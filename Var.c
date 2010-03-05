@@ -8,7 +8,9 @@
 //
 void VarInit(VAR* pvar)
 {
-	pvar->type = TT_EMPTY;
+	pvar->type    = TT_EMPTY;
+	pvar->sVal    = 0;
+	pvar->vresult = VR_OK;
 }
 
 VRESULT VarClear(VAR* pvar)

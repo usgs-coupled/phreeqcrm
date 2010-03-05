@@ -4,9 +4,7 @@
 #include <assert.h>  /* assert */
 #include <stdio.h>   /* printf */
 
-#define EXTERNAL extern
-#include "phreeqcpp/phreeqc/global.h"
-#undef EXTERNAL
+#include "phrqtype.h"
 
 struct buffer {
 	char *name;
@@ -35,8 +33,7 @@ extern int store_tally_table(double *array, int row_dim, int col_dim);
 extern int warning_msg (const char *err_str);
 extern int zero_tally_table(void);
 
-
-#include "../include/IPhreeqc.h"
+#include "IPhreeqc.h"
 
 /*******************************
 When using GNU gcc/g++/g77

@@ -11,6 +11,7 @@
 #include <math.h>
 
 
+#if !defined(PHREEQC_CLASS)
 #define EXTERNAL extern
 
 #include "global.h"
@@ -21,6 +22,7 @@
 EXTERNAL int n_user_punch_index;
 
 #undef EXTERNAL
+#endif
 
 
 #endif /* _INC_GLOBALNS */

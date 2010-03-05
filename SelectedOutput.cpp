@@ -5,10 +5,25 @@
 #pragma warning(disable : 4786) // disable truncation warning
 #include <sstream>              // std::ostringstream
 #include <windows.h>            // ::OutputDebugString
+#else
+#if defined(PHREEQC_CLASS)
+#include <windows.h>            // ::OutputDebugString
+#endif
 #endif
 
 #include <stdarg.h>
 #include <stdio.h>
+
+#if defined(PHREEQC_CLASS)
+#include "phrqtype.h"
+#include "p2c.h"
+#include "global_structures.h"
+#include "basic.h"
+#include "Phreeqc.h"
+
+// COMMENT: {2/24/2010 6:01:56 PM}extern int user_punch_count_headings;
+// COMMENT: {2/24/2010 6:01:56 PM}extern char **user_punch_headings;
+#endif
 
 #include "SelectedOutput.hxx"
 #include "phreeqcns.hxx"
@@ -16,225 +31,227 @@
 const size_t RESERVE_ROWS = 80;
 const size_t RESERVE_COLS = 80;
 
-
-int EndRow(void);
+// COMMENT: {3/3/2010 5:31:34 PM}int EndRow(void);
 void AddSelectedOutput(const char* name, const char* format, va_list argptr);
 int warning_msg (const char *err_str);
 
-int EndRow(void)
-{
-	if (CSelectedOutput::Instance()->GetRowCount() <= 1) {
-		// ensure all user_punch headings are included
-		for (int i = n_user_punch_index; i < user_punch_count_headings; ++i) {
-			CSelectedOutput::Instance()->PushBackEmpty(user_punch_headings[i]);
-		}
-	}
-	return CSelectedOutput::Instance()->EndRow();
-}
+// COMMENT: {3/3/2010 8:55:29 PM}int Phreeqc::EndRow(void)
+// COMMENT: {3/3/2010 8:55:29 PM}{
+// COMMENT: {3/3/2010 8:55:29 PM}// COMMENT: {3/3/2010 7:29:42 PM}	if (CSelectedOutput::Instance()->GetRowCount() <= 1)
+// COMMENT: {3/3/2010 8:55:29 PM}	if (this->SelectedOutput.GetRowCount() <= 1)
+// COMMENT: {3/3/2010 8:55:29 PM}	{
+// COMMENT: {3/3/2010 8:55:29 PM}		// ensure all user_punch headings are included
+// COMMENT: {3/3/2010 8:55:29 PM}		for (int i = n_user_punch_index; i < user_punch_count_headings; ++i)
+// COMMENT: {3/3/2010 8:55:29 PM}		{
+// COMMENT: {3/3/2010 8:55:29 PM}			CSelectedOutput::Instance()->PushBackEmpty(user_punch_headings[i]);
+// COMMENT: {3/3/2010 8:55:29 PM}		}
+// COMMENT: {3/3/2010 8:55:29 PM}	}
+// COMMENT: {3/3/2010 8:55:29 PM}	return CSelectedOutput::Instance()->EndRow();
+// COMMENT: {3/3/2010 8:55:29 PM}}
 
-int PushBackDouble(const char* key, double dVal)
-{
-	return CSelectedOutput::Instance()->PushBackDouble(key, dVal);
-}
-
-int PushBackLong(const char* key, long lVal)
-{
-	return CSelectedOutput::Instance()->PushBackLong(key, lVal);
-}
-
-int PushBackString(const char* key, const char* sVal)
-{
-	return CSelectedOutput::Instance()->PushBackString(key, sVal);
-}
-
-int PushBackEmpty(const char* key)
-{
-	return CSelectedOutput::Instance()->PushBackEmpty(key);
-}
-
-
-void AddSelectedOutput(const char* name, const char* format, va_list argptr)
-{
-	int bInt;
-	int bDouble;
-	int bString;
-
-	int state;
-	int bLongDouble;
-	char ch;
+// COMMENT: {3/3/2010 8:55:40 PM}int PushBackDouble(const char* key, double dVal)
+// COMMENT: {3/3/2010 8:55:40 PM}{
+// COMMENT: {3/3/2010 8:55:40 PM}	return CSelectedOutput::Instance()->PushBackDouble(key, dVal);
+// COMMENT: {3/3/2010 8:55:40 PM}}
+// COMMENT: {3/3/2010 8:55:40 PM}
+// COMMENT: {3/3/2010 8:55:40 PM}int PushBackLong(const char* key, long lVal)
+// COMMENT: {3/3/2010 8:55:40 PM}{
+// COMMENT: {3/3/2010 8:55:40 PM}	return CSelectedOutput::Instance()->PushBackLong(key, lVal);
+// COMMENT: {3/3/2010 8:55:40 PM}}
+// COMMENT: {3/3/2010 8:55:40 PM}
+// COMMENT: {3/3/2010 8:55:40 PM}int PushBackString(const char* key, const char* sVal)
+// COMMENT: {3/3/2010 8:55:40 PM}{
+// COMMENT: {3/3/2010 8:55:40 PM}	return CSelectedOutput::Instance()->PushBackString(key, sVal);
+// COMMENT: {3/3/2010 8:55:40 PM}}
+// COMMENT: {3/3/2010 8:55:40 PM}
+// COMMENT: {3/3/2010 8:55:40 PM}int PushBackEmpty(const char* key)
+// COMMENT: {3/3/2010 8:55:40 PM}{
+// COMMENT: {3/3/2010 8:55:40 PM}	return CSelectedOutput::Instance()->PushBackEmpty(key);
+// COMMENT: {3/3/2010 8:55:40 PM}}
 
 
-	/* state values
-	0 Haven't found start(%)
-	1 Just read start(%)
-	2 Just read Flags(-0+ #) (zero or more)
-	3 Just read Width
-	4 Just read Precision start (.)
-	5 Just read Size modifier
-	6 Just read Type
-	*/
+// COMMENT: {3/3/2010 8:58:25 PM}void AddSelectedOutput(const char* name, const char* format, va_list argptr)
+// COMMENT: {3/3/2010 8:58:25 PM}{
+// COMMENT: {3/3/2010 8:58:25 PM}	int bInt;
+// COMMENT: {3/3/2010 8:58:25 PM}	int bDouble;
+// COMMENT: {3/3/2010 8:58:25 PM}	int bString;
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}	int state;
+// COMMENT: {3/3/2010 8:58:25 PM}	int bLongDouble;
+// COMMENT: {3/3/2010 8:58:25 PM}	char ch;
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}	/* state values
+// COMMENT: {3/3/2010 8:58:25 PM}	0 Haven't found start(%)
+// COMMENT: {3/3/2010 8:58:25 PM}	1 Just read start(%)
+// COMMENT: {3/3/2010 8:58:25 PM}	2 Just read Flags(-0+ #) (zero or more)
+// COMMENT: {3/3/2010 8:58:25 PM}	3 Just read Width
+// COMMENT: {3/3/2010 8:58:25 PM}	4 Just read Precision start (.)
+// COMMENT: {3/3/2010 8:58:25 PM}	5 Just read Size modifier
+// COMMENT: {3/3/2010 8:58:25 PM}	6 Just read Type
+// COMMENT: {3/3/2010 8:58:25 PM}	*/
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}	if (name == NULL) {
+// COMMENT: {3/3/2010 8:58:25 PM}		return;
+// COMMENT: {3/3/2010 8:58:25 PM}	}
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}	bDouble = 0;
+// COMMENT: {3/3/2010 8:58:25 PM}	bInt = 0;
+// COMMENT: {3/3/2010 8:58:25 PM}	bString = 0;
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}	bLongDouble = 0;
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}	state = 0;
+// COMMENT: {3/3/2010 8:58:25 PM}	ch = *format++;
+// COMMENT: {3/3/2010 8:58:25 PM}	while (ch != '\0') {
+// COMMENT: {3/3/2010 8:58:25 PM}		switch (state) {
+// COMMENT: {3/3/2010 8:58:25 PM}	case 0: /* looking for Start specification (%) */
+// COMMENT: {3/3/2010 8:58:25 PM}		switch (ch) {
+// COMMENT: {3/3/2010 8:58:25 PM}	case '%':
+// COMMENT: {3/3/2010 8:58:25 PM}		state = 1;
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	default:
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}		}
+// COMMENT: {3/3/2010 8:58:25 PM}		ch = *format++;
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	case 1: /* reading Flags (zero or more(-,+,0,# or space)) */
+// COMMENT: {3/3/2010 8:58:25 PM}		switch (ch) {
+// COMMENT: {3/3/2010 8:58:25 PM}	case '-': case '0': case '+': case ' ': case '#':
+// COMMENT: {3/3/2010 8:58:25 PM}		ch = *format++;
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	default:
+// COMMENT: {3/3/2010 8:58:25 PM}		state = 2;
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}		}
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	case 2: /* reading Minimum field width (decimal integer constant) */
+// COMMENT: {3/3/2010 8:58:25 PM}		switch (ch) {
+// COMMENT: {3/3/2010 8:58:25 PM}	case '.':
+// COMMENT: {3/3/2010 8:58:25 PM}		state = 3;
+// COMMENT: {3/3/2010 8:58:25 PM}		ch = *format++;
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+// COMMENT: {3/3/2010 8:58:25 PM}		ch = *format++;
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	default:
+// COMMENT: {3/3/2010 8:58:25 PM}		state = 4;
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}		}
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	case 3: /* reading Precision specification (period already read) */
+// COMMENT: {3/3/2010 8:58:25 PM}		switch (ch)
+// COMMENT: {3/3/2010 8:58:25 PM}		{
+// COMMENT: {3/3/2010 8:58:25 PM}		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+// COMMENT: {3/3/2010 8:58:25 PM}			ch = *format++;
+// COMMENT: {3/3/2010 8:58:25 PM}			break;
+// COMMENT: {3/3/2010 8:58:25 PM}		default:
+// COMMENT: {3/3/2010 8:58:25 PM}			state = 4;
+// COMMENT: {3/3/2010 8:58:25 PM}			break;
+// COMMENT: {3/3/2010 8:58:25 PM}		}
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	case 4: /* reading Size modifier */
+// COMMENT: {3/3/2010 8:58:25 PM}		switch (ch)
+// COMMENT: {3/3/2010 8:58:25 PM}		{
+// COMMENT: {3/3/2010 8:58:25 PM}		case 'l':
+// COMMENT: {3/3/2010 8:58:25 PM}			ch = *format++;
+// COMMENT: {3/3/2010 8:58:25 PM}			break;
+// COMMENT: {3/3/2010 8:58:25 PM}		case 'L':
+// COMMENT: {3/3/2010 8:58:25 PM}			bLongDouble = 1;
+// COMMENT: {3/3/2010 8:58:25 PM}			ch = *format++;
+// COMMENT: {3/3/2010 8:58:25 PM}			break;
+// COMMENT: {3/3/2010 8:58:25 PM}		case 'h':
+// COMMENT: {3/3/2010 8:58:25 PM}			ch = *format++;
+// COMMENT: {3/3/2010 8:58:25 PM}			break;
+// COMMENT: {3/3/2010 8:58:25 PM}		}
+// COMMENT: {3/3/2010 8:58:25 PM}		state = 5;
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	case 5: /* reading Conversion letter */
+// COMMENT: {3/3/2010 8:58:25 PM}		switch (ch) {
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'c':
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'd':
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'i':
+// COMMENT: {3/3/2010 8:58:25 PM}		bInt = 1;
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'n':
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'o':
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'p':
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	case 's':
+// COMMENT: {3/3/2010 8:58:25 PM}		bString = 1;
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'u':
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'x':
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'X':
+// COMMENT: {3/3/2010 8:58:25 PM}	case '%':
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'f':
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'e':
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'E':
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'g':
+// COMMENT: {3/3/2010 8:58:25 PM}	case 'G':
+// COMMENT: {3/3/2010 8:58:25 PM}		bDouble = 1;
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}	default:
+// COMMENT: {3/3/2010 8:58:25 PM}		ASSERT(false);
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}		}
+// COMMENT: {3/3/2010 8:58:25 PM}		ch = '\0';  /* done */
+// COMMENT: {3/3/2010 8:58:25 PM}		break;
+// COMMENT: {3/3/2010 8:58:25 PM}		}
+// COMMENT: {3/3/2010 8:58:25 PM}	}
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}	if (bDouble) {
+// COMMENT: {3/3/2010 8:58:25 PM}		double valDouble;
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}		if (bLongDouble) {
+// COMMENT: {3/3/2010 8:58:25 PM}			valDouble = (double)va_arg(argptr, long double);
+// COMMENT: {3/3/2010 8:58:25 PM}		}
+// COMMENT: {3/3/2010 8:58:25 PM}		else {
+// COMMENT: {3/3/2010 8:58:25 PM}			valDouble = va_arg(argptr, double);
+// COMMENT: {3/3/2010 8:58:25 PM}		}
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}		CSelectedOutput::Instance()->PushBackDouble(name, valDouble);
+// COMMENT: {3/3/2010 8:58:25 PM}	}
+// COMMENT: {3/3/2010 8:58:25 PM}	else if (bInt) {
+// COMMENT: {3/3/2010 8:58:25 PM}		int valInt;
+// COMMENT: {3/3/2010 8:58:25 PM}		valInt = va_arg(argptr, int);
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}		CSelectedOutput::Instance()->PushBackLong(name, (long)valInt);
+// COMMENT: {3/3/2010 8:58:25 PM}	}
+// COMMENT: {3/3/2010 8:58:25 PM}	else if (bString) {
+// COMMENT: {3/3/2010 8:58:25 PM}		char* valString;
+// COMMENT: {3/3/2010 8:58:25 PM}		valString = (char *)va_arg(argptr, char *);
+// COMMENT: {3/3/2010 8:58:25 PM}
+// COMMENT: {3/3/2010 8:58:25 PM}		CSelectedOutput::Instance()->PushBackString(name, valString);
+// COMMENT: {3/3/2010 8:58:25 PM}	}
+// COMMENT: {3/3/2010 8:58:25 PM}	else {
+// COMMENT: {3/3/2010 8:58:25 PM}		ASSERT(false);
+// COMMENT: {3/3/2010 8:58:25 PM}		CSelectedOutput::Instance()->PushBackEmpty(name);
+// COMMENT: {3/3/2010 8:58:25 PM}	}
+// COMMENT: {3/3/2010 8:58:25 PM}}
 
-	if (name == NULL) {
-		return;
-	}
-
-	bDouble = 0;
-	bInt = 0;
-	bString = 0;
-
-	bLongDouble = 0;
-
-	state = 0;
-	ch = *format++;
-	while (ch != '\0') {
-		switch (state) {
-	case 0: /* looking for Start specification (%) */
-		switch (ch) {
-	case '%':
-		state = 1;
-		break;
-	default:
-		break;
-		}
-		ch = *format++;
-		break;
-	case 1: /* reading Flags (zero or more(-,+,0,# or space)) */
-		switch (ch) {
-	case '-': case '0': case '+': case ' ': case '#':
-		ch = *format++;
-		break;
-	default:
-		state = 2;
-		break;
-		}
-		break;
-	case 2: /* reading Minimum field width (decimal integer constant) */
-		switch (ch) {
-	case '.':
-		state = 3;
-		ch = *format++;
-		break;
-	case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-		ch = *format++;
-		break;
-	default:
-		state = 4;
-		break;
-		}
-		break;
-	case 3: /* reading Precision specification (period already read) */
-		switch (ch)
-		{
-		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-			ch = *format++;
-			break;
-		default:
-			state = 4;
-			break;
-		}
-		break;
-	case 4: /* reading Size modifier */
-		switch (ch)
-		{
-		case 'l':
-			ch = *format++;
-			break;
-		case 'L':
-			bLongDouble = 1;
-			ch = *format++;
-			break;
-		case 'h':
-			ch = *format++;
-			break;
-		}
-		state = 5;
-		break;
-	case 5: /* reading Conversion letter */
-		switch (ch) {
-	case 'c':
-		break;
-	case 'd':
-	case 'i':
-		bInt = 1;
-		break;
-	case 'n':
-	case 'o':
-	case 'p':
-		break;
-	case 's':
-		bString = 1;
-		break;
-	case 'u':
-	case 'x':
-	case 'X':
-	case '%':
-		break;
-	case 'f':
-	case 'e':
-	case 'E':
-	case 'g':
-	case 'G':
-		bDouble = 1;
-		break;
-	default:
-		ASSERT(false);
-		break;
-		}
-		ch = '\0';  /* done */
-		break;
-		}
-	}
-
-	if (bDouble) {
-		double valDouble;
-
-		if (bLongDouble) {
-			valDouble = (double)va_arg(argptr, long double);
-		}
-		else {
-			valDouble = va_arg(argptr, double);
-		}
-
-		CSelectedOutput::Instance()->PushBackDouble(name, valDouble);
-	}
-	else if (bInt) {
-		int valInt;
-		valInt = va_arg(argptr, int);
-
-		CSelectedOutput::Instance()->PushBackLong(name, (long)valInt);
-	}
-	else if (bString) {
-		char* valString;
-		valString = (char *)va_arg(argptr, char *);
-
-		CSelectedOutput::Instance()->PushBackString(name, valString);
-	}
-	else {
-		ASSERT(false);
-		CSelectedOutput::Instance()->PushBackEmpty(name);
-	}
-}
-
-// COMMENT: {11/16/2004 10:18:22 PM}CSelectedOutput CSelectedOutput::singleton;
-CSelectedOutput* CSelectedOutput::s_instance = 0;
-
-CSelectedOutput* CSelectedOutput::Instance()
-{
-	if (s_instance == 0)
-	{
-		s_instance = new CSelectedOutput;
-	}
-	return s_instance;
-}
-
-void CSelectedOutput::Release()
-{
-	if (s_instance)
-	{
-		delete s_instance;
-		s_instance = 0;
-	}
-}
+// COMMENT: {3/3/2010 8:56:03 PM}// COMMENT: {11/16/2004 10:18:22 PM}CSelectedOutput CSelectedOutput::singleton;
+// COMMENT: {3/3/2010 8:56:03 PM}CSelectedOutput* CSelectedOutput::s_instance = 0;
+// COMMENT: {3/3/2010 8:56:03 PM}
+// COMMENT: {3/3/2010 8:56:03 PM}CSelectedOutput* CSelectedOutput::Instance()
+// COMMENT: {3/3/2010 8:56:03 PM}{
+// COMMENT: {3/3/2010 8:56:03 PM}	if (s_instance == 0)
+// COMMENT: {3/3/2010 8:56:03 PM}	{
+// COMMENT: {3/3/2010 8:56:03 PM}		s_instance = new CSelectedOutput;
+// COMMENT: {3/3/2010 8:56:03 PM}	}
+// COMMENT: {3/3/2010 8:56:03 PM}	return s_instance;
+// COMMENT: {3/3/2010 8:56:03 PM}}
+// COMMENT: {3/3/2010 8:56:03 PM}
+// COMMENT: {3/3/2010 8:56:03 PM}void CSelectedOutput::Release()
+// COMMENT: {3/3/2010 8:56:03 PM}{
+// COMMENT: {3/3/2010 8:56:03 PM}	if (s_instance)
+// COMMENT: {3/3/2010 8:56:03 PM}	{
+// COMMENT: {3/3/2010 8:56:03 PM}		delete s_instance;
+// COMMENT: {3/3/2010 8:56:03 PM}		s_instance = 0;
+// COMMENT: {3/3/2010 8:56:03 PM}	}
+// COMMENT: {3/3/2010 8:56:03 PM}}
 
 CSelectedOutput::CSelectedOutput()
 : m_nRowCount(0)

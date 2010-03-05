@@ -1,214 +1,216 @@
-#if defined(_DEBUG)
-#pragma warning(disable : 4786)   // disable truncation warning
-#endif
-#include <iostream>  // std::cout
-#include <fstream>   // std::ifstream
-#include <memory>    // std::auto_ptr
-#include <sstream>   // std::istringstream
-#include <cstdarg>
-
-#if defined(_WIN32)
-#include <windows.h> // ::OutputDebugString
-#endif
-
-#include "phreeqcns.hxx"
-#include "ErrorReporter.hxx"
-#include "SelectedOutput.hxx"
-#include "Var.h"
 #include "IPhreeqc.h"
-#include "module_files.h"
+#include "IPhreeqc.hpp"
+#include "ErrorReporter.hxx"
 
-#ifdef PHREEQC_CPP
-extern int dump_entities(void);
-extern int delete_entities(void);
-extern int run_as_cells(void);
-#endif
-
+int istream_getc(void *cookie);
 
 const char OUTPUT_FILENAME[] = "phreeqc.out";
 const char ERROR_FILENAME[]  = "phreeqc.err";
 const char LOG_FILENAME[]    = "phreeqc.log";
 const char PUNCH_FILENAME[]  = "selected.out";
 
-
-const std::string& GetAccumulatedLines(void);
-void ClearAccumulatedLines(void);
-
-void EndRow(void);
-void AddSelectedOutput(const char* name, const char* format, va_list argptr);
-
-
-struct PhreeqcStop{};
-
-struct IPhreeqc
-{
-	// ctor
-	IPhreeqc(void)
-		: m_pIErrorReporter(0)
-		, m_bDatabaseLoaded(false)
-		, m_bSelectedOutputOn(false)
-		, m_sPunchFileName(NULL)
-	{
-		// initialize
-		UnLoadDatabase();
-	};
-	IPhreeqc(IErrorReporter *pIErrorReporter)
-		: m_pIErrorReporter(0)
-		, m_bDatabaseLoaded(false)
-		, m_bSelectedOutputOn(false)
-		, m_sPunchFileName(NULL)
-	{
-		// initialize
-		UnLoadDatabase();
-	};
-	~IPhreeqc(void)
-	{
-		UnLoadDatabase();
-		delete[] m_sPunchFileName;
-	};
-	IErrorReporter  *m_pIErrorReporter;
-	bool             m_bDatabaseLoaded;
-	bool             m_bSelectedOutputOn;
-	char            *m_sPunchFileName;
-};
-
-static std::string s_string_input;
-static std::ostringstream s_oss;
-static CErrorReporter<std::ostringstream> s_errorReporter;
-static IPhreeqc s_IPhreeqc(&s_errorReporter);
-
-static void check_database(const char *sz_routine);
-
-static void do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int error_on, int log_on, int selected_output_on, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie);
-
-
-int istream_getc(void *cookie);
-int output_handler(const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args);
-int open_handler(const int type, const char *file_name);
-int handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args);
-
-
-int
-istream_getc(void *cookie)
-{
-	if (cookie)
-	{
-		std::istream* is = (std::istream*)cookie;
-		return is->get();
-	}
-	return EOF;
-}
-
-int
-handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
-{
-	int n = OK;
-	switch (action)
-	{
-	case ACTION_OPEN:
-		n = open_handler(type, err_str);
-		break;
-
-	case ACTION_OUTPUT:
-		n = output_handler(type, err_str, stop, cookie, format, args);
-		break;
-
-	default:
-		n = module_handler(action, type, err_str, stop, cookie, format, args);
-		break;
-	}
-
-	if (stop == STOP)
-	{
-		throw PhreeqcStop();
-	}
-	return n;
-}
-
-int
-output_handler(const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
-{
-	IPhreeqc* pIPhreeqc = (IPhreeqc*) cookie;
-
-	switch (type)
-	{
-	case OUTPUT_ERROR:
-		if (pIPhreeqc && pIPhreeqc->m_pIErrorReporter)
-		{
-			std::ostringstream oss;
-			oss << "ERROR: " << err_str << "\n";
-			if (stop == STOP) {
-				oss << "Stopping.\n";
-			}
-			pIPhreeqc->m_pIErrorReporter->AddError(oss.str().c_str());
-		}
-		break;
-
-	case OUTPUT_PUNCH:
-		AddSelectedOutput(err_str, format, args);
-		break;
-
-	}
-	return module_handler(ACTION_OUTPUT, type, err_str, stop, cookie, format, args);
-}
-
-int
-open_handler(const int type, const char *file_name)
-{
-	int n = OK;
-	switch (type)
-	{
-	case OUTPUT_PUNCH:
-		if (file_name)
-		{
-			ASSERT(s_IPhreeqc.m_sPunchFileName != file_name);
-			if (s_IPhreeqc.m_sPunchFileName != file_name)
-			{
-				delete[] s_IPhreeqc.m_sPunchFileName;
-				s_IPhreeqc.m_sPunchFileName = NULL;
-				s_IPhreeqc.m_sPunchFileName = new char[::strlen(file_name) + 1];
-				::strcpy(s_IPhreeqc.m_sPunchFileName, file_name);
-			}
-		}
-		if (s_IPhreeqc.m_bSelectedOutputOn)
-		{
-			n = module_handler(ACTION_OPEN, type, file_name, CONTINUE, NULL, NULL, NULL);
-		}
-		break;
-	default:
-		n = module_handler(ACTION_OPEN, type, file_name, CONTINUE, NULL, NULL, NULL);
-		break;
-	}
-	return n;
-}
-
 int
 LoadDatabase(const char* filename)
+{
+	return IPhreeqc::LibraryInstance()->LoadDatabase(filename);
+}
+
+int
+LoadDatabaseString(const char* input)
+{
+	return IPhreeqc::LibraryInstance()->LoadDatabaseString(input);
+}
+
+void
+UnLoadDatabase(void)
+{
+	IPhreeqc::LibraryInstance()->UnLoadDatabase();
+}
+
+void
+OutputLastError(void)
+{
+	IPhreeqc::LibraryInstance()->OutputLastError();
+}
+
+const char*
+GetLastErrorString(void)
+{
+	return IPhreeqc::LibraryInstance()->GetLastErrorString();
+}
+
+VRESULT
+AccumulateLine(const char *line)
+{
+	return IPhreeqc::LibraryInstance()->AccumulateLine(line);
+}
+
+int
+Run(int output_on, int error_on, int log_on, int selected_output_on)
+{
+	return IPhreeqc::LibraryInstance()->Run(output_on, error_on, log_on, selected_output_on);
+}
+
+int
+RunFile(const char* filename, int output_on, int error_on, int log_on, int selected_output_on)
+{
+	return IPhreeqc::LibraryInstance()->RunFile(filename, output_on, error_on, log_on, selected_output_on);
+}
+
+int
+RunString(const char* input, int output_on, int error_on, int log_on, int selected_output_on)
+{
+	return IPhreeqc::LibraryInstance()->RunString(input, output_on, error_on, log_on, selected_output_on);
+}
+
+int
+GetSelectedOutputRowCount(void)
+{
+	return (int)IPhreeqc::LibraryInstance()->GetSelectedOutputRowCount();
+}
+
+int
+GetSelectedOutputColumnCount(void)
+{
+	return (int)IPhreeqc::LibraryInstance()->GetSelectedOutputColumnCount();
+}
+
+VRESULT
+GetSelectedOutputValue(int row, int col, VAR* pVAR)
+{
+	return IPhreeqc::LibraryInstance()->GetSelectedOutputValue(row, col, pVAR);
+}
+
+size_t
+AddError(const char* error_msg)
+{
+	return IPhreeqc::LibraryInstance()->AddError(error_msg);
+}
+
+
+void
+OutputLines(void)
+{
+	IPhreeqc::LibraryInstance()->OutputLines();
+}
+
+const std::string&
+GetAccumulatedLines(void)
+{
+	return IPhreeqc::LibraryInstance()->GetAccumulatedLines();
+}
+
+void
+ClearAccumulatedLines(void)
+{
+	IPhreeqc::LibraryInstance()->ClearAccumulatedLines();
+}
+
+
+IPhreeqc::IPhreeqc(void)
+: Phreeqc()
+, ErrorReporter(0)
+, SelectedOutput(0)
+, DatabaseLoaded(false)
+, SelectedOutputOn(false)
+{
+	ASSERT(this->phast == 0);
+	this->ErrorReporter = new CErrorReporter<std::ostringstream>;
+	this->SelectedOutput = new CSelectedOutput();
+	this->Init();
+	this->UnLoadDatabase();
+}
+
+IPhreeqc::~IPhreeqc(void)
+{
+	delete this->ErrorReporter;
+	delete this->SelectedOutput;
+}
+
+// the library singleton
+IPhreeqc* IPhreeqc::Instance = 0;
+
+IPhreeqc* IPhreeqc::LibraryInstance()
+{
+	if (IPhreeqc::Instance == 0)
+	{
+		IPhreeqc::Instance = new IPhreeqc;
+	}
+	return IPhreeqc::Instance;
+}
+
+int Phreeqc::EndRow(void)
+{
+	return OK;
+}
+
+int IPhreeqc::EndRow(void)
+{
+	if (this->SelectedOutput->GetRowCount() <= 1)
+	{
+		// ensure all user_punch headings are included
+		for (int i = this->n_user_punch_index; i < this->user_punch_count_headings; ++i)
+		{
+			this->SelectedOutput->PushBackEmpty(this->user_punch_headings[i]);
+		}
+	}
+	return this->SelectedOutput->EndRow();
+}
+
+void IPhreeqc::ClearAccumulatedLines(void)
+{
+	this->StringInput.erase();
+}
+
+size_t IPhreeqc::AddError(const char* error_msg)
+{
+	return this->ErrorReporter->AddError(error_msg);
+}
+
+const std::string& IPhreeqc::GetAccumulatedLines(void)
+{
+	return this->StringInput;
+}
+
+void IPhreeqc::OutputLines(void)
+{
+	std::cout << this->StringInput.c_str() << std::endl;
+}
+
+void IPhreeqc::UnLoadDatabase(void)
+{
+	// init IPhreeqc
+	//
+	this->DatabaseLoaded   = false;
+	this->SelectedOutputOn = false;
+
+	// clear error state
+	//
+	ASSERT(this->ErrorReporter);
+	this->ErrorReporter->Clear();
+
+	// clear selectedoutput
+	//
+	ASSERT(this->ErrorReporter);
+	this->SelectedOutput->Clear();
+
+	// initialize phreeqc
+	//
+	this->clean_up();
+	this->add_output_callback(IPhreeqc::handler, this);
+	this->do_initialize();
+	this->input_error = 0;
+}
+
+int IPhreeqc::LoadDatabase(const char* filename)
 {
 	try
 	{
 		// cleanup
 		//
-		UnLoadDatabase();
+		this->UnLoadDatabase();
+		this->SelectedOutput->Clear();
 
-		CSelectedOutput::Instance()->Clear();
-
-#if 0
-		// open stream
-		//
-		std::ifstream ifs;
-		ifs.open(filename);
-		if (!ifs.is_open())
-		{
-			std::ostringstream oss;
-			oss << "LoadDatabase: Unable to open:" << "\"" << filename << "\".";
-			error_msg(oss.str().c_str(), STOP); // throws PhreeqcStop
-		}
-
-		// read input
-		//
-		read_database(istream_getc, &ifs);
-#else
 		// open file
 		//
 		FILE* f = fopen(filename, "r");
@@ -216,24 +218,24 @@ LoadDatabase(const char* filename)
 		{
 			std::ostringstream oss;
 			oss << "LoadDatabase: Unable to open:" << "\"" << filename << "\".";
-			error_msg(oss.str().c_str(), STOP); // throws PhreeqcStop
+			this->error_msg(oss.str().c_str(), STOP); // throws PhreeqcStop
 		}
 
 		// read input
 		//
-		read_database(getc_callback, f);
-#endif
+		this->read_database(getc_callback, f);
+
 	}
 	catch (PhreeqcStop)
 	{
 		// do nothing
 	}
-	catch(...)
+	catch (...)
 	{
 		const char *errmsg = "LoadDatabase: An unhandled exception occured.\n";
 		try
 		{
-			error_msg(errmsg, STOP); // throws PhreeqcStop
+			this->error_msg(errmsg, STOP); // throws PhreeqcStop
 		}
 		catch (PhreeqcStop)
 		{
@@ -241,27 +243,26 @@ LoadDatabase(const char* filename)
 		}
 	}
 
-	s_IPhreeqc.m_bDatabaseLoaded = (input_error == 0);
-	return input_error;
+	this->DatabaseLoaded = (this->input_error == 0);
+	return this->input_error;
 }
 
-int
-LoadDatabaseString(const char* input)
+int IPhreeqc::LoadDatabaseString(const char* input)
 {
 	try
 	{
 		// cleanup
 		//
-		UnLoadDatabase();
+		this->UnLoadDatabase();
 
-		CSelectedOutput::Instance()->Clear();
+		this->SelectedOutput->Clear();
 
 		std::string s(input);
 		std::istringstream iss(s);
 
 		// read input
 		//
-		read_database(istream_getc, &iss);
+		this->read_database(istream_getc, &iss);
 	}
 	catch (PhreeqcStop)
 	{
@@ -272,7 +273,7 @@ LoadDatabaseString(const char* input)
 		const char *errmsg = "LoadDatabaseString: An unhandled exception occured.\n";
 		try
 		{
-			error_msg(errmsg, STOP); // throws PhreeqcStop
+			this->error_msg(errmsg, STOP); // throws PhreeqcStop
 		}
 		catch (PhreeqcStop)
 		{
@@ -280,423 +281,70 @@ LoadDatabaseString(const char* input)
 		}
 	}
 
-	s_IPhreeqc.m_bDatabaseLoaded = (input_error == 0);
-	return input_error;
+	this->DatabaseLoaded = (this->input_error == 0);
+	return this->input_error;
 }
 
-void
-UnLoadDatabase(void)
+void IPhreeqc::OutputLastError(void)
 {
-	// init IPhreeqc
-	//
-	s_IPhreeqc.m_pIErrorReporter   = &s_errorReporter;
-	s_IPhreeqc.m_bDatabaseLoaded   = false;
-	s_IPhreeqc.m_bSelectedOutputOn = false;
-
-	// clear error state
-	//
-	s_errorReporter.Clear();
-
-	// free selectedoutput
-	//
-	CSelectedOutput::Release();
-
-	// initialize phreeqc
-	//
-	clean_up();
-	add_output_callback(handler, &s_IPhreeqc);
-	do_initialize();
-	input_error = 0;
+	std::cout << ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str().c_str() << std::endl;
 }
 
-
-void
-OutputLastError(void)
-{
-	std::cout << s_errorReporter.GetOS()->str().c_str() << std::endl;
-}
-
-const char*
-GetLastErrorString(void)
+const char* IPhreeqc::GetLastErrorString(void)
 {
 	static std::string str;
-	str = s_errorReporter.GetOS()->str();
+	str = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
 	return str.c_str();
 }
 
-// COMMENT: {11/27/2006 7:00:49 PM}#if defined(_WIN32)
-// COMMENT: {11/27/2006 7:00:49 PM}void
-// COMMENT: {11/27/2006 7:00:49 PM}DebugOutputLastError(void)
-// COMMENT: {11/27/2006 7:00:49 PM}{
-// COMMENT: {11/27/2006 7:00:49 PM}	std::istringstream iss(s_errorReporter.GetOS()->str());
-// COMMENT: {11/27/2006 7:00:49 PM}	std::string line;
-// COMMENT: {11/27/2006 7:00:49 PM}	while (std::getline(iss, line)) {
-// COMMENT: {11/27/2006 7:00:49 PM}		::OutputDebugString(line.c_str());
-// COMMENT: {11/27/2006 7:00:49 PM}		::OutputDebugString("\n");
-// COMMENT: {11/27/2006 7:00:49 PM}	}
-// COMMENT: {11/27/2006 7:00:49 PM}}
-// COMMENT: {11/27/2006 7:00:49 PM}#endif
-
-
-VRESULT
-AccumulateLine(const char *line)
+void IPhreeqc::check_database(const char* sz_routine)
 {
-	try
-	{
-		s_errorReporter.Clear();
-		s_string_input.append(line);
-		s_string_input.append("\n");
-		return VR_OK;
-	}
-	catch (...)
-	{
-		s_errorReporter.AddError("AccumulateLine: An unhandled exception occured.\n");
-	}
-	return VR_OUTOFMEMORY;
-}
+	this->ErrorReporter->Clear();
+	this->SelectedOutput->Clear();
 
-int
-Run(int output_on, int error_on, int log_on, int selected_output_on)
-{
-	static const char *sz_routine = "Run";
-	try
-	{
-		// this may throw
-		check_database(sz_routine);
-
-		input_error = 0;
-
-		// create input stream
-		std::istringstream iss(GetAccumulatedLines());
-
-		// this may throw
-		do_run(sz_routine, &iss, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
-	}
-	catch (PhreeqcStop)
-	{
-		// do nothing
-	}
-	catch(...)
-	{
-		const char *errmsg = "Run: An unhandled exception occured.\n";
-		try
-		{
-			error_msg(errmsg, STOP); // throws PhreeqcStop
-		}
-		catch (PhreeqcStop)
-		{
-			// do nothing
-		}
-	}
-
-	::ClearAccumulatedLines();
-	close_output_files();
-	return input_error;
-}
-
-int
-RunFile(const char* filename, int output_on, int error_on, int log_on, int selected_output_on)
-{
-	static const char *sz_routine = "RunFile";
-	try
-	{
-		// this may throw
-		check_database(sz_routine);
-
-		input_error = 0;
-
-#if 0
-		// create input stream
-		std::ifstream ifs;
-		ifs.open(filename);
-		if (!ifs.is_open())
-		{
-			std::ostringstream oss;
-			oss << "RunFile: Unable to open:" << "\"" << filename << "\".";
-			input_error = 1;
-			error_msg(oss.str().c_str(), STOP); // throws
-		}
-
-		// this may throw
-		do_run(sz_routine, &ifs, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
-#else
-		// open file
-		//
-		FILE* f = fopen(filename, "r");
-		if (!f)
-		{
-			std::ostringstream oss;
-			oss << "RunFile: Unable to open:" << "\"" << filename << "\".";
-			error_msg(oss.str().c_str(), STOP); // throws PhreeqcStop
-		}
-
-		// this may throw
-		do_run(sz_routine, NULL, f, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
-#endif
-	}
-	catch (PhreeqcStop)
-	{
-		// do nothing
-	}
-	catch(...)
-	{
-		const char *errmsg = "RunFile: An unhandled exception occured.\n";
-		try
-		{
-			error_msg(errmsg, STOP); // throws PhreeqcStop
-		}
-		catch (PhreeqcStop)
-		{
-			// do nothing
-		}
-	}
-
-	close_output_files();
-	return input_error;
-}
-
-int
-RunString(const char* input, int output_on, int error_on, int log_on, int selected_output_on)
-{
-	static const char *sz_routine = "RunString";
-	try
-	{
-		// this may throw
-		check_database(sz_routine);
-
-		input_error = 0;
-
-		// create input stream
-		std::string s(input);
-		std::istringstream iss(s);
-
-		// this may throw
-		do_run(sz_routine, &iss, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
-	}
-	catch (PhreeqcStop)
-	{
-		// do nothing
-	}
-	catch(...)
-	{
-		const char *errmsg = "RunString: An unhandled exception occured.\n";
-		try
-		{
-			error_msg(errmsg, STOP); // throws PhreeqcStop
-		}
-		catch (PhreeqcStop)
-		{
-			// do nothing
-		}
-	}
-
-	close_output_files();
-	return input_error;
-}
-
-
-int
-GetSelectedOutputRowCount(void)
-{
-	return (int)CSelectedOutput::Instance()->GetRowCount();
-}
-
-int
-GetSelectedOutputColumnCount(void)
-{
-	return (int)CSelectedOutput::Instance()->GetColCount();
-}
-
-VRESULT
-GetSelectedOutputValue(int row, int col, VAR* pVAR)
-{
-	s_errorReporter.Clear();
-	if (!pVAR) {
-		s_errorReporter.AddError("GetSelectedOutputValue: VR_INVALIDARG pVar is NULL.\n");
-		return VR_INVALIDARG;
-	}
-
-	VRESULT v = CSelectedOutput::Instance()->Get(row, col, pVAR);
-	switch (v) {
-	case VR_OK:
-		break;
-	case VR_OUTOFMEMORY:
-		s_errorReporter.AddError("GetSelectedOutputValue: VR_OUTOFMEMORY Out of memory.\n");
-		break;
-	case VR_BADVARTYPE:
-		s_errorReporter.AddError("GetSelectedOutputValue: VR_BADVARTYPE pVar must be initialized(VarInit) and/or cleared(VarClear).\n");
-		break;
-	case VR_INVALIDARG:
-		// not possible
-		break;
-	case VR_INVALIDROW:
-		s_errorReporter.AddError("GetSelectedOutputValue: VR_INVALIDROW Row index out of range.\n");
-		break;
-	case VR_INVALIDCOL:
-		s_errorReporter.AddError("GetSelectedOutputValue: VR_INVALIDCOL Column index out of range.\n");
-		break;
-	}
-	return v;
-}
-
-size_t
-AddError(const char* error_msg)
-{
-	return s_errorReporter.AddError(error_msg);
-}
-
-void
-OutputLines(void)
-{
-	std::cout << s_string_input.c_str() << std::endl;
-}
-
-// COMMENT: {11/27/2006 7:01:16 PM}#if defined(WIN32)
-// COMMENT: {11/27/2006 7:01:16 PM}void
-// COMMENT: {11/27/2006 7:01:16 PM}DebugOutputLines(void)
-// COMMENT: {11/27/2006 7:01:16 PM}{
-// COMMENT: {11/27/2006 7:01:16 PM}	std::istringstream iss(s_string_input);
-// COMMENT: {11/27/2006 7:01:16 PM}	std::string line;
-// COMMENT: {11/27/2006 7:01:16 PM}	while (std::getline(iss, line)) {
-// COMMENT: {11/27/2006 7:01:16 PM}		::OutputDebugString(line.c_str());
-// COMMENT: {11/27/2006 7:01:16 PM}		::OutputDebugString("\n");
-// COMMENT: {11/27/2006 7:01:16 PM}	}
-// COMMENT: {11/27/2006 7:01:16 PM}}
-// COMMENT: {11/27/2006 7:01:16 PM}#endif
-
-const std::string&
-GetAccumulatedLines(void)
-{
-	return s_string_input;
-}
-
-void
-ClearAccumulatedLines(void)
-{
-	s_string_input.erase();
-}
-
-int
-RunWithCallback(PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie, int output_on, int error_on, int log_on, int selected_output_on)
-{
-	static const char *sz_routine = "RunWithCallback";
-	try
-	{
-		// this may throw
-		check_database(sz_routine);
-
-		input_error = 0;
-
-		// this may throw
-		do_run(sz_routine, NULL, NULL, output_on, error_on, log_on, selected_output_on, pfn_pre, pfn_post, cookie);
-	}
-	catch (PhreeqcStop)
-	{
-		// do nothing
-	}
-	catch(...)
-	{
-		const char *errmsg = "RunWithCallback: An unhandled exception occured.\n";
-		try
-		{
-			error_msg(errmsg, STOP); // throws PhreeqcStop
-		}
-		catch (PhreeqcStop)
-		{
-			// do nothing
-		}
-	}
-
-	ClearAccumulatedLines();
-	close_output_files();
-	output_close(OUTPUT_DUMP); // this should be closed in close_output_files
-	return input_error;
-}
-
-
-int
-CatchErrors(PFN_CATCH_CALLBACK pfn, void *cookie)
-{
-	int rvalue = OK;
-	try
-	{
-		input_error = 0;
-
-		if (pfn)
-		{
-			rvalue = pfn(cookie);
-		}
-
-	}
-	catch (PhreeqcStop)
-	{
-		// do nothing
-	}
-	catch (...)
-	{
-		const char errmsg[] = "CatchErrors: Unhandled exception occured.\n";
-		try
-		{
-			error_msg(errmsg, STOP); // throws PhreeqcStop
-		}
-		catch (PhreeqcStop)
-		{
-			// do nothing
-		}
-	}
-	return rvalue;
-}
-
-static void
-check_database(const char* sz_routine)
-{
-	s_errorReporter.Clear();
-	CSelectedOutput::Instance()->Clear();
-
-	if (!s_IPhreeqc.m_bDatabaseLoaded)
+	if (!this->DatabaseLoaded)
 	{
 		std::ostringstream oss;
 		oss << sz_routine << ": No database is loaded";
-		input_error = 1;
-		error_msg(oss.str().c_str(), STOP); // throws PhreeqcStop
+		this->input_error = 1;
+		this->error_msg(oss.str().c_str(), STOP); // throws PhreeqcStop
 	}
 }
 
-static void
-do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int error_on, int log_on, int selected_output_on, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie)
+void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int error_on, int log_on, int selected_output_on, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie)
 {
 	std::auto_ptr<std::istringstream> auto_iss(NULL);
 	char token[MAX_LENGTH];
 
 	if (output_on)
 	{
-		if (output_open(OUTPUT_MESSAGE, OUTPUT_FILENAME) != OK)
+		if (this->output_open(OUTPUT_MESSAGE, OUTPUT_FILENAME) != OK)
 		{
 			std::ostringstream oss;
 			oss << sz_routine << ": Unable to open:" << "\"" << OUTPUT_FILENAME << "\".\n";
-			warning_msg(oss.str().c_str());
+			this->warning_msg(oss.str().c_str());
 		}
 	}
 	if (error_on)
 	{
-		if (output_open(OUTPUT_ERROR, ERROR_FILENAME) != OK)
+		if (this->output_open(OUTPUT_ERROR, ERROR_FILENAME) != OK)
 		{
 			std::ostringstream oss;
 			oss << sz_routine << ": Unable to open:" << "\"" << ERROR_FILENAME << "\".\n";
-			warning_msg(oss.str().c_str());
+			this->warning_msg(oss.str().c_str());
 		}
 	}
 	if (log_on)
 	{
-		if (output_open(OUTPUT_LOG, LOG_FILENAME) != OK)
+		if (this->output_open(OUTPUT_LOG, LOG_FILENAME) != OK)
 		{
 			std::ostringstream oss;
 			oss << sz_routine << ": Unable to open:" << "\"" << LOG_FILENAME << "\".\n";
-			warning_msg(oss.str().c_str());
+			this->warning_msg(oss.str().c_str());
 		}
 	}
 
-	s_IPhreeqc.m_bSelectedOutputOn = (selected_output_on != 0);
+	this->SelectedOutputOn = (selected_output_on != 0);
 
 /*
  *   call pre-run callback
@@ -713,63 +361,63 @@ do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int e
 	{
 		if (fp)
 		{
-			set_read_callback(getc_callback, fp, FALSE);
+			this->set_read_callback(getc_callback, fp, FALSE);
 		}
 		else
 		{
-			std::auto_ptr<std::istringstream> a_iss(new std::istringstream(GetAccumulatedLines()));
+			std::auto_ptr<std::istringstream> a_iss(new std::istringstream(this->GetAccumulatedLines()));
 			auto_iss = a_iss;
-			set_read_callback(istream_getc, auto_iss.get(), FALSE);
+			this->set_read_callback(istream_getc, auto_iss.get(), FALSE);
 		}
 	}
 	else
 	{
-		set_read_callback(istream_getc, pis, FALSE);
+		this->set_read_callback(istream_getc, pis, FALSE);
 	}
 
 
 /*
  *   Read input data for simulation
  */
-	for (simulation = 1; ; simulation++) {
+	for (this->simulation = 1; ; this->simulation++) {
 
 #ifdef PHREEQ98
    		AddSeries = !connect_simulations;
 #endif
-		sprintf(token, "Reading input data for simulation %d.", simulation);
+		::sprintf(token, "Reading input data for simulation %d.", simulation);
 
-		output_msg(OUTPUT_GUI_ERROR, "\nSimulation %d\n", simulation);
+		this->output_msg(OUTPUT_GUI_ERROR, "\nSimulation %d\n", simulation);
 
 #ifdef SWIG_SHARED_OBJ
-		int save_punch_in = punch.in;
+		int save_punch_in = this->punch.in;
 #endif // SWIG_SHARED_OBJ
-		dup_print(token, TRUE);
-		if (read_input() == EOF) break;
+// COMMENT: {3/3/2010 10:46:12 PM}		dup_print(token, TRUE);
+		if (this->read_input() == EOF) break;
 
 #ifdef SWIG_SHARED_OBJ
-		if (simulation > 1 && save_punch_in == TRUE && punch.new_def == TRUE)
+		if (this->simulation > 1 && save_punch_in == TRUE && this->punch.new_def == TRUE)
 		{
 			std::ostringstream oss;
 			oss << sz_routine << ": Warning SELECTED_OUTPUT has been redefined.\n";
-			warning_msg(oss.str().c_str());
+			this->warning_msg(oss.str().c_str());
 
 		}
-		if (simulation > 1 && keyword[39].keycount > 0)
+		if (this->simulation > 1 && this->keyword[39].keycount > 0)
 		{
 			std::ostringstream oss;
 			oss << sz_routine << ": Warning USER_PUNCH has been redefined.\n";
-			warning_msg(oss.str().c_str());
+			this->warning_msg(oss.str().c_str());
 		}
 #endif // SWIG_SHARED_OBJ
 
-		if (title_x != NULL) {
-			sprintf(token, "TITLE");
-			dup_print(token, TRUE);
-			if (pr.headings == TRUE) output_msg(OUTPUT_MESSAGE,"%s\n\n", title_x);
+		if (this->title_x != NULL) {
+			::sprintf(token, "TITLE");
+			this->dup_print(token, TRUE);
+			if (this->pr.headings == TRUE) this->output_msg(OUTPUT_MESSAGE, "%s\n\n", this->title_x);
 		}
 
 #ifdef SWIG_SHARED_OBJ
-		if (punch.in == TRUE)
+		if (this->punch.in == TRUE)
 		{
 			//
 			// (punch.in == TRUE) when any "RUN" has contained
@@ -787,9 +435,9 @@ do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int e
 			// TRUE ???
 			//
 			//
-			if (!selected_output_on) ASSERT(!::output_isopen(OUTPUT_PUNCH));
+			if (!selected_output_on) ASSERT(!this->output_isopen(OUTPUT_PUNCH));
 
-			if (pr.punch == FALSE)
+			if (this->pr.punch == FALSE)
 			{
 				// No selected_output for this simulation
 				// this happens when
@@ -799,34 +447,34 @@ do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int e
 			}
 			else
 			{
-				if (punch.new_def == FALSE)
+				if (this->punch.new_def == FALSE)
 				{
-					if (selected_output_on && !::output_isopen(OUTPUT_PUNCH))
+					if (selected_output_on && !this->output_isopen(OUTPUT_PUNCH))
 					{
 						//
 						// LoadDatabase
 						// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
 						// another do_run without SELECTED_OUTPUT
 						//
-						std::string filename = s_IPhreeqc.m_sPunchFileName;
-						output_open(OUTPUT_PUNCH, filename.c_str());
-						if (!::output_isopen(OUTPUT_PUNCH))
+						std::string filename = this->PunchFileName;
+						this->output_open(OUTPUT_PUNCH, filename.c_str());
+						if (!this->output_isopen(OUTPUT_PUNCH))
 						{
 							std::ostringstream oss;
 							oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
-							warning_msg(oss.str().c_str());
+							this->warning_msg(oss.str().c_str());
 						}
 						else
 						{
 							// output selected_output headings
-							punch.new_def = TRUE;
-							tidy_punch();
+							this->punch.new_def = TRUE;
+							this->tidy_punch();
 						}
 					}
 				}
 				else
 				{
-					if (selected_output_on && !::output_isopen(OUTPUT_PUNCH))
+					if (selected_output_on && !this->output_isopen(OUTPUT_PUNCH))
 					{
 						// This is a special case which could not occur in
 						// phreeqc
@@ -836,34 +484,34 @@ do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int e
 						// another do_run with SELECTED_OUTPUT
 						//
 						std::string filename = PUNCH_FILENAME;
-						if (s_IPhreeqc.m_sPunchFileName && ::strlen(s_IPhreeqc.m_sPunchFileName))
+						if (this->PunchFileName.size())
 						{
-							filename = s_IPhreeqc.m_sPunchFileName;
+							filename = this->PunchFileName;
 						}
-						output_open(OUTPUT_PUNCH, filename.c_str());
-						if (!::output_isopen(OUTPUT_PUNCH))
+						this->output_open(OUTPUT_PUNCH, filename.c_str());
+						if (!this->output_isopen(OUTPUT_PUNCH))
 						{
 							std::ostringstream oss;
 							oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
-							warning_msg(oss.str().c_str());
+							this->warning_msg(oss.str().c_str());
 						}
 						else
 						{
 							// output selected_output headings
 							ASSERT(punch.new_def == TRUE);
-							tidy_punch();
+							this->tidy_punch();
 						}
 					}
 				}
 			}
 		}
 
-		if (!selected_output_on) ASSERT(!::output_isopen(OUTPUT_PUNCH));
+		if (!selected_output_on) ASSERT(!this->output_isopen(OUTPUT_PUNCH));
 		/* the converse is not necessarily true */
 
-		n_user_punch_index = -1;
+		this->n_user_punch_index = -1;
 #endif // SWIG_SHARED_OBJ
-		tidy_model();
+		this->tidy_model();
 #ifdef PHREEQC_CPP
 		//test_classes();
 #endif
@@ -875,69 +523,69 @@ do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int e
 /*
  *   Calculate distribution of species for initial solutions
  */
-		if (new_solution) initial_solutions(TRUE);
+		if (this->new_solution) this->initial_solutions(TRUE);
 /*
  *   Calculate distribution for exchangers
  */
-		if (new_exchange) initial_exchangers(TRUE);
+		if (this->new_exchange) this->initial_exchangers(TRUE);
 /*
  *   Calculate distribution for surfaces
  */
-		if (new_surface) initial_surfaces(TRUE);
+		if (this->new_surface) this->initial_surfaces(TRUE);
 /*
  *   Calculate initial gas composition
  */
-		if (new_gas_phase) initial_gas_phases(TRUE);
+		if (this->new_gas_phase) this->initial_gas_phases(TRUE);
 /*
  *   Calculate reactions
  */
-		reactions();
+		this->reactions();
 /*
  *   Calculate inverse models
  */
-		inverse_models();
+		this->inverse_models();
 /*
  *   Calculate advection
  */
-		if (use.advect_in == TRUE) {
-			dup_print ("Beginning of advection calculations.", TRUE);
-			advection();
+		if (this->use.advect_in == TRUE) {
+			this->dup_print ("Beginning of advection calculations.", TRUE);
+			this->advection();
 		}
 /*
  *   Calculate transport
  */
-		if (use.trans_in == TRUE) {
-			dup_print ("Beginning of transport calculations.", TRUE);
-			transport();
+		if (this->use.trans_in == TRUE) {
+			this->dup_print ("Beginning of transport calculations.", TRUE);
+			this->transport();
 		}
 
 #ifdef PHREEQC_CPP
 /*
  *   run
  */
-			run_as_cells();
+			this->run_as_cells();
 #endif
 
 /*
  *   Copy
  */
-		if (new_copy) copy_entities();
+		if (this->new_copy) this->copy_entities();
 #ifdef PHREEQC_CPP
 
 /*
  *   dump
  */
-			dump_entities();
+			this->dump_entities();
 /*
  *   delete
  */
-			delete_entities();
+			this->delete_entities();
 #endif
 
 /*
  *   End of simulation
  */
-		dup_print( "End of simulation.", TRUE);
+		this->dup_print( "End of simulation.", TRUE);
 #ifdef PHREEQ98
                 } /* if (!phreeq98_debug) */
 #endif
@@ -946,7 +594,7 @@ do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int e
 /*
  *   Display successful status
  */
-	do_status();
+	this->do_status();
 
 /*
  *   call post-run callback
@@ -956,12 +604,951 @@ do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int e
 		pfn_post(cookie);
 	}
 
-	if (input_error > 0)
+	if (this->input_error > 0)
 	{
 		std::ostringstream oss;
 		oss << "<input>\n";
-		oss << s_string_input.c_str();
+		oss << this->StringInput.c_str();
 		oss << "</input>\n";
-		error_msg(oss.str().c_str(), CONTINUE);
+		this->error_msg(oss.str().c_str(), CONTINUE);
 	}
+}
+
+
+
+int istream_getc(void *cookie)
+{
+	if (cookie)
+	{
+		std::istream* is = (std::istream*)cookie;
+		return is->get();
+	}
+	return EOF;
+}
+
+int IPhreeqc::handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
+{
+	int n = OK;
+	IPhreeqc *pThis = (IPhreeqc*)cookie;
+	switch (action)
+	{
+	case ACTION_OPEN:
+		n = pThis->open_handler(type, err_str);
+		break;
+
+	case ACTION_OUTPUT:
+		n = pThis->output_handler(type, err_str, stop, cookie, format, args);
+		break;
+
+	default:
+		n = pThis->module_handler(action, type, err_str, stop, cookie, format, args);
+		break;
+	}
+
+	if (stop == STOP)
+	{
+		throw PhreeqcStop();
+	}
+	return n;
+}
+
+int IPhreeqc::output_handler(const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
+{
+	IPhreeqc* pIPhreeqc = (IPhreeqc*) cookie;
+
+	switch (type)
+	{
+	case OUTPUT_ERROR:
+		if (pIPhreeqc && pIPhreeqc->ErrorReporter)
+		{
+			std::ostringstream oss;
+			oss << "ERROR: " << err_str << "\n";
+			if (stop == STOP)
+			{
+				oss << "Stopping.\n";
+			}
+			pIPhreeqc->AddError(oss.str().c_str());
+		}
+		break;
+
+	case OUTPUT_PUNCH:
+		this->AddSelectedOutput(err_str, format, args);
+		break;
+
+	}
+	return module_handler(ACTION_OUTPUT, type, err_str, stop, cookie, format, args);
+}
+
+int IPhreeqc::open_handler(const int type, const char *file_name)
+{
+	int n = OK;
+	switch (type)
+	{
+	case OUTPUT_PUNCH:
+		if (file_name)
+		{
+			if (this->PunchFileName.compare(file_name) != 0)
+			{
+				this->PunchFileName = file_name;
+			}
+		}
+		if (this->SelectedOutputOn)
+		{
+			n = module_handler(ACTION_OPEN, type, file_name, CONTINUE, this, NULL, NULL);
+		}
+		break;
+	default:
+		n = module_handler(ACTION_OPEN, type, file_name, CONTINUE, this, NULL, NULL);
+		break;
+	}
+	return n;
+}
+
+void IPhreeqc::Init(void)
+{
+	int i;
+
+	moles_per_kilogram_string = 0;
+	pe_string = 0;
+
+	debug_model = FALSE;
+	debug_prep = FALSE;
+	debug_set = FALSE;
+	debug_diffuse_layer = FALSE;
+	debug_inverse = FALSE;
+	itmax = 100;
+#ifdef USE_LONG_DOUBLE
+	/* from float.h, sets tolerance for cl1 routine */
+	ineq_tol = pow((long double) 10, (long double) -LDBL_DIG);
+#else
+	ineq_tol = pow((double) 10, (double) -DBL_DIG);
+#endif
+	convergence_tolerance = 1e-8;
+#ifdef USE_LONG_DOUBLE
+	/* from float.h, sets tolerance for cl1 routine */
+	inv_tol_default = pow((long double) 10, (long double) -LDBL_DIG + 5);
+#else
+	inv_tol_default = pow((double) 10, (double) -DBL_DIG + 5);
+#endif
+	step_size               = 100.;
+	pe_step_size            = 10.;
+	pp_scale                = 1.0;
+	pp_column_scale         = 1.0;
+	diagonal_scale          = FALSE;
+	censor                  = 0.0;
+	mass_water_switch       = FALSE;
+	delay_mass_water        = FALSE;
+	incremental_reactions   = FALSE;
+	aqueous_only            = 0;
+	negative_concentrations = FALSE;
+
+	LOG_10 = log(10.0);
+
+	max_solution       = MAX_SOLUTION;
+	max_pp_assemblage  = MAX_PP_ASSEMBLAGE;
+	max_exchange       = MAX_PP_ASSEMBLAGE;
+	max_surface        = MAX_PP_ASSEMBLAGE;
+	max_gas_phase      = MAX_PP_ASSEMBLAGE;
+	max_kinetics       = MAX_PP_ASSEMBLAGE;
+	max_s_s_assemblage = MAX_PP_ASSEMBLAGE;
+
+	max_elements       = MAX_ELEMENTS;
+	max_elts           = MAX_ELTS;
+	max_line           = MAX_LINE;
+	max_master         = MAX_MASTER;
+	max_mb_unknowns    = MAX_TRXN;
+	max_phases         = MAX_PHASES;
+	max_s              = MAX_S;
+	max_strings        = MAX_STRINGS;
+	max_trxn           = MAX_TRXN;
+	max_logk           = MAX_S;
+	max_master_isotope = MAX_ELTS;
+
+	count_solution       = 0;
+	count_pp_assemblage  = 0;
+	count_exchange       = 0;
+	count_surface        = 0;
+	count_gas_phase      = 0;
+	count_kinetics       = 0;
+	count_s_s_assemblage = 0;
+
+	count_elements       = 0;
+	count_irrev          = 0;
+	count_master         = 0;
+	count_mix            = 0;
+	count_phases         = 0;
+	count_s              = 0;
+	count_temperature    = 0;
+	count_logk           = 0;
+	count_master_isotope = 0;
+/*
+ *   Initialize advection
+ */
+	count_ad_cells   = 1;
+	count_ad_shifts  = 1;
+	print_ad_modulus = 1;
+	punch_ad_modulus = 1;
+
+	advection_punch            = 0;
+	advection_kin_time         = 0.0;
+	advection_kin_time_defined = FALSE;
+	advection_print            = 0;
+	advection_warnings         = TRUE;
+/*
+ *   Initialize transport
+ */
+	count_cells      = 1;
+	count_shifts     = 1;
+	ishift           = 1;
+	bcon_first       = bcon_last = 3;
+	diffc            = 0.3e-9;
+	simul_tr         = 0;
+	tempr            = 2.0;
+	heat_diffc       = -0.1;
+	timest           = 0.0;
+	multi_Dflag      = FALSE;
+	interlayer_Dflag = FALSE;
+	interlayer_tortf = 100.0;
+	interlayer_Dpor  = 0.1;
+/* !!!!        count_stag = 0; */
+	mcd_substeps       = 1.0;
+	print_modulus      = 1;
+	punch_modulus      = 1;
+	dump_modulus       = 0;
+	dump_in            = FALSE;
+	transport_warnings = TRUE;
+
+	pp_assemblage  = 0;
+	exchange       = 0;
+	surface        = 0;
+	gas_phase      = 0;
+	kinetics       = 0;
+	s_s_assemblage = 0;
+	cell_data      = 0;
+	elements       = 0;
+	elt_list       = 0;
+
+
+	inverse       = 0;
+	count_inverse = 0;
+
+	irrev = 0;
+
+	line = 0;
+	line_save = 0;
+
+	master = 0;
+
+	mb_unknowns = 0;
+
+	mix       = 0;
+	count_mix = 0;
+/* !!!! */
+	stag_data = 0;
+
+	phases = 0;
+
+	trxn.token = 0;
+
+	s = 0;
+
+	logk = 0;
+
+	master_isotope = 0;
+
+	solution = 0;
+
+	temperature = 0;
+
+	title_x       = NULL;
+	pe_x          = NULL;
+	description_x = NULL;
+	units_x       = NULL;
+	s_x           = NULL;
+
+	sum_mb1    = NULL;
+	sum_mb2    = NULL;
+	sum_jacob0 = NULL;
+	sum_jacob1 = NULL;
+	sum_jacob2 = NULL;
+	sum_delta  = NULL;
+
+	isotopes_x = 0;
+
+	x            = NULL;
+	max_unknowns = 0;
+
+	array     = NULL;
+	delta     = NULL;
+	residual  = NULL;
+	s_h2o     = NULL;
+	s_hplus   = NULL;
+	s_h3oplus = NULL;
+	s_eminus  = NULL;
+	s_co3     = NULL;
+	s_h2      = NULL;
+	s_o2      = NULL;
+
+	logk_hash_table           = 0;
+	master_isotope_hash_table = 0;
+	strings_hash_table        = 0;
+	elements_hash_table       = 0;
+	species_hash_table        = 0;
+	phases_hash_table         = 0;
+	keyword_hash_table        = 0;
+/*
+ *  Initialize use pointers
+ */
+	use.solution_in      = FALSE;
+	use.pp_assemblage_in = FALSE;
+	use.mix_in           = FALSE;
+	use.irrev_in         = FALSE;
+/*
+ *   Initialize punch
+ */
+	punch.in               = FALSE;
+	punch.count_totals     = 0;
+	punch.totals           = 0;
+	punch.count_molalities = 0;
+
+	punch.molalities       = 0;
+	punch.count_activities = 0;
+
+	punch.activities        = 0;
+	punch.count_pure_phases = 0;
+
+	punch.pure_phases = 0;
+	punch.count_si    = 0;
+
+	punch.si          = 0;
+	punch.count_gases = 0;
+
+	punch.gases     = 0;
+	punch.count_s_s = 0;
+	punch.s_s = 0;
+
+	punch.count_kinetics = 0;
+	punch.kinetics = 0;
+
+	punch.count_isotopes = 0;
+	punch.isotopes       = 0;
+
+	punch.count_calculate_values = 0;
+	punch.calculate_values       = 0;
+
+	count_save_values = 0;
+	save_values       = 0;
+
+
+	punch.inverse = TRUE;
+
+	punch.sim            = TRUE;
+	punch.state          = TRUE;
+	punch.soln           = TRUE;
+	punch.dist           = TRUE;
+	punch.time           = TRUE;
+	punch.step           = TRUE;
+	punch.rxn            = FALSE;
+	punch.temp           = FALSE;
+	punch.ph             = TRUE;
+	punch.pe             = TRUE;
+	punch.alk            = FALSE;
+	punch.mu             = FALSE;
+	punch.water          = FALSE;
+	punch.high_precision = FALSE;
+	punch.user_punch     = TRUE;
+	punch.charge_balance = FALSE;
+	punch.percent_error  = FALSE;
+/*
+ *   last model
+ */
+	last_model.exchange       = NULL;
+	last_model.gas_phase      = NULL;
+	last_model.s_s_assemblage = NULL;
+	last_model.kinetics       = NULL;
+	last_model.pp_assemblage  = NULL;
+	last_model.add_formula    = NULL;
+	last_model.si             = NULL;
+	last_model.surface_comp   = NULL;
+	last_model.surface_charge = NULL;
+/*
+ *   Update hash table
+ */
+	keyword_hash = 0;
+/*
+ *   rates
+ */
+	rates = 0;
+	count_rates = 0;
+	initial_total_time = 0;
+	rate_m = 0;
+	rate_m0 = 0;
+	rate_p = NULL;
+	rate_time = 0;
+	rate_sim_time_start = 0;
+	rate_sim_time_end = 0;
+	rate_sim_time = 0;
+	rate_moles = 0;
+	initial_total_time = 0;
+
+/*
+ *   user_print, user_punch
+ */
+	user_print = 0;
+	user_punch = 0;
+	user_punch_headings = 0;
+	user_punch_count_headings = 0;
+#ifdef PHREEQ98
+/*
+ *   user_graph
+ */
+	user_graph                = 0;
+	user_graph_headings       = 0
+	user_graph_count_headings = 0;
+#endif
+	/*
+	   Initialize llnl aqueous model parameters
+	 */
+	llnl_temp = 0;
+	llnl_count_temp = 0;
+
+	llnl_adh = 0;
+	llnl_count_adh = 0;
+
+	llnl_bdh = 0;
+	llnl_count_bdh = 0;
+
+	llnl_bdot = 0;
+	llnl_count_bdot = 0;
+
+	llnl_co2_coefs = 0;
+	llnl_count_co2_coefs = 0;
+/*
+ *
+ */
+	command_hash_table = 0;
+
+	change_surf       = 0;
+	change_surf_count = 0;
+
+
+#if defined(WINDOWS) || defined(_WINDOWS)
+	/* SRC pr.status = FALSE; */
+#endif
+	/* Initialize print here, not in global.h */
+	pr.all                = TRUE;
+	pr.initial_solutions  = TRUE;
+	pr.initial_exchangers = TRUE;
+	pr.reactions          = TRUE;
+	pr.gas_phase          = TRUE;
+	pr.s_s_assemblage     = TRUE;
+	pr.pp_assemblage      = TRUE;
+	pr.surface            = TRUE;
+	pr.exchange           = TRUE;
+	pr.kinetics           = TRUE;
+	pr.totals             = TRUE;
+	pr.eh                 = TRUE;
+	pr.species            = TRUE;
+	pr.saturation_indices = TRUE;
+	pr.irrev              = TRUE;
+	pr.mix                = TRUE;
+	pr.reaction           = TRUE;
+	pr.use                = TRUE;
+	pr.logfile            = FALSE;
+	pr.punch              = TRUE;
+	if (phast == TRUE)
+	{
+		pr.status = FALSE;
+	}
+	else
+	{
+		pr.status = TRUE;
+	}
+	pr.inverse            = TRUE;
+	pr.dump               = TRUE;
+	pr.user_print         = TRUE;
+	pr.headings           = TRUE;
+	pr.user_graph         = TRUE;
+	pr.echo_input         = TRUE;
+	count_warnings = 0;
+	pr.warnings           = 100;
+	pr.initial_isotopes   = TRUE;
+	pr.isotope_ratios     = TRUE;
+	pr.isotope_alphas     = TRUE;
+	pr.hdf                = FALSE;
+	pr.alkalinity         = FALSE;
+
+	species_list = NULL;
+
+	user_database             = NULL;
+	first_read_input          = TRUE;
+	have_punch_name           = FALSE;
+	selected_output_file_name = NULL;
+	dump_file_name            = NULL;
+
+	/* calculate_value */
+	max_calculate_value = MAX_ELTS;
+	count_calculate_value = 0;
+
+	calculate_value = 0;
+	calculate_value_hash_table = 0;
+
+	/* isotope_ratio */
+	max_isotope_ratio = MAX_ELTS;
+	count_isotope_ratio = 0;
+	isotope_ratio = 0;
+	isotope_ratio_hash_table = 0;
+
+	/* isotope_value */
+	max_isotope_alpha = MAX_ELTS;
+	count_isotope_alpha = 0;
+	isotope_alpha = 0;
+	isotope_alpha_hash_table = 0;
+
+	phreeqc_mpi_myself = 0;
+
+	copy_solution.n_user       = copy_solution.start       = copy_solution.end       = 0;
+	copy_pp_assemblage.n_user  = copy_pp_assemblage.start  = copy_pp_assemblage.end  = 0;
+	copy_exchange.n_user       = copy_exchange.start       = copy_exchange.end       = 0;
+	copy_surface.n_user        = copy_surface.start        = copy_surface.end        = 0;
+	copy_s_s_assemblage.n_user = copy_s_s_assemblage.start = copy_s_s_assemblage.end = 0;
+	copy_gas_phase.n_user      = copy_gas_phase.start      = copy_gas_phase.end      = 0;
+	copy_kinetics.n_user       = copy_kinetics.start       = copy_kinetics.end       = 0;
+	copy_mix.n_user            = copy_mix.start            = copy_mix.end            = 0;
+	copy_irrev.n_user          = copy_irrev.start          = copy_irrev.end          = 0;
+	copy_temperature.n_user    = copy_temperature.start    = copy_temperature.end    = 0;
+
+	set_forward_output_to_log(FALSE);
+	simulation = 0;
+	/*
+	 *  cvode
+	 */
+
+	cvode_init();
+	/*
+	 *  Pitzer
+	 */
+	pitzer_model = FALSE;
+	max_pitz_param = 100;
+	count_pitz_param = 0;
+	use_etheta = TRUE;
+	pitz_params = 0;
+
+	max_theta_param = 100;
+	count_theta_param = 0;
+	theta_params = 0;
+
+	ICON = TRUE;
+	OTEMP = 0.0;
+	for (i = 0; i < 23; i++)
+	{
+		BK[i] = 0.0;
+		DK[i] = 0.0;
+	}
+	pitzer_pe = FALSE;
+
+
+	/*
+	 *  SIT
+	 */
+	sit_model       = FALSE;
+	max_sit_param   = 100;
+	count_sit_param = 0;
+	sit_params      = 0;
+
+	/*
+	 * to facilitate debuging
+	 */
+	dbg_use           = &use;
+	dbg_solution      = solution;
+	dbg_exchange      = exchange;
+	dbg_surface       = surface;
+	dbg_pp_assemblage = pp_assemblage;
+	dbg_kinetics      = kinetics;
+	dbg_irrev         = irrev;
+	dbg_mix           = mix;
+	dbg_master        = master;
+	calculating_deriv = FALSE;
+	numerical_deriv   = FALSE;
+
+	zeros     = 0;
+	zeros_max = 1;
+
+	cell_pore_volume = 0;
+	cell_volume      = 0;
+	cell_porosity    = 0;
+	cell_saturation  = 0;
+
+	charge_group = NULL;
+	print_density = 0;
+
+	return;
+}
+
+void IPhreeqc::AddSelectedOutput(const char* name, const char* format, va_list argptr)
+{
+	int bInt;
+	int bDouble;
+	int bString;
+
+	int state;
+	int bLongDouble;
+	char ch;
+
+
+	/* state values
+	0 Haven't found start(%)
+	1 Just read start(%)
+	2 Just read Flags(-0+ #) (zero or more)
+	3 Just read Width
+	4 Just read Precision start (.)
+	5 Just read Size modifier
+	6 Just read Type
+	*/
+
+	if (name == NULL) {
+		return;
+	}
+
+	bDouble = 0;
+	bInt = 0;
+	bString = 0;
+
+	bLongDouble = 0;
+
+	state = 0;
+	ch = *format++;
+	while (ch != '\0')
+	{
+		switch (state)
+		{
+		case 0: /* looking for Start specification (%) */
+			switch (ch)
+			{
+			case '%':
+				state = 1;
+				break;
+			default:
+				break;
+			}
+			ch = *format++;
+			break;
+		case 1: /* reading Flags (zero or more(-,+,0,# or space)) */
+			switch (ch)
+			{
+				case '-': case '0': case '+': case ' ': case '#':
+					ch = *format++;
+					break;
+				default:
+					state = 2;
+					break;
+			}
+			break;
+		case 2: /* reading Minimum field width (decimal integer constant) */
+			switch (ch)
+			{
+			case '.':
+				state = 3;
+				ch = *format++;
+				break;
+			case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+				ch = *format++;
+				break;
+			default:
+				state = 4;
+				break;
+			}
+			break;
+		case 3: /* reading Precision specification (period already read) */
+			switch (ch)
+			{
+			case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+				ch = *format++;
+				break;
+			default:
+				state = 4;
+				break;
+			}
+			break;
+		case 4: /* reading Size modifier */
+			switch (ch)
+			{
+			case 'l':
+				ch = *format++;
+				break;
+			case 'L':
+				bLongDouble = 1;
+				ch = *format++;
+				break;
+			case 'h':
+				ch = *format++;
+				break;
+			}
+			state = 5;
+			break;
+		case 5: /* reading Conversion letter */
+			switch (ch)
+			{
+			case 'c':
+				break;
+			case 'd':
+			case 'i':
+				bInt = 1;
+				break;
+			case 'n':
+			case 'o':
+			case 'p':
+				break;
+			case 's':
+				bString = 1;
+				break;
+			case 'u':
+			case 'x':
+			case 'X':
+			case '%':
+				break;
+			case 'f':
+			case 'e':
+			case 'E':
+			case 'g':
+			case 'G':
+				bDouble = 1;
+				break;
+			default:
+				ASSERT(false);
+				break;
+			}
+			ch = '\0';  /* done */
+			break;
+		}
+	}
+
+	if (bDouble)
+	{
+		double valDouble;
+
+		if (bLongDouble)
+		{
+			valDouble = (double)va_arg(argptr, long double);
+		}
+		else
+		{
+			valDouble = va_arg(argptr, double);
+		}
+
+		this->SelectedOutput->PushBackDouble(name, valDouble);
+	}
+	else if (bInt)
+	{
+		int valInt;
+		valInt = va_arg(argptr, int);
+
+		this->SelectedOutput->PushBackLong(name, (long)valInt);
+	}
+	else if (bString)
+	{
+		char* valString;
+		valString = (char *)va_arg(argptr, char *);
+
+		this->SelectedOutput->PushBackString(name, valString);
+	}
+	else
+	{
+		ASSERT(false);
+		this->SelectedOutput->PushBackEmpty(name);
+	}
+}
+
+VRESULT IPhreeqc::AccumulateLine(const char *line)
+{
+	try
+	{
+		this->ErrorReporter->Clear();
+		this->StringInput.append(line);
+		this->StringInput.append("\n");
+		return VR_OK;
+	}
+	catch (...)
+	{
+		this->AddError("AccumulateLine: An unhandled exception occured.\n");
+	}
+	return VR_OUTOFMEMORY;
+}
+
+int IPhreeqc::Run(int output_on, int error_on, int log_on, int selected_output_on)
+{
+	static const char *sz_routine = "Run";
+	try
+	{
+		// this may throw
+		this->check_database(sz_routine);
+
+		this->input_error = 0;
+
+		// create input stream
+		std::istringstream iss(this->GetAccumulatedLines());
+
+		// this may throw
+		this->do_run(sz_routine, &iss, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
+	}
+	catch (PhreeqcStop)
+	{
+		// do nothing
+	}
+	catch(...)
+	{
+		const char *errmsg = "Run: An unhandled exception occured.\n";
+		try
+		{
+			this->error_msg(errmsg, STOP); // throws PhreeqcStop
+		}
+		catch (PhreeqcStop)
+		{
+			// do nothing
+		}
+	}
+
+	this->ClearAccumulatedLines();
+	this->close_output_files();
+	return this->input_error;
+}
+
+int IPhreeqc::RunFile(const char* filename, int output_on, int error_on, int log_on, int selected_output_on)
+{
+	static const char *sz_routine = "RunFile";
+	try
+	{
+		// this may throw
+		this->check_database(sz_routine);
+
+		this->input_error = 0;
+
+#if 0
+		// create input stream
+		std::ifstream ifs;
+		ifs.open(filename);
+		if (!ifs.is_open())
+		{
+			std::ostringstream oss;
+			oss << "RunFile: Unable to open:" << "\"" << filename << "\".";
+			this->error_msg(oss.str().c_str(), STOP); // throws
+		}
+
+		// this may throw
+		this->do_run(sz_routine, &ifs, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
+#else
+		// open file
+		//
+		FILE* f = ::fopen(filename, "r");
+		if (!f)
+		{
+			std::ostringstream oss;
+			oss << "RunFile: Unable to open:" << "\"" << filename << "\".";
+			this->error_msg(oss.str().c_str(), STOP); // throws PhreeqcStop
+		}
+
+		// this may throw
+		this->do_run(sz_routine, NULL, f, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
+#endif
+	}
+	catch (PhreeqcStop)
+	{
+		// do nothing
+	}
+	catch(...)
+	{
+		const char *errmsg = "RunFile: An unhandled exception occured.\n";
+		try
+		{
+			this->error_msg(errmsg, STOP); // throws PhreeqcStop
+		}
+		catch (PhreeqcStop)
+		{
+			// do nothing
+		}
+	}
+
+	this->close_output_files();
+	return this->input_error;
+}
+
+int IPhreeqc::RunString(const char* input, int output_on, int error_on, int log_on, int selected_output_on)
+{
+	static const char *sz_routine = "RunString";
+	try
+	{
+		// this may throw
+		this->check_database(sz_routine);
+
+		this->input_error = 0;
+
+		// create input stream
+		std::string s(input);
+		std::istringstream iss(s);
+
+		// this may throw
+		this->do_run(sz_routine, &iss, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
+	}
+	catch (PhreeqcStop)
+	{
+		// do nothing
+	}
+	catch(...)
+	{
+		const char *errmsg = "RunString: An unhandled exception occured.\n";
+		try
+		{
+			this->error_msg(errmsg, STOP); // throws PhreeqcStop
+		}
+		catch (PhreeqcStop)
+		{
+			// do nothing
+		}
+	}
+
+	this->close_output_files();
+	return this->input_error;
+}
+
+int IPhreeqc::GetSelectedOutputRowCount(void)const
+{
+	return (int)this->SelectedOutput->GetRowCount();
+}
+
+int IPhreeqc::GetSelectedOutputColumnCount(void)const
+{
+	return (int)this->SelectedOutput->GetColCount();
+}
+
+VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
+{
+	this->ErrorReporter->Clear();
+	if (!pVAR)
+	{
+		this->AddError("GetSelectedOutputValue: VR_INVALIDARG pVar is NULL.\n");
+		return VR_INVALIDARG;
+	}
+
+	VRESULT v = this->SelectedOutput->Get(row, col, pVAR);
+	switch (v)
+	{
+	case VR_OK:
+		break;
+	case VR_OUTOFMEMORY:
+		this->AddError("GetSelectedOutputValue: VR_OUTOFMEMORY Out of memory.\n");
+		break;
+	case VR_BADVARTYPE:
+		this->AddError("GetSelectedOutputValue: VR_BADVARTYPE pVar must be initialized(VarInit) and/or cleared(VarClear).\n");
+		break;
+	case VR_INVALIDARG:
+		// not possible
+		break;
+	case VR_INVALIDROW:
+		this->AddError("GetSelectedOutputValue: VR_INVALIDROW Row index out of range.\n");
+		break;
+	case VR_INVALIDCOL:
+		this->AddError("GetSelectedOutputValue: VR_INVALIDCOL Column index out of range.\n");
+		break;
+	}
+	return v;
 }

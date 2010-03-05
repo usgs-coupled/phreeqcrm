@@ -9,8 +9,8 @@
 extern "C" {
 #endif
 
-int module_handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args);
-int output_isopen(const int type);
+// COMMENT: {3/2/2010 4:07:45 PM}int module_handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args);
+// COMMENT: {3/2/2010 4:07:45 PM}int output_isopen(const int type);
 
 
 typedef enum {

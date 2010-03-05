@@ -6,7 +6,8 @@
 #include <cstdio>          // std::fprintf
 #include "phreeqcns.hxx"
 
-class IErrorReporter {
+class IErrorReporter
+{
 public:
 	virtual size_t AddError(const char* error_msg) = 0;
 	virtual void Clear(void) = 0;
