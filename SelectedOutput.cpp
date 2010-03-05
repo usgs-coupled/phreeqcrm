@@ -1,14 +1,12 @@
 // SelectedOutput.cpp: implementation of the CSelectedOutput class.
 //
 //////////////////////////////////////////////////////////////////////
-#if defined(_DEBUG)
-#pragma warning(disable : 4786) // disable truncation warning
-#include <sstream>              // std::ostringstream
-#include <windows.h>            // ::OutputDebugString
-#else
-#if defined(PHREEQC_CLASS)
-#include <windows.h>            // ::OutputDebugString
+#if defined(WIN32)
+#include <windows.h>            // reqd to avoid namespace problems
 #endif
+
+#if defined(_DEBUG)
+#include <sstream>              // std::ostringstream
 #endif
 
 #include <stdarg.h>
