@@ -1,3 +1,4 @@
+#include <memory>
 #include "IPhreeqc.h"
 #include "IPhreeqc.hpp"
 #include "ErrorReporter.hxx"
