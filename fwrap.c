@@ -73,7 +73,7 @@ f2cstring(char* fstring, int len)
 }
 
 void
-padfstring(char *dest, char *src, unsigned int len)
+padfstring(char *dest, const char *src, unsigned int len)
 {
     unsigned int sofar;
 
