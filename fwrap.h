@@ -11,14 +11,25 @@ extern "C" {
 
   VRESULT AccumulateLineF(char *line, unsigned int line_length);
 
-  int RunF(int* output_on, int* error_on, int* log_on, int* selected_output_on);
+  int RunF(void);
 
-  int RunFileF(int* output_on, int* error_on, int* log_on, int* selected_output_on, char* filename, unsigned int filename_length);
+  int RunFileF(char* filename, unsigned int filename_length);
+
+  int RunStringF(char* input, unsigned int input_length);
+
   int GetSelectedOutputRowCountF(void);
 
   int GetSelectedOutputColumnCountF(void);
 
   VRESULT GetSelectedOutputValueF(int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
+
+  void SetSelectedOutputOnF(int* selected_output_on);
+
+  void SetOutputOnF(int* output_on);
+
+  void SetErrorOnF(int* error_on);
+
+  void SetLogOnF(int* error_on);
 
   void OutputLastErrorF(void);
 

@@ -28,9 +28,17 @@ public:
 
 	VRESULT AccumulateLine(const char *line);
 
-	int Run(int output_on, int error_on, int log_on, int selected_output_on);
-	int RunFile(const char* filename, int output_on, int error_on, int log_on, int selected_output_on);
-	int RunString(const char* input, int output_on, int error_on, int log_on, int selected_output_on);
+	//{{
+	void SetDumpOn(bool bValue);
+	void SetErrorOn(bool bValue);
+	void SetLogOn(bool bValue);
+	void SetOutputOn(bool bValue);
+	void SetSelectedOutputOn(bool bValue);
+	//}}
+
+	int Run(void);
+	int RunFile(const char* filename);
+	int RunString(const char* input);
 
 	int GetSelectedOutputRowCount(void)const;
 	int GetSelectedOutputColumnCount(void)const;
@@ -69,7 +77,7 @@ public:
 	void do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int error_on, int log_on, int selected_output_on, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie);
 
 protected:
-	void Init(void);
+	void init(void);
 
 protected:
 	// Data
@@ -77,8 +85,16 @@ protected:
 	CSelectedOutput       *SelectedOutput;
 	std::string            PunchFileName;
 	bool                   DatabaseLoaded;
-	bool                   SelectedOutputOn;
 	std::string            StringInput;
+
+	bool                   SelectedOutputOn;
+	//{{
+	bool                   OutputOn;
+	bool                   LogOn;
+	bool                   ErrorOn;
+	bool                   DumpOn;
+	bool                   DumpStringOn;
+	//}}
 
 private:
 	static IPhreeqc* Instance;

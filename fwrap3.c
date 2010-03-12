@@ -22,13 +22,33 @@ int accumulateline_(char *line, unsigned int len)
 {
 	return AccumulateLineF(line, len);
 }
-int run_(int *output_on, int *error_on, int *log_on, int *selected_on)
+void setselectedoutputon_(int *selected_on)
 {
-	return RunF(output_on, error_on, log_on, selected_on);
+	SetSelectedOutputOnF(selected_on);
 }
-int runfile_(char *filename, unsigned int len, int *output_on, int *error_on, int *log_on, int *selected_on)
+void setoutputon_(int *output_on)
 {
-	return RunFileF(output_on, error_on, log_on, selected_on, filename, len);
+	SetOutputOnF(output_on);
+}
+void seterroron_(int *error_on)
+{
+	SetErrorOnF(error_on);
+}
+void setlogon_(int *log_on)
+{
+	SetLogOnF(log_on);
+}
+int run_(void)
+{
+	return RunF();
+}
+int runfile_(char *filename, unsigned int len)
+{
+	return RunFileF(filename, len);
+}
+int runstring_(char *input, unsigned int len)
+{
+	return RunFileF(input, len);
 }
 void outputlines_(void)
 {

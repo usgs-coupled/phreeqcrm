@@ -46,22 +46,46 @@ AccumulateLine(const char *line)
 	return IPhreeqc::LibraryInstance()->AccumulateLine(line);
 }
 
-int
-Run(int output_on, int error_on, int log_on, int selected_output_on)
+void
+SetSelectedOutputOn(int value)
 {
-	return IPhreeqc::LibraryInstance()->Run(output_on, error_on, log_on, selected_output_on);
+	return IPhreeqc::LibraryInstance()->SetSelectedOutputOn(value != 0);
+}
+
+void
+SetOutputOn(int value)
+{
+	return IPhreeqc::LibraryInstance()->SetOutputOn(value != 0);
+}
+
+void
+SetErrorOn(int value)
+{
+	return IPhreeqc::LibraryInstance()->SetErrorOn(value != 0);
+}
+
+void
+SetLogOn(int value)
+{
+	return IPhreeqc::LibraryInstance()->SetLogOn(value != 0);
 }
 
 int
-RunFile(const char* filename, int output_on, int error_on, int log_on, int selected_output_on)
+Run(void)
 {
-	return IPhreeqc::LibraryInstance()->RunFile(filename, output_on, error_on, log_on, selected_output_on);
+	return IPhreeqc::LibraryInstance()->Run();
 }
 
 int
-RunString(const char* input, int output_on, int error_on, int log_on, int selected_output_on)
+RunFile(const char* filename)
 {
-	return IPhreeqc::LibraryInstance()->RunString(input, output_on, error_on, log_on, selected_output_on);
+	return IPhreeqc::LibraryInstance()->RunFile(filename);
+}
+
+int
+RunString(const char* input)
+{
+	return IPhreeqc::LibraryInstance()->RunString(input);
 }
 
 int
@@ -114,11 +138,16 @@ IPhreeqc::IPhreeqc(void)
 , SelectedOutput(0)
 , DatabaseLoaded(false)
 , SelectedOutputOn(false)
+, OutputOn(false)
+, LogOn(false)
+, ErrorOn(false)
+, DumpOn(false)
+, DumpStringOn(false)
 {
 	ASSERT(this->phast == 0);
 	this->ErrorReporter = new CErrorReporter<std::ostringstream>;
 	this->SelectedOutput = new CSelectedOutput();
-	this->Init();
+	this->init();
 	this->UnLoadDatabase();
 }
 
@@ -622,7 +651,12 @@ int istream_getc(void *cookie)
 	if (cookie)
 	{
 		std::istream* is = (std::istream*)cookie;
-		return is->get();
+		int n = is->get();
+		if (n == 13 && is->peek() == 10)
+		{
+			n = is->get();
+		}
+		return n;
 	}
 	return EOF;
 }
@@ -705,7 +739,7 @@ int IPhreeqc::open_handler(const int type, const char *file_name)
 	return n;
 }
 
-void IPhreeqc::Init(void)
+void IPhreeqc::init(void)
 {
 	int i;
 
@@ -1186,6 +1220,31 @@ void IPhreeqc::Init(void)
 	return;
 }
 
+void IPhreeqc::SetOutputOn(bool bValue)
+{
+	this->OutputOn = bValue;
+}
+
+void IPhreeqc::SetSelectedOutputOn(bool bValue)
+{
+	this->SelectedOutputOn = bValue;
+}
+
+void IPhreeqc::SetLogOn(bool bValue)
+{
+	this->LogOn = bValue;
+}
+
+void IPhreeqc::SetDumpOn(bool bValue)
+{
+	this->DumpOn = bValue;
+}
+
+void IPhreeqc::SetErrorOn(bool bValue)
+{
+	this->ErrorOn = bValue;
+}
+
 void IPhreeqc::AddSelectedOutput(const char* name, const char* format, va_list argptr)
 {
 	int bInt;
@@ -1376,7 +1435,7 @@ VRESULT IPhreeqc::AccumulateLine(const char *line)
 	return VR_OUTOFMEMORY;
 }
 
-int IPhreeqc::Run(int output_on, int error_on, int log_on, int selected_output_on)
+int IPhreeqc::Run(void)
 {
 	static const char *sz_routine = "Run";
 	try
@@ -1390,6 +1449,10 @@ int IPhreeqc::Run(int output_on, int error_on, int log_on, int selected_output_o
 		std::istringstream iss(this->GetAccumulatedLines());
 
 		// this may throw
+		int output_on          = this->OutputOn         ? 1 : 0;
+		int error_on           = this->ErrorOn          ? 1 : 0;
+		int log_on             = this->LogOn            ? 1 : 0;
+		int selected_output_on = this->SelectedOutputOn ? 1 : 0;
 		this->do_run(sz_routine, &iss, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
 	}
 	catch (PhreeqcStop)
@@ -1414,7 +1477,7 @@ int IPhreeqc::Run(int output_on, int error_on, int log_on, int selected_output_o
 	return this->input_error;
 }
 
-int IPhreeqc::RunFile(const char* filename, int output_on, int error_on, int log_on, int selected_output_on)
+int IPhreeqc::RunFile(const char* filename)
 {
 	static const char *sz_routine = "RunFile";
 	try
@@ -1436,6 +1499,10 @@ int IPhreeqc::RunFile(const char* filename, int output_on, int error_on, int log
 		}
 
 		// this may throw
+		int output_on          = this->OutputOn         ? 1 : 0;
+		int error_on           = this->ErrorOn          ? 1 : 0;
+		int log_on             = this->LogOn            ? 1 : 0;
+		int selected_output_on = this->SelectedOutputOn ? 1 : 0;
 		this->do_run(sz_routine, &ifs, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
 #else
 		// open file
@@ -1449,6 +1516,10 @@ int IPhreeqc::RunFile(const char* filename, int output_on, int error_on, int log
 		}
 
 		// this may throw
+		int output_on          = this->OutputOn         ? 1 : 0;
+		int error_on           = this->ErrorOn          ? 1 : 0;
+		int log_on             = this->LogOn            ? 1 : 0;
+		int selected_output_on = this->SelectedOutputOn ? 1 : 0;
 		this->do_run(sz_routine, NULL, f, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
 #endif
 	}
@@ -1473,7 +1544,7 @@ int IPhreeqc::RunFile(const char* filename, int output_on, int error_on, int log
 	return this->input_error;
 }
 
-int IPhreeqc::RunString(const char* input, int output_on, int error_on, int log_on, int selected_output_on)
+int IPhreeqc::RunString(const char* input)
 {
 	static const char *sz_routine = "RunString";
 	try
@@ -1488,6 +1559,10 @@ int IPhreeqc::RunString(const char* input, int output_on, int error_on, int log_
 		std::istringstream iss(s);
 
 		// this may throw
+		int output_on          = this->OutputOn         ? 1 : 0;
+		int error_on           = this->ErrorOn          ? 1 : 0;
+		int log_on             = this->LogOn            ? 1 : 0;
+		int selected_output_on = this->SelectedOutputOn ? 1 : 0;
 		this->do_run(sz_routine, &iss, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
 	}
 	catch (PhreeqcStop)

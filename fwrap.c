@@ -2,36 +2,36 @@
 #include <stdlib.h>  /* malloc */
 #include <memory.h>  /* memcpy */
 #include <assert.h>  /* assert */
-#include <stdio.h>   /* printf */
+// COMMENT: {3/11/2010 8:14:05 PM}#include <stdio.h>   /* printf */
 
 #include "phrqtype.h"
 
-struct buffer {
-	char *name;
-	struct master *master;
-	LDBLE moles;
-	LDBLE gfw;
-};
+// COMMENT: {3/11/2010 8:13:47 PM}struct buffer {
+// COMMENT: {3/11/2010 8:13:47 PM}	char *name;
+// COMMENT: {3/11/2010 8:13:47 PM}	struct master *master;
+// COMMENT: {3/11/2010 8:13:47 PM}	LDBLE moles;
+// COMMENT: {3/11/2010 8:13:47 PM}	LDBLE gfw;
+// COMMENT: {3/11/2010 8:13:47 PM}};
 
-/*
- *  Routines
- */
-extern void add_all_components(void);
-extern int build_tally_table(void);
-extern int calc_dummy_kinetic_reaction(struct kinetics *kinetics_ptr);
-extern int diff_tally_table(void);
-extern int elt_list_to_tally_table(struct buffer *buffer_ptr);
-extern int entity_exists (char *name, int n_user);
-extern int extend_tally_table(void);
-extern int free_tally_table(void);
-extern int fill_tally_table(int *n_user, int n_buffer);
-extern int get_tally_table_rows_columns(int *rows, int *columns);
-extern int get_tally_table_column_heading(int column, int *type, char *string);
-extern int get_tally_table_row_heading(int column, char *string);
-extern int set_reaction_moles(int n_user, LDBLE moles);
-extern int store_tally_table(double *array, int row_dim, int col_dim);
-extern int warning_msg (const char *err_str);
-extern int zero_tally_table(void);
+// COMMENT: {3/11/2010 8:13:17 PM}/*
+// COMMENT: {3/11/2010 8:13:17 PM} *  Routines
+// COMMENT: {3/11/2010 8:13:17 PM} */
+// COMMENT: {3/11/2010 8:13:17 PM}extern void add_all_components(void);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int build_tally_table(void);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int calc_dummy_kinetic_reaction(struct kinetics *kinetics_ptr);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int diff_tally_table(void);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int elt_list_to_tally_table(struct buffer *buffer_ptr);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int entity_exists (char *name, int n_user);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int extend_tally_table(void);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int free_tally_table(void);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int fill_tally_table(int *n_user, int n_buffer);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int get_tally_table_rows_columns(int *rows, int *columns);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int get_tally_table_column_heading(int column, int *type, char *string);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int get_tally_table_row_heading(int column, char *string);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int set_reaction_moles(int n_user, LDBLE moles);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int store_tally_table(double *array, int row_dim, int col_dim);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int warning_msg (const char *err_str);
+// COMMENT: {3/11/2010 8:13:17 PM}extern int zero_tally_table(void);
 
 #include "IPhreeqc.h"
 
@@ -87,21 +87,37 @@ padfstring(char *dest, const char *src, unsigned int len)
 int
 LoadDatabaseF(char* filename, unsigned int filename_length)
 {
-	int n;
 	char* cfilename;
 
 	cfilename = f2cstring(filename, filename_length);
-	if (!cfilename) {
+	if (!cfilename)
+	{
 		AddError("LoadDatabase: Out of memory.\n");
 		return VR_OUTOFMEMORY;
 	}
 
-	n = LoadDatabase(cfilename);
-
+	int n = ::LoadDatabase(cfilename);
 	free(cfilename);
-
 	return n;
 }
+
+int
+LoadDatabaseStringF(char* input, unsigned int input_length)
+{
+	char* cinput;
+
+	cinput = f2cstring(input, input_length);
+	if (!cinput)
+	{
+		AddError("LoadDatabase: Out of memory.\n");
+		return VR_OUTOFMEMORY;
+	}
+
+	int n = ::LoadDatabaseString(cinput);
+	free(cinput);
+	return n;
+}
+
 
 VRESULT
 AccumulateLineF(char *line, unsigned int line_length)
@@ -110,48 +126,91 @@ AccumulateLineF(char *line, unsigned int line_length)
 	char* cline;
 
 	cline = f2cstring(line, line_length);
-	if (!cline) {
+	if (!cline)
+	{
 		AddError("AccumulateLine: Out of memory.\n");
 		return VR_OUTOFMEMORY;
 	}
 
 	n = AccumulateLine(cline);
-
 	free(cline);
-
 	return n;
 }
 
-int
-RunF(int* output_on, int* error_on, int* log_on, int* selected_output_on)
+void
+SetSelectedOutputOnF(int* sel_on)
 {
-	return Run(*output_on, *error_on, *log_on, *selected_output_on);
+	::SetSelectedOutputOn(*sel_on);
+}
+
+void
+SetOutputOnF(int* output_on)
+{
+	::SetOutputOn(*output_on);
+}
+
+void
+SetErrorOnF(int* error_on)
+{
+	::SetErrorOn(*error_on);
+}
+
+void
+SetLogOnF(int* log_on)
+{
+	::SetLogOn(*log_on);
 }
 
 int
-RunFileF(int* output_on, int* error_on, int* log_on, int* selected_output_on, char* filename, unsigned int filename_length)
+RunF(void)
 {
-	char* cline;
+	return ::Run();
+}
 
-	cline = f2cstring(filename, filename_length);
-	if (!cline) {
+int
+RunFileF(char* filename, unsigned int filename_length)
+{
+	char* cfilename;
+
+	cfilename = f2cstring(filename, filename_length);
+	if (!cfilename)
+	{
 		AddError("RunFile: Out of memory.\n");
 		return (int)VR_OUTOFMEMORY;
 	}
 
-	return RunFile(cline, *output_on, *error_on, *log_on, *selected_output_on);
+	int n = ::RunFile(cfilename);
+	free(cfilename);
+	return n;
+}
+
+int
+RunStringF(char* input, unsigned int input_length)
+{
+	char* cinput;
+
+	cinput = f2cstring(input, input_length);
+	if (!cinput)
+	{
+		AddError("RunString: Out of memory.\n");
+		return (int)VR_OUTOFMEMORY;
+	}
+
+	int n = ::RunString(cinput);
+	free(cinput);
+	return n;
 }
 
 int
 GetSelectedOutputRowCountF(void)
 {
-	return GetSelectedOutputRowCount();
+	return ::GetSelectedOutputRowCount();
 }
 
 int
 GetSelectedOutputColumnCountF(void)
 {
-	return GetSelectedOutputColumnCount();
+	return ::GetSelectedOutputColumnCount();
 }
 
 VRESULT
@@ -160,7 +219,7 @@ GetSelectedOutputValueF(int *row, int *col, int *vtype, double* dvalue, char* sv
 	VRESULT result;
 	VAR v;
 	VarInit(&v);
-	result = GetSelectedOutputValue(*row, *col, &v);
+	result = ::GetSelectedOutputValue(*row, *col, &v);
 
 	switch (v.type) {
 	case TT_EMPTY:
@@ -184,20 +243,20 @@ GetSelectedOutputValueF(int *row, int *col, int *vtype, double* dvalue, char* sv
 	default:
 		assert(0);
 	}
-	VarClear(&v);
+	::VarClear(&v);
 	return result;
 }
 
 void
 OutputLastErrorF(void)
 {
-	OutputLastError();
+	::OutputLastError();
 }
 
 void
 OutputLinesF(void)
 {
-	OutputLines();
+	::OutputLines();
 }
 
 #if defined(__cplusplus)
@@ -207,15 +266,18 @@ extern "C" {
 int
 SystemF(char* command, unsigned int command_length)
 {
-	char* cline;
+	char* ccommand;
 
-	cline = f2cstring(command, command_length);
-	if (!cline) {
+	ccommand = f2cstring(command, command_length);
+	if (!ccommand)
+	{
 		AddError("System: Out of memory.\n");
 		return (int)VR_OUTOFMEMORY;
 	}
 
-	return system(cline);
+	int n = system(ccommand);
+	free(ccommand);
+	return n;
 }
 
 #if defined(__cplusplus)
@@ -245,13 +307,33 @@ int __stdcall ACCUMULATELINE(char *line, unsigned int len)
 {
 	return AccumulateLineF(line, len);
 }
-int __stdcall RUN(int *output_on, int *error_on, int *log_on, int *selected_on)
+void __stdcall SETSELECTEDOUTPUTON(int *selected_on)
 {
-	return RunF(output_on, error_on, log_on, selected_on);
+	SetSelectedOutputOnF(selected_on);
 }
-int __stdcall RUNFILE(char *filename, unsigned int len, int *output_on, int *error_on, int *log_on, int *selected_on)
+void __stdcall SETOUTPUTON(int *output_on)
 {
-	return RunFileF(output_on, error_on, log_on, selected_on, filename, len);
+	SetOutputOnF(output_on);
+}
+void __stdcall SETERRORON(int *error_on)
+{
+	SetErrorOnF(error_on);
+}
+void __stdcall SETLOGON(int *log_on)
+{
+	SetLogOnF(log_on);
+}
+int __stdcall RUN(void)
+{
+	return RunF();
+}
+int __stdcall RUNFILE(char *filename, unsigned int len)
+{
+	return RunFileF(filename, len);
+}
+int __stdcall RUNSTRING(char *input, unsigned int len)
+{
+	return RunStringF(input, len);
 }
 void __stdcall OUTPUTLINES(void)
 {
