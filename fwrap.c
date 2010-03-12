@@ -2,37 +2,7 @@
 #include <stdlib.h>  /* malloc */
 #include <memory.h>  /* memcpy */
 #include <assert.h>  /* assert */
-// COMMENT: {3/11/2010 8:14:05 PM}#include <stdio.h>   /* printf */
-
 #include "phrqtype.h"
-
-// COMMENT: {3/11/2010 8:13:47 PM}struct buffer {
-// COMMENT: {3/11/2010 8:13:47 PM}	char *name;
-// COMMENT: {3/11/2010 8:13:47 PM}	struct master *master;
-// COMMENT: {3/11/2010 8:13:47 PM}	LDBLE moles;
-// COMMENT: {3/11/2010 8:13:47 PM}	LDBLE gfw;
-// COMMENT: {3/11/2010 8:13:47 PM}};
-
-// COMMENT: {3/11/2010 8:13:17 PM}/*
-// COMMENT: {3/11/2010 8:13:17 PM} *  Routines
-// COMMENT: {3/11/2010 8:13:17 PM} */
-// COMMENT: {3/11/2010 8:13:17 PM}extern void add_all_components(void);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int build_tally_table(void);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int calc_dummy_kinetic_reaction(struct kinetics *kinetics_ptr);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int diff_tally_table(void);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int elt_list_to_tally_table(struct buffer *buffer_ptr);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int entity_exists (char *name, int n_user);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int extend_tally_table(void);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int free_tally_table(void);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int fill_tally_table(int *n_user, int n_buffer);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int get_tally_table_rows_columns(int *rows, int *columns);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int get_tally_table_column_heading(int column, int *type, char *string);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int get_tally_table_row_heading(int column, char *string);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int set_reaction_moles(int n_user, LDBLE moles);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int store_tally_table(double *array, int row_dim, int col_dim);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int warning_msg (const char *err_str);
-// COMMENT: {3/11/2010 8:13:17 PM}extern int zero_tally_table(void);
-
 #include "IPhreeqc.h"
 
 /*******************************
