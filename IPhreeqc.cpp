@@ -1752,9 +1752,10 @@ int IPhreeqc::GetDumpLineCount(void)const
 
 const char* IPhreeqc::GetDumpLine(int n)
 {
+	static const char empty[] = "";
 	if (n < 0 || n >= this->GetDumpLineCount())
 	{
-		return 0;
+		return empty;
 	}
 	return this->DumpLines[n].c_str();
 }
@@ -1766,9 +1767,10 @@ int IPhreeqc::GetErrorLineCount(void)const
 
 const char* IPhreeqc::GetErrorLine(int n)
 {
+	static const char empty[] = "";
 	if (n < 0 || n >= this->GetErrorLineCount())
 	{
-		return 0;
+		return empty;
 	}
 	return this->ErrorLines[n].c_str();
 }
