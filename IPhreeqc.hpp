@@ -35,6 +35,8 @@ public:
 	int GetErrorLineCount(void)const;
 	const char* GetErrorLine(int n);
 
+	std::list< std::string > ListComponents(void);
+
 	VRESULT AccumulateLine(const char *line);
 
 	void SetDumpOn(bool bValue);

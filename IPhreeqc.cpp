@@ -180,6 +180,32 @@ GetErrorLine(int n)
 	return IPhreeqc::LibraryInstance()->GetErrorLine(n);
 }
 
+int
+GetComponentCount(void)
+{
+	return (int)IPhreeqc::LibraryInstance()->ListComponents().size();
+}
+
+const char*
+GetComponent(int n)
+{
+	static const char empty[] = "";
+	static std::string comp;
+	std::list< std::string > comps = IPhreeqc::LibraryInstance()->ListComponents();
+	if (n < 0 || n >= (int)comps.size())
+	{
+		return empty;
+	}
+	std::list< std::string >::iterator it = comps.begin();
+	for(int i = 0; i < n; ++i)
+	{
+		++it;
+	}
+	comp = (*it);
+	return comp.c_str();
+}
+
+
 IPhreeqc::IPhreeqc(void)
 : Phreeqc()
 , ErrorReporter(0)
@@ -1786,4 +1812,10 @@ void IPhreeqc::update_errors(void)
 	{
 		this->ErrorLines.push_back(line);
 	}
+}
+std::list< std::string > IPhreeqc::ListComponents(void)
+{
+	std::list< std::string > comps;
+	this->list_components(comps);
+	return comps;
 }
