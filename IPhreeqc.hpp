@@ -24,17 +24,29 @@ public:
 	void UnLoadDatabase(void);
 
 	void OutputLastError(void);
+
 	const char* GetLastErrorString(void);
+	const char* GetLastWarningString(void);
+	const char* GetDumpString(void);
+
+	int GetDumpLineCount(void)const;
+	const char* GetDumpLine(int n);
+
+	int GetErrorLineCount(void)const;
+	const char* GetErrorLine(int n);
 
 	VRESULT AccumulateLine(const char *line);
 
-	//{{
 	void SetDumpOn(bool bValue);
+	void SetDumpStringOn(bool bValue);
+
 	void SetErrorOn(bool bValue);
+
 	void SetLogOn(bool bValue);
+
 	void SetOutputOn(bool bValue);
+
 	void SetSelectedOutputOn(bool bValue);
-	//}}
 
 	int Run(void);
 	int RunFile(const char* filename);
@@ -47,6 +59,7 @@ public:
 	void OutputLines(void);
 
 	size_t AddError(const char* error_msg);
+	size_t AddWarning(const char* warning_msg);	
 
 	const std::string& GetAccumulatedLines(void);
 	void ClearAccumulatedLines(void);
@@ -74,27 +87,36 @@ public:
 	void AddSelectedOutput(const char* name, const char* format, va_list argptr);
 
 	void check_database(const char* sz_routine);
-	void do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int error_on, int log_on, int selected_output_on, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie);
+	void do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie);
 
 protected:
 	void init(void);
+	void update_errors(void);
 
 protected:
-	// Data
-	IErrorReporter        *ErrorReporter;
-	CSelectedOutput       *SelectedOutput;
-	std::string            PunchFileName;
-	bool                   DatabaseLoaded;
-	std::string            StringInput;
 
-	bool                   SelectedOutputOn;
-	//{{
-	bool                   OutputOn;
-	bool                   LogOn;
-	bool                   ErrorOn;
-	bool                   DumpOn;
-	bool                   DumpStringOn;
-	//}}
+	IErrorReporter            *ErrorReporter;
+	std::string                LastErrorString;
+	std::vector< std::string > ErrorLines;
+
+	IErrorReporter            *WarningReporter;
+	std::string                LastWarningString;
+	std::vector< std::string > WarningLines;
+
+	CSelectedOutput           *SelectedOutput;
+	std::string                PunchFileName;
+	bool                       DatabaseLoaded;
+	std::string                StringInput;
+
+	bool                       SelectedOutputOn;
+	bool                       OutputOn;
+	bool                       LogOn;
+	bool                       ErrorOn;
+	bool                       DumpOn;
+	bool                       DumpStringOn;
+
+	std::string                DumpString;
+	std::vector< std::string > DumpLines;
 
 private:
 	static IPhreeqc* Instance;

@@ -131,6 +131,42 @@ SetLogOnF(int* log_on)
 	::SetLogOn(*log_on);
 }
 
+void
+SetDumpOnF(int* dump_on)
+{
+	::SetDumpOn(*dump_on);
+}
+
+void
+SetDumpStringOnF(int* dump_string_on)
+{
+	::SetDumpStringOn(*dump_string_on);
+}
+
+int
+GetDumpLineCountF(void)
+{
+	return ::GetDumpLineCount();
+}
+
+void
+GetDumpLineF(int* n, char* line, unsigned int line_length)
+{
+	padfstring(line, ::GetDumpLine((*n) - 1), line_length);
+}
+
+int
+GetErrorLineCountF(void)
+{
+	return ::GetErrorLineCount();
+}
+
+void
+GetErrorLineF(int* n, char* line, unsigned int line_length)
+{
+	padfstring(line, ::GetErrorLine((*n) - 1), line_length);
+}
+
 int
 RunF(void)
 {
@@ -292,6 +328,30 @@ void __stdcall SETERRORON(int *error_on)
 void __stdcall SETLOGON(int *log_on)
 {
 	SetLogOnF(log_on);
+}
+void __stdcall SETDUMPON(int *dump_on)
+{
+	SetDumpOnF(dump_on);
+}
+void __stdcall SETDUMPSTRINGON(int *dump_string_on)
+{
+	SetDumpStringOnF(dump_string_on);
+}
+int __stdcall GETDUMPLINECOUNT(void)
+{
+	return GetDumpLineCountF();
+}
+void __stdcall GETDUMPLINE(int *n, char* line, unsigned int line_length)
+{
+	GetDumpLineF(n, line, line_length);
+}
+int __stdcall GETERRORLINECOUNT(void)
+{
+	return GetErrorLineCountF();
+}
+void __stdcall GETERRORLINE(int *n, char* line, unsigned int line_length)
+{
+	GetErrorLineF(n, line, line_length);
 }
 int __stdcall RUN(void)
 {

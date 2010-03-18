@@ -4,7 +4,6 @@
 
 #include <iosfwd>          // std::ostream
 #include <cstdio>          // std::fprintf
-#include "phreeqcns.hxx"
 
 class IErrorReporter
 {

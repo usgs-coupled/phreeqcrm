@@ -40,6 +40,19 @@ GetLastErrorString(void)
 	return IPhreeqc::LibraryInstance()->GetLastErrorString();
 }
 
+const char* 
+GetLastWarningString(void)
+{
+	return IPhreeqc::LibraryInstance()->GetLastWarningString();
+}
+
+const char*
+GetDumpString(void)
+{
+	return IPhreeqc::LibraryInstance()->GetDumpString();
+}
+
+
 VRESULT
 AccumulateLine(const char *line)
 {
@@ -68,6 +81,18 @@ void
 SetLogOn(int value)
 {
 	return IPhreeqc::LibraryInstance()->SetLogOn(value != 0);
+}
+
+void
+SetDumpOn(int value)
+{
+	return IPhreeqc::LibraryInstance()->SetDumpOn(value != 0);
+}
+
+void
+SetDumpStringOn(int value)
+{
+	return IPhreeqc::LibraryInstance()->SetDumpStringOn(value != 0);
 }
 
 int
@@ -131,10 +156,34 @@ ClearAccumulatedLines(void)
 	IPhreeqc::LibraryInstance()->ClearAccumulatedLines();
 }
 
+int
+GetDumpLineCount(void)
+{
+	return IPhreeqc::LibraryInstance()->GetDumpLineCount();
+}
+
+const char*
+GetDumpLine(int n)
+{
+	return IPhreeqc::LibraryInstance()->GetDumpLine(n);
+}
+
+int
+GetErrorLineCount(void)
+{
+	return IPhreeqc::LibraryInstance()->GetErrorLineCount();
+}
+
+const char*
+GetErrorLine(int n)
+{
+	return IPhreeqc::LibraryInstance()->GetErrorLine(n);
+}
 
 IPhreeqc::IPhreeqc(void)
 : Phreeqc()
 , ErrorReporter(0)
+, WarningReporter(0)
 , SelectedOutput(0)
 , DatabaseLoaded(false)
 , SelectedOutputOn(false)
@@ -145,8 +194,9 @@ IPhreeqc::IPhreeqc(void)
 , DumpStringOn(false)
 {
 	ASSERT(this->phast == 0);
-	this->ErrorReporter = new CErrorReporter<std::ostringstream>;
-	this->SelectedOutput = new CSelectedOutput();
+	this->ErrorReporter   = new CErrorReporter<std::ostringstream>;
+	this->WarningReporter = new CErrorReporter<std::ostringstream>;
+	this->SelectedOutput  = new CSelectedOutput();
 	this->init();
 	this->UnLoadDatabase();
 }
@@ -154,6 +204,7 @@ IPhreeqc::IPhreeqc(void)
 IPhreeqc::~IPhreeqc(void)
 {
 	delete this->ErrorReporter;
+	delete this->WarningReporter;
 	delete this->SelectedOutput;
 }
 
@@ -197,6 +248,11 @@ size_t IPhreeqc::AddError(const char* error_msg)
 	return this->ErrorReporter->AddError(error_msg);
 }
 
+size_t IPhreeqc::AddWarning(const char* error_msg)
+{
+	return this->WarningReporter->AddError(error_msg);
+}
+
 const std::string& IPhreeqc::GetAccumulatedLines(void)
 {
 	return this->StringInput;
@@ -212,17 +268,28 @@ void IPhreeqc::UnLoadDatabase(void)
 	// init IPhreeqc
 	//
 	this->DatabaseLoaded   = false;
-	this->SelectedOutputOn = false;
 
 	// clear error state
 	//
 	ASSERT(this->ErrorReporter);
 	this->ErrorReporter->Clear();
+	this->LastErrorString.clear();
+
+	// clear warning state
+	//
+	ASSERT(this->WarningReporter);
+	this->WarningReporter->Clear();
+	this->LastWarningString.clear();
 
 	// clear selectedoutput
 	//
-	ASSERT(this->ErrorReporter);
+	ASSERT(this->SelectedOutput);
 	this->SelectedOutput->Clear();
+
+	// clear dump string
+	//
+	this->DumpString.clear();
+	this->DumpLines.clear();
 
 	// initialize phreeqc
 	//
@@ -317,14 +384,25 @@ int IPhreeqc::LoadDatabaseString(const char* input)
 
 void IPhreeqc::OutputLastError(void)
 {
-	std::cout << ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str().c_str() << std::endl;
+	std::cout << this->GetLastErrorString() << std::endl;
 }
 
 const char* IPhreeqc::GetLastErrorString(void)
 {
-	static std::string str;
-	str = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
-	return str.c_str();
+	this->LastErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
+	return this->LastErrorString.c_str();
+}
+
+const char* IPhreeqc::GetLastWarningString(void)
+{
+	this->LastWarningString = ((CErrorReporter<std::ostringstream>*)this->WarningReporter)->GetOS()->str();
+	return this->LastWarningString.c_str();
+}
+
+
+const char* IPhreeqc::GetDumpString(void)
+{
+	return this->DumpString.c_str();
 }
 
 void IPhreeqc::check_database(const char* sz_routine)
@@ -341,12 +419,12 @@ void IPhreeqc::check_database(const char* sz_routine)
 	}
 }
 
-void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int error_on, int log_on, int selected_output_on, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie)
+void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie)
 {
 	std::auto_ptr<std::istringstream> auto_iss(NULL);
 	char token[MAX_LENGTH];
 
-	if (output_on)
+	if (this->OutputOn)
 	{
 		if (this->output_open(OUTPUT_MESSAGE, OUTPUT_FILENAME) != OK)
 		{
@@ -355,7 +433,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, int o
 			this->warning_msg(oss.str().c_str());
 		}
 	}
-	if (error_on)
+	if (this->ErrorOn)
 	{
 		if (this->output_open(OUTPUT_ERROR, ERROR_FILENAME) != OK)
 		{
@@ -364,7 +442,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, int o
 			this->warning_msg(oss.str().c_str());
 		}
 	}
-	if (log_on)
+	if (this->LogOn)
 	{
 		if (this->output_open(OUTPUT_LOG, LOG_FILENAME) != OK)
 		{
@@ -373,8 +451,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, int o
 			this->warning_msg(oss.str().c_str());
 		}
 	}
-
-	this->SelectedOutputOn = (selected_output_on != 0);
 
 /*
  *   call pre-run callback
@@ -465,7 +541,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, int o
 			// TRUE ???
 			//
 			//
-			if (!selected_output_on) ASSERT(!this->output_isopen(OUTPUT_PUNCH));
+			if (!this->SelectedOutputOn) ASSERT(!this->output_isopen(OUTPUT_PUNCH));
 
 			if (this->pr.punch == FALSE)
 			{
@@ -479,7 +555,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, int o
 			{
 				if (this->punch.new_def == FALSE)
 				{
-					if (selected_output_on && !this->output_isopen(OUTPUT_PUNCH))
+					if (this->SelectedOutputOn && !this->output_isopen(OUTPUT_PUNCH))
 					{
 						//
 						// LoadDatabase
@@ -504,7 +580,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, int o
 				}
 				else
 				{
-					if (selected_output_on && !this->output_isopen(OUTPUT_PUNCH))
+					if (this->SelectedOutputOn && !this->output_isopen(OUTPUT_PUNCH))
 					{
 						// This is a special case which could not occur in
 						// phreeqc
@@ -536,7 +612,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, int o
 			}
 		}
 
-		if (!selected_output_on) ASSERT(!this->output_isopen(OUTPUT_PUNCH));
+		if (!this->SelectedOutputOn) ASSERT(!this->output_isopen(OUTPUT_PUNCH));
 		/* the converse is not necessarily true */
 
 		this->n_user_punch_index = -1;
@@ -605,7 +681,37 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, int o
 /*
  *   dump
  */
+		dumper dump_info_save(dump_info);
+		if (this->DumpOn)
+		{
 			this->dump_entities();
+		}
+		if (this->DumpStringOn)
+		{
+			dump_info = dump_info_save;
+			if (dump_info.Get_bool_any())
+			{
+				std::ostringstream oss;
+				this->dump_ostream(oss);
+				if (dump_info.get_append())
+				{
+					this->DumpString += oss.str();
+				}
+				else
+				{
+					this->DumpString = oss.str();
+				}
+
+				/* Fill dump lines */
+				this->DumpLines.clear();
+				std::istringstream iss(this->DumpString);
+				std::string line;
+				while (std::getline(iss, line))
+				{
+					this->DumpLines.push_back(line);
+				}
+			}
+		}
 /*
  *   delete
  */
@@ -642,6 +748,9 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, int o
 		oss << "</input>\n";
 		this->error_msg(oss.str().c_str(), CONTINUE);
 	}
+	//{{
+	this->update_errors();
+	//}}
 }
 
 
@@ -694,7 +803,7 @@ int IPhreeqc::output_handler(const int type, const char *err_str, const int stop
 	switch (type)
 	{
 	case OUTPUT_ERROR:
-		if (pIPhreeqc && pIPhreeqc->ErrorReporter)
+		if (pIPhreeqc)
 		{
 			std::ostringstream oss;
 			oss << "ERROR: " << err_str << "\n";
@@ -703,6 +812,15 @@ int IPhreeqc::output_handler(const int type, const char *err_str, const int stop
 				oss << "Stopping.\n";
 			}
 			pIPhreeqc->AddError(oss.str().c_str());
+		}
+		break;
+
+	case OUTPUT_WARNING:
+		if (pIPhreeqc)
+		{
+			std::ostringstream oss;
+			oss << "WARNING: " << err_str << "\n";
+			pIPhreeqc->AddWarning(oss.str().c_str());
 		}
 		break;
 
@@ -1240,6 +1358,11 @@ void IPhreeqc::SetDumpOn(bool bValue)
 	this->DumpOn = bValue;
 }
 
+void IPhreeqc::SetDumpStringOn(bool bValue)
+{
+	this->DumpStringOn = bValue;
+}
+
 void IPhreeqc::SetErrorOn(bool bValue)
 {
 	this->ErrorOn = bValue;
@@ -1424,6 +1547,7 @@ VRESULT IPhreeqc::AccumulateLine(const char *line)
 	try
 	{
 		this->ErrorReporter->Clear();
+		this->WarningReporter->Clear();
 		this->StringInput.append(line);
 		this->StringInput.append("\n");
 		return VR_OK;
@@ -1449,11 +1573,7 @@ int IPhreeqc::Run(void)
 		std::istringstream iss(this->GetAccumulatedLines());
 
 		// this may throw
-		int output_on          = this->OutputOn         ? 1 : 0;
-		int error_on           = this->ErrorOn          ? 1 : 0;
-		int log_on             = this->LogOn            ? 1 : 0;
-		int selected_output_on = this->SelectedOutputOn ? 1 : 0;
-		this->do_run(sz_routine, &iss, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
+		this->do_run(sz_routine, &iss, NULL, NULL, NULL, NULL);
 	}
 	catch (PhreeqcStop)
 	{
@@ -1474,6 +1594,8 @@ int IPhreeqc::Run(void)
 
 	this->ClearAccumulatedLines();
 	this->close_output_files();
+	this->update_errors();
+
 	return this->input_error;
 }
 
@@ -1499,11 +1621,7 @@ int IPhreeqc::RunFile(const char* filename)
 		}
 
 		// this may throw
-		int output_on          = this->OutputOn         ? 1 : 0;
-		int error_on           = this->ErrorOn          ? 1 : 0;
-		int log_on             = this->LogOn            ? 1 : 0;
-		int selected_output_on = this->SelectedOutputOn ? 1 : 0;
-		this->do_run(sz_routine, &ifs, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
+		this->do_run(sz_routine, &ifs, NULL, NULL, NULL, NULL);
 #else
 		// open file
 		//
@@ -1516,11 +1634,7 @@ int IPhreeqc::RunFile(const char* filename)
 		}
 
 		// this may throw
-		int output_on          = this->OutputOn         ? 1 : 0;
-		int error_on           = this->ErrorOn          ? 1 : 0;
-		int log_on             = this->LogOn            ? 1 : 0;
-		int selected_output_on = this->SelectedOutputOn ? 1 : 0;
-		this->do_run(sz_routine, NULL, f, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
+		this->do_run(sz_routine, NULL, f, NULL, NULL, NULL);
 #endif
 	}
 	catch (PhreeqcStop)
@@ -1541,6 +1655,8 @@ int IPhreeqc::RunFile(const char* filename)
 	}
 
 	this->close_output_files();
+	this->update_errors();
+
 	return this->input_error;
 }
 
@@ -1559,11 +1675,7 @@ int IPhreeqc::RunString(const char* input)
 		std::istringstream iss(s);
 
 		// this may throw
-		int output_on          = this->OutputOn         ? 1 : 0;
-		int error_on           = this->ErrorOn          ? 1 : 0;
-		int log_on             = this->LogOn            ? 1 : 0;
-		int selected_output_on = this->SelectedOutputOn ? 1 : 0;
-		this->do_run(sz_routine, &iss, NULL, output_on, error_on, log_on, selected_output_on, NULL, NULL, NULL);
+		this->do_run(sz_routine, &iss, NULL, NULL, NULL, NULL);
 	}
 	catch (PhreeqcStop)
 	{
@@ -1583,6 +1695,8 @@ int IPhreeqc::RunString(const char* input)
 	}
 
 	this->close_output_files();
+	this->update_errors();
+
 	return this->input_error;
 }
 
@@ -1601,7 +1715,8 @@ VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 	this->ErrorReporter->Clear();
 	if (!pVAR)
 	{
-		this->AddError("GetSelectedOutputValue: VR_INVALIDARG pVar is NULL.\n");
+		this->AddError("GetSelectedOutputValue: VR_INVALIDARG pVAR is NULL.\n");
+		this->update_errors();
 		return VR_INVALIDARG;
 	}
 
@@ -1626,5 +1741,47 @@ VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 		this->AddError("GetSelectedOutputValue: VR_INVALIDCOL Column index out of range.\n");
 		break;
 	}
+	this->update_errors();
 	return v;
+}
+
+int IPhreeqc::GetDumpLineCount(void)const
+{
+	return (int)this->DumpLines.size();
+}
+
+const char* IPhreeqc::GetDumpLine(int n)
+{
+	if (n < 0 || n >= this->GetDumpLineCount())
+	{
+		return 0;
+	}
+	return this->DumpLines[n].c_str();
+}
+
+int IPhreeqc::GetErrorLineCount(void)const
+{
+	return (int)this->ErrorLines.size();
+}
+
+const char* IPhreeqc::GetErrorLine(int n)
+{
+	if (n < 0 || n >= this->GetErrorLineCount())
+	{
+		return 0;
+	}
+	return this->ErrorLines[n].c_str();
+}
+
+void IPhreeqc::update_errors(void)
+{
+	this->LastErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
+
+	this->ErrorLines.clear();
+	std::istringstream iss(this->LastErrorString);
+	std::string line;
+	while (std::getline(iss, line))
+	{
+		this->ErrorLines.push_back(line);
+	}
 }

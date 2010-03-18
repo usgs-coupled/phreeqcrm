@@ -29,7 +29,19 @@ extern "C" {
 
   void SetErrorOnF(int* error_on);
 
-  void SetLogOnF(int* error_on);
+  void SetLogOnF(int* log_on);
+
+  void SetDumpOnF(int* dump_on);
+
+  void SetDumpStringOnF(int* dump_string_on);
+
+  int GetDumpLineCountF(void);
+
+  void GetDumpLineF(int* n, char* line, unsigned int line_length);
+
+  int GetErrorLineCountF(void);
+
+  void GetErrorLineF(int* n, char* line, unsigned int line_length);
 
   void OutputLastErrorF(void);
 

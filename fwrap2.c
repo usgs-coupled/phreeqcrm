@@ -38,6 +38,30 @@ void SETLOGON(int *log_on)
 {
 	SetLogOnF(log_on);
 }
+void SETDUMPON(int *dump_on)
+{
+	SetDumpOnF(dump_on);
+}
+void SETDUMPSTRINGON(int *dump_string_on)
+{
+	SetDumpStringOnF(dump_string_on);
+}
+int GETDUMPLINECOUNT(void)
+{
+	return GetDumpLineCountF();
+}
+void GETDUMPLINE(int *n, char* line, unsigned int line_length)
+{
+	GetDumpLineF(n, line, line_length);
+}
+int GETERRORLINECOUNT(void)
+{
+	return GetErrorLineCountF();
+}
+void GETERRORLINE(int *n, char* line, unsigned int line_length)
+{
+	GetErrorLineF(n, line, line_length);
+}
 int RUN(void)
 {
 	return RunF();
