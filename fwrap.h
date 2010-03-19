@@ -43,6 +43,10 @@ extern "C" {
 
   void GetErrorLineF(int* n, char* line, unsigned int line_length);
 
+  int GetComponentCountF(void);
+
+  void GetComponentF(int* n, char* line, unsigned int line_length);
+
   void OutputLastErrorF(void);
 
   void OutputLinesF(void);

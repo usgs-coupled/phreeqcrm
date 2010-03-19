@@ -168,6 +168,18 @@ GetErrorLineF(int* n, char* line, unsigned int line_length)
 }
 
 int
+GetComponentCountF(void)
+{
+	return ::GetComponentCount();
+}
+
+void
+GetComponentF(int *n, char* line, unsigned int line_length)
+{
+	padfstring(line, ::GetComponent((*n) - 1), line_length);
+}
+
+int
 RunF(void)
 {
 	return ::Run();
@@ -352,6 +364,14 @@ int __stdcall GETERRORLINECOUNT(void)
 void __stdcall GETERRORLINE(int *n, char* line, unsigned int line_length)
 {
 	GetErrorLineF(n, line, line_length);
+}
+int __stdcall GETCOMPONENTCOUNT(void)
+{
+	return GetComponentCountF();
+}
+void __stdcall GETCOMPONENT(int *n, char* line, unsigned int line_length)
+{
+	GetComponentF(n, line, line_length);
 }
 int __stdcall RUN(void)
 {

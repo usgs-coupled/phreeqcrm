@@ -62,6 +62,14 @@ void GETERRORLINE(int *n, char* line, unsigned int line_length)
 {
 	GetErrorLineF(n, line, line_length);
 }
+int GETCOMPONENTCOUNT(void)
+{
+	return GetComponentCountF();
+}
+void GETCOMPONENT(int *n, char* line, unsigned int line_length)
+{
+	GetComponentF(n, line, line_length);
+}
 int RUN(void)
 {
 	return RunF();

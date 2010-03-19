@@ -62,6 +62,14 @@ void geterrorline_(int *n, char* line, unsigned int line_length)
 {
 	GetErrorLineF(n, line, line_length);
 }
+int getcomponentcount_(void)
+{
+	return GetComponentCountF();
+}
+void getcomponent_(int *n, char* line, unsigned int line_length)
+{
+	GetComponentF(n, line, line_length);
+}
 int run_(void)
 {
 	return RunF();
