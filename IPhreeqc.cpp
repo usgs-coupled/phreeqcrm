@@ -1364,9 +1364,19 @@ void IPhreeqc::init(void)
 	return;
 }
 
+bool IPhreeqc::GetOutputOn(void)const
+{
+	return this->OutputOn;
+}
+
 void IPhreeqc::SetOutputOn(bool bValue)
 {
 	this->OutputOn = bValue;
+}
+
+bool IPhreeqc::GetSelectedOutputOn(void)const
+{
+	return this->SelectedOutputOn;
 }
 
 void IPhreeqc::SetSelectedOutputOn(bool bValue)
@@ -1374,9 +1384,19 @@ void IPhreeqc::SetSelectedOutputOn(bool bValue)
 	this->SelectedOutputOn = bValue;
 }
 
+bool IPhreeqc::GetLogOn(void)const
+{
+	return this->LogOn;
+}
+
 void IPhreeqc::SetLogOn(bool bValue)
 {
 	this->LogOn = bValue;
+}
+
+bool IPhreeqc::GetDumpOn(void)const
+{
+	return this->DumpOn;
 }
 
 void IPhreeqc::SetDumpOn(bool bValue)
@@ -1384,9 +1404,19 @@ void IPhreeqc::SetDumpOn(bool bValue)
 	this->DumpOn = bValue;
 }
 
+bool IPhreeqc::GetDumpStringOn(void)const
+{
+	return this->DumpStringOn;
+}
+
 void IPhreeqc::SetDumpStringOn(bool bValue)
 {
 	this->DumpStringOn = bValue;
+}
+
+bool IPhreeqc::GetErrorOn(void)const
+{
+	return this->ErrorOn;
 }
 
 void IPhreeqc::SetErrorOn(bool bValue)

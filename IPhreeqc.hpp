@@ -39,15 +39,22 @@ public:
 
 	VRESULT AccumulateLine(const char *line);
 
+	bool GetDumpOn(void)const;
 	void SetDumpOn(bool bValue);
+
+	bool GetDumpStringOn(void)const;
 	void SetDumpStringOn(bool bValue);
 
+	bool GetErrorOn(void)const;
 	void SetErrorOn(bool bValue);
 
+	bool GetLogOn(void)const;
 	void SetLogOn(bool bValue);
 
+	bool GetOutputOn(void)const;
 	void SetOutputOn(bool bValue);
 
+	bool GetSelectedOutputOn(void)const;
 	void SetSelectedOutputOn(bool bValue);
 
 	int Run(void);
