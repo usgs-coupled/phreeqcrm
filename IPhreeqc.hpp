@@ -57,7 +57,7 @@ public:
 	bool GetSelectedOutputOn(void)const;
 	void SetSelectedOutputOn(bool bValue);
 
-	int Run(void);
+	int RunAccumulated(void);
 	int RunFile(const char* filename);
 	int RunString(const char* input);
 

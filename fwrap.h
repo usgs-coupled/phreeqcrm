@@ -11,7 +11,7 @@ extern "C" {
 
   VRESULT AccumulateLineF(char *line, unsigned int line_length);
 
-  int RunF(void);
+  int RunAccumulatedF(void);
 
   int RunFileF(char* filename, unsigned int filename_length);
 

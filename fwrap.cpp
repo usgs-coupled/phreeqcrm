@@ -180,9 +180,9 @@ GetComponentF(int *n, char* line, unsigned int line_length)
 }
 
 int
-RunF(void)
+RunAccumulatedF(void)
 {
-	return ::Run();
+	return ::RunAccumulated();
 }
 
 int
@@ -385,9 +385,9 @@ void __stdcall GETCOMPONENT(int *n, char* line, unsigned int line_length)
 {
 	GetComponentF(n, line, line_length);
 }
-int __stdcall RUN(void)
+int __stdcall RUNACCUMULATED(void)
 {
-	return RunF();
+	return RunAccumulatedF();
 }
 int __stdcall RUNFILE(char *filename, unsigned int len)
 {

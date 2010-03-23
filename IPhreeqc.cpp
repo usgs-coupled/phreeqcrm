@@ -97,9 +97,9 @@ SetDumpStringOn(int value)
 }
 
 int
-Run(void)
+RunAccumulated(void)
 {
-	return IPhreeqc::LibraryInstance()->Run();
+	return IPhreeqc::LibraryInstance()->RunAccumulated();
 }
 
 int
@@ -1616,9 +1616,9 @@ VRESULT IPhreeqc::AccumulateLine(const char *line)
 	return VR_OUTOFMEMORY;
 }
 
-int IPhreeqc::Run(void)
+int IPhreeqc::RunAccumulated(void)
 {
-	static const char *sz_routine = "Run";
+	static const char *sz_routine = "RunAccumulated";
 	try
 	{
 		// this may throw
@@ -1638,7 +1638,7 @@ int IPhreeqc::Run(void)
 	}
 	catch(...)
 	{
-		const char *errmsg = "Run: An unhandled exception occured.\n";
+		const char *errmsg = "RunAccumulated: An unhandled exception occured.\n";
 		try
 		{
 			this->error_msg(errmsg, STOP); // throws PhreeqcStop

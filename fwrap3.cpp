@@ -70,9 +70,9 @@ void getcomponent_(int *n, char* line, unsigned int line_length)
 {
 	GetComponentF(n, line, line_length);
 }
-int run_(void)
+int runaccumulated_(void)
 {
-	return RunF();
+	return RunAccumulatedF();
 }
 int runfile_(char *filename, unsigned int len)
 {
@@ -80,7 +80,7 @@ int runfile_(char *filename, unsigned int len)
 }
 int runstring_(char *input, unsigned int len)
 {
-	return RunFileF(input, len);
+	return RunStringF(input, len);
 }
 void outputlines_(void)
 {
