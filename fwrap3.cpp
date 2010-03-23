@@ -88,7 +88,7 @@ void outputlines_(void)
 }
 int getselectedoutputrowcount_(void)
 {
-	return GetSelectedOutputRowCountF() - 1;
+	return GetSelectedOutputRowCountF();
 }
 int getselectedoutputcolumncount_(void)
 {
@@ -96,8 +96,7 @@ int getselectedoutputcolumncount_(void)
 }
 int getselectedoutputvalue_(int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
 {
-	int adjcol = *col - 1;
-	return GetSelectedOutputValueF(row, &adjcol, vtype, dvalue, svalue, svalue_length);
+	return GetSelectedOutputValueF(row, col, vtype, dvalue, svalue, svalue_length);
 }
 
 #if defined(__cplusplus)

@@ -1,4 +1,5 @@
 #include <memory>
+#include <cassert>
 #include "IPhreeqc.h"
 #include "IPhreeqc.hpp"
 #include "ErrorReporter.hxx"
@@ -824,29 +825,36 @@ int IPhreeqc::handler(const int action, const int type, const char *err_str, con
 
 int IPhreeqc::output_handler(const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
 {
-	IPhreeqc* pIPhreeqc = (IPhreeqc*) cookie;
+	assert(cookie == this);
 
 	switch (type)
 	{
 	case OUTPUT_ERROR:
-		if (pIPhreeqc)
+		if (this)
 		{
-			std::ostringstream oss;
-			oss << "ERROR: " << err_str << "\n";
 			if (stop == STOP)
 			{
+				static std::string str(200, ' ');
+				static std::ostringstream oss(str);
+				oss << "ERROR: " << err_str << "\n";
 				oss << "Stopping.\n";
+				this->AddError(oss.str().c_str());
 			}
-			pIPhreeqc->AddError(oss.str().c_str());
+			else
+			{
+				std::ostringstream oss;
+				oss << "ERROR: " << err_str << "\n";
+				this->AddError(oss.str().c_str());
+			}
 		}
 		break;
 
 	case OUTPUT_WARNING:
-		if (pIPhreeqc)
+		if (this)
 		{
 			std::ostringstream oss;
 			oss << "WARNING: " << err_str << "\n";
-			pIPhreeqc->AddWarning(oss.str().c_str());
+			this->AddWarning(oss.str().c_str());
 		}
 		break;
 

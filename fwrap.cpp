@@ -222,7 +222,12 @@ RunStringF(char* input, unsigned int input_length)
 int
 GetSelectedOutputRowCountF(void)
 {
-	return ::GetSelectedOutputRowCount();
+	int rows = ::GetSelectedOutputRowCount();
+	if (rows > 0)
+	{
+		rows -= 1;
+	}
+	return rows;
 }
 
 int
@@ -237,7 +242,10 @@ GetSelectedOutputValueF(int *row, int *col, int *vtype, double* dvalue, char* sv
 	VRESULT result;
 	VAR v;
 	VarInit(&v);
-	result = ::GetSelectedOutputValue(*row, *col, &v);
+	char buffer[100];
+
+	int adjcol = *col - 1;
+	result = ::GetSelectedOutputValue(*row, adjcol, &v);
 
 	switch (v.type) {
 	case TT_EMPTY:
@@ -249,10 +257,14 @@ GetSelectedOutputValueF(int *row, int *col, int *vtype, double* dvalue, char* sv
 	case TT_LONG:
 		*vtype = TT_DOUBLE;
 		*dvalue = (double)v.lVal;
+		::sprintf(buffer, "%d", v.lVal);
+		padfstring(svalue, buffer, svalue_length);
 		break;
 	case TT_DOUBLE:
 		*vtype = v.type;
 		*dvalue = v.dVal;
+		::sprintf(buffer, "%23.15e", v.dVal);
+		padfstring(svalue, buffer, svalue_length);
 		break;
 	case TT_STRING:
 		*vtype = v.type;
@@ -391,7 +403,7 @@ void __stdcall OUTPUTLINES(void)
 }
 int __stdcall GETSELECTEDOUTPUTROWCOUNT(void)
 {
-	return GetSelectedOutputRowCountF() - 1;
+	return GetSelectedOutputRowCountF();
 }
 int __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(void)
 {
@@ -399,8 +411,7 @@ int __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(void)
 }
 int __stdcall GETSELECTEDOUTPUTVALUE(int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
 {
-	int adjcol = *col - 1;
-	return GetSelectedOutputValueF(row, &adjcol, vtype, dvalue, svalue, svalue_length);
+	return GetSelectedOutputValueF(row, col, vtype, dvalue, svalue, svalue_length);
 }
 #if defined(__cplusplus)
 }
