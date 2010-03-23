@@ -235,6 +235,36 @@ IPhreeqc::~IPhreeqc(void)
 	delete this->SelectedOutput;
 }
 
+std::map<size_t, IPhreeqc*> IPhreeqc::Instances;
+size_t IPhreeqc::InstancesIndex = 0;
+
+int
+IPhreeqc::Create(void)
+{
+	int n = (int)IPhreeqc::InstancesIndex;
+	try
+	{
+		IPhreeqc* instance = new IPhreeqc;
+		if (instance)
+		{
+			IPhreeqc::Instances[IPhreeqc::InstancesIndex] = instance;
+			++IPhreeqc::InstancesIndex;
+		}
+	}
+	catch(...)
+	{
+		return -1;
+	}
+	return n;
+}
+
+void
+Destroy(int n)
+{
+
+}
+
+
 // the library singleton
 IPhreeqc* IPhreeqc::Instance = 0;
 

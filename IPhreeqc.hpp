@@ -74,7 +74,9 @@ public:
 	void ClearAccumulatedLines(void);
 
 	// Singleton for library
-	static IPhreeqc* LibraryInstance();
+	static IPhreeqc* LibraryInstance(void);
+	static int Create(void);
+	static void Destroy(int n);
 
 	// Callbacks
 	//
@@ -129,6 +131,8 @@ protected:
 
 private:
 	static IPhreeqc* Instance;
+	static std::map<size_t, IPhreeqc*> Instances;
+	static size_t InstancesIndex;
 };
 
 #endif /* _INC_IPHREEQC_HPP */
