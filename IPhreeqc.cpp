@@ -832,19 +832,12 @@ int IPhreeqc::output_handler(const int type, const char *err_str, const int stop
 	case OUTPUT_ERROR:
 		if (this)
 		{
+			this->AddError("ERROR: ");
+			this->AddError(err_str);
+			this->AddError("\n");
 			if (stop == STOP)
 			{
-				static std::string str(200, ' ');
-				static std::ostringstream oss(str);
-				oss << "ERROR: " << err_str << "\n";
-				oss << "Stopping.\n";
-				this->AddError(oss.str().c_str());
-			}
-			else
-			{
-				std::ostringstream oss;
-				oss << "ERROR: " << err_str << "\n";
-				this->AddError(oss.str().c_str());
+				this->AddError("Stopping.\n");
 			}
 		}
 		break;
