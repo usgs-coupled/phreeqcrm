@@ -2,12 +2,15 @@
 #if defined(R_SO)
 #include "phreeqc_files.inl"
 #else
-#include "phreeqcpp/phreeqc/phreeqc_files.c"
+// COMMENT: {3/25/2010 12:36:14 PM}#include "phreeqcpp/phreeqc/phreeqc_files.c"
 #endif
 
 // COMMENT: {3/2/2010 4:06:35 PM}static int module_isopen_handler(const int type);
 // COMMENT: {3/2/2010 4:06:35 PM}static int module_open_handler(const int type, const char *file_name);
 
+//{{{3/25/2010 12:37:19 PM}
+#include <cassert>
+//}}{3/25/2010 12:37:19 PM}
 #include "IPhreeqc.hpp"
 
 int IPhreeqc::module_handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
