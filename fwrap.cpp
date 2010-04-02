@@ -13,7 +13,7 @@ compile fortran with:
 #if defined(__GNUC__)
 #define LoadDatabaseF                  loaddatabasef_
 #define AccumulateLineF                accumulatelinef_
-#define RunF                           runf_
+#define RunAccumulatedF                runaccumulatedf_
 #define RunFileF                       runfilef_
 #define GetSelectedOutputValueF        getselectedoutputvaluef_
 #define OutputLastErrorF               outputlasterrorf_
