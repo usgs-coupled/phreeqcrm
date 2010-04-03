@@ -2,6 +2,7 @@
 #include <stdlib.h>  /* malloc */
 #include <memory.h>  /* memcpy */
 #include <assert.h>  /* assert */
+#include <stdio.h>   /* sprintf */
 #include "phrqtype.h"
 #include "IPhreeqc.h"
 
@@ -257,7 +258,7 @@ GetSelectedOutputValueF(int *row, int *col, int *vtype, double* dvalue, char* sv
 	case TT_LONG:
 		*vtype = TT_DOUBLE;
 		*dvalue = (double)v.lVal;
-		::sprintf(buffer, "%d", v.lVal);
+		::sprintf(buffer, "%ld", v.lVal);
 		padfstring(svalue, buffer, svalue_length);
 		break;
 	case TT_DOUBLE:

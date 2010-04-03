@@ -51,16 +51,16 @@
         AccumulateLine = AccumulateLineF(LINE)
       END FUNCTION AccumulateLine
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION Run(OUTPUT_ON, ERROR_ON, LOG_ON, SELECTED_ON)
+      FUNCTION RunAccumulated(OUTPUT_ON, ERROR_ON, LOG_ON, SELECTED_ON)
         IMPLICIT NONE
         LOGICAL  :: OUTPUT_ON
         LOGICAL  :: ERROR_ON
         LOGICAL  :: LOG_ON
         LOGICAL  :: SELECTED_ON
-        INTEGER  :: Run
+        INTEGER  :: RunAccumulated
 #if defined(_WIN32)
         INTERFACE 
-          FUNCTION RunF(OUTPUT_ON, ERROR_ON, LOG_ON, SELECTED_ON)
+          FUNCTION RunAccumulatedF(OUTPUT_ON, ERROR_ON, LOG_ON, SELECTED_ON)
             !DEC$ ATTRIBUTES C,REFERENCE::RunF
             !DEC$ ATTRIBUTES ALIAS:'_RunF'::RunF
             LOGICAL(KIND=4) :: OUTPUT_ON
@@ -68,13 +68,14 @@
             LOGICAL(KIND=4) :: LOG_ON
             LOGICAL(KIND=4) :: SELECTED_ON
             INTEGER(KIND=4) :: RunF
-          END FUNCTION RunF
+          END FUNCTION RunAccumulatedF
         END INTERFACE
 #else
-        INTEGER  :: RunF
+        INTEGER  :: RunAccumulatedF
 #endif
-        Run = RunF(OUTPUT_ON, ERROR_ON, LOG_ON, SELECTED_ON)
-      END FUNCTION Run
+        RunAccumulated = RunAccumulatedF(OUTPUT_ON, ERROR_ON,
+     &                                   LOG_ON, SELECTED_ON)
+      END FUNCTION RunAccumulated
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION RunFile(FILENAME,OUTPUT_ON,ERROR_ON,LOG_ON,SELECTED_ON)
         IMPLICIT NONE
@@ -161,7 +162,6 @@
         REAL*8           :: DVALUE
         CHARACTER(LEN=*) :: SVALUE
         INTEGER          :: GetSelectedOutputValue
-        INTEGER          :: adjcol
 #if defined(_WIN32)
         INTERFACE 
           FUNCTION Get(ROW,COL,VTYPE,DVALUE,SVALUE)
@@ -179,9 +179,8 @@
         GetSelectedOutputValue = Get(ROW,adjcol,VTYPE,DVALUE,SVALUE)
 #else
         INTEGER          :: GetSelectedOutputValueF
-        adjcol = col - 1
         GetSelectedOutputValue = GetSelectedOutputValueF(ROW,
-     &                     adjcol,VTYPE,DVALUE,SVALUE)
+     &                     COL,VTYPE,DVALUE,SVALUE)
 #endif
       END FUNCTION GetSelectedOutputValue
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

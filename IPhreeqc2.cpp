@@ -1,13 +1,11 @@
 #include "IPhreeqc2.h"
+#include "Phreeqc.h"                // Phreeqc
 
-// COMMENT: {3/25/2010 7:28:15 PM}#define protected public
-#include "Phreeqc.h"                /* Phreeqc */
-// COMMENT: {3/25/2010 7:28:18 PM}#undef protected
-
-#include <cassert>
-#include "ErrorReporter.hxx"
-#include "SelectedOutput.hxx"
-#include "dumper.h"
+#include <cassert>                  // assert
+#include <memory>                   // auto_ptr
+#include "ErrorReporter.hxx"        // CErrorReporter
+#include "SelectedOutput.hxx"       // CSelectedOutput
+#include "dumper.h"                 // dumper
 
 int istream_getc(void *cookie);
 
@@ -22,16 +20,16 @@ const char LOG_FILENAME[]    = "phreeqc.log";
 const char PUNCH_FILENAME[]  = "selected.out";
 
 IPhreeqc2::IPhreeqc2(void)
-: ErrorReporter(0)
-, WarningReporter(0)
-, SelectedOutput(0)
-, DatabaseLoaded(false)
+: DatabaseLoaded(false)
 , SelectedOutputOn(false)
 , OutputOn(false)
 , LogOn(false)
 , ErrorOn(false)
 , DumpOn(false)
 , DumpStringOn(false)
+, ErrorReporter(0)
+, WarningReporter(0)
+, SelectedOutput(0)
 , PhreeqcPtr(0)
 {
 	this->ErrorReporter   = new CErrorReporter<std::ostringstream>;
