@@ -10,15 +10,15 @@ CreateIPhreeqc(void)
 }
 
 IPL_RESULT
-DestroyIPhreeqc(int n)
+DestroyIPhreeqc(int id)
 {
-	return IPhreeqcLib::DestroyIPhreeqc(n);
+	return IPhreeqcLib::DestroyIPhreeqc(id);
 }
 
 int
-LoadDatabaseM(int n, const char* filename)
+LoadDatabaseM(int id, const char* filename)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->LoadDatabase(filename);
@@ -27,9 +27,9 @@ LoadDatabaseM(int n, const char* filename)
 }
 
 int
-LoadDatabaseStringM(int n, const char* input)
+LoadDatabaseStringM(int id, const char* input)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->LoadDatabaseString(input);
@@ -38,9 +38,9 @@ LoadDatabaseStringM(int n, const char* input)
 }
 
 int
-UnLoadDatabaseM(int n)
+UnLoadDatabaseM(int id)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->UnLoadDatabase();
@@ -50,10 +50,10 @@ UnLoadDatabaseM(int n)
 }
 
 const char*
-GetLastErrorStringM(int n)
+GetLastErrorStringM(int id)
 {
 	static const char err_msg[] = "GetLastErrorString: Bad instance.\n";
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->GetLastErrorString();
@@ -62,10 +62,10 @@ GetLastErrorStringM(int n)
 }
 
 const char*
-GetDumpStringM(int n)
+GetDumpStringM(int id)
 {
 	static const char empty[] = "";
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->GetDumpString();
@@ -74,9 +74,9 @@ GetDumpStringM(int n)
 }
 
 int
-GetDumpLineCountM(int n)
+GetDumpLineCountM(int id)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->GetDumpLineCount();
@@ -134,9 +134,9 @@ GetComponentM(int id, int n)
 }
 
 IPL_RESULT
-AccumulateLineM(int n, const char *line)
+AccumulateLineM(int id, const char *line)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		switch (IPhreeqcPtr->AccumulateLine(line))
@@ -153,9 +153,9 @@ AccumulateLineM(int n, const char *line)
 }
 
 int
-GetSelectedOutputOnM(int n)
+GetSelectedOutputOnM(int id)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		if (IPhreeqcPtr->GetSelectedOutputOn())
@@ -171,9 +171,9 @@ GetSelectedOutputOnM(int n)
 }
 
 IPL_RESULT
-SetSelectedOutputOnM(int n, int value)
+SetSelectedOutputOnM(int id, int value)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetSelectedOutputOn(value != 0);
@@ -183,9 +183,9 @@ SetSelectedOutputOnM(int n, int value)
 }
 
 int
-GetOutputOnM(int n)
+GetOutputOnM(int id)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		if (IPhreeqcPtr->GetOutputOn())
@@ -201,9 +201,9 @@ GetOutputOnM(int n)
 }
 
 IPL_RESULT
-SetOutputOnM(int n, int value)
+SetOutputOnM(int id, int value)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetOutputOn(value != 0);
@@ -213,9 +213,9 @@ SetOutputOnM(int n, int value)
 }
 
 int
-GetErrorOnM(int n)
+GetErrorOnM(int id)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		if (IPhreeqcPtr->GetErrorOn())
@@ -231,9 +231,9 @@ GetErrorOnM(int n)
 }
 
 IPL_RESULT
-SetErrorOnM(int n, int value)
+SetErrorOnM(int id, int value)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetErrorOn(value != 0);
@@ -243,9 +243,9 @@ SetErrorOnM(int n, int value)
 }
 
 int
-GetLogOnM(int n)
+GetLogOnM(int id)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		if (IPhreeqcPtr->GetLogOn())
@@ -261,9 +261,9 @@ GetLogOnM(int n)
 }
 
 IPL_RESULT
-SetLogOnM(int n, int value)
+SetLogOnM(int id, int value)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetLogOn(value != 0);
@@ -274,9 +274,9 @@ SetLogOnM(int n, int value)
 
 
 int
-GetDumpOnM(int n)
+GetDumpOnM(int id)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		if (IPhreeqcPtr->GetDumpOn())
@@ -292,9 +292,9 @@ GetDumpOnM(int n)
 }
 
 IPL_RESULT
-SetDumpOnM(int n, int value)
+SetDumpOnM(int id, int value)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetDumpOn(value != 0);
@@ -304,9 +304,9 @@ SetDumpOnM(int n, int value)
 }
 
 int
-GetDumpStringOnM(int n)
+GetDumpStringOnM(int id)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		if (IPhreeqcPtr->GetDumpStringOn())
@@ -322,9 +322,9 @@ GetDumpStringOnM(int n)
 }
 
 IPL_RESULT
-SetDumpStringOnM(int n, int value)
+SetDumpStringOnM(int id, int value)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetDumpStringOn(value != 0);
@@ -334,9 +334,9 @@ SetDumpStringOnM(int n, int value)
 }
 
 int
-RunAccumulatedM(int n)
+RunAccumulatedM(int id)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->RunAccumulated();
@@ -345,9 +345,9 @@ RunAccumulatedM(int n)
 }
 
 int
-RunFileM(int n, const char* filename)
+RunFileM(int id, const char* filename)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->RunFile(filename);
@@ -356,9 +356,20 @@ RunFileM(int n, const char* filename)
 }
 
 int
-GetSelectedOutputRowCountM(int n)
+RunStringM(int id, const char* input)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->RunString(input);
+	}
+	return IPL_BADINSTANCE;
+}
+
+int
+GetSelectedOutputRowCountM(int id)
+{
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->GetSelectedOutputRowCount();
@@ -367,9 +378,9 @@ GetSelectedOutputRowCountM(int n)
 }
 
 int
-GetSelectedOutputColumnCountM(int n)
+GetSelectedOutputColumnCountM(int id)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->GetSelectedOutputColumnCount();
@@ -379,9 +390,9 @@ GetSelectedOutputColumnCountM(int n)
 
 
 IPL_RESULT
-GetSelectedOutputValueM(int n, int row, int col, VAR* pVAR)
+GetSelectedOutputValueM(int id, int row, int col, VAR* pVAR)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		switch(IPhreeqcPtr->GetSelectedOutputValue(row, col, pVAR))
@@ -400,9 +411,9 @@ GetSelectedOutputValueM(int n, int row, int col, VAR* pVAR)
 }
 
 int
-AddErrorM(int n, const char* error_msg)
+AddErrorM(int id, const char* error_msg)
 {
-	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(n);
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		return (int)IPhreeqcPtr->AddError(error_msg);
@@ -439,12 +450,12 @@ IPhreeqcLib::CreateIPhreeqc(void)
 }
 
 IPL_RESULT
-IPhreeqcLib::DestroyIPhreeqc(int n)
+IPhreeqcLib::DestroyIPhreeqc(int id)
 {
 	IPL_RESULT retval = IPL_BADINSTANCE;
-	if (n >= 0)
+	if (id >= 0)
 	{
-		std::map<size_t, IPhreeqc2*>::iterator it = IPhreeqcLib::Instances.find(size_t(n));
+		std::map<size_t, IPhreeqc2*>::iterator it = IPhreeqcLib::Instances.find(size_t(id));
 		if (it != IPhreeqcLib::Instances.end())
 		{
 			delete (*it).second;
@@ -456,9 +467,9 @@ IPhreeqcLib::DestroyIPhreeqc(int n)
 }
 
 IPhreeqc2*
-IPhreeqcLib::GetInstance(int n)
+IPhreeqcLib::GetInstance(int id)
 {
-	std::map<size_t, IPhreeqc2*>::iterator it = IPhreeqcLib::Instances.find(size_t(n));
+	std::map<size_t, IPhreeqc2*>::iterator it = IPhreeqcLib::Instances.find(size_t(id));
 	if (it != IPhreeqcLib::Instances.end())
 	{
 		return (*it).second;
