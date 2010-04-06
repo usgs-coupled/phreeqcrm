@@ -10,7 +10,7 @@ CreateIPhreeqc(void)
 	return IPhreeqcLib::CreateIPhreeqc();
 }
 
-IPL_RESULT
+IPQ_RESULT
 DestroyIPhreeqc(int id)
 {
 	return IPhreeqcLib::DestroyIPhreeqc(id);
@@ -24,7 +24,7 @@ LoadDatabaseM(int id, const char* filename)
 	{
 		return IPhreeqcPtr->LoadDatabase(filename);
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -35,7 +35,7 @@ LoadDatabaseStringM(int id, const char* input)
 	{
 		return IPhreeqcPtr->LoadDatabaseString(input);
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -45,9 +45,9 @@ UnLoadDatabaseM(int id)
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->UnLoadDatabase();
-		return IPL_OK;
+		return IPQ_OK;
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 void
@@ -147,7 +147,7 @@ GetComponentM(int id, int n)
 	return err_msg;
 }
 
-IPL_RESULT
+IPQ_RESULT
 AccumulateLineM(int id, const char *line)
 {
 	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
@@ -156,14 +156,14 @@ AccumulateLineM(int id, const char *line)
 		switch (IPhreeqcPtr->AccumulateLine(line))
 		{
 		case VR_OK:
-			return IPL_OK;
+			return IPQ_OK;
 		case VR_OUTOFMEMORY:
-			return IPL_OUTOFMEMORY;
+			return IPQ_OUTOFMEMORY;
 		default:
 			assert(false);
 		}
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -181,19 +181,19 @@ GetSelectedOutputOnM(int id)
 			return 0;
 		}
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetSelectedOutputOnM(int id, int value)
 {
 	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetSelectedOutputOn(value != 0);
-		return IPL_OK;
+		return IPQ_OK;
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -211,19 +211,19 @@ GetOutputOnM(int id)
 			return 0;
 		}
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetOutputOnM(int id, int value)
 {
 	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetOutputOn(value != 0);
-		return IPL_OK;
+		return IPQ_OK;
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -241,19 +241,19 @@ GetErrorOnM(int id)
 			return 0;
 		}
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetErrorOnM(int id, int value)
 {
 	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetErrorOn(value != 0);
-		return IPL_OK;
+		return IPQ_OK;
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -271,19 +271,19 @@ GetLogOnM(int id)
 			return 0;
 		}
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetLogOnM(int id, int value)
 {
 	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetLogOn(value != 0);
-		return IPL_OK;
+		return IPQ_OK;
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 
@@ -302,19 +302,19 @@ GetDumpOnM(int id)
 			return 0;
 		}
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetDumpOnM(int id, int value)
 {
 	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetDumpOn(value != 0);
-		return IPL_OK;
+		return IPQ_OK;
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -332,19 +332,19 @@ GetDumpStringOnM(int id)
 			return 0;
 		}
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetDumpStringOnM(int id, int value)
 {
 	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetDumpStringOn(value != 0);
-		return IPL_OK;
+		return IPQ_OK;
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -355,7 +355,7 @@ RunAccumulatedM(int id)
 	{
 		return IPhreeqcPtr->RunAccumulated();
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -366,7 +366,7 @@ RunFileM(int id, const char* filename)
 	{
 		return IPhreeqcPtr->RunFile(filename);
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -377,7 +377,7 @@ RunStringM(int id, const char* input)
 	{
 		return IPhreeqcPtr->RunString(input);
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -388,7 +388,7 @@ GetSelectedOutputRowCountM(int id)
 	{
 		return IPhreeqcPtr->GetSelectedOutputRowCount();
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -399,11 +399,11 @@ GetSelectedOutputColumnCountM(int id)
 	{
 		return IPhreeqcPtr->GetSelectedOutputColumnCount();
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 
-IPL_RESULT
+IPQ_RESULT
 GetSelectedOutputValueM(int id, int row, int col, VAR* pVAR)
 {
 	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
@@ -411,17 +411,17 @@ GetSelectedOutputValueM(int id, int row, int col, VAR* pVAR)
 	{
 		switch(IPhreeqcPtr->GetSelectedOutputValue(row, col, pVAR))
 		{
-		case VR_OK:          return IPL_OK;
-		case VR_OUTOFMEMORY: return IPL_OUTOFMEMORY;
-		case VR_BADVARTYPE:  return IPL_BADVARTYPE;
-		case VR_INVALIDARG:  return IPL_INVALIDARG;
-		case VR_INVALIDROW:  return IPL_INVALIDROW;
-		case VR_INVALIDCOL:  return IPL_INVALIDCOL;
+		case VR_OK:          return IPQ_OK;
+		case VR_OUTOFMEMORY: return IPQ_OUTOFMEMORY;
+		case VR_BADVARTYPE:  return IPQ_BADVARTYPE;
+		case VR_INVALIDARG:  return IPQ_INVALIDARG;
+		case VR_INVALIDROW:  return IPQ_INVALIDROW;
+		case VR_INVALIDCOL:  return IPQ_INVALIDCOL;
 		default:
 			assert(false);
 		}
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -432,7 +432,7 @@ AddErrorM(int id, const char* error_msg)
 	{
 		return (int)IPhreeqcPtr->AddError(error_msg);
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 void
@@ -456,7 +456,7 @@ GetErrorLineCountM(int id)
 	{
 		return (int)IPhreeqcPtr->GetErrorLineCount();
 	}
-	return IPL_BADINSTANCE;
+	return IPQ_BADINSTANCE;
 }
 
 const char*
@@ -478,7 +478,7 @@ size_t IPhreeqcLib::InstancesIndex = 0;
 int
 IPhreeqcLib::CreateIPhreeqc(void)
 {
-	int n = IPL_OUTOFMEMORY;
+	int n = IPQ_OUTOFMEMORY;
 	try
 	{
 		IPhreeqc2* IPhreeqcPtr = new IPhreeqc2;
@@ -495,15 +495,15 @@ IPhreeqcLib::CreateIPhreeqc(void)
 	}
 	catch(...)
 	{
-		return IPL_OUTOFMEMORY;
+		return IPQ_OUTOFMEMORY;
 	}
 	return n;
 }
 
-IPL_RESULT
+IPQ_RESULT
 IPhreeqcLib::DestroyIPhreeqc(int id)
 {
-	IPL_RESULT retval = IPL_BADINSTANCE;
+	IPQ_RESULT retval = IPQ_BADINSTANCE;
 	if (id >= 0)
 	{
 		std::map<size_t, IPhreeqc2*>::iterator it = IPhreeqcLib::Instances.find(size_t(id));
@@ -511,7 +511,7 @@ IPhreeqcLib::DestroyIPhreeqc(int id)
 		{
 			delete (*it).second;
 			IPhreeqcLib::Instances.erase(it);
-			retval = IPL_OK;
+			retval = IPQ_OK;
 		}
 	}
 	return retval;

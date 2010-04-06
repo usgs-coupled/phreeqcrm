@@ -10,7 +10,7 @@ extern "C" {
 
   int LoadDatabaseF(int *id, char* filename, unsigned int filename_length);
 
-  IPL_RESULT AccumulateLineF(int *id, char *line, unsigned int line_length);
+  IPQ_RESULT AccumulateLineF(int *id, char *line, unsigned int line_length);
 
   int RunAccumulatedF(int *id);
 
@@ -22,19 +22,19 @@ extern "C" {
 
   int GetSelectedOutputColumnCountF(int *id);
 
-  IPL_RESULT GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
+  IPQ_RESULT GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
 
-  IPL_RESULT SetSelectedOutputOnF(int *id, int* selected_output_on);
+  IPQ_RESULT SetSelectedOutputOnF(int *id, int* selected_output_on);
 
-  IPL_RESULT SetOutputOnF(int *id, int* output_on);
+  IPQ_RESULT SetOutputOnF(int *id, int* output_on);
 
-  IPL_RESULT SetErrorOnF(int *id, int* error_on);
+  IPQ_RESULT SetErrorOnF(int *id, int* error_on);
 
-  IPL_RESULT SetLogOnF(int *id, int* log_on);
+  IPQ_RESULT SetLogOnF(int *id, int* log_on);
 
-  IPL_RESULT SetDumpOnF(int *id, int* dump_on);
+  IPQ_RESULT SetDumpOnF(int *id, int* dump_on);
 
-  IPL_RESULT SetDumpStringOnF(int *id, int* dump_string_on);
+  IPQ_RESULT SetDumpStringOnF(int *id, int* dump_string_on);
 
   int GetDumpLineCountF(int *id);
 

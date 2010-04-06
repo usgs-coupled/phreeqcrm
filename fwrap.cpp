@@ -96,17 +96,17 @@ LoadDatabaseStringF(int *id, char* input, unsigned int input_length)
 }
 
 
-IPL_RESULT
+IPQ_RESULT
 AccumulateLineF(int *id, char *line, unsigned int line_length)
 {
-	IPL_RESULT n;
+	IPQ_RESULT n;
 	char* cline;
 
 	cline = f2cstring(line, line_length);
 	if (!cline)
 	{
 		::AddErrorM(*id, "AccumulateLine: Out of memory.\n");
-		return IPL_OUTOFMEMORY;
+		return IPQ_OUTOFMEMORY;
 	}
 
 	n = ::AccumulateLineM(*id, cline);
@@ -114,37 +114,37 @@ AccumulateLineF(int *id, char *line, unsigned int line_length)
 	return n;
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetSelectedOutputOnF(int *id, int* sel_on)
 {
 	return ::SetSelectedOutputOnM(*id, *sel_on);
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetOutputOnF(int *id, int* output_on)
 {
 	return ::SetOutputOnM(*id, *output_on);
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetErrorOnF(int *id, int* error_on)
 {
 	return ::SetErrorOnM(*id, *error_on);
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetLogOnF(int *id, int* log_on)
 {
 	return ::SetLogOnM(*id, *log_on);
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetDumpOnF(int *id, int* dump_on)
 {
 	return ::SetDumpOnM(*id, *dump_on);
 }
 
-IPL_RESULT
+IPQ_RESULT
 SetDumpStringOnF(int *id, int* dump_string_on)
 {
 	return ::SetDumpStringOnM(*id, *dump_string_on);
@@ -243,10 +243,10 @@ GetSelectedOutputColumnCountF(int *id)
 	return ::GetSelectedOutputColumnCountM(*id);
 }
 
-IPL_RESULT
+IPQ_RESULT
 GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
 {
-	IPL_RESULT result;
+	IPQ_RESULT result;
 	VAR v;
 	VarInit(&v);
 	char buffer[100];
