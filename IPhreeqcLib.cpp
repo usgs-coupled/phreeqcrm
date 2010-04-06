@@ -1,6 +1,7 @@
 #include "IPhreeqcLib.h"
 #include "IPhreeqc2.h"
 #include <cassert>
+#include <iostream>
 
 
 int
@@ -47,6 +48,19 @@ UnLoadDatabaseM(int id)
 		return IPL_OK;
 	}
 	return IPL_BADINSTANCE;
+}
+
+void
+OutputLastErrorM(int id)
+{
+	static const char err_msg[] = "OutputLastError: Bad instance.\n";
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->OutputLastError();
+		return;
+	}
+	std::cout << err_msg << std::endl;
 }
 
 const char*
@@ -420,6 +434,43 @@ AddErrorM(int id, const char* error_msg)
 	}
 	return IPL_BADINSTANCE;
 }
+
+void
+OutputLinesM(int id)
+{
+	static const char err_msg[] = "OutputLines: Bad instance.\n";
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->OutputLines();
+		return;
+	}
+	std::cout << err_msg << std::endl;
+}
+
+int
+GetErrorLineCountM(int id)
+{
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return (int)IPhreeqcPtr->GetErrorLineCount();
+	}
+	return IPL_BADINSTANCE;
+}
+
+const char*
+GetErrorLineM(int id, int n)
+{
+	static const char err_msg[] = "GetErrorLine: Bad instance.\n";
+	IPhreeqc2* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetErrorLine(n);
+	}
+	return err_msg;
+}
+
 
 std::map<size_t, IPhreeqc2*> IPhreeqcLib::Instances;
 size_t IPhreeqcLib::InstancesIndex = 0;

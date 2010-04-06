@@ -19,6 +19,21 @@ const char ERROR_FILENAME[]  = "phreeqc.err";
 const char LOG_FILENAME[]    = "phreeqc.log";
 const char PUNCH_FILENAME[]  = "selected.out";
 
+int istream_getc(void *cookie)
+{
+	if (cookie)
+	{
+		std::istream* is = (std::istream*)cookie;
+		int n = is->get();
+		if (n == 13 && is->peek() == 10)
+		{
+			n = is->get();
+		}
+		return n;
+	}
+	return EOF;
+}
+
 IPhreeqc2::IPhreeqc2(void)
 : DatabaseLoaded(false)
 , SelectedOutputOn(false)
@@ -230,17 +245,12 @@ int IPhreeqc2::output_isopen2(const int type)
 	return 0;
 }
 
-// COMMENT: {3/25/2010 1:27:16 PM}int Phreeqc::EndRow(void)
-// COMMENT: {3/25/2010 1:27:16 PM}{
-// COMMENT: {3/25/2010 1:27:16 PM}	return OK;
-// COMMENT: {3/25/2010 1:27:16 PM}}
-
 int IPhreeqc2::EndRow(void)
 {
 	if (this->SelectedOutput->GetRowCount() <= 1)
 	{
-		assert(this->PhreeqcPtr->n_user_punch_index >= 0);
 		// ensure all user_punch headings are included
+		assert(this->PhreeqcPtr->n_user_punch_index >= 0);
 		for (int i = this->PhreeqcPtr->n_user_punch_index; i < this->PhreeqcPtr->user_punch_count_headings; ++i)
 		{
 			this->SelectedOutput->PushBackEmpty(this->PhreeqcPtr->user_punch_headings[i]);
@@ -269,10 +279,16 @@ const std::string& IPhreeqc2::GetAccumulatedLines(void)
 	return this->StringInput;
 }
 
+void IPhreeqc2::OutputLastError(void)
+{
+	std::cout << this->GetLastErrorString() << std::endl;
+}
+
 void IPhreeqc2::OutputLines(void)
 {
 	std::cout << this->StringInput.c_str() << std::endl;
 }
+
 
 int IPhreeqc2::LoadDatabase(const char* filename)
 {

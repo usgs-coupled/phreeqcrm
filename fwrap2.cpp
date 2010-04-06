@@ -1,4 +1,4 @@
-#include "Var.h"
+#include "IPhreeqcLib.h"  // TODO DELETE AFTER RENAMING TO IPhreeqc.h
 #include "fwrap.h"
 
 #if defined(_WIN32)
@@ -10,93 +10,97 @@ extern "C" {
 //
 // Intel Fortran compiler 9.1 /iface:cvf
 //
-int LOADDATABASE(char *filename, unsigned int len)
+int CREATEIPHREEQC(void)
 {
-	return LoadDatabaseF(filename, len);
+	return CreateIPhreeqcF();
 }
-void OUTPUTLASTERROR(void)
+int LOADDATABASE(int *id, char *filename, unsigned int len)
 {
-	OutputLastErrorF();
+	return LoadDatabaseF(id, filename, len);
 }
-int ACCUMULATELINE(char *line, unsigned int len)
+void OUTPUTLASTERROR(int *id)
 {
-	return AccumulateLineF(line, len);
+	OutputLastErrorF(id);
 }
-void SETSELECTEDOUTPUTON(int *selected_on)
+int ACCUMULATELINE(int *id, char *line, unsigned int len)
 {
-	SetSelectedOutputOnF(selected_on);
+	return AccumulateLineF(id, line, len);
 }
-void SETOUTPUTON(int *output_on)
+void SETSELECTEDOUTPUTON(int *id, int *selected_on)
 {
-	SetOutputOnF(output_on);
+	SetSelectedOutputOnF(id, selected_on);
 }
-void SETERRORON(int *error_on)
+void SETOUTPUTON(int *id, int *output_on)
 {
-	SetErrorOnF(error_on);
+	SetOutputOnF(id, output_on);
 }
-void SETLOGON(int *log_on)
+void SETERRORON(int *id, int *error_on)
 {
-	SetLogOnF(log_on);
+	SetErrorOnF(id, error_on);
 }
-void SETDUMPON(int *dump_on)
+void SETLOGON(int *id, int *log_on)
 {
-	SetDumpOnF(dump_on);
+	SetLogOnF(id, log_on);
 }
-void SETDUMPSTRINGON(int *dump_string_on)
+void SETDUMPON(int *id, int *dump_on)
 {
-	SetDumpStringOnF(dump_string_on);
+	SetDumpOnF(id, dump_on);
 }
-int GETDUMPLINECOUNT(void)
+void SETDUMPSTRINGON(int *id, int *dump_string_on)
 {
-	return GetDumpLineCountF();
+	SetDumpStringOnF(id, dump_string_on);
 }
-void GETDUMPLINE(int *n, char* line, unsigned int line_length)
+int GETDUMPLINECOUNT(int *id)
 {
-	GetDumpLineF(n, line, line_length);
+	return GetDumpLineCountF(id);
 }
-int GETERRORLINECOUNT(void)
+void GETDUMPLINE(int *id, int *n, char* line, unsigned int line_length)
 {
-	return GetErrorLineCountF();
+	GetDumpLineF(id, n, line, line_length);
 }
-void GETERRORLINE(int *n, char* line, unsigned int line_length)
+int GETERRORLINECOUNT(int *id)
 {
-	GetErrorLineF(n, line, line_length);
+	return GetErrorLineCountF(id);
 }
-int GETCOMPONENTCOUNT(void)
+void GETERRORLINE(int *id, int *n, char* line, unsigned int line_length)
 {
-	return GetComponentCountF();
+	GetErrorLineF(id, n, line, line_length);
 }
-void GETCOMPONENT(int *n, char* line, unsigned int line_length)
+int GETCOMPONENTCOUNT(int *id)
 {
-	GetComponentF(n, line, line_length);
+	return GetComponentCountF(id);
 }
-int RUNACCUMULATED(void)
+void GETCOMPONENT(int *id, int *n, char* line, unsigned int line_length)
 {
-	return RunAccumulatedF();
+	GetComponentF(id, n, line, line_length);
 }
-int RUNFILE(char *filename, unsigned int len)
+int RUNACCUMULATED(int *id)
 {
-	return RunFileF(filename, len);
+	return RunAccumulatedF(id);
 }
-int RUNSTRING(char *input, unsigned int len)
+int RUNFILE(int *id, char *filename, unsigned int len)
 {
-	return RunStringF(input, len);
+	return RunFileF(id, filename, len);
 }
-void OUTPUTLINES(void)
+int RUNSTRING(int *id, char *input, unsigned int len)
 {
-	OutputLinesF();
+	return RunStringF(id, input, len);
 }
-int GETSELECTEDOUTPUTROWCOUNT(void)
+void OUTPUTLINES(int *id)
 {
-	return GetSelectedOutputRowCountF();
+	OutputLinesF(id);
 }
-int GETSELECTEDOUTPUTCOLUMNCOUNT(void)
+int GETSELECTEDOUTPUTROWCOUNT(int *id)
 {
-	return GetSelectedOutputColumnCountF();
+	return GetSelectedOutputRowCountF(id);
 }
-int GETSELECTEDOUTPUTVALUE(int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+int GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
 {
-	return GetSelectedOutputValueF(row, col, vtype, dvalue, svalue, svalue_length);
+	return GetSelectedOutputColumnCountF(id);
+}
+int GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+{
+	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
 }
 
 #if defined(__cplusplus)

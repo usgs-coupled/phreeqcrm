@@ -6,50 +6,51 @@
 extern "C" {
 #endif
 
+  int CreateIPhreeqcF(void);
 
-  int LoadDatabaseF(char* filename, unsigned int filename_length);
+  int LoadDatabaseF(int *id, char* filename, unsigned int filename_length);
 
-  VRESULT AccumulateLineF(char *line, unsigned int line_length);
+  IPL_RESULT AccumulateLineF(int *id, char *line, unsigned int line_length);
 
-  int RunAccumulatedF(void);
+  int RunAccumulatedF(int *id);
 
-  int RunFileF(char* filename, unsigned int filename_length);
+  int RunFileF(int *id, char* filename, unsigned int filename_length);
 
-  int RunStringF(char* input, unsigned int input_length);
+  int RunStringF(int *id, char* input, unsigned int input_length);
 
-  int GetSelectedOutputRowCountF(void);
+  int GetSelectedOutputRowCountF(int *id);
 
-  int GetSelectedOutputColumnCountF(void);
+  int GetSelectedOutputColumnCountF(int *id);
 
-  VRESULT GetSelectedOutputValueF(int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
+  IPL_RESULT GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
 
-  void SetSelectedOutputOnF(int* selected_output_on);
+  IPL_RESULT SetSelectedOutputOnF(int *id, int* selected_output_on);
 
-  void SetOutputOnF(int* output_on);
+  IPL_RESULT SetOutputOnF(int *id, int* output_on);
 
-  void SetErrorOnF(int* error_on);
+  IPL_RESULT SetErrorOnF(int *id, int* error_on);
 
-  void SetLogOnF(int* log_on);
+  IPL_RESULT SetLogOnF(int *id, int* log_on);
 
-  void SetDumpOnF(int* dump_on);
+  IPL_RESULT SetDumpOnF(int *id, int* dump_on);
 
-  void SetDumpStringOnF(int* dump_string_on);
+  IPL_RESULT SetDumpStringOnF(int *id, int* dump_string_on);
 
-  int GetDumpLineCountF(void);
+  int GetDumpLineCountF(int *id);
 
-  void GetDumpLineF(int* n, char* line, unsigned int line_length);
+  void GetDumpLineF(int *id, int* n, char* line, unsigned int line_length);
 
-  int GetErrorLineCountF(void);
+  int GetErrorLineCountF(int *id);
 
-  void GetErrorLineF(int* n, char* line, unsigned int line_length);
+  void GetErrorLineF(int *id, int* n, char* line, unsigned int line_length);
 
-  int GetComponentCountF(void);
+  int GetComponentCountF(int *id);
 
-  void GetComponentF(int* n, char* line, unsigned int line_length);
+  void GetComponentF(int *id, int* n, char* line, unsigned int line_length);
 
-  void OutputLastErrorF(void);
+  void OutputLastErrorF(int *id);
 
-  void OutputLinesF(void);
+  void OutputLinesF(int *id);
 
 
 #if defined(__cplusplus)

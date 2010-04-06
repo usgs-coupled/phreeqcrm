@@ -1,4 +1,4 @@
-#include "Var.h"
+#include "IPhreeqcLib.h"  // TODO DELETE AFTER RENAMING TO IPhreeqc.h
 #include "fwrap.h"
 
 #if defined(_WIN32)
@@ -10,93 +10,97 @@ extern "C" {
 //
 // Intel Fortran compiler 9.1 /iface:cref /assume:underscore
 //
-int loaddatabase_(char *filename, unsigned int len)
+int createiphreeqc_(void)
 {
-	return LoadDatabaseF(filename, len);
+	return CreateIPhreeqcF();
 }
-void outputlasterror_(void)
+int loaddatabase_(int *id, char *filename, unsigned int len)
 {
-	OutputLastErrorF();
+	return LoadDatabaseF(id, filename, len);
 }
-int accumulateline_(char *line, unsigned int len)
+void outputlasterror_(int *id)
 {
-	return AccumulateLineF(line, len);
+	OutputLastErrorF(id);
 }
-void setselectedoutputon_(int *selected_on)
+int accumulateline_(int *id, char *line, unsigned int len)
 {
-	SetSelectedOutputOnF(selected_on);
+	return AccumulateLineF(id, line, len);
 }
-void setoutputon_(int *output_on)
+void setselectedoutputon_(int *id, int *selected_on)
 {
-	SetOutputOnF(output_on);
+	SetSelectedOutputOnF(id, selected_on);
 }
-void seterroron_(int *error_on)
+void setoutputon_(int *id, int *output_on)
 {
-	SetErrorOnF(error_on);
+	SetOutputOnF(id, output_on);
 }
-void setlogon_(int *log_on)
+void seterroron_(int *id, int *error_on)
 {
-	SetLogOnF(log_on);
+	SetErrorOnF(id, error_on);
 }
-void setdumpon_(int *dump_on)
+void setlogon_(int *id, int *log_on)
 {
-	SetLogOnF(dump_on);
+	SetLogOnF(id, log_on);
 }
-void setdumpstringon_(int *dump_string_on)
+void setdumpon_(int *id, int *dump_on)
 {
-	SetDumpStringOnF(dump_string_on);
+	SetLogOnF(id, dump_on);
 }
-int getdumplinecount_(void)
+void setdumpstringon_(int *id, int *dump_string_on)
 {
-	return GetDumpLineCountF();
+	SetDumpStringOnF(id, dump_string_on);
 }
-void getdumpline_(int *n, char* line, unsigned int line_length)
+int getdumplinecount_(int *id)
 {
-	GetDumpLineF(n, line, line_length);
+	return GetDumpLineCountF(id);
 }
-int geterrorlinecount_(void)
+void getdumpline_(int *id, int *n, char* line, unsigned int line_length)
 {
-	return GetErrorLineCountF();
+	GetDumpLineF(id, n, line, line_length);
 }
-void geterrorline_(int *n, char* line, unsigned int line_length)
+int geterrorlinecount_(int *id)
 {
-	GetErrorLineF(n, line, line_length);
+	return GetErrorLineCountF(id);
 }
-int getcomponentcount_(void)
+void geterrorline_(int *id, int *n, char* line, unsigned int line_length)
 {
-	return GetComponentCountF();
+	GetErrorLineF(id, n, line, line_length);
 }
-void getcomponent_(int *n, char* line, unsigned int line_length)
+int getcomponentcount_(int *id)
 {
-	GetComponentF(n, line, line_length);
+	return GetComponentCountF(id);
 }
-int runaccumulated_(void)
+void getcomponent_(int *id, int *n, char* line, unsigned int line_length)
 {
-	return RunAccumulatedF();
+	GetComponentF(id, n, line, line_length);
 }
-int runfile_(char *filename, unsigned int len)
+int runaccumulated_(int *id)
 {
-	return RunFileF(filename, len);
+	return RunAccumulatedF(id);
 }
-int runstring_(char *input, unsigned int len)
+int runfile_(int *id, char *filename, unsigned int len)
 {
-	return RunStringF(input, len);
+	return RunFileF(id, filename, len);
 }
-void outputlines_(void)
+int runstring_(int *id, char *input, unsigned int len)
 {
-	OutputLinesF();
+	return RunStringF(id, input, len);
 }
-int getselectedoutputrowcount_(void)
+void outputlines_(int *id)
 {
-	return GetSelectedOutputRowCountF();
+	OutputLinesF(id);
 }
-int getselectedoutputcolumncount_(void)
+int getselectedoutputrowcount_(int *id)
 {
-	return GetSelectedOutputColumnCountF();
+	return GetSelectedOutputRowCountF(id);
 }
-int getselectedoutputvalue_(int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+int getselectedoutputcolumncount_(int *id)
 {
-	return GetSelectedOutputValueF(row, col, vtype, dvalue, svalue, svalue_length);
+	return GetSelectedOutputColumnCountF(id);
+}
+int getselectedoutputvalue_(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+{
+	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
 }
 
 #if defined(__cplusplus)
