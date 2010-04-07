@@ -12,17 +12,31 @@ compile fortran with:
 	g77 -fno-second-underscore
 ********************************/
 #if defined(__GNUC__)
-#define LoadDatabaseF                  loaddatabasef_
 #define AccumulateLineF                accumulatelinef_
-#define RunAccumulatedF                runaccumulatedf_
-#define RunFileF                       runfilef_
+#define CreateIPhreeqcF                createiphreeqcf_
+#define GetComponentCountF             getcomponentcountf_
+#define GetComponentF                  getcomponentf_
+#define GetDumpLineCountF              getdumplinecountf_
+#define GetDumpLineF                   getdumplinef_
+#define GetErrorLineCountF             geterrorlinecountf_
+#define GetErrorLineF                  geterrorlinef_
+#define GetSelectedOutputColumnCountF  getselectedoutputcolumncountf_
+#define GetSelectedOutputRowCountF     getselectedoutputrowcountf_
 #define GetSelectedOutputValueF        getselectedoutputvaluef_
+#define LoadDatabaseF                  loaddatabasef_
+#define LoadDatabaseStringF            loaddatabasestringf_
 #define OutputLastErrorF               outputlasterrorf_
 #define OutputLinesF                   outputlinesf_
-#define GetSelectedOutputRowCountF     getselectedoutputrowcountf_
-#define GetSelectedOutputColumnCountF  getselectedoutputcolumncountf_
-#define GetSelectedOutputValueF        getselectedoutputvaluef_
-#define SystemF                        systemf_
+#define RunAccumulatedF                runaccumulatedf_
+#define RunFileF                       runfilef_
+#define RunStringF                     runstringf_
+#define SetDumpOnF                     setdumponf_
+#define SetDumpStringOnF               setdumpstringonf_
+#define SetErrorOnF                    seterroronf_
+#define SetLogOnF                      setlogonf_
+#define SetOutputOnF                   setoutputonf_
+#define SetSelectedOutputOnF           setselectedoutputonf_
+//#define SystemF                        systemf_
 #endif
 
 #include "fwrap.h"
@@ -86,7 +100,7 @@ LoadDatabaseStringF(int *id, char* input, unsigned int input_length)
 	cinput = f2cstring(input, input_length);
 	if (!cinput)
 	{
-		::AddErrorM(*id, "LoadDatabase: Out of memory.\n");
+		::AddErrorM(*id, "LoadDatabaseString: Out of memory.\n");
 		return VR_OUTOFMEMORY;
 	}
 
@@ -94,7 +108,6 @@ LoadDatabaseStringF(int *id, char* input, unsigned int input_length)
 	free(cinput);
 	return n;
 }
-
 
 IPQ_RESULT
 AccumulateLineF(int *id, char *line, unsigned int line_length)
@@ -181,9 +194,9 @@ GetComponentCountF(int *id)
 }
 
 void
-GetComponentF(int *id, int *n, char* line, unsigned int line_length)
+GetComponentF(int *id, int *n, char* comp, unsigned int line_length)
 {
-	padfstring(line, ::GetComponentM(*id, (*n) - 1), line_length);
+	padfstring(comp, ::GetComponentM(*id, (*n) - 1), line_length);
 }
 
 int
@@ -301,22 +314,22 @@ OutputLinesF(int *id)
 extern "C" {
 #endif
 
-// COMMENT: {4/5/2010 7:12:55 PM}int
-// COMMENT: {4/5/2010 7:12:55 PM}SystemF(char* command, unsigned int command_length)
-// COMMENT: {4/5/2010 7:12:55 PM}{
-// COMMENT: {4/5/2010 7:12:55 PM}	char* ccommand;
-// COMMENT: {4/5/2010 7:12:55 PM}
-// COMMENT: {4/5/2010 7:12:55 PM}	ccommand = f2cstring(command, command_length);
-// COMMENT: {4/5/2010 7:12:55 PM}	if (!ccommand)
-// COMMENT: {4/5/2010 7:12:55 PM}	{
-// COMMENT: {4/5/2010 7:12:55 PM}		AddError("System: Out of memory.\n");
-// COMMENT: {4/5/2010 7:12:55 PM}		return (int)VR_OUTOFMEMORY;
-// COMMENT: {4/5/2010 7:12:55 PM}	}
-// COMMENT: {4/5/2010 7:12:55 PM}
-// COMMENT: {4/5/2010 7:12:55 PM}	int n = system(ccommand);
-// COMMENT: {4/5/2010 7:12:55 PM}	free(ccommand);
-// COMMENT: {4/5/2010 7:12:55 PM}	return n;
-// COMMENT: {4/5/2010 7:12:55 PM}}
+int
+SystemF(char* command, unsigned int command_length)
+{
+	char* ccommand;
+
+	ccommand = f2cstring(command, command_length);
+	if (!ccommand)
+	{
+		//AddError("System: Out of memory.\n");
+		return (int)VR_OUTOFMEMORY;
+	}
+
+	int n = system(ccommand);
+	free(ccommand);
+	return n;
+}
 
 #if defined(__cplusplus)
 }

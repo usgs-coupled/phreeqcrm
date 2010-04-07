@@ -10,6 +10,8 @@ extern "C" {
 
   int LoadDatabaseF(int *id, char* filename, unsigned int filename_length);
 
+  int LoadDatabaseStringF(int *id, char* input, unsigned int input_length);
+
   IPQ_RESULT AccumulateLineF(int *id, char *line, unsigned int line_length);
 
   int RunAccumulatedF(int *id);
