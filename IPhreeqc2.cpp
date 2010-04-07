@@ -60,22 +60,22 @@ IPhreeqc2::~IPhreeqc2(void)
 	delete this->PhreeqcPtr;
 }
 
-int IPhreeqc2::handler2(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
+int IPhreeqc2::handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
 {
 	int n = OK;
 	IPhreeqc2 *pThis = (IPhreeqc2*)cookie;
 	switch (action)
 	{
 	case Phreeqc::ACTION_OPEN:
-		n = pThis->open_handler2(type, err_str);
+		n = pThis->open_handler(type, err_str);
 		break;
 
 	case Phreeqc::ACTION_OUTPUT:
-		n = pThis->output_handler2(type, err_str, stop, cookie, format, args);
+		n = pThis->output_handler(type, err_str, stop, cookie, format, args);
 		break;
 
 	default:
-		n = pThis->module_handler2(action, type, err_str, stop, cookie, format, args);
+		n = pThis->module_handler(action, type, err_str, stop, cookie, format, args);
 		break;
 	}
 
@@ -86,7 +86,7 @@ int IPhreeqc2::handler2(const int action, const int type, const char *err_str, c
 	return n;
 }
 
-int IPhreeqc2::output_handler2(const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
+int IPhreeqc2::output_handler(const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
 {
 	assert(cookie == this);
 
@@ -123,10 +123,10 @@ int IPhreeqc2::output_handler2(const int type, const char *err_str, const int st
 		break;
 
 	}
-	return module_handler2(Phreeqc::ACTION_OUTPUT, type, err_str, stop, cookie, format, args);
+	return module_handler(Phreeqc::ACTION_OUTPUT, type, err_str, stop, cookie, format, args);
 }
 
-int IPhreeqc2::open_handler2(const int type, const char *file_name)
+int IPhreeqc2::open_handler(const int type, const char *file_name)
 {
 	int n = OK;
 	switch (type)
@@ -141,27 +141,27 @@ int IPhreeqc2::open_handler2(const int type, const char *file_name)
 		}
 		if (this->SelectedOutputOn)
 		{
-			n = module_handler2(Phreeqc::ACTION_OPEN, type, file_name, CONTINUE, this, NULL, NULL);
+			n = module_handler(Phreeqc::ACTION_OPEN, type, file_name, CONTINUE, this, NULL, NULL);
 		}
 		break;
 	default:
-		n = module_handler2(Phreeqc::ACTION_OPEN, type, file_name, CONTINUE, this, NULL, NULL);
+		n = module_handler(Phreeqc::ACTION_OPEN, type, file_name, CONTINUE, this, NULL, NULL);
 		break;
 	}
 	return n;
 }
 
-int IPhreeqc2::module_handler2(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
+int IPhreeqc2::module_handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
 {
 	IPhreeqc2* pThis = (IPhreeqc2*) cookie;
 
 	switch (action)
 	{
 	case Phreeqc::ACTION_OPEN:
-		return pThis->module_open_handler2(type, err_str);
+		return pThis->module_open_handler(type, err_str);
 		break;
 	case ACTION_ISOPEN:
-		return pThis->module_isopen_handler2(type);
+		return pThis->module_isopen_handler(type);
 		break;
 	default:
 		return pThis->PhreeqcPtr->phreeqc_handler(action, type, err_str, stop, pThis->PhreeqcPtr, format, args);
@@ -170,7 +170,7 @@ int IPhreeqc2::module_handler2(const int action, const int type, const char *err
 	return ERROR;
 }
 
-int IPhreeqc2::module_isopen_handler2(const int type)
+int IPhreeqc2::module_isopen_handler(const int type)
 {
 	switch (type)
 	{
@@ -183,7 +183,7 @@ int IPhreeqc2::module_isopen_handler2(const int type)
 	return 0;
 }
 
-int IPhreeqc2::module_open_handler2(const int type, const char *file_name)
+int IPhreeqc2::module_open_handler(const int type, const char *file_name)
 {
 	assert(file_name && ::strlen(file_name));
 	switch (type)
@@ -233,7 +233,7 @@ int IPhreeqc2::module_open_handler2(const int type, const char *file_name)
 	return(OK);
 }
 
-int IPhreeqc2::output_isopen2(const int type)
+int IPhreeqc2::output_isopen(const int type)
 {
 	size_t i;
 	int isopen;
@@ -405,7 +405,7 @@ void IPhreeqc2::UnLoadDatabase(void)
 	// initialize phreeqc
 	//
 	this->PhreeqcPtr->clean_up();
-	this->PhreeqcPtr->add_output_callback(IPhreeqc2::handler2, this);
+	this->PhreeqcPtr->add_output_callback(IPhreeqc2::handler, this);
 	this->PhreeqcPtr->do_initialize();
 	this->PhreeqcPtr->input_error = 0;
 }
@@ -798,7 +798,7 @@ void IPhreeqc2::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_
 			// TRUE ???
 			//
 			//
-			if (!this->SelectedOutputOn) ASSERT(!this->output_isopen2(Phreeqc::OUTPUT_PUNCH));
+			if (!this->SelectedOutputOn) ASSERT(!this->output_isopen(Phreeqc::OUTPUT_PUNCH));
 
 			if (this->PhreeqcPtr->pr.punch == FALSE)
 			{
@@ -812,7 +812,7 @@ void IPhreeqc2::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_
 			{
 				if (this->PhreeqcPtr->punch.new_def == FALSE)
 				{
-					if (this->SelectedOutputOn && !this->output_isopen2(Phreeqc::OUTPUT_PUNCH))
+					if (this->SelectedOutputOn && !this->output_isopen(Phreeqc::OUTPUT_PUNCH))
 					{
 						//
 						// LoadDatabase
@@ -821,7 +821,7 @@ void IPhreeqc2::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_
 						//
 						std::string filename = this->PunchFileName;
 						this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_PUNCH, filename.c_str());
-						if (!this->output_isopen2(Phreeqc::OUTPUT_PUNCH))
+						if (!this->output_isopen(Phreeqc::OUTPUT_PUNCH))
 						{
 							std::ostringstream oss;
 							oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
@@ -837,7 +837,7 @@ void IPhreeqc2::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_
 				}
 				else
 				{
-					if (this->SelectedOutputOn && !this->output_isopen2(Phreeqc::OUTPUT_PUNCH))
+					if (this->SelectedOutputOn && !this->output_isopen(Phreeqc::OUTPUT_PUNCH))
 					{
 						// This is a special case which could not occur in
 						// phreeqc
@@ -852,7 +852,7 @@ void IPhreeqc2::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_
 							filename = this->PunchFileName;
 						}
 						this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_PUNCH, filename.c_str());
-						if (!this->output_isopen2(Phreeqc::OUTPUT_PUNCH))
+						if (!this->output_isopen(Phreeqc::OUTPUT_PUNCH))
 						{
 							std::ostringstream oss;
 							oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
@@ -869,7 +869,7 @@ void IPhreeqc2::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_
 			}
 		}
 
-		if (!this->SelectedOutputOn) ASSERT(!this->output_isopen2(Phreeqc::OUTPUT_PUNCH));
+		if (!this->SelectedOutputOn) ASSERT(!this->output_isopen(Phreeqc::OUTPUT_PUNCH));
 		/* the converse is not necessarily true */
 
 		this->PhreeqcPtr->n_user_punch_index = -1;
