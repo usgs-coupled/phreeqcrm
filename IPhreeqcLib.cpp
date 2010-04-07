@@ -1,5 +1,5 @@
 #include "IPhreeqc.h"
-#include "IPhreeqc2.h"
+#include "IPhreeqc.hpp"
 #include <cassert>
 #include <iostream>
 

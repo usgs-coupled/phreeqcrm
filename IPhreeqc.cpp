@@ -1,4 +1,4 @@
-#include "IPhreeqc2.h"
+#include "IPhreeqc.hpp"
 #include "Phreeqc.h"                // Phreeqc
 
 #include <cassert>                  // assert
