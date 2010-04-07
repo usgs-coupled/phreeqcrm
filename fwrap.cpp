@@ -83,11 +83,11 @@ LoadDatabaseF(int *id, char* filename, unsigned int filename_length)
 	cfilename = f2cstring(filename, filename_length);
 	if (!cfilename)
 	{
-		::AddErrorM(*id, "LoadDatabase: Out of memory.\n");
+		::AddError(*id, "LoadDatabase: Out of memory.\n");
 		return VR_OUTOFMEMORY;
 	}
 
-	int n = ::LoadDatabaseM(*id, cfilename);
+	int n = ::LoadDatabase(*id, cfilename);
 	free(cfilename);
 	return n;
 }
@@ -100,11 +100,11 @@ LoadDatabaseStringF(int *id, char* input, unsigned int input_length)
 	cinput = f2cstring(input, input_length);
 	if (!cinput)
 	{
-		::AddErrorM(*id, "LoadDatabaseString: Out of memory.\n");
+		::AddError(*id, "LoadDatabaseString: Out of memory.\n");
 		return VR_OUTOFMEMORY;
 	}
 
-	int n = ::LoadDatabaseStringM(*id, cinput);
+	int n = ::LoadDatabaseString(*id, cinput);
 	free(cinput);
 	return n;
 }
@@ -118,11 +118,11 @@ AccumulateLineF(int *id, char *line, unsigned int line_length)
 	cline = f2cstring(line, line_length);
 	if (!cline)
 	{
-		::AddErrorM(*id, "AccumulateLine: Out of memory.\n");
+		::AddError(*id, "AccumulateLine: Out of memory.\n");
 		return IPQ_OUTOFMEMORY;
 	}
 
-	n = ::AccumulateLineM(*id, cline);
+	n = ::AccumulateLine(*id, cline);
 	free(cline);
 	return n;
 }
@@ -130,79 +130,79 @@ AccumulateLineF(int *id, char *line, unsigned int line_length)
 IPQ_RESULT
 SetSelectedOutputOnF(int *id, int* sel_on)
 {
-	return ::SetSelectedOutputOnM(*id, *sel_on);
+	return ::SetSelectedOutputOn(*id, *sel_on);
 }
 
 IPQ_RESULT
 SetOutputOnF(int *id, int* output_on)
 {
-	return ::SetOutputOnM(*id, *output_on);
+	return ::SetOutputOn(*id, *output_on);
 }
 
 IPQ_RESULT
 SetErrorOnF(int *id, int* error_on)
 {
-	return ::SetErrorOnM(*id, *error_on);
+	return ::SetErrorOn(*id, *error_on);
 }
 
 IPQ_RESULT
 SetLogOnF(int *id, int* log_on)
 {
-	return ::SetLogOnM(*id, *log_on);
+	return ::SetLogOn(*id, *log_on);
 }
 
 IPQ_RESULT
 SetDumpOnF(int *id, int* dump_on)
 {
-	return ::SetDumpOnM(*id, *dump_on);
+	return ::SetDumpOn(*id, *dump_on);
 }
 
 IPQ_RESULT
 SetDumpStringOnF(int *id, int* dump_string_on)
 {
-	return ::SetDumpStringOnM(*id, *dump_string_on);
+	return ::SetDumpStringOn(*id, *dump_string_on);
 }
 
 int
 GetDumpLineCountF(int *id)
 {
-	return ::GetDumpLineCountM(*id);
+	return ::GetDumpLineCount(*id);
 }
 
 void
 GetDumpLineF(int *id, int* n, char* line, unsigned int line_length)
 {
-	padfstring(line, ::GetDumpLineM(*id, (*n) - 1), line_length);
+	padfstring(line, ::GetDumpLine(*id, (*n) - 1), line_length);
 }
 
 int
 GetErrorLineCountF(int *id)
 {
-	return ::GetErrorLineCountM(*id);
+	return ::GetErrorLineCount(*id);
 }
 
 void
 GetErrorLineF(int *id, int* n, char* line, unsigned int line_length)
 {
-	padfstring(line, ::GetErrorLineM(*id, (*n) - 1), line_length);
+	padfstring(line, ::GetErrorLine(*id, (*n) - 1), line_length);
 }
 
 int
 GetComponentCountF(int *id)
 {
-	return ::GetComponentCountM(*id);
+	return ::GetComponentCount(*id);
 }
 
 void
 GetComponentF(int *id, int *n, char* comp, unsigned int line_length)
 {
-	padfstring(comp, ::GetComponentM(*id, (*n) - 1), line_length);
+	padfstring(comp, ::GetComponent(*id, (*n) - 1), line_length);
 }
 
 int
 RunAccumulatedF(int *id)
 {
-	return ::RunAccumulatedM(*id);
+	return ::RunAccumulated(*id);
 }
 
 int
@@ -213,11 +213,11 @@ RunFileF(int *id, char* filename, unsigned int filename_length)
 	cfilename = f2cstring(filename, filename_length);
 	if (!cfilename)
 	{
-		::AddErrorM(*id, "RunFile: Out of memory.\n");
+		::AddError(*id, "RunFile: Out of memory.\n");
 		return (int)VR_OUTOFMEMORY;
 	}
 
-	int n = ::RunFileM(*id, cfilename);
+	int n = ::RunFile(*id, cfilename);
 	free(cfilename);
 	return n;
 }
@@ -230,11 +230,11 @@ RunStringF(int *id, char* input, unsigned int input_length)
 	cinput = f2cstring(input, input_length);
 	if (!cinput)
 	{
-		::AddErrorM(*id, "RunString: Out of memory.\n");
+		::AddError(*id, "RunString: Out of memory.\n");
 		return (int)VR_OUTOFMEMORY;
 	}
 
-	int n = ::RunStringM(*id, cinput);
+	int n = ::RunString(*id, cinput);
 	free(cinput);
 	return n;
 }
@@ -242,7 +242,7 @@ RunStringF(int *id, char* input, unsigned int input_length)
 int
 GetSelectedOutputRowCountF(int *id)
 {
-	int rows = ::GetSelectedOutputRowCountM(*id);
+	int rows = ::GetSelectedOutputRowCount(*id);
 	if (rows > 0)
 	{
 		rows -= 1;
@@ -253,7 +253,7 @@ GetSelectedOutputRowCountF(int *id)
 int
 GetSelectedOutputColumnCountF(int *id)
 {
-	return ::GetSelectedOutputColumnCountM(*id);
+	return ::GetSelectedOutputColumnCount(*id);
 }
 
 IPQ_RESULT
@@ -265,7 +265,7 @@ GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue,
 	char buffer[100];
 
 	int adjcol = *col - 1;
-	result = ::GetSelectedOutputValueM(*id, *row, adjcol, &v);
+	result = ::GetSelectedOutputValue(*id, *row, adjcol, &v);
 
 	switch (v.type)
 	{
@@ -301,13 +301,13 @@ GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue,
 void
 OutputLastErrorF(int *id)
 {
-	::OutputLastErrorM(*id);
+	::OutputLastError(*id);
 }
 
 void
 OutputLinesF(int *id)
 {
-	::OutputLinesM(*id);
+	::OutputLines(*id);
 }
 
 #if defined(__cplusplus)
