@@ -1,4 +1,4 @@
-#include "IPhreeqcLib.h"  // TODO DELETE AFTER RENAMING TO IPhreeqc.h
+#include "IPhreeqc.h"
 #include "fwrap.h"
 
 #if defined(_WIN32)

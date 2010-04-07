@@ -1,4 +1,4 @@
-#include "IPhreeqcLib.h"
+#include "IPhreeqc.h"
 #include "IPhreeqc2.h"
 #include <cassert>
 #include <iostream>

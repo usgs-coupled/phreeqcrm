@@ -4,7 +4,7 @@
 #include <assert.h>  /* assert */
 #include <stdio.h>   /* sprintf */
 #include "phrqtype.h"
-#include "IPhreeqcLib.h"  // TODO DELETE AFTER RENAMING TO IPhreeqc.h
+#include "IPhreeqc.h"
 
 /*******************************
 When using GNU gcc/g++/g77
