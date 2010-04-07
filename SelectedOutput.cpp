@@ -2,21 +2,21 @@
 //
 //////////////////////////////////////////////////////////////////////
 #if defined(WIN32)
-#include <windows.h>            // reqd to avoid namespace problems
+#include <windows.h>                // OutputDebugString
 #endif
 
 #if defined(_DEBUG)
-#include <sstream>              // std::ostringstream
+#include <sstream>                  // std::ostringstream
 #endif
 
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "SelectedOutput.hxx"
+#include "Debug.h"                  // ASSERT
+#include "SelectedOutput.hxx"       // CSelectedOutput
 
 const size_t RESERVE_ROWS = 80;
 const size_t RESERVE_COLS = 80;
-
 
 CSelectedOutput::CSelectedOutput()
 : m_nRowCount(0)
@@ -195,7 +195,8 @@ void CSelectedOutput::Dump(const char* heading)
 	oss << *this;
 	std::istringstream iss(oss.str());
 	std::string line;
-	while (std::getline(iss, line)) {
+	while (std::getline(iss, line))
+	{
 		::OutputDebugStringA(line.c_str());
 		::OutputDebugStringA("\n");
 	}
@@ -216,13 +217,13 @@ void CSelectedOutput::AssertValid(void)const
 
 std::ostream& operator<< (std::ostream &os, const CSelectedOutput &a)
 {
-#if defined(_WIN32)
 	os << "CSelectedOutput(rows=" << a.GetRowCount() << ", cols=" << a.GetColCount() << ")\n";
-#endif
 
 	CVar v;
-	for (size_t r = 0; r < a.GetRowCount(); ++r) {
-		for (size_t c = 0; c < a.GetColCount(); ++c) {
+	for (size_t r = 0; r < a.GetRowCount(); ++r)
+	{
+		for (size_t c = 0; c < a.GetColCount(); ++c)
+		{
 			a.Get((int)r, (int)c, &v);
 			os << v << ", ";
 			::VarClear(&v);

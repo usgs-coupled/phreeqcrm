@@ -1,8 +1,9 @@
-#include "IPhreeqc.hpp"
+#include <memory>                   // auto_ptr
+
+#include "IPhreeqc.hpp"             // IPhreeqc
 #include "Phreeqc.h"                // Phreeqc
 
-#include <cassert>                  // assert
-#include <memory>                   // auto_ptr
+#include "Debug.h"                  // ASSERT
 #include "ErrorReporter.hxx"        // CErrorReporter
 #include "SelectedOutput.hxx"       // CSelectedOutput
 #include "dumper.h"                 // dumper
@@ -34,7 +35,7 @@ int istream_getc(void *cookie)
 	return EOF;
 }
 
-IPhreeqc2::IPhreeqc2(void)
+IPhreeqc::IPhreeqc(void)
 : DatabaseLoaded(false)
 , SelectedOutputOn(false)
 , OutputOn(false)
@@ -55,15 +56,15 @@ IPhreeqc2::IPhreeqc2(void)
 	this->UnLoadDatabase();
 }
 
-IPhreeqc2::~IPhreeqc2(void)
+IPhreeqc::~IPhreeqc(void)
 {
 	delete this->PhreeqcPtr;
 }
 
-int IPhreeqc2::handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
+int IPhreeqc::handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
 {
 	int n = OK;
-	IPhreeqc2 *pThis = (IPhreeqc2*)cookie;
+	IPhreeqc *pThis = (IPhreeqc*)cookie;
 	switch (action)
 	{
 	case Phreeqc::ACTION_OPEN:
@@ -86,9 +87,9 @@ int IPhreeqc2::handler(const int action, const int type, const char *err_str, co
 	return n;
 }
 
-int IPhreeqc2::output_handler(const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
+int IPhreeqc::output_handler(const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
 {
-	assert(cookie == this);
+	ASSERT(cookie == this);
 
 	switch (type)
 	{
@@ -126,7 +127,7 @@ int IPhreeqc2::output_handler(const int type, const char *err_str, const int sto
 	return module_handler(Phreeqc::ACTION_OUTPUT, type, err_str, stop, cookie, format, args);
 }
 
-int IPhreeqc2::open_handler(const int type, const char *file_name)
+int IPhreeqc::open_handler(const int type, const char *file_name)
 {
 	int n = OK;
 	switch (type)
@@ -151,9 +152,9 @@ int IPhreeqc2::open_handler(const int type, const char *file_name)
 	return n;
 }
 
-int IPhreeqc2::module_handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
+int IPhreeqc::module_handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
 {
-	IPhreeqc2* pThis = (IPhreeqc2*) cookie;
+	IPhreeqc* pThis = (IPhreeqc*) cookie;
 
 	switch (action)
 	{
@@ -170,7 +171,7 @@ int IPhreeqc2::module_handler(const int action, const int type, const char *err_
 	return ERROR;
 }
 
-int IPhreeqc2::module_isopen_handler(const int type)
+int IPhreeqc::module_isopen_handler(const int type)
 {
 	switch (type)
 	{
@@ -178,14 +179,14 @@ int IPhreeqc2::module_isopen_handler(const int type)
 		if (this->PhreeqcPtr->punch_file) return 1;
 		break;
 	default:
-		assert(0);
+		ASSERT(0);
 	}
 	return 0;
 }
 
-int IPhreeqc2::module_open_handler(const int type, const char *file_name)
+int IPhreeqc::module_open_handler(const int type, const char *file_name)
 {
-	assert(file_name && ::strlen(file_name));
+	ASSERT(file_name && ::strlen(file_name));
 	switch (type)
 	{
 	case Phreeqc::OUTPUT_MESSAGE:
@@ -201,7 +202,7 @@ int IPhreeqc2::module_open_handler(const int type, const char *file_name)
 		break;
 
 	case Phreeqc::OUTPUT_ERROR:
-		assert(this->PhreeqcPtr->error_file != stderr);
+		ASSERT(this->PhreeqcPtr->error_file != stderr);
 		if (this->PhreeqcPtr->error_file != NULL)
 		{
 			::fclose(this->PhreeqcPtr->error_file);
@@ -233,7 +234,7 @@ int IPhreeqc2::module_open_handler(const int type, const char *file_name)
 	return(OK);
 }
 
-int IPhreeqc2::output_isopen(const int type)
+int IPhreeqc::output_isopen(const int type)
 {
 	size_t i;
 	int isopen;
@@ -245,12 +246,12 @@ int IPhreeqc2::output_isopen(const int type)
 	return 0;
 }
 
-int IPhreeqc2::EndRow(void)
+int IPhreeqc::EndRow(void)
 {
 	if (this->SelectedOutput->GetRowCount() <= 1)
 	{
 		// ensure all user_punch headings are included
-		assert(this->PhreeqcPtr->n_user_punch_index >= 0);
+		ASSERT(this->PhreeqcPtr->n_user_punch_index >= 0);
 		for (int i = this->PhreeqcPtr->n_user_punch_index; i < this->PhreeqcPtr->user_punch_count_headings; ++i)
 		{
 			this->SelectedOutput->PushBackEmpty(this->PhreeqcPtr->user_punch_headings[i]);
@@ -259,38 +260,38 @@ int IPhreeqc2::EndRow(void)
 	return this->SelectedOutput->EndRow();
 }
 
-void IPhreeqc2::ClearAccumulatedLines(void)
+void IPhreeqc::ClearAccumulatedLines(void)
 {
 	this->StringInput.erase();
 }
 
-size_t IPhreeqc2::AddError(const char* error_msg)
+size_t IPhreeqc::AddError(const char* error_msg)
 {
 	return this->ErrorReporter->AddError(error_msg);
 }
 
-size_t IPhreeqc2::AddWarning(const char* error_msg)
+size_t IPhreeqc::AddWarning(const char* error_msg)
 {
 	return this->WarningReporter->AddError(error_msg);
 }
 
-const std::string& IPhreeqc2::GetAccumulatedLines(void)
+const std::string& IPhreeqc::GetAccumulatedLines(void)
 {
 	return this->StringInput;
 }
 
-void IPhreeqc2::OutputLastError(void)
+void IPhreeqc::OutputLastError(void)
 {
 	std::cout << this->GetLastErrorString() << std::endl;
 }
 
-void IPhreeqc2::OutputLines(void)
+void IPhreeqc::OutputLines(void)
 {
 	std::cout << this->StringInput.c_str() << std::endl;
 }
 
 
-int IPhreeqc2::LoadDatabase(const char* filename)
+int IPhreeqc::LoadDatabase(const char* filename)
 {
 	try
 	{
@@ -336,7 +337,7 @@ int IPhreeqc2::LoadDatabase(const char* filename)
 	return this->PhreeqcPtr->input_error;
 }
 
-int IPhreeqc2::LoadDatabaseString(const char* input)
+int IPhreeqc::LoadDatabaseString(const char* input)
 {
 	try
 	{
@@ -374,7 +375,7 @@ int IPhreeqc2::LoadDatabaseString(const char* input)
 	return this->PhreeqcPtr->input_error;
 }
 
-void IPhreeqc2::UnLoadDatabase(void)
+void IPhreeqc::UnLoadDatabase(void)
 {
 	// init IPhreeqc
 	//
@@ -405,72 +406,72 @@ void IPhreeqc2::UnLoadDatabase(void)
 	// initialize phreeqc
 	//
 	this->PhreeqcPtr->clean_up();
-	this->PhreeqcPtr->add_output_callback(IPhreeqc2::handler, this);
+	this->PhreeqcPtr->add_output_callback(IPhreeqc::handler, this);
 	this->PhreeqcPtr->do_initialize();
 	this->PhreeqcPtr->input_error = 0;
 }
 
-bool IPhreeqc2::GetOutputOn(void)const
+bool IPhreeqc::GetOutputOn(void)const
 {
 	return this->OutputOn;
 }
 
-void IPhreeqc2::SetOutputOn(bool bValue)
+void IPhreeqc::SetOutputOn(bool bValue)
 {
 	this->OutputOn = bValue;
 }
 
-bool IPhreeqc2::GetSelectedOutputOn(void)const
+bool IPhreeqc::GetSelectedOutputOn(void)const
 {
 	return this->SelectedOutputOn;
 }
 
-void IPhreeqc2::SetSelectedOutputOn(bool bValue)
+void IPhreeqc::SetSelectedOutputOn(bool bValue)
 {
 	this->SelectedOutputOn = bValue;
 }
 
-bool IPhreeqc2::GetLogOn(void)const
+bool IPhreeqc::GetLogOn(void)const
 {
 	return this->LogOn;
 }
 
-void IPhreeqc2::SetLogOn(bool bValue)
+void IPhreeqc::SetLogOn(bool bValue)
 {
 	this->LogOn = bValue;
 }
 
-bool IPhreeqc2::GetDumpOn(void)const
+bool IPhreeqc::GetDumpOn(void)const
 {
 	return this->DumpOn;
 }
 
-void IPhreeqc2::SetDumpOn(bool bValue)
+void IPhreeqc::SetDumpOn(bool bValue)
 {
 	this->DumpOn = bValue;
 }
 
-bool IPhreeqc2::GetDumpStringOn(void)const
+bool IPhreeqc::GetDumpStringOn(void)const
 {
 	return this->DumpStringOn;
 }
 
-void IPhreeqc2::SetDumpStringOn(bool bValue)
+void IPhreeqc::SetDumpStringOn(bool bValue)
 {
 	this->DumpStringOn = bValue;
 }
 
-bool IPhreeqc2::GetErrorOn(void)const
+bool IPhreeqc::GetErrorOn(void)const
 {
 	return this->ErrorOn;
 }
 
-void IPhreeqc2::SetErrorOn(bool bValue)
+void IPhreeqc::SetErrorOn(bool bValue)
 {
 	this->ErrorOn = bValue;
 }
 
-void IPhreeqc2::AddSelectedOutput(const char* name, const char* format, va_list argptr)
+void IPhreeqc::AddSelectedOutput(const char* name, const char* format, va_list argptr)
 {
 	int bInt;
 	int bDouble;
@@ -644,25 +645,25 @@ void IPhreeqc2::AddSelectedOutput(const char* name, const char* format, va_list 
 	}
 }
 
-const char* IPhreeqc2::GetLastErrorString(void)
+const char* IPhreeqc::GetLastErrorString(void)
 {
 	this->LastErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
 	return this->LastErrorString.c_str();
 }
 
-const char* IPhreeqc2::GetLastWarningString(void)
+const char* IPhreeqc::GetLastWarningString(void)
 {
 	this->LastWarningString = ((CErrorReporter<std::ostringstream>*)this->WarningReporter)->GetOS()->str();
 	return this->LastWarningString.c_str();
 }
 
-const char* IPhreeqc2::GetDumpString(void)
+const char* IPhreeqc::GetDumpString(void)
 {
 	return this->DumpString.c_str();
 }
 
 
-void IPhreeqc2::check_database(const char* sz_routine)
+void IPhreeqc::check_database(const char* sz_routine)
 {
 	this->ErrorReporter->Clear();
 	this->SelectedOutput->Clear();
@@ -676,7 +677,7 @@ void IPhreeqc2::check_database(const char* sz_routine)
 	}
 }
 
-void IPhreeqc2::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie)
+void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie)
 {
 	std::auto_ptr<std::istringstream> auto_iss(NULL);
 	char token[MAX_LENGTH];
@@ -1008,7 +1009,7 @@ void IPhreeqc2::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_
 	this->update_errors();
 }
 
-VRESULT IPhreeqc2::AccumulateLine(const char *line)
+VRESULT IPhreeqc::AccumulateLine(const char *line)
 {
 	try
 	{
@@ -1025,7 +1026,7 @@ VRESULT IPhreeqc2::AccumulateLine(const char *line)
 	return VR_OUTOFMEMORY;
 }
 
-int IPhreeqc2::RunAccumulated(void)
+int IPhreeqc::RunAccumulated(void)
 {
 	static const char *sz_routine = "RunAccumulated";
 	try
@@ -1065,7 +1066,7 @@ int IPhreeqc2::RunAccumulated(void)
 	return this->PhreeqcPtr->input_error;
 }
 
-int IPhreeqc2::RunFile(const char* filename)
+int IPhreeqc::RunFile(const char* filename)
 {
 	static const char *sz_routine = "RunFile";
 	try
@@ -1112,7 +1113,7 @@ int IPhreeqc2::RunFile(const char* filename)
 	return this->PhreeqcPtr->input_error;
 }
 
-int IPhreeqc2::RunString(const char* input)
+int IPhreeqc::RunString(const char* input)
 {
 	static const char *sz_routine = "RunString";
 	try
@@ -1152,17 +1153,17 @@ int IPhreeqc2::RunString(const char* input)
 	return this->PhreeqcPtr->input_error;
 }
 
-int IPhreeqc2::GetSelectedOutputRowCount(void)const
+int IPhreeqc::GetSelectedOutputRowCount(void)const
 {
 	return (int)this->SelectedOutput->GetRowCount();
 }
 
-int IPhreeqc2::GetSelectedOutputColumnCount(void)const
+int IPhreeqc::GetSelectedOutputColumnCount(void)const
 {
 	return (int)this->SelectedOutput->GetColCount();
 }
 
-VRESULT IPhreeqc2::GetSelectedOutputValue(int row, int col, VAR* pVAR)
+VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 {
 	this->ErrorReporter->Clear();
 	if (!pVAR)
@@ -1197,12 +1198,12 @@ VRESULT IPhreeqc2::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 	return v;
 }
 
-int IPhreeqc2::GetDumpLineCount(void)const
+int IPhreeqc::GetDumpLineCount(void)const
 {
 	return (int)this->DumpLines.size();
 }
 
-const char* IPhreeqc2::GetDumpLine(int n)
+const char* IPhreeqc::GetDumpLine(int n)
 {
 	static const char empty[] = "";
 	if (n < 0 || n >= this->GetDumpLineCount())
@@ -1212,12 +1213,12 @@ const char* IPhreeqc2::GetDumpLine(int n)
 	return this->DumpLines[n].c_str();
 }
 
-int IPhreeqc2::GetErrorLineCount(void)const
+int IPhreeqc::GetErrorLineCount(void)const
 {
 	return (int)this->ErrorLines.size();
 }
 
-const char* IPhreeqc2::GetErrorLine(int n)
+const char* IPhreeqc::GetErrorLine(int n)
 {
 	static const char empty[] = "";
 	if (n < 0 || n >= this->GetErrorLineCount())
@@ -1227,7 +1228,7 @@ const char* IPhreeqc2::GetErrorLine(int n)
 	return this->ErrorLines[n].c_str();
 }
 
-void IPhreeqc2::update_errors(void)
+void IPhreeqc::update_errors(void)
 {
 	this->LastErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
 
@@ -1240,21 +1241,21 @@ void IPhreeqc2::update_errors(void)
 	}
 }
 
-std::list< std::string > IPhreeqc2::ListComponents(void)
+std::list< std::string > IPhreeqc::ListComponents(void)
 {
 	std::list< std::string > comps;
 	this->PhreeqcPtr->list_components(comps);
 	return comps;
 }
 
-size_t IPhreeqc2::GetComponentCount(void)
+size_t IPhreeqc::GetComponentCount(void)
 {
 	std::list< std::string > comps;
 	this->PhreeqcPtr->list_components(comps);
 	return comps.size();
 }
 
-const char* IPhreeqc2::GetComponent(int n)
+const char* IPhreeqc::GetComponent(int n)
 {
 	static const char empty[] = "";
 	this->Components = this->ListComponents();
