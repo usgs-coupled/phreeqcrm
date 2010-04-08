@@ -74,6 +74,19 @@ OutputLastError(int id)
 	std::cout << err_msg << std::endl;
 }
 
+void
+OutputLastWarning(int id)
+{
+	static const char err_msg[] = "OutputLastWarning: Bad instance.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->OutputLastWarning();
+		return;
+	}
+	std::cout << err_msg << std::endl;
+}
+
 const char*
 GetLastErrorString(int id)
 {
@@ -82,6 +95,18 @@ GetLastErrorString(int id)
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->GetLastErrorString();
+	}
+	return err_msg;
+}
+
+const char*
+GetLastWarningString(int id)
+{
+	static const char err_msg[] = "GetLastWarningString: Bad instance.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetLastWarningString();
 	}
 	return err_msg;
 }
@@ -482,6 +507,28 @@ GetErrorLine(int id, int n)
 	return err_msg;
 }
 
+int
+GetWarningLineCount(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return (int)IPhreeqcPtr->GetWarningLineCount();
+	}
+	return IPQ_BADINSTANCE;
+}
+
+const char*
+GetWarningLine(int id, int n)
+{
+	static const char err_msg[] = "GetWarningLine: Bad instance.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetWarningLine(n);
+	}
+	return err_msg;
+}
 
 std::map<size_t, IPhreeqc*> IPhreeqcLib::Instances;
 size_t IPhreeqcLib::InstancesIndex = 0;

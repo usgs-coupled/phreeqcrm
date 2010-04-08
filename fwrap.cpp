@@ -188,6 +188,18 @@ GetErrorLineF(int *id, int* n, char* line, unsigned int line_length)
 }
 
 int
+GetWarningLineCountF(int *id)
+{
+	return ::GetWarningLineCount(*id);
+}
+
+void
+GetWarningLineF(int *id, int* n, char* line, unsigned int line_length)
+{
+	padfstring(line, ::GetWarningLine(*id, (*n) - 1), line_length);
+}
+
+int
 GetComponentCountF(int *id)
 {
 	return ::GetComponentCount(*id);
@@ -401,6 +413,14 @@ int __stdcall GETERRORLINECOUNT(int *id)
 void __stdcall GETERRORLINE(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetErrorLineF(id, n, line, line_length);
+}
+int __stdcall GETWARNINGLINECOUNT(int *id)
+{
+	return GetWarningLineCountF(id);
+}
+void __stdcall GETWARNINGLINE(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetWarningLineF(id, n, line, line_length);
 }
 int __stdcall GETCOMPONENTCOUNT(int *id)
 {

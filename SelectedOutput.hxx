@@ -15,7 +15,6 @@
 #include <vector>
 #include "CVar.hxx"
 
-// TODO: templatize
 class CSelectedOutput
 {
 public:

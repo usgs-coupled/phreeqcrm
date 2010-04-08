@@ -46,6 +46,10 @@ extern "C" {
 
   void GetErrorLineF(int *id, int* n, char* line, unsigned int line_length);
 
+  int GetWarningLineCountF(int *id);
+
+  void GetWarningLineF(int *id, int* n, char* line, unsigned int line_length);
+
   int GetComponentCountF(int *id);
 
   void GetComponentF(int *id, int* n, char* line, unsigned int line_length);

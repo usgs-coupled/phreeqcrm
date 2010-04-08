@@ -270,9 +270,9 @@ size_t IPhreeqc::AddError(const char* error_msg)
 	return this->ErrorReporter->AddError(error_msg);
 }
 
-size_t IPhreeqc::AddWarning(const char* error_msg)
+size_t IPhreeqc::AddWarning(const char* warn_msg)
 {
-	return this->WarningReporter->AddError(error_msg);
+	return this->WarningReporter->AddError(warn_msg);
 }
 
 const std::string& IPhreeqc::GetAccumulatedLines(void)
@@ -283,6 +283,11 @@ const std::string& IPhreeqc::GetAccumulatedLines(void)
 void IPhreeqc::OutputLastError(void)
 {
 	std::cout << this->GetLastErrorString() << std::endl;
+}
+
+void IPhreeqc::OutputLastWarning(void)
+{
+	std::cout << this->GetLastWarningString() << std::endl;
 }
 
 void IPhreeqc::OutputLines(void)
@@ -1228,16 +1233,45 @@ const char* IPhreeqc::GetErrorLine(int n)
 	return this->ErrorLines[n].c_str();
 }
 
+int IPhreeqc::GetWarningLineCount(void)const
+{
+	return (int)this->WarningLines.size();
+}
+
+const char* IPhreeqc::GetWarningLine(int n)
+{
+	static const char empty[] = "";
+	if (n < 0 || n >= this->GetWarningLineCount())
+	{
+		return empty;
+	}
+	return this->WarningLines[n].c_str();
+}
+
 void IPhreeqc::update_errors(void)
 {
-	this->LastErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
-
 	this->ErrorLines.clear();
-	std::istringstream iss(this->LastErrorString);
-	std::string line;
-	while (std::getline(iss, line))
+	this->LastErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
+	if (this->LastErrorString.size())
 	{
-		this->ErrorLines.push_back(line);
+		std::istringstream iss(this->LastErrorString);
+		std::string line;
+		while (std::getline(iss, line))
+		{
+			this->ErrorLines.push_back(line);
+		}
+	}
+
+	this->WarningLines.clear();
+	this->LastWarningString = ((CErrorReporter<std::ostringstream>*)this->WarningReporter)->GetOS()->str();
+	if (this->LastWarningString.size())
+	{
+		std::istringstream iss(this->LastWarningString);
+		std::string line;
+		while (std::getline(iss, line))
+		{
+			this->WarningLines.push_back(line);
+		}
 	}
 }
 

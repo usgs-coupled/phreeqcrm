@@ -66,6 +66,14 @@ void geterrorline_(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetErrorLineF(id, n, line, line_length);
 }
+int getwarninglinecount_(int *id)
+{
+	return GetWarningLineCountF(id);
+}
+void getwarningline_(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetWarningLineF(id, n, line, line_length);
+}
 int getcomponentcount_(int *id)
 {
 	return GetComponentCountF(id);

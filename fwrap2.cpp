@@ -66,6 +66,14 @@ void GETERRORLINE(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetErrorLineF(id, n, line, line_length);
 }
+int GETWARNINGLINECOUNT(int *id)
+{
+	return GetWarningLineCountF(id);
+}
+void GETWARNINGLINE(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetWarningLineF(id, n, line, line_length);
+}
 int GETCOMPONENTCOUNT(int *id)
 {
 	return GetComponentCountF(id);
