@@ -23,8 +23,8 @@ compile fortran with:
 #define GetSelectedOutputColumnCountF  getselectedoutputcolumncountf_
 #define GetSelectedOutputRowCountF     getselectedoutputrowcountf_
 #define GetSelectedOutputValueF        getselectedoutputvaluef_
-#define GetWarningLineCountF           getwarninglinecountf
-#define GetWarningLineF                getwarninglinef
+#define GetWarningLineCountF           getwarninglinecountf_
+#define GetWarningLineF                getwarninglinef_
 #define LoadDatabaseF                  loaddatabasef_
 #define LoadDatabaseStringF            loaddatabasestringf_
 #define OutputLastErrorF               outputlasterrorf_
