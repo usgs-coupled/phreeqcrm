@@ -360,103 +360,103 @@ extern "C" {
 //
 // Intel Fortran compiler 9.1 /iface:cvf
 //
-int __stdcall CREATEIPHREEQC(void)
+DLL_EXPORT int __stdcall CREATEIPHREEQC(void)
 {
 	return CreateIPhreeqcF();
 }
-int __stdcall LOADDATABASE(int *id, char *filename, unsigned int len)
+DLL_EXPORT int __stdcall LOADDATABASE(int *id, char *filename, unsigned int len)
 {
 	return LoadDatabaseF(id, filename, len);
 }
-void __stdcall OUTPUTLASTERROR(int *id)
+DLL_EXPORT void __stdcall OUTPUTLASTERROR(int *id)
 {
 	OutputLastErrorF(id);
 }
-int __stdcall ACCUMULATELINE(int *id, char *line, unsigned int len)
+DLL_EXPORT int __stdcall ACCUMULATELINE(int *id, char *line, unsigned int len)
 {
 	return AccumulateLineF(id, line, len);
 }
-void __stdcall SETSELECTEDOUTPUTON(int *id, int *selected_on)
+DLL_EXPORT void __stdcall SETSELECTEDOUTPUTON(int *id, int *selected_on)
 {
 	SetSelectedOutputOnF(id, selected_on);
 }
-void __stdcall SETOUTPUTON(int *id, int *output_on)
+DLL_EXPORT void __stdcall SETOUTPUTON(int *id, int *output_on)
 {
 	SetOutputOnF(id, output_on);
 }
-void __stdcall SETERRORON(int *id, int *error_on)
+DLL_EXPORT void __stdcall SETERRORON(int *id, int *error_on)
 {
 	SetErrorOnF(id, error_on);
 }
-void __stdcall SETLOGON(int *id, int *log_on)
+DLL_EXPORT void __stdcall SETLOGON(int *id, int *log_on)
 {
 	SetLogOnF(id, log_on);
 }
-void __stdcall SETDUMPON(int *id, int *dump_on)
+DLL_EXPORT void __stdcall SETDUMPON(int *id, int *dump_on)
 {
 	SetDumpOnF(id, dump_on);
 }
-void __stdcall SETDUMPSTRINGON(int *id, int *dump_string_on)
+DLL_EXPORT void __stdcall SETDUMPSTRINGON(int *id, int *dump_string_on)
 {
 	SetDumpStringOnF(id, dump_string_on);
 }
-int __stdcall GETDUMPLINECOUNT(int *id)
+DLL_EXPORT int __stdcall GETDUMPLINECOUNT(int *id)
 {
 	return GetDumpLineCountF(id);
 }
-void __stdcall GETDUMPLINE(int *id, int *n, char* line, unsigned int line_length)
+DLL_EXPORT void __stdcall GETDUMPLINE(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetDumpLineF(id, n, line, line_length);
 }
-int __stdcall GETERRORLINECOUNT(int *id)
+DLL_EXPORT int __stdcall GETERRORLINECOUNT(int *id)
 {
 	return GetErrorLineCountF(id);
 }
-void __stdcall GETERRORLINE(int *id, int *n, char* line, unsigned int line_length)
+DLL_EXPORT void __stdcall GETERRORLINE(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetErrorLineF(id, n, line, line_length);
 }
-int __stdcall GETWARNINGLINECOUNT(int *id)
+DLL_EXPORT int __stdcall GETWARNINGLINECOUNT(int *id)
 {
 	return GetWarningLineCountF(id);
 }
-void __stdcall GETWARNINGLINE(int *id, int *n, char* line, unsigned int line_length)
+DLL_EXPORT void __stdcall GETWARNINGLINE(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetWarningLineF(id, n, line, line_length);
 }
-int __stdcall GETCOMPONENTCOUNT(int *id)
+DLL_EXPORT int __stdcall GETCOMPONENTCOUNT(int *id)
 {
 	return GetComponentCountF(id);
 }
-void __stdcall GETCOMPONENT(int *id, int *n, char* line, unsigned int line_length)
+DLL_EXPORT void __stdcall GETCOMPONENT(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetComponentF(id, n, line, line_length);
 }
-int __stdcall RUNACCUMULATED(int *id)
+DLL_EXPORT int __stdcall RUNACCUMULATED(int *id)
 {
 	return RunAccumulatedF(id);
 }
-int __stdcall RUNFILE(int *id, char *filename, unsigned int len)
+DLL_EXPORT int __stdcall RUNFILE(int *id, char *filename, unsigned int len)
 {
 	return RunFileF(id, filename, len);
 }
-int __stdcall RUNSTRING(int *id, char *input, unsigned int len)
+DLL_EXPORT int __stdcall RUNSTRING(int *id, char *input, unsigned int len)
 {
 	return RunStringF(id, input, len);
 }
-void __stdcall OUTPUTLINES(int *id)
+DLL_EXPORT void __stdcall OUTPUTLINES(int *id)
 {
 	OutputLinesF(id);
 }
-int __stdcall GETSELECTEDOUTPUTROWCOUNT(int *id)
+DLL_EXPORT int __stdcall GETSELECTEDOUTPUTROWCOUNT(int *id)
 {
 	return GetSelectedOutputRowCountF(id);
 }
-int __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
+DLL_EXPORT int __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
 {
 	return GetSelectedOutputColumnCountF(id);
 }
-int __stdcall GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+DLL_EXPORT int __stdcall GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
 {
 	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
 }

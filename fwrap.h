@@ -1,6 +1,11 @@
 #ifndef __FWRAP__H
 #define __FWRAP__H
 
+#if defined(_WINDLL)
+#define DLL_EXPORT __declspec(dllexport)
+#else
+#define DLL_EXPORT
+#endif
 
 #if defined(__cplusplus)
 extern "C" {

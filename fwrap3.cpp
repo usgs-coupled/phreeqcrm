@@ -10,103 +10,103 @@ extern "C" {
 //
 // Intel Fortran compiler 9.1 /iface:cref /assume:underscore
 //
-int createiphreeqc_(void)
+DLL_EXPORT int createiphreeqc_(void)
 {
 	return CreateIPhreeqcF();
 }
-int loaddatabase_(int *id, char *filename, unsigned int len)
+DLL_EXPORT int loaddatabase_(int *id, char *filename, unsigned int len)
 {
 	return LoadDatabaseF(id, filename, len);
 }
-void outputlasterror_(int *id)
+DLL_EXPORT void outputlasterror_(int *id)
 {
 	OutputLastErrorF(id);
 }
-int accumulateline_(int *id, char *line, unsigned int len)
+DLL_EXPORT int accumulateline_(int *id, char *line, unsigned int len)
 {
 	return AccumulateLineF(id, line, len);
 }
-void setselectedoutputon_(int *id, int *selected_on)
+DLL_EXPORT void setselectedoutputon_(int *id, int *selected_on)
 {
 	SetSelectedOutputOnF(id, selected_on);
 }
-void setoutputon_(int *id, int *output_on)
+DLL_EXPORT void setoutputon_(int *id, int *output_on)
 {
 	SetOutputOnF(id, output_on);
 }
-void seterroron_(int *id, int *error_on)
+DLL_EXPORT void seterroron_(int *id, int *error_on)
 {
 	SetErrorOnF(id, error_on);
 }
-void setlogon_(int *id, int *log_on)
+DLL_EXPORT void setlogon_(int *id, int *log_on)
 {
 	SetLogOnF(id, log_on);
 }
-void setdumpon_(int *id, int *dump_on)
+DLL_EXPORT void setdumpon_(int *id, int *dump_on)
 {
 	SetLogOnF(id, dump_on);
 }
-void setdumpstringon_(int *id, int *dump_string_on)
+DLL_EXPORT void setdumpstringon_(int *id, int *dump_string_on)
 {
 	SetDumpStringOnF(id, dump_string_on);
 }
-int getdumplinecount_(int *id)
+DLL_EXPORT int getdumplinecount_(int *id)
 {
 	return GetDumpLineCountF(id);
 }
-void getdumpline_(int *id, int *n, char* line, unsigned int line_length)
+DLL_EXPORT void getdumpline_(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetDumpLineF(id, n, line, line_length);
 }
-int geterrorlinecount_(int *id)
+DLL_EXPORT int geterrorlinecount_(int *id)
 {
 	return GetErrorLineCountF(id);
 }
-void geterrorline_(int *id, int *n, char* line, unsigned int line_length)
+DLL_EXPORT void geterrorline_(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetErrorLineF(id, n, line, line_length);
 }
-int getwarninglinecount_(int *id)
+DLL_EXPORT int getwarninglinecount_(int *id)
 {
 	return GetWarningLineCountF(id);
 }
-void getwarningline_(int *id, int *n, char* line, unsigned int line_length)
+DLL_EXPORT void getwarningline_(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetWarningLineF(id, n, line, line_length);
 }
-int getcomponentcount_(int *id)
+DLL_EXPORT int getcomponentcount_(int *id)
 {
 	return GetComponentCountF(id);
 }
-void getcomponent_(int *id, int *n, char* line, unsigned int line_length)
+DLL_EXPORT void getcomponent_(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetComponentF(id, n, line, line_length);
 }
-int runaccumulated_(int *id)
+DLL_EXPORT int runaccumulated_(int *id)
 {
 	return RunAccumulatedF(id);
 }
-int runfile_(int *id, char *filename, unsigned int len)
+DLL_EXPORT int runfile_(int *id, char *filename, unsigned int len)
 {
 	return RunFileF(id, filename, len);
 }
-int runstring_(int *id, char *input, unsigned int len)
+DLL_EXPORT int runstring_(int *id, char *input, unsigned int len)
 {
 	return RunStringF(id, input, len);
 }
-void outputlines_(int *id)
+DLL_EXPORT void outputlines_(int *id)
 {
 	OutputLinesF(id);
 }
-int getselectedoutputrowcount_(int *id)
+DLL_EXPORT int getselectedoutputrowcount_(int *id)
 {
 	return GetSelectedOutputRowCountF(id);
 }
-int getselectedoutputcolumncount_(int *id)
+DLL_EXPORT int getselectedoutputcolumncount_(int *id)
 {
 	return GetSelectedOutputColumnCountF(id);
 }
-int getselectedoutputvalue_(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+DLL_EXPORT int getselectedoutputvalue_(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
 {
 	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
 }
