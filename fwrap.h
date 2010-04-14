@@ -13,9 +13,13 @@ extern "C" {
 
   int CreateIPhreeqcF(void);
 
+  int DestroyIPhreeqcF(int *id);
+
   int LoadDatabaseF(int *id, char* filename, unsigned int filename_length);
 
   int LoadDatabaseStringF(int *id, char* input, unsigned int input_length);
+
+  int UnLoadDatabaseF(int *id);
 
   IPQ_RESULT AccumulateLineF(int *id, char *line, unsigned int line_length);
 
@@ -60,6 +64,8 @@ extern "C" {
   void GetComponentF(int *id, int* n, char* line, unsigned int line_length);
 
   void OutputLastErrorF(int *id);
+
+  void OutputLastWarningF(int *id);
 
   void OutputLinesF(int *id);
 

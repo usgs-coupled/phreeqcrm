@@ -6,6 +6,14 @@
         CreateIPhreeqc = CreateIPhreeqcF()
       END FUNCTION CreateIPhreeqc
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION DestroyIPhreeqc(ID)
+        IMPLICIT NONE
+        INTEGER          :: ID
+        INTEGER          :: DestroyIPhreeqc
+        INTEGER          :: DestroyIPhreeqcF
+        DestroyIPhreeqc = DestroyIPhreeqcF(ID)
+      END FUNCTION DestroyIPhreeqc
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION LoadDatabase(ID,FILENAME)
         IMPLICIT NONE
         INTEGER          :: ID
@@ -23,6 +31,24 @@
         INTEGER          :: LoadDatabaseStringF
         LoadDatabaseString = LoadDatabaseStringF(ID,INPUT)
       END FUNCTION LoadDatabaseString
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION UnLoadDatabase(ID)
+        IMPLICIT NONE
+        INTEGER          :: ID
+        INTEGER          :: UnLoadDatabase
+        INTEGER          :: UnLoadDatabaseF
+        UnLoadDatabase = UnLoadDatabaseF(ID)
+      END FUNCTION UnLoadDatabase
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      SUBROUTINE OutputLastError
+        IMPLICIT NONE
+        CALL OutputLastErrorF
+      END SUBROUTINE OutputLastError
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      SUBROUTINE OutputLastWarning
+        IMPLICIT NONE
+        CALL OutputLastWarningF
+      END SUBROUTINE OutputLastWarning
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION AccumulateLine(ID,LINE)
         IMPLICIT NONE
@@ -197,16 +223,29 @@
      &                     COL,VTYPE,DVALUE,SVALUE)
       END FUNCTION GetSelectedOutputValue
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      SUBROUTINE OutputLastError
-        IMPLICIT NONE
-        CALL OutputLastErrorF
-      END SUBROUTINE OutputLastError
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       SUBROUTINE OutputLines(ID)
         IMPLICIT NONE
         INTEGER          :: ID
         CALL OutputLinesF(ID)
       END SUBROUTINE OutputLines
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetWarningLineCount(ID)
+        IMPLICIT NONE
+        INTEGER :: ID
+        INTEGER :: GetWarningLineCount
+        INTEGER :: GetWarningLineCountF
+        GetWarningLineCount = GetWarningLineCountF(ID)
+      END FUNCTION GetWarningLineCount
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetWarningLine(ID,N,LINE)
+        IMPLICIT NONE
+        INTEGER          :: ID
+        INTEGER          :: N
+        CHARACTER(LEN=*) :: LINE        
+        INTEGER          :: GetWarningLine
+        INTEGER          :: GetWarningLineF
+        GetWarningLine = GetWarningLineF(ID,N,LINE)
+      END FUNCTION GetWarningLine
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!      FUNCTION System(COMMAND)
 !!        IMPLICIT NONE

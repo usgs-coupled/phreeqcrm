@@ -14,6 +14,7 @@ compile fortran with:
 #if defined(__GNUC__)
 #define AccumulateLineF                accumulatelinef_
 #define CreateIPhreeqcF                createiphreeqcf_
+#define DestroyIPhreeqcF               destroyiphreeqcf_
 #define GetComponentCountF             getcomponentcountf_
 #define GetComponentF                  getcomponentf_
 #define GetDumpLineCountF              getdumplinecountf_
@@ -28,6 +29,7 @@ compile fortran with:
 #define LoadDatabaseF                  loaddatabasef_
 #define LoadDatabaseStringF            loaddatabasestringf_
 #define OutputLastErrorF               outputlasterrorf_
+#define OutputLastWarningF             outputlastwarningf_
 #define OutputLinesF                   outputlinesf_
 #define RunAccumulatedF                runaccumulatedf_
 #define RunFileF                       runfilef_
@@ -38,6 +40,7 @@ compile fortran with:
 #define SetLogOnF                      setlogonf_
 #define SetOutputOnF                   setoutputonf_
 #define SetSelectedOutputOnF           setselectedoutputonf_
+#define UnLoadDatabaseF                unloaddatabasef_
 //#define SystemF                        systemf_
 #endif
 
@@ -78,6 +81,12 @@ CreateIPhreeqcF(void)
 }
 
 int
+DestroyIPhreeqcF(int *id)
+{
+	return ::DestroyIPhreeqc(*id);
+}
+
+int
 LoadDatabaseF(int *id, char* filename, unsigned int filename_length)
 {
 	char* cfilename;
@@ -109,6 +118,12 @@ LoadDatabaseStringF(int *id, char* input, unsigned int input_length)
 	int n = ::LoadDatabaseString(*id, cinput);
 	free(cinput);
 	return n;
+}
+
+int
+UnLoadDatabaseF(int *id)
+{
+	return ::UnLoadDatabase(*id);
 }
 
 IPQ_RESULT
@@ -319,6 +334,12 @@ OutputLastErrorF(int *id)
 }
 
 void
+OutputLastWarningF(int *id)
+{
+	::OutputLastWarning(*id);
+}
+
+void
 OutputLinesF(int *id)
 {
 	::OutputLines(*id);
@@ -364,13 +385,29 @@ DLL_EXPORT int __stdcall CREATEIPHREEQC(void)
 {
 	return CreateIPhreeqcF();
 }
+DLL_EXPORT int __stdcall DESTROYIPHREEQC(int *id)
+{
+	return DestroyIPhreeqcF(id);
+}
 DLL_EXPORT int __stdcall LOADDATABASE(int *id, char *filename, unsigned int len)
 {
 	return LoadDatabaseF(id, filename, len);
 }
+DLL_EXPORT int __stdcall LOADDATABASESTRING(int *id, char *input, unsigned int len)
+{
+	return LoadDatabaseStringF(id, input, len);
+}
+DLL_EXPORT int __stdcall UNLOADDATABASE(int *id)
+{
+	return UnLoadDatabaseF(id);
+}
 DLL_EXPORT void __stdcall OUTPUTLASTERROR(int *id)
 {
 	OutputLastErrorF(id);
+}
+DLL_EXPORT void __stdcall OUTPUTLASTWARNING(int *id)
+{
+	OutputLastWarningF(id);
 }
 DLL_EXPORT int __stdcall ACCUMULATELINE(int *id, char *line, unsigned int len)
 {

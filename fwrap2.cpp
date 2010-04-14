@@ -14,13 +14,29 @@ DLL_EXPORT int CREATEIPHREEQC(void)
 {
 	return CreateIPhreeqcF();
 }
+DLL_EXPORT int DESTROYIPHREEQC(int *id)
+{
+	return DestroyIPhreeqcF(id);
+}
 DLL_EXPORT int LOADDATABASE(int *id, char *filename, unsigned int len)
 {
 	return LoadDatabaseF(id, filename, len);
 }
+DLL_EXPORT int LOADDATABASESTRING(int *id, char *input, unsigned int len)
+{
+	return LoadDatabaseStringF(id, input, len);
+}
+DLL_EXPORT int UNLOADDATABASE(int *id)
+{
+	return UnLoadDatabaseF(id);
+}
 DLL_EXPORT void OUTPUTLASTERROR(int *id)
 {
 	OutputLastErrorF(id);
+}
+DLL_EXPORT void OUTPUTLASTWARNING(int *id)
+{
+	OutputLastWarningF(id);
 }
 DLL_EXPORT int ACCUMULATELINE(int *id, char *line, unsigned int len)
 {
