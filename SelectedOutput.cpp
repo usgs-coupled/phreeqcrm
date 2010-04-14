@@ -1,240 +1,22 @@
 // SelectedOutput.cpp: implementation of the CSelectedOutput class.
 //
 //////////////////////////////////////////////////////////////////////
+#if defined(WIN32)
+#include <windows.h>                // OutputDebugString
+#endif
+
 #if defined(_DEBUG)
-#pragma warning(disable : 4786) // disable truncation warning
-#include <sstream>              // std::ostringstream
-#include <windows.h>            // ::OutputDebugString
+#include <sstream>                  // std::ostringstream
 #endif
 
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "SelectedOutput.hxx"
-#include "phreeqcns.hxx"
+#include "Debug.h"                  // ASSERT
+#include "SelectedOutput.hxx"       // CSelectedOutput
 
 const size_t RESERVE_ROWS = 80;
 const size_t RESERVE_COLS = 80;
-
-
-int EndRow(void);
-void AddSelectedOutput(const char* name, const char* format, va_list argptr);
-int warning_msg (const char *err_str);
-
-int EndRow(void)
-{
-	if (CSelectedOutput::Instance()->GetRowCount() <= 1) {
-		// ensure all user_punch headings are included
-		for (int i = n_user_punch_index; i < user_punch_count_headings; ++i) {
-			CSelectedOutput::Instance()->PushBackEmpty(user_punch_headings[i]);
-		}
-	}
-	return CSelectedOutput::Instance()->EndRow();
-}
-
-int PushBackDouble(const char* key, double dVal)
-{
-	return CSelectedOutput::Instance()->PushBackDouble(key, dVal);
-}
-
-int PushBackLong(const char* key, long lVal)
-{
-	return CSelectedOutput::Instance()->PushBackLong(key, lVal);
-}
-
-int PushBackString(const char* key, const char* sVal)
-{
-	return CSelectedOutput::Instance()->PushBackString(key, sVal);
-}
-
-int PushBackEmpty(const char* key)
-{
-	return CSelectedOutput::Instance()->PushBackEmpty(key);
-}
-
-
-void AddSelectedOutput(const char* name, const char* format, va_list argptr)
-{
-	int bInt;
-	int bDouble;
-	int bString;
-
-	int state;
-	int bLongDouble;
-	char ch;
-
-
-	/* state values
-	0 Haven't found start(%)
-	1 Just read start(%)
-	2 Just read Flags(-0+ #) (zero or more)
-	3 Just read Width
-	4 Just read Precision start (.)
-	5 Just read Size modifier
-	6 Just read Type
-	*/
-
-	if (name == NULL) {
-		return;
-	}
-
-	bDouble = 0;
-	bInt = 0;
-	bString = 0;
-
-	bLongDouble = 0;
-
-	state = 0;
-	ch = *format++;
-	while (ch != '\0') {
-		switch (state) {
-	case 0: /* looking for Start specification (%) */
-		switch (ch) {
-	case '%':
-		state = 1;
-		break;
-	default:
-		break;
-		}
-		ch = *format++;
-		break;
-	case 1: /* reading Flags (zero or more(-,+,0,# or space)) */
-		switch (ch) {
-	case '-': case '0': case '+': case ' ': case '#':
-		ch = *format++;
-		break;
-	default:
-		state = 2;
-		break;
-		}
-		break;
-	case 2: /* reading Minimum field width (decimal integer constant) */
-		switch (ch) {
-	case '.':
-		state = 3;
-		ch = *format++;
-		break;
-	case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-		ch = *format++;
-		break;
-	default:
-		state = 4;
-		break;
-		}
-		break;
-	case 3: /* reading Precision specification (period already read) */
-		switch (ch)
-		{
-		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-			ch = *format++;
-			break;
-		default:
-			state = 4;
-			break;
-		}
-		break;
-	case 4: /* reading Size modifier */
-		switch (ch)
-		{
-		case 'l':
-			ch = *format++;
-			break;
-		case 'L':
-			bLongDouble = 1;
-			ch = *format++;
-			break;
-		case 'h':
-			ch = *format++;
-			break;
-		}
-		state = 5;
-		break;
-	case 5: /* reading Conversion letter */
-		switch (ch) {
-	case 'c':
-		break;
-	case 'd':
-	case 'i':
-		bInt = 1;
-		break;
-	case 'n':
-	case 'o':
-	case 'p':
-		break;
-	case 's':
-		bString = 1;
-		break;
-	case 'u':
-	case 'x':
-	case 'X':
-	case '%':
-		break;
-	case 'f':
-	case 'e':
-	case 'E':
-	case 'g':
-	case 'G':
-		bDouble = 1;
-		break;
-	default:
-		ASSERT(false);
-		break;
-		}
-		ch = '\0';  /* done */
-		break;
-		}
-	}
-
-	if (bDouble) {
-		double valDouble;
-
-		if (bLongDouble) {
-			valDouble = (double)va_arg(argptr, long double);
-		}
-		else {
-			valDouble = va_arg(argptr, double);
-		}
-
-		CSelectedOutput::Instance()->PushBackDouble(name, valDouble);
-	}
-	else if (bInt) {
-		int valInt;
-		valInt = va_arg(argptr, int);
-
-		CSelectedOutput::Instance()->PushBackLong(name, (long)valInt);
-	}
-	else if (bString) {
-		char* valString;
-		valString = (char *)va_arg(argptr, char *);
-
-		CSelectedOutput::Instance()->PushBackString(name, valString);
-	}
-	else {
-		ASSERT(false);
-		CSelectedOutput::Instance()->PushBackEmpty(name);
-	}
-}
-
-// COMMENT: {11/16/2004 10:18:22 PM}CSelectedOutput CSelectedOutput::singleton;
-CSelectedOutput* CSelectedOutput::s_instance = 0;
-
-CSelectedOutput* CSelectedOutput::Instance()
-{
-	if (s_instance == 0)
-	{
-		s_instance = new CSelectedOutput;
-	}
-	return s_instance;
-}
-
-void CSelectedOutput::Release()
-{
-	if (s_instance)
-	{
-		delete s_instance;
-		s_instance = 0;
-	}
-}
 
 CSelectedOutput::CSelectedOutput()
 : m_nRowCount(0)
@@ -328,9 +110,6 @@ int CSelectedOutput::EndRow(void)
 			}
 		}
 	}
-// COMMENT: {11/27/2006 7:22:37 PM}#if defined(_DEBUG)
-// COMMENT: {11/27/2006 7:22:37 PM}	this->AssertValid();
-// COMMENT: {11/27/2006 7:22:37 PM}#endif
 	return 0;
 }
 
@@ -416,7 +195,8 @@ void CSelectedOutput::Dump(const char* heading)
 	oss << *this;
 	std::istringstream iss(oss.str());
 	std::string line;
-	while (std::getline(iss, line)) {
+	while (std::getline(iss, line))
+	{
 		::OutputDebugStringA(line.c_str());
 		::OutputDebugStringA("\n");
 	}
@@ -437,13 +217,13 @@ void CSelectedOutput::AssertValid(void)const
 
 std::ostream& operator<< (std::ostream &os, const CSelectedOutput &a)
 {
-#if defined(_WIN32)
 	os << "CSelectedOutput(rows=" << a.GetRowCount() << ", cols=" << a.GetColCount() << ")\n";
-#endif
 
 	CVar v;
-	for (size_t r = 0; r < a.GetRowCount(); ++r) {
-		for (size_t c = 0; c < a.GetColCount(); ++c) {
+	for (size_t r = 0; r < a.GetRowCount(); ++r)
+	{
+		for (size_t c = 0; c < a.GetColCount(); ++c)
+		{
 			a.Get((int)r, (int)c, &v);
 			os << v << ", ";
 			::VarClear(&v);

@@ -1,194 +1,217 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION LoadDatabase(FILENAME)
+      FUNCTION CreateIPhreeqc()
         IMPLICIT NONE
+        INTEGER          :: CreateIPhreeqc
+        INTEGER          :: CreateIPhreeqcF
+        CreateIPhreeqc = CreateIPhreeqcF()
+      END FUNCTION CreateIPhreeqc
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION LoadDatabase(ID,FILENAME)
+        IMPLICIT NONE
+        INTEGER          :: ID
         CHARACTER(LEN=*) :: FILENAME
         INTEGER          :: LoadDatabase
-#if defined(_WIN32)
-        INTERFACE 
-          FUNCTION LoadDatabaseF(FILENAME)
-            !DEC$ ATTRIBUTES C,REFERENCE::LoadDatabaseF
-            !DEC$ ATTRIBUTES ALIAS:'_LoadDatabaseF'::LoadDatabaseF
-            CHARACTER(LEN=*) :: FILENAME
-            INTEGER(KIND=4) :: LoadDatabaseF
-          END FUNCTION LoadDatabaseF
-        END INTERFACE
-#else
         INTEGER          :: LoadDatabaseF
-#endif
-
-        LoadDatabase = LoadDatabaseF(FILENAME)
+        LoadDatabase = LoadDatabaseF(ID,FILENAME)
       END FUNCTION LoadDatabase
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      SUBROUTINE OutputLastError
+      FUNCTION LoadDatabaseString(ID,INPUT)
         IMPLICIT NONE
-#if defined(_WIN32)
-        INTERFACE 
-          SUBROUTINE OutputLastErrorF
-            !DEC$ ATTRIBUTES C,REFERENCE::OutputLastErrorF
-            !DEC$ ATTRIBUTES ALIAS:'_OutputLastError'::OutputLastErrorF
-          END SUBROUTINE OutputLastErrorF
-        END INTERFACE
-#endif
-        CALL OutputLastErrorF
-      END SUBROUTINE OutputLastError
+        INTEGER          :: ID
+        CHARACTER(LEN=*) :: INPUT
+        INTEGER          :: LoadDatabaseString
+        INTEGER          :: LoadDatabaseStringF
+        LoadDatabaseString = LoadDatabaseStringF(ID,INPUT)
+      END FUNCTION LoadDatabaseString
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION AccumulateLine(LINE)
+      FUNCTION AccumulateLine(ID,LINE)
         IMPLICIT NONE
+        INTEGER          :: ID
         CHARACTER(LEN=*) :: LINE
         INTEGER          :: AccumulateLine
-#if defined(_WIN32)
-        INTERFACE 
-          FUNCTION AccumulateLineF(LINE)
-            !DEC$ ATTRIBUTES C,REFERENCE::AccumulateLineF
-            !DEC$ ATTRIBUTES ALIAS:'_AccumulateLineF'::AccumulateLineF
-            CHARACTER(LEN=*) :: LINE
-            INTEGER(KIND=4)  :: AccumulateLineF
-          END FUNCTION AccumulateLineF
-        END INTERFACE
-#else
         INTEGER          :: AccumulateLineF
-#endif
-        AccumulateLine = AccumulateLineF(LINE)
+        AccumulateLine = AccumulateLineF(ID,LINE)
       END FUNCTION AccumulateLine
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION Run(OUTPUT_ON, ERROR_ON, LOG_ON, SELECTED_ON)
+      FUNCTION SetSelectedOutputOn(ID,SELECTED_ON)
         IMPLICIT NONE
-        LOGICAL  :: OUTPUT_ON
-        LOGICAL  :: ERROR_ON
-        LOGICAL  :: LOG_ON
-        LOGICAL  :: SELECTED_ON
-        INTEGER  :: Run
-#if defined(_WIN32)
-        INTERFACE 
-          FUNCTION RunF(OUTPUT_ON, ERROR_ON, LOG_ON, SELECTED_ON)
-            !DEC$ ATTRIBUTES C,REFERENCE::RunF
-            !DEC$ ATTRIBUTES ALIAS:'_RunF'::RunF
-            LOGICAL(KIND=4) :: OUTPUT_ON
-            LOGICAL(KIND=4) :: ERROR_ON
-            LOGICAL(KIND=4) :: LOG_ON
-            LOGICAL(KIND=4) :: SELECTED_ON
-            INTEGER(KIND=4) :: RunF
-          END FUNCTION RunF
-        END INTERFACE
-#else
-        INTEGER  :: RunF
-#endif
-        Run = RunF(OUTPUT_ON, ERROR_ON, LOG_ON, SELECTED_ON)
-      END FUNCTION Run
+        INTEGER :: ID
+		LOGICAL :: SELECTED_ON
+        INTEGER :: SetSelectedOutputOn
+        INTEGER :: SetSelectedOutputOnF
+        SetSelectedOutputOn = SetSelectedOutputOnF(ID,SELECTED_ON)
+      END FUNCTION SetSelectedOutputOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION RunFile(FILENAME,OUTPUT_ON,ERROR_ON,LOG_ON,SELECTED_ON)
+      FUNCTION SetOutputOn(ID,OUTPUT_ON)
         IMPLICIT NONE
+        INTEGER :: ID
+		LOGICAL :: OUTPUT_ON
+        INTEGER :: SetOutputOn
+        INTEGER :: SetOutputOnF
+        SetOutputOn = SetOutputOnF(ID,OUTPUT_ON)
+      END FUNCTION SetOutputOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetErrorOn(ID,ERROR_ON)
+        IMPLICIT NONE
+        INTEGER :: ID
+		LOGICAL :: ERROR_ON
+        INTEGER :: SetErrorOn
+        INTEGER :: SetErrorOnF
+        SetErrorOn = SetErrorOnF(ID,ERROR_ON)
+      END FUNCTION SetErrorOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetLogOn(ID,LOG_ON)
+        IMPLICIT NONE
+        INTEGER :: ID
+		LOGICAL :: LOG_ON
+        INTEGER :: SetLogOn
+        INTEGER :: SetLogOnF
+        SetLogOn = SetLogOnF(ID,LOG_ON)
+      END FUNCTION SetLogOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetDumpOn(ID,DUMP_ON)
+        IMPLICIT NONE
+        INTEGER :: ID
+		LOGICAL :: DUMP_ON
+        INTEGER :: SetDumpOn
+        INTEGER :: SetDumpOnF
+        SetDumpOn = SetDumpOnF(ID,DUMP_ON)
+      END FUNCTION SetDumpOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetDumpStringOn(ID,DUMP_STRING_ON)
+        IMPLICIT NONE
+        INTEGER :: ID
+		LOGICAL :: DUMP_STRING_ON
+        INTEGER :: SetDumpStringOn
+        INTEGER :: SetDumpStringOnF
+        SetDumpStringOn = SetDumpStringOnF(ID,DUMP_STRING_ON)
+      END FUNCTION SetDumpStringOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetDumpLineCount(ID)
+        IMPLICIT NONE
+        INTEGER :: ID
+        INTEGER :: GetDumpLineCount
+        INTEGER :: GetDumpLineCountF
+        GetDumpLineCount = GetDumpLineCountF(ID)
+      END FUNCTION GetDumpLineCount
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetDumpLine(ID,N,LINE)
+        IMPLICIT NONE
+        INTEGER          :: ID
+        INTEGER          :: N
+        CHARACTER(LEN=*) :: LINE        
+        INTEGER          :: GetDumpLine
+        INTEGER          :: GetDumpLineF
+        GetDumpLine = GetDumpLineF(ID,N,LINE)
+      END FUNCTION GetDumpLine
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetErrorLineCount(ID)
+        IMPLICIT NONE
+        INTEGER :: ID
+        INTEGER :: GetErrorLineCount
+        INTEGER :: GetErrorLineCountF
+        GetErrorLineCount = GetErrorLineCountF(ID)
+      END FUNCTION GetErrorLineCount
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetErrorLine(ID,N,LINE)
+        IMPLICIT NONE
+        INTEGER          :: ID
+        INTEGER          :: N
+        CHARACTER(LEN=*) :: LINE        
+        INTEGER          :: GetErrorLine
+        INTEGER          :: GetErrorLineF
+        GetErrorLine = GetErrorLineF(ID,N,LINE)
+      END FUNCTION GetErrorLine
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetComponentCount(ID)
+        IMPLICIT NONE
+        INTEGER :: ID
+        INTEGER :: GetComponentCount
+        INTEGER :: GetComponentCountF
+        GetComponentCount = GetComponentCountF(ID)
+      END FUNCTION GetComponentCount
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetComponent(ID,N,COMP)
+        IMPLICIT NONE
+        INTEGER          :: ID
+        INTEGER          :: N
+        CHARACTER(LEN=*) :: COMP        
+        INTEGER          :: GetComponent
+        INTEGER          :: GetComponentF
+        GetComponent = GetComponentF(ID,N,COMP)
+      END FUNCTION GetComponent
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION RunAccumulated(ID)
+        IMPLICIT NONE
+        INTEGER  :: ID
+        INTEGER  :: RunAccumulated
+        INTEGER  :: RunAccumulatedF
+        RunAccumulated = RunAccumulatedF(ID)
+      END FUNCTION RunAccumulated
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION RunFile(ID,FILENAME)
+        IMPLICIT NONE
+        INTEGER          :: ID
         CHARACTER(LEN=*) :: FILENAME
-        LOGICAL          :: OUTPUT_ON
-        LOGICAL          :: ERROR_ON
-        LOGICAL          :: LOG_ON
-        LOGICAL          :: SELECTED_ON
         INTEGER          :: RunFile
-#if defined(_WIN32)
-        INTERFACE 
-          FUNCTION RunFileF(OUT_ON, ERR_ON, LOG_ON, SEL_ON, FILE)
-            !DEC$ ATTRIBUTES C,REFERENCE::RunFileF
-            !DEC$ ATTRIBUTES ALIAS:'_RunFileF'::RunFileF
-            LOGICAL(KIND=4)  :: OUT_ON
-            LOGICAL(KIND=4)  :: ERR_ON
-            LOGICAL(KIND=4)  :: LOG_ON
-            LOGICAL(KIND=4)  :: SEL_ON
-            CHARACTER(LEN=*) :: FILE
-            INTEGER(KIND=4)  :: RunFileF
-          END FUNCTION RunFileF
-        END INTERFACE
-#else
         INTEGER          :: RunFileF
-#endif
-        RunFile = RunFileF(OUTPUT_ON, ERROR_ON, LOG_ON,
-     &                     SELECTED_ON, FILENAME)
+        RunFile = RunFileF(ID,FILENAME)
       END FUNCTION RunFile
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      SUBROUTINE OutputLines
+      FUNCTION RunString(ID,INPUT)
         IMPLICIT NONE
-#if defined(_WIN32)
-        INTERFACE 
-          SUBROUTINE OutputLinesF
-            !DEC$ ATTRIBUTES C,REFERENCE::OutputLinesF
-            !DEC$ ATTRIBUTES ALIAS:'_OutputLines'::OutputLinesF
-          END SUBROUTINE OutputLinesF
-        END INTERFACE
-#endif
-        CALL OutputLinesF
-      END SUBROUTINE OutputLines
+        INTEGER          :: ID
+        CHARACTER(LEN=*) :: INPUT
+        INTEGER          :: RunString
+        INTEGER          :: RunStringF
+        RunString = RunStringF(ID,INPUT)
+      END FUNCTION RunString
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetSelectedOutputRowCount()
+      FUNCTION GetSelectedOutputRowCount(ID)
         IMPLICIT NONE
-        INTEGER  :: GetSelectedOutputRowCount
-#if defined(_WIN32)
-        INTERFACE 
-          FUNCTION FRows
-            !DEC$ ATTRIBUTES C,REFERENCE::FRows
-            !DEC$ ATTRIBUTES ALIAS:'_GetSelectedOutputRowCountF'::FRows
-            INTEGER(KIND=4) :: FRows
-          END FUNCTION FRows
-        END INTERFACE
-        GetSelectedOutputRowCount = FRows() - 1
-#else
-        INTEGER  :: GetSelectedOutputRowCountF
-        GetSelectedOutputRowCount = GetSelectedOutputRowCountF() - 1
-#endif
+        INTEGER :: ID
+        INTEGER :: GetSelectedOutputRowCount
+        INTEGER :: GetSelectedOutputRowCountF
+        GetSelectedOutputRowCount = GetSelectedOutputRowCountF(ID)
       END FUNCTION GetSelectedOutputRowCount
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetSelectedOutputColumnCount()
+      FUNCTION GetSelectedOutputColumnCount(ID)
         IMPLICIT NONE
+        INTEGER :: ID
         INTEGER :: GetSelectedOutputColumnCount
-#if defined(_WIN32)
-        INTERFACE 
-          FUNCTION FCols
-          !DEC$ ATTRIBUTES C,REFERENCE::FCols
-          !DEC$ ATTRIBUTES ALIAS:'_GetSelectedOutputColumnCount'::FCols
-            INTEGER(KIND=4) :: FCols
-          END FUNCTION FCols
-        END INTERFACE
-        GetSelectedOutputColumnCount = FCols()
-#else
         INTEGER :: GetSelectedOutputColumnCountF
-        GetSelectedOutputColumnCount = GetSelectedOutputColumnCountF()
-#endif
+        GetSelectedOutputColumnCount = GetSelectedOutputColumnCountF(ID)
       END FUNCTION GetSelectedOutputColumnCount
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetSelectedOutputValue(ROW,COL,VTYPE,DVALUE,SVALUE)
+      FUNCTION GetSelectedOutputValue(ID,ROW,COL,VTYPE,DVALUE,SVALUE)
         IMPLICIT NONE
+        INTEGER          :: ID
         INTEGER          :: ROW
         INTEGER          :: COL
         INTEGER          :: VTYPE
         REAL*8           :: DVALUE
         CHARACTER(LEN=*) :: SVALUE
         INTEGER          :: GetSelectedOutputValue
-        INTEGER          :: adjcol
-#if defined(_WIN32)
-        INTERFACE 
-          FUNCTION Get(ROW,COL,VTYPE,DVALUE,SVALUE)
-            !DEC$ ATTRIBUTES C,REFERENCE::Get
-            !DEC$ ATTRIBUTES ALIAS:'_GetSelectedOutputValueF'::Get
-            INTEGER(KIND=4)  :: ROW
-            INTEGER(KIND=4)  :: COL
-            INTEGER(KIND=4)  :: VTYPE
-            REAL(KIND=8)     :: DVALUE
-            CHARACTER(LEN=*) :: SVALUE
-            INTEGER(KIND=4)  :: Get
-          END FUNCTION Get
-        END INTERFACE
-        adjcol = col - 1
-        GetSelectedOutputValue = Get(ROW,adjcol,VTYPE,DVALUE,SVALUE)
-#else
         INTEGER          :: GetSelectedOutputValueF
-        adjcol = col - 1
-        GetSelectedOutputValue = GetSelectedOutputValueF(ROW,
-     &                     adjcol,VTYPE,DVALUE,SVALUE)
-#endif
+        GetSelectedOutputValue = GetSelectedOutputValueF(ID,ROW,
+     &                     COL,VTYPE,DVALUE,SVALUE)
       END FUNCTION GetSelectedOutputValue
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION System(COMMAND)
+      SUBROUTINE OutputLastError
         IMPLICIT NONE
-        CHARACTER(LEN=*) :: COMMAND
-        INTEGER          :: System
-        INTEGER          :: SystemF
-        System = SystemF(COMMAND)
-      END FUNCTION System
+        CALL OutputLastErrorF
+      END SUBROUTINE OutputLastError
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      SUBROUTINE OutputLines(ID)
+        IMPLICIT NONE
+        INTEGER          :: ID
+        CALL OutputLinesF(ID)
+      END SUBROUTINE OutputLines
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!      FUNCTION System(COMMAND)
+!!        IMPLICIT NONE
+!!        CHARACTER(LEN=*) :: COMMAND
+!!        INTEGER          :: System
+!!        INTEGER          :: SystemF
+!!        System = SystemF(COMMAND)
+!!      END FUNCTION System

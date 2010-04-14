@@ -6,7 +6,7 @@
 #include <string.h> /* strlen */
 
 extern char *f2cstring(char* fstring, int len);
-extern void padfstring(char *dest, char *src, unsigned int len);
+extern void padfstring(char *dest, const char *src, unsigned int len);
 
 #define fullpathpp fullpathpp_
 #define splitpathpp splitpathpp_
@@ -63,8 +63,8 @@ splitpathpp(char *path, char* drive, char* dir, char* name, char* ext,
 	    unsigned int ext_len)
 {
   int i;
-  int dot = 0;
-  int slash = 0;
+  size_t dot = 0;
+  size_t slash = 0;
   int slash_found = 0;
   char *cpath = NULL;
   size_t plen = 0;
@@ -72,7 +72,7 @@ splitpathpp(char *path, char* drive, char* dir, char* name, char* ext,
   /* linux has no drives */
   padfstring(drive, "", drive_len);
 
-  if (cpath = f2cstring(path, path_len)) {
+  if ((cpath = f2cstring(path, path_len))) {
     plen = strlen(cpath);
   }
 

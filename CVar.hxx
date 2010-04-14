@@ -1,8 +1,6 @@
-#ifndef __CVAR_HXX_INC
-#define __CVAR_HXX_INC
+#ifndef INC_CVAR_HXX
+#define INC_CVAR_HXX
 
-
-#include "Debug.h"          // ASSERT
 #include "Var.h"
 #include <ostream>          // std::ostream
 
@@ -93,7 +91,6 @@ public:
 	VRESULT InternalClear()
 	{
 		VRESULT vr = Clear();
-		ASSERT(vr == VR_OK);
 		if (vr != VR_OK)
 		{
 			type = TT_ERROR;
@@ -162,4 +159,4 @@ inline std::ostream& operator<< (std::ostream &os, const CVar &a)
 	return os;
 }
 
-#endif // __CVAR_HXX_INC
+#endif // INC_CVAR_HXX

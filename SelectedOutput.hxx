@@ -15,17 +15,11 @@
 #include <vector>
 #include "CVar.hxx"
 
-// TODO: templatize
 class CSelectedOutput
 {
-protected:
-	CSelectedOutput(void);
 public:
-	static CSelectedOutput* Instance();
-	static void Release();
-
+	CSelectedOutput(void);
 	virtual ~CSelectedOutput(void);
-
 
 	int EndRow(void);
 	void Clear(void);
