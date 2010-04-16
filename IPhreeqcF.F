@@ -246,11 +246,3 @@
         INTEGER          :: GetWarningLineF
         GetWarningLine = GetWarningLineF(ID,N,LINE)
       END FUNCTION GetWarningLine
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!      FUNCTION System(COMMAND)
-!!        IMPLICIT NONE
-!!        CHARACTER(LEN=*) :: COMMAND
-!!        INTEGER          :: System
-!!        INTEGER          :: SystemF
-!!        System = SystemF(COMMAND)
-!!      END FUNCTION System
