@@ -6,44 +6,6 @@
 #include "phrqtype.h"
 #include "IPhreeqc.h"
 
-/*******************************
-When using GNU gcc/g++/g77
-compile fortran with:
-	g77 -fno-second-underscore
-********************************/
-#if defined(__GNUC__)
-#define AccumulateLineF                accumulatelinef_
-#define CreateIPhreeqcF                createiphreeqcf_
-#define DestroyIPhreeqcF               destroyiphreeqcf_
-#define GetComponentCountF             getcomponentcountf_
-#define GetComponentF                  getcomponentf_
-#define GetDumpLineCountF              getdumplinecountf_
-#define GetDumpLineF                   getdumplinef_
-#define GetErrorLineCountF             geterrorlinecountf_
-#define GetErrorLineF                  geterrorlinef_
-#define GetSelectedOutputColumnCountF  getselectedoutputcolumncountf_
-#define GetSelectedOutputRowCountF     getselectedoutputrowcountf_
-#define GetSelectedOutputValueF        getselectedoutputvaluef_
-#define GetWarningLineCountF           getwarninglinecountf_
-#define GetWarningLineF                getwarninglinef_
-#define LoadDatabaseF                  loaddatabasef_
-#define LoadDatabaseStringF            loaddatabasestringf_
-#define OutputLastErrorF               outputlasterrorf_
-#define OutputLastWarningF             outputlastwarningf_
-#define OutputLinesF                   outputlinesf_
-#define RunAccumulatedF                runaccumulatedf_
-#define RunFileF                       runfilef_
-#define RunStringF                     runstringf_
-#define SetDumpOnF                     setdumponf_
-#define SetDumpStringOnF               setdumpstringonf_
-#define SetErrorOnF                    seterroronf_
-#define SetLogOnF                      setlogonf_
-#define SetOutputOnF                   setoutputonf_
-#define SetSelectedOutputOnF           setselectedoutputonf_
-#define UnLoadDatabaseF                unloaddatabasef_
-//#define SystemF                        systemf_
-#endif
-
 #include "fwrap.h"
 
 char *
@@ -501,5 +463,5 @@ DLL_EXPORT int __stdcall GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int
 }
 #endif
 
-#endif
+#endif // _WIN32
 
