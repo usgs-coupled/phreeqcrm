@@ -40,14 +40,17 @@
         UnLoadDatabase = UnLoadDatabaseF(ID)
       END FUNCTION UnLoadDatabase
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      SUBROUTINE OutputLastError
+      SUBROUTINE OutputLastError(ID)
         IMPLICIT NONE
-        CALL OutputLastErrorF
+        INTEGER :: ID
+        WRITE(*,*) "fortran OutputLastError ID = ", ID
+        CALL OutputLastErrorF(ID)
       END SUBROUTINE OutputLastError
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      SUBROUTINE OutputLastWarning
+      SUBROUTINE OutputLastWarning(ID)
         IMPLICIT NONE
-        CALL OutputLastWarningF
+        INTEGER :: ID
+        CALL OutputLastWarningF(ID)
       END SUBROUTINE OutputLastWarning
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION AccumulateLine(ID,LINE)

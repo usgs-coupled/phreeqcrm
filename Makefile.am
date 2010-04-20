@@ -148,11 +148,11 @@ include_HEADERS=\
 if BUILD_FORTRAN
 
 libiphreeqc_la_SOURCES+=\
-	fwrap.cpp\
 	fwrap.h\
+	fwrap.cpp\
 	fwrap2.cpp\
 	fwrap3.cpp\
-	IPhreeqcF.F
+	IPhreeqcF.f
 
 include_HEADERS+=\
 	$(top_srcdir)/include/IPhreeqc.f90.inc\
