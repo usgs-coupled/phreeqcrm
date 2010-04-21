@@ -18,25 +18,18 @@ private:
 int
 CreateIPhreeqc(void)
 {
-//	return IPhreeqcLib::CreateIPhreeqc();
-	int i = IPhreeqcLib::CreateIPhreeqc();
-	std::cout << "CreateIPhreeqc " << i << "\n";
-	return i;
+	return IPhreeqcLib::CreateIPhreeqc();
 }
 
 IPQ_RESULT
 DestroyIPhreeqc(int id)
 {
-//	return IPhreeqcLib::DestroyIPhreeqc(id);
-	IPQ_RESULT i = IPhreeqcLib::DestroyIPhreeqc(id);
-	std::cout << "DestroyIPhreeqc( " << id << ") = " << i << "\n";
-	return i;
+	return IPhreeqcLib::DestroyIPhreeqc(id);
 }
 
 int
 LoadDatabase(int id, const char* filename)
 {
-	std::cout << "In LoadDatabase id = " << id << "\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
@@ -72,7 +65,6 @@ void
 OutputLastError(int id)
 {
 	static const char err_msg[] = "OutputLastError: Bad instance.\n";
-	std::cout << "In OutputLastError id = " << id << "\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
