@@ -99,10 +99,12 @@ int IPhreeqc::output_handler(const int type, const char *err_str, const int stop
 			this->AddError("ERROR: ");
 			this->AddError(err_str);
 			this->AddError("\n");
+#if 0
 			if (stop == STOP)
 			{
 				this->AddError("Stopping.\n");
 			}
+#endif
 		}
 		break;
 

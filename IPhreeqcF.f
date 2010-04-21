@@ -43,7 +43,6 @@
       SUBROUTINE OutputLastError(ID)
         IMPLICIT NONE
         INTEGER :: ID
-        WRITE(*,*) "fortran OutputLastError ID = ", ID
         CALL OutputLastErrorF(ID)
       END SUBROUTINE OutputLastError
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

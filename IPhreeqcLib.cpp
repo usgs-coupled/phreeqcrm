@@ -1,7 +1,9 @@
-#include "IPhreeqc.h"
-#include "IPhreeqc.hpp"
 #include <cassert>
 #include <iostream>
+#include <map>
+
+#include "IPhreeqc.h"
+#include "IPhreeqc.hpp"
 
 class IPhreeqcLib
 {
