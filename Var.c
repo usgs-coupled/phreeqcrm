@@ -1,6 +1,6 @@
 #include "Var.h"
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <assert.h>
 
 // The VarInit function initializes the VAR
