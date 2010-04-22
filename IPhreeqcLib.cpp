@@ -587,4 +587,3 @@ IPhreeqcLib::GetInstance(int id)
 	}
 	return 0;
 }
-
