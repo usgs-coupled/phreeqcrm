@@ -1,6 +1,14 @@
-AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/cxx -DSWIG_SHARED_OBJ -DPHREEQC_CPP -DPHREEQC_CLASS -DUSE_PHRQ_ALLOC
+#AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/phreeqc
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/phreeqc
+
+SUBDIRS=phreeqcpp
 
 lib_LTLIBRARIES=libiphreeqc.la
+
+##{{
+##libiphreeqc_la_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/phreeqc
+##libiphreeqc_la_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/phreeqc
+##}}
 
 # library sources
 libiphreeqc_la_SOURCES=\
@@ -11,132 +19,11 @@ libiphreeqc_la_SOURCES=\
 	IPhreeqcLib.cpp\
 	SelectedOutput.cpp\
 	SelectedOutput.hxx\
-	Var.c\
-	phreeqcpp/char_star.h\
-	phreeqcpp/cxxKinetics.cxx\
-	phreeqcpp/cxxKinetics.h\
-	phreeqcpp/cxxMix.cxx\
-	phreeqcpp/cxxMix.h\
-	phreeqcpp/Dictionary.h\
-	phreeqcpp/dumper.cpp\
-	phreeqcpp/dumper.h\
-	phreeqcpp/Exchange.cxx\
-	phreeqcpp/Exchange.h\
-	phreeqcpp/ExchComp.cxx\
-	phreeqcpp/ExchComp.h\
-	phreeqcpp/GasPhase.cxx\
-	phreeqcpp/GasPhase.h\
-	phreeqcpp/ISolution.cxx\
-	phreeqcpp/ISolution.h\
-	phreeqcpp/ISolutionComp.cxx\
-	phreeqcpp/ISolutionComp.h\
-	phreeqcpp/KineticsComp.cxx\
-	phreeqcpp/KineticsComp.h\
-	phreeqcpp/NameDouble.cxx\
-	phreeqcpp/NameDouble.h\
-	phreeqcpp/NumKeyword.cxx\
-	phreeqcpp/NumKeyword.h\
-	phreeqcpp/Parser.cxx\
-	phreeqcpp/Parser.h\
-	phreeqcpp/Phreeqc.cpp\
-	phreeqcpp/Phreeqc.h\
-	phreeqcpp/Phreeqc_class.h\
-	phreeqcpp/PPassemblage.cxx\
-	phreeqcpp/PPassemblage.h\
-	phreeqcpp/PPassemblageComp.cxx\
-	phreeqcpp/PPassemblageComp.h\
-	phreeqcpp/Reaction.cxx\
-	phreeqcpp/Reaction.h\
-	phreeqcpp/ReadClass.cxx\
-	phreeqcpp/runner.cpp\
-	phreeqcpp/runner.h\
-	phreeqcpp/SAXPhreeqc.h\
-	phreeqcpp/SaxPhreeqcHandlers.h\
-	phreeqcpp/Solution.cxx\
-	phreeqcpp/Solution.h\
-	phreeqcpp/SolutionIsotope.cxx\
-	phreeqcpp/SolutionIsotope.h\
-	phreeqcpp/SolutionIsotopeList.cxx\
-	phreeqcpp/SolutionIsotopeList.h\
-	phreeqcpp/SSassemblage.cxx\
-	phreeqcpp/SSassemblage.h\
-	phreeqcpp/SSassemblageSS.cxx\
-	phreeqcpp/SSassemblageSS.h\
-	phreeqcpp/StorageBin.cxx\
-	phreeqcpp/StorageBin.h\
-	phreeqcpp/StorageBinList.cpp\
-	phreeqcpp/StorageBinList.h\
-	phreeqcpp/Surface.cxx\
-	phreeqcpp/Surface.h\
-	phreeqcpp/SurfaceCharge.cxx\
-	phreeqcpp/SurfaceCharge.h\
-	phreeqcpp/SurfaceComp.cxx\
-	phreeqcpp/SurfaceComp.h\
-	phreeqcpp/System.cxx\
-	phreeqcpp/System.h\
-	phreeqcpp/Temperature.cxx\
-	phreeqcpp/Temperature.h\
-	phreeqcpp/Utils.cxx\
-	phreeqcpp/Utils.h\
-	phreeqcpp/cxx/advection.cxx\
-	phreeqcpp/cxx/basic.cxx\
-	phreeqcpp/cxx/basic.h\
-	phreeqcpp/cxx/basicsubs.cxx\
-	phreeqcpp/cxx/cl1.cxx\
-	phreeqcpp/cxx/cvdense.cxx\
-	phreeqcpp/cxx/cvdense.h\
-	phreeqcpp/cxx/cvode.cxx\
-	phreeqcpp/cxx/cvode.h\
-	phreeqcpp/cxx/dense.cxx\
-	phreeqcpp/cxx/dense.h\
-	phreeqcpp/cxx/dw.cxx\
-	phreeqcpp/cxx/global.h\
-	phreeqcpp/cxx/global_structures.h\
-	phreeqcpp/cxx/input.cxx\
-	phreeqcpp/cxx/input.h\
-	phreeqcpp/cxx/integrate.cxx\
-	phreeqcpp/cxx/inverse.cxx\
-	phreeqcpp/cxx/isotopes.cxx\
-	phreeqcpp/cxx/kinetics.cxx\
-	phreeqcpp/cxx/kinetics.h\
-	phreeqcpp/cxx/mainsubs.cxx\
-	phreeqcpp/cxx/model.cxx\
-	phreeqcpp/cxx/nvector.cxx\
-	phreeqcpp/cxx/nvector.h\
-	phreeqcpp/cxx/nvector_serial.cxx\
-	phreeqcpp/cxx/nvector_serial.h\
-	phreeqcpp/cxx/output.cxx\
-	phreeqcpp/cxx/output.h\
-	phreeqcpp/cxx/p2c.h\
-	phreeqcpp/cxx/p2clib.cxx\
-	phreeqcpp/cxx/parse.cxx\
-	phreeqcpp/cxx/phqalloc.cxx\
-	phreeqcpp/cxx/phqalloc.h\
-	phreeqcpp/cxx/phreeqc_files.cxx\
-	phreeqcpp/cxx/phrqproto.h\
-	phreeqcpp/cxx/phrqtype.h\
-	phreeqcpp/cxx/pitzer.cxx\
-	phreeqcpp/cxx/pitzer.h\
-	phreeqcpp/cxx/pitzer_structures.cxx\
-	phreeqcpp/cxx/pitzer_structures.h\
-	phreeqcpp/cxx/prep.cxx\
-	phreeqcpp/cxx/print.cxx\
-	phreeqcpp/cxx/read.cxx\
-	phreeqcpp/cxx/readtr.cxx\
-	phreeqcpp/cxx/sit.cxx\
-	phreeqcpp/cxx/smalldense.cxx\
-	phreeqcpp/cxx/smalldense.h\
-	phreeqcpp/cxx/spread.cxx\
-	phreeqcpp/cxx/step.cxx\
-	phreeqcpp/cxx/structures.cxx\
-	phreeqcpp/cxx/sundialsmath.cxx\
-	phreeqcpp/cxx/sundialsmath.h\
-	phreeqcpp/cxx/sundialstypes.h\
-	phreeqcpp/cxx/tally.cxx\
-	phreeqcpp/cxx/tidy.cxx\
-	phreeqcpp/cxx/transport.cxx\
-	phreeqcpp/cxx/utilities.cxx
-
+	Var.c
+	
+libiphreeqc_la_LIBADD=\
+	phreeqcpp/libphreeqcpp.la\
+	phreeqcpp/phreeqc/libphreeqc.la	
 
 include_HEADERS=\
 	$(top_srcdir)/include/IPhreeqc.h\
@@ -150,8 +37,6 @@ if BUILD_FORTRAN
 libiphreeqc_la_SOURCES+=\
 	fwrap.h\
 	fwrap.cpp\
-	fwrap2.cpp\
-	fwrap3.cpp\
 	IPhreeqcF.f
 
 include_HEADERS+=\
