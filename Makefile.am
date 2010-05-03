@@ -1,9 +1,9 @@
 AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/phreeqc
 
-
+# libtool libraries to build
 lib_LTLIBRARIES=libiphreeqc.la
 
-# library sources
+# library sources for libiphreeqc.la
 libiphreeqc_la_SOURCES=\
 	CVar.hxx\
 	Debug.h\
@@ -137,6 +137,10 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/phreeqc/tidy.c\
 	phreeqcpp/phreeqc/transport.c\
 	phreeqcpp/phreeqc/utilities.c
+	
+# library sources for libiphreeqc.la
+libiphreeqc_la_LDFLAGS=-version-info $(IPQ_VERSION)
+	
 
 include_HEADERS=\
 	$(top_srcdir)/include/IPhreeqc.h\
