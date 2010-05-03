@@ -51,8 +51,6 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/ReadClass.cxx\
 	phreeqcpp/runner.cpp\
 	phreeqcpp/runner.h\
-	phreeqcpp/SAXPhreeqc.h\
-	phreeqcpp/SaxPhreeqcHandlers.h\
 	phreeqcpp/Solution.cxx\
 	phreeqcpp/Solution.h\
 	phreeqcpp/SolutionIsotope.cxx\
