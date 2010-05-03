@@ -137,10 +137,6 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/phreeqc/tidy.c\
 	phreeqcpp/phreeqc/transport.c\
 	phreeqcpp/phreeqc/utilities.c
-	
-# library sources for libiphreeqc.la
-libiphreeqc_la_LDFLAGS=-version-info $(IPQ_VERSION)
-	
 
 include_HEADERS=\
 	$(top_srcdir)/include/IPhreeqc.h\
