@@ -282,14 +282,14 @@ const std::string& IPhreeqc::GetAccumulatedLines(void)
 	return this->StringInput;
 }
 
-void IPhreeqc::OutputLastError(void)
+void IPhreeqc::OutputError(void)
 {
-	std::cout << this->GetLastErrorString() << std::endl;
+	std::cout << this->GetErrorString() << std::endl;
 }
 
-void IPhreeqc::OutputLastWarning(void)
+void IPhreeqc::OutputWarning(void)
 {
-	std::cout << this->GetLastWarningString() << std::endl;
+	std::cout << this->GetWarningString() << std::endl;
 }
 
 void IPhreeqc::OutputLines(void)
@@ -392,13 +392,13 @@ void IPhreeqc::UnLoadDatabase(void)
 	//
 	ASSERT(this->ErrorReporter);
 	this->ErrorReporter->Clear();
-	this->LastErrorString.clear();
+	this->ErrorString.clear();
 
 	// clear warning state
 	//
 	ASSERT(this->WarningReporter);
 	this->WarningReporter->Clear();
-	this->LastWarningString.clear();
+	this->WarningString.clear();
 
 	// clear selectedoutput
 	//
@@ -652,16 +652,16 @@ void IPhreeqc::AddSelectedOutput(const char* name, const char* format, va_list a
 	}
 }
 
-const char* IPhreeqc::GetLastErrorString(void)
+const char* IPhreeqc::GetErrorString(void)
 {
-	this->LastErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
-	return this->LastErrorString.c_str();
+	this->ErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
+	return this->ErrorString.c_str();
 }
 
-const char* IPhreeqc::GetLastWarningString(void)
+const char* IPhreeqc::GetWarningString(void)
 {
-	this->LastWarningString = ((CErrorReporter<std::ostringstream>*)this->WarningReporter)->GetOS()->str();
-	return this->LastWarningString.c_str();
+	this->WarningString = ((CErrorReporter<std::ostringstream>*)this->WarningReporter)->GetOS()->str();
+	return this->WarningString.c_str();
 }
 
 const char* IPhreeqc::GetDumpString(void)
@@ -1253,10 +1253,10 @@ const char* IPhreeqc::GetWarningLine(int n)
 void IPhreeqc::update_errors(void)
 {
 	this->ErrorLines.clear();
-	this->LastErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
-	if (this->LastErrorString.size())
+	this->ErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
+	if (this->ErrorString.size())
 	{
-		std::istringstream iss(this->LastErrorString);
+		std::istringstream iss(this->ErrorString);
 		std::string line;
 		while (std::getline(iss, line))
 		{
@@ -1265,10 +1265,10 @@ void IPhreeqc::update_errors(void)
 	}
 
 	this->WarningLines.clear();
-	this->LastWarningString = ((CErrorReporter<std::ostringstream>*)this->WarningReporter)->GetOS()->str();
-	if (this->LastWarningString.size())
+	this->WarningString = ((CErrorReporter<std::ostringstream>*)this->WarningReporter)->GetOS()->str();
+	if (this->WarningString.size())
 	{
-		std::istringstream iss(this->LastWarningString);
+		std::istringstream iss(this->WarningString);
 		std::string line;
 		while (std::getline(iss, line))
 		{

@@ -64,51 +64,51 @@ UnLoadDatabase(int id)
 }
 
 void
-OutputLastError(int id)
+OutputError(int id)
 {
-	static const char err_msg[] = "OutputLastError: Bad instance.\n";
+	static const char err_msg[] = "OutputError: Bad instance.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		IPhreeqcPtr->OutputLastError();
+		IPhreeqcPtr->OutputError();
 		return;
 	}
 	std::cout << err_msg << std::endl;
 }
 
 void
-OutputLastWarning(int id)
+OutputWarning(int id)
 {
-	static const char err_msg[] = "OutputLastWarning: Bad instance.\n";
+	static const char err_msg[] = "OutputWarning: Bad instance.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		IPhreeqcPtr->OutputLastWarning();
+		IPhreeqcPtr->OutputWarning();
 		return;
 	}
 	std::cout << err_msg << std::endl;
 }
 
 const char*
-GetLastErrorString(int id)
+GetErrorString(int id)
 {
-	static const char err_msg[] = "GetLastErrorString: Bad instance.\n";
+	static const char err_msg[] = "GetErrorString: Bad instance.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		return IPhreeqcPtr->GetLastErrorString();
+		return IPhreeqcPtr->GetErrorString();
 	}
 	return err_msg;
 }
 
 const char*
-GetLastWarningString(int id)
+GetWarningString(int id)
 {
-	static const char err_msg[] = "GetLastWarningString: Bad instance.\n";
+	static const char err_msg[] = "GetWarningString: Bad instance.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		return IPhreeqcPtr->GetLastWarningString();
+		return IPhreeqcPtr->GetWarningString();
 	}
 	return err_msg;
 }

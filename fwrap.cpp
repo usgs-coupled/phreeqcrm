@@ -290,15 +290,15 @@ GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue,
 }
 
 void
-OutputLastErrorF(int *id)
+OutputErrorF(int *id)
 {
-	::OutputLastError(*id);
+	::OutputError(*id);
 }
 
 void
-OutputLastWarningF(int *id)
+OutputWarningF(int *id)
 {
-	::OutputLastWarning(*id);
+	::OutputWarning(*id);
 }
 
 void
@@ -363,13 +363,13 @@ DLL_EXPORT int __stdcall UNLOADDATABASE(int *id)
 {
 	return UnLoadDatabaseF(id);
 }
-DLL_EXPORT void __stdcall OUTPUTLASTERROR(int *id)
+DLL_EXPORT void __stdcall OUTPUTERROR(int *id)
 {
-	OutputLastErrorF(id);
+	OutputErrorF(id);
 }
-DLL_EXPORT void __stdcall OUTPUTLASTWARNING(int *id)
+DLL_EXPORT void __stdcall OUTPUTWARNING(int *id)
 {
-	OutputLastWarningF(id);
+	OutputWarningF(id);
 }
 DLL_EXPORT int __stdcall ACCUMULATELINE(int *id, char *line, unsigned int len)
 {

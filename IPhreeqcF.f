@@ -40,17 +40,17 @@
         UnLoadDatabase = UnLoadDatabaseF(ID)
       END FUNCTION UnLoadDatabase
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      SUBROUTINE OutputLastError(ID)
+      SUBROUTINE OutputError(ID)
         IMPLICIT NONE
         INTEGER :: ID
-        CALL OutputLastErrorF(ID)
-      END SUBROUTINE OutputLastError
+        CALL OutputErrorF(ID)
+      END SUBROUTINE OutputError
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      SUBROUTINE OutputLastWarning(ID)
+      SUBROUTINE OutputWarning(ID)
         IMPLICIT NONE
         INTEGER :: ID
-        CALL OutputLastWarningF(ID)
-      END SUBROUTINE OutputLastWarning
+        CALL OutputWarningF(ID)
+      END SUBROUTINE OutputWarning
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION AccumulateLine(ID,LINE)
         IMPLICIT NONE

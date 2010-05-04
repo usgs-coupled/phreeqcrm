@@ -30,13 +30,13 @@ DLL_EXPORT int UNLOADDATABASE(int *id)
 {
 	return UnLoadDatabaseF(id);
 }
-DLL_EXPORT void OUTPUTLASTERROR(int *id)
+DLL_EXPORT void OUTPUTERROR(int *id)
 {
-	OutputLastErrorF(id);
+	OutputErrorF(id);
 }
-DLL_EXPORT void OUTPUTLASTWARNING(int *id)
+DLL_EXPORT void OUTPUTWARNING(int *id)
 {
-	OutputLastWarningF(id);
+	OutputWarningF(id);
 }
 DLL_EXPORT int ACCUMULATELINE(int *id, char *line, unsigned int len)
 {

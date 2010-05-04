@@ -34,8 +34,8 @@
 #define GetWarningLineF               FC_FUNC (getwarninglinef,               GETWARNINGLINEF)
 #define GetComponentCountF            FC_FUNC (getcomponentcountf,            GETCOMPONENTCOUNTF)
 #define GetComponentF                 FC_FUNC (getcomponentf,                 GETCOMPONENTF)
-#define OutputLastErrorF              FC_FUNC (outputlasterrorf,              OUTPUTLASTERRORF)
-#define OutputLastWarningF            FC_FUNC (outputlastwarningf,            OUTPUTLASTWARNINGF)
+#define OutputErrorF                  FC_FUNC (outputerrorf,                  OUTPUTERRORF)
+#define OutputWarningF                FC_FUNC (outputwarningf,                OUTPUTWARNINGF)
 #define OutputLinesF                  FC_FUNC (outputlinesf,                  OUTPUTLINESF)
 #endif /* FC_FUNC */
 
@@ -95,9 +95,9 @@ extern "C" {
 
   void GetComponentF(int *id, int* n, char* line, unsigned int line_length);
 
-  void OutputLastErrorF(int *id);
+  void OutputErrorF(int *id);
 
-  void OutputLastWarningF(int *id);
+  void OutputWarningF(int *id);
 
   void OutputLinesF(int *id);
 
