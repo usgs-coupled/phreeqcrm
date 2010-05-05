@@ -66,7 +66,7 @@ UnLoadDatabase(int id)
 void
 OutputError(int id)
 {
-	static const char err_msg[] = "OutputError: Bad instance.\n";
+	static const char err_msg[] = "OutputError: Invalid instance id.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
@@ -79,7 +79,7 @@ OutputError(int id)
 void
 OutputWarning(int id)
 {
-	static const char err_msg[] = "OutputWarning: Bad instance.\n";
+	static const char err_msg[] = "OutputWarning: Invalid instance id.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
@@ -92,7 +92,7 @@ OutputWarning(int id)
 const char*
 GetErrorString(int id)
 {
-	static const char err_msg[] = "GetErrorString: Bad instance.\n";
+	static const char err_msg[] = "GetErrorString: Invalid instance id.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
@@ -104,7 +104,7 @@ GetErrorString(int id)
 const char*
 GetWarningString(int id)
 {
-	static const char err_msg[] = "GetWarningString: Bad instance.\n";
+	static const char err_msg[] = "GetWarningString: Invalid instance id.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
@@ -139,7 +139,7 @@ GetDumpLineCount(int id)
 const char*
 GetDumpLine(int id, int n)
 {
-	static const char err_msg[] = "GetDumpLine: Bad instance.\n";
+	static const char err_msg[] = "GetDumpLine: Invalid instance id.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
@@ -156,13 +156,13 @@ GetComponentCount(int id)
 	{
 		return IPhreeqcPtr->ListComponents().size();
 	}
-	return 0;
+	return IPQ_BADINSTANCE;
 }
 
 const char*
 GetComponent(int id, int n)
 {
-	static const char err_msg[] = "GetComponent: Bad instance.\n";
+	static const char err_msg[] = "GetComponent: Invalid instance id.\n";
 	static const char empty[] = "";
 	static std::string comp;
 
@@ -476,7 +476,7 @@ AddError(int id, const char* error_msg)
 void
 OutputLines(int id)
 {
-	static const char err_msg[] = "OutputLines: Bad instance.\n";
+	static const char err_msg[] = "OutputLines: Invalid instance id.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
@@ -500,7 +500,7 @@ GetErrorLineCount(int id)
 const char*
 GetErrorLine(int id, int n)
 {
-	static const char err_msg[] = "GetErrorLine: Bad instance.\n";
+	static const char err_msg[] = "GetErrorLine: Invalid instance id.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
@@ -523,7 +523,7 @@ GetWarningLineCount(int id)
 const char*
 GetWarningLine(int id, int n)
 {
-	static const char err_msg[] = "GetWarningLine: Bad instance.\n";
+	static const char err_msg[] = "GetWarningLine: Invalid instance id.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
