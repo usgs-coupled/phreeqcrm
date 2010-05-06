@@ -36,58 +36,6 @@ padfstring(char *dest, const char *src, unsigned int len)
         *dest++ = ' ';
 }
 
-int
-CreateIPhreeqcF(void)
-{
-	return ::CreateIPhreeqc();
-}
-
-int
-DestroyIPhreeqcF(int *id)
-{
-	return ::DestroyIPhreeqc(*id);
-}
-
-int
-LoadDatabaseF(int *id, char* filename, unsigned int filename_length)
-{
-	char* cfilename;
-
-	cfilename = f2cstring(filename, filename_length);
-	if (!cfilename)
-	{
-		::AddError(*id, "LoadDatabase: Out of memory.\n");
-		return VR_OUTOFMEMORY;
-	}
-
-	int n = ::LoadDatabase(*id, cfilename);
-	free(cfilename);
-	return n;
-}
-
-int
-LoadDatabaseStringF(int *id, char* input, unsigned int input_length)
-{
-	char* cinput;
-
-	cinput = f2cstring(input, input_length);
-	if (!cinput)
-	{
-		::AddError(*id, "LoadDatabaseString: Out of memory.\n");
-		return VR_OUTOFMEMORY;
-	}
-
-	int n = ::LoadDatabaseString(*id, cinput);
-	free(cinput);
-	return n;
-}
-
-int
-UnLoadDatabaseF(int *id)
-{
-	return ::UnLoadDatabase(*id);
-}
-
 IPQ_RESULT
 AccumulateLineF(int *id, char *line, unsigned int line_length)
 {
@@ -106,76 +54,16 @@ AccumulateLineF(int *id, char *line, unsigned int line_length)
 	return n;
 }
 
-IPQ_RESULT
-SetSelectedOutputOnF(int *id, int* sel_on)
+int
+CreateIPhreeqcF(void)
 {
-	return ::SetSelectedOutputOn(*id, *sel_on);
-}
-
-IPQ_RESULT
-SetOutputOnF(int *id, int* output_on)
-{
-	return ::SetOutputOn(*id, *output_on);
-}
-
-IPQ_RESULT
-SetErrorOnF(int *id, int* error_on)
-{
-	return ::SetErrorOn(*id, *error_on);
-}
-
-IPQ_RESULT
-SetLogOnF(int *id, int* log_on)
-{
-	return ::SetLogOn(*id, *log_on);
-}
-
-IPQ_RESULT
-SetDumpOnF(int *id, int* dump_on)
-{
-	return ::SetDumpOn(*id, *dump_on);
-}
-
-IPQ_RESULT
-SetDumpStringOnF(int *id, int* dump_string_on)
-{
-	return ::SetDumpStringOn(*id, *dump_string_on);
+	return ::CreateIPhreeqc();
 }
 
 int
-GetDumpLineCountF(int *id)
+DestroyIPhreeqcF(int *id)
 {
-	return ::GetDumpLineCount(*id);
-}
-
-void
-GetDumpLineF(int *id, int* n, char* line, unsigned int line_length)
-{
-	padfstring(line, ::GetDumpLine(*id, (*n) - 1), line_length);
-}
-
-int
-GetErrorLineCountF(int *id)
-{
-	return ::GetErrorLineCount(*id);
-}
-
-void
-GetErrorLineF(int *id, int* n, char* line, unsigned int line_length)
-{
-	padfstring(line, ::GetErrorLine(*id, (*n) - 1), line_length);
-}
-
-int
-GetWarningLineCountF(int *id)
-{
-	return ::GetWarningLineCount(*id);
-}
-
-void
-GetWarningLineF(int *id, int* n, char* line, unsigned int line_length)
-{
-	padfstring(line, ::GetWarningLine(*id, (*n) - 1), line_length);
+	return ::DestroyIPhreeqc(*id);
 }
 
 int
@@ -191,43 +79,69 @@ GetComponentF(int *id, int *n, char* comp, unsigned int line_length)
 }
 
 int
-RunAccumulatedF(int *id)
+GetDumpLineCountF(int *id)
 {
-	return ::RunAccumulated(*id);
+	return ::GetDumpLineCount(*id);
+}
+
+void
+GetDumpLineF(int *id, int* n, char* line, unsigned int line_length)
+{
+	padfstring(line, ::GetDumpLine(*id, (*n) - 1), line_length);
 }
 
 int
-RunFileF(int *id, char* filename, unsigned int filename_length)
+GetDumpOnF(int *id)
 {
-	char* cfilename;
-
-	cfilename = f2cstring(filename, filename_length);
-	if (!cfilename)
-	{
-		::AddError(*id, "RunFile: Out of memory.\n");
-		return (int)VR_OUTOFMEMORY;
-	}
-
-	int n = ::RunFile(*id, cfilename);
-	free(cfilename);
-	return n;
+	return ::GetDumpOn(*id);
 }
 
 int
-RunStringF(int *id, char* input, unsigned int input_length)
+GetDumpStringOnF(int *id)
 {
-	char* cinput;
+	return ::GetDumpStringOn(*id);
+}
 
-	cinput = f2cstring(input, input_length);
-	if (!cinput)
-	{
-		::AddError(*id, "RunString: Out of memory.\n");
-		return (int)VR_OUTOFMEMORY;
-	}
+int
+GetErrorLineCountF(int *id)
+{
+	return ::GetErrorLineCount(*id);
+}
 
-	int n = ::RunString(*id, cinput);
-	free(cinput);
-	return n;
+void
+GetErrorLineF(int *id, int* n, char* line, unsigned int line_length)
+{
+	padfstring(line, ::GetErrorLine(*id, (*n) - 1), line_length);
+}
+
+int
+GetErrorOnF(int *id)
+{
+	return ::GetErrorOn(*id);
+}
+
+int
+GetLogOnF(int *id)
+{
+	return ::GetLogOn(*id);
+}
+
+int
+GetOutputOnF(int *id)
+{
+	return ::GetOutputOn(*id);
+}
+
+int
+GetSelectedOutputColumnCountF(int *id)
+{
+	return ::GetSelectedOutputColumnCount(*id);
+}
+
+int
+GetSelectedOutputOnF(int *id)
+{
+	return ::GetSelectedOutputOn(*id);
 }
 
 int
@@ -239,12 +153,6 @@ GetSelectedOutputRowCountF(int *id)
 		rows -= 1;
 	}
 	return rows;
-}
-
-int
-GetSelectedOutputColumnCountF(int *id)
-{
-	return ::GetSelectedOutputColumnCount(*id);
 }
 
 IPQ_RESULT
@@ -289,16 +197,56 @@ GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue,
 	return result;
 }
 
+int
+GetWarningLineCountF(int *id)
+{
+	return ::GetWarningLineCount(*id);
+}
+
+void
+GetWarningLineF(int *id, int* n, char* line, unsigned int line_length)
+{
+	padfstring(line, ::GetWarningLine(*id, (*n) - 1), line_length);
+}
+
+int
+LoadDatabaseF(int *id, char* filename, unsigned int filename_length)
+{
+	char* cfilename;
+
+	cfilename = f2cstring(filename, filename_length);
+	if (!cfilename)
+	{
+		::AddError(*id, "LoadDatabase: Out of memory.\n");
+		return VR_OUTOFMEMORY;
+	}
+
+	int n = ::LoadDatabase(*id, cfilename);
+	free(cfilename);
+	return n;
+}
+
+int
+LoadDatabaseStringF(int *id, char* input, unsigned int input_length)
+{
+	char* cinput;
+
+	cinput = f2cstring(input, input_length);
+	if (!cinput)
+	{
+		::AddError(*id, "LoadDatabaseString: Out of memory.\n");
+		return VR_OUTOFMEMORY;
+	}
+
+	int n = ::LoadDatabaseString(*id, cinput);
+	free(cinput);
+	return n;
+}
+
 void
 OutputErrorF(int *id)
 {
 	::OutputError(*id);
-}
-
-void
-OutputWarningF(int *id)
-{
-	::OutputWarning(*id);
 }
 
 void
@@ -307,31 +255,93 @@ OutputLinesF(int *id)
 	::OutputLines(*id);
 }
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+void
+OutputWarningF(int *id)
+{
+	::OutputWarning(*id);
+}
 
 int
-SystemF(char* command, unsigned int command_length)
+RunAccumulatedF(int *id)
 {
-	char* ccommand;
+	return ::RunAccumulated(*id);
+}
 
-	ccommand = f2cstring(command, command_length);
-	if (!ccommand)
+int
+RunFileF(int *id, char* filename, unsigned int filename_length)
+{
+	char* cfilename;
+
+	cfilename = f2cstring(filename, filename_length);
+	if (!cfilename)
 	{
-		//AddError("System: Out of memory.\n");
+		::AddError(*id, "RunFile: Out of memory.\n");
 		return (int)VR_OUTOFMEMORY;
 	}
 
-	int n = system(ccommand);
-	free(ccommand);
+	int n = ::RunFile(*id, cfilename);
+	free(cfilename);
 	return n;
 }
 
-#if defined(__cplusplus)
-}
-#endif
+int
+RunStringF(int *id, char* input, unsigned int input_length)
+{
+	char* cinput;
 
+	cinput = f2cstring(input, input_length);
+	if (!cinput)
+	{
+		::AddError(*id, "RunString: Out of memory.\n");
+		return (int)VR_OUTOFMEMORY;
+	}
+
+	int n = ::RunString(*id, cinput);
+	free(cinput);
+	return n;
+}
+
+IPQ_RESULT
+SetDumpOnF(int *id, int* dump_on)
+{
+	return ::SetDumpOn(*id, *dump_on);
+}
+
+IPQ_RESULT
+SetDumpStringOnF(int *id, int* dump_string_on)
+{
+	return ::SetDumpStringOn(*id, *dump_string_on);
+}
+
+IPQ_RESULT
+SetErrorOnF(int *id, int* error_on)
+{
+	return ::SetErrorOn(*id, *error_on);
+}
+
+IPQ_RESULT
+SetLogOnF(int *id, int* log_on)
+{
+	return ::SetLogOn(*id, *log_on);
+}
+
+IPQ_RESULT
+SetOutputOnF(int *id, int* output_on)
+{
+	return ::SetOutputOn(*id, *output_on);
+}
+
+IPQ_RESULT
+SetSelectedOutputOnF(int *id, int* sel_on)
+{
+	return ::SetSelectedOutputOn(*id, *sel_on);
+}
+
+int
+UnLoadDatabaseF(int *id)
+{
+	return ::UnLoadDatabase(*id);
+}
 
 
 #if defined(_WIN32)
@@ -343,6 +353,10 @@ extern "C" {
 //
 // Intel Fortran compiler 9.1 /iface:cvf
 //
+DLL_EXPORT int __stdcall ACCUMULATELINE(int *id, char *line, unsigned int len)
+{
+	return AccumulateLineF(id, line, len);
+}
 DLL_EXPORT int __stdcall CREATEIPHREEQC(void)
 {
 	return CreateIPhreeqcF();
@@ -350,6 +364,58 @@ DLL_EXPORT int __stdcall CREATEIPHREEQC(void)
 DLL_EXPORT int __stdcall DESTROYIPHREEQC(int *id)
 {
 	return DestroyIPhreeqcF(id);
+}
+DLL_EXPORT void __stdcall GETCOMPONENT(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetComponentF(id, n, line, line_length);
+}
+DLL_EXPORT int __stdcall GETCOMPONENTCOUNT(int *id)
+{
+	return GetComponentCountF(id);
+}
+DLL_EXPORT void __stdcall GETDUMPLINE(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetDumpLineF(id, n, line, line_length);
+}
+DLL_EXPORT int __stdcall GETDUMPLINECOUNT(int *id)
+{
+	return GetDumpLineCountF(id);
+}
+DLL_EXPORT void __stdcall GETERRORLINE(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetErrorLineF(id, n, line, line_length);
+}
+DLL_EXPORT int __stdcall GETERRORLINECOUNT(int *id)
+{
+	return GetErrorLineCountF(id);
+}
+DLL_EXPORT int __stdcall GETLOGON(int *id)
+{
+	return GetLogonF(id);
+}
+DLL_EXPORT int __stdcall GETOUTPUTON(int *id)
+{
+	return GetOutputF(id);
+}
+DLL_EXPORT int __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
+{
+	return GetSelectedOutputColumnCountF(id);
+}
+DLL_EXPORT int __stdcall GETSELECTEDOUTPUTROWCOUNT(int *id)
+{
+	return GetSelectedOutputRowCountF(id);
+}
+DLL_EXPORT int __stdcall GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+{
+	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
+}
+DLL_EXPORT void __stdcall GETWARNINGLINE(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetWarningLineF(id, n, line, line_length);
+}
+DLL_EXPORT int __stdcall GETWARNINGLINECOUNT(int *id)
+{
+	return GetWarningLineCountF(id);
 }
 DLL_EXPORT int __stdcall LOADDATABASE(int *id, char *filename, unsigned int len)
 {
@@ -359,77 +425,17 @@ DLL_EXPORT int __stdcall LOADDATABASESTRING(int *id, char *input, unsigned int l
 {
 	return LoadDatabaseStringF(id, input, len);
 }
-DLL_EXPORT int __stdcall UNLOADDATABASE(int *id)
-{
-	return UnLoadDatabaseF(id);
-}
 DLL_EXPORT void __stdcall OUTPUTERROR(int *id)
 {
 	OutputErrorF(id);
 }
+DLL_EXPORT void __stdcall OUTPUTLINES(int *id)
+{
+	OutputLinesF(id);
+}
 DLL_EXPORT void __stdcall OUTPUTWARNING(int *id)
 {
 	OutputWarningF(id);
-}
-DLL_EXPORT int __stdcall ACCUMULATELINE(int *id, char *line, unsigned int len)
-{
-	return AccumulateLineF(id, line, len);
-}
-DLL_EXPORT void __stdcall SETSELECTEDOUTPUTON(int *id, int *selected_on)
-{
-	SetSelectedOutputOnF(id, selected_on);
-}
-DLL_EXPORT void __stdcall SETOUTPUTON(int *id, int *output_on)
-{
-	SetOutputOnF(id, output_on);
-}
-DLL_EXPORT void __stdcall SETERRORON(int *id, int *error_on)
-{
-	SetErrorOnF(id, error_on);
-}
-DLL_EXPORT void __stdcall SETLOGON(int *id, int *log_on)
-{
-	SetLogOnF(id, log_on);
-}
-DLL_EXPORT void __stdcall SETDUMPON(int *id, int *dump_on)
-{
-	SetDumpOnF(id, dump_on);
-}
-DLL_EXPORT void __stdcall SETDUMPSTRINGON(int *id, int *dump_string_on)
-{
-	SetDumpStringOnF(id, dump_string_on);
-}
-DLL_EXPORT int __stdcall GETDUMPLINECOUNT(int *id)
-{
-	return GetDumpLineCountF(id);
-}
-DLL_EXPORT void __stdcall GETDUMPLINE(int *id, int *n, char* line, unsigned int line_length)
-{
-	GetDumpLineF(id, n, line, line_length);
-}
-DLL_EXPORT int __stdcall GETERRORLINECOUNT(int *id)
-{
-	return GetErrorLineCountF(id);
-}
-DLL_EXPORT void __stdcall GETERRORLINE(int *id, int *n, char* line, unsigned int line_length)
-{
-	GetErrorLineF(id, n, line, line_length);
-}
-DLL_EXPORT int __stdcall GETWARNINGLINECOUNT(int *id)
-{
-	return GetWarningLineCountF(id);
-}
-DLL_EXPORT void __stdcall GETWARNINGLINE(int *id, int *n, char* line, unsigned int line_length)
-{
-	GetWarningLineF(id, n, line, line_length);
-}
-DLL_EXPORT int __stdcall GETCOMPONENTCOUNT(int *id)
-{
-	return GetComponentCountF(id);
-}
-DLL_EXPORT void __stdcall GETCOMPONENT(int *id, int *n, char* line, unsigned int line_length)
-{
-	GetComponentF(id, n, line, line_length);
 }
 DLL_EXPORT int __stdcall RUNACCUMULATED(int *id)
 {
@@ -443,21 +449,33 @@ DLL_EXPORT int __stdcall RUNSTRING(int *id, char *input, unsigned int len)
 {
 	return RunStringF(id, input, len);
 }
-DLL_EXPORT void __stdcall OUTPUTLINES(int *id)
+DLL_EXPORT void __stdcall SETDUMPON(int *id, int *dump_on)
 {
-	OutputLinesF(id);
+	SetDumpOnF(id, dump_on);
 }
-DLL_EXPORT int __stdcall GETSELECTEDOUTPUTROWCOUNT(int *id)
+DLL_EXPORT void __stdcall SETDUMPSTRINGON(int *id, int *dump_string_on)
 {
-	return GetSelectedOutputRowCountF(id);
+	SetDumpStringOnF(id, dump_string_on);
 }
-DLL_EXPORT int __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
+DLL_EXPORT void __stdcall SETERRORON(int *id, int *error_on)
 {
-	return GetSelectedOutputColumnCountF(id);
+	SetErrorOnF(id, error_on);
 }
-DLL_EXPORT int __stdcall GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+DLL_EXPORT void __stdcall SETLOGON(int *id, int *log_on)
 {
-	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
+	SetLogOnF(id, log_on);
+}
+DLL_EXPORT void __stdcall SETOUTPUTON(int *id, int *output_on)
+{
+	SetOutputOnF(id, output_on);
+}
+DLL_EXPORT void __stdcall SETSELECTEDOUTPUTON(int *id, int *selected_on)
+{
+	SetSelectedOutputOnF(id, selected_on);
+}
+DLL_EXPORT int __stdcall UNLOADDATABASE(int *id)
+{
+	return UnLoadDatabaseF(id);
 }
 #if defined(__cplusplus)
 }
