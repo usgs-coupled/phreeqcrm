@@ -51,7 +51,7 @@ LoadDatabaseString(int id, const char* input)
 	return IPQ_BADINSTANCE;
 }
 
-int
+IPQ_RESULT
 UnLoadDatabase(int id)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);

@@ -666,6 +666,11 @@ const char* IPhreeqc::GetWarningString(void)
 
 const char* IPhreeqc::GetDumpString(void)
 {
+	static const char err_msg[] = "GetDumpString: DumpStringOn not set.\n";
+	if (!this->DumpStringOn)
+	{
+		return err_msg;
+	}
 	return this->DumpString.c_str();
 }
 
@@ -1066,7 +1071,11 @@ int IPhreeqc::RunAccumulated(void)
 		}
 	}
 
-	this->ClearAccumulatedLines();
+	if (this->PhreeqcPtr->input_error == 0)
+	{
+		this->ClearAccumulatedLines();
+	}
+
 	this->PhreeqcPtr->close_output_files();
 	this->update_errors();
 
