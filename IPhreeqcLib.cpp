@@ -154,7 +154,7 @@ GetComponentCount(int id)
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		return IPhreeqcPtr->ListComponents().size();
+		return (int)IPhreeqcPtr->ListComponents().size();
 	}
 	return IPQ_BADINSTANCE;
 }

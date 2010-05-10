@@ -56,11 +56,11 @@ extern "C" {
   void       GetComponentF(int *id, int* n, char* line, unsigned int line_length);
   int        GetDumpLineCountF(int *id);
   void       GetDumpLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetDumpOnF(int *id);
+  int        GetDumpStringOnF(int *id);
   int        GetErrorLineCountF(int *id);
   void       GetErrorLineF(int *id, int* n, char* line, unsigned int line_length);
   int        GetErrorOnF(int *id);
-  int        GetDumpOnF(int *id);
-  int        GetDumpStringOnF(int *id);
   int        GetLogOnF(int *id);
   int        GetOutputOnF(int *id);
   int        GetSelectedOutputColumnCountF(int *id);

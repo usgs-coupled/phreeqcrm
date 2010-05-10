@@ -344,7 +344,7 @@ UnLoadDatabaseF(int *id)
 }
 
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(_M_AMD64)
 
 #if defined(__cplusplus)
 extern "C" {
@@ -353,15 +353,15 @@ extern "C" {
 //
 // Intel Fortran compiler 9.1 /iface:cvf
 //
-DLL_EXPORT int __stdcall ACCUMULATELINE(int *id, char *line, unsigned int len)
+DLL_EXPORT int  __stdcall ACCUMULATELINE(int *id, char *line, unsigned int len)
 {
 	return AccumulateLineF(id, line, len);
 }
-DLL_EXPORT int __stdcall CREATEIPHREEQC(void)
+DLL_EXPORT int  __stdcall CREATEIPHREEQC(void)
 {
 	return CreateIPhreeqcF();
 }
-DLL_EXPORT int __stdcall DESTROYIPHREEQC(int *id)
+DLL_EXPORT int  __stdcall DESTROYIPHREEQC(int *id)
 {
 	return DestroyIPhreeqcF(id);
 }
@@ -369,7 +369,7 @@ DLL_EXPORT void __stdcall GETCOMPONENT(int *id, int *n, char* line, unsigned int
 {
 	GetComponentF(id, n, line, line_length);
 }
-DLL_EXPORT int __stdcall GETCOMPONENTCOUNT(int *id)
+DLL_EXPORT int  __stdcall GETCOMPONENTCOUNT(int *id)
 {
 	return GetComponentCountF(id);
 }
@@ -377,35 +377,51 @@ DLL_EXPORT void __stdcall GETDUMPLINE(int *id, int *n, char* line, unsigned int 
 {
 	GetDumpLineF(id, n, line, line_length);
 }
-DLL_EXPORT int __stdcall GETDUMPLINECOUNT(int *id)
+DLL_EXPORT int  __stdcall GETDUMPLINECOUNT(int *id)
 {
 	return GetDumpLineCountF(id);
+}
+DLL_EXPORT int  __stdcall GETDUMPON(int *id)
+{
+	return GetDumpOnF(id);
+}
+DLL_EXPORT int  __stdcall GETDUMPSTRINGON(int *id)
+{
+	return GetDumpStringOnF(id);
 }
 DLL_EXPORT void __stdcall GETERRORLINE(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetErrorLineF(id, n, line, line_length);
 }
-DLL_EXPORT int __stdcall GETERRORLINECOUNT(int *id)
+DLL_EXPORT int  __stdcall GETERRORLINECOUNT(int *id)
 {
 	return GetErrorLineCountF(id);
 }
-DLL_EXPORT int __stdcall GETLOGON(int *id)
+DLL_EXPORT int  __stdcall GETERRORON(int *id)
 {
-	return GetLogonF(id);
+	return GetErrorOnF(id);
 }
-DLL_EXPORT int __stdcall GETOUTPUTON(int *id)
+DLL_EXPORT int  __stdcall GETLOGON(int *id)
 {
-	return GetOutputF(id);
+	return GetLogOnF(id);
 }
-DLL_EXPORT int __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
+DLL_EXPORT int  __stdcall GETOUTPUTON(int *id)
+{
+	return GetOutputOnF(id);
+}
+DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
 {
 	return GetSelectedOutputColumnCountF(id);
 }
-DLL_EXPORT int __stdcall GETSELECTEDOUTPUTROWCOUNT(int *id)
+DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTON(int *id)
+{
+	return GetSelectedOutputOnF(id);
+}
+DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTROWCOUNT(int *id)
 {
 	return GetSelectedOutputRowCountF(id);
 }
-DLL_EXPORT int __stdcall GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
 {
 	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
 }
@@ -413,15 +429,15 @@ DLL_EXPORT void __stdcall GETWARNINGLINE(int *id, int *n, char* line, unsigned i
 {
 	GetWarningLineF(id, n, line, line_length);
 }
-DLL_EXPORT int __stdcall GETWARNINGLINECOUNT(int *id)
+DLL_EXPORT int  __stdcall GETWARNINGLINECOUNT(int *id)
 {
 	return GetWarningLineCountF(id);
 }
-DLL_EXPORT int __stdcall LOADDATABASE(int *id, char *filename, unsigned int len)
+DLL_EXPORT int  __stdcall LOADDATABASE(int *id, char *filename, unsigned int len)
 {
 	return LoadDatabaseF(id, filename, len);
 }
-DLL_EXPORT int __stdcall LOADDATABASESTRING(int *id, char *input, unsigned int len)
+DLL_EXPORT int  __stdcall LOADDATABASESTRING(int *id, char *input, unsigned int len)
 {
 	return LoadDatabaseStringF(id, input, len);
 }
@@ -437,15 +453,15 @@ DLL_EXPORT void __stdcall OUTPUTWARNING(int *id)
 {
 	OutputWarningF(id);
 }
-DLL_EXPORT int __stdcall RUNACCUMULATED(int *id)
+DLL_EXPORT int  __stdcall RUNACCUMULATED(int *id)
 {
 	return RunAccumulatedF(id);
 }
-DLL_EXPORT int __stdcall RUNFILE(int *id, char *filename, unsigned int len)
+DLL_EXPORT int  __stdcall RUNFILE(int *id, char *filename, unsigned int len)
 {
 	return RunFileF(id, filename, len);
 }
-DLL_EXPORT int __stdcall RUNSTRING(int *id, char *input, unsigned int len)
+DLL_EXPORT int  __stdcall RUNSTRING(int *id, char *input, unsigned int len)
 {
 	return RunStringF(id, input, len);
 }
@@ -473,7 +489,7 @@ DLL_EXPORT void __stdcall SETSELECTEDOUTPUTON(int *id, int *selected_on)
 {
 	SetSelectedOutputOnF(id, selected_on);
 }
-DLL_EXPORT int __stdcall UNLOADDATABASE(int *id)
+DLL_EXPORT int  __stdcall UNLOADDATABASE(int *id)
 {
 	return UnLoadDatabaseF(id);
 }
