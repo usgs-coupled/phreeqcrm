@@ -62,12 +62,12 @@ CVar CSelectedOutput::Get(int nRow, int nCol)const
 
 VRESULT CSelectedOutput::Get(int nRow, int nCol, VAR* pVAR)const
 {
-	if ((size_t)nRow >= this->GetRowCount() || (size_t)nRow < 0) {
+	if ((size_t)nRow >= this->GetRowCount() || nRow < 0) {
 		pVAR->type = TT_ERROR;
 		pVAR->vresult = VR_INVALIDROW;
 		return pVAR->vresult;
 	}
-	if ((size_t)nCol >= this->GetColCount() || (size_t)nCol < 0) {
+	if ((size_t)nCol >= this->GetColCount() || nCol < 0) {
 		pVAR->type = TT_ERROR;
 		pVAR->vresult = VR_INVALIDCOL;
 		return pVAR->vresult;
