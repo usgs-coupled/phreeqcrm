@@ -8,6 +8,14 @@
         AccumulateLine = AccumulateLineF(ID,LINE)
       END FUNCTION AccumulateLine
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION ClearAccumulatedLines(ID)
+        IMPLICIT NONE
+        INTEGER(KIND=4)  :: ID
+        INTEGER(KIND=4)  :: ClearAccumulatedLines
+        INTEGER(KIND=4)  :: ClearAccumulatedLinesF
+        ClearAccumulatedLines = ClearAccumulatedLinesF(ID)
+      END FUNCTION ClearAccumulatedLines
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION CreateIPhreeqc()
         IMPLICIT NONE
         INTEGER(KIND=4)  :: CreateIPhreeqc

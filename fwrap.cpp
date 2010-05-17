@@ -54,6 +54,12 @@ AccumulateLineF(int *id, char *line, unsigned int line_length)
 	return n;
 }
 
+IPQ_RESULT
+ClearAccumulatedLinesF(int *id)
+{
+	return ::ClearAccumulatedLines(*id);
+}
+
 int
 CreateIPhreeqcF(void)
 {
@@ -356,6 +362,10 @@ extern "C" {
 DLL_EXPORT int  __stdcall ACCUMULATELINE(int *id, char *line, unsigned int len)
 {
 	return AccumulateLineF(id, line, len);
+}
+DLL_EXPORT int  __stdcall CLEARACCUMULATEDLINES(int *id)
+{
+	return ClearAccumulatedLinesF(id);
 }
 DLL_EXPORT int  __stdcall CREATEIPHREEQC(void)
 {

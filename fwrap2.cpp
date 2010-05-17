@@ -15,6 +15,10 @@ DLL_EXPORT int  ACCUMULATELINE(int *id, char *line, unsigned int len)
 {
 	return AccumulateLineF(id, line, len);
 }
+DLL_EXPORT int  CLEARACCUMULATEDLINES(int *id)
+{
+	return ClearAccumulatedLinesF(id);
+}
 DLL_EXPORT int  CREATEIPHREEQC(void)
 {
 	return CreateIPhreeqcF();

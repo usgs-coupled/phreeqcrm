@@ -17,10 +17,54 @@ private:
 	static size_t InstancesIndex;
 };
 
+IPQ_RESULT
+AccumulateLine(int id, const char *line)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		switch (IPhreeqcPtr->AccumulateLine(line))
+		{
+		case VR_OK:
+			return IPQ_OK;
+		case VR_OUTOFMEMORY:
+			return IPQ_OUTOFMEMORY;
+		default:
+			assert(false);
+		}
+	}
+	return IPQ_BADINSTANCE;
+}
+
+int
+AddError(int id, const char* error_msg)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return (int)IPhreeqcPtr->AddError(error_msg);
+	}
+	return IPQ_BADINSTANCE;
+}
+
+// TODO AddWarning
+
 int
 CreateIPhreeqc(void)
 {
 	return IPhreeqcLib::CreateIPhreeqc();
+}
+
+IPQ_RESULT
+ClearAccumulatedLines(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->ClearAccumulatedLines();
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
 }
 
 IPQ_RESULT
@@ -29,135 +73,7 @@ DestroyIPhreeqc(int id)
 	return IPhreeqcLib::DestroyIPhreeqc(id);
 }
 
-int
-LoadDatabase(int id, const char* filename)
-{
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->LoadDatabase(filename);
-	}
-	return IPQ_BADINSTANCE;
-}
-
-int
-LoadDatabaseString(int id, const char* input)
-{
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->LoadDatabaseString(input);
-	}
-	return IPQ_BADINSTANCE;
-}
-
-IPQ_RESULT
-UnLoadDatabase(int id)
-{
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		IPhreeqcPtr->UnLoadDatabase();
-		return IPQ_OK;
-	}
-	return IPQ_BADINSTANCE;
-}
-
-void
-OutputError(int id)
-{
-	static const char err_msg[] = "OutputError: Invalid instance id.\n";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		IPhreeqcPtr->OutputError();
-		return;
-	}
-	std::cout << err_msg << std::endl;
-}
-
-void
-OutputWarning(int id)
-{
-	static const char err_msg[] = "OutputWarning: Invalid instance id.\n";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		IPhreeqcPtr->OutputWarning();
-		return;
-	}
-	std::cout << err_msg << std::endl;
-}
-
-const char*
-GetErrorString(int id)
-{
-	static const char err_msg[] = "GetErrorString: Invalid instance id.\n";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->GetErrorString();
-	}
-	return err_msg;
-}
-
-const char*
-GetWarningString(int id)
-{
-	static const char err_msg[] = "GetWarningString: Invalid instance id.\n";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->GetWarningString();
-	}
-	return err_msg;
-}
-
-const char*
-GetDumpString(int id)
-{
-	static const char empty[] = "";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->GetDumpString();
-	}
-	return empty;
-}
-
-int
-GetDumpLineCount(int id)
-{
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->GetDumpLineCount();
-	}
-	return 0;
-}
-
-const char*
-GetDumpLine(int id, int n)
-{
-	static const char err_msg[] = "GetDumpLine: Invalid instance id.\n";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->GetDumpLine(n);
-	}
-	return err_msg;
-}
-
-int
-GetComponentCount(int id)
-{
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return (int)IPhreeqcPtr->ListComponents().size();
-	}
-	return IPQ_BADINSTANCE;
-}
+// TODO Maybe GetAccumulatedLines
 
 const char*
 GetComponent(int id, int n)
@@ -185,32 +101,47 @@ GetComponent(int id, int n)
 	return err_msg;
 }
 
-IPQ_RESULT
-AccumulateLine(int id, const char *line)
+int
+GetComponentCount(int id)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		switch (IPhreeqcPtr->AccumulateLine(line))
-		{
-		case VR_OK:
-			return IPQ_OK;
-		case VR_OUTOFMEMORY:
-			return IPQ_OUTOFMEMORY;
-		default:
-			assert(false);
-		}
+		return (int)IPhreeqcPtr->ListComponents().size();
 	}
 	return IPQ_BADINSTANCE;
 }
 
+const char*
+GetDumpLine(int id, int n)
+{
+	static const char err_msg[] = "GetDumpLine: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetDumpLine(n);
+	}
+	return err_msg;
+}
+
 int
-GetSelectedOutputOn(int id)
+GetDumpLineCount(int id)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		if (IPhreeqcPtr->GetSelectedOutputOn())
+		return IPhreeqcPtr->GetDumpLineCount();
+	}
+	return 0;
+}
+
+int
+GetDumpOn(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		if (IPhreeqcPtr->GetDumpOn())
 		{
 			return 1;
 		}
@@ -222,25 +153,25 @@ GetSelectedOutputOn(int id)
 	return IPQ_BADINSTANCE;
 }
 
-IPQ_RESULT
-SetSelectedOutputOn(int id, int value)
+const char*
+GetDumpString(int id)
 {
+	static const char empty[] = "";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		IPhreeqcPtr->SetSelectedOutputOn(value != 0);
-		return IPQ_OK;
+		return IPhreeqcPtr->GetDumpString();
 	}
-	return IPQ_BADINSTANCE;
+	return empty;
 }
 
 int
-GetOutputOn(int id)
+GetDumpStringOn(int id)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		if (IPhreeqcPtr->GetOutputOn())
+		if (IPhreeqcPtr->GetDumpStringOn())
 		{
 			return 1;
 		}
@@ -252,14 +183,25 @@ GetOutputOn(int id)
 	return IPQ_BADINSTANCE;
 }
 
-IPQ_RESULT
-SetOutputOn(int id, int value)
+const char*
+GetErrorLine(int id, int n)
+{
+	static const char err_msg[] = "GetErrorLine: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetErrorLine(n);
+	}
+	return err_msg;
+}
+
+int
+GetErrorLineCount(int id)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		IPhreeqcPtr->SetOutputOn(value != 0);
-		return IPQ_OK;
+		return (int)IPhreeqcPtr->GetErrorLineCount();
 	}
 	return IPQ_BADINSTANCE;
 }
@@ -282,16 +224,16 @@ GetErrorOn(int id)
 	return IPQ_BADINSTANCE;
 }
 
-IPQ_RESULT
-SetErrorOn(int id, int value)
+const char*
+GetErrorString(int id)
 {
+	static const char err_msg[] = "GetErrorString: Invalid instance id.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		IPhreeqcPtr->SetErrorOn(value != 0);
-		return IPQ_OK;
+		return IPhreeqcPtr->GetErrorString();
 	}
-	return IPQ_BADINSTANCE;
+	return err_msg;
 }
 
 int
@@ -312,26 +254,13 @@ GetLogOn(int id)
 	return IPQ_BADINSTANCE;
 }
 
-IPQ_RESULT
-SetLogOn(int id, int value)
-{
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		IPhreeqcPtr->SetLogOn(value != 0);
-		return IPQ_OK;
-	}
-	return IPQ_BADINSTANCE;
-}
-
-
 int
-GetDumpOn(int id)
+GetOutputOn(int id)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		if (IPhreeqcPtr->GetDumpOn())
+		if (IPhreeqcPtr->GetOutputOn())
 		{
 			return 1;
 		}
@@ -343,25 +272,24 @@ GetDumpOn(int id)
 	return IPQ_BADINSTANCE;
 }
 
-IPQ_RESULT
-SetDumpOn(int id, int value)
+int
+GetSelectedOutputColumnCount(int id)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		IPhreeqcPtr->SetDumpOn(value != 0);
-		return IPQ_OK;
+		return IPhreeqcPtr->GetSelectedOutputColumnCount();
 	}
 	return IPQ_BADINSTANCE;
 }
 
 int
-GetDumpStringOn(int id)
+GetSelectedOutputOn(int id)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		if (IPhreeqcPtr->GetDumpStringOn())
+		if (IPhreeqcPtr->GetSelectedOutputOn())
 		{
 			return 1;
 		}
@@ -373,16 +301,132 @@ GetDumpStringOn(int id)
 	return IPQ_BADINSTANCE;
 }
 
-IPQ_RESULT
-SetDumpStringOn(int id, int value)
+int
+GetSelectedOutputRowCount(int id)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		IPhreeqcPtr->SetDumpStringOn(value != 0);
-		return IPQ_OK;
+		return IPhreeqcPtr->GetSelectedOutputRowCount();
 	}
 	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
+GetSelectedOutputValue(int id, int row, int col, VAR* pVAR)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		switch(IPhreeqcPtr->GetSelectedOutputValue(row, col, pVAR))
+		{
+		case VR_OK:          return IPQ_OK;
+		case VR_OUTOFMEMORY: return IPQ_OUTOFMEMORY;
+		case VR_BADVARTYPE:  return IPQ_BADVARTYPE;
+		case VR_INVALIDARG:  return IPQ_INVALIDARG;
+		case VR_INVALIDROW:  return IPQ_INVALIDROW;
+		case VR_INVALIDCOL:  return IPQ_INVALIDCOL;
+		default:
+			assert(false);
+		}
+	}
+	return IPQ_BADINSTANCE;
+}
+
+const char*
+GetWarningLine(int id, int n)
+{
+	static const char err_msg[] = "GetWarningLine: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetWarningLine(n);
+	}
+	return err_msg;
+}
+
+int
+GetWarningLineCount(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return (int)IPhreeqcPtr->GetWarningLineCount();
+	}
+	return IPQ_BADINSTANCE;
+}
+
+const char*
+GetWarningString(int id)
+{
+	static const char err_msg[] = "GetWarningString: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetWarningString();
+	}
+	return err_msg;
+}
+
+int
+LoadDatabase(int id, const char* filename)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->LoadDatabase(filename);
+	}
+	return IPQ_BADINSTANCE;
+}
+
+int
+LoadDatabaseString(int id, const char* input)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->LoadDatabaseString(input);
+	}
+	return IPQ_BADINSTANCE;
+}
+
+void
+OutputError(int id)
+{
+	static const char err_msg[] = "OutputError: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->OutputError();
+		return;
+	}
+	std::cout << err_msg << std::endl;
+}
+
+void
+OutputLines(int id)
+{
+	static const char err_msg[] = "OutputLines: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->OutputLines();
+		return;
+	}
+	std::cout << err_msg << std::endl;
+}
+
+void
+OutputWarning(int id)
+{
+	static const char err_msg[] = "OutputWarning: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->OutputWarning();
+		return;
+	}
+	std::cout << err_msg << std::endl;
 }
 
 int
@@ -418,119 +462,92 @@ RunString(int id, const char* input)
 	return IPQ_BADINSTANCE;
 }
 
-int
-GetSelectedOutputRowCount(int id)
+IPQ_RESULT
+SetDumpOn(int id, int value)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		return IPhreeqcPtr->GetSelectedOutputRowCount();
+		IPhreeqcPtr->SetDumpOn(value != 0);
+		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;
 }
-
-int
-GetSelectedOutputColumnCount(int id)
-{
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->GetSelectedOutputColumnCount();
-	}
-	return IPQ_BADINSTANCE;
-}
-
 
 IPQ_RESULT
-GetSelectedOutputValue(int id, int row, int col, VAR* pVAR)
+SetDumpStringOn(int id, int value)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		switch(IPhreeqcPtr->GetSelectedOutputValue(row, col, pVAR))
-		{
-		case VR_OK:          return IPQ_OK;
-		case VR_OUTOFMEMORY: return IPQ_OUTOFMEMORY;
-		case VR_BADVARTYPE:  return IPQ_BADVARTYPE;
-		case VR_INVALIDARG:  return IPQ_INVALIDARG;
-		case VR_INVALIDROW:  return IPQ_INVALIDROW;
-		case VR_INVALIDCOL:  return IPQ_INVALIDCOL;
-		default:
-			assert(false);
-		}
+		IPhreeqcPtr->SetDumpStringOn(value != 0);
+		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;
 }
 
-int
-AddError(int id, const char* error_msg)
+IPQ_RESULT
+SetErrorOn(int id, int value)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		return (int)IPhreeqcPtr->AddError(error_msg);
+		IPhreeqcPtr->SetErrorOn(value != 0);
+		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;
 }
 
-void
-OutputLines(int id)
-{
-	static const char err_msg[] = "OutputLines: Invalid instance id.\n";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		IPhreeqcPtr->OutputLines();
-		return;
-	}
-	std::cout << err_msg << std::endl;
-}
-
-int
-GetErrorLineCount(int id)
+IPQ_RESULT
+SetLogOn(int id, int value)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		return (int)IPhreeqcPtr->GetErrorLineCount();
+		IPhreeqcPtr->SetLogOn(value != 0);
+		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;
 }
 
-const char*
-GetErrorLine(int id, int n)
-{
-	static const char err_msg[] = "GetErrorLine: Invalid instance id.\n";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->GetErrorLine(n);
-	}
-	return err_msg;
-}
-
-int
-GetWarningLineCount(int id)
+IPQ_RESULT
+SetOutputOn(int id, int value)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		return (int)IPhreeqcPtr->GetWarningLineCount();
+		IPhreeqcPtr->SetOutputOn(value != 0);
+		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;
 }
 
-const char*
-GetWarningLine(int id, int n)
+IPQ_RESULT
+SetSelectedOutputOn(int id, int value)
 {
-	static const char err_msg[] = "GetWarningLine: Invalid instance id.\n";
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		return IPhreeqcPtr->GetWarningLine(n);
+		IPhreeqcPtr->SetSelectedOutputOn(value != 0);
+		return IPQ_OK;
 	}
-	return err_msg;
+	return IPQ_BADINSTANCE;
 }
+
+IPQ_RESULT
+UnLoadDatabase(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->UnLoadDatabase();
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+// helper functions
+//
 
 std::map<size_t, IPhreeqc*> IPhreeqcLib::Instances;
 size_t IPhreeqcLib::InstancesIndex = 0;

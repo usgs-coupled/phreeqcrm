@@ -9,6 +9,7 @@
 
 #if defined(FC_FUNC)
 #define AccumulateLineF               FC_FUNC (accumulatelinef,               ACCUMULATELINEF)
+#define ClearAccumulatedLinesF        FC_FUNC (clearaccumulatedlinesf,        CLEARACCUMULATEDLINESF)
 #define CreateIPhreeqcF               FC_FUNC (createiphreeqcf,               CREATEIPHREEQCF)
 #define DestroyIPhreeqcF              FC_FUNC (destroyiphreeqcf,              DESTROYIPHREEQCF)
 #define GetComponentCountF            FC_FUNC (getcomponentcountf,            GETCOMPONENTCOUNTF)
@@ -50,6 +51,7 @@ extern "C" {
 #endif
 
   IPQ_RESULT AccumulateLineF(int *id, char *line, unsigned int line_length);
+  IPQ_RESULT ClearAccumulatedLinesF(int *id);
   int        CreateIPhreeqcF(void);
   int        DestroyIPhreeqcF(int *id);
   int        GetComponentCountF(int *id);
