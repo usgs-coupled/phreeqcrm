@@ -8,6 +8,8 @@
         AccumulateLine = AccumulateLineF(ID,LINE)
       END FUNCTION AccumulateLine
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! AddError      
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION ClearAccumulatedLines(ID)
         IMPLICIT NONE
         INTEGER(KIND=4)  :: ID
@@ -49,6 +51,20 @@
         GetComponentCount = GetComponentCountF(ID)
       END FUNCTION GetComponentCount
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetDumpFileOn(ID)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: GetDumpFileOn
+        INTEGER(KIND=4) :: GetDumpFileOnF
+        IF (GetDumpFileOnF(ID).EQ.0) THEN
+          GetDumpFileOn = .FALSE.
+        ELSE
+          GetDumpFileOn = .TRUE.
+        ENDIF
+      END FUNCTION GetDumpFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! GetDumpString      
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetDumpStringLine(ID,N,LINE)
         IMPLICIT NONE
         INTEGER(KIND=4)  :: ID
@@ -67,18 +83,6 @@
         GetDumpStringLineCount = GetDumpStringLineCountF(ID)
       END FUNCTION GetDumpStringLineCount
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetDumpFileOn(ID)
-        IMPLICIT NONE
-        INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: GetDumpFileOn
-        INTEGER(KIND=4) :: GetDumpFileOnF
-        IF (GetDumpFileOnF(ID).EQ.0) THEN
-          GetDumpFileOn = .FALSE.
-        ELSE
-          GetDumpFileOn = .TRUE.
-        ENDIF
-      END FUNCTION GetDumpFileOn
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetDumpStringOn(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
@@ -90,6 +94,20 @@
           GetDumpStringOn = .TRUE.
         ENDIF
       END FUNCTION GetDumpStringOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetErrorFileOn(ID)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: GetErrorFileOn
+        INTEGER(KIND=4) :: GetErrorFileOnF
+        IF (GetErrorFileOnF(ID).EQ.0) THEN
+          GetErrorFileOn = .FALSE.
+        ELSE
+          GetErrorFileOn = .TRUE.
+        ENDIF
+      END FUNCTION GetErrorFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! GetErrorString      
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetErrorStringLine(ID,N,LINE)
         IMPLICIT NONE
@@ -108,18 +126,6 @@
         INTEGER(KIND=4) :: GetErrorStringLineCountF
         GetErrorStringLineCount = GetErrorStringLineCountF(ID)
       END FUNCTION GetErrorStringLineCount
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetErrorFileOn(ID)
-        IMPLICIT NONE
-        INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: GetErrorFileOn
-        INTEGER(KIND=4) :: GetErrorFileOnF
-        IF (GetErrorFileOnF(ID).EQ.0) THEN
-          GetErrorFileOn = .FALSE.
-        ELSE
-          GetErrorFileOn = .TRUE.
-        ENDIF
-      END FUNCTION GetErrorFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetLogFileOn(ID)
         IMPLICIT NONE
@@ -187,6 +193,8 @@
      &                     COL,VTYPE,DVALUE,SVALUE)
       END FUNCTION GetSelectedOutputValue
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! GetWarningString
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetWarningStringLine(ID,N,LINE)
         IMPLICIT NONE
         INTEGER(KIND=4)  :: ID
@@ -223,77 +231,23 @@
         LoadDatabaseString = LoadDatabaseStringF(ID,INPUT)
       END FUNCTION LoadDatabaseString
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      SUBROUTINE OutputErrorString(ID)
-        IMPLICIT NONE
-        INTEGER(KIND=4) :: ID
-        CALL OutputErrorStringF(ID)
-      END SUBROUTINE OutputErrorString
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       SUBROUTINE OutputAccumulatedLines(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
         CALL OutputAccumulatedLinesF(ID)
       END SUBROUTINE OutputAccumulatedLines
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      SUBROUTINE OutputErrorString(ID)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+        CALL OutputErrorStringF(ID)
+      END SUBROUTINE OutputErrorString
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       SUBROUTINE OutputWarningString(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
         CALL OutputWarningStringF(ID)
       END SUBROUTINE OutputWarningString
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetSelectedOutputFileOn(ID,SELECTED_ON)
-        IMPLICIT NONE
-        INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: SELECTED_ON
-        INTEGER(KIND=4) :: SetSelectedOutputFileOn
-        INTEGER(KIND=4) :: SetSelOutFileOnF
-        SetSelectedOutputFileOn = SetSelOutFileOnF(ID,SELECTED_ON)
-      END FUNCTION SetSelectedOutputFileOn
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetOutputFileOn(ID,OUTPUT_ON)
-        IMPLICIT NONE
-        INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: OUTPUT_ON
-        INTEGER(KIND=4) :: SetOutputFileOn
-        INTEGER(KIND=4) :: SetOutputFileOnF
-        SetOutputFileOn = SetOutputFileOnF(ID,OUTPUT_ON)
-      END FUNCTION SetOutputFileOn
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetErrorFileOn(ID,ERROR_ON)
-        IMPLICIT NONE
-        INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: ERROR_ON
-        INTEGER(KIND=4) :: SetErrorFileOn
-        INTEGER(KIND=4) :: SetErrorFileOnF
-        SetErrorFileOn = SetErrorFileOnF(ID,ERROR_ON)
-      END FUNCTION SetErrorFileOn
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetLogFileOn(ID,LOG_ON)
-        IMPLICIT NONE
-        INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: LOG_ON
-        INTEGER(KIND=4) :: SetLogFileOn
-        INTEGER(KIND=4) :: SetLogFileOnF
-        SetLogFileOn = SetLogFileOnF(ID,LOG_ON)
-      END FUNCTION SetLogFileOn
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetDumpFileOn(ID,DUMP_ON)
-        IMPLICIT NONE
-        INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: DUMP_ON
-        INTEGER(KIND=4) :: SetDumpFileOn
-        INTEGER(KIND=4) :: SetDumpFileOnF
-        SetDumpFileOn = SetDumpFileOnF(ID,DUMP_ON)
-      END FUNCTION SetDumpFileOn
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetDumpStringOn(ID,DUMP_STRING_ON)
-        IMPLICIT NONE
-        INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: DUMP_STRING_ON
-        INTEGER(KIND=4) :: SetDumpStringOn
-        INTEGER(KIND=4) :: SetDumpStringOnF
-        SetDumpStringOn = SetDumpStringOnF(ID,DUMP_STRING_ON)
-      END FUNCTION SetDumpStringOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION RunAccumulated(ID)
         IMPLICIT NONE
@@ -320,6 +274,60 @@
         INTEGER(KIND=4)  :: RunStringF
         RunString = RunStringF(ID,INPUT)
       END FUNCTION RunString
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetDumpFileOn(ID,DUMP_ON)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: DUMP_ON
+        INTEGER(KIND=4) :: SetDumpFileOn
+        INTEGER(KIND=4) :: SetDumpFileOnF
+        SetDumpFileOn = SetDumpFileOnF(ID,DUMP_ON)
+      END FUNCTION SetDumpFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetDumpStringOn(ID,DUMP_STRING_ON)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: DUMP_STRING_ON
+        INTEGER(KIND=4) :: SetDumpStringOn
+        INTEGER(KIND=4) :: SetDumpStringOnF
+        SetDumpStringOn = SetDumpStringOnF(ID,DUMP_STRING_ON)
+      END FUNCTION SetDumpStringOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetErrorFileOn(ID,ERROR_ON)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: ERROR_ON
+        INTEGER(KIND=4) :: SetErrorFileOn
+        INTEGER(KIND=4) :: SetErrorFileOnF
+        SetErrorFileOn = SetErrorFileOnF(ID,ERROR_ON)
+      END FUNCTION SetErrorFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetLogFileOn(ID,LOG_ON)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: LOG_ON
+        INTEGER(KIND=4) :: SetLogFileOn
+        INTEGER(KIND=4) :: SetLogFileOnF
+        SetLogFileOn = SetLogFileOnF(ID,LOG_ON)
+      END FUNCTION SetLogFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetOutputFileOn(ID,OUTPUT_ON)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: OUTPUT_ON
+        INTEGER(KIND=4) :: SetOutputFileOn
+        INTEGER(KIND=4) :: SetOutputFileOnF
+        SetOutputFileOn = SetOutputFileOnF(ID,OUTPUT_ON)
+      END FUNCTION SetOutputFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetSelectedOutputFileOn(ID,SELECTED_ON)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: SELECTED_ON
+        INTEGER(KIND=4) :: SetSelectedOutputFileOn
+        INTEGER(KIND=4) :: SetSelOutFileOnF
+        SetSelectedOutputFileOn = SetSelOutFileOnF(ID,SELECTED_ON)
+      END FUNCTION SetSelectedOutputFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION UnLoadDatabase(ID)
         IMPLICIT NONE

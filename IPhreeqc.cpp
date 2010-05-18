@@ -62,6 +62,513 @@ IPhreeqc::~IPhreeqc(void)
 	delete this->PhreeqcPtr;
 }
 
+VRESULT IPhreeqc::AccumulateLine(const char *line)
+{
+	try
+	{
+		if (this->ClearAccumulatedLinesOnNextAccumulate)
+		{
+			this->ClearAccumulatedLines();
+			this->ClearAccumulatedLinesOnNextAccumulate = false;
+		}
+
+		this->ErrorReporter->Clear();
+		this->WarningReporter->Clear();
+		this->StringInput.append(line);
+		this->StringInput.append("\n");
+		return VR_OK;
+	}
+	catch (...)
+	{
+		this->AddError("AccumulateLine: An unhandled exception occured.\n");
+	}
+	return VR_OUTOFMEMORY;
+}
+
+size_t IPhreeqc::AddError(const char* error_msg)
+{
+	return this->ErrorReporter->AddError(error_msg);
+}
+
+size_t IPhreeqc::AddWarning(const char* warn_msg)
+{
+	return this->WarningReporter->AddError(warn_msg);
+}
+
+void IPhreeqc::ClearAccumulatedLines(void)
+{
+	this->StringInput.erase();
+}
+
+const std::string& IPhreeqc::GetAccumulatedLines(void)
+{
+	return this->StringInput;
+}
+
+const char* IPhreeqc::GetComponent(int n)
+{
+	static const char empty[] = "";
+	this->Components = this->ListComponents();
+	if (n < 0 || n >= (int)this->Components.size())
+	{
+		return empty;
+	}
+	std::list< std::string >::iterator it = this->Components.begin();
+	for(int i = 0; i < n; ++i)
+	{
+		++it;
+	}
+	return (*it).c_str();
+}
+
+size_t IPhreeqc::GetComponentCount(void)
+{
+	std::list< std::string > comps;
+	this->PhreeqcPtr->list_components(comps);
+	return comps.size();
+}
+
+bool IPhreeqc::GetDumpFileOn(void)const
+{
+	return this->DumpOn;
+}
+
+const char* IPhreeqc::GetDumpString(void)
+{
+	static const char err_msg[] = "GetDumpString: DumpStringOn not set.\n";
+	if (!this->DumpStringOn)
+	{
+		return err_msg;
+	}
+	return this->DumpString.c_str();
+}
+
+const char* IPhreeqc::GetDumpStringLine(int n)
+{
+	static const char empty[] = "";
+	if (n < 0 || n >= this->GetDumpStringLineCount())
+	{
+		return empty;
+	}
+	return this->DumpLines[n].c_str();
+}
+
+int IPhreeqc::GetDumpStringLineCount(void)const
+{
+	return (int)this->DumpLines.size();
+}
+
+bool IPhreeqc::GetDumpStringOn(void)const
+{
+	return this->DumpStringOn;
+}
+
+bool IPhreeqc::GetErrorFileOn(void)const
+{
+	return this->ErrorOn;
+}
+
+const char* IPhreeqc::GetErrorString(void)
+{
+	this->ErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
+	return this->ErrorString.c_str();
+}
+
+const char* IPhreeqc::GetErrorStringLine(int n)
+{
+	static const char empty[] = "";
+	if (n < 0 || n >= this->GetErrorStringLineCount())
+	{
+		return empty;
+	}
+	return this->ErrorLines[n].c_str();
+}
+
+int IPhreeqc::GetErrorStringLineCount(void)const
+{
+	return (int)this->ErrorLines.size();
+}
+
+bool IPhreeqc::GetLogFileOn(void)const
+{
+	return this->LogOn;
+}
+
+bool IPhreeqc::GetOutputFileOn(void)const
+{
+	return this->OutputOn;
+}
+
+int IPhreeqc::GetSelectedOutputColumnCount(void)const
+{
+	return (int)this->SelectedOutput->GetColCount();
+}
+
+bool IPhreeqc::GetSelectedOutputFileOn(void)const
+{
+	return this->SelectedOutputOn;
+}
+
+int IPhreeqc::GetSelectedOutputRowCount(void)const
+{
+	return (int)this->SelectedOutput->GetRowCount();
+}
+
+VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
+{
+	this->ErrorReporter->Clear();
+	if (!pVAR)
+	{
+		this->AddError("GetSelectedOutputValue: VR_INVALIDARG pVAR is NULL.\n");
+		this->update_errors();
+		return VR_INVALIDARG;
+	}
+
+	VRESULT v = this->SelectedOutput->Get(row, col, pVAR);
+	switch (v)
+	{
+	case VR_OK:
+		break;
+	case VR_OUTOFMEMORY:
+		this->AddError("GetSelectedOutputValue: VR_OUTOFMEMORY Out of memory.\n");
+		break;
+	case VR_BADVARTYPE:
+		this->AddError("GetSelectedOutputValue: VR_BADVARTYPE pVar must be initialized(VarInit) and/or cleared(VarClear).\n");
+		break;
+	case VR_INVALIDARG:
+		// not possible
+		break;
+	case VR_INVALIDROW:
+		this->AddError("GetSelectedOutputValue: VR_INVALIDROW Row index out of range.\n");
+		break;
+	case VR_INVALIDCOL:
+		this->AddError("GetSelectedOutputValue: VR_INVALIDCOL Column index out of range.\n");
+		break;
+	}
+	this->update_errors();
+	return v;
+}
+
+const char* IPhreeqc::GetWarningString(void)
+{
+	this->WarningString = ((CErrorReporter<std::ostringstream>*)this->WarningReporter)->GetOS()->str();
+	return this->WarningString.c_str();
+}
+
+const char* IPhreeqc::GetWarningStringLine(int n)
+{
+	static const char empty[] = "";
+	if (n < 0 || n >= this->GetWarningStringLineCount())
+	{
+		return empty;
+	}
+	return this->WarningLines[n].c_str();
+}
+
+int IPhreeqc::GetWarningStringLineCount(void)const
+{
+	return (int)this->WarningLines.size();
+}
+
+std::list< std::string > IPhreeqc::ListComponents(void)
+{
+	std::list< std::string > comps;
+	this->PhreeqcPtr->list_components(comps);
+	return comps;
+}
+
+int IPhreeqc::LoadDatabase(const char* filename)
+{
+	try
+	{
+		// cleanup
+		//
+		this->UnLoadDatabase();
+		this->SelectedOutput->Clear();
+
+		// open file
+		//
+		std::ifstream ifs;
+		ifs.open(filename);
+
+		if (!ifs.is_open())
+		{
+			std::ostringstream oss;
+			oss << "LoadDatabase: Unable to open:" << "\"" << filename << "\".";
+			this->PhreeqcPtr->error_msg(oss.str().c_str(), STOP); // throws
+		}
+
+		// read input
+		//
+		this->PhreeqcPtr->read_database(istream_getc, &ifs);
+	}
+	catch (IPhreeqcStop)
+	{
+		this->PhreeqcPtr->close_input_files();
+	}
+	catch (...)
+	{
+		const char *errmsg = "LoadDatabase: An unhandled exception occured.\n";
+		try
+		{
+			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws IPhreeqcStop
+		}
+		catch (IPhreeqcStop)
+		{
+			// do nothing
+		}
+	}
+
+	this->DatabaseLoaded = (this->PhreeqcPtr->input_error == 0);
+	return this->PhreeqcPtr->input_error;
+}
+
+int IPhreeqc::LoadDatabaseString(const char* input)
+{
+	try
+	{
+		// cleanup
+		//
+		this->UnLoadDatabase();
+
+		this->SelectedOutput->Clear();
+
+		std::string s(input);
+		std::istringstream iss(s);
+
+		// read input
+		//
+		this->PhreeqcPtr->read_database(istream_getc, &iss);
+	}
+	catch (IPhreeqcStop)
+	{
+		this->PhreeqcPtr->close_input_files();
+	}
+	catch(...)
+	{
+		const char *errmsg = "LoadDatabaseString: An unhandled exception occured.\n";
+		try
+		{
+			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
+		}
+		catch (IPhreeqcStop)
+		{
+			// do nothing
+		}
+	}
+
+	this->DatabaseLoaded = (this->PhreeqcPtr->input_error == 0);
+	return this->PhreeqcPtr->input_error;
+}
+
+void IPhreeqc::OutputAccumulatedLines(void)
+{
+	std::cout << this->StringInput.c_str() << std::endl;
+}
+
+void IPhreeqc::OutputErrorString(void)
+{
+	std::cout << this->GetErrorString() << std::endl;
+}
+
+void IPhreeqc::OutputWarningString(void)
+{
+	std::cout << this->GetWarningString() << std::endl;
+}
+
+int IPhreeqc::RunAccumulated(void)
+{
+	static const char *sz_routine = "RunAccumulated";
+	try
+	{
+		// this may throw
+		this->check_database(sz_routine);
+
+		this->PhreeqcPtr->input_error = 0;
+
+		// create input stream
+		std::istringstream iss(this->GetAccumulatedLines());
+
+		// this may throw
+		this->do_run(sz_routine, &iss, NULL, NULL, NULL, NULL);
+	}
+	catch (IPhreeqcStop)
+	{
+		// do nothing
+	}
+	catch(...)
+	{
+		const char *errmsg = "RunAccumulated: An unhandled exception occured.\n";
+		try
+		{
+			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
+		}
+		catch (IPhreeqcStop)
+		{
+			// do nothing
+		}
+	}
+
+	this->ClearAccumulatedLinesOnNextAccumulate = true;
+	this->PhreeqcPtr->close_output_files();
+	this->update_errors();
+
+	return this->PhreeqcPtr->input_error;
+}
+
+int IPhreeqc::RunFile(const char* filename)
+{
+	static const char *sz_routine = "RunFile";
+	try
+	{
+		// this may throw
+		this->check_database(sz_routine);
+
+		this->PhreeqcPtr->input_error = 0;
+
+		// open file
+		//
+		std::ifstream ifs;
+		ifs.open(filename);
+		if (!ifs.is_open())
+		{
+			std::ostringstream oss;
+			oss << "RunFile: Unable to open:" << "\"" << filename << "\".";
+			this->PhreeqcPtr->error_msg(oss.str().c_str(), STOP); // throws
+		}
+
+		// this may throw
+		this->do_run(sz_routine, &ifs, NULL, NULL, NULL, NULL);
+	}
+	catch (IPhreeqcStop)
+	{
+		this->PhreeqcPtr->close_input_files();
+	}
+	catch(...)
+	{
+		const char *errmsg = "RunFile: An unhandled exception occured.\n";
+		try
+		{
+			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
+		}
+		catch (IPhreeqcStop)
+		{
+			// do nothing
+		}
+	}
+
+	this->PhreeqcPtr->close_output_files();
+	this->update_errors();
+
+	return this->PhreeqcPtr->input_error;
+}
+
+int IPhreeqc::RunString(const char* input)
+{
+	static const char *sz_routine = "RunString";
+	try
+	{
+		// this may throw
+		this->check_database(sz_routine);
+
+		this->PhreeqcPtr->input_error = 0;
+
+		// create input stream
+		std::string s(input);
+		std::istringstream iss(s);
+
+		// this may throw
+		this->do_run(sz_routine, &iss, NULL, NULL, NULL, NULL);
+	}
+	catch (IPhreeqcStop)
+	{
+		this->PhreeqcPtr->close_input_files();
+	}
+	catch(...)
+	{
+		const char *errmsg = "RunString: An unhandled exception occured.\n";
+		try
+		{
+			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
+		}
+		catch (IPhreeqcStop)
+		{
+			// do nothing
+		}
+	}
+
+	this->PhreeqcPtr->close_output_files();
+	this->update_errors();
+
+	return this->PhreeqcPtr->input_error;
+}
+
+void IPhreeqc::SetDumpFileOn(bool bValue)
+{
+	this->DumpOn = bValue;
+}
+
+void IPhreeqc::SetDumpStringOn(bool bValue)
+{
+	this->DumpStringOn = bValue;
+}
+
+void IPhreeqc::SetErrorFileOn(bool bValue)
+{
+	this->ErrorOn = bValue;
+}
+
+void IPhreeqc::SetLogFileOn(bool bValue)
+{
+	this->LogOn = bValue;
+}
+
+void IPhreeqc::SetOutputFileOn(bool bValue)
+{
+	this->OutputOn = bValue;
+}
+
+void IPhreeqc::SetSelectedOutputFileOn(bool bValue)
+{
+	this->SelectedOutputOn = bValue;
+}
+
+void IPhreeqc::UnLoadDatabase(void)
+{
+	// init IPhreeqc
+	//
+	this->DatabaseLoaded   = false;
+
+	// clear error state
+	//
+	ASSERT(this->ErrorReporter);
+	this->ErrorReporter->Clear();
+	this->ErrorString.clear();
+
+	// clear warning state
+	//
+	ASSERT(this->WarningReporter);
+	this->WarningReporter->Clear();
+	this->WarningString.clear();
+
+	// clear selectedoutput
+	//
+	ASSERT(this->SelectedOutput);
+	this->SelectedOutput->Clear();
+
+	// clear dump string
+	//
+	this->DumpString.clear();
+	this->DumpLines.clear();
+
+	// initialize phreeqc
+	//
+	this->PhreeqcPtr->clean_up();
+	this->PhreeqcPtr->add_output_callback(IPhreeqc::handler, this);
+	this->PhreeqcPtr->do_initialize();
+	this->PhreeqcPtr->input_error = 0;
+}
+
 int IPhreeqc::handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
 {
 	int n = OK;
@@ -263,222 +770,6 @@ int IPhreeqc::EndRow(void)
 	return this->SelectedOutput->EndRow();
 }
 
-void IPhreeqc::ClearAccumulatedLines(void)
-{
-	this->StringInput.erase();
-}
-
-size_t IPhreeqc::AddError(const char* error_msg)
-{
-	return this->ErrorReporter->AddError(error_msg);
-}
-
-size_t IPhreeqc::AddWarning(const char* warn_msg)
-{
-	return this->WarningReporter->AddError(warn_msg);
-}
-
-const std::string& IPhreeqc::GetAccumulatedLines(void)
-{
-	return this->StringInput;
-}
-
-void IPhreeqc::OutputErrorString(void)
-{
-	std::cout << this->GetErrorString() << std::endl;
-}
-
-void IPhreeqc::OutputWarningString(void)
-{
-	std::cout << this->GetWarningString() << std::endl;
-}
-
-void IPhreeqc::OutputAccumulatedLines(void)
-{
-	std::cout << this->StringInput.c_str() << std::endl;
-}
-
-
-int IPhreeqc::LoadDatabase(const char* filename)
-{
-	try
-	{
-		// cleanup
-		//
-		this->UnLoadDatabase();
-		this->SelectedOutput->Clear();
-
-		// open file
-		//
-		std::ifstream ifs;
-		ifs.open(filename);
-
-		if (!ifs.is_open())
-		{
-			std::ostringstream oss;
-			oss << "LoadDatabase: Unable to open:" << "\"" << filename << "\".";
-			this->PhreeqcPtr->error_msg(oss.str().c_str(), STOP); // throws
-		}
-
-		// read input
-		//
-		this->PhreeqcPtr->read_database(istream_getc, &ifs);
-	}
-	catch (IPhreeqcStop)
-	{
-		this->PhreeqcPtr->close_input_files();
-	}
-	catch (...)
-	{
-		const char *errmsg = "LoadDatabase: An unhandled exception occured.\n";
-		try
-		{
-			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws IPhreeqcStop
-		}
-		catch (IPhreeqcStop)
-		{
-			// do nothing
-		}
-	}
-
-	this->DatabaseLoaded = (this->PhreeqcPtr->input_error == 0);
-	return this->PhreeqcPtr->input_error;
-}
-
-int IPhreeqc::LoadDatabaseString(const char* input)
-{
-	try
-	{
-		// cleanup
-		//
-		this->UnLoadDatabase();
-
-		this->SelectedOutput->Clear();
-
-		std::string s(input);
-		std::istringstream iss(s);
-
-		// read input
-		//
-		this->PhreeqcPtr->read_database(istream_getc, &iss);
-	}
-	catch (IPhreeqcStop)
-	{
-		this->PhreeqcPtr->close_input_files();
-	}
-	catch(...)
-	{
-		const char *errmsg = "LoadDatabaseString: An unhandled exception occured.\n";
-		try
-		{
-			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
-		}
-		catch (IPhreeqcStop)
-		{
-			// do nothing
-		}
-	}
-
-	this->DatabaseLoaded = (this->PhreeqcPtr->input_error == 0);
-	return this->PhreeqcPtr->input_error;
-}
-
-void IPhreeqc::UnLoadDatabase(void)
-{
-	// init IPhreeqc
-	//
-	this->DatabaseLoaded   = false;
-
-	// clear error state
-	//
-	ASSERT(this->ErrorReporter);
-	this->ErrorReporter->Clear();
-	this->ErrorString.clear();
-
-	// clear warning state
-	//
-	ASSERT(this->WarningReporter);
-	this->WarningReporter->Clear();
-	this->WarningString.clear();
-
-	// clear selectedoutput
-	//
-	ASSERT(this->SelectedOutput);
-	this->SelectedOutput->Clear();
-
-	// clear dump string
-	//
-	this->DumpString.clear();
-	this->DumpLines.clear();
-
-	// initialize phreeqc
-	//
-	this->PhreeqcPtr->clean_up();
-	this->PhreeqcPtr->add_output_callback(IPhreeqc::handler, this);
-	this->PhreeqcPtr->do_initialize();
-	this->PhreeqcPtr->input_error = 0;
-}
-
-bool IPhreeqc::GetOutputFileOn(void)const
-{
-	return this->OutputOn;
-}
-
-void IPhreeqc::SetOutputFileOn(bool bValue)
-{
-	this->OutputOn = bValue;
-}
-
-bool IPhreeqc::GetSelectedOutputFileOn(void)const
-{
-	return this->SelectedOutputOn;
-}
-
-void IPhreeqc::SetSelectedOutputFileOn(bool bValue)
-{
-	this->SelectedOutputOn = bValue;
-}
-
-bool IPhreeqc::GetLogFileOn(void)const
-{
-	return this->LogOn;
-}
-
-void IPhreeqc::SetLogFileOn(bool bValue)
-{
-	this->LogOn = bValue;
-}
-
-bool IPhreeqc::GetDumpFileOn(void)const
-{
-	return this->DumpOn;
-}
-
-void IPhreeqc::SetDumpFileOn(bool bValue)
-{
-	this->DumpOn = bValue;
-}
-
-bool IPhreeqc::GetDumpStringOn(void)const
-{
-	return this->DumpStringOn;
-}
-
-void IPhreeqc::SetDumpStringOn(bool bValue)
-{
-	this->DumpStringOn = bValue;
-}
-
-bool IPhreeqc::GetErrorFileOn(void)const
-{
-	return this->ErrorOn;
-}
-
-void IPhreeqc::SetErrorFileOn(bool bValue)
-{
-	this->ErrorOn = bValue;
-}
-
 void IPhreeqc::AddSelectedOutput(const char* name, const char* format, va_list argptr)
 {
 	int bInt;
@@ -652,29 +943,6 @@ void IPhreeqc::AddSelectedOutput(const char* name, const char* format, va_list a
 		this->SelectedOutput->PushBackEmpty(name);
 	}
 }
-
-const char* IPhreeqc::GetErrorString(void)
-{
-	this->ErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
-	return this->ErrorString.c_str();
-}
-
-const char* IPhreeqc::GetWarningString(void)
-{
-	this->WarningString = ((CErrorReporter<std::ostringstream>*)this->WarningReporter)->GetOS()->str();
-	return this->WarningString.c_str();
-}
-
-const char* IPhreeqc::GetDumpString(void)
-{
-	static const char err_msg[] = "GetDumpString: DumpStringOn not set.\n";
-	if (!this->DumpStringOn)
-	{
-		return err_msg;
-	}
-	return this->DumpString.c_str();
-}
-
 
 void IPhreeqc::check_database(const char* sz_routine)
 {
@@ -1022,246 +1290,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 	this->update_errors();
 }
 
-VRESULT IPhreeqc::AccumulateLine(const char *line)
-{
-	try
-	{
-		if (this->ClearAccumulatedLinesOnNextAccumulate)
-		{
-			this->ClearAccumulatedLines();
-			this->ClearAccumulatedLinesOnNextAccumulate = false;
-		}
-
-		this->ErrorReporter->Clear();
-		this->WarningReporter->Clear();
-		this->StringInput.append(line);
-		this->StringInput.append("\n");
-		return VR_OK;
-	}
-	catch (...)
-	{
-		this->AddError("AccumulateLine: An unhandled exception occured.\n");
-	}
-	return VR_OUTOFMEMORY;
-}
-
-int IPhreeqc::RunAccumulated(void)
-{
-	static const char *sz_routine = "RunAccumulated";
-	try
-	{
-		// this may throw
-		this->check_database(sz_routine);
-
-		this->PhreeqcPtr->input_error = 0;
-
-		// create input stream
-		std::istringstream iss(this->GetAccumulatedLines());
-
-		// this may throw
-		this->do_run(sz_routine, &iss, NULL, NULL, NULL, NULL);
-	}
-	catch (IPhreeqcStop)
-	{
-		// do nothing
-	}
-	catch(...)
-	{
-		const char *errmsg = "RunAccumulated: An unhandled exception occured.\n";
-		try
-		{
-			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
-		}
-		catch (IPhreeqcStop)
-		{
-			// do nothing
-		}
-	}
-
-	this->ClearAccumulatedLinesOnNextAccumulate = true;
-	this->PhreeqcPtr->close_output_files();
-	this->update_errors();
-
-	return this->PhreeqcPtr->input_error;
-}
-
-int IPhreeqc::RunFile(const char* filename)
-{
-	static const char *sz_routine = "RunFile";
-	try
-	{
-		// this may throw
-		this->check_database(sz_routine);
-
-		this->PhreeqcPtr->input_error = 0;
-
-		// open file
-		//
-		std::ifstream ifs;
-		ifs.open(filename);
-		if (!ifs.is_open())
-		{
-			std::ostringstream oss;
-			oss << "RunFile: Unable to open:" << "\"" << filename << "\".";
-			this->PhreeqcPtr->error_msg(oss.str().c_str(), STOP); // throws
-		}
-
-		// this may throw
-		this->do_run(sz_routine, &ifs, NULL, NULL, NULL, NULL);
-	}
-	catch (IPhreeqcStop)
-	{
-		this->PhreeqcPtr->close_input_files();
-	}
-	catch(...)
-	{
-		const char *errmsg = "RunFile: An unhandled exception occured.\n";
-		try
-		{
-			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
-		}
-		catch (IPhreeqcStop)
-		{
-			// do nothing
-		}
-	}
-
-	this->PhreeqcPtr->close_output_files();
-	this->update_errors();
-
-	return this->PhreeqcPtr->input_error;
-}
-
-int IPhreeqc::RunString(const char* input)
-{
-	static const char *sz_routine = "RunString";
-	try
-	{
-		// this may throw
-		this->check_database(sz_routine);
-
-		this->PhreeqcPtr->input_error = 0;
-
-		// create input stream
-		std::string s(input);
-		std::istringstream iss(s);
-
-		// this may throw
-		this->do_run(sz_routine, &iss, NULL, NULL, NULL, NULL);
-	}
-	catch (IPhreeqcStop)
-	{
-		this->PhreeqcPtr->close_input_files();
-	}
-	catch(...)
-	{
-		const char *errmsg = "RunString: An unhandled exception occured.\n";
-		try
-		{
-			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
-		}
-		catch (IPhreeqcStop)
-		{
-			// do nothing
-		}
-	}
-
-	this->PhreeqcPtr->close_output_files();
-	this->update_errors();
-
-	return this->PhreeqcPtr->input_error;
-}
-
-int IPhreeqc::GetSelectedOutputRowCount(void)const
-{
-	return (int)this->SelectedOutput->GetRowCount();
-}
-
-int IPhreeqc::GetSelectedOutputColumnCount(void)const
-{
-	return (int)this->SelectedOutput->GetColCount();
-}
-
-VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
-{
-	this->ErrorReporter->Clear();
-	if (!pVAR)
-	{
-		this->AddError("GetSelectedOutputValue: VR_INVALIDARG pVAR is NULL.\n");
-		this->update_errors();
-		return VR_INVALIDARG;
-	}
-
-	VRESULT v = this->SelectedOutput->Get(row, col, pVAR);
-	switch (v)
-	{
-	case VR_OK:
-		break;
-	case VR_OUTOFMEMORY:
-		this->AddError("GetSelectedOutputValue: VR_OUTOFMEMORY Out of memory.\n");
-		break;
-	case VR_BADVARTYPE:
-		this->AddError("GetSelectedOutputValue: VR_BADVARTYPE pVar must be initialized(VarInit) and/or cleared(VarClear).\n");
-		break;
-	case VR_INVALIDARG:
-		// not possible
-		break;
-	case VR_INVALIDROW:
-		this->AddError("GetSelectedOutputValue: VR_INVALIDROW Row index out of range.\n");
-		break;
-	case VR_INVALIDCOL:
-		this->AddError("GetSelectedOutputValue: VR_INVALIDCOL Column index out of range.\n");
-		break;
-	}
-	this->update_errors();
-	return v;
-}
-
-int IPhreeqc::GetDumpStringLineCount(void)const
-{
-	return (int)this->DumpLines.size();
-}
-
-const char* IPhreeqc::GetDumpStringLine(int n)
-{
-	static const char empty[] = "";
-	if (n < 0 || n >= this->GetDumpStringLineCount())
-	{
-		return empty;
-	}
-	return this->DumpLines[n].c_str();
-}
-
-int IPhreeqc::GetErrorStringLineCount(void)const
-{
-	return (int)this->ErrorLines.size();
-}
-
-const char* IPhreeqc::GetErrorStringLine(int n)
-{
-	static const char empty[] = "";
-	if (n < 0 || n >= this->GetErrorStringLineCount())
-	{
-		return empty;
-	}
-	return this->ErrorLines[n].c_str();
-}
-
-int IPhreeqc::GetWarningStringLineCount(void)const
-{
-	return (int)this->WarningLines.size();
-}
-
-const char* IPhreeqc::GetWarningStringLine(int n)
-{
-	static const char empty[] = "";
-	if (n < 0 || n >= this->GetWarningStringLineCount())
-	{
-		return empty;
-	}
-	return this->WarningLines[n].c_str();
-}
-
 void IPhreeqc::update_errors(void)
 {
 	this->ErrorLines.clear();
@@ -1289,32 +1317,3 @@ void IPhreeqc::update_errors(void)
 	}
 }
 
-std::list< std::string > IPhreeqc::ListComponents(void)
-{
-	std::list< std::string > comps;
-	this->PhreeqcPtr->list_components(comps);
-	return comps;
-}
-
-size_t IPhreeqc::GetComponentCount(void)
-{
-	std::list< std::string > comps;
-	this->PhreeqcPtr->list_components(comps);
-	return comps.size();
-}
-
-const char* IPhreeqc::GetComponent(int n)
-{
-	static const char empty[] = "";
-	this->Components = this->ListComponents();
-	if (n < 0 || n >= (int)this->Components.size())
-	{
-		return empty;
-	}
-	std::list< std::string >::iterator it = this->Components.begin();
-	for(int i = 0; i < n; ++i)
-	{
-		++it;
-	}
-	return (*it).c_str();
-}

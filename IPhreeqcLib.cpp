@@ -49,12 +49,6 @@ AddError(int id, const char* error_msg)
 
 // TODO AddWarning
 
-int
-CreateIPhreeqc(void)
-{
-	return IPhreeqcLib::CreateIPhreeqc();
-}
-
 IPQ_RESULT
 ClearAccumulatedLines(int id)
 {
@@ -65,6 +59,12 @@ ClearAccumulatedLines(int id)
 		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;
+}
+
+int
+CreateIPhreeqc(void)
+{
+	return IPhreeqcLib::CreateIPhreeqc();
 }
 
 IPQ_RESULT
@@ -112,29 +112,6 @@ GetComponentCount(int id)
 	return IPQ_BADINSTANCE;
 }
 
-const char*
-GetDumpStringLine(int id, int n)
-{
-	static const char err_msg[] = "GetDumpStringLine: Invalid instance id.\n";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->GetDumpStringLine(n);
-	}
-	return err_msg;
-}
-
-int
-GetDumpStringLineCount(int id)
-{
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->GetDumpStringLineCount();
-	}
-	return 0;
-}
-
 int
 GetDumpFileOn(int id)
 {
@@ -165,6 +142,29 @@ GetDumpString(int id)
 	return empty;
 }
 
+const char*
+GetDumpStringLine(int id, int n)
+{
+	static const char err_msg[] = "GetDumpStringLine: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetDumpStringLine(n);
+	}
+	return err_msg;
+}
+
+int
+GetDumpStringLineCount(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetDumpStringLineCount();
+	}
+	return 0;
+}
+
 int
 GetDumpStringOn(int id)
 {
@@ -179,29 +179,6 @@ GetDumpStringOn(int id)
 		{
 			return 0;
 		}
-	}
-	return IPQ_BADINSTANCE;
-}
-
-const char*
-GetErrorStringLine(int id, int n)
-{
-	static const char err_msg[] = "GetErrorStringLine: Invalid instance id.\n";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->GetErrorStringLine(n);
-	}
-	return err_msg;
-}
-
-int
-GetErrorStringLineCount(int id)
-{
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return (int)IPhreeqcPtr->GetErrorStringLineCount();
 	}
 	return IPQ_BADINSTANCE;
 }
@@ -234,6 +211,29 @@ GetErrorString(int id)
 		return IPhreeqcPtr->GetErrorString();
 	}
 	return err_msg;
+}
+
+const char*
+GetErrorStringLine(int id, int n)
+{
+	static const char err_msg[] = "GetErrorStringLine: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetErrorStringLine(n);
+	}
+	return err_msg;
+}
+
+int
+GetErrorStringLineCount(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return (int)IPhreeqcPtr->GetErrorStringLineCount();
+	}
+	return IPQ_BADINSTANCE;
 }
 
 int
@@ -334,6 +334,18 @@ GetSelectedOutputValue(int id, int row, int col, VAR* pVAR)
 }
 
 const char*
+GetWarningString(int id)
+{
+	static const char err_msg[] = "GetWarningString: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetWarningString();
+	}
+	return err_msg;
+}
+
+const char*
 GetWarningStringLine(int id, int n)
 {
 	static const char err_msg[] = "GetWarningStringLine: Invalid instance id.\n";
@@ -354,18 +366,6 @@ GetWarningStringLineCount(int id)
 		return (int)IPhreeqcPtr->GetWarningStringLineCount();
 	}
 	return IPQ_BADINSTANCE;
-}
-
-const char*
-GetWarningString(int id)
-{
-	static const char err_msg[] = "GetWarningString: Invalid instance id.\n";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		return IPhreeqcPtr->GetWarningString();
-	}
-	return err_msg;
 }
 
 int
@@ -391,19 +391,6 @@ LoadDatabaseString(int id, const char* input)
 }
 
 void
-OutputErrorString(int id)
-{
-	static const char err_msg[] = "OutputErrorString: Invalid instance id.\n";
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		IPhreeqcPtr->OutputErrorString();
-		return;
-	}
-	std::cout << err_msg << std::endl;
-}
-
-void
 OutputAccumulatedLines(int id)
 {
 	static const char err_msg[] = "OutputAccumulatedLines: Invalid instance id.\n";
@@ -411,6 +398,19 @@ OutputAccumulatedLines(int id)
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->OutputAccumulatedLines();
+		return;
+	}
+	std::cout << err_msg << std::endl;
+}
+
+void
+OutputErrorString(int id)
+{
+	static const char err_msg[] = "OutputErrorString: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->OutputErrorString();
 		return;
 	}
 	std::cout << err_msg << std::endl;

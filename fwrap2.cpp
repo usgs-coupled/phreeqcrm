@@ -15,6 +15,7 @@ DLL_EXPORT int  ACCUMULATELINE(int *id, char *line, unsigned int len)
 {
 	return AccumulateLineF(id, line, len);
 }
+// AddError
 DLL_EXPORT int  CLEARACCUMULATEDLINES(int *id)
 {
 	return ClearAccumulatedLinesF(id);
@@ -35,6 +36,11 @@ DLL_EXPORT int  GETCOMPONENTCOUNT(int *id)
 {
 	return GetComponentCountF(id);
 }
+DLL_EXPORT int  GETDUMPFILEON(int *id)
+{
+	return GetDumpFileOnF(id);
+}
+// GetDumpString
 DLL_EXPORT void GETDUMPSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetDumpStringLineF(id, n, line, line_length);
@@ -43,13 +49,13 @@ DLL_EXPORT int  GETDUMPSTRINGLINECOUNT(int *id)
 {
 	return GetDumpStringLineCountF(id);
 }
-DLL_EXPORT int  GETDUMPFILEON(int *id)
-{
-	return GetDumpFileOnF(id);
-}
 DLL_EXPORT int  GETDUMPSTRINGON(int *id)
 {
 	return GetDumpStringOnF(id);
+}
+DLL_EXPORT int  GETERRORFILEON(int *id)
+{
+	return GetErrorFileOnF(id);
 }
 DLL_EXPORT void GETERRORSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
 {
@@ -58,10 +64,6 @@ DLL_EXPORT void GETERRORSTRINGLINE(int *id, int *n, char* line, unsigned int lin
 DLL_EXPORT int  GETERRORSTRINGLINECOUNT(int *id)
 {
 	return GetErrorStringLineCountF(id);
-}
-DLL_EXPORT int  GETERRORFILEON(int *id)
-{
-	return GetErrorFileOnF(id);
 }
 DLL_EXPORT int  GETLOGFILEON(int *id)
 {
@@ -103,13 +105,13 @@ DLL_EXPORT int  LOADDATABASESTRING(int *id, char *input, unsigned int len)
 {
 	return LoadDatabaseStringF(id, input, len);
 }
-DLL_EXPORT void OUTPUTERRORSTRING(int *id)
-{
-	OutputErrorStringF(id);
-}
 DLL_EXPORT void OUTPUTACCUMULATEDLINES(int *id)
 {
 	OutputAccumulatedLinesF(id);
+}
+DLL_EXPORT void OUTPUTERRORSTRING(int *id)
+{
+	OutputErrorStringF(id);
 }
 DLL_EXPORT void OUTPUTWARNINGSTRING(int *id)
 {

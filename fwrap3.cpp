@@ -14,6 +14,7 @@ DLL_EXPORT int  accumulateline_(int *id, char *line, unsigned int len)
 {
 	return AccumulateLineF(id, line, len);
 }
+// AddError
 DLL_EXPORT int  clearaccumulatedlines_(int *id)
 {
 	return ClearAccumulatedLinesF(id);
@@ -34,6 +35,11 @@ DLL_EXPORT int  getcomponentcount_(int *id)
 {
 	return GetComponentCountF(id);
 }
+DLL_EXPORT int  getdumpfileon_(int *id)
+{
+	return GetDumpFileOnF(id);
+}
+// GetDumpString
 DLL_EXPORT void getdumpstringline_(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetDumpStringLineF(id, n, line, line_length);
@@ -42,14 +48,15 @@ DLL_EXPORT int  getdumpstringlinecount_(int *id)
 {
 	return GetDumpStringLineCountF(id);
 }
-DLL_EXPORT int  getdumpfileon_(int *id)
-{
-	return GetDumpFileOnF(id);
-}
 DLL_EXPORT int  getdumpstringon_(int *id)
 {
 	return GetDumpStringOnF(id);
 }
+DLL_EXPORT int  geterrorfileon_(int *id)
+{
+	return GetErrorFileOnF(id);
+}
+// GetErrorString
 DLL_EXPORT void geterrorstringline_(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetErrorStringLineF(id, n, line, line_length);
@@ -57,10 +64,6 @@ DLL_EXPORT void geterrorstringline_(int *id, int *n, char* line, unsigned int li
 DLL_EXPORT int  geterrorstringlinecount_(int *id)
 {
 	return GetErrorStringLineCountF(id);
-}
-DLL_EXPORT int  geterrorfileon_(int *id)
-{
-	return GetErrorFileOnF(id);
 }
 DLL_EXPORT int  getlogfileon_(int *id)
 {
@@ -86,6 +89,7 @@ DLL_EXPORT int  getselectedoutputvalue_(int *id, int *row, int *col, int *vtype,
 {
 	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
 }
+// GetWarningString
 DLL_EXPORT void getwarningstringline_(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetWarningStringLineF(id, n, line, line_length);
@@ -102,13 +106,13 @@ DLL_EXPORT int  loaddatabasestring_(int *id, char *input, unsigned int len)
 {
 	return LoadDatabaseStringF(id, input, len);
 }
-DLL_EXPORT void outputerrorstring_(int *id)
-{
-	OutputErrorStringF(id);
-}
 DLL_EXPORT void outputaccumulatedlines_(int *id)
 {
 	OutputAccumulatedLinesF(id);
+}
+DLL_EXPORT void outputerrorstring_(int *id)
+{
+	OutputErrorStringF(id);
 }
 DLL_EXPORT void outputwarningstring_(int *id)
 {
