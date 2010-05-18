@@ -49,35 +49,35 @@
         GetComponentCount = GetComponentCountF(ID)
       END FUNCTION GetComponentCount
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetDumpLine(ID,N,LINE)
+      FUNCTION GetDumpStringLine(ID,N,LINE)
         IMPLICIT NONE
         INTEGER(KIND=4)  :: ID
         INTEGER(KIND=4)  :: N
         CHARACTER(LEN=*) :: LINE        
-        INTEGER(KIND=4)  :: GetDumpLine
-        INTEGER(KIND=4)  :: GetDumpLineF
-        GetDumpLine = GetDumpLineF(ID,N,LINE)
-      END FUNCTION GetDumpLine
+        INTEGER(KIND=4)  :: GetDumpStringLine
+        INTEGER(KIND=4)  :: GetDumpStringLineF
+        GetDumpStringLine = GetDumpStringLineF(ID,N,LINE)
+      END FUNCTION GetDumpStringLine
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetDumpLineCount(ID)
+      FUNCTION GetDumpStringLineCount(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-        INTEGER(KIND=4) :: GetDumpLineCount
-        INTEGER(KIND=4) :: GetDumpLineCountF
-        GetDumpLineCount = GetDumpLineCountF(ID)
-      END FUNCTION GetDumpLineCount
+        INTEGER(KIND=4) :: GetDumpStringLineCount
+        INTEGER(KIND=4) :: GetDumpStringLineCountF
+        GetDumpStringLineCount = GetDumpStringLineCountF(ID)
+      END FUNCTION GetDumpStringLineCount
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetDumpOn(ID)
+      FUNCTION GetDumpFileOn(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: GetDumpOn
-        INTEGER(KIND=4) :: GetDumpOnF
-        IF (GetDumpOnF(ID).EQ.0) THEN
-          GetDumpOn = .FALSE.
+		LOGICAL(KIND=4) :: GetDumpFileOn
+        INTEGER(KIND=4) :: GetDumpFileOnF
+        IF (GetDumpFileOnF(ID).EQ.0) THEN
+          GetDumpFileOn = .FALSE.
         ELSE
-          GetDumpOn = .TRUE.
+          GetDumpFileOn = .TRUE.
         ENDIF
-      END FUNCTION GetDumpOn
+      END FUNCTION GetDumpFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetDumpStringOn(ID)
         IMPLICIT NONE
@@ -91,59 +91,59 @@
         ENDIF
       END FUNCTION GetDumpStringOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetErrorLine(ID,N,LINE)
+      FUNCTION GetErrorStringLine(ID,N,LINE)
         IMPLICIT NONE
         INTEGER(KIND=4)  :: ID
         INTEGER(KIND=4)  :: N
         CHARACTER(LEN=*) :: LINE        
-        INTEGER(KIND=4)  :: GetErrorLine
-        INTEGER(KIND=4)  :: GetErrorLineF
-        GetErrorLine = GetErrorLineF(ID,N,LINE)
-      END FUNCTION GetErrorLine
+        INTEGER(KIND=4)  :: GetErrorStringLine
+        INTEGER(KIND=4)  :: GetErrorStringLineF
+        GetErrorStringLine = GetErrorStringLineF(ID,N,LINE)
+      END FUNCTION GetErrorStringLine
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetErrorLineCount(ID)
+      FUNCTION GetErrorStringLineCount(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-        INTEGER(KIND=4) :: GetErrorLineCount
-        INTEGER(KIND=4) :: GetErrorLineCountF
-        GetErrorLineCount = GetErrorLineCountF(ID)
-      END FUNCTION GetErrorLineCount
+        INTEGER(KIND=4) :: GetErrorStringLineCount
+        INTEGER(KIND=4) :: GetErrorStringLineCountF
+        GetErrorStringLineCount = GetErrorStringLineCountF(ID)
+      END FUNCTION GetErrorStringLineCount
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetErrorOn(ID)
+      FUNCTION GetErrorFileOn(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: GetErrorOn
-        INTEGER(KIND=4) :: GetErrorOnF
-        IF (GetErrorOnF(ID).EQ.0) THEN
-          GetErrorOn = .FALSE.
+		LOGICAL(KIND=4) :: GetErrorFileOn
+        INTEGER(KIND=4) :: GetErrorFileOnF
+        IF (GetErrorFileOnF(ID).EQ.0) THEN
+          GetErrorFileOn = .FALSE.
         ELSE
-          GetErrorOn = .TRUE.
+          GetErrorFileOn = .TRUE.
         ENDIF
-      END FUNCTION GetErrorOn
+      END FUNCTION GetErrorFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetLogOn(ID)
+      FUNCTION GetLogFileOn(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: GetLogOn
-        INTEGER(KIND=4) :: GetLogOnF
-        IF (GetLogOnF(ID).EQ.0) THEN
-          GetLogOn = .FALSE.
+		LOGICAL(KIND=4) :: GetLogFileOn
+        INTEGER(KIND=4) :: GetLogFileOnF
+        IF (GetLogFileOnF(ID).EQ.0) THEN
+          GetLogFileOn = .FALSE.
         ELSE
-          GetLogOn = .TRUE.
+          GetLogFileOn = .TRUE.
         ENDIF
-      END FUNCTION GetLogOn
+      END FUNCTION GetLogFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetOutputOn(ID)
+      FUNCTION GetOutputFileOn(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: GetOutputOn
-        INTEGER(KIND=4) :: GetOutputOnF
-        IF (GetOutputOnF(ID).EQ.0) THEN
-          GetOutputOn = .FALSE.
+		LOGICAL(KIND=4) :: GetOutputFileOn
+        INTEGER(KIND=4) :: GetOutputFileOnF
+        IF (GetOutputFileOnF(ID).EQ.0) THEN
+          GetOutputFileOn = .FALSE.
         ELSE
-          GetOutputOn = .TRUE.
+          GetOutputFileOn = .TRUE.
         ENDIF
-      END FUNCTION GetOutputOn
+      END FUNCTION GetOutputFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetSelectedOutputColumnCount(ID)
         IMPLICIT NONE
@@ -153,17 +153,17 @@
         GetSelectedOutputColumnCount = GetSelectedOutputColumnCountF(ID)
       END FUNCTION GetSelectedOutputColumnCount
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetSelectedOutputOn(ID)
+      FUNCTION GetSelectedOutputFileOn(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: GetSelectedOutputOn
-        INTEGER(KIND=4) :: GetSelectedOutputOnF
-        IF (GetSelectedOutputOnF(ID).EQ.0) THEN
-          GetSelectedOutputOn = .FALSE.
+		LOGICAL(KIND=4) :: GetSelectedOutputFileOn
+        INTEGER(KIND=4) :: GetSelectedOutputFileOnF
+        IF (GetSelectedOutputFileOnF(ID).EQ.0) THEN
+          GetSelectedOutputFileOn = .FALSE.
         ELSE
-          GetSelectedOutputOn = .TRUE.
+          GetSelectedOutputFileOn = .TRUE.
         ENDIF
-      END FUNCTION GetSelectedOutputOn
+      END FUNCTION GetSelectedOutputFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetSelectedOutputRowCount(ID)
         IMPLICIT NONE
@@ -187,23 +187,23 @@
      &                     COL,VTYPE,DVALUE,SVALUE)
       END FUNCTION GetSelectedOutputValue
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetWarningLine(ID,N,LINE)
+      FUNCTION GetWarningStringLine(ID,N,LINE)
         IMPLICIT NONE
         INTEGER(KIND=4)  :: ID
         INTEGER(KIND=4)  :: N
         CHARACTER(LEN=*) :: LINE        
-        INTEGER(KIND=4)  :: GetWarningLine
-        INTEGER(KIND=4)  :: GetWarningLineF
-        GetWarningLine = GetWarningLineF(ID,N,LINE)
-      END FUNCTION GetWarningLine
+        INTEGER(KIND=4)  :: GetWarningStringLine
+        INTEGER(KIND=4)  :: GetWarningStringLineF
+        GetWarningStringLine = GetWarningStringLineF(ID,N,LINE)
+      END FUNCTION GetWarningStringLine
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetWarningLineCount(ID)
+      FUNCTION GetWarningStringLineCount(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-        INTEGER(KIND=4) :: GetWarningLineCount
-        INTEGER(KIND=4) :: GetWarningLineCountF
-        GetWarningLineCount = GetWarningLineCountF(ID)
-      END FUNCTION GetWarningLineCount
+        INTEGER(KIND=4) :: GetWarningStringLineCount
+        INTEGER(KIND=4) :: GetWarningStringLineCountF
+        GetWarningStringLineCount = GetWarningStringLineCountF(ID)
+      END FUNCTION GetWarningStringLineCount
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION LoadDatabase(ID,FILENAME)
         IMPLICIT NONE
@@ -223,68 +223,68 @@
         LoadDatabaseString = LoadDatabaseStringF(ID,INPUT)
       END FUNCTION LoadDatabaseString
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      SUBROUTINE OutputError(ID)
+      SUBROUTINE OutputErrorString(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-        CALL OutputErrorF(ID)
-      END SUBROUTINE OutputError
+        CALL OutputErrorStringF(ID)
+      END SUBROUTINE OutputErrorString
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      SUBROUTINE OutputLines(ID)
+      SUBROUTINE OutputAccumulatedLines(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-        CALL OutputLinesF(ID)
-      END SUBROUTINE OutputLines
+        CALL OutputAccumulatedLinesF(ID)
+      END SUBROUTINE OutputAccumulatedLines
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      SUBROUTINE OutputWarning(ID)
+      SUBROUTINE OutputWarningString(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-        CALL OutputWarningF(ID)
-      END SUBROUTINE OutputWarning
+        CALL OutputWarningStringF(ID)
+      END SUBROUTINE OutputWarningString
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetSelectedOutputOn(ID,SELECTED_ON)
+      FUNCTION SetSelectedOutputFileOn(ID,SELECTED_ON)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
 		LOGICAL(KIND=4) :: SELECTED_ON
-        INTEGER(KIND=4) :: SetSelectedOutputOn
-        INTEGER(KIND=4) :: SetSelectedOutputOnF
-        SetSelectedOutputOn = SetSelectedOutputOnF(ID,SELECTED_ON)
-      END FUNCTION SetSelectedOutputOn
+        INTEGER(KIND=4) :: SetSelectedOutputFileOn
+        INTEGER(KIND=4) :: SetSelOutFileOnF
+        SetSelectedOutputFileOn = SetSelOutFileOnF(ID,SELECTED_ON)
+      END FUNCTION SetSelectedOutputFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetOutputOn(ID,OUTPUT_ON)
+      FUNCTION SetOutputFileOn(ID,OUTPUT_ON)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
 		LOGICAL(KIND=4) :: OUTPUT_ON
-        INTEGER(KIND=4) :: SetOutputOn
-        INTEGER(KIND=4) :: SetOutputOnF
-        SetOutputOn = SetOutputOnF(ID,OUTPUT_ON)
-      END FUNCTION SetOutputOn
+        INTEGER(KIND=4) :: SetOutputFileOn
+        INTEGER(KIND=4) :: SetOutputFileOnF
+        SetOutputFileOn = SetOutputFileOnF(ID,OUTPUT_ON)
+      END FUNCTION SetOutputFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetErrorOn(ID,ERROR_ON)
+      FUNCTION SetErrorFileOn(ID,ERROR_ON)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
 		LOGICAL(KIND=4) :: ERROR_ON
-        INTEGER(KIND=4) :: SetErrorOn
-        INTEGER(KIND=4) :: SetErrorOnF
-        SetErrorOn = SetErrorOnF(ID,ERROR_ON)
-      END FUNCTION SetErrorOn
+        INTEGER(KIND=4) :: SetErrorFileOn
+        INTEGER(KIND=4) :: SetErrorFileOnF
+        SetErrorFileOn = SetErrorFileOnF(ID,ERROR_ON)
+      END FUNCTION SetErrorFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetLogOn(ID,LOG_ON)
+      FUNCTION SetLogFileOn(ID,LOG_ON)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
 		LOGICAL(KIND=4) :: LOG_ON
-        INTEGER(KIND=4) :: SetLogOn
-        INTEGER(KIND=4) :: SetLogOnF
-        SetLogOn = SetLogOnF(ID,LOG_ON)
-      END FUNCTION SetLogOn
+        INTEGER(KIND=4) :: SetLogFileOn
+        INTEGER(KIND=4) :: SetLogFileOnF
+        SetLogFileOn = SetLogFileOnF(ID,LOG_ON)
+      END FUNCTION SetLogFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetDumpOn(ID,DUMP_ON)
+      FUNCTION SetDumpFileOn(ID,DUMP_ON)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
 		LOGICAL(KIND=4) :: DUMP_ON
-        INTEGER(KIND=4) :: SetDumpOn
-        INTEGER(KIND=4) :: SetDumpOnF
-        SetDumpOn = SetDumpOnF(ID,DUMP_ON)
-      END FUNCTION SetDumpOn
+        INTEGER(KIND=4) :: SetDumpFileOn
+        INTEGER(KIND=4) :: SetDumpFileOnF
+        SetDumpFileOn = SetDumpFileOnF(ID,DUMP_ON)
+      END FUNCTION SetDumpFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION SetDumpStringOn(ID,DUMP_STRING_ON)
         IMPLICIT NONE

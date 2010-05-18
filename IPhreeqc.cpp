@@ -37,6 +37,7 @@ int istream_getc(void *cookie)
 
 IPhreeqc::IPhreeqc(void)
 : DatabaseLoaded(false)
+, ClearAccumulatedLinesOnNextAccumulate(false)
 , SelectedOutputOn(false)
 , OutputOn(false)
 , LogOn(false)
@@ -282,17 +283,17 @@ const std::string& IPhreeqc::GetAccumulatedLines(void)
 	return this->StringInput;
 }
 
-void IPhreeqc::OutputError(void)
+void IPhreeqc::OutputErrorString(void)
 {
 	std::cout << this->GetErrorString() << std::endl;
 }
 
-void IPhreeqc::OutputWarning(void)
+void IPhreeqc::OutputWarningString(void)
 {
 	std::cout << this->GetWarningString() << std::endl;
 }
 
-void IPhreeqc::OutputLines(void)
+void IPhreeqc::OutputAccumulatedLines(void)
 {
 	std::cout << this->StringInput.c_str() << std::endl;
 }
@@ -418,42 +419,42 @@ void IPhreeqc::UnLoadDatabase(void)
 	this->PhreeqcPtr->input_error = 0;
 }
 
-bool IPhreeqc::GetOutputOn(void)const
+bool IPhreeqc::GetOutputFileOn(void)const
 {
 	return this->OutputOn;
 }
 
-void IPhreeqc::SetOutputOn(bool bValue)
+void IPhreeqc::SetOutputFileOn(bool bValue)
 {
 	this->OutputOn = bValue;
 }
 
-bool IPhreeqc::GetSelectedOutputOn(void)const
+bool IPhreeqc::GetSelectedOutputFileOn(void)const
 {
 	return this->SelectedOutputOn;
 }
 
-void IPhreeqc::SetSelectedOutputOn(bool bValue)
+void IPhreeqc::SetSelectedOutputFileOn(bool bValue)
 {
 	this->SelectedOutputOn = bValue;
 }
 
-bool IPhreeqc::GetLogOn(void)const
+bool IPhreeqc::GetLogFileOn(void)const
 {
 	return this->LogOn;
 }
 
-void IPhreeqc::SetLogOn(bool bValue)
+void IPhreeqc::SetLogFileOn(bool bValue)
 {
 	this->LogOn = bValue;
 }
 
-bool IPhreeqc::GetDumpOn(void)const
+bool IPhreeqc::GetDumpFileOn(void)const
 {
 	return this->DumpOn;
 }
 
-void IPhreeqc::SetDumpOn(bool bValue)
+void IPhreeqc::SetDumpFileOn(bool bValue)
 {
 	this->DumpOn = bValue;
 }
@@ -468,12 +469,12 @@ void IPhreeqc::SetDumpStringOn(bool bValue)
 	this->DumpStringOn = bValue;
 }
 
-bool IPhreeqc::GetErrorOn(void)const
+bool IPhreeqc::GetErrorFileOn(void)const
 {
 	return this->ErrorOn;
 }
 
-void IPhreeqc::SetErrorOn(bool bValue)
+void IPhreeqc::SetErrorFileOn(bool bValue)
 {
 	this->ErrorOn = bValue;
 }
@@ -1025,6 +1026,12 @@ VRESULT IPhreeqc::AccumulateLine(const char *line)
 {
 	try
 	{
+		if (this->ClearAccumulatedLinesOnNextAccumulate)
+		{
+			this->ClearAccumulatedLines();
+			this->ClearAccumulatedLinesOnNextAccumulate = false;
+		}
+
 		this->ErrorReporter->Clear();
 		this->WarningReporter->Clear();
 		this->StringInput.append(line);
@@ -1071,11 +1078,7 @@ int IPhreeqc::RunAccumulated(void)
 		}
 	}
 
-	if (this->PhreeqcPtr->input_error == 0)
-	{
-		this->ClearAccumulatedLines();
-	}
-
+	this->ClearAccumulatedLinesOnNextAccumulate = true;
 	this->PhreeqcPtr->close_output_files();
 	this->update_errors();
 
@@ -1214,45 +1217,45 @@ VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 	return v;
 }
 
-int IPhreeqc::GetDumpLineCount(void)const
+int IPhreeqc::GetDumpStringLineCount(void)const
 {
 	return (int)this->DumpLines.size();
 }
 
-const char* IPhreeqc::GetDumpLine(int n)
+const char* IPhreeqc::GetDumpStringLine(int n)
 {
 	static const char empty[] = "";
-	if (n < 0 || n >= this->GetDumpLineCount())
+	if (n < 0 || n >= this->GetDumpStringLineCount())
 	{
 		return empty;
 	}
 	return this->DumpLines[n].c_str();
 }
 
-int IPhreeqc::GetErrorLineCount(void)const
+int IPhreeqc::GetErrorStringLineCount(void)const
 {
 	return (int)this->ErrorLines.size();
 }
 
-const char* IPhreeqc::GetErrorLine(int n)
+const char* IPhreeqc::GetErrorStringLine(int n)
 {
 	static const char empty[] = "";
-	if (n < 0 || n >= this->GetErrorLineCount())
+	if (n < 0 || n >= this->GetErrorStringLineCount())
 	{
 		return empty;
 	}
 	return this->ErrorLines[n].c_str();
 }
 
-int IPhreeqc::GetWarningLineCount(void)const
+int IPhreeqc::GetWarningStringLineCount(void)const
 {
 	return (int)this->WarningLines.size();
 }
 
-const char* IPhreeqc::GetWarningLine(int n)
+const char* IPhreeqc::GetWarningStringLine(int n)
 {
 	static const char empty[] = "";
-	if (n < 0 || n >= this->GetWarningLineCount())
+	if (n < 0 || n >= this->GetWarningStringLineCount())
 	{
 		return empty;
 	}

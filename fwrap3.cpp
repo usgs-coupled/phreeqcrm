@@ -34,49 +34,49 @@ DLL_EXPORT int  getcomponentcount_(int *id)
 {
 	return GetComponentCountF(id);
 }
-DLL_EXPORT void getdumpline_(int *id, int *n, char* line, unsigned int line_length)
+DLL_EXPORT void getdumpstringline_(int *id, int *n, char* line, unsigned int line_length)
 {
-	GetDumpLineF(id, n, line, line_length);
+	GetDumpStringLineF(id, n, line, line_length);
 }
-DLL_EXPORT int  getdumplinecount_(int *id)
+DLL_EXPORT int  getdumpstringlinecount_(int *id)
 {
-	return GetDumpLineCountF(id);
+	return GetDumpStringLineCountF(id);
 }
-DLL_EXPORT int  getdumpon_(int *id)
+DLL_EXPORT int  getdumpfileon_(int *id)
 {
-	return GetDumpOnF(id);
+	return GetDumpFileOnF(id);
 }
 DLL_EXPORT int  getdumpstringon_(int *id)
 {
 	return GetDumpStringOnF(id);
 }
-DLL_EXPORT void geterrorline_(int *id, int *n, char* line, unsigned int line_length)
+DLL_EXPORT void geterrorstringline_(int *id, int *n, char* line, unsigned int line_length)
 {
-	GetErrorLineF(id, n, line, line_length);
+	GetErrorStringLineF(id, n, line, line_length);
 }
-DLL_EXPORT int  geterrorlinecount_(int *id)
+DLL_EXPORT int  geterrorstringlinecount_(int *id)
 {
-	return GetErrorLineCountF(id);
+	return GetErrorStringLineCountF(id);
 }
-DLL_EXPORT int  geterroron_(int *id)
+DLL_EXPORT int  geterrorfileon_(int *id)
 {
-	return GetErrorOnF(id);
+	return GetErrorFileOnF(id);
 }
-DLL_EXPORT int  getlogon_(int *id)
+DLL_EXPORT int  getlogfileon_(int *id)
 {
-	return GetLogOnF(id);
+	return GetLogFileOnF(id);
 }
-DLL_EXPORT int  getoutputon_(int *id)
+DLL_EXPORT int  getoutputfileon_(int *id)
 {
-	return GetOutputOnF(id);
+	return GetOutputFileOnF(id);
 }
 DLL_EXPORT int  getselectedoutputcolumncount_(int *id)
 {
 	return GetSelectedOutputColumnCountF(id);
 }
-DLL_EXPORT int  getselectedoutputon_(int *id)
+DLL_EXPORT int  getselectedoutputfileon_(int *id)
 {
-	return GetSelectedOutputOnF(id);
+	return GetSelectedOutputFileOnF(id);
 }
 DLL_EXPORT int  getselectedoutputrowcount_(int *id)
 {
@@ -86,13 +86,13 @@ DLL_EXPORT int  getselectedoutputvalue_(int *id, int *row, int *col, int *vtype,
 {
 	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
 }
-DLL_EXPORT void getwarningline_(int *id, int *n, char* line, unsigned int line_length)
+DLL_EXPORT void getwarningstringline_(int *id, int *n, char* line, unsigned int line_length)
 {
-	GetWarningLineF(id, n, line, line_length);
+	GetWarningStringLineF(id, n, line, line_length);
 }
-DLL_EXPORT int  getwarninglinecount_(int *id)
+DLL_EXPORT int  getwarningstringlinecount_(int *id)
 {
-	return GetWarningLineCountF(id);
+	return GetWarningStringLineCountF(id);
 }
 DLL_EXPORT int  loaddatabase_(int *id, char *filename, unsigned int len)
 {
@@ -102,17 +102,17 @@ DLL_EXPORT int  loaddatabasestring_(int *id, char *input, unsigned int len)
 {
 	return LoadDatabaseStringF(id, input, len);
 }
-DLL_EXPORT void outputerror_(int *id)
+DLL_EXPORT void outputerrorstring_(int *id)
 {
-	OutputErrorF(id);
+	OutputErrorStringF(id);
 }
-DLL_EXPORT void outputlines_(int *id)
+DLL_EXPORT void outputaccumulatedlines_(int *id)
 {
-	OutputLinesF(id);
+	OutputAccumulatedLinesF(id);
 }
-DLL_EXPORT void outputwarning_(int *id)
+DLL_EXPORT void outputwarningstring_(int *id)
 {
-	OutputWarningF(id);
+	OutputWarningStringF(id);
 }
 DLL_EXPORT int  runaccumulated_(int *id)
 {
@@ -126,29 +126,29 @@ DLL_EXPORT int  runstring_(int *id, char *input, unsigned int len)
 {
 	return RunStringF(id, input, len);
 }
-DLL_EXPORT void setdumpon_(int *id, int *dump_on)
+DLL_EXPORT void setdumpfileon_(int *id, int *dump_on)
 {
-	SetDumpOnF(id, dump_on);
+	SetDumpFileOnF(id, dump_on);
 }
 DLL_EXPORT void setdumpstringon_(int *id, int *dump_string_on)
 {
 	SetDumpStringOnF(id, dump_string_on);
 }
-DLL_EXPORT void seterroron_(int *id, int *error_on)
+DLL_EXPORT void seterrorfileon_(int *id, int *error_on)
 {
-	SetErrorOnF(id, error_on);
+	SetErrorFileOnF(id, error_on);
 }
-DLL_EXPORT void setlogon_(int *id, int *log_on)
+DLL_EXPORT void setlogfileon_(int *id, int *log_on)
 {
-	SetLogOnF(id, log_on);
+	SetLogFileOnF(id, log_on);
 }
-DLL_EXPORT void setoutputon_(int *id, int *output_on)
+DLL_EXPORT void setoutputfileon_(int *id, int *output_on)
 {
-	SetOutputOnF(id, output_on);
+	SetOutputFileOnF(id, output_on);
 }
-DLL_EXPORT void setselectedoutputon_(int *id, int *selected_on)
+DLL_EXPORT void setselectedoutputfileon_(int *id, int *selected_on)
 {
-	SetSelectedOutputOnF(id, selected_on);
+	SetSelOutFileOnF(id, selected_on);
 }
 DLL_EXPORT int  unloaddatabase_(int *id)
 {

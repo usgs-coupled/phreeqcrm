@@ -14,35 +14,35 @@
 #define DestroyIPhreeqcF              FC_FUNC (destroyiphreeqcf,              DESTROYIPHREEQCF)
 #define GetComponentCountF            FC_FUNC (getcomponentcountf,            GETCOMPONENTCOUNTF)
 #define GetComponentF                 FC_FUNC (getcomponentf,                 GETCOMPONENTF)
-#define GetDumpLineCountF             FC_FUNC (getdumplinecountf,             GETDUMPLINECOUNTF)
-#define GetDumpLineF                  FC_FUNC (getdumplinef,                  GETDUMPLINEF)
-#define GetDumpOnF                    FC_FUNC (getdumponf,                    GETDUMPONF)
+#define GetDumpStringLineCountF       FC_FUNC (getdumpstringlinecountf,       GETDUMPSTRINGLINECOUNTF)
+#define GetDumpStringLineF            FC_FUNC (getdumpstringlinef,            GETDUMPSTRINGLINEF)
+#define GetDumpFileOnF                FC_FUNC (getdumpfileonf,                GETDUMPFILEONF)
 #define GetDumpStringOnF              FC_FUNC (getdumpstringonf,              GETDUMPSTRINGONF)
-#define GetErrorLineCountF            FC_FUNC (geterrorlinecountf,            GETERRORLINECOUNTF)
-#define GetErrorLineF                 FC_FUNC (geterrorlinef,                 GETERRORLINEF)
-#define GetErrorOnF                   FC_FUNC (geterroronf,                   GETERRORONF)
-#define GetLogOnF                     FC_FUNC (getlogonf,                     GETLOGONF)
-#define GetOutputOnF                  FC_FUNC (getoutputonf,                  GETOUTPUTONF)
+#define GetErrorStringLineCountF      FC_FUNC (geterrorstringlinecountf,      GETERRORSTRINGLINECOUNTF)
+#define GetErrorStringLineF           FC_FUNC (geterrorstringlinef,           GETERRORSTRINGLINEF)
+#define GetErrorFileOnF               FC_FUNC (geterrorfileonf,               GETERRORFILEONF)
+#define GetLogFileOnF                 FC_FUNC (getlogfileonf,                 GETLOGFILEONF)
+#define GetOutputFileOnF              FC_FUNC (getoutputfileonf,              GETOUTPUTFILEONF)
 #define GetSelectedOutputColumnCountF FC_FUNC (getselectedoutputcolumncountf, GETSELECTEDOUTPUTCOLUMNCOUNTF)
-#define GetSelectedOutputOnF          FC_FUNC (getselectedoutputonf,          GETSELECTEDOUTPUTONF)
+#define GetSelectedOutputFileOnF      FC_FUNC (getselectedoutputfileonf,      GETSELECTEDOUTPUTFILEONF)
 #define GetSelectedOutputRowCountF    FC_FUNC (getselectedoutputrowcountf,    GETSELECTEDOUTPUTROWCOUNTF)
 #define GetSelectedOutputValueF       FC_FUNC (getselectedoutputvaluef,       GETSELECTEDOUTPUTVALUEF)
-#define GetWarningLineCountF          FC_FUNC (getwarninglinecountf,          GETWARNINGLINECOUNTF)
-#define GetWarningLineF               FC_FUNC (getwarninglinef,               GETWARNINGLINEF)
+#define GetWarningStringLineCountF    FC_FUNC (getwarningstringlinecountf,    GETWARNINGSTRINGLINECOUNTF)
+#define GetWarningStringLineF         FC_FUNC (getwarningstringlinef,         GETWARNINGSTRINGLINEF)
 #define LoadDatabaseF                 FC_FUNC (loaddatabasef,                 LOADDATABASEF)
 #define LoadDatabaseStringF           FC_FUNC (loaddatabasestringf,           LOADDATABASESTRINGF)
-#define OutputErrorF                  FC_FUNC (outputerrorf,                  OUTPUTERRORF)
-#define OutputLinesF                  FC_FUNC (outputlinesf,                  OUTPUTLINESF)
-#define OutputWarningF                FC_FUNC (outputwarningf,                OUTPUTWARNINGF)
+#define OutputErrorStringF            FC_FUNC (outputerrorstringf,            OUTPUTERRORSTRINGF)
+#define OutputAccumulatedLinesF       FC_FUNC (outputaccumulatedlinesf,       OUTPUTACCUMULATEDLINESF)
+#define OutputWarningStringF          FC_FUNC (outputwarningstringf,          OUTPUTWARNINGSTRINGF)
 #define RunAccumulatedF               FC_FUNC (runaccumulatedf,               RUNACCUMULATEDF)
 #define RunFileF                      FC_FUNC (runfilef,                      RUNFILEF)
 #define RunStringF                    FC_FUNC (runstringf,                    RUNSTRINGF)
-#define SetDumpOnF                    FC_FUNC (setdumponf,                    SETDUMPONF)
+#define SetDumpFileOnF                FC_FUNC (setdumpfileonf,                SETDUMPFILEONF)
 #define SetDumpStringOnF              FC_FUNC (setdumpstringonf,              SETDUMPSTRINGONF)
-#define SetErrorOnF                   FC_FUNC (seterroronf,                   SETERRORONF)
-#define SetLogOnF                     FC_FUNC (setlogonf,                     SETLOGONF)
-#define SetOutputOnF                  FC_FUNC (setoutputonf,                  SETOUTPUTONF)
-#define SetSelectedOutputOnF          FC_FUNC (setselectedoutputonf,          SETSELECTEDOUTPUTONF)
+#define SetErrorFileOnF               FC_FUNC (seterrorfileonf,               SETERRORFILEONF)
+#define SetLogFileOnF                 FC_FUNC (setlogfileonf,                 SETLOGFILEONF)
+#define SetOutputFileOnF              FC_FUNC (setoutputfileonf,              SETOUTPUTFILEONF)
+#define SetSelOutFileOnF              FC_FUNC (setseloutfileonf,              SETSELOUTFILEONF)
 #define UnLoadDatabaseF               FC_FUNC (unloaddatabasef,               UNLOADDATABASEF)
 #endif /* FC_FUNC */
 
@@ -56,35 +56,35 @@ extern "C" {
   int        DestroyIPhreeqcF(int *id);
   int        GetComponentCountF(int *id);
   void       GetComponentF(int *id, int* n, char* line, unsigned int line_length);
-  int        GetDumpLineCountF(int *id);
-  void       GetDumpLineF(int *id, int* n, char* line, unsigned int line_length);
-  int        GetDumpOnF(int *id);
+  int        GetDumpStringLineCountF(int *id);
+  void       GetDumpStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetDumpFileOnF(int *id);
   int        GetDumpStringOnF(int *id);
-  int        GetErrorLineCountF(int *id);
-  void       GetErrorLineF(int *id, int* n, char* line, unsigned int line_length);
-  int        GetErrorOnF(int *id);
-  int        GetLogOnF(int *id);
-  int        GetOutputOnF(int *id);
+  int        GetErrorStringLineCountF(int *id);
+  void       GetErrorStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetErrorFileOnF(int *id);
+  int        GetLogFileOnF(int *id);
+  int        GetOutputFileOnF(int *id);
   int        GetSelectedOutputColumnCountF(int *id);
-  int        GetSelectedOutputOnF(int *id);
+  int        GetSelectedOutputFileOnF(int *id);
   int        GetSelectedOutputRowCountF(int *id);
   IPQ_RESULT GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
-  int        GetWarningLineCountF(int *id);
-  void       GetWarningLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetWarningStringLineCountF(int *id);
+  void       GetWarningStringLineF(int *id, int* n, char* line, unsigned int line_length);
   int        LoadDatabaseF(int *id, char* filename, unsigned int filename_length);
   int        LoadDatabaseStringF(int *id, char* input, unsigned int input_length);
-  void       OutputErrorF(int *id);
-  void       OutputLinesF(int *id);
-  void       OutputWarningF(int *id);
+  void       OutputErrorStringF(int *id);
+  void       OutputAccumulatedLinesF(int *id);
+  void       OutputWarningStringF(int *id);
   int        RunAccumulatedF(int *id);
   int        RunFileF(int *id, char* filename, unsigned int filename_length);
   int        RunStringF(int *id, char* input, unsigned int input_length);
-  IPQ_RESULT SetDumpOnF(int *id, int* dump_on);
+  IPQ_RESULT SetDumpFileOnF(int *id, int* dump_on);
   IPQ_RESULT SetDumpStringOnF(int *id, int* dump_string_on);
-  IPQ_RESULT SetErrorOnF(int *id, int* error_on);
-  IPQ_RESULT SetLogOnF(int *id, int* log_on);
-  IPQ_RESULT SetOutputOnF(int *id, int* output_on);
-  IPQ_RESULT SetSelectedOutputOnF(int *id, int* selected_output_on);
+  IPQ_RESULT SetErrorFileOnF(int *id, int* error_on);
+  IPQ_RESULT SetLogFileOnF(int *id, int* log_on);
+  IPQ_RESULT SetOutputFileOnF(int *id, int* output_on);
+  IPQ_RESULT SetSelOutFileOnF(int *id, int* selected_output_on);
   int        UnLoadDatabaseF(int *id);
 
 #if defined(__cplusplus)
