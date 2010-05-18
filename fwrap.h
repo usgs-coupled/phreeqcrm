@@ -2,9 +2,9 @@
 #define __FWRAP__H
 
 #if defined(_WINDLL)
-#define DLL_EXPORT __declspec(dllexport)
+#define IPQ_DLL_EXPORT __declspec(dllexport)
 #else
-#define DLL_EXPORT
+#define IPQ_DLL_EXPORT
 #endif
 
 #if defined(FC_FUNC)

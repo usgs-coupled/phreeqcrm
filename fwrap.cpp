@@ -375,151 +375,151 @@ extern "C" {
 //
 // Intel Fortran compiler 9.1 /iface:cvf
 //
-DLL_EXPORT int  __stdcall ACCUMULATELINE(int *id, char *line, unsigned int len)
+IPQ_DLL_EXPORT int  __stdcall ACCUMULATELINE(int *id, char *line, unsigned int len)
 {
 	return AccumulateLineF(id, line, len);
 }
 // AddError
-DLL_EXPORT int  __stdcall CLEARACCUMULATEDLINES(int *id)
+IPQ_DLL_EXPORT int  __stdcall CLEARACCUMULATEDLINES(int *id)
 {
 	return ClearAccumulatedLinesF(id);
 }
-DLL_EXPORT int  __stdcall CREATEIPHREEQC(void)
+IPQ_DLL_EXPORT int  __stdcall CREATEIPHREEQC(void)
 {
 	return CreateIPhreeqcF();
 }
-DLL_EXPORT int  __stdcall DESTROYIPHREEQC(int *id)
+IPQ_DLL_EXPORT int  __stdcall DESTROYIPHREEQC(int *id)
 {
 	return DestroyIPhreeqcF(id);
 }
-DLL_EXPORT void __stdcall GETCOMPONENT(int *id, int *n, char* line, unsigned int line_length)
+IPQ_DLL_EXPORT void __stdcall GETCOMPONENT(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetComponentF(id, n, line, line_length);
 }
-DLL_EXPORT int  __stdcall GETCOMPONENTCOUNT(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETCOMPONENTCOUNT(int *id)
 {
 	return GetComponentCountF(id);
 }
-DLL_EXPORT int  __stdcall GETDUMPFILEON(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETDUMPFILEON(int *id)
 {
 	return GetDumpFileOnF(id);
 }
 // GetDumpString
-DLL_EXPORT void __stdcall GETDUMPSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
+IPQ_DLL_EXPORT void __stdcall GETDUMPSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetDumpStringLineF(id, n, line, line_length);
 }
-DLL_EXPORT int  __stdcall GETDUMPSTRINGLINECOUNT(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETDUMPSTRINGLINECOUNT(int *id)
 {
 	return GetDumpStringLineCountF(id);
 }
-DLL_EXPORT int  __stdcall GETDUMPSTRINGON(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETDUMPSTRINGON(int *id)
 {
 	return GetDumpStringOnF(id);
 }
-DLL_EXPORT int  __stdcall GETERRORFILEON(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETERRORFILEON(int *id)
 {
 	return GetErrorFileOnF(id);
 }
 // GetErrorString
-DLL_EXPORT void __stdcall GETERRORSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
+IPQ_DLL_EXPORT void __stdcall GETERRORSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetErrorStringLineF(id, n, line, line_length);
 }
-DLL_EXPORT int  __stdcall GETERRORSTRINGLINECOUNT(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETERRORSTRINGLINECOUNT(int *id)
 {
 	return GetErrorStringLineCountF(id);
 }
-DLL_EXPORT int  __stdcall GETLOGFILEON(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETLOGFILEON(int *id)
 {
 	return GetLogFileOnF(id);
 }
-DLL_EXPORT int  __stdcall GETOUTPUTFILEON(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETOUTPUTFILEON(int *id)
 {
 	return GetOutputFileOnF(id);
 }
-DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
 {
 	return GetSelectedOutputColumnCountF(id);
 }
-DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTFILEON(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTFILEON(int *id)
 {
 	return GetSelectedOutputFileOnF(id);
 }
-DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTROWCOUNT(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTROWCOUNT(int *id)
 {
 	return GetSelectedOutputRowCountF(id);
 }
-DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
 {
 	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
 }
 // GetWarningString
-DLL_EXPORT void __stdcall GETWARNINGSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
+IPQ_DLL_EXPORT void __stdcall GETWARNINGSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
 {
 	GetWarningStringLineF(id, n, line, line_length);
 }
-DLL_EXPORT int  __stdcall GETWARNINGSTRINGLINECOUNT(int *id)
+IPQ_DLL_EXPORT int  __stdcall GETWARNINGSTRINGLINECOUNT(int *id)
 {
 	return GetWarningStringLineCountF(id);
 }
-DLL_EXPORT int  __stdcall LOADDATABASE(int *id, char *filename, unsigned int len)
+IPQ_DLL_EXPORT int  __stdcall LOADDATABASE(int *id, char *filename, unsigned int len)
 {
 	return LoadDatabaseF(id, filename, len);
 }
-DLL_EXPORT int  __stdcall LOADDATABASESTRING(int *id, char *input, unsigned int len)
+IPQ_DLL_EXPORT int  __stdcall LOADDATABASESTRING(int *id, char *input, unsigned int len)
 {
 	return LoadDatabaseStringF(id, input, len);
 }
-DLL_EXPORT void __stdcall OUTPUTACCUMULATEDLINES(int *id)
+IPQ_DLL_EXPORT void __stdcall OUTPUTACCUMULATEDLINES(int *id)
 {
 	OutputAccumulatedLinesF(id);
 }
-DLL_EXPORT void __stdcall OUTPUTERRORSTRING(int *id)
+IPQ_DLL_EXPORT void __stdcall OUTPUTERRORSTRING(int *id)
 {
 	OutputErrorStringF(id);
 }
-DLL_EXPORT void __stdcall OUTPUTWARNINGSTRING(int *id)
+IPQ_DLL_EXPORT void __stdcall OUTPUTWARNINGSTRING(int *id)
 {
 	OutputWarningStringF(id);
 }
-DLL_EXPORT int  __stdcall RUNACCUMULATED(int *id)
+IPQ_DLL_EXPORT int  __stdcall RUNACCUMULATED(int *id)
 {
 	return RunAccumulatedF(id);
 }
-DLL_EXPORT int  __stdcall RUNFILE(int *id, char *filename, unsigned int len)
+IPQ_DLL_EXPORT int  __stdcall RUNFILE(int *id, char *filename, unsigned int len)
 {
 	return RunFileF(id, filename, len);
 }
-DLL_EXPORT int  __stdcall RUNSTRING(int *id, char *input, unsigned int len)
+IPQ_DLL_EXPORT int  __stdcall RUNSTRING(int *id, char *input, unsigned int len)
 {
 	return RunStringF(id, input, len);
 }
-DLL_EXPORT void __stdcall SETDUMPFILEON(int *id, int *dump_on)
+IPQ_DLL_EXPORT void __stdcall SETDUMPFILEON(int *id, int *dump_on)
 {
 	SetDumpFileOnF(id, dump_on);
 }
-DLL_EXPORT void __stdcall SETDUMPSTRINGON(int *id, int *dump_string_on)
+IPQ_DLL_EXPORT void __stdcall SETDUMPSTRINGON(int *id, int *dump_string_on)
 {
 	SetDumpStringOnF(id, dump_string_on);
 }
-DLL_EXPORT void __stdcall SETERRORFILEON(int *id, int *error_on)
+IPQ_DLL_EXPORT void __stdcall SETERRORFILEON(int *id, int *error_on)
 {
 	SetErrorFileOnF(id, error_on);
 }
-DLL_EXPORT void __stdcall SETLOGFILEON(int *id, int *log_on)
+IPQ_DLL_EXPORT void __stdcall SETLOGFILEON(int *id, int *log_on)
 {
 	SetLogFileOnF(id, log_on);
 }
-DLL_EXPORT void __stdcall SETOUTPUTFILEON(int *id, int *output_on)
+IPQ_DLL_EXPORT void __stdcall SETOUTPUTFILEON(int *id, int *output_on)
 {
 	SetOutputFileOnF(id, output_on);
 }
-DLL_EXPORT void __stdcall SETSELECTEDOUTPUTFILEON(int *id, int *selected_on)
+IPQ_DLL_EXPORT void __stdcall SETSELECTEDOUTPUTFILEON(int *id, int *selected_on)
 {
 	SetSelOutFileOnF(id, selected_on);
 }
-DLL_EXPORT int  __stdcall UNLOADDATABASE(int *id)
+IPQ_DLL_EXPORT int  __stdcall UNLOADDATABASE(int *id)
 {
 	return UnLoadDatabaseF(id);
 }
