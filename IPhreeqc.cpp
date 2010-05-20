@@ -381,7 +381,8 @@ int IPhreeqc::RunAccumulated(void)
 	static const char *sz_routine = "RunAccumulated";
 	try
 	{
-		// this may throw
+		// these may throw
+		this->open_output_files(sz_routine);
 		this->check_database(sz_routine);
 
 		this->PhreeqcPtr->input_error = 0;
@@ -421,7 +422,8 @@ int IPhreeqc::RunFile(const char* filename)
 	static const char *sz_routine = "RunFile";
 	try
 	{
-		// this may throw
+		// these may throw
+		this->open_output_files(sz_routine);
 		this->check_database(sz_routine);
 
 		this->PhreeqcPtr->input_error = 0;
@@ -468,7 +470,8 @@ int IPhreeqc::RunString(const char* input)
 	static const char *sz_routine = "RunString";
 	try
 	{
-		// this may throw
+		// these may throw
+		this->open_output_files(sz_routine);
 		this->check_database(sz_routine);
 
 		this->PhreeqcPtr->input_error = 0;
@@ -633,6 +636,14 @@ int IPhreeqc::output_handler(const int type, const char *err_str, const int stop
  		this->EndRow();
 		break;
 
+// COMMENT: {5/19/2010 4:50:29 PM}	case Phreeqc::OUTPUT_LOG:
+// COMMENT: {5/19/2010 4:50:29 PM}		if (this)
+// COMMENT: {5/19/2010 4:50:29 PM}		{
+// COMMENT: {5/19/2010 4:50:29 PM}			std::ostringstream oss;
+// COMMENT: {5/19/2010 4:50:29 PM}			oss << "WARNING: " << err_str << "\n";
+// COMMENT: {5/19/2010 4:50:29 PM}			this->AddWarning(oss.str().c_str());
+// COMMENT: {5/19/2010 4:50:29 PM}		}
+// COMMENT: {5/19/2010 4:50:29 PM}		break;
 	}
 	return module_handler(Phreeqc::ACTION_OUTPUT, type, err_str, stop, cookie, format, args);
 }
@@ -963,34 +974,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 	std::auto_ptr<std::istringstream> auto_iss(NULL);
 	char token[MAX_LENGTH];
 
-	if (this->OutputOn)
-	{
-		if (this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_MESSAGE, OUTPUT_FILENAME) != OK)
-		{
-			std::ostringstream oss;
-			oss << sz_routine << ": Unable to open:" << "\"" << OUTPUT_FILENAME << "\".\n";
-			this->PhreeqcPtr->warning_msg(oss.str().c_str());
-		}
-	}
-	if (this->ErrorOn)
-	{
-		if (this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_ERROR, ERROR_FILENAME) != OK)
-		{
-			std::ostringstream oss;
-			oss << sz_routine << ": Unable to open:" << "\"" << ERROR_FILENAME << "\".\n";
-			this->PhreeqcPtr->warning_msg(oss.str().c_str());
-		}
-	}
-	if (this->LogOn)
-	{
-		if (this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_LOG, LOG_FILENAME) != OK)
-		{
-			std::ostringstream oss;
-			oss << sz_routine << ": Unable to open:" << "\"" << LOG_FILENAME << "\".\n";
-			this->PhreeqcPtr->warning_msg(oss.str().c_str());
-		}
-	}
-
 /*
  *   call pre-run callback
  */
@@ -1279,14 +1262,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 		pfn_post(cookie);
 	}
 
-	if (this->PhreeqcPtr->input_error > 0)
-	{
-		std::ostringstream oss;
-		oss << "<input>\n";
-		oss << this->StringInput.c_str();
-		oss << "</input>\n";
-		this->PhreeqcPtr->error_msg(oss.str().c_str(), CONTINUE);
-	}
 	this->update_errors();
 }
 
@@ -1317,3 +1292,33 @@ void IPhreeqc::update_errors(void)
 	}
 }
 
+void IPhreeqc::open_output_files(const char* sz_routine)
+{
+	if (this->OutputOn)
+	{
+		if (this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_MESSAGE, OUTPUT_FILENAME) != OK)
+		{
+			std::ostringstream oss;
+			oss << sz_routine << ": Unable to open:" << "\"" << OUTPUT_FILENAME << "\".\n";
+			this->PhreeqcPtr->warning_msg(oss.str().c_str());
+		}
+	}
+	if (this->ErrorOn)
+	{
+		if (this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_ERROR, ERROR_FILENAME) != OK)
+		{
+			std::ostringstream oss;
+			oss << sz_routine << ": Unable to open:" << "\"" << ERROR_FILENAME << "\".\n";
+			this->PhreeqcPtr->warning_msg(oss.str().c_str());
+		}
+	}
+	if (this->LogOn)
+	{
+		if (this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_LOG, LOG_FILENAME) != OK)
+		{
+			std::ostringstream oss;
+			oss << sz_routine << ": Unable to open:" << "\"" << LOG_FILENAME << "\".\n";
+			this->PhreeqcPtr->warning_msg(oss.str().c_str());
+		}
+	}
+}
