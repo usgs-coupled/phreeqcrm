@@ -8,7 +8,23 @@
         AccumulateLine = AccumulateLineF(ID,LINE)
       END FUNCTION AccumulateLine
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! AddError      
+      FUNCTION AddError(ID,ERROR_MSG)
+        IMPLICIT NONE
+        INTEGER(KIND=4)  :: ID
+        CHARACTER(LEN=*) :: ERROR_MSG
+        INTEGER(KIND=4)  :: AddError
+        INTEGER(KIND=4)  :: AddErrorF
+        AddError = AddErrorF(ID,LINE)
+      END FUNCTION AddError
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION AddWarning(ID,WARN_MSG)
+        IMPLICIT NONE
+        INTEGER(KIND=4)  :: ID
+        CHARACTER(LEN=*) :: WARN_MSG
+        INTEGER(KIND=4)  :: AddWarning
+        INTEGER(KIND=4)  :: AddWarningF
+        AddWarning = AddWarningF(ID,WARN_MSG)
+      END FUNCTION AddWarning
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION ClearAccumulatedLines(ID)
         IMPLICIT NONE

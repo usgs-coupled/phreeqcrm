@@ -47,7 +47,16 @@ AddError(int id, const char* error_msg)
 	return IPQ_BADINSTANCE;
 }
 
-// TODO AddWarning
+int
+AddWarning(int id, const char* warn_msg)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return (int)IPhreeqcPtr->AddWarning(warn_msg);
+	}
+	return IPQ_BADINSTANCE;
+}
 
 IPQ_RESULT
 ClearAccumulatedLines(int id)

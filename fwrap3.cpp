@@ -14,7 +14,14 @@ IPQ_DLL_EXPORT int  accumulateline_(int *id, char *line, unsigned int len)
 {
 	return AccumulateLineF(id, line, len);
 }
-// AddError
+IPQ_DLL_EXPORT int  adderror(int *id, char *error_msg, unsigned int len)
+{
+	return AddErrorF(id, error_msg, len);
+}
+IPQ_DLL_EXPORT int  addwarning(int *id, char *warn_msg, unsigned int len)
+{
+	return AddWarningF(id, warn_msg, len);
+}
 IPQ_DLL_EXPORT int  clearaccumulatedlines_(int *id)
 {
 	return ClearAccumulatedLinesF(id);

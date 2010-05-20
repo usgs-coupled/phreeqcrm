@@ -54,9 +54,41 @@ AccumulateLineF(int *id, char *line, unsigned int line_length)
 	return n;
 }
 
-/*
-AddErrorF
-*/
+int
+AddErrorF(int *id, char *error_msg, unsigned int len)
+{
+	int n;
+	char* cmsg;
+
+	cmsg = f2cstring(error_msg, len);
+	if (!cmsg)
+	{
+		::AddError(*id, "AddError: Out of memory.\n");
+		return IPQ_OUTOFMEMORY;
+	}
+
+	n = ::AddError(*id, cmsg);
+	free(cmsg);
+	return n;
+}
+
+int
+AddWarningF(int *id, char *warn_msg, unsigned int len)
+{
+	int n;
+	char* cmsg;
+
+	cmsg = f2cstring(warn_msg, len);
+	if (!cmsg)
+	{
+		::AddError(*id, "AddWarning: Out of memory.\n");
+		return IPQ_OUTOFMEMORY;
+	}
+
+	n = ::AddWarning(*id, cmsg);
+	free(cmsg);
+	return n;
+}
 
 IPQ_RESULT
 ClearAccumulatedLinesF(int *id)
@@ -379,7 +411,14 @@ IPQ_DLL_EXPORT int  __stdcall ACCUMULATELINE(int *id, char *line, unsigned int l
 {
 	return AccumulateLineF(id, line, len);
 }
-// AddError
+IPQ_DLL_EXPORT int  __stdcall ADDERROR(int *id, char *error_msg, unsigned int len)
+{
+	return AddErrorF(id, error_msg, len);
+}
+IPQ_DLL_EXPORT int  __stdcall ADDWARNING(int *id, char *warn_msg, unsigned int len)
+{
+	return AddWarningF(id, warn_msg, len);
+}
 IPQ_DLL_EXPORT int  __stdcall CLEARACCUMULATEDLINES(int *id)
 {
 	return ClearAccumulatedLinesF(id);

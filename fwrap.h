@@ -9,6 +9,8 @@
 
 #if defined(FC_FUNC)
 #define AccumulateLineF               FC_FUNC (accumulatelinef,               ACCUMULATELINEF)
+#define AddErrorF                     FC_FUNC (adderrorf,                     ADDERRORF)
+#define AddWarningF                   FC_FUNC (addwarningf,                   ADDWARNINGF)
 #define ClearAccumulatedLinesF        FC_FUNC (clearaccumulatedlinesf,        CLEARACCUMULATEDLINESF)
 #define CreateIPhreeqcF               FC_FUNC (createiphreeqcf,               CREATEIPHREEQCF)
 #define DestroyIPhreeqcF              FC_FUNC (destroyiphreeqcf,              DESTROYIPHREEQCF)
@@ -51,6 +53,8 @@ extern "C" {
 #endif
 
   IPQ_RESULT AccumulateLineF(int *id, char *line, unsigned int line_length);
+  int        AddErrorF(int *id, char *error_msg, unsigned int len);
+  int        AddWarningF(int *id, char *warn_msg, unsigned int len);
   IPQ_RESULT ClearAccumulatedLinesF(int *id);
   int        CreateIPhreeqcF(void);
   int        DestroyIPhreeqcF(int *id);
