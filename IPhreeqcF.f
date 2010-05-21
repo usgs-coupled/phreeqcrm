@@ -14,7 +14,7 @@
         CHARACTER(LEN=*) :: ERROR_MSG
         INTEGER(KIND=4)  :: AddError
         INTEGER(KIND=4)  :: AddErrorF
-        AddError = AddErrorF(ID,LINE)
+        AddError = AddErrorF(ID,ERROR_MSG)
       END FUNCTION AddError
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION AddWarning(ID,WARN_MSG)
