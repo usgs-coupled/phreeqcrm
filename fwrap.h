@@ -45,7 +45,6 @@
 #define SetLogFileOnF                 FC_FUNC (setlogfileonf,                 SETLOGFILEONF)
 #define SetOutputFileOnF              FC_FUNC (setoutputfileonf,              SETOUTPUTFILEONF)
 #define SetSelOutFileOnF              FC_FUNC (setseloutfileonf,              SETSELOUTFILEONF)
-#define UnLoadDatabaseF               FC_FUNC (unloaddatabasef,               UNLOADDATABASEF)
 #endif /* FC_FUNC */
 
 #if defined(__cplusplus)
@@ -89,7 +88,6 @@ extern "C" {
   IPQ_RESULT SetLogFileOnF(int *id, int* log_on);
   IPQ_RESULT SetOutputFileOnF(int *id, int* output_on);
   IPQ_RESULT SetSelOutFileOnF(int *id, int* selected_output_on);
-  int        UnLoadDatabaseF(int *id);
 
 #if defined(__cplusplus)
 }

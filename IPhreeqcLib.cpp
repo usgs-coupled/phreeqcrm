@@ -543,18 +543,6 @@ SetSelectedOutputFileOn(int id, int value)
 	return IPQ_BADINSTANCE;
 }
 
-IPQ_RESULT
-UnLoadDatabase(int id)
-{
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		IPhreeqcPtr->UnLoadDatabase();
-		return IPQ_OK;
-	}
-	return IPQ_BADINSTANCE;
-}
-
 // helper functions
 //
 

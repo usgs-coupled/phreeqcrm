@@ -161,10 +161,6 @@ IPQ_DLL_EXPORT void setselectedoutputfileon_(int *id, int *selected_on)
 {
 	SetSelOutFileOnF(id, selected_on);
 }
-IPQ_DLL_EXPORT int  unloaddatabase_(int *id)
-{
-	return UnLoadDatabaseF(id);
-}
 
 #if defined(__cplusplus)
 }

@@ -391,13 +391,6 @@ SetSelOutFileOnF(int *id, int* sel_on)
 	return ::SetSelectedOutputFileOn(*id, *sel_on);
 }
 
-int
-UnLoadDatabaseF(int *id)
-{
-	return ::UnLoadDatabase(*id);
-}
-
-
 #if defined(_WIN32) && !defined(_M_AMD64)
 
 #if defined(__cplusplus)
@@ -557,10 +550,6 @@ IPQ_DLL_EXPORT void __stdcall SETOUTPUTFILEON(int *id, int *output_on)
 IPQ_DLL_EXPORT void __stdcall SETSELECTEDOUTPUTFILEON(int *id, int *selected_on)
 {
 	SetSelOutFileOnF(id, selected_on);
-}
-IPQ_DLL_EXPORT int  __stdcall UNLOADDATABASE(int *id)
-{
-	return UnLoadDatabaseF(id);
 }
 #if defined(__cplusplus)
 }

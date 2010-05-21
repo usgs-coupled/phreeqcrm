@@ -344,11 +344,3 @@
         INTEGER(KIND=4) :: SetSelOutFileOnF
         SetSelectedOutputFileOn = SetSelOutFileOnF(ID,SELECTED_ON)
       END FUNCTION SetSelectedOutputFileOn
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION UnLoadDatabase(ID)
-        IMPLICIT NONE
-        INTEGER(KIND=4)  :: ID
-        INTEGER(KIND=4)  :: UnLoadDatabase
-        INTEGER(KIND=4)  :: UnLoadDatabaseF
-        UnLoadDatabase = UnLoadDatabaseF(ID)
-      END FUNCTION UnLoadDatabase
