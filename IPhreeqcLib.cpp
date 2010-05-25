@@ -88,24 +88,11 @@ const char*
 GetComponent(int id, int n)
 {
 	static const char err_msg[] = "GetComponent: Invalid instance id.\n";
-	static const char empty[] = "";
-	static std::string comp;
 
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		std::list< std::string > comps = IPhreeqcPtr->ListComponents();
-		if (n < 0 || n >= (int)comps.size())
-		{
-			return empty;
-		}
-		std::list< std::string >::iterator it = comps.begin();
-		for(int i = 0; i < n; ++i)
-		{
-			++it;
-		}
-		comp = (*it);
-		return comp.c_str();
+		return IPhreeqcPtr->GetComponent(n);
 	}
 	return err_msg;
 }
@@ -116,7 +103,7 @@ GetComponentCount(int id)
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		return (int)IPhreeqcPtr->ListComponents().size();
+		return (int)IPhreeqcPtr->GetComponentCount();
 	}
 	return IPQ_BADINSTANCE;
 }

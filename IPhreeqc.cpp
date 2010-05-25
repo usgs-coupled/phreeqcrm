@@ -37,7 +37,8 @@ int istream_getc(void *cookie)
 
 IPhreeqc::IPhreeqc(void)
 : DatabaseLoaded(false)
-, ClearAccumulatedLinesOnNextAccumulate(false)
+, ClearAccumulated(false)
+, UpdateComponents(true)
 , SelectedOutputOn(false)
 , OutputOn(false)
 , LogOn(false)
@@ -66,10 +67,10 @@ VRESULT IPhreeqc::AccumulateLine(const char *line)
 {
 	try
 	{
-		if (this->ClearAccumulatedLinesOnNextAccumulate)
+		if (this->ClearAccumulated)
 		{
 			this->ClearAccumulatedLines();
-			this->ClearAccumulatedLinesOnNextAccumulate = false;
+			this->ClearAccumulated = false;
 		}
 
 		this->ErrorReporter->Clear();
@@ -108,7 +109,7 @@ const std::string& IPhreeqc::GetAccumulatedLines(void)
 const char* IPhreeqc::GetComponent(int n)
 {
 	static const char empty[] = "";
-	this->Components = this->ListComponents();
+	this->ListComponents();
 	if (n < 0 || n >= (int)this->Components.size())
 	{
 		return empty;
@@ -123,9 +124,8 @@ const char* IPhreeqc::GetComponent(int n)
 
 size_t IPhreeqc::GetComponentCount(void)
 {
-	std::list< std::string > comps;
-	this->PhreeqcPtr->list_components(comps);
-	return comps.size();
+	this->ListComponents();
+	return this->Components.size();
 }
 
 bool IPhreeqc::GetDumpFileOn(void)const
@@ -272,9 +272,13 @@ int IPhreeqc::GetWarningStringLineCount(void)const
 
 std::list< std::string > IPhreeqc::ListComponents(void)
 {
-	std::list< std::string > comps;
-	this->PhreeqcPtr->list_components(comps);
-	return comps;
+	if (this->UpdateComponents)
+	{
+		this->Components.clear();
+		this->PhreeqcPtr->list_components(this->Components);
+		this->UpdateComponents = false;
+	}
+	return this->Components;
 }
 
 int IPhreeqc::LoadDatabase(const char* filename)
@@ -410,7 +414,7 @@ int IPhreeqc::RunAccumulated(void)
 		}
 	}
 
-	this->ClearAccumulatedLinesOnNextAccumulate = true;
+	this->ClearAccumulated = true;
 	this->PhreeqcPtr->close_output_files();
 	this->update_errors();
 
@@ -541,6 +545,8 @@ void IPhreeqc::UnLoadDatabase(void)
 	// init IPhreeqc
 	//
 	this->DatabaseLoaded   = false;
+	this->UpdateComponents = true;
+	this->Components.clear();
 
 	// clear error state
 	//
@@ -1262,6 +1268,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 		pfn_post(cookie);
 	}
 
+	this->UpdateComponents = true;
 	this->update_errors();
 }
 
