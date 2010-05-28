@@ -62,7 +62,10 @@ CVar CSelectedOutput::Get(int nRow, int nCol)const
 
 VRESULT CSelectedOutput::Get(int nRow, int nCol, VAR* pVAR)const
 {
-	::VarClear(pVAR);
+	if (::VarClear(pVAR) == VR_BADVARTYPE)
+	{
+		return VR_BADVARTYPE;
+	}
 	if ((size_t)nRow >= this->GetRowCount() || nRow < 0)
 	{
 		pVAR->type = TT_ERROR;
