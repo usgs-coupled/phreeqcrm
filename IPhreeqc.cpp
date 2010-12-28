@@ -61,6 +61,9 @@ IPhreeqc::IPhreeqc(void)
 IPhreeqc::~IPhreeqc(void)
 {
 	delete this->PhreeqcPtr;
+	delete this->SelectedOutput;
+	delete this->WarningReporter;
+	delete this->ErrorReporter;
 }
 
 VRESULT IPhreeqc::AccumulateLine(const char *line)
