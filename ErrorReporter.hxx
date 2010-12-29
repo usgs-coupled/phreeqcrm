@@ -10,7 +10,14 @@ class IErrorReporter
 public:
 	virtual size_t AddError(const char* error_msg) = 0;
 	virtual void Clear(void) = 0;
+	virtual ~IErrorReporter(void) = 0;
 };
+
+// Note: this is req'd in order for subclass dtors to be called
+//
+IErrorReporter::~IErrorReporter(void)
+{
+}
 
 template <typename OS>
 class CErrorReporter : public IErrorReporter
