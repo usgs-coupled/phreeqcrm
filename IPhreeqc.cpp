@@ -720,12 +720,12 @@ int IPhreeqc::module_open_handler(const int type, const char *file_name)
 	switch (type)
 	{
 	case Phreeqc::OUTPUT_MESSAGE:
-		if (this->PhreeqcPtr->output != NULL)
+		if (this->PhreeqcPtr->output_file != NULL)
 		{
-			::fclose(this->PhreeqcPtr->output);
-			this->PhreeqcPtr->output = NULL;
+			::fclose(this->PhreeqcPtr->output_file);
+			this->PhreeqcPtr->output_file = NULL;
 		}
-		if ( (this->PhreeqcPtr->output = ::fopen(file_name, "w")) == NULL)
+		if ( (this->PhreeqcPtr->output_file = ::fopen(file_name, "w")) == NULL)
 		{
 			return ERROR;
 		}
