@@ -1,3 +1,5 @@
+EXTRA_DIST = fwrap2.cpp fwrap3.cpp
+
 AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/phreeqc
 
 # libtool libraries to build
