@@ -15,7 +15,6 @@ libiphreeqc_la_SOURCES=\
 	SelectedOutput.cpp\
 	SelectedOutput.hxx\
 	Var.c\
-	phreeqcpp/char_star.h\
 	phreeqcpp/cxxKinetics.cxx\
 	phreeqcpp/cxxKinetics.h\
 	phreeqcpp/cxxMix.cxx\
