@@ -135,7 +135,8 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/phreeqc/tally.c\
 	phreeqcpp/phreeqc/tidy.c\
 	phreeqcpp/phreeqc/transport.c\
-	phreeqcpp/phreeqc/utilities.c
+	phreeqcpp/phreeqc/utilities.c\
+	phreeqcpp/phreeqc/NA.h
 
 include_HEADERS=\
 	$(top_srcdir)/include/IPhreeqc.h\
