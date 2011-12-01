@@ -53,7 +53,10 @@ IPhreeqc::IPhreeqc(void)
 	this->ErrorReporter   = new CErrorReporter<std::ostringstream>;
 	this->WarningReporter = new CErrorReporter<std::ostringstream>;
 	this->SelectedOutput  = new CSelectedOutput();
-	this->PhreeqcPtr = new Phreeqc;
+	this->PhreeqcPtr      = new Phreeqc();
+
+	this->PhreeqcPtr->set_io(this);
+
 	ASSERT(this->PhreeqcPtr->phast == 0);
 	this->UnLoadDatabase();
 }
@@ -307,11 +310,12 @@ int IPhreeqc::LoadDatabase(const char* filename)
 
 		// read input
 		//
-		this->PhreeqcPtr->read_database(istream_getc, &ifs);
+		this->PhreeqcPtr->push_istream(&ifs, false);
+		this->PhreeqcPtr->read_database();
 	}
 	catch (IPhreeqcStop)
 	{
-		this->PhreeqcPtr->close_input_files();
+		this->close_input_files();
 	}
 	catch (...)
 	{
@@ -325,7 +329,7 @@ int IPhreeqc::LoadDatabase(const char* filename)
 			// do nothing
 		}
 	}
-
+	this->PhreeqcPtr->clear_istream();
 	this->DatabaseLoaded = (this->PhreeqcPtr->input_error == 0);
 	return this->PhreeqcPtr->input_error;
 }
@@ -345,11 +349,13 @@ int IPhreeqc::LoadDatabaseString(const char* input)
 
 		// read input
 		//
-		this->PhreeqcPtr->read_database(istream_getc, &iss);
+		ASSERT(this->PhreeqcPtr->get_istream() == NULL);
+		this->PhreeqcPtr->push_istream(&iss, false);
+		this->PhreeqcPtr->read_database();
 	}
 	catch (IPhreeqcStop)
 	{
-		this->PhreeqcPtr->close_input_files();
+		this->close_input_files();
 	}
 	catch(...)
 	{
@@ -364,6 +370,7 @@ int IPhreeqc::LoadDatabaseString(const char* input)
 		}
 	}
 
+	this->PhreeqcPtr->clear_istream();
 	this->DatabaseLoaded = (this->PhreeqcPtr->input_error == 0);
 	return this->PhreeqcPtr->input_error;
 }
@@ -393,12 +400,14 @@ int IPhreeqc::RunAccumulated(void)
 		this->check_database(sz_routine);
 
 		this->PhreeqcPtr->input_error = 0;
+// COMMENT: {11/29/2011 6:16:39 PM}		this->IPHRQ_ioPtr->Set_io_error_count(0);
+		this->Set_io_error_count(0);
 
 		// create input stream
 		std::istringstream iss(this->GetAccumulatedLines());
 
 		// this may throw
-		this->do_run(sz_routine, &iss, NULL, NULL, NULL, NULL);
+		this->do_run(sz_routine, &iss, NULL, NULL, NULL);
 	}
 	catch (IPhreeqcStop)
 	{
@@ -418,8 +427,9 @@ int IPhreeqc::RunAccumulated(void)
 	}
 
 	this->ClearAccumulated = true;
-	this->PhreeqcPtr->close_output_files();
+	this->close_output_files();
 	this->update_errors();
+	this->PhreeqcPtr->clear_istream();
 
 	return this->PhreeqcPtr->input_error;
 }
@@ -447,11 +457,11 @@ int IPhreeqc::RunFile(const char* filename)
 		}
 
 		// this may throw
-		this->do_run(sz_routine, &ifs, NULL, NULL, NULL, NULL);
+		this->do_run(sz_routine, &ifs, NULL, NULL, NULL);
 	}
 	catch (IPhreeqcStop)
 	{
-		this->PhreeqcPtr->close_input_files();
+		this->close_input_files();
 	}
 	catch(...)
 	{
@@ -466,8 +476,9 @@ int IPhreeqc::RunFile(const char* filename)
 		}
 	}
 
-	this->PhreeqcPtr->close_output_files();
+	this->close_output_files();
 	this->update_errors();
+	this->PhreeqcPtr->clear_istream();
 
 	return this->PhreeqcPtr->input_error;
 }
@@ -488,11 +499,11 @@ int IPhreeqc::RunString(const char* input)
 		std::istringstream iss(s);
 
 		// this may throw
-		this->do_run(sz_routine, &iss, NULL, NULL, NULL, NULL);
+		this->do_run(sz_routine, &iss, NULL, NULL, NULL);
 	}
 	catch (IPhreeqcStop)
 	{
-		this->PhreeqcPtr->close_input_files();
+		this->close_input_files();
 	}
 	catch(...)
 	{
@@ -507,8 +518,9 @@ int IPhreeqc::RunString(const char* input)
 		}
 	}
 
-	this->PhreeqcPtr->close_output_files();
+	this->close_output_files();
 	this->update_errors();
+	this->PhreeqcPtr->clear_istream();
 
 	return this->PhreeqcPtr->input_error;
 }
@@ -576,29 +588,30 @@ void IPhreeqc::UnLoadDatabase(void)
 	// initialize phreeqc
 	//
 	this->PhreeqcPtr->clean_up();
-	this->PhreeqcPtr->add_output_callback(IPhreeqc::handler, this);
+// COMMENT: {11/16/2011 10:01:40 PM}	this->PhreeqcPtr->add_output_callback(IPhreeqc::handler, this);
 	this->PhreeqcPtr->do_initialize();
 	this->PhreeqcPtr->input_error = 0;
+// COMMENT: {11/29/2011 7:18:29 PM}	this->IPHRQ_ioPtr->Set_io_error_count(0);
 }
 
 int IPhreeqc::handler(const int action, const int type, const char *err_str, const int stop, void *cookie, const char *format, va_list args)
 {
 	int n = OK;
 	IPhreeqc *pThis = (IPhreeqc*)cookie;
-	switch (action)
-	{
-	case Phreeqc::ACTION_OPEN:
-		n = pThis->open_handler(type, err_str);
-		break;
-
-	case Phreeqc::ACTION_OUTPUT:
-		n = pThis->output_handler(type, err_str, stop, cookie, format, args);
-		break;
-
-	default:
-		n = pThis->module_handler(action, type, err_str, stop, cookie, format, args);
-		break;
-	}
+// COMMENT: {11/16/2011 10:02:40 PM}	switch (action)
+// COMMENT: {11/16/2011 10:02:40 PM}	{
+// COMMENT: {11/16/2011 10:02:40 PM}	case Phreeqc::ACTION_OPEN:
+// COMMENT: {11/16/2011 10:02:40 PM}		n = pThis->open_handler(type, err_str);
+// COMMENT: {11/16/2011 10:02:40 PM}		break;
+// COMMENT: {11/16/2011 10:02:40 PM}
+// COMMENT: {11/16/2011 10:02:40 PM}	case Phreeqc::ACTION_OUTPUT:
+// COMMENT: {11/16/2011 10:02:40 PM}		n = pThis->output_handler(type, err_str, stop, cookie, format, args);
+// COMMENT: {11/16/2011 10:02:40 PM}		break;
+// COMMENT: {11/16/2011 10:02:40 PM}
+// COMMENT: {11/16/2011 10:02:40 PM}	default:
+// COMMENT: {11/16/2011 10:02:40 PM}		n = pThis->module_handler(action, type, err_str, stop, cookie, format, args);
+// COMMENT: {11/16/2011 10:02:40 PM}		break;
+// COMMENT: {11/16/2011 10:02:40 PM}	}
 
 	if (stop == STOP)
 	{
@@ -611,74 +624,78 @@ int IPhreeqc::output_handler(const int type, const char *err_str, const int stop
 {
 	ASSERT(cookie == this);
 
-	switch (type)
-	{
-	case Phreeqc::OUTPUT_ERROR:
-		if (this)
-		{
-			this->AddError("ERROR: ");
-			this->AddError(err_str);
-			this->AddError("\n");
+// COMMENT: {11/16/2011 10:04:42 PM}	switch (type)
+// COMMENT: {11/16/2011 10:04:42 PM}	{
+// COMMENT: {11/16/2011 10:04:42 PM}	case Phreeqc::OUTPUT_ERROR:
+// COMMENT: {11/16/2011 10:04:42 PM}		if (this)
+// COMMENT: {11/16/2011 10:04:42 PM}		{
+// COMMENT: {11/16/2011 10:04:42 PM}			this->AddError("ERROR: ");
+// COMMENT: {11/16/2011 10:04:42 PM}			this->AddError(err_str);
+// COMMENT: {11/16/2011 10:04:42 PM}			this->AddError("\n");
+// COMMENT: {11/16/2011 10:04:42 PM}#if 0
+// COMMENT: {11/16/2011 10:04:42 PM}			if (stop == STOP)
+// COMMENT: {11/16/2011 10:04:42 PM}			{
+// COMMENT: {11/16/2011 10:04:42 PM}				this->AddError("Stopping.\n");
+// COMMENT: {11/16/2011 10:04:42 PM}			}
+// COMMENT: {11/16/2011 10:04:42 PM}#endif
+// COMMENT: {11/16/2011 10:04:42 PM}		}
+// COMMENT: {11/16/2011 10:04:42 PM}		break;
+// COMMENT: {11/16/2011 10:04:42 PM}
+// COMMENT: {11/16/2011 10:04:42 PM}	case Phreeqc::OUTPUT_WARNING:
+// COMMENT: {11/16/2011 10:04:42 PM}		if (this)
+// COMMENT: {11/16/2011 10:04:42 PM}		{
+// COMMENT: {11/16/2011 10:04:42 PM}			std::ostringstream oss;
+// COMMENT: {11/16/2011 10:04:42 PM}			oss << "WARNING: " << err_str << "\n";
+// COMMENT: {11/16/2011 10:04:42 PM}			this->AddWarning(oss.str().c_str());
+// COMMENT: {11/16/2011 10:04:42 PM}		}
+// COMMENT: {11/16/2011 10:04:42 PM}		break;
+// COMMENT: {11/16/2011 10:04:42 PM}
+// COMMENT: {11/16/2011 10:04:42 PM}	case Phreeqc::OUTPUT_PUNCH:
+// COMMENT: {11/16/2011 10:04:42 PM}		this->AddSelectedOutput(err_str, format, args);
+// COMMENT: {11/16/2011 10:04:42 PM}		break;
+// COMMENT: {11/16/2011 10:04:42 PM}
+// COMMENT: {11/16/2011 10:04:42 PM}	case Phreeqc::OUTPUT_PUNCH_END_ROW:
+// COMMENT: {11/16/2011 10:04:42 PM} 		this->EndRow();
+// COMMENT: {11/16/2011 10:04:42 PM}		break;
+// COMMENT: {11/16/2011 10:04:42 PM}
+// COMMENT: {11/16/2011 10:04:42 PM}// COMMENT: {5/19/2010 4:50:29 PM}	case Phreeqc::OUTPUT_LOG:
+// COMMENT: {11/16/2011 10:04:42 PM}// COMMENT: {5/19/2010 4:50:29 PM}		if (this)
+// COMMENT: {11/16/2011 10:04:42 PM}// COMMENT: {5/19/2010 4:50:29 PM}		{
+// COMMENT: {11/16/2011 10:04:42 PM}// COMMENT: {5/19/2010 4:50:29 PM}			std::ostringstream oss;
+// COMMENT: {11/16/2011 10:04:42 PM}// COMMENT: {5/19/2010 4:50:29 PM}			oss << "WARNING: " << err_str << "\n";
+// COMMENT: {11/16/2011 10:04:42 PM}// COMMENT: {5/19/2010 4:50:29 PM}			this->AddWarning(oss.str().c_str());
+// COMMENT: {11/16/2011 10:04:42 PM}// COMMENT: {5/19/2010 4:50:29 PM}		}
+// COMMENT: {11/16/2011 10:04:42 PM}// COMMENT: {5/19/2010 4:50:29 PM}		break;
+// COMMENT: {11/16/2011 10:04:42 PM}	}
 #if 0
-			if (stop == STOP)
-			{
-				this->AddError("Stopping.\n");
-			}
-#endif
-		}
-		break;
-
-	case Phreeqc::OUTPUT_WARNING:
-		if (this)
-		{
-			std::ostringstream oss;
-			oss << "WARNING: " << err_str << "\n";
-			this->AddWarning(oss.str().c_str());
-		}
-		break;
-
-	case Phreeqc::OUTPUT_PUNCH:
-		this->AddSelectedOutput(err_str, format, args);
-		break;
-
-	case Phreeqc::OUTPUT_PUNCH_END_ROW:
- 		this->EndRow();
-		break;
-
-// COMMENT: {5/19/2010 4:50:29 PM}	case Phreeqc::OUTPUT_LOG:
-// COMMENT: {5/19/2010 4:50:29 PM}		if (this)
-// COMMENT: {5/19/2010 4:50:29 PM}		{
-// COMMENT: {5/19/2010 4:50:29 PM}			std::ostringstream oss;
-// COMMENT: {5/19/2010 4:50:29 PM}			oss << "WARNING: " << err_str << "\n";
-// COMMENT: {5/19/2010 4:50:29 PM}			this->AddWarning(oss.str().c_str());
-// COMMENT: {5/19/2010 4:50:29 PM}		}
-// COMMENT: {5/19/2010 4:50:29 PM}		break;
-	}
 	return module_handler(Phreeqc::ACTION_OUTPUT, type, err_str, stop, cookie, format, args);
+#else
+	return 0;
+#endif
 }
 
 int IPhreeqc::open_handler(const int type, const char *file_name)
 {
 	int n = OK;
-	switch (type)
-	{
-	case Phreeqc::OUTPUT_PUNCH:
-		if (file_name)
-		{
-			if (this->PunchFileName.compare(file_name) != 0)
-			{
-				this->PunchFileName = file_name;
-			}
-		}
-		if (this->SelectedOutputOn)
-		{
-			n = module_handler(Phreeqc::ACTION_OPEN, type, file_name, CONTINUE, this, NULL, NULL);
-		}
-		break;
-	default:
-		n = module_handler(Phreeqc::ACTION_OPEN, type, file_name, CONTINUE, this, NULL, NULL);
-		break;
-	}
+// COMMENT: {11/16/2011 10:04:23 PM}	switch (type)
+// COMMENT: {11/16/2011 10:04:23 PM}	{
+// COMMENT: {11/16/2011 10:04:23 PM}	case Phreeqc::OUTPUT_PUNCH:
+// COMMENT: {11/16/2011 10:04:23 PM}		if (file_name)
+// COMMENT: {11/16/2011 10:04:23 PM}		{
+// COMMENT: {11/16/2011 10:04:23 PM}			if (this->PunchFileName.compare(file_name) != 0)
+// COMMENT: {11/16/2011 10:04:23 PM}			{
+// COMMENT: {11/16/2011 10:04:23 PM}				this->PunchFileName = file_name;
+// COMMENT: {11/16/2011 10:04:23 PM}			}
+// COMMENT: {11/16/2011 10:04:23 PM}		}
+// COMMENT: {11/16/2011 10:04:23 PM}		if (this->SelectedOutputOn)
+// COMMENT: {11/16/2011 10:04:23 PM}		{
+// COMMENT: {11/16/2011 10:04:23 PM}			n = module_handler(Phreeqc::ACTION_OPEN, type, file_name, CONTINUE, this, NULL, NULL);
+// COMMENT: {11/16/2011 10:04:23 PM}		}
+// COMMENT: {11/16/2011 10:04:23 PM}		break;
+// COMMENT: {11/16/2011 10:04:23 PM}	default:
+// COMMENT: {11/16/2011 10:04:23 PM}		n = module_handler(Phreeqc::ACTION_OPEN, type, file_name, CONTINUE, this, NULL, NULL);
+// COMMENT: {11/16/2011 10:04:23 PM}		break;
+// COMMENT: {11/16/2011 10:04:23 PM}	}
 	return n;
 }
 
@@ -686,93 +703,93 @@ int IPhreeqc::module_handler(const int action, const int type, const char *err_s
 {
 	IPhreeqc* pThis = (IPhreeqc*) cookie;
 
-	switch (action)
-	{
-	case Phreeqc::ACTION_OPEN:
-		return pThis->module_open_handler(type, err_str);
-		break;
-	case ACTION_ISOPEN:
-		return pThis->module_isopen_handler(type);
-		break;
-	default:
-		return pThis->PhreeqcPtr->phreeqc_handler(action, type, err_str, stop, pThis->PhreeqcPtr, format, args);
-		break;
-	}
+// COMMENT: {11/16/2011 10:05:03 PM}	switch (action)
+// COMMENT: {11/16/2011 10:05:03 PM}	{
+// COMMENT: {11/16/2011 10:05:03 PM}	case Phreeqc::ACTION_OPEN:
+// COMMENT: {11/16/2011 10:05:03 PM}		return pThis->module_open_handler(type, err_str);
+// COMMENT: {11/16/2011 10:05:03 PM}		break;
+// COMMENT: {11/16/2011 10:05:03 PM}	case ACTION_ISOPEN:
+// COMMENT: {11/16/2011 10:05:03 PM}		return pThis->module_isopen_handler(type);
+// COMMENT: {11/16/2011 10:05:03 PM}		break;
+// COMMENT: {11/16/2011 10:05:03 PM}	default:
+// COMMENT: {11/16/2011 10:05:03 PM}		return pThis->PhreeqcPtr->phreeqc_handler(action, type, err_str, stop, pThis->PhreeqcPtr, format, args);
+// COMMENT: {11/16/2011 10:05:03 PM}		break;
+// COMMENT: {11/16/2011 10:05:03 PM}	}
 	return ERROR;
 }
 
 int IPhreeqc::module_isopen_handler(const int type)
 {
-	switch (type)
-	{
-	case Phreeqc::OUTPUT_PUNCH:
-		if (this->PhreeqcPtr->punch_file) return 1;
-		break;
-	default:
-		ASSERT(0);
-	}
+// COMMENT: {11/16/2011 10:05:16 PM}	switch (type)
+// COMMENT: {11/16/2011 10:05:16 PM}	{
+// COMMENT: {11/16/2011 10:05:16 PM}	case Phreeqc::OUTPUT_PUNCH:
+// COMMENT: {11/16/2011 10:05:16 PM}		if (this->PhreeqcPtr->punch_file) return 1;
+// COMMENT: {11/16/2011 10:05:16 PM}		break;
+// COMMENT: {11/16/2011 10:05:16 PM}	default:
+// COMMENT: {11/16/2011 10:05:16 PM}		ASSERT(0);
+// COMMENT: {11/16/2011 10:05:16 PM}	}
 	return 0;
 }
 
 int IPhreeqc::module_open_handler(const int type, const char *file_name)
 {
 	ASSERT(file_name && ::strlen(file_name));
-	switch (type)
-	{
-	case Phreeqc::OUTPUT_MESSAGE:
-		if (this->PhreeqcPtr->output_file != NULL)
-		{
-			::fclose(this->PhreeqcPtr->output_file);
-			this->PhreeqcPtr->output_file = NULL;
-		}
-		if ( (this->PhreeqcPtr->output_file = ::fopen(file_name, "w")) == NULL)
-		{
-			return ERROR;
-		}
-		break;
-
-	case Phreeqc::OUTPUT_ERROR:
-		ASSERT(this->PhreeqcPtr->error_file != stderr);
-		if (this->PhreeqcPtr->error_file != NULL)
-		{
-			::fclose(this->PhreeqcPtr->error_file);
-			this->PhreeqcPtr->error_file = NULL;
-		}
-		if ( (this->PhreeqcPtr->error_file = ::fopen(file_name, "w")) == NULL)
-		{
-			return ERROR;
-		}
-		break;
-
-	case Phreeqc::OUTPUT_LOG:
-		if (this->PhreeqcPtr->log_file != NULL)
-		{
-			::fclose(this->PhreeqcPtr->log_file);
-			this->PhreeqcPtr->log_file = NULL;
-		}
-		if ( (this->PhreeqcPtr->log_file = ::fopen(file_name, "w")) == NULL)
-		{
-			return ERROR;
-		}
-		break;
-
-	default:
-		return this->PhreeqcPtr->open_handler(type, file_name);
-		break;
-
-	}
+// COMMENT: {11/16/2011 10:05:34 PM}	switch (type)
+// COMMENT: {11/16/2011 10:05:34 PM}	{
+// COMMENT: {11/16/2011 10:05:34 PM}	case Phreeqc::OUTPUT_MESSAGE:
+// COMMENT: {11/16/2011 10:05:34 PM}		if (this->PhreeqcPtr->output_file != NULL)
+// COMMENT: {11/16/2011 10:05:34 PM}		{
+// COMMENT: {11/16/2011 10:05:34 PM}			::fclose(this->PhreeqcPtr->output_file);
+// COMMENT: {11/16/2011 10:05:34 PM}			this->PhreeqcPtr->output_file = NULL;
+// COMMENT: {11/16/2011 10:05:34 PM}		}
+// COMMENT: {11/16/2011 10:05:34 PM}		if ( (this->PhreeqcPtr->output_file = ::fopen(file_name, "w")) == NULL)
+// COMMENT: {11/16/2011 10:05:34 PM}		{
+// COMMENT: {11/16/2011 10:05:34 PM}			return ERROR;
+// COMMENT: {11/16/2011 10:05:34 PM}		}
+// COMMENT: {11/16/2011 10:05:34 PM}		break;
+// COMMENT: {11/16/2011 10:05:34 PM}
+// COMMENT: {11/16/2011 10:05:34 PM}	case Phreeqc::OUTPUT_ERROR:
+// COMMENT: {11/16/2011 10:05:34 PM}		ASSERT(this->PhreeqcPtr->error_file != stderr);
+// COMMENT: {11/16/2011 10:05:34 PM}		if (this->PhreeqcPtr->error_file != NULL)
+// COMMENT: {11/16/2011 10:05:34 PM}		{
+// COMMENT: {11/16/2011 10:05:34 PM}			::fclose(this->PhreeqcPtr->error_file);
+// COMMENT: {11/16/2011 10:05:34 PM}			this->PhreeqcPtr->error_file = NULL;
+// COMMENT: {11/16/2011 10:05:34 PM}		}
+// COMMENT: {11/16/2011 10:05:34 PM}		if ( (this->PhreeqcPtr->error_file = ::fopen(file_name, "w")) == NULL)
+// COMMENT: {11/16/2011 10:05:34 PM}		{
+// COMMENT: {11/16/2011 10:05:34 PM}			return ERROR;
+// COMMENT: {11/16/2011 10:05:34 PM}		}
+// COMMENT: {11/16/2011 10:05:34 PM}		break;
+// COMMENT: {11/16/2011 10:05:34 PM}
+// COMMENT: {11/16/2011 10:05:34 PM}	case Phreeqc::OUTPUT_LOG:
+// COMMENT: {11/16/2011 10:05:34 PM}		if (this->PhreeqcPtr->log_file != NULL)
+// COMMENT: {11/16/2011 10:05:34 PM}		{
+// COMMENT: {11/16/2011 10:05:34 PM}			::fclose(this->PhreeqcPtr->log_file);
+// COMMENT: {11/16/2011 10:05:34 PM}			this->PhreeqcPtr->log_file = NULL;
+// COMMENT: {11/16/2011 10:05:34 PM}		}
+// COMMENT: {11/16/2011 10:05:34 PM}		if ( (this->PhreeqcPtr->log_file = ::fopen(file_name, "w")) == NULL)
+// COMMENT: {11/16/2011 10:05:34 PM}		{
+// COMMENT: {11/16/2011 10:05:34 PM}			return ERROR;
+// COMMENT: {11/16/2011 10:05:34 PM}		}
+// COMMENT: {11/16/2011 10:05:34 PM}		break;
+// COMMENT: {11/16/2011 10:05:34 PM}
+// COMMENT: {11/16/2011 10:05:34 PM}	default:
+// COMMENT: {11/16/2011 10:05:34 PM}		return this->PhreeqcPtr->open_handler(type, file_name);
+// COMMENT: {11/16/2011 10:05:34 PM}		break;
+// COMMENT: {11/16/2011 10:05:34 PM}
+// COMMENT: {11/16/2011 10:05:34 PM}	}
 	return(OK);
 }
 
 int IPhreeqc::output_isopen(const int type)
 {
-	size_t i;
-	int isopen;
-	for (i = 0; i < this->PhreeqcPtr->count_output_callback; ++i)
-	{
-		isopen = (this->PhreeqcPtr->output_callbacks[i].callback)(ACTION_ISOPEN, type, NULL, CONTINUE, this->PhreeqcPtr->output_callbacks[i].cookie, NULL, NULL);
-		if (isopen) return 1;
-	}
+// COMMENT: {11/16/2011 10:06:17 PM}	size_t i;
+// COMMENT: {11/16/2011 10:06:17 PM}	int isopen;
+// COMMENT: {11/16/2011 10:06:17 PM}	for (i = 0; i < this->PhreeqcPtr->count_output_callback; ++i)
+// COMMENT: {11/16/2011 10:06:17 PM}	{
+// COMMENT: {11/16/2011 10:06:17 PM}		isopen = (this->PhreeqcPtr->output_callbacks[i].callback)(ACTION_ISOPEN, type, NULL, CONTINUE, this->PhreeqcPtr->output_callbacks[i].cookie, NULL, NULL);
+// COMMENT: {11/16/2011 10:06:17 PM}		if (isopen) return 1;
+// COMMENT: {11/16/2011 10:06:17 PM}	}
 	return 0;
 }
 
@@ -790,183 +807,183 @@ int IPhreeqc::EndRow(void)
 	return this->SelectedOutput->EndRow();
 }
 
-void IPhreeqc::AddSelectedOutput(const char* name, const char* format, va_list argptr)
-{
-	int bInt;
-	int bDouble;
-	int bString;
-
-	int state;
-	int bLongDouble;
-	char ch;
-
-
-	/* state values
-	0 Haven't found start(%)
-	1 Just read start(%)
-	2 Just read Flags(-0+ #) (zero or more)
-	3 Just read Width
-	4 Just read Precision start (.)
-	5 Just read Size modifier
-	6 Just read Type
-	*/
-
-	if (name == NULL) {
-		return;
-	}
-
-	bDouble = 0;
-	bInt = 0;
-	bString = 0;
-
-	bLongDouble = 0;
-
-	state = 0;
-	ch = *format++;
-	while (ch != '\0')
-	{
-		switch (state)
-		{
-		case 0: /* looking for Start specification (%) */
-			switch (ch)
-			{
-			case '%':
-				state = 1;
-				break;
-			default:
-				break;
-			}
-			ch = *format++;
-			break;
-		case 1: /* reading Flags (zero or more(-,+,0,# or space)) */
-			switch (ch)
-			{
-				case '-': case '0': case '+': case ' ': case '#':
-					ch = *format++;
-					break;
-				default:
-					state = 2;
-					break;
-			}
-			break;
-		case 2: /* reading Minimum field width (decimal integer constant) */
-			switch (ch)
-			{
-			case '.':
-				state = 3;
-				ch = *format++;
-				break;
-			case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-				ch = *format++;
-				break;
-			default:
-				state = 4;
-				break;
-			}
-			break;
-		case 3: /* reading Precision specification (period already read) */
-			switch (ch)
-			{
-			case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-				ch = *format++;
-				break;
-			default:
-				state = 4;
-				break;
-			}
-			break;
-		case 4: /* reading Size modifier */
-			switch (ch)
-			{
-			case 'l':
-				ch = *format++;
-				break;
-			case 'L':
-				bLongDouble = 1;
-				ch = *format++;
-				break;
-			case 'h':
-				ch = *format++;
-				break;
-			}
-			state = 5;
-			break;
-		case 5: /* reading Conversion letter */
-			switch (ch)
-			{
-			case 'c':
-				break;
-			case 'd':
-			case 'i':
-				bInt = 1;
-				break;
-			case 'n':
-			case 'o':
-			case 'p':
-				break;
-			case 's':
-				bString = 1;
-				break;
-			case 'u':
-			case 'x':
-			case 'X':
-			case '%':
-				break;
-			case 'f':
-			case 'e':
-			case 'E':
-			case 'g':
-			case 'G':
-				bDouble = 1;
-				break;
-			default:
-				ASSERT(false);
-				break;
-			}
-			ch = '\0';  /* done */
-			break;
-		}
-	}
-
-	if (bDouble)
-	{
-		double valDouble;
-
-		if (bLongDouble)
-		{
-			valDouble = (double)va_arg(argptr, long double);
-		}
-		else
-		{
-			valDouble = va_arg(argptr, double);
-		}
-
-		this->SelectedOutput->PushBackDouble(name, valDouble);
-	}
-	else if (bInt)
-	{
-		int valInt;
-		valInt = va_arg(argptr, int);
-
-		this->SelectedOutput->PushBackLong(name, (long)valInt);
-	}
-	else if (bString)
-	{
-		char* valString;
-		valString = (char *)va_arg(argptr, char *);
-
-		this->SelectedOutput->PushBackString(name, valString);
-	}
-	else
-	{
-		ASSERT(false);
-		this->SelectedOutput->PushBackEmpty(name);
-	}
-}
+// COMMENT: {11/29/2011 3:58:27 PM}void IPhreeqc::AddSelectedOutput(const char* name, const char* format, va_list argptr)
+// COMMENT: {11/29/2011 3:58:27 PM}{
+// COMMENT: {11/29/2011 3:58:27 PM}	int bInt;
+// COMMENT: {11/29/2011 3:58:27 PM}	int bDouble;
+// COMMENT: {11/29/2011 3:58:27 PM}	int bString;
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}	int state;
+// COMMENT: {11/29/2011 3:58:27 PM}	int bLongDouble;
+// COMMENT: {11/29/2011 3:58:27 PM}	char ch;
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}	/* state values
+// COMMENT: {11/29/2011 3:58:27 PM}	0 Haven't found start(%)
+// COMMENT: {11/29/2011 3:58:27 PM}	1 Just read start(%)
+// COMMENT: {11/29/2011 3:58:27 PM}	2 Just read Flags(-0+ #) (zero or more)
+// COMMENT: {11/29/2011 3:58:27 PM}	3 Just read Width
+// COMMENT: {11/29/2011 3:58:27 PM}	4 Just read Precision start (.)
+// COMMENT: {11/29/2011 3:58:27 PM}	5 Just read Size modifier
+// COMMENT: {11/29/2011 3:58:27 PM}	6 Just read Type
+// COMMENT: {11/29/2011 3:58:27 PM}	*/
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}	if (name == NULL) {
+// COMMENT: {11/29/2011 3:58:27 PM}		return;
+// COMMENT: {11/29/2011 3:58:27 PM}	}
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}	bDouble = 0;
+// COMMENT: {11/29/2011 3:58:27 PM}	bInt = 0;
+// COMMENT: {11/29/2011 3:58:27 PM}	bString = 0;
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}	bLongDouble = 0;
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}	state = 0;
+// COMMENT: {11/29/2011 3:58:27 PM}	ch = *format++;
+// COMMENT: {11/29/2011 3:58:27 PM}	while (ch != '\0')
+// COMMENT: {11/29/2011 3:58:27 PM}	{
+// COMMENT: {11/29/2011 3:58:27 PM}		switch (state)
+// COMMENT: {11/29/2011 3:58:27 PM}		{
+// COMMENT: {11/29/2011 3:58:27 PM}		case 0: /* looking for Start specification (%) */
+// COMMENT: {11/29/2011 3:58:27 PM}			switch (ch)
+// COMMENT: {11/29/2011 3:58:27 PM}			{
+// COMMENT: {11/29/2011 3:58:27 PM}			case '%':
+// COMMENT: {11/29/2011 3:58:27 PM}				state = 1;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			default:
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			}
+// COMMENT: {11/29/2011 3:58:27 PM}			ch = *format++;
+// COMMENT: {11/29/2011 3:58:27 PM}			break;
+// COMMENT: {11/29/2011 3:58:27 PM}		case 1: /* reading Flags (zero or more(-,+,0,# or space)) */
+// COMMENT: {11/29/2011 3:58:27 PM}			switch (ch)
+// COMMENT: {11/29/2011 3:58:27 PM}			{
+// COMMENT: {11/29/2011 3:58:27 PM}				case '-': case '0': case '+': case ' ': case '#':
+// COMMENT: {11/29/2011 3:58:27 PM}					ch = *format++;
+// COMMENT: {11/29/2011 3:58:27 PM}					break;
+// COMMENT: {11/29/2011 3:58:27 PM}				default:
+// COMMENT: {11/29/2011 3:58:27 PM}					state = 2;
+// COMMENT: {11/29/2011 3:58:27 PM}					break;
+// COMMENT: {11/29/2011 3:58:27 PM}			}
+// COMMENT: {11/29/2011 3:58:27 PM}			break;
+// COMMENT: {11/29/2011 3:58:27 PM}		case 2: /* reading Minimum field width (decimal integer constant) */
+// COMMENT: {11/29/2011 3:58:27 PM}			switch (ch)
+// COMMENT: {11/29/2011 3:58:27 PM}			{
+// COMMENT: {11/29/2011 3:58:27 PM}			case '.':
+// COMMENT: {11/29/2011 3:58:27 PM}				state = 3;
+// COMMENT: {11/29/2011 3:58:27 PM}				ch = *format++;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+// COMMENT: {11/29/2011 3:58:27 PM}				ch = *format++;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			default:
+// COMMENT: {11/29/2011 3:58:27 PM}				state = 4;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			}
+// COMMENT: {11/29/2011 3:58:27 PM}			break;
+// COMMENT: {11/29/2011 3:58:27 PM}		case 3: /* reading Precision specification (period already read) */
+// COMMENT: {11/29/2011 3:58:27 PM}			switch (ch)
+// COMMENT: {11/29/2011 3:58:27 PM}			{
+// COMMENT: {11/29/2011 3:58:27 PM}			case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+// COMMENT: {11/29/2011 3:58:27 PM}				ch = *format++;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			default:
+// COMMENT: {11/29/2011 3:58:27 PM}				state = 4;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			}
+// COMMENT: {11/29/2011 3:58:27 PM}			break;
+// COMMENT: {11/29/2011 3:58:27 PM}		case 4: /* reading Size modifier */
+// COMMENT: {11/29/2011 3:58:27 PM}			switch (ch)
+// COMMENT: {11/29/2011 3:58:27 PM}			{
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'l':
+// COMMENT: {11/29/2011 3:58:27 PM}				ch = *format++;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'L':
+// COMMENT: {11/29/2011 3:58:27 PM}				bLongDouble = 1;
+// COMMENT: {11/29/2011 3:58:27 PM}				ch = *format++;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'h':
+// COMMENT: {11/29/2011 3:58:27 PM}				ch = *format++;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			}
+// COMMENT: {11/29/2011 3:58:27 PM}			state = 5;
+// COMMENT: {11/29/2011 3:58:27 PM}			break;
+// COMMENT: {11/29/2011 3:58:27 PM}		case 5: /* reading Conversion letter */
+// COMMENT: {11/29/2011 3:58:27 PM}			switch (ch)
+// COMMENT: {11/29/2011 3:58:27 PM}			{
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'c':
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'd':
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'i':
+// COMMENT: {11/29/2011 3:58:27 PM}				bInt = 1;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'n':
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'o':
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'p':
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			case 's':
+// COMMENT: {11/29/2011 3:58:27 PM}				bString = 1;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'u':
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'x':
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'X':
+// COMMENT: {11/29/2011 3:58:27 PM}			case '%':
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'f':
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'e':
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'E':
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'g':
+// COMMENT: {11/29/2011 3:58:27 PM}			case 'G':
+// COMMENT: {11/29/2011 3:58:27 PM}				bDouble = 1;
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			default:
+// COMMENT: {11/29/2011 3:58:27 PM}				ASSERT(false);
+// COMMENT: {11/29/2011 3:58:27 PM}				break;
+// COMMENT: {11/29/2011 3:58:27 PM}			}
+// COMMENT: {11/29/2011 3:58:27 PM}			ch = '\0';  /* done */
+// COMMENT: {11/29/2011 3:58:27 PM}			break;
+// COMMENT: {11/29/2011 3:58:27 PM}		}
+// COMMENT: {11/29/2011 3:58:27 PM}	}
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}	if (bDouble)
+// COMMENT: {11/29/2011 3:58:27 PM}	{
+// COMMENT: {11/29/2011 3:58:27 PM}		double valDouble;
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}		if (bLongDouble)
+// COMMENT: {11/29/2011 3:58:27 PM}		{
+// COMMENT: {11/29/2011 3:58:27 PM}			valDouble = (double)va_arg(argptr, long double);
+// COMMENT: {11/29/2011 3:58:27 PM}		}
+// COMMENT: {11/29/2011 3:58:27 PM}		else
+// COMMENT: {11/29/2011 3:58:27 PM}		{
+// COMMENT: {11/29/2011 3:58:27 PM}			valDouble = va_arg(argptr, double);
+// COMMENT: {11/29/2011 3:58:27 PM}		}
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}		this->SelectedOutput->PushBackDouble(name, valDouble);
+// COMMENT: {11/29/2011 3:58:27 PM}	}
+// COMMENT: {11/29/2011 3:58:27 PM}	else if (bInt)
+// COMMENT: {11/29/2011 3:58:27 PM}	{
+// COMMENT: {11/29/2011 3:58:27 PM}		int valInt;
+// COMMENT: {11/29/2011 3:58:27 PM}		valInt = va_arg(argptr, int);
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}		this->SelectedOutput->PushBackLong(name, (long)valInt);
+// COMMENT: {11/29/2011 3:58:27 PM}	}
+// COMMENT: {11/29/2011 3:58:27 PM}	else if (bString)
+// COMMENT: {11/29/2011 3:58:27 PM}	{
+// COMMENT: {11/29/2011 3:58:27 PM}		char* valString;
+// COMMENT: {11/29/2011 3:58:27 PM}		valString = (char *)va_arg(argptr, char *);
+// COMMENT: {11/29/2011 3:58:27 PM}
+// COMMENT: {11/29/2011 3:58:27 PM}		this->SelectedOutput->PushBackString(name, valString);
+// COMMENT: {11/29/2011 3:58:27 PM}	}
+// COMMENT: {11/29/2011 3:58:27 PM}	else
+// COMMENT: {11/29/2011 3:58:27 PM}	{
+// COMMENT: {11/29/2011 3:58:27 PM}		ASSERT(false);
+// COMMENT: {11/29/2011 3:58:27 PM}		this->SelectedOutput->PushBackEmpty(name);
+// COMMENT: {11/29/2011 3:58:27 PM}	}
+// COMMENT: {11/29/2011 3:58:27 PM}}
 
 void IPhreeqc::check_database(const char* sz_routine)
 {
-	this->ErrorReporter->Clear();
+ 	this->ErrorReporter->Clear();
 	this->SelectedOutput->Clear();
 
 	if (!this->DatabaseLoaded)
@@ -978,7 +995,7 @@ void IPhreeqc::check_database(const char* sz_routine)
 	}
 }
 
-void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie)
+void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie)
 {
 	std::auto_ptr<std::istringstream> auto_iss(NULL);
 	char token[MAX_LENGTH];
@@ -996,20 +1013,18 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
  */
 	if (!pis)
 	{
-		if (fp)
-		{
-			this->PhreeqcPtr->set_read_callback(Phreeqc::getc_callback, fp, FALSE);
-		}
-		else
 		{
 			std::auto_ptr<std::istringstream> a_iss(new std::istringstream(this->GetAccumulatedLines()));
 			auto_iss = a_iss;
-			this->PhreeqcPtr->set_read_callback(istream_getc, auto_iss.get(), FALSE);
+// COMMENT: {11/22/2011 7:01:32 PM}			this->PhreeqcPtr->set_read_callback(istream_getc, auto_iss.get(), FALSE);
+			this->PhreeqcPtr->push_istream(auto_iss.get(), false);
 		}
 	}
 	else
 	{
-		this->PhreeqcPtr->set_read_callback(istream_getc, pis, FALSE);
+// COMMENT: {11/22/2011 7:01:42 PM}		this->PhreeqcPtr->set_read_callback(istream_getc, pis, FALSE);
+		ASSERT(this->PhreeqcPtr->get_istream() == NULL);
+		this->PhreeqcPtr->push_istream(pis, false);
 	}
 
 
@@ -1023,7 +1038,8 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 #endif
 		::sprintf(token, "Reading input data for simulation %d.", this->PhreeqcPtr->simulation);
 
-		this->PhreeqcPtr->output_msg(Phreeqc::OUTPUT_GUI_ERROR, "\nSimulation %d\n", this->PhreeqcPtr->simulation);
+// COMMENT: {11/16/2011 10:06:56 PM}		this->PhreeqcPtr->output_msg(Phreeqc::OUTPUT_GUI_ERROR, "\nSimulation %d\n", this->PhreeqcPtr->simulation);
+		// TODO 
 
 #ifdef SWIG_SHARED_OBJ
 		int save_punch_in = this->PhreeqcPtr->punch.in;
@@ -1039,18 +1055,23 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 			this->PhreeqcPtr->warning_msg(oss.str().c_str());
 
 		}
-		if (this->PhreeqcPtr->simulation > 1 && this->PhreeqcPtr->keyword[39].keycount > 0)
-		{
-			std::ostringstream oss;
-			oss << sz_routine << ": Warning USER_PUNCH has been redefined.\n";
-			this->PhreeqcPtr->warning_msg(oss.str().c_str());
-		}
+// COMMENT: {11/30/2011 11:14:18 PM}		if (this->PhreeqcPtr->simulation > 1 && this->PhreeqcPtr->keyword[39].keycount > 0)
+// COMMENT: {11/30/2011 11:14:18 PM}		{
+// COMMENT: {11/30/2011 11:14:18 PM}			std::ostringstream oss;
+// COMMENT: {11/30/2011 11:14:18 PM}			oss << sz_routine << ": Warning USER_PUNCH has been redefined.\n";
+// COMMENT: {11/30/2011 11:14:18 PM}			this->PhreeqcPtr->warning_msg(oss.str().c_str());
+// COMMENT: {11/30/2011 11:14:18 PM}		}
 #endif // SWIG_SHARED_OBJ
 
 		if (this->PhreeqcPtr->title_x != NULL) {
 			::sprintf(token, "TITLE");
 			this->PhreeqcPtr->dup_print(token, TRUE);
-			if (this->PhreeqcPtr->pr.headings == TRUE) this->PhreeqcPtr->output_msg(Phreeqc::OUTPUT_MESSAGE, "%s\n\n", this->PhreeqcPtr->title_x);
+// COMMENT: {11/16/2011 10:07:07 PM}			if (this->PhreeqcPtr->pr.headings == TRUE) this->PhreeqcPtr->output_msg(Phreeqc::OUTPUT_MESSAGE, "%s\n\n", this->PhreeqcPtr->title_x);
+			if (this->PhreeqcPtr->pr.headings == TRUE)
+			{
+				char *p = this->PhreeqcPtr->sformatf("%s\n\n", this->PhreeqcPtr->title_x);
+				this->PhreeqcPtr->output_msg(p);
+			}
 		}
 
 #ifdef SWIG_SHARED_OBJ
@@ -1072,7 +1093,11 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 			// TRUE ???
 			//
 			//
-			if (!this->SelectedOutputOn) ASSERT(!this->output_isopen(Phreeqc::OUTPUT_PUNCH));
+// COMMENT: {11/16/2011 10:07:25 PM}			if (!this->SelectedOutputOn) ASSERT(!this->output_isopen(Phreeqc::OUTPUT_PUNCH));
+			if (!this->SelectedOutputOn)
+			{
+				ASSERT(!this->punch_file);
+			}
 
 			if (this->PhreeqcPtr->pr.punch == FALSE)
 			{
@@ -1086,7 +1111,8 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 			{
 				if (this->PhreeqcPtr->punch.new_def == FALSE)
 				{
-					if (this->SelectedOutputOn && !this->output_isopen(Phreeqc::OUTPUT_PUNCH))
+// COMMENT: {11/16/2011 10:07:38 PM}					if (this->SelectedOutputOn && !this->output_isopen(Phreeqc::OUTPUT_PUNCH))
+					if (this->SelectedOutputOn && !this->punch_file)
 					{
 						//
 						// LoadDatabase
@@ -1094,14 +1120,14 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 						// another do_run without SELECTED_OUTPUT
 						//
 						std::string filename = this->PunchFileName;
-						this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_PUNCH, filename.c_str());
-						if (!this->output_isopen(Phreeqc::OUTPUT_PUNCH))
-						{
-							std::ostringstream oss;
-							oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
-							this->PhreeqcPtr->warning_msg(oss.str().c_str());
-						}
-						else
+// COMMENT: {11/16/2011 10:08:23 PM}						this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_PUNCH, filename.c_str());
+// COMMENT: {11/16/2011 10:08:23 PM}						if (!this->output_isopen(Phreeqc::OUTPUT_PUNCH))
+// COMMENT: {11/16/2011 10:08:23 PM}						{
+// COMMENT: {11/16/2011 10:08:23 PM}							std::ostringstream oss;
+// COMMENT: {11/16/2011 10:08:23 PM}							oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
+// COMMENT: {11/16/2011 10:08:23 PM}							this->PhreeqcPtr->warning_msg(oss.str().c_str());
+// COMMENT: {11/16/2011 10:08:23 PM}						}
+// COMMENT: {11/16/2011 10:08:23 PM}						else
 						{
 							// output selected_output headings
 							this->PhreeqcPtr->punch.new_def = TRUE;
@@ -1111,7 +1137,8 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 				}
 				else
 				{
-					if (this->SelectedOutputOn && !this->output_isopen(Phreeqc::OUTPUT_PUNCH))
+// COMMENT: {11/16/2011 10:08:38 PM}					if (this->SelectedOutputOn && !this->output_isopen(Phreeqc::OUTPUT_PUNCH))
+					if (this->SelectedOutputOn && !this->punch_file)
 					{
 						// This is a special case which could not occur in
 						// phreeqc
@@ -1125,8 +1152,15 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 						{
 							filename = this->PunchFileName;
 						}
-						this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_PUNCH, filename.c_str());
-						if (!this->output_isopen(Phreeqc::OUTPUT_PUNCH))
+// COMMENT: {11/16/2011 10:09:10 PM}						this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_PUNCH, filename.c_str());
+// COMMENT: {11/16/2011 10:09:10 PM}						if (!this->output_isopen(Phreeqc::OUTPUT_PUNCH))
+// COMMENT: {11/16/2011 10:09:10 PM}						{
+// COMMENT: {11/16/2011 10:09:10 PM}							std::ostringstream oss;
+// COMMENT: {11/16/2011 10:09:10 PM}							oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
+// COMMENT: {11/16/2011 10:09:10 PM}							this->PhreeqcPtr->warning_msg(oss.str().c_str());
+// COMMENT: {11/16/2011 10:09:10 PM}						}
+// COMMENT: {11/16/2011 10:09:10 PM}						else
+						if (!this->punch_open(filename.c_str()))
 						{
 							std::ostringstream oss;
 							oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
@@ -1143,7 +1177,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 			}
 		}
 
-		if (!this->SelectedOutputOn) ASSERT(!this->output_isopen(Phreeqc::OUTPUT_PUNCH));
+// COMMENT: {11/16/2011 10:09:47 PM}		if (!this->SelectedOutputOn) ASSERT(!this->output_isopen(Phreeqc::OUTPUT_PUNCH));
 		/* the converse is not necessarily true */
 
 		this->PhreeqcPtr->n_user_punch_index = -1;
@@ -1224,7 +1258,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, FILE* fp, PFN_P
 			{
 				std::ostringstream oss;
 				this->PhreeqcPtr->dump_ostream(oss);
-				if (this->PhreeqcPtr->dump_info.get_append())
+				if (this->PhreeqcPtr->dump_info.Get_append())
 				{
 					this->DumpString += oss.str();
 				}
@@ -1302,33 +1336,146 @@ void IPhreeqc::update_errors(void)
 	}
 }
 
+void IPhreeqc::error_msg(const char *err_str, bool stop)
+{
+	this->AddError(err_str);
+	if (stop)
+	{
+		throw IPhreeqcStop();
+	}
+}
+
+void IPhreeqc::output_msg(const char * str)
+{
+	// TODO
+}
+
+void IPhreeqc::screen_msg(const char *err_str)
+{
+	// no-op
+}
+
+void IPhreeqc::punch_msg(const char *str)
+{
+	this->PHRQ_io::punch_msg(str);
+}
+
 void IPhreeqc::open_output_files(const char* sz_routine)
 {
 	if (this->OutputOn)
 	{
-		if (this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_MESSAGE, OUTPUT_FILENAME) != OK)
+		if (this->output_file != NULL)
+		{
+			::fclose(this->output_file);
+			this->output_file = NULL;
+		}
+		if ( (this->output_file = ::fopen(OUTPUT_FILENAME, "w")) == NULL)
 		{
 			std::ostringstream oss;
 			oss << sz_routine << ": Unable to open:" << "\"" << OUTPUT_FILENAME << "\".\n";
-			this->PhreeqcPtr->warning_msg(oss.str().c_str());
+			this->warning_msg(oss.str().c_str());
 		}
 	}
 	if (this->ErrorOn)
 	{
-		if (this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_ERROR, ERROR_FILENAME) != OK)
+		if (this->error_file != NULL)
+		{
+			::fclose(this->error_file);
+			this->error_file = NULL;
+		}
+		if ( (this->error_file = ::fopen(ERROR_FILENAME, "w")) == NULL)
 		{
 			std::ostringstream oss;
 			oss << sz_routine << ": Unable to open:" << "\"" << ERROR_FILENAME << "\".\n";
-			this->PhreeqcPtr->warning_msg(oss.str().c_str());
+			this->warning_msg(oss.str().c_str());
 		}
 	}
 	if (this->LogOn)
 	{
-		if (this->PhreeqcPtr->output_open(Phreeqc::OUTPUT_LOG, LOG_FILENAME) != OK)
+		if (this->log_file != NULL)
+		{
+			::fclose(this->log_file);
+			this->log_file = NULL;
+		}
+		if ( (this->log_file = ::fopen(LOG_FILENAME, "w")) == NULL)
 		{
 			std::ostringstream oss;
 			oss << sz_routine << ": Unable to open:" << "\"" << LOG_FILENAME << "\".\n";
-			this->PhreeqcPtr->warning_msg(oss.str().c_str());
+			this->warning_msg(oss.str().c_str());
 		}
 	}
+}
+
+int IPhreeqc::close_input_files(void)
+{
+	int i = 0;
+	if (this->database_file)
+	{
+		i |= fclose(this->database_file);
+	}
+	if (this->input_file)
+	{
+		i |= fclose(this->input_file);
+	}
+	this->input_file = this->database_file = NULL;
+	return (i);
+}
+
+int IPhreeqc::close_output_files(void)
+{
+	int ret = 0;
+
+	if (this->output_file != NULL)
+		ret |= fclose(this->output_file);
+	if (this->log_file != NULL)
+		ret |= fclose(this->log_file);
+	if (this->punch_file != NULL)
+		ret |= fclose(this->punch_file);
+	if (this->dump_file != NULL)
+		ret |= fclose(this->dump_file);
+	if (this->error_file != NULL)
+		ret |= fclose(this->error_file);
+	this->error_file = NULL;
+	this->output_file = this->log_file = this->punch_file = this->dump_file = NULL;
+	return ret;
+}
+
+void IPhreeqc::fpunchf(const char *name, const char *format, double d)
+{
+	this->PHRQ_io::fpunchf(name, format, d);
+	this->SelectedOutput->PushBackDouble(name, d);
+}
+
+void IPhreeqc::fpunchf(const char *name, const char *format, char *s)
+{
+	this->PHRQ_io::fpunchf(name, format, s);
+	this->SelectedOutput->PushBackString(name, s);
+}
+
+void IPhreeqc::fpunchf(const char *name, const char *format, int i)
+{
+	this->PHRQ_io::fpunchf(name, format, i);
+	this->SelectedOutput->PushBackLong(name, (long)i);
+}
+
+void IPhreeqc::fpunchf_end_row(const char *format)
+{
+	this->EndRow();
+}
+
+bool IPhreeqc::punch_open(const char *file_name)
+/* ---------------------------------------------------------------------- */
+{
+	if (file_name)
+	{
+		if (this->PunchFileName.compare(file_name) != 0)
+		{
+			this->PunchFileName = file_name;
+		}
+	}
+	if (this->SelectedOutputOn)
+	{
+		return this->PHRQ_io::punch_open(file_name);
+	}
+	return true;
 }
