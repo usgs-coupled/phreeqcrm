@@ -19,7 +19,6 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/cxxKinetics.h\
 	phreeqcpp/cxxMix.cxx\
 	phreeqcpp/cxxMix.h\
-	phreeqcpp/Dictionary.h\
 	phreeqcpp/dumper.cpp\
 	phreeqcpp/dumper.h\
 	phreeqcpp/Exchange.cxx\
@@ -32,6 +31,8 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/ISolution.h\
 	phreeqcpp/ISolutionComp.cxx\
 	phreeqcpp/ISolutionComp.h\
+	phreeqcpp/Keywords.cpp\
+	phreeqcpp/Keywords.h\
 	phreeqcpp/KineticsComp.cxx\
 	phreeqcpp/KineticsComp.h\
 	phreeqcpp/NameDouble.cxx\
@@ -40,13 +41,21 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/NumKeyword.h\
 	phreeqcpp/Parser.cxx\
 	phreeqcpp/Parser.h\
+	phreeqcpp/PBasic.cpp\
+	phreeqcpp/PBasic.h\
 	phreeqcpp/Phreeqc.cpp\
 	phreeqcpp/Phreeqc.h\
 	phreeqcpp/Phreeqc_class.h\
+	phreeqcpp/PHRQ_base.cxx\
+	phreeqcpp/PHRQ_base.h\
+	phreeqcpp/PHRQ_io.cpp\
+	phreeqcpp/PHRQ_io.h\
 	phreeqcpp/PPassemblage.cxx\
 	phreeqcpp/PPassemblage.h\
 	phreeqcpp/PPassemblageComp.cxx\
 	phreeqcpp/PPassemblageComp.h\
+	phreeqcpp/Pressure.cxx\
+	phreeqcpp/Pressure.h\
 	phreeqcpp/Reaction.cxx\
 	phreeqcpp/Reaction.h\
 	phreeqcpp/ReadClass.cxx\
@@ -78,65 +87,54 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/Temperature.h\
 	phreeqcpp/Utils.cxx\
 	phreeqcpp/Utils.h\
-	phreeqcpp/phreeqc/advection.c\
-	phreeqcpp/phreeqc/basic.c\
-	phreeqcpp/phreeqc/basic.h\
-	phreeqcpp/phreeqc/basicsubs.c\
-	phreeqcpp/phreeqc/cl1.c\
-	phreeqcpp/phreeqc/cvdense.c\
+	phreeqcpp/phreeqc/advection.cpp\
+	phreeqcpp/phreeqc/basicsubs.cpp\
+	phreeqcpp/phreeqc/cl1.cpp\
+	phreeqcpp/phreeqc/cvdense.cpp\
 	phreeqcpp/phreeqc/cvdense.h\
-	phreeqcpp/phreeqc/cvode.c\
+	phreeqcpp/phreeqc/cvode.cpp\
 	phreeqcpp/phreeqc/cvode.h\
-	phreeqcpp/phreeqc/dense.c\
+	phreeqcpp/phreeqc/dense.cpp\
 	phreeqcpp/phreeqc/dense.h\
-	phreeqcpp/phreeqc/dw.c\
-	phreeqcpp/phreeqc/global.h\
+	phreeqcpp/phreeqc/dw.cpp\
 	phreeqcpp/phreeqc/global_structures.h\
-	phreeqcpp/phreeqc/input.c\
-	phreeqcpp/phreeqc/input.h\
-	phreeqcpp/phreeqc/integrate.c\
-	phreeqcpp/phreeqc/inverse.c\
-	phreeqcpp/phreeqc/isotopes.c\
-	phreeqcpp/phreeqc/kinetics.c\
-	phreeqcpp/phreeqc/kinetics.h\
-	phreeqcpp/phreeqc/mainsubs.c\
-	phreeqcpp/phreeqc/model.c\
-	phreeqcpp/phreeqc/nvector.c\
+	phreeqcpp/phreeqc/input.cpp\
+	phreeqcpp/phreeqc/integrate.cpp\
+	phreeqcpp/phreeqc/inverse.cpp\
+	phreeqcpp/phreeqc/isotopes.cpp\
+	phreeqcpp/phreeqc/kinetics.cpp\
+	phreeqcpp/phreeqc/mainsubs.cpp\
+	phreeqcpp/phreeqc/model.cpp\
+	phreeqcpp/phreeqc/NA.h
+	phreeqcpp/phreeqc/nvector.cpp\
 	phreeqcpp/phreeqc/nvector.h\
-	phreeqcpp/phreeqc/nvector_serial.c\
+	phreeqcpp/phreeqc/nvector_serial.cpp\
 	phreeqcpp/phreeqc/nvector_serial.h\
-	phreeqcpp/phreeqc/output.c\
-	phreeqcpp/phreeqc/output.h\
-	phreeqcpp/phreeqc/p2c.h\
-	phreeqcpp/phreeqc/p2clib.c\
-	phreeqcpp/phreeqc/parse.c\
-	phreeqcpp/phreeqc/phqalloc.c\
+	phreeqcpp/phreeqc/parse.cpp\
+	phreeqcpp/phreeqc/phqalloc.cpp\
 	phreeqcpp/phreeqc/phqalloc.h\
-	phreeqcpp/phreeqc/phreeqc_files.c\
 	phreeqcpp/phreeqc/phrqproto.h\
 	phreeqcpp/phreeqc/phrqtype.h\
-	phreeqcpp/phreeqc/pitzer.c\
+	phreeqcpp/phreeqc/pitzer.cpp\
 	phreeqcpp/phreeqc/pitzer.h\
-	phreeqcpp/phreeqc/pitzer_structures.c\
-	phreeqcpp/phreeqc/pitzer_structures.h\
-	phreeqcpp/phreeqc/prep.c\
-	phreeqcpp/phreeqc/print.c\
-	phreeqcpp/phreeqc/read.c\
-	phreeqcpp/phreeqc/readtr.c\
-	phreeqcpp/phreeqc/sit.c\
-	phreeqcpp/phreeqc/smalldense.c\
+	phreeqcpp/phreeqc/pitzer_structures.cpp\
+	phreeqcpp/phreeqc/prep.cpp\
+	phreeqcpp/phreeqc/print.cpp\
+	phreeqcpp/phreeqc/read.cpp\
+	phreeqcpp/phreeqc/readtr.cpp\
+	phreeqcpp/phreeqc/sit.cpp\
+	phreeqcpp/phreeqc/smalldense.cpp\
 	phreeqcpp/phreeqc/smalldense.h\
-	phreeqcpp/phreeqc/spread.c\
-	phreeqcpp/phreeqc/step.c\
-	phreeqcpp/phreeqc/structures.c\
-	phreeqcpp/phreeqc/sundialsmath.c\
+	phreeqcpp/phreeqc/spread.cpp\
+	phreeqcpp/phreeqc/step.cpp\
+	phreeqcpp/phreeqc/structures.cpp\
+	phreeqcpp/phreeqc/sundialsmath.cpp\
 	phreeqcpp/phreeqc/sundialsmath.h\
 	phreeqcpp/phreeqc/sundialstypes.h\
-	phreeqcpp/phreeqc/tally.c\
-	phreeqcpp/phreeqc/tidy.c\
-	phreeqcpp/phreeqc/transport.c\
-	phreeqcpp/phreeqc/utilities.c\
-	phreeqcpp/phreeqc/NA.h
+	phreeqcpp/phreeqc/tally.cpp\
+	phreeqcpp/phreeqc/tidy.cpp\
+	phreeqcpp/phreeqc/transport.cpp\
+	phreeqcpp/phreeqc/utilities.cpp
 
 include_HEADERS=\
 	$(top_srcdir)/include/IPhreeqc.h\
