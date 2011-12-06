@@ -1033,12 +1033,13 @@ int IPhreeqc::close_output_files(void)
 		ret |= fclose(this->log_file);
 	if (this->punch_file != NULL)
 		ret |= fclose(this->punch_file);
-	if (this->dump_file != NULL)
-		ret |= fclose(this->dump_file);
+	if (this->dump_ostream != NULL)
+		delete this->dump_ostream;
 	if (this->error_file != NULL)
 		ret |= fclose(this->error_file);
 	this->error_file = NULL;
-	this->output_file = this->log_file = this->punch_file = this->dump_file = NULL;
+	this->output_file = this->log_file = this->punch_file = NULL;
+	this->dump_ostream = NULL;
 	return ret;
 }
 
