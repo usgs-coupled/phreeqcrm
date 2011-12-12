@@ -20,21 +20,6 @@ const char ERROR_FILENAME[]  = "phreeqc.err";
 const char LOG_FILENAME[]    = "phreeqc.log";
 const char PUNCH_FILENAME[]  = "selected.out";
 
-int istream_getc(void *cookie)
-{
-	if (cookie)
-	{
-		std::istream* is = (std::istream*)cookie;
-		int n = is->get();
-		if (n == 13 && is->peek() == 10)
-		{
-			n = is->get();
-		}
-		return n;
-	}
-	return EOF;
-}
-
 IPhreeqc::IPhreeqc(void)
 : DatabaseLoaded(false)
 , ClearAccumulated(false)
