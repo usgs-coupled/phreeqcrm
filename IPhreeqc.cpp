@@ -224,6 +224,11 @@ bool IPhreeqc::GetLogFileOn(void)const
 	return this->LogOn;
 }
 
+const char* IPhreeqc::GetOutputFileName(void)const
+{
+	return this->OutputFileName.c_str();
+}
+
 bool IPhreeqc::GetOutputFileOn(void)const
 {
 	return this->OutputOn;
@@ -577,6 +582,11 @@ void IPhreeqc::SetErrorFileOn(bool bValue)
 void IPhreeqc::SetLogFileOn(bool bValue)
 {
 	this->LogOn = bValue;
+}
+
+void IPhreeqc::SetOutputFileName(const char *filename)
+{
+	this->OutputFileName = filename;
 }
 
 void IPhreeqc::SetOutputFileOn(bool bValue)
