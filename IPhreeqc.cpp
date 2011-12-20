@@ -8,17 +8,15 @@
 #include "SelectedOutput.hxx"       // CSelectedOutput
 #include "dumper.h"                 // dumper
 
-int istream_getc(void *cookie);
+const char OUTPUT_FILENAME_FORMAT[] = "phreeqc.%d.out";
+const char ERROR_FILENAME_FORMAT[]  = "phreeqc.%d.err";
+const char LOG_FILENAME_FORMAT[]    = "phreeqc.%d.log";
+const char PUNCH_FILENAME_FORMAT[]  = "selected.%d.out";
+const char DUMP_FILENAME_FORMAT[]   = "dump.%d.out";
 
-
-typedef enum {
-	ACTION_ISOPEN = -100,
-} module_action_type;
-
-const char OUTPUT_FILENAME[] = "phreeqc.out";
-const char ERROR_FILENAME[]  = "phreeqc.err";
-const char LOG_FILENAME[]    = "phreeqc.log";
-const char PUNCH_FILENAME[]  = "selected.out";
+// statics
+std::map<size_t, IPhreeqc*> IPhreeqc::Instances;
+size_t IPhreeqc::InstancesIndex = 0;
 
 IPhreeqc::IPhreeqc(void)
 : DatabaseLoaded(false)
@@ -36,7 +34,10 @@ IPhreeqc::IPhreeqc(void)
 , PhreeqcPtr(0)
 , input_file(0)
 , database_file(0)
+, Index(IPhreeqc::InstancesIndex++)
 {
+	char buffer[80];
+
 	this->ErrorReporter   = new CErrorReporter<std::ostringstream>;
 	this->WarningReporter = new CErrorReporter<std::ostringstream>;
 	this->SelectedOutput  = new CSelectedOutput();
@@ -44,6 +45,25 @@ IPhreeqc::IPhreeqc(void)
 
 	ASSERT(this->PhreeqcPtr->phast == 0);
 	this->UnLoadDatabase();
+
+	std::map<size_t, IPhreeqc*>::value_type instance(this->Index, this);
+	std::pair<std::map<size_t, IPhreeqc*>::iterator, bool> pr = IPhreeqc::Instances.insert(instance);
+
+	::sprintf(buffer, PUNCH_FILENAME_FORMAT,  this->Index);
+	this->PunchFileName = buffer;
+
+	::sprintf(buffer, OUTPUT_FILENAME_FORMAT, this->Index);
+	this->OutputFileName = buffer;
+
+	::sprintf(buffer, ERROR_FILENAME_FORMAT,  this->Index);
+	this->ErrorFileName = buffer;
+
+	::sprintf(buffer, LOG_FILENAME_FORMAT,    this->Index);
+	this->LogFileName = buffer;
+
+	::sprintf(buffer, DUMP_FILENAME_FORMAT,   this->Index);
+	this->DumpFileName = buffer;
+	this->PhreeqcPtr->dump_info.Set_file_name(this->DumpFileName);
 }
 
 IPhreeqc::~IPhreeqc(void)
@@ -55,6 +75,12 @@ IPhreeqc::~IPhreeqc(void)
 	delete this->SelectedOutput;
 	delete this->WarningReporter;
 	delete this->ErrorReporter;
+
+	std::map<size_t, IPhreeqc*>::iterator it = IPhreeqc::Instances.find(this->Index);
+	if (it != IPhreeqc::Instances.end())
+	{
+		IPhreeqc::Instances.erase(it);
+	}
 }
 
 VRESULT IPhreeqc::AccumulateLine(const char *line)
@@ -122,6 +148,11 @@ size_t IPhreeqc::GetComponentCount(void)
 	return this->Components.size();
 }
 
+const char* IPhreeqc::GetDumpFileName(void)const
+{
+	return this->DumpFileName.c_str();
+}
+
 bool IPhreeqc::GetDumpFileOn(void)const
 {
 	return this->DumpOn;
@@ -181,6 +212,11 @@ const char* IPhreeqc::GetErrorStringLine(int n)
 int IPhreeqc::GetErrorStringLineCount(void)const
 {
 	return (int)this->ErrorLines.size();
+}
+
+int IPhreeqc::GetId(void)const
+{
+	return (int)this->Index;
 }
 
 bool IPhreeqc::GetLogFileOn(void)const
@@ -517,6 +553,12 @@ int IPhreeqc::RunString(const char* input)
 	return this->PhreeqcPtr->get_input_errors();
 }
 
+void IPhreeqc::SetDumpFileName(const char *filename)
+{
+	this->DumpFileName = filename;
+	this->PhreeqcPtr->dump_info.Set_file_name(this->DumpFileName);
+}
+
 void IPhreeqc::SetDumpFileOn(bool bValue)
 {
 	this->DumpOn = bValue;
@@ -752,11 +794,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 						// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
 						// another do_run with SELECTED_OUTPUT
 						//
-						std::string filename = PUNCH_FILENAME;
-						if (this->PunchFileName.size())
-						{
-							filename = this->PunchFileName;
-						}
+						std::string filename = this->PunchFileName;
 						if (!this->punch_open(filename.c_str()))
 						{
 							std::ostringstream oss;
@@ -981,10 +1019,10 @@ void IPhreeqc::open_output_files(const char* sz_routine)
 			delete this->output_ostream;
 			this->output_ostream = NULL;
 		}
-		if ( (this->output_ostream = new std::ofstream(OUTPUT_FILENAME)) == NULL)
+		if ( (this->output_ostream = new std::ofstream(this->OutputFileName.c_str())) == NULL)
 		{
 			std::ostringstream oss;
-			oss << sz_routine << ": Unable to open:" << "\"" << OUTPUT_FILENAME << "\".\n";
+			oss << sz_routine << ": Unable to open:" << "\"" << this->OutputFileName << "\".\n";
 			this->warning_msg(oss.str().c_str());
 		}
 	}
@@ -995,10 +1033,10 @@ void IPhreeqc::open_output_files(const char* sz_routine)
 			delete this->error_ostream;
 			this->error_ostream = NULL;
 		}
-		if ( (this->error_ostream = new std::ofstream(ERROR_FILENAME)) == NULL)
+		if ( (this->error_ostream = new std::ofstream(this->ErrorFileName.c_str())) == NULL)
 		{
 			std::ostringstream oss;
-			oss << sz_routine << ": Unable to open:" << "\"" << ERROR_FILENAME << "\".\n";
+			oss << sz_routine << ": Unable to open:" << "\"" << this->ErrorFileName << "\".\n";
 			this->warning_msg(oss.str().c_str());
 		}
 	}
@@ -1009,10 +1047,10 @@ void IPhreeqc::open_output_files(const char* sz_routine)
 			delete this->log_ostream;
 			this->log_ostream = NULL;
 		}
-		if ( (this->log_ostream = new std::ofstream(LOG_FILENAME)) == NULL)
+		if ( (this->log_ostream = new std::ofstream(this->LogFileName.c_str())) == NULL)
 		{
 			std::ostringstream oss;
-			oss << sz_routine << ": Unable to open:" << "\"" << LOG_FILENAME << "\".\n";
+			oss << sz_routine << ": Unable to open:" << "\"" << this->LogFileName << "\".\n";
 			this->warning_msg(oss.str().c_str());
 		}
 	}
@@ -1037,19 +1075,18 @@ int IPhreeqc::close_output_files(void)
 {
 	int ret = 0;
 
-	if (this->output_ostream != NULL)
-		delete this->output_ostream;
-	if (this->log_ostream != NULL)
-		delete this->log_ostream;
-	if (this->punch_ostream != NULL)
-		delete this->punch_ostream;
-	if (this->dump_ostream != NULL)
-		delete this->dump_ostream;
-	if (this->error_ostream != NULL)
-		delete this->error_ostream;
-	this->error_ostream = NULL;
-	this->output_ostream = this->log_ostream = this->punch_ostream = NULL;
-	this->dump_ostream = NULL;
+	delete this->output_ostream;
+	delete this->log_ostream;
+	delete this->punch_ostream;
+	delete this->dump_ostream;
+	delete this->error_ostream;
+
+	this->error_ostream  = 0;
+	this->output_ostream = 0;
+	this->log_ostream    = 0;
+	this->punch_ostream  = 0;
+	this->dump_ostream   = 0;
+
 	return ret;
 }
 
@@ -1078,23 +1115,19 @@ void IPhreeqc::fpunchf_end_row(const char *format)
 
 bool IPhreeqc::punch_open(const char *file_name, std::ios_base::openmode mode)
 {
-	if (file_name)
+	if (file_name && this->PhreeqcPtr->have_punch_name)
 	{
 		this->PunchFileName = file_name;
 	}
 	if (this->SelectedOutputOn)
 	{
-		return this->PHRQ_io::punch_open(file_name, mode);
+		return this->PHRQ_io::punch_open(this->PunchFileName.c_str(), mode);
 	}
 	return true;
 }
 
 bool IPhreeqc::output_open(const char *file_name, std::ios_base::openmode mode)
 {
-	if (file_name)
-	{
-		//this->PunchFileName = file_name;
-	}
 	if (this->OutputOn)
 	{
 		return this->PHRQ_io::output_open(file_name, mode);

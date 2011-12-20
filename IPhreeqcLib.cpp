@@ -11,10 +11,6 @@ public:
 	static int CreateIPhreeqc(void);
 	static IPQ_RESULT DestroyIPhreeqc(int n);
 	static IPhreeqc* GetInstance(int n);
-
-private:
-	static std::map<size_t, IPhreeqc*> Instances;
-	static size_t InstancesIndex;
 };
 
 IPQ_RESULT
@@ -106,6 +102,18 @@ GetComponentCount(int id)
 		return (int)IPhreeqcPtr->GetComponentCount();
 	}
 	return IPQ_BADINSTANCE;
+}
+
+const char*
+GetDumpFileName(int id)
+{
+	static const char empty[] = "";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetDumpFileName();
+	}
+	return empty;
 }
 
 int
@@ -459,6 +467,18 @@ RunString(int id, const char* input)
 }
 
 IPQ_RESULT
+SetDumpFileName(int id, const char* filename)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetDumpFileName(filename);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
 SetDumpFileOn(int id, int value)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
@@ -533,9 +553,6 @@ SetSelectedOutputFileOn(int id, int value)
 // helper functions
 //
 
-std::map<size_t, IPhreeqc*> IPhreeqcLib::Instances;
-size_t IPhreeqcLib::InstancesIndex = 0;
-
 int
 IPhreeqcLib::CreateIPhreeqc(void)
 {
@@ -543,16 +560,7 @@ IPhreeqcLib::CreateIPhreeqc(void)
 	try
 	{
 		IPhreeqc* IPhreeqcPtr = new IPhreeqc;
-		if (IPhreeqcPtr)
-		{
-			std::map<size_t, IPhreeqc*>::value_type instance(IPhreeqcLib::InstancesIndex, IPhreeqcPtr);
-			std::pair<std::map<size_t, IPhreeqc*>::iterator, bool> pr = IPhreeqcLib::Instances.insert(instance);
-			if (pr.second)
-			{
-				n = (int) (*pr.first).first;
-				++IPhreeqcLib::InstancesIndex;
-			}
-		}
+		n = IPhreeqcPtr->Index;
 	}
 	catch(...)
 	{
@@ -567,11 +575,9 @@ IPhreeqcLib::DestroyIPhreeqc(int id)
 	IPQ_RESULT retval = IPQ_BADINSTANCE;
 	if (id >= 0)
 	{
-		std::map<size_t, IPhreeqc*>::iterator it = IPhreeqcLib::Instances.find(size_t(id));
-		if (it != IPhreeqcLib::Instances.end())
+		if (IPhreeqc *ptr = IPhreeqcLib::GetInstance(id))
 		{
-			delete (*it).second;
-			IPhreeqcLib::Instances.erase(it);
+			delete ptr;
 			retval = IPQ_OK;
 		}
 	}
@@ -581,8 +587,8 @@ IPhreeqcLib::DestroyIPhreeqc(int id)
 IPhreeqc*
 IPhreeqcLib::GetInstance(int id)
 {
-	std::map<size_t, IPhreeqc*>::iterator it = IPhreeqcLib::Instances.find(size_t(id));
-	if (it != IPhreeqcLib::Instances.end())
+	std::map<size_t, IPhreeqc*>::iterator it = IPhreeqc::Instances.find(size_t(id));
+	if (it != IPhreeqc::Instances.end())
 	{
 		return (*it).second;
 	}

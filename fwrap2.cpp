@@ -43,6 +43,10 @@ IPQ_DLL_EXPORT int  GETCOMPONENTCOUNT(int *id)
 {
 	return GetComponentCountF(id);
 }
+IPQ_DLL_EXPORT void GETDUMPFILENAME(int *id, char *filename, unsigned int len)
+{
+	GetDumpFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  GETDUMPFILEON(int *id)
 {
 	return GetDumpFileOnF(id);
@@ -136,29 +140,33 @@ IPQ_DLL_EXPORT int  RUNSTRING(int *id, char *input, unsigned int len)
 {
 	return RunStringF(id, input, len);
 }
-IPQ_DLL_EXPORT void SETDUMPFILEON(int *id, int *dump_on)
+IPQ_DLL_EXPORT int  SETDUMPFILENAME(int *id, char *filename, unsigned int len)
 {
-	SetDumpFileOnF(id, dump_on);
+	return SetDumpFileNameF(id, filename, len);
 }
-IPQ_DLL_EXPORT void SETDUMPSTRINGON(int *id, int *dump_string_on)
+IPQ_DLL_EXPORT int  SETDUMPFILEON(int *id, int *dump_on)
 {
-	SetDumpStringOnF(id, dump_string_on);
+	return SetDumpFileOnF(id, dump_on);
 }
-IPQ_DLL_EXPORT void SETERRORFILEON(int *id, int *error_on)
+IPQ_DLL_EXPORT int  SETDUMPSTRINGON(int *id, int *dump_string_on)
 {
-	SetErrorFileOnF(id, error_on);
+	return SetDumpStringOnF(id, dump_string_on);
 }
-IPQ_DLL_EXPORT void SETLOGFILEON(int *id, int *log_on)
+IPQ_DLL_EXPORT int  SETERRORFILEON(int *id, int *error_on)
 {
-	SetLogFileOnF(id, log_on);
+	return SetErrorFileOnF(id, error_on);
 }
-IPQ_DLL_EXPORT void SETOUTPUTFILEON(int *id, int *output_on)
+IPQ_DLL_EXPORT int  SETLOGFILEON(int *id, int *log_on)
 {
-	SetOutputFileOnF(id, output_on);
+	return SetLogFileOnF(id, log_on);
 }
-IPQ_DLL_EXPORT void SETSELECTEDOUTPUTFILEON(int *id, int *selected_on)
+IPQ_DLL_EXPORT int  SETOUTPUTFILEON(int *id, int *output_on)
 {
-	SetSelOutFileOnF(id, selected_on);
+	return SetOutputFileOnF(id, output_on);
+}
+IPQ_DLL_EXPORT int  SETSELECTEDOUTPUTFILEON(int *id, int *selected_on)
+{
+	return SetSelOutFileOnF(id, selected_on);
 }
 
 #if defined(__cplusplus)

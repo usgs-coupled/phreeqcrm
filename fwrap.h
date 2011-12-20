@@ -18,6 +18,7 @@
 #define GetComponentF                 FC_FUNC (getcomponentf,                 GETCOMPONENTF)
 #define GetDumpStringLineCountF       FC_FUNC (getdumpstringlinecountf,       GETDUMPSTRINGLINECOUNTF)
 #define GetDumpStringLineF            FC_FUNC (getdumpstringlinef,            GETDUMPSTRINGLINEF)
+#define GetDumpFileNameF              FC_FUNC (getdumpfilenamef,              GETDUMPFILENAMEF)
 #define GetDumpFileOnF                FC_FUNC (getdumpfileonf,                GETDUMPFILEONF)
 #define GetDumpStringOnF              FC_FUNC (getdumpstringonf,              GETDUMPSTRINGONF)
 #define GetErrorStringLineCountF      FC_FUNC (geterrorstringlinecountf,      GETERRORSTRINGLINECOUNTF)
@@ -39,6 +40,7 @@
 #define RunAccumulatedF               FC_FUNC (runaccumulatedf,               RUNACCUMULATEDF)
 #define RunFileF                      FC_FUNC (runfilef,                      RUNFILEF)
 #define RunStringF                    FC_FUNC (runstringf,                    RUNSTRINGF)
+#define SetDumpFileNameF              FC_FUNC (setdumpfilenamef,              SETDUMPFILENAMEF)
 #define SetDumpFileOnF                FC_FUNC (setdumpfileonf,                SETDUMPFILEONF)
 #define SetDumpStringOnF              FC_FUNC (setdumpstringonf,              SETDUMPSTRINGONF)
 #define SetErrorFileOnF               FC_FUNC (seterrorfileonf,               SETERRORFILEONF)
@@ -61,6 +63,7 @@ extern "C" {
   void       GetComponentF(int *id, int* n, char* line, unsigned int line_length);
   int        GetDumpStringLineCountF(int *id);
   void       GetDumpStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  void       GetDumpFileNameF(int *id, char* filename, unsigned int filename_length);
   int        GetDumpFileOnF(int *id);
   int        GetDumpStringOnF(int *id);
   int        GetErrorStringLineCountF(int *id);
@@ -82,6 +85,7 @@ extern "C" {
   int        RunAccumulatedF(int *id);
   int        RunFileF(int *id, char* filename, unsigned int filename_length);
   int        RunStringF(int *id, char* input, unsigned int input_length);
+  IPQ_RESULT SetDumpFileNameF(int *id, char* fname, unsigned int fname_length);
   IPQ_RESULT SetDumpFileOnF(int *id, int* dump_on);
   IPQ_RESULT SetDumpStringOnF(int *id, int* dump_string_on);
   IPQ_RESULT SetErrorFileOnF(int *id, int* error_on);
