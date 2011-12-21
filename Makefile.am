@@ -97,6 +97,7 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/phreeqc/dense.cpp\
 	phreeqcpp/phreeqc/dense.h\
 	phreeqcpp/phreeqc/dw.cpp\
+	phreeqcpp/phreeqc/gases.cpp\
 	phreeqcpp/phreeqc/global_structures.h\
 	phreeqcpp/phreeqc/input.cpp\
 	phreeqcpp/phreeqc/integrate.cpp\
