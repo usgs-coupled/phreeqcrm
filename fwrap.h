@@ -70,6 +70,7 @@ extern "C" {
   void       GetErrorStringLineF(int *id, int* n, char* line, unsigned int line_length);
   int        GetErrorFileOnF(int *id);
   int        GetLogFileOnF(int *id);
+  void       GetOutputFileNameF(int *id, char* filename, unsigned int filename_length);
   int        GetOutputFileOnF(int *id);
   int        GetSelectedOutputColumnCountF(int *id);
   int        GetSelectedOutputFileOnF(int *id);
@@ -90,6 +91,7 @@ extern "C" {
   IPQ_RESULT SetDumpStringOnF(int *id, int* dump_string_on);
   IPQ_RESULT SetErrorFileOnF(int *id, int* error_on);
   IPQ_RESULT SetLogFileOnF(int *id, int* log_on);
+  IPQ_RESULT SetOutputFileNameF(int *id, char* fname, unsigned int fname_length);
   IPQ_RESULT SetOutputFileOnF(int *id, int* output_on);
   IPQ_RESULT SetSelOutFileOnF(int *id, int* selected_output_on);
 

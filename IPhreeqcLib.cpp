@@ -258,6 +258,18 @@ GetLogFileOn(int id)
 	return IPQ_BADINSTANCE;
 }
 
+const char*
+GetOutputFileName(int id)
+{
+	static const char empty[] = "";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetOutputFileName();
+	}
+	return empty;
+}
+
 int
 GetOutputFileOn(int id)
 {
@@ -521,6 +533,18 @@ SetLogFileOn(int id, int value)
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetLogFileOn(value != 0);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
+SetOutputFileName(int id, const char* filename)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetOutputFileName(filename);
 		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;

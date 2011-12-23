@@ -80,6 +80,10 @@ IPQ_DLL_EXPORT int  getlogfileon_(int *id)
 {
 	return GetLogFileOnF(id);
 }
+IPQ_DLL_EXPORT void getoutputfilename_(int *id, char *filename, unsigned int len)
+{
+	GetOutputFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  getoutputfileon_(int *id)
 {
 	return GetOutputFileOnF(id);
@@ -160,6 +164,10 @@ IPQ_DLL_EXPORT int  seterrorfileon_(int *id, int *error_on)
 IPQ_DLL_EXPORT int  setlogfileon_(int *id, int *log_on)
 {
 	return SetLogFileOnF(id, log_on);
+}
+IPQ_DLL_EXPORT int  setoutputfilename_(int *id, char *filename, unsigned int len)
+{
+	return SetOutputFileNameF(id, filename, len);
 }
 IPQ_DLL_EXPORT int  setoutputfileon_(int *id, int *output_on)
 {
