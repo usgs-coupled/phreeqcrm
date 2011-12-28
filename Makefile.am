@@ -106,7 +106,7 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/phreeqc/kinetics.cpp\
 	phreeqcpp/phreeqc/mainsubs.cpp\
 	phreeqcpp/phreeqc/model.cpp\
-	phreeqcpp/phreeqc/NA.h
+	phreeqcpp/phreeqc/NA.h\
 	phreeqcpp/phreeqc/nvector.cpp\
 	phreeqcpp/phreeqc/nvector.h\
 	phreeqcpp/phreeqc/nvector_serial.cpp\
@@ -114,6 +114,7 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/phreeqc/parse.cpp\
 	phreeqcpp/phreeqc/phqalloc.cpp\
 	phreeqcpp/phreeqc/phqalloc.h\
+	phreeqcpp/phreeqc/PHRQ_io_output.cpp\
 	phreeqcpp/phreeqc/phrqproto.h\
 	phreeqcpp/phreeqc/phrqtype.h\
 	phreeqcpp/phreeqc/pitzer.cpp\
