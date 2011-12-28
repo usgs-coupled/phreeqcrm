@@ -591,8 +591,11 @@ int IPhreeqc::RunString(const char* input)
 
 void IPhreeqc::SetDumpFileName(const char *filename)
 {
-	this->DumpFileName = filename;
-	this->PhreeqcPtr->dump_info.Set_file_name(this->DumpFileName);
+	if (filename && ::strlen(filename))
+	{
+		this->DumpFileName = filename;
+		this->PhreeqcPtr->dump_info.Set_file_name(this->DumpFileName);
+	}
 }
 
 void IPhreeqc::SetDumpFileOn(bool bValue)
@@ -617,7 +620,10 @@ void IPhreeqc::SetLogFileOn(bool bValue)
 
 void IPhreeqc::SetOutputFileName(const char *filename)
 {
-	this->OutputFileName = filename;
+	if (filename && ::strlen(filename))
+	{
+		this->OutputFileName = filename;
+	}
 }
 
 void IPhreeqc::SetOutputStringOn(bool bValue)

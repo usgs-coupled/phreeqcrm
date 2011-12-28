@@ -288,6 +288,59 @@ GetOutputFileOn(int id)
 	return IPQ_BADINSTANCE;
 }
 
+const char*
+GetOutputString(int id)
+{
+	static const char empty[] = "";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetOutputString();
+	}
+	return empty;
+}
+
+const char*
+GetOutputStringLine(int id, int n)
+{
+	static const char err_msg[] = "GetOutputStringLine: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetOutputStringLine(n);
+	}
+	return err_msg;
+}
+
+int
+GetOutputStringLineCount(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetOutputStringLineCount();
+	}
+	return 0;
+}
+
+int
+GetOutputStringOn(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		if (IPhreeqcPtr->GetOutputStringOn())
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	return IPQ_BADINSTANCE;
+}
+
 int
 GetSelectedOutputColumnCount(int id)
 {
@@ -557,6 +610,18 @@ SetOutputFileOn(int id, int value)
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetOutputFileOn(value != 0);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
+SetOutputStringOn(int id, int value)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetOutputStringOn(value != 0);
 		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;

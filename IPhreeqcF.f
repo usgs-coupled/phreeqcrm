@@ -67,6 +67,13 @@
         GetComponentCount = GetComponentCountF(ID)
       END FUNCTION GetComponentCount
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      SUBROUTINE GetDumpFileName(ID,FNAME)
+        IMPLICIT NONE
+        INTEGER(KIND=4)  :: ID
+        CHARACTER(LEN=*) :: FNAME
+        CALL GetDumpFileNameF(ID,FNAME)
+      END SUBROUTINE GetDumpFileName
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetDumpFileOn(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
@@ -154,6 +161,13 @@
           GetLogFileOn = .TRUE.
         ENDIF
       END FUNCTION GetLogFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      SUBROUTINE GetOutputFileName(ID,FNAME)
+        IMPLICIT NONE
+        INTEGER(KIND=4)  :: ID
+        CHARACTER(LEN=*) :: FNAME
+        CALL GetOutputFileNameF(ID,FNAME)
+      END SUBROUTINE GetOutputFileName
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetOutputFileOn(ID)
         IMPLICIT NONE
@@ -291,6 +305,14 @@
         RunString = RunStringF(ID,INPUT)
       END FUNCTION RunString
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetDumpFileName(ID,FNAME)
+        IMPLICIT NONE
+        INTEGER(KIND=4)  :: ID
+        CHARACTER(LEN=*) :: FNAME
+        INTEGER(KIND=4)  :: SetDumpFileName
+        SetDumpFileName = SetDumpFileNameF(ID,FNAME)
+      END FUNCTION SetDumpFileName
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION SetDumpFileOn(ID,DUMP_ON)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
@@ -326,6 +348,14 @@
         INTEGER(KIND=4) :: SetLogFileOnF
         SetLogFileOn = SetLogFileOnF(ID,LOG_ON)
       END FUNCTION SetLogFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetOutputFileName(ID,FNAME)
+        IMPLICIT NONE
+        INTEGER(KIND=4)  :: ID
+        CHARACTER(LEN=*) :: FNAME
+        INTEGER(KIND=4)  :: SetOutputFileName
+        SetOutputFileName = SetOutputFileNameF(ID,FNAME)
+      END FUNCTION SetOutputFileName
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION SetOutputFileOn(ID,OUTPUT_ON)
         IMPLICIT NONE
