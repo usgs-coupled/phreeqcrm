@@ -25,6 +25,7 @@
 #define GetErrorStringLineF           FC_FUNC (geterrorstringlinef,           GETERRORSTRINGLINEF)
 #define GetErrorFileOnF               FC_FUNC (geterrorfileonf,               GETERRORFILEONF)
 #define GetLogFileOnF                 FC_FUNC (getlogfileonf,                 GETLOGFILEONF)
+#define GetOutputFileNameF            FC_FUNC (getoutputfilenamef,            GETOUTPUTFILENAMEF)
 #define GetOutputFileOnF              FC_FUNC (getoutputfileonf,              GETOUTPUTFILEONF)
 #define GetSelectedOutputColumnCountF FC_FUNC (getselectedoutputcolumncountf, GETSELECTEDOUTPUTCOLUMNCOUNTF)
 #define GetSelectedOutputFileOnF      FC_FUNC (getselectedoutputfileonf,      GETSELECTEDOUTPUTFILEONF)
@@ -45,6 +46,7 @@
 #define SetDumpStringOnF              FC_FUNC (setdumpstringonf,              SETDUMPSTRINGONF)
 #define SetErrorFileOnF               FC_FUNC (seterrorfileonf,               SETERRORFILEONF)
 #define SetLogFileOnF                 FC_FUNC (setlogfileonf,                 SETLOGFILEONF)
+#define SetOutputFileNameF            FC_FUNC (setoutputfilenamef,            SETOUTPUTFILENAMEF)
 #define SetOutputFileOnF              FC_FUNC (setoutputfileonf,              SETOUTPUTFILEONF)
 #define SetSelOutFileOnF              FC_FUNC (setseloutfileonf,              SETSELOUTFILEONF)
 #endif /* FC_FUNC */
