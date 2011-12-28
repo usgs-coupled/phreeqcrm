@@ -23,11 +23,12 @@ IPhreeqc::IPhreeqc(void)
 , ClearAccumulated(false)
 , UpdateComponents(true)
 , SelectedOutputOn(false)
-, OutputOn(false)
+, OutputFileOn(false)
 , LogOn(false)
 , ErrorOn(false)
 , DumpOn(false)
 , DumpStringOn(false)
+, OutputStringOn(false)
 , ErrorReporter(0)
 , WarningReporter(0)
 , SelectedOutput(0)
@@ -69,7 +70,7 @@ IPhreeqc::IPhreeqc(void)
 IPhreeqc::~IPhreeqc(void)
 {
 #ifdef _DEBUG
-	this->OutputOn = false;
+	this->OutputFileOn = false;
 #endif
 	delete this->PhreeqcPtr;
 	delete this->SelectedOutput;
@@ -158,7 +159,7 @@ bool IPhreeqc::GetDumpFileOn(void)const
 	return this->DumpOn;
 }
 
-const char* IPhreeqc::GetDumpString(void)
+const char* IPhreeqc::GetDumpString(void)const
 {
 	static const char err_msg[] = "GetDumpString: DumpStringOn not set.\n";
 	if (!this->DumpStringOn)
@@ -231,7 +232,37 @@ const char* IPhreeqc::GetOutputFileName(void)const
 
 bool IPhreeqc::GetOutputFileOn(void)const
 {
-	return this->OutputOn;
+	return this->OutputFileOn;
+}
+
+const char* IPhreeqc::GetOutputString(void)const
+{
+	static const char err_msg[] = "GetOutputString: OutputStringOn not set.\n";
+	if (!this->OutputStringOn)
+	{
+		return err_msg;
+	}
+	return this->OutputString.c_str();
+}
+
+const char* IPhreeqc::GetOutputStringLine(int n)const
+{
+	static const char empty[] = "";
+	if (n < 0 || n >= this->GetOutputStringLineCount())
+	{
+		return empty;
+	}
+	return this->OutputLines[n].c_str();
+}
+
+int IPhreeqc::GetOutputStringLineCount(void)const
+{
+	return (int)this->OutputLines.size();
+}
+
+bool IPhreeqc::GetOutputStringOn(void)const
+{
+	return this->OutputStringOn;
 }
 
 int IPhreeqc::GetSelectedOutputColumnCount(void)const
@@ -318,8 +349,8 @@ std::list< std::string > IPhreeqc::ListComponents(void)
 
 int IPhreeqc::LoadDatabase(const char* filename)
 {
-	bool bSaveOutputOn = this->OutputOn;
-	this->OutputOn = false;
+	bool bSaveOutputOn = this->OutputFileOn;
+	this->OutputFileOn = false;
 	try
 	{
 		// cleanup
@@ -362,7 +393,7 @@ int IPhreeqc::LoadDatabase(const char* filename)
 	}
 	this->PhreeqcPtr->phrq_io->clear_istream();
 	this->DatabaseLoaded = (this->PhreeqcPtr->get_input_errors() == 0);
-	this->OutputOn = bSaveOutputOn;
+	this->OutputFileOn = bSaveOutputOn;
 	return this->PhreeqcPtr->get_input_errors();
 }
 
@@ -589,9 +620,14 @@ void IPhreeqc::SetOutputFileName(const char *filename)
 	this->OutputFileName = filename;
 }
 
+void IPhreeqc::SetOutputStringOn(bool bValue)
+{
+	this->OutputStringOn = bValue;
+}
+
 void IPhreeqc::SetOutputFileOn(bool bValue)
 {
-	this->OutputOn = bValue;
+	this->OutputFileOn = bValue;
 }
 
 void IPhreeqc::SetSelectedOutputFileOn(bool bValue)
@@ -676,6 +712,10 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 	{
 		pfn_pre(cookie);
 	}
+
+	// release
+	this->OutputString.clear();
+	this->OutputLines.clear();
 
 /*
  *   set read callback
@@ -948,6 +988,18 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 
 	this->UpdateComponents = true;
 	this->update_errors();
+
+	// update lines
+	if (this->OutputStringOn)
+	{
+		// output lines
+		std::istringstream iss(this->OutputString);
+		std::string line;
+		while (std::getline(iss, line))
+		{
+			this->OutputLines.push_back(line);
+		}
+	}
 }
 
 void IPhreeqc::update_errors(void)
@@ -1006,7 +1058,11 @@ void IPhreeqc::warning_msg(const char *str)
 
 void IPhreeqc::output_msg(const char * str)
 {
-	ASSERT(!(this->OutputOn ^ (this->output_ostream != 0)));
+	if (this->OutputStringOn && this->output_on)
+	{
+		this->OutputString += str;
+	}
+	ASSERT(!(this->OutputFileOn ^ (this->output_ostream != 0)));
 	this->PHRQ_io::output_msg(str);
 }
 
@@ -1022,7 +1078,7 @@ void IPhreeqc::punch_msg(const char *str)
 
 void IPhreeqc::open_output_files(const char* sz_routine)
 {
-	if (this->OutputOn)
+	if (this->OutputFileOn)
 	{
 		if (this->output_ostream != NULL)
 		{
@@ -1138,7 +1194,7 @@ bool IPhreeqc::punch_open(const char *file_name, std::ios_base::openmode mode)
 
 bool IPhreeqc::output_open(const char *file_name, std::ios_base::openmode mode)
 {
-	if (this->OutputOn)
+	if (this->OutputFileOn)
 	{
 		return this->PHRQ_io::output_open(file_name, mode);
 	}
