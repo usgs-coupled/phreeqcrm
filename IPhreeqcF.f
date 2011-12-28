@@ -310,6 +310,7 @@
         INTEGER(KIND=4)  :: ID
         CHARACTER(LEN=*) :: FNAME
         INTEGER(KIND=4)  :: SetDumpFileName
+        INTEGER(KIND=4)  :: SetDumpFileNameF
         SetDumpFileName = SetDumpFileNameF(ID,FNAME)
       END FUNCTION SetDumpFileName
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -354,6 +355,7 @@
         INTEGER(KIND=4)  :: ID
         CHARACTER(LEN=*) :: FNAME
         INTEGER(KIND=4)  :: SetOutputFileName
+        INTEGER(KIND=4)  :: SetOutputFileNameF
         SetOutputFileName = SetOutputFileNameF(ID,FNAME)
       END FUNCTION SetOutputFileName
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
