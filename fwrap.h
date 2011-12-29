@@ -51,8 +51,8 @@
 #define SetLogFileOnF                 FC_FUNC (setlogfileonf,                 SETLOGFILEONF)
 #define SetOutputFileNameF            FC_FUNC (setoutputfilenamef,            SETOUTPUTFILENAMEF)
 #define SetOutputFileOnF              FC_FUNC (setoutputfileonf,              SETOUTPUTFILEONF)
-#define SetSelOutFileOnF              FC_FUNC (setseloutfileonf,              SETSELOUTFILEONF)
 #define SetOutputStringOnF            FC_FUNC (setoutputstringonf,            SETOUTPUTSTRINGONF)
+#define SetSelOutFileOnF              FC_FUNC (setseloutfileonf,              SETSELOUTFILEONF)
 #endif /* FC_FUNC */
 
 #if defined(__cplusplus)
