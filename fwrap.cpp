@@ -189,6 +189,24 @@ GetOutputFileNameF(int *id, char* fname, unsigned int fname_length)
 }
 
 int
+GetOutputStringLineCountF(int *id)
+{
+	return ::GetOutputStringLineCount(*id);
+}
+
+void
+GetOutputStringLineF(int *id, int* n, char* line, unsigned int line_length)
+{
+	padfstring(line, ::GetOutputStringLine(*id, (*n) - 1), line_length);
+}
+
+int
+GetOutputStringOnF(int *id)
+{
+	return ::GetOutputStringOn(*id);
+}
+
+int
 GetOutputFileOnF(int *id)
 {
 	return ::GetOutputFileOn(*id);
@@ -432,6 +450,12 @@ SetOutputFileOnF(int *id, int* output_on)
 }
 
 IPQ_RESULT
+SetOutputStringOnF(int *id, int* output_string_on)
+{
+	return ::SetOutputStringOn(*id, *output_string_on);
+}
+
+IPQ_RESULT
 SetSelOutFileOnF(int *id, int* sel_on)
 {
 	return ::SetSelectedOutputFileOn(*id, *sel_on);
@@ -524,6 +548,19 @@ IPQ_DLL_EXPORT int  __stdcall GETOUTPUTFILEON(int *id)
 {
 	return GetOutputFileOnF(id);
 }
+// GetOutputString
+IPQ_DLL_EXPORT void __stdcall GETOUTPUTSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetOutputStringLineF(id, n, line, line_length);
+}
+IPQ_DLL_EXPORT int  __stdcall GETOUTPUTSTRINGLINECOUNT(int *id)
+{
+	return GetOutputStringLineCountF(id);
+}
+IPQ_DLL_EXPORT int  __stdcall GETOUTPUTSTRINGON(int *id)
+{
+	return GetOutputStringOnF(id);
+}
 IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
 {
 	return GetSelectedOutputColumnCountF(id);
@@ -608,6 +645,10 @@ IPQ_DLL_EXPORT int  __stdcall SETOUTPUTFILENAME(int *id, char *filename, unsigne
 IPQ_DLL_EXPORT int  __stdcall SETOUTPUTFILEON(int *id, int *output_on)
 {
 	return SetOutputFileOnF(id, output_on);
+}
+IPQ_DLL_EXPORT int  __stdcall SETOUTPUTSTRINGON(int *id, int *output_on)
+{
+	return SetOutputStringOnF(id, output_on);
 }
 IPQ_DLL_EXPORT int  __stdcall SETSELECTEDOUTPUTFILEON(int *id, int *selected_on)
 {

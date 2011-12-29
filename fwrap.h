@@ -27,6 +27,9 @@
 #define GetLogFileOnF                 FC_FUNC (getlogfileonf,                 GETLOGFILEONF)
 #define GetOutputFileNameF            FC_FUNC (getoutputfilenamef,            GETOUTPUTFILENAMEF)
 #define GetOutputFileOnF              FC_FUNC (getoutputfileonf,              GETOUTPUTFILEONF)
+#define GetOutputStringLineF          FC_FUNC (getoutputstringlinef,          GETOUTPUTSTRINGLINEF)
+#define GetOutputStringLineCountF     FC_FUNC (getoutputstringlinecountf,     GETOUTPUTSTRINGLINECOUNTF)
+#define GetOutputStringOnF            FC_FUNC (getoutputstringonf,            GETOUTPUTSTRINGONF)
 #define GetSelectedOutputColumnCountF FC_FUNC (getselectedoutputcolumncountf, GETSELECTEDOUTPUTCOLUMNCOUNTF)
 #define GetSelectedOutputFileOnF      FC_FUNC (getselectedoutputfileonf,      GETSELECTEDOUTPUTFILEONF)
 #define GetSelectedOutputRowCountF    FC_FUNC (getselectedoutputrowcountf,    GETSELECTEDOUTPUTROWCOUNTF)
@@ -49,6 +52,7 @@
 #define SetOutputFileNameF            FC_FUNC (setoutputfilenamef,            SETOUTPUTFILENAMEF)
 #define SetOutputFileOnF              FC_FUNC (setoutputfileonf,              SETOUTPUTFILEONF)
 #define SetSelOutFileOnF              FC_FUNC (setseloutfileonf,              SETSELOUTFILEONF)
+#define SetOutputStringOnF            FC_FUNC (setoutputstringonf,            SETOUTPUTSTRINGONF)
 #endif /* FC_FUNC */
 
 #if defined(__cplusplus)
@@ -74,6 +78,9 @@ extern "C" {
   int        GetLogFileOnF(int *id);
   void       GetOutputFileNameF(int *id, char* filename, unsigned int filename_length);
   int        GetOutputFileOnF(int *id);
+  int        GetOutputStringLineCountF(int *id);
+  void       GetOutputStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetOutputStringOnF(int *id);
   int        GetSelectedOutputColumnCountF(int *id);
   int        GetSelectedOutputFileOnF(int *id);
   int        GetSelectedOutputRowCountF(int *id);
@@ -95,6 +102,7 @@ extern "C" {
   IPQ_RESULT SetLogFileOnF(int *id, int* log_on);
   IPQ_RESULT SetOutputFileNameF(int *id, char* fname, unsigned int fname_length);
   IPQ_RESULT SetOutputFileOnF(int *id, int* output_on);
+  IPQ_RESULT SetOutputStringOnF(int *id, int* output_string_on);
   IPQ_RESULT SetSelOutFileOnF(int *id, int* selected_output_on);
 
 #if defined(__cplusplus)

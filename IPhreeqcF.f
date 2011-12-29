@@ -181,6 +181,38 @@
         ENDIF
       END FUNCTION GetOutputFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! GetOutputString      
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetOutputStringLine(ID,N,LINE)
+        IMPLICIT NONE
+        INTEGER(KIND=4)  :: ID
+        INTEGER(KIND=4)  :: N
+        CHARACTER(LEN=*) :: LINE        
+        INTEGER(KIND=4)  :: GetOutputStringLine
+        INTEGER(KIND=4)  :: GetOutputStringLineF
+        GetOutputStringLine = GetOutputStringLineF(ID,N,LINE)
+      END FUNCTION GetOutputStringLine
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetOutputStringLineCount(ID)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+        INTEGER(KIND=4) :: GetOutputStringLineCount
+        INTEGER(KIND=4) :: GetOutputStringLineCountF
+        GetOutputStringLineCount = GetOutputStringLineCountF(ID)
+      END FUNCTION GetOutputStringLineCount
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetOutputStringOn(ID)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: GetOutputStringOn
+        INTEGER(KIND=4) :: GetOutputStringOnF
+        IF (GetOutputStringOnF(ID).EQ.0) THEN
+          GetOutputStringOn = .FALSE.
+        ELSE
+          GetOutputStringOn = .TRUE.
+        ENDIF
+      END FUNCTION GetOutputStringOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetSelectedOutputColumnCount(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
@@ -367,6 +399,15 @@
         INTEGER(KIND=4) :: SetOutputFileOnF
         SetOutputFileOn = SetOutputFileOnF(ID,OUTPUT_ON)
       END FUNCTION SetOutputFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetOutputStringOn(ID,OUTPUT_STRING_ON)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: OUTPUT_STRING_ON
+        INTEGER(KIND=4) :: SetOutputStringOn
+        INTEGER(KIND=4) :: SetOutputStringOnF
+        SetOutputStringOn = SetOutputStringOnF(ID,OUTPUT_STRING_ON)   
+      END FUNCTION SetOutputStringOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION SetSelectedOutputFileOn(ID,SELECTED_ON)
         IMPLICIT NONE
