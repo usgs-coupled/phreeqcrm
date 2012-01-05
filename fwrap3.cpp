@@ -76,9 +76,26 @@ IPQ_DLL_EXPORT int  geterrorstringlinecount_(int *id)
 {
 	return GetErrorStringLineCountF(id);
 }
+IPQ_DLL_EXPORT void getlogfilename_(int *id, char *filename, unsigned int len)
+{
+	GetLogFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  getlogfileon_(int *id)
 {
 	return GetLogFileOnF(id);
+}
+IPQ_DLL_EXPORT int  getlogstringon_(int *id)
+{
+	return GetLogStringOnF(id);
+}
+// GetLogString
+IPQ_DLL_EXPORT void getlogstringline_(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetLogStringLineF(id, n, line, line_length);
+}
+IPQ_DLL_EXPORT int  getlogstringlinecount_(int *id)
+{
+	return GetLogStringLineCountF(id);
 }
 IPQ_DLL_EXPORT void getoutputfilename_(int *id, char *filename, unsigned int len)
 {
@@ -174,9 +191,17 @@ IPQ_DLL_EXPORT int  seterrorfileon_(int *id, int *error_on)
 {
 	return SetErrorFileOnF(id, error_on);
 }
+IPQ_DLL_EXPORT int  setlogfilename_(int *id, char *filename, unsigned int len)
+{
+	return SetLogFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  setlogfileon_(int *id, int *log_on)
 {
 	return SetLogFileOnF(id, log_on);
+}
+IPQ_DLL_EXPORT int  setlogstringon_(int *id, int *log_on)
+{
+	return SetLogStringOnF(id, log_on);
 }
 IPQ_DLL_EXPORT int  setoutputfilename_(int *id, char *filename, unsigned int len)
 {

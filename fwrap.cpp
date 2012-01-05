@@ -176,10 +176,34 @@ GetErrorStringLineF(int *id, int* n, char* line, unsigned int line_length)
 	padfstring(line, ::GetErrorStringLine(*id, (*n) - 1), line_length);
 }
 
+void 
+GetLogFileNameF(int *id, char* fname, unsigned int fname_length)
+{
+	padfstring(fname, ::GetLogFileName(*id), fname_length);
+}
+
 int
 GetLogFileOnF(int *id)
 {
 	return ::GetLogFileOn(*id);
+}
+
+int
+GetLogStringOnF(int *id)
+{
+	return ::GetLogStringOn(*id);
+}
+
+int
+GetLogStringLineCountF(int *id)
+{
+	return ::GetLogStringLineCount(*id);
+}
+
+void
+GetLogStringLineF(int *id, int* n, char* line, unsigned int line_length)
+{
+	padfstring(line, ::GetLogStringLine(*id, (*n) - 1), line_length);
 }
 
 void
@@ -421,9 +445,32 @@ SetErrorFileOnF(int *id, int* error_on)
 }
 
 IPQ_RESULT
+SetLogFileNameF(int *id, char* fname, unsigned int fname_length)
+{
+	char* cinput;
+
+	cinput = f2cstring(fname, fname_length);
+	if (!cinput)
+	{
+		::AddError(*id, "SetLogFileName: Out of memory.\n");
+		return IPQ_OUTOFMEMORY;
+	}
+
+	IPQ_RESULT n = ::SetLogFileName(*id, cinput);
+	free(cinput);
+	return n;
+}
+
+IPQ_RESULT
 SetLogFileOnF(int *id, int* log_on)
 {
 	return ::SetLogFileOn(*id, *log_on);
+}
+
+IPQ_RESULT
+SetLogStringOnF(int *id, int* log_string_on)
+{
+	return ::SetLogStringOn(*id, *log_string_on);
 }
 
 IPQ_RESULT
@@ -536,9 +583,26 @@ IPQ_DLL_EXPORT int  __stdcall GETERRORSTRINGLINECOUNT(int *id)
 {
 	return GetErrorStringLineCountF(id);
 }
+IPQ_DLL_EXPORT void __stdcall GETLOGFILENAME(int *id, char *filename, unsigned int len)
+{
+	GetLogFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  __stdcall GETLOGFILEON(int *id)
 {
 	return GetLogFileOnF(id);
+}
+IPQ_DLL_EXPORT int  __stdcall GETLOGSTRINGON(int *id)
+{
+	return GetLogStringOnF(id);
+}
+// GetLogString
+IPQ_DLL_EXPORT void __stdcall GETLOGSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetLogStringLineF(id, n, line, line_length);
+}
+IPQ_DLL_EXPORT int  __stdcall GETLOGSTRINGLINECOUNT(int *id)
+{
+	return GetLogStringLineCountF(id);
 }
 IPQ_DLL_EXPORT void __stdcall GETOUTPUTFILENAME(int *id, char *filename, unsigned int len)
 {
@@ -634,9 +698,17 @@ IPQ_DLL_EXPORT int  __stdcall SETERRORFILEON(int *id, int *error_on)
 {
 	return SetErrorFileOnF(id, error_on);
 }
+IPQ_DLL_EXPORT int  __stdcall SETLOGFILENAME(int *id, char *filename, unsigned int len)
+{
+	return SetLogFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  __stdcall SETLOGFILEON(int *id, int *log_on)
 {
 	return SetLogFileOnF(id, log_on);
+}
+IPQ_DLL_EXPORT int  __stdcall SETLOGSTRINGON(int *id, int *log_on)
+{
+	return SetLogStringOnF(id, log_on);
 }
 IPQ_DLL_EXPORT int  __stdcall SETOUTPUTFILENAME(int *id, char *filename, unsigned int len)
 {

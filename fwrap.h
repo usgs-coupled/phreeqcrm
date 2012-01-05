@@ -24,7 +24,11 @@
 #define GetErrorStringLineCountF      FC_FUNC (geterrorstringlinecountf,      GETERRORSTRINGLINECOUNTF)
 #define GetErrorStringLineF           FC_FUNC (geterrorstringlinef,           GETERRORSTRINGLINEF)
 #define GetErrorFileOnF               FC_FUNC (geterrorfileonf,               GETERRORFILEONF)
+#define GetLogFileNameF               FC_FUNC (getlogfilenamef,               GETLOGFILENAMEF)
 #define GetLogFileOnF                 FC_FUNC (getlogfileonf,                 GETLOGFILEONF)
+#define GetLogStringLineCountF        FC_FUNC (getlogstringlinecountf,        GETLOGSTRINGLINECOUNTF)
+#define GetLogStringLineF             FC_FUNC (getlogstringlinef,             GETLOGSTRINGLINEF)
+#define GetLogStringOnF               FC_FUNC (getlogstringonf,               GETLOGSTRINGONF)
 #define GetOutputFileNameF            FC_FUNC (getoutputfilenamef,            GETOUTPUTFILENAMEF)
 #define GetOutputFileOnF              FC_FUNC (getoutputfileonf,              GETOUTPUTFILEONF)
 #define GetOutputStringLineF          FC_FUNC (getoutputstringlinef,          GETOUTPUTSTRINGLINEF)
@@ -48,7 +52,9 @@
 #define SetDumpFileOnF                FC_FUNC (setdumpfileonf,                SETDUMPFILEONF)
 #define SetDumpStringOnF              FC_FUNC (setdumpstringonf,              SETDUMPSTRINGONF)
 #define SetErrorFileOnF               FC_FUNC (seterrorfileonf,               SETERRORFILEONF)
+#define SetLogFileNameF               FC_FUNC (setlogfilenamef,               SETLOGFILENAMEF)
 #define SetLogFileOnF                 FC_FUNC (setlogfileonf,                 SETLOGFILEONF)
+#define SetLogStringOnF               FC_FUNC (setlogstringonf,               SETLOGSTRINGONF)
 #define SetOutputFileNameF            FC_FUNC (setoutputfilenamef,            SETOUTPUTFILENAMEF)
 #define SetOutputFileOnF              FC_FUNC (setoutputfileonf,              SETOUTPUTFILEONF)
 #define SetOutputStringOnF            FC_FUNC (setoutputstringonf,            SETOUTPUTSTRINGONF)
@@ -75,7 +81,11 @@ extern "C" {
   int        GetErrorStringLineCountF(int *id);
   void       GetErrorStringLineF(int *id, int* n, char* line, unsigned int line_length);
   int        GetErrorFileOnF(int *id);
+  void       GetLogFileNameF(int *id, char* filename, unsigned int filename_length);
   int        GetLogFileOnF(int *id);
+  int        GetLogStringLineCountF(int *id);
+  void       GetLogStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetLogStringOnF(int *id);
   void       GetOutputFileNameF(int *id, char* filename, unsigned int filename_length);
   int        GetOutputFileOnF(int *id);
   int        GetOutputStringLineCountF(int *id);
@@ -99,7 +109,9 @@ extern "C" {
   IPQ_RESULT SetDumpFileOnF(int *id, int* dump_on);
   IPQ_RESULT SetDumpStringOnF(int *id, int* dump_string_on);
   IPQ_RESULT SetErrorFileOnF(int *id, int* error_on);
+  IPQ_RESULT SetLogFileNameF(int *id, char* fname, unsigned int fname_length);
   IPQ_RESULT SetLogFileOnF(int *id, int* log_on);
+  IPQ_RESULT SetLogStringOnF(int *id, int* log_string_on);
   IPQ_RESULT SetOutputFileNameF(int *id, char* fname, unsigned int fname_length);
   IPQ_RESULT SetOutputFileOnF(int *id, int* output_on);
   IPQ_RESULT SetOutputStringOnF(int *id, int* output_string_on);

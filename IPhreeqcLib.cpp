@@ -240,6 +240,18 @@ GetErrorStringLineCount(int id)
 	return IPQ_BADINSTANCE;
 }
 
+const char*
+GetLogFileName(int id)
+{
+	static const char empty[] = "";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetLogFileName();
+	}
+	return empty;
+}
+
 int
 GetLogFileOn(int id)
 {
@@ -247,6 +259,59 @@ GetLogFileOn(int id)
 	if (IPhreeqcPtr)
 	{
 		if (IPhreeqcPtr->GetLogFileOn())
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	return IPQ_BADINSTANCE;
+}
+
+const char*
+GetLogString(int id)
+{
+	static const char empty[] = "";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetLogString();
+	}
+	return empty;
+}
+
+const char*
+GetLogStringLine(int id, int n)
+{
+	static const char err_msg[] = "GetLogStringLine: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetLogStringLine(n);
+	}
+	return err_msg;
+}
+
+int
+GetLogStringLineCount(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetLogStringLineCount();
+	}
+	return 0;
+}
+
+int
+GetLogStringOn(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		if (IPhreeqcPtr->GetLogStringOn())
 		{
 			return 1;
 		}
@@ -580,12 +645,36 @@ SetErrorFileOn(int id, int value)
 }
 
 IPQ_RESULT
+SetLogFileName(int id, const char* filename)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetLogFileName(filename);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
 SetLogFileOn(int id, int value)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetLogFileOn(value != 0);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
+SetLogStringOn(int id, int value)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetLogStringOn(value != 0);
 		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;

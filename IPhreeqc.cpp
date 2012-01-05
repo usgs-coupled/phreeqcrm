@@ -18,17 +18,19 @@ const char DUMP_FILENAME_FORMAT[]   = "dump.%d.out";
 std::map<size_t, IPhreeqc*> IPhreeqc::Instances;
 size_t IPhreeqc::InstancesIndex = 0;
 
+
 IPhreeqc::IPhreeqc(void)
 : DatabaseLoaded(false)
 , ClearAccumulated(false)
 , UpdateComponents(true)
 , SelectedOutputOn(false)
 , OutputFileOn(false)
-, LogOn(false)
+, LogFileOn(false)
 , ErrorOn(false)
 , DumpOn(false)
 , DumpStringOn(false)
 , OutputStringOn(false)
+, LogStringOn(false)
 , ErrorReporter(0)
 , WarningReporter(0)
 , SelectedOutput(0)
@@ -220,9 +222,44 @@ int IPhreeqc::GetId(void)const
 	return (int)this->Index;
 }
 
+const char* IPhreeqc::GetLogFileName(void)const
+{
+	return this->LogFileName.c_str();
+}
+
 bool IPhreeqc::GetLogFileOn(void)const
 {
-	return this->LogOn;
+	return this->LogFileOn;
+}
+
+const char* IPhreeqc::GetLogString(void)const
+{
+	static const char err_msg[] = "GetLogString: LogStringOn not set.\n";
+	if (!this->LogStringOn)
+	{
+		return err_msg;
+	}
+	return this->LogString.c_str();
+}
+
+const char* IPhreeqc::GetLogStringLine(int n)const
+{
+	static const char empty[] = "";
+	if (n < 0 || n >= this->GetLogStringLineCount())
+	{
+		return empty;
+	}
+	return this->LogLines[n].c_str();
+}
+
+int IPhreeqc::GetLogStringLineCount(void)const
+{
+	return (int)this->LogLines.size();
+}
+
+bool IPhreeqc::GetLogStringOn(void)const
+{
+	return this->LogStringOn;
 }
 
 const char* IPhreeqc::GetOutputFileName(void)const
@@ -351,6 +388,8 @@ int IPhreeqc::LoadDatabase(const char* filename)
 {
 	bool bSaveOutputOn = this->OutputFileOn;
 	this->OutputFileOn = false;
+	bool bSaveLogFileOn = this->LogFileOn;
+	this->LogFileOn = false;
 	try
 	{
 		// cleanup
@@ -394,6 +433,7 @@ int IPhreeqc::LoadDatabase(const char* filename)
 	this->PhreeqcPtr->phrq_io->clear_istream();
 	this->DatabaseLoaded = (this->PhreeqcPtr->get_input_errors() == 0);
 	this->OutputFileOn = bSaveOutputOn;
+	this->LogFileOn = bSaveLogFileOn;
 	return this->PhreeqcPtr->get_input_errors();
 }
 
@@ -613,9 +653,22 @@ void IPhreeqc::SetErrorFileOn(bool bValue)
 	this->ErrorOn = bValue;
 }
 
+void IPhreeqc::SetLogFileName(const char *filename)
+{
+	if (filename && ::strlen(filename))
+	{
+		this->LogFileName = filename;
+	}
+}
+
 void IPhreeqc::SetLogFileOn(bool bValue)
 {
-	this->LogOn = bValue;
+	this->LogFileOn = bValue;
+}
+
+void IPhreeqc::SetLogStringOn(bool bValue)
+{
+	this->LogStringOn = bValue;
 }
 
 void IPhreeqc::SetOutputFileName(const char *filename)
@@ -720,6 +773,8 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 	}
 
 	// release
+	this->LogString.clear();
+	this->LogLines.clear();
 	this->OutputString.clear();
 	this->OutputLines.clear();
 
@@ -751,6 +806,9 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		::sprintf(token, "Reading input data for simulation %d.", this->PhreeqcPtr->simulation);
 
 		int save_punch_in = this->PhreeqcPtr->punch.in;
+
+		//{{
+		//}}
 
 		this->PhreeqcPtr->dup_print(token, TRUE);
 		if (this->PhreeqcPtr->read_input() == EOF)
@@ -996,6 +1054,19 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 	this->update_errors();
 
 	// update lines
+	//
+
+	if (this->LogStringOn)
+	{
+		// output lines
+		std::istringstream iss(this->LogString);
+		std::string line;
+		while (std::getline(iss, line))
+		{
+			this->LogLines.push_back(line);
+		}
+	}
+
 	if (this->OutputStringOn)
 	{
 		// output lines
@@ -1033,6 +1104,16 @@ void IPhreeqc::update_errors(void)
 			this->WarningLines.push_back(line);
 		}
 	}
+}
+
+void IPhreeqc::log_msg(const char * str)
+{
+	if (this->LogStringOn && this->log_on)
+	{
+		this->LogString += str;
+	}
+	ASSERT(!(this->LogFileOn ^ (this->log_ostream != 0)));
+	this->PHRQ_io::log_msg(str);
 }
 
 void IPhreeqc::error_msg(const char *str, bool stop)
@@ -1112,7 +1193,7 @@ void IPhreeqc::open_output_files(const char* sz_routine)
 			this->warning_msg(oss.str().c_str());
 		}
 	}
-	if (this->LogOn)
+	if (this->LogFileOn)
 	{
 		if (this->log_ostream != NULL)
 		{

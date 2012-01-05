@@ -150,6 +150,13 @@
         GetErrorStringLineCount = GetErrorStringLineCountF(ID)
       END FUNCTION GetErrorStringLineCount
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      SUBROUTINE GetLogFileName(ID,FNAME)
+        IMPLICIT NONE
+        INTEGER(KIND=4)  :: ID
+        CHARACTER(LEN=*) :: FNAME
+        CALL GetLogFileNameF(ID,FNAME)
+      END SUBROUTINE GetLogFileName
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetLogFileOn(ID)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
@@ -161,6 +168,38 @@
           GetLogFileOn = .TRUE.
         ENDIF
       END FUNCTION GetLogFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! GetLogString      
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetLogStringLine(ID,N,LINE)
+        IMPLICIT NONE
+        INTEGER(KIND=4)  :: ID
+        INTEGER(KIND=4)  :: N
+        CHARACTER(LEN=*) :: LINE        
+        INTEGER(KIND=4)  :: GetLogStringLine
+        INTEGER(KIND=4)  :: GetLogStringLineF
+        GetLogStringLine = GetLogStringLineF(ID,N,LINE)
+      END FUNCTION GetLogStringLine
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetLogStringLineCount(ID)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+        INTEGER(KIND=4) :: GetLogStringLineCount
+        INTEGER(KIND=4) :: GetLogStringLineCountF
+        GetLogStringLineCount = GetLogStringLineCountF(ID)
+      END FUNCTION GetLogStringLineCount
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetLogStringOn(ID)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: GetLogStringOn
+        INTEGER(KIND=4) :: GetLogStringOnF
+        IF (GetLogStringOnF(ID).EQ.0) THEN
+          GetLogStringOn = .FALSE.
+        ELSE
+          GetLogStringOn = .TRUE.
+        ENDIF
+      END FUNCTION GetLogStringOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       SUBROUTINE GetOutputFileName(ID,FNAME)
         IMPLICIT NONE
@@ -373,6 +412,15 @@
         SetErrorFileOn = SetErrorFileOnF(ID,ERROR_ON)
       END FUNCTION SetErrorFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetLogFileName(ID,FNAME)
+        IMPLICIT NONE
+        INTEGER(KIND=4)  :: ID
+        CHARACTER(LEN=*) :: FNAME
+        INTEGER(KIND=4)  :: SetLogFileName
+        INTEGER(KIND=4)  :: SetLogFileNameF
+        SetLogFileName = SetLogFileNameF(ID,FNAME)
+      END FUNCTION SetLogFileName
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION SetLogFileOn(ID,LOG_ON)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
@@ -381,6 +429,15 @@
         INTEGER(KIND=4) :: SetLogFileOnF
         SetLogFileOn = SetLogFileOnF(ID,LOG_ON)
       END FUNCTION SetLogFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetLogStringOn(ID,LOG_STRING_ON)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: LOG_STRING_ON
+        INTEGER(KIND=4) :: SetLogStringOn
+        INTEGER(KIND=4) :: SetLogStringOnF
+        SetLogStringOn = SetLogStringOnF(ID,LOG_STRING_ON)   
+      END FUNCTION SetLogStringOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION SetOutputFileName(ID,FNAME)
         IMPLICIT NONE
@@ -417,3 +474,4 @@
         INTEGER(KIND=4) :: SetSelOutFileOnF
         SetSelectedOutputFileOn = SetSelOutFileOnF(ID,SELECTED_ON)
       END FUNCTION SetSelectedOutputFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
