@@ -1,6 +1,6 @@
 EXTRA_DIST = fwrap2.cpp fwrap3.cpp
 
-AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/phreeqc
+AM_CPPFLAGS=-I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/phreeqc
 
 # libtool libraries to build
 lib_LTLIBRARIES=libiphreeqc.la
@@ -141,10 +141,12 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/phreeqc/utilities.cpp
 
 include_HEADERS=\
-	$(top_srcdir)/include/IPhreeqc.h\
-	$(top_srcdir)/include/IPhreeqc.hpp\
-	$(top_srcdir)/include/IPhreeqcCallbacks.h\
-	$(top_srcdir)/include/Var.h
+	$(top_srcdir)/src/IPhreeqc.h\
+	$(top_srcdir)/src/IPhreeqc.hpp\
+	$(top_srcdir)/src/IPhreeqcCallbacks.h\
+	$(top_srcdir)/src/Var.h\
+	$(top_srcdir)/src/phreeqcpp/PHRQ_io.h\
+	$(top_srcdir)/src/phreeqcpp/Keywords.h
 
 
 if BUILD_FORTRAN
@@ -155,8 +157,8 @@ libiphreeqc_la_SOURCES+=\
 	IPhreeqcF.f
 
 include_HEADERS+=\
-	$(top_srcdir)/include/IPhreeqc.f90.inc\
-	$(top_srcdir)/include/IPhreeqc.f.inc
+	$(top_srcdir)/src/IPhreeqc.f90.inc\
+	$(top_srcdir)/src/IPhreeqc.f.inc
 
 endif
 
