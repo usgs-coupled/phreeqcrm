@@ -25,6 +25,8 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/Exchange.h\
 	phreeqcpp/ExchComp.cxx\
 	phreeqcpp/ExchComp.h\
+	phreeqcpp/GasComp.cxx\
+	phreeqcpp/GasComp.h\
 	phreeqcpp/GasPhase.cxx\
 	phreeqcpp/GasPhase.h\
 	phreeqcpp/ISolution.cxx\
@@ -69,8 +71,8 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/SolutionIsotopeList.h\
 	phreeqcpp/SSassemblage.cxx\
 	phreeqcpp/SSassemblage.h\
-	phreeqcpp/SSassemblageSS.cxx\
-	phreeqcpp/SSassemblageSS.h\
+	phreeqcpp/SS.cxx\
+	phreeqcpp/SS.h\
 	phreeqcpp/StorageBin.cxx\
 	phreeqcpp/StorageBin.h\
 	phreeqcpp/StorageBinList.cpp\
