@@ -119,7 +119,6 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/phreeqc/PHRQ_io_output.cpp\
 	phreeqcpp/phreeqc/phrqtype.h\
 	phreeqcpp/phreeqc/pitzer.cpp\
-	phreeqcpp/phreeqc/pitzer.h\
 	phreeqcpp/phreeqc/pitzer_structures.cpp\
 	phreeqcpp/phreeqc/prep.cpp\
 	phreeqcpp/phreeqc/print.cpp\
