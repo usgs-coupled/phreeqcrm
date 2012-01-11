@@ -117,7 +117,6 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/phreeqc/phqalloc.cpp\
 	phreeqcpp/phreeqc/phqalloc.h\
 	phreeqcpp/phreeqc/PHRQ_io_output.cpp\
-	phreeqcpp/phreeqc/phrqproto.h\
 	phreeqcpp/phreeqc/phrqtype.h\
 	phreeqcpp/phreeqc/pitzer.cpp\
 	phreeqcpp/phreeqc/pitzer.h\
