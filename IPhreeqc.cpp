@@ -968,7 +968,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 /*
  *   Calculate advection
  */
-		if (this->PhreeqcPtr->use.advect_in == TRUE)
+		if (this->PhreeqcPtr->use.Get_advect_in())
 		{
 			this->PhreeqcPtr->dup_print("Beginning of advection calculations.", TRUE);
 			this->PhreeqcPtr->advection();
@@ -976,7 +976,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 /*
  *   Calculate transport
  */
-		if (this->PhreeqcPtr->use.trans_in == TRUE)
+		if (this->PhreeqcPtr->use.Get_trans_in())
 		{
 			this->PhreeqcPtr->dup_print("Beginning of transport calculations.", TRUE);
 			this->PhreeqcPtr->transport();
