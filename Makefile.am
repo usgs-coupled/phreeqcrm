@@ -87,6 +87,8 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/System.h\
 	phreeqcpp/Temperature.cxx\
 	phreeqcpp/Temperature.h\
+	phreeqcpp/Use.cpp\
+	phreeqcpp/Use.h\
 	phreeqcpp/Utils.cxx\
 	phreeqcpp/Utils.h\
 	phreeqcpp/phreeqc/advection.cpp\
