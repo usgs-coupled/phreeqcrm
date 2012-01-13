@@ -374,6 +374,26 @@ extern "C" {
 
 
 /**
+ *  Retrieves the name of the error file.  The default name is <B><I>phreeqc.id.err</I></B>.
+ *  @param id               The instance id returned from \ref CreateIPhreeqc.
+ *  @return filename        The name of the error file.
+ *  @see                    GetErrorFileOn, GetErrorString, GetErrorStringOn, GetErrorStringLine, GetErrorStringLineCount, SetErrorFileName, SetErrorFileOn, SetErrorStringOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  SUBROUTINE GetErrorFileName(ID,FILENAME)
+ *    INTEGER(KIND=4),   INTENT(IN)   :: ID
+ *    CHARACTER(LEN=*),  INTENT(OUT)  :: FILENAME
+ *  END SUBROUTINE GetErrorFileName
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT const char* GetErrorFileName(int id);
+
+
+/**
  *  Retrieves the current value of the error file switch.
  *  @param id            The instance id returned from \ref CreateIPhreeqc.
  *  @return              Non-zero if errors are written to the <B><I>phreeqc.id.err</I></B> file, 0 (zero) otherwise.
@@ -445,6 +465,26 @@ extern "C" {
  *  @endhtmlonly
  */
 	IPQ_DLL_EXPORT int         GetErrorStringLineCount(int id);
+
+/**
+ *  Retrieves the current value of the error string switch.
+ *  @param id            The instance id returned from \ref CreateIPhreeqc.
+ *  @return              Non-zero if output is stored, 0 (zero) otherwise.
+ *  @see                 GetErrorFileOn, GetErrorString, GetErrorStringLine, GetErrorStringLineCount, SetErrorFileOn, SetErrorStringOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION GetErrorStringOn(ID)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    LOGICAL(KIND=4)               :: GetErrorStringOn
+ *  END FUNCTION GetErrorStringOn
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT int         GetErrorStringOn(int id);
+
 
 /**
  *  Retrieves the name of the log file.  The default name is <B><I>phreeqc.id.log</I></B>.
@@ -1283,6 +1323,27 @@ Headings
  */
 	IPQ_DLL_EXPORT IPQ_RESULT  SetDumpStringOn(int id, int dump_string_on);
 
+/**
+ *  Sets the name of the error file.  The default value is <B><I>phreeqc.id.err</I></B>.
+ *  @param id               The instance id returned from \ref CreateIPhreeqc.
+ *  @param filename         The name of the error file.
+ *  @retval IPQ_OK          Success.
+ *  @retval IPQ_BADINSTANCE The given id is invalid.
+ *  @see                    GetErrorFileName, GetErrorFileOn, GetErrorString, GetErrorStringOn, GetErrorStringLine, GetErrorStringLineCount, SetErrorFileOn, SetErrorStringOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION SetErrorFileName(ID,FILENAME)
+ *    INTEGER(KIND=4),   INTENT(IN)   :: ID
+ *    CHARACTER(LEN=*),  INTENT(OUT)  :: FILENAME
+ *    INTEGER(KIND=4)                 :: SetErrorFileName
+ *  END FUNCTION SetErrorFileName
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT IPQ_RESULT  SetErrorFileName(int id, const char* filename);
 
 /**
  *  Sets the error file switch on or off.  This switch controls whether or not
@@ -1307,6 +1368,37 @@ Headings
  *  @endhtmlonly
  */
 	IPQ_DLL_EXPORT IPQ_RESULT  SetErrorFileOn(int id, int error_on);
+
+/**
+ *  Sets the error string switch on or off.  This switch controls whether or not the data normally sent
+ *  to the error file are stored in a buffer for retrieval.  The initial setting after calling
+ *  \ref CreateIPhreeqc is off.
+ *  @param id                   The instance id returned from \ref CreateIPhreeqc.
+ *  @param output_string_on     If non-zero, captures the error output into a string buffer;
+ *                              if zero, error output is not captured to a string buffer.
+ *  @retval IPQ_OK              Success.
+ *  @retval IPQ_BADINSTANCE     The given id is invalid.
+ *  @see                        GetErrorFileOn, GetErrorStringOn, GetErrorString, GetErrorStringLine, GetErrorStringLineCount, SetErrorFileOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION SetErrorStringOn(ID,ERR_STRING_ON)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    LOGICAL(KIND=4),  INTENT(IN)  :: ERR_STRING_ON
+ *    INTEGER(KIND=4)               :: SetErrorStringOn
+ *  END FUNCTION SetErrorStringOn
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ *
+ *  @par C Example:
+ *  see \ref GetErrorString_c "GetErrorString"
+ *
+ *  @par Fortran90 Example:
+ *  see \ref GetErrorStringLine_f90 "GetErrorStringLine"
+ */
+	IPQ_DLL_EXPORT IPQ_RESULT  SetErrorStringOn(int id, int error_string_on);
 
 /**
  *  Sets the name of the log file.  The default value is <B><I>phreeqc.id.log</I></B>.

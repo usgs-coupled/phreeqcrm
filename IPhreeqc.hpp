@@ -169,6 +169,13 @@ public:
 	bool                     GetDumpStringOn(void)const;
 
 	/**
+	 *  Retrieves the name of the error file. The default value is <B><I>phreeqc.id.err</I></B>, where id is obtained from \ref GetId.
+	 *  @return filename        The name of the file to write to.
+	 *  @see                    GetErrorFileOn, GetErrorString, GetErrorStringOn, GetErrorStringLine, GetErrorStringLineCount, SetErrorFileName, SetErrorFileOn, SetErrorStringOn
+	 */
+	const char*              GetErrorFileName(void)const;
+
+	/**
 	 *  Retrieves the current value of the error file switch.
      *  @retval true            Errors are written to the <B><I>phreeqc.id.err</I></B> (where id is obtained from \ref GetId) file.
      *  @retval false           No errors are written.
@@ -197,6 +204,14 @@ public:
 	 *  @see                    GetErrorStringLine, OutputErrorString
 	 */
 	int                      GetErrorStringLineCount(void)const;
+
+	/**
+	 *  Retrieves the current value of the error string switch.
+     *  @retval true            Error output is stored.
+     *  @retval false           No error output is stored.
+	 *  @see                    GetErrorFileOn, GetErrorString, GetErrorStringLine, GetErrorStringLineCount, SetErrorFileOn, SetErrorStringOn
+	 */
+	bool                     GetErrorStringOn(void)const;
 
 	/**
 	 *  Retrieves the id of this object.  Each instance receives an id which is incremented for each instance
@@ -612,6 +627,13 @@ public:
 	void                     SetDumpStringOn(bool bValue);
 
 	/**
+	 *  Sets the name of the error file. The default value is <B><I>phreeqc.id.err</I></B>, where id is obtained from \ref GetId.
+	 *  @param filename         The name of the file to write error output to.
+	 *  @see                    GetErrorFileName, GetErrorFileOn, GetErrorString, GetErrorStringOn, GetErrorStringLine, GetErrorStringLineCount, SetErrorFileOn, SetErrorStringOn
+	 */
+	void                     SetErrorFileName(const char *filename);
+
+	/**
 	 *  Sets the error file switch on or off.  This switch controls whether or not
 	 *  error messages are written to the <B><I>phreeqc.id.err</I></B> (where id is obtained from \ref GetId) file.
 	 *  The initial setting is false.
@@ -619,6 +641,14 @@ public:
 	 *  @see                    GetErrorStringLine, GetErrorStringLineCount, GetErrorFileOn, OutputErrorString
 	 */
 	void                     SetErrorFileOn(bool bValue);
+
+	/**
+	 *  Sets the error string switch on or off.  This switch controls whether or not the data normally sent
+	 *  to the error file are stored in a buffer for retrieval.  The initial setting is false.
+	 *  @param bValue           If true, captures error output into a string buffer; if false, error output is not captured to a string buffer.
+	 *  @see                    GetErrorFileOn, GetErrorString, GetErrorStringOn, GetErrorStringLine, GetErrorStringLineCount, SetErrorFileOn
+	 */
+	void                     SetErrorStringOn(bool bValue);
 
 	/**
 	 *  Sets the name of the log file. The default value is <B><I>phreeqc.id.log</I></B>, where id is obtained from \ref GetId.
@@ -723,7 +753,7 @@ protected:
 	bool                       OutputFileOn;
 
 	bool                       LogFileOn;
-	bool                       ErrorOn;
+	bool                       ErrorFileOn;
 	bool                       DumpOn;
 
 	bool                       DumpStringOn;
@@ -736,6 +766,7 @@ protected:
 	std::string                LogString;
 	std::vector< std::string > LogLines;
 
+	bool                       ErrorStringOn;
 	IErrorReporter            *ErrorReporter;
 	std::string                ErrorString;
 	std::vector< std::string > ErrorLines;

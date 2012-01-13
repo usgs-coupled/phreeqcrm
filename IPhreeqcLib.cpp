@@ -187,6 +187,18 @@ GetDumpStringOn(int id)
 	return IPQ_BADINSTANCE;
 }
 
+const char*
+GetErrorFileName(int id)
+{
+	static const char empty[] = "";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetErrorFileName();
+	}
+	return empty;
+}
+
 int
 GetErrorFileOn(int id)
 {
@@ -236,6 +248,24 @@ GetErrorStringLineCount(int id)
 	if (IPhreeqcPtr)
 	{
 		return (int)IPhreeqcPtr->GetErrorStringLineCount();
+	}
+	return IPQ_BADINSTANCE;
+}
+
+int
+GetErrorStringOn(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		if (IPhreeqcPtr->GetErrorStringOn())
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 	return IPQ_BADINSTANCE;
 }
@@ -633,12 +663,36 @@ SetDumpStringOn(int id, int value)
 }
 
 IPQ_RESULT
+SetErrorFileName(int id, const char* filename)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetErrorFileName(filename);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
 SetErrorFileOn(int id, int value)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetErrorFileOn(value != 0);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
+SetErrorStringOn(int id, int value)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetErrorStringOn(value != 0);
 		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;

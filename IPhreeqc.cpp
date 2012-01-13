@@ -26,11 +26,12 @@ IPhreeqc::IPhreeqc(void)
 , SelectedOutputOn(false)
 , OutputFileOn(false)
 , LogFileOn(false)
-, ErrorOn(false)
+, ErrorFileOn(false)
 , DumpOn(false)
 , DumpStringOn(false)
 , OutputStringOn(false)
 , LogStringOn(false)
+, ErrorStringOn(true)
 , ErrorReporter(0)
 , WarningReporter(0)
 , SelectedOutput(0)
@@ -191,13 +192,23 @@ bool IPhreeqc::GetDumpStringOn(void)const
 	return this->DumpStringOn;
 }
 
+const char* IPhreeqc::GetErrorFileName(void)const
+{
+	return this->ErrorFileName.c_str();
+}
+
 bool IPhreeqc::GetErrorFileOn(void)const
 {
-	return this->ErrorOn;
+	return this->ErrorFileOn;
 }
 
 const char* IPhreeqc::GetErrorString(void)
 {
+	static const char err_msg[] = "GetErrorString: ErrorStringOn not set.\n";
+	if (!this->ErrorStringOn)
+	{
+		return err_msg;
+	}
 	this->ErrorString = ((CErrorReporter<std::ostringstream>*)this->ErrorReporter)->GetOS()->str();
 	return this->ErrorString.c_str();
 }
@@ -215,6 +226,11 @@ const char* IPhreeqc::GetErrorStringLine(int n)
 int IPhreeqc::GetErrorStringLineCount(void)const
 {
 	return (int)this->ErrorLines.size();
+}
+
+bool IPhreeqc::GetErrorStringOn(void)const
+{
+	return this->ErrorStringOn;
 }
 
 int IPhreeqc::GetId(void)const
@@ -648,9 +664,22 @@ void IPhreeqc::SetDumpStringOn(bool bValue)
 	this->DumpStringOn = bValue;
 }
 
+void IPhreeqc::SetErrorFileName(const char *filename)
+{
+	if (filename && ::strlen(filename))
+	{
+		this->ErrorFileName = filename;
+	}
+}
+
 void IPhreeqc::SetErrorFileOn(bool bValue)
 {
-	this->ErrorOn = bValue;
+	this->ErrorFileOn = bValue;
+}
+
+void IPhreeqc::SetErrorStringOn(bool bValue)
+{
+	this->ErrorStringOn = bValue;
 }
 
 void IPhreeqc::SetLogFileName(const char *filename)
@@ -1118,7 +1147,7 @@ void IPhreeqc::log_msg(const char * str)
 
 void IPhreeqc::error_msg(const char *str, bool stop)
 {
-	ASSERT(!(this->ErrorOn ^ (this->error_ostream != 0)));
+	ASSERT(!(this->ErrorFileOn ^ (this->error_ostream != 0)));
 	this->PHRQ_io::error_msg(str);
 
 	this->AddError(str);
@@ -1135,7 +1164,7 @@ void IPhreeqc::error_msg(const char *str, bool stop)
 
 void IPhreeqc::warning_msg(const char *str)
 {
-	ASSERT(!(this->ErrorOn ^ (this->error_ostream != 0)));
+	ASSERT(!(this->ErrorFileOn ^ (this->error_ostream != 0)));
 	this->PHRQ_io::warning_msg(str);
 
 	std::ostringstream oss;
@@ -1179,7 +1208,7 @@ void IPhreeqc::open_output_files(const char* sz_routine)
 			this->warning_msg(oss.str().c_str());
 		}
 	}
-	if (this->ErrorOn)
+	if (this->ErrorFileOn)
 	{
 		if (this->error_ostream != NULL)
 		{
