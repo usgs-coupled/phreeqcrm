@@ -542,25 +542,24 @@
         SetSelectedOutputFileName = SetSelectedOutputFileNameF(ID,FNAME)
       END FUNCTION SetSelectedOutputFileName
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION SetSelectedOutputFileOn(ID,SELECTED_ON)
+      FUNCTION SetSelectedOutputFileOn(ID,SELOUT_FILE_ON)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: SELECTED_ON
+		LOGICAL(KIND=4) :: SELOUT_FILE_ON
         INTEGER(KIND=4) :: SetSelectedOutputFileOn
         INTEGER(KIND=4) :: SetSelectedOutputFileOnF
         SetSelectedOutputFileOn = SetSelectedOutputFileOnF(ID,
-     &                     SELECTED_ON)
+     &                     SELOUT_FILE_ON)
       END FUNCTION SetSelectedOutputFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION GetSelectedOutputStringOn(ID)
+      FUNCTION SetSelectedOutputStringOn(ID,SELOUT_STRING_ON)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID
-		LOGICAL(KIND=4) :: GetSelectedOutputStringOn
-        INTEGER(KIND=4) :: GetSelectedOutputStringOnF
-        IF (GetSelectedOutputStringOnF(ID).EQ.0) THEN
-          GetSelectedOutputStringOn = .FALSE.
-        ELSE
-          GetSelectedOutputStringOn = .TRUE.
-        ENDIF
-      END FUNCTION GetSelectedOutputStringOn
+		LOGICAL(KIND=4) :: SELOUT_STRING_ON
+        INTEGER(KIND=4) :: SetSelectedOutputStringOn
+        INTEGER(KIND=4) :: SetSelectedOutputStringOnF
+        SetSelectedOutputStringOn = SetSelectedOutputStringOnF(ID,
+     &                     SELOUT_STRING_ON)   
+      END FUNCTION SetSelectedOutputStringOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
