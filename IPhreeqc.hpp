@@ -330,6 +330,15 @@ public:
 	int                      GetSelectedOutputColumnCount(void)const;
 
 	/**
+
+	 *  Retrieves the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
+	 *  The default value is <B><I>selected.id.out</I></B>, where id is obtained from \ref GetId.
+	 *  @return filename        The name of the file to write to.
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 */
+	const char*              GetSelectedOutputFileName(void)const;
+
+	/**
 	 *  Retrieves the selected-output file switch.
      *  @retval true            Output is written to the selected-output (<B><I>selected.id.out</I></B> if unspecified, where id is obtained from \ref GetId) file.
      *  @retval false           No output is written.
@@ -343,6 +352,41 @@ public:
 	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputValue, SetSelectedOutputFileOn
 	 */
 	int                      GetSelectedOutputRowCount(void)const;
+
+	/**
+	 *  Retrieves the string buffer containing <b>SELECTED_OUTPUT</b>.
+     *  @return                 A null terminated string containing <b>SELECTED_OUTPUT</b>.
+	 *  @pre
+	 *      \ref SetSelectedOutputStringOn must have been set to true in order to recieve <b>SELECTED_OUTPUT</b>.
+	 *  @see                    GetSelectedOutputStringLine, GetSelectedOutputFileOn, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 */
+	const char*              GetSelectedOutputString(void)const;
+
+	/**
+	 *  Retrieves the given selected output line.
+	 *  @param n                The zero-based index of the line to retrieve.
+	 *  @return                 A null terminated string containing the given line.
+	 *                          Returns an empty string if n is out of range.
+     *  @pre                    \ref SetSelectedOutputStringOn must have been set to true.
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 */
+	const char*              GetSelectedOutputStringLine(int n);
+
+	/**
+	 *  Retrieves the number of lines in the current selected output string buffer.
+	 *  @return                 The number of lines.
+     *  @pre                    \ref SetSelectedOutputStringOn must have been set to true.
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 */
+	int                      GetSelectedOutputStringLineCount(void)const;
+
+	/**
+	 *  Retrieves the current value of the selected output string switch.
+     *  @retval true            Output defined by the <B>SELECTED_OUTPUT</B> keyword is stored.
+     *  @retval false           No output is stored.
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 */
+	bool                     GetSelectedOutputStringOn(void)const;
 
 	/**
 	 *  Returns the \c VAR associated with the specified row and column.
@@ -700,6 +744,14 @@ public:
 	void                     SetOutputStringOn(bool bValue);
 
 	/**
+	 *  Sets the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
+	 *  The default value is <B><I>selected.id.out</I></B>, where id is obtained from \ref GetId.
+	 *  @param filename         The name of the file to write <B>SELECTED_OUTPUT</B> output to.
+	 *  @see                    GetSelectedOutputFileName, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputStringOn
+	 */
+	void                     SetSelectedOutputFileName(const char *filename);
+
+	/**
 	 *  Sets the selected-output file switch on or off.  This switch controls whether or not phreeqc writes output to
 	 *  the <B>SELECTED_OUTPUT</B> (<B><I>selected.id.out</I></B> if unspecified, where id is obtained from \ref GetId) file.
 	 *  The initial setting is false.
@@ -707,6 +759,16 @@ public:
 	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputRowCount, GetSelectedOutputValue
 	 */
 	void                     SetSelectedOutputFileOn(bool bValue);
+
+	/**
+	 *  Sets the selected output string switch on or off.  This switch controls whether or not the data normally sent
+	 *  to the selected output file are stored in a buffer for retrieval.  The initial setting is false.
+	 *  @param bValue           If true, captures the output defined by the <B>SELECTED_OUTPUT</B> keyword into a string buffer;
+	 *                          if false, output defined by the <B>SELECTED_OUTPUT</B> keyword is not captured to a string buffer.
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn
+	 */
+	void                     SetSelectedOutputStringOn(bool bValue);
+
 
 public:
 	// overrides
@@ -749,7 +811,7 @@ protected:
 	bool                       DatabaseLoaded;
 	bool                       ClearAccumulated;
 	bool                       UpdateComponents;
-	bool                       SelectedOutputOn;
+	bool                       SelectedOutputFileOn;
 	bool                       OutputFileOn;
 
 	bool                       LogFileOn;
@@ -783,11 +845,15 @@ protected:
 
 	std::list< std::string >   Components;
 
-	std::string                PunchFileName;
+	std::string                SelectedOutputFileName;
 	std::string                OutputFileName;
 	std::string                ErrorFileName;
 	std::string                LogFileName;
 	std::string                DumpFileName;
+
+	bool                       SelectedOutputStringOn;
+	std::string                SelectedOutputString;
+	std::vector< std::string > SelectedOutputLines;
 
 protected:
 	Phreeqc* PhreeqcPtr;

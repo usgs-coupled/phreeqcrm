@@ -447,6 +447,18 @@ GetSelectedOutputColumnCount(int id)
 	return IPQ_BADINSTANCE;
 }
 
+const char*
+GetSelectedOutputFileName(int id)
+{
+	static const char empty[] = "";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetSelectedOutputFileName();
+	}
+	return empty;
+}
+
 int
 GetSelectedOutputFileOn(int id)
 {
@@ -472,6 +484,59 @@ GetSelectedOutputRowCount(int id)
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->GetSelectedOutputRowCount();
+	}
+	return IPQ_BADINSTANCE;
+}
+
+const char*
+GetSelectedOutputString(int id)
+{
+	static const char empty[] = "";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetSelectedOutputString();
+	}
+	return empty;
+}
+
+const char*
+GetSelectedOutputStringLine(int id, int n)
+{
+	static const char err_msg[] = "GetSelectedOutputStringLine: Invalid instance id.\n";
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetSelectedOutputStringLine(n);
+	}
+	return err_msg;
+}
+
+int
+GetSelectedOutputStringLineCount(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetSelectedOutputStringLineCount();
+	}
+	return 0;
+}
+
+int
+GetSelectedOutputStringOn(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		if (IPhreeqcPtr->GetSelectedOutputStringOn())
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 	return IPQ_BADINSTANCE;
 }
@@ -771,12 +836,36 @@ SetOutputStringOn(int id, int value)
 }
 
 IPQ_RESULT
+SetSelectedOutputFileName(int id, const char* filename)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetSelectedOutputFileName(filename);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
 SetSelectedOutputFileOn(int id, int value)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetSelectedOutputFileOn(value != 0);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
+SetSelectedOutputStringOn(int id, int value)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetSelectedOutputStringOn(value != 0);
 		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;

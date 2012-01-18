@@ -154,6 +154,12 @@ GetDumpStringOnF(int *id)
 	return ::GetDumpStringOn(*id);
 }
 
+void
+GetErrorFileNameF(int *id, char* fname, unsigned int fname_length)
+{
+	padfstring(fname, ::GetErrorFileName(*id), fname_length);
+}
+
 int
 GetErrorFileOnF(int *id)
 {
@@ -174,6 +180,12 @@ void
 GetErrorStringLineF(int *id, int* n, char* line, unsigned int line_length)
 {
 	padfstring(line, ::GetErrorStringLine(*id, (*n) - 1), line_length);
+}
+
+int
+GetErrorStringOnF(int *id)
+{
+	return ::GetErrorStringOn(*id);
 }
 
 void 
@@ -242,10 +254,38 @@ GetSelectedOutputColumnCountF(int *id)
 	return ::GetSelectedOutputColumnCount(*id);
 }
 
+void
+GetSelectedOutputFileNameF(int *id, char* fname, unsigned int fname_length)
+{
+	padfstring(fname, ::GetSelectedOutputFileName(*id), fname_length);
+}
+
 int
 GetSelectedOutputFileOnF(int *id)
 {
 	return ::GetSelectedOutputFileOn(*id);
+}
+
+/*
+GetSelectedOutputStringF
+*/
+
+int
+GetSelectedOutputStringLineCountF(int *id)
+{
+	return ::GetSelectedOutputStringLineCount(*id);
+}
+
+void
+GetSelectedOutputStringLineF(int *id, int* n, char* line, unsigned int line_length)
+{
+	padfstring(line, ::GetSelectedOutputStringLine(*id, (*n) - 1), line_length);
+}
+
+int
+GetSelectedOutputStringOnF(int *id)
+{
+	return ::GetSelectedOutputStringOn(*id);
 }
 
 int
@@ -439,9 +479,32 @@ SetDumpStringOnF(int *id, int* dump_string_on)
 }
 
 IPQ_RESULT
-SetErrorFileOnF(int *id, int* error_on)
+SetErrorFileNameF(int *id, char* fname, unsigned int fname_length)
 {
-	return ::SetErrorFileOn(*id, *error_on);
+	char* cinput;
+
+	cinput = f2cstring(fname, fname_length);
+	if (!cinput)
+	{
+		::AddError(*id, "SetErrorFileName: Out of memory.\n");
+		return IPQ_OUTOFMEMORY;
+	}
+
+	IPQ_RESULT n = ::SetErrorFileName(*id, cinput);
+	free(cinput);
+	return n;
+}
+
+IPQ_RESULT
+SetErrorFileOnF(int *id, int* error_file_on)
+{
+	return ::SetErrorFileOn(*id, *error_file_on);
+}
+
+IPQ_RESULT
+SetErrorStringOnF(int *id, int* error_string_on)
+{
+	return ::SetErrorStringOn(*id, *error_string_on);
 }
 
 IPQ_RESULT
@@ -503,9 +566,32 @@ SetOutputStringOnF(int *id, int* output_string_on)
 }
 
 IPQ_RESULT
-SetSelOutFileOnF(int *id, int* sel_on)
+SetSelectedOutputFileNameF(int *id, char* fname, unsigned int fname_length)
+{
+	char* cinput;
+
+	cinput = f2cstring(fname, fname_length);
+	if (!cinput)
+	{
+		::AddError(*id, "SetSelectedOutputFileName: Out of memory.\n");
+		return IPQ_OUTOFMEMORY;
+	}
+
+	IPQ_RESULT n = ::SetSelectedOutputFileName(*id, cinput);
+	free(cinput);
+	return n;
+}
+
+IPQ_RESULT
+SetSelectedOutputFileOnF(int *id, int* sel_on)
 {
 	return ::SetSelectedOutputFileOn(*id, *sel_on);
+}
+
+IPQ_RESULT
+SetSelectedOutputStringOnF(int *id, int* dump_string_on)
+{
+	return ::SetSelectedOutputStringOn(*id, *dump_string_on);
 }
 
 #if defined(_WIN32) && !defined(_M_AMD64)
@@ -570,6 +656,10 @@ IPQ_DLL_EXPORT int  __stdcall GETDUMPSTRINGON(int *id)
 {
 	return GetDumpStringOnF(id);
 }
+IPQ_DLL_EXPORT void __stdcall GETERRORFILENAME(int *id, char *filename, unsigned int len)
+{
+	GetErrorFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  __stdcall GETERRORFILEON(int *id)
 {
 	return GetErrorFileOnF(id);
@@ -582,6 +672,10 @@ IPQ_DLL_EXPORT void __stdcall GETERRORSTRINGLINE(int *id, int *n, char* line, un
 IPQ_DLL_EXPORT int  __stdcall GETERRORSTRINGLINECOUNT(int *id)
 {
 	return GetErrorStringLineCountF(id);
+}
+IPQ_DLL_EXPORT int  __stdcall GETERRORSTRINGON(int *id)
+{
+	return GetErrorStringOnF(id);
 }
 IPQ_DLL_EXPORT void __stdcall GETLOGFILENAME(int *id, char *filename, unsigned int len)
 {
@@ -629,6 +723,10 @@ IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
 {
 	return GetSelectedOutputColumnCountF(id);
 }
+IPQ_DLL_EXPORT void __stdcall GETSELECTEDOUTPUTFILENAME(int *id, char *filename, unsigned int len)
+{
+	GetSelectedOutputFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTFILEON(int *id)
 {
 	return GetSelectedOutputFileOnF(id);
@@ -636,6 +734,19 @@ IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTFILEON(int *id)
 IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTROWCOUNT(int *id)
 {
 	return GetSelectedOutputRowCountF(id);
+}
+// GetSelectedOutputString
+IPQ_DLL_EXPORT void __stdcall GETSELECTEDOUTPUTSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetSelectedOutputStringLineF(id, n, line, line_length);
+}
+IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTSTRINGLINECOUNT(int *id)
+{
+	return GetSelectedOutputStringLineCountF(id);
+}
+IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTSTRINGON(int *id)
+{
+	return GetSelectedOutputStringOnF(id);
 }
 IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
 {
@@ -694,9 +805,17 @@ IPQ_DLL_EXPORT int  __stdcall SETDUMPSTRINGON(int *id, int *dump_string_on)
 {
 	return SetDumpStringOnF(id, dump_string_on);
 }
+IPQ_DLL_EXPORT int  __stdcall SETERRORFILENAME(int *id, char *filename, unsigned int len)
+{
+	return SetErrorFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  __stdcall SETERRORFILEON(int *id, int *error_on)
 {
 	return SetErrorFileOnF(id, error_on);
+}
+IPQ_DLL_EXPORT int  __stdcall SETERRORSTRINGON(int *id, int *error_string_on)
+{
+	return SetErrorStringOnF(id, error_string_on);
 }
 IPQ_DLL_EXPORT int  __stdcall SETLOGFILENAME(int *id, char *filename, unsigned int len)
 {
@@ -722,9 +841,17 @@ IPQ_DLL_EXPORT int  __stdcall SETOUTPUTSTRINGON(int *id, int *output_on)
 {
 	return SetOutputStringOnF(id, output_on);
 }
-IPQ_DLL_EXPORT int  __stdcall SETSELECTEDOUTPUTFILEON(int *id, int *selected_on)
+IPQ_DLL_EXPORT int  __stdcall SETSELECTEDOUTPUTFILENAME(int *id, char *filename, unsigned int len)
 {
-	return SetSelOutFileOnF(id, selected_on);
+	return SetSelectedOutputFileNameF(id, filename, len);
+}
+IPQ_DLL_EXPORT int  __stdcall SETSELECTEDOUTPUTFILEON(int *id, int *selout_file_on)
+{
+	return SetSelectedOutputFileOnF(id, selout_file_on);
+}
+IPQ_DLL_EXPORT int  __stdcall SETSELECTEDOUTPUTSTRINGON(int *id, int *selout_string_on)
+{
+	return SetSelectedOutputStringOnF(id, selout_string_on);
 }
 #if defined(__cplusplus)
 }

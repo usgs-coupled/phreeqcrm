@@ -23,7 +23,7 @@ IPhreeqc::IPhreeqc(void)
 : DatabaseLoaded(false)
 , ClearAccumulated(false)
 , UpdateComponents(true)
-, SelectedOutputOn(false)
+, SelectedOutputFileOn(false)
 , OutputFileOn(false)
 , LogFileOn(false)
 , ErrorFileOn(false)
@@ -35,6 +35,7 @@ IPhreeqc::IPhreeqc(void)
 , ErrorReporter(0)
 , WarningReporter(0)
 , SelectedOutput(0)
+, SelectedOutputStringOn(false)
 , PhreeqcPtr(0)
 , input_file(0)
 , database_file(0)
@@ -54,7 +55,7 @@ IPhreeqc::IPhreeqc(void)
 	std::pair<std::map<size_t, IPhreeqc*>::iterator, bool> pr = IPhreeqc::Instances.insert(instance);
 
 	::sprintf(buffer, PUNCH_FILENAME_FORMAT,  this->Index);
-	this->PunchFileName = buffer;
+	this->SelectedOutputFileName = buffer;
 
 	::sprintf(buffer, OUTPUT_FILENAME_FORMAT, this->Index);
 	this->OutputFileName = buffer;
@@ -323,14 +324,49 @@ int IPhreeqc::GetSelectedOutputColumnCount(void)const
 	return (int)this->SelectedOutput->GetColCount();
 }
 
+const char* IPhreeqc::GetSelectedOutputFileName(void)const
+{
+	return this->SelectedOutputFileName.c_str();
+}
+
 bool IPhreeqc::GetSelectedOutputFileOn(void)const
 {
-	return this->SelectedOutputOn;
+	return this->SelectedOutputFileOn;
 }
 
 int IPhreeqc::GetSelectedOutputRowCount(void)const
 {
 	return (int)this->SelectedOutput->GetRowCount();
+}
+
+const char* IPhreeqc::GetSelectedOutputString(void)const
+{
+	static const char err_msg[] = "GetSelectedOutputString: SelectedOutputStringOn not set.\n";
+	if (!this->SelectedOutputStringOn)
+	{
+		return err_msg;
+	}
+	return this->SelectedOutputString.c_str();
+}
+
+const char* IPhreeqc::GetSelectedOutputStringLine(int n)
+{
+	static const char empty[] = "";
+	if (n < 0 || n >= this->GetSelectedOutputStringLineCount())
+	{
+		return empty;
+	}
+	return this->SelectedOutputLines[n].c_str();
+}
+
+int IPhreeqc::GetSelectedOutputStringLineCount(void)const
+{
+	return (int)this->SelectedOutputLines.size();
+}
+
+bool IPhreeqc::GetSelectedOutputStringOn(void)const
+{
+	return this->SelectedOutputStringOn;
 }
 
 VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
@@ -718,9 +754,22 @@ void IPhreeqc::SetOutputFileOn(bool bValue)
 	this->OutputFileOn = bValue;
 }
 
+void IPhreeqc::SetSelectedOutputFileName(const char *filename)
+{
+	if (filename && ::strlen(filename))
+	{
+		this->SelectedOutputFileName = filename;
+	}
+}
+
 void IPhreeqc::SetSelectedOutputFileOn(bool bValue)
 {
-	this->SelectedOutputOn = bValue;
+	this->SelectedOutputFileOn = bValue;
+}
+
+void IPhreeqc::SetSelectedOutputStringOn(bool bValue)
+{
+	this->SelectedOutputStringOn = bValue;
 }
 
 void IPhreeqc::UnLoadDatabase(void)
@@ -747,6 +796,8 @@ void IPhreeqc::UnLoadDatabase(void)
 	//
 	ASSERT(this->SelectedOutput);
 	this->SelectedOutput->Clear();
+	this->SelectedOutputString.clear();
+	this->SelectedOutputLines.clear();
 
 	// clear dump string
 	//
@@ -887,7 +938,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			// TRUE ???
 			//
 			//
-			if (!this->SelectedOutputOn)
+			if (!this->SelectedOutputFileOn)
 			{
 				ASSERT(!this->punch_ostream);
 			}
@@ -904,14 +955,14 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			{
 				if (this->PhreeqcPtr->punch.new_def == FALSE)
 				{
-					if (this->SelectedOutputOn && !this->punch_ostream)
+					if (this->SelectedOutputFileOn && !this->punch_ostream)
 					{
 						//
 						// LoadDatabase
 						// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
 						// another do_run without SELECTED_OUTPUT
 						//
-						std::string filename = this->PunchFileName;
+						std::string filename = this->SelectedOutputFileName;
 						if (!this->punch_open(filename.c_str()))
 						{
 							std::ostringstream oss;
@@ -928,7 +979,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 				}
 				else
 				{
-					if (this->SelectedOutputOn && !this->punch_ostream)
+					if (this->SelectedOutputFileOn && !this->punch_ostream)
 					{
 						// This is a special case which could not occur in
 						// phreeqc
@@ -937,7 +988,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 						// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
 						// another do_run with SELECTED_OUTPUT
 						//
-						std::string filename = this->PunchFileName;
+						std::string filename = this->SelectedOutputFileName;
 						if (!this->punch_open(filename.c_str()))
 						{
 							std::ostringstream oss;
@@ -955,7 +1006,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			}
 		}
 
-		if (!this->SelectedOutputOn) ASSERT(!this->punch_ostream);
+		if (!this->SelectedOutputFileOn) ASSERT(!this->punch_ostream);
 		/* the converse is not necessarily true */
 
 		this->PhreeqcPtr->n_user_punch_index = -1;
@@ -1106,6 +1157,17 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			this->OutputLines.push_back(line);
 		}
 	}
+
+	if (this->SelectedOutputStringOn)
+	{
+		// output lines
+		std::istringstream iss(this->SelectedOutputString);
+		std::string line;
+		while (std::getline(iss, line))
+		{
+			this->SelectedOutputLines.push_back(line);
+		}
+	}
 }
 
 void IPhreeqc::update_errors(void)
@@ -1189,6 +1251,11 @@ void IPhreeqc::screen_msg(const char *err_str)
 
 void IPhreeqc::punch_msg(const char *str)
 {
+	if (this->SelectedOutputStringOn && this->punch_on)
+	{
+		this->SelectedOutputString += str;
+	}
+	ASSERT(!(this->SelectedOutputFileOn ^ (this->punch_ostream != 0)));
 	this->PHRQ_io::punch_msg(str);
 }
 
@@ -1299,11 +1366,11 @@ bool IPhreeqc::punch_open(const char *file_name, std::ios_base::openmode mode)
 {
 	if (file_name && this->PhreeqcPtr->have_punch_name)
 	{
-		this->PunchFileName = file_name;
+		this->SelectedOutputFileName = file_name;
 	}
-	if (this->SelectedOutputOn)
+	if (this->SelectedOutputFileOn)
 	{
-		return this->PHRQ_io::punch_open(this->PunchFileName.c_str(), mode);
+		return this->PHRQ_io::punch_open(this->SelectedOutputFileName.c_str(), mode);
 	}
 	return true;
 }

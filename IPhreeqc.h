@@ -762,6 +762,27 @@ extern "C" {
 
 
 /**
+ *  Retrieves the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
+ *  The default value is <B><I>selected.id.out</I></B>.
+ *  @param id               The instance id returned from \ref CreateIPhreeqc.
+ *  @return filename        The name of the file to write <B>SELECTED_OUTPUT</B> output to.
+ *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  SUBROUTINE GetSelectedOutputFileName(ID,FILENAME)
+ *    INTEGER(KIND=4),   INTENT(IN)   :: ID
+ *    CHARACTER(LEN=*),  INTENT(OUT)  :: FILENAME
+ *  END SUBROUTINE GetSelectedOutputFileName
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT const char* GetSelectedOutputFileName(int id);
+
+
+/**
  *  Retrieves the selected-output file switch.
  *  @param id                    The instance id returned from \ref CreateIPhreeqc.
  *  @return                      Non-zero if output is written to the selected-output (<B><I>selected.id.out</I></B> if unspecified) file, 0 (zero) otherwise.
@@ -779,6 +800,95 @@ extern "C" {
  *  @endhtmlonly
  */
 	IPQ_DLL_EXPORT int         GetSelectedOutputFileOn(int id);
+
+
+/**
+ *  Retrieves the string buffer containing <b>SELECTED_OUTPUT</b>.
+ *  @param id            The instance id returned from \ref CreateIPhreeqc.
+ *  @return              A null terminated string containing <b>SELECTED_OUTPUT</b>.
+ *  @pre                 \ref SetSelectedOutputStringOn must have been set to true (non-zero) in order to recieve <b>SELECTED_OUTPUT</b>.
+ *  @see                 GetSelectedOutputFileOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn, GetSelectedOutputStringOn, SetSelectedOutputStringOn
+ *  @par Fortran90 Interface:
+ *  Not implemented. (see \ref GetSelectedOutputStringLineCount, \ref GetSelectedOutputStringLine)
+ *
+ *  \anchor GetSelectedOutputString_c
+ *  @par  C Example:
+ *  \include GetSelectedOutputString.c
+ */
+	IPQ_DLL_EXPORT const char* GetSelectedOutputString(int id);
+
+
+/**
+ *  Retrieves the given selected output line.
+ *  @param id            The instance id returned from \ref CreateIPhreeqc.
+ *  @param n             The zero-based index of the line to retrieve.
+ *  @return              A null terminated string containing the given line.
+ *                       Returns an empty string if n is out of range.
+ *  @pre                 \ref SetSelectedOutputStringOn must have been set to true (non-zero).
+ *  @see                 GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  (Note: N is one-based for the Fortran interface.)
+ *  <CODE>
+ *  <PRE>
+ *  SUBROUTINE GetSelectedOutputStringLine(ID,N,LINE)
+ *    INTEGER(KIND=4),   INTENT(IN)   :: ID
+ *    INTEGER(KIND=4),   INTENT(IN)   :: N
+ *    CHARACTER(LEN=*),  INTENT(OUT)  :: LINE
+ *  END SUBROUTINE GetSelectedOutputStringLine
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ *
+ *  \anchor GetSelectedOutputStringLine_f90
+ *  @par  Fortran90 Example:
+ *  \include F90GetSelectedOutputStringLine.f90
+ */
+	IPQ_DLL_EXPORT const char* GetSelectedOutputStringLine(int id, int n);
+
+
+/**
+ *  Retrieves the number of lines in the current selected output string buffer.
+ *  @param id            The instance id returned from \ref CreateIPhreeqc.
+ *  @return              The number of lines.
+ *  @pre                 \ref SetSelectedOutputStringOn must have been set to true (non-zero).
+ *  @see                 GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION GetSelectedOutputStringLineCount(ID)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    INTEGER(KIND=4)               :: GetSelectedOutputStringLineCount
+ *  END FUNCTION GetSelectedOutputStringLineCount
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ *
+ *  @par Fortran90 Example:
+ *  see \ref GetSelectedOutputStringLine_f90 "GetSelectedOutputStringLine"
+ */
+	IPQ_DLL_EXPORT int         GetSelectedOutputStringLineCount(int id);
+
+
+/**
+ *  Retrieves the current value of the selected output string switch.
+ *  @param id            The instance id returned from \ref CreateIPhreeqc.
+ *  @return              Non-zero if output defined by the <B>SELECTED_OUTPUT</B> keyword is stored, 0 (zero) otherwise.
+ *  @see                 GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION GetSelectedOutputStringOn(ID)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    LOGICAL(KIND=4)               :: GetSelectedOutputStringOn
+ *  END FUNCTION GetSelectedOutputStringOn
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT int         GetSelectedOutputStringOn(int id);
 
 
 /**
@@ -1560,6 +1670,30 @@ Headings
 
 
 /**
+ *  Sets the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
+ *  The default value is <B><I>selected.id.out</I></B>.
+ *  @param id               The instance id returned from \ref CreateIPhreeqc.
+ *  @param filename         The name of the file to write <B>SELECTED_OUTPUT</B> output to.
+ *  @retval IPQ_OK          Success.
+ *  @retval IPQ_BADINSTANCE The given id is invalid.
+ *  @see                    GetSelectedOutputFileName, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION SetSelectedOutputFileName(ID,FILENAME)
+ *    INTEGER(KIND=4),   INTENT(IN)   :: ID
+ *    CHARACTER(LEN=*),  INTENT(OUT)  :: FILENAME
+ *    INTEGER(KIND=4)                 :: SetSelectedOutputFileName
+ *  END FUNCTION SetSelectedOutputFileName
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT IPQ_RESULT  SetSelectedOutputFileName(int id, const char* filename);
+
+
+/**
  *  Sets the selected-output file switch on or off.  This switch controls whether or not phreeqc writes output to
  *  the <B>SELECTED_OUTPUT</B> (<B><I>selected.id.out</I></B> if unspecified) file. The initial setting after calling \ref CreateIPhreeqc is off.
  *  @param id               The instance id returned from \ref CreateIPhreeqc.
@@ -1582,6 +1716,36 @@ Headings
  */
 	IPQ_DLL_EXPORT IPQ_RESULT  SetSelectedOutputFileOn(int id, int sel_on);
 
+/**
+ *  Sets the selected output string switch on or off.  This switch controls whether or not the data normally sent
+ *  to the selected output file are stored in a buffer for retrieval.  The initial setting after calling
+ *  \ref CreateIPhreeqc is off.
+ *  @param id                   The instance id returned from \ref CreateIPhreeqc.
+ *  @param dump_string_on       If non-zero, captures the output defined by the <B>SELECTED_OUTPUT</B> keyword into a string buffer;
+ *                              if zero, output defined by the <B>SELECTED_OUTPUT</B> keyword is not captured to a string buffer.
+ *  @retval IPQ_OK              Success.
+ *  @retval IPQ_BADINSTANCE     The given id is invalid.
+ *  @see                        GetSelectedOutputFileOn, GetSelectedOutputStringOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION SetSelectedOutputStringOn(ID,SELECTED_OUTPUT_STRING_ON)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    LOGICAL(KIND=4),  INTENT(IN)  :: SELECTED_OUTPUT_STRING_ON
+ *    INTEGER(KIND=4)               :: SetSelectedOutputStringOn
+ *  END FUNCTION SetSelectedOutputStringOn
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ *
+ *  @par C Example:
+ *  see \ref GetSelectedOutputString_c "GetSelectedOutputString"
+ *
+ *  @par Fortran90 Example:
+ *  see \ref GetSelectedOutputStringLine_f90 "GetSelectedOutputStringLine"
+ */
+	IPQ_DLL_EXPORT IPQ_RESULT  SetSelectedOutputStringOn(int id, int dump_string_on);
 
 // TODO int RunWithCallback(PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie, int output_on, int error_on, int log_on, int selected_output_on);
 

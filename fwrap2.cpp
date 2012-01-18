@@ -64,6 +64,10 @@ IPQ_DLL_EXPORT int  GETDUMPSTRINGON(int *id)
 {
 	return GetDumpStringOnF(id);
 }
+IPQ_DLL_EXPORT void GETERRORFILENAME(int *id, char *filename, unsigned int len)
+{
+	GetErrorFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  GETERRORFILEON(int *id)
 {
 	return GetErrorFileOnF(id);
@@ -75,6 +79,10 @@ IPQ_DLL_EXPORT void GETERRORSTRINGLINE(int *id, int *n, char* line, unsigned int
 IPQ_DLL_EXPORT int  GETERRORSTRINGLINECOUNT(int *id)
 {
 	return GetErrorStringLineCountF(id);
+}
+IPQ_DLL_EXPORT int  GETERRORSTRINGON(int *id)
+{
+	return GetErrorStringOnF(id);
 }
 IPQ_DLL_EXPORT void GETLOGFILENAME(int *id, char *filename, unsigned int len)
 {
@@ -122,6 +130,10 @@ IPQ_DLL_EXPORT int  GETSELECTEDOUTPUTCOLUMNCOUNT(int *id)
 {
 	return GetSelectedOutputColumnCountF(id);
 }
+IPQ_DLL_EXPORT void GETSELECTEDOUTPUTFILENAME(int *id, char *filename, unsigned int len)
+{
+	GetSelectedOutputFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  GETSELECTEDOUTPUTFILEON(int *id)
 {
 	return GetSelectedOutputFileOnF(id);
@@ -129,6 +141,19 @@ IPQ_DLL_EXPORT int  GETSELECTEDOUTPUTFILEON(int *id)
 IPQ_DLL_EXPORT int  GETSELECTEDOUTPUTROWCOUNT(int *id)
 {
 	return GetSelectedOutputRowCountF(id);
+}
+// GetSelectedOutputString
+IPQ_DLL_EXPORT void GETSELECTEDOUTPUTSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)
+{
+	GetSelectedOutputStringLineF(id, n, line, line_length);
+}
+IPQ_DLL_EXPORT int  GETSELECTEDOUTPUTSTRINGLINECOUNT(int *id)
+{
+	return GetSelectedOutputStringLineCountF(id);
+}
+IPQ_DLL_EXPORT int  GETSELECTEDOUTPUTSTRINGON(int *id)
+{
+	return GetSelectedOutputStringOnF(id);
 }
 IPQ_DLL_EXPORT int  GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
 {
@@ -186,9 +211,17 @@ IPQ_DLL_EXPORT int  SETDUMPSTRINGON(int *id, int *dump_string_on)
 {
 	return SetDumpStringOnF(id, dump_string_on);
 }
+IPQ_DLL_EXPORT int  SETERRORFILENAME(int *id, char *filename, unsigned int len)
+{
+	return SetErrorFileNameF(id, filename, len);
+}
 IPQ_DLL_EXPORT int  SETERRORFILEON(int *id, int *error_on)
 {
 	return SetErrorFileOnF(id, error_on);
+}
+IPQ_DLL_EXPORT int  SETERRORSTRINGON(int *id, int *error_string_on)
+{
+	return SetErrorStringOnF(id, error_string_on);
 }
 IPQ_DLL_EXPORT int  SETLOGFILENAME(int *id, char *filename, unsigned int len)
 {
@@ -214,9 +247,17 @@ IPQ_DLL_EXPORT int  SETOUTPUTSTRINGON(int *id, int *output_on)
 {
 	return SetOutputStringOnF(id, output_on);
 }
-IPQ_DLL_EXPORT int  SETSELECTEDOUTPUTFILEON(int *id, int *selected_on)
+IPQ_DLL_EXPORT int  SETSELECTEDOUTPUTFILENAME(int *id, char *filename, unsigned int len)
 {
-	return SetSelOutFileOnF(id, selected_on);
+	return SetSelectedOutputFileNameF(id, filename, len);
+}
+IPQ_DLL_EXPORT int  SETSELECTEDOUTPUTFILEON(int *id, int *selout_file_on)
+{
+	return SetSelectedOutputFileOnF(id, selout_file_on);
+}
+IPQ_DLL_EXPORT int  SETSELECTEDOUTPUTSTRINGON(int *id, int *selout_string_on)
+{
+	return SetSelectedOutputStringOnF(id, selout_string_on);
 }
 
 #if defined(__cplusplus)
