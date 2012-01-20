@@ -688,7 +688,7 @@ public:
 
 	/**
 	 *  Sets the error string switch on or off.  This switch controls whether or not the data normally sent
-	 *  to the error file are stored in a buffer for retrieval.  The initial setting is false.
+	 *  to the error file are stored in a buffer for retrieval.  The initial setting is true.
 	 *  @param bValue           If true, captures error output into a string buffer; if false, error output is not captured to a string buffer.
 	 *  @see                    GetErrorFileOn, GetErrorString, GetErrorStringOn, GetErrorStringLine, GetErrorStringLineCount, SetErrorFileOn
 	 */
@@ -833,6 +833,7 @@ protected:
 	std::string                ErrorString;
 	std::vector< std::string > ErrorLines;
 
+	bool                       WarningStringOn;
 	IErrorReporter            *WarningReporter;
 	std::string                WarningString;
 	std::vector< std::string > WarningLines;

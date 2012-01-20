@@ -33,6 +33,7 @@ IPhreeqc::IPhreeqc(void)
 , LogStringOn(false)
 , ErrorStringOn(true)
 , ErrorReporter(0)
+, WarningStringOn(true)
 , WarningReporter(0)
 , SelectedOutput(0)
 , SelectedOutputStringOn(false)
@@ -1212,10 +1213,13 @@ void IPhreeqc::error_msg(const char *str, bool stop)
 	ASSERT(!(this->ErrorFileOn ^ (this->error_ostream != 0)));
 	this->PHRQ_io::error_msg(str);
 
-	this->AddError(str);
+	if (this->ErrorStringOn && this->error_on)
+	{
+		this->AddError(str);
+	}
 	if (stop)
 	{
-		if (this->error_ostream)
+		if (this->error_ostream && this->error_on)
 		{
 			(*this->error_ostream) << "Stopping.\n";
 			this->error_ostream->flush();
@@ -1231,7 +1235,10 @@ void IPhreeqc::warning_msg(const char *str)
 
 	std::ostringstream oss;
 	oss << str << std::endl;
-	this->AddWarning(oss.str().c_str());
+	if (this->WarningStringOn)
+	{
+		this->AddWarning(oss.str().c_str());
+	}
 }
 
 void IPhreeqc::output_msg(const char * str)

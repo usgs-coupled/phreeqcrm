@@ -1482,7 +1482,7 @@ Headings
 /**
  *  Sets the error string switch on or off.  This switch controls whether or not the data normally sent
  *  to the error file are stored in a buffer for retrieval.  The initial setting after calling
- *  \ref CreateIPhreeqc is off.
+ *  \ref CreateIPhreeqc is on.
  *  @param id                   The instance id returned from \ref CreateIPhreeqc.
  *  @param output_string_on     If non-zero, captures the error output into a string buffer;
  *                              if zero, error output is not captured to a string buffer.
