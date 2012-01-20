@@ -1349,18 +1349,36 @@ int IPhreeqc::close_output_files(void)
 void IPhreeqc::fpunchf(const char *name, const char *format, double d)
 {
 	this->PHRQ_io::fpunchf(name, format, d);
+	if (this->SelectedOutputStringOn && this->punch_on)
+	{
+		char token[256];
+		sprintf(token, format, d);
+		this->SelectedOutputString += token;
+	}
 	this->SelectedOutput->PushBackDouble(name, d);
 }
 
 void IPhreeqc::fpunchf(const char *name, const char *format, char *s)
 {
 	this->PHRQ_io::fpunchf(name, format, s);
+	if (this->SelectedOutputStringOn && this->punch_on)
+	{
+		char token[256];
+		sprintf(token, format, s);
+		this->SelectedOutputString += token;
+	}
 	this->SelectedOutput->PushBackString(name, s);
 }
 
 void IPhreeqc::fpunchf(const char *name, const char *format, int i)
 {
 	this->PHRQ_io::fpunchf(name, format, i);
+	if (this->SelectedOutputStringOn && this->punch_on)
+	{
+		char token[256];
+		sprintf(token, format, i);
+		this->SelectedOutputString += token;
+	}
 	this->SelectedOutput->PushBackLong(name, (long)i);
 }
 
