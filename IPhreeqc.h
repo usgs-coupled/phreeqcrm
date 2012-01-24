@@ -420,6 +420,10 @@ extern "C" {
  *  @see                 GetErrorFileOn, GetErrorStringLine, GetErrorStringLineCount, OutputErrorString, SetErrorFileOn
  *  @par Fortran90 Interface:
  *  Not implemented. (see \ref GetErrorStringLineCount, \ref GetErrorStringLine, \ref OutputErrorString)
+ *
+ *  \anchor GetErrorString_c
+ *  @par  C Example:
+ *  \include GetErrorString.c
  */
 	IPQ_DLL_EXPORT const char* GetErrorString(int id);
 
@@ -443,6 +447,10 @@ extern "C" {
  *  </PRE>
  *  </CODE>
  *  @endhtmlonly
+ *
+ *  \anchor GetErrorStringLine_f90
+ *  @par  Fortran90 Example:
+ *  \include F90GetErrorStringLine.f90
  */
 	IPQ_DLL_EXPORT const char* GetErrorStringLine(int id, int n);
 
@@ -537,9 +545,9 @@ extern "C" {
  *  @par Fortran90 Interface:
  *  Not implemented. (see \ref GetLogStringLineCount, \ref GetLogStringLine)
  *
- *  \anchor GetOutputString_c
+ *  \anchor GetLogString_c
  *  @par  C Example:
- *  \include GetOutputString.c
+ *  \include GetLogString.c
  */
 	IPQ_DLL_EXPORT const char* GetLogString(int id);
 
@@ -1484,7 +1492,7 @@ Headings
  *  to the error file are stored in a buffer for retrieval.  The initial setting after calling
  *  \ref CreateIPhreeqc is on.
  *  @param id                   The instance id returned from \ref CreateIPhreeqc.
- *  @param output_string_on     If non-zero, captures the error output into a string buffer;
+ *  @param error_string_on      If non-zero, captures the error output into a string buffer;
  *                              if zero, error output is not captured to a string buffer.
  *  @retval IPQ_OK              Success.
  *  @retval IPQ_BADINSTANCE     The given id is invalid.
@@ -1563,7 +1571,7 @@ Headings
  *  to the log file are stored in a buffer for retrieval.  The initial setting after calling
  *  \ref CreateIPhreeqc is off.
  *  @param id                   The instance id returned from \ref CreateIPhreeqc.
- *  @param output_string_on     If non-zero, captures the log output into a string buffer;
+ *  @param log_string_on        If non-zero, captures the log output into a string buffer;
  *                              if zero, log output is not captured to a string buffer.
  *  @retval IPQ_OK              Success.
  *  @retval IPQ_BADINSTANCE     The given id is invalid.
