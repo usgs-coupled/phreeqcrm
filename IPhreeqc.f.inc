@@ -64,6 +64,7 @@ C
       INTEGER(KIND=4) GetSelectedOutputColumnCount
       LOGICAL(KIND=4) GetSelectedOutputFileOn
       INTEGER(KIND=4) GetSelectedOutputRowCount
+      INTEGER(KIND=4) GetSelectedOutputStringLineCount
       INTEGER(KIND=4) GetSelectedOutputValue
       INTEGER(KIND=4) GetWarningStringLine
       INTEGER(KIND=4) GetWarningStringLineCount

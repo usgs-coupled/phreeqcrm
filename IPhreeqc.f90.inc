@@ -255,6 +255,14 @@
 
 
        INTERFACE
+        FUNCTION GetSelectedOutputStringLineCount(ID)
+         INTEGER(KIND=4),  INTENT(IN)  :: ID
+         INTEGER(KIND=4)               :: GetSelectedOutputStringLineCount
+        END FUNCTION GetSelectedOutputStringLineCount
+       END INTERFACE
+       
+       
+       INTERFACE
         FUNCTION GetSelectedOutputValue(ID,ROW,COL,VTYPE,DVALUE,SVALUE)
          INTEGER(KIND=4),  INTENT(IN)  :: ID
          INTEGER(KIND=4),  INTENT(IN)  :: ROW
