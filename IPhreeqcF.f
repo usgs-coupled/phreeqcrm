@@ -486,7 +486,7 @@
         INTEGER(KIND=4) :: SetErrorStringOn
         INTEGER(KIND=4) :: SetErrorStringOnF
         SetErrorStringOn = SetErrorStringOnF(ID,ERROR_STRING_ON)
-      END FUNCTION SetDumpStringOn
+      END FUNCTION SetErrorStringOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION SetLogFileName(ID,FNAME)
         IMPLICIT NONE
