@@ -479,6 +479,15 @@
         SetErrorFileOn = SetErrorFileOnF(ID,ERROR_ON)
       END FUNCTION SetErrorFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetErrorStringOn(ID,ERROR_STRING_ON)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+		LOGICAL(KIND=4) :: ERROR_STRING_ON
+        INTEGER(KIND=4) :: SetErrorStringOn
+        INTEGER(KIND=4) :: SetErrorStringOnF
+        SetErrorStringOn = SetErrorStringOnF(ID,ERROR_STRING_ON)
+      END FUNCTION SetDumpStringOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION SetLogFileName(ID,FNAME)
         IMPLICIT NONE
         INTEGER(KIND=4)  :: ID

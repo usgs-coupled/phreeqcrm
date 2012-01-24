@@ -377,11 +377,20 @@
 
 
        INTERFACE
-        FUNCTION SetErrorFileOn(ID,ERR_ON)
+        FUNCTION SetErrorFileOn(ID,ERR_FILE_ON)
          INTEGER(KIND=4),  INTENT(IN) :: ID
-         LOGICAL(KIND=4),  INTENT(IN) :: ERR_ON
+         LOGICAL(KIND=4),  INTENT(IN) :: ERR_FILE_ON
          INTEGER(KIND=4)              :: SetErrorFileOn
         END FUNCTION SetErrorFileOn
+       END INTERFACE
+
+
+       INTERFACE
+        FUNCTION SetErrorStringOn(ID,ERR_STRING_ON)
+         INTEGER(KIND=4),  INTENT(IN) :: ID
+         LOGICAL(KIND=4),  INTENT(IN) :: ERR_ON
+         INTEGER(KIND=4)              :: SetErrorStringOn
+        END FUNCTION SetErrorStringOn
        END INTERFACE
 
 
