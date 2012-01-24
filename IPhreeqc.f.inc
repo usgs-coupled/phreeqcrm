@@ -85,3 +85,4 @@ C
       INTEGER(KIND=4) SetOutputFileOn
       INTEGER(KIND=4) SetOutputStringOn
       INTEGER(KIND=4) SetSelectedOutputFileOn
+      INTEGER(KIND=4) SetSelectedOutputStringOn

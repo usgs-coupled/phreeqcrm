@@ -463,3 +463,12 @@
          INTEGER(KIND=4)              :: SetSelectedOutputFileOn
         END FUNCTION SetSelectedOutputFileOn
        END INTERFACE
+
+
+       INTERFACE
+        FUNCTION SetSelectedOutputStringOn(ID,SEL_ON)
+         INTEGER(KIND=4),  INTENT(IN) :: ID
+         LOGICAL(KIND=4),  INTENT(IN) :: SEL_ON
+         INTEGER(KIND=4)              :: SetSelectedOutputStringOn
+        END FUNCTION SetSelectedOutputStringOn
+       END INTERFACE

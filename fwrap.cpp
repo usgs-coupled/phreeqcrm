@@ -589,9 +589,9 @@ SetSelectedOutputFileOnF(int *id, int* sel_on)
 }
 
 IPQ_RESULT
-SetSelectedOutputStringOnF(int *id, int* dump_string_on)
+SetSelectedOutputStringOnF(int *id, int* selected_output_string_on)
 {
-	return ::SetSelectedOutputStringOn(*id, *dump_string_on);
+	return ::SetSelectedOutputStringOn(*id, *selected_output_string_on);
 }
 
 #if defined(_WIN32) && !defined(_M_AMD64)
