@@ -858,6 +858,8 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 	this->LogLines.clear();
 	this->OutputString.clear();
 	this->OutputLines.clear();
+	this->SelectedOutputString.clear();
+	this->SelectedOutputLines.clear();
 
 /*
  *   set read callback
@@ -887,9 +889,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		::sprintf(token, "Reading input data for simulation %d.", this->PhreeqcPtr->simulation);
 
 		int save_punch_in = this->PhreeqcPtr->punch.in;
-
-		//{{
-		//}}
 
 		this->PhreeqcPtr->dup_print(token, TRUE);
 		if (this->PhreeqcPtr->read_input() == EOF)
@@ -1077,6 +1076,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		if (this->DumpOn)
 		{
 			this->PhreeqcPtr->dump_entities();
+			this->DumpFileName = this->PhreeqcPtr->dump_info.Get_file_name();
 		}
 		if (this->DumpStringOn)
 		{
