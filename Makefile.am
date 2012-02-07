@@ -73,6 +73,8 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/SSassemblage.h\
 	phreeqcpp/SS.cxx\
 	phreeqcpp/SS.h\
+	phreeqcpp/SScomp.cxx\
+	phreeqcpp/SScomp.h\
 	phreeqcpp/StorageBin.cxx\
 	phreeqcpp/StorageBin.h\
 	phreeqcpp/StorageBinList.cpp\
