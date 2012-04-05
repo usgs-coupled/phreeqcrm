@@ -67,8 +67,6 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/Solution.h\
 	phreeqcpp/SolutionIsotope.cxx\
 	phreeqcpp/SolutionIsotope.h\
-	phreeqcpp/SolutionIsotopeList.cxx\
-	phreeqcpp/SolutionIsotopeList.h\
 	phreeqcpp/SSassemblage.cxx\
 	phreeqcpp/SSassemblage.h\
 	phreeqcpp/SS.cxx\
