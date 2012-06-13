@@ -1,6 +1,6 @@
-C
-C     GetSelectedOutputValue TYPES
-C      
+!
+!     GetSelectedOutputValue TYPES
+!      
       INTEGER :: TT_EMPTY
       PARAMETER (TT_EMPTY=0)
           
@@ -13,9 +13,9 @@ C
       INTEGER :: TT_STRING
       PARAMETER (TT_STRING=4)
           
-C
-C     IPQ_RESULT TYPES
-C      
+!
+!     IPQ_RESULT TYPES
+!      
           
       INTEGER :: IPQ_OK
       PARAMETER (IPQ_OK=0)
@@ -38,9 +38,9 @@ C
       INTEGER :: IPQ_BADINSTANCE
       PARAMETER (IPQ_BADINSTANCE=-6)
           
-C
-C     function prototypes
-C      
+!
+!     function prototypes
+!      
           
       INTEGER(KIND=4) AccumulateLine
       INTEGER(KIND=4) AddError
