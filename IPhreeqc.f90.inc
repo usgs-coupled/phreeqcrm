@@ -257,7 +257,7 @@
        INTERFACE
         FUNCTION GetSelectedOutputStringLineCount(ID)
          INTEGER(KIND=4),  INTENT(IN)  :: ID
-         INTEGER(KIND=4)               :: GetSelectedOutputStringLineCount
+         INTEGER(KIND=4)  :: GetSelectedOutputStringLineCount
         END FUNCTION GetSelectedOutputStringLineCount
        END INTERFACE
        
