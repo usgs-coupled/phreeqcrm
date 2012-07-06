@@ -1,4 +1,5 @@
 #include <memory>                   // auto_ptr
+#include <string.h>
 
 #include "IPhreeqc.hpp"             // IPhreeqc
 #include "Phreeqc.h"                // Phreeqc
@@ -403,6 +404,46 @@ VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 	}
 	this->update_errors();
 	return v;
+}
+
+VRESULT IPhreeqc::GetSelectedOutputValue2(int row, int col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+{
+	VRESULT result;
+	VAR v;
+	VarInit(&v);
+	char buffer[100];
+
+	result = this->GetSelectedOutputValue(row, col, &v);
+
+	switch (v.type)
+	{
+	case TT_EMPTY:
+		*vtype = v.type;
+		break;
+	case TT_ERROR:
+		*vtype = v.type;
+		break;
+	case TT_LONG:
+		*vtype = TT_DOUBLE;
+		*dvalue = (double)v.lVal;
+		::sprintf(buffer, "%ld", v.lVal);
+		::strncpy(svalue, buffer, svalue_length);
+		break;
+	case TT_DOUBLE:
+		*vtype = v.type;
+		*dvalue = v.dVal;
+		::sprintf(buffer, "%23.15e", v.dVal);
+		::strncpy(svalue, buffer, svalue_length);
+		break;
+	case TT_STRING:
+		*vtype = v.type;
+		::strncpy(svalue, v.sVal, svalue_length);
+		break;
+	default:
+		assert(0);
+	}
+	::VarClear(&v);
+	return result;
 }
 
 const char* IPhreeqc::GetWarningString(void)

@@ -562,6 +562,27 @@ GetSelectedOutputValue(int id, int row, int col, VAR* pVAR)
 	return IPQ_BADINSTANCE;
 }
 
+IPQ_RESULT
+GetSelectedOutputValue2(int id, int row, int col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		switch(IPhreeqcPtr->GetSelectedOutputValue(row, col, vtype, dvalue, svalue, svalue_length))
+		{
+		case VR_OK:          return IPQ_OK;
+		case VR_OUTOFMEMORY: return IPQ_OUTOFMEMORY;
+		case VR_BADVARTYPE:  return IPQ_BADVARTYPE;
+		case VR_INVALIDARG:  return IPQ_INVALIDARG;
+		case VR_INVALIDROW:  return IPQ_INVALIDROW;
+		case VR_INVALIDCOL:  return IPQ_INVALIDCOL;
+		default:
+			assert(false);
+		}
+	}
+	return IPQ_BADINSTANCE;
+}
+
 const char*
 GetWarningString(int id)
 {

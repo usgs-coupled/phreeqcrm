@@ -288,7 +288,7 @@ extern "C" {
  *  Retrieves the string buffer containing <b>DUMP</b> output.
  *  @param id            The instance id returned from \ref CreateIPhreeqc.
  *  @return              A null terminated string containing <b>DUMP</b> output.
- *  @pre                 \ref SetDumpStringOn must have been set to true (non-zero) in order to recieve <b>DUMP</b> output.
+ *  @pre                 \ref SetDumpStringOn must have been set to true (non-zero) in order to receive <b>DUMP</b> output.
  *  @see                 GetDumpFileOn, GetDumpStringLine, GetDumpStringLineCount, SetDumpFileOn, GetDumpStringOn, SetDumpStringOn
  *  @par Fortran90 Interface:
  *  Not implemented. (see \ref GetDumpStringLineCount, \ref GetDumpStringLine)
@@ -540,7 +540,7 @@ extern "C" {
  *  @param id            The instance id returned from \ref CreateIPhreeqc.
  *  @return              A null terminated string containing log output.
  *  @remarks             Logging must be enabled through the use of the KNOBS -logfile option in order to receive any log messages.
- *  @pre                 \ref SetLogStringOn must have been set to true (non-zero) in order to recieve log output.
+ *  @pre                 \ref SetLogStringOn must have been set to true (non-zero) in order to receive log output.
  *  @see                 GetLogFileOn, GetLogStringLine, GetLogStringLineCount, SetLogFileOn, GetLogStringOn, SetLogStringOn
  *  @par Fortran90 Interface:
  *  Not implemented. (see \ref GetLogStringLineCount, \ref GetLogStringLine)
@@ -667,7 +667,7 @@ extern "C" {
  *  Retrieves the string buffer containing phreeqc output.
  *  @param id            The instance id returned from \ref CreateIPhreeqc.
  *  @return              A null terminated string containing phreeqc output.
- *  @pre                 \ref SetOutputStringOn must have been set to true (non-zero) in order to recieve phreeqc output.
+ *  @pre                 \ref SetOutputStringOn must have been set to true (non-zero) in order to receive phreeqc output.
  *  @see                 GetOutputFileOn, GetOutputStringLine, GetOutputStringLineCount, SetOutputFileOn, GetOutputStringOn, SetOutputStringOn
  *  @par Fortran90 Interface:
  *  Not implemented. (see \ref GetOutputStringLineCount, \ref GetOutputStringLine)
@@ -814,7 +814,7 @@ extern "C" {
  *  Retrieves the string buffer containing <b>SELECTED_OUTPUT</b>.
  *  @param id            The instance id returned from \ref CreateIPhreeqc.
  *  @return              A null terminated string containing <b>SELECTED_OUTPUT</b>.
- *  @pre                 \ref SetSelectedOutputStringOn must have been set to true (non-zero) in order to recieve <b>SELECTED_OUTPUT</b>.
+ *  @pre                 \ref SetSelectedOutputStringOn must have been set to true (non-zero) in order to receive <b>SELECTED_OUTPUT</b>.
  *  @see                 GetSelectedOutputFileOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn, GetSelectedOutputStringOn, SetSelectedOutputStringOn
  *  @par Fortran90 Interface:
  *  Not implemented. (see \ref GetSelectedOutputStringLineCount, \ref GetSelectedOutputStringLine)
@@ -924,13 +924,13 @@ extern "C" {
  *  @param id                The instance id returned from \ref CreateIPhreeqc.
  *  @param row               The row index.
  *  @param col               The column index.
- *  @param pVAR              Pointer to the \c VAR to recieve the requested data.
+ *  @param pVAR              Pointer to the \c VAR to receive the requested data.
  *  @retval IPQ_OK           Success.
  *  @retval IPQ_INVALIDROW   The given row is out of range.
  *  @retval IPQ_INVALIDCOL   The given column is out of range.
  *  @retval IPQ_OUTOFMEMORY  Memory could not be allocated.
  *  @retval IPQ_BADINSTANCE  The given id is invalid.
- *  @see                     GetSelectedOutputFileOn, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, SetSelectedOutputFileOn
+ *  @see                     GetSelectedOutputFileOn, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, GetSelectedOutputValue2, SetSelectedOutputFileOn
  *  @remarks
  *  Row 0 contains the column headings to the selected_ouput.
  *  @par Examples:
@@ -1104,6 +1104,169 @@ Headings
  *  \include F90GetSelectedOutputValue.f90
  */
 	IPQ_DLL_EXPORT IPQ_RESULT  GetSelectedOutputValue(int id, int row, int col, VAR* pVAR);
+
+
+/**
+ *  Returns the associated data with the specified row and column.
+ *  @param id                The instance id returned from \ref CreateIPhreeqc.
+ *  @param row               The row index.
+ *  @param col               The column index.
+ *  @param vtype             Receives the variable type.  See \ref VAR_TYPE.
+ *  @param dvalue            Receives the numeric value when (VTYPE=\ref TT_DOUBLE) or (VTYPE=\ref TT_LONG).
+ *  @param svalue            Receives the string variable when (VTYPE=\ref TT_STRING).  When (VTYPE=\ref TT_DOUBLE) or (VTYPE=\ref TT_LONG) this variable is filled with a string equivalent of DVALUE.
+ *  @param svalue_length     The length of the svalue buffer.
+ *  @retval IPQ_OK           Success.
+ *  @retval IPQ_INVALIDROW   The given row is out of range.
+ *  @retval IPQ_INVALIDCOL   The given column is out of range.
+ *  @retval IPQ_OUTOFMEMORY  Memory could not be allocated.
+ *  @retval IPQ_BADINSTANCE  The given id is invalid.
+ *  @see                     GetSelectedOutputFileOn, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, GetSelectedOutputValue, SetSelectedOutputFileOn
+ *  @remarks
+ *  Row 0 contains the column headings to the selected_ouput.
+ *  @par Examples:
+ *  The headings will include a suffix and/or prefix in order to differentiate the
+ *  columns.
+ *  @htmlonly
+<p>
+<table border=1>
+
+<TR VALIGN="top">
+<TH width=65%>
+Input
+</TH>
+<TH width=35%>
+Headings
+</TH>
+</TR>
+
+<TR VALIGN="top">
+<TD width=65%>
+<CODE><PRE>
+  SELECTED_OUTPUT
+    -reset false
+    -totals Ca Na
+</PRE></CODE>
+</TD>
+<TD width=35%>
+<CODE><PRE>
+  Ca(mol/kgw)  Na(mol/kgw)
+</PRE></CODE>
+</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=65%>
+<CODE><PRE>
+  SELECTED_OUTPUT
+    -reset false
+    -molalities Fe+2 Hfo_sOZn+
+</PRE></CODE>
+</TD>
+<TD width=35%>
+<CODE><PRE>
+  m_Fe+2(mol/kgw)  m_Hfo_sOZn+(mol/kgw)
+</PRE></CODE>
+</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=65%>
+<CODE><PRE>
+  SELECTED_OUTPUT
+    -reset false
+    -activities H+ Ca+2
+</PRE></CODE>
+</TD>
+<TD width=35%>
+<CODE><PRE>
+  la_H+  la_Ca+2
+</PRE></CODE>
+</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=65%>
+<CODE><PRE>
+  SELECTED_OUTPUT
+    -reset false
+    -equilibrium_phases Calcite Dolomite
+</PRE></CODE>
+</TD>
+<TD width=35%>
+<CODE><PRE>
+  Calcite  d_Calcite  Dolomite  d_Dolomite
+</PRE></CODE>
+</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=65%>
+<CODE><PRE>
+  SELECTED_OUTPUT
+    -reset false
+    -saturation_indices CO2(g) Siderite
+</PRE></CODE>
+</TD>
+<TD width=35%>
+<CODE><PRE>
+  si_CO2(g)  si_Siderite
+</PRE></CODE>
+</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=65%>
+<CODE><PRE>
+  SELECTED_OUTPUT
+    -reset false
+    -gases CO2(g) N2(g)
+</PRE></CODE>
+</TD>
+<TD width=35%>
+<CODE><PRE>
+  pressure "total mol" volume g_CO2(g) g_N2(g)
+</PRE></CODE>
+</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=65%>
+<CODE><PRE>
+  SELECTED_OUTPUT
+    -reset false
+    -kinetic_reactants CH2O Pyrite
+</PRE></CODE>
+</TD>
+<TD width=35%>
+<CODE><PRE>
+  k_CH2O dk_CH2O k_Pyrite dk_Pyrite
+</PRE></CODE>
+</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=65%>
+<CODE><PRE>
+  SELECTED_OUTPUT
+    -reset false
+    -solid_solutions CaSO4 SrSO4
+</PRE></CODE>
+</TD>
+<TD width=35%>
+<CODE><PRE>
+  s_CaSO4 s_SrSO4
+</PRE></CODE>
+</TD>
+</TR>
+
+</table>
+ *  @endhtmlonly
+ *  \anchor GetSelectedOutputValue2_c
+ *  @par  C Example:
+ *  \include GetSelectedOutputValue2.c
+ */
+	IPQ_DLL_EXPORT IPQ_RESULT  GetSelectedOutputValue2(int id, int row, int col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
+
 
 
 /**
