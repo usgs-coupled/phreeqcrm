@@ -47,7 +47,6 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/PBasic.h\
 	phreeqcpp/Phreeqc.cpp\
 	phreeqcpp/Phreeqc.h\
-	phreeqcpp/Phreeqc_class.h\
 	phreeqcpp/PHRQ_base.cxx\
 	phreeqcpp/PHRQ_base.h\
 	phreeqcpp/PHRQ_io.cpp\
