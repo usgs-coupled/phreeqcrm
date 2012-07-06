@@ -568,7 +568,7 @@ GetSelectedOutputValue2(int id, int row, int col, int *vtype, double* dvalue, ch
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		switch(IPhreeqcPtr->GetSelectedOutputValue(row, col, vtype, dvalue, svalue, svalue_length))
+		switch(IPhreeqcPtr->GetSelectedOutputValue2(row, col, vtype, dvalue, svalue, svalue_length))
 		{
 		case VR_OK:          return IPQ_OK;
 		case VR_OUTOFMEMORY: return IPQ_OUTOFMEMORY;
