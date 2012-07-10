@@ -561,7 +561,6 @@ public:
 	 *  @par Examples:
 	 *  The headings will include a suffix and/or prefix in order to differentiate the
 	 *  columns.
-	 *  @htmlonly
 	<p>
 	<table border=1>
 
