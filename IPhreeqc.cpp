@@ -1252,7 +1252,15 @@ void IPhreeqc::log_msg(const char * str)
 void IPhreeqc::error_msg(const char *str, bool stop)
 {
 	ASSERT(!(this->ErrorFileOn ^ (this->error_ostream != 0)));
+
+	if (this->error_ostream != NULL && this->error_on)
+	{
+		(*this->error_ostream) << str;
+	}
+	bool save_error_on = this->error_on;
+	this->error_on = false;
 	this->PHRQ_io::error_msg(str);
+	this->error_on = save_error_on;
 
 	if (this->ErrorStringOn && this->error_on)
 	{
@@ -1272,7 +1280,15 @@ void IPhreeqc::error_msg(const char *str, bool stop)
 void IPhreeqc::warning_msg(const char *str)
 {
 	ASSERT(!(this->ErrorFileOn ^ (this->error_ostream != 0)));
+
+	if (this->error_ostream != NULL && this->error_on)
+	{
+		(*this->error_ostream) << str << "\n";
+	}
+	bool save_error_on = this->error_on;
+	this->error_on = false;
 	this->PHRQ_io::warning_msg(str);
+	this->error_on = save_error_on;
 
 	std::ostringstream oss;
 	oss << str << std::endl;
