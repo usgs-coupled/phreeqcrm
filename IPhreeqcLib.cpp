@@ -899,9 +899,13 @@ int
 IPhreeqcLib::CreateIPhreeqc(void)
 {
 	int n = IPQ_OUTOFMEMORY;
+	IPhreeqc* IPhreeqcPtr;
 	try
 	{
-		IPhreeqc* IPhreeqcPtr = new IPhreeqc;
+		#pragma omp critical(IPhreeqcLib)
+		{
+			IPhreeqcPtr = new IPhreeqc;
+		}
 		n = IPhreeqcPtr->Index;
 	}
 	catch(...)
@@ -919,8 +923,11 @@ IPhreeqcLib::DestroyIPhreeqc(int id)
 	{
 		if (IPhreeqc *ptr = IPhreeqcLib::GetInstance(id))
 		{
-			delete ptr;
-			retval = IPQ_OK;
+			#pragma omp critical(IPhreeqcLib)
+			{
+				delete ptr;
+			}
+				retval = IPQ_OK;
 		}
 	}
 	return retval;
@@ -929,8 +936,14 @@ IPhreeqcLib::DestroyIPhreeqc(int id)
 IPhreeqc*
 IPhreeqcLib::GetInstance(int id)
 {
-	std::map<size_t, IPhreeqc*>::iterator it = IPhreeqc::Instances.find(size_t(id));
-	if (it != IPhreeqc::Instances.end())
+	std::map<size_t, IPhreeqc*>::iterator it;
+	bool found=false;
+	#pragma omp critical(IPhreeqcLib)
+	{
+		it = IPhreeqc::Instances.find(size_t(id));
+		found = (it != IPhreeqc::Instances.end());
+	}
+	if (found)
 	{
 		return (*it).second;
 	}
