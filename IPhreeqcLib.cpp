@@ -8,6 +8,7 @@
 class IPhreeqcLib
 {
 public:
+	//static void CleanupIPhreeqcInstances(void);
 	static int CreateIPhreeqc(void);
 	static IPQ_RESULT DestroyIPhreeqc(int n);
 	static IPhreeqc* GetInstance(int n);
@@ -949,3 +950,17 @@ IPhreeqcLib::GetInstance(int id)
 	}
 	return 0;
 }
+//// static method
+//void IPhreeqcLib::CleanupIPhreeqcInstances(void)
+//{
+//	std::map<size_t, IPhreeqc*>::iterator it = IPhreeqc::Instances.begin();
+//	std::vector<IPhreeqc*> ip_list;
+//	for ( ; it != IPhreeqc::Instances.end(); it++)
+//	{
+//		ip_list.push_back(it->second);
+//	}
+//	for (size_t i = 0; i < ip_list.size(); i++)
+//	{
+//		delete ip_list[i];
+//	}
+//}
