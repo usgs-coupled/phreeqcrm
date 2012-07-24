@@ -1107,6 +1107,10 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
  */
 		this->PhreeqcPtr->run_as_cells();
 /*
+ *   Calculate mixes
+ */
+		this->PhreeqcPtr->do_mixes();
+/*
  *   Copy
  */
 		if (this->PhreeqcPtr->new_copy) this->PhreeqcPtr->copy_entities();
