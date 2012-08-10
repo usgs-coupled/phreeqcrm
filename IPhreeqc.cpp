@@ -1048,6 +1048,14 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		}
 
 		if (!this->SelectedOutputFileOn) ASSERT(!this->punch_ostream);
+
+		// Consider this addition
+		{
+			this->PhreeqcPtr->pr.all = (this->OutputFileOn || this->OutputStringOn) ? TRUE : FALSE;
+			this->PhreeqcPtr->punch.in = (this->SelectedOutputFileOn || this->SelectedOutputStringOn) ? TRUE : FALSE;
+		}
+
+
 		/* the converse is not necessarily true */
 
 		this->PhreeqcPtr->n_user_punch_index = -1;
