@@ -1052,7 +1052,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		// Consider this addition
 		{
 			this->PhreeqcPtr->pr.all = (this->OutputFileOn || this->OutputStringOn) ? TRUE : FALSE;
-			this->PhreeqcPtr->punch.in = (this->SelectedOutputFileOn || this->SelectedOutputStringOn) ? TRUE : FALSE;
+			//this->PhreeqcPtr->pr.punch = (this->SelectedOutputFileOn || this->SelectedOutputStringOn) ? TRUE : FALSE;
 		}
 
 
