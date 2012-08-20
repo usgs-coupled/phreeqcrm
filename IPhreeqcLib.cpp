@@ -907,7 +907,7 @@ IPhreeqcLib::CreateIPhreeqc(void)
 		{
 			IPhreeqcPtr = new IPhreeqc;
 		}
-		n = IPhreeqcPtr->Index;
+		n = (int) IPhreeqcPtr->Index;
 	}
 	catch(...)
 	{
