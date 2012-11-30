@@ -849,6 +849,7 @@ void IPhreeqc::UnLoadDatabase(void)
 	// initialize phreeqc
 	//
 	this->PhreeqcPtr->clean_up();
+	this->PhreeqcPtr->init();
 	this->PhreeqcPtr->do_initialize();
 	this->PhreeqcPtr->input_error = 0;
 	this->io_error_count = 0;
@@ -1417,38 +1418,53 @@ int IPhreeqc::close_output_files(void)
 
 void IPhreeqc::fpunchf(const char *name, const char *format, double d)
 {
-	this->PHRQ_io::fpunchf(name, format, d);
-	if (this->SelectedOutputStringOn && this->punch_on)
+	try
 	{
-		char token[256];
-		sprintf(token, format, d);
-		this->SelectedOutputString += token;
+		this->PHRQ_io::fpunchf(name, format, d);
+		if (this->SelectedOutputStringOn && this->punch_on)
+		{
+			PHRQ_io::fpunchf_helper(&this->SelectedOutputString, format, d);
+		}
+		this->SelectedOutput->PushBackDouble(name, d);
 	}
-	this->SelectedOutput->PushBackDouble(name, d);
+	catch (std::bad_alloc)
+	{
+		this->PhreeqcPtr->malloc_error();
+	}
 }
 
 void IPhreeqc::fpunchf(const char *name, const char *format, char *s)
 {
-	this->PHRQ_io::fpunchf(name, format, s);
-	if (this->SelectedOutputStringOn && this->punch_on)
+	try
 	{
-		char token[256];
-		sprintf(token, format, s);
-		this->SelectedOutputString += token;
+		this->PHRQ_io::fpunchf(name, format, s);
+		if (this->SelectedOutputStringOn && this->punch_on)
+		{
+			PHRQ_io::fpunchf_helper(&this->SelectedOutputString, format, s);
+		}
+		this->SelectedOutput->PushBackString(name, s);
 	}
-	this->SelectedOutput->PushBackString(name, s);
+	catch (std::bad_alloc)
+	{
+		this->PhreeqcPtr->malloc_error();
+	}
 }
 
 void IPhreeqc::fpunchf(const char *name, const char *format, int i)
 {
-	this->PHRQ_io::fpunchf(name, format, i);
-	if (this->SelectedOutputStringOn && this->punch_on)
+	try
 	{
-		char token[256];
-		sprintf(token, format, i);
-		this->SelectedOutputString += token;
+		this->PHRQ_io::fpunchf(name, format, i);
+		if (this->SelectedOutputStringOn && this->punch_on)
+		{
+			PHRQ_io::fpunchf_helper(&this->SelectedOutputString, format, i);
+		}
+		this->SelectedOutput->PushBackLong(name, (long)i);
 	}
-	this->SelectedOutput->PushBackLong(name, (long)i);
+	catch (std::bad_alloc)
+	{
+		this->PhreeqcPtr->malloc_error();
+	}
 }
 
 void IPhreeqc::fpunchf_end_row(const char *format)
