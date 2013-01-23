@@ -7,8 +7,12 @@ EXTRA_DIST=\
 	fwrap7.cpp\
 	fwrap8.cpp\
 	phreeqcpp/ChartHandler.cpp\
+	phreeqcpp/ChartHandler.h\
 	phreeqcpp/ChartObject.cpp\
+	phreeqcpp/ChartObject.h\
 	phreeqcpp/CurveObject.cpp\
+	phreeqcpp/CurveObject.h\
+	phreeqcpp/Form1.h\
 	phreeqcpp/ZedGraph.dll	
 
 AM_CPPFLAGS=-I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp
