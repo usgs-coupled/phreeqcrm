@@ -1,6 +1,17 @@
-EXTRA_DIST = fwrap2.cpp fwrap3.cpp
+EXTRA_DIST=\
+	fwrap2.cpp\
+	fwrap3.cpp\
+	fwrap4.cpp\
+	fwrap5.cpp\
+	fwrap6.cpp\
+	fwrap7.cpp\
+	fwrap8.cpp\
+	phreeqcpp/ChartHandler.cpp\
+	phreeqcpp/ChartObject.cpp\
+	phreeqcpp/CurveObject.cpp\
+	phreeqcpp/ZedGraph.dll	
 
-AM_CPPFLAGS=-I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/phreeqc
+AM_CPPFLAGS=-I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp
 
 # libtool libraries to build
 lib_LTLIBRARIES=libiphreeqc.la
@@ -160,6 +171,3 @@ include_HEADERS+=\
 	$(top_srcdir)/src/IPhreeqc.f.inc
 
 endif
-
-COMPILE = $(CXXCOMPILE)
-LTCOMPILE = $(LTCXXCOMPILE)
