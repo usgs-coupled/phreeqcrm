@@ -18,6 +18,8 @@ EXTRA_DIST=\
 
 AM_CPPFLAGS=-I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp
 
+AM_LDFLAGS=-release 3.0.0
+
 # libtool libraries to build
 lib_LTLIBRARIES=libiphreeqc.la
 
