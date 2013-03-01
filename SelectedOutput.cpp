@@ -99,21 +99,18 @@ int CSelectedOutput::EndRow(void)
 		// make sure array is full
 		for (size_t col = 0; col < ncols; ++col)
 		{
-			for (size_t row = 0; row < this->m_nRowCount; ++row)
+			size_t nrows = this->m_arrayVar[col].size();
+			if (nrows < this->m_nRowCount)
 			{
-				size_t nrows = this->m_arrayVar[col].size();
-				if (nrows < this->m_nRowCount)
-				{
-					// fill w/ empty
-					this->m_arrayVar[col].resize(this->m_nRowCount);
-				}
-#if defined(_DEBUG)
-				else if (nrows > this->m_nRowCount)
-				{
-					ASSERT(false);
-				}
-#endif
+				// fill w/ empty
+				this->m_arrayVar[col].resize(this->m_nRowCount);
 			}
+#if defined(_DEBUG)
+			else if (nrows > this->m_nRowCount)
+			{
+				ASSERT(false);
+			}
+#endif
 		}
 	}
 	return 0;
