@@ -60,8 +60,11 @@ template<typename OS>
 void CErrorReporter<OS>::Clear(void)
 {
 	this->m_error_count = 0;
-	delete this->m_pOS;
-	this->m_pOS = new OS;
+	if (this->m_pOS->tellp() != std::ios::pos_type(-1))
+	{
+		delete this->m_pOS;
+		this->m_pOS = new OS;
+	}
 }
 
 #endif // __ERROR_REPORTER_HXX_INC
