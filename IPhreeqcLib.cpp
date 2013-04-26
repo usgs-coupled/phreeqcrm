@@ -4,6 +4,7 @@
 
 #include "IPhreeqc.h"
 #include "IPhreeqc.hpp"
+#include "thread.h"
 
 class IPhreeqcLib
 {
@@ -903,10 +904,9 @@ IPhreeqcLib::CreateIPhreeqc(void)
 	IPhreeqc* IPhreeqcPtr;
 	try
 	{
-		#pragma omp critical(IPhreeqcLib)
-		{
-			IPhreeqcPtr = new IPhreeqc;
-		}
+		mutex_lock(&map_lock);
+		IPhreeqcPtr = new IPhreeqc;
+		mutex_unlock(&map_lock);
 		n = (int) IPhreeqcPtr->Index;
 	}
 	catch(...)
@@ -924,11 +924,10 @@ IPhreeqcLib::DestroyIPhreeqc(int id)
 	{
 		if (IPhreeqc *ptr = IPhreeqcLib::GetInstance(id))
 		{
-			#pragma omp critical(IPhreeqcLib)
-			{
-				delete ptr;
-			}
-				retval = IPQ_OK;
+			mutex_lock(&map_lock);
+			delete ptr;
+			mutex_unlock(&map_lock);
+			retval = IPQ_OK;
 		}
 	}
 	return retval;
@@ -939,11 +938,10 @@ IPhreeqcLib::GetInstance(int id)
 {
 	std::map<size_t, IPhreeqc*>::iterator it;
 	bool found=false;
-	#pragma omp critical(IPhreeqcLib)
-	{
-		it = IPhreeqc::Instances.find(size_t(id));
-		found = (it != IPhreeqc::Instances.end());
-	}
+	mutex_lock(&map_lock);
+	it = IPhreeqc::Instances.find(size_t(id));
+	found = (it != IPhreeqc::Instances.end());
+	mutex_unlock(&map_lock);
 	if (found)
 	{
 		return (*it).second;

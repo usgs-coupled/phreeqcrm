@@ -32,6 +32,7 @@ libiphreeqc_la_SOURCES=\
 	IPhreeqcLib.cpp\
 	SelectedOutput.cpp\
 	SelectedOutput.hxx\
+	thread.h\
 	Var.c\
 	phreeqcpp/cxxKinetics.cxx\
 	phreeqcpp/cxxKinetics.h\
