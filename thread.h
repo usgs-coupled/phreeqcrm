@@ -25,14 +25,14 @@
 
 /*	This is simplified spinlock version */
 
-	typedef volatile unsigned int mutex_t;
+	typedef LONG volatile mutex_t;
 
-	#define mutex_init(m)		InterlockedExchange(m, 0)
+	#define mutex_init(m)		InterlockedExchange(m, 0L)
 	#define mutex_delete(m)
-	#define mutex_lock(m)		while(InterlockedExchange(m, 1)) Sleep(0)
-	#define mutex_trylock(m)	InterlockedExchange(m, 1)
-	#define mutex_unlock(m)		InterlockedExchange(m, 0)
-	#define MUTEX_INITIALIZER	0
+	#define mutex_lock(m)		while(InterlockedExchange(m, 1L)) Sleep(0)
+	#define mutex_trylock(m)	InterlockedExchange(m, 1L)
+	#define mutex_unlock(m)		InterlockedExchange(m, 0L)
+	#define MUTEX_INITIALIZER	0L
 
 #else
 
