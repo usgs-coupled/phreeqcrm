@@ -3,7 +3,6 @@
 
 #include "IPhreeqc.hpp"             // IPhreeqc
 #include "Phreeqc.h"                // Phreeqc
-#define _INC_PHREEQC_H
 #include "thread.h"
 
 #include "Debug.h"                  // ASSERT
@@ -43,7 +42,6 @@ IPhreeqc::IPhreeqc(void)
 , PhreeqcPtr(0)
 , input_file(0)
 , database_file(0)
-/* , Index(IPhreeqc::InstancesIndex++) */
 {
 	char buffer[80];
 

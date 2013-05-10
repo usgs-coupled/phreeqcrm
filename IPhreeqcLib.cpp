@@ -932,17 +932,15 @@ IPhreeqcLib::DestroyIPhreeqc(int id)
 IPhreeqc*
 IPhreeqcLib::GetInstance(int id)
 {
-	std::map<size_t, IPhreeqc*>::iterator it;
-	bool found=false;
+	IPhreeqc* instance = 0;
 	mutex_lock(&map_lock);
-	it = IPhreeqc::Instances.find(size_t(id));
-	found = (it != IPhreeqc::Instances.end());
-	mutex_unlock(&map_lock);
-	if (found)
+	std::map<size_t, IPhreeqc*>::iterator it = IPhreeqc::Instances.find(size_t(id));
+	if (it != IPhreeqc::Instances.end())
 	{
-		return (*it).second;
+		instance = (*it).second;
 	}
-	return 0;
+	mutex_unlock(&map_lock);
+	return instance;
 }
 //// static method
 //void IPhreeqcLib::CleanupIPhreeqcInstances(void)
