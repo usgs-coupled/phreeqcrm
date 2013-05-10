@@ -885,7 +885,7 @@ protected:
 	friend class IPhreeqcLib;
 	static std::map<size_t, IPhreeqc*> Instances;
 	static size_t InstancesIndex;
-	const size_t Index;
+	size_t Index;
 
 #if defined(_MSC_VER)
 /* reset warning C4251 */

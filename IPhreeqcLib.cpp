@@ -904,9 +904,7 @@ IPhreeqcLib::CreateIPhreeqc(void)
 	IPhreeqc* IPhreeqcPtr;
 	try
 	{
-		mutex_lock(&map_lock);
 		IPhreeqcPtr = new IPhreeqc;
-		mutex_unlock(&map_lock);
 		n = (int) IPhreeqcPtr->Index;
 	}
 	catch(...)
@@ -924,9 +922,7 @@ IPhreeqcLib::DestroyIPhreeqc(int id)
 	{
 		if (IPhreeqc *ptr = IPhreeqcLib::GetInstance(id))
 		{
-			mutex_lock(&map_lock);
 			delete ptr;
-			mutex_unlock(&map_lock);
 			retval = IPQ_OK;
 		}
 	}

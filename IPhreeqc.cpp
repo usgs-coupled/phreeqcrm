@@ -3,6 +3,8 @@
 
 #include "IPhreeqc.hpp"             // IPhreeqc
 #include "Phreeqc.h"                // Phreeqc
+#define _INC_PHREEQC_H
+#include "thread.h"
 
 #include "Debug.h"                  // ASSERT
 #include "ErrorReporter.hxx"        // CErrorReporter
@@ -41,7 +43,7 @@ IPhreeqc::IPhreeqc(void)
 , PhreeqcPtr(0)
 , input_file(0)
 , database_file(0)
-, Index(IPhreeqc::InstancesIndex++)
+/* , Index(IPhreeqc::InstancesIndex++) */
 {
 	char buffer[80];
 
@@ -53,8 +55,11 @@ IPhreeqc::IPhreeqc(void)
 	ASSERT(this->PhreeqcPtr->phast == 0);
 	this->UnLoadDatabase();
 
+	mutex_lock(&map_lock);
+	this->Index = IPhreeqc::InstancesIndex++;
 	std::map<size_t, IPhreeqc*>::value_type instance(this->Index, this);
 	std::pair<std::map<size_t, IPhreeqc*>::iterator, bool> pr = IPhreeqc::Instances.insert(instance);
+	mutex_unlock(&map_lock);
 
 	::sprintf(buffer, PUNCH_FILENAME_FORMAT,  this->Index);
 	this->SelectedOutputFileName = buffer;
@@ -83,11 +88,13 @@ IPhreeqc::~IPhreeqc(void)
 	delete this->WarningReporter;
 	delete this->ErrorReporter;
 
+	mutex_lock(&map_lock);
 	std::map<size_t, IPhreeqc*>::iterator it = IPhreeqc::Instances.find(this->Index);
 	if (it != IPhreeqc::Instances.end())
 	{
 		IPhreeqc::Instances.erase(it);
 	}
+	mutex_unlock(&map_lock);
 }
 
 VRESULT IPhreeqc::AccumulateLine(const char *line)
