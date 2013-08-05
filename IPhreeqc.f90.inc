@@ -358,6 +358,21 @@
 
 
        INTERFACE
+        FUNCTION SetBasicFortranCallback(ID,COOKIE)
+         INTEGER(KIND=4),  INTENT(IN) :: ID
+        INTERFACE
+          DOUBLE PRECISION FUNCTION cookie(x1, x2, str)
+            DOUBLE PRECISION, INTENT(in) :: x1
+            DOUBLE PRECISION, INTENT(in) :: x2
+            CHARACTER(*), INTENT(in)                   :: str
+          END FUNCTION 
+        END INTERFACE
+         INTEGER(KIND=4)              :: SetBasicFortranCallback
+        END FUNCTION SetBasicFortranCallback
+       END INTERFACE
+
+
+       INTERFACE
         FUNCTION SetDumpFileName(ID,FNAME)
          INTEGER(KIND=4),  INTENT(IN) :: ID
          CHARACTER(LEN=*), INTENT(IN) :: FNAME
@@ -444,21 +459,6 @@
          LOGICAL(KIND=4),  INTENT(IN) :: OUT_ON
          INTEGER(KIND=4)              :: SetOutputFileOn
         END FUNCTION SetOutputFileOn
-       END INTERFACE
-
-
-       INTERFACE
-        FUNCTION SetFortranBasicCallback(ID,COOKIE)
-         INTEGER(KIND=4),  INTENT(IN) :: ID
-        INTERFACE
-          DOUBLE PRECISION FUNCTION cookie(x1, x2, str)
-            DOUBLE PRECISION, INTENT(in) :: x1
-            DOUBLE PRECISION, INTENT(in) :: x2
-            CHARACTER(*), INTENT(in)                   :: str
-          END FUNCTION 
-        END INTERFACE
-         INTEGER(KIND=4)              :: SetFortranBasicCallback
-        END FUNCTION SetFortranBasicCallback
        END INTERFACE
 
 

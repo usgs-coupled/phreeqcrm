@@ -715,6 +715,29 @@ RunString(int id, const char* input)
 }
 
 IPQ_RESULT
+SetBasicCallback(int id, double (*cookie)(double *x1, double *x2, char *str))
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetBasicCallback(cookie);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
+SetBasicFortranCallback(int id, double (*cookie)(double *x1, double *x2, char *str, int l))
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetBasicFortranCallback(cookie);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+IPQ_RESULT
 SetDumpFileName(int id, const char* filename)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
@@ -841,18 +864,6 @@ SetOutputFileOn(int id, int value)
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetOutputFileOn(value != 0);
-		return IPQ_OK;
-	}
-	return IPQ_BADINSTANCE;
-}
-
-IPQ_RESULT
-SetFortranBasicCallback(int id, double (*cookie)(double *x1, double *x2, char *str, int l))
-{
-	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
-	if (IPhreeqcPtr)
-	{
-		IPhreeqcPtr->SetFortranBasicCallback(cookie);
 		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;

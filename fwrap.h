@@ -69,7 +69,7 @@
 #define SetSelectedOutputFileNameF        FC_FUNC (setselectedoutputfilenamef,        SETSELECTEDOUTPUTFILENAMEF)
 #define SetSelectedOutputFileOnF          FC_FUNC (setselectedoutputfileonf,          SETSELECTEDOUTPUTFILEONF)
 #define SetSelectedOutputStringOnF        FC_FUNC (setselectedoutputstringonf,        SETSELECTEDOUTPUTSTRINGONF)
-#define SetFortranBasicCallbackF          FC_FUNC (setfortranbasiccallbackf,          SETFOTRANBASICCALLBACKF)
+#define SetBasicFortranCallbackF          FC_FUNC (setbasicfortrancallbackf,          SETFOTRANBASICCALLBACKF)
 #endif /* FC_FUNC */
 
 #if defined(__cplusplus)
@@ -137,7 +137,7 @@ extern "C" {
   IPQ_RESULT SetSelectedOutputFileNameF(int *id, char* fname, unsigned int fname_length);
   IPQ_RESULT SetSelectedOutputFileOnF(int *id, int* selected_output_file_on);
   IPQ_RESULT SetSelectedOutputStringOnF(int *id, int* selected_output_string_on);
-  IPQ_RESULT SetFortranBasicCallbackF(int *id, double (*cookie)(double *x1, double *x2, char *str, int l));
+  IPQ_RESULT SetBasicFortranCallbackF(int *id, double (*cookie)(double *x1, double *x2, char *str, int l));
 
 #if defined(__cplusplus)
 }

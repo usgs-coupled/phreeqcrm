@@ -728,6 +728,16 @@ int IPhreeqc::RunString(const char* input)
 	return this->PhreeqcPtr->get_input_errors();
 }
 
+void IPhreeqc::SetBasicCallback(double (*cookie)(double *x1, double *x2, char *str))
+{
+	this->PhreeqcPtr->register_basic_callback(cookie);
+}
+
+void IPhreeqc::SetBasicFortranCallback(double (*cookie)(double *x1, double *x2, char *str, int l))
+{
+	this->PhreeqcPtr->register_fortran_basic_callback(cookie);
+}
+
 void IPhreeqc::SetDumpFileName(const char *filename)
 {
 	if (filename && ::strlen(filename))
@@ -799,10 +809,6 @@ void IPhreeqc::SetOutputStringOn(bool bValue)
 void IPhreeqc::SetOutputFileOn(bool bValue)
 {
 	this->OutputFileOn = bValue;
-}
-void IPhreeqc::SetFortranBasicCallback(double (*cookie)(double *x1, double *x2, char *str, int l))
-{
-	this->PhreeqcPtr->register_fortran_basic_callback(cookie);
 }
 
 void IPhreeqc::SetSelectedOutputFileName(const char *filename)

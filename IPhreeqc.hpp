@@ -655,6 +655,26 @@ public:
 	int                      RunFile(const char* filename);
 
 	/**
+	 *  Sets a C callback function for Basic programs. The syntax for the Basic command is
+	 *  10 result = CALLBACK(x1, x2, string$)
+	 *  The syntax for the C function is
+	 *  double my_callback(double x1, double x2, char * string)
+	 *  @param cookie           The name of a user-defined function 
+	 *  @see                    SetBasicFortranCallback
+	 */
+	void                     SetBasicCallback(double (*cookie)(double *x1, double *x2, char *str));
+
+	/**
+	 *  Sets a Fortran callback function for Basic programs. The syntax for the Basic command is
+	 *  10 result = CALLBACK(x1, x2, string$)
+	 *  The syntax for the Fortran function is
+	 *  double precision my_callback(x1, x2, string), where x1 and x2 are double precision and string is a character variable.
+	 *  @param cookie           The name of a user-defined double precision function with three arguments (two double precision, one character).
+	 *  @see                    SetBasicCallback
+	 */
+	void                     SetBasicFortranCallback(double (*cookie)(double *x1, double *x2, char *str, int l));
+
+	/**
 	 *  Runs the specified string as input to phreeqc.
 	 *  @param input            String containing phreeqc input.
 	 *  @return                 The number of errors encountered during the run.
@@ -755,16 +775,6 @@ public:
 	 *  @see                    GetOutputFileOn
 	 */
 	void                     SetOutputFileOn(bool bValue);
-
-	/**
-	 *  Sets a Fortran callback function for Basic programs. The syntax for the Basic command is
-	 *  10 result = CALLBACK(x1, x2, string$)
-	 *  The syntax for the Fortran function is
-	 *  double precision my_callback(x1, x2, string), where x1 and x2 are double precision and string is a character variable.
-	 *  @param cookie           The name of a user-defined double precision function with three arguments (two double precision, one character).
-	 *  @see                    GetOutputFileOn
-	 */
-	void                     SetFortranBasicCallback(double (*cookie)(double *x1, double *x2, char *str, int l));
 
 	/**
 	 *  Sets the output string switch on or off.  This switch controls whether or not the data normally sent
