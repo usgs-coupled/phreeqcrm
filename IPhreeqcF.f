@@ -533,6 +533,21 @@
         SetOutputFileOn = SetOutputFileOnF(ID,OUTPUT_FILE_ON)
       END FUNCTION SetOutputFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetFortranBasicCallback(ID,COOKIE)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+        INTERFACE 
+          DOUBLE PRECISION FUNCTION cookie(x1, x2, str)
+            DOUBLE PRECISION, INTENT(in) :: x1
+            DOUBLE PRECISION, INTENT(in) :: x2
+            CHARACTER(*), INTENT(in)                   :: str
+          END FUNCTION 
+        END INTERFACE 
+        INTEGER(KIND=4) :: SetFortranBasicCallback
+        INTEGER(KIND=4) :: SetFortranBasicCallbackF
+        SetFortranBasicCallback = SetFortranBasicCallbackF(ID,COOKIE)
+      END FUNCTION SetFortranBasicCallback      
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION SetOutputStringOn(ID,OUTPUT_STRING_ON)
         IMPLICIT NONE
         INTEGER(KIND=4) :: ID

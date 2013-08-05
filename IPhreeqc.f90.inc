@@ -448,6 +448,21 @@
 
 
        INTERFACE
+        FUNCTION SetFortranBasicCallback(ID,COOKIE)
+         INTEGER(KIND=4),  INTENT(IN) :: ID
+        INTERFACE
+          DOUBLE PRECISION FUNCTION cookie(x1, x2, str)
+            DOUBLE PRECISION, INTENT(in) :: x1
+            DOUBLE PRECISION, INTENT(in) :: x2
+            CHARACTER(*), INTENT(in)                   :: str
+          END FUNCTION 
+        END INTERFACE
+         INTEGER(KIND=4)              :: SetFortranBasicCallback
+        END FUNCTION SetFortranBasicCallback
+       END INTERFACE
+
+
+       INTERFACE
         FUNCTION SetOutputStringOn(ID,OUT_STRING_ON)
          INTEGER(KIND=4),  INTENT(IN) :: ID
          LOGICAL(KIND=4),  INTENT(IN) :: OUT_STRING_ON

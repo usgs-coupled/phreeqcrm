@@ -757,6 +757,16 @@ public:
 	void                     SetOutputFileOn(bool bValue);
 
 	/**
+	 *  Sets a Fortran callback function for Basic programs. The syntax for the Basic command is
+	 *  10 result = CALLBACK(x1, x2, string$)
+	 *  The syntax for the Fortran function is
+	 *  double precision my_callback(x1, x2, string), where x1 and x2 are double precision and string is a character variable.
+	 *  @param cookie           The name of a user-defined double precision function with three arguments (two double precision, one character).
+	 *  @see                    GetOutputFileOn
+	 */
+	void                     SetFortranBasicCallback(double (*cookie)(double *x1, double *x2, char *str, int l));
+
+	/**
 	 *  Sets the output string switch on or off.  This switch controls whether or not the data normally sent
 	 *  to the output file are stored in a buffer for retrieval.  The initial setting is false.
 	 *  @param bValue           If true, captures output into a string buffer; if false, output is not captured to a string buffer.

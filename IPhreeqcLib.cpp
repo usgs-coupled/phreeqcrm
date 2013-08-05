@@ -847,6 +847,18 @@ SetOutputFileOn(int id, int value)
 }
 
 IPQ_RESULT
+SetFortranBasicCallback(int id, double (*cookie)(double *x1, double *x2, char *str, int l))
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetFortranBasicCallback(cookie);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
 SetOutputStringOn(int id, int value)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);

@@ -800,6 +800,10 @@ void IPhreeqc::SetOutputFileOn(bool bValue)
 {
 	this->OutputFileOn = bValue;
 }
+void IPhreeqc::SetFortranBasicCallback(double (*cookie)(double *x1, double *x2, char *str, int l))
+{
+	this->PhreeqcPtr->register_fortran_basic_callback(cookie);
+}
 
 void IPhreeqc::SetSelectedOutputFileName(const char *filename)
 {

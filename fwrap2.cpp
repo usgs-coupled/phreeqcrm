@@ -243,6 +243,10 @@ IPQ_DLL_EXPORT int  SETOUTPUTFILEON(int *id, int *output_on)
 {
 	return SetOutputFileOnF(id, output_on);
 }
+IPQ_DLL_EXPORT int  SETFORTRANBASICCALLBACK(int *id, double (*cookie)(double *x1, double *x2, char *str, int l))
+{
+	return SetFortranBasicCallbackF(id, cookie);
+}
 IPQ_DLL_EXPORT int  SETOUTPUTSTRINGON(int *id, int *output_on)
 {
 	return SetOutputStringOnF(id, output_on);

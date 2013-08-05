@@ -1809,6 +1809,27 @@ Headings
 	IPQ_DLL_EXPORT IPQ_RESULT  SetOutputFileOn(int id, int output_on);
 
 /**
+ *  Sets Fortran callback function for the Basic interpreter.  
+ *  @param id               The instance id returned from \ref CreateIPhreeqc.
+ *  @param cookie           The name of a double precision Fortran function with three arguments (two double precision, and one character).
+ *  @retval IPQ_OK          Success.
+ *  @retval IPQ_BADINSTANCE The given id is invalid.
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION SetFortranBasicCallback(ID,COOKIE)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    FUNCTION POINTER,  INTENT(IN) :: COOKIE
+ *    INTEGER(KIND=4)               :: SetFortranBasicCallback
+ *  END FUNCTION SetFortranBasicCallback
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT IPQ_RESULT  SetFortranBasicCallback(int id, double (*cookie)(double *x1, double *x2, char *str, int l));
+
+/**
  *  Sets the output string switch on or off.  This switch controls whether or not the data normally sent
  *  to the output file are stored in a buffer for retrieval.  The initial setting after calling
  *  \ref CreateIPhreeqc is off.
