@@ -1535,14 +1535,14 @@ Headings
  *  <PRE>
  *  FUNCTION SetBasicCallback(ID,COOKIE)
  *    INTEGER  :: ID
- *    double (*cookie)(double *x1, double *x2, char *str)
+ *    double (*cookie)(double x1, double x2, const char *str)
  *    INTEGER  :: SetBasicCallback
  *  END FUNCTION SetBasicCallback
  *  </PRE>
  *  </CODE>
  *  @endhtmlonly
  */
-	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicCallback(int id, double (*cookie)(double *x1, double *x2, char *str));
+	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicCallback(int id, double (*cookie)(double x1, double x2, const char *str));
 
 /**
  *  Sets Fortran callback function for the Basic interpreter.  

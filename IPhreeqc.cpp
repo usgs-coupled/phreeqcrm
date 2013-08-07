@@ -728,7 +728,7 @@ int IPhreeqc::RunString(const char* input)
 	return this->PhreeqcPtr->get_input_errors();
 }
 
-void IPhreeqc::SetBasicCallback(double (*cookie)(double *x1, double *x2, char *str))
+void IPhreeqc::SetBasicCallback(double (*cookie)(double x1, double x2, const char *str))
 {
 	this->PhreeqcPtr->register_basic_callback(cookie);
 }

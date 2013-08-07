@@ -715,7 +715,7 @@ RunString(int id, const char* input)
 }
 
 IPQ_RESULT
-SetBasicCallback(int id, double (*cookie)(double *x1, double *x2, char *str))
+SetBasicCallback(int id, double (*cookie)(double x1, double x2, const char *str))
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
