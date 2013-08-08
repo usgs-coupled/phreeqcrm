@@ -715,24 +715,24 @@ RunString(int id, const char* input)
 }
 
 IPQ_RESULT
-SetBasicCallback(int id, double (*cookie)(double x1, double x2, const char *str))
+SetBasicCallback(int id, double (*fcn)(double x1, double x2, const char *str, void *cookie), void *cookie1)
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		IPhreeqcPtr->SetBasicCallback(cookie);
+		IPhreeqcPtr->SetBasicCallback(fcn, cookie1);
 		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;
 }
 
 IPQ_RESULT
-SetBasicFortranCallback(int id, double (*cookie)(double *x1, double *x2, char *str, int l))
+SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str, int l))
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		IPhreeqcPtr->SetBasicFortranCallback(cookie);
+		IPhreeqcPtr->SetBasicFortranCallback(fcn);
 		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;

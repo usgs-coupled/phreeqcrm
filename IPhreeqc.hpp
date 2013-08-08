@@ -662,7 +662,7 @@ public:
 	 *  @param cookie           The name of a user-defined function 
 	 *  @see                    SetBasicFortranCallback
 	 */
-	void                     SetBasicCallback(double (*cookie)(double x1, double x2, const char *str));
+	void                     SetBasicCallback(double (*fcn)(double x1, double x2, const char *str, void *cookie), void * cookie1);
 
 	/**
 	 *  Sets a Fortran callback function for Basic programs. The syntax for the Basic command is
@@ -672,7 +672,7 @@ public:
 	 *  @param cookie           The name of a user-defined double precision function with three arguments (two double precision, one character).
 	 *  @see                    SetBasicCallback
 	 */
-	void                     SetBasicFortranCallback(double (*cookie)(double *x1, double *x2, char *str, int l));
+	void                     SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, char *str, int l));
 
 	/**
 	 *  Runs the specified string as input to phreeqc.

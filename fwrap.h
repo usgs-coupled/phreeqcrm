@@ -137,7 +137,7 @@ extern "C" {
   IPQ_RESULT SetSelectedOutputFileNameF(int *id, char* fname, unsigned int fname_length);
   IPQ_RESULT SetSelectedOutputFileOnF(int *id, int* selected_output_file_on);
   IPQ_RESULT SetSelectedOutputStringOnF(int *id, int* selected_output_string_on);
-  IPQ_RESULT SetBasicFortranCallbackF(int *id, double (*cookie)(double *x1, double *x2, char *str, int l));
+  IPQ_RESULT SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *str, int l));
 
 #if defined(__cplusplus)
 }

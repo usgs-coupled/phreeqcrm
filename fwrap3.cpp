@@ -200,9 +200,9 @@ IPQ_DLL_EXPORT int  runstring_(int *id, char *input, unsigned int len)
 {
 	return RunStringF(id, input, len);
 }
-IPQ_DLL_EXPORT int  setbasicfortrancallback_(int *id, double (*cookie)(double *x1, double *x2, char *str, int l))
+IPQ_DLL_EXPORT int  setbasicfortrancallback_(int *id, double (*fcn)(double *x1, double *x2, char *str, int l))
 {
-	return SetBasicFortranCallbackF(id, cookie);
+	return SetBasicFortranCallbackF(id, fcn);
 }
 IPQ_DLL_EXPORT int  setdumpfilename_(int *id, char *filename, unsigned int len)
 {

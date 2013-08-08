@@ -728,14 +728,14 @@ int IPhreeqc::RunString(const char* input)
 	return this->PhreeqcPtr->get_input_errors();
 }
 
-void IPhreeqc::SetBasicCallback(double (*cookie)(double x1, double x2, const char *str))
+void IPhreeqc::SetBasicCallback(double (*fcn)(double x1, double x2, const char *str, void *cookie), void *cookie1)
 {
-	this->PhreeqcPtr->register_basic_callback(cookie);
+	this->PhreeqcPtr->register_basic_callback(fcn, cookie1);
 }
 
-void IPhreeqc::SetBasicFortranCallback(double (*cookie)(double *x1, double *x2, char *str, int l))
+void IPhreeqc::SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, char *str, int l))
 {
-	this->PhreeqcPtr->register_fortran_basic_callback(cookie);
+	this->PhreeqcPtr->register_fortran_basic_callback(fcn);
 }
 
 void IPhreeqc::SetDumpFileName(const char *filename)

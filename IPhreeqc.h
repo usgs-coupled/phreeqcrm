@@ -1533,16 +1533,17 @@ Headings
  *  @htmlonly
  *  <CODE>
  *  <PRE>
- *  FUNCTION SetBasicCallback(ID,COOKIE)
+ *  FUNCTION SetBasicCallback(ID,fcn,cookie)
  *    INTEGER  :: ID
- *    double (*cookie)(double x1, double x2, const char *str)
- *    INTEGER  :: SetBasicCallback
+ *    double (*fcn)(double x1, double x2, const char *str, void *)
+ *    void *      cookie  :: SetBasicCallback
+ *    integer     SetBasicCallback
  *  END FUNCTION SetBasicCallback
  *  </PRE>
  *  </CODE>
  *  @endhtmlonly
  */
-	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicCallback(int id, double (*cookie)(double x1, double x2, const char *str));
+	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicCallback(int id, double (*fcn)(double x1, double x2, const char *str, void *cookie), void *cookie1);
 
 /**
  *  Sets Fortran callback function for the Basic interpreter.  
@@ -1554,10 +1555,10 @@ Headings
  *  @htmlonly
  *  <CODE>
  *  <PRE>
- *  FUNCTION SetBasicFortranCallback(ID,COOKIE)
+ *  FUNCTION SetBasicFortranCallback(ID,fcn)
  *    INTEGER(KIND=4),  INTENT(IN)  :: ID
  *    INTERFACE
- *      DOUBLE PRECISION FUNCTION cookie(x1, x2, str)
+ *      DOUBLE PRECISION FUNCTION fcn(x1, x2, str)
  *        DOUBLE PRECISION, INTENT(in) :: x1
  *        DOUBLE PRECISION, INTENT(in) :: x2
  *        CHARACTER(*), INTENT(in)                   :: str
@@ -1569,7 +1570,7 @@ Headings
  *  </CODE>
  *  @endhtmlonly
  */
-	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicFortranCallback(int id, double (*cookie)(double *x1, double *x2, char *str, int l));
+	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str, int l));
 
 
 /**

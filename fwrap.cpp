@@ -450,9 +450,9 @@ RunStringF(int *id, char* input, unsigned int input_length)
 }
 
 IPQ_RESULT
-SetBasicFortranCallbackF(int *id, double (*cookie)(double *x1, double *x2, char *str, int l))
+SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *str, int l))
 {
-	return ::SetBasicFortranCallback(*id, cookie);
+	return ::SetBasicFortranCallback(*id, fcn);
 }
 
 IPQ_RESULT
@@ -799,9 +799,9 @@ IPQ_DLL_EXPORT int  __stdcall RUNSTRING(int *id, char *input, unsigned int len)
 {
 	return RunStringF(id, input, len);
 }
-IPQ_DLL_EXPORT int  __stdcall SETBASICFORTRANCALBACK(int *id, double (*cookie)(double *x1, double *x2, char *str, int l))
+IPQ_DLL_EXPORT int  __stdcall SETBASICFORTRANCALBACK(int *id, double (*fcn)(double *x1, double *x2, char *str, int l))
 {
-	return SetBasicFortranCallbackF(id, cookie);
+	return SetBasicFortranCallbackF(id, fcn);
 }
 IPQ_DLL_EXPORT int  __stdcall SETDUMPFILENAME(int *id, char *filename, unsigned int len)
 {
