@@ -806,7 +806,7 @@ public:
 	virtual void fpunchf_end_row(const char *format);
 
 	virtual bool output_open(const char *file_name, std::ios_base::openmode mode = std::ios_base::out);
-	virtual bool punch_open(const char *file_name, std::ios_base::openmode mode = std::ios_base::out);
+	virtual bool punch_open(const char *file_name, std::ios_base::openmode mode = std::ios_base::out, int n_user = 1);
 
 protected:
 	int EndRow(void);

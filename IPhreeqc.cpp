@@ -1,4 +1,5 @@
 #include <memory>                   // auto_ptr
+#include <map>
 #include <string.h>
 
 #include "IPhreeqc.hpp"             // IPhreeqc
@@ -8,12 +9,13 @@
 #include "Debug.h"                  // ASSERT
 #include "ErrorReporter.hxx"        // CErrorReporter
 #include "SelectedOutput.hxx"       // CSelectedOutput
+#include "phreeqcpp/SelectedOutput.h" // SelectedOutput
 #include "dumper.h"                 // dumper
 
 const char OUTPUT_FILENAME_FORMAT[] = "phreeqc.%d.out";
 const char ERROR_FILENAME_FORMAT[]  = "phreeqc.%d.err";
 const char LOG_FILENAME_FORMAT[]    = "phreeqc.%d.log";
-const char PUNCH_FILENAME_FORMAT[]  = "selected.%d.out";
+const char PUNCH_FILENAME_FORMAT[]  = "selected_1.%d.out";
 const char DUMP_FILENAME_FORMAT[]   = "dump.%d.out";
 
 // statics
@@ -866,9 +868,12 @@ int IPhreeqc::EndRow(void)
 	{
 		// ensure all user_punch headings are included
 		ASSERT(this->PhreeqcPtr->n_user_punch_index >= 0);
-		for (int i = this->PhreeqcPtr->n_user_punch_index; i < this->PhreeqcPtr->user_punch_count_headings; ++i)
+		if (this->PhreeqcPtr->current_user_punch != NULL)
 		{
-			this->SelectedOutput->PushBackEmpty(this->PhreeqcPtr->user_punch_headings[i]);
+			for (size_t i = this->PhreeqcPtr->n_user_punch_index; i < this->PhreeqcPtr->current_user_punch->Get_headings().size(); ++i)
+			{
+				this->SelectedOutput->PushBackEmpty(this->PhreeqcPtr->current_user_punch->Get_headings()[i].c_str());
+			}
 		}
 	}
 	return this->SelectedOutput->EndRow();
@@ -935,18 +940,22 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 #endif
 		::sprintf(token, "Reading input data for simulation %d.", this->PhreeqcPtr->simulation);
 
-		int save_punch_in = this->PhreeqcPtr->punch.in;
+		bool save_punch_in = this->PhreeqcPtr->SelectedOutput_map.size() > 0;
 
 		this->PhreeqcPtr->dup_print(token, TRUE);
 		if (this->PhreeqcPtr->read_input() == EOF)
 			break;
 
-		if (this->PhreeqcPtr->simulation > 1 && save_punch_in == TRUE && this->PhreeqcPtr->punch.new_def == TRUE)
+		std::map< int, class SelectedOutput >::iterator mit = this->PhreeqcPtr->SelectedOutput_map.begin();
+		for (; mit != this->PhreeqcPtr->SelectedOutput_map.end(); ++mit)
 		{
-			std::ostringstream oss;
-			oss << sz_routine << ": Warning SELECTED_OUTPUT has been redefined.\n";
-			this->PhreeqcPtr->warning_msg(oss.str().c_str());
-
+			if (this->PhreeqcPtr->simulation > 1 && save_punch_in && (*mit).second.Get_new_def())
+			{
+				std::ostringstream oss;
+				oss << sz_routine << ": Warning SELECTED_OUTPUT has been redefined.\n";
+				this->PhreeqcPtr->warning_msg(oss.str().c_str());
+				break;
+			}
 		}
 		if (this->PhreeqcPtr->simulation > 1 && this->PhreeqcPtr->keycount[Keywords::KEY_USER_PUNCH] > 0)
 		{
@@ -967,7 +976,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		}
 
 #ifdef SWIG_SHARED_OBJ
-		if (this->PhreeqcPtr->punch.in == TRUE)
+		if (this->PhreeqcPtr->SelectedOutput_map.size() > 0)
 		{
 			//
 			// (punch.in == TRUE) when any "RUN" has contained
@@ -987,7 +996,11 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			//
 			if (!this->SelectedOutputFileOn)
 			{
-				ASSERT(!this->punch_ostream);
+				std::map< int, class SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
+				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
+				{
+					ASSERT((*it).second.Get_punch_ostream() == 0);
+				}
 			}
 
 			if (this->PhreeqcPtr->pr.punch == FALSE)
@@ -1000,53 +1013,74 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			}
 			else
 			{
-				if (this->PhreeqcPtr->punch.new_def == FALSE)
+				std::map< int, class SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
+				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 				{
-					if (this->SelectedOutputFileOn && !this->punch_ostream)
+					//{{ TEMP
+					if ((*it).first != 1) continue;
+					//}} TEMP
+					if (!(*it).second.Get_new_def())
 					{
-						//
-						// LoadDatabase
-						// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
-						// another do_run without SELECTED_OUTPUT
-						//
-						std::string filename = this->SelectedOutputFileName;
-						if (!this->punch_open(filename.c_str()))
+						if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
 						{
-							std::ostringstream oss;
-							oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
-							this->PhreeqcPtr->warning_msg(oss.str().c_str());
-						}
-						else
-						{
-							// output selected_output headings
-							this->PhreeqcPtr->punch.new_def = TRUE;
-							this->PhreeqcPtr->tidy_punch();
+							//
+							// LoadDatabase
+							// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
+							// another do_run without SELECTED_OUTPUT
+							//
+							//std::string filename = this->SelectedOutputFileName;
+							std::string filename = (*it).second.Get_file_name();
+							if (!punch_open((*it).second.Get_file_name().c_str(), std::ios_base::out, (*it).first))
+							{
+								std::ostringstream oss;
+								oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
+								this->PhreeqcPtr->warning_msg(oss.str().c_str());
+							}
+							else
+							{
+								// output selected_output headings
+								//this->PhreeqcPtr->punch.new_def = TRUE;
+								//SelectedOutput *selected_output = this->PhreeqcPtr->SelectedOutput_map[1]
+								//{{
+								ASSERT((*it).second.Get_punch_ostream() == NULL);
+								(*it).second.Set_punch_ostream(this->Get_punch_ostream());
+								this->Set_punch_ostream(NULL);
+								//}}
+								(*it).second.Set_new_def(TRUE);
+								this->PhreeqcPtr->tidy_punch();
+							}
 						}
 					}
-				}
-				else
-				{
-					if (this->SelectedOutputFileOn && !this->punch_ostream)
+					else
 					{
-						// This is a special case which could not occur in
-						// phreeqc
-						//
-						// LoadDatabase
-						// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
-						// another do_run with SELECTED_OUTPUT
-						//
-						std::string filename = this->SelectedOutputFileName;
-						if (!this->punch_open(filename.c_str()))
+						if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
 						{
-							std::ostringstream oss;
-							oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
-							this->PhreeqcPtr->warning_msg(oss.str().c_str());
-						}
-						else
-						{
-							// output selected_output headings
-							ASSERT(this->PhreeqcPtr->punch.new_def == TRUE);
-							this->PhreeqcPtr->tidy_punch();
+							// This is a special case which could not occur in
+							// phreeqc
+							//
+							// LoadDatabase
+							// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
+							// another do_run with SELECTED_OUTPUT
+							//
+							std::string filename = this->SelectedOutputFileName;
+							if (!this->punch_open((*it).second.Get_file_name().c_str(), (*it).first))
+							{
+								std::ostringstream oss;
+								oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
+								this->PhreeqcPtr->warning_msg(oss.str().c_str());
+							}
+							else
+							{
+								//{{
+								ASSERT((*it).second.Get_punch_ostream() == NULL);
+								(*it).second.Set_punch_ostream(this->Get_punch_ostream());
+								this->Set_punch_ostream(NULL);
+								//}}
+
+								// output selected_output headings
+								ASSERT((*it).second.Get_new_def());
+								this->PhreeqcPtr->tidy_punch();
+							}
 						}
 					}
 				}
@@ -1263,13 +1297,13 @@ void IPhreeqc::log_msg(const char * str)
 	{
 		this->LogString += str;
 	}
-	ASSERT(!(this->LogFileOn ^ (this->log_ostream != 0)));
+	ASSERT(!(this->LogFileOn != (this->log_ostream != 0)));
 	this->PHRQ_io::log_msg(str);
 }
 
 void IPhreeqc::error_msg(const char *str, bool stop)
 {
-	ASSERT(!(this->ErrorFileOn ^ (this->error_ostream != 0)));
+	ASSERT(!(this->ErrorFileOn != (this->error_ostream != 0)));
 
 	if (this->error_ostream != NULL && this->error_on)
 	{
@@ -1297,7 +1331,7 @@ void IPhreeqc::error_msg(const char *str, bool stop)
 
 void IPhreeqc::warning_msg(const char *str)
 {
-	ASSERT(!(this->ErrorFileOn ^ (this->error_ostream != 0)));
+	ASSERT(!(this->ErrorFileOn != (this->error_ostream != 0)));
 
 	if (this->error_ostream != NULL && this->error_on)
 	{
@@ -1322,7 +1356,7 @@ void IPhreeqc::output_msg(const char * str)
 	{
 		this->OutputString += str;
 	}
-	ASSERT(!(this->OutputFileOn ^ (this->output_ostream != 0)));
+	ASSERT(!(this->OutputFileOn != (this->output_ostream != 0)));
 	this->PHRQ_io::output_msg(str);
 }
 
@@ -1337,7 +1371,7 @@ void IPhreeqc::punch_msg(const char *str)
 	{
 		this->SelectedOutputString += str;
 	}
-	ASSERT(!(this->SelectedOutputFileOn ^ (this->punch_ostream != 0)));
+	ASSERT(!(this->SelectedOutputFileOn != (this->PhreeqcPtr->current_selected_output->Get_punch_ostream() != 0)));
 	this->PHRQ_io::punch_msg(str);
 }
 
@@ -1408,9 +1442,16 @@ int IPhreeqc::close_output_files(void)
 
 	delete this->output_ostream;
 	delete this->log_ostream;
-	delete this->punch_ostream;
+	//delete this->punch_ostream;
 	delete this->dump_ostream;
 	delete this->error_ostream;
+
+	std::map< int, class SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
+	for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
+	{
+		delete (*it).second.Get_punch_ostream();
+		(*it).second.Set_punch_ostream(NULL);
+	}
 
 	this->error_ostream  = 0;
 	this->output_ostream = 0;
@@ -1477,15 +1518,15 @@ void IPhreeqc::fpunchf_end_row(const char *format)
 	this->EndRow();
 }
 
-bool IPhreeqc::punch_open(const char *file_name, std::ios_base::openmode mode)
+bool IPhreeqc::punch_open(const char *file_name, std::ios_base::openmode mode, int n_user)
 {
-	if (file_name && this->PhreeqcPtr->have_punch_name)
+	if (file_name && this->PhreeqcPtr->SelectedOutput_map[n_user].Get_have_punch_name())
 	{
 		this->SelectedOutputFileName = file_name;
 	}
 	if (this->SelectedOutputFileOn)
 	{
-		return this->PHRQ_io::punch_open(this->SelectedOutputFileName.c_str(), mode);
+		return this->PHRQ_io::punch_open(this->SelectedOutputFileName.c_str(), mode, n_user);
 	}
 	return true;
 }
