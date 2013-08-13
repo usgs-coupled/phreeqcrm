@@ -82,7 +82,7 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/runner.cpp\
 	phreeqcpp/runner.h\
 	phreeqcpp/SelectedOutput.cpp\
-	phreeqcpp/SelectedOutput.hxx\
+	phreeqcpp/SelectedOutput.h\
 	phreeqcpp/Solution.cxx\
 	phreeqcpp/Solution.h\
 	phreeqcpp/SolutionIsotope.cxx\
