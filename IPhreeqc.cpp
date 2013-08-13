@@ -1002,6 +1002,10 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 					ASSERT((*it).second.Get_punch_ostream() == 0);
 				}
 			}
+			else
+			{
+				ASSERT(TRUE);
+			}
 
 			if (this->PhreeqcPtr->pr.punch == FALSE)
 			{
@@ -1010,6 +1014,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 				//    PRINT;  -selected_output false
 				// is given as input
 				// Note: this also disables the CSelectedOutput object
+				ASSERT(TRUE);
 			}
 			else
 			{
@@ -1050,6 +1055,10 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 								this->PhreeqcPtr->tidy_punch();
 							}
 						}
+						else
+						{
+							ASSERT(TRUE);
+						}
 					}
 					else
 					{
@@ -1063,7 +1072,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 							// another do_run with SELECTED_OUTPUT
 							//
 							std::string filename = this->SelectedOutputFileName;
-							if (!this->punch_open((*it).second.Get_file_name().c_str(), (*it).first))
+							if (!this->punch_open((*it).second.Get_file_name().c_str(), std::ios_base::out, (*it).first))
 							{
 								std::ostringstream oss;
 								oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
@@ -1082,10 +1091,19 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 								this->PhreeqcPtr->tidy_punch();
 							}
 						}
+						else
+						{
+							ASSERT(TRUE);
+						}
 					}
 				}
 			}
 		}
+		else
+		{
+			ASSERT(TRUE);
+		}
+		
 
 		if (!this->SelectedOutputFileOn) ASSERT(!this->punch_ostream);
 
