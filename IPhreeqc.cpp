@@ -8,7 +8,7 @@
 
 #include "Debug.h"                  // ASSERT
 #include "ErrorReporter.hxx"        // CErrorReporter
-#include "SelectedOutput.hxx"       // CSelectedOutput
+#include "CSelectedOutput.hxx"      // CSelectedOutput
 #include "phreeqcpp/SelectedOutput.h" // SelectedOutput
 #include "dumper.h"                 // dumper
 
