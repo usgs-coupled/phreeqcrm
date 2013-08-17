@@ -822,6 +822,7 @@ protected:
 
 	void update_errors(void);
 
+	std::string sel_file_name(int n_user);
 
 protected:
 #if defined(_MSC_VER)
@@ -867,7 +868,8 @@ protected:
 
 	std::list< std::string >   Components;
 
-	std::string                SelectedOutputFileName;
+	std::map< int, std::string > SelectedOutputFileNameMap;
+
 	std::string                OutputFileName;
 	std::string                ErrorFileName;
 	std::string                LogFileName;
