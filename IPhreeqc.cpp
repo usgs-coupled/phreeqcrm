@@ -1025,74 +1025,106 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			}
 			else
 			{
+				//{{
 				std::map< int, class SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
 				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 				{
-					if (!(*it).second.Get_new_def())
+					if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
 					{
-						if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
+						//
+						// LoadDatabase
+						// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
+						// another do_run without SELECTED_OUTPUT
+						//
+						ASSERT(!this->SelectedOutputFileNameMap[(*it).first].empty());
+						ASSERT(this->SelectedOutputFileNameMap[(*it).first] == this->PhreeqcPtr->SelectedOutput_map[(*it).first].Get_file_name());
+						std::string filename = this->SelectedOutputFileNameMap[(*it).first];
+						if (!punch_open(filename.c_str(), std::ios_base::out, (*it).first))
 						{
-							//
-							// LoadDatabase
-							// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
-							// another do_run without SELECTED_OUTPUT
-							//
-							ASSERT(!this->SelectedOutputFileNameMap[(*it).first].empty());
-							std::string filename = this->SelectedOutputFileNameMap[(*it).first];
-							if (!punch_open(filename.c_str(), std::ios_base::out, (*it).first))
-							{
-								std::ostringstream oss;
-								oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
-								this->PhreeqcPtr->warning_msg(oss.str().c_str());
-							}
-							else
-							{
-								ASSERT(this->Get_punch_ostream() == NULL);
-								ASSERT((*it).second.Get_punch_ostream() != NULL);
-								// output selected_output headings
-								(*it).second.Set_new_def(TRUE);
-								this->PhreeqcPtr->tidy_punch();
-							}
+							std::ostringstream oss;
+							oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
+							this->PhreeqcPtr->warning_msg(oss.str().c_str());
 						}
 						else
 						{
-							ASSERT(TRUE);
-						}
-					}
-					else
-					{
-						if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
-						{
-							// This is a special case which could not occur in
-							// phreeqc
-							//
-							// LoadDatabase
-							// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
-							// another do_run with SELECTED_OUTPUT
-							//
-							std::string filename = this->SelectedOutputFileNameMap[(*it).first];
-							if (!this->punch_open(filename.c_str(), std::ios_base::out, (*it).first))
-							{
-								std::ostringstream oss;
-								oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
-								this->PhreeqcPtr->warning_msg(oss.str().c_str());
-							}
-							else
-							{
-								ASSERT(this->Get_punch_ostream() == NULL);
-								ASSERT((*it).second.Get_punch_ostream() != NULL);
-
-								// output selected_output headings
-								ASSERT((*it).second.Get_new_def());
-								this->PhreeqcPtr->tidy_punch();
-							}
-						}
-						else
-						{
-							ASSERT(TRUE);
+							ASSERT(this->Get_punch_ostream() == NULL);
+							ASSERT((*it).second.Get_punch_ostream() != NULL);
+							
+							// output selected_output headings
+							(*it).second.Set_new_def(TRUE);
+							this->PhreeqcPtr->tidy_punch();
 						}
 					}
 				}
+				//}}
+// COMMENT: {8/19/2013 5:22:41 PM}				std::map< int, class SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
+// COMMENT: {8/19/2013 5:22:41 PM}				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
+// COMMENT: {8/19/2013 5:22:41 PM}				{
+// COMMENT: {8/19/2013 5:22:41 PM}					if (!(*it).second.Get_new_def())
+// COMMENT: {8/19/2013 5:22:41 PM}					{
+// COMMENT: {8/19/2013 5:22:41 PM}						if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
+// COMMENT: {8/19/2013 5:22:41 PM}						{
+// COMMENT: {8/19/2013 5:22:41 PM}							//
+// COMMENT: {8/19/2013 5:22:41 PM}							// LoadDatabase
+// COMMENT: {8/19/2013 5:22:41 PM}							// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
+// COMMENT: {8/19/2013 5:22:41 PM}							// another do_run without SELECTED_OUTPUT
+// COMMENT: {8/19/2013 5:22:41 PM}							//
+// COMMENT: {8/19/2013 5:22:41 PM}							ASSERT(!this->SelectedOutputFileNameMap[(*it).first].empty());
+// COMMENT: {8/19/2013 5:22:41 PM}							std::string filename = this->SelectedOutputFileNameMap[(*it).first];
+// COMMENT: {8/19/2013 5:22:41 PM}							if (!punch_open(filename.c_str(), std::ios_base::out, (*it).first))
+// COMMENT: {8/19/2013 5:22:41 PM}							{
+// COMMENT: {8/19/2013 5:22:41 PM}								std::ostringstream oss;
+// COMMENT: {8/19/2013 5:22:41 PM}								oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
+// COMMENT: {8/19/2013 5:22:41 PM}								this->PhreeqcPtr->warning_msg(oss.str().c_str());
+// COMMENT: {8/19/2013 5:22:41 PM}							}
+// COMMENT: {8/19/2013 5:22:41 PM}							else
+// COMMENT: {8/19/2013 5:22:41 PM}							{
+// COMMENT: {8/19/2013 5:22:41 PM}								ASSERT(this->Get_punch_ostream() == NULL);
+// COMMENT: {8/19/2013 5:22:41 PM}								ASSERT((*it).second.Get_punch_ostream() != NULL);
+// COMMENT: {8/19/2013 5:22:41 PM}								// output selected_output headings
+// COMMENT: {8/19/2013 5:22:41 PM}								(*it).second.Set_new_def(TRUE);
+// COMMENT: {8/19/2013 5:22:41 PM}								this->PhreeqcPtr->tidy_punch();
+// COMMENT: {8/19/2013 5:22:41 PM}							}
+// COMMENT: {8/19/2013 5:22:41 PM}						}
+// COMMENT: {8/19/2013 5:22:41 PM}						else
+// COMMENT: {8/19/2013 5:22:41 PM}						{
+// COMMENT: {8/19/2013 5:22:41 PM}							ASSERT(TRUE);
+// COMMENT: {8/19/2013 5:22:41 PM}						}
+// COMMENT: {8/19/2013 5:22:41 PM}					}
+// COMMENT: {8/19/2013 5:22:41 PM}					else
+// COMMENT: {8/19/2013 5:22:41 PM}					{
+// COMMENT: {8/19/2013 5:22:41 PM}						if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
+// COMMENT: {8/19/2013 5:22:41 PM}						{
+// COMMENT: {8/19/2013 5:22:41 PM}							// This is a special case which could not occur in
+// COMMENT: {8/19/2013 5:22:41 PM}							// phreeqc
+// COMMENT: {8/19/2013 5:22:41 PM}							//
+// COMMENT: {8/19/2013 5:22:41 PM}							// LoadDatabase
+// COMMENT: {8/19/2013 5:22:41 PM}							// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
+// COMMENT: {8/19/2013 5:22:41 PM}							// another do_run with SELECTED_OUTPUT
+// COMMENT: {8/19/2013 5:22:41 PM}							//
+// COMMENT: {8/19/2013 5:22:41 PM}							std::string filename = this->SelectedOutputFileNameMap[(*it).first];
+// COMMENT: {8/19/2013 5:22:41 PM}							if (!this->punch_open(filename.c_str(), std::ios_base::out, (*it).first))
+// COMMENT: {8/19/2013 5:22:41 PM}							{
+// COMMENT: {8/19/2013 5:22:41 PM}								std::ostringstream oss;
+// COMMENT: {8/19/2013 5:22:41 PM}								oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
+// COMMENT: {8/19/2013 5:22:41 PM}								this->PhreeqcPtr->warning_msg(oss.str().c_str());
+// COMMENT: {8/19/2013 5:22:41 PM}							}
+// COMMENT: {8/19/2013 5:22:41 PM}							else
+// COMMENT: {8/19/2013 5:22:41 PM}							{
+// COMMENT: {8/19/2013 5:22:41 PM}								ASSERT(this->Get_punch_ostream() == NULL);
+// COMMENT: {8/19/2013 5:22:41 PM}								ASSERT((*it).second.Get_punch_ostream() != NULL);
+// COMMENT: {8/19/2013 5:22:41 PM}
+// COMMENT: {8/19/2013 5:22:41 PM}								// output selected_output headings
+// COMMENT: {8/19/2013 5:22:41 PM}								ASSERT((*it).second.Get_new_def());
+// COMMENT: {8/19/2013 5:22:41 PM}								this->PhreeqcPtr->tidy_punch();
+// COMMENT: {8/19/2013 5:22:41 PM}							}
+// COMMENT: {8/19/2013 5:22:41 PM}						}
+// COMMENT: {8/19/2013 5:22:41 PM}						else
+// COMMENT: {8/19/2013 5:22:41 PM}						{
+// COMMENT: {8/19/2013 5:22:41 PM}							ASSERT(TRUE);
+// COMMENT: {8/19/2013 5:22:41 PM}						}
+// COMMENT: {8/19/2013 5:22:41 PM}					}
+// COMMENT: {8/19/2013 5:22:41 PM}				}
 			}
 		}
 		else
