@@ -334,7 +334,7 @@ int IPhreeqc::GetSelectedOutputColumnCount(void)const
 
 const char* IPhreeqc::GetSelectedOutputFileName(void)const
 {
-	static char* empty = "";
+	static const char* empty = "";
 	std::map< int, std::string >::const_iterator ci = this->SelectedOutputFileNameMap.find(1);
 	if (ci != this->SelectedOutputFileNameMap.end())
 	{
