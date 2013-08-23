@@ -22,6 +22,8 @@ const char DUMP_FILENAME_FORMAT[]   = "dump.%d.out";
 std::map<size_t, IPhreeqc*> IPhreeqc::Instances;
 size_t IPhreeqc::InstancesIndex = 0;
 
+static const char empty[] = "";
+
 
 IPhreeqc::IPhreeqc(void)
 : DatabaseLoaded(false)
@@ -39,7 +41,8 @@ IPhreeqc::IPhreeqc(void)
 , ErrorReporter(0)
 , WarningStringOn(true)
 , WarningReporter(0)
-, SelectedOutput(0)
+, PtrSelectedOutput(0)
+, CurrentSelectedOutputUserNumber(1)
 , SelectedOutputStringOn(false)
 , PhreeqcPtr(0)
 , input_file(0)
@@ -49,7 +52,7 @@ IPhreeqc::IPhreeqc(void)
 
 	this->ErrorReporter   = new CErrorReporter<std::ostringstream>;
 	this->WarningReporter = new CErrorReporter<std::ostringstream>;
-	this->SelectedOutput  = new CSelectedOutput();
+	this->PtrSelectedOutput  = new CSelectedOutput();
 	this->PhreeqcPtr      = new Phreeqc(this);
 
 	ASSERT(this->PhreeqcPtr->phast == 0);
@@ -83,7 +86,7 @@ IPhreeqc::~IPhreeqc(void)
 	this->OutputFileOn = false;
 #endif
 	delete this->PhreeqcPtr;
-	delete this->SelectedOutput;
+	delete this->PtrSelectedOutput;
 	delete this->WarningReporter;
 	delete this->ErrorReporter;
 
@@ -329,13 +332,13 @@ bool IPhreeqc::GetOutputStringOn(void)const
 
 int IPhreeqc::GetSelectedOutputColumnCount(void)const
 {
-	return (int)this->SelectedOutput->GetColCount();
+	return (int)this->PtrSelectedOutput->GetColCount();
 }
 
 const char* IPhreeqc::GetSelectedOutputFileName(void)const
 {
-	static const char* empty = "";
-	std::map< int, std::string >::const_iterator ci = this->SelectedOutputFileNameMap.find(1);
+	static const char empty[] = "";
+	std::map< int, std::string >::const_iterator ci = this->SelectedOutputFileNameMap.find(this->CurrentSelectedOutputUserNumber);
 	if (ci != this->SelectedOutputFileNameMap.end())
 	{
 		return (*ci).second.c_str();
@@ -350,7 +353,7 @@ bool IPhreeqc::GetSelectedOutputFileOn(void)const
 
 int IPhreeqc::GetSelectedOutputRowCount(void)const
 {
-	return (int)this->SelectedOutput->GetRowCount();
+	return (int)this->PtrSelectedOutput->GetRowCount();
 }
 
 const char* IPhreeqc::GetSelectedOutputString(void)const
@@ -360,7 +363,12 @@ const char* IPhreeqc::GetSelectedOutputString(void)const
 	{
 		return err_msg;
 	}
-	return this->SelectedOutputString.c_str();
+	std::map< int, std::string >::const_iterator cit = this->SelectedOutputStringMap.find(this->CurrentSelectedOutputUserNumber);
+	if (cit != this->SelectedOutputStringMap.end())
+	{
+		return (*cit).second.c_str();
+	}
+	return empty;
 }
 
 const char* IPhreeqc::GetSelectedOutputStringLine(int n)
@@ -370,12 +378,17 @@ const char* IPhreeqc::GetSelectedOutputStringLine(int n)
 	{
 		return empty;
 	}
-	return this->SelectedOutputLines[n].c_str();
+	return this->SelectedOutputLinesMap[this->CurrentSelectedOutputUserNumber][n].c_str();
 }
 
 int IPhreeqc::GetSelectedOutputStringLineCount(void)const
 {
-	return (int)this->SelectedOutputLines.size();
+	std::map< int, std::vector < std::string > >::const_iterator cit = this->SelectedOutputLinesMap.find(this->CurrentSelectedOutputUserNumber);
+	if (cit != this->SelectedOutputLinesMap.end())
+	{
+		return (*cit).second.size();
+	}
+	return (int)0;
 }
 
 bool IPhreeqc::GetSelectedOutputStringOn(void)const
@@ -393,7 +406,7 @@ VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 		return VR_INVALIDARG;
 	}
 
-	VRESULT v = this->SelectedOutput->Get(row, col, pVAR);
+	VRESULT v = this->PtrSelectedOutput->Get(row, col, pVAR);
 	switch (v)
 	{
 	case VR_OK:
@@ -501,7 +514,7 @@ int IPhreeqc::LoadDatabase(const char* filename)
 		// cleanup
 		//
 		this->UnLoadDatabase();
-		this->SelectedOutput->Clear();
+		this->PtrSelectedOutput->Clear();
 
 		// open file
 		//
@@ -551,7 +564,7 @@ int IPhreeqc::LoadDatabaseString(const char* input)
 		//
 		this->UnLoadDatabase();
 
-		this->SelectedOutput->Clear();
+		this->PtrSelectedOutput->Clear();
 
 		std::string s(input);
 		std::istringstream iss(s);
@@ -735,6 +748,11 @@ int IPhreeqc::RunString(const char* input)
 	return this->PhreeqcPtr->get_input_errors();
 }
 
+void IPhreeqc::SetCurrentSelectedOutputUserNumber(int n)
+{
+	this->CurrentSelectedOutputUserNumber = n;
+}
+
 void IPhreeqc::SetDumpFileName(const char *filename)
 {
 	if (filename && ::strlen(filename))
@@ -850,10 +868,20 @@ void IPhreeqc::UnLoadDatabase(void)
 
 	// clear selectedoutput
 	//
-	ASSERT(this->SelectedOutput);
-	this->SelectedOutput->Clear();
-	this->SelectedOutputString.clear();
-	this->SelectedOutputLines.clear();
+	ASSERT(this->PtrSelectedOutput);
+	this->PtrSelectedOutput->Clear();
+	
+	std::map< int, std::string >::iterator mit = SelectedOutputStringMap.begin();
+	for (; mit != SelectedOutputStringMap.begin(); ++mit)
+	{
+		(*mit).second.clear();
+	}
+	std::map< int, std::vector< std::string > >::iterator it = this->SelectedOutputLinesMap.begin();
+	for (; it != this->SelectedOutputLinesMap.begin(); ++it)
+	{
+		(*it).second.clear();
+	}
+
 
 	// clear dump string
 	//
@@ -871,7 +899,7 @@ void IPhreeqc::UnLoadDatabase(void)
 
 int IPhreeqc::EndRow(void)
 {
-	if (this->SelectedOutput->GetRowCount() <= 1)
+	if (this->PtrSelectedOutput->GetRowCount() <= 1)
 	{
 		// ensure all user_punch headings are included
 		ASSERT(this->PhreeqcPtr->n_user_punch_index >= 0);
@@ -879,17 +907,17 @@ int IPhreeqc::EndRow(void)
 		{
 			for (size_t i = this->PhreeqcPtr->n_user_punch_index; i < this->PhreeqcPtr->current_user_punch->Get_headings().size(); ++i)
 			{
-				this->SelectedOutput->PushBackEmpty(this->PhreeqcPtr->current_user_punch->Get_headings()[i].c_str());
+				this->PtrSelectedOutput->PushBackEmpty(this->PhreeqcPtr->current_user_punch->Get_headings()[i].c_str());
 			}
 		}
 	}
-	return this->SelectedOutput->EndRow();
+	return this->PtrSelectedOutput->EndRow();
 }
 
 void IPhreeqc::check_database(const char* sz_routine)
 {
  	this->ErrorReporter->Clear();
-	this->SelectedOutput->Clear();
+	this->PtrSelectedOutput->Clear();
 
 	if (!this->DatabaseLoaded)
 	{
@@ -912,13 +940,24 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		pfn_pre(cookie);
 	}
 
+	///{{{ REPLACE WITH A CLEAR ROUTINE
 	// release
 	this->LogString.clear();
 	this->LogLines.clear();
 	this->OutputString.clear();
 	this->OutputLines.clear();
-	this->SelectedOutputString.clear();
-	this->SelectedOutputLines.clear();
+
+	std::map< int, std::string >::iterator mit = SelectedOutputStringMap.begin();
+	for (; mit != SelectedOutputStringMap.begin(); ++mit)
+	{
+		(*mit).second.clear();
+	}
+	std::map< int, std::vector< std::string > >::iterator it = this->SelectedOutputLinesMap.begin();
+	for (; it != this->SelectedOutputLinesMap.begin(); ++it)
+	{
+		(*it).second.clear();
+	}
+	///}}}
 
 /*
  *   set read callback
@@ -953,15 +992,31 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		if (this->PhreeqcPtr->read_input() == EOF)
 			break;
 
-		std::map< int, class SelectedOutput >::iterator mit = this->PhreeqcPtr->SelectedOutput_map.begin();
+		bool bWarning = false;
+		std::map< int, SelectedOutput >::iterator mit = this->PhreeqcPtr->SelectedOutput_map.begin();
 		for (; mit != this->PhreeqcPtr->SelectedOutput_map.end(); ++mit)
 		{
-			if (this->PhreeqcPtr->simulation > 1 && save_punch_in && (*mit).second.Get_new_def())
+			if (this->CurrentSelectedOutputMap.find(&(*mit).second) == this->CurrentSelectedOutputMap.end())
+			{
+				std::map< int, CSelectedOutput* >::value_type item((*mit).first, new CSelectedOutput());
+				this->SelectedOutputMap.insert(item);
+
+				// SelectedOutput
+				this->CurrentSelectedOutputMap.insert(
+					std::map< SelectedOutput*, CSelectedOutput* >::value_type(
+					&(*mit).second, item.second));
+
+				// SelectedOutputString
+				this->CurrentToStringMap.insert(
+					std::map< SelectedOutput*, std::string* >::value_type(
+					&(*mit).second, &this->SelectedOutputStringMap[(*mit).first]));
+			}
+			if (this->PhreeqcPtr->simulation > 1 && save_punch_in && (*mit).second.Get_new_def() && !bWarning)
 			{
 				std::ostringstream oss;
 				oss << sz_routine << ": Warning SELECTED_OUTPUT has been redefined.\n";
 				this->PhreeqcPtr->warning_msg(oss.str().c_str());
-				break;
+				bWarning = true;
 			}
 		}
 		if (this->PhreeqcPtr->simulation > 1 && this->PhreeqcPtr->keycount[Keywords::KEY_USER_PUNCH] > 0)
@@ -1311,12 +1366,16 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 
 	if (this->SelectedOutputStringOn)
 	{
-		// output lines
-		std::istringstream iss(this->SelectedOutputString);
-		std::string line;
-		while (std::getline(iss, line))
+		std::map< int, std::string >::iterator mit = this->SelectedOutputStringMap.begin();
+		for (; mit != this->SelectedOutputStringMap.end(); ++mit)
 		{
-			this->SelectedOutputLines.push_back(line);
+			// output lines
+			std::istringstream iss((*mit).second);
+			std::string line;
+			while (std::getline(iss, line))
+			{
+				this->SelectedOutputLinesMap[(*mit).first].push_back(line);
+			}
 		}
 	}
 }
@@ -1426,7 +1485,7 @@ void IPhreeqc::punch_msg(const char *str)
 {
 	if (this->SelectedOutputStringOn && this->punch_on)
 	{
-		this->SelectedOutputString += str;
+		*(this->CurrentToStringMap[this->PhreeqcPtr->current_selected_output]) += str;
 	}
 	ASSERT(!(this->SelectedOutputFileOn != (this->PhreeqcPtr->current_selected_output->Get_punch_ostream() != 0)));
 	this->PHRQ_io::punch_msg(str);
@@ -1526,9 +1585,9 @@ void IPhreeqc::fpunchf(const char *name, const char *format, double d)
 		this->PHRQ_io::fpunchf(name, format, d);
 		if (this->SelectedOutputStringOn && this->punch_on)
 		{
-			PHRQ_io::fpunchf_helper(&this->SelectedOutputString, format, d);
+			PHRQ_io::fpunchf_helper(this->CurrentToStringMap[this->PhreeqcPtr->current_selected_output], format, d);
 		}
-		this->SelectedOutput->PushBackDouble(name, d);
+		this->PtrSelectedOutput->PushBackDouble(name, d);
 	}
 	catch (std::bad_alloc)
 	{
@@ -1543,9 +1602,9 @@ void IPhreeqc::fpunchf(const char *name, const char *format, char *s)
 		this->PHRQ_io::fpunchf(name, format, s);
 		if (this->SelectedOutputStringOn && this->punch_on)
 		{
-			PHRQ_io::fpunchf_helper(&this->SelectedOutputString, format, s);
+			PHRQ_io::fpunchf_helper(this->CurrentToStringMap[this->PhreeqcPtr->current_selected_output], format, s);
 		}
-		this->SelectedOutput->PushBackString(name, s);
+		this->PtrSelectedOutput->PushBackString(name, s);
 	}
 	catch (std::bad_alloc)
 	{
@@ -1560,9 +1619,9 @@ void IPhreeqc::fpunchf(const char *name, const char *format, int i)
 		this->PHRQ_io::fpunchf(name, format, i);
 		if (this->SelectedOutputStringOn && this->punch_on)
 		{
-			PHRQ_io::fpunchf_helper(&this->SelectedOutputString, format, i);
+			PHRQ_io::fpunchf_helper(this->CurrentToStringMap[this->PhreeqcPtr->current_selected_output], format, i);
 		}
-		this->SelectedOutput->PushBackLong(name, (long)i);
+		this->PtrSelectedOutput->PushBackLong(name, (long)i);
 	}
 	catch (std::bad_alloc)
 	{

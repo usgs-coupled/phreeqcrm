@@ -23,6 +23,7 @@
 class Phreeqc;
 class IErrorReporter;
 class CSelectedOutput;
+class SelectedOutput;
 
 /**
  * @class IPhreeqcStop
@@ -791,6 +792,17 @@ public:
 	void                     SetSelectedOutputStringOn(bool bValue);
 
 
+	/**
+	 *  Sets the selected output string switch on or off.  This switch controls whether or not the data normally sent
+	 *  to the selected output file are stored in a buffer for retrieval.  The initial setting is false.
+	 *  @param bValue           If true, captures the output defined by the <B>SELECTED_OUTPUT</B> keyword into a string buffer;
+	 *                          if false, output defined by the <B>SELECTED_OUTPUT</B> keyword is not captured to a string buffer.
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn
+	 */
+	void                     SetCurrentSelectedOutputUserNumber(int n);
+
+
+
 public:
 	// overrides
 	virtual void error_msg(const char *str, bool stop=false);
@@ -860,8 +872,13 @@ protected:
 	std::string                WarningString;
 	std::vector< std::string > WarningLines;
 
-	CSelectedOutput           *SelectedOutput;
-	std::string                StringInput;
+	int                                           CurrentSelectedOutputUserNumber;
+	CSelectedOutput                              *PtrSelectedOutput;
+	std::map< int, CSelectedOutput* >             SelectedOutputMap;
+	std::map< SelectedOutput*, CSelectedOutput* > CurrentSelectedOutputMap;
+	std::map< SelectedOutput*, std::string* >     CurrentToStringMap;
+	std::map< class SelectedOutput*, int >        InverseSelectedOutputMap;
+	std::string                                   StringInput;
 
 	std::string                DumpString;
 	std::vector< std::string > DumpLines;
@@ -875,9 +892,9 @@ protected:
 	std::string                LogFileName;
 	std::string                DumpFileName;
 
-	bool                       SelectedOutputStringOn;
-	std::string                SelectedOutputString;
-	std::vector< std::string > SelectedOutputLines;
+	bool                                          SelectedOutputStringOn;
+	std::map< int, std::string >                  SelectedOutputStringMap;
+	std::map< int, std::vector< std::string > >   SelectedOutputLinesMap;
 
 protected:
 	Phreeqc* PhreeqcPtr;
