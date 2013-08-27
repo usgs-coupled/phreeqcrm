@@ -1,16 +1,16 @@
-#include <memory>                   // auto_ptr
+#include <memory>                       // auto_ptr
 #include <map>
 #include <string.h>
 
-#include "IPhreeqc.hpp"             // IPhreeqc
-#include "Phreeqc.h"                // Phreeqc
+#include "IPhreeqc.hpp"                 // IPhreeqc
+#include "Phreeqc.h"                    // Phreeqc
 #include "thread.h"
 
-#include "Debug.h"                  // ASSERT
-#include "ErrorReporter.hxx"        // CErrorReporter
-#include "CSelectedOutput.hxx"      // CSelectedOutput
-#include "phreeqcpp/SelectedOutput.h" // SelectedOutput
-#include "dumper.h"                 // dumper
+#include "Debug.h"                      // ASSERT
+#include "ErrorReporter.hxx"            // CErrorReporter
+#include "CSelectedOutput.hxx"          // CSelectedOutput
+#include "phreeqcpp/SelectedOutput.h"   // SelectedOutput
+#include "dumper.h"                     // dumper
 
 const char OUTPUT_FILENAME_FORMAT[] = "phreeqc.%d.out";
 const char ERROR_FILENAME_FORMAT[]  = "phreeqc.%d.err";
@@ -42,7 +42,6 @@ IPhreeqc::IPhreeqc(void)
 , WarningStringOn(true)
 , WarningReporter(0)
 , CurrentSelectedOutputUserNumber(1)
-// COMMENT: {8/23/2013 9:33:02 PM}, PtrSelectedOutput(0)
 , SelectedOutputStringOn(false)
 , PhreeqcPtr(0)
 , input_file(0)
@@ -52,7 +51,6 @@ IPhreeqc::IPhreeqc(void)
 
 	this->ErrorReporter   = new CErrorReporter<std::ostringstream>;
 	this->WarningReporter = new CErrorReporter<std::ostringstream>;
-// COMMENT: {8/23/2013 9:33:08 PM}	this->PtrSelectedOutput  = new CSelectedOutput();
 	this->PhreeqcPtr      = new Phreeqc(this);
 
 	ASSERT(this->PhreeqcPtr->phast == 0);
@@ -95,6 +93,7 @@ IPhreeqc::~IPhreeqc(void)
 		delete (*sit).second;
 	}
 	this->SelectedOutputMap.clear();
+	this->CurrentSelectedOutputMap.clear();
 
 	mutex_lock(&map_lock);
 	std::map<size_t, IPhreeqc*>::iterator it = IPhreeqc::Instances.find(this->Index);
@@ -344,8 +343,6 @@ int IPhreeqc::GetSelectedOutputColumnCount(void)const
 		return (int)(*ci).second->GetColCount();
 	}
 	return 0;
-// COMMENT: {8/23/2013 9:16:26 PM}	this->CurrentSelectedOutputMap[]
-// COMMENT: {8/23/2013 9:16:26 PM}	return (int)this->PtrSelectedOutput->GetColCount();
 }
 
 const char* IPhreeqc::GetSelectedOutputFileName(void)const
@@ -538,6 +535,7 @@ int IPhreeqc::LoadDatabase(const char* filename)
 			delete (*it).second;
 		}
 		this->SelectedOutputMap.clear();
+		this->CurrentSelectedOutputMap.clear();
 
 		// open file
 		//
@@ -592,6 +590,7 @@ int IPhreeqc::LoadDatabaseString(const char* input)
 			delete (*it).second;
 		}
 		this->SelectedOutputMap.clear();
+		this->CurrentSelectedOutputMap.clear();
 
 		std::string s(input);
 		std::istringstream iss(s);
@@ -900,7 +899,9 @@ void IPhreeqc::UnLoadDatabase(void)
 	{
 		delete (*itt).second;
 	}
-	this->SelectedOutputMap.clear();	
+	this->SelectedOutputMap.clear();
+	this->CurrentSelectedOutputMap.clear();
+
 	std::map< int, std::string >::iterator mit = this->SelectedOutputStringMap.begin();
 	for (; mit != this->SelectedOutputStringMap.begin(); ++mit)
 	{
@@ -959,7 +960,6 @@ void IPhreeqc::check_database(const char* sz_routine)
 	this->SelectedOutputMap.clear();
 	this->CurrentSelectedOutputMap.clear();
 
-	///{{{ REPLACE WITH A CLEAR ROUTINE
 	// release
 	this->LogString.clear();
 	this->LogLines.clear();
@@ -976,7 +976,6 @@ void IPhreeqc::check_database(const char* sz_routine)
 	{
 		(*lit).second.clear();
 	}
-	///}}}
 
 	if (!this->DatabaseLoaded)
 	{
@@ -991,25 +990,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 {
 	char token[MAX_LENGTH];
 
-// COMMENT: {8/26/2013 10:32:34 PM}	///{{{ REPLACE WITH A CLEAR ROUTINE
-// COMMENT: {8/26/2013 10:32:34 PM}	// release
-// COMMENT: {8/26/2013 10:32:34 PM}	this->LogString.clear();
-// COMMENT: {8/26/2013 10:32:34 PM}	this->LogLines.clear();
-// COMMENT: {8/26/2013 10:32:34 PM}	this->OutputString.clear();
-// COMMENT: {8/26/2013 10:32:34 PM}	this->OutputLines.clear();
-// COMMENT: {8/26/2013 10:32:34 PM}
-// COMMENT: {8/26/2013 10:32:34 PM}	std::map< int, std::string >::iterator mit = SelectedOutputStringMap.begin();
-// COMMENT: {8/26/2013 10:32:34 PM}	for (; mit != SelectedOutputStringMap.begin(); ++mit)
-// COMMENT: {8/26/2013 10:32:34 PM}	{
-// COMMENT: {8/26/2013 10:32:34 PM}		(*mit).second.clear();
-// COMMENT: {8/26/2013 10:32:34 PM}	}
-// COMMENT: {8/26/2013 10:32:34 PM}	std::map< int, std::vector< std::string > >::iterator it = this->SelectedOutputLinesMap.begin();
-// COMMENT: {8/26/2013 10:32:34 PM}	for (; it != this->SelectedOutputLinesMap.begin(); ++it)
-// COMMENT: {8/26/2013 10:32:34 PM}	{
-// COMMENT: {8/26/2013 10:32:34 PM}		(*it).second.clear();
-// COMMENT: {8/26/2013 10:32:34 PM}	}
-// COMMENT: {8/26/2013 10:32:34 PM}	///}}}
-
 /*
  *   call pre-run callback
  */
@@ -1017,25 +997,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 	{
 		pfn_pre(cookie);
 	}
-
-// COMMENT: {8/26/2013 10:30:49 PM}	///{{{ REPLACE WITH A CLEAR ROUTINE
-// COMMENT: {8/26/2013 10:30:49 PM}	// release
-// COMMENT: {8/26/2013 10:30:49 PM}	this->LogString.clear();
-// COMMENT: {8/26/2013 10:30:49 PM}	this->LogLines.clear();
-// COMMENT: {8/26/2013 10:30:49 PM}	this->OutputString.clear();
-// COMMENT: {8/26/2013 10:30:49 PM}	this->OutputLines.clear();
-// COMMENT: {8/26/2013 10:30:49 PM}
-// COMMENT: {8/26/2013 10:30:49 PM}	std::map< int, std::string >::iterator mit = SelectedOutputStringMap.begin();
-// COMMENT: {8/26/2013 10:30:49 PM}	for (; mit != SelectedOutputStringMap.begin(); ++mit)
-// COMMENT: {8/26/2013 10:30:49 PM}	{
-// COMMENT: {8/26/2013 10:30:49 PM}		(*mit).second.clear();
-// COMMENT: {8/26/2013 10:30:49 PM}	}
-// COMMENT: {8/26/2013 10:30:49 PM}	std::map< int, std::vector< std::string > >::iterator it = this->SelectedOutputLinesMap.begin();
-// COMMENT: {8/26/2013 10:30:49 PM}	for (; it != this->SelectedOutputLinesMap.begin(); ++it)
-// COMMENT: {8/26/2013 10:30:49 PM}	{
-// COMMENT: {8/26/2013 10:30:49 PM}		(*it).second.clear();
-// COMMENT: {8/26/2013 10:30:49 PM}	}
-// COMMENT: {8/26/2013 10:30:49 PM}	///}}}
 
 /*
  *   set read callback
@@ -1163,7 +1124,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			}
 			else
 			{
-				//{{
 				std::map< int, class SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
 				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 				{
@@ -1194,75 +1154,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 						}
 					}
 				}
-				//}}
-// COMMENT: {8/19/2013 5:22:41 PM}				std::map< int, class SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
-// COMMENT: {8/19/2013 5:22:41 PM}				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
-// COMMENT: {8/19/2013 5:22:41 PM}				{
-// COMMENT: {8/19/2013 5:22:41 PM}					if (!(*it).second.Get_new_def())
-// COMMENT: {8/19/2013 5:22:41 PM}					{
-// COMMENT: {8/19/2013 5:22:41 PM}						if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
-// COMMENT: {8/19/2013 5:22:41 PM}						{
-// COMMENT: {8/19/2013 5:22:41 PM}							//
-// COMMENT: {8/19/2013 5:22:41 PM}							// LoadDatabase
-// COMMENT: {8/19/2013 5:22:41 PM}							// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
-// COMMENT: {8/19/2013 5:22:41 PM}							// another do_run without SELECTED_OUTPUT
-// COMMENT: {8/19/2013 5:22:41 PM}							//
-// COMMENT: {8/19/2013 5:22:41 PM}							ASSERT(!this->SelectedOutputFileNameMap[(*it).first].empty());
-// COMMENT: {8/19/2013 5:22:41 PM}							std::string filename = this->SelectedOutputFileNameMap[(*it).first];
-// COMMENT: {8/19/2013 5:22:41 PM}							if (!punch_open(filename.c_str(), std::ios_base::out, (*it).first))
-// COMMENT: {8/19/2013 5:22:41 PM}							{
-// COMMENT: {8/19/2013 5:22:41 PM}								std::ostringstream oss;
-// COMMENT: {8/19/2013 5:22:41 PM}								oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
-// COMMENT: {8/19/2013 5:22:41 PM}								this->PhreeqcPtr->warning_msg(oss.str().c_str());
-// COMMENT: {8/19/2013 5:22:41 PM}							}
-// COMMENT: {8/19/2013 5:22:41 PM}							else
-// COMMENT: {8/19/2013 5:22:41 PM}							{
-// COMMENT: {8/19/2013 5:22:41 PM}								ASSERT(this->Get_punch_ostream() == NULL);
-// COMMENT: {8/19/2013 5:22:41 PM}								ASSERT((*it).second.Get_punch_ostream() != NULL);
-// COMMENT: {8/19/2013 5:22:41 PM}								// output selected_output headings
-// COMMENT: {8/19/2013 5:22:41 PM}								(*it).second.Set_new_def(TRUE);
-// COMMENT: {8/19/2013 5:22:41 PM}								this->PhreeqcPtr->tidy_punch();
-// COMMENT: {8/19/2013 5:22:41 PM}							}
-// COMMENT: {8/19/2013 5:22:41 PM}						}
-// COMMENT: {8/19/2013 5:22:41 PM}						else
-// COMMENT: {8/19/2013 5:22:41 PM}						{
-// COMMENT: {8/19/2013 5:22:41 PM}							ASSERT(TRUE);
-// COMMENT: {8/19/2013 5:22:41 PM}						}
-// COMMENT: {8/19/2013 5:22:41 PM}					}
-// COMMENT: {8/19/2013 5:22:41 PM}					else
-// COMMENT: {8/19/2013 5:22:41 PM}					{
-// COMMENT: {8/19/2013 5:22:41 PM}						if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
-// COMMENT: {8/19/2013 5:22:41 PM}						{
-// COMMENT: {8/19/2013 5:22:41 PM}							// This is a special case which could not occur in
-// COMMENT: {8/19/2013 5:22:41 PM}							// phreeqc
-// COMMENT: {8/19/2013 5:22:41 PM}							//
-// COMMENT: {8/19/2013 5:22:41 PM}							// LoadDatabase
-// COMMENT: {8/19/2013 5:22:41 PM}							// do_run -- containing SELECTED_OUTPUT ****TODO**** check -file option
-// COMMENT: {8/19/2013 5:22:41 PM}							// another do_run with SELECTED_OUTPUT
-// COMMENT: {8/19/2013 5:22:41 PM}							//
-// COMMENT: {8/19/2013 5:22:41 PM}							std::string filename = this->SelectedOutputFileNameMap[(*it).first];
-// COMMENT: {8/19/2013 5:22:41 PM}							if (!this->punch_open(filename.c_str(), std::ios_base::out, (*it).first))
-// COMMENT: {8/19/2013 5:22:41 PM}							{
-// COMMENT: {8/19/2013 5:22:41 PM}								std::ostringstream oss;
-// COMMENT: {8/19/2013 5:22:41 PM}								oss << sz_routine << ": Unable to open:" << "\"" << filename << "\".\n";
-// COMMENT: {8/19/2013 5:22:41 PM}								this->PhreeqcPtr->warning_msg(oss.str().c_str());
-// COMMENT: {8/19/2013 5:22:41 PM}							}
-// COMMENT: {8/19/2013 5:22:41 PM}							else
-// COMMENT: {8/19/2013 5:22:41 PM}							{
-// COMMENT: {8/19/2013 5:22:41 PM}								ASSERT(this->Get_punch_ostream() == NULL);
-// COMMENT: {8/19/2013 5:22:41 PM}								ASSERT((*it).second.Get_punch_ostream() != NULL);
-// COMMENT: {8/19/2013 5:22:41 PM}
-// COMMENT: {8/19/2013 5:22:41 PM}								// output selected_output headings
-// COMMENT: {8/19/2013 5:22:41 PM}								ASSERT((*it).second.Get_new_def());
-// COMMENT: {8/19/2013 5:22:41 PM}								this->PhreeqcPtr->tidy_punch();
-// COMMENT: {8/19/2013 5:22:41 PM}							}
-// COMMENT: {8/19/2013 5:22:41 PM}						}
-// COMMENT: {8/19/2013 5:22:41 PM}						else
-// COMMENT: {8/19/2013 5:22:41 PM}						{
-// COMMENT: {8/19/2013 5:22:41 PM}							ASSERT(TRUE);
-// COMMENT: {8/19/2013 5:22:41 PM}						}
-// COMMENT: {8/19/2013 5:22:41 PM}					}
-// COMMENT: {8/19/2013 5:22:41 PM}				}
 			}
 		}
 		else
@@ -1641,7 +1532,6 @@ int IPhreeqc::close_output_files(void)
 
 	delete this->output_ostream;
 	delete this->log_ostream;
-	//delete this->punch_ostream;
 	delete this->dump_ostream;
 	delete this->error_ostream;
 
