@@ -873,11 +873,11 @@ protected:
 	std::vector< std::string > WarningLines;
 
 	int                                           CurrentSelectedOutputUserNumber;
-	CSelectedOutput                              *PtrSelectedOutput;
+// COMMENT: {8/26/2013 10:29:19 PM}	CSelectedOutput                              *PtrSelectedOutput;
 	std::map< int, CSelectedOutput* >             SelectedOutputMap;
 	std::map< SelectedOutput*, CSelectedOutput* > CurrentSelectedOutputMap;
 	std::map< SelectedOutput*, std::string* >     CurrentToStringMap;
-	std::map< class SelectedOutput*, int >        InverseSelectedOutputMap;
+// COMMENT: {8/26/2013 10:27:53 PM}	std::map< class SelectedOutput*, int >        InverseSelectedOutputMap;
 	std::string                                   StringInput;
 
 	std::string                DumpString;
