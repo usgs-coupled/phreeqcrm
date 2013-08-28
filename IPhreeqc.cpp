@@ -1102,7 +1102,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			//
 			if (!this->SelectedOutputFileOn)
 			{
-				std::map< int, class SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
+				std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
 				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 				{
 					ASSERT((*it).second.Get_punch_ostream() == 0);
@@ -1124,7 +1124,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			}
 			else
 			{
-				std::map< int, class SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
+				std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
 				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 				{
 					if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
@@ -1145,8 +1145,12 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 						}
 						else
 						{
-							ASSERT(this->Get_punch_ostream() == NULL);
-							ASSERT((*it).second.Get_punch_ostream() != NULL);
+							ASSERT(this->Get_punch_ostream() != NULL);
+							ASSERT((*it).second.Get_punch_ostream() == NULL);
+
+							int n_user = (*it).first;
+							this->PhreeqcPtr->SelectedOutput_map[n_user].Set_punch_ostream(this->Get_punch_ostream());
+							this->Set_punch_ostream(NULL);
 							
 							// output selected_output headings
 							(*it).second.Set_new_def(TRUE);
@@ -1162,7 +1166,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		}
 		
 
-		std::map< int, class SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
+		std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
 		for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 		{
 			if (this->SelectedOutputFileOn)
@@ -1535,7 +1539,7 @@ int IPhreeqc::close_output_files(void)
 	delete this->dump_ostream;
 	delete this->error_ostream;
 
-	std::map< int, class SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
+	std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
 	for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 	{
 		delete (*it).second.Get_punch_ostream();
@@ -1620,15 +1624,9 @@ bool IPhreeqc::punch_open(const char *file_name, std::ios_base::openmode mode, i
 	}
 	if (this->SelectedOutputFileOn)
 	{
-		std::ostream *os = 0;
 		ASSERT(!this->SelectedOutputFileNameMap[n_user].empty());
-		bool retval = this->ofstream_open(&os, this->SelectedOutputFileNameMap[n_user].c_str(), mode);
-		if (retval)
-		{
-			this->PhreeqcPtr->SelectedOutput_map[n_user].Set_punch_ostream(os);
-			this->PhreeqcPtr->SelectedOutput_map[n_user].Set_file_name(this->SelectedOutputFileNameMap[n_user]);
-		}
-		return retval;
+		this->PhreeqcPtr->SelectedOutput_map[n_user].Set_file_name(this->SelectedOutputFileNameMap[n_user]);
+		return this->ofstream_open(&punch_ostream, this->SelectedOutputFileNameMap[n_user].c_str(), mode);
 	}
 	return true;
 }
