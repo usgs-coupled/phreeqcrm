@@ -326,7 +326,7 @@ public:
 	/**
 	 *  Retrieves the number of columns in the selected-output buffer.
      *  @return                 The number of columns.
-	 *  @see                    GetSelectedOutputRowCount, GetSelectedOutputValue
+	 *  @see                    GetSelectedOutputRowCount, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber
 	 */
 	int                      GetSelectedOutputColumnCount(void)const;
 
@@ -335,7 +335,7 @@ public:
 	 *  Retrieves the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
 	 *  The default value is <B><I>selected.id.out</I></B>, where id is obtained from \ref GetId.
 	 *  @return filename        The name of the file to write to.
-	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	const char*              GetSelectedOutputFileName(void)const;
 
@@ -350,7 +350,7 @@ public:
 	/**
 	 *  Retrieves the number of rows in the selected-output buffer.
      *  @return                 The number of rows.
-	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputValue, SetSelectedOutputFileOn
+	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
 	 */
 	int                      GetSelectedOutputRowCount(void)const;
 
@@ -359,7 +359,7 @@ public:
      *  @return                 A null terminated string containing <b>SELECTED_OUTPUT</b>.
 	 *  @pre
 	 *      \ref SetSelectedOutputStringOn must have been set to true in order to receive <b>SELECTED_OUTPUT</b>.
-	 *  @see                    GetSelectedOutputStringLine, GetSelectedOutputFileOn, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 *  @see                    GetSelectedOutputStringLine, GetSelectedOutputFileOn, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, GetSelectedOutputString, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	const char*              GetSelectedOutputString(void)const;
 
@@ -369,7 +369,7 @@ public:
 	 *  @return                 A null terminated string containing the given line.
 	 *                          Returns an empty string if n is out of range.
      *  @pre                    \ref SetSelectedOutputStringOn must have been set to true.
-	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	const char*              GetSelectedOutputStringLine(int n);
 
@@ -377,7 +377,7 @@ public:
 	 *  Retrieves the number of lines in the current selected output string buffer.
 	 *  @return                 The number of lines.
      *  @pre                    \ref SetSelectedOutputStringOn must have been set to true.
-	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringOn, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	int                      GetSelectedOutputStringLineCount(void)const;
 
@@ -399,7 +399,7 @@ public:
 	 *  @retval VR_INVALIDCOL   The given column is out of range.
 	 *  @retval VR_OUTOFMEMORY  Memory could not be allocated.
 	 *  @retval VR_BADINSTANCE  The given id is invalid.
-	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputRowCount, GetSelectedOutputValue2, SetSelectedOutputFileOn
+	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputRowCount, GetSelectedOutputValue2, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
 	 *  @remarks
 	 *      Row 0 contains the column headings to the selected_ouput.
 	 *  @par Examples:
@@ -793,11 +793,10 @@ public:
 
 
 	/**
-	 *  Sets the selected output string switch on or off.  This switch controls whether or not the data normally sent
-	 *  to the selected output file are stored in a buffer for retrieval.  The initial setting is false.
-	 *  @param bValue           If true, captures the output defined by the <B>SELECTED_OUTPUT</B> keyword into a string buffer;
-	 *                          if false, output defined by the <B>SELECTED_OUTPUT</B> keyword is not captured to a string buffer.
-	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn
+	 *  Sets the given user number for use in subsequent calls to GetSelectedOutputXXX routines.
+	 *  The initial setting is 1.
+	 *  @param n                The user number as specified in the <B>SELECTED_OUTPUT</B> block.
+	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileName, GetSelectedOutputRowCount, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, GetSelectedOutputValue
 	 */
 	void                     SetCurrentSelectedOutputUserNumber(int n);
 
@@ -873,11 +872,9 @@ protected:
 	std::vector< std::string > WarningLines;
 
 	int                                           CurrentSelectedOutputUserNumber;
-// COMMENT: {8/26/2013 10:29:19 PM}	CSelectedOutput                              *PtrSelectedOutput;
 	std::map< int, CSelectedOutput* >             SelectedOutputMap;
 	std::map< SelectedOutput*, CSelectedOutput* > CurrentSelectedOutputMap;
 	std::map< SelectedOutput*, std::string* >     CurrentToStringMap;
-// COMMENT: {8/26/2013 10:27:53 PM}	std::map< class SelectedOutput*, int >        InverseSelectedOutputMap;
 	std::string                                   StringInput;
 
 	std::string                DumpString;
