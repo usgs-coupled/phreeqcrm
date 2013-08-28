@@ -13,7 +13,7 @@
 #include <stdio.h>
 
 #include "Debug.h"                  // ASSERT
-#include "SelectedOutput.hxx"       // CSelectedOutput
+#include "CSelectedOutput.hxx"      // CSelectedOutput
 
 const size_t RESERVE_ROWS = 80;
 const size_t RESERVE_COLS = 80;

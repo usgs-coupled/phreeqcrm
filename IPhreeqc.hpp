@@ -23,6 +23,7 @@
 class Phreeqc;
 class IErrorReporter;
 class CSelectedOutput;
+class SelectedOutput;
 
 /**
  * @class IPhreeqcStop
@@ -325,7 +326,7 @@ public:
 	/**
 	 *  Retrieves the number of columns in the selected-output buffer.
      *  @return                 The number of columns.
-	 *  @see                    GetSelectedOutputRowCount, GetSelectedOutputValue
+	 *  @see                    GetSelectedOutputRowCount, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber
 	 */
 	int                      GetSelectedOutputColumnCount(void)const;
 
@@ -334,7 +335,7 @@ public:
 	 *  Retrieves the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
 	 *  The default value is <B><I>selected.id.out</I></B>, where id is obtained from \ref GetId.
 	 *  @return filename        The name of the file to write to.
-	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	const char*              GetSelectedOutputFileName(void)const;
 
@@ -349,7 +350,7 @@ public:
 	/**
 	 *  Retrieves the number of rows in the selected-output buffer.
      *  @return                 The number of rows.
-	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputValue, SetSelectedOutputFileOn
+	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
 	 */
 	int                      GetSelectedOutputRowCount(void)const;
 
@@ -358,7 +359,7 @@ public:
      *  @return                 A null terminated string containing <b>SELECTED_OUTPUT</b>.
 	 *  @pre
 	 *      \ref SetSelectedOutputStringOn must have been set to true in order to receive <b>SELECTED_OUTPUT</b>.
-	 *  @see                    GetSelectedOutputStringLine, GetSelectedOutputFileOn, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 *  @see                    GetSelectedOutputStringLine, GetSelectedOutputFileOn, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, GetSelectedOutputString, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	const char*              GetSelectedOutputString(void)const;
 
@@ -368,7 +369,7 @@ public:
 	 *  @return                 A null terminated string containing the given line.
 	 *                          Returns an empty string if n is out of range.
      *  @pre                    \ref SetSelectedOutputStringOn must have been set to true.
-	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	const char*              GetSelectedOutputStringLine(int n);
 
@@ -376,7 +377,7 @@ public:
 	 *  Retrieves the number of lines in the current selected output string buffer.
 	 *  @return                 The number of lines.
      *  @pre                    \ref SetSelectedOutputStringOn must have been set to true.
-	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringOn, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	int                      GetSelectedOutputStringLineCount(void)const;
 
@@ -398,7 +399,7 @@ public:
 	 *  @retval VR_INVALIDCOL   The given column is out of range.
 	 *  @retval VR_OUTOFMEMORY  Memory could not be allocated.
 	 *  @retval VR_BADINSTANCE  The given id is invalid.
-	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputRowCount, GetSelectedOutputValue2, SetSelectedOutputFileOn
+	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputRowCount, GetSelectedOutputValue2, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
 	 *  @remarks
 	 *      Row 0 contains the column headings to the selected_ouput.
 	 *  @par Examples:
@@ -811,6 +812,16 @@ public:
 	void                     SetSelectedOutputStringOn(bool bValue);
 
 
+	/**
+	 *  Sets the given user number for use in subsequent calls to GetSelectedOutputXXX routines.
+	 *  The initial setting is 1.
+	 *  @param n                The user number as specified in the <B>SELECTED_OUTPUT</B> block.
+	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileName, GetSelectedOutputRowCount, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, GetSelectedOutputValue
+	 */
+	void                     SetCurrentSelectedOutputUserNumber(int n);
+
+
+
 public:
 	// overrides
 	virtual void error_msg(const char *str, bool stop=false);
@@ -826,7 +837,7 @@ public:
 	virtual void fpunchf_end_row(const char *format);
 
 	virtual bool output_open(const char *file_name, std::ios_base::openmode mode = std::ios_base::out);
-	virtual bool punch_open(const char *file_name, std::ios_base::openmode mode = std::ios_base::out);
+	virtual bool punch_open(const char *file_name, std::ios_base::openmode mode = std::ios_base::out, int n_user = 1);
 
 protected:
 	int EndRow(void);
@@ -842,6 +853,7 @@ protected:
 
 	void update_errors(void);
 
+	std::string sel_file_name(int n_user);
 
 protected:
 #if defined(_MSC_VER)
@@ -879,23 +891,27 @@ protected:
 	std::string                WarningString;
 	std::vector< std::string > WarningLines;
 
-	CSelectedOutput           *SelectedOutput;
-	std::string                StringInput;
+	int                                           CurrentSelectedOutputUserNumber;
+	std::map< int, CSelectedOutput* >             SelectedOutputMap;
+	std::map< SelectedOutput*, CSelectedOutput* > CurrentSelectedOutputMap;
+	std::map< SelectedOutput*, std::string* >     CurrentToStringMap;
+	std::string                                   StringInput;
 
 	std::string                DumpString;
 	std::vector< std::string > DumpLines;
 
 	std::list< std::string >   Components;
 
-	std::string                SelectedOutputFileName;
+	std::map< int, std::string > SelectedOutputFileNameMap;
+
 	std::string                OutputFileName;
 	std::string                ErrorFileName;
 	std::string                LogFileName;
 	std::string                DumpFileName;
 
-	bool                       SelectedOutputStringOn;
-	std::string                SelectedOutputString;
-	std::vector< std::string > SelectedOutputLines;
+	bool                                          SelectedOutputStringOn;
+	std::map< int, std::string >                  SelectedOutputStringMap;
+	std::map< int, std::vector< std::string > >   SelectedOutputLinesMap;
 
 protected:
 	Phreeqc* PhreeqcPtr;

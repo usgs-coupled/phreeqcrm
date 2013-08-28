@@ -30,8 +30,8 @@ libiphreeqc_la_SOURCES=\
 	ErrorReporter.hxx\
 	IPhreeqc.cpp\
 	IPhreeqcLib.cpp\
-	SelectedOutput.cpp\
-	SelectedOutput.hxx\
+	CSelectedOutput.cpp\
+	CSelectedOutput.hxx\
 	thread.h\
 	Var.c\
 	phreeqcpp/cxxKinetics.cxx\
@@ -81,6 +81,8 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/ReadClass.cxx\
 	phreeqcpp/runner.cpp\
 	phreeqcpp/runner.h\
+	phreeqcpp/SelectedOutput.cpp\
+	phreeqcpp/SelectedOutput.h\
 	phreeqcpp/Solution.cxx\
 	phreeqcpp/Solution.h\
 	phreeqcpp/SolutionIsotope.cxx\
@@ -107,6 +109,8 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/Temperature.h\
 	phreeqcpp/Use.cpp\
 	phreeqcpp/Use.h\
+	phreeqcpp/UserPunch.cpp\
+	phreeqcpp/UserPunch.h\
 	phreeqcpp/Utils.cxx\
 	phreeqcpp/Utils.h\
 	phreeqcpp/advection.cpp\
