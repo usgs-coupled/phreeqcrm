@@ -42,6 +42,10 @@ IPQ_DLL_EXPORT int  __stdcall getcomponentcount(int *id)
 {
 	return GetComponentCountF(id);
 }
+IPQ_DLL_EXPORT int  __stdcall getcurrentselectedoutputusernumber(int *id)
+{
+	return GetCurrentSelectedOutputUserNumberF(id);
+}
 IPQ_DLL_EXPORT void __stdcall getdumpfilename(int *id, char *filename, unsigned int len)
 {
 	GetDumpFileNameF(id, filename, len);
@@ -92,10 +96,6 @@ IPQ_DLL_EXPORT int  __stdcall getlogfileon(int *id)
 {
 	return GetLogFileOnF(id);
 }
-IPQ_DLL_EXPORT int  __stdcall getlogstringon(int *id)
-{
-	return GetLogStringOnF(id);
-}
 // GetLogString
 IPQ_DLL_EXPORT void __stdcall getlogstringline(int *id, int *n, char* line, unsigned int line_length)
 {
@@ -104,6 +104,14 @@ IPQ_DLL_EXPORT void __stdcall getlogstringline(int *id, int *n, char* line, unsi
 IPQ_DLL_EXPORT int  __stdcall getlogstringlinecount(int *id)
 {
 	return GetLogStringLineCountF(id);
+}
+IPQ_DLL_EXPORT int  __stdcall getlogstringon(int *id)
+{
+	return GetLogStringOnF(id);
+}
+IPQ_DLL_EXPORT int  __stdcall getnthselectedoutputusernumber(int *id, int *n)
+{
+	return GetNthSelectedOutputUserNumberF(id, n);
 }
 IPQ_DLL_EXPORT void __stdcall getoutputfilename(int *id, char *filename, unsigned int len)
 {
@@ -129,6 +137,10 @@ IPQ_DLL_EXPORT int  __stdcall getoutputstringon(int *id)
 IPQ_DLL_EXPORT int  __stdcall getselectedoutputcolumncount(int *id)
 {
 	return GetSelectedOutputColumnCountF(id);
+}
+IPQ_DLL_EXPORT int  __stdcall getselectedoutputcount(int *id)
+{
+	return GetSelectedOutputCountF(id);
 }
 IPQ_DLL_EXPORT void __stdcall getselectedoutputfilename(int *id, char *filename, unsigned int len)
 {
@@ -203,6 +215,10 @@ IPQ_DLL_EXPORT int  __stdcall runstring(int *id, char *input, unsigned int len)
 IPQ_DLL_EXPORT int  __stdcall setbasicfortrancallback(int *id, double (*fcn)(double *x1, double *x2, char *str, int l))
 {
 	return SetBasicFortranCallbackF(id, fcn);
+}
+IPQ_DLL_EXPORT int  __stdcall setcurrentselectedoutputusernumber(int *id, int *n)
+{
+	return SetCurrentSelectedOutputUserNumberF(id, n);
 }
 IPQ_DLL_EXPORT int  __stdcall setdumpfilename(int *id, char *filename, unsigned int len)
 {

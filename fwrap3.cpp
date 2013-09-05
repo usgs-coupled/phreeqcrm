@@ -42,6 +42,10 @@ IPQ_DLL_EXPORT int  getcomponentcount_(int *id)
 {
 	return GetComponentCountF(id);
 }
+IPQ_DLL_EXPORT int  getcurrentselectedoutputusernumber_(int *id)
+{
+	return GetCurrentSelectedOutputUserNumberF(id);
+}
 IPQ_DLL_EXPORT void getdumpfilename_(int *id, char *filename, unsigned int len)
 {
 	GetDumpFileNameF(id, filename, len);
@@ -92,10 +96,6 @@ IPQ_DLL_EXPORT int  getlogfileon_(int *id)
 {
 	return GetLogFileOnF(id);
 }
-IPQ_DLL_EXPORT int  getlogstringon_(int *id)
-{
-	return GetLogStringOnF(id);
-}
 // GetLogString
 IPQ_DLL_EXPORT void getlogstringline_(int *id, int *n, char* line, unsigned int line_length)
 {
@@ -104,6 +104,14 @@ IPQ_DLL_EXPORT void getlogstringline_(int *id, int *n, char* line, unsigned int 
 IPQ_DLL_EXPORT int  getlogstringlinecount_(int *id)
 {
 	return GetLogStringLineCountF(id);
+}
+IPQ_DLL_EXPORT int  getlogstringon_(int *id)
+{
+	return GetLogStringOnF(id);
+}
+IPQ_DLL_EXPORT int  getnthselectedoutputusernumber_(int *id, int *n)
+{
+	return GetNthSelectedOutputUserNumberF(id, n);
 }
 IPQ_DLL_EXPORT void getoutputfilename_(int *id, char *filename, unsigned int len)
 {
@@ -129,6 +137,10 @@ IPQ_DLL_EXPORT int  getoutputstringon_(int *id)
 IPQ_DLL_EXPORT int  getselectedoutputcolumncount_(int *id)
 {
 	return GetSelectedOutputColumnCountF(id);
+}
+IPQ_DLL_EXPORT int  getselectedoutputcount_(int *id)
+{
+	return GetSelectedOutputCountF(id);
 }
 IPQ_DLL_EXPORT void getselectedoutputfilename_(int *id, char *filename, unsigned int len)
 {
@@ -203,6 +215,10 @@ IPQ_DLL_EXPORT int  runstring_(int *id, char *input, unsigned int len)
 IPQ_DLL_EXPORT int  setbasicfortrancallback_(int *id, double (*fcn)(double *x1, double *x2, char *str, int l))
 {
 	return SetBasicFortranCallbackF(id, fcn);
+}
+IPQ_DLL_EXPORT int  setcurrentselectedoutputusernumber_(int *id, int *n)
+{
+	return SetCurrentSelectedOutputUserNumberF(id, n);
 }
 IPQ_DLL_EXPORT int  setdumpfilename_(int *id, char *filename, unsigned int len)
 {

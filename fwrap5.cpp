@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 
+
 //
 // Intel Fortran compiler 9.1 /iface:default /names:default /assume:underscore
 //
@@ -41,6 +42,10 @@ IPQ_DLL_EXPORT void GETCOMPONENT_(int *id, int *n, char* line, unsigned int line
 IPQ_DLL_EXPORT int  GETCOMPONENTCOUNT_(int *id)
 {
 	return GetComponentCountF(id);
+}
+IPQ_DLL_EXPORT int  GETCURRENTSELECTEDOUTPUTUSERNUMBER_(int *id)
+{
+	return GetCurrentSelectedOutputUserNumberF(id);
 }
 IPQ_DLL_EXPORT void GETDUMPFILENAME_(int *id, char *filename, unsigned int len)
 {
@@ -92,10 +97,6 @@ IPQ_DLL_EXPORT int  GETLOGFILEON_(int *id)
 {
 	return GetLogFileOnF(id);
 }
-IPQ_DLL_EXPORT int  GETLOGSTRINGON_(int *id)
-{
-	return GetLogStringOnF(id);
-}
 // GetLogString
 IPQ_DLL_EXPORT void GETLOGSTRINGLINE_(int *id, int *n, char* line, unsigned int line_length)
 {
@@ -104,6 +105,14 @@ IPQ_DLL_EXPORT void GETLOGSTRINGLINE_(int *id, int *n, char* line, unsigned int 
 IPQ_DLL_EXPORT int  GETLOGSTRINGLINECOUNT_(int *id)
 {
 	return GetLogStringLineCountF(id);
+}
+IPQ_DLL_EXPORT int  GETLOGSTRINGON_(int *id)
+{
+	return GetLogStringOnF(id);
+}
+IPQ_DLL_EXPORT int  GETNTHSELECTEDOUTPUTUSERNUMBER_(int *id, int *n)
+{
+	return GetNthSelectedOutputUserNumberF(id, n);
 }
 IPQ_DLL_EXPORT void GETOUTPUTFILENAME_(int *id, char *filename, unsigned int len)
 {
@@ -129,6 +138,10 @@ IPQ_DLL_EXPORT int  GETOUTPUTSTRINGON_(int *id)
 IPQ_DLL_EXPORT int  GETSELECTEDOUTPUTCOLUMNCOUNT_(int *id)
 {
 	return GetSelectedOutputColumnCountF(id);
+}
+IPQ_DLL_EXPORT int  GETSELECTEDOUTPUTCOUNT_(int *id)
+{
+	return GetSelectedOutputCountF(id);
 }
 IPQ_DLL_EXPORT void GETSELECTEDOUTPUTFILENAME_(int *id, char *filename, unsigned int len)
 {
@@ -203,6 +216,10 @@ IPQ_DLL_EXPORT int  RUNSTRING_(int *id, char *input, unsigned int len)
 IPQ_DLL_EXPORT int  SETBASICFORTRANCALLBACK_(int *id, double (*fcn)(double *x1, double *x2, char *str, int l))
 {
 	return SetBasicFortranCallbackF(id, fcn);
+}
+IPQ_DLL_EXPORT int  SETCURRENTSELECTEDOUTPUTUSERNUMBER_(int *id, int *n)
+{
+	return SetCurrentSelectedOutputUserNumberF(id, n);
 }
 IPQ_DLL_EXPORT int  SETDUMPFILENAME_(int *id, char *filename, unsigned int len)
 {
