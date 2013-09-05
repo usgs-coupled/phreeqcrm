@@ -169,6 +169,11 @@ size_t IPhreeqc::GetComponentCount(void)
 	return this->Components.size();
 }
 
+int IPhreeqc::GetCurrentSelectedOutputUserNumber(void)const
+{
+	return this->CurrentSelectedOutputUserNumber;
+}
+
 const char* IPhreeqc::GetDumpFileName(void)const
 {
 	return this->DumpFileName.c_str();
@@ -295,6 +300,21 @@ bool IPhreeqc::GetLogStringOn(void)const
 	return this->LogStringOn;
 }
 
+int IPhreeqc::GetNthSelectedOutputUserNumber(int n)const
+{
+	int nth = VR_INVALIDARG;
+	std::map< int, SelectedOutput >::const_iterator ci = this->PhreeqcPtr->SelectedOutput_map.begin();
+	for (int i = 0; ci != this->PhreeqcPtr->SelectedOutput_map.end(); ++ci, ++i)
+	{
+		if (i == n)
+		{
+			nth = (*ci).first;
+			break;
+		}
+	}
+	return nth;
+}
+
 const char* IPhreeqc::GetOutputFileName(void)const
 {
 	return this->OutputFileName.c_str();
@@ -343,6 +363,11 @@ int IPhreeqc::GetSelectedOutputColumnCount(void)const
 		return (int)(*ci).second->GetColCount();
 	}
 	return 0;
+}
+
+int IPhreeqc::GetSelectedOutputCount(void)const
+{
+	return this->PhreeqcPtr->SelectedOutput_map.size();
 }
 
 const char* IPhreeqc::GetSelectedOutputFileName(void)const
@@ -784,9 +809,14 @@ void IPhreeqc::SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, cha
 	this->PhreeqcPtr->register_fortran_basic_callback(fcn);
 }
 
-void IPhreeqc::SetCurrentSelectedOutputUserNumber(int n)
+VRESULT IPhreeqc::SetCurrentSelectedOutputUserNumber(int n)
 {
-	this->CurrentSelectedOutputUserNumber = n;
+	if (this->PhreeqcPtr->SelectedOutput_map.find(n) != this->PhreeqcPtr->SelectedOutput_map.end())
+	{
+		this->CurrentSelectedOutputUserNumber = n;
+		return VR_OK;
+	}
+	return VR_INVALIDARG;
 }
 
 void IPhreeqc::SetDumpFileName(const char *filename)

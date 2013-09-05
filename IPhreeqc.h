@@ -69,7 +69,7 @@ extern "C" {
  *  Internally used to create an error condition.
  *  @param id            The instance id returned from \ref CreateIPhreeqc.
  *  @param error_msg     The error message to display.
- *  @returns             The current error count if successful; otherwise a negative value indicates an error occured (see \ref IPQ_RESULT).
+ *  @return              The current error count if successful; otherwise a negative value indicates an error occured (see \ref IPQ_RESULT).
  *  @see                 GetErrorString, GetErrorStringLine, GetErrorStringLineCount, OutputErrorString
  *  @par Fortran90 Interface:
  *  @htmlonly
@@ -92,7 +92,7 @@ extern "C" {
  *  Internally used to create a warning condition.
  *  @param id            The instance id returned from \ref CreateIPhreeqc.
  *  @param warn_msg      The warning message to display.
- *  @returns             The current warning count if successful; otherwise a negative value indicates an error occured (see \ref IPQ_RESULT).
+ *  @return              The current warning count if successful; otherwise a negative value indicates an error occured (see \ref IPQ_RESULT).
  *  @see                 GetWarningString, GetWarningStringLine, GetWarningStringLineCount, OutputWarningString
  *  @par Fortran90 Interface:
  *  @htmlonly
@@ -242,6 +242,25 @@ extern "C" {
  */
 	IPQ_DLL_EXPORT int         GetComponentCount(int id);
 
+/**
+ *  Sets the currently active <b>SELECTED_OUTPUT</b> user number for use in subsequent calls to GetSelectedOutputXXX routines.
+ *  The initial setting after calling \ref CreateIPhreeqc is 1.
+ *  @param id                   The instance id returned from \ref CreateIPhreeqc.
+ *  @return                     The current active <b>SELECTED_OUTPUT</b> user number.
+ *  @see                        GetNthSelectedOutputUserNumber, GetSelectedOutputCount, SetCurrentSelectedOutputUserNumber
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION GetCurrentSelectedOutputUserNumber(ID)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    INTEGER(KIND=4)               :: GetCurrentSelectedOutputUserNumber
+ *  END FUNCTION GetCurrentSelectedOutputUserNumber
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT int GetCurrentSelectedOutputUserNumber(int id);
 
 /**
  *  Retrieves the name of the dump file.  This file name is used if not specified within <B>DUMP</B> input.
@@ -493,7 +512,6 @@ extern "C" {
  */
 	IPQ_DLL_EXPORT int         GetErrorStringOn(int id);
 
-
 /**
  *  Retrieves the name of the log file.  The default name is <B><I>phreeqc.id.log</I></B>.
  *  @param id               The instance id returned from \ref CreateIPhreeqc.
@@ -623,6 +641,27 @@ extern "C" {
  */
 	IPQ_DLL_EXPORT int         GetLogStringOn(int id);
 
+
+/**
+ *  Retrieves the nth user number of the currently defined <B>SELECTED_OUTPUT</B> keyword blocks.
+ *  @param id            The instance id returned from \ref CreateIPhreeqc.
+ *  @return              The nth defined user number; a negative value indicates an error occured.
+ *  @see                 GetCurrentSelectedOutputUserNumber, GetSelectedOutputCount, SetCurrentSelectedOutputUserNumber
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  (Note: N is one-based for the Fortran interface.)
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION GetNthSelectedOutputUserNumber(ID)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    INTEGER(KIND=4),  INTENT(IN)  :: N
+ *    INTEGER(KIND=4)               :: GetNthSelectedOutputUserNumber
+ *  END FUNCTION GetNthSelectedOutputUserNumber
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT int         GetNthSelectedOutputUserNumber(int id, int n);
 
 /**
  *  Retrieves the name of the output file.  The default name is <B><I>phreeqc.id.out</I></B>.
@@ -767,6 +806,25 @@ extern "C" {
  *  @endhtmlonly
  */
 	IPQ_DLL_EXPORT int         GetSelectedOutputColumnCount(int id);
+
+/**
+ *  Retrieves the count of <B>SELECTED_OUTPUT</B> blocks that are currently defined.
+ *  @param id            The instance id returned from \ref CreateIPhreeqc.
+ *  @return              The number of <B>SELECTED_OUTPUT</B> blocks.
+ *  @see                 GetCurrentSelectedOutputUserNumber, GetNthSelectedOutputUserNumber, SetCurrentSelectedOutputUserNumber
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION GetSelectedOutputCount(ID)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    INTEGER(KIND=4)               :: GetSelectedOutputCount
+ *  END FUNCTION GetSelectedOutputCount
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT int         GetSelectedOutputCount(int id);
 
 
 /**
@@ -1572,6 +1630,30 @@ Headings
  */
 	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str, int l));
 
+
+/**
+ *  Sets the currently active SELECTED_OUTPUT user number for use in subsequent calls to GetSelectedOutputXXX routines.
+ *  The initial setting after calling \ref CreateIPhreeqc is 1.
+ *  @param id                   The instance id returned from \ref CreateIPhreeqc.
+ *  @param n                    The user number as specified in the <B>SELECTED_OUTPUT</B> block.
+ *  @retval IPQ_OK              Success.
+ *  @retval IPQ_BADINSTANCE     The given id is invalid.
+ *  @retval IPQ_INVALIDARG      The given user number is invalid.
+ *  @see                        GetSelectedOutputColumnCount, GetSelectedOutputFileName, GetSelectedOutputRowCount, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, GetSelectedOutputValue
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION SetCurrentSelectedOutputUserNumber(ID,N)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    INTEGER(KIND=4),  INTENT(IN)  :: N
+ *    INTEGER(KIND=4)               :: SetCurrentSelectedOutputUserNumber
+ *  END FUNCTION SetCurrentSelectedOutputUserNumber
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT IPQ_RESULT SetCurrentSelectedOutputUserNumber(int id, int n);
 
 /**
  *  Sets the name of the dump file.  This file name is used if not specified within <B>DUMP</B> input.

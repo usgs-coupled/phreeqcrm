@@ -106,6 +106,17 @@ GetComponentCount(int id)
 	return IPQ_BADINSTANCE;
 }
 
+int
+GetCurrentSelectedOutputUserNumber(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetCurrentSelectedOutputUserNumber();
+	}
+	return IPQ_BADINSTANCE;
+}
+
 const char*
 GetDumpFileName(int id)
 {
@@ -355,6 +366,22 @@ GetLogStringOn(int id)
 	return IPQ_BADINSTANCE;
 }
 
+int
+GetNthSelectedOutputUserNumber(int id, int n)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		int nth = IPhreeqcPtr->GetNthSelectedOutputUserNumber(n);
+		switch (nth)
+		{
+		case VR_INVALIDARG:  return IPQ_INVALIDARG;
+		}
+		return nth;
+	}
+	return IPQ_BADINSTANCE;
+}
+
 const char*
 GetOutputFileName(int id)
 {
@@ -445,6 +472,17 @@ GetSelectedOutputColumnCount(int id)
 	if (IPhreeqcPtr)
 	{
 		return IPhreeqcPtr->GetSelectedOutputColumnCount();
+	}
+	return IPQ_BADINSTANCE;
+}
+
+int
+GetSelectedOutputCount(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		return IPhreeqcPtr->GetSelectedOutputCount();
 	}
 	return IPQ_BADINSTANCE;
 }
@@ -549,7 +587,7 @@ GetSelectedOutputValue(int id, int row, int col, VAR* pVAR)
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		switch(IPhreeqcPtr->GetSelectedOutputValue(row, col, pVAR))
+		switch (IPhreeqcPtr->GetSelectedOutputValue(row, col, pVAR))
 		{
 		case VR_OK:          return IPQ_OK;
 		case VR_OUTOFMEMORY: return IPQ_OUTOFMEMORY;
@@ -570,7 +608,7 @@ GetSelectedOutputValue2(int id, int row, int col, int *vtype, double* dvalue, ch
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		switch(IPhreeqcPtr->GetSelectedOutputValue2(row, col, vtype, dvalue, svalue, svalue_length))
+		switch (IPhreeqcPtr->GetSelectedOutputValue2(row, col, vtype, dvalue, svalue, svalue_length))
 		{
 		case VR_OK:          return IPQ_OK;
 		case VR_OUTOFMEMORY: return IPQ_OUTOFMEMORY;
@@ -737,6 +775,23 @@ SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str,
 	}
 	return IPQ_BADINSTANCE;
 }
+
+IPQ_RESULT
+SetCurrentSelectedOutputUserNumber(int id, int n)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		switch (IPhreeqcPtr->SetCurrentSelectedOutputUserNumber(n))
+		{
+		case VR_INVALIDARG: return IPQ_INVALIDARG;
+		case VR_OK:         return IPQ_OK;
+		default:            assert(false);
+		}
+	}
+	return IPQ_BADINSTANCE;
+}
+
 IPQ_RESULT
 SetDumpFileName(int id, const char* filename)
 {
