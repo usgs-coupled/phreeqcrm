@@ -1582,51 +1582,53 @@ Headings
 	IPQ_DLL_EXPORT int         RunString(int id, const char* input);
 
 /**
- *  Sets C callback function for the Basic interpreter.  
- *  @param id               The instance id returned from \ref CreateIPhreeqc.
- *  @param cookie           The name of a double precision Fortran function with three arguments (two double precision, and one character).
+ *  Sets a C callback function for Basic programs. The syntax for the Basic command is
+ *  10 result = CALLBACK(x1, x2, string$)
+ *  The syntax for the C function is
+ *  double my_callback(double x1, double x2, const char * string)
+ *  @param id               The instance id returned from @ref CreateIPhreeqc.
+ *  @param fcn              The name of a user-defined function.
+ *  @param cookie1          A user defined value to be passed to the callback function.
  *  @retval IPQ_OK          Success.
  *  @retval IPQ_BADINSTANCE The given id is invalid.
  *  @par Fortran90 Interface:
- *  @htmlonly
- *  <CODE>
- *  <PRE>
- *  FUNCTION SetBasicCallback(ID,fcn,cookie)
- *    INTEGER  :: ID
- *    double (*fcn)(double x1, double x2, const char *str, void *)
- *    void *      cookie  :: SetBasicCallback
- *    integer     SetBasicCallback
- *  END FUNCTION SetBasicCallback
- *  </PRE>
- *  </CODE>
- *  @endhtmlonly
+ *  see @ref SetBasicFortranCallback
+ *  @par C Example:
+ *  @include SetBasicCallback.c
  */
 	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicCallback(int id, double (*fcn)(double x1, double x2, const char *str, void *cookie), void *cookie1);
 
 /**
- *  Sets Fortran callback function for the Basic interpreter.  
- *  @param id               The instance id returned from \ref CreateIPhreeqc.
- *  @param cookie           The name of a double precision Fortran function with three arguments (two double precision, and one character).
+ *  Sets a Fortran callback function for Basic programs. The syntax for the Basic command is
+ *  10 result = CALLBACK(x1, x2, string$)
+ *  The syntax for the Fortran function is
+ *  double precision my_callback(x1, x2, string), where x1 and x2 are double precision and string is a character variable.
+ *  @param id               The instance id returned from @ref CreateIPhreeqc.
+ *  @param fcn              The name of a double precision Fortran function with three arguments (two double precision, and one character).
  *  @retval IPQ_OK          Success.
  *  @retval IPQ_BADINSTANCE The given id is invalid.
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
  *  <PRE>
- *  FUNCTION SetBasicFortranCallback(ID,fcn)
+ *  FUNCTION SetBasicFortranCallback(ID,FCN)
  *    INTEGER(KIND=4),  INTENT(IN)  :: ID
  *    INTERFACE
- *      DOUBLE PRECISION FUNCTION fcn(x1, x2, str)
+ *      DOUBLE PRECISION FUNCTION FCN(x1, x2, str)
  *        DOUBLE PRECISION, INTENT(in) :: x1
  *        DOUBLE PRECISION, INTENT(in) :: x2
- *        CHARACTER(*), INTENT(in)                   :: str
- *      END FUNCTION 
+ *        CHARACTER(*), INTENT(in)     :: str
+ *      END FUNCTION
  *    END INTERFACE
  *    INTEGER(KIND=4)               :: SetBasicFortranCallback
- *  END FUNCTION SetBasicCallback
+ *  END FUNCTION SetBasicFortranCallback
  *  </PRE>
  *  </CODE>
  *  @endhtmlonly
+ *  @par  Fortran90 Example:
+ *  @include F90SetBasicFortranCallback.f90
+ *  @par File ic :
+ *  @include ic
  */
 	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str, int l));
 

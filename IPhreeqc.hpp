@@ -38,7 +38,7 @@ class IPQ_DLL_EXPORT IPhreeqcStop : std::exception
 /**
  * @class IPhreeqc
  *
- * @brief Provides an interface to PHREEQC (Version 2)--A Computer
+ * @brief Provides an interface to PHREEQC (Version 3)--A Computer
  * Program for Speciation, Batch-Reaction, One-Dimensional Transport,
  * and Inverse Geochemical Calculations
  */
@@ -690,7 +690,8 @@ public:
 	 *  10 result = CALLBACK(x1, x2, string$)
 	 *  The syntax for the C function is
 	 *  double my_callback(double x1, double x2, const char * string)
-	 *  @param cookie           The name of a user-defined function 
+	 *  @param fcn              The name of a user-defined function.
+	 *  @param cookie1          A user defined value to be passed to the callback function.
 	 *  @see                    SetBasicFortranCallback
 	 */
 	void                     SetBasicCallback(double (*fcn)(double x1, double x2, const char *str, void *cookie), void * cookie1);
@@ -700,7 +701,7 @@ public:
 	 *  10 result = CALLBACK(x1, x2, string$)
 	 *  The syntax for the Fortran function is
 	 *  double precision my_callback(x1, x2, string), where x1 and x2 are double precision and string is a character variable.
-	 *  @param cookie           The name of a user-defined double precision function with three arguments (two double precision, one character).
+	 *  @param fcn              The name of a user-defined function.
 	 *  @see                    SetBasicCallback
 	 */
 	void                     SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, char *str, int l));
