@@ -353,7 +353,7 @@ public:
 
 	/**
 	 *  Retrieves the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
-	 *  The default value is <B><I>selected.id.out</I></B>, where id is obtained from \ref GetId.
+	 *  The default value is <B><I>selected_n.id.out</I></B>, where id is obtained from \ref GetId.
 	 *  @return filename        The name of the file to write to.
 	 *  @see                    GetCurrentSelectedOutputUserNumber, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
@@ -361,7 +361,7 @@ public:
 
 	/**
 	 *  Retrieves the selected-output file switch.
-	 *  @retval true            Output is written to the selected-output (<B><I>selected.id.out</I></B> if unspecified, where id is obtained from \ref GetId) file.
+	 *  @retval true            Output is written to the selected-output (<B><I>selected_n.id.out</I></B> if unspecified, where id is obtained from \ref GetId) file.
 	 *  @retval false           No output is written.
 	 *  @see                    GetSelectedOutputValue, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, SetSelectedOutputFileOn
 	 */
@@ -818,7 +818,7 @@ public:
 
 	/**
 	 *  Sets the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
-	 *  The default value is <B><I>selected.id.out</I></B>, where id is obtained from \ref GetId.
+	 *  The default value is <B><I>selected_n.id.out</I></B>, where id is obtained from \ref GetId.
 	 *  @param filename         The name of the file to write <B>SELECTED_OUTPUT</B> output to.
 	 *  @see                    GetSelectedOutputFileName, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputStringOn
 	 */
@@ -826,7 +826,7 @@ public:
 
 	/**
 	 *  Sets the selected-output file switch on or off.  This switch controls whether or not phreeqc writes output to
-	 *  the <B>SELECTED_OUTPUT</B> (<B><I>selected.id.out</I></B> if unspecified, where id is obtained from \ref GetId) file.
+	 *  the <B>SELECTED_OUTPUT</B> (<B><I>selected_n.id.out</I></B> if unspecified, where id is obtained from \ref GetId) file.
 	 *  The initial setting is false.
 	 *  @param bValue           If true, writes output to the selected-output file; if false, no output is written to the selected-output file.
 	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputRowCount, GetSelectedOutputValue

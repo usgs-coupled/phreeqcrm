@@ -829,7 +829,7 @@ extern "C" {
 
 /**
  *  Retrieves the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
- *  The default value is <B><I>selected.id.out</I></B>.
+ *  The default value is <B><I>selected_n.id.out</I></B>.
  *  @param id               The instance id returned from \ref CreateIPhreeqc.
  *  @return filename        The name of the file to write <B>SELECTED_OUTPUT</B> output to.
  *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
@@ -851,7 +851,7 @@ extern "C" {
 /**
  *  Retrieves the selected-output file switch.
  *  @param id                    The instance id returned from \ref CreateIPhreeqc.
- *  @return                      Non-zero if output is written to the selected-output (<B><I>selected.id.out</I></B> if unspecified) file, 0 (zero) otherwise.
+ *  @return                      Non-zero if output is written to the selected-output (<B><I>selected_n.id.out</I></B> if unspecified) file, 0 (zero) otherwise.
  *  @see                         GetSelectedOutputColumnCount, GetSelectedOutputRowCount, GetSelectedOutputValue, SetSelectedOutputFileOn
  *  @par Fortran90 Interface:
  *  @htmlonly
@@ -1975,7 +1975,7 @@ Headings
 
 /**
  *  Sets the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
- *  The default value is <B><I>selected.id.out</I></B>.
+ *  The default value is <B><I>selected_n.id.out</I></B>.
  *  @param id               The instance id returned from \ref CreateIPhreeqc.
  *  @param filename         The name of the file to write <B>SELECTED_OUTPUT</B> output to.
  *  @retval IPQ_OK          Success.
@@ -1999,7 +1999,7 @@ Headings
 
 /**
  *  Sets the selected-output file switch on or off.  This switch controls whether or not phreeqc writes output to
- *  the <B>SELECTED_OUTPUT</B> (<B><I>selected.id.out</I></B> if unspecified) file. The initial setting after calling \ref CreateIPhreeqc is off.
+ *  the <B>SELECTED_OUTPUT</B> (<B><I>selected_n.id.out</I></B> if unspecified) file. The initial setting after calling \ref CreateIPhreeqc is off.
  *  @param id               The instance id returned from \ref CreateIPhreeqc.
  *  @param sel_on           If non-zero, writes output to the selected-output file; if zero, no output is written to the selected-output file.
  *  @retval IPQ_OK          Success.
