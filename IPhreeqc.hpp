@@ -47,9 +47,9 @@ class IPQ_DLL_EXPORT IPhreeqc : public PHRQ_io
 public:
 	/**
 	 * Constructor.
-	 *  \anchor IPhreeqc_cpp
+	 *  @anchor IPhreeqc_cpp
 	 *  @par Example:
-	 *  \include IPhreeqc.cpp
+	 *  @include IPhreeqc.cpp
 	 */
 	IPhreeqc(void);
 
@@ -88,14 +88,14 @@ public:
 	size_t                   AddWarning(const char* warning_msg);
 
 	/**
-	 *  Clears the accumulated input buffer.  Input buffer is accumulated from calls to \ref AccumulateLine.
+	 *  Clears the accumulated input buffer.  Input buffer is accumulated from calls to @ref AccumulateLine.
 	 *  @see                    AccumulateLine, GetAccumulatedLines, OutputAccumulatedLines, RunAccumulated
 	 */
 	void                     ClearAccumulatedLines(void);
 
 	/**
 	 *  Retrieve the accumulated input string.  The accumulated input string can be run
-	 *  with \ref RunAccumulated.
+	 *  with @ref RunAccumulated.
 	 *  @return                 The accumulated input string.
 	 *  @see                    AccumulateLine, ClearAccumulatedLines, OutputAccumulatedLines, RunAccumulated
 	 */
@@ -126,7 +126,7 @@ public:
 
 	/**
 	 *  Retrieves the name of the dump file.  This file name is used if not specified within <B>DUMP</B> input.
-	 *  The default value is <B><I>dump.id.out</I></B>, where id is obtained from \ref GetId.
+	 *  The default value is <B><I>dump.id.out</I></B>, where id is obtained from @ref GetId.
 	 *  @return filename        The name of the file to write <B>DUMP</B> output to.
 	 *  @see                    GetDumpFileOn, GetDumpString, GetDumpStringOn, GetDumpStringLine, GetDumpStringLineCount, SetDumpFileName, SetDumpFileOn, SetDumpStringOn
 	 */
@@ -134,7 +134,7 @@ public:
 
 	/**
 	 *  Retrieves the current value of the dump file switch.
-	 *  @retval true            Output is written to the <B>DUMP</B> (<B><I>dump.id.out</I></B> if unspecified, where id is obtained from \ref GetId) file.
+	 *  @retval true            Output is written to the <B>DUMP</B> (<B><I>dump.id.out</I></B> if unspecified, where id is obtained from @ref GetId) file.
 	 *  @retval false           No output is written.
 	 *  @see                    GetDumpStringLine, GetDumpStringLineCount, GetDumpStringOn, GetDumpString, SetDumpFileOn, SetDumpStringOn
 	 */
@@ -143,8 +143,8 @@ public:
 	/**
 	 *  Retrieves the string buffer containing <b>DUMP</b> output.
 	 *  @return                 A null terminated string containing <b>DUMP</b> output.
-	 *  @pre
-	 *      \ref SetDumpStringOn must have been set to true in order to receive <b>DUMP</b> output.
+	 *  @pre                    
+	 *      @ref SetDumpStringOn must have been set to true in order to receive <b>DUMP</b> output.
 	 *  @see                    GetDumpStringLine, GetDumpFileOn, GetDumpStringLineCount, GetDumpStringOn, SetDumpFileOn, SetDumpStringOn
 	 */
 	const char*              GetDumpString(void)const;
@@ -154,7 +154,7 @@ public:
 	 *  @param n                The zero-based index of the line to retrieve.
 	 *  @return                 A null terminated string containing the given line.
 	 *                          Returns an empty string if n is out of range.
-	 *  @pre                    \ref SetDumpStringOn must have been set to true.
+	 *  @pre                    @ref SetDumpStringOn must have been set to true.
 	 *  @see                    GetDumpFileOn, GetDumpString, GetDumpStringLineCount, GetDumpStringOn, SetDumpFileOn, SetDumpStringOn
 	 */
 	const char*              GetDumpStringLine(int n);
@@ -162,7 +162,7 @@ public:
 	/**
 	 *  Retrieves the number of lines in the current dump string buffer.
 	 *  @return                 The number of lines.
-	 *  @pre                    \ref SetDumpStringOn must have been set to true.
+	 *  @pre                    @ref SetDumpStringOn must have been set to true.
 	 *  @see                    GetDumpFileOn, GetDumpString, GetDumpStringLine, GetDumpStringOn, SetDumpFileOn, SetDumpStringOn
 	 */
 	int                      GetDumpStringLineCount(void)const;
@@ -176,7 +176,7 @@ public:
 	bool                     GetDumpStringOn(void)const;
 
 	/**
-	 *  Retrieves the name of the error file. The default value is <B><I>phreeqc.id.err</I></B>, where id is obtained from \ref GetId.
+	 *  Retrieves the name of the error file. The default value is <B><I>phreeqc.id.err</I></B>, where id is obtained from @ref GetId.
 	 *  @return filename        The name of the file to write to.
 	 *  @see                    GetErrorFileOn, GetErrorString, GetErrorStringOn, GetErrorStringLine, GetErrorStringLineCount, SetErrorFileName, SetErrorFileOn, SetErrorStringOn
 	 */
@@ -184,14 +184,14 @@ public:
 
 	/**
 	 *  Retrieves the current value of the error file switch.
-	 *  @retval true            Errors are written to the <B><I>phreeqc.id.err</I></B> (where id is obtained from \ref GetId) file.
+	 *  @retval true            Errors are written to the <B><I>phreeqc.id.err</I></B> (where id is obtained from @ref GetId) file.
 	 *  @retval false           No errors are written.
 	 *  @see                    SetErrorFileOn
 	 */
 	bool                     GetErrorFileOn(void)const;
 
 	/**
-	 *  Retrieves the error messages from the last call to \ref RunAccumulated, \ref RunFile, \ref RunString, \ref LoadDatabase, or \ref LoadDatabaseString.
+	 *  Retrieves the error messages from the last call to @ref RunAccumulated, @ref RunFile, @ref RunString, @ref LoadDatabase, or @ref LoadDatabaseString.
 	 *  @return                 A null terminated string containing error messages.
 	 *  @see                    GetErrorStringLine, GetErrorStringLineCount, GetErrorFileOn, OutputErrorString, SetErrorFileOn
 	 */
@@ -228,7 +228,7 @@ public:
 	int                      GetId(void)const;
 
 	/**
-	 *  Retrieves the name of the log file. The default value is <B><I>phreeqc.id.log</I></B>, where id is obtained from \ref GetId.
+	 *  Retrieves the name of the log file. The default value is <B><I>phreeqc.id.log</I></B>, where id is obtained from @ref GetId.
 	 *  @return filename        The name of the file to write to.
 	 *  @see                    GetLogFileOn, GetLogString, GetLogStringOn, GetLogStringLine, GetLogStringLineCount, SetLogFileName, SetLogFileOn, SetLogStringOn
 	 */
@@ -236,7 +236,7 @@ public:
 
 	/**
 	 *  Retrieves the current value of the log file switch.
-	 *  @retval true            Log messages are written to the <B><I>phreeqc.id.log</I></B> (where id is obtained from \ref GetId) file.
+	 *  @retval true            Log messages are written to the <B><I>phreeqc.id.log</I></B> (where id is obtained from @ref GetId) file.
 	 *  @retval false           No log messages are written.
 	 *  @remarks
 	 *      Logging must be enabled through the use of the KNOBS -logfile option in order to receive any log messages.
@@ -248,7 +248,7 @@ public:
 	 *  Retrieves the string buffer containing phreeqc log output.
 	 *  @return                 A null terminated string containing log output.
 	 *  @pre
-	 *      \ref SetLogStringOn must have been set to true and enabled through the use of the KNOBS -logfile option in order to receive any log messages.
+	 *      @ref SetLogStringOn must have been set to true and enabled through the use of the KNOBS -logfile option in order to receive any log messages.
 	 *  @see                    GetLogStringLine, GetLogFileOn, GetLogStringLineCount, GetLogStringOn, SetLogFileOn, SetLogStringOn
 	 */
 	const char*              GetLogString(void)const;
@@ -258,7 +258,7 @@ public:
 	 *  @param n                The zero-based index of the line to retrieve.
 	 *  @return                 A null terminated string containing the given line.
 	 *                          Returns an empty string if n is out of range.
-	 *  @pre                    \ref SetLogStringOn must have been set to true and enabled through the use of the KNOBS -logfile option in order to receive any log messages.
+	 *  @pre                    @ref SetLogStringOn must have been set to true and enabled through the use of the KNOBS -logfile option in order to receive any log messages.
 	 *  @see                    GetLogFileOn, GetLogString, GetLogStringLineCount, GetLogStringOn, SetLogFileOn, SetLogStringOn
 	 */
 	const char*              GetLogStringLine(int n)const;
@@ -266,7 +266,7 @@ public:
 	/**
 	 *  Retrieves the number of lines in the current log string buffer.
 	 *  @return                 The number of lines.
-	 *  @pre                    \ref SetLogStringOn must have been set to true and enabled through the use of the KNOBS -logfile option in order to receive any log messages.
+	 *  @pre                    @ref SetLogStringOn must have been set to true and enabled through the use of the KNOBS -logfile option in order to receive any log messages.
 	 *  @see                    GetLogFileOn, GetLogString, GetLogStringLine, GetLogStringOn, SetLogFileOn, SetLogStringOn
 	 */
 	int                      GetLogStringLineCount(void)const;
@@ -288,7 +288,7 @@ public:
 	int                      GetNthSelectedOutputUserNumber(int n)const;
 
 	/**
-	 *  Retrieves the name of the output file. The default value is <B><I>phreeqc.id.out</I></B>, where id is obtained from \ref GetId.
+	 *  Retrieves the name of the output file. The default value is <B><I>phreeqc.id.out</I></B>, where id is obtained from @ref GetId.
 	 *  @return filename        The name of the file to write phreeqc output to.
 	 *  @see                    GetOutputFileOn, GetOutputString, GetOutputStringOn, GetOutputStringLine, GetOutputStringLineCount, SetOutputFileName, SetOutputFileOn, SetOutputStringOn
 	 */
@@ -296,7 +296,7 @@ public:
 
 	/**
 	 *  Retrieves the current value of the output file switch.
-	 *  @retval true            Output is written to the <B><I>phreeqc.id.out</I></B> (where id is obtained from \ref GetId) file.
+	 *  @retval true            Output is written to the <B><I>phreeqc.id.out</I></B> (where id is obtained from @ref GetId) file.
 	 *  @retval false           No output is written.
 	 *  @see                    GetOutputFileOn, GetOutputString, GetOutputStringOn, GetOutputStringLine, GetOutputStringLineCount, SetOutputFileName, SetOutputFileOn, SetOutputStringOn
 	 */
@@ -306,7 +306,7 @@ public:
 	 *  Retrieves the string buffer containing phreeqc output.
 	 *  @return                 A null terminated string containing phreeqc output.
 	 *  @pre
-	 *      \ref SetOutputStringOn must have been set to true in order to receive output.
+	 *      @ref SetOutputStringOn must have been set to true in order to receive output.
 	 *  @see                    GetOutputStringLine, GetOutputFileOn, GetOutputStringLineCount, GetOutputStringOn, SetOutputFileOn, SetOutputStringOn
 	 */
 	const char*              GetOutputString(void)const;
@@ -316,7 +316,7 @@ public:
 	 *  @param n                The zero-based index of the line to retrieve.
 	 *  @return                 A null terminated string containing the given line.
 	 *                          Returns an empty string if n is out of range.
-	 *  @pre                    \ref SetOutputStringOn must have been set to true.
+	 *  @pre                    @ref SetOutputStringOn must have been set to true.
 	 *  @see                    GetOutputFileOn, GetOutputString, GetOutputStringLineCount, GetOutputStringOn, SetOutputFileOn, SetOutputStringOn
 	 */
 	const char*              GetOutputStringLine(int n)const;
@@ -324,7 +324,7 @@ public:
 	/**
 	 *  Retrieves the number of lines in the current output string buffer.
 	 *  @return                 The number of lines.
-	 *  @pre                    \ref SetOutputStringOn must have been set to true.
+	 *  @pre                    @ref SetOutputStringOn must have been set to true.
 	 *  @see                    GetOutputFileOn, GetOutputString, GetOutputStringLine, GetOutputStringOn, SetOutputFileOn, SetOutputStringOn
 	 */
 	int                      GetOutputStringLineCount(void)const;
@@ -353,7 +353,7 @@ public:
 
 	/**
 	 *  Retrieves the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
-	 *  The default value is <B><I>selected_n.id.out</I></B>, where id is obtained from \ref GetId.
+	 *  The default value is <B><I>selected_n.id.out</I></B>, where id is obtained from @ref GetId.
 	 *  @return filename        The name of the file to write to.
 	 *  @see                    GetCurrentSelectedOutputUserNumber, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
@@ -361,7 +361,7 @@ public:
 
 	/**
 	 *  Retrieves the selected-output file switch.
-	 *  @retval true            Output is written to the selected-output (<B><I>selected_n.id.out</I></B> if unspecified, where id is obtained from \ref GetId) file.
+	 *  @retval true            Output is written to the selected-output (<B><I>selected_n.id.out</I></B> if unspecified, where id is obtained from @ref GetId) file.
 	 *  @retval false           No output is written.
 	 *  @see                    GetSelectedOutputValue, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, SetSelectedOutputFileOn
 	 */
@@ -375,10 +375,10 @@ public:
 	int                      GetSelectedOutputRowCount(void)const;
 
 	/**
-	 *  Retrieves the string buffer containing <b>SELECTED_OUTPUT</b>.
+	 *  Retrieves the string buffer containing <b>SELECTED_OUTPUT</b> for the currently selected user number(see @ref SetCurrentSelectedOutputUserNumber).
 	 *  @return                 A null terminated string containing <b>SELECTED_OUTPUT</b>.
 	 *  @pre
-	 *      \ref SetSelectedOutputStringOn must have been set to true in order to receive <b>SELECTED_OUTPUT</b>.
+	 *      @ref SetSelectedOutputStringOn must have been set to true in order to receive <b>SELECTED_OUTPUT</b>.
 	 *  @see                    GetCurrentSelectedOutputUserNumber, GetSelectedOutputStringLine, GetSelectedOutputFileOn, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, GetSelectedOutputString, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	const char*              GetSelectedOutputString(void)const;
@@ -388,7 +388,7 @@ public:
 	 *  @param n                The zero-based index of the line to retrieve.
 	 *  @return                 A null terminated string containing the given line.
 	 *                          Returns an empty string if n is out of range.
-	 *  @pre                    \ref SetSelectedOutputStringOn must have been set to true.
+	 *  @pre                    @ref SetSelectedOutputStringOn must have been set to true.
 	 *  @see                    GetCurrentSelectedOutputUserNumber, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	const char*              GetSelectedOutputStringLine(int n);
@@ -396,7 +396,7 @@ public:
 	/**
 	 *  Retrieves the number of lines in the current selected output string buffer.
 	 *  @return                 The number of lines.
-	 *  @pre                    \ref SetSelectedOutputStringOn must have been set to true.
+	 *  @pre                    @ref SetSelectedOutputStringOn must have been set to true.
 	 *  @see                    GetCurrentSelectedOutputUserNumber, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringOn, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	int                      GetSelectedOutputStringLineCount(void)const;
@@ -410,10 +410,10 @@ public:
 	bool                     GetSelectedOutputStringOn(void)const;
 
 	/**
-	 *  Returns the \c VAR associated with the specified row and column.
+	 *  Returns the @c VAR associated with the specified row and column.
 	 *  @param row              The row index.
 	 *  @param col              The column index.
-	 *  @param pVAR             Pointer to the \c VAR to receive the requested data.
+	 *  @param pVAR             Pointer to the @c VAR to receive the requested data.
 	 *  @retval VR_OK           Success.
 	 *  @retval VR_INVALIDROW   The given row is out of range.
 	 *  @retval VR_INVALIDCOL   The given column is out of range.
@@ -567,9 +567,9 @@ public:
 	 *  Returns the associated data with the specified row and column.
 	 *  @param row               The row index.
 	 *  @param col               The column index.
-	 *  @param vtype             Receives the variable type.  See \ref VAR_TYPE.
-	 *  @param dvalue            Receives the numeric value when (VTYPE=\ref TT_DOUBLE) or (VTYPE=\ref TT_LONG).
-	 *  @param svalue            Receives the string variable when (VTYPE=\ref TT_STRING).  When (VTYPE=\ref TT_DOUBLE) or (VTYPE=\ref TT_LONG) this variable is filled with a string equivalent of DVALUE.
+	 *  @param vtype             Receives the variable type.  See @ref VAR_TYPE.
+	 *  @param dvalue            Receives the numeric value when (VTYPE=@ref TT_DOUBLE) or (VTYPE=@ref TT_LONG).
+	 *  @param svalue            Receives the string variable when (VTYPE=@ref TT_STRING).  When (VTYPE=@ref TT_DOUBLE) or (VTYPE=@ref TT_LONG) this variable is filled with a string equivalent of DVALUE.
 	 *  @param svalue_length     The length of the svalue buffer.
 	 *  @retval IPQ_OK           Success.
 	 *  @retval IPQ_INVALIDROW   The given row is out of range.
@@ -580,12 +580,12 @@ public:
 	 *  @remarks
 	 *  Row 0 contains the column headings to the selected_ouput.
 	 *  @par Examples:
-	 *  See \ref GetSelectedOutputValue.
+	 *  See @ref GetSelectedOutputValue.
 	 */
 	VRESULT                  GetSelectedOutputValue2(int row, int col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
 
 	/**
-	 *  Retrieves the warning messages from the last call to \ref RunAccumulated, \ref RunFile, \ref RunString, \ref LoadDatabase, or \ref LoadDatabaseString.
+	 *  Retrieves the warning messages from the last call to @ref RunAccumulated, @ref RunFile, @ref RunString, @ref LoadDatabase, or @ref LoadDatabaseString.
 	 *  @return                 A null terminated string containing warning messages.
 	 *  @see                    GetWarningStringLine, GetWarningStringLineCount, OutputWarningString
 	 */
@@ -636,13 +636,13 @@ public:
 	int                      LoadDatabaseString(const char* input);
 
 	/**
-	 *  Output the accumulated input buffer to stdout.  The input buffer can be run with a call to \ref RunAccumulated.
+	 *  Output the accumulated input buffer to stdout.  The input buffer can be run with a call to @ref RunAccumulated.
 	 *  @see                    AccumulateLine, ClearAccumulatedLines, RunAccumulated
 	 */
 	void                     OutputAccumulatedLines(void);
 
 	/**
-	 *  Output the error messages normally stored in the <B><I>phreeqc.id.err</I></B> (where id is obtained from \ref GetId)
+	 *  Output the error messages normally stored in the <B><I>phreeqc.id.err</I></B> (where id is obtained from @ref GetId)
 	 *  file to stdout.
 	 *  @see                    GetErrorStringLine, GetErrorStringLineCount, GetErrorFileOn, SetErrorFileOn
 	 */
@@ -655,13 +655,13 @@ public:
 	void                     OutputWarningString(void);
 
 	/**
-	 *  Runs the input buffer as defined by calls to \ref AccumulateLine.
+	 *  Runs the input buffer as defined by calls to @ref AccumulateLine.
 	 *  @return                 The number of errors encountered.
 	 *  @see                    AccumulateLine, ClearAccumulatedLines, OutputAccumulatedLines, RunFile, RunString
 	 *  @remarks
-	 *      The accumulated input is cleared at the next call to \ref AccumulateLine.
+	 *      The accumulated input is cleared at the next call to @ref AccumulateLine.
 	 *  @pre
-	 *      \ref LoadDatabase/\ref LoadDatabaseString must have been called and returned 0 (zero) errors.
+	 *      @ref LoadDatabase/@ref LoadDatabaseString must have been called and returned 0 (zero) errors.
 	 */
 	int                      RunAccumulated(void);
 
@@ -671,7 +671,7 @@ public:
 	 *  @return                 The number of errors encountered during the run.
 	 *  @see                    RunAccumulated, RunString
 	 *  @pre
-	 *      \ref LoadDatabase/\ref LoadDatabaseString must have been called and returned 0 (zero) errors.
+	 *      @ref LoadDatabase/@ref LoadDatabaseString must have been called and returned 0 (zero) errors.
 	 */
 	int                      RunFile(const char* filename);
 
@@ -681,7 +681,7 @@ public:
 	 *  @return                 The number of errors encountered during the run.
 	 *  @see                    RunAccumulated, RunFile
 	 *  @pre
-	 *      \ref LoadDatabase/\ref LoadDatabaseString must have been called and returned 0 (zero) errors.
+	 *      @ref LoadDatabase/@ref LoadDatabaseString must have been called and returned 0 (zero) errors.
 	 */
 	int                      RunString(const char* input);
 
@@ -718,7 +718,7 @@ public:
 
 	/**
 	 *  Sets the name of the dump file.  This file name is used if not specified within <B>DUMP</B> input.
-	 *  The default value is <B><I>dump.id.out</I></B>, where id is obtained from \ref GetId.
+	 *  The default value is <B><I>dump.id.out</I></B>, where id is obtained from @ref GetId.
 	 *  @param filename         The name of the file to write <B>DUMP</B> output to.
 	 *  @see                    GetDumpFileName, GetDumpFileOn, GetDumpString, GetDumpStringOn, GetDumpStringLine, GetDumpStringLineCount, SetDumpStringOn
 	 */
@@ -726,7 +726,7 @@ public:
 
 	/**
 	 *  Sets the dump file switch on or off.  This switch controls whether or not phreeqc writes to the <B>DUMP</B> (<B><I>dump.id.out</I></B>
-	 *  if unspecified, where id is obtained from \ref GetId) file.
+	 *  if unspecified, where id is obtained from @ref GetId) file.
 	 *  The initial setting is false.
 	 *  @param bValue           If true, turns on output to the <B>DUMP</B> file;
 	 *                          if false, turns off output to the <B>DUMP</B> file.
@@ -744,7 +744,7 @@ public:
 	void                     SetDumpStringOn(bool bValue);
 
 	/**
-	 *  Sets the name of the error file. The default value is <B><I>phreeqc.id.err</I></B>, where id is obtained from \ref GetId.
+	 *  Sets the name of the error file. The default value is <B><I>phreeqc.id.err</I></B>, where id is obtained from @ref GetId.
 	 *  @param filename         The name of the file to write error output to.
 	 *  @see                    GetErrorFileName, GetErrorFileOn, GetErrorString, GetErrorStringOn, GetErrorStringLine, GetErrorStringLineCount, SetErrorFileOn, SetErrorStringOn
 	 */
@@ -752,7 +752,7 @@ public:
 
 	/**
 	 *  Sets the error file switch on or off.  This switch controls whether or not
-	 *  error messages are written to the <B><I>phreeqc.id.err</I></B> (where id is obtained from \ref GetId) file.
+	 *  error messages are written to the <B><I>phreeqc.id.err</I></B> (where id is obtained from @ref GetId) file.
 	 *  The initial setting is false.
 	 *  @param bValue           If true, writes errors to the error file; if false, no errors are written to the error file.
 	 *  @see                    GetErrorStringLine, GetErrorStringLineCount, GetErrorFileOn, OutputErrorString
@@ -768,7 +768,7 @@ public:
 	void                     SetErrorStringOn(bool bValue);
 
 	/**
-	 *  Sets the name of the log file. The default value is <B><I>phreeqc.id.log</I></B>, where id is obtained from \ref GetId.
+	 *  Sets the name of the log file. The default value is <B><I>phreeqc.id.log</I></B>, where id is obtained from @ref GetId.
 	 *  @param filename         The name of the file to write log output to.
 	 *  @see                    GetLogFileName, GetLogFileOn, GetLogString, GetLogStringOn, GetLogStringLine, GetLogStringLineCount, SetLogFileOn, SetLogStringOn
 	 */
@@ -776,7 +776,7 @@ public:
 
 	/**
 	 *  Sets the log file switch on or off.  This switch controls whether or not phreeqc
-	 *  writes log messages to the <B><I>phreeqc.id.log</I></B> (where id is obtained from \ref GetId) file.  The initial setting is false.
+	 *  writes log messages to the <B><I>phreeqc.id.log</I></B> (where id is obtained from @ref GetId) file.  The initial setting is false.
 	 *  @param bValue           If true, turns on output to the log file; if false, no log messages are written to the log file.
 	 *  @remarks
 	 *      Logging must be enabled through the use of the KNOBS -logfile option in order to receive any log messages.
@@ -793,7 +793,7 @@ public:
 	void                     SetLogStringOn(bool bValue);
 
 	/**
-	 *  Sets the name of the output file. The default value is <B><I>phreeqc.id.out</I></B>, where id is obtained from \ref GetId.
+	 *  Sets the name of the output file. The default value is <B><I>phreeqc.id.out</I></B>, where id is obtained from @ref GetId.
 	 *  @param filename         The name of the file to write phreeqc output to.
 	 *  @see                    GetOutputFileName, GetOutputFileOn, GetOutputString, GetOutputStringOn, GetOutputStringLine, GetOutputStringLineCount, SetOutputFileOn, SetOutputStringOn
 	 */
@@ -801,7 +801,7 @@ public:
 
 	/**
 	 *  Sets the output file switch on or off.  This switch controls whether or not phreeqc
-	 *  writes to the <B><I>phreeqc.id.out</I></B> file (where id is obtained from \ref GetId).  This is the output that is normally generated
+	 *  writes to the <B><I>phreeqc.id.out</I></B> file (where id is obtained from @ref GetId).  This is the output that is normally generated
 	 *  when phreeqc is run.  The initial setting is false.
 	 *  @param bValue           If true, writes output to the output file; if false, no output is written to the output file.
 	 *  @see                    GetOutputFileOn
@@ -818,7 +818,7 @@ public:
 
 	/**
 	 *  Sets the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
-	 *  The default value is <B><I>selected_n.id.out</I></B>, where id is obtained from \ref GetId.
+	 *  The default value is <B><I>selected_n.id.out</I></B>, where id is obtained from @ref GetId.
 	 *  @param filename         The name of the file to write <B>SELECTED_OUTPUT</B> output to.
 	 *  @see                    GetSelectedOutputFileName, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputStringOn
 	 */
@@ -826,7 +826,7 @@ public:
 
 	/**
 	 *  Sets the selected-output file switch on or off.  This switch controls whether or not phreeqc writes output to
-	 *  the <B>SELECTED_OUTPUT</B> (<B><I>selected_n.id.out</I></B> if unspecified, where id is obtained from \ref GetId) file.
+	 *  the <B>SELECTED_OUTPUT</B> (<B><I>selected_n.id.out</I></B> if unspecified, where id is obtained from @ref GetId) file.
 	 *  The initial setting is false.
 	 *  @param bValue           If true, writes output to the selected-output file; if false, no output is written to the selected-output file.
 	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputRowCount, GetSelectedOutputValue
@@ -873,6 +873,7 @@ protected:
 
 	void update_errors(void);
 
+	bool get_sel_out_file_on(int n)const;
 	std::string sel_file_name(int n_user);
 
 protected:
@@ -884,7 +885,8 @@ protected:
 	bool                       DatabaseLoaded;
 	bool                       ClearAccumulated;
 	bool                       UpdateComponents;
-	bool                       SelectedOutputFileOn;
+	std::map< int, bool >      SelectedOutputFileOnMap;
+
 	bool                       OutputFileOn;
 
 	bool                       LogFileOn;

@@ -112,7 +112,13 @@ GetCurrentSelectedOutputUserNumber(int id)
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)
 	{
-		return IPhreeqcPtr->GetCurrentSelectedOutputUserNumber();
+		int n = IPhreeqcPtr->GetCurrentSelectedOutputUserNumber();
+		switch (n)
+		{
+		case VR_INVALIDARG:
+			return IPQ_INVALIDARG;
+		}
+		return n;
 	}
 	return IPQ_BADINSTANCE;
 }

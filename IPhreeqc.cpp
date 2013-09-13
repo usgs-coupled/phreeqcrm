@@ -29,7 +29,6 @@ IPhreeqc::IPhreeqc(void)
 : DatabaseLoaded(false)
 , ClearAccumulated(false)
 , UpdateComponents(true)
-, SelectedOutputFileOn(false)
 , OutputFileOn(false)
 , LogFileOn(false)
 , ErrorFileOn(false)
@@ -383,7 +382,7 @@ const char* IPhreeqc::GetSelectedOutputFileName(void)const
 
 bool IPhreeqc::GetSelectedOutputFileOn(void)const
 {
-	return this->SelectedOutputFileOn;
+	return this->get_sel_out_file_on(this->CurrentSelectedOutputUserNumber);
 }
 
 int IPhreeqc::GetSelectedOutputRowCount(void)const
@@ -811,7 +810,7 @@ void IPhreeqc::SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, cha
 
 VRESULT IPhreeqc::SetCurrentSelectedOutputUserNumber(int n)
 {
-	if (this->PhreeqcPtr->SelectedOutput_map.find(n) != this->PhreeqcPtr->SelectedOutput_map.end())
+	if (0 <= n)
 	{
 		this->CurrentSelectedOutputUserNumber = n;
 		return VR_OK;
@@ -904,7 +903,11 @@ void IPhreeqc::SetSelectedOutputFileName(const char *filename)
 
 void IPhreeqc::SetSelectedOutputFileOn(bool bValue)
 {
-	this->SelectedOutputFileOn = bValue;
+// COMMENT: {9/12/2013 6:40:50 PM}	this->SelectedOutputFileOn = bValue;
+	if (0 <= this->CurrentSelectedOutputUserNumber)
+	{
+		this->SelectedOutputFileOnMap[this->CurrentSelectedOutputUserNumber] = bValue;
+	}
 }
 
 void IPhreeqc::SetSelectedOutputStringOn(bool bValue)
@@ -934,6 +937,10 @@ void IPhreeqc::UnLoadDatabase(void)
 
 	// clear selectedoutput
 	//
+	this->CurrentSelectedOutputUserNumber = 1;
+	this->SelectedOutputFileOnMap.clear();
+	this->SelectedOutputFileOnMap[1] = false;
+
 	std::map< int, CSelectedOutput* >::iterator itt = this->SelectedOutputMap.begin();
 	for (; itt != this->SelectedOutputMap.end(); ++itt)
 	{
@@ -1140,17 +1147,25 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			// TRUE ???
 			//
 			//
-			if (!this->SelectedOutputFileOn)
+// COMMENT: {9/12/2013 6:47:53 PM}			if (!this->SelectedOutputFileOn)
+// COMMENT: {9/12/2013 6:47:53 PM}			{
+// COMMENT: {9/12/2013 6:47:53 PM}				std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
+// COMMENT: {9/12/2013 6:47:53 PM}				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
+// COMMENT: {9/12/2013 6:47:53 PM}				{
+// COMMENT: {9/12/2013 6:47:53 PM}					ASSERT((*it).second.Get_punch_ostream() == 0);
+// COMMENT: {9/12/2013 6:47:53 PM}				}
+// COMMENT: {9/12/2013 6:47:53 PM}			}
+// COMMENT: {9/12/2013 6:47:53 PM}			else
+// COMMENT: {9/12/2013 6:47:53 PM}			{
+// COMMENT: {9/12/2013 6:47:53 PM}				ASSERT(TRUE);
+// COMMENT: {9/12/2013 6:47:53 PM}			}
+			std::map< int, SelectedOutput >::iterator ai = this->PhreeqcPtr->SelectedOutput_map.begin();
+			for (; ai != this->PhreeqcPtr->SelectedOutput_map.end(); ++ai)
 			{
-				std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
-				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
+				if (!this->SelectedOutputFileOnMap[(*ai).first])
 				{
-					ASSERT((*it).second.Get_punch_ostream() == 0);
+					ASSERT((*ai).second.Get_punch_ostream() == 0);
 				}
-			}
-			else
-			{
-				ASSERT(TRUE);
 			}
 
 			if (this->PhreeqcPtr->pr.punch == FALSE)
@@ -1167,7 +1182,8 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 				std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
 				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 				{
-					if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
+// COMMENT: {9/12/2013 6:42:03 PM}					if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
+					if (this->SelectedOutputFileOnMap[(*it).first] && !(*it).second.Get_punch_ostream())
 					{
 						//
 						// LoadDatabase
@@ -1209,7 +1225,8 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
 		for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 		{
-			if (this->SelectedOutputFileOn)
+// COMMENT: {9/12/2013 6:53:23 PM}			if (this->SelectedOutputFileOn)
+			if (this->SelectedOutputFileOnMap[(*it).first])
 			{
 				ASSERT((*it).second.Get_punch_ostream());
 			}
@@ -1651,6 +1668,17 @@ void IPhreeqc::fpunchf_end_row(const char *format)
 	this->EndRow();
 }
 
+bool IPhreeqc::get_sel_out_file_on(int n)const
+{
+	// if not found in list SelectedOutputFileOn is false
+	std::map< int, bool >::const_iterator ci = this->SelectedOutputFileOnMap.find(n);
+	if (ci != this->SelectedOutputFileOnMap.end())
+	{
+		return (*ci).second;
+	}
+	return false;
+}
+
 bool IPhreeqc::punch_open(const char *file_name, std::ios_base::openmode mode, int n_user)
 {
 	if (this->PhreeqcPtr->SelectedOutput_map[n_user].Get_have_punch_name() &&
@@ -1662,7 +1690,7 @@ bool IPhreeqc::punch_open(const char *file_name, std::ios_base::openmode mode, i
 	{
 		this->SelectedOutputFileNameMap[n_user] = this->sel_file_name(n_user);
 	}
-	if (this->SelectedOutputFileOn)
+	if (this->get_sel_out_file_on(n_user))
 	{
 		ASSERT(!this->SelectedOutputFileNameMap[n_user].empty());
 		this->PhreeqcPtr->SelectedOutput_map[n_user].Set_file_name(this->SelectedOutputFileNameMap[n_user]);
