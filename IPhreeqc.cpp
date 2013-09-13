@@ -366,7 +366,7 @@ int IPhreeqc::GetSelectedOutputColumnCount(void)const
 
 int IPhreeqc::GetSelectedOutputCount(void)const
 {
-	return this->PhreeqcPtr->SelectedOutput_map.size();
+	return (int) this->PhreeqcPtr->SelectedOutput_map.size();
 }
 
 const char* IPhreeqc::GetSelectedOutputFileName(void)const
@@ -425,7 +425,7 @@ int IPhreeqc::GetSelectedOutputStringLineCount(void)const
 	std::map< int, std::vector < std::string > >::const_iterator cit = this->SelectedOutputLinesMap.find(this->CurrentSelectedOutputUserNumber);
 	if (cit != this->SelectedOutputLinesMap.end())
 	{
-		return (*cit).second.size();
+		return (int) (*cit).second.size();
 	}
 	return (int)0;
 }
