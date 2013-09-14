@@ -1522,7 +1522,7 @@ void IPhreeqc::punch_msg(const char *str)
 	{
 		*(this->CurrentToStringMap[this->PhreeqcPtr->current_selected_output]) += str;
 	}
-	ASSERT(!(this->SelectedOutputFileOn != (this->PhreeqcPtr->current_selected_output->Get_punch_ostream() != 0)));
+	ASSERT(!(this->SelectedOutputFileOnMap[this->PhreeqcPtr->current_selected_output->Get_n_user()] != (this->PhreeqcPtr->current_selected_output->Get_punch_ostream() != 0)));
 	this->PHRQ_io::punch_msg(str);
 }
 
