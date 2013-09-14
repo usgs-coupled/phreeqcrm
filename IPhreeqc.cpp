@@ -897,13 +897,12 @@ void IPhreeqc::SetSelectedOutputFileName(const char *filename)
 	{
 		// Can't use this->PhreeqcPtr->SelectedOutput_map since it's necessary
 		// to override the default filename "selected_output_%d.%d.sel" 
-		this->SelectedOutputFileNameMap[1] = std::string(filename);
+		this->SelectedOutputFileNameMap[this->CurrentSelectedOutputUserNumber] = std::string(filename);
 	}
 }
 
 void IPhreeqc::SetSelectedOutputFileOn(bool bValue)
 {
-// COMMENT: {9/12/2013 6:40:50 PM}	this->SelectedOutputFileOn = bValue;
 	if (0 <= this->CurrentSelectedOutputUserNumber)
 	{
 		this->SelectedOutputFileOnMap[this->CurrentSelectedOutputUserNumber] = bValue;
@@ -1147,18 +1146,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			// TRUE ???
 			//
 			//
-// COMMENT: {9/12/2013 6:47:53 PM}			if (!this->SelectedOutputFileOn)
-// COMMENT: {9/12/2013 6:47:53 PM}			{
-// COMMENT: {9/12/2013 6:47:53 PM}				std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
-// COMMENT: {9/12/2013 6:47:53 PM}				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
-// COMMENT: {9/12/2013 6:47:53 PM}				{
-// COMMENT: {9/12/2013 6:47:53 PM}					ASSERT((*it).second.Get_punch_ostream() == 0);
-// COMMENT: {9/12/2013 6:47:53 PM}				}
-// COMMENT: {9/12/2013 6:47:53 PM}			}
-// COMMENT: {9/12/2013 6:47:53 PM}			else
-// COMMENT: {9/12/2013 6:47:53 PM}			{
-// COMMENT: {9/12/2013 6:47:53 PM}				ASSERT(TRUE);
-// COMMENT: {9/12/2013 6:47:53 PM}			}
 			std::map< int, SelectedOutput >::iterator ai = this->PhreeqcPtr->SelectedOutput_map.begin();
 			for (; ai != this->PhreeqcPtr->SelectedOutput_map.end(); ++ai)
 			{
@@ -1182,7 +1169,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 				std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
 				for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 				{
-// COMMENT: {9/12/2013 6:42:03 PM}					if (this->SelectedOutputFileOn && !(*it).second.Get_punch_ostream())
 					if (this->SelectedOutputFileOnMap[(*it).first] && !(*it).second.Get_punch_ostream())
 					{
 						//
@@ -1225,7 +1211,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
 		for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 		{
-// COMMENT: {9/12/2013 6:53:23 PM}			if (this->SelectedOutputFileOn)
 			if (this->SelectedOutputFileOnMap[(*it).first])
 			{
 				ASSERT((*it).second.Get_punch_ostream());
