@@ -172,6 +172,10 @@ IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTVALUE_(int *id, int *row, int *co
 {
 	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
 }
+IPQ_DLL_EXPORT void __stdcall GETVERSIONSTRING_(char* version, unsigned int version_length)
+{
+	GetVersionStringF(version, version_length);
+}
 // GetWarningString
 IPQ_DLL_EXPORT void __stdcall GETWARNINGSTRINGLINE_(int *id, int *n, char* line, unsigned int line_length)
 {

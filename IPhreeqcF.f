@@ -379,6 +379,12 @@
      &                     COL,VTYPE,DVALUE,SVALUE)
       END FUNCTION GetSelectedOutputValue
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      SUBROUTINE GetVersionString(VERSION)
+        IMPLICIT NONE
+        CHARACTER(LEN=*) :: VERSION
+        CALL GetVersionStringF(VERSION)
+      END SUBROUTINE GetVersionString
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! GetWarningString
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetWarningStringLine(ID,N,LINE)

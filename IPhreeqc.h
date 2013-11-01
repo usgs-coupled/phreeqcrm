@@ -1329,6 +1329,28 @@ Headings
 	IPQ_DLL_EXPORT IPQ_RESULT  GetSelectedOutputValue2(int id, int row, int col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
 
 
+/**
+ *  Retrieves the string buffer containing the version in the form of X.X.X-XXXX.
+ *  @return              A null terminated string containing the IPhreeqc version number.
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  SUBROUTINE GetVersionString(VERSION)
+ *    CHARACTER(LEN=*), INTENT(OUT) :: VERSION
+ *  END SUBROUTINE GetVersionString
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ *
+ *  @par C Example:
+ *  @include GetVersionString.c
+ *
+ *  @par Fortran90 Example:
+ *  @include GetVersionString.f90
+ */
+	IPQ_DLL_EXPORT const char* GetVersionString(void);
+
 
 /**
  *  Retrieves the warning messages from the last call to @ref RunAccumulated, @ref RunFile, @ref RunString, @ref LoadDatabase, or @ref LoadDatabaseString.

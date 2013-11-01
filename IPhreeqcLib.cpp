@@ -630,6 +630,12 @@ GetSelectedOutputValue2(int id, int row, int col, int *vtype, double* dvalue, ch
 }
 
 const char*
+GetVersionString(void)
+{
+	return IPhreeqc::GetVersionString();
+}
+
+const char*
 GetWarningString(int id)
 {
 	static const char err_msg[] = "GetWarningString: Invalid instance id.\n";

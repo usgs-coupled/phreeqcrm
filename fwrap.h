@@ -47,6 +47,7 @@
 #define GetSelectedOutputStringLineF        FC_FUNC (getselectedoutputstringlinef,        GETSELECTEDOUTPUTSTRINGLINEF)
 #define GetSelectedOutputStringOnF          FC_FUNC (getselectedoutputstringonf,          GETSELECTEDOUTPUTSTRINGONF)
 #define GetSelectedOutputValueF             FC_FUNC (getselectedoutputvaluef,             GETSELECTEDOUTPUTVALUEF)
+#define GetVersionStringF                   FC_FUNC (getversionstringf,                   GETVERSIONSTRINGF)
 #define GetWarningStringLineCountF          FC_FUNC (getwarningstringlinecountf,          GETWARNINGSTRINGLINECOUNTF)
 #define GetWarningStringLineF               FC_FUNC (getwarningstringlinef,               GETWARNINGSTRINGLINEF)
 #define LoadDatabaseF                       FC_FUNC (loaddatabasef,                       LOADDATABASEF)
@@ -119,6 +120,7 @@ extern "C" {
   void       GetSelectedOutputStringLineF(int *id, int* n, char* line, unsigned int line_length);
   int        GetSelectedOutputStringOnF(int *id);
   IPQ_RESULT GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
+  void       GetVersionStringF(char* version, unsigned int version_length);
   int        GetWarningStringLineCountF(int *id);
   void       GetWarningStringLineF(int *id, int* n, char* line, unsigned int line_length);
   int        LoadDatabaseF(int *id, char* filename, unsigned int filename_length);

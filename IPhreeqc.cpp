@@ -5,6 +5,7 @@
 #include "IPhreeqc.hpp"                 // IPhreeqc
 #include "Phreeqc.h"                    // Phreeqc
 #include "thread.h"
+#include "Version.h"
 
 #include "Debug.h"                      // ASSERT
 #include "ErrorReporter.hxx"            // CErrorReporter
@@ -21,6 +22,8 @@ const char DUMP_FILENAME_FORMAT[]   = "dump.%d.out";
 // statics
 std::map<size_t, IPhreeqc*> IPhreeqc::Instances;
 size_t IPhreeqc::InstancesIndex = 0;
+
+std::string IPhreeqc::Version(VERSION_STRING);
 
 static const char empty[] = "";
 
@@ -508,6 +511,11 @@ VRESULT IPhreeqc::GetSelectedOutputValue2(int row, int col, int *vtype, double* 
 	}
 	::VarClear(&v);
 	return result;
+}
+
+const char* IPhreeqc::GetVersionString(void)
+{
+	return IPhreeqc::Version.c_str();
 }
 
 const char* IPhreeqc::GetWarningString(void)
@@ -1101,6 +1109,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			{
 				ASSERT(this->SelectedOutputMap[(*mit).first] == this->CurrentSelectedOutputMap[&(*mit).second]);
 			}
+			/**
 			if (this->PhreeqcPtr->simulation > 1 && save_punch_in && (*mit).second.Get_new_def() && !bWarning)
 			{
 				std::ostringstream oss;
@@ -1108,13 +1117,16 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 				this->PhreeqcPtr->warning_msg(oss.str().c_str());
 				bWarning = true;
 			}
+			**/
 		}
+		/**
 		if (this->PhreeqcPtr->simulation > 1 && this->PhreeqcPtr->keycount[Keywords::KEY_USER_PUNCH] > 0)
 		{
 			std::ostringstream oss;
 			oss << sz_routine << ": Warning USER_PUNCH has been redefined.\n";
 			this->PhreeqcPtr->warning_msg(oss.str().c_str());
 		}
+		**/
 
 		if (this->PhreeqcPtr->title_x != NULL)
 		{

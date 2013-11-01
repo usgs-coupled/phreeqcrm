@@ -359,6 +359,12 @@ GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue,
 	return result;
 }
 
+void
+GetVersionStringF(char* version, unsigned int version_length)
+{
+	padfstring(version, ::GetVersionString(), version_length);
+}
+
 /*
 GetWarningStringF
 */
@@ -793,6 +799,10 @@ IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTSTRINGON(int *id)
 IPQ_DLL_EXPORT int  __stdcall GETSELECTEDOUTPUTVALUE(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
 {
 	return GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, svalue_length);
+}
+IPQ_DLL_EXPORT void __stdcall GETVERSIONSTRING(char* version, unsigned int version_length)
+{
+	GetVersionStringF(version, version_length);
 }
 // GetWarningString
 IPQ_DLL_EXPORT void __stdcall GETWARNINGSTRINGLINE(int *id, int *n, char* line, unsigned int line_length)

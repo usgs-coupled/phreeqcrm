@@ -585,6 +585,12 @@ public:
 	VRESULT                  GetSelectedOutputValue2(int row, int col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
 
 	/**
+	 *  Retrieves the string buffer containing the version in the form of X.X.X-XXXX.
+	 *  @return                 A null terminated string containing the IPhreeqc version number.
+	 */
+	static const char*       GetVersionString(void);
+
+	/**
 	 *  Retrieves the warning messages from the last call to @ref RunAccumulated, @ref RunFile, @ref RunString, @ref LoadDatabase, or @ref LoadDatabaseString.
 	 *  @return                 A null terminated string containing warning messages.
 	 *  @see                    GetWarningStringLine, GetWarningStringLineCount, OutputWarningString
@@ -944,6 +950,8 @@ protected:
 	static std::map<size_t, IPhreeqc*> Instances;
 	static size_t InstancesIndex;
 	size_t Index;
+
+	static std::string Version;
 
 #if defined(_MSC_VER)
 /* reset warning C4251 */
