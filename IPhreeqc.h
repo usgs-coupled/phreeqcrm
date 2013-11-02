@@ -1347,7 +1347,7 @@ Headings
  *  @include GetVersionString.c
  *
  *  @par Fortran90 Example:
- *  @include GetVersionString.f90
+ *  @include F90GetVersionString.f90
  */
 	IPQ_DLL_EXPORT const char* GetVersionString(void);
 
@@ -2026,7 +2026,7 @@ Headings
 
 /**
  *  Sets the selected-output file switch on or off.  This switch controls whether or not phreeqc writes output to
- *  the currently selected <B>SELECTED_OUTPUT</B> file (see @ref SetCurrentSelectedOutputUserNumber). The initial 
+ *  the currently selected <B>SELECTED_OUTPUT</B> file (see @ref SetCurrentSelectedOutputUserNumber). The initial
  *  setting after calling @ref CreateIPhreeqc is off.
  *  @param id               The instance id returned from @ref CreateIPhreeqc.
  *  @param sel_on           If non-zero, writes output to the selected-output file; if zero, no output is written to the selected-output file.
