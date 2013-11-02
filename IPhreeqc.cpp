@@ -1109,25 +1109,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			{
 				ASSERT(this->SelectedOutputMap[(*mit).first] == this->CurrentSelectedOutputMap[&(*mit).second]);
 			}
-			/**
-			if (this->PhreeqcPtr->simulation > 1 && save_punch_in && (*mit).second.Get_new_def() && !bWarning)
-			{
-				std::ostringstream oss;
-				oss << sz_routine << ": Warning SELECTED_OUTPUT has been redefined.\n";
-				this->PhreeqcPtr->warning_msg(oss.str().c_str());
-				bWarning = true;
-			}
-			**/
 		}
-		/**
-		if (this->PhreeqcPtr->simulation > 1 && this->PhreeqcPtr->keycount[Keywords::KEY_USER_PUNCH] > 0)
-		{
-			std::ostringstream oss;
-			oss << sz_routine << ": Warning USER_PUNCH has been redefined.\n";
-			this->PhreeqcPtr->warning_msg(oss.str().c_str());
-		}
-		**/
-
 		if (this->PhreeqcPtr->title_x != NULL)
 		{
 			::sprintf(token, "TITLE");
