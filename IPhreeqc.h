@@ -243,9 +243,11 @@ extern "C" {
 	IPQ_DLL_EXPORT int         GetComponentCount(int id);
 
 /**
- *  Retrieves the currently active <b>SELECTED_OUTPUT</b> user number for use in subsequent calls to GetSelectedOutputXXX routines.
- *  The initial setting after calling @ref CreateIPhreeqc is @ref IPQ_INVALIDARG.  After the first RunXXX method call, the initial setting
- *  is the lowest defined user number.
+ *  Retrieves the currently active <b>SELECTED_OUTPUT</b> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount/@ref
+ *  GetSelectedOutputFileName/@ref GetSelectedOutputRowCount/@ref GetSelectedOutputString/@ref GetSelectedOutputStringLine/@ref
+ *  GetSelectedOutputStringLineCount/@ref GetSelectedOutputValue/@ref GetSelectedOutputValue2) routines.
+ *  The initial setting after calling @ref CreateIPhreeqc is @ref IPQ_INVALIDARG.  After the first (@ref RunAccumulated/@ref
+ *  RunFile/@ref RunString) method call, the initial setting is the lowest defined user number.
  *  @param id                   The instance id returned from @ref CreateIPhreeqc.
  *  @return                     The current active <b>SELECTED_OUTPUT</b> user number.
  *  @see                        GetNthSelectedOutputUserNumber, GetSelectedOutputCount, SetCurrentSelectedOutputUserNumber
@@ -991,7 +993,7 @@ extern "C" {
  *  @retval IPQ_INVALIDCOL   The given column is out of range.
  *  @retval IPQ_OUTOFMEMORY  Memory could not be allocated.
  *  @retval IPQ_BADINSTANCE  The given id is invalid.
- *  @see                     GetSelectedOutputFileOn, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, GetSelectedOutputValue2, SetSelectedOutputFileOn
+ *  @see                     GetCurrentSelectedOutputUserNumber, GetSelectedOutputFileOn, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, GetSelectedOutputValue2, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
  *  @remarks
  *  Row 0 contains the column headings to the selected_ouput.
  *  @par Examples:
@@ -1181,7 +1183,7 @@ Headings
  *  @retval IPQ_INVALIDCOL   The given column is out of range.
  *  @retval IPQ_OUTOFMEMORY  Memory could not be allocated.
  *  @retval IPQ_BADINSTANCE  The given id is invalid.
- *  @see                     GetSelectedOutputFileOn, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, GetSelectedOutputValue, SetSelectedOutputFileOn
+ *  @see                     GetCurrentSelectedOutputUserNumber, GetSelectedOutputFileOn, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
  *  @remarks
  *  Row 0 contains the column headings to the selected_ouput.
  *  @par Examples:
@@ -1659,7 +1661,9 @@ Headings
 
 
 /**
- *  Sets the currently active SELECTED_OUTPUT user number for use in subsequent calls to (GetSelectedOutputColumnCount/GetSelectedOutputFileName/) routines.
+ *  Sets the currently active SELECTED_OUTPUT user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount/@ref
+ *  GetSelectedOutputFileName/@ref GetSelectedOutputRowCount/@ref GetSelectedOutputString/@ref GetSelectedOutputStringLine/@ref
+ *  GetSelectedOutputStringLineCount/@ref GetSelectedOutputValue/@ref GetSelectedOutputValue2) routines.
  *  The initial setting after calling @ref CreateIPhreeqc is IPQ_INVALIDARG.  After the first (@ref RunAccumulated/@ref
  *  RunFile/@ref RunString) method call, the initial setting is the lowest defined user number.
  *  @param id                   The instance id returned from @ref CreateIPhreeqc.
