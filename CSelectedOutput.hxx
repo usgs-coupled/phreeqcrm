@@ -37,6 +37,18 @@ public:
 	int PushBackString(const char* key, const char* sVal);
 	int PushBackEmpty(const char* key);
 
+	// Serialize
+	void CSelectedOutput::Serialize(
+		std::vector<int> &types,
+		std::vector<long> &longs,
+		std::vector<double> &doubles,
+		std::string &strings);
+	void CSelectedOutput::DeSerialize(
+		std::vector<int> &types,        
+		std::vector<long> &longs,       
+		std::vector<double> &doubles,   
+		std::string &strings);
+
 #if defined(_DEBUG)
 	void Dump(const char* heading);
 	void AssertValid(void)const;

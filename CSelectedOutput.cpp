@@ -236,3 +236,118 @@ std::ostream& operator<< (std::ostream &os, const CSelectedOutput &a)
 	os << "\n";
 	return os;
 }
+void CSelectedOutput::Serialize(
+	std::vector<int> &types,        // each column for each row types, including headings
+	std::vector<long> &longs,       // in order by occurance
+	std::vector<double> &doubles,   // in order by occurance
+	std::string &strings)
+{
+	types.clear();
+	longs.clear();
+	doubles.clear();
+	strings.clear();
+
+	size_t nrows = this->m_nRowCount;
+	size_t ncols = this->m_vecVarHeadings.size();
+
+	longs.push_back((long) nrows);
+	longs.push_back((long) ncols);
+
+	// put headings
+	for (size_t i = 0; i < ncols; i++)
+	{
+		ASSERT(this->m_vecVarHeadings[i].type == TT_STRING);
+		longs.push_back((long) strlen(this->m_vecVarHeadings[i].sVal));
+		strings.append(this->m_vecVarHeadings[i].sVal);
+	}
+
+	// go through rows by column
+	for (size_t j = 0; j < ncols; j++)
+	{
+		for (size_t i = 0; i < nrows; i++)
+		{
+			types.push_back(m_arrayVar[j][i].type);
+			switch(m_arrayVar[j][i].type)
+			{
+			case TT_EMPTY:
+				break;
+			case TT_ERROR:
+				longs.push_back(m_arrayVar[j][i].vresult);
+				break;
+			case TT_LONG:
+				longs.push_back(m_arrayVar[j][i].lVal);
+				break;
+			case TT_DOUBLE:
+				doubles.push_back(m_arrayVar[j][i].dVal);
+				break;
+			case TT_STRING:
+				longs.push_back((long) strlen(m_arrayVar[j][i].sVal));
+				strings.append(m_arrayVar[j][i].sVal);
+				break;
+
+			}
+		}
+	}
+}
+void CSelectedOutput::DeSerialize(
+	std::vector<int> &types,        // each column for each row types, including headings
+	std::vector<long> &longs,       // in order by occurance
+	std::vector<double> &doubles,   // in order by occurance
+	std::string &strings)
+{
+	size_t i_types = 0, i_longs = 0, i_doubles = 0;
+	size_t strings_start = 0;
+
+	size_t nrows = longs[i_longs++];
+	size_t ncols = longs[i_longs++];
+
+	// put headings
+	std::vector<std::string> headings;
+	for (size_t i = 0; i < ncols; i++)
+	{
+		size_t l = (size_t) longs[i_longs++];
+		headings.push_back(strings.substr(strings_start, l));
+		strings_start += l;
+	}
+
+	// go through rows by column
+	for (size_t j = 0; j < ncols; j++)
+	{
+		for (size_t i = 0; i < nrows; i++)
+		{
+			switch((VAR_TYPE) types[i_types++])
+			{
+			case TT_EMPTY:
+				{
+					CVar v;
+					v.Clear();
+					this->PushBack(headings[j].c_str(), v);
+				}
+				break;
+			case TT_ERROR:
+				{
+					CVar v;
+					v.Clear();
+					v.type = TT_ERROR;
+					v.vresult = (VRESULT) longs[i_longs++];
+					this->PushBack(headings[j].c_str(), v);
+				}
+				break;
+			case TT_LONG:
+				PushBackLong(headings[j].c_str(), longs[i_longs++]);
+				break;
+			case TT_DOUBLE:
+				PushBackDouble(headings[j].c_str(), doubles[i_doubles++]);
+				break;
+			case TT_STRING:
+				{
+					size_t l = (size_t) longs[i_longs++];
+					PushBackString(headings[j].c_str(), strings.substr(strings_start, l).c_str());
+					strings_start += l;
+				}
+				break;
+			}
+		}
+	}
+	this->m_nRowCount += nrows;
+}
