@@ -38,16 +38,20 @@ public:
 	int PushBackEmpty(const char* key);
 
 	// Serialize
-	void CSelectedOutput::Serialize(
+	void Serialize(
 		std::vector<int> &types,
 		std::vector<long> &longs,
 		std::vector<double> &doubles,
 		std::string &strings);
-	void CSelectedOutput::DeSerialize(
+	void DeSerialize(
 		std::vector<int> &types,        
 		std::vector<long> &longs,       
 		std::vector<double> &doubles,   
 		std::string &strings);
+	void Doublize(
+		int &nrow,
+		int &ncol,
+		double *doubles);
 
 #if defined(_DEBUG)
 	void Dump(const char* heading);

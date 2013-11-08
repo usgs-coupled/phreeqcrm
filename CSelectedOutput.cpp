@@ -14,7 +14,7 @@
 
 #include "Debug.h"                  // ASSERT
 #include "CSelectedOutput.hxx"      // CSelectedOutput
-
+const float INACTIVE_CELL_VALUE = 1.0e30f;
 const size_t RESERVE_ROWS = 80;
 const size_t RESERVE_COLS = 80;
 
@@ -349,5 +349,43 @@ void CSelectedOutput::DeSerialize(
 			}
 		}
 	}
-	this->m_nRowCount += nrows;
+	this->EndRow();
+}
+void CSelectedOutput::Doublize(
+	int &nrow,
+	int &ncol,
+	double *doubles)
+{
+	nrow = (int) this->m_nRowCount;
+	ncol = (int) this->m_vecVarHeadings.size();
+
+	size_t pos = 0;
+	// go through column dominant order (Fortran)
+	for (size_t j = 0; j < ncol; j++)
+	{
+		for (size_t i = 0; i < nrow; i++)
+		{
+			switch(m_arrayVar[j][i].type)
+			{
+			case TT_EMPTY:
+				break;
+			case TT_ERROR:
+				doubles[pos++] = (double) INACTIVE_CELL_VALUE;
+				break;
+			case TT_LONG:
+				doubles[pos++] = (double) m_arrayVar[j][i].lVal;
+				break;
+			case TT_DOUBLE:
+				doubles[pos++] = m_arrayVar[j][i].dVal;
+				break;
+			case TT_STRING:
+				doubles[pos++] = (double) INACTIVE_CELL_VALUE;
+				break;
+			default:
+				doubles[pos++] = (double) INACTIVE_CELL_VALUE;
+				break;
+
+			}
+		}
+	}
 }
