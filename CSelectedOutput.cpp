@@ -368,6 +368,7 @@ void CSelectedOutput::Doublize(
 			switch(m_arrayVar[j][i].type)
 			{
 			case TT_EMPTY:
+				doubles[pos++] = (double) INACTIVE_CELL_VALUE;
 				break;
 			case TT_ERROR:
 				doubles[pos++] = (double) INACTIVE_CELL_VALUE;
