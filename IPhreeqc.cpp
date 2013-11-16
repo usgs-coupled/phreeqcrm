@@ -420,6 +420,8 @@ const char* IPhreeqc::GetSelectedOutputStringLine(int n)
 	{
 		return empty;
 	}
+	// don't need to check CurrentSelectedOutputUserNumber since
+	// GetSelectedOutputStringLineCount will catch
 	return this->SelectedOutputLinesMap[this->CurrentSelectedOutputUserNumber][n].c_str();
 }
 
@@ -430,7 +432,7 @@ int IPhreeqc::GetSelectedOutputStringLineCount(void)const
 	{
 		return (int) (*cit).second.size();
 	}
-	return (int)0;
+	return 0;
 }
 
 bool IPhreeqc::GetSelectedOutputStringOn(void)const
@@ -440,6 +442,7 @@ bool IPhreeqc::GetSelectedOutputStringOn(void)const
 
 VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 {
+	VRESULT v;
 	this->ErrorReporter->Clear();
 	if (!pVAR)
 	{
@@ -448,26 +451,37 @@ VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 		return VR_INVALIDARG;
 	}
 
-	VRESULT v = this->SelectedOutputMap[this->CurrentSelectedOutputUserNumber]->Get(row, col, pVAR);
-	switch (v)
+	std::map< int, CSelectedOutput* >::const_iterator ci = this->SelectedOutputMap.find(this->CurrentSelectedOutputUserNumber);
+	if (ci != this->SelectedOutputMap.end())
 	{
-	case VR_OK:
-		break;
-	case VR_OUTOFMEMORY:
-		this->AddError("GetSelectedOutputValue: VR_OUTOFMEMORY Out of memory.\n");
-		break;
-	case VR_BADVARTYPE:
-		this->AddError("GetSelectedOutputValue: VR_BADVARTYPE pVar must be initialized(VarInit) and/or cleared(VarClear).\n");
-		break;
-	case VR_INVALIDARG:
-		// not possible
-		break;
-	case VR_INVALIDROW:
-		this->AddError("GetSelectedOutputValue: VR_INVALIDROW Row index out of range.\n");
-		break;
-	case VR_INVALIDCOL:
-		this->AddError("GetSelectedOutputValue: VR_INVALIDCOL Column index out of range.\n");
-		break;
+		v = this->SelectedOutputMap[this->CurrentSelectedOutputUserNumber]->Get(row, col, pVAR);
+		switch (v)
+		{
+		case VR_OK:
+			break;
+		case VR_OUTOFMEMORY:
+			this->AddError("GetSelectedOutputValue: VR_OUTOFMEMORY Out of memory.\n");
+			break;
+		case VR_BADVARTYPE:
+			this->AddError("GetSelectedOutputValue: VR_BADVARTYPE pVar must be initialized(VarInit) and/or cleared(VarClear).\n");
+			break;
+		case VR_INVALIDARG:
+			// not possible
+			break;
+		case VR_INVALIDROW:
+			this->AddError("GetSelectedOutputValue: VR_INVALIDROW Row index out of range.\n");
+			break;
+		case VR_INVALIDCOL:
+			this->AddError("GetSelectedOutputValue: VR_INVALIDCOL Column index out of range.\n");
+			break;
+		}
+	}
+	else
+	{
+		char buffer[120];
+		v = VR_INVALIDARG;
+		::sprintf(buffer, "GetSelectedOutputValue: VR_INVALIDARG Invalid selected-output user number %d.\n", this->CurrentSelectedOutputUserNumber);
+		this->AddError(buffer);
 	}
 	this->update_errors();
 	return v;
