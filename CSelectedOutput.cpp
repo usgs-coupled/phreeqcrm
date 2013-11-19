@@ -11,6 +11,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>                 // strlen
 
 #include "Debug.h"                  // ASSERT
 #include "CSelectedOutput.hxx"      // CSelectedOutput
@@ -390,3 +391,4 @@ void CSelectedOutput::Doublize(
 		}
 	}
 }
+
