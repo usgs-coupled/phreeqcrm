@@ -243,11 +243,11 @@ extern "C" {
 	IPQ_DLL_EXPORT int         GetComponentCount(int id);
 
 /**
- *  Retrieves the currently active <b>SELECTED_OUTPUT</b> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount/@ref
- *  GetSelectedOutputFileName/@ref GetSelectedOutputRowCount/@ref GetSelectedOutputString/@ref GetSelectedOutputStringLine/@ref
- *  GetSelectedOutputStringLineCount/@ref GetSelectedOutputValue/@ref GetSelectedOutputValue2) routines.
- *  The initial setting after calling @ref CreateIPhreeqc is @ref IPQ_INVALIDARG.  After the first (@ref RunAccumulated/@ref
- *  RunFile/@ref RunString) method call, the initial setting is the lowest defined user number.
+ *  Retrieves the currently active <b>SELECTED_OUTPUT</b> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount / @ref
+ *  GetSelectedOutputFileName / @ref GetSelectedOutputRowCount / @ref GetSelectedOutputString / @ref GetSelectedOutputStringLine / @ref
+ *  GetSelectedOutputStringLineCount / @ref GetSelectedOutputValue / @ref GetSelectedOutputValue2) routines.
+ *  The initial setting after calling @ref CreateIPhreeqc is @ref IPQ_INVALIDARG.  After the first (@ref RunAccumulated / @ref
+ *  RunFile / @ref RunString) method call, the initial setting is the lowest defined user number.
  *  @param id                   The instance id returned from @ref CreateIPhreeqc.
  *  @return                     The current active <b>SELECTED_OUTPUT</b> user number.
  *  @see                        GetNthSelectedOutputUserNumber, GetSelectedOutputCount, SetCurrentSelectedOutputUserNumber
@@ -648,15 +648,16 @@ extern "C" {
 /**
  *  Retrieves the nth user number of the currently defined <B>SELECTED_OUTPUT</B> keyword blocks.
  *  @param id            The instance id returned from @ref CreateIPhreeqc.
+ *  @param n             The zero-based index of the <B>SELECTED_OUTPUT</B> user number to retrieve.
  *  @return              The nth defined user number; a negative value indicates an error occured.
  *  @see                 GetCurrentSelectedOutputUserNumber, GetSelectedOutputCount, SetCurrentSelectedOutputUserNumber
- *  @pre @ref RunAccumulated/@ref RunFile/@ref RunString must have been called and returned 0 (zero) errors.
+ *  @pre @ref RunAccumulated, @ref RunFile, @ref RunString must have been called and returned 0 (zero) errors.
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  (Note: N is one-based for the Fortran interface.)
  *  <CODE>
  *  <PRE>
- *  FUNCTION GetNthSelectedOutputUserNumber(ID)
+ *  FUNCTION GetNthSelectedOutputUserNumber(ID,N)
  *    INTEGER(KIND=4),  INTENT(IN)  :: ID
  *    INTEGER(KIND=4),  INTENT(IN)  :: N
  *    INTEGER(KIND=4)               :: GetNthSelectedOutputUserNumber
@@ -664,6 +665,9 @@ extern "C" {
  *  </PRE>
  *  </CODE>
  *  @endhtmlonly
+ *
+ *  @par C Example:
+ *  see @ref SetCurrentSelectedOutputUserNumber_c "SetCurrentSelectedOutputUserNumber"
  */
 	IPQ_DLL_EXPORT int         GetNthSelectedOutputUserNumber(int id, int n);
 
@@ -828,6 +832,9 @@ extern "C" {
  *  </PRE>
  *  </CODE>
  *  @endhtmlonly
+ *
+ *  @par C Example:
+ *  see @ref SetCurrentSelectedOutputUserNumber_c "SetCurrentSelectedOutputUserNumber"
  */
 	IPQ_DLL_EXPORT int         GetSelectedOutputCount(int id);
 
@@ -1661,18 +1668,18 @@ Headings
 
 
 /**
- *  Sets the currently active SELECTED_OUTPUT user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount/@ref
- *  GetSelectedOutputFileName/@ref GetSelectedOutputRowCount/@ref GetSelectedOutputString/@ref GetSelectedOutputStringLine/@ref
- *  GetSelectedOutputStringLineCount/@ref GetSelectedOutputValue/@ref GetSelectedOutputValue2) routines.
- *  The initial setting after calling @ref CreateIPhreeqc is IPQ_INVALIDARG.  After the first (@ref RunAccumulated/@ref
- *  RunFile/@ref RunString) method call, the initial setting is the lowest defined user number.
+ *  Sets the currently active SELECTED_OUTPUT user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount / @ref
+ *  GetSelectedOutputFileName / @ref GetSelectedOutputRowCount / @ref GetSelectedOutputString / @ref GetSelectedOutputStringLine / @ref
+ *  GetSelectedOutputStringLineCount / @ref GetSelectedOutputValue / @ref GetSelectedOutputValue2) routines.
+ *  The initial setting after calling @ref CreateIPhreeqc is IPQ_INVALIDARG.  After the first (@ref RunAccumulated / @ref
+ *  RunFile / @ref RunString) method call, the initial setting is the lowest defined user number.
  *  @param id                   The instance id returned from @ref CreateIPhreeqc.
- *  @param n                    The user number as specified in the <B>SELECTED_OUTPUT</B> block.
+ *  @param n                    The user number specified in the <B>SELECTED_OUTPUT</B> block.
  *  @retval IPQ_OK              Success.
  *  @retval IPQ_BADINSTANCE     The given id is invalid.
  *  @retval IPQ_INVALIDARG      The given user number is invalid.
  *  @see                        GetSelectedOutputColumnCount, GetSelectedOutputFileName, GetSelectedOutputRowCount, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, GetSelectedOutputValue
- *  @pre @ref RunAccumulated/@ref RunFile/@ref RunString must have been called and returned 0 (zero) errors.
+ *  @pre @ref RunAccumulated / @ref RunFile / @ref RunString must have been called and returned 0 (zero) errors.
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -1685,6 +1692,10 @@ Headings
  *  </PRE>
  *  </CODE>
  *  @endhtmlonly
+ *
+ *  @anchor SetCurrentSelectedOutputUserNumber_c
+ *  @par C Example:
+ *  @include SetCurrentSelectedOutputUserNumber.c
  */
 	IPQ_DLL_EXPORT IPQ_RESULT SetCurrentSelectedOutputUserNumber(int id, int n);
 
