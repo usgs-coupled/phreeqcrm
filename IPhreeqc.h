@@ -1693,6 +1693,8 @@ Headings
  *  @anchor SetCurrentSelectedOutputUserNumber_c
  *  @par C Example:
  *  @include SetCurrentSelectedOutputUserNumber.c
+ *  @par File multi_punch :
+ *  @include multi_punch
  */
 	IPQ_DLL_EXPORT IPQ_RESULT  SetCurrentSelectedOutputUserNumber(int id, int n);
 
