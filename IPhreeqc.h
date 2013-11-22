@@ -243,13 +243,12 @@ extern "C" {
 	IPQ_DLL_EXPORT int         GetComponentCount(int id);
 
 /**
- *  Retrieves the currently active <b>SELECTED_OUTPUT</b> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount / @ref
- *  GetSelectedOutputFileName / @ref GetSelectedOutputRowCount / @ref GetSelectedOutputString / @ref GetSelectedOutputStringLine / @ref
- *  GetSelectedOutputStringLineCount / @ref GetSelectedOutputValue / @ref GetSelectedOutputValue2) routines.
- *  The initial setting after calling @ref CreateIPhreeqc is @ref IPQ_INVALIDARG.  After the first (@ref RunAccumulated / @ref
- *  RunFile / @ref RunString) method call, the initial setting is the lowest defined user number.
+ *  Retrieves the current <b>SELECTED_OUTPUT</b> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount, 
+ *  GetSelectedOutputFileName, GetSelectedOutputRowCount, GetSelectedOutputString, GetSelectedOutputStringLine, 
+ *  GetSelectedOutputStringLineCount, GetSelectedOutputValue, GetSelectedOutputValue2) routines.
+ *  The initial setting after calling @ref CreateIPhreeqc is 1.
  *  @param id                   The instance id returned from @ref CreateIPhreeqc.
- *  @return                     The current active <b>SELECTED_OUTPUT</b> user number.
+ *  @return                     The current <b>SELECTED_OUTPUT</b> user number.
  *  @see                        GetNthSelectedOutputUserNumber, GetSelectedOutputCount, SetCurrentSelectedOutputUserNumber
  *  @par Fortran90 Interface:
  *  @htmlonly
@@ -263,7 +262,7 @@ extern "C" {
  *  </CODE>
  *  @endhtmlonly
  */
-	IPQ_DLL_EXPORT int GetCurrentSelectedOutputUserNumber(int id);
+	IPQ_DLL_EXPORT int         GetCurrentSelectedOutputUserNumber(int id);
 
 /**
  *  Retrieves the name of the dump file.  This file name is used if not specified within <B>DUMP</B> input.
@@ -820,7 +819,7 @@ extern "C" {
  *  @param id            The instance id returned from @ref CreateIPhreeqc.
  *  @return              The number of <B>SELECTED_OUTPUT</B> blocks.
  *  @see                 GetCurrentSelectedOutputUserNumber, GetNthSelectedOutputUserNumber, SetCurrentSelectedOutputUserNumber
- *  @pre @ref RunAccumulated/@ref RunFile/@ref RunString must have been called and returned 0 (zero) errors.
+ *  @pre                 (@ref RunAccumulated, @ref RunFile, @ref RunString) must have been called and returned 0 (zero) errors.
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -840,11 +839,11 @@ extern "C" {
 
 
 /**
- *  Retrieves the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
+ *  Retrieves the name of the current selected output file (see @ref SetCurrentSelectedOutputUserNumber).  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
  *  The default value is <B><I>selected_n.id.out</I></B>.
  *  @param id               The instance id returned from @ref CreateIPhreeqc.
  *  @return filename        The name of the file to write <B>SELECTED_OUTPUT</B> output to.
- *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+ *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -861,10 +860,10 @@ extern "C" {
 
 
 /**
- *  Retrieves the selected-output file switch.
+ *  Retrieves the current selected-output file switch (see @ref SetCurrentSelectedOutputUserNumber).
  *  @param id                    The instance id returned from @ref CreateIPhreeqc.
  *  @return                      Non-zero if output is written to the selected-output (<B><I>selected_n.id.out</I></B> if unspecified) file, 0 (zero) otherwise.
- *  @see                         GetSelectedOutputColumnCount, GetSelectedOutputRowCount, GetSelectedOutputValue, SetSelectedOutputFileOn
+ *  @see                         GetSelectedOutputColumnCount, GetSelectedOutputRowCount, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -881,11 +880,31 @@ extern "C" {
 
 
 /**
- *  Retrieves the string buffer containing <b>SELECTED_OUTPUT</b>.
+ *  Retrieves the number of rows in the current selected-output buffer (see @ref SetCurrentSelectedOutputUserNumber).
+ *  @param id            The instance id returned from @ref CreateIPhreeqc.
+ *  @return              The number of rows.
+ *  @see                 GetSelectedOutputFileOn, GetSelectedOutputColumnCount, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION GetSelectedOutputRowCount(ID)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    INTEGER(KIND=4)               :: GetSelectedOutputRowCount
+ *  END FUNCTION GetSelectedOutputRowCount
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT int         GetSelectedOutputRowCount(int id);
+
+
+/**
+ *  Retrieves the string buffer containing the current <b>SELECTED_OUTPUT</b> (see @ref SetCurrentSelectedOutputUserNumber).
  *  @param id            The instance id returned from @ref CreateIPhreeqc.
  *  @return              A null terminated string containing <b>SELECTED_OUTPUT</b>.
  *  @pre                 @ref SetSelectedOutputStringOn must have been set to true (non-zero) in order to receive <b>SELECTED_OUTPUT</b>.
- *  @see                 GetSelectedOutputFileOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn, GetSelectedOutputStringOn, SetSelectedOutputStringOn
+ *  @see                 GetSelectedOutputFileOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetCurrentSelectedOutputUserNumber SetSelectedOutputStringOn
  *  @par Fortran90 Interface:
  *  Not implemented. (see @ref GetSelectedOutputStringLineCount, @ref GetSelectedOutputStringLine)
  *
@@ -897,13 +916,13 @@ extern "C" {
 
 
 /**
- *  Retrieves the given selected output line.
+ *  Retrieves the given line of the current selected output string (see @ref SetCurrentSelectedOutputUserNumber).
  *  @param id            The instance id returned from @ref CreateIPhreeqc.
  *  @param n             The zero-based index of the line to retrieve.
  *  @return              A null terminated string containing the given line.
  *                       Returns an empty string if n is out of range.
  *  @pre                 @ref SetSelectedOutputStringOn must have been set to true (non-zero).
- *  @see                 GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+ *  @see                 GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLineCount, GetSelectedOutputStringOn, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  (Note: N is one-based for the Fortran interface.)
@@ -926,11 +945,11 @@ extern "C" {
 
 
 /**
- *  Retrieves the number of lines in the current selected output string buffer.
+ *  Retrieves the number of lines in the current selected output string buffer (see @ref SetCurrentSelectedOutputUserNumber).
  *  @param id            The instance id returned from @ref CreateIPhreeqc.
  *  @return              The number of lines.
  *  @pre                 @ref SetSelectedOutputStringOn must have been set to true (non-zero).
- *  @see                 GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringOn, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+ *  @see                 GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringOn, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -950,10 +969,10 @@ extern "C" {
 
 
 /**
- *  Retrieves the current value of the selected output string switch.
+ *  Retrieves the value of the current selected output string switch (see @ref SetCurrentSelectedOutputUserNumber).
  *  @param id            The instance id returned from @ref CreateIPhreeqc.
  *  @return              Non-zero if output defined by the <B>SELECTED_OUTPUT</B> keyword is stored, 0 (zero) otherwise.
- *  @see                 GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+ *  @see                 GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -970,27 +989,7 @@ extern "C" {
 
 
 /**
- *  Retrieves the number of rows in the selected-output buffer.
- *  @param id            The instance id returned from @ref CreateIPhreeqc.
- *  @return              The number of rows.
- *  @see                 GetSelectedOutputFileOn, GetSelectedOutputColumnCount, GetSelectedOutputValue, SetSelectedOutputFileOn
- *  @par Fortran90 Interface:
- *  @htmlonly
- *  <CODE>
- *  <PRE>
- *  FUNCTION GetSelectedOutputRowCount(ID)
- *    INTEGER(KIND=4),  INTENT(IN)  :: ID
- *    INTEGER(KIND=4)               :: GetSelectedOutputRowCount
- *  END FUNCTION GetSelectedOutputRowCount
- *  </PRE>
- *  </CODE>
- *  @endhtmlonly
- */
-	IPQ_DLL_EXPORT int         GetSelectedOutputRowCount(int id);
-
-
-/**
- *  Returns the @c VAR associated with the specified row and column.
+ *  Returns the @c VAR associated with the specified row and column.  The current <b>SELECTED_OUTPUT</b> block is set using the @ref SetCurrentSelectedOutputUserNumber method.
  *  @param id                The instance id returned from @ref CreateIPhreeqc.
  *  @param row               The row index.
  *  @param col               The column index.
@@ -1177,7 +1176,7 @@ Headings
 
 
 /**
- *  Returns the associated data with the specified row and column.
+ *  Returns the associated data with the specified row and column.  The current <b>SELECTED_OUTPUT</b> block is set using the @ref SetCurrentSelectedOutputUserNumber method.
  *  @param id                The instance id returned from @ref CreateIPhreeqc.
  *  @param row               The row index.
  *  @param col               The column index.
@@ -1362,7 +1361,7 @@ Headings
 
 
 /**
- *  Retrieves the warning messages from the last call to @ref RunAccumulated, @ref RunFile, @ref RunString, @ref LoadDatabase, or @ref LoadDatabaseString.
+ *  Retrieves the warning messages from the last call to (@ref RunAccumulated, @ref RunFile, @ref RunString, @ref LoadDatabase, or @ref LoadDatabaseString).
  *  @param id            The instance id returned from @ref CreateIPhreeqc.
  *  @return              A null terminated string containing warning messages.
  *  @see                 GetWarningStringLine, GetWarningStringLineCount, OutputWarningString
@@ -1566,7 +1565,7 @@ Headings
  *  @param filename      The name of the phreeqc input file to run.
  *  @return              The number of errors encountered during the run.
  *  @see                 RunAccumulated, RunString
- *  @pre                 @ref LoadDatabase/@ref LoadDatabaseString must have been called and returned 0 (zero) errors.
+ *  @pre                 (@ref LoadDatabase, @ref LoadDatabaseString) must have been called and returned 0 (zero) errors.
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -1595,7 +1594,7 @@ Headings
  *  @param input         String containing phreeqc input.
  *  @return              The number of errors encountered during the run.
  *  @see                 RunAccumulated, RunFile
- *  @pre                 @ref LoadDatabase/@ref LoadDatabaseString must have been called and returned 0 (zero) errors.
+ *  @pre                 (@ref LoadDatabase, @ref LoadDatabaseString) must have been called and returned 0 (zero) errors.
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -1668,18 +1667,16 @@ Headings
 
 
 /**
- *  Sets the currently active SELECTED_OUTPUT user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount / @ref
- *  GetSelectedOutputFileName / @ref GetSelectedOutputRowCount / @ref GetSelectedOutputString / @ref GetSelectedOutputStringLine / @ref
- *  GetSelectedOutputStringLineCount / @ref GetSelectedOutputValue / @ref GetSelectedOutputValue2) routines.
- *  The initial setting after calling @ref CreateIPhreeqc is IPQ_INVALIDARG.  After the first (@ref RunAccumulated / @ref
- *  RunFile / @ref RunString) method call, the initial setting is the lowest defined user number.
+ *  Sets the current <B>SELECTED_OUTPUT</B> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount, 
+ *  @ref GetSelectedOutputFileName, @ref GetSelectedOutputRowCount, @ref GetSelectedOutputString, @ref GetSelectedOutputStringLine, 
+ *  @ref GetSelectedOutputStringLineCount, @ref GetSelectedOutputValue, @ref GetSelectedOutputValue2) routines.
+ *  The initial setting after calling @ref CreateIPhreeqc is 1.
  *  @param id                   The instance id returned from @ref CreateIPhreeqc.
  *  @param n                    The user number specified in the <B>SELECTED_OUTPUT</B> block.
  *  @retval IPQ_OK              Success.
  *  @retval IPQ_BADINSTANCE     The given id is invalid.
  *  @retval IPQ_INVALIDARG      The given user number is invalid.
  *  @see                        GetSelectedOutputColumnCount, GetSelectedOutputFileName, GetSelectedOutputRowCount, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, GetSelectedOutputValue
- *  @pre @ref RunAccumulated / @ref RunFile / @ref RunString must have been called and returned 0 (zero) errors.
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -1697,7 +1694,7 @@ Headings
  *  @par C Example:
  *  @include SetCurrentSelectedOutputUserNumber.c
  */
-	IPQ_DLL_EXPORT IPQ_RESULT SetCurrentSelectedOutputUserNumber(int id, int n);
+	IPQ_DLL_EXPORT IPQ_RESULT  SetCurrentSelectedOutputUserNumber(int id, int n);
 
 /**
  *  Sets the name of the dump file.  This file name is used if not specified within <B>DUMP</B> input.
@@ -2016,13 +2013,13 @@ Headings
 
 
 /**
- *  Sets the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
+ *  Sets the name of the current selected output file (see @ref SetCurrentSelectedOutputUserNumber).  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
  *  The default value is <B><I>selected_n.id.out</I></B>.
  *  @param id               The instance id returned from @ref CreateIPhreeqc.
  *  @param filename         The name of the file to write <B>SELECTED_OUTPUT</B> output to.
  *  @retval IPQ_OK          Success.
  *  @retval IPQ_BADINSTANCE The given id is invalid.
- *  @see                    GetSelectedOutputFileName, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+ *  @see                    GetSelectedOutputFileName, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -2041,7 +2038,7 @@ Headings
 
 /**
  *  Sets the selected-output file switch on or off.  This switch controls whether or not phreeqc writes output to
- *  the currently selected <B>SELECTED_OUTPUT</B> file (see @ref SetCurrentSelectedOutputUserNumber). The initial
+ *  the current <B>SELECTED_OUTPUT</B> file (see @ref SetCurrentSelectedOutputUserNumber). The initial
  *  setting after calling @ref CreateIPhreeqc is off.
  *  @param id               The instance id returned from @ref CreateIPhreeqc.
  *  @param sel_on           If non-zero, writes output to the selected-output file; if zero, no output is written to the selected-output file.
@@ -2064,15 +2061,15 @@ Headings
 	IPQ_DLL_EXPORT IPQ_RESULT  SetSelectedOutputFileOn(int id, int sel_on);
 
 /**
- *  Sets the selected output string switch on or off.  This switch controls whether or not the data normally sent
- *  to the selected output file are stored in a buffer for retrieval.  The initial setting after calling
+ *  Sets the current selected output string switch on or off.  This switch controls whether or not the data normally sent
+ *  to the current selected output file (see @ref SetCurrentSelectedOutputUserNumber) are stored in a buffer for retrieval.  The initial setting after calling
  *  @ref CreateIPhreeqc is off.
  *  @param id                   The instance id returned from @ref CreateIPhreeqc.
  *  @param dump_string_on       If non-zero, captures the output defined by the <B>SELECTED_OUTPUT</B> keyword into a string buffer;
  *                              if zero, output defined by the <B>SELECTED_OUTPUT</B> keyword is not captured to a string buffer.
  *  @retval IPQ_OK              Success.
  *  @retval IPQ_BADINSTANCE     The given id is invalid.
- *  @see                        GetSelectedOutputFileOn, GetSelectedOutputStringOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn
+ *  @see                        GetSelectedOutputFileOn, GetSelectedOutputStringOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>

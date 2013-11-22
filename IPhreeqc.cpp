@@ -454,7 +454,7 @@ VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 	std::map< int, CSelectedOutput* >::const_iterator ci = this->SelectedOutputMap.find(this->CurrentSelectedOutputUserNumber);
 	if (ci != this->SelectedOutputMap.end())
 	{
-		v = this->SelectedOutputMap[this->CurrentSelectedOutputUserNumber]->Get(row, col, pVAR);
+		v = (*ci).second->Get(row, col, pVAR);
 		switch (v)
 		{
 		case VR_OK:

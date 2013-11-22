@@ -118,8 +118,8 @@ public:
 	size_t                   GetComponentCount(void);
 
 	/**
-	 *  Retrieves the currently active SELECTED_OUTPUT user number.
-	 *  @return                 The current active SELECTED_OUTPUT user number.
+	 *  Retrieves the current <B>SELECTED_OUTPUT</B> user number.  The initial setting is 1.
+	 *  @return                 The current <b>SELECTED_OUTPUT</b> user number.
 	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileName, GetSelectedOutputRowCount, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber
 	 */
 	int                      GetCurrentSelectedOutputUserNumber(void)const;
@@ -338,7 +338,7 @@ public:
 	bool                     GetOutputStringOn(void)const;
 
 	/**
-	 *  Retrieves the number of columns in the selected-output buffer.
+	 *  Retrieves the number of columns in the current selected-output buffer (see @ref SetCurrentSelectedOutputUserNumber).
 	 *  @return                 The number of columns.
 	 *  @see                    GetCurrentSelectedOutputUserNumber, GetSelectedOutputRowCount, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber
 	 */
@@ -352,7 +352,7 @@ public:
 	int                      GetSelectedOutputCount(void)const;
 
 	/**
-	 *  Retrieves the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
+	 *  Retrieves the name of the current selected output file (see @ref SetCurrentSelectedOutputUserNumber).  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
 	 *  The default value is <B><I>selected_n.id.out</I></B>, where id is obtained from @ref GetId.
 	 *  @return filename        The name of the file to write to.
 	 *  @see                    GetCurrentSelectedOutputUserNumber, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileName, SetSelectedOutputFileOn, SetSelectedOutputStringOn
@@ -360,22 +360,22 @@ public:
 	const char*              GetSelectedOutputFileName(void)const;
 
 	/**
-	 *  Retrieves the selected-output file switch.
+	 *  Retrieves the current selected-output file switch (see @ref SetCurrentSelectedOutputUserNumber).
 	 *  @retval true            Output is written to the selected-output (<B><I>selected_n.id.out</I></B> if unspecified, where id is obtained from @ref GetId) file.
 	 *  @retval false           No output is written.
-	 *  @see                    GetSelectedOutputValue, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, SetSelectedOutputFileOn
+	 *  @see                    GetSelectedOutputValue, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
 	 */
 	bool                     GetSelectedOutputFileOn(void)const;
 
 	/**
-	 *  Retrieves the number of rows in the selected-output buffer.
+	 *  Retrieves the number of rows in the current selected-output buffer (see @ref SetCurrentSelectedOutputUserNumber).
 	 *  @return                 The number of rows.
 	 *  @see                    GetCurrentSelectedOutputUserNumber, GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
 	 */
 	int                      GetSelectedOutputRowCount(void)const;
 
 	/**
-	 *  Retrieves the string buffer containing <b>SELECTED_OUTPUT</b> for the currently selected user number(see @ref SetCurrentSelectedOutputUserNumber).
+	 *  Retrieves the string buffer containing <b>SELECTED_OUTPUT</b> for the currently selected user number (see @ref SetCurrentSelectedOutputUserNumber).
 	 *  @return                 A null terminated string containing <b>SELECTED_OUTPUT</b>.
 	 *  @pre
 	 *      @ref SetSelectedOutputStringOn must have been set to true in order to receive <b>SELECTED_OUTPUT</b>.
@@ -384,7 +384,7 @@ public:
 	const char*              GetSelectedOutputString(void)const;
 
 	/**
-	 *  Retrieves the given selected output line.
+	 *  Retrieves the given selected output line of the currently selected user number (see @ref SetCurrentSelectedOutputUserNumber).
 	 *  @param n                The zero-based index of the line to retrieve.
 	 *  @return                 A null terminated string containing the given line.
 	 *                          Returns an empty string if n is out of range.
@@ -394,7 +394,7 @@ public:
 	const char*              GetSelectedOutputStringLine(int n);
 
 	/**
-	 *  Retrieves the number of lines in the current selected output string buffer.
+	 *  Retrieves the number of lines in the current selected output string buffer (see @ref SetCurrentSelectedOutputUserNumber).
 	 *  @return                 The number of lines.
 	 *  @pre                    @ref SetSelectedOutputStringOn must have been set to true.
 	 *  @see                    GetCurrentSelectedOutputUserNumber, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringOn, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
@@ -402,15 +402,15 @@ public:
 	int                      GetSelectedOutputStringLineCount(void)const;
 
 	/**
-	 *  Retrieves the current value of the selected output string switch.
+	 *  Retrieves the value of the current selected output string switch (see @ref SetCurrentSelectedOutputUserNumber).
 	 *  @retval true            Output defined by the <B>SELECTED_OUTPUT</B> keyword is stored.
 	 *  @retval false           No output is stored.
-	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn, SetSelectedOutputStringOn
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn, SetSelectedOutputStringOn
 	 */
 	bool                     GetSelectedOutputStringOn(void)const;
 
 	/**
-	 *  Returns the @c VAR associated with the specified row and column.
+	 *  Returns the @c VAR associated with the specified row and column.  The current <b>SELECTED_OUTPUT</b> block is set using the @ref SetCurrentSelectedOutputUserNumber method.
 	 *  @param row              The row index.
 	 *  @param col              The column index.
 	 *  @param pVAR             Pointer to the @c VAR to receive the requested data.
@@ -564,7 +564,7 @@ public:
 	VRESULT                  GetSelectedOutputValue(int row, int col, VAR* pVAR);
 
 	/**
-	 *  Returns the associated data with the specified row and column.
+	 *  Returns the associated data with the specified row and column.  The current <b>SELECTED_OUTPUT</b> block is set using the @ref SetCurrentSelectedOutputUserNumber method.
 	 *  @param row               The row index.
 	 *  @param col               The column index.
 	 *  @param vtype             Receives the variable type.  See @ref VAR_TYPE.
@@ -576,7 +576,7 @@ public:
 	 *  @retval IPQ_INVALIDCOL   The given column is out of range.
 	 *  @retval IPQ_OUTOFMEMORY  Memory could not be allocated.
 	 *  @retval IPQ_BADINSTANCE  The given id is invalid.
-	 *  @see                     GetSelectedOutputFileOn, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, GetSelectedOutputValue, SetSelectedOutputFileOn
+	 *  @see                     GetSelectedOutputFileOn, GetSelectedOutputColumnCount, GetSelectedOutputRowCount, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
 	 *  @remarks
 	 *  Row 0 contains the column headings to the selected_ouput.
 	 *  @par Examples:
@@ -713,7 +713,9 @@ public:
 	void                     SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, char *str, int l));
 
 	/**
-	 *  Sets the currently active SELECTED_OUTPUT user number for use in subsequent calls to GetSelectedOutputXXX routines.
+	 *  Sets the current <B>SELECTED_OUTPUT</B> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount, 
+     *  @ref GetSelectedOutputFileName, @ref GetSelectedOutputRowCount, @ref GetSelectedOutputString, @ref GetSelectedOutputStringLine, 
+     *  @ref GetSelectedOutputStringLineCount, @ref GetSelectedOutputValue, @ref GetSelectedOutputValue2) routines.
 	 *  The initial setting is 1.
 	 *  @param n                The user number as specified in the <B>SELECTED_OUTPUT</B> block.
 	 *  @retval VR_OK           Success
@@ -823,28 +825,29 @@ public:
 	void                     SetOutputStringOn(bool bValue);
 
 	/**
-	 *  Sets the name of the selected output file.  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
+	 *  Sets the name of the current selected output file (see @ref SetCurrentSelectedOutputUserNumber).  This file name is used if not specified within <B>SELECTED_OUTPUT</B> input.
 	 *  The default value is <B><I>selected_n.id.out</I></B>, where id is obtained from @ref GetId.
 	 *  @param filename         The name of the file to write <B>SELECTED_OUTPUT</B> output to.
-	 *  @see                    GetSelectedOutputFileName, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputStringOn
+	 *  @see                    GetSelectedOutputFileName, GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputStringOn
 	 */
 	void                     SetSelectedOutputFileName(const char *filename);
 
 	/**
 	 *  Sets the selected-output file switch on or off.  This switch controls whether or not phreeqc writes output to
-	 *  the <B>SELECTED_OUTPUT</B> (<B><I>selected_n.id.out</I></B> if unspecified, where id is obtained from @ref GetId) file.
+	 *  the current <B>SELECTED_OUTPUT</B> (<B><I>selected_n.id.out</I></B> if unspecified, where id is obtained from @ref GetId) file.
 	 *  The initial setting is false.
 	 *  @param bValue           If true, writes output to the selected-output file; if false, no output is written to the selected-output file.
-	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputRowCount, GetSelectedOutputValue
+	 *  @see                    GetSelectedOutputColumnCount, GetSelectedOutputFileOn, GetSelectedOutputRowCount, GetSelectedOutputValue, SetCurrentSelectedOutputUserNumber
 	 */
 	void                     SetSelectedOutputFileOn(bool bValue);
 
 	/**
 	 *  Sets the selected output string switch on or off.  This switch controls whether or not the data normally sent
-	 *  to the selected output file are stored in a buffer for retrieval.  The initial setting is false.
+	 *  to the current <B>SELECTED_OUTPUT</B> file (see @ref SetCurrentSelectedOutputUserNumber) are stored in a buffer for retrieval.
+	 *  The initial setting is false.
 	 *  @param bValue           If true, captures the output defined by the <B>SELECTED_OUTPUT</B> keyword into a string buffer;
 	 *                          if false, output defined by the <B>SELECTED_OUTPUT</B> keyword is not captured to a string buffer.
-	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetSelectedOutputFileOn
+	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
 	 */
 	void                     SetSelectedOutputStringOn(bool bValue);
 
