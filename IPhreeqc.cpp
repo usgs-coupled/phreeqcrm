@@ -369,6 +369,7 @@ int IPhreeqc::GetSelectedOutputColumnCount(void)const
 
 int IPhreeqc::GetSelectedOutputCount(void)const
 {
+	ASSERT(this->PhreeqcPtr->SelectedOutput_map.size() == this->CurrentSelectedOutputMap.size());
 	return (int) this->PhreeqcPtr->SelectedOutput_map.size();
 }
 
@@ -459,21 +460,27 @@ VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 		{
 		case VR_OK:
 			break;
+		case VR_INVALIDROW:
+			this->AddError("GetSelectedOutputValue: VR_INVALIDROW Row index out of range.\n");
+			this->update_errors();
+			break;
+		case VR_INVALIDCOL:
+			this->AddError("GetSelectedOutputValue: VR_INVALIDCOL Column index out of range.\n");
+			this->update_errors();
+			break;
 		case VR_OUTOFMEMORY:
 			this->AddError("GetSelectedOutputValue: VR_OUTOFMEMORY Out of memory.\n");
+			this->update_errors();
 			break;
 		case VR_BADVARTYPE:
 			this->AddError("GetSelectedOutputValue: VR_BADVARTYPE pVar must be initialized(VarInit) and/or cleared(VarClear).\n");
+			this->update_errors();
 			break;
 		case VR_INVALIDARG:
 			// not possible
 			break;
-		case VR_INVALIDROW:
-			this->AddError("GetSelectedOutputValue: VR_INVALIDROW Row index out of range.\n");
-			break;
-		case VR_INVALIDCOL:
-			this->AddError("GetSelectedOutputValue: VR_INVALIDCOL Column index out of range.\n");
-			break;
+		default:
+			assert(0);
 		}
 	}
 	else
@@ -482,8 +489,8 @@ VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 		v = VR_INVALIDARG;
 		::sprintf(buffer, "GetSelectedOutputValue: VR_INVALIDARG Invalid selected-output user number %d.\n", this->CurrentSelectedOutputUserNumber);
 		this->AddError(buffer);
+		this->update_errors();
 	}
-	this->update_errors();
 	return v;
 }
 
@@ -1124,6 +1131,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 				ASSERT(this->SelectedOutputMap[(*mit).first] == this->CurrentSelectedOutputMap[&(*mit).second]);
 			}
 		}
+		ASSERT(this->PhreeqcPtr->SelectedOutput_map.size() == this->CurrentSelectedOutputMap.size());
 		if (this->PhreeqcPtr->title_x != NULL)
 		{
 			::sprintf(token, "TITLE");
