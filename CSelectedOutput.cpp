@@ -250,6 +250,8 @@ void CSelectedOutput::Serialize(
 
 	size_t nrows = this->m_nRowCount;
 	size_t ncols = this->m_vecVarHeadings.size();
+	ASSERT (nrows > 0);
+	ASSERT (ncols > 0);
 
 	longs.push_back((long) nrows);
 	longs.push_back((long) ncols);
