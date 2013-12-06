@@ -51,7 +51,7 @@ public:
 	void Doublize(
 		int &nrow,
 		int &ncol,
-		double *doubles);
+		std::vector < double > &doubles);
 
 #if defined(_DEBUG)
 	void Dump(const char* heading);

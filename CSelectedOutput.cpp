@@ -355,12 +355,12 @@ void CSelectedOutput::DeSerialize(
 void CSelectedOutput::Doublize(
 	int &nrow,
 	int &ncol,
-	double *doubles)
+	std::vector < double > &doubles)
 {
 	nrow = (int) this->m_nRowCount;
 	ncol = (int) this->m_vecVarHeadings.size();
 
-	size_t pos = 0;
+	doubles.clear();
 	// go through column dominant order (Fortran)
 	for (size_t j = 0; j < ncol; j++)
 	{
@@ -369,22 +369,22 @@ void CSelectedOutput::Doublize(
 			switch(m_arrayVar[j][i].type)
 			{
 			case TT_EMPTY:
-				doubles[pos++] = (double) INACTIVE_CELL_VALUE;
+				doubles.push_back((double) INACTIVE_CELL_VALUE);
 				break;
 			case TT_ERROR:
-				doubles[pos++] = (double) INACTIVE_CELL_VALUE;
+				doubles.push_back((double) INACTIVE_CELL_VALUE);
 				break;
 			case TT_LONG:
-				doubles[pos++] = (double) m_arrayVar[j][i].lVal;
+				doubles.push_back((double) m_arrayVar[j][i].lVal);
 				break;
 			case TT_DOUBLE:
-				doubles[pos++] = m_arrayVar[j][i].dVal;
+				doubles.push_back(m_arrayVar[j][i].dVal);
 				break;
 			case TT_STRING:
-				doubles[pos++] = (double) INACTIVE_CELL_VALUE;
+				doubles.push_back((double) INACTIVE_CELL_VALUE);
 				break;
 			default:
-				doubles[pos++] = (double) INACTIVE_CELL_VALUE;
+				doubles.push_back((double) INACTIVE_CELL_VALUE);
 				break;
 
 			}
