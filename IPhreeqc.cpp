@@ -1005,22 +1005,26 @@ void IPhreeqc::UnLoadDatabase(void)
 
 int IPhreeqc::EndRow(void)
 {
-	if (this->CurrentSelectedOutputMap[this->PhreeqcPtr->current_selected_output]->GetRowCount() <= 1)
+	if (this->PhreeqcPtr->current_selected_output)
 	{
-		// ensure all user_punch headings are included
-		ASSERT(this->PhreeqcPtr->n_user_punch_index >= 0);
-		if (this->CurrentSelectedOutputMap[this->PhreeqcPtr->current_selected_output] != NULL)
+		std::map< SelectedOutput*, CSelectedOutput* >::iterator it =
+			this->CurrentSelectedOutputMap.find(this->PhreeqcPtr->current_selected_output);
+
+		if (it != this->CurrentSelectedOutputMap.end())
 		{
+			// ensure all user_punch headings are included
+			ASSERT(this->PhreeqcPtr->n_user_punch_index >= 0);
 			if (this->PhreeqcPtr->current_user_punch)
 			{
 				for (size_t i = this->PhreeqcPtr->n_user_punch_index; i < this->PhreeqcPtr->current_user_punch->Get_headings().size(); ++i)
 				{
-					this->CurrentSelectedOutputMap[this->PhreeqcPtr->current_selected_output]->PushBackEmpty(this->PhreeqcPtr->current_user_punch->Get_headings()[i].c_str());
+					(*it).second->PushBackEmpty(this->PhreeqcPtr->current_user_punch->Get_headings()[i].c_str());
 				}
 			}
+			return (*it).second->EndRow();
 		}
 	}
-	return this->CurrentSelectedOutputMap[this->PhreeqcPtr->current_selected_output]->EndRow();
+	return 0;
 }
 
 void IPhreeqc::check_database(const char* sz_routine)
@@ -1128,6 +1132,10 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			}
 			else
 			{
+				ASSERT(this->SelectedOutputMap.find((*mit).first)          != this->SelectedOutputMap.end());
+				ASSERT(this->CurrentSelectedOutputMap.find(&(*mit).second) != this->CurrentSelectedOutputMap.end());
+				ASSERT(this->CurrentToStringMap.find(&(*mit).second)       != this->CurrentToStringMap.end());
+
 				ASSERT(this->SelectedOutputMap[(*mit).first] == this->CurrentSelectedOutputMap[&(*mit).second]);
 			}
 		}
@@ -1521,6 +1529,7 @@ void IPhreeqc::punch_msg(const char *str)
 {
 	if (this->SelectedOutputStringOn && this->punch_on)
 	{
+		ASSERT(this->CurrentToStringMap.find(this->PhreeqcPtr->current_selected_output) != this->CurrentToStringMap.end());
 		*(this->CurrentToStringMap[this->PhreeqcPtr->current_selected_output]) += str;
 	}
 	ASSERT(!(this->SelectedOutputFileOnMap[this->PhreeqcPtr->current_selected_output->Get_n_user()] != (this->PhreeqcPtr->current_selected_output->Get_punch_ostream() != 0)));
@@ -1620,8 +1629,10 @@ void IPhreeqc::fpunchf(const char *name, const char *format, double d)
 		this->PHRQ_io::fpunchf(name, format, d);
 		if (this->SelectedOutputStringOn && this->punch_on)
 		{
+			ASSERT(this->CurrentToStringMap.find(this->PhreeqcPtr->current_selected_output) != this->CurrentToStringMap.end());
 			PHRQ_io::fpunchf_helper(this->CurrentToStringMap[this->PhreeqcPtr->current_selected_output], format, d);
 		}
+		ASSERT(this->CurrentSelectedOutputMap.find(this->PhreeqcPtr->current_selected_output) != this->CurrentSelectedOutputMap.end());
 		this->CurrentSelectedOutputMap[this->PhreeqcPtr->current_selected_output]->PushBackDouble(name, d);
 	}
 	catch (std::bad_alloc)
@@ -1637,8 +1648,10 @@ void IPhreeqc::fpunchf(const char *name, const char *format, char *s)
 		this->PHRQ_io::fpunchf(name, format, s);
 		if (this->SelectedOutputStringOn && this->punch_on)
 		{
+			ASSERT(this->CurrentToStringMap.find(this->PhreeqcPtr->current_selected_output) != this->CurrentToStringMap.end());
 			PHRQ_io::fpunchf_helper(this->CurrentToStringMap[this->PhreeqcPtr->current_selected_output], format, s);
 		}
+		ASSERT(this->CurrentSelectedOutputMap.find(this->PhreeqcPtr->current_selected_output) != this->CurrentSelectedOutputMap.end());
 		this->CurrentSelectedOutputMap[this->PhreeqcPtr->current_selected_output]->PushBackString(name, s);
 	}
 	catch (std::bad_alloc)
@@ -1654,8 +1667,10 @@ void IPhreeqc::fpunchf(const char *name, const char *format, int i)
 		this->PHRQ_io::fpunchf(name, format, i);
 		if (this->SelectedOutputStringOn && this->punch_on)
 		{
+			ASSERT(this->CurrentToStringMap.find(this->PhreeqcPtr->current_selected_output) != this->CurrentToStringMap.end());
 			PHRQ_io::fpunchf_helper(this->CurrentToStringMap[this->PhreeqcPtr->current_selected_output], format, i);
 		}
+		ASSERT(this->CurrentSelectedOutputMap.find(this->PhreeqcPtr->current_selected_output) != this->CurrentSelectedOutputMap.end());
 		this->CurrentSelectedOutputMap[this->PhreeqcPtr->current_selected_output]->PushBackLong(name, (long)i);
 	}
 	catch (std::bad_alloc)
