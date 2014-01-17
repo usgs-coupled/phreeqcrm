@@ -238,6 +238,7 @@ std::ostream& operator<< (std::ostream &os, const CSelectedOutput &a)
 	return os;
 }
 void CSelectedOutput::Serialize(
+	int row_number,
 	std::vector<int> &types,        // each column for each row types, including headings
 	std::vector<long> &longs,       // in order by occurance
 	std::vector<double> &doubles,   // in order by occurance
@@ -251,7 +252,7 @@ void CSelectedOutput::Serialize(
 	size_t nrows = this->m_nRowCount;
 	size_t ncols = this->m_vecVarHeadings.size();
 
-	longs.push_back((long) nrows);
+	longs.push_back((long) 1);
 	longs.push_back((long) ncols);
 
 	// put headings
@@ -265,7 +266,7 @@ void CSelectedOutput::Serialize(
 	// go through rows by column
 	for (size_t j = 0; j < ncols; j++)
 	{
-		for (size_t i = 0; i < nrows; i++)
+		for (size_t i = row_number; i < row_number + 1; i++)
 		{
 			types.push_back(m_arrayVar[j][i].type);
 			switch(m_arrayVar[j][i].type)

@@ -39,6 +39,7 @@ public:
 
 	// Serialize
 	void Serialize(
+		int row,
 		std::vector<int> &types,
 		std::vector<long> &longs,
 		std::vector<double> &doubles,
