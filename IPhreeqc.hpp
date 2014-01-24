@@ -882,6 +882,10 @@ protected:
 
 	void update_errors(void);
 
+	int load_db(const char* filename);
+	int load_db_str(const char* filename);
+	int test_db(void);
+
 	bool get_sel_out_file_on(int n)const;
 	std::string sel_file_name(int n_user);
 

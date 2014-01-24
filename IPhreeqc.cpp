@@ -571,12 +571,8 @@ std::list< std::string > IPhreeqc::ListComponents(void)
 	return this->Components;
 }
 
-int IPhreeqc::LoadDatabase(const char* filename)
+int IPhreeqc::load_db(const char* filename)
 {
-	bool bSaveOutputOn = this->OutputFileOn;
-	this->OutputFileOn = false;
-	bool bSaveLogFileOn = this->LogFileOn;
-	this->LogFileOn = false;
 	try
 	{
 		// cleanup
@@ -604,6 +600,7 @@ int IPhreeqc::LoadDatabase(const char* filename)
 
 		// read input
 		//
+		ASSERT(this->PhreeqcPtr->phrq_io->get_istream() == NULL);
 		this->PhreeqcPtr->phrq_io->push_istream(&ifs, false);
 		this->PhreeqcPtr->read_database();
 	}
@@ -625,12 +622,34 @@ int IPhreeqc::LoadDatabase(const char* filename)
 	}
 	this->PhreeqcPtr->phrq_io->clear_istream();
 	this->DatabaseLoaded = (this->PhreeqcPtr->get_input_errors() == 0);
-	this->OutputFileOn = bSaveOutputOn;
-	this->LogFileOn = bSaveLogFileOn;
 	return this->PhreeqcPtr->get_input_errors();
 }
 
-int IPhreeqc::LoadDatabaseString(const char* input)
+int IPhreeqc::LoadDatabase(const char* filename)
+{
+	// save I/O state
+	bool bSaveErrorFileOn  = this->ErrorFileOn;
+	bool bSaveOutputOn     = this->OutputFileOn;
+	bool bSaveLogFileOn    = this->LogFileOn;
+	this->ErrorFileOn      = false;
+	this->OutputFileOn     = false;
+	this->LogFileOn        = false;
+
+	int n = this->load_db(filename);
+	if (n == 0)
+	{
+		n = this->test_db();
+	}
+
+	// restore I/O state
+	this->ErrorFileOn  = bSaveErrorFileOn;
+	this->OutputFileOn = bSaveOutputOn;
+	this->LogFileOn    = bSaveLogFileOn;
+
+	return n;
+}
+
+int IPhreeqc::load_db_str(const char* input)
 {
 	try
 	{
@@ -674,6 +693,30 @@ int IPhreeqc::LoadDatabaseString(const char* input)
 	this->PhreeqcPtr->phrq_io->clear_istream();
 	this->DatabaseLoaded = (this->PhreeqcPtr->get_input_errors() == 0);
 	return this->PhreeqcPtr->get_input_errors();
+}
+
+int IPhreeqc::LoadDatabaseString(const char* input)
+{
+	// save I/O state
+	bool bSaveErrorFileOn  = this->ErrorFileOn;
+	bool bSaveOutputOn     = this->OutputFileOn;
+	bool bSaveLogFileOn    = this->LogFileOn;
+	this->ErrorFileOn      = false;
+	this->OutputFileOn     = false;
+	this->LogFileOn        = false;
+
+	int n = this->load_db_str(input);
+	if (n == 0)
+	{
+		n = this->test_db();
+	}
+
+	// restore I/O state
+	this->ErrorFileOn  = bSaveErrorFileOn;
+	this->OutputFileOn = bSaveOutputOn;
+	this->LogFileOn    = bSaveLogFileOn;
+
+	return n;
 }
 
 void IPhreeqc::OutputAccumulatedLines(void)
@@ -941,6 +984,18 @@ void IPhreeqc::SetSelectedOutputFileOn(bool bValue)
 void IPhreeqc::SetSelectedOutputStringOn(bool bValue)
 {
 	this->SelectedOutputStringOn = bValue;
+}
+
+int IPhreeqc::test_db(void)
+{
+	std::ostringstream oss;
+	int sn = this->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
+	oss << "SOLUTION " << sn <<"; DELETE; -solution " << sn;
+
+	this->PhreeqcPtr->set_reading_database(TRUE);
+	int n = this->RunString(oss.str().c_str());
+	this->PhreeqcPtr->set_reading_database(FALSE);
+	return n;
 }
 
 void IPhreeqc::UnLoadDatabase(void)
