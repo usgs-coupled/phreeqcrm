@@ -243,8 +243,8 @@ extern "C" {
 	IPQ_DLL_EXPORT int         GetComponentCount(int id);
 
 /**
- *  Retrieves the current <b>SELECTED_OUTPUT</b> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount, 
- *  GetSelectedOutputFileName, GetSelectedOutputRowCount, GetSelectedOutputString, GetSelectedOutputStringLine, 
+ *  Retrieves the current <b>SELECTED_OUTPUT</b> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount,
+ *  GetSelectedOutputFileName, GetSelectedOutputRowCount, GetSelectedOutputString, GetSelectedOutputStringLine,
  *  GetSelectedOutputStringLineCount, GetSelectedOutputValue, GetSelectedOutputValue2) routines.
  *  The initial setting after calling @ref CreateIPhreeqc is 1.
  *  @param id                   The instance id returned from @ref CreateIPhreeqc.
@@ -1667,8 +1667,8 @@ Headings
 
 
 /**
- *  Sets the current <B>SELECTED_OUTPUT</B> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount, 
- *  @ref GetSelectedOutputFileName, @ref GetSelectedOutputRowCount, @ref GetSelectedOutputString, @ref GetSelectedOutputStringLine, 
+ *  Sets the current <B>SELECTED_OUTPUT</B> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount,
+ *  @ref GetSelectedOutputFileName, @ref GetSelectedOutputRowCount, @ref GetSelectedOutputString, @ref GetSelectedOutputStringLine,
  *  @ref GetSelectedOutputStringLineCount, @ref GetSelectedOutputValue, @ref GetSelectedOutputValue2) routines.
  *  The initial setting after calling @ref CreateIPhreeqc is 1.
  *  @param id                   The instance id returned from @ref CreateIPhreeqc.
@@ -2091,7 +2091,7 @@ Headings
  *  @par Fortran90 Example:
  *  see @ref GetSelectedOutputStringLine_f90 "GetSelectedOutputStringLine"
  */
-	IPQ_DLL_EXPORT IPQ_RESULT  SetSelectedOutputStringOn(int id, int dump_string_on);
+	IPQ_DLL_EXPORT IPQ_RESULT  SetSelectedOutputStringOn(int id, int sel_string_on);
 
 // TODO int RunWithCallback(PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie, int output_on, int error_on, int log_on, int selected_output_on);
 
