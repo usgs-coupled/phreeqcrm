@@ -49,6 +49,7 @@
       INTEGER(KIND=4) CreateIPhreeqc
       INTEGER(KIND=4) DestroyIPhreeqc
       INTEGER(KIND=4) GetComponentCount
+      INTEGER(KIND=4) GetCurrentSelectedOutputUserNumber
       LOGICAL(KIND=4) GetDumpFileOn
       INTEGER(KIND=4) GetDumpStringLineCount
       LOGICAL(KIND=4) GetDumpStringOn

@@ -14,42 +14,42 @@
 #define ClearAccumulatedLinesF              FC_FUNC (clearaccumulatedlinesf,              CLEARACCUMULATEDLINESF)
 #define CreateIPhreeqcF                     FC_FUNC (createiphreeqcf,                     CREATEIPHREEQCF)
 #define DestroyIPhreeqcF                    FC_FUNC (destroyiphreeqcf,                    DESTROYIPHREEQCF)
+#define GetComponentF                       FC_FUNC (getcomponentf,                       GETCOMPONENTF)
 #define GetComponentCountF                  FC_FUNC (getcomponentcountf,                  GETCOMPONENTCOUNTF)
 #define GetCurrentSelectedOutputUserNumberF FC_FUNC (getcurrentselectedoutputusernumberf, GETCURRENTSELECTEDOUTPUTUSERNUMBERF)
-#define GetComponentF                       FC_FUNC (getcomponentf,                       GETCOMPONENTF)
 #define GetDumpFileNameF                    FC_FUNC (getdumpfilenamef,                    GETDUMPFILENAMEF)
 #define GetDumpFileOnF                      FC_FUNC (getdumpfileonf,                      GETDUMPFILEONF)
-#define GetDumpStringLineCountF             FC_FUNC (getdumpstringlinecountf,             GETDUMPSTRINGLINECOUNTF)
 #define GetDumpStringLineF                  FC_FUNC (getdumpstringlinef,                  GETDUMPSTRINGLINEF)
+#define GetDumpStringLineCountF             FC_FUNC (getdumpstringlinecountf,             GETDUMPSTRINGLINECOUNTF)
 #define GetDumpStringOnF                    FC_FUNC (getdumpstringonf,                    GETDUMPSTRINGONF)
 #define GetErrorFileNameF                   FC_FUNC (geterrorfilenamef,                   GETERRORFILENAMEF)
 #define GetErrorFileOnF                     FC_FUNC (geterrorfileonf,                     GETERRORFILEONF)
-#define GetErrorStringLineCountF            FC_FUNC (geterrorstringlinecountf,            GETERRORSTRINGLINECOUNTF)
 #define GetErrorStringLineF                 FC_FUNC (geterrorstringlinef,                 GETERRORSTRINGLINEF)
+#define GetErrorStringLineCountF            FC_FUNC (geterrorstringlinecountf,            GETERRORSTRINGLINECOUNTF)
 #define GetErrorStringOnF                   FC_FUNC (geterrorstringonf,                   GETERRORSTRINGONF)
 #define GetLogFileNameF                     FC_FUNC (getlogfilenamef,                     GETLOGFILENAMEF)
 #define GetLogFileOnF                       FC_FUNC (getlogfileonf,                       GETLOGFILEONF)
-#define GetLogStringLineCountF              FC_FUNC (getlogstringlinecountf,              GETLOGSTRINGLINECOUNTF)
 #define GetLogStringLineF                   FC_FUNC (getlogstringlinef,                   GETLOGSTRINGLINEF)
+#define GetLogStringLineCountF              FC_FUNC (getlogstringlinecountf,              GETLOGSTRINGLINECOUNTF)
 #define GetLogStringOnF                     FC_FUNC (getlogstringonf,                     GETLOGSTRINGONF)
 #define GetNthSelectedOutputUserNumberF     FC_FUNC (getnthselectedoutputusernumberf,     GETNTHSELECTEDOUTPUTUSERNUMBERF)
 #define GetOutputFileNameF                  FC_FUNC (getoutputfilenamef,                  GETOUTPUTFILENAMEF)
 #define GetOutputFileOnF                    FC_FUNC (getoutputfileonf,                    GETOUTPUTFILEONF)
-#define GetOutputStringLineCountF           FC_FUNC (getoutputstringlinecountf,           GETOUTPUTSTRINGLINECOUNTF)
 #define GetOutputStringLineF                FC_FUNC (getoutputstringlinef,                GETOUTPUTSTRINGLINEF)
+#define GetOutputStringLineCountF           FC_FUNC (getoutputstringlinecountf,           GETOUTPUTSTRINGLINECOUNTF)
 #define GetOutputStringOnF                  FC_FUNC (getoutputstringonf,                  GETOUTPUTSTRINGONF)
 #define GetSelectedOutputColumnCountF       FC_FUNC (getselectedoutputcolumncountf,       GETSELECTEDOUTPUTCOLUMNCOUNTF)
 #define GetSelectedOutputCountF             FC_FUNC (getselectedoutputcountf,             GETSELECTEDOUTPUTCOUNTF)
 #define GetSelectedOutputFileNameF          FC_FUNC (getselectedoutputfilenamef,          GETSELECTEDOUTPUTFILENAMEF)
 #define GetSelectedOutputFileOnF            FC_FUNC (getselectedoutputfileonf,            GETSELECTEDOUTPUTFILEONF)
 #define GetSelectedOutputRowCountF          FC_FUNC (getselectedoutputrowcountf,          GETSELECTEDOUTPUTROWCOUNTF)
-#define GetSelectedOutputStringLineCountF   FC_FUNC (getselectedoutputstringlinecountf,   GETSELECTEDOUTPUTSTRINGLINECOUNTF)
 #define GetSelectedOutputStringLineF        FC_FUNC (getselectedoutputstringlinef,        GETSELECTEDOUTPUTSTRINGLINEF)
+#define GetSelectedOutputStringLineCountF   FC_FUNC (getselectedoutputstringlinecountf,   GETSELECTEDOUTPUTSTRINGLINECOUNTF)
 #define GetSelectedOutputStringOnF          FC_FUNC (getselectedoutputstringonf,          GETSELECTEDOUTPUTSTRINGONF)
 #define GetSelectedOutputValueF             FC_FUNC (getselectedoutputvaluef,             GETSELECTEDOUTPUTVALUEF)
 #define GetVersionStringF                   FC_FUNC (getversionstringf,                   GETVERSIONSTRINGF)
-#define GetWarningStringLineCountF          FC_FUNC (getwarningstringlinecountf,          GETWARNINGSTRINGLINECOUNTF)
 #define GetWarningStringLineF               FC_FUNC (getwarningstringlinef,               GETWARNINGSTRINGLINEF)
+#define GetWarningStringLineCountF          FC_FUNC (getwarningstringlinecountf,          GETWARNINGSTRINGLINECOUNTF)
 #define LoadDatabaseF                       FC_FUNC (loaddatabasef,                       LOADDATABASEF)
 #define LoadDatabaseStringF                 FC_FUNC (loaddatabasestringf,                 LOADDATABASESTRINGF)
 #define OutputAccumulatedLinesF             FC_FUNC (outputaccumulatedlinesf,             OUTPUTACCUMULATEDLINESF)
@@ -87,42 +87,42 @@ extern "C" {
   IPQ_RESULT ClearAccumulatedLinesF(int *id);
   int        CreateIPhreeqcF(void);
   int        DestroyIPhreeqcF(int *id);
+  void       GetComponentF(int *id, int* n, char* line, unsigned int line_length);
   int        GetComponentCountF(int *id);
   int        GetCurrentSelectedOutputUserNumberF(int *id);
-  void       GetComponentF(int *id, int* n, char* line, unsigned int line_length);
   void       GetDumpFileNameF(int *id, char* filename, unsigned int filename_length);
   int        GetDumpFileOnF(int *id);
-  int        GetDumpStringLineCountF(int *id);
   void       GetDumpStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetDumpStringLineCountF(int *id);
   int        GetDumpStringOnF(int *id);
   void       GetErrorFileNameF(int *id, char* filename, unsigned int filename_length);
   int        GetErrorFileOnF(int *id);
-  int        GetErrorStringLineCountF(int *id);
   void       GetErrorStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetErrorStringLineCountF(int *id);
   int        GetErrorStringOnF(int *id);
   void       GetLogFileNameF(int *id, char* filename, unsigned int filename_length);
   int        GetLogFileOnF(int *id);
-  int        GetLogStringLineCountF(int *id);
   void       GetLogStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetLogStringLineCountF(int *id);
   int        GetLogStringOnF(int *id);
   int        GetNthSelectedOutputUserNumberF(int *id, int* n);
   void       GetOutputFileNameF(int *id, char* filename, unsigned int filename_length);
   int        GetOutputFileOnF(int *id);
-  int        GetOutputStringLineCountF(int *id);
   void       GetOutputStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetOutputStringLineCountF(int *id);
   int        GetOutputStringOnF(int *id);
   int        GetSelectedOutputColumnCountF(int *id);
   int        GetSelectedOutputCountF(int *id);
   void       GetSelectedOutputFileNameF(int *id, char* filename, unsigned int filename_length);
   int        GetSelectedOutputFileOnF(int *id);
   int        GetSelectedOutputRowCountF(int *id);
-  int        GetSelectedOutputStringLineCountF(int *id);
   void       GetSelectedOutputStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetSelectedOutputStringLineCountF(int *id);
   int        GetSelectedOutputStringOnF(int *id);
   IPQ_RESULT GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
   void       GetVersionStringF(char* version, unsigned int version_length);
-  int        GetWarningStringLineCountF(int *id);
   void       GetWarningStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  int        GetWarningStringLineCountF(int *id);
   int        LoadDatabaseF(int *id, char* filename, unsigned int filename_length);
   int        LoadDatabaseStringF(int *id, char* input, unsigned int input_length);
   void       OutputAccumulatedLinesF(int *id);
@@ -148,6 +148,7 @@ extern "C" {
   IPQ_RESULT SetSelectedOutputFileNameF(int *id, char* fname, unsigned int fname_length);
   IPQ_RESULT SetSelectedOutputFileOnF(int *id, int* selected_output_file_on);
   IPQ_RESULT SetSelectedOutputStringOnF(int *id, int* selected_output_string_on);
+
 
 #if defined(__cplusplus)
 }
