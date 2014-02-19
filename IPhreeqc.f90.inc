@@ -444,14 +444,6 @@
 
        INTERFACE
         FUNCTION SetCurrentSelectedOutputUserNumber(ID,N)
-         INTEGER(KIND=4),  INTENT(IN) :: ID
-         INTEGER(KIND=4),  INTENT(IN) :: N
-         INTEGER(KIND=4)              :: SetCurrentSelectedOutputUserNumber
-        END FUNCTION SetCurrentSelectedOutputUserNumber
-       END INTERFACE
-
-       INTERFACE
-        FUNCTION SetCurrentSelectedOutputUserNumber(ID,N)
          INTEGER(KIND=4), INTENT(IN)  :: ID
          INTEGER(KIND=4), INTENT(IN)  :: N
          INTEGER(KIND=4)              :: SetCurrentSelectedOutputUserNumber
