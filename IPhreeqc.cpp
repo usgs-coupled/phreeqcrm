@@ -1169,6 +1169,20 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		std::map< int, SelectedOutput >::iterator mit = this->PhreeqcPtr->SelectedOutput_map.begin();
 		for (; mit != this->PhreeqcPtr->SelectedOutput_map.end(); ++mit)
 		{
+			if (mit->second.Get_new_def())
+			{
+				int n = mit->first;
+				std::map< SelectedOutput*, CSelectedOutput* >::iterator it = this->CurrentSelectedOutputMap.begin();
+				for ( ; it != this->CurrentSelectedOutputMap.end(); it++)
+				{
+					if (it->first->Get_n_user() == n)
+					{
+						delete it->second;
+						this->CurrentSelectedOutputMap.erase(it);
+						break;
+					}
+				}
+			}
 			if (this->CurrentSelectedOutputMap.find(&(*mit).second) == this->CurrentSelectedOutputMap.end())
 			{
 				// int -> CSelectedOutput*
