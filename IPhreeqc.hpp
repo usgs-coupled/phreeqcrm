@@ -889,6 +889,8 @@ protected:
 	bool get_sel_out_file_on(int n)const;
 	std::string sel_file_name(int n_user);
 
+	bool get_sel_out_string_on(int n)const;
+
 protected:
 #if defined(_MSC_VER)
 /* disable warning C4251: 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2' */
@@ -928,8 +930,6 @@ protected:
 
 	int                                           CurrentSelectedOutputUserNumber;
 	std::map< int, CSelectedOutput* >             SelectedOutputMap;
-	std::map< SelectedOutput*, CSelectedOutput* > CurrentSelectedOutputMap;
-	std::map< SelectedOutput*, std::string* >     CurrentToStringMap;
 	std::string                                   StringInput;
 
 	std::string                DumpString;
@@ -944,7 +944,7 @@ protected:
 	std::string                LogFileName;
 	std::string                DumpFileName;
 
-	bool                                          SelectedOutputStringOn;
+	std::map< int, bool >                         SelectedOutputStringOn;
 	std::map< int, std::string >                  SelectedOutputStringMap;
 	std::map< int, std::vector< std::string > >   SelectedOutputLinesMap;
 
