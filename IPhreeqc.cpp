@@ -1114,6 +1114,11 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 	char token[MAX_LENGTH];
 
 /*
+ *   Maybe should be in read_input
+ */
+	this->PhreeqcPtr->first_read_input = TRUE;
+
+/*
  *   call pre-run callback
  */
 	if (pfn_pre)
