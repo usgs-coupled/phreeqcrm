@@ -727,6 +727,9 @@ int IPhreeqc::RunAccumulated(void)
 	static const char *sz_routine = "RunAccumulated";
 	try
 	{
+		// DON'T clear accumulated (just set
+		// flag to on next AccumulateLine)
+
 		// these may throw
 		this->open_output_files(sz_routine);
 		this->check_database(sz_routine);
@@ -770,6 +773,11 @@ int IPhreeqc::RunFile(const char* filename)
 	static const char *sz_routine = "RunFile";
 	try
 	{
+		// clear accumulated
+		//
+		this->ClearAccumulatedLines();
+		this->ClearAccumulated = false;
+
 		// these may throw
 		this->open_output_files(sz_routine);
 		this->check_database(sz_routine);
@@ -820,6 +828,11 @@ int IPhreeqc::RunString(const char* input)
 	static const char *sz_routine = "RunString";
 	try
 	{
+		// clear accumulated
+		//
+		this->ClearAccumulatedLines();
+		this->ClearAccumulated = false;
+
 		// these may throw
 		this->open_output_files(sz_routine);
 		this->check_database(sz_routine);
@@ -994,6 +1007,11 @@ void IPhreeqc::UnLoadDatabase(void)
 	this->UpdateComponents = true;
 	this->Components.clear();
 
+	// clear accumulated
+	//
+	this->ClearAccumulatedLines();
+	this->ClearAccumulated = false;
+
 	// clear error state
 	//
 	ASSERT(this->ErrorReporter);
@@ -1074,6 +1092,7 @@ int IPhreeqc::EndRow(void)
 void IPhreeqc::check_database(const char* sz_routine)
 {
  	this->ErrorReporter->Clear();
+	this->WarningReporter->Clear();
 
 	std::map< int, CSelectedOutput* >::iterator it = this->SelectedOutputMap.begin();
 	for (; it != this->SelectedOutputMap.end(); ++it)
