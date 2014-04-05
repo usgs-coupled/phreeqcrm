@@ -702,7 +702,9 @@ OutputAccumulatedLines(int id)
 		IPhreeqcPtr->OutputAccumulatedLines();
 		return;
 	}
+#if !defined(R_SO)
 	std::cout << err_msg << std::endl;
+#endif
 }
 
 void
@@ -715,7 +717,9 @@ OutputErrorString(int id)
 		IPhreeqcPtr->OutputErrorString();
 		return;
 	}
+#if !defined(R_SO)
 	std::cout << err_msg << std::endl;
+#endif
 }
 
 void
@@ -728,7 +732,9 @@ OutputWarningString(int id)
 		IPhreeqcPtr->OutputWarningString();
 		return;
 	}
+#if !defined(R_SO)
 	std::cout << err_msg << std::endl;
+#endif
 }
 
 int

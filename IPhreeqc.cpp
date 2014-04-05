@@ -709,17 +709,23 @@ int IPhreeqc::LoadDatabaseString(const char* input)
 
 void IPhreeqc::OutputAccumulatedLines(void)
 {
+#if !defined(R_SO)
 	std::cout << this->StringInput.c_str() << std::endl;
+#endif
 }
 
 void IPhreeqc::OutputErrorString(void)
 {
+#if !defined(R_SO)
 	std::cout << this->GetErrorString() << std::endl;
+#endif
 }
 
 void IPhreeqc::OutputWarningString(void)
 {
+#if !defined(R_SO)
 	std::cout << this->GetWarningString() << std::endl;
+#endif
 }
 
 int IPhreeqc::RunAccumulated(void)
