@@ -2067,7 +2067,7 @@ Headings
  *  to the current selected output file (see @ref SetCurrentSelectedOutputUserNumber) are stored in a buffer for retrieval.  The initial setting after calling
  *  @ref CreateIPhreeqc is off.
  *  @param id                   The instance id returned from @ref CreateIPhreeqc.
- *  @param dump_string_on       If non-zero, captures the output defined by the <B>SELECTED_OUTPUT</B> keyword into a string buffer;
+ *  @param sel_string_on        If non-zero, captures the output defined by the <B>SELECTED_OUTPUT</B> keyword into a string buffer;
  *                              if zero, output defined by the <B>SELECTED_OUTPUT</B> keyword is not captured to a string buffer.
  *  @retval IPQ_OK              Success.
  *  @retval IPQ_BADINSTANCE     The given id is invalid.
