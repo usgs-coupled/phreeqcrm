@@ -18,28 +18,28 @@ public:
 	}
 	CVar(const VAR& varSrc)
 	{
-		type = TT_EMPTY;
+		this->type = TT_EMPTY;
 		InternalCopy(&varSrc);
 	}
 	CVar(const CVar& varSrc)
 	{
-		type = TT_EMPTY;
+		this->type = TT_EMPTY;
 		InternalCopy(&varSrc);
 	}
 	CVar(double dblSrc) throw()
 	{
-		type = TT_DOUBLE;
-		dVal = dblSrc;
+		this->type = TT_DOUBLE;
+		this->dVal = dblSrc;
 	}
 	CVar(const char* pszSrc)
 	{
-		type = TT_EMPTY;
+		this->type = TT_EMPTY;
 		*this = pszSrc;
 	}
 	CVar(long nSrc) throw()
 	{
-		type = TT_LONG;
-		lVal = nSrc;
+		this->type = TT_LONG;
+		this->lVal = nSrc;
 	}
 
 // Assignment Operators
@@ -67,13 +67,13 @@ public:
 	CVar& operator=(const char* pszSrc)
 	{
 		Clear();
-		type = TT_STRING;
-		sVal = ::VarAllocString(pszSrc);
+		this->type = TT_STRING;
+		this->sVal = ::VarAllocString(pszSrc);
 
-		if (sVal == NULL && pszSrc != NULL)
+		if (this->sVal == NULL && pszSrc != NULL)
 		{
-			type = TT_ERROR;
-			vresult = VR_OUTOFMEMORY;
+			this->type = TT_ERROR;
+			this->vresult = VR_OUTOFMEMORY;
 		}
 		return *this;
 	}
@@ -93,8 +93,8 @@ public:
 		VRESULT vr = Clear();
 		if (vr != VR_OK)
 		{
-			type = TT_ERROR;
-			vresult = vr;
+			this->type = TT_ERROR;
+			this->vresult = vr;
 		}
 		return vr;
 	}
@@ -104,8 +104,8 @@ public:
 		VRESULT vr = Copy(pSrc);
 		if (vr != VR_OK)
 		{
-			type = TT_ERROR;
-			vresult = vr;
+			this->type = TT_ERROR;
+			this->vresult = vr;
 		}
 	}
 
