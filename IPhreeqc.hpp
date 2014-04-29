@@ -889,6 +889,8 @@ protected:
 	bool get_sel_out_file_on(int n)const;
 	std::string sel_file_name(int n_user);
 
+	std::string create_file_name(const char *prefix, const char *suffix);
+
 	bool get_sel_out_string_on(int n)const;
 
 protected:
