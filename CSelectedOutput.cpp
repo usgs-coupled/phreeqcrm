@@ -14,7 +14,13 @@
 #include <string.h>                 // strlen
 
 #include "Debug.h"                  // ASSERT
+
+#if defined(R_SO) && defined(VAR_UNION_NAME)
+#include "CSelectedOutputhxx.h"     // CSelectedOutput
+#else
 #include "CSelectedOutput.hxx"      // CSelectedOutput
+#endif
+
 const float INACTIVE_CELL_VALUE = 1.0e30f;
 const size_t RESERVE_ROWS = 80;
 const size_t RESERVE_COLS = 80;

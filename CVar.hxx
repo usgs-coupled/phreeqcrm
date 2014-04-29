@@ -61,7 +61,7 @@ public:
 			Clear();
 			type = TT_DOUBLE;
 		}
-		dVal = dblSrc;
+		this->dVal = dblSrc;
 		return *this;
 	}
 	CVar& operator=(const char* pszSrc)

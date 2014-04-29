@@ -12,6 +12,12 @@
 #define IPQ_DLL_EXPORT
 #endif
 
+#if defined(R_SO) || defined(NO_NAMELESS_UNION)
+#define VAR_UNION_NAME u
+#else
+#define VAR_UNION_NAME
+#endif
+
 /*! \brief Enumeration used to determine the type of data stored in a VAR.
 */
 typedef enum {
@@ -42,7 +48,7 @@ typedef struct {
 		double  dVal;      /*!< valid when <code>(type == TT_DOUBLE)</code> */
 		char*   sVal;      /*!< valid when <code>(type == TT_STRING)</code> */
 		VRESULT vresult;   /*!< valid when <code>(type == TT_ERROR)</code>  */
-	};
+	} VAR_UNION_NAME;
 } VAR;
 
 
