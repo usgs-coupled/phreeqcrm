@@ -13,12 +13,6 @@
 #include "phreeqcpp/SelectedOutput.h"   // SelectedOutput
 #include "dumper.h"                     // dumper
 
-const char OUTPUT_FILENAME_FORMAT[] = "phreeqc.%d.out";
-const char ERROR_FILENAME_FORMAT[]  = "phreeqc.%d.err";
-const char LOG_FILENAME_FORMAT[]    = "phreeqc.%d.log";
-const char PUNCH_FILENAME_FORMAT[]  = "selected_%d.%d.out";
-const char DUMP_FILENAME_FORMAT[]   = "dump.%d.out";
-
 // statics
 std::map<size_t, IPhreeqc*> IPhreeqc::Instances;
 size_t IPhreeqc::InstancesIndex = 0;
@@ -67,18 +61,12 @@ IPhreeqc::IPhreeqc(void)
 
 	this->SelectedOutputFileOnMap[1] = false;
 	this->SelectedOutputFileNameMap[1] = this->sel_file_name(1);
+	
+	this->OutputFileName = create_file_name("phreeqc", "out");
+	this->ErrorFileName  = create_file_name("phreeqc", "err");
+	this->LogFileName    = create_file_name("phreeqc", "log");
 
-	::sprintf(buffer, OUTPUT_FILENAME_FORMAT, this->Index);
-	this->OutputFileName = buffer;
-
-	::sprintf(buffer, ERROR_FILENAME_FORMAT,  this->Index);
-	this->ErrorFileName = buffer;
-
-	::sprintf(buffer, LOG_FILENAME_FORMAT,    this->Index);
-	this->LogFileName = buffer;
-
-	::sprintf(buffer, DUMP_FILENAME_FORMAT,   this->Index);
-	this->DumpFileName = buffer;
+	this->DumpFileName   = create_file_name("dump", "out");
 	this->PhreeqcPtr->dump_info.Set_file_name(this->DumpFileName);
 }
 
@@ -1811,7 +1799,14 @@ bool IPhreeqc::output_open(const char *file_name, std::ios_base::openmode mode)
 
 std::string IPhreeqc::sel_file_name(int n_user)
 {
-	char buffer[80];
-	::sprintf(buffer, PUNCH_FILENAME_FORMAT, n_user, this->Index);
-	return std::string(buffer);
+	std::ostringstream oss;
+	oss << "selected_" << n_user << "." << this->Index << ".out";
+	return oss.str();
+}
+
+std::string IPhreeqc::create_file_name(const char *prefix, const char *suffix)
+{
+	std::ostringstream oss;
+	oss << prefix << "." << this->Index << "." << suffix;
+	return oss.str();
 }
