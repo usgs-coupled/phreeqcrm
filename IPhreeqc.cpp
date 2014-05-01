@@ -42,8 +42,6 @@ IPhreeqc::IPhreeqc(void)
 , input_file(0)
 , database_file(0)
 {
-	char buffer[80];
-
 	this->ErrorReporter   = new CErrorReporter<std::ostringstream>;
 	this->WarningReporter = new CErrorReporter<std::ostringstream>;
 	this->PhreeqcPtr      = new Phreeqc(this);
