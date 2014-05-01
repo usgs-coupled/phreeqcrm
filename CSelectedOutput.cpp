@@ -272,7 +272,7 @@ void CSelectedOutput::Serialize(
 	// go through rows by column
 	for (size_t j = 0; j < ncols; j++)
 	{
-		for (size_t i = row_number; i < row_number + 1; i++)
+		for (size_t i = row_number; i < (size_t)(row_number + 1); i++)
 		{
 			types.push_back(m_arrayVar[j][i].type);
 			switch(m_arrayVar[j][i].type)
@@ -369,9 +369,9 @@ void CSelectedOutput::Doublize(
 
 	doubles.clear();
 	// go through column dominant order (Fortran)
-	for (size_t j = 0; j < ncol; j++)
+	for (size_t j = 0; j < (size_t)ncol; j++)
 	{
-		for (size_t i = 0; i < nrow; i++)
+		for (size_t i = 0; i < (size_t)nrow; i++)
 		{
 			switch(m_arrayVar[j][i].type)
 			{
