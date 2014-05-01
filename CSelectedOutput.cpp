@@ -15,7 +15,7 @@
 
 #include "Debug.h"                  // ASSERT
 
-#if defined(R_SO) && defined(VAR_UNION_NAME)
+#if defined(R_SO)
 #include "CSelectedOutputhxx.h"     // CSelectedOutput
 #else
 #include "CSelectedOutput.hxx"      // CSelectedOutput
