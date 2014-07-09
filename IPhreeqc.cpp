@@ -52,7 +52,7 @@ IPhreeqc::IPhreeqc(void)
 	mutex_lock(&map_lock);
 	this->Index = IPhreeqc::InstancesIndex++;
 	std::map<size_t, IPhreeqc*>::value_type instance(this->Index, this);
-	std::pair<std::map<size_t, IPhreeqc*>::iterator, bool> pr = IPhreeqc::Instances.insert(instance);
+	/*std::pair<std::map<size_t, IPhreeqc*>::iterator, bool> pr = */IPhreeqc::Instances.insert(instance);
 	mutex_unlock(&map_lock);
 
 	this->SelectedOutputStringOn[1] = false;
@@ -1164,13 +1164,13 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 #endif
 		::sprintf(token, "Reading input data for simulation %d.", this->PhreeqcPtr->simulation);
 
-		bool save_punch_in = this->PhreeqcPtr->SelectedOutput_map.size() > 0;
+		// bool save_punch_in = this->PhreeqcPtr->SelectedOutput_map.size() > 0;
 
 		this->PhreeqcPtr->dup_print(token, TRUE);
 		if (this->PhreeqcPtr->read_input() == EOF)
 			break;
 
-		bool bWarning = false;
+		// bool bWarning = false;
 		std::map< int, SelectedOutput >::iterator mit = this->PhreeqcPtr->SelectedOutput_map.begin();
 		for (; mit != this->PhreeqcPtr->SelectedOutput_map.end(); ++mit)
 		{

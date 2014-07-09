@@ -255,7 +255,7 @@ void CSelectedOutput::Serialize(
 	doubles.clear();
 	strings.clear();
 
-	size_t nrows = this->m_nRowCount;
+	// size_t nrows = this->m_nRowCount;
 	size_t ncols = this->m_vecVarHeadings.size();
 
 	longs.push_back((long) 1);
