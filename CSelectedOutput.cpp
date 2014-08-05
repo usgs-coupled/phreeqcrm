@@ -168,6 +168,7 @@ int CSelectedOutput::PushBack(const char* key, const CVar& var)
 	catch(...)
 	{
 		ASSERT(false);
+		throw;
 	}
 	return 1; // error
 }

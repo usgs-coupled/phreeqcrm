@@ -1003,7 +1003,7 @@ IPhreeqcLib::CreateIPhreeqc(void)
 		IPhreeqcPtr = new IPhreeqc;
 		n = (int) IPhreeqcPtr->Index;
 	}
-	catch(...)
+	catch (const std::bad_alloc&)
 	{
 		return IPQ_OUTOFMEMORY;
 	}

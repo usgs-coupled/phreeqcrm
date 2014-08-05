@@ -112,6 +112,7 @@ VRESULT IPhreeqc::AccumulateLine(const char *line)
 	catch (...)
 	{
 		this->AddError("AccumulateLine: An unhandled exception occured.\n");
+		throw;
 	}
 	return VR_OUTOFMEMORY;
 }
@@ -600,6 +601,7 @@ int IPhreeqc::load_db(const char* filename)
 		{
 			// do nothing
 		}
+		throw;
 	}
 	this->PhreeqcPtr->phrq_io->clear_istream();
 	this->DatabaseLoaded = (this->PhreeqcPtr->get_input_errors() == 0);
@@ -662,6 +664,7 @@ int IPhreeqc::load_db_str(const char* input)
 		{
 			// do nothing
 		}
+		throw;
 	}
 
 	this->PhreeqcPtr->phrq_io->clear_istream();
@@ -750,6 +753,7 @@ int IPhreeqc::RunAccumulated(void)
 		{
 			// do nothing
 		}
+		throw;
 	}
 
 	this->ClearAccumulated = true;
@@ -806,6 +810,7 @@ int IPhreeqc::RunFile(const char* filename)
 		{
 			// do nothing
 		}
+		throw;
 	}
 
 	this->close_output_files();
@@ -854,6 +859,7 @@ int IPhreeqc::RunString(const char* input)
 		{
 			// do nothing
 		}
+		throw;
 	}
 
 	this->close_output_files();
