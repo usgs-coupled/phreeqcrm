@@ -1663,7 +1663,7 @@ Headings
  *  @par File ic :
  *  @include ic
  */
-	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str, int l));
+	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str, size_t l));
 
 
 /**

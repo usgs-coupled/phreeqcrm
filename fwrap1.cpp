@@ -8,10 +8,10 @@ extern "C" {
 #endif
 
 //
-// Intel Fortran compiler 9.1 /iface:stdref /names:lowercase
+// Intel Fortran compiler 9.1 /iface:cvf
 //
 #define IPQ_DECL __stdcall
-#define IPQ_CASE_UND(name, NAME, name_, NAME_) name
+#define IPQ_CASE_UND(name, NAME, name_, NAME_) NAME
 
 #include "fimpl.h"
 
@@ -19,5 +19,4 @@ extern "C" {
 }
 #endif
 
-#endif // _WIN32
-
+#endif

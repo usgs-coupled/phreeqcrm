@@ -710,7 +710,7 @@ public:
 	 *  @param fcn              The name of a user-defined function.
 	 *  @see                    SetBasicCallback
 	 */
-	void                     SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, char *str, int l));
+	void                     SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, char *str, size_t l));
 
 	/**
 	 *  Sets the current <B>SELECTED_OUTPUT</B> user number for use in subsequent calls to (@ref GetSelectedOutputColumnCount, 

@@ -81,71 +81,71 @@
 extern "C" {
 #endif
 
-  IPQ_RESULT AccumulateLineF(int *id, char *line, unsigned int line_length);
-  int        AddErrorF(int *id, char *error_msg, unsigned int len);
-  int        AddWarningF(int *id, char *warn_msg, unsigned int len);
+  IPQ_RESULT AccumulateLineF(int *id, char *line, size_t line_length);
+  int        AddErrorF(int *id, char *error_msg, size_t len);
+  int        AddWarningF(int *id, char *warn_msg, size_t len);
   IPQ_RESULT ClearAccumulatedLinesF(int *id);
   int        CreateIPhreeqcF(void);
   int        DestroyIPhreeqcF(int *id);
-  void       GetComponentF(int *id, int* n, char* line, unsigned int line_length);
+  void       GetComponentF(int *id, int* n, char* line, size_t line_length);
   int        GetComponentCountF(int *id);
   int        GetCurrentSelectedOutputUserNumberF(int *id);
-  void       GetDumpFileNameF(int *id, char* filename, unsigned int filename_length);
+  void       GetDumpFileNameF(int *id, char* filename, size_t filename_length);
   int        GetDumpFileOnF(int *id);
-  void       GetDumpStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  void       GetDumpStringLineF(int *id, int* n, char* line, size_t line_length);
   int        GetDumpStringLineCountF(int *id);
   int        GetDumpStringOnF(int *id);
-  void       GetErrorFileNameF(int *id, char* filename, unsigned int filename_length);
+  void       GetErrorFileNameF(int *id, char* filename, size_t filename_length);
   int        GetErrorFileOnF(int *id);
-  void       GetErrorStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  void       GetErrorStringLineF(int *id, int* n, char* line, size_t line_length);
   int        GetErrorStringLineCountF(int *id);
   int        GetErrorStringOnF(int *id);
-  void       GetLogFileNameF(int *id, char* filename, unsigned int filename_length);
+  void       GetLogFileNameF(int *id, char* filename, size_t filename_length);
   int        GetLogFileOnF(int *id);
-  void       GetLogStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  void       GetLogStringLineF(int *id, int* n, char* line, size_t line_length);
   int        GetLogStringLineCountF(int *id);
   int        GetLogStringOnF(int *id);
   int        GetNthSelectedOutputUserNumberF(int *id, int* n);
-  void       GetOutputFileNameF(int *id, char* filename, unsigned int filename_length);
+  void       GetOutputFileNameF(int *id, char* filename, size_t filename_length);
   int        GetOutputFileOnF(int *id);
-  void       GetOutputStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  void       GetOutputStringLineF(int *id, int* n, char* line, size_t line_length);
   int        GetOutputStringLineCountF(int *id);
   int        GetOutputStringOnF(int *id);
   int        GetSelectedOutputColumnCountF(int *id);
   int        GetSelectedOutputCountF(int *id);
-  void       GetSelectedOutputFileNameF(int *id, char* filename, unsigned int filename_length);
+  void       GetSelectedOutputFileNameF(int *id, char* filename, size_t filename_length);
   int        GetSelectedOutputFileOnF(int *id);
   int        GetSelectedOutputRowCountF(int *id);
-  void       GetSelectedOutputStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  void       GetSelectedOutputStringLineF(int *id, int* n, char* line, size_t line_length);
   int        GetSelectedOutputStringLineCountF(int *id);
   int        GetSelectedOutputStringOnF(int *id);
-  IPQ_RESULT GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length);
-  void       GetVersionStringF(char* version, unsigned int version_length);
-  void       GetWarningStringLineF(int *id, int* n, char* line, unsigned int line_length);
+  IPQ_RESULT GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue, char* svalue, size_t svalue_length);
+  void       GetVersionStringF(char* version, size_t version_length);
+  void       GetWarningStringLineF(int *id, int* n, char* line, size_t line_length);
   int        GetWarningStringLineCountF(int *id);
-  int        LoadDatabaseF(int *id, char* filename, unsigned int filename_length);
-  int        LoadDatabaseStringF(int *id, char* input, unsigned int input_length);
+  int        LoadDatabaseF(int *id, char* filename, size_t filename_length);
+  int        LoadDatabaseStringF(int *id, char* input, size_t input_length);
   void       OutputAccumulatedLinesF(int *id);
   void       OutputErrorStringF(int *id);
   void       OutputWarningStringF(int *id);
   int        RunAccumulatedF(int *id);
-  int        RunFileF(int *id, char* filename, unsigned int filename_length);
-  int        RunStringF(int *id, char* input, unsigned int input_length);
-  IPQ_RESULT SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *str, int l));
+  int        RunFileF(int *id, char* filename, size_t filename_length);
+  int        RunStringF(int *id, char* input, size_t input_length);
+  IPQ_RESULT SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *str, size_t l));
   IPQ_RESULT SetCurrentSelectedOutputUserNumberF(int *id, int *n);
-  IPQ_RESULT SetDumpFileNameF(int *id, char* fname, unsigned int fname_length);
+  IPQ_RESULT SetDumpFileNameF(int *id, char* fname, size_t fname_length);
   IPQ_RESULT SetDumpFileOnF(int *id, int* dump_on);
   IPQ_RESULT SetDumpStringOnF(int *id, int* dump_string_on);
-  IPQ_RESULT SetErrorFileNameF(int *id, char* fname, unsigned int fname_length);
+  IPQ_RESULT SetErrorFileNameF(int *id, char* fname, size_t fname_length);
   IPQ_RESULT SetErrorFileOnF(int *id, int* error_file_on);
   IPQ_RESULT SetErrorStringOnF(int *id, int* error_string_on);
-  IPQ_RESULT SetLogFileNameF(int *id, char* fname, unsigned int fname_length);
+  IPQ_RESULT SetLogFileNameF(int *id, char* fname, size_t fname_length);
   IPQ_RESULT SetLogFileOnF(int *id, int* log_file_on);
   IPQ_RESULT SetLogStringOnF(int *id, int* log_string_on);
-  IPQ_RESULT SetOutputFileNameF(int *id, char* fname, unsigned int fname_length);
+  IPQ_RESULT SetOutputFileNameF(int *id, char* fname, size_t fname_length);
   IPQ_RESULT SetOutputFileOnF(int *id, int* output_on);
   IPQ_RESULT SetOutputStringOnF(int *id, int* output_string_on);
-  IPQ_RESULT SetSelectedOutputFileNameF(int *id, char* fname, unsigned int fname_length);
+  IPQ_RESULT SetSelectedOutputFileNameF(int *id, char* fname, size_t fname_length);
   IPQ_RESULT SetSelectedOutputFileOnF(int *id, int* selected_output_file_on);
   IPQ_RESULT SetSelectedOutputStringOnF(int *id, int* selected_output_string_on);
 
@@ -153,5 +153,5 @@ extern "C" {
 #if defined(__cplusplus)
 }
 #endif
-void padfstring(char *dest, const char *src, unsigned int len);
+void padfstring(char *dest, const char *src, size_t len);
 #endif  /* __FWRAP__H */
