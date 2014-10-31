@@ -153,5 +153,5 @@ extern "C" {
 #if defined(__cplusplus)
 }
 #endif
-void padfstring(char *dest, const char *src, size_t len);
+void padfstring(char *dest, const char *src, unsigned int len);
 #endif  /* __FWRAP__H */

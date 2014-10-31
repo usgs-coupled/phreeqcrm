@@ -25,7 +25,7 @@ f2cstring(char* fstring, size_t len)
 }
 
 void
-padfstring(char *dest, const char *src, size_t len)
+padfstring(char *dest, const char *src, unsigned int len)
 {
     size_t sofar;
 
