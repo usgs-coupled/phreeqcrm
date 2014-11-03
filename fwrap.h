@@ -7,7 +7,7 @@
 #define IPQ_DLL_EXPORT
 #endif
 
-#if defined(  FC_FUNC)
+#if defined(FC_FUNC)
 #define AccumulateLineF                     FC_FUNC (accumulatelinef,                     ACCUMULATELINEF)
 #define AddErrorF                           FC_FUNC (adderrorf,                           ADDERRORF)
 #define AddWarningF                         FC_FUNC (addwarningf,                         ADDWARNINGF)
@@ -75,7 +75,7 @@
 #define SetSelectedOutputFileNameF          FC_FUNC (setselectedoutputfilenamef,          SETSELECTEDOUTPUTFILENAMEF)
 #define SetSelectedOutputFileOnF            FC_FUNC (setselectedoutputfileonf,            SETSELECTEDOUTPUTFILEONF)
 #define SetSelectedOutputStringOnF          FC_FUNC (setselectedoutputstringonf,          SETSELECTEDOUTPUTSTRINGONF)
-#endif /*   FC_FUNC */
+#endif /* FC_FUNC */
 
 #if defined(__cplusplus)
 extern "C" {
