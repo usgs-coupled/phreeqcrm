@@ -1,4 +1,5 @@
 EXTRA_DIST=\
+	fwrap1.cpp\
 	fwrap2.cpp\
 	fwrap3.cpp\
 	fwrap4.cpp\
