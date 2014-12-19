@@ -5,7 +5,7 @@
 
 #include <string.h> /* strlen */
 
-extern char *f2cstring(char* fstring, int len);
+extern char *f2cstring(char* fstring, size_t len);
 extern void padfstring(char *dest, const char *src, unsigned int len);
 
 #define fullpathpp fullpathpp_
@@ -41,7 +41,7 @@ fullpathpp(char *name, char *path, unsigned int name_len, unsigned int path_len)
   char *ptr;
   char buffer[PATH_MAX];
 
-  n = f2cstring(name, name_len);
+  n = f2cstring(name, (size_t) name_len);
 
   ptr = realpath(n, buffer);
   if (ptr == NULL) {
@@ -72,7 +72,7 @@ splitpathpp(char *path, char* drive, char* dir, char* name, char* ext,
   /* linux has no drives */
   padfstring(drive, "", drive_len);
 
-  if ((cpath = f2cstring(path, path_len))) {
+  if ((cpath = f2cstring(path, (size_t) path_len))) {
     plen = strlen(cpath);
   }
 
@@ -142,8 +142,8 @@ setenvpp(char *name, char *value, unsigned int name_len, unsigned int value_len)
   char *cname, *cvalue;
   int result = 0; /* failure */
 
-  cname = f2cstring(name, name_len);
-  cvalue = f2cstring(value, value_len);
+  cname = f2cstring(name, (size_t) name_len);
+  cvalue = f2cstring(value, (size_t) value_len);
 
   if (cname != NULL && cvalue != NULL) {
     if (setenv(cname, cvalue, 1) == 0) {
