@@ -1,4 +1,5 @@
 EXTRA_DIST=\
+	fimpl.h\
 	fwrap1.cpp\
 	fwrap2.cpp\
 	fwrap3.cpp\
