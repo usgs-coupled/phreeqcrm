@@ -12,15 +12,15 @@ char *
 f2cstring(char* fstring, size_t len)
 {
     char *cstr, *str;
-    size_t i;
+    long i;
 
     str = fstring;
-    for (i = len - 1; i >= 0 && !isgraph((int)str[i]); i--);
+    for (i = len - 1; i >= 0 && !isgraph((int) str[i]); i--);
     cstr = (char *) malloc((size_t) (i + 2));
     if (!cstr) return 0;
 
     cstr[i + 1] = '\0';
-    memcpy(cstr,str,i+1);
+	if ((i + 1) > 0) memcpy(cstr, str, (size_t) (i + 1));
     return cstr;
 }
 
