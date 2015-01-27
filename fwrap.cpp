@@ -20,7 +20,7 @@ f2cstring(char* fstring, size_t len)
     if (!cstr) return 0;
 
     cstr[i + 1] = '\0';
-	if ((i + 1) > 0) memcpy(cstr, str, (size_t) (i + 1));
+    if ((i + 1) > 0) memcpy(cstr, str, (size_t) (i + 1));
     return cstr;
 }
 
