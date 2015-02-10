@@ -15,7 +15,7 @@ f2cstring(char* fstring, size_t len)
     long i;
 
     str = fstring;
-    for (i = len - 1; i >= 0 && !isgraph((int) str[i]); i--);
+    for (i = (long) len - 1; i >= 0 && !isgraph((int) str[i]); i--);
     cstr = (char *) malloc((size_t) (i + 2));
     if (!cstr) return 0;
 
@@ -117,7 +117,7 @@ GetComponentCountF(int *id)
 void
 GetComponentF(int *id, int *n, char* comp, size_t line_length)
 {
-	padfstring(comp, ::GetComponent(*id, (*n) - 1), line_length);
+	padfstring(comp, ::GetComponent(*id, (*n) - 1), (unsigned int) line_length);
 }
 
 int
@@ -129,7 +129,7 @@ GetCurrentSelectedOutputUserNumberF(int *id)
 void
 GetDumpFileNameF(int *id, char* fname, size_t fname_length)
 {
-	padfstring(fname, ::GetDumpFileName(*id), fname_length);
+	padfstring(fname, ::GetDumpFileName(*id), (unsigned int) fname_length);
 }
 
 int
@@ -151,7 +151,7 @@ GetDumpStringLineCountF(int *id)
 void
 GetDumpStringLineF(int *id, int* n, char* line, size_t line_length)
 {
-	padfstring(line, ::GetDumpStringLine(*id, (*n) - 1), line_length);
+	padfstring(line, ::GetDumpStringLine(*id, (*n) - 1), (unsigned int) line_length);
 }
 
 int
@@ -163,7 +163,7 @@ GetDumpStringOnF(int *id)
 void
 GetErrorFileNameF(int *id, char* fname, size_t fname_length)
 {
-	padfstring(fname, ::GetErrorFileName(*id), fname_length);
+	padfstring(fname, ::GetErrorFileName(*id), (unsigned int) fname_length);
 }
 
 int
@@ -185,7 +185,7 @@ GetErrorStringLineCountF(int *id)
 void
 GetErrorStringLineF(int *id, int* n, char* line, size_t line_length)
 {
-	padfstring(line, ::GetErrorStringLine(*id, (*n) - 1), line_length);
+	padfstring(line, ::GetErrorStringLine(*id, (*n) - 1), (unsigned int) line_length);
 }
 
 int
@@ -197,7 +197,7 @@ GetErrorStringOnF(int *id)
 void 
 GetLogFileNameF(int *id, char* fname, size_t fname_length)
 {
-	padfstring(fname, ::GetLogFileName(*id), fname_length);
+	padfstring(fname, ::GetLogFileName(*id), (unsigned int) fname_length);
 }
 
 int
@@ -215,7 +215,7 @@ GetLogStringLineCountF(int *id)
 void
 GetLogStringLineF(int *id, int* n, char* line, size_t line_length)
 {
-	padfstring(line, ::GetLogStringLine(*id, (*n) - 1), line_length);
+	padfstring(line, ::GetLogStringLine(*id, (*n) - 1), (unsigned int) line_length);
 }
 
 int
@@ -233,7 +233,7 @@ GetNthSelectedOutputUserNumberF(int *id, int* n)
 void
 GetOutputFileNameF(int *id, char* fname, size_t fname_length)
 {
-	padfstring(fname, ::GetOutputFileName(*id), fname_length);
+	padfstring(fname, ::GetOutputFileName(*id), (unsigned int) fname_length);
 }
 
 int
@@ -245,7 +245,7 @@ GetOutputStringLineCountF(int *id)
 void
 GetOutputStringLineF(int *id, int* n, char* line, size_t line_length)
 {
-	padfstring(line, ::GetOutputStringLine(*id, (*n) - 1), line_length);
+	padfstring(line, ::GetOutputStringLine(*id, (*n) - 1), (unsigned int) line_length);
 }
 
 int
@@ -275,7 +275,7 @@ GetSelectedOutputCountF(int *id)
 void
 GetSelectedOutputFileNameF(int *id, char* fname, size_t fname_length)
 {
-	padfstring(fname, ::GetSelectedOutputFileName(*id), fname_length);
+	padfstring(fname, ::GetSelectedOutputFileName(*id), (unsigned int) fname_length);
 }
 
 int
@@ -297,7 +297,7 @@ GetSelectedOutputStringLineCountF(int *id)
 void
 GetSelectedOutputStringLineF(int *id, int* n, char* line, size_t line_length)
 {
-	padfstring(line, ::GetSelectedOutputStringLine(*id, (*n) - 1), line_length);
+	padfstring(line, ::GetSelectedOutputStringLine(*id, (*n) - 1), (unsigned int) line_length);
 }
 
 int
@@ -340,17 +340,17 @@ GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue,
 		*vtype = TT_DOUBLE;
 		*dvalue = (double)v.lVal;
 		::sprintf(buffer, "%ld", v.lVal);
-		padfstring(svalue, buffer, svalue_length);
+		padfstring(svalue, buffer, (unsigned int) svalue_length);
 		break;
 	case TT_DOUBLE:
 		*vtype = v.type;
 		*dvalue = v.dVal;
 		::sprintf(buffer, "%23.15e", v.dVal);
-		padfstring(svalue, buffer, svalue_length);
+		padfstring(svalue, buffer, (unsigned int) svalue_length);
 		break;
 	case TT_STRING:
 		*vtype = v.type;
-		padfstring(svalue, v.sVal, svalue_length);
+		padfstring(svalue, v.sVal, (unsigned int) svalue_length);
 		break;
 	default:
 		assert(0);
@@ -362,7 +362,7 @@ GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue,
 void
 GetVersionStringF(char* version, size_t version_length)
 {
-	padfstring(version, ::GetVersionString(), version_length);
+	padfstring(version, ::GetVersionString(), (unsigned int) version_length);
 }
 
 /*
@@ -378,7 +378,7 @@ GetWarningStringLineCountF(int *id)
 void
 GetWarningStringLineF(int *id, int* n, char* line, size_t line_length)
 {
-	padfstring(line, ::GetWarningStringLine(*id, (*n) - 1), line_length);
+	padfstring(line, ::GetWarningStringLine(*id, (*n) - 1), (unsigned int) line_length);
 }
 
 int
