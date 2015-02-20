@@ -70,7 +70,7 @@ IPhreeqc::IPhreeqc(void)
 
 IPhreeqc::~IPhreeqc(void)
 {
-#ifdef _DEBUG
+#if !defined(NDEBUG)
 	this->OutputFileOn = false;
 #endif
 	delete this->PhreeqcPtr;
