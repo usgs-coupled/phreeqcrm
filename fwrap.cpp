@@ -1,3 +1,5 @@
+
+#ifndef IPHREEQC_MODULE
 #include <ctype.h>   /* isgraph */
 #include <stdlib.h>  /* malloc */
 #include <memory.h>  /* memcpy */
@@ -629,3 +631,4 @@ SetSelectedOutputStringOnF(int *id, int* selected_output_string_on)
 {
 	return ::SetSelectedOutputStringOn(*id, *selected_output_string_on);
 }
+#endif

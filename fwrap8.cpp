@@ -1,3 +1,4 @@
+#ifndef IPHREEQC_MODULE
 #include "IPhreeqc.h"
 #include "fwrap.h"
 
@@ -20,4 +21,4 @@ extern "C" {
 #endif
 
 #endif // _WIN32
-
+#endif
