@@ -18,7 +18,7 @@ EXTRA_DIST=\
 	phreeqcpp/Form1.resX\
 	phreeqcpp/ZedGraph.dll	
 
-AM_CPPFLAGS=-I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp
+AM_CPPFLAGS=-I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/PhreeqcKeywords
 
 AM_LDFLAGS=-release 3.0.0
 
@@ -68,8 +68,6 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/ISolutionComp.cxx\
 	phreeqcpp/ISolutionComp.h\
 	phreeqcpp/isotopes.cpp\
-	phreeqcpp/Keywords.cpp\
-	phreeqcpp/Keywords.h\
 	phreeqcpp/kinetics.cpp\
 	phreeqcpp/KineticsComp.cxx\
 	phreeqcpp/KineticsComp.h\
@@ -93,6 +91,8 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/phqalloc.h\
 	phreeqcpp/Phreeqc.cpp\
 	phreeqcpp/Phreeqc.h\
+	phreeqcpp/PhreeqcKeywords/Keywords.cpp\
+	phreeqcpp/PhreeqcKeywords/Keywords.h\
 	phreeqcpp/PHRQ_base.cxx\
 	phreeqcpp/PHRQ_base.h\
 	phreeqcpp/PHRQ_io.cpp\
@@ -171,7 +171,7 @@ include_HEADERS=\
 	$(top_srcdir)/src/IPhreeqcCallbacks.h\
 	$(top_srcdir)/src/Var.h\
 	$(top_srcdir)/src/phreeqcpp/PHRQ_io.h\
-	$(top_srcdir)/src/phreeqcpp/Keywords.h
+	$(top_srcdir)/src/phreeqcpp/PhreeqcKeywords/Keywords.h
 
 
 if BUILD_FORTRAN
