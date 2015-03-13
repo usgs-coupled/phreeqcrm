@@ -28,7 +28,7 @@ f2cstring(char* fstring, size_t len)
 void
 padfstring(char *dest, const char *src, int* len)
 {
-    size_t sofar;
+    int sofar;
 
     for (sofar = 0; (sofar < *len) && (*src != '\0'); ++sofar)
         *dest++ = *src++;
