@@ -1,4 +1,4 @@
-#ifndef IPHREEQC_MODULE
+#ifdef IPHREEQC_NO_FORTRAN_MODULE
 #ifndef __FWRAP__H
 #define __FWRAP__H
 

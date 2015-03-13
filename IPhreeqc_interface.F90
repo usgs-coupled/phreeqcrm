@@ -1,4 +1,4 @@
-#ifdef IPHREEQC_MODULE
+#ifndef IPHREEQC_NO_FORTRAN_MODULE
 MODULE IPhreeqc
 implicit none
 SAVE
@@ -685,7 +685,7 @@ INTEGER FUNCTION LoadDatabase(id, filename)
         END FUNCTION LoadDatabaseF
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(inout) :: filename
+    CHARACTER(len=*), INTENT(in) :: filename
 	LoadDatabase = LoadDatabaseF(id, trim(filename)//C_NULL_CHAR)
 	return
 END FUNCTION LoadDatabase
@@ -702,7 +702,7 @@ INTEGER FUNCTION LoadDatabaseString(id, input)
         END FUNCTION LoadDatabaseStringF
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(inout) :: input
+    CHARACTER(len=*), INTENT(in) :: input
 	LoadDatabaseString = LoadDatabaseStringF(id, trim(input)//C_NULL_CHAR)
 	return
 END FUNCTION LoadDatabaseString
@@ -779,7 +779,7 @@ INTEGER FUNCTION RunFile(id, filename)
         END FUNCTION RunFileF
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(inout) :: filename
+    CHARACTER(len=*), INTENT(in) :: filename
 	RunFile = RunFileF(id, trim(filename)//C_NULL_CHAR)
 	return
 END FUNCTION RunFile
@@ -796,7 +796,7 @@ INTEGER FUNCTION RunString(id, input)
         END FUNCTION RunStringF
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(inout) :: input
+    CHARACTER(len=*), INTENT(in) :: input
 	RunString = RunStringF(id, trim(input)//C_NULL_CHAR)
 	return
 END FUNCTION RunString
@@ -810,22 +810,22 @@ INTEGER FUNCTION SetBasicFortranCallback(id, fcn)
 			IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTERFACE
-                INTEGER(KIND=C_INT) FUNCTION fcn(x1, x2, str, l) BIND(C)
+                REAL(KIND=C_DOUBLE) FUNCTION fcn(x1, x2, str, l) BIND(C)
                     USE ISO_C_BINDING
-                    INTEGER(KIND=C_INT), INTENT(inout) :: l
-                    REAL(KIND=C_DOUBLE), INTENT(inout) :: x1, x2
-                    CHARACTER(KIND=C_CHAR), INTENT(out) :: str(*)
+                    INTEGER(KIND=C_INT), INTENT(in) :: l
+                    REAL(KIND=C_DOUBLE), INTENT(in) :: x1, x2
+                    CHARACTER(KIND=C_CHAR), INTENT(in) :: str(*)
                 END FUNCTION fcn
            END INTERFACE
         END FUNCTION SetBasicFortranCallbackF
     END INTERFACE
     INTEGER, INTENT(in) :: id     
     INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION fcn(x1, x2, str, l) BIND(C)
+        REAL(KIND=C_DOUBLE) FUNCTION fcn(x1, x2, str, l) BIND(C)
             USE ISO_C_BINDING
-            INTEGER(KIND=C_INT), INTENT(inout) :: l
-            REAL(KIND=C_DOUBLE), INTENT(inout) :: x1, x2
-            CHARACTER(KIND=C_CHAR), INTENT(out) :: str(*)
+            INTEGER(KIND=C_INT), INTENT(in) :: l
+            REAL(KIND=C_DOUBLE), INTENT(in) :: x1, x2
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: str(*)
         END FUNCTION fcn
     END INTERFACE
 	SetBasicFortranCallback = SetBasicFortranCallbackF(id, fcn)

@@ -1,4 +1,4 @@
-#ifdef IPHREEQC_MODULE
+#ifndef IPHREEQC_NO_FORTRAN_MODULE
 #include <ctype.h>   /* isgraph */
 #include <stdlib.h>  /* malloc */
 #include <memory.h>  /* memcpy */

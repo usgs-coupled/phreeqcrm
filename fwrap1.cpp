@@ -1,3 +1,4 @@
+#ifdef NO_IPHREEQC_FORTRAN_MODULE
 #include "IPhreeqc.h"
 #include "fwrap.h"
 
@@ -19,4 +20,5 @@ extern "C" {
 }
 #endif
 
+#endif
 #endif
