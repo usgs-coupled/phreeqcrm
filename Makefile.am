@@ -33,6 +33,8 @@ libiphreeqc_la_SOURCES=\
 	Debug.h\
 	ErrorReporter.hxx\
 	IPhreeqc.cpp\
+	IPhreeqc_interface_F.cpp\
+	IPhreeqc_interface_F.h\
 	IPhreeqcLib.cpp\
 	phreeqcpp/advection.cpp\
 	phreeqcpp/basicsubs.cpp\
@@ -178,11 +180,12 @@ if BUILD_FORTRAN
 
 libiphreeqc_la_SOURCES+=\
 	fwrap.h\
-	fwrap.cpp\
-	IPhreeqcF.f
+	fwrap.cpp
+##	fwrap.cpp\
+##	IPhreeqcF.f
 
-include_HEADERS+=\
-	$(top_srcdir)/src/IPhreeqc.f90.inc\
-	$(top_srcdir)/src/IPhreeqc.f.inc
+##include_HEADERS+=\
+##	$(top_srcdir)/src/IPhreeqc.f90.inc\
+##	$(top_srcdir)/src/IPhreeqc.f.inc
 
 endif
