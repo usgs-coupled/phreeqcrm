@@ -1,4 +1,4 @@
-#ifdef NO_IPHREEQC_FORTRAN_MODULE
+#ifdef IPHREEQC_NO_FORTRAN_MODULE
 #include "IPhreeqc.h"
 #include "fwrap.h"
 
