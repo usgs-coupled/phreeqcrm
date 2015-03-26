@@ -1,6 +1,6 @@
 ##EXTRA_DIST = test_c.vcproj test_cxx.vcproj test_f90.vfproj test_f.vfproj main77.f main.f90
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/IPhreeqcPhast -I$(top_srcdir)/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/IPhreeqcPhast/IPhreeqc/phreeqcpp -I$(top_srcdir)/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords -I$(top_builddir)
+AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords -I$(top_builddir)
 
 TESTS = test
 check_PROGRAMS = test
@@ -39,8 +39,8 @@ if BUILD_FORTRAN
 test_SOURCES+=\
 	advection_f90.F90\
 	species_f90.F90\
-	../RM_interface.F90\
-	../IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90 
+	../src/RM_interface.F90\
+	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90 
 
 test_LDADD+=$(FCLIBS)
 
@@ -50,10 +50,10 @@ clean-modules:
 	-test -z $(FC_MODEXT) || $(RM) *.$(FC_MODEXT)
 
 
-advection_f90.$(OBJEXT) : ../RM_interface.$(OBJEXT) ../IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT)
+advection_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT)
 
 
-species_f90.$(OBJEXT) : ../RM_interface.$(OBJEXT) 
+species_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) 
 
 
 endif

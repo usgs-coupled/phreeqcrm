@@ -20,8 +20,8 @@ if (PHREEQCRM_FORTRAN_TESTING)
   # source
   SET(FortranAdvect_SOURCES
     advection_f90.F90
-    ../RM_interface.F90
-    ../IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
+    ../src/RM_interface.F90
+    ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
     species_f90.F90
   )
   
