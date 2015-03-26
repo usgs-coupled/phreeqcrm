@@ -1,0 +1,13 @@
+To make html documentation for C++, C, and Fortran
+
+(1) Make sure RM_interface.F90 is up to date.
+
+(2) Run lower_case.bat to modify RM_interface.F90 to lower case.
+
+(3) Run doxygen wizard
+
+(4) Run upper_case.bat
+
+(5) Html is complete
+
+(6) Revert RM_interface.F90

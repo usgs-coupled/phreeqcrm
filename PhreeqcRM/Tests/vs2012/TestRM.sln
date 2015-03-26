@@ -1,0 +1,77 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestRM", "TestRM.vcxproj", "{9B65F71A-2D27-4121-9724-6CD0ED7D975A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7} = {F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}
+		{DE41D908-C972-4C33-AF85-6109613B9090} = {DE41D908-C972-4C33-AF85-6109613B9090}
+	EndProjectSection
+EndProject
+Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "FortranAdvect", "FortranAdvect.vfproj", "{DE41D908-C972-4C33-AF85-6109613B9090}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhreeqcRM", "..\..\vs2012\PhreeqcRM.vcxproj", "{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		mpi_debug|Win32 = mpi_debug|Win32
+		mpi_debug|x64 = mpi_debug|x64
+		mpi|Win32 = mpi|Win32
+		mpi|x64 = mpi|x64
+		openmp_debug|Win32 = openmp_debug|Win32
+		openmp_debug|x64 = openmp_debug|x64
+		openmp|Win32 = openmp|Win32
+		openmp|x64 = openmp|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE41D908-C972-4C33-AF85-6109613B9090}.mpi_debug|Win32.ActiveCfg = mpi_debug|Win32
+		{DE41D908-C972-4C33-AF85-6109613B9090}.mpi_debug|Win32.Build.0 = mpi_debug|Win32
+		{DE41D908-C972-4C33-AF85-6109613B9090}.mpi_debug|x64.ActiveCfg = mpi_debug|x64
+		{DE41D908-C972-4C33-AF85-6109613B9090}.mpi_debug|x64.Build.0 = mpi_debug|x64
+		{DE41D908-C972-4C33-AF85-6109613B9090}.mpi|Win32.ActiveCfg = mpi|Win32
+		{DE41D908-C972-4C33-AF85-6109613B9090}.mpi|Win32.Build.0 = mpi|Win32
+		{DE41D908-C972-4C33-AF85-6109613B9090}.mpi|x64.ActiveCfg = mpi|x64
+		{DE41D908-C972-4C33-AF85-6109613B9090}.mpi|x64.Build.0 = mpi|x64
+		{DE41D908-C972-4C33-AF85-6109613B9090}.openmp_debug|Win32.ActiveCfg = openmp_debug|Win32
+		{DE41D908-C972-4C33-AF85-6109613B9090}.openmp_debug|Win32.Build.0 = openmp_debug|Win32
+		{DE41D908-C972-4C33-AF85-6109613B9090}.openmp_debug|x64.ActiveCfg = openmp_debug|x64
+		{DE41D908-C972-4C33-AF85-6109613B9090}.openmp_debug|x64.Build.0 = openmp_debug|x64
+		{DE41D908-C972-4C33-AF85-6109613B9090}.openmp|Win32.ActiveCfg = openmp|Win32
+		{DE41D908-C972-4C33-AF85-6109613B9090}.openmp|Win32.Build.0 = openmp|Win32
+		{DE41D908-C972-4C33-AF85-6109613B9090}.openmp|x64.ActiveCfg = openmp|x64
+		{DE41D908-C972-4C33-AF85-6109613B9090}.openmp|x64.Build.0 = openmp|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi_debug|Win32.ActiveCfg = mpi_debug|Win32
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi_debug|Win32.Build.0 = mpi_debug|Win32
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi_debug|x64.ActiveCfg = mpi_debug|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi_debug|x64.Build.0 = mpi_debug|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi|Win32.ActiveCfg = mpi|Win32
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi|Win32.Build.0 = mpi|Win32
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi|x64.ActiveCfg = mpi|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi|x64.Build.0 = mpi|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp_debug|Win32.ActiveCfg = openmp_debug|Win32
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp_debug|Win32.Build.0 = openmp_debug|Win32
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp_debug|x64.ActiveCfg = openmp_debug|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp_debug|x64.Build.0 = openmp_debug|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp|Win32.ActiveCfg = openmp|Win32
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp|Win32.Build.0 = openmp|Win32
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp|x64.ActiveCfg = openmp|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp|x64.Build.0 = openmp|x64
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.mpi_debug|Win32.ActiveCfg = mpi_debug|Win32
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.mpi_debug|Win32.Build.0 = mpi_debug|Win32
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.mpi_debug|x64.ActiveCfg = mpi_debug|x64
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.mpi_debug|x64.Build.0 = mpi_debug|x64
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.mpi|Win32.ActiveCfg = mpi|Win32
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.mpi|Win32.Build.0 = mpi|Win32
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.mpi|x64.ActiveCfg = mpi|x64
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.mpi|x64.Build.0 = mpi|x64
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.openmp_debug|Win32.ActiveCfg = openmp_debug|Win32
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.openmp_debug|Win32.Build.0 = openmp_debug|Win32
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.openmp_debug|x64.ActiveCfg = openmp_debug|x64
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.openmp_debug|x64.Build.0 = openmp_debug|x64
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.openmp|Win32.ActiveCfg = openmp|Win32
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.openmp|Win32.Build.0 = openmp|Win32
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.openmp|x64.ActiveCfg = openmp|x64
+		{9B65F71A-2D27-4121-9724-6CD0ED7D975A}.openmp|x64.Build.0 = openmp|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
