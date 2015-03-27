@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="mpi_debug|Win32">
@@ -503,6 +503,7 @@
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqc.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqc.hpp" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqcCallbacks.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqc_interface_F.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasComp.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\global_structures.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NA.h" />
