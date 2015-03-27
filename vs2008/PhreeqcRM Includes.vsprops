@@ -6,6 +6,6 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(ProjectDir)../IPhreeqcPhast&quot;;&quot;$(ProjectDir)../IPhreeqcPhast/IPhreeqc&quot;;&quot;$(ProjectDir)../IPhreeqcPhast/IPhreeqc/phreeqcpp&quot;"
+		AdditionalIncludeDirectories="&quot;$(ProjectDir)../src/IPhreeqcPhast&quot;;&quot;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc&quot;;&quot;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp&quot;;&quot;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords&quot;"
 	/>
 </VisualStudioPropertySheet>

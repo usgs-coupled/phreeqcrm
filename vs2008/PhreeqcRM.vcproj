@@ -537,135 +537,99 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\advection.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\advection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\basicsubs.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\basicsubs.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartHandler.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartObject.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\cl1.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cl1.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\cl1mp.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cl1mp.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\CSelectedOutput.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\CSelectedOutput.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\CurveObject.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\CurveObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvdense.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvdense.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvode.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxKinetics.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxKinetics.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxMix.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxMix.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\dense.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dense.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\dumper.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dumper.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\dw.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dw.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Exchange.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Exchange.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\ExchComp.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ExchComp.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\fwrap.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\fwrap.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\fwrap1.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\fwrap1.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\fwrap2.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\fwrap2.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\fwrap3.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\fwrap3.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\fwrap4.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\fwrap4.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\fwrap5.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\fwrap5.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\fwrap6.cpp"
-				>
-				<FileConfiguration
-					Name="openmp_debug|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="openmp|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="mpi_debug|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="mpi|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\fwrap7.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\fwrap6.cpp"
 				>
 				<FileConfiguration
 					Name="openmp_debug|x64"
@@ -701,7 +665,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\fwrap8.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\fwrap7.cpp"
 				>
 				<FileConfiguration
 					Name="openmp_debug|x64"
@@ -737,295 +701,331 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasComp.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\fwrap8.cpp"
 				>
+				<FileConfiguration
+					Name="openmp_debug|x64"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="openmp|x64"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="mpi_debug|x64"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="mpi|x64"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\gases.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasComp.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasPhase.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\gases.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\input.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasPhase.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\integrate.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\input.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\inverse.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\integrate.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\IPhreeqc.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\inverse.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\IPhreeqcLib.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqc.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqcPhast.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqcLib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqcPhastLib.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqcPhast.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolution.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqcPhastLib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolutionComp.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolution.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\isotopes.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolutionComp.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Keywords.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\isotopes.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\kinetics.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PhreeqcKeywords\Keywords.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\KineticsComp.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\kinetics.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\mainsubs.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\KineticsComp.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\model.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\mainsubs.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\NameDouble.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\model.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\NumKeyword.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NameDouble.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NumKeyword.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector_serial.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\parse.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector_serial.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Parser.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\parse.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\PBasic.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Parser.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\phqalloc.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PBasic.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Phreeqc.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\phqalloc.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\PhreeqcRM.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Phreeqc.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_base.cxx"
+				RelativePath="..\src\PhreeqcRM.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_io.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_base.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_io_output.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_io.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\pitzer.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_io_output.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\pitzer_structures.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\pitzer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\pp_sys.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\pitzer_structures.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblage.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\pp_sys.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblageComp.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblage.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\prep.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblageComp.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Pressure.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\prep.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\print.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Pressure.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Reaction.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\print.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\read.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Reaction.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\ReadClass.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\read.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\readtr.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ReadClass.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\RM_interface_C.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\readtr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\RM_interface_F.cpp"
+				RelativePath="..\src\RM_interface_C.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\runner.cpp"
+				RelativePath="..\src\RM_interface_F.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SelectedOutput.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\runner.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\sit.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SelectedOutput.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\smalldense.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\sit.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Solution.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\smalldense.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SolutionIsotope.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Solution.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\spread.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SolutionIsotope.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SS.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\spread.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SSassemblage.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SS.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SScomp.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SSassemblage.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\step.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SScomp.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBin.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\step.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBinList.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBin.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\structures.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBinList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\sundialsmath.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\structures.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Surface.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\sundialsmath.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceCharge.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Surface.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceComp.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceCharge.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\System.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceComp.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\tally.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\System.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Temperature.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\tally.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\tidy.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Temperature.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\transport.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\tidy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Use.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\transport.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\UserPunch.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Use.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\utilities.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\UserPunch.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Utils.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\utilities.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\Var.c"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Utils.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\Var.c"
 				>
 			</File>
 		</Filter>
@@ -1035,295 +1035,295 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartHandler.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartObject.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\CSelectedOutput.hxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\CSelectedOutput.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\CurveObject.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\CurveObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\CVar.hxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\CVar.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvdense.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvdense.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvode.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxKinetics.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxKinetics.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxMix.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxMix.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\Debug.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\Debug.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\dense.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dense.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\dumper.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dumper.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\ErrorReporter.hxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\ErrorReporter.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Exchange.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Exchange.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\ExchComp.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ExchComp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\fimpl.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\fimpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Form1.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Form1.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\fwrap.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\fwrap.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasComp.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasComp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasPhase.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasPhase.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\global_structures.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\global_structures.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\IPhreeqc.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\IPhreeqc.hpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqc.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\IPhreeqcCallbacks.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqcCallbacks.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqcPhast.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqcPhast.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqcPhastLib.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqcPhastLib.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IrmResult.h"
+				RelativePath="..\src\IrmResult.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolution.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolution.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolutionComp.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolutionComp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Keywords.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PhreeqcKeywords\Keywords.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\KineticsComp.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\KineticsComp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\NA.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NA.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\NameDouble.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NameDouble.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\NumKeyword.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NumKeyword.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector_serial.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector_serial.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Parser.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Parser.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\PBasic.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PBasic.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\phqalloc.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\phqalloc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Phreeqc.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Phreeqc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\PhreeqcRM.h"
+				RelativePath="..\src\PhreeqcRM.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_base.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_base.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_io.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_io.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\phrqtype.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\phrqtype.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblage.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblage.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblageComp.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblageComp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Pressure.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Pressure.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Reaction.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Reaction.h"
 				>
 			</File>
 			<File
-				RelativePath="..\RM_interface_C.h"
+				RelativePath="..\src\RM_interface_C.h"
 				>
 			</File>
 			<File
-				RelativePath="..\RM_interface_F.h"
+				RelativePath="..\src\RM_interface_F.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\runner.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\runner.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SelectedOutput.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SelectedOutput.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\smalldense.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\smalldense.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Solution.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Solution.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SolutionIsotope.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SolutionIsotope.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SS.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SS.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SSassemblage.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SSassemblage.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SScomp.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SScomp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBin.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBin.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBinList.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBinList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\sundialsmath.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\sundialsmath.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\sundialstypes.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\sundialstypes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Surface.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Surface.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceCharge.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceCharge.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceComp.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceComp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\System.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\System.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Temperature.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Temperature.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\thread.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\thread.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Use.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Use.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\UserPunch.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\UserPunch.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\phreeqcpp\Utils.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Utils.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\Var.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\Var.h"
 				>
 			</File>
 			<File
-				RelativePath="..\IPhreeqcPhast\IPhreeqc\Version.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\Version.h"
 				>
 			</File>
 		</Filter>
