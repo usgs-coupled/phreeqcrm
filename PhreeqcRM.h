@@ -2359,7 +2359,7 @@ status = phreeqc_rm.ReturnHandler(irm_result, "Previous method failed.");
 @endhtmlonly
 @par MPI:
 Called by root or workers.
- */	
+ */
 	IRM_RESULT                                ReturnHandler(IRM_RESULT result, const std::string &e_string);
 /**
 Run a PHREEQC input file. The first three arguments determine which IPhreeqc instances will run
@@ -3194,6 +3194,17 @@ Options are
 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (@ref SetPorosity); or
 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-P)*RV.
 
+All three options will work for constant initial-condition porosity. However, varying
+initial-condition porosity among cells cannot be handled accurately by options 0 and 1 without an
+EXCHANGE definition for each different cell porosity. Consider a single EXCHANGE definition
+applied to two cells with different porosity. For option 0, the number of moles of exchangers
+will be the same regardless of porosity (perhaps adequate for systems with small porosities). For
+option 1, the number of moles of exchangers in a cell will be proportional to porosity, which is
+incorrect; moles of exchangers will decrease with decreasing porosity, which is equivalent to a
+decrease with increasing rock volume, whereas moles of exchangers should increase with increasing
+rock volume. Option 2 is best for varying initial-condition porosity and requires that the number
+of moles of exchangers per volume of rock be defined in the PHREEQC EXCHANGE definitions.
+
 @param option           Units option for exchangers: 0, 1, or 2.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
 @see                    @ref GetUnitsExchange, @ref InitialPhreeqc2Module, @ref InitialPhreeqcCell2Module,
@@ -3220,6 +3231,11 @@ Options are
 0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (@ref SetRepresentativeVolume);
 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (@ref SetPorosity); or
 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
+
+All three options will work for constant initial-condition porosity. However, it is up to the
+user to define the correct units for initial moles of gases when there is varying
+initial-condition porosity. Options 0 or 1 may be appropriate, whereas option 2 would increase gas
+moles as porosity decreases, which is probably incorrect.
 
 @param option           Units option for gas phases: 0, 1, or 2.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
@@ -3250,14 +3266,25 @@ Options are
 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (@ref SetPorosity); or
 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
 
-@n@n
-Note that the volume of water in a cell in the reaction module is equal
-to the product of porosity (@ref SetPorosity), the saturation (@ref SetSaturation),
-and representative volume (@ref SetRepresentativeVolume),
-which is usually less than 1 liter.
-It is important to write the RATES definitions for KINETICS to account for the current volume of water,
-often by calculating the rate of reaction per liter of water and multiplying by the
-volume of water (Basic function SOLN_VOL).
+All three options will work for constant initial-condition porosity. However, if the KINETIC
+reaction represents a reaction with solids, varying initial-condition porosity among cells cannot
+be handled accurately by options 0 and 1 without a KINETIC definition for each different cell
+porosity. Consider a single KINETIC definition for a reaction with a solid applied to two cells
+with different porosity. For option 0, the number of moles of kinetic reactants will be the same
+regardless of porosity (perhaps adequate for systems with small porosities). For option 1, the
+number of moles of kinetic reactants will be proportional to porosity, which is incorrect; moles
+will decrease with decreasing porosity, which is equivalent to a decrease with increasing rock
+volume, whereas moles of a solid kinetic reactant should increase with increasing rock volume.
+Option 2 is best for varying initial-condition porosity and requires that the number of moles of
+kinetic reactants per volume of rock be defined in the PHREEQC KINETIC definitions.
+
+Note that the volume of water in a cell in the reaction module is equal to the product of
+porosity (@ref SetPorosity), the saturation (@ref SetSaturation), and representative volume (@ref
+SetRepresentativeVolume), which is usually less than 1 liter. It is important to write the RATES
+definitions for homogeneous (aqueous) kinetic reactions to account for the current volume of
+water, often by calculating the rate of reaction per liter of water and multiplying by the volume
+of water (Basic function SOLN_VOL). Rates that depend on surface area of solids, are not dependent
+on the volume of water.
 
 @param option           Units option for kinetic reactants: 0, 1, or 2.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
@@ -3287,6 +3314,19 @@ Options are
 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (@ref SetPorosity); or
 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-P)*RV.
 
+All three options will work for constant initial-condition porosity. However, varying
+initial-condition porosity among cells cannot be handled accurately by options 0 and 1 without
+an EQUILIBRIUM_PHASES definition for each different cell porosity. Consider a single
+EQUILIBRIUM_PHASES definition applied to two cells with different porosity. For option 0, the
+number of moles of equilibrium phases will be the same regardless of porosity (perhaps
+adequate for systems with small porosities). For option 1, the number of moles of equilibrium
+phases in a cell will be proportional to porosity, which is incorrect; moles of equilibrium
+phases will decrease with decreasing porosity, which is equivalent to a decrease with
+increasing rock volume, whereas moles of equilibrium phases should increase with increasing
+rock volume. Option 2 is best for varying initial-condition porosity and requires that the
+number of moles of equilibrium phases per volume of rock be defined in the PHREEQC
+EQUILIBRIUM_PHASES definitions.
+
 @param option           Units option for equilibrium phases: 0, 1, or 2.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
 @see                    @ref GetUnitsPPassemblage, @ref InitialPhreeqc2Module, @ref InitialPhreeqcCell2Module,
@@ -3308,7 +3348,7 @@ Solution concentration units used by the transport model.
 Options are 1, mg/L; 2 mol/L; or 3, mass fraction, kg/kgs.
 PHREEQC defines solutions by the number of moles of each
 element in the solution.
-@n@n
+
 To convert from mg/L to moles
 of element in the representative volume of a reaction cell, mg/L is converted to mol/L and
 multiplied by the solution volume,
@@ -3321,7 +3361,7 @@ To convert from mass fraction to moles
 of element in the representative volume of a reaction cell, kg/kgs is converted to mol/kgs, multiplied by density
 (@ref SetDensity) and
 multiplied by the solution volume.
-@n@n
+
 To convert from moles
 of element in the representative volume of a reaction cell to mg/L, the number of moles of an element is divided by the
 solution volume resulting in mol/L, and then converted to mg/L.
@@ -3366,6 +3406,20 @@ Options are
 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (@ref SetPorosity); or
 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@ P)*RV.
 
+All three options will work for constant initial-condition porosity. However, varying
+initial-condition porosity among cells cannot be handled accurately by options 0 and 1
+without an SOLID_SOLUTIONS definition for each different cell porosity. Consider a
+single SOLID_SOLUTIONS definition applied to two cells with different porosity. For
+option 0, the number of moles of solid-solution components will be the same regardless
+of porosity (perhaps adequate for systems with small porosities). For option 1, the
+number of moles of solid-solution components in a cell will be proportional to
+porosity, which is incorrect; moles of solid-solution components will decrease with
+decreasing porosity, which is equivalent to a decrease with increasing rock volume,
+whereas moles of solid-solution components should increase with increasing rock
+volume. Option 2 is best for varying initial-condition porosity and requires that the
+number of moles of solid-solution components per volume of rock be defined in the
+PHREEQC SOLID_SOLUTIONS definitions.
+
 @param option           Units option for solid solutions: 0, 1, or 2.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
 @see                    @ref GetUnitsSSassemblage, @ref InitialPhreeqc2Module, @ref InitialPhreeqcCell2Module,
@@ -3392,6 +3446,20 @@ Options are
 0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (@ref SetRepresentativeVolume);
 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (@ref SetPorosity); or
 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
+
+All three options will work for constant initial-condition porosity. However, varying
+initial-condition porosity among cells cannot be handled accurately by options 0 and 1
+without an SURFACE definition for each different cell porosity. Consider a
+single SURFACE definition applied to two cells with different porosity. For
+option 0, the number of moles of surface sites will be the same regardless
+of porosity (perhaps adequate for systems with small porosities). For option 1, the
+number of moles of surface sites in a cell will be proportional to
+porosity, which is incorrect; moles of surface sites will decrease with
+decreasing porosity, which is equivalent to a decrease with increasing rock volume,
+whereas moles of surface sites should increase with increasing rock
+volume. Option 2 is best for varying initial-condition porosity and requires that the
+number of moles of surface sites per volume of rock be defined in the
+PHREEQC SURFACE definitions.
 
 @param option           Units option for surfaces: 0, 1, or 2.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
