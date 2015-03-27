@@ -133,7 +133,11 @@ extern "C" {
   IPQ_DLL_EXPORT int        RunAccumulatedF(int *id);
   IPQ_DLL_EXPORT int        RunFileF(int *id, char* filename);
   IPQ_DLL_EXPORT int        RunStringF(int *id, char* input);
+#ifdef IPHREEQC_NO_FORTRAN_MODULE
   IPQ_DLL_EXPORT IPQ_RESULT SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *str, size_t l));
+#else
+  IPQ_DLL_EXPORT IPQ_RESULT SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *str));
+#endif
   IPQ_DLL_EXPORT IPQ_RESULT SetCurrentSelectedOutputUserNumberF(int *id, int *n);
   IPQ_DLL_EXPORT IPQ_RESULT SetDumpFileNameF(int *id, char* fname);
   IPQ_DLL_EXPORT IPQ_RESULT SetDumpFileOnF(int *id, int* dump_on);

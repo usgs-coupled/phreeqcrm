@@ -402,12 +402,19 @@ RunStringF(int *id, char* input)
 	int n = ::RunString(*id, input);
 	return n;
 }
-
+#ifdef IPHREEQC_NO_FORTRAN_MODULE
 IPQ_RESULT
 SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *str, size_t l))
 {
 	return ::SetBasicFortranCallback(*id, fcn);
 }
+#else
+IPQ_RESULT
+SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *str))
+{
+	return ::SetBasicFortranCallback(*id, fcn);
+}
+#endif
 
 IPQ_RESULT
 SetCurrentSelectedOutputUserNumberF(int *id, int *n)

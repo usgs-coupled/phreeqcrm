@@ -781,7 +781,7 @@ SetBasicCallback(int id, double (*fcn)(double x1, double x2, const char *str, vo
 	}
 	return IPQ_BADINSTANCE;
 }
-
+#ifdef IPHREEQC_NO_FORTRAN_MODULE
 IPQ_RESULT
 SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str, size_t l))
 {
@@ -793,7 +793,19 @@ SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str,
 	}
 	return IPQ_BADINSTANCE;
 }
-
+#else
+IPQ_RESULT
+SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str))
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetBasicFortranCallback(fcn);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+#endif
 IPQ_RESULT
 SetCurrentSelectedOutputUserNumber(int id, int n)
 {
