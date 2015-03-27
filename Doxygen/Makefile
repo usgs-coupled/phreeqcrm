@@ -1,8 +1,9 @@
 all:
+	cp ../src/RM_interface.F90 ../src/RM_interface.F90.save
 	./lower_case.sh
 	doxygen
 	./upper_case.sh
-	svn revert ../src/RM_interface.F90
+	mv ../src/RM_interface.F90.save ../src/RM_interface.F90
 
 win:
 	lower_case.bat
