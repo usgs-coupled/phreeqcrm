@@ -1,6 +1,5 @@
 #!/bin/sh
-set RM_INTERFACE_F90=../src/RM_interface.F90
-export RM_INTERFACE_F90
+export RM_INTERFACE_F90=../src/RM_interface.F90
 # sed -i -e "s/PhreeqcRM/phreeqcrm/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_Abort/rm_abort/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_Abort/rm_abort/g" $RM_INTERFACE_F90
