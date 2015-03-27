@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS=-I m4
-AM_CPPFLAGS=-I$(top_srcdir)/IPhreeqcPhast -I$(top_srcdir)/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/IPhreeqcPhast/IPhreeqc/phreeqcpp -I$(top_srcdir)/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords
+AM_CPPFLAGS=-I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords
 
 # libtool libraries to build
 lib_LTLIBRARIES=libphreeqcrm.la
