@@ -1,7 +1,6 @@
 #!/bin/sh
-set RM_INTERFACE_F90=../src/RM_interface.F90
-export RM_INTERFACE_F90
-REM sed -i -e "s/PhreeqcRM/phreeqcrm/g" $RM_INTERFACE_F90
+export RM_INTERFACE_F90=../src/RM_interface.F90
+# sed -i -e "s/PhreeqcRM/phreeqcrm/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_Abort/rm_abort/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_Abort/rm_abort/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_CloseFiles/rm_closefiles/g" $RM_INTERFACE_F90
@@ -92,4 +91,3 @@ sed -i -e "s/RM_SetUnitsSurface/rm_setunitssurface/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SpeciesConcentrations2Module/rm_speciesconcentrations2module/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_UseSolutionDensityVolume/rm_usesolutiondensityvolume/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_WarningMessage/rm_warningmessage/g" $RM_INTERFACE_F90
-del sed*
