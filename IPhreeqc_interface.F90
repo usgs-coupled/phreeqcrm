@@ -853,22 +853,24 @@ INTEGER FUNCTION SetBasicFortranCallback(id, fcn)
 			IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTERFACE
-                REAL(KIND=C_DOUBLE) FUNCTION fcn(x1, x2, str) BIND(C)
+                REAL(KIND=C_DOUBLE) FUNCTION fcn(x1, x2, str, l) BIND(C)
                     USE ISO_C_BINDING
                     IMPLICIT none
                     REAL(KIND=C_DOUBLE), INTENT(in) :: x1, x2
                     CHARACTER(KIND=C_CHAR), INTENT(in) :: str(*)
+                    INTEGER(KIND=C_INT), INTENT(in) :: l
                 END FUNCTION fcn
            END INTERFACE
         END FUNCTION SetBasicFortranCallbackF
     END INTERFACE
     INTEGER, INTENT(in) :: id     
     INTERFACE
-        REAL(KIND=C_DOUBLE) FUNCTION fcn(x1, x2, str) BIND(C)
+        REAL(KIND=C_DOUBLE) FUNCTION fcn(x1, x2, str, l) BIND(C)
             USE ISO_C_BINDING
             IMPLICIT none
             REAL(KIND=C_DOUBLE), INTENT(in) :: x1, x2
             CHARACTER(KIND=C_CHAR), INTENT(in) :: str(*)
+            INTEGER(KIND=C_INT), INTENT(in) :: l
         END FUNCTION fcn
     END INTERFACE
 	SetBasicFortranCallback = SetBasicFortranCallbackF(id, fcn)
