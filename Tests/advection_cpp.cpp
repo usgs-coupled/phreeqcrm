@@ -8,6 +8,9 @@
 int worker_tasks_cc(int *task_number, void * cookie);
 int do_something(void *cookie);
 
+double my_basic_callback(double x1, double x2, const char *str, void *cookie);
+void register_basic_callback(void *cookie);
+
 #if defined(USE_MPI)
 #include <mpi.h>
 #endif
@@ -15,13 +18,14 @@ int do_something(void *cookie);
 void AdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
 double my_basic_callback(double x1, double x2, const char *str, void *cookie);
 
-class my_pointers
+class my_data
 {
 public:
 	PhreeqcRM *PhreeqcRM_ptr;
-	double *porosity;
-	double * rv;
-	double * saturation;
+#ifdef USE_MPI
+	MPI_Comm rm_commxx;
+#endif
+	std::vector<double> *hydraulic_K;
 };
 
 int advection_cpp()
@@ -34,9 +38,18 @@ int advection_cpp()
 		// --------------------------------------------------------------------------
 
 		int nxyz = 40;
+		std::vector<double> hydraulic_K;
+		for (int i = 0; i < nxyz; i++)
+		{
+			hydraulic_K.push_back(i*2.0);
+		}
+		my_data some_data;
+		some_data.hydraulic_K = &hydraulic_K;
+
 #ifdef USE_MPI
 		// MPI
 		PhreeqcRM phreeqc_rm(nxyz, MPI_COMM_WORLD);
+		some_data.PhreeqcRM_ptr = &phreeqc_rm;
 		MP_TYPE comm = MPI_COMM_WORLD;
 		int mpi_myself;
 		if (MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself) != MPI_SUCCESS)
@@ -46,7 +59,7 @@ int advection_cpp()
 		if (mpi_myself > 0)
 		{
 			phreeqc_rm.SetMpiWorkerCallbackC(worker_tasks_cc);
-			phreeqc_rm.SetMpiWorkerCallbackCookie(&comm);
+			phreeqc_rm.SetMpiWorkerCallbackCookie(&some_data);
 			phreeqc_rm.MpiWorker();
 			return EXIT_SUCCESS;
 		}
@@ -54,6 +67,7 @@ int advection_cpp()
 		// OpenMP
 		int nthreads = 3;
 		PhreeqcRM phreeqc_rm(nxyz, nthreads);
+		some_data.PhreeqcRM_ptr = &phreeqc_rm;
 #endif
 		IRM_RESULT status;
 		// Set properties
@@ -68,7 +82,7 @@ int advection_cpp()
 		phreeqc_rm.OpenFiles();
 #ifdef USE_MPI
 		// Optional callback for MPI
-		int istatus = do_something(&comm);                 // Root calls do_something, workers respond
+		int istatus = do_something(&some_data);                 // Root calls do_something, workers respond
 #endif
 		// Set concentration units
 		status = phreeqc_rm.SetUnitsSolution(2);           // 1, mg/L; 2, mol/L; 3, kg/kgs
@@ -137,16 +151,7 @@ int advection_cpp()
 		status = phreeqc_rm.LoadDatabase("phreeqc.dat");
 
 		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
-		const std::vector<IPhreeqcPhast *> w = phreeqc_rm.GetWorkers();
-		my_pointers some_data;
-		some_data.PhreeqcRM_ptr = &phreeqc_rm;
-		some_data.porosity = por.data();
-		some_data.rv = rv.data();
-		some_data.saturation = sat.data();
-		for (int i = 0; i < phreeqc_rm.GetThreadCount() + 2; i++)
-		{
-			w[i]->SetBasicCallback(my_basic_callback, &some_data);
-		}
+		register_basic_callback(&some_data);
 
 		// Demonstration of error handling if ErrorHandlerMode is 0
 		if (status != IRM_OK)
@@ -389,6 +394,7 @@ int advection_cpp()
 		status = phreeqc_rm.SetDumpFileName("advection_cpp.dmp");
 		status = phreeqc_rm.DumpModule(dump_on, append);    // gz disabled unless compiled with #define USE_GZ
 		// Get pointer to worker
+		const std::vector<IPhreeqcPhast *> w = phreeqc_rm.GetWorkers();
 		w[0]->AccumulateLine("Delete; -all");
 		iphreeqc_result = w[0]->RunAccumulated();
 		// Clean up
@@ -586,19 +592,23 @@ int worker_tasks_cc(int *task_number, void * cookie)
 	{
 		do_something(cookie);
 	}
+	else if (*task_number == 1001)
+	{
+		register_basic_callback(cookie);
+	}
 	return 0;
 }
 int do_something(void *cookie)
 {
 	int method_number = 1000;
-	MP_TYPE *comm = (MP_TYPE *) cookie;
+	my_data *data = (my_data *) cookie;
 	int mpi_tasks, mpi_myself, worker_number;
 	MPI_Comm_size(MPI_COMM_WORLD, &mpi_tasks);
 	MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself);
 	std::stringstream msg;
 	if (mpi_myself == 0)
 	{
-		MPI_Bcast(&method_number, 1, MPI_INTEGER, 0, *comm);
+		MPI_Bcast(&method_number, 1, MPI_INTEGER, 0, MPI_COMM_WORLD);
 		fprintf(stderr, "I am root.\n");
 		for (int i = 1; i < mpi_tasks; i++)
 		{
@@ -609,32 +619,46 @@ int do_something(void *cookie)
 	}
 	else
 	{
-		MPI_Send(&mpi_myself, 1, MPI_INTEGER, 0, 0, *comm);
+		MPI_Send(&mpi_myself, 1, MPI_INTEGER, 0, 0, MPI_COMM_WORLD);
 	}
 	return 0;
 }
 #endif
+void register_basic_callback(void *cookie)
+{		
+	my_data *data; 
+	int mpi_tasks, mpi_myself;
+	int	method_number = 1001;
+	data = (my_data *) cookie;
+
+#ifdef USE_MPI
+	MPI_Comm_size(MPI_COMM_WORLD, &mpi_tasks);
+	MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself);
+	if (mpi_myself == 0)
+	{
+		MPI_Bcast(&method_number, 1, MPI_INTEGER, 0, MPI_COMM_WORLD);
+	}
+#endif
+
+	const std::vector<IPhreeqcPhast *> w = data->PhreeqcRM_ptr->GetWorkers();
+	for (int i = 0; i < (int) w.size(); i++)
+	{
+		w[i]->SetBasicCallback(my_basic_callback, cookie);
+	}
+}
 double my_basic_callback(double x1, double x2, const char *str, void *cookie)
 {
-	my_pointers * ptrs = (my_pointers *) cookie;
-	PhreeqcRM *phreeqcrm_ptr = ptrs->PhreeqcRM_ptr;
+	my_data * data_ptr = (my_data *) cookie;
+	PhreeqcRM *phreeqcrm_ptr = data_ptr->PhreeqcRM_ptr;
 	std::string option(str);
 
 	int rm_cell_number = (int) x1;
 	if (rm_cell_number >= 0 && rm_cell_number < phreeqcrm_ptr->GetChemistryCellCount())
 	{
 		const std::vector < std::vector <int> > back = phreeqcrm_ptr->GetBackwardMapping();
-		if (option == "POROSITY")
+		if (option == "HYDRAULIC_K")
 		{
-			return ptrs->porosity[back[rm_cell_number][0]];
-		}
-		else if (option == "RV")
-		{
-			return ptrs->rv[back[rm_cell_number][0]];
-		}
-		else if (option == "SATURATION")
-		{
-			return ptrs->saturation[back[rm_cell_number][0]];
+			return (*data_ptr->hydraulic_K)[back[rm_cell_number][0]];
 		}
 	}
 	return -999.9;

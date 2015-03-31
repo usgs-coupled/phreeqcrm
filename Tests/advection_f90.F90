@@ -1,42 +1,37 @@
 
 
 module mydata
-  double precision, dimension(:), pointer   :: rv_ptr
-  double precision, dimension(:), pointer   :: por_ptr
-  double precision, dimension(:), pointer   :: sat_ptr
+  double precision, dimension(:), pointer :: K_ptr
+  integer                                 :: rm_id
 end module mydata
     
 subroutine advection_f90()  BIND(C)
   USE, intrinsic :: ISO_C_BINDING
   USE PhreeqcRM
   USE IPhreeqc
+  USE mydata
   implicit none
 #ifdef USE_MPI    
   INCLUDE 'mpif.h'
 #endif
-  interface
-     subroutine advect_f90(c, bc_conc, ncomps, nxyz)
-       implicit none
-       double precision, dimension(:,:), allocatable, intent(inout) :: c 
-       double precision, dimension(:,:), allocatable, intent(in) :: bc_conc
-       integer, intent(in)                                       :: ncomps, nxyz
-     end subroutine advect_f90
-     integer function do_something()
-     end function do_something
-     integer(kind=C_INT) function worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
-        USE ISO_C_BINDING
-        implicit none
-        integer(kind=c_int), intent(in) :: method_number
-     end function worker_tasks_f
-
-    DOUBLE PRECISION FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, NAME='my_basic_fortran_callback')
-        USE ISO_C_BINDING
-        IMPLICIT none
-        REAL(kind=C_DOUBLE) x1, x2
-        CHARACTER(kind=C_CHAR) :: str
-        INTEGER(kind=C_INT) :: l 
-     END FUNCTION my_basic_fortran_callback
-  end interface
+    interface
+        subroutine advect_f90(c, bc_conc, ncomps, nxyz)
+            implicit none
+            double precision, dimension(:,:), allocatable, intent(inout) :: c 
+            double precision, dimension(:,:), allocatable, intent(in) :: bc_conc
+            integer, intent(in)                                       :: ncomps, nxyz
+        end subroutine advect_f90
+        integer function do_something()
+        end function do_something
+        integer(kind=C_INT) function worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
+            USE ISO_C_BINDING
+            implicit none
+            integer(kind=c_int), intent(in) :: method_number
+        end function worker_tasks_f
+        SUBROUTINE register_basic_callback_fortran()
+            implicit none
+        END SUBROUTINE register_basic_callback_fortran
+    end interface
 
   ! Based on PHREEQC Example 11
   
@@ -46,6 +41,7 @@ subroutine advection_f90()  BIND(C)
   integer :: nthreads
   integer :: id
   integer :: status
+  double precision, dimension(:), allocatable, target :: hydraulic_K
   double precision, dimension(:), allocatable   :: rv
   double precision, dimension(:), allocatable   :: por
   double precision, dimension(:), allocatable   :: sat
@@ -94,9 +90,16 @@ subroutine advection_f90()  BIND(C)
   ! --------------------------------------------------------------------------
 
   nxyz = 40
+  ! Bogus conductivity field for Basic callback demonstration
+  allocate(hydraulic_K(nxyz))
+  do i = 1, nxyz
+      hydraulic_K(i) = i * 2.0
+  enddo
+  K_ptr => hydraulic_K
 #ifdef USE_MPI
   ! MPI
   id = RM_Create(nxyz, MPI_COMM_WORLD)
+  rm_id = id
   call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
   if (status .ne. MPI_SUCCESS) then
      stop "Failed to get mpi_myself"
@@ -111,6 +114,7 @@ subroutine advection_f90()  BIND(C)
   ! OpenMP
   nthreads = 3
   id = RM_Create(nxyz, nthreads)
+  rm_id = id
 #endif
   ! Set properties
   status = RM_SetErrorHandlerMode(id, 2)  ! exit on error
@@ -175,10 +179,8 @@ subroutine advection_f90()  BIND(C)
   status = RM_LoadDatabase(id, "phreeqc.dat") 
   
   ! Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
-		do i = 0, RM_GetThreadCount(id) + 1
-			j = RM_GetIPhreeqcId(id, i);
-			!j = SetBasicFortranCallback(j, my_basic_fortran_callback)
-		enddo  
+  CALL register_basic_callback_fortran()
+  
   ! Demonstration of error handling if ErrorHandlerMode is 0
   if (status .ne. 0) then
      l = RM_GetErrorStringLength(id)
@@ -421,7 +423,7 @@ subroutine advection_f90()  BIND(C)
   return 
 end subroutine advection_f90
 
-subroutine advect_f90(c, bc_conc, ncomps, nxyz)
+SUBROUTINE ADVECT_F90(c, bc_conc, ncomps, nxyz)
   implicit none
   double precision, dimension(:,:), allocatable, intent(inout) :: c 
   double precision, dimension(:,:), allocatable, intent(in)    :: bc_conc
@@ -437,8 +439,7 @@ subroutine advect_f90(c, bc_conc, ncomps, nxyz)
   do j = 1, ncomps
      c(1,j) = bc_conc(1,j)
   enddo
-
-end subroutine advect_f90
+END SUBROUTINE ADVECT_F90
 
 #ifdef USE_MPI
 integer(kind=C_INT) function worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
@@ -447,18 +448,26 @@ integer(kind=C_INT) function worker_tasks_f(method_number) BIND(C, NAME='worker_
     interface
         integer function do_something()
         end function do_something
+
+        SUBROUTINE register_basic_callback_fortran()
+            implicit none
+        END SUBROUTINE register_basic_callback_fortran        
     end interface
     integer(kind=c_int), intent(in) :: method_number
     integer :: status
 	if (method_number .eq. 1000) then
 		status = do_something()
+	else if (method_number .eq. 1001) then
+		call register_basic_callback_fortran()
     endif
     worker_tasks_f = 0
 end function worker_tasks_f
     
 integer function do_something()
     implicit none
-    INCLUDE 'mpif.h'
+#ifdef USE_MPI    
+  INCLUDE 'mpif.h'
+#endif
 	integer status
 	integer i, method_number, mpi_myself, mpi_task, mpi_tasks, worker_number;
     method_number = 1000
@@ -477,27 +486,65 @@ integer function do_something()
 	do_something = 0
 end function do_something
 #endif
-DOUBLE PRECISION FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, name='my_basic_fortran_callback')
+SUBROUTINE register_basic_callback_fortran()
+    USE IPhreeqc
+    USE mydata
+    USE PhreeqcRM
+    USE ISO_C_BINDING
+    implicit none
+    INTERFACE
+        REAL(kind=C_DOUBLE) FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C)
+            USE ISO_C_BINDING
+            IMPLICIT none
+            REAL(kind=C_DOUBLE), INTENT(in)           :: x1, x2
+            CHARACTER(kind=C_CHAR), INTENT(in)        :: str(*)
+            INTEGER(kind=C_INT),    INTENT(in), value :: l
+        END FUNCTION my_basic_fortran_callback   
+    END INTERFACE    
+#ifdef USE_MPI    
+  INCLUDE 'mpif.h'
+#endif
+	integer status, method_number, mpi_tasks, mpi_myself
+    integer i, j
+    
+    method_number = 1001
+
+#ifdef USE_MPI
+	CALL MPI_Comm_size(MPI_COMM_WORLD, mpi_tasks, status)
+	CALL MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
+	if (mpi_myself == 0) then
+		CALL MPI_Bcast(method_number, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, status)
+	endif
+#endif
+
+    do i = 1, RM_GetThreadCount(rm_id) + 2
+		j = RM_GetIPhreeqcId(rm_id, i-1)
+		j = SetBasicFortranCallback(j, my_basic_fortran_callback)
+    enddo
+END SUBROUTINE register_basic_callback_fortran
+    
+REAL(kind=C_DOUBLE) FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, name='my_basic_fortran_callback')
     USE ISO_C_BINDING
     USE PhreeqcRM
     USE mydata
     IMPLICIT none
-    INTEGER :: list(4)
-    INTEGER :: rm_id, size=4, rm_cell_number
-    REAL(kind=C_DOUBLE) x1, x2
-    CHARACTER(kind=C_CHAR) :: str
-    INTEGER(kind=C_INT) :: l
+    REAL(kind=C_DOUBLE),    INTENT(in)        :: x1, x2
+    CHARACTER(kind=C_CHAR), INTENT(in)        :: str(*)
+    INTEGER(kind=C_INT),    INTENT(in), value :: l
+    character(100) fstr;
+
+    INTEGER :: list(4), i
+    INTEGER :: size=4, rm_cell_number
     
+    do i = 1, l
+        fstr(i:i) = str(i)
+    enddo
 	rm_cell_number = DINT(x1)
     my_basic_fortran_callback = -999.9
 	if (rm_cell_number .ge. 0 .and. rm_cell_number < RM_GetChemistryCellCount(rm_id)) then
 		if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, size) .eq. 0) then
-			if (str(1:l) .eq. "POROSITY") then
-				my_basic_fortran_callback = por_ptr(list(1)+1);
-			else if (str(1:l) == "RV") then
-				my_basic_fortran_callback = rv_ptr(list(1)+1);
-			else if (str(1:l) == "SATURATION") then
-				my_basic_fortran_callback = sat_ptr(list(1)+1);
+			if (fstr(1:l) .eq. "HYDRAULIC_K") then
+				my_basic_fortran_callback = K_ptr(list(1)+1);
             endif
         endif
     endif

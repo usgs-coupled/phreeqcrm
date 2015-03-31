@@ -9,14 +9,17 @@
 #endif
 int worker_tasks_c(int *task_number, void * cookie);
 int do_something(void *cookie);
+
+void register_basic_callback(void *cookie);
 double my_basic_callback(double x1, double x2, const char *str, void *cookie);
 
-struct my_pointers
+struct my_data
 {
+#ifdef USE_MPI
+	MPI_Comm rm_comm;
+#endif
 	int phreeqcrm_id;
-	double *porosity;
-	double * rv;
-	double * saturation;
+	double *K_ptr;
 };
 void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 
@@ -75,17 +78,25 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		int dump_on, append;
 		char * errstr = NULL;
 		int l;
-		struct my_pointers some_data;
+		double * hydraulic_K;
+		struct my_data some_data;
 
 		// --------------------------------------------------------------------------
 		// Create PhreeqcRM
 		// --------------------------------------------------------------------------
 
 		nxyz = 40;
+		// Bogus conductivity field for Basic callback demonstration
+		hydraulic_K = (double *) malloc((size_t) (nxyz * sizeof(double)));
+		for (i = 0; i < nxyz; i++) hydraulic_K[i] = ((double) i) * 2.0;
+		some_data.K_ptr = hydraulic_K;
+
 #ifdef USE_MPI
 		// MPI
 		comm = MPI_COMM_WORLD;
+		some_data.rm_comm = comm;
 		id = RM_Create(nxyz, comm);
+		some_data.phreeqcrm_id = id;
 		if (MPI_Comm_rank(comm, &mpi_myself) != MPI_SUCCESS)
 		{
 			exit(4);
@@ -93,7 +104,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		if (mpi_myself > 0)
 		{
 			status = RM_SetMpiWorkerCallback(id, worker_tasks_c);
-			status = RM_SetMpiWorkerCallbackCookie(id, &comm);
+			status = RM_SetMpiWorkerCallbackCookie(id, &some_data);
 			status = RM_MpiWorker(id);
 			status = RM_Destroy(id);
 			return;
@@ -102,6 +113,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		// OpenMP
 		nthreads = 3;
 		id = RM_Create(nxyz, nthreads);
+		some_data.phreeqcrm_id = id;
 #endif
 		// Set properties
 		status = RM_SetErrorHandlerMode(id, 2);
@@ -115,7 +127,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		status = RM_OpenFiles(id);
 #ifdef USE_MPI
 		// Optional callback for MPI
-		status = do_something(&comm);  // only root is calling do_something here
+		status = do_something(&some_data);  // only root is calling do_something here
 #endif
 		// Set concentration units
 		status = RM_SetUnitsSolution(id, 2);      // 1, mg/L; 2, mol/L; 3, kg/kgs
@@ -170,15 +182,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		status = RM_LoadDatabase(id, "phreeqc.dat"); 
 
 		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
-		some_data.phreeqcrm_id = id;
-		some_data.porosity = por;
-		some_data.rv = rv;
-		some_data.saturation = sat;
-		for (i = 0; i < RM_GetThreadCount(id) + 2; i++)
-		{
-			j = RM_GetIPhreeqcId(id, i);
-			SetBasicCallback(j, my_basic_callback, &some_data);
-		}
+		register_basic_callback(&some_data);
 
 		// Demonstration of error handling if ErrorHandlerMode is 0
 		if (status != IRM_OK)
@@ -456,6 +460,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		free(density);
 		free(temperature);
 		free(pressure);
+		free(hydraulic_K);
 	}
 	void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 	{
@@ -481,60 +486,82 @@ int worker_tasks_c(int *method_number, void * cookie)
 	{
 		do_something(cookie);
 	}
+	else if (*method_number == 1001)
+	{
+		register_basic_callback(cookie);
+	}
 	return 0;
 }
 int do_something(void *cookie)
 {
 	MPI_Status status;
-	MPI_Comm *comm = (MPI_Comm *) cookie;
-	int i, method_number, mpi_myself, mpi_tasks, worker_number;
+	struct my_data *data; 
+	int method_number, mpi_tasks, mpi_myself;
+	int i, worker_number;
+
+	data = (struct my_data *) cookie;
+
 	method_number = 1000;
-	MPI_Comm_size(MPI_COMM_WORLD, &mpi_tasks);
-	MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself);
+	MPI_Comm_size(data->rm_comm, &mpi_tasks);
+	MPI_Comm_rank(data->rm_comm, &mpi_myself);
 	if (mpi_myself == 0)
 	{
-		MPI_Bcast(&method_number, 1, MPI_INTEGER, 0, *comm);
+		MPI_Bcast(&method_number, 1, MPI_INTEGER, 0, data->rm_comm);
 		fprintf(stderr, "I am Groot.\n");
 		for (i = 1; i < mpi_tasks; i++)
 		{
-			MPI_Recv(&worker_number, 1, MPI_INTEGER, i, 0, *comm, &status);
+			MPI_Recv(&worker_number, 1, MPI_INTEGER, i, 0, data->rm_comm, &status);
 			fprintf(stderr, "Recieved data from worker number %d.\n", worker_number);
 		}
 	}
 	else
 	{
-		MPI_Send(&mpi_myself, 1, MPI_INTEGER, 0, 0, *comm);
+		MPI_Send(&mpi_myself, 1, MPI_INTEGER, 0, 0, data->rm_comm);
 	}
 	return 0;
 }
 #endif
+void register_basic_callback(void *cookie)
+{		
+	struct my_data *data; 
+	int i, j, rm_id, mpi_tasks, mpi_myself;
+	int	method_number = 1001;
+	data = (struct my_data *) cookie;
+
+#ifdef USE_MPI
+	MPI_Comm_size(data->rm_comm, &mpi_tasks);
+	MPI_Comm_rank(data->rm_comm, &mpi_myself);
+	if (mpi_myself == 0)
+	{
+		MPI_Bcast(&method_number, 1, MPI_INTEGER, 0, data->rm_comm);
+	}
+#endif
+
+	rm_id = data->phreeqcrm_id;
+	for (i = 0; i < RM_GetThreadCount(rm_id) + 2; i++)
+	{
+		j = RM_GetIPhreeqcId(rm_id, i);
+		SetBasicCallback(j, my_basic_callback, cookie);
+	}
+}
 double my_basic_callback(double x1, double x2, const char *str, void *cookie)
 {
-	struct my_pointers *ptrs;
+	struct my_data *data;
 	int rm_cell_number;
 	int rm_id, size=4;
 	int list[4];
 
-	ptrs = (struct my_pointers *) cookie;
-	rm_id = ptrs->phreeqcrm_id;
-
+	data = (struct my_data *) cookie;
+	rm_id = data->phreeqcrm_id;
 
 	rm_cell_number = (int) x1;
 	if (rm_cell_number >= 0 && rm_cell_number < RM_GetChemistryCellCount(rm_id))
 	{
 		if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, &size) == 0)
 		{
-			if (strcmp(str, "POROSITY") == 0)
+			if (strcmp(str, "HYDRAULIC_K") == 0)
 			{
-				return ptrs->porosity[list[0]];
-			}
-			if (strcmp(str, "RV") == 0)
-			{
-				return ptrs->rv[list[0]];
-			}
-			else if (strcmp(str, "SATURATION") == 0)
-			{
-				return ptrs->saturation[list[0]];
+				return data->K_ptr[list[0]];
 			}
 		}
 	}
