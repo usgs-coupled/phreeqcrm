@@ -9,6 +9,15 @@
 #endif
 int worker_tasks_c(int *task_number, void * cookie);
 int do_something(void *cookie);
+double my_basic_callback(double x1, double x2, const char *str, void *cookie);
+
+struct my_pointers
+{
+	int phreeqcrm_id;
+	double *porosity;
+	double * rv;
+	double * saturation;
+};
 void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 
     void advection_c()
@@ -66,6 +75,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		int dump_on, append;
 		char * errstr = NULL;
 		int l;
+		struct my_pointers some_data;
 
 		// --------------------------------------------------------------------------
 		// Create PhreeqcRM
@@ -158,6 +168,18 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		status = RM_SetPrintChemistryOn(id, 0, 1, 0); // workers, initial_phreeqc, utility
 		// Set printing of chemistry file
 		status = RM_LoadDatabase(id, "phreeqc.dat"); 
+
+		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
+		some_data.phreeqcrm_id = id;
+		some_data.porosity = por;
+		some_data.rv = rv;
+		some_data.saturation = sat;
+		for (i = 0; i < RM_GetThreadCount(id) + 2; i++)
+		{
+			j = RM_GetIPhreeqcId(id, i);
+			SetBasicCallback(j, my_basic_callback, &some_data);
+		}
+
 		// Demonstration of error handling if ErrorHandlerMode is 0
 		if (status != IRM_OK)
 		{
@@ -486,3 +508,35 @@ int do_something(void *cookie)
 	return 0;
 }
 #endif
+double my_basic_callback(double x1, double x2, const char *str, void *cookie)
+{
+	struct my_pointers *ptrs;
+	int rm_cell_number;
+	int rm_id, size=4;
+	int list[4];
+
+	ptrs = (struct my_pointers *) cookie;
+	rm_id = ptrs->phreeqcrm_id;
+
+
+	rm_cell_number = (int) x1;
+	if (rm_cell_number >= 0 && rm_cell_number < RM_GetChemistryCellCount(rm_id))
+	{
+		if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, &size) == 0)
+		{
+			if (strcmp(str, "POROSITY") == 0)
+			{
+				return ptrs->porosity[list[0]];
+			}
+			if (strcmp(str, "RV") == 0)
+			{
+				return ptrs->rv[list[0]];
+			}
+			else if (strcmp(str, "SATURATION") == 0)
+			{
+				return ptrs->saturation[list[0]];
+			}
+		}
+	}
+	return -999.9;
+}

@@ -1,5 +1,11 @@
 
 
+module mydata
+  double precision, dimension(:), pointer   :: rv_ptr
+  double precision, dimension(:), pointer   :: por_ptr
+  double precision, dimension(:), pointer   :: sat_ptr
+end module mydata
+    
 subroutine advection_f90()  BIND(C)
   USE, intrinsic :: ISO_C_BINDING
   USE PhreeqcRM
@@ -22,6 +28,14 @@ subroutine advection_f90()  BIND(C)
         implicit none
         integer(kind=c_int), intent(in) :: method_number
      end function worker_tasks_f
+
+    DOUBLE PRECISION FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, NAME='my_basic_fortran_callback')
+        USE ISO_C_BINDING
+        IMPLICIT none
+        REAL(kind=C_DOUBLE) x1, x2
+        CHARACTER(kind=C_CHAR) :: str
+        INTEGER(kind=C_INT) :: l 
+     END FUNCTION my_basic_fortran_callback
   end interface
 
   ! Based on PHREEQC Example 11
@@ -75,7 +89,6 @@ subroutine advection_f90()  BIND(C)
   character(LEN=10000)                          :: errstr
 #endif
   integer                                       :: l
-
   ! --------------------------------------------------------------------------
   ! Create PhreeqcRM
   ! --------------------------------------------------------------------------
@@ -160,6 +173,12 @@ subroutine advection_f90()  BIND(C)
   status = RM_SetPrintChemistryOn(id, 0, 1, 0)  ! workers, initial_phreeqc, utility
   ! Load database
   status = RM_LoadDatabase(id, "phreeqc.dat") 
+  
+  ! Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
+		do i = 0, RM_GetThreadCount(id) + 1
+			j = RM_GetIPhreeqcId(id, i);
+			!j = SetBasicFortranCallback(j, my_basic_fortran_callback)
+		enddo  
   ! Demonstration of error handling if ErrorHandlerMode is 0
   if (status .ne. 0) then
      l = RM_GetErrorStringLength(id)
@@ -458,3 +477,28 @@ integer function do_something()
 	do_something = 0
 end function do_something
 #endif
+DOUBLE PRECISION FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, name='my_basic_fortran_callback')
+    USE ISO_C_BINDING
+    USE PhreeqcRM
+    USE mydata
+    IMPLICIT none
+    INTEGER :: list(4)
+    INTEGER :: rm_id, size=4, rm_cell_number
+    REAL(kind=C_DOUBLE) x1, x2
+    CHARACTER(kind=C_CHAR) :: str
+    INTEGER(kind=C_INT) :: l
+    
+	rm_cell_number = DINT(x1)
+    my_basic_fortran_callback = -999.9
+	if (rm_cell_number .ge. 0 .and. rm_cell_number < RM_GetChemistryCellCount(rm_id)) then
+		if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, size) .eq. 0) then
+			if (str(1:l) .eq. "POROSITY") then
+				my_basic_fortran_callback = por_ptr(list(1)+1);
+			else if (str(1:l) == "RV") then
+				my_basic_fortran_callback = rv_ptr(list(1)+1);
+			else if (str(1:l) == "SATURATION") then
+				my_basic_fortran_callback = sat_ptr(list(1)+1);
+            endif
+        endif
+    endif
+END FUNCTION my_basic_fortran_callback

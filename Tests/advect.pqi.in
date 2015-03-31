@@ -25,6 +25,7 @@ SELECTED_OUTPUT
 #        -step
         -totals          Na Cl K Ca
 USER_PUNCH
-  -heading  Temperature Pressure
+  -heading  Temperature Pressure Saturation
   10 PUNCH TC, PRESSURE
+  20 PUNCH CALLBACK(cell_no, 0, "SATURATION")
 END

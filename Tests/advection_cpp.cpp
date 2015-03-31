@@ -13,6 +13,16 @@ int do_something(void *cookie);
 #endif
 
 void AdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
+double my_basic_callback(double x1, double x2, const char *str, void *cookie);
+
+class my_pointers
+{
+public:
+	PhreeqcRM *PhreeqcRM_ptr;
+	double *porosity;
+	double * rv;
+	double * saturation;
+};
 
 int advection_cpp()
 {
@@ -125,6 +135,19 @@ int advection_cpp()
 		status = phreeqc_rm.SetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
 		// Load database
 		status = phreeqc_rm.LoadDatabase("phreeqc.dat");
+
+		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
+		const std::vector<IPhreeqcPhast *> w = phreeqc_rm.GetWorkers();
+		my_pointers some_data;
+		some_data.PhreeqcRM_ptr = &phreeqc_rm;
+		some_data.porosity = por.data();
+		some_data.rv = rv.data();
+		some_data.saturation = sat.data();
+		for (int i = 0; i < phreeqc_rm.GetThreadCount() + 2; i++)
+		{
+			w[i]->SetBasicCallback(my_basic_callback, &some_data);
+		}
+
 		// Demonstration of error handling if ErrorHandlerMode is 0
 		if (status != IRM_OK)
 		{
@@ -366,7 +389,6 @@ int advection_cpp()
 		status = phreeqc_rm.SetDumpFileName("advection_cpp.dmp");
 		status = phreeqc_rm.DumpModule(dump_on, append);    // gz disabled unless compiled with #define USE_GZ
 		// Get pointer to worker
-		const std::vector < IPhreeqcPhast *> & w = phreeqc_rm.GetWorkers();
 		w[0]->AccumulateLine("Delete; -all");
 		iphreeqc_result = w[0]->RunAccumulated();
 		// Clean up
@@ -592,3 +614,28 @@ int do_something(void *cookie)
 	return 0;
 }
 #endif
+double my_basic_callback(double x1, double x2, const char *str, void *cookie)
+{
+	my_pointers * ptrs = (my_pointers *) cookie;
+	PhreeqcRM *phreeqcrm_ptr = ptrs->PhreeqcRM_ptr;
+	std::string option(str);
+
+	int rm_cell_number = (int) x1;
+	if (rm_cell_number >= 0 && rm_cell_number < phreeqcrm_ptr->GetChemistryCellCount())
+	{
+		const std::vector < std::vector <int> > back = phreeqcrm_ptr->GetBackwardMapping();
+		if (option == "POROSITY")
+		{
+			return ptrs->porosity[back[rm_cell_number][0]];
+		}
+		else if (option == "RV")
+		{
+			return ptrs->rv[back[rm_cell_number][0]];
+		}
+		else if (option == "SATURATION")
+		{
+			return ptrs->saturation[back[rm_cell_number][0]];
+		}
+	}
+	return -999.9;
+}

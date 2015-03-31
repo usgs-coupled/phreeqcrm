@@ -304,6 +304,45 @@ Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT int        RM_FindComponents(int id);
 /**
+Fills an array with the cell numbers in the user's numbering sytstem that map to a cell in the
+PhreeqcRM numbering system. The mapping is defined by @ref RM_CreateMapping.
+
+@param id            The instance @a id returned from @ref RM_Create.
+@param n             A cell number in the PhreeqcRM numbering system (0 <= n < @ref RM_GetChemistryCellCount).
+@param list          Array to store the user cell numbers mapped to PhreeqcRM cell @a n.
+@param size          Input, the allocated size of @a list; it is an error if the array is too small. 
+                     Output, the number of cells mapped to cell @a n.
+@retval              IRM_RESULT error code (see @ref RM_DecodeError).
+
+@see                 @ref RM_CreateMapping, @ref RM_GetGridCellCount.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, &size) == 0)
+{
+  if (strcmp(str, "POROSITY") == 0)
+  {
+    return ptrs->porosity[list[0]];
+  }
+  if (strcmp(str, "RV") == 0)
+  {
+    return ptrs->rv[list[0]];
+  }
+    else if (strcmp(str, "SATURATION") == 0)
+  {
+    return ptrs->saturation[list[0]];
+  }
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root and (or) workers.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_GetBackwardMapping(int id, int n, int *list, int *size);
+/**
 Returns the number of chemistry cells in the reaction module. The number of chemistry cells is defined by
 the set of non-negative integers in the mapping from user grid cells (@ref RM_CreateMapping).
 The number of chemistry cells is less than or equal to the number of cells in the user's model.
