@@ -824,7 +824,7 @@ INTEGER FUNCTION SetBasicFortranCallback(id, fcn)
             INTEGER, INTENT(in) :: id
             INTERFACE
                 DOUBLE PRECISION FUNCTION fcn(x1, x2, str, l)
-                    INTEGER, INTENT(in) :: l
+                    INTEGER, INTENT(in)   :: l
                     DOUBLE PRECISION, INTENT(in) :: x1, x2
                     CHARACTER, INTENT(in) :: str(*)
                 END FUNCTION fcn
@@ -834,8 +834,8 @@ INTEGER FUNCTION SetBasicFortranCallback(id, fcn)
     INTEGER, INTENT(in) :: id     
     INTERFACE
         DOUBLE PRECISION FUNCTION fcn(x1, x2, str, l) 
-            INTEGER, INTENT(in) :: l
-            REAL, INTENT(in) :: x1, x2
+            INTEGER, INTENT(in)          :: l
+            DOUBLE PRECISION, INTENT(in) :: x1, x2
             CHARACTER, INTENT(in) :: str(*)
         END FUNCTION fcn
     END INTERFACE
@@ -856,9 +856,9 @@ INTEGER FUNCTION SetBasicFortranCallback(id, fcn)
                 REAL(KIND=C_DOUBLE) FUNCTION fcn(x1, x2, str, l) BIND(C)
                     USE ISO_C_BINDING
                     IMPLICIT none
-                    REAL(KIND=C_DOUBLE), INTENT(in) :: x1, x2
+                    REAL(KIND=C_DOUBLE),    INTENT(in) :: x1, x2
                     CHARACTER(KIND=C_CHAR), INTENT(in) :: str(*)
-                    INTEGER(KIND=C_INT), INTENT(in) :: l
+                    INTEGER(KIND=C_INT),    INTENT(in), value :: l
                 END FUNCTION fcn
            END INTERFACE
         END FUNCTION SetBasicFortranCallbackF
@@ -868,9 +868,9 @@ INTEGER FUNCTION SetBasicFortranCallback(id, fcn)
         REAL(KIND=C_DOUBLE) FUNCTION fcn(x1, x2, str, l) BIND(C)
             USE ISO_C_BINDING
             IMPLICIT none
-            REAL(KIND=C_DOUBLE), INTENT(in) :: x1, x2
+            REAL(KIND=C_DOUBLE),    INTENT(in) :: x1, x2
             CHARACTER(KIND=C_CHAR), INTENT(in) :: str(*)
-            INTEGER(KIND=C_INT), INTENT(in) :: l
+            INTEGER(KIND=C_INT),    INTENT(in), value :: l
         END FUNCTION fcn
     END INTERFACE
 	SetBasicFortranCallback = SetBasicFortranCallbackF(id, fcn)
