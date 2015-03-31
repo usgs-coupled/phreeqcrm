@@ -200,6 +200,30 @@ RMF_FindComponents(int *id)
 }
 
 /* ---------------------------------------------------------------------- */
+IRM_RESULT RMF_GetBackwardMapping(int *id, int *n, int *list, int *size)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		if (*n >= 0 && *n < Reaction_module_ptr->GetChemistryCellCount() && list != NULL)
+		{
+			const std::vector < std::vector<int> > back = Reaction_module_ptr->GetBackwardMapping();
+			if (*size >= (int) back[*n].size())
+			{
+				*size = (int) back[*n].size();
+				for (int i = 0; i < *size; i++)
+				{
+					list[i] = back[*n][i];
+				}
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
 int
 RMF_GetChemistryCellCount(int * id)
 /* ---------------------------------------------------------------------- */

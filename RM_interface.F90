@@ -518,6 +518,57 @@ INTEGER FUNCTION RM_FindComponents(id)
     return
 END FUNCTION RM_FindComponents  
 
+!> Fills an array with the cell numbers in the user's numbering sytstem that map to a cell in the
+!> PhreeqcRM numbering system. The mapping is defined by @ref RM_CreateMapping.
+
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> @param n             A cell number in the PhreeqcRM numbering system (0 <= n < @ref RM_GetChemistryCellCount).
+!> @param list          Array to store the user cell numbers mapped to PhreeqcRM cell @a n.
+!> @param size          Input, the allocated size of @a list; it is an error if the array is too small. 
+!>                      Output, the number of cells mapped to cell @a n.
+!> @retval              IRM_RESULT error code (see @ref RM_DecodeError).
+!> 
+!> @see                 @ref RM_CreateMapping, @ref RM_GetGridCellCount.
+!> 
+!> @par C Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, size) .eq. 0) then
+!>   if (str(1:l) .eq. "POROSITY") then
+!>     my_basic_fortran_callback = por_ptr(list(1)+1);
+!>   else if (str(1:l) == "RV") then
+!>     my_basic_fortran_callback = rv_ptr(list(1)+1);
+!>   else if (str(1:l) == "SATURATION") then
+!>     my_basic_fortran_callback = sat_ptr(list(1)+1);
+!>   endif
+!> endif
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root and (or) workers.
+
+INTEGER FUNCTION RM_GetBackwardMapping(id, n, list, size) 
+	USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetBackwardMapping(id, n, list, size) &
+			BIND(C, NAME='RMF_GetBackwardMapping') 
+			USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in)    :: id, n
+            INTEGER(KIND=C_INT), INTENT(in)    :: list(*)
+            INTEGER(KIND=C_INT), INTENT(inout) :: size
+        END FUNCTION RMF_GetBackwardMapping  
+	END INTERFACE
+    INTEGER, INTENT(in)    :: id, n
+    INTEGER, INTENT(in)    :: list(*)
+    INTEGER, INTENT(inout) :: size
+    RM_GetBackwardMapping = RMF_GetBackwardMapping(id, n, list, size)
+    return
+END FUNCTION RM_GetBackwardMapping  
+
 !> Returns the number of chemistry cells in the reaction module. The number of chemistry cells is defined by
 !> the set of non-negative integers in the mapping from user grid cells (@ref RM_CreateMapping).
 !> The number of chemistry cells is less than or equal to the number of cells in the user's model.

@@ -24,6 +24,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_Destroy(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_DumpModule(int *id, int *dump_on, int *append);
 IRM_DLL_EXPORT IRM_RESULT RMF_ErrorMessage(int *id, const char *err_str);
 IRM_DLL_EXPORT int        RMF_FindComponents(int *id);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetBackwardMapping(int *id, int *n, int *list, int *size);
 IRM_DLL_EXPORT int        RMF_GetChemistryCellCount(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetComponent(int * id, int * num, char *chem_name, int *l1);
 IRM_DLL_EXPORT int        RMF_GetComponentCount(int * id);
