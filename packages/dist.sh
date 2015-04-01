@@ -159,7 +159,7 @@ echo "Exporting revision $REVISION of external phreeqcpp into sandbox..."
 (cd "$DIST_SANDBOX" && \
  	${SVN:-svn} export -q $EXTRA_EXPORT_OPTIONS --ignore-externals -r "$REVISION" \
 	     "http://internalbrr.cr.usgs.gov/svn_GW/phreeqc3/trunk/src" \
-	     "$DISTNAME/srcIPhreeqcPhast/IPhreeqc/phreeqcpp")
+	     "$DISTNAME/src/IPhreeqcPhast/IPhreeqc/phreeqcpp")
 
 # echo "Exporting revision $REVISION of external examples/c into sandbox..."
 # (cd "$DIST_SANDBOX" && \
