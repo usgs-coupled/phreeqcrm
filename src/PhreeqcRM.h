@@ -407,10 +407,10 @@ the grid-cell numbers that map to the reaction cell.
 @htmlonly
 <CODE>
 <PRE>
-for (int j = 0; j < count_chemistry; j++)
+const std::vector < std::vector <int> > back = phreeqcrm_ptr->GetBackwardMapping();
+if (option == "HYDRAULIC_K")
 {
-    // First grid cell in list for reaction cell j
-	int i = phreeqc_rm.GetBackwardMapping()[j][0];
+  return (*data_ptr->hydraulic_K)[back[rm_cell_number][0]];
 }
 </PRE>
 </CODE>
