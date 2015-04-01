@@ -549,7 +549,6 @@ ${PROJECT_SOURCE_DIR}/src/RM_interface.F90
 ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
 )
 
-##{{
 if (PHREEQCRM_BUILD_MPI)
   ADD_DEFINITIONS(-DUSE_MPI)
   include_directories(${MPI_CXX_INCLUDE_PATH})
@@ -576,7 +575,6 @@ else()
     endif()
   endif()
 endif()  
-##}}
 
 # install
 install(TARGETS PhreeqcRM DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -586,4 +584,6 @@ install(FILES ${PhreeqcRM_SRC} DESTINATION src)
 # tests
 enable_testing()
 
+# subdirs
+add_subdirectory(Doxygen)
 add_subdirectory(Tests)
