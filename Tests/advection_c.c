@@ -524,7 +524,10 @@ int do_something(void *cookie)
 void register_basic_callback(void *cookie)
 {		
 	struct my_data *data; 
-	int i, j, rm_id, mpi_tasks, mpi_myself;
+	int i, j, rm_id;
+#ifdef USE_MPI
+	int mpi_tasks, mpi_myself;
+#endif
 	int	method_number = 1001;
 	data = (struct my_data *) cookie;
 
