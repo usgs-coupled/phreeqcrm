@@ -7,7 +7,10 @@ AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([-Wall -Werror foreign no-define subdir-objects])
-AC_CONFIG_SRCDIR([.])
+AC_CONFIG_SRCDIR([src/PhreeqcRM.cpp])
+
+# enable silent rules when available (automake 1.11 or later).
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_CANONICAL_HOST
 
@@ -197,6 +200,7 @@ fi
 
 AC_CONFIG_FILES([
   Makefile
+  Doxygen/Makefile
   Tests/Makefile
   Tests/advect.pqi
   Tests/phreeqc.dat
