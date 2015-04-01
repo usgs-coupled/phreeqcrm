@@ -528,7 +528,7 @@ END FUNCTION RM_FindComponents
 !>                      Output, the number of cells mapped to cell @a n.
 !> @retval              IRM_RESULT error code (see @ref RM_DecodeError).
 !> 
-!> @see                 @ref RM_CreateMapping, @ref RM_GetGridCellCount.
+!> @see                 @ref RM_CreateMapping, @ref RM_GetChemistryCellCount, @ref RM_GetGridCellCount.
 !> 
 !> @par C Example:
 !> @htmlonly

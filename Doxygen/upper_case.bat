@@ -39,6 +39,10 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getbackwardmapping/RM_GetBackwardMapping/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_getchemistrycellcount/RM_GetChemistryCellCount/g" %%f 
   @del sed*
 )

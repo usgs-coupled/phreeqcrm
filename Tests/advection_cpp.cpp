@@ -657,7 +657,7 @@ double my_basic_callback(double x1, double x2, const char *str, void *cookie)
 	int rm_cell_number = (int) x1;
 	if (rm_cell_number >= 0 && rm_cell_number < phreeqcrm_ptr->GetChemistryCellCount())
 	{
-		const std::vector < std::vector <int> > back = phreeqcrm_ptr->GetBackwardMapping();
+		const std::vector < std::vector <int> > & back = phreeqcrm_ptr->GetBackwardMapping();
 		if (option == "HYDRAULIC_K")
 		{
 			return (*data_ptr->hydraulic_K)[back[rm_cell_number][0]];

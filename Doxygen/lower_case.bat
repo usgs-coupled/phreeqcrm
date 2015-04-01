@@ -11,6 +11,7 @@ sed -i -e "s/RM_Destroy/rm_destroy/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_DumpModule/rm_dumpmodule/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_ErrorMessage/rm_errormessage/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_FindComponents/rm_findcomponents/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetBackwardMapping/rm_getbackwardmapping/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetChemistryCellCount/rm_getchemistrycellcount/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetComponentCount/rm_getcomponentcount/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetComponent/rm_getcomponent/g" %RM_INTERFACE_F90%

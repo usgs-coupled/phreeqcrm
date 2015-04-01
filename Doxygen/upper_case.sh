@@ -30,6 +30,9 @@ for f in html/*.html; do
   sed -i "s/rm_findcomponents/RM_FindComponents/g" $f 
 done
 for f in html/*.html; do
+  sed -i "s/rm_getbackwardmapping/RM_GetBackwardMapping/g" $f 
+done
+for f in html/*.html; do
   sed -i "s/rm_getchemistrycellcount/RM_GetChemistryCellCount/g" $f 
 done
 for f in html/*.html; do

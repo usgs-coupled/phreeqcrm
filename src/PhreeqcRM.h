@@ -402,12 +402,13 @@ Each reaction-cell number has a vector of one or more grid-cell numbers.
 @retval              Vector of vectors of ints. For each reaction cell @a n,
 the @a nth vector in the vector of vectors contains
 the grid-cell numbers that map to the reaction cell.
-@see                 @ref CreateMapping, @ref GetForwardMapping.
+@see                 @ref CreateMapping, @ref GetForwardMapping, @ref GetChemistryCellCount, 
+@ref GetGridCellCount.
 @par C++ Example:
 @htmlonly
 <CODE>
 <PRE>
-const std::vector < std::vector <int> > back = phreeqcrm_ptr->GetBackwardMapping();
+const std::vector < std::vector <int> > & back = phreeqcrm_ptr->GetBackwardMapping();
 if (option == "HYDRAULIC_K")
 {
   return (*data_ptr->hydraulic_K)[back[rm_cell_number][0]];
