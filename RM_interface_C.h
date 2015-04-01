@@ -322,17 +322,9 @@ PhreeqcRM numbering system. The mapping is defined by @ref RM_CreateMapping.
 <PRE>
 if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, &size) == 0)
 {
-  if (strcmp(str, "POROSITY") == 0)
+  if (strcmp(str, "HYDRAULIC_K") == 0)
   {
-    return ptrs->porosity[list[0]];
-  }
-  if (strcmp(str, "RV") == 0)
-  {
-    return ptrs->rv[list[0]];
-  }
-    else if (strcmp(str, "SATURATION") == 0)
-  {
-    return ptrs->saturation[list[0]];
+    return data->K_ptr[list[0]];
   }
 }
 </PRE>

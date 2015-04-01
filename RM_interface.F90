@@ -535,12 +535,8 @@ END FUNCTION RM_FindComponents
 !> <CODE>
 !> <PRE>
 !> if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, size) .eq. 0) then
-!>   if (str(1:l) .eq. "POROSITY") then
-!>     my_basic_fortran_callback = por_ptr(list(1)+1);
-!>   else if (str(1:l) == "RV") then
-!>     my_basic_fortran_callback = rv_ptr(list(1)+1);
-!>   else if (str(1:l) == "SATURATION") then
-!>     my_basic_fortran_callback = sat_ptr(list(1)+1);
+!>   if (fstr(1:l) .eq. "HYDRAULIC_K") then
+!>     my_basic_fortran_callback = K_ptr(list(1)+1);
 !>   endif
 !> endif
 !> </PRE>
