@@ -301,7 +301,7 @@ subroutine advection_f90()  BIND(C)
      ! Transport calculation here
      write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
           RM_GetTime(id) * RM_GetTimeConversion(id), " days"
-     status = RM_LogMessage(id, string);
+     status = RM_LogMessage(id, string)
      status = RM_ScreenMessage(id, string)
      write(string, "(A32,F15.1,A)") "          Time step             ", &
           RM_GetTimeStep(id) * RM_GetTimeConversion(id), " days"
@@ -310,10 +310,10 @@ subroutine advection_f90()  BIND(C)
      call advect_f90(c, bc_conc, ncomps, nxyz)
      ! print at last time step
      if (isteps == nsteps) then
-        status = RM_SetSelectedOutputOn(id, 1);        ! enable selected output
+        status = RM_SetSelectedOutputOn(id, 1)         ! enable selected output
         status = RM_SetPrintChemistryOn(id, 1, 0, 0)   ! workers, initial_phreeqc, utility
      else
-        status = RM_SetSelectedOutputOn(id, 0);        ! disable selected output
+        status = RM_SetSelectedOutputOn(id, 0)         ! disable selected output
         status = RM_SetPrintChemistryOn(id, 0, 0, 0)   ! workers, initial_phreeqc, utility
      endif
      ! Transfer data to PhreeqcRM for reactions
@@ -328,8 +328,8 @@ subroutine advection_f90()  BIND(C)
      ! Run cells with transported conditions
      write(string, "(A32,F15.1,A)") "Beginning reaction calculation  ", &
           time * RM_GetTimeConversion(id), " days"
-     status = RM_LogMessage(id, string);
-     status = RM_ScreenMessage(id, string);
+     status = RM_LogMessage(id, string) 
+     status = RM_ScreenMessage(id, string) 
      status = RM_RunCells(id)  
      ! Transfer data from PhreeqcRM for transport
      status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
@@ -387,8 +387,8 @@ subroutine advection_f90()  BIND(C)
   status = SetOutputFileName(iphreeqc_id, "utility_f90.txt")
   status = SetOutputFileOn(iphreeqc_id, .true.)
   status = RunString(iphreeqc_id, string)
-  if (status .ne. 0) status = RM_Abort(id, status, "IPhreeqc RunString failed");
-  status = SetCurrentSelectedOutputUserNumber(iphreeqc_id, 5);
+  if (status .ne. 0) status = RM_Abort(id, status, "IPhreeqc RunString failed") 
+  status = SetCurrentSelectedOutputUserNumber(iphreeqc_id, 5) 
   status = GetSelectedOutputValue(iphreeqc_id, 1, 1, vtype, pH, svalue)
   ! Dump results   
   status = RM_SetDumpFileName(id, "advection_f90.dmp")  
@@ -400,26 +400,26 @@ subroutine advection_f90()  BIND(C)
   status = RM_MpiWorkerBreak(id)
   status = RM_Destroy(id)
   ! Deallocate
-  deallocate(rv);
-  deallocate(por);
-  deallocate(sat);
-  deallocate(print_chemistry_mask);
-  deallocate(grid2chem);
-  deallocate(components);
-  deallocate(ic1);
-  deallocate(ic2);
-  deallocate(f1);
-  deallocate(bc1);
-  deallocate(bc2);
-  deallocate(bc_f1);
-  deallocate(bc_conc);
-  deallocate(c);
-  deallocate(density);
-  deallocate(temperature);
-  deallocate(c_well);
-  deallocate(pressure);
-  deallocate(tc);
-  deallocate(p_atm);
+  deallocate(rv) 
+  deallocate(por) 
+  deallocate(sat) 
+  deallocate(print_chemistry_mask) 
+  deallocate(grid2chem) 
+  deallocate(components) 
+  deallocate(ic1) 
+  deallocate(ic2) 
+  deallocate(f1) 
+  deallocate(bc1) 
+  deallocate(bc2) 
+  deallocate(bc_f1) 
+  deallocate(bc_conc) 
+  deallocate(c) 
+  deallocate(density) 
+  deallocate(temperature) 
+  deallocate(c_well) 
+  deallocate(pressure) 
+  deallocate(tc) 
+  deallocate(p_atm) 
   return 
 end subroutine advection_f90
 
@@ -469,7 +469,7 @@ integer function do_something()
   INCLUDE 'mpif.h'
 #endif
 	integer status
-	integer i, method_number, mpi_myself, mpi_task, mpi_tasks, worker_number;
+	integer i, method_number, mpi_myself, mpi_task, mpi_tasks, worker_number 
     method_number = 1000
 	call MPI_Comm_size(MPI_COMM_WORLD, mpi_tasks, status)
     call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
@@ -531,7 +531,7 @@ REAL(kind=C_DOUBLE) FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, n
     REAL(kind=C_DOUBLE),    INTENT(in)        :: x1, x2
     CHARACTER(kind=C_CHAR), INTENT(in)        :: str(*)
     INTEGER(kind=C_INT),    INTENT(in), value :: l
-    character(100) fstr;
+    character(100) fstr
 
     INTEGER :: list(4), i
     INTEGER :: size=4, rm_cell_number
@@ -544,7 +544,7 @@ REAL(kind=C_DOUBLE) FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, n
 	if (rm_cell_number .ge. 0 .and. rm_cell_number < RM_GetChemistryCellCount(rm_id)) then
 		if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, size) .eq. 0) then
 			if (fstr(1:l) .eq. "HYDRAULIC_K") then
-				my_basic_fortran_callback = K_ptr(list(1)+1);
+				my_basic_fortran_callback = K_ptr(list(1)+1)
             endif
         endif
     endif

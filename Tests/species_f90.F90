@@ -78,14 +78,14 @@ subroutine species_f90()  BIND(C)
      stop "Failed to get mpi_myself"
   endif
   if (mpi_myself > 0) then
-     status = RM_MpiWorker(id);
-     status = RM_Destroy(id);
+     status = RM_MpiWorker(id) 
+     status = RM_Destroy(id) 
      return
   endif
 #else
   ! OpenMP
-  nthreads = 3;
-  id = RM_Create(nxyz, nthreads);
+  nthreads = 3 
+  id = RM_Create(nxyz, nthreads) 
 #endif
   ! Set properties
   status = RM_SetErrorHandlerMode(id, 2)  ! exit on error
@@ -183,18 +183,18 @@ subroutine species_f90()  BIND(C)
   ! Determine species information
   nspecies = RM_GetSpeciesCount(id) 
   allocate(species_z(nspecies), species_d(nspecies))
-  status = RM_GetSpeciesZ(id, species_z);
-  status = RM_GetSpeciesD25(id, species_d);
+  status = RM_GetSpeciesZ(id, species_z) 
+  status = RM_GetSpeciesD25(id, species_d) 
   do i = 1, nspecies
-     status = RM_GetSpeciesName(id, i, string);
+     status = RM_GetSpeciesName(id, i, string) 
      write(string1,"(A12)") trim(string)
-     status = RM_OutputMessage(id, string1);
+     status = RM_OutputMessage(id, string1) 
      write(string1,"(A12,F10.1)")  "    Charge: ", species_z(i)
-     status = RM_OutputMessage(id, string1);
+     status = RM_OutputMessage(id, string1) 
      write(string1,"(A12,E10.3)")  "    Dw:     ", species_d(i)
-     status = RM_OutputMessage(id, string1);
+     status = RM_OutputMessage(id, string1) 
   enddo
-  status = RM_OutputMessage(id, " ");    
+  status = RM_OutputMessage(id, " ")     
   ! Set array of initial conditions
   allocate(ic1(nxyz,7), ic2(nxyz,7), f1(nxyz,7))
   ic1 = -1
@@ -265,7 +265,7 @@ subroutine species_f90()  BIND(C)
      ! Transport calculation here
      write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
           RM_GetTime(id) * RM_GetTimeConversion(id), " days"
-     status = RM_LogMessage(id, string);
+     status = RM_LogMessage(id, string) 
      status = RM_ScreenMessage(id, string)
      write(string, "(A32,F15.1,A)") "          Time step             ", &
           RM_GetTimeStep(id) * RM_GetTimeConversion(id), " days"
@@ -275,10 +275,10 @@ subroutine species_f90()  BIND(C)
 
      ! print at last time step
      if (isteps == nsteps) then
-        status = RM_SetSelectedOutputOn(id, 1);        ! enable selected output
+        status = RM_SetSelectedOutputOn(id, 1)         ! enable selected output
         status = RM_SetPrintChemistryOn(id, 1, 0, 0)   ! workers, initial_phreeqc, utility
      else
-        status = RM_SetSelectedOutputOn(id, 0);        ! disable selected output
+        status = RM_SetSelectedOutputOn(id, 0)         ! disable selected output
         status = RM_SetPrintChemistryOn(id, 0, 0, 0)   ! workers, initial_phreeqc, utility
      endif
      ! Transfer data to PhreeqcRM for reactions
@@ -293,8 +293,8 @@ subroutine species_f90()  BIND(C)
      ! Run cells with transported conditions
      write(string, "(A32,F15.1,A)") "Beginning reaction calculation  ", &
           time * RM_GetTimeConversion(id), " days"
-     status = RM_LogMessage(id, string);
-     status = RM_ScreenMessage(id, string);
+     status = RM_LogMessage(id, string) 
+     status = RM_ScreenMessage(id, string) 
      status = RM_RunCells(id)  
      ! Transfer data from PhreeqcRM for transport
      status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
@@ -363,26 +363,26 @@ subroutine species_f90()  BIND(C)
   status = RM_MpiWorkerBreak(id)
   status = RM_Destroy(id)
   ! Deallocate
-  deallocate(rv);
-  deallocate(por);
-  deallocate(sat);
-  deallocate(print_chemistry_mask);
-  deallocate(grid2chem);
-  deallocate(components);
-  deallocate(ic1);
-  deallocate(ic2);
-  deallocate(f1);
-  deallocate(bc1);
-  deallocate(bc2);
-  deallocate(bc_f1);
-  deallocate(bc_conc);
-  deallocate(c);
-  deallocate(density);
-  deallocate(temperature);
-  deallocate(c_well);
-  deallocate(pressure);
-  deallocate(tc);
-  deallocate(p_atm);
+  deallocate(rv) 
+  deallocate(por) 
+  deallocate(sat) 
+  deallocate(print_chemistry_mask) 
+  deallocate(grid2chem) 
+  deallocate(components) 
+  deallocate(ic1) 
+  deallocate(ic2) 
+  deallocate(f1) 
+  deallocate(bc1) 
+  deallocate(bc2) 
+  deallocate(bc_f1) 
+  deallocate(bc_conc) 
+  deallocate(c) 
+  deallocate(density) 
+  deallocate(temperature) 
+  deallocate(c_well) 
+  deallocate(pressure) 
+  deallocate(tc) 
+  deallocate(p_atm) 
   return 
 end subroutine species_f90
 
