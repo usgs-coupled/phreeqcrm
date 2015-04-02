@@ -879,7 +879,7 @@ void IPhreeqc::SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, cha
 	this->PhreeqcPtr->register_fortran_basic_callback(fcn);
 }
 #else
-void IPhreeqc::SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, char *str, int l))
+void IPhreeqc::SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, const char *str, int l))
 {
 	this->PhreeqcPtr->register_fortran_basic_callback(fcn);
 }

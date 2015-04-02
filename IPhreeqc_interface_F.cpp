@@ -410,7 +410,7 @@ SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *st
 }
 #else
 IPQ_RESULT
-SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *str, int l))
+SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, const char *str, int l))
 {
 	return ::SetBasicFortranCallback(*id, fcn);
 }
