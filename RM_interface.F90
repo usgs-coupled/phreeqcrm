@@ -536,7 +536,7 @@ END FUNCTION RM_FindComponents
 !> <PRE>
 !> if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, size) .eq. 0) then
 !>   if (fstr(1:l) .eq. "HYDRAULIC_K") then
-!>     my_basic_fortran_callback = K_ptr(list(1)+1);
+!>     my_basic_fortran_callback = K_ptr(list(1)+1) 
 !>   endif
 !> endif
 !> </PRE>
