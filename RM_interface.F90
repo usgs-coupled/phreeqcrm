@@ -3984,6 +3984,12 @@ END FUNCTION RM_SetTimeStep
 !> 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (@ref RM_SetPorosity); or
 !> 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-P)*RV.
 !> 
+!> If a single EXCHANGE definition is used for cells with different initial porosity, 
+!>    the three options scale quite differently. 
+!> For option 0, the number of moles of exchangers will be the same regardless of porosity. 
+!> For option 1, the number of moles of exchangers will be vary directly with porosity and inversely with rock volume. 
+!> For option 2, the number of moles of exchangers will vary directly with rock volume and inversely with porosity.
+!> 
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for exchangers: 0, 1, or 2.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -4027,6 +4033,12 @@ END FUNCTION RM_SetUnitsExchange
 !> 0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (@ref RM_SetRepresentativeVolume);
 !> 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (@ref RM_SetPorosity); or
 !> 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
+!> 
+!> If a single GAS_PHASE definition is used for cells with different initial porosity, 
+!>    the three options scale quite differently. 
+!> For option 0, the number of moles of a gas component will be the same regardless of porosity. 
+!> For option 1, the number of moles of a gas component will be vary directly with porosity and inversely with rock volume. 
+!> For option 2, the number of moles of a gas component will vary directly with rock volume and inversely with porosity.
 !> 
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for gas phases: 0, 1, or 2.
@@ -4073,14 +4085,24 @@ END FUNCTION RM_SetUnitsGasPhase
 !> 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (@ref RM_SetPorosity); or
 !> 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
 !> 
-!> @n@n
-!> Note that the volume of water in a cell in the reaction module is equal
-!> to the product of porosity (@ref RM_SetPorosity), the saturation (@ref RM_SetSaturation), 
-!> and representative volume (@ref RM_SetRepresentativeVolume),
-!> which is usually less than 1 liter.
-!> It is important to write the RATES definitions for KINETICS to account for the current volume of water,
-!> often by calculating the rate of reaction per liter of water and multiplying by the
-!> volume of water (Basic function SOLN_VOL).
+!> If a single KINETICS definition is used for cells with different initial porosity, 
+!>    the three options scale quite differently. 
+!> For option 0, the number of moles of kinetic reactants will be the same regardless of porosity. 
+!> For option 1, the number of moles of kinetic reactants will be vary directly with porosity and inversely with rock volume. 
+!> For option 2, the number of moles of kinetic reactants will vary directly with rock volume and inversely with porosity.
+!> 
+!> Note that the volume of water in a cell in the reaction module is equal to the product of
+!> porosity (@ref RM_SetPorosity), the saturation (@ref RM_SetSaturation), and representative volume (@ref
+!> RM_SetRepresentativeVolume), which is usually less than 1 liter. It is important to write the RATES
+!> definitions for homogeneous (aqueous) kinetic reactions to account for the current volume of
+!> water, often by calculating the rate of reaction per liter of water and multiplying by the volume
+!> of water (Basic function SOLN_VOL). 
+!> 
+!> Rates that depend on surface area of solids, are not dependent
+!> on the volume of water. However, it is important to get the correct surface area for the kinetic
+!> reaction. To scale the surface area with the number of moles, the specific area (m^2 per mole of reactant) 
+!> can be defined as a parameter (KINETICS; -parm), which is multiplied by the number of moles of 
+!> reactant (Basic function M) in RATES to obtain the surface area.
 !> 
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for kinetic reactants: 0, 1, or 2.
@@ -4125,6 +4147,12 @@ END FUNCTION RM_SetUnitsKinetics
 !> 0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (@ref RM_SetRepresentativeVolume);
 !> 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (@ref RM_SetPorosity); or
 !> 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
+!> 
+!> If a single EQUILIBRIUM_PHASES definition is used for cells with different initial porosity, 
+!>    the three options scale quite differently. 
+!> For option 0, the number of moles of a mineral will be the same regardless of porosity. 
+!> For option 1, the number of moles of a mineral will be vary directly with porosity and inversely with rock volume. 
+!> For option 2, the number of moles of a mineral will vary directly with rock volume and inversely with porosity.
 !> 
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for equilibrium phases: 0, 1, or 2.
@@ -4177,7 +4205,7 @@ END FUNCTION RM_SetUnitsPPassemblage
 !> of element in the representative volume of a reaction cell, kg/kgs is converted to mol/kgs, multiplied by density
 !> (@ref RM_SetDensity) and
 !> multiplied by the solution volume.
-!> @n@n
+!> 
 !> To convert from moles
 !> of element in the representative volume of a reaction cell to mg/L, the number of moles of an element is divided by the
 !> solution volume resulting in mol/L, and then converted to mg/L.
@@ -4244,6 +4272,12 @@ END FUNCTION RM_SetUnitsSolution
 !> @see                    @ref RM_InitialPhreeqc2Module, @ref RM_InitialPhreeqcCell2Module,
 !> @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume.
 !> 
+!> If a single SOLID_SOLUTION definition is used for cells with different initial porosity, 
+!>    the three options scale quite differently. 
+!> For option 0, the number of moles of a solid-solution component will be the same regardless of porosity. 
+!> For option 1, the number of moles of a solid-solution component will be vary directly with porosity and inversely with rock volume. 
+!> For option 2, the number of moles of a solid-solution component will vary directly with rock volume and inversely with porosity.
+!> 
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -4281,6 +4315,12 @@ END FUNCTION RM_SetUnitsSSassemblage
 !> 0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (@ref RM_SetRepresentativeVolume);
 !> 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (@ref RM_SetPorosity); or
 !> 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
+!> 
+!> If a single SURFACE definition is used for cells with different initial porosity, 
+!>    the three options scale quite differently. 
+!> For option 0, the number of moles of surface sites will be the same regardless of porosity. 
+!> For option 1, the number of moles of surface sites will be vary directly with porosity and inversely with rock volume. 
+!> For option 2, the number of moles of surface sites will vary directly with rock volume and inversely with porosity.
 !> 
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for surfaces: 0, 1, or 2.
