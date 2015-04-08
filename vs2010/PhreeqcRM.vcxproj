@@ -1,0 +1,467 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="mpi_debug|Win32">
+      <Configuration>mpi_debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="mpi_debug|x64">
+      <Configuration>mpi_debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="mpi|Win32">
+      <Configuration>mpi</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="mpi|x64">
+      <Configuration>mpi</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="openmp_debug|Win32">
+      <Configuration>openmp_debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="openmp_debug|x64">
+      <Configuration>openmp_debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="openmp|Win32">
+      <Configuration>openmp</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="openmp|x64">
+      <Configuration>openmp</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5049778D-3E59-4DD4-A63C-D7648864EF4B}</ProjectGuid>
+    <RootNamespace>PhreeqcRM</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='mpi|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='mpi_debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='openmp|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="IPhreeqc.props" />
+    <Import Project="PhreeqcRM Includes.props" />
+    <Import Project="PhreeqcRM MPI.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="IPhreeqc.props" />
+    <Import Project="PhreeqcRM Includes.props" />
+    <Import Project="PhreeqcRM MPI.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="IPhreeqc.props" />
+    <Import Project="PhreeqcRM Includes.props" />
+    <Import Project="PhreeqcRM OpenMP.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="IPhreeqc.props" />
+    <Import Project="PhreeqcRM Includes.props" />
+    <Import Project="PhreeqcRM OpenMP.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='mpi|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="IPhreeqc.props" />
+    <Import Project="PhreeqcRM Includes.props" />
+    <Import Project="PhreeqcRM MPI.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='mpi_debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="IPhreeqc.props" />
+    <Import Project="PhreeqcRM Includes.props" />
+    <Import Project="PhreeqcRM MPI.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='openmp|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="IPhreeqc.props" />
+    <Import Project="PhreeqcRM Includes.props" />
+    <Import Project="PhreeqcRM OpenMP.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="IPhreeqc.props" />
+    <Import Project="PhreeqcRM Includes.props" />
+    <Import Project="PhreeqcRM OpenMP.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='openmp_debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='openmp_debug|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='openmp|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='openmp|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='mpi_debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='mpi_debug|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='mpi|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='mpi|x64'">$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='openmp|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <OpenMPSupport>true</OpenMPSupport>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='mpi_debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='mpi|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\advection.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\basicsubs.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartHandler.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartObject.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cl1.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cl1mp.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\CSelectedOutput.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\CurveObject.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvdense.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvode.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxKinetics.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxMix.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dense.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dumper.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dw.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Exchange.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ExchComp.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\fwrap.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\fwrap1.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\fwrap2.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\fwrap3.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\fwrap4.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\fwrap5.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\fwrap6.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='mpi_debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='mpi|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='openmp_debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='openmp|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\fwrap7.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='mpi_debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='mpi|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='openmp_debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='openmp|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\fwrap8.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='mpi_debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='mpi|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='openmp_debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='openmp|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasComp.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\gases.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasPhase.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\input.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\integrate.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\inverse.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqc.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqcLib.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqcPhast.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqcPhastLib.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolution.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolutionComp.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\isotopes.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PhreeqcKeywords\Keywords.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\kinetics.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\KineticsComp.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\mainsubs.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\model.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NameDouble.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NumKeyword.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector_serial.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\parse.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Parser.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PBasic.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\phqalloc.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Phreeqc.cpp" />
+    <ClCompile Include="..\src\PhreeqcRM.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_base.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_io.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_io_output.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\pitzer.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\pitzer_structures.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\pp_sys.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblage.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblageComp.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\prep.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Pressure.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\print.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Reaction.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\read.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ReadClass.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\readtr.cpp" />
+    <ClCompile Include="..\src\RM_interface_C.cpp" />
+    <ClCompile Include="..\src\RM_interface_F.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\runner.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SelectedOutput.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\sit.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\smalldense.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Solution.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SolutionIsotope.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\spread.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SS.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SSassemblage.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SScomp.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\step.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBin.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBinList.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\structures.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\sundialsmath.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Surface.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceCharge.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceComp.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\System.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\tally.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Temperature.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\tidy.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\transport.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Use.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\UserPunch.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\utilities.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Utils.cxx" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\Var.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartHandler.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ChartObject.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\CSelectedOutput.hxx" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\CurveObject.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\CVar.hxx" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvdense.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvode.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxKinetics.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxMix.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\Debug.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dense.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dumper.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\ErrorReporter.hxx" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Exchange.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ExchComp.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\fimpl.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Form1.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\fwrap.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasComp.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasPhase.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\global_structures.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqc.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqc.hpp" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqcCallbacks.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqcPhast.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqcPhastLib.h" />
+    <ClInclude Include="..\src\IrmResult.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolution.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\ISolutionComp.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PhreeqcKeywords\Keywords.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\KineticsComp.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NA.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NameDouble.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NumKeyword.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\nvector_serial.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Parser.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PBasic.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\phqalloc.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Phreeqc.h" />
+    <ClInclude Include="..\src\PhreeqcRM.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_base.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_io.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\phrqtype.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblage.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PPassemblageComp.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Pressure.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Reaction.h" />
+    <ClInclude Include="..\src\RM_interface_C.h" />
+    <ClInclude Include="..\src\RM_interface_F.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\runner.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SelectedOutput.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\smalldense.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Solution.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SolutionIsotope.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SS.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SSassemblage.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SScomp.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBin.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\StorageBinList.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\sundialsmath.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\sundialstypes.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Surface.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceCharge.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SurfaceComp.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\System.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Temperature.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\thread.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Use.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\UserPunch.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Utils.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\Var.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\Version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
