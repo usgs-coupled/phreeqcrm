@@ -2616,7 +2616,8 @@ IRM_RESULT
 PhreeqcRM::GetConcentrations(std::vector<double> &c)
 /* ---------------------------------------------------------------------- */
 {
-	this->phreeqcrm_error_string.clear();
+	//this->phreeqcrm_error_string.clear();
+	this->phreeqcrm_error_string="";
 	// convert Reaction module solution data to hst mass fractions
 	IRM_RESULT return_value = IRM_OK;
 	try
@@ -2625,10 +2626,17 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 		c.resize(this->nxyz * this->components.size());
 		std::fill(c.begin(), c.end(), INACTIVE_CELL_VALUE);
 
-		std::vector<double> d;  // scratch space to convert from moles to mass fraction
-		cxxSolution * cxxsoln_ptr;
+
+#ifdef USE_OPENMP
+		omp_set_num_threads(this->nthreads);
+#pragma omp parallel
+#pragma omp for 
+#endif
+
 		for (int n = 0; n < this->nthreads; n++)
 		{
+			cxxSolution * cxxsoln_ptr;
+			std::vector<double> d;  // scratch space to convert from moles to mass fraction
 			for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
 			{
 				// load fractions into d
@@ -6608,8 +6616,8 @@ PhreeqcRM::RunFile(bool workers, bool initial_phreeqc, bool utility, const std::
 
 #ifdef USE_OPENMP
 	omp_set_num_threads(this->nthreads);
-	#pragma omp parallel
-	#pragma omp for
+#pragma omp parallel
+#pragma omp for
 #endif
 	for (int n = 0; n < this->nthreads + 2; n++)
 	{
@@ -7396,7 +7404,8 @@ IRM_RESULT
 PhreeqcRM::SetPrintChemistryOn(bool worker, bool ip, bool utility)
 /* ---------------------------------------------------------------------- */
 {
-	this->phreeqcrm_error_string.clear();
+	//this->phreeqcrm_error_string.clear();
+	this->phreeqcrm_error_string ="";
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
@@ -7421,9 +7430,9 @@ PhreeqcRM::SetPrintChemistryOn(bool worker, bool ip, bool utility)
 #ifdef USE_MPI
 	MPI_Bcast(&l.front(), 3, MPI_INT, 0, phreeqcrm_comm);
 #endif
-	this->print_chemistry_on[0] = l[0] != 0;
-	this->print_chemistry_on[1] = l[1] != 0;
-	this->print_chemistry_on[2] = l[2] != 0;
+	this->print_chemistry_on[0] = (l[0] != 0);
+	this->print_chemistry_on[1] = (l[1] != 0);
+	this->print_chemistry_on[2] = (l[2] != 0);
 	return IRM_OK;
 }
 /* ---------------------------------------------------------------------- */
@@ -7536,7 +7545,8 @@ IRM_RESULT
 PhreeqcRM::SetSelectedOutputOn(bool t)
 /* ---------------------------------------------------------------------- */
 {
-	this->phreeqcrm_error_string.clear();
+	//this->phreeqcrm_error_string.clear();
+	this->phreeqcrm_error_string="";
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
@@ -7632,7 +7642,8 @@ IRM_RESULT
 PhreeqcRM::SetTime(double t)
 /* ---------------------------------------------------------------------- */
 {
-	this->phreeqcrm_error_string.clear();
+	//this->phreeqcrm_error_string.clear();
+	this->phreeqcrm_error_string = "";
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
@@ -7680,7 +7691,8 @@ IRM_RESULT
 PhreeqcRM::SetTimeStep(double t)
 /* ---------------------------------------------------------------------- */
 {
-	this->phreeqcrm_error_string.clear();
+	//this->phreeqcrm_error_string.clear();
+	this->phreeqcrm_error_string = "";
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
