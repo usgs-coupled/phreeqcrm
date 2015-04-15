@@ -224,9 +224,19 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 #endif
 
 	// last one is to calculate well pH
+	this->workers.resize(this->nthreads);
+#ifdef USE_OPENMP
+		omp_set_num_threads(this->nthreads);
+#pragma omp parallel
+#pragma omp for
+#endif
 	for (int i = 0; i < this->nthreads + 2; i++)
 	{
-		this->workers.push_back(new IPhreeqcPhast);
+		this->workers[i] = new IPhreeqcPhast;
+	}
+	for (int i = this->nthreads; i < this->nthreads + 2; i++)
+	{
+		this->workers[i] = new IPhreeqcPhast;
 	}
 	if (this->GetWorkers()[0])
 	{
@@ -3737,21 +3747,43 @@ PhreeqcRM::InitialPhreeqc2Module(
 		// distribute to thread IPhreeqcs
 		std::vector<int> r_values;
 		r_values.resize(this->nthreads, 0);
-		for (int n = 1; n < this->nthreads; n++)
+#ifdef USE_OPENMP
+		omp_set_num_threads(this->nthreads);
+#pragma omp parallel
+#pragma omp for
+#endif
+		for (int n = 0; n < this->nthreads; n++)
 		{
+			int i;
+			if (n == 0) continue;
 			std::ostringstream delete_command;
 			delete_command << "DELETE; -cells\n";
 			for (i = this->start_cell[n]; i <= this->end_cell[n]; i++)
 			{
 				cxxStorageBin sz_bin;
-				this->GetWorkers()[0]->Get_PhreeqcPtr()->phreeqc2cxxStorageBin(sz_bin, i);
+#ifdef USE_OPENMP
+#pragma omp critical
+#endif
+				{
+					this->GetWorkers()[0]->Get_PhreeqcPtr()->phreeqc2cxxStorageBin(sz_bin, i);
+				}
 				this->GetWorkers()[n]->Get_PhreeqcPtr()->cxxStorageBin2phreeqc(sz_bin, i);
 				delete_command << i << "\n";
 			}
-			r_values[n] = this->GetWorkers()[0]->RunString(delete_command.str().c_str());
+#ifdef USE_OPENMP
+#pragma omp critical
+#endif
+				{
+							r_values[n] = this->GetWorkers()[0]->RunString(delete_command.str().c_str());
+				}
 			if (r_values[n] != 0)
 			{
-				this->ErrorMessage(this->GetWorkers()[0]->GetErrorString());
+#ifdef USE_OPENMP
+#pragma omp critical
+#endif
+				{				
+					this->ErrorMessage(this->GetWorkers()[0]->GetErrorString());
+				}
 			}
 		}
 		this->HandleErrorsInternal(r_values);
