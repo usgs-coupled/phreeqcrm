@@ -2704,48 +2704,61 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 #pragma omp parallel
 #pragma omp for 
 #endif
-
 		for (int n = 0; n < this->nthreads; n++)
 		{
+		  std::vector<int> start_cell_local = this->start_cell;
+		  std::vector<int> end_cell_local = this->end_cell;
+		  std::vector<double> porosity_local = this->porosity;
+		  std::vector<double> saturation_local = this->saturation;
+		  std::vector<double> rv_local = this->rv;
+		  std::vector< std::vector <int> > backward_mapping_local = this->backward_mapping;
+		  std::vector<double> density_local;
+		  int count_comps = this->components.size();
+		  IPhreeqcPhast *  iphreeqc_phast_ptr = this->GetWorkers()[n];
+		  bool use_solution_density_volume_local = this->use_solution_density_volume;
+		  if (use_solution_density_volume_local)
+		    {
+		      density_local = this->density;
+		    }
+
 			cxxNameDouble::iterator it;
 			std::vector<double> solns;
 
 			std::vector<double> d;  // scratch space to convert from moles to mass fraction
 			// Put solutions into a vector
-			for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+			for (int j = start_cell_local[n]; j <= end_cell_local[n]; j++)
 			{
 				// load fractions into d
-				cxxSolution * cxxsoln_ptr = this->GetWorkers()[0]->Get_solution(j);
+				cxxSolution * cxxsoln_ptr = iphreeqc_phast_ptr->Get_solution(j);
 				assert (cxxsoln_ptr);
 				double v, dens;
-				if (this->use_solution_density_volume)
+				if (use_solution_density_volume_local)
 				{
 					v = cxxsoln_ptr->Get_soln_vol();
 					dens = cxxsoln_ptr->Get_density();
 				}
 				else
 				{
-					int k = this->backward_mapping[j][0];
-					v = this->saturation[k] * this->porosity[k] * this->rv[k];
+					int k = backward_mapping_local[j][0];
+					v = saturation_local[k] * porosity_local[k] * rv_local[k];
 					if (v <= 0)
 					{
 						v = cxxsoln_ptr->Get_soln_vol();
 					}
-					dens = this->density[k];
+					dens = density_local[k];
 				}
 				this->cxxSolution2concentration(cxxsoln_ptr, d, v, dens);
-				for (int i = 0; i < (int) this->components.size(); i++)
+				for (int i = 0; i < count_comps; i++)
 				{
 					solns.push_back(d[i]);
 				}
 
 			}
-			int location = start_cell[n] * this->components.size();
-			memcpy(&ctemp[location], &solns[0], (this->end_cell[n] - this->start_cell[n] + 1) * sizeof(double));
+			int location = start_cell_local[n] * count_comps;
+			memcpy(&ctemp[location], &solns[0], (end_cell_local[n] - start_cell_local[n] + 1) * sizeof(double));
 		}
 
 		// copy to array
-		int n = 0;
 		for (int j = 0; j < count_chemistry; j++)
 		{
 			std::vector<int>::iterator it;
