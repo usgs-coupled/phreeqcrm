@@ -225,12 +225,14 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 
 	// last one is to calculate well pH
 	this->workers.resize(this->nthreads);
+
 #ifdef USE_OPENMP
 		omp_set_num_threads(this->nthreads);
 #pragma omp parallel
 #pragma omp for
 #endif
-	for (int i = 0; i < this->nthreads + 2; i++)
+
+	for (int i = 0; i < this->nthreads; i++)
 	{
 		this->workers[i] = new IPhreeqcPhast;
 	}
@@ -2716,7 +2718,7 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 		  int count_comps = this->components.size();
 		  IPhreeqcPhast *  iphreeqc_phast_ptr = this->GetWorkers()[n];
 		  bool use_solution_density_volume_local = this->use_solution_density_volume;
-		  if (use_solution_density_volume_local)
+		  if (!use_solution_density_volume_local)
 		    {
 		      density_local = this->density;
 		    }
@@ -2755,7 +2757,10 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 
 			}
 			int location = start_cell_local[n] * count_comps;
+#pragma omp critical
+				{
 			memcpy(&ctemp[location], &solns[0], (end_cell_local[n] - start_cell_local[n] + 1) * sizeof(double));
+				}
 		}
 
 		// copy to array
