@@ -2611,6 +2611,7 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 	return this->ReturnHandler(return_value, "PhreeqcRM::GetConcentrations");
 }
 #else
+#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::GetConcentrations(std::vector<double> &c)
@@ -2673,6 +2674,93 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 				}
 			}
 		}
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::GetConcentrations");
+}
+#endif
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetConcentrations(std::vector<double> &c)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string="";
+	// convert Reaction module solution data to hst mass fractions
+	IRM_RESULT return_value = IRM_OK;
+	try
+	{
+		// check size and fill elements, if necessary resize
+		c.resize(this->nxyz * this->components.size());
+		std::fill(c.begin(), c.end(), INACTIVE_CELL_VALUE);
+		std::vector<double> ctemp;
+		ctemp.resize(this->nxyz * this->components.size());
+		std::fill(ctemp.begin(), ctemp.end(), INACTIVE_CELL_VALUE);
+
+#ifdef USE_OPENMP
+		omp_set_num_threads(this->nthreads);
+#pragma omp parallel
+#pragma omp for 
+#endif
+
+		for (int n = 0; n < this->nthreads; n++)
+		{
+			cxxNameDouble::iterator it;
+			std::vector<double> solns;
+
+			std::vector<double> d;  // scratch space to convert from moles to mass fraction
+			// Put solutions into a vector
+			for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+			{
+				// load fractions into d
+				cxxSolution * cxxsoln_ptr = this->GetWorkers()[0]->Get_solution(j);
+				assert (cxxsoln_ptr);
+				double v, dens;
+				if (this->use_solution_density_volume)
+				{
+					v = cxxsoln_ptr->Get_soln_vol();
+					dens = cxxsoln_ptr->Get_density();
+				}
+				else
+				{
+					int k = this->backward_mapping[j][0];
+					v = this->saturation[k] * this->porosity[k] * this->rv[k];
+					if (v <= 0)
+					{
+						v = cxxsoln_ptr->Get_soln_vol();
+					}
+					dens = this->density[k];
+				}
+				this->cxxSolution2concentration(cxxsoln_ptr, d, v, dens);
+				for (int i = 0; i < (int) this->components.size(); i++)
+				{
+					solns.push_back(d[i]);
+				}
+
+			}
+			int location = start_cell[n] * this->components.size();
+			memcpy(&ctemp[location], &solns[0], (this->end_cell[n] - this->start_cell[n] + 1) * sizeof(double));
+		}
+
+		// copy to array
+		int n = 0;
+		for (int j = 0; j < count_chemistry; j++)
+		{
+			std::vector<int>::iterator it;
+			for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+			{
+				double *d_ptr = &c[*it];
+				size_t i;
+				for (i = 0; i < this->components.size(); i++)
+				{
+					d_ptr[this->nxyz * i] = ctemp[i];
+				}
+			}
+		}
+
+
 	}
 	catch (...)
 	{
