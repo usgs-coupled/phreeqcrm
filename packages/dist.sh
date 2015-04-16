@@ -26,6 +26,7 @@
 #   specified, it will build a release tarball.
 #  
 #   To build a Windows package pass -win.
+NAME=PhreeqcRM
 
 # echo everything
 # set -x
@@ -124,7 +125,7 @@ else
   REPOS_PATH="`echo $REPOS_PATH | sed 's/^\/*//'`"
 fi
 
-DISTNAME="PhreeqcRM-${VERSION}${VER_NUMTAG}"
+DISTNAME="${NAME}-${VERSION}${VER_NUMTAG}"
 DIST_SANDBOX=.dist_sandbox
 DISTPATH="$DIST_SANDBOX/$DISTNAME"
 
