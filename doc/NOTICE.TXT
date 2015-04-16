@@ -1,7 +1,7 @@
                             User Rights Notice
 
 This software and related material (data and (or) documentation),
-contained in or furnished in connection with PhreeqcRM, are made available
+contained in or furnished in connection with @NAME@, are made available
 by the U.S. Geological Survey (USGS) to be used in the public interest
 and in the advancement of science.  You may, without any fee or cost,
 use, copy, modify, or distribute this software, and any derivative works
