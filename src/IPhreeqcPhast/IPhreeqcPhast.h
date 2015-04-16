@@ -53,5 +53,23 @@ protected:
 	std::vector<double> cell_clock_times;
 	double standard_clock_time;
 	cxxStorageBin uz_bin;
+
+public:
+	std::vector<double> saturation_local;	        
+	std::vector<double> rv_local;		            
+	std::vector<double> porosity_local;				
+	std::vector<double> density_local;				
+	std::vector <int> forward_mapping_local;					
+	std::vector <std::vector <int> > backward_mapping_local;	
+	std::vector<bool> print_chemistry_on_local;			
+	std::vector<int> start_cell_local;
+	std::vector<int> end_cell_local;
+	std::vector<int> print_chem_mask_local;		
+	int units_Solution_local;     
+	int nxyz_local;								
+	int count_chemistry_local;					
+	int count_comps_local;	
+	bool use_solution_density_volume_local;				    
+
 };
 #endif // !defined(PHAST_IPHREEQC_H_INCLUDED)

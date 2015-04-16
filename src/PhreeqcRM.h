@@ -3590,6 +3590,8 @@ protected:
 
 private:
 	IRM_RESULT                                SetGeneric(std::vector<double> &destination, int newSize, const std::vector<double> &origin, int mpiMethod, const std::string &name, const double newValue = 0.0);
+	void									  SetLocal(int n);
+
 protected:
 
 #if defined(_MSC_VER)

@@ -224,7 +224,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 #endif
 
 	// last one is to calculate well pH
-	this->workers.resize(this->nthreads);
+	this->workers.resize(this->nthreads + 2);
 
 #ifdef USE_OPENMP
 		omp_set_num_threads(this->nthreads);
@@ -234,7 +234,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 
 	for (int i = 0; i < this->nthreads; i++)
 	{
-		this->workers[i] = new IPhreeqcPhast;
+			this->workers[i] = new IPhreeqcPhast;
 	}
 	for (int i = this->nthreads; i < this->nthreads + 2; i++)
 	{
@@ -2708,58 +2708,46 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 #endif
 		for (int n = 0; n < this->nthreads; n++)
 		{
-		  std::vector<int> start_cell_local = this->start_cell;
-		  std::vector<int> end_cell_local = this->end_cell;
-		  std::vector<double> porosity_local = this->porosity;
-		  std::vector<double> saturation_local = this->saturation;
-		  std::vector<double> rv_local = this->rv;
-		  std::vector< std::vector <int> > backward_mapping_local = this->backward_mapping;
-		  std::vector<double> density_local;
-		  int count_comps = this->components.size();
 		  IPhreeqcPhast *  iphreeqc_phast_ptr = this->GetWorkers()[n];
-		  bool use_solution_density_volume_local = this->use_solution_density_volume;
-		  if (!use_solution_density_volume_local)
-		    {
-		      density_local = this->density;
-		    }
+
 
 			cxxNameDouble::iterator it;
 			std::vector<double> solns;
 
 			std::vector<double> d;  // scratch space to convert from moles to mass fraction
 			// Put solutions into a vector
-			for (int j = start_cell_local[n]; j <= end_cell_local[n]; j++)
+			for (int j = iphreeqc_phast_ptr->start_cell_local[n]; j <= iphreeqc_phast_ptr->end_cell_local[n]; j++)
 			{
 				// load fractions into d
 				cxxSolution * cxxsoln_ptr = iphreeqc_phast_ptr->Get_solution(j);
 				assert (cxxsoln_ptr);
 				double v, dens;
-				if (use_solution_density_volume_local)
+				if (iphreeqc_phast_ptr->use_solution_density_volume_local)
 				{
 					v = cxxsoln_ptr->Get_soln_vol();
 					dens = cxxsoln_ptr->Get_density();
 				}
 				else
 				{
-					int k = backward_mapping_local[j][0];
-					v = saturation_local[k] * porosity_local[k] * rv_local[k];
+					int k = iphreeqc_phast_ptr->backward_mapping_local[j][0];
+					v = iphreeqc_phast_ptr->saturation_local[k] * iphreeqc_phast_ptr->porosity_local[k] * iphreeqc_phast_ptr->rv_local[k];
 					if (v <= 0)
 					{
 						v = cxxsoln_ptr->Get_soln_vol();
 					}
-					dens = density_local[k];
+					dens = iphreeqc_phast_ptr->density_local[k];
 				}
 				this->cxxSolution2concentration(cxxsoln_ptr, d, v, dens);
-				for (int i = 0; i < count_comps; i++)
+				for (int i = 0; i < iphreeqc_phast_ptr->count_comps_local; i++)
 				{
 					solns.push_back(d[i]);
 				}
 
 			}
-			int location = start_cell_local[n] * count_comps;
+			int location = iphreeqc_phast_ptr->start_cell_local[n] * iphreeqc_phast_ptr->count_comps_local;
 #pragma omp critical
 				{
-			memcpy(&ctemp[location], &solns[0], (end_cell_local[n] - start_cell_local[n] + 1) * sizeof(double));
+			memcpy(&ctemp[location], &solns[0], (iphreeqc_phast_ptr->end_cell_local[n] - iphreeqc_phast_ptr->start_cell_local[n] + 1) * sizeof(double));
 				}
 		}
 
@@ -6173,6 +6161,7 @@ PhreeqcRM::RunCells()
 #endif
 		for (int n = 0; n < this->nthreads; n++)
 		{
+			SetLocal(n);
 			r_vector[n] = RunCellsThread(n);
 		}
 		old_saturation = saturation;
@@ -8300,4 +8289,32 @@ PhreeqcRM::GetIPhreeqcPointer(int i)
 /* ---------------------------------------------------------------------- */
 {
 	return (i >= 0 && i < this->nthreads + 2) ? this->workers[i] : NULL;
+}
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::SetLocal(int n)
+/* ---------------------------------------------------------------------- */
+{
+	IPhreeqcPhast * iphreeqcphast_ptr = this->GetWorkers()[n];
+	if (iphreeqcphast_ptr->rv_local.size() == 0)
+	{
+		iphreeqcphast_ptr->rv_local = this->rv;	
+		iphreeqcphast_ptr->forward_mapping_local = this->forward_mapping;
+		iphreeqcphast_ptr->backward_mapping_local = this->backward_mapping;
+		iphreeqcphast_ptr->nxyz_local = this->nxyz;
+		iphreeqcphast_ptr->count_chemistry_local = this->count_chemistry;	
+		iphreeqcphast_ptr->count_comps_local = (int) this->components.size();		
+	}
+	iphreeqcphast_ptr->start_cell_local = this->start_cell;
+	iphreeqcphast_ptr->end_cell_local = this->end_cell;
+	iphreeqcphast_ptr->saturation_local = this->saturation;	
+	iphreeqcphast_ptr->porosity_local = this->porosity;	 		  
+	if (!this->use_solution_density_volume)
+	{
+		iphreeqcphast_ptr->density_local = this->density; 
+	}   
+	iphreeqcphast_ptr->print_chemistry_on_local = this->print_chemistry_on;  
+	iphreeqcphast_ptr->print_chem_mask_local = this->print_chem_mask;     
+	iphreeqcphast_ptr->units_Solution_local = this->units_Solution;  	
+	iphreeqcphast_ptr->use_solution_density_volume_local = this->use_solution_density_volume; 
 }
