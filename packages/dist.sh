@@ -221,7 +221,7 @@ do
    -e "s/@REVISION_SVN@/$REVISION_SVN/g" \
     < "$vsn_file" > "$vsn_file.tmp"
   mv -f "$vsn_file.tmp" "$vsn_file"
-  if [ -n "$WIN" ]; then
+  if [ -n "$WIN" && "$vsn_file" != "$DISTPATH/configure.ac" ]; then
     unix2dos "$vsn_file"
   fi  
   cp "$vsn_file" "$vsn_file.dist"

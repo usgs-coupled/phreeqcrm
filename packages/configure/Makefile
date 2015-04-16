@@ -24,6 +24,8 @@ CMAKE_PKG := $(LNAME)-$(VER)-$(REL).zip
 
 TARBALL  := $(NAME)-$(VER)-$(REL).tar.gz
 
+ZIPBALL  := $(NAME)-$(VER)-$(REL).zip
+
 REPOS_PATH ?= trunk
 
 
