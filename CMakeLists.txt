@@ -549,6 +549,11 @@ ${PROJECT_SOURCE_DIR}/src/RM_interface.F90
 ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
 )
 
+SET(PhreeqcRM_ROOT
+${PROJECT_SOURCE_DIR}/doc/NOTICE.TXT
+${PROJECT_SOURCE_DIR}/doc/README.TXT
+)
+
 if (PHREEQCRM_BUILD_MPI)
   ADD_DEFINITIONS(-DUSE_MPI)
   include_directories(${MPI_CXX_INCLUDE_PATH})
@@ -580,6 +585,7 @@ endif()
 install(TARGETS PhreeqcRM DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${PhreeqcRM_Headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(FILES ${PhreeqcRM_SRC} DESTINATION src)
+install(FILES ${PhreeqcRM_ROOT} DESTINATION .)
 
 # tests
 enable_testing()
