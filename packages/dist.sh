@@ -224,7 +224,7 @@ do
    -e "s/@NAME@/$NAME/g" \
     < "$vsn_file" > "$vsn_file.tmp"
   mv -f "$vsn_file.tmp" "$vsn_file"
-  if [ -n "$WIN" && "$vsn_file" != "$DISTPATH/configure.ac" ]; then
+  if [ -n "$WIN" ] && [ "$vsn_file" != "$DISTPATH/configure.ac" ]; then
     unix2dos "$vsn_file"
   fi  
   cp "$vsn_file" "$vsn_file.dist"
@@ -232,7 +232,6 @@ done
 
 # cp $DISTPATH/phreeqc3-doc/RELEASE.TXT     $DISTPATH/doc/RELEASE
 # cp $DISTPATH/phreeqc3-doc/NOTICE.TXT      $DISTPATH/doc/NOTICE
-exit 99
 
 (cd "$DISTPATH/Doxygen" && "make")
 
