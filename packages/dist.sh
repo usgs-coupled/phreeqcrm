@@ -68,6 +68,7 @@ do
         ;;
       -win)
         WIN=1
+	EXTRA_EXPORT_OPTIONS="--native-eol CRLF"
         ARG_PREV=""
 	;;
       *)
@@ -231,12 +232,19 @@ done
 
 (cd "$DISTPATH/Doxygen" && "make")
 
-echo "Rolling $DISTNAME.tar ..."
-(cd "$DIST_SANDBOX" > /dev/null && tar c "$DISTNAME") > \
-"$DISTNAME.tar"
+if [ -n "$WIN" ]; then
+  echo "Rolling $DISTNAME.zip ..."
+  (cd "$DIST_SANDBOX" > /dev/null && zip -q -r - "$DISTNAME") > \
+    "$DISTNAME.zip"
+else
+  echo "Rolling $DISTNAME.tar ..."
+  (cd "$DIST_SANDBOX" > /dev/null && tar c "$DISTNAME") > \
+  "$DISTNAME.tar"
 
-echo "Compressing to $DISTNAME.tar.gz ..."
-gzip -9f "$DISTNAME.tar"
+  echo "Compressing to $DISTNAME.tar.gz ..."
+  gzip -9f "$DISTNAME.tar"
+fi  
+
 echo "Removing sandbox..."
 rm -rf "$DIST_SANDBOX"
 

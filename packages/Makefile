@@ -10,9 +10,11 @@ REL := $(shell svn st -v ../configure.ac | cut -b 10- | ( read one two ; echo $$
 
 TARBALL := $(NAME)-$(VER)-$(REL).tar.gz
 
+ZIPBALL := $(NAME)-$(VER)-$(REL).zip
+
 REPOS_PATH ?= trunk
 
-all : $(TARBALL)
+all : $(TARBALL) $(ZIPBALL)
 
 $(TARBALL) : dist.sh
 ifeq ($(DATE),)
@@ -24,6 +26,13 @@ endif
 	@echo "Creating $(TARBALL)"
 	@rm -f $(TARBALL)
 	time ./dist.sh -v $(VER) -r $(REL) -d $(DATE) -pr $(REPOS_PATH) 2>&1 | tee dist-$(REL).log
+
+
+$(ZIPBALL) : $(TARBALL)
+	@echo "Creating $(ZIPBALL)"
+	@rm -f $(ZIPBALL)
+	time ./dist.sh -v $(VER) -r $(REL) -d $(DATE) -pr $(REPOS_PATH) -win 2>&1 | tee distw-$(REL).log
+
 
 usage:
 	@echo ""
