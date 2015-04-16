@@ -54,7 +54,7 @@ $(CMAKE_PKG) : ../$(ZIPBALL) $(CONF_PKG)
 	cd $(NAME)-$(VER)-$(REL) && mkdir _build
 	cd $(NAME)-$(VER)-$(REL) && cd _build && ../configure
 	cd $(NAME)-$(VER)-$(REL) && cd _build && $(MAKE) dist-zip
-	mv $(NAME)-$(VER)-$(REL)/_build/$(CONF_PKG) .
+	mv $(NAME)-$(VER)-$(REL)/_build/$(CMAKE_PKG) .
 	rm -rf $(NAME)-$(VER)-$(REL)
 
 usage:

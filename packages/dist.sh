@@ -204,6 +204,8 @@ fi
 VERSION_LONG="$ver_major.$ver_minor.$ver_patch.$REVISION_SVN"
 
 SED_FILES="$DISTPATH/configure.ac \
+           $DISTPATH/doc/NOTICE.TXT \
+           $DISTPATH/doc/README.TXT \
            $DISTPATH/src/PhreeqcRM.h"
 
 for vsn_file in $SED_FILES
@@ -216,9 +218,10 @@ do
    -e "/#define *VER_PATCH/s/[0-9]\+/$ver_patch/" \
    -e "/#define *VER_REVISION/s/[0-9]\+/$REVISION_SVN/" \
    -e "s/@RELEASE_DATE@/$RELEASE_DATE/g" \
-   -e "s/@PHREEQC_VER@/$VER/g" \
-   -e "s/@PHREEQC_DATE@/$RELEASE_DATE/g" \
-   -e "s/@REVISION_SVN@/$REVISION_SVN/g" \
+   -e "s/@VERSION@/$VER/g" \
+   -e "s/@DATE@/$RELEASE_DATE/g" \
+   -e "s/@REVISION@/$REVISION_SVN/g" \
+   -e "s/@NAME@/$NAME/g" \
     < "$vsn_file" > "$vsn_file.tmp"
   mv -f "$vsn_file.tmp" "$vsn_file"
   if [ -n "$WIN" && "$vsn_file" != "$DISTPATH/configure.ac" ]; then
@@ -229,6 +232,7 @@ done
 
 # cp $DISTPATH/phreeqc3-doc/RELEASE.TXT     $DISTPATH/doc/RELEASE
 # cp $DISTPATH/phreeqc3-doc/NOTICE.TXT      $DISTPATH/doc/NOTICE
+exit 99
 
 (cd "$DISTPATH/Doxygen" && "make")
 
