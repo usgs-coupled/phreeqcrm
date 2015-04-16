@@ -224,21 +224,9 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 #endif
 
 	// last one is to calculate well pH
-	this->workers.resize(this->nthreads);
-
-#ifdef USE_OPENMP
-		omp_set_num_threads(this->nthreads);
-#pragma omp parallel
-#pragma omp for
-#endif
-
-	for (int i = 0; i < this->nthreads; i++)
+	for (int i = 0; i < this->nthreads + 2; i++)
 	{
-		this->workers[i] = new IPhreeqcPhast;
-	}
-	for (int i = this->nthreads; i < this->nthreads + 2; i++)
-	{
-		this->workers[i] = new IPhreeqcPhast;
+		this->workers.push_back(new IPhreeqcPhast);
 	}
 	if (this->GetWorkers()[0])
 	{
@@ -2613,14 +2601,12 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 	return this->ReturnHandler(return_value, "PhreeqcRM::GetConcentrations");
 }
 #else
-#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::GetConcentrations(std::vector<double> &c)
 /* ---------------------------------------------------------------------- */
 {
-	//this->phreeqcrm_error_string.clear();
-	this->phreeqcrm_error_string="";
+	this->phreeqcrm_error_string.clear();
 	// convert Reaction module solution data to hst mass fractions
 	IRM_RESULT return_value = IRM_OK;
 	try
@@ -2629,17 +2615,10 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 		c.resize(this->nxyz * this->components.size());
 		std::fill(c.begin(), c.end(), INACTIVE_CELL_VALUE);
 
-
-#ifdef USE_OPENMP
-		omp_set_num_threads(this->nthreads);
-#pragma omp parallel
-#pragma omp for 
-#endif
-
+		std::vector<double> d;  // scratch space to convert from moles to mass fraction
+		cxxSolution * cxxsoln_ptr;
 		for (int n = 0; n < this->nthreads; n++)
 		{
-			cxxSolution * cxxsoln_ptr;
-			std::vector<double> d;  // scratch space to convert from moles to mass fraction
 			for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
 			{
 				// load fractions into d
@@ -2676,109 +2655,6 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 				}
 			}
 		}
-	}
-	catch (...)
-	{
-		return_value = IRM_FAIL;
-	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::GetConcentrations");
-}
-#endif
-/* ---------------------------------------------------------------------- */
-IRM_RESULT
-PhreeqcRM::GetConcentrations(std::vector<double> &c)
-/* ---------------------------------------------------------------------- */
-{
-	this->phreeqcrm_error_string="";
-	// convert Reaction module solution data to hst mass fractions
-	IRM_RESULT return_value = IRM_OK;
-	try
-	{
-		// check size and fill elements, if necessary resize
-		c.resize(this->nxyz * this->components.size());
-		std::fill(c.begin(), c.end(), INACTIVE_CELL_VALUE);
-		std::vector<double> ctemp;
-		ctemp.resize(this->nxyz * this->components.size());
-		std::fill(ctemp.begin(), ctemp.end(), INACTIVE_CELL_VALUE);
-
-#ifdef USE_OPENMP
-		omp_set_num_threads(this->nthreads);
-#pragma omp parallel
-#pragma omp for 
-#endif
-		for (int n = 0; n < this->nthreads; n++)
-		{
-		  std::vector<int> start_cell_local = this->start_cell;
-		  std::vector<int> end_cell_local = this->end_cell;
-		  std::vector<double> porosity_local = this->porosity;
-		  std::vector<double> saturation_local = this->saturation;
-		  std::vector<double> rv_local = this->rv;
-		  std::vector< std::vector <int> > backward_mapping_local = this->backward_mapping;
-		  std::vector<double> density_local;
-		  int count_comps = this->components.size();
-		  IPhreeqcPhast *  iphreeqc_phast_ptr = this->GetWorkers()[n];
-		  bool use_solution_density_volume_local = this->use_solution_density_volume;
-		  if (!use_solution_density_volume_local)
-		    {
-		      density_local = this->density;
-		    }
-
-			cxxNameDouble::iterator it;
-			std::vector<double> solns;
-
-			std::vector<double> d;  // scratch space to convert from moles to mass fraction
-			// Put solutions into a vector
-			for (int j = start_cell_local[n]; j <= end_cell_local[n]; j++)
-			{
-				// load fractions into d
-				cxxSolution * cxxsoln_ptr = iphreeqc_phast_ptr->Get_solution(j);
-				assert (cxxsoln_ptr);
-				double v, dens;
-				if (use_solution_density_volume_local)
-				{
-					v = cxxsoln_ptr->Get_soln_vol();
-					dens = cxxsoln_ptr->Get_density();
-				}
-				else
-				{
-					int k = backward_mapping_local[j][0];
-					v = saturation_local[k] * porosity_local[k] * rv_local[k];
-					if (v <= 0)
-					{
-						v = cxxsoln_ptr->Get_soln_vol();
-					}
-					dens = density_local[k];
-				}
-				this->cxxSolution2concentration(cxxsoln_ptr, d, v, dens);
-				for (int i = 0; i < count_comps; i++)
-				{
-					solns.push_back(d[i]);
-				}
-
-			}
-			int location = start_cell_local[n] * count_comps;
-#pragma omp critical
-				{
-			memcpy(&ctemp[location], &solns[0], (end_cell_local[n] - start_cell_local[n] + 1) * sizeof(double));
-				}
-		}
-
-		// copy to array
-		for (int j = 0; j < count_chemistry; j++)
-		{
-			std::vector<int>::iterator it;
-			for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
-			{
-				double *d_ptr = &c[*it];
-				size_t i;
-				for (i = 0; i < this->components.size(); i++)
-				{
-					d_ptr[this->nxyz * i] = ctemp[i];
-				}
-			}
-		}
-
-
 	}
 	catch (...)
 	{
@@ -3861,43 +3737,21 @@ PhreeqcRM::InitialPhreeqc2Module(
 		// distribute to thread IPhreeqcs
 		std::vector<int> r_values;
 		r_values.resize(this->nthreads, 0);
-#ifdef USE_OPENMP
-		omp_set_num_threads(this->nthreads);
-#pragma omp parallel
-#pragma omp for
-#endif
-		for (int n = 0; n < this->nthreads; n++)
+		for (int n = 1; n < this->nthreads; n++)
 		{
-			int i;
-			if (n == 0) continue;
 			std::ostringstream delete_command;
 			delete_command << "DELETE; -cells\n";
 			for (i = this->start_cell[n]; i <= this->end_cell[n]; i++)
 			{
 				cxxStorageBin sz_bin;
-#ifdef USE_OPENMP
-#pragma omp critical
-#endif
-				{
-					this->GetWorkers()[0]->Get_PhreeqcPtr()->phreeqc2cxxStorageBin(sz_bin, i);
-				}
+				this->GetWorkers()[0]->Get_PhreeqcPtr()->phreeqc2cxxStorageBin(sz_bin, i);
 				this->GetWorkers()[n]->Get_PhreeqcPtr()->cxxStorageBin2phreeqc(sz_bin, i);
 				delete_command << i << "\n";
 			}
-#ifdef USE_OPENMP
-#pragma omp critical
-#endif
-				{
-							r_values[n] = this->GetWorkers()[0]->RunString(delete_command.str().c_str());
-				}
+			r_values[n] = this->GetWorkers()[0]->RunString(delete_command.str().c_str());
 			if (r_values[n] != 0)
 			{
-#ifdef USE_OPENMP
-#pragma omp critical
-#endif
-				{				
-					this->ErrorMessage(this->GetWorkers()[0]->GetErrorString());
-				}
+				this->ErrorMessage(this->GetWorkers()[0]->GetErrorString());
 			}
 		}
 		this->HandleErrorsInternal(r_values);
@@ -6722,8 +6576,8 @@ PhreeqcRM::RunFile(bool workers, bool initial_phreeqc, bool utility, const std::
 
 #ifdef USE_OPENMP
 	omp_set_num_threads(this->nthreads);
-#pragma omp parallel
-#pragma omp for
+	#pragma omp parallel
+	#pragma omp for
 #endif
 	for (int n = 0; n < this->nthreads + 2; n++)
 	{
@@ -7510,8 +7364,7 @@ IRM_RESULT
 PhreeqcRM::SetPrintChemistryOn(bool worker, bool ip, bool utility)
 /* ---------------------------------------------------------------------- */
 {
-	//this->phreeqcrm_error_string.clear();
-	this->phreeqcrm_error_string ="";
+	this->phreeqcrm_error_string.clear();
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
@@ -7536,9 +7389,9 @@ PhreeqcRM::SetPrintChemistryOn(bool worker, bool ip, bool utility)
 #ifdef USE_MPI
 	MPI_Bcast(&l.front(), 3, MPI_INT, 0, phreeqcrm_comm);
 #endif
-	this->print_chemistry_on[0] = (l[0] != 0);
-	this->print_chemistry_on[1] = (l[1] != 0);
-	this->print_chemistry_on[2] = (l[2] != 0);
+	this->print_chemistry_on[0] = l[0] != 0;
+	this->print_chemistry_on[1] = l[1] != 0;
+	this->print_chemistry_on[2] = l[2] != 0;
 	return IRM_OK;
 }
 /* ---------------------------------------------------------------------- */
@@ -7651,8 +7504,7 @@ IRM_RESULT
 PhreeqcRM::SetSelectedOutputOn(bool t)
 /* ---------------------------------------------------------------------- */
 {
-	//this->phreeqcrm_error_string.clear();
-	this->phreeqcrm_error_string="";
+	this->phreeqcrm_error_string.clear();
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
@@ -7748,8 +7600,7 @@ IRM_RESULT
 PhreeqcRM::SetTime(double t)
 /* ---------------------------------------------------------------------- */
 {
-	//this->phreeqcrm_error_string.clear();
-	this->phreeqcrm_error_string = "";
+	this->phreeqcrm_error_string.clear();
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
@@ -7797,8 +7648,7 @@ IRM_RESULT
 PhreeqcRM::SetTimeStep(double t)
 /* ---------------------------------------------------------------------- */
 {
-	//this->phreeqcrm_error_string.clear();
-	this->phreeqcrm_error_string = "";
+	this->phreeqcrm_error_string.clear();
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
