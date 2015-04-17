@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS=-I m4
-EXTRA_DIST=CMakeLists.txt
+EXTRA_DIST=CMakeLists.txt doc/README.TXT doc/NOTICE.TXT
 AM_CPPFLAGS=-I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords
 
 # libtool libraries to build
