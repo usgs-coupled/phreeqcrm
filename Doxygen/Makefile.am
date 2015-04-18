@@ -1,9 +1,9 @@
-EXTRA_DIST = CMakeLists.txt
+EXTRA_DIST=CMakeLists.txt
 
 # Doxygen
 #
-docdir = $(datadir)/doc/$(PACKAGE_TARNAME)/html
+htmldir=$(docdir)/html
 
-dist_html_DATA = $(DOCS)
+dist_html_DATA=$(DOCS)
 
-DOCS= $(top_srcdir)/Doxygen/html/*
+DOCS=$(top_srcdir)/Doxygen/html/*
