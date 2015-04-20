@@ -231,7 +231,7 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 	
 	Open CMake. Fill in the top two lines.
 		Where is the source code: 
-			The PhreeqcRM/src??? directory. 
+			The top level directory (ie c:/phreeqcrm-@VERSION@-@REVISION@).
 		Where to build the binaries: 
 			A new directory. It is suggested that the name
 			of the directory include the characteristics of 
@@ -255,9 +255,9 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 		for the binaries.
 	(3) PHREEQCRM_BUILD_MPI--Sets whether to build libraries that use
 		MPI (Message Passing Interface) for parallelization. If not 
-		clicked, the libraries will use OpenMP for parallelization.
-		If you check the PHREEQCRM_BUILD_MPI checkbox, you will need
-		to have a version of MPI installed on your computer.
+		clicked, the libraries will use OpenMP for parallelization (if
+		available). If you check the PHREEQCRM_BUILD_MPI checkbox, you
+		will need to have a version of MPI installed on your computer.
 	(4) PHREEQCRM_FORTRAN_TESTING--Sets whether the test calculations
 		(Tests directory) will include Fortran files (FortranAdvect
 		project). A Fortran compiler is required. 
@@ -275,25 +275,26 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 	
   E.3. Compile and install PhreeqcRM
 
-        Open the Visual Studio solution in the build directory defined in CMake.
-        
-        Build ALL_BUILD. PhreeqcRM is compiled.
-        
-        Build RUN_TESTS. Programs that test PhreeqcRM are compiled and run, 
-        including the TestRM project, and optionally (CMake 
-        PHREEQCRM_FORTRAN_TESTING option) the FortransAdvect project. 
-        These projects use most of the features of PhreeqcRM.
-        
-        Build INSTALL. The libraries, header files, and Fortran module source
-        files are installed in the install directory selected in CMake.
-        
-        	Libraries that can be installed:
-        		PhreeqcRM.lib
-        		PhreeqcRMd.lib
-        		PhreeqcRM.dll
-        		PhreeqcRMd.dll
-        		
-        	Include files:
+	Open the Visual Studio solution in the build directory defined in CMake.
+
+	Build ALL_BUILD. PhreeqcRM is compiled.
+
+	Build RUN_TESTS. Programs that test PhreeqcRM are compiled and run, 
+	including the TestRM project, and optionally (CMake 
+	PHREEQCRM_FORTRAN_TESTING option) the FortransAdvect project. 
+	These projects use most of the features of PhreeqcRM.
+
+	Build INSTALL. The libraries, header files, Fortran module source
+	files, phreeqc database files, and documentation are installed in the
+	install directory selected in CMake.
+
+		Libraries that can be installed:
+			PhreeqcRM.lib
+			PhreeqcRMd.lib
+			PhreeqcRM.dll
+			PhreeqcRMd.dll
+
+		Include files:
 			C++ and C headers for user's code:	
 				PhreeqcRM.h          (C++ header)
 				RM_interface_C.h     (C header)
@@ -305,13 +306,28 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 				Var.h                (IPhreeqc VAR structure)
 				IrmResult.h          (PhreeqcRM error code enum)
 				IPhreeqcCallbacks.h  (IPhreeqc callbacks)
-        		
-        	Src files???:
-        		To use PhreeqcRM in Fortran:
-        			RM_interface.F90
-        		
-        		If IPhreeqc methods are called in the user's program:
-        			IPhreeqc_interface.F90
+			
+		Src files:
+			To use PhreeqcRM in Fortran:
+				RM_interface.F90
+
+			If IPhreeqc methods are called in the user's program:
+				IPhreeqc_interface.F90
+
+		Database files:
+			Amm.dat
+			iso.dat
+			llnl.dat
+			minteq.dat
+			minteq.v4.dat
+			phreeqc.dat
+			pitzer.dat
+			sit.dat
+			wateq4f.dat
+
+		Documentation files:
+			???.pdf               (PDF)
+			html/index.html       (API documentation)
 
 -----------------------------------------------------------------------------------        			
 F. Using the library

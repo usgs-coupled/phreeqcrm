@@ -292,5 +292,6 @@ install(FILES ${PhreeqcRM_ROOT} DESTINATION .)
 enable_testing()
 
 # subdirs
+add_subdirectory(database)
 add_subdirectory(Doxygen)
 add_subdirectory(Tests)
