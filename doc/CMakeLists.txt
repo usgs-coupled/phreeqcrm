@@ -1,0 +1,5 @@
+SET(PhreeqcRM_DOCS
+NOTICE.TXT
+README.TXT
+)
+install (FILES ${PhreeqcRM_DOCS} DESTINATION doc)
