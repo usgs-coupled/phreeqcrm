@@ -201,6 +201,7 @@ fi
 AC_CONFIG_FILES([
   Makefile
   database/Makefile
+  doc/Makefile
   Doxygen/Makefile
   Tests/Makefile
   Tests/advect.pqi

@@ -3,11 +3,7 @@ ACLOCAL_AMFLAGS=-I m4
 PHREEQCRM_CMAKELISTS=\
 	CMakeLists.txt
 
-PHREEQCRM_DOCS=\
-	doc/README.TXT\
-	doc/NOTICE.TXT
-
-EXTRA_DIST=$(PHREEQCRM_CMAKELISTS) $(PHREEQCRM_DOCS)
+EXTRA_DIST=$(PHREEQCRM_CMAKELISTS)
 
 AM_CPPFLAGS=-I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords
 
@@ -227,5 +223,5 @@ LTPPFCCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=FC $(AM_LIBTOOLFLAGS) \
         $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
         $(AM_FCFLAGS) $(FCFLAGS)
 
-SUBDIRS = database Doxygen Tests
+SUBDIRS = database doc Doxygen Tests
 
