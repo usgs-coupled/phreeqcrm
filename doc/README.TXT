@@ -104,9 +104,9 @@ C. Downloading and unzipping the distribution file
 
 	phreeqcrm-@VERSION@-@REVISION@			Source code and configure/CMake files
 	     ./config        				More configure files
-	     ./database???      				Database files for PHREEQC
-	     ./doc???           				Documentation files 
-	     ./IPhreeqcPhast 				More source code for PhreeqcRM
+	     ./database      				Database files for PHREEQC
+	     ./doc           				Documentation files 
+	     ./src           				Source code for PhreeqcRM
 	     ./Tests         				Advection example in C++, C, and Fortran
 
 	Note:  A compiled executable is not included in the distribution.
@@ -164,7 +164,7 @@ D. Linux compiling, testing, and installing the PhreeqcRM library
 	
 	make [-j 4]
 	
-    	Optionally, use -j n--where n is the number of compilations make runs in paralllel.
+    	Optionally, use -j n--where n is the number of compilations make runs in parallel.
 	
   D.6.  Compile and run the test case. Make check may take several minutes. 
   	The files in the directory PhreeqcRM/Tests are compiled and linked to the 
@@ -184,8 +184,9 @@ D. Linux compiling, testing, and installing the PhreeqcRM library
 	--prefix definition). 
     
 	Libraries:
-		/usr/local/bin/libphreeqcrm.a           (Static library)
-		/usr/local/bin/phreeqcrm.so             (Shared object library)
+		/usr/local/lib/libphreeqcrm.a           (Static library)
+		/usr/local/lib/libphreeqcrm.so          (Shared object library)
+		/usr/local/lib/libphreeqcrm.la          (libtool library file)
 		    
 	Include files:
 		C++ and C headers for user's code:
@@ -203,10 +204,11 @@ D. Linux compiling, testing, and installing the PhreeqcRM library
 	Documentation??? (PDFs, README, NOTICE, phreeqcrm.txt):
 		/usr/local/share/doc/phreeqcrm
     
-	Databases???: 
+	Databases: 
 		/usr/local/share/doc/phreeqcrm/database
 		
-	Fortran interfaces???
+	Fortran interfaces
+		/usr/local/share/doc/phreeqcrm/src
     
 -----------------------------------------------------------------------------------
 E. Windows compiling, testing, and installing the PhreeqcRM library
@@ -327,7 +329,7 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 
 		Documentation files:
 			???.pdf               (PDF)
-			html/index.html       (API documentation)
+			html/index.html       (PhreeqcRM API documentation)
 
 -----------------------------------------------------------------------------------        			
 F. Using the library
