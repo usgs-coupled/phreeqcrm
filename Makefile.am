@@ -177,7 +177,15 @@ include_HEADERS=\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqcCallbacks.h\
-	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/Var.h
+	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/Var.h\
+	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/NameDouble.h\
+	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/Parser.h\
+	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords/Keywords.h\
+	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PHRQ_base.h\
+	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PHRQ_io.h\
+	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/phrqtype.h\
+	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/StorageBin.h\
+	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h
 
 
 if BUILD_FORTRAN
