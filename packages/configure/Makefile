@@ -57,6 +57,12 @@ $(CMAKE_PKG) : ../$(ZIPBALL) $(CONF_PKG)
 	mv $(NAME)-$(VER)-$(REL)/_build/$(CMAKE_PKG) .
 	rm -rf $(NAME)-$(VER)-$(REL)
 
+../$(TARBALL) :
+	cd .. && $(MAKE) DATE=$(DATE) VER=$(VER) REL=$(REL)
+
+../$(ZIPBALL) : ../$(TARBALL)
+
+
 usage:
 	@echo ""
 	@echo "usage: make DATE=<m/d/yyyy> VER=<x.y.z> [REL=x]"
