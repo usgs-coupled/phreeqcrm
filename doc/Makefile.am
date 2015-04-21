@@ -1,0 +1,9 @@
+EXTRA_DIST=CMakeLists.txt
+
+# Docs
+#
+dist_doc_DATA=$(PHREEQCRM_DOCS)
+
+PHREEQCRM_DOCS=\
+	README.TXT\
+	NOTICE.TXT
