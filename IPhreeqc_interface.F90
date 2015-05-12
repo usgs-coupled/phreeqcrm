@@ -183,7 +183,7 @@ SUBROUTINE GetDumpFileName(id, fname)
         END SUBROUTINE GetDumpFileNameF
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(inout) :: fname
+    CHARACTER(len=*), INTENT(out) :: fname
     call GetDumpFileNameF(id, fname, len(fname))
     return
 END SUBROUTINE GetDumpFileName
@@ -452,7 +452,7 @@ SUBROUTINE GetOutputFileName(id, fname)
         END SUBROUTINE GetOutputFileNameF
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(inout) :: fname
+    CHARACTER(len=*), INTENT(out) :: fname
     call GetOutputFileNameF(id, fname, len(fname))
     return
 END SUBROUTINE GetOutputFileName
