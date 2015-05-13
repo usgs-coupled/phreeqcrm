@@ -2,21 +2,6 @@
 if (PHREEQCRM_FORTRAN_TESTING)
   project(FortranAdvect Fortran)
   
-##  # need to set for each project
-##  if (PHREEQCRM_BUILD_MPI)
-##    if (CMAKE_CONFIGURATION_TYPES)
-##      SET(CMAKE_CONFIGURATION_TYPES "openmp_debug;openmp;mpi;mpi_debug" CACHE STRING 
-##      "Semicolon separated list of supported configuration types."
-##      FORCE)
-##    endif (CMAKE_CONFIGURATION_TYPES)
-##  else (PHREEQCRM_BUILD_MPI)
-##    if (CMAKE_CONFIGURATION_TYPES)
-##      SET(CMAKE_CONFIGURATION_TYPES "openmp_debug;openmp" CACHE STRING 
-##      "Semicolon separated list of supported configuration types."
-##      FORCE)
-##    endif (CMAKE_CONFIGURATION_TYPES)
-##  endif (PHREEQCRM_BUILD_MPI)
-  
   # source
   SET(FortranAdvect_SOURCES
     advection_f90.F90
@@ -25,34 +10,18 @@ if (PHREEQCRM_FORTRAN_TESTING)
     species_f90.F90
   )
   
+  # place [*.F[90]] files into "Source Files"
+  source_group("Source Files" FILES "advection_f90.F90")
+  source_group("Source Files" FILES "../src/RM_interface.F90")
+  source_group("Source Files" FILES "../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90")
+  source_group("Source Files" FILES "species_f90.F90")
+  
   add_library(FortranAdvect STATIC ${FortranAdvect_SOURCES})
   
   set_target_properties(FortranAdvect PROPERTIES COMPILE_DEFINITIONS "TEST_FORTRAN")
 endif()
 
-
-#{{
-##if (OPENMP_FOUND)
-##  set_target_properties(FortranAdvect PROPERTIES COMPILE_DEFINITIONS_OPENMP "USE_OPENMP")
-##endif ()
-#}}
-
 project(TestRM CXX)
-
-### need to set for each project
-##if (PHREEQCRM_BUILD_MPI)
-##  if (CMAKE_CONFIGURATION_TYPES)
-##    SET(CMAKE_CONFIGURATION_TYPES "openmp_debug;openmp;mpi;mpi_debug" CACHE STRING 
-##    "Semicolon separated list of supported configuration types."
-##    FORCE)
-##  endif (CMAKE_CONFIGURATION_TYPES)
-##else (PHREEQCRM_BUILD_MPI)
-##  if (CMAKE_CONFIGURATION_TYPES)
-##    SET(CMAKE_CONFIGURATION_TYPES "openmp_debug;openmp" CACHE STRING 
-##    "Semicolon separated list of supported configuration types."
-##    FORCE)
-##  endif (CMAKE_CONFIGURATION_TYPES)
-##endif (PHREEQCRM_BUILD_MPI)
 
 # Tests/advect.pqi
 configure_file (
