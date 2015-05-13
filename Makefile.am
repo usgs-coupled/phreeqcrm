@@ -196,6 +196,16 @@ DEFS+=\
 	-DTEST_FORTRAN
 endif
 
+# Docs
+#
+sourcedir=$(docdir)/src
+
+dist_source_DATA=$(SRC)
+
+SRC=\
+	src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90\
+	src/RM_interface.F90
+
 # We must override the default PPFCCOMPILE since ifort can't
 # handle the FC_FUNC define correctly so $(DEFS) is replaced
 # by $(FCDEFS)
