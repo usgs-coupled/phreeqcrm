@@ -36,9 +36,9 @@ find_package(OpenMP)
 # check for MPI
 option(PHREEQCRM_BUILD_MPI "Build MPI configuration" "OFF")
 if (PHREEQCRM_BUILD_MPI)
-  cmake_policy(SET CMP0054 OLD)
+##  cmake_policy(SET CMP0054 OLD)
   find_package(MPI)
-  cmake_policy(SET CMP0054 NEW)
+##  cmake_policy(SET CMP0054 NEW)
 endif (PHREEQCRM_BUILD_MPI)
 
 

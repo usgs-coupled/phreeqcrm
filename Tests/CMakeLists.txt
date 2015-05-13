@@ -96,9 +96,9 @@ if (PHREEQCRM_FORTRAN_TESTING)
     SET(EXTRA_LIBS ${EXTRA_LIBS} ${EXTRA_FORTRAN_LIB})
   endif ()  
   if (PHREEQCRM_BUILD_MPI)
-    SET(EXTRA_LIBS ${EXTRA_LIBS} PhreeqcRM FortranAdvect ${MPI_CXX_LIBRARIES})
+    SET(EXTRA_LIBS ${EXTRA_LIBS} FortranAdvect PhreeqcRM ${MPI_CXX_LIBRARIES})
   else ()
-    SET(EXTRA_LIBS ${EXTRA_LIBS} PhreeqcRM FortranAdvect)
+    SET(EXTRA_LIBS ${EXTRA_LIBS} FortranAdvect PhreeqcRM)
   endif ()
   # Override bug reported on:
   # http://www.cmake.org/pipermail/cmake/2009-July/030954.html
