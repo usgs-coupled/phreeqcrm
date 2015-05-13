@@ -14,6 +14,8 @@ lib_LTLIBRARIES=libphreeqcrm.la
 libphreeqcrm_la_SOURCES=\
 	src/PhreeqcRM.cpp\
 	src/RM_interface_C.cpp\
+	src/RM_interface_F.h\
+	src/RM_interface_F.cpp\
 	src/IPhreeqcPhast/IPhreeqcPhast.cxx\
 	src/IPhreeqcPhast/IPhreeqcPhast.h\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.cpp\
@@ -188,36 +190,10 @@ include_HEADERS=\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h
 
 
-if BUILD_FORTRAN
+if PHREEQCRM_TEST_FORTRAN
 
 DEFS+=\
 	-DTEST_FORTRAN
-
-libphreeqcrm_la_SOURCES+=\
-	src/RM_interface_F.h\
-	src/RM_interface_F.cpp\
-	src/IPhreeqcPhast/IPhreeqc/fwrap.cpp\
-	src/IPhreeqcPhast/IPhreeqc/fwrap.h
-
-include_HEADERS+=\
-	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.f90.inc\
-	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.f.inc
-
-##install-data-hook:
-##	@if test -n "$(FC_MODEXT)"; then \
-##	  $(INSTALL_DATA) $(top_builddir)/*.$(FC_MODEXT) $(DESTDIR)$(includedir)/. ; \
-##	fi
-
-##uninstall-hook:
-##	@if test -n "$(FC_MODEXT)"; then \
-##	  $(RM) $(DESTDIR)$(includedir)/[pP][hH][rR][eE][eE][qQ][cC][rR][mM].$(FC_MODEXT) ; \
-##	fi
-
-##mostlyclean-local: clean-modules
-##.PHONY: clean-modules
-##clean-modules:
-##	-test -z $(FC_MODEXT) || $(RM) *.$(FC_MODEXT)
-
 endif
 
 # We must override the default PPFCCOMPILE since ifort can't

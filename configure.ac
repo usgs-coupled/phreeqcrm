@@ -45,16 +45,15 @@ AC_PROG_AWK
 AC_PROG_CPP
 
 
-# Check if the fortran interface should be included
-AC_MSG_CHECKING([if Fortran interface included])
-AC_ARG_ENABLE([fortran],
-     [AS_HELP_STRING([--enable-fortran],[include the Fortran interface @<:@default=yes@:>@])],
+# Check if the fortran test should be included
+AC_MSG_CHECKING([if Fortran test is added])
+AC_ARG_ENABLE([fortran-test],
+     [AS_HELP_STRING([--enable-fortran-test],[test Fortran interface @<:@default=no@:>@])],
      [IRM_FORTRAN=$enableval],
-     [IRM_FORTRAN=yes])
+     [IRM_FORTRAN=no])
 
 if test "X$IRM_FORTRAN" = "Xyes"; then
   AC_MSG_RESULT(yes)
-  ##AC_PROG_FC
   AX_PROG_FC_MPI([test x"$with_mpi" != xno],[use_mpi=yes],[
     use_mpi=no
     if test x"$with_mpi" = xyes; then
@@ -72,19 +71,16 @@ if test "X$IRM_FORTRAN" = "Xyes"; then
     fi
     AC_SUBST(FC_MODEXT)
   ])
-  ##AC_FC_MODULE_FLAG
-  ##AC_FC_MODULE_OUTPUT_FLAG
   AC_SUBST(F77, $FC)
   AC_SUBST(FFLAGS, $FCFLAGS) 
 else
   AC_MSG_RESULT(no)
 fi
-AM_CONDITIONAL([BUILD_FORTRAN], [test "X$IRM_FORTRAN" = "Xyes"])
+AM_CONDITIONAL([PHREEQCRM_TEST_FORTRAN], [test "X$IRM_FORTRAN" = "Xyes"])
 
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-##AM_PROG_AR
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT
 
@@ -164,30 +160,6 @@ AC_CHECK_FUNCS([isnan],    , AC_CHECK_LIB(m, isnan))
 
 AM_CONDITIONAL([BUILD_OPENMP], [test "X$enable_openmp" != "Xno"])
 AM_CONDITIONAL([BUILD_MPI], [test "X$with_mpi" = "Xyes"])
-
-dnl if test "X$IRM_FORTRAN" = "Xyes"; then
-dnl   AC_MSG_RESULT(yes)
-dnl   ##AC_PROG_FC
-dnl   AX_PROG_FC_MPI([test x"$with_mpi" != xno],[use_mpi=yes],[
-dnl     use_mpi=no
-dnl     if test x"$with_mpi" = xyes; then
-dnl       AC_MSG_ERROR([MPI compiler requested, but couldn't use MPI.])
-dnl     fi
-dnl   ])
-dnl   AC_FC_LIBRARY_LDFLAGS
-dnl   AC_FC_WRAPPERS 
-dnl   AC_FC_MAIN
-dnl   AC_FC_MODULE_EXTENSION
-dnl   AC_FC_MODULE_FLAG
-dnl   AC_FC_MODULE_OUTPUT_FLAG
-dnl   AC_SUBST(F77, $FC)
-dnl   AC_SUBST(FFLAGS, $FCFLAGS) 
-dnl else
-dnl   AC_MSG_RESULT(no)
-dnl fi
-dnl AM_CONDITIONAL([BUILD_FORTRAN], [test "X$IRM_FORTRAN" = "Xyes"])
-dnl ##}}
-
 
 if test "X$with_mpi" != "Xno"; then
   AC_DEFINE([USE_MPI], [], [Set to use MPI])

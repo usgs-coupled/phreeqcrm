@@ -34,7 +34,7 @@ CLEANFILES =\
 	utility_cpp.txt\
 	Units_InitialPhreeqc_1.chem.txt
 
-if BUILD_FORTRAN
+if PHREEQCRM_TEST_FORTRAN
 
 test_SOURCES+=\
 	advection_f90.F90\

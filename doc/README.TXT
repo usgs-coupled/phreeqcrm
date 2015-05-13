@@ -151,7 +151,7 @@ D. Linux compiling, testing, and installing the PhreeqcRM library
     		is no, in which case, OpenMP is used for parallelization.
     	--disable-openmp--specifies that OpenMP is not used. This option 
     	 	is used if you want neither kind of parallelization.
-    	--enable-fortran--specifies that you have a Fortran compiler
+    	--enable-fortran-test--specifies that you have a Fortran compiler
     		and want to include Fortran files during "make check", 
     		which compiles, links, and runs programs that use 
     		PhreeqcRM.
@@ -168,14 +168,14 @@ D. Linux compiling, testing, and installing the PhreeqcRM library
 	
   D.6.  Compile and run the test case. Make check may take several minutes. 
   	The files in the directory PhreeqcRM/Tests are compiled and linked to the 
-	PhreeqcRM library. The Fortran files are optionally included (--enable-fortran
+	PhreeqcRM library. The Fortran files are optionally included (--enable-fortran-test
 	configure option). The source files in the Tests directory demonstrate
 	the use of almost all PhreeqcRM features for each programming language.
 	
 	make check
 	
   D.7.  Install the PhreeqcRM library. By default the program is installed in /usr/local/bin
-	and /usr/local/share/doc/phreeqcrm???. Alternatively, the directory defined
+	and /usr/local/share/doc/phreeqcrm. Alternatively, the directory defined
 	by --prefix in the configure command is used. 
     
     	make install
