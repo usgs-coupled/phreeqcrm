@@ -6332,6 +6332,9 @@ PhreeqcRM::RunCellsThread(int n)
 		{
 			pr_chemistry_on = print_chemistry_on[2];
 		}
+		phast_iphreeqc_worker->SetOutputFileOn(false);
+		phast_iphreeqc_worker->SetOutputStringOn(pr_chemistry_on);
+		phast_iphreeqc_worker->SetSelectedOutputFileOn(false);
 		if (!pr_chemistry_on)
 		{
 			RunCellsThreadNoPrint(n);
@@ -6344,9 +6347,9 @@ PhreeqcRM::RunCellsThread(int n)
 			phast_iphreeqc_worker->CSelectedOutputMap.clear();	// Make a dummy run to fill in new CSelectedOutputMap
 			if(this->selected_output_on)
 			{
+				phast_iphreeqc_worker->SetSelectedOutputStringOn(true);
 				std::ostringstream input;
 				int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
-				input << "PRINT; -selected_output true\n";
 				input << "SOLUTION " << next << "; DELETE; -solution " << next << "\n";
 				if (phast_iphreeqc_worker->RunString(input.str().c_str()) < 0)
 				{
@@ -6377,13 +6380,7 @@ PhreeqcRM::RunCellsThread(int n)
 			}
 			else
 			{
-				std::ostringstream input;
-				input << "PRINT; -selected_output false\n";
-				if (phast_iphreeqc_worker->RunString(input.str().c_str()) < 0)
-				{
-					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
-					throw PhreeqcRMStop();
-				}
+				phast_iphreeqc_worker->SetSelectedOutputStringOn(false);
 			}
 
 			std::vector<int> types;
