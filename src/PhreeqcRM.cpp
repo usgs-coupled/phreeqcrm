@@ -6208,6 +6208,14 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 	if (count_active > 0)
 	{
 		std::ostringstream input;
+		if(this->selected_output_on)
+		{
+			input << "PRINT; -selected_output true\n";
+		}
+		else
+		{
+			input << "PRINT; -selected_output false\n";
+		}
 		input << "RUN_CELLS\n";
 		input << "  -start_time " << (this->time - this->time_step) << "\n";
 		input << "  -time_step  " << this->time_step << "\n";
@@ -6334,9 +6342,11 @@ PhreeqcRM::RunCellsThread(int n)
 
 			// selected output IPhreeqcPhast
 			phast_iphreeqc_worker->CSelectedOutputMap.clear();	// Make a dummy run to fill in new CSelectedOutputMap
+			if(this->selected_output_on)
 			{
 				std::ostringstream input;
 				int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
+				input << "PRINT; -selected_output true\n";
 				input << "SOLUTION " << next << "; DELETE; -solution " << next << "\n";
 				if (phast_iphreeqc_worker->RunString(input.str().c_str()) < 0)
 				{
@@ -6363,6 +6373,16 @@ PhreeqcRM::RunCellsThread(int n)
 						VarClear(&pvar1);
 					}
 					phast_iphreeqc_worker->CSelectedOutputMap[iso] = cso;
+				}
+			}
+			else
+			{
+				std::ostringstream input;
+				input << "PRINT; -selected_output false\n";
+				if (phast_iphreeqc_worker->RunString(input.str().c_str()) < 0)
+				{
+					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+					throw PhreeqcRMStop();
 				}
 			}
 
