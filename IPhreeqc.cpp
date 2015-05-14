@@ -1313,12 +1313,14 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			this->PhreeqcPtr->pr.all = (this->OutputFileOn || this->OutputStringOn) ? TRUE : FALSE;
 			//this->PhreeqcPtr->pr.punch = (this->SelectedOutputFileOn || this->SelectedOutputStringOn) ? TRUE : FALSE;
 		}
-
-
 		/* the converse is not necessarily true */
 
 		this->PhreeqcPtr->n_user_punch_index = -1;
 #endif // SWIG_SHARED_OBJ
+		{
+			this->PhreeqcPtr->pr.all = (this->OutputFileOn || this->OutputStringOn) ? TRUE : FALSE;
+		}
+
 		this->PhreeqcPtr->tidy_model();
 #ifdef PHREEQ98
                 if (!phreeq98_debug)
