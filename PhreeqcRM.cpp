@@ -6349,6 +6349,7 @@ PhreeqcRM::RunCellsThread(int n)
 			{
 				phast_iphreeqc_worker->SetSelectedOutputStringOn(true);
 				std::ostringstream input;
+				input << "PRINT; -selected_output true\n";
 				int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
 				input << "SOLUTION " << next << "; DELETE; -solution " << next << "\n";
 				if (phast_iphreeqc_worker->RunString(input.str().c_str()) < 0)
@@ -6381,6 +6382,13 @@ PhreeqcRM::RunCellsThread(int n)
 			else
 			{
 				phast_iphreeqc_worker->SetSelectedOutputStringOn(false);
+				std::ostringstream input;
+				input << "PRINT; -selected_output false\n";
+				if (phast_iphreeqc_worker->RunString(input.str().c_str()) < 0)
+				{
+					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+					throw PhreeqcRMStop();
+				}
 			}
 
 			std::vector<int> types;
