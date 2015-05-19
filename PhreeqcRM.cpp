@@ -6416,6 +6416,8 @@ PhreeqcRM::RunCellsThread(int n)
 				j = backward_mapping[i][0];			/* j is nxyz number */
 #ifdef USE_MPI
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) MPI_Wtime());
+#elif USE_OPENMP
+				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) omp_get_wtime());
 #else
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) clock());
 #endif
@@ -6520,6 +6522,8 @@ PhreeqcRM::RunCellsThread(int n)
 				}
 #ifdef USE_MPI
 				phast_iphreeqc_worker->Get_cell_clock_times().back() += (double) MPI_Wtime();
+#elif defined(USE_OPENMP)
+				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) omp_get_wtime());
 #else
 				phast_iphreeqc_worker->Get_cell_clock_times().back() += (double) clock();
 #endif
