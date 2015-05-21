@@ -178,17 +178,11 @@ include_HEADERS=\
 	$(top_srcdir)/src/phreeqcpp/PHRQ_io.h\
 	$(top_srcdir)/src/phreeqcpp/PhreeqcKeywords/Keywords.h
 
+sourcedir=$(docdir)/src
 
-if BUILD_FORTRAN
+dist_source_DATA=$(SRC)
 
-libiphreeqc_la_SOURCES+=\
-	fwrap.h\
-	fwrap.cpp
-##	fwrap.cpp\
-##	IPhreeqcF.f
-
-##include_HEADERS+=\
-##	$(top_srcdir)/src/IPhreeqc.f90.inc\
-##	$(top_srcdir)/src/IPhreeqc.f.inc
-
-endif
+SRC=\
+	$(top_srcdir)/src/IPhreeqc_interface.F90\
+	$(top_srcdir)/src/IPhreeqc.f90.inc\
+	$(top_srcdir)/src/IPhreeqc.f.inc
