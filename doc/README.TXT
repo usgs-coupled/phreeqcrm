@@ -318,6 +318,7 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 
 		Database files:
 			Amm.dat
+			frezchem.dat
 			iso.dat
 			llnl.dat
 			minteq.dat
