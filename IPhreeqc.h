@@ -1662,6 +1662,7 @@ Headings
  *  #else
  *  !
  *  ! if using the fortran module (USE IPhreeqc)
+ *  ! must also add IPhreeqc_interface.F90 to your project
  *  !
  *  FUNCTION SetBasicFortranCallback(ID,FCN)
  *    INTEGER(KIND=4),  INTENT(IN)  :: ID
