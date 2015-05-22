@@ -1635,15 +1635,19 @@ Headings
  *  Sets a Fortran callback function for Basic programs. The syntax for the Basic command is
  *  10 result = CALLBACK(x1, x2, string$)
  *  The syntax for the Fortran function is
- *  double precision my_callback(x1, x2, string), where x1 and x2 are double precision and string is a character variable.
+ *  REAL(KIND=C_DOUBLE) my_callback(x1, x2, string), where x1 and x2 are REAL(KIND=C_DOUBLE) and string is a CHARACTER(KIND=C_CHAR).
  *  @param id               The instance id returned from @ref CreateIPhreeqc.
- *  @param fcn              The name of a double precision Fortran function with three arguments (two double precision, and one character).
+ *  @param fcn              The name of a REAL(KIND=C_DOUBLE) Fortran function with three arguments (two REAL(KIND=C_DOUBLE), and one CHARACTER(KIND=C_CHAR)).
  *  @retval IPQ_OK          Success.
  *  @retval IPQ_BADINSTANCE The given id is invalid.
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
  *  <PRE>
+ *  !
+ *  ! if using  include files (IPhreeqc.f.inc or IPhreeqc.f90.inc)
+ *  !
+ *  #ifdef IPHREEQC_NO_FORTRAN_MODULE
  *  FUNCTION SetBasicFortranCallback(ID,FCN)
  *    INTEGER(KIND=4),  INTENT(IN)  :: ID
  *    INTERFACE
@@ -1655,6 +1659,23 @@ Headings
  *    END INTERFACE
  *    INTEGER(KIND=4)               :: SetBasicFortranCallback
  *  END FUNCTION SetBasicFortranCallback
+ *  #else
+ *  !
+ *  ! if using the fortran module (USE IPhreeqc)
+ *  !
+ *  FUNCTION SetBasicFortranCallback(ID,FCN)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    INTERFACE
+ *      REAL(KIND=C_DOUBLE) FUNCTION fcn(x1, x2, str, l) BIND(C)
+ *        USE ISO_C_BINDING
+ *        IMPLICIT none
+ *        REAL(KIND=C_DOUBLE),    INTENT(in)        :: x1, x2
+ *        CHARACTER(KIND=C_CHAR), INTENT(in)        :: str(*)
+ *        INTEGER(KIND=C_INT),    INTENT(in), VALUE :: l
+ *      END FUNCTION fcn
+ *    END INTERFACE
+ *  END FUNCTION SetBasicFortranCallback
+ *  #endif
  *  </PRE>
  *  </CODE>
  *  @endhtmlonly
