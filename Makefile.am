@@ -189,7 +189,8 @@ SRC=\
 
 if FORTRAN_MODULE
 
-SRC += $(top_srcdir)/src/IPhreeqc_interface.F90
+SRC+=\
+	$(top_srcdir)/src/IPhreeqc_interface.F90
 
 else
 
@@ -201,4 +202,5 @@ libiphreeqc_la_SOURCES+=\
 	fwrap.h\
 	fwrap.cpp\
 	IPhreeqcF.f
+
 endif
