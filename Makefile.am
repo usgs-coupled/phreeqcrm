@@ -185,6 +185,20 @@ sourcedir=$(docdir)/src
 dist_source_DATA=$(SRC)
 
 SRC=\
-	$(top_srcdir)/src/IPhreeqc_interface.F90\
-	$(top_srcdir)/src/IPhreeqc.f90.inc\
-	$(top_srcdir)/src/IPhreeqc.f.inc
+	$(top_srcdir)/src/README.Fortran
+
+if FORTRAN_MODULE
+
+SRC += $(top_srcdir)/src/IPhreeqc_interface.F90
+
+else
+
+include_HEADERS+=\
+	$(top_srcdir)/src/IPhreeqc.f.inc\
+	$(top_srcdir)/src/IPhreeqc.f90.inc
+
+libiphreeqc_la_SOURCES+=\
+	fwrap.h\
+	fwrap.cpp\
+	IPhreeqcF.f
+endif
