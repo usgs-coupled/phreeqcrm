@@ -253,14 +253,6 @@ ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/StorageBin.h
 ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h
 )
 
-if (PHREEQCRM_FORTRAN_TESTING)
-  SET(PhreeqcRM_Headers
-  ${PhreeqcRM_Headers}
-  ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.f90.inc
-  ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.f.inc
-  )
-endif()
-
 SET(PhreeqcRM_SRC
 ${PROJECT_SOURCE_DIR}/src/RM_interface.F90
 ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
