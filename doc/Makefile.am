@@ -5,6 +5,7 @@ EXTRA_DIST=CMakeLists.txt
 dist_doc_DATA=$(PHREEQCRM_DOCS)
 
 PHREEQCRM_DOCS=\
+	AbstractAWR.pdf\
 	README.TXT\
 	NOTICE.TXT
 

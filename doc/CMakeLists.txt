@@ -1,4 +1,5 @@
 SET(PhreeqcRM_DOCS
+AbstractAWR.pdf
 NOTICE.TXT
 README.TXT
 )
