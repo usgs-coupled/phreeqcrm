@@ -189,7 +189,9 @@ do
    -e "/#define *VER_REVISION/s/[0-9]\+/$REVISION_SVN/" \
    -e "s/@RELEASE_DATE@/$RELEASE_DATE/g" \
    -e "s/@VERSION@/$VER/g" \
+   -e "s/@PHREEQC_VER@/$VER/g" \
    -e "s/@DATE@/$RELEASE_DATE/g" \
+   -e "s/@REVISION_SVN@/$REVISION_SVN/g" \
    -e "s/@REVISION@/$REVISION_SVN/g" \
    -e "s/@NAME@/$NAME/g" \
     < "$vsn_file" > "$vsn_file.tmp"
