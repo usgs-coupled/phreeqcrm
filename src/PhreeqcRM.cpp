@@ -2383,6 +2383,7 @@ PhreeqcRM::FindComponents(void)
 		// Always include H, O, Charge
 
 		std::set<std::string> component_set;
+		std::set<std::string> surface_charge_set;
 
 		size_t fixed_components = 3;
 		if (this->component_h2o)
@@ -2392,6 +2393,10 @@ PhreeqcRM::FindComponents(void)
 		for (size_t i = fixed_components; i < this->components.size(); i++)
 		{
 			component_set.insert(this->components[i]);
+		}
+		for (size_t i = 0; i < this->surface_charges.size(); i++)
+		{
+			surface_charge_set.insert(this->surface_charges[i]);
 		}
 
 		// Get other components
@@ -2411,6 +2416,7 @@ PhreeqcRM::FindComponents(void)
 		}
 		// clear and refill components in vector
 		this->components.clear();
+		this->surface_charges.clear();
 
 		// Always include H, O, Charge
 		if (this->component_h2o)
@@ -2480,6 +2486,23 @@ PhreeqcRM::FindComponents(void)
 				{
 					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
 					throw PhreeqcRMStop();
+				}
+			}
+			//Find all surfaces with diffuse layers
+			{
+				std::map<int, cxxSurface>::iterator it = phast_iphreeqc_worker->PhreeqcPtr->Rxn_surface_map.begin();
+				for ( ; it != phast_iphreeqc_worker->PhreeqcPtr->Rxn_surface_map.end(); it++)
+				{
+					std::vector < cxxSurfaceCharge > & surface_names = it->second.Get_surface_charges();
+					for (int i = 0; i < surface_names.size(); i++)
+					{
+						surface_charge_set.insert(surface_names[i].Get_name());
+					}
+				}
+				std::set < std::string >::iterator jt = surface_charge_set.begin();
+				for ( ; jt != surface_charge_set.end(); jt++)
+				{
+					this->surface_charges.push_back(*jt);
 				}
 			}
 		}

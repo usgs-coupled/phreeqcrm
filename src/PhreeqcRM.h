@@ -3606,7 +3606,8 @@ protected:
 	cxxStorageBin * phreeqc_bin;
 	int mpi_myself;
 	int mpi_tasks;
-	std::vector <std::string> components;	// list of components to be transported
+	std::vector <std::string> components;	    // list of components to be transported
+	std::vector <std::string> surface_charges;	// list of components to be transported
 	std::vector <double> gfw;				// gram formula weights converting mass to moles (1 for each component)
 	double gfw_water;						// gfw of water
 	bool partition_uz_solids;
