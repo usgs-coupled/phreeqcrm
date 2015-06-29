@@ -23,6 +23,7 @@ public:
 	size_t Get_Index() {return (int) this->Index;}
 	cxxGasPhase * Get_gas_phase(int i);
 	cxxSolution * Get_solution(int n_user);
+	cxxSurface * Get_surface(int n_user);
 	void Set_out_stream(std::ostringstream *s) {this->out_stream = s;}
 	void Set_punch_stream(std::ostringstream *s) {this->punch_stream = s;}	
 	std::ostringstream * Get_out_stream(void) {return this->out_stream;}

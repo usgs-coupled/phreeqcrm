@@ -1363,6 +1363,7 @@ const std::vector < double > & species_d = phreeqc_rm.GetSpeciesD25();
 Called by root and (or) workers.
  */
 	const std::vector<double> &               GetSpeciesD25(void) {return this->species_d_25;}
+	IRM_RESULT                                GetSpeciesLogGammas(std::vector<double> & gammas);
 /**
 Returns a vector reference to the names of the aqueous species.
 This method is intended for use with multicomponent-diffusion transport calculations,
@@ -1520,6 +1521,8 @@ phreeqc_rm.OutputMessage(oss.str());
 Called by root and (or) workers.
  */
 	const std::vector < int> &                GetStartCell(void) const {return this->start_cell;}
+	IRM_RESULT GetSurfaceDiffuseLayerConcentrations(std::string surf, std::vector<double> & species_conc);
+	const std::vector<std::string> &           GetSurfaceDiffuseLayerNames(void) const {return this->surface_names;}
 /**
 Vector reference to the current temperatures of the cells.
 By default, the temperature vector is initialized to 25 C;
@@ -3607,7 +3610,7 @@ protected:
 	int mpi_myself;
 	int mpi_tasks;
 	std::vector <std::string> components;	    // list of components to be transported
-	std::vector <std::string> surface_charges;	// list of components to be transported
+	std::vector <std::string> surface_names;	// list of surfaces with DL
 	std::vector <double> gfw;				// gram formula weights converting mass to moles (1 for each component)
 	double gfw_water;						// gfw of water
 	bool partition_uz_solids;

@@ -2394,9 +2394,9 @@ PhreeqcRM::FindComponents(void)
 		{
 			component_set.insert(this->components[i]);
 		}
-		for (size_t i = 0; i < this->surface_charges.size(); i++)
+		for (size_t i = 0; i < this->surface_names.size(); i++)
 		{
-			surface_charge_set.insert(this->surface_charges[i]);
+			surface_charge_set.insert(this->surface_names[i]);
 		}
 
 		// Get other components
@@ -2416,7 +2416,7 @@ PhreeqcRM::FindComponents(void)
 		}
 		// clear and refill components in vector
 		this->components.clear();
-		this->surface_charges.clear();
+		this->surface_names.clear();
 
 		// Always include H, O, Charge
 		if (this->component_h2o)
@@ -2493,16 +2493,16 @@ PhreeqcRM::FindComponents(void)
 				std::map<int, cxxSurface>::iterator it = phast_iphreeqc_worker->PhreeqcPtr->Rxn_surface_map.begin();
 				for ( ; it != phast_iphreeqc_worker->PhreeqcPtr->Rxn_surface_map.end(); it++)
 				{
-					std::vector < cxxSurfaceCharge > & surface_names = it->second.Get_surface_charges();
-					for (int i = 0; i < surface_names.size(); i++)
+					std::vector < cxxSurfaceCharge > & surface_charges = it->second.Get_surface_charges();
+					for (size_t i = 0; i < surface_charges.size(); i++)
 					{
-						surface_charge_set.insert(surface_names[i].Get_name());
+						surface_charge_set.insert(surface_charges[i].Get_name());
 					}
 				}
 				std::set < std::string >::iterator jt = surface_charge_set.begin();
 				for ( ; jt != surface_charge_set.end(); jt++)
 				{
-					this->surface_charges.push_back(*jt);
+					this->surface_names.push_back(*jt);
 				}
 			}
 		}
@@ -3378,6 +3378,353 @@ PhreeqcRM::GetSpeciesConcentrations(std::vector<double> & species_conc)
 		species_conc.clear();
 	}
 	return IRM_OK;
+}
+#endif
+#ifdef USE_MPI
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSpeciesLogGammas(std::vector<double> & log_gammas)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	size_t nspecies = this->species_names.size();
+			log_gammas.resize(nspecies * this->nxyz, 0.0);
+	if (this->mpi_myself == 0)
+	{
+		int method = METHOD_GETSPECIESCONCENTRATIONS;
+		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+	}
+	if (this->species_save_on)
+	{
+		// Fill in root concentrations
+		if (this->mpi_myself == 0)
+		{
+			for (int j = this->start_cell[0]; j <= this->end_cell[0]; j++)
+			{
+				std::vector<double> d;
+				d.resize(this->species_names.size(), 0.0);
+				{
+					std::map<int,double>::iterator it = this->workers[0]->Get_solution(j)->Get_species_map().begin();
+					for ( ; it != this->workers[0]->Get_solution(j)->Get_species_map().end(); it++)
+					{
+						// it is pointing to a species number, concentration
+						int rm_species_num = this->s_num2rm_species_num[it->first];
+						d[rm_species_num] = it->second;
+					}
+				}
+				{
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						double *d_ptr = &log_gammas[*it];
+						for (size_t i = 0; i < d.size(); i++)
+						{
+							d_ptr[this->nxyz * i] = d[i];
+						}
+					}
+				}
+			}
+		}
+		// Fill in worker concentrations
+		for (int n = 1; n < this->mpi_tasks; n++)
+		{
+			int ncells = this->end_cell[n] - start_cell[n] + 1;
+			if (this->mpi_myself == n)
+			{
+				log_gammas.resize(nspecies * ncells, 0);
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					{
+						std::map<int,double>::iterator it = this->workers[0]->Get_solution(j)->Get_log_gamma_map().begin();
+						for ( ; it != this->workers[0]->Get_solution(j)->Get_log_gamma_map().end(); it++)
+						{
+							// it is pointing to a species number, concentration
+							int rm_species_num = this->s_num2rm_species_num[it->first];
+							log_gammas[rm_species_num * ncells + j0] = it->second;
+						}
+					}
+				}
+				MPI_Send((void *) &log_gammas.front(), (int) nspecies * ncells, MPI_DOUBLE, 0, 0, phreeqcrm_comm);
+			}
+			else if (this->mpi_myself == 0)
+			{
+				MPI_Status mpi_status;
+				double * recv_species = new double[(size_t)  nspecies * ncells];
+				MPI_Recv(recv_species, (int) nspecies * ncells, MPI_DOUBLE, n, 0, phreeqcrm_comm, &mpi_status);
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						double *d_ptr = &log_gammas[*it];
+						for (size_t i = 0; i < nspecies; i++)
+						{
+							d_ptr[this->nxyz * i] = recv_species[i * ncells + j0];
+						}
+					}
+				}
+				delete recv_species;
+			}
+		}
+	}
+	return IRM_OK;
+}
+#else
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSpeciesLogGammas(std::vector<double> & log_gammas)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	size_t nspecies = this->species_names.size();
+	log_gammas.resize(nspecies * this->nxyz, 0.0);
+	if (this->species_save_on)
+	{
+		for (int i = 0; i < this->nthreads; i++)
+		{
+			for (int j = this->start_cell[i]; j <= this->end_cell[i]; j++)
+			{
+				std::vector<double> d;
+				d.resize(this->species_names.size(), 0);
+				{
+					std::map<int,double>::iterator it = this->workers[i]->Get_solution(j)->Get_log_gamma_map().begin();
+					for ( ; it != this->workers[i]->Get_solution(j)->Get_log_gamma_map().end(); it++)
+					{
+						// it is pointing to a species number, concentration
+						int rm_species_num = this->s_num2rm_species_num[it->first];
+						d[rm_species_num] = it->second;
+					}
+				}
+				std::vector<int>::iterator it;
+				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+				{
+					double *d_ptr = &log_gammas[*it];
+					for (size_t i = 0; i < d.size(); i++)
+					{
+						d_ptr[this->nxyz * i] = d[i];
+					}
+				}
+			}
+		}
+	}
+	return IRM_OK;
+}
+#endif
+#ifdef USE_MPI
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSurfaceDiffuseLayerConcentrations(std::string surf, std::vector<double> & dl_species_conc)
+/* ---------------------------------------------------------------------- */
+{
+	IRM_RESULT return_value = IRM_OK;
+	this->phreeqcrm_error_string.clear();
+	size_t nspecies = this->species_names.size();
+	dl_species_conc.resize(nspecies * this->nxyz, 0.0);
+
+	if (this->species_save_on)
+	{
+		if (this->mpi_myself == 0)
+		{		
+			try
+			{		
+				bool found = false;
+				for (size_t i = 0; i < this->surface_names.size(); i++)
+				{
+					if (surf == this->surface_names[i]) 
+					{
+						found = true;
+						break;
+					}
+				}
+				if (!found) 
+				{
+					std::ostringstream estream;
+					estream << "Surface not found: " << surf;
+					return_value = IRM_INVALIDARG;
+					this->ErrorHandler(return_value, estream.str());
+				}
+				int method = METHOD_GETSPECIESCONCENTRATIONS;
+				MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+			}
+			catch (...)
+			{
+				return this->ReturnHandler(return_value, "PhreeqcRM::GetSurfaceDiffuseLayerConcentrations");
+			}
+		}
+		// Fill in root concentrations
+		if (this->mpi_myself == 0)
+		{
+			for (int j = this->start_cell[0]; j <= this->end_cell[0]; j++)
+			{
+				std::vector<double> d;
+				d.resize(this->species_names.size(), 0);
+				{
+					std::vector <cxxSurfaceCharge> & sc_ref = this->workers[0]->Get_surface(j)->Get_surface_charges();
+					cxxSurfaceCharge * surf_charge_ptr = NULL;
+					for (size_t isc = 0; isc < sc_ref.size(); isc++)
+					{
+						if (sc_ref[isc].Get_name() == surf)
+						{
+							surf_charge_ptr = &sc_ref[isc];
+							break;
+						}
+					}
+					if (surf_charge_ptr == NULL) continue;
+					std::map<int,double>::iterator it = surf_charge_ptr->Get_dl_species_map().begin();
+					for ( ; it != surf_charge_ptr->Get_dl_species_map().end(); it++)
+					{
+						// it is pointing to a species number, concentration
+						int rm_species_num = this->s_num2rm_species_num[it->first];
+						d[rm_species_num] = it->second;
+					}
+				}
+				{
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						double *d_ptr = &dl_species_conc[*it];
+						for (size_t i = 0; i < d.size(); i++)
+						{
+							d_ptr[this->nxyz * i] = d[i];
+						}
+					}
+				}
+			}
+		}
+		// Fill in worker concentrations
+		for (int n = 1; n < this->mpi_tasks; n++)
+		{
+			int ncells = this->end_cell[n] - start_cell[n] + 1;
+			if (this->mpi_myself == n)
+			{
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					{
+						std::vector <cxxSurfaceCharge> & sc_ref = this->workers[0]->Get_surface(j)->Get_surface_charges();
+						cxxSurfaceCharge * surf_charge_ptr = NULL;
+						for (size_t isc = 0; isc < sc_ref.size(); isc++)
+						{
+							if (sc_ref[isc].Get_name() == surf)
+							{
+								surf_charge_ptr = &sc_ref[isc];
+							}
+						}
+						if (surf_charge_ptr == NULL) continue;
+						std::map<int,double>::iterator it = surf_charge_ptr->Get_dl_species_map().begin();
+						for ( ; it != surf_charge_ptr->Get_dl_species_map().end(); it++)
+						{
+							// it is pointing to a species number, concentration
+							int rm_species_num = this->s_num2rm_species_num[it->first];
+							dl_species_conc[rm_species_num * ncells + j0] = it->second;
+						}
+					}
+				}
+				MPI_Send((void *) &dl_species_conc.front(), (int) nspecies * ncells, MPI_DOUBLE, 0, 0, phreeqcrm_comm);
+			}
+			else if (this->mpi_myself == 0)
+			{
+				MPI_Status mpi_status;
+				double * recv_species = new double[(size_t)  nspecies * ncells];
+				MPI_Recv(recv_species, (int) nspecies * ncells, MPI_DOUBLE, n, 0, phreeqcrm_comm, &mpi_status);
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						double *d_ptr = &dl_species_conc[*it];
+						for (size_t i = 0; i < nspecies; i++)
+						{
+							d_ptr[this->nxyz * i] = recv_species[i * ncells + j0];
+						}
+					}
+				}
+				delete recv_species;
+			}
+		}
+	}
+	return IRM_OK;
+}
+#else
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSurfaceDiffuseLayerConcentrations(std::string surf, std::vector<double> & dl_species_conc)
+/* ---------------------------------------------------------------------- */
+{
+	IRM_RESULT return_value = IRM_OK;
+	this->phreeqcrm_error_string.clear();
+	size_t nspecies = this->species_names.size();
+	dl_species_conc.resize(nspecies * this->nxyz, 0.0);
+	try
+	{
+		if (this->species_save_on)
+		{
+			bool found = false;
+			for (size_t i = 0; i < this->surface_names.size(); i++)
+			{
+				if (surf == this->surface_names[i]) 
+				{
+					found = true;
+					break;
+				}
+			}
+			if (!found) 
+			{
+				std::ostringstream estream;
+				estream << "Surface not found: " << surf;
+				return_value = IRM_INVALIDARG;
+				this->ErrorHandler(return_value, estream.str());
+			}
+			for (int i = 0; i < this->nthreads; i++)
+			{
+				for (int j = this->start_cell[i]; j <= this->end_cell[i]; j++)
+				{
+					std::vector<double> d;
+					d.resize(this->species_names.size(), 0);
+					{
+						cxxSurfaceCharge * surf_charge_ptr = NULL;
+						cxxSurface *surface_ptr = this->workers[i]->Get_surface(j);
+						if (surface_ptr)
+						{
+							std::vector <cxxSurfaceCharge> & sc_ref = surface_ptr->Get_surface_charges();
+							for (size_t isc = 0; isc < sc_ref.size(); isc++)
+							{
+								if (sc_ref[isc].Get_name() == surf)
+								{
+									surf_charge_ptr = &sc_ref[isc];
+									break;
+								}
+							}
+						}
+						if (surf_charge_ptr == NULL) continue;
+						std::map<int,double>::iterator it = surf_charge_ptr->Get_dl_species_map().begin();
+						for ( ; it != surf_charge_ptr->Get_dl_species_map().end(); it++)
+						{
+							// it is pointing to a species number, concentration
+							int rm_species_num = this->s_num2rm_species_num[it->first];
+							d[rm_species_num] = it->second;
+						}
+					}
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						double *d_ptr = &dl_species_conc[*it];
+						for (size_t i = 0; i < d.size(); i++)
+						{
+							d_ptr[this->nxyz * i] = d[i];
+						}
+					}
+				}
+			}
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::GetSurfaceDiffuseLayerConcentrations");
 }
 #endif
 #ifdef USE_MPI

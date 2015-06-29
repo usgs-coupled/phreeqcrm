@@ -86,6 +86,13 @@ IPhreeqcPhast::Get_solution(int i)
 	return Utilities::Rxn_find(this->PhreeqcPtr->Rxn_solution_map, i);
 }
 /* ---------------------------------------------------------------------- */
+cxxSurface *
+IPhreeqcPhast::Get_surface(int i)
+/* ---------------------------------------------------------------------- */
+{
+	return Utilities::Rxn_find(this->PhreeqcPtr->Rxn_surface_map, i);
+}
+/* ---------------------------------------------------------------------- */
 cxxGasPhase *
 IPhreeqcPhast::Get_gas_phase(int i)
 /* ---------------------------------------------------------------------- */
