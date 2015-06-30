@@ -1662,9 +1662,42 @@ phreeqc_rm.OutputMessage(oss.str());
 Called by root and (or) workers.
  */
 	const std::vector < int> &                GetStartCell(void) const {return this->start_cell;}
+/**
+Fills a vector reference (@a areas) with areas (m^2) for the specified diffuse layer (@a surf) for each cell.
+This method is intended for use with diffuse-layer diffusion in 
+multicomponent-diffusion transport calculations,
+and @ref SetSpeciesSaveOn must be set to @a true. 
+
+@param surf      Name of surface for which diffuse-layer areas are retrieved.
+@param areas     Vector to receive the diffuse-layer areas.
+Dimension of the vector is set to @a nxyz,
+where @a nxyz is the number of grid cells (@ref GetGridCellCount).
+Areas are square meter.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+
+@see @ref FindComponents, 
+@ref GetSpeciesCount, 
+@ref GetSpeciesSaveOn, 
+@ref GetSurfaceDiffuseLayerNames, 
+@ref GetSurfaceDiffuseLayerThickness,
+@ref SetSpeciesSaveOn, 
+@ref SetSurfaceDiffuseLayerConcentrations.
+
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> dl_area;
+status = phreeqc_rm.GetSurfaceDiffuseLayerArea("Hfo", dl_area);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
 	IRM_RESULT                                GetSurfaceDiffuseLayerArea(std::string surf, std::vector<double> &areas); 
 /**
-Returns a vector reference to species concentrations (@a dl_species_conc) in the diffuse layer 
+Fills a vector reference (@a dl_species_conc) with species concentrations in the diffuse layer 
 of the specified surface (@a surf).
 This method is intended for use with diffuse-layer diffusion in 
 multicomponent-diffusion transport calculations,
@@ -1683,7 +1716,9 @@ Concentrations are moles per liter.
 @see @ref FindComponents, 
 @ref GetSpeciesCount, 
 @ref GetSpeciesSaveOn, 
+@ref GetSurfaceDiffuseLayerArea,
 @ref GetSurfaceDiffuseLayerNames, 
+@ref GetSurfaceDiffuseLayerThickness,
 @ref SetSpeciesSaveOn, 
 @ref SetSurfaceDiffuseLayerConcentrations.
 
@@ -1715,7 +1750,9 @@ and @ref SetSpeciesSaveOn must be set to @a true.
 @see @ref FindComponents, 
 @ref GetSpeciesCount, 
 @ref GetSpeciesSaveOn, 
+@ref GetSurfaceDiffuseLayerArea,
 @ref GetSurfaceDiffuseLayerConcentrations,
+@ref GetSurfaceDiffuseLayerThickness,
 @ref SetSpeciesSaveOn, 
 @ref SetSurfaceDiffuseLayerConcentrations.
 
@@ -1736,7 +1773,40 @@ for (size_t i = 0; i < surface_names.size(); i++)
 Called by root and (or) workers.
  */
 	const std::vector<std::string> &           GetSurfaceDiffuseLayerNames(void) const {return this->surface_names;}
-	IRM_RESULT                                 GetSurfaceDiffuseLayerThickness(std::string surf, std::vector<double> &thicknesses); 
+/**
+Fills a vector reference (@a thickness) with the thicknes (m) for the specified diffuse layer (@a surf) for each cell.
+This method is intended for use with diffuse-layer diffusion in 
+multicomponent-diffusion transport calculations,
+and @ref SetSpeciesSaveOn must be set to @a true. 
+
+@param surf          Name of surface for which diffuse-layer areas are retrieved.
+@param thickness     Vector to receive the diffuse-layer thicknesses.
+Dimension of the vector is set to @a nxyz,
+where @a nxyz is the number of grid cells (@ref GetGridCellCount).
+Thicknesses are in meters.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+
+@see @ref FindComponents, 
+@ref GetSpeciesCount, 
+@ref GetSpeciesSaveOn, 
+@ref GetSurfaceDiffuseLayerArea,
+@ref GetSurfaceDiffuseLayerNames, 
+@ref SetSpeciesSaveOn, 
+@ref SetSurfaceDiffuseLayerConcentrations.
+
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> dl_thickness;
+status = phreeqc_rm.GetSurfaceDiffuseLayerThickness("Hfo", dl_thickness);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+	IRM_RESULT                                 GetSurfaceDiffuseLayerThickness(std::string surf, std::vector<double> &thickness); 
 /**
 Vector reference to the current temperatures of the cells.
 By default, the temperature vector is initialized to 25 C;

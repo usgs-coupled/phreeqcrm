@@ -692,6 +692,105 @@ RM_GetSpeciesZ(int id, double * z)
 	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSurfaceDiffuseLayerArea(int id, char *surf, double * areas)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	IRM_RESULT return_value = IRM_OK;
+	if (Reaction_module_ptr)
+	{
+		if (areas != NULL)
+		{
+			std::vector<double> areas_vector;
+			std::string surf_str(surf);
+			return_value = Reaction_module_ptr->GetSurfaceDiffuseLayerArea(surf, areas_vector);
+			if (return_value != 0) return return_value;
+			memcpy(areas, &areas_vector.front(), areas_vector.size()*sizeof(double));
+			return IRM_OK;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSurfaceDiffuseLayerConcentrations(int id, char *surf, double * c)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	IRM_RESULT return_value = IRM_OK;
+	if (Reaction_module_ptr)
+	{
+		if (c != NULL)
+		{
+			std::vector<double> c_vector;
+			std::string surf_str(surf);
+			return_value = Reaction_module_ptr->GetSurfaceDiffuseLayerConcentrations(surf, c_vector);
+			if (return_value != 0) return return_value;
+			memcpy(c, &c_vector.front(), c_vector.size()*sizeof(double));
+			return IRM_OK;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+int RM_GetSurfaceDiffuseLayerCount(int id)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns the number of components 
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return (int) Reaction_module_ptr->GetSurfaceDiffuseLayerNames().size();
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSurfaceDiffuseLayerName(int id, int num, char *surf_name, int l1)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (surf_name != NULL)
+		{
+			//if (l1 >= 0)
+			if (l1 > 0 && num >= 0 && num < (int) Reaction_module_ptr->GetSurfaceDiffuseLayerNames().size())
+			{
+				strncpy(surf_name, Reaction_module_ptr->GetSurfaceDiffuseLayerNames()[num].c_str(), l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSurfaceDiffuseLayerThickness(int id, char *surf, double * thickness)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	IRM_RESULT return_value = IRM_OK;
+	if (Reaction_module_ptr)
+	{
+		if (thickness != NULL)
+		{
+			std::vector<double> thickness_vector;
+			std::string surf_str(surf);
+			return_value = Reaction_module_ptr->GetSurfaceDiffuseLayerThickness(surf, thickness_vector);
+			if (return_value != 0) return return_value;
+			memcpy(thickness, &thickness_vector.front(), thickness_vector.size()*sizeof(double));
+			return IRM_OK;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
 int 
 RM_GetThreadCount(int id)
 /* ---------------------------------------------------------------------- */
@@ -1374,6 +1473,28 @@ RM_SetSpeciesSaveOn(int id, int save_on)
 	if (Reaction_module_ptr)
 	{
 		return Reaction_module_ptr->SetSpeciesSaveOn(save_on != 0);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_SetSurfaceDiffuseLayerConcentrations(int id, char *surf, double * c)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	IRM_RESULT return_value = IRM_OK;
+	if (Reaction_module_ptr)
+	{
+		if (c != NULL)
+		{
+			std::vector<double> c_vector;
+			c_vector.resize(Reaction_module_ptr->GetSpeciesCount() * Reaction_module_ptr->GetGridCellCount());
+			memcpy((void *) &c_vector[0], c, (size_t) (Reaction_module_ptr->GetSpeciesCount() * Reaction_module_ptr->GetGridCellCount()));
+			std::string surf_str(surf);
+			return_value = Reaction_module_ptr->SetSurfaceDiffuseLayerConcentrations(surf_str, c_vector);
+			return return_value;
+		}
+		return IRM_INVALIDARG;
 	}
 	return IRM_BADINSTANCE;
 }

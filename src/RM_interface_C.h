@@ -1154,6 +1154,11 @@ status = RM_GetSpeciesZ(id, z);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetSpeciesZ(int id, double *z);
+IRM_DLL_EXPORT IRM_RESULT RM_GetSurfaceDiffuseLayerArea(int id, char *surf, double * areas);
+IRM_DLL_EXPORT IRM_RESULT RM_GetSurfaceDiffuseLayerConcentrations(int id, char *surf, double * c);
+IRM_DLL_EXPORT int        RM_GetSurfaceDiffuseLayerCount(int id);
+IRM_DLL_EXPORT IRM_RESULT RM_GetSurfaceDiffuseLayerName(int id, int num, char *surf_name, int l);
+IRM_DLL_EXPORT IRM_RESULT RM_GetSurfaceDiffuseLayerThickness(int id, char *surf, double * thickness);
 /**
 Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
 For the OPENMP version, the number of threads is set implicitly or explicitly with @ref RM_Create. For the
@@ -2416,6 +2421,7 @@ status = RM_SetSpeciesSaveOn(id, 1);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SetSpeciesSaveOn(int id, int save_on);
+IRM_DLL_EXPORT IRM_RESULT RM_SetSurfaceDiffuseLayerConcentrations(int id, char *surf, double * c);
 /**
 Set the temperature for each reaction cell. If @a RM_SetTemperature is not called,
 worker solutions will have temperatures as defined by initial conditions
