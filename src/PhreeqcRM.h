@@ -53,6 +53,7 @@ typedef enum {
 	METHOD_GETSELECTEDOUTPUT,
 	METHOD_GETSOLUTIONVOLUME,
 	METHOD_GETSPECIESCONCENTRATIONS,
+	METHOD_GETSURFACEDIFFUSELAYERCONCENTRATIONS,
 	METHOD_INITIALPHREEQC2MODULE,
 	METHOD_INITIALPHREEQCCELL2MODULE,
 	METHOD_LOADDATABASE,
@@ -76,6 +77,7 @@ typedef enum {
 	METHOD_SETSATURATION,
 	METHOD_SETSELECTEDOUTPUTON,
 	METHOD_SETSPECIESSAVEON,
+	METHOD_SETSURFACEDIFFUSELAYERCONCENTRATIONS,
 	METHOD_SETTEMPERATURE,
 	METHOD_SETTIME,
 	METHOD_SETTIMECONVERSION,
@@ -3343,6 +3345,7 @@ status = phreeqc_rm.SetSpeciesSaveOn(true);
 Called by root and (or) workers.
  */
 	IRM_RESULT                                SetSpeciesSaveOn(bool save_on);
+	IRM_RESULT SetSurfaceDiffuseLayerConcentrations(std::string surf, std::vector<double> & dl_species_conc);
 /**
 Set the temperature for each reaction cell. If @a SetTemperature is not called,
 worker solutions will have temperatures as defined by initial conditions

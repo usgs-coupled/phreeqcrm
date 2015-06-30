@@ -3545,7 +3545,7 @@ PhreeqcRM::GetSurfaceDiffuseLayerConcentrations(std::string surf, std::vector<do
 					return_value = IRM_INVALIDARG;
 					this->ErrorHandler(return_value, estream.str());
 				}
-				int method = METHOD_GETSPECIESCONCENTRATIONS;
+				int method = METHOD_GETSURFACEDIFFUSELAYERCONCENTRATIONS;
 				MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 			}
 			catch (...)
@@ -7956,7 +7956,83 @@ PhreeqcRM::SetSpeciesSaveOn(bool t)
 
 	return IRM_OK;
 }
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::SetSurfaceDiffuseLayerConcentrations(std::string surf, std::vector<double> & dl_species_conc)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (this->species_save_on)
+	{
+#ifdef USE_MPI
+		if (this->mpi_myself == 0)
+		{
+			int method = METHOD_SETSURFACEDIFFUSELAYERCONCENTRATIONS;
+			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+		}
+		else if (this->mpi_myself > 0)
+		{
+			dl_species_conc.resize(this->species_names.size() * this->nxyz, 0.0);
+		}
+		MPI_Bcast(&dl_species_conc.front(), (int) this->species_names.size() * nxyz, MPI_DOUBLE, 0, phreeqcrm_comm);
+		for (int n = this->mpi_myself; n < this->mpi_myself + 1; n++)
+#else
+ 		for (int n = 0; n < this->nthreads; n++)
+#endif
+		{
+			for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
+			{
+#ifdef USE_MPI
+				cxxSurface * surface_ptr =  this->GetWorkers()[0]->Get_surface(i);
+#else
+				cxxSurface * surface_ptr =  this->GetWorkers()[n]->Get_surface(i);
+#endif
+				cxxSurfaceCharge * charge_ptr = NULL;
+				for (size_t isc = 0; isc < surface_ptr->Get_surface_charges().size(); isc++)
+				{
+					if (surf == surface_ptr->Get_surface_charges()[isc].Get_name())
+					{
+						charge_ptr = &surface_ptr->Get_surface_charges()[isc];
+						break;
+					}
+				}
+				if (charge_ptr == NULL) continue;
+				int j = this->backward_mapping[i][0];   // user grid number
+				cxxNameDouble dl_totals;                // mol/L
+				for (size_t k = 0; k < this->components.size(); k++)
+				{
+					dl_totals.add(components[k].c_str(), 0.0);
+				}
 
+				for (size_t k = 0; k < this->species_names.size(); k++)
+				{
+					// kth species, jth cell
+					double conc = dl_species_conc[k * this->nxyz + j];
+					cxxNameDouble::iterator it = this->species_stoichiometry[k].begin();
+					for ( ; it != this->species_stoichiometry[k].end(); it++)
+					{
+						dl_totals.add(it->first.c_str(), it->second * conc);
+					}
+				}
+				double volume = charge_ptr->Get_mass_water();
+
+				dl_totals.multiply(volume);              // convert to moles
+				
+				cxxNameDouble nd;
+				cxxNameDouble::iterator it = dl_totals.begin();
+				for ( ; it != dl_totals.end(); it++)
+				{
+					if (it->second <= 0) continue;
+					if (it->first == "Charge") continue;
+					nd[it->first] = it->second;
+				}
+				charge_ptr->Set_diffuse_layer_totals(nd);
+			}
+		}
+		return IRM_OK;
+	}
+	return IRM_INVALIDARG;
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::SetTemperature(const std::vector<double> &t)
