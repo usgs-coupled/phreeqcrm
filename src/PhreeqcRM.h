@@ -53,7 +53,9 @@ typedef enum {
 	METHOD_GETSELECTEDOUTPUT,
 	METHOD_GETSOLUTIONVOLUME,
 	METHOD_GETSPECIESCONCENTRATIONS,
+	METHOD_GETSURFACEDIFFUSELAYERAREA,
 	METHOD_GETSURFACEDIFFUSELAYERCONCENTRATIONS,
+	METHOD_GETSURFACEDIFFUSELAYERTHICKNESS,
 	METHOD_INITIALPHREEQC2MODULE,
 	METHOD_INITIALPHREEQCCELL2MODULE,
 	METHOD_LOADDATABASE,
@@ -1660,6 +1662,7 @@ phreeqc_rm.OutputMessage(oss.str());
 Called by root and (or) workers.
  */
 	const std::vector < int> &                GetStartCell(void) const {return this->start_cell;}
+	IRM_RESULT                                GetSurfaceDiffuseLayerArea(std::string surf, std::vector<double> &areas); 
 /**
 Returns a vector reference to species concentrations (@a dl_species_conc) in the diffuse layer 
 of the specified surface (@a surf).
@@ -1733,6 +1736,7 @@ for (size_t i = 0; i < surface_names.size(); i++)
 Called by root and (or) workers.
  */
 	const std::vector<std::string> &           GetSurfaceDiffuseLayerNames(void) const {return this->surface_names;}
+	IRM_RESULT                                 GetSurfaceDiffuseLayerThickness(std::string surf, std::vector<double> &thicknesses); 
 /**
 Vector reference to the current temperatures of the cells.
 By default, the temperature vector is initialized to 25 C;

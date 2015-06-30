@@ -3515,6 +3515,199 @@ PhreeqcRM::GetSpeciesLogGammas(std::vector<double> & log_gammas)
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+PhreeqcRM::GetSurfaceDiffuseLayerArea(std::string surf, std::vector<double> &areas)
+/* ---------------------------------------------------------------------- */
+{
+	IRM_RESULT return_value = IRM_OK;
+	this->phreeqcrm_error_string.clear();
+	areas.clear();
+	areas.resize(this->nxyz, 0.0);
+	if (this->species_save_on)
+	{
+		if (this->mpi_myself == 0)
+		{		
+			try
+			{		
+				bool found = false;
+				for (size_t i = 0; i < this->surface_names.size(); i++)
+				{
+					if (surf == this->surface_names[i]) 
+					{
+						found = true;
+						break;
+					}
+				}
+				if (!found) 
+				{
+					std::ostringstream estream;
+					estream << "Surface not found: " << surf;
+					return_value = IRM_INVALIDARG;
+					this->ErrorHandler(return_value, estream.str());
+				}
+				int method = METHOD_GETSURFACEDIFFUSELAYERAREA;
+				MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+			}
+			catch (...)
+			{
+				return this->ReturnHandler(return_value, "PhreeqcRM::GetSurfaceDiffuseLayerArea");
+			}
+		}
+		int len = (int) surf.size();
+		MPI_Bcast(&len, 1, MPI_INT, 0, phreeqcrm_comm);
+		if (mpi_myself == 0)
+		{
+			MPI_Bcast((void *) surf.c_str(), len + 1, MPI_CHAR, 0, phreeqcrm_comm);
+		}
+		else
+		{
+			char *tstr = new char[len+1];
+			MPI_Bcast((void *) tstr, len + 1, MPI_CHAR, 0, phreeqcrm_comm);
+			surf = tstr;
+		}
+		// Fill in root areas
+		if (this->mpi_myself == 0)
+		{
+			for (int j = this->start_cell[0]; j <= this->end_cell[0]; j++)
+			{
+				cxxSurfaceCharge * surf_charge_ptr = NULL;
+				cxxSurface *surface_ptr = this->workers[0]->Get_surface(j);
+				if (surface_ptr)
+				{
+					std::vector <cxxSurfaceCharge> & sc_ref = surface_ptr->Get_surface_charges();
+					for (size_t isc = 0; isc < sc_ref.size(); isc++)
+					{
+						if (sc_ref[isc].Get_name() == surf)
+						{
+							surf_charge_ptr = &sc_ref[isc];
+							break;
+						}
+					}
+				}
+				if (surf_charge_ptr == NULL) continue;
+				double area = surf_charge_ptr->Get_specific_area() * surf_charge_ptr->Get_grams();
+				std::vector<int>::iterator it;
+				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+				{
+					areas[*it] = area;
+				}
+			}
+		}
+
+		// Fill in worker concentrations
+		for (int n = 1; n < this->mpi_tasks; n++)
+		{
+			int ncells = this->end_cell[n] - start_cell[n] + 1;
+			if (this->mpi_myself == n)
+			{
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					{
+						std::vector <cxxSurfaceCharge> & sc_ref = this->workers[0]->Get_surface(j)->Get_surface_charges();
+						cxxSurfaceCharge * surf_charge_ptr = NULL;
+						for (size_t isc = 0; isc < sc_ref.size(); isc++)
+						{
+							if (sc_ref[isc].Get_name() == surf)
+							{
+								surf_charge_ptr = &sc_ref[isc];
+							}
+						}
+						if (surf_charge_ptr == NULL) continue;
+						double area = surf_charge_ptr->Get_specific_area() * surf_charge_ptr->Get_grams();
+						std::cerr << "Worker: cell: " << j << " area: " << area << std::endl;
+						areas[j0] = area;
+					}
+				}
+				MPI_Send((void *) &areas.front(), (int) ncells, MPI_DOUBLE, 0, 0, phreeqcrm_comm);
+			}
+			else if (this->mpi_myself == 0)
+			{
+				MPI_Status mpi_status;
+				double * recv_species = new double[(size_t)  ncells];
+				MPI_Recv(recv_species, (int) ncells, MPI_DOUBLE, n, 0, phreeqcrm_comm, &mpi_status);
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						areas[*it] = recv_species[j0];
+					}
+				}
+				delete recv_species;
+			}
+		}
+	}
+	return IRM_OK;
+}
+#else
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSurfaceDiffuseLayerArea(std::string surf, std::vector<double> &areas)
+/* ---------------------------------------------------------------------- */
+{
+	IRM_RESULT return_value = IRM_OK;
+	this->phreeqcrm_error_string.clear();
+	areas.clear();
+	areas.resize(this->nxyz, 0.0);
+	try
+	{
+		if (this->species_save_on)
+		{
+			bool found = false;
+			for (size_t i = 0; i < this->surface_names.size(); i++)
+			{
+				if (surf == this->surface_names[i]) 
+				{
+					found = true;
+					break;
+				}
+			}
+			if (!found) 
+			{
+				std::ostringstream estream;
+				estream << "Surface not found: " << surf;
+				return_value = IRM_INVALIDARG;
+				this->ErrorHandler(return_value, estream.str());
+			}
+			for (int i = 0; i < this->nthreads; i++)
+			{
+				for (int j = this->start_cell[i]; j <= this->end_cell[i]; j++)
+				{
+					cxxSurfaceCharge * surf_charge_ptr = NULL;
+					cxxSurface *surface_ptr = this->workers[i]->Get_surface(j);
+					if (surface_ptr)
+					{
+						std::vector <cxxSurfaceCharge> & sc_ref = surface_ptr->Get_surface_charges();
+						for (size_t isc = 0; isc < sc_ref.size(); isc++)
+						{
+							if (sc_ref[isc].Get_name() == surf)
+							{
+								surf_charge_ptr = &sc_ref[isc];
+								break;
+							}
+						}
+					}
+					if (surf_charge_ptr == NULL) continue;
+					double area = surf_charge_ptr->Get_specific_area() * surf_charge_ptr->Get_grams();
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						areas[*it] = area;
+					}
+				}
+			}
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::GetSurfaceDiffuseLayerArea");
+}
+#endif
+#ifdef USE_MPI
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 PhreeqcRM::GetSurfaceDiffuseLayerConcentrations(std::string surf, std::vector<double> & dl_species_conc)
 /* ---------------------------------------------------------------------- */
 {
@@ -3552,6 +3745,18 @@ PhreeqcRM::GetSurfaceDiffuseLayerConcentrations(std::string surf, std::vector<do
 			{
 				return this->ReturnHandler(return_value, "PhreeqcRM::GetSurfaceDiffuseLayerConcentrations");
 			}
+		}
+		int len = (int) surf.size();
+		MPI_Bcast(&len, 1, MPI_INT, 0, phreeqcrm_comm);
+		if (mpi_myself == 0)
+		{
+			MPI_Bcast((void *) surf.c_str(), len + 1, MPI_CHAR, 0, phreeqcrm_comm);
+		}
+		else
+		{
+			char *tstr = new char[len+1];
+			MPI_Bcast((void *) tstr, len + 1, MPI_CHAR, 0, phreeqcrm_comm);
+			surf = tstr;
 		}
 		// Fill in root concentrations
 		if (this->mpi_myself == 0)
@@ -3725,6 +3930,198 @@ PhreeqcRM::GetSurfaceDiffuseLayerConcentrations(std::string surf, std::vector<do
 	{
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::GetSurfaceDiffuseLayerConcentrations");
+}
+#endif
+#ifdef USE_MPI
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSurfaceDiffuseLayerThickness(std::string surf, std::vector<double> &thicknesses)
+/* ---------------------------------------------------------------------- */
+{
+	IRM_RESULT return_value = IRM_OK;
+	this->phreeqcrm_error_string.clear();
+	thicknesses.clear();
+	thicknesses.resize(this->nxyz, 0.0);
+	if (this->species_save_on)
+	{
+		if (this->mpi_myself == 0)
+		{		
+			try
+			{		
+				bool found = false;
+				for (size_t i = 0; i < this->surface_names.size(); i++)
+				{
+					if (surf == this->surface_names[i]) 
+					{
+						found = true;
+						break;
+					}
+				}
+				if (!found) 
+				{
+					std::ostringstream estream;
+					estream << "Surface not found: " << surf;
+					return_value = IRM_INVALIDARG;
+					this->ErrorHandler(return_value, estream.str());
+				}
+				int method = METHOD_GETSURFACEDIFFUSELAYERTHICKNESS;
+				MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+			}
+			catch (...)
+			{
+				return this->ReturnHandler(return_value, "PhreeqcRM::GetSurfaceDiffuseLayerThickness");
+			}
+		}
+		int len = (int) surf.size();
+		MPI_Bcast(&len, 1, MPI_INT, 0, phreeqcrm_comm);
+		if (mpi_myself == 0)
+		{
+			MPI_Bcast((void *) surf.c_str(), len + 1, MPI_CHAR, 0, phreeqcrm_comm);
+		}
+		else
+		{
+			char *tstr = new char[len+1];
+			MPI_Bcast((void *) tstr, len + 1, MPI_CHAR, 0, phreeqcrm_comm);
+			surf = tstr;
+		}
+		// Fill in root areas
+		if (this->mpi_myself == 0)
+		{
+			for (int j = this->start_cell[0]; j <= this->end_cell[0]; j++)
+			{
+				cxxSurfaceCharge * surf_charge_ptr = NULL;
+				cxxSurface *surface_ptr = this->workers[0]->Get_surface(j);
+				if (surface_ptr)
+				{
+					std::vector <cxxSurfaceCharge> & sc_ref = surface_ptr->Get_surface_charges();
+					for (size_t isc = 0; isc < sc_ref.size(); isc++)
+					{
+						if (sc_ref[isc].Get_name() == surf)
+						{
+							surf_charge_ptr = &sc_ref[isc];
+							break;
+						}
+					}
+				}
+				if (surf_charge_ptr == NULL) continue;
+				double thickness = surface_ptr->Get_thickness();
+				std::vector<int>::iterator it;
+				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+				{
+					thicknesses[*it] = thickness;
+				}
+			}
+		}
+
+		// Fill in worker concentrations
+		for (int n = 1; n < this->mpi_tasks; n++)
+		{
+			int ncells = this->end_cell[n] - start_cell[n] + 1;
+			if (this->mpi_myself == n)
+			{
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					{
+						std::vector <cxxSurfaceCharge> & sc_ref = this->workers[0]->Get_surface(j)->Get_surface_charges();
+						cxxSurfaceCharge * surf_charge_ptr = NULL;
+						for (size_t isc = 0; isc < sc_ref.size(); isc++)
+						{
+							if (sc_ref[isc].Get_name() == surf)
+							{
+								surf_charge_ptr = &sc_ref[isc];
+							}
+						}
+						if (surf_charge_ptr == NULL) continue;
+						double thickness = this->workers[0]->Get_surface(j)->Get_thickness();
+						thicknesses[j0] = thickness;
+					}
+				}
+				MPI_Send((void *) &thicknesses.front(), (int) ncells, MPI_DOUBLE, 0, 0, phreeqcrm_comm);
+			}
+			else if (this->mpi_myself == 0)
+			{
+				MPI_Status mpi_status;
+				double * recv_species = new double[(size_t)  ncells];
+				MPI_Recv(recv_species, (int) ncells, MPI_DOUBLE, n, 0, phreeqcrm_comm, &mpi_status);
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						thicknesses[*it] = recv_species[j0];
+					}
+				}
+				delete recv_species;
+			}
+		}
+	}
+	return IRM_OK;
+}
+#else
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSurfaceDiffuseLayerThickness(std::string surf, std::vector<double> &thicknesses)
+/* ---------------------------------------------------------------------- */
+{
+	IRM_RESULT return_value = IRM_OK;
+	this->phreeqcrm_error_string.clear();
+	thicknesses.clear();
+	thicknesses.resize(this->nxyz, 0.0);
+	try
+	{
+		if (this->species_save_on)
+		{
+			bool found = false;
+			for (size_t i = 0; i < this->surface_names.size(); i++)
+			{
+				if (surf == this->surface_names[i]) 
+				{
+					found = true;
+					break;
+				}
+			}
+			if (!found) 
+			{
+				std::ostringstream estream;
+				estream << "Surface not found: " << surf;
+				return_value = IRM_INVALIDARG;
+				this->ErrorHandler(return_value, estream.str());
+			}
+			for (int i = 0; i < this->nthreads; i++)
+			{
+				for (int j = this->start_cell[i]; j <= this->end_cell[i]; j++)
+				{
+					cxxSurfaceCharge * surf_charge_ptr = NULL;
+					cxxSurface *surface_ptr = this->workers[i]->Get_surface(j);
+					if (surface_ptr)
+					{
+						std::vector <cxxSurfaceCharge> & sc_ref = surface_ptr->Get_surface_charges();
+						for (size_t isc = 0; isc < sc_ref.size(); isc++)
+						{
+							if (sc_ref[isc].Get_name() == surf)
+							{
+								surf_charge_ptr = &sc_ref[isc];
+								break;
+							}
+						}
+					}
+					if (surf_charge_ptr == NULL) continue;
+					double thickness = surface_ptr->Get_thickness();
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						thicknesses[*it] = thickness;
+					}
+				}
+			}
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::GetSurfaceDiffuseLayerThickness");
 }
 #endif
 #ifdef USE_MPI
@@ -4622,6 +5019,30 @@ PhreeqcRM::MpiWorker()
 					this->GetSpeciesConcentrations(c);
 				}
 				break;
+			case METHOD_GETSURFACEDIFFUSELAYERAREA:
+				if (debug_worker) std::cerr << "METHOD_GETSURFACEDIFFUSELAYERAREA" << std::endl;
+				{
+					std::vector<double> dummy;
+					std::string dummy_string;
+					return_value = this->GetSurfaceDiffuseLayerArea(dummy_string, dummy);
+				}
+				break;			
+			case METHOD_GETSURFACEDIFFUSELAYERCONCENTRATIONS:
+				if (debug_worker) std::cerr << "METHOD_GETSURFACEDIFFUSELAYERCONCENTRATIONS" << std::endl;
+				{
+					std::vector<double> dummy;
+					std::string dummy_string;
+					return_value = this->GetSurfaceDiffuseLayerConcentrations(dummy_string, dummy);
+				}
+				break;
+			case METHOD_GETSURFACEDIFFUSELAYERTHICKNESS:
+				if (debug_worker) std::cerr << "METHOD_GETSURFACEDIFFUSELAYERTHICKNESS" << std::endl;
+				{
+					std::vector<double> dummy;
+					std::string dummy_string;
+					return_value = this->GetSurfaceDiffuseLayerThickness(dummy_string, dummy);
+				}
+				break;	
 			case METHOD_INITIALPHREEQC2MODULE:
 				if (debug_worker) std::cerr << "METHOD_INITIALPHREEQC2MODULE" << std::endl;
 				{
@@ -4778,6 +5199,14 @@ PhreeqcRM::MpiWorker()
 				{
 					bool t = true;
 					return_value = this->SetSpeciesSaveOn(t);
+				}
+				break;
+			case METHOD_SETSURFACEDIFFUSELAYERCONCENTRATIONS:
+				if (debug_worker) std::cerr << "METHOD_SETSURFACEDIFFUSELAYERCONCENTRATIONS" << std::endl;
+				{
+					std::string dummy_string;
+					std::vector<double> dummy;
+					return_value = this->SetSurfaceDiffuseLayerConcentrations(dummy_string, dummy);
 				}
 				break;
 			case METHOD_SETTEMPERATURE:
@@ -7974,7 +8403,21 @@ PhreeqcRM::SetSurfaceDiffuseLayerConcentrations(std::string surf, std::vector<do
 		{
 			dl_species_conc.resize(this->species_names.size() * this->nxyz, 0.0);
 		}
+		// surface name
+		int len = (int) surf.size();
+		MPI_Bcast(&len, 1, MPI_INT, 0, phreeqcrm_comm);
+		if (mpi_myself == 0)
+		{
+			MPI_Bcast((void *) surf.c_str(), len + 1, MPI_CHAR, 0, phreeqcrm_comm);
+		}
+		else
+		{
+			char *tstr = new char[len+1];
+			MPI_Bcast((void *) tstr, len + 1, MPI_CHAR, 0, phreeqcrm_comm);
+			surf = tstr;
+		}
 		MPI_Bcast(&dl_species_conc.front(), (int) this->species_names.size() * nxyz, MPI_DOUBLE, 0, phreeqcrm_comm);
+
 		for (int n = this->mpi_myself; n < this->mpi_myself + 1; n++)
 #else
  		for (int n = 0; n < this->nthreads; n++)

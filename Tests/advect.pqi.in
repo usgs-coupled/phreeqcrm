@@ -15,6 +15,11 @@ SOLUTION 1-40  Initial solution for column
         K                0.2
         N(5)             1.2
 END
+SURFACE 1-40
+	-donnan
+	Hfo_w   1   1 100
+	Hfo_s   0.05
+        -equilibrate 1
 EXCHANGE 1-40
         -equilibrate 1
         X                0.0011

@@ -162,21 +162,54 @@ int species_cpp()
 		{
 			ic1[i] = 1;              // Solution 1
 			ic1[2*nxyz + i] = 1;     // Exchange 1
+			ic1[3*nxyz + i] = 1;     // Surface 1
 		}
 		status = phreeqc_rm.InitialPhreeqc2Module(ic1);
 		// Initial equilibration of cells
 		double time = 0.0;
 		double time_step = 0.0;
 		std::vector<double> c;
+		std::vector<double> log_gammas;
+		std::vector<double> dl_c;
 		status = phreeqc_rm.SetTime(time);
 		status = phreeqc_rm.SetTimeStep(time_step);
 		status = phreeqc_rm.RunCells();
 		status = phreeqc_rm.GetSpeciesConcentrations(c);
+		status = phreeqc_rm.GetSpeciesLogGammas(log_gammas);
+		const std::vector<std::string> & surface_names = phreeqc_rm.GetSurfaceDiffuseLayerNames();
+		{
+			std::ostringstream strm;
+			strm << "List of diffuse-layer surfaces: \n";
+			for (size_t i = 0; i < surface_names.size(); i++)
+			{
+				strm << "\t" << surface_names[i] << "\n";
+			}
+			phreeqc_rm.OutputMessage(strm.str());
+		}
+		status = phreeqc_rm.GetSurfaceDiffuseLayerConcentrations("Hfo", dl_c);
+		std::vector<double> dl_area;
+		status = phreeqc_rm.GetSurfaceDiffuseLayerArea("Hfo", dl_area);
+		std::vector<double> dl_thickness;
+		status = phreeqc_rm.GetSurfaceDiffuseLayerThickness("Hfo", dl_thickness);
+		{
+			for (size_t j = 0; j < nxyz; j++)
+			{
+				std::ostringstream strm;
+				strm << "List of diffuse-layer species for cell: " << j << "\n";
+				strm << "\tArea: " << dl_area[j] << "\n";
+				strm << "\tThickness: " << dl_thickness[j] << "\n";
+				for (size_t i = 0; i < phreeqc_rm.GetSpeciesCount(); i++)
+				{
+					strm << "\t" << species[i] << "\t" << dl_c[j + i * nxyz] << "\n";
+				}
+				phreeqc_rm.OutputMessage(strm.str());
+			}
+		}
+		status = phreeqc_rm.SetSurfaceDiffuseLayerConcentrations("Hfo", dl_c);
 
 		// --------------------------------------------------------------------------
 		// Set boundary condition
 		// --------------------------------------------------------------------------
-
 		std::vector<double> bc_conc, bc_f1;
 		std::vector<int> bc1, bc2;
 		int nbound = 1;
