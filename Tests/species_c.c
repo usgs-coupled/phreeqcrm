@@ -14,7 +14,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 	{
 		// Based on PHREEQC Example 11, transporting species rather than components
 		int mpi_myself = 0;
-		int i, j;
+		int i, j, k;
 		int nxyz; 
 #ifndef USE_MPI
 		int nthreads;
@@ -62,6 +62,12 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		char svalue[100];
 		int iphreeqc_id;
 		int dump_on, append;
+		double * log_gammas;
+		double * dl_areas;
+		double * dl_c;
+		int count_surface;
+		char ** surfaces;
+		double * dl_thicknesses;
 		
 		// --------------------------------------------------------------------------
 		// Create PhreeqcRM
@@ -209,7 +215,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 			ic1[i]          = 1;       // Solution 1
 			ic1[nxyz + i]   = -1;      // Equilibrium phases none
 			ic1[2*nxyz + i] = 1;       // Exchange 1
-			ic1[3*nxyz + i] = -1;      // Surface none
+			ic1[3*nxyz + i] = 1;       // Surface none
 			ic1[4*nxyz + i] = -1;      // Gas phase none
 			ic1[5*nxyz + i] = -1;      // Solid solutions none
 			ic1[6*nxyz + i] = -1;      // Kinetics none
@@ -245,12 +251,47 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		time = 0.0;
 		time_step = 0.0;
 		c = (double *) malloc((size_t) (ncomps * nxyz * sizeof(double)));
-		species_c = (double *) malloc((size_t) (nspecies * nxyz * sizeof(double)));
+		species_c      = (double *) malloc((size_t) (nspecies * nxyz * sizeof(double)));
+		dl_c           = (double *) malloc((size_t) (nspecies * nxyz * sizeof(double)));
+		log_gammas     = (double *) malloc((size_t) (nspecies * nxyz * sizeof(double)));
+		dl_areas       = (double *) malloc((size_t) (nxyz * sizeof(double)));
+		dl_thicknesses = (double *) malloc((size_t) (nxyz * sizeof(double)));
 		status = RM_SetTime(id, time);
 		status = RM_SetTimeStep(id, time_step);
 		status = RM_RunCells(id); 
 		status = RM_GetConcentrations(id, c);
 		status = RM_GetSpeciesConcentrations(id, species_c);
+		status = RM_GetSpeciesLogGammas(id, log_gammas);
+		count_surface = RM_GetSurfaceDiffuseLayerCount(id);
+		surfaces = (char **) malloc((size_t) count_surface);
+		for (i = 0; i < count_surface; i++)
+		{
+			surfaces[i] = (char *) malloc(100);
+			status = RM_GetSurfaceDiffuseLayerName(id, i, surfaces[i], 100);
+			status = RM_GetSurfaceDiffuseLayerArea(id, surfaces[i], dl_areas);
+			status = RM_GetSurfaceDiffuseLayerThickness(id, surfaces[i], dl_thicknesses);
+			status = RM_GetSurfaceDiffuseLayerConcentrations(id, surfaces[i], dl_c);
+			status = RM_SetSurfaceDiffuseLayerConcentrations(id, surfaces[i], dl_c);
+			sprintf(str1, "Diffuse-layer surface number \t%d\t%s\n", i, surfaces[i]);
+			status = RM_OutputMessage(id, str1);
+			for (j = 0; j < nxyz / 2; j++)
+			{
+				sprintf(str1, "Cell: %d\n", j);
+				status = RM_OutputMessage(id, str1);
+				sprintf(str1, "\tArea:     %e\n", dl_areas[j]);
+				status = RM_OutputMessage(id, str1);
+				sprintf(str1, "\tThickness: %e\n", dl_thicknesses[j]);
+				status = RM_OutputMessage(id, str1);
+				sprintf(str1, "\tSpecies    Log Gamma       DL conc\n", components[i]);
+				status = RM_OutputMessage(id, str1);
+				for (k =0; k < nspecies; k++)
+				{
+					status = RM_GetSpeciesName(id, k, str, 100);
+					sprintf(str1, "%12s\t%12.2e\t%12.2e\n", str, log_gammas[j + k*nxyz], dl_c[j + k*nxyz]);
+					status = RM_OutputMessage(id, str1);
+				}
+			}
+		}
 
 		// --------------------------------------------------------------------------
 		// Set boundary condition

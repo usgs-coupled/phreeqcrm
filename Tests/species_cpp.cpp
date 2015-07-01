@@ -169,41 +169,38 @@ int species_cpp()
 		double time = 0.0;
 		double time_step = 0.0;
 		std::vector<double> c;
-		std::vector<double> log_gammas;
-		std::vector<double> dl_c;
 		status = phreeqc_rm.SetTime(time);
 		status = phreeqc_rm.SetTimeStep(time_step);
 		status = phreeqc_rm.RunCells();
 		status = phreeqc_rm.GetSpeciesConcentrations(c);
+		// Diffuse layer methods
+		std::vector<double> log_gammas;
+		std::vector<double> dl_c;		
+		std::vector<double> dl_areas;
+		std::vector<double> dl_thicknesses;
 		status = phreeqc_rm.GetSpeciesLogGammas(log_gammas);
 		const std::vector<std::string> & surface_names = phreeqc_rm.GetSurfaceDiffuseLayerNames();
+		size_t count_surfaces = surface_names.size();
+		for (size_t i = 0; i < count_surfaces; i++)
 		{
+			status = phreeqc_rm.GetSurfaceDiffuseLayerConcentrations(surface_names[i], dl_c);
+			status = phreeqc_rm.GetSurfaceDiffuseLayerArea(surface_names[i], dl_areas);
+			status = phreeqc_rm.GetSurfaceDiffuseLayerThickness(surface_names[i], dl_thicknesses);
+
 			std::ostringstream strm;
-			strm << "List of diffuse-layer surfaces: \n";
-			for (size_t i = 0; i < surface_names.size(); i++)
+			strm << "Diffuse-layer surface number " << i << "\t" << surface_names[i] << "\n";	
+			for (size_t j = 0; j < nxyz / 2; j++)
 			{
-				strm << "\t" << surface_names[i] << "\n";
-			}
-			phreeqc_rm.OutputMessage(strm.str());
-		}
-		status = phreeqc_rm.GetSurfaceDiffuseLayerConcentrations("Hfo", dl_c);
-		std::vector<double> dl_area;
-		status = phreeqc_rm.GetSurfaceDiffuseLayerArea("Hfo", dl_area);
-		std::vector<double> dl_thickness;
-		status = phreeqc_rm.GetSurfaceDiffuseLayerThickness("Hfo", dl_thickness);
-		{
-			for (size_t j = 0; j < nxyz; j++)
-			{
-				std::ostringstream strm;
-				strm << "List of diffuse-layer species for cell: " << j << "\n";
-				strm << "\tArea: " << dl_area[j] << "\n";
-				strm << "\tThickness: " << dl_thickness[j] << "\n";
+				strm << "Cell: " << j << "\n";
+				strm << "\t\tArea:      "          << dl_areas[j]       << "\n";
+				strm << "\t\tThickness: "          << dl_thicknesses[j] << "\n\n";
+				strm << "\t\tSpecies\tLog Gamma\tDL conc\t\n";
 				for (size_t i = 0; i < phreeqc_rm.GetSpeciesCount(); i++)
 				{
-					strm << "\t" << species[i] << "\t" << dl_c[j + i * nxyz] << "\n";
+					strm << "\t\t" << species[i] << "\t" << log_gammas[j + i*nxyz] << "\t" << dl_c[j + i * nxyz] << "\n";
 				}
-				phreeqc_rm.OutputMessage(strm.str());
 			}
+			phreeqc_rm.OutputMessage(strm.str());
 		}
 		status = phreeqc_rm.SetSurfaceDiffuseLayerConcentrations("Hfo", dl_c);
 

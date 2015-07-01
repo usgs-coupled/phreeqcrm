@@ -1417,7 +1417,7 @@ Called by root and (or) workers.
 	const std::vector<double> &               GetSpeciesD25(void) {return this->species_d_25;}
 
 /**
-Returns a vector reference to log activity coefficients for aqueous species (@a log_gammas).
+Transfers log activity coefficients for aqueous species to a vector reference (@a log_gammas).
 This method is intended for use with multicomponent-diffusion transport calculations,
 and @ref SetSpeciesSaveOn must be set to @a true.
 The list of aqueous species is determined by @ref FindComponents and includes all
@@ -1726,12 +1726,8 @@ Concentrations are moles per liter.
 @htmlonly
 <CODE>
 <PRE>
-status = phreeqc_rm.SetSpeciesSaveOn(true);
-int ncomps = phreeqc_rm.FindComponents();
-int npecies = phreeqc_rm.GetSpeciesCount();
-status = phreeqc_rm.RunCells();
-std::vector<double> c;
-status = phreeqc_rm.GetSpeciesConcentrations(c);
+std::vector<double> dl_c;
+status = phreeqc_rm.GetSurfaceDiffuseLayerConcentrations(dl_c);
 </PRE>
 </CODE>
 @endhtmlonly
@@ -3419,6 +3415,43 @@ status = phreeqc_rm.SetSpeciesSaveOn(true);
 Called by root and (or) workers.
  */
 	IRM_RESULT                                SetSpeciesSaveOn(bool save_on);
+/**
+Sets the species concentrations in the diffuse layer 
+of the specified surface (@a surf) (actually, sets the total moles of each element in the diffuse layer).
+This method is intended for use with diffuse-layer diffusion in 
+multicomponent-diffusion transport calculations,
+and @ref SetSpeciesSaveOn must be set to @a true. 
+
+@param surf                Name of surface for which diffuse-layer concentrations are set.
+@param dl_species_conc     Vector of diffuse-layer species concentrations.
+Dimension of the vector is @a nspecies times @a nxyz,
+where @a nspecies is the number of aqueous species (@ref GetSpeciesCount),
+and @a nxyz is the number of grid cells (@ref GetGridCellCount).
+Concentrations are moles per liter.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+
+@see @ref FindComponents, 
+@ref GetSpeciesCount, 
+@ref GetSpeciesSaveOn, 
+@ref GetSurfaceDiffuseLayerArea,
+@ref GetSurfaceDiffuseLayerConcentrations.
+@ref GetSurfaceDiffuseLayerNames, 
+@ref GetSurfaceDiffuseLayerThickness,
+@ref SetSpeciesSaveOn. 
+
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> dl_c;
+...
+status = phreeqc_rm.SetSurfaceDiffuseLayerConcentrations(dl_c);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
 	IRM_RESULT SetSurfaceDiffuseLayerConcentrations(std::string surf, std::vector<double> & dl_species_conc);
 /**
 Set the temperature for each reaction cell. If @a SetTemperature is not called,

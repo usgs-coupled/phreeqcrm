@@ -1054,6 +1054,48 @@ Called by root and (or) workers.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetSpeciesD25(int id, double *diffc);
 /**
+Transfers log activity coefficients for aqueous species to the argument array (@a log_gammas).
+This method is intended for use with multicomponent-diffusion transport calculations,
+and @ref SetSpeciesSaveOn must be set to @a true.
+The list of aqueous species is determined by @ref FindComponents and includes all
+aqueous species that can be made from the set of components.
+
+@param id               The instance @a id returned from @ref RM_Create.
+@param log_gammas     Array to receive the log activity coefficients for the aqueous species.
+Dimension of the array must be at least @a nspecies times @a nxyz,
+where @a nspecies is the number of aqueous species (@ref GetSpeciesCount),
+and @a nxyz is the number of grid cells (@ref GetGridCellCount).
+Activity coefficients are unitless.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+
+@see @ref RM_FindComponents, 
+@ref RM_GetComponent,
+@ref RM_GetComponentCount,
+@ref RM_GetSpeciesConcentrations, 
+@ref RM_GetSpeciesCount, 
+@ref RM_GetSpeciesD25, 
+@ref RM_GetSpeciesName, 
+@ref RM_GetSpeciesSaveOn,
+@ref RM_GetSpeciesStoichiometry, 
+@ref RM_GetSpeciesZ,
+@ref RM_InitialPhreeqc2SpeciesConcentrations, 
+@ref RM_SpeciesConcentrations2Module, 
+@ref RM_SetSpeciesSaveOn.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+log_gammas = (double *) malloc((size_t) (nspecies * nxyz * sizeof(double)));
+status = RM_GetSpeciesLogGammas(id, log_gammas);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_GetSpeciesLogGammas(int id, double *log_gammas);
+/**
 Transfers the name of the @a ith aqueous species to the character argument (@a name).
 This method is intended for use with multicomponent-diffusion transport calculations,
 and @ref RM_SetSpeciesSaveOn must be set to @a true.
@@ -1154,10 +1196,204 @@ status = RM_GetSpeciesZ(id, z);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetSpeciesZ(int id, double *z);
+/**
+Fills an array (@a areas) with areas (m^2) for the specified diffuse layer (@a surf) for each cell.
+This method is intended for use with diffuse-layer diffusion in 
+multicomponent-diffusion transport calculations,
+and @ref SetSpeciesSaveOn must be set to @a true. 
+
+@param id               The instance @a id returned from @ref RM_Create.
+@param surf      Name of surface for which diffuse-layer areas are retrieved.
+@param areas     Array to receive the diffuse-layer areas.
+Dimension of the array must be @a nxyz,
+where @a nxyz is the number of grid cells (@ref RM_GetGridCellCount).
+Areas are square meter.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+
+@see @ref RM_FindComponents, 
+@ref RM_GetSpeciesCount, 
+@ref RM_GetSpeciesSaveOn, 
+@ref RM_GetSurfaceDiffuseLayerConcentrations,
+@ref RM_GetSurfaceDiffuseLayerCount, 
+@ref RM_GetSurfaceDiffuseLayerName, 
+@ref RM_GetSurfaceDiffuseLayerThickness,
+@ref RM_SetSpeciesSaveOn, 
+@ref RM_SetSurfaceDiffuseLayerConcentrations.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+dl_areas = (double *) malloc((size_t) (nxyz * sizeof(double)));
+count_surface = RM_GetSurfaceDiffuseLayerCount(id);
+surfaces = (char **) malloc((size_t) count_surface);
+for (i = 0; i < count_surface; i++)
+{
+	surfaces[i] = (char *) malloc(100);
+	status = RM_GetSurfaceDiffuseLayerName(id, i, surfaces[i], 100);
+	status = RM_GetSurfaceDiffuseLayerArea(id, surfaces[i], dl_areas);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
 IRM_DLL_EXPORT IRM_RESULT RM_GetSurfaceDiffuseLayerArea(int id, char *surf, double * areas);
+/**
+Fills an array (@a dl_species_conc) with species concentrations in the diffuse layer 
+of the specified surface (@a surf).
+This method is intended for use with diffuse-layer diffusion in 
+multicomponent-diffusion transport calculations,
+and @ref SetSpeciesSaveOn must be set to @a true. 
+The list of aqueous species is determined by @ref FindComponents and includes all
+aqueous species that can be made from the set of components.
+
+@param id               The instance @a id returned from @ref RM_Create.
+@param surf                Name of surface for which diffuse-layer concentrations are retrieved.
+@param dl_species_conc    Array to receive the diffuse-layer species concentrations.
+Dimension of the vector is set to @a nspecies times @a nxyz,
+where @a nspecies is the number of aqueous species (@ref RM_GetSpeciesCount),
+and @a nxyz is the number of grid cells (@ref RM_GetGridCellCount).
+Concentrations are moles per liter.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+
+@see @ref RM_FindComponents, 
+@ref RM_GetSpeciesCount, 
+@ref RM_GetSpeciesSaveOn, 
+@ref RM_GetSurfaceDiffuseLayerArea,
+@ref RM_GetSurfaceDiffuseLayerCount,
+@ref RM_GetSurfaceDiffuseLayerName, 
+@ref RM_GetSurfaceDiffuseLayerThickness,
+@ref RM_SetSpeciesSaveOn, 
+@ref RM_SetSurfaceDiffuseLayerConcentrations.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+dl_c           = (double *) malloc((size_t) (nspecies * nxyz * sizeof(double)));
+count_surface = RM_GetSurfaceDiffuseLayerCount(id);
+surfaces = (char **) malloc((size_t) count_surface);
+for (i = 0; i < count_surface; i++)
+{
+  surfaces[i] = (char *) malloc(100);
+  status = RM_GetSurfaceDiffuseLayerName(id, i, surfaces[i], 100);
+  status = RM_GetSurfaceDiffuseLayerConcentrations(id, surfaces[i], dl_c);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
 IRM_DLL_EXPORT IRM_RESULT RM_GetSurfaceDiffuseLayerConcentrations(int id, char *surf, double * c);
+/**
+Returns the number of diffuse-layer surfaces in the reaction-module.
+The list of diffuse-layer surfaces is generated by calls to @ref RM_FindComponents.
+@param id               The instance @a id returned from @ref RM_Create.
+@retval                 The number of diffuse-layer surfaces in the reaction-module list, negative is failure (See @ref RM_DecodeError).
+
+@see @ref RM_FindComponents, 
+@ref RM_GetSpeciesCount, 
+@ref RM_GetSpeciesSaveOn, 
+@ref RM_GetSurfaceDiffuseLayerArea,
+@ref RM_GetSurfaceDiffuseLayerConcentrations,
+@ref RM_GetSurfaceDiffuseLayerName,
+@ref RM_GetSurfaceDiffuseLayerThickness,
+@ref RM_SetSpeciesSaveOn, 
+@ref RM_SetSurfaceDiffuseLayerConcentrations.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+count_surface = RM_GetSurfaceDiffuseLayerCount(id);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root and (or) workers.
+ */
 IRM_DLL_EXPORT int        RM_GetSurfaceDiffuseLayerCount(int id);
+/**
+Retrieves a name from the reaction-module diffuse-layer-surfaces list that was generated by calls to @ref RM_FindComponents.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the surface name to be retrieved. C, 0 based.
+@param surf_name        The string value associated with surface @a num.
+@param l                The maximum number of characters for @a chem_name.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+
+@see @ref RM_FindComponents, 
+@ref RM_GetSpeciesCount, 
+@ref RM_GetSpeciesSaveOn, 
+@ref RM_GetSurfaceDiffuseLayerArea,
+@ref RM_GetSurfaceDiffuseLayerConcentrations, 
+@ref RM_GetSurfaceDiffuseLayerThickness,
+@ref RM_SetSpeciesSaveOn, 
+@ref RM_SetSurfaceDiffuseLayerConcentrations.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+count_surface = RM_GetSurfaceDiffuseLayerCount(id);
+surfaces = (char **) malloc((size_t) count_surface);
+for (i = 0; i < count_surface; i++)
+{
+  surfaces[i] = (char *) malloc(100);
+  status = RM_GetSurfaceDiffuseLayerName(id, i, surfaces[i], 100);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root and (or) workers.
+ */
 IRM_DLL_EXPORT IRM_RESULT RM_GetSurfaceDiffuseLayerName(int id, int num, char *surf_name, int l);
+/**
+Fills an array (@a thickness) with the thickness (m) for the specified diffuse layer (@a surf) for each cell.
+This method is intended for use with diffuse-layer diffusion in 
+multicomponent-diffusion transport calculations,
+and @ref SetSpeciesSaveOn must be set to @a true. 
+
+@param id        The instance @a id returned from @ref RM_Create.
+@param surf      Name of surface for which diffuse-layer thicknesses are retrieved.
+@param areas     Array to receive the diffuse-layer thicknesses.
+Dimension of the array must be @a nxyz,
+where @a nxyz is the number of grid cells (@ref RM_GetGridCellCount).
+Thicknes is in meters.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+
+@see @ref RM_FindComponents, 
+@ref RM_GetSpeciesCount, 
+@ref RM_GetSpeciesSaveOn, 
+@ref RM_GetSurfaceDiffuseLayerArea,
+@ref RM_GetSurfaceDiffuseLayerConcentrations,
+@ref RM_GetSurfaceDiffuseLayerCount, 
+@ref RM_GetSurfaceDiffuseLayerName, 
+@ref RM_SetSpeciesSaveOn, 
+@ref RM_SetSurfaceDiffuseLayerConcentrations.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+dl_thickness = (double *) malloc((size_t) (nxyz * sizeof(double)));
+count_surface = RM_GetSurfaceDiffuseLayerCount(id);
+surfaces = (char **) malloc((size_t) count_surface);
+for (i = 0; i < count_surface; i++)
+{
+	surfaces[i] = (char *) malloc(100);
+	status = RM_GetSurfaceDiffuseLayerName(id, i, surfaces[i], 100);
+	status = RM_GetSurfaceDiffuseLayerThickness(id, surfaces[i], dl_thickness);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
 IRM_DLL_EXPORT IRM_RESULT RM_GetSurfaceDiffuseLayerThickness(int id, char *surf, double * thickness);
 /**
 Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
@@ -2421,7 +2657,46 @@ status = RM_SetSpeciesSaveOn(id, 1);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SetSpeciesSaveOn(int id, int save_on);
-IRM_DLL_EXPORT IRM_RESULT RM_SetSurfaceDiffuseLayerConcentrations(int id, char *surf, double * c);
+/**
+Sets the species concentrations in the diffuse layer 
+of the specified surface (@a surf) (actually, sets the total moles of each element in the diffuse layer).
+This method is intended for use with diffuse-layer diffusion in 
+multicomponent-diffusion transport calculations,
+and @ref RM_SetSpeciesSaveOn must be set to @a true. 
+
+@param surf                Name of surface for which diffuse-layer concentrations are set.
+@param dl_species_conc     Array of diffuse-layer species concentrations.
+Dimension of the array is @a nspecies times @a nxyz,
+where @a nspecies is the number of aqueous species (@ref RM_GetSpeciesCount),
+and @a nxyz is the number of grid cells (@ref RM_GetGridCellCount).
+Concentrations are moles per liter.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+
+@see @ref RM_FindComponents, 
+@ref RM_GetSpeciesCount, 
+@ref RM_GetSpeciesSaveOn, 
+@ref RM_GetSurfaceDiffuseLayerArea,
+@ref RM_GetSurfaceDiffuseLayerCount,
+@ref RM_GetSurfaceDiffuseLayerConcentrations.
+@ref RM_GetSurfaceDiffuseLayerName, 
+@ref RM_GetSurfaceDiffuseLayerThickness,
+@ref RM_SetSpeciesSaveOn. 
+
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+for (i = 0; i < count_surface; i++)
+{
+  status = RM_SetSurfaceDiffuseLayerConcentrations(id, surfaces[i], dl_c);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_SetSurfaceDiffuseLayerConcentrations(int id, char *surf, double * dl_species_conc);
 /**
 Set the temperature for each reaction cell. If @a RM_SetTemperature is not called,
 worker solutions will have temperatures as defined by initial conditions
