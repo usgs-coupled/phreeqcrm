@@ -1451,8 +1451,8 @@ status = phreeqc_rm.SetSpeciesSaveOn(true);
 int ncomps = phreeqc_rm.FindComponents();
 int npecies = phreeqc_rm.GetSpeciesCount();
 status = phreeqc_rm.RunCells();
-std::vector<double> lg;
-status = phreeqc_rm.GetSpeciesLogGammas(lg);
+std::vector<double> log_gammas;
+status = phreeqc_rm.GetSpeciesLogGammas(log_gammas);
 </PRE>
 </CODE>
 @endhtmlonly
@@ -1687,8 +1687,8 @@ Areas are square meter.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> dl_area;
-status = phreeqc_rm.GetSurfaceDiffuseLayerArea("Hfo", dl_area);
+std::vector<double> areas;
+status = phreeqc_rm.GetSurfaceDiffuseLayerArea("Hfo", areas);
 </PRE>
 </CODE>
 @endhtmlonly
@@ -1726,8 +1726,8 @@ Concentrations are moles per liter.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> dl_c;
-status = phreeqc_rm.GetSurfaceDiffuseLayerConcentrations(dl_c);
+std::vector<double> dl_species_conc;
+status = phreeqc_rm.GetSurfaceDiffuseLayerConcentrations(dl_species_conc);
 </PRE>
 </CODE>
 @endhtmlonly
@@ -1794,8 +1794,8 @@ Thicknesses are in meters.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> dl_thickness;
-status = phreeqc_rm.GetSurfaceDiffuseLayerThickness("Hfo", dl_thickness);
+std::vector<double> thickness;
+status = phreeqc_rm.GetSurfaceDiffuseLayerThickness("Hfo", thickness);
 </PRE>
 </CODE>
 @endhtmlonly
@@ -3401,7 +3401,7 @@ with @ref GetSpeciesConcentrations, and solution compositions to be set with
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
 @ref InitialPhreeqc2SpeciesConcentrations, 
-@ref SpeciesConcentrations2Modulen.
+@ref SpeciesConcentrations2Module.
 
 @par C++ Example:
 @htmlonly
@@ -3443,9 +3443,9 @@ Concentrations are moles per liter.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> dl_c;
+std::vector<double> dl_species_conc;
 ...
-status = phreeqc_rm.SetSurfaceDiffuseLayerConcentrations(dl_c);
+status = phreeqc_rm.SetSurfaceDiffuseLayerConcentrations(dl_species_conc);
 </PRE>
 </CODE>
 @endhtmlonly
