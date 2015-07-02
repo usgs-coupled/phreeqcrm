@@ -36,9 +36,15 @@ sed -i -e "s/RM_GetSolutionVolume/rm_getsolutionvolume/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesConcentrations/rm_getspeciesconcentrations/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesCount/rm_getspeciescount/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesD25/rm_getspeciesd25/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSpeciesLogGammas/rm_getspeciesloggammas/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesName/rm_getspeciesname/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesSaveOn/rm_getspeciessaveon/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesZ/rm_getspeciesz/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSurfaceDiffuseLayerArea/rm_getsurfacediffuselayerarea/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSurfaceDiffuseLayerConcentrations/rm_getsurfacediffuselayerconcentrations/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSurfaceDiffuseLayerCount/rm_getsurfacediffuselayercount/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSurfaceDiffuseLayerName/rm_getsurfacediffuselayername/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSurfaceDiffuseLayerThickness/rm_getsurfacediffuselayerthickness/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetThreadCount/rm_getthreadcount/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetTimeConversion/rm_gettimeconversion/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetTimeStep/rm_gettimestep/g" %RM_INTERFACE_F90%
@@ -76,6 +82,7 @@ sed -i -e "s/RM_SetRepresentativeVolume/rm_setrepresentativevolume/g" %RM_INTERF
 sed -i -e "s/RM_SetSaturation/rm_setsaturation/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetSelectedOutputOn/rm_setselectedoutputon/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetSpeciesSaveOn/rm_setspeciessaveon/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_SetSurfaceDiffuseLayerConcentrations/rm_setsurfacediffuselayerconcentrations/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetTemperature/rm_settemperature/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetTimeConversion/rm_settimeconversion/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetTimeStep/rm_settimestep/g" %RM_INTERFACE_F90%

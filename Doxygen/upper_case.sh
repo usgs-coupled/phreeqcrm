@@ -105,6 +105,9 @@ for f in html/*.html; do
   sed -i "s/rm_getspeciesd25/RM_GetSpeciesD25/g" $f 
 done
 for f in html/*.html; do
+  sed -i "s/rm_getspeciesloggammas/RM_GetSpeciesLogGammas/g" $f 
+done
+for f in html/*.html; do
   sed -i "s/rm_getspeciesname/RM_GetSpeciesName/g" $f 
 done
 for f in html/*.html; do
@@ -112,6 +115,21 @@ for f in html/*.html; do
 done
 for f in html/*.html; do
   sed -i "s/rm_getspeciesz/RM_GetSpeciesZ/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsurfacediffuselayerarea/RM_GetSurfaceDiffuseLayerArea/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsurfacediffuselayerconcentrations/RM_GetSurfaceDiffuseLayerConcentrations/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsurfacediffuselayercount/RM_GetSurfaceDiffuseLayerCount/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsurfacediffuselayername/RM_GetSurfaceDiffuseLayerName/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsurfacediffuselayerthickness/RM_GetSurfaceDiffuseLayerThickness/g" $f 
 done
 for f in html/*.html; do
   sed -i "s/rm_getthreadcount/RM_GetThreadCount/g" $f 
@@ -223,6 +241,9 @@ for f in html/*.html; do
 done
 for f in html/*.html; do
   sed -i "s/rm_setspeciessaveon/RM_SetSpeciesSaveOn/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/rm_setsurfacediffuselayerconcentrations/RM_SetSurfaceDiffuseLayerConcentrations/g" $f 
 done
 for f in html/*.html; do
   sed -i "s/rm_settemperature/RM_SetTemperature/g" $f 

@@ -139,6 +139,10 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getspeciesloggammas/RM_GetSpeciesLogGammas/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_getspeciesname/RM_GetSpeciesName/g" %%f 
   @del sed*
 )
@@ -148,6 +152,26 @@
 )
 @FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_getspeciesz/RM_GetSpeciesZ/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsurfacediffuselayerarea/RM_GetSurfaceDiffuseLayerArea/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsurfacediffuselayerconcentrations/RM_GetSurfaceDiffuseLayerConcentrations/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsurfacediffuselayercount/RM_GetSurfaceDiffuseLayerCount/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsurfacediffuselayername/RM_GetSurfaceDiffuseLayerName/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsurfacediffuselayerthickness/RM_GetSurfaceDiffuseLayerThickness/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
@@ -296,6 +320,10 @@
 )
 @FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_setspeciessaveon/RM_SetSpeciesSaveOn/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_setsurfacediffuselayerconcentrations/RM_SetSurfaceDiffuseLayerConcentrations/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
