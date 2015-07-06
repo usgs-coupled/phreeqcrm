@@ -949,7 +949,7 @@ PhreeqcRM::Concentrations2SolutionsH2O(int n, std::vector<double> &c)
 				// convert to mol/L
 				for (k = 1; k < (int) this->components.size(); k++)
 				{
-					d.push_back(c[j * (int) this->components.size() + k]);
+					d.push_back(c[j * (int) this->components.size() + k] * 1e-3 / this->gfw[k]);
 				}
 				double h2o_mol = c[j * (int) this->components.size()] * 1e-3 / this->gfw[0];
 				d[0] += h2o_mol * 2.0;
