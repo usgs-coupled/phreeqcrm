@@ -1734,6 +1734,78 @@ SUBROUTINE Chk_GetSpeciesD25(id, diffc)
     endif
 END SUBROUTINE Chk_GetSpeciesD25
 
+
+
+!> Transfers log activity coefficients for aqueous species to the argument array (@a log_gammas).
+!> This method is intended for use with multicomponent-diffusion transport calculations,
+!> and @ref RM_SetSpeciesSaveOn must be set to @a true.
+!> The list of aqueous species is determined by @ref RM_FindComponents and includes all
+!> aqueous species that can be made from the set of components.
+!> 
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param log_gammas     Array to receive the log activity coefficients for the aqueous species.
+!> Dimension of the array is (@a nxyz, @a nspecies),
+!> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount), 
+!> and @a nspecies is the number of aqueous species (@ref RM_GetSpeciesCount).
+!> Activity coefficients are unitless.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!>
+!> @see @ref RM_FindComponents, 
+!> @ref RM_GetComponent,
+!> @ref RM_GetComponentCount,
+!> @ref RM_GetSpeciesConcentrations, 
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_SpeciesConcentrations2Module, 
+!> @ref RM_SetSpeciesSaveOn.
+!> 
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> allocate(log_gammas(nxyz, nspecies))
+!> status = RM_GetSpeciesLogGammas(id, log_gammas)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+
+INTEGER FUNCTION RM_GetSpeciesLogGammas(id, log_gammas) 
+	USE ISO_C_BINDING  
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSpeciesLogGammas(id, log_gammas) &
+			BIND(C, NAME='RMF_GetSpeciesConcentrations')   
+			USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            REAL(KIND=C_DOUBLE), INTENT(out) :: log_gammas(*)
+        END FUNCTION RMF_GetSpeciesLogGammas 
+	END INTERFACE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: log_gammas
+	if (rmf_debug) call Chk_GetSpeciesLogGammas(id, log_gammas)
+    RM_GetSpeciesLogGammas = RMF_GetSpeciesLogGammas(id, log_gammas)
+END FUNCTION RM_GetSpeciesLogGammas 
+
+SUBROUTINE Chk_GetSpeciesLogGammas(id, log_gammas)
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: log_gammas
+    INTEGER :: errors, nspecies
+    nspecies = RM_GetSpeciesCount(id)
+    errors = 0
+    errors = errors + Chk_Double2D(id, log_gammas, rmf_nxyz, nspecies, "species log_gammas", "RM_GetSpeciesLogGammas")
+    if (errors .gt. 0) then
+        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesLogGammas")
+    endif
+END SUBROUTINE Chk_GetSpeciesLogGammas
+
 !> Transfers the name of the @a ith aqueous species to the character argument (@a name).
 !> This method is intended for use with multicomponent-diffusion transport calculations,
 !> and @ref RM_SetSpeciesSaveOn must be set to @a true.
@@ -1886,6 +1958,150 @@ SUBROUTINE Chk_GetSpeciesZ(id, z)
         errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesZ")
     endif
 END SUBROUTINE Chk_GetSpeciesZ
+
+!> Fills an array (@a dl_species_conc) with species concentrations in the diffuse layer 
+!> of the specified surface (@a surf).
+!> This method is intended for use with diffuse-layer diffusion in 
+!> multicomponent-diffusion transport calculations,
+!> and @ref RM_SetSpeciesSaveOn must be set to @a true. 
+!> The list of aqueous species is determined by @ref RM_FindComponents and includes all
+!> aqueous species that can be made from the set of components.
+!> 
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param surf                Name of surface for which diffuse-layer concentrations are retrieved.
+!> @param dl_species_conc    Array to receive the diffuse-layer species concentrations.
+!> Dimension of the vector is set to @a nspecies times @a nxyz,
+!> where @a nspecies is the number of aqueous species (@ref RM_GetSpeciesCount),
+!> and @a nxyz is the number of grid cells (@ref RM_GetGridCellCount).
+!> Concentrations are moles per liter.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> 
+!> @see @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSurfaceDiffuseLayerArea,
+!> @ref RM_GetSurfaceDiffuseLayerCount,
+!> @ref RM_GetSurfaceDiffuseLayerName, 
+!> @ref RM_GetSurfaceDiffuseLayerThickness,
+!> @ref RM_SetSpeciesSaveOn, 
+!> @ref RM_SetSurfaceDiffuseLayerConcentrations.
+!> 
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> allocate(dl_c(nxyz, nspecies))
+!> count_surface = RM_GetSurfaceDiffuseLayerCount(id)
+!> allocate(surfaces(count_surface))
+!> do i = 1, count_surface
+!>   status = RM_GetSurfaceDiffuseLayerName(id, i, surfaces(i))
+!>   status = RM_GetSurfaceDiffuseLayerConcentrations(id, surfaces(i), dl_c)
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+
+INTEGER FUNCTION RM_GetSurfaceDiffuseLayerConcentrations(id, surf, dl_species_conc) 
+	USE ISO_C_BINDING  
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSurfaceDiffuseLayerConcentrations(id, surf, dl_species_conc) &
+			BIND(C, NAME='RMF_GetSurfaceDiffuseLayerConcentrations')   
+			USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: surf(*)
+            REAL(KIND=C_DOUBLE), INTENT(out) :: dl_species_conc(*)
+        END FUNCTION RMF_GetSurfaceDiffuseLayerConcentrations 
+	END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: surf
+    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: dl_species_conc
+	if (rmf_debug) call Chk_GetSurfaceDiffuseLayerConcentrations(id, dl_species_conc)
+    RM_GetSurfaceDiffuseLayerConcentrations = RMF_GetSurfaceDiffuseLayerConcentrations(id, trim(surf)//C_NULL_CHAR, dl_species_conc)
+END FUNCTION RM_GetSurfaceDiffuseLayerConcentrations 
+
+SUBROUTINE Chk_GetSurfaceDiffuseLayerConcentrations(id, dl_species_conc)
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: dl_species_conc
+    INTEGER :: errors, nspecies
+    nspecies = RM_GetSpeciesCount(id)
+    errors = 0
+    errors = errors + Chk_Double2D(id, dl_species_conc, rmf_nxyz, nspecies, "diffuse layer species concentration", "Chk_GetSurfaceDiffuseLayerConcentrations")
+    if (errors .gt. 0) then
+        errors = RM_Abort(id, -3, "Invalid argument in Chk_GetSurfaceDiffuseLayerConcentrations")
+    endif
+END SUBROUTINE Chk_GetSurfaceDiffuseLayerConcentrations
+
+!> Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
+!> For the OPENMP version, the number of threads is set implicitly or explicitly with @ref RM_Create. For the
+!> MPI version, the number of threads is always one for each process.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @retval                 The number of threads, negative is failure (See @ref RM_DecodeError).
+!> @see                    @ref RM_GetMpiTasks.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> write(string1, "(A,I)") "Number of threads: ", RM_GetThreadCount(id)
+!> status = RM_OutputMessage(id, string1)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root and (or) workers; result is always 1.
+
+!> Returns the number of diffuse-layer surfaces in the reaction-module.
+!> The list of diffuse-layer surfaces is generated by calls to @ref RM_FindComponents.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @retval                 The number of diffuse-layer surfaces in the reaction-module list, negative is failure (See @ref RM_DecodeError).
+!> 
+!> @see @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSurfaceDiffuseLayerArea,
+!> @ref RM_GetSurfaceDiffuseLayerConcentrations,
+!> @ref RM_GetSurfaceDiffuseLayerName,
+!> @ref RM_GetSurfaceDiffuseLayerThickness,
+!> @ref RM_SetSpeciesSaveOn, 
+!> @ref RM_SetSurfaceDiffuseLayerConcentrations.
+
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> count_surface = RM_GetSurfaceDiffuseLayerCount(id)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root and (or) workers.
+
+INTEGER FUNCTION RM_GetSurfaceDiffuseLayerCount(id)
+	USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSurfaceDiffuseLayerCount(id) &
+			BIND(C, NAME='RMF_GetSurfaceDiffuseLayerCount')
+			USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_GetSurfaceDiffuseLayerCount
+	END INTERFACE
+    INTEGER, INTENT(in) :: id
+    RM_GetSurfaceDiffuseLayerCount = RMF_GetSurfaceDiffuseLayerCount(id)
+END FUNCTION RM_GetSurfaceDiffuseLayerCount
+
+
+
+
+
+
+
+
 
 !> Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
 !> For the OPENMP version, the number of threads is set implicitly or explicitly with @ref RM_Create. For the

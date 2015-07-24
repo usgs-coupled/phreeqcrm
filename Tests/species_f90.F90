@@ -20,7 +20,7 @@ subroutine species_f90()  BIND(C)
   ! Based on PHREEQC Example 11, transporting species rather than components
   
   integer :: mpi_myself
-  integer :: i, j
+  integer :: i, j, k
   integer :: nxyz
   integer :: nthreads
   integer :: id
@@ -64,6 +64,12 @@ subroutine species_f90()  BIND(C)
   character(100)                                :: svalue
   integer                                       :: iphreeqc_id
   integer                                       :: dump_on, append
+  double precision, dimension(:,:), allocatable :: log_gammas
+  double precision, dimension(:), allocatable   :: dl_areas
+  double precision, dimension(:,:), allocatable :: dl_c
+  integer count_surface
+  character(100), dimension(:), allocatable     :: surfaces
+  double precision, dimension(:), allocatable   :: dl_thicknesses
 
   ! --------------------------------------------------------------------------
   ! Create PhreeqcRM
@@ -204,7 +210,7 @@ subroutine species_f90()  BIND(C)
      ic1(i,1) = 1       ! Solution 1
      ic1(i,2) = -1      ! Equilibrium phases none
      ic1(i,3) = 1       ! Exchange 1
-     ic1(i,4) = -1      ! Surface none
+     ic1(i,4) = 1      ! Surface none
      ic1(i,5) = -1      ! Gas phase none
      ic1(i,6) = -1      ! Solid solutions none
      ic1(i,7) = -1      ! Kinetics none
@@ -227,12 +233,47 @@ subroutine species_f90()  BIND(C)
   time_step = 0.0
   allocate(c(nxyz, ncomps))
   allocate(species_c(nxyz, nspecies))
+  allocate(dl_c(nxyz, nspecies))
+  allocate(log_gammas(nxyz, nspecies))
+  allocate(dl_areas(nxyz))
+  allocate(dl_thicknesses(nxyz))
   status = RM_SetTime(id, time)
   status = RM_SetTimeStep(id, time_step)
   status = RM_RunCells(id) 
   status = RM_GetConcentrations(id, c)
   status = RM_GetSpeciesConcentrations(id, species_c)
   
+  
+  status = RM_GetSpeciesLogGammas(id, log_gammas)
+  count_surface = RM_GetSurfaceDiffuseLayerCount(id)
+  allocate(surfaces(count_surface))
+  do i = 1, count_surface
+    status = RM_GetSurfaceDiffuseLayerName(id, i, surfaces(i))
+    status = RM_GetSurfaceDiffuseLayerArea(id, surfaces(i), dl_areas)
+    status = RM_GetSurfaceDiffuseLayerThickness(id, surfaces(i), dl_thicknesses)
+    status = RM_GetSurfaceDiffuseLayerConcentrations(id, surfaces(i), dl_c)
+    status = RM_SetSurfaceDiffuseLayerConcentrations(id, surfaces(i), dl_c)
+    write(string1,*) "Diffuse-layer surface number ", i, surfaces(i)
+    status = RM_OutputMessage(id, string1)
+    do j = 1, nxyz / 2
+        write(string1,*) "Cell: ", j
+        status = RM_OutputMessage(id, string1)
+        write(string1,*) "     Area:          ", dl_areas(j)
+        status = RM_OutputMessage(id, string1)
+        write(string1,*) "     Thickness:     ", dl_thicknesses(j)
+        status = RM_OutputMessage(id, string1)
+        write(string1,*) "     Species:     Log Gamma       DL conc"
+        status = RM_OutputMessage(id, string1)
+        do k = 1, nspecies 
+            status = RM_GetSpeciesName(id, k, string)
+            write(string1,"(A12,t5,E12.4,t4,E12.4)") string, log_gammas(j,k), dl_c(j,k)
+            status = RM_OutputMessage(id, string1)
+        enddo
+    enddo
+  enddo
+                    
+                    
+                    
   ! --------------------------------------------------------------------------
   ! Set boundary condition
   ! --------------------------------------------------------------------------

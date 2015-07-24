@@ -282,7 +282,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 				status = RM_OutputMessage(id, str1);
 				sprintf(str1, "\tThickness: %e\n", dl_thicknesses[j]);
 				status = RM_OutputMessage(id, str1);
-				sprintf(str1, "\tSpecies    Log Gamma       DL conc\n", components[i]);
+				sprintf(str1, "\tSpecies    Log Gamma       DL conc\n");
 				status = RM_OutputMessage(id, str1);
 				for (k =0; k < nspecies; k++)
 				{
