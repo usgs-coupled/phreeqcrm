@@ -2688,6 +2688,8 @@ Concentrations are moles per liter.
 <PRE>
 for (i = 0; i < count_surface; i++)
 {
+  status = RM_GetSurfaceDiffuseLayerName(id, i, surfaces[i])
+  status = RM_GetSurfaceDiffuseLayerConcentrations(id, surfaces[i], dl_species_conc);
   status = RM_SetSurfaceDiffuseLayerConcentrations(id, surfaces[i], dl_species_conc);
 }
 </PRE>
