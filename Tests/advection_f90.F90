@@ -189,7 +189,7 @@ subroutine advection_f90()  BIND(C)
 #endif
      write(*,*) "Start of error string: "
      status = RM_GetErrorString(id, errstr)
-     write(*,"(A)") errstr
+     write(*,"(A)") trim(errstr)
      write(*,*) "End of error string."
 #ifdef FORTRAN_2003
      deallocate(errstr)
