@@ -42,7 +42,7 @@ class IRM_DLL_EXPORT PhreeqcRMStop : std::exception
 /*! @brief Enumeration used to return error codes.
 */
 #include "IrmResult.h"
-typedef enum {
+enum {
 	METHOD_CREATEMAPPING,
 	METHOD_DUMPMODULE,
 	METHOD_FINDCOMPONENTS,
