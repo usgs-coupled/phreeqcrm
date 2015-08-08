@@ -23,7 +23,7 @@ EXTRA_DIST=\
 	phreeqcpp/Form1.resX\
 	phreeqcpp/ZedGraph.dll	
 
-AM_CPPFLAGS=-I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/PhreeqcKeywords
+AM_CPPFLAGS=-I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/common -I$(top_srcdir)/src/phreeqcpp/PhreeqcKeywords
 
 AM_LDFLAGS=-release 3.0.0
 
@@ -44,6 +44,15 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/advection.cpp\
 	phreeqcpp/basicsubs.cpp\
 	phreeqcpp/cl1.cpp\
+	phreeqcpp/commmon/Parser.cxx\
+	phreeqcpp/commmon/Parser.h\
+	phreeqcpp/commmon/PHRQ_base.cxx\
+	phreeqcpp/commmon/PHRQ_base.h\
+	phreeqcpp/commmon/PHRQ_io.cpp\
+	phreeqcpp/commmon/PHRQ_io.h\
+	phreeqcpp/commmon/phrqtype.h\
+	phreeqcpp/commmon/Utils.cxx\
+	phreeqcpp/commmon/Utils.h\
 	phreeqcpp/cvdense.cpp\
 	phreeqcpp/cvdense.h\
 	phreeqcpp/cvode.cpp\
@@ -90,8 +99,6 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/nvector_serial.cpp\
 	phreeqcpp/nvector_serial.h\
 	phreeqcpp/parse.cpp\
-	phreeqcpp/Parser.cxx\
-	phreeqcpp/Parser.h\
 	phreeqcpp/PBasic.cpp\
 	phreeqcpp/PBasic.h\
 	phreeqcpp/phqalloc.cpp\
@@ -100,12 +107,7 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/Phreeqc.h\
 	phreeqcpp/PhreeqcKeywords/Keywords.cpp\
 	phreeqcpp/PhreeqcKeywords/Keywords.h\
-	phreeqcpp/PHRQ_base.cxx\
-	phreeqcpp/PHRQ_base.h\
-	phreeqcpp/PHRQ_io.cpp\
-	phreeqcpp/PHRQ_io.h\
 	phreeqcpp/PHRQ_io_output.cpp\
-	phreeqcpp/phrqtype.h\
 	phreeqcpp/pitzer.cpp\
 	phreeqcpp/pitzer_structures.cpp\
 	phreeqcpp/PPassemblage.cxx\
@@ -166,8 +168,6 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/UserPunch.cpp\
 	phreeqcpp/UserPunch.h\
 	phreeqcpp/utilities.cpp\
-	phreeqcpp/Utils.cxx\
-	phreeqcpp/Utils.h\
 	thread.h\
 	Var.c\
 	Version.h
@@ -177,7 +177,7 @@ include_HEADERS=\
 	$(top_srcdir)/src/IPhreeqc.hpp\
 	$(top_srcdir)/src/IPhreeqcCallbacks.h\
 	$(top_srcdir)/src/Var.h\
-	$(top_srcdir)/src/phreeqcpp/PHRQ_io.h\
+	$(top_srcdir)/src/phreeqcpp/common/PHRQ_io.h\
 	$(top_srcdir)/src/phreeqcpp/PhreeqcKeywords/Keywords.h
 
 sourcedir=$(docdir)/src
