@@ -44,15 +44,15 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/advection.cpp\
 	phreeqcpp/basicsubs.cpp\
 	phreeqcpp/cl1.cpp\
-	phreeqcpp/commmon/Parser.cxx\
-	phreeqcpp/commmon/Parser.h\
-	phreeqcpp/commmon/PHRQ_base.cxx\
-	phreeqcpp/commmon/PHRQ_base.h\
-	phreeqcpp/commmon/PHRQ_io.cpp\
-	phreeqcpp/commmon/PHRQ_io.h\
-	phreeqcpp/commmon/phrqtype.h\
-	phreeqcpp/commmon/Utils.cxx\
-	phreeqcpp/commmon/Utils.h\
+	phreeqcpp/common/Parser.cxx\
+	phreeqcpp/common/Parser.h\
+	phreeqcpp/common/PHRQ_base.cxx\
+	phreeqcpp/common/PHRQ_base.h\
+	phreeqcpp/common/PHRQ_io.cpp\
+	phreeqcpp/common/PHRQ_io.h\
+	phreeqcpp/common/phrqtype.h\
+	phreeqcpp/common/Utils.cxx\
+	phreeqcpp/common/Utils.h\
 	phreeqcpp/cvdense.cpp\
 	phreeqcpp/cvdense.h\
 	phreeqcpp/cvode.cpp\
