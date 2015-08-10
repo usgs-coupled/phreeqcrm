@@ -829,7 +829,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Parser.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\Parser.cxx"
 				>
 			</File>
 			<File
@@ -849,11 +849,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_base.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\PHRQ_base.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_io.cpp"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\PHRQ_io.cpp"
 				>
 			</File>
 			<File
@@ -1021,7 +1021,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Utils.cxx"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\Utils.cxx"
 				>
 			</File>
 			<File
@@ -1179,7 +1179,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Parser.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\Parser.h"
 				>
 			</File>
 			<File
@@ -1199,15 +1199,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_base.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\PHRQ_base.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\PHRQ_io.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\PHRQ_io.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\phrqtype.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\phrqtype.h"
 				>
 			</File>
 			<File
@@ -1315,7 +1315,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Utils.h"
+				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\Utils.h"
 				>
 			</File>
 			<File
