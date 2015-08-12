@@ -208,7 +208,7 @@ IRM_RESULT RMF_GetBackwardMapping(int *id, int *n, int *list, int *size)
 	{
 		if (*n >= 0 && *n < Reaction_module_ptr->GetChemistryCellCount() && list != NULL)
 		{
-			const std::vector < std::vector<int> > back = Reaction_module_ptr->GetBackwardMapping();
+			const std::vector < std::vector<int> > & back = Reaction_module_ptr->GetBackwardMapping();
 			if (*size >= (int) back[*n].size())
 			{
 				*size = (int) back[*n].size();
