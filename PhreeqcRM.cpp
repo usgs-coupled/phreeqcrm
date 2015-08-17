@@ -1952,14 +1952,14 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 
 		std::vector<int> r_values;
 		{
-			int status;
-			status = this->workers[0]->RunString(in.str().c_str());
-			if (status != 0)
-			{
-				this->ErrorMessage(this->workers[0]->GetErrorString());
+				int status;
+				status = this->workers[0]->RunString(in.str().c_str());
+				if (status != 0)
+				{
+					this->ErrorMessage(this->workers[0]->GetErrorString());
+				}
+				r_values.push_back(status);
 			}
-			r_values.push_back(status);
-		}
 		this->HandleErrorsInternal(r_values);
 		r_values.clear();
 		for (int n = 0; n < this->mpi_tasks; n++)
