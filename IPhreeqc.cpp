@@ -1657,28 +1657,32 @@ void IPhreeqc::open_output_files(const char* sz_routine)
 	{
 		if (this->output_ostream != NULL)
 		{
-			delete this->output_ostream;
-			this->output_ostream = NULL;
+			safe_close(&this->output_ostream);
 		}
-		if ( (this->output_ostream = new std::ofstream(this->OutputFileName.c_str())) == NULL)
+		if (!this->output_ostream)
 		{
-			std::ostringstream oss;
-			oss << sz_routine << ": Unable to open:" << "\"" << this->OutputFileName << "\".\n";
-			this->warning_msg(oss.str().c_str());
+			if ( (this->output_ostream = new std::ofstream(this->OutputFileName.c_str())) == NULL)
+			{
+				std::ostringstream oss;
+				oss << sz_routine << ": Unable to open:" << "\"" << this->OutputFileName << "\".\n";
+				this->warning_msg(oss.str().c_str());
+			}
 		}
 	}
 	if (this->ErrorFileOn)
 	{
 		if (this->error_ostream != NULL)
 		{
-			delete this->error_ostream;
-			this->error_ostream = NULL;
+			safe_close(&this->error_ostream);
 		}
-		if ( (this->error_ostream = new std::ofstream(this->ErrorFileName.c_str())) == NULL)
+		if (!this->error_ostream)
 		{
-			std::ostringstream oss;
-			oss << sz_routine << ": Unable to open:" << "\"" << this->ErrorFileName << "\".\n";
-			this->warning_msg(oss.str().c_str());
+			if ( (this->error_ostream = new std::ofstream(this->ErrorFileName.c_str())) == NULL)
+			{
+				std::ostringstream oss;
+				oss << sz_routine << ": Unable to open:" << "\"" << this->ErrorFileName << "\".\n";
+				this->warning_msg(oss.str().c_str());
+			}
 		}
 	}
 	if (this->LogFileOn)
@@ -1716,23 +1720,20 @@ int IPhreeqc::close_output_files(void)
 {
 	int ret = 0;
 
-	delete this->output_ostream;
-	delete this->log_ostream;
-	delete this->dump_ostream;
-	delete this->error_ostream;
+	safe_close(&this->output_ostream);
+	safe_close(&this->log_ostream);
+	safe_close(&this->dump_ostream);
+	safe_close(&this->error_ostream);
 
 	std::map< int, SelectedOutput >::iterator it = this->PhreeqcPtr->SelectedOutput_map.begin();
 	for (; it != this->PhreeqcPtr->SelectedOutput_map.end(); ++it)
 	{
-		delete (*it).second.Get_punch_ostream();
-		(*it).second.Set_punch_ostream(NULL);
+		std::ostream *ptr = (*it).second.Get_punch_ostream();
+		safe_close(&ptr);
+		//(*it).second.Set_punch_ostream(NULL);
 	}
 
-	this->error_ostream  = 0;
-	this->output_ostream = 0;
-	this->log_ostream    = 0;
-	this->punch_ostream  = 0;
-	this->dump_ostream   = 0;
+	this->punch_ostream = 0;
 
 	return ret;
 }
