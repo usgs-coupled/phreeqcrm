@@ -143,7 +143,7 @@
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_OPENMP;NDEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_OPENMP;NDEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -171,7 +171,7 @@
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(MSMPI_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_MPI;NDEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_MPI;NDEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -201,8 +201,8 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_OPENMP;NDEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(DEV_ZLIB123_X64_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USE_OPENMP;NDEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -233,8 +233,8 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(MSMPI_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_MPI;NDEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(DEV_ZLIB123_X64_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(MSMPI_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USE_MPI;NDEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -266,7 +266,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_OPENMP;_DEBUG;WIN32;_LIB;_HAS_ITERATOR_DEBUGGING=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_OPENMP;_DEBUG;WIN32;_LIB;_HAS_ITERATOR_DEBUGGING=0;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -296,7 +296,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(MSMPI_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_MPI;_DEBUG;WIN32;_LIB;_HAS_ITERATOR_DEBUGGING=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_MPI;_DEBUG;WIN32;_LIB;_HAS_ITERATOR_DEBUGGING=0;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -328,8 +328,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_OPENMP;_HAS_ITERATOR_DEBUGGING=0;_DEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(DEV_ZLIB123_X64_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USE_OPENMP;_HAS_ITERATOR_DEBUGGING=0;_DEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -362,8 +362,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(MSMPI_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_MPI;_HAS_ITERATOR_DEBUGGING=0;_DEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(DEV_ZLIB123_X64_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(MSMPI_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USE_MPI;_HAS_ITERATOR_DEBUGGING=0;_DEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
