@@ -742,6 +742,20 @@ int IPhreeqc::RunAccumulated(void)
 	{
 		// do nothing
 	}
+	catch(std::exception &e)
+	{
+		std::string errmsg("RunAccumulated: ");
+		errmsg += e.what();
+		try
+		{
+			this->PhreeqcPtr->error_msg(errmsg.c_str(), STOP); // throws PhreeqcStop
+		}
+		catch (IPhreeqcStop)
+		{
+			// do nothing
+		}
+		throw;
+	}
 	catch(...)
 	{
 		const char *errmsg = "RunAccumulated: An unhandled exception occured.\n";
@@ -798,6 +812,20 @@ int IPhreeqc::RunFile(const char* filename)
 	catch (IPhreeqcStop)
 	{
 		this->close_input_files();
+	}
+	catch(std::exception &e)
+	{
+		std::string errmsg("RunFile: ");
+		errmsg += e.what();
+		try
+		{
+			this->PhreeqcPtr->error_msg(errmsg.c_str(), STOP); // throws PhreeqcStop
+		}
+		catch (IPhreeqcStop)
+		{
+			// do nothing
+		}
+		throw;
 	}
 	catch(...)
 	{
