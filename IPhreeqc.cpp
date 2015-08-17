@@ -848,6 +848,20 @@ int IPhreeqc::RunString(const char* input)
 	{
 		this->close_input_files();
 	}
+	catch(std::exception &e)
+	{
+		std::string errmsg("RunString: ");
+		errmsg += e.what();
+		try
+		{
+			this->PhreeqcPtr->error_msg(errmsg.c_str(), STOP); // throws PhreeqcStop
+		}
+		catch (IPhreeqcStop)
+		{
+			// do nothing
+		}
+		throw;
+	}
 	catch(...)
 	{
 		const char *errmsg = "RunString: An unhandled exception occured.\n";
