@@ -21,7 +21,7 @@
 #define gzclose fclose
 #define gzopen fopen
 #define gzprintf fprintf
-#define ogzstream std::ofstream
+//#define ogzstream std::ofstream
 #endif
 #include "cxxMix.h"
 #include "Solution.h"
@@ -1529,792 +1529,9 @@ PhreeqcRM::DecodeError(int r)
 }
 // Many versions of DumpModule that may not work
 // Started considering whether root or workers write the data
-#ifdef SKIP
-/* ---------------------------------------------------------------------- */
-IRM_RESULT
-PhreeqcRM::DumpModule(bool dump_on, bool use_gz_in)
-/* ---------------------------------------------------------------------- */
-{
-	this->phreeqcrm_error_string.clear();
-	bool dump = false;
-
-	// return if dump_on is false
-	if (this->mpi_myself == 0)
-	{
+#ifdef SKIP_BOTH
 #ifdef USE_MPI
-		int method = METHOD_DUMPMODULE;
-		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
-#endif
-		dump = dump_on;
-	}
-#ifdef USE_MPI
-	int temp_tf = dump ? 1 : 0;
-	MPI_Bcast(&temp_tf, 1, MPI_INT, 0, phreeqcrm_comm);
-	dump = (temp_tf == 0) ? false : true;
-	//MPI_Bcast(&dump, 1, MPI_LOGICAL, 0, phreeqcrm_comm);
-#endif
-	if (!dump) return IRM_OK;
-
-	IRM_RESULT return_value = IRM_OK;
-
-	// open dump file
-	std::string char_buffer;
-	bool use_gz;
-	use_gz = use_gz_in;
-#ifdef USE_GZ
-	ogzstream ofs_restart_gz;
-#else
-	use_gz = 0;
-#endif
-	std::ofstream ofs_restart;
-	std::string temp_name("temp_dump_file");
-	std::string name(this->file_prefix);
-	std::string backup_name(this->file_prefix);
-	if (mpi_myself == 0)
-	{
-		name.append(".dump");
-		backup_name.append(".dump.backup");
-		if (use_gz)
-		{
-#ifdef USE_GZ
-			temp_name.append(".gz");
-			name.append(".gz");
-			backup_name.append(".gz");
-			ofs_restart_gz.open(temp_name.c_str());
-			if (!ofs_restart_gz.good())
-			{
-				std::ostringstream errstr;
-				errstr << "Temporary restart file could not be opened: " << temp_name;
-				this->ErrorHandler(IRM_FAIL, errstr.str());
-			}
-#endif
-		}
-		else
-		{
-			ofs_restart.open(temp_name.c_str(), std::ofstream::out);  // ::app for append
-			if (!ofs_restart.good())
-			{
-				std::ostringstream errstr;
-				errstr << "Temporary restart file could not be opened: " << temp_name;
-				this->ErrorHandler(IRM_FAIL, errstr.str());
-				return_value = IRM_FAIL;
-			}
-		}
-	}
-
-	// Return on error opening dump file
-#ifdef USE_MPI
-	MPI_Bcast(&return_value, 1, MPI_INT, 0, phreeqcrm_comm);
-#endif
-	if (return_value != IRM_OK)
-	{
-		return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
-	}
-
-	// Try for dumping data
-	try
-	{
-		// write dump data
-#ifdef USE_MPI
-		this->workers[0]->SetDumpStringOn(true);
-		std::ostringstream in;
-
-		in << "DUMP; -cells " << this->start_cell[this->mpi_myself] << "-" << this->end_cell[this->mpi_myself] << "\n";
-
-		std::vector<int> r_values;
-		//r_values.push_back(this->workers[0]->RunString(in.str().c_str()));
-		{
-			int status;
-			status = this->workers[0]->RunString(in.str().c_str());
-			if (status != 0)
-			{
-				error_msg(this->workers[0]->GetErrorString());
-			}
-			r_values.push_back(status);
-		}
-		this->HandleErrorsInternal(r_values);
-
-		r_values.clear();
-		for (int n = 0; n < this->mpi_tasks; n++)
-		{
-			// Need to transfer output stream to root and print
-			if (this->mpi_myself == n)
-			{
-				if (n == 0)
-				{
-					if (use_gz)
-					{
-#ifdef USE_GZ
-						ofs_restart_gz << this->GetWorkers()[0]->GetDumpString();
-#endif
-					}
-					else
-					{
-						ofs_restart << this->GetWorkers()[0]->GetDumpString();
-					}
-				}
-				else
-				{
-					int size = (int) strlen(this->workers[0]->GetDumpString());
-					MPI_Send(&size, 1, MPI_INT, 0, 0, phreeqcrm_comm);
-					MPI_Send((void *) this->workers[0]->GetDumpString(), size, MPI_CHAR, 0, 0, phreeqcrm_comm);
-				}
-			}
-			else if (this->mpi_myself == 0)
-			{
-				MPI_Status mpi_status;
-				int size;
-				MPI_Recv(&size, 1, MPI_INT, n, 0, phreeqcrm_comm, &mpi_status);
-				char_buffer.resize(size+1);
-				MPI_Recv((void *) char_buffer.c_str(), size, MPI_CHAR, n, 0, phreeqcrm_comm, &mpi_status);
-				char_buffer[size] = '\0';
-				if (use_gz)
-				{
-#ifdef USE_GZ
-					ofs_restart_gz << char_buffer;
-#endif
-				}
-				else
-				{
-					ofs_restart << char_buffer;
-				}
-			}
-			// Clear dump string to save space
-			std::ostringstream clr;
-			clr << "END\n";
-			//r_values.push_back(this->GetWorkers()[0]->RunString(clr.str().c_str()));
-			{
-				int status;
-				status = this->workers[0]->RunString(clr.str().c_str()));
-				if (status != 0)
-				{
-					error_msg(this->workers[0]->GetErrorString());
-				}
-				r_values.push_back(status);
-			}
-		}
-		this->HandleErrorsInternal(r_values);
-#else
-		std::vector<int> r_values;
-		r_values.resize(nthreads, 0);
-		for (int n = 0; n < (int) this->nthreads; n++)
-		{
-			this->workers[n]->SetDumpStringOn(true);
-			std::ostringstream in;
-			in << "DUMP; -cells " << this->start_cell[n] << "-" << this->end_cell[n] << "\n";
-			//r_values[n] = this->workers[n]->RunString(in.str().c_str());
-			{
-				int status;
-				status = this->workers[n]->RunString(in.str().c_str());
-				if (status != 0)
-				{
-					error_msg(this->workers[n]->GetErrorString());
-				}
-				r_values[n] = status;
-			}
-			if (use_gz)
-			{
-#ifdef USE_GZ
-				ofs_restart_gz << this->GetWorkers()[n]->GetDumpString();
-#endif
-			}
-			else
-			{
-				ofs_restart << this->GetWorkers()[n]->GetDumpString();
-			}
-		}
-		this->HandleErrorsInternal(r_values);
-		r_values.clear();
-		for (int n = 0; n < (int) this->nthreads; n++)
-		{
-			// Clear dump string to save space
-			std::string clr = "END\n";
-			//r_values.push_back(this->workers[n]->RunString(clr.c_str()));
-			{
-				int status;
-				status = this->workers[n]->RunString(clr.c_str());
-				if (status != 0)
-				{
-					error_msg(this->workers[n]->GetErrorString());
-				}
-				r_values.push_back(status);
-			}
-		}
-		this->HandleErrorsInternal(r_values);
-#endif
-		if (mpi_myself == 0)
-		{
-			if (use_gz)
-			{
-#ifdef USE_GZ
-				ofs_restart_gz.close();
-#endif
-			}
-			else
-			{
-				ofs_restart.close();
-			}
-			// rename files
-			PhreeqcRM::FileRename(temp_name.c_str(), name.c_str(), backup_name.c_str());
-		}
-	}
-	catch (...)
-	{
-		return_value = IRM_FAIL;
-	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
-}
-#endif
-#ifdef SKIP_ALL
-#ifdef USE_MPI
-#ifdef SKIP
-// This one writes directly from each MPI process
-/* ---------------------------------------------------------------------- */
-IRM_RESULT
-PhreeqcRM::DumpModule(bool dump_on, bool append)
-/* ---------------------------------------------------------------------- */
-{
-	this->phreeqcrm_error_string.clear();
-	bool dump = false;
-
-	// return if dump_on is false
-	if (this->mpi_myself == 0)
-	{
-		dump = dump_on;
-	}
-	int temp_tf = dump ? 1 : 0;
-	MPI_Bcast(&temp_tf, 1, MPI_INT, 0, phreeqcrm_comm);
-	dump = (temp_tf == 0) ? false : true;
-	//MPI_Bcast(&dump, 1, MPI_LOGICAL, 0, phreeqcrm_comm);
-	if (!dump) return IRM_OK;
-
-	IRM_RESULT return_value = IRM_OK;
-
-	// Try for dumping data
-	try
-	{
-		try
-		{
-			// write dump file data
-			int n = this->mpi_myself;
-			this->workers[0]->SetDumpStringOn(true);
-			std::ostringstream in;
-			in << "DUMP; -cells " << this->start_cell[n] << "-" << this->end_cell[n] << "\n";
-			int status = this->workers[0]->RunString(in.str().c_str());
-			if (status != 0)
-			{
-				error_msg(this->workers[0]->GetErrorString());
-			}
-			this->ErrorHandler(PhreeqcRM::Int2IrmResult(status, false), "RunString");
-		}
-		catch (...)
-		{
-			return_value = IRM_FAIL;
-		}
-
-		for (int n = 0; n < this->mpi_tasks; n++)
-		{
-			// try for one process
-			try
-			{
-				if (this->mpi_myself == n)
-				{
-					this->ErrorHandler(return_value, "Already failed for DumpModule process.");
-					// open dump file
-					gzFile dump_file;
-					std::string name(this->dump_file_name);
-
-					if (append)
-					{
-						dump_file = gzopen(name.c_str(), "ab1");
-					}
-					else
-					{
-						// rename
-						if (n == 0)
-						{
-							dump_file = gzopen(name.c_str(), "wb1");
-						}
-						else
-						{
-							dump_file = gzopen(name.c_str(), "ab1");
-						}
-					}
-					if (dump_file == NULL)
-					{
-						std::ostringstream errstr;
-						errstr << "Restart file could not be opened: " << name;
-						this->ErrorHandler(IRM_FAIL, errstr.str());
-					}
-
-					size_t dump_length = strlen(this->GetWorkers()[0]->GetDumpString());
-					char buffer[4096];
-					const char * start = this->GetWorkers()[0]->GetDumpString();
-					const char * end = &this->GetWorkers()[0]->GetDumpString()[dump_length];
-					for (const char * ptr = start; ptr <  end; ptr += 4094)
-					{
-						strncpy(buffer, ptr, 4094);
-						buffer[4094] = '\0';
-						int err = gzprintf(dump_file, "%s", buffer);
-						if (err <= 0)
-						{
-							this->ErrorHandler(IRM_FAIL, "gzprintf");
-						}
-					}
-					gzclose(dump_file);
-				}
-			}
-			catch (...)
-			{
-				return_value = IRM_FAIL;
-			}
-			MPI_Bcast(&return_value,  1, MPI_INT, n, phreeqcrm_comm);
-			this->ErrorHandler(return_value, "Dumping data for process.");
-		}
-	}
-	catch (...)
-	{
-		return_value = IRM_FAIL;
-	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
-}
-#endif
-// This one transfers to root and then writes
-/* ---------------------------------------------------------------------- */
-IRM_RESULT
-PhreeqcRM::DumpModule(bool dump_on, bool append)
-/* ---------------------------------------------------------------------- */
-{
-	this->phreeqcrm_error_string.clear();
-#ifdef USE_MPI
-	if (this->mpi_myself == 0)
-	{
-		int method = METHOD_DUMPMODULE;
-		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
-	}
-#endif
-	bool dump = false;
-
-	// return if dump_on is false
-	if (this->mpi_myself == 0)
-	{
-		dump = dump_on;
-	}
-	int temp_tf = dump ? 1 : 0;
-	MPI_Bcast(&temp_tf, 1, MPI_INT, 0, phreeqcrm_comm);
-	dump = (temp_tf == 0) ? false : true;
-	//MPI_Bcast(&dump, 1, MPI_LOGICAL, 0, phreeqcrm_comm);
-	if (!dump) return IRM_OK;
-
-	IRM_RESULT return_value = IRM_OK;
-
-	// Open file on root
-	gzFile dump_file = NULL;
-	try
-	{
-		if (this->mpi_myself == 0)
-		{
-			// open dump file
-			std::string name(this->dump_file_name);
-			std::string mode;
-#ifdef USE_GZ
-			mode = append ? "ab1" : "wb1";
-#else
-			mode = append ? "a" : "w";
-#endif
-			dump_file = gzopen(name.c_str(), mode.c_str());
-			if (dump_file == NULL)
-			{
-				std::ostringstream errstr;
-				errstr << "Restart file could not be opened: " << name;
-				this->ErrorHandler(IRM_FAIL, errstr.str());
-			}
-		}
-	}
-	catch (...)
-	{
-		return_value = IRM_FAIL;
-	}
-
-	// Return on error opening dump file
-	MPI_Bcast(&return_value, 1, MPI_INT, 0, phreeqcrm_comm);
-	if (return_value != IRM_OK)
-	{
-		return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
-	}
-
-	// Try for dumping data
-	try
-	{
-		// write dump file data
-		int n = this->mpi_myself;
-		this->workers[0]->SetDumpStringOn(true);
-		std::ostringstream in;
-		in << "DUMP; -cells " << this->start_cell[n] << "-" << this->end_cell[n] << "\n";
-
-		std::vector<int> r_values;
-		{
-				int status;
-				status = this->workers[0]->RunString(in.str().c_str());
-				if (status != 0)
-				{
-					this->ErrorMessage(this->workers[0]->GetErrorString());
-				}
-				r_values.push_back(status);
-			}
-		this->HandleErrorsInternal(r_values);
-		r_values.clear();
-		for (int n = 0; n < this->mpi_tasks; n++)
-		{
-			// Need to transfer output stream to root and print
-			if (this->mpi_myself == n)
-			{
-				if (n == 0)
-				{
-					size_t dump_length = strlen(this->GetWorkers()[0]->GetDumpString());
-					char buffer[4096];
-					const char * start = this->GetWorkers()[0]->GetDumpString();
-					const char * end = &this->GetWorkers()[0]->GetDumpString()[dump_length];
-					for (const char * ptr = start; ptr <  end; ptr += 4094)
-					{
-						strncpy(buffer, ptr, 4094);
-						buffer[4094] = '\0';
-						int err = gzprintf(dump_file, "%s", buffer);
-						if (err <= 0)
-						{
-							this->ErrorHandler(IRM_FAIL, "gzprintf");
-						}
-					}
-				}
-				else
-				{
-					int size = (int) strlen(this->workers[0]->GetDumpString());
-					MPI_Send(&size, 1, MPI_INT, 0, 0, phreeqcrm_comm);
-					MPI_Send((void *) this->workers[0]->GetDumpString(), size, MPI_CHAR, 0, 0, phreeqcrm_comm);
-				}
-			}
-			else if (this->mpi_myself == 0)
-			{
-				MPI_Status mpi_status;
-				std::vector<char> char_buffer;
-				int size;
-				MPI_Recv(&size, 1, MPI_INT, n, 0, phreeqcrm_comm, &mpi_status);
-				char_buffer.resize(size+1);
-				MPI_Recv((void *) &char_buffer.front(), size, MPI_CHAR, n, 0, phreeqcrm_comm, &mpi_status);
-				char_buffer[size] = '\0';
-
-				char buffer[4096];
-				char * start = &char_buffer.front();
-				char * end = &char_buffer[size];
-				for (const char * ptr = start; ptr <  end; ptr += 4094)
-				{
-					strncpy(buffer, ptr, 4094);
-					buffer[4094] = '\0';
-					int err = gzprintf(dump_file, "%s", buffer);
-					if (err <= 0)
-					{
-						this->ErrorHandler(IRM_FAIL, "gzprintf");
-					}
-				}
-			}
-			// Clear dump string to save space
-			std::ostringstream clr;
-			clr << "END\n";
-			{
-				int status;
-				status = this->GetWorkers()[0]->RunString(clr.str().c_str());
-				if (status != 0)
-				{
-					this->ErrorMessage(this->workers[0]->GetErrorString());
-				}
-				r_values.push_back(status);
-			}
-		}
-		this->HandleErrorsInternal(r_values);
-	}
-	catch (...)
-	{
-		return_value = IRM_FAIL;
-	}
-	if (mpi_myself == 0)
-	{
-		gzclose(dump_file);
-	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
-}
-#else
-/* ---------------------------------------------------------------------- */
-IRM_RESULT
-PhreeqcRM::DumpModule(bool dump_on, bool append)
-/* ---------------------------------------------------------------------- */
-{
-	this->phreeqcrm_error_string.clear();
-	// return if dump_on is false
-	if (!dump_on) return IRM_OK;
-
-	IRM_RESULT return_value = IRM_OK;
-
-	try
-	{
-		// open dump file
-		gzFile dump_file;
-		std::string name(this->dump_file_name);
-
-		// open
-		std::string mode;
-#ifdef USE_GZ
-		mode = append ? "ab1" : "wb1";
-#else
-		mode = append ? "a" : "w";
-#endif
-		dump_file = gzopen(name.c_str(), mode.c_str());
-
-		if (dump_file == NULL)
-		{
-			std::ostringstream errstr;
-			errstr << "Restart file could not be opened: " << name;
-			this->ErrorHandler(IRM_FAIL, errstr.str());
-		}
-#ifdef USE_OPENMP
-		omp_set_num_threads(this->nthreads);
-#pragma omp parallel
-#pragma omp for
-#endif
-		for (int n = 0; n < (int) this->nthreads; n++)
-		{
-			this->workers[n]->SetDumpStringOn(true);
-			std::ostringstream in;
-			in << "DUMP; -cells " << start_cell[n] << "-" << end_cell[n] << "\n";
-			int status = this->workers[n]->RunString(in.str().c_str());
-			if (status != 0)
-			{
-				this->ErrorMessage(this->workers[n]->GetErrorString());
-			}
-			this->ErrorHandler(PhreeqcRM::Int2IrmResult(status, false), "RunString");
-		}
-
-		for (int n = 0; n < (int) this->nthreads; n++)
-		{
-			size_t dump_length = strlen(this->GetWorkers()[n]->GetDumpString());
-			char buffer[4096];
-			const char * start = this->GetWorkers()[n]->GetDumpString();
-			const char * end = &this->GetWorkers()[n]->GetDumpString()[dump_length];
-			for (const char * ptr = start; ptr <  end; ptr += 4094)
-			{
-				strncpy(buffer, ptr, 4094);
-				buffer[4094] = '\0';
-				if (dump_file)
-				{
-					int err = gzprintf(dump_file, "%s", buffer);
-					if (err <= 0)
-					{
-						this->ErrorHandler(IRM_FAIL, "gzprintf");
-					}
-				}
-			}
-		}
-		if (dump_file)
-		{
-			gzclose(dump_file);
-		}
-	}
-	catch (...)
-	{
-		return_value = IRM_FAIL;
-	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
-}
-#endif
-#ifdef THIS_DUMP_MODULE_MAY_WORK_FOR_VERY_LARGE_PROBLEMS
-#ifdef USE_MPI
-// This one generates a strings for a certain number of solutions (block = 1000)
-// tnen writes directly from each MPI process
-/* ---------------------------------------------------------------------- */
-IRM_RESULT
-PhreeqcRM::DumpModule(bool dump_on, bool append)
-/* ---------------------------------------------------------------------- */
-{
-	this->phreeqcrm_error_string.clear();
-	bool dump = false;
-
-	// return if dump_on is false
-	if (this->mpi_myself == 0)
-	{
-		dump = dump_on;
-	}
-	int temp_tf = dump ? 1 : 0;
-	MPI_Bcast(&temp_tf, 1, MPI_INT, 0, phreeqcrm_comm);
-	dump = (temp_tf == 0) ? false : true;
-	//MPI_Bcast(&dump, 1, MPI_LOGICAL, 0, phreeqcrm_comm);
-	if (!dump) return IRM_OK;
-
-	IRM_RESULT return_value = IRM_OK;
-
-	// Try for dumping data
-	try
-	{
-		for (int n = 0; n < this->mpi_tasks; n++)
-		{
-			// try for one process
-			try
-			{
-				if (this->mpi_myself == n)
-				{
-					// open dump file
-					gzFile dump_file;
-					std::string name(this->dump_file_name);
-
-					if (append)
-					{
-						dump_file = gzopen(name.c_str(), "ab1");
-					}
-					else
-					{
-						// rename
-						if (n == 0)
-						{
-							dump_file = gzopen(name.c_str(), "wb1");
-						}
-						else
-						{
-							dump_file = gzopen(name.c_str(), "ab1");
-						}
-					}
-					if (dump_file == NULL)
-					{
-						std::ostringstream errstr;
-						errstr << "Restart file could not be opened: " << name;
-						this->ErrorHandler(IRM_FAIL, errstr.str());
-					}
-
-					// write dump file data
-					this->workers[0]->SetDumpStringOn(true);
-					std::ostringstream in;
-					int block = 1000;
-					for (int j = this->start_cell[n]; j <= this->end_cell[n]; j += block)
-					{
-						int last = j + block > this->end_cell[n] ? this->end_cell[n] : j + block;
-						in << "DUMP; -cells " << j << "-" << last << "\n";
-						int status = this->workers[0]->RunString(in.str().c_str());
-						if (status != 0)
-						{
-							error_msg(this->workers[0]->GetErrorString());
-						}
-						this->ErrorHandler(PhreeqcRM::Int2IrmResult(status, false), "RunString");
-
-						size_t dump_length = strlen(this->GetWorkers()[0]->GetDumpString());
-						char buffer[4096];
-						const char * start = this->GetWorkers()[0]->GetDumpString();
-						const char * end = &this->GetWorkers()[0]->GetDumpString()[dump_length];
-						for (const char * ptr = start; ptr <  end; ptr += 4094)
-						{
-							strncpy(buffer, ptr, 4094);
-							buffer[4094] = '\0';
-							int err = gzprintf(dump_file, "%s", buffer);
-							if (err <= 0)
-							{
-								this->ErrorHandler(IRM_FAIL, "gzprintf");
-							}
-						}
-					}
-					gzclose(dump_file);
-				}
-			}
-			catch (...)
-			{
-				return_value = IRM_FAIL;
-			}
-			MPI_Barrier(phreeqcrm_comm);
-			MPI_Bcast(&return_value,  1, MPI_INT, n, phreeqcrm_comm);
-			this->ErrorHandler(return_value, "Dumping data for process.");
-		}
-	}
-	catch (...)
-	{
-		return_value = IRM_FAIL;
-	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
-}
-#else
-// This one generates a string for a certain number of solutions (block = 1000)
-// and writes to gz file
-/* ---------------------------------------------------------------------- */
-IRM_RESULT
-PhreeqcRM::DumpModule(bool dump_on, bool append)
-/* ---------------------------------------------------------------------- */
-{
-	this->phreeqcrm_error_string.clear();
-	// return if dump_on is false
-	if (!dump_on) return IRM_OK;
-
-	IRM_RESULT return_value = IRM_OK;
-
-	try
-	{
-		// open dump file
-		gzFile dump_file;
-		std::string name(this->dump_file_name);
-
-		// open
-		if (append)
-		{
-			dump_file = gzopen(name.c_str(), "ab1");
-		}
-		else
-		{
-			dump_file = gzopen(name.c_str(), "wb1");
-		}
-		if (dump_file == NULL)
-		{
-			std::ostringstream errstr;
-			errstr << "Restart file could not be opened: " << name;
-			this->ErrorHandler(IRM_FAIL, errstr.str());
-		}
-
-		for (int n = 0; n < (int) this->nthreads; n++)
-		{
-			this->workers[n]->SetDumpStringOn(true);
-			std::ostringstream in;
-			int block = 1000;
-			for (int j = this->start_cell[n]; j <= this->end_cell[n]; j += block)
-			{
-				int last = (j + block) > this->end_cell[n] ? this->end_cell[n] : j + block;
-				in << "DUMP; -cells " << j << "-" << last << "\n";
-				int status = this->workers[n]->RunString(in.str().c_str());
-				if (status != 0)
-				{
-					error_msg(this->workers[n]->GetErrorString());
-				}
-				this->ErrorHandler(PhreeqcRM::Int2IrmResult(status, false), "RunString");
-				size_t dump_length = strlen(this->GetWorkers()[n]->GetDumpString());
-				char buffer[4096];
-				const char * start = this->GetWorkers()[n]->GetDumpString();
-				const char * end = &this->GetWorkers()[n]->GetDumpString()[dump_length];
-				for (const char * ptr = start; ptr <  end; ptr += 4094)
-				{
-					strncpy(buffer, ptr, 4094);
-					buffer[4094] = '\0';
-					int err = gzprintf(dump_file, "%s", buffer);
-					if (err <= 0)
-					{
-						this->ErrorHandler(IRM_FAIL, "gzprintf");
-					}
-				}
-			}
-		}
-		gzclose(dump_file);
-	}
-	catch (...)
-	{
-		return_value = IRM_FAIL;
-	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
-}
-#endif
-#endif
-#endif
-#ifdef USE_MPI
-// This one transfers to root and then writes
+// This one transfers blocks to root and then writes
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::DumpModule(bool dump_on, bool append)
@@ -2363,6 +1580,11 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 				errstr << "Restart file could not be opened: " << name;
 				this->ErrorHandler(IRM_FAIL, errstr.str());
 			}
+#ifdef USE_GZ
+			gzbuffer(dump_file, 100000);
+#else
+			setbuf(dump_file, 100000)
+#endif
 		}
 	}
 	catch (...)
@@ -2382,21 +1604,22 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 	{
 		// write dump file data
 		this->workers[0]->SetDumpStringOn(true);
-
 		int block = 10000;
+		int pct = 10;
+		int total_cells = this->end_cell[mpi_tasks - 1];
+		if (mpi_myself == 0 && total_cells > 10 * block)
+		{
+			std::cerr << "Dump 0% ";
+		}
 		for (int n = 0; n < this->mpi_tasks; n++)
+		//for (int n = 0; n < 1; n++)
 		{		
-			if (mpi_myself == 0)
-			{
-				std::cerr << "Task number " << n << std::endl;
-			}
 			for (int j = this->start_cell[n]; j <= this->end_cell[n]; j += block)
-			{				
+			{			
+				int last = j + block - 1 > this->end_cell[n] ? this->end_cell[n] : j + block - 1;	
 				if (this->mpi_myself == n)
 				{		
 					// Dump block of cells
-					int last = j + block - 1 > this->end_cell[n] ? this->end_cell[n] : j + block - 1;
-					std::cerr << "\tCell numbers " << j << "-" << last << std::endl;
 					std::ostringstream in;
 					in << "DUMP; -cells " << j << "-" << last << "\n";
 					int status = this->workers[0]->RunString(in.str().c_str());
@@ -2423,6 +1646,11 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 							{
 								this->ErrorHandler(IRM_FAIL, "gzprintf");
 							}
+						}
+						if ((total_cells > 10 * block) && (last * 100 / total_cells > pct))
+						{
+							std::cerr << pct << "% ";
+							pct += 10;
 						}
 					}
 					else
@@ -2455,6 +1683,11 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 							this->ErrorHandler(IRM_FAIL, "gzprintf");
 						}
 					}
+					if ((total_cells > 10 * block) && (last * 100 / total_cells > pct))
+					{
+						std::cerr << pct << "% ";
+						pct += 10;
+					}
 				}
 			}
 			if (this->mpi_myself == n)
@@ -2472,6 +1705,10 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 				}
 			}
 			MPI_Barrier(phreeqcrm_comm);
+		}
+		if (mpi_myself == 0 && total_cells > 10 * block)
+		{
+			std::cerr << "100% " << std::endl;
 		}
 	}
 	catch (...)
@@ -2516,7 +1753,11 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 			errstr << "Restart file could not be opened: " << name;
 			this->ErrorHandler(IRM_FAIL, errstr.str());
 		}
-
+#ifdef USE_GZ
+			gzbuffer(dump_file, 100000);
+#else
+			setbuf(dump_file, 100000)
+#endif
 		// write dump file data
 		int block = 10000;
 		for (int n = 0; n < (int) this->nthreads; n++)
@@ -2574,8 +1815,9 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
 }
 #endif // USE_MPI
+#endif
 #ifdef SKIP
-// This one transfers to root and then writes
+// This one transfers blocks to root from each process and then writes
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::DumpModule(bool dump_on, bool append)
@@ -2625,6 +1867,11 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 				errstr << "Restart file could not be opened: " << name;
 				this->ErrorHandler(IRM_FAIL, errstr.str());
 			}
+#ifdef USE_GZ
+			gzbuffer(dump_file, 100000);
+#else
+			setbuf(dump_file, 100000)
+#endif
 		}
 	}
 	catch (...)
@@ -2737,8 +1984,8 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 						}
 					}
 				}
-				MPI_Barrier(phreeqcrm_comm);
 			}
+			MPI_Barrier(phreeqcrm_comm);
 		}
 		// Clear dump string to save space
 		std::ostringstream clr;
@@ -2763,6 +2010,365 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
 }
 #endif
+#ifdef USE_MPI
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::DumpModule(bool dump_on, bool append)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (this->mpi_myself == 0)
+	{
+		int method = METHOD_DUMPMODULE;
+		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+	}
+	bool dump = false;
+
+	// return if dump_on is false
+	if (this->mpi_myself == 0)
+	{
+		dump = dump_on;
+	}
+	int temp_tf = dump ? 1 : 0;
+	MPI_Bcast(&temp_tf, 1, MPI_INT, 0, phreeqcrm_comm);
+	dump = (temp_tf == 0) ? false : true;
+	//MPI_Bcast(&dump, 1, MPI_LOGICAL, 0, phreeqcrm_comm);
+	if (!dump) return IRM_OK;
+
+	IRM_RESULT return_value = IRM_OK;
+
+	// Open file on root
+	gzFile dump_file = NULL;
+	try
+	{
+		if (this->mpi_myself == 0)
+		{
+			// open dump file
+			std::string name(this->dump_file_name);
+			std::string mode;
+#ifdef USE_GZ
+			mode = append ? "ab1" : "wb1";
+#else
+			mode = append ? "a" : "w";
+#endif
+			dump_file = gzopen(name.c_str(), mode.c_str());
+			if (dump_file == NULL)
+			{
+				std::ostringstream errstr;
+				errstr << "Restart file could not be opened: " << name;
+				this->ErrorHandler(IRM_FAIL, errstr.str());
+			}
+#ifdef USE_GZ
+			gzbuffer(dump_file, 100000);
+#else
+			setbuf(dump_file, 100000)
+#endif
+		}
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+
+	// Return on error opening dump file
+	MPI_Bcast(&return_value, 1, MPI_INT, 0, phreeqcrm_comm);
+	if (return_value != IRM_OK)
+	{
+		return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
+	}
+	int block = 10000;
+	// Calculate max
+	int max = 0;
+	for (int n = 0; n < mpi_tasks; n++)
+	{
+		int count = this->end_cell[n] - this->start_cell[n] + 1;
+		max = count > max ? count : max;
+	}
+	
+	int nblocks = max / block;
+	if (max % block > 0) nblocks += 1;
+
+
+	std::vector<char> char_buffer;
+	const size_t gzblock = 4094;
+	char buffer[gzblock+2];
+	int total_cells = this->end_cell[this->mpi_tasks -1];
+	int pct = 10;
+	int block_count = 0;
+	if (mpi_myself == 0)
+	{
+		std::cerr << "Dump 0% ";
+	}
+	// Try for dumping data
+	try
+	{
+		// write dump file data
+		this->workers[0]->SetDumpStringOn(true);
+
+		for (int iblock = 0; iblock < nblocks; iblock++)
+		{
+			for (int n = 0; n < this->mpi_tasks; n++)
+			{
+				int begin = this->start_cell[n] + iblock * block;
+				if (begin <= this->end_cell[n]) 
+				{
+					int last = this->start_cell[n] + (iblock + 1) * block - 1;
+					if (last > this->end_cell[n]) last = this->end_cell[n];
+					if (mpi_myself == 0)
+					{
+						block_count += last - begin + 1;
+					}
+					if (this->mpi_myself == n)
+					{		
+						// Dump block of cells
+						std::ostringstream in;
+						in << "DUMP; -cells " << begin << "-" << last << "\n";
+						int status = this->workers[0]->RunString(in.str().c_str());
+						if (status != 0)
+						{
+							this->ErrorMessage(this->workers[0]->GetErrorString());
+						}
+						this->ErrorHandler(PhreeqcRM::Int2IrmResult(status, false), "RunString");
+					}
+				}
+			}
+			if (mpi_myself == 0)
+			{
+				size_t dump_length = strlen(this->GetWorkers()[0]->GetDumpString());
+				const char * start = this->GetWorkers()[0]->GetDumpString();
+				const char * end = &this->GetWorkers()[0]->GetDumpString()[dump_length];
+				for (const char * ptr = start; ptr <  end; ptr += gzblock)
+				{
+					strncpy(buffer, ptr, gzblock);
+					buffer[gzblock] = '\0';
+					int err = gzprintf(dump_file, "%s", buffer);
+					if (err <= 0)
+					{
+						this->ErrorHandler(IRM_FAIL, "gzprintf");
+					}
+				}
+			}
+			for (int n = 1; n < this->mpi_tasks; n++)
+			{
+				// Need to transfer output stream to root and print
+
+				if (mpi_myself == n)
+				{
+					int size = (int) strlen(this->workers[0]->GetDumpString());
+					MPI_Send(&size, 1, MPI_INT, 0, 0, phreeqcrm_comm);
+					MPI_Send((void *) this->workers[0]->GetDumpString(), size, MPI_CHAR, 0, 0, phreeqcrm_comm);
+				}
+				else if (this->mpi_myself == 0)
+				{
+					MPI_Status mpi_status;
+					int size;
+					MPI_Recv(&size, 1, MPI_INT, n, 0, phreeqcrm_comm, &mpi_status);
+					char_buffer.resize(size+1);
+					MPI_Recv((void *) &char_buffer.front(), size, MPI_CHAR, n, 0, phreeqcrm_comm, &mpi_status);
+					char_buffer[size] = '\0';
+
+					char * start = &char_buffer.front();
+					char * end = &char_buffer[size];
+					for (const char * ptr = start; ptr <  end; ptr += gzblock)
+					{
+						strncpy(buffer, ptr, gzblock);
+						buffer[gzblock] = '\0';
+						int err = gzprintf(dump_file, "%s", buffer);
+						if (err <= 0)
+						{
+							this->ErrorHandler(IRM_FAIL, "gzprintf");
+						}
+					}
+				}
+			}
+			if (mpi_myself == 0 && block_count * 100 / total_cells > pct)
+			{
+				int pct_block_count = (block_count * 10 / total_cells) * 10;
+				if (pct_block_count < 100)
+				{
+					std::cerr << pct_block_count << "% ";
+				}
+				pct = pct_block_count + 10;
+			}
+			MPI_Barrier(phreeqcrm_comm);
+		}
+		if (mpi_myself == 0)
+		{
+			std::cerr << "100% " << std::endl;
+		}
+
+		// Clear dump string to save space
+		std::ostringstream clr;
+		clr << "END\n";
+		{
+			int status;
+			status = this->GetWorkers()[0]->RunString(clr.str().c_str());
+			if (status != 0)
+			{
+				this->ErrorMessage(this->workers[0]->GetErrorString());
+			}
+		}
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+	if (mpi_myself == 0)
+	{
+		gzclose(dump_file);
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
+}
+#else // MPI
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::DumpModule(bool dump_on, bool append)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (!dump_on) return IRM_OK;
+
+	IRM_RESULT return_value = IRM_OK;
+
+	// Open file on root
+	gzFile dump_file = NULL;
+	try
+	{
+		// open dump file
+		gzFile dump_file;
+		std::string name(this->dump_file_name);
+
+		// open
+		std::string mode;
+#ifdef USE_GZ
+		mode = append ? "ab1" : "wb1";
+#else
+		mode = append ? "a" : "w";
+#endif
+		dump_file = gzopen(name.c_str(), mode.c_str());
+		if (dump_file == NULL)
+		{
+			std::ostringstream errstr;
+			errstr << "Restart file could not be opened: " << name;
+			this->ErrorHandler(IRM_FAIL, errstr.str());
+		}
+#ifdef USE_GZ
+		gzbuffer(dump_file, 100000);
+#else
+		setbuf(dump_file, 100000)
+#endif
+
+		int block = 10000;
+		// Calculate max
+		int max = 0;
+		for (int n = 0; n < nthreads; n++)
+		{
+			int count = this->end_cell[n] - this->start_cell[n] + 1;
+			max = count > max ? count : max;
+		}
+
+		int nblocks = max / block;
+		if (max % block > 0) nblocks += 1;
+
+		std::vector<char> char_buffer;
+		const size_t gzblock = 4094;
+		char buffer[gzblock+2];
+		int total_cells = this->end_cell[this->nthreads -1];
+		int pct = 10;
+		int block_count = 0;
+
+		std::cerr << "Dump 0% ";
+
+		for (int iblock = 0; iblock < nblocks; iblock++)
+		{
+			for (int n = 0; n < this->nthreads; n++)
+			{
+				// count cells for blocks
+				int begin = this->start_cell[n] + iblock * block;
+				if (begin <= this->end_cell[n]) 
+				{
+					int last = this->start_cell[n] + (iblock + 1) * block - 1;
+					if (last > this->end_cell[n]) last = this->end_cell[n];
+					block_count += last - begin + 1;
+				}
+			}
+#ifdef USE_OPENMP
+		omp_set_num_threads(this->nthreads);
+#pragma omp parallel
+#pragma omp for
+#endif
+			for (int n = 0; n < this->nthreads; n++)
+			{
+				// write dump file data
+				this->workers[n]->SetDumpStringOn(true);
+				int begin = this->start_cell[n] + iblock * block;
+				if (begin <= this->end_cell[n]) 
+				{
+					int last = this->start_cell[n] + (iblock + 1) * block - 1;
+					if (last > this->end_cell[n]) last = this->end_cell[n];
+					// Dump block of cells
+					std::ostringstream in;
+					in << "DUMP; -cells " << begin << "-" << last << "\n";
+					int status = this->workers[n]->RunString(in.str().c_str());
+					if (status != 0)
+					{
+						this->ErrorMessage(this->workers[n]->GetErrorString());
+					}
+					this->ErrorHandler(PhreeqcRM::Int2IrmResult(status, false), "RunString");
+				}
+			}
+			for (int n = 0; n < this->nthreads; n++)
+			{
+				// Write data to file
+				size_t dump_length = strlen(this->GetWorkers()[n]->GetDumpString());
+				const char * start = this->GetWorkers()[n]->GetDumpString();
+				const char * end = &this->GetWorkers()[n]->GetDumpString()[dump_length];
+				for (const char * ptr = start; ptr <  end; ptr += gzblock)
+				{
+					strncpy(buffer, ptr, gzblock);
+					buffer[gzblock] = '\0';
+					int err = gzprintf(dump_file, "%s", buffer);
+					if (err <= 0)
+					{
+						this->ErrorHandler(IRM_FAIL, "gzprintf");
+					}
+				}
+			}
+			int pct_block_count = (block_count * 10 / total_cells) * 10;
+			if (block_count * 100 / total_cells > pct)
+			{
+				if (pct_block_count < 100)
+				{
+					std::cerr << pct_block_count << "% ";
+				}
+				pct = pct_block_count + 10;
+			}
+		}
+		std::cerr << "100% " << std::endl;
+
+		for (int n = 0; n < this->nthreads; n++)
+		{
+			// Clear dump string to save space
+			std::ostringstream clr;
+			clr << "END\n";
+			{
+				int status;
+				status = this->GetWorkers()[n]->RunString(clr.str().c_str());
+				if (status != 0)
+				{
+					this->ErrorMessage(this->workers[n]->GetErrorString());
+				}
+			}
+		}
+		gzclose(dump_file);
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
+}
+#endif // MPI
 /* ---------------------------------------------------------------------- */
 void
 PhreeqcRM::ErrorMessage(const std::string &error_string, bool prepend)
@@ -4209,6 +3815,13 @@ PhreeqcRM::InitialPhreeqc2Module(
 		}
 		this->HandleErrorsInternal(r_values);
 #endif
+	}	
+	catch(std::exception &e)
+	{
+		std::string errmsg("InitialPhreeqc2Module: ");
+		errmsg += e.what();
+		this->ErrorMessage(errmsg.c_str()); 
+		return_value = IRM_FAIL;
 	}
 	catch (...)
 	{

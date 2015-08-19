@@ -35,8 +35,10 @@ class IPhreeqc;
  * @brief This class is derived from std::exception and is thrown
  * when an unrecoverable error has occured.
  */
-class IRM_DLL_EXPORT PhreeqcRMStop : std::exception
+class IRM_DLL_EXPORT PhreeqcRMStop : public std::exception
 {
+public:
+	const char *what() const {return "Failure in PhreeqcRM\n";}
 };
 
 /*! @brief Enumeration used to return error codes.
