@@ -38,7 +38,7 @@ class IPhreeqc;
 class IRM_DLL_EXPORT PhreeqcRMStop : public std::exception
 {
 public:
-	const char *what() const {return "Failure in PhreeqcRM\n";}
+  const char *what() const throw () {return "Failure in PhreeqcRM\n";}
 };
 
 /*! @brief Enumeration used to return error codes.
