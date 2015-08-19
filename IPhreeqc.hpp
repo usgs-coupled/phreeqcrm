@@ -31,11 +31,10 @@ class SelectedOutput;
  * @brief This class is derived from std::exception and is thrown
  * when an unrecoverable error has occured.
  */
-
 class IPQ_DLL_EXPORT IPhreeqcStop : public std::exception 
 {
 public:
-	const char *what() const {return "Failure in IPhreeqc\n";}
+  virtual const char *what() const throw () {return "Failure in IPhreeqc\n";}
 };
 
 /**
@@ -45,6 +44,7 @@ public:
  * Program for Speciation, Batch-Reaction, One-Dimensional Transport,
  * and Inverse Geochemical Calculations
  */
+
 class IPQ_DLL_EXPORT IPhreeqc : public PHRQ_io
 {
 public:
