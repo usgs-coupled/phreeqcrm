@@ -1576,9 +1576,6 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 				errstr << "Restart file could not be opened: " << name;
 				this->ErrorHandler(IRM_FAIL, errstr.str());
 			}
-#ifdef USE_GZ
-			gzbuffer(dump_file, 100000);
-#endif
 		}
 	}
 	catch (...)
@@ -1592,7 +1589,7 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 	{
 		return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
 	}
-	int block = 10000;
+	int block = 5000;
 	// Calculate max
 	int max = 0;
 	for (int n = 0; n < mpi_tasks; n++)
@@ -1769,9 +1766,6 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 			errstr << "Restart file could not be opened: " << name;
 			this->ErrorHandler(IRM_FAIL, errstr.str());
 		}
-#ifdef USE_GZ
-		gzbuffer(dump_file, 100000);
-#endif
 
 		int block = 10000;
 		// Calculate max
