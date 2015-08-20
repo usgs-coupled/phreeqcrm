@@ -1689,14 +1689,16 @@ void IPhreeqc::open_output_files(const char* sz_routine)
 	{
 		if (this->log_ostream != NULL)
 		{
-			delete this->log_ostream;
-			this->log_ostream = NULL;
+			safe_close(&this->log_ostream);
 		}
-		if ( (this->log_ostream = new std::ofstream(this->LogFileName.c_str())) == NULL)
+		if (!this->log_ostream)
 		{
-			std::ostringstream oss;
-			oss << sz_routine << ": Unable to open:" << "\"" << this->LogFileName << "\".\n";
-			this->warning_msg(oss.str().c_str());
+			if ( (this->log_ostream = new std::ofstream(this->LogFileName.c_str())) == NULL)
+			{
+				std::ostringstream oss;
+				oss << sz_routine << ": Unable to open:" << "\"" << this->LogFileName << "\".\n";
+				this->warning_msg(oss.str().c_str());
+			}
 		}
 	}
 }
@@ -1730,7 +1732,7 @@ int IPhreeqc::close_output_files(void)
 	{
 		std::ostream *ptr = (*it).second.Get_punch_ostream();
 		safe_close(&ptr);
-		//(*it).second.Set_punch_ostream(NULL);
+		(*it).second.Set_punch_ostream(NULL);
 	}
 
 	this->punch_ostream = 0;
