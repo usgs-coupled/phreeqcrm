@@ -174,6 +174,7 @@ fi
 VERSION_LONG="$ver_major.$ver_minor.$ver_patch.$REVISION_SVN"
 
 SED_FILES="$DISTPATH/configure.ac \
+           $DISTPATH/Makefile.am \
            $DISTPATH/doc/NOTICE.TXT \
            $DISTPATH/doc/README.TXT \
            $DISTPATH/src/PhreeqcRM.h"
