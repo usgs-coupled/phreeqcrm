@@ -59,9 +59,9 @@ endif ()
 
 # library dependencies
 ##{{
-if (ZLIB_FOUND)
-  set(EXTRA_LIBS ${EXTRA_LIBS} ${ZLIB_LIBRARIES})
-endif()  
+##if (ZLIB_FOUND)
+##  set(EXTRA_LIBS ${EXTRA_LIBS} ${ZLIB_LIBRARIES})
+##endif()  
 ##}}
 if (PHREEQCRM_FORTRAN_TESTING)
   # need extra mpi fortran libs if using msmpi
@@ -89,7 +89,10 @@ else ()
   endif ()
 endif ()
 
-# link 
+# link (zlib must be last on linux)
+if (PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
+  set(EXTRA_LIBS ${EXTRA_LIBS} ${ZLIB_LIBRARIES})
+endif()
 target_link_libraries(TestRM ${EXTRA_LIBS})
 
 # test compile and run
