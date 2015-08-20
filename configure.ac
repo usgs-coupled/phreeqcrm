@@ -157,6 +157,62 @@ AC_LANG_POP(C++)
 # isnan
 AC_CHECK_FUNCS([isnan],    , AC_CHECK_LIB(m, isnan))
 
+#  ----------------------------------------------------------------------
+#  Is the zlib present? It has a header file `zlib.h' and a library
+#  `-lz' and their locations might be specified with the `--with-zlib'
+#  command-line switch. The value is an include path and/or a library path.
+#  If the library path is specified then it must be preceded by a comma.
+#
+AC_ARG_WITH([zlib],
+            [AC_HELP_STRING([--with-zlib=DIR],
+                            [Use the zlib library [default=auto]])],,withval=yes)
+
+case $withval in
+  no)
+    ;;
+  yes)
+    HAVE_ZLIB="yes"
+    AC_CHECK_HEADERS(zlib.h, , AC_MSG_ERROR([zlib.h not found]))
+    AC_CHECK_LIB(z, gzwrite, , AC_MSG_ERROR([couldn't find zlib library]))
+    ;;
+  *)
+    HAVE_ZLIB="yes"
+    case "$withval" in
+      *,*)
+        zlib_inc="`echo $withval |cut -f1 -d,`"
+        zlib_lib="`echo $withval |cut -f2 -d, -s`"
+        ;;
+      *)
+        if test -n "$withval"; then
+          zlib_inc="$withval/include"
+          zlib_lib="$withval/lib"
+        fi
+        ;;
+    esac
+
+    saved_CPPFLAGS="$CPPFLAGS"
+    saved_LDFLAGS="$LDFLAGS"
+
+    if test -n "$zlib_inc"; then
+      CPPFLAGS="$CPPFLAGS -I$zlib_inc"
+    fi
+
+    AC_CHECK_HEADERS(zlib.h,, AC_MSG_ERROR([zlib.h not found]))
+
+    if test -n "$zlib_lib"; then
+      LDFLAGS="$LDFLAGS -L$zlib_lib"
+    fi
+
+    AC_CHECK_LIB(z, gzwrite,, LDFLAGS="$saved_LDFLAGS"; unset HAVE_ZLIB)
+
+    if test -z "$HAVE_ZLIB"; then
+      AC_MSG_ERROR(couldn't find zlib library)
+    fi
+    ;;
+esac
+if test -n "$HAVE_ZLIB"; then
+  AC_DEFINE([USE_GZ], [], [Set if zlib is present])
+fi
 
 AM_CONDITIONAL([BUILD_OPENMP], [test "X$enable_openmp" != "Xno"])
 AM_CONDITIONAL([BUILD_MPI], [test "X$with_mpi" = "Xyes"])
