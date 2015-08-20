@@ -29,7 +29,7 @@
 NAME=PhreeqcRM
 
 # echo everything
-# set -x
+set -x
 
 # A quick and dirty usage message
 USAGE="USAGE: ./dist.sh -v VERSION -r REVISION -d RELEASE_DATE \
@@ -197,7 +197,7 @@ do
    -e "s/@NAME@/$NAME/g" \
     < "$vsn_file" > "$vsn_file.tmp"
   mv -f "$vsn_file.tmp" "$vsn_file"
-  if [ -n "$WIN" ] && [ "$vsn_file" != "$DISTPATH/configure.ac" ]; then
+  if [ -n "$WIN" ] && [ "$vsn_file" != "$DISTPATH/configure.ac" ] && [ "$vsn_file" != "$DISTPATH/Makefile.am" ]; then
     unix2dos "$vsn_file"
   fi  
   cp "$vsn_file" "$vsn_file.dist"
