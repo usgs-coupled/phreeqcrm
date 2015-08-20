@@ -7,6 +7,8 @@ EXTRA_DIST=$(PHREEQCRM_CMAKELISTS)
 
 AM_CPPFLAGS=-I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords
 
+AM_LDFLAGS=-release 3.0.0
+
 # libtool libraries to build
 lib_LTLIBRARIES=libphreeqcrm.la
 
