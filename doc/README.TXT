@@ -23,6 +23,7 @@ TABLE OF CONTENTS
 	F. Using the library
 	G. Contacts
 
+
 -----------------------------------------------------------------------------------
 A. Distribution file
 -----------------------------------------------------------------------------------
@@ -111,6 +112,7 @@ C. Downloading and unzipping the distribution file
 
 	Note:  A compiled executable is not included in the distribution.
 
+
 -----------------------------------------------------------------------------------
 D. Linux compiling, testing, and installing the PhreeqcRM library
 -----------------------------------------------------------------------------------
@@ -155,7 +157,13 @@ D. Linux compiling, testing, and installing the PhreeqcRM library
     		and want to include Fortran files during "make check", 
     		which compiles, links, and runs programs that use 
     		PhreeqcRM.
-    		
+    	--with-zlib=yes--Sets whether the dump files (method DumpModule or
+	        RM_DumpModule) are compressed using zlib methods. Dump files
+	        can be up to 10 times smaller when using zlib; however, zlib 
+	        methods will be required to read the dump file. If 
+	        --with-zlib=yes is used, the preprocessor definition 
+	        USE_GZ is defined.
+    	
 	Run configure as follows:	
     	
     	../configure [options] 
@@ -194,22 +202,46 @@ D. Linux compiling, testing, and installing the PhreeqcRM library
 		/usr/local/include/RM_interface_C.h     (C header)
 		
 		Optionally, user's code may need one or more of the following:
-		/usr/local/include/IPhreeqc.hpp         (C++ header)
-		/usr/local/include/IPhreeqc.h           (C header)
-		/usr/local/include/IPhreeqcPhast.h      (C++ header)
-		/usr/local/include/Var.h                (IPhreeqc VAR structure)
-		/usr/local/include/IrmResult.h          (PhreeqcRM error code enum)
 		/usr/local/include/IPhreeqcCallbacks.h  (IPhreeqc callbacks)
+		/usr/local/include/IPhreeqc.h           (C header)
+		/usr/local/include/IPhreeqc.hpp         (C++ header)
+		/usr/local/include/IPhreeqcPhast.h      (C++ header)
+		/usr/local/include/IrmResult.h          (PhreeqcRM error code enum)
+		/usr/local/include/Keywords.h           (C++ header)
+		/usr/local/include/NameDouble.h         (C++ header) 
+		/usr/local/include/Parser.h             (C++ header) 
+		/usr/local/include/PHRQ_base.h          (C++ header)
+		/usr/local/include/PHRQ_io.h            (C++ header)
+		/usr/local/include/phrqtype.h           (C++ header)
+		/usr/local/include/StorageBin.h         (C++ header)
+		/usr/local/include/System.h             (C++ header)
+		/usr/local/include/Var.h                (IPhreeqc VAR structure)        
 	
-	Documentation??? (PDFs, README, NOTICE, phreeqcrm.txt):
-		/usr/local/share/doc/phreeqcrm
-    
-	Databases: 
-		/usr/local/share/doc/phreeqcrm/database
+	Documentation:
+		/usr/local/share/doc/phreeqcrm/AbstractAWR.pdf       Abstract to Advances in Water Research article
+		                                                     on PhreeqcRM: Parkhurst and Wissmeier, 2015
+		/usr/local/share/doc/phreeqcrm/NOTICE.TXT            User Agreement
+		/usr/local/share/doc/phreeqcrm/README.TXT            This file
+		/usr/local/share/doc/phreeqcrm/html/index.html       HTML PhreeqcRM documentation for C++, C, and Fortran
 		
+	Databases: 
+		/usr/local/share/doc/phreeqcrm/database              Phreeqc databases
+			Amm.dat
+			frezchem.dat
+			iso.dat
+			llnl.dat
+			minteq.dat
+			minteq.v4.dat
+			phreeqc.dat
+			pitzer.dat
+			sit.dat
+			wateq4f.dat
+			
 	Fortran interfaces
-		/usr/local/share/doc/phreeqcrm/src
-    
+		/usr/local/share/doc/phreeqcrm/src/IPhreeqc_interface.F90  IPhreeqc Fortran module
+		/usr/local/share/doc/phreeqcrm/src/RM_interface.F90        PhreeqcRM Fortran module
+		
+ 
 -----------------------------------------------------------------------------------
 E. Windows compiling, testing, and installing the PhreeqcRM library
 -----------------------------------------------------------------------------------
@@ -263,6 +295,12 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 	(4) PHREEQCRM_FORTRAN_TESTING--Sets whether the test calculations
 		(Tests directory) will include Fortran files (FortranAdvect
 		project). A Fortran compiler is required. 
+	(5) PHREEQCRM_USE_ZLIB-Sets whether the dump files (method DumpModule or
+	        RM_DumpModule) are compressed using zlib methods. Dump files
+	        can be up to 10 times smaller when using zlib; however, zlib 
+	        methods will be required to read the dump file. If 
+	        PHREEQCRM_USE_ZLIB is used, the preprocessor definition 
+	        USE_GZ is defined.
 	
 	Click Configure until the screen is not red. If the screen remains 
 	red, you will have to deal with the CMake error messages.
@@ -288,28 +326,36 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 
 	Build INSTALL. The libraries, header files, Fortran module source
 	files, phreeqc database files, and documentation are installed in the
-	install directory selected in CMake.
+	install directory selected in CMake, indicated by "install".
 
-		Libraries that can be installed:
+		install/lib 
 			PhreeqcRM.lib
 			PhreeqcRMd.lib
 			PhreeqcRM.dll
 			PhreeqcRMd.dll
 
-		Include files:
+		install/include
 			C++ and C headers for user's code:	
 				PhreeqcRM.h          (C++ header)
 				RM_interface_C.h     (C header)
 
 			Optionally, may need one or more of the following:
-				IPhreeqc.hpp         (C++ header)
 				IPhreeqc.h           (C header)
-				IPhreeqcPhast.h      (C++ header)
-				Var.h                (IPhreeqc VAR structure)
-				IrmResult.h          (PhreeqcRM error code enum)
+				IPhreeqc.hpp         (C++ header)
 				IPhreeqcCallbacks.h  (IPhreeqc callbacks)
+				IPhreeqcPhast.h      (C++ header)
+				IrmResult.h          (PhreeqcRM error code enum)
+				Keywords.h           (C++ header)
+				NameDouble.h         (C++ header)
+				Parser.h             (C++ header)
+				PHRQ_base.h          (C++ header)
+				PHRQ_io.h            (C++ header)
+				phrqtype.h           (C++ header)
+				StorageBin.h         (C++ header)
+				System.h             (C++ header)
+				Var.h                (IPhreeqc VAR structure)
 			
-		Src files:
+		install/include
 			To use PhreeqcRM in Fortran:
 				RM_interface.F90
 
@@ -329,8 +375,11 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 			wateq4f.dat
 
 		Documentation files:
-			???.pdf               (PDF)
-			html/index.html       (PhreeqcRM API documentation)
+			/usr/local/share/doc/phreeqcrm/AbstractAWR.pdf       Abstract to Advances in Water Research article
+		                                                             on PhreeqcRM: Parkhurst and Wissmeier, 2015
+			/usr/local/share/doc/phreeqcrm/NOTICE.TXT            User Agreement
+			/usr/local/share/doc/phreeqcrm/README.TXT            This file
+			/usr/local/share/doc/phreeqcrm/html/index.html       HTML PhreeqcRM documentation for C++, C, and Fortran
 
 -----------------------------------------------------------------------------------        			
 F. Using the library
