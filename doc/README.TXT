@@ -273,9 +273,9 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 			version, OpenMP/MPI, 32/64 bit, dll/lib.
 			for example, vs2012_openmp_64_lib.
 	
-	Click Configure. From the pulldown menu select the 64-bit version 
-	for your Visual Studio. Normally, the default radio button should
-	be sufficient. Click Finish. 
+	Click Configure. From the cmake-gui pulldown menu select the version
+	for your Visual Studio (including 32- or 64-bit). Normally, the default 
+	radio button should be sufficient. Click Finish. 
 	
 	Options in the top panel:
 	(1) BUILD_SHARED_LIBS--If checked, .dll files will be
@@ -303,7 +303,11 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 	        USE_GZ is defined.
 	
 	Click Configure until the screen is not red. If the screen remains 
-	red, you will have to deal with the CMake error messages.
+	red, you will have to deal with the CMake error messages. If you set
+	PHREEQCRM_USE_ZLIB, you may need to set the zlib include directory
+	and zlib library file. Click the Advanced check box and scroll down
+	to set the variables ZLIB_INCLUDE_DIR and ZLIB_LIBRARY with complete
+	paths to the directory (include) and zlib library (zlib.lib).
 	
 	Click Generate.
 	
