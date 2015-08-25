@@ -34,6 +34,12 @@ IF(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
 ENDIF(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400) 
 
 # check for zlib
+#set(ZLIB_ROOT "" CACHE PATH "Set to a zlib installation root")
+if(NOT ZLIB_ROOT)
+  if(EXISTS $ENV{ZLIB_ROOT})
+    set(ZLIB_ROOT $ENV{ZLIB_ROOT})
+  endif()
+endif()
 find_package(ZLIB QUIET)
 if (ZLIB_FOUND)
   option(PHREEQCRM_USE_ZLIB "Use zlib compression for dump files" ON)
