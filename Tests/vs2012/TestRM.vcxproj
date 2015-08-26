@@ -179,7 +179,7 @@ copy ..\units.pqi.in units.pqi
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../src;$(ProjectDir)../../src/IPhreeqcPhast;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../src;$(ProjectDir)../../src/IPhreeqcPhast;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TEST_FORTRAN;_HAS_ITERATOR_DEBUGGING=0;_DEBUG;WIN32;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -194,8 +194,8 @@ copy ..\units.pqi.in units.pqi
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DEV_IFC_X64_LIB);$(OUTDIR);$(OUTDIR)FortranAdvect</AdditionalLibraryDirectories>
+      <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIB);$(DEV_IFC_X64_LIB);$(OUTDIR);$(OUTDIR)FortranAdvect</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
     </Link>
@@ -246,7 +246,7 @@ copy ..\units.pqi.in units.pqi
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../src;$(ProjectDir)../../src/IPhreeqcPhast;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../src;$(ProjectDir)../../src/IPhreeqcPhast;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TEST_FORTRAN;NDEBUG;WIN32;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -259,8 +259,8 @@ copy ..\units.pqi.in units.pqi
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DEV_IFC_X64_LIB);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIB);$(DEV_IFC_X64_LIB);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
     </PostBuildEvent>
@@ -309,7 +309,7 @@ copy ..\units.pqi.in units.pqi
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>$(MSMPI_INC);$(ProjectDir)../../src;$(ProjectDir)../../src/IPhreeqcPhast;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSMPI_INC);$(ProjectDir)../../src;$(ProjectDir)../../src/IPhreeqcPhast;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TEST_FORTRAN;USE_MPI;NDEBUG;WIN32;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -321,8 +321,8 @@ copy ..\units.pqi.in units.pqi
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;msmpi.lib;msmpifec.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DEV_IFC_X64_LIB);$(MSMPI_LIB64);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;msmpi.lib;msmpifec.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIB);$(DEV_IFC_X64_LIB);$(MSMPI_LIB64);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
     </PostBuildEvent>
@@ -375,7 +375,7 @@ copy ..\units.pqi.in units.pqi
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalIncludeDirectories>$(MSMPI_INC);$(ProjectDir)../../src;$(ProjectDir)../../src/IPhreeqcPhast;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSMPI_INC);$(ProjectDir)../../src;$(ProjectDir)../../src/IPhreeqcPhast;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(ProjectDir)../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TEST_FORTRAN;_HAS_ITERATOR_DEBUGGING=0;USE_MPI;_DEBUG;WIN32;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>false</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -389,8 +389,8 @@ copy ..\units.pqi.in units.pqi
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;msmpi.lib;msmpifec.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DEV_IFC_X64_LIB);$(MSMPI_LIB64);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;msmpi.lib;msmpifec.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIB);$(DEV_IFC_X64_LIB);$(MSMPI_LIB64);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
     </Link>
