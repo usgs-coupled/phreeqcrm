@@ -7760,7 +7760,7 @@ PhreeqcRM::GetIPhreeqcPointer(int i)
 }
 /* ---------------------------------------------------------------------- */
 void
-PhreeqcRM::ScatterIntegerNchem(int *i_array)
+PhreeqcRM::ScatterNchem(int *i_array)
 /* ---------------------------------------------------------------------- */
 {
 #ifdef USE_MPI
@@ -7800,7 +7800,7 @@ PhreeqcRM::ScatterIntegerNchem(int *i_array)
 }
 /* ---------------------------------------------------------------------- */
 void
-PhreeqcRM::ScatterDoubleNchem(double *d_array)
+PhreeqcRM::ScatterNchem(double *d_array)
 /* ---------------------------------------------------------------------- */
 {
 #ifdef USE_MPI
@@ -8194,14 +8194,17 @@ PhreeqcRM::InitialPhreeqc2Module(
 		{
 			for (int i = 0; i < 7; i++)
 			{
-				for (int j = 0; j < this->nxyz; j++)
-				{
-					int ichem = this->forward_mapping[j];
-					if (ichem < 0) continue;
-					ic1[i * count_chemistry + ichem] = initial_conditions1[i*this->nxyz + j];
-					ic2[i * count_chemistry + ichem] = initial_conditions2[i*this->nxyz + j];
-					f1[i * count_chemistry + ichem] = fraction1[i*this->nxyz + j];
-				}
+				Collapse2Nchem(&initial_conditions1[i*this->nxyz], &ic1[i * count_chemistry]);
+				Collapse2Nchem(&initial_conditions2[i*this->nxyz], &ic2[i * count_chemistry]);
+				Collapse2Nchem(&fraction1[i*this->nxyz], &f1[i * count_chemistry]);
+				//for (int j = 0; j < this->nxyz; j++)
+				//{
+				//	int ichem = this->forward_mapping[j];
+				//	if (ichem < 0) continue;
+				//	//ic1[i * count_chemistry + ichem] = initial_conditions1[i*this->nxyz + j];
+				//	//ic2[i * count_chemistry + ichem] = initial_conditions2[i*this->nxyz + j];
+				//	//f1[i * count_chemistry + ichem] = fraction1[i*this->nxyz + j];
+				//}
 			}
 		}
 #ifdef USE_MPI
@@ -8217,20 +8220,18 @@ PhreeqcRM::InitialPhreeqc2Module(
 		{
 			if (mpi_myself == 0)
 			{
-				ScatterIntegerNchem(&ic1[ireact*this->count_chemistry]);
-				ScatterIntegerNchem(&ic2[ireact*this->count_chemistry]);
-				ScatterDoubleNchem(&f1[ireact*this->count_chemistry]);
+				ScatterNchem(&ic1[ireact*this->count_chemistry]);
+				ScatterNchem(&ic2[ireact*this->count_chemistry]);
+				ScatterNchem(&f1[ireact*this->count_chemistry]);
 			}
 			else
 			{
-				ScatterIntegerNchem(&ic1[ireact*ncells]);
-				ScatterIntegerNchem(&ic2[ireact*ncells]);
-				ScatterDoubleNchem(&f1[ireact*ncells]);
+				ScatterNchem(&ic1[ireact*ncells]);
+				ScatterNchem(&ic2[ireact*ncells]);
+				ScatterNchem(&f1[ireact*ncells]);
 			}
 		}
 #endif
-
-		this->ScreenMessage("After transfer arrays");
 		/*
 		*  Copy solution, exchange, surface, gas phase, kinetics, solid solution for each active cell.
 		*  Does nothing for indexes less than 0 (i.e. restart files)
@@ -8287,8 +8288,6 @@ PhreeqcRM::InitialPhreeqc2Module(
 				return_value = IRM_FAIL;
 			}
 		}
-		this->ScreenMessage("After CellInitialize loop");
-
 		if (count_negative_porosity > 0)
 		{
 			return_value = IRM_FAIL;
@@ -8341,4 +8340,34 @@ PhreeqcRM::InitialPhreeqc2Module(
 		return_value = IRM_FAIL;
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::InitialPhreeqc2Module");
+}
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::Collapse2Nchem(int *i_in, int *i_out)
+/* ---------------------------------------------------------------------- */
+{
+	if (mpi_myself == 0)
+	{
+		for (int j = 0; j < this->nxyz; j++)
+		{
+			int ichem = this->forward_mapping[j];
+			if (ichem < 0) continue;
+			i_out[ichem] = i_in[j];
+		}
+	}
+}
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::Collapse2Nchem(double *i_in, double *i_out)
+/* ---------------------------------------------------------------------- */
+{
+	if (mpi_myself == 0)
+	{
+		for (int j = 0; j < this->nxyz; j++)
+		{
+			int ichem = this->forward_mapping[j];
+			if (ichem < 0) continue;
+			i_out[ichem] = i_in[j];
+		}
+	}
 }

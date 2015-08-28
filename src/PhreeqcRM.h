@@ -3562,6 +3562,8 @@ protected:
 		                                          std::set<std::string> &error_set);
 	IRM_RESULT                                CheckCells();
 	int                                       CheckSelectedOutput();
+    void                                      Collapse2Nchem(double *d_in, double *d_out);
+    void                                      Collapse2Nchem(int *i_in, int *i_out);
 	IPhreeqc *                                Concentrations2UtilityH2O(std::vector<double> &c_in,
 		                                           std::vector<double> &t_in, std::vector<double> &p_in);
 	IPhreeqc *                                Concentrations2UtilityNoH2O(std::vector<double> &c_in,
@@ -3582,8 +3584,8 @@ protected:
 	IRM_RESULT                                RunStringThread(int n, std::string & input);
 	IRM_RESULT                                RunCellsThreadNoPrint(int n);
 	void                                      Scale_solids(int n, int iphrq, double frac);
-	void                                      ScatterDoubleNchem(double *d_array);
-	void                                      ScatterIntegerNchem(int *i_array);
+	void                                      ScatterNchem(double *d_array);
+	void                                      ScatterNchem(int *i_array);
 	IRM_RESULT                                SetChemistryFileName(const char * prefix = NULL);
 	IRM_RESULT                                SetDatabaseFileName(const char * db = NULL);
 	void                                      SetEndCells(void);
