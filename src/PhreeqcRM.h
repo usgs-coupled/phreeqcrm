@@ -3582,6 +3582,8 @@ protected:
 	IRM_RESULT                                RunStringThread(int n, std::string & input);
 	IRM_RESULT                                RunCellsThreadNoPrint(int n);
 	void                                      Scale_solids(int n, int iphrq, double frac);
+	void                                      ScatterDoubleNchem(double *d_array);
+	void                                      ScatterIntegerNchem(int *i_array);
 	IRM_RESULT                                SetChemistryFileName(const char * prefix = NULL);
 	IRM_RESULT                                SetDatabaseFileName(const char * db = NULL);
 	void                                      SetEndCells(void);
