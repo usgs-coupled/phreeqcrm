@@ -228,6 +228,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 	{
 		this->workers.push_back(new IPhreeqcPhast);
 		this->workers.back()->Set_error_ostream(phreeqcrm_io->Get_error_ostream());
+		this->workers.back()->SetErrorFileOn(true);
 		this->workers.back()->Set_error_on(true);
 	}
 	if (this->GetWorkers()[0])
