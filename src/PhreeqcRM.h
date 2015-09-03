@@ -12,7 +12,8 @@
 class IPhreeqcPhast;
 
 class cxxStorageBin;
-class cxxNameDouble;
+//class cxxNameDouble;
+#include "NameDouble.h"
 class cxxSolution;
 class PHRQ_io;
 #include <vector>
