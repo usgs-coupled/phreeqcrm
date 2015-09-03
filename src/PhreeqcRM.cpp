@@ -3180,12 +3180,12 @@ PhreeqcRM::GetSolutionVolume(void)
 		int n = this->mpi_myself;
 		for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
 		{
-			this->tempc[i - this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_soln_vol();;
+			this->solution_volume_root[i - this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_soln_vol();;
 		}
 		// Gather to root
-		GatherNchem(this->solution_volume_worker, this->solution_volume);
+		GatherNchem(this->solution_volume_worker, this->solution_volume_root);
 #else
-		this->solution_volume.resize(this->nxyz, INACTIVE_CELL_VALUE);
+		this->solution_volume_root.resize(this->nxyz, INACTIVE_CELL_VALUE);
 		std::vector<double> dbuffer;
 		for (int n = 0; n < this->nthreads; n++)
 		{
@@ -3195,7 +3195,7 @@ PhreeqcRM::GetSolutionVolume(void)
 				for(size_t j = 0; j < backward_mapping[i].size(); j++)
 				{
 					int n = backward_mapping[i][j];
-					this->solution_volume[n] = d;
+					this->solution_volume_root[n] = d;
 				}
 			}
 		}
@@ -3204,10 +3204,10 @@ PhreeqcRM::GetSolutionVolume(void)
 	catch (...)
 	{
 		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetSolutionVolume");
-		this->solution_volume.clear();
+		this->solution_volume_root.clear();
 		this->solution_volume_worker.clear();
 	}
-	return this->solution_volume;
+	return this->solution_volume_root;
 }
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
@@ -3366,25 +3366,26 @@ PhreeqcRM::GetTemperature(void)
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		}
 		int size = this->start_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
-		this->tempc.resize(size, INACTIVE_CELL_VALUE);
+		this->tempc_worker.resize(size, INACTIVE_CELL_VALUE);
 		
 		// fill tempc
 		int n = this->mpi_myself;
 		for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
 		{
-			this->tempc[i - this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_tc();
+			this->tempc_worker[i - this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_tc();
 		}
 		
 		// Gather to root
-		GatherNchem(this->tempc, this->tempc);
+		GatherNchem(this->tempc_worker, this->tempc_root);
 
 	}
 	catch (...)
 	{
 		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetTemperature");
-		this->tempc.clear();
+		this->tempc_worker.clear();
+		this->tempc_root.clear();
 	}
-	return this->tempc;
+	return this->tempc_root;
 }
 #else
 /* ---------------------------------------------------------------------- */
@@ -3396,7 +3397,7 @@ PhreeqcRM::GetTemperature(void)
 	try
 	{
 
-		this->tempc.resize(this->nxyz, INACTIVE_CELL_VALUE);
+		this->tempc_root.resize(this->nxyz, INACTIVE_CELL_VALUE);
 		std::vector<double> dbuffer;
 
 		for (int n = 0; n < this->nthreads; n++)
@@ -3407,7 +3408,7 @@ PhreeqcRM::GetTemperature(void)
 				for(size_t j = 0; j < backward_mapping[i].size(); j++)
 				{
 					int n = backward_mapping[i][j];
-					this->tempc[n] = d;
+					this->tempc_root[n] = d;
 				}
 			}
 		}
@@ -3415,9 +3416,10 @@ PhreeqcRM::GetTemperature(void)
 	catch (...)
 	{
 		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetTemperature");
-		this->tempc.clear();
+		this->tempc_root.clear();
+		this->tempc_worker.clear();
 	}
-	return this->tempc;
+	return this->tempc_root;
 }
 #endif
 #ifdef USE_MPI
@@ -8001,7 +8003,7 @@ PhreeqcRM::SetSpeciesSaveOn(bool t)
 
 	return IRM_OK;
 }
-
+#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::SetTemperature(const std::vector<double> &t)
@@ -8036,6 +8038,67 @@ PhreeqcRM::SetTemperature(const std::vector<double> &t)
 				soln_ptr->Set_tc(tempc[i]);
 			}
 		}
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::SetTemperature");
+}
+#endif
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::SetTemperature(const std::vector<double> &t)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	IRM_RESULT return_value = IRM_OK;
+	try
+	{
+		if (this->mpi_myself == 0)
+		{
+#ifdef USE_MPI
+			int method = METHOD_SETTEMPERATURE;
+			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+#endif
+			if (t.size() < this->nxyz)
+			{				
+				this->ErrorHandler(IRM_INVALIDARG, "Wrong number of elements in vector argument for SetTemperature");
+			}
+			this->tempc_root = t;
+		}
+#ifdef USE_MPI
+		ScatterNchem(tempc_root, tempc_worker);
+		for (int j = this->start_cell[this->mpi_myself]; j <= this->end_cell[this->mpi_myself]; j++)
+		{
+			// j is count_chem number
+			int i = j - this->start_cell[this->mpi_myself];
+			cxxSolution *soln_ptr = this->GetWorkers()[0]->Get_solution(j);
+			if (soln_ptr)
+			{
+				soln_ptr->Set_tc(tempc_worker[i]);
+			}
+		}
+#else
+#ifdef USE_OPENMP
+	omp_set_num_threads(this->nthreads);
+#pragma omp parallel
+#pragma omp for
+#endif
+		for (int n = 0; n < nthreads; n++)
+		{
+			for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+			{
+				// j is count_chem number
+				int i = this->backward_mapping[j][0];
+				cxxSolution *soln_ptr = this->GetWorkers()[n]->Get_solution(j);
+				if (soln_ptr)
+				{
+					soln_ptr->Set_tc(tempc_root[i]);
+				}
+			}
+		}
+#endif
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::SetTemperature");
 }
