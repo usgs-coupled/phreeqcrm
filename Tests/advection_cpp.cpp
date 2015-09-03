@@ -121,7 +121,6 @@ int advection_cpp()
 		bool rebalance = phreeqc_rm.GetRebalanceByCell();
 		double f_rebalance = phreeqc_rm.GetRebalanceFraction();
 		bool so_on = phreeqc_rm.GetSelectedOutputOn();
-		const std::vector<double> &  tempc = phreeqc_rm.GetTemperature();
 		int units_exchange = phreeqc_rm.GetUnitsExchange();
 		int units_gas_phase = phreeqc_rm.GetUnitsGasPhase();
 		int units_kinetics = phreeqc_rm.GetUnitsKinetics();
@@ -226,6 +225,8 @@ int advection_cpp()
 		module_cells.push_back(18);
 		module_cells.push_back(19);
 		status = phreeqc_rm.InitialPhreeqcCell2Module(-1, module_cells);
+		// Get temperatures
+		const std::vector<double> &  tempc = phreeqc_rm.GetTemperature();
 		// get current saturation
 		std::vector<double> current_sat;
 		status = phreeqc_rm.GetSaturation(current_sat);
