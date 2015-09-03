@@ -3423,11 +3423,20 @@ PhreeqcRM::GetTemperature(void)
 		{
 			for (int i = start_cell[n]; i <= this->end_cell[n]; i++)
 			{
-				double d = this->workers[n]->Get_solution(i)->Get_tc();
-				for(size_t j = 0; j < backward_mapping[i].size(); j++)
+				if (this->workers[n]->Get_solution(i))
 				{
-					int n = backward_mapping[i][j];
-					this->tempc_root[n] = d;
+					double d = this->workers[n]->Get_solution(i)->Get_tc();
+					for(size_t j = 0; j < backward_mapping[i].size(); j++)
+					{
+						int n = backward_mapping[i][j];
+						this->tempc_root[n] = d;
+					}
+				}
+				else
+				{
+					std::ostringstream e_stream;
+				    e_stream << "Solution not found in GetTemperatures " << i << std::endl;
+					this->ErrorMessage(e_stream.str());
 				}
 			}
 		}
@@ -3669,6 +3678,11 @@ PhreeqcRM::InitialPhreeqc2Module(
 	this->phreeqcrm_error_string.clear();
 	std::vector<int> i_dummy;
 	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		i_dummy.resize(this->nxyz*7, -1);
+		d_dummy.resize(this->nxyz*7,1.0);
+	}
 	return InitialPhreeqc2Module(initial_conditions1_in, i_dummy, d_dummy);
 }
 #ifdef SKIP
