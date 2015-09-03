@@ -954,9 +954,9 @@ const std::vector<int> & print_chemistry_mask1 = phreeqc_rm.GetPrintChemistryMas
 </CODE>
 @endhtmlonly
 @par MPI:
-Called by root and (or) workers.
+Called by root.
  */
-	const std::vector<int> &                  GetPrintChemistryMask (void) {return this->print_chem_mask;}
+	const std::vector<int> &                  GetPrintChemistryMask (void) {return this->print_chem_mask_root;}
 /**
 Returns a vector reference to the current print flags for detailed output for the three sets of IPhreeqc instances:
 the workers, the InitialPhreeqc instance, and the Utility instance. Dimension of the vector is 3.
@@ -1542,7 +1542,7 @@ const std::vector<double> &  tempc = phreeqc_rm.GetTemperature();
 </CODE>
 @endhtmlonly
 @par MPI:
-Called by root and (or) workers.
+Called by root.
  */
 	//const std::vector<double> &               GetTemperature(void) {return this->tempc;}
 	const std::vector<double> &               GetTemperature(void);
@@ -3591,6 +3591,7 @@ protected:
 	void                                      ScatterNchem(double *d_array);
 	void                                      ScatterNchem(int *i_array);
 	void                                      ScatterNchem(std::vector<double> &source, std::vector<double> &destination);
+	void                                      ScatterNchem(std::vector<int> &source, std::vector<int> &destination);
 	IRM_RESULT                                SetChemistryFileName(const char * prefix = NULL);
 	IRM_RESULT                                SetDatabaseFileName(const char * db = NULL);
 	void                                      SetEndCells(void);
@@ -3636,7 +3637,8 @@ protected:
 	std::vector<double> density;			// nxyz density
 	std::vector<double> solution_volume_root;   // nxyz on root solution volume
 	std::vector<double> solution_volume_worker;	// nchem on workers solution_volume 
-	std::vector<int> print_chem_mask;		// nxyz print flags for output file
+	std::vector<int> print_chem_mask_root;		// nxyz print flags for output file
+	std::vector<int> print_chem_mask_worker;	// nchem print flags for output file
 	bool rebalance_by_cell;                 // rebalance method 0 std, 1 by_cell
 	double rebalance_fraction;			    // parameter for rebalancing process load for parallel
 	int units_Solution;                     // 1 mg/L, 2 mol/L, 3 kg/kgs
