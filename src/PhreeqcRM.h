@@ -56,6 +56,7 @@ enum {
 	METHOD_GETSELECTEDOUTPUT,
 	METHOD_GETSOLUTIONVOLUME,
 	METHOD_GETSPECIESCONCENTRATIONS,
+	METHOD_GETTEMPERATURE,
 	METHOD_INITIALPHREEQC2MODULE,
 	METHOD_INITIALPHREEQCCELL2MODULE,
 	METHOD_LOADDATABASE,
@@ -1543,7 +1544,8 @@ const std::vector<double> &  tempc = phreeqc_rm.GetTemperature();
 @par MPI:
 Called by root and (or) workers.
  */
-	const std::vector<double> &               GetTemperature(void) {return this->tempc;}
+	//const std::vector<double> &               GetTemperature(void) {return this->tempc;}
+	const std::vector<double> &               GetTemperature(void);
 /**
 Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
 For the OPENMP version, the number of threads is set implicitly or explicitly
@@ -3575,6 +3577,7 @@ protected:
 	void                                      cxxSolution2concentration(cxxSolution * cxxsoln_ptr, std::vector<double> & d, double v, double dens);
 	void                                      cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector<double> & d, double v, double dens);
 	void                                      cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector<double> & d, double v, double dens);
+    void                                      GatherNchem(std::vector<double> &source, std::vector<double> &destination);
 	cxxStorageBin &                           Get_phreeqc_bin(void) {return *this->phreeqc_bin;}
 	IRM_RESULT                                HandleErrorsInternal(std::vector< int > & r);
 	void                                      PartitionUZ(int n, int iphrq, int ihst, double new_frac);
@@ -3587,6 +3590,7 @@ protected:
 	void                                      Scale_solids(int n, int iphrq, double frac);
 	void                                      ScatterNchem(double *d_array);
 	void                                      ScatterNchem(int *i_array);
+	void                                      ScatterNchem(std::vector<double> &source, std::vector<double> &destination);
 	IRM_RESULT                                SetChemistryFileName(const char * prefix = NULL);
 	IRM_RESULT                                SetDatabaseFileName(const char * db = NULL);
 	void                                      SetEndCells(void);
@@ -3627,9 +3631,9 @@ protected:
 	std::vector<double> pressure;			// nxyz current pressure
 	std::vector<double> rv;		            // nxyz representative volume
 	std::vector<double> porosity;		    // nxyz porosity
-	std::vector<double> tempc;				// nxyz temperature Celsius
+	std::vector<double> tempc;				// nxyz temperature Celsius root, workers segment of nchem
 	std::vector<double> density;			// nxyz density
-	std::vector<double> solution_volume;	// nxyz density
+	std::vector<double> solution_volume;	// nxyz density root, workers segment of nchem
 	std::vector<int> print_chem_mask;		// nxyz print flags for output file
 	bool rebalance_by_cell;                 // rebalance method 0 std, 1 by_cell
 	double rebalance_fraction;			    // parameter for rebalancing process load for parallel
