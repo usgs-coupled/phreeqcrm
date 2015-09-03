@@ -283,13 +283,14 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 		rv.push_back(1.0);
 		porosity.push_back(0.1);
 		//print_chem_mask.push_back(0);
-		density.push_back(1.0);
+		//density.push_back(1.0);
 		pressure.push_back(1.0);
 		//tempc.push_back(25.0);
 		//solution_volume.push_back(1.0);
 		if (mpi_myself == 0)
 		{
 			print_chem_mask_root.push_back(0);
+			density_root.push_back(1.0);
 		}
 	}
 
@@ -297,6 +298,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 	SetEndCells();
 #ifdef USE_MPI
 	ScatterNchem(print_chem_mask_root, print_chem_mask_worker);
+	ScatterNchem(density_root, density_worker);
 #endif
 
 	species_save_on = false;
@@ -1270,6 +1272,11 @@ PhreeqcRM::Concentrations2SolutionsH2O(int n, std::vector<double> &c)
 		// j is count_chem number
 		i = this->backward_mapping[j][0];
 		if (this->saturation[i] <= 0.0) continue;
+#ifdef USE_MPI
+		double dens = density_worker[j - start];
+#else
+		double dens = density_root[i];
+#endif
 		switch (this->units_Solution)
 		{
 		case 1:  // mg/L to mol/L
@@ -1301,9 +1308,9 @@ PhreeqcRM::Concentrations2SolutionsH2O(int n, std::vector<double> &c)
 				// convert to mol/L
 				for (k = 1; k < (int) this->components.size(); k++)
 				{
-					d.push_back(c[j * (int) this->components.size() + k] * 1000.0 / this->gfw[k] * density[i]);
+					d.push_back(c[j * (int) this->components.size() + k] * 1000.0 / this->gfw[k] * dens);
 				}
-				double h2o_mol = c[j * (int) this->components.size()] * 1000.0 / this->gfw[0] * density[i];
+				double h2o_mol = c[j * (int) this->components.size()] * 1000.0 / this->gfw[0] * dens;
 				d[0] += h2o_mol * 2.0;
 				d[1] += h2o_mol;
 			}
@@ -1362,6 +1369,11 @@ PhreeqcRM::Concentrations2SolutionsNoH2O(int n, std::vector<double> &c)
 		i = this->backward_mapping[j][0];
 		if (this->saturation[i] <= 0.0) continue;
 
+#ifdef USE_MPI
+		double dens = density_worker[j - start];
+#else
+		double dens = density_root[i];
+#endif
 		switch (this->units_Solution)
 		{
 		case 1:  // mg/L to mol/L
@@ -1387,7 +1399,7 @@ PhreeqcRM::Concentrations2SolutionsNoH2O(int n, std::vector<double> &c)
 				// convert to mol/L
 				for (k = 0; k < (int) this->components.size(); k++)
 				{
-					d.push_back(c[j * (int) this->components.size() + k] * 1000.0 / this->gfw[k] * density[i]);
+					d.push_back(c[j * (int) this->components.size() + k] * 1000.0 / this->gfw[k] * dens);
 				}
 			}
 			break;
@@ -1480,7 +1492,7 @@ PhreeqcRM::Concentrations2UtilityH2O(std::vector<double> &c, std::vector<double>
 				{
 					d.push_back(ptr[nsolns * k] * 1000.0 / this->gfw[k]);
 				}
-				double h2o_mol = ptr[0] * 1000.0 / this->gfw[0] * density[i];
+				double h2o_mol = ptr[0] * 1000.0 / this->gfw[0] * density_root[i];
 				d[0] += h2o_mol * 2.0;
 				d[1] += h2o_mol;
 			}
@@ -2471,7 +2483,7 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 				{
 					v = cxxsoln_ptr->Get_soln_vol();
 				}
-				dens = this->density[k];
+				dens = this->density_worker[j - this->start_cell[n]];
 			}
 			this->cxxSolution2concentration(cxxsoln_ptr, d, v, dens);
 			for (int i = 0; i < (int) this->components.size(); i++)
@@ -2574,7 +2586,7 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 				{
 					int k = this->backward_mapping[j][0];
 					v =  this->saturation[k]  * this->porosity[k] * this->rv[k];
-					dens = this->density[k];
+					dens = this->density_root[k];
 					if (v <= 0)
 					{
 						v = cxxsoln_ptr->Get_soln_vol();
@@ -5042,6 +5054,7 @@ PhreeqcRM::RebalanceLoad(void)
 			this->ErrorHandler(IRM_FAIL, "PhreeqcRM::RebalanceLoad");
 		}
 		ScatterNchem(print_chem_mask_root, print_chem_mask_worker);
+		ScatterNchem(density_root, density_worker);
 		return;
 	}
 #include <time.h>
@@ -5354,6 +5367,7 @@ PhreeqcRM::RebalanceLoad(void)
 		}
 	}
 	ScatterNchem(print_chem_mask_root, print_chem_mask_worker);
+	ScatterNchem(density_root, density_worker);
 	this->ErrorHandler(return_value, "PhreeqcRM::RebalanceLoad");
 }
 #else
@@ -7521,7 +7535,7 @@ PhreeqcRM::SetDatabaseFileName(const char * db)
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::SetDatabaseFileName");
 }
-
+#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::SetDensity(const std::vector<double> &t)
@@ -7531,6 +7545,38 @@ PhreeqcRM::SetDensity(const std::vector<double> &t)
 	std::string methodName = "SetDensity";
 	IRM_RESULT result_value = SetGeneric(this->density, this->nxyz, t, METHOD_SETDENSITY, methodName);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
+}
+#endif
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::SetDensity(const std::vector<double> &t)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	IRM_RESULT return_value = IRM_OK;
+	try
+	{
+		if (this->mpi_myself == 0)
+		{
+#ifdef USE_MPI
+			int method = METHOD_SETDENSITY;
+			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+#endif
+			if (t.size() < this->nxyz)
+			{				
+				this->ErrorHandler(IRM_INVALIDARG, "Wrong number of elements in vector argument for SetDensity");
+			}
+			this->density_root = t;
+		}
+#ifdef USE_MPI
+		ScatterNchem(density_root, density_worker);
+#endif
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::SetTemperature");
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
