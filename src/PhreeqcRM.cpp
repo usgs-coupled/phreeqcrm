@@ -282,15 +282,22 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 		saturation.push_back(1.0);
 		rv.push_back(1.0);
 		porosity.push_back(0.1);
-		print_chem_mask.push_back(0);
+		//print_chem_mask.push_back(0);
 		density.push_back(1.0);
 		pressure.push_back(1.0);
 		//tempc.push_back(25.0);
 		//solution_volume.push_back(1.0);
+		if (mpi_myself == 0)
+		{
+			print_chem_mask_root.push_back(0);
+		}
 	}
 
 	// set work for each thread or process
 	SetEndCells();
+#ifdef USE_MPI
+	ScatterNchem(print_chem_mask_root, print_chem_mask_worker);
+#endif
 
 	species_save_on = false;
 	mpi_worker_callback_fortran = NULL;
@@ -5034,6 +5041,7 @@ PhreeqcRM::RebalanceLoad(void)
 		{
 			this->ErrorHandler(IRM_FAIL, "PhreeqcRM::RebalanceLoad");
 		}
+		ScatterNchem(print_chem_mask_root, print_chem_mask_worker);
 		return;
 	}
 #include <time.h>
@@ -5345,6 +5353,7 @@ PhreeqcRM::RebalanceLoad(void)
 			return_value = IRM_FAIL;
 		}
 	}
+	ScatterNchem(print_chem_mask_root, print_chem_mask_worker);
 	this->ErrorHandler(return_value, "PhreeqcRM::RebalanceLoad");
 }
 #else
@@ -6706,15 +6715,19 @@ PhreeqcRM::RunCellsThread(int n)
 			for (i = start; i <= end; i++)
 			{							/* i is count_chem number */
 				j = backward_mapping[i][0];			/* j is nxyz number */
+				int local_chem_mask;
 #ifdef USE_MPI
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) MPI_Wtime());
+				local_chem_mask = this->print_chem_mask_worker[i - start];
 #elif defined(USE_OPENMP)
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) omp_get_wtime());
+				local_chem_mask = this->print_chem_mask_root[j];
 #else
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) clock());
+				local_chem_mask = this->print_chem_mask_root[j];
 #endif
 				// Set local print flags
-				bool pr_chem = pr_chemistry_on && (this->print_chem_mask[j] != 0);
+				bool pr_chem = pr_chemistry_on && (local_chem_mask != 0);
 
 				// ignore small saturations
 				bool active = true;
@@ -7258,11 +7271,10 @@ PhreeqcRM::ScatterNchem(std::vector<double> &source, std::vector<double> &destin
 	d_array.resize(this->count_chemistry, INACTIVE_CELL_VALUE);
 	if (mpi_myself == 0)
 	{
-		for (int j = 0; j < this->nxyz; j++)
+		for (int j = 0; j < this->count_chemistry; j++)
 		{
-			int ichem = this->forward_mapping[j];
-			if (ichem < 0) continue;
-			d_array[ichem] = source[j];
+			int ixyz = this->backward_mapping[j][0];
+			d_array[j] = source[ixyz];
 		}
 	}
 
@@ -7272,7 +7284,10 @@ PhreeqcRM::ScatterNchem(std::vector<double> &source, std::vector<double> &destin
 	double * recv_buf = NULL;
 	int recv_count;
 	recv_count = end_cell[this->mpi_myself] - start_cell[this->mpi_myself] + 1;
-	if (this->mpi_myself == 0)
+	destination.resize(recv_count);
+	recv_buf = &(destination[0]);
+
+	if (mpi_myself == 0)
 	{
 		send_buf = &d_array[0];
 		send_counts = new int[this->mpi_tasks];
@@ -7283,9 +7298,54 @@ PhreeqcRM::ScatterNchem(std::vector<double> &source, std::vector<double> &destin
 			send_displs[j] = start_cell[j];
 		}
 	}
-	recv_buf = &destination[0];
 
 	MPI_Scatterv(send_buf, send_counts, send_displs, MPI_DOUBLE, recv_buf, recv_count, MPI_DOUBLE, 0, this->phreeqcrm_comm);
+
+	delete [] send_counts;
+	delete [] send_displs;
+#endif
+}
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::ScatterNchem(std::vector<int> &source, std::vector<int> &destination)
+/* ---------------------------------------------------------------------- */
+{
+	// source is nxyz on root
+	// destination is nchem pieces on workers
+#ifdef USE_MPI
+	std::vector<int> i_array;
+	i_array.resize(this->count_chemistry);
+	if (mpi_myself == 0)
+	{
+		for (int j = 0; j < this->count_chemistry; j++)
+		{
+			int ixyz = this->backward_mapping[j][0];
+			i_array[j] = source[ixyz];
+		}
+	}
+
+	int * send_buf = NULL;
+	int * send_counts = NULL;
+	int * send_displs = NULL;
+	int * recv_buf = NULL;
+	int recv_count;
+	recv_count = end_cell[this->mpi_myself] - start_cell[this->mpi_myself] + 1;
+	destination.resize(recv_count);
+	recv_buf = &(destination[0]);
+
+	if (mpi_myself == 0)
+	{
+		send_buf = &i_array[0];
+		send_counts = new int[this->mpi_tasks];
+		send_displs = new int[this->mpi_tasks];
+		for (int j = 0; j < this->mpi_tasks; j++)
+		{
+			send_counts[j] = end_cell[j] - start_cell[j] + 1;
+			send_displs[j] = start_cell[j];
+		}
+	}
+
+	MPI_Scatterv(send_buf, send_counts, send_displs, MPI_INT, recv_buf, recv_count, MPI_INT, 0, this->phreeqcrm_comm);
 
 	delete [] send_counts;
 	delete [] send_displs;
@@ -7840,6 +7900,7 @@ PhreeqcRM::SetPrintChemistryOn(bool worker, bool ip, bool utility)
 	this->print_chemistry_on[2] = l[2] != 0;
 	return IRM_OK;
 }
+#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::SetPrintChemistryMask(std::vector<int> & m)
@@ -7876,6 +7937,38 @@ PhreeqcRM::SetPrintChemistryMask(std::vector<int> & m)
 #ifdef USE_MPI
 	MPI_Bcast(&this->print_chem_mask.front(), this->nxyz, MPI_INT, 0, phreeqcrm_comm);
 #endif
+	return this->ReturnHandler(return_value, "PhreeqcRM::SetPrintChemistryMask");
+}
+#endif
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::SetPrintChemistryMask(std::vector<int> & m)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	IRM_RESULT return_value = IRM_OK;
+	try
+	{
+		if (this->mpi_myself == 0)
+		{
+#ifdef USE_MPI
+			int method = METHOD_SETPRINTCHEMISTRYMASK;
+			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+#endif
+			if (m.size() < this->nxyz)
+			{				
+				this->ErrorHandler(IRM_INVALIDARG, "Wrong number of elements in vector argument for SetPrintChemistryMask");
+			}
+			this->print_chem_mask_root = m;
+		}
+#ifdef USE_MPI
+		ScatterNchem(print_chem_mask_root, print_chem_mask_worker);
+#endif
+	}
+	catch (...)
+	{
+		return_value = IRM_INVALIDARG;
+	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::SetPrintChemistryMask");
 }
 /* ---------------------------------------------------------------------- */
