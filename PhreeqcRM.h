@@ -3631,9 +3631,11 @@ protected:
 	std::vector<double> pressure;			// nxyz current pressure
 	std::vector<double> rv;		            // nxyz representative volume
 	std::vector<double> porosity;		    // nxyz porosity
-	std::vector<double> tempc;				// nxyz temperature Celsius root, workers segment of nchem
+	std::vector<double> tempc;             // nxyz on root temperature Celsius 
+	//std::vector<double> tempc_worker;		    // nchem on workers temperature Celsius 
 	std::vector<double> density;			// nxyz density
-	std::vector<double> solution_volume;	// nxyz density root, workers segment of nchem
+	std::vector<double> solution_volume;        // nxyz on root solution volume
+	std::vector<double> solution_volume_worker;	// nchem on workers solution_volume 
 	std::vector<int> print_chem_mask;		// nxyz print flags for output file
 	bool rebalance_by_cell;                 // rebalance method 0 std, 1 by_cell
 	double rebalance_fraction;			    // parameter for rebalancing process load for parallel

@@ -3174,7 +3174,7 @@ PhreeqcRM::GetSolutionVolume(void)
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		}
 		int size = this->start_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
-		this->solution_volume.resize(size, INACTIVE_CELL_VALUE);
+		this->solution_volume_worker.resize(size, INACTIVE_CELL_VALUE);
 		
 		// fill solution_volume
 		int n = this->mpi_myself;
@@ -3183,7 +3183,7 @@ PhreeqcRM::GetSolutionVolume(void)
 			this->tempc[i - this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_soln_vol();;
 		}
 		// Gather to root
-		GatherNchem(this->solution_volume, this->solution_volume);
+		GatherNchem(this->solution_volume_worker, this->solution_volume);
 #else
 		this->solution_volume.resize(this->nxyz, INACTIVE_CELL_VALUE);
 		std::vector<double> dbuffer;
@@ -3205,6 +3205,7 @@ PhreeqcRM::GetSolutionVolume(void)
 	{
 		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetSolutionVolume");
 		this->solution_volume.clear();
+		this->solution_volume_worker.clear();
 	}
 	return this->solution_volume;
 }
