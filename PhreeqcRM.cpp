@@ -3192,14 +3192,14 @@ PhreeqcRM::GetSolutionVolume(void)
 			int method = METHOD_GETSOLUTIONVOLUME;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		}
-		int size = this->start_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
+		int size = this->end_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
 		this->solution_volume_worker.resize(size, INACTIVE_CELL_VALUE);
 		
 		// fill solution_volume
 		int n = this->mpi_myself;
 		for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
 		{
-			this->solution_volume_root[i - this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_soln_vol();;
+			this->solution_volume_worker[i - this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_soln_vol();;
 		}
 		// Gather to root
 		GatherNchem(this->solution_volume_worker, this->solution_volume_root);
@@ -3384,7 +3384,7 @@ PhreeqcRM::GetTemperature(void)
 			int method = METHOD_GETTEMPERATURE;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		}
-		int size = this->start_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
+		int size = this->end_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
 		this->tempc_worker.resize(size, INACTIVE_CELL_VALUE);
 		
 		// fill tempc
