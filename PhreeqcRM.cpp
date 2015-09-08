@@ -8088,8 +8088,8 @@ PhreeqcRM::SetPressure(const std::vector<double> &t)
 
 		this->phreeqcrm_error_string.clear();
 		std::string methodName = "SetPressure";
-		IRM_RESULT return_value = SetGeneric(t, this->pressure_root, pressure_worker, METHOD_SETPRESSURE, methodName);
-	    if (return_value == 0)
+		return_value = SetGeneric(t, this->pressure_root, pressure_worker, METHOD_SETPRESSURE, methodName);
+	    if (return_value == IRM_OK)
 		{
 #ifdef USE_MPI
 			for (int j = this->start_cell[this->mpi_myself]; j <= this->end_cell[this->mpi_myself]; j++)
@@ -8433,40 +8433,42 @@ PhreeqcRM::SetTemperature(const std::vector<double> &t)
 	try
 	{
 		std::string methodName = "SetTemperature";
-		IRM_RESULT result_value = SetGeneric(t, this->tempc_root, tempc_worker, METHOD_SETTEMPERATURE, methodName);
-		return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
+		return_value = SetGeneric(t, this->tempc_root, tempc_worker, METHOD_SETTEMPERATURE, methodName);
+		if (return_value == IRM_OK)
+		{
 
 #ifdef USE_MPI
-		for (int j = this->start_cell[this->mpi_myself]; j <= this->end_cell[this->mpi_myself]; j++)
-		{
-			// j is count_chem number
-			int i = j - this->start_cell[this->mpi_myself];
-			cxxSolution *soln_ptr = this->GetWorkers()[0]->Get_solution(j);
-			if (soln_ptr)
+			for (int j = this->start_cell[this->mpi_myself]; j <= this->end_cell[this->mpi_myself]; j++)
 			{
-				soln_ptr->Set_tc(tempc_worker[i]);
+				// j is count_chem number
+				int i = j - this->start_cell[this->mpi_myself];
+				cxxSolution *soln_ptr = this->GetWorkers()[0]->Get_solution(j);
+				if (soln_ptr)
+				{
+					soln_ptr->Set_tc(tempc_worker[i]);
+				}
 			}
-		}
 #else
 #ifdef USE_OPENMP
-	omp_set_num_threads(this->nthreads);
+			omp_set_num_threads(this->nthreads);
 #pragma omp parallel
 #pragma omp for
 #endif
-		for (int n = 0; n < nthreads; n++)
-		{
-			for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+			for (int n = 0; n < nthreads; n++)
 			{
-				// j is count_chem number
-				int i = this->backward_mapping[j][0];
-				cxxSolution *soln_ptr = this->GetWorkers()[n]->Get_solution(j);
-				if (soln_ptr)
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
 				{
-					soln_ptr->Set_tc(tempc_root[i]);
+					// j is count_chem number
+					int i = this->backward_mapping[j][0];
+					cxxSolution *soln_ptr = this->GetWorkers()[n]->Get_solution(j);
+					if (soln_ptr)
+					{
+						soln_ptr->Set_tc(tempc_root[i]);
+					}
 				}
 			}
-		}
 #endif
+		}
 	}
 	catch (...)
 	{
