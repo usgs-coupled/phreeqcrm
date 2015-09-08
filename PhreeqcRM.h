@@ -3631,7 +3631,8 @@ protected:
 	std::vector<double> saturation;	        // nxyz saturation fraction
 	std::vector<double> pressure;			// nxyz current pressure
 	std::vector<double> rv;		            // nxyz representative volume
-	std::vector<double> porosity;		    // nxyz porosity
+	std::vector<double> porosity_root;		    // nxyz porosity
+	std::vector<double> porosity_worker;	    // nchem on workers  porosity
 	std::vector<double> tempc_root;             // nxyz on root temperature Celsius 
 	std::vector<double> tempc_worker;		    // nchem on workers temperature Celsius 
 	std::vector<double> density_root;			// nxyz density
