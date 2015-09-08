@@ -52,6 +52,7 @@ enum {
 	METHOD_GETCONCENTRATIONS,
 	METHOD_GETDENSITY,
 	METHOD_GETERRORSTRING,
+	METHOD_GETPRESSURE,
 	METHOD_GETSATURATION,
 	METHOD_GETSELECTEDOUTPUT,
 	METHOD_GETSOLUTIONVOLUME,
@@ -935,7 +936,7 @@ const std::vector<double> & p_atm = phreeqc_rm.GetPressure();
 @par MPI:
 Called by root and (or) workers.
  */
-	std::vector<double> &                     GetPressure(void) {return this->pressure;}
+	const std::vector<double> &                     GetPressure(void);
 /**
 Return a reference to the vector of print flags that enable or disable detailed output for each cell.
 Printing for a cell will occur only when the
@@ -3629,10 +3630,12 @@ protected:
 	double time_conversion;					// time conversion factor, multiply to convert to preferred time unit for output
 	std::vector <double> old_saturation;	// saturation fraction from previous step
 	std::vector<double> saturation;	        // nxyz saturation fraction
-	std::vector<double> pressure;			// nxyz current pressure
-	std::vector<double> rv;		            // nxyz representative volume
+	std::vector<double> pressure_root;			//  nxyz on root current pressure
+	std::vector<double> pressure_worker;		//  nchem on workers current pressure
+	std::vector<double> rv_root;		        // nxyz on root representative volume
+	std::vector<double> rv_worker;		        // nchem on workers representative volume
 	std::vector<double> porosity_root;		    // nxyz porosity
-	std::vector<double> porosity_worker;	    // nchem on workers  porosity
+	std::vector<double> porosity_worker;	    // nchem on workers porosity
 	std::vector<double> tempc_root;             // nxyz on root temperature Celsius 
 	std::vector<double> tempc_worker;		    // nchem on workers temperature Celsius 
 	std::vector<double> density_root;			// nxyz density
