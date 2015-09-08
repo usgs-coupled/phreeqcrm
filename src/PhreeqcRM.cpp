@@ -7689,37 +7689,16 @@ PhreeqcRM::SetDensity(const std::vector<double> &t)
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 #endif
-/* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::SetDensity(const std::vector<double> &t)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
-	IRM_RESULT return_value = IRM_OK;
-	try
-	{
-		if (this->mpi_myself == 0)
-		{
-#ifdef USE_MPI
-			int method = METHOD_SETDENSITY;
-			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
-#endif
-			if (t.size() < this->nxyz)
-			{				
-				this->ErrorHandler(IRM_INVALIDARG, "Wrong number of elements in vector argument for SetDensity");
-			}
-			this->density_root = t;
-		}
-#ifdef USE_MPI
-		ScatterNchem(density_root, density_worker);
-#endif
-	}
-	catch (...)
-	{
-		return_value = IRM_FAIL;
-	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::SetDensity");
+	std::string methodName = "SetDensity";
+	IRM_RESULT result_value = SetGeneric(t, this->density_root, density_worker, METHOD_SETDENSITY, methodName);
+	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
+
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::SetDumpFileName(const std::string & cn)
@@ -7944,6 +7923,37 @@ PhreeqcRM::SetGeneric(std::vector<double> &destination, int newSize, const std::
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+PhreeqcRM::SetGeneric(const std::vector<double> &source, std::vector<double> &destination_root, std::vector<double> &destination_worker, int mpiMethod, const std::string &name)
+/* ---------------------------------------------------------------------- */
+{
+	IRM_RESULT return_value = IRM_OK;
+	try
+	{		
+		if (mpi_myself == 0)
+		{
+			if (source.size() < this->nxyz)
+			{
+				this->ErrorHandler(IRM_INVALIDARG, "Wrong number of elements in vector argument for " + name);
+			}
+			destination_root = source;
+		}
+#ifdef USE_MPI
+		if (this->mpi_myself == 0)
+		{
+			MPI_Bcast(&mpiMethod, 1, MPI_INT, 0, phreeqcrm_comm);
+		}
+		ScatterNchem(destination_root, destination_worker);
+#endif
+
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+	return return_value;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 PhreeqcRM::SetMpiWorkerCallbackC(int (*fcn)(int *method, void *cookie))
 /* ---------------------------------------------------------------------- */
 {
@@ -8011,36 +8021,14 @@ PhreeqcRM::SetPorosity(const std::vector<double> &t)
 	return this->ReturnHandler(return_value, "PhreeqcRM::" + methodName);
 }
 #endif
-/* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::SetPorosity(const std::vector<double> &t)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
-	IRM_RESULT return_value = IRM_OK;
-	try
-	{
-		if (this->mpi_myself == 0)
-		{
-#ifdef USE_MPI
-			int method = METHOD_SETPOROSITY;
-			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
-#endif
-			if (t.size() < this->nxyz)
-			{				
-				this->ErrorHandler(IRM_INVALIDARG, "Wrong number of elements in vector argument for SetPorosity");
-			}
-			this->porosity_root = t;
-		}
-#ifdef USE_MPI
-		ScatterNchem(porosity_root, porosity_worker);
-#endif
-	}
-	catch (...)
-	{
-		return_value = IRM_FAIL;
-	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::SetPorosity");
+	std::string methodName = "SetPorosity";
+	IRM_RESULT result_value = SetGeneric(t, this->porosity_root, porosity_worker, METHOD_SETPOROSITY, methodName);
+	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 #ifdef SKIP
 /* ---------------------------------------------------------------------- */
@@ -8097,50 +8085,44 @@ PhreeqcRM::SetPressure(const std::vector<double> &t)
 	IRM_RESULT return_value = IRM_OK;
 	try
 	{
-		if (this->mpi_myself == 0)
+
+		this->phreeqcrm_error_string.clear();
+		std::string methodName = "SetPressure";
+		IRM_RESULT return_value = SetGeneric(t, this->pressure_root, pressure_worker, METHOD_SETPRESSURE, methodName);
+	    if (return_value == 0)
 		{
 #ifdef USE_MPI
-			int method = METHOD_SETPRESSURE;
-			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
-#endif
-			if (t.size() < this->nxyz)
-			{				
-				this->ErrorHandler(IRM_INVALIDARG, "Wrong number of elements in vector argument for SetPressure");
-			}
-			this->pressure_root = t;
-		}
-#ifdef USE_MPI
-		ScatterNchem(pressure_root, this->pressure_worker);
-		for (int j = this->start_cell[this->mpi_myself]; j <= this->end_cell[this->mpi_myself]; j++)
-		{
-			// j is count_chem number
-			int i = j - this->start_cell[this->mpi_myself];
-			cxxSolution *soln_ptr = this->GetWorkers()[0]->Get_solution(j);
-			if (soln_ptr)
+			for (int j = this->start_cell[this->mpi_myself]; j <= this->end_cell[this->mpi_myself]; j++)
 			{
-				soln_ptr->Set_patm(this->pressure_worker[i]);
+				// j is count_chem number
+				int i = j - this->start_cell[this->mpi_myself];
+				cxxSolution *soln_ptr = this->GetWorkers()[0]->Get_solution(j);
+				if (soln_ptr)
+				{
+					soln_ptr->Set_patm(this->pressure_worker[i]);
+				}
 			}
-		}
 #else
 #ifdef USE_OPENMP
-	omp_set_num_threads(this->nthreads);
+			omp_set_num_threads(this->nthreads);
 #pragma omp parallel
 #pragma omp for
 #endif
-		for (int n = 0; n < nthreads; n++)
-		{
-			for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+			for (int n = 0; n < nthreads; n++)
 			{
-				// j is count_chem number
-				int i = this->backward_mapping[j][0];
-				cxxSolution *soln_ptr = this->GetWorkers()[n]->Get_solution(j);
-				if (soln_ptr)
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
 				{
-					soln_ptr->Set_patm(pressure_root[i]);
+					// j is count_chem number
+					int i = this->backward_mapping[j][0];
+					cxxSolution *soln_ptr = this->GetWorkers()[n]->Get_solution(j);
+					if (soln_ptr)
+					{
+						soln_ptr->Set_patm(pressure_root[i]);
+					}
 				}
 			}
-		}
 #endif
+		}
 	}
 	catch (...)
 	{
@@ -8319,30 +8301,9 @@ PhreeqcRM::SetRepresentativeVolume(const std::vector<double> &t)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
-	IRM_RESULT return_value = IRM_OK;
-	try
-	{
-		if (this->mpi_myself == 0)
-		{
-#ifdef USE_MPI
-			int method = METHOD_SETREPRESENTATIVEVOLUME;
-			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
-#endif
-			if (t.size() < this->nxyz)
-			{				
-				this->ErrorHandler(IRM_INVALIDARG, "Wrong number of elements in vector argument for SetRepresentativeVolume");
-			}
-			this->rv_root = t;
-		}
-#ifdef USE_MPI
-		ScatterNchem(rv_root, rv_worker);
-#endif
-	}
-	catch (...)
-	{
-		return_value = IRM_FAIL;
-	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::SetRepresentativeVolume");
+	std::string methodName = "SetRepresentativeVolume";
+	IRM_RESULT result_value = SetGeneric(t, this->rv_root, rv_worker, METHOD_SETREPRESENTATIVEVOLUME, methodName);
+	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -8354,6 +8315,17 @@ PhreeqcRM::SetSaturation(const std::vector<double> &t)
 	IRM_RESULT return_value = SetGeneric(this->saturation, this->nxyz, t, METHOD_SETSATURATION, methodName);
 	return this->ReturnHandler(return_value, "PhreeqcRM::" + methodName);
 }
+#ifdef SKIP
+IRM_RESULT
+PhreeqcRM::SetSaturation(const std::vector<double> &t)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::string methodName = "SetSaturation";
+	IRM_RESULT result_value = SetGeneric(t, this->saturation_root, saturation_worker, METHOD_SETSATURATION, methodName);
+	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
+}
+#endif
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::SetSelectedOutputOn(bool t)
@@ -8460,20 +8432,11 @@ PhreeqcRM::SetTemperature(const std::vector<double> &t)
 	IRM_RESULT return_value = IRM_OK;
 	try
 	{
-		if (this->mpi_myself == 0)
-		{
+		std::string methodName = "SetTemperature";
+		IRM_RESULT result_value = SetGeneric(t, this->tempc_root, tempc_worker, METHOD_SETTEMPERATURE, methodName);
+		return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
+
 #ifdef USE_MPI
-			int method = METHOD_SETTEMPERATURE;
-			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
-#endif
-			if (t.size() < this->nxyz)
-			{				
-				this->ErrorHandler(IRM_INVALIDARG, "Wrong number of elements in vector argument for SetTemperature");
-			}
-			this->tempc_root = t;
-		}
-#ifdef USE_MPI
-		ScatterNchem(tempc_root, tempc_worker);
 		for (int j = this->start_cell[this->mpi_myself]; j <= this->end_cell[this->mpi_myself]; j++)
 		{
 			// j is count_chem number
