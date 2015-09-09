@@ -2938,6 +2938,7 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 	return this->ReturnHandler(return_value, "PhreeqcRM::GetConcentrations");
 }
 #endif
+#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::GetDensity(std::vector<double> & density_arg)
@@ -3021,6 +3022,67 @@ PhreeqcRM::GetDensity(std::vector<double> & density_arg)
 	}
 	return IRM_OK;
 }
+#endif
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetDensity(std::vector<double> & density_arg)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+#ifdef USE_MPI
+		if (this->mpi_myself == 0)
+		{
+			int method = METHOD_GETDENSITY;
+			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+		}
+		std::vector<double> local_density_worker;
+		int size = this->end_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
+		local_density_worker.resize(size, INACTIVE_CELL_VALUE);
+		
+		// fill saturation_root
+		int n = this->mpi_myself;
+		for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
+		{
+			int l = i - this->start_cell[n];
+			local_density_worker[l] = this->workers[0]->Get_solution(i)->Get_density();
+		}
+
+		// Gather to root
+		GatherNchem(local_density_worker, density_arg);
+#else
+		density_arg.resize(this->nxyz, INACTIVE_CELL_VALUE);
+		std::vector<double> dbuffer;
+		for (int n = 0; n < this->nthreads; n++)
+		{
+			for (int i = start_cell[n]; i <= this->end_cell[n]; i++)
+			{
+				cxxSolution * soln_ptr = this->workers[n]->Get_solution(i);
+				if (!soln_ptr)
+				{
+					this->ErrorHandler(IRM_FAIL, "Solution not found for solution volume.");
+				}
+				else
+				{
+					double d = this->workers[n]->Get_solution(i)->Get_density();
+					for(size_t j = 0; j < backward_mapping[i].size(); j++)
+					{
+						int n = backward_mapping[i][j];
+						density_arg[n] = d;
+					}
+				}
+			}
+		}
+#endif
+	}
+	catch (...)
+	{
+		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetDensity");
+	}
+	return IRM_OK;
+}
+
 /* ---------------------------------------------------------------------- */
 std::string
 PhreeqcRM::GetErrorString(void)
