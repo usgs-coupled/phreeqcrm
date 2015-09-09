@@ -3602,7 +3602,7 @@ protected:
 	IRM_RESULT                                TransferCellsUZ(std::ostringstream &raw_stream, int old, int nnew);
 
 private:
-	IRM_RESULT                                SetGeneric(std::vector<double> &destination, int newSize, const std::vector<double> &origin, int mpiMethod, const std::string &name, const double newValue = 0.0);
+	//IRM_RESULT                                SetGeneric(std::vector<double> &destination, int newSize, const std::vector<double> &origin, int mpiMethod, const std::string &name, const double newValue = 0.0);
 	IRM_RESULT                                SetGeneric(const std::vector<double> &source, std::vector<double> &destination_root, std::vector<double> &destination_worker, int mpiMethod, const std::string &name);
 protected:
 
@@ -3629,10 +3629,12 @@ protected:
 	double time;						    // time from transport, sec
 	double time_step;					    // time step from transport, sec
 	double time_conversion;					// time conversion factor, multiply to convert to preferred time unit for output
-	std::vector <double> old_saturation;	// saturation fraction from previous step
-	std::vector<double> saturation;	        // nxyz saturation fraction
-	std::vector<double> pressure_root;			//  nxyz on root current pressure
-	std::vector<double> pressure_worker;		//  nchem on workers current pressure
+	std::vector <double> old_saturation_root;	// saturation fraction from previous step
+	std::vector <double> old_saturation_worker;
+	std::vector<double> saturation_root;	    // nxyz saturation fraction
+	std::vector<double> saturation_worker;	    // nchem on workers saturation fraction
+	std::vector<double> pressure_root;			// nxyz on root current pressure
+	std::vector<double> pressure_worker;		// nchem on workers current pressure
 	std::vector<double> rv_root;		        // nxyz on root representative volume
 	std::vector<double> rv_worker;		        // nchem on workers representative volume
 	std::vector<double> porosity_root;		    // nxyz porosity
