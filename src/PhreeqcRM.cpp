@@ -604,6 +604,7 @@ PhreeqcRM::CellInitialize(
 	return rtn;
 }
 #endif
+#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::CellInitialize(
@@ -644,6 +645,303 @@ PhreeqcRM::CellInitialize(
 	double cell_porosity_local = this->porosity_root[ixyz];
 	double cell_rv_local = this->rv_root[ixyz];
 #endif
+	std::vector < double > porosity_factor;
+	porosity_factor.push_back(cell_rv_local);                              // no adjustment, per liter of rv
+	porosity_factor.push_back(cell_rv_local*cell_porosity_local);          // per liter of water in rv
+	porosity_factor.push_back(cell_rv_local*(1.0 - cell_porosity_local));  // per liter of rock in rv
+
+	/*
+	 *   Copy solution
+	 */
+	n_old1 = initial_conditions1[ilocal];
+	n_old2 = initial_conditions2[ilocal];
+	if (n_old1 >= 0 && phreeqc_bin->Get_Solutions().find(n_old1) == phreeqc_bin->Get_Solutions().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition SOLUTION " << n_old1 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (n_old2 >= 0 && phreeqc_bin->Get_Solutions().find(n_old2) == phreeqc_bin->Get_Solutions().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition SOLUTION " << n_old2 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (rtn == IRM_OK)
+	{
+		f1 = fraction1[ilocal];
+		if (n_old1 >= 0)
+		{
+			cxxMix mx;
+			// Account for saturation of cell
+			double current_v = phreeqc_bin->Get_Solution(n_old1)->Get_soln_vol();
+			double v = f1 * cell_porosity_local * saturation[ixyz] / current_v;
+			mx.Add(n_old1, v);
+			if (n_old2 >= 0)
+			{
+				current_v = phreeqc_bin->Get_Solution(n_old2)->Get_soln_vol();
+				v = (1.0 - f1) * cell_porosity_local * saturation[ixyz] / current_v;
+				mx.Add(n_old2, v);
+			}
+			cxxSolution cxxsoln(phreeqc_bin->Get_Solutions(), mx, n_user_new);
+			initial_bin.Set_Solution(n_user_new, &cxxsoln);
+		}
+	}
+
+	/*
+	 *   Copy pp_assemblage
+	 */
+	n_old1 = initial_conditions1[stride + ilocal];
+	n_old2 = initial_conditions2[stride + ilocal];
+	if (n_old1 >= 0 && phreeqc_bin->Get_PPassemblages().find(n_old1) == phreeqc_bin->Get_PPassemblages().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition EQUILIBRIUM_PHASES " << n_old1 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (n_old2 >= 0 && phreeqc_bin->Get_PPassemblages().find(n_old2) == phreeqc_bin->Get_PPassemblages().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition EQUILIBRIUM_PHASES " << n_old2 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (rtn == IRM_OK)
+	{
+		f1 = fraction1[stride + ilocal];
+		if (n_old1 >= 0)
+		{
+			cxxMix mx;
+			mx.Add(n_old1, f1);
+			if (n_old2 >= 0)
+				mx.Add(n_old2, 1 - f1);
+
+			mx.Multiply(porosity_factor[this->units_PPassemblage]);
+			cxxPPassemblage cxxentity(phreeqc_bin->Get_PPassemblages(), mx,
+				n_user_new);
+			initial_bin.Set_PPassemblage(n_user_new, &cxxentity);
+		}
+	}
+	/*
+	 *   Copy exchange assemblage
+	 */
+
+	n_old1 = initial_conditions1[2 * stride + ilocal];
+	n_old2 = initial_conditions2[2 * stride + ilocal];
+	if (n_old1 >= 0 && phreeqc_bin->Get_Exchangers().find(n_old1) == phreeqc_bin->Get_Exchangers().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition EXCHANGE " << n_old1 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (n_old2 >= 0 && phreeqc_bin->Get_Exchangers().find(n_old2) == phreeqc_bin->Get_Exchangers().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition EXCHANGE " << n_old2 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (rtn == IRM_OK)
+	{
+		f1 = fraction1[2 * stride + ilocal];
+		if (n_old1 >= 0)
+		{
+			cxxMix mx;
+			mx.Add(n_old1, f1);
+			if (n_old2 >= 0)
+				mx.Add(n_old2, 1 - f1);
+			mx.Multiply(porosity_factor[this->units_Exchange]);
+			cxxExchange cxxexch(phreeqc_bin->Get_Exchangers(), mx, n_user_new);
+			initial_bin.Set_Exchange(n_user_new, &cxxexch);
+		}
+	}
+	/*
+	 *   Copy surface assemblage
+	 */
+	n_old1 = initial_conditions1[3 * stride + ilocal];
+	n_old2 = initial_conditions2[3 * stride + ilocal];
+	if (n_old1 >= 0 && phreeqc_bin->Get_Surfaces().find(n_old1) == phreeqc_bin->Get_Surfaces().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition SURFACE " << n_old1 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (n_old2 >= 0 && phreeqc_bin->Get_Surfaces().find(n_old2) == phreeqc_bin->Get_Surfaces().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition SURFACE " << n_old2 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (rtn == IRM_OK)
+	{
+		f1 = fraction1[3 * stride + ilocal];
+		if (n_old1 >= 0)
+		{
+			cxxMix mx;
+			mx.Add(n_old1, f1);
+			if (n_old2 >= 0)
+				mx.Add(n_old2, 1 - f1);
+			mx.Multiply(porosity_factor[this->units_Surface]);
+			cxxSurface cxxentity(phreeqc_bin->Get_Surfaces(), mx, n_user_new);
+			initial_bin.Set_Surface(n_user_new, &cxxentity);
+		}
+	}
+	/*
+	 *   Copy gas phase
+	 */
+	n_old1 = initial_conditions1[4 * stride + ilocal];
+	n_old2 = initial_conditions2[4 * stride + ilocal];
+	if (n_old1 >= 0 && phreeqc_bin->Get_GasPhases().find(n_old1) == phreeqc_bin->Get_GasPhases().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition GAS_PHASE " << n_old1 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (n_old2 >= 0 && phreeqc_bin->Get_GasPhases().find(n_old2) == phreeqc_bin->Get_GasPhases().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition GAS_PHASE " << n_old2 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (rtn == IRM_OK)
+	{
+		f1 = fraction1[4 * stride + ilocal];
+		if (n_old1 >= 0)
+		{
+			cxxMix mx;
+			mx.Add(n_old1, f1);
+			if (n_old2 >= 0)
+				mx.Add(n_old2, 1 - f1);
+			mx.Multiply(porosity_factor[this->units_GasPhase]);
+			cxxGasPhase cxxentity(phreeqc_bin->Get_GasPhases(), mx, n_user_new);
+			initial_bin.Set_GasPhase(n_user_new, &cxxentity);
+		}
+	}
+	/*
+	 *   Copy solid solution
+	 */
+	n_old1 = initial_conditions1[5 * stride + ilocal];
+	n_old2 = initial_conditions2[5 * stride + ilocal];
+	if (n_old1 >= 0 && phreeqc_bin->Get_SSassemblages().find(n_old1) == phreeqc_bin->Get_SSassemblages().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition SOLID_SOLUTIONS " << n_old1 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (n_old2 >= 0 && phreeqc_bin->Get_SSassemblages().find(n_old2) == phreeqc_bin->Get_SSassemblages().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition SOLID_SOLUTIONS " << n_old2 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (rtn == IRM_OK)
+	{
+		f1 = fraction1[5 * stride + ilocal];
+		if (n_old1 >= 0)
+		{
+			cxxMix mx;
+			mx.Add(n_old1, f1);
+			if (n_old2 >= 0)
+				mx.Add(n_old2, 1 - f1);
+			mx.Multiply(porosity_factor[this->units_SSassemblage]);
+			cxxSSassemblage cxxentity(phreeqc_bin->Get_SSassemblages(), mx,
+				n_user_new);
+			initial_bin.Set_SSassemblage(n_user_new, &cxxentity);
+		}
+	}
+	/*
+	 *   Copy kinetics
+	 */
+	n_old1 = initial_conditions1[6 * stride + ilocal];
+	n_old2 = initial_conditions2[6 * stride + ilocal];
+	if (n_old1 >= 0 && phreeqc_bin->Get_Kinetics().find(n_old1) == phreeqc_bin->Get_Kinetics().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition KINETICS " << n_old1 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (n_old2 >= 0 && phreeqc_bin->Get_SSassemblages().find(n_old2) == phreeqc_bin->Get_SSassemblages().end())
+	{
+		std::ostringstream e_stream;
+		e_stream << "Initial condition KINETICS " << n_old2 << " not found.";
+		error_set.insert(e_stream.str());
+		rtn = IRM_FAIL;
+	}
+	if (rtn == IRM_OK)
+	{
+		f1 = fraction1[6 * stride + ilocal];
+		if (n_old1 >= 0)
+		{
+			cxxMix mx;
+			mx.Add(n_old1, f1);
+			if (n_old2 >= 0)
+				mx.Add(n_old2, 1 - f1);
+			mx.Multiply(porosity_factor[this->units_Kinetics]);
+			cxxKinetics cxxentity(phreeqc_bin->Get_Kinetics(), mx, n_user_new);
+			initial_bin.Set_Kinetics(n_user_new, &cxxentity);
+		}
+	}
+	if (rtn == IRM_OK)
+	{
+		this->GetWorkers()[0]->Get_PhreeqcPtr()->cxxStorageBin2phreeqc(initial_bin);
+	}
+	return rtn;
+}
+#endif
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::CellInitialize(
+					int ixyz,
+					int n_user_new,
+					int *initial_conditions1,
+					int *initial_conditions2,
+					double *fraction1,
+					std::set<std::string> &error_set)
+/* ---------------------------------------------------------------------- */
+{
+	// ixyz is nxyz numbering
+	// n_user_n is nchem cells numbering
+	// For MPI, initial_conditions are local to mpi_myself (end - start + 1 in size)
+	// For OpenMP, initial conditions are nxyz in size
+
+	int n_old1, n_old2;
+	double f1;
+#ifdef USE_MPI
+	// For nonroot, initial conditions are shortened
+	int ilocal = n_user_new - this->start_cell[this->mpi_myself];
+	int stride = this->end_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
+#else
+	int stride = this->nxyz;    // stride in initial_conditions
+	int ilocal = ixyz;          // location in initial_conditions
+#endif
+
+	cxxStorageBin initial_bin;
+
+	IRM_RESULT rtn = IRM_OK;
+#ifdef USE_MPI
+	double cell_porosity_local = this->porosity_worker[ilocal];
+	double cell_rv_local = this->rv_worker[ilocal];
+#else
+	double cell_porosity_local = this->porosity_root[ixyz];
+	double cell_rv_local = this->rv_root[ixyz];
+#endif
+	if (this->porosity_root[ixyz] != this->porosity_worker[ilocal])
+	{
+		std::ostringstream str;
+		str << "Porosities differ " << n_user_new << " " << ixyz << " " << this->porosity_root[ixyz] << " " << this->porosity_worker[ilocal] << std::endl;
+		std::cerr << str.str().c_str() << std::endl;
+	}
 	std::vector < double > porosity_factor;
 	porosity_factor.push_back(cell_rv_local);                              // no adjustment, per liter of rv
 	porosity_factor.push_back(cell_rv_local*cell_porosity_local);          // per liter of water in rv
@@ -3970,6 +4268,7 @@ PhreeqcRM::InitialPhreeqc2Module(
 	return this->ReturnHandler(return_value, "PhreeqcRM::InitialPhreeqc2Module");
 }
 #endif
+#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Module(
@@ -4181,6 +4480,210 @@ PhreeqcRM::InitialPhreeqc2Module(
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::InitialPhreeqc2Module");
 }
+#endif
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialPhreeqc2Module(
+					std::vector < int >    & initial_conditions1,
+					std::vector < int >    & initial_conditions2,
+					std::vector < double > & fraction1)
+/* ---------------------------------------------------------------------- */
+{
+	/*
+	 *      nxyz - number of cells
+	 *      initial_conditions1 - Fortran, 7 x nxyz integer array, containing
+	 *      entity numbers for
+	 *           solution number
+	 *           pure_phases number
+	 *           exchange number
+	 *           surface number
+	 *           gas number
+	 *           solid solution number
+	 *           kinetics number
+	 *      initial_conditions2 - Fortran, 7 x nxyz integer array, containing
+	 *			 entity numbers
+	 *      fraction1 - Fortran 7 x n_cell  double array, fraction for entity 1
+	 *
+	 *      Routine mixes solutions, pure_phase assemblages,
+	 *      exchangers, surface complexers, gases, solid solution assemblages,
+	 *      and kinetics for each cell.
+	 */
+	this->phreeqcrm_error_string.clear();
+	IRM_RESULT return_value = IRM_OK;
+	try
+	{
+		if (mpi_myself == 0)
+		{
+			if ((int) initial_conditions1.size() != (7 * this->nxyz))
+			{
+				this->ErrorHandler(IRM_INVALIDARG, "initial_conditions1 vector is the wrong size in InitialPhreeqc2Module");
+			}
+			if ((int) initial_conditions2.size() > 0 && (int) initial_conditions2.size() != (7 * this->nxyz))
+			{
+				this->ErrorHandler(IRM_INVALIDARG, "initial_conditions2 vector is the wrong size in InitialPhreeqc2Module");
+			}
+			if ((int) fraction1.size() > 0 && (int) fraction1.size() != (7 * this->nxyz))
+			{
+				this->ErrorHandler(IRM_INVALIDARG, "fraction1 vector is the wrong size in InitialPhreeqc2Module");
+			}
+		}
+
+		// Use phreeqc_bin to capture InitialPhreeqc definitions
+		this->Get_phreeqc_bin().Clear();
+		this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->phreeqc2cxxStorageBin(this->Get_phreeqc_bin());
+#ifdef USE_MPI
+		if (this->mpi_myself == 0)
+		{
+			int method = METHOD_INITIALPHREEQC2MODULE;
+			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+		}
+		//int ncells = this->end_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
+
+
+
+
+
+
+
+		// distribute initial conditions to workers
+		std::vector<int> ic1, ic2, ic1_worker, ic2_worker, ic1_root, ic2_root;
+		std::vector<double> f1, f1_worker, f1_root;
+		ic1_root.resize(this->nxyz);
+		ic2_root.resize(this->nxyz);
+		f1_root.resize(this->nxyz);
+		for (int i = 0; i < 7; i++)
+		{
+			// pull out next chunk
+			if (mpi_myself == 0)
+			{ 
+				memcpy(&ic1_root.front(), &initial_conditions1[i * this->nxyz], (size_t) this->nxyz * sizeof(int));
+				memcpy(&ic2_root.front(), &initial_conditions2[i * this->nxyz], (size_t) this->nxyz * sizeof(int));
+				memcpy(&f1_root.front(), &fraction1[i * this->nxyz], (size_t) this->nxyz * sizeof(double));
+			}
+			ScatterNchem(ic1_root, ic1);
+			ScatterNchem(ic2_root, ic2);
+			ScatterNchem(f1_root, f1);
+			//a.insert(a.end(), b.begin(), b.end());
+			ic1_worker.insert(ic1_worker.end(), ic1.begin(), ic1.end());
+			ic2_worker.insert(ic2_worker.end(), ic2.begin(), ic2.end());
+			f1_worker.insert(f1_worker.end(), f1.begin(), f1.end());
+		}
+#endif
+		/*
+		*  Copy solution, exchange, surface, gas phase, kinetics, solid solution for each active cell.
+		*  Does nothing for indexes less than 0 (i.e. restart files)
+		*/
+
+		size_t count_negative_porosity = 0;
+		std::ostringstream errstr;
+
+#ifdef USE_MPI
+		int begin = this->start_cell[this->mpi_myself];
+		int end = this->end_cell[this->mpi_myself] + 1;
+#else
+		int begin = 0;
+		int end = this->count_chemistry;
+#endif
+		for (int i = begin; i < end; i++)  		    /* i is count_chem number */
+		{
+			std::set<std::string> error_set;
+			int j = this->backward_mapping[i][0];	/* j is nxyz number */
+#ifdef USE_MPI
+			int l = i - begin;
+			double por = porosity_worker[l];
+			double repv = rv_worker[l];
+#else
+			if (j < 0)	continue;
+			double por = porosity_root[j];
+			double repv = rv_root[j];
+#endif
+			assert (por >= 0.0);
+			if (por < 0.0)
+			{
+				errstr << "Nonpositive porosity in cell " << i << ": porosity, " << por;
+				errstr <<  "." << std::endl;
+				count_negative_porosity++;
+				return_value = IRM_FAIL;
+				continue;
+			}
+			assert (repv >= 0.0);
+			if (repv < 0.0)
+			{
+				errstr << "Nonpositive representative volume in cell " << i << ": representative volume, " << repv;
+				errstr <<  "." << std::endl;
+				count_negative_porosity++;
+				return_value = IRM_FAIL;
+				continue;
+			}
+#ifdef USE_MPI
+			if (this->CellInitialize(j, i, &ic1_worker.front(), &ic2_worker.front(),
+				&f1_worker.front(), error_set) != IRM_OK)
+#else
+			if (this->CellInitialize(j, i, &initial_conditions1.front(), &initial_conditions2.front(),
+				&fraction1.front(), error_set) != IRM_OK)
+#endif
+			{
+				std::set<std::string>::iterator it = error_set.begin();
+				for (; it != error_set.end(); it++)
+				{
+					errstr << it->c_str() << "\n";
+				}
+				return_value = IRM_FAIL;
+			}
+		}
+		if (count_negative_porosity > 0)
+		{
+			return_value = IRM_FAIL;
+			errstr << "Negative initial volumes may be due to initial head distribution.\n"
+				"Make initial heads greater than or equal to the elevation of the node for each cell.\n"
+				"Increase porosity, decrease specific storage, or use free surface boundary.";
+		}
+		if (return_value != IRM_OK)
+		{
+			std::cerr << errstr.str() << std::endl;
+		}
+#ifdef USE_MPI
+		std::vector<int> r_values;
+		r_values.push_back(return_value);
+		this->HandleErrorsInternal(r_values);
+#else
+		this->ErrorHandler(return_value, "Processing initial conditions.");
+		// distribute to thread IPhreeqcs
+		std::vector<int> r_values;
+		r_values.resize(this->nthreads, 0);
+		for (int n = 1; n < this->nthreads; n++)
+		{
+			std::ostringstream delete_command;
+			delete_command << "DELETE; -cells\n";
+			for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
+			{
+				cxxStorageBin sz_bin;
+				this->GetWorkers()[0]->Get_PhreeqcPtr()->phreeqc2cxxStorageBin(sz_bin, i);
+				this->GetWorkers()[n]->Get_PhreeqcPtr()->cxxStorageBin2phreeqc(sz_bin, i);
+				delete_command << i << "\n";
+			}
+			r_values[n] = this->GetWorkers()[0]->RunString(delete_command.str().c_str());
+			if (r_values[n] != 0)
+			{
+				this->ErrorMessage(this->GetWorkers()[0]->GetErrorString());
+			}
+		}
+		this->HandleErrorsInternal(r_values);
+#endif
+	}	
+	catch(std::exception &e)
+	{
+		std::string errmsg("InitialPhreeqc2Module: ");
+		errmsg += e.what();
+		this->ErrorMessage(errmsg.c_str()); 
+		return_value = IRM_FAIL;
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::InitialPhreeqc2Module");
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2SpeciesConcentrations(std::vector < double > &destination_c,
@@ -4191,6 +4694,7 @@ PhreeqcRM::InitialPhreeqc2SpeciesConcentrations(std::vector < double > &destinat
 	std::vector< double > dummy1;
 	return InitialPhreeqc2SpeciesConcentrations(destination_c, boundary_solution1, dummy, dummy1);
 }
+
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2SpeciesConcentrations(std::vector < double > &destination_c,
@@ -8021,6 +8525,7 @@ PhreeqcRM::SetPorosity(const std::vector<double> &t)
 	return this->ReturnHandler(return_value, "PhreeqcRM::" + methodName);
 }
 #endif
+/* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::SetPorosity(const std::vector<double> &t)
 /* ---------------------------------------------------------------------- */
