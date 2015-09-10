@@ -422,9 +422,9 @@ if (option == "HYDRAULIC_K")
 </CODE>
 @endhtmlonly
 @par MPI:
-Called by root and (or) workers.
+Called by root.
  */
-	const std::vector < std::vector <int> > & GetBackwardMapping(void) {return this->backward_mapping;}
+	const std::vector < std::vector <int> > & GetBackwardMapping(void) {return this->backward_mapping_root;}
 /**
 Returns the number of reaction cells in the reaction module. The number of reaction cells is defined by
 the set of non-negative integers in the mapping from grid cells (@ref CreateMapping), or, by default,
@@ -691,9 +691,9 @@ const std::vector<int> &f_map = phreeqc_rm.GetForwardMapping();
 </CODE>
 @endhtmlonly
 @par MPI:
-Called by root and (or) workers.
+Called by root.
  */
-	const std::vector < int > &               GetForwardMapping(void) {return this->forward_mapping;}
+	const std::vector < int > &               GetForwardMapping(void) {return this->forward_mapping_root;}
 /**
 Returns a reference to a vector of doubles that contains the gram-formula weight of
 each component. Called after @ref FindComponents. Order of weights corresponds to the list of components from
@@ -3566,8 +3566,8 @@ protected:
 		                                          std::set<std::string> &error_set);
 	IRM_RESULT                                CheckCells();
 	int                                       CheckSelectedOutput();
-    void                                      Collapse2Nchem(double *d_in, double *d_out);
-    void                                      Collapse2Nchem(int *i_in, int *i_out);
+    //void                                      Collapse2Nchem(double *d_in, double *d_out);
+    //void                                      Collapse2Nchem(int *i_in, int *i_out);
 	IPhreeqc *                                Concentrations2UtilityH2O(std::vector<double> &c_in,
 		                                           std::vector<double> &t_in, std::vector<double> &p_in);
 	IPhreeqc *                                Concentrations2UtilityNoH2O(std::vector<double> &c_in,
@@ -3656,8 +3656,8 @@ protected:
 	int units_GasPhase;                     // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 	int units_SSassemblage;                 // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 	int units_Kinetics;                     // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
-	std::vector <int> forward_mapping;					// mapping from nxyz cells to count_chem chemistry cells
-	std::vector <std::vector <int> > backward_mapping;	// mapping from count_chem chemistry cells to nxyz cells
+	std::vector <int> forward_mapping_root;				    // mapping from nxyz cells to count_chem chemistry cells
+	std::vector <std::vector <int> > backward_mapping_root;	// mapping from count_chem chemistry cells to nxyz cells
 	bool use_solution_density_volume;
 
 	// print flags
