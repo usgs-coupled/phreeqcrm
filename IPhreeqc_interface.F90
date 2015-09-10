@@ -976,6 +976,7 @@ INTEGER FUNCTION SetDumpFileOn(id, dump_on)
     INTEGER, INTENT(in) :: id
     LOGICAL, INTENT(in) :: dump_on
     INTEGER :: tf = 0
+    tf = 0
     if (dump_on) tf = 1
     SetDumpFileOn = SetDumpFileOnF(id, tf)
     return
@@ -995,6 +996,7 @@ INTEGER FUNCTION SetDumpStringOn(id, dump_string_on)
     INTEGER, INTENT(in) :: id
     LOGICAL, INTENT(in) :: dump_string_on
     INTEGER :: tf = 0
+    tf = 0
     if (dump_string_on) tf = 1
     SetDumpStringOn = SetDumpStringOnF(id, tf)
     return
@@ -1032,6 +1034,7 @@ INTEGER FUNCTION SetErrorFileOn(id, error_file_on)
     INTEGER, INTENT(in) :: id
     LOGICAL, INTENT(in) :: error_file_on
     INTEGER :: tf = 0
+    tf = 0
     if (error_file_on) tf = 1
     SetErrorFileOn = SetErrorFileOnF(id, tf)
     return
@@ -1051,6 +1054,7 @@ INTEGER FUNCTION SetErrorStringOn(id, error_string_on)
     INTEGER, INTENT(in) :: id
     LOGICAL, INTENT(in) :: error_string_on
     INTEGER :: tf = 0
+    tf = 0
     if (error_string_on) tf = 1
     SetErrorStringOn = SetErrorStringOnF(id, tf)
     return
@@ -1088,6 +1092,7 @@ INTEGER FUNCTION SetLogFileOn(id, log_on)
     INTEGER, INTENT(in) :: id
     LOGICAL, INTENT(in) :: log_on
     INTEGER :: tf = 0
+    tf = 0
     if (log_on) tf = 1
     SetLogFileOn = SetLogFileOnF(id, tf)
     return
@@ -1107,6 +1112,7 @@ INTEGER FUNCTION SetLogStringOn(id, log_string_on)
     INTEGER, INTENT(in) :: id
     LOGICAL, INTENT(in) :: log_string_on
     INTEGER :: tf = 0
+    tf = 0
     if (log_string_on) tf = 1
     SetLogStringOn = SetLogStringOnF(id, tf)
     return
@@ -1143,7 +1149,8 @@ INTEGER FUNCTION SetOutputFileOn(id, output_on)
     END INTERFACE
     INTEGER, INTENT(in) :: id
     LOGICAL, INTENT(in) :: output_on
-    INTEGER :: tf = 0
+    INTEGER :: tf
+    tf = 0
     if (output_on) tf = 1
     SetOutputFileOn = SetOutputFileOnF(id, tf)
     return
@@ -1163,6 +1170,7 @@ INTEGER FUNCTION SetOutputStringOn(id, output_string_on)
     INTEGER, INTENT(in) :: id
     LOGICAL, INTENT(in) :: output_string_on
     INTEGER :: tf = 0
+    tf = 0
     if (output_string_on) tf = 1
     SetOutputStringOn = SetOutputStringOnF(id, tf)
     return
@@ -1200,6 +1208,7 @@ INTEGER FUNCTION SetSelectedOutputFileOn(id, sel_on)
     INTEGER, INTENT(in) :: id
     LOGICAL, INTENT(in) :: sel_on
     INTEGER :: tf = 0
+    tf = 0
     if (sel_on) tf = 1
     SetSelectedOutputFileOn = SetSelectedOutputFileOnF(id, tf)
     return
@@ -1219,6 +1228,7 @@ INTEGER FUNCTION SetSelectedOutputStringOn(id, selected_output_string_on)
     INTEGER, INTENT(in) :: id
     LOGICAL, INTENT(in) :: selected_output_string_on
     INTEGER :: tf = 0
+    tf = 0
     if (selected_output_string_on) tf = 1
     SetSelectedOutputStringOn = SetSelectedOutputStringOnF(id, tf)
     return
