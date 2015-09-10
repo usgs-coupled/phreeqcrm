@@ -276,9 +276,9 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 	for (int i = 0; i < this->nxyz; i++)
 	{
 		//forward_mapping.push_back(i);
-		//std::vector<int> temp;
-		//temp.push_back(i);
-		//backward_mapping.push_back(temp);
+		std::vector<int> temp;
+		temp.push_back(i);
+		backward_mapping.push_back(temp);
 		//saturation.push_back(1.0);
 		//rv.push_back(1.0);
 		//porosity.push_back(0.1);
@@ -290,9 +290,6 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 		if (mpi_myself == 0)
 		{
 			forward_mapping_root.push_back(i);
-			std::vector<int> temp;
-			temp.push_back(i);
-			backward_mapping_root.push_back(temp);
 			print_chem_mask_root.push_back(0);
 			density_root.push_back(1.0);
 			porosity_root.push_back(0.1);
@@ -675,13 +672,13 @@ PhreeqcRM::CheckCells()
 		estr << "Solutions not defined for these cells:\n";
 		for (size_t i = 0; i < missing.size(); i++)
 		{
-			estr << "Chem cell "<< i << "\n";
-			//estr << "Chem cell "<< i << " = Grid cell(s): ";
-			//for (size_t j = 0; j < backward_mapping[i].size(); j++)
-			//{
-			//	estr << backward_mapping[i][j] << " ";
-			//}
-			//estr << "\n";
+			//estr << "Chem cell "<< i << "\n";
+			estr << "Chem cell "<< i << " = Grid cell(s): ";
+			for (size_t j = 0; j < backward_mapping[i].size(); j++)
+			{
+				estr << backward_mapping[i][j] << " ";
+			}
+			estr << "\n";
 		}
 
 		this->workers[0]->AddError(estr.str().c_str());
@@ -716,13 +713,13 @@ PhreeqcRM::CheckCells()
 		estr << "Solutions not defined for these cells:\n";
 		for (size_t i = 0; i < missing.size(); i++)
 		{
-			estr << "Chem cell "<< i << "\n";
-			//estr << "Chem cell "<< i << " = Grid cell(s): ";
-			//for (size_t j = 0; j < backward_mapping[i].size(); j++)
-			//{
-			//	estr << backward_mapping[i][j] << " ";
-			//}
-			//estr << "\n";
+			//estr << "Chem cell "<< i << "\n";
+			estr << "Chem cell "<< i << " = Grid cell(s): ";
+			for (size_t j = 0; j < backward_mapping[i].size(); j++)
+			{
+				estr << backward_mapping[i][j] << " ";
+			}
+			estr << "\n";
 		}
 		ErrorMessage(estr.str());
 		throw PhreeqcRMStop();
@@ -1022,7 +1019,7 @@ PhreeqcRM::Concentrations2SolutionsH2O(int n, std::vector<double> &c)
 		double repv  = rv_worker[j - start];
 		double sat = saturation_worker[j - start];
 #else
-		int i = this->backward_mapping_root[j][0];
+		int i = this->backward_mapping[j][0];
 		double dens = density_root[i];
 		double por  = porosity_root[i];
 		double repv = rv_root[i];
@@ -1125,7 +1122,7 @@ PhreeqcRM::Concentrations2SolutionsNoH2O(int n, std::vector<double> &c)
 		double repv = rv_worker[j - start];
 		double sat  = saturation_worker[j - start];
 #else
-		int i = this->backward_mapping_root[j][0];
+		int i = this->backward_mapping[j][0];
 		double dens = density_root[i];
 		double por  = porosity_root[i];
 		double repv = rv_root[i];
@@ -1457,6 +1454,7 @@ PhreeqcRM::CreateMapping(std::vector<int> &grid2chem)
 	return this->ReturnHandler(return_value, "PhreeqcRM::CreateMapping");
 }
 #endif
+#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::CreateMapping(std::vector<int> &grid2chem)
@@ -1557,6 +1555,128 @@ PhreeqcRM::CreateMapping(std::vector<int> &grid2chem)
 				}
 			}
 		}
+		// Distribute work with new count_chemistry
+		SetEndCells();
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::CreateMapping");
+}
+#endif
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::CreateMapping(std::vector<int> &grid2chem)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	IRM_RESULT return_value = IRM_OK;
+	try
+	{
+		if (mpi_myself == 0)
+		{
+			if ((int) grid2chem.size() != this->nxyz)
+			{
+				this->ErrorHandler(IRM_INVALIDARG, "Mapping vector is the wrong size");
+			}
+		}
+#ifdef USE_MPI
+		if (mpi_myself == 0)
+		{
+			int method = METHOD_CREATEMAPPING;
+			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+		}
+		else
+		{
+			grid2chem.resize(this->nxyz);
+		}
+		MPI_Bcast(&grid2chem.front(), this->nxyz, MPI_INT, 0, phreeqcrm_comm);
+#endif
+		backward_mapping.clear();
+		forward_mapping_root.clear();
+
+		// find count_chem
+		this->count_chemistry = 0;
+		for (int i = 0; i < this->nxyz; i++)
+		{
+			if (grid2chem[i] > count_chemistry)
+			{
+				count_chemistry = grid2chem[i];
+			}
+		}
+		count_chemistry ++;
+
+#ifdef USE_MPI
+		if (this->mpi_myself == 0)
+		{
+			if (this->mpi_tasks > this->count_chemistry)
+			{
+				std::ostringstream err;
+				err << "Number of threads must be less than or equal to number of reaction cells, ";
+				err << this->count_chemistry << "." << std::endl;
+				this->ErrorHandler(IRM_FAIL, err.str());
+			}
+		}
+#else
+		if (this->nthreads > this->count_chemistry)
+		{
+			std::ostringstream err;
+			err << "Number of threads must be less than or equal to number of reaction cells, ";
+			err << this->count_chemistry << "." << std::endl;
+			this->ErrorHandler(IRM_FAIL, err.str());
+		}
+#endif
+
+
+		for (int i = 0; i < count_chemistry; i++)
+		{
+			std::vector<int> temp;
+			backward_mapping.push_back(temp);
+		}
+		for (int i = 0; i < this->nxyz; i++)
+		{
+			int n = grid2chem[i];
+			if (n >= count_chemistry)
+			{
+				this->ErrorHandler(IRM_INVALIDARG, "PhreeqcRM::CreateMapping, cell out of range in mapping (grid to chem).");
+			}
+
+			// copy to forward
+			if (mpi_myself == 0)
+			{
+				forward_mapping_root.push_back(n);
+			}
+
+			// add to back
+			if (n >= 0)
+			{
+				backward_mapping[n].push_back(i);
+			}
+		}
+
+		// set -1 for back items > 0
+		for (int i = 0; i < this->count_chemistry; i++)
+		{
+			// add to back
+			if (mpi_myself == 0)
+			{
+				for (size_t j = 1; j < backward_mapping[i].size(); j++)
+				{
+					int n = backward_mapping[i][j];
+					forward_mapping_root[n] = -1;
+				}
+			}
+		}
+		// check that all count_chem have at least 1 cell
+		for (int i = 0; i < this->count_chemistry; i++)
+		{
+			if (backward_mapping[i].size() == 0)
+			{
+				this->ErrorHandler(IRM_INVALIDARG, "PhreeqcRM::CreateMapping, building inverse mapping (chem to grid).");
+			}
+		}
+
 		// Distribute work with new count_chemistry
 		SetEndCells();
 	}
@@ -2298,9 +2418,9 @@ PhreeqcRM::GatherNchem(std::vector<double> &source, std::vector<double> &destina
 
 		for(size_t i = 0; i < this->count_chemistry; i++)
 		{
-			for(size_t j = 0; j < backward_mapping_root[i].size(); j++)
+			for(size_t j = 0; j < backward_mapping[i].size(); j++)
 			{
-				int n = backward_mapping_root[i][j];
+				int n = backward_mapping[i][j];
 				destination[n] = dbuffer[i];
 			}
 		}
@@ -2401,7 +2521,7 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 					d.push_back(recv_solns[n++]);
 				}
 				std::vector<int>::iterator it;
-				for (it = this->backward_mapping_root[j].begin(); it != this->backward_mapping_root[j].end(); it++)
+				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
 				{
 					double *d_ptr = &c[*it];
 					size_t i;
@@ -2454,7 +2574,7 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 				}
 				else
 				{
-					int k = this->backward_mapping_root[j][0];
+					int k = this->backward_mapping[j][0];
 					v =  this->saturation_root[k]  * this->porosity_root[k] * this->rv_root[k];
 					dens = this->density_root[k];
 					if (v <= 0)
@@ -2466,7 +2586,7 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 
 				// store in fraction at 1, 2, or 4 places depending on chemistry dimensions
 				std::vector<int>::iterator it;
-				for (it = this->backward_mapping_root[j].begin(); it != this->backward_mapping_root[j].end(); it++)
+				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
 				{
 					double *d_ptr = &c[*it];
 					size_t i;
@@ -2528,9 +2648,9 @@ PhreeqcRM::GetDensity(std::vector<double> & density_arg)
 				else
 				{
 					double d = this->workers[n]->Get_solution(i)->Get_density();
-					for(size_t j = 0; j < backward_mapping_root[i].size(); j++)
+					for(size_t j = 0; j < backward_mapping[i].size(); j++)
 					{
-						int n = backward_mapping_root[i][j];
+						int n = backward_mapping[i][j];
 						density_arg[n] = d;
 					}
 				}
@@ -2686,9 +2806,9 @@ PhreeqcRM::GetPressure(void)
 				if (this->workers[n]->Get_solution(i))
 				{
 					double d = this->workers[n]->Get_solution(i)->Get_patm();
-					for(size_t j = 0; j < backward_mapping_root[i].size(); j++)
+					for(size_t j = 0; j < backward_mapping[i].size(); j++)
 					{
-						int n = backward_mapping_root[i][j];
+						int n = backward_mapping[i][j];
 						this->pressure_root[n] = d;
 					}
 				}
@@ -2754,9 +2874,9 @@ PhreeqcRM::GetSaturation(std::vector<double> & sat_arg)
 				else
 				{
 					double v = soln_ptr->Get_soln_vol();
-					for(size_t j = 0; j < backward_mapping_root[i].size(); j++)
+					for(size_t j = 0; j < backward_mapping[i].size(); j++)
 					{
-						int n = backward_mapping_root[i][j];
+						int n = backward_mapping[i][j];
 						sat_arg[n] = v / (this->rv_root[n] * this->porosity_root[n]);
 					}
 				}
@@ -2850,9 +2970,9 @@ PhreeqcRM::GetSelectedOutput(std::vector<double> &so)
 						for (int irow = 0; irow < nrow; irow++)
 						{
 							int ichem = local_start_cell + (int) irow;
-							for (size_t k = 0; k < backward_mapping_root[ichem].size(); k++)
+							for (size_t k = 0; k < backward_mapping[ichem].size(); k++)
 							{
-								int ixyz = backward_mapping_root[ichem][k];
+								int ixyz = backward_mapping[ichem][k];
 								so[icol*this->nxyz + ixyz] = dbuffer[icol*nrow + irow];
 							}
 						}
@@ -2896,9 +3016,9 @@ PhreeqcRM::GetSelectedOutput(std::vector<double> &so)
 					for (size_t irow = 0; irow < (size_t) nrow_x; irow++)
 					{
 						int ichem = local_start_cell + (int) irow;
-						for (size_t k = 0; k < backward_mapping_root[ichem].size(); k++)
+						for (size_t k = 0; k < backward_mapping[ichem].size(); k++)
 						{
-							int ixyz = backward_mapping_root[ichem][k];
+							int ixyz = backward_mapping[ichem][k];
 							so[icol*this->nxyz + ixyz] = dbuffer[icol*nrow_x + irow];
 						}
 					}
@@ -3026,9 +3146,9 @@ PhreeqcRM::GetSolutionVolume(void)
 			for (int i = start_cell[n]; i <= this->end_cell[n]; i++)
 			{
 				double d = this->workers[n]->Get_solution(i)->Get_soln_vol();
-				for(size_t j = 0; j < backward_mapping_root[i].size(); j++)
+				for(size_t j = 0; j < backward_mapping[i].size(); j++)
 				{
-					int n = backward_mapping_root[i][j];
+					int n = backward_mapping[i][j];
 					this->solution_volume_root[n] = d;
 				}
 			}
@@ -3078,7 +3198,7 @@ PhreeqcRM::GetSpeciesConcentrations(std::vector<double> & species_conc)
 				}
 				{
 					std::vector<int>::iterator it;
-					for (it = this->backward_mapping_root[j].begin(); it != this->backward_mapping_root[j].end(); it++)
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
 					{
 						double *d_ptr = &species_conc[*it];
 						for (size_t i = 0; i < d.size(); i++)
@@ -3120,7 +3240,7 @@ PhreeqcRM::GetSpeciesConcentrations(std::vector<double> & species_conc)
 				{
 					int j0 = j - this->start_cell[n];
 					std::vector<int>::iterator it;
-					for (it = this->backward_mapping_root[j].begin(); it != this->backward_mapping_root[j].end(); it++)
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
 					{
 						double *d_ptr = &species_conc[*it];
 						for (size_t i = 0; i < nspecies; i++)
@@ -3166,7 +3286,7 @@ PhreeqcRM::GetSpeciesConcentrations(std::vector<double> & species_conc)
 					}
 				}
 				std::vector<int>::iterator it;
-				for (it = this->backward_mapping_root[j].begin(); it != this->backward_mapping_root[j].end(); it++)
+				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
 				{
 					double *d_ptr = &species_conc[*it];
 					for (size_t i = 0; i < d.size(); i++)
@@ -3241,9 +3361,9 @@ PhreeqcRM::GetTemperature(void)
 				if (this->workers[n]->Get_solution(i))
 				{
 					double d = this->workers[n]->Get_solution(i)->Get_tc();
-					for(size_t j = 0; j < backward_mapping_root[i].size(); j++)
+					for(size_t j = 0; j < backward_mapping[i].size(); j++)
 					{
-						int n = backward_mapping_root[i][j];
+						int n = backward_mapping[i][j];
 						this->tempc_root[n] = d;
 					}
 				}
@@ -3604,7 +3724,7 @@ PhreeqcRM::InitialPhreeqc2Module(
 			double por = porosity_worker[l];
 			double repv = rv_worker[l];
 #else
-			int j = this->backward_mapping_root[i][0];	/* j is nxyz number */
+			int j = this->backward_mapping[i][0];	/* j is nxyz number */
 			if (j < 0)	continue;
 			double por = porosity_root[j];
 			double repv = rv_root[j];
@@ -6336,7 +6456,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 		int j = i; // not used
 		double sat = saturation_worker[i - start];
 #else
-		int j = backward_mapping_root[i][0];			/* j is nxyz number */
+		int j = backward_mapping[i][0];			/* j is nxyz number */
 		double sat = saturation_root[j];
 #endif
 		if (sat > 1e-6)
@@ -6360,7 +6480,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 			int j = i; // not used
 		double sat = saturation_worker[i - start];
 #else
-		int j = backward_mapping_root[i][0];			/* j is nxyz number */
+		int j = backward_mapping[i][0];			/* j is nxyz number */
 		double sat = saturation_root[j];
 #endif
 			if (sat > 1e-10)
@@ -6446,7 +6566,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 #ifdef USE_MPI
 				double sat = saturation_worker[i - start];
 #else
-				int j = backward_mapping_root[i][0];			/* j is nxyz number */
+				int j = backward_mapping[i][0];			/* j is nxyz number */
 				double sat = saturation_root[j];
 #endif
 				if (sat > 1e-6)
@@ -6474,7 +6594,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 #ifdef USE_MPI
 		double sat = saturation_worker[i - start];
 #else
-			int j = backward_mapping_root[i][0];			/* j is nxyz number */
+			int j = backward_mapping[i][0];			/* j is nxyz number */
 			double sat = saturation_root[j];
 #endif
 			if (sat > 1e-6 )
@@ -6523,7 +6643,7 @@ PhreeqcRM::RunCellsThread(int n)
 				j = i; // unused
 				double sat = saturation_worker[i - start];
 #else
-				j = backward_mapping_root[i][0];			/* j is nxyz number */
+				j = backward_mapping[i][0];			/* j is nxyz number */
 				double sat = saturation_root[j];
 #endif
 				this->PartitionUZ(iworker, i, j, sat);
@@ -6630,7 +6750,7 @@ PhreeqcRM::RunCellsThread(int n)
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) MPI_Wtime());
 				local_chem_mask = this->print_chem_mask_worker[i - start];
 #elif defined(USE_OPENMP)
-				j = backward_mapping_root[i][0];			/* j is nxyz number */
+				j = backward_mapping[i][0];			/* j is nxyz number */
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) omp_get_wtime());
 				local_chem_mask = this->print_chem_mask_root[j];
 #else
@@ -6680,12 +6800,12 @@ PhreeqcRM::RunCellsThread(int n)
 						std::ostringstream line_buff;
 						line_buff << "Time:           " << (this->time) * (this->time_conversion) << "\n";
 						line_buff << "Chemistry cell: " << i << "\n";
-						//line_buff << "Grid cell(s):   ";
-						//for (size_t ib = 0; ib < this->backward_mapping[i].size(); ib++)
-						//{
-						//	line_buff << backward_mapping[i][ib] << " ";
-						//}
-						//line_buff << "\n";
+						line_buff << "Grid cell(s):   ";
+						for (size_t ib = 0; ib < this->backward_mapping[i].size(); ib++)
+						{
+							line_buff << backward_mapping[i][ib] << " ";
+						}
+						line_buff << "\n";
 						*phast_iphreeqc_worker->Get_out_stream() << line_buff.str();
 						*phast_iphreeqc_worker->Get_out_stream() << phast_iphreeqc_worker->GetOutputString();
 					}
@@ -6721,11 +6841,11 @@ PhreeqcRM::RunCellsThread(int n)
 						std::ostringstream line_buff;
 						line_buff << "Time:           " << (this->time) * (this->time_conversion) << "\n";
 						line_buff << "Chemistry cell: " << i;
-						//line_buff << "Grid cell(s):   ";
-						//for (size_t ib = 0; ib < this->backward_mapping[i].size(); ib++)
-						//{
-						//	line_buff << backward_mapping[i][ib] << " ";
-						//}
+						line_buff << "Grid cell(s):   ";
+						for (size_t ib = 0; ib < this->backward_mapping[i].size(); ib++)
+						{
+							line_buff << backward_mapping[i][ib] << " ";
+						}
 						line_buff << "\nCell is dry.\n";
 						*phast_iphreeqc_worker->Get_out_stream() << line_buff.str();
 					}
@@ -7190,7 +7310,7 @@ PhreeqcRM::ScatterNchem(std::vector<double> &source, std::vector<double> &destin
 	{
 		for (int j = 0; j < this->count_chemistry; j++)
 		{
-			int ixyz = this->backward_mapping_root[j][0];
+			int ixyz = this->backward_mapping[j][0];
 			d_array[j] = source[ixyz];
 		}
 	}
@@ -7236,7 +7356,7 @@ PhreeqcRM::ScatterNchem(std::vector<int> &source, std::vector<int> &destination)
 	{
 		for (int j = 0; j < this->count_chemistry; j++)
 		{
-			int ixyz = this->backward_mapping_root[j][0];
+			int ixyz = this->backward_mapping[j][0];
 			i_array[j] = source[ixyz];
 		}
 	}
@@ -7343,7 +7463,7 @@ PhreeqcRM::SetConcentrations(const std::vector<double> &t)
 		c_chem_root.resize(this->count_chemistry * (int) this->components.size(), INACTIVE_CELL_VALUE);
 		for (int i = 0; i < this->count_chemistry; i++)
 		{
-			int j = this->backward_mapping_root[i][0];
+			int j = this->backward_mapping[i][0];
 			for (int k = 0; k < (int) this->components.size(); k++)
 			{
 				c_chem_root[i * (int) this->components.size() + k] = t[k*this->nxyz + j];
@@ -7785,7 +7905,7 @@ PhreeqcRM::SetPressure(const std::vector<double> &t)
 			for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
 			{
 				// j is count_chem number
-				int i = this->backward_mapping_root[j][0];
+				int i = this->backward_mapping[j][0];
 				cxxSolution *soln_ptr = this->GetWorkers()[n]->Get_solution(j);
 				if (soln_ptr)
 				{
@@ -8031,7 +8151,7 @@ PhreeqcRM::SetTemperature(const std::vector<double> &t)
 			for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
 			{
 				// j is count_chem number
-				int i = this->backward_mapping_root[j][0];
+				int i = this->backward_mapping[j][0];
 				cxxSolution *soln_ptr = this->GetWorkers()[n]->Get_solution(j);
 				if (soln_ptr)
 				{
@@ -8364,7 +8484,7 @@ PhreeqcRM::SpeciesConcentrations2Module(std::vector<double> & species_conc)
 		{
 			for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
 			{
-				int j = this->backward_mapping_root[i][0];   // user grid number
+				int j = this->backward_mapping[i][0];   // user grid number
 				cxxNameDouble solution_totals;
 				for (size_t k = 0; k < this->components.size(); k++)
 				{
@@ -8424,6 +8544,99 @@ PhreeqcRM::SpeciesConcentrations2Module(std::vector<double> & species_conc)
 	}
 	return IRM_INVALIDARG;
 }
+#ifdef NEVER_GOT_WORKING_TO_ELIMINATE_BACKWARD_MAPPING
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::SpeciesConcentrations2Module(std::vector<double> & species_conc_root)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+
+	if (this->mpi_myself == 0)
+	{
+		int method = METHOD_SPECIESCONCENTRATIONS2MODULE;
+		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+	}
+	if (this->species_save_on)
+	{
+		std::vector<double> species_conc_worker;
+		if (this->mpi_myself > 0)
+		{
+			species_conc_root.resize(this->species_names.size() * this->nxyz, 0.0);
+		}
+		for (size_t i = 0; i < species_names.size(); i++)
+		{
+			std::vector<double> spec_root;
+			if (this->mpi_myself == 0)
+			{
+				spec_root.resize(this->nxyz);
+				memcpy(&(spec_root[0]), &(species_conc_root[i * this->nxyz]), (size_t) this->nxyz * sizeof(double));
+			}
+			std::vector<double> spec_worker;
+			int size = this->end_cell[this->mpi_myself] - this->start_cell[mpi_myself] + 1;
+			spec_worker.resize(size);
+			ScatterNchem(spec_root, spec_worker);
+			species_conc_worker.insert(species_conc_worker.end(), spec_worker.begin(), spec_worker.end());
+		}
+			for (int i = this->start_cell[this->mpi_myself]; i <= this->end_cell[this->mpi_myself]; i++)
+			{
+				//int j = this->backward_mapping_root[i][0];   // user grid number
+				cxxNameDouble solution_totals;
+				for (size_t k = 0; k < this->components.size(); k++)
+				{
+					solution_totals.add(components[k].c_str(), 0.0);
+				}
+				int stride = this->end_cell[this->mpi_myself] - this->start_cell[mpi_myself] + 1;
+				for (size_t k = 0; k < this->species_names.size(); k++)
+				{
+					// kth species, jth cell
+					double conc = species_conc_worker[k * stride + i];
+					cxxNameDouble::iterator it = this->species_stoichiometry[k].begin();
+					for ( ; it != this->species_stoichiometry[k].end(); it++)
+					{
+						solution_totals.add(it->first.c_str(), it->second * conc);
+					}
+				}
+				cxxNameDouble nd;
+				std::vector<double> d;
+				d.resize(3,0.0);
+				int l = i - this->start_cell[this->mpi_myself];
+				solution_totals.multiply(this->porosity_worker[l] * this->saturation_worker[l] * this->rv_worker[l]);
+
+				cxxNameDouble::iterator it = solution_totals.begin();
+				for ( ; it != solution_totals.end(); it++)
+				{
+					if (it->first == "H")
+					{
+						d[0] = it->second;
+					}
+					else if (it->first == "O")
+					{
+						d[1] = it->second;
+					}
+					else if (it->first == "Charge")
+					{
+						d[2] = it->second;
+					}
+					else
+					{
+						nd.add(it->first.c_str(), it->second);
+					}
+				}
+
+				cxxSolution *soln_ptr = this->GetWorkers()[0]->Get_solution(i);
+
+				if (soln_ptr)
+				{
+					soln_ptr->Update(d[0], d[1], d[2], nd);
+				}
+			}
+		return IRM_OK;
+	}
+	return IRM_INVALIDARG;
+}
+
+#endif
 /* ---------------------------------------------------------------------- */
 double
 PhreeqcRM::TimeStandardTask()

@@ -422,9 +422,9 @@ if (option == "HYDRAULIC_K")
 </CODE>
 @endhtmlonly
 @par MPI:
-Called by root.
+Called by root or workers.
  */
-	const std::vector < std::vector <int> > & GetBackwardMapping(void) {return this->backward_mapping_root;}
+	const std::vector < std::vector <int> > & GetBackwardMapping(void) {return this->backward_mapping;}
 /**
 Returns the number of reaction cells in the reaction module. The number of reaction cells is defined by
 the set of non-negative integers in the mapping from grid cells (@ref CreateMapping), or, by default,
@@ -3657,7 +3657,7 @@ protected:
 	int units_SSassemblage;                 // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 	int units_Kinetics;                     // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 	std::vector <int> forward_mapping_root;				    // mapping from nxyz cells to count_chem chemistry cells
-	std::vector <std::vector <int> > backward_mapping_root;	// mapping from count_chem chemistry cells to nxyz cells
+	std::vector <std::vector <int> > backward_mapping;	    // mapping from count_chem chemistry cells to nxyz cells
 	bool use_solution_density_volume;
 
 	// print flags
