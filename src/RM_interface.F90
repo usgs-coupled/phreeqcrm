@@ -9,7 +9,7 @@
 !>
     MODULE PhreeqcRM
     IMPLICIT NONE
-    SAVE
+    !!!SAVE
 #if defined(NDEBUG)
     LOGICAL :: rmf_debug=.false.
 #else
