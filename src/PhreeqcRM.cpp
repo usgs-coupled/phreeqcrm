@@ -6383,8 +6383,11 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 	// selected output IPhreeqcPhast
 	phast_iphreeqc_worker->CSelectedOutputMap.clear();
 	// Make a dummy run to fill in new CSelectedOutputMap
+	
+	if (selected_output_on)
 	{
 		std::ostringstream input;
+		input << "PRINT; -selected_output true\n";
 		int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
 		input << "SOLUTION " << next << "; DELETE; -solution " << next << "\n";
 		if (phast_iphreeqc_worker->RunString(input.str().c_str()) < 0)
@@ -6483,7 +6486,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 		int j = backward_mapping[i][0];			/* j is nxyz number */
 		double sat = saturation_root[j];
 #endif
-			if (sat > 1e-10)
+			if (sat > 1e-6)
 			{
 				count_active++;
 				if (i == range_end + 1)
@@ -6583,9 +6586,9 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 				{
 					ipp_it->second.EndRow();
 				}
+				}
 			}
-		}
-	}
+			}
 	// Set cell_clock_times
 	if (this->rebalance_by_cell)
 	{
@@ -6770,7 +6773,7 @@ PhreeqcRM::RunCellsThread(int n)
 #endif
 				if (sat <= 1e-6)
 				{
-					//this->saturation[j] = 0.0;
+					//this->saturation_root[j] = 0.0;
 					active = false;
 				}
 
