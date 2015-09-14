@@ -1936,7 +1936,9 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 	int block_count = 0;
 	if (mpi_myself == 0)
 	{
-		std::cerr << "Dump 0% ";
+		//std::cerr << "Dump 0% ";
+		std::ostringstream msg;
+		this->ScreenMessage("Dump 0% ");
 	}
 	// Try for dumping data
 	try
@@ -2025,7 +2027,10 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 				int pct_block_count = (block_count * 10 / total_cells) * 10;
 				if (pct_block_count < 100)
 				{
-					std::cerr << pct_block_count << "% ";
+					//std::cerr << pct_block_count << "% ";
+					std::ostringstream msg;
+					msg << pct_block_count << "% ";
+					this->ScreenMessage(msg.str().c_str());
 				}
 				pct = pct_block_count + 10;
 			}
@@ -2112,7 +2117,8 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 		int pct = 10;
 		int block_count = 0;
 
-		std::cerr << "Dump 0% ";
+		//std::cerr << "Dump 0% ";
+		this->ScreenMessage("Dump 0% ");
 
 		for (int iblock = 0; iblock < nblocks; iblock++)
 		{
@@ -2174,12 +2180,20 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 			{
 				if (pct_block_count < 100)
 				{
-					std::cerr << pct_block_count << "% ";
+					//std::cerr << pct_block_count << "% ";
+					std::ostringstream msg;
+					msg << pct_block_count << "% ";
+					this->ScreenMessage(msg.str().c_str());
 				}
 				pct = pct_block_count + 10;
 			}
 		}
-		std::cerr << "100% " << std::endl;
+		{
+			//std::cerr << "100% " << std::endl;
+			std::ostringstream msg;
+			msg << "100% " << std::endl;
+			this->ScreenMessage(msg.str().c_str());
+		}
 
 		for (int n = 0; n < this->nthreads; n++)
 		{
@@ -3772,7 +3786,8 @@ PhreeqcRM::InitialPhreeqc2Module(
 		}
 		if (return_value != IRM_OK)
 		{
-			std::cerr << errstr.str() << std::endl;
+			//std::cerr << errstr.str() << std::endl;
+			this->ErrorMessage(errstr.str());
 		}
 #ifdef USE_MPI
 		std::vector<int> r_values;
@@ -5151,8 +5166,12 @@ PhreeqcRM::RebalanceLoad(void)
 				if (t > max_old)
 					max_old = t;
 			}
-			std::cerr << "          Estimated efficiency of chemistry " << (float) ((LDBLE) 100. * max_new / max_old) << "\n";
-
+			{
+				//std::cerr << "          Estimated efficiency of chemistry " << (float) ((LDBLE) 100. * max_new / max_old) << "\n";
+				std::ostringstream msg;
+				msg << "          Estimated efficiency of chemistry " << (float) ((LDBLE) 100. * max_new / max_old) << "\n";
+				this->ScreenMessage(msg.str().c_str());
+			}
 
 			if ((max_old - max_new) / max_old < 0.05)
 			{
@@ -5317,7 +5336,10 @@ PhreeqcRM::RebalanceLoad(void)
 			}
 			if (this->mpi_myself == 0)
 			{
-				std::cerr << "          Cells shifted between processes     " << change << "\n";
+				//std::cerr << "          Cells shifted between processes     " << change << "\n";
+				std::ostringstream msg;
+				msg << "          Cells shifted between processes     " << change << "\n";
+				this->ScreenMessage(msg.str().c_str());
 			}
 			if (change > 0)
 			{
@@ -5501,9 +5523,12 @@ PhreeqcRM::RebalanceLoad(void)
 			if (t > max_old)
 				max_old = t;
 		}
-		std::cerr << "          Estimated efficiency of chemistry " << (float) ((LDBLE) 100. * max_new / max_old) << "\n";
-
-
+		{
+			//std::cerr << "          Estimated efficiency of chemistry " << (float) ((LDBLE) 100. * max_new / max_old) << "\n";
+			std::ostringstream msg;
+			msg << "          Estimated efficiency of chemistry " << (float) ((LDBLE) 100. * max_new / max_old) << "\n";
+			this->ScreenMessage(msg.str().c_str());
+		}
 		if ((max_old - max_new) / max_old < 0.05)
 		{
 			for (int i = 0; i < this->nthreads; i++)
@@ -5575,7 +5600,12 @@ PhreeqcRM::RebalanceLoad(void)
 			worker->Set_start_cell(start_cell_new[i]);
 			worker->Set_end_cell(end_cell_new[i]);
 		}
-		std::cerr << "          Cells shifted between threads     " << change << "\n";
+		{
+			//std::cerr << "          Cells shifted between threads     " << change << "\n";
+			std::ostringstream msg;
+			msg << "          Cells shifted between threads     " << change << "\n";
+			this->ScreenMessage(msg.str().c_str());
+		}
 	}
 	catch (...)
 	{
@@ -5675,8 +5705,14 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 		{
 			efficiency += task_time[i] / max_task_time * task_fraction[i];
 		}
-		std::cerr << "          Estimated efficiency of chemistry without communication: " <<
+		{
+			//std::cerr << "          Estimated efficiency of chemistry without communication: " <<
+			//		   (float) (100. * efficiency) << "\n";
+			std::ostringstream msg;
+			msg << "          Estimated efficiency of chemistry without communication: " <<
 					   (float) (100. * efficiency) << "\n";
+			this->ScreenMessage(msg.str().c_str());
+		}
 
 		// Split up work
 		double f_low, f_high;
@@ -5881,7 +5917,10 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 		}
 		if (this->mpi_myself == 0)
 		{
-			std::cerr << "          Cells shifted between processes     " << change << "\n";
+			//std::cerr << "          Cells shifted between processes     " << change << "\n";
+			std::ostringstream msg;
+			msg << "          Cells shifted between processes     " << change << "\n";
+			this->ScreenMessage(msg.str().c_str());
 		}
 
 		if (change > 0)
@@ -5981,8 +6020,14 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 	{
 		efficiency += task_time[i] / max_task_time * task_fraction[i];
 	}
-	std::cerr << "          Estimated efficiency of chemistry without communication: " <<
-		(float) (100. * efficiency) << "\n";;
+	{
+			//std::cerr << "          Estimated efficiency of chemistry without communication: " <<
+			//	(float) (100. * efficiency) << "\n";
+			std::ostringstream msg;
+			msg << "          Estimated efficiency of chemistry without communication: " <<
+				(float) (100. * efficiency) << "\n";
+			this->ScreenMessage(msg.str().c_str());
+	}
 
 	// Split up work
 	double f_low, f_high;
@@ -6105,7 +6150,12 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 			worker->Set_start_cell(start_cell_new[i]);
 			worker->Set_end_cell(end_cell_new[i]);
 		}
-		std::cerr << "          Cells shifted between threads     " << change << "\n";
+		{
+			//std::cerr << "          Cells shifted between threads     " << change << "\n";
+			std::ostringstream msg;
+			msg << "          Cells shifted between threads     " << change << "\n";
+			this->ScreenMessage(msg.str().c_str());
+		}
 	}
 	catch (...)
 	{
@@ -6263,7 +6313,10 @@ PhreeqcRM::RunCells()
 		MPI_Barrier(this->phreeqcrm_comm);
 		if (mpi_myself == 0 && mpi_tasks > 1)
 		{
-			std::cerr << "          Time rebalancing load             " << double(clock() - t0)/CLOCKS_PER_SEC << "\n";
+			//std::cerr << "          Time rebalancing load             " << double(clock() - t0)/CLOCKS_PER_SEC << "\n";
+			std::ostringstream msg;
+			msg << "          Time rebalancing load             " << double(clock() - t0)/CLOCKS_PER_SEC << "\n";
+			this->ScreenMessage(msg.str().c_str());
 		}
 	}
 	catch (...)
@@ -6358,7 +6411,10 @@ PhreeqcRM::RunCells()
 		this->RebalanceLoad();
 		if (mpi_myself == 0 && nthreads > 1)
 		{
-			std::cerr << "          Time rebalancing load             " << double(clock() - t0)/CLOCKS_PER_SEC << "\n";
+			//std::cerr << "          Time rebalancing load             " << double(clock() - t0)/CLOCKS_PER_SEC << "\n";
+			std::ostringstream msg;
+			msg << "          Time rebalancing load             " << double(clock() - t0)/CLOCKS_PER_SEC << "\n";
+			this->ScreenMessage(msg.str().c_str());
 		}
 	}
 	catch (...)
