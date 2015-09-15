@@ -3058,6 +3058,26 @@ Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                SetSaturation(const std::vector<double> &sat);
 /**
+Set the property that controls whether messages are written to the screen.
+Messages include information about rebalancing during @ref RunCells, and
+any messages written with @ref ScreenMessage.
+
+@param tf  @a True, enable screen messages; @a False, disable screen messages. Default is true.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref RunCells, @ref ScreenMessage.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.SetScreenOn(true);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+ */
+	IRM_RESULT                                SetScreenOn(bool tf);
+/**
 Set the property that controls whether selected-output results are available to be retrieved
 with @ref GetSelectedOutput. @a True indicates that selected-output results
 will be accumulated during @ref RunCells and can be retrieved with @ref GetSelectedOutput;

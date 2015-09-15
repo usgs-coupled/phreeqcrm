@@ -331,6 +331,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 			sprintf(str, "%s%10.1f%s", "Beginning transport calculation      ", 
 				RM_GetTime(id) * RM_GetTimeConversion(id), " days\n");
 			status = RM_LogMessage(id, str);
+			status = RM_SetScreenOn(id, 1);
 			status = RM_ScreenMessage(id, str);
 			sprintf(str, "%s%10.1f%s", "          Time step                  ", 
 				RM_GetTimeStep(id) * RM_GetTimeConversion(id), " days\n");

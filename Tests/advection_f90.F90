@@ -302,6 +302,7 @@ subroutine advection_f90()  BIND(C)
      write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
           RM_GetTime(id) * RM_GetTimeConversion(id), " days"
      status = RM_LogMessage(id, string)
+     status = RM_SetScreenOn(id, 1)
      status = RM_ScreenMessage(id, string)
      write(string, "(A32,F15.1,A)") "          Time step             ", &
           RM_GetTimeStep(id) * RM_GetTimeConversion(id), " days"

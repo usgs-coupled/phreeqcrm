@@ -274,6 +274,7 @@ int advection_cpp()
 				strm << "Beginning transport calculation             " <<   phreeqc_rm.GetTime() * phreeqc_rm.GetTimeConversion() << " days\n";
 				strm << "          Time step                         " <<   phreeqc_rm.GetTimeStep() * phreeqc_rm.GetTimeConversion() << " days\n";
 				phreeqc_rm.LogMessage(strm.str());
+				phreeqc_rm.SetScreenOn(true);
 				phreeqc_rm.ScreenMessage(strm.str());
 			}
 			AdvectCpp(c, bc_conc, ncomps, nxyz, nbound);

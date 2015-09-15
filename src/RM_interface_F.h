@@ -117,6 +117,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_SetRebalanceByCell(int *id, int *method);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetRebalanceFraction(int *id, double *f);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetRepresentativeVolume(int *id, double *t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetSaturation(int *id, double *t);
+IRM_DLL_EXPORT IRM_RESULT RMF_SetScreenOn(int *id, int *t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetSelectedOutputOn(int *id, int *selected_output);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetSpeciesSaveOn(int *id, int *save_on);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetTemperature(int *id, double *t);
