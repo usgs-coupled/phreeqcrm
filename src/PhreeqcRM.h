@@ -12,7 +12,8 @@
 class IPhreeqcPhast;
 
 class cxxStorageBin;
-class cxxNameDouble;
+//class cxxNameDouble;
+#include "NameDouble.h"
 class cxxSolution;
 class PHRQ_io;
 #include <vector>
@@ -35,20 +36,23 @@ class IPhreeqc;
  * @brief This class is derived from std::exception and is thrown
  * when an unrecoverable error has occured.
  */
-class IRM_DLL_EXPORT PhreeqcRMStop : std::exception
+class IRM_DLL_EXPORT PhreeqcRMStop : public std::exception
 {
+public:
+  const char *what() const throw () {return "Failure in PhreeqcRM\n";}
 };
 
 /*! @brief Enumeration used to return error codes.
 */
 #include "IrmResult.h"
-typedef enum {
+enum {
 	METHOD_CREATEMAPPING,
 	METHOD_DUMPMODULE,
 	METHOD_FINDCOMPONENTS,
 	METHOD_GETCONCENTRATIONS,
 	METHOD_GETDENSITY,
 	METHOD_GETERRORSTRING,
+	METHOD_GETPRESSURE,
 	METHOD_GETSATURATION,
 	METHOD_GETSELECTEDOUTPUT,
 	METHOD_GETSOLUTIONVOLUME,
@@ -56,6 +60,7 @@ typedef enum {
 	METHOD_GETSURFACEDIFFUSELAYERAREA,
 	METHOD_GETSURFACEDIFFUSELAYERCONCENTRATIONS,
 	METHOD_GETSURFACEDIFFUSELAYERTHICKNESS,
+	METHOD_GETTEMPERATURE,
 	METHOD_INITIALPHREEQC2MODULE,
 	METHOD_INITIALPHREEQCCELL2MODULE,
 	METHOD_LOADDATABASE,
@@ -434,7 +439,7 @@ if (option == "HYDRAULIC_K")
 </CODE>
 @endhtmlonly
 @par MPI:
-Called by root and (or) workers.
+Called by root or workers.
  */
 	const std::vector < std::vector <int> > & GetBackwardMapping(void) {return this->backward_mapping;}
 /**
@@ -703,9 +708,9 @@ const std::vector<int> &f_map = phreeqc_rm.GetForwardMapping();
 </CODE>
 @endhtmlonly
 @par MPI:
-Called by root and (or) workers.
+Called by root.
  */
-	const std::vector < int > &               GetForwardMapping(void) {return this->forward_mapping;}
+	const std::vector < int > &               GetForwardMapping(void) {return this->forward_mapping_root;}
 /**
 Returns a reference to a vector of doubles that contains the gram-formula weight of
 each component. Called after @ref FindComponents. Order of weights corresponds to the list of components from
@@ -948,7 +953,7 @@ const std::vector<double> & p_atm = phreeqc_rm.GetPressure();
 @par MPI:
 Called by root and (or) workers.
  */
-	std::vector<double> &                     GetPressure(void) {return this->pressure;}
+	const std::vector<double> &                     GetPressure(void);
 /**
 Return a reference to the vector of print flags that enable or disable detailed output for each cell.
 Printing for a cell will occur only when the
@@ -967,9 +972,9 @@ const std::vector<int> & print_chemistry_mask1 = phreeqc_rm.GetPrintChemistryMas
 </CODE>
 @endhtmlonly
 @par MPI:
-Called by root and (or) workers.
+Called by root.
  */
-	const std::vector<int> &                  GetPrintChemistryMask (void) {return this->print_chem_mask;}
+	const std::vector<int> &                  GetPrintChemistryMask (void) {return this->print_chem_mask_root;}
 /**
 Returns a vector reference to the current print flags for detailed output for the three sets of IPhreeqc instances:
 the workers, the InitialPhreeqc instance, and the Utility instance. Dimension of the vector is 3.
@@ -1821,9 +1826,10 @@ const std::vector<double> &  tempc = phreeqc_rm.GetTemperature();
 </CODE>
 @endhtmlonly
 @par MPI:
-Called by root and (or) workers.
+Called by root.
  */
-	const std::vector<double> &               GetTemperature(void) {return this->tempc;}
+	//const std::vector<double> &               GetTemperature(void) {return this->tempc;}
+	const std::vector<double> &               GetTemperature(void);
 /**
 Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
 For the OPENMP version, the number of threads is set implicitly or explicitly
@@ -3355,6 +3361,26 @@ Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                SetSaturation(const std::vector<double> &sat);
 /**
+Set the property that controls whether messages are written to the screen.
+Messages include information about rebalancing during @ref RunCells, and
+any messages written with @ref ScreenMessage.
+
+@param tf  @a True, enable screen messages; @a False, disable screen messages. Default is true.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref RunCells, @ref ScreenMessage.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.SetScreenOn(true);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+ */
+	IRM_RESULT                                SetScreenOn(bool tf);
+/**
 Set the property that controls whether selected-output results are available to be retrieved
 with @ref GetSelectedOutput. @a True indicates that selected-output results
 will be accumulated during @ref RunCells and can be retrieved with @ref GetSelectedOutput;
@@ -3923,6 +3949,8 @@ protected:
 		                                          std::set<std::string> &error_set);
 	IRM_RESULT                                CheckCells();
 	int                                       CheckSelectedOutput();
+    //void                                      Collapse2Nchem(double *d_in, double *d_out);
+    //void                                      Collapse2Nchem(int *i_in, int *i_out);
 	IPhreeqc *                                Concentrations2UtilityH2O(std::vector<double> &c_in,
 		                                           std::vector<double> &t_in, std::vector<double> &p_in);
 	IPhreeqc *                                Concentrations2UtilityNoH2O(std::vector<double> &c_in,
@@ -3933,6 +3961,7 @@ protected:
 	void                                      cxxSolution2concentration(cxxSolution * cxxsoln_ptr, std::vector<double> & d, double v, double dens);
 	void                                      cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector<double> & d, double v, double dens);
 	void                                      cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector<double> & d, double v, double dens);
+    void                                      GatherNchem(std::vector<double> &source, std::vector<double> &destination);
 	cxxStorageBin &                           Get_phreeqc_bin(void) {return *this->phreeqc_bin;}
 	IRM_RESULT                                HandleErrorsInternal(std::vector< int > & r);
 	void                                      PartitionUZ(int n, int iphrq, int ihst, double new_frac);
@@ -3943,6 +3972,10 @@ protected:
 	IRM_RESULT                                RunStringThread(int n, std::string & input);
 	IRM_RESULT                                RunCellsThreadNoPrint(int n);
 	void                                      Scale_solids(int n, int iphrq, double frac);
+	void                                      ScatterNchem(double *d_array);
+	void                                      ScatterNchem(int *i_array);
+	void                                      ScatterNchem(std::vector<double> &source, std::vector<double> &destination);
+	void                                      ScatterNchem(std::vector<int> &source, std::vector<int> &destination);
 	IRM_RESULT                                SetChemistryFileName(const char * prefix = NULL);
 	IRM_RESULT                                SetDatabaseFileName(const char * db = NULL);
 	void                                      SetEndCells(void);
@@ -3952,7 +3985,8 @@ protected:
 	IRM_RESULT                                TransferCellsUZ(std::ostringstream &raw_stream, int old, int nnew);
 
 private:
-	IRM_RESULT                                SetGeneric(std::vector<double> &destination, int newSize, const std::vector<double> &origin, int mpiMethod, const std::string &name, const double newValue = 0.0);
+	//IRM_RESULT                                SetGeneric(std::vector<double> &destination, int newSize, const std::vector<double> &origin, int mpiMethod, const std::string &name, const double newValue = 0.0);
+	IRM_RESULT                                SetGeneric(const std::vector<double> &source, std::vector<double> &destination_root, std::vector<double> &destination_worker, int mpiMethod, const std::string &name);
 protected:
 
 #if defined(_MSC_VER)
@@ -3979,15 +4013,24 @@ protected:
 	double time;						    // time from transport, sec
 	double time_step;					    // time step from transport, sec
 	double time_conversion;					// time conversion factor, multiply to convert to preferred time unit for output
-	std::vector <double> old_saturation;	// saturation fraction from previous step
-	std::vector<double> saturation;	        // nxyz saturation fraction
-	std::vector<double> pressure;			// nxyz current pressure
-	std::vector<double> rv;		            // nxyz representative volume
-	std::vector<double> porosity;		    // nxyz porosity
-	std::vector<double> tempc;				// nxyz temperature Celsius
-	std::vector<double> density;			// nxyz density
-	std::vector<double> solution_volume;	// nxyz density
-	std::vector<int> print_chem_mask;		// nxyz print flags for output file
+	std::vector <double> old_saturation_root;	// saturation fraction from previous step
+	std::vector <double> old_saturation_worker;
+	std::vector<double> saturation_root;	    // nxyz saturation fraction
+	std::vector<double> saturation_worker;	    // nchem on workers saturation fraction
+	std::vector<double> pressure_root;			// nxyz on root current pressure
+	std::vector<double> pressure_worker;		// nchem on workers current pressure
+	std::vector<double> rv_root;		        // nxyz on root representative volume
+	std::vector<double> rv_worker;		        // nchem on workers representative volume
+	std::vector<double> porosity_root;		    // nxyz porosity
+	std::vector<double> porosity_worker;	    // nchem on workers porosity
+	std::vector<double> tempc_root;             // nxyz on root temperature Celsius 
+	std::vector<double> tempc_worker;		    // nchem on workers temperature Celsius 
+	std::vector<double> density_root;			// nxyz density
+	std::vector<double> density_worker;			// nchem on workers density
+	std::vector<double> solution_volume_root;   // nxyz on root solution volume
+	std::vector<double> solution_volume_worker;	// nchem on workers solution_volume 
+	std::vector<int> print_chem_mask_root;		// nxyz print flags for output file
+	std::vector<int> print_chem_mask_worker;	// nchem print flags for output file
 	bool rebalance_by_cell;                 // rebalance method 0 std, 1 by_cell
 	double rebalance_fraction;			    // parameter for rebalancing process load for parallel
 	int units_Solution;                     // 1 mg/L, 2 mol/L, 3 kg/kgs
@@ -3997,7 +4040,7 @@ protected:
 	int units_GasPhase;                     // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 	int units_SSassemblage;                 // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 	int units_Kinetics;                     // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
-	std::vector <int> forward_mapping;					// mapping from nxyz cells to count_chem chemistry cells
+	std::vector <int> forward_mapping_root;				    // mapping from nxyz cells to count_chem chemistry cells
 	std::vector <std::vector <int> > backward_mapping;	// mapping from count_chem chemistry cells to nxyz cells
 	bool use_solution_density_volume;
 

@@ -32,7 +32,7 @@
 				<Tool Name="VFPreBuildEventTool"/>
 				<Tool Name="VFPostBuildEventTool"/></Configuration>
 		<Configuration Name="mpi|x64" OutputDirectory="$(PlatformName)\$(ConfigurationName)\$(ProjectName)\" IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\$(ProjectName)\" DeleteExtensionsOnClean="" ConfigurationType="typeStaticLibrary">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" MultiProcessorCompilation="true" Preprocess="preprocessYes" AdditionalIncludeDirectories="..\..;..\..\IPhreeqcPhast\IPhreeqc;$(MSMPI_INC);$(MSMPI_INC)\amd64" PreprocessorDefinitions="USE_MPI" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" MultiProcessorCompilation="true" Preprocess="preprocessYes" AdditionalIncludeDirectories="..\..;..\..\IPhreeqcPhast\IPhreeqc;$(MSMPI_INC);&quot;$(MSMPI_INC)\x64&quot;" PreprocessorDefinitions="USE_MPI" RuntimeLibrary="rtMultiThreadedDLL"/>
 				<Tool Name="VFLibrarianTool"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
