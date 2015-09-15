@@ -3737,6 +3737,41 @@ SUBROUTINE Chk_SetSaturation(id, sat)
     endif
 END SUBROUTINE Chk_SetSaturation
 
+!> Set the property that controls whether messages are written to the screen.
+!> Messages include information about rebalancing during @ref RM_RunCells, and
+!> any messages written with @ref RM_ScreenMessage.
+!> 
+!> @param tf  @a 1, enable screen messages; @a 0, disable screen messages. Default is 1.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    @ref RM_RunCells, @ref RM_ScreenMessage.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = RM_SetScreenOn(rm_id, 1)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_SetScreenOn(id, tf)
+	USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_SetScreenOn(id, tf) &
+			BIND(C, NAME='RMF_SetScreenOn')
+			USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            INTEGER(KIND=C_INT), INTENT(in) :: tf
+        END FUNCTION RMF_SetScreenOn 
+	END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in) :: tf
+    RM_SetScreenOn = RMF_SetScreenOn(id, tf)
+END FUNCTION RM_SetScreenOn 
+
 !> Setting determines whether selected-output results are available to be retrieved
 !> with @ref RM_GetSelectedOutput. @a 1 indicates that selected-output results
 !> will be accumulated during @ref RM_RunCells and can be retrieved with @ref RM_GetSelectedOutput;

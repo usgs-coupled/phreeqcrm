@@ -8118,6 +8118,18 @@ PhreeqcRM::SetSaturation(const std::vector<double> &t)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+PhreeqcRM::SetScreenOn(bool t)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (mpi_myself == 0)
+	{
+		this->phreeqcrm_io->Set_screen_on(t);
+	}
+	return IRM_OK;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 PhreeqcRM::SetSelectedOutputOn(bool t)
 /* ---------------------------------------------------------------------- */
 {

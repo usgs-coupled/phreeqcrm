@@ -1505,6 +1505,19 @@ RMF_SetSaturation(int *id, double *t)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+RMF_SetScreenOn(int *id, int *tf)
+/* ---------------------------------------------------------------------- */
+{
+	// Specifies whether screen messages are written
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->SetScreenOn(*tf != 0);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 RMF_SetSelectedOutputOn(int *id, int *selected_output_on)
 /* ---------------------------------------------------------------------- */
 {

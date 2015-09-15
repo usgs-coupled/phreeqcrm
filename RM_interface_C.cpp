@@ -1353,6 +1353,19 @@ RM_SetSaturation(int id, double *t)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+RM_SetScreenOn(int id, int tf)
+/* ---------------------------------------------------------------------- */
+{
+	// pass pointers from Fortran to the Reaction module
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->SetSelectedOutputOn(tf != 0);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 RM_SetSelectedOutputOn(int id, int selected_output_on)
 /* ---------------------------------------------------------------------- */
 {

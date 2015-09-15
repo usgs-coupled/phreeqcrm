@@ -2364,6 +2364,27 @@ Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SetSaturation(int id, double *sat);
 /**
+Set the property that controls whether messages are written to the screen.
+Messages include information about rebalancing during @ref RM_RunCells, and
+any messages written with @ref RM_ScreenMessage.
+
+@param id               The instance @a id returned from @ref RM_Create.
+@param tf  @a 1, enable screen messages; @a 0, disable screen messages. Default is 1.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see                    @ref RM_RunCells, @ref RM_ScreenMessage.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+status = RM_SetScreenOn(id, 1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_SetScreenOn(int id, int tf);
+/**
 Setting determines whether selected-output results are available to be retrieved
 with @ref RM_GetSelectedOutput. @a 1 indicates that selected-output results
 will be accumulated during @ref RM_RunCells and can be retrieved with @ref RM_GetSelectedOutput;
