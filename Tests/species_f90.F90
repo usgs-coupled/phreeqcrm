@@ -42,7 +42,7 @@ subroutine species_f90()  BIND(C)
   integer,          dimension(:), allocatable   :: bc1, bc2
   double precision, dimension(:), allocatable   :: bc_f1
   integer,          dimension(:), allocatable   :: module_cells
-  double precision, dimension(:,:), allocatable :: bc_conc
+  double precision, dimension(:,:), allocatable :: bc_conc, bc_lg
   double precision, dimension(:,:), allocatable :: c
   double precision, dimension(:,:), allocatable :: species_c
   integer                                       :: nspecies
@@ -271,7 +271,7 @@ subroutine species_f90()  BIND(C)
         enddo
     enddo
   enddo
-                    
+            
                     
                     
   ! --------------------------------------------------------------------------
@@ -286,6 +286,14 @@ subroutine species_f90()  BIND(C)
   bc_f1 = 1.0       ! mixing fraction for bc1 
   !status = RM_InitialPhreeqc2Concentrations(id, bc_conc, nbound, bc1, bc2, bc_f1)
   status = RM_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, nbound, bc1, bc2, bc_f1)
+  allocate(bc_lg(nbound, nspecies))  
+  status = RM_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, nbound, bc1);
+  status = RM_ScreenMessage(id, "Species            Conc           Log Gamma");
+  do i = 1, nspecies
+    status = RM_GetSpeciesName(id, i, string)
+    write(string1,"(A12,4x,E12.4,4x,E12.4)") string, bc_conc(1,i), bc_lg(1,i)
+    status = RM_ScreenMessage(id, string1);
+  enddo
 
   ! --------------------------------------------------------------------------
   ! Transient loop
@@ -417,6 +425,7 @@ subroutine species_f90()  BIND(C)
   deallocate(bc2) 
   deallocate(bc_f1) 
   deallocate(bc_conc) 
+  deallocate(bc_lg) 
   deallocate(c) 
   deallocate(density) 
   deallocate(temperature) 

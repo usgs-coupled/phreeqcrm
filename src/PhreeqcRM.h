@@ -2353,7 +2353,7 @@ and @a n_boundary is the dimension of @a boundary_solution1.
 @param boundary_solution1  Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
 @retval IRM_RESULT         0 is success, negative is failure (See @ref DecodeError).
 
-@ref GetSpeciesCount, 
+@see @ref GetSpeciesCount, 
 @ref GetSpeciesD25, 
 @ref GetSpeciesLogGammas, 
 @ref GetSpeciesNames, 
@@ -2403,7 +2403,7 @@ and are defined to mix with @a boundary_solution1. Size is same as @a boundary_s
 @param fraction1           Vector of fractions of @a boundary_solution1 that mix with (1 - @a fraction1) of @a boundary_solution2.
 Size is same as @a boundary_solution1.
 @retval IRM_RESULT         0 is success, negative is failure (See @ref DecodeError).
-
+@see
 @ref GetSpeciesCount, 
 @ref GetSpeciesD25, 
 @ref GetSpeciesLogGammas, 
@@ -2450,7 +2450,7 @@ where @a nspecies is the number of aqueous species returned from @ref GetSpecies
 and @a n_boundary is the dimension of @a boundary_solution1.
 @param boundary_solution1  Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
 @retval IRM_RESULT         0 is success, negative is failure (See @ref DecodeError).
-
+@see
 @ref GetSpeciesCount, 
 @ref GetSpeciesD25, 
 @ref GetSpeciesLogGammas, 

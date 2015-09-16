@@ -756,7 +756,7 @@ int RMF_GetSurfaceDiffuseLayerCount(int *id)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_GetSurfaceDiffuseLayerName(int *id, int *num, char *surf_name, int l1)
+RMF_GetSurfaceDiffuseLayerName(int *id, int *num, char *surf_name, int *l1)
 /* ---------------------------------------------------------------------- */
 {
 	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
@@ -764,9 +764,10 @@ RMF_GetSurfaceDiffuseLayerName(int *id, int *num, char *surf_name, int l1)
 	{
 		if (surf_name != NULL)
 		{
-			if (l1 > 0 && *num >= 0 && *num < (int) Reaction_module_ptr->GetSurfaceDiffuseLayerNames().size())
+			int numc = *num - 1;
+			if (*l1 > 0 && *num >= 0 && numc < (int) Reaction_module_ptr->GetSurfaceDiffuseLayerNames().size())
 			{
-				strncpy(surf_name, Reaction_module_ptr->GetSurfaceDiffuseLayerNames()[*num].c_str(), l1);
+				strncpy(surf_name, Reaction_module_ptr->GetSurfaceDiffuseLayerNames()[numc].c_str(), *l1);
 				return IRM_OK;
 			}
 		}
@@ -1142,6 +1143,44 @@ RMF_InitialPhreeqc2SpeciesConcentrations2(
 		if (return_value == 0)
 		{
 			memcpy(species_c, &destination_c.front(), destination_c.size() * sizeof(double));
+		}       
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialPhreeqc2SpeciesLogGammas(
+			int *id,
+			double *species_lg,
+			int *n_boundary,
+			int *boundary_solution1)
+/* ---------------------------------------------------------------------- */
+{
+/*
+ *   Routine takes a list of solution numbers and returns a set of
+ *   aqueous species log gammas
+ *   Input: n_boundary - number of boundary conditions in list
+ *          boundary_solution1 - list of first solution numbers to be mixed
+ *
+ *   Output: species_lg - aqueous species log gammas for boundary conditions
+ *                      - dimensions must be n_boundary x n_species
+ *
+ */
+	
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector < int > boundary_solution1_vector;
+		std::vector < double > destination_lg;
+		boundary_solution1_vector.resize(*n_boundary);
+		memcpy(&boundary_solution1_vector.front(), boundary_solution1, (size_t) (*n_boundary * sizeof(int)));
+		IRM_RESULT return_value = Reaction_module_ptr->InitialPhreeqc2SpeciesLogGammas(
+			destination_lg,
+			boundary_solution1_vector);		
+		if (return_value == 0)
+		{
+			memcpy(species_lg, &destination_lg.front(), destination_lg.size() * sizeof(double));
 		}       
 		return return_value;
 	}

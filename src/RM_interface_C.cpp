@@ -1043,6 +1043,49 @@ RM_InitialPhreeqc2SpeciesConcentrations(
 	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_InitialPhreeqc2SpeciesLogGammas(
+			int id,
+			double *species_lg,
+			int n_boundary,
+			int *boundary_solution1)
+/* ---------------------------------------------------------------------- */
+{
+	/*
+	*   Routine takes a list of solution numbers and returns a set of
+	*   aqueous species log gammas
+	*   Input: n_boundary - number of boundary conditions in list
+	*          boundary_solution1 - list of first solution numbers to be mixed
+	*
+	*   Output: species_lg - aqueous species log gammas for boundary conditions
+	*                      - dimensions must be n_boundary x n_species
+	*
+	*/
+
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (species_lg && boundary_solution1)
+		{
+			std::vector < int > boundary_solution1_vector;
+			std::vector < double > destination_lg;
+			boundary_solution1_vector.resize(n_boundary);
+			memcpy(&boundary_solution1_vector.front(), boundary_solution1, (size_t) (n_boundary * sizeof(int)));
+
+			IRM_RESULT return_value = Reaction_module_ptr->InitialPhreeqc2SpeciesConcentrations(
+				destination_lg,
+				boundary_solution1_vector);		
+			if (return_value == 0)
+			{
+				memcpy(species_lg, &destination_lg.front(), destination_lg.size() * sizeof(double));
+			}       
+			return return_value;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
 IRM_RESULT 
 RM_LoadDatabase(int id, const char *db_name)
 	/* ---------------------------------------------------------------------- */

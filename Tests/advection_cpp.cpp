@@ -70,6 +70,15 @@ int advection_cpp()
 		some_data.PhreeqcRM_ptr = &phreeqc_rm;
 #endif
 		IRM_RESULT status;
+		// Demonstation of mapping, two equivalent rows by symmetry
+		std::vector<int> grid2chem;
+		grid2chem.resize(nxyz, -1);
+		for (int i = 0; i < nxyz/2; i++)
+		{
+			grid2chem[i] = i;
+			grid2chem[i + nxyz/2] = i;
+		}
+		status = phreeqc_rm.CreateMapping(grid2chem);
 		// Set properties
 		status = phreeqc_rm.SetErrorHandlerMode(1);
 		status = phreeqc_rm.SetComponentH2O(false);
@@ -121,7 +130,6 @@ int advection_cpp()
 		bool rebalance = phreeqc_rm.GetRebalanceByCell();
 		double f_rebalance = phreeqc_rm.GetRebalanceFraction();
 		bool so_on = phreeqc_rm.GetSelectedOutputOn();
-		const std::vector<double> &  tempc = phreeqc_rm.GetTemperature();
 		int units_exchange = phreeqc_rm.GetUnitsExchange();
 		int units_gas_phase = phreeqc_rm.GetUnitsGasPhase();
 		int units_kinetics = phreeqc_rm.GetUnitsKinetics();
@@ -129,15 +137,6 @@ int advection_cpp()
 		int units_solution = phreeqc_rm.GetUnitsSolution();
 		int units_ss_exchange = phreeqc_rm.GetUnitsSSassemblage();
 		int units_surface = phreeqc_rm.GetUnitsSurface();
-		// Demonstation of mapping, two equivalent rows by symmetry
-		std::vector<int> grid2chem;
-		grid2chem.resize(nxyz, -1);
-		for (int i = 0; i < nxyz/2; i++)
-		{
-			grid2chem[i] = i;
-			grid2chem[i + nxyz/2] = i;
-		}
-		status = phreeqc_rm.CreateMapping(grid2chem);
 		if (status < 0) phreeqc_rm.DecodeError(status);
 		int nchem = phreeqc_rm.GetChemistryCellCount();
 
@@ -229,6 +228,7 @@ int advection_cpp()
 		// get current saturation
 		std::vector<double> current_sat;
 		status = phreeqc_rm.GetSaturation(current_sat);
+		const std::vector<double> &  tempc = phreeqc_rm.GetTemperature();
 		// Initial equilibration of cells
 		double time = 0.0;
 		double time_step = 0.0;

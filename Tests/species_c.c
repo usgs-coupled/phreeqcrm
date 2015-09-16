@@ -41,6 +41,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		int * bc2;
 		double * bc_f1;
 		double * bc_conc;
+		double * bc_lg;
 		double * c;
 		double * species_c;
 		double * species_d;
@@ -309,6 +310,15 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 			bc_f1[i]        = 1.0;     // mixing fraction for bc1
 		} 
 		status = RM_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, nbound, bc1, bc2, bc_f1);
+		bc_lg = (double *) malloc((size_t) (nspecies * nbound * sizeof(double)));
+		status = RM_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, nbound, bc1);
+		status = RM_ScreenMessage(id,"     Species            Conc       Log Gamma\n");
+		for (k = 0; k < nspecies; k++)
+		{
+			status = RM_GetSpeciesName(id, k, str, 100);
+			sprintf(str1, "%12s\t%12.2e\t%12.2e\n", str, bc_conc[k], bc_lg[k]);
+			status = RM_ScreenMessage(id, str1);
+		}
 
 		// --------------------------------------------------------------------------
 		// Transient loop
@@ -459,6 +469,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		free(bc2);
 		free(bc_f1);
 		free(bc_conc);
+		free(bc_lg);
 		free(c);
 		free(density);
 		free(temperature);

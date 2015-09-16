@@ -55,7 +55,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesZ(int *id, double *z);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSurfaceDiffuseLayerArea(int *id, char *surf, double * areas);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSurfaceDiffuseLayerConcentrations(int *id, char * surf, double * dl_species_conc);
 IRM_DLL_EXPORT int        RMF_GetSurfaceDiffuseLayerCount(int *id);
-IRM_DLL_EXPORT IRM_RESULT RMF_GetSurfaceDiffuseLayerName(int *id, int *num, char *surf_name, int l1);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetSurfaceDiffuseLayerName(int *id, int *num, char *surf_name, int *l1);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSurfaceDiffuseLayerThickness(int *id, char *surf, double * thickness);
 IRM_DLL_EXPORT int        RMF_GetThreadCount(int *id);
 IRM_DLL_EXPORT double     RMF_GetTime(int *id);
@@ -95,6 +95,11 @@ IRM_DLL_EXPORT IRM_RESULT RMF_InitialPhreeqc2SpeciesConcentrations2(
                 int *boundary_solution1,  
                 int *boundary_solution2 = NULL, 
                 double *fraction1 = NULL);
+IRM_DLL_EXPORT IRM_RESULT RMF_InitialPhreeqc2SpeciesLogGammas(
+                int *id,
+                double *species_lg,
+                int *n_boundary,
+                int *boundary_solution1);
 IRM_DLL_EXPORT IRM_RESULT RMF_LoadDatabase(int *id, const char *db_name);
 IRM_DLL_EXPORT IRM_RESULT RMF_LogMessage(int * id, const char *str);
 IRM_DLL_EXPORT IRM_RESULT RMF_MpiWorker(int * id);

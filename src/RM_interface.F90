@@ -482,9 +482,24 @@ END FUNCTION RM_ErrorMessage
 !> their charge (@ref RM_GetSpeciesZ).
 !> @param id            The instance @a id returned from @ref RM_Create.
 !> @retval              Number of components currently in the list, or IRM_RESULT error code (see @ref RM_DecodeError).
-!> @see                 @ref RM_GetComponent, @ref RM_SetSpeciesSaveOn, @ref RM_GetSpeciesConcentrations, 
-!> @ref RM_SpeciesConcentrations2Module, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesName, 
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ, @ref RM_SetComponentH2O.
+!> @see 
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_GetSurfaceDiffuseLayerArea,
+!> @ref RM_GetSurfaceDiffuseLayerConcentrations,
+!> @ref RM_GetSurfaceDiffuseLayerCount,
+!> @ref RM_GetSurfaceDiffuseLayerName,
+!> @ref RM_GetSurfaceDiffuseLayerThickness,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
+
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1576,8 +1591,18 @@ END SUBROUTINE Chk_GetSolutionVolume
 !> Concentrations are moles per liter.
 !> Values for inactive cells are set to 1e30.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module, @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1636,10 +1661,18 @@ END SUBROUTINE Chk_GetSpeciesConcentrations
 !> 
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval IRM_RESULT      The number of aqueous species, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, 
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module, 
-!> @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1685,8 +1718,18 @@ END FUNCTION RM_GetSpeciesCount
 !> Dimension of the array is @a nspecies,
 !> where @a nspecies is is the number of aqueous species (@ref RM_GetSpeciesCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module, @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1750,18 +1793,18 @@ END SUBROUTINE Chk_GetSpeciesD25
 !> Activity coefficients are unitless.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !>
-!> @see @ref RM_FindComponents, 
-!> @ref RM_GetComponent,
-!> @ref RM_GetComponentCount,
-!> @ref RM_GetSpeciesConcentrations, 
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
 !> @ref RM_GetSpeciesCount, 
-!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesD25,  
 !> @ref RM_GetSpeciesName, 
-!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesSaveOn,
 !> @ref RM_GetSpeciesZ,
 !> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
-!> @ref RM_SpeciesConcentrations2Module, 
-!> @ref RM_SetSpeciesSaveOn.
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1817,9 +1860,18 @@ END SUBROUTINE Chk_GetSpeciesLogGammas
 !> @param i                Sequence number of the species in the species list. Fortran, 1 based.
 !> @param name             Character array to receive the species name.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount,
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ,
-!> @ref RM_SpeciesConcentrations2Module, @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1865,9 +1917,23 @@ END FUNCTION RM_GetSpeciesName
 !> 
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval IRM_RESULT      0, species are not saved; 1, species are saved; negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount,
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module, @ref RM_SetSpeciesSaveOn.
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_GetSurfaceDiffuseLayerArea,
+!> @ref RM_GetSurfaceDiffuseLayerConcentrations,
+!> @ref RM_GetSurfaceDiffuseLayerCount,
+!> @ref RM_GetSurfaceDiffuseLayerName,
+!> @ref RM_GetSurfaceDiffuseLayerThickness,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1909,9 +1975,19 @@ END FUNCTION RM_GetSpeciesSaveOn
 !> Dimension of the array is @a nspecies,
 !> where @a nspecies is is the number of aqueous species (@ref RM_GetSpeciesCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount,
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module, 
-!> @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1972,15 +2048,23 @@ END SUBROUTINE Chk_GetSpeciesZ
 !> Areas are square meter.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
-!> @see @ref RM_FindComponents, 
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
 !> @ref RM_GetSpeciesCount, 
-!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
 !> @ref RM_GetSurfaceDiffuseLayerConcentrations,
-!> @ref RM_GetSurfaceDiffuseLayerCount, 
-!> @ref RM_GetSurfaceDiffuseLayerName, 
+!> @ref RM_GetSurfaceDiffuseLayerCount,
+!> @ref RM_GetSurfaceDiffuseLayerName,
 !> @ref RM_GetSurfaceDiffuseLayerThickness,
-!> @ref RM_SetSpeciesSaveOn, 
-!> @ref RM_SetSurfaceDiffuseLayerConcentrations.
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -2048,15 +2132,23 @@ END SUBROUTINE Chk_GetSurfaceDiffuseLayerArea
 !> Concentrations are moles per liter.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
-!> @see @ref RM_FindComponents, 
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
 !> @ref RM_GetSpeciesCount, 
-!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
 !> @ref RM_GetSurfaceDiffuseLayerArea,
 !> @ref RM_GetSurfaceDiffuseLayerCount,
-!> @ref RM_GetSurfaceDiffuseLayerName, 
+!> @ref RM_GetSurfaceDiffuseLayerName,
 !> @ref RM_GetSurfaceDiffuseLayerThickness,
-!> @ref RM_SetSpeciesSaveOn, 
-!> @ref RM_SetSurfaceDiffuseLayerConcentrations.
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -2131,15 +2223,23 @@ END SUBROUTINE Chk_GetSurfaceDiffuseLayerConcentrations
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 The number of diffuse-layer surfaces in the reaction-module list, negative is failure (See @ref RM_DecodeError).
 !> 
-!> @see @ref RM_FindComponents, 
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
 !> @ref RM_GetSpeciesCount, 
-!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
 !> @ref RM_GetSurfaceDiffuseLayerArea,
 !> @ref RM_GetSurfaceDiffuseLayerConcentrations,
 !> @ref RM_GetSurfaceDiffuseLayerName,
 !> @ref RM_GetSurfaceDiffuseLayerThickness,
-!> @ref RM_SetSpeciesSaveOn, 
-!> @ref RM_SetSurfaceDiffuseLayerConcentrations.
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 
 !> @par Fortran Example:
 !> @htmlonly
@@ -2169,19 +2269,28 @@ END FUNCTION RM_GetSurfaceDiffuseLayerCount
 
 !> Retrieves a name from the reaction-module diffuse-layer-surfaces list that was generated by calls to @ref RM_FindComponents.
 !> @param id               The instance @a id returned from @ref RM_Create.
-!> @param num              The number of the surface name to be retrieved. C, 0 based.
+!> @param num              The number of the surface name to be retrieved. Fortran, 1 based.
 !> @param surf_name        The string value associated with surface @a num.
 !> @param l                The maximum number of characters for @a chem_name.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
-!> @see @ref RM_FindComponents, 
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
 !> @ref RM_GetSpeciesCount, 
-!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
 !> @ref RM_GetSurfaceDiffuseLayerArea,
-!> @ref RM_GetSurfaceDiffuseLayerConcentrations, 
+!> @ref RM_GetSurfaceDiffuseLayerConcentrations,
+!> @ref RM_GetSurfaceDiffuseLayerCount,
 !> @ref RM_GetSurfaceDiffuseLayerThickness,
-!> @ref RM_SetSpeciesSaveOn, 
-!> @ref RM_SetSurfaceDiffuseLayerConcentrations.
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -2213,8 +2322,10 @@ INTEGER FUNCTION RM_GetSurfaceDiffuseLayerName(id, num, surf_name)
         END FUNCTION RMF_GetSurfaceDiffuseLayerName 
 	END INTERFACE
     INTEGER, INTENT(in) :: id, num
+    integer l
     CHARACTER(len=*), INTENT(inout) :: surf_name
-    RM_GetSurfaceDiffuseLayerName = RMF_GetSurfaceDiffuseLayerName(id, num, surf_name, len(surf_name))
+    l = len(surf_name)
+    RM_GetSurfaceDiffuseLayerName = RMF_GetSurfaceDiffuseLayerName(id, num, surf_name, l)
     return
 END FUNCTION RM_GetSurfaceDiffuseLayerName 
 
@@ -2231,15 +2342,23 @@ END FUNCTION RM_GetSurfaceDiffuseLayerName
 !> Thicknes is in meters.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
-!> @see @ref RM_FindComponents, 
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
 !> @ref RM_GetSpeciesCount, 
-!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
 !> @ref RM_GetSurfaceDiffuseLayerArea,
 !> @ref RM_GetSurfaceDiffuseLayerConcentrations,
-!> @ref RM_GetSurfaceDiffuseLayerCount, 
-!> @ref RM_GetSurfaceDiffuseLayerName, 
-!> @ref RM_SetSpeciesSaveOn, 
-!> @ref RM_SetSurfaceDiffuseLayerConcentrations.
+!> @ref RM_GetSurfaceDiffuseLayerCount,
+!> @ref RM_GetSurfaceDiffuseLayerName,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -2673,7 +2792,18 @@ END SUBROUTINE Chk_InitialPhreeqc2Module
 !> @param f1           Fraction of @a bc1 that mixes with (1-@a f1) of @a bc2.
 !> Size is @a n_boundary. Optional in Fortran.
 !> @retval IRM_RESULT         0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                  @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_SetSpeciesSaveOn.
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2753,6 +2883,92 @@ SUBROUTINE Chk_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary, bc1
         errors = RM_Abort(id, -3, "Invalid argument in RM_InitialPhreeqc2SpeciesConcentrations")
     endif
 END SUBROUTINE Chk_InitialPhreeqc2SpeciesConcentrations
+
+!> Fills an array (@a bc_lg) with aqueous species log gammas from solutions in the InitialPhreeqc instance.
+!> This method is intended for use with multicomponent-diffusion transport calculations,
+!> and @ref RM_SetSpeciesSaveOn must be set to @a true.
+!> The method is used to obtain aqueous species log gammas for boundary conditions. If a negative value
+!> is used for a cell in @a boundary_solution1, then the highest numbered solution in the InitialPhreeqc instance
+!> will be used for that cell.
+!> 
+!> @param id                  The instance @a id returned from @ref RM_Create.
+!> @param bc_lg          Array of aqueous species log gammas extracted from the InitialPhreeqc instance.
+!> The dimension of @a bc_lg is equivalent to Fortran allocation (@a n_boundary, @a nspecies),
+!> where @a nspecies is the number of aqueous species returned from @ref RM_GetSpeciesCount.
+!> @param n_boundary          The number of boundary condition solutions that need to be filled.
+!> @param boundary_solution1  Array of solution index numbers that refer to solutions in the InitialPhreeqc instance.
+!> Size is @a n_boundary.
+!> @retval IRM_RESULT         0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_GetSurfaceDiffuseLayerArea,
+!> @ref RM_GetSurfaceDiffuseLayerConcentrations,
+!> @ref RM_GetSurfaceDiffuseLayerCount,
+!> @ref RM_GetSurfaceDiffuseLayerName,
+!> @ref RM_GetSurfaceDiffuseLayerThickness,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_SpeciesConcentrations2Module, 
+!> @ref RM_SetSpeciesSaveOn.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> nbound = 1;
+!> nspecies = RM_GetSpeciesCount(id);
+!> allocate(bc1(nbound))
+!> allocate(bc_lg(nbound, nspecies)) 
+!> bc1[1]          = 0;       // Solution 0 from InitialPhreeqc instance
+!> status = RM_InitialPhreeqc2SpeciesLogGammas(bc_lg, bc1);
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, bc1) 
+	USE ISO_C_BINDING  
+    IMPLICIT NONE
+    INTERFACE
+           INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, bc1) &
+			BIND(C, NAME='RMF_InitialPhreeqc2SpeciesLogGammas')   
+			USE ISO_C_BINDING
+                IMPLICIT NONE
+                INTEGER(KIND=C_INT), INTENT(in) :: id
+                REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_lg(*)
+                INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
+        END FUNCTION RMF_InitialPhreeqc2SpeciesLogGammas    
+	END INTERFACE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, DIMENSION(:,:), INTENT(OUT) :: bc_lg
+    INTEGER, INTENT(IN) :: n_boundary
+    INTEGER, INTENT(IN), DIMENSION(:) :: bc1
+	if (rmf_debug) call Chk_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, bc1) 
+    RM_InitialPhreeqc2SpeciesLogGammas = &
+            RMF_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, bc1)
+END FUNCTION RM_InitialPhreeqc2SpeciesLogGammas          
+
+SUBROUTINE Chk_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, bc1) 
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(IN), DIMENSION(:,:) :: bc_lg
+    INTEGER, INTENT(IN) :: n_boundary 
+    INTEGER, INTENT(IN), DIMENSION(:) :: bc1
+    INTEGER :: errors, nspecies
+    nspecies = RM_GetSpeciesCount(id)
+    errors = 0
+    errors = errors + Chk_Double2D(id, bc_lg, n_boundary, nspecies, "bc_lg", "RM_InitialPhreeqc2SpeciesLogGammas")
+    errors = errors + Chk_Integer1D(id, bc1, n_boundary, "bc1", "RM_InitialPhreeqc2SpeciesLogGammas")
+    if (errors .gt. 0) then
+        errors = RM_Abort(id, -3, "Invalid argument in RM_InitialPhreeqc2SpeciesLogGammas")
+    endif
+END SUBROUTINE Chk_InitialPhreeqc2SpeciesLogGammas
 
 !> A cell numbered @a n_user in the InitialPhreeqc instance is selected to populate a series of cells.
 !> All reactants with the number @a n_user are transferred along with the solution.
@@ -4226,9 +4442,23 @@ END FUNCTION RM_SetSelectedOutputOn
 !> @param save_on          0, indicates species concentrations are not saved; 1, indicates species concentrations are
 !> saved.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount,
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesSaveOn, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module.
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_GetSurfaceDiffuseLayerArea,
+!> @ref RM_GetSurfaceDiffuseLayerConcentrations,
+!> @ref RM_GetSurfaceDiffuseLayerCount,
+!> @ref RM_GetSurfaceDiffuseLayerName,
+!> @ref RM_GetSurfaceDiffuseLayerThickness,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -4887,9 +5117,18 @@ END FUNCTION RM_SetUnitsSurface
 !> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount), and @a nspecies is the number of aqueous species (@ref RM_GetSpeciesCount).
 !> Concentrations are moles per liter.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount, 
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see 
+!> @ref RM_FindComponents,
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLogGammas, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_InitialPhreeqc2SpeciesConcentrations, 
+!> @ref RM_InitialPhreeqc2SpeciesLogGammas,
+!> @ref RM_SetSpeciesSaveOn.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
