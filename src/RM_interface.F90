@@ -27,17 +27,23 @@
     PRIVATE :: Chk_GetSolutionVolume
     PRIVATE :: Chk_GetSpeciesConcentrations
     PRIVATE :: Chk_GetSpeciesD25
+    PRIVATE :: Chk_GetSpeciesLogGammas
     PRIVATE :: Chk_GetSpeciesZ
+    PRIVATE :: Chk_GetSurfaceDiffuseLayerArea
+    PRIVATE :: Chk_GetSurfaceDiffuseLayerConcentrations
+    PRIVATE :: Chk_GetSurfaceDiffuseLayerThickness
     PRIVATE :: Chk_InitialPhreeqc2Concentrations
     PRIVATE :: Chk_InitialPhreeqc2Module
     PRIVATE :: Chk_InitialPhreeqcCell2Module
     PRIVATE :: Chk_InitialPhreeqc2SpeciesConcentrations
+    PRIVATE :: Chk_InitialPhreeqc2SpeciesLogGammas
     PRIVATE :: Chk_SetConcentrations
     PRIVATE :: Chk_SetDensity
     PRIVATE :: Chk_SetPorosity
     PRIVATE :: Chk_SetPressure
     PRIVATE :: Chk_SetPrintChemistryMask
     PRIVATE :: Chk_SetSaturation
+    PRIVATE :: Chk_SetSurfaceDiffuseLayerConcentrations
     PRIVATE :: Chk_SetTemperature
     PRIVATE :: Chk_SpeciesConcentrations2Module
     PRIVATE :: Chk_Double1D
@@ -2947,10 +2953,10 @@ INTEGER FUNCTION RM_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, bound
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:,:), INTENT(OUT) :: bc_lg
     INTEGER, INTENT(IN) :: n_boundary
-    INTEGER, INTENT(IN), DIMENSION(:) :: bc1
-	if (rmf_debug) call Chk_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, bc1) 
+    INTEGER, INTENT(IN), DIMENSION(:) :: boundary_solution1
+	if (rmf_debug) call Chk_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, boundary_solution1) 
     RM_InitialPhreeqc2SpeciesLogGammas = &
-            RMF_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, bc1)
+            RMF_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, boundary_solution1)
 END FUNCTION RM_InitialPhreeqc2SpeciesLogGammas          
 
 SUBROUTINE Chk_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, bc1) 
