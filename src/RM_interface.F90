@@ -2035,14 +2035,14 @@ SUBROUTINE Chk_GetSpeciesZ(id, z)
     endif
 END SUBROUTINE Chk_GetSpeciesZ
 
-!> Fills an array (@a areas) with areas (m^2) for the specified diffuse layer (@a surf) for each cell.
+!> Fills an array (@a area) with areas (m^2) for the specified diffuse layer (@a surf) for each cell.
 !> This method is intended for use with diffuse-layer diffusion in 
 !> multicomponent-diffusion transport calculations,
 !> and @ref RM_SetSpeciesSaveOn must be set to @a true. 
 !> 
 !> @param id        The instance @a id returned from @ref RM_Create.
 !> @param surf      Name of surface for which diffuse-layer areas are retrieved.
-!> @param areas     Array to receive the diffuse-layer areas.
+!> @param area      Array to receive the diffuse-layer areas.
 !> Dimension of the array must be @a nxyz,
 !> where @a nxyz is the number of grid cells (@ref RM_GetGridCellCount).
 !> Areas are square meter.
@@ -2271,7 +2271,6 @@ END FUNCTION RM_GetSurfaceDiffuseLayerCount
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param num              The number of the surface name to be retrieved. Fortran, 1 based.
 !> @param surf_name        The string value associated with surface @a num.
-!> @param l                The maximum number of characters for @a chem_name.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
 !> @see 
@@ -2932,7 +2931,7 @@ END SUBROUTINE Chk_InitialPhreeqc2SpeciesConcentrations
 !> @par MPI:
 !> Called by root.
 
-INTEGER FUNCTION RM_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, bc1) 
+INTEGER FUNCTION RM_InitialPhreeqc2SpeciesLogGammas(id, bc_lg, n_boundary, boundary_solution1) 
 	USE ISO_C_BINDING  
     IMPLICIT NONE
     INTERFACE
@@ -4360,6 +4359,7 @@ END SUBROUTINE Chk_SetSaturation
 !> Messages include information about rebalancing during @ref RM_RunCells, and
 !> any messages written with @ref RM_ScreenMessage.
 !> 
+!> @param id               The instance @a id returned from @ref RM_Create.
 !> @param tf  @a 1, enable screen messages; @a 0, disable screen messages. Default is 1.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> @see                    @ref RM_RunCells, @ref RM_ScreenMessage.
