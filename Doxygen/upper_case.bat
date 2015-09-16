@@ -195,6 +195,10 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_initialphreeqc2loggammas/RM_InitialPhreeqc2LogGammas/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_initialphreeqc2module/RM_InitialPhreeqc2Module/g" %%f 
   @del sed*
 )
@@ -312,6 +316,10 @@
 )
 @FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_setsaturation/RM_SetSaturation/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_setscreenon/RM_SetScreenOn/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
