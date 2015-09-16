@@ -195,10 +195,6 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
-  @sed -i "s/rm_initialphreeqc2loggammas/RM_InitialPhreeqc2LogGammas/g" %%f 
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_initialphreeqc2module/RM_InitialPhreeqc2Module/g" %%f 
   @del sed*
 )
@@ -208,6 +204,10 @@
 )
 @FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_initialphreeqc2speciesconcentrations/RM_InitialPhreeqc2SpeciesConcentrations/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_initialphreeqc2speciesloggammas/RM_InitialPhreeqc2SpeciesLogGammas/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(

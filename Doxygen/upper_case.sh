@@ -147,9 +147,6 @@ for f in html/*.html; do
   sed -i "s/rm_initialphreeqc2concentrations/RM_InitialPhreeqc2Concentrations/g" $f 
 done
 for f in html/*.html; do
-  sed -i "s/rm_initialphreeqc2loggammas/RM_InitialPhreeqc2LogGammas/g" $f 
-done
-for f in html/*.html; do
   sed -i "s/rm_initialphreeqc2module/RM_InitialPhreeqc2Module/g" $f 
 done
 for f in html/*.html; do
@@ -157,6 +154,9 @@ for f in html/*.html; do
 done
 for f in html/*.html; do
   sed -i "s/rm_initialphreeqc2speciesconcentrations/RM_InitialPhreeqc2SpeciesConcentrations/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/rm_initialphreeqc2speciesloggammas/RM_InitialPhreeqc2SpeciesLogGammas/g" $f 
 done
 for f in html/*.html; do
   sed -i "s/rm_loaddatabase/RM_LoadDatabase/g" $f 
