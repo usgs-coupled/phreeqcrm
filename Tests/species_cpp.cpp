@@ -214,6 +214,15 @@ int species_cpp()
 		bc2.resize(nbound, -1);                     // no bc2 solution for mixing
 		bc_f1.resize(nbound, 1.0);                  // mixing fraction for bc1
 		status = phreeqc_rm.InitialPhreeqc2SpeciesConcentrations(bc_conc, bc1);
+		std::vector<double> bc_lg;
+		status = phreeqc_rm.InitialPhreeqc2SpeciesLogGammas(bc_lg, bc1);
+		phreeqc_rm.ScreenMessage("Species\t\t Conc\tLog Gamma\n");
+		for (size_t i = 0; i < species.size(); i++)
+		{
+			std::ostringstream msg;
+			msg << species[i] << "\t" << std::scientific << bc_conc[i] << "\t" << std::fixed << bc_lg[i] << "\n";
+			phreeqc_rm.ScreenMessage(msg.str().c_str());
+		}
 
 		// --------------------------------------------------------------------------
 		// Transient loop

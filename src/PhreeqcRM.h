@@ -392,6 +392,7 @@ and their charge (@ref GetSpeciesZ).
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
 @ref InitialPhreeqc2SpeciesConcentrations, 
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module, 
 @ref SetSpeciesSaveOn.
 
@@ -1327,6 +1328,7 @@ Values for inactive cells are set to 1e30.
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
 @ref InitialPhreeqc2SpeciesConcentrations, 
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module, 
 @ref SetSpeciesSaveOn.
 
@@ -1365,6 +1367,7 @@ aqueous species that can be made from the set of components.
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
 @ref InitialPhreeqc2SpeciesConcentrations, 
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module, 
 @ref SetSpeciesSaveOn.
 
@@ -1402,6 +1405,7 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
 @ref InitialPhreeqc2SpeciesConcentrations, 
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module, 
 @ref SetSpeciesSaveOn.
 
@@ -1445,6 +1449,7 @@ Activity coefficients are unitless.
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
 @ref InitialPhreeqc2SpeciesConcentrations, 
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module, 
 @ref SetSpeciesSaveOn.
 
@@ -1484,6 +1489,7 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
 @ref InitialPhreeqc2SpeciesConcentrations, 
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module, 
 @ref SetSpeciesSaveOn.
 
@@ -1522,6 +1528,7 @@ with @ref GetSpeciesConcentrations, and solution compositions to be set with
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
 @ref InitialPhreeqc2SpeciesConcentrations, 
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module, 
 @ref SetSpeciesSaveOn.
 
@@ -1560,6 +1567,7 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @ref GetSpeciesSaveOn,
 @ref GetSpeciesZ,
 @ref InitialPhreeqc2SpeciesConcentrations, 
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module, 
 @ref SetSpeciesSaveOn.
 
@@ -1610,6 +1618,7 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @ref GetSpeciesSaveOn,
 @ref GetSpeciesStoichiometry, 
 @ref InitialPhreeqc2SpeciesConcentrations, 
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module, 
 @ref SetSpeciesSaveOn.
 
@@ -2338,7 +2347,7 @@ The method is used to obtain aqueous species concentrations for boundary conditi
 is used for a cell in @a boundary_solution1, then the highest numbered solution in the InitialPhreeqc instance
 will be used for that cell.
 @param destination_c           Vector of aqueous concentrations extracted from the InitialPhreeqc instance.
-The dimension of @a species_c is @a nspecies times @a n_boundary,
+The dimension of @a destination_c is set to @a nspecies times @a n_boundary,
 where @a nspecies is the number of aqueous species returned from @ref GetSpeciesCount,
 and @a n_boundary is the dimension of @a boundary_solution1.
 @param boundary_solution1  Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
@@ -2351,6 +2360,7 @@ and @a n_boundary is the dimension of @a boundary_solution1.
 @ref GetSpeciesSaveOn,
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module, 
 @ref SetSpeciesSaveOn.
 
@@ -2384,7 +2394,7 @@ solutions, @a boundary_solution1 and @a boundary_solution2, with a mixing fracti
 @a fraction1 and mixing fraction for @a boundary_solution2 of (1 - @a fraction1).
 A negative value for @a boundary_solution2 implies no mixing, and the associated value for @a fraction1 is ignored.
 @param destination_c           Vector of aqueous concentrations extracted from the InitialPhreeqc instance.
-The dimension of @a species_c is @a nspecies times @a n_boundary,
+The dimension of @a destination_c is set to @a nspecies times @a n_boundary,
 where @a nspecies is the number of aqueous species returned from @ref GetSpeciesCount, and @a n_boundary is the dimension
 of @a boundary_solution1.
 @param boundary_solution1  Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
@@ -2401,6 +2411,7 @@ Size is same as @a boundary_solution1.
 @ref GetSpeciesSaveOn,
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module, 
 @ref SetSpeciesSaveOn.
 
@@ -2426,6 +2437,49 @@ Called by root.
 													std::vector < int >    & boundary_solution1,
 													std::vector < int >    & boundary_solution2,
 													std::vector < double > & fraction1);
+/**
+Fills a vector @a destination_lg with aqueous species log gammas from solutions in the InitialPhreeqc instance.
+This method is intended for use with multicomponent-diffusion transport calculations,
+and @ref SetSpeciesSaveOn must be set to @a true.
+The method is used to obtain aqueous species log gammas for boundary conditions. If a negative value
+is used for a cell in @a boundary_solution1, then the highest numbered solution in the InitialPhreeqc instance
+will be used for that cell.
+@param destination_lg           Vector of aqueous log gammas extracted from the InitialPhreeqc instance.
+The dimension of @a destination_lg is set to @a nspecies times @a n_boundary,
+where @a nspecies is the number of aqueous species returned from @ref GetSpeciesCount,
+and @a n_boundary is the dimension of @a boundary_solution1.
+@param boundary_solution1  Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
+@retval IRM_RESULT         0 is success, negative is failure (See @ref DecodeError).
+
+@ref GetSpeciesCount, 
+@ref GetSpeciesD25, 
+@ref GetSpeciesLogGammas, 
+@ref GetSpeciesNames, 
+@ref GetSpeciesSaveOn,
+@ref GetSpeciesStoichiometry, 
+@ref GetSpeciesZ,
+@ref InitialPhreeqc2SpeciesConcentrations, 
+@ref SpeciesConcentrations2Module, 
+@ref SetSpeciesSaveOn.
+
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> bc_lg;
+std::vector<int> bc1;
+int nbound = 1;
+bc1.resize(nbound, 0);                      // solution 0 from Initial IPhreeqc instance
+status = phreeqc_rm.InitialPhreeqc2SpeciesLogGammas(bc_lg, bc1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+ */
+	IRM_RESULT                                InitialPhreeqc2SpeciesLogGammas(
+													std::vector < double > &destination_lg,
+													std::vector < int > & boundary_solution1);
 /**
 A cell numbered @a n in the InitialPhreeqc instance is selected to populate a series of transport cells.
 All reactants with the number @a n are transferred along with the solution.
@@ -3427,6 +3481,7 @@ with @ref GetSpeciesConcentrations, and solution compositions to be set with
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
 @ref InitialPhreeqc2SpeciesConcentrations, 
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SpeciesConcentrations2Module.
 
 @par C++ Example:
@@ -3857,6 +3912,7 @@ Concentrations are moles per liter.
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
 @ref InitialPhreeqc2SpeciesConcentrations, 
+@ref InitialPhreeqc2SpeciesLogGammas,
 @ref SetSpeciesSaveOn.
 
 @par C++ Example:

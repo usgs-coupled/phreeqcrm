@@ -4725,6 +4725,74 @@ PhreeqcRM::InitialPhreeqc2SpeciesConcentrations(std::vector < double > &destinat
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::InitialPhreeqc2SpeciesConcentrations");
 }
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialPhreeqc2SpeciesLogGammas(std::vector < double > &destination_lg,
+					std::vector < int > & boundary_solution1)
+{
+/*
+ *   Routine takes a list of solution numbers and returns log gammas
+ *   for all species
+ *   Input: boundary_solution1 is a vector of solution numbers
+ *
+ *   Output: destination_lg - log gammas for boundary solutions
+ *
+ */
+	this->phreeqcrm_error_string.clear();
+	IRM_RESULT return_value = IRM_OK;
+	this->Get_phreeqc_bin().Clear();
+	try
+	{
+		size_t n_boundary1 = boundary_solution1.size();
+		if (n_boundary1 > 0 && this->species_names.size() > 0)
+		{
+			destination_lg.resize(this->species_names.size()*boundary_solution1.size(), 0.0);
+			
+			for (size_t i = 0; i < boundary_solution1.size(); i++)
+			{
+				// Find solution 1 number
+				int n_old1 = boundary_solution1[i];
+				if (n_old1 < 0)
+				{
+					int next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEY_SOLUTION);
+					if (next != 0)
+					{
+						n_old1 = next - 1;
+					}
+				}
+				// Put solution 1 in storage bin
+				IRM_RESULT status = IRM_OK;
+				cxxSolution * cxxsoln = this->GetWorkers()[this->nthreads]->Get_solution(n_old1);
+				if (cxxsoln == NULL)
+				{
+					this->ErrorHandler(status, "Solution missing for InitialPhreeqc2Concentrations");
+				}
+				// Put log gammas in d
+				std::vector<double> d;
+				d.resize(this->species_names.size(), 0);
+				std::map<int, double>::iterator it = cxxsoln->Get_log_gamma_map().begin();
+				for ( ; it != cxxsoln->Get_log_gamma_map().end(); it++)
+				{
+					int rm_species_num = this->s_num2rm_species_num[it->first];
+					d[rm_species_num] = it->second;
+				}
+				// Put log gammas in destination_lg
+				double *d_ptr = &destination_lg[i];
+				for (size_t j = 0; j < species_names.size(); j++)
+				{
+					d_ptr[n_boundary1 * j] = d[j];
+				}
+			}
+			return IRM_OK;
+		}
+		this->ErrorHandler(IRM_INVALIDARG, "Size of boundary1 or species list is zero.");
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::InitialPhreeqc2SpeciesConcentrations");
+}
 #ifdef SKIP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
