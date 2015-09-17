@@ -219,6 +219,9 @@ for f in html/*.html; do
   sed -i "s/rm_setsaturation/RM_SetSaturation/g" $f 
 done
 for f in html/*.html; do
+  sed -i "s/rm_setscreenon/RM_SetScreenOn/g" $f 
+done
+for f in html/*.html; do
   sed -i "s/rm_setselectedoutputon/RM_SetSelectedOutputOn/g" $f 
 done
 for f in html/*.html; do

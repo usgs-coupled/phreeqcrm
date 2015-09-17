@@ -75,6 +75,7 @@ sed -i -e "s/RM_SetRebalanceFraction/rm_setrebalancefraction/g" $RM_INTERFACE_F9
 sed -i -e "s/RM_SetRebalanceByCell/rm_setrebalancebycell/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SetRepresentativeVolume/rm_setrepresentativevolume/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SetSaturation/rm_setsaturation/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_SetScreenOn/rm_setscreenon/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SetSelectedOutputOn/rm_setselectedoutputon/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SetSpeciesSaveOn/rm_setspeciessaveon/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SetTemperature/rm_settemperature/g" $RM_INTERFACE_F90

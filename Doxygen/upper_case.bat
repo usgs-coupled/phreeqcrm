@@ -291,6 +291,10 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_setscreenon/RM_SetScreenOn/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_setselectedoutputon/RM_SetSelectedOutputOn/g" %%f 
   @del sed*
 )
