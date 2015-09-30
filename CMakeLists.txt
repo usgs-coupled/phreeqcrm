@@ -255,6 +255,10 @@ if (MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_BUILD_MPI)
   target_link_libraries(PhreeqcRM ${MPI_CXX_LIBRARIES})
 endif()
 
+if (MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
+  target_link_libraries(PhreeqcRM ${ZLIB_LIBRARIES})
+endif()
+
 SET(PhreeqcRM_Headers
 ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h
 ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp
