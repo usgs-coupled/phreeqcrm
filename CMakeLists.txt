@@ -9,6 +9,13 @@ if (POLICY CMP0054)
   cmake_policy(POP)
 endif()
 
+# check if this is the root project
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  set(STANDALONE_BUILD 1)
+else()
+  set(STANDALONE_BUILD 0)
+endif()
+
 # overide docdir on windows
 if(WIN32 AND NOT CMAKE_INSTALL_DOCDIR)
   set(CMAKE_INSTALL_DOCDIR "" CACHE PATH "documentation root (doc)")
