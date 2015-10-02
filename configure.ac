@@ -165,13 +165,13 @@ AC_CHECK_FUNCS([isnan],    , AC_CHECK_LIB(m, isnan))
 ##
 AC_ARG_WITH([fnord],
   [
- For the following --with-xxx options, you can specify where the header
- files and libraries are in two different ways:
+For the following --with-xxx options, you can specify where the header
+files and libraries are in two different ways:
 
-    --with-xxx=INC,LIB - Specify individually the include directory and
-                         library directory separated by a comma
-    --with-xxx=DIR     - Specify only the directory which contains the
-                         include/ and lib/ subdirectories
+  --with-xxx=INC,LIB      Specify individually the include directory and
+                          library directory separated by a comma
+  --with-xxx=DIR          Specify only the directory which contains the
+                          include/ and lib/ subdirectories
   ])
 
 #  ----------------------------------------------------------------------
@@ -182,7 +182,7 @@ AC_ARG_WITH([fnord],
 #
 AC_ARG_WITH([zlib],
             [AC_HELP_STRING([--with-zlib=DIR],
-                            [Use the zlib library [default=no]])],,withval=no)
+                            [Use zlib compression for dump files [default=no]])],,withval=no)
 
 case $withval in
   no)
