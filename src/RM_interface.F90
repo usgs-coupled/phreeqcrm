@@ -814,6 +814,57 @@ SUBROUTINE Chk_GetDensity(id, density)
     endif
 END SUBROUTINE Chk_GetDensity
 
+!> Returns an array with the ending cell numbers from the range of cell numbers assigned to each worker.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param ec               Array to receive the ending cell numbers. Dimension of the array is 
+!>                         the number of threads (OpenMP) or the number of processes (MPI).
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    @ref RM_Create, @ref RM_GetMpiTasks, @ref RM_GetStartCell, @ref RM_GetThreadCount.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> n = RM_GetThreadCount(id) * RM_GetMpiTasks(id)
+!> allocate(ec(n))
+!> status = RM_GetEndCell(id, ec)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root and (or) workers.
+
+INTEGER FUNCTION RM_GetEndCell(id, ec)
+	USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetEndCell(id, ec) &
+			BIND(C, NAME='RMF_GetEndCell')  
+			USE ISO_C_BINDING 
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            INTEGER(KIND=C_INT), INTENT(out):: ec(*)
+        END FUNCTION RMF_GetEndCell 
+	END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(out), DIMENSION(:) :: ec
+    if (rmf_debug) call Chk_GetEndCell(id, ec)
+    RM_GetEndCell = RMF_GetEndCell(id, ec)
+    RETURN
+END FUNCTION RM_GetEndCell
+
+SUBROUTINE Chk_GetEndCell(id, ec)
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: ec
+    INTEGER :: errors, n
+    errors = 0
+    n = RM_GetMpiTasks(id) * RM_GetThreadCount(id)
+    errors = errors + Chk_Integer1D(id, ec, n, "EndCell", "RM_GetEndCell")
+    if (errors .gt. 0) then
+        errors = RM_Abort(id, -3, "Invalid argument in RM_GetEndCell")
+    endif
+END SUBROUTINE Chk_GetEndCell
+
 !> Returns a string containing error messages related to the last call to a PhreeqcRM method to 
 !> the character argument (@a errstr).
 !> 
@@ -1886,6 +1937,57 @@ SUBROUTINE Chk_GetSpeciesZ(id, z)
         errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesZ")
     endif
 END SUBROUTINE Chk_GetSpeciesZ
+
+!> Returns an array with the starting cell numbers from the range of cell numbers assigned to each worker.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param sc               Array to receive the starting cell numbers. Dimension of the array is 
+!>                         the number of threads (OpenMP) or the number of processes (MPI).
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    @ref RM_Create, @ref RM_GetEndCell, @ref RM_GetMpiTasks, @ref RM_GetThreadCount.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> n = RM_GetThreadCount(id) * RM_GetMpiTasks(id)
+!> allocate(sc(n))
+!> status = RM_GetStartCell(id, sc)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root and (or) workers.
+
+INTEGER FUNCTION RM_GetStartCell(id, sc)
+	USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetStartCell(id, sc) &
+			BIND(C, NAME='RMF_GetStartCell')  
+			USE ISO_C_BINDING 
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            INTEGER(KIND=C_INT), INTENT(out):: sc(*)
+        END FUNCTION RMF_GetStartCell 
+	END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(out), DIMENSION(:) :: sc
+    if (rmf_debug) call Chk_GetStartCell(id, sc)
+    RM_GetStartCell = RMF_GetStartCell(id, sc)
+    RETURN
+END FUNCTION RM_GetStartCell
+
+SUBROUTINE Chk_GetStartCell(id, sc)
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: sc
+    INTEGER :: errors, n
+    errors = 0
+    n = RM_GetMpiTasks(id) * RM_GetThreadCount(id)
+    errors = errors + Chk_Integer1D(id, sc, n, "StartCell", "RM_GetStartCell")
+    if (errors .gt. 0) then
+        errors = RM_Abort(id, -3, "Invalid argument in RMF_GetStartCell")
+    endif
+END SUBROUTINE Chk_GetStartCell
 
 !> Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
 !> For the OPENMP version, the number of threads is set implicitly or explicitly with @ref RM_Create. For the

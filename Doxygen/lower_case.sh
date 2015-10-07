@@ -18,6 +18,7 @@ sed -i -e "s/RM_GetComponentCount/rm_getcomponentcount/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetComponent/rm_getcomponent/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetConcentrations/rm_getconcentrations/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetDensity/rm_getdensity/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_GetEndCell/rm_getendcell/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetErrorString/rm_geterrorstring/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetErrorStringLength/rm_geterrorstringlength/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetFilePrefix/rm_getfileprefix/g" $RM_INTERFACE_F90
@@ -40,6 +41,7 @@ sed -i -e "s/RM_GetSpeciesD25/rm_getspeciesd25/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetSpeciesName/rm_getspeciesname/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetSpeciesSaveOn/rm_getspeciessaveon/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetSpeciesZ/rm_getspeciesz/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_GetStartCell/rm_getstartcell/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetThreadCount/rm_getthreadcount/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetTimeConversion/rm_gettimeconversion/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetTimeStep/rm_gettimestep/g" $RM_INTERFACE_F90

@@ -80,6 +80,8 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		int l;
 		double * hydraulic_K;
 		struct my_data some_data;
+		int n;
+		int * sc, * ec;
 
 		// --------------------------------------------------------------------------
 		// Create PhreeqcRM
@@ -371,6 +373,17 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 			// Print results at last time step
 			if (isteps == nsteps - 1) 
 			{
+				fprintf(stderr, "Current distribution of cells for workers\n");
+				fprintf(stderr, "Worker      First cell        Last Cell\n");
+				n = RM_GetThreadCount(id) * RM_GetMpiTasks(id);
+				sc = (int *) malloc((size_t) (n * sizeof(int)));
+				ec = (int *) malloc((size_t) (n * sizeof(int)));
+				status = RM_GetStartCell(id, sc);
+				status = RM_GetEndCell(id, ec);
+				for (i = 0; i < n; i++)
+				{
+					fprintf(stderr, "%d%s%d%s%d\n", i,"           ",sc[i], "                 ",ec[i]);
+				}
 				// Loop through possible multiple selected output definitions
 				for (isel = 0; isel < RM_GetSelectedOutputCount(id); isel++)
 				{

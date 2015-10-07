@@ -310,6 +310,18 @@ RM_GetDensity(int id, double * d)
 	}
 	return IRM_BADINSTANCE;
 }
+IRM_RESULT 
+RM_GetEndCell(int id, int *ec)
+{
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		const std::vector <int> & l = Reaction_module_ptr->GetEndCell();
+		memcpy(ec, &l.front(), l.size() * sizeof(int));
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT 
 RM_GetErrorString(int id, char *errstr, int l)
@@ -688,6 +700,18 @@ RM_GetSpeciesZ(int id, double * z)
 			return IRM_OK;
 		}
 		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+IRM_RESULT 
+RM_GetStartCell(int id, int *sc)
+{
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		const std::vector <int> & l = Reaction_module_ptr->GetStartCell();
+		memcpy(sc, &l.front(), l.size() * sizeof(int));
+		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
 }

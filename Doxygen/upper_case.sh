@@ -48,6 +48,9 @@ for f in html/*.html; do
   sed -i "s/rm_getdensity/RM_GetDensity/g" $f 
 done
 for f in html/*.html; do
+  sed -i "s/rm_getendcell/RM_GetEndCell/g" $f 
+done
+for f in html/*.html; do
   sed -i "s/rm_geterrorstring/RM_GetErrorString/g" $f 
 done
 for f in html/*.html; do
@@ -112,6 +115,9 @@ for f in html/*.html; do
 done
 for f in html/*.html; do
   sed -i "s/rm_getspeciesz/RM_GetSpeciesZ/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/rm_getstartcell/RM_GetStartCell/g" $f 
 done
 for f in html/*.html; do
   sed -i "s/rm_getthreadcount/RM_GetThreadCount/g" $f 

@@ -84,7 +84,8 @@ subroutine advection_f90()  BIND(C)
 #else
   character(LEN=10000)                          :: errstr
 #endif
-  integer                                       :: l
+  integer                                       :: l, n
+  integer, dimension(:), allocatable            :: sc, ec
   ! --------------------------------------------------------------------------
   ! Create PhreeqcRM
   ! --------------------------------------------------------------------------
@@ -339,6 +340,16 @@ subroutine advection_f90()  BIND(C)
      status = RM_GetSaturation(id, sat_calc)         ! Saturation after reaction
      ! Print results at last time step
      if (isteps == nsteps) then
+		write(*,*) "Current distribution of cells for workers"
+		write(*,*) "Worker      First cell        Last Cell"
+		n = RM_GetThreadCount(id) * RM_GetMpiTasks(id)
+        allocate(sc(n), ec(n))
+        status = RM_GetStartCell(id, sc)
+        status = RM_GetEndCell(id, ec)
+        do i = 1, n
+			write(*,*) i,"           ", sc(i),"                 ",ec(i)
+        enddo
+        
         ! Loop through possible multiple selected output definitions
         do isel = 1, RM_GetSelectedOutputCount(id)
            n_user = RM_GetNthSelectedOutputUserNumber(id, isel)

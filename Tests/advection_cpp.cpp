@@ -312,11 +312,7 @@ int advection_cpp()
 					oss << "Current distribution of cells for workers\n";
 					oss << "Worker      First cell        Last Cell\n";
 					int n;
-#ifdef USE_MPI
-					n = phreeqc_rm.GetMpiTasks();
-#else
-					n = phreeqc_rm.GetThreadCount();
-#endif
+					n = phreeqc_rm.GetThreadCount() * phreeqc_rm.GetMpiTasks();
 					for (int i = 0; i < n; i++)
 					{
 						oss << i << "           " << phreeqc_rm.GetStartCell()[i] << "                 "

@@ -63,6 +63,10 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getendcell/RM_GetEndCell/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_geterrorstring/RM_GetErrorString/g" %%f 
   @del sed*
 )
@@ -148,6 +152,10 @@
 )
 @FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_getspeciesz/RM_GetSpeciesZ/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getstartcell/RM_GetStartCell/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
