@@ -3843,6 +3843,7 @@ END SUBROUTINE Chk_SetSaturation
 !> Messages include information about rebalancing during @ref RM_RunCells, and
 !> any messages written with @ref RM_ScreenMessage.
 !> 
+!> @param id               The instance @a id returned from @ref RM_Create.
 !> @param tf  @a 1, enable screen messages; @a 0, disable screen messages. Default is 1.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> @see                    @ref RM_RunCells, @ref RM_ScreenMessage.

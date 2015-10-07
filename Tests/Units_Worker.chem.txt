@@ -117,9 +117,9 @@ End of simulation.
 Reading input data for simulation 2.
 ------------------------------------
 
--------------------------------
-End of Run after 1.051 Seconds.
--------------------------------
+------------------------------
+End of Run after 2.11 Seconds.
+------------------------------
 
 Time:           0
 Chemistry cell: 1
@@ -211,7 +211,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.061 Seconds.
+End of Run after 2.148 Seconds.
 -------------------------------
 
 Time:           0
@@ -304,6 +304,6 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.068 Seconds.
+End of Run after 2.112 Seconds.
 -------------------------------
 
