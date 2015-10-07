@@ -595,11 +595,7 @@ std::ostringstream oss;
 oss << "Current distribution of cells for workers\n";
 oss << "Worker First Cell   Last Cell\n";
 int n;
-#ifdef USE_MPI
-  n = phreeqc_rm.GetMpiTasks();
-#else
-  n = phreeqc_rm.GetThreadCount();
-#endif
+n = phreeqc_rm.GetThreadCount() * phreeqc_rm.GetMpiTasks();
 for (int i = 0; i < n; i++)
 {
 	oss << i << "      "
@@ -1505,11 +1501,7 @@ std::ostringstream oss;
 oss << "Current distribution of cells for workers\n";
 oss << "Worker First Cell   Last Cell\n";
 int n;
-#ifdef USE_MPI
-  n = phreeqc_rm.GetMpiTasks();
-#else
-  n = phreeqc_rm.GetThreadCount();
-#endif
+n = phreeqc_rm.GetThreadCount() * phreeqc_rm.GetMpiTasks();
 for (int i = 0; i < n; i++)
 {
 	oss << i << "      "

@@ -30,6 +30,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetComponent(int * id, int * num, char *chem_name,
 IRM_DLL_EXPORT int        RMF_GetComponentCount(int * id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetConcentrations(int *id, double *c);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetDensity(int *id, double *density);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetEndCell(int *id, int *ec);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetErrorString(int *id, char *prefix, int *l);
 IRM_DLL_EXPORT int        RMF_GetErrorStringLength(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetFilePrefix(int *id, char *prefix, int *l);
@@ -52,6 +53,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesD25(int *id, double *diffc);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesName(int *id, int *i, char * name, int *length);
 IRM_DLL_EXPORT int        RMF_GetSpeciesSaveOn(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesZ(int *id, double *z);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetStartCell(int *id, int *sc);
 IRM_DLL_EXPORT int        RMF_GetThreadCount(int *id);
 IRM_DLL_EXPORT double     RMF_GetTime(int *id);
 IRM_DLL_EXPORT double     RMF_GetTimeConversion(int *id);

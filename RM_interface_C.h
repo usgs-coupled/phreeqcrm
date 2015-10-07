@@ -467,6 +467,30 @@ status = RM_GetDensity(id, density);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetDensity(int id, double *density);
+
+
+/**
+Returns an array with the ending cell numbers from the range of cell numbers assigned to each worker.
+@param id               The instance @a id returned from @ref RM_Create.
+@param ec               Array to receive the ending cell numbers. Dimension of the array is 
+                        the number of threads (OpenMP) or the number of processes (MPI).
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see                    @ref RM_Create, @ref RM_GetMpiTasks, @ref RM_GetStartCell, @ref RM_GetThreadCount.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+n = RM_GetThreadCount(id) * RM_GetMpiTasks(id);
+ec = (int *) malloc((size_t) (n * sizeof(int)));
+status = RM_GetEndCell(id, ec);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root and (or) workers.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_GetEndCell(int id, int *ec);
+
 /**
 Returns a string containing error messages related to the last call to a PhreeqcRM method to
 the character argument (@a errstr).
@@ -1154,6 +1178,29 @@ status = RM_GetSpeciesZ(id, z);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetSpeciesZ(int id, double *z);
+
+/**
+Returns an array with the starting cell numbers from the range of cell numbers assigned to each worker.
+@param id               The instance @a id returned from @ref RM_Create.
+@param sc               Array to receive the starting cell numbers. Dimension of the array is 
+                        the number of threads (OpenMP) or the number of processes (MPI).
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see                    @ref RM_Create, @ref RM_GetEndCell, @ref RM_GetMpiTasks, @ref RM_GetThreadCount.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+n = RM_GetThreadCount(id) * RM_GetMpiTasks(id);
+sc = (int *) malloc((size_t) (n * sizeof(int)));
+status = RM_GetStartCell(id, sc);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root and (or) workers.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_GetStartCell(int id, int *sc);
+
 /**
 Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
 For the OPENMP version, the number of threads is set implicitly or explicitly with @ref RM_Create. For the
