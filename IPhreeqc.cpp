@@ -1575,7 +1575,7 @@ void IPhreeqc::log_msg(const char * str)
 
 void IPhreeqc::error_msg(const char *str, bool stop)
 {
-	ASSERT(!(this->ErrorFileOn != (this->error_ostream != 0)));
+	ASSERT(this->error_ostream == &std::cerr || (!(this->ErrorFileOn != (this->error_ostream != 0))));
 
 	if (this->error_ostream != NULL && this->error_on)
 	{
@@ -1603,7 +1603,7 @@ void IPhreeqc::error_msg(const char *str, bool stop)
 
 void IPhreeqc::warning_msg(const char *str)
 {
-	ASSERT(!(this->ErrorFileOn != (this->error_ostream != 0)));
+	ASSERT(this->error_ostream == &std::cerr || (!(this->ErrorFileOn != (this->error_ostream != 0))));
 
 	if (this->error_ostream != NULL && this->error_on)
 	{
