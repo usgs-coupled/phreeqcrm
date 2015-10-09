@@ -21,6 +21,7 @@
     PRIVATE :: Chk_CreateMapping
     PRIVATE :: Chk_GetConcentrations
     PRIVATE :: Chk_GetDensity
+    PRIVATE :: Chk_GetEndCell
     PRIVATE :: Chk_GetGfw
     PRIVATE :: Chk_GetSaturation
     PRIVATE :: Chk_GetSelectedOutput
@@ -28,6 +29,7 @@
     PRIVATE :: Chk_GetSpeciesConcentrations
     PRIVATE :: Chk_GetSpeciesD25
     PRIVATE :: Chk_GetSpeciesZ
+    PRIVATE :: Chk_GetStartCell
     PRIVATE :: Chk_InitialPhreeqc2Concentrations
     PRIVATE :: Chk_InitialPhreeqc2Module
     PRIVATE :: Chk_InitialPhreeqcCell2Module
