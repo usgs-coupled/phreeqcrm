@@ -157,7 +157,6 @@ public class advection {
 			sb.append("Partioning of UZ solids:                          " + phreeqcrm.GetPartitionUZSolids() + "\n");
 			sb.append("Error handler mode:                               " + phreeqcrm.GetErrorHandlerMode() + "\n");
 			phreeqcrm.OutputMessage(sb.toString());
-			//System.out.println(sb);
 		}
 
 		IntVector f_map = phreeqcrm.GetForwardMapping();
@@ -168,7 +167,6 @@ public class advection {
 			StringBuffer strm = new StringBuffer();
 			strm.append(String.format("%10s    %10f \n", components.get(i), gfw.get(i)));
 			phreeqcrm.OutputMessage(strm.toString());
-			//System.out.print(strm);
 		}
 		phreeqcrm.OutputMessage("\n");
 
@@ -257,6 +255,7 @@ public class advection {
 		time_step = 86400.;
 		status = phreeqcrm.SetTimeStep(time_step);
 		for (int steps = 0; steps < nsteps; ++steps) {
+
 			// Transport calculation here
 			{
 				StringBuffer strm = new StringBuffer();
@@ -267,6 +266,7 @@ public class advection {
 				phreeqcrm.ScreenMessage(strm.toString());
 			}
 			AdvectCpp(c, bc_conc, ncomps, nxyz, nbound);
+
 			// Transfer data to PhreeqcRM for reactions
 			boolean print_selected_output_on = (steps == nsteps - 1) ? true : false;
 			boolean print_chemistry_on = (steps == nsteps - 1) ? true : false;
@@ -280,6 +280,7 @@ public class advection {
 			status = phreeqcrm.SetTimeStep(time_step);		 // Time step for kinetic reactions
 			time += time_step;
 			status = phreeqcrm.SetTime(time);
+
 			// Run cells with transported conditions
 			{
 				StringBuffer strm = new StringBuffer();
@@ -288,13 +289,14 @@ public class advection {
 				phreeqcrm.ScreenMessage(strm.toString());
 			}
 			status = phreeqcrm.RunCells();
+
 			// Transfer data from PhreeqcRM for transport
 			status = phreeqcrm.GetConcentrations(c);
 			DoubleVector density = new DoubleVector();
 			status = phreeqcrm.GetDensity(density);
 			DoubleVector volume = phreeqcrm.GetSolutionVolume();
+
 			// Print results at last time step
-			////System.exit(99);
 			if (print_chemistry_on)
 			{
 				{
@@ -310,17 +312,18 @@ public class advection {
 					}
 					phreeqcrm.OutputMessage(oss.toString());
 				}
-				///System.exit(99);
 				for (int isel = 0; isel < phreeqcrm.GetSelectedOutputCount(); isel++) {
 					// Loop through possible multiple selected output definitions
 					int n_user = phreeqcrm.GetNthSelectedOutputUserNumber(isel);
 					status = phreeqcrm.SetCurrentSelectedOutputUserNumber(n_user);
 					System.err.println("Selected output sequence number: " + isel);
 					System.err.println("Selected output user number:     " + n_user);
+
 					// Get double array of selected output values
 					DoubleVector so = new DoubleVector();
 					int col = phreeqcrm.GetSelectedOutputColumnCount();
 					status = phreeqcrm.GetSelectedOutput(so);
+
 					// Print results
 					for (int i = 0; i < phreeqcrm.GetSelectedOutputRowCount()/2; i++) {
 						System.err.println("Cell number " + i);
@@ -361,6 +364,7 @@ public class advection {
 		util_ptr.SetOutputFileName("utility_cpp.txt");
 		util_ptr.SetOutputFileOn(true);
 		int ir = util_ptr.RunString(input);
+
 		// Alternatively, utility pointer is worker nthreads + 1
 		IPhreeqc util_ptr1 = phreeqcrm.GetIPhreeqcPointer(phreeqcrm.GetThreadCount() + 1);
 		if (ir != 0) {
@@ -375,10 +379,12 @@ public class advection {
 		boolean append = false;
 		status = phreeqcrm.SetDumpFileName("advection_cpp.dmp");
 		status = phreeqcrm.DumpModule(dump_on, append);    // gz disabled unless compiled with #define USE_GZ
+
 		// Get pointer to worker
 		IPhreeqcPhastVector w = phreeqcrm.GetWorkers();
 		w.get(0).AccumulateLine("Delete; -all");
 		ir = w.get(0).RunAccumulated();
+
 		// Clean up
 		status = phreeqcrm.CloseFiles();
 		status = phreeqcrm.MpiWorkerBreak();
