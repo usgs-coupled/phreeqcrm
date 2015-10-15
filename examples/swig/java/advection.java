@@ -266,7 +266,7 @@ public class advection {
 				phreeqcrm.SetScreenOn(true);
 				phreeqcrm.ScreenMessage(strm.toString());
 			}
-			// TODO // AdvectCpp(c, bc_conc, ncomps, nxyz, nbound);
+			AdvectCpp(c, bc_conc, ncomps, nxyz, nbound);
 			// Transfer data to PhreeqcRM for reactions
 			boolean print_selected_output_on = (steps == nsteps - 1) ? true : false;
 			boolean print_chemistry_on = (steps == nsteps - 1) ? true : false;
@@ -369,6 +369,7 @@ public class advection {
 		util_ptr.SetCurrentSelectedOutputUserNumber(5);
 		VAR v = new VAR();
 		iphreeqc_result = util_ptr.GetSelectedOutputValue(1, 0, v);
+
 		// Dump results
 		boolean dump_on = true;
 		boolean append = false;
@@ -377,13 +378,22 @@ public class advection {
 		// Get pointer to worker
 		IPhreeqcPhastVector w = phreeqcrm.GetWorkers();
 		w.get(0).AccumulateLine("Delete; -all");
-		/**
-		iphreeqc_result = w[0]->RunAccumulated();
+		ir = w.get(0).RunAccumulated();
 		// Clean up
 		status = phreeqcrm.CloseFiles();
 		status = phreeqcrm.MpiWorkerBreak();
-		**/
+	}
 
+	public void	AdvectCpp(DoubleVector c, DoubleVector bc_conc, int ncomps, int nxyz, int dim) {
+		for (int i = nxyz/2 - 1 ; i > 0; --i) {
+			for (int j = 0; j < ncomps; ++j) {
+				c.set(j * nxyz + i, c.get(j * nxyz + i - 1));                    // component j
+			}
+		}
+		// Cell zero gets boundary condition
+		for (int j = 0; j < ncomps; ++j) {
+			c.set(j * nxyz, bc_conc.get(j * dim));                                // component j
+		}
 	}
 
     public static void main(String argv[]) {
