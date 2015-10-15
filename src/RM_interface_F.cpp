@@ -562,6 +562,7 @@ RMF_GetSelectedOutputCount(int * id)
 	return IRM_BADINSTANCE;
 }
 
+#if !(defined(SWIG_PHREEQCRM) || defined(SWIG))
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RMF_GetSelectedOutputHeading(int * id, int *icol, char *heading, int *length)
@@ -581,6 +582,7 @@ RMF_GetSelectedOutputHeading(int * id, int *icol, char *heading, int *length)
 	}
 	return IRM_BADINSTANCE;
 }
+#endif
 
 /* ---------------------------------------------------------------------- */
 int

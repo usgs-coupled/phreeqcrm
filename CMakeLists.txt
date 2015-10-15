@@ -16,6 +16,23 @@ else()
   set(STANDALONE_BUILD 0)
 endif()
 
+# enable swig java
+option (SWIG_ENABLE_JAVA "Generate java wrappers using SWIG" OFF)
+
+# enable swig python
+option (SWIG_ENABLE_PYTHON "Generate python wrappers using SWIG" OFF)
+
+# enable swig ruby
+if (NOT MSVC)
+  option (SWIG_ENABLE_RUBY "Generate ruby wrappers using SWIG" OFF)
+endif()
+
+# swig
+if (SWIG_ENABLE_JAVA OR SWIG_ENABLE_PYTHON OR SWIG_ENABLE_RUBY)
+  find_package(SWIG REQUIRED)
+  include(${SWIG_USE_FILE})
+endif()
+
 # overide docdir on windows
 if(WIN32 AND NOT CMAKE_INSTALL_DOCDIR)
   set(CMAKE_INSTALL_DOCDIR "" CACHE PATH "documentation root (doc)")
@@ -28,6 +45,13 @@ if (PHREEQCRM_FORTRAN_TESTING)
 endif()
 
 include(GNUInstallDirs)
+
+# set examples directory
+if (WIN32)
+  set(EXAMPLES_DIR examples)
+else()
+  set(EXAMPLES_DIR ${CMAKE_INSTALL_DOCDIR}/examples)
+endif()
 
 # iphreeqc defs
 ADD_DEFINITIONS(-DSWIG_SHARED_OBJ)
@@ -358,6 +382,57 @@ if (STANDALONE_BUILD EQUAL 1 AND MSVC)
 endif()
 
 if (STANDALONE_BUILD EQUAL 1)
+  # swig
+  if (SWIG_FOUND)
+    set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/swig")
+    set_source_files_properties(src/PhreeqcRM.i PROPERTIES CPLUSPLUS ON)
+    set_source_files_properties(src/PhreeqcRM.i PROPERTIES SWIG_FLAGS "-includeall")
+    set_source_files_properties(src/PhreeqcRM.i PROPERTIES SWIG_FLAGS "-Wall")
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/src)
+    
+    # swig python
+    if (SWIG_ENABLE_PYTHON)
+      find_package(PythonLibs)
+
+      swig_add_module(phreeqcrm python src/PhreeqcRM.i ${PhreeqcRM_SOURCES})
+      swig_link_libraries(phreeqcrm ${PYTHON_LIBRARIES})
+      
+      target_include_directories(${SWIG_MODULE_phreeqcrm_REAL_NAME} BEFORE PUBLIC ${PYTHON_INCLUDE_PATH})
+####      target_compile_definitions(${SWIG_MODULE_phreeqcrm_REAL_NAME} PUBLIC NESTED_UNION_NOT_SUPPORTED SWIG_PHREEQCRM)
+
+      install(TARGETS ${SWIG_MODULE_phreeqcrm_REAL_NAME} DESTINATION ${EXAMPLES_DIR}/swig/python)
+    endif()
+
+    # swig java  
+    if (SWIG_ENABLE_JAVA)
+      find_package(JNI)
+      
+      swig_add_module(phreeqcrm_java java src/PhreeqcRM.i ${PhreeqcRM_SOURCES})
+      swig_link_libraries(${SWIG_MODULE_phreeqcrm_java_REAL_NAME} ${JNI_LIBRARIES})
+      
+      target_include_directories(${SWIG_MODULE_phreeqcrm_java_REAL_NAME} BEFORE PUBLIC ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})      
+      target_compile_definitions(${SWIG_MODULE_phreeqcrm_java_REAL_NAME} PUBLIC SWIG_PHREEQCRM)
+      
+      install(TARGETS ${SWIG_MODULE_phreeqcrm_java_REAL_NAME} DESTINATION ${EXAMPLES_DIR}/swig/java)
+    endif()
+    
+    # swig ruby  
+    if (SWIG_ENABLE_RUBY)
+      find_package(Ruby)
+    
+      swig_add_module(phreeqcrm_ruby ruby src/PhreeqcRM.i ${PhreeqcRM_SOURCES})
+      swig_link_libraries(phreeqcrm_ruby ${RUBY_LIBRARY})
+      
+      target_include_directories(${SWIG_MODULE_phreeqcrm_ruby_REAL_NAME} BEFORE PUBLIC ${RUBY_INCLUDE_PATH})
+####      target_compile_definitions(${SWIG_MODULE_phreeqcrm_ruby_REAL_NAME} PUBLIC NESTED_UNION_NOT_SUPPORTED SWIG_PHREEQCRM)
+
+      # must not prefix ruby .so on linux
+      set_target_properties(phreeqcrm_ruby PROPERTIES PREFIX "" OUTPUT_NAME "phreeqcrm_ruby")      
+      
+      install(TARGETS ${SWIG_MODULE_iphreeqc_ruby_REAL_NAME} DESTINATION ${EXAMPLES_DIR}/swig/ruby)
+    endif()
+  endif()
+
   # tests
   enable_testing()
 
@@ -366,6 +441,9 @@ if (STANDALONE_BUILD EQUAL 1)
   add_subdirectory(doc)
   add_subdirectory(Doxygen)
   add_subdirectory(Tests)
+  if (SWIG_FOUND)
+    add_subdirectory(examples)
+  endif()
 endif()
 
 # Turn off Incremental Linking for Debug and RelWithDebInfo

@@ -3081,6 +3081,48 @@ PhreeqcRM::GetSelectedOutputCount(void)
 	this->phreeqcrm_error_string.clear();
 	return (int) this->workers[0]->CSelectedOutputMap.size();
 }
+#if defined(SWIG_PHREEQCRM) || defined(SWIG)
+/* ---------------------------------------------------------------------- */
+std::string
+PhreeqcRM::GetSelectedOutputHeading(int icol)
+/* ---------------------------------------------------------------------- */
+{
+	std::string heading;
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+		if (this->workers[0]->CurrentSelectedOutputUserNumber >= 0)
+		{
+			std::map< int, CSelectedOutput >::iterator it = this->workers[0]->CSelectedOutputMap.find(
+				this->workers[0]->CurrentSelectedOutputUserNumber);
+			if (it != this->workers[0]->CSelectedOutputMap.end())
+			{
+				VAR pVar;
+				VarInit(&pVar);
+				if (it->second.Get(0, icol, &pVar) == VR_OK)
+				{
+					if (pVar.type == TT_STRING)
+					{
+						heading = pVar.sVal;
+						VarClear(&pVar);
+						return heading;
+					}
+				}
+				VarClear(&pVar);
+			}
+		}
+		else
+		{
+			this->ErrorHandler(IRM_INVALIDARG, "Selected output not found.");
+		}
+	}
+	catch (...)
+	{
+	}
+	this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetSelectedOutputHeading");
+	return heading;
+}
+#else   /* defined(SWIG_PHREEQCRM) || defined(SWIG) */
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::GetSelectedOutputHeading(int icol, std::string &heading)
@@ -3119,6 +3161,7 @@ PhreeqcRM::GetSelectedOutputHeading(int icol, std::string &heading)
 	}
 	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetSelectedOutputHeading");
 }
+#endif  /* defined(SWIG_PHREEQCRM) || defined(SWIG) */
 /* ---------------------------------------------------------------------- */
 int
 PhreeqcRM::GetSelectedOutputRowCount()

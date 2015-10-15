@@ -1197,7 +1197,11 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 @par MPI:
 Called by root.
  */
+#if defined(SWIG_PHREEQCRM) || defined(SWIG)
+	std::string                               GetSelectedOutputHeading(int icol);
+#else
 	IRM_RESULT                                GetSelectedOutputHeading(int icol, std::string &heading);
+#endif
 /**
 Returns the current value of the selected-output property.
 A value of true for this property indicates that selected output data will be requested this time step.

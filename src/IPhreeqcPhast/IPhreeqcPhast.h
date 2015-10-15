@@ -15,7 +15,9 @@ public:
 	~IPhreeqcPhast(void);
 	double Get_gfw(std::string);
 	void Set_cell_volumes(int i, double pore_volume, double f, double v);
+#if 0
 	void Selected_out_to_double();
+#endif
 
 	void Get_cell_from_storage_bin(cxxStorageBin & sb, int i);
 	void Put_cell_in_storage_bin(cxxStorageBin & sb, int i);
