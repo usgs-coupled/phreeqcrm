@@ -1,31 +1,33 @@
-public class advection {
-
+public class advection
+{
 	// data members
-    public PhreeqcRM phreeqcrm;
-    public int nxyz;
-    public int threads;
+	public PhreeqcRM phreeqcrm;
+	public int nxyz;
+	public int threads;
 
 	// load the dll/so
-    static {
-        try {
-            System.loadLibrary("phreeqcrm_java");
-        } catch (UnsatisfiedLinkError e) {
-            System.err.println("Native code library failed to load. See the chapter on Dynamic Linking Problems in the SWIG Java documentation for help.\n" + e);
-            System.exit(1);
-        }
-    }
+	static {
+		try {
+			System.loadLibrary("phreeqcrm_java");
+		} catch (UnsatisfiedLinkError e) {
+			System.err.println("Native code library failed to load. See the chapter on Dynamic Linking Problems in the SWIG Java documentation for help.\n" + e);
+			System.exit(1);
+		}
+	}
 
-    public advection() {
+	public advection() {
 		phreeqcrm = null;
 		nxyz      = 40;
 		threads   = 3;
-    }
+	}
 
-    public void Exec() {
+	public void Exec() {
+
 		// Create module
-        phreeqcrm = new PhreeqcRM(nxyz, threads);
+		phreeqcrm = new PhreeqcRM(nxyz, threads);
 
 		IRM_RESULT status;
+
 		// Set properties
 		status = phreeqcrm.SetErrorHandlerMode(1);
 		status = phreeqcrm.SetComponentH2O(false);
@@ -33,6 +35,7 @@ public class advection {
 		status = phreeqcrm.SetRebalanceByCell(true);
 		phreeqcrm.UseSolutionDensityVolume(false);
 		phreeqcrm.SetPartitionUZSolids(false);
+
 		// Open files
 		status = phreeqcrm.SetFilePrefix("Advect_cpp");
 		phreeqcrm.OpenFiles();
@@ -398,12 +401,12 @@ public class advection {
 		}
 		// Cell zero gets boundary condition
 		for (int j = 0; j < ncomps; ++j) {
-			c.set(j * nxyz, bc_conc.get(j * dim));                                // component j
+			c.set(j * nxyz, bc_conc.get(j * dim));                               // component j
 		}
 	}
 
-    public static void main(String argv[]) {
-        advection a = new advection();
-        a.Exec();
-    }
+	public static void main(String argv[]) {
+		advection a = new advection();
+		a.Exec();
+	}
 }
