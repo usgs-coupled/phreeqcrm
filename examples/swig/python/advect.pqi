@@ -1,0 +1,31 @@
+TITLE Example 11.--Transport and cation exchange.
+SOLUTION 0  CaCl2
+        units            mmol/kgw
+        temp             25.0
+        pH               7.0     charge
+        pe               12.5    O2(g)   -0.68
+        Ca               0.6
+        Cl               1.2
+SOLUTION 1-40  Initial solution for column
+        units            mmol/kgw
+        temp             25.0
+        pH               7.0     charge
+        pe               12.5    O2(g)   -0.68
+        Na               1.0
+        K                0.2
+        N(5)             1.2
+END
+EXCHANGE 1-40
+        -equilibrate 1
+        X                0.0011
+END
+SELECTED_OUTPUT
+        -file            advect.sel
+        -reset           false
+#        -step
+        -totals          Na Cl K Ca
+USER_PUNCH
+  -heading  Temperature Pressure Hyd_K
+  10 PUNCH TC, PRESSURE
+  20 PUNCH CALLBACK(cell_no, 0, "HYDRAULIC_K")
+END
