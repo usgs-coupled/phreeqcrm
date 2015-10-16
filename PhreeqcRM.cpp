@@ -5987,7 +5987,6 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 		}
 		phast_iphreeqc_worker->Get_cell_clock_times().clear();
 	}
-
 	// Root normalizes times, calculates efficiency, rebalances work
 	double normalized_total_time = 0;
 	double max_task_time = 0;
@@ -6810,7 +6809,7 @@ PhreeqcRM::RunCellsThread(int n)
 				local_chem_mask = this->print_chem_mask_worker[i - start];
 #elif defined(USE_OPENMP)
 				j = backward_mapping[i][0];			/* j is nxyz number */
-				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) omp_get_wtime());
+				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- omp_get_wtime());
 				local_chem_mask = this->print_chem_mask_root[j];
 #else
 				j = backward_mapping_root[i][0];			/* j is nxyz number */
@@ -6924,7 +6923,7 @@ PhreeqcRM::RunCellsThread(int n)
 #ifdef USE_MPI
 				phast_iphreeqc_worker->Get_cell_clock_times().back() += (double) MPI_Wtime();
 #elif defined(USE_OPENMP)
-				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) omp_get_wtime());
+				phast_iphreeqc_worker->Get_cell_clock_times().back() += omp_get_wtime();
 #else
 				phast_iphreeqc_worker->Get_cell_clock_times().back() += (double) clock();
 #endif
