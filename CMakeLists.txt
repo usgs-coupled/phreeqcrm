@@ -398,7 +398,8 @@ if (STANDALONE_BUILD EQUAL 1)
       swig_link_libraries(phreeqcrm ${PYTHON_LIBRARIES})
       
       target_include_directories(${SWIG_MODULE_phreeqcrm_REAL_NAME} BEFORE PUBLIC ${PYTHON_INCLUDE_PATH})
-####      target_compile_definitions(${SWIG_MODULE_phreeqcrm_REAL_NAME} PUBLIC NESTED_UNION_NOT_SUPPORTED SWIG_PHREEQCRM)
+      target_compile_definitions(${SWIG_MODULE_phreeqcrm_REAL_NAME} PUBLIC NESTED_UNION_NOT_SUPPORTED SWIG_PHREEQCRM)
+      target_compile_definitions(${SWIG_MODULE_phreeqcrm_REAL_NAME} PUBLIC SWIG_IPHREEQC)
 
       install(TARGETS ${SWIG_MODULE_phreeqcrm_REAL_NAME} DESTINATION ${EXAMPLES_DIR}/swig/python)
     endif()
@@ -412,6 +413,7 @@ if (STANDALONE_BUILD EQUAL 1)
       
       target_include_directories(${SWIG_MODULE_phreeqcrm_java_REAL_NAME} BEFORE PUBLIC ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})      
       target_compile_definitions(${SWIG_MODULE_phreeqcrm_java_REAL_NAME} PUBLIC SWIG_PHREEQCRM)
+      target_compile_definitions(${SWIG_MODULE_phreeqcrm_java_REAL_NAME} PUBLIC SWIG_IPHREEQC)
       
       install(TARGETS ${SWIG_MODULE_phreeqcrm_java_REAL_NAME} DESTINATION ${EXAMPLES_DIR}/swig/java)
     endif()
@@ -424,7 +426,8 @@ if (STANDALONE_BUILD EQUAL 1)
       swig_link_libraries(phreeqcrm_ruby ${RUBY_LIBRARY})
       
       target_include_directories(${SWIG_MODULE_phreeqcrm_ruby_REAL_NAME} BEFORE PUBLIC ${RUBY_INCLUDE_PATH})
-####      target_compile_definitions(${SWIG_MODULE_phreeqcrm_ruby_REAL_NAME} PUBLIC NESTED_UNION_NOT_SUPPORTED SWIG_PHREEQCRM)
+      target_compile_definitions(${SWIG_MODULE_phreeqcrm_ruby_REAL_NAME} PUBLIC NESTED_UNION_NOT_SUPPORTED SWIG_PHREEQCRM)
+      target_compile_definitions(${SWIG_MODULE_phreeqcrm_ruby_REAL_NAME} PUBLIC SWIG_IPHREEQC)
 
       # must not prefix ruby .so on linux
       set_target_properties(phreeqcrm_ruby PROPERTIES PREFIX "" OUTPUT_NAME "phreeqcrm_ruby")      

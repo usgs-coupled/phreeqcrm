@@ -1,9 +1,11 @@
-public class advection
+public class advection extends BasicCallback
 {
 	// data members
 	public PhreeqcRM phreeqcrm;
 	public int nxyz;
 	public int threads;
+	public DoubleVector hydraulic_K;
+
 
 	// load the dll/so
 	static {
@@ -16,12 +18,45 @@ public class advection
 	}
 
 	public advection() {
-		phreeqcrm = null;
-		nxyz      = 40;
-		threads   = 3;
+		phreeqcrm   = null;
+		nxyz        = 40;
+		threads     = 3;
+		hydraulic_K = null;
+	}
+
+    public double Callback(double x1, double x2, String str) {
+		/*
+		Use of a callback is optional.
+
+		The callback provides a way to obtain data from a Basic program
+		through the variables x1, x2, and str1, and send data to a
+		Basic program through the return value of the callback.
+
+		The callback function is called whenever CALLBACK(x1, x2, str$)
+		is used in a Basic program (usually USER_PUNCH). See file "ic".
+		*/
+		int rm_cell_number = (int) x1;
+		if (rm_cell_number >= 0 && rm_cell_number < phreeqcrm.GetChemistryCellCount()) {
+			IntVectorVector back = phreeqcrm.GetBackwardMapping();
+			if (str.compareTo("HYDRAULIC_K") == 0) {
+				return hydraulic_K.get(back.get(rm_cell_number).get(0));
+			}
+		}
+		return -999.9;
 	}
 
 	public void Exec() {
+
+		// Based on PHREEQC Example 11
+
+		// --------------------------------------------------------------------------
+		// Create PhreeqcRM
+		// --------------------------------------------------------------------------
+
+		hydraulic_K = new DoubleVector();
+		for (int i = 0; i < nxyz; ++i) {
+			hydraulic_K.add(i*2.0);
+		}
 
 		// Create module
 		phreeqcrm = new PhreeqcRM(nxyz, threads);
@@ -29,7 +64,7 @@ public class advection
 		IRM_RESULT status;
 
 		// Set properties
-		status = phreeqcrm.SetErrorHandlerMode(1);
+		status = phreeqcrm.SetErrorHandlerMode(0);
 		status = phreeqcrm.SetComponentH2O(false);
 		status = phreeqcrm.SetRebalanceFraction(0.5);
 		status = phreeqcrm.SetRebalanceByCell(true);
@@ -112,24 +147,23 @@ public class advection
 		if (status != IRM_RESULT.IRM_OK) phreeqcrm.DecodeError(status.swigValue());
 		int nchem = phreeqcrm.GetChemistryCellCount();
 
-
 		// --------------------------------------------------------------------------
 		// Set initial conditions
 		// --------------------------------------------------------------------------
 
 		// Set printing of chemistry file
 		status = phreeqcrm.SetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
+
 		// Load database
 		phreeqcrm.LoadDatabase("phreeqc.dat");
 
-		// TODO CALLBACK
-		//// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
-		//register_basic_callback(&some_data);
+		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
+		register_basic_callback();
 
 		// Demonstration of error handling if ErrorHandlerMode is 0
 		if (status != IRM_RESULT.IRM_OK) {
 			System.err.println(phreeqcrm.GetErrorString());
-			throw new RuntimeException();
+			System.exit(1);
 		}
 
 		// Run file to define solutions and reactants for initial conditions, selected output
@@ -167,9 +201,7 @@ public class advection
 		StringVector components = phreeqcrm.GetComponents();
 		DoubleVector gfw = phreeqcrm.GetGfw();
 		for (int i = 0; i < ncomps; i++) {
-			StringBuffer strm = new StringBuffer();
-			strm.append(String.format("%10s    %10f \n", components.get(i), gfw.get(i)));
-			phreeqcrm.OutputMessage(strm.toString());
+			phreeqcrm.OutputMessage(String.format("%10s    %10f \n", components.get(i), gfw.get(i)));
 		}
 		phreeqcrm.OutputMessage("\n");
 
@@ -402,6 +434,13 @@ public class advection
 		// Cell zero gets boundary condition
 		for (int j = 0; j < ncomps; ++j) {
 			c.set(j * nxyz, bc_conc.get(j * dim));                               // component j
+		}
+	}
+
+	public void register_basic_callback() {
+		IPhreeqcPhastVector w = phreeqcrm.GetWorkers();
+		for (int i = 0; i < (int) w.size(); i++) {
+			w.get(i).SetBasicCallback(this);
 		}
 	}
 
