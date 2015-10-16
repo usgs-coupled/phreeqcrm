@@ -2076,7 +2076,6 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 	IRM_RESULT return_value = IRM_OK;
 
 	// Open file on root
-	gzFile dump_file = NULL;
 	try
 	{
 		// open dump file
@@ -2430,7 +2429,7 @@ PhreeqcRM::GatherNchem(std::vector<double> &source, std::vector<double> &destina
 	{
 		destination.resize(this->nxyz);
 
-		for(size_t i = 0; i < this->count_chemistry; i++)
+		for(size_t i = 0; i < (size_t) this->count_chemistry; i++)
 		{
 			for(size_t j = 0; j < backward_mapping[i].size(); j++)
 			{
@@ -7827,7 +7826,7 @@ PhreeqcRM::SetGeneric(const std::vector<double> &source, std::vector<double> &de
 	{		
 		if (mpi_myself == 0)
 		{
-			if (source.size() < this->nxyz)
+			if ((int) source.size() < this->nxyz)
 			{
 				this->ErrorHandler(IRM_INVALIDARG, "Wrong number of elements in vector argument for " + name);
 			}
@@ -7899,14 +7898,14 @@ PhreeqcRM::SetPartitionUZSolids(bool tf)
 	this->partition_uz_solids = (temp_tf == 0) ? false : true;
 	if (this->partition_uz_solids) 
 	{
-		if (this->mpi_myself == 0 && this->old_saturation_root.size() != this->nxyz)
+		if (this->mpi_myself == 0 && ((int) this->old_saturation_root.size() != this->nxyz))
 		{
 			this->old_saturation_root.resize(this->nxyz, 1.0);
 		}
 		ScatterNchem(old_saturation_root, old_saturation_worker);
 	}
 #else
-	if (this->partition_uz_solids && (this->old_saturation_root.size() != this->nxyz))
+	if (this->partition_uz_solids && ((int) this->old_saturation_root.size() != this->nxyz))
 	{
 		this->old_saturation_root.resize(this->nxyz, 1.0);
 	}
@@ -8031,7 +8030,7 @@ PhreeqcRM::SetPrintChemistryMask(std::vector<int> & m)
 			int method = METHOD_SETPRINTCHEMISTRYMASK;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 #endif
-			if (m.size() < this->nxyz)
+			if ((int) m.size() < this->nxyz)
 			{				
 				this->ErrorHandler(IRM_INVALIDARG, "Wrong number of elements in vector argument for SetPrintChemistryMask");
 			}
