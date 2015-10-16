@@ -432,7 +432,7 @@ if (STANDALONE_BUILD EQUAL 1)
       # must not prefix ruby .so on linux
       set_target_properties(phreeqcrm_ruby PROPERTIES PREFIX "" OUTPUT_NAME "phreeqcrm_ruby")      
       
-      install(TARGETS ${SWIG_MODULE_iphreeqc_ruby_REAL_NAME} DESTINATION ${EXAMPLES_DIR}/swig/ruby)
+      install(TARGETS ${SWIG_MODULE_phreeqcrm_ruby_REAL_NAME} DESTINATION ${EXAMPLES_DIR}/swig/ruby)
     endif()
   endif()
 
