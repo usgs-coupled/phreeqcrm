@@ -4,7 +4,13 @@
 #if defined(USE_OPENMP) && defined(USE_MPI)
 #error "Cannot define both USE_OPENMP and USE_MPI at the same time."
 #endif
-
+#ifdef USE_MPI
+#define CLOCK() MPI_Wtime()
+#elif defined(USE_OPENMP)
+#define CLOCK() omp_get_wtime()
+#else
+#define CLOCK() clock()
+#endif
 #include "PhreeqcRM.h"
 #include "PHRQ_base.h"
 #include "PHRQ_io.h"
@@ -6230,7 +6236,6 @@ PhreeqcRM::RunCells()
 	*   Update solution compositions in sz_bin
 	*/
 
-	//clock_t t0 = clock();
 	IPhreeqcPhast * phast_iphreeqc_worker = this->workers[0];
 	phast_iphreeqc_worker->PhreeqcPtr->Set_run_cells_one_step(true);
 	if (phast_iphreeqc_worker->Get_out_stream())
@@ -6306,14 +6311,13 @@ PhreeqcRM::RunCells()
 		this->CheckSelectedOutput();
 #endif
 		// Rebalance load
-		clock_t t0 = clock();
+		double t0 = (double) CLOCK();
 		this->RebalanceLoad();
 		MPI_Barrier(this->phreeqcrm_comm);
 		if (mpi_myself == 0 && mpi_tasks > 1)
 		{
-			//std::cerr << "          Time rebalancing load             " << double(clock() - t0)/CLOCKS_PER_SEC << "\n";
 			std::ostringstream msg;
-			msg << "          Time rebalancing load             " << double(clock() - t0)/CLOCKS_PER_SEC << "\n";
+			msg << "          Time rebalancing load             " << ((double) CLOCK() - t0)/((double) CLOCKS_PER_SEC) << "\n";
 			this->ScreenMessage(msg.str().c_str());
 		}
 	}
@@ -6351,7 +6355,6 @@ PhreeqcRM::RunCells()
 			return this->ReturnHandler(IRM_FAIL, "PhreeqcRM::RunCells");
 		}
 	}
-	//clock_t t0 = clock();
 	IRM_RESULT return_value = IRM_OK;
 	try
 	{
@@ -6405,13 +6408,12 @@ PhreeqcRM::RunCells()
 		this->CheckSelectedOutput();
 #endif
 		// Rebalance load
-		clock_t t0 = clock();
+		double t0 = CLOCK();
 		this->RebalanceLoad();
 		if (mpi_myself == 0 && nthreads > 1)
 		{
-			//std::cerr << "          Time rebalancing load             " << double(clock() - t0)/CLOCKS_PER_SEC << "\n";
 			std::ostringstream msg;
-			msg << "          Time rebalancing load             " << double(clock() - t0)/CLOCKS_PER_SEC << "\n";
+			msg << "          Time rebalancing load             " << ((double) CLOCK() - t0)/((double) CLOCKS_PER_SEC) << "\n";
 			this->ScreenMessage(msg.str().c_str());
 		}
 	}
@@ -6577,7 +6579,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 		}
 	}
 
-	clock_t t0 = clock();
+	double t0 = (double) CLOCK();
 	if (count_active > 0)
 	{
 		std::ostringstream input;
@@ -6601,7 +6603,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 			throw PhreeqcRMStop();
 		}
 	}
-	clock_t t_elapsed = clock() - t0;
+	double t_elapsed = (double) CLOCK() - t0;
 
 	// Save selected output data
 	if (this->selected_output_on)
@@ -6675,7 +6677,7 @@ PhreeqcRM::RunCellsThread(int n)
 	/*
 	*   Update solution compositions
 	*/
-	clock_t t0 = clock();
+	double t0 = (double) CLOCK();
 
 	int i, j;
 	IPhreeqcPhast *phast_iphreeqc_worker = this->GetWorkers()[n];
@@ -6811,8 +6813,8 @@ PhreeqcRM::RunCellsThread(int n)
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- omp_get_wtime());
 				local_chem_mask = this->print_chem_mask_root[j];
 #else
-				j = backward_mapping_root[i][0];			/* j is nxyz number */
-				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) clock());
+				//j = backward_mapping_root[i][0];			/* j is nxyz number */
+				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) CLOCK());
 				local_chem_mask = this->print_chem_mask_root[j];
 #endif
 				// Set local print flags
@@ -6924,11 +6926,11 @@ PhreeqcRM::RunCellsThread(int n)
 #elif defined(USE_OPENMP)
 				phast_iphreeqc_worker->Get_cell_clock_times().back() += omp_get_wtime();
 #else
-				phast_iphreeqc_worker->Get_cell_clock_times().back() += (double) clock();
+				phast_iphreeqc_worker->Get_cell_clock_times().back() += (double) CLOCK();
 #endif
 			} // end one cell
 		}
-		clock_t t_elapsed = clock() - t0;
+		double t_elapsed = (double) CLOCK() - t0;
 		phast_iphreeqc_worker->Set_thread_clock_time((double) t_elapsed);
 	}
 	catch (PhreeqcRMStop)
@@ -8713,7 +8715,7 @@ PhreeqcRM::TimeStandardTask()
 {
 	double a = 0.0;
 	double count = 0.0;
-	clock_t t0 = clock();
+	double t0 = (double) CLOCK();
 	for (;;)
 	{
 		for (int i = 1; i < 1000; i++)
@@ -8721,7 +8723,7 @@ PhreeqcRM::TimeStandardTask()
 			count += 1.0;
 			a += 1.0/sqrt(count + a);
 		}
-		if (double((clock() - t0)/CLOCKS_PER_SEC) > 1.0) break;
+		if (((double) CLOCK() - t0)/((double) CLOCKS_PER_SEC) > 1.0) break;
 	}
 	return count;
 }
