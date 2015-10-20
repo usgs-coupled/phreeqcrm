@@ -9,7 +9,7 @@
 #elif defined(USE_OPENMP)
 #define CLOCK() omp_get_wtime()
 #else
-#define CLOCK() clock()
+#define CLOCK() clock()/CLOCKS_PER_SEC
 #endif
 #include "PhreeqcRM.h"
 #include "PHRQ_base.h"
@@ -6317,7 +6317,7 @@ PhreeqcRM::RunCells()
 		if (mpi_myself == 0 && mpi_tasks > 1)
 		{
 			std::ostringstream msg;
-			msg << "          Time rebalancing load             " << ((double) CLOCK() - t0)/((double) CLOCKS_PER_SEC) << "\n";
+			msg << "          Time rebalancing load             " << ((double) CLOCK() - t0) << "\n";
 			this->ScreenMessage(msg.str().c_str());
 		}
 	}
@@ -6413,7 +6413,7 @@ PhreeqcRM::RunCells()
 		if (mpi_myself == 0 && nthreads > 1)
 		{
 			std::ostringstream msg;
-			msg << "          Time rebalancing load             " << ((double) CLOCK() - t0)/((double) CLOCKS_PER_SEC) << "\n";
+			msg << "          Time rebalancing load             " << ((double) CLOCK() - t0) << "\n";
 			this->ScreenMessage(msg.str().c_str());
 		}
 	}
@@ -8723,7 +8723,7 @@ PhreeqcRM::TimeStandardTask()
 			count += 1.0;
 			a += 1.0/sqrt(count + a);
 		}
-		if (((double) CLOCK() - t0)/((double) CLOCKS_PER_SEC) > 1.0) break;
+		if (((double) CLOCK() - t0) > 1.0) break;
 	}
 	return count;
 }
