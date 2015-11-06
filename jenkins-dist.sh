@@ -180,6 +180,8 @@ SED_FILES="$DISTPATH/configure.ac \
            $DISTPATH/doc/README.TXT \
            $DISTPATH/src/PhreeqcRM.h"
 
+env
+
 for vsn_file in $SED_FILES
 do
   sed \
