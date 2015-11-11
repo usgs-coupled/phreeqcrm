@@ -26,7 +26,7 @@
 #   specified, it will build a release tarball.
 #  
 #   To build a Windows package pass -win.
-###NAME=PhreeqcRM
+#NAME=PhreeqcRM
 
 # echo everything
 set -x
