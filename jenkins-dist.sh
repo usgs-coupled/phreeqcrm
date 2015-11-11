@@ -26,7 +26,7 @@
 #   specified, it will build a release tarball.
 #  
 #   To build a Windows package pass -win.
-NAME=PhreeqcRM
+##NAME=PhreeqcRM
 
 # echo everything
 set -x
@@ -185,7 +185,7 @@ env
 for vsn_file in $SED_FILES
 do
   sed \
-   -e "s/AC_INIT(.*)/AC_INIT([PhreeqcRM], [$VERSION-$REVISION], [dlpark@usgs.gov])/g" \
+   -e "s/AC_INIT(.*)/AC_INIT([$NAME], [$VERSION-$REVISION], [dlpark@usgs.gov])/g" \
    -e "s/AM_LDFLAGS=-release.*/AM_LDFLAGS=-release $ver_major.$ver_minor.$ver_patch/g" \
    -e "/#define *VER_MAJOR/s/[0-9]\+/$ver_major/" \
    -e "/#define *VER_MINOR/s/[0-9]\+/$ver_minor/" \
