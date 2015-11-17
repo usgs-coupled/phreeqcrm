@@ -233,7 +233,12 @@ Called only by root.
 /**
 Provides a mapping from grid cells in the user's model to reaction cells for which chemistry needs to be run.
 The mapping is used to eliminate inactive cells and to use symmetry to decrease the number of cells
-for which chemistry must be run. The mapping may be many-to-one to account for symmetry.
+for which chemistry must be run. 
+The array @grid2chem of size @a nxyz (the number of grid cells, @ref GetGridCellCount) 
+must contain the set of all integers 0 <= @a i < @a count_chemistry, 
+where @a count_chemistry is a number less than or equal to @a nxyz.
+Inactive cells are assigned a negative integer. 
+The mapping may be many-to-one to account for symmetry.
 Default is a one-to-one mapping--all user grid cells are reaction cells
 (equivalent to @a grid2chem values of 0,1,2,3,...,nxyz-1).
 @param grid2chem        A vector of integers: Nonnegative is a reaction-cell number (0 based),
