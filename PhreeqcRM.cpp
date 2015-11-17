@@ -1679,6 +1679,11 @@ PhreeqcRM::CreateMapping(std::vector<int> &grid2chem)
 		{
 			if (backward_mapping[i].size() == 0)
 			{
+				std::ostringstream estrm;
+				estrm << "Largest number in grid2chem is " << count_chemistry << "." << std::endl;
+				estrm << "grid2chem should contain all i such that 0 <= i < " << count_chemistry << "." << std::endl;
+				estrm << "However, grid2chem does not contain the integer " << i << "." << std::endl;
+				this->ErrorMessage(estrm.str().c_str());
 				this->ErrorHandler(IRM_INVALIDARG, "PhreeqcRM::CreateMapping, building inverse mapping (chem to grid).");
 			}
 		}
