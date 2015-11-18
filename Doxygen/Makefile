@@ -1,4 +1,4 @@
-DOXYGEN=doxygen
+DOXYGEN ?= doxygen
 
 all:
 	cp ../src/RM_interface.F90 ../src/RM_interface.F90.save
