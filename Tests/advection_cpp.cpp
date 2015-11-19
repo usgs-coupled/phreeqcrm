@@ -145,7 +145,7 @@ int advection_cpp()
 		// --------------------------------------------------------------------------
 
 		// Set printing of chemistry file
-		status = phreeqc_rm.SetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
+		status = phreeqc_rm.SetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
 		// Load database
 		status = phreeqc_rm.LoadDatabase("phreeqc.dat");
 
@@ -623,8 +623,8 @@ int do_something(void *cookie)
 }
 #endif
 void register_basic_callback(void *cookie)
-{		
-	my_data *data; 
+{
+	my_data *data;
 #ifdef USE_MPI
 	int mpi_tasks, mpi_myself;
 #endif
