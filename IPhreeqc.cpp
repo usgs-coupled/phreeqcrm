@@ -1,7 +1,6 @@
 #include <memory>                       // auto_ptr
 #include <map>
 #include <string.h>
-
 #include "IPhreeqc.hpp"                 // IPhreeqc
 #include "Phreeqc.h"                    // Phreeqc
 #include "thread.h"
@@ -10,7 +9,7 @@
 #include "Debug.h"                      // ASSERT
 #include "ErrorReporter.hxx"            // CErrorReporter
 #include "CSelectedOutput.hxx"          // CSelectedOutput
-#include "phreeqcpp/SelectedOutput.h"   // SelectedOutput
+#include "SelectedOutput.h"             // SelectedOutput
 #include "dumper.h"                     // dumper
 
 // statics
