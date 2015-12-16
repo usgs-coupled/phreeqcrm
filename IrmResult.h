@@ -13,6 +13,6 @@ typedef enum {
 	IRM_INVALIDROW    = -4,  /*!< Failure, Invalid row */
 	IRM_INVALIDCOL    = -5,  /*!< Failure, Invalid column */
 	IRM_BADINSTANCE   = -6,  /*!< Failure, Invalid rm instance id */
-	IRM_FAIL          = -7,  /*!< Failure, Unspecified */
+	IRM_FAIL          = -7   /*!< Failure, Unspecified */
 } IRM_RESULT;
 #endif
