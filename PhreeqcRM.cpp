@@ -2429,10 +2429,15 @@ PhreeqcRM::GatherNchem(std::vector<double> &source, std::vector<double> &destina
 		recv_displs[j] = start_cell[j];
 	}
 	std::vector<double> dbuffer;
-	if (mpi_myself == 0) 
+	if (this->mpi_myself == 0)
 	{
 		dbuffer.resize(this->count_chemistry);
 	}
+	else
+	{
+		dbuffer.resize(1);
+	}
+
 	MPI_Gatherv((void *) &(source[0]), send_count, MPI_DOUBLE, &dbuffer[0], recv_counts, recv_displs, MPI_DOUBLE, 0, this->phreeqcrm_comm);
 
 	// Place in tempc on root
