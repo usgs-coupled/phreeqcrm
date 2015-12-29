@@ -54,6 +54,8 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/cxxMix.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/dense.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/dense.h\
+	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/Dictionary.cpp\
+	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/Dictionary.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/dumper.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/dumper.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/dw.cpp\
@@ -118,6 +120,8 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/runner.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/SelectedOutput.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/SelectedOutput.h\
+	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/Serializer.cxx\
+	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/Serializer.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/sit.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/smalldense.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/smalldense.h\
