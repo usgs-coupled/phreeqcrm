@@ -63,6 +63,8 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/cxxMix.h\
 	phreeqcpp/dense.cpp\
 	phreeqcpp/dense.h\
+	phreeqcpp/Dictionary.cpp\
+	phreeqcpp/Dictionary.h\
 	phreeqcpp/dumper.cpp\
 	phreeqcpp/dumper.h\
 	phreeqcpp/dw.cpp\
@@ -127,6 +129,8 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/runner.h\
 	phreeqcpp/SelectedOutput.cpp\
 	phreeqcpp/SelectedOutput.h\
+	phreeqcpp/Serializer.cxx\
+	phreeqcpp/Serializer.h\
 	phreeqcpp/sit.cpp\
 	phreeqcpp/smalldense.cpp\
 	phreeqcpp/smalldense.h\
