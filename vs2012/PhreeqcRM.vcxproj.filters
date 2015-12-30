@@ -278,6 +278,12 @@
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\Utils.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Dictionary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Serializer.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqcPhast.h">
@@ -479,6 +485,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Dictionary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Serializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

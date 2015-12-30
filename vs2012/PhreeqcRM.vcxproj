@@ -410,6 +410,7 @@
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvdense.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvode.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dense.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Dictionary.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dw.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\gases.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\input.cpp" />
@@ -432,6 +433,7 @@
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\read.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\readtr.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SelectedOutput.cpp" />
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Serializer.cxx" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\sit.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\smalldense.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\spread.cpp" />
@@ -509,6 +511,7 @@
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\PHRQ_base.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\PHRQ_io.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\common\Utils.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Dictionary.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\GasComp.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\global_structures.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\NA.h" />
@@ -541,6 +544,7 @@
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Reaction.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\runner.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\SelectedOutput.h" />
+    <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Serializer.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\UserPunch.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\phreeqc\smalldense.h" />
     <ClInclude Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Solution.h" />
