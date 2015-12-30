@@ -18,6 +18,7 @@
 #include "IPhreeqc.hpp"
 #include "IPhreeqcPhast.h"
 #include "IPhreeqcPhastLib.h"
+#include "Serializer.h"
 #include <assert.h>
 #include "System.h"
 #ifdef USE_GZ
@@ -5026,6 +5027,409 @@ PhreeqcRM::PartitionUZ(int n, int iphrq, int ihst, double new_frac)
 #endif
 }
 #ifdef USE_MPI
+#define SERIALIZE
+#ifdef SERIALIZE
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::RebalanceLoad(void)
+/* ---------------------------------------------------------------------- */
+{
+	if (this->mpi_tasks <= 1) return;
+	if (this->mpi_tasks > count_chemistry) return;
+	if (this->rebalance_fraction <= 0.0) return;
+	if (this->rebalance_by_cell)
+	{
+		try
+		{
+			RebalanceLoadPerCell();
+		}
+		catch (...)
+		{
+			this->ErrorHandler(IRM_FAIL, "PhreeqcRM::RebalanceLoad");
+		}
+		return;
+	}
+#include <time.h>
+
+	// working space
+	std::vector<int> start_cell_new;
+	std::vector<int> end_cell_new;
+	for (int i = 0; i < this->mpi_tasks; i++)
+	{
+		start_cell_new.push_back(0);
+		end_cell_new.push_back(0);
+	}
+	std::vector<int> cells_v;
+	std::ostringstream error_stream;
+	bool good_enough = false;
+
+	// Calculate time per cell for this process
+	IPhreeqcPhast * phast_iphreeqc_worker = this->workers[0];
+	int cells = this->end_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
+	double time_per_cell = phast_iphreeqc_worker->Get_thread_clock_time()/((double) cells);
+
+	// Gather times at root
+	std::vector<double> recv_buffer;
+	recv_buffer.resize(this->mpi_tasks);
+	MPI_Gather(&time_per_cell, 1, MPI_DOUBLE, &recv_buffer.front(), 1, MPI_DOUBLE, 0,
+			   phreeqcrm_comm);
+
+	IRM_RESULT return_value = IRM_OK;
+	try
+	{
+		if (this->mpi_myself == 0)
+		{
+			double total = 0;
+			for (int i = 0; i < this->mpi_tasks; i++)
+			{
+				total += recv_buffer[i];
+			}
+			double avg = total / (double) this->mpi_tasks;
+			// Normalize
+			total = 0;
+			for (int i = 0; i < this->mpi_tasks; i++)
+			{
+				assert(recv_buffer[i] >= 0);
+				if (recv_buffer[i] == 0) recv_buffer[i] = 0.25*avg;
+				total += recv_buffer[0] / recv_buffer[i];
+			}
+
+			// Set first and last cells
+			double new_n = this->count_chemistry / total; /* new_n is number of cells for root */
+
+
+			// Calculate number of cells per process, rounded to lower number
+			int	total_cells = 0;
+			int n = 0;
+			for (int i = 0; i < this->mpi_tasks; i++)
+			{
+				n = (int) floor(new_n * recv_buffer[0] / recv_buffer[i]);
+				if (n < 1)
+					n = 1;
+				cells_v.push_back(n);
+				total_cells += n;
+			}
+
+			// Distribute cells from rounding down
+			int diff_cells = this->count_chemistry - total_cells;
+			if (diff_cells > 0)
+			{
+				for (int j = 0; j < diff_cells; j++)
+				{
+					int min_cell = 0;
+					double min_time = (cells_v[0] + 1) * recv_buffer[0];
+					for (int i = 1; i < this->mpi_tasks; i++)
+					{
+						if ((cells_v[i] + 1) * recv_buffer[i] < min_time)
+						{
+							min_cell = i;
+							min_time = (cells_v[i] + 1) * recv_buffer[i];
+						}
+					}
+					cells_v[min_cell] += 1;
+				}
+			}
+			else if (diff_cells < 0)
+			{
+				for (int j = 0; j < -diff_cells; j++)
+				{
+					int max_cell = -1;
+					double max_time = 0;
+					for (int i = 0; i < this->mpi_tasks; i++)
+					{
+						if (cells_v[i] > 1)
+						{
+							if ((cells_v[i] - 1) * recv_buffer[i] > max_time)
+							{
+								max_cell = i;
+								max_time = (cells_v[i] - 1) * recv_buffer[i];
+							}
+						}
+					}
+					cells_v[max_cell] -= 1;
+				}
+			}
+
+			// Fill in subcolumn ends
+			int last = -1;
+			for (int i = 0; i < this->mpi_tasks; i++)
+			{
+				start_cell_new[i] = last + 1;
+				end_cell_new[i] = start_cell_new[i] + cells_v[i] - 1;
+				last = end_cell_new[i];
+			}
+
+			// Check that all cells are distributed
+			if (end_cell_new[this->mpi_tasks - 1] != this->count_chemistry - 1)
+			{
+				error_stream << "Failed: " << diff_cells << ", count_cells " << this->count_chemistry << ", last cell "
+					<< end_cell_new[this->mpi_tasks - 1] << "\n";
+				for (int i = 0; i < this->mpi_tasks; i++)
+				{
+					error_stream << i << ": first " << start_cell_new[i] << "\tlast " << end_cell_new[i] << "\n";
+				}
+				error_stream << "Failed to redistribute cells." << "\n";
+				this->ErrorHandler(IRM_FAIL, error_stream.str().c_str());
+			}
+
+			// Compare old and new times
+			double max_old = 0.0;
+			double max_new = 0.0;
+			for (int i = 0; i < this->mpi_tasks; i++)
+			{
+				double t = cells_v[i] * recv_buffer[i];
+				if (t > max_new)
+					max_new = t;
+				t = (end_cell[i] - start_cell[i] + 1) * recv_buffer[i];
+				if (t > max_old)
+					max_old = t;
+			}
+			{
+				//std::cerr << "          Estimated efficiency of chemistry " << (float) ((LDBLE) 100. * max_new / max_old) << "\n";
+				std::ostringstream msg;
+				msg << "          Estimated efficiency of chemistry " << (float) ((LDBLE) 100. * max_new / max_old) << "\n";
+				this->ScreenMessage(msg.str().c_str());
+			}
+
+			if ((max_old - max_new) / max_old < 0.05)
+			{
+				for (int i = 0; i < this->mpi_tasks; i++)
+				{
+					start_cell_new[i] = start_cell[i];
+					end_cell_new[i] = end_cell[i];
+				}
+				good_enough = true;
+			}
+			else
+			{
+				for (int i = 0; i < this->mpi_tasks - 1; i++)
+				{
+					int icells = (int) ((end_cell_new[i] - end_cell[i]) * this->rebalance_fraction);
+					end_cell_new[i] = end_cell[i] + icells;
+					start_cell_new[i + 1] = end_cell_new[i] + 1;
+				}
+			}
+		}
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+
+	// Broadcast error condition
+	MPI_Bcast(&return_value, 1, MPI_INT, 0, phreeqcrm_comm);
+
+	/*
+	 *   Broadcast new subcolumns
+	 */
+
+	if (return_value == 0)
+	{
+		try
+		{
+			std::vector<int> r_vector;
+			r_vector.push_back(0);
+
+			MPI_Bcast((void *) &start_cell_new.front(), mpi_tasks, MPI_INT, 0, phreeqcrm_comm);
+			MPI_Bcast((void *) &end_cell_new.front(), mpi_tasks, MPI_INT, 0, phreeqcrm_comm);
+
+			/*
+			*   Redefine columns
+			*/
+			int nnew = 0;
+			int old = 0;
+			int change = 0;
+			std::map< std::string, std::vector<int> > transfer_pair;
+			for (int k = 0; k < this->count_chemistry; k++)
+			{
+				while (k > end_cell[old])
+				{
+					old++;
+				}
+				while (k > end_cell_new[nnew])
+				{
+					nnew++;
+				}
+
+				if (old == nnew)
+					continue;
+				change++;
+				std::ostringstream key;
+				key << old << "#" << nnew;
+				std::map< std::string, std::vector<int> >::iterator tp_it = transfer_pair.find(key.str());
+				if (tp_it == transfer_pair.end())
+				{
+					std::vector<int> v;
+					v.push_back(old);
+					v.push_back(nnew);
+					transfer_pair[key.str()] = v;
+				}
+				transfer_pair[key.str()].push_back(k);
+			}
+			std::map< std::string, std::vector<int> >::iterator tp_it = transfer_pair.begin();
+
+			// Transfer cells
+			int transfers = 0;
+			for ( ; tp_it != transfer_pair.end(); tp_it++)
+			{
+				Serializer serial;
+				int pold = tp_it->second[0];
+				int pnew = tp_it->second[1];
+				// transfer cells from pold to pnew
+				try
+				{
+					if (this->mpi_myself == pold)
+					{
+						for (size_t i = 2; i < tp_it->second.size(); i++)
+						{
+							int k = tp_it->second[i];
+							serial.Serialize(*phast_iphreeqc_worker->Get_PhreeqcPtr(), k, k, false, false);
+						}
+						int total_size = (int) (serial.GetDictionary().GetDictionaryOss().str().size() * sizeof(char));
+						total_size += (int) (serial.GetInts().size() * sizeof(int));
+						total_size += (int) (serial.GetDoubles().size() * sizeof(double));
+						total_size += 1000;
+						int position=0;
+						char *buffer = new char[total_size];
+						MPI_Pack(serial.GetDictionary().GetDictionaryOss().str().c_str(), (int) serial.GetDictionary().GetDictionaryOss().str().size(), 
+							MPI_CHAR, buffer, total_size, &position, MPI_COMM_WORLD);
+						MPI_Pack(&(serial.GetInts()[0]), (int) serial.GetInts().size(), 
+							MPI_INT, buffer, total_size, &position, MPI_COMM_WORLD);
+						MPI_Pack(&(serial.GetDoubles()[0]), (int) serial.GetDoubles().size(), 
+							MPI_DOUBLE, buffer, total_size, &position, MPI_COMM_WORLD);
+						int sizes[4];
+						sizes[0] = position;
+						sizes[1] = (int) serial.GetDictionary().GetDictionaryOss().str().size();
+						sizes[2] = (int) serial.GetInts().size();
+						sizes[3] = (int) serial.GetDoubles().size();
+						MPI_Send(&sizes, 4, MPI_INT, pnew, 0, MPI_COMM_WORLD);
+						MPI_Send(buffer, position, MPI_PACKED, pnew, 0, MPI_COMM_WORLD);
+						delete [] buffer;
+					}
+					else if (this->GetMpiMyself() == pnew)
+					{
+						MPI_Status mpi_status;
+						int sizes[4];
+						MPI_Recv(&sizes[0], 4, MPI_INT, pold, 0, MPI_COMM_WORLD, &mpi_status);
+
+						Serializer serial;
+						std::string  string_buffer;
+						string_buffer.resize(sizes[1]);
+						std::vector<int> ints;
+						ints.resize(sizes[2], 0);
+						std::vector<double> doubles;
+						doubles.resize(sizes[3],0.0);
+						char *buffer = new char[sizes[0]];
+						MPI_Recv((void *) buffer, sizes[0], MPI_PACKED, pold, 0, MPI_COMM_WORLD, &mpi_status);
+
+						int position = 0;
+						MPI_Unpack(buffer, sizes[0], &position, &(string_buffer[0]), sizes[1],
+							MPI_CHAR, MPI_COMM_WORLD);
+						MPI_Unpack(buffer, sizes[0], &position, &(ints[0]), sizes[2],
+							MPI_INT, MPI_COMM_WORLD);
+						MPI_Unpack(buffer, sizes[0], &position, &(doubles[0]), sizes[3],
+							MPI_DOUBLE, MPI_COMM_WORLD);
+
+						Dictionary dictionary(string_buffer);
+						IPhreeqcPhast * phast_iphreeqc_worker = this->workers[0];
+						serial.Deserialize(*phast_iphreeqc_worker->Get_PhreeqcPtr(), dictionary, ints, doubles);
+						delete [] buffer;
+					}
+					transfers++;
+				}
+				catch (...)
+				{
+					r_vector[0] = 1;
+				}		
+				// delete cells from pold
+				if (this->mpi_myself == pold && r_vector[0] == 0)
+				{
+					std::ostringstream del;
+					del << "DELETE; -cell\n";
+					for (size_t i = 2; i < tp_it->second.size(); i++)
+					{
+						del << tp_it->second[i] << "\n";
+
+					}
+					try
+					{
+						int status = phast_iphreeqc_worker->RunString(del.str().c_str());
+						if (status != 0)
+						{
+							this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+						}
+						this->ErrorHandler(PhreeqcRM::Int2IrmResult(status, false), "RunString");
+					}
+					catch (...)
+					{
+						r_vector[0] = 1;
+					}
+				}
+
+				// Also need to tranfer UZ
+				if (this->partition_uz_solids)
+				{
+					std::ostringstream uz_dump;
+					if (this->mpi_myself == pold)
+					{
+						for (size_t i = 2; i < tp_it->second.size(); i++)
+						{
+							int k = tp_it->second[i];
+							phast_iphreeqc_worker->uz_bin.Remove_Solution(k);
+							phast_iphreeqc_worker->uz_bin.dump_raw(uz_dump, k, 0);
+							phast_iphreeqc_worker->uz_bin.Remove(k);
+						}
+					}
+					try
+					{
+						this->TransferCellsUZ(uz_dump, pold, pnew);
+					}
+					catch (...)
+					{
+						r_vector[0] = 1;
+					}
+				}
+
+				//The gather is sometimes slow for some reason
+				//this->HandleErrorsInternal(r_vector);
+				if (r_vector[0] != 0)
+					throw PhreeqcRMStop();
+			}
+			for (int i = 0; i < this->mpi_tasks; i++)
+			{
+				start_cell[i] = start_cell_new[i];
+				end_cell[i] = end_cell_new[i];
+			}
+			if (this->mpi_myself == 0)
+			{
+				//std::cerr << "          Cells shifted between processes     " << change << "\n";
+				std::ostringstream msg;
+				msg << "          Cells shifted between processes     " << change << "\n";
+				this->ScreenMessage(msg.str().c_str());
+			}
+			if (change > 0)
+			{
+				ScatterNchem(print_chem_mask_root, print_chem_mask_worker);
+				ScatterNchem(density_root, density_worker);
+				//ScatterNchem(tempc_root, tempc_worker);
+				ScatterNchem(porosity_root, porosity_worker);
+				ScatterNchem(rv_root, rv_worker);
+				//ScatterNchem(pressure_root, pressure_worker);
+				ScatterNchem(saturation_root, saturation_worker);
+				if (partition_uz_solids)
+				{
+					ScatterNchem(old_saturation_root, old_saturation_worker);
+				}
+			}
+		}
+		catch (...)
+		{
+			return_value = IRM_FAIL;
+		}
+	}
+	this->ErrorHandler(return_value, "PhreeqcRM::RebalanceLoad");
+}
+#else
 /* ---------------------------------------------------------------------- */
 void
 PhreeqcRM::RebalanceLoad(void)
@@ -5378,6 +5782,7 @@ PhreeqcRM::RebalanceLoad(void)
 	}
 	this->ErrorHandler(return_value, "PhreeqcRM::RebalanceLoad");
 }
+#endif
 #else
 /* ---------------------------------------------------------------------- */
 void
@@ -5629,6 +6034,387 @@ PhreeqcRM::RebalanceLoad(void)
 }
 #endif
 #ifdef USE_MPI
+#ifdef SERIALIZE
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::RebalanceLoadPerCell(void)
+/* ---------------------------------------------------------------------- */
+{
+	// Throws on error
+	if (this->mpi_tasks <= 1) return;
+	if (this->mpi_tasks > count_chemistry) return;
+#include <time.h>
+
+	// vectors for each cell (count_chem)
+	std::vector<double> recv_cell_times, normalized_cell_times;
+	recv_cell_times.resize(this->count_chemistry);
+
+	// vectors for each process (mpi_tasks)
+	std::vector<double> standard_time, task_fraction, task_time;
+
+	// Assume homogeneous cluster for now
+	if (mpi_myself == 0)
+	{
+		double tasks_total = 0;
+		for (size_t i = 0; i < (size_t) mpi_tasks; i++)
+		{
+			standard_time.push_back(this->standard_task_vector[i]);   // slower is bigger number
+			//standard_time.push_back(1.0);                           // homogeneous
+			tasks_total += 1.0 / standard_time[i];
+		}
+
+		for (size_t i = 0; i < (size_t) mpi_tasks; i++)
+		{
+			task_fraction.push_back((1.0 / standard_time[i]) / tasks_total);
+		}
+	}
+	// Collect times
+	IPhreeqcPhast * phast_iphreeqc_worker = this->workers[0];
+	// manager
+	if (mpi_myself == 0)
+	{
+		recv_cell_times.insert(recv_cell_times.begin(),
+			phast_iphreeqc_worker->Get_cell_clock_times().begin(),
+			phast_iphreeqc_worker->Get_cell_clock_times().end());
+	}
+
+	// workers
+	for (int i = 1; i < mpi_tasks; i++)
+	{
+		int n = end_cell[i] - start_cell[i] + 1;
+		if (mpi_myself == i)
+		{
+			MPI_Send(&phast_iphreeqc_worker->Get_cell_clock_times().front(), n, MPI_DOUBLE, 0, 0, phreeqcrm_comm);
+		}
+		if (mpi_myself == 0)
+		{
+			MPI_Status mpi_status;
+			MPI_Recv((void *) &recv_cell_times[start_cell[i]], n, MPI_DOUBLE, i, 0, phreeqcrm_comm, &mpi_status);
+		}
+	}
+	phast_iphreeqc_worker->Get_cell_clock_times().clear();
+	// Root normalizes times, calculates efficiency, rebalances work
+	double normalized_total_time = 0;
+	double max_task_time = 0;
+	// working space
+	std::vector<int> start_cell_new;
+	std::vector<int> end_cell_new;
+	start_cell_new.resize(mpi_tasks, 0);
+	end_cell_new.resize(mpi_tasks, 0);
+
+	if (mpi_myself == 0)
+	{
+		// Normalize times
+		max_task_time = 0;
+		for (size_t i = 0; i < (size_t) mpi_tasks; i++)
+		{
+			double task_sum = 0;
+			// normalize cell_times with standard_time
+			for (size_t j = (size_t) start_cell[i]; j <= (size_t) end_cell[i]; j++)
+			{
+				task_sum += recv_cell_times[j];
+				normalized_cell_times.push_back(recv_cell_times[j]/standard_time[i]);
+				normalized_total_time += normalized_cell_times.back();
+			}
+			task_time.push_back(task_sum);
+			max_task_time = (task_sum > max_task_time) ? task_sum : max_task_time;
+		}
+
+		// calculate efficiency
+		double efficiency = 0;
+		for (size_t i = 0; i < (size_t) mpi_tasks; i++)
+		{
+			efficiency += task_time[i] / max_task_time * task_fraction[i];
+		}
+		{
+			//std::cerr << "          Estimated efficiency of chemistry without communication: " <<
+			//		   (float) (100. * efficiency) << "\n";
+			std::ostringstream msg;
+			msg << "          Estimated efficiency of chemistry without communication: " <<
+					   (float) (100. * efficiency) << "\n";
+			this->ScreenMessage(msg.str().c_str());
+		}
+
+		// Split up work
+		double f_low, f_high;
+		f_high = 1 + 0.5 / ((double) mpi_tasks);
+		f_low = 1;
+		int j = 0;
+		for (size_t i = 0; i < (size_t) mpi_tasks - 1; i++)
+		{
+			if (i > 0)
+			{
+				start_cell_new[i] = end_cell_new[i - 1] + 1;
+			}
+			double sum_work = 0;
+			double temp_sum_work = 0;
+			bool next = true;
+			while (next)
+			{
+				temp_sum_work += normalized_cell_times[j] / normalized_total_time;
+				if ((temp_sum_work < task_fraction[i]) && (((size_t) count_chemistry - j) > (size_t) (mpi_tasks - i)))
+				{
+					sum_work = temp_sum_work;
+					j++;
+					next = true;
+				}
+				else
+				{
+					if (j == start_cell_new[i])
+					{
+						end_cell_new[i] = j;
+						j++;
+					}
+					else
+					{
+						end_cell_new[i] = j - 1;
+					}
+					next = false;
+				}
+			}
+		}
+		assert(j < count_chemistry);
+		assert(mpi_tasks > 1);
+		start_cell_new[mpi_tasks - 1] = end_cell_new[mpi_tasks - 2] + 1;
+		end_cell_new[mpi_tasks - 1] = count_chemistry - 1;
+
+		if (efficiency > 0.95)
+		{
+			for (int i = 0; i < this->mpi_tasks; i++)
+			{
+				start_cell_new[i] = start_cell[i];
+				end_cell_new[i] = end_cell[i];
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < (size_t) this->mpi_tasks - 1; i++)
+			{
+				int	icells;
+				icells = (int) (((double) (end_cell_new[i] - end_cell[i])) * (this->rebalance_fraction) );
+				if (icells == 0)
+				{
+					icells = end_cell_new[i] - end_cell[i];
+				}
+				end_cell_new[i] = end_cell[i] + icells;
+				start_cell_new[i + 1] = end_cell_new[i] + 1;
+			}
+		}
+
+	}
+
+	/*
+	 *   Broadcast new subcolumns
+	 */
+
+	MPI_Bcast((void *) &start_cell_new.front(), mpi_tasks, MPI_INT, 0, phreeqcrm_comm);
+	MPI_Bcast((void *) &end_cell_new.front(), mpi_tasks, MPI_INT, 0, phreeqcrm_comm);
+
+	/*
+	 *   Redefine columns
+	 */
+	int nnew = 0;
+	int old = 0;
+	int change = 0;
+
+			std::map< std::string, std::vector<int> > transfer_pair;
+	for (int k = 0; k < this->count_chemistry; k++)
+	{
+		while (k > end_cell[old])
+		{
+			old++;
+		}
+		while (k > end_cell_new[nnew])
+		{
+			nnew++;
+		}
+
+		if (old == nnew)
+			continue;
+		change++;
+
+		// Need to send cell from old task to nnew task
+		std::ostringstream key;
+		key << old << "#" << nnew;
+		std::map< std::string, std::vector<int> >::iterator tp_it = transfer_pair.find(key.str());
+		if (tp_it == transfer_pair.end())
+		{
+			std::vector<int> v;
+			v.push_back(old);
+			v.push_back(nnew);
+			transfer_pair[key.str()] = v;
+		}
+		transfer_pair[key.str()].push_back(k);
+	}
+
+	// Transfer cells
+	int transfers = 0;
+	try
+	{
+		std::map< std::string, std::vector<int> >::iterator tp_it = transfer_pair.begin();
+		std::vector<int> r_vector;
+		r_vector.push_back(IRM_OK);
+		for ( ; tp_it != transfer_pair.end(); tp_it++)
+		{
+			Serializer serial;
+			int pold = tp_it->second[0];
+			int pnew = tp_it->second[1];
+			// transfer cells from pold to pnew
+			try
+			{
+				if (this->mpi_myself == pold)
+				{
+					for (size_t i = 2; i < tp_it->second.size(); i++)
+					{
+						int k = tp_it->second[i];
+						serial.Serialize(*phast_iphreeqc_worker->Get_PhreeqcPtr(), k, k, false, false);
+					}
+					int total_size = (int) (serial.GetDictionary().GetDictionaryOss().str().size() * sizeof(char));
+					total_size += (int) (serial.GetInts().size() * sizeof(int));
+					total_size += (int) (serial.GetDoubles().size() * sizeof(double));
+					total_size += 1000;
+					int position=0;
+					char *buffer = new char[total_size];
+					MPI_Pack(serial.GetDictionary().GetDictionaryOss().str().c_str(), (int) serial.GetDictionary().GetDictionaryOss().str().size(), 
+						MPI_CHAR, buffer, total_size, &position, MPI_COMM_WORLD);
+					MPI_Pack(&(serial.GetInts()[0]), (int) serial.GetInts().size(), 
+						MPI_INT, buffer, total_size, &position, MPI_COMM_WORLD);
+					MPI_Pack(&(serial.GetDoubles()[0]), (int) serial.GetDoubles().size(), 
+						MPI_DOUBLE, buffer, total_size, &position, MPI_COMM_WORLD);
+					int sizes[4];
+					sizes[0] = position;
+					sizes[1] = (int) serial.GetDictionary().GetDictionaryOss().str().size();
+					sizes[2] = (int) serial.GetInts().size();
+					sizes[3] = (int) serial.GetDoubles().size();
+					MPI_Send(&sizes, 4, MPI_INT, pnew, 0, MPI_COMM_WORLD);
+					MPI_Send(buffer, position, MPI_PACKED, pnew, 0, MPI_COMM_WORLD);
+					delete [] buffer;
+				}
+				else if (this->GetMpiMyself() == pnew)
+				{
+					MPI_Status mpi_status;
+					int sizes[4];
+					MPI_Recv(&sizes[0], 4, MPI_INT, pold, 0, MPI_COMM_WORLD, &mpi_status);
+
+					Serializer serial;
+					std::string  string_buffer;
+					string_buffer.resize(sizes[1]);
+					std::vector<int> ints;
+					ints.resize(sizes[2], 0);
+					std::vector<double> doubles;
+					doubles.resize(sizes[3],0.0);
+					char *buffer = new char[sizes[0]];
+					MPI_Recv((void *) buffer, sizes[0], MPI_PACKED, pold, 0, MPI_COMM_WORLD, &mpi_status);
+
+					int position = 0;
+					MPI_Unpack(buffer, sizes[0], &position, &(string_buffer[0]), sizes[1],
+						MPI_CHAR, MPI_COMM_WORLD);
+					MPI_Unpack(buffer, sizes[0], &position, &(ints[0]), sizes[2],
+						MPI_INT, MPI_COMM_WORLD);
+					MPI_Unpack(buffer, sizes[0], &position, &(doubles[0]), sizes[3],
+						MPI_DOUBLE, MPI_COMM_WORLD);
+
+					Dictionary dictionary(string_buffer);
+					IPhreeqcPhast * phast_iphreeqc_worker = this->workers[0];
+					serial.Deserialize(*phast_iphreeqc_worker->Get_PhreeqcPtr(), dictionary, ints, doubles);
+					delete [] buffer;
+				}
+				transfers++;
+			}
+			catch (...)
+			{
+				r_vector[0] = 1;
+			}
+
+			// Delete cells in old
+			if (this->mpi_myself == pold && r_vector[0] == 0)
+			{
+				std::ostringstream del;
+				del << "DELETE; -cell\n";
+				for (size_t i = 2; i < tp_it->second.size(); i++)
+				{
+					del << tp_it->second[i] << "\n";
+
+				}
+				try
+				{
+					int status = phast_iphreeqc_worker->RunString(del.str().c_str());
+					if (status != 0)
+					{
+						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+					}
+					this->ErrorHandler(PhreeqcRM::Int2IrmResult(status, false), "RunString");
+				}
+				catch (...)
+				{
+					r_vector[0] = 1;
+				}
+			}
+
+			// Also need to tranfer UZ
+			if (this->partition_uz_solids)
+			{
+				std::ostringstream uz_dump;
+				if (this->mpi_myself == pold)
+				{
+					for (size_t i = 2; i < tp_it->second.size(); i++)
+					{
+						int k = tp_it->second[i];
+						phast_iphreeqc_worker->uz_bin.Remove_Solution(k);
+						phast_iphreeqc_worker->uz_bin.dump_raw(uz_dump, k, 0);
+						phast_iphreeqc_worker->uz_bin.Remove(k);
+					}
+				}
+				try
+				{
+					this->TransferCellsUZ(uz_dump, pold, pnew);
+				}
+				catch (...)
+				{
+					r_vector[0] = 1;
+				}
+			}
+
+			//The gather is sometimes slow for some reason
+			//this->HandleErrorsInternal(r_vector);
+			if (r_vector[0] != 0)
+				throw PhreeqcRMStop();
+		}
+		for (int i = 0; i < this->mpi_tasks; i++)
+		{
+			start_cell[i] = start_cell_new[i];
+			end_cell[i] = end_cell_new[i];
+		}
+		if (this->mpi_myself == 0)
+		{
+			//std::cerr << "          Cells shifted between processes     " << change << "\n";
+			std::ostringstream msg;
+			msg << "          Cells shifted between processes     " << change << "\n";
+			this->ScreenMessage(msg.str().c_str());
+		}
+
+		if (change > 0)
+		{
+			ScatterNchem(print_chem_mask_root, print_chem_mask_worker);
+			ScatterNchem(density_root, density_worker);
+			//ScatterNchem(tempc_root, tempc_worker);
+			ScatterNchem(porosity_root, porosity_worker);
+			ScatterNchem(rv_root, rv_worker);
+			//ScatterNchem(pressure_root, pressure_worker);
+			ScatterNchem(saturation_root, saturation_worker);
+			if (partition_uz_solids)
+			{
+				ScatterNchem(old_saturation_root, old_saturation_worker);
+			}
+		}
+
+	}
+	catch (...)
+	{
+		this->ErrorHandler(IRM_FAIL, "PhreeqcRM::RebalanceLoadPerCell");
+	}
+}
+#else
 /* ---------------------------------------------------------------------- */
 void
 PhreeqcRM::RebalanceLoadPerCell(void)
@@ -5959,6 +6745,7 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 		this->ErrorHandler(IRM_FAIL, "PhreeqcRM::RebalanceLoadPerCell");
 	}
 }
+#endif
 #else
 /* ---------------------------------------------------------------------- */
 void
