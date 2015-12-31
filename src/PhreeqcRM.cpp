@@ -5291,11 +5291,11 @@ PhreeqcRM::RebalanceLoad(void)
 						total_size += 1000;
 						int position=0;
 						char *buffer = new char[total_size];
-						MPI_Pack(serial.GetDictionary().GetDictionaryOss().str().c_str(), (int) serial.GetDictionary().GetDictionaryOss().str().size(), 
+						MPI_Pack((void *)serial.GetDictionary().GetDictionaryOss().str().c_str(), (int) serial.GetDictionary().GetDictionaryOss().str().size(), 
 							MPI_CHAR, buffer, total_size, &position, MPI_COMM_WORLD);
-						MPI_Pack(&(serial.GetInts()[0]), (int) serial.GetInts().size(), 
+						MPI_Pack((void *)&(serial.GetInts()[0]), (int) serial.GetInts().size(), 
 							MPI_INT, buffer, total_size, &position, MPI_COMM_WORLD);
-						MPI_Pack(&(serial.GetDoubles()[0]), (int) serial.GetDoubles().size(), 
+						MPI_Pack((void *)&(serial.GetDoubles()[0]), (int) serial.GetDoubles().size(), 
 							MPI_DOUBLE, buffer, total_size, &position, MPI_COMM_WORLD);
 						int sizes[4];
 						sizes[0] = position;
@@ -6275,11 +6275,11 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 					total_size += 1000;
 					int position=0;
 					char *buffer = new char[total_size];
-					MPI_Pack(serial.GetDictionary().GetDictionaryOss().str().c_str(), (int) serial.GetDictionary().GetDictionaryOss().str().size(), 
+					MPI_Pack((void *)serial.GetDictionary().GetDictionaryOss().str().c_str(), (int) serial.GetDictionary().GetDictionaryOss().str().size(), 
 						MPI_CHAR, buffer, total_size, &position, MPI_COMM_WORLD);
-					MPI_Pack(&(serial.GetInts()[0]), (int) serial.GetInts().size(), 
+					MPI_Pack((void *)&(serial.GetInts()[0]), (int) serial.GetInts().size(), 
 						MPI_INT, buffer, total_size, &position, MPI_COMM_WORLD);
-					MPI_Pack(&(serial.GetDoubles()[0]), (int) serial.GetDoubles().size(), 
+					MPI_Pack((void *)&(serial.GetDoubles()[0]), (int) serial.GetDoubles().size(), 
 						MPI_DOUBLE, buffer, total_size, &position, MPI_COMM_WORLD);
 					int sizes[4];
 					sizes[0] = position;
