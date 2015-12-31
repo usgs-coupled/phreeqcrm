@@ -520,17 +520,17 @@ int do_something(void *cookie)
 	MPI_Comm_rank(data->rm_comm, &mpi_myself);
 	if (mpi_myself == 0)
 	{
-		MPI_Bcast(&method_number, 1, MPI_INTEGER, 0, data->rm_comm);
+		MPI_Bcast(&method_number, 1, MPI_INT, 0, data->rm_comm);
 		fprintf(stderr, "I am Groot.\n");
 		for (i = 1; i < mpi_tasks; i++)
 		{
-			MPI_Recv(&worker_number, 1, MPI_INTEGER, i, 0, data->rm_comm, &status);
+			MPI_Recv(&worker_number, 1, MPI_INT, i, 0, data->rm_comm, &status);
 			fprintf(stderr, "Recieved data from worker number %d.\n", worker_number);
 		}
 	}
 	else
 	{
-		MPI_Send(&mpi_myself, 1, MPI_INTEGER, 0, 0, data->rm_comm);
+		MPI_Send(&mpi_myself, 1, MPI_INT, 0, 0, data->rm_comm);
 	}
 	return 0;
 }
@@ -550,7 +550,7 @@ void register_basic_callback(void *cookie)
 	MPI_Comm_rank(data->rm_comm, &mpi_myself);
 	if (mpi_myself == 0)
 	{
-		MPI_Bcast(&method_number, 1, MPI_INTEGER, 0, data->rm_comm);
+		MPI_Bcast(&method_number, 1, MPI_INT, 0, data->rm_comm);
 	}
 #endif
 
