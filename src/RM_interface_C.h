@@ -2043,17 +2043,17 @@ int do_something(void *cookie)
 	MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself);
 	if (mpi_myself == 0)
 	{
-		MPI_Bcast(&method_number, 1, MPI_INTEGER, 0, *comm);
+		MPI_Bcast(&method_number, 1, MPI_INT, 0, *comm);
 		fprintf(stderr, "I am root.\n");
 		for (i = 1; i < mpi_tasks; i++)
 		{
-			MPI_Recv(&worker_number, 1, MPI_INTEGER, i, 0, *comm, &status);
+			MPI_Recv(&worker_number, 1, MPI_INT, i, 0, *comm, &status);
 			fprintf(stderr, "Recieved data from worker number %d.\n", worker_number);
 		}
 	}
 	else
 	{
-		MPI_Send(&mpi_myself, 1, MPI_INTEGER, 0, 0, *comm);
+		MPI_Send(&mpi_myself, 1, MPI_INT, 0, 0, *comm);
 	}
 	return 0;
 }
@@ -2112,17 +2112,17 @@ int do_something(void *cookie)
 	MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself);
 	if (mpi_myself == 0)
 	{
-		MPI_Bcast(&method_number, 1, MPI_INTEGER, 0, *comm);
+		MPI_Bcast(&method_number, 1, MPI_INT, 0, *comm);
 		fprintf(stderr, "I am root.\n");
 		for (i = 1; i < mpi_tasks; i++)
 		{
-			MPI_Recv(&worker_number, 1, MPI_INTEGER, i, 0, *comm, &status);
+			MPI_Recv(&worker_number, 1, MPI_INT, i, 0, *comm, &status);
 			fprintf(stderr, "Recieved data from worker number %d.\n", worker_number);
 		}
 	}
 	else
 	{
-		MPI_Send(&mpi_myself, 1, MPI_INTEGER, 0, 0, *comm);
+		MPI_Send(&mpi_myself, 1, MPI_INT, 0, 0, *comm);
 	}
 	return 0;
 }
