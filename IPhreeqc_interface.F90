@@ -655,15 +655,16 @@ INTEGER FUNCTION GetSelectedOutputRowCount(id)
     return
 END FUNCTION GetSelectedOutputRowCount
 
-INTEGER FUNCTION GetSelectedOutputValue(id, row, col, vtype, dvalue, svalue)
+INTEGER FUNCTION GetSelectedOutputValue(id, row, col, vtype, dvalue, svalue, c_length)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, l) &
+        INTEGER(KIND=C_INT) FUNCTION GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, sz) &
             BIND(C, NAME='GetSelectedOutputValueF')
             USE ISO_C_BINDING
             IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id, row, col, l
+            INTEGER(KIND=C_INT), INTENT(in) :: id, row, col
+            INTEGER(KIND=C_INT), INTENT(inout) :: sz
             INTEGER(KIND=C_INT), INTENT(out) :: vtype 
             REAL(KIND=C_DOUBLE), INTENT(out) :: dvalue
             CHARACTER(KIND=C_CHAR), INTENT(out) :: svalue(*)
@@ -673,9 +674,14 @@ INTEGER FUNCTION GetSelectedOutputValue(id, row, col, vtype, dvalue, svalue)
     INTEGER, INTENT(out) :: vtype
     DOUBLE PRECISION, INTENT(out) :: dvalue
     CHARACTER(len=*), INTENT(out) :: svalue
-    INTEGER :: l
-    l = len(svalue)
-    GetSelectedOutputValue = GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, l)
+    INTEGER, INTENT(out), OPTIONAL :: c_length
+    INTEGER :: sz, sz_fortran
+    sz = len(svalue)
+    sz_fortran = sz
+    GetSelectedOutputValue = GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, sz)
+    if (sz > sz_fortran .and. present(c_length)) then
+        c_length = sz
+    endif    
     return
 END FUNCTION GetSelectedOutputValue
 
