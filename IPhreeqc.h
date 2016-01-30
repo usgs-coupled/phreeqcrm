@@ -1146,14 +1146,15 @@ Headings
  *  @htmlonly
  *  <CODE>
  *  <PRE>
- *  FUNCTION GetSelectedOutputValue(ID,ROW,COL,VTYPE,DVALUE,SVALUE)
- *    INTEGER(KIND=4),   INTENT(IN)   :: ID
- *    INTEGER(KIND=4),   INTENT(IN)   :: ROW
- *    INTEGER(KIND=4),   INTENT(IN)   :: COL
- *    INTEGER(KIND=4),   INTENT(OUT)  :: VTYPE
- *    REAL(KIND=8),      INTENT(OUT)  :: DVALUE
- *    CHARACTER(LEN=*),  INTENT(OUT)  :: SVALUE
- *    INTEGER(KIND=4)                 :: GetSelectedOutputValue
+ *  FUNCTION GetSelectedOutputValue(ID,ROW,COL,VTYPE,DVALUE,SVALUE,SLENGTH)
+ *    INTEGER(KIND=4),   INTENT(IN)            :: ID
+ *    INTEGER(KIND=4),   INTENT(IN)            :: ROW
+ *    INTEGER(KIND=4),   INTENT(IN)            :: COL
+ *    INTEGER(KIND=4),   INTENT(OUT)           :: VTYPE
+ *    REAL(KIND=8),      INTENT(OUT)           :: DVALUE
+ *    CHARACTER(LEN=*),  INTENT(OUT)           :: SVALUE
+ *    INTEGER(KIND=4),   INTENT(OUT), OPTIONAL :: SLENGTH
+ *    INTEGER(KIND=4)                          :: GetSelectedOutputValue
  *  END FUNCTION GetSelectedOutputValue
  *  </PRE>
  *  </CODE>
@@ -1164,6 +1165,7 @@ Headings
  *  @param VTYPE             Returns the variable type.  See @ref VAR_TYPE.
  *  @param DVALUE            Returns the numeric value when (VTYPE=@ref TT_DOUBLE) or (VTYPE=@ref TT_LONG).
  *  @param SVALUE            Returns the string variable when (VTYPE=@ref TT_STRING).  When (VTYPE=@ref TT_DOUBLE) or (VTYPE=@ref TT_LONG) this variable is filled with a string equivalent of DVALUE.
+ *  @param SLENGTH           Optional, if the length of SVALUE isn't sufficient to hold the entire string value, returns the required length, otherwise returns 0 (zero).
  *  @anchor GetSelectedOutputValue_c
  *  @par  C Example:
  *  @include GetSelectedOutputValue.c
