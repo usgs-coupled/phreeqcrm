@@ -4245,9 +4245,9 @@ PhreeqcRM::InitialPhreeqcCell2Module(int cell, const std::vector<int> &cell_numb
 					double cell_rv_local = this->rv_worker[l];
 					double cell_saturation_local = this->saturation_worker[l];
 #else
-					double cell_porosity_local = this->porosity_root[cell_numbers[i]];
-					double cell_rv_local = this->rv_root[cell_numbers[i]];
-					double cell_saturation_local = this->saturation_root[cell_numbers[i]];
+					double cell_porosity_local = this->porosity_root[cell_numbers_in[i]];
+					double cell_rv_local = this->rv_root[cell_numbers_in[i]];
+					double cell_saturation_local = this->saturation_root[cell_numbers_in[i]];
 #endif
 					// solution
 					{
