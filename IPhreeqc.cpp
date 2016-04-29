@@ -1305,7 +1305,6 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 						// another do_run without SELECTED_OUTPUT
 						//
 						ASSERT(!this->SelectedOutputFileNameMap[(*it).first].empty());
-						ASSERT(this->SelectedOutputFileNameMap[(*it).first] == this->PhreeqcPtr->SelectedOutput_map[(*it).first].Get_file_name());
 						std::string filename = this->SelectedOutputFileNameMap[(*it).first];
 						if (!punch_open(filename.c_str(), std::ios_base::out, (*it).first))
 						{
