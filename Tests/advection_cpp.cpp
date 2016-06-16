@@ -1,3 +1,6 @@
+#if defined(USE_MPI)
+#include <mpi.h>
+#endif
 #include <stdlib.h>
 #include <iostream>
 #include <string>
@@ -10,10 +13,6 @@ int do_something(void *cookie);
 
 double my_basic_callback(double x1, double x2, const char *str, void *cookie);
 void register_basic_callback(void *cookie);
-
-#if defined(USE_MPI)
-#include <mpi.h>
-#endif
 
 void AdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
 double my_basic_callback(double x1, double x2, const char *str, void *cookie);

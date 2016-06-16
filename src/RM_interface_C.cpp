@@ -1,3 +1,6 @@
+#ifdef USE_MPI
+#include "mpi.h"
+#endif
 #include "PhreeqcRM.h"
 #include "RM_interface_C.h"
 #include "IPhreeqcPhastLib.h"
@@ -5,9 +8,7 @@
 #include "PHRQ_io.h"
 #include <string>
 #include <map>
-#ifdef USE_MPI
-#include "mpi.h"
-#endif
+
 /* ---------------------------------------------------------------------- */
 IRM_RESULT RM_Abort(int id, int result, const char * str)
 /* ---------------------------------------------------------------------- */

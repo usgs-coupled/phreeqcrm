@@ -1,3 +1,6 @@
+#if defined(USE_MPI)
+#include <mpi.h>
+#endif
 #include <stdlib.h>
 #include <iostream>
 
@@ -19,10 +22,6 @@ extern void species_c(void);
 extern int advection_cpp();
 extern int species_cpp();
 extern int units_tester();
-
-#if defined(USE_MPI)
-#include <mpi.h>
-#endif
 
 int main(int argc, char* argv[])
 {

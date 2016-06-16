@@ -1,12 +1,13 @@
+#if defined(USE_MPI)
+#include <mpi.h>
+#endif
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "RM_interface_C.h"
 #include "IPhreeqc.h"
-#if defined(USE_MPI)
-#include <mpi.h>
-#endif
+
 
 void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 

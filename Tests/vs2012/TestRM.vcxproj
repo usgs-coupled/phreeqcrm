@@ -195,7 +195,7 @@ copy ..\units.pqi.in units.pqi
     </ClCompile>
     <Link>
       <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIB);$(DEV_IFC_X64_LIB);$(OUTDIR);$(OUTDIR)FortranAdvect</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIBDLL);$(DEV_IFC_X64_LIB);$(OUTDIR);$(OUTDIR)FortranAdvect</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
     </Link>
@@ -260,7 +260,7 @@ copy ..\units.pqi.in units.pqi
     </ClCompile>
     <Link>
       <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIB);$(DEV_IFC_X64_LIB);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIBDLL);$(DEV_IFC_X64_LIB);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
     </PostBuildEvent>
@@ -322,7 +322,7 @@ copy ..\units.pqi.in units.pqi
     </ClCompile>
     <Link>
       <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;msmpi.lib;msmpifec.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIB);$(DEV_IFC_X64_LIB);$(MSMPI_LIB64);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIBDLL);$(DEV_IFC_X64_LIB);$(MSMPI_LIB64);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
     </PostBuildEvent>
@@ -390,7 +390,7 @@ copy ..\units.pqi.in units.pqi
     </ClCompile>
     <Link>
       <AdditionalDependencies>PhreeqcRM.lib;FortranAdvect.lib;msmpi.lib;msmpifec.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIB);$(DEV_IFC_X64_LIB);$(MSMPI_LIB64);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DEV_HDF5_X64_LIBDLL);$(DEV_IFC_X64_LIB);$(MSMPI_LIB64);$(OUTDIR);$(OUTDIR)FortranAdvect;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
     </Link>

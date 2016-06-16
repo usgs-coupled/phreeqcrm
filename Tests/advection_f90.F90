@@ -476,10 +476,8 @@ integer(kind=C_INT) function worker_tasks_f(method_number) BIND(C, NAME='worker_
 end function worker_tasks_f
     
 integer function do_something()
-    implicit none
-#ifdef USE_MPI    
-  INCLUDE 'mpif.h'
-#endif
+    implicit none  
+	INCLUDE 'mpif.h'
 	integer status
 	integer i, method_number, mpi_myself, mpi_task, mpi_tasks, worker_number 
     method_number = 1000

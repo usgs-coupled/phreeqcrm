@@ -1,12 +1,12 @@
+#if defined(USE_MPI)
+#include <mpi.h>
+#endif
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "RM_interface_C.h"
 #include "IPhreeqc.h"
-#if defined(USE_MPI)
-#include <mpi.h>
-#endif
 int worker_tasks_c(int *task_number, void * cookie);
 int do_something(void *cookie);
 

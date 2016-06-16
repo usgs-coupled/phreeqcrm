@@ -1,3 +1,6 @@
+#if defined(USE_MPI)
+#include <mpi.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -7,9 +10,7 @@
 #include "IPhreeqc.hpp"
 #include "IPhreeqcPhast.h"
 
-#if defined(USE_MPI)
-#include <mpi.h>
-#endif
+
 
 void SpeciesAdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
 
