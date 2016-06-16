@@ -599,10 +599,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dw.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Exchange.cxx"
 				>
 			</File>

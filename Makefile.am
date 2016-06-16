@@ -58,7 +58,6 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/Dictionary.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/dumper.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/dumper.h\
-	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/dw.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/Exchange.cxx\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/Exchange.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/ExchComp.cxx\

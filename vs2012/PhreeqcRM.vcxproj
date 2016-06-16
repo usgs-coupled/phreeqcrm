@@ -410,7 +410,6 @@
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cvode.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dense.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\Dictionary.cpp" />
-    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dw.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\gases.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\input.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\integrate.cpp" />
