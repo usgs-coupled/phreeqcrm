@@ -67,7 +67,6 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/Dictionary.h\
 	phreeqcpp/dumper.cpp\
 	phreeqcpp/dumper.h\
-	phreeqcpp/dw.cpp\
 	phreeqcpp/Exchange.cxx\
 	phreeqcpp/Exchange.h\
 	phreeqcpp/ExchComp.cxx\
