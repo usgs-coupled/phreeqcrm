@@ -319,9 +319,11 @@ else()
 endif()  
 
 # install
-install(TARGETS PhreeqcRM DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(FILES ${PhreeqcRM_Headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(FILES ${PhreeqcRM_SRC} DESTINATION src)
+if (STANDALONE_BUILD EQUAL 1)
+  install(TARGETS PhreeqcRM DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  install(FILES ${PhreeqcRM_Headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(FILES ${PhreeqcRM_SRC} DESTINATION src)
+endif()
 
 if (STANDALONE_BUILD EQUAL 1 AND MSVC)
   # PHREEQCRM_STATIC_RUNTIME (VCOMP???.dll) cannot be made static
