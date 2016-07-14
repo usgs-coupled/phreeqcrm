@@ -74,12 +74,12 @@
 !> Called by root or workers.
 
 INTEGER FUNCTION RM_Abort(id, irm_result, err_str)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE 
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_Abort(id, result, str) &
-			BIND(C, NAME='RMF_Abort')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_Abort')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: result
@@ -109,16 +109,16 @@ END FUNCTION RM_Abort
 !> Called only by root.
 
 INTEGER FUNCTION RM_CloseFiles(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_CloseFiles(id) &
-			BIND(C, NAME='RMF_CloseFiles')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_CloseFiles')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_CloseFiles
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_CloseFiles = RMF_CloseFiles(id)
     RETURN    
@@ -162,19 +162,19 @@ END FUNCTION RM_CloseFiles
 !> Called only by root.
 
 INTEGER FUNCTION RM_Concentrations2Utility(id, c, n, tc, p_atm)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_Concentrations2Utility(id, c, n, tc, p_atm) &
-			BIND(C, NAME='RMF_Concentrations2Utility')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_Concentrations2Utility')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: c(*)
             INTEGER(KIND=C_INT), INTENT(in) :: n
             REAL(KIND=C_DOUBLE), INTENT(in) :: tc(*), p_atm(*)
         END FUNCTION RMF_Concentrations2Utility  
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
     INTEGER, INTENT(in) :: n
@@ -238,19 +238,19 @@ END SUBROUTINE Chk_Concentrations2Utility
 !> Called by root and workers. 
 
 INTEGER FUNCTION RM_Create(nxyz, nthreads) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_Create(nxyz, nthreads) &
-			BIND(C, NAME='RMF_Create') 
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_Create') 
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: nxyz
-			INTEGER(KIND=C_INT), INTENT(in) :: nthreads
+            INTEGER(KIND=C_INT), INTENT(in) :: nthreads
         END FUNCTION RMF_Create
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: nxyz
-	INTEGER, INTENT(in) :: nthreads
+    INTEGER, INTENT(in) :: nthreads
     RM_Create = RMF_Create(nxyz, nthreads) 
     rmf_nxyz = nxyz
   
@@ -286,17 +286,17 @@ END FUNCTION RM_Create
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_CreateMapping(id, grid2chem)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION RMF_CreateMapping(id, grid2chem) &
-			BIND(C, NAME='RMF_CreateMapping')
-			USE ISO_C_BINDING
+        INTEGER(KIND=C_INT) FUNCTION RMF_CreateMapping(id, grid2chem) &
+            BIND(C, NAME='RMF_CreateMapping')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: grid2chem(*)
         END FUNCTION RMF_CreateMapping
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in), DIMENSION(:) :: grid2chem
     if (rmf_debug) call Chk_CreateMapping(id, grid2chem)
@@ -350,17 +350,17 @@ END SUBROUTINE Chk_CreateMapping
 !> Can be called by root and (or) workers.
 
 INTEGER FUNCTION RM_DecodeError(id, e)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION RMF_DecodeError(id, e) &
-			BIND(C, NAME='RMF_DecodeError')
-			USE ISO_C_BINDING
+        INTEGER(KIND=C_INT) FUNCTION RMF_DecodeError(id, e) &
+            BIND(C, NAME='RMF_DecodeError')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: e
         END FUNCTION RMF_DecodeError
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: e
     RM_DecodeError = RMF_DecodeError(id, e)
@@ -383,16 +383,16 @@ END FUNCTION RM_DecodeError
 !> Called by root and workers.
 
 INTEGER FUNCTION RM_Destroy(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_Destroy(id) &
-			BIND(C, NAME='RMF_Destroy')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_Destroy')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_Destroy
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_Destroy = RMF_Destroy(id)
     return
@@ -418,18 +418,18 @@ END FUNCTION RM_Destroy
 !> Called by root; workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_DumpModule(id, dump_on, append) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_DumpModule(id, dump_on, append) &
-			BIND(C, NAME='RMF_DumpModule')
-			USE ISO_C_BINDING 
+            BIND(C, NAME='RMF_DumpModule')
+            USE ISO_C_BINDING 
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: dump_on
             INTEGER(KIND=C_INT), INTENT(in) :: append
         END FUNCTION RMF_DumpModule
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: dump_on
     INTEGER, INTENT(in) :: append
@@ -459,13 +459,13 @@ INTEGER FUNCTION RM_ErrorMessage(id, errstr)
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_ErrorMessage(id, errstr) &
-			BIND(C, NAME='RMF_ErrorMessage')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_ErrorMessage')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             CHARACTER(KIND=C_CHAR), INTENT(in) :: errstr(*)
         END FUNCTION RMF_ErrorMessage
-	END INTERFACE 
+    END INTERFACE 
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: errstr
     RM_ErrorMessage = RMF_ErrorMessage(id, trim(errstr)//C_NULL_CHAR)
@@ -508,16 +508,16 @@ END FUNCTION RM_ErrorMessage
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_FindComponents(id) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_FindComponents(id) &
-			BIND(C, NAME='RMF_FindComponents') 
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_FindComponents') 
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_FindComponents  
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_FindComponents = RMF_FindComponents(id)
     rmf_ncomps = RM_FindComponents
@@ -552,18 +552,18 @@ END FUNCTION RM_FindComponents
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetBackwardMapping(id, n, list, size) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetBackwardMapping(id, n, list, size) &
-			BIND(C, NAME='RMF_GetBackwardMapping') 
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetBackwardMapping') 
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in)    :: id, n
             INTEGER(KIND=C_INT), INTENT(in)    :: list(*)
             INTEGER(KIND=C_INT), INTENT(inout) :: size
         END FUNCTION RMF_GetBackwardMapping  
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in)    :: id, n
     INTEGER, INTENT(in)    :: list(*)
     INTEGER, INTENT(inout) :: size
@@ -590,16 +590,16 @@ END FUNCTION RM_GetBackwardMapping
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetChemistryCellCount(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetChemistryCellCount(id) &
-			BIND(C, NAME='RMF_GetChemistryCellCount')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetChemistryCellCount')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetChemistryCellCount 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetChemistryCellCount = RMF_GetChemistryCellCount(id)
     return
@@ -628,17 +628,17 @@ END FUNCTION RM_GetChemistryCellCount
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetComponent(id, num, comp_name)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetComponent(id, num, comp_name, l) &
-			BIND(C, NAME='RMF_GetComponent')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetComponent')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
             CHARACTER(KIND=C_CHAR), INTENT(out) :: comp_name(*)
         END FUNCTION RMF_GetComponent 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id, num
     CHARACTER(len=*), INTENT(inout) :: comp_name
     RM_GetComponent = RMF_GetComponent(id, num, comp_name, len(comp_name))
@@ -663,16 +663,16 @@ END FUNCTION RM_GetComponent
 !> Called by root.
 
 INTEGER FUNCTION RM_GetComponentCount(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
-			BIND(C, NAME='RMF_GetComponentCount')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetComponentCount')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetComponentCount 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetComponentCount = RMF_GetComponentCount(id)
 END FUNCTION RM_GetComponentCount 
@@ -718,17 +718,17 @@ END FUNCTION RM_GetComponentCount
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_GetConcentrations(id, c) 
-	USE ISO_C_BINDING  
+    USE ISO_C_BINDING  
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetConcentrations(id, c) &
-			BIND(C, NAME='RMF_GetConcentrations')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetConcentrations')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
         END FUNCTION RMF_GetConcentrations 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: c
     if (rmf_debug) call Chk_GetConcentrations(id, c)  
@@ -749,17 +749,17 @@ SUBROUTINE Chk_GetConcentrations(id, c)
 END SUBROUTINE Chk_GetConcentrations
 #ifdef SKIP
 INTEGER FUNCTION RM_GetConcentrations1D(id, c) 
-	USE ISO_C_BINDING  
+    USE ISO_C_BINDING  
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetConcentrations(id, c) &
-			BIND(C, NAME='RMF_GetConcentrations')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetConcentrations')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
         END FUNCTION RMF_GetConcentrations 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: c
     RM_GetConcentrations1D = RMF_GetConcentrations(id, c)   
@@ -790,17 +790,17 @@ END FUNCTION RM_GetConcentrations1D
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_GetDensity(id, density)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetDensity(id, density) &
-			BIND(C, NAME='RMF_GetDensity')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetDensity')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out) :: density(*)
         END FUNCTION RMF_GetDensity 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(out), dimension(:) :: density
     if (rmf_debug) call Chk_GetDensity(id, density)
@@ -840,17 +840,17 @@ END SUBROUTINE Chk_GetDensity
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetEndCell(id, ec)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetEndCell(id, ec) &
-			BIND(C, NAME='RMF_GetEndCell')  
-			USE ISO_C_BINDING 
+            BIND(C, NAME='RMF_GetEndCell')  
+            USE ISO_C_BINDING 
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(out):: ec(*)
         END FUNCTION RMF_GetEndCell 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(out), DIMENSION(:) :: ec
     if (rmf_debug) call Chk_GetEndCell(id, ec)
@@ -899,18 +899,18 @@ END SUBROUTINE Chk_GetEndCell
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_GetErrorString(id, errstr)  
-	USE ISO_C_BINDING 
+    USE ISO_C_BINDING 
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetErrorString(id, errstr, l) &
-			BIND(C, NAME='RMF_GetErrorString')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetErrorString')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
-			INTEGER(KIND=C_INT), INTENT(in) :: l
+            INTEGER(KIND=C_INT), INTENT(in) :: l
             CHARACTER(KIND=C_CHAR), INTENT(out) :: errstr(*)
         END FUNCTION RMF_GetErrorString 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(out) :: errstr
     RM_GetErrorString = RMF_GetErrorString(id, errstr, len(errstr))   
@@ -941,16 +941,16 @@ END FUNCTION RM_GetErrorString
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_GetErrorStringLength(id)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetErrorStringLength(id) &
-			BIND(C, NAME='RMF_GetErrorStringLength')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetErrorStringLength')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetErrorStringLength 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetErrorStringLength = RMF_GetErrorStringLength(id) 
 END FUNCTION RM_GetErrorStringLength 
@@ -976,18 +976,18 @@ END FUNCTION RM_GetErrorStringLength
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetFilePrefix(id, prefix)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetFilePrefix(id, prefix, l) &
-			BIND(C, NAME='RMF_GetFilePrefix')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetFilePrefix')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: l
             CHARACTER(KIND=C_CHAR), INTENT(out) :: prefix(*)
         END FUNCTION RMF_GetFilePrefix
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(inout) :: prefix
     integer l
@@ -1023,17 +1023,17 @@ END FUNCTION RM_GetFilePrefix
 !> Called by root.
 
 INTEGER FUNCTION RM_GetGfw(id, gfw)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetGfw(id, gfw) &
-			BIND(C, NAME='RMF_GetGfw')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetGfw')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out) :: gfw(*)
         END FUNCTION RMF_GetGfw 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:), INTENT(out) :: gfw
     if (rmf_debug) call Chk_GetGfw(id, gfw) 
@@ -1073,16 +1073,16 @@ END SUBROUTINE Chk_GetGfw
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetGridCellCount(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetGridCellCount(id) &
-			BIND(C, NAME='RMF_GetGridCellCount')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetGridCellCount')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetGridCellCount
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetGridCellCount = RMF_GetGridCellCount(id)
 END FUNCTION RM_GetGridCellCount
@@ -1116,17 +1116,17 @@ END FUNCTION RM_GetGridCellCount
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetIPhreeqcId(id, i)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetIPhreeqcId(id, i) &
-			BIND(C, NAME='RMF_GetIPhreeqcId')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetIPhreeqcId')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: i
         END FUNCTION RMF_GetIPhreeqcId
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: i
     RM_GetIPhreeqcId = RMF_GetIPhreeqcId(id, i)
@@ -1155,16 +1155,16 @@ END FUNCTION RM_GetIPhreeqcId
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetMpiMyself(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetMpiMyself(id) &
-			BIND(C, NAME='RMF_GetMpiMyself')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetMpiMyself')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetMpiMyself
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetMpiMyself = RMF_GetMpiMyself(id)
 END FUNCTION RM_GetMpiMyself
@@ -1195,16 +1195,16 @@ END FUNCTION RM_GetMpiMyself
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetMpiTasks(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetMpiTasks(id) &
-			BIND(C, NAME='RMF_GetMpiTasks')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetMpiTasks')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetMpiTasks
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetMpiTasks = RMF_GetMpiTasks(id)
 END FUNCTION RM_GetMpiTasks
@@ -1247,16 +1247,16 @@ END FUNCTION RM_GetMpiTasks
 !> Called by root.
 
 INTEGER FUNCTION RM_GetNthSelectedOutputUserNumber(id, n)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetNthSelectedOutputUserNumber(id, n) &
-			BIND(C, NAME='RMF_GetNthSelectedOutputUserNumber')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetNthSelectedOutputUserNumber')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id, n
         END FUNCTION RMF_GetNthSelectedOutputUserNumber 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id, n
     RM_GetNthSelectedOutputUserNumber = RMF_GetNthSelectedOutputUserNumber(id, n)
 END FUNCTION RM_GetNthSelectedOutputUserNumber 
@@ -1292,17 +1292,17 @@ END FUNCTION RM_GetNthSelectedOutputUserNumber
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_GetSaturation(id, sat_calc)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSaturation(id, sat_calc) &
-			BIND(C, NAME='RMF_GetSaturation')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetSaturation')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out) :: sat_calc(*)
         END FUNCTION RMF_GetSaturation
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: sat_calc
     if (rmf_debug) call Chk_GetSaturation(id, sat_calc)
@@ -1351,17 +1351,17 @@ END SUBROUTINE Chk_GetSaturation
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_GetSelectedOutput(id, so)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSelectedOutput(id, so) &
-			BIND(C, NAME='RMF_GetSelectedOutput')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetSelectedOutput')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out) :: so(*)
         END FUNCTION RMF_GetSelectedOutput
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:,:), INTENT(out) :: so
     if (rmf_debug) call Chk_GetSelectedOutput(id, so)
@@ -1408,16 +1408,16 @@ END SUBROUTINE Chk_GetSelectedOutput
 !> Called by root.
 
 INTEGER FUNCTION RM_GetSelectedOutputColumnCount(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSelectedOutputColumnCount(id) &
-			BIND(C, NAME='RMF_GetSelectedOutputColumnCount')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetSelectedOutputColumnCount')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetSelectedOutputColumnCount
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetSelectedOutputColumnCount = RMF_GetSelectedOutputColumnCount(id)
 END FUNCTION RM_GetSelectedOutputColumnCount
@@ -1449,16 +1449,16 @@ END FUNCTION RM_GetSelectedOutputColumnCount
 !> Called by root.
 
 INTEGER FUNCTION RM_GetSelectedOutputCount(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSelectedOutputCount(id) &
-			BIND(C, NAME='RMF_GetSelectedOutputCount')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetSelectedOutputCount')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetSelectedOutputCount
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetSelectedOutputCount = RMF_GetSelectedOutputCount(id)
 END FUNCTION RM_GetSelectedOutputCount
@@ -1493,17 +1493,17 @@ END FUNCTION RM_GetSelectedOutputCount
 !> Called by root.
 
 INTEGER FUNCTION RM_GetSelectedOutputHeading(id, icol, heading)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSelectedOutputHeading(id, icol, heading, l) &
-			BIND(C, NAME='RMF_GetSelectedOutputHeading')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetSelectedOutputHeading')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id, icol, l
             CHARACTER(KIND=C_CHAR), INTENT(out) :: heading(*)
         END FUNCTION RMF_GetSelectedOutputHeading
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id, icol
     CHARACTER(len=*), INTENT(out) :: heading
     RM_GetSelectedOutputHeading = RMF_GetSelectedOutputHeading(id, icol, heading, len(heading))
@@ -1545,16 +1545,16 @@ END FUNCTION RM_GetSelectedOutputHeading
 !> Called by root.
         
 INTEGER FUNCTION RM_GetSelectedOutputRowCount(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSelectedOutputRowCount(id) &
-			BIND(C, NAME='RMF_GetSelectedOutputRowCount')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetSelectedOutputRowCount')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetSelectedOutputRowCount
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetSelectedOutputRowCount = RMF_GetSelectedOutputRowCount(id)
 END FUNCTION RM_GetSelectedOutputRowCount
@@ -1585,17 +1585,17 @@ END FUNCTION RM_GetSelectedOutputRowCount
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_GetSolutionVolume(id, vol)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSolutionVolume(id, vol) &
-			BIND(C, NAME='RMF_GetSolutionVolume')  
-			USE ISO_C_BINDING 
+            BIND(C, NAME='RMF_GetSolutionVolume')  
+            USE ISO_C_BINDING 
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out) :: vol(*)
         END FUNCTION RMF_GetSolutionVolume 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: vol
     if (rmf_debug) call Chk_GetDensity(id, vol)
@@ -1654,20 +1654,20 @@ END SUBROUTINE Chk_GetSolutionVolume
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_GetSpeciesConcentrations(id, species_conc) 
-	USE ISO_C_BINDING  
+    USE ISO_C_BINDING  
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSpeciesConcentrations(id, species_conc) &
-			BIND(C, NAME='RMF_GetSpeciesConcentrations')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetSpeciesConcentrations')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out) :: species_conc(*)
         END FUNCTION RMF_GetSpeciesConcentrations 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: species_conc
-	if (rmf_debug) call Chk_GetSpeciesConcentrations(id, species_conc)
+    if (rmf_debug) call Chk_GetSpeciesConcentrations(id, species_conc)
     RM_GetSpeciesConcentrations = RMF_GetSpeciesConcentrations(id, species_conc)
 END FUNCTION RM_GetSpeciesConcentrations 
 
@@ -1716,16 +1716,16 @@ END SUBROUTINE Chk_GetSpeciesConcentrations
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetSpeciesCount(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSpeciesCount(id) &
-			BIND(C, NAME='RMF_GetSpeciesCount')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetSpeciesCount')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetSpeciesCount
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetSpeciesCount = RMF_GetSpeciesCount(id)
 END FUNCTION RM_GetSpeciesCount
@@ -1761,20 +1761,20 @@ END FUNCTION RM_GetSpeciesCount
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetSpeciesD25(id, diffc)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSpeciesD25(id, diffc) &
-			BIND(C, NAME='RMF_GetSpeciesD25')  
-			USE ISO_C_BINDING 
+            BIND(C, NAME='RMF_GetSpeciesD25')  
+            USE ISO_C_BINDING 
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out) :: diffc(*)
         END FUNCTION RMF_GetSpeciesD25 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: diffc
-	if (rmf_debug) call Chk_GetSpeciesD25(id, diffc)
+    if (rmf_debug) call Chk_GetSpeciesD25(id, diffc)
     RM_GetSpeciesD25 = RMF_GetSpeciesD25(id, diffc)
 END FUNCTION RM_GetSpeciesD25 
 
@@ -1826,17 +1826,17 @@ END SUBROUTINE Chk_GetSpeciesD25
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetSpeciesName(id, i, name)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSpeciesName(id, i, name, l) &
-			BIND(C, NAME='RMF_GetSpeciesName')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetSpeciesName')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id, i, l
             CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
         END FUNCTION RMF_GetSpeciesName
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id, i
     CHARACTER(len=*), INTENT(out) :: name
     RM_GetSpeciesName = RMF_GetSpeciesName(id, i, name, len(name))
@@ -1871,16 +1871,16 @@ END FUNCTION RM_GetSpeciesName
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetSpeciesSaveOn(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSpeciesSaveOn(id) &
-			BIND(C, NAME='RMF_GetSpeciesSaveOn')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetSpeciesSaveOn')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetSpeciesSaveOn
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetSpeciesSaveOn = RMF_GetSpeciesSaveOn(id)
 END FUNCTION RM_GetSpeciesSaveOn
@@ -1914,20 +1914,20 @@ END FUNCTION RM_GetSpeciesSaveOn
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetSpeciesZ(id, z)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetSpeciesZ(id, z) &
-			BIND(C, NAME='RMF_GetSpeciesZ')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetSpeciesZ')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out) :: z(*)
         END FUNCTION RMF_GetSpeciesZ 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: z
-	if (rmf_debug) call Chk_GetSpeciesZ(id, z) 
+    if (rmf_debug) call Chk_GetSpeciesZ(id, z) 
     RM_GetSpeciesZ = RMF_GetSpeciesZ(id, z)
 END FUNCTION RM_GetSpeciesZ 
  
@@ -1964,17 +1964,17 @@ END SUBROUTINE Chk_GetSpeciesZ
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_GetStartCell(id, sc)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetStartCell(id, sc) &
-			BIND(C, NAME='RMF_GetStartCell')  
-			USE ISO_C_BINDING 
+            BIND(C, NAME='RMF_GetStartCell')  
+            USE ISO_C_BINDING 
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(out):: sc(*)
         END FUNCTION RMF_GetStartCell 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(out), DIMENSION(:) :: sc
     if (rmf_debug) call Chk_GetStartCell(id, sc)
@@ -2014,16 +2014,16 @@ END SUBROUTINE Chk_GetStartCell
 !> Called by root and (or) workers; result is always 1.
 
 INTEGER FUNCTION RM_GetThreadCount(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_GetThreadCount(id) &
-			BIND(C, NAME='RMF_GetThreadCount')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetThreadCount')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetThreadCount
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetThreadCount = RMF_GetThreadCount(id)
 END FUNCTION RM_GetThreadCount
@@ -2048,16 +2048,16 @@ END FUNCTION RM_GetThreadCount
 !> Called by root and (or) workers.
         
 DOUBLE PRECISION FUNCTION RM_GetTime(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         REAL(KIND=C_DOUBLE) FUNCTION RMF_GetTime(id) &
-			BIND(C, NAME='RMF_GetTime')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetTime')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetTime
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetTime = RMF_GetTime(id)
 END FUNCTION RM_GetTime
@@ -2084,16 +2084,16 @@ END FUNCTION RM_GetTime
 !> Called by root and (or) workers.
 
 DOUBLE PRECISION FUNCTION RM_GetTimeConversion(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         REAL(KIND=C_DOUBLE) FUNCTION RMF_GetTimeConversion(id) &
-			BIND(C, NAME='RMF_GetTimeConversion')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetTimeConversion')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetTimeConversion
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetTimeConversion = RMF_GetTimeConversion(id)
 END FUNCTION RM_GetTimeConversion
@@ -2120,16 +2120,16 @@ END FUNCTION RM_GetTimeConversion
 !> Called by root and (or) workers.
 
 DOUBLE PRECISION FUNCTION RM_GetTimeStep(id)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         REAL(KIND=C_DOUBLE) FUNCTION RMF_GetTimeStep(id) &
-			BIND(C, NAME='RMF_GetTimeStep')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_GetTimeStep')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_GetTimeStep 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_GetTimeStep = RMF_GetTimeStep(id)
 END FUNCTION RM_GetTimeStep 
@@ -2177,20 +2177,20 @@ END FUNCTION RM_GetTimeStep
 !> Called by root.
 
 INTEGER FUNCTION RM_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, bc2, f1) 
-	USE ISO_C_BINDING  
+    USE ISO_C_BINDING  
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1) &
-			BIND(C, NAME='RMF_InitialPhreeqc2Concentrations')
-			USE ISO_C_BINDING   
+            BIND(C, NAME='RMF_InitialPhreeqc2Concentrations')
+            USE ISO_C_BINDING   
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
             INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
         END FUNCTION RMF_InitialPhreeqc2Concentrations    
         INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Concentrations2(id, bc_conc, n_boundary, bc1, bc2, f1) &
-			BIND(C, NAME='RMF_InitialPhreeqc2Concentrations2')
-			USE ISO_C_BINDING   
+            BIND(C, NAME='RMF_InitialPhreeqc2Concentrations2')
+            USE ISO_C_BINDING   
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
@@ -2198,14 +2198,14 @@ INTEGER FUNCTION RM_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, 
             INTEGER(KIND=C_INT), INTENT(IN) :: bc2(*)
             REAL(KIND=C_DOUBLE), INTENT(IN) :: f1(*)
         END FUNCTION RMF_InitialPhreeqc2Concentrations2
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(OUT), DIMENSION(:,:) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary 
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:) , OPTIONAL :: bc2
     DOUBLE PRECISION, INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
-	if (rmf_debug) call Chk_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, bc2, f1) 
+    if (rmf_debug) call Chk_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, bc2, f1) 
     if (present(bc2) .and. present(f1)) then
         RM_InitialPhreeqc2Concentrations = RMF_InitialPhreeqc2Concentrations2(id, bc_conc, n_boundary, bc1, bc2, f1)
     else
@@ -2298,33 +2298,33 @@ END SUBROUTINE Chk_InitialPhreeqc2Concentrations
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_InitialPhreeqc2Module(id, ic1, ic2, f1)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Module(id, ic1) &
-			BIND(C, NAME='RMF_InitialPhreeqc2Module')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_InitialPhreeqc2Module')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
         END FUNCTION RMF_InitialPhreeqc2Module  
-	END INTERFACE
+    END INTERFACE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Module2(id, ic1, ic2, f1) &
-			BIND(C, NAME='RMF_InitialPhreeqc2Module2')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_InitialPhreeqc2Module2')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
             INTEGER(KIND=C_INT), INTENT(in) :: ic2(*)
             REAL(KIND=C_DOUBLE), INTENT(in) :: f1(*)
         END FUNCTION RMF_InitialPhreeqc2Module2  
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in), DIMENSION(:,:) :: ic1
     INTEGER, INTENT(in), DIMENSION(:,:), OPTIONAL :: ic2
     DOUBLE PRECISION, INTENT(in), DIMENSION(:,:), OPTIONAL :: f1
-	if (rmf_debug) call Chk_InitialPhreeqc2Module(id, ic1, ic2, f1)
+    if (rmf_debug) call Chk_InitialPhreeqc2Module(id, ic1, ic2, f1)
     if (present(ic2) .and. present(f1)) then
         RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2Module2(id, ic1, ic2, f1)
     else
@@ -2397,20 +2397,20 @@ END SUBROUTINE Chk_InitialPhreeqc2Module
 !> Called by root.
 
 INTEGER FUNCTION RM_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary, bc1, bc2, f1) 
-	USE ISO_C_BINDING  
+    USE ISO_C_BINDING  
     IMPLICIT NONE
     INTERFACE
            INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary, bc1) &
-			BIND(C, NAME='RMF_InitialPhreeqc2SpeciesConcentrations')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_InitialPhreeqc2SpeciesConcentrations')   
+            USE ISO_C_BINDING
                 IMPLICIT NONE
                 INTEGER(KIND=C_INT), INTENT(in) :: id
                 REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
                 INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
         END FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations    
         INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations2(id, bc_conc, n_boundary, bc1, bc2, f1) &
-			BIND(C, NAME='RMF_InitialPhreeqc2SpeciesConcentrations2')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_InitialPhreeqc2SpeciesConcentrations2')   
+            USE ISO_C_BINDING
                 IMPLICIT NONE
                 INTEGER(KIND=C_INT), INTENT(in) :: id
                 REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
@@ -2418,14 +2418,14 @@ INTEGER FUNCTION RM_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary
                 INTEGER(KIND=C_INT), INTENT(IN) :: bc2(*)
                 REAL(KIND=C_DOUBLE), INTENT(IN) :: f1(*)
         END FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations2  
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:,:), INTENT(OUT) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:), OPTIONAL :: bc2
     DOUBLE PRECISION, INTENT(IN), DIMENSION(:), OPTIONAL :: f1
-	if (rmf_debug) call Chk_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary, bc1, bc2, f1) 
+    if (rmf_debug) call Chk_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary, bc1, bc2, f1) 
     if (present(bc2) .and. present(f1)) then
         RM_InitialPhreeqc2SpeciesConcentrations = &
             RMF_InitialPhreeqc2SpeciesConcentrations2(id, bc_conc, n_boundary, bc1, bc2, f1)
@@ -2490,24 +2490,24 @@ END SUBROUTINE Chk_InitialPhreeqc2SpeciesConcentrations
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_InitialPhreeqcCell2Module(id, n_user, cell_numbers, n_cell)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqcCell2Module(id, n_user, cell_numbers, n_cell) &
-			BIND(C, NAME='RMF_InitialPhreeqcCell2Module')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_InitialPhreeqcCell2Module')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: n_user
             INTEGER(KIND=C_INT), INTENT(in) :: cell_numbers(*)
             INTEGER(KIND=C_INT), INTENT(in) :: n_cell
         END FUNCTION RMF_InitialPhreeqcCell2Module  
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: n_user
     INTEGER, INTENT(in), DIMENSION(:) :: cell_numbers
     INTEGER, INTENT(in) :: n_cell
-	if (rmf_debug) call Chk_InitialPhreeqcCell2Module(id, n_user, cell_numbers, n_cell)
+    if (rmf_debug) call Chk_InitialPhreeqcCell2Module(id, n_user, cell_numbers, n_cell)
     RM_InitialPhreeqcCell2Module = RMF_InitialPhreeqcCell2Module(id, n_user, cell_numbers, n_cell)
 END FUNCTION RM_InitialPhreeqcCell2Module   
 
@@ -2541,17 +2541,17 @@ END SUBROUTINE Chk_InitialPhreeqcCell2Module
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_LoadDatabase(id, db_name) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_LoadDatabase(id, db_name) &
-			BIND(C, NAME='RMF_LoadDatabase') 
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_LoadDatabase') 
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             CHARACTER(KIND=C_CHAR), INTENT(in) :: db_name(*)
         END FUNCTION RMF_LoadDatabase 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: db_name
     RM_LoadDatabase = RMF_LoadDatabase(id, trim(db_name)//C_NULL_CHAR)
@@ -2576,17 +2576,17 @@ END FUNCTION RM_LoadDatabase
 !> Called by root.
 
 INTEGER FUNCTION RM_LogMessage(id, str) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_LogMessage(id, str) &
-			BIND(C, NAME='RMF_LogMessage') 
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_LogMessage') 
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             CHARACTER(KIND=C_CHAR), INTENT(in) :: str(*)
         END FUNCTION RMF_LogMessage
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: str
     RM_LogMessage = RMF_LogMessage(id, trim(str)//C_NULL_CHAR)
@@ -2625,16 +2625,16 @@ END FUNCTION RM_LogMessage
 !> Called by all workers.
 
 INTEGER FUNCTION RM_MpiWorker(id) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_MpiWorker(id) &
-			BIND(C, NAME='RMF_MpiWorker') 
+            BIND(C, NAME='RMF_MpiWorker') 
             USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_MpiWorker
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_MpiWorker = RMF_MpiWorker(id)
 END FUNCTION RM_MpiWorker
@@ -2661,16 +2661,16 @@ END FUNCTION RM_MpiWorker
 !> Called by root.
 
 INTEGER FUNCTION RM_MpiWorkerBreak(id) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_MpiWorkerBreak(id) &
-			BIND(C, NAME='RMF_MpiWorkerBreak') 
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_MpiWorkerBreak') 
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_MpiWorkerBreak
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_MpiWorkerBreak = RMF_MpiWorkerBreak(id)
 END FUNCTION RM_MpiWorkerBreak
@@ -2694,16 +2694,16 @@ END FUNCTION RM_MpiWorkerBreak
 !> Called by root.
 
 INTEGER FUNCTION RM_OpenFiles(id) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_OpenFiles(id) &
-			BIND(C, NAME='RMF_OpenFiles') 
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_OpenFiles') 
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_OpenFiles
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_OpenFiles = RMF_OpenFiles(id)
 END FUNCTION RM_OpenFiles
@@ -2739,17 +2739,17 @@ END FUNCTION RM_OpenFiles
 !> Called by root.
 
 INTEGER FUNCTION RM_OutputMessage(id, str)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_OutputMessage(id, str) &
-			BIND(C, NAME='RMF_OutputMessage')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_OutputMessage')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             CHARACTER(KIND=C_CHAR), INTENT(in) :: str(*)
         END FUNCTION RMF_OutputMessage
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: str
     RM_OutputMessage = RMF_OutputMessage(id, trim(str)//C_NULL_CHAR)
@@ -2786,16 +2786,16 @@ END FUNCTION RM_OutputMessage
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_RunCells(id)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_RunCells(id) &
-			BIND(C, NAME='RMF_RunCells')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_RunCells')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_RunCells  
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_RunCells = RMF_RunCells(id)
 END FUNCTION RM_RunCells  
@@ -2825,18 +2825,18 @@ END FUNCTION RM_RunCells
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_RunFile(id, workers, initial_phreeqc, utility, chem_name)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_RunFile(id, workers, initial_phreeqc, utility, chem_name) &
-			BIND(C, NAME='RMF_RunFile')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_RunFile')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: workers, initial_phreeqc, utility
             CHARACTER(KIND=C_CHAR), INTENT(in) :: chem_name(*)
         END FUNCTION RMF_RunFile   
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: workers, initial_phreeqc, utility
     CHARACTER(len=*), INTENT(in) :: chem_name
@@ -2870,18 +2870,18 @@ END FUNCTION RM_RunFile
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_RunString(id, initial_phreeqc, workers, utility, input_string)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_RunString(id, initial_phreeqc, workers, utility, input_string) &
-			BIND(C, NAME='RMF_RunString')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_RunString')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: initial_phreeqc, workers, utility
             CHARACTER(KIND=C_CHAR), INTENT(in) :: input_string(*)
         END FUNCTION RMF_RunString   
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: initial_phreeqc, workers, utility
     CHARACTER(len=*), INTENT(in) :: input_string
@@ -2907,17 +2907,17 @@ END FUNCTION RM_RunString
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_ScreenMessage(id, str) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_ScreenMessage(id, str) &
-			BIND(C, NAME='RMF_ScreenMessage') 
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_ScreenMessage') 
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             CHARACTER(KIND=C_CHAR), INTENT(in) :: str(*)
         END FUNCTION RMF_ScreenMessage 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: str
     RM_ScreenMessage = RMF_ScreenMessage(id, trim(str)//C_NULL_CHAR) 
@@ -2952,17 +2952,17 @@ END FUNCTION RM_ScreenMessage
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetComponentH2O(id, tf)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetComponentH2O(id, tf) &
-			BIND(C, NAME='RMF_SetComponentH2O')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetComponentH2O')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: tf
         END FUNCTION RMF_SetComponentH2O
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: tf
     RM_SetComponentH2O = RMF_SetComponentH2O(id, tf)
@@ -3008,23 +3008,23 @@ END FUNCTION RM_SetComponentH2O
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetConcentrations(id, c)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetConcentrations(id, c) &
-			BIND(C, NAME='RMF_SetConcentrations')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetConcentrations')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: c(*)
         END FUNCTION RMF_SetConcentrations
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:,:), INTENT(in) :: c
-	if (rmf_debug) call Chk_SetConcentrations(id, c)
+    if (rmf_debug) call Chk_SetConcentrations(id, c)
     RM_SetConcentrations = RMF_SetConcentrations(id, c)
 END FUNCTION RM_SetConcentrations
-	
+    
 SUBROUTINE Chk_SetConcentrations(id, c)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
@@ -3039,17 +3039,17 @@ END SUBROUTINE Chk_SetConcentrations
 
 #ifdef SKIP
 INTEGER FUNCTION RM_SetConcentrations1D(id, c)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetConcentrations(id, c) &
-			BIND(C, NAME='RMF_SetConcentrations')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetConcentrations')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: c(*)
         END FUNCTION RMF_SetConcentrations
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: c
     RM_SetConcentrations1D = RMF_SetConcentrations(id, c)
@@ -3087,17 +3087,17 @@ END FUNCTION RM_SetConcentrations1D
 !>  */
 
 INTEGER FUNCTION RM_SetCurrentSelectedOutputUserNumber(id, n_user)  
-	USE ISO_C_BINDING 
+    USE ISO_C_BINDING 
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetCurrentSelectedOutputUserNumber(id, n_user) &
-			BIND(C, NAME='RMF_SetCurrentSelectedOutputUserNumber') 
-			USE ISO_C_BINDING  
+            BIND(C, NAME='RMF_SetCurrentSelectedOutputUserNumber') 
+            USE ISO_C_BINDING  
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: n_user
         END FUNCTION RMF_SetCurrentSelectedOutputUserNumber
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: n_user
     RM_SetCurrentSelectedOutputUserNumber = RMF_SetCurrentSelectedOutputUserNumber(id, n_user)
@@ -3130,20 +3130,20 @@ END FUNCTION RM_SetCurrentSelectedOutputUserNumber
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetDensity(id, density)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetDensity(id, density) &
-			BIND(C, NAME='RMF_SetDensity')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetDensity')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: density(*)
         END FUNCTION RMF_SetDensity 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: density
-	if (rmf_debug) call Chk_SetDensity(id, density)
+    if (rmf_debug) call Chk_SetDensity(id, density)
     RM_SetDensity = RMF_SetDensity(id, density)
 END FUNCTION RM_SetDensity 
 
@@ -3179,17 +3179,17 @@ END SUBROUTINE Chk_SetDensity
 !> Called by root.
 
 INTEGER FUNCTION RM_SetDumpFileName(id, dump_name) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetDumpFileName(id, dump_name) &
-			BIND(C, NAME='RMF_SetDumpFileName') 
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetDumpFileName') 
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             CHARACTER(KIND=C_CHAR), INTENT(in) :: dump_name(*)
         END FUNCTION RMF_SetDumpFileName  
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: dump_name
     RM_SetDumpFileName = RMF_SetDumpFileName(id, trim(dump_name)//C_NULL_CHAR)
@@ -3215,17 +3215,17 @@ END FUNCTION RM_SetDumpFileName
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetErrorHandlerMode(id, mode)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetErrorHandlerMode(id, mode) &
-			BIND(C, NAME='RMF_SetErrorHandlerMode')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetErrorHandlerMode')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: mode
         END FUNCTION RMF_SetErrorHandlerMode    
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: mode
     RM_SetErrorHandlerMode = RMF_SetErrorHandlerMode(id, mode)
@@ -3250,17 +3250,17 @@ END FUNCTION RM_SetErrorHandlerMode
 !> Called by root.
 
 INTEGER FUNCTION RM_SetFilePrefix(id, prefix) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetFilePrefix(id, prefix) &
-			BIND(C, NAME='RMF_SetFilePrefix') 
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetFilePrefix') 
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             CHARACTER(KIND=C_CHAR), INTENT(in) :: prefix(*)
         END FUNCTION RMF_SetFilePrefix  
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: prefix
     RM_SetFilePrefix = RMF_SetFilePrefix(id, trim(prefix)//C_NULL_CHAR) 
@@ -3331,7 +3331,7 @@ END FUNCTION RM_SetFilePrefix
 !>       write(*,*) "Recieved data from worker number ", worker_number, "."
 !>     enddo
 !>   else
-!> 		CALL MPI_Send(mpi_myself, 1, MPI_INTEGER, 0, 0, MPI_COMM_WORLD, status)
+!>     CALL MPI_Send(mpi_myself, 1, MPI_INTEGER, 0, 0, MPI_COMM_WORLD, status)
 !>   endif
 !>   do_something = 0
 !> end function do_something
@@ -3425,17 +3425,17 @@ END FUNCTION RM_SetMpiWorkerCallback
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetPartitionUZSolids(id, tf)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetPartitionUZSolids(id, tf) &
-			BIND(C, NAME='RMF_SetPartitionUZSolids')  
-			USE ISO_C_BINDING 
+            BIND(C, NAME='RMF_SetPartitionUZSolids')  
+            USE ISO_C_BINDING 
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in)  :: tf
         END FUNCTION RMF_SetPartitionUZSolids 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in)  :: tf
     RM_SetPartitionUZSolids = RMF_SetPartitionUZSolids(id, tf)
@@ -3463,20 +3463,20 @@ END FUNCTION RM_SetPartitionUZSolids
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetPorosity(id, por)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetPorosity(id, por) &
-			BIND(C, NAME='RMF_SetPorosity')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetPorosity')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: por(*)
         END FUNCTION RMF_SetPorosity 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: por
-	if (rmf_debug) call Chk_SetPorosity(id, por)
+    if (rmf_debug) call Chk_SetPorosity(id, por)
     RM_SetPorosity = RMF_SetPorosity(id, por)
 END FUNCTION RM_SetPorosity 
 
@@ -3513,20 +3513,20 @@ END SUBROUTINE Chk_SetPorosity
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetPressure(id, p)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetPressure(id, p) &
-			BIND(C, NAME='RMF_SetPressure')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetPressure')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: p(*)
         END FUNCTION RMF_SetPressure   
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: p
-	if (rmf_debug) call Chk_SetPressure(id, p)
+    if (rmf_debug) call Chk_SetPressure(id, p)
     RM_SetPressure = RMF_SetPressure(id, p)
 END FUNCTION RM_SetPressure        
 
@@ -3570,20 +3570,20 @@ END SUBROUTINE Chk_SetPressure
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetPrintChemistryMask(id, cell_mask)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetPrintChemistryMask(id, cell_mask) &
-			BIND(C, NAME='RMF_SetPrintChemistryMask') 
-			USE ISO_C_BINDING  
+            BIND(C, NAME='RMF_SetPrintChemistryMask') 
+            USE ISO_C_BINDING  
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: cell_mask(*)
         END FUNCTION RMF_SetPrintChemistryMask 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, DIMENSION(:), INTENT(in) :: cell_mask
-	if (rmf_debug) call Chk_SetPrintChemistryMask(id, cell_mask)
+    if (rmf_debug) call Chk_SetPrintChemistryMask(id, cell_mask)
     RM_SetPrintChemistryMask = RMF_SetPrintChemistryMask(id, cell_mask)
 END FUNCTION RM_SetPrintChemistryMask 
 
@@ -3631,17 +3631,17 @@ END SUBROUTINE Chk_SetPrintChemistryMask
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetPrintChemistryOn(id, workers, initial_phreeqc, utility)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetPrintChemistryOn(id, workers, initial_phreeqc, utility) &
-			BIND(C, NAME='RMF_SetPrintChemistryOn')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetPrintChemistryOn')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: workers, initial_phreeqc, utility
         END FUNCTION RMF_SetPrintChemistryOn 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: workers, initial_phreeqc, utility
     RM_SetPrintChemistryOn = RMF_SetPrintChemistryOn(id, workers, initial_phreeqc, utility)
@@ -3674,17 +3674,17 @@ END FUNCTION RM_SetPrintChemistryOn
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetRebalanceByCell(id, method)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetRebalanceByCell(id, method) &
-			BIND(C, NAME='RMF_SetRebalanceByCell')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetRebalanceByCell')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in)  :: method
         END FUNCTION RMF_SetRebalanceByCell
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in)  :: method
     RM_SetRebalanceByCell = RMF_SetRebalanceByCell(id, method)
@@ -3719,17 +3719,17 @@ END FUNCTION RM_SetRebalanceByCell
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetRebalanceFraction(id, f)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetRebalanceFraction(id, f) &
-			BIND(C, NAME='RMF_SetRebalanceFraction')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetRebalanceFraction')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in)  :: f
         END FUNCTION RMF_SetRebalanceFraction
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in)  :: f
     RM_SetRebalanceFraction = RMF_SetRebalanceFraction(id, f)
@@ -3770,17 +3770,17 @@ END FUNCTION RM_SetRebalanceFraction
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetRepresentativeVolume(id, rv)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetRepresentativeVolume(id, rv) &
-			BIND(C, NAME='RMF_SetRepresentativeVolume') 
-			USE ISO_C_BINDING  
+            BIND(C, NAME='RMF_SetRepresentativeVolume') 
+            USE ISO_C_BINDING  
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: rv(*)
         END FUNCTION RMF_SetRepresentativeVolume 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: rv
     RM_SetRepresentativeVolume = RMF_SetRepresentativeVolume(id, rv)
@@ -3816,20 +3816,20 @@ END FUNCTION RM_SetRepresentativeVolume
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetSaturation(id, sat)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetSaturation(id, sat) &
-			BIND(C, NAME='RMF_SetSaturation')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetSaturation')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: sat(*)
         END FUNCTION RMF_SetSaturation 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: sat
-	if (rmf_debug) call Chk_SetSaturation(id, sat)
+    if (rmf_debug) call Chk_SetSaturation(id, sat)
     RM_SetSaturation = RMF_SetSaturation(id, sat)
 END FUNCTION RM_SetSaturation 
 
@@ -3865,17 +3865,17 @@ END SUBROUTINE Chk_SetSaturation
 !> Called by root.
 
 INTEGER FUNCTION RM_SetScreenOn(id, tf)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetScreenOn(id, tf) &
-			BIND(C, NAME='RMF_SetScreenOn')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetScreenOn')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: tf
         END FUNCTION RMF_SetScreenOn 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: tf
     RM_SetScreenOn = RMF_SetScreenOn(id, tf)
@@ -3904,17 +3904,17 @@ END FUNCTION RM_SetScreenOn
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetSelectedOutputOn(id, tf)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetSelectedOutputOn(id, tf) &
-			BIND(C, NAME='RMF_SetSelectedOutputOn')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetSelectedOutputOn')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: tf
         END FUNCTION RMF_SetSelectedOutputOn  
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: tf
     RM_SetSelectedOutputOn = RMF_SetSelectedOutputOn(id, tf)
@@ -3948,17 +3948,17 @@ END FUNCTION RM_SetSelectedOutputOn
 !> Called by root and (or) workers.
 
 INTEGER FUNCTION RM_SetSpeciesSaveOn(id, save_on)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetSpeciesSaveOn(id, save_on) &
-			BIND(C, NAME='RMF_SetSpeciesSaveOn')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetSpeciesSaveOn')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: save_on
         END FUNCTION RMF_SetSpeciesSaveOn
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: save_on
     RM_SetSpeciesSaveOn = RMF_SetSpeciesSaveOn(id, save_on)
@@ -3989,20 +3989,20 @@ END FUNCTION RM_SetSpeciesSaveOn
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetTemperature(id, t)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetTemperature(id, t) &
-			BIND(C, NAME='RMF_SetTemperature')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetTemperature')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: t(*)
         END FUNCTION RMF_SetTemperature 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: t
-	if (rmf_debug) call Chk_SetTemperature(id, t)
+    if (rmf_debug) call Chk_SetTemperature(id, t)
     RM_SetTemperature = RMF_SetTemperature(id, t)
 END FUNCTION RM_SetTemperature 
 
@@ -4035,17 +4035,17 @@ END SUBROUTINE Chk_SetTemperature
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetTime(id, time)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetTime(id, time) &
-			BIND(C, NAME='RMF_SetTime')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetTime')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: time
         END FUNCTION RMF_SetTime 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in) :: time
     RM_SetTime = RMF_SetTime(id, time)
@@ -4068,17 +4068,17 @@ END FUNCTION RM_SetTime
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetTimeConversion(id, conv_factor)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetTimeConversion(id, conv_factor) &
-			BIND(C, NAME='RMF_SetTimeConversion') 
-			USE ISO_C_BINDING  
+            BIND(C, NAME='RMF_SetTimeConversion') 
+            USE ISO_C_BINDING  
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: conv_factor
         END FUNCTION RMF_SetTimeConversion 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in) :: conv_factor
     RM_SetTimeConversion = RMF_SetTimeConversion(id, conv_factor)
@@ -4102,17 +4102,17 @@ END FUNCTION RM_SetTimeConversion
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetTimeStep(id, time_step)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetTimeStep(id, time_step) &
-			BIND(C, NAME='RMF_SetTimeStep')  
-			USE ISO_C_BINDING 
+            BIND(C, NAME='RMF_SetTimeStep')  
+            USE ISO_C_BINDING 
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: time_step
         END FUNCTION RMF_SetTimeStep 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in) :: time_step
     RM_SetTimeStep = RMF_SetTimeStep(id, time_step)
@@ -4152,17 +4152,17 @@ END FUNCTION RM_SetTimeStep
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetUnitsExchange(id, option)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetUnitsExchange(id, option) &
-			BIND(C, NAME='RMF_SetUnitsExchange')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetUnitsExchange')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: option
         END FUNCTION RMF_SetUnitsExchange 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: option
     RM_SetUnitsExchange = RMF_SetUnitsExchange(id, option)
@@ -4202,17 +4202,17 @@ END FUNCTION RM_SetUnitsExchange
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetUnitsGasPhase(id, option)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetUnitsGasPhase(id, option) &
-			BIND(C, NAME='RMF_SetUnitsGasPhase')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetUnitsGasPhase')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: option
         END FUNCTION RMF_SetUnitsGasPhase 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: option
     RM_SetUnitsGasPhase = RMF_SetUnitsGasPhase(id, option)
@@ -4266,17 +4266,17 @@ END FUNCTION RM_SetUnitsGasPhase
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetUnitsKinetics(id, option)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetUnitsKinetics(id, option) &
-			BIND(C, NAME='RMF_SetUnitsKinetics')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetUnitsKinetics')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: option
         END FUNCTION RMF_SetUnitsKinetics 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: option
     RM_SetUnitsKinetics = RMF_SetUnitsKinetics(id, option)
@@ -4316,17 +4316,17 @@ END FUNCTION RM_SetUnitsKinetics
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetUnitsPPassemblage(id, option)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetUnitsPPassemblage(id, option) &
-			BIND(C, NAME='RMF_SetUnitsPPassemblage')  
-			USE ISO_C_BINDING 
+            BIND(C, NAME='RMF_SetUnitsPPassemblage')  
+            USE ISO_C_BINDING 
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: option
         END FUNCTION RMF_SetUnitsPPassemblage
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: option
     RM_SetUnitsPPassemblage = RMF_SetUnitsPPassemblage(id, option)
@@ -4384,17 +4384,17 @@ END FUNCTION RM_SetUnitsPPassemblage
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetUnitsSolution(id, option)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetUnitsSolution(id, option) &
-			BIND(C, NAME='RMF_SetUnitsSolution')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetUnitsSolution')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: option
         END FUNCTION RMF_SetUnitsSolution  
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: option
     RM_SetUnitsSolution = RMF_SetUnitsSolution(id, option)
@@ -4434,17 +4434,17 @@ END FUNCTION RM_SetUnitsSolution
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetUnitsSSassemblage(id, option)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetUnitsSSassemblage(id, option) &
-			BIND(C, NAME='RMF_SetUnitsSSassemblage')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetUnitsSSassemblage')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: option
         END FUNCTION RMF_SetUnitsSSassemblage 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: option
     RM_SetUnitsSSassemblage = RMF_SetUnitsSSassemblage(id, option)
@@ -4484,17 +4484,17 @@ END FUNCTION RM_SetUnitsSSassemblage
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SetUnitsSurface(id, option)   
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SetUnitsSurface(id, option) &
-			BIND(C, NAME='RMF_SetUnitsSurface')   
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SetUnitsSurface')   
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: option
         END FUNCTION RMF_SetUnitsSurface 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: option
     RM_SetUnitsSurface = RMF_SetUnitsSurface(id, option)
@@ -4539,20 +4539,20 @@ END FUNCTION RM_SetUnitsSurface
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_SpeciesConcentrations2Module(id, species_conc)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_SpeciesConcentrations2Module(id, species_conc) &
-			BIND(C, NAME='RMF_SpeciesConcentrations2Module')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_SpeciesConcentrations2Module')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: species_conc(*)
         END FUNCTION RMF_SpeciesConcentrations2Module
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:,:), INTENT(in) :: species_conc
-	if (rmf_debug) call Chk_SpeciesConcentrations2Module(id, species_conc)
+    if (rmf_debug) call Chk_SpeciesConcentrations2Module(id, species_conc)
     RM_SpeciesConcentrations2Module = RMF_SpeciesConcentrations2Module(id, species_conc)
 END FUNCTION RM_SpeciesConcentrations2Module  
 
@@ -4605,17 +4605,17 @@ END SUBROUTINE Chk_SpeciesConcentrations2Module
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_UseSolutionDensityVolume(id, tf)
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_UseSolutionDensityVolume(id, tf) &
-			BIND(C, NAME='RMF_UseSolutionDensityVolume')
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_UseSolutionDensityVolume')
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             INTEGER(KIND=C_INT), INTENT(in) :: tf
         END FUNCTION RMF_UseSolutionDensityVolume 
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: tf
     RM_UseSolutionDensityVolume = RMF_UseSolutionDensityVolume(id, tf)
@@ -4638,17 +4638,17 @@ END FUNCTION RM_UseSolutionDensityVolume
 !> Called by root and (or) workers; only root writes to the log file.
 
 INTEGER FUNCTION RM_WarningMessage(id, warn_str) 
-	USE ISO_C_BINDING
+    USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
         INTEGER(KIND=C_INT) FUNCTION RMF_WarningMessage(id, warn_str) &
-			BIND(C, NAME='RMF_WarningMessage') 
-			USE ISO_C_BINDING
+            BIND(C, NAME='RMF_WarningMessage') 
+            USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             CHARACTER(KIND=C_CHAR), INTENT(in) :: warn_str(*)
         END FUNCTION RMF_WarningMessage
-	END INTERFACE
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: warn_str
     RM_WarningMessage = RMF_WarningMessage(id, trim(warn_str)//C_NULL_CHAR)
