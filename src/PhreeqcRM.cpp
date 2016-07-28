@@ -7654,9 +7654,9 @@ PhreeqcRM::RunCellsThread(int n)
 					if (pr_chem)
 					{
 						std::ostringstream line_buff;
-						line_buff << "Time:           " << (this->time) * (this->time_conversion) << "\n";
-						line_buff << "Chemistry cell: " << i << "\n";
-						line_buff << "Grid cell(s):   ";
+						line_buff << "Time:                   " << (this->time) * (this->time_conversion) << "\n";
+						line_buff << "Chemistry cell:         " << i << "\n";
+						line_buff << "Grid cell(s) (0-based): ";
 						for (size_t ib = 0; ib < this->backward_mapping[i].size(); ib++)
 						{
 							line_buff << backward_mapping[i][ib] << " ";
@@ -7695,12 +7695,12 @@ PhreeqcRM::RunCellsThread(int n)
 					if (pr_chem)
 					{
 						std::ostringstream line_buff;
-						line_buff << "Time:           " << (this->time) * (this->time_conversion) << "\n";
-						line_buff << "Chemistry cell: " << i;
-						line_buff << "Grid cell(s):   ";
+						line_buff << "Time:                   " << (this->time) * (this->time_conversion) << "\n";
+						line_buff << "Chemistry cell:         " << i;
+						line_buff << "Grid cell(s) (0-based): ";
 						for (size_t ib = 0; ib < this->backward_mapping[i].size(); ib++)
 						{
-							line_buff << backward_mapping[i][ib] << " ";
+							line_buff << this->backward_mapping[i][ib] << " ";
 						}
 						line_buff << "\nCell is dry.\n";
 						*phast_iphreeqc_worker->Get_out_stream() << line_buff.str();
