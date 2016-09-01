@@ -795,7 +795,7 @@ phreeqc_rm.OutputMessage(oss.str());
 @par MPI:
 Called by root and (or) workers.
  */
-	const int                                 GetMpiMyself(void) const {return this->mpi_myself;}
+	int                                 GetMpiMyself(void) const {return this->mpi_myself;}
 /**
 Returns the number of MPI processes (tasks) assigned to the reaction module.
 For the MPI version, the number of
@@ -821,7 +821,7 @@ phreeqc_rm.OutputMessage(oss.str());
 @par MPI:
 Called by root and (or) workers.
  */
-	const int                                 GetMpiTasks(void) const {return this->mpi_tasks;}
+	int                                 GetMpiTasks(void) const {return this->mpi_tasks;}
 /**
 Returns the user number for the @a nth selected-output definition.
 Definitions are sorted by user number. Phreeqc allows multiple selected-output
@@ -892,7 +892,7 @@ oss << "Partioning of UZ solids: " << phreeqc_rm.GetPartitionUZSolids();
 @par MPI:
 Called by root and (or) workers.
  */
-	const bool                                GetPartitionUZSolids(void) const {return this->partition_uz_solids;}
+	bool                                GetPartitionUZSolids(void) const {return this->partition_uz_solids;}
 #ifdef USE_RV
 /**
 Returns the current set of pore volumes as
