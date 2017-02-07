@@ -1,36 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="mpi_debug|Win32">
-      <Configuration>mpi_debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="mpi_debug|x64">
       <Configuration>mpi_debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="mpi|Win32">
-      <Configuration>mpi</Configuration>
-      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="mpi|x64">
       <Configuration>mpi</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="openmp_debug|Win32">
-      <Configuration>openmp_debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="openmp_debug|x64">
       <Configuration>openmp_debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="openmp|Win32">
-      <Configuration>openmp</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="openmp|x64">
       <Configuration>openmp</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="serial_debug|x64">
+      <Configuration>serial_debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="serial|x64">
+      <Configuration>serial</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -39,31 +31,13 @@
     <RootNamespace>IPhreeqc</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='serial_debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <PlatformToolset>v110</PlatformToolset>
@@ -81,6 +55,12 @@
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='serial|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='mpi|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
@@ -90,23 +70,11 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="IPhreeqc.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="IPhreeqc.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="IPhreeqc.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="IPhreeqc.props" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="IPhreeqc.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='serial_debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="IPhreeqc.props" />
   </ImportGroup>
@@ -118,6 +86,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="IPhreeqc.props" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='serial|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="IPhreeqc.props" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='mpi|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="IPhreeqc.props" />
@@ -125,75 +97,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'">$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'">$(Configuration)\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='openmp|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='serial|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='mpi|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='openmp|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='serial|x64'">$(Platform)\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='mpi|x64'">$(Platform)\$(Configuration)\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'">$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'">$(Configuration)\</IntDir>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'">
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>$(DEV_HDF5_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_OPENMP;NDEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeaderOutputFile>
-      </PrecompiledHeaderOutputFile>
-      <WarningLevel>Level3</WarningLevel>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-    </ResourceCompile>
-    <Lib>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Lib>
-    <Bscmake>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Bscmake>
-    <PostBuildEvent />
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'">
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>$(DEV_HDF5_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(MSMPI_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_MPI;NDEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeaderOutputFile>
-      </PrecompiledHeaderOutputFile>
-      <WarningLevel>Level3</WarningLevel>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-    </ResourceCompile>
-    <Lib>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Lib>
-    <Bscmake>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Bscmake>
-    <PostBuildEvent />
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='openmp|x64'">
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -202,7 +112,7 @@
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>$(DEV_HDF5_X64_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_OPENMP;NDEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_OPENMP;NDEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -228,13 +138,47 @@
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='serial|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>$(DEV_HDF5_X64_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <OpenMPSupport>false</OpenMPSupport>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Bscmake>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='mpi|x64'">
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <AdditionalIncludeDirectories>$(DEV_HDF5_X64_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(MSMPI_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_MPI;NDEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_MPI;NDEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -261,66 +205,6 @@
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'">
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(DEV_HDF5_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_OPENMP;_DEBUG;WIN32;_LIB;_HAS_ITERATOR_DEBUGGING=0;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeaderOutputFile>
-      </PrecompiledHeaderOutputFile>
-      <WarningLevel>Level3</WarningLevel>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-    </ResourceCompile>
-    <Lib>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Lib>
-    <Bscmake>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Bscmake>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'">
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(DEV_HDF5_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(MSMPI_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_MPI;_DEBUG;WIN32;_LIB;_HAS_ITERATOR_DEBUGGING=0;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeaderOutputFile>
-      </PrecompiledHeaderOutputFile>
-      <WarningLevel>Level3</WarningLevel>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-    </ResourceCompile>
-    <Lib>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Lib>
-    <Bscmake>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Bscmake>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='openmp_debug|x64'">
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -328,7 +212,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(DEV_HDF5_X64_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_OPENMP;_HAS_ITERATOR_DEBUGGING=0;_DEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_OPENMP;_HAS_ITERATOR_DEBUGGING=0;_DEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -355,6 +239,40 @@
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='serial_debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(DEV_HDF5_X64_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_HAS_ITERATOR_DEBUGGING=0;_DEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <OpenMPSupport>false</OpenMPSupport>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Bscmake>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='mpi_debug|x64'">
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -362,7 +280,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(DEV_HDF5_X64_INC);$(ProjectDir)../src/IPhreeqcPhast;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common;$(ProjectDir)../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords;$(MSMPI_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_MPI;_HAS_ITERATOR_DEBUGGING=0;_DEBUG;WIN32;_LIB;USE_GZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_MPI;_HAS_ITERATOR_DEBUGGING=0;_DEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -443,12 +361,7 @@
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\transport.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\UserPunch.cpp" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\utilities.cpp" />
-    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\Var.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
+    <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\Var.c" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxKinetics.cxx" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\cxxMix.cxx" />
     <ClCompile Include="..\src\IPhreeqcPhast\IPhreeqc\phreeqcpp\dumper.cpp" />
@@ -489,10 +402,6 @@
   <ItemGroup>
     <CustomBuildStep Include="..\src\IPhreeqcPhast\IPhreeqc\IPhreeqcF.f">
       <FileType>Document</FileType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='openmp_debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='mpi_debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='openmp|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='mpi|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
   </ItemGroup>
   <ItemGroup>
