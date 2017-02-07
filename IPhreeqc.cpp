@@ -1192,7 +1192,11 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 /*
  *   set read callback
  */
+#if (__GNUC__ && (__cplusplus >= 201103L)) || (_MSC_VER >= 1600)
+	std::unique_ptr<std::istringstream> auto_iss=NULL;
+#else
 	std::auto_ptr<std::istringstream> auto_iss(0);
+#endif
 	if (!pis)
 	{
 		auto_iss.reset(new std::istringstream(this->GetAccumulatedLines()));
