@@ -381,8 +381,17 @@ If the save-species property is on, FindComponents will generate
 a list of aqueous species (@ref GetSpeciesCount, @ref GetSpeciesNames), their diffusion coefficients at 25 C (@ref GetSpeciesD25),
 and their charge (@ref GetSpeciesZ).
 @retval              Number of components currently in the list, or IRM_RESULT error code (negative value, see @ref DecodeError).
-@see                 @ref GetComponents, @ref SetSpeciesSaveOn, @ref GetSpeciesConcentrations, @ref SpeciesConcentrations2Module,
-@ref GetSpeciesCount, @ref GetSpeciesNames, @ref GetSpeciesD25, @ref GetSpeciesZ, @ref SetComponentH2O.
+@see                   @ref GetComponents, 
+@ref GetSpeciesConcentrations, 
+@ref GetSpeciesCount, 
+@ref GetSpeciesD25, 
+@ref GetSpeciesNames, 
+@ref GetSpeciesSaveOn, 
+@ref GetSpeciesStoichiometry, 
+@ref GetSpeciesZ,
+@ref SetComponentH2O,
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module. 
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1300,8 +1309,15 @@ and @a nxyz is the number of grid cells (@ref GetGridCellCount).
 Concentrations are moles per liter.
 Values for inactive cells are set to 1e30.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref FindComponents, @ref GetSpeciesCount, @ref GetSpeciesD25, @ref GetSpeciesZ,
-@ref GetSpeciesNames, @ref SpeciesConcentrations2Module, @ref GetSpeciesSaveOn, @ref SetSpeciesSaveOn.
+@see                    @ref FindComponents, 
+@ref GetSpeciesCount, 
+@ref GetSpeciesD25, 
+@ref GetSpeciesNames, 
+@ref GetSpeciesSaveOn, 
+@ref GetSpeciesStoichiometry, 
+@ref GetSpeciesZ,
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module. 
 
 @par C++ Example:
 @htmlonly
@@ -1327,8 +1343,15 @@ and @ref SetSpeciesSaveOn must be set to @a true.
 The list of aqueous species is determined by @ref FindComponents and includes all
 aqueous species that can be made from the set of components.
 @retval int      The number of aqueous species.
-@see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesD25, @ref GetSpeciesZ,
-@ref GetSpeciesNames, @ref SpeciesConcentrations2Module, @ref GetSpeciesSaveOn, @ref SetSpeciesSaveOn.
+@see                    @ref FindComponents, 
+@ref GetSpeciesConcentrations, 
+@ref GetSpeciesD25, 
+@ref GetSpeciesNames, 
+@ref GetSpeciesSaveOn, 
+@ref GetSpeciesStoichiometry, 
+@ref GetSpeciesZ,
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module. 
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1352,8 +1375,15 @@ Databases distributed with the reaction module that have diffusion coefficients 
 phreeqc.dat, Amm.dat, and pitzer.dat.
 @retval Vector reference to the diffusion coefficients at 25 C, m^2/s. Dimension of the vector is @a nspecies,
 where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
-@see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesCount, @ref GetSpeciesZ,
-@ref GetSpeciesNames, @ref SpeciesConcentrations2Module, @ref GetSpeciesSaveOn, @ref SetSpeciesSaveOn.
+@see                    @ref FindComponents, 
+@ref GetSpeciesConcentrations, 
+@ref GetSpeciesCount,
+@ref GetSpeciesNames, 
+@ref GetSpeciesSaveOn, 
+@ref GetSpeciesStoichiometry, 
+@ref GetSpeciesZ,
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module.  
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1377,9 +1407,15 @@ The list of aqueous species is determined by @ref FindComponents and includes al
 aqueous species that can be made from the set of components.
 @retval names      Vector of strings containing the names of the aqueous species. Dimension of the vector is @a nspecies,
 where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
-@see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesCount,
-@ref GetSpeciesD25, @ref GetSpeciesZ,
-@ref SpeciesConcentrations2Module, @ref GetSpeciesSaveOn, @ref SetSpeciesSaveOn.
+@see                    @ref FindComponents, 
+@ref GetSpeciesConcentrations, 
+@ref GetSpeciesCount,
+@ref GetSpeciesD25, 
+@ref GetSpeciesSaveOn, 
+@ref GetSpeciesStoichiometry, 
+@ref GetSpeciesZ,
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module.  
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1407,6 +1443,15 @@ with @ref GetSpeciesConcentrations, and solution compositions to be set with
 @see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesCount,
 @ref GetSpeciesD25, @ref GetSpeciesSaveOn, @ref GetSpeciesZ,
 @ref GetSpeciesNames, @ref SpeciesConcentrations2Module.
+@see                    @ref FindComponents, 
+@ref GetSpeciesConcentrations, 
+@ref GetSpeciesCount,
+@ref GetSpeciesD25,
+@ref GetSpeciesNames, 
+@ref GetSpeciesStoichiometry, 
+@ref GetSpeciesZ,
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1431,8 +1476,15 @@ and @ref SetSpeciesSaveOn must be set to @a true.
 @retval Vector of cxxNameDouble instances (maps) that contain the component names and
 associated stoichiometric coefficients for each aqueous species.  Dimension of the vector is @a nspecies,
 where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
-@see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesCount, @ref GetSpeciesD25,
-@ref GetSpeciesNames, @ref SpeciesConcentrations2Module, @ref GetSpeciesSaveOn, @ref SetSpeciesSaveOn.
+@see                    @ref FindComponents, 
+@ref GetSpeciesConcentrations, 
+@ref GetSpeciesCount,
+@ref GetSpeciesD25,
+@ref GetSpeciesNames, 
+@ref GetSpeciesSaveOn, 
+@ref GetSpeciesZ,
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module.
 
 @par C++ Example:
 @htmlonly
@@ -1470,8 +1522,15 @@ This method is intended for use with multicomponent-diffusion transport calculat
 and @ref SetSpeciesSaveOn must be set to @a true.
 @retval Vector containing the charge on each aqueous species. Dimension of the vector is @a nspecies,
 where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
-@see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesCount, @ref GetSpeciesZ,
-@ref GetSpeciesNames, @ref SpeciesConcentrations2Module, @ref GetSpeciesSaveOn, @ref SetSpeciesSaveOn.
+@see                    @ref FindComponents, 
+@ref GetSpeciesConcentrations, 
+@ref GetSpeciesCount,
+@ref GetSpeciesD25,
+@ref GetSpeciesNames, 
+@ref GetSpeciesSaveOn, 
+@ref GetSpeciesStoichiometry, 
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -3109,9 +3168,15 @@ with @ref GetSpeciesConcentrations, and solution compositions to be set with
 @param save_on          @a True indicates species concentrations are saved;
 @a False indicates species concentrations are not saved.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesCount,
-@ref GetSpeciesD25, @ref GetSpeciesSaveOn, @ref GetSpeciesZ,
-@ref GetSpeciesNames, @ref SpeciesConcentrations2Module.
+@see                    @ref FindComponents, 
+@ref GetSpeciesConcentrations, 
+@ref GetSpeciesCount,
+@ref GetSpeciesD25,
+@ref GetSpeciesNames, 
+@ref GetSpeciesSaveOn, 
+@ref GetSpeciesStoichiometry, 
+@ref GetSpeciesZ,
+@ref SpeciesConcentrations2Module.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -3490,9 +3555,15 @@ where  @a nspecies is the number of aqueous species (@ref GetSpeciesCount),
 and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
 Concentrations are moles per liter.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesCount,
-@ref GetSpeciesD25, @ref GetSpeciesZ,
-@ref GetSpeciesNames, @ref GetSpeciesSaveOn, @ref SetSpeciesSaveOn.
+@see                    @ref FindComponents, 
+@ref GetSpeciesConcentrations, 
+@ref GetSpeciesCount,
+@ref GetSpeciesD25,
+@ref GetSpeciesNames, 
+@ref GetSpeciesSaveOn, 
+@ref GetSpeciesStoichiometry, 
+@ref GetSpeciesZ,
+@ref SetSpeciesSaveOn.
 @par C++ Example:
 @htmlonly
 <CODE>
