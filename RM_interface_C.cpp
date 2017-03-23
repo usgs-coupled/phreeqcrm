@@ -1581,6 +1581,7 @@ RM_SpeciesConcentrations2Module(int id, double * species_conc)
 			species_conc_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetSpeciesCount());
 			memcpy(&species_conc_vector.front(), species_conc, species_conc_vector.size()*sizeof(double));
 			return_value = Reaction_module_ptr->SpeciesConcentrations2Module(species_conc_vector);
+			return return_value;
 		}
 		return IRM_INVALIDARG;
 	}
