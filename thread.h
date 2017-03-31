@@ -49,7 +49,7 @@
 
 #endif
 
-#if !defined (_INC_PHREEQC_H) || defined (PHREEQC) || defined (PHREEQC_PARALLEL)
+#if !defined (_INC_PHREEQC_H)  || defined (PHREEQC) || defined (PHREEQC_PARALLEL)
 	mutex_t map_lock = MUTEX_INITIALIZER;
 	mutex_t qsort_lock = MUTEX_INITIALIZER;
 #else
