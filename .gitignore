@@ -1,0 +1,22 @@
+
+# /
+
+# /Doxygen/
+/Doxygen/html
+
+# /Tests/
+/Tests/Makefile.in
+
+# /Tests/vs2012/
+/Tests/vs2012/FortranAdvect.u2d
+/Tests/vs2012/Tests.opensdf
+/Tests/vs2012/Tests.sdf
+/Tests/vs2012/Tests.v11.suo
+/Tests/vs2012/mpi
+/Tests/vs2012/mpi_debug
+/Tests/vs2012/openmp
+/Tests/vs2012/openmp_debug
+/Tests/vs2012/vc110.pdb
+/Tests/vs2012/x64
+
+# /src/IPhreeqcPhast/
