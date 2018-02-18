@@ -411,12 +411,12 @@ PhreeqcRM::CellInitialize(
 			cxxMix mx;
 			// Account for saturation of cell
 			double current_v = phreeqc_bin->Get_Solution(n_old1)->Get_soln_vol();
-			double v = f1 * cell_porosity_local * cell_saturation_local / current_v;
+			double v = f1 * cell_porosity_local * cell_saturation_local * cell_rv_local / current_v;
 			mx.Add(n_old1, v);
 			if (n_old2 >= 0)
 			{
 				current_v = phreeqc_bin->Get_Solution(n_old2)->Get_soln_vol();
-				v = (1.0 - f1) * cell_porosity_local * cell_saturation_local / current_v;
+				v = (1.0 - f1) * cell_porosity_local * cell_saturation_local * cell_rv_local / current_v;
 				mx.Add(n_old2, v);
 			}
 			cxxSolution cxxsoln(phreeqc_bin->Get_Solutions(), mx, n_user_new);

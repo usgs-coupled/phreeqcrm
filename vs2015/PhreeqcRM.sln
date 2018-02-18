@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhreeqcRM", "PhreeqcRM.vcxproj", "{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		mpi_debug|x64 = mpi_debug|x64
+		mpi|x64 = mpi|x64
+		openmp_debug|x64 = openmp_debug|x64
+		openmp|x64 = openmp|x64
+		serial_debug|x64 = serial_debug|x64
+		serial|x64 = serial|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi_debug|x64.ActiveCfg = mpi_debug|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi_debug|x64.Build.0 = mpi_debug|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi|x64.ActiveCfg = mpi|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.mpi|x64.Build.0 = mpi|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp_debug|x64.ActiveCfg = openmp_debug|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp_debug|x64.Build.0 = openmp_debug|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp|x64.ActiveCfg = openmp|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.openmp|x64.Build.0 = openmp|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.serial_debug|x64.ActiveCfg = serial_debug|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.serial_debug|x64.Build.0 = serial_debug|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.serial|x64.ActiveCfg = serial|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.serial|x64.Build.0 = serial|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

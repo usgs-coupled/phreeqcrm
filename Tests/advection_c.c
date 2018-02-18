@@ -1,7 +1,7 @@
 #if defined(USE_MPI)
 #include <mpi.h>
 #endif
-#include <malloc.h>
+//#include <malloc.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
