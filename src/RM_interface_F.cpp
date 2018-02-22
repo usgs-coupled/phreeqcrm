@@ -250,7 +250,7 @@ RMF_GetComponent(int * id, int * num, char *chem_name, int * l1)
 	{
 		if (chem_name != NULL)
 		{
-			if (l1 > 0 && *num > 0 && *num <= Reaction_module_ptr->GetComponentCount())
+			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetComponentCount()))
 			{
 				rmpadfstring(chem_name, Reaction_module_ptr->GetComponents()[*num - 1].c_str(), (unsigned int) *l1);
 				return IRM_OK;
