@@ -302,7 +302,8 @@ their charge (@ref RM_GetSpeciesZ).
 @ref RM_GetComponent, 
 @ref RM_GetSpeciesConcentrations,
 @ref RM_GetSpeciesCount,
-@ref RM_GetSpeciesD25,  
+@ref RM_GetSpeciesD25, 
+@ref RM_GetSpeciesLog10Gammas, 
 @ref RM_GetSpeciesName,
 @ref RM_GetSpeciesZ, 
 @ref RM_SetComponentH2O,
@@ -1084,6 +1085,7 @@ Values for inactive cells are set to 1e30.
 @ref RM_FindComponents, 
 @ref RM_GetSpeciesCount, 
 @ref RM_GetSpeciesD25, 
+@ref RM_GetSpeciesLog10Gammas,
 @ref RM_GetSpeciesName,
 @ref RM_GetSpeciesSaveOn,
 @ref RM_GetSpeciesZ,   
@@ -1122,6 +1124,7 @@ aqueous species that can be made from the set of components.
 @ref RM_FindComponents, 
 @ref RM_GetSpeciesConcentrations,
 @ref RM_GetSpeciesD25,
+@ref RM_GetSpeciesLog10Gammas,
 @ref RM_GetSpeciesName, 
 @ref RM_GetSpeciesSaveOn,
 @ref RM_GetSpeciesZ, 
@@ -1163,6 +1166,7 @@ where @a nspecies is is the number of aqueous species (@ref RM_GetSpeciesCount).
 @ref RM_FindComponents, 
 @ref RM_GetSpeciesConcentrations, 
 @ref RM_GetSpeciesCount,
+@ref RM_GetSpeciesLog10Gammas,
 @ref RM_GetSpeciesName,  
 @ref RM_GetSpeciesSaveOn, 
 @ref RM_GetSpeciesZ, 
@@ -1186,6 +1190,50 @@ Called by root and (or) workers.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetSpeciesD25(int id, double *diffc);
 /**
+Transfer aqueous-species log10 activity coefficients to the array argument (@a species_log10gammas)
+This method is intended for use with multicomponent-diffusion transport calculations,
+and @ref RM_SetSpeciesSaveOn must be set to @a true.
+The list of aqueous
+species is determined by @ref RM_FindComponents and includes all
+aqueous species that can be made from the set of components.
+
+@param id                   The instance @a id returned from @ref RM_Create.
+@param species_log10gammas  Array to receive the aqueous species concentrations.
+Dimension of the array is (@a nxyz, @a nspecies),
+where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount),
+and @a nspecies is the number of aqueous species (@ref RM_GetSpeciesCount).
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetSpeciesConcentrations,
+@ref RM_GetSpeciesCount,
+@ref RM_GetSpeciesD25,
+@ref RM_GetSpeciesName,
+@ref RM_GetSpeciesSaveOn,
+@ref RM_GetSpeciesZ,
+@ref RM_SetSpeciesSaveOn,
+@ref RM_SpeciesConcentrations2Module.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+status = RM_SetSpeciesSaveOn(id, 1);
+ncomps = RM_FindComponents(id);
+nspecies = RM_GetSpeciesCount(id);
+nxyz = RM_GetGridCellCount(id);
+species_log10gammas = (double *) malloc((size_t) (nxyz * nspecies * sizeof(double)));
+status = RM_RunCells(id);
+status = RM_GetSpeciesLog10Gammas(id, species_log10gammas);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetSpeciesLog10Gammas(int id, double *species_log10gammas);
+/**
 Transfers the name of the @a ith aqueous species to the character argument (@a name).
 This method is intended for use with multicomponent-diffusion transport calculations,
 and @ref RM_SetSpeciesSaveOn must be set to @a true.
@@ -1203,6 +1251,7 @@ aqueous species that can be made from the set of components.
 @ref RM_GetSpeciesConcentrations, 
 @ref RM_GetSpeciesCount,
 @ref RM_GetSpeciesD25, 
+@ref RM_GetSpeciesLog10Gammas,
 @ref RM_GetSpeciesSaveOn,
 @ref RM_GetSpeciesZ,
 @ref RM_SetSpeciesSaveOn,
@@ -1243,6 +1292,7 @@ with @ref RM_GetSpeciesConcentrations, and solution compositions to be set with
 @ref RM_GetSpeciesConcentrations, 
 @ref RM_GetSpeciesCount,
 @ref RM_GetSpeciesD25, 
+@ref RM_GetSpeciesLog10Gammas,
 @ref RM_GetSpeciesName,
 @ref RM_GetSpeciesZ, 
 @ref RM_SetSpeciesSaveOn,
@@ -1283,6 +1333,7 @@ where @a nspecies is is the number of aqueous species (@ref RM_GetSpeciesCount).
 @ref RM_GetSpeciesConcentrations, 
 @ref RM_GetSpeciesCount,
 @ref RM_GetSpeciesD25, 
+@ref RM_GetSpeciesLog10Gammas,
 @ref RM_GetSpeciesName, 
 @ref RM_GetSpeciesSaveOn,
 @ref RM_SetSpeciesSaveOn,
@@ -2694,6 +2745,7 @@ saved.
 @ref RM_GetSpeciesConcentrations, 
 @ref RM_GetSpeciesCount,
 @ref RM_GetSpeciesD25, 
+@ref RM_GetSpeciesLog10Gammas,
 @ref RM_GetSpeciesName,
 @ref RM_GetSpeciesSaveOn, 
 @ref RM_GetSpeciesZ, 
@@ -3126,6 +3178,7 @@ Concentrations are moles per liter.
 @ref RM_GetSpeciesConcentrations, 
 @ref RM_GetSpeciesCount,
 @ref RM_GetSpeciesD25, 
+@ref RM_GetSpeciesLog10Gammas,
 @ref RM_GetSpeciesName, 
 @ref RM_GetSpeciesSaveOn,
 @ref RM_GetSpeciesZ, 
