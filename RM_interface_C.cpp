@@ -655,6 +655,29 @@ RM_GetSpeciesD25(int id, double * diffc)
 	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSpeciesLog10Gammas(int id, double * species_log10gammas)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (species_log10gammas != NULL)
+		{
+			IRM_RESULT return_value = IRM_OK;
+			std::vector<double> species_gammas_vector;
+			return_value = Reaction_module_ptr->GetSpeciesConcentrations(species_gammas_vector);
+			if (return_value == IRM_OK)
+			{
+				memcpy(species_log10gammas, &species_gammas_vector.front(), species_gammas_vector.size() * sizeof(double));
+			}
+			return return_value;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
 IRM_RESULT 
 RM_GetSpeciesName(int id, int i, char *name, int length)
 /* ---------------------------------------------------------------------- */

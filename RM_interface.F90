@@ -28,7 +28,7 @@
     PRIVATE :: Chk_GetSolutionVolume
     PRIVATE :: Chk_GetSpeciesConcentrations
     PRIVATE :: Chk_GetSpeciesD25
-    !PRIVATE :: Chk_GetSpeciesLog10Gammas
+    PRIVATE :: Chk_GetSpeciesLog10Gammas
     PRIVATE :: Chk_GetSpeciesZ
     PRIVATE :: Chk_GetStartCell
     PRIVATE :: Chk_InitialPhreeqc2Concentrations
@@ -1723,6 +1723,7 @@ END SUBROUTINE Chk_GetSolutionVolume
 !> @ref RM_FindComponents, 
 !> @ref RM_GetSpeciesCount, 
 !> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLog10Gammas,
 !> @ref RM_GetSpeciesName,
 !> @ref RM_GetSpeciesSaveOn, 
 !> @ref RM_GetSpeciesZ,  
@@ -1789,7 +1790,8 @@ END SUBROUTINE Chk_GetSpeciesConcentrations
 !> @see                    
 !> @ref RM_FindComponents, 
 !> @ref RM_GetSpeciesConcentrations, 
-!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesD25,
+!> @ref RM_GetSpeciesLog10Gammas, 
 !> @ref RM_GetSpeciesName, 
 !> @ref RM_GetSpeciesSaveOn, 
 !> @ref RM_GetSpeciesZ,
@@ -1844,6 +1846,7 @@ END FUNCTION RM_GetSpeciesCount
 !> @ref RM_FindComponents, 
 !> @ref RM_GetSpeciesConcentrations, 
 !> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesLog10Gammas,
 !> @ref RM_GetSpeciesName,
 !> @ref RM_GetSpeciesSaveOn,
 !> @ref RM_GetSpeciesZ,  
@@ -1896,6 +1899,80 @@ SUBROUTINE Chk_GetSpeciesD25(id, diffc)
     endif
 END SUBROUTINE Chk_GetSpeciesD25
 
+!> Transfer log10 aqueous-species activity coefficients to the array argument (@a species_log10gammas)
+!> This method is intended for use with multicomponent-diffusion transport calculations,
+!> and @ref RM_SetSpeciesSaveOn must be set to @a true.
+!> The list of aqueous
+!> species is determined by @ref RM_FindComponents and includes all
+!> aqueous species that can be made from the set of components.
+!> 
+!> @param id                   The instance @a id returned from @ref RM_Create.
+!> @param species_log10gammas  Array to receive the aqueous species concentrations. 
+!> Dimension of the array is (@a nxyz, @a nspecies),
+!> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount), 
+!> and @a nspecies is the number of aqueous species (@ref RM_GetSpeciesCount).
+!> Values for inactive cells are set to 1e30.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesName,
+!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesZ,  
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
+!> 
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = RM_SetSpeciesSaveOn(id, 1)
+!> ncomps = RM_FindComponents(id)
+!> nspecies = RM_GetSpeciesCount(id)
+!> nxyz = RM_GetGridCellCount(id)
+!> allocate(species_log10gammas(nxyz, nspecies))
+!> status = RM_RunCells(id)
+!> status = RM_GetSpeciesLog10Gammas(id, species_log10gammas)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+
+INTEGER FUNCTION RM_GetSpeciesLog10Gammas(id, species_log10gammas) 
+    USE ISO_C_BINDING  
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSpeciesLog10Gammas(id, species_log10gammas) &
+            BIND(C, NAME='RMF_GetSpeciesLog10Gammas')   
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            REAL(KIND=C_DOUBLE), INTENT(out) :: species_log10gammas(*)
+        END FUNCTION RMF_GetSpeciesLog10Gammas 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: species_log10gammas
+    if (rmf_debug) call Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
+    RM_GetSpeciesLog10Gammas = RMF_GetSpeciesLog10Gammas(id, species_log10gammas)
+END FUNCTION RM_GetSpeciesLog10Gammas 
+
+SUBROUTINE Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: species_log10gammas
+    INTEGER :: errors, nspecies
+    nspecies = RM_GetSpeciesCount(id)
+    errors = 0
+    errors = errors + Chk_Double2D(id, species_log10gammas, rmf_nxyz, nspecies, "species concentration", "RM_GetSpeciesConcentrations")
+    if (errors .gt. 0) then
+        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesConcentrations")
+    endif
+END SUBROUTINE Chk_GetSpeciesLog10Gammas
+
+
 !> Transfers the name of the @a ith aqueous species to the character argument (@a name).
 !> This method is intended for use with multicomponent-diffusion transport calculations,
 !> and @ref RM_SetSpeciesSaveOn must be set to @a true.
@@ -1912,6 +1989,7 @@ END SUBROUTINE Chk_GetSpeciesD25
 !> @ref RM_GetSpeciesConcentrations, 
 !> @ref RM_GetSpeciesCount,
 !> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLog10Gammas,
 !> @ref RM_GetSpeciesSaveOn,
 !> @ref RM_GetSpeciesZ, 
 !> @ref RM_SetSpeciesSaveOn,
@@ -1966,6 +2044,7 @@ END FUNCTION RM_GetSpeciesName
 !> @ref RM_GetSpeciesConcentrations, 
 !> @ref RM_GetSpeciesCount,
 !> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLog10Gammas,
 !> @ref RM_GetSpeciesName,
 !> @ref RM_GetSpeciesZ, 
 !> @ref RM_SetSpeciesSaveOn,
@@ -2016,6 +2095,7 @@ END FUNCTION RM_GetSpeciesSaveOn
 !> @ref RM_GetSpeciesConcentrations, 
 !> @ref RM_GetSpeciesCount,
 !> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLog10Gammas,
 !> @ref RM_GetSpeciesName, 
 !> @ref RM_GetSpeciesSaveOn, 
 !> @ref RM_SetSpeciesSaveOn,
@@ -4152,6 +4232,7 @@ END FUNCTION RM_SetSelectedOutputOn
 !> @ref RM_GetSpeciesConcentrations, 
 !> @ref RM_GetSpeciesCount,
 !> @ref RM_GetSpeciesD25,
+!> @ref RM_GetSpeciesLog10Gammas,
 !> @ref RM_GetSpeciesName, 
 !> @ref RM_GetSpeciesSaveOn, 
 !> @ref RM_GetSpeciesZ, 
@@ -4772,7 +4853,8 @@ END FUNCTION RM_SetUnitsSurface
 !> @ref RM_FindComponents, 
 !> @ref RM_GetSpeciesConcentrations, 
 !> @ref RM_GetSpeciesCount, 
-!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesD25,
+!> @ref RM_GetSpeciesLog10Gammas, 
 !> @ref RM_GetSpeciesName, 
 !> @ref RM_GetSpeciesSaveOn,
 !> @ref RM_GetSpeciesZ, 

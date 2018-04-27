@@ -50,6 +50,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetSolutionVolume(int *id, double *solution_volume
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesConcentrations(int *id, double *species_conc);
 IRM_DLL_EXPORT int        RMF_GetSpeciesCount(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesD25(int *id, double *diffc);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesLog10Gammas(int *id, double *species_log10gammas);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesName(int *id, int *i, char * name, int *length);
 IRM_DLL_EXPORT int        RMF_GetSpeciesSaveOn(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesZ(int *id, double *z);
