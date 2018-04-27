@@ -28,6 +28,7 @@
     PRIVATE :: Chk_GetSolutionVolume
     PRIVATE :: Chk_GetSpeciesConcentrations
     PRIVATE :: Chk_GetSpeciesD25
+    !PRIVATE :: Chk_GetSpeciesLog10Gammas
     PRIVATE :: Chk_GetSpeciesZ
     PRIVATE :: Chk_GetStartCell
     PRIVATE :: Chk_InitialPhreeqc2Concentrations
@@ -58,7 +59,9 @@
 !> @param irm_result        Integer treated as an IRM_RESULT return code.
 !> @param err_str       String to be printed as an error message.
 !> @retval IRM_RESULT   Program will exit before returning unless @a id is an invalid reaction module id.
-!> @see                 @ref RM_Destroy, @ref RM_ErrorMessage.
+!> @see                 
+!> @ref RM_Destroy, 
+!> @ref RM_ErrorMessage.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -96,7 +99,9 @@ END FUNCTION RM_Abort
 !> Close the output and log files.
 !> @param id            The instance @a id returned from @ref RM_Create.
 !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                 @ref RM_OpenFiles, @ref RM_SetFilePrefix
+!> @see                 
+!> @ref RM_OpenFiles, 
+!> @ref RM_SetFilePrefix.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -210,7 +215,8 @@ END SUBROUTINE Chk_Concentrations2Utility
 !> If @a nthreads <= 0, the number of threads is set equal to the number of processors of the computer.
 !> When using MPI, the argument (@a comm) is the MPI communicator to use within the reaction module.
 !> @retval Id of the PhreeqcRM instance, negative is failure (See @ref RM_DecodeError).
-!> @see                 @ref RM_Destroy
+!> @see                 
+!> @ref RM_Destroy.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -370,7 +376,8 @@ END FUNCTION RM_DecodeError
 !> Destroys a reaction module.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_Create
+!> @see                    
+!> @ref RM_Create.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -403,7 +410,8 @@ END FUNCTION RM_Destroy
 !> @param dump_on          Signal for writing the dump file: 1 true, 0 false.
 !> @param append           Signal to append to the contents of the dump file: 1 true, 0 false.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetDumpFileName
+!> @see                    
+!> @ref RM_SetDumpFileName.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -441,7 +449,12 @@ END FUNCTION RM_DumpModule
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param errstr           String to be printed.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_OpenFiles, @ref RM_LogMessage, @ref RM_OutputMessage, @ref RM_ScreenMessage, @ref RM_WarningMessage.
+!> @see               
+!> @ref RM_LogMessage,     
+!> @ref RM_OpenFiles,  
+!> @ref RM_OutputMessage, 
+!> @ref RM_ScreenMessage, 
+!> @ref RM_WarningMessage.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -488,9 +501,17 @@ END FUNCTION RM_ErrorMessage
 !> their charge (@ref RM_GetSpeciesZ).
 !> @param id            The instance @a id returned from @ref RM_Create.
 !> @retval              Number of components currently in the list, or IRM_RESULT error code (see @ref RM_DecodeError).
-!> @see                 @ref RM_GetComponent, @ref RM_SetSpeciesSaveOn, @ref RM_GetSpeciesConcentrations, 
-!> @ref RM_SpeciesConcentrations2Module, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesName, 
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ, @ref RM_SetComponentH2O.
+!> @see                 
+!> @ref RM_GetComponent,
+!> @ref RM_GetSpeciesConcentrations,  
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25,
+!> @ref RM_GetSpeciesLog10Gammas,
+!> @ref RM_GetSpeciesName,   
+!> @ref RM_GetSpeciesZ, 
+!> @ref RM_SetComponentH2O. 
+!> @ref RM_SetSpeciesSaveOn, 
+!> @ref RM_SpeciesConcentrations2Module,
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -534,7 +555,10 @@ END FUNCTION RM_FindComponents
 !>                      Output, the number of cells mapped to cell @a n.
 !> @retval              IRM_RESULT error code (see @ref RM_DecodeError).
 !> 
-!> @see                 @ref RM_CreateMapping, @ref RM_GetChemistryCellCount, @ref RM_GetGridCellCount.
+!> @see                 
+!> @ref RM_CreateMapping, 
+!> @ref RM_GetChemistryCellCount, 
+!> @ref RM_GetGridCellCount.
 !> 
 !> @par C Example:
 !> @htmlonly
@@ -576,7 +600,9 @@ END FUNCTION RM_GetBackwardMapping
 !> The number of chemistry cells is less than or equal to the number of cells in the user's model.
 !> @param id            The instance @a id returned from @ref RM_Create.
 !> @retval              Number of chemistry cells, or IRM_RESULT error code (see @ref RM_DecodeError).
-!> @see                 @ref RM_CreateMapping, @ref RM_GetGridCellCount.
+!> @see                 
+!> @ref RM_CreateMapping, 
+!> @ref RM_GetGridCellCount.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -610,7 +636,9 @@ END FUNCTION RM_GetChemistryCellCount
 !> @param num              The number of the component to be retrieved. Fortran, 1 based.
 !> @param comp_name        The string value associated with component @a num.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetComponentCount
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetComponentCount.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -650,7 +678,9 @@ END FUNCTION RM_GetComponent
 !> The return value from the last call to @ref RM_FindComponents is equal to the return value from RM_GetComponentCount.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 The number of components in the reaction-module component list, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetComponent.
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetComponent.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -701,9 +731,16 @@ END FUNCTION RM_GetComponentCount
 !> Values for inactive cells are set to 1e30.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
-!> @see                    @ref RM_FindComponents, @ref RM_GetComponentCount, @ref RM_GetSaturation,
-!> @ref RM_SetConcentrations, @ref RM_SetDensity, @ref RM_SetRepresentativeVolume, @ref RM_SetSaturation,
-!> @ref RM_SetUnitsSolution, @ref RM_UseSolutionDensityVolume.
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetComponentCount, 
+!> @ref RM_GetSaturation,
+!> @ref RM_SetConcentrations, 
+!> @ref RM_SetDensity, 
+!> @ref RM_SetRepresentativeVolume, 
+!> @ref RM_SetSaturation,
+!> @ref RM_SetUnitsSolution, 
+!> @ref RM_UseSolutionDensityVolume.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -825,7 +862,11 @@ END SUBROUTINE Chk_GetDensity
 !> @param ec               Array to receive the ending cell numbers. Dimension of the array is 
 !>                         the number of threads (OpenMP) or the number of processes (MPI).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_Create, @ref RM_GetMpiTasks, @ref RM_GetStartCell, @ref RM_GetThreadCount.
+!> @see                    
+!> @ref RM_Create, 
+!> @ref RM_GetMpiTasks, 
+!> @ref RM_GetStartCell, 
+!> @ref RM_GetThreadCount.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -959,7 +1000,8 @@ END FUNCTION RM_GetErrorStringLength
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param prefix           Character string where the prefix is written.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetFilePrefix.
+!> @see                    
+!> @ref RM_SetFilePrefix.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1000,7 +1042,10 @@ END FUNCTION RM_GetFilePrefix
 !> @param gfw              Array to receive the gram formula weights. Dimension of the array is @a ncomps,
 !> where @a ncomps is the number of components in the component list.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetComponentCount, @ref RM_GetComponent.
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetComponent,
+!> @ref RM_GetComponentCount. 
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1058,7 +1103,9 @@ END SUBROUTINE Chk_GetGfw
 !> there are inactive regions or symmetry in the model definition.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 Number of grid cells in the user's model, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_Create,  @ref RM_CreateMapping.
+!> @see                    
+!> @ref RM_Create,
+!> @ref RM_CreateMapping.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1101,7 +1148,9 @@ END FUNCTION RM_GetGridCellCount
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param i                The number of the IPhreeqc instance to be retrieved (0 based).
 !> @retval                 IPhreeqc id for the @a ith IPhreeqc instance, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_Create, @ref RM_GetThreadCount. 
+!> @see                    
+!> @ref RM_Create, 
+!> @ref RM_GetThreadCount. 
 !> See IPhreeqc documentation for descriptions of IPhreeqc methods.
 !> @par Fortran Example:
 !> @htmlonly
@@ -1141,7 +1190,8 @@ END FUNCTION RM_GetIPhreeqcId
 !> constructing the reaction modules (@ref RM_Create).
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 The MPI task number for a process, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetMpiTasks.
+!> @see                    
+!> @ref RM_GetMpiTasks.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1180,7 +1230,9 @@ END FUNCTION RM_GetMpiMyself
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 The number of MPI  processes assigned to the reaction module,
 !> negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetMpiMyself, @ref RM_Create.
+!> @see                    
+!> @ref RM_GetMpiMyself, 
+!> @ref RM_Create.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1221,10 +1273,14 @@ END FUNCTION RM_GetMpiTasks
 !> @param n                The sequence number of the selected-output definition for which the user number will be returned.
 !> Fortran, 1 based.
 !> @retval                 The user number of the @a nth selected-output definition, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetSelectedOutput,
-!> @ref RM_GetSelectedOutputColumnCount, @ref RM_GetSelectedOutputCount,
+!> @see                    
+!> @ref RM_GetSelectedOutput,
+!> @ref RM_GetSelectedOutputColumnCount, 
+!> @ref RM_GetSelectedOutputCount,
 !> @ref RM_GetSelectedOutputHeading,
-!> @ref RM_GetSelectedOutputRowCount, @ref RM_SetCurrentSelectedOutputUserNumber, @ref RM_SetSelectedOutputOn.
+!> @ref RM_GetSelectedOutputRowCount, 
+!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1277,7 +1333,11 @@ END FUNCTION RM_GetNthSelectedOutputUserNumber
 !> Values for inactive cells are set to 1e30.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
-!> @see                    @ref RM_GetSolutionVolume, @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume, @ref RM_SetSaturation.
+!> @see                    
+!> @ref RM_GetSolutionVolume, 
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetRepresentativeVolume, 
+!> @ref RM_SetSaturation.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1328,9 +1388,14 @@ END SUBROUTINE Chk_GetSaturation
 !> where @a nxyz is the number of grid cells in the user's model (@ref RM_GetGridCellCount), and @a col is the number of
 !> columns in the selected-output definition (@ref RM_GetSelectedOutputColumnCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetNthSelectedOutputUserNumber,
-!> @ref RM_GetSelectedOutputColumnCount, @ref RM_GetSelectedOutputCount, @ref RM_GetSelectedOutputHeading,
-!> @ref RM_GetSelectedOutputRowCount, @ref RM_SetCurrentSelectedOutputUserNumber, @ref RM_SetSelectedOutputOn.
+!> @see                    
+!> @ref RM_GetNthSelectedOutputUserNumber,
+!> @ref RM_GetSelectedOutputColumnCount, 
+!> @ref RM_GetSelectedOutputCount, 
+!> @ref RM_GetSelectedOutputHeading,
+!> @ref RM_GetSelectedOutputRowCount, 
+!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1385,9 +1450,14 @@ END SUBROUTINE Chk_GetSelectedOutput
 !> determines which of the selected-output definitions is used.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 Number of columns in the current selected-output definition, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetNthSelectedOutputUserNumber, @ref RM_GetSelectedOutput,
-!> @ref RM_GetSelectedOutputCount, @ref RM_GetSelectedOutputHeading,
-!> @ref RM_GetSelectedOutputRowCount, @ref RM_SetCurrentSelectedOutputUserNumber, @ref RM_SetSelectedOutputOn.
+!> @see                    
+!> @ref RM_GetNthSelectedOutputUserNumber, 
+!> @ref RM_GetSelectedOutput,
+!> @ref RM_GetSelectedOutputCount, 
+!> @ref RM_GetSelectedOutputHeading,
+!> @ref RM_GetSelectedOutputRowCount, 
+!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1426,9 +1496,14 @@ END FUNCTION RM_GetSelectedOutputColumnCount
 !> determines which of the selected-output definitions is used.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 Number of selected-output definitions, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetNthSelectedOutputUserNumber, @ref RM_GetSelectedOutput,
-!> @ref RM_GetSelectedOutputColumnCount, @ref RM_GetSelectedOutputHeading,
-!> @ref RM_GetSelectedOutputRowCount, @ref RM_SetCurrentSelectedOutputUserNumber, @ref RM_SetSelectedOutputOn.
+!> @see                    
+!> @ref RM_GetNthSelectedOutputUserNumber, 
+!> @ref RM_GetSelectedOutput,
+!> @ref RM_GetSelectedOutputColumnCount, 
+!> @ref RM_GetSelectedOutputHeading,
+!> @ref RM_GetSelectedOutputRowCount, 
+!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1470,9 +1545,14 @@ END FUNCTION RM_GetSelectedOutputCount
 !> @param icol             The sequence number of the heading to be retrieved. Fortran, 1 based.
 !> @param heading          A string buffer to receive the heading.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetNthSelectedOutputUserNumber, @ref RM_GetSelectedOutput,
-!> @ref RM_GetSelectedOutputColumnCount, @ref RM_GetSelectedOutputCount,
-!> @ref RM_GetSelectedOutputRowCount, @ref RM_SetCurrentSelectedOutputUserNumber, @ref RM_SetSelectedOutputOn.
+!> @see                    
+!> @ref RM_GetNthSelectedOutputUserNumber, 
+!> @ref RM_GetSelectedOutput,
+!> @ref RM_GetSelectedOutputColumnCount, 
+!> @ref RM_GetSelectedOutputCount,
+!> @ref RM_GetSelectedOutputRowCount, 
+!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1514,9 +1594,14 @@ END FUNCTION RM_GetSelectedOutputHeading
 !> grid cells in the user's model, and is equal to @ref RM_GetGridCellCount.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 Number of rows in the current selected-output definition, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetNthSelectedOutputUserNumber, @ref RM_GetSelectedOutput, @ref RM_GetSelectedOutputColumnCount,
-!> @ref RM_GetSelectedOutputCount, @ref RM_GetSelectedOutputHeading,
-!> @ref RM_SetCurrentSelectedOutputUserNumber, @ref RM_SetSelectedOutputOn.
+!> @see                    
+!> @ref RM_GetNthSelectedOutputUserNumber, 
+!> @ref RM_GetSelectedOutput, 
+!> @ref RM_GetSelectedOutputColumnCount,
+!> @ref RM_GetSelectedOutputCount, 
+!> @ref RM_GetSelectedOutputHeading,
+!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1569,7 +1654,8 @@ END FUNCTION RM_GetSelectedOutputRowCount
 !> @param vol                  Array to receive the solution volumes. Dimension of the array is (@a nxyz),
 !> where @a nxyz is the number of user grid cells. Values for inactive cells are set to 1e30. 
 !> @retval IRM_RESULT         0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetSaturation.
+!> @see                    
+!> @ref RM_GetSaturation.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1633,8 +1719,15 @@ END SUBROUTINE Chk_GetSolutionVolume
 !> Concentrations are moles per liter.
 !> Values for inactive cells are set to 1e30.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module, @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesName,
+!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesZ,  
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1693,10 +1786,15 @@ END SUBROUTINE Chk_GetSpeciesConcentrations
 !> 
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval IRM_RESULT      The number of aqueous species, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, 
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module, 
-!> @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesConcentrations, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesZ,
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module. 
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1742,8 +1840,15 @@ END FUNCTION RM_GetSpeciesCount
 !> Dimension of the array is @a nspecies,
 !> where @a nspecies is is the number of aqueous species (@ref RM_GetSpeciesCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module, @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesConcentrations, 
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesName,
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ,  
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1802,9 +1907,15 @@ END SUBROUTINE Chk_GetSpeciesD25
 !> @param i                Sequence number of the species in the species list. Fortran, 1 based.
 !> @param name             Character array to receive the species name.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount,
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ,
-!> @ref RM_SpeciesConcentrations2Module, @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesConcentrations, 
+!> @ref RM_GetSpeciesCount,
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ, 
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1850,9 +1961,15 @@ END FUNCTION RM_GetSpeciesName
 !> 
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval IRM_RESULT      0, species are not saved; 1, species are saved; negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount,
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module, @ref RM_SetSpeciesSaveOn.
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesConcentrations, 
+!> @ref RM_GetSpeciesCount,
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesName,
+!> @ref RM_GetSpeciesZ, 
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module. 
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1894,9 +2011,15 @@ END FUNCTION RM_GetSpeciesSaveOn
 !> Dimension of the array is @a nspecies,
 !> where @a nspecies is is the number of aqueous species (@ref RM_GetSpeciesCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount,
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module, 
-!> @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesConcentrations, 
+!> @ref RM_GetSpeciesCount,
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -1949,7 +2072,11 @@ END SUBROUTINE Chk_GetSpeciesZ
 !> @param sc               Array to receive the starting cell numbers. Dimension of the array is 
 !>                         the number of threads (OpenMP) or the number of processes (MPI).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_Create, @ref RM_GetEndCell, @ref RM_GetMpiTasks, @ref RM_GetThreadCount.
+!> @see                    
+!> @ref RM_Create, 
+!> @ref RM_GetEndCell, 
+!> @ref RM_GetMpiTasks, 
+!> @ref RM_GetThreadCount.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2000,7 +2127,8 @@ END SUBROUTINE Chk_GetStartCell
 !> MPI version, the number of threads is always one for each process.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 The number of threads, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetMpiTasks.
+!> @see                    
+!> @ref RM_GetMpiTasks.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2032,8 +2160,12 @@ END FUNCTION RM_GetThreadCount
 !> returned value is equal to the default (0.0) or the last time set by @ref RM_SetTime.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 The current simulation time in seconds.
-!> @see                    @ref RM_GetTimeConversion, @ref RM_GetTimeStep, @ref RM_SetTime,
-!> @ref RM_SetTimeConversion, @ref RM_SetTimeStep.
+!> @see                    
+!> @ref RM_GetTimeConversion, 
+!> @ref RM_GetTimeStep, 
+!> @ref RM_SetTime,
+!> @ref RM_SetTimeConversion, 
+!> @ref RM_SetTimeStep.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2069,7 +2201,12 @@ END FUNCTION RM_GetTime
 !> of cell chemistry (@ref RM_SetPrintChemistryOn), which is rare. Default conversion factor is 1.0.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 Multiplier to convert seconds to another time unit.
-!> @see                    @ref RM_GetTime, @ref RM_GetTimeStep, @ref RM_SetTime, @ref RM_SetTimeConversion, @ref RM_SetTimeStep.
+!> @see                    
+!> @ref RM_GetTime, 
+!> @ref RM_GetTimeStep, 
+!> @ref RM_SetTime, 
+!> @ref RM_SetTimeConversion, 
+!> @ref RM_SetTimeStep.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2104,8 +2241,12 @@ END FUNCTION RM_GetTimeConversion
 !> returned value is equal to the default (0.0) or the last time step set by @ref RM_SetTimeStep.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 The current simulation time step in seconds.
-!> @see                    @ref RM_GetTime, @ref RM_GetTimeConversion, @ref RM_SetTime,
-!> @ref RM_SetTimeConversion, @ref RM_SetTimeStep.
+!> @see                    
+!> @ref RM_GetTime, 
+!> @ref RM_GetTimeConversion, 
+!> @ref RM_SetTime,
+!> @ref RM_SetTimeConversion, 
+!> @ref RM_SetTimeStep.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2157,7 +2298,9 @@ END FUNCTION RM_GetTimeStep
 !> @param f1           Fraction of @a bc1 that mixes with (1-@a f1) of @a bc2.
 !> Size is (n_boundary). Optional in Fortran.
 !> @retval IRM_RESULT         0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                       @ref RM_FindComponents, @ref RM_GetComponentCount.
+!> @see                       
+!> @ref RM_FindComponents, 
+!> @ref RM_GetComponentCount.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -2270,7 +2413,8 @@ END SUBROUTINE Chk_InitialPhreeqc2Concentrations
 !> Size is (nxyz,7). The order of definitions is given above.
 !> Optional in Fortran; omitting results in no mixing.
 !> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                        @ref RM_InitialPhreeqcCell2Module.
+!> @see                        
+!> @ref RM_InitialPhreeqcCell2Module.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2378,7 +2522,10 @@ END SUBROUTINE Chk_InitialPhreeqc2Module
 !> @param f1           Fraction of @a bc1 that mixes with (1-@a f1) of @a bc2.
 !> Size is @a n_boundary. Optional in Fortran.
 !> @retval IRM_RESULT         0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                  @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_SetSpeciesSaveOn.
+!> @see                  
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_SetSpeciesSaveOn.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2472,7 +2619,8 @@ END SUBROUTINE Chk_InitialPhreeqc2SpeciesConcentrations
 !> cell @a n_user from the InitialPhreeqc instance.
 !> @param n_cell The number of cell numbers in the @a cell_numbers list.
 !> @retval IRM_RESULT        0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                      @ref RM_InitialPhreeqc2Module.
+!> @see                      
+!> @ref RM_InitialPhreeqc2Module.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2528,7 +2676,8 @@ END SUBROUTINE Chk_InitialPhreeqcCell2Module
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param db_name          String containing the database name.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_Create.
+!> @see                    
+!> @ref RM_Create.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2561,7 +2710,12 @@ END FUNCTION RM_LoadDatabase
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param str              String to be printed.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_OpenFiles, @ref RM_ErrorMessage, @ref RM_OutputMessage, @ref RM_ScreenMessage, @ref RM_WarningMessage.
+!> @see   
+!> @ref RM_ErrorMessage,                 
+!> @ref RM_OpenFiles,  
+!> @ref RM_OutputMessage, 
+!> @ref RM_ScreenMessage, 
+!> @ref RM_WarningMessage.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2611,7 +2765,9 @@ END FUNCTION RM_LogMessage
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError). RM_MpiWorker returns a value only when
 !> @ref RM_MpiWorkerBreak is called by root.
-!> @see                    @ref RM_MpiWorkerBreak, @ref RM_SetMpiWorkerCallback.
+!> @see                    
+!> @ref RM_MpiWorkerBreak, 
+!> @ref RM_SetMpiWorkerCallback.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -2648,7 +2804,9 @@ END FUNCTION RM_MpiWorker
 !> The workers will continue to respond to messages from root until root calls RM_MpiWorkerBreak.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_MpiWorker, @ref RM_SetMpiWorkerCallback.
+!> @see                    
+!> @ref RM_MpiWorker, 
+!> @ref RM_SetMpiWorkerCallback.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2679,8 +2837,14 @@ END FUNCTION RM_MpiWorkerBreak
 !> based on the prefix defined by @ref RM_SetFilePrefix.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetFilePrefix, @ref RM_GetFilePrefix, @ref RM_CloseFiles,
-!> @ref RM_ErrorMessage, @ref RM_LogMessage, @ref RM_OutputMessage, @ref RM_WarningMessage.
+!> @see  
+!> @ref RM_CloseFiles, 
+!> @ref RM_ErrorMessage, 
+!> @ref RM_GetFilePrefix, 
+!> @ref RM_LogMessage, 
+!> @ref RM_OutputMessage,                  
+!> @ref RM_SetFilePrefix, 
+!> @ref RM_WarningMessage.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2712,7 +2876,11 @@ END FUNCTION RM_OpenFiles
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param str              String to be printed.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_ErrorMessage, @ref RM_LogMessage, @ref RM_ScreenMessage, @ref RM_WarningMessage.
+!> @see                    
+!> @ref RM_ErrorMessage, 
+!> @ref RM_LogMessage, 
+!> @ref RM_ScreenMessage, 
+!> @ref RM_WarningMessage.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2763,8 +2931,13 @@ END FUNCTION RM_OutputMessage
 !> temperature (@ref RM_SetTemperature), and pressure (@ref RM_SetPressure).
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetConcentrations,  @ref RM_SetPorosity,
-!> @ref RM_SetPressure, @ref RM_SetSaturation, @ref RM_SetTemperature, @ref RM_SetTimeStep.
+!> @see                    
+!> @ref RM_SetConcentrations,  
+!> @ref RM_SetPorosity,
+!> @ref RM_SetPressure, 
+!> @ref RM_SetSaturation, 
+!> @ref RM_SetTemperature, 
+!> @ref RM_SetTimeStep.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2812,7 +2985,8 @@ END FUNCTION RM_RunCells
 !> @param utility          1, the Utility instance will run the file; 0, the Utility instance will not run the file.
 !> @param chem_name        Name of the file to run.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_RunString.
+!> @see                    
+!> @ref RM_RunString.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2856,7 +3030,8 @@ END FUNCTION RM_RunFile
 !> @param utility          1, the Utility instance will run the string; 0, the Utility instance will not run the string.
 !> @param input_string     String containing PHREEQC input.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_RunFile.
+!> @see                    
+!> @ref RM_RunFile.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2892,7 +3067,11 @@ END FUNCTION RM_RunString
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param str              String to be printed.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_ErrorMessage,  @ref RM_LogMessage, @ref RM_OutputMessage, @ref RM_WarningMessage.
+!> @see                    
+!> @ref RM_ErrorMessage,  
+!> @ref RM_LogMessage, 
+!> @ref RM_OutputMessage, 
+!> @ref RM_WarningMessage.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2938,7 +3117,8 @@ END FUNCTION RM_ScreenMessage
 !> @param tf               0, total H and O are included in the component list; 1, excess H, excess O, and water
 !> are included in the component list.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents.
+!> @see                    
+!> @ref RM_FindComponents.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -2980,8 +3160,12 @@ END FUNCTION RM_SetComponentH2O
 !> of grid cells in the user's model (@ref RM_GetGridCellCount), and @a ncomps is the number of components as determined
 !> by @ref RM_FindComponents or @ref RM_GetComponentCount.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetDensity, @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume,
-!> @ref RM_SetSaturation, @ref RM_SetUnitsSolution.
+!> @see                    
+!> @ref RM_SetDensity, 
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetRepresentativeVolume,
+!> @ref RM_SetSaturation, 
+!> @ref RM_SetUnitsSolution.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -3063,9 +3247,14 @@ END FUNCTION RM_SetConcentrations1D
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param n_user           User number of the SELECTED_OUTPUT data block that is to be used.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetNthSelectedOutputUserNumber, @ref RM_GetSelectedOutput, @ref RM_GetSelectedOutputColumnCount,
-!> @ref RM_GetSelectedOutputCount, @ref RM_GetSelectedOutputRowCount, @ref RM_GetSelectedOutputHeading,
-!> @ref RM_SetSelectedOutputOn.
+!> @see                    
+!> @ref RM_GetNthSelectedOutputUserNumber, 
+!> @ref RM_GetSelectedOutput, 
+!> @ref RM_GetSelectedOutputColumnCount,
+!> @ref RM_GetSelectedOutputCount, 
+!> @ref RM_GetSelectedOutputHeading,
+!> @ref RM_SetSelectedOutputOn,
+!> @ref RM_GetSelectedOutputRowCount. 
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -3113,8 +3302,11 @@ END FUNCTION RM_SetCurrentSelectedOutputUserNumber
 !> @param density          Array of densities. Size of array is @a nxyz, where @a nxyz is the number
 !> of grid cells in the user's model (@ref RM_GetGridCellCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetConcentrations, @ref RM_SetConcentrations, 
-!> @ref RM_SetUnitsSolution, @ref RM_UseSolutionDensityVolume.
+!> @see                    
+!> @ref RM_GetConcentrations, 
+!> @ref RM_SetConcentrations, 
+!> @ref RM_SetUnitsSolution, 
+!> @ref RM_UseSolutionDensityVolume.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -3163,7 +3355,8 @@ END SUBROUTINE Chk_SetDensity
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param dump_name        Name of dump file.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_DumpModule.
+!> @see                    
+!> @ref RM_DumpModule.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -3236,7 +3429,9 @@ END FUNCTION RM_SetErrorHandlerMode
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param prefix           Prefix used when opening the output and log files.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_OpenFiles, @ref RM_CloseFiles.
+!> @see                    
+!> @ref RM_OpenFiles, 
+!> @ref RM_CloseFiles.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -3302,7 +3497,9 @@ END FUNCTION RM_SetFilePrefix
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param fcn              A function that returns an integer and has an integer argument.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_MpiWorker, @ref RM_MpiWorkerBreak.
+!> @see                    
+!> @ref RM_MpiWorker, 
+!> @ref RM_MpiWorkerBreak.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -3448,7 +3645,10 @@ END FUNCTION RM_SetPartitionUZSolids
 !> @param por              Array of porosities, unitless. Default is 0.1. Size of array is @a nxyz, where @a nxyz is the number
 !> of grid cells in the user's model (@ref RM_GetGridCellCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetSaturation, @ref RM_SetRepresentativeVolume, @ref RM_SetSaturation.
+!> @see                    
+!> @ref RM_GetSaturation, 
+!> @ref RM_SetRepresentativeVolume, 
+!> @ref RM_SetSaturation.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -3498,7 +3698,8 @@ END SUBROUTINE Chk_SetPorosity
 !> @param p                Array of pressures, in atm. Size of array is @a nxyz, where @a nxyz is the number
 !> of grid cells in the user's model (@ref RM_GetGridCellCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetTemperature.
+!> @see                    
+!> @ref RM_SetTemperature.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -3551,7 +3752,8 @@ END SUBROUTINE Chk_SetPressure
 !> of grid cells in the user's model (@ref RM_GetGridCellCount). A value of 0 will
 !> disable printing detailed output for the cell; a value of 1 will enable printing detailed output for a cell.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetPrintChemistryOn.
+!> @see                    
+!> @ref RM_SetPrintChemistryOn.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -3618,7 +3820,8 @@ END SUBROUTINE Chk_SetPrintChemistryMask
 !> @param utility          0, disable detailed printing in the Utility instance, 1, enable detailed printing
 !> in the Utility instance.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetPrintChemistryMask.
+!> @see                    
+!> @ref RM_SetPrintChemistryMask.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -3660,7 +3863,8 @@ END FUNCTION RM_SetPrintChemistryOn
 !> @param method           0, indicates average times are used in rebalancing; 1 indicates individual
 !> cell times are used in rebalancing (default).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetRebalanceFraction.
+!> @see                    
+!> @ref RM_SetRebalanceFraction.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -3705,7 +3909,8 @@ END FUNCTION RM_SetRebalanceByCell
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param f                Fraction from 0.0 to 1.0.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetRebalanceByCell.
+!> @see                    
+!> @ref RM_SetRebalanceByCell.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -3753,7 +3958,9 @@ END FUNCTION RM_SetRebalanceFraction
 !> Size of array is @a nxyz, where @a nxyz is the number
 !> of grid cells in the user's model (@ref RM_GetGridCellCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetPorosity, @ref RM_SetSaturation.
+!> @see                    
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetSaturation.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -3799,8 +4006,12 @@ END FUNCTION RM_SetRepresentativeVolume
 !> @param sat              Array of saturations, unitless. Size of array is @a nxyz, where @a nxyz is the number
 !> of grid cells in the user's model (@ref RM_GetGridCellCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetDensity, @ref RM_GetSaturation, @ref RM_GetSolutionVolume,
-!> @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume.
+!> @see                    
+!> @ref RM_GetDensity, 
+!> @ref RM_GetSaturation, 
+!> @ref RM_GetSolutionVolume,
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetRepresentativeVolume.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -3852,7 +4063,9 @@ END SUBROUTINE Chk_SetSaturation
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param tf  @a 1, enable screen messages; @a 0, disable screen messages. Default is 1.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_RunCells, @ref RM_ScreenMessage.
+!> @see                    
+!> @ref RM_RunCells, 
+!> @ref RM_ScreenMessage.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -3890,7 +4103,9 @@ END FUNCTION RM_SetScreenOn
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param tf               0, disable selected output; 1, enable selected output.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_GetSelectedOutput, @ref RM_SetPrintChemistryOn.
+!> @see                    
+!> @ref RM_GetSelectedOutput, 
+!> @ref RM_SetPrintChemistryOn.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -3932,9 +4147,15 @@ END FUNCTION RM_SetSelectedOutputOn
 !> @param save_on          0, indicates species concentrations are not saved; 1, indicates species concentrations are
 !> saved.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount,
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesSaveOn, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_SpeciesConcentrations2Module.
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesConcentrations, 
+!> @ref RM_GetSpeciesCount,
+!> @ref RM_GetSpeciesD25,
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesZ, 
+!> @ref RM_SpeciesConcentrations2Module.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -3972,8 +4193,10 @@ END FUNCTION RM_SetSpeciesSaveOn
 !> @param t                Array of temperatures, in degrees C. Size of array is @a nxyz, where @a nxyz is the number
 !> of grid cells in the user's model (@ref RM_GetGridCellCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_InitialPhreeqc2Module, 
-!> @ref RM_InitialPhreeqcCell2Module, @ref RM_SetPressure.
+!> @see                    
+!> @ref RM_InitialPhreeqc2Module, 
+!> @ref RM_InitialPhreeqcCell2Module, 
+!> @ref RM_SetPressure.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -4022,7 +4245,9 @@ END SUBROUTINE Chk_SetTemperature
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param time             Current simulation time, in seconds.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetTimeStep, @ref RM_SetTimeConversion.
+!> @see     
+!> @ref RM_SetTimeConversion,               
+!> @ref RM_SetTimeStep.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -4055,7 +4280,9 @@ END FUNCTION RM_SetTime
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param conv_factor      Factor to convert seconds to user time units.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetTime, @ref RM_SetTimeStep.
+!> @see                    
+!> @ref RM_SetTime, 
+!> @ref RM_SetTimeStep.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -4089,7 +4316,9 @@ END FUNCTION RM_SetTimeConversion
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param time_step        Current time step, in seconds.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetTime, @ref RM_SetTimeConversion.
+!> @see                    
+!> @ref RM_SetTime, 
+!> @ref RM_SetTimeConversion.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -4137,8 +4366,11 @@ END FUNCTION RM_SetTimeStep
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for exchangers: 0, 1, or 2.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_InitialPhreeqc2Module, @ref RM_InitialPhreeqcCell2Module,
-!> @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume.
+!> @see                    
+!> @ref RM_InitialPhreeqc2Module, 
+!> @ref RM_InitialPhreeqcCell2Module,
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetRepresentativeVolume.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -4187,8 +4419,11 @@ END FUNCTION RM_SetUnitsExchange
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for gas phases: 0, 1, or 2.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_InitialPhreeqc2Module, @ref RM_InitialPhreeqcCell2Module,
-!> @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume.
+!> @see                    
+!> @ref RM_InitialPhreeqc2Module, 
+!> @ref RM_InitialPhreeqcCell2Module,
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetRepresentativeVolume.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -4251,8 +4486,12 @@ END FUNCTION RM_SetUnitsGasPhase
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for kinetic reactants: 0, 1, or 2.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                     @ref RM_InitialPhreeqc2Module, @ref RM_InitialPhreeqcCell2Module,
-!> @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume, @ref RM_SetSaturation.
+!> @see                     
+!> @ref RM_InitialPhreeqc2Module, 
+!> @ref RM_InitialPhreeqcCell2Module,
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetRepresentativeVolume, 
+!> @ref RM_SetSaturation.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -4301,8 +4540,11 @@ END FUNCTION RM_SetUnitsKinetics
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for equilibrium phases: 0, 1, or 2.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_InitialPhreeqc2Module, @ref RM_InitialPhreeqcCell2Module,
-!> @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume.
+!> @see                    
+!> @ref RM_InitialPhreeqc2Module, 
+!> @ref RM_InitialPhreeqcCell2Module,
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetRepresentativeVolume.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -4369,7 +4611,11 @@ END FUNCTION RM_SetUnitsPPassemblage
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for solutions: 1, 2, or 3, default is 1, mg/L.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_SetDensity, @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume, @ref RM_SetSaturation,
+!> @see                    
+!> @ref RM_SetDensity, 
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetRepresentativeVolume, 
+!> @ref RM_SetSaturation,
 !> @ref RM_UseSolutionDensityVolume.
 !> 
 !> @par Fortran Example:
@@ -4413,8 +4659,11 @@ END FUNCTION RM_SetUnitsSolution
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for solid solutions: 0, 1, or 2.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_InitialPhreeqc2Module, @ref RM_InitialPhreeqcCell2Module,
-!> @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume.
+!> @see                    
+!> @ref RM_InitialPhreeqc2Module, 
+!> @ref RM_InitialPhreeqcCell2Module,
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetRepresentativeVolume.
 !> 
 !> If a single SOLID_SOLUTION definition is used for cells with different initial porosity, 
 !>    the three options scale quite differently. 
@@ -4469,8 +4718,11 @@ END FUNCTION RM_SetUnitsSSassemblage
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param option           Units option for surfaces: 0, 1, or 2.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_InitialPhreeqc2Module, @ref RM_InitialPhreeqcCell2Module,
-!> @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume.
+!> @see                    
+!> @ref RM_InitialPhreeqc2Module, 
+!> @ref RM_InitialPhreeqcCell2Module,
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetRepresentativeVolume.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -4516,9 +4768,15 @@ END FUNCTION RM_SetUnitsSurface
 !> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount), and @a nspecies is the number of aqueous species (@ref RM_GetSpeciesCount).
 !> Concentrations are moles per liter.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesConcentrations, @ref RM_GetSpeciesCount, 
-!> @ref RM_GetSpeciesD25, @ref RM_GetSpeciesZ,
-!> @ref RM_GetSpeciesName, @ref RM_GetSpeciesSaveOn, @ref RM_SetSpeciesSaveOn.
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesConcentrations, 
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesName, 
+!> @ref RM_GetSpeciesSaveOn,
+!> @ref RM_GetSpeciesZ, 
+!> @ref RM_SetSpeciesSaveOn.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -4591,8 +4849,12 @@ END SUBROUTINE Chk_SpeciesConcentrations2Module
 !> @a False indicates that the solution density set by @ref RM_SetDensity and the volume determined by the 
 !> product of  @ref RM_SetSaturation, @ref RM_SetPorosity, and @ref RM_SetRepresentativeVolume,
 !> will be used to calculate concentrations retrieved by @ref RM_GetConcentrations.
-!> @see                    @ref RM_GetConcentrations, @ref RM_SetDensity, 
-!> @ref RM_SetPorosity, @ref RM_SetRepresentativeVolume, @ref RM_SetSaturation.
+!> @see                    
+!> @ref RM_GetConcentrations, 
+!> @ref RM_SetDensity, 
+!> @ref RM_SetPorosity, 
+!> @ref RM_SetRepresentativeVolume, 
+!> @ref RM_SetSaturation.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -4625,7 +4887,12 @@ END FUNCTION RM_UseSolutionDensityVolume
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param warn_str         String to be printed.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    @ref RM_OpenFiles, @ref RM_LogMessage, @ref RM_OutputMessage, @ref RM_ScreenMessage, @ref RM_ErrorMessage.
+!> @see 
+!> @ref RM_ErrorMessage,  
+!> @ref RM_LogMessage,                  
+!> @ref RM_OpenFiles, 
+!> @ref RM_OutputMessage, 
+!> @ref RM_ScreenMessage. 
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
