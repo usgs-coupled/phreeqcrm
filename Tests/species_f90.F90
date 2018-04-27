@@ -45,6 +45,7 @@ subroutine species_f90()  BIND(C)
   double precision, dimension(:,:), allocatable :: bc_conc
   double precision, dimension(:,:), allocatable :: c
   double precision, dimension(:,:), allocatable :: species_c
+  double precision, dimension(:,:), allocatable :: species_log10gammas
   integer                                       :: nspecies
   double precision, dimension(:), allocatable   :: species_d
   double precision, dimension(:), allocatable   :: species_z
@@ -227,11 +228,13 @@ subroutine species_f90()  BIND(C)
   time_step = 0.0
   allocate(c(nxyz, ncomps))
   allocate(species_c(nxyz, nspecies))
+  allocate(species_log10gammas(nxyz, nspecies))
   status = RM_SetTime(id, time)
   status = RM_SetTimeStep(id, time_step)
   status = RM_RunCells(id) 
   status = RM_GetConcentrations(id, c)
   status = RM_GetSpeciesConcentrations(id, species_c)
+  status = RM_GetSpeciesLog10Gammas(id, species_log10gammas)
   
   ! --------------------------------------------------------------------------
   ! Set boundary condition
@@ -299,6 +302,7 @@ subroutine species_f90()  BIND(C)
      ! Transfer data from PhreeqcRM for transport
      status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
      status = RM_GetSpeciesConcentrations(id, species_c)          ! Species concentrations after reaction
+     status = RM_GetSpeciesLog10Gammas(id, species_log10gammas)   ! Species log10 activity coefficient after reaction
      status = RM_GetDensity(id, density)             ! Density after reaction
      status = RM_GetSolutionVolume(id, volume)       ! Solution volume after reaction
      ! Print results at last time step
@@ -377,6 +381,8 @@ subroutine species_f90()  BIND(C)
   deallocate(bc_f1) 
   deallocate(bc_conc) 
   deallocate(c) 
+  deallocate(species_c)
+  deallocate(species_log10gamma)
   deallocate(density) 
   deallocate(temperature) 
   deallocate(c_well) 
