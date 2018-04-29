@@ -3359,8 +3359,8 @@ PhreeqcRM::GetSpeciesLog10Gammas(std::vector<double> & species_log10gammas)
 				std::vector<double> d;
 				d.resize(this->species_names.size(), 0);
 				{
-					std::map<int, double>::iterator it = this->workers[0]->Get_solution(j)->Get_species_map().begin();
-					for (; it != this->workers[0]->Get_solution(j)->Get_species_map().end(); it++)
+					std::map<int, double>::iterator it = this->workers[0]->Get_solution(j)->Get_log_gamma_map().begin();
+					for (; it != this->workers[0]->Get_solution(j)->Get_log_gamma_map().end(); it++)
 					{
 						// it is pointing to a species number, concentration
 						int rm_species_num = this->s_num2rm_species_num[it->first];
