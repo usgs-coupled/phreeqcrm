@@ -666,7 +666,7 @@ RM_GetSpeciesLog10Gammas(int id, double * species_log10gammas)
 		{
 			IRM_RESULT return_value = IRM_OK;
 			std::vector<double> species_gammas_vector;
-			return_value = Reaction_module_ptr->GetSpeciesConcentrations(species_gammas_vector);
+			return_value = Reaction_module_ptr->GetSpeciesLog10Gammas(species_gammas_vector);
 			if (return_value == IRM_OK)
 			{
 				memcpy(species_log10gammas, &species_gammas_vector.front(), species_gammas_vector.size() * sizeof(double));
