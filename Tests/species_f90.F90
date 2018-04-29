@@ -326,6 +326,11 @@ subroutine species_f90()  BIND(C)
               do j = 1, ncomps
                  write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ",trim(components(j)), ": ", c(i,j)
               enddo
+              write(*,*) "     Species: "
+              do j = 1, nspecies
+                 status = RM_GetSpeciesName(id, j, string) 
+                 write(*,'(10x,i2,A2,A10,A2,f10.4,f10.4)') j, " ",trim(string), ": ", species_c(i,j), species_log10gammas(i,j)
+              enddo              
               write(*,*) "     Selected output: "
               do j = 1, col
                  status = RM_GetSelectedOutputHeading(id, j, heading)    

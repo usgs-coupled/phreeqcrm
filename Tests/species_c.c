@@ -362,6 +362,12 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 						{
 							fprintf(stderr, "          %2d %10s: %10.4f\n", j, components[j], c[j*nxyz + i]);
 						}
+						fprintf(stderr, "     Species: \n");
+						for (j = 0; j < nspecies; j++)
+						{
+							status = RM_GetSpeciesName(id, j, str, 100);
+							fprintf(stderr, "          %2d %10s: %10.4f %10.4f\n", j, str, species_c[j*nxyz + i], species_log10gammas[j*nxyz + i]);
+						}
 						fprintf(stderr, "     Selected output: \n");
 						for (j = 0; j < col; j++)
 						{

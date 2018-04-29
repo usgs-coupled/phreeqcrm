@@ -271,6 +271,11 @@ int species_cpp()
 						{
 							std::cerr << "          " << j << " " << components[j] << ": " << component_c[j*nxyz + i] << "\n";
 						}
+						std::cerr << "     Species: " << "\n";
+						for (int j = 0; j < nspecies; j++)
+						{
+							std::cerr << "          " << j << " " << species[j] << " c: " << c[j*nxyz + i] << " lg: " << g[j*nxyz + i] << "\n";
+						}
 						std::vector<std::string> headings;
 						headings.resize(col);
 						std::cerr << "     Selected output: " << "\n";
