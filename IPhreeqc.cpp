@@ -554,6 +554,14 @@ std::list< std::string > IPhreeqc::ListComponents(void)
 	{
 		this->Components.clear();
 		this->PhreeqcPtr->list_components(this->Components);
+		this->PhreeqcPtr->list_EquilibriumPhases(this->EquilibriumPhasesList);
+		this->PhreeqcPtr->list_GasComponents(this->GasComponentsList);
+		this->PhreeqcPtr->list_KineticReactions(this->KineticReactionsList);
+		this->PhreeqcPtr->list_SolidSolutions(this->SolidSolutionComponentsList,this->SolidSolutionNamesList);
+		this->PhreeqcPtr->list_Surfaces(this->SurfaceTypeList, this->SurfaceNamesList);
+		this->PhreeqcPtr->list_Exchangers(this->ExchangeNamesList);
+		//this->PhreeqcPtr->list_ExchangeSpecies(this->es);
+		//this->PhreeqcPtr->list_SurfaceSpecies(this->es);
 		this->UpdateComponents = false;
 	}
 	return this->Components;
