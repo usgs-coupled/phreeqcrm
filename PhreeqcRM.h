@@ -3829,6 +3829,9 @@ protected:
 	// mcd
 	bool species_save_on;
 	std::vector <std::string> species_names;
+	std::vector <std::string> exchange_species_names;
+	std::vector <std::string> surface_species_names;
+
 	std::vector <double> species_z;
 	std::vector <double> species_d_25;
 	std::vector <cxxNameDouble> species_stoichiometry;
