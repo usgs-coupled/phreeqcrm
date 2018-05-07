@@ -2402,6 +2402,104 @@ PhreeqcRM::FindComponents(void)
 				}
 			}
 		}
+		// Make all lists
+		{
+			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
+			int next_ex = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_EXCHANGE);
+			int next_ss = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLID_SOLUTIONS);
+			this->surface_species_names.clear();
+			const std::list<std::string> &surftype = phast_iphreeqc_worker->GetSurfaceTypeList();
+			this->exchange_species_names.clear();
+			const std::list<std::string> &ex = phast_iphreeqc_worker->GetExchangeNamesList();
+			if (ex.size() > 0 || surftype.size() > 0)
+			{
+				std::ostringstream in;
+				in << "SOLUTION " << next << "\n";
+				for (i = 0; i < components.size(); i++)
+				{
+					if (components[i] == "H") continue;
+					if (components[i] == "O") continue;
+					if (components[i] == "H2O") continue;
+					if (components[i] == "Charge") continue;
+					in << components[i] << " 1e-6\n";
+				}
+				in << "END\n";
+				int status = phast_iphreeqc_worker->RunString(in.str().c_str());
+				if (status != 0)
+				{
+					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+					throw PhreeqcRMStop();
+				}
+				// Surface species
+				if (surftype.size() > 0)
+				{
+					in.clear();
+					std::list<std::string>::const_iterator cit = surftype.begin();
+					in << "SURFACE " << next_ss << "\n";
+					in << "  -eq " << next << "\n";
+					for (; cit != surftype.end(); cit++)
+					{
+						in << "  " << *cit << "  0.001  1   1\n";
+					}
+					int status = phast_iphreeqc_worker->RunString(in.str().c_str());
+					if (status != 0)
+					{
+						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+						throw PhreeqcRMStop();
+					}
+					for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_s_x; i++)
+					{
+						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == SURF)
+						{
+							this->surface_species_names.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
+						}
+					}
+				}
+				// Exchange species
+				if (ex.size() > 0)
+				{
+					in.clear();
+					in << "EXCHANGE " << next_ex << "\n";
+					in << "  -eq " << next << "\n";
+					std::list<std::string>::const_iterator cit = ex.begin();
+					for (; cit != ex.end(); cit++)
+					{
+						in << "  " << *cit << "  0.001\n";
+					}
+					int status = phast_iphreeqc_worker->RunString(in.str().c_str());
+					if (status != 0)
+					{
+						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+						throw PhreeqcRMStop();
+					}
+					for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_s_x; i++)
+					{
+						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == EX)
+						{
+							this->exchange_species_names.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
+						}
+					}
+				}
+				{
+					std::ostringstream in;
+					in << "DELETE; -solution " << next << "\n";
+					if (surftype.size() > 0)
+					{
+						in << "DELETE -solid_solution " << next_ss << "\n";
+					}
+					if (ex.size() > 0)
+					{
+						in << "DELETE -exchange " << next_ex << "\n";
+					}
+					int status = phast_iphreeqc_worker->RunString(in.str().c_str());
+					if (status != 0)
+					{
+						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+						throw PhreeqcRMStop();
+					}
+				}
+			}
+		}
 	}
 	catch (...)
 	{

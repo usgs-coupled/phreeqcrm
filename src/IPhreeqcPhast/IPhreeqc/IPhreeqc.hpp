@@ -945,6 +945,26 @@ protected:
 	std::vector< std::string > DumpLines;
 
 	std::list< std::string >   Components;
+	std::list< std::string >   EquilibriumPhasesList;
+	const std::list<std::string> & IPhreeqc::GetEquilibriumPhasesList() { return this->EquilibriumPhasesList; };
+	std::list< std::string >   GasComponentsList;
+	const std::list<std::string> & IPhreeqc::GetGasComponentsList() { return this->GasComponentsList; };
+	std::list< std::string >   KineticReactionsList;
+	const std::list<std::string> & IPhreeqc::GetKineticReactionsList() { return this->KineticReactionsList; };
+	std::list< std::string >   SolidSolutionComponentsList;
+	const std::list<std::string> & IPhreeqc::GetSolidSolutionComponentsList() { return this->SolidSolutionComponentsList; };
+	std::list< std::string >   SolidSolutionNamesList;
+	const std::list<std::string> & IPhreeqc::GetSolidSolutionNamesList() { return this->SolidSolutionComponentsList; };
+	std::list< std::string >   SurfaceSpeciesList;
+	const std::list<std::string> & IPhreeqc::GetSurfaceSpeciesList() { return this->SurfaceSpeciesList; };
+	std::list< std::string >   SurfaceTypeList;
+	const std::list<std::string> & IPhreeqc::GetSurfaceTypeList() { return this->SurfaceTypeList; };
+	std::list< std::string >   SurfaceNamesList;
+	const std::list<std::string> & IPhreeqc::GetSurfaceNamesList() { return this->SurfaceNamesList; };
+	std::list< std::string >   ExchangeSpeciesList;
+	const std::list<std::string> & IPhreeqc::GetExchangeSpeciesList() { return this->ExchangeSpeciesList; };
+	std::list< std::string >   ExchangeNamesList;
+	const std::list<std::string> & IPhreeqc::GetExchangeNamesList() { return this->ExchangeNamesList; };
 
 	std::map< int, std::string > SelectedOutputFileNameMap;
 
