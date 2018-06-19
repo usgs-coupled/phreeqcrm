@@ -560,8 +560,6 @@ std::list< std::string > IPhreeqc::ListComponents(void)
 		this->PhreeqcPtr->list_SolidSolutions(this->SolidSolutionComponentsList,this->SolidSolutionNamesList);
 		this->PhreeqcPtr->list_Surfaces(this->SurfaceTypeList, this->SurfaceNamesList);
 		this->PhreeqcPtr->list_Exchangers(this->ExchangeNamesList);
-		//this->PhreeqcPtr->list_ExchangeSpecies(this->es);
-		//this->PhreeqcPtr->list_SurfaceSpecies(this->es);
 		this->UpdateComponents = false;
 	}
 	return this->Components;

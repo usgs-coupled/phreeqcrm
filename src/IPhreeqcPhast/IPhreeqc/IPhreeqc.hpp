@@ -954,15 +954,15 @@ protected:
 	std::list< std::string >   SolidSolutionComponentsList;
 	const std::list<std::string> & IPhreeqc::GetSolidSolutionComponentsList() { return this->SolidSolutionComponentsList; };
 	std::list< std::string >   SolidSolutionNamesList;
-	const std::list<std::string> & IPhreeqc::GetSolidSolutionNamesList() { return this->SolidSolutionComponentsList; };
-	std::list< std::string >   SurfaceSpeciesList;
-	const std::list<std::string> & IPhreeqc::GetSurfaceSpeciesList() { return this->SurfaceSpeciesList; };
+	const std::list<std::string> & IPhreeqc::GetSolidSolutionNamesList() { return this->SolidSolutionNamesList; };
+	//std::list< std::string >   SurfaceSpeciesList;
+	//const std::list<std::string> & IPhreeqc::GetSurfaceSpeciesList() { return this->SurfaceSpeciesList; };
 	std::list< std::string >   SurfaceTypeList;
 	const std::list<std::string> & IPhreeqc::GetSurfaceTypeList() { return this->SurfaceTypeList; };
 	std::list< std::string >   SurfaceNamesList;
 	const std::list<std::string> & IPhreeqc::GetSurfaceNamesList() { return this->SurfaceNamesList; };
-	std::list< std::string >   ExchangeSpeciesList;
-	const std::list<std::string> & IPhreeqc::GetExchangeSpeciesList() { return this->ExchangeSpeciesList; };
+	//std::list< std::string >   ExchangeSpeciesList;
+	//const std::list<std::string> & IPhreeqc::GetExchangeSpeciesList() { return this->ExchangeSpeciesList; };
 	std::list< std::string >   ExchangeNamesList;
 	const std::list<std::string> & IPhreeqc::GetExchangeNamesList() { return this->ExchangeNamesList; };
 
