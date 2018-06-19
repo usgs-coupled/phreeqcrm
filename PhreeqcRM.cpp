@@ -2406,10 +2406,14 @@ PhreeqcRM::FindComponents(void)
 		{
 			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
 			int next_ex = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_EXCHANGE);
-			int next_ss = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLID_SOLUTIONS);
-			this->surface_species_names.clear();
+			int next_surf = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SURFACE);
+			this->SurfaceSpeciesNamesList.clear();
+			this->SurfaceTypeList.clear();
+			this->SurfaceNamesList.clear();
 			const std::list<std::string> &surftype = phast_iphreeqc_worker->GetSurfaceTypeList();
-			this->exchange_species_names.clear();
+			const std::list<std::string> &surfnames = phast_iphreeqc_worker->GetSurfaceNamesList();
+			this->ExchangeSpeciesNamesList.clear();
+			this->ExchangeNamesList.clear();
 			const std::list<std::string> &ex = phast_iphreeqc_worker->GetExchangeNamesList();
 			if (ex.size() > 0 || surftype.size() > 0)
 			{
@@ -2430,17 +2434,18 @@ PhreeqcRM::FindComponents(void)
 					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
 					throw PhreeqcRMStop();
 				}
-				// Surface species
-				if (surftype.size() > 0)
+			}
+			// Surface species
+			if (surftype.size() > 0)
+			{
+				std::list<std::string>::const_iterator cit = surftype.begin();
+				std::list<std::string>::const_iterator citnames = surfnames.begin();
+				for (; cit != surftype.end(); cit++)
 				{
-					in.clear();
-					std::list<std::string>::const_iterator cit = surftype.begin();
-					in << "SURFACE " << next_ss << "\n";
+					std::ostringstream in;
+					in << "SURFACE " << next_surf << "\n";
 					in << "  -eq " << next << "\n";
-					for (; cit != surftype.end(); cit++)
-					{
-						in << "  " << *cit << "  0.001  1   1\n";
-					}
+					in << "  " << *cit << "  0.001  1   1\n";
 					int status = phast_iphreeqc_worker->RunString(in.str().c_str());
 					if (status != 0)
 					{
@@ -2451,21 +2456,34 @@ PhreeqcRM::FindComponents(void)
 					{
 						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == SURF)
 						{
-							this->surface_species_names.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
+							this->SurfaceSpeciesNamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
+							this->SurfaceTypeList.push_back(*cit);
+							this->SurfaceNamesList.push_back(*citnames);
 						}
 					}
+					{
+						std::ostringstream in1;
+						in1 << "DELETE -surface " << next_surf << "\n";
+						status = phast_iphreeqc_worker->RunString(in1.str().c_str());
+						if (status != 0)
+						{
+							this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+							throw PhreeqcRMStop();
+						}
+					}
+					citnames++;
 				}
-				// Exchange species
-				if (ex.size() > 0)
+			}
+			// Exchange species
+			if (ex.size() > 0)
+			{
+				std::list<std::string>::const_iterator cit = ex.begin();
+				for (; cit != ex.end(); cit++)
 				{
-					in.clear();
+					std::ostringstream in;
 					in << "EXCHANGE " << next_ex << "\n";
 					in << "  -eq " << next << "\n";
-					std::list<std::string>::const_iterator cit = ex.begin();
-					for (; cit != ex.end(); cit++)
-					{
-						in << "  " << *cit << "  0.001\n";
-					}
+					in << "  " << *cit << "  0.001\n";
 					int status = phast_iphreeqc_worker->RunString(in.str().c_str());
 					if (status != 0)
 					{
@@ -2476,27 +2494,71 @@ PhreeqcRM::FindComponents(void)
 					{
 						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == EX)
 						{
-							this->exchange_species_names.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
+							this->ExchangeSpeciesNamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
+							this->ExchangeNamesList.push_back(*cit);
+						}
+					}
+					{
+						std::ostringstream in1;
+						in1 << "DELETE -exchange " << next_ex << "\n";
+						status = phast_iphreeqc_worker->RunString(in1.str().c_str());
+						if (status != 0)
+						{
+							this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+							throw PhreeqcRMStop();
 						}
 					}
 				}
+			}
+			if (ex.size() > 0 || surftype.size() > 0)
+			{
+				std::ostringstream in;
+				in << "DELETE; -solution " << next << "\n";
+				int status = phast_iphreeqc_worker->RunString(in.str().c_str());
+				if (status != 0)
 				{
-					std::ostringstream in;
-					in << "DELETE; -solution " << next << "\n";
-					if (surftype.size() > 0)
-					{
-						in << "DELETE -solid_solution " << next_ss << "\n";
-					}
-					if (ex.size() > 0)
-					{
-						in << "DELETE -exchange " << next_ex << "\n";
-					}
-					int status = phast_iphreeqc_worker->RunString(in.str().c_str());
-					if (status != 0)
-					{
-						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
-						throw PhreeqcRMStop();
-					}
+					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+					throw PhreeqcRMStop();
+				}
+			}
+			{
+				this->EquilibriumPhasesList.clear();
+				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetEquilibriumPhasesList().begin();
+				for (; cit != phast_iphreeqc_worker->GetEquilibriumPhasesList().end(); cit++)
+				{
+					this->EquilibriumPhasesList.push_back(*cit);
+				}
+			}
+			{
+				this->GasComponentsList.clear();
+				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetGasComponentsList().begin();
+				for (; cit != phast_iphreeqc_worker->GetGasComponentsList().end(); cit++)
+				{
+					this->GasComponentsList.push_back(*cit);
+				}
+			}
+			{
+				this->KineticReactionsList.clear();
+				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetKineticReactionsList().begin();
+				for (; cit != phast_iphreeqc_worker->GetKineticReactionsList().end(); cit++)
+				{
+					this->KineticReactionsList.push_back(*cit);
+				}
+			}
+			{
+				this->SolidSolutionComponentsList.clear();
+				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetSolidSolutionComponentsList().begin();
+				for (; cit != phast_iphreeqc_worker->GetSolidSolutionComponentsList().end(); cit++)
+				{
+					this->SolidSolutionComponentsList.push_back(*cit);
+				}
+			}
+			{
+				this->SolidSolutionNamesList.clear();
+				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetSolidSolutionNamesList().begin();
+				for (; cit != phast_iphreeqc_worker->GetSolidSolutionNamesList().end(); cit++)
+				{
+					this->SolidSolutionNamesList.push_back(*cit);
 				}
 			}
 		}

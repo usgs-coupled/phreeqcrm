@@ -3829,14 +3829,24 @@ protected:
 	// mcd
 	bool species_save_on;
 	std::vector <std::string> species_names;
-	std::vector <std::string> exchange_species_names;
-	std::vector <std::string> surface_species_names;
-
 	std::vector <double> species_z;
 	std::vector <double> species_d_25;
 	std::vector <cxxNameDouble> species_stoichiometry;
 	std::map<int, int> s_num2rm_species_num;
 	std::vector<double> standard_task_vector;   // root only
+
+	// reactant lists
+	std::vector <std::string> ExchangeSpeciesNamesList;
+	std::vector <std::string> ExchangeNamesList;
+	std::vector <std::string> SurfaceSpeciesNamesList;
+	std::vector <std::string> SurfaceTypeList;
+	std::vector <std::string> SurfaceNamesList;
+
+	std::vector < std::string >   EquilibriumPhasesList;
+	std::vector < std::string >   GasComponentsList;
+	std::vector < std::string >   KineticReactionsList;
+	std::vector< std::string >   SolidSolutionComponentsList;
+	std::vector < std::string >   SolidSolutionNamesList;
 
 private:
 	//friend class RM_interface;
