@@ -1024,6 +1024,72 @@ Called by root.
 	*/
 	const std::vector<std::string> &          GetSolidSolutionNames(void) const { return this->SolidSolutionNamesList; }
 
+	/////////////////////
+	// SI list
+	/////////////////////
+
+	/**
+	Returns the number of phases in the reaction module for which saturation indices could be calculated.
+	@ref FindComponents must be called before @ref GetSICount.
+	This method may be useful when generating selected output definitions related to
+	saturation indices.
+
+	@retval                 The number of phases in the reaction module for which saturation indices 
+	could be calculated.
+
+	@see                    @ref FindComponents,
+	@ref GetSINames.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::ostringstream oss;
+	oss << "Number of SI phases: " << phreeqc_rm.GetSICount() << "\n";
+	phreeqc_rm.OutputMessage(oss.str());
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	int                                       GetSICount(void) const { return (int) this->SINamesList.size(); }
+	/**
+	Returns a reference to the vector of the names of all phases in the reaction module for which 
+	saturation indices (SIs) could be calculated.
+	The list includes all phases that contain only elements included in the components in 
+	the reaction model. 
+	The list assumes that all components are present to be able to calculate the entire list of SIs; 
+	it may be that one or more components are missing in any specific cell.
+	@ref FindComponents must be called before @ref GetSINames.
+	This method may be useful when generating selected output definitions related to 
+	saturation indices.
+
+	@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+	phase name.
+
+	@see                    @ref FindComponents,
+	@ref GetSICount.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<std::string> &si = phreeqc_rm.GetSINames();
+	int nsi = phreeqc_rm.GetSICount();
+	for (int i = 0; i < nsi; i++)
+	{
+	std::ostringstream strm;
+	strm.width(10);
+	strm << si[i] << "\n";
+	phreeqc_rm.OutputMessage(strm.str());
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	const std::vector<std::string> &          GetSINames(void) const { return this->SINamesList; }
+
 	////////////////////
 	// End
 	////////////////////
@@ -4372,6 +4438,7 @@ protected:
 	std::vector <std::string> KineticReactionsList;
 	std::vector <std::string> SolidSolutionComponentsList;
 	std::vector <std::string> SolidSolutionNamesList;
+	std::vector <std::string> SINamesList;
 
 private:
 	//friend class RM_interface;
