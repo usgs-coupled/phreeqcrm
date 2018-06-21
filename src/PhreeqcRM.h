@@ -509,7 +509,532 @@ for (int i = 0; i < ncomps; i++)
 Called by root and (or) workers.
  */
 	const std::vector<std::string> &          GetComponents(void) const {return this->components;}
+///////////////////////////
+	// Exchange
+///////////////////////////
+
+	/**
+	Returns the number of exchange species in the reaction module.
+	@ref FindComponents must be called before @ref GetExchangeSpeciesCount.
+    This method may be useful when generating selected output definitions related to exchangers.
+
+	@retval                 The number of exchange species in the reaction-module. 
+
+	@see                    @ref FindComponents,
+	@ref GetExchangeSpeciesNames, @ref GetExchangeNames.
+
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::ostringstream oss;
+	oss << "Number of exchange species: " << phreeqc_rm.GetExchangeSpeciesCount() << "\n";
+	phreeqc_rm.OutputMessage(oss.str());
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	int                                       GetExchangeSpeciesCount(void) const { return (int) this->ExchangeSpeciesNamesList.size(); }
+	/**
+	Returns a reference to the vector of exchange species names (such as "NaX").
+	The list of exchange species (such as "NaX") is derived from the list of components
+	(@ref FindComponents) and the list of all exchange names (such as "X")
+	that are included in EXCHANGE definitions in the reaction module.
+	@ref FindComponents must be called before @ref GetExchangeSpeciesNames.
+    This method may be useful when generating selected output definitions related to exchangers.
+
+	@retval const std::vector<std::string>&       A vector of strings; each string is a 
+	unique exchange species name. 
+
+	@see                    @ref FindComponents, 
+	@ref GetExchangeSpeciesCount, @ref GetExchangeNames.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpeciesNames();
+	int nex_species = phreeqc_rm.GetExchangeSpeciesCount();
+	for (int i = 0; i < nex_species; i++)
+	{
+	std::ostringstream strm;
+	strm.width(10);
+	strm << ex_species[i] << "\n";
+	phreeqc_rm.OutputMessage(strm.str());
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	const std::vector<std::string> &          GetExchangeSpeciesNames(void) const { return this->ExchangeSpeciesNamesList; }
+
+	/**
+	Returns a reference to the vector of exchange names (such as "X") that correspond with
+	the exchange species names. 
+	@ref FindComponents must be called before @ref GetExchangeNames.
+	The exchange names vector is the same length as the exchange species names vector
+	and provides the corresponding exchange site. 
+    This method may be useful when generating selected output definitions related to exchangers.
+
+	@retval const std::vector<std::string>&       A vector of strings; each string is an
+	exchange name corresponding to the exchange species vector; an exchange name may occur
+	multiple times.
+
+	@see                    @ref FindComponents, 
+	@ref GetExchangeSpeciesCount, @ref GetExchangeSpeciesNames.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpeciesNames();
+	const std::vector<std::string> &ex_names = phreeqc_rm.GetExchangeNames();
+	int nex_species = phreeqc_rm.GetExchangeSpeciesCount();
+	for (int i = 0; i < nex_species; i++)
+	{
+	std::ostringstream strm;
+	strm.width(10);
+	strm << ex_species[i] << "    site type: " << ex_names[i] << "\n";
+	phreeqc_rm.OutputMessage(strm.str());
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	const std::vector<std::string> &          GetExchangeNames(void) const { return this->ExchangeNamesList; }
+	
+/////////////////////////	
+	// Surface
+//////////////////////////	
 /**
+Returns the number of surface species (such as "Hfo_wOH") in the reaction module.
+@ref FindComponents must be called before @ref GetSurfaceSpeciesCount. 
+This method may be useful when generating selected output definitions related to surfaces.
+
+@retval                 The number of surface species in the reaction-module.
+
+@see                    @ref FindComponents, 
+@ref GetSurfaceSpeciesNames, @ref GetSurfaceTypes, @ref GetSurfaceNames.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::ostringstream oss;
+oss << "Number of surface species: " << phreeqc_rm.GetSurfaceSpeciesCount() << "\n";
+phreeqc_rm.OutputMessage(oss.str());
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+	int                                       GetSurfaceSpeciesCount(void) const { return (int) this->SurfaceSpeciesNamesList.size(); }
+	/**
+	Returns a reference to the vector of surface species names (such as "Hfo_wOH"). 
+	The list of surface species is derived from the list of components
+	(@ref FindComponents) and the list of all surface site types (such as "Hfo_w")
+	that are included in SURFACE definitions in the reaction module.
+    @ref FindComponents must be called before @ref GetSurfaceSpeciesNames.
+    This method may be useful when generating selected output definitions related to surfaces.
+
+	@retval const std::vector<std::string>&       A vector of strings; each string is a
+	unique surface species name.
+	@see                    @ref FindComponents, 
+	@ref GetSurfaceSpeciesCount, @ref GetSurfaceTypes, @ref GetSurfaceNames.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpeciesNames();
+	const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
+	const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+	int nsurf_species = phreeqc_rm.GetSurfaceSpeciesCount();
+	for (int i = 0; i < nsurf_species; i++)
+	{
+	std::ostringstream strm;
+	strm.width(10);
+	strm << surf_species[i] << "    site type: " << surf_types[i] << "    surface: " << surf_names[i] << "\n";
+	phreeqc_rm.OutputMessage(strm.str());
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	const std::vector<std::string> &          GetSurfaceSpeciesNames(void) const { return this->SurfaceSpeciesNamesList; }
+
+	/**
+	Returns a reference to the vector of surface site types (such as "Hfo_w") that correspond with
+	the surface species names. 
+	The vectors referenced by @ref GetSurfaceSpeciesNames and 
+	@ref GetSurfaceTypes are the same length. 
+	@ref FindComponents must be called before @ref GetSurfaceTypes.
+    This method may be useful when generating selected output definitions related to surfaces.
+
+	@retval const std::vector<std::string>&       A vector of strings; each string is a
+	surface site type for the corresponding species in the surface species vector; 
+	a surface site type may occur multiple times.
+
+	@see                    @ref FindComponents, 
+	@ref GetSurfaceSpeciesCount, @ref GetSurfaceSpeciesName, @ref GetSurfaceNames.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpeciesNames();
+	const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
+	const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+	int nsurf_species = phreeqc_rm.GetSurfaceSpeciesCount();
+	for (int i = 0; i < nsurf_species; i++)
+	{
+	std::ostringstream strm;
+	strm.width(10);
+	strm << surf_species[i] << "    site type: " << surf_types[i] << "    surface: " << surf_names[i] << "\n";
+	phreeqc_rm.OutputMessage(strm.str());
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	const std::vector<std::string> &          GetSurfaceTypes(void) const { return this->SurfaceTypesList; }
+
+	/**
+	Returns a reference to the vector of surface names (such as "Hfo") that correspond with
+	the surface species names. The vectors referenced by @ref GetSurfaceSpeciesNames 
+	and @ref GetSurfaceNames are the same length. 
+	@ref FindComponents must be called before @ref GetSurfaceNames.
+    This method may be useful when generating selected output definitions related to surfaces.
+
+	@retval const std::vector<std::string>&       A vector of strings; each string is a
+	surface name corresponding to the surface species vector; 
+	a surface name may occur multiple times.
+
+	@see                    @ref FindComponents, 
+	@ref GetSurfaceSpeciesCount, @ref GetSurfaceSpeciesNames, @ref GetSurfaceTypes.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpeciesNames();
+	const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
+	const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+	int nsurf_species = phreeqc_rm.GetSurfaceSpeciesCount();
+	for (int i = 0; i < nsurf_species; i++)
+	{
+	std::ostringstream strm;
+	strm.width(10);
+	strm << surf_species[i] << "    site type: " << surf_types[i] << "    surface: " << surf_names[i] << "\n";
+	phreeqc_rm.OutputMessage(strm.str());
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	const std::vector<std::string> &          GetSurfaceNames(void) const { return this->SurfaceNamesList; }
+
+	/////////////////////
+	// Equilibrium phases
+	/////////////////////
+
+	/**
+	Returns the number of equilibrium phases in the reaction module.
+	@ref FindComponents must be called before @ref GetEquilibriumPhasesCount.
+	This method may be useful when generating selected output definitions related to 
+	equilibrium phases.
+
+	@retval                 The number of equilibrium phases in the reaction-module.
+
+	@see                    @ref FindComponents, 
+	@ref GetEquilibriumPhases.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::ostringstream oss;
+	oss << "Number of equilibrium phases: " << phreeqc_rm.GetEquilibriumPhasesCount() << "\n";
+	phreeqc_rm.OutputMessage(oss.str());
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	int                                       GetEquilibriumPhasesCount(void) const { return (int) this->EquilibriumPhasesList.size(); }
+	/**
+	Returns a reference to the vector of all equilibrium phases in the reaction module.
+	The list includes all phases included in any EQUILIBRIUM_PHASES definitions in
+	the reaction model.
+	@ref FindComponents must be called before @ref GetEquilibriumPhases.
+	This method may be useful when generating selected output definitions related to equilibrium phases.
+
+	@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+	equilibrium phases name.
+
+	@see                    @ref FindComponents, 
+	@ref GetEquilibriumPhasesCount.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<std::string> &eq_phases = phreeqc_rm.GetEquilibriumPhases();
+	int neq_phases = phreeqc_rm.GetEquilibriumPhasesCount();
+	for (int i = 0; i < neq_phases; i++)
+	{
+	std::ostringstream strm;
+	strm.width(10);
+	strm << eq_phases[i] << "\n";
+	phreeqc_rm.OutputMessage(strm.str());
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	const std::vector<std::string> &          GetEquilibriumPhases(void) const { return this->EquilibriumPhasesList; }
+
+
+	/////////////////////
+	// Gas components
+	/////////////////////
+
+	/**
+	Returns the number of gas phase components in the reaction module.
+	@ref FindComponents must be called before @ref GetGasComponentsCount.
+	This method may be useful when generating selected output definitions related to
+	gas phases.
+
+	@retval                 The number of gas phase components in the reaction-module.
+
+	@see                    @ref FindComponents,
+	@ref GetGasComponents.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::ostringstream oss;
+	oss << "Number of gas components: " << phreeqc_rm.GetGasComponentsCount() << "\n";
+	phreeqc_rm.OutputMessage(oss.str());
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	int                                       GetGasComponentsCount(void) const { return (int) this->GasComponentsList.size(); }
+	/**
+	Returns a reference to the vector of all gas components in the reaction module.
+	The list includes all gas components included in any GAS_PHASE definitions in
+	the reaction model.
+	@ref FindComponents must be called before @ref GetGasComponents.
+	This method may be useful when generating selected output definitions related to gas phases.
+
+	@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+	gas component name.
+
+	@see                    @ref FindComponents,
+	@ref GetGasComponentsCount.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<std::string> &gas_comps = phreeqc_rm.GetGasComponents();
+	int ngas_comps = phreeqc_rm.GetGasComponentsCount();
+	for (int i = 0; i < ngas_comps; i++)
+	{
+	std::ostringstream strm;
+	strm.width(10);
+	strm << gas_comps[i] << "\n";
+	phreeqc_rm.OutputMessage(strm.str());
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	const std::vector<std::string> &          GetGasComponents(void) const { return this->GasComponentsList; }
+
+	/////////////////////
+	// Kinetic reactions
+	/////////////////////
+
+	/**
+	Returns the number of kinetic reactions in the reaction module.
+	@ref FindComponents must be called before @ref GetKineticReactionsCount.
+	This method may be useful when generating selected output definitions related to
+	kinetic reactions.
+
+	@retval                 The number of kinetic reactions in the reaction-module.
+
+	@see                    @ref FindComponents,
+	@ref GetKineticReactions.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::ostringstream oss;
+	oss << "Number of kinetic reactions: " << phreeqc_rm.GetKineticReactionsCount() << "\n";
+	phreeqc_rm.OutputMessage(oss.str());
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	int                                       GetKineticReactionsCount(void) const { return (int) this->KineticReactionsList.size(); }
+	/**
+	Returns a reference to the vector of all kinetic reactions in the reaction module.
+	The list includes all kinetic reactions included in any KINETICS definitions in
+	the reaction model.
+	@ref FindComponents must be called before @ref GetKineticReactions.
+	This method may be useful when generating selected output definitions related to kinetic reactions.
+
+	@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+	kinetic reaction name.
+
+	@see                    @ref FindComponents,
+	@ref GetKineticReactionsCount.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<std::string> &kin_rxns = phreeqc_rm.GetKineticReactions();
+	int nkin_rxns = phreeqc_rm.GetKineticReactionsCount();
+	for (int i = 0; i < nkin_rxns; i++)
+	{
+	std::ostringstream strm;
+	strm.width(10);
+	strm << kin_rxns[i] << "\n";
+	phreeqc_rm.OutputMessage(strm.str());
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	const std::vector<std::string> &          GetKineticReactions(void) const { return this->KineticReactionsList; }
+
+	/////////////////////
+	// Solid solutions
+	/////////////////////
+
+	/**
+	Returns the number of solid solution components in the reaction module.
+	@ref FindComponents must be called before @ref GetSolidSolutionComponentsCount.
+	This method may be useful when generating selected output definitions related to solid solutions.
+
+	@retval                 The number of solid solution components in the reaction-module.
+
+	@see                    @ref FindComponents,
+	@ref GetSolidSolutionComponents, @ref GetSolidSolutionNames.
+
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::ostringstream oss;
+	oss << "Number of solid solution components: " << phreeqc_rm.GetSolidSolutionComponentsCount() << "\n";
+	phreeqc_rm.OutputMessage(oss.str());
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	int                                       GetSolidSolutionComponentsCount(void) const { return (int) this->SolidSolutionComponentsList.size(); }
+	/**
+	Returns a reference to the vector of solid solution components.
+	The list of solid solution components includes all components in any SOLID_SOLUTION 
+	definitions in the reaction module.
+	@ref FindComponents must be called before @ref GetSolidSolutionComponents.
+	This method may be useful when generating selected output definitions related to 
+	solid solutions.
+
+	@retval const std::vector<std::string>&       A vector of strings; each string is a
+	unique solid solution component.
+
+	@see                    @ref FindComponents,
+	@ref GetSolidSolutionComponentsCount, @ref GetSolidSolutionNames.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<std::string> &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
+	const std::vector<std::string> &ss_names = phreeqc_rm.GetSolidSolutionNames();
+	int nss_comps = phreeqc_rm.GetSolidSolutionComponentsCount();
+	for (int i = 0; i < nss_comps; i++)
+	{
+	std::ostringstream strm;
+	strm.width(10);
+	strm << ss_comps[i] << "     ss name: " << ss_names[i] << \n";
+	phreeqc_rm.OutputMessage(strm.str());
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	const std::vector<std::string> &          GetSolidSolutionComponents(void) const { return this->SolidSolutionComponentsList; }
+
+	/**
+	Returns a reference to the vector of solid solution names that correspond with
+	the solid solution components. 
+	@ref FindComponents must be called before @ref GetSolidSolutionNames.
+	The solid solution names vector is the same length as the solid solution components vector
+	and provides the corresponding name of solid solution containing the component.
+	This method may be useful when generating selected output definitions related to solid solutions.
+
+	@retval const std::vector<std::string>&       A vector of strings; each string is an
+	solid solution name corresponding to the solid solution components vector; an solid solution name may occur
+	multiple times.
+
+	@see                    @ref FindComponents,
+	@ref GetSolidSolutionComponentsCount, @ref GetSolidSolutionComponents.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<std::string> &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
+	const std::vector<std::string> &ss_names = phreeqc_rm.GetSolidSolutionNames();
+	int nss_comps = phreeqc_rm.GetSolidSolutionComponentsCount();
+	for (int i = 0; i < nss_comps; i++)
+	{
+	std::ostringstream strm;
+	strm.width(10);
+	strm << ss_comps[i] << "     ss name: " << ss_names[i] << \n";
+	phreeqc_rm.OutputMessage(strm.str());
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	*/
+	const std::vector<std::string> &          GetSolidSolutionNames(void) const { return this->SolidSolutionNamesList; }
+
+	////////////////////
+	// End
+	////////////////////
+
+
+
+	
+	
+	
+	
+	/**
 Transfer solution concentrations from each reaction cell
 to the concentration vector given in the argument list (@a c).
 Units of concentration for @a c are defined by @ref SetUnitsSolution.
@@ -3839,14 +4364,14 @@ protected:
 	std::vector <std::string> ExchangeSpeciesNamesList;
 	std::vector <std::string> ExchangeNamesList;
 	std::vector <std::string> SurfaceSpeciesNamesList;
-	std::vector <std::string> SurfaceTypeList;
+	std::vector <std::string> SurfaceTypesList;
 	std::vector <std::string> SurfaceNamesList;
 
-	std::vector < std::string >   EquilibriumPhasesList;
-	std::vector < std::string >   GasComponentsList;
-	std::vector < std::string >   KineticReactionsList;
-	std::vector< std::string >   SolidSolutionComponentsList;
-	std::vector < std::string >   SolidSolutionNamesList;
+	std::vector <std::string> EquilibriumPhasesList;
+	std::vector <std::string> GasComponentsList;
+	std::vector <std::string> KineticReactionsList;
+	std::vector <std::string> SolidSolutionComponentsList;
+	std::vector <std::string> SolidSolutionNamesList;
 
 private:
 	//friend class RM_interface;
