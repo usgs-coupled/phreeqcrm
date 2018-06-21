@@ -2408,7 +2408,7 @@ PhreeqcRM::FindComponents(void)
 			int next_ex = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_EXCHANGE);
 			int next_surf = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SURFACE);
 			this->SurfaceSpeciesNamesList.clear();
-			this->SurfaceTypeList.clear();
+			this->SurfaceTypesList.clear();
 			this->SurfaceNamesList.clear();
 			const std::list<std::string> &surftype = phast_iphreeqc_worker->GetSurfaceTypeList();
 			const std::list<std::string> &surfnames = phast_iphreeqc_worker->GetSurfaceNamesList();
@@ -2457,7 +2457,7 @@ PhreeqcRM::FindComponents(void)
 						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == SURF)
 						{
 							this->SurfaceSpeciesNamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
-							this->SurfaceTypeList.push_back(*cit);
+							this->SurfaceTypesList.push_back(*cit);
 							this->SurfaceNamesList.push_back(*citnames);
 						}
 					}
