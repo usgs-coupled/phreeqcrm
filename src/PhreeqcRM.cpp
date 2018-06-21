@@ -2358,6 +2358,9 @@ PhreeqcRM::FindComponents(void)
 		if (this->species_save_on)
 		{
 			phast_iphreeqc_worker->PhreeqcPtr->save_species = true;
+		}
+		// Make lists regardless of species_save_on
+		{
 			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
 			{
 				std::ostringstream in;
@@ -2390,6 +2393,13 @@ PhreeqcRM::FindComponents(void)
 				cxxNameDouble nd(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->next_elt);
 				nd.add("Charge", phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->z);
 				species_stoichiometry.push_back(nd);
+			}
+			for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_phases; i++)
+			{
+				if (phast_iphreeqc_worker->PhreeqcPtr->phases[i]->in == TRUE)
+				{
+					SINamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->phases[i]->name);
+				}
 			}
 			{
 				std::ostringstream in;

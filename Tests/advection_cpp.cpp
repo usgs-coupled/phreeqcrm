@@ -15,6 +15,7 @@ double my_basic_callback(double x1, double x2, const char *str, void *cookie);
 void register_basic_callback(void *cookie);
 
 void AdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
+int example_selected_output(PhreeqcRM &phreeqc_rm);
 double my_basic_callback(double x1, double x2, const char *str, void *cookie);
 
 class my_data
@@ -183,6 +184,8 @@ int advection_cpp()
 			oss << "Error handler mode:                               " << phreeqc_rm.GetErrorHandlerMode() << "\n";
 			phreeqc_rm.OutputMessage(oss.str());
 		}
+		example_selected_output(phreeqc_rm);
+
 		const std::vector<int> &f_map = phreeqc_rm.GetForwardMapping();
 		// Get component information
 		const std::vector<std::string> &components = phreeqc_rm.GetComponents();
@@ -661,4 +664,104 @@ double my_basic_callback(double x1, double x2, const char *str, void *cookie)
 		}
 	}
 	return -999.9;
+}
+int example_selected_output(PhreeqcRM &phreeqc_rm)
+{
+	// Turning on to get list of aqueous species
+	//int status = phreeqc_rm.SetSpeciesSaveOn(true);
+	//int status = phreeqc_rm.FindComponents();
+
+	std::ostringstream oss;
+	oss << "SELECTED_OUTPUT 2" << "\n";
+	// totals
+	oss << "  -totals " << "\n";
+	const std::vector<std::string> &components = phreeqc_rm.GetComponents();
+	for (size_t i = 0; i < phreeqc_rm.GetComponents().size(); i++)
+	{
+		if (components[i] != "H" &&
+			components[i] != "O" &&
+			components[i] != "charge" &&
+			components[i] != "Charge" &&
+			components[i] != "H2O")
+		{
+			oss << "    " << components[i] << "\n";
+		}
+	}
+
+	oss << "  -molalities " << "\n";
+	{
+		// molalities of aqueous species 
+		const std::vector<std::string> &aq_species = phreeqc_rm.GetSpeciesNames();
+		for (size_t i = 0; i < phreeqc_rm.GetSpeciesNames().size(); i++)
+		{
+			oss << "    " << aq_species[i] << "\n";
+		}
+	}
+	{
+		// molalities of exchange species
+		const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpeciesNames();
+		for (size_t i = 0; i < phreeqc_rm.GetExchangeSpeciesNames().size(); i++)
+		{
+			oss << "    " << ex_species[i] << "\n";
+		}
+	}
+	{
+		// molalities of surface species
+		const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpeciesNames();
+		for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesNames().size(); i++)
+		{
+			oss << "    " << surf_species[i] << "\n";
+		}
+	}
+	oss << "  -equilibrium_phases " << "\n";
+	{
+		// equilibrium phases 
+		const std::vector<std::string> &eq_phases = phreeqc_rm.GetEquilibriumPhases();
+		for (size_t i = 0; i < phreeqc_rm.GetEquilibriumPhases().size(); i++)
+		{
+			oss << "    " << eq_phases[i] << "\n";
+		}
+	}
+	oss << "  -gases " << "\n";
+	{
+		// gas components
+		const std::vector<std::string> &gas_phases = phreeqc_rm.GetGasComponents();
+		for (size_t i = 0; i < phreeqc_rm.GetGasComponents().size(); i++)
+		{
+			oss << "    " << gas_phases[i] << "\n";
+		}
+	}
+	oss << "  -kinetics " << "\n";
+	{
+		// kinetic reactions 
+		const std::vector<std::string> &kin_reactions = phreeqc_rm.GetKineticReactions();
+		for (size_t i = 0; i < phreeqc_rm.GetKineticReactions().size(); i++)
+		{
+			oss << "    " << kin_reactions[i] << "\n";
+		}
+	}
+	oss << "  -solid_solutions " << "\n";
+	{
+		// solid solutions 
+		const std::vector<std::string> &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
+		for (size_t i = 0; i < phreeqc_rm.GetSolidSolutionComponents().size(); i++)
+		{
+			oss << "    " << ss_comps[i] << "\n";
+		}
+	}
+	oss << "  -saturation_indices " << "\n";
+	{
+		// molalities of aqueous species 
+		const std::vector<std::string> &si = phreeqc_rm.GetSINames();
+		for (size_t i = 0; i < phreeqc_rm.GetSINames().size(); i++)
+		{
+			oss << "    " << si[i] << "\n";
+		}
+	}
+
+	// Uncommenting the following line would define SELECTED_OUTPUT 2 with all species, reactants, and SIs
+	//int status = phreeqc_rm.RunString(true, false, false, oss.str().c_str());
+	std::cerr << oss.str();
+
+	return(0);
 }
