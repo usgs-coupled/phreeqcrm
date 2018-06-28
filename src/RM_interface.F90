@@ -707,6 +707,820 @@ INTEGER FUNCTION RM_GetComponentCount(id)
     RM_GetComponentCount = RMF_GetComponentCount(id)
 END FUNCTION RM_GetComponentCount 
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! start
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!> Returns the number of exchange species in the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetExchangeSpeciesCount.
+!> This method may be useful when generating selected output definitions related to exchangers.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @retval                 The number of exchange species in the initial-phreeqc module. 
+!> @see                    
+!> @ref RM_FindComponents,
+!> @ref RM_GetExchangeSpeciesName, @ref RM_GetExchangeName.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> do i = 1, RM_GetExchangeSpeciesCount(id)
+!>   status = RM_GetExchangeSpeciesName(id, i, line)
+!>   status = RM_GetExchangeName(id, i, line1)
+!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
+!>   iline = iline + 1
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetExchangeSpeciesCount(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetExchangeSpeciesCount(id) &
+            BIND(C, NAME='RMF_GetExchangeSpeciesCount')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_GetExchangeSpeciesCount 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    RM_GetExchangeSpeciesCount = RMF_GetExchangeSpeciesCount(id)
+END FUNCTION RM_GetExchangeSpeciesCount
+
+!> Retrieves an item (for example, NaX) from the exchange species list.
+!> The list of exchange species (such as "NaX") is derived from the list of components
+!> (@ref RM_FindComponents) and the list of all exchange names (such as "X")
+!> that are included in EXCHANGE definitions in the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetExchangeSpeciesNames.
+!> This method may be useful when generating selected output definitions related to exchangers.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param num              The number of the exchange species to be retrieved. Fortran, 1 based.
+!> @param name             The string value associated with exchange species @a num.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetExchangeSpeciesCount, @ref RM_GetExchangeName.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> do i = 1, RM_GetExchangeSpeciesCount(id)
+!>   status = RM_GetExchangeSpeciesName(id, i, line)
+!>   status = RM_GetExchangeName(id, i, line1)
+!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
+!>   iline = iline + 1
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetExchangeSpeciesName(id, num, name)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetExchangeSpeciesName(id, num, name, l) &
+            BIND(C, NAME='RMF_GetExchangeSpeciesName')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+        END FUNCTION RMF_GetExchangeSpeciesName 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id, num
+    CHARACTER(len=*), INTENT(inout) :: name
+    RM_GetExchangeSpeciesName = RMF_GetExchangeSpeciesName(id, num, name, len(name))
+    return
+END FUNCTION RM_GetExchangeSpeciesName 
+
+!> Retrieves an item (for example, X) from the exchange name list.
+!> @ref FindComponents must be called before @ref GetExchangeName.
+!> The exchange names vector is the same length as the exchange species names vector
+!> and provides the corresponding exchange site.
+!> This method may be useful when generating selected output definitions related to exchangers.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param num              The number of the exchange name to be retrieved. Fortran, 1 based.
+!> @param name             The string value of the exchange name associated with exchange species @a num.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetExchangeSpeciesCount, @ref RM_GetExchangeSpeciesName.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> do i = 1, RM_GetExchangeSpeciesCount(id)
+!>   status = RM_GetExchangeSpeciesName(id, i, line)
+!>   status = RM_GetExchangeName(id, i, line1)
+!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
+!>   iline = iline + 1
+!> enddo  
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetExchangeName(id, num, name)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetExchangeName(id, num, name, l) &
+            BIND(C, NAME='RMF_GetExchangeName')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+        END FUNCTION RMF_GetExchangeName 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id, num
+    CHARACTER(len=*), INTENT(inout) :: name
+    RM_GetExchangeName = RMF_GetExchangeName(id, num, name, len(name))
+    return
+END FUNCTION RM_GetExchangeName 
+
+!> Returns the number of surface species (such as "Hfo_wOH") in the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesCount.
+!> This method may be useful when generating selected output definitions related to surfaces.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @retval                 The number of surface species in the initial-phreeqc module.
+!> @see                    
+!> @ref RM_FindComponents,
+!> @ref RM_GetSurfaceSpeciesNames, @ref RM_GetSurfaceTypes, @ref RM_GetSurfaceName.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> do i = 1, RM_GetSurfaceSpeciesCount(id)
+!>   status = RM_GetSurfaceSpeciesName(id, i, line)
+!>   status = RM_GetSurfaceType(id, i, line1)
+!>   status = RM_GetSurfaceName(id, i, line2)
+!>   lines(iline) = "    " // trim(line) // " # " // trim(line1) // "  " // trim(line2)
+!>   iline = iline + 1
+!> enddo 
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetSurfaceSpeciesCount(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSurfaceSpeciesCount(id) &
+            BIND(C, NAME='RMF_GetSurfaceSpeciesCount')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_GetSurfaceSpeciesCount 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    RM_GetSurfaceSpeciesCount = RMF_GetSurfaceSpeciesCount(id)
+END FUNCTION RM_GetSurfaceSpeciesCount
+
+!> Retrieves an item (for example, "Hfo_wOH") from the surface species list.
+!> The list of surface species is derived from the list of components
+!> (@ref RM_FindComponents) and the list of all surface types (such as "Hfo_w")
+!> that are included in SURFACE definitions in the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesNames.
+!> This method may be useful when generating selected output definitions related to surfaces.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param num              The number of the surface type to be retrieved. Fortran, 1 based.
+!> @param name             The string value associated with surface species @a num.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceType, @ref RM_GetSurfaceName.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> do i = 1, RM_GetSurfaceSpeciesCount(id)
+!>   status = RM_GetSurfaceSpeciesName(id, i, line)
+!>   status = RM_GetSurfaceType(id, i, line1)
+!>   status = RM_GetSurfaceName(id, i, line2)
+!>   lines(iline) = "    " // trim(line) // " # " // trim(line1) // "  " // trim(line2)
+!>   iline = iline + 1
+!> enddo 
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetSurfaceSpeciesName(id, num, name)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSurfaceSpeciesName(id, num, name, l) &
+            BIND(C, NAME='RMF_GetSurfaceSpeciesName')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+        END FUNCTION RMF_GetSurfaceSpeciesName 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id, num
+    CHARACTER(len=*), INTENT(inout) :: name
+    RM_GetSurfaceSpeciesName = RMF_GetSurfaceSpeciesName(id, num, name, len(name))
+    return
+END FUNCTION RM_GetSurfaceSpeciesName 
+
+!> Retrieves the surface site type (such as "Hfo_w") that corresponds with
+!> the surface species name.
+!> The lists of surface species names and surface species types are the same length. 
+!> @ref RM_FindComponents must be called before @ref RM_GetSurfaceType.
+!> This method may be useful when generating selected output definitions related to surfaces.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param num              The number of the surface type to be retrieved. Fortran, 1 based.
+!> @param name             The surface type associated with surface species @a num.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceSpeciesName, @ref RM_GetSurfaceName.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> do i = 1, RM_GetSurfaceSpeciesCount(id)
+!>   status = RM_GetSurfaceSpeciesName(id, i, line)
+!>   status = RM_GetSurfaceType(id, i, line1)
+!>   status = RM_GetSurfaceName(id, i, line2)
+!>   lines(iline) = "    " // trim(line) // " # " // trim(line1) // "  " // trim(line2)
+!>   iline = iline + 1
+!> enddo 
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetSurfaceType(id, num, name)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSurfaceType(id, num, name, l) &
+            BIND(C, NAME='RMF_GetSurfaceType')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+        END FUNCTION RMF_GetSurfaceType 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id, num
+    CHARACTER(len=*), INTENT(inout) :: name
+    RM_GetSurfaceType = RMF_GetSurfaceType(id, num, name, len(name))
+    return
+END FUNCTION RM_GetSurfaceType 
+
+!> Retrieves the surface name (such as "Hfo") that corresponds with
+!> the surface species name.
+!> The lists of surface species names and surface names are the same length. 
+!> @ref RM_FindComponents must be called before @ref RM_GetSurfaceName.
+!> This method may be useful when generating selected output definitions related to surfaces.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param num              The number of the surface name to be retrieved. Fortran, 1 based.
+!> @param name             The surface name associated with surface species @a num.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceSpeciesName, @ref RM_GetSurfaceType.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> do i = 1, RM_GetSurfaceSpeciesCount(id)
+!>   status = RM_GetSurfaceSpeciesName(id, i, line)
+!>   status = RM_GetSurfaceType(id, i, line1)
+!>   status = RM_GetSurfaceName(id, i, line2)
+!>   lines(iline) = "    " // trim(line) // " # " // trim(line1) // "  " // trim(line2)
+!>   iline = iline + 1
+!> enddo 
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetSurfaceName(id, num, name)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSurfaceName(id, num, name, l) &
+            BIND(C, NAME='RMF_GetSurfaceName')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+        END FUNCTION RMF_GetSurfaceName 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id, num
+    CHARACTER(len=*), INTENT(inout) :: name
+    RM_GetSurfaceName = RMF_GetSurfaceName(id, num, name, len(name))
+    return
+END FUNCTION RM_GetSurfaceName 
+
+!> Returns the number of equilibrium phases in the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetEquilibriumPhasesCount.
+!> This method may be useful when generating selected output definitions related to 
+!> equilibrium phases.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @retval                 The number of equilibrium phases in the initial-phreeqc module.
+!> @see                    
+!> @ref RM_FindComponents,
+!> @ref RM_GetEquilibriumPhases.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> iline = iline + 1
+!> do i = 1, RM_GetEquilibriumPhasesCount(id)
+!>   status = RM_GetEquilibriumPhasesName(id, i, line)
+!>   lines(iline) = "    " // trim(line)
+!>   iline = iline + 1
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetEquilibriumPhasesCount(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetEquilibriumPhasesCount(id) &
+            BIND(C, NAME='RMF_GetEquilibriumPhasesCount')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_GetEquilibriumPhasesCount 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    RM_GetEquilibriumPhasesCount = RMF_GetEquilibriumPhasesCount(id)
+END FUNCTION RM_GetEquilibriumPhasesCount
+
+!> Retrieves an item from the equilibrium phase list.
+!> The list includes all phases included in any EQUILIBRIUM_PHASES definitions in
+!> the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetEquilibriumPhasesName.
+!> This method may be useful when generating selected output definitions related to equilibrium phases.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param num              The number of the equilibrium phase name to be retrieved. Fortran, 1 based.
+!> @param name             The equilibrium phase name at number @a num.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetEquilibriumPhasesCount.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> iline = iline + 1
+!> do i = 1, RM_GetEquilibriumPhasesCount(id)
+!>   status = RM_GetEquilibriumPhasesName(id, i, line)
+!>   lines(iline) = "    " // trim(line)
+!>   iline = iline + 1
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetEquilibriumPhasesName(id, num, name)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetEquilibriumPhasesName(id, num, name, l) &
+            BIND(C, NAME='RMF_GetEquilibriumPhasesName')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+        END FUNCTION RMF_GetEquilibriumPhasesName 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id, num
+    CHARACTER(len=*), INTENT(inout) :: name
+    RM_GetEquilibriumPhasesName = RMF_GetEquilibriumPhasesName(id, num, name, len(name))
+    return
+END FUNCTION RM_GetEquilibriumPhasesName 
+
+!> Returns the number of gas phase components in the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetGasComponentsCount.
+!> This method may be useful when generating selected output definitions related to
+!> gas phases. 
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @retval                 The number of gas phase components in the initial-phreeqc module.
+!> @see                    
+!> @ref RM_FindComponents,
+!> @ref RM_GetGasComponents.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> lines(iline) = "  -gas "
+!> iline = iline + 1
+!> do i = 1, RM_GetGasComponentsCount(id)
+!>   status = RM_GetGasComponentsName(id, i, line)
+!>   lines(iline) = "    " // trim(line)
+!>   iline = iline + 1
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetGasComponentsCount(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetGasComponentsCount(id) &
+            BIND(C, NAME='RMF_GetGasComponentsCount')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_GetGasComponentsCount 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    RM_GetGasComponentsCount = RMF_GetGasComponentsCount(id)
+END FUNCTION RM_GetGasComponentsCount
+
+!> Retrieves an item from the gas components list.
+!> The list includes all gas components included in any GAS_PHASE definitions in
+!> the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetGasComponentsName.
+!> This method may be useful when generating selected output definitions related to gas phases.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param num              The number of the gas component name to be retrieved. Fortran, 1 based.
+!> @param name             The gas component name at number @a num.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetGasComponentsCount.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> lines(iline) = "  -gas "
+!> iline = iline + 1
+!> do i = 1, RM_GetGasComponentsCount(id)
+!>   status = RM_GetGasComponentsName(id, i, line)
+!>   lines(iline) = "    " // trim(line)
+!>   iline = iline + 1
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetGasComponentsName(id, num, name)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetGasComponentsName(id, num, name, l) &
+            BIND(C, NAME='RMF_GetGasComponentsName')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+        END FUNCTION RMF_GetGasComponentsName 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id, num
+    CHARACTER(len=*), INTENT(inout) :: name
+    RM_GetGasComponentsName = RMF_GetGasComponentsName(id, num, name, len(name))
+    return
+END FUNCTION RM_GetGasComponentsName 
+
+!> Returns the number of kinetic reactions in the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetKineticReactionsCount.
+!> This method may be useful when generating selected output definitions related to
+!> kinetic reactions.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @retval                 The number of kinetic reactions in the initial-phreeqc module.
+!> @see                    
+!> @ref RM_FindComponents,
+!> @ref RM_GetKineticReactions.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> lines(iline) = "  -kinetics "
+!> iline = iline + 1
+!> do i = 1, RM_GetKineticReactionsCount(id)
+!>   status = RM_GetKineticReactionsName(id, i, line)
+!>   lines(iline) = "    " // trim(line)
+!>   iline = iline + 1
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetKineticReactionsCount(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetGetKineticReactionsCount(id) &
+            BIND(C, NAME='RMF_GetKineticReactionsCount')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_GetGetKineticReactionsCount 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    RM_GetKineticReactionsCount = RMF_GetGetKineticReactionsCount(id)
+END FUNCTION RM_GetKineticReactionsCount
+
+!> Retrieves an item from the kinetic reactions list.
+!> The list includes all kinetic reactions included in any KINETICS definitions in
+!> the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetKineticReactionsName.
+!> This method may be useful when generating selected output definitions related to kinetic reactions.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param num              The number of the kinetic reaction name to be retrieved. Fortran, 1 based.
+!> @param name             The kinetic reaction name at number @a num.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetKineticReactionsCount.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> lines(iline) = "  -kinetics "
+!> iline = iline + 1
+!> do i = 1, RM_GetKineticReactionsCount(id)
+!>   status = RM_GetKineticReactionsName(id, i, line)
+!>   lines(iline) = "    " // trim(line)
+!>   iline = iline + 1
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetKineticReactionsName(id, num, name)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetKineticReactionsName(id, num, name, l) &
+            BIND(C, NAME='RMF_GetKineticReactionsName')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+        END FUNCTION RMF_GetKineticReactionsName 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id, num
+    CHARACTER(len=*), INTENT(inout) :: name
+    RM_GetKineticReactionsName = RMF_GetKineticReactionsName(id, num, name, len(name))
+    return
+END FUNCTION RM_GetKineticReactionsName 
+
+!> Returns the number of solid solution components in the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetSolidSolutionComponentsCount.
+!> This method may be useful when generating selected output definitions related to solid solutions.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @retval                 The number of solid solution components in the initial-phreeqc module.
+!> @see                    
+!> @ref RM_FindComponents,
+!> @ref RM_GetSolidSolutionComponents, @ref RM_GetSolidSolutionNames.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> lines(iline) = "  -solid_solutions "
+!> iline = iline + 1
+!> do i = 1, RM_GetSolidSolutionComponentsCount(id)
+!>   status = RM_GetSolidSolutionComponentsName(id, i, line)
+!>   status = RM_GetSolidSolutionName(id, i, line1)
+!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
+!>   iline = iline + 1
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetSolidSolutionComponentsCount(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSolidSolutionComponentsCount(id) &
+            BIND(C, NAME='RMF_GetSolidSolutionComponentsCount')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_GetSolidSolutionComponentsCount 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    RM_GetSolidSolutionComponentsCount = RMF_GetSolidSolutionComponentsCount(id)
+END FUNCTION RM_GetSolidSolutionComponentsCount
+
+!> Retrieves an item from the solid solution components list.
+!> The list includes all solid solution components included in any SOLID_SOLUTIONS definitions in
+!> the initial-phreeqc module.
+!> @ref RM_FindComponents must be called before @ref RM_GetSolidSolutionComponentsName.
+!> This method may be useful when generating selected output definitions related to solid solutions.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param num              The number of the solid solution components name to be retrieved. Fortran, 1 based.
+!> @param name             The solid solution compnent name at number @a num.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSolidSolutionComponentsCount, @ref RM_GetSolidSolutionName.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> lines(iline) = "  -solid_solutions "
+!> iline = iline + 1
+!> do i = 1, RM_GetSolidSolutionComponentsCount(id)
+!>   status = RM_GetSolidSolutionComponentsName(id, i, line)
+!>   status = RM_GetSolidSolutionName(id, i, line1)
+!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
+!>   iline = iline + 1
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetSolidSolutionComponentsName(id, num, name)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSolidSolutionComponentsName(id, num, name, l) &
+            BIND(C, NAME='RMF_GetSolidSolutionComponentsName')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+        END FUNCTION RMF_GetSolidSolutionComponentsName 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id, num
+    CHARACTER(len=*), INTENT(inout) :: name
+    RM_GetSolidSolutionComponentsName = RMF_GetSolidSolutionComponentsName(id, num, name, len(name))
+    return
+END FUNCTION RM_GetSolidSolutionComponentsName 
+
+!> Retrieves an item from the solid solution names list.
+!> The list includes solid solution names included in SOLID_SOLUTIONS definitions in
+!> the initial-phreeqc module.
+!> The solid solution names vector is the same length as the solid solution components vector
+!> and provides the corresponding name of solid solution containing the component.
+!> @ref RM_FindComponents must be called before @ref RM_GetSolidSolutionName.
+!> This method may be useful when generating selected output definitions related to solid solutions.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param num              The number of the solid solution name to be retrieved. Fortran, 1 based.
+!> @param name             The solid solution name at number @a num.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSolidSolutionComponentsCount, @ref RM_GetSolidSolutionComponentsName.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> lines(iline) = "  -solid_solutions "
+!> iline = iline + 1
+!> do i = 1, RM_GetSolidSolutionComponentsCount(id)
+!>   status = RM_GetSolidSolutionComponentsName(id, i, line)
+!>   status = RM_GetSolidSolutionName(id, i, line1)
+!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
+!>   iline = iline + 1
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetSolidSolutionName(id, num, name)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSolidSolutionName(id, num, name, l) &
+            BIND(C, NAME='RMF_GetSolidSolutionName')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+        END FUNCTION RMF_GetSolidSolutionName 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id, num
+    CHARACTER(len=*), INTENT(inout) :: name
+    RM_GetSolidSolutionName = RMF_GetSolidSolutionName(id, num, name, len(name))
+    return
+END FUNCTION RM_GetSolidSolutionName
+
+!> Returns the number of phases in the initial-phreeqc module for which saturation indices could be calculated.
+!> @ref RM_FindComponents must be called before @ref RM_GetSICount.
+!> This method may be useful when generating selected output definitions related to
+!> saturation indices.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @retval                 The number of phases in the initial-phreeqc module for which saturation indices 
+!> could be calculated.
+!> @see                    
+!> @ref RM_FindComponents,
+!> @ref GetSINames.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> lines(iline) = "  -si "
+!> iline = iline + 1
+!> do i = 1, RM_GetSICount(id)
+!>   status = RM_GetSIName(id, i, line)
+!>   lines(iline) = "    " // trim(line)
+!>   iline = iline + 1
+!> enddo 
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetSICount(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSICount(id) &
+            BIND(C, NAME='RMF_GetSICount')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_GetSICount 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    RM_GetSICount = RMF_GetSICount(id)
+END FUNCTION RM_GetSICount
+
+!> Retrieves an item from the list of all phases for which saturation indices can be calculated.
+!> 	The list includes all phases that contain only elements included in the components in 
+!> the initial-phreeqc module.
+!> The list assumes that all components are present to be able to calculate the entire list of SIs; 
+!> it may be that one or more components are missing in any specific cell.
+!> @ref RM_FindComponents must be called before @ref RM_GetSIName.
+!> This method may be useful when generating selected output definitions related to saturation indices.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param num              The number of the saturation-index-phase name to be retrieved. Fortran, 1 based.
+!> @param name             The saturation-index-phase name at number @a num.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSICount.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> lines(iline) = "  -si "
+!> iline = iline + 1
+!> do i = 1, RM_GetSICount(id)
+!>   status = RM_GetSIName(id, i, line)
+!>   lines(iline) = "    " // trim(line)
+!>   iline = iline + 1
+!> enddo 
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetSIName(id, num, name)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSIName(id, num, name, l) &
+            BIND(C, NAME='RMF_GetSIName')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+        END FUNCTION RMF_GetSIName 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id, num
+    CHARACTER(len=*), INTENT(inout) :: name
+    RM_GetSIName = RMF_GetSIName(id, num, name, len(name))
+    return
+END FUNCTION RM_GetSIName 
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!END
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+
 !> Transfer solution concentrations from each reaction cell 
 !> to the concentration array given in the argument list (@a c).
 !> Units of concentration for @a c are defined by @ref RM_SetUnitsSolution. 

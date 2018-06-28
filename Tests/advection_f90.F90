@@ -558,4 +558,142 @@ REAL(kind=C_DOUBLE) FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, n
             endif
         endif
     endif
-END FUNCTION my_basic_fortran_callback
+    END FUNCTION my_basic_fortran_callback
+    
+INTEGER FUNCTION example_selected_output(id)
+    USE ISO_C_BINDING
+    USE PhreeqcRM
+    implicit none
+    integer, intent(in) :: id
+    character*100 :: line, line1, line2
+    character*100, allocatable :: lines(:)
+    integer iline, i, nlines, status
+    nlines = 50
+    nlines = nlines + RM_GetComponentCount(id) 
+    nlines = nlines + RM_GetSpeciesCount(id)
+    nlines = nlines + RM_GetExchangeSpeciesCount(id)
+    nlines = nlines + RM_GetSurfaceSpeciesCount(id)
+    nlines = nlines + RM_GetEquilibriumPhasesCount(id)
+    nlines = nlines + RM_GetGasComponentsCount(id)
+    nlines = nlines + RM_GetKineticReactionsCount(id)
+    nlines = nlines + RM_GetSolidSolutionComponentsCount(id)
+    nlines = nlines + RM_GetSICount(id)
+    allocate (lines(nlines))
+    
+    iline = 1
+    lines(iline) = "SELECTED_OUTPUT 2"
+    iline = iline + 1
+    ! totals
+    lines(iline) = "  -totals"
+    iline = iline + 1
+    do i = 1, RM_GetComponentCount(id)
+        status = RM_GetComponent(id, i, line)
+        if (trim(line) .ne. "H" .and. &
+            trim(line) .ne. "O" .and. &
+            trim(line) .ne. "charge" .and. &
+            trim(line) .ne. "Charge" .and. &
+            trim(line) .ne. "H2O" ) then
+            lines(iline) = "    " // trim(line)
+            iline = iline + 1
+         endif 
+    enddo
+    ! aqueous species
+    lines(iline) = "  -molalities"
+    iline = iline + 1
+    do i = 1, RM_GetSpeciesCount(id)
+        status = RM_GetSpeciesName(id, i, line)
+        lines(iline) = trim(line)
+        iline = iline + 1
+    enddo 
+    ! exchange species
+    do i = 1, RM_GetExchangeSpeciesCount(id)
+        status = RM_GetExchangeSpeciesName(id, i, line)
+        status = RM_GetExchangeName(id, i, line1)
+        lines(iline) = "    " // trim(line) // " # " // trim(line1)
+        iline = iline + 1
+    enddo  
+    ! surface species species
+    do i = 1, RM_GetSurfaceSpeciesCount(id)
+        status = RM_GetSurfaceSpeciesName(id, i, line)
+        status = RM_GetSurfaceType(id, i, line1)
+        status = RM_GetSurfaceName(id, i, line2)
+        lines(iline) = "    " // trim(line) // " # " // trim(line1) // "  " // trim(line2)
+        iline = iline + 1
+    enddo   
+    ! equilibrium phases
+    lines(iline) = "  -equilibrium_phases "
+    iline = iline + 1
+    do i = 1, RM_GetEquilibriumPhasesCount(id)
+        status = RM_GetEquilibriumPhasesName(id, i, line)
+        lines(iline) = "    " // trim(line)
+        iline = iline + 1
+    enddo
+    ! gas components
+    lines(iline) = "  -gas "
+    iline = iline + 1
+    do i = 1, RM_GetGasComponentsCount(id)
+        status = RM_GetGasComponentsName(id, i, line)
+        lines(iline) = "    " // trim(line)
+        iline = iline + 1
+    enddo
+    ! kinetic reactions
+    lines(iline) = "  -kinetics "
+    iline = iline + 1
+    do i = 1, RM_GetKineticReactionsCount(id)
+        status = RM_GetKineticReactionsName(id, i, line)
+        lines(iline) = "    " // trim(line)
+        iline = iline + 1
+    enddo
+    ! solid solution components
+    lines(iline) = "  -solid_solutions "
+    iline = iline + 1
+    do i = 1, RM_GetSolidSolutionComponentsCount(id)
+        status = RM_GetSolidSolutionComponentsName(id, i, line)
+        status = RM_GetSolidSolutionName(id, i, line1)
+        lines(iline) = "    " // trim(line) // " # " // trim(line1)
+        iline = iline + 1
+    enddo
+    ! saturation indices
+    lines(iline) = "  -si "
+    iline = iline + 1
+    do i = 1, RM_GetSICount(id)
+        status = RM_GetSIName(id, i, line)
+        lines(iline) = "    " // trim(line)
+        iline = iline + 1
+    enddo    
+#ifdef SKIP
+
+	oss << "  -solid_solutions " << "\n";
+	{
+		// solid solutions 
+		const std::vector<std::string> &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
+		const std::vector<std::string> &ss_names = phreeqc_rm.GetSolidSolutionNames();
+		for (size_t i = 0; i < phreeqc_rm.GetSolidSolutionComponentsCount(); i++)
+		{
+			
+			oss << "    ";
+			oss.width(15);
+			oss  << std::left << ss_comps[i];
+			oss << " # " << ss_names[i] << "\n";
+		}
+	}
+	oss << "  -saturation_indices " << "\n";
+	{
+		// molalities of aqueous species 
+		const std::vector<std::string> &si = phreeqc_rm.GetSINames();
+		for (size_t i = 0; i < phreeqc_rm.GetSICount(); i++)
+		{
+			oss << "    " << si[i] << "\n";
+		}
+	}
+
+	// Uncommenting the following line would define SELECTED_OUTPUT 2 with all species, reactants, and SIs
+	// int status = phreeqc_rm.RunString(true, false, false, oss.str().c_str());
+	std::cerr << oss.str();
+
+	return(0);
+}
+#endif    
+
+    example_selected_output = 0
+END FUNCTION example_selected_output

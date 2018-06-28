@@ -28,6 +28,29 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetBackwardMapping(int *id, int *n, int *list, int
 IRM_DLL_EXPORT int        RMF_GetChemistryCellCount(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetComponent(int * id, int * num, char *chem_name, int *l1);
 IRM_DLL_EXPORT int        RMF_GetComponentCount(int * id);
+
+
+IRM_DLL_EXPORT int        RMF_GetExchangeSpeciesCount(int * id);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetExchangeSpeciesName(int * id, int * num, char *name, int *l1);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetExchangeName(int * id, int * num, char *name, int *l1);
+IRM_DLL_EXPORT int        RMF_GetSurfaceSpeciesCount(int * id);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetSurfaceSpeciesName(int * id, int * num, char *name, int *l1);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetSurfaceType(int * id, int * num, char *name, int *l1);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetSurfaceName(int * id, int * num, char *name, int *l1);
+IRM_DLL_EXPORT int        RMF_GetEquilibriumPhasesCount(int * id);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetEquilibriumPhasesName(int * id, int * num, char *name, int *l1);
+IRM_DLL_EXPORT int        RMF_GetGasComponentsCount(int * id);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetGasComponentName(int * id, int * num, char *name, int *l1);
+IRM_DLL_EXPORT int        RMF_GetKineticReactionsCount(int * id);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetKineticReactionName(int * id, int * num, char *name, int *l1);
+IRM_DLL_EXPORT int        RMF_GetSolidSolutionComponentsCount(int * id);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetSolidSolutionComponentName(int * id, int * num, char *name, int *l1);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetSolidSolutionName(int * id, int * num, char *name, int *l1);
+IRM_DLL_EXPORT int        RMF_GetSICount(int * id);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetSIName(int * id, int * num, char *name, int *l1);
+
+
+
 IRM_DLL_EXPORT IRM_RESULT RMF_GetConcentrations(int *id, double *c);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetDensity(int *id, double *density);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetEndCell(int *id, int *ec);
