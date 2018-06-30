@@ -34,7 +34,7 @@ class IPhreeqc;
  * @class PhreeqcRMStop
  *
  * @brief This class is derived from std::exception and is thrown
- * when an unrecoverable error has occured.
+ * when an unrecoverable error has occurred.
  */
 class IRM_DLL_EXPORT PhreeqcRMStop : public std::exception
 {
@@ -235,7 +235,7 @@ Called only by root.
 Provides a mapping from grid cells in the user's model to reaction cells for which chemistry needs to be run.
 The mapping is used to eliminate inactive cells and to use symmetry to decrease the number of cells
 for which chemistry must be run. 
-The array @grid2chem of size @a nxyz (the number of grid cells, @ref GetGridCellCount) 
+The array @a grid2chem of size @a nxyz (the number of grid cells, @ref GetGridCellCount) 
 must contain the set of all integers 0 <= @a i < @a count_chemistry, 
 where @a count_chemistry is a number less than or equal to @a nxyz.
 Inactive cells are assigned a negative integer. 
@@ -696,7 +696,7 @@ surface site type for the corresponding species in the surface species vector;
 a surface site type may occur multiple times.
 
 @see                    @ref FindComponents, 
-@ref GetSurfaceSpeciesCount, @ref GetSurfaceSpeciesName, @ref GetSurfaceNames.
+@ref GetSurfaceSpeciesCount, @ref GetSurfaceSpeciesNames, @ref GetSurfaceNames.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -2093,7 +2093,7 @@ aqueous species concentrations to be retrieved
 with @ref GetSpeciesConcentrations, and solution compositions to be set with
 @ref SpeciesConcentrations2Module.
 
-@retval @a True indicates solution species concentrations are saved and can be used for multicomponent-diffusion calculations;
+@retval True indicates solution species concentrations are saved and can be used for multicomponent-diffusion calculations;
 @a False indicates that solution species concentrations are not saved.
 @see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesCount,
 @ref GetSpeciesD25, @ref GetSpeciesSaveOn, @ref GetSpeciesZ,
@@ -3713,7 +3713,7 @@ Called by root, workers must be in the loop of @ref MpiWorker.
 /**
 Set the representative volume of each reaction cell.
 By default the representative volume of each reaction cell is 1 liter.
-The volume of water in a reaction cell is determined by the procuct of the representative volume,
+The volume of water in a reaction cell is determined by the product of the representative volume,
 the porosity (@ref SetPorosity), and the saturation (@ref SetSaturation).
 The numerical method of PHREEQC is more robust if the water volume for a reaction cell is
 within a couple orders of magnitude of 1.0.
