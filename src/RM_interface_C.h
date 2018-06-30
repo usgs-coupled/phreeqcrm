@@ -153,7 +153,7 @@ IRM_DLL_EXPORT int RM_Create(int nxyz, int nthreads);
 Provides a mapping from grid cells in the user's model to reaction cells in PhreeqcRM.
 The mapping is used to eliminate inactive cells and to use symmetry to decrease the number of cells 
 for which chemistry must be run.
-The array @grid2chem of size @a nxyz (the number of grid cells, @ref RM_GetGridCellCount) 
+The array @a grid2chem of size @a nxyz (the number of grid cells, @ref RM_GetGridCellCount) 
 must contain the set of all integers 0 <= @a i < @a count_chemistry, 
 where @a count_chemistry is a number less than or equal to @a nxyz.
 Inactive cells are assigned a negative integer. 

@@ -265,7 +265,7 @@ END FUNCTION RM_Create
 
 !> Provides a mapping from grid cells in the user's model to reaction cells in PhreeqcRM.
 !> The mapping is used to eliminate inactive cells and to use symmetry to decrease the number of cells for which chemistry must be run.
-!> The array @grid2chem of size @a nxyz (the number of grid cells, @ref RM_GetGridCellCount) 
+!> The array @a grid2chem of size @a nxyz (the number of grid cells, @ref RM_GetGridCellCount) 
 !> must contain the set of all integers 0 <= @a i < @a count_chemistry, 
 !> where @a count_chemistry is a number less than or equal to @a nxyz.
 !> Inactive cells are assigned a negative integer. 
@@ -754,7 +754,7 @@ END FUNCTION RM_GetExchangeSpeciesCount
 !> The list of exchange species (such as "NaX") is derived from the list of components
 !> (@ref RM_FindComponents) and the list of all exchange names (such as "X")
 !> that are included in EXCHANGE definitions in the initial-phreeqc module.
-!> @ref RM_FindComponents must be called before @ref RM_GetExchangeSpeciesNames.
+!> @ref RM_FindComponents must be called before @ref RM_GetExchangeSpeciesName.
 !> This method may be useful when generating selected output definitions related to exchangers.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param num              The number of the exchange species to be retrieved. Fortran, 1 based.
@@ -798,7 +798,7 @@ INTEGER FUNCTION RM_GetExchangeSpeciesName(id, num, name)
 END FUNCTION RM_GetExchangeSpeciesName 
 
 !> Retrieves an item (for example, X) from the exchange name list.
-!> @ref FindComponents must be called before @ref GetExchangeName.
+!> @ref RM_FindComponents must be called before @ref RM_GetExchangeName.
 !> The exchange names vector is the same length as the exchange species names vector
 !> and provides the corresponding exchange site.
 !> This method may be useful when generating selected output definitions related to exchangers.
@@ -850,7 +850,7 @@ END FUNCTION RM_GetExchangeName
 !> @retval                 The number of surface species in the initial-phreeqc module.
 !> @see                    
 !> @ref RM_FindComponents,
-!> @ref RM_GetSurfaceSpeciesNames, @ref RM_GetSurfaceTypes, @ref RM_GetSurfaceName.
+!> @ref RM_GetSurfaceSpeciesName, @ref RM_GetSurfaceType, @ref RM_GetSurfaceName.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -887,7 +887,7 @@ END FUNCTION RM_GetSurfaceSpeciesCount
 !> The list of surface species is derived from the list of components
 !> (@ref RM_FindComponents) and the list of all surface types (such as "Hfo_w")
 !> that are included in SURFACE definitions in the initial-phreeqc module.
-!> @ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesNames.
+!> @ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesName.
 !> This method may be useful when generating selected output definitions related to surfaces.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param num              The number of the surface type to be retrieved. Fortran, 1 based.
@@ -1033,7 +1033,7 @@ END FUNCTION RM_GetSurfaceName
 !> @retval                 The number of equilibrium phases in the initial-phreeqc module.
 !> @see                    
 !> @ref RM_FindComponents,
-!> @ref RM_GetEquilibriumPhases.
+!> @ref RM_GetEquilibriumPhasesName.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1119,7 +1119,7 @@ END FUNCTION RM_GetEquilibriumPhasesName
 !> @retval                 The number of gas phase components in the initial-phreeqc module.
 !> @see                    
 !> @ref RM_FindComponents,
-!> @ref RM_GetGasComponents.
+!> @ref RM_GetGasComponentsName.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1207,7 +1207,7 @@ END FUNCTION RM_GetGasComponentsName
 !> @retval                 The number of kinetic reactions in the initial-phreeqc module.
 !> @see                    
 !> @ref RM_FindComponents,
-!> @ref RM_GetKineticReactions.
+!> @ref RM_GetKineticReactionsName.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1294,7 +1294,7 @@ END FUNCTION RM_GetKineticReactionsName
 !> @retval                 The number of solid solution components in the initial-phreeqc module.
 !> @see                    
 !> @ref RM_FindComponents,
-!> @ref RM_GetSolidSolutionComponents, @ref RM_GetSolidSolutionNames.
+!> @ref RM_GetSolidSolutionComponentsName, @ref RM_GetSolidSolutionName.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1435,7 +1435,7 @@ END FUNCTION RM_GetSolidSolutionName
 !> could be calculated.
 !> @see                    
 !> @ref RM_FindComponents,
-!> @ref GetSINames.
+!> @ref RM_GetSIName.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
