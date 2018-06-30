@@ -94,4 +94,24 @@ sed -i -e "s/RM_SetUnitsSurface/rm_setunitssurface/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SpeciesConcentrations2Module/rm_speciesconcentrations2module/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_UseSolutionDensityVolume/rm_usesolutiondensityvolume/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_WarningMessage/rm_warningmessage/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSpeciesLog10Gammas/rm_getspecieslog10gammas/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetExchangeSpeciesCount/rm_getexchangespeciescount/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetExchangeSpeciesName/rm_getexchangespeciesname/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetExchangeName/rm_getexchangename/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSurfaceSpeciesCount/rm_getsurfacespeciescount/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSurfaceSpeciesName/rm_getsurfacespeciesname/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSurfaceType/rm_getsurfacetype/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSurfaceName/rm_getsurfacename/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetEquilibriumPhasesCount/rm_getequilibriumphasescount/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetEquilibriumPhasesName/rm_getequilibriumphasesname/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetGasComponentsCount/rm_getgascomponentscount/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetGasComponentsName/rm_getgascomponentsname/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetKineticReactionsCount/rm_getkineticreactionscount/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetKineticReactionsName/rm_getkineticreactionsname/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSolidSolutionComponentsCount/rm_getsolidsolutioncomponentscount/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSolidSolutionComponentsName/rm_getsolidsolutioncomponentsname/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSolidSolutionName/rm_getsolidsolutionname/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSICount/rm_getsicount/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSIName/rm_getsiname/g" %RM_INTERFACE_F90%
+
 del sed*
