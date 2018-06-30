@@ -726,8 +726,7 @@ END FUNCTION RM_GetComponentCount
 !> do i = 1, RM_GetExchangeSpeciesCount(id)
 !>   status = RM_GetExchangeSpeciesName(id, i, line)
 !>   status = RM_GetExchangeName(id, i, line1)
-!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
 !> enddo
 !> </PRE>
 !> </CODE>
@@ -750,7 +749,7 @@ INTEGER FUNCTION RM_GetExchangeSpeciesCount(id)
     RM_GetExchangeSpeciesCount = RMF_GetExchangeSpeciesCount(id)
 END FUNCTION RM_GetExchangeSpeciesCount
 
-!> Retrieves an item (for example, NaX) from the exchange species list.
+!> Retrieves an item from the exchange species list.
 !> The list of exchange species (such as "NaX") is derived from the list of components
 !> (@ref RM_FindComponents) and the list of all exchange names (such as "X")
 !> that are included in EXCHANGE definitions in the initial-phreeqc module.
@@ -758,7 +757,7 @@ END FUNCTION RM_GetExchangeSpeciesCount
 !> This method may be useful when generating selected output definitions related to exchangers.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param num              The number of the exchange species to be retrieved. Fortran, 1 based.
-!> @param name             The string value associated with exchange species @a num.
+!> @param name             The exchange species name at number @a num.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> @see                    
 !> @ref RM_FindComponents, 
@@ -770,9 +769,8 @@ END FUNCTION RM_GetExchangeSpeciesCount
 !> do i = 1, RM_GetExchangeSpeciesCount(id)
 !>   status = RM_GetExchangeSpeciesName(id, i, line)
 !>   status = RM_GetExchangeName(id, i, line1)
-!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
-!>   iline = iline + 1
-!> enddo
+!>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+!> enddo 
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -797,14 +795,14 @@ INTEGER FUNCTION RM_GetExchangeSpeciesName(id, num, name)
     return
 END FUNCTION RM_GetExchangeSpeciesName 
 
-!> Retrieves an item (for example, X) from the exchange name list.
+!> Retrieves an item from the exchange name list.
 !> @ref RM_FindComponents must be called before @ref RM_GetExchangeName.
 !> The exchange names vector is the same length as the exchange species names vector
-!> and provides the corresponding exchange site.
+!> and provides the corresponding exchange site (for example, X corresponing to NaX).
 !> This method may be useful when generating selected output definitions related to exchangers.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param num              The number of the exchange name to be retrieved. Fortran, 1 based.
-!> @param name             The string value of the exchange name associated with exchange species @a num.
+!> @param name             The exchange name associated with exchange species @a num.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> @see                    
 !> @ref RM_FindComponents, 
@@ -816,9 +814,8 @@ END FUNCTION RM_GetExchangeSpeciesName
 !> do i = 1, RM_GetExchangeSpeciesCount(id)
 !>   status = RM_GetExchangeSpeciesName(id, i, line)
 !>   status = RM_GetExchangeName(id, i, line1)
-!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
-!>   iline = iline + 1
-!> enddo  
+!>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+!> enddo 
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -859,9 +856,8 @@ END FUNCTION RM_GetExchangeName
 !>   status = RM_GetSurfaceSpeciesName(id, i, line)
 !>   status = RM_GetSurfaceType(id, i, line1)
 !>   status = RM_GetSurfaceName(id, i, line2)
-!>   lines(iline) = "    " // trim(line) // " # " // trim(line1) // "  " // trim(line2)
-!>   iline = iline + 1
-!> enddo 
+!>   input = trim(input) // "    " // line // " # " // line1  // line2 // new_line(c)
+!> enddo  
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -883,15 +879,15 @@ INTEGER FUNCTION RM_GetSurfaceSpeciesCount(id)
     RM_GetSurfaceSpeciesCount = RMF_GetSurfaceSpeciesCount(id)
 END FUNCTION RM_GetSurfaceSpeciesCount
 
-!> Retrieves an item (for example, "Hfo_wOH") from the surface species list.
-!> The list of surface species is derived from the list of components
+!> Retrieves an item from the surface species list.
+!> The list of surface species (for example, "Hfo_wOH") is derived from the list of components
 !> (@ref RM_FindComponents) and the list of all surface types (such as "Hfo_w")
 !> that are included in SURFACE definitions in the initial-phreeqc module.
 !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesName.
 !> This method may be useful when generating selected output definitions related to surfaces.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param num              The number of the surface type to be retrieved. Fortran, 1 based.
-!> @param name             The string value associated with surface species @a num.
+!> @param name             The surface species name at number @a num.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> @see                    
 !> @ref RM_FindComponents, 
@@ -904,8 +900,7 @@ END FUNCTION RM_GetSurfaceSpeciesCount
 !>   status = RM_GetSurfaceSpeciesName(id, i, line)
 !>   status = RM_GetSurfaceType(id, i, line1)
 !>   status = RM_GetSurfaceName(id, i, line2)
-!>   lines(iline) = "    " // trim(line) // " # " // trim(line1) // "  " // trim(line2)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // " # " // line1  // line2 // new_line(c)
 !> enddo 
 !> </PRE>
 !> </CODE>
@@ -951,8 +946,7 @@ END FUNCTION RM_GetSurfaceSpeciesName
 !>   status = RM_GetSurfaceSpeciesName(id, i, line)
 !>   status = RM_GetSurfaceType(id, i, line1)
 !>   status = RM_GetSurfaceName(id, i, line2)
-!>   lines(iline) = "    " // trim(line) // " # " // trim(line1) // "  " // trim(line2)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // " # " // line1  // line2 // new_line(c)
 !> enddo 
 !> </PRE>
 !> </CODE>
@@ -998,9 +992,8 @@ END FUNCTION RM_GetSurfaceType
 !>   status = RM_GetSurfaceSpeciesName(id, i, line)
 !>   status = RM_GetSurfaceType(id, i, line1)
 !>   status = RM_GetSurfaceName(id, i, line2)
-!>   lines(iline) = "    " // trim(line) // " # " // trim(line1) // "  " // trim(line2)
-!>   iline = iline + 1
-!> enddo 
+!>   input = trim(input) // "    " // line // " # " // line1  // line2 // new_line(c)
+!> enddo  
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -1038,11 +1031,10 @@ END FUNCTION RM_GetSurfaceName
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> iline = iline + 1
+!> input = trim(input) // "  -equilibrium_phases " // new_line(c)
 !> do i = 1, RM_GetEquilibriumPhasesCount(id)
 !>   status = RM_GetEquilibriumPhasesName(id, i, line)
-!>   lines(iline) = "    " // trim(line)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // new_line(c)
 !> enddo
 !> </PRE>
 !> </CODE>
@@ -1081,11 +1073,10 @@ END FUNCTION RM_GetEquilibriumPhasesCount
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> iline = iline + 1
+!> input = trim(input) // "  -equilibrium_phases " // new_line(c)
 !> do i = 1, RM_GetEquilibriumPhasesCount(id)
 !>   status = RM_GetEquilibriumPhasesName(id, i, line)
-!>   lines(iline) = "    " // trim(line)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // new_line(c)
 !> enddo
 !> </PRE>
 !> </CODE>
@@ -1124,12 +1115,10 @@ END FUNCTION RM_GetEquilibriumPhasesName
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> lines(iline) = "  -gas "
-!> iline = iline + 1
+!> input = trim(input) // "  -gas " // new_line(c)
 !> do i = 1, RM_GetGasComponentsCount(id)
 !>   status = RM_GetGasComponentsName(id, i, line)
-!>   lines(iline) = "    " // trim(line)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // new_line(c)
 !> enddo
 !> </PRE>
 !> </CODE>
@@ -1168,12 +1157,10 @@ END FUNCTION RM_GetGasComponentsCount
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> lines(iline) = "  -gas "
-!> iline = iline + 1
+!> input = trim(input) // "  -gas " // new_line(c)
 !> do i = 1, RM_GetGasComponentsCount(id)
 !>   status = RM_GetGasComponentsName(id, i, line)
-!>   lines(iline) = "    " // trim(line)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // new_line(c)
 !> enddo
 !> </PRE>
 !> </CODE>
@@ -1212,12 +1199,10 @@ END FUNCTION RM_GetGasComponentsName
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> lines(iline) = "  -kinetics "
-!> iline = iline + 1
+!> input = trim(input) // "  -kinetics " // new_line(c)
 !> do i = 1, RM_GetKineticReactionsCount(id)
 !>   status = RM_GetKineticReactionsName(id, i, line)
-!>   lines(iline) = "    " // trim(line)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // new_line(c)
 !> enddo
 !> </PRE>
 !> </CODE>
@@ -1256,12 +1241,10 @@ END FUNCTION RM_GetKineticReactionsCount
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> lines(iline) = "  -kinetics "
-!> iline = iline + 1
+!> input = trim(input) // "  -kinetics " // new_line(c)
 !> do i = 1, RM_GetKineticReactionsCount(id)
 !>   status = RM_GetKineticReactionsName(id, i, line)
-!>   lines(iline) = "    " // trim(line)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // new_line(c)
 !> enddo
 !> </PRE>
 !> </CODE>
@@ -1299,13 +1282,11 @@ END FUNCTION RM_GetKineticReactionsName
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> lines(iline) = "  -solid_solutions "
-!> iline = iline + 1
+!> input = trim(input) // "  -solid_solutions " // new_line(c)
 !> do i = 1, RM_GetSolidSolutionComponentsCount(id)
 !>   status = RM_GetSolidSolutionComponentsName(id, i, line)
 !>   status = RM_GetSolidSolutionName(id, i, line1)
-!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
 !> enddo
 !> </PRE>
 !> </CODE>
@@ -1344,13 +1325,11 @@ END FUNCTION RM_GetSolidSolutionComponentsCount
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> lines(iline) = "  -solid_solutions "
-!> iline = iline + 1
+!> input = trim(input) // "  -solid_solutions " // new_line(c)
 !> do i = 1, RM_GetSolidSolutionComponentsCount(id)
 !>   status = RM_GetSolidSolutionComponentsName(id, i, line)
 !>   status = RM_GetSolidSolutionName(id, i, line1)
-!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
 !> enddo
 !> </PRE>
 !> </CODE>
@@ -1394,13 +1373,11 @@ END FUNCTION RM_GetSolidSolutionComponentsName
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> lines(iline) = "  -solid_solutions "
-!> iline = iline + 1
+!> input = trim(input) // "  -solid_solutions " // new_line(c)
 !> do i = 1, RM_GetSolidSolutionComponentsCount(id)
 !>   status = RM_GetSolidSolutionComponentsName(id, i, line)
 !>   status = RM_GetSolidSolutionName(id, i, line1)
-!>   lines(iline) = "    " // trim(line) // " # " // trim(line1)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
 !> enddo
 !> </PRE>
 !> </CODE>
@@ -1426,7 +1403,7 @@ INTEGER FUNCTION RM_GetSolidSolutionName(id, num, name)
     return
 END FUNCTION RM_GetSolidSolutionName
 
-!> Returns the number of phases in the initial-phreeqc module for which saturation indices could be calculated.
+!> Returns the number of phases in the initial-phreeqc module for which saturation indices can be calculated.
 !> @ref RM_FindComponents must be called before @ref RM_GetSICount.
 !> This method may be useful when generating selected output definitions related to
 !> saturation indices.
@@ -1440,12 +1417,10 @@ END FUNCTION RM_GetSolidSolutionName
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> lines(iline) = "  -si "
-!> iline = iline + 1
+!> input = trim(input) // "  -si "// new_line(c)
 !> do i = 1, RM_GetSICount(id)
 !>   status = RM_GetSIName(id, i, line)
-!>   lines(iline) = "    " // trim(line)
-!>   iline = iline + 1
+!>   input = trim(input) // "    " // line // new_line(c)
 !> enddo 
 !> </PRE>
 !> </CODE>
@@ -1469,7 +1444,7 @@ INTEGER FUNCTION RM_GetSICount(id)
 END FUNCTION RM_GetSICount
 
 !> Retrieves an item from the list of all phases for which saturation indices can be calculated.
-!> 	The list includes all phases that contain only elements included in the components in 
+!> The list includes all phases that contain only elements included in the components in 
 !> the initial-phreeqc module.
 !> The list assumes that all components are present to be able to calculate the entire list of SIs; 
 !> it may be that one or more components are missing in any specific cell.
@@ -1486,13 +1461,11 @@ END FUNCTION RM_GetSICount
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> lines(iline) = "  -si "
-!> iline = iline + 1
+!> input = trim(input) // "  -si "// new_line(c)
 !> do i = 1, RM_GetSICount(id)
 !>   status = RM_GetSIName(id, i, line)
-!>   lines(iline) = "    " // trim(line)
-!>   iline = iline + 1
-!> enddo 
+!>   input = trim(input) // "    " // line // new_line(c)
+!> enddo  
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
