@@ -287,7 +287,7 @@ RM_GetExchangeSpeciesName(int id, int num, char *name, int l1)
 		{
 			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetExchangeSpeciesCount()))
 			{
-				strncpy(name, Reaction_module_ptr->GetExchangeSpeciesNames()[num].c_str(), (unsigned int)l1);
+				strncpy(name, Reaction_module_ptr->GetExchangeSpecies()[num].c_str(), (unsigned int)l1);
 				return IRM_OK;
 			}
 		}
@@ -345,7 +345,7 @@ RM_GetSurfaceSpeciesName(int  id, int num, char *name, int  l1)
 		{
 			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetSurfaceSpeciesCount()))
 			{
-				strncpy(name, Reaction_module_ptr->GetSurfaceSpeciesNames()[num].c_str(), (unsigned int) l1);
+				strncpy(name, Reaction_module_ptr->GetSurfaceSpecies()[num].c_str(), (unsigned int) l1);
 				return IRM_OK;
 			}
 		}

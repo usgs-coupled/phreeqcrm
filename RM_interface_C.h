@@ -573,6 +573,7 @@ This method may be useful when generating selected output definitions related to
 @param id               The instance @a id returned from @ref RM_Create.
 @param num              The number of the equilibrium phase name to be retrieved. Fortran, 1 based.
 @param name             The equilibrium phase name at number @a num.
+@param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
 @ref RM_FindComponents,
@@ -659,6 +660,7 @@ This method may be useful when generating selected output definitions related to
 @param id               The instance @a id returned from @ref RM_Create.
 @param num              The number of the exchange name to be retrieved. Fortran, 1 based.
 @param name             The exchange name associated with exchange species @a num.
+@param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
 @ref RM_FindComponents,
@@ -720,6 +722,7 @@ This method may be useful when generating selected output definitions related to
 @param id               The instance @a id returned from @ref RM_Create.
 @param num              The number of the exchange species to be retrieved. Fortran, 1 based.
 @param name             The exchange species name at number @a num.
+@param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
 @ref RM_FindComponents,
@@ -805,6 +808,7 @@ This method may be useful when generating selected output definitions related to
 @param id               The instance @a id returned from @ref RM_Create.
 @param num              The number of the gas component name to be retrieved. Fortran, 1 based.
 @param name             The gas component name at number @a num.
+@param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
 @ref RM_FindComponents,
@@ -954,6 +958,7 @@ This method may be useful when generating selected output definitions related to
 @param id               The instance @a id returned from @ref RM_Create.
 @param num              The number of the kinetic reaction name to be retrieved. Fortran, 1 based.
 @param name             The kinetic reaction name at number @a num.
+@param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
 @ref RM_FindComponents,
@@ -1343,6 +1348,7 @@ This method may be useful when generating selected output definitions related to
 @param id               The instance @a id returned from @ref RM_Create.
 @param num              The number of the saturation-index-phase name to be retrieved. Fortran, 1 based.
 @param name             The saturation-index-phase name at number @a num.
+@param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
 @ref RM_FindComponents,
@@ -1403,6 +1409,7 @@ This method may be useful when generating selected output definitions related to
 @param id               The instance @a id returned from @ref RM_Create.
 @param num              The number of the solid solution components name to be retrieved. Fortran, 1 based.
 @param name             The solid solution compnent name at number @a num.
+@param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
 @ref RM_FindComponents,
@@ -1437,6 +1444,7 @@ This method may be useful when generating selected output definitions related to
 @param id               The instance @a id returned from @ref RM_Create.
 @param num              The number of the solid solution name to be retrieved. Fortran, 1 based.
 @param name             The solid solution name at number @a num.
+@param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
 @ref RM_FindComponents,
@@ -1818,6 +1826,7 @@ This method may be useful when generating selected output definitions related to
 @param id               The instance @a id returned from @ref RM_Create.
 @param num              The number of the surface name to be retrieved. Fortran, 1 based.
 @param name             The surface name associated with surface species @a num.
+@param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
 @ref RM_FindComponents,
@@ -1879,6 +1888,7 @@ This method may be useful when generating selected output definitions related to
 @param id               The instance @a id returned from @ref RM_Create.
 @param num              The number of the surface type to be retrieved. Fortran, 1 based.
 @param name             The surface species name at number @a num.
+@param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
 @ref RM_FindComponents,
@@ -1911,6 +1921,7 @@ This method may be useful when generating selected output definitions related to
 @param id               The instance @a id returned from @ref RM_Create.
 @param num              The number of the surface type to be retrieved. Fortran, 1 based.
 @param name             The surface type associated with surface species @a num.
+@param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
 @ref RM_FindComponents,
