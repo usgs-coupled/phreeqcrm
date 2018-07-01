@@ -434,6 +434,567 @@ ncomps1 = RM_GetComponentCount(id);
 Called by root.
  */
 IRM_DLL_EXPORT int RM_GetComponentCount(int id);
+
+
+/**************************
+* Start
+***************************/
+/**
+Returns the number of exchange species in the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetExchangeSpeciesCount.
+This method may be useful when generating selected output definitions related to exchangers.
+@param id               The instance @a id returned from @ref RM_Create.
+@retval                 The number of exchange species in the initial-phreeqc module.
+@see
+@ref RM_FindComponents,
+@ref RM_GetExchangeSpeciesName, @ref RM_GetExchangeName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
+{
+  strcpy(line, "");
+  status = RM_GetExchangeSpeciesName(id, i, line1, 100);
+  status = RM_GetExchangeName(id, i, line2, 100);
+  sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+**/
+IRM_DLL_EXPORT int RM_GetExchangeSpeciesCount(int id);
+/*
+Retrieves an item from the exchange species list.
+The list of exchange species (such as "NaX") is derived from the list of components
+(@ref RM_FindComponents) and the list of all exchange names (such as "X")
+that are included in EXCHANGE definitions in the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetExchangeSpeciesName.
+This method may be useful when generating selected output definitions related to exchangers.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the exchange species to be retrieved. Fortran, 1 based.
+@param name             The exchange species name at number @a num.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetExchangeSpeciesCount, @ref RM_GetExchangeName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
+{
+  strcpy(line, "");
+  status = RM_GetExchangeSpeciesName(id, i, line1, 100);
+  status = RM_GetExchangeName(id, i, line2, 100);
+  sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetExchangeSpeciesName(int id, int num, char *name, int l1);
+/*
+Retrieves an item from the exchange name list.
+@ref RM_FindComponents must be called before @ref RM_GetExchangeName.
+The exchange names vector is the same length as the exchange species names vector
+and provides the corresponding exchange site (for example, X corresponing to NaX).
+This method may be useful when generating selected output definitions related to exchangers.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the exchange name to be retrieved. Fortran, 1 based.
+@param name             The exchange name associated with exchange species @a num.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetExchangeSpeciesCount, @ref RM_GetExchangeSpeciesName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
+{
+  strcpy(line, "");
+  status = RM_GetExchangeSpeciesName(id, i, line1, 100);
+  status = RM_GetExchangeName(id, i, line2, 100);
+  sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetExchangeName(int id, int num, char *name, int l1);
+/*
+Returns the number of surface species (such as "Hfo_wOH") in the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesCount.
+This method may be useful when generating selected output definitions related to surfaces.
+@param id               The instance @a id returned from @ref RM_Create.
+@retval                 The number of surface species in the initial-phreeqc module.
+@see
+@ref RM_FindComponents,
+@ref RM_GetSurfaceSpeciesName, @ref RM_GetSurfaceType, @ref RM_GetSurfaceName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
+{
+  status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
+  status = RM_GetSurfaceType(id, i, line2, 100);
+  status = RM_GetSurfaceName(id, i, line3, 100);
+  sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT int        RM_GetSurfaceSpeciesCount(int id);
+/*
+Retrieves an item from the surface species list.
+The list of surface species (for example, "Hfo_wOH") is derived from the list of components
+(@ref RM_FindComponents) and the list of all surface types (such as "Hfo_w")
+that are included in SURFACE definitions in the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesName.
+This method may be useful when generating selected output definitions related to surfaces.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the surface type to be retrieved. Fortran, 1 based.
+@param name             The surface species name at number @a num.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceType, @ref RM_GetSurfaceName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
+{
+  status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
+  status = RM_GetSurfaceType(id, i, line2, 100);
+  status = RM_GetSurfaceName(id, i, line3, 100);
+  sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetSurfaceSpeciesName(int id, int num, char *name, int l1);
+/*
+Retrieves the surface site type (such as "Hfo_w") that corresponds with
+the surface species name.
+The lists of surface species names and surface species types are the same length.
+@ref RM_FindComponents must be called before @ref RM_GetSurfaceType.
+This method may be useful when generating selected output definitions related to surfaces.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the surface type to be retrieved. Fortran, 1 based.
+@param name             The surface type associated with surface species @a num.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceSpeciesName, @ref RM_GetSurfaceName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
+{
+  status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
+  status = RM_GetSurfaceType(id, i, line2, 100);
+  status = RM_GetSurfaceName(id, i, line3, 100);
+  sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetSurfaceType(int id, int num, char *name, int l1);
+/*
+Retrieves the surface name (such as "Hfo") that corresponds with
+the surface species name.
+The lists of surface species names and surface names are the same length.
+@ref RM_FindComponents must be called before @ref RM_GetSurfaceName.
+This method may be useful when generating selected output definitions related to surfaces.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the surface name to be retrieved. Fortran, 1 based.
+@param name             The surface name associated with surface species @a num.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceSpeciesName, @ref RM_GetSurfaceType.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
+{
+  status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
+  status = RM_GetSurfaceType(id, i, line2, 100);
+  status = RM_GetSurfaceName(id, i, line3, 100);
+  sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetSurfaceName(int id, int num, char *name, int l1);
+/*
+Returns the number of equilibrium phases in the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetEquilibriumPhasesCount.
+This method may be useful when generating selected output definitions related to
+equilibrium phases.
+@param id               The instance @a id returned from @ref RM_Create.
+@retval                 The number of equilibrium phases in the initial-phreeqc module.
+@see
+@ref RM_FindComponents,
+@ref RM_GetEquilibriumPhasesName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+strcat(input, "  -equilibrium_phases\n");
+for (i = 0; i < RM_GetEquilibriumPhasesCount(id); i++)
+{
+  status = RM_GetEquilibriumPhasesName(id, i, line1, 100);
+  sprintf(line, "%4s%20s\n", "    ", line1);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT int        RM_GetEquilibriumPhasesCount(int id);
+/*
+Retrieves an item from the equilibrium phase list.
+The list includes all phases included in any EQUILIBRIUM_PHASES definitions in
+the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetEquilibriumPhasesName.
+This method may be useful when generating selected output definitions related to equilibrium phases.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the equilibrium phase name to be retrieved. Fortran, 1 based.
+@param name             The equilibrium phase name at number @a num.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetEquilibriumPhasesCount.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+strcat(input, "  -equilibrium_phases\n");
+for (i = 0; i < RM_GetEquilibriumPhasesCount(id); i++)
+{
+  status = RM_GetEquilibriumPhasesName(id, i, line1, 100);
+  sprintf(line, "%4s%20s\n", "    ", line1);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetEquilibriumPhasesName(int id, int num, char *name, int l1);
+/*
+Returns the number of gas phase components in the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetGasComponentsCount.
+This method may be useful when generating selected output definitions related to
+gas phases.
+@param id               The instance @a id returned from @ref RM_Create.
+@retval                 The number of gas phase components in the initial-phreeqc module.
+@see
+@ref RM_FindComponents,
+@ref RM_GetGasComponentsName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+strcat(input, "  -gases\n");
+for (i = 0; i < RM_GetGasComponentsCount(id); i++)
+{
+  status = RM_GetGasComponentsName(id, i, line1, 100);
+  sprintf(line, "%4s%20s\n", "    ", line1);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT int        RM_GetGasComponentsCount(int id);
+/*
+Retrieves an item from the gas components list.
+The list includes all gas components included in any GAS_PHASE definitions in
+the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetGasComponentsName.
+This method may be useful when generating selected output definitions related to gas phases.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the gas component name to be retrieved. Fortran, 1 based.
+@param name             The gas component name at number @a num.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetGasComponentsCount.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+strcat(input, "  -gases\n");
+for (i = 0; i < RM_GetGasComponentsCount(id); i++)
+{
+  status = RM_GetGasComponentsName(id, i, line1, 100);
+  sprintf(line, "%4s%20s\n", "    ", line1);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetGasComponentsName(int id, int num, char *name, int l1);
+/*
+Returns the number of kinetic reactions in the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetKineticReactionsCount.
+This method may be useful when generating selected output definitions related to
+kinetic reactions.
+@param id               The instance @a id returned from @ref RM_Create.
+@retval                 The number of kinetic reactions in the initial-phreeqc module.
+@see
+@ref RM_FindComponents,
+@ref RM_GetKineticReactionsName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+strcat(input, "  -kinetics\n");
+for (i = 0; i < RM_GetKineticReactionsCount(id); i++)
+{
+  status = RM_GetKineticReactionsName(id, i, line1, 100);
+  sprintf(line, "%4s%20s\n", "    ", line1);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT int        RM_GetKineticReactionsCount(int id);
+/*
+Retrieves an item from the kinetic reactions list.
+The list includes all kinetic reactions included in any KINETICS definitions in
+the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetKineticReactionsName.
+This method may be useful when generating selected output definitions related to kinetic reactions.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the kinetic reaction name to be retrieved. Fortran, 1 based.
+@param name             The kinetic reaction name at number @a num.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetKineticReactionsCount.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+strcat(input, "  -kinetics\n");
+for (i = 0; i < RM_GetKineticReactionsCount(id); i++)
+{
+  status = RM_GetKineticReactionsName(id, i, line1, 100);
+  sprintf(line, "%4s%20s\n", "    ", line1);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetKineticReactionsName(int id, int num, char *name, int l1);
+/*
+Returns the number of solid solution components in the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetSolidSolutionComponentsCount.
+This method may be useful when generating selected output definitions related to solid solutions.
+@param id               The instance @a id returned from @ref RM_Create.
+@retval                 The number of solid solution components in the initial-phreeqc module.
+@see
+@ref RM_FindComponents,
+@ref RM_GetSolidSolutionComponentsName, @ref RM_GetSolidSolutionName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+strcat(input, "  -solid_solutions\n");
+for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
+{
+  status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
+  status = RM_GetSolidSolutionName(id, i, line2, 100);
+  sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT int        RM_GetSolidSolutionComponentsCount(int id);
+/*
+Retrieves an item from the solid solution components list.
+The list includes all solid solution components included in any SOLID_SOLUTIONS definitions in
+the initial-phreeqc module.
+@ref RM_FindComponents must be called before @ref RM_GetSolidSolutionComponentsName.
+This method may be useful when generating selected output definitions related to solid solutions.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the solid solution components name to be retrieved. Fortran, 1 based.
+@param name             The solid solution compnent name at number @a num.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetSolidSolutionComponentsCount, @ref RM_GetSolidSolutionName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+strcat(input, "  -solid_solutions\n");
+for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
+{
+  status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
+  status = RM_GetSolidSolutionName(id, i, line2, 100);
+  sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetSolidSolutionComponentsName(int id, int num, char *name, int l1);
+/*
+Retrieves an item from the solid solution names list.
+The list includes solid solution names included in SOLID_SOLUTIONS definitions in
+the initial-phreeqc module.
+The solid solution names vector is the same length as the solid solution components vector
+and provides the corresponding name of solid solution containing the component.
+@ref RM_FindComponents must be called before @ref RM_GetSolidSolutionName.
+This method may be useful when generating selected output definitions related to solid solutions.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the solid solution name to be retrieved. Fortran, 1 based.
+@param name             The solid solution name at number @a num.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetSolidSolutionComponentsCount, @ref RM_GetSolidSolutionComponentsName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+strcat(input, "  -solid_solutions\n");
+for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
+{
+  status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
+  status = RM_GetSolidSolutionName(id, i, line2, 100);
+  sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetSolidSolutionName(int id, int num, char *name, int l1);
+/*
+Returns the number of phases in the initial-phreeqc module for which saturation indices can be calculated.
+@ref RM_FindComponents must be called before @ref RM_GetSICount.
+This method may be useful when generating selected output definitions related to
+saturation indices.
+@param id               The instance @a id returned from @ref RM_Create.
+@retval                 The number of phases in the initial-phreeqc module for which saturation indices
+could be calculated.
+@see
+@ref RM_FindComponents,
+@ref RM_GetSIName.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+strcat(input, "  -saturation_indices\n");
+for (i = 0; i < RM_GetSICount(id); i++)
+{
+  status = RM_GetSIName(id, i, line1, 100);
+  sprintf(line, "%4s%20s\n", "    ", line1);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT int        RM_GetSICount(int id);
+/*
+Retrieves an item from the list of all phases for which saturation indices can be calculated.
+The list includes all phases that contain only elements included in the components in
+the initial-phreeqc module.
+The list assumes that all components are present to be able to calculate the entire list of SIs;
+it may be that one or more components are missing in any specific cell.
+@ref RM_FindComponents must be called before @ref RM_GetSIName.
+This method may be useful when generating selected output definitions related to saturation indices.
+@param id               The instance @a id returned from @ref RM_Create.
+@param num              The number of the saturation-index-phase name to be retrieved. Fortran, 1 based.
+@param name             The saturation-index-phase name at number @a num.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetSICount.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+strcat(input, "  -saturation_indices\n");
+for (i = 0; i < RM_GetSICount(id); i++)
+{
+  status = RM_GetSIName(id, i, line1, 100);
+  sprintf(line, "%4s%20s\n", "    ", line1);
+  strcat(input, line);
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetSIName(int id, int num, char *name, int l1);
+
+
+/**************************
+* End
+***************************/
 /**
 Transfer solution concentrations from each reaction cell
 to the concentration array given in the argument list (@a c).

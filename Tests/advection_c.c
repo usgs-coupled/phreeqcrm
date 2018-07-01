@@ -12,6 +12,7 @@ int do_something(void *cookie);
 
 void register_basic_callback(void *cookie);
 double my_basic_callback(double x1, double x2, const char *str, void *cookie);
+int example_selected_output(int id);
 
 struct my_data
 {
@@ -239,6 +240,8 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 			status = RM_OutputMessage(id, str);
 		}
 		status = RM_OutputMessage(id, "\n");
+		// Example of selected output
+		example_selected_output(id);
 		// Set array of initial conditions
 		ic1 = (int *) malloc((size_t) (7 * nxyz * sizeof(int)));
 		ic2 = (int *) malloc((size_t) (7 * nxyz * sizeof(int)));
@@ -583,4 +586,117 @@ double my_basic_callback(double x1, double x2, const char *str, void *cookie)
 		}
 	}
 	return -999.9;
+}
+int example_selected_output(int id)
+{
+	int nlines, i, status;
+	char *input;
+	char line[200], line1[100], line2[100], line3[100];
+	nlines = 50;
+	nlines = nlines + RM_GetComponentCount(id);
+	nlines = nlines + RM_GetSpeciesCount(id);
+	nlines = nlines + RM_GetExchangeSpeciesCount(id);
+	nlines = nlines + RM_GetSurfaceSpeciesCount(id);
+	nlines = nlines + RM_GetEquilibriumPhasesCount(id);
+	nlines = nlines + RM_GetGasComponentsCount(id);
+	nlines = nlines + RM_GetKineticReactionsCount(id);
+	nlines = nlines + RM_GetSolidSolutionComponentsCount(id);
+	nlines = nlines + RM_GetSICount(id);
+	input = (char *) malloc((size_t)(nlines * 40));
+
+	strcpy(input, "");
+	strcat(input, "SELECTED_OUTPUT 2\n");
+	// totals
+	strcat(input, "  -totals\n");
+	for (i = 0; i < RM_GetComponentCount(id); i++)
+	{
+		status = RM_GetComponent(id, i, line1, 100);
+		if (strcmp(line, "H") != 0 &&
+			strcmp(line, "O") != 0 &&
+			strcmp(line, "charge") != 0 &&
+			strcmp(line, "Charge") != 0 &&
+			strcmp(line, "H2O") != 0)
+		{
+			strcat(input, "    ");
+			strcat(input, line1);
+			strcat(input, "\n");
+		}
+	}
+
+	strcat(input, "  -molalities \n");
+	// molalities of aqueous species 
+	for (i = 0; i < RM_GetSpeciesCount(id); i++)
+	{
+		status = RM_GetSpeciesName(id, i, line1, 100);
+		strcat(input, "    ");
+		strcat(input, line1);
+		strcat(input, "\n");
+	}
+	// molalities of exchange species
+	for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
+	{
+		strcpy(line, "");
+		status = RM_GetExchangeSpeciesName(id, i, line1, 100);
+		status = RM_GetExchangeName(id, i, line2, 100);
+		sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+		strcat(input, line);
+	}
+	// molalities of surface species
+	for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
+	{
+		status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
+		status = RM_GetSurfaceType(id, i, line2, 100);
+		status = RM_GetSurfaceName(id, i, line3, 100);
+		sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+		strcat(input, line);
+	}
+	strcat(input, "  -equilibrium_phases\n");
+	// equilibrium phases 
+	for (i = 0; i < RM_GetEquilibriumPhasesCount(id); i++)
+	{
+		status = RM_GetEquilibriumPhasesName(id, i, line1, 100);
+		sprintf(line, "%4s%20s\n", "    ", line1);
+		strcat(input, line);
+	}
+	strcat(input, "  -gases\n");
+	// gas components
+	for (i = 0; i < RM_GetGasComponentsCount(id); i++)
+	{
+		status = RM_GetGasComponentsName(id, i, line1, 100);
+		sprintf(line, "%4s%20s\n", "    ", line1);
+		strcat(input, line);
+	}
+	strcat(input, "  -kinetics\n");
+	// kinetic reactions 
+	for (i = 0; i < RM_GetKineticReactionsCount(id); i++)
+	{
+		status = RM_GetKineticReactionsName(id, i, line1, 100);
+		sprintf(line, "%4s%20s\n", "    ", line1);
+		strcat(input, line);
+	}
+	strcat(input, "  -solid_solutions\n");
+	// solid solutions
+	for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
+	{
+		status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
+		status = RM_GetSolidSolutionName(id, i, line2, 100);
+		sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+		strcat(input, line);
+	}
+	strcat(input, "  -saturation_indices\n");
+	// molalities of aqueous species 
+	for (i = 0; i < RM_GetSICount(id); i++)
+	{
+		status = RM_GetSIName(id, i, line1, 100);
+		sprintf(line, "%4s%20s\n", "    ", line1);
+		strcat(input, line);
+	}
+
+	/*generate selected output with the following line*/
+	//status = RM_RunString(id, 1, 1, 1, input);
+
+	/*print selected output data block with the following line*/
+	//fprintf(stdout, "%s", input);
+
+	return(0);
 }
