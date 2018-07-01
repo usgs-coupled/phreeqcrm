@@ -258,6 +258,351 @@ int RM_GetComponentCount(int id)
 }
 
 /* ---------------------------------------------------------------------- */
+/*Start*/
+/* ---------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------- */
+int RM_GetExchangeSpeciesCount(int id)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns the number of components 
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->GetExchangeSpeciesCount();
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetExchangeSpeciesName(int id, int num, char *name, int l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves the exchange species name in position num to name
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (name != NULL)
+		{
+			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetExchangeSpeciesCount()))
+			{
+				strncpy(name, Reaction_module_ptr->GetExchangeSpeciesNames()[num].c_str(), (unsigned int)l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetExchangeName(int  id, int num, char *name, int  l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves the exchangename in position num to name
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (name != NULL)
+		{
+			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetExchangeSpeciesCount()))
+			{
+				strncpy(name, Reaction_module_ptr->GetExchangeNames()[num].c_str(), (unsigned int) l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+int
+RM_GetSurfaceSpeciesCount(int  id)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns the number of components 
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->GetSurfaceSpeciesCount();
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSurfaceSpeciesName(int  id, int num, char *name, int  l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves the exchange species name in position num to name
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (name != NULL)
+		{
+			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetSurfaceSpeciesCount()))
+			{
+				strncpy(name, Reaction_module_ptr->GetSurfaceSpeciesNames()[num].c_str(), (unsigned int) l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSurfaceType(int  id, int num, char *name, int  l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves the exchangename in position num to name
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (name != NULL)
+		{
+			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetSurfaceSpeciesCount()))
+			{
+				strncpy(name, Reaction_module_ptr->GetSurfaceTypes()[num].c_str(), (unsigned int) l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSurfaceName(int  id, int num, char *name, int  l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves the exchangename in position num to name
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (name != NULL)
+		{
+			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetSurfaceSpeciesCount()))
+			{
+				strncpy(name, Reaction_module_ptr->GetSurfaceNames()[num].c_str(), (unsigned int) l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+int
+RM_GetEquilibriumPhasesCount(int  id)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns the number of components 
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->GetEquilibriumPhasesCount();
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetEquilibriumPhasesName(int  id, int num, char *name, int  l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves the exchangename in position num to name
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (name != NULL)
+		{
+			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetEquilibriumPhasesCount()))
+			{
+				strncpy(name, Reaction_module_ptr->GetEquilibriumPhases()[num].c_str(), (unsigned int) l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+int
+RM_GetGasComponentsCount(int  id)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns the number of components 
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->GetGasComponentsCount();
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetGasComponentsName(int  id, int num, char *name, int  l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves the exchangename in position num to name
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (name != NULL)
+		{
+			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetGasComponentsCount()))
+			{
+				strncpy(name, Reaction_module_ptr->GetGasComponents()[num].c_str(), (unsigned int) l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+int
+RM_GetKineticReactionsCount(int  id)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns the number of components 
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->GetKineticReactionsCount();
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetKineticReactionsName(int  id, int num, char *name, int  l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves the exchangename in position num to name
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (name != NULL)
+		{
+			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetKineticReactionsCount()))
+			{
+				strncpy(name, Reaction_module_ptr->GetKineticReactions()[num].c_str(), (unsigned int) l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+int
+RM_GetSolidSolutionComponentsCount(int  id)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns the number of components 
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->GetSolidSolutionComponentsCount();
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSolidSolutionComponentsName(int  id, int num, char *name, int  l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves the exchangename in position num to name
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (name != NULL)
+		{
+			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetSolidSolutionComponentsCount()))
+			{
+				strncpy(name, Reaction_module_ptr->GetSolidSolutionComponents()[num].c_str(), (unsigned int) l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSolidSolutionName(int  id, int num, char *name, int  l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves the exchangename in position num to name
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (name != NULL)
+		{
+			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetSolidSolutionComponentsCount()))
+			{
+				strncpy(name, Reaction_module_ptr->GetSolidSolutionNames()[num].c_str(), (unsigned int) l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+int
+RM_GetSICount(int  id)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns the number of components 
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->GetSICount();
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSIName(int  id, int num, char *name, int  l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves the exchangename in position num to name
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (name != NULL)
+		{
+			if ((l1 > 0) && (num >= 0) && (num <= Reaction_module_ptr->GetSICount()))
+			{
+				strncpy(name, Reaction_module_ptr->GetSINames()[num].c_str(), (unsigned int) l1);
+				return IRM_OK;
+			}
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+/*End*/
+/* ---------------------------------------------------------------------- */
+
 IRM_RESULT 
 RM_GetConcentrations(int id, double * c)
 /* ---------------------------------------------------------------------- */
