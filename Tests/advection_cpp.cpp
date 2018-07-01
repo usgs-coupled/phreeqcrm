@@ -696,9 +696,9 @@ int example_selected_output(PhreeqcRM &phreeqc_rm)
 	}
 	{
 		// molalities of exchange species
-		const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpeciesNames();
+		const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpecies();
 		const std::vector<std::string> &ex_names = phreeqc_rm.GetExchangeNames();
-		for (size_t i = 0; i < phreeqc_rm.GetExchangeSpeciesNames().size(); i++)
+		for (size_t i = 0; i < phreeqc_rm.GetExchangeSpeciesCount(); i++)
 		{
 
 			oss << "    ";
@@ -709,10 +709,10 @@ int example_selected_output(PhreeqcRM &phreeqc_rm)
 	}
 	{
 		// molalities of surface species
-		const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpeciesNames();
+		const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpecies();
 		const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
 		const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
-		for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesNames().size(); i++)
+		for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesCount(); i++)
 		{
 			oss << "    ";
 			oss.width(15);

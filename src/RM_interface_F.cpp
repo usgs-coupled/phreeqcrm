@@ -306,7 +306,7 @@ RMF_GetExchangeSpeciesName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetExchangeSpeciesCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetExchangeSpeciesNames()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetExchangeSpecies()[*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -364,7 +364,7 @@ RMF_GetSurfaceSpeciesName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetSurfaceSpeciesCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetSurfaceSpeciesNames()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetSurfaceSpecies()[*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
