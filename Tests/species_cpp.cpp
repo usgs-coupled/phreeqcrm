@@ -169,10 +169,12 @@ int species_cpp()
 		double time = 0.0;
 		double time_step = 0.0;
 		std::vector<double> c;
+		std::vector<double> g;
 		status = phreeqc_rm.SetTime(time);
 		status = phreeqc_rm.SetTimeStep(time_step);
 		status = phreeqc_rm.RunCells();
 		status = phreeqc_rm.GetSpeciesConcentrations(c);
+		status = phreeqc_rm.GetSpeciesLog10Gammas(g);
 
 		// --------------------------------------------------------------------------
 		// Set boundary condition
@@ -238,6 +240,7 @@ int species_cpp()
 			status = phreeqc_rm.RunCells();
 			// Transfer data from PhreeqcRM for transport
 			status = phreeqc_rm.GetSpeciesConcentrations(c);
+			status = phreeqc_rm.GetSpeciesLog10Gammas(g);
 			phreeqc_rm.GetConcentrations(component_c);
 			std::vector<double> density;
 			status = phreeqc_rm.GetDensity(density);
@@ -267,6 +270,11 @@ int species_cpp()
 						for (int j = 0; j < ncomps; j++)
 						{
 							std::cerr << "          " << j << " " << components[j] << ": " << component_c[j*nxyz + i] << "\n";
+						}
+						std::cerr << "     Species: " << "\n";
+						for (int j = 0; j < nspecies; j++)
+						{
+							std::cerr << "          " << j << " " << species[j] << " c: " << c[j*nxyz + i] << " lg: " << g[j*nxyz + i] << "\n";
 						}
 						std::vector<std::string> headings;
 						headings.resize(col);

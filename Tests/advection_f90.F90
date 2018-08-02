@@ -234,6 +234,8 @@ subroutine advection_f90()  BIND(C)
      write(string,"(A10, F15.4)") components(i), gfw(i)
      status = RM_OutputMessage(id, string)
   enddo
+  ! example selected output
+  call example_selected_output(id)
   status = RM_OutputMessage(id, " ")
   ! Set array of initial conditions
   allocate(ic1(nxyz,7), ic2(nxyz,7), f1(nxyz,7))
@@ -372,7 +374,7 @@ subroutine advection_f90()  BIND(C)
               write(*,*) "     Selected output: "
               do j = 1, col
                  status = RM_GetSelectedOutputHeading(id, j, heading)    
-                 write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ", trim(heading),": ", selected_out(i,j)
+                 write(*,'(10x,i3,A2,A20,A2,1pe15.4)') j, " ", trim(heading),": ", selected_out(i,j)
               enddo
            enddo
            deallocate(selected_out)
@@ -558,4 +560,97 @@ REAL(kind=C_DOUBLE) FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, n
             endif
         endif
     endif
-END FUNCTION my_basic_fortran_callback
+    END FUNCTION my_basic_fortran_callback
+    
+subroutine example_selected_output(id)
+    USE ISO_C_BINDING
+    USE PhreeqcRM
+    implicit none
+    integer, intent(in) :: id
+    character*20 :: line, line1, line2
+    character(len=:), allocatable :: input
+    integer i, nlines, status
+    character*1 :: c
+    nlines = 50
+    nlines = nlines + RM_GetComponentCount(id) 
+    nlines = nlines + RM_GetSpeciesCount(id)
+    nlines = nlines + RM_GetExchangeSpeciesCount(id)
+    nlines = nlines + RM_GetSurfaceSpeciesCount(id)
+    nlines = nlines + RM_GetEquilibriumPhasesCount(id)
+    nlines = nlines + RM_GetGasComponentsCount(id)
+    nlines = nlines + RM_GetKineticReactionsCount(id)
+    nlines = nlines + RM_GetSolidSolutionComponentsCount(id)
+    nlines = nlines + RM_GetSICount(id)
+    allocate (character(len=nlines * 40)::input)
+    
+    input = "SELECTED_OUTPUT 2" // new_line(c)
+    ! totals
+    input = input // "  -totals" // new_line(c)
+    do i = 1, RM_GetComponentCount(id)
+        status = RM_GetComponent(id, i, line)
+        if (trim(line) .ne. "H" .and. &
+            trim(line) .ne. "O" .and. &
+            trim(line) .ne. "charge" .and. &
+            trim(line) .ne. "Charge" .and. &
+            trim(line) .ne. "H2O" ) then
+            input = trim(input) // "    " // trim(line) // new_line(c)
+         endif 
+    enddo
+    ! aqueous species
+    input = trim(input) // "  -molalities" // new_line(c)
+    do i = 1, RM_GetSpeciesCount(id)
+        status = RM_GetSpeciesName(id, i, line)
+        input = trim(input) // "    " // line // new_line(c)
+    enddo 
+    ! exchange species
+    do i = 1, RM_GetExchangeSpeciesCount(id)
+        status = RM_GetExchangeSpeciesName(id, i, line)
+        status = RM_GetExchangeName(id, i, line1)
+        input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+    enddo  
+    ! surface species species
+    do i = 1, RM_GetSurfaceSpeciesCount(id)
+        status = RM_GetSurfaceSpeciesName(id, i, line)
+        status = RM_GetSurfaceType(id, i, line1)
+        status = RM_GetSurfaceName(id, i, line2)
+        input = trim(input) // "    " // line // " # " // line1  // line2 // new_line(c)
+    enddo   
+    ! equilibrium phases
+    input = trim(input) // "  -equilibrium_phases " // new_line(c)
+    do i = 1, RM_GetEquilibriumPhasesCount(id)
+        status = RM_GetEquilibriumPhasesName(id, i, line)
+        input = trim(input) // "    " // line // new_line(c)
+    enddo
+    ! gas components
+    input = trim(input) // "  -gas " // new_line(c)
+    do i = 1, RM_GetGasComponentsCount(id)
+        status = RM_GetGasComponentsName(id, i, line)
+        input = trim(input) // "    " // line // new_line(c)
+    enddo
+    ! kinetic reactions
+    input = trim(input) // "  -kinetics " // new_line(c)
+    do i = 1, RM_GetKineticReactionsCount(id)
+        status = RM_GetKineticReactionsName(id, i, line)
+        input = trim(input) // "    " // line // new_line(c)
+    enddo
+    ! solid solution components
+    input = trim(input) // "  -solid_solutions " // new_line(c)
+    do i = 1, RM_GetSolidSolutionComponentsCount(id)
+        status = RM_GetSolidSolutionComponentsName(id, i, line)
+        status = RM_GetSolidSolutionName(id, i, line1)
+        input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+    enddo
+    ! saturation indices
+    input = trim(input) // "  -si "// new_line(c)
+    do i = 1, RM_GetSICount(id)
+        status = RM_GetSIName(id, i, line)
+        input = trim(input) // "    " // line // new_line(c)
+    enddo    
+    
+    ! generate selected output with the following line
+    !status = RM_RunString(id, 1, 1, 1, input)
+    
+    ! print selected output data block with the following line
+    !write(*,'(a)') input
+    return
+END subroutine example_selected_output

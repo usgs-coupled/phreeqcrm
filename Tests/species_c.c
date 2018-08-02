@@ -44,6 +44,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		double * bc_conc;
 		double * c;
 		double * species_c;
+		double * species_log10gammas;
 		double * species_d;
 		double * species_z;
 		double time, time_step;
@@ -247,11 +248,13 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		time_step = 0.0;
 		c = (double *) malloc((size_t) (ncomps * nxyz * sizeof(double)));
 		species_c = (double *) malloc((size_t) (nspecies * nxyz * sizeof(double)));
+		species_log10gammas = (double *)malloc((size_t)(nspecies * nxyz * sizeof(double)));
 		status = RM_SetTime(id, time);
 		status = RM_SetTimeStep(id, time_step);
 		status = RM_RunCells(id); 
 		status = RM_GetConcentrations(id, c);
 		status = RM_GetSpeciesConcentrations(id, species_c);
+		status = RM_GetSpeciesLog10Gammas(id, species_log10gammas);
 
 		// --------------------------------------------------------------------------
 		// Set boundary condition
@@ -329,7 +332,8 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 			status = RM_RunCells(id);  
 			// Transfer data from PhreeqcRM for transport
 			status = RM_GetConcentrations(id, c);
-			status = RM_GetSpeciesConcentrations(id, species_c); 
+			status = RM_GetSpeciesConcentrations(id, species_c);
+			status = RM_GetSpeciesLog10Gammas(id, species_log10gammas);
 			status = RM_GetDensity(id, density);
 			status = RM_GetSolutionVolume(id, volume); 
 			// Print results at last time step
@@ -357,6 +361,12 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 						for (j = 0; j < ncomps; j++)
 						{
 							fprintf(stderr, "          %2d %10s: %10.4f\n", j, components[j], c[j*nxyz + i]);
+						}
+						fprintf(stderr, "     Species: \n");
+						for (j = 0; j < nspecies; j++)
+						{
+							status = RM_GetSpeciesName(id, j, str, 100);
+							fprintf(stderr, "          %2d %10s: %10.4f %10.4f\n", j, str, species_c[j*nxyz + i], species_log10gammas[j*nxyz + i]);
 						}
 						fprintf(stderr, "     Selected output: \n");
 						for (j = 0; j < col; j++)
@@ -420,6 +430,8 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		free(bc_f1);
 		free(bc_conc);
 		free(c);
+		free(species_c);
+		free(species_log10gammas);
 		free(density);
 		free(temperature);
 		free(pressure);

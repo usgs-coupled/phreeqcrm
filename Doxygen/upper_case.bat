@@ -370,6 +370,82 @@
   @sed -i "s/rm_warningmessage/RM_WarningMessage/g" %%f 
   @del sed*
 )
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getspecieslog10gammas/RM_GetSpeciesLog10Gammas/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getexchangespeciescount/RM_GetExchangeSpeciesCount/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getexchangespeciesname/RM_GetExchangeSpeciesName/g"   %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getexchangename/RM_GetExchangeName/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsurfacespeciescount/RM_GetSurfaceSpeciesCount/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsurfacespeciesname/RM_GetSurfaceSpeciesName/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsurfacetype/RM_GetSurfaceType/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsurfacename/RM_GetSurfaceName/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getequilibriumphasescount/RM_GetEquilibriumPhasesCount/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getequilibriumphasesname/RM_GetEquilibriumPhasesName/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getgascomponentscount/RM_GetGasComponentsCount/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getgascomponentsname/RM_GetGasComponentsName/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getkineticreactionscount/RM_GetKineticReactionsCount/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getkineticreactionsname/RM_GetKineticReactionsName/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsolidsolutioncomponentscount/RM_GetSolidSolutionComponentsCount/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsolidsolutioncomponentsname/RM_GetSolidSolutionComponentsName/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsolidsolutionname/RM_GetSolidSolutionName/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsicount/RM_GetSICount/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getsiname/RM_GetSIName/g" %%f 
+  @del sed*
+)
 
 @REM Rename PhreeqcRM to mixed case 
 @FOR %%f IN (.\html\*.html) DO @(

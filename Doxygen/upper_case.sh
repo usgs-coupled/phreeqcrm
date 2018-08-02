@@ -278,6 +278,63 @@ done
 for f in html/*.html; do
   sed -i "s/rm_warningmessage/RM_WarningMessage/g" $f 
 done
+for f in html/*.html; do
+  sed -i "s/rm_getspecieslog10gammas/RM_GetSpeciesLog10Gammas/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getexchangespeciescount/RM_GetExchangeSpeciesCount/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getexchangespeciesname/RM_GetExchangeSpeciesName/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getexchangename/RM_GetExchangeName/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsurfacespeciescount/RM_GetSurfaceSpeciesCount/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsurfacespeciesname/RM_GetSurfaceSpeciesName/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsurfacetype/RM_GetSurfaceType/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsurfacename/RM_GetSurfaceName/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getequilibriumphasescount/RM_GetEquilibriumPhasesCount/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getequilibriumphasesname/RM_GetEquilibriumPhasesName/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getgascomponentscount/RM_GetGasComponentsCount/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getgascomponentsname/RM_GetGasComponentsName/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getkineticreactionscount/RM_GetKineticReactionsCount/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getkineticreactionsname/RM_GetKineticReactionsName/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsolidsolutioncomponentscount/RM_GetSolidSolutionComponentsCount/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsolidsolutioncomponentsname/RM_GetSolidSolutionComponentsName/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsolidsolutionname/RM_GetSolidSolutionName/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsicount/RM_GetSICount/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getsiname/RM_GetSIName/g"  $f
+done
 
 # Rename PhreeqcRM to mixed case 
 for f in html/*.html; do

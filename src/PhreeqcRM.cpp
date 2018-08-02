@@ -2358,6 +2358,9 @@ PhreeqcRM::FindComponents(void)
 		if (this->species_save_on)
 		{
 			phast_iphreeqc_worker->PhreeqcPtr->save_species = true;
+		}
+		// Make lists regardless of species_save_on
+		{
 			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
 			{
 				std::ostringstream in;
@@ -2391,6 +2394,13 @@ PhreeqcRM::FindComponents(void)
 				nd.add("Charge", phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->z);
 				species_stoichiometry.push_back(nd);
 			}
+			for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_phases; i++)
+			{
+				if (phast_iphreeqc_worker->PhreeqcPtr->phases[i]->in == TRUE)
+				{
+					SINamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->phases[i]->name);
+				}
+			}
 			{
 				std::ostringstream in;
 				in << "DELETE; -solution " << next << "\n";
@@ -2399,6 +2409,166 @@ PhreeqcRM::FindComponents(void)
 				{
 					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
 					throw PhreeqcRMStop();
+				}
+			}
+		}
+		// Make all lists
+		{
+			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
+			int next_ex = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_EXCHANGE);
+			int next_surf = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SURFACE);
+			this->SurfaceSpeciesNamesList.clear();
+			this->SurfaceTypesList.clear();
+			this->SurfaceNamesList.clear();
+			const std::list<std::string> &surftype = phast_iphreeqc_worker->GetSurfaceTypeList();
+			const std::list<std::string> &surfnames = phast_iphreeqc_worker->GetSurfaceNamesList();
+			this->ExchangeSpeciesNamesList.clear();
+			this->ExchangeNamesList.clear();
+			const std::list<std::string> &ex = phast_iphreeqc_worker->GetExchangeNamesList();
+			if (ex.size() > 0 || surftype.size() > 0)
+			{
+				std::ostringstream in;
+				in << "SOLUTION " << next << "\n";
+				for (i = 0; i < components.size(); i++)
+				{
+					if (components[i] == "H") continue;
+					if (components[i] == "O") continue;
+					if (components[i] == "H2O") continue;
+					if (components[i] == "Charge") continue;
+					in << components[i] << " 1e-6\n";
+				}
+				in << "END\n";
+				int status = phast_iphreeqc_worker->RunString(in.str().c_str());
+				if (status != 0)
+				{
+					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+					throw PhreeqcRMStop();
+				}
+			}
+			// Surface species
+			if (surftype.size() > 0)
+			{
+				std::list<std::string>::const_iterator cit = surftype.begin();
+				std::list<std::string>::const_iterator citnames = surfnames.begin();
+				for (; cit != surftype.end(); cit++)
+				{
+					std::ostringstream in;
+					in << "SURFACE " << next_surf << "\n";
+					in << "  -eq " << next << "\n";
+					in << "  " << *cit << "  0.001  1   1\n";
+					int status = phast_iphreeqc_worker->RunString(in.str().c_str());
+					if (status != 0)
+					{
+						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+						throw PhreeqcRMStop();
+					}
+					for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_s_x; i++)
+					{
+						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == SURF)
+						{
+							this->SurfaceSpeciesNamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
+							this->SurfaceTypesList.push_back(*cit);
+							this->SurfaceNamesList.push_back(*citnames);
+						}
+					}
+					{
+						std::ostringstream in1;
+						in1 << "DELETE -surface " << next_surf << "\n";
+						status = phast_iphreeqc_worker->RunString(in1.str().c_str());
+						if (status != 0)
+						{
+							this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+							throw PhreeqcRMStop();
+						}
+					}
+					citnames++;
+				}
+			}
+			// Exchange species
+			if (ex.size() > 0)
+			{
+				std::list<std::string>::const_iterator cit = ex.begin();
+				for (; cit != ex.end(); cit++)
+				{
+					std::ostringstream in;
+					in << "EXCHANGE " << next_ex << "\n";
+					in << "  -eq " << next << "\n";
+					in << "  " << *cit << "  0.001\n";
+					int status = phast_iphreeqc_worker->RunString(in.str().c_str());
+					if (status != 0)
+					{
+						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+						throw PhreeqcRMStop();
+					}
+					for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_s_x; i++)
+					{
+						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == EX)
+						{
+							this->ExchangeSpeciesNamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
+							this->ExchangeNamesList.push_back(*cit);
+						}
+					}
+					{
+						std::ostringstream in1;
+						in1 << "DELETE -exchange " << next_ex << "\n";
+						status = phast_iphreeqc_worker->RunString(in1.str().c_str());
+						if (status != 0)
+						{
+							this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+							throw PhreeqcRMStop();
+						}
+					}
+				}
+			}
+			if (ex.size() > 0 || surftype.size() > 0)
+			{
+				std::ostringstream in;
+				in << "DELETE; -solution " << next << "\n";
+				int status = phast_iphreeqc_worker->RunString(in.str().c_str());
+				if (status != 0)
+				{
+					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+					throw PhreeqcRMStop();
+				}
+			}
+			{
+				this->EquilibriumPhasesList.clear();
+				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetEquilibriumPhasesList().begin();
+				for (; cit != phast_iphreeqc_worker->GetEquilibriumPhasesList().end(); cit++)
+				{
+					this->EquilibriumPhasesList.push_back(*cit);
+				}
+			}
+			{
+				this->GasComponentsList.clear();
+				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetGasComponentsList().begin();
+				for (; cit != phast_iphreeqc_worker->GetGasComponentsList().end(); cit++)
+				{
+					this->GasComponentsList.push_back(*cit);
+				}
+			}
+			{
+				this->KineticReactionsList.clear();
+				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetKineticReactionsList().begin();
+				for (; cit != phast_iphreeqc_worker->GetKineticReactionsList().end(); cit++)
+				{
+					this->KineticReactionsList.push_back(*cit);
+				}
+			}
+			{
+				this->SolidSolutionComponentsList.clear();
+				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetSolidSolutionComponentsList().begin();
+				for (; cit != phast_iphreeqc_worker->GetSolidSolutionComponentsList().end(); cit++)
+				{
+					this->SolidSolutionComponentsList.push_back(*cit);
+				}
+			}
+			{
+				this->SolidSolutionNamesList.clear();
+				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetSolidSolutionNamesList().begin();
+				for (; cit != phast_iphreeqc_worker->GetSolidSolutionNamesList().end(); cit++)
+				{
+					this->SolidSolutionNamesList.push_back(*cit);
 				}
 			}
 		}
@@ -3334,7 +3504,147 @@ PhreeqcRM::GetSpeciesConcentrations(std::vector<double> & species_conc)
 	return IRM_OK;
 }
 #endif
+#ifdef USE_MPI
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSpeciesLog10Gammas(std::vector<double> & species_log10gammas)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (this->mpi_myself == 0)
+	{
+		int method = METHOD_GETSPECIESLOG10GAMMAS;
+		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+	}
 
+	if (this->species_save_on)
+	{
+		size_t nspecies = this->species_names.size();
+		// Fill in root concentrations
+		if (this->mpi_myself == 0)
+		{
+			species_log10gammas.resize(nspecies * this->nxyz, 0);
+			for (int j = this->start_cell[0]; j <= this->end_cell[0]; j++)
+			{
+				std::vector<double> d;
+				d.resize(this->species_names.size(), 0);
+				{
+					std::map<int, double>::iterator it = this->workers[0]->Get_solution(j)->Get_log_gamma_map().begin();
+					for (; it != this->workers[0]->Get_solution(j)->Get_log_gamma_map().end(); it++)
+					{
+						// it is pointing to a species number, concentration
+						int rm_species_num = this->s_num2rm_species_num[it->first];
+						d[rm_species_num] = it->second;
+					}
+				}
+				{
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						double *d_ptr = &species_log10gammas[*it];
+						for (size_t i = 0; i < d.size(); i++)
+						{
+							d_ptr[this->nxyz * i] = d[i];
+						}
+					}
+				}
+			}
+		}
+		// Fill in worker concentrations
+		for (int n = 1; n < this->mpi_tasks; n++)
+		{
+			int ncells = this->end_cell[n] - start_cell[n] + 1;
+			if (this->mpi_myself == n)
+			{
+				species_log10gammas.resize(nspecies * ncells, 0);
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					{
+						std::map<int, double>::iterator it = this->workers[0]->Get_solution(j)->Get_log_gamma_map().begin();
+						for (; it != this->workers[0]->Get_solution(j)->Get_log_gamma_map().end(); it++)
+						{
+							// it is pointing to a species number, concentration
+							int rm_species_num = this->s_num2rm_species_num[it->first];
+							species_log10gammas[rm_species_num * ncells + j0] = it->second;
+						}
+					}
+				}
+				MPI_Send((void *)&species_log10gammas.front(), (int)nspecies * ncells, MPI_DOUBLE, 0, 0, phreeqcrm_comm);
+			}
+			else if (this->mpi_myself == 0)
+			{
+				MPI_Status mpi_status;
+				double * recv_species = new double[(size_t)nspecies * ncells];
+				MPI_Recv(recv_species, (int)nspecies * ncells, MPI_DOUBLE, n, 0, phreeqcrm_comm, &mpi_status);
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						double *d_ptr = &species_log10gammas[*it];
+						for (size_t i = 0; i < nspecies; i++)
+						{
+							d_ptr[this->nxyz * i] = recv_species[i * ncells + j0];
+						}
+					}
+				}
+				delete recv_species;
+			}
+		}
+	}
+	else
+	{
+		species_log10gammas.clear();
+	}
+	return IRM_OK;
+}
+#else
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSpeciesLog10Gammas(std::vector<double> & species_log10gammas)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (this->species_save_on)
+	{
+		size_t nspecies = this->species_names.size();
+		species_log10gammas.resize(nspecies * this->nxyz, 0);
+		for (int i = 0; i < this->nthreads; i++)
+		{
+			for (int j = this->start_cell[i]; j <= this->end_cell[i]; j++)
+			{
+				std::vector<double> d;
+				d.resize(this->species_names.size(), 0);
+				{
+					std::map<int, double>::iterator it = this->workers[i]->Get_solution(j)->Get_log_gamma_map().begin();
+					for (; it != this->workers[i]->Get_solution(j)->Get_log_gamma_map().end(); it++)
+					{
+						// it is pointing to a species number, concentration
+						int rm_species_num = this->s_num2rm_species_num[it->first];
+						d[rm_species_num] = it->second;
+					}
+				}
+				std::vector<int>::iterator it;
+				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+				{
+					double *d_ptr = &species_log10gammas[*it];
+					for (size_t i = 0; i < d.size(); i++)
+					{
+						d_ptr[this->nxyz * i] = d[i];
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		species_log10gammas.clear();
+	}
+	return IRM_OK;
+}
+#endif
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 const std::vector<double> &
@@ -4531,6 +4841,13 @@ PhreeqcRM::MpiWorker()
 				{
 					std::vector<double> c;
 					this->GetSpeciesConcentrations(c);
+				}
+				break;
+			case METHOD_GETSPECIESLOG10GAMMAS:
+				if (debug_worker) std::cerr << "METHOD_GETSPECIESLOG10GAMMAS" << std::endl;
+				{
+					std::vector<double> c;
+					this->GetSpeciesLog10Gammas(c);
 				}
 				break;
 			case METHOD_GETTEMPERATURE:
