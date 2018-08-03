@@ -2565,7 +2565,8 @@ SUBROUTINE Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
-    errors = errors + Chk_Double2D(id, species_log10gammas, rmf_nxyz, nspecies, "species concentration", "RM_GetSpeciesConcentrations")
+    errors = errors + Chk_Double2D(id, species_log10gammas, rmf_nxyz, nspecies, "species concentration", &
+         "RM_GetSpeciesConcentrations")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesConcentrations")
     endif
