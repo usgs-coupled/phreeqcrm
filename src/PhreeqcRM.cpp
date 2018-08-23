@@ -2289,6 +2289,7 @@ PhreeqcRM::FindComponents(void)
  *		n_comp, which is total, including H, O, elements, and Charge
  *      names, which contains character strings with names of components
  */
+	bool clear = false;
 	this->phreeqcrm_error_string.clear();
 	try
 	{
@@ -2531,44 +2532,113 @@ PhreeqcRM::FindComponents(void)
 					throw PhreeqcRMStop();
 				}
 			}
+			// equilibrium_phases
 			{
-				this->EquilibriumPhasesList.clear();
+				// Move to set
+				std::set<std::string> eq_set;
+				if (!clear)
+				{
+					for (size_t i = 0; i < this->EquilibriumPhasesList.size(); i++)
+					{
+						eq_set.insert(this->EquilibriumPhasesList[i]);
+					}
+				}
+				// add new equilibrium phases to set
 				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetEquilibriumPhasesList().begin();
 				for (; cit != phast_iphreeqc_worker->GetEquilibriumPhasesList().end(); cit++)
 				{
-					this->EquilibriumPhasesList.push_back(*cit);
+					eq_set.insert(*cit);
+				}
+				// move set to vector
+				this->EquilibriumPhasesList.clear();
+				std::set<std::string>::const_iterator eqit = eq_set.begin();
+				for (; eqit != eq_set.end(); eqit++)
+				{
+					this->EquilibriumPhasesList.push_back(*eqit);
 				}
 			}
-			{
-				this->GasComponentsList.clear();
+			// gas phase components
+			{				
+				// Move to set
+				std::set<std::string> g_set;
+				if (!clear)
+				{
+					for (size_t i = 0; i < this->GasComponentsList.size(); i++)
+					{
+						g_set.insert(this->GasComponentsList[i]);
+					}
+				}
+				// add new gas components to set
 				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetGasComponentsList().begin();
 				for (; cit != phast_iphreeqc_worker->GetGasComponentsList().end(); cit++)
 				{
-					this->GasComponentsList.push_back(*cit);
+					g_set.insert(*cit);
+				}
+				// move set to vector
+				this->GasComponentsList.clear();
+				std::set<std::string>::const_iterator git = g_set.begin();
+				for (; git != g_set.end(); git++)
+				{
+					this->GasComponentsList.push_back(*git);
 				}
 			}
+			// Kinetics
 			{
-				this->KineticReactionsList.clear();
+				// Move to set
+				std::set<std::string> k_set;
+				if (!clear)
+				{
+					for (size_t i = 0; i < this->KineticReactionsList.size(); i++)
+					{
+						k_set.insert(this->KineticReactionsList[i]);
+					}
+				}
+				// add new kinetic reactions to set
 				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetKineticReactionsList().begin();
 				for (; cit != phast_iphreeqc_worker->GetKineticReactionsList().end(); cit++)
 				{
-					this->KineticReactionsList.push_back(*cit);
+					k_set.insert(*cit);
+				}
+				// move set to vector
+				this->KineticReactionsList.clear();
+				std::set<std::string>::const_iterator kit = k_set.begin();
+				for (; kit != k_set.end(); kit++)
+				{
+					this->KineticReactionsList.push_back(*kit);
 				}
 			}
+			// Solid solutions
 			{
-				this->SolidSolutionComponentsList.clear();
+				// move existing component names to set and solid solution names to map
+				std::set<std::string> sscomp_set;
+				std::map<std::string, std::string> ssnames_map;
+				if (!clear)
+				{
+					for (size_t i = 0; i < this->SolidSolutionComponentsList.size(); i++)
+					{
+						sscomp_set.insert(this->SolidSolutionComponentsList[i]);
+						ssnames_map[this->SolidSolutionComponentsList[i]] = this->SolidSolutionNamesList[i];
+					}
+				}
+				// add new component names set and solid solution names to map
 				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetSolidSolutionComponentsList().begin();
+				std::list<std::string>::const_iterator nit = phast_iphreeqc_worker->GetSolidSolutionNamesList().begin();
 				for (; cit != phast_iphreeqc_worker->GetSolidSolutionComponentsList().end(); cit++)
 				{
-					this->SolidSolutionComponentsList.push_back(*cit);
+					if (sscomp_set.find(*cit) == sscomp_set.end())
+					{
+						sscomp_set.insert(*cit);
+						ssnames_map[*cit] = *nit++;
+					}
 				}
-			}
-			{
+				// Move from set and map to vectors
+				this->SolidSolutionComponentsList.clear();
 				this->SolidSolutionNamesList.clear();
-				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetSolidSolutionNamesList().begin();
-				for (; cit != phast_iphreeqc_worker->GetSolidSolutionNamesList().end(); cit++)
+				std::set<std::string>::const_iterator set_it = sscomp_set.begin();
+				for (; set_it != sscomp_set.end(); set_it++)
 				{
-					this->SolidSolutionNamesList.push_back(*cit);
+					this->SolidSolutionComponentsList.push_back(*set_it);
+					this->SolidSolutionNamesList.push_back(ssnames_map[*set_it]);
 				}
 			}
 		}
