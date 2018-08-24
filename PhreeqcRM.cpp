@@ -2415,18 +2415,54 @@ PhreeqcRM::FindComponents(void)
 		}
 		// Make all lists
 		{
+			// Make set for surfaces
+			std::set<std::string> surface_types_set;
+			std::map<std::string, std::string> surface_names_map;
+			if (!clear)
+			{
+				for (size_t ii = 0; ii < this->SurfaceSpeciesNamesList.size(); ii++)
+				{
+					surface_types_set.insert(this->SurfaceTypesList[ii]);
+					surface_names_map[this->SurfaceTypesList[ii]] = this->SurfaceNamesList[ii];
+				}
+			}
+			// add new surface types 
+			{
+				const std::list<std::string> &surftype = phast_iphreeqc_worker->GetSurfaceTypeList();
+				const std::list<std::string> &surfnames = phast_iphreeqc_worker->GetSurfaceNamesList();
+				{
+					std::list<std::string>::const_iterator surftype_it = surftype.begin();
+					std::list<std::string>::const_iterator surfnames_it = surfnames.begin();
+					for (; surftype_it != surftype.end(); surftype_it++)
+					{
+						surface_types_set.insert(*surftype_it);
+						surface_names_map[*surftype_it] = *surfnames_it++;
+					}
+				}
+			}
+			// make set for exchange
+			std::set<std::string> ex_set;
+			if (!clear)
+			{
+				for (size_t ii = 0; ii < this->ExchangeNamesList.size(); ii++)
+				{
+					ex_set.insert(this->ExchangeNamesList[ii]);
+				}
+			}
+			// add new exchange sites
+			{
+				const std::list<std::string> &ex = phast_iphreeqc_worker->GetExchangeNamesList();
+				{
+					std::list<std::string>::const_iterator ex_it = ex.begin();
+					for (; ex_it != ex.end(); ex_it++)
+					{
+						ex_set.insert(*ex_it);
+					}
+				}
+			}
+			// write solution
 			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
-			int next_ex = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_EXCHANGE);
-			int next_surf = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SURFACE);
-			this->SurfaceSpeciesNamesList.clear();
-			this->SurfaceTypesList.clear();
-			this->SurfaceNamesList.clear();
-			const std::list<std::string> &surftype = phast_iphreeqc_worker->GetSurfaceTypeList();
-			const std::list<std::string> &surfnames = phast_iphreeqc_worker->GetSurfaceNamesList();
-			this->ExchangeSpeciesNamesList.clear();
-			this->ExchangeNamesList.clear();
-			const std::list<std::string> &ex = phast_iphreeqc_worker->GetExchangeNamesList();
-			if (ex.size() > 0 || surftype.size() > 0)
+			if (ex_set.size() > 0 || surface_types_set.size() > 0)
 			{
 				std::ostringstream in;
 				in << "SOLUTION " << next << "\n";
@@ -2446,12 +2482,15 @@ PhreeqcRM::FindComponents(void)
 					throw PhreeqcRMStop();
 				}
 			}
-			// Surface species
-			if (surftype.size() > 0)
+			// write surface and save vectors
+			int next_surf = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SURFACE);
+			this->SurfaceSpeciesNamesList.clear();
+			this->SurfaceTypesList.clear();
+			this->SurfaceNamesList.clear();
+			if (surface_types_set.size() > 0)
 			{
-				std::list<std::string>::const_iterator cit = surftype.begin();
-				std::list<std::string>::const_iterator citnames = surfnames.begin();
-				for (; cit != surftype.end(); cit++)
+				std::set<std::string>::iterator cit = surface_types_set.begin();
+				for (; cit != surface_types_set.end(); cit++)
 				{
 					std::ostringstream in;
 					in << "SURFACE " << next_surf << "\n";
@@ -2463,13 +2502,14 @@ PhreeqcRM::FindComponents(void)
 						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
 						throw PhreeqcRMStop();
 					}
+					// fill surface vectors
 					for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_s_x; i++)
 					{
 						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == SURF)
 						{
 							this->SurfaceSpeciesNamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
 							this->SurfaceTypesList.push_back(*cit);
-							this->SurfaceNamesList.push_back(*citnames);
+							this->SurfaceNamesList.push_back(surface_names_map[*cit]);
 						}
 					}
 					{
@@ -2482,14 +2522,16 @@ PhreeqcRM::FindComponents(void)
 							throw PhreeqcRMStop();
 						}
 					}
-					citnames++;
 				}
 			}
 			// Exchange species
-			if (ex.size() > 0)
+			int next_ex = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_EXCHANGE);
+			this->ExchangeSpeciesNamesList.clear();
+			this->ExchangeNamesList.clear();
+			if (ex_set.size() > 0)
 			{
-				std::list<std::string>::const_iterator cit = ex.begin();
-				for (; cit != ex.end(); cit++)
+				std::set<std::string>::iterator cit = ex_set.begin();
+				for (; cit != ex_set.end(); cit++)
 				{
 					std::ostringstream in;
 					in << "EXCHANGE " << next_ex << "\n";
@@ -2521,7 +2563,7 @@ PhreeqcRM::FindComponents(void)
 					}
 				}
 			}
-			if (ex.size() > 0 || surftype.size() > 0)
+			if (ex_set.size() > 0 || surface_types_set.size() > 0)
 			{
 				std::ostringstream in;
 				in << "DELETE; -solution " << next << "\n";
