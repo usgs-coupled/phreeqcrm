@@ -2289,6 +2289,7 @@ PhreeqcRM::FindComponents(void)
  *		n_comp, which is total, including H, O, elements, and Charge
  *      names, which contains character strings with names of components
  */
+	bool clear = false;
 	this->phreeqcrm_error_string.clear();
 	try
 	{
@@ -2414,18 +2415,54 @@ PhreeqcRM::FindComponents(void)
 		}
 		// Make all lists
 		{
+			// Make set for surfaces
+			std::set<std::string> surface_types_set;
+			std::map<std::string, std::string> surface_names_map;
+			if (!clear)
+			{
+				for (size_t ii = 0; ii < this->SurfaceSpeciesNamesList.size(); ii++)
+				{
+					surface_types_set.insert(this->SurfaceTypesList[ii]);
+					surface_names_map[this->SurfaceTypesList[ii]] = this->SurfaceNamesList[ii];
+				}
+			}
+			// add new surface types 
+			{
+				const std::list<std::string> &surftype = phast_iphreeqc_worker->GetSurfaceTypeList();
+				const std::list<std::string> &surfnames = phast_iphreeqc_worker->GetSurfaceNamesList();
+				{
+					std::list<std::string>::const_iterator surftype_it = surftype.begin();
+					std::list<std::string>::const_iterator surfnames_it = surfnames.begin();
+					for (; surftype_it != surftype.end(); surftype_it++)
+					{
+						surface_types_set.insert(*surftype_it);
+						surface_names_map[*surftype_it] = *surfnames_it++;
+					}
+				}
+			}
+			// make set for exchange
+			std::set<std::string> ex_set;
+			if (!clear)
+			{
+				for (size_t ii = 0; ii < this->ExchangeNamesList.size(); ii++)
+				{
+					ex_set.insert(this->ExchangeNamesList[ii]);
+				}
+			}
+			// add new exchange sites
+			{
+				const std::list<std::string> &ex = phast_iphreeqc_worker->GetExchangeNamesList();
+				{
+					std::list<std::string>::const_iterator ex_it = ex.begin();
+					for (; ex_it != ex.end(); ex_it++)
+					{
+						ex_set.insert(*ex_it);
+					}
+				}
+			}
+			// write solution
 			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
-			int next_ex = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_EXCHANGE);
-			int next_surf = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SURFACE);
-			this->SurfaceSpeciesNamesList.clear();
-			this->SurfaceTypesList.clear();
-			this->SurfaceNamesList.clear();
-			const std::list<std::string> &surftype = phast_iphreeqc_worker->GetSurfaceTypeList();
-			const std::list<std::string> &surfnames = phast_iphreeqc_worker->GetSurfaceNamesList();
-			this->ExchangeSpeciesNamesList.clear();
-			this->ExchangeNamesList.clear();
-			const std::list<std::string> &ex = phast_iphreeqc_worker->GetExchangeNamesList();
-			if (ex.size() > 0 || surftype.size() > 0)
+			if (ex_set.size() > 0 || surface_types_set.size() > 0)
 			{
 				std::ostringstream in;
 				in << "SOLUTION " << next << "\n";
@@ -2445,12 +2482,15 @@ PhreeqcRM::FindComponents(void)
 					throw PhreeqcRMStop();
 				}
 			}
-			// Surface species
-			if (surftype.size() > 0)
+			// write surface and save vectors
+			int next_surf = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SURFACE);
+			this->SurfaceSpeciesNamesList.clear();
+			this->SurfaceTypesList.clear();
+			this->SurfaceNamesList.clear();
+			if (surface_types_set.size() > 0)
 			{
-				std::list<std::string>::const_iterator cit = surftype.begin();
-				std::list<std::string>::const_iterator citnames = surfnames.begin();
-				for (; cit != surftype.end(); cit++)
+				std::set<std::string>::iterator cit = surface_types_set.begin();
+				for (; cit != surface_types_set.end(); cit++)
 				{
 					std::ostringstream in;
 					in << "SURFACE " << next_surf << "\n";
@@ -2462,13 +2502,14 @@ PhreeqcRM::FindComponents(void)
 						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
 						throw PhreeqcRMStop();
 					}
+					// fill surface vectors
 					for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_s_x; i++)
 					{
 						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == SURF)
 						{
 							this->SurfaceSpeciesNamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
 							this->SurfaceTypesList.push_back(*cit);
-							this->SurfaceNamesList.push_back(*citnames);
+							this->SurfaceNamesList.push_back(surface_names_map[*cit]);
 						}
 					}
 					{
@@ -2481,14 +2522,16 @@ PhreeqcRM::FindComponents(void)
 							throw PhreeqcRMStop();
 						}
 					}
-					citnames++;
 				}
 			}
 			// Exchange species
-			if (ex.size() > 0)
+			int next_ex = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_EXCHANGE);
+			this->ExchangeSpeciesNamesList.clear();
+			this->ExchangeNamesList.clear();
+			if (ex_set.size() > 0)
 			{
-				std::list<std::string>::const_iterator cit = ex.begin();
-				for (; cit != ex.end(); cit++)
+				std::set<std::string>::iterator cit = ex_set.begin();
+				for (; cit != ex_set.end(); cit++)
 				{
 					std::ostringstream in;
 					in << "EXCHANGE " << next_ex << "\n";
@@ -2520,7 +2563,7 @@ PhreeqcRM::FindComponents(void)
 					}
 				}
 			}
-			if (ex.size() > 0 || surftype.size() > 0)
+			if (ex_set.size() > 0 || surface_types_set.size() > 0)
 			{
 				std::ostringstream in;
 				in << "DELETE; -solution " << next << "\n";
@@ -2531,44 +2574,113 @@ PhreeqcRM::FindComponents(void)
 					throw PhreeqcRMStop();
 				}
 			}
+			// equilibrium_phases
 			{
-				this->EquilibriumPhasesList.clear();
+				// Move to set
+				std::set<std::string> eq_set;
+				if (!clear)
+				{
+					for (size_t i = 0; i < this->EquilibriumPhasesList.size(); i++)
+					{
+						eq_set.insert(this->EquilibriumPhasesList[i]);
+					}
+				}
+				// add new equilibrium phases to set
 				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetEquilibriumPhasesList().begin();
 				for (; cit != phast_iphreeqc_worker->GetEquilibriumPhasesList().end(); cit++)
 				{
-					this->EquilibriumPhasesList.push_back(*cit);
+					eq_set.insert(*cit);
+				}
+				// move set to vector
+				this->EquilibriumPhasesList.clear();
+				std::set<std::string>::const_iterator eqit = eq_set.begin();
+				for (; eqit != eq_set.end(); eqit++)
+				{
+					this->EquilibriumPhasesList.push_back(*eqit);
 				}
 			}
-			{
-				this->GasComponentsList.clear();
+			// gas phase components
+			{				
+				// Move to set
+				std::set<std::string> g_set;
+				if (!clear)
+				{
+					for (size_t i = 0; i < this->GasComponentsList.size(); i++)
+					{
+						g_set.insert(this->GasComponentsList[i]);
+					}
+				}
+				// add new gas components to set
 				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetGasComponentsList().begin();
 				for (; cit != phast_iphreeqc_worker->GetGasComponentsList().end(); cit++)
 				{
-					this->GasComponentsList.push_back(*cit);
+					g_set.insert(*cit);
+				}
+				// move set to vector
+				this->GasComponentsList.clear();
+				std::set<std::string>::const_iterator git = g_set.begin();
+				for (; git != g_set.end(); git++)
+				{
+					this->GasComponentsList.push_back(*git);
 				}
 			}
+			// Kinetics
 			{
-				this->KineticReactionsList.clear();
+				// Move to set
+				std::set<std::string> k_set;
+				if (!clear)
+				{
+					for (size_t i = 0; i < this->KineticReactionsList.size(); i++)
+					{
+						k_set.insert(this->KineticReactionsList[i]);
+					}
+				}
+				// add new kinetic reactions to set
 				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetKineticReactionsList().begin();
 				for (; cit != phast_iphreeqc_worker->GetKineticReactionsList().end(); cit++)
 				{
-					this->KineticReactionsList.push_back(*cit);
+					k_set.insert(*cit);
+				}
+				// move set to vector
+				this->KineticReactionsList.clear();
+				std::set<std::string>::const_iterator kit = k_set.begin();
+				for (; kit != k_set.end(); kit++)
+				{
+					this->KineticReactionsList.push_back(*kit);
 				}
 			}
+			// Solid solutions
 			{
-				this->SolidSolutionComponentsList.clear();
+				// move existing component names to set and solid solution names to map
+				std::set<std::string> sscomp_set;
+				std::map<std::string, std::string> ssnames_map;
+				if (!clear)
+				{
+					for (size_t i = 0; i < this->SolidSolutionComponentsList.size(); i++)
+					{
+						sscomp_set.insert(this->SolidSolutionComponentsList[i]);
+						ssnames_map[this->SolidSolutionComponentsList[i]] = this->SolidSolutionNamesList[i];
+					}
+				}
+				// add new component names set and solid solution names to map
 				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetSolidSolutionComponentsList().begin();
+				std::list<std::string>::const_iterator nit = phast_iphreeqc_worker->GetSolidSolutionNamesList().begin();
 				for (; cit != phast_iphreeqc_worker->GetSolidSolutionComponentsList().end(); cit++)
 				{
-					this->SolidSolutionComponentsList.push_back(*cit);
+					if (sscomp_set.find(*cit) == sscomp_set.end())
+					{
+						sscomp_set.insert(*cit);
+						ssnames_map[*cit] = *nit++;
+					}
 				}
-			}
-			{
+				// Move from set and map to vectors
+				this->SolidSolutionComponentsList.clear();
 				this->SolidSolutionNamesList.clear();
-				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetSolidSolutionNamesList().begin();
-				for (; cit != phast_iphreeqc_worker->GetSolidSolutionNamesList().end(); cit++)
+				std::set<std::string>::const_iterator set_it = sscomp_set.begin();
+				for (; set_it != sscomp_set.end(); set_it++)
 				{
-					this->SolidSolutionNamesList.push_back(*cit);
+					this->SolidSolutionComponentsList.push_back(*set_it);
+					this->SolidSolutionNamesList.push_back(ssnames_map[*set_it]);
 				}
 			}
 		}
