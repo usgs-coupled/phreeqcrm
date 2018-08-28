@@ -511,7 +511,32 @@ END FUNCTION RM_ErrorMessage
 !> @ref RM_GetSpeciesZ, 
 !> @ref RM_SetComponentH2O. 
 !> @ref RM_SetSpeciesSaveOn, 
-!> @ref RM_SpeciesConcentrations2Module,
+!> @ref RM_SpeciesConcentrations2Module.
+!> @par The @ref RM_FindComponents method also generates lists of reactants--equilibrium phases,
+!> exchangers, gas components, kinetic reactants, solid solution components, and surfaces. 
+!> The lists are cumulative, including all reactants that were
+!> defined in the initial phreeqc instance at any time FindComponents was called.
+!> In addition, a list of phases is generated for which saturation indices may be calculated from the
+!> cumulative list of components.
+!> @see also
+!> @ref RM_GetEquilibriumPhases,
+!> @ref RM_GetEquilibriumPhasesCount,
+!> @ref RM_GetExchangeNames,
+!> @ref RM_GetExchangeSpecies,
+!> @ref RM_GetExchangeSpeciesCount,
+!> @ref RM_GetGasComponents,
+!> @ref RM_GetGasComponentsCount,
+!> @ref RM_GetKineticReactions,
+!> @ref RM_GetKineticReactionsCount,
+!> @ref RM_GetSICount,
+!> @ref RM_GetSINames,
+!> @ref RM_GetSolidSolutionComponents,
+!> @ref RM_GetSolidSolutionComponentsCount,
+!> @ref RM_GetSolidSolutionNames,
+!> @ref RM_GetSurfaceNames,
+!> @ref RM_GetSurfaceSpecies,
+!> @ref RM_GetSurfaceSpeciesCount,
+!> @ref RM_GetSurfaceTypes.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>

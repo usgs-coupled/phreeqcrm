@@ -379,9 +379,11 @@ MCD by using individual species concentrations
 (@ref SpeciesConcentrations2Module).
 To use these methods the save-species property needs to be turned on (@ref SetSpeciesSaveOn).
 If the save-species property is on, FindComponents will generate
-a list of aqueous species (@ref GetSpeciesCount, @ref GetSpeciesNames), their diffusion coefficients at 25 C (@ref GetSpeciesD25),
+a list of aqueous species (@ref GetSpeciesCount, @ref GetSpeciesNames), 
+their diffusion coefficients at 25 C (@ref GetSpeciesD25),
 and their charge (@ref GetSpeciesZ).
-@retval              Number of components currently in the list, or IRM_RESULT error code (negative value, see @ref DecodeError).
+@retval              Number of components currently in the list, or IRM_RESULT error code 
+(negative value, see @ref DecodeError).
 @see                   @ref GetComponents, 
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount, 
@@ -394,6 +396,31 @@ and their charge (@ref GetSpeciesZ).
 @ref SetComponentH2O,
 @ref SetSpeciesSaveOn,
 @ref SpeciesConcentrations2Module. 
+@par The @ref FindComponents method also generates lists of reactants--equilibrium phases,
+exchangers, gas components, kinetic reactants, solid solution components, and surfaces. 
+The lists are cumulative, including all reactants that were
+defined in the initial phreeqc instance at any time FindComponents was called.
+In addition, a list of phases is generated for which saturation indices may be calculated from the
+cumulative list of components.
+@see also
+@ref GetEquilibriumPhases,
+@ref GetEquilibriumPhasesCount,
+@ref GetExchangeNames,
+@ref GetExchangeSpecies,
+@ref GetExchangeSpeciesCount,
+@ref GetGasComponents,
+@ref GetGasComponentsCount,
+@ref GetKineticReactions,
+@ref GetKineticReactionsCount,
+@ref GetSICount,
+@ref GetSINames,
+@ref GetSolidSolutionComponents,
+@ref GetSolidSolutionComponentsCount,
+@ref GetSolidSolutionNames,
+@ref GetSurfaceNames,
+@ref GetSurfaceSpecies,
+@ref GetSurfaceSpeciesCount,
+@ref GetSurfaceTypes.
 @par C++ Example:
 @htmlonly
 <CODE>
