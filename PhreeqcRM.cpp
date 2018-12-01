@@ -38,6 +38,8 @@
 #include "SSassemblage.h"
 #include "cxxKinetics.h"
 #include "GasPhase.h"
+#include "Temperature.h"
+#include "Reaction.h"
 #include "CSelectedOutput.hxx"
 
 #include <time.h>
@@ -1866,7 +1868,253 @@ PhreeqcRM::DecodeError(int r)
 	}
 }
 
+//#define ORIGINALDUMP
+#define NEWDUMP
 #ifdef USE_MPI
+#ifdef NEWDUMP
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::DumpModule(bool dump_on, bool append)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (this->mpi_myself == 0)
+	{
+		int method = METHOD_DUMPMODULE;
+		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+	}
+	bool dump = false;
+
+	// return if dump_on is false
+	if (this->mpi_myself == 0)
+	{
+		dump = dump_on;
+	}
+	int temp_tf = dump ? 1 : 0;
+	MPI_Bcast(&temp_tf, 1, MPI_INT, 0, phreeqcrm_comm);
+	dump = (temp_tf == 0) ? false : true;
+	//MPI_Bcast(&dump, 1, MPI_LOGICAL, 0, phreeqcrm_comm);
+	if (!dump) return IRM_OK;
+
+	IRM_RESULT return_value = IRM_OK;
+
+	// Open file on root
+	gzFile dump_file = NULL;
+	try
+	{
+		if (this->mpi_myself == 0)
+		{
+			// open dump file
+			std::string name(this->dump_file_name);
+			std::string mode;
+#ifdef USE_GZ
+			mode = append ? "ab1" : "wb1";
+#else
+			mode = append ? "a" : "w";
+#endif
+			dump_file = gzopen(name.c_str(), mode.c_str());
+			if (dump_file == NULL)
+			{
+				std::ostringstream errstr;
+				errstr << "Restart file could not be opened: " << name;
+				this->ErrorHandler(IRM_FAIL, errstr.str());
+			}
+		}
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+
+	// Return on error opening dump file
+	MPI_Bcast(&return_value, 1, MPI_INT, 0, phreeqcrm_comm);
+	if (return_value != IRM_OK)
+	{
+		return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
+	}
+	int block = 5000;
+	// Calculate max
+	int max = 0;
+	for (int n = 0; n < mpi_tasks; n++)
+	{
+		int count = this->end_cell[n] - this->start_cell[n] + 1;
+		max = count > max ? count : max;
+	}
+
+	int nblocks = max / block;
+	if (max % block > 0) nblocks += 1;
+
+
+	std::vector<char> char_buffer;
+	const size_t gzblock = 4094;
+	char buffer[gzblock + 2];
+	int total_cells = this->end_cell[this->mpi_tasks - 1];
+	int pct = 10;
+	int block_count = 0;
+	if (mpi_myself == 0)
+	{
+		//std::cerr << "Dump 0% ";
+		std::ostringstream msg;
+		this->ScreenMessage("Dump 0% ");
+	}
+	// Try for dumping data
+	try
+	{
+		// write dump file data
+		//this->workers[0]->SetDumpStringOn(true);
+
+		for (int iblock = 0; iblock < nblocks; iblock++)
+		{
+			std::ostringstream oss;
+			std::string dump_string;
+			cxxStorageBin sz_uz;
+			for (int n = 0; n < this->mpi_tasks; n++)
+			{
+				int begin = this->start_cell[n] + iblock * block;
+				if (begin <= this->end_cell[n])
+				{
+					int last = this->start_cell[n] + (iblock + 1) * block - 1;
+					if (last > this->end_cell[n]) last = this->end_cell[n];
+					if (mpi_myself == 0)
+					{
+						block_count += last - begin + 1;
+					}
+
+
+					// Dump block of cells
+					if (this->mpi_myself == n)
+					{
+						this->workers[0]->Get_PhreeqcPtr()->phreeqc2cxxStorageBin(sz_uz);
+						if (this->partition_uz_solids)
+						{
+							sz_uz.Add_uz(this->workers[0]->uz_bin);
+						}
+						sz_uz.dump_raw_range(oss, begin, last, 2);
+						dump_string = oss.str();
+					}
+					//if (this->mpi_myself == n)
+					//{
+					//	// Dump block of cells
+					//	std::ostringstream in;
+					//	in << "DUMP; -cells " << begin << "-" << last << "\n";
+					//	int status = this->workers[0]->RunString(in.str().c_str());
+					//	if (status != 0)
+					//	{
+					//		this->ErrorMessage(this->workers[0]->GetErrorString());
+					//	}
+					//	this->ErrorHandler(PhreeqcRM::Int2IrmResult(status, false), "RunString");
+					//}
+				}
+			}
+			if (mpi_myself == 0)
+			{
+				size_t dump_length = strlen(dump_string.c_str());
+				const char * start = dump_string.c_str();
+				const char * end = &(dump_string.c_str()[dump_length]);
+				for (const char * ptr = start; ptr < end; ptr += gzblock)
+				{
+					strncpy(buffer, ptr, gzblock);
+					buffer[gzblock] = '\0';
+					int err = gzprintf(dump_file, "%s", buffer);
+					if (err <= 0)
+					{
+						this->ErrorHandler(IRM_FAIL, "gzprintf");
+					}
+				}
+				//size_t dump_length = strlen(this->GetWorkers()[0]->GetDumpString());
+				//const char * start = this->GetWorkers()[0]->GetDumpString();
+				//const char * end = &this->GetWorkers()[0]->GetDumpString()[dump_length];
+				//for (const char * ptr = start; ptr < end; ptr += gzblock)
+				//{
+				//	strncpy(buffer, ptr, gzblock);
+				//	buffer[gzblock] = '\0';
+				//	int err = gzprintf(dump_file, "%s", buffer);
+				//	if (err <= 0)
+				//	{
+				//		this->ErrorHandler(IRM_FAIL, "gzprintf");
+				//	}
+				//}
+			}
+			for (int n = 1; n < this->mpi_tasks; n++)
+			{
+				// Need to transfer output stream to root and print
+
+				if (mpi_myself == n)
+				{
+					int size = (int)strlen(dump_string.c_str());
+					MPI_Send(&size, 1, MPI_INT, 0, 0, phreeqcrm_comm);
+					MPI_Send((void *) dump_string.c_str(), size, MPI_CHAR, 0, 0, phreeqcrm_comm);
+					//int size = (int)strlen(this->workers[0]->GetDumpString());
+					//MPI_Send(&size, 1, MPI_INT, 0, 0, phreeqcrm_comm);
+					//MPI_Send((void *) this->workers[0]->GetDumpString(), size, MPI_CHAR, 0, 0, phreeqcrm_comm);
+				}
+				else if (this->mpi_myself == 0)
+				{
+					MPI_Status mpi_status;
+					int size;
+					MPI_Recv(&size, 1, MPI_INT, n, 0, phreeqcrm_comm, &mpi_status);
+					char_buffer.resize(size + 1);
+					MPI_Recv((void *)&char_buffer.front(), size, MPI_CHAR, n, 0, phreeqcrm_comm, &mpi_status);
+					char_buffer[size] = '\0';
+
+					char * start = &char_buffer.front();
+					char * end = &char_buffer[size];
+					for (const char * ptr = start; ptr < end; ptr += gzblock)
+					{
+						strncpy(buffer, ptr, gzblock);
+						buffer[gzblock] = '\0';
+						int err = gzprintf(dump_file, "%s", buffer);
+						if (err <= 0)
+						{
+							this->ErrorHandler(IRM_FAIL, "gzprintf");
+						}
+					}
+				}
+			}
+			if (mpi_myself == 0 && block_count * 100 / total_cells > pct)
+			{
+				int pct_block_count = (block_count * 10 / total_cells) * 10;
+				if (pct_block_count < 100)
+				{
+					//std::cerr << pct_block_count << "% ";
+					std::ostringstream msg;
+					msg << pct_block_count << "% ";
+					this->ScreenMessage(msg.str().c_str());
+				}
+				pct = pct_block_count + 10;
+			}
+			MPI_Barrier(phreeqcrm_comm);
+		}
+		if (mpi_myself == 0)
+		{
+			std::cerr << "100% " << std::endl;
+		}
+
+		// Clear dump string to save space
+		std::ostringstream clr;
+		clr << "END\n";
+		{
+			int status;
+			status = this->GetWorkers()[0]->RunString(clr.str().c_str());
+			if (status != 0)
+			{
+				this->ErrorMessage(this->workers[0]->GetErrorString());
+			}
+		}
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+	if (mpi_myself == 0)
+	{
+		gzclose(dump_file);
+	}
+
+	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
+}
+#endif
+#ifdef ORIGINADUMP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::DumpModule(bool dump_on, bool append)
@@ -2076,7 +2324,188 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 
 	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
 }
+#endif
 #else // MPI
+#ifdef NEWDUMP
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::DumpModule(bool dump_on, bool append)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (!dump_on) return IRM_OK;
+
+	IRM_RESULT return_value = IRM_OK;
+
+	// Open file on root
+	try
+	{
+		// open dump file
+		gzFile dump_file;
+		std::string name(this->dump_file_name);
+
+		// open
+		std::string mode;
+#ifdef USE_GZ
+		mode = append ? "ab1" : "wb1";
+#else
+		mode = append ? "a" : "w";
+#endif
+		dump_file = gzopen(name.c_str(), mode.c_str());
+		if (dump_file == NULL)
+		{
+			std::ostringstream errstr;
+			errstr << "Restart file could not be opened: " << name;
+			this->ErrorHandler(IRM_FAIL, errstr.str());
+		}
+
+
+		std::vector<cxxStorageBin> sz_uz;
+		sz_uz.resize(nthreads);
+		for (int n = 0; n < nthreads; n++)
+		{
+			this->workers[n]->Get_PhreeqcPtr()->phreeqc2cxxStorageBin(sz_uz[n]);
+			if (this->partition_uz_solids)
+			{
+				sz_uz[n].Add_uz(this->workers[n]->uz_bin);
+			}
+		}
+
+		int block = 10000;
+		// Calculate max
+		int max = 0;
+		for (int n = 0; n < nthreads; n++)
+		{
+			int count = this->end_cell[n] - this->start_cell[n] + 1;
+			max = count > max ? count : max;
+		}
+
+		int nblocks = max / block;
+		if (max % block > 0) nblocks += 1;
+
+		std::vector<char> char_buffer;
+		const size_t gzblock = 4094;
+		char buffer[gzblock + 2];
+		int total_cells = this->end_cell[this->nthreads - 1];
+		int pct = 10;
+		int block_count = 0;
+
+		//std::cerr << "Dump 0% ";
+		this->ScreenMessage("Dump 0% ");
+
+		for (int iblock = 0; iblock < nblocks; iblock++)
+		{
+			for (int n = 0; n < this->nthreads; n++)
+			{
+				// count cells for blocks
+				int begin = this->start_cell[n] + iblock * block;
+				if (begin <= this->end_cell[n])
+				{
+					int last = this->start_cell[n] + (iblock + 1) * block - 1;
+					if (last > this->end_cell[n]) last = this->end_cell[n];
+					block_count += last - begin + 1;
+				}
+			}
+
+			std::vector<std::string> dump_strings;
+			dump_strings.resize(this->nthreads);
+#ifdef USE_OPENMP
+			omp_set_num_threads(this->nthreads);
+#pragma omp parallel
+#pragma omp for
+#endif
+			for (int n = 0; n < this->nthreads; n++)
+			{
+				std::ostringstream oss;
+				int begin = this->start_cell[n] + iblock * block;
+				if (begin <= this->end_cell[n])
+				{
+					int last = this->start_cell[n] + (iblock + 1) * block - 1;
+					if (last > this->end_cell[n]) last = this->end_cell[n];
+					// Dump block of cells
+					sz_uz[n].dump_raw_range(oss, begin, last, 2);
+					dump_strings[n] = oss.str();
+				}
+			}
+			for (int n = 0; n < this->nthreads; n++)
+			{
+				// Write data to file
+				size_t dump_length = strlen(dump_strings[n].c_str());
+				const char * start = dump_strings[n].c_str();
+				const char * end = &(dump_strings[n].c_str()[dump_length]);
+				for (const char * ptr = start; ptr < end; ptr += gzblock)
+				{
+					strncpy(buffer, ptr, gzblock);
+					buffer[gzblock] = '\0';
+					int err = gzprintf(dump_file, "%s", buffer);
+					if (err <= 0)
+					{
+						this->ErrorHandler(IRM_FAIL, "gzprintf");
+					}
+				}
+			}
+			//for (int n = 0; n < this->nthreads; n++)
+			//{
+			//	// Write data to file
+			//	size_t dump_length = strlen(this->GetWorkers()[n]->GetDumpString());
+			//	const char * start = this->GetWorkers()[n]->GetDumpString();
+			//	const char * end = &this->GetWorkers()[n]->GetDumpString()[dump_length];
+			//	for (const char * ptr = start; ptr < end; ptr += gzblock)
+			//	{
+			//		strncpy(buffer, ptr, gzblock);
+			//		buffer[gzblock] = '\0';
+			//		int err = gzprintf(dump_file, "%s", buffer);
+			//		if (err <= 0)
+			//		{
+			//			this->ErrorHandler(IRM_FAIL, "gzprintf");
+			//		}
+			//	}
+			//}
+			int pct_block_count = (block_count * 10 / total_cells) * 10;
+			if (block_count * 100 / total_cells > pct)
+			{
+				if (pct_block_count < 100)
+				{
+					//std::cerr << pct_block_count << "% ";
+					std::ostringstream msg;
+					msg << pct_block_count << "% ";
+					this->ScreenMessage(msg.str().c_str());
+				}
+				pct = pct_block_count + 10;
+			}
+		}
+
+		{
+			//std::cerr << "100% " << std::endl;
+			std::ostringstream msg;
+			msg << "100% " << std::endl;
+			this->ScreenMessage(msg.str().c_str());
+		}
+
+		for (int n = 0; n < this->nthreads; n++)
+		{
+			// Clear dump string to save space
+			std::ostringstream clr;
+			clr << "END\n";
+			{
+				int status;
+				status = this->GetWorkers()[n]->RunString(clr.str().c_str());
+				if (status != 0)
+				{
+					this->ErrorMessage(this->workers[n]->GetErrorString());
+				}
+			}
+		}
+		gzclose(dump_file);
+	}
+	catch (...)
+	{
+		return_value = IRM_FAIL;
+	}
+	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
+}
+#endif
+#ifdef ORIGINALDUMP
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::DumpModule(bool dump_on, bool append)
@@ -2228,6 +2657,7 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::DumpModule");
 }
+#endif
 #endif // MPI
 /* ---------------------------------------------------------------------- */
 void
