@@ -591,7 +591,7 @@ int IPhreeqc::load_db(const char* filename)
 		this->PhreeqcPtr->phrq_io->push_istream(&ifs, false);
 		this->PhreeqcPtr->read_database();
 	}
-	catch (IPhreeqcStop)
+	catch (const IPhreeqcStop&)
 	{
 		this->close_input_files();
 	}
@@ -602,7 +602,7 @@ int IPhreeqc::load_db(const char* filename)
 		{
 			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws IPhreeqcStop
 		}
-		catch (IPhreeqcStop)
+		catch (const IPhreeqcStop&)
 		{
 			// do nothing
 		}
@@ -654,7 +654,7 @@ int IPhreeqc::load_db_str(const char* input)
 		this->PhreeqcPtr->phrq_io->push_istream(&iss, false);
 		this->PhreeqcPtr->read_database();
 	}
-	catch (IPhreeqcStop)
+	catch (const IPhreeqcStop&)
 	{
 		this->close_input_files();
 	}
@@ -665,7 +665,7 @@ int IPhreeqc::load_db_str(const char* input)
 		{
 			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
 		}
-		catch (IPhreeqcStop)
+		catch (const IPhreeqcStop&)
 		{
 			// do nothing
 		}
@@ -743,7 +743,7 @@ int IPhreeqc::RunAccumulated(void)
 		// this may throw
 		this->do_run(sz_routine, &iss, NULL, NULL, NULL);
 	}
-	catch (IPhreeqcStop)
+	catch (const IPhreeqcStop&)
 	{
 		// do nothing
 	}
@@ -755,7 +755,7 @@ int IPhreeqc::RunAccumulated(void)
 		{
 			this->PhreeqcPtr->error_msg(errmsg.c_str(), STOP); // throws PhreeqcStop
 		}
-		catch (IPhreeqcStop)
+		catch (const IPhreeqcStop&)
 		{
 			// do nothing
 		}
@@ -768,7 +768,7 @@ int IPhreeqc::RunAccumulated(void)
 		{
 			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
 		}
-		catch (IPhreeqcStop)
+		catch (const IPhreeqcStop&)
 		{
 			// do nothing
 		}
@@ -814,7 +814,7 @@ int IPhreeqc::RunFile(const char* filename)
 		// this may throw
 		this->do_run(sz_routine, &ifs, NULL, NULL, NULL);
 	}
-	catch (IPhreeqcStop)
+	catch (const IPhreeqcStop&)
 	{
 		this->close_input_files();
 	}
@@ -826,7 +826,7 @@ int IPhreeqc::RunFile(const char* filename)
 		{
 			this->PhreeqcPtr->error_msg(errmsg.c_str(), STOP); // throws PhreeqcStop
 		}
-		catch (IPhreeqcStop)
+		catch (const IPhreeqcStop&)
 		{
 			// do nothing
 		}
@@ -839,7 +839,7 @@ int IPhreeqc::RunFile(const char* filename)
 		{
 			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
 		}
-		catch (IPhreeqcStop)
+		catch (const IPhreeqcStop&)
 		{
 			// do nothing
 		}
@@ -877,7 +877,7 @@ int IPhreeqc::RunString(const char* input)
 		// this may throw
 		this->do_run(sz_routine, &iss, NULL, NULL, NULL);
 	}
-	catch (IPhreeqcStop)
+	catch (const IPhreeqcStop&)
 	{
 		this->close_input_files();
 	}
@@ -889,7 +889,7 @@ int IPhreeqc::RunString(const char* input)
 		{
 			this->PhreeqcPtr->error_msg(errmsg.c_str(), STOP); // throws PhreeqcStop
 		}
-		catch (IPhreeqcStop)
+		catch (const IPhreeqcStop&)
 		{
 			// do nothing
 		}
@@ -902,7 +902,7 @@ int IPhreeqc::RunString(const char* input)
 		{
 			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
 		}
-		catch (IPhreeqcStop)
+		catch (const IPhreeqcStop&)
 		{
 			// do nothing
 		}
@@ -1761,7 +1761,7 @@ void IPhreeqc::fpunchf(const char *name, const char *format, double d)
 		ASSERT(this->SelectedOutputMap.find(this->PhreeqcPtr->current_selected_output->Get_n_user()) != this->SelectedOutputMap.end());
 		this->SelectedOutputMap[this->PhreeqcPtr->current_selected_output->Get_n_user()]->PushBackDouble(name, d);
 	}
-	catch (std::bad_alloc)
+	catch (const std::bad_alloc&)
 	{
 		this->PhreeqcPtr->malloc_error();
 	}
@@ -1780,7 +1780,7 @@ void IPhreeqc::fpunchf(const char *name, const char *format, char *s)
 		ASSERT(this->SelectedOutputMap.find(this->PhreeqcPtr->current_selected_output->Get_n_user()) != this->SelectedOutputMap.end());
 		this->SelectedOutputMap[this->PhreeqcPtr->current_selected_output->Get_n_user()]->PushBackString(name, s);
 	}
-	catch (std::bad_alloc)
+	catch (const std::bad_alloc&)
 	{
 		this->PhreeqcPtr->malloc_error();
 	}
@@ -1799,7 +1799,7 @@ void IPhreeqc::fpunchf(const char *name, const char *format, int i)
 		ASSERT(this->SelectedOutputMap.find(this->PhreeqcPtr->current_selected_output->Get_n_user()) != this->SelectedOutputMap.end());
 		this->SelectedOutputMap[this->PhreeqcPtr->current_selected_output->Get_n_user()]->PushBackLong(name, (long)i);
 	}
-	catch (std::bad_alloc)
+	catch (const std::bad_alloc&)
 	{
 		this->PhreeqcPtr->malloc_error();
 	}

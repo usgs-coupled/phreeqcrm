@@ -30,13 +30,13 @@ padfstring(char *dest, const char *src, int* len)
 {
     int sofar, c_len;
 
-	c_len = (int)strlen(src);
+    c_len = (int)strlen(src);
     for (sofar = 0; (sofar < *len) && (*src != '\0'); ++sofar)
         *dest++ = *src++;
 
     while (sofar++ < *len)
         *dest++ = ' ';
-	*len = c_len;
+    *len = c_len;
 }
 
 IPQ_RESULT
