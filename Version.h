@@ -3,6 +3,7 @@
 #define VER_MINOR      0
 #define VER_PATCH      0
 #define VER_REVISION   0
+#define GIT_COMMIT     0000000000000000000000000000000000000000
 
 #define RELEASE_DATE           "@RELEASE_DATE@"
 
