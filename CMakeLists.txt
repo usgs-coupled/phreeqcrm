@@ -1,13 +1,13 @@
 cmake_minimum_required (VERSION 2.8)
 
-if (POLICY CMP0054)
-  cmake_policy(PUSH)
-  cmake_policy(SET CMP0054 OLD)
-endif()
+# if (POLICY CMP0054)
+#   cmake_policy(PUSH)
+#   cmake_policy(SET CMP0054 OLD)
+# endif()
 project (PhreeqcRM CXX C)
-if (POLICY CMP0054)
-  cmake_policy(POP)
-endif()
+# if (POLICY CMP0054)
+#   cmake_policy(POP)
+# endif()
 
 # check if this is the root project
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -58,19 +58,21 @@ if (PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
   include_directories(${ZLIB_INCLUDE_DIRS})
 endif()
 
-# check for openmp
-find_package(OpenMP)
+if (STANDALONE_BUILD EQUAL 1)
+  # check for openmp
+  find_package(OpenMP)
+endif()
 
 # check for MPI
 option(PHREEQCRM_BUILD_MPI "Build MPI configuration" "OFF")
 if (PHREEQCRM_BUILD_MPI)
-  if (POLICY CMP0054)
-    cmake_policy(SET CMP0054 OLD)
-  endif()
+  # if (POLICY CMP0054)
+  #   cmake_policy(SET CMP0054 OLD)
+  # endif()
   find_package(MPI)
-  if (POLICY CMP0054)
-    cmake_policy(SET CMP0054 NEW)
-  endif()
+  # if (POLICY CMP0054)
+  #   cmake_policy(SET CMP0054 NEW)
+  # endif()
 endif (PHREEQCRM_BUILD_MPI)
 
 
@@ -323,6 +325,11 @@ if (STANDALONE_BUILD EQUAL 1)
   install(TARGETS PhreeqcRM DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(FILES ${PhreeqcRM_Headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
   install(FILES ${PhreeqcRM_SRC} DESTINATION src)
+else()
+  #option(PHREEQCRM_INSTALL_TARGETS "" OFF)  
+  if (PHREEQCRM_INSTALL_TARGETS)
+    install(TARGETS PhreeqcRM DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  endif()
 endif()
 
 if (STANDALONE_BUILD EQUAL 1 AND MSVC)
