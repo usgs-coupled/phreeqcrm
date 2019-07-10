@@ -1753,7 +1753,7 @@ RM_SetScreenOn(int id, int tf)
 	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
 	if (Reaction_module_ptr)
 	{
-		return Reaction_module_ptr->SetSelectedOutputOn(tf != 0);
+		return Reaction_module_ptr->SetScreenOn(tf != 0);
 	}
 	return IRM_BADINSTANCE;
 }
