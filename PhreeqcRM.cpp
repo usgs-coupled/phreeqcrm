@@ -9608,6 +9608,11 @@ PhreeqcRM::SetPressure(const std::vector<double> &t)
 			{
 				soln_ptr->Set_patm(this->pressure_worker[i]);
 			}
+			cxxGasPhase *gas_ptr = this->GetWorkers()[0]->Get_gas_phase(j);
+			if (gas_ptr && gas_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+			{
+				gas_ptr->Set_total_p(this->pressure_worker[i]);
+			}
 		}
 #else
 #ifdef USE_OPENMP
@@ -9625,6 +9630,11 @@ PhreeqcRM::SetPressure(const std::vector<double> &t)
 				if (soln_ptr)
 				{
 					soln_ptr->Set_patm(pressure_root[i]);
+				}
+				cxxGasPhase *gas_ptr = this->GetWorkers()[n]->Get_gas_phase(j);
+				if (gas_ptr && gas_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+				{
+					gas_ptr->Set_total_p(pressure_root[i]);  
 				}
 			}
 		}
