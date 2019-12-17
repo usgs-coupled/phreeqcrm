@@ -58,19 +58,9 @@ if (PHREEQCRM_FORTRAN_TESTING)
 endif ()
 
 # library dependencies
-##{{
-##if (ZLIB_FOUND)
-##  set(EXTRA_LIBS ${EXTRA_LIBS} ${ZLIB_LIBRARIES})
-##endif()  
-##}}
 if (PHREEQCRM_FORTRAN_TESTING)
-  # need extra mpi fortran libs if using msmpi
-  if (MPI_Fortran_LIBRARIES MATCHES "msmpi.lib$")
-    STRING(REGEX REPLACE "msmpi.lib$" "msmpifec.lib" EXTRA_FORTRAN_LIB ${MPI_Fortran_LIBRARIES})
-    SET(EXTRA_LIBS ${EXTRA_LIBS} ${EXTRA_FORTRAN_LIB})
-  endif ()  
   if (PHREEQCRM_BUILD_MPI)
-    SET(EXTRA_LIBS ${EXTRA_LIBS} FortranAdvect PhreeqcRM ${MPI_CXX_LIBRARIES})
+    SET(EXTRA_LIBS ${EXTRA_LIBS} FortranAdvect PhreeqcRM ${MPI_CXX_LIBRARIES} ${MPI_Fortran_LIBRARIES})
   else ()
     SET(EXTRA_LIBS ${EXTRA_LIBS} FortranAdvect PhreeqcRM)
   endif ()
