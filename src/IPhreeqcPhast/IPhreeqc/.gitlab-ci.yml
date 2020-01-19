@@ -1,0 +1,122 @@
+#
+# https://code.chs.usgs.gov/coupled/subtrees/iphreeqc-src
+#
+image: buildpack-deps:bionic-scm
+
+stages:
+  - sync
+  - trigger
+
+before_script:
+  - eval $(ssh-agent -s)
+  - echo "${SSH_PRIVATE_KEY_ENC}" | base64 --decode | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan ${CI_SERVER_HOST} >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  - git config --global user.email "darth@empire.com"
+  - git config --global user.name "Darth Vader"
+ 
+subtree-sync:
+  stage: sync
+
+  ##
+  ## Only run if on the master branch and the variable GROUP is set
+  ##
+  ## change this to
+  ## only:
+  ##  - master@$GROUP/subtrees/iphreeqc-src
+  ## and set GROUP to coupled before merge
+  only:
+    refs:
+      - master
+    variables:
+      - $GROUP
+
+  script:
+    ##
+    ## Must re-clone in order for the subtree merge to work
+    ## tried re-setting the url for the origin but didn't work
+    ##
+    - cd ..
+    - rm -rf ${CI_PROJECT_NAME}
+    - git clone git@${CI_SERVER_HOST}:${CI_PROJECT_PATH}.git
+    - cd ${CI_PROJECT_NAME}
+
+    ##
+    ## Sync subtrees
+    ##
+    - |
+      #!/bin/bash -ex
+      #
+      # IPhreeqc/              git@${CI_SERVER_HOST}:${GROUP}/IPhreeqc.git
+      # ├─database/            ├─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-database.git                                   database
+      # ├─examples/            │ └─examples
+      # │ ├─c/                 │   ├─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc-COMManuscript-CGfinal-examples-c.git        examples/c
+      # │ ├─com/               │   ├─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc-COMManuscript-CGfinal-examples-com.git      examples/com
+      # │ └─fortran/           │   └─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc-COMManuscript-CGfinal-examples-fortran.git  examples/fortran
+      # ├─phreeqc3-doc/        ├─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-doc.git                                        phreeqc3-doc
+      # ├─phreeqc3-examples/   ├─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-examples.git                                   phreeqc3-examples
+      # └─src/                 └─git@${CI_SERVER_HOST}:${GROUP}/subtrees/IPhreeqc-src.git                                        src
+      #   └─phreeqcpp/           └─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-src.git                                      src/phreeqcpp
+      #     └─common/              └─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-src-common.git                             src/phreeqcpp/common
+      #
+      # IPhreeqc-src/        git@${CI_SERVER_HOST}:${GROUP}/subtrees/IPhreeqc-src.git
+      # └─phreeqcpp/         └─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-src.git                                        phreeqcpp
+      #   └─common/            └─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-src-common.git                               phreeqcpp/common
+
+      git_subtree() {
+        git subtree "${1}" --prefix="${2}" "${4}" master 2>&1 | grep -v "^[[:digit:]].*/[[:digit:]].*"
+      }
+
+      declare -A urls=( \
+        ["phreeqc3-src"]="git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-src.git" \
+      )
+
+      declare -A prefixes=( \
+        ["phreeqc3-src"]="phreeqcpp" \
+      )
+
+      export GIT_EDITOR=true
+
+      for remote in "${!urls[@]}"; do
+        git_subtree "pull" "${prefixes[$remote]}" "$remote" "${urls[$remote]}"
+      done
+
+      for remote in "${!urls[@]}"; do
+        git_subtree "push" "${prefixes[$remote]}" "$remote" "${urls[$remote]}"
+      done
+
+      git push origin master
+      git status
+
+trigger-downstream:
+  stage: trigger
+  ##
+  ## Only run if on the master branch and the variable GROUP is set
+  ##
+  ## change this to
+  ## only:
+  ##  - master@$GROUP/subtrees/iphreeqc-src
+  ## and set GROUP to coupled before merge
+  only:
+    refs:
+      - master
+    variables:
+      - $GROUP
+
+  ## Downstream Projects
+  ## triggers and ids are stored at the group level
+  ## iphreeqc https://code.chs.usgs.gov/coupled/iphreeqc
+  ## iphreeqccom https://code.chs.usgs.gov/coupled/iphreeqccom
+  ## phreeqcrm-src https://code.chs.usgs.gov/coupled/subtrees/phreeqcrm-src
+  script:
+    - echo triggering iphreeqc
+    - curl -X POST -F token=${IPHREEQC_TRIGGER} -F ref=master https://code.chs.usgs.gov/api/v4/projects/${IPHREEQC_ID}/trigger/pipeline
+    - echo triggering iphreeqccom
+    - curl -X POST -F token=${IPHREEQCCOM_TRIGGER} -F ref=master https://code.chs.usgs.gov/api/v4/projects/${IPHREEQCCOM_ID}/trigger/pipeline
+    - echo triggering phreeqcrm-src
+    - curl -X POST -F token=${PHREEQCRM_SRC_TRIGGER} -F ref=master https://code.chs.usgs.gov/api/v4/projects/${PHREEQCRM_SRC_ID}/trigger/pipeline
+
+  ## Upstream Projects
+  ## phreeqc3-src https://code.chs.usgs.gov/coupled/subtrees/phreeqc3-src
