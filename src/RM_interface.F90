@@ -3927,11 +3927,11 @@ END FUNCTION RM_RunFile
 !> @par MPI:
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-INTEGER FUNCTION RM_RunString(id, initial_phreeqc, workers, utility, input_string)
+INTEGER FUNCTION RM_RunString(id, workers, initial_phreeqc, utility, input_string)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_RunString(id, initial_phreeqc, workers, utility, input_string) &
+        INTEGER(KIND=C_INT) FUNCTION RMF_RunString(id, workers, initial_phreeqc, utility, input_string) &
             BIND(C, NAME='RMF_RunString')
             USE ISO_C_BINDING
             IMPLICIT NONE
@@ -3943,7 +3943,7 @@ INTEGER FUNCTION RM_RunString(id, initial_phreeqc, workers, utility, input_strin
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: initial_phreeqc, workers, utility
     CHARACTER(len=*), INTENT(in) :: input_string
-    RM_RunString = RMF_RunString(id, initial_phreeqc, workers, utility, trim(input_string)//C_NULL_CHAR)
+    RM_RunString = RMF_RunString(id, workers, initial_phreeqc, utility, trim(input_string)//C_NULL_CHAR)
 END FUNCTION RM_RunString   
 
 !> Print message to the screen.
