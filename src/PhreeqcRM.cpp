@@ -8585,6 +8585,15 @@ PhreeqcRM::RunCellsThread(int n)
 				phast_iphreeqc_worker->Get_cell_clock_times().back() += (double) CLOCK();
 #endif
 			} // end one cell
+
+			// Copy selected output back to worker for Kinniburgh to process strings
+			phast_iphreeqc_worker->SelectedOutputMap.clear();
+			std::map< int, CSelectedOutput >::iterator ipp_it = phast_iphreeqc_worker->CSelectedOutputMap.begin();
+			for (; ipp_it != phast_iphreeqc_worker->CSelectedOutputMap.end(); ipp_it++)
+			{
+				CSelectedOutput* temp_ip_map = new CSelectedOutput(ipp_it->second);
+				phast_iphreeqc_worker->SelectedOutputMap[ipp_it->first] = temp_ip_map;
+			}
 		}
 		double t_elapsed = (double) CLOCK() - t0;
 		phast_iphreeqc_worker->Set_thread_clock_time((double) t_elapsed);
