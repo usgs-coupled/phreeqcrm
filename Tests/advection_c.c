@@ -591,7 +591,7 @@ int example_selected_output(int id)
 {
 	int nlines, i, status;
 	char *input;
-	char line[200], line1[100], line2[100], line3[100];
+	char line[400], line1[100], line2[100], line3[100];
 	nlines = 50;
 	nlines = nlines + RM_GetComponentCount(id);
 	nlines = nlines + RM_GetSpeciesCount(id);
