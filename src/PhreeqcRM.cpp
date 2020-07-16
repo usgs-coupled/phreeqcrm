@@ -8382,11 +8382,11 @@ PhreeqcRM::RunCellsThread(int n)
 		phast_iphreeqc_worker->SetOutputFileOn(false);
 		phast_iphreeqc_worker->SetOutputStringOn(pr_chemistry_on);
 		phast_iphreeqc_worker->SetSelectedOutputFileOn(false);
-		if (!pr_chemistry_on)
-		{
-			RunCellsThreadNoPrint(n);
-		}
-		else
+		//if (!pr_chemistry_on)
+		//{
+		//	RunCellsThreadNoPrint(n);
+		//}
+		//else
 		{
 			phast_iphreeqc_worker->Get_cell_clock_times().clear();
 
@@ -8449,7 +8449,7 @@ PhreeqcRM::RunCellsThread(int n)
 			phast_iphreeqc_worker->SetDumpFileOn(false);
 			phast_iphreeqc_worker->SetDumpStringOn(false);
 			phast_iphreeqc_worker->SetOutputFileOn(false);
-			phast_iphreeqc_worker->SetErrorFileOn(false);
+			//phast_iphreeqc_worker->SetErrorFileOn(false);
 #ifdef USE_MPI
 			int start = this->start_cell[this->mpi_myself];
 			int end = this->end_cell[this->mpi_myself];
@@ -8461,6 +8461,7 @@ PhreeqcRM::RunCellsThread(int n)
 			for (i = start; i <= end; i++)
 			{							/* i is count_chem number */
 				int local_chem_mask;
+				bool calculation_success = true;
 #ifdef USE_MPI
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) MPI_Wtime());
 				local_chem_mask = this->print_chem_mask_worker[i - start];
@@ -8469,7 +8470,7 @@ PhreeqcRM::RunCellsThread(int n)
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- omp_get_wtime());
 				local_chem_mask = this->print_chem_mask_root[j];
 #else
-				//j = backward_mapping_root[i][0];			/* j is nxyz number */
+				j = backward_mapping[i][0];			/* j is nxyz number */
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) CLOCK());
 				local_chem_mask = this->print_chem_mask_root[j];
 #endif
@@ -8504,11 +8505,20 @@ PhreeqcRM::RunCellsThread(int n)
 					input << "END" << "\n";
 					if (phast_iphreeqc_worker->RunString(input.str().c_str()) != 0)
 					{
-						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
-						*phast_iphreeqc_worker->Get_out_stream() << phast_iphreeqc_worker->GetOutputString();
-						throw PhreeqcRMStop();
+						if (this->GetErrorHandlerMode() < 3)
+						{
+							this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
+							*phast_iphreeqc_worker->Get_out_stream() << phast_iphreeqc_worker->GetOutputString();
+							throw PhreeqcRMStop();
+						}
+						else
+						{
+							calculation_success = false;
+						}
 					}
-
+				}
+				if (active && calculation_success)
+				{
 					// Write output file
 					if (pr_chem)
 					{
@@ -8548,20 +8558,27 @@ PhreeqcRM::RunCellsThread(int n)
 							ipp_it->second.DeSerialize(types, longs, doubles, strings);
 						}
 					}
-				} // end active
+				} // end active and calculation_success
 				else
 				{
 					if (pr_chem)
 					{
 						std::ostringstream line_buff;
 						line_buff << "Time:                   " << (this->time) * (this->time_conversion) << "\n";
-						line_buff << "Chemistry cell:         " << i;
+						line_buff << "Chemistry cell:         " << i << "\n";
 						line_buff << "Grid cell(s) (0-based): ";
 						for (size_t ib = 0; ib < this->backward_mapping[i].size(); ib++)
 						{
 							line_buff << this->backward_mapping[i][ib] << " ";
 						}
-						line_buff << "\nCell is dry.\n";
+						if (calculation_success)
+						{
+							line_buff << "\nCell is dry.\n";
+						}
+						else
+						{
+							line_buff << "\nCalculation failure.\n";
+						}
 						*phast_iphreeqc_worker->Get_out_stream() << line_buff.str();
 					}
 					// Get selected output
@@ -8587,7 +8604,13 @@ PhreeqcRM::RunCellsThread(int n)
 			} // end one cell
 
 			// Copy selected output back to worker for Kinniburgh to process strings
+			std::map< int, CSelectedOutput* >::iterator sit = phast_iphreeqc_worker->SelectedOutputMap.begin();
+			for (; sit != phast_iphreeqc_worker->SelectedOutputMap.end(); ++sit)
+			{
+				delete (*sit).second;
+			}
 			phast_iphreeqc_worker->SelectedOutputMap.clear();
+
 			std::map< int, CSelectedOutput >::iterator ipp_it = phast_iphreeqc_worker->CSelectedOutputMap.begin();
 			for (; ipp_it != phast_iphreeqc_worker->CSelectedOutputMap.end(); ipp_it++)
 			{
@@ -9436,16 +9459,29 @@ PhreeqcRM::SetErrorHandlerMode(int i)
 	IRM_RESULT return_value = IRM_OK;
 	if (mpi_myself == 0)
 	{
-		this->error_handler_mode = i;
+		this->error_handler_mode = 0;
+		if (i < 0)
+		{
+			return_value = IRM_INVALIDARG;
+		}
+		else if (i < 3)
+		{
+			this->error_handler_mode = i;
+		}
+#ifdef USE_OPENMP
+		else if (i == 3)
+		{
+			this->error_handler_mode = i;
+		}
+#endif
+		else
+		{
+			return_value = IRM_INVALIDARG;
+		}
 	}
 #ifdef USE_MPI
 	MPI_Bcast(&this->error_handler_mode, 1, MPI_INT, 0, phreeqcrm_comm);
 #endif
-	if (this->error_handler_mode < 0 || this->error_handler_mode > 2)
-	{
-		return_value = IRM_INVALIDARG;
-		this->error_handler_mode = 0;
-	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::SetErrorHandlerMode");
 }
 /* ---------------------------------------------------------------------- */

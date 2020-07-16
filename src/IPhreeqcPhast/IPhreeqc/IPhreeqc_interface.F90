@@ -680,8 +680,8 @@ INTEGER FUNCTION GetSelectedOutputValue(id, row, col, vtype, dvalue, svalue, sle
     sz_fortran = sz
     GetSelectedOutputValue = GetSelectedOutputValueF(id, row, col, vtype, dvalue, svalue, sz)
     if (present(slength)) then
-        slength = 0
-        if (sz > sz_fortran) then
+        slength = sz_fortran
+        if (sz < sz_fortran) then
             slength = sz
         endif
     endif        
