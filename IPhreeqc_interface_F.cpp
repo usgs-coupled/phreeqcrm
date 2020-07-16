@@ -4,6 +4,7 @@
 #include <memory.h>  /* memcpy */
 #include <assert.h>  /* assert */
 #include <stdio.h>   /* sprintf */
+#include <cstring>
 #include "phrqtype.h"
 #include "IPhreeqc.h"
 
