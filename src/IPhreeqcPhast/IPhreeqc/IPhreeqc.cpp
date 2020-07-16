@@ -971,6 +971,7 @@ void IPhreeqc::SetErrorFileName(const char *filename)
 void IPhreeqc::SetErrorFileOn(bool bValue)
 {
 	this->ErrorFileOn = bValue;
+	this->Set_error_on(bValue);
 }
 
 void IPhreeqc::SetErrorStringOn(bool bValue)
@@ -1143,7 +1144,6 @@ void IPhreeqc::check_database(const char* sz_routine)
 {
  	this->ErrorReporter->Clear();
 	this->WarningReporter->Clear();
-
 	std::map< int, CSelectedOutput* >::iterator it = this->SelectedOutputMap.begin();
 	for (; it != this->SelectedOutputMap.end(); ++it)
 	{
