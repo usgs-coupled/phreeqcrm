@@ -971,7 +971,6 @@ void IPhreeqc::SetErrorFileName(const char *filename)
 void IPhreeqc::SetErrorFileOn(bool bValue)
 {
 	this->ErrorFileOn = bValue;
-	this->Set_error_on(bValue);
 }
 
 void IPhreeqc::SetErrorStringOn(bool bValue)

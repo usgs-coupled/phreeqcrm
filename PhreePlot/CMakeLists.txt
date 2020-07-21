@@ -1,5 +1,16 @@
-
 project(PhreePlot Fortran)
+
+configure_file (
+  ../database/wateq4f.dat
+  wateq4f.dat
+  COPYONLY
+  )
+
+configure_file (
+  preloop2.pqi
+  preloop2.pqi
+  COPYONLY
+  )
 
 # source
 SET(PhreePlot_SOURCES

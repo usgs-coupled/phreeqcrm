@@ -9,7 +9,7 @@
 
    integer, parameter :: dp = kind(1.d0)
    integer :: nres = 50
-   integer :: nthreads = 1
+   integer :: nthreads = 0
    integer :: nxyz
    integer :: status_rm
    integer :: status_ip
@@ -92,8 +92,8 @@
 
    ! initialize
    id = RM_Create(nxyz, nthreads)
-   status_rm = RM_loaddatabase(id, "../wateq4f.dat")  !dlp
-   status_rm = RM_RunFile(id, 1, 1, 0, "../preloop2.pqi") !dlp
+   status_rm = RM_loaddatabase(id, "wateq4f.dat")  !dlp
+   status_rm = RM_RunFile(id, 1, 1, 0, "preloop2.pqi") !dlp
    status_rm = RM_SetFilePrefix(id, "PhreePlotTest")
    status_rm = RM_SetErrorHandlerMode(id, 3)   !OpenMP only
    
@@ -274,10 +274,10 @@
    t0 = t1;
    
 !$OMP PARALLEL DO
-   !do w = 0, tc - 1
-   !   iphreeqc_id1 = RM_GetIPhreeqcId(id, w)
-   !   status_ip = RunString(iphreeqc_id1, "DELETE; -all") ! throws an exception
-   !enddo
+   do w = 0, tc - 1
+      iphreeqc_id1 = RM_GetIPhreeqcId(id, w)
+      !!status_ip = RunString(iphreeqc_id1, "DELETE; -all") ! throws an exception
+   enddo
 !$OMP END PARALLEL DO
 
    status_RM = RM_CloseFiles(id)

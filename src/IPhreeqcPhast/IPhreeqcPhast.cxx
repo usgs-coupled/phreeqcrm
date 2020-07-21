@@ -92,3 +92,11 @@ IPhreeqcPhast::Get_gas_phase(int i)
 {
 	return Utilities::Rxn_find(this->PhreeqcPtr->Rxn_gas_phase_map, i);
 }
+/* ---------------------------------------------------------------------- */
+void
+IPhreeqcPhast::SetErrorFileOn(bool bValue)
+/* ---------------------------------------------------------------------- */
+{
+	this->IPhreeqc::SetErrorFileOn(bValue);
+	this->Set_error_on(bValue);
+}

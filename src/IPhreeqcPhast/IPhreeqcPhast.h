@@ -37,6 +37,8 @@ public:
 	void Set_end_cell(int i) {this->end_cell = i;}
 	int Get_end_cell(void) {return this->end_cell;}
 	std::vector < double > & Get_cell_clock_times(void) {return this->cell_clock_times;}
+
+	void SetErrorFileOn(bool bValue);
 protected:
 	friend class IPhreeqcPhastLib;
 	friend class PhreeqcRM;

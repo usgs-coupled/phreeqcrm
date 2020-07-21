@@ -359,6 +359,7 @@ if (STANDALONE_BUILD EQUAL 1)
   add_subdirectory(doc)
   add_subdirectory(Doxygen)
   add_subdirectory(Tests)
+  add_subdirectory(PhreePlot)
 endif()
 
 # Turn off Incremental Linking for Debug and RelWithDebInfo
