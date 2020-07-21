@@ -1,0 +1,64 @@
+PRINT
+-warnings 0
+ PHASES
+ Fix_H+
+ H+ = H+
+ log_k 0.0
+ SELECTED_OUTPUT 1
+ -high_precision true
+ -reset false
+ USER_PUNCH 1
+ # output predominant species
+ -headings pH pe O2 TC nmain
+ 10 nmain = 2  # number of predominant species to extract for each execution of the main loop
+ 20 DATA "Fe","Zn"
+ 30 REM IF STEP_NO = 0 THEN 10000
+ 40 PUNCH -LA("H+"), -LA("e-"), SI("O2(g)"), TC, nmain
+ 50 FOR imain = 1 TO nmain
+ 60    p$ = "NA"
+ 70    READ main$
+ 80    IF(SI("O2(g)") > -0.677) THEN 81 ELSE 90
+ 81    p$ = "O2(g) > 0.21 atm" 
+ 82    GOTO 160  # edit constraints as wanted
+ 90    h2g = SI("H2(g)") 
+ 91    ch4g = SI("CH4(g)")
+100    IF(h2g > 0 AND h2g > ch4g) THEN 101 ELSE 110
+101    p$ = "H2(g) > 1 atm"
+102    GOTO 160
+110    IF(ch4g > 0) THEN 111 ELSE 120
+111    p$ = "CH4(g) > 1 atm" 
+112    GOTO 160
+120    totel = SYS(main$, n, n$, t$, c)
+130    FOR i = 1 TO n
+140       IF(c(i) <= 0) THEN 160 ELSE 141
+141       p$ = n$(i)
+142       IF (INSTR(p$, "(g)") > 0) THEN 150 ELSE 160
+150    NEXT i
+160    PUNCH p$ #: PRINT "Predominant species for", main$, "=", p$
+170 NEXT imain
+180 REM PUNCH any extra numeric variables (e.g. contour and carry variables) to output here, lines 181-9999
+10000 REM  
+
+# Simulation 1: Preloop
+SOLUTION 1
+   pH        1.8
+   units     mol/kgw
+   Fe(3)     1e-3
+   Zn        1e-6
+   Na        1e-1
+   Cl        1e-1
+EQUILIBRIUM_PHASES 1
+   Fix_H+ -7 NaOH 10
+     -force_equality true
+   O2(g)  0
+   -force_equality true
+   Fe(OH)3(a) 0 0
+   Zn(OH)2-a  0 0
+#END
+SURFACE 1
+    Hfo_sOH Fe(OH)3(a)      equilibrium_phase 0.005  53300 # Dzombak and Morel (1990) Hfo database
+    Hfo_wOH Fe(OH)3(a)      equilibrium_phase 0.2 
+SAVE solution 1
+SAVE surface 1
+SAVE equilibrium_phases 1
+END
