@@ -8141,7 +8141,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 	phast_iphreeqc_worker->SetDumpFileOn(false);
 	phast_iphreeqc_worker->SetDumpStringOn(false);
 	phast_iphreeqc_worker->SetOutputFileOn(false);
-	phast_iphreeqc_worker->SetErrorFileOn(false);
+	//phast_iphreeqc_worker->SetErrorFileOn(false);
 	phast_iphreeqc_worker->SetOutputStringOn(false);
 #ifdef USE_MPI
 	int start = this->start_cell[this->mpi_myself];
@@ -8726,7 +8726,7 @@ PhreeqcRM::RunFileThread(int n)
 		IPhreeqcPhast * iphreeqc_phast_worker = this->GetWorkers()[n];
 
 		iphreeqc_phast_worker->SetOutputFileOn(false);
-		iphreeqc_phast_worker->SetErrorFileOn(false);
+		//iphreeqc_phast_worker->SetErrorFileOn(false);
 		iphreeqc_phast_worker->SetLogFileOn(false);
 		iphreeqc_phast_worker->SetSelectedOutputStringOn(false);
 		iphreeqc_phast_worker->SetSelectedOutputFileOn(false);
@@ -8866,7 +8866,7 @@ PhreeqcRM::RunStringThread(int n, std::string & input)
 		IPhreeqcPhast * iphreeqc_phast_worker = this->GetWorkers()[n];
 
 		iphreeqc_phast_worker->SetOutputFileOn(false);
-		iphreeqc_phast_worker->SetErrorFileOn(false);
+		//iphreeqc_phast_worker->SetErrorFileOn(false);
 		iphreeqc_phast_worker->SetLogFileOn(false);
 		iphreeqc_phast_worker->SetSelectedOutputStringOn(false);
 		iphreeqc_phast_worker->SetSelectedOutputFileOn(false);
