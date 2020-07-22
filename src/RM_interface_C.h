@@ -2790,6 +2790,29 @@ Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SetErrorHandlerMode(int id, int mode);
 /**
+Set the property that controls whether error messages are generated and displayed.
+Messages include PHREEQC "ERROR" messages, and
+any messages written with @ref RM_ErrorMessage.
+
+@param id               The instance @a id returned from @ref RM_Create.
+@param tf  @a 1, enable error messages; @a 0, disable error messages. Default is 1.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_ErrorMessage,
+@ref RM_ScreenMessage.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+status = RM_SetErrorOn(id, 1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_SetErrorOn(int id, int tf);
+/**
 Set the prefix for the output (prefix.chem.txt) and log (prefix.log.txt) files.
 These files are opened by @ref RM_OpenFiles.
 @param id               The instance @a id returned from @ref RM_Create.

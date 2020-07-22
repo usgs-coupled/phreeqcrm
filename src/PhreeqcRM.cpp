@@ -9486,6 +9486,22 @@ PhreeqcRM::SetErrorHandlerMode(int i)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+PhreeqcRM::SetErrorOn(bool t)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (mpi_myself == 0)
+	{
+		this->phreeqcrm_io->Set_error_on(t);
+		for (int w = 0; w < nthreads + 2; w++)
+		{
+			workers[w]->Set_error_on(t);
+		}
+	}
+	return IRM_OK;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 PhreeqcRM::SetFilePrefix(const std::string & prefix)
 /* ---------------------------------------------------------------------- */
 {

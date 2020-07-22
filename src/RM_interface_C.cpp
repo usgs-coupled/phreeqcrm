@@ -1561,6 +1561,19 @@ RM_SetErrorHandlerMode(int id, int mode)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+RM_SetErrorOn(int id, int tf)
+/* ---------------------------------------------------------------------- */
+{
+	// pass pointers from Fortran to the Reaction module
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->SetErrorOn(tf != 0);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 RM_SetFilePrefix(int id, const char *name)
 /* ---------------------------------------------------------------------- */
 {

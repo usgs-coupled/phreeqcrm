@@ -3350,6 +3350,26 @@ status = phreeqc_rm.SetErrorHandlerMode(1);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                SetErrorHandlerMode(int mode);
+	/**
+	Set the property that controls whether error messages are generated and displayed.
+	Messages include PHREEQC "ERROR" messages, and
+	any messages written with @ref ErrorMessage.
+
+	@param tf  @a True, enable error messages; @a False, disable error messages. Default is true.
+	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+	@see                    @ref ErrorMessage, @ref ScreenMessage.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	status = phreeqc_rm.SetErrorOn(true);
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	IRM_RESULT                                SetErrorOn(bool tf);
 /**
 Set the prefix for the output (prefix.chem.txt) and log (prefix.log.txt) files.
 These files are opened by @ref OpenFiles.
