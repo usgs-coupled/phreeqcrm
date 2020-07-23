@@ -4341,7 +4341,7 @@ INTEGER FUNCTION RM_SetErrorOn(id, tf)
     END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: tf
-    RM_SetScreenOn = RMF_SetErrorOn(id, tf)
+    RM_SetErrorOn = RMF_SetErrorOn(id, tf)
 END FUNCTION RM_SetErrorOn 
 !> Set the prefix for the output (prefix.chem.txt) and log (prefix.log.txt) files.
 !> These files are opened by @ref RM_OpenFiles.
