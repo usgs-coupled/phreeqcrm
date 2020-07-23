@@ -9852,6 +9852,10 @@ PhreeqcRM::SetScreenOn(bool t)
 	if (mpi_myself == 0)
 	{
 		this->phreeqcrm_io->Set_screen_on(t);
+		for (int w = 0; w < nthreads + 2; w++)
+		{
+			workers[w]->Set_screen_on(t);
+		}
 	}
 	return IRM_OK;
 }
