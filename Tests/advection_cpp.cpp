@@ -466,6 +466,7 @@ int units_tester()
 #endif
 		IRM_RESULT status;
 		// Set properties
+		status = phreeqc_rm.SetErrorOn(true);
 		status = phreeqc_rm.SetErrorHandlerMode(1);
 		status = phreeqc_rm.SetFilePrefix("Units_InitialPhreeqc_1");
 		if (phreeqc_rm.GetMpiMyself() == 0)
