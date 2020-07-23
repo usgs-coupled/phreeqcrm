@@ -96,12 +96,12 @@
    status_rm = RM_RunFile(id, 1, 1, 0, "preloop2.pqi") !dlp
    status_rm = RM_SetFilePrefix(id, "PhreePlotTest")
    status_rm = RM_SetErrorHandlerMode(id, 3)   !OpenMP only
-   
+   status_rm = RM_SetErrorOn(id, 0) ! 0 = off; 1 = on ! dlp
    status_rm = RM_SetScreenOn(id, 0)  ! 0 = off; 1 = on ! dlp
    !$OMP PARALLEL DO PRIVATE(w, status_rm, status_ip)
    do w = 0, nthreads - 1
       iphreeqc_id1 = RM_GetIPhreeqcId(id, w)
-      status_ip = SetErrorFileOn(iphreeqc_id1, .false.) !dlp
+      !status_ip = SetErrorFileOn(iphreeqc_id1, .false.) !dlp
       status_ip = SetOutputStringOn(iphreeqc_id1, .true.)
    enddo
    !$OMP END PARALLEL DO 

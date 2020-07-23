@@ -5,7 +5,7 @@
 #error "Cannot define both USE_OPENMP and USE_MPI at the same time."
 #endif
 #ifdef USE_MPI
-#define CLOCK() MPI_Wtimeset
+#define CLOCK() MPI_Wtime()
 #elif defined(USE_OPENMP)
 #define CLOCK() omp_get_wtime()
 #else
