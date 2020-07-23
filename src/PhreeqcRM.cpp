@@ -8141,7 +8141,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 	phast_iphreeqc_worker->SetDumpFileOn(false);
 	phast_iphreeqc_worker->SetDumpStringOn(false);
 	phast_iphreeqc_worker->SetOutputFileOn(false);
-	phast_iphreeqc_worker->SetErrorFileOn(false);
+	//phast_iphreeqc_worker->SetErrorFileOn(false);
 	phast_iphreeqc_worker->SetOutputStringOn(false);
 #ifdef USE_MPI
 	int start = this->start_cell[this->mpi_myself];
@@ -8726,7 +8726,7 @@ PhreeqcRM::RunFileThread(int n)
 		IPhreeqcPhast * iphreeqc_phast_worker = this->GetWorkers()[n];
 
 		iphreeqc_phast_worker->SetOutputFileOn(false);
-		iphreeqc_phast_worker->SetErrorFileOn(false);
+		//iphreeqc_phast_worker->SetErrorFileOn(false);
 		iphreeqc_phast_worker->SetLogFileOn(false);
 		iphreeqc_phast_worker->SetSelectedOutputStringOn(false);
 		iphreeqc_phast_worker->SetSelectedOutputFileOn(false);
@@ -8866,7 +8866,7 @@ PhreeqcRM::RunStringThread(int n, std::string & input)
 		IPhreeqcPhast * iphreeqc_phast_worker = this->GetWorkers()[n];
 
 		iphreeqc_phast_worker->SetOutputFileOn(false);
-		iphreeqc_phast_worker->SetErrorFileOn(false);
+		//iphreeqc_phast_worker->SetErrorFileOn(false);
 		iphreeqc_phast_worker->SetLogFileOn(false);
 		iphreeqc_phast_worker->SetSelectedOutputStringOn(false);
 		iphreeqc_phast_worker->SetSelectedOutputFileOn(false);
@@ -9486,6 +9486,22 @@ PhreeqcRM::SetErrorHandlerMode(int i)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+PhreeqcRM::SetErrorOn(bool t)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (mpi_myself == 0)
+	{
+		this->phreeqcrm_io->Set_error_on(t);
+		for (int w = 0; w < nthreads + 2; w++)
+		{
+			workers[w]->Set_error_on(t);
+		}
+	}
+	return IRM_OK;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 PhreeqcRM::SetFilePrefix(const std::string & prefix)
 /* ---------------------------------------------------------------------- */
 {
@@ -9836,6 +9852,10 @@ PhreeqcRM::SetScreenOn(bool t)
 	if (mpi_myself == 0)
 	{
 		this->phreeqcrm_io->Set_screen_on(t);
+		for (int w = 0; w < nthreads + 2; w++)
+		{
+			workers[w]->Set_screen_on(t);
+		}
 	}
 	return IRM_OK;
 }
