@@ -4306,7 +4306,43 @@ INTEGER FUNCTION RM_SetErrorHandlerMode(id, mode)
     INTEGER, INTENT(in) :: mode
     RM_SetErrorHandlerMode = RMF_SetErrorHandlerMode(id, mode)
 END FUNCTION RM_SetErrorHandlerMode        
+!> Set the property that controls whether error messages are generated and displayed.
+!> Messages include PHREEQC "ERROR" messages, and
+!> any messages written with @ref RM_ErrorMessage.
+!> 
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param tf  @a 1, enable error messages; @a 0, disable error messages. Default is 1.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_ErrorMessage, 
+!> @ref RM_ScreenMessage.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = RM_SetErrorOn(rm_id, 1)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
 
+INTEGER FUNCTION RM_SetErrorOn(id, tf)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_SetErrorOn(id, tf) &
+            BIND(C, NAME='RMF_SetErrorOn')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            INTEGER(KIND=C_INT), INTENT(in) :: tf
+        END FUNCTION RMF_SetErrorOn 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in) :: tf
+    RM_SetErrorOn = RMF_SetErrorOn(id, tf)
+END FUNCTION RM_SetErrorOn 
 !> Set the prefix for the output (prefix.chem.txt) and log (prefix.log.txt) files.
 !> These files are opened by @ref RM_OpenFiles.
 !> @param id               The instance @a id returned from @ref RM_Create.

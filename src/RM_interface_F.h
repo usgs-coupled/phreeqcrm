@@ -132,6 +132,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_SetCurrentSelectedOutputUserNumber(int *id, int *i
 IRM_DLL_EXPORT IRM_RESULT RMF_SetDensity(int *id, double *t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetDumpFileName(int *id, const char *dump_name);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetErrorHandlerMode(int *id, int *mode);
+IRM_DLL_EXPORT IRM_RESULT RMF_SetErrorOn(int* id, int* t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetFilePrefix(int *id, const char *prefix);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetMpiWorkerCallback(int *id, int (*fcn)(int *x1));
 IRM_DLL_EXPORT IRM_RESULT RMF_SetPartitionUZSolids(int *id, int *t);

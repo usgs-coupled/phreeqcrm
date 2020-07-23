@@ -119,6 +119,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		some_data.phreeqcrm_id = id;
 #endif
 		// Set properties
+		status = RM_SetErrorOn(id, 1);
 		status = RM_SetErrorHandlerMode(id, 2);
 		status = RM_SetComponentH2O(id, 0);
 		status = RM_SetRebalanceFraction(id, 0.5);
