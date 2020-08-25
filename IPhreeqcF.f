@@ -146,6 +146,18 @@
         ENDIF
       END FUNCTION GetErrorFileOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION GetErrorOn(ID)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+        LOGICAL(KIND=4) :: GetErrorOn
+        INTEGER(KIND=4) :: GetErrorOnF
+        IF (GetErrorOnF(ID).EQ.0) THEN
+          GetErrorOn = .FALSE.
+        ELSE
+          GetErrorOn = .TRUE.
+        ENDIF
+      END FUNCTION GetErrorOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! GetErrorString      
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION GetErrorStringLine(ID,N,LINE)
@@ -536,6 +548,15 @@
         INTEGER(KIND=4) :: SetErrorFileOnF
         SetErrorFileOn = SetErrorFileOnF(ID,ERROR_ON)
       END FUNCTION SetErrorFileOn
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION SetErrorOn(ID,ERROR_ON)
+        IMPLICIT NONE
+        INTEGER(KIND=4) :: ID
+        LOGICAL(KIND=4) :: ERROR_ON
+        INTEGER(KIND=4) :: SetErrorOn
+        INTEGER(KIND=4) :: SetErrorOnF
+        SetErrorOn = SetErrorOnF(ID,ERROR_ON)
+      END FUNCTION SetErrorOn
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION SetErrorStringOn(ID,ERROR_STRING_ON)
         IMPLICIT NONE
