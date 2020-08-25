@@ -15,7 +15,13 @@
 #include <vector>
 #include "CVar.hxx"
 
-class CSelectedOutput
+#if defined(_WINDLL)
+#define IPQ_DLL_EXPORT __declspec(dllexport)
+#else
+#define IPQ_DLL_EXPORT
+#endif
+
+class IPQ_DLL_EXPORT CSelectedOutput
 {
 public:
 	CSelectedOutput(void);
