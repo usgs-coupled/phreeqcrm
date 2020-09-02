@@ -227,6 +227,8 @@ D. Linux compiling, testing, and installing the PhreeqcRM library
 	Databases: 
 		/usr/local/share/doc/phreeqcrm/database              Phreeqc databases
 			Amm.dat
+			ColdChem.dat
+			core10.dat
 			frezchem.dat
 			iso.dat
 			llnl.dat
@@ -235,6 +237,7 @@ D. Linux compiling, testing, and installing the PhreeqcRM library
 			phreeqc.dat
 			pitzer.dat
 			sit.dat
+			Tipping_Hurley.dat
 			wateq4f.dat
 			
 	Fortran interfaces
