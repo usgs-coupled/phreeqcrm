@@ -14,11 +14,7 @@
 #include "Var.h"                    /* VRESULT */
 #include "PHRQ_io.h"
 
-#if defined(_WINDLL)
-#define IPQ_DLL_EXPORT __declspec(dllexport)
-#else
-#define IPQ_DLL_EXPORT
-#endif
+#include "PHRQ_exports.h"
 
 class Phreeqc;
 class IErrorReporter;
