@@ -63,6 +63,10 @@ IPQ_DLL_EXPORT int  IPQ_DECL IPQ_CASE_UND(geterrorfileon, GETERRORFILEON, geterr
 {
 	return GetErrorFileOnF(id);
 }
+IPQ_DLL_EXPORT int  IPQ_DECL IPQ_CASE_UND(geterroron, GETERRORON, geterroron_, GETERRORON_)(int *id)
+{
+	return GetErrorOnF(id);
+}
 // GetErrorString
 IPQ_DLL_EXPORT void IPQ_DECL IPQ_CASE_UND(geterrorstringline, GETERRORSTRINGLINE, geterrorstringline_, GETERRORSTRINGLINE_)(int *id, int *n, char* line, size_t line_length)
 {
@@ -231,6 +235,10 @@ IPQ_DLL_EXPORT int  IPQ_DECL IPQ_CASE_UND(seterrorfilename, SETERRORFILENAME, se
 IPQ_DLL_EXPORT int  IPQ_DECL IPQ_CASE_UND(seterrorfileon, SETERRORFILEON, seterrorfileon_, SETERRORFILEON_)(int *id, int *error_on)
 {
 	return SetErrorFileOnF(id, error_on);
+}
+IPQ_DLL_EXPORT int  IPQ_DECL IPQ_CASE_UND(seterroron, SETERRORON, seterroron_, SETERRORON_)(int *id, int *error_on)
+{
+	return SetErrorOnF(id, error_on);
 }
 IPQ_DLL_EXPORT int  IPQ_DECL IPQ_CASE_UND(seterrorstringon, SETERRORSTRINGON, seterrorstringon_, SETERRORSTRINGON_)(int *id, int *error_string_on)
 {
