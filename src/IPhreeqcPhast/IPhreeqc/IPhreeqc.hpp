@@ -14,11 +14,7 @@
 #include "Var.h"                    /* VRESULT */
 #include "PHRQ_io.h"
 
-#if defined(_WINDLL)
-#define IPQ_DLL_EXPORT __declspec(dllexport)
-#else
-#define IPQ_DLL_EXPORT
-#endif
+#include "PHRQ_exports.h"
 
 class Phreeqc;
 class IErrorReporter;
@@ -192,6 +188,14 @@ public:
 	 *  @see                    SetErrorFileOn
 	 */
 	bool                     GetErrorFileOn(void)const;
+
+	/**
+	 *  Retrieves the current value of the error switch.
+	 *  @retval true            Error messages are sent to the error file and to the string buffer
+	 *  @retval false           No errors are sent.
+	 *  @see                    SetErrorOn
+	 */
+	bool                     GetErrorOn(void)const;
 
 	/**
 	 *  Retrieves the error messages from the last call to @ref RunAccumulated, @ref RunFile, @ref RunString, @ref LoadDatabase, or @ref LoadDatabaseString.
@@ -768,11 +772,20 @@ public:
 	/**
 	 *  Sets the error file switch on or off.  This switch controls whether or not
 	 *  error messages are written to the <B><I>phreeqc.id.err</I></B> (where id is obtained from @ref GetId) file.
-	 *  The initial setting is false.
+	 *  The initial setting is true.
 	 *  @param bValue           If true, writes errors to the error file; if false, no errors are written to the error file.
 	 *  @see                    GetErrorStringLine, GetErrorStringLineCount, GetErrorFileOn, OutputErrorString
 	 */
 	void                     SetErrorFileOn(bool bValue);
+
+	/**
+	 *  Sets the error switch on or off.  This switch controls whether
+	 *  error messages are are generated and displayed.
+	 *  The initial setting is true.
+	 *  @param bValue           If true, error messages are sent to the error file and error string buffer; if false, no error messages are generated.
+	 *  @see                    GetErrorOn, GetErrorStringLine, GetErrorStringLineCount, GetErrorFileOn, OutputErrorString
+	 */
+	void                     SetErrorOn(bool bValue);
 
 	/**
 	 *  Sets the error string switch on or off.  This switch controls whether or not the data normally sent

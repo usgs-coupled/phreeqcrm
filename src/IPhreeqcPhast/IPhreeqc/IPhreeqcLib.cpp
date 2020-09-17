@@ -236,6 +236,24 @@ GetErrorFileOn(int id)
 	return IPQ_BADINSTANCE;
 }
 
+int
+GetErrorOn(int id)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		if (IPhreeqcPtr->GetErrorOn())
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	return IPQ_BADINSTANCE;
+}
+
 const char*
 GetErrorString(int id)
 {
@@ -879,6 +897,18 @@ SetErrorFileOn(int id, int value)
 	if (IPhreeqcPtr)
 	{
 		IPhreeqcPtr->SetErrorFileOn(value != 0);
+		return IPQ_OK;
+	}
+	return IPQ_BADINSTANCE;
+}
+
+IPQ_RESULT
+SetErrorOn(int id, int value)
+{
+	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
+	if (IPhreeqcPtr)
+	{
+		IPhreeqcPtr->SetErrorOn(value != 0);
 		return IPQ_OK;
 	}
 	return IPQ_BADINSTANCE;

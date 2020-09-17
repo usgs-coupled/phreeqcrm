@@ -15,7 +15,9 @@
 #include <vector>
 #include "CVar.hxx"
 
-class CSelectedOutput
+#include "PHRQ_exports.h"
+
+class IPQ_DLL_EXPORT CSelectedOutput
 {
 public:
 	CSelectedOutput(void);

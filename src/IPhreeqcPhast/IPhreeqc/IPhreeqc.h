@@ -433,6 +433,25 @@ extern "C" {
  */
 	IPQ_DLL_EXPORT int         GetErrorFileOn(int id);
 
+/**
+ *  Retrieves the current value of the error on switch.
+ *  @param id            The instance id returned from @ref CreateIPhreeqc.
+ *  @return              Non-zero if errors are generated, 0 (zero) otherwise.
+ *  @see                 SetErrorOn
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION GetErrorOn(ID)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    LOGICAL(KIND=4)               :: GetErrorOn
+ *  END FUNCTION GetErrorOn
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT int         GetErrorOn(int id);
+
 
 /**
  *  Retrieves the error messages from the last call to @ref RunAccumulated, @ref RunFile, @ref RunString, @ref LoadDatabase, or @ref LoadDatabaseString.
@@ -1851,6 +1870,31 @@ Headings
  *  @endhtmlonly
  */
 	IPQ_DLL_EXPORT IPQ_RESULT  SetErrorFileOn(int id, int error_on);
+
+/**
+ *  Sets the error switch on or off.  This switch controls whether or not
+ *  error messages are generated and displayed.  The initial setting after calling
+ *  @ref CreateIPhreeqc is on.
+ *  @param id                   The instance id returned from @ref CreateIPhreeqc.
+ *  @param error_on             If non-zero, writes errors to the error file and error string; if zero, no errors are written to the error file or stored in the error string.
+ *  @retval IPQ_OK              Success.
+ *  @retval IPQ_BADINSTANCE     The given id is invalid.
+ *  @see                        GetErrorOn, GetErrorStringLine, GetErrorStringLineCount, OutputErrorString
+ *  @par Fortran90 Interface:
+ *  @htmlonly
+ *  <CODE>
+ *  <PRE>
+ *  FUNCTION SetErrorOn(ID,ERR_ON)
+ *    INTEGER(KIND=4),  INTENT(IN)  :: ID
+ *    LOGICAL(KIND=4),  INTENT(IN)  :: ERR_ON
+ *    INTEGER(KIND=4)               :: SetErrorOn
+ *  END FUNCTION SetErrorOn
+ *  </PRE>
+ *  </CODE>
+ *  @endhtmlonly
+ */
+	IPQ_DLL_EXPORT IPQ_RESULT  SetErrorOn(int id, int error_on);
+
 
 /**
  *  Sets the error string switch on or off.  This switch controls whether or not the data normally sent

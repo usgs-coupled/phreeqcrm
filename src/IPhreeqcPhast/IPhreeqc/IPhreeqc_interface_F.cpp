@@ -145,6 +145,12 @@ GetErrorFileOnF(int *id)
 	return ::GetErrorFileOn(*id);
 }
 
+int
+GetErrorOnF(int *id)
+{
+	return ::GetErrorOn(*id);
+}
+
 /*
 GetErrorStringF
 */
@@ -455,6 +461,12 @@ IPQ_RESULT
 SetErrorFileOnF(int *id, int* error_file_on)
 {
 	return ::SetErrorFileOn(*id, *error_file_on);
+}
+
+IPQ_RESULT
+SetErrorOnF(int *id, int* error_on)
+{
+	return ::SetErrorOn(*id, *error_on);
 }
 
 IPQ_RESULT

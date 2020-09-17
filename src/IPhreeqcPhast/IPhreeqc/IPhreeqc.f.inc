@@ -54,6 +54,7 @@
       INTEGER(KIND=4) GetDumpStringLineCount
       LOGICAL(KIND=4) GetDumpStringOn
       LOGICAL(KIND=4) GetErrorFileOn
+      LOGICAL(KIND=4) GetErrorOn
       INTEGER(KIND=4) GetErrorStringLine
       INTEGER(KIND=4) GetErrorStringLineCount
       LOGICAL(KIND=4) GetLogFileOn      
@@ -78,6 +79,7 @@
       INTEGER(KIND=4) SetDumpFileOn
       INTEGER(KIND=4) SetDumpStringOn
       INTEGER(KIND=4) SetErrorFileOn
+      INTEGER(KIND=4) SetErrorOn
       INTEGER(KIND=4) SetErrorStringOn
       INTEGER(KIND=4) SetLogFileName
       INTEGER(KIND=4) SetLogFileOn
