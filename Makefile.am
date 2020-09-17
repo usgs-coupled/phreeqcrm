@@ -37,6 +37,7 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/Parser.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_base.cxx\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_base.h\
+	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_exports.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_io.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_io.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/phrqtype.h\
