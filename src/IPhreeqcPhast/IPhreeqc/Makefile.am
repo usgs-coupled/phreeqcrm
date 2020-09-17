@@ -48,6 +48,7 @@ libiphreeqc_la_SOURCES=\
 	phreeqcpp/common/Parser.h\
 	phreeqcpp/common/PHRQ_base.cxx\
 	phreeqcpp/common/PHRQ_base.h\
+	phreeqcpp/common/PHRQ_exports.h\
 	phreeqcpp/common/PHRQ_io.cpp\
 	phreeqcpp/common/PHRQ_io.h\
 	phreeqcpp/common/phrqtype.h\

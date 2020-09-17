@@ -213,9 +213,19 @@ bool IPhreeqc::GetErrorFileOn(void)const
 	return this->ErrorFileOn;
 }
 
+bool IPhreeqc::GetErrorOn(void)const
+{
+	return this->Get_error_on();
+}
+
 const char* IPhreeqc::GetErrorString(void)
 {
 	static const char err_msg[] = "GetErrorString: ErrorStringOn not set.\n";
+	static const char err_msg2[] = "GetErrorString: ErrorOn not set.\n";
+	if (!this->error_on)
+	{
+		return err_msg2;
+	}
 	if (!this->ErrorStringOn)
 	{
 		return err_msg;
@@ -971,6 +981,11 @@ void IPhreeqc::SetErrorFileName(const char *filename)
 void IPhreeqc::SetErrorFileOn(bool bValue)
 {
 	this->ErrorFileOn = bValue;
+}
+
+void IPhreeqc::SetErrorOn(bool bValue)
+{
+	this->Set_error_on(bValue);
 }
 
 void IPhreeqc::SetErrorStringOn(bool bValue)

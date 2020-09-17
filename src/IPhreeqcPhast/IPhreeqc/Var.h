@@ -6,11 +6,7 @@
 #ifndef __VAR_H_INC
 #define __VAR_H_INC
 
-#if defined(_WINDLL)
-#define IPQ_DLL_EXPORT __declspec(dllexport)
-#else
-#define IPQ_DLL_EXPORT
-#endif
+#include "PHRQ_exports.h"
 
 #if defined(R_SO) || defined(NO_NAMELESS_UNION)
 #define VAR_UNION_NAME u
