@@ -28,10 +28,6 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqc/IPhreeqcLib.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/advection.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/basicsubs.cpp\
-	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/ChartHandler.cpp\
-	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/ChartHandler.h\
-	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/ChartObject.cpp\
-	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/ChartObject.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/cl1.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/Parser.cxx\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/Parser.h\
@@ -43,8 +39,6 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/phrqtype.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/Utils.cxx\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/Utils.h\
-	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/CurveObject.cpp\
-	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/CurveObject.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/cvdense.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/cvdense.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/cvode.cpp\
