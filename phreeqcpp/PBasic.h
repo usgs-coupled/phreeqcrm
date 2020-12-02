@@ -266,6 +266,7 @@ public:
 		tokdescription,
 		toktitle,
 		toksys,
+		tokadd_heading,
 		tokinstr,
 		tokltrim,
 		tokrtrim,
@@ -298,6 +299,8 @@ public:
 		toktotmol,
 		toktotmoles,
 		tokeol_,
+		tokeol_notab_,
+		tokno_newline_,
 		tokceil,
 		tokfloor,
 		tokkinetics_formula,
@@ -547,6 +550,8 @@ protected:
 	IDErr nIDErrPrompt;
 #endif
 	int nErrLineNumber;
+	bool punch_tab;
+	bool skip_punch;
 };
 
 #endif /* _INC_PBasic_H */
