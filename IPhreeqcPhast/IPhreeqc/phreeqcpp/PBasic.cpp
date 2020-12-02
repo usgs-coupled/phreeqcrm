@@ -64,6 +64,8 @@ PBasic::PBasic(Phreeqc * ptr, PHRQ_io *phrq_io)
 	nIDErrPrompt = (PBasic::IDErr)0;
 #endif
 	nErrLineNumber = 0;
+	punch_tab = true;
+	skip_punch = false;
 	// Basic commands initialized at bottom of file
 }
 PBasic::~PBasic(void)
@@ -1091,6 +1093,14 @@ listtokens(FILE * f, tokenrec * l_buf)
 			output_msg("EOL$");
 			break;
 
+		case tokeol_notab_:
+			output_msg("EOL_NOTAB$");
+			break;
+
+		case tokno_newline_:
+			output_msg("NO_NEWLINE$");
+			break;
+
 		case tokasc:
 			output_msg("ASC");
 			break;
@@ -1411,6 +1421,10 @@ listtokens(FILE * f, tokenrec * l_buf)
 
 		case toksys:
 			output_msg("SYS");
+			break;
+
+		case tokadd_heading:
+			output_msg("ADD_HEADING");
 			break;
 
 		case tokinstr:
@@ -2104,10 +2118,10 @@ factor(struct LOC_exec * LINK)
 
 	case tokstr:
 		n.stringval = true;
-		m = (int) strlen(facttok->UU.sp) + 1;
+		m = (int)strlen(facttok->UU.sp) + 1;
 		if (m < 256)
 			m = 256;
-		n.UU.sval = (char *) PhreeqcPtr->PHRQ_calloc(m, sizeof(char));
+		n.UU.sval = (char*)PhreeqcPtr->PHRQ_calloc(m, sizeof(char));
 		if (n.UU.sval == NULL)
 			PhreeqcPtr->malloc_error();
 		strcpy(n.UU.sval, facttok->UU.sp);
@@ -2121,7 +2135,7 @@ factor(struct LOC_exec * LINK)
 		{
 			if (*v->UU.U1.sval != NULL)
 			{
-				m = (int) strlen(*v->UU.U1.sval) + 1;
+				m = (int)strlen(*v->UU.U1.sval) + 1;
 				if (m < 256)
 					m = 256;
 			}
@@ -2129,7 +2143,7 @@ factor(struct LOC_exec * LINK)
 			{
 				m = 256;
 			}
-			n.UU.sval = (char *) PhreeqcPtr->PHRQ_calloc(m, sizeof(char));
+			n.UU.sval = (char*)PhreeqcPtr->PHRQ_calloc(m, sizeof(char));
 			if (n.UU.sval == NULL)
 				PhreeqcPtr->malloc_error();
 			if (*v->UU.U1.sval != NULL)
@@ -2274,25 +2288,25 @@ factor(struct LOC_exec * LINK)
 		break;
 
 	case tokact:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->activity(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->activity(str);
+	}
+	break;
 
 	case tokgamma:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->activity_coefficient(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->activity_coefficient(str);
+	}
+	break;
 
 	case toklg:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->log_activity_coefficient(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->log_activity_coefficient(str);
+	}
+	break;
 
 	case tokget_por:
 		i = intfactor(LINK);
@@ -2355,66 +2369,66 @@ factor(struct LOC_exec * LINK)
 		break;
 
 	case tokequi:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->equi_phase(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->equi_phase(str);
+	}
+	break;
 
 	case tokequi_delta:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->equi_phase_delta(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->equi_phase_delta(str);
+	}
+	break;
 
 	case tokkin:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->kinetics_moles(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->kinetics_moles(str);
+	}
+	break;
 
 	case tokkin_delta:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->kinetics_moles_delta(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->kinetics_moles_delta(str);
+	}
+	break;
 
 	case tokkin_time:
-		{
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->rate_kin_time;
-		}
-		break;
+	{
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->rate_kin_time;
+	}
+	break;
 
 	case tokgas:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_gas_comp(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_gas_comp(str);
+	}
+	break;
 
 	case toks_s:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_ss_comp(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_ss_comp(str);
+	}
+	break;
 
 	case tokmisc1:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_misc1(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_misc1(str);
+	}
+	break;
 
 	case tokmisc2:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_misc2(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_misc2(str);
+	}
+	break;
 
 	case tokmu:
 		n.UU.val = PhreeqcPtr->mu_x;
@@ -2436,25 +2450,25 @@ factor(struct LOC_exec * LINK)
 		break;
 
 	case toklk_species:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_logk_s(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_logk_s(str);
+	}
+	break;
 
 	case toklk_named:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_logk_n(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_logk_n(str);
+	}
+	break;
 
 	case toklk_phase:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_logk_p(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_logk_p(str);
+	}
+	break;
 
 	case toksum_species:
 		require(toklp, LINK);
@@ -2522,7 +2536,7 @@ factor(struct LOC_exec * LINK)
 			}
 			else
 			{
-				soln_ptr = Utilities::Rxn_find(PhreeqcPtr->Rxn_solution_map, 
+				soln_ptr = Utilities::Rxn_find(PhreeqcPtr->Rxn_solution_map,
 					PhreeqcPtr->use.Get_n_solution_user());
 				if (soln_ptr != NULL)
 				{
@@ -2570,14 +2584,14 @@ factor(struct LOC_exec * LINK)
 		string2 = stringfactor(STR2, LINK);
 		require(tokrp, LINK);
 		{
-			const char * cptr = strstr(string1, string2);
+			const char* cptr = strstr(string1, string2);
 			if (cptr == NULL)
 			{
 				n.UU.val = 0;
 			}
 			else
 			{
-				n.UU.val = ((LDBLE) (cptr - string1)) + 1;
+				n.UU.val = ((LDBLE)(cptr - string1)) + 1;
 			}
 		}
 		break;
@@ -2610,11 +2624,11 @@ factor(struct LOC_exec * LINK)
 		break;
 
 	case tokiso:
-		{
-			const char * str = stringfactor(STR1, LINK);
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->iso_value(str);
-		}
-		break;
+	{
+		const char* str = stringfactor(STR1, LINK);
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->iso_value(str);
+	}
+	break;
 
 	case tokiso_unit:
 		n.stringval = true;
@@ -2633,6 +2647,14 @@ factor(struct LOC_exec * LINK)
 		i = intexpr(LINK);
 		require(tokrp, LINK);
 		n.UU.sval = PhreeqcPtr->string_pad(string1, i);
+		break;
+
+	case tokadd_heading:
+		require(toklp, LINK);
+		name = stringfactor(STR1, LINK);
+		require(tokrp, LINK);
+		PhreeqcPtr->current_user_punch->Get_headings().push_back(name);
+		n.UU.val = (parse_all) ? 1 : (double)PhreeqcPtr->current_user_punch->Get_headings().size();
 		break;
 
 	case toksys:
@@ -4098,6 +4120,21 @@ factor(struct LOC_exec * LINK)
 		strcpy(n.UU.sval, "\n");
 		break;
 
+	case tokeol_notab_:
+		n.stringval = true;
+		n.UU.sval = (char*)PhreeqcPtr->PHRQ_calloc(256, sizeof(char));
+		if (n.UU.sval == NULL)
+			PhreeqcPtr->malloc_error();
+		strcpy(n.UU.sval, "\n");
+		punch_tab = false;
+		break;
+
+	case tokno_newline_:
+		n.stringval = true;
+		PhreeqcPtr->current_selected_output->Set_punch_newline(false);
+		this->skip_punch = true;
+		break;
+
 	case tokasc:
 		l_s = strfactor(LINK);
 		if (*l_s == '\0')
@@ -5028,46 +5065,74 @@ cmdpunch(struct LOC_exec *LINK)
 			continue;
 		}
 		n = expr(LINK);
-		bool temp_high_precision = (PhreeqcPtr->current_selected_output != NULL) ? 
-			PhreeqcPtr->current_selected_output->Get_high_precision() : 
+		bool temp_high_precision = (PhreeqcPtr->current_selected_output != NULL) ?
+			PhreeqcPtr->current_selected_output->Get_high_precision() :
 			PhreeqcPtr->high_precision;
-		if (n.stringval)
+		if (!this->skip_punch)
 		{
-/*      fputs(n.UU.sval, stdout); */
-
-			if (!temp_high_precision)
+			if (n.stringval)
 			{
-				if (strlen(n.UU.sval) <= 12)
+				/*      fputs(n.UU.sval, stdout); */
 				{
-					PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%12.12s\t", n.UU.sval);
+					if (!temp_high_precision)
+					{
+						if (strlen(n.UU.sval) <= 12)
+						{
+							if (punch_tab)
+							{
+								PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%12.12s\t", n.UU.sval);
+							}
+							else {
+								PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%12.12s", n.UU.sval);
+							}
+						}
+						else
+						{
+							if (punch_tab)
+							{
+								PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%s\t", n.UU.sval);
+							}
+							else {
+								PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%s", n.UU.sval);
+							}
+						}
+					}
+					else
+					{
+						if (strlen(n.UU.sval) <= 20)
+						{
+							if (punch_tab) {
+								PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%20.20s\t", n.UU.sval);
+							}
+							else {
+								PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%20.20s", n.UU.sval);
+							}
+						}
+						else
+						{
+							if (punch_tab) {
+								PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%s\t", n.UU.sval);
+							}
+							else {
+								PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%s", n.UU.sval);
+							}
+						}
+					}
 				}
-				else
-				{
-					PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%s\t", n.UU.sval);
-				}
+				PhreeqcPtr->PHRQ_free(n.UU.sval);
+			}
+			else if (!temp_high_precision)
+			{
+				PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%12.4e\t", (double)n.UU.val);
 			}
 			else
 			{
-				if (strlen(n.UU.sval) <= 20)
-				{
-					PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%20.20s\t", n.UU.sval);
-				}
-				else
-				{
-					PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%s\t", n.UU.sval);
-				}
+				PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%20.12e\t", (double)n.UU.val);
 			}
-			PhreeqcPtr->PHRQ_free(n.UU.sval);
+			punch_tab = true;
+			++PhreeqcPtr->n_user_punch_index;
 		}
-		else if (!temp_high_precision)
-		{
-			PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%12.4e\t", (double) n.UU.val);
-		}
-		else
-		{
-			PhreeqcPtr->fpunchf_user(PhreeqcPtr->n_user_punch_index, "%20.12e\t", (double) n.UU.val);
-		}
-		++PhreeqcPtr->n_user_punch_index;
+		this->skip_punch = false;
 	}
 }
 
@@ -7253,6 +7318,8 @@ const std::map<const std::string, PBasic::BASIC_TOKEN>::value_type temp_tokens[]
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("val",                PBasic::tokval),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("chr$",               PBasic::tokchr_),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("eol$",               PBasic::tokeol_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("eol_notab$",         PBasic::tokeol_notab_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("no_newline$",        PBasic::tokno_newline_),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("asc",                PBasic::tokasc),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("len",                PBasic::toklen),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("mid$",               PBasic::tokmid_),
@@ -7332,6 +7399,7 @@ const std::map<const std::string, PBasic::BASIC_TOKEN>::value_type temp_tokens[]
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("description",        PBasic::tokdescription),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("title",              PBasic::toktitle),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sys",                PBasic::toksys),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("add_heading",        PBasic::tokadd_heading),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("instr",              PBasic::tokinstr),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("ltrim",              PBasic::tokltrim),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rtrim",              PBasic::tokrtrim),
