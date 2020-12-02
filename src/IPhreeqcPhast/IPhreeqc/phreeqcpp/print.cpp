@@ -180,7 +180,6 @@ punch_all(void)
 		// UserPunch
 		std::map < int, UserPunch >::iterator up_it = UserPunch_map.find(current_selected_output->Get_n_user());
 		current_user_punch = up_it == UserPunch_map.end() ? NULL : &(up_it->second);
-
 		punch_identifiers();
 		punch_totals();
 		punch_molalities();
@@ -196,8 +195,9 @@ punch_all(void)
 		/*
 		*   new line for punch_file
 		*/
-		if (current_selected_output->Get_new_line())
+		if (current_selected_output->Get_new_line() && current_selected_output->Get_punch_newline())
 			punch_msg("\n");
+		current_selected_output->Set_punch_newline(true);
 
 		/*
 		*   signal end of row
