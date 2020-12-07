@@ -65,6 +65,7 @@ sed -i -e "s/RM_SetCurrentSelectedOutputUserNumber/rm_setcurrentselectedoutputus
 sed -i -e "s/RM_SetDensity/rm_setdensity/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetDumpFileName/rm_setdumpfilename/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetErrorHandlerMode/rm_seterrorhandlermode/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_SetErrorOn/rm_seterroron/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetFilePrefix/rm_setfileprefix/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetMpiWorkerCallback/rm_setmpiworkercallback/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetPartitionUZSolids/rm_setpartitionuzsolids/g" %RM_INTERFACE_F90%

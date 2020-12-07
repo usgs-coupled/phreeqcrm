@@ -192,6 +192,9 @@ for f in html/*.html; do
   sed -i "s/rm_seterrorhandlermode/RM_SetErrorHandlerMode/g" $f 
 done
 for f in html/*.html; do
+  sed -i "s/rm_seterroron/RM_SetErrorOn/g" $f 
+done
+for f in html/*.html; do
   sed -i "s/rm_setfileprefix/RM_SetFilePrefix/g" $f 
 done
 for f in html/*.html; do
