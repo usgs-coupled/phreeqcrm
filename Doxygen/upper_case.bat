@@ -255,6 +255,10 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_seterroron/RM_SetErrorOn/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_setfileprefix/RM_SetFilePrefix/g" %%f 
   @del sed*
 )
