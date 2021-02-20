@@ -2282,6 +2282,7 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 					}
 				}
 			}
+			if(total_cells <= 0) total_cells = 1;
 			if (mpi_myself == 0 && block_count * 100 / total_cells > pct)
 			{
 				int pct_block_count = (block_count * 10 / total_cells) * 10;
