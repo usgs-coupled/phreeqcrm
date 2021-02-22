@@ -507,6 +507,7 @@ END FUNCTION RM_ErrorMessage
 !> @ref RM_GetSpeciesCount, 
 !> @ref RM_GetSpeciesD25,
 !> @ref RM_GetSpeciesLog10Gammas,
+!> @ref RM_GetSpeciesLog10Molalities,
 !> @ref RM_GetSpeciesName,   
 !> @ref RM_GetSpeciesZ, 
 !> @ref RM_SetComponentH2O. 
@@ -2348,6 +2349,7 @@ END SUBROUTINE Chk_GetSolutionVolume
 !> @ref RM_GetSpeciesCount, 
 !> @ref RM_GetSpeciesD25, 
 !> @ref RM_GetSpeciesLog10Gammas,
+!> @ref RM_GetSpeciesLog10Molalities,
 !> @ref RM_GetSpeciesName,
 !> @ref RM_GetSpeciesSaveOn, 
 !> @ref RM_GetSpeciesZ,  
@@ -2416,6 +2418,7 @@ END SUBROUTINE Chk_GetSpeciesConcentrations
 !> @ref RM_GetSpeciesConcentrations, 
 !> @ref RM_GetSpeciesD25,
 !> @ref RM_GetSpeciesLog10Gammas, 
+!> @ref RM_GetSpeciesLog10Molalities,
 !> @ref RM_GetSpeciesName, 
 !> @ref RM_GetSpeciesSaveOn, 
 !> @ref RM_GetSpeciesZ,
@@ -2471,6 +2474,7 @@ END FUNCTION RM_GetSpeciesCount
 !> @ref RM_GetSpeciesConcentrations, 
 !> @ref RM_GetSpeciesCount, 
 !> @ref RM_GetSpeciesLog10Gammas,
+!> @ref RM_GetSpeciesLog10Molalities,
 !> @ref RM_GetSpeciesName,
 !> @ref RM_GetSpeciesSaveOn,
 !> @ref RM_GetSpeciesZ,  
@@ -2542,6 +2546,7 @@ END SUBROUTINE Chk_GetSpeciesD25
 !> @ref RM_GetSpeciesConcentrations,
 !> @ref RM_GetSpeciesCount, 
 !> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLog10Molalities,
 !> @ref RM_GetSpeciesName,
 !> @ref RM_GetSpeciesSaveOn, 
 !> @ref RM_GetSpeciesZ,  
@@ -2590,13 +2595,86 @@ SUBROUTINE Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
-    errors = errors + Chk_Double2D(id, species_log10gammas, rmf_nxyz, nspecies, "species concentration", &
-         "RM_GetSpeciesConcentrations")
+    errors = errors + Chk_Double2D(id, species_log10gammas, rmf_nxyz, nspecies, "species gammas", &
+         "RM_GetSpeciesLog10Gammas")
     if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesConcentrations")
+        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesLog10Gammas")
     endif
 END SUBROUTINE Chk_GetSpeciesLog10Gammas
 
+!> Transfer log10 aqueous-species log10 molalities to the array argument (@a species_log10molalities)
+!> To use this method @ref RM_SetSpeciesSaveOn must be set to @a true.
+!> The list of aqueous
+!> species is determined by @ref RM_FindComponents and includes all
+!> aqueous species that can be made from the set of components.
+!> 
+!> @param id                   The instance @a id returned from @ref RM_Create.
+!> @param species_log10molalities  Array to receive the aqueous species molalities. 
+!> Dimension of the array is (@a nxyz, @a nspecies),
+!> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount), 
+!> and @a nspecies is the number of aqueous species (@ref RM_GetSpeciesCount).
+!> Values for inactive cells are set to 1e30.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see                    
+!> @ref RM_FindComponents, 
+!> @ref RM_GetSpeciesConcentrations,
+!> @ref RM_GetSpeciesCount, 
+!> @ref RM_GetSpeciesD25, 
+!> @ref RM_GetSpeciesLog10Gammas,
+!> @ref RM_GetSpeciesName,
+!> @ref RM_GetSpeciesSaveOn, 
+!> @ref RM_GetSpeciesZ,  
+!> @ref RM_SetSpeciesSaveOn,
+!> @ref RM_SpeciesConcentrations2Module.
+!> 
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = RM_SetSpeciesSaveOn(id, 1)
+!> ncomps = RM_FindComponents(id)
+!> nspecies = RM_GetSpeciesCount(id)
+!> nxyz = RM_GetGridCellCount(id)
+!> allocate(species_log10molalities(nxyz, nspecies))
+!> status = RM_RunCells(id)
+!> status = RM_GetSpeciesLog10Molalities(id, species_log10molalites)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+
+INTEGER FUNCTION RM_GetSpeciesLog10Molalities(id, species_log10molalities) 
+    USE ISO_C_BINDING  
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetSpeciesLog10Molalities(id, species_log10molalities) &
+            BIND(C, NAME='RMF_GetSpeciesLog10Molalities')   
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            REAL(KIND=C_DOUBLE), INTENT(out) :: species_log10molalities(*)
+        END FUNCTION RMF_GetSpeciesLog10Molalities 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: species_log10molalities
+    if (rmf_debug) call Chk_GetSpeciesLog10Molalities(id, species_log10molalities)
+    RM_GetSpeciesLog10Molalities = RMF_GetSpeciesLog10Molalities(id, species_log10molalities)
+END FUNCTION RM_GetSpeciesLog10Molalities
+
+SUBROUTINE Chk_GetSpeciesLog10Molalities(id, species_log10molalities)
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: species_log10molalities
+    INTEGER :: errors, nspecies
+    nspecies = RM_GetSpeciesCount(id)
+    errors = 0
+    errors = errors + Chk_Double2D(id, species_log10molalities, rmf_nxyz, nspecies, "species molalities", &
+         "RM_GetSpeciesLog10Molalities")
+    if (errors .gt. 0) then
+        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesLog10Molalities")
+    endif
+END SUBROUTINE Chk_GetSpeciesLog10Molalities
 
 !> Transfers the name of the @a ith aqueous species to the character argument (@a name).
 !> This method is intended for use with multicomponent-diffusion transport calculations,
@@ -2615,6 +2693,7 @@ END SUBROUTINE Chk_GetSpeciesLog10Gammas
 !> @ref RM_GetSpeciesCount,
 !> @ref RM_GetSpeciesD25, 
 !> @ref RM_GetSpeciesLog10Gammas,
+!> @ref RM_GetSpeciesLog10Molalities,
 !> @ref RM_GetSpeciesSaveOn,
 !> @ref RM_GetSpeciesZ, 
 !> @ref RM_SetSpeciesSaveOn,
@@ -2670,6 +2749,7 @@ END FUNCTION RM_GetSpeciesName
 !> @ref RM_GetSpeciesCount,
 !> @ref RM_GetSpeciesD25, 
 !> @ref RM_GetSpeciesLog10Gammas,
+!> @ref RM_GetSpeciesLog10Molalities,
 !> @ref RM_GetSpeciesName,
 !> @ref RM_GetSpeciesZ, 
 !> @ref RM_SetSpeciesSaveOn,
@@ -2721,6 +2801,7 @@ END FUNCTION RM_GetSpeciesSaveOn
 !> @ref RM_GetSpeciesCount,
 !> @ref RM_GetSpeciesD25, 
 !> @ref RM_GetSpeciesLog10Gammas,
+!> @ref RM_GetSpeciesLog10Molalities,
 !> @ref RM_GetSpeciesName, 
 !> @ref RM_GetSpeciesSaveOn, 
 !> @ref RM_SetSpeciesSaveOn,
@@ -5072,6 +5153,7 @@ END FUNCTION RM_SetSelectedOutputOn
 !> @ref RM_GetSpeciesCount,
 !> @ref RM_GetSpeciesD25,
 !> @ref RM_GetSpeciesLog10Gammas,
+!> @ref RM_GetSpeciesLog10Molalities,
 !> @ref RM_GetSpeciesName, 
 !> @ref RM_GetSpeciesSaveOn, 
 !> @ref RM_GetSpeciesZ, 
@@ -5694,6 +5776,7 @@ END FUNCTION RM_SetUnitsSurface
 !> @ref RM_GetSpeciesCount, 
 !> @ref RM_GetSpeciesD25,
 !> @ref RM_GetSpeciesLog10Gammas, 
+!> @ref RM_GetSpeciesLog10Molalities,
 !> @ref RM_GetSpeciesName, 
 !> @ref RM_GetSpeciesSaveOn,
 !> @ref RM_GetSpeciesZ, 
