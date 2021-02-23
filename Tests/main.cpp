@@ -22,6 +22,7 @@ extern void species_c(void);
 extern int advection_cpp();
 extern int species_cpp();
 extern int units_tester();
+extern int gas_cpp();
 
 int main(int argc, char* argv[])
 {
@@ -59,6 +60,12 @@ int main(int argc, char* argv[])
 	species_f90();
 #endif
 	species_c();
+
+	gas_cpp();
+#if defined(TEST_FORTRAN)
+	//gas_f90();
+#endif
+	//gas_c();
 
 #if defined(USE_MPI)
 	MPI_Finalize();
