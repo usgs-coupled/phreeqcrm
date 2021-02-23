@@ -52,6 +52,7 @@ enum {
 	METHOD_GETCONCENTRATIONS,
 	METHOD_GETDENSITY,
 	METHOD_GETERRORSTRING,
+	METHOD_GETGASPHASEMOLES,
 	METHOD_GETPRESSURE,
 	METHOD_GETSATURATION,
 	METHOD_GETSELECTEDOUTPUT,
@@ -71,6 +72,7 @@ enum {
 	METHOD_SETDENSITY,
 	METHOD_SETERRORHANDLERMODE,
 	METHOD_SETFILEPREFIX,
+	METHOD_SETGASPHASEMOLES,
 	METHOD_SETPARTITIONUZSOLIDS,
 	METHOD_SETPOROSITY,
 	METHOD_SETPRESSURE,
@@ -959,6 +961,33 @@ oss << "    " << gas_phases[i] << "\n";
 Called by root.
 */
 int                                       GetGasComponentsCount(void) const { return (int) this->GasComponentsList.size(); }
+
+/**
+Transfer moles of gas components from each reaction cell
+to the vector given in the argument list (@a gas_moles).
+
+@param  gas_moles               Vector to receive the moles of gas components.
+Dimension of the vector is set to @a ngas_comps times @a nxyz,
+where,  ngas_comps is the result of @ref GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas component is not defined for a cell, the number of moles is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref FindComponents, @ref GetGasComponentsCount, @ref SetGasPhaseMoles.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_moles;
+status = phreeqc_rm.RunCells();
+status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                GetGasPhaseMoles(std::vector<double>& gas_moles);
 
 /**
 Returns a reference to a vector of doubles that contains the gram-formula weight of
@@ -3389,6 +3418,35 @@ phreeqc_rm.OpenFiles();
 Called by root.
  */
 	IRM_RESULT                                SetFilePrefix(const std::string & prefix);
+
+/**
+Transfer moles of gas components from
+the vector given in the argument list (@a gas_moles) to each reaction cell.
+
+@param  gas_moles               Vector of moles of gas components.
+Dimension of the vector is set to @a ngas_comps times @a nxyz,
+where,  ngas_comps is the result of @ref GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If the number of moles is set to a negative number, the gas component will
+not be defined for the GAS_PHASE of the reaction cell.
+
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref FindComponents, @ref GetGasComponentsCount, @ref GetGasPhaseMoles.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_moles;
+status = phreeqc_rm.SetGasPhaseMoles(gas_moles);
+status = phreeqc_rm.RunCells();
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+	*/
+IRM_RESULT                                SetGasPhaseMoles(const std::vector<double>& gas_moles);
+
 /**
 MPI and C/C++ only. Defines a callback function that allows additional tasks to be done
 by the workers. The method @ref MpiWorker contains a loop,

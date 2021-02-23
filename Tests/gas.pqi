@@ -1,0 +1,31 @@
+SOLUTION 1
+Na 1000
+Cl 1000
+END
+GAS_PHASE 1
+-fixed_volume 
+-pressure 1
+-temp 25
+-volume 24.5
+CH4(g) .1
+Ntg(g) .2
+Oxg(g) .3
+END
+GAS_PHASE 2
+-fixed_volume 
+-pressure 1
+-temp 25
+-volume 24.5
+CH4(g) .5
+Ntg(g) .7
+Oxg(g) .11
+END
+GAS_PHASE 3
+-fixed_volume 
+-pressure 1
+-temp 25
+-volume 24.5
+CH4(g) .13
+Ntg(g) .17
+Oxg(g) .19
+END
