@@ -7,9 +7,17 @@ subroutine gas_f90()  BIND(C)
 #ifdef USE_MPI    
   INCLUDE 'mpif.h'
 #endif
+interface
+    subroutine PrintCells(gas_comps, gas_moles, nxyz, str)
+      character(*), dimension(:), allocatable, intent(in) :: gas_comps
+      double precision, dimension(:,:), allocatable, intent(in) :: gas_moles
+      integer, intent(in) :: nxyz
+      character(*), intent(in) :: str
+    end subroutine PrintCells
+end interface
 
   ! Based on PHREEQC Example 11
-  
+
   integer :: mpi_myself
   integer :: i, j
   integer :: nxyz
@@ -36,14 +44,14 @@ subroutine gas_f90()  BIND(C)
   ! --------------------------------------------------------------------------
 
   nxyz = 20
-  
+
 #ifdef USE_MPI
   ! MPI
   id = RM_Create(nxyz, MPI_COMM_WORLD)
   rm_id = id
   call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
   if (status .ne. MPI_SUCCESS) then
-     stop "Failed to get mpi_myself"
+      stop "Failed to get mpi_myself"
   endif
   if (mpi_myself > 0) then
       status = RM_MpiWorker(id)
@@ -59,7 +67,7 @@ subroutine gas_f90()  BIND(C)
   ! Open files
   status = RM_SetFilePrefix(id, "gas_f90")
   status = RM_OpenFiles(id)
-  
+
   ! Set concentration units
   status = RM_SetUnitsSolution(id, 2)      ! 1, mg/L; 2, mol/L; 3, kg/kgs
   status = RM_SetUnitsGasPhase(id, 0)      ! 0, mol/L cell; 1, mol/L water; 2 mol/L rock
@@ -72,7 +80,7 @@ subroutine gas_f90()  BIND(C)
   allocate(sat(nxyz))
   sat = 0.5
   status = RM_SetSaturation(id, sat)
-  
+
   ! --------------------------------------------------------------------------
   ! Set initial conditions
   ! --------------------------------------------------------------------------
@@ -80,16 +88,16 @@ subroutine gas_f90()  BIND(C)
   ! Set printing of chemistry file to false
   status = RM_SetPrintChemistryOn(id, 0, 1, 0)  ! workers, initial_phreeqc, utility
   ! Load database
-  status = RM_LoadDatabase(id, "phreeqc.dat") 
+  status = RM_LoadDatabase(id, "phreeqc.dat")
   if (status < 0) then
-    status = RM_OutputMessage(id, "Unable to open database.")
+      status = RM_OutputMessage(id, "Unable to open database.")
   endif
 
   status = RM_RunFile(id, 0, 1, 0, "gas.pqi")
   if (status < 0) then
-    status = RM_OutputMessage(id, "Unable to run input file.")
+      status = RM_OutputMessage(id, "Unable to run input file.")
   endif
-  
+
   ! Determine number of components to transport
   ncomps = RM_FindComponents(id)
   ngas = RM_GetGasComponentsCount(id)
@@ -97,11 +105,11 @@ subroutine gas_f90()  BIND(C)
   ! Determine number of components and gas components
   allocate(gas_comps(ngas))
   do i = 1, ngas
-     status = RM_GetGasComponentsName(id, i, gas_comps(i))
+      status = RM_GetGasComponentsName(id, i, gas_comps(i))
   enddo
   allocate(components(ncomps))
   do i = 1, ncomps
-     status = RM_GetComponent(id, i, components(i))
+      status = RM_GetComponent(id, i, components(i))
   enddo
 
   ! Set array of initial conditions
@@ -110,8 +118,8 @@ subroutine gas_f90()  BIND(C)
   ic2 = -1
   f1 = 1.0
   do i = 1, nxyz
-     ic1(i,1) = 1                 ! Solution 1
-     ic1(i,5) = MOD(i-1,3) + 1    ! Gas phase none
+      ic1(i,1) = 1                 ! Solution 1
+      ic1(i,5) = MOD(i-1,3) + 1    ! Gas phase none
   enddo
   status = RM_InitialPhreeqc2Module(id, ic1, ic2, f1)
 
@@ -120,37 +128,63 @@ subroutine gas_f90()  BIND(C)
   allocate(c(nxyz, ncomps))
   status = RM_GetConcentrations(id, c)
   status = RM_GetGasPhaseMoles(id, gas_moles)
+  call PrintCells(gas_comps, gas_moles, ngas, "Initial condition")
+  
   ! multiply by 2
   do i = 1,nxyz
-    do j = 1,ngas
-      gas_moles(i,j) = gas_moles(i,j) * 2.0
-	enddo
+      do j = 1,ngas
+          gas_moles(i,j) = gas_moles(i,j) * 2.0
+      enddo
   enddo
   status = RM_SetGasPhaseMoles(id, gas_moles)
   status = RM_GetGasPhaseMoles(id, gas_moles)
+  call PrintCells(gas_comps, gas_moles, ngas, "Initial condition times 2")
+
+  ! Eliminate CH4(g) from cell 1, all gases from cell 2
+  gas_moles(1,1) = -1.0
+  gas_moles(2,1) = -1.0
+  gas_moles(2,2) = -1.0
+  gas_moles(2,3) = -1.0
+  status = RM_SetGasPhaseMoles(id, gas_moles)
+  status = RM_GetGasPhaseMoles(id, gas_moles)
+  call PrintCells(gas_comps, gas_moles, ngas, "Remove some components")
+  
+  
+  ! Clean up
+  status = RM_CloseFiles(id)
+#ifdef USE_MPI
+  if (mpi_myself > 0) then
+      status = RM_MpiWorkerBreak(id)
+  endif
+#endif
+  status = RM_Destroy(id)
+  ! Deallocate
+  deallocate(por)
+  deallocate(sat)
+  deallocate(gas_comps)
+  deallocate(ic1)
+  deallocate(ic2)
+  deallocate(f1)
+  deallocate(gas_moles)
+
+  return
+end subroutine gas_f90
+   
+subroutine PrintCells(gas_comps, gas_moles, ngas, str)
+  implicit none
+  character(*), dimension(:), allocatable, intent(in) :: gas_comps
+  double precision, dimension(:,:), allocatable, intent(in) :: gas_moles
+  integer, intent(in) :: ngas
+  character(*), intent(in) :: str
+  integer :: i,j
+  write(*, *)
+  write(*,"(A)") str
   do i = 1,3  ! cells
     write(*,"(A6,I2)") "Cell: ",i
 	do j = 1,ngas ! gas components
 	  write(*,"(2x,A6,f10.6)") gas_comps(j), gas_moles(i,j)
 	enddo
-  enddo
-
-  ! Clean up
-  status = RM_CloseFiles(id)
-#ifdef USE_MPI
-  if (mpi_myself > 0) then
-   status = RM_MpiWorkerBreak(id)
-  endif
-#endif
-  status = RM_Destroy(id)
-  ! Deallocate
-  deallocate(por) 
-  deallocate(sat) 
-  deallocate(gas_comps) 
-  deallocate(ic1) 
-  deallocate(ic2) 
-  deallocate(f1) 
-  deallocate(gas_moles) 
-
-  return 
-end subroutine gas_f90
+  enddo    
+  return
+end subroutine PrintCells
+    

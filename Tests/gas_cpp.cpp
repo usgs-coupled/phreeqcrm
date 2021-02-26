@@ -6,7 +6,8 @@
 #include <string>
 #include <vector>
 #include "PhreeqcRM.h"
-
+void PrintCells(const std::vector<std::string>& gcomps, const std::vector<double>& gas_moles, int nxyz,
+  const std::string str);
 int gas_cpp()
 {
 	try
@@ -98,25 +99,24 @@ int gas_cpp()
 		std::vector<double> gas_moles;
 		gas_moles.resize((size_t)nxyz * phreeqc_rm.GetGasComponentsCount());
 		status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
+		PrintCells(gcomps, gas_moles, nxyz, "Initial conditions");
+
 		// multiply by 2
 		for (int i = 0; i < nxyz * phreeqc_rm.GetGasComponentsCount(); i++)
 		{
 			gas_moles[i] *= 2.0;
 		}
-		// set new moles
 		status = phreeqc_rm.SetGasPhaseMoles(gas_moles);
-		// retrieve new moles
 		status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
-		// print cells 1,2,3
-		for (size_t j = 0; j < 3; j++) // cell
-		{
-			std::cerr << "Cell: " << j << std::endl;
-			for (size_t i = 0; i < 3; i++) // component
-			{
-				std::cerr << "  " << gcomps[i] << "  " << 
-					gas_moles[i * (size_t)nxyz + j] << std::endl;
-			}
-		}
+		PrintCells(gcomps, gas_moles, nxyz,"Initial conditions times 2");
+
+		// eliminate CH4 in cell 0, and all of Cell 1 gases
+		gas_moles[0] = -1.0;
+		gas_moles[1] = gas_moles[nxyz + 1] = gas_moles[2 * nxyz + 1] = -1.0;
+		status = phreeqc_rm.SetGasPhaseMoles(gas_moles);
+		status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
+		PrintCells(gcomps, gas_moles, nxyz, "Remove some components");
+
 		// Clean up
 
 		status = phreeqc_rm.CloseFiles();
@@ -141,4 +141,22 @@ int gas_cpp()
 		return IRM_FAIL;
 	}
 	return EXIT_SUCCESS;
+}
+/* ---------------------------------------------------------------------- */
+void
+PrintCells(const std::vector<std::string>& gcomps, const std::vector<double>& gas_moles, int nxyz,
+	const std::string str)
+/* ---------------------------------------------------------------------- */
+{
+	std::cerr << "\n" << str << std::endl;
+	// print cells 1,2,3
+	for (size_t j = 0; j < 3; j++) // cell
+	{
+		std::cerr << "Cell: " << j << std::endl;
+		for (size_t i = 0; i < 3; i++) // component
+		{
+			std::cerr << "  " << gcomps[i] << "  " <<
+				gas_moles[i * (size_t)nxyz + j] << std::endl;
+		}
+	}
 }

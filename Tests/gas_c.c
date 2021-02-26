@@ -6,11 +6,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "RM_interface_C.h"
+void PrintCells(char** gcomps, double* gas_moles, int nxyz,
+	const char* str);
 
     void gas_c()
 	{
-		int mpi_myself;
-		int i, j;
+		int i;
 		int nxyz; 
 #ifndef USE_MPI
 		int nthreads;
@@ -135,23 +136,23 @@
 		// Get gases
 		gas_moles = (double *) malloc((size_t) (ngas * nxyz * sizeof(double)));
 		status = RM_GetGasPhaseMoles(id, gas_moles);
+		PrintCells(gas_comps, gas_moles, nxyz, "Initial conditions");
+
 		// multiply by 2
-		for (i = 0; i < nxyz * RM_GetGasComponentsCount(id); i++)
+		for (int i = 0; i < nxyz * RM_GetGasComponentsCount(id); i++)
 		{
 			gas_moles[i] *= 2.0;
 		}
 		status = RM_SetGasPhaseMoles(id, gas_moles);
 		status = RM_GetGasPhaseMoles(id, gas_moles);
+		PrintCells(gas_comps, gas_moles, nxyz, "Initial conditions times 2");
 
-		// print cells 1,2,3
-		for (j = 0; j < 3; j++) // cell
-		{
-			fprintf(stderr, "Cell: %i\n",j);
-			for (size_t i = 0; i < 3; i++) // component
-			{
-				fprintf(stderr, "  %s  %f\n",gas_comps[i], gas_moles[i * nxyz + j]);
-			}
-		}
+		// eliminate CH4 in cell 0, and all of Cell 1 gases
+		gas_moles[0] = -1.0;
+		gas_moles[1] = gas_moles[nxyz + 1] = gas_moles[2 * nxyz + 1] = -1.0;
+		status = RM_SetGasPhaseMoles(id, gas_moles);
+		status = RM_GetGasPhaseMoles(id, gas_moles);
+		PrintCells(gas_comps, gas_moles, nxyz, "Remove some components");
 		// Finalize
 		status = RM_MpiWorkerBreak(id);
 		status = RM_CloseFiles(id);
@@ -169,4 +170,20 @@
 		free(gas_moles);
 		free(por);
 		free(sat);
+	}
+	void PrintCells(char** gcomps, double* gas_moles, int nxyz,
+		const char* str)
+		/* ---------------------------------------------------------------------- */
+	{
+		fprintf(stderr, "\n%s\n", str);
+		// print cells 1,2,3
+		for (int j = 0; j < 3; j++) // cell
+		{
+			fprintf(stderr, "Cell: %i\n", j);
+			for (size_t i = 0; i < 3; i++) // component
+			{
+				fprintf(stderr, "  %10s  %10.4f\n", gcomps[i],
+					gas_moles[i * nxyz + j]);
+			}
+		}
 	}
