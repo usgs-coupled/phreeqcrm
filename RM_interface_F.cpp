@@ -729,6 +729,27 @@ RMF_GetFilePrefix(int * id, char *prefix, int *l)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+RMF_GetGasPhaseMoles(int* id, double* m)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves moles of gas components for all grid nodes to m
+	// size of m must be the number of grid nodes time the number of gas components
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> m_vector;
+		m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+		IRM_RESULT return_value = Reaction_module_ptr->GetGasPhaseMoles(m_vector);
+		if (return_value == IRM_OK)
+		{
+			memcpy(m, &m_vector.front(), m_vector.size() * sizeof(double));
+		}
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 RMF_GetGfw(int *id, double * gfw)
 /* ---------------------------------------------------------------------- */
 {
@@ -1733,6 +1754,23 @@ RMF_SetFilePrefix(int *id, const char *name)
 		size_t strEnd = str.find_last_not_of(" \t\n");
 		str = str.substr(0, strEnd + 1);
 		return Reaction_module_ptr->SetFilePrefix(str.c_str());
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_SetGasPhaseMoles(int* id, double* m)
+/* ---------------------------------------------------------------------- */
+{
+	// Sets the moles of gas components in the cells
+
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> m_vector;
+		m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+		memcpy(&m_vector.front(), m, m_vector.size() * sizeof(double));
+		return Reaction_module_ptr->SetGasPhaseMoles(m_vector);
 	}
 	return IRM_BADINSTANCE;
 }
