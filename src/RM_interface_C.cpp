@@ -712,7 +712,28 @@ RM_GetFilePrefix(int id, char *prefix, int l)
 	}
 	return IRM_BADINSTANCE;
 }
-
+IRM_RESULT
+RM_GetGasPhaseMoles(int id, double* gas_moles)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (gas_moles != NULL)
+		{
+			std::vector<double> m_vector;
+			m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+			IRM_RESULT return_value = Reaction_module_ptr->GetGasPhaseMoles(m_vector);
+			if (return_value == IRM_OK)
+			{
+				memcpy(gas_moles, &m_vector.front(), m_vector.size() * sizeof(double));
+			}
+			return return_value;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RM_GetGfw(int id, double * gfw)
@@ -1584,6 +1605,25 @@ RM_SetFilePrefix(int id, const char *name)
 		{
 			std::string str = PhreeqcRM::Char2TrimString(name);
 			return Reaction_module_ptr->SetFilePrefix(str.c_str());
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_SetGasPhaseMoles(int id, double* m)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (m != NULL)
+		{
+			std::vector<double> m_vector;
+			m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+			memcpy(&m_vector.front(), m, m_vector.size() * sizeof(double));
+			return Reaction_module_ptr->SetGasPhaseMoles(m_vector);
 		}
 		return IRM_INVALIDARG;
 	}

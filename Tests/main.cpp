@@ -52,26 +52,26 @@ int main(int argc, char* argv[])
 #endif
 
 	units_tester();
-	std::cerr << "Done units_tester.===============" << std::endl;
+	std::cerr << "Done units_tester.===================================" << std::endl;
 	advection_cpp();
-	std::cerr << "Done advection_cpp.==============" << std::endl;
+	std::cerr << "Done advection_cpp.==================================" << std::endl;
 	advection_c();
-	std::cerr << "Done advection_c.================" << std::endl;
+	std::cerr << "Done advection_c.====================================" << std::endl;
 	species_cpp();
-	std::cerr << "Done species_cpp.================" << std::endl;
+	std::cerr << "Done species_cpp.====================================" << std::endl;
 	species_c();
-	std::cerr << "Done species_c.==================" << std::endl;
+	std::cerr << "Done species_c.======================================" << std::endl;
 	gas_cpp();
-	std::cerr << "Done gas_ccp.====================" << std::endl;
+	std::cerr << "Done gas_ccp.========================================" << std::endl;
 	gas_c();
-	std::cerr << "Done gas_c.======================" << std::endl;
+	std::cerr << "Done gas_c.==========================================" << std::endl;
 #if defined(TEST_FORTRAN)
-	//	advection_f90();
-	std::cerr << "Done advection_f90.==============" << std::endl;
-	//	species_f90();
-	std::cerr << "Done species_f90.================" << std::endl;
+	advection_f90();
+	std::cerr << "Done advection_f90.==================================" << std::endl;
+	species_f90();
+	std::cerr << "Done species_f90.====================================" << std::endl;
 	gas_f90();
-	std::cerr << "Done gas_f90.====================" << std::endl;
+	std::cerr << "Done gas_f90.========================================" << std::endl;
 #endif
 #if defined(USE_MPI)
 	MPI_Finalize();
