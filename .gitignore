@@ -20,3 +20,4 @@
 /Tests/vs2012/x64
 
 # /src/IPhreeqcPhast/
+/_build*
