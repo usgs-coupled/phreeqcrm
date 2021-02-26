@@ -5,7 +5,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcd
 TESTS = test
 check_PROGRAMS = test
 
-test_SOURCES = advection_c.c advection_cpp.cpp main.cpp species_c.c species_cpp.cpp
+test_SOURCES = advection_c.c advection_cpp.cpp main.cpp species_c.c species_cpp.cpp gas_c.c gas_cpp.cpp
 test_LDADD = $(top_builddir)/libphreeqcrm.la
 test_LINK = $(CXXLINK)
 
@@ -32,12 +32,21 @@ CLEANFILES =\
 	Units_InitialPhreeqc_2.chem.txt\
 	Advect_c.log.txt\
 	utility_cpp.txt\
-	Units_InitialPhreeqc_1.chem.txt
+	Units_InitialPhreeqc_1.chem.txt \
+	gas_cpp.dmp\
+	gas_cpp.log.txt\
+	gas_c.dmp\
+	gas_c.chem.txt\
+	gas_utility_c.txt\
+	gas_c.log.txt\
+	gas_utility_cpp.txt\
+	gas_cpp.chem.txt
 
 if PHREEQCRM_TEST_FORTRAN
 
 test_SOURCES+=\
 	advection_f90.F90\
+	gas_f90.F90\
 	species_f90.F90\
 	../src/RM_interface.F90\
 	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90 
@@ -49,11 +58,11 @@ mostlyclean-local: clean-modules
 clean-modules:
 	-test -z $(FC_MODEXT) || $(RM) *.$(FC_MODEXT)
 
-
 advection_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT)
 
-
 species_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) 
+
+gas_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) 
 
 
 endif

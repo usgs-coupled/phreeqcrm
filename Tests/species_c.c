@@ -70,6 +70,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		// --------------------------------------------------------------------------
 
 		nxyz = 40;
+
 #ifdef USE_MPI
 		// MPI
 		id = RM_Create(nxyz, MPI_COMM_WORLD);
