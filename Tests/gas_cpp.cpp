@@ -19,6 +19,7 @@ int gas_cpp()
 #ifdef USE_MPI
 		// MPI
 		PhreeqcRM phreeqc_rm(nxyz, MPI_COMM_WORLD);
+
 		MP_TYPE comm = MPI_COMM_WORLD;
 		int mpi_myself;
 		if (MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself) != MPI_SUCCESS)
@@ -35,11 +36,11 @@ int gas_cpp()
 		int nthreads = 3;
 		PhreeqcRM phreeqc_rm(nxyz, nthreads);
 #endif
+
 		IRM_RESULT status;
 		// Open files
 		status = phreeqc_rm.SetFilePrefix("gas_cpp");
 		phreeqc_rm.OpenFiles();
-
 		// Set concentration units
 		status = phreeqc_rm.SetUnitsSolution(2);           // 1, mg/L; 2, mol/L; 3, kg/kgs
 		status = phreeqc_rm.SetUnitsGasPhase(0);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
@@ -112,13 +113,18 @@ int gas_cpp()
 			std::cerr << "Cell: " << j << std::endl;
 			for (size_t i = 0; i < 3; i++) // component
 			{
-				std::cerr << gcomps[i] << "  " << gas_moles[i * (size_t)nxyz + j] << std::endl;
+				std::cerr << "  " << gcomps[i] << "  " << 
+					gas_moles[i * (size_t)nxyz + j] << std::endl;
 			}
 		}
+		// Clean up
+
+		status = phreeqc_rm.CloseFiles();
+		status = phreeqc_rm.MpiWorkerBreak();
 	}
 	catch (PhreeqcRMStop)
 	{
-		std::string e_string = "Advection_cpp failed with an error in PhreeqcRM.";
+		std::string e_string = "gas_cpp failed with an error in PhreeqcRM.";
 		std::cerr << e_string << std::endl;
 #ifdef USE_MPI
 		MPI_Abort(MPI_COMM_WORLD, 1);
@@ -127,7 +133,7 @@ int gas_cpp()
 	}
 	catch (...)
 	{
-		std::string e_string = "Advection_cpp failed with an unhandled exception.";
+		std::string e_string = "gas_cpp failed with an unhandled exception.";
 		std::cerr << e_string << std::endl;
 #ifdef USE_MPI
 		MPI_Abort(MPI_COMM_WORLD, 1);

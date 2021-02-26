@@ -433,8 +433,8 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		{
 			c_well[i] = 0.5 * c[0 + nxyz*i] + 0.5 * c[9 + nxyz*i];
 		}
-		tc = (double *) malloc((size_t) (1 * sizeof(double)));
-		p_atm = (double *) malloc((size_t) (1 * sizeof(double)));
+		tc = (double *) malloc((size_t) (2 * sizeof(double)));
+		p_atm = (double *) malloc((size_t) (2 * sizeof(double)));
 		tc[0] = 15.0;
 		p_atm[0] = 3.0;
 		iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
@@ -605,7 +605,7 @@ int example_selected_output(int id)
 	nlines = nlines + RM_GetSICount(id);
 	input = (char *) malloc((size_t)(nlines * 40));
 
-	strcpy(input, "");
+	strncpy(input, "",40);
 	strcat(input, "SELECTED_OUTPUT 2\n");
 	// totals
 	strcat(input, "  -totals\n");
