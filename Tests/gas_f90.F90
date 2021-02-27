@@ -8,10 +8,11 @@ subroutine gas_f90()  BIND(C)
   INCLUDE 'mpif.h'
 #endif
 interface
-    subroutine PrintCells(gas_comps, gas_moles, nxyz, str)
+    subroutine PrintCells(gas_comps, gas_moles, gas_p, gas_phi, str)
       character(*), dimension(:), allocatable, intent(in) :: gas_comps
       double precision, dimension(:,:), allocatable, intent(in) :: gas_moles
-      integer, intent(in) :: nxyz
+      double precision, dimension(:,:), allocatable, intent(in) :: gas_p
+      double precision, dimension(:,:), allocatable, intent(in) :: gas_phi
       character(*), intent(in) :: str
     end subroutine PrintCells
 end interface
@@ -32,7 +33,7 @@ end interface
   character(100),   dimension(:), allocatable   :: components
   integer,          dimension(:,:), allocatable :: ic1, ic2
   double precision, dimension(:,:), allocatable :: f1
-  double precision, dimension(:,:), allocatable :: gas_moles, c
+  double precision, dimension(:,:), allocatable :: gas_moles, gas_p, gas_phi
   !character(LEN=1), dimension(:), allocatable   :: errstr
 #ifdef FORTRAN_2003
   character(LEN=:), allocatable                 :: errstr
@@ -125,10 +126,12 @@ end interface
 
   ! Get gases
   allocate(gas_moles(nxyz, ngas))
-  allocate(c(nxyz, ncomps))
-  status = RM_GetConcentrations(id, c)
+  allocate(gas_p(nxyz, ngas))
+  allocate(gas_phi(nxyz, ngas))
   status = RM_GetGasPhaseMoles(id, gas_moles)
-  call PrintCells(gas_comps, gas_moles, ngas, "Initial condition")
+  status = RM_GetGasPhasePressures(id, gas_p)
+  status = RM_GetGasPhasePhi(id, gas_phi)
+  call PrintCells(gas_comps, gas_moles, gas_p, gas_phi, "Initial condition")
   
   ! multiply by 2
   do i = 1,nxyz
@@ -138,7 +141,9 @@ end interface
   enddo
   status = RM_SetGasPhaseMoles(id, gas_moles)
   status = RM_GetGasPhaseMoles(id, gas_moles)
-  call PrintCells(gas_comps, gas_moles, ngas, "Initial condition times 2")
+  status = RM_GetGasPhasePressures(id, gas_p)
+  status = RM_GetGasPhasePhi(id, gas_phi)
+  call PrintCells(gas_comps, gas_moles, gas_p, gas_phi, "Initial condition times 2")
 
   ! Eliminate CH4(g) from cell 1, all gases from cell 2
   gas_moles(1,1) = -1.0
@@ -146,8 +151,11 @@ end interface
   gas_moles(2,2) = -1.0
   gas_moles(2,3) = -1.0
   status = RM_SetGasPhaseMoles(id, gas_moles)
+  status = RM_RunCells(id)
   status = RM_GetGasPhaseMoles(id, gas_moles)
-  call PrintCells(gas_comps, gas_moles, ngas, "Remove some components")
+  status = RM_GetGasPhasePressures(id, gas_p)
+  status = RM_GetGasPhasePhi(id, gas_phi)
+  call PrintCells(gas_comps, gas_moles, gas_p, gas_phi, "Remove some components")
   
   
   ! Clean up
@@ -170,19 +178,22 @@ end interface
   return
 end subroutine gas_f90
    
-subroutine PrintCells(gas_comps, gas_moles, ngas, str)
+subroutine PrintCells(gas_comps, gas_moles, gas_p, gas_phi, str)
   implicit none
   character(*), dimension(:), allocatable, intent(in) :: gas_comps
   double precision, dimension(:,:), allocatable, intent(in) :: gas_moles
-  integer, intent(in) :: ngas
+  double precision, dimension(:,:), allocatable, intent(in) :: gas_p
+  double precision, dimension(:,:), allocatable, intent(in) :: gas_phi
+  integer :: n
   character(*), intent(in) :: str
   integer :: i,j
   write(*, *)
   write(*,"(A)") str
   do i = 1,3  ! cells
     write(*,"(A6,I2)") "Cell: ",i
-	do j = 1,ngas ! gas components
-	  write(*,"(2x,A6,f10.6)") gas_comps(j), gas_moles(i,j)
+    write(*,"(8x,3A10)") "Moles", "P", "Phi"
+	do j = 1, size(gas_comps) ! gas components
+	  write(*,"(2x,A6,3f10.6)") gas_comps(j), gas_moles(i,j), gas_p(i,j), gas_phi(i,j)
 	enddo
   enddo    
   return

@@ -6,8 +6,9 @@
 #include <string>
 #include <vector>
 #include "PhreeqcRM.h"
-void PrintCells(const std::vector<std::string>& gcomps, const std::vector<double>& gas_moles, int nxyz,
-  const std::string str);
+void PrintCells(const std::vector<std::string>& gcomps, const std::vector<double>& gas_moles,
+	const std::vector<double>& gas_p, const std::vector<double>& gas_phi, int nxyz,
+	const std::string str);
 int gas_cpp()
 {
 	try
@@ -96,10 +97,12 @@ int gas_cpp()
 		status = phreeqc_rm.InitialPhreeqc2Module(ic1);
 
 		// Get gases
-		std::vector<double> gas_moles;
+		std::vector<double> gas_moles, gas_p, gas_phi;
 		gas_moles.resize((size_t)nxyz * phreeqc_rm.GetGasComponentsCount());
 		status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
-		PrintCells(gcomps, gas_moles, nxyz, "Initial conditions");
+		status = phreeqc_rm.GetGasPhasePressures(gas_p);
+		status = phreeqc_rm.GetGasPhasePhi(gas_phi);
+		PrintCells(gcomps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions");
 
 		// multiply by 2
 		for (int i = 0; i < nxyz * phreeqc_rm.GetGasComponentsCount(); i++)
@@ -108,14 +111,19 @@ int gas_cpp()
 		}
 		status = phreeqc_rm.SetGasPhaseMoles(gas_moles);
 		status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
-		PrintCells(gcomps, gas_moles, nxyz,"Initial conditions times 2");
+		status = phreeqc_rm.GetGasPhasePressures(gas_p);
+		status = phreeqc_rm.GetGasPhasePhi(gas_phi);
+		PrintCells(gcomps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions times 2");
 
 		// eliminate CH4 in cell 0, and all of Cell 1 gases
 		gas_moles[0] = -1.0;
 		gas_moles[1] = gas_moles[nxyz + 1] = gas_moles[2 * nxyz + 1] = -1.0;
 		status = phreeqc_rm.SetGasPhaseMoles(gas_moles);
+		phreeqc_rm.RunCells();
 		status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
-		PrintCells(gcomps, gas_moles, nxyz, "Remove some components");
+		status = phreeqc_rm.GetGasPhasePressures(gas_p);
+		status = phreeqc_rm.GetGasPhasePhi(gas_phi);
+		PrintCells(gcomps, gas_moles, gas_p, gas_phi, nxyz, "Remove some components");
 
 		// Clean up
 
@@ -144,19 +152,25 @@ int gas_cpp()
 }
 /* ---------------------------------------------------------------------- */
 void
-PrintCells(const std::vector<std::string>& gcomps, const std::vector<double>& gas_moles, int nxyz,
+PrintCells(const std::vector<std::string>& gcomps, const std::vector<double>& gas_moles,
+	const std::vector<double>& gas_p, const std::vector<double>& gas_phi, int nxyz,
 	const std::string str)
 /* ---------------------------------------------------------------------- */
 {
 	std::cerr << "\n" << str << std::endl;
-	// print cells 1,2,3
-	for (size_t j = 0; j < 3; j++) // cell
+	// print cells 0,1,2
+	for (int j = 0; j < 3; j++) // cell
 	{
 		std::cerr << "Cell: " << j << std::endl;
-		for (size_t i = 0; i < 3; i++) // component
+		std::cerr << "               Moles         P         Phi" << std::endl;
+		for (int i = 0; i < 3; i++) // component
 		{
-			std::cerr << "  " << gcomps[i] << "  " <<
-				gas_moles[i * (size_t)nxyz + j] << std::endl;
+			int k = i * nxyz + j;
+			fprintf(stderr, "%8s  %10.4f  %10.4f  %10.4f\n",
+				gcomps[i].c_str(),
+				gas_moles[k],
+				gas_p[k],
+				gas_phi[k]);
 		}
 	}
 }
