@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "RM_interface_C.h"
-void PrintCells(char** gcomps, double* gas_moles, int nxyz,
+void PrintCells(char** gcomps, double* gas_moles,
+	double* gas_p, double* gas_phi, int nxyz,
 	const char* str);
 
     void gas_c()
@@ -27,7 +28,9 @@ void PrintCells(char** gcomps, double* gas_moles, int nxyz,
 		int * ic1;
 		int * ic2;
 		double * f1;
-		double * gas_moles;
+		double* gas_moles;
+		double* gas_p;
+		double* gas_phi;
 		double* por;
 		double* sat;
 		char * errstr = NULL;
@@ -135,8 +138,12 @@ void PrintCells(char** gcomps, double* gas_moles, int nxyz,
 
 		// Get gases
 		gas_moles = (double *) malloc((size_t) (ngas * nxyz * sizeof(double)));
+		gas_p = (double*)malloc((size_t)(ngas * nxyz * sizeof(double)));
+		gas_phi = (double*)malloc((size_t)(ngas * nxyz * sizeof(double)));
 		status = RM_GetGasPhaseMoles(id, gas_moles);
-		PrintCells(gas_comps, gas_moles, nxyz, "Initial conditions");
+		status = RM_GetGasPhasePressures(id, gas_p);
+		status = RM_GetGasPhasePhi(id, gas_phi);
+		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions");
 
 		// multiply by 2
 		for (int i = 0; i < nxyz * RM_GetGasComponentsCount(id); i++)
@@ -145,14 +152,19 @@ void PrintCells(char** gcomps, double* gas_moles, int nxyz,
 		}
 		status = RM_SetGasPhaseMoles(id, gas_moles);
 		status = RM_GetGasPhaseMoles(id, gas_moles);
-		PrintCells(gas_comps, gas_moles, nxyz, "Initial conditions times 2");
+		status = RM_GetGasPhasePressures(id, gas_p);
+		status = RM_GetGasPhasePhi(id, gas_phi);
+		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions times 2");
 
 		// eliminate CH4 in cell 0, and all of Cell 1 gases
 		gas_moles[0] = -1.0;
 		gas_moles[1] = gas_moles[nxyz + 1] = gas_moles[2 * nxyz + 1] = -1.0;
 		status = RM_SetGasPhaseMoles(id, gas_moles);
+		status = RM_RunCells(id);
 		status = RM_GetGasPhaseMoles(id, gas_moles);
-		PrintCells(gas_comps, gas_moles, nxyz, "Remove some components");
+		status = RM_GetGasPhasePressures(id, gas_p);
+		status = RM_GetGasPhasePhi(id, gas_phi);
+		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Remove some components");
 		// Finalize
 		status = RM_MpiWorkerBreak(id);
 		status = RM_CloseFiles(id);
@@ -171,19 +183,25 @@ void PrintCells(char** gcomps, double* gas_moles, int nxyz,
 		free(por);
 		free(sat);
 	}
-	void PrintCells(char** gcomps, double* gas_moles, int nxyz,
+	void PrintCells(char** gcomps, double* gas_moles,
+		double* gas_p, double* gas_phi, int nxyz,
 		const char* str)
 		/* ---------------------------------------------------------------------- */
 	{
 		fprintf(stderr, "\n%s\n", str);
-		// print cells 1,2,3
+		// print cells 0,1,2
 		for (int j = 0; j < 3; j++) // cell
 		{
 			fprintf(stderr, "Cell: %i\n", j);
-			for (size_t i = 0; i < 3; i++) // component
+			fprintf(stderr, "               Moles         P         Phi\n");
+			for (int i = 0; i < 3; i++) // component
 			{
-				fprintf(stderr, "  %10s  %10.4f\n", gcomps[i],
-					gas_moles[i * nxyz + j]);
+				int k = i * nxyz + j;
+				fprintf(stderr, "%8s  %10.4f  %10.4f  %10.4f\n",
+					gcomps[i],
+					gas_moles[k],
+					gas_p[k],
+					gas_phi[k]);
 			}
 		}
 	}
