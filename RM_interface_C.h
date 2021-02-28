@@ -872,6 +872,8 @@ Values for inactive cells are set to 1e30.
 @see
 @ref RM_FindComponents, 
 @ref RM_GetGasComponentsCount, 
+@ref RM_GetGasPhasePressures,
+@ref RM_GetGasPhasePhi,
 @ref RM_SetGasPhaseMoles.
 
 @par C Example:
@@ -889,7 +891,77 @@ status = RM_GetGasPhaseMoles(id, gas_moles);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetGasPhaseMoles(int id, double* gas_moles);
+/**
+Transfer pressures of gas components from each reaction cell
+to the vector given in the argument list (@a gas_pressures).
 
+@param id               The instance @a id returned from @ref RM_Create.
+@param gas_pressures        Vector to receive the pressures of gas components.
+Dimension of the vector is set to @a ngas_comps times @a nxyz,
+where,  ngas_comps is the result of @ref RM_GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas component is not defined for a cell, the pressure is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+
+@see
+@ref RM_FindComponents,
+@ref RM_GetGasComponentsCount,
+@ref RM_GetGasPhaseMoles,
+@ref RM_GetGasPhasePhi,
+@ref RM_SetGasPhaseMoles.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+ngas_comps = RM_GetGasComponentsCount();
+gas_pressures = (double *) malloc((size_t) (ngas_comps * nxyz * sizeof(double)));
+status = RM_RunCells(id);
+status = RM_GetGasPhasePressures(id, gas_pressures);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_GetGasPhasePressures(int id, double* gas_pressures);
+/**
+Transfer fugacity coefficients (phi) of gas components from each reaction cell
+to the vector given in the argument list (@a gas_phi). Fugacity of a gas
+component is equal to its pressure time the fugacity coefficient.
+
+@param id               The instance @a id returned from @ref RM_Create.
+@param gas_phi        Vector to receive the fugacity coefficients of gas components.
+Dimension of the vector is set to @a ngas_comps times @a nxyz,
+where,  ngas_comps is the result of @ref RM_GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas component is not defined for a cell, the fugacity coefficient is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+
+@see
+@ref RM_FindComponents,
+@ref RM_GetGasComponentsCount,
+@ref RM_GetGasPhaseMoles,
+@ref RM_GetGasPhasePressures,
+@ref RM_SetGasPhaseMoles.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+ngas_comps = RM_GetGasComponentsCount();
+gas_phi = (double *) malloc((size_t) (ngas_comps * nxyz * sizeof(double)));
+status = RM_RunCells(id);
+status = RM_GetGasPhasePhi(id, gas_phi);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_GetGasPhasePhi(int id, double* gas_phi);
 /**
 Returns the gram formula weights (g/mol) for the components in the reaction-module component list.
 @param id               The instance id returned from @ref RM_Create.
@@ -2884,7 +2956,9 @@ not be defined for the GAS_PHASE of the reaction cell.
 @see                    
 @ref RM_FindComponents, 
 @ref RM_GetGasComponentsCount, 
-@ref RM_GetGasPhaseMoles.
+@ref RM_GetGasPhaseMoles, 
+@ref RM_GetGasPhasePressures,
+@ref RM_GetGasPhasePhi.
 
 @par C Example:
 @htmlonly

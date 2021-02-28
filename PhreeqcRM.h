@@ -53,6 +53,8 @@ enum {
 	METHOD_GETDENSITY,
 	METHOD_GETERRORSTRING,
 	METHOD_GETGASPHASEMOLES,
+	METHOD_GETGASPHASEPRESSURES,
+	METHOD_GETGASPHASEPHI,
 	METHOD_GETPRESSURE,
 	METHOD_GETSATURATION,
 	METHOD_GETSELECTEDOUTPUT,
@@ -973,7 +975,12 @@ and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
 If a gas component is not defined for a cell, the number of moles is set to -1.
 Values for inactive cells are set to 1e30.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref FindComponents, @ref GetGasComponentsCount, @ref SetGasPhaseMoles.
+@see                    
+@ref FindComponents, 
+@ref GetGasComponentsCount, 
+@ref GetGasPhasePressures,
+@ref GetGasPhasePhi,
+@ref SetGasPhaseMoles.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -988,6 +995,71 @@ status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 IRM_RESULT                                GetGasPhaseMoles(std::vector<double>& gas_moles);
+
+/**
+Transfer pressures of gas components from each reaction cell
+to the vector given in the argument list (@a gas_pressures).
+
+@param  gas_pressures               Vector to receive the pressures of gas components.
+Dimension of the vector is set to @a ngas_comps times @a nxyz,
+where,  ngas_comps is the result of @ref GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas component is not defined for a cell, the pressure is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    
+@ref FindComponents, 
+@ref GetGasComponentsCount, 
+@ref GetGasPhaseMoles,
+@ref GetGasPhasePhi,
+@ref SetGasPhaseMoles.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_pressures;
+status = phreeqc_rm.RunCells();
+status = phreeqc_rm.GetGasPhasePressures(gas_pressures);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                GetGasPhasePressures(std::vector<double>& gas_pressures);
+
+/**
+Transfer fugacity coefficients (phi) of gas components from each reaction cell
+to the vector given in the argument list (@a gas_pressures). Fugacity is
+equal to the gas component pressure times the fugacity coefficient.
+
+@param  gas_phis               Vector to receive the fugacity coefficients of gas components.
+Dimension of the vector is set to @a ngas_comps times @a nxyz,
+where,  ngas_comps is the result of @ref GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas component is not defined for a cell, the fugacity coefficient is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref FindComponents,
+@ref GetGasComponentsCount,
+@ref GetGasPhaseMoles,
+@ref GetGasPhasePressures,
+@ref SetGasPhaseMoles.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_phis;
+status = phreeqc_rm.RunCells();
+status = phreeqc_rm.GetGasPhasePhi(gas_phis);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                GetGasPhasePhi(std::vector<double>& gas_phis);
 
 /**
 Returns a reference to a vector of doubles that contains the gram-formula weight of
@@ -3431,7 +3503,12 @@ If the number of moles is set to a negative number, the gas component will
 not be defined for the GAS_PHASE of the reaction cell.
 
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref FindComponents, @ref GetGasComponentsCount, @ref GetGasPhaseMoles.
+@see                    
+@ref FindComponents, 
+@ref GetGasComponentsCount, 
+@ref GetGasPhaseMoles,
+@ref GetGasPhasePressures,
+@ref GetGasPhasePhi.
 @par C++ Example:
 @htmlonly
 <CODE>

@@ -734,6 +734,52 @@ RM_GetGasPhaseMoles(int id, double* gas_moles)
 	}
 	return IRM_BADINSTANCE;
 }
+
+IRM_RESULT
+RM_GetGasPhasePressures(int id, double* gas_p)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (gas_p != NULL)
+		{
+			std::vector<double> p_vector;
+			p_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+			IRM_RESULT return_value = Reaction_module_ptr->GetGasPhasePressures(p_vector);
+			if (return_value == IRM_OK)
+			{
+				memcpy(gas_p, &p_vector.front(), p_vector.size() * sizeof(double));
+			}
+			return return_value;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+IRM_RESULT
+RM_GetGasPhasePhi(int id, double* gas_phi)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (gas_phi != NULL)
+		{
+			std::vector<double> phi_vector;
+			phi_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+			IRM_RESULT return_value = Reaction_module_ptr->GetGasPhasePhi(phi_vector);
+			if (return_value == IRM_OK)
+			{
+				memcpy(gas_phi, &phi_vector.front(), phi_vector.size() * sizeof(double));
+			}
+			return return_value;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RM_GetGfw(int id, double * gfw)

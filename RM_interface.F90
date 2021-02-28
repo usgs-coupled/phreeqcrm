@@ -1419,6 +1419,136 @@ SUBROUTINE Chk_GetGasPhaseMoles(id, m)
     endif
 END SUBROUTINE Chk_GetGasPhaseMoles
 
+!> Transfer pressures of gas components from each reaction cell 
+!> to the array given in the argument list (@a gas_p).
+!> 
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param gas_p        Array to receive the moles of gas components for each cell. 
+!> Dimension of the array is (@a nxyz, @a ngas_comps),
+!> where @a nxyz is the number of user grid cells and @a ngas_comps is the result 
+!> of @ref RM_GetGasComponentsCount. If a gas component is not defined for a cell, 
+!> the pressure is set to -1. Values for inactive cells are set to 1e30.
+!> Values for inactive cells are set to 1e30.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> 
+!> @see                    
+!> @ref FindComponents, 
+!> @ref GetGasComponentsCount,
+!> @ref GetGasPhaseMoles,
+!> @ref GetGasPhasePhi,
+!> @ref SetGasPhaseMoles.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> ngas_comps = RM_GetGasComponentsCount(id)
+!> allocate(m(nxyz, ngas_comps))
+!> status = RM_RunCells(id)
+!> status = RM_GetGasPhasePressures(id, m)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+
+INTEGER FUNCTION RM_GetGasPhasePressures(id, p) 
+    USE ISO_C_BINDING  
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetGasPhasePressures(id, p) &
+            BIND(C, NAME='RMF_GetGasPhasePressures')   
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            REAL(KIND=C_DOUBLE), INTENT(out)  :: p(*)
+        END FUNCTION RMF_GetGasPhasePressures 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:), TARGET :: p
+    if (rmf_debug) call Chk_GetGasPhasePressures(id, p)  
+    RM_GetGasPhasePressures = RMF_GetGasPhasePressures(id, p ) 
+    return
+END FUNCTION RM_GetGasPhasePressures         
+
+SUBROUTINE Chk_GetGasPhasePressures(id, p)
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: p
+    INTEGER :: errors, rmf_ngas_comps
+    errors = 0
+	rmf_ngas_comps = RM_GetGasComponentsCount(id)
+    errors = errors + Chk_Double2D(id, p, rmf_nxyz, rmf_ngas_comps, "gas_pressures", "RM_GetGasPhasePressures")
+    if (errors .gt. 0) then
+        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasPhasePressures")
+    endif
+END SUBROUTINE Chk_GetGasPhasePressures
+
+!> Transfer fugacity coefficients (phi) of gas components from each reaction cell 
+!> to the array given in the argument list (@a gas_phi). Fugacity of a gas component
+!> is equal to the pressure of the component times the fugacity coefficient.
+!> 
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param gas_phi        Array to receive the fugacity coefficients 
+!> of gas components for each cell. 
+!> Dimension of the array is (@a nxyz, @a ngas_comps),
+!> where @a nxyz is the number of user grid cells and @a ngas_comps is the result 
+!> of @ref RM_GetGasComponentsCount. If a gas component is not defined for a cell, 
+!> the fugacity coefficient is set to -1. Values for inactive cells are set to 1e30.
+!> Values for inactive cells are set to 1e30.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> 
+!> @see                    
+!> @ref FindComponents, 
+!> @ref GetGasComponentsCount,
+!> @ref GetGasPhaseMoles,
+!> @ref GetGasPhasePhi,
+!> @ref SetGasPhaseMoles.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> ngas_comps = RM_GetGasComponentsCount(id)
+!> allocate(m(nxyz, ngas_comps))
+!> status = RM_RunCells(id)
+!> status = RM_GetGasPhasePhi(id, m)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+
+INTEGER FUNCTION RM_GetGasPhasePhi(id, phi) 
+    USE ISO_C_BINDING  
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetGasPhasePhi(id, phi) &
+            BIND(C, NAME='RMF_GetGasPhasePhi')   
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            REAL(KIND=C_DOUBLE), INTENT(out)  :: phi(*)
+        END FUNCTION RMF_GetGasPhasePhi 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:), TARGET :: phi
+    if (rmf_debug) call Chk_GetGasPhasePhi(id, phi)  
+    RM_GetGasPhasePhi = RMF_GetGasPhasePhi(id, phi ) 
+    return
+END FUNCTION RM_GetGasPhasePhi         
+
+SUBROUTINE Chk_GetGasPhasePhi(id, phi)
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: phi
+    INTEGER :: errors, rmf_ngas_comps
+    errors = 0
+	rmf_ngas_comps = RM_GetGasComponentsCount(id)
+    errors = errors + Chk_Double2D(id, phi, rmf_nxyz, rmf_ngas_comps, "gas_phi", "RM_GetGasPhasePhi")
+    if (errors .gt. 0) then
+        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasPhasePressures")
+    endif
+END SUBROUTINE Chk_GetGasPhasePhi
+
 !> Returns the gram formula weights (g/mol) for the components in the reaction-module component list.
 !> @param id               The instance id returned from @ref RM_Create.
 !> @param gfw              Array to receive the gram formula weights. Dimension of the array is @a ncomps,
