@@ -41,6 +41,7 @@ void PrintCells(char** gcomps, double* gas_moles,
 		nxyz = 20;
 #ifdef USE_MPI
 		// MPI
+		int mpi_myself;
 		comm = MPI_COMM_WORLD;
 		id = RM_Create(nxyz, comm);
 		if (MPI_Comm_rank(comm, &mpi_myself) != MPI_SUCCESS)
