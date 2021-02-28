@@ -750,6 +750,48 @@ RMF_GetGasPhaseMoles(int* id, double* m)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+RMF_GetGasPhasePressures(int* id, double* p)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves pressures of gas components for all grid nodes to p
+	// size of m must be the number of grid nodes time the number of gas components
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> p_vector;
+		p_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+		IRM_RESULT return_value = Reaction_module_ptr->GetGasPhasePressures(p_vector);
+		if (return_value == IRM_OK)
+		{
+			memcpy(p, &p_vector.front(), p_vector.size() * sizeof(double));
+		}
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_GetGasPhasePhi(int* id, double* phi)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves fugacity coefficients of gas components for all grid nodes to phi
+	// size of m must be the number of grid nodes time the number of gas components
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> phi_vector;
+		phi_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+		IRM_RESULT return_value = Reaction_module_ptr->GetGasPhasePhi(phi_vector);
+		if (return_value == IRM_OK)
+		{
+			memcpy(phi, &phi_vector.front(), phi_vector.size() * sizeof(double));
+		}
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 RMF_GetGfw(int *id, double * gfw)
 /* ---------------------------------------------------------------------- */
 {
