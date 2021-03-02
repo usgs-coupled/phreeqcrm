@@ -3970,7 +3970,7 @@ PhreeqcRM::GetGasPhaseVolume(std::vector<double>& v_out)
 	try
 	{
 		// resize and fill elements
-		v_out.resize(this->nxyz * this->GetGasComponentsCount());
+		v_out.resize(this->nxyz);
 		std::fill(v_out.begin(), v_out.end(), 1e30);
 #ifdef USE_OPENMP
 		omp_set_num_threads(this->nthreads);
