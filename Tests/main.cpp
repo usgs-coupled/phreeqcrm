@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 	mpi_myself = 0;
 #endif
 	std::cerr << mpi_myself << std::endl;
-	bool root = (mpi_myself == 1);
+	bool root = (mpi_myself == 0);
 	units_tester();
 	if (root) std::cerr << "Done units_tester.===================================" << std::endl;
 	advection_cpp();

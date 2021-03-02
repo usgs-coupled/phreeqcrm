@@ -180,9 +180,7 @@ end interface
   ! Clean up
   status = RM_CloseFiles(id)
 #ifdef USE_MPI
-  if (mpi_myself > 0) then
-      status = RM_MpiWorkerBreak(id)
-  endif
+  status = RM_MpiWorkerBreak(id)
 #endif
   status = RM_Destroy(id)
   ! Deallocate
