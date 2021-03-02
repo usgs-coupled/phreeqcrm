@@ -31,6 +31,7 @@ void PrintCells(char** gcomps, double* gas_moles,
 		double* gas_moles;
 		double* gas_p;
 		double* gas_phi;
+		double* gas_volume;
 		double* por;
 		double* sat;
 		char * errstr = NULL;
@@ -142,7 +143,7 @@ void PrintCells(char** gcomps, double* gas_moles,
 		gas_p = (double*)malloc((size_t)(ngas * nxyz * sizeof(double)));
 		gas_phi = (double*)malloc((size_t)(ngas * nxyz * sizeof(double)));
 		status = RM_GetGasPhaseMoles(id, gas_moles);
-		status = RM_GetGasPhasePressures(id, gas_p);
+		status = RM_GetGasCompPressures(id, gas_p);
 		status = RM_GetGasPhasePhi(id, gas_phi);
 		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions");
 
@@ -153,19 +154,39 @@ void PrintCells(char** gcomps, double* gas_moles,
 		}
 		status = RM_SetGasPhaseMoles(id, gas_moles);
 		status = RM_GetGasPhaseMoles(id, gas_moles);
-		status = RM_GetGasPhasePressures(id, gas_p);
+		status = RM_GetGasCompPressures(id, gas_p);
 		status = RM_GetGasPhasePhi(id, gas_phi);
 		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions times 2");
 
-		// eliminate CH4 in cell 0, and all of Cell 1 gases
+		// eliminate CH4 in cell 0
 		gas_moles[0] = -1.0;
+		// Gas phase is removed from cell 1
 		gas_moles[1] = gas_moles[nxyz + 1] = gas_moles[2 * nxyz + 1] = -1.0;
 		status = RM_SetGasPhaseMoles(id, gas_moles);
 		status = RM_RunCells(id);
 		status = RM_GetGasPhaseMoles(id, gas_moles);
-		status = RM_GetGasPhasePressures(id, gas_p);
+		status = RM_GetGasCompPressures(id, gas_p);
 		status = RM_GetGasPhasePhi(id, gas_phi);
 		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Remove some components");
+
+		// add CH4 in cell 0
+		gas_moles[0] = 0.02;
+		// Gas phase is added to cell 1; fixed pressure by default
+		gas_moles[1] = 0.01;
+		gas_moles[nxyz + 1] = 0.02;
+		gas_moles[2 * nxyz + 1] = 0.03;
+		status = RM_SetGasPhaseMoles(id, gas_moles);
+		// Set volume for cell 1 and convert to fixed pressure gas phase
+		gas_volume = (double*)malloc((size_t)(nxyz * sizeof(double)));
+		for (int i = 0; i < nxyz; i++) gas_volume[i] = -1.0;
+		gas_volume[1] = 12.25;
+		status = RM_SetGasPhaseVolume(id, gas_volume);
+		status = RM_RunCells(id);
+		status = RM_GetGasPhaseMoles(id, gas_moles);
+		status = RM_GetGasCompPressures(id, gas_p);
+		status = RM_GetGasPhasePhi(id, gas_phi);
+		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Add components back");
+
 		// Finalize
 		status = RM_MpiWorkerBreak(id);
 		status = RM_CloseFiles(id);

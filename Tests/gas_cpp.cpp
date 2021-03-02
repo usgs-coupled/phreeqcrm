@@ -100,7 +100,7 @@ int gas_cpp()
 		std::vector<double> gas_moles, gas_p, gas_phi;
 		gas_moles.resize((size_t)nxyz * phreeqc_rm.GetGasComponentsCount());
 		status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
-		status = phreeqc_rm.GetGasPhasePressures(gas_p);
+		status = phreeqc_rm.GetGasCompPressures(gas_p);
 		status = phreeqc_rm.GetGasPhasePhi(gas_phi);
 		PrintCells(gcomps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions");
 
@@ -111,19 +111,38 @@ int gas_cpp()
 		}
 		status = phreeqc_rm.SetGasPhaseMoles(gas_moles);
 		status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
-		status = phreeqc_rm.GetGasPhasePressures(gas_p);
+		status = phreeqc_rm.GetGasCompPressures(gas_p);
 		status = phreeqc_rm.GetGasPhasePhi(gas_phi);
 		PrintCells(gcomps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions times 2");
 
-		// eliminate CH4 in cell 0, and all of Cell 1 gases
+		// eliminate CH4 in cell 0
 		gas_moles[0] = -1.0;
+		// Gas phase is removed from cell 1
 		gas_moles[1] = gas_moles[nxyz + 1] = gas_moles[2 * nxyz + 1] = -1.0;
 		status = phreeqc_rm.SetGasPhaseMoles(gas_moles);
 		phreeqc_rm.RunCells();
 		status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
-		status = phreeqc_rm.GetGasPhasePressures(gas_p);
+		status = phreeqc_rm.GetGasCompPressures(gas_p);
 		status = phreeqc_rm.GetGasPhasePhi(gas_phi);
 		PrintCells(gcomps, gas_moles, gas_p, gas_phi, nxyz, "Remove some components");
+
+		// add CH4 in cell 0
+		gas_moles[0] = 0.02;
+		// Gas phase is added to cell 1; fixed pressure by default
+		gas_moles[1] = 0.01;
+		gas_moles[nxyz + 1] = 0.02;
+		gas_moles[2 * nxyz + 1] = 0.03;
+		status = phreeqc_rm.SetGasPhaseMoles(gas_moles);
+		// Set volume for cell 1 and convert to fixed pressure gas phase
+		std::vector<double> gas_volume;
+		gas_volume.resize(nxyz, -1);
+		gas_volume[1] = 12.25;
+		status = phreeqc_rm.SetGasPhaseVolume(gas_volume);
+		phreeqc_rm.RunCells();
+		status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
+		status = phreeqc_rm.GetGasCompPressures(gas_p);
+		status = phreeqc_rm.GetGasPhasePhi(gas_phi);
+		PrintCells(gcomps, gas_moles, gas_p, gas_phi, nxyz, "Add components back");
 
 		// Clean up
 
