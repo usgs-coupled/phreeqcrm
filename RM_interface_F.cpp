@@ -798,7 +798,7 @@ RMF_GetGasPhaseVolume(int* id, double* v_out)
 	{
 		std::vector<double> v_vector;
 		v_vector.resize(Reaction_module_ptr->GetGridCellCount());
-		IRM_RESULT return_value = Reaction_module_ptr->GetGasPhasePhi(v_vector);
+		IRM_RESULT return_value = Reaction_module_ptr->GetGasPhaseVolume(v_vector);
 		if (return_value == IRM_OK)
 		{
 			memcpy(v_out, &v_vector.front(), v_vector.size() * sizeof(double));
