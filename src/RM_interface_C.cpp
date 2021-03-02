@@ -736,7 +736,7 @@ RM_GetGasPhaseMoles(int id, double* gas_moles)
 }
 
 IRM_RESULT
-RM_GetGasPhasePressures(int id, double* gas_p)
+RM_GetGasCompPressures(int id, double* gas_p)
 /* ---------------------------------------------------------------------- */
 {
 	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
@@ -746,7 +746,7 @@ RM_GetGasPhasePressures(int id, double* gas_p)
 		{
 			std::vector<double> p_vector;
 			p_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
-			IRM_RESULT return_value = Reaction_module_ptr->GetGasPhasePressures(p_vector);
+			IRM_RESULT return_value = Reaction_module_ptr->GetGasCompPressures(p_vector);
 			if (return_value == IRM_OK)
 			{
 				memcpy(gas_p, &p_vector.front(), p_vector.size() * sizeof(double));
@@ -772,6 +772,28 @@ RM_GetGasPhasePhi(int id, double* gas_phi)
 			if (return_value == IRM_OK)
 			{
 				memcpy(gas_phi, &phi_vector.front(), phi_vector.size() * sizeof(double));
+			}
+			return return_value;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+IRM_RESULT
+RM_GetGasPhaseVolume(int id, double* gas_volume)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (gas_volume != NULL)
+		{
+			std::vector<double> v_vector;
+			v_vector.resize(Reaction_module_ptr->GetGridCellCount());
+			IRM_RESULT return_value = Reaction_module_ptr->GetGasPhaseVolume(v_vector);
+			if (return_value == IRM_OK)
+			{
+				memcpy(gas_volume, &v_vector.front(), v_vector.size() * sizeof(double));
 			}
 			return return_value;
 		}
@@ -1670,6 +1692,25 @@ RM_SetGasPhaseMoles(int id, double* m)
 			m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
 			memcpy(&m_vector.front(), m, m_vector.size() * sizeof(double));
 			return Reaction_module_ptr->SetGasPhaseMoles(m_vector);
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_SetGasPhaseVolume(int id, double* v)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (v != NULL)
+		{
+			std::vector<double> v_vector;
+			v_vector.resize(Reaction_module_ptr->GetGridCellCount());
+			memcpy(&v_vector.front(), v, v_vector.size() * sizeof(double));
+			return Reaction_module_ptr->SetGasPhaseVolume(v_vector);
 		}
 		return IRM_INVALIDARG;
 	}

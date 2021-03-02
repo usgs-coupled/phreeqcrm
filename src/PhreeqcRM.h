@@ -53,8 +53,9 @@ enum {
 	METHOD_GETDENSITY,
 	METHOD_GETERRORSTRING,
 	METHOD_GETGASPHASEMOLES,
-	METHOD_GETGASPHASEPRESSURES,
+	METHOD_GETGASCOMPPRESSURES,
 	METHOD_GETGASPHASEPHI,
+	METHOD_GETGASPHASEVOLUME,
 	METHOD_GETPRESSURE,
 	METHOD_GETSATURATION,
 	METHOD_GETSELECTEDOUTPUT,
@@ -75,6 +76,7 @@ enum {
 	METHOD_SETERRORHANDLERMODE,
 	METHOD_SETFILEPREFIX,
 	METHOD_SETGASPHASEMOLES,
+	METHOD_SETGASPHASEVOLUME,
 	METHOD_SETPARTITIONUZSOLIDS,
 	METHOD_SETPOROSITY,
 	METHOD_SETPRESSURE,
@@ -978,9 +980,11 @@ Values for inactive cells are set to 1e30.
 @see                    
 @ref FindComponents, 
 @ref GetGasComponentsCount, 
-@ref GetGasPhasePressures,
+@ref GetGasCompPressures,
 @ref GetGasPhasePhi,
-@ref SetGasPhaseMoles.
+@ref GetGasPhaseVolume,
+@ref SetGasPhaseMoles,
+@ref SetGasPhaseVolume.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -998,9 +1002,9 @@ IRM_RESULT                                GetGasPhaseMoles(std::vector<double>& 
 
 /**
 Transfer pressures of gas components from each reaction cell
-to the vector given in the argument list (@a gas_pressures).
+to the vector given in the argument list (@a gas_pressure).
 
-@param  gas_pressures               Vector to receive the pressures of gas components.
+@param  gas_pressure               Vector to receive the pressures of gas components.
 Dimension of the vector is set to @a ngas_comps times @a nxyz,
 where,  ngas_comps is the result of @ref GetGasComponentsCount,
 and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
@@ -1012,28 +1016,30 @@ Values for inactive cells are set to 1e30.
 @ref GetGasComponentsCount, 
 @ref GetGasPhaseMoles,
 @ref GetGasPhasePhi,
-@ref SetGasPhaseMoles.
+@ref GetGasPhaseVolume,
+@ref SetGasPhaseMoles,
+@ref SetGasPhaseVolume.
 @par C++ Example:
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> gas_pressures;
+std::vector<double> gas_pressure;
 status = phreeqc_rm.RunCells();
-status = phreeqc_rm.GetGasPhasePressures(gas_pressures);
+status = phreeqc_rm.GetGasCompPressures(gas_pressure);
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-IRM_RESULT                                GetGasPhasePressures(std::vector<double>& gas_pressures);
+IRM_RESULT                                GetGasCompPressures(std::vector<double>& gas_pressure);
 
 /**
 Transfer fugacity coefficients (phi) of gas components from each reaction cell
-to the vector given in the argument list (@a gas_pressures). Fugacity is
+to the vector given in the argument list (@a gas_phi). Fugacity is
 equal to the gas component pressure times the fugacity coefficient.
 
-@param  gas_phis               Vector to receive the fugacity coefficients of gas components.
+@param  gas_phi               Vector to receive the fugacity coefficients of gas components.
 Dimension of the vector is set to @a ngas_comps times @a nxyz,
 where,  ngas_comps is the result of @ref GetGasComponentsCount,
 and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
@@ -1044,22 +1050,57 @@ Values for inactive cells are set to 1e30.
 @ref FindComponents,
 @ref GetGasComponentsCount,
 @ref GetGasPhaseMoles,
-@ref GetGasPhasePressures,
-@ref SetGasPhaseMoles.
+@ref GetGasCompPressures,
+@ref GetGasPhaseVolume,
+@ref SetGasPhaseMoles,
+@ref SetGasPhaseVolume.
 @par C++ Example:
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> gas_phis;
+std::vector<double> gas_phi;
 status = phreeqc_rm.RunCells();
-status = phreeqc_rm.GetGasPhasePhi(gas_phis);
+status = phreeqc_rm.GetGasPhasePhi(gas_phi);
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-IRM_RESULT                                GetGasPhasePhi(std::vector<double>& gas_phis);
+IRM_RESULT                                GetGasPhasePhi(std::vector<double>& gas_phi);
+
+/**
+Transfer volume of gas phase from each reaction cell
+to the vector given in the argument list (@a gas_volume). 
+
+@param  gas_volume               Vector to receive the gas phase volumes.
+Dimension of the vector is set to @a nxyz,
+where,  @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas phase is not defined for a cell, the volume is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref FindComponents,
+@ref GetGasComponentsCount,
+@ref GetGasPhaseMoles,
+@ref GetGasCompPressures,
+@ref GetGasPhasePhi,
+@ref SetGasPhaseMoles,
+@ref RM_SetGasPhaseVolume.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_volume;
+status = phreeqc_rm.RunCells();
+status = phreeqc_rm.GetGasPhaseVolume(gas_volume);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                GetGasPhaseVolume(std::vector<double>& gas_volume);
 
 /**
 Returns a reference to a vector of doubles that contains the gram-formula weight of
@@ -3507,13 +3548,17 @@ not be defined for the GAS_PHASE of the reaction cell.
 @ref FindComponents, 
 @ref GetGasComponentsCount, 
 @ref GetGasPhaseMoles,
-@ref GetGasPhasePressures,
-@ref GetGasPhasePhi.
+@ref GetGasCompPressures,
+@ref GetGasPhaseVolume,
+@ref GetGasPhasePhi,
+@ref SetGasPhaseVolume.
 @par C++ Example:
 @htmlonly
 <CODE>
 <PRE>
 std::vector<double> gas_moles;
+gas_moles.resize(nxyz*ngas);
+...
 status = phreeqc_rm.SetGasPhaseMoles(gas_moles);
 status = phreeqc_rm.RunCells();
 </PRE>
@@ -3523,6 +3568,45 @@ status = phreeqc_rm.RunCells();
 Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
 IRM_RESULT                                SetGasPhaseMoles(const std::vector<double>& gas_moles);
+/**
+Transfer volumes of gas phases from
+the vector given in the argument list (@a gas_volume) to each reaction cell.
+The gas-phase volume affects the gas-component pressures calculated for fixed-volume
+gas phases. If a gas-phase volume is defined with this methood 
+for a GAS_PHASE in a cell, 
+the gas phase is forced to be a fixed-volume gas phase.
+
+@param  gas_volume               Vector of volumes for each gas phase.
+Dimension of the vector is @a nxyz,
+where @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If the volume is set to a negative number for a cell, the gas-phase volume for that cell is
+not changed.
+
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref FindComponents,
+@ref GetGasComponentsCount,
+@ref GetGasPhaseMoles,
+@ref GetGasCompPressures,
+@ref GetGasPhasePhi,
+@ref GetGasPhaseVolume,
+@ref SetGasPhaseMoles.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_volume;
+gas_volume.resize(nxyz, -1.0);
+...
+status = phreeqc_rm.SetGasPhaseVolume(gas_volume);
+status = phreeqc_rm.RunCells();
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+	*/
+IRM_RESULT                                SetGasPhaseVolume(const std::vector<double>& gas_volume);
 
 /**
 MPI and C/C++ only. Defines a callback function that allows additional tasks to be done

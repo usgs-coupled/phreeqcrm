@@ -862,7 +862,7 @@ to the vector given in the argument list (@a gas_moles).
 
 @param id               The instance @a id returned from @ref RM_Create.
 @param gas_moles        Vector to receive the moles of gas components.
-Dimension of the vector is set to @a ngas_comps times @a nxyz,
+Dimension of the vector must be @a ngas_comps times @a nxyz,
 where,  ngas_comps is the result of @ref RM_GetGasComponentsCount,
 and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
 If a gas component is not defined for a cell, the number of moles is set to -1.
@@ -872,9 +872,11 @@ Values for inactive cells are set to 1e30.
 @see
 @ref RM_FindComponents, 
 @ref RM_GetGasComponentsCount, 
-@ref RM_GetGasPhasePressures,
+@ref RM_GetGasCompPressures,
 @ref RM_GetGasPhasePhi,
-@ref RM_SetGasPhaseMoles.
+@ref RM_GetGasPhaseVolume,
+@ref RM_SetGasPhaseMoles,
+@ref RM_SetGasPhaseVolume.
 
 @par C Example:
 @htmlonly
@@ -893,12 +895,12 @@ Called by root, workers must be in the loop of @ref RM_MpiWorker.
 IRM_DLL_EXPORT IRM_RESULT RM_GetGasPhaseMoles(int id, double* gas_moles);
 /**
 Transfer pressures of gas components from each reaction cell
-to the vector given in the argument list (@a gas_pressures).
+to the vector given in the argument list (@a gas_pressure).
 
 @param id               The instance @a id returned from @ref RM_Create.
-@param gas_pressures        Vector to receive the pressures of gas components.
-Dimension of the vector is set to @a ngas_comps times @a nxyz,
-where,  ngas_comps is the result of @ref RM_GetGasComponentsCount,
+@param gas_pressure        Vector to receive the pressures of gas components.
+Dimension of the vector must be @a ngas_comps times @a nxyz,
+where, ngas_comps is the result of @ref RM_GetGasComponentsCount,
 and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
 If a gas component is not defined for a cell, the pressure is set to -1.
 Values for inactive cells are set to 1e30.
@@ -909,31 +911,33 @@ Values for inactive cells are set to 1e30.
 @ref RM_GetGasComponentsCount,
 @ref RM_GetGasPhaseMoles,
 @ref RM_GetGasPhasePhi,
-@ref RM_SetGasPhaseMoles.
+@ref RM_GetGasPhaseVolume,
+@ref RM_SetGasPhaseMoles,
+@ref RM_SetGasPhaseVolume.
 
 @par C Example:
 @htmlonly
 <CODE>
 <PRE>
 ngas_comps = RM_GetGasComponentsCount();
-gas_pressures = (double *) malloc((size_t) (ngas_comps * nxyz * sizeof(double)));
+gas_pressure = (double *) malloc((size_t) (ngas_comps * nxyz * sizeof(double)));
 status = RM_RunCells(id);
-status = RM_GetGasPhasePressures(id, gas_pressures);
+status = RM_GetGasCompPressures(id, gas_pressure);
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
-IRM_DLL_EXPORT IRM_RESULT RM_GetGasPhasePressures(int id, double* gas_pressures);
+IRM_DLL_EXPORT IRM_RESULT RM_GetGasCompPressures(int id, double* gas_pressure);
 /**
 Transfer fugacity coefficients (phi) of gas components from each reaction cell
 to the vector given in the argument list (@a gas_phi). Fugacity of a gas
-component is equal to its pressure time the fugacity coefficient.
+component is equal to its pressure times the fugacity coefficient.
 
 @param id               The instance @a id returned from @ref RM_Create.
 @param gas_phi        Vector to receive the fugacity coefficients of gas components.
-Dimension of the vector is set to @a ngas_comps times @a nxyz,
+Dimension of the vector must be @a ngas_comps times @a nxyz,
 where,  ngas_comps is the result of @ref RM_GetGasComponentsCount,
 and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
 If a gas component is not defined for a cell, the fugacity coefficient is set to -1.
@@ -944,8 +948,10 @@ Values for inactive cells are set to 1e30.
 @ref RM_FindComponents,
 @ref RM_GetGasComponentsCount,
 @ref RM_GetGasPhaseMoles,
-@ref RM_GetGasPhasePressures,
-@ref RM_SetGasPhaseMoles.
+@ref RM_GetGasCompPressures,
+@ref RM_GetGasPhaseVolume,
+@ref RM_SetGasPhaseMoles,
+@ref RM_SetGasPhaseVolume.
 
 @par C Example:
 @htmlonly
@@ -962,6 +968,41 @@ status = RM_GetGasPhasePhi(id, gas_phi);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetGasPhasePhi(int id, double* gas_phi);
+/**
+Transfer volume of gas from each reaction cell
+to the vector given in the argument list (@a gas_volume).
+
+@param id               The instance @a id returned from @ref RM_Create.
+@param  gas_volume               Array to receive the gas phase volumes.
+Dimension of the vector must be @a nxyz,
+where,  @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas phase is not defined for a cell, the volume is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+
+@see
+@ref RM_FindComponents,
+@ref RM_GetGasComponentsCount,
+@ref RM_GetGasPhaseMoles,
+@ref RM_GetGasCompPressures,
+@ref RM_GetGasPhasePhi,
+@ref RM_SetGasPhaseMoles,
+@ref RM_SetGasPhaseVolume.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+gas_volume = (double *) malloc((size_t) (nxyz * sizeof(double)));
+status = RM_RunCells(id);
+status = RM_GetGasPhaseVolume(id, gas_volume);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_GetGasPhaseVolume(int id, double* gas_volume);
 /**
 Returns the gram formula weights (g/mol) for the components in the reaction-module component list.
 @param id               The instance id returned from @ref RM_Create.
@@ -2947,7 +2988,7 @@ the vector given in the argument list (@a gas_moles) to each reaction cell.
 
 @param id               The instance @a id returned from @ref RM_Create.
 @param gas_moles        Vector of moles of gas components.
-Dimension of the vector is set to @a ngas_comps times @a nxyz,
+Dimension of the vector must be @a ngas_comps times @a nxyz,
 where,  ngas_comps is the result of @ref _GetGasComponentsCount,
 and @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
 If the number of moles is set to a negative number, the gas component will
@@ -2957,8 +2998,10 @@ not be defined for the GAS_PHASE of the reaction cell.
 @ref RM_FindComponents, 
 @ref RM_GetGasComponentsCount, 
 @ref RM_GetGasPhaseMoles, 
-@ref RM_GetGasPhasePressures,
-@ref RM_GetGasPhasePhi.
+@ref RM_GetGasCompPressures,
+@ref RM_GetGasPhaseVolume,
+@ref RM_GetGasPhasePhi,
+@ref RM_SetGasPhaseVolume.
 
 @par C Example:
 @htmlonly
@@ -2976,6 +3019,48 @@ status = RM_RunCells(id)
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SetGasPhaseMoles(int id, double* gas_moles);
+
+/**
+Transfer volumes of gas phases from
+the array given in the argument list (@a gas_volume) to each reaction cell.
+The gas-phase volume affects the pressures calculated for fixed-volume
+gas phases. If a gas-phase volume is defined with this method 
+for a GAS_PHASE in a cell, 
+the gas phase is forced to be a fixed-volume gas phase.
+
+@param id               The instance @a id returned from @ref RM_Create.
+@param  gas_volume               Vector of volumes for each gas phase.
+Dimension of the vector must be @a nxyz,
+where, @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
+If the volume is set to a negative number for a cell, the gas-phase volume for that cell is
+not changed.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetGasComponentsCount,
+@ref RM_GetGasPhaseMoles,
+@ref RM_GetGasCompPressures,
+@ref RM_GetGasPhaseVolume,
+@ref RM_GetGasPhasePhi,
+@ref RM_SetGasPhaseMoles.
+
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+gas_volume = (double *) malloc((size_t) (nxyz * sizeof(double)));
+...
+status = RM_SetGasPhaseVolume(id, gas_moles);
+status = RM_RunCells(id)
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_SetGasPhaseVolume(int id, double* gas_volume);
+
+
 /**
 MPI only. Defines a callback function that allows additional tasks to be done
 by the workers. The method @ref RM_MpiWorker contains a loop,
