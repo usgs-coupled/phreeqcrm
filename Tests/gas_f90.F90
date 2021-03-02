@@ -34,6 +34,7 @@ end interface
   integer,          dimension(:,:), allocatable :: ic1, ic2
   double precision, dimension(:,:), allocatable :: f1
   double precision, dimension(:,:), allocatable :: gas_moles, gas_p, gas_phi
+  double precision, dimension(:), allocatable   :: gas_volume
   !character(LEN=1), dimension(:), allocatable   :: errstr
 #ifdef FORTRAN_2003
   character(LEN=:), allocatable                 :: errstr
@@ -129,7 +130,7 @@ end interface
   allocate(gas_p(nxyz, ngas))
   allocate(gas_phi(nxyz, ngas))
   status = RM_GetGasPhaseMoles(id, gas_moles)
-  status = RM_GetGasPhasePressures(id, gas_p)
+  status = RM_GetGasCompPressures(id, gas_p)
   status = RM_GetGasPhasePhi(id, gas_phi)
   call PrintCells(gas_comps, gas_moles, gas_p, gas_phi, "Initial condition")
   
@@ -141,7 +142,7 @@ end interface
   enddo
   status = RM_SetGasPhaseMoles(id, gas_moles)
   status = RM_GetGasPhaseMoles(id, gas_moles)
-  status = RM_GetGasPhasePressures(id, gas_p)
+  status = RM_GetGasCompPressures(id, gas_p)
   status = RM_GetGasPhasePhi(id, gas_phi)
   call PrintCells(gas_comps, gas_moles, gas_p, gas_phi, "Initial condition times 2")
 
@@ -153,11 +154,29 @@ end interface
   status = RM_SetGasPhaseMoles(id, gas_moles)
   status = RM_RunCells(id)
   status = RM_GetGasPhaseMoles(id, gas_moles)
-  status = RM_GetGasPhasePressures(id, gas_p)
+  status = RM_GetGasCompPressures(id, gas_p)
   status = RM_GetGasPhasePhi(id, gas_phi)
   call PrintCells(gas_comps, gas_moles, gas_p, gas_phi, "Remove some components")
   
-  
+    ! add CH4 in cell 0
+    gas_moles(1,1) = 0.02
+    ! Gas phase is added to cell 1; fixed pressure by default
+    gas_moles(2,1) = 0.01
+	gas_moles(2,2) = 0.02
+	gas_moles(2,3) = 0.03
+    status = RM_SetGasPhaseMoles(id, gas_moles)
+	! Set volume for cell 1 and convert to fixed pressure gas phase
+    allocate(gas_volume(nxyz))
+    gas_volume = -1.0
+	gas_volume(2) = 12.25
+	status = RM_SetGasPhaseVolume(id, gas_volume)
+	status = RM_GetGasPhaseVolume(id, gas_volume)
+	status = RM_RunCells(id)
+    status = RM_GetGasPhaseMoles(id, gas_moles)
+    status = RM_GetGasCompPressures(id, gas_p)
+    status = RM_GetGasPhasePhi(id, gas_phi)
+    call PrintCells(gas_comps, gas_moles, gas_p, gas_phi, "Add components back")
+      
   ! Clean up
   status = RM_CloseFiles(id)
 #ifdef USE_MPI
