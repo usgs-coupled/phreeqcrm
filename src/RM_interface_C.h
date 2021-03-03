@@ -309,31 +309,31 @@ their charge (@ref RM_GetSpeciesZ).
 @ref RM_SetComponentH2O,
 @ref RM_SetSpeciesSaveOn, 
 @ref RM_SpeciesConcentrations2Module. 
-@par The @ref RM_FindComponents method also generates lists of reactants--equilibrium phases,
+@par The RM_FindComponents method also generates lists of reactants--equilibrium phases,
 exchangers, gas components, kinetic reactants, solid solution components, and surfaces.
 The lists are cumulative, including all reactants that were
 defined in the initial phreeqc instance at any time FindComponents was called.
 In addition, a list of phases is generated for which saturation indices may be calculated from the
 cumulative list of components.
 @see also
-@ref RM_GetEquilibriumPhases,
+@ref RM_GetEquilibriumPhasesName,
 @ref RM_GetEquilibriumPhasesCount,
-@ref RM_GetExchangeNames,
-@ref RM_GetExchangeSpecies,
+@ref RM_GetExchangeName,
+@ref RM_GetExchangeSpeciesName,
 @ref RM_GetExchangeSpeciesCount,
-@ref RM_GetGasComponents,
+@ref RM_GetGasComponentsName,
 @ref RM_GetGasComponentsCount,
-@ref RM_GetKineticReactions,
+@ref RM_GetKineticReactionsName,
 @ref RM_GetKineticReactionsCount,
 @ref RM_GetSICount,
-@ref RM_GetSINames,
-@ref RM_GetSolidSolutionComponents,
+@ref RM_GetSIName,
+@ref RM_GetSolidSolutionComponentsName,
 @ref RM_GetSolidSolutionComponentsCount,
-@ref RM_GetSolidSolutionNames,
-@ref RM_GetSurfaceNames,
-@ref RM_GetSurfaceSpecies,
+@ref RM_GetSolidSolutionName,
+@ref RM_GetSurfaceName,
+@ref RM_GetSurfaceSpeciesName,
 @ref RM_GetSurfaceSpeciesCount,
-@ref RM_GetSurfaceTypes.
+@ref RM_GetSurfaceType.
 @par C Example:
 @htmlonly
 <CODE>
@@ -863,8 +863,8 @@ to the vector given in the argument list (@a gas_moles).
 @param id               The instance @a id returned from @ref RM_Create.
 @param gas_moles        Vector to receive the moles of gas components.
 Dimension of the vector must be @a ngas_comps times @a nxyz,
-where,  ngas_comps is the result of @ref RM_GetGasComponentsCount,
-and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+where, @a ngas_comps is the result of @ref RM_GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
 If a gas component is not defined for a cell, the number of moles is set to -1.
 Values for inactive cells are set to 1e30.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -900,8 +900,8 @@ to the vector given in the argument list (@a gas_pressure).
 @param id               The instance @a id returned from @ref RM_Create.
 @param gas_pressure        Vector to receive the pressures of gas components.
 Dimension of the vector must be @a ngas_comps times @a nxyz,
-where, ngas_comps is the result of @ref RM_GetGasComponentsCount,
-and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+where, @a ngas_comps is the result of @ref RM_GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
 If a gas component is not defined for a cell, the pressure is set to -1.
 Values for inactive cells are set to 1e30.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -938,8 +938,8 @@ component is equal to its pressure times the fugacity coefficient.
 @param id               The instance @a id returned from @ref RM_Create.
 @param gas_phi        Vector to receive the fugacity coefficients of gas components.
 Dimension of the vector must be @a ngas_comps times @a nxyz,
-where,  ngas_comps is the result of @ref RM_GetGasComponentsCount,
-and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+where, @a ngas_comps is the result of @ref RM_GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
 If a gas component is not defined for a cell, the fugacity coefficient is set to -1.
 Values for inactive cells are set to 1e30.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -975,7 +975,7 @@ to the vector given in the argument list (@a gas_volume).
 @param id               The instance @a id returned from @ref RM_Create.
 @param  gas_volume               Array to receive the gas phase volumes.
 Dimension of the vector must be @a nxyz,
-where,  @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+where,  @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
 If a gas phase is not defined for a cell, the volume is set to -1.
 Values for inactive cells are set to 1e30.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -2989,7 +2989,7 @@ the vector given in the argument list (@a gas_moles) to each reaction cell.
 @param id               The instance @a id returned from @ref RM_Create.
 @param gas_moles        Vector of moles of gas components.
 Dimension of the vector must be @a ngas_comps times @a nxyz,
-where,  ngas_comps is the result of @ref _GetGasComponentsCount,
+where, @a ngas_comps is the result of @ref RM_GetGasComponentsCount,
 and @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
 If the number of moles is set to a negative number, the gas component will
 not be defined for the GAS_PHASE of the reaction cell.
