@@ -1,5 +1,5 @@
 /*! @file PhreeqcRM.h
-	@brief C++ Documentation
+	@brief C++ Documentation 
 */
 #if !defined(PHREEQCRM_H_INCLUDED)
 #define PHREEQCRM_H_INCLUDED
@@ -62,6 +62,7 @@ enum {
 	METHOD_GETSOLUTIONVOLUME,
 	METHOD_GETSPECIESCONCENTRATIONS,
 	METHOD_GETSPECIESLOG10GAMMAS,
+	METHOD_GETSPECIESLOG10MOLALITIES,
 	METHOD_GETTEMPERATURE,
 	METHOD_INITIALPHREEQC2MODULE,
 	METHOD_INITIALPHREEQCCELL2MODULE,
@@ -395,6 +396,7 @@ and their charge (@ref GetSpeciesZ).
 @ref GetSpeciesCount, 
 @ref GetSpeciesD25, 
 @ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -1942,6 +1944,7 @@ Values for inactive cells are set to 1e30.
 @ref GetSpeciesCount, 
 @ref GetSpeciesD25, 
 @ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -1977,6 +1980,7 @@ aqueous species that can be made from the set of components.
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesD25, 
 @ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -2010,6 +2014,7 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount,
 @ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -2048,6 +2053,7 @@ Called by root and (or) workers.
     @ref GetSpeciesConcentrations, 
 	@ref GetSpeciesCount,
 	@ref GetSpeciesD25,
+    @ref GetSpeciesLog10Molalities,
 	@ref GetSpeciesNames,
 	@ref GetSpeciesSaveOn,
 	@ref GetSpeciesStoichiometry,
@@ -2071,8 +2077,50 @@ Called by root and (or) workers.
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
-	IRM_RESULT                                GetSpeciesLog10Gammas(std::vector<double> & species_log10gammas);
-	
+	IRM_RESULT                                GetSpeciesLog10Gammas(std::vector<double> & species_log10gammas);	
+
+	/**
+	Returns a vector reference to log10 aqueous species molalities (@a species_log10molalities).
+	To use this method @ref SetSpeciesSaveOn must be set to @a true.
+	The list of aqueous species is determined by @ref FindComponents and includes all
+	aqueous species that can be made from the set of components.
+
+	@param species_log10molalities     Vector to receive the log10 aqueous species molalites.
+	Dimension of the vector is set to @a nspecies times @a nxyz,
+	where @a nspecies is the number of aqueous species (@ref GetSpeciesCount),
+	and @a nxyz is the number of grid cells (@ref GetGridCellCount).
+	Values for inactive cells are set to 1e30.
+	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+	@see                    @ref FindComponents
+	@ref GetSpeciesConcentrations,
+	@ref GetSpeciesCount,
+	@ref GetSpeciesD25,
+	@ref GetSpeciesLog10Gammas,
+	@ref GetSpeciesNames,
+	@ref GetSpeciesSaveOn,
+	@ref GetSpeciesStoichiometry,
+	@ref GetSpeciesZ,
+	@ref SetSpeciesSaveOn,
+	@ref SpeciesConcentrations2Module.
+
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	status = phreeqc_rm.SetSpeciesSaveOn(true);
+	int ncomps = phreeqc_rm.FindComponents();
+	int npecies = phreeqc_rm.GetSpeciesCount();
+	status = phreeqc_rm.RunCells();
+	std::vector<double> species_molalities;
+	status = phreeqc_rm.GetSpeciesLog10Molalities(species_molalities);
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	*/
+	IRM_RESULT                                GetSpeciesLog10Molalities(std::vector<double>& species_log10molalities);	/**
+
 	/**
 Returns a vector reference to the names of the aqueous species.
 This method is intended for use with multicomponent-diffusion transport calculations,
@@ -2086,6 +2134,7 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @ref GetSpeciesCount,
 @ref GetSpeciesD25, 
 @ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
@@ -2123,6 +2172,7 @@ with @ref GetSpeciesConcentrations, and solution compositions to be set with
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
 @ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
@@ -2157,6 +2207,7 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
 @ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesZ,
@@ -2204,6 +2255,7 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
 @ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -4098,6 +4150,7 @@ with @ref GetSpeciesConcentrations, and solution compositions to be set with
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
 @ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -4486,6 +4539,7 @@ Concentrations are moles per liter.
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
 @ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 

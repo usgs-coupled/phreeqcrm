@@ -46,6 +46,7 @@ subroutine species_f90()  BIND(C)
   double precision, dimension(:,:), allocatable :: c
   double precision, dimension(:,:), allocatable :: species_c
   double precision, dimension(:,:), allocatable :: species_log10gammas
+  double precision, dimension(:,:), allocatable :: species_log10molalities
   integer                                       :: nspecies
   double precision, dimension(:), allocatable   :: species_d
   double precision, dimension(:), allocatable   :: species_z
@@ -229,12 +230,14 @@ subroutine species_f90()  BIND(C)
   allocate(c(nxyz, ncomps))
   allocate(species_c(nxyz, nspecies))
   allocate(species_log10gammas(nxyz, nspecies))
+  allocate(species_log10molalities(nxyz, nspecies))
   status = RM_SetTime(id, time)
   status = RM_SetTimeStep(id, time_step)
   status = RM_RunCells(id) 
   status = RM_GetConcentrations(id, c)
   status = RM_GetSpeciesConcentrations(id, species_c)
   status = RM_GetSpeciesLog10Gammas(id, species_log10gammas)
+  status = RM_GetSpeciesLog10Molalities(id, species_log10molalities)
   
   ! --------------------------------------------------------------------------
   ! Set boundary condition
@@ -303,6 +306,7 @@ subroutine species_f90()  BIND(C)
      status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
      status = RM_GetSpeciesConcentrations(id, species_c)          ! Species concentrations after reaction
      status = RM_GetSpeciesLog10Gammas(id, species_log10gammas)   ! Species log10 activity coefficient after reaction
+     status = RM_GetSpeciesLog10Molalities(id, species_log10molalities)   ! Species log10 activity coefficient after reaction
      status = RM_GetDensity(id, density)             ! Density after reaction
      status = RM_GetSolutionVolume(id, volume)       ! Solution volume after reaction
      ! Print results at last time step
@@ -329,7 +333,8 @@ subroutine species_f90()  BIND(C)
               write(*,*) "     Species: "
               do j = 1, nspecies
                  status = RM_GetSpeciesName(id, j, string) 
-                 write(*,'(10x,i2,A2,A10,A2,f10.4,f10.4)') j, " ",trim(string), ": ", species_c(i,j), species_log10gammas(i,j)
+                 write(*,'(10x,i2,A2,A10,A2,1pe10.2,f10.4,1pe10.2)') j, " ",trim(string), ": ", species_c(i,j), &
+				    species_log10gammas(i,j), species_log10molalities(i,j)
               enddo              
               write(*,*) "     Selected output: "
               do j = 1, col

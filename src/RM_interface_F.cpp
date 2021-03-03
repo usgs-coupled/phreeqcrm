@@ -1100,10 +1100,10 @@ RMF_GetSpeciesD25(int *id, double * diffc)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_GetSpeciesLog10Gammas(int *id, double * species_log10gammas)
+RMF_GetSpeciesLog10Gammas(int* id, double* species_log10gammas)
 /* ---------------------------------------------------------------------- */
 {
-	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
 	if (Reaction_module_ptr)
 	{
 		IRM_RESULT return_value = IRM_OK;
@@ -1117,6 +1117,26 @@ RMF_GetSpeciesLog10Gammas(int *id, double * species_log10gammas)
 	}
 	return IRM_BADINSTANCE;
 }
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_GetSpeciesLog10Molalities(int *id, double * species_log10molalities)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		IRM_RESULT return_value = IRM_OK;
+		std::vector<double> species_molalities_vector;
+		return_value = Reaction_module_ptr->GetSpeciesLog10Molalities(species_molalities_vector);
+		if (return_value == IRM_OK)
+		{
+			memcpy(species_log10molalities, &species_molalities_vector.front(), species_molalities_vector.size() * sizeof(double));
+		}
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RMF_GetSpeciesName(int *id, int *i_in, char *name, int *length)
