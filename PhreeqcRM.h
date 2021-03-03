@@ -402,7 +402,7 @@ and their charge (@ref GetSpeciesZ).
 @ref SetComponentH2O,
 @ref SetSpeciesSaveOn,
 @ref SpeciesConcentrations2Module. 
-@par The @ref FindComponents method also generates lists of reactants--equilibrium phases,
+@par The FindComponents method also generates lists of reactants--equilibrium phases,
 exchangers, gas components, kinetic reactants, solid solution components, and surfaces. 
 The lists are cumulative, including all reactants that were
 defined in the initial phreeqc instance at any time FindComponents was called.
@@ -972,7 +972,7 @@ to the vector given in the argument list (@a gas_moles).
 
 @param  gas_moles               Vector to receive the moles of gas components.
 Dimension of the vector is set to @a ngas_comps times @a nxyz,
-where,  ngas_comps is the result of @ref GetGasComponentsCount,
+where, @a ngas_comps is the result of @ref GetGasComponentsCount,
 and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
 If a gas component is not defined for a cell, the number of moles is set to -1.
 Values for inactive cells are set to 1e30.
@@ -1006,7 +1006,7 @@ to the vector given in the argument list (@a gas_pressure).
 
 @param  gas_pressure               Vector to receive the pressures of gas components.
 Dimension of the vector is set to @a ngas_comps times @a nxyz,
-where,  ngas_comps is the result of @ref GetGasComponentsCount,
+where, @a ngas_comps is the result of @ref GetGasComponentsCount,
 and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
 If a gas component is not defined for a cell, the pressure is set to -1.
 Values for inactive cells are set to 1e30.
@@ -1041,7 +1041,7 @@ equal to the gas component pressure times the fugacity coefficient.
 
 @param  gas_phi               Vector to receive the fugacity coefficients of gas components.
 Dimension of the vector is set to @a ngas_comps times @a nxyz,
-where,  ngas_comps is the result of @ref GetGasComponentsCount,
+where, @a ngas_comps is the result of @ref GetGasComponentsCount,
 and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
 If a gas component is not defined for a cell, the fugacity coefficient is set to -1.
 Values for inactive cells are set to 1e30.
@@ -1086,7 +1086,7 @@ Values for inactive cells are set to 1e30.
 @ref GetGasCompPressures,
 @ref GetGasCompPhi,
 @ref SetGasCompMoles,
-@ref RM_SetGasPhaseVolume.
+@ref SetGasPhaseVolume.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -3538,7 +3538,7 @@ the vector given in the argument list (@a gas_moles) to each reaction cell.
 
 @param  gas_moles               Vector of moles of gas components.
 Dimension of the vector is set to @a ngas_comps times @a nxyz,
-where,  ngas_comps is the result of @ref GetGasComponentsCount,
+where, @a ngas_comps is the result of @ref GetGasComponentsCount,
 and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
 If the number of moles is set to a negative number, the gas component will
 not be defined for the GAS_PHASE of the reaction cell.
