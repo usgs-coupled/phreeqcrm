@@ -3464,7 +3464,7 @@ PhreeqcRM::GetErrorString(void)
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::GetGasPhaseMoles(std::vector<double>& m_out)
+PhreeqcRM::GetGasCompMoles(std::vector<double>& m_out)
 /* ---------------------------------------------------------------------- */
 {
 	// retrieve gas component moles
@@ -3474,7 +3474,7 @@ PhreeqcRM::GetGasPhaseMoles(std::vector<double>& m_out)
 	{
 		if (this->mpi_myself == 0)
 		{
-			int method = METHOD_GETGASPHASEMOLES;
+			int method = METHOD_GETGASCOMPMOLES;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		}
 		const std::vector<std::string>& gc_names = GetGasComponents();
@@ -3547,12 +3547,12 @@ PhreeqcRM::GetGasPhaseMoles(std::vector<double>& m_out)
 	{
 		return_value = IRM_FAIL;
 	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::GetGasPhaseMoles");
+	return this->ReturnHandler(return_value, "PhreeqcRM::GetGasCompMoles");
 }
 #else
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::GetGasPhaseMoles(std::vector<double>& m_out)
+PhreeqcRM::GetGasCompMoles(std::vector<double>& m_out)
 /* ---------------------------------------------------------------------- */
 {
 	// retrieve gas component moles
@@ -3599,7 +3599,7 @@ PhreeqcRM::GetGasPhaseMoles(std::vector<double>& m_out)
 	{
 		return_value = IRM_FAIL;
 	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::GetGasPhaseMoles");
+	return this->ReturnHandler(return_value, "PhreeqcRM::GetGasCompMoles");
 }
 #endif
 
@@ -3747,7 +3747,7 @@ PhreeqcRM::GetGasCompPressures(std::vector<double>& p_out)
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::GetGasPhasePhi(std::vector<double>& phi_out)
+PhreeqcRM::GetGasCompPhi(std::vector<double>& phi_out)
 /* ---------------------------------------------------------------------- */
 {
 	// retrieve phi
@@ -3757,7 +3757,7 @@ PhreeqcRM::GetGasPhasePhi(std::vector<double>& phi_out)
 	{
 		if (this->mpi_myself == 0)
 		{
-			int method = METHOD_GETGASPHASEPHI;
+			int method = METHOD_GETGASCOMPPHI;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		}
 		const std::vector<std::string>& gc_names = GetGasComponents();
@@ -3831,12 +3831,12 @@ PhreeqcRM::GetGasPhasePhi(std::vector<double>& phi_out)
 	{
 		return_value = IRM_FAIL;
 	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::GetGasPhasePhi");
+	return this->ReturnHandler(return_value, "PhreeqcRM::GetGasCompPhi");
 }
 #else
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::GetGasPhasePhi(std::vector<double>& phi_out)
+PhreeqcRM::GetGasCompPhi(std::vector<double>& phi_out)
 /* ---------------------------------------------------------------------- */
 {
 	// retrieve phi
@@ -3881,7 +3881,7 @@ PhreeqcRM::GetGasPhasePhi(std::vector<double>& phi_out)
 	{
 		return_value = IRM_FAIL;
 	}
-	return this->ReturnHandler(return_value, "PhreeqcRM::GetGasPhasePhi");
+	return this->ReturnHandler(return_value, "PhreeqcRM::GetGasCompPhi");
 }
 #endif
 
@@ -5892,11 +5892,11 @@ PhreeqcRM::MpiWorker()
 					this->GetErrorString();
 				}
 				break;
-			case METHOD_GETGASPHASEMOLES:
-				if (debug_worker) std::cerr << "METHOD_GETGASPHASEMOLES" << std::endl;
+			case METHOD_GETGASCOMPMOLES:
+				if (debug_worker) std::cerr << "METHOD_GETGASCOMPMOLES" << std::endl;
 				{
 					std::vector<double> dummy;
-					this->GetGasPhaseMoles(dummy);
+					this->GetGasCompMoles(dummy);
 				}
 				break;
 			case METHOD_GETGASCOMPPRESSURES:
@@ -5906,11 +5906,11 @@ PhreeqcRM::MpiWorker()
 					this->GetGasCompPressures(dummy);
 				}
 				break;
-			case METHOD_GETGASPHASEPHI:
-				if (debug_worker) std::cerr << "METHOD_GETGASPHASEPHI" << std::endl;
+			case METHOD_GETGASCOMPPHI:
+				if (debug_worker) std::cerr << "METHOD_GETGASCOMPPHI" << std::endl;
 				{
 					std::vector<double> dummy;
-					this->GetGasPhasePhi(dummy);
+					this->GetGasCompPhi(dummy);
 				}
 				break;
 			case METHOD_GETGASPHASEVOLUME:
@@ -6047,11 +6047,11 @@ PhreeqcRM::MpiWorker()
 					return_value = this->SetFilePrefix(c_dummy);
 				}
 				break;			
-			case METHOD_SETGASPHASEMOLES:
-					if (debug_worker) std::cerr << "METHOD_SETGASPHASEMOLES" << std::endl;
+			case METHOD_SETGASCOMPMOLES:
+					if (debug_worker) std::cerr << "METHOD_SETGASCOMPMOLES" << std::endl;
 					{
 						std::vector<double> dummy;
-						return_value = this->SetGasPhaseMoles(dummy);
+						return_value = this->SetGasCompMoles(dummy);
 					}
 					break;
 			case METHOD_SETGASPHASEVOLUME:
@@ -9854,7 +9854,7 @@ PhreeqcRM::SetConcentrations(const std::vector<double> &t)
 #ifdef ORIG
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::SetGasPhaseMoles(const std::vector<double>& t)
+PhreeqcRM::SetGasCompMoles(const std::vector<double>& t)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -9880,7 +9880,7 @@ PhreeqcRM::SetGasPhaseMoles(const std::vector<double>& t)
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
-		int method = METHOD_SETGASPHASEMOLES;
+		int method = METHOD_SETGASCOMPMOLES;
 		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 	}
 
@@ -9982,13 +9982,13 @@ PhreeqcRM::SetGasPhaseMoles(const std::vector<double>& t)
 		}
 	}
 #endif
-	return this->ReturnHandler(return_value, "PhreeqcRM::SetGasPhaseMoles");
+	return this->ReturnHandler(return_value, "PhreeqcRM::SetGasCompMoles");
 }
 #endif
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::SetGasPhaseMoles(const std::vector<double>& m_in)
+PhreeqcRM::SetGasCompMoles(const std::vector<double>& m_in)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -10013,7 +10013,7 @@ PhreeqcRM::SetGasPhaseMoles(const std::vector<double>& m_in)
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
-		int method = METHOD_SETGASPHASEMOLES;
+		int method = METHOD_SETGASCOMPMOLES;
 		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 	}
 	double* send_buf = NULL;
@@ -10132,7 +10132,7 @@ PhreeqcRM::SetGasPhaseMoles(const std::vector<double>& m_in)
 		}
 	}
 #endif
-	return this->ReturnHandler(return_value, "PhreeqcRM::SetGasPhaseMoles");
+	return this->ReturnHandler(return_value, "PhreeqcRM::SetGasCompMoles");
 }
 
 /* ---------------------------------------------------------------------- */
