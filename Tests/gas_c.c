@@ -142,9 +142,9 @@ void PrintCells(char** gcomps, double* gas_moles,
 		gas_moles = (double *) malloc((size_t) (ngas * nxyz * sizeof(double)));
 		gas_p = (double*)malloc((size_t)(ngas * nxyz * sizeof(double)));
 		gas_phi = (double*)malloc((size_t)(ngas * nxyz * sizeof(double)));
-		status = RM_GetGasPhaseMoles(id, gas_moles);
+		status = RM_GetGasCompMoles(id, gas_moles);
 		status = RM_GetGasCompPressures(id, gas_p);
-		status = RM_GetGasPhasePhi(id, gas_phi);
+		status = RM_GetGasCompPhi(id, gas_phi);
 		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions");
 
 		// multiply by 2
@@ -152,21 +152,21 @@ void PrintCells(char** gcomps, double* gas_moles,
 		{
 			gas_moles[i] *= 2.0;
 		}
-		status = RM_SetGasPhaseMoles(id, gas_moles);
-		status = RM_GetGasPhaseMoles(id, gas_moles);
+		status = RM_SetGasCompMoles(id, gas_moles);
+		status = RM_GetGasCompMoles(id, gas_moles);
 		status = RM_GetGasCompPressures(id, gas_p);
-		status = RM_GetGasPhasePhi(id, gas_phi);
+		status = RM_GetGasCompPhi(id, gas_phi);
 		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions times 2");
 
 		// eliminate CH4 in cell 0
 		gas_moles[0] = -1.0;
 		// Gas phase is removed from cell 1
 		gas_moles[1] = gas_moles[nxyz + 1] = gas_moles[2 * nxyz + 1] = -1.0;
-		status = RM_SetGasPhaseMoles(id, gas_moles);
+		status = RM_SetGasCompMoles(id, gas_moles);
 		status = RM_RunCells(id);
-		status = RM_GetGasPhaseMoles(id, gas_moles);
+		status = RM_GetGasCompMoles(id, gas_moles);
 		status = RM_GetGasCompPressures(id, gas_p);
-		status = RM_GetGasPhasePhi(id, gas_phi);
+		status = RM_GetGasCompPhi(id, gas_phi);
 		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Remove some components");
 
 		// add CH4 in cell 0
@@ -175,16 +175,16 @@ void PrintCells(char** gcomps, double* gas_moles,
 		gas_moles[1] = 0.01;
 		gas_moles[nxyz + 1] = 0.02;
 		gas_moles[2 * nxyz + 1] = 0.03;
-		status = RM_SetGasPhaseMoles(id, gas_moles);
+		status = RM_SetGasCompMoles(id, gas_moles);
 		// Set volume for cell 1 and convert to fixed pressure gas phase
 		gas_volume = (double*)malloc((size_t)(nxyz * sizeof(double)));
 		for (int i = 0; i < nxyz; i++) gas_volume[i] = -1.0;
 		gas_volume[1] = 12.25;
 		status = RM_SetGasPhaseVolume(id, gas_volume);
 		status = RM_RunCells(id);
-		status = RM_GetGasPhaseMoles(id, gas_moles);
+		status = RM_GetGasCompMoles(id, gas_moles);
 		status = RM_GetGasCompPressures(id, gas_p);
-		status = RM_GetGasPhasePhi(id, gas_phi);
+		status = RM_GetGasCompPhi(id, gas_phi);
 		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Add components back");
 
 		// Finalize

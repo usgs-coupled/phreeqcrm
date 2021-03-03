@@ -873,9 +873,9 @@ Values for inactive cells are set to 1e30.
 @ref RM_FindComponents, 
 @ref RM_GetGasComponentsCount, 
 @ref RM_GetGasCompPressures,
-@ref RM_GetGasPhasePhi,
+@ref RM_GetGasCompPhi,
 @ref RM_GetGasPhaseVolume,
-@ref RM_SetGasPhaseMoles,
+@ref RM_SetGasCompMoles,
 @ref RM_SetGasPhaseVolume.
 
 @par C Example:
@@ -885,14 +885,14 @@ Values for inactive cells are set to 1e30.
 ngas_comps = RM_GetGasComponentsCount();
 gas_moles = (double *) malloc((size_t) (ngas_comps * nxyz * sizeof(double)));
 status = RM_RunCells(id);
-status = RM_GetGasPhaseMoles(id, gas_moles);
+status = RM_GetGasCompMoles(id, gas_moles);
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
-IRM_DLL_EXPORT IRM_RESULT RM_GetGasPhaseMoles(int id, double* gas_moles);
+IRM_DLL_EXPORT IRM_RESULT RM_GetGasCompMoles(int id, double* gas_moles);
 /**
 Transfer pressures of gas components from each reaction cell
 to the vector given in the argument list (@a gas_pressure).
@@ -909,10 +909,10 @@ Values for inactive cells are set to 1e30.
 @see
 @ref RM_FindComponents,
 @ref RM_GetGasComponentsCount,
-@ref RM_GetGasPhaseMoles,
-@ref RM_GetGasPhasePhi,
+@ref RM_GetGasCompMoles,
+@ref RM_GetGasCompPhi,
 @ref RM_GetGasPhaseVolume,
-@ref RM_SetGasPhaseMoles,
+@ref RM_SetGasCompMoles,
 @ref RM_SetGasPhaseVolume.
 
 @par C Example:
@@ -947,10 +947,10 @@ Values for inactive cells are set to 1e30.
 @see
 @ref RM_FindComponents,
 @ref RM_GetGasComponentsCount,
-@ref RM_GetGasPhaseMoles,
+@ref RM_GetGasCompMoles,
 @ref RM_GetGasCompPressures,
 @ref RM_GetGasPhaseVolume,
-@ref RM_SetGasPhaseMoles,
+@ref RM_SetGasCompMoles,
 @ref RM_SetGasPhaseVolume.
 
 @par C Example:
@@ -960,14 +960,14 @@ Values for inactive cells are set to 1e30.
 ngas_comps = RM_GetGasComponentsCount();
 gas_phi = (double *) malloc((size_t) (ngas_comps * nxyz * sizeof(double)));
 status = RM_RunCells(id);
-status = RM_GetGasPhasePhi(id, gas_phi);
+status = RM_GetGasCompPhi(id, gas_phi);
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
-IRM_DLL_EXPORT IRM_RESULT RM_GetGasPhasePhi(int id, double* gas_phi);
+IRM_DLL_EXPORT IRM_RESULT RM_GetGasCompPhi(int id, double* gas_phi);
 /**
 Transfer volume of gas from each reaction cell
 to the vector given in the argument list (@a gas_volume).
@@ -983,10 +983,10 @@ Values for inactive cells are set to 1e30.
 @see
 @ref RM_FindComponents,
 @ref RM_GetGasComponentsCount,
-@ref RM_GetGasPhaseMoles,
+@ref RM_GetGasCompMoles,
 @ref RM_GetGasCompPressures,
-@ref RM_GetGasPhasePhi,
-@ref RM_SetGasPhaseMoles,
+@ref RM_GetGasCompPhi,
+@ref RM_SetGasCompMoles,
 @ref RM_SetGasPhaseVolume.
 
 @par C Example:
@@ -2997,10 +2997,10 @@ not be defined for the GAS_PHASE of the reaction cell.
 @see                    
 @ref RM_FindComponents, 
 @ref RM_GetGasComponentsCount, 
-@ref RM_GetGasPhaseMoles, 
+@ref RM_GetGasCompMoles, 
 @ref RM_GetGasCompPressures,
 @ref RM_GetGasPhaseVolume,
-@ref RM_GetGasPhasePhi,
+@ref RM_GetGasCompPhi,
 @ref RM_SetGasPhaseVolume.
 
 @par C Example:
@@ -3010,7 +3010,7 @@ not be defined for the GAS_PHASE of the reaction cell.
 ngas_comps = RM_GetGasComponentsCount();
 gas_moles = (double *) malloc((size_t) (ngas_comps * nxyz * sizeof(double)));
 ...
-status = RM_SetGasPhaseMoles(id, gas_moles);
+status = RM_SetGasCompMoles(id, gas_moles);
 status = RM_RunCells(id)
 </PRE>
 </CODE>
@@ -3018,7 +3018,7 @@ status = RM_RunCells(id)
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
-IRM_DLL_EXPORT IRM_RESULT RM_SetGasPhaseMoles(int id, double* gas_moles);
+IRM_DLL_EXPORT IRM_RESULT RM_SetGasCompMoles(int id, double* gas_moles);
 
 /**
 Transfer volumes of gas phases from
@@ -3038,11 +3038,11 @@ not changed.
 @see
 @ref RM_FindComponents,
 @ref RM_GetGasComponentsCount,
-@ref RM_GetGasPhaseMoles,
+@ref RM_GetGasCompMoles,
 @ref RM_GetGasCompPressures,
 @ref RM_GetGasPhaseVolume,
-@ref RM_GetGasPhasePhi,
-@ref RM_SetGasPhaseMoles.
+@ref RM_GetGasCompPhi,
+@ref RM_SetGasCompMoles.
 
 @par C Example:
 @htmlonly

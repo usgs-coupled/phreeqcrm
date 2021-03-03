@@ -52,9 +52,9 @@ enum {
 	METHOD_GETCONCENTRATIONS,
 	METHOD_GETDENSITY,
 	METHOD_GETERRORSTRING,
-	METHOD_GETGASPHASEMOLES,
+	METHOD_GETGASCOMPMOLES,
 	METHOD_GETGASCOMPPRESSURES,
-	METHOD_GETGASPHASEPHI,
+	METHOD_GETGASCOMPPHI,
 	METHOD_GETGASPHASEVOLUME,
 	METHOD_GETPRESSURE,
 	METHOD_GETSATURATION,
@@ -75,7 +75,7 @@ enum {
 	METHOD_SETDENSITY,
 	METHOD_SETERRORHANDLERMODE,
 	METHOD_SETFILEPREFIX,
-	METHOD_SETGASPHASEMOLES,
+	METHOD_SETGASCOMPMOLES,
 	METHOD_SETGASPHASEVOLUME,
 	METHOD_SETPARTITIONUZSOLIDS,
 	METHOD_SETPOROSITY,
@@ -981,9 +981,9 @@ Values for inactive cells are set to 1e30.
 @ref FindComponents, 
 @ref GetGasComponentsCount, 
 @ref GetGasCompPressures,
-@ref GetGasPhasePhi,
+@ref GetGasCompPhi,
 @ref GetGasPhaseVolume,
-@ref SetGasPhaseMoles,
+@ref SetGasCompMoles,
 @ref SetGasPhaseVolume.
 @par C++ Example:
 @htmlonly
@@ -991,14 +991,14 @@ Values for inactive cells are set to 1e30.
 <PRE>
 std::vector<double> gas_moles;
 status = phreeqc_rm.RunCells();
-status = phreeqc_rm.GetGasPhaseMoles(gas_moles);
+status = phreeqc_rm.GetGasCompMoles(gas_moles);
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-IRM_RESULT                                GetGasPhaseMoles(std::vector<double>& gas_moles);
+IRM_RESULT                                GetGasCompMoles(std::vector<double>& gas_moles);
 
 /**
 Transfer pressures of gas components from each reaction cell
@@ -1014,10 +1014,10 @@ Values for inactive cells are set to 1e30.
 @see                    
 @ref FindComponents, 
 @ref GetGasComponentsCount, 
-@ref GetGasPhaseMoles,
-@ref GetGasPhasePhi,
+@ref GetGasCompMoles,
+@ref GetGasCompPhi,
 @ref GetGasPhaseVolume,
-@ref SetGasPhaseMoles,
+@ref SetGasCompMoles,
 @ref SetGasPhaseVolume.
 @par C++ Example:
 @htmlonly
@@ -1049,10 +1049,10 @@ Values for inactive cells are set to 1e30.
 @see
 @ref FindComponents,
 @ref GetGasComponentsCount,
-@ref GetGasPhaseMoles,
+@ref GetGasCompMoles,
 @ref GetGasCompPressures,
 @ref GetGasPhaseVolume,
-@ref SetGasPhaseMoles,
+@ref SetGasCompMoles,
 @ref SetGasPhaseVolume.
 @par C++ Example:
 @htmlonly
@@ -1060,14 +1060,14 @@ Values for inactive cells are set to 1e30.
 <PRE>
 std::vector<double> gas_phi;
 status = phreeqc_rm.RunCells();
-status = phreeqc_rm.GetGasPhasePhi(gas_phi);
+status = phreeqc_rm.GetGasCompPhi(gas_phi);
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-IRM_RESULT                                GetGasPhasePhi(std::vector<double>& gas_phi);
+IRM_RESULT                                GetGasCompPhi(std::vector<double>& gas_phi);
 
 /**
 Transfer volume of gas phase from each reaction cell
@@ -1082,10 +1082,10 @@ Values for inactive cells are set to 1e30.
 @see
 @ref FindComponents,
 @ref GetGasComponentsCount,
-@ref GetGasPhaseMoles,
+@ref GetGasCompMoles,
 @ref GetGasCompPressures,
-@ref GetGasPhasePhi,
-@ref SetGasPhaseMoles,
+@ref GetGasCompPhi,
+@ref SetGasCompMoles,
 @ref RM_SetGasPhaseVolume.
 @par C++ Example:
 @htmlonly
@@ -3547,10 +3547,10 @@ not be defined for the GAS_PHASE of the reaction cell.
 @see                    
 @ref FindComponents, 
 @ref GetGasComponentsCount, 
-@ref GetGasPhaseMoles,
+@ref GetGasCompMoles,
 @ref GetGasCompPressures,
 @ref GetGasPhaseVolume,
-@ref GetGasPhasePhi,
+@ref GetGasCompPhi,
 @ref SetGasPhaseVolume.
 @par C++ Example:
 @htmlonly
@@ -3559,7 +3559,7 @@ not be defined for the GAS_PHASE of the reaction cell.
 std::vector<double> gas_moles;
 gas_moles.resize(nxyz*ngas);
 ...
-status = phreeqc_rm.SetGasPhaseMoles(gas_moles);
+status = phreeqc_rm.SetGasCompMoles(gas_moles);
 status = phreeqc_rm.RunCells();
 </PRE>
 </CODE>
@@ -3567,7 +3567,7 @@ status = phreeqc_rm.RunCells();
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
-IRM_RESULT                                SetGasPhaseMoles(const std::vector<double>& gas_moles);
+IRM_RESULT                                SetGasCompMoles(const std::vector<double>& gas_moles);
 /**
 Transfer volumes of gas phases from
 the vector given in the argument list (@a gas_volume) to each reaction cell.
@@ -3586,11 +3586,11 @@ not changed.
 @see
 @ref FindComponents,
 @ref GetGasComponentsCount,
-@ref GetGasPhaseMoles,
+@ref GetGasCompMoles,
 @ref GetGasCompPressures,
-@ref GetGasPhasePhi,
+@ref GetGasCompPhi,
 @ref GetGasPhaseVolume,
-@ref SetGasPhaseMoles.
+@ref SetGasCompMoles.
 @par C++ Example:
 @htmlonly
 <CODE>
