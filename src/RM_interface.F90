@@ -512,31 +512,31 @@ END FUNCTION RM_ErrorMessage
 !> @ref RM_SetComponentH2O. 
 !> @ref RM_SetSpeciesSaveOn, 
 !> @ref RM_SpeciesConcentrations2Module.
-!> @par The @ref RM_FindComponents method also generates lists of reactants--equilibrium phases,
+!> @par The RM_FindComponents method also generates lists of reactants--equilibrium phases,
 !> exchangers, gas components, kinetic reactants, solid solution components, and surfaces. 
 !> The lists are cumulative, including all reactants that were
-!> defined in the initial phreeqc instance at any time FindComponents was called.
+!> defined in the initial phreeqc instance at any time RM_FindComponents was called.
 !> In addition, a list of phases is generated for which saturation indices may be calculated from the
 !> cumulative list of components.
 !> @see also
-!> @ref RM_GetEquilibriumPhases,
+!> @ref RM_GetEquilibriumPhasesName,
 !> @ref RM_GetEquilibriumPhasesCount,
-!> @ref RM_GetExchangeNames,
-!> @ref RM_GetExchangeSpecies,
+!> @ref RM_GetExchangeName,
+!> @ref RM_GetExchangeSpeciesName,
 !> @ref RM_GetExchangeSpeciesCount,
-!> @ref RM_GetGasComponents,
+!> @ref RM_GetGasComponentsName,
 !> @ref RM_GetGasComponentsCount,
-!> @ref RM_GetKineticReactions,
+!> @ref RM_GetKineticReactionsName,
 !> @ref RM_GetKineticReactionsCount,
 !> @ref RM_GetSICount,
-!> @ref RM_GetSINames,
-!> @ref RM_GetSolidSolutionComponents,
+!> @ref RM_GetSIName,
+!> @ref RM_GetSolidSolutionComponentsName,
 !> @ref RM_GetSolidSolutionComponentsCount,
-!> @ref RM_GetSolidSolutionNames,
-!> @ref RM_GetSurfaceNames,
-!> @ref RM_GetSurfaceSpecies,
+!> @ref RM_GetSolidSolutionName,
+!> @ref RM_GetSurfaceName,
+!> @ref RM_GetSurfaceSpeciesName,
 !> @ref RM_GetSurfaceSpeciesCount,
-!> @ref RM_GetSurfaceTypes.
+!> @ref RM_GetSurfaceType.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1370,13 +1370,13 @@ END FUNCTION RM_GetGasComponentsName
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
 !> @see                    
-!> @ref FindComponents, 
-!> @ref GetGasComponentsCount,
-!> @ref GetGasCompPressures,
-!> @ref GetGasCompPhi,
-!> @ref GetGasPhaseVolume,
-!> @ref SetGasCompMoles,
-!> @ref SetGasPhaseVolume.
+!> @ref RM_FindComponents, 
+!> @ref RM_GetGasComponentsCount,
+!> @ref RM_GetGasCompPressures,
+!> @ref RM_GetGasCompPhi,
+!> @ref RM_GetGasPhaseVolume,
+!> @ref RM_SetGasCompMoles,
+!> @ref RM_SetGasPhaseVolume.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1436,13 +1436,13 @@ END SUBROUTINE Chk_GetGasCompMoles
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
 !> @see                    
-!> @ref FindComponents, 
-!> @ref GetGasComponentsCount,
-!> @ref GetGasCompMoles,
-!> @ref GetGasCompPhi,
-!> @ref GetGasPhaseVolume,
-!> @ref SetGasCompMoles,
-!> @ref SetGasPhaseVolume.
+!> @ref RM_FindComponents, 
+!> @ref RM_GetGasComponentsCount,
+!> @ref RM_GetGasCompMoles,
+!> @ref RM_GetGasCompPhi,
+!> @ref RM_GetGasPhaseVolume,
+!> @ref RM_SetGasCompMoles,
+!> @ref RM_SetGasPhaseVolume.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1503,13 +1503,13 @@ END SUBROUTINE Chk_GetGasCompPressures
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
 !> @see                    
-!> @ref FindComponents, 
-!> @ref GetGasComponentsCount,
-!> @ref GetGasCompMoles,
-!> @ref GetGasCompPressures,
-!> @ref GetGasPhaseVolume,
-!> @ref SetGasCompMoles,
-!> @ref SetGasPhaseVolume.
+!> @ref RM_FindComponents, 
+!> @ref RM_GetGasComponentsCount,
+!> @ref RM_GetGasCompMoles,
+!> @ref RM_GetGasCompPressures,
+!> @ref RM_GetGasPhaseVolume,
+!> @ref RM_SetGasCompMoles,
+!> @ref RM_SetGasPhaseVolume.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1562,19 +1562,19 @@ END SUBROUTINE Chk_GetGasCompPhi
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param gas_volume        Array to receive the gas phase volumes.
 !> Dimension of the array must be @a nxyz,
-!> where @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+!> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
 !> If a gas phase is not defined for a cell, the volume is set to -1.
 !> Values for inactive cells are set to 1e30.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
 !> @see                    
-!> @ref FindComponents, 
-!> @ref GetGasComponentsCount,
-!> @ref GetGasCompMoles,
-!> @ref GetGasCompPhi,
-!> @ref GetGasCompPressures,
-!> @ref SetGasCompMoles
-!> @ref SetGasPhaseVolume.
+!> @ref RM_FindComponents, 
+!> @ref RM_GetGasComponentsCount,
+!> @ref RM_GetGasCompMoles,
+!> @ref RM_GetGasCompPhi,
+!> @ref RM_GetGasCompPressures,
+!> @ref RM_SetGasCompMoles
+!> @ref RM_SetGasPhaseVolume.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -4656,13 +4656,13 @@ END FUNCTION RM_SetFilePrefix
 !> not be defined for the GAS_PHASE of the reaction cell.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> @see                    
-!> @ref FindComponents, 
-!> @ref GetGasComponentsCount, 
-!> @ref GetGasCompMoles,
-!> @ref GetGasCompPressures,
-!> @ref GetGasCompPhi,
-!> @ref GetGasPhaseVolume,
-!> @ref SetGasPhaseVolume.
+!> @ref RM_FindComponents, 
+!> @ref RM_GetGasComponentsCount, 
+!> @ref RM_GetGasCompMoles,
+!> @ref RM_GetGasCompPressures,
+!> @ref RM_GetGasCompPhi,
+!> @ref RM_GetGasPhaseVolume,
+!> @ref RM_SetGasPhaseVolume.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -4718,20 +4718,20 @@ END SUBROUTINE Chk_SetGasCompMoles
 !> the gas phase is forced to be a fixed-volume gas phase.
 !> 
 !> @param id               The instance @a id returned from @ref RM_Create.
-!> @param gas_moles        Array of gas-phase volumes.
+!> @param gas_volume        Array of gas-phase volumes.
 !> Dimension of the array is (nxyz), 
 !> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
 !> If an element of the array is set to a negative number, the gas component will
 !> not be defined for the GAS_PHASE of the reaction cell.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> @see                    
-!> @ref FindComponents, 
-!> @ref GetGasComponentsCount, 
-!> @ref GetGasCompMoles,
-!> @ref GetGasCompPressures,
-!> @ref GetGasCompPhi,
-!> @ref GetGasPhaseVolume,
-!> @ref SetGasCompMoles.
+!> @ref RM_FindComponents, 
+!> @ref RM_GetGasComponentsCount, 
+!> @ref RM_GetGasCompMoles,
+!> @ref RM_GetGasCompPressures,
+!> @ref RM_GetGasCompPhi,
+!> @ref RM_GetGasPhaseVolume,
+!> @ref RM_SetGasCompMoles.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
