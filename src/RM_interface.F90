@@ -22,6 +22,13 @@
     PRIVATE :: Chk_GetConcentrations
     PRIVATE :: Chk_GetDensity
     PRIVATE :: Chk_GetEndCell
+    PRIVATE :: Chk_GetGasCompMoles
+    PRIVATE :: Chk_GetGasCompPressures
+    PRIVATE :: Chk_GetGasCompPhi
+    PRIVATE :: Chk_GetGasPhaseVolume
+    PRIVATE :: Chk_SetGasCompMoles
+    PRIVATE :: Chk_SetGasPhaseVolume
+    PRIVATE :: Chk_GetSpeciesLog10Molalities
     PRIVATE :: Chk_GetGfw
     PRIVATE :: Chk_GetSaturation
     PRIVATE :: Chk_GetSelectedOutput
