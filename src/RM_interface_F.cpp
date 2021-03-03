@@ -729,7 +729,7 @@ RMF_GetFilePrefix(int * id, char *prefix, int *l)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_GetGasPhaseMoles(int* id, double* m_out)
+RMF_GetGasCompMoles(int* id, double* m_out)
 /* ---------------------------------------------------------------------- */
 {
 	// Retrieves moles of gas components for all grid nodes 
@@ -738,7 +738,7 @@ RMF_GetGasPhaseMoles(int* id, double* m_out)
 	{
 		std::vector<double> m_vector;
 		m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
-		IRM_RESULT return_value = Reaction_module_ptr->GetGasPhaseMoles(m_vector);
+		IRM_RESULT return_value = Reaction_module_ptr->GetGasCompMoles(m_vector);
 		if (return_value == IRM_OK)
 		{
 			memcpy(m_out, &m_vector.front(), m_vector.size() * sizeof(double));
@@ -769,7 +769,7 @@ RMF_GetGasCompPressures(int* id, double* p_out)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_GetGasPhasePhi(int* id, double* phi_out)
+RMF_GetGasCompPhi(int* id, double* phi_out)
 /* ---------------------------------------------------------------------- */
 {
 	// Retrieves fugacity coefficients of gas components for all grid nodes 
@@ -778,7 +778,7 @@ RMF_GetGasPhasePhi(int* id, double* phi_out)
 	{
 		std::vector<double> phi_vector;
 		phi_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
-		IRM_RESULT return_value = Reaction_module_ptr->GetGasPhasePhi(phi_vector);
+		IRM_RESULT return_value = Reaction_module_ptr->GetGasCompPhi(phi_vector);
 		if (return_value == IRM_OK)
 		{
 			memcpy(phi_out, &phi_vector.front(), phi_vector.size() * sizeof(double));
@@ -1818,7 +1818,7 @@ RMF_SetFilePrefix(int *id, const char *name)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_SetGasPhaseMoles(int* id, double* m_in)
+RMF_SetGasCompMoles(int* id, double* m_in)
 /* ---------------------------------------------------------------------- */
 {
 	// Sets the moles of gas components in the cells
@@ -1828,7 +1828,7 @@ RMF_SetGasPhaseMoles(int* id, double* m_in)
 		std::vector<double> m_vector;
 		m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
 		memcpy(&m_vector.front(), m_in, m_vector.size() * sizeof(double));
-		return Reaction_module_ptr->SetGasPhaseMoles(m_vector);
+		return Reaction_module_ptr->SetGasCompMoles(m_vector);
 	}
 	return IRM_BADINSTANCE;
 }

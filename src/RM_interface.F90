@@ -1373,9 +1373,9 @@ END FUNCTION RM_GetGasComponentsName
 !> @ref FindComponents, 
 !> @ref GetGasComponentsCount,
 !> @ref GetGasCompPressures,
-!> @ref GetGasPhasePhi,
+!> @ref GetGasCompPhi,
 !> @ref GetGasPhaseVolume,
-!> @ref SetGasPhaseMoles,
+!> @ref SetGasCompMoles,
 !> @ref SetGasPhaseVolume.
 !> @par Fortran Example:
 !> @htmlonly
@@ -1384,44 +1384,44 @@ END FUNCTION RM_GetGasComponentsName
 !> ngas_comps = RM_GetGasComponentsCount(id)
 !> allocate(gas_moles(nxyz, ngas_comps))
 !> status = RM_RunCells(id)
-!> status = RM_GetGasPhaseMoles(id, gas_moles)
+!> status = RM_GetGasCompMoles(id, gas_moles)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
 !> @par MPI:
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-INTEGER FUNCTION RM_GetGasPhaseMoles(id, gas_moles) 
+INTEGER FUNCTION RM_GetGasCompMoles(id, gas_moles) 
     USE ISO_C_BINDING  
     IMPLICIT NONE
     INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_GetGasPhaseMoles(id, gas_moles) &
-            BIND(C, NAME='RMF_GetGasPhaseMoles')   
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetGasCompMoles(id, gas_moles) &
+            BIND(C, NAME='RMF_GetGasCompMoles')   
             USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out)  :: gas_moles(*)
-        END FUNCTION RMF_GetGasPhaseMoles 
+        END FUNCTION RMF_GetGasCompMoles 
     END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(out), DIMENSION(:,:), TARGET :: gas_moles
-    if (rmf_debug) call Chk_GetGasPhaseMoles(id, gas_moles)  
-    RM_GetGasPhaseMoles = RMF_GetGasPhaseMoles(id, gas_moles) 
+    if (rmf_debug) call Chk_GetGasCompMoles(id, gas_moles)  
+    RM_GetGasCompMoles = RMF_GetGasCompMoles(id, gas_moles) 
     return
-END FUNCTION RM_GetGasPhaseMoles         
+END FUNCTION RM_GetGasCompMoles         
 
-SUBROUTINE Chk_GetGasPhaseMoles(id, gas_moles)
+SUBROUTINE Chk_GetGasCompMoles(id, gas_moles)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: gas_moles
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
 	rmf_ngas_comps = RM_GetGasComponentsCount(id)
-    errors = errors + Chk_Double2D(id, gas_moles, rmf_nxyz, rmf_ngas_comps, "gas_moles", "RM_GetGasPhaseMoles")
+    errors = errors + Chk_Double2D(id, gas_moles, rmf_nxyz, rmf_ngas_comps, "gas_moles", "RM_GetGasCompMoles")
     if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasPhaseMoles")
+        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasCompMoles")
     endif
-END SUBROUTINE Chk_GetGasPhaseMoles
+END SUBROUTINE Chk_GetGasCompMoles
 
 !> Transfer pressures of gas components from each reaction cell 
 !> to the array given in the argument list (@a gas_p).
@@ -1438,10 +1438,10 @@ END SUBROUTINE Chk_GetGasPhaseMoles
 !> @see                    
 !> @ref FindComponents, 
 !> @ref GetGasComponentsCount,
-!> @ref GetGasPhaseMoles,
-!> @ref GetGasPhasePhi,
+!> @ref GetGasCompMoles,
+!> @ref GetGasCompPhi,
 !> @ref GetGasPhaseVolume,
-!> @ref SetGasPhaseMoles,
+!> @ref SetGasCompMoles,
 !> @ref SetGasPhaseVolume.
 !> @par Fortran Example:
 !> @htmlonly
@@ -1505,10 +1505,10 @@ END SUBROUTINE Chk_GetGasCompPressures
 !> @see                    
 !> @ref FindComponents, 
 !> @ref GetGasComponentsCount,
-!> @ref GetGasPhaseMoles,
+!> @ref GetGasCompMoles,
 !> @ref GetGasCompPressures,
 !> @ref GetGasPhaseVolume,
-!> @ref SetGasPhaseMoles,
+!> @ref SetGasCompMoles,
 !> @ref SetGasPhaseVolume.
 !> @par Fortran Example:
 !> @htmlonly
@@ -1517,44 +1517,44 @@ END SUBROUTINE Chk_GetGasCompPressures
 !> ngas_comps = RM_GetGasComponentsCount(id)
 !> allocate(gas_phi(nxyz, ngas_comps))
 !> status = RM_RunCells(id)
-!> status = RM_GetGasPhasePhi(id, gas_phi)
+!> status = RM_GetGasCompPhi(id, gas_phi)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
 !> @par MPI:
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-INTEGER FUNCTION RM_GetGasPhasePhi(id, gas_phi) 
+INTEGER FUNCTION RM_GetGasCompPhi(id, gas_phi) 
     USE ISO_C_BINDING  
     IMPLICIT NONE
     INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_GetGasPhasePhi(id, gas_phi) &
-            BIND(C, NAME='RMF_GetGasPhasePhi')   
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetGasCompPhi(id, gas_phi) &
+            BIND(C, NAME='RMF_GetGasCompPhi')   
             USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(out)  :: gas_phi(*)
-        END FUNCTION RMF_GetGasPhasePhi 
+        END FUNCTION RMF_GetGasCompPhi 
     END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(out), DIMENSION(:,:), TARGET :: gas_phi
-    if (rmf_debug) call Chk_GetGasPhasePhi(id, gas_phi)  
-    RM_GetGasPhasePhi = RMF_GetGasPhasePhi(id, gas_phi) 
+    if (rmf_debug) call Chk_GetGasCompPhi(id, gas_phi)  
+    RM_GetGasCompPhi = RMF_GetGasCompPhi(id, gas_phi) 
     return
-END FUNCTION RM_GetGasPhasePhi         
+END FUNCTION RM_GetGasCompPhi         
 
-SUBROUTINE Chk_GetGasPhasePhi(id, gas_phi)
+SUBROUTINE Chk_GetGasCompPhi(id, gas_phi)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: gas_phi
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
 	rmf_ngas_comps = RM_GetGasComponentsCount(id)
-    errors = errors + Chk_Double2D(id, gas_phi, rmf_nxyz, rmf_ngas_comps, "gas_phi", "RM_GetGasPhasePhi")
+    errors = errors + Chk_Double2D(id, gas_phi, rmf_nxyz, rmf_ngas_comps, "gas_phi", "RM_GetGasCompPhi")
     if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasPhasePhi")
+        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasCompPhi")
     endif
-END SUBROUTINE Chk_GetGasPhasePhi
+END SUBROUTINE Chk_GetGasCompPhi
 
 !> Transfer volume of gas from each reaction cell
 !> to the vector given in the argument list (@a gas_volume).
@@ -1570,10 +1570,10 @@ END SUBROUTINE Chk_GetGasPhasePhi
 !> @see                    
 !> @ref FindComponents, 
 !> @ref GetGasComponentsCount,
-!> @ref GetGasPhaseMoles,
-!> @ref GetGasPhasePhi,
+!> @ref GetGasCompMoles,
+!> @ref GetGasCompPhi,
 !> @ref GetGasCompPressures,
-!> @ref SetGasPhaseMoles
+!> @ref SetGasCompMoles
 !> @ref SetGasPhaseVolume.
 !> @par Fortran Example:
 !> @htmlonly
@@ -4658,9 +4658,9 @@ END FUNCTION RM_SetFilePrefix
 !> @see                    
 !> @ref FindComponents, 
 !> @ref GetGasComponentsCount, 
-!> @ref GetGasPhaseMoles,
+!> @ref GetGasCompMoles,
 !> @ref GetGasCompPressures,
-!> @ref GetGasPhasePhi,
+!> @ref GetGasCompPhi,
 !> @ref GetGasPhaseVolume,
 !> @ref SetGasPhaseVolume.
 !> 
@@ -4671,7 +4671,7 @@ END FUNCTION RM_SetFilePrefix
 !> ngas_comps = RM_SetGasComponentsCount(id)
 !> allocate(gas_moles(nxyz, ngas_comps))
 !> ...
-!> status = RM_SetGasPhaseMoles(id, gas_moles)
+!> status = RM_SetGasCompMoles(id, gas_moles)
 !> status = RM_RunCells(id)
 !> </PRE>
 !> </CODE>
@@ -4679,36 +4679,36 @@ END FUNCTION RM_SetFilePrefix
 !> @par MPI:
 !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-INTEGER FUNCTION RM_SetGasPhaseMoles(id, gas_moles)   
+INTEGER FUNCTION RM_SetGasCompMoles(id, gas_moles)   
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_SetGasPhaseMoles(id, gas_moles) &
-            BIND(C, NAME='RMF_SetGasPhaseMoles')   
+        INTEGER(KIND=C_INT) FUNCTION RMF_SetGasCompMoles(id, gas_moles) &
+            BIND(C, NAME='RMF_SetGasCompMoles')   
             USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             REAL(KIND=C_DOUBLE), INTENT(in) :: gas_moles(*)
-        END FUNCTION RMF_SetGasPhaseMoles
+        END FUNCTION RMF_SetGasCompMoles
     END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, DIMENSION(:,:), INTENT(in) :: gas_moles
-    if (rmf_debug) call Chk_SetGasPhaseMoles(id, gas_moles)
-    RM_SetGasPhaseMoles = RMF_SetGasPhaseMoles(id, gas_moles)
-END FUNCTION RM_SetGasPhaseMoles
+    if (rmf_debug) call Chk_SetGasCompMoles(id, gas_moles)
+    RM_SetGasCompMoles = RMF_SetGasCompMoles(id, gas_moles)
+END FUNCTION RM_SetGasCompMoles
     
-SUBROUTINE Chk_SetGasPhaseMoles(id, gas_moles)
+SUBROUTINE Chk_SetGasCompMoles(id, gas_moles)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: gas_moles
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
 	rmf_ngas_comps = RM_GetGasComponentsCount(id)
-    errors = errors + Chk_Double2D(id, gas_moles, rmf_nxyz, rmf_ngas_comps, "gas moles", "RM_SetGasPhaseMoles")
+    errors = errors + Chk_Double2D(id, gas_moles, rmf_nxyz, rmf_ngas_comps, "gas moles", "RM_SetGasCompMoles")
     if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_SetGasPhaseMoles")
+        errors = RM_Abort(id, -3, "Invalid argument in RM_SetGasCompMoles")
     endif
-END SUBROUTINE Chk_SetGasPhaseMoles
+END SUBROUTINE Chk_SetGasCompMoles
 
 !> Transfer volumes of gas phases from
 !> the array given in the argument list (@a gas_volume) to each reaction cell.
@@ -4727,11 +4727,11 @@ END SUBROUTINE Chk_SetGasPhaseMoles
 !> @see                    
 !> @ref FindComponents, 
 !> @ref GetGasComponentsCount, 
-!> @ref GetGasPhaseMoles,
+!> @ref GetGasCompMoles,
 !> @ref GetGasCompPressures,
-!> @ref GetGasPhasePhi,
+!> @ref GetGasCompPhi,
 !> @ref GetGasPhaseVolume,
-!> @ref SetGasPhaseMoles.
+!> @ref SetGasCompMoles.
 !> 
 !> @par Fortran Example:
 !> @htmlonly

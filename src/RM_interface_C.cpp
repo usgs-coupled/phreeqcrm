@@ -713,7 +713,7 @@ RM_GetFilePrefix(int id, char *prefix, int l)
 	return IRM_BADINSTANCE;
 }
 IRM_RESULT
-RM_GetGasPhaseMoles(int id, double* gas_moles)
+RM_GetGasCompMoles(int id, double* gas_moles)
 /* ---------------------------------------------------------------------- */
 {
 	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
@@ -723,7 +723,7 @@ RM_GetGasPhaseMoles(int id, double* gas_moles)
 		{
 			std::vector<double> m_vector;
 			m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
-			IRM_RESULT return_value = Reaction_module_ptr->GetGasPhaseMoles(m_vector);
+			IRM_RESULT return_value = Reaction_module_ptr->GetGasCompMoles(m_vector);
 			if (return_value == IRM_OK)
 			{
 				memcpy(gas_moles, &m_vector.front(), m_vector.size() * sizeof(double));
@@ -758,7 +758,7 @@ RM_GetGasCompPressures(int id, double* gas_p)
 	return IRM_BADINSTANCE;
 }
 IRM_RESULT
-RM_GetGasPhasePhi(int id, double* gas_phi)
+RM_GetGasCompPhi(int id, double* gas_phi)
 /* ---------------------------------------------------------------------- */
 {
 	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
@@ -768,7 +768,7 @@ RM_GetGasPhasePhi(int id, double* gas_phi)
 		{
 			std::vector<double> phi_vector;
 			phi_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
-			IRM_RESULT return_value = Reaction_module_ptr->GetGasPhasePhi(phi_vector);
+			IRM_RESULT return_value = Reaction_module_ptr->GetGasCompPhi(phi_vector);
 			if (return_value == IRM_OK)
 			{
 				memcpy(gas_phi, &phi_vector.front(), phi_vector.size() * sizeof(double));
@@ -1680,7 +1680,7 @@ RM_SetFilePrefix(int id, const char *name)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_SetGasPhaseMoles(int id, double* m)
+RM_SetGasCompMoles(int id, double* m)
 /* ---------------------------------------------------------------------- */
 {
 	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
@@ -1691,7 +1691,7 @@ RM_SetGasPhaseMoles(int id, double* m)
 			std::vector<double> m_vector;
 			m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
 			memcpy(&m_vector.front(), m, m_vector.size() * sizeof(double));
-			return Reaction_module_ptr->SetGasPhaseMoles(m_vector);
+			return Reaction_module_ptr->SetGasCompMoles(m_vector);
 		}
 		return IRM_INVALIDARG;
 	}
