@@ -45,6 +45,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		double * c;
 		double * species_c;
 		double * species_log10gammas;
+		double* species_log10molalities;
 		double * species_d;
 		double * species_z;
 		double time, time_step;
@@ -249,13 +250,15 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		time_step = 0.0;
 		c = (double *) malloc((size_t) (ncomps * nxyz * sizeof(double)));
 		species_c = (double *) malloc((size_t) (nspecies * nxyz * sizeof(double)));
-		species_log10gammas = (double *)malloc((size_t)(nspecies * nxyz * sizeof(double)));
+		species_log10gammas = (double*)malloc((size_t)(nspecies * nxyz * sizeof(double)));
+		species_log10molalities = (double*)malloc((size_t)(nspecies * nxyz * sizeof(double)));
 		status = RM_SetTime(id, time);
 		status = RM_SetTimeStep(id, time_step);
 		status = RM_RunCells(id); 
 		status = RM_GetConcentrations(id, c);
 		status = RM_GetSpeciesConcentrations(id, species_c);
 		status = RM_GetSpeciesLog10Gammas(id, species_log10gammas);
+		status = RM_GetSpeciesLog10Molalities(id, species_log10molalities);
 
 		// --------------------------------------------------------------------------
 		// Set boundary condition
@@ -335,6 +338,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 			status = RM_GetConcentrations(id, c);
 			status = RM_GetSpeciesConcentrations(id, species_c);
 			status = RM_GetSpeciesLog10Gammas(id, species_log10gammas);
+			status = RM_GetSpeciesLog10Molalities(id, species_log10molalities);
 			status = RM_GetDensity(id, density);
 			status = RM_GetSolutionVolume(id, volume); 
 			// Print results at last time step
@@ -367,7 +371,8 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 						for (j = 0; j < nspecies; j++)
 						{
 							status = RM_GetSpeciesName(id, j, str, 100);
-							fprintf(stderr, "          %2d %10s: %10.4f %10.4f\n", j, str, species_c[j*nxyz + i], species_log10gammas[j*nxyz + i]);
+							fprintf(stderr, "          %2d %10s: %10.2e %10.4f %10.2e\n", j, str, species_c[j*nxyz + i], 
+								species_log10gammas[j*nxyz + i],species_log10molalities[j * nxyz + i]);
 						}
 						fprintf(stderr, "     Selected output: \n");
 						for (j = 0; j < col; j++)

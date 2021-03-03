@@ -4727,6 +4727,149 @@ PhreeqcRM::GetSpeciesLog10Gammas(std::vector<double> & species_log10gammas)
 	return IRM_OK;
 }
 #endif
+
+#ifdef USE_MPI
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSpeciesLog10Molalities(std::vector<double>& species_log10molalities)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (this->mpi_myself == 0)
+	{
+		int method = METHOD_GETSPECIESLOG10MOLALITIES;
+		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+	}
+
+	if (this->species_save_on)
+	{
+		size_t nspecies = this->species_names.size();
+		// Fill in root concentrations
+		if (this->mpi_myself == 0)
+		{
+			species_log10molalities.resize(nspecies * this->nxyz, 0);
+			for (int j = this->start_cell[0]; j <= this->end_cell[0]; j++)
+			{
+				std::vector<double> d;
+				d.resize(this->species_names.size(), 0);
+				{
+					std::map<int, double>::iterator it = this->workers[0]->Get_solution(j)->Get_log_molalities_map().begin();
+					for (; it != this->workers[0]->Get_solution(j)->Get_log_molalities_map().end(); it++)
+					{
+						// it is pointing to a species number, concentration
+						int rm_species_num = this->s_num2rm_species_num[it->first];
+						d[rm_species_num] = it->second;
+					}
+				}
+				{
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						double* d_ptr = &species_log10molalities[*it];
+						for (size_t i = 0; i < d.size(); i++)
+						{
+							d_ptr[this->nxyz * i] = d[i];
+						}
+					}
+				}
+			}
+		}
+		// Fill in worker concentrations
+		for (int n = 1; n < this->mpi_tasks; n++)
+		{
+			int ncells = this->end_cell[n] - start_cell[n] + 1;
+			if (this->mpi_myself == n)
+			{
+				species_log10molalities.resize(nspecies * ncells, 0);
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					{
+						std::map<int, double>::iterator it = this->workers[0]->Get_solution(j)->Get_log_molalities_map().begin();
+						for (; it != this->workers[0]->Get_solution(j)->Get_log_molalities_map().end(); it++)
+						{
+							// it is pointing to a species number, concentration
+							int rm_species_num = this->s_num2rm_species_num[it->first];
+							species_log10molalities[rm_species_num * ncells + j0] = it->second;
+						}
+					}
+				}
+				MPI_Send((void*)&species_log10molalities.front(), (int)nspecies * ncells, MPI_DOUBLE, 0, 0, phreeqcrm_comm);
+			}
+			else if (this->mpi_myself == 0)
+			{
+				MPI_Status mpi_status;
+				double* recv_species = new double[(size_t)nspecies * ncells];
+				MPI_Recv(recv_species, (int)nspecies * ncells, MPI_DOUBLE, n, 0, phreeqcrm_comm, &mpi_status);
+				for (int j = this->start_cell[n]; j <= this->end_cell[n]; j++)
+				{
+					int j0 = j - this->start_cell[n];
+					std::vector<int>::iterator it;
+					for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+					{
+						double* d_ptr = &species_log10molalities[*it];
+						for (size_t i = 0; i < nspecies; i++)
+						{
+							d_ptr[this->nxyz * i] = recv_species[i * ncells + j0];
+						}
+					}
+				}
+				delete recv_species;
+			}
+		}
+	}
+	else
+	{
+		species_log10molalities.clear();
+	}
+	return IRM_OK;
+}
+#else
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSpeciesLog10Molalities(std::vector<double>& species_log10molalities)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	if (this->species_save_on)
+	{
+		size_t nspecies = this->species_names.size();
+		species_log10molalities.resize(nspecies * this->nxyz, 0);
+		for (int i = 0; i < this->nthreads; i++)
+		{
+			for (int j = this->start_cell[i]; j <= this->end_cell[i]; j++)
+			{
+				std::vector<double> d;
+				d.resize(this->species_names.size(), 0);
+				{
+					std::map<int, double>::iterator it = this->workers[i]->Get_solution(j)->Get_log_molalities_map().begin();
+					for (; it != this->workers[i]->Get_solution(j)->Get_log_molalities_map().end(); it++)
+					{
+						// it is pointing to a species number, concentration
+						int rm_species_num = this->s_num2rm_species_num[it->first];
+						d[rm_species_num] = it->second;
+					}
+				}
+				std::vector<int>::iterator it;
+				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
+				{
+					double* d_ptr = &species_log10molalities[*it];
+					for (size_t i = 0; i < d.size(); i++)
+					{
+						d_ptr[this->nxyz * i] = d[i];
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		species_log10molalities.clear();
+	}
+	return IRM_OK;
+}
+#endif
+
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 const std::vector<double> &
@@ -5958,6 +6101,13 @@ PhreeqcRM::MpiWorker()
 				{
 					std::vector<double> c;
 					this->GetSpeciesLog10Gammas(c);
+				}
+				break;
+			case METHOD_GETSPECIESLOG10MOLALITIES:
+				if (debug_worker) std::cerr << "METHOD_GETSPECIESLOG10MOLALITIESS" << std::endl;
+				{
+					std::vector<double> c;
+					this->GetSpeciesLog10Molalities(c);
 				}
 				break;
 			case METHOD_GETTEMPERATURE:
