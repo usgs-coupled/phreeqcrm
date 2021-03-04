@@ -47,11 +47,11 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
-  @sed -i "s/rm_getcomponent/RM_GetComponent/g" %%f 
+  @sed -i "s/rm_getcomponentcount/RM_GetComponentCount/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
-  @sed -i "s/rm_getcomponentcount/RM_GetComponentCount/g" %%f 
+  @sed -i "s/rm_getcomponent/RM_GetComponent/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
@@ -67,15 +67,31 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
-  @sed -i "s/rm_geterrorstring/RM_GetErrorString/g" %%f 
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_geterrorstringlength/RM_GetErrorStringLength/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_geterrorstring/RM_GetErrorString/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_getfileprefix/RM_GetFilePrefix/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getgascompmoles/RM_GetGasCompMoles/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getgascompphi/RM_GetGasCompPhi/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getgascomppressures/RM_GetGasCompPressures/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getgasphasevolume/RM_GetGasPhaseVolume/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
@@ -107,10 +123,6 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
-  @sed -i "s/rm_getselectedoutput/RM_GetSelectedOutput/g" %%f 
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_getselectedoutputcolumncount/RM_GetSelectedOutputColumnCount/g" %%f 
   @del sed*
 )
@@ -127,6 +139,10 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getselectedoutput/RM_GetSelectedOutput/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_getsolutionvolume/RM_GetSolutionVolume/g" %%f 
   @del sed*
 )
@@ -140,6 +156,10 @@
 )
 @FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_getspeciesd25/RM_GetSpeciesD25/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getspecieslog10molalities/RM_GetSpeciesLog10Molalities/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
@@ -199,11 +219,11 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
-  @sed -i "s/rm_mpiworker/RM_MpiWorker/g" %%f 
+  @sed -i "s/rm_mpiworkerbreak/RM_MpiWorkerBreak/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
-  @sed -i "s/rm_mpiworkerbreak/RM_MpiWorkerBreak/g" %%f 
+  @sed -i "s/rm_mpiworker/RM_MpiWorker/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
@@ -263,6 +283,14 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_setgascompmoles/RM_SetGasCompMoles/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_setgasphasevolume/RM_SetGasPhaseVolume/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_setmpiworkercallback/RM_SetMpiWorkerCallback/g" %%f 
   @del sed*
 )
@@ -319,15 +347,15 @@
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
-  @sed -i "s/rm_settime/RM_SetTime/g" %%f 
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_settimeconversion/RM_SetTimeConversion/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_settimestep/RM_SetTimeStep/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_settime/RM_SetTime/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(

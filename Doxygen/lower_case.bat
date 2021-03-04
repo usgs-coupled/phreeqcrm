@@ -21,6 +21,10 @@ sed -i -e "s/RM_GetEndCell/rm_getendcell/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetErrorString/rm_geterrorstring/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetErrorStringLength/rm_geterrorstringlength/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetFilePrefix/rm_getfileprefix/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetGasCompMoles/rm_getgascompmoles/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetGasCompPhi/rm_getgascompphi/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetGasCompPressures/rm_getgascomppressures/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetGasPhaseVolume/rm_getgasphasevolume/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetGfw/rm_getgfw/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetGridCellCount/rm_getgridcellcount/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetIPhreeqcId/rm_getiphreeqcid/g" %RM_INTERFACE_F90%
@@ -37,6 +41,7 @@ sed -i -e "s/RM_GetSolutionVolume/rm_getsolutionvolume/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesConcentrations/rm_getspeciesconcentrations/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesCount/rm_getspeciescount/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesD25/rm_getspeciesd25/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSpeciesLog10Molalities/rm_getspecieslog10molalities/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesName/rm_getspeciesname/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesSaveOn/rm_getspeciessaveon/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSpeciesZ/rm_getspeciesz/g" %RM_INTERFACE_F90%
@@ -67,6 +72,8 @@ sed -i -e "s/RM_SetDumpFileName/rm_setdumpfilename/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetErrorHandlerMode/rm_seterrorhandlermode/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetErrorOn/rm_seterroron/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetFilePrefix/rm_setfileprefix/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_SetGasCompMoles/rm_setgascompmoles/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_SetGasPhaseVolume/rm_setgasphasevolume/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetMpiWorkerCallback/rm_setmpiworkercallback/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetPartitionUZSolids/rm_setpartitionuzsolids/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetPorosity/rm_setporosity/g" %RM_INTERFACE_F90%
