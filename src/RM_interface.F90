@@ -54,6 +54,11 @@
     PRIVATE :: Chk_Double2D
     PRIVATE :: Chk_Integer1D
     PRIVATE :: Chk_Integer2D
+    PRIVATE :: RMF_debug
+#ifdef SKIP    
+    PRIVATE :: RM_SETCONCENTRATIONS1D
+#endif   
+    
     CONTAINS
     
 !> Abort the program. 
