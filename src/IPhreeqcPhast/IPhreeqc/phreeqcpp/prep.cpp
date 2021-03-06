@@ -6001,9 +6001,9 @@ save_model(void)
 		last_model.surface_charge = NULL;
 	}
 
-	current_tc = NAN;
-	current_pa = NAN;
-	current_mu = NAN;
+	current_tc = nan("");
+	current_pa = nan("");
+	current_mu = nan("");
 	mu_terms_in_logk = true;
 
 	last_model.numerical_fixed_volume = numerical_fixed_volume;

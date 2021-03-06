@@ -432,9 +432,9 @@ Phreeqc::Phreeqc(PHRQ_io *io)
 void Phreeqc::init(void)
 {
 	same_model                      = FALSE;
-	current_tc                      = NAN;
-	current_pa                      = NAN;
-	current_mu                      = NAN;
+	current_tc                      = nan("");
+	current_pa                      = nan("");
+	current_mu                      = nan("");
 	mu_terms_in_logk                = true;
 	current_A                       = 0.0;
 	current_x                       = 0.0;

@@ -1375,7 +1375,7 @@ read_gas_phase(void)
 				temp_comp.Set_phase_name(token);
 				if ((j = copy_token(token, &ptr, &l)) == EMPTY)
 				{
-					temp_comp.Set_p_read(NAN);
+					temp_comp.Set_p_read(nan(""));
 					temp_gas_phase.Get_gas_comps().push_back(temp_comp);
 					break;
 				}
@@ -1965,7 +1965,7 @@ read_inv_phases(struct inverse *inverse_ptr, char *ptr)
 			if (isotopes[i].Get_ratio_uncertainty_defined())
 				iso_ptr->ratio_uncertainty = isotopes[i].Get_ratio_uncertainty();
 			else
-				iso_ptr->ratio_uncertainty = NAN;
+				iso_ptr->ratio_uncertainty = nan("");
 			iso_ptr->x_ratio_uncertainty = isotopes[i].Get_x_ratio_uncertainty();
 			iso_ptr->coef = isotopes[i].Get_coef();
 			iso_ptr->master = NULL;
@@ -5857,7 +5857,7 @@ read_solution(void)
 				}
 				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 				temp_isotope.Set_ratio(dummy);
-				temp_isotope.Set_ratio_uncertainty(NAN);
+				temp_isotope.Set_ratio_uncertainty(nan(""));
 
 				/* read and store isotope ratio uncertainty */
 				int j;
@@ -10094,7 +10094,7 @@ read_solid_solutions(void)
 				
 				if (copy_token(token, &ptr) == EMPTY)
 				{
-					comp.Set_moles(NAN);
+					comp.Set_moles(nan(""));
 				}
 				else
 				{
@@ -10434,7 +10434,7 @@ read_solid_solutions(void)
 			 */
 			if (copy_token(token, &ptr) == EMPTY)
 			{
-				comp0_ptr->Set_moles(NAN);
+				comp0_ptr->Set_moles(nan(""));
 			}
 			else
 			{
@@ -10462,7 +10462,7 @@ read_solid_solutions(void)
 			 */
 			if (copy_token(token, &ptr) == EMPTY)
 			{
-				comp1_ptr->Set_moles(NAN);
+				comp1_ptr->Set_moles(nan(""));
 			}
 			else
 			{

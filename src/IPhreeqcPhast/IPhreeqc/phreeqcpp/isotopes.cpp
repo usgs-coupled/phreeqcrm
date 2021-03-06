@@ -915,7 +915,7 @@ punch_calculate_values(void)
 
 		if (calculate_value_ptr->calculated == FALSE)
 		{
-			rate_moles = NAN;
+			rate_moles = nan("");
 			if (calculate_value_ptr->new_def == TRUE)
 			{
 				if (basic_compile
@@ -938,11 +938,7 @@ punch_calculate_values(void)
 					calculate_value_ptr->name);
 				error_msg(error_string, STOP);
 			}
-#ifdef NPP
 			if (isnan(rate_moles))
-#else
-			if (rate_moles == NAN)
-#endif
 			{
 				error_string = sformatf( "Calculated value not SAVEed for %s.",
 					calculate_value_ptr->name);
@@ -1141,7 +1137,7 @@ calculate_values(void)
 	for (j = 0; j < count_calculate_value; j++)
 	{
 		calculate_value_ptr = calculate_value[j];
-		rate_moles = NAN;
+		rate_moles = nan("");
 		if (calculate_value_ptr->new_def == TRUE)
 		{
 			if (basic_compile
@@ -1164,7 +1160,8 @@ calculate_values(void)
 					calculate_value[j]->name);
 			error_msg(error_string, STOP);
 		}
-		if (rate_moles == NAN)
+		//if (rate_moles == NAN)
+		if (isnan(rate_moles))
 		{
 			error_string = sformatf( "Calculated value not SAVEed for %s.",
 					calculate_value[j]->name);
@@ -1188,7 +1185,7 @@ calculate_values(void)
 			calculate_value_ptr = calculate_value_search(isotope_ratio_ptr->name);
 			if (calculate_value_ptr->calculated == FALSE)
 			{
-				rate_moles = NAN;
+				rate_moles = nan("");
 				if (calculate_value_ptr->new_def == TRUE)
 				{
 					if (basic_compile
@@ -1211,11 +1208,7 @@ calculate_values(void)
 						calculate_value_ptr->name);
 					error_msg(error_string, STOP);
 				}
-#ifdef NPP
 				if (isnan(rate_moles))
-#else
-				if (rate_moles == NAN)
-#endif
 				{
 					error_string = sformatf( "Calculated value not SAVEed for %s.",
 						calculate_value_ptr->name);
@@ -1255,7 +1248,7 @@ calculate_values(void)
 			*/
 			if (calculate_value_ptr->calculated == FALSE)
 			{
-				rate_moles = NAN;
+				rate_moles = nan("");
 				if (calculate_value_ptr->new_def == TRUE)
 				{
 					if (basic_compile
@@ -1278,11 +1271,7 @@ calculate_values(void)
 						calculate_value_ptr->name);
 					error_msg(error_string, STOP);
 				}
-#ifdef NPP
 				if (isnan(rate_moles))
-#else
-				if (rate_moles == NAN)
-#endif
 				{
 					error_string = sformatf( "Calculated value not SAVEed for %s.",
 						calculate_value_ptr->name);
@@ -1331,7 +1320,7 @@ calculate_values(void)
 	for (j = 0; j < count_calculate_value; j++)
 	{
 		calculate_value_ptr = calculate_value[j];
-		rate_moles = NAN;
+		rate_moles = nan("");
 		if (calculate_value_ptr->new_def == TRUE)
 		{
 			if (basic_compile
@@ -1354,7 +1343,8 @@ calculate_values(void)
 					calculate_value[j]->name);
 			error_msg(error_string, STOP);
 		}
-		if (rate_moles == NAN)
+		//if (rate_moles == NAN)
+		if (isnan(rate_moles))
 		{
 			error_string = sformatf( "Calculated value not SAVEed for %s.",
 					calculate_value[j]->name);

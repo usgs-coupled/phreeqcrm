@@ -394,8 +394,8 @@ read_solution_spread(void)
 					else
 					{
 						soln_defaults.iso[i].name = string_hsave(token.c_str());
-						soln_defaults.iso[i].value = NAN;
-						soln_defaults.iso[i].uncertainty = NAN;
+						soln_defaults.iso[i].value = nan("");
+						soln_defaults.iso[i].uncertainty = nan("");
 						soln_defaults.count_iso++;
 					}
 				}
@@ -420,7 +420,7 @@ read_solution_spread(void)
 				}
 				else
 				{
-					soln_defaults.iso[i].uncertainty = NAN;
+					soln_defaults.iso[i].uncertainty = nan("");
 				}
 			}
 			break;
@@ -477,8 +477,8 @@ read_solution_spread(void)
 					else
 					{
 						soln_defaults.iso[i].name = string_hsave(token.c_str());
-						soln_defaults.iso[i].value = NAN;
-						soln_defaults.iso[i].uncertainty = NAN;
+						soln_defaults.iso[i].value = nan("");
+						soln_defaults.iso[i].uncertainty = nan("");
 						soln_defaults.count_iso++;
 					}
 				}
@@ -925,7 +925,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 				}
 				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 				temp_isotope.Set_ratio(dummy);
-				temp_isotope.Set_ratio_uncertainty(NAN);
+				temp_isotope.Set_ratio_uncertainty(nan(""));
 
 				/* read and store isotope ratio uncertainty */
 				int j;
@@ -1160,7 +1160,7 @@ string_to_spread_row(char *string)
 			break;
 		spread_row_ptr->char_vector[spread_row_ptr->count] =
 			string_duplicate(token);
-		spread_row_ptr->d_vector[spread_row_ptr->count] = NAN;
+		spread_row_ptr->d_vector[spread_row_ptr->count] = nan("");
 		if (j == EMPTY || l == 0)
 		{
 			spread_row_ptr->empty++;

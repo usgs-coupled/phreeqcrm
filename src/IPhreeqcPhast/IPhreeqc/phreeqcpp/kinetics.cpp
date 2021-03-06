@@ -80,7 +80,7 @@ calc_kinetic_reaction(cxxKinetics *kinetics_ptr, LDBLE time_step)
 		}
 		else
 		{
-			rate_moles = NAN;
+			rate_moles = nan("");
 			rate_m = kinetics_comp_ptr->Get_m();
 			rate_m0 = kinetics_comp_ptr->Get_m0();
 			rate_p = kinetics_comp_ptr->Get_d_params();
@@ -106,11 +106,8 @@ calc_kinetic_reaction(cxxKinetics *kinetics_ptr, LDBLE time_step)
 						kinetics_comp_ptr->Get_rate_name().c_str());
 				error_msg(error_string, STOP);
 			}
-#ifdef NPP
+
 			if (isnan(rate_moles))
-#else
-			if (rate_moles == NAN)
-#endif
 			{
 				error_string = sformatf( "Moles of reaction not SAVEed for %s.",
 						kinetics_comp_ptr->Get_rate_name().c_str());

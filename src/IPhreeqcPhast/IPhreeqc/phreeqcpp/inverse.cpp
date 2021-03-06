@@ -3746,7 +3746,7 @@ check_isotopes(struct inverse *inv_ptr)
 		{
 			struct master *master_kit = master_bsearch(kit->second.Get_elt_name().c_str());
 			struct master *primary_kit = master_bsearch_primary(kit->second.Get_elt_name().c_str());
-			kit->second.Set_x_ratio_uncertainty(NAN);
+			kit->second.Set_x_ratio_uncertainty(nan(""));
 /*
  *  Search for secondary or primary master in inverse uncertainties
  */
@@ -3770,35 +3770,21 @@ check_isotopes(struct inverse *inv_ptr)
 
 			i = ii;
 			/* use inverse-defined uncertainties first */
-#ifdef NPP
 			if (j < inv_ptr->i_u[i].count_uncertainties
 				&& !isnan(inv_ptr->i_u[i].uncertainties[j]))
-#else
-			if (j < inv_ptr->i_u[i].count_uncertainties
-				&& inv_ptr->i_u[i].uncertainties[j] != NAN)
-#endif
 			{
 				kit->second.Set_x_ratio_uncertainty(inv_ptr->i_u[i].uncertainties[j]);
 
 				/* use solution-defined uncertainties second */
 			}
-#ifdef NPP
 			else if (inv_ptr->i_u[i].count_uncertainties > 0
 				&& !isnan(inv_ptr->i_u[i].uncertainties[inv_ptr->i_u[i].count_uncertainties - 1]))
-#else
-			else if (inv_ptr->i_u[i].count_uncertainties > 0
-				&& inv_ptr->i_u[i].uncertainties[(size_t)inv_ptr->i_u[i].count_uncertainties - 1] != NAN)
-#endif
 			{
 				kit->second.Set_x_ratio_uncertainty(inv_ptr->i_u[i].uncertainties[inv_ptr->i_u[i].count_uncertainties - 1]);
 
 				/* use solution-defined uncertainties second */
 			}
-#ifdef NPP
 			else if (!isnan(kit->second.Get_ratio_uncertainty()))
-#else
-			else if (kit->second.Get_ratio_uncertainty() != NAN)
-#endif
 			{
 				kit->second.Set_x_ratio_uncertainty(
 					kit->second.Get_ratio_uncertainty());
@@ -3826,11 +3812,7 @@ check_isotopes(struct inverse *inv_ptr)
 					}
 				}
 			}
-#ifdef NPP
 			if (isnan(kit->second.Get_x_ratio_uncertainty()))
-#else
-			if (kit->second.Get_x_ratio_uncertainty() == NAN)
-#endif
 			{
 				error_string = sformatf(
 						"In solution %d, isotope ratio uncertainty is needed for element: %g%s.",
