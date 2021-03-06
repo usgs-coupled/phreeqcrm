@@ -613,7 +613,7 @@ RM_GetConcentrations(int id, double * c)
 		if (c != NULL)
 		{
 			std::vector<double> c_vector;
-			c_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetComponentCount());
+			c_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetComponentCount());
 			IRM_RESULT return_value = Reaction_module_ptr->GetConcentrations(c_vector);
 			if (return_value == IRM_OK)
 			{
@@ -722,7 +722,7 @@ RM_GetGasCompMoles(int id, double* gas_moles)
 		if (gas_moles != NULL)
 		{
 			std::vector<double> m_vector;
-			m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+			m_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetGasComponentsCount());
 			IRM_RESULT return_value = Reaction_module_ptr->GetGasCompMoles(m_vector);
 			if (return_value == IRM_OK)
 			{
@@ -745,7 +745,7 @@ RM_GetGasCompPressures(int id, double* gas_p)
 		if (gas_p != NULL)
 		{
 			std::vector<double> p_vector;
-			p_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+			p_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetGasComponentsCount());
 			IRM_RESULT return_value = Reaction_module_ptr->GetGasCompPressures(p_vector);
 			if (return_value == IRM_OK)
 			{
@@ -767,7 +767,7 @@ RM_GetGasCompPhi(int id, double* gas_phi)
 		if (gas_phi != NULL)
 		{
 			std::vector<double> phi_vector;
-			phi_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+			phi_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetGasComponentsCount());
 			IRM_RESULT return_value = Reaction_module_ptr->GetGasCompPhi(phi_vector);
 			if (return_value == IRM_OK)
 			{
@@ -930,8 +930,8 @@ RM_GetSelectedOutput(int id, double * so)
 		if (so != NULL)
 		{
 			std::vector<double> so_vector;
-			so_vector.resize(Reaction_module_ptr->GetSelectedOutputColumnCount() * 
-				Reaction_module_ptr->GetSelectedOutputRowCount());
+			so_vector.resize((size_t)Reaction_module_ptr->GetSelectedOutputColumnCount() *
+				(size_t)Reaction_module_ptr->GetSelectedOutputRowCount());
 			IRM_RESULT return_value = Reaction_module_ptr->GetSelectedOutput(so_vector);
 			if (return_value == IRM_OK)
 			{
@@ -1327,17 +1327,17 @@ RM_InitialPhreeqc2Module(int id,
 			std::vector<int> i1_vector, i2_vector;
 			std::vector<double> f1_vector;
 			int nxyz = Reaction_module_ptr->GetGridCellCount();
-			i1_vector.resize(nxyz * 7);
-			i2_vector.resize(nxyz * 7, -1);
-			f1_vector.resize(nxyz * 7, 1.0);
-			memcpy(&i1_vector.front(), initial_conditions1, (size_t) (nxyz * 7 * sizeof(int)));
+			i1_vector.resize((size_t)nxyz * 7);
+			i2_vector.resize((size_t)nxyz * 7, -1);
+			f1_vector.resize((size_t)nxyz * 7, 1.0);
+			memcpy(&i1_vector.front(), initial_conditions1, ((size_t)nxyz * 7 * sizeof(int)));
 			if (initial_conditions2 != NULL)
 			{
-				memcpy(&i2_vector.front(), initial_conditions2, (size_t) (nxyz * 7 * sizeof(int)));
+				memcpy(&i2_vector.front(), initial_conditions2, ((size_t)nxyz * 7 * sizeof(int)));
 			}
 			if (fraction1 != NULL)
 			{
-				memcpy(&f1_vector.front(), fraction1, (size_t) (nxyz * 7 * sizeof(double)));
+				memcpy(&f1_vector.front(), fraction1, ((size_t)nxyz * 7 * sizeof(double)));
 			}
 			return Reaction_module_ptr->InitialPhreeqc2Module(
 				i1_vector,
@@ -1602,7 +1602,7 @@ RM_SetConcentrations(int id, double *t)
 		if (t != NULL)
 		{
 			std::vector<double> c_vector;
-			c_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetComponentCount());
+			c_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetComponentCount());
 			memcpy(&c_vector.front(), t, c_vector.size() * sizeof(double));
 			return Reaction_module_ptr->SetConcentrations(c_vector);
 		}
@@ -1714,7 +1714,7 @@ RM_SetGasCompMoles(int id, double* m)
 		if (m != NULL)
 		{
 			std::vector<double> m_vector;
-			m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+			m_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetGasComponentsCount());
 			memcpy(&m_vector.front(), m, m_vector.size() * sizeof(double));
 			return Reaction_module_ptr->SetGasCompMoles(m_vector);
 		}
@@ -2111,7 +2111,7 @@ RM_SpeciesConcentrations2Module(int id, double * species_conc)
 		{
 			IRM_RESULT return_value = IRM_OK;
 			std::vector<double> species_conc_vector;
-			species_conc_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetSpeciesCount());
+			species_conc_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetSpeciesCount());
 			memcpy(&species_conc_vector.front(), species_conc, species_conc_vector.size()*sizeof(double));
 			return_value = Reaction_module_ptr->SpeciesConcentrations2Module(species_conc_vector);
 			return return_value;

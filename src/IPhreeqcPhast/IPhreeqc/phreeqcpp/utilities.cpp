@@ -612,7 +612,7 @@ dup_print(const char *ptr, int emphasis)
 #endif
 	std::string save_in(ptr);
 	l = (int) strlen(ptr);
-	dash = (char *) PHRQ_malloc((size_t) (l + 2) * sizeof(char));
+	dash = (char *) PHRQ_malloc(((size_t)l + 2) * sizeof(char));
 	if (dash == NULL)
 		malloc_error();
 	if (emphasis == TRUE)
@@ -1262,7 +1262,7 @@ string_duplicate(const char *token)
 #if !defined(NDEBUG) && defined(WIN32_MEMORY_DEBUG)
 	str = (char *) _malloc_dbg((size_t) (l + 1) * sizeof(char), _NORMAL_BLOCK, szFileName, nLine);
 #else
-	str = (char *) PHRQ_malloc((size_t) (l + 1) * sizeof(char));
+	str = (char *) PHRQ_malloc(((size_t)l + 1) * sizeof(char));
 #endif
 
 	if (str == NULL)
@@ -2016,7 +2016,7 @@ string_pad(const char *str, int i)
 	max = l;
 	if (l < i)
 		max = i;
-	str_ptr = (char *) PHRQ_malloc((size_t) ((max + 1) * sizeof(char)));
+	str_ptr = (char *) PHRQ_malloc(((size_t)max + 1) * sizeof(char));
 	if (str_ptr == NULL)
 		malloc_error();
 	strcpy(str_ptr, str);

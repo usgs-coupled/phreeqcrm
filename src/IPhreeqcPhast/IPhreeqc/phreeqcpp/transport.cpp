@@ -247,8 +247,8 @@ transport(void)
 						"Electrical Field (potential) was defined, assuming constant boundary condition for last cell.");
 					warning_msg(error_string);
 				}
-				current_cells = (struct CURRENT_CELLS *) PHRQ_malloc((size_t)
-					(count_cells + 1) * sizeof(struct CURRENT_CELLS));
+				current_cells = (struct CURRENT_CELLS *) PHRQ_malloc(
+					((size_t)count_cells + 1) * sizeof(struct CURRENT_CELLS));
 				if (current_cells == NULL)
 					malloc_error();
 				for (int i = 0; i < count_cells + 1; i++)
@@ -288,8 +288,8 @@ transport(void)
 		//}
 		if (implicit && current_cells == NULL)
 		{
-			current_cells = (struct CURRENT_CELLS *) PHRQ_malloc((size_t)
-				(count_cells + 1) * sizeof(struct CURRENT_CELLS));
+			current_cells = (struct CURRENT_CELLS *) PHRQ_malloc(
+				((size_t)count_cells + 1) * sizeof(struct CURRENT_CELLS));
 			if (current_cells == NULL)
 				malloc_error();
 			for (int i = 0; i < count_cells + 1; i++)
@@ -379,7 +379,7 @@ transport(void)
 		else
 			stagkin_time = timest / nmix;
 		if (ishift != 0)
-			kin_time = timest / (1 + nmix);
+			kin_time = timest / (1 + (size_t)nmix);
 		else
 			kin_time = stagkin_time;
 		kin_time_save = kin_time;
@@ -529,7 +529,7 @@ transport(void)
 				for (j = 1; j <= floor((LDBLE)nmix / 2); j++)
 				{
 					rate_sim_time_start =
-						(transport_step - 1) * timest + (j - 1) * kin_time;
+						((size_t)transport_step - 1) * timest + ((size_t)j - 1) * kin_time;
 					rate_sim_time = rate_sim_time_start + kin_time;
 
 					mixrun = j;
@@ -619,7 +619,7 @@ transport(void)
 					/* Stagnant zone mixing after completion of each
 					diffusive/dispersive step ...  */
 					rate_sim_time_start =
-						(transport_step - 1) * timest + (j - 1) * stagkin_time;
+						((size_t)transport_step - 1) * timest + ((size_t)j - 1) * stagkin_time;
 					rate_sim_time = rate_sim_time_start + stagkin_time;
 
 					if (stag_data->count_stag > 0)
@@ -657,9 +657,9 @@ transport(void)
 				dup_print(token, FALSE);
 				if (b_c == 1)
 					rate_sim_time_start =
-					(transport_step - 1) * timest + (j - 1) * kin_time;
+					((size_t)transport_step - 1) * timest + ((size_t)j - 1) * kin_time;
 				else
-					rate_sim_time_start = (transport_step - 1) * timest;
+					rate_sim_time_start = ((size_t)transport_step - 1) * timest;
 				rate_sim_time = rate_sim_time_start + kin_time;
 
 				/* halftime kinetics for resident water in first cell ... */
@@ -807,7 +807,7 @@ transport(void)
 					dup_print(token, FALSE);
 				}
 				rate_sim_time_start =
-					(transport_step - 1) * timest + (j - 1) * kin_time;
+					((size_t)transport_step - 1) * timest + ((size_t)j - 1) * kin_time;
 				if (ishift != 0)
 					rate_sim_time_start += kin_time;
 				rate_sim_time = rate_sim_time_start + kin_time;
@@ -877,7 +877,7 @@ transport(void)
 					Utilities::Rxn_copy(Rxn_solution_map, -2, count_cells);
 				/* Stagnant zone mixing after completion of each diffusive/dispersive step ... */
 				rate_sim_time_start =
-					(transport_step - 1) * timest + (j - 1) * stagkin_time;
+					((size_t)transport_step - 1) * timest + ((size_t)j - 1) * stagkin_time;
 				rate_sim_time = rate_sim_time_start + stagkin_time;
 
 				if (stag_data->count_stag > 0)
@@ -1102,10 +1102,10 @@ init_mix(void)
 	bool warning = false;
 	int i, l_nmix;
 	LDBLE *m, *m1;
-	m = (LDBLE *)PHRQ_malloc((count_cells + 1) * sizeof(LDBLE));
+	m = (LDBLE *)PHRQ_malloc(((size_t)count_cells + 1) * sizeof(LDBLE));
 	if (m == NULL)
 		malloc_error();
-	m1 = (LDBLE *)PHRQ_malloc((count_cells + 1) * sizeof(LDBLE));
+	m1 = (LDBLE *)PHRQ_malloc(((size_t)count_cells + 1) * sizeof(LDBLE));
 	if (m1 == NULL)
 		malloc_error();
 	for (i = 0; i < count_cells + 1; i++)
@@ -1554,15 +1554,15 @@ init_heat_mix(int l_nmix)
 	/*
 	* Initialize arrays...
 	*/
-	heat_mix_array = (LDBLE *)PHRQ_malloc((count_cells + 2) * sizeof(LDBLE));
+	heat_mix_array = (LDBLE *)PHRQ_malloc(((size_t)count_cells + 2) * sizeof(LDBLE));
 	if (heat_mix_array == NULL)
 		malloc_error();
 
-	temp1 = (LDBLE *)PHRQ_malloc((count_cells + 2) * sizeof(LDBLE));
+	temp1 = (LDBLE *)PHRQ_malloc(((size_t)count_cells + 2) * sizeof(LDBLE));
 	if (temp1 == NULL)
 		malloc_error();
 
-	temp2 = (LDBLE *)PHRQ_malloc((count_cells + 2) * sizeof(LDBLE));
+	temp2 = (LDBLE *)PHRQ_malloc(((size_t)count_cells + 2) * sizeof(LDBLE));
 	if (temp2 == NULL)
 		malloc_error();
 	/*
@@ -1812,12 +1812,12 @@ fill_spec(int l_cell_no, int ref_cell)
 	//sol_D[l_cell_no].spec = (struct spec *) free_check_null(sol_D[l_cell_no].spec);
 	if (sol_D[l_cell_no].spec == NULL)
 	{
-		sol_D[l_cell_no].spec = (struct spec *) PHRQ_malloc((size_t)(count_species_list + size_xt) * sizeof(struct spec));
+		sol_D[l_cell_no].spec = (struct spec *) PHRQ_malloc(((size_t)count_species_list + (size_t)size_xt) * sizeof(struct spec));
 		sol_D[l_cell_no].spec_size = count_species_list + size_xt;
 	}
 	else if (count_species_list + size_xt > sol_D[l_cell_no].spec_size)
 	{
-		sol_D[l_cell_no].spec = (struct spec *) PHRQ_realloc(sol_D[l_cell_no].spec, (size_t)(count_species_list + size_xt) * sizeof(struct spec));
+		sol_D[l_cell_no].spec = (struct spec *) PHRQ_realloc(sol_D[l_cell_no].spec, ((size_t)count_species_list + (size_t)size_xt) * sizeof(struct spec));
 		sol_D[l_cell_no].spec_size = count_species_list + size_xt;
 	}
 	if (sol_D[l_cell_no].spec == NULL)
@@ -2019,7 +2019,7 @@ fill_spec(int l_cell_no, int ref_cell)
 						i3 = i2 - i1;
 						if (i3 + count_spec + 1 > sol_D[l_cell_no].spec_size)
 						{
-							sol_D[l_cell_no].spec = (struct spec *) PHRQ_realloc(sol_D[l_cell_no].spec, (size_t)(i3 + count_spec + 1 + size_xt) * sizeof(struct spec));
+							sol_D[l_cell_no].spec = (struct spec *) PHRQ_realloc(sol_D[l_cell_no].spec, ((size_t)i3 + (size_t)count_spec + 1 + (size_t)size_xt) * sizeof(struct spec));
 							if (sol_D[l_cell_no].spec == NULL)
 								malloc_error();
 							sol_D[l_cell_no].spec_size = i3 + count_spec + 1 + size_xt;
@@ -2040,7 +2040,7 @@ fill_spec(int l_cell_no, int ref_cell)
 			}
 			if (count_spec >= sol_D[l_cell_no].spec_size)
 			{
-				sol_D[l_cell_no].spec = (struct spec *) PHRQ_realloc(sol_D[l_cell_no].spec, (size_t)(count_spec + size_xt) * sizeof(struct spec));
+				sol_D[l_cell_no].spec = (struct spec *) PHRQ_realloc(sol_D[l_cell_no].spec, ((size_t)count_spec + (size_t)size_xt) * sizeof(struct spec));
 				if (sol_D[l_cell_no].spec == NULL)
 					malloc_error();
 				sol_D[l_cell_no].spec_size = count_spec + size_xt;
@@ -2091,7 +2091,7 @@ fill_spec(int l_cell_no, int ref_cell)
 						i2 = sol_D[i1].count_spec + 1;
 						if (i2 > sol_D[i1].spec_size)
 						{
-							sol_D[i1].spec = (struct spec *) PHRQ_realloc(sol_D[i1].spec, (size_t)(i2 + size_xt) * sizeof(struct spec));
+							sol_D[i1].spec = (struct spec *) PHRQ_realloc(sol_D[i1].spec, ((size_t)i2 + (size_t)size_xt) * sizeof(struct spec));
 							if (sol_D[i1].spec == NULL)
 								malloc_error();
 							sol_D[i1].spec_size = i2 + size_xt;
@@ -2119,7 +2119,7 @@ fill_spec(int l_cell_no, int ref_cell)
 		i3 = (int) dif_spec_names.size();
 		if (i3 > sol_D[l_cell_no].spec_size)
 		{
-			sol_D[l_cell_no].spec = (struct spec *) PHRQ_realloc(sol_D[l_cell_no].spec, (size_t)(i3 + size_xt) * sizeof(struct spec));
+			sol_D[l_cell_no].spec = (struct spec *) PHRQ_realloc(sol_D[l_cell_no].spec, ((size_t)i3 + (size_t)size_xt) * sizeof(struct spec));
 			if (sol_D[l_cell_no].spec == NULL)
 				malloc_error();
 			sol_D[l_cell_no].spec_size = i3 + size_xt;
@@ -2210,20 +2210,20 @@ diffuse_implicit(LDBLE DDt, int stagnant)
 		comp += 1;
 
 	if (Ct2 == NULL)
-		Ct2 = (LDBLE *) PHRQ_malloc((size_t) (count_cells + 2 + stagnant * count_cells) * sizeof(LDBLE));
+		Ct2 = (LDBLE *) PHRQ_malloc(((size_t)count_cells + 2 + (size_t)stagnant * (size_t)count_cells) * sizeof(LDBLE));
 	if (Ct2 == NULL) malloc_error();
 	if (l_tk_x2 == NULL)
-		l_tk_x2 = (LDBLE *) PHRQ_malloc((size_t) (count_cells + 2 + stagnant * count_cells) * sizeof(LDBLE));
+		l_tk_x2 = (LDBLE *) PHRQ_malloc(((size_t)count_cells + 2 + (size_t)stagnant * (size_t)count_cells) * sizeof(LDBLE));
 	if (l_tk_x2 == NULL) malloc_error();
 
 	if (A == NULL)
 	{
-		A = (LDBLE **)PHRQ_malloc((size_t)(count_cells + 2 + stagnant * count_cells) * sizeof(LDBLE *));
+		A = (LDBLE **)PHRQ_malloc(((size_t)count_cells + 2 + (size_t)stagnant * (size_t)count_cells) * sizeof(LDBLE *));
 		if (A == NULL) malloc_error();
 		for (i = 0; i < count_cells + 2 + stagnant * count_cells; i++)
 		{
 			if (stagnant)
-				A[i] = (LDBLE *)PHRQ_calloc((size_t)(2 * count_cells + 2), sizeof(LDBLE));
+				A[i] = (LDBLE *)PHRQ_calloc((2 * (size_t)count_cells + 2), sizeof(LDBLE));
 			else 
 				A[i] = (LDBLE *)PHRQ_malloc((size_t)3 * sizeof(LDBLE));
 			if (A[i] == NULL) malloc_error();
@@ -2231,12 +2231,12 @@ diffuse_implicit(LDBLE DDt, int stagnant)
 	}
 	if (LU == NULL)
 	{
-		LU = (LDBLE **)PHRQ_malloc((size_t)(count_cells + 2 + stagnant * count_cells) * sizeof(LDBLE *));
+		LU = (LDBLE **)PHRQ_malloc(((size_t)count_cells + 2 + (size_t)stagnant * (size_t)count_cells) * sizeof(LDBLE *));
 		if (LU == NULL) malloc_error();
 		for (i = 0; i < count_cells + 2 + stagnant * count_cells; i++)
 		{
 			if (stagnant)
-				LU[i] = (LDBLE *)PHRQ_calloc((size_t)(2 * count_cells + 2), sizeof(LDBLE));
+				LU[i] = (LDBLE *)PHRQ_calloc((2 * (size_t)count_cells + 2), sizeof(LDBLE));
 			else 
 				LU[i] = (LDBLE *)PHRQ_malloc((size_t)3 * sizeof(LDBLE));
 			if (LU[i] == NULL) malloc_error();
@@ -2244,7 +2244,7 @@ diffuse_implicit(LDBLE DDt, int stagnant)
 	}
 	if (mixf == NULL)
 	{
-		mixf = (LDBLE **)PHRQ_malloc((size_t)(count_cells + 2) * sizeof(LDBLE *));
+		mixf = (LDBLE **)PHRQ_malloc(((size_t)count_cells + 2) * sizeof(LDBLE *));
 		if (mixf == NULL) malloc_error();
 		for (i = 0; i < count_cells + 2; i++)
 		{
@@ -2255,7 +2255,7 @@ diffuse_implicit(LDBLE DDt, int stagnant)
 	{
 		if (mixf_stag == NULL)
 		{
-			mixf_stag = (LDBLE **)PHRQ_malloc((size_t)(count_cells + 2) * sizeof(LDBLE *));
+			mixf_stag = (LDBLE **)PHRQ_malloc(((size_t)count_cells + 2) * sizeof(LDBLE *));
 			if (mixf_stag == NULL) malloc_error();
 			for (i = 0; i < count_cells + 2; i++)
 			{
@@ -2268,16 +2268,16 @@ diffuse_implicit(LDBLE DDt, int stagnant)
 		for (i = 0; i < count_cells + 2; i++)
 		{
 			if (mixf[i] == NULL)
-				mixf[i] = (LDBLE *)PHRQ_malloc((size_t)(comp + 2) * sizeof(LDBLE));
+				mixf[i] = (LDBLE *)PHRQ_malloc(((size_t)comp + 2) * sizeof(LDBLE));
 			else
-				mixf[i] = (LDBLE *)PHRQ_realloc(mixf[i], (size_t)(comp + 2) * sizeof(LDBLE));
+				mixf[i] = (LDBLE *)PHRQ_realloc(mixf[i], ((size_t)comp + 2) * sizeof(LDBLE));
 			if (mixf[i] == NULL) malloc_error();
 			if (stagnant)
 			{
 				if (mixf_stag[i] == NULL)
-					mixf_stag[i] = (LDBLE *)PHRQ_malloc((size_t)(comp + 2) * sizeof(LDBLE));
+					mixf_stag[i] = (LDBLE *)PHRQ_malloc(((size_t)comp + 2) * sizeof(LDBLE));
 				else
-					mixf_stag[i] = (LDBLE *)PHRQ_realloc(mixf_stag[i], (size_t)(comp + 2) * sizeof(LDBLE));
+					mixf_stag[i] = (LDBLE *)PHRQ_realloc(mixf_stag[i], ((size_t)comp + 2) * sizeof(LDBLE));
 				if (mixf_stag[i] == NULL) malloc_error();
 				for (cp = 0; cp < comp; cp++)
 					mixf_stag[i][cp] = 0;
@@ -2796,7 +2796,7 @@ diffuse_implicit(LDBLE DDt, int stagnant)
 			((dV_dcell > 0) && ((cell_data[i].potV + dVc) > cell_data[count_cells + 1].potV)) ||
 			((dV_dcell < 0) && ((cell_data[i].potV + dVc) < cell_data[count_cells + 1].potV)))
 		{
-			dVc = (cell_data[count_cells + 1].potV - cell_data[i].potV) / (count_cells + 1 - i);
+			dVc = (cell_data[count_cells + 1].potV - cell_data[i].potV) / ((size_t)count_cells + 1 - (size_t)i);
 		}
 		cell_data[i + 1].potV = cell_data[i].potV + dVc;
 	}
@@ -2839,12 +2839,12 @@ diffuse_implicit(LDBLE DDt, int stagnant)
 			ct[i].m_s = (struct M_S *) free_check_null(ct[i].m_s);
 		if (ct[i].m_s == NULL)
 		{
-			ct[i].m_s = (struct M_S *) PHRQ_malloc((size_t)(count_m_s + 5) * sizeof(struct M_S));
+			ct[i].m_s = (struct M_S *) PHRQ_malloc(((size_t)count_m_s + 5) * sizeof(struct M_S));
 			ct[i].m_s_size = count_m_s + 5;
 		}
 		else if (count_m_s > ct[i].m_s_size)
 		{
-			ct[i].m_s = (struct M_S *) PHRQ_realloc(ct[i].m_s, (size_t)(count_m_s + 5) * sizeof(struct M_S));
+			ct[i].m_s = (struct M_S *) PHRQ_realloc(ct[i].m_s, ((size_t)count_m_s + 5) * sizeof(struct M_S));
 			ct[i].m_s_size = count_m_s + 5;
 		}
 		if (ct[i].m_s == NULL)

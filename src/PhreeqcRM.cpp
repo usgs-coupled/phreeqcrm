@@ -1042,9 +1042,9 @@ PhreeqcRM::Concentrations2SolutionsH2O(int n, std::vector<double> &c)
 				// convert to mol/L
 				for (k = 1; k < (int) this->components.size(); k++)
 				{
-					d.push_back(c[j * (int) this->components.size() + k] * 1e-3 / this->gfw[k]);
+					d.push_back(c[(size_t)j * this->components.size() + (size_t)k] * 1e-3 / this->gfw[k]);
 				}
-				double h2o_mol = c[j * (int) this->components.size()] * 1e-3 / this->gfw[0];
+				double h2o_mol = c[(size_t)j * this->components.size()] * 1e-3 / this->gfw[0];
 				d[0] += h2o_mol * 2.0;
 				d[1] += h2o_mol;
 			}
@@ -1054,9 +1054,9 @@ PhreeqcRM::Concentrations2SolutionsH2O(int n, std::vector<double> &c)
 				// convert to mol/L
 				for (k = 1; k < (int) this->components.size(); k++)
 				{
-					d.push_back(c[j * (int) this->components.size() + k]);
+					d.push_back(c[(size_t)j * this->components.size() + (size_t)k]);
 				}
-				double h2o_mol = c[j * (int) this->components.size()];
+				double h2o_mol = c[(size_t)j * this->components.size()];
 				d[0] += h2o_mol * 2.0;
 				d[1] += h2o_mol;
 			}
@@ -1066,9 +1066,9 @@ PhreeqcRM::Concentrations2SolutionsH2O(int n, std::vector<double> &c)
 				// convert to mol/L
 				for (k = 1; k < (int) this->components.size(); k++)
 				{
-					d.push_back(c[j * (int) this->components.size() + k] * 1000.0 / this->gfw[k] * dens);
+					d.push_back(c[(size_t)j * this->components.size() + (size_t)k] * 1000.0 / this->gfw[k] * dens);
 				}
-				double h2o_mol = c[j * (int) this->components.size()] * 1000.0 / this->gfw[0] * dens;
+				double h2o_mol = c[(size_t)j * this->components.size()] * 1000.0 / this->gfw[0] * dens;
 				d[0] += h2o_mol * 2.0;
 				d[1] += h2o_mol;
 			}
@@ -1091,8 +1091,8 @@ PhreeqcRM::Concentrations2SolutionsH2O(int n, std::vector<double> &c)
 		cxxNameDouble nd;
 		for (k = 4; k < (int) components.size(); k++)
 		{
-			if (d[k-1] < 0.0) d[k-1] = 0.0;
-			nd.add(components[k].c_str(), d[k-1]);
+			if (d[(size_t)k-1] < 0.0) d[(size_t)k-1] = 0.0;
+			nd.add(components[k].c_str(), d[(size_t)k-1]);
 		}
 
 		cxxSolution *soln_ptr = this->GetWorkers()[n]->Get_solution(j);
@@ -1145,7 +1145,7 @@ PhreeqcRM::Concentrations2SolutionsNoH2O(int n, std::vector<double> &c)
 				// convert to mol/L
 				for (k = 0; k < (int) this->components.size(); k++)
 				{
-					d.push_back(c[j * (int) this->components.size() + k] * 1e-3 / this->gfw[k]);
+					d.push_back(c[(size_t)j * this->components.size() + (size_t)k] * 1e-3 / this->gfw[k]);
 				}
 			}
 			break;
@@ -1154,7 +1154,7 @@ PhreeqcRM::Concentrations2SolutionsNoH2O(int n, std::vector<double> &c)
 				// convert to mol/L
 				for (k = 0; k < (int) this->components.size(); k++)
 				{
-					d.push_back(c[j * (int) this->components.size() + k]);
+					d.push_back(c[(size_t)j * this->components.size() + (size_t)k]);
 				}
 			}
 			break;
@@ -1163,7 +1163,7 @@ PhreeqcRM::Concentrations2SolutionsNoH2O(int n, std::vector<double> &c)
 				// convert to mol/L
 				for (k = 0; k < (int) this->components.size(); k++)
 				{
-					d.push_back(c[j * (int) this->components.size() + k] * 1000.0 / this->gfw[k] * dens);
+					d.push_back(c[(size_t)j * this->components.size() + (size_t)k] * 1000.0 / this->gfw[k] * dens);
 				}
 			}
 			break;
@@ -1215,7 +1215,7 @@ PhreeqcRM::Concentrations2UtilityH2O(std::vector<double> &c, std::vector<double>
 {
 	size_t ncomps = this->components.size();
 	size_t nsolns = c.size() / ncomps;
-	size_t nutil= this->nthreads + 1;
+	size_t nutil= (size_t)this->nthreads + 1;
 
 	for (size_t i = 0; i < nsolns; i++)
 	{
@@ -1289,7 +1289,7 @@ PhreeqcRM::Concentrations2UtilityNoH2O(std::vector<double> &c, std::vector<doubl
 {
 	size_t ncomps = this->components.size();
 	size_t nsolns = c.size() / ncomps;
-	size_t nutil= this->nthreads + 1;
+	size_t nutil= (size_t)this->nthreads + 1;
 
 	for (size_t i = 0; i < nsolns; i++)
 	{
@@ -2387,7 +2387,7 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 		std::vector<char> char_buffer;
 		const size_t gzblock = 4094;
 		char buffer[gzblock + 2];
-		int total_cells = this->end_cell[this->nthreads - 1];
+		int total_cells = this->end_cell[(size_t)this->nthreads - 1];
 		int pct = 10;
 		int block_count = 0;
 
@@ -2703,9 +2703,9 @@ PhreeqcRM::FileRename(const std::string &temp_name, const std::string &name,
 	{
 		if (PhreeqcRM::FileExists(backup_name.c_str()))
 			remove(backup_name.c_str());
-		rename(name.c_str(), backup_name.c_str());
+		(void)rename(name.c_str(), backup_name.c_str());
 	}
-	rename(temp_name.c_str(), name.c_str());
+	(void)rename(temp_name.c_str(), name.c_str());
 }
 /* ---------------------------------------------------------------------- */
 int
@@ -3561,7 +3561,7 @@ PhreeqcRM::GetGasCompMoles(std::vector<double>& m_out)
 	try
 	{
 		// resize and fill elements
-		m_out.resize(this->nxyz * this->GetGasComponentsCount());
+		m_out.resize((size_t)this->nxyz * this->GetGasComponentsCount());
 		std::fill(m_out.begin(), m_out.end(), 1e30);
 #ifdef USE_OPENMP
 		omp_set_num_threads(this->nthreads);
@@ -3704,7 +3704,7 @@ PhreeqcRM::GetGasCompPressures(std::vector<double>& p_out)
 	try
 	{
 		// resize and fill elements
-		p_out.resize(this->nxyz * this->GetGasComponentsCount());
+		p_out.resize((size_t)this->nxyz * this->GetGasComponentsCount());
 		std::fill(p_out.begin(), p_out.end(), 1e30);
 #ifdef USE_OPENMP
 		omp_set_num_threads(this->nthreads);
@@ -3845,7 +3845,7 @@ PhreeqcRM::GetGasCompPhi(std::vector<double>& phi_out)
 	try
 	{
 		// resize and fill elements
-		phi_out.resize(this->nxyz * this->GetGasComponentsCount());
+		phi_out.resize((size_t)this->nxyz * this->GetGasComponentsCount());
 		std::fill(phi_out.begin(), phi_out.end(), 1e30);
 #ifdef USE_OPENMP
 		omp_set_num_threads(this->nthreads);
@@ -4278,7 +4278,7 @@ PhreeqcRM::GetSelectedOutput(std::vector<double> &so)
 		int local_start_cell = 0;
 
 		// resize target
-		so.resize(this->nxyz * ncol);
+		so.resize((size_t)this->nxyz * (size_t)ncol);
 		for (int n = 0; n < this->nthreads; n++)
 		{
 			int nrow_x=-1, ncol_x=-1;
@@ -5180,8 +5180,8 @@ PhreeqcRM::InitialPhreeqc2Module(
 	std::vector<double> d_dummy;
 	if (mpi_myself == 0)
 	{
-		i_dummy.resize(this->nxyz*7, -1);
-		d_dummy.resize(this->nxyz*7,1.0);
+		i_dummy.resize((size_t)this->nxyz*7, -1);
+		d_dummy.resize((size_t)this->nxyz*7,1.0);
 	}
 	return InitialPhreeqc2Module(initial_conditions1_in, i_dummy, d_dummy);
 }
@@ -5924,7 +5924,7 @@ PhreeqcRM::LoadDatabase(const std::string &database)
 		this->HandleErrorsInternal(r_vector);
 
 		// vector for return values
-		r_vector.resize(this->nthreads + 2);
+		r_vector.resize((size_t)this->nthreads + 2);
 
 		// Load database for all IPhreeqc instances
 #ifdef USE_OPENMP
@@ -7464,13 +7464,13 @@ PhreeqcRM::RebalanceLoad(void)
 		for (int j = 0; j < diff_cells; j++)
 		{
 			int min_cell = 0;
-			double min_time = (cells_v[0] + 1) * recv_buffer[0];
+			double min_time = ((size_t)cells_v[0] + 1) * recv_buffer[0];
 			for (int i = 1; i < this->nthreads; i++)
 			{
-				if ((cells_v[i] + 1) * recv_buffer[i] < min_time)
+				if (((size_t)cells_v[i] + 1) * recv_buffer[i] < min_time)
 				{
 					min_cell = i;
-					min_time = (cells_v[i] + 1) * recv_buffer[i];
+					min_time = ((size_t)cells_v[i] + 1) * recv_buffer[i];
 				}
 			}
 			cells_v[min_cell] += 1;
@@ -7486,10 +7486,10 @@ PhreeqcRM::RebalanceLoad(void)
 			{
 				if (cells_v[i] > 1)
 				{
-					if ((cells_v[i] - 1) * recv_buffer[i] > max_time)
+					if (((size_t)cells_v[i] - 1) * recv_buffer[i] > max_time)
 					{
 						max_cell = i;
-						max_time = (cells_v[i] - 1) * recv_buffer[i];
+						max_time = ((size_t)cells_v[i] - 1) * recv_buffer[i];
 					}
 				}
 			}
@@ -7511,10 +7511,10 @@ PhreeqcRM::RebalanceLoad(void)
 	*/
 	try
 	{
-		if (end_cell_new[this->nthreads - 1] != this->count_chemistry - 1)
+		if (end_cell_new[(size_t)this->nthreads - 1] != this->count_chemistry - 1)
 		{
 			error_stream << "Failed: " << diff_cells << ", count_cells " << this->count_chemistry << ", last cell "
-				<< end_cell_new[this->nthreads - 1] << "\n";
+				<< end_cell_new[(size_t)this->nthreads - 1] << "\n";
 			for (int i = 0; i < this->nthreads; i++)
 			{
 				error_stream << i << ": first " << start_cell_new[i] << "\tlast " << end_cell_new[i] << "\n";
@@ -7532,7 +7532,7 @@ PhreeqcRM::RebalanceLoad(void)
 			double t = cells_v[i] * recv_buffer[i];
 			if (t > max_new)
 				max_new = t;
-			t = (end_cell[i] - start_cell[i] + 1) * recv_buffer[i];
+			t = ((size_t)end_cell[i] - (size_t)start_cell[i] + 1) * recv_buffer[i];
 			if (t > max_old)
 				max_old = t;
 		}
@@ -7556,7 +7556,7 @@ PhreeqcRM::RebalanceLoad(void)
 			{
 				int icells = (int) ((end_cell_new[i] - end_cell[i]) * this->rebalance_fraction);
 				end_cell_new[i] = end_cell[i] + icells;
-				start_cell_new[i + 1] = end_cell_new[i] + 1;
+				start_cell_new[(size_t)i + 1] = end_cell_new[i] + 1;
 			}
 		}
 		/*
@@ -8463,8 +8463,8 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 	}
 	assert(j < count_chemistry);
 	assert(this->nthreads > 1);
-	start_cell_new[this->nthreads - 1] = end_cell_new[this->nthreads - 2] + 1;
-	end_cell_new[this->nthreads - 1] = count_chemistry - 1;
+	start_cell_new[(size_t)this->nthreads - 1] = end_cell_new[(size_t)this->nthreads - 2] + 1;
+	end_cell_new[(size_t)this->nthreads - 1] = count_chemistry - 1;
 
 	if (efficiency > 0.95)
 	{
@@ -8890,7 +8890,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 	{
 		if (phast_iphreeqc_worker->Get_cell_clock_times().size() == 0)
 		{
-			phast_iphreeqc_worker->Get_cell_clock_times().resize(end - start + 1, 0.0);
+			phast_iphreeqc_worker->Get_cell_clock_times().resize((size_t)end - (size_t)start + 1, 0.0);
 		}
 	}
 	// Make list of cells with saturation > 0.0
@@ -9048,7 +9048,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 #endif
 			if (sat > 1e-6 )
 			{
-				phast_iphreeqc_worker->Get_cell_clock_times()[i - start] += t_elapsed / (double) count_active;
+				phast_iphreeqc_worker->Get_cell_clock_times()[(size_t)i - (size_t)start] += t_elapsed / (double) count_active;
 			}
 		}
 	}
@@ -9405,9 +9405,9 @@ PhreeqcRM::RunFile(bool workers, bool initial_phreeqc, bool utility, const std::
 		return IRM_FAIL;
 	}
 	std::vector<bool> run;
-	run.resize(this->nthreads + 2, false);
+	run.resize((size_t)this->nthreads + 2, false);
 	std::vector < int >  r_vector;
-	r_vector.resize(this->nthreads + 2, 0);
+	r_vector.resize((size_t)this->nthreads + 2, 0);
 
 	// Set flag for each IPhreeqc instance
 	if (flags[0] != 0)
@@ -9423,7 +9423,7 @@ PhreeqcRM::RunFile(bool workers, bool initial_phreeqc, bool utility, const std::
 	}
 	if (flags[2] != 0)
 	{
-		run[this->nthreads + 1] = true;
+		run[(size_t)this->nthreads + 1] = true;
 	}
 
 #ifdef USE_OPENMP
@@ -9546,9 +9546,9 @@ PhreeqcRM::RunString(bool workers, bool initial_phreeqc, bool utility, const std
 
 	// Set flag for each IPhreeqc instance
 	std::vector<bool> run;
-	run.resize(this->nthreads + 2, false);
+	run.resize((size_t)this->nthreads + 2, false);
 	std::vector < int >  r_vector;
-	r_vector.resize(this->nthreads + 2, 0);
+	r_vector.resize((size_t)this->nthreads + 2, 0);
 	if (flags[0] != 0)
 	{
 		for (int i = 0; i < this->nthreads; i++)
@@ -9562,7 +9562,7 @@ PhreeqcRM::RunString(bool workers, bool initial_phreeqc, bool utility, const std
 	}
 	if (flags[2] != 0)
 	{
-		run[this->nthreads + 1] = true;
+		run[(size_t)this->nthreads + 1] = true;
 	}
 #ifdef USE_OPENMP
 	omp_set_num_threads(this->nthreads);
@@ -9937,17 +9937,17 @@ PhreeqcRM::SetConcentrations(const std::vector<double> &t)
 	this->phreeqcrm_error_string.clear();
 	IRM_RESULT return_value = IRM_OK;
 	std::vector<double> c_chem, c_chem_root;
-	c_chem.resize(this->count_chemistry * (int) this->components.size(), INACTIVE_CELL_VALUE);
+	c_chem.resize((size_t)this->count_chemistry * this->components.size(), INACTIVE_CELL_VALUE);
 
 	if (this->mpi_myself == 0)
 	{
-		c_chem_root.resize(this->count_chemistry * (int) this->components.size(), INACTIVE_CELL_VALUE);
+		c_chem_root.resize((size_t)this->count_chemistry * this->components.size(), INACTIVE_CELL_VALUE);
 		for (int i = 0; i < this->count_chemistry; i++)
 		{
 			int j = this->backward_mapping[i][0];
 			for (int k = 0; k < (int) this->components.size(); k++)
 			{
-				c_chem_root[i * (int) this->components.size() + k] = t[k*this->nxyz + j];
+				c_chem_root[(size_t)i * this->components.size() + (size_t)k] = t[(size_t)k* (size_t)this->nxyz + (size_t)j];
 			}
 		}
 	}

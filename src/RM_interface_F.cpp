@@ -252,7 +252,7 @@ RMF_GetComponent(int * id, int * num, char *chem_name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetComponentCount()))
 			{
-				rmpadfstring(chem_name, Reaction_module_ptr->GetComponents()[*num - 1].c_str(), (unsigned int) *l1);
+				rmpadfstring(chem_name, Reaction_module_ptr->GetComponents()[(size_t)*num - 1].c_str(), (unsigned int) *l1);
 				return IRM_OK;
 			}
 		}
@@ -306,7 +306,7 @@ RMF_GetExchangeSpeciesName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetExchangeSpeciesCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetExchangeSpecies()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetExchangeSpecies()[(size_t)*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -328,7 +328,7 @@ RMF_GetExchangeName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetExchangeSpeciesCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetExchangeNames()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetExchangeNames()[(size_t)*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -364,7 +364,7 @@ RMF_GetSurfaceSpeciesName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetSurfaceSpeciesCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetSurfaceSpecies()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetSurfaceSpecies()[(size_t)*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -386,7 +386,7 @@ RMF_GetSurfaceType(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetSurfaceSpeciesCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetSurfaceTypes()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetSurfaceTypes()[(size_t)*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -409,7 +409,7 @@ RMF_GetSurfaceName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetSurfaceSpeciesCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetSurfaceNames()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetSurfaceNames()[(size_t)*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -445,7 +445,7 @@ RMF_GetEquilibriumPhasesName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetEquilibriumPhasesCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetEquilibriumPhases()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetEquilibriumPhases()[(size_t)*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -481,7 +481,7 @@ RMF_GetGasComponentsName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetGasComponentsCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetGasComponents()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetGasComponents()[(size_t)*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -517,7 +517,7 @@ RMF_GetKineticReactionsName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetKineticReactionsCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetKineticReactions()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetKineticReactions()[(size_t)*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -553,7 +553,7 @@ RMF_GetSolidSolutionComponentsName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetSolidSolutionComponentsCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetSolidSolutionComponents()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetSolidSolutionComponents()[(size_t)*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -575,7 +575,7 @@ RMF_GetSolidSolutionName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetSolidSolutionComponentsCount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetSolidSolutionNames()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetSolidSolutionNames()[(size_t)*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -610,7 +610,7 @@ RMF_GetSIName(int * id, int * num, char *name, int * l1)
 		{
 			if ((*l1 > 0) && (*num > 0) && (*num <= Reaction_module_ptr->GetSICount()))
 			{
-				rmpadfstring(name, Reaction_module_ptr->GetSINames()[*num - 1].c_str(), (unsigned int)*l1);
+				rmpadfstring(name, Reaction_module_ptr->GetSINames()[(size_t)*num - 1].c_str(), (unsigned int)*l1);
 				return IRM_OK;
 			}
 		}
@@ -633,7 +633,7 @@ RMF_GetConcentrations(int *id, double * c)
 	if (Reaction_module_ptr)
 	{
 		std::vector<double> c_vector;
-		c_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetComponentCount());
+		c_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetComponentCount());
 		IRM_RESULT return_value = Reaction_module_ptr->GetConcentrations(c_vector);
 		if (return_value == IRM_OK)
 		{
@@ -737,7 +737,7 @@ RMF_GetGasCompMoles(int* id, double* m_out)
 	if (Reaction_module_ptr)
 	{
 		std::vector<double> m_vector;
-		m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+		m_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetGasComponentsCount());
 		IRM_RESULT return_value = Reaction_module_ptr->GetGasCompMoles(m_vector);
 		if (return_value == IRM_OK)
 		{
@@ -757,7 +757,7 @@ RMF_GetGasCompPressures(int* id, double* p_out)
 	if (Reaction_module_ptr)
 	{
 		std::vector<double> p_vector;
-		p_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+		p_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetGasComponentsCount());
 		IRM_RESULT return_value = Reaction_module_ptr->GetGasCompPressures(p_vector);
 		if (return_value == IRM_OK)
 		{
@@ -777,7 +777,7 @@ RMF_GetGasCompPhi(int* id, double* phi_out)
 	if (Reaction_module_ptr)
 	{
 		std::vector<double> phi_vector;
-		phi_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+		phi_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetGasComponentsCount());
 		IRM_RESULT return_value = Reaction_module_ptr->GetGasCompPhi(phi_vector);
 		if (return_value == IRM_OK)
 		{
@@ -951,8 +951,8 @@ RMF_GetSelectedOutput(int * id, double * so)
 	if (Reaction_module_ptr)
 	{
 		std::vector<double> so_vector;
-		so_vector.resize(Reaction_module_ptr->GetSelectedOutputColumnCount() * 
-			Reaction_module_ptr->GetSelectedOutputRowCount());
+		so_vector.resize((size_t)Reaction_module_ptr->GetSelectedOutputColumnCount() *
+			(size_t)Reaction_module_ptr->GetSelectedOutputRowCount());
 		IRM_RESULT return_value = Reaction_module_ptr->GetSelectedOutput(so_vector);
 		if (return_value == IRM_OK)
 		{
@@ -1371,10 +1371,10 @@ RMF_InitialPhreeqc2Module(int *id,
 		std::vector<int> i1_vector, i2_vector;
 		std::vector<double> f1_vector;
 		int nxyz = Reaction_module_ptr->GetGridCellCount();
-		i1_vector.resize(nxyz * 7);
-		i2_vector.resize(nxyz * 7, -1);
-		f1_vector.resize(nxyz * 7, 1.0);
-		memcpy(&i1_vector.front(), initial_conditions1, (size_t) (nxyz * 7 * sizeof(int)));
+		i1_vector.resize((size_t)nxyz * 7);
+		i2_vector.resize((size_t)nxyz * 7, -1);
+		f1_vector.resize((size_t)nxyz * 7, 1.0);
+		memcpy(&i1_vector.front(), initial_conditions1, ((size_t)nxyz * 7 * sizeof(int)));
 		return Reaction_module_ptr->InitialPhreeqc2Module(
 			i1_vector,
 			i2_vector,
@@ -1405,17 +1405,17 @@ RMF_InitialPhreeqc2Module2(int *id,
 		std::vector<int> i1_vector, i2_vector;
 		std::vector<double> f1_vector;
 		int nxyz = Reaction_module_ptr->GetGridCellCount();
-		i1_vector.resize(nxyz * 7);
-		i2_vector.resize(nxyz * 7, -1);
-		f1_vector.resize(nxyz * 7, 1.0);
-		memcpy(&i1_vector.front(), initial_conditions1, (size_t) (nxyz * 7 * sizeof(int)));
+		i1_vector.resize((size_t)nxyz * 7);
+		i2_vector.resize((size_t)nxyz * 7, -1);
+		f1_vector.resize((size_t)nxyz * 7, 1.0);
+		memcpy(&i1_vector.front(), initial_conditions1, ((size_t)nxyz * 7 * sizeof(int)));
 		if (initial_conditions2 != NULL)
 		{
-			memcpy(&i2_vector.front(), initial_conditions2, (size_t) (nxyz * 7 * sizeof(int)));
+			memcpy(&i2_vector.front(), initial_conditions2, ((size_t)nxyz * 7 * sizeof(int)));
 		}
 		if (fraction1 != NULL)
 		{
-			memcpy(&f1_vector.front(), fraction1, (size_t) (nxyz * 7 * sizeof(double)));
+			memcpy(&f1_vector.front(), fraction1, ((size_t)nxyz * 7 * sizeof(double)));
 		}
 		return Reaction_module_ptr->InitialPhreeqc2Module(
 			i1_vector,
@@ -1734,7 +1734,7 @@ RMF_SetConcentrations(int *id, double *t)
 	if (Reaction_module_ptr)
 	{
 		std::vector<double> c_vector;
-		c_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetComponentCount());
+		c_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetComponentCount());
 		memcpy(&c_vector.front(), t, c_vector.size() * sizeof(double));
 		return Reaction_module_ptr->SetConcentrations(c_vector);
 	}
@@ -1846,7 +1846,7 @@ RMF_SetGasCompMoles(int* id, double* m_in)
 	if (Reaction_module_ptr)
 	{
 		std::vector<double> m_vector;
-		m_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetGasComponentsCount());
+		m_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetGasComponentsCount());
 		memcpy(&m_vector.front(), m_in, m_vector.size() * sizeof(double));
 		return Reaction_module_ptr->SetGasCompMoles(m_vector);
 	}
@@ -2245,7 +2245,7 @@ RMF_SpeciesConcentrations2Module(int *id, double * species_conc)
 		{
 			IRM_RESULT return_value = IRM_OK;
 			std::vector<double> species_conc_vector;
-			species_conc_vector.resize(Reaction_module_ptr->GetGridCellCount() * Reaction_module_ptr->GetSpeciesCount());
+			species_conc_vector.resize((size_t)Reaction_module_ptr->GetGridCellCount() * (size_t)Reaction_module_ptr->GetSpeciesCount());
 			memcpy(&species_conc_vector.front(), species_conc, species_conc_vector.size()*sizeof(double));
 			return_value = Reaction_module_ptr->SpeciesConcentrations2Module(species_conc_vector);
 			return return_value;
