@@ -39,7 +39,7 @@ sit_tidy(void)
 	 *  allocate pointers to species structures
 	 */
 	if (spec != NULL) spec = (struct species **) free_check_null(spec);
-	spec = (struct species **) PHRQ_malloc((size_t) (3 * count_s * sizeof(struct species *)));
+	spec = (struct species **) PHRQ_malloc(3 * (size_t)count_s * sizeof(struct species *));
 	if (spec == NULL) malloc_error();
 	for (i = 0; i < 3 * count_s; i++) spec[i] = NULL;
 
@@ -57,13 +57,13 @@ sit_tidy(void)
 	 *  allocate other arrays for SIT
 	 */
 	if (sit_IPRSNT != NULL) sit_IPRSNT = (int *) free_check_null(sit_IPRSNT);
-	sit_IPRSNT = (int *) PHRQ_malloc((size_t) (3 * count_s * sizeof(int)));
+	sit_IPRSNT = (int *) PHRQ_malloc(3 * (size_t)count_s * sizeof(int));
 	if (sit_IPRSNT == NULL) malloc_error();
 	if (sit_M != NULL) sit_M = (LDBLE *) free_check_null(sit_M);
-	sit_M = (LDBLE *) PHRQ_malloc((size_t) (3 * count_s * sizeof(LDBLE)));
+	sit_M = (LDBLE *) PHRQ_malloc(3 * (size_t)count_s * sizeof(LDBLE));
 	if (sit_M == NULL) malloc_error();
 	if (sit_LGAMMA != NULL) sit_LGAMMA = (LDBLE *) free_check_null(sit_LGAMMA);
-	sit_LGAMMA = (LDBLE *) PHRQ_malloc((size_t) (3 * count_s * sizeof(LDBLE)));
+	sit_LGAMMA = (LDBLE *) PHRQ_malloc(3 * (size_t)count_s * sizeof(LDBLE));
 	if (sit_LGAMMA == NULL) malloc_error();
 
 

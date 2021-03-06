@@ -592,13 +592,12 @@ elt_list_dup(struct elt_list *elt_list_ptr_old)
 /*
  *   Malloc space and store element data
  */
-	elt_list_ptr_new =
-		(struct elt_list *) PHRQ_malloc((size_t) (count_totals + 1) *
-										sizeof(struct elt_list));
+	elt_list_ptr_new = (struct elt_list *) PHRQ_malloc( 
+		((size_t)count_totals + 1) * sizeof(struct elt_list));
 	if (elt_list_ptr_new == NULL)
 		malloc_error();
 	memcpy(elt_list_ptr_new, elt_list_ptr_old,
-		   (size_t) (count_totals + 1) * sizeof(struct elt_list));
+		((size_t)count_totals + 1) * sizeof(struct elt_list));
 	return (elt_list_ptr_new);
 }
 
@@ -663,9 +662,8 @@ elt_list_save(void)
 /*
  *   Malloc space and store element data
  */
-	elt_list_ptr =
-		(struct elt_list *) PHRQ_malloc((size_t) (count_elts + 1) *
-										sizeof(struct elt_list));
+	elt_list_ptr = (struct elt_list*)PHRQ_malloc(
+		((size_t)count_elts + 1) * sizeof(struct elt_list));
 	if (elt_list_ptr == NULL)
 	{
 		malloc_error();
@@ -1842,7 +1840,7 @@ rxn_dup(struct reaction *rxn_ptr_old)
  *   Copy tokens
  */
 	memcpy(rxn_ptr_new->token, rxn_ptr_old->token,
-		   (size_t) (i + 1) * sizeof(struct rxn_token));
+		((size_t)i + 1) * sizeof(struct rxn_token));
 
 	return (rxn_ptr_new);
 }
@@ -2371,11 +2369,8 @@ save_values_store(struct save_values *s_v)
 	}
 	else
 	{
-		save_values =
-			(struct save_values *) PHRQ_realloc(save_values,
-												(size_t) (count_save_values +
-														  1) *
-												sizeof(struct save_values));
+		save_values = (struct save_values*)PHRQ_realloc(save_values,
+			((size_t)count_save_values + 1) * sizeof(struct save_values));
 		if (save_values == NULL)
 			malloc_error();
 		save_values[count_save_values].value = s_v->value;

@@ -11059,7 +11059,7 @@ read_named_logk(void)
 			else
 			{
 				logk_ptr->add_logk = (struct name_coef*)PHRQ_realloc(logk_ptr->add_logk,
-					(size_t)((logk_ptr->count_add_logk + 1) * sizeof(struct name_coef)));
+					((size_t)logk_ptr->count_add_logk + 1) * sizeof(struct name_coef));
 				if (logk_ptr->add_logk == NULL)
 					malloc_error();
 			}

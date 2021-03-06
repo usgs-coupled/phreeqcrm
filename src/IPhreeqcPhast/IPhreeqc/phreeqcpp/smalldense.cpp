@@ -79,11 +79,11 @@ denalloc(integertype n)
 	if (n <= 0)
 		return (NULL);
 
-	a = (realtype **) malloc(n * sizeof(realtype *));
+	a = (realtype **) malloc((size_t)n * sizeof(realtype *));
 	if (a == NULL)
 		return (NULL);
 
-	a[0] = (realtype *) malloc(n * n * sizeof(realtype));
+	a[0] = (realtype *) malloc((size_t)n * (size_t)n * sizeof(realtype));
 	if (a[0] == NULL)
 	{
 		free(a);
@@ -91,7 +91,7 @@ denalloc(integertype n)
 	}
 
 	for (j = 1; j < n; j++)
-		a[j] = a[0] + j * n;
+		a[j] = a[0] + (size_t)j * (size_t)n;
 
 	return (a);
 }

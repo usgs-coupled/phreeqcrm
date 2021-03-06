@@ -123,7 +123,7 @@ read_solution_spread(void)
 			bool num = false;
 			if (j == DIGIT)
 			{
-				strtod(token.c_str(), &ptr);
+				double strtod_rtn = strtod(token.c_str(), &ptr);
 				int j1 = copy_token(token1, &ptr);
 				if (j1 != EMPTY)
 				{
@@ -385,11 +385,8 @@ read_solution_spread(void)
 				}
 				if (i == soln_defaults.count_iso)
 				{
-					soln_defaults.iso =
-						(struct iso *) PHRQ_realloc(soln_defaults.iso,
-						(size_t) (i +
-						1) *
-						sizeof(struct iso));
+					soln_defaults.iso = (struct iso*)PHRQ_realloc(soln_defaults.iso,
+						((size_t)i + 1) * sizeof(struct iso));
 					if (soln_defaults.iso == NULL)
 					{
 						malloc_error();
@@ -471,11 +468,8 @@ read_solution_spread(void)
 				}
 				if (i == soln_defaults.count_iso)
 				{
-					soln_defaults.iso =
-						(struct iso *) PHRQ_realloc(soln_defaults.iso,
-						(size_t) (i +
-						1) *
-						sizeof(struct iso));
+					soln_defaults.iso = (struct iso*)PHRQ_realloc(soln_defaults.iso,
+						((size_t)i + 1) * sizeof(struct iso));
 					if (soln_defaults.iso == NULL)
 					{
 						malloc_error();
