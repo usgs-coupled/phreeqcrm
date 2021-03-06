@@ -250,6 +250,7 @@ AC_CONFIG_FILES([
   Doxygen/Makefile
   Tests/Makefile
   Tests/advect.pqi
+  Tests/gas.pqi
   Tests/phreeqc.dat
   Tests/units.pqi
 ])
