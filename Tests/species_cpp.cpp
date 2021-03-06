@@ -87,7 +87,7 @@ int species_cpp()
 		for (int i = 0; i < nxyz/2; i++)
 		{
 			grid2chem[i] = i;
-			grid2chem[i + nxyz/2] = i;
+			grid2chem[(size_t)i + (size_t)nxyz/2] = i;
 		}
 		status = phreeqc_rm.CreateMapping(grid2chem);
 		if (status < 0) phreeqc_rm.DecodeError(status);
@@ -158,11 +158,11 @@ int species_cpp()
 		phreeqc_rm.OutputMessage("\n");
 		// Set array of initial conditions
 		std::vector<int> ic1, ic2;
-		ic1.resize(nxyz*7, -1);
+		ic1.resize((size_t)nxyz*7, -1);
 		for (int i = 0; i < nxyz; i++)
 		{
 			ic1[i] = 1;              // Solution 1
-			ic1[2*nxyz + i] = 1;     // Exchange 1
+			ic1[2* (size_t)nxyz + (size_t)i] = 1;     // Exchange 1
 		}
 		status = phreeqc_rm.InitialPhreeqc2Module(ic1);
 		// Initial equilibration of cells
@@ -203,7 +203,7 @@ int species_cpp()
 		time_step = 86400.;
 		status = phreeqc_rm.SetTimeStep(time_step);
 		std::vector < double > component_c;
-		component_c.resize(nxyz * ncomps);
+		component_c.resize((size_t)nxyz * (size_t)ncomps);
 		for (int steps = 0; steps < nsteps; steps++)
 		{
 			// Transport calculation here
@@ -259,7 +259,7 @@ int species_cpp()
 					// Get double array of selected output values
 					std::vector<double> so;
 					int col = phreeqc_rm.GetSelectedOutputColumnCount();
-					so.resize(nxyz*col, 0);
+					so.resize((size_t)nxyz* (size_t)col, 0);
 					status = phreeqc_rm.GetSelectedOutput(so);
 					// Print results
 					for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
@@ -270,13 +270,13 @@ int species_cpp()
 						std::cerr << "     Components: " << "\n";
 						for (int j = 0; j < ncomps; j++)
 						{
-							std::cerr << "          " << j << " " << components[j] << ": " << component_c[j*nxyz + i] << "\n";
+							std::cerr << "          " << j << " " << components[j] << ": " << component_c[(size_t)j* (size_t)nxyz + (size_t)i] << "\n";
 						}
 						std::cerr << "     Species: " << "\n";
 						for (int j = 0; j < nspecies; j++)
 						{
-							std::cerr << "          " << j << " " << species[j] << " c: " << c[j*nxyz + i] << 
-								" lg: " << lg[j*nxyz + i] << " lm: " << lm[j * nxyz + i] <<"\n";
+							std::cerr << "          " << j << " " << species[j] << " c: " << c[(size_t)j* (size_t)nxyz + (size_t)i] <<
+								" lg: " << lg[(size_t)j* (size_t)nxyz + (size_t)i] << " lm: " << lm[(size_t)j * (size_t)nxyz + (size_t)i] <<"\n";
 						}
 						std::vector<std::string> headings;
 						headings.resize(col);
@@ -284,7 +284,7 @@ int species_cpp()
 						for (int j = 0; j < col; j++)
 						{
 							status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
-							std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
+							std::cerr << "          " << j << " " << headings[j] << ": " << so[(size_t)j* (size_t)nxyz + (size_t)i] << "\n";
 						}
 					}
 				}
@@ -297,10 +297,10 @@ int species_cpp()
 
  		// Use utility instance of PhreeqcRM to calculate pH of a mixture
 		std::vector <double> c_well;
-		c_well.resize(1*ncomps, 0.0);
+		c_well.resize((size_t)ncomps, 0.0);
 		for (int i = 0; i < ncomps; i++)
 		{
-			c_well[i] = 0.5 * component_c[0 + nxyz*i] + 0.5 * component_c[9 + nxyz*i];
+			c_well[i] = 0.5 * component_c[(size_t)nxyz* (size_t)i] + 0.5 * component_c[9 + (size_t)nxyz* (size_t)i];
 		}
 		std::vector<double> tc, p_atm;
 		tc.resize(1, 15.0);
@@ -353,12 +353,12 @@ SpeciesAdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps
 	{
 		for (int j = 0; j < ncomps; j++)
 		{
-			c[j * nxyz + i] = c[j * nxyz + i - 1];                 // component j
+			c[(size_t)j * (size_t)nxyz + (size_t)i] = c[(size_t)j * (size_t)nxyz + (size_t)i - 1];                 // component j
 		}
 	}
 	// Cell zero gets boundary condition
 	for (int j = 0; j < ncomps; j++)
 	{
-		c[j * nxyz] = bc_conc[j * dim];                           // component j
+		c[(size_t)j * (size_t)nxyz] = bc_conc[(size_t)j * (size_t)dim];                           // component j
 	}
 }

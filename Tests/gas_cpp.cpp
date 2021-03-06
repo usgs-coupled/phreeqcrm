@@ -118,7 +118,7 @@ int gas_cpp()
 		// eliminate CH4 in cell 0
 		gas_moles[0] = -1.0;
 		// Gas phase is removed from cell 1
-		gas_moles[1] = gas_moles[nxyz + 1] = gas_moles[2 * nxyz + 1] = -1.0;
+		gas_moles[1] = gas_moles[(size_t)nxyz + 1] = gas_moles[2 * (size_t)nxyz + 1] = -1.0;
 		status = phreeqc_rm.SetGasCompMoles(gas_moles);
 		phreeqc_rm.RunCells();
 		status = phreeqc_rm.GetGasCompMoles(gas_moles);
@@ -130,8 +130,8 @@ int gas_cpp()
 		gas_moles[0] = 0.02;
 		// Gas phase is added to cell 1; fixed pressure by default
 		gas_moles[1] = 0.01;
-		gas_moles[nxyz + 1] = 0.02;
-		gas_moles[2 * nxyz + 1] = 0.03;
+		gas_moles[(size_t)nxyz + 1] = 0.02;
+		gas_moles[2 * (size_t)nxyz + 1] = 0.03;
 		status = phreeqc_rm.SetGasCompMoles(gas_moles);
 		// Set volume for cell 1 and convert to fixed pressure gas phase
 		std::vector<double> gas_volume;

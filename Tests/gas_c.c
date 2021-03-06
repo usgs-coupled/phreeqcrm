@@ -109,18 +109,18 @@ void PrintCells(char** gcomps, double* gas_moles,
 		}
 
 		// Set array of initial conditions
-		ic1 = (int *) malloc((size_t) (7 * nxyz * sizeof(int)));
-		ic2 = (int*) malloc((size_t)(7 * nxyz * sizeof(int)));
-		f1 = (double*) malloc((size_t)(7 * nxyz * sizeof(double)));
+		ic1 = (int *) malloc((7 * (size_t)nxyz * sizeof(int)));
+		ic2 = (int*) malloc((7 * (size_t)nxyz * sizeof(int)));
+		f1 = (double*) malloc((7 * (size_t)nxyz * sizeof(double)));
 		for (i = 0; i < nxyz; i++) 
 		{
 			ic1[i]          = 1;       // Solution 1
 			ic1[nxyz + i]   = -1;      // Equilibrium phases none
-			ic1[2*nxyz + i] = -1;       // Exchange 1
-			ic1[3*nxyz + i] = -1;      // Surface none
-			ic1[4*nxyz + i] = i % 3 + 1;      // Gas phase none
-			ic1[5*nxyz + i] = -1;      // Solid solutions none
-			ic1[6*nxyz + i] = -1;      // Kinetics none
+			ic1[2* nxyz + i] = -1;       // Exchange 1
+			ic1[3* nxyz + i] = -1;      // Surface none
+			ic1[4* nxyz + i] = i % 3 + 1;      // Gas phase none
+			ic1[5* nxyz + i] = -1;      // Solid solutions none
+			ic1[6* nxyz + i] = -1;      // Kinetics none
 			ic2[i]          = -1;      // Solution none
 			ic2[nxyz + i]   = -1;      // Equilibrium phases none
 			ic2[2*nxyz + i] = -1;      // Exchange none
@@ -139,16 +139,16 @@ void PrintCells(char** gcomps, double* gas_moles,
 		status = RM_InitialPhreeqc2Module(id, ic1, ic2, f1); 
 
 		// Get gases
-		gas_moles = (double *) malloc((size_t) (ngas * nxyz * sizeof(double)));
-		gas_p = (double*)malloc((size_t)(ngas * nxyz * sizeof(double)));
-		gas_phi = (double*)malloc((size_t)(ngas * nxyz * sizeof(double)));
+		gas_moles = (double *) malloc((size_t)ngas * (size_t)nxyz * sizeof(double));
+		gas_p = (double*)malloc((size_t)ngas * (size_t)nxyz * sizeof(double));
+		gas_phi = (double*)malloc((size_t)ngas * (size_t)nxyz * sizeof(double));
 		status = RM_GetGasCompMoles(id, gas_moles);
 		status = RM_GetGasCompPressures(id, gas_p);
 		status = RM_GetGasCompPhi(id, gas_phi);
 		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions");
 
 		// multiply by 2
-		for (int i = 0; i < nxyz * RM_GetGasComponentsCount(id); i++)
+		for (size_t i = 0; i < (size_t)nxyz * RM_GetGasComponentsCount(id); i++)
 		{
 			gas_moles[i] *= 2.0;
 		}
@@ -161,7 +161,7 @@ void PrintCells(char** gcomps, double* gas_moles,
 		// eliminate CH4 in cell 0
 		gas_moles[0] = -1.0;
 		// Gas phase is removed from cell 1
-		gas_moles[1] = gas_moles[nxyz + 1] = gas_moles[2 * nxyz + 1] = -1.0;
+		gas_moles[1] = gas_moles[(size_t)nxyz + 1] = gas_moles[2 * (size_t)nxyz + 1] = -1.0;
 		status = RM_SetGasCompMoles(id, gas_moles);
 		status = RM_RunCells(id);
 		status = RM_GetGasCompMoles(id, gas_moles);
@@ -177,7 +177,7 @@ void PrintCells(char** gcomps, double* gas_moles,
 		gas_moles[2 * nxyz + 1] = 0.03;
 		status = RM_SetGasCompMoles(id, gas_moles);
 		// Set volume for cell 1 and convert to fixed pressure gas phase
-		gas_volume = (double*)malloc((size_t)(nxyz * sizeof(double)));
+		gas_volume = (double*)malloc((size_t)nxyz * sizeof(double));
 		for (int i = 0; i < nxyz; i++) gas_volume[i] = -1.0;
 		gas_volume[1] = 12.25;
 		status = RM_SetGasPhaseVolume(id, gas_volume);

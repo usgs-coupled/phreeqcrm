@@ -205,9 +205,9 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		}
 		status = RM_OutputMessage(id, "\n");
 		// Set array of initial conditions
-		ic1 = (int *) malloc((size_t) (7 * nxyz * sizeof(int)));
-		ic2 = (int *) malloc((size_t) (7 * nxyz * sizeof(int)));
-		f1 = (double *) malloc((size_t) (7 * nxyz * sizeof(double)));
+		ic1 = (int *) malloc((size_t) (7 * (size_t)nxyz * sizeof(int)));
+		ic2 = (int *) malloc((size_t) (7 * (size_t)nxyz * sizeof(int)));
+		f1 = (double *) malloc((size_t) (7 * (size_t)nxyz * sizeof(double)));
 		for (i = 0; i < nxyz; i++) 
 		{
 			ic1[i]          = 1;       // Solution 1
@@ -248,10 +248,10 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		// Initial equilibration of cells
 		time = 0.0;
 		time_step = 0.0;
-		c = (double *) malloc((size_t) (ncomps * nxyz * sizeof(double)));
-		species_c = (double *) malloc((size_t) (nspecies * nxyz * sizeof(double)));
-		species_log10gammas = (double*)malloc((size_t)(nspecies * nxyz * sizeof(double)));
-		species_log10molalities = (double*)malloc((size_t)(nspecies * nxyz * sizeof(double)));
+		c = (double *) malloc((size_t) ((size_t)ncomps * (size_t)nxyz * sizeof(double)));
+		species_c = (double *) malloc((size_t) ((size_t)nspecies * (size_t)nxyz * sizeof(double)));
+		species_log10gammas = (double*)malloc((size_t)((size_t)nspecies * (size_t)nxyz * sizeof(double)));
+		species_log10molalities = (double*)malloc((size_t)((size_t)nspecies * (size_t)nxyz * sizeof(double)));
 		status = RM_SetTime(id, time);
 		status = RM_SetTimeStep(id, time_step);
 		status = RM_RunCells(id); 
@@ -268,7 +268,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		bc1 = (int *) malloc((size_t) (nbound * sizeof(int)));
 		bc2 = (int *) malloc((size_t) (nbound * sizeof(int)));
 		bc_f1 = (double *) malloc((size_t) (nbound * sizeof(double)));
-		bc_conc = (double *) malloc((size_t) (nspecies * nbound * sizeof(double)));
+		bc_conc = (double *) malloc((size_t) ((size_t)nspecies * (size_t)nbound * sizeof(double)));
 		for (i = 0; i < nbound; i++) 
 		{
 			bc1[i]          = 0;       // Solution 0 from Initial IPhreeqc instance
@@ -282,10 +282,10 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		// --------------------------------------------------------------------------
 
 		nsteps = 10;
-		density = (double *) malloc((size_t) (nxyz * sizeof(double)));
-		volume = (double *) malloc((size_t) (nxyz * sizeof(double)));
-		pressure = (double *) malloc((size_t) (nxyz * sizeof(double)));
-		temperature = (double *) malloc((size_t) (nxyz * sizeof(double)));
+		density = (double *) malloc((size_t)nxyz * sizeof(double));
+		volume = (double *) malloc((size_t)nxyz * sizeof(double));
+		pressure = (double *) malloc((size_t)nxyz * sizeof(double));
+		temperature = (double *) malloc((size_t)nxyz * sizeof(double));
 		for (i = 0; i < nxyz; i++) 
 		{
 			density[i] = 1.0;
@@ -354,7 +354,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 					// Get double array of selected output values
 					col = RM_GetSelectedOutputColumnCount(id);
 					// Allocate(selected_out(nxyz,col))
-					selected_out = (double *) malloc((size_t) (col * nxyz * sizeof(double)));
+					selected_out = (double *) malloc((size_t) ((size_t)col * (size_t)nxyz * sizeof(double)));
 					status = RM_GetSelectedOutput(id, selected_out);
 					// Print results
 					for (i = 0; i < RM_GetSelectedOutputRowCount(id)/2; i++)
@@ -396,8 +396,8 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		{
 			c_well[i] = 0.5 * c[0 + nxyz*i] + 0.5 * c[9 + nxyz*i];
 		}
-		tc = (double *) malloc((size_t) (1 * sizeof(double)));
-		p_atm = (double *) malloc((size_t) (1 * sizeof(double)));
+		tc = (double *) malloc(sizeof(double));
+		p_atm = (double *) malloc(sizeof(double));
 		tc[0] = 15.0;
 		p_atm[0] = 3.0;
 		iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);

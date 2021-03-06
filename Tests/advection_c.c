@@ -244,9 +244,9 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		// Example of selected output
 		example_selected_output(id);
 		// Set array of initial conditions
-		ic1 = (int *) malloc((size_t) (7 * nxyz * sizeof(int)));
-		ic2 = (int *) malloc((size_t) (7 * nxyz * sizeof(int)));
-		f1 = (double *) malloc((size_t) (7 * nxyz * sizeof(double)));
+		ic1 = (int *) malloc(7 * (size_t)nxyz * sizeof(int));
+		ic2 = (int *) malloc(7 * (size_t)nxyz * sizeof(int));
+		f1 = (double *) malloc(7 * (size_t)nxyz * sizeof(double));
 		for (i = 0; i < nxyz; i++) 
 		{
 			ic1[i]          = 1;       // Solution 1
@@ -287,7 +287,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		// Initial equilibration of cells
 		time = 0.0;
 		time_step = 0.0;
-		c = (double *) malloc((size_t) (ncomps * nxyz * sizeof(double)));
+		c = (double *) malloc((size_t) ((size_t)ncomps * (size_t)nxyz * sizeof(double)));
 		status = RM_SetTime(id, time);
 		status = RM_SetTimeStep(id, time_step);
 		status = RM_RunCells(id); 
@@ -298,10 +298,10 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		// --------------------------------------------------------------------------
 
 		nbound = 1;
-		bc1 = (int *) malloc((size_t) (nbound * sizeof(int)));
-		bc2 = (int *) malloc((size_t) (nbound * sizeof(int)));
-		bc_f1 = (double *) malloc((size_t) (nbound * sizeof(double)));
-		bc_conc = (double *) malloc((size_t) (ncomps * nbound * sizeof(double)));
+		bc1 = (int *) malloc((size_t)nbound * sizeof(int));
+		bc2 = (int *) malloc((size_t)nbound * sizeof(int));
+		bc_f1 = (double *) malloc((size_t)nbound * sizeof(double));
+		bc_conc = (double *) malloc((size_t)ncomps * (size_t)nbound * sizeof(double));
 		for (i = 0; i < nbound; i++) 
 		{
 			bc1[i]          = 0;       // Solution 0 from Initial IPhreeqc instance
@@ -398,7 +398,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 					// Get double array of selected output values
 					col = RM_GetSelectedOutputColumnCount(id);
 					// allocate(selected_out(nxyz,col))
-					selected_out = (double *) malloc((size_t) (col * nxyz * sizeof(double)));
+					selected_out = (double *) malloc((size_t)col * (size_t)nxyz * sizeof(double));
 					status = RM_GetSelectedOutput(id, selected_out);
 					// Print results
 					for (i = 0; i < RM_GetSelectedOutputRowCount(id)/2; i++)
@@ -433,8 +433,8 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		{
 			c_well[i] = 0.5 * c[0 + nxyz*i] + 0.5 * c[9 + nxyz*i];
 		}
-		tc = (double *) malloc((size_t) (2 * sizeof(double)));
-		p_atm = (double *) malloc((size_t) (2 * sizeof(double)));
+		tc = (double *) malloc(sizeof(double));
+		p_atm = (double *) malloc(sizeof(double));
 		tc[0] = 15.0;
 		p_atm[0] = 3.0;
 		iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
@@ -603,7 +603,7 @@ int example_selected_output(int id)
 	nlines = nlines + RM_GetKineticReactionsCount(id);
 	nlines = nlines + RM_GetSolidSolutionComponentsCount(id);
 	nlines = nlines + RM_GetSICount(id);
-	input = (char *) malloc((size_t)(nlines * 40));
+	input = (char *) malloc((size_t)nlines * 40);
 
 	strncpy(input, "",40);
 	strcat(input, "SELECTED_OUTPUT 2\n");

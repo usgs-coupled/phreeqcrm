@@ -134,7 +134,7 @@ int advection_cpp()
 		for (int i = 0; i < nxyz/2; i++)
 		{
 			grid2chem[i] = i;
-			grid2chem[i + nxyz/2] = i;
+			grid2chem[i + (size_t)nxyz/2] = i;
 		}
 		status = phreeqc_rm.CreateMapping(grid2chem);
 		if (status < 0) phreeqc_rm.DecodeError(status);
@@ -200,19 +200,19 @@ int advection_cpp()
 		phreeqc_rm.OutputMessage("\n");
 		// Set array of initial conditions
 		std::vector<int> ic1, ic2;
-		ic1.resize(nxyz*7, -1);
-		ic2.resize(nxyz*7, -1);
+		ic1.resize((size_t)nxyz*7, -1);
+		ic2.resize((size_t)nxyz*7, -1);
 		std::vector<double> f1;
-		f1.resize(nxyz*7, 1.0);
+		f1.resize((size_t)nxyz*7, 1.0);
 		for (int i = 0; i < nxyz; i++)
 		{
 			ic1[i] = 1;              // Solution 1
-			ic1[nxyz + i] = -1;      // Equilibrium phases none
-			ic1[2*nxyz + i] = 1;     // Exchange 1
-			ic1[3*nxyz + i] = -1;    // Surface none
-			ic1[4*nxyz + i] = -1;    // Gas phase none
-			ic1[5*nxyz + i] = -1;    // Solid solutions none
-			ic1[6*nxyz + i] = -1;    // Kinetics none
+			ic1[(size_t)nxyz + i] = -1;      // Equilibrium phases none
+			ic1[2* (size_t)nxyz + i] = 1;     // Exchange 1
+			ic1[3* (size_t)nxyz + i] = -1;    // Surface none
+			ic1[4* (size_t)nxyz + i] = -1;    // Gas phase none
+			ic1[5* (size_t)nxyz + i] = -1;    // Solid solutions none
+			ic1[6* (size_t)nxyz + i] = -1;    // Kinetics none
 		}
 		status = phreeqc_rm.InitialPhreeqc2Module(ic1, ic2, f1);
 		// No mixing is defined, so the following is equivalent
@@ -342,7 +342,7 @@ int advection_cpp()
 						std::cerr << "     Components: " << "\n";
 						for (int j = 0; j < ncomps; j++)
 						{
-							std::cerr << "          " << j << " " << components[j] << ": " << c[j*nxyz + i] << "\n";
+							std::cerr << "          " << j << " " << components[j] << ": " << c[(size_t)j* (size_t)nxyz + (size_t)i] << "\n";
 						}
 						std::vector<std::string> headings;
 						headings.resize(col);
@@ -350,7 +350,7 @@ int advection_cpp()
 						for (int j = 0; j < col; j++)
 						{
 							status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
-							std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
+							std::cerr << "          " << j << " " << headings[j] << ": " << so[(size_t)j* (size_t)nxyz + (size_t)i] << "\n";
 						}
 					}
 				}
@@ -366,7 +366,7 @@ int advection_cpp()
 		c_well.resize(1*ncomps, 0.0);
 		for (int i = 0; i < ncomps; i++)
 		{
-			c_well[i] = 0.5 * c[0 + nxyz*i] + 0.5 * c[9 + nxyz*i];
+			c_well[i] = 0.5 * c[(size_t)nxyz* (size_t)i] + 0.5 * c[9 + (size_t)nxyz* (size_t)i];
 		}
 		std::vector<double> tc, p_atm;
 		tc.resize(1, 15.0);
@@ -428,13 +428,13 @@ AdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int n
 	{
 		for (int j = 0; j < ncomps; j++)
 		{
-			c[j * nxyz + i] = c[j * nxyz + i - 1];                 // component j
+			c[(size_t)j * (size_t)nxyz + (size_t)i] = c[(size_t)j * (size_t)nxyz + (size_t)i - 1];                 // component j
 		}
 	}
 	// Cell zero gets boundary condition
 	for (int j = 0; j < ncomps; j++)
 	{
-		c[j * nxyz] = bc_conc[j * dim];                                // component j
+		c[(size_t)j * (size_t)nxyz] = bc_conc[(size_t)j * (size_t)dim];                                // component j
 	}
 }
 int units_tester()
