@@ -249,10 +249,8 @@ read_calculate_values(void)
 			{
 			length = (int) strlen(calculate_value_ptr->commands);
 			line_length = (int) strlen(line);
-			calculate_value_ptr->commands =
-				(char *) PHRQ_realloc(calculate_value_ptr->commands,
-									  (size_t) (length + line_length +
-												2) * sizeof(char));
+			calculate_value_ptr->commands = (char*)PHRQ_realloc(calculate_value_ptr->commands,
+				((size_t)length + line_length + 2) * sizeof(char));
 			if (calculate_value_ptr->commands == NULL)
 				malloc_error();
 			calculate_value_ptr->commands[length] = ';';

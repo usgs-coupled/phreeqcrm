@@ -1121,11 +1121,11 @@ solve_inverse(struct inverse *inv_ptr)
 /*
  *   Allocate space for arrays
  */
-	inv_cu = (LDBLE *) PHRQ_malloc((size_t) 2 * nklmd * sizeof(LDBLE));
+	inv_cu = (LDBLE *) PHRQ_malloc(2 * (size_t)nklmd * sizeof(LDBLE));
 	if (inv_cu == NULL)
 		malloc_error();
-	memset(inv_cu, 0, ((size_t) (2 * nklmd * sizeof(LDBLE))));
-	inv_iu = (int *) PHRQ_malloc((size_t) 2 * nklmd * sizeof(int));
+	memset(inv_cu, 0, 2 * (size_t)nklmd * sizeof(LDBLE));
+	inv_iu = (int *) PHRQ_malloc(2 * (size_t)nklmd * sizeof(int));
 	if (inv_iu == NULL)
 		malloc_error();
 	inv_is = (int *) PHRQ_malloc((size_t) klmd * sizeof(int));
@@ -2805,7 +2805,7 @@ shrink(struct inverse *inv_ptr, LDBLE * array_in, LDBLE * array_out,
 
 			memcpy(&(array_out[row * max_column_count]),
 				&(array_out[i * max_column_count]),
-				(size_t) (*n + 1) * sizeof(LDBLE));
+				((size_t)*n + 1) * sizeof(LDBLE));
 		}
 		row_back_l[row] = i;
 		row++;
@@ -2849,7 +2849,7 @@ shrink(struct inverse *inv_ptr, LDBLE * array_in, LDBLE * array_out,
 			}
 			memcpy(&(array_out[row * max_column_count]),
 				&(array_out[i * max_column_count]),
-				(size_t) (*n + 1) * sizeof(LDBLE));
+				((size_t)*n + 1) * sizeof(LDBLE));
 		}
 		row_back_l[row] = i;
 		row++;
@@ -2892,7 +2892,7 @@ shrink(struct inverse *inv_ptr, LDBLE * array_in, LDBLE * array_out,
 			}
 			memcpy(&(array_out[row * max_column_count]),
 				&(array_out[i * max_column_count]),
-				(size_t) (*n + 1) * sizeof(LDBLE));
+				((size_t)*n + 1) * sizeof(LDBLE));
 		}
 		row_back_l[row] = i;
 		row++;
@@ -3618,11 +3618,8 @@ count_isotope_unknowns(struct inverse *inv_ptr,
 		/* nonredox element */
 		if (primary_ptr->s->secondary == NULL)
 		{
-			isotopes =
-				(struct isotope *) PHRQ_realloc(isotopes,
-												(size_t) (count_isotopes +
-														  1) *
-												sizeof(struct isotope));
+			isotopes = (struct isotope*)PHRQ_realloc(isotopes,
+				((size_t)count_isotopes + 1) * sizeof(struct isotope));
 			if (isotopes == NULL)
 			{
 				malloc_error();
@@ -3652,12 +3649,8 @@ count_isotope_unknowns(struct inverse *inv_ptr,
 			{
 				if (master[k]->elt->primary != primary_ptr)
 					break;
-				isotopes =
-					(struct isotope *) PHRQ_realloc(isotopes,
-													(size_t) (count_isotopes
-															  +
-															  1) *
-													sizeof(struct isotope));
+				isotopes = (struct isotope*)PHRQ_realloc(isotopes,
+					((size_t)count_isotopes + 1) * sizeof(struct isotope));
 				if (isotopes == NULL)
 				{
 					malloc_error();
@@ -3794,7 +3787,7 @@ check_isotopes(struct inverse *inv_ptr)
 				&& !isnan(inv_ptr->i_u[i].uncertainties[inv_ptr->i_u[i].count_uncertainties - 1]))
 #else
 			else if (inv_ptr->i_u[i].count_uncertainties > 0
-				&& inv_ptr->i_u[i].uncertainties[inv_ptr->i_u[i].count_uncertainties - 1] != NAN)
+				&& inv_ptr->i_u[i].uncertainties[(size_t)inv_ptr->i_u[i].count_uncertainties - 1] != NAN)
 #endif
 			{
 				kit->second.Set_x_ratio_uncertainty(inv_ptr->i_u[i].uncertainties[inv_ptr->i_u[i].count_uncertainties - 1]);

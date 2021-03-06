@@ -305,10 +305,10 @@ polint(LDBLE * xa, LDBLE * ya, int n, LDBLE xv, LDBLE * yv, LDBLE * dy)
 /*
  *   Malloc work space
  */
-	c = (LDBLE *) PHRQ_malloc((size_t) (n + 1) * sizeof(LDBLE));
+	c = (LDBLE *) PHRQ_malloc(((size_t)n + 1) * sizeof(LDBLE));
 	if (c == NULL)
 		malloc_error();
-	d = (LDBLE *) PHRQ_malloc((size_t) (n + 1) * sizeof(LDBLE));
+	d = (LDBLE *) PHRQ_malloc(((size_t)n + 1) * sizeof(LDBLE));
 	if (d == NULL)
 		malloc_error();
 

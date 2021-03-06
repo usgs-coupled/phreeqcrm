@@ -2233,7 +2233,7 @@ CVAdjustAdams(CVodeMem cv_mem, int deltaq)
 	}
 
 	for (j = 1; j <= q - 2; j++)
-		l[j + 1] = q * (l[j] / (j + 1));
+		l[j + 1] = q * (l[j] / ((size_t)j + (size_t)1));
 
 	for (j = 2; j < q; j++)
 		N_VLinearSum(-l[j], zn[q], ONE, zn[j], zn[j]);
@@ -2292,7 +2292,7 @@ CVIncreaseBDF(CVodeMem cv_mem)
 			hsum += tau[j + 1];
 			xi = hsum / hscale;
 			prod *= xi;
-			alpha0 -= ONE / (j + 1);
+			alpha0 -= ONE / ((size_t)j + (size_t)1);
 			alpha1 += ONE / xi;
 			for (i = j + 2; i >= 2; i--)
 				l[i] = l[i] * xiold + l[i - 1];
@@ -2543,7 +2543,7 @@ CVAltSum(int iend, realtype a[], int k)
 	sign = 1;
 	for (i = 0; i <= iend; i++)
 	{
-		sum += sign * (a[i] / (i + k));
+		sum += sign * (a[i] / ((size_t)i + (size_t)k));
 		sign = -sign;
 	}
 	return (sum);
@@ -2630,10 +2630,10 @@ CVSetTqBDF(CVodeMem cv_mem, realtype hsum, realtype alpha0,
 		tq[1] = ABS(CPrime / C);
 		hsum += tau[q];
 		xi_inv = h / hsum;
-		A5 = alpha0 - (ONE / (q + 1));
+		A5 = alpha0 - (ONE / (q + (size_t)1));
 		A6 = alpha0_hat - xi_inv;
 		CPrimePrime = A2 / (ONE - A6 + A5);
-		tq[3] = ABS(CPrimePrime * xi_inv * (q + 2) * A5);
+		tq[3] = ABS(CPrimePrime * xi_inv * (q + (realtype)2) * A5);
 	}
 	tq[4] = CORTES * tq[2];
 }

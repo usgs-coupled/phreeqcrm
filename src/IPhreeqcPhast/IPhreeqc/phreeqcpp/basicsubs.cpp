@@ -2958,10 +2958,10 @@ edl_species(const char *surf_name, LDBLE * count, char ***names, LDBLE ** moles,
 	/*
 	 * malloc space
 	 */
-	*names = (char **) PHRQ_malloc((size_t) (count_sys + 1) * sizeof(char *));
+	*names = (char **) PHRQ_malloc(((size_t)count_sys + (size_t)1) * sizeof(char *));
 	if (names == NULL)
 		malloc_error();
-	*moles = (LDBLE *) PHRQ_malloc((size_t) (count_sys + 1) * sizeof(LDBLE));
+	*moles = (LDBLE *) PHRQ_malloc(((size_t)count_sys + (size_t)1) * sizeof(LDBLE));
 	if (moles == NULL)
 		malloc_error();
 
@@ -3051,13 +3051,13 @@ system_total(const char *total_name, LDBLE * count, char ***names,
 	/*
 	 * malloc space
 	 */
-	*names = (char **) PHRQ_malloc((size_t) (count_sys + 1) * sizeof(char *));
+	*names = (char **) PHRQ_malloc(((size_t)count_sys + (size_t)1) * sizeof(char *));
 	if (names == NULL)
 		malloc_error();
-	*types = (char **) PHRQ_malloc((size_t) (count_sys + 1) * sizeof(char *));
+	*types = (char **) PHRQ_malloc(((size_t)count_sys + (size_t)1) * sizeof(char *));
 	if (types == NULL)
 		malloc_error();
-	*moles = (LDBLE *) PHRQ_malloc((size_t) (count_sys + 1) * sizeof(LDBLE));
+	*moles = (LDBLE *) PHRQ_malloc(((size_t)count_sys + (size_t)1) * sizeof(LDBLE));
 	if (moles == NULL)
 		malloc_error();
 

@@ -88,7 +88,7 @@ VRESULT CSelectedOutput::Get(int nRow, int nCol, VAR* pVAR)const
 	if (nRow)
 	{
 		ASSERT((size_t)nRow <= this->m_arrayVar[nCol].size());
-		return ::VarCopy(pVAR, &(this->m_arrayVar[nCol])[nRow - 1]);
+		return ::VarCopy(pVAR, &(this->m_arrayVar[nCol])[(size_t)nRow - (size_t)1]);
 	}
 	else
 	{
@@ -273,7 +273,7 @@ void CSelectedOutput::Serialize(
 	// go through rows by column
 	for (size_t j = 0; j < ncols; j++)
 	{
-		for (size_t i = row_number; i < (size_t)(row_number + 1); i++)
+		for (size_t i = row_number; i < (size_t)row_number + (size_t)1; i++)
 		{
 			types.push_back(m_arrayVar[j][i].type);
 			switch(m_arrayVar[j][i].type)

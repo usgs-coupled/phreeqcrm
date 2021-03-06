@@ -128,6 +128,14 @@ cxxGasPhase::cxxGasPhase(std::map < int, cxxGasPhase > &entity_map,
 	v_m = 0;
 	pr_in = false;
 	bool first = true;
+
+	n_solution = -999;
+	new_def = false;
+	solution_equilibria = false;
+	temperature = 298.15;
+	total_moles = 0.0;
+	type = cxxGasPhase::GP_PRESSURE;
+
 //
 //   Mix
 //
