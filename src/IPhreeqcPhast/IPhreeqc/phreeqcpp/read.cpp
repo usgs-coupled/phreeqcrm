@@ -656,15 +656,8 @@ read_exchange_species(void)
 			}
 			else
 			{
-				s_ptr->add_logk =
-					(struct name_coef *) PHRQ_realloc(s_ptr->add_logk,
-													  (size_t) ((s_ptr->
-																 count_add_logk
-																 +
-																 1) *
-																sizeof
-																(struct
-																 name_coef)));
+				s_ptr->add_logk = (struct name_coef*)PHRQ_realloc(s_ptr->add_logk,
+					((size_t)s_ptr->count_add_logk + 1) * sizeof(struct name_coef));
 				if (s_ptr->add_logk == NULL)
 				{
 					malloc_error();
@@ -714,15 +707,8 @@ read_exchange_species(void)
 			}
 			else
 			{
-				s_ptr->add_logk =
-					(struct name_coef *) PHRQ_realloc(s_ptr->add_logk,
-													  (size_t) ((s_ptr->
-																 count_add_logk
-																 +
-																 1) *
-																sizeof
-																(struct
-																 name_coef)));
+				s_ptr->add_logk = (struct name_coef*)PHRQ_realloc(s_ptr->add_logk,
+					((size_t)s_ptr->count_add_logk + 1) * sizeof(struct name_coef));
 				if (s_ptr->add_logk == NULL)
 				{
 					malloc_error();
@@ -1733,12 +1719,8 @@ read_inv_balances(struct inverse *inverse_ptr, char *ptr)
 	}
 	else if (strcmp_nocase_arg1(token, "ph") != 0)
 	{
-		inverse_ptr->elts =
-			(struct inv_elts *) PHRQ_realloc(inverse_ptr->elts,
-											 (size_t) (inverse_ptr->
-													   count_elts +
-													   1) *
-											 sizeof(struct inv_elts));
+		inverse_ptr->elts = (struct inv_elts*)PHRQ_realloc(inverse_ptr->elts,
+			((size_t)inverse_ptr->count_elts + 1) * sizeof(struct inv_elts));
 		if (inverse_ptr->elts == NULL)
 			malloc_error();
 		replace("(+", "(", token);
@@ -1826,12 +1808,8 @@ read_inv_isotopes(struct inverse *inverse_ptr, char *ptr)
 	}
 	if (i == inverse_ptr->count_isotopes)
 	{
-		inverse_ptr->isotopes =
-			(struct inv_isotope *) PHRQ_realloc(inverse_ptr->isotopes,
-												(size_t) (inverse_ptr->
-														  count_isotopes +
-														  1) *
-												sizeof(struct inv_isotope));
+		inverse_ptr->isotopes = (struct inv_isotope*)PHRQ_realloc(inverse_ptr->isotopes,
+			((size_t)inverse_ptr->count_isotopes + 1) * sizeof(struct inv_isotope));
 		if (inverse_ptr->isotopes == NULL)
 			malloc_error();
 		inverse_ptr->isotopes[inverse_ptr->count_isotopes].isotope_number =
@@ -1848,12 +1826,8 @@ read_inv_isotopes(struct inverse *inverse_ptr, char *ptr)
 /*
  *  add redox state name to inv_ptr->i_u
  */
-	inverse_ptr->i_u =
-		(struct inv_isotope *) PHRQ_realloc(inverse_ptr->i_u,
-											(size_t) (inverse_ptr->
-													  count_i_u +
-													  1) *
-											sizeof(struct inv_isotope));
+	inverse_ptr->i_u = (struct inv_isotope*)PHRQ_realloc(inverse_ptr->i_u,
+		((size_t)inverse_ptr->count_i_u + 1) * sizeof(struct inv_isotope));
 	if (inverse_ptr->i_u == NULL)
 	{
 		malloc_error();
@@ -1885,12 +1859,8 @@ read_inv_phases(struct inverse *inverse_ptr, char *ptr)
 	j = copy_token(token, &ptr, &l);
 	if (j == EMPTY)
 		return (OK);
-	inverse_ptr->phases =
-		(struct inv_phases *) PHRQ_realloc(inverse_ptr->phases,
-										   (size_t) (inverse_ptr->
-													 count_phases +
-													 1) *
-										   sizeof(struct inv_phases));
+	inverse_ptr->phases = (struct inv_phases*)PHRQ_realloc(inverse_ptr->phases,
+		((size_t)inverse_ptr->count_phases + 1) * sizeof(struct inv_phases));
 	if (inverse_ptr->phases == NULL)
 		malloc_error();
 	inverse_ptr->phases[inverse_ptr->count_phases].name = string_hsave(token);
@@ -3921,15 +3891,8 @@ read_phases(void)
 			}
 			else
 			{
-				phase_ptr->add_logk =
-					(struct name_coef *) PHRQ_realloc(phase_ptr->add_logk,
-													  (size_t) ((phase_ptr->
-																 count_add_logk
-																 +
-																 1) *
-																sizeof
-																(struct
-																 name_coef)));
+				phase_ptr->add_logk = (struct name_coef *) PHRQ_realloc(phase_ptr->add_logk,
+				 ((size_t)phase_ptr->count_add_logk + 1) * sizeof(struct name_coef));
 				if (phase_ptr->add_logk == NULL)
 					malloc_error();
 			}
@@ -3967,15 +3930,8 @@ read_phases(void)
 			}
 			else
 			{
-				phase_ptr->add_logk =
-					(struct name_coef *) PHRQ_realloc(phase_ptr->add_logk,
-													  (size_t) ((phase_ptr->
-																 count_add_logk
-																 +
-																 1) *
-																sizeof
-																(struct
-																 name_coef)));
+				phase_ptr->add_logk = (struct name_coef*)PHRQ_realloc(phase_ptr->add_logk,
+					((size_t)phase_ptr->count_add_logk + 1) * sizeof(struct name_coef));
 				if (phase_ptr->add_logk == NULL)
 					malloc_error();
 			}
@@ -6286,15 +6242,8 @@ read_species(void)
 			}
 			else
 			{
-				s_ptr->add_logk =
-					(struct name_coef *) PHRQ_realloc(s_ptr->add_logk,
-													  (size_t) ((s_ptr->
-																 count_add_logk
-																 +
-																 1) *
-																sizeof
-																(struct
-																 name_coef)));
+				s_ptr->add_logk = (struct name_coef*)PHRQ_realloc(s_ptr->add_logk,
+					((size_t)s_ptr->count_add_logk + 1) * sizeof(struct name_coef));
 				if (s_ptr->add_logk == NULL)
 					malloc_error();
 			}
@@ -6338,15 +6287,8 @@ read_species(void)
 			}
 			else
 			{
-				s_ptr->add_logk =
-					(struct name_coef *) PHRQ_realloc(s_ptr->add_logk,
-													  (size_t) ((s_ptr->
-																 count_add_logk
-																 +
-																 1) *
-																sizeof
-																(struct
-																 name_coef)));
+				s_ptr->add_logk = (struct name_coef *) PHRQ_realloc(s_ptr->add_logk,
+				 ((size_t)s_ptr->count_add_logk + 1) * sizeof(struct name_coef));
 				if (s_ptr->add_logk == NULL)
 					malloc_error();
 			}
@@ -6999,15 +6941,8 @@ read_surface_species(void)
 			}
 			else
 			{
-				s_ptr->add_logk =
-					(struct name_coef *) PHRQ_realloc(s_ptr->add_logk,
-													  (size_t) ((s_ptr->
-																 count_add_logk
-																 +
-																 1) *
-																sizeof
-																(struct
-																 name_coef)));
+				s_ptr->add_logk = (struct name_coef*)PHRQ_realloc(s_ptr->add_logk,
+					((size_t)s_ptr->count_add_logk + 1) * sizeof(struct name_coef));
 				if (s_ptr->add_logk == NULL)
 				{
 					malloc_error();
@@ -7054,15 +6989,8 @@ read_surface_species(void)
 			}
 			else
 			{
-				s_ptr->add_logk =
-					(struct name_coef *) PHRQ_realloc(s_ptr->add_logk,
-													  (size_t) ((s_ptr->
-																 count_add_logk
-																 +
-																 1) *
-																sizeof
-																(struct
-																 name_coef)));
+				s_ptr->add_logk = (struct name_coef*)PHRQ_realloc(s_ptr->add_logk,
+					((size_t)s_ptr->count_add_logk + 1) * sizeof(struct name_coef));
 				if (s_ptr->add_logk == NULL)
 					malloc_error();
 			}
@@ -8076,10 +8004,8 @@ read_title(void)
  */
 		title_x_length = (int) strlen(title_x);
 		line_length = (int) strlen(line);
-		title_x =
-			(char *) PHRQ_realloc(title_x,
-								  (size_t) (title_x_length + line_length +
-											2) * sizeof(char));
+		title_x = (char*)PHRQ_realloc(title_x,
+			((size_t)title_x_length + (size_t)line_length + 2) * sizeof(char));
 		if (title_x == NULL)
 			malloc_error();
 		if (title_x_length > 0)
@@ -8294,9 +8220,8 @@ read_advection(void)
 /*
  *   Fill in data for punch
  */
-	advection_punch =
-		(int *) PHRQ_realloc(advection_punch,
-							 (size_t) (count_ad_cells + 1) * sizeof(int));
+	advection_punch = (int*)PHRQ_realloc(advection_punch,
+		((size_t)count_ad_cells + 1) * sizeof(int));
 	if (advection_punch == NULL)
 		malloc_error();
 	if (count_punch != 0)
@@ -8327,9 +8252,8 @@ read_advection(void)
 /*
  *   Fill in data for print
  */
-	advection_print =
-		(int *) PHRQ_realloc(advection_print,
-							 (size_t) (count_ad_cells + 1) * sizeof(int));
+	advection_print = (int*)PHRQ_realloc(advection_print,
+		((size_t)count_ad_cells + 1) * sizeof(int));
 	if (advection_print == NULL)
 		malloc_error();
 	if (count_print != 0)
@@ -9383,11 +9307,8 @@ read_rates(void)
 			}
 			if (rate_ptr == NULL)
 			{
-				rates =
-					(struct rate *) PHRQ_realloc(rates,
-												 (size_t) (count_rates +
-														   1) *
-												 sizeof(struct rate));
+				rates = (struct rate*)PHRQ_realloc(rates,
+					((size_t)count_rates + 1) * sizeof(struct rate));
 				if (rates == NULL)
 					malloc_error();
 				rate_ptr = &rates[count_rates];
@@ -9424,10 +9345,8 @@ read_rates(void)
 			}
 			length = (int) strlen(rate_ptr->commands);
 			line_length = (int) strlen(line);
-			rate_ptr->commands =
-				(char *) PHRQ_realloc(rate_ptr->commands,
-									  (size_t) (length + line_length +
-												2) * sizeof(char));
+			rate_ptr->commands = (char*)PHRQ_realloc(rate_ptr->commands,
+				((size_t)length + (size_t)line_length + 2) * sizeof(char));
 			if (rate_ptr->commands == NULL)
 			{
 				malloc_error();
@@ -9523,10 +9442,8 @@ read_user_print(void)
 		case OPT_1:			/* read command */
 			length = (int) strlen(user_print->commands);
 			line_length = (int) strlen(line);
-			user_print->commands =
-				(char *) PHRQ_realloc(user_print->commands,
-									  (size_t) (length + line_length +
-												2) * sizeof(char));
+			user_print->commands = (char*)PHRQ_realloc(user_print->commands,
+				((size_t)length + (size_t)line_length + 2) * sizeof(char));
 			if (user_print->commands == NULL)
 				malloc_error();
 			user_print->commands[length] = ';';
@@ -9659,8 +9576,8 @@ read_user_punch(void)
 		case OPT_1:			/* read command */
 			length = (int) strlen(r->commands);
 			line_length = (int) strlen(line);
-			r->commands = (char *) PHRQ_realloc(r->commands,
-				(size_t) (length + line_length + 2) * sizeof(char));
+			r->commands = (char*)PHRQ_realloc(r->commands,
+				((size_t)length + (size_t)line_length + 2) * sizeof(char));
 			if (r->commands == NULL)
 			{
 				malloc_error();
@@ -11141,15 +11058,8 @@ read_named_logk(void)
 			}
 			else
 			{
-				logk_ptr->add_logk =
-					(struct name_coef *) PHRQ_realloc(logk_ptr->add_logk,
-													  (size_t) ((logk_ptr->
-																 count_add_logk
-																 +
-																 1) *
-																sizeof
-																(struct
-																 name_coef)));
+				logk_ptr->add_logk = (struct name_coef*)PHRQ_realloc(logk_ptr->add_logk,
+					(size_t)((logk_ptr->count_add_logk + 1) * sizeof(struct name_coef)));
 				if (logk_ptr->add_logk == NULL)
 					malloc_error();
 			}

@@ -67,7 +67,7 @@ pitzer_tidy(void)
 		spec = (struct species **) free_check_null(spec);
 	spec =
 		(struct species **)
-		PHRQ_malloc((size_t) (3 * count_s * sizeof(struct species *)));
+		PHRQ_malloc(3 * (size_t)count_s * sizeof(struct species *));
 	if (spec == NULL)
 		malloc_error();
 	for (i = 0; i < 3 * count_s; i++)
@@ -88,17 +88,17 @@ pitzer_tidy(void)
 	 */
 	if (IPRSNT != NULL)
 		IPRSNT = (int *) free_check_null(IPRSNT);
-	IPRSNT = (int *) PHRQ_malloc((size_t) (3 * count_s * sizeof(int)));
+	IPRSNT = (int *) PHRQ_malloc(3 * (size_t)count_s * sizeof(int));
 	if (IPRSNT == NULL)
 		malloc_error();
 	if (M != NULL)
 		M = (LDBLE *) free_check_null(M);
-	M = (LDBLE *) PHRQ_malloc((size_t) (3 * count_s * sizeof(LDBLE)));
+	M = (LDBLE *) PHRQ_malloc(3 * (size_t)count_s * sizeof(LDBLE));
 	if (M == NULL)
 		malloc_error();
 	if (LGAMMA != NULL)
 		LGAMMA = (LDBLE *) free_check_null(LGAMMA);
-	LGAMMA = (LDBLE *) PHRQ_malloc((size_t) (3 * count_s * sizeof(LDBLE)));
+	LGAMMA = (LDBLE *) PHRQ_malloc(3 * (size_t)count_s * sizeof(LDBLE));
 	if (LGAMMA == NULL)
 		malloc_error();
 

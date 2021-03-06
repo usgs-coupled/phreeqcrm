@@ -2124,7 +2124,10 @@ factor(struct LOC_exec * LINK)
 		n.UU.sval = (char*)PhreeqcPtr->PHRQ_calloc(m, sizeof(char));
 		if (n.UU.sval == NULL)
 			PhreeqcPtr->malloc_error();
-		strcpy(n.UU.sval, facttok->UU.sp);
+		if (n.UU.sval != NULL)
+		{
+			strcpy(n.UU.sval, facttok->UU.sp);
+		}
 		break;
 
 	case tokvar:
@@ -2744,7 +2747,7 @@ factor(struct LOC_exec * LINK)
 				exit(4);
 #endif
 			}
-			moles_arg = (LDBLE *) PhreeqcPtr->PHRQ_calloc((size_t) (count_sys + 1), sizeof(LDBLE));
+			moles_arg = (LDBLE *) PhreeqcPtr->PHRQ_calloc(((size_t)count_sys + 1), sizeof(LDBLE));
 			if (moles_arg == NULL)
 			{
 				PhreeqcPtr->malloc_error();
@@ -3843,7 +3846,7 @@ factor(struct LOC_exec * LINK)
 
 	case toksgn:
 		n.UU.val = realfactor(LINK);
-		n.UU.val = (n.UU.val > 0) - (n.UU.val < 0);
+		n.UU.val = (double)(n.UU.val > 0) - (double)(n.UU.val < 0);
 		break;
 
 	case tokstr_:
@@ -5831,7 +5834,7 @@ cmddim(struct LOC_exec *LINK)
 
 	do
 	{
-		if (LINK->t == NULL || LINK->t->kind != tokvar)
+		if (LINK == NULL || LINK->t == NULL || LINK->t->kind != tokvar)
 			snerr(": error in DIM command");
 		v = LINK->t->UU.vp;
 		LINK->t = LINK->t->next;
@@ -6749,8 +6752,8 @@ void PBasic::
 strmove(int len, char *l_s, int spos,
 		char *d, int dpos)
 {
-	l_s += spos - 1;
-	d += dpos - 1;
+	l_s += (size_t)spos - 1;
+	d += (size_t)dpos - 1;
 	while (*d && --len >= 0)
 		*d++ = *l_s++;
 	if (len > 0)

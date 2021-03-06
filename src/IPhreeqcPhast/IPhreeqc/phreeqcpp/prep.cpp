@@ -89,9 +89,8 @@ prep(void)
 		residual = (LDBLE *) PHRQ_malloc( (size_t) count_unknowns * sizeof( LDBLE ));
 		if (residual == NULL) malloc_error();
 */
-		my_array =
-			(LDBLE *) PHRQ_malloc((size_t) (max_unknowns + 1) *
-								  max_unknowns * sizeof(LDBLE));
+		my_array = (LDBLE*)PHRQ_malloc(((size_t)max_unknowns + 1) *
+			max_unknowns * sizeof(LDBLE));
 		if (my_array == NULL)
 			malloc_error();
 		delta = (LDBLE *) PHRQ_malloc((size_t) max_unknowns * sizeof(LDBLE));
@@ -764,12 +763,12 @@ build_ss_assemblage(void)
 				if ((int) j != x[i]->ss_comp_number)
 				{
 /*					store_jacob (&(s_s_ptr->dn), &(array[row + col + j]), -1.0); */
-					store_jacob(&(x[i]->phase->dn), &(my_array[row + col + j]),
+					store_jacob(&(x[i]->phase->dn), &(my_array[(size_t)row + (size_t)col + (size_t)j]),
 								-1.0);
 				}
 				else
 				{
-					store_jacob(&(x[i]->phase->dnb), &(my_array[row + col + j]),
+					store_jacob(&(x[i]->phase->dnb), &(my_array[(size_t)row + (size_t)col + (size_t)j]),
 								-1.0);
 				}
 			}
@@ -2153,14 +2152,8 @@ get_list_master_ptrs(char *ptr, struct master *master_ptr)
 			{
 				if (master[j]->s->primary == NULL)
 				{
-					master_ptr_list =
-						(struct master **) PHRQ_realloc((void *)
-														master_ptr_list,
-														(size_t) (count_list
-																  +
-																  2) *
-														sizeof(struct master
-															   *));
+					master_ptr_list = (struct master**)PHRQ_realloc((void*)master_ptr_list,
+						((size_t)count_list + 2) * sizeof(struct master*));
 					if (master_ptr_list == NULL)
 						malloc_error();
 					master_ptr_list[count_list++] = master[j];
@@ -2180,11 +2173,8 @@ get_list_master_ptrs(char *ptr, struct master *master_ptr)
 			master_ptr = master_bsearch(token);
 			if (master_ptr != NULL)
 			{
-				master_ptr_list =
-					(struct master **) PHRQ_realloc((void *) master_ptr_list,
-													(size_t) (count_list +
-															  2) *
-													sizeof(struct master *));
+				master_ptr_list = (struct master**)PHRQ_realloc((void*)master_ptr_list,
+					((size_t)count_list + 2) * sizeof(struct master*));
 				if (master_ptr_list == NULL)
 					malloc_error();
 				master_ptr_list[count_list++] = master_ptr;
@@ -3664,7 +3654,7 @@ setup_surface(void)
 				/* Add SURFACE unknown to a list for SURF_PSI */
 				struct unknown *unknown_ptr = find_surface_charge_unknown(token, SURF_PSI);
 				unknown_ptr->comp_unknowns = (struct unknown **) PHRQ_realloc(unknown_ptr->comp_unknowns,
-					(size_t) ((unknown_ptr->count_comp_unknowns + 1) * sizeof(struct unknown *)));
+					 ((size_t)unknown_ptr->count_comp_unknowns + 1) * sizeof(struct unknown *));
 				if (unknown_ptr->comp_unknowns == NULL)
 					malloc_error();
 				unknown_ptr->comp_unknowns[unknown_ptr->count_comp_unknowns++] =
@@ -4827,7 +4817,7 @@ setup_unknowns(void)
 		else
 		{
 			max_unknowns +=	(int) (use.Get_surface_ptr()->Get_surface_comps().size() +
-				4 * (int) use.Get_surface_ptr()->Get_surface_charges().size());
+				4 * use.Get_surface_ptr()->Get_surface_charges().size());
 		}
 	}
 /*
