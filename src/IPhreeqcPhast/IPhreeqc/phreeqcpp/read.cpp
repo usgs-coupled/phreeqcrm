@@ -967,7 +967,7 @@ read_exchange(void)
 				if (i == DIGIT)
 				{
 					int n_solution;
-					sscanf(token.c_str(), "%d", &n_solution);
+					int sscan_rtn = sscanf(token.c_str(), "%d", &n_solution);
 					temp_exchange.Set_n_solution(n_solution);
 					temp_exchange.Set_new_def(true);
 					temp_exchange.Set_solution_equilibria(true);
@@ -1045,7 +1045,7 @@ read_exchange(void)
 							break;
 						}
 						LDBLE p;
-						sscanf(token1.c_str(), SCANFORMAT, &p);
+						int sscan_rtn = sscanf(token1.c_str(), SCANFORMAT, &p);
 						comp_ptr->Set_phase_proportion(p);
 					}
 					/*
@@ -1090,7 +1090,7 @@ read_exchange(void)
 						break;
 					}
 					LDBLE p;
-					sscanf(token1.c_str(), SCANFORMAT, &p);
+					int sscan_rtn = sscanf(token1.c_str(), SCANFORMAT, &p);
 					comp_ptr->Set_phase_proportion(p);
 					/* real conc must be defined in tidy_model */
 					conc = 1.0;
@@ -1323,16 +1323,22 @@ read_gas_phase(void)
 			error_msg(line_save, CONTINUE);
 			break;
 		case 0:				/* pressure */
-			sscanf(next_char, SCANFORMAT, &dummy);
+		{
+			int sscan_rtn = sscanf(next_char, SCANFORMAT, &dummy);
+		}
 			temp_gas_phase.Set_total_p(dummy);
 			break;
 		case 1:				/* Volume */
-			sscanf(next_char, SCANFORMAT, &dummy);
+		{
+			int sscan_rtn = sscanf(next_char, SCANFORMAT, &dummy);
+		}
 			temp_gas_phase.Set_volume(dummy);
 			break;
 		case 2:				/* Temperature */
 		case 3:
+		{
 			j = sscanf(next_char, SCANFORMAT, &dummy);
+		}
 			if (j == 1)
 			{
 				temp_gas_phase.Set_temperature(dummy + 273.15);
@@ -1355,7 +1361,7 @@ read_gas_phase(void)
 				i = copy_token(token, &next_char, &l);
 				if (i == DIGIT)
 				{
-					sscanf(token, "%d", &l);
+					int sscan_rtn = sscanf(token, "%d", &l);
 					temp_gas_phase.Set_n_solution(l);
 					temp_gas_phase.Set_new_def(true);
 					temp_gas_phase.Set_solution_equilibria(true);
@@ -1946,7 +1952,7 @@ read_inv_phases(struct inverse *inverse_ptr, char *ptr)
 				input_error++;
 				break;
 			}
-			sscanf(token, SCANFORMAT, &dummy);
+			int sscan_rtn = sscanf(token, SCANFORMAT, &dummy);
 			temp_isotope.Set_ratio(dummy);
 
 			/* read and store isotope ratio uncertainty */
@@ -1960,7 +1966,9 @@ read_inv_phases(struct inverse *inverse_ptr, char *ptr)
 				error_msg(error_string, CONTINUE);
 				continue;
 			}
-			sscanf(token, SCANFORMAT, &dummy);
+			{
+				int sscan_rtn = sscanf(token, SCANFORMAT, &dummy);
+			}
 			temp_isotope.Set_ratio_uncertainty(dummy);
 			temp_isotope.Set_ratio_uncertainty_defined(true);
 			isotopes.push_back(temp_isotope);
@@ -2354,7 +2362,7 @@ read_kinetics(void)
 		case 6:				/* step_divide */
 			if (copy_token(token, &next_char) == DIGIT)
 			{
-				sscanf(token.c_str(), SCANFORMAT, &dummy);
+				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 				temp_kinetics.Set_step_divide(dummy);
 			}
 			else
@@ -3146,8 +3154,7 @@ read_millero_abcdef (char *ptr, LDBLE * abcdef)
   {
     abcdef[j] = 0.0;
   }
-  j =
-    sscanf (ptr, SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT,
+  j = sscanf (ptr, SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT,
 	    &(abcdef[0]), &(abcdef[1]), &(abcdef[2]), &(abcdef[3]), &(abcdef[4]), &(abcdef[5]), &(abcdef[6]));
   if (j < 1)
   {
@@ -3173,8 +3180,7 @@ read_viscosity_parms(char *ptr, LDBLE * Jones_Dole)
   {
     Jones_Dole[j] = 0.0;
   }
-  j =
-    sscanf (ptr, SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT,
+  j = sscanf (ptr, SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT,
 	&(Jones_Dole[0]), &(Jones_Dole[1]), &(Jones_Dole[2]), &(Jones_Dole[3]), &(Jones_Dole[4]), &(Jones_Dole[5]), &(Jones_Dole[6]), &(Jones_Dole[7]), &(Jones_Dole[8]), &(Jones_Dole[9]));
   if (j < 1)
   {
@@ -3363,7 +3369,7 @@ read_master_species(void)
 		i = copy_token(token, &ptr, &l);
 		if (i == DIGIT)
 		{
-			sscanf(token, SCANFORMAT, &master[count_master-1]->gfw);
+			int sscan_rtn = sscanf(token, SCANFORMAT, &master[count_master-1]->gfw);
 		}
 		else if (i == UPPER)
 		{
@@ -3399,7 +3405,7 @@ read_master_species(void)
 				i = copy_token(token, &ptr, &l);
 				if (i == DIGIT)
 				{
-					sscanf(token, SCANFORMAT, &elts_ptr->gfw);
+					int sscan_rtn = sscanf(token, SCANFORMAT, &elts_ptr->gfw);
 				}
 				else
 				{
@@ -3490,7 +3496,7 @@ read_mix(void)
 		i = copy_token(token, &ptr, &l);
 		if (i == DIGIT)
 		{
-			sscanf(token, "%d ", &n_solution);
+			int sscan_rtn = sscanf(token, "%d ", &n_solution);
 		}
 		else
 		{
@@ -3577,7 +3583,7 @@ read_entity_mix(std::map<int, cxxMix> &mix_map)
 		i = copy_token(token, &ptr, &l);
 		if (i == DIGIT)
 		{
-			sscanf(token, "%d ", &n_solution);
+			int sscan_rtn = sscanf(token, "%d ", &n_solution);
 		}
 		else
 		{
@@ -3670,7 +3676,7 @@ read_solution_mix(void)
 		i = copy_token(token, &ptr, &l);
 		if (i == DIGIT)
 		{
-			sscanf(token, "%d ", &n_solution);
+			int sscan_rtn = sscanf(token, "%d ", &n_solution);
 		}
 		else
 		{
@@ -5893,7 +5899,7 @@ read_solution(void)
 					error_msg(error_string, CONTINUE);
 					continue;
 				}
-				sscanf(token.c_str(), SCANFORMAT, &dummy);
+				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 				temp_isotope.Set_ratio(dummy);
 				temp_isotope.Set_ratio_uncertainty(NAN);
 
@@ -5909,7 +5915,7 @@ read_solution(void)
 						error_msg(error_string, PHRQ_io::OT_CONTINUE);
 						continue;
 					}
-					sscanf(token.c_str(), SCANFORMAT, &dummy);
+					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 					temp_isotope.Set_ratio_uncertainty(dummy);
 					temp_isotope.Set_ratio_uncertainty_defined(true);
 				}
@@ -5932,7 +5938,7 @@ read_solution(void)
 				}
 				else
 				{
-					sscanf(token.c_str(), SCANFORMAT, &dummy);
+					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 					temp_solution.Set_mass_water(dummy);
 				}
 			}
@@ -6615,7 +6621,7 @@ read_use(void)
 		i = copy_token(token, &ptr, &l);
 		if (i == DIGIT)
 		{
-			sscanf(token, "%d", &n_user);
+			int sscan_rtn = sscanf(token, "%d", &n_user);
 			if (n_user < 0)
 			{
 				error_msg("Number must be a positive integer.", CONTINUE);
@@ -7308,7 +7314,7 @@ read_surface(void)
 				if (i == DIGIT)
 				{
 					int j;
-					sscanf(token.c_str(), "%d", &j);
+					int sscan_rtn = sscanf(token.c_str(), "%d", &j);
 					temp_surface.Set_solution_equilibria(true);
 					temp_surface.Set_n_solution(j);
 					break;
@@ -7352,7 +7358,7 @@ read_surface(void)
 					int i = copy_token(token, &next_char);
 					if (i == DIGIT)
 					{
-						sscanf(token.c_str(), SCANFORMAT, &dummy);
+						int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 						temp_surface.Set_thickness(dummy);
 						thickness = 1;
 						continue;
@@ -7373,7 +7379,7 @@ read_surface(void)
 							int j = copy_token(token1, &next_char);
 							if (j == DIGIT)
 							{
-								sscanf(token1.c_str(), SCANFORMAT, &dummy);
+								int sscan_rtn = sscanf(token1.c_str(), SCANFORMAT, &dummy);
 								temp_surface.Set_debye_lengths(dummy);
 								continue;
 							}
@@ -7392,7 +7398,7 @@ read_surface(void)
 							int j = copy_token(token1, &next_char);
 							if (j == DIGIT)
 							{
-								sscanf(token1.c_str(), SCANFORMAT, &dummy);
+								int sscan_rtn = sscanf(token1.c_str(), SCANFORMAT, &dummy);
 								temp_surface.Set_DDL_viscosity(dummy);
 								continue;
 							}
@@ -7411,7 +7417,7 @@ read_surface(void)
 							int j = copy_token(token1, &next_char);
 							if (j == DIGIT)
 							{
-								sscanf(token1.c_str(), SCANFORMAT, &dummy);
+								int sscan_rtn = sscanf(token1.c_str(), SCANFORMAT, &dummy);
 								temp_surface.Set_DDL_limit(dummy);
 								continue;
 							}
@@ -7603,7 +7609,7 @@ read_surface(void)
 						input_error++;
 						break;
 					}
-					sscanf(token1.c_str(), SCANFORMAT, &dummy);
+					int sscan_rtn = sscanf(token1.c_str(), SCANFORMAT, &dummy);
 					comp_ptr->Set_phase_proportion(dummy);
 					/* real conc must be defined in tidy_model */
 					conc = 1.0;
@@ -7703,7 +7709,7 @@ read_surface(void)
 					}
 					else
 					{
-						sscanf(token1.c_str(), SCANFORMAT, &dummy);
+						int sscan_rtn = sscanf(token1.c_str(), SCANFORMAT, &dummy);
 						comp_ptr->Set_Dw(dummy);
 						if (dummy > 0)
 						{
@@ -8189,11 +8195,15 @@ read_advection(void)
 			error_msg(line_save, CONTINUE);
 			break;
 		case 0:				/* cells */
-			sscanf(next_char, "%d", &count_ad_cells);
+		{
+			int sscan_rtn = sscanf(next_char, "%d", &count_ad_cells);
+		}
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 1:				/* shifts */
-			sscanf(next_char, "%d", &count_ad_shifts);
+		{
+			int sscan_rtn = sscanf(next_char, "%d", &count_ad_shifts);
+		}
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 2:				/* print */
@@ -8206,7 +8216,9 @@ read_advection(void)
 		case 3:				/* selected_output */
 		case 11:				/* selected_output_frequency */
 		case 12:				/* punch_frequency */
-			sscanf(next_char, "%d", &punch_ad_modulus);
+		{
+			int sscan_rtn = sscanf(next_char, "%d", &punch_ad_modulus);
+		}
 			opt_save = OPTION_DEFAULT;
 			if (punch_ad_modulus <= 0)
 			{
@@ -8226,7 +8238,9 @@ read_advection(void)
 			break;
 		case 7:				/* time_step */
 		case 8:				/* timest */
-			sscanf(next_char, SCANFORMAT, &advection_kin_time);
+		{
+			int sscan_rtn = sscanf(next_char, SCANFORMAT, &advection_kin_time);
+		}
 			{
 				std::string token;
 				int j = copy_token(token, &next_char);
@@ -8242,7 +8256,9 @@ read_advection(void)
 		case 9:				/* output */
 		case 10:				/* output_frequency */
 		case 13:				/* print_frequency */
-			sscanf(next_char, "%d", &print_ad_modulus);
+		{
+			int sscan_rtn = sscanf(next_char, "%d", &print_ad_modulus);
+		}
 			opt_save = OPTION_DEFAULT;
 			if (print_ad_modulus <= 0)
 			{
@@ -8256,8 +8272,8 @@ read_advection(void)
 			char token[MAX_LENGTH];
 			int j;
 			if (copy_token(token, &next_char, &j) == DIGIT)
-				sscanf(token, SCANFORMAT, &initial_total_time);
 			{
+				int sscan_rtn = sscanf(token, SCANFORMAT, &initial_total_time);
 				std::string stdtoken;
 				j = copy_token(stdtoken, &next_char);
 				if (j == UPPER || j == LOWER)
@@ -8419,19 +8435,29 @@ read_debug(void)
 			error_msg(line_save, CONTINUE);
 			break;
 		case 0:				/* iterations */
-			sscanf(next_char, "%d", &itmax);
+		{
+			int sscan_rtn = sscanf(next_char, "%d", &itmax);
+		}
 			break;
 		case 1:				/* tolerance */
-			sscanf(next_char, SCANFORMAT, &ineq_tol);
+		{
+			int sscan_rtn = sscanf(next_char, SCANFORMAT, &ineq_tol);
+		}
 			break;
 		case 2:				/* step_size */
-			sscanf(next_char, SCANFORMAT, &step_size);
+		{
+			int sscan_rtn = sscanf(next_char, SCANFORMAT, &step_size);
+		}
 			break;
 		case 3:				/* pe_step_size */
-			sscanf(next_char, SCANFORMAT, &pe_step_size);
+		{
+			int sscan_rtn = sscanf(next_char, SCANFORMAT, &pe_step_size);
+		}
 			break;
 		case 4:				/* pp_scale */
-			sscanf(next_char, SCANFORMAT, &pp_scale);
+		{
+			int sscan_rtn = sscanf(next_char, SCANFORMAT, &pp_scale);
+		}
 			break;
 		case 5:				/* diagonal_scale */
 			diagonal_scale = get_true_false(next_char, TRUE);
@@ -8467,7 +8493,7 @@ read_debug(void)
 		case 14:				/* convergence_tolerance */
 			{
 				LDBLE ct;
-				sscanf(next_char, SCANFORMAT, &ct);
+				int sscan_rtn = sscanf(next_char, SCANFORMAT, &ct);
 				convergence_tolerance = ct;
 			}
 			break;
@@ -8476,7 +8502,9 @@ read_debug(void)
 			break;
 		case 16:				/* tries */
 		case 17:				/* try */
-			sscanf(next_char, "%d", &max_tries);
+		{
+			int sscan_rtn = sscanf(next_char, "%d", &max_tries);
+		}
 			break;
 		case 18:				/* debug_inverse */
 			numerical_fixed_volume = (get_true_false(next_char, TRUE) == TRUE);
@@ -8485,11 +8513,15 @@ read_debug(void)
 			force_numerical_fixed_volume = (get_true_false(next_char, TRUE) == TRUE);
 			break;
 		case 20:				/* equi_delay */
-			sscanf(next_char, "%d", &equi_delay);
+		{
+			int sscan_rtn = sscanf(next_char, "%d", &equi_delay);
+		}
 			break;
 		case 21:				/* minimum_total */
 		case 22:				/* min_total */
-			sscanf(next_char, SCANFORMAT, &MIN_TOTAL);
+		{
+			int sscan_rtn = sscanf(next_char, SCANFORMAT, &MIN_TOTAL);
+		}
 			MIN_TOTAL_SS = MIN_TOTAL/100;
 			MIN_RELATED_SURFACE = MIN_TOTAL*100;
 			break;
@@ -8720,7 +8752,9 @@ read_print(void)
 			break;
 		case 32:				/* warning */
 		case 33:				/* warnings */
-			sscanf(next_char, "%d", &pr.warnings);
+		{
+			int sscan_rtn = sscanf(next_char, "%d", &pr.warnings);
+		}
 			break;
 		case 34:				/* initial_isotopes */
 			pr.initial_isotopes = get_true_false(next_char, TRUE);
@@ -8734,7 +8768,7 @@ read_print(void)
 		case 37:				/* censor_species */
 			if (copy_token(token, &next_char, &l) != EMPTY)
 			{
-				sscanf(token, SCANFORMAT, &censor);
+				int sscan_rtn = sscanf(token, SCANFORMAT, &censor);
 			}
 			else
 			{
@@ -9969,11 +10003,15 @@ read_user_graph(void)
 			i = copy_token(token, &next_char, &l);
 			str_tolower(token);
 			if (i == DIGIT)
-				sscanf(token, "%d", &RowOffset);
+			{
+				int sscan_rtn = sscanf(token, "%d", &RowOffset);
+			}
 			i = copy_token(token, &next_char, &l);
 			str_tolower(token);
 			if (i == DIGIT)
-				sscanf(token, "%d", &ColumnOffset);
+			{
+				int sscan_rtn = sscanf(token, "%d", &ColumnOffset);
+			}
 #endif
 			break;
 		case 11:
@@ -10168,12 +10206,12 @@ read_solid_solutions(void)
 			ptr = next_char;
 			if (copy_token(token, &ptr) != EMPTY)
 			{
-				sscanf(token.c_str(), SCANFORMAT, &dummy);
+				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 				ss_ptr->Get_p()[0] = dummy;
 			}
 			if (copy_token(token, &ptr) != EMPTY)
 			{
-				sscanf(token.c_str(), SCANFORMAT, &dummy);
+				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 				ss_ptr->Get_p()[1] = dummy;
 			}
 			ss_ptr->Set_input_case(cxxSS::SS_PARM_A0_A1);
@@ -10187,12 +10225,12 @@ read_solid_solutions(void)
 			ptr = next_char;
 			if (copy_token(token, &ptr) != EMPTY)
 			{
-				sscanf(token.c_str(), SCANFORMAT, &dummy);
+				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 				ss_ptr->Get_p()[0] = dummy;
 			}
 			if (copy_token(token, &ptr) != EMPTY)
 			{
-				sscanf(token.c_str(), SCANFORMAT, &dummy);
+				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 				ss_ptr->Get_p()[1] = dummy;
 			}
 			ss_ptr->Set_input_case(cxxSS::SS_PARM_DIM_GUGG);
@@ -10209,7 +10247,7 @@ read_solid_solutions(void)
 			{
 				if (copy_token(token, &ptr) != EMPTY)
 				{
-					sscanf(token.c_str(), SCANFORMAT, &dummy);
+					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 					ss_ptr->Get_p().push_back(dummy);
 				}
 			}
@@ -10236,7 +10274,7 @@ read_solid_solutions(void)
 			{
 				if (copy_token(token, &ptr) != EMPTY)
 				{
-					sscanf(token.c_str(), SCANFORMAT, &dummy);
+					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 					ss_ptr->Get_p().push_back(dummy);
 				}
 			}
@@ -10263,7 +10301,7 @@ read_solid_solutions(void)
 			{
 				if (copy_token(token, &ptr) != EMPTY)
 				{
-					sscanf(token.c_str(), SCANFORMAT, &dummy);
+					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 					ss_ptr->Get_p().push_back(dummy);
 				}
 			}
@@ -10290,7 +10328,7 @@ read_solid_solutions(void)
 			{
 				if (copy_token(token, &ptr) != EMPTY)
 				{
-					sscanf(token.c_str(), SCANFORMAT, &dummy);
+					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 					ss_ptr->Get_p().push_back(dummy);
 				}
 			}
@@ -10317,7 +10355,7 @@ read_solid_solutions(void)
 			{
 				if (copy_token(token, &ptr) != EMPTY)
 				{
-					sscanf(token.c_str(), SCANFORMAT, &dummy);
+					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 					ss_ptr->Get_p().push_back(dummy);
 				}
 			}
@@ -10344,7 +10382,7 @@ read_solid_solutions(void)
 			{
 				if (copy_token(token, &ptr) != EMPTY)
 				{
-					sscanf(token.c_str(), SCANFORMAT, &dummy);
+					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 					ss_ptr->Get_p().push_back(dummy);
 				}
 			}
@@ -10422,7 +10460,7 @@ read_solid_solutions(void)
 			{
 				if (copy_token(token, &ptr) != EMPTY)
 				{
-					sscanf(token.c_str(), SCANFORMAT, &dummy);
+					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 					ss_ptr->Get_p().push_back(dummy);
 				}
 			}
@@ -10449,7 +10487,7 @@ read_solid_solutions(void)
 			{
 				if (copy_token(token, &ptr) != EMPTY)
 				{
-					sscanf(token.c_str(), SCANFORMAT, &dummy);
+					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
 					ss_ptr->Get_p().push_back(dummy);
 				}
 			}
@@ -10865,7 +10903,7 @@ read_line_doubles(char *next_char, LDBLE ** d, int *count_d, int *count_alloc)
 		}
 		else
 		{
-			sscanf(token, SCANFORMAT, &value);
+			int sscan_rtn = sscanf(token, SCANFORMAT, &value);
 			n = 1;
 		}
 		for (;;)
@@ -11237,7 +11275,7 @@ read_copy(void)
 	i = copy_token(token, &ptr, &l);
 	if (i == DIGIT)
 	{
-		sscanf(token, "%d", &n_user);
+		int sscan_rtn = sscanf(token, "%d", &n_user);
 		//if (n_user < 0)
 		//{
 		//	error_msg("Source index number must be a positive integer.",

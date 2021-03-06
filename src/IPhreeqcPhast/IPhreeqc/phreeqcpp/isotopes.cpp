@@ -106,7 +106,9 @@ read_isotopes(void)
 				input_error++;
 				break;
 			}
-			sscanf(token, SCANFORMAT, &(master_isotope_ptr->standard));
+			{
+				int sscan_rtn = sscanf(token, SCANFORMAT, &(master_isotope_ptr->standard));
+			}
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 1:				/* total_is_major_isotope */
