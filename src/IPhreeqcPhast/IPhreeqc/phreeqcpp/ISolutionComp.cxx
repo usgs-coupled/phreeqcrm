@@ -397,7 +397,7 @@ read(const char *line_in, cxxSolution *solution_ptr)
 		}
 		else
 		{
-			int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &this->gfw);
+			(void)sscanf(token.c_str(), SCANFORMAT, &this->gfw);
 			if ((CParser::copy_token(token, b, e)) == CParser::TT_EMPTY)
 				return (CParser::PARSER_OK);
 		}

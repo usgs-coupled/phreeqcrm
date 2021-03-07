@@ -211,7 +211,7 @@ read_solution_spread(void)
 				case 14: /* pressure */
 				case 15: /* press */
 				{
-					int sscan_rtn = sscanf(next_char, SCANFORMAT, &(soln_defaults.pressure));
+					(void)sscanf(next_char, SCANFORMAT, &(soln_defaults.pressure));
 				}
 					break;
 				}
@@ -272,7 +272,7 @@ read_solution_spread(void)
 		case 0:				/* temperature */
 		case 1:
 		{
-			int sscan_rtn = sscanf(next_char, SCANFORMAT, &(soln_defaults.temp));
+			(void)sscanf(next_char, SCANFORMAT, &(soln_defaults.temp));
 		}
 			break;
 		case 2:				/* density */
@@ -336,7 +336,7 @@ read_solution_spread(void)
 		case 6:				/* ph */
 			copy_token(token, &next_char);
 			{
-				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &(soln_defaults.ph));
+				(void)sscanf(token.c_str(), SCANFORMAT, &(soln_defaults.ph));
 			}
 			if (copy_token(token, &next_char) != EMPTY)
 			{
@@ -347,7 +347,7 @@ read_solution_spread(void)
 		case 7:				/* pe */
 			copy_token(token, &next_char);
 			{
-				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &(soln_defaults.pe));
+				(void)sscanf(token.c_str(), SCANFORMAT, &(soln_defaults.pe));
 			}
 			if (copy_token(token, &next_char) != EMPTY)
 			{
@@ -414,7 +414,7 @@ read_solution_spread(void)
 					}
 					else
 					{
-						int sscan_rtn = sscanf(token.c_str(), SCANFORMAT,
+						(void)sscanf(token.c_str(), SCANFORMAT,
 							&(soln_defaults.iso[i].uncertainty));
 					}
 				}
@@ -436,7 +436,7 @@ read_solution_spread(void)
 				}
 				else
 				{
-					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &(soln_defaults.water));
+					(void)sscanf(token.c_str(), SCANFORMAT, &(soln_defaults.water));
 				}
 			}
 			break;
@@ -492,7 +492,7 @@ read_solution_spread(void)
 					break;
 				}
 				{
-					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &(soln_defaults.iso[i].value));
+					(void)sscanf(token.c_str(), SCANFORMAT, &(soln_defaults.iso[i].value));
 				}
 				/* read and store isotope ratio uncertainty */
 				int j;
@@ -508,7 +508,7 @@ read_solution_spread(void)
 					}
 					else
 					{
-						int sscan_rtn = sscanf(token.c_str(), SCANFORMAT,
+						(void)sscanf(token.c_str(), SCANFORMAT,
 							&(soln_defaults.iso[i].uncertainty));
 					}
 				}
@@ -516,7 +516,7 @@ read_solution_spread(void)
 			break;
 		case 14: /* pressure */
 		{
-			int sscan_rtn = sscanf(next_char, SCANFORMAT, &(soln_defaults.pressure));
+			(void)sscanf(next_char, SCANFORMAT, &(soln_defaults.pressure));
 		}
 			break;
 		case 100:				/* read headings */
@@ -727,7 +727,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 		case 0:				/* temperature */
 		case 1:
 		{
-			int sscan_rtn = sscanf(next_char, SCANFORMAT, &dummy);
+			(void)sscanf(next_char, SCANFORMAT, &dummy);
 		}
 			temp_solution.Set_tc(dummy);
 			break;
@@ -735,7 +735,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 		case 3:
 			{
 				int j = copy_token(token, &next_char);
-				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
+				(void)sscanf(token.c_str(), SCANFORMAT, &dummy);
 				temp_solution.Set_density(dummy);
 				j = copy_token(token, &next_char);
 				if (j != EMPTY)
@@ -923,7 +923,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 					free_check_null(char_string);
 					continue;
 				}
-				int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
+				(void)sscanf(token.c_str(), SCANFORMAT, &dummy);
 				temp_isotope.Set_ratio(dummy);
 				temp_isotope.Set_ratio_uncertainty(nan(""));
 
@@ -940,7 +940,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 						free_check_null(char_string);
 						continue;
 					}
-					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
+					(void)sscanf(token.c_str(), SCANFORMAT, &dummy);
 					temp_isotope.Set_ratio_uncertainty(dummy);
 				}
 				temp_solution.Get_isotopes()[temp_isotope.Get_isotope_name()] = temp_isotope;
@@ -964,7 +964,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 				}
 				else
 				{
-					int sscan_rtn = sscanf(token.c_str(), SCANFORMAT, &dummy);
+					(void)sscanf(token.c_str(), SCANFORMAT, &dummy);
 					temp_solution.Set_mass_water(dummy);
 				}
 			}

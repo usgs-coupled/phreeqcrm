@@ -5111,7 +5111,7 @@ dump_netpath_pat(struct inverse *inv_ptr)
 				std::string::iterator e = string.end();
 				CParser::copy_token(token, b, e);
 				CParser::copy_token(string1, b, e);
-				int sscan_rtn = sscanf(string1.c_str(), SCANFORMAT, &f);
+				(void)sscanf(string1.c_str(), SCANFORMAT, &f);
 				sum += f * rxn_ptr->coef;
 			}
 		}

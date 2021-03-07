@@ -107,7 +107,7 @@ read_isotopes(void)
 				break;
 			}
 			{
-				int sscan_rtn = sscanf(token, SCANFORMAT, &(master_isotope_ptr->standard));
+				(void)sscanf(token, SCANFORMAT, &(master_isotope_ptr->standard));
 			}
 			opt_save = OPTION_DEFAULT;
 			break;
