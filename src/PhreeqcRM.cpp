@@ -813,7 +813,7 @@ PhreeqcRM::CheckSelectedOutput()
 			MPI_Bcast(&length,  1, MPI_INT, 0, phreeqcrm_comm);
 
 			// Broadcast string
-			char *headings_bcast = new char[length + 1];
+			char *headings_bcast = new char[(size_t)length + 1];
 			if (this->mpi_myself == 0)
 			{
 				strcpy(headings_bcast, headings.c_str());
@@ -1023,10 +1023,10 @@ PhreeqcRM::Concentrations2SolutionsH2O(int n, std::vector<double> &c)
 		std::vector<double> d;  // scratch space to convert from mass fraction to moles
 		// j is count_chem number
 #ifdef USE_MPI
-		double dens = density_worker[j - start];
-		double por  = porosity_worker[j - start];
-		double repv  = rv_worker[j - start];
-		double sat = saturation_worker[j - start];
+		double dens = density_worker[(size_t)j - (size_t)start];
+		double por  = porosity_worker[(size_t)j - (size_t)start];
+		double repv  = rv_worker[(size_t)j - (size_t)start];
+		double sat = saturation_worker[(size_t)j - (size_t)start];
 #else
 		int i = this->backward_mapping[j][0];
 		double dens = density_root[i];
@@ -1126,10 +1126,10 @@ PhreeqcRM::Concentrations2SolutionsNoH2O(int n, std::vector<double> &c)
 		// j is count_chem number
 
 #ifdef USE_MPI
-		double dens = density_worker[j - start];
-		double por  = porosity_worker[j - start];
-		double repv = rv_worker[j - start];
-		double sat  = saturation_worker[j - start];
+		double dens = density_worker[(size_t)j - (size_t)start];
+		double por  = porosity_worker[(size_t)j - (size_t)start];
+		double repv = rv_worker[(size_t)j - (size_t)start];
+		double sat  = saturation_worker[(size_t)j - (size_t)start];
 #else
 		int i = this->backward_mapping[j][0];
 		double dens = density_root[i];
@@ -1948,7 +1948,7 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 	std::vector<char> char_buffer;
 	const size_t gzblock = 4094;
 	char buffer[gzblock + 2];
-	int total_cells = this->end_cell[this->mpi_tasks - 1];
+	int total_cells = this->end_cell[(size_t)this->mpi_tasks - 1];
 	int pct = 10;
 	int block_count = 0;
 	if (mpi_myself == 0)
@@ -2053,7 +2053,7 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 					MPI_Status mpi_status;
 					int size;
 					MPI_Recv(&size, 1, MPI_INT, n, 0, phreeqcrm_comm, &mpi_status);
-					char_buffer.resize(size + 1);
+					char_buffer.resize((size_t)size + 1);
 					MPI_Recv((void *)&char_buffer.front(), size, MPI_CHAR, n, 0, phreeqcrm_comm, &mpi_status);
 					char_buffer[size] = '\0';
 
@@ -3216,7 +3216,7 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 				{
 					v = cxxsoln_ptr->Get_soln_vol();
 				}
-				dens = this->density_worker[j - this->start_cell[n]];
+				dens = this->density_worker[(size_t)j - (size_t)this->start_cell[n]];
 			}
 			this->cxxSolution2concentration(cxxsoln_ptr, d, v, dens);
 			for (int i = 0; i < (int) this->components.size(); i++)
@@ -3259,9 +3259,16 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 			for (int j = 0; j < count_chemistry; j++)
 			{
 				std::vector<double> d;
-				for (size_t i = 0; i < this->components.size(); i++)
+				if (recv_solns != NULL)
 				{
-					d.push_back(recv_solns[n++]);
+					for (size_t i = 0; i < this->components.size(); i++)
+					{
+						d.push_back(recv_solns[n++]);
+					}
+				}
+				else
+				{
+					return IRM_FAIL;
 				}
 				std::vector<int>::iterator it;
 				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
@@ -3445,7 +3452,7 @@ PhreeqcRM::GetErrorString(void)
 				MPI_Recv(&l, 1, MPI_INT, n, 0, phreeqcrm_comm, &mpi_status);
 				if (l > 0)
 				{
-					char *errstr = new char[l + 1];
+					char *errstr = new char[(size_t)l + 1];
 					MPI_Recv(errstr, l, MPI_CHAR, n, 0, phreeqcrm_comm, &mpi_status);
 					cummulative_error_string.append(errstr);
 					delete []errstr;
@@ -3523,9 +3530,16 @@ PhreeqcRM::GetGasCompMoles(std::vector<double>& m_out)
 			for (int j = 0; j < count_chemistry; j++)
 			{
 				std::vector<double> d;
-				for (size_t i = 0; i < gc_names.size(); i++)
+				if (recv_gas_moles != NULL)
 				{
-					d.push_back(recv_gas_moles[n++]);
+					for (size_t i = 0; i < gc_names.size(); i++)
+					{
+						d.push_back(recv_gas_moles[n++]);
+					}
+				}
+				else
+				{
+					return IRM_FAIL;
 				}
 				std::vector<int>::iterator it;
 				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
@@ -3666,9 +3680,16 @@ PhreeqcRM::GetGasCompPressures(std::vector<double>& p_out)
 			for (int j = 0; j < count_chemistry; j++)
 			{
 				std::vector<double> d;
-				for (size_t i = 0; i < gc_names.size(); i++)
+				if (recv_gas_p != NULL)
 				{
-					d.push_back(recv_gas_p[n++]);
+					for (size_t i = 0; i < gc_names.size(); i++)
+					{
+						d.push_back(recv_gas_p[n++]);
+					}
+				}
+				else
+				{
+					return IRM_FAIL;
 				}
 				std::vector<int>::iterator it;
 				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
@@ -3807,9 +3828,12 @@ PhreeqcRM::GetGasCompPhi(std::vector<double>& phi_out)
 			for (int j = 0; j < count_chemistry; j++)
 			{
 				std::vector<double> d;
-				for (size_t i = 0; i < gc_names.size(); i++)
+				if (recv_gas_phis != NULL)
 				{
-					d.push_back(recv_gas_phis[n++]);
+					for (size_t i = 0; i < gc_names.size(); i++)
+					{
+						d.push_back(recv_gas_phis[n++]);
+					}
 				}
 				std::vector<int>::iterator it;
 				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
@@ -4054,7 +4078,7 @@ PhreeqcRM::GetPressure(void)
 		int n = this->mpi_myself;
 		for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
 		{
-			this->pressure_worker[i - this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_patm();
+			this->pressure_worker[(size_t)i - (size_t)this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_patm();
 		}
 		
 		// Gather to root
@@ -4212,7 +4236,7 @@ PhreeqcRM::GetSelectedOutput(std::vector<double> &so)
 			// fill with INACTIVE_CELL_VALUE
 			if (mpi_myself == 0)
 			{
-				so.resize(this->nxyz * ncol);
+				so.resize((size_t)this->nxyz * (size_t)ncol);
 			}
 			for (int n = 0; n < this->mpi_tasks; n++)
 			{
@@ -4241,7 +4265,7 @@ PhreeqcRM::GetSelectedOutput(std::vector<double> &so)
 					MPI_Recv(length, 2, MPI_INT, n, 0, phreeqcrm_comm, &mpi_status);
 					nrow = length[0];
 					ncol = length[1];
-					dbuffer.resize(nrow*ncol);
+					dbuffer.resize((size_t)nrow* (size_t)ncol);
 					MPI_Recv(&dbuffer.front(), nrow*ncol, MPI_DOUBLE, n, 0, phreeqcrm_comm, &mpi_status);
 				}
 				if (mpi_myself == 0)
@@ -4255,7 +4279,7 @@ PhreeqcRM::GetSelectedOutput(std::vector<double> &so)
 							for (size_t k = 0; k < backward_mapping[ichem].size(); k++)
 							{
 								int ixyz = backward_mapping[ichem][k];
-								so[icol*this->nxyz + ixyz] = dbuffer[icol*nrow + irow];
+								so[(size_t)icol * (size_t)this->nxyz + (size_t)ixyz] = dbuffer[(size_t)icol * (size_t)nrow + (size_t)irow];
 							}
 						}
 					}
@@ -4416,7 +4440,7 @@ PhreeqcRM::GetSolutionVolume(void)
 		int n = this->mpi_myself;
 		for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
 		{
-			this->solution_volume_worker[i - this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_soln_vol();;
+			this->solution_volume_worker[(size_t)i - (size_t)this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_soln_vol();;
 		}
 		// Gather to root
 		GatherNchem(this->solution_volume_worker, this->solution_volume_root);
@@ -4507,7 +4531,7 @@ PhreeqcRM::GetSpeciesConcentrations(std::vector<double> & species_conc)
 						{
 							// it is pointing to a species number, concentration
 							int rm_species_num = this->s_num2rm_species_num[it->first];
-							species_conc[rm_species_num * ncells + j0] = it->second;
+							species_conc[(size_t)rm_species_num * (size_t)ncells + (size_t)j0] = it->second;
 						}
 					}
 				}
@@ -4648,7 +4672,7 @@ PhreeqcRM::GetSpeciesLog10Gammas(std::vector<double> & species_log10gammas)
 						{
 							// it is pointing to a species number, concentration
 							int rm_species_num = this->s_num2rm_species_num[it->first];
-							species_log10gammas[rm_species_num * ncells + j0] = it->second;
+							species_log10gammas[(size_t)rm_species_num * (size_t)ncells + (size_t)j0] = it->second;
 						}
 					}
 				}
@@ -4790,7 +4814,7 @@ PhreeqcRM::GetSpeciesLog10Molalities(std::vector<double>& species_log10molalitie
 						{
 							// it is pointing to a species number, concentration
 							int rm_species_num = this->s_num2rm_species_num[it->first];
-							species_log10molalities[rm_species_num * ncells + j0] = it->second;
+							species_log10molalities[(size_t)rm_species_num * (size_t)ncells + (size_t)j0] = it->second;
 						}
 					}
 				}
@@ -4814,7 +4838,7 @@ PhreeqcRM::GetSpeciesLog10Molalities(std::vector<double>& species_log10molalitie
 						}
 					}
 				}
-				delete recv_species;
+				delete [] recv_species;
 			}
 		}
 	}
@@ -4891,7 +4915,7 @@ PhreeqcRM::GetTemperature(void)
 		int n = this->mpi_myself;
 		for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
 		{
-			this->tempc_worker[i - this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_tc();
+			this->tempc_worker[(size_t)i - (size_t)this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_tc();
 		}
 		
 		// Gather to root
@@ -5013,7 +5037,7 @@ PhreeqcRM::HandleErrorsInternal(std::vector <int> & r_vector)
 				int size;
 				MPI_Recv(&size, 1, MPI_INT, n, 0, phreeqcrm_comm, &mpi_status);
 				std::string char_buffer;
-				char_buffer.resize(size + 1);
+				char_buffer.resize((size_t)size + 1);
 				MPI_Recv((void *) &char_buffer[0], size, MPI_CHAR, n, 0, phreeqcrm_comm, &mpi_status);
 				char_buffer[size] = '\0';
 				this->ErrorMessage(char_buffer, false);
@@ -5252,9 +5276,9 @@ PhreeqcRM::InitialPhreeqc2Module(
 			// pull out next chunk
 			if (mpi_myself == 0)
 			{ 
-				memcpy(&ic1_root.front(), &initial_conditions1[i * this->nxyz], (size_t) this->nxyz * sizeof(int));
-				memcpy(&ic2_root.front(), &initial_conditions2[i * this->nxyz], (size_t) this->nxyz * sizeof(int));
-				memcpy(&f1_root.front(), &fraction1[i * this->nxyz], (size_t) this->nxyz * sizeof(double));
+				memcpy(&ic1_root.front(), &initial_conditions1[(size_t)i * (size_t)this->nxyz], (size_t) this->nxyz * sizeof(int));
+				memcpy(&ic2_root.front(), &initial_conditions2[(size_t)i * (size_t)this->nxyz], (size_t) this->nxyz * sizeof(int));
+				memcpy(&f1_root.front(), &fraction1[(size_t)i * (size_t)this->nxyz], (size_t) this->nxyz * sizeof(double));
 			}
 			ScatterNchem(ic1_root, ic1);
 			ScatterNchem(ic2_root, ic2);
@@ -6710,13 +6734,13 @@ PhreeqcRM::RebalanceLoad(void)
 				for (int j = 0; j < diff_cells; j++)
 				{
 					int min_cell = 0;
-					double min_time = (cells_v[0] + 1) * recv_buffer[0];
+					double min_time = ((size_t)cells_v[0] + 1) * recv_buffer[0];
 					for (int i = 1; i < this->mpi_tasks; i++)
 					{
-						if ((cells_v[i] + 1) * recv_buffer[i] < min_time)
+						if (((size_t)cells_v[i] + 1) * recv_buffer[i] < min_time)
 						{
 							min_cell = i;
-							min_time = (cells_v[i] + 1) * recv_buffer[i];
+							min_time = ((size_t)cells_v[i] + 1) * recv_buffer[i];
 						}
 					}
 					cells_v[min_cell] += 1;
@@ -6732,10 +6756,10 @@ PhreeqcRM::RebalanceLoad(void)
 					{
 						if (cells_v[i] > 1)
 						{
-							if ((cells_v[i] - 1) * recv_buffer[i] > max_time)
+							if (((size_t)cells_v[i] - 1) * recv_buffer[i] > max_time)
 							{
 								max_cell = i;
-								max_time = (cells_v[i] - 1) * recv_buffer[i];
+								max_time = ((size_t)cells_v[i] - 1) * recv_buffer[i];
 							}
 						}
 					}
@@ -6753,10 +6777,10 @@ PhreeqcRM::RebalanceLoad(void)
 			}
 
 			// Check that all cells are distributed
-			if (end_cell_new[this->mpi_tasks - 1] != this->count_chemistry - 1)
+			if (end_cell_new[(size_t)this->mpi_tasks - 1] != this->count_chemistry - 1)
 			{
 				error_stream << "Failed: " << diff_cells << ", count_cells " << this->count_chemistry << ", last cell "
-					<< end_cell_new[this->mpi_tasks - 1] << "\n";
+					<< end_cell_new[(size_t)this->mpi_tasks - 1] << "\n";
 				for (int i = 0; i < this->mpi_tasks; i++)
 				{
 					error_stream << i << ": first " << start_cell_new[i] << "\tlast " << end_cell_new[i] << "\n";
@@ -6773,7 +6797,7 @@ PhreeqcRM::RebalanceLoad(void)
 				double t = cells_v[i] * recv_buffer[i];
 				if (t > max_new)
 					max_new = t;
-				t = (end_cell[i] - start_cell[i] + 1) * recv_buffer[i];
+				t = ((size_t)end_cell[i] - (size_t)start_cell[i] + 1) * recv_buffer[i];
 				if (t > max_old)
 					max_old = t;
 			}
@@ -6799,7 +6823,7 @@ PhreeqcRM::RebalanceLoad(void)
 				{
 					int icells = (int) ((end_cell_new[i] - end_cell[i]) * this->rebalance_fraction);
 					end_cell_new[i] = end_cell[i] + icells;
-					start_cell_new[i + 1] = end_cell_new[i] + 1;
+					start_cell_new[(size_t)i + 1] = end_cell_new[i] + 1;
 				}
 			}
 		}
@@ -7768,8 +7792,8 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 		}
 		assert(j < count_chemistry);
 		assert(mpi_tasks > 1);
-		start_cell_new[mpi_tasks - 1] = end_cell_new[mpi_tasks - 2] + 1;
-		end_cell_new[mpi_tasks - 1] = count_chemistry - 1;
+		start_cell_new[(size_t)mpi_tasks - 1] = end_cell_new[(size_t)mpi_tasks - 2] + 1;
+		end_cell_new[(size_t)mpi_tasks - 1] = count_chemistry - 1;
 
 		if (efficiency > 0.95)
 		{
@@ -8683,7 +8707,7 @@ PhreeqcRM::RunCells()
 				MPI_Status mpi_status;
 				int size;
 				MPI_Recv(&size, 1, MPI_INT, n, 0, phreeqcrm_comm, &mpi_status);
-				char_buffer.resize(size + 1);
+				char_buffer.resize((size_t)size + 1);
 				MPI_Recv((void *) &char_buffer.front(), size, MPI_CHAR, n, 0, phreeqcrm_comm, &mpi_status);
 				char_buffer[size] = '\0';
 				this->OutputMessage(&char_buffer.front());
@@ -8903,7 +8927,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 	{
 #ifdef USE_MPI
 		int j = i; // not used
-		double sat = saturation_worker[i - start];
+		double sat = saturation_worker[(size_t)i - (size_t)start];
 #else
 		int j = backward_mapping[i][0];			/* j is nxyz number */
 		double sat = saturation_root[j];
@@ -8927,7 +8951,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 		{		  					                /* i is count_chem number */
 #ifdef USE_MPI
 			int j = i; // not used
-		double sat = saturation_worker[i - start];
+		double sat = saturation_worker[(size_t)i - (size_t)start];
 #else
 		int j = backward_mapping[i][0];			/* j is nxyz number */
 		double sat = saturation_root[j];
@@ -9013,7 +9037,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 			for (int i = start; i <= end; i++)
 			{							                /* i is count_chem number */
 #ifdef USE_MPI
-				double sat = saturation_worker[i - start];
+				double sat = saturation_worker[(size_t)i - (size_t)start];
 #else
 				int j = backward_mapping[i][0];			/* j is nxyz number */
 				double sat = saturation_root[j];
@@ -9041,7 +9065,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 		for (int i = start; i <= end; i++)
 		{							                /* i is count_chem number */
 #ifdef USE_MPI
-		double sat = saturation_worker[i - start];
+		double sat = saturation_worker[(size_t)i - (size_t)start];
 #else
 			int j = backward_mapping[i][0];			/* j is nxyz number */
 			double sat = saturation_root[j];
@@ -9090,7 +9114,7 @@ PhreeqcRM::RunCellsThread(int n)
 			{							            /* i is count_chem number */
 #ifdef USE_MPI
 				j = i; // unused
-				double sat = saturation_worker[i - start];
+				double sat = saturation_worker[(size_t)i - (size_t)start];
 #else
 				j = backward_mapping[i][0];			/* j is nxyz number */
 				double sat = saturation_root[j];
@@ -9198,7 +9222,7 @@ PhreeqcRM::RunCellsThread(int n)
 				bool calculation_success = true;
 #ifdef USE_MPI
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- (double) MPI_Wtime());
-				local_chem_mask = this->print_chem_mask_worker[i - start];
+				local_chem_mask = this->print_chem_mask_worker[(size_t)i - (size_t)start];
 #elif defined(USE_OPENMP)
 				j = backward_mapping[i][0];			/* j is nxyz number */
 				phast_iphreeqc_worker->Get_cell_clock_times().push_back(- omp_get_wtime());
@@ -9214,7 +9238,7 @@ PhreeqcRM::RunCellsThread(int n)
 				// ignore small saturations
 				bool active = true;
 #ifdef USE_MPI
-				double sat = saturation_worker[i - start];
+				double sat = saturation_worker[(size_t)i - (size_t)start];
 #else
 				double sat = saturation_root[j];
 #endif
@@ -9978,7 +10002,7 @@ PhreeqcRM::SetConcentrations(const std::vector<double> &t)
 	}
 	else
 	{
-		recv_buf = &c_chem[start_cell[this->mpi_myself] * (int) this->components.size()];
+		recv_buf = &c_chem[(size_t)start_cell[this->mpi_myself] * this->components.size()];
 	}
 
 	MPI_Scatterv(send_buf, send_counts, send_displs, MPI_DOUBLE, recv_buf, recv_count, MPI_DOUBLE, 0, phreeqcrm_comm);

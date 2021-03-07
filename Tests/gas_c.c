@@ -98,14 +98,18 @@ void gas_c()
 
 	// Determine number of components and gas components
 	ncomps = RM_FindComponents(id);
-	ngas = max(RM_GetGasComponentsCount(id), 3);
+	ngas = RM_GetGasComponentsCount(id);
+	if (ngas < 3) ngas = 3;
 
 	// Get gas component names
 	gas_comps = (char**)malloc((size_t)(ngas * sizeof(char*)));
-	for (i = 0; i < ngas; i++)
+	if (gas_comps != NULL)
 	{
-		gas_comps[i] = (char*)malloc((size_t)(100 * sizeof(char*)));
-		status = RM_GetGasComponentsName(id, i, gas_comps[i], 100);
+		for (i = 0; i < ngas; i++)
+		{
+			gas_comps[i] = (char*)malloc((size_t)(100 * sizeof(char*)));
+			status = RM_GetGasComponentsName(id, i, gas_comps[i], 100);
+		}
 	}
 
 	// Set array of initial conditions
@@ -153,7 +157,7 @@ void gas_c()
 		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions");
 
 		// multiply by 2
-		for (size_t i = 0; i < (size_t)nxyz * RM_GetGasComponentsCount(id); i++)
+		for (size_t i = 0; i < (size_t)nxyz * ngas; i++)
 		{
 			gas_moles[i] *= 2.0;
 		}
