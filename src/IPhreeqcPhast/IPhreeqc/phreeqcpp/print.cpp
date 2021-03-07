@@ -493,29 +493,34 @@ print_exchange(void)
 					master_ptr->unknown->description);
 				error_msg(error_string, STOP);
 			}
-			const cxxExchComp *exchange_comp_ptr = exchange_ptr->Find_comp(master_ptr->unknown->exch_comp);
-			assert(exchange_comp_ptr);
-			if (exchange_comp_ptr->Get_phase_name().size() > 0)
+			const cxxExchComp* exchange_comp_ptr;
+			if (master_ptr->unknown->exch_comp != NULL)
 			{
-				output_msg(sformatf("\t[%g (mol %s)/(mol %s)]",
-					(double) exchange_comp_ptr->Get_phase_proportion(),
-					exchange_comp_ptr->Get_formula().c_str(),
-					exchange_comp_ptr->Get_phase_name().c_str()));
+				exchange_comp_ptr = exchange_ptr->Find_comp(master_ptr->unknown->exch_comp);
+
+				assert(exchange_comp_ptr);
+				if (exchange_comp_ptr->Get_phase_name().size() > 0)
+				{
+					output_msg(sformatf("\t[%g (mol %s)/(mol %s)]",
+						(double)exchange_comp_ptr->Get_phase_proportion(),
+						exchange_comp_ptr->Get_formula().c_str(),
+						exchange_comp_ptr->Get_phase_name().c_str()));
+				}
+				else if (exchange_comp_ptr->Get_rate_name().size() > 0)
+				{
+					output_msg(sformatf(
+						"\t[%g (mol %s)/(mol kinetic reactant %s)]",
+						(double)exchange_comp_ptr->Get_phase_proportion(),
+						exchange_comp_ptr->Get_formula().c_str(),
+						exchange_comp_ptr->Get_rate_name().c_str()));
+				}
+				output_msg(sformatf("\n\n"));
+				/* Heading for species */
+				output_msg(sformatf("\t%-15s%12s%12s%12s%10s\n", " ", " ",
+					"Equiv-  ", "Equivalent", "Log "));
+				output_msg(sformatf("\t%-15s%12s%12s%12s%10s\n\n",
+					"Species", "Moles  ", "alents  ", "Fraction", "Gamma"));
 			}
-			else if (exchange_comp_ptr->Get_rate_name().size() > 0)
-			{
-				output_msg(sformatf(
-						   "\t[%g (mol %s)/(mol kinetic reactant %s)]",
-						   (double) exchange_comp_ptr->Get_phase_proportion(),
-						   exchange_comp_ptr->Get_formula().c_str(),
-						   exchange_comp_ptr->Get_rate_name().c_str()));
-			}
-			output_msg(sformatf("\n\n"));
-			/* Heading for species */
-			output_msg(sformatf("\t%-15s%12s%12s%12s%10s\n", " ", " ",
-					   "Equiv-  ", "Equivalent", "Log "));
-			output_msg(sformatf("\t%-15s%12s%12s%12s%10s\n\n",
-					   "Species", "Moles  ", "alents  ", "Fraction", "Gamma"));
 		}
 /*
  *   Print species data

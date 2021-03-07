@@ -3300,7 +3300,7 @@ CVComputeEtaqp1(CVodeMem cv_mem)
 		cquot = (tq[5] / saved_tq5) * RPowerI(h / tau[2], L);
 		N_VLinearSum(-cquot, zn[qmax], ONE, acor, tempv);
 		dup = N_VWrmsNorm(tempv, ewt) / tq[3];
-		etaqp1 = ONE / (RPowerR(BIAS3 * dup, ONE / (L + 1)) + ADDON);
+		etaqp1 = ONE / (RPowerR(BIAS3 * dup, ONE / ((size_t)L + 1)) + ADDON);
 	}
 	return (etaqp1);
 }

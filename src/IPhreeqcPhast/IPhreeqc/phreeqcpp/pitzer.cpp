@@ -2639,10 +2639,10 @@ pitzer_make_lists(void)
 		{
 			IPRSNT[i] = FALSE;
 			M[i] = 0.0;
-		if ((spec[i] != NULL && spec[i]->in == TRUE) ||
-			(ICON == TRUE && i == IC))
+			if ((spec[i] != NULL && spec[i]->in == TRUE) ||
+				(ICON == TRUE && i == IC))
 			{
-				if (spec[i]->type == EX ||
+				if (spec[i] == NULL || spec[i]->type == EX ||
 					spec[i]->type == SURF || spec[i]->type == SURF_PSI)
 					continue;	
 				IPRSNT[i] = TRUE;	

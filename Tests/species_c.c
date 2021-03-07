@@ -286,15 +286,18 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		volume = (double *) malloc((size_t)nxyz * sizeof(double));
 		pressure = (double *) malloc((size_t)nxyz * sizeof(double));
 		temperature = (double *) malloc((size_t)nxyz * sizeof(double));
-		for (i = 0; i < nxyz; i++) 
+		if (density != NULL && pressure != NULL && temperature != NULL)
 		{
-			density[i] = 1.0;
-			pressure[i] = 2.0;
-			temperature[i] = 20.0;
+			for (i = 0; i < nxyz; i++)
+			{
+				density[i] = 1.0;
+				pressure[i] = 2.0;
+				temperature[i] = 20.0;
+			}
+			status = RM_SetDensity(id, density);
+			status = RM_SetPressure(id, pressure);
+			status = RM_SetTemperature(id, temperature);
 		}
-		status = RM_SetDensity(id, density);
-		status = RM_SetPressure(id, pressure);      
-		status = RM_SetTemperature(id, temperature); 
 		time_step = 86400;
 		status = RM_SetTimeStep(id, time_step);
 		for (isteps = 0; isteps < nsteps; isteps++)
@@ -398,8 +401,11 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		}
 		tc = (double *) malloc(sizeof(double));
 		p_atm = (double *) malloc(sizeof(double));
-		tc[0] = 15.0;
-		p_atm[0] = 3.0;
+		if (tc != NULL && p_atm != NULL)
+		{
+			tc[0] = 15.0;
+			p_atm[0] = 3.0;
+		}
 		iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
 		strcpy(str, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
 		SetOutputFileName(iphreeqc_id, "species_utility_c.txt");

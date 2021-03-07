@@ -284,7 +284,6 @@ public:
 	void set_reading_database(int reading_database);
 	int check_line(const char *string, int allow_empty, int allow_eof,
 		int allow_keyword, int print);
-	int add_char_to_line(int *i, char c);
 	int check_line_impl(const char *string, int allow_empty,
 		int allow_eof, int allow_keyword, int print);
 	int get_line(void);

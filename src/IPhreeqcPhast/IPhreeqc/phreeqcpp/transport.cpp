@@ -1953,30 +1953,34 @@ fill_spec(int l_cell_no, int ref_cell)
 						break;
 				}
 				/* copy its name and Dw and charge... */
-				sol_D[l_cell_no].spec[count_spec].aq_name = s_ptr2->name;
-				//string_hsave(s_ptr2->name);
-				sol_D[l_cell_no].spec[count_spec].z = s_ptr2->z;
-				if (s_ptr2->dw == 0)
-					sol_D[l_cell_no].spec[count_spec].Dwt = default_Dw * viscos_il_f;
-				else
+				if (s_ptr2 != NULL)
 				{
-					if (s_ptr2->dw_t)
-					{
-						sol_D[l_cell_no].spec[count_spec].Dwt = s_ptr2->dw *
-							exp(s_ptr2->dw_t / 298.15 - s_ptr2->dw_t / tk_x) * viscos_il_f;
-						sol_D[l_cell_no].spec[count_spec].dw_t = s_ptr2->dw_t;
-					}
-					else
-						sol_D[l_cell_no].spec[count_spec].Dwt = s_ptr2->dw * viscos_il_f;
-				}
+					sol_D[l_cell_no].spec[count_spec].aq_name = s_ptr2->name;
 
-				//if (implicit) // && name_ret.second && (l_cell_no > 1 || (l_cell_no == 1 && bcon_first != 2)))
-				//{
-				//	// name_ret = dif_spec_names.insert(s_ptr->name); // but not in implicit now...
-				//	// must fill in the spec in previous cells, order the names, see below for aqueous species...
-				//}
-				count_exch_spec++;
-				count_spec++;
+					//string_hsave(s_ptr2->name);
+					sol_D[l_cell_no].spec[count_spec].z = s_ptr2->z;
+					if (s_ptr2->dw == 0)
+						sol_D[l_cell_no].spec[count_spec].Dwt = default_Dw * viscos_il_f;
+					else
+					{
+						if (s_ptr2->dw_t)
+						{
+							sol_D[l_cell_no].spec[count_spec].Dwt = s_ptr2->dw *
+								exp(s_ptr2->dw_t / 298.15 - s_ptr2->dw_t / tk_x) * viscos_il_f;
+							sol_D[l_cell_no].spec[count_spec].dw_t = s_ptr2->dw_t;
+						}
+						else
+							sol_D[l_cell_no].spec[count_spec].Dwt = s_ptr2->dw * viscos_il_f;
+					}
+
+					//if (implicit) // && name_ret.second && (l_cell_no > 1 || (l_cell_no == 1 && bcon_first != 2)))
+					//{
+					//	// name_ret = dif_spec_names.insert(s_ptr->name); // but not in implicit now...
+					//	// must fill in the spec in previous cells, order the names, see below for aqueous species...
+					//}
+					count_exch_spec++;
+					count_spec++;
+				}
 			}
 			continue;
 		}

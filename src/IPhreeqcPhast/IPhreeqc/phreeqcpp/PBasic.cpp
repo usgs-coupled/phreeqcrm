@@ -40,6 +40,7 @@ PBasic::PBasic(Phreeqc * ptr, PHRQ_io *phrq_io)
 		error_msg("No Phreeqc instance in PBasic constructor\n", 1);
 	}
 	PhreeqcPtr = ptr;
+	strncpy(fnbuf, "", 10);
 	inbuf = NULL;
 	linebase = NULL;
 	varbase = NULL;
@@ -2151,7 +2152,10 @@ factor(struct LOC_exec * LINK)
 				PhreeqcPtr->malloc_error();
 			if (*v->UU.U1.sval != NULL)
 			{
-				strcpy(n.UU.sval, *v->UU.U1.sval);
+				if (n.UU.sval != NULL)
+				{
+					strcpy(n.UU.sval, *v->UU.U1.sval);
+				}
 			}
 
 		}
@@ -5835,68 +5839,72 @@ cmddim(struct LOC_exec *LINK)
 	do
 	{
 		if (LINK == NULL || LINK->t == NULL || LINK->t->kind != tokvar)
+		{
 			snerr(": error in DIM command");
-		v = LINK->t->UU.vp;
-		LINK->t = LINK->t->next;
-		if (v->numdims != 0)
-		{
-			if (phreeqci_gui)
-			{
-				_ASSERTE(nIDErrPrompt == 0);
-				nIDErrPrompt = IDS_ERR_ARRAY_ALREADY;
-			}
-			errormsg("Array already dimensioned before");
-		}
-		j = 1;
-		i = 0;
-		require(toklp, LINK);
-		do
-		{
-			k = intexpr(LINK) + 1;
-			if (k < 1)
-				badsubscr();
-			if (i >= maxdims)
-				badsubscr();
-			i++;
-			v->dims[i - 1] = k;
-			j *= k;
-			done = (bool) (LINK->t != NULL && LINK->t->kind == tokrp);
-			if (!done)
-				require(tokcomma, LINK);
-		}
-		while (!done);
-		LINK->t = LINK->t->next;
-		v->numdims = (char) i;
-		if (v->stringvar)
-		{
-			v->UU.U1.sarr = (char **) PhreeqcPtr->PHRQ_malloc(j * sizeof(char *));
-			if (!v->UU.U1.sarr)
-			{
-				PhreeqcPtr->malloc_error();
-#if !defined(R_SO)
-				exit(4);
-#endif
-			}
-			if (v->UU.U1.sarr == NULL)
-				PhreeqcPtr->malloc_error();
-			for (i = 0; i < j; i++)
-				v->UU.U1.sarr[i] = NULL;
 		}
 		else
 		{
-			v->UU.U0.arr = (LDBLE *) PhreeqcPtr->PHRQ_malloc(j * sizeof(LDBLE));
-			if (v->UU.U0.arr == NULL)
+			v = LINK->t->UU.vp;
+			LINK->t = LINK->t->next;
+			if (v->numdims != 0)
 			{
-				PhreeqcPtr->malloc_error();
+				if (phreeqci_gui)
+				{
+					_ASSERTE(nIDErrPrompt == 0);
+					nIDErrPrompt = IDS_ERR_ARRAY_ALREADY;
+				}
+				errormsg("Array already dimensioned before");
+			}
+			j = 1;
+			i = 0;
+			require(toklp, LINK);
+			do
+			{
+				k = intexpr(LINK) + 1;
+				if (k < 1)
+					badsubscr();
+				if (i >= maxdims)
+					badsubscr();
+				i++;
+				v->dims[i - 1] = k;
+				j *= k;
+				done = (bool)(LINK->t != NULL && LINK->t->kind == tokrp);
+				if (!done)
+					require(tokcomma, LINK);
+			} while (!done);
+			LINK->t = LINK->t->next;
+			v->numdims = (char)i;
+			if (v->stringvar)
+			{
+				v->UU.U1.sarr = (char**)PhreeqcPtr->PHRQ_malloc(j * sizeof(char*));
+				if (!v->UU.U1.sarr)
+				{
+					PhreeqcPtr->malloc_error();
+#if !defined(R_SO)
+					exit(4);
+#endif
+				}
+				if (v->UU.U1.sarr == NULL)
+					PhreeqcPtr->malloc_error();
+				for (i = 0; i < j; i++)
+					v->UU.U1.sarr[i] = NULL;
 			}
 			else
 			{
-				for (i = 0; i < j; i++)
-					v->UU.U0.arr[i] = 0.0;
+				v->UU.U0.arr = (LDBLE*)PhreeqcPtr->PHRQ_malloc(j * sizeof(LDBLE));
+				if (v->UU.U0.arr == NULL)
+				{
+					PhreeqcPtr->malloc_error();
+				}
+				else
+				{
+					for (i = 0; i < j; i++)
+						v->UU.U0.arr[i] = 0.0;
+				}
 			}
+			if (!iseos(LINK))
+				require(tokcomma, LINK);
 		}
-		if (!iseos(LINK))
-			require(tokcomma, LINK);
 	}
 	while (!iseos(LINK));
 }
@@ -7009,40 +7017,40 @@ P_addset(long *l_s, unsigned val)	/* s := s + [val] */
 	return sbase;
 }
 
-long * PBasic::
-P_addsetr(long *l_s, unsigned v1, unsigned v2)	/* s := s + [v1..v2] */
-{
-	long *sbase = l_s;
-	int b1, b2, size;
-	if ((int) v1 > (int) v2)
-		return sbase;
-	b1 = v1 % SETBITS;
-	v1 /= SETBITS;
-	b2 = v2 % SETBITS;
-	v2 /= SETBITS;
-	size = *l_s;
-	v1++;
-	if ((int) ++v2 > size)
-	{
-		while ((int) v2 > size)
-			l_s[++size] = 0;
-		l_s[v2] = 0;
-		*l_s = v2;
-	}
-	l_s += v1;
-	if (v1 == v2)
-	{
-		*l_s |= (~((-2L) << (b2 - b1))) << b1;
-	}
-	else
-	{
-		*l_s++ |= (-1L) << b1;
-		while (++v1 < v2)
-			*l_s++ = -1;
-		*l_s |= ~((-2L) << b2);
-	}
-	return sbase;
-}
+//long * PBasic::
+//P_addsetr(long *l_s, unsigned v1, unsigned v2)	/* s := s + [v1..v2] */
+//{
+//	long *sbase = l_s;
+//	int b1, b2, size;
+//	if ((int) v1 > (int) v2)
+//		return sbase;
+//	b1 = v1 % SETBITS;
+//	v1 /= SETBITS;
+//	b2 = v2 % SETBITS;
+//	v2 /= SETBITS;
+//	size = *l_s;
+//	v1++;
+//	if ((int) ++v2 > size)
+//	{
+//		while ((int) v2 > size)
+//			l_s[++size] = 0;
+//		l_s[v2] = 0;
+//		*l_s = v2;
+//	}
+//	l_s += v1;
+//	if (v1 == v2)
+//	{
+//		*l_s |= (~((-2L) << (b2 - b1))) << b1;
+//	}
+//	else
+//	{
+//		*l_s++ |= (-1L) << b1;
+//		while (++v1 < v2)
+//			*l_s++ = -1;
+//		*l_s |= ~((-2L) << b2);
+//	}
+//	return sbase;
+//}
 
 long *  PBasic::
 P_remset(long *l_s, unsigned val)	/* s := s - [val] */

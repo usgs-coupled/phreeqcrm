@@ -435,8 +435,11 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		}
 		tc = (double *) malloc(sizeof(double));
 		p_atm = (double *) malloc(sizeof(double));
-		tc[0] = 15.0;
-		p_atm[0] = 3.0;
+		if (tc != NULL && p_atm != NULL)
+		{
+			tc[0] = 15.0;
+			p_atm[0] = 3.0;
+		}
 		iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
 		strcpy(str, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
 		// Alternatively, utility pointer is worker number nthreads + 1 
@@ -603,9 +606,8 @@ int example_selected_output(int id)
 	nlines = nlines + RM_GetKineticReactionsCount(id);
 	nlines = nlines + RM_GetSolidSolutionComponentsCount(id);
 	nlines = nlines + RM_GetSICount(id);
-	input = (char *) malloc((size_t)nlines * 40);
+	input = (char *) calloc((size_t)nlines * 40, sizeof(char));
 
-	strncpy(input, "",40);
 	strcat(input, "SELECTED_OUTPUT 2\n");
 	// totals
 	strcat(input, "  -totals\n");
