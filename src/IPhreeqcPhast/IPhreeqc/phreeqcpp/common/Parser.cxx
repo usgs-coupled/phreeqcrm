@@ -644,7 +644,7 @@ CParser::FIND_TYPE CParser::find_option(const std::string & item, int *n,
 	}
 
 	*n = -1;
-	return FT_ERROR;
+	return FIND_TYPE::FT_ERROR;
 }
 
 int
@@ -724,7 +724,7 @@ CParser::get_option(const std::vector < std::string > &opt_list,
 		opt_ptr = m_line.begin();
 		std::string::iterator end = m_line.end();
 		copy_token(option, opt_ptr, end);
-		if (find_option(option, &opt, opt_list, true) == FT_OK)
+		if (find_option(option, &opt, opt_list, true) == FIND_TYPE::FT_OK)
 		{
 			j = opt;
 			next_char = opt_ptr;
@@ -776,7 +776,7 @@ CParser::get_option(const std::vector < std::string > &opt_list,
 		std::string::iterator opt_ptr = m_line.begin();
 		std::string::iterator end = m_line.end();
 		copy_token(option, opt_ptr, end);
-		if (find_option(option.substr(1), &opt, opt_list, false) == FT_OK)
+		if (find_option(option.substr(1), &opt, opt_list, false) == FIND_TYPE::FT_OK)
 		{
 			// replace -option with option
 			j = opt;
@@ -803,7 +803,7 @@ CParser::get_option(const std::vector < std::string > &opt_list,
 	{
 		pos_ptr = m_line_iss.tellg();
 		m_line_iss >> option;
-		if (find_option(option, &opt, opt_list, true) == FT_OK)
+		if (find_option(option, &opt, opt_list, true) == FIND_TYPE::FT_OK)
 		{
 			j = opt;
 			next_pos = m_line_iss.tellg();
@@ -1096,7 +1096,7 @@ CParser::getOptionFromLastLine(const std::vector < std::string > &opt_list,
 		opt_ptr = m_line.begin();
 		std::string::iterator end = m_line.end();
 		copy_token(option, opt_ptr, end);
-		if (find_option(option, &opt, opt_list, true) == FT_OK)
+		if (find_option(option, &opt, opt_list, true) == FIND_TYPE::FT_OK)
 		{
 			j = opt;
 			next_char = opt_ptr;
@@ -1148,7 +1148,7 @@ CParser::getOptionFromLastLine(const std::vector < std::string > &opt_list,
 		std::string::iterator opt_ptr = m_line.begin();
 		std::string::iterator end = m_line.end();
 		copy_token(option, opt_ptr, end);
-		if (find_option(option.substr(1), &opt, opt_list, false) == FT_OK)
+		if (find_option(option.substr(1), &opt, opt_list, false) == FIND_TYPE::FT_OK)
 		{
 			// replace -option with option
 			j = opt;
@@ -1197,7 +1197,7 @@ CParser::getOptionFromLastLine(const std::vector < std::string > &opt_list,
 	{
 		pos_ptr = 0;
 		copy_token(option, pos_ptr);
-		if (find_option(option, &opt, opt_list, true) == FT_OK)
+		if (find_option(option, &opt, opt_list, true) == FIND_TYPE::FT_OK)
 		{
 			j = opt;
 			next_pos = pos_ptr;

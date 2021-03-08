@@ -44,7 +44,7 @@ class CParser: public PHRQ_base
 		TT_UNKNOWN = 7
 	};
 
-	enum FIND_TYPE
+	enum class FIND_TYPE
 	{
 		FT_OK = 0,
 		FT_ERROR = 1
