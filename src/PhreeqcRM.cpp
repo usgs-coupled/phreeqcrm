@@ -806,14 +806,12 @@ PhreeqcRM::CheckSelectedOutput()
 			}
 
 
-			if (this->mpi_myself == 0)
-			{
-				length = (int) headings.size();
-			}
+			length = (this->mpi_myself == 0) ? (int)headings.size() : 0;
 			MPI_Bcast(&length,  1, MPI_INT, 0, phreeqcrm_comm);
 
 			// Broadcast string
 			char *headings_bcast = new char[(size_t)length + 1];
+			headings_bcast[0] = '\0';
 			if (this->mpi_myself == 0)
 			{
 				strcpy(headings_bcast, headings.c_str());
@@ -3226,12 +3224,12 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 		}
 
 		// make buffer to recv solutions
-		double * recv_solns = NULL;
+		std::vector<double> recv_solns;
 		int * recv_counts = NULL;
 		int * recv_displs = NULL;
 		if (this->mpi_myself == 0)
 		{
-			recv_solns = new double[(size_t) this->count_chemistry * this->components.size()];
+			recv_solns.resize((size_t)this->count_chemistry * this->components.size());
 			recv_counts = new int[this->mpi_tasks];
 			recv_displs = new int[this->mpi_tasks];
 			for (int i = 0; i < this->mpi_tasks; i++)
@@ -3240,12 +3238,16 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 				recv_displs[i] = start_cell[i] * (int) this->components.size();
 			}
 		}
+		else
+		{
+			recv_solns.push_back(0.0);
+		}
 
 		// Gather to root
 		double * buf = &solns[0];
 		int my_length = (end_cell[this->mpi_myself] - start_cell[this->mpi_myself] + 1) * (int) this->components.size();
 		MPI_Gatherv(buf, my_length, MPI_DOUBLE,
-			recv_solns, recv_counts, recv_displs, MPI_DOUBLE, 0, phreeqcrm_comm);
+			&recv_solns[0], recv_counts, recv_displs, MPI_DOUBLE, 0, phreeqcrm_comm);
 
 		// Root processes to c
 		if (mpi_myself == 0)
@@ -3259,16 +3261,9 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 			for (int j = 0; j < count_chemistry; j++)
 			{
 				std::vector<double> d;
-				if (recv_solns != NULL)
+				for (size_t i = 0; i < this->components.size(); i++)
 				{
-					for (size_t i = 0; i < this->components.size(); i++)
-					{
-						d.push_back(recv_solns[n++]);
-					}
-				}
-				else
-				{
-					return IRM_FAIL;
+					d.push_back(recv_solns[n++]);
 				}
 				std::vector<int>::iterator it;
 				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
@@ -3281,7 +3276,6 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 					}
 				}
 			}
-			delete [] recv_solns;
 			delete [] recv_counts;
 			delete [] recv_displs;
 		}
@@ -3498,12 +3492,12 @@ PhreeqcRM::GetGasCompMoles(std::vector<double>& m_out)
 		}
 
 		// make buffer to recv solutions
-		double* recv_gas_moles = NULL;
+		std::vector<double> recv_gas_moles;
 		int* recv_counts = NULL;
 		int* recv_displs = NULL;
 		if (this->mpi_myself == 0)
 		{
-			recv_gas_moles = new double[(size_t)this->count_chemistry * gc_names.size()];
+			recv_gas_moles.resize((size_t)this->count_chemistry * gc_names.size());
 			recv_counts = new int[this->mpi_tasks];
 			recv_displs = new int[this->mpi_tasks];
 			for (int i = 0; i < this->mpi_tasks; i++)
@@ -3512,12 +3506,16 @@ PhreeqcRM::GetGasCompMoles(std::vector<double>& m_out)
 				recv_displs[i] = start_cell[i] * (int) gc_names.size();
 			}
 		}
+		else
+		{
+			recv_gas_moles.push_back(0.0);
+		}
 
 		// Gather to root
 		double* send_buf = &send_gas_moles[0];
 		int my_length = (end_cell[this->mpi_myself] - start_cell[this->mpi_myself] + 1) * (int)gc_names.size();
 		MPI_Gatherv(send_buf, my_length, MPI_DOUBLE,
-			recv_gas_moles, recv_counts, recv_displs, MPI_DOUBLE, 0, phreeqcrm_comm);
+			&recv_gas_moles[0], recv_counts, recv_displs, MPI_DOUBLE, 0, phreeqcrm_comm);
 
 		// Root processes to m_out
 		if (mpi_myself == 0)
@@ -3530,16 +3528,9 @@ PhreeqcRM::GetGasCompMoles(std::vector<double>& m_out)
 			for (int j = 0; j < count_chemistry; j++)
 			{
 				std::vector<double> d;
-				if (recv_gas_moles != NULL)
+				for (size_t i = 0; i < gc_names.size(); i++)
 				{
-					for (size_t i = 0; i < gc_names.size(); i++)
-					{
-						d.push_back(recv_gas_moles[n++]);
-					}
-				}
-				else
-				{
-					return IRM_FAIL;
+					d.push_back(recv_gas_moles[n++]);
 				}
 				std::vector<int>::iterator it;
 				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
@@ -3552,7 +3543,6 @@ PhreeqcRM::GetGasCompMoles(std::vector<double>& m_out)
 					}
 				}
 			}
-			delete[] recv_gas_moles;
 			delete[] recv_counts;
 			delete[] recv_displs;
 		}
@@ -3648,12 +3638,12 @@ PhreeqcRM::GetGasCompPressures(std::vector<double>& p_out)
 			}
 		}
 
-		double* recv_gas_p = NULL;
+		std::vector<double> recv_gas_p;
 		int* recv_counts = NULL;
 		int* recv_displs = NULL;
 		if (this->mpi_myself == 0)
 		{
-			recv_gas_p = new double[(size_t)this->count_chemistry * gc_names.size()];
+			recv_gas_p.resize((size_t)this->count_chemistry * gc_names.size());
 			recv_counts = new int[this->mpi_tasks];
 			recv_displs = new int[this->mpi_tasks];
 			for (int i = 0; i < this->mpi_tasks; i++)
@@ -3662,12 +3652,16 @@ PhreeqcRM::GetGasCompPressures(std::vector<double>& p_out)
 				recv_displs[i] = start_cell[i] * (int)gc_names.size();
 			}
 		}
+		else
+		{
+			recv_gas_p.push_back(0.0);
+		}
 
 		// Gather to root
 		double* send_buf = &send_gas_p[0];
 		int my_length = (end_cell[this->mpi_myself] - start_cell[this->mpi_myself] + 1) * (int)gc_names.size();
 		MPI_Gatherv(send_buf, my_length, MPI_DOUBLE,
-			recv_gas_p, recv_counts, recv_displs, MPI_DOUBLE, 0, phreeqcrm_comm);
+			&recv_gas_p[0], recv_counts, recv_displs, MPI_DOUBLE, 0, phreeqcrm_comm);
 
 		// Root processes to m
 		if (mpi_myself == 0)
@@ -3680,16 +3674,9 @@ PhreeqcRM::GetGasCompPressures(std::vector<double>& p_out)
 			for (int j = 0; j < count_chemistry; j++)
 			{
 				std::vector<double> d;
-				if (recv_gas_p != NULL)
+				for (size_t i = 0; i < gc_names.size(); i++)
 				{
-					for (size_t i = 0; i < gc_names.size(); i++)
-					{
-						d.push_back(recv_gas_p[n++]);
-					}
-				}
-				else
-				{
-					return IRM_FAIL;
+					d.push_back(recv_gas_p[n++]);
 				}
 				std::vector<int>::iterator it;
 				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
@@ -3702,7 +3689,6 @@ PhreeqcRM::GetGasCompPressures(std::vector<double>& p_out)
 					}
 				}
 			}
-			delete[] recv_gas_p;
 			delete[] recv_counts;
 			delete[] recv_displs;
 		}
@@ -3795,12 +3781,12 @@ PhreeqcRM::GetGasCompPhi(std::vector<double>& phi_out)
 		}
 
 		// make buffer to recv solutions
-		double* recv_gas_phis = NULL;
+		std::vector<double> recv_gas_phis;
 		int* recv_counts = NULL;
 		int* recv_displs = NULL;
 		if (this->mpi_myself == 0)
 		{
-			recv_gas_phis = new double[(size_t)this->count_chemistry * gc_names.size()];
+			recv_gas_phis.resize(this->count_chemistry * gc_names.size());
 			recv_counts = new int[this->mpi_tasks];
 			recv_displs = new int[this->mpi_tasks];
 			for (int i = 0; i < this->mpi_tasks; i++)
@@ -3809,12 +3795,16 @@ PhreeqcRM::GetGasCompPhi(std::vector<double>& phi_out)
 				recv_displs[i] = start_cell[i] * (int)gc_names.size();
 			}
 		}
+		else
+		{
+			recv_gas_phis.push_back(0.0);
+		}
 
 		// Gather to root
 		double* buf = &send_gas_phi[0];
 		int my_length = (end_cell[this->mpi_myself] - start_cell[this->mpi_myself] + 1) * (int)gc_names.size();
 		MPI_Gatherv(buf, my_length, MPI_DOUBLE,
-			recv_gas_phis, recv_counts, recv_displs, MPI_DOUBLE, 0, phreeqcrm_comm);
+			&recv_gas_phis[0], recv_counts, recv_displs, MPI_DOUBLE, 0, phreeqcrm_comm);
 
 		// Root processes to m
 		if (mpi_myself == 0)
@@ -3828,12 +3818,9 @@ PhreeqcRM::GetGasCompPhi(std::vector<double>& phi_out)
 			for (int j = 0; j < count_chemistry; j++)
 			{
 				std::vector<double> d;
-				if (recv_gas_phis != NULL)
+				for (size_t i = 0; i < gc_names.size(); i++)
 				{
-					for (size_t i = 0; i < gc_names.size(); i++)
-					{
-						d.push_back(recv_gas_phis[n++]);
-					}
+					d.push_back(recv_gas_phis[n++]);
 				}
 				std::vector<int>::iterator it;
 				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
@@ -3846,7 +3833,6 @@ PhreeqcRM::GetGasCompPhi(std::vector<double>& phi_out)
 					}
 				}
 			}
-			delete[] recv_gas_phis;
 			delete[] recv_counts;
 			delete[] recv_displs;
 		}
@@ -3937,12 +3923,12 @@ PhreeqcRM::GetGasPhaseVolume(std::vector<double>& v_out)
 		}
 
 		// make buffer to recv solutions
-		double* recv_gas_p = NULL;
+		std::vector<double> recv_gas_v;
 		int* recv_counts = NULL;
 		int* recv_displs = NULL;
 		if (this->mpi_myself == 0)
 		{
-			recv_gas_p = new double[(size_t)this->count_chemistry];
+			recv_gas_v.resize((size_t)this->count_chemistry);
 			recv_counts = new int[this->mpi_tasks];
 			recv_displs = new int[this->mpi_tasks];
 			for (int i = 0; i < this->mpi_tasks; i++)
@@ -3951,12 +3937,16 @@ PhreeqcRM::GetGasPhaseVolume(std::vector<double>& v_out)
 				recv_displs[i] = start_cell[i];
 			}
 		}
+		else
+		{
+			recv_gas_v.push_back(-1.0);
+		}
 
 		// Gather to root
 		double* send_buf = &send_gas_v[0];
 		int my_length = (end_cell[this->mpi_myself] - start_cell[this->mpi_myself] + 1);
 		MPI_Gatherv(send_buf, my_length, MPI_DOUBLE,
-			recv_gas_p, recv_counts, recv_displs, MPI_DOUBLE, 0, phreeqcrm_comm);
+			&recv_gas_v[0], recv_counts, recv_displs, MPI_DOUBLE, 0, phreeqcrm_comm);
 
 		if (mpi_myself == 0)
 		{
@@ -3968,10 +3958,9 @@ PhreeqcRM::GetGasPhaseVolume(std::vector<double>& v_out)
 				std::vector<int>::iterator it;
 				for (it = this->backward_mapping[j].begin(); it != this->backward_mapping[j].end(); it++)
 				{
-					v_out[*it] = recv_gas_p[j];
+					v_out[*it] = recv_gas_v[j];
 				}
 			}
-			delete[] recv_gas_p;
 			delete[] recv_counts;
 			delete[] recv_displs;
 		}
@@ -5766,10 +5755,8 @@ PhreeqcRM::InitialPhreeqcCell2Module(int cell, const std::vector<int> &cell_numb
 	// transfer the cell to domain
 #ifdef USE_MPI
 	int n_cells;
-	if (this->mpi_myself == 0)
-	{
-		n_cells = (int) cell_numbers.size();
-	}
+	n_cells = (this->mpi_myself == 0) ? (int)cell_numbers.size() : 0;
+
 	MPI_Bcast(&n_cells, 1, MPI_INT, 0, phreeqcrm_comm);
 	cell_numbers.resize(n_cells);
 	MPI_Bcast((void *) &cell_numbers.front(), n_cells, MPI_INT, 0, phreeqcrm_comm);
@@ -6016,7 +6003,7 @@ PhreeqcRM::MpiWorker()
 		try
 		{
 			return_value = IRM_OK;
-			int method;
+			int method = -1;
 			//std::cerr << "Worker waiting..." << std::endl;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 			switch (method)

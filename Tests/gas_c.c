@@ -107,7 +107,7 @@ void gas_c()
 	{
 		for (i = 0; i < ngas; i++)
 		{
-			gas_comps[i] = (char*)malloc((size_t)(100 * sizeof(char*)));
+			gas_comps[i] = (char*)malloc((size_t)100 * sizeof(char*));
 			status = RM_GetGasComponentsName(id, i, gas_comps[i], 100);
 		}
 	}
@@ -149,7 +149,7 @@ void gas_c()
 	gas_moles = (double*)malloc((size_t)ngas * (size_t)nxyz * sizeof(double));
 	gas_p = (double*)malloc((size_t)ngas * (size_t)nxyz * sizeof(double));
 	gas_phi = (double*)malloc((size_t)ngas * (size_t)nxyz * sizeof(double));
-	if (gas_moles != NULL && gas_p != NULL && gas_phi != NULL)
+	if (gas_moles != NULL && gas_p != NULL && gas_phi != NULL && gas_comps != NULL)
 	{
 		status = RM_GetGasCompMoles(id, gas_moles);
 		status = RM_GetGasCompPressures(id, gas_p);
@@ -198,6 +198,11 @@ void gas_c()
 		status = RM_GetGasCompPressures(id, gas_p);
 		status = RM_GetGasCompPhi(id, gas_phi);
 		PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Add components back");
+
+		for (i = 0; i < ngas; i++)
+		{
+			free(gas_comps[i]);
+		}
 	}
 	// Finalize
 	status = RM_MpiWorkerBreak(id);
@@ -205,10 +210,7 @@ void gas_c()
 	status = RM_Destroy(id);
 
 	// free space
-	for (i = 0; i < ngas; i++)
-	{
-		free(gas_comps[i]);
-	}
+
 	free(gas_comps);
 	free(ic1);
 	free(ic2);
