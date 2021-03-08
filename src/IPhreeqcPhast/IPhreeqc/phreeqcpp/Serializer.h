@@ -13,7 +13,7 @@ public:
 	Serializer(PHRQ_io *io = NULL);
 	~Serializer(void);
 
-	enum PACK_TYPE
+	enum class PACK_TYPE
 	{
 		PT_SOLUTION     = 0,
 		PT_EXCHANGE     = 1,

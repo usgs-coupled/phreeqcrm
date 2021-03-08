@@ -251,7 +251,7 @@ cxxPPassemblageComp::read_raw(CParser & parser, bool check)
 			}
 			break;
 		case 10:				// totals
-			if (this->totals.read_raw(parser, next_char) !=	CParser::PARSER_OK)
+			if (this->totals.read_raw(parser, next_char) !=	CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.

@@ -1747,7 +1747,7 @@ set_pz(int initial)
 	s_eminus->la = -solution_ptr->Get_pe();
 	if (initial == TRUE)
 		pitzer_initial_guesses();
-	if (dl_type_x != cxxSurface::NO_DL)
+	if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		initial_surface_water();
 	pitzer_revise_guesses();
 	return (OK);
@@ -2045,7 +2045,7 @@ Restart:
 			// DL_pitz
 			d1 = mass_water_aq_x * d;
 			mass_water_aq_x += d1;
-			if (use.Get_surface_in() && dl_type_x == cxxSurface::DONNAN_DL)
+			if (use.Get_surface_in() && dl_type_x == cxxSurface::DIFFUSE_LAYER_TYPE::DONNAN_DL)
 				mass_water_bulk_x += d1;
 			x[i]->master[0]->s->moles = mass_water_aq_x / gfw_water;
 			//d2 = log(1.0 + d);
@@ -2145,7 +2145,7 @@ Restart:
 			//break;
 			//DL_pitz
 			mass_water_aq_x -= d1;
-			if (use.Get_surface_in() && dl_type_x == cxxSurface::DONNAN_DL)
+			if (use.Get_surface_in() && dl_type_x == cxxSurface::DIFFUSE_LAYER_TYPE::DONNAN_DL)
 				mass_water_bulk_x -= d1;
 			x[i]->master[0]->s->moles = mass_water_aq_x / gfw_water;
 			break;
@@ -2330,7 +2330,7 @@ model_pz(void)
 				pitzer_revise_guesses();
 			}
 			if (use.Get_surface_ptr() != NULL &&
-				use.Get_surface_ptr()->Get_dl_type() != cxxSurface::NO_DL &&
+				use.Get_surface_ptr()->Get_dl_type() != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL &&
 				use.Get_surface_ptr()->Get_related_phases())
 				initial_surface_water();
 			mb_sums();
@@ -2496,7 +2496,7 @@ gammas_pz(bool exch_a_f)
 					break;
 				}
 			}
-			if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC) // DL_pitz
+			if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC) // DL_pitz
 			{
 				/*  mole fraction */
 				equiv = 1.0;

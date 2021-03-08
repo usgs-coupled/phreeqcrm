@@ -52,7 +52,7 @@ inverse_models(void)
 	minimal = NULL;
 
 	state = INVERSE;
-	dl_type_x = cxxSurface::NO_DL;
+	dl_type_x = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 
 	for (n = 0; n < count_inverse; n++)
 	{

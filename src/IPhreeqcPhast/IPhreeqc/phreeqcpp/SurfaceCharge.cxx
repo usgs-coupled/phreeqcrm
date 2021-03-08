@@ -233,7 +233,7 @@ cxxSurfaceCharge::read_raw(CParser & parser, bool check)
 
 		case 6:				// diffuse_layer_totals
 			if (this->diffuse_layer_totals.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.
@@ -338,7 +338,7 @@ cxxSurfaceCharge::read_raw(CParser & parser, bool check)
 			break;
 		case 16:				// dl_species_map
 			int s_num;
-			if (parser.peek_token() != CParser::TT_EMPTY)
+			if (parser.peek_token() != CParser::TOKEN_TYPE::TT_EMPTY)
 			{
 				if (!(parser.get_iss() >> s_num))
 				{

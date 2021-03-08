@@ -21,7 +21,7 @@ class cxxGasPhase:public cxxNumKeyword
 		cxxMix & mx, int n_user, PHRQ_io * io=NULL);
 	 ~cxxGasPhase();
 
-	enum GP_TYPE
+	enum class GP_TYPE
 	{
 		GP_PRESSURE = 0,
 		GP_VOLUME = 1,

@@ -28,7 +28,7 @@ cxxGasPhase::cxxGasPhase(PHRQ_io * io)
 	new_def = false;
 	solution_equilibria = false;
 	n_solution = -999;
-	type = cxxGasPhase::GP_PRESSURE;
+	type = cxxGasPhase::GP_TYPE::GP_PRESSURE;
 	total_p = 1.0;
 	total_moles = 0.0;
 	volume = 1.0;
@@ -134,7 +134,7 @@ cxxGasPhase::cxxGasPhase(std::map < int, cxxGasPhase > &entity_map,
 	solution_equilibria = false;
 	temperature = 298.15;
 	total_moles = 0.0;
-	type = cxxGasPhase::GP_PRESSURE;
+	type = cxxGasPhase::GP_TYPE::GP_PRESSURE;
 
 //
 //   Mix
@@ -343,7 +343,7 @@ cxxGasPhase::dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out) con
 
 	s_oss << indent1 << "# GAS_PHASE_MODIFY candidate identifiers #\n";
 	s_oss << indent1;
-	s_oss << "-type                      " << this->type << "\n";
+	s_oss << "-type                      " << (int)this->type << "\n";
 	s_oss << indent1;
 	s_oss << "-total_p                   " << this->total_p << "\n";
 	s_oss << indent1;
@@ -409,7 +409,7 @@ cxxGasPhase::read_raw(CParser & parser, bool check)
 		else
 		{
 			CParser::ECHO_OPTION eo = parser.get_echo_file();
-			parser.set_echo_file(CParser::EO_NONE);
+			parser.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 			opt = parser.getOptionFromLastLine(vopts, next_char, true);
 			parser.set_echo_file(eo);
 		}
@@ -435,7 +435,7 @@ cxxGasPhase::read_raw(CParser & parser, bool check)
 		case 0:				// type
 			if (!(parser.get_iss() >> i))
 			{
-				this->type = cxxGasPhase::GP_PRESSURE;
+				this->type = cxxGasPhase::GP_TYPE::GP_PRESSURE;
 				parser.incr_input_error();
 				parser.error_msg("Expected enum for type.",
 								 PHRQ_io::OT_CONTINUE);
@@ -588,7 +588,7 @@ cxxGasPhase::read_raw(CParser & parser, bool check)
 			break;
 		case 12:				// totals
 			if (this->totals.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.
@@ -759,7 +759,7 @@ void
 cxxGasPhase::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles)
 {
 	ints.push_back(this->n_user);
-	ints.push_back((this->type == cxxGasPhase::GP_PRESSURE) ? 0 : 1);
+	ints.push_back((this->type == cxxGasPhase::GP_TYPE::GP_PRESSURE) ? 0 : 1);
 	doubles.push_back(this->total_p);
 	doubles.push_back(this->volume);
 	ints.push_back((int) this->gas_comps.size());
@@ -786,7 +786,7 @@ cxxGasPhase::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	this->n_user_end = this->n_user;
 	this->description = " ";
 
-	this->type = (ints[ii++] == 0) ? cxxGasPhase::GP_PRESSURE : cxxGasPhase::GP_VOLUME;
+	this->type = (ints[ii++] == 0) ? cxxGasPhase::GP_TYPE::GP_PRESSURE : cxxGasPhase::GP_TYPE::GP_VOLUME;
 	this->total_p = doubles[dd++];
 	this->volume = doubles[dd++];
 	int count = ints[ii++];

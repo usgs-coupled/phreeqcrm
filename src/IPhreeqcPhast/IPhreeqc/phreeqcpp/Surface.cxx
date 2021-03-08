@@ -25,9 +25,9 @@ cxxSurface::cxxSurface(PHRQ_io *io)
 {
 	new_def = false;
 	tidied = false;
-	type = DDL;
-	dl_type = NO_DL;
-	sites_units = SITES_ABSOLUTE;
+	type = SURFACE_TYPE::DDL;
+	dl_type = DIFFUSE_LAYER_TYPE::NO_DL;
+	sites_units = SITES_UNITS::SITES_ABSOLUTE;
 	only_counter_ions = false;
 	thickness = 1e-8;
 	debye_lengths = 0.0;
@@ -44,9 +44,9 @@ cxxNumKeyword(io)
 	this->n_user = this->n_user_end = l_n_user;
 	this->new_def = false;
 	this->tidied = true;
-	type = DDL;
-	dl_type = NO_DL;
-	sites_units = SITES_ABSOLUTE;
+	type = SURFACE_TYPE::DDL;
+	dl_type = DIFFUSE_LAYER_TYPE::NO_DL;
+	sites_units = SITES_UNITS::SITES_ABSOLUTE;
 	only_counter_ions = false;
 	thickness = 1e-8;
 	debye_lengths = 0.0;
@@ -183,9 +183,9 @@ cxxSurface::dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out) cons
 	s_oss << "SURFACE_RAW                  " << n_user_local << " " << this->description << "\n";
 	s_oss << indent1 << "# SURFACE_MODIFY candidate identifiers #\n";
 	s_oss << indent1;
-	s_oss << "-type                      " << this->type << "\n";
+	s_oss << "-type                      " << (int)this->type << "\n";
 	s_oss << indent1;
-	s_oss << "-dl_type                   " << this->dl_type << "\n";
+	s_oss << "-dl_type                   " << (int)this->dl_type << "\n";
 	s_oss << indent1;
 	s_oss << "-only_counter_ions         " << this->only_counter_ions << "\n";
 	s_oss << indent1;
@@ -219,7 +219,7 @@ cxxSurface::dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out) cons
 	s_oss << indent1;
 	s_oss << "-tidied                   " << this->tidied << "\n";
 	s_oss << indent1;
-	s_oss << "-sites_units               " << this->sites_units << "\n";
+	s_oss << "-sites_units               " << (int)this->sites_units << "\n";
 	s_oss << indent1;
 	s_oss << "-solution_equilibria       " << this->solution_equilibria << "\n";
 	s_oss << indent1;
@@ -404,7 +404,7 @@ cxxSurface::read_raw(CParser & parser, bool check)
 			i = 0;
 			if (!(parser.get_iss() >> i))
 			{
-				this->type = NO_EDL;
+				this->type = SURFACE_TYPE::NO_EDL;
 				parser.incr_input_error();
 				parser.error_msg("Expected numeric value for type.",
 								 PHRQ_io::OT_CONTINUE);
@@ -416,7 +416,7 @@ cxxSurface::read_raw(CParser & parser, bool check)
 			i = 0;
 			if (!(parser.get_iss() >> i))
 			{
-				this->dl_type = NO_DL;
+				this->dl_type = DIFFUSE_LAYER_TYPE::NO_DL;
 				parser.incr_input_error();
 				parser.error_msg("Expected numeric value for dl_type.",
 								 PHRQ_io::OT_CONTINUE);
@@ -428,7 +428,7 @@ cxxSurface::read_raw(CParser & parser, bool check)
 			i = 0;
 			if (!(parser.get_iss() >> i))
 			{
-				this->sites_units = SITES_ABSOLUTE;
+				this->sites_units = SITES_UNITS::SITES_ABSOLUTE;
 				parser.incr_input_error();
 				parser.error_msg("Expected numeric value for sites_units.",
 								 PHRQ_io::OT_CONTINUE);
@@ -511,7 +511,7 @@ cxxSurface::read_raw(CParser & parser, bool check)
 			}
 			break;
 		case 17:				// totals
-			if (this->totals.read_raw(parser, next_char) !=	CParser::PARSER_OK)
+			if (this->totals.read_raw(parser, next_char) !=	CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.

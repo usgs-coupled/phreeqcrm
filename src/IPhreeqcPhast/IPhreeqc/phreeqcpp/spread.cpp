@@ -324,7 +324,7 @@ read_solution_spread(void)
 		case 5:				/* redox */
 			if (copy_token(token, &next_char) == EMPTY)
 				break;
-			if (parser.parse_couple(token) == OK)
+			if (parser.parse_couple(token) == CParser::STATUS_TYPE::PARSER_OK)
 			{
 				soln_defaults.redox = string_hsave(token.c_str());
 			}
@@ -771,7 +771,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 		case 5:				/* redox */
 			if (copy_token(token, &next_char) == EMPTY)
 				break;
-			if (parser.parse_couple(token) == OK)
+			if (parser.parse_couple(token) == CParser::STATUS_TYPE::PARSER_OK)
 			{
 				const char * pe_str = string_hsave(token.c_str());
 				initial_data_ptr->Set_default_pe(pe_str);
@@ -786,7 +786,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 		case 6:				/* ph */
 			{
 				cxxISolutionComp temp_comp(this->phrq_io);
-				if (temp_comp.read(char_string, &temp_solution) == CParser::PARSER_ERROR)
+				if (temp_comp.read(char_string, &temp_solution) == CParser::STATUS_TYPE::PARSER_ERROR)
 				{
 					input_error++;
 					break;
@@ -805,7 +805,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 		case 7:				/* pe */
 			{
 				cxxISolutionComp temp_comp(this->phrq_io);
-				if (temp_comp.read(char_string, &temp_solution) == CParser::PARSER_ERROR)
+				if (temp_comp.read(char_string, &temp_solution) == CParser::STATUS_TYPE::PARSER_ERROR)
 				{
 					input_error++;
 					break;
@@ -823,7 +823,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 			{
 				next_char = char_string;
 				cxxSolutionIsotope temp_isotope;
-				if (copy_token(token, &next_char) !=  CParser::TT_DIGIT)
+				if (copy_token(token, &next_char) !=  (int)CParser::TOKEN_TYPE::TT_DIGIT)
 				{
 					input_error++;
 					error_string = sformatf( "Expected isotope name to"
@@ -908,13 +908,13 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 						input_error++;
 						temp_iso_name = (char*)free_check_null(temp_iso_name);
 						char_string = (char*)free_check_null(char_string);
-						return (CParser::PARSER_ERROR);
+						return ((int)CParser::STATUS_TYPE::PARSER_ERROR);
 					}
 					temp_isotope.Set_elt_name(ptr1);
 					temp_iso_name = (char*)free_check_null(temp_iso_name);
 				}
 				/* read and store isotope ratio */
-				if (copy_token(token, &next_char) != CParser::TT_DIGIT)
+				if (copy_token(token, &next_char) != (int)CParser::TOKEN_TYPE::TT_DIGIT)
 				{
 					input_error++;
 					error_string = sformatf(
@@ -929,7 +929,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 
 				/* read and store isotope ratio uncertainty */
 				int j;
-				if ((j = copy_token(token, &next_char)) != CParser::TT_EMPTY)
+				if ((j = copy_token(token, &next_char)) != (int)CParser::TOKEN_TYPE::TT_EMPTY)
 				{
 					if (j != DIGIT)
 					{
@@ -1005,7 +1005,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 					continue;
 				}
 				cxxISolutionComp temp_comp(this->phrq_io);
-				if (temp_comp.read(char_string, &temp_solution) == CParser::PARSER_ERROR)
+				if (temp_comp.read(char_string, &temp_solution) == CParser::STATUS_TYPE::PARSER_ERROR)
 				{
 #ifdef SKIP
 					input_error++;
@@ -1043,7 +1043,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 			if (strstr(token.c_str(), "alk") == token.c_str())
 				alk = true;
 			std::string token1 = it->second.Get_units();
-			if (check_units(token1, alk, true, initial_data_ptr->Get_units().c_str(), true) ==	CParser::PARSER_ERROR)
+			if (check_units(token1, alk, true, initial_data_ptr->Get_units().c_str(), true) ==	(int)CParser::STATUS_TYPE::PARSER_ERROR)
 			{
 				input_error++;
 			}

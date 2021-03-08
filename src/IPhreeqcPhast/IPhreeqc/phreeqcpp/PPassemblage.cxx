@@ -174,7 +174,7 @@ cxxPPassemblage::read_raw(CParser & parser, bool check)
 
 		case 0:				// eltList
 			if (this->eltList.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.
@@ -220,7 +220,7 @@ cxxPPassemblage::read_raw(CParser & parser, bool check)
 			break;
 		case 3:				// assemblage_totals
 			if (this->assemblage_totals.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.

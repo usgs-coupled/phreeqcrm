@@ -125,11 +125,11 @@ bool dumper::Read(CParser & parser)
 			for (;;)
 			{ 
 				CParser::TOKEN_TYPE j = parser.copy_token(token, next_char);
-				if (item && j == CParser::TT_DIGIT)
+				if (item && j == CParser::TOKEN_TYPE::TT_DIGIT)
 				{
 					item->Augment(token);
 				}
-				else if (item && j == CParser::TT_EMPTY)
+				else if (item && j == CParser::TOKEN_TYPE::TT_EMPTY)
 				{
 					item->Augment(token);
 					break;

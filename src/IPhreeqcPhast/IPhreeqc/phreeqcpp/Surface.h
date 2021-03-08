@@ -16,11 +16,11 @@ class cxxSurface:public cxxNumKeyword
 {
 
 public:
-	enum SURFACE_TYPE
+	enum class SURFACE_TYPE
 	{ UNKNOWN_DL, NO_EDL, DDL, CD_MUSIC, CCM };
-	enum DIFFUSE_LAYER_TYPE
+	enum class DIFFUSE_LAYER_TYPE
 	{ NO_DL, BORKOVEK_DL, DONNAN_DL };
-	enum SITES_UNITS
+	enum class SITES_UNITS
 	{ SITES_ABSOLUTE, SITES_DENSITY };
 
 	cxxSurface(PHRQ_io *io=NULL);

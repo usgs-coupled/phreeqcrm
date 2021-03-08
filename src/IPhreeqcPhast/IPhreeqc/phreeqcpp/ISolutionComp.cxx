@@ -129,7 +129,7 @@ cxxISolutionComp::STATUS_TYPE cxxISolutionComp::read(CParser & parser,
 	int
 		count_redox_states = 0;
 	CParser::TOKEN_TYPE j;
-	while (((j = parser.copy_token(token, ptr)) == CParser::TT_UPPER) ||
+	while (((j = parser.copy_token(token, ptr)) == CParser::TOKEN_TYPE::TT_UPPER) ||
 		   (token[0] == '[') ||
 		   (Utilities::strcmp_nocase_arg1(token.c_str(), "ph") == 0) ||
 		   (Utilities::strcmp_nocase_arg1(token.c_str(), "pe") == 0))
@@ -169,7 +169,7 @@ cxxISolutionComp::STATUS_TYPE cxxISolutionComp::read(CParser & parser,
 		parser.error_msg(err, PHRQ_io::OT_CONTINUE);
 		return cxxISolutionComp::ERROR;
 	}
-	if ((j = parser.copy_token(token, ptr)) == CParser::TT_EMPTY)
+	if ((j = parser.copy_token(token, ptr)) == CParser::TOKEN_TYPE::TT_EMPTY)
 		return cxxISolutionComp::OK;
 
 	// Read optional data
@@ -184,7 +184,7 @@ cxxISolutionComp::STATUS_TYPE cxxISolutionComp::read(CParser & parser,
 						true) == CParser::OK)
 		{
 			this->units = token1;
-			if ((j = parser.copy_token(token, ptr)) == CParser::TT_EMPTY)
+			if ((j = parser.copy_token(token, ptr)) == CParser::TOKEN_TYPE::TT_EMPTY)
 				return cxxISolutionComp::OK;
 		}
 		else
@@ -200,13 +200,13 @@ cxxISolutionComp::STATUS_TYPE cxxISolutionComp::read(CParser & parser,
 	{
 		parser.copy_token(token, ptr);
 		this->as = token;
-		if ((j = parser.copy_token(token, ptr)) == CParser::TT_EMPTY)
+		if ((j = parser.copy_token(token, ptr)) == CParser::TOKEN_TYPE::TT_EMPTY)
 			return cxxISolutionComp::OK;
 	}
 	// Check for "gfw" followed by gram formula weight
 	else if (token1.compare("gfw") == 0)
 	{
-		if (parser.copy_token(token, ptr) != CParser::TT_DIGIT)
+		if (parser.copy_token(token, ptr) != CParser::TOKEN_TYPE::TT_DIGIT)
 		{
 			parser.error_msg("Expecting gram formula weight.",
 							 PHRQ_io::OT_CONTINUE);
@@ -215,7 +215,7 @@ cxxISolutionComp::STATUS_TYPE cxxISolutionComp::read(CParser & parser,
 		else
 		{
 			parser.get_iss() >> this->gfw;
-			if ((j = parser.copy_token(token, ptr)) == CParser::TT_EMPTY)
+			if ((j = parser.copy_token(token, ptr)) == CParser::TOKEN_TYPE::TT_EMPTY)
 				return cxxISolutionComp::OK;
 		}
 	}
@@ -224,7 +224,7 @@ cxxISolutionComp::STATUS_TYPE cxxISolutionComp::read(CParser & parser,
 	if (Utilities::strcmp_nocase_arg1(token.c_str(), "pe") == 0)
 	{
 		this->n_pe = cxxPe_Data::store(solution.pe, token);
-		if ((j = parser.copy_token(token, ptr)) == CParser::TT_EMPTY)
+		if ((j = parser.copy_token(token, ptr)) == CParser::TOKEN_TYPE::TT_EMPTY)
 			return cxxISolutionComp::OK;
 	}
 	else if (token.find("/") != std::string::npos)
@@ -232,7 +232,7 @@ cxxISolutionComp::STATUS_TYPE cxxISolutionComp::read(CParser & parser,
 		if (parser.parse_couple(token) == CParser::OK)
 		{
 			this->n_pe = cxxPe_Data::store(solution.pe, token);
-			if ((j = parser.copy_token(token, ptr)) == CParser::TT_EMPTY)
+			if ((j = parser.copy_token(token, ptr)) == CParser::TOKEN_TYPE::TT_EMPTY)
 				return cxxISolutionComp::OK;
 		}
 		else
@@ -243,7 +243,7 @@ cxxISolutionComp::STATUS_TYPE cxxISolutionComp::read(CParser & parser,
 
 	// Must have phase
 	this->equation_name = token;
-	if ((j = parser.copy_token(token, ptr)) == CParser::TT_EMPTY)
+	if ((j = parser.copy_token(token, ptr)) == CParser::TOKEN_TYPE::TT_EMPTY)
 		return cxxISolutionComp::OK;
 
 	// Check for saturation index
@@ -294,8 +294,8 @@ read(const char *line_in, cxxSolution *solution_ptr)
 	std::string::iterator b = line.begin(); 
 	std::string::iterator e = line.end(); 
 	{
-		int j;
-		while (((j = CParser::copy_token(token, b, e)) == CParser::TT_UPPER) ||
+		CParser::TOKEN_TYPE j_tt;
+		while (((j_tt = CParser::copy_token(token, b, e)) == CParser::TOKEN_TYPE::TT_UPPER) ||
 			(token[0] == '[') ||
 			(Utilities::strcmp_nocase(token.c_str(), "ph") == 0) ||
 			(Utilities::strcmp_nocase(token.c_str(), "pe") == 0))
@@ -311,7 +311,7 @@ read(const char *line_in, cxxSolution *solution_ptr)
 		error_msg
 			("No element or master species given for concentration input.",
 			  PHRQ_io::OT_CONTINUE);
-		return (CParser::PARSER_ERROR);
+		return (CParser::STATUS_TYPE::PARSER_ERROR);
 	}
 	this->Set_description(master_list.c_str());
 /*
@@ -338,14 +338,15 @@ read(const char *line_in, cxxSolution *solution_ptr)
 			std::ostringstream errstr;
 			errstr << "Concentration data error for " << master_list << " in solution input.";
 			error_msg(errstr.str().c_str(),  PHRQ_io::OT_CONTINUE);
-			return (CParser::PARSER_ERROR);
+			return (CParser::STATUS_TYPE::PARSER_ERROR);
 		}
 		else
 		{
 			this->Set_input_conc(dummy);
 		}
-		if ((j = CParser::copy_token(token, b, e)) == CParser::TT_EMPTY)
-			return (CParser::PARSER_OK);
+		CParser::TOKEN_TYPE j_tt;
+		if ((j_tt = CParser::copy_token(token, b, e)) == CParser::TOKEN_TYPE::TT_EMPTY)
+			return (CParser::STATUS_TYPE::PARSER_OK);
 	}
 /*
  *   Read optional data
@@ -360,17 +361,17 @@ read(const char *line_in, cxxSolution *solution_ptr)
 	{
 		error_msg("Initial_data instance not defined in cxxISolutionComp::read", 1);
 	}
-	if (parser.check_units(token1, alk, false, solution_ptr->Get_initial_data()->Get_units().c_str(), false) == CParser::PARSER_OK)
+	if (parser.check_units(token1, alk, false, solution_ptr->Get_initial_data()->Get_units().c_str(), false) == CParser::STATUS_TYPE::PARSER_OK)
 	{
-		if (parser.check_units(token1, alk, false, solution_ptr->Get_initial_data()->Get_units().c_str(), true) == CParser::PARSER_OK)
+		if (parser.check_units(token1, alk, false, solution_ptr->Get_initial_data()->Get_units().c_str(), true) == CParser::STATUS_TYPE::PARSER_OK)
 		{
 			this->units = token1;
-			if ((CParser::copy_token(token, b, e)) == CParser::TT_EMPTY)
-				return (CParser::PARSER_OK);
+			if ((CParser::copy_token(token, b, e)) == CParser::TOKEN_TYPE::TT_EMPTY)
+				return (CParser::STATUS_TYPE::PARSER_OK);
 		}
 		else
 		{
-			return (CParser::PARSER_ERROR);
+			return (CParser::STATUS_TYPE::PARSER_ERROR);
 		}
 	}
 /*
@@ -382,24 +383,24 @@ read(const char *line_in, cxxSolution *solution_ptr)
 	{
 		CParser::copy_token(token, b, e);
 		this->as = token;
-		if ((CParser::copy_token(token, b, e)) == CParser::TT_EMPTY)
-			return (CParser::PARSER_OK);
+		if ((CParser::copy_token(token, b, e)) == CParser::TOKEN_TYPE::TT_EMPTY)
+			return (CParser::STATUS_TYPE::PARSER_OK);
 /*
  *   Check for "gfw" followed by gram formula weight
  */
 	}
 	else if (strcmp(token1.c_str(), "gfw") == 0 || strcmp(token1.c_str(), "gfm") == 0)
 	{
-		if (CParser::copy_token(token, b, e) != DIGIT)
+		if (CParser::copy_token(token, b, e) != CParser::TOKEN_TYPE::TT_DIGIT)
 		{
 			error_msg("Expecting gram formula weight.",  PHRQ_io::OT_CONTINUE);
-			return (CParser::PARSER_ERROR);
+			return (CParser::STATUS_TYPE::PARSER_ERROR);
 		}
 		else
 		{
 			(void)sscanf(token.c_str(), SCANFORMAT, &this->gfw);
-			if ((CParser::copy_token(token, b, e)) == CParser::TT_EMPTY)
-				return (CParser::PARSER_OK);
+			if ((CParser::copy_token(token, b, e)) == CParser::TOKEN_TYPE::TT_EMPTY)
+				return (CParser::STATUS_TYPE::PARSER_OK);
 		}
 	}
 /*
@@ -408,28 +409,28 @@ read(const char *line_in, cxxSolution *solution_ptr)
 	if (Utilities::strcmp_nocase(token.c_str(), "pe") == 0)
 	{
 		this->pe_reaction = token;
-		if ((CParser::copy_token(token, b, e)) == CParser::TT_EMPTY)
-			return (CParser::PARSER_OK);
+		if ((CParser::copy_token(token, b, e)) == CParser::TOKEN_TYPE::TT_EMPTY)
+			return (CParser::STATUS_TYPE::PARSER_OK);
 	}
 	else if (strstr(token.c_str(), "/") != NULL)
 	{
-		if (parser.parse_couple(token) == CParser::PARSER_OK)
+		if (parser.parse_couple(token) == CParser::STATUS_TYPE::PARSER_OK)
 		{
 			this->pe_reaction = token;
-			if ((CParser::copy_token(token, b, e)) == CParser::TT_EMPTY)
-				return (CParser::PARSER_OK);
+			if ((CParser::copy_token(token, b, e)) == CParser::TOKEN_TYPE::TT_EMPTY)
+				return (CParser::STATUS_TYPE::PARSER_OK);
 		}
 		else
 		{
-			return (CParser::PARSER_ERROR);
+			return (CParser::STATUS_TYPE::PARSER_ERROR);
 		}
 	}
 /*
  *   Must have phase
  */
 	this->equation_name = token;
-	if (CParser::copy_token(token, b, e) == CParser::TT_EMPTY)
-		return (CParser::PARSER_OK);
+	if (CParser::copy_token(token, b, e) == CParser::TOKEN_TYPE::TT_EMPTY)
+		return (CParser::STATUS_TYPE::PARSER_OK);
 /*
  *   Check for saturation index
  */
@@ -439,9 +440,9 @@ read(const char *line_in, cxxSolution *solution_ptr)
 		if (j != 1)
 		{
 			error_msg("Expected saturation index.",  PHRQ_io::OT_CONTINUE);
-			return (CParser::PARSER_ERROR);
+			return (CParser::STATUS_TYPE::PARSER_ERROR);
 		}
 	}
-	return (CParser::PARSER_OK);
+	return (CParser::STATUS_TYPE::PARSER_OK);
 
 }

@@ -139,7 +139,7 @@ cxxNumKeyword::read_number_description(const std::string & line_in)
 	CParser::copy_token(keyword, b, e);
 
 	// read number
-	if (CParser::copy_token(token, b, e) == CParser::TT_DIGIT)
+	if (CParser::copy_token(token, b, e) == CParser::TOKEN_TYPE::TT_DIGIT)
 	{
 		if (token[0] == '-') 
 		{

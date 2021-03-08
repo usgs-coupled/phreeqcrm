@@ -10366,12 +10366,12 @@ PhreeqcRM::SetGasPhaseVolume(const std::vector<double>& v_in)
 		if (gas_ptr != NULL) // Gas phase exists
 		{
 			gas_ptr->Set_volume(volume);
-			gas_ptr->Set_type(cxxGasPhase::GP_VOLUME);
+			gas_ptr->Set_type(cxxGasPhase::GP_TYPE::GP_VOLUME);
 		}
 		else  // no gas phase
 		{
 			cxxGasPhase temp_gas;
-			temp_gas.Set_type(cxxGasPhase::GP_VOLUME);
+			temp_gas.Set_type(cxxGasPhase::GP_TYPE::GP_VOLUME);
 			temp_gas.Set_volume(volume);
 			this->GetWorkers()[n]->Get_PhreeqcPtr()->Get_Rxn_gas_phase_map()[(int)j] = temp_gas;
 		}
@@ -10391,12 +10391,12 @@ PhreeqcRM::SetGasPhaseVolume(const std::vector<double>& v_in)
 			if (gas_ptr != NULL) // gas phase exists
 			{
 				gas_ptr->Set_volume(send_gas_volume[j]);
-				gas_ptr->Set_type(cxxGasPhase::GP_VOLUME);
+				gas_ptr->Set_type(cxxGasPhase::GP_TYPE::GP_VOLUME);
 			}
 			else  // no gas phase
 			{
 				cxxGasPhase temp_gas;
-				temp_gas.Set_type(cxxGasPhase::GP_VOLUME);
+				temp_gas.Set_type(cxxGasPhase::GP_TYPE::GP_VOLUME);
 				temp_gas.Set_volume(send_gas_volume[j]);
 				this->GetWorkers()[n]->Get_PhreeqcPtr()->Get_Rxn_gas_phase_map()[(int)j] = temp_gas;
 			}
@@ -10809,7 +10809,7 @@ PhreeqcRM::SetPressure(const std::vector<double> &t)
 				soln_ptr->Set_patm(this->pressure_worker[i]);
 			}
 			cxxGasPhase *gas_ptr = this->GetWorkers()[0]->Get_gas_phase(j);
-			if (gas_ptr && gas_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+			if (gas_ptr && gas_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 			{
 				gas_ptr->Set_total_p(this->pressure_worker[i]);
 			}
@@ -10832,7 +10832,7 @@ PhreeqcRM::SetPressure(const std::vector<double> &t)
 					soln_ptr->Set_patm(pressure_root[i]);
 				}
 				cxxGasPhase *gas_ptr = this->GetWorkers()[n]->Get_gas_phase(j);
-				if (gas_ptr && gas_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+				if (gas_ptr && gas_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 				{
 					gas_ptr->Set_total_p(pressure_root[i]);  
 				}
@@ -11704,8 +11704,8 @@ PhreeqcRM::TransferCellsUZ(std::ostringstream &raw_stream, int old, int nnew)
 			std::istringstream iss(string_buffer);
 			delete [] string_buffer;
 			CParser cp(iss);
-			cp.set_echo_file(CParser::EO_NONE);
-			cp.set_echo_stream(CParser::EO_NONE);
+			cp.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
+			cp.set_echo_stream(CParser::ECHO_OPTION::EO_NONE);
 			phast_iphreeqc_worker->uz_bin.read_raw(cp);
 		}
 	}

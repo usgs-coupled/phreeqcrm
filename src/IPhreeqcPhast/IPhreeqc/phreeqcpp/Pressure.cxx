@@ -82,16 +82,16 @@ cxxPressure::read(CParser & parser)
 			if (done) break;
 			// new token
 			std::string token;
-			CParser::TOKEN_TYPE k =	parser.copy_token(token, next_char);
+			CParser::TOKEN_TYPE k_tt =	parser.copy_token(token, next_char);
 
 			// need new line
-			if (k == CParser::TT_EMPTY)
+			if (k_tt == CParser::TOKEN_TYPE::TT_EMPTY)
 			{
 				break;
 			}
 
 			// read a pressure
-			if (k == CParser::TT_DIGIT)
+			if (k_tt == CParser::TOKEN_TYPE::TT_DIGIT)
 			{
 				std::istringstream iss(token);
 				LDBLE d;
@@ -108,7 +108,7 @@ cxxPressure::read(CParser & parser)
 			}
 
 			// non digit, must be "in"
-			if (k == CParser::TT_UPPER || k == CParser::TT_LOWER)
+			if (k_tt == CParser::TOKEN_TYPE::TT_UPPER || k_tt == CParser::TOKEN_TYPE::TT_LOWER)
 			{
 				if (this->pressures.size() != 2)
 				{
@@ -116,8 +116,9 @@ cxxPressure::read(CParser & parser)
 				}
 				else
 				{
-					int i = parser.copy_token(token, next_char);
-					if (i == EMPTY)
+					int i;
+					CParser::TOKEN_TYPE i_tt = parser.copy_token(token, next_char);
+					if (i_tt == CParser::TOKEN_TYPE::TT_EMPTY)
 					{
 						error_msg("To define equal increments, define 'in n steps'.", CONTINUE);
 					}
@@ -136,7 +137,8 @@ cxxPressure::read(CParser & parser)
 					}
 					done = true;
 				}
-				if (k == CParser::TT_UNKNOWN)
+
+				if (k_tt == CParser::TOKEN_TYPE::TT_UNKNOWN)
 				{
 					error_msg("Unknown input for pressure steps.", CONTINUE);
 				}
@@ -248,7 +250,7 @@ cxxPressure::read_raw(CParser & parser, bool check)
 				this->pressures.clear();
 				cleared_once = true;
 			}
-			while ((k =	parser.copy_token(token, next_char)) == CParser::TT_DIGIT)
+			while ((k =	parser.copy_token(token, next_char)) == CParser::TOKEN_TYPE::TT_DIGIT)
 			{
 				std::istringstream iss(token);
 				if (!(iss >> d))

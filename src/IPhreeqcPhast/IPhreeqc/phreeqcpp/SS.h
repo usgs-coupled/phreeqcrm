@@ -18,7 +18,7 @@ class cxxSS: public PHRQ_base
 	cxxSS(PHRQ_io *io=NULL);
 	virtual ~cxxSS();
 
-	enum SS_PARAMETER_TYPE
+	enum class SS_PARAMETER_TYPE
 	{
 		SS_PARM_NONE = -1,
 		SS_PARM_A0_A1 = 0,

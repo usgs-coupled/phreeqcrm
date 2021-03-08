@@ -453,7 +453,7 @@ void Phreeqc::init(void)
 	last_model.count_kinetics       = -1;
 	last_model.kinetics             = NULL;
 	last_model.count_gas_phase      = -1;
-	last_model.gas_phase_type       = cxxGasPhase::GP_UNKNOWN;
+	last_model.gas_phase_type       = cxxGasPhase::GP_TYPE::GP_UNKNOWN;
 	last_model.gas_phase            = NULL;
 	last_model.count_ss_assemblage  = -1;
 	last_model.ss_assemblage        = NULL;
@@ -461,8 +461,8 @@ void Phreeqc::init(void)
 	last_model.pp_assemblage        = NULL;
 	last_model.add_formula          = NULL;
 	last_model.si                   = NULL;
-	last_model.dl_type              = cxxSurface::NO_DL;
-	last_model.surface_type         = cxxSurface::UNKNOWN_DL;
+	last_model.dl_type              = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
+	last_model.surface_type         = cxxSurface::SURFACE_TYPE::UNKNOWN_DL;
 	last_model.only_counter_ions    = FALSE;
 	last_model.thickness            = 1e-8;
 	last_model.count_surface_comp   = -1;
@@ -676,7 +676,7 @@ void Phreeqc::init(void)
 	// auto pe_x
 	// auto isotopes_x
 	// auto default_pe_x
-	dl_type_x                = cxxSurface::NO_DL;
+	dl_type_x                = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 	total_carbon             = 0;
 	total_co2                = 0;
 	total_alkalinity         = 0;
@@ -1632,7 +1632,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	// auto isotopes_x
 	// auto default_pe_x
 	/*
-	dl_type_x                = cxxSurface::NO_DL;
+	dl_type_x                = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 	total_carbon             = 0;
 	total_co2                = 0;
 	total_alkalinity         = 0;

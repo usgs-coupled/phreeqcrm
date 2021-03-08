@@ -235,7 +235,7 @@ quick_setup(void)
 	if (gas_unknown != NULL)
 	{
 		cxxGasPhase * gas_phase_ptr = use.Get_gas_phase_ptr();
-		if ((gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME) && 
+		if ((gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_VOLUME) && 
 			numerical_fixed_volume && 
 			(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume))
 		{
@@ -405,7 +405,7 @@ build_gas_phase(void)
 	if (gas_unknown == NULL)
 		return (OK);
 	cxxGasPhase * gas_phase_ptr = use.Get_gas_phase_ptr();
-	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME && 
+	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_VOLUME && 
 		(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) && 
 		numerical_fixed_volume)
 	{
@@ -472,7 +472,7 @@ build_gas_phase(void)
 				}
 			}
 		}
-		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 		{
 			/* Total pressure of gases */
 			store_mb(&(phase_ptr->p_soln_x), &(gas_unknown->f), 1.0);
@@ -565,7 +565,7 @@ build_gas_phase(void)
 				store_jacob(&(phase_ptr->moles_x),
 					&(my_array[row + col]), coef);
 			}
-			if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+			if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 			{
 				/* derivative wrt total moles of gas */
 				if (debug_prep == TRUE)
@@ -582,7 +582,7 @@ build_gas_phase(void)
 /*
  *   Build jacobian sums for sum of partial pressures equation
  */
-		if (gas_phase_ptr->Get_type() != cxxGasPhase::GP_PRESSURE)
+		if (gas_phase_ptr->Get_type() != cxxGasPhase::GP_TYPE::GP_PRESSURE)
 			continue;
 		if (debug_prep == TRUE)
 		{
@@ -912,7 +912,7 @@ build_jacobian_sums(int k)
 /*
  *   Add extra terms for change in dg/dx in diffuse layer model
  */
-		if (s[k]->type >= H2O || dl_type_x == cxxSurface::NO_DL)
+		if (s[k]->type >= H2O || dl_type_x == cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		{
 			continue;
 		}
@@ -1331,7 +1331,7 @@ build_model(void)
 			build_species_list(i);
 		}
 	}
-	if (dl_type_x != cxxSurface::NO_DL && (/*pitzer_model == TRUE || */sit_model == TRUE)) //DL_pitz
+	if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL && (/*pitzer_model == TRUE || */sit_model == TRUE)) //DL_pitz
 	{
 		error_msg("-diffuse_layer option not available for Pizer or SIT model",
 				  STOP);
@@ -1339,7 +1339,7 @@ build_model(void)
 /*
  *   Sum diffuse layer water into hydrogen and oxygen mass balances
  */
-	if (dl_type_x != cxxSurface::NO_DL && state >= REACTION)
+	if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL && state >= REACTION)
 	{
 		for (i = 0; i < count_unknowns; i++)
 		{
@@ -2323,7 +2323,7 @@ mb_for_species_aq(int n)
  */
 	if (mass_hydrogen_unknown != NULL)
 	{
-		if (dl_type_x != cxxSurface::NO_DL && state >= REACTION)
+		if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL && state >= REACTION)
 		{
 #ifdef COMBINE
 			store_mb_unknowns(mass_hydrogen_unknown, &s[n]->tot_g_moles,
@@ -2346,7 +2346,7 @@ mb_for_species_aq(int n)
 	}
 	if (mass_oxygen_unknown != NULL)
 	{
-		if (dl_type_x != cxxSurface::NO_DL && state >= REACTION)
+		if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL && state >= REACTION)
 		{
 			store_mb_unknowns(mass_oxygen_unknown, &s[n]->tot_g_moles,
 							  s[n]->o, &s[n]->dg_total_g);
@@ -2360,7 +2360,7 @@ mb_for_species_aq(int n)
 /* 
  *   Sum diffuse layer charge into (surface + DL) charge balance
  */
-	if (use.Get_surface_ptr() != NULL && s[n]->type < H2O && dl_type_x != cxxSurface::NO_DL)
+	if (use.Get_surface_ptr() != NULL && s[n]->type < H2O && dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 	{
 		j = 0;
 		for (i = 0; i < count_unknowns; i++)
@@ -2369,7 +2369,7 @@ mb_for_species_aq(int n)
 			{
 				cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[i]->surface_charge);
 				unknown_ptr = x[i];
-				if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+				if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 					unknown_ptr = x[i + 2];
 
 				store_mb_unknowns(unknown_ptr, s_diff_layer[n][charge_ptr->Get_name()].Get_g_moles_address(),
@@ -2419,7 +2419,7 @@ mb_for_species_aq(int n)
 		{
 			continue;
 		}
-		if (dl_type_x != cxxSurface::NO_DL && state >= REACTION)
+		if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL && state >= REACTION)
 		{
 			store_mb_unknowns(master_ptr->unknown,
 							  &s[n]->tot_g_moles,
@@ -2547,7 +2547,7 @@ mb_for_species_surf(int n)
 /*
  *   Include in charge balance, if diffuse_layer_x == FALSE
  */
-	if (charge_balance_unknown != NULL && dl_type_x == cxxSurface::NO_DL)
+	if (charge_balance_unknown != NULL && dl_type_x == cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 	{
 		store_mb_unknowns(charge_balance_unknown, &s[n]->moles, s[n]->z,
 						  &s[n]->dg);
@@ -2594,14 +2594,14 @@ mb_for_species_surf(int n)
  *   SURF_PSI, sum surface species in (surface + DL) charge balance
  */
 		if (master_ptr->s->type == SURF_PSI
-			&& use.Get_surface_ptr()->Get_type() != cxxSurface::CD_MUSIC)
+			&& use.Get_surface_ptr()->Get_type() != cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			store_mb_unknowns(master_ptr->unknown, &s[n]->moles, s[n]->z,
 							  &s[n]->dg);
 			continue;
 		}
 		if (master_ptr->s->type == SURF_PSI
-			&& use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+			&& use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			store_mb_unknowns(master_ptr->unknown, &s[n]->moles, s[n]->dz[0],
 							  &s[n]->dg);
@@ -2855,7 +2855,7 @@ add_potential_factor(void)
 		error_msg(error_string, CONTINUE);
 		return(OK);
 	}
-	if (use.Get_surface_ptr()->Get_type() != cxxSurface::DDL && use.Get_surface_ptr()->Get_type() != cxxSurface::CCM)
+	if (use.Get_surface_ptr()->Get_type() != cxxSurface::SURFACE_TYPE::DDL && use.Get_surface_ptr()->Get_type() != cxxSurface::SURFACE_TYPE::CCM)
 		return (OK);
 	sum_z = 0.0;
 	master_ptr = NULL;
@@ -2957,7 +2957,7 @@ add_cd_music_factors(int n)
 		error_msg(error_string, CONTINUE);
 		return(OK);
 	}
-	if (use.Get_surface_ptr()->Get_type() != cxxSurface::CD_MUSIC)
+	if (use.Get_surface_ptr()->Get_type() != cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		return (OK);
 	master_ptr = NULL;
 /*
@@ -3088,7 +3088,7 @@ add_surface_charge_balance(void)
 		error_msg(error_string, CONTINUE);
 		return(OK);
 	}
-	if (use.Get_surface_ptr()->Get_type() != cxxSurface::DDL && use.Get_surface_ptr()->Get_type() != cxxSurface::CCM)
+	if (use.Get_surface_ptr()->Get_type() != cxxSurface::SURFACE_TYPE::DDL && use.Get_surface_ptr()->Get_type() != cxxSurface::SURFACE_TYPE::CCM)
 		return (OK);
 	master_ptr = NULL;
 /*
@@ -3157,7 +3157,7 @@ add_cd_music_charge_balances(int n)
 		error_msg(error_string, CONTINUE);
 		return(OK);
 	}
-	if (use.Get_surface_ptr()->Get_type() != cxxSurface::CD_MUSIC)
+	if (use.Get_surface_ptr()->Get_type() != cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		return (OK);
 	master_ptr = NULL;
 /*
@@ -3365,7 +3365,7 @@ setup_gas_phase(void)
 	if (use.Get_gas_phase_ptr() == NULL)
 		return (OK);
 	cxxGasPhase * gas_phase_ptr = use.Get_gas_phase_ptr();
-	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME && (
+	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_VOLUME && (
 		gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) && numerical_fixed_volume)
 	{
 		return setup_fixed_volume_gas();
@@ -3511,7 +3511,7 @@ setup_surface(void)
 			x[count_unknowns]->potential_unknown = NULL;
 			count_unknowns++;
 			/*if (use.Get_surface_ptr()->edl == FALSE) continue; */
-			if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
+			if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CCM)
 			{
 				/*
 				 *   Setup surface-potential unknown
@@ -3559,7 +3559,7 @@ setup_surface(void)
 					count_unknowns++;
 				}
 			}
-			else if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+			else if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 			{
 				/*
 				 *   Setup 3 surface-potential unknowns
@@ -4195,7 +4195,7 @@ calc_PR(std::vector<struct phase *> phase_ptrs, LDBLE P, LDBLE TK, LDBLE V_m)
 	}
 	if (gas_phase_ptr && iterations > 2)
 	{
-		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME)
+		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_VOLUME)
 		{
 			gas_phase_ptr->Set_total_p(P);
 		}
@@ -4809,7 +4809,7 @@ setup_unknowns(void)
  */
 	if (use.Get_surface_ptr() != NULL)
 	{
-		if (use.Get_surface_ptr()->Get_type() != cxxSurface::CD_MUSIC)
+		if (use.Get_surface_ptr()->Get_type() != cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			max_unknowns +=	(int) use.Get_surface_ptr()->Get_surface_comps().size() + 
 				(int) use.Get_surface_ptr()->Get_surface_charges().size();
@@ -4826,7 +4826,7 @@ setup_unknowns(void)
 	if (use.Get_gas_phase_ptr() != NULL)
 	{
 		cxxGasPhase * gas_phase_ptr = use.Get_gas_phase_ptr();
-		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME && 
+		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_VOLUME && 
 			(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) && numerical_fixed_volume)
 		{
 			max_unknowns += (int) gas_phase_ptr->Get_gas_comps().size();
@@ -5882,7 +5882,7 @@ save_model(void)
 	else
 	{
 		last_model.count_gas_phase = 0;
-		last_model.gas_phase_type = cxxGasPhase::GP_UNKNOWN;
+		last_model.gas_phase_type = cxxGasPhase::GP_TYPE::GP_UNKNOWN;
 		last_model.gas_phase = NULL;
 	}
 /*
@@ -5992,9 +5992,9 @@ save_model(void)
 	}
 	else
 	{
-		last_model.dl_type = cxxSurface::NO_DL;
+		last_model.dl_type = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 		/*last_model.edl = -1; */
-		last_model.surface_type = cxxSurface::UNKNOWN_DL;
+		last_model.surface_type = cxxSurface::SURFACE_TYPE::UNKNOWN_DL;
 		last_model.count_surface_comp = 0;
 		last_model.surface_comp = NULL;
 		last_model.count_surface_charge = 0;

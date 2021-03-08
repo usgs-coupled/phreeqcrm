@@ -494,7 +494,7 @@ set_use(void)
 /*
  *   Find surface
  */
-	dl_type_x = cxxSurface::NO_DL;
+	dl_type_x = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 	if (use.Get_surface_in() == TRUE)
 	{
 		use.Set_surface_ptr(Utilities::Rxn_find(Rxn_surface_map, use.Get_n_surface_user()));
@@ -600,7 +600,7 @@ initial_solutions(int print)
 	state = INITIAL_SOLUTION;
 	set_use();
 	print1 = TRUE;
-	dl_type_x = cxxSurface::NO_DL;
+	dl_type_x = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 	//std::map<int, cxxSolution>::iterator it = Rxn_solution_map.begin();
 	//for ( ; it != Rxn_solution_map.end(); it++)
 	//{
@@ -747,7 +747,7 @@ initial_exchangers(int print)
 	state = INITIAL_EXCHANGE;
 	set_use();
 	print1 = TRUE;
-	dl_type_x = cxxSurface::NO_DL;
+	dl_type_x = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 	//std::map<int, cxxExchange>::iterator it = Rxn_exchange_map.begin();
 	//for ( ; it != Rxn_exchange_map.end(); it++)
 	//{
@@ -838,7 +838,7 @@ initial_gas_phases(int print)
 	state = INITIAL_GAS_PHASE;
 	set_use();
 	print1 = TRUE;
-	dl_type_x = cxxSurface::NO_DL;
+	dl_type_x = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 	//std::map<int, cxxGasPhase>::iterator it = Rxn_gas_phase_map.begin();
 	//for ( ; it != Rxn_gas_phase_map.end(); it++)
 	//{
@@ -1726,7 +1726,7 @@ xsurface_save(int n_user)
 	temp_surface.Set_solution_equilibria(false);
 	temp_surface.Set_n_solution(-999);
 
-	if (temp_surface.Get_type() == cxxSurface::NO_EDL)
+	if (temp_surface.Get_type() == cxxSurface::SURFACE_TYPE::NO_EDL)
 	{
 		temp_surface.Get_surface_charges().clear();
 	}
@@ -1773,7 +1773,7 @@ xsurface_save(int n_user)
 			}
 			comp_ptr->Set_charge_balance(charge);
 		}
-		else if (x[i]->type == SURFACE_CB && (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM))
+		else if (x[i]->type == SURFACE_CB && (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CCM))
 		{
 			cxxSurfaceCharge *charge_ptr = temp_surface.Find_charge(x[i]->surface_charge);
 			if (charge_ptr == NULL)
@@ -1784,7 +1784,7 @@ xsurface_save(int n_user)
 /*
  *   Store moles from diffuse_layer
  */
-			if (dl_type_x != cxxSurface::NO_DL)
+			if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 			{
 				sum_diffuse_layer(charge_ptr);
 				cxxNameDouble nd = elt_list_NameDouble();
@@ -1792,11 +1792,11 @@ xsurface_save(int n_user)
 			}
 		}
 		else if (x[i]->type == SURFACE_CB
-			&& use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+			&& use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			cxxSurfaceCharge *charge_ptr = temp_surface.Find_charge(x[i]->surface_charge);
 			assert(charge_ptr);
-			if (dl_type_x != cxxSurface::NO_DL)
+			if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 			{
 				charge_ptr->Set_charge_balance(
 					(charge_ptr->Get_sigma0() +
@@ -1819,7 +1819,7 @@ xsurface_save(int n_user)
 /*
  *   Store moles from diffuse_layer
  */
-			if (dl_type_x != cxxSurface::NO_DL)
+			if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 			{
 				sum_diffuse_layer(charge_ptr);
 				cxxNameDouble nd = elt_list_NameDouble();
@@ -1827,7 +1827,7 @@ xsurface_save(int n_user)
 			}
 		}
 	}
-	if (!(dl_type_x == cxxSurface::NO_DL))
+	if (!(dl_type_x == cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL))
 	{
 		cxxSurface *surface_ptr = &temp_surface;
 		for (size_t i = 0; i < surface_ptr->Get_surface_charges().size(); i++)
@@ -1958,7 +1958,7 @@ copy_use(int i)
 /*
  *   Find surface
  */
-	dl_type_x = cxxSurface::NO_DL;
+	dl_type_x = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 	if (use.Get_surface_in() == TRUE)
 	{
 		Utilities::Rxn_copy(Rxn_surface_map, use.Get_n_surface_user(), i);
@@ -2113,7 +2113,7 @@ step_save_surf(int n_user)
 	/*
 	 *   Update grams
 	 */
-	if ((surface_ptr->Get_type() == cxxSurface::DDL || surface_ptr->Get_type() == cxxSurface::CCM || surface_ptr->Get_type() == cxxSurface::CD_MUSIC)
+	if ((surface_ptr->Get_type() == cxxSurface::SURFACE_TYPE::DDL || surface_ptr->Get_type() == cxxSurface::SURFACE_TYPE::CCM || surface_ptr->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		&& surface_ptr->Get_related_rate() && use.Get_kinetics_ptr() != NULL)
 	{
 		for (size_t j = 0; j < surface_ptr->Get_surface_comps().size(); j++)

@@ -321,7 +321,7 @@ cxxExchange::read_raw(CParser & parser, bool check)
 			break;
 		case 6:				// totals
 			if (this->totals.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.

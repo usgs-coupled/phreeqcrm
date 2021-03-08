@@ -325,7 +325,7 @@ print_diffuse_layer(cxxSurfaceCharge *charge_ptr)
 		/*
 		 *   Print totals
 		 */
-		if (use.Get_surface_ptr()->Get_dl_type() != cxxSurface::DONNAN_DL)
+		if (use.Get_surface_ptr()->Get_dl_type() != cxxSurface::DIFFUSE_LAYER_TYPE::DONNAN_DL)
 		{
 			output_msg(sformatf(
 				"\n\tTotal moles in diffuse layer (excluding water)\n\n"));
@@ -584,7 +584,7 @@ print_gas_phase(void)
 	cxxGasPhase *gas_phase_ptr = use.Get_gas_phase_ptr();
 	if (gas_phase_ptr->Get_v_m() >= 0.01)
 		PR = true;
-	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 	{
 		if (gas_unknown == NULL)
 			return (OK);
@@ -1244,7 +1244,7 @@ print_saturation_indices(void)
 	if (use.Get_gas_phase_ptr() != NULL)
 	{
 		cxxGasPhase * gas_phase_ptr = use.Get_gas_phase_ptr();
-		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 		{
 			if (gas_unknown == NULL || gas_unknown->moles < 1e-12)
 				gas = false;
@@ -1587,7 +1587,7 @@ print_surface(void)
 	surface_ptr = use.Get_surface_ptr();
 	if (surface_ptr == NULL || pr.surface == FALSE || pr.all == FALSE)
 		return (OK);
-	if (surface_ptr->Get_type() == cxxSurface::CD_MUSIC)
+	if (surface_ptr->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		return (print_surface_cd_music());
 
 	if (state >= REACTION)
@@ -1599,18 +1599,18 @@ print_surface(void)
  */
 
 	s_h2o->lm = s_h2o->la;
-	if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL)
+	if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::DDL)
 	{
 		output_msg(sformatf("%-14s\n", "Diffuse Double Layer Surface-Complexation Model\n"));
 	}
-	else if (use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
+	else if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CCM)
 	{
 		output_msg(sformatf("%-14s\n", "Constant Capacitance Surface-Complexation Model\n"));
 	}
 	for (int j = 0; j < count_unknowns; j++)
 	{
 		/*if (use.Get_surface_ptr()->edl == TRUE) { */
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
+		if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CCM)
 		{
 			if (x[j]->type != SURFACE_CB)
 				continue;
@@ -1631,14 +1631,14 @@ print_surface(void)
 /*
  *   Description of surface
  */
-		if (dl_type_x != cxxSurface::NO_DL)
+		if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		{
 			output_msg(sformatf(
 					   "\t%11.3e  Surface + diffuse layer charge, eq\n",
 					   (double) x[j]->f));
 		}
 		/*if (use.Get_surface_ptr()->edl == TRUE && diffuse_layer_x == FALSE) { */
-		if ((use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM) && dl_type_x == cxxSurface::NO_DL)
+		if ((use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CCM) && dl_type_x == cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		{
 			charge = x[j]->f;
 		}
@@ -1671,7 +1671,7 @@ print_surface(void)
 				output_msg(sformatf("\tundefined  sigma, C/m²\n"));
 #endif
 			}
-			if (use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
+			if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CCM)
 			{			
 				output_msg(sformatf("\t%11.3e  capacitance, F/m^2\n",
 					   (double) (charge_ptr->Get_capacitance0())));
@@ -1744,7 +1744,7 @@ print_surface(void)
 									 charge_ptr->Get_grams()),
 						   (double) charge_ptr->Get_grams()));
 			}
-			if (dl_type_x != cxxSurface::NO_DL)
+			if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 				print_diffuse_layer(charge_ptr);
 			output_msg(sformatf("\n"));
 /*
@@ -1900,7 +1900,7 @@ print_surface_cd_music(void)
 /*
  *   Description of surface
  */
-		if (dl_type_x != cxxSurface::NO_DL)
+		if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		{
 			output_msg(sformatf(
 					   "\t%11.3e  Surface + diffuse layer charge, eq\n\n",
@@ -1918,7 +1918,7 @@ print_surface_cd_music(void)
 
 		charge0 = unknown_ptr0->f;
 		charge1 = unknown_ptr1->f;
-		if (dl_type_x != cxxSurface::NO_DL)
+		if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		{
 			charge2 =
 				charge_ptr->Get_sigma2() *
@@ -2042,7 +2042,7 @@ print_surface_cd_music(void)
 									 charge_ptr->Get_grams()),
 						   (double) charge_ptr->Get_grams()));
 			}
-			if (dl_type_x != cxxSurface::NO_DL)
+			if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 				print_diffuse_layer(charge_ptr);
 			output_msg(sformatf("\n"));
 /*
@@ -2566,7 +2566,7 @@ punch_gas_phase(void)
 		{
 			PR = true;
 		}
-		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 		{
 			if (gas_unknown->moles >= 1e-12)
 			{

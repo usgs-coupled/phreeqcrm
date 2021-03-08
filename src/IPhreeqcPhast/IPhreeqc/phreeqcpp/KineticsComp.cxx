@@ -218,7 +218,7 @@ cxxKineticsComp::read_raw(CParser & parser, bool check)
 
 		case 5:				// namecoef
 			if (this->namecoef.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.
@@ -230,7 +230,7 @@ cxxKineticsComp::read_raw(CParser & parser, bool check)
 			break;
 
 		case 6:				// d_params
-			while (parser.copy_token(token, next_char) == CParser::TT_DIGIT)
+			while (parser.copy_token(token, next_char) == CParser::TOKEN_TYPE::TT_DIGIT)
 			{
 				double dd;
 				(void)sscanf(token.c_str(), "%lf", &dd);

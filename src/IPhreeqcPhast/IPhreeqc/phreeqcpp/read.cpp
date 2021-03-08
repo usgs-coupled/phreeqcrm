@@ -1331,10 +1331,10 @@ read_gas_phase(void)
 			}
 			break;
 		case 4:				/* fixed_pressure */
-			temp_gas_phase.Set_type(cxxGasPhase::GP_PRESSURE);
+			temp_gas_phase.Set_type(cxxGasPhase::GP_TYPE::GP_PRESSURE);
 			break;
 		case 5:				/* fixed_volume */
-			temp_gas_phase.Set_type(cxxGasPhase::GP_VOLUME);
+			temp_gas_phase.Set_type(cxxGasPhase::GP_TYPE::GP_VOLUME);
 			break;
 		case 6:				/* equilibrate */
 		case 7:				/* equilibrium */
@@ -5686,7 +5686,7 @@ read_solution(void)
 		if (opt == OPTION_DEFAULT)
 		{
 			ptr = next_char;
-			if (copy_token(token, &ptr) == CParser::TT_DIGIT)
+			if (copy_token(token, &ptr) == (int)CParser::TOKEN_TYPE::TT_DIGIT)
 			{
 				opt = 9;
 			}
@@ -5743,10 +5743,10 @@ read_solution(void)
 			break;
 		case 4:				/* units */
 		case 8:				/* unit */
-			if (copy_token(token, &next_char) == CParser::TT_EMPTY)
+			if (copy_token(token, &next_char) == (int)CParser::TOKEN_TYPE::TT_EMPTY)
 				break;
 			{
-				if (check_units(token, false, false, "mMol/kgw", false) == CParser::PARSER_OK)
+				if (check_units(token, false, false, "mMol/kgw", false) == (int)CParser::STATUS_TYPE::PARSER_OK)
 				{
 					isoln_ptr->Set_units(token);
 				}
@@ -5757,9 +5757,9 @@ read_solution(void)
 			}
 			break;
 		case 5:				/* redox */
-			if (copy_token(token, &next_char) == CParser::TT_EMPTY)
+			if (copy_token(token, &next_char) == (int)CParser::TOKEN_TYPE::TT_EMPTY)
 				break;
-			if (parser.parse_couple(token) == CParser::PARSER_OK)
+			if (parser.parse_couple(token) == CParser::STATUS_TYPE::PARSER_OK)
 			{
 				const char * str = string_hsave(token.c_str());
 				//isoln_ptr->Set_default_pe(token);
@@ -5775,7 +5775,7 @@ read_solution(void)
 		case 6:				/* ph */
 			{
 				cxxISolutionComp temp_comp(this->phrq_io);
-				if (temp_comp.read(line, &temp_solution) == CParser::PARSER_ERROR)
+				if (temp_comp.read(line, &temp_solution) == CParser::STATUS_TYPE::PARSER_ERROR)
 				{
 					input_error++;
 					break;
@@ -5795,7 +5795,7 @@ read_solution(void)
 		case 7:				/* pe */
 			{
 				cxxISolutionComp temp_comp(this->phrq_io);
-				if (temp_comp.read(line, &temp_solution) == CParser::PARSER_ERROR)
+				if (temp_comp.read(line, &temp_solution) == CParser::STATUS_TYPE::PARSER_ERROR)
 				{
 					input_error++;
 					break;
@@ -5812,7 +5812,7 @@ read_solution(void)
 		case 9:				/* isotope */
 			{
 				cxxSolutionIsotope temp_isotope;
-				if (copy_token(token, &next_char) !=  CParser::TT_DIGIT)
+				if (copy_token(token, &next_char) !=  (int)CParser::TOKEN_TYPE::TT_DIGIT)
 				{
 					input_error++;
 					error_string = sformatf( "Expected isotope name to"
@@ -5841,13 +5841,13 @@ read_solution(void)
 						error_msg(line_save, PHRQ_io::OT_CONTINUE);
 						input_error++;
 						temp_iso_name = (char*)free_check_null(temp_iso_name);
-						return (CParser::PARSER_ERROR);
+						return ((int)CParser::STATUS_TYPE::PARSER_ERROR);
 					}
 					temp_isotope.Set_elt_name(ptr1);
 					temp_iso_name = (char*)free_check_null(temp_iso_name);
 				}
 				/* read and store isotope ratio */
-				if (copy_token(token, &next_char) != CParser::TT_DIGIT)
+				if (copy_token(token, &next_char) != (int)CParser::TOKEN_TYPE::TT_DIGIT)
 				{
 					input_error++;
 					error_string = sformatf(
@@ -5861,7 +5861,7 @@ read_solution(void)
 
 				/* read and store isotope ratio uncertainty */
 				int j;
-				if ((j = copy_token(token, &next_char)) != CParser::TT_EMPTY)
+				if ((j = copy_token(token, &next_char)) != (int)CParser::TOKEN_TYPE::TT_EMPTY)
 				{
 					if (j != DIGIT)
 					{
@@ -5930,7 +5930,7 @@ read_solution(void)
  */
 			{
 				cxxISolutionComp temp_comp(this->phrq_io);
-				if (temp_comp.read(line, &temp_solution) == CParser::PARSER_ERROR)
+				if (temp_comp.read(line, &temp_solution) == CParser::STATUS_TYPE::PARSER_ERROR)
 				{
 					input_error++;
 					break;
@@ -5965,7 +5965,7 @@ read_solution(void)
 			if (strstr(token.c_str(), "alk") == token.c_str())
 				alk = true;
 			std::string token1 = it->second.Get_units();
-			if (check_units(token1, alk, true, isoln_ptr->Get_units().c_str(), true) ==	CParser::PARSER_ERROR)
+			if (check_units(token1, alk, true, isoln_ptr->Get_units().c_str(), true) ==	(int)CParser::STATUS_TYPE::PARSER_ERROR)
 			{
 				input_error++;
 			}
@@ -7262,7 +7262,7 @@ read_surface(void)
 		case 3:
 			{
 				temp_surface.Set_thickness(1e-8);
-				temp_surface.Set_dl_type(cxxSurface::BORKOVEK_DL);
+				temp_surface.Set_dl_type(cxxSurface::DIFFUSE_LAYER_TYPE::BORKOVEK_DL);
 				int j = sscanf(next_char, SCANFORMAT, &dummy);
 				if (j == 1)
 				{
@@ -7272,14 +7272,14 @@ read_surface(void)
 			 break;
 		case 4:				/* no electrostatic */
 		case 5:
-			temp_surface.Set_type(cxxSurface::NO_EDL);
+			temp_surface.Set_type(cxxSurface::SURFACE_TYPE::NO_EDL);
 			break;
 		case 6:
 			temp_surface.Set_only_counter_ions(get_true_false(next_char, TRUE) == TRUE);
 			break;
 		case 7:				/* donnan for DL conc's */
 			{
-				temp_surface.Set_dl_type(cxxSurface::DONNAN_DL);
+				temp_surface.Set_dl_type(cxxSurface::DIFFUSE_LAYER_TYPE::DONNAN_DL);
 				LDBLE thickness = 0.0;
 				for (;;)
 				{
@@ -7375,7 +7375,7 @@ read_surface(void)
 			}
 			break;
 		case 8:				/* cd_music */
-			temp_surface.Set_type(cxxSurface::CD_MUSIC);
+			temp_surface.Set_type(cxxSurface::SURFACE_TYPE::CD_MUSIC);
 			break;
 		case 9:				/* capacitances */
 			/*
@@ -7408,11 +7408,11 @@ read_surface(void)
 				int j = copy_token(token1, &next_char);
 				if (j != EMPTY && (token1[0] == 'A' || token1[0] == 'a'))
 				{
-					temp_surface.Set_sites_units(cxxSurface::SITES_ABSOLUTE);
+					temp_surface.Set_sites_units(cxxSurface::SITES_UNITS::SITES_ABSOLUTE);
 				}
 				else if (j != EMPTY && (token1[0] == 'D' || token1[0] == 'd'))
 				{
-					temp_surface.Set_sites_units(cxxSurface::SITES_DENSITY);
+					temp_surface.Set_sites_units(cxxSurface::SITES_UNITS::SITES_DENSITY);
 				}
 				else
 				{
@@ -7427,7 +7427,7 @@ read_surface(void)
 			// CCM not implemented yet
 		case 12:			    /* constant_capacitance */
 		case 13:			    /* ccm */
-			temp_surface.Set_type(cxxSurface::CCM);
+			temp_surface.Set_type(cxxSurface::SURFACE_TYPE::CCM);
 			copy_token(token1, &next_char);
 			if (charge_ptr == NULL)
 			{
@@ -7453,7 +7453,7 @@ read_surface(void)
 			//input_error++;
 			break;
 		case 16:				/* ddl */
-			temp_surface.Set_type(cxxSurface::DDL);
+			temp_surface.Set_type(cxxSurface::SURFACE_TYPE::DDL);
 			break;
 		case OPTION_DEFAULT:
 			/*
@@ -7669,14 +7669,14 @@ read_surface(void)
 	 */
 	if (temp_surface.Get_transport())
 	{
-		if (temp_surface.Get_type() <= cxxSurface::NO_EDL)
+		if (temp_surface.Get_type() <= cxxSurface::SURFACE_TYPE::NO_EDL)
 		{
 			input_error++;
 			error_msg
 				("Must use default Dzombak and Morel or -cd_music for surface transport.",
 				 CONTINUE);
 		}
-		if (temp_surface.Get_dl_type() <= cxxSurface::NO_DL)
+		if (temp_surface.Get_dl_type() <= cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		{
 			input_error++;
 			error_msg
@@ -7704,7 +7704,7 @@ read_surface(void)
 	/*
 	 *   Make sure surface area is defined
 	 */
-	if (temp_surface.Get_type() == cxxSurface::DDL || temp_surface.Get_type() == cxxSurface::CCM || temp_surface.Get_type() == cxxSurface::CD_MUSIC)
+	if (temp_surface.Get_type() == cxxSurface::SURFACE_TYPE::DDL || temp_surface.Get_type() == cxxSurface::SURFACE_TYPE::CCM || temp_surface.Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 	{
 		for (size_t i = 0; i < temp_surface.Get_surface_charges().size(); i++)
 		{
@@ -7722,34 +7722,34 @@ read_surface(void)
 	/*
 	 *  Logical checks
 	 */
-	if (temp_surface.Get_type() == cxxSurface::UNKNOWN_DL)
+	if (temp_surface.Get_type() == cxxSurface::SURFACE_TYPE::UNKNOWN_DL)
 	{
 		error_string = sformatf( "Unknown surface type.\n");
 		error_msg(error_string, CONTINUE);
 		input_error++;
 	}
-	else if (temp_surface.Get_type() == cxxSurface::NO_EDL)
+	else if (temp_surface.Get_type() == cxxSurface::SURFACE_TYPE::NO_EDL)
 	{
-		if (temp_surface.Get_dl_type() != cxxSurface::NO_DL)
+		if (temp_surface.Get_dl_type() != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		{
 			error_string = sformatf(
 					"No electrostatic term calculations do not allow calculation of the diffuse layer composition.\n");
 			warning_msg(error_string);
-			temp_surface.Set_dl_type(cxxSurface::NO_DL);
+			temp_surface.Set_dl_type(cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL);
 		}
 	}
-	else if (temp_surface.Get_type() == cxxSurface::DDL || temp_surface.Get_type() == cxxSurface::CCM)
+	else if (temp_surface.Get_type() == cxxSurface::SURFACE_TYPE::DDL || temp_surface.Get_type() == cxxSurface::SURFACE_TYPE::CCM)
 	{
 		/* all values of dl_type are valid */
 	}
-	else if (temp_surface.Get_type() == cxxSurface::CD_MUSIC)
+	else if (temp_surface.Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 	{
-		if (temp_surface.Get_dl_type() == cxxSurface::BORKOVEK_DL)
+		if (temp_surface.Get_dl_type() == cxxSurface::DIFFUSE_LAYER_TYPE::BORKOVEK_DL)
 		{
 			error_string = sformatf(
 					"Borkovec and Westall diffuse layer calculation is not allowed with a CD_MUSIC surface.\n\tUsing Donnan diffuse layer calculation.");
 			warning_msg(error_string);
-			temp_surface.Set_dl_type(cxxSurface::DONNAN_DL);
+			temp_surface.Set_dl_type(cxxSurface::DIFFUSE_LAYER_TYPE::DONNAN_DL);
 		}
 		if (temp_surface.Get_debye_lengths() > 0)
 		{
@@ -10131,7 +10131,7 @@ read_solid_solutions(void)
 				(void)sscanf(token.c_str(), SCANFORMAT, &dummy);
 				ss_ptr->Get_p()[1] = dummy;
 			}
-			ss_ptr->Set_input_case(cxxSS::SS_PARM_A0_A1);
+			ss_ptr->Set_input_case(cxxSS::SS_PARAMETER_TYPE::SS_PARM_A0_A1);
 			break;
 		case 4:				/* gugg_kj */
 			if (!ss_ptr)
@@ -10150,7 +10150,7 @@ read_solid_solutions(void)
 				(void)sscanf(token.c_str(), SCANFORMAT, &dummy);
 				ss_ptr->Get_p()[1] = dummy;
 			}
-			ss_ptr->Set_input_case(cxxSS::SS_PARM_DIM_GUGG);
+			ss_ptr->Set_input_case(cxxSS::SS_PARAMETER_TYPE::SS_PARM_DIM_GUGG);
 			break;
 		case 5:				/* activity coefficients */
 			if (!ss_ptr)
@@ -10177,7 +10177,7 @@ read_solid_solutions(void)
 				error_msg(error_string, CONTINUE);
 				input_error++;
 			}
-			ss_ptr->Set_input_case(cxxSS::SS_PARM_GAMMAS);
+			ss_ptr->Set_input_case(cxxSS::SS_PARAMETER_TYPE::SS_PARM_GAMMAS);
 			break;
 		case 6:				/* distribution coefficients */
 			if (!ss_ptr)
@@ -10204,7 +10204,7 @@ read_solid_solutions(void)
 				error_msg(error_string, CONTINUE);
 				input_error++;
 			}
-			ss_ptr->Set_input_case(cxxSS::SS_PARM_DIST_COEF);
+			ss_ptr->Set_input_case(cxxSS::SS_PARAMETER_TYPE::SS_PARM_DIST_COEF);
 			break;
 		case 7:				/* miscibility_gap */
 			if (!ss_ptr)
@@ -10231,7 +10231,7 @@ read_solid_solutions(void)
 				error_msg(error_string, CONTINUE);
 				input_error++;
 			}
-			ss_ptr->Set_input_case(cxxSS::SS_PARM_MISCIBILITY);
+			ss_ptr->Set_input_case(cxxSS::SS_PARAMETER_TYPE::SS_PARM_MISCIBILITY);
 			break;
 		case 8:				/* spinodal_gap */
 			if (!ss_ptr)
@@ -10258,7 +10258,7 @@ read_solid_solutions(void)
 				error_msg(error_string, CONTINUE);
 				input_error++;
 			}
-			ss_ptr->Set_input_case(cxxSS::SS_PARM_SPINODAL);
+			ss_ptr->Set_input_case(cxxSS::SS_PARAMETER_TYPE::SS_PARM_SPINODAL);
 			break;
 		case 9:				/* critical point */
 			if (!ss_ptr)
@@ -10285,7 +10285,7 @@ read_solid_solutions(void)
 				error_msg(error_string, CONTINUE);
 				input_error++;
 			}
-			ss_ptr->Set_input_case(cxxSS::SS_PARM_CRITICAL);
+			ss_ptr->Set_input_case(cxxSS::SS_PARAMETER_TYPE::SS_PARM_CRITICAL);
 			break;
 		case 10:				/* alyotropic point */
 			if (!ss_ptr)
@@ -10312,7 +10312,7 @@ read_solid_solutions(void)
 				error_msg(error_string, CONTINUE);
 				input_error++;
 			}
-			ss_ptr->Set_input_case(cxxSS::SS_PARM_ALYOTROPIC);
+			ss_ptr->Set_input_case(cxxSS::SS_PARAMETER_TYPE::SS_PARM_ALYOTROPIC);
 			break;
 		case 12:				/* tempk */
 			if (!ss_ptr)
@@ -10390,7 +10390,7 @@ read_solid_solutions(void)
 				error_msg(error_string, CONTINUE);
 				input_error++;
 			}
-			ss_ptr->Set_input_case(cxxSS::SS_PARM_WALDBAUM);
+			ss_ptr->Set_input_case(cxxSS::SS_PARAMETER_TYPE::SS_PARM_WALDBAUM);
 			break;
 		case 15:				/* Margules */
 			if (!ss_ptr)
@@ -10417,7 +10417,7 @@ read_solid_solutions(void)
 				error_msg(error_string, CONTINUE);
 				input_error++;
 			}
-			ss_ptr->Set_input_case(cxxSS::SS_PARM_MARGULES);
+			ss_ptr->Set_input_case(cxxSS::SS_PARAMETER_TYPE::SS_PARM_MARGULES);
 			break;
 		case 16:				/* comp1 */
 
@@ -11334,7 +11334,7 @@ read_reaction_pressure(void)
 	 *  Make parser
 	 */
 	CParser parser(this->phrq_io);
-	if (pr.echo_input == FALSE) parser.set_echo_file(CParser::EO_NONE);
+	if (pr.echo_input == FALSE) parser.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 	atm.read(parser);
 	if (atm.Get_base_error_count() == 0)
 	{
@@ -11384,7 +11384,7 @@ read_reaction_pressure_raw(void)
 	 *  Make parser
 	 */
 	CParser parser(this->phrq_io);
-	if (pr.echo_input == FALSE) parser.set_echo_file(CParser::EO_NONE);
+	if (pr.echo_input == FALSE) parser.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 	atm.read_raw(parser);
 
 	// Store
@@ -11468,7 +11468,7 @@ read_temperature(void)
 	 *  Make parser
 	 */
 	CParser parser(this->phrq_io);
-	if (pr.echo_input == FALSE) parser.set_echo_file(CParser::EO_NONE);
+	if (pr.echo_input == FALSE) parser.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 	t_react.read(parser);
 	if (t_react.Get_base_error_count() == 0)
 	{

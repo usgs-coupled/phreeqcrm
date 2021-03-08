@@ -35,7 +35,7 @@ class CParser: public PHRQ_base
 	//		std::ostream & error, PHRQ_io *io=NULL);
 
 	virtual ~ CParser();
-	enum TOKEN_TYPE
+	enum class TOKEN_TYPE
 	{
 		TT_EMPTY = 2,
 		TT_UPPER = 4,
@@ -57,7 +57,7 @@ class CParser: public PHRQ_base
 		OPT_KEYWORD = -2,
 		OPT_EOF = -1
 	};
-	enum ECHO_OPTION
+	enum class ECHO_OPTION
 	{
 		EO_NONE = 0,
 		EO_ALL = 1,
@@ -65,7 +65,7 @@ class CParser: public PHRQ_base
 		EO_NOKEYWORDS = 3
 	};
 
-	enum STATUS_TYPE
+	enum class STATUS_TYPE
 	{
 		PARSER_ERROR = 0,
 		PARSER_OK = 1

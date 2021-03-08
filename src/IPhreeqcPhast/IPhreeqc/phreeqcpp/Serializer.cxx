@@ -23,7 +23,7 @@ bool Serializer::Serialize(Phreeqc &phreeqc_ref, int start, int end, bool includ
 		cxxSolution *soln_ptr = Utilities::Rxn_find(phreeqc_ref.Get_Rxn_solution_map(), i);
 		if (soln_ptr)
 		{
-			ints.push_back((int) PT_SOLUTION);
+			ints.push_back((int) PACK_TYPE::PT_SOLUTION);
 			soln_ptr->Serialize(this->dictionary, this->ints, this->doubles);
 		}
 		// Exchangers
@@ -31,7 +31,7 @@ bool Serializer::Serialize(Phreeqc &phreeqc_ref, int start, int end, bool includ
 			cxxExchange *entity_ptr = Utilities::Rxn_find(phreeqc_ref.Get_Rxn_exchange_map(), i);
 			if (entity_ptr)
 			{
-				ints.push_back((int) PT_EXCHANGE);
+				ints.push_back((int) PACK_TYPE::PT_EXCHANGE);
 				entity_ptr->Serialize(this->dictionary, this->ints, this->doubles);
 			}
 		}
@@ -40,7 +40,7 @@ bool Serializer::Serialize(Phreeqc &phreeqc_ref, int start, int end, bool includ
 			cxxGasPhase *entity_ptr = Utilities::Rxn_find(phreeqc_ref.Get_Rxn_gas_phase_map(), i);
 			if (entity_ptr)
 			{
-				ints.push_back((int) PT_GASPHASE);
+				ints.push_back((int) PACK_TYPE::PT_GASPHASE);
 				entity_ptr->Serialize(this->dictionary, this->ints, this->doubles);
 			}
 		}
@@ -49,7 +49,7 @@ bool Serializer::Serialize(Phreeqc &phreeqc_ref, int start, int end, bool includ
 			cxxKinetics *entity_ptr = Utilities::Rxn_find(phreeqc_ref.Get_Rxn_kinetics_map(), i);
 			if (entity_ptr)
 			{
-				ints.push_back((int) PT_KINETICS);
+				ints.push_back((int) PACK_TYPE::PT_KINETICS);
 				entity_ptr->Serialize(this->dictionary, this->ints, this->doubles);
 			}
 		}
@@ -58,7 +58,7 @@ bool Serializer::Serialize(Phreeqc &phreeqc_ref, int start, int end, bool includ
 			cxxPPassemblage *entity_ptr = Utilities::Rxn_find(phreeqc_ref.Get_Rxn_pp_assemblage_map(), i);
 			if (entity_ptr)
 			{
-				ints.push_back((int) PT_PPASSEMBLAGE);
+				ints.push_back((int) PACK_TYPE::PT_PPASSEMBLAGE);
 				entity_ptr->Serialize(this->dictionary, this->ints, this->doubles);
 			}
 		}
@@ -67,7 +67,7 @@ bool Serializer::Serialize(Phreeqc &phreeqc_ref, int start, int end, bool includ
 			cxxSSassemblage *entity_ptr = Utilities::Rxn_find(phreeqc_ref.Get_Rxn_ss_assemblage_map(), i);
 			if (entity_ptr)
 			{
-				ints.push_back((int) PT_SSASSEMBLAGE);
+				ints.push_back((int) PACK_TYPE::PT_SSASSEMBLAGE);
 				entity_ptr->Serialize(this->dictionary, this->ints, this->doubles);
 			}
 		}
@@ -76,7 +76,7 @@ bool Serializer::Serialize(Phreeqc &phreeqc_ref, int start, int end, bool includ
 			cxxSurface *entity_ptr = Utilities::Rxn_find(phreeqc_ref.Get_Rxn_surface_map(), i);
 			if (entity_ptr)
 			{
-				ints.push_back((int) PT_SURFACES);
+				ints.push_back((int) PACK_TYPE::PT_SURFACES);
 				entity_ptr->Serialize(this->dictionary, this->ints, this->doubles);
 			}
 		}
@@ -86,7 +86,7 @@ bool Serializer::Serialize(Phreeqc &phreeqc_ref, int start, int end, bool includ
 			cxxTemperature *entity_ptr = Utilities::Rxn_find(phreeqc_ref.Get_Rxn_temperature_map(), i);
 			if (entity_ptr)
 			{
-				ints.push_back((int) PT_TEMPERATURE);
+				ints.push_back((int) PACK_TYPE::PT_TEMPERATURE);
 				entity_ptr->Serialize(this->dictionary, this->ints, this->doubles);
 			}
 		}
@@ -96,7 +96,7 @@ bool Serializer::Serialize(Phreeqc &phreeqc_ref, int start, int end, bool includ
 			cxxPressure *entity_ptr = Utilities::Rxn_find(phreeqc_ref.Get_Rxn_pressure_map(), i);
 			if (entity_ptr)
 			{
-				ints.push_back((int) PT_PRESSURE);
+				ints.push_back((int) PACK_TYPE::PT_PRESSURE);
 				entity_ptr->Serialize(this->dictionary, this->ints, this->doubles);
 			}
 		}			
@@ -114,7 +114,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 		PACK_TYPE type = (PACK_TYPE) ints[ii++];
 		switch (type)
 		{
-		case PT_SOLUTION:	
+		case PACK_TYPE::PT_SOLUTION:	
 			{
 				cxxSolution soln;
 				soln.Deserialize(dictionary, ints, doubles, ii, dd);
@@ -123,7 +123,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 				phreeqc_ref.Get_Rxn_solution_map()[n_user] = soln;
 			}
 			break;
-		case PT_EXCHANGE:	
+		case PACK_TYPE::PT_EXCHANGE:	
 			{
 				cxxExchange entity;
 				entity.Deserialize(dictionary, ints, doubles, ii, dd);
@@ -131,7 +131,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 				phreeqc_ref.Get_Rxn_exchange_map()[n_user] = entity;
 			}
 			break;
-		case PT_GASPHASE:
+		case PACK_TYPE::PT_GASPHASE:
 			{
 				cxxGasPhase entity(phreeqc_ref.Get_phrq_io());
 				entity.Deserialize(dictionary, ints, doubles, ii, dd);
@@ -139,7 +139,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 				phreeqc_ref.Get_Rxn_gas_phase_map()[n_user] = entity;
 			}
 			break;
-		case PT_KINETICS:	
+		case PACK_TYPE::PT_KINETICS:	
 			{
 				cxxKinetics entity(phreeqc_ref.Get_phrq_io());
 				entity.Deserialize(dictionary, ints, doubles, ii, dd);
@@ -147,7 +147,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 				phreeqc_ref.Get_Rxn_kinetics_map()[n_user] = entity;
 			}
 			break;
-		case PT_PPASSEMBLAGE:	
+		case PACK_TYPE::PT_PPASSEMBLAGE:	
 			{
 				cxxPPassemblage entity;
 				entity.Deserialize(dictionary, ints, doubles, ii, dd);
@@ -156,7 +156,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 				phreeqc_ref.Get_Rxn_pp_assemblage_map()[n_user] = entity;
 			}
 			break;
-		case PT_SSASSEMBLAGE:	
+		case PACK_TYPE::PT_SSASSEMBLAGE:	
 			{
 				cxxSSassemblage entity(phreeqc_ref.Get_phrq_io());
 				entity.Deserialize(dictionary, ints, doubles, ii, dd);
@@ -164,7 +164,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 				phreeqc_ref.Get_Rxn_ss_assemblage_map()[n_user] = entity;
 			}
 			break;
-		case PT_SURFACES:	
+		case PACK_TYPE::PT_SURFACES:	
 			{
 				cxxSurface entity;
 				entity.Deserialize(dictionary, ints, doubles, ii, dd);
@@ -172,7 +172,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 				phreeqc_ref.Get_Rxn_surface_map()[n_user] = entity;
 			}
 			break;
-		case PT_TEMPERATURE:
+		case PACK_TYPE::PT_TEMPERATURE:
 			{
 				cxxTemperature entity;
 				entity.Deserialize(dictionary, ints, doubles, ii, dd);
@@ -180,7 +180,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 				phreeqc_ref.Get_Rxn_temperature_map()[n_user] = entity;
 			}
 			break;
-		case PT_PRESSURE:	
+		case PACK_TYPE::PT_PRESSURE:	
 			{
 				cxxPressure entity;
 				entity.Deserialize(dictionary, ints, doubles, ii, dd);
@@ -190,7 +190,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 			break;
 		default:
 #if !defined(R_SO)
-			std::cerr << "Unknown pack type in deserialize " << type << std::endl;
+			std::cerr << "Unknown pack type in deserialize " << (int)type << std::endl;
 			exit(4);
 #endif
 			break;

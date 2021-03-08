@@ -137,7 +137,7 @@ cxxMix::read_raw(CParser & parser)
 			break;
 
 		case CParser::OPT_DEFAULT:	// solution number, mix fraction
-			if (parser.copy_token(token, next_char) != CParser::TT_EMPTY)
+			if (parser.copy_token(token, next_char) != CParser::TOKEN_TYPE::TT_EMPTY)
 			{
 				std::istringstream iss(token);
 				if (!(iss >> i))

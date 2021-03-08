@@ -39,7 +39,7 @@ PHRQ_base(io)
 	tk = 298.15;
 	xb1 = 0;
 	xb2 = 0;
-	input_case = SS_PARM_NONE;
+	input_case = SS_PARAMETER_TYPE::SS_PARM_NONE;
 	for (int i = 0; i < 4; i++)
 	{
 		p.push_back(0);
@@ -98,7 +98,7 @@ cxxSS::dump_raw(std::ostream & s_oss, unsigned int indent) const
 
 	s_oss << indent0 << "# SOLID_SOLUTION_MODIFY candidate identifiers with new_def=true #\n";
 	s_oss << indent0 << "-tk                      " << this->tk << "\n";
-	s_oss << indent0 << "-input_case              " << this->input_case << "\n";
+	s_oss << indent0 << "-input_case              " << (int)this->input_case << "\n";
 	s_oss << indent0 << "-p			              " << 
 		p[0] << "\t"  << 
 		p[1] << "\t"  << 
@@ -338,7 +338,7 @@ cxxSS::read_raw(CParser & parser, bool check)
 				int i;
 				if (!(parser.get_iss() >> i))
 				{
-					this->input_case = cxxSS::SS_PARM_NONE;
+					this->input_case = cxxSS::SS_PARAMETER_TYPE::SS_PARM_NONE;
 					parser.incr_input_error();
 					parser.error_msg("Expected integer value for parameter type.", PHRQ_io::OT_CONTINUE);
 				}
@@ -373,7 +373,7 @@ cxxSS::read_raw(CParser & parser, bool check)
 			}
 			break;
 		case 16:				// totals
-			if (this->totals.read_raw(parser, next_char) !=	CParser::PARSER_OK)
+			if (this->totals.read_raw(parser, next_char) !=	CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.error_msg

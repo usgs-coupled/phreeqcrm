@@ -401,7 +401,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 		case 0:				// totals
 			{
 				cxxNameDouble temp_totals;
-				if (temp_totals.read_raw(parser, next_char) !=	CParser::PARSER_OK)
+				if (temp_totals.read_raw(parser, next_char) !=	CParser::STATUS_TYPE::PARSER_OK)
 				{
 					parser.incr_input_error();
 					parser.
@@ -418,7 +418,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 
 		case 1:				// activities
 			if (this->master_activity.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.
@@ -431,7 +431,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 
 		case 2:				// gammas
 			if (this->species_gamma.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.
@@ -743,7 +743,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 		case 0:				// totals
 			{
 				cxxNameDouble temp_totals;
-				if (temp_totals.read_raw(parser, next_char) !=	CParser::PARSER_OK)
+				if (temp_totals.read_raw(parser, next_char) !=	CParser::STATUS_TYPE::PARSER_OK)
 				{
 					parser.incr_input_error();
 					parser.
@@ -760,7 +760,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 
 		case 1:				// activities
 			if (this->master_activity.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.
@@ -773,7 +773,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 
 		case 2:				// gammas
 			if (this->species_gamma.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.
@@ -967,7 +967,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 		case 24:				// species_map
 			{
 				int s_num;
-				if (parser.peek_token() != CParser::TT_EMPTY)
+				if (parser.peek_token() != CParser::TOKEN_TYPE::TT_EMPTY)
 				{
 					if (!(parser.get_iss() >> s_num))
 					{
@@ -993,7 +993,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 		case 25:				// log_gamma_map
 			{
 				int s_num;
-				if (parser.peek_token() != CParser::TT_EMPTY)
+				if (parser.peek_token() != CParser::TOKEN_TYPE::TT_EMPTY)
 				{
 					if (!(parser.get_iss() >> s_num))
 					{
@@ -1030,7 +1030,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 		case 27:				// log_molalities_map
 		{
 			int s_num;
-			if (parser.peek_token() != CParser::TT_EMPTY)
+			if (parser.peek_token() != CParser::TOKEN_TYPE::TT_EMPTY)
 			{
 				if (!(parser.get_iss() >> s_num))
 				{

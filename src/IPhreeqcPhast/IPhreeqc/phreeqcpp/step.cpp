@@ -512,7 +512,7 @@ add_surface(cxxSurface *surface_ptr)
 		}
 		struct master *master_i_ptr = elt_ptr->master;
 
-		if (surface_ptr->Get_type() == cxxSurface::NO_EDL)
+		if (surface_ptr->Get_type() == cxxSurface::SURFACE_TYPE::NO_EDL)
 		{
 			cb_x += comp_ptr->Get_charge_balance();
 		}
@@ -556,12 +556,12 @@ add_surface(cxxSurface *surface_ptr)
 			}
 		}
 	}
-	if (surface_ptr->Get_type() != cxxSurface::DDL && surface_ptr->Get_type() != cxxSurface::CCM && surface_ptr->Get_type() != cxxSurface::CD_MUSIC)
+	if (surface_ptr->Get_type() != cxxSurface::SURFACE_TYPE::DDL && surface_ptr->Get_type() != cxxSurface::SURFACE_TYPE::CCM && surface_ptr->Get_type() != cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		return (OK);
 	for (size_t i = 0; i < surface_ptr->Get_surface_charges().size(); i++)
 	{
 		cxxSurfaceCharge *charge_ptr = &(surface_ptr->Get_surface_charges()[i]);
-		if (surface_ptr->Get_type() == cxxSurface::DDL || surface_ptr->Get_type() == cxxSurface::CCM || surface_ptr->Get_type() == cxxSurface::CD_MUSIC)
+		if (surface_ptr->Get_type() == cxxSurface::SURFACE_TYPE::DDL || surface_ptr->Get_type() == cxxSurface::SURFACE_TYPE::CCM || surface_ptr->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			cb_x += charge_ptr->Get_charge_balance();
 		}
@@ -573,7 +573,7 @@ add_surface(cxxSurface *surface_ptr)
 /*
  *   Add diffuse layer elements (including water in Debye layer)
  */
-		if (surface_ptr->Get_dl_type() != cxxSurface::NO_DL && !surface_ptr->Get_new_def())
+		if (surface_ptr->Get_dl_type() != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL && !surface_ptr->Get_new_def())
 		{
 			cxxNameDouble::const_iterator jit;
 			for (jit = charge_ptr->Get_diffuse_layer_totals().begin(); jit != charge_ptr->Get_diffuse_layer_totals().end(); jit++)
@@ -1057,7 +1057,7 @@ add_gas_phase(cxxGasPhase *gas_phase_ptr)
 			master_ptr->total += elt_list[i].coef;
 		}
 	}
-	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE && fabs(gas_phase_ptr->Get_total_p() - patm_x) > 0.01)
+	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE && fabs(gas_phase_ptr->Get_total_p() - patm_x) > 0.01)
 	{
 		patm_x = gas_phase_ptr->Get_total_p();
 		k_temp(tc_x, patm_x);
@@ -1221,7 +1221,7 @@ gas_phase_check(cxxGasPhase *gas_phase_ptr)
 	if (gas_phase_ptr == NULL)
 		return (OK);
 // set gas pressure to reaction_pressure...
-	if (use.Get_pressure_ptr() != NULL && gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+	if (use.Get_pressure_ptr() != NULL && gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 	{
 		gas_phase_ptr->Set_total_p(patm_x);
 		k_temp(tc_x, patm_x);

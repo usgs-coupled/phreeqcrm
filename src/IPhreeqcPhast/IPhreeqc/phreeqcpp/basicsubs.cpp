@@ -785,7 +785,7 @@ diff_layer_total(const char *total_name, const char *surface_name)
 	LDBLE mass_water_surface;
 	LDBLE molality, moles_excess, moles_surface, charge;
 
-	if (use.Get_surface_ptr() == NULL || (dl_type_x == cxxSurface::NO_DL &&
+	if (use.Get_surface_ptr() == NULL || (dl_type_x == cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL &&
 									strcmp_nocase("psi", total_name) != 0 &&
 									strcmp_nocase("psi1", total_name) != 0 &&
 									strcmp_nocase("psi2", total_name) != 0 &&
@@ -808,14 +808,14 @@ diff_layer_total(const char *total_name, const char *surface_name)
 	int j;
 	for (j = 0; j < count_unknowns; j++)
 	{
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
+		if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CCM)
 		{
 			if (x[j]->type != SURFACE_CB)
 				continue;
 			name = x[j]->master[0]->elt->name;
 			Utilities::replace("_psi", "", name);
 		}
-		else if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+		else if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			if (x[j]->type != SURFACE_CB)
 				continue;
@@ -850,12 +850,12 @@ diff_layer_total(const char *total_name, const char *surface_name)
 	 */
 	if (strcmp_nocase("psi", total_name) == 0)
 	{
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
+		if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CCM)
 		{
 			return ((LDBLE) (x[j]->master[0]->s->la * 2 * R_KJ_DEG_MOL *
 							 tk_x * LOG_10 / F_KJ_V_EQ));
 		}
-		else if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+		else if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			master_ptr = surface_get_psi_master(surface_name, SURF_PSI);
 			if (master_ptr != NULL)
@@ -904,11 +904,11 @@ diff_layer_total(const char *total_name, const char *surface_name)
 	}
 	else if (strcmp_nocase("charge", total_name) == 0)
 	{
-		if ((use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM) && dl_type_x == cxxSurface::NO_DL)
+		if ((use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CCM) && dl_type_x == cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		{
 			return ((LDBLE) (x[j]->f));
 		}
-		else if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+		else if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[j]->surface_charge);
 			return ((charge_ptr->Get_sigma0() *
@@ -922,7 +922,7 @@ diff_layer_total(const char *total_name, const char *surface_name)
 	}
 	else if (strcmp_nocase("charge1", total_name) == 0)
 	{
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+		if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[j]->surface_charge);
 			return ((charge_ptr->Get_sigma1() *
@@ -936,7 +936,7 @@ diff_layer_total(const char *total_name, const char *surface_name)
 	}
 	else if (strcmp_nocase("charge2", total_name) == 0)
 	{
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+		if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[j]->surface_charge);
 			return ((charge_ptr->Get_sigma2() *
@@ -950,10 +950,10 @@ diff_layer_total(const char *total_name, const char *surface_name)
 	}
 	else if (strcmp_nocase("sigma", total_name) == 0)
 	{
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
+		if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CCM)
 		{
 			cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[j]->surface_charge);
-			if (dl_type_x != cxxSurface::NO_DL)
+			if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 			{
 				charge = calc_surface_charge(surface_name_local.c_str());
 			}
@@ -973,7 +973,7 @@ diff_layer_total(const char *total_name, const char *surface_name)
 				return (0);
 			}
 		}
-		else if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+		else if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[j]->surface_charge);
 			return ((LDBLE) (charge_ptr->Get_sigma0()));
@@ -985,7 +985,7 @@ diff_layer_total(const char *total_name, const char *surface_name)
 	}
 	else if (strcmp_nocase("sigma1", total_name) == 0)
 	{
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+		if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[j]->surface_charge);
 			return ((LDBLE) (charge_ptr->Get_sigma1()));
@@ -997,7 +997,7 @@ diff_layer_total(const char *total_name, const char *surface_name)
 	}
 	else if (strcmp_nocase("sigma2", total_name) == 0)
 	{
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+		if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[j]->surface_charge);
 			return ((LDBLE) (charge_ptr->Get_sigma2()));
@@ -1009,7 +1009,7 @@ diff_layer_total(const char *total_name, const char *surface_name)
 	}
 	else if (strcmp_nocase("water", total_name) == 0)
 	{
-		if (dl_type_x != cxxSurface::NO_DL)
+		if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		{
 			cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[j]->surface_charge);
 			return (charge_ptr->Get_mass_water());
@@ -1262,7 +1262,7 @@ find_gas_p(void)
 	if (use.Get_gas_phase_in() == FALSE || use.Get_gas_phase_ptr() == NULL)
 		return (0);
 	cxxGasPhase *gas_phase_ptr = use.Get_gas_phase_ptr();
-	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 	{
 		if (gas_unknown == NULL)
 			return (0);
@@ -1279,7 +1279,7 @@ find_gas_vm(void)
 	if (use.Get_gas_phase_in() == FALSE || use.Get_gas_phase_ptr() == NULL)
 		return (0);
 	cxxGasPhase *gas_phase_ptr = use.Get_gas_phase_ptr();
-	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 	{
 		if (gas_unknown == NULL)
 			return (0);
@@ -2928,7 +2928,7 @@ edl_species(const char *surf_name, LDBLE * count, char ***names, LDBLE ** moles,
 	max_sys = 100;
 	space((void **) ((void *) &sys), INIT, &max_sys,
 		  sizeof(struct system_species));
-	if (!(dl_type_x == cxxSurface::NO_DL))
+	if (!(dl_type_x == cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL))
 	{
 		cxxSurface *surface_ptr = use.Get_surface_ptr();
 		for (size_t i = 0; i < surface_ptr->Get_surface_charges().size(); i++)
@@ -3635,7 +3635,7 @@ system_total_elt(const char *total_name)
 			}
 		}
 	}
-	if (use.Get_surface_ptr() != NULL && dl_type_x != cxxSurface::NO_DL)
+	if (use.Get_surface_ptr() != NULL && dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 	{
 		/*
 		 *   Find position of component in surface charge data
@@ -3908,7 +3908,7 @@ system_total_elt_secondary(const char *total_name)
 			}
 		}
 	}
-	if (use.Get_surface_ptr() != NULL && dl_type_x != cxxSurface::NO_DL)
+	if (use.Get_surface_ptr() != NULL && dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 	{
 		/*
 		 *   Find position of component in surface charge data

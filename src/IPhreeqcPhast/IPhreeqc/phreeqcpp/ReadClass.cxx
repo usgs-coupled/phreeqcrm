@@ -52,18 +52,18 @@ read_dump(void)
 	assert(!reading_database());
 
 	//For testing, need to read line to get started
-	parser.set_echo_file(CParser::EO_NONE);
+	parser.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 	std::vector < std::string > vopts;
 	std::istream::pos_type next_char;
 	parser.get_option(vopts, next_char);
 
 	if (pr.echo_input == FALSE)
 	{
-		parser.set_echo_file(CParser::EO_NONE);
+		parser.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 	}
 	else
 	{
-		parser.set_echo_file(CParser::EO_NOKEYWORDS);
+		parser.set_echo_file(CParser::ECHO_OPTION::EO_NOKEYWORDS);
 	}
 
 	dump_info.Read(parser);
@@ -100,18 +100,18 @@ read_delete(void)
 	//assert(!reading_database());
 
 	//For testing, need to read line to get started
-	parser.set_echo_file(CParser::EO_NONE);
+	parser.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 	std::vector < std::string > vopts;
 	std::istream::pos_type next_char;
 	parser.get_option(vopts, next_char);
 
 	if (pr.echo_input == FALSE)
 	{
-		parser.set_echo_file(CParser::EO_NONE);
+		parser.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 	}
 	else
 	{
-		parser.set_echo_file(CParser::EO_NOKEYWORDS);
+		parser.set_echo_file(CParser::ECHO_OPTION::EO_NOKEYWORDS);
 	}
 
 	delete_info.Read(parser);
@@ -149,18 +149,18 @@ read_run_cells(void)
 	assert(!reading_database());
 
 	//For testing, need to read line to get started
-	parser.set_echo_file(CParser::EO_NONE);
+	parser.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 	std::vector < std::string > vopts;
 	std::istream::pos_type next_char;
 	parser.get_option(vopts, next_char);
 
 	if (pr.echo_input == FALSE)
 	{
-		parser.set_echo_file(CParser::EO_NONE);
+		parser.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 	}
 	else
 	{
-		parser.set_echo_file(CParser::EO_NOKEYWORDS);
+		parser.set_echo_file(CParser::ECHO_OPTION::EO_NOKEYWORDS);
 	}
 
 	runner r(parser, phrq_io);
@@ -1122,11 +1122,11 @@ read_user_graph_handler(void)
 
 	if (pr.echo_input == FALSE)
 	{
-		parser.set_echo_file(CParser::EO_NONE);
+		parser.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 	}
 	else
 	{
-		parser.set_echo_file(CParser::EO_NOKEYWORDS);
+		parser.set_echo_file(CParser::ECHO_OPTION::EO_NOKEYWORDS);
 	}
 
 	assert(!reading_database());

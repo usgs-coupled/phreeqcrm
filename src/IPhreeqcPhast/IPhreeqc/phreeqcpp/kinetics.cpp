@@ -1489,7 +1489,7 @@ restart:
 			//cxxStorageBin reread;
 			//std::istringstream is(error_input.str());
 			//CParser cp(is);
-			//cp.set_echo_stream(CParser::EO_NONE);
+			//cp.set_echo_stream(CParser::ECHO_OPTION::EO_NONE);
 			//reread.read_raw(cp);
 			//cxxStorageBin2phreeqc(reread);
 			//error_string = sformatf("Trying restarting ...\n");
@@ -1527,8 +1527,8 @@ restart:
 			cxxStorageBin reread(this->Get_phrq_io());
 			std::istringstream is(error_input.str());
 			CParser cp(is);
-			cp.set_echo_stream(CParser::EO_NONE);
-			cp.set_echo_file(CParser::EO_NONE);
+			cp.set_echo_stream(CParser::ECHO_OPTION::EO_NONE);
+			cp.set_echo_file(CParser::ECHO_OPTION::EO_NONE);
 			reread.read_raw(cp);
 			cxxStorageBin2phreeqc(reread);
 			error_string = sformatf("Trying restarting ...\n");
@@ -1675,7 +1675,7 @@ set_and_run(int i, int use_mix, int use_kinetics, int nsaver,
 		if (use.Get_gas_phase_ptr() != NULL)
 		{
 			cxxGasPhase *gas_phase_ptr = use.Get_gas_phase_ptr();
-			if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE) 
+			if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE) 
 			{
 			/*
 			 * Fixed-pressure Gas phase and solution will react 
@@ -1693,7 +1693,7 @@ set_and_run(int i, int use_mix, int use_kinetics, int nsaver,
 	{
 		dl_type_x = use.Get_surface_ptr()->Get_dl_type();
 	}
-	if (use.Get_surface_ptr() != NULL && dl_type_x != cxxSurface::NO_DL)
+	if (use.Get_surface_ptr() != NULL && dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 	{
 		converge = surface_model();
 	}
@@ -1838,7 +1838,7 @@ set_transport(int i, int use_mix, int use_kinetics, int nsaver)
 	{
 		use.Set_surface_in(false);
 		save.surface = FALSE;
-		dl_type_x = cxxSurface::NO_DL;
+		dl_type_x = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 	}
 /*
  *   Find temperature;  temp retardation is done in step
@@ -2002,7 +2002,7 @@ set_reaction(int i, int use_mix, int use_kinetics)
 /*
  *   Find surface
  */
-	dl_type_x = cxxSurface::NO_DL;
+	dl_type_x = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 	if (use.Get_surface_in() == TRUE)
 	{
 		use.Set_surface_ptr(Utilities::Rxn_find(Rxn_surface_map, i));
@@ -3022,7 +3022,7 @@ set_advection(int i, int use_mix, int use_kinetics, int nsaver)
 	{
 		use.Set_surface_in(false);
 		save.surface = FALSE;
-		dl_type_x = cxxSurface::NO_DL;
+		dl_type_x = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 	}
 /*
  *   Find temperature;  temp retardation is done in step

@@ -753,7 +753,7 @@ set_sit(int initial)
 	s_hplus->moles = exp(s_hplus->lm * LOG_10) * mass_water_aq_x;
 	s_eminus->la = -solution_ptr->Get_pe();
 	if (initial == TRUE) sit_initial_guesses();
-	if (dl_type_x != cxxSurface::NO_DL)	initial_surface_water();
+	if (dl_type_x != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)	initial_surface_water();
 	sit_revise_guesses();
 	return (OK);
 }
@@ -1301,7 +1301,7 @@ model_sit(void)
 				sit_revise_guesses();
 			}
 			if (use.Get_surface_ptr() != NULL &&
-				use.Get_surface_ptr()->Get_dl_type() != cxxSurface::NO_DL &&
+				use.Get_surface_ptr()->Get_dl_type() != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL &&
 				use.Get_surface_ptr()->Get_related_phases() == TRUE)
 				initial_surface_water();
 			mb_sums();

@@ -24,11 +24,11 @@ StorageBinListItem::StorageBinListItem(CParser & parser)
 		{ 
 			std::string token;
 			CParser::TOKEN_TYPE j = parser.copy_token(token, next_char);
-			if (j == CParser::TT_DIGIT)
+			if (j == CParser::TOKEN_TYPE::TT_DIGIT)
 			{
 				this->Augment(token);
 			}
-			else if (j == CParser::TT_EMPTY)
+			else if (j == CParser::TOKEN_TYPE::TT_EMPTY)
 			{
 				break;
 			}
@@ -220,11 +220,11 @@ bool StorageBinList::Read(CParser & parser)
 				CParser::TOKEN_TYPE j = parser.copy_token(token, next_char);
 				if (item)
 				{
-					if (j == CParser::TT_DIGIT)
+					if (j == CParser::TOKEN_TYPE::TT_DIGIT)
 					{
 						item->Augment(token);
 					}
-					else if (j == CParser::TT_EMPTY)
+					else if (j == CParser::TOKEN_TYPE::TT_EMPTY)
 					{
 						item->Augment(token);
 						break;

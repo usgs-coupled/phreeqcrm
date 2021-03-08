@@ -128,7 +128,6 @@ void
 cxxReaction::read_raw(CParser & parser, const bool check)
 {
 
-	int j;
 	LDBLE d;
 	CParser::TOKEN_TYPE k;
 
@@ -174,24 +173,26 @@ cxxReaction::read_raw(CParser & parser, const bool check)
 		case CParser::OPT_ERROR:
 			opt = CParser::OPT_EOF;
 			parser.error_msg("Unknown input in IRREV_COMP_RAW keyword.",
-							 PHRQ_io::OT_CONTINUE);
+				PHRQ_io::OT_CONTINUE);
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
 			useLastLine = false;
 			break;
 
 		case 0:				// units
-			j = parser.copy_token(token, next_char);
-			if (j == CParser::TT_EMPTY)
+		{
+			CParser::TOKEN_TYPE j_tt = parser.copy_token(token, next_char);
+			if (j_tt == CParser::TOKEN_TYPE::TT_EMPTY)
 				break;
 			this->Set_units(token.c_str());
 			opt_save = CParser::OPT_DEFAULT;
 			useLastLine = false;
 			units_defined = true;
+		}
 			break;
 
 		case 1:				// reactant_list
 			if (this->reactantList.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.error_msg("Expected reactant formula and coefficient.",
@@ -203,7 +204,7 @@ cxxReaction::read_raw(CParser & parser, const bool check)
 
 		case 2:				// element_list
 			if (this->elementList.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.error_msg("Expected element formula and coefficient.",
@@ -220,7 +221,7 @@ cxxReaction::read_raw(CParser & parser, const bool check)
 				cleared_once = true;
 			}
 			while ((k =
-					parser.copy_token(token, next_char)) == CParser::TT_DIGIT)
+					parser.copy_token(token, next_char)) == CParser::TOKEN_TYPE::TT_DIGIT)
 			{
 				std::istringstream iss(token);
 				if (!(iss >> d))

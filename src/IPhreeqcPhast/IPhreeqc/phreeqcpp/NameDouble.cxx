@@ -218,15 +218,15 @@ CParser::STATUS_TYPE cxxNameDouble::read_raw(CParser & parser,
 	CParser::TOKEN_TYPE j;
 	j = parser.copy_token(token, pos);
 
-	if (j == CParser::TT_EMPTY)
-		return CParser::PARSER_OK;
+	if (j == CParser::TOKEN_TYPE::TT_EMPTY)
+		return CParser::STATUS_TYPE::PARSER_OK;
 
 	if (!(parser.get_iss() >> d))
 	{
-		return CParser::PARSER_ERROR;
+		return CParser::STATUS_TYPE::PARSER_ERROR;
 	}
 	(*this)[token.c_str()] = d;
-	return CParser::PARSER_OK;
+	return CParser::STATUS_TYPE::PARSER_OK;
 }
 
 void

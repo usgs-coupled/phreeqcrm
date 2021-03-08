@@ -126,7 +126,7 @@ build_fixed_volume_gas(void)
 				}
 			}
 		}
-		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 		{
 			/* Total pressure of gases */
 			store_mb(&(phase_ptr->p_soln_x), &(gas_unknown->f),
@@ -220,7 +220,7 @@ build_fixed_volume_gas(void)
 				store_jacob(&(gas_unknowns[i]->moles),
 					&(my_array[row + col]), coef);
 			}
-			if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+			if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 			{
 				/* derivative wrt total moles of gas */
 				if (debug_prep == TRUE)
@@ -237,7 +237,7 @@ build_fixed_volume_gas(void)
 /*
  *   Build jacobian sums for sum of partial pressures equation
  */
-		if (gas_phase_ptr->Get_type() != cxxGasPhase::GP_PRESSURE)
+		if (gas_phase_ptr->Get_type() != cxxGasPhase::GP_TYPE::GP_PRESSURE)
 			continue;
 		if (debug_prep == TRUE)
 		{
@@ -452,7 +452,7 @@ calc_PR(void)
 	}
 	b2 = b_sum * b_sum;
 
-	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME)
+	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_VOLUME)
 	{
 		V_m = gas_phase_ptr->Get_volume() / m_sum;
 		P = 0.0;

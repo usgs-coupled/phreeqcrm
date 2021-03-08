@@ -669,7 +669,7 @@ initial_surface_water(void)
 		}
 	}
 
-	if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+	if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		mass_water_bulk_x = mass_water_aq_x + mass_water_surfaces_x;
 	else
 	{
@@ -779,7 +779,7 @@ calc_all_donnan(void)
 		}
 		/* find surface charge from potential... */
 		A_surf = charge_ptr->Get_specific_area() * charge_ptr->Get_grams();
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+		if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			f_psi = x[j + 2]->master[0]->s->la * LOG_10;	/* -FPsi/RT */
 			f_psi = f_psi / 2;
@@ -950,7 +950,7 @@ calc_init_donnan(void)
 
 		/* find surface charge from potential... */
 		A_surf = charge_ptr->Get_specific_area() * charge_ptr->Get_grams();
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC)
+		if (use.Get_surface_ptr()->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 		{
 			f_psi = x[j + 2]->master[0]->s->la * LOG_10;	/* -FPsi/RT */
 			f_psi = f_psi / 2;

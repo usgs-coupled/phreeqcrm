@@ -952,7 +952,7 @@ tidy_gas_phase(void)
 				/*
 				*   Fixed pressure
 				*/
-				if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+				if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 				{
 					if (gas_phase_ptr->Get_solution_equilibria())
 					{
@@ -1044,7 +1044,7 @@ tidy_gas_phase(void)
 				}
 				V_m = calc_PR(phase_ptrs, P, gas_phase_ptr->Get_temperature(), 0);
 				gas_phase_ptr->Set_v_m(V_m);
-				if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME)
+				if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_VOLUME)
 				{
 					gas_phase_ptr->Set_total_p(P);
 				}
@@ -1142,7 +1142,7 @@ tidy_gas_phase(void)
 				/*
 				*   Fixed pressure
 				*/
-				if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
+				if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_PRESSURE)
 				{
 					if (gas_phase_ptr->Get_solution_equilibria())
 					{
@@ -1218,7 +1218,7 @@ tidy_gas_phase(void)
 					}
 					V_m = calc_PR(phase_ptrs, P, gas_phase_ptr->Get_temperature(), 0);
 					gas_phase_ptr->Set_v_m(V_m);
-					if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME)
+					if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_TYPE::GP_VOLUME)
 					{
 						gas_phase_ptr->Set_total_p(P);
 					}
@@ -3129,9 +3129,9 @@ tidy_surface(void)
 		if (surface_ptr->Get_tidied()) continue;
 		surface_ptr->Set_tidied(true);
 		// ccm incompatible with Donnan or diffuse_layer
-		if (surface_ptr->Get_type() == cxxSurface::CCM)
+		if (surface_ptr->Get_type() == cxxSurface::SURFACE_TYPE::CCM)
 		{
-			if (surface_ptr->Get_dl_type() == cxxSurface::BORKOVEK_DL || surface_ptr->Get_dl_type() == cxxSurface::DONNAN_DL)
+			if (surface_ptr->Get_dl_type() == cxxSurface::DIFFUSE_LAYER_TYPE::BORKOVEK_DL || surface_ptr->Get_dl_type() == cxxSurface::DIFFUSE_LAYER_TYPE::DONNAN_DL)
 			{
 					input_error++;
 					error_string = "Cannot use -diffuse_layer or -donnan calculation with Constant Capacity Model.";
@@ -3171,7 +3171,7 @@ tidy_surface(void)
 				 * Calculate moles of sites
 				 */
 				if (surface_ptr->Get_new_def()
-					&& surface_ptr->Get_sites_units() == cxxSurface::SITES_DENSITY
+					&& surface_ptr->Get_sites_units() == cxxSurface::SITES_UNITS::SITES_DENSITY
 					&& comp_ptr->Get_phase_name().size() == 0)
 				{
 					if (charge_ptr == NULL)
@@ -3203,7 +3203,7 @@ tidy_surface(void)
 						comp_ptr->Set_totals(nd);
 					}
 				}
-				if (surface_ptr->Get_type() == cxxSurface::CD_MUSIC)
+				if (surface_ptr->Get_type() == cxxSurface::SURFACE_TYPE::CD_MUSIC)
 				{
 					charge_ptr->Set_charge_balance(charge_ptr->Get_charge_balance() +
 						comp_ptr->Get_moles() *
@@ -4355,7 +4355,7 @@ tidy_min_surface(void)
 					get_elts_in_species(&ptr,
 										-comp_jj_ptr->Get_phase_proportion());
 
-					if (surface_ptr->Get_type() != cxxSurface::CD_MUSIC)
+					if (surface_ptr->Get_type() != cxxSurface::SURFACE_TYPE::CD_MUSIC)
 					{
 
 						// Warn if not master species and charge balanced
@@ -4384,7 +4384,7 @@ tidy_min_surface(void)
 						//		elt_ptr->master->s->name);
 						//	warning_msg(error_string);
 						//}
-						if (elt_ptr->master->s->z != 0.0 && surface_ptr->Get_dl_type() != cxxSurface::DONNAN_DL)
+						if (elt_ptr->master->s->z != 0.0 && surface_ptr->Get_dl_type() != cxxSurface::DIFFUSE_LAYER_TYPE::DONNAN_DL)
 						{
 							error_string = sformatf(
 								"Use the -donnan option when coupling surface %s to an equilibrium_phase, \n\t and note to give the equilibrium_phase the surface charge.",
@@ -4462,7 +4462,7 @@ update_min_surface(void)
 			cxxSurfaceComp* surface_comp_ptr = &(surface_ptr->Get_surface_comps()[j]);
 			if (surface_comp_ptr->Get_phase_name().size() == 0)	continue;
 			cxxSurfaceCharge* surface_charge_ptr =  NULL;
-			if (surface_ptr->Get_type() != cxxSurface::NO_EDL)
+			if (surface_ptr->Get_type() != cxxSurface::SURFACE_TYPE::NO_EDL)
 			{
 				surface_charge_ptr = surface_ptr->Find_charge(surface_comp_ptr->Get_charge_name());
 				if (surface_charge_ptr == NULL)
@@ -4961,7 +4961,7 @@ update_kin_surface(void)
 			/* use database name for rate */
 			comp_ptr->Set_rate_name(kin_comp_ptr->Get_rate_name().c_str());
 			cxxSurfaceCharge* charge_ptr = surface_ptr->Find_charge(comp_ptr->Get_charge_name());
-			if (surface_ptr->Get_type() != cxxSurface::NO_EDL)
+			if (surface_ptr->Get_type() != cxxSurface::SURFACE_TYPE::NO_EDL)
 			{
 				charge_ptr = surface_ptr->Find_charge(comp_ptr->Get_charge_name());
 				if (charge_ptr == NULL)
@@ -5675,7 +5675,7 @@ ss_calc_a0_a1(cxxSS *ss_ptr)
 		/*
 		 *  dimensionless a0 and a1
 		 */
-	case cxxSS::SS_PARM_A0_A1:
+	case cxxSS::SS_PARAMETER_TYPE::SS_PARM_A0_A1:
 		l_a0 = p[0];
 		l_a1 = p[1];
 		ag0 = l_a0 * rt;
@@ -5685,7 +5685,7 @@ ss_calc_a0_a1(cxxSS *ss_ptr)
 		 *  two activity coefficients
 		 *  q1, q2, xbq1, xbq2
 		 */
-	case cxxSS::SS_PARM_GAMMAS:
+	case cxxSS::SS_PARAMETER_TYPE::SS_PARM_GAMMAS:
 		q1 = p[0];
 		q2 = p[1];
 		xbq1 = p[2];
@@ -5754,7 +5754,7 @@ ss_calc_a0_a1(cxxSS *ss_ptr)
 		 *  two distribution coefficients
 		 *  q1, q2, xbq1, xbq2
 		 */
-	case cxxSS::SS_PARM_DIST_COEF:
+	case cxxSS::SS_PARAMETER_TYPE::SS_PARM_DIST_COEF:
 		q1 = p[0];
 		q2 = p[1];
 		xbq1 = p[2];
@@ -5801,7 +5801,7 @@ ss_calc_a0_a1(cxxSS *ss_ptr)
 		 *  from miscibility gap fractions
 		 *  q1, q2
 		 */
-	case cxxSS::SS_PARM_MISCIBILITY:
+	case cxxSS::SS_PARAMETER_TYPE::SS_PARM_MISCIBILITY:
 		q1 = p[0];
 		q2 = p[1];
 		xb1 = q1;
@@ -5829,7 +5829,7 @@ ss_calc_a0_a1(cxxSS *ss_ptr)
 		 *  from spinodal gap fractions
 		 *  q1, q2
 		 */
-	case cxxSS::SS_PARM_SPINODAL:
+	case cxxSS::SS_PARAMETER_TYPE::SS_PARM_SPINODAL:
 		q1 = p[0];
 		q2 = p[1];
 		xsm1 = q1;
@@ -5853,7 +5853,7 @@ ss_calc_a0_a1(cxxSS *ss_ptr)
 		 *  from critical point
 		 *  q1, q2
 		 */
-	case cxxSS::SS_PARM_CRITICAL:
+	case cxxSS::SS_PARAMETER_TYPE::SS_PARM_CRITICAL:
 		xc = p[0];
 		tc = p[1];
 		r = R_KJ_DEG_MOL;
@@ -5868,7 +5868,7 @@ ss_calc_a0_a1(cxxSS *ss_ptr)
 		 *  from alyotropic point
 		 *  q1, q2
 		 */
-	case cxxSS::SS_PARM_ALYOTROPIC:
+	case cxxSS::SS_PARAMETER_TYPE::SS_PARM_ALYOTROPIC:
 		q1 = p[0];
 		q2 = p[1];
 		xaly = q1;
@@ -5952,7 +5952,7 @@ ss_calc_a0_a1(cxxSS *ss_ptr)
 		 *  dimensional (kJ/mol) Guggenheim parameters
 		 *  ag0, ag1
 		 */
-	case cxxSS::SS_PARM_DIM_GUGG:
+	case cxxSS::SS_PARAMETER_TYPE::SS_PARM_DIM_GUGG:
 		ag0 = p[0];
 		ag1 = p[1];
 		l_a0 = ag0 / rt;
@@ -5962,7 +5962,7 @@ ss_calc_a0_a1(cxxSS *ss_ptr)
 		 *  Waldbaum-Thompson
 		 *  wg2, wg1
 		 */
-	case cxxSS::SS_PARM_WALDBAUM:
+	case cxxSS::SS_PARAMETER_TYPE::SS_PARM_WALDBAUM:
 		wg2 = p[0];
 		wg1 = p[1];
 		ag0 = (wg2 + wg1) / 2;
@@ -5974,7 +5974,7 @@ ss_calc_a0_a1(cxxSS *ss_ptr)
 		 *  Margules
 		 *  alpha2, alpha3
 		 */
-	case cxxSS::SS_PARM_MARGULES:
+	case cxxSS::SS_PARAMETER_TYPE::SS_PARM_MARGULES:
 		alpha2 = p[0];
 		alpha3 = p[1];
 		l_a0 = alpha2 + 3 * alpha3 / 4;
@@ -5982,7 +5982,7 @@ ss_calc_a0_a1(cxxSS *ss_ptr)
 		ag0 = l_a0 * rt;
 		ag1 = l_a1 * rt;
 		break;
-	case cxxSS::SS_PARM_NONE:
+	case cxxSS::SS_PARAMETER_TYPE::SS_PARM_NONE:
 		break;
 	}
 	ss_ptr->Set_ag0(ag0);
@@ -6126,7 +6126,7 @@ reset_last_model(void)
 	last_model.exchange =
 		(struct master **) free_check_null(last_model.exchange);
 	last_model.count_gas_phase = 0;
-	last_model.gas_phase_type = cxxGasPhase::GP_UNKNOWN;
+	last_model.gas_phase_type = cxxGasPhase::GP_TYPE::GP_UNKNOWN;
 	last_model.gas_phase =
 		(struct phase **) free_check_null(last_model.gas_phase);
 	last_model.count_ss_assemblage = 0;
@@ -6138,7 +6138,7 @@ reset_last_model(void)
 	last_model.add_formula =
 		(const char **) free_check_null(last_model.add_formula);
 	last_model.si = (LDBLE *) free_check_null(last_model.si);
-	last_model.dl_type = cxxSurface::NO_DL;
+	last_model.dl_type = cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL;
 	last_model.count_surface_comp = 0;
 	last_model.surface_comp =
 		(const char **) free_check_null(last_model.surface_comp);

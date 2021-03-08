@@ -3197,7 +3197,7 @@ moles_from_donnan_layer(cxxSurface *sptr, const char *name, LDBLE moles_needed)
 
 	for (size_t j = 0; j < sptr->Get_surface_charges().size(); j++)
 	{
-		if (sptr->Get_dl_type() == cxxSurface::DONNAN_DL)
+		if (sptr->Get_dl_type() == cxxSurface::DIFFUSE_LAYER_TYPE::DONNAN_DL)
 		{
 			charge_ptr = &(sptr->Get_surface_charges()[j]);
 			for (kit = charge_ptr->Get_diffuse_layer_totals().begin(); kit != charge_ptr->Get_diffuse_layer_totals().end(); kit++)
@@ -3491,7 +3491,7 @@ multi_D(LDBLE DDt, int mobile_cell, int stagnant)
 				cxxNameDouble::iterator jit;
 				for (size_t j = 0; j < s_ptr->Get_surface_charges().size(); j++)
 				{
-					if (s_ptr->Get_dl_type() == cxxSurface::DONNAN_DL)
+					if (s_ptr->Get_dl_type() == cxxSurface::DIFFUSE_LAYER_TYPE::DONNAN_DL)
 					{
 						charge_ptr = &(s_ptr->Get_surface_charges()[j]);
 						for (jit = charge_ptr->Get_diffuse_layer_totals().begin(); jit != charge_ptr->Get_diffuse_layer_totals().end(); jit++)
@@ -3816,7 +3816,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 	s_ptr1 = Utilities::Rxn_find(Rxn_surface_map, icell);
 	if (s_ptr1 != NULL)
 	{
-		if (s_ptr1->Get_dl_type() != cxxSurface::NO_DL)
+		if (s_ptr1->Get_dl_type() != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		{
 			s_charge_p.assign(s_ptr1->Get_surface_charges().begin(), s_ptr1->Get_surface_charges().end());
 			s_com_p.assign(s_ptr1->Get_surface_comps().begin(), s_ptr1->Get_surface_comps().end());
@@ -3843,7 +3843,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 	s_ptr2 = Utilities::Rxn_find(Rxn_surface_map, jcell);
 	if (s_ptr2 != NULL)
 	{
-		if (s_ptr2->Get_dl_type() != cxxSurface::NO_DL)
+		if (s_ptr2->Get_dl_type() != cxxSurface::DIFFUSE_LAYER_TYPE::NO_DL)
 		{
 			s_charge_p.assign(s_ptr2->Get_surface_charges().begin(), s_ptr2->Get_surface_charges().end());
 			s_com_p.assign(s_ptr2->Get_surface_comps().begin(), s_ptr2->Get_surface_comps().end());

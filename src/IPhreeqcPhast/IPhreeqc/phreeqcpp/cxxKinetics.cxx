@@ -325,7 +325,7 @@ cxxKinetics::read_raw(CParser & parser, bool check)
 
 		case 5:				// totals
 			if (this->totals.read_raw(parser, next_char) !=
-				CParser::PARSER_OK)
+				CParser::STATUS_TYPE::PARSER_OK)
 			{
 				parser.incr_input_error();
 				parser.
@@ -337,7 +337,7 @@ cxxKinetics::read_raw(CParser & parser, bool check)
 			break;
 
 		case 6:				// steps
-			while (parser.copy_token(token, next_char) == CParser::TT_DIGIT)
+			while (parser.copy_token(token, next_char) == CParser::TOKEN_TYPE::TT_DIGIT)
 			{
 				std::istringstream iss(token);
 				if (!(iss >> d))

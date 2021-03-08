@@ -27,8 +27,8 @@ m_next_keyword(Keywords::KEY_NONE)
 	if (!io)
 	{
 		error_msg("This parser constructor requires non-null phrq_io", PHRQ_io::OT_STOP);
-		echo_file = EO_ALL;
-		echo_stream = EO_NONE;
+		echo_file = ECHO_OPTION::EO_ALL;
+		echo_stream = ECHO_OPTION::EO_NONE;
 		accumulate = false;
 		phrq_io_only = true;
 		m_line_type = PHRQ_io::LT_EMPTY;
@@ -41,8 +41,8 @@ m_next_keyword(Keywords::KEY_NONE)
 		m_line_iss.str(m_line);
 		m_line_iss.seekg(0, std::ios_base::beg);
 		m_line_iss.clear();
-		echo_file = EO_ALL;
-		echo_stream = EO_NONE;
+		echo_file = ECHO_OPTION::EO_ALL;
+		echo_stream = ECHO_OPTION::EO_NONE;
 		accumulate = false;
 		phrq_io_only = true;
 	}
@@ -56,8 +56,8 @@ m_next_keyword(Keywords::KEY_NONE)
 {
 	m_line_save.reserve(80);
 	m_line.reserve(80);
-	echo_file = EO_ALL;
-	echo_stream = EO_NONE;
+	echo_file = ECHO_OPTION::EO_ALL;
+	echo_stream = ECHO_OPTION::EO_NONE;
 	accumulate = false;
 	phrq_io_only = false;
 	m_line_type = PHRQ_io::LT_EMPTY;
@@ -86,9 +86,9 @@ PHRQ_io::LINE_TYPE CParser::check_line(const std::string & str,
 		// output for stream
 		switch (this->echo_stream)
 		{
-		case EO_NONE:
+		case ECHO_OPTION::EO_NONE:
 			break;
-		case EO_ALL:
+		case ECHO_OPTION::EO_ALL:
 			if (i != PHRQ_io::LT_EOF)
 			{
 				std::ostringstream msg;
@@ -97,7 +97,7 @@ PHRQ_io::LINE_TYPE CParser::check_line(const std::string & str,
 				io->output_msg(msg.str().c_str());
 			}
 			break;
-		case EO_KEYWORDS:
+		case ECHO_OPTION::EO_KEYWORDS:
 			if (i == PHRQ_io::LT_KEYWORD)
 			{
 				std::ostringstream msg;
@@ -106,7 +106,7 @@ PHRQ_io::LINE_TYPE CParser::check_line(const std::string & str,
 				io->output_msg(msg.str().c_str());
 			}
 			break;
-		case EO_NOKEYWORDS:
+		case ECHO_OPTION::EO_NOKEYWORDS:
 			if (i != PHRQ_io::LT_KEYWORD && i != PHRQ_io::LT_EOF)
 			{
 				std::ostringstream msg;
@@ -119,9 +119,9 @@ PHRQ_io::LINE_TYPE CParser::check_line(const std::string & str,
 		// output for file
 		switch (this->echo_file)
 		{
-		case EO_NONE:
+		case ECHO_OPTION::EO_NONE:
 			break;
-		case EO_ALL:
+		case ECHO_OPTION::EO_ALL:
 			if (i != PHRQ_io::LT_EOF)
 			{
 				std::ostringstream msg;
@@ -129,7 +129,7 @@ PHRQ_io::LINE_TYPE CParser::check_line(const std::string & str,
 				this->echo_msg(msg.str());
 			}
 			break;
-		case EO_KEYWORDS:
+		case ECHO_OPTION::EO_KEYWORDS:
 			if (i == PHRQ_io::LT_KEYWORD)
 			{
 				std::ostringstream msg;
@@ -138,7 +138,7 @@ PHRQ_io::LINE_TYPE CParser::check_line(const std::string & str,
 			}
 			break;
 
-		case EO_NOKEYWORDS:
+		case ECHO_OPTION::EO_NOKEYWORDS:
 			if (i != PHRQ_io::LT_KEYWORD && i != PHRQ_io::LT_EOF)
 			{
 				std::ostringstream msg;
@@ -476,14 +476,14 @@ CParser::STATUS_TYPE CParser::check_units(std::string & tot_units,
 			err << "Unknown unit, " << tot_units;
 			this->error_msg(err.str().c_str(), PHRQ_io::OT_CONTINUE);
 		}
-		return PARSER_ERROR;
+		return STATUS_TYPE::PARSER_ERROR;
 	}
 
 	//
 	//   Check if units are compatible with default_units
 	//
 	if (check_compatibility == false)
-		return PARSER_OK;
+		return STATUS_TYPE::PARSER_OK;
 
 	//
 	//   Special cases for alkalinity
@@ -504,7 +504,7 @@ CParser::STATUS_TYPE CParser::check_units(std::string & tot_units,
 			this->error_msg("Only alkalinity can be entered in equivalents.",
 					  PHRQ_io::OT_CONTINUE);
 		}
-		return PARSER_ERROR;
+		return STATUS_TYPE::PARSER_ERROR;
 	}
 
 	//
@@ -512,13 +512,13 @@ CParser::STATUS_TYPE CParser::check_units(std::string & tot_units,
 	//
 	if (default_units.find("/l") != std::string::npos
 		&& tot_units.find("/l") != std::string::npos)
-		return PARSER_OK;
+		return STATUS_TYPE::PARSER_OK;
 	if (default_units.find("/kgs") != std::string::npos
 		&& tot_units.find("/kgs") != std::string::npos)
-		return PARSER_OK;
+		return STATUS_TYPE::PARSER_OK;
 	if (default_units.find("/kgw") != std::string::npos
 		&& tot_units.find("/kgw") != std::string::npos)
-		return PARSER_OK;
+		return STATUS_TYPE::PARSER_OK;
 
 	std::string str = default_units;
 	replace("kgs", "kg solution", str);
@@ -537,7 +537,7 @@ CParser::STATUS_TYPE CParser::check_units(std::string & tot_units,
 			", are not compatible with default units, " << str << ".";
 		this->error_msg(err.str().c_str(), PHRQ_io::OT_CONTINUE);
 	}
-	return PARSER_ERROR;
+	return STATUS_TYPE::PARSER_ERROR;
 }
 CParser::TOKEN_TYPE CParser::token_type(const std::string & token)
 {
@@ -545,25 +545,25 @@ CParser::TOKEN_TYPE CParser::token_type(const std::string & token)
 	{
 		if (::isupper(token[0]))
 		{
-			return CParser::TT_UPPER;
+			return CParser::TOKEN_TYPE::TT_UPPER;
 		}
 		else if (::islower(token[0]))
 		{
-			return CParser::TT_LOWER;
+			return CParser::TOKEN_TYPE::TT_LOWER;
 		}
 		else if (::isdigit(token[0]) || token[0] == '.' || token[0] == '-')
 		{
-			return CParser::TT_DIGIT;
+			return CParser::TOKEN_TYPE::TT_DIGIT;
 		}
 		else
 		{
 			assert(!::isspace(token[0]));
-			return CParser::TT_UNKNOWN;
+			return CParser::TOKEN_TYPE::TT_UNKNOWN;
 		}
 	}
 	else
 	{
-		return CParser::TT_EMPTY;
+		return CParser::TOKEN_TYPE::TT_EMPTY;
 	}
 }
 
@@ -828,7 +828,7 @@ CParser::STATUS_TYPE CParser::get_elt(std::string::iterator & begin,
 	{
 		error_msg("Empty string in get_elt.  Expected an element name.",
 				  PHRQ_io::OT_CONTINUE);
-		return PARSER_ERROR;
+		return STATUS_TYPE::PARSER_ERROR;
 	}
 
 	//
@@ -855,7 +855,7 @@ CParser::STATUS_TYPE CParser::get_elt(std::string::iterator & begin,
 				error_msg("No ending bracket (]) for element name",
 						  PHRQ_io::OT_CONTINUE);
 				incr_input_error();
-				return PARSER_ERROR;
+				return STATUS_TYPE::PARSER_ERROR;
 			}
 		}
 		while (::islower(c = *begin) || c == '_')
@@ -876,7 +876,7 @@ CParser::STATUS_TYPE CParser::get_elt(std::string::iterator & begin,
 				break;
 		}
 	}
-	return PARSER_OK;
+	return STATUS_TYPE::PARSER_OK;
 }
 
 CParser::STATUS_TYPE CParser::parse_couple(std::string & token)
@@ -888,7 +888,7 @@ CParser::STATUS_TYPE CParser::parse_couple(std::string & token)
 	if (Utilities::strcmp_nocase_arg1(token.c_str(), "pe") == 0)
 	{
 		Utilities::str_tolower(token);
-		return PARSER_OK;
+		return STATUS_TYPE::PARSER_OK;
 	}
 
 	while (Utilities::replace("+", "", token));
@@ -904,7 +904,7 @@ CParser::STATUS_TYPE CParser::parse_couple(std::string & token)
 			"parentheses in redox couple, " << token << ".";
 		error_msg(err_msg.str().c_str(), PHRQ_io::OT_CONTINUE);
 		incr_input_error();
-		return PARSER_ERROR;
+		return STATUS_TYPE::PARSER_ERROR;
 	}
 
 	int
@@ -919,7 +919,7 @@ CParser::STATUS_TYPE CParser::parse_couple(std::string & token)
 			err_msg << "End of line or  " "/"
 				" encountered before end of parentheses, " << token << ".";
 			error_msg(err_msg.str().c_str(), PHRQ_io::OT_CONTINUE);
-			return PARSER_ERROR;
+			return STATUS_TYPE::PARSER_ERROR;
 		}
 		paren1.insert(paren1.end(), *ptr);	// element.push_back(c);
 		if (*ptr == '(')
@@ -937,7 +937,7 @@ CParser::STATUS_TYPE CParser::parse_couple(std::string & token)
 		err_msg << " " "/" " must follow parentheses " <<
 			"ending first half of redox couple, " << token << ".";
 		error_msg(err_msg.str().c_str(), PHRQ_io::OT_CONTINUE);
-		return PARSER_ERROR;
+		return STATUS_TYPE::PARSER_ERROR;
 	}
 	++ptr;
 	std::string elt2;
@@ -948,7 +948,7 @@ CParser::STATUS_TYPE CParser::parse_couple(std::string & token)
 		err_msg << "Redox couple must be two redox states " <<
 			"of the same element, " << token << ".";
 		error_msg(err_msg.str().c_str(), PHRQ_io::OT_CONTINUE);
-		return PARSER_ERROR;
+		return STATUS_TYPE::PARSER_ERROR;
 	}
 	if (*ptr != '(')
 	{
@@ -957,7 +957,7 @@ CParser::STATUS_TYPE CParser::parse_couple(std::string & token)
 			"parentheses in redox couple, " << token << ".";
 		error_msg(err_msg.str().c_str(), PHRQ_io::OT_CONTINUE);
 		incr_input_error();
-		return PARSER_ERROR;
+		return STATUS_TYPE::PARSER_ERROR;
 	}
 	std::string paren2 = "(";
 	paren_count = 1;
@@ -971,7 +971,7 @@ CParser::STATUS_TYPE CParser::parse_couple(std::string & token)
 			err_msg << "End of line or  " "/"
 				" encountered before end of parentheses, " << token << ".";
 			error_msg(err_msg.str().c_str(), PHRQ_io::OT_CONTINUE);
-			return PARSER_ERROR;
+			return STATUS_TYPE::PARSER_ERROR;
 		}
 		paren2.insert(paren2.end(), *ptr);	// element.push_back(c);
 		if (*ptr == '(')
@@ -995,9 +995,9 @@ CParser::STATUS_TYPE CParser::parse_couple(std::string & token)
 		err_msg << "Both parts of redox couple are the same, " <<
 			token << ".";
 		error_msg(err_msg.str().c_str(), PHRQ_io::OT_CONTINUE);
-		return PARSER_ERROR;
+		return STATUS_TYPE::PARSER_ERROR;
 	}
-	return PARSER_OK;
+	return STATUS_TYPE::PARSER_OK;
 }
 
 template <class T>
@@ -1012,15 +1012,15 @@ CParser::STATUS_TYPE CParser::addPair(std::map < std::string, T >&totals,
 
 	j = copy_token(token, pos);
 
-	if (j == CParser::TT_EMPTY)
-		return PARSER_OK;
+	if (j == CParser::TOKEN_TYPE::TT_EMPTY)
+		return STATUS_TYPE::PARSER_OK;
 
 	if (!(m_line_iss >> d))
 	{
-		return PARSER_ERROR;
+		return STATUS_TYPE::PARSER_ERROR;
 	}
 	totals[token] = d;
-	return PARSER_OK;
+	return STATUS_TYPE::PARSER_OK;
 }
 
 int
