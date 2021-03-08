@@ -19,7 +19,7 @@ class IPQ_DLL_EXPORT cxxNameDouble:public
 {
 
   public:
-	enum ND_TYPE
+	enum class ND_TYPE
 	{
 		ND_ELT_MOLES = 1,
 		ND_SPECIES_LA = 2,

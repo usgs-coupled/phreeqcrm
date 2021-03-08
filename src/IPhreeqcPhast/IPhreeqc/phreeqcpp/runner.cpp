@@ -35,14 +35,14 @@ bool runner::Read(CParser & parser)
 	int opt_save;
 
 	this->Get_cells().Set_defined(true);
-	opt_save = CParser::OPT_DEFAULT;
+	opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
 
 	StorageBinListItem item;
 	for (;;)
 	{
 		int opt;
 		opt = parser.get_option(vopts, next_char);
-		if (opt == CParser::OPT_DEFAULT)
+		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
@@ -55,9 +55,9 @@ bool runner::Read(CParser & parser)
 		std::set < int >::iterator it;
 		switch (opt)
 		{
-		case CParser::OPT_EOF:
+		case CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_KEYWORD:
+		case CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
 
 		case 0:
@@ -119,16 +119,16 @@ bool runner::Read(CParser & parser)
 			}
 			break;
 		default:
-		case CParser::OPT_DEFAULT:
-		case CParser::OPT_ERROR:
-			opt = CParser::OPT_EOF;
+		case CParser::OPT_TYPE::OPT_DEFAULT:
+		case CParser::OPT_TYPE::OPT_ERROR:
+			opt = CParser::OPT_TYPE::OPT_EOF;
 			parser.error_msg("Unknown input reading RUN_CELLS definition.",
 							 PHRQ_io::OT_CONTINUE);
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
 			return_value = false;
 			break;
 		}
-		if (opt == CParser::OPT_EOF || opt == CParser::OPT_KEYWORD)
+		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	if (item.Get_numbers().size() > 0)

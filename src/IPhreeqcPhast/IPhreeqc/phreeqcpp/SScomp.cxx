@@ -98,27 +98,27 @@ cxxSScomp::read_raw(CParser & parser, bool check)
 	std::string token;
 	int opt_save;
 
-	opt_save = CParser::OPT_ERROR;
+	opt_save = CParser::OPT_TYPE::OPT_ERROR;
 	bool initial_moles_defined(false);
 	bool moles_defined(false);
 
 	for (;;)
 	{
 		int opt = parser.get_option(vopts, next_char);
-		if (opt == CParser::OPT_DEFAULT)
+		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
 
 		switch (opt)
 		{
-		case CParser::OPT_EOF:
+		case CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_KEYWORD:
+		case CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_DEFAULT:
-		case CParser::OPT_ERROR:
-			opt = CParser::OPT_KEYWORD;
+		case CParser::OPT_TYPE::OPT_DEFAULT:
+		case CParser::OPT_TYPE::OPT_ERROR:
+			opt = CParser::OPT_TYPE::OPT_KEYWORD;
 			// Allow return to Exchange for more processing
 			break;
 
@@ -227,7 +227,7 @@ cxxSScomp::read_raw(CParser & parser, bool check)
 			}
 			break;
 		}
-		if (opt == CParser::OPT_EOF || opt == CParser::OPT_KEYWORD)
+		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	// members that must be defined

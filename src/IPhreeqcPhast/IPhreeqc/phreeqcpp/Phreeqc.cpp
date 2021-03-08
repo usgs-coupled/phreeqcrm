@@ -943,7 +943,7 @@ void Phreeqc::init(void)
 	delta					= NULL;
 	residual				= NULL;
 	input_error             = 0;
-	next_keyword            = Keywords::KEY_NONE;
+	next_keyword            = Keywords::KEYWORDS::KEY_NONE;
 	parse_error             = 0;
 	paren_count             = 0;
 	iterations              = 0;
@@ -1399,8 +1399,8 @@ void Phreeqc::init(void)
 	/* utilities.cpp ------------------------------- */
 	spinner                 = 0;
 	// keycount;
-	keycount.resize(Keywords::KEY_COUNT_KEYWORDS);
-	for (int i = 0; i < Keywords::KEY_COUNT_KEYWORDS; i++)
+	keycount.resize((size_t)Keywords::KEYWORDS::KEY_COUNT_KEYWORDS);
+	for (int i = 0; i < (int)Keywords::KEYWORDS::KEY_COUNT_KEYWORDS; i++)
 	{
 		keycount[i] = 0;
 	}
@@ -2260,7 +2260,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	delta					= NULL;
 	residual				= NULL;
 	input_error             = 0;
-	next_keyword            = Keywords::KEY_NONE;
+	next_keyword            = Keywords::KEYWORDS::KEY_NONE;
 	parse_error             = 0;
 	paren_count             = 0;
 	iterations              = 0;
@@ -2833,7 +2833,7 @@ protected:
 	/* utilities.cpp ------------------------------- */
 	//spinner                 = 0;
 	//// keycount;
-	//for (int i = 0; i < Keywords::KEY_COUNT_KEYWORDS; i++)
+	//for (int i = 0; i < Keywords::KEYWORDS::KEY_COUNT_KEYWORDS; i++)
 	//{
 	//	keycount.push_back(0);
 	//}
@@ -2844,7 +2844,7 @@ protected:
 	sum_species_map_db = pSrc->sum_species_map_db;
 
 	// make sure new_model gets set
-	this->keycount[Keywords::KEY_SOLUTION_SPECIES] = 1;
+	this->keycount[(size_t)Keywords::KEYWORDS::KEY_SOLUTION_SPECIES] = 1;
 	this->tidy_model();
 	return;
 }
@@ -2881,37 +2881,37 @@ int Phreeqc::next_user_number(Keywords::KEYWORDS key)
 {
 	switch (key)
 	{
-	case Keywords::KEY_REACTION_TEMPERATURE:
+	case Keywords::KEYWORDS::KEY_REACTION_TEMPERATURE:
 		return Utilities::Rxn_next_user_number(Rxn_temperature_map);
 		break;
-	case Keywords::KEY_REACTION_PRESSURE:
+	case Keywords::KEYWORDS::KEY_REACTION_PRESSURE:
 		return Utilities::Rxn_next_user_number(Rxn_pressure_map);
 		break;
-	case Keywords::KEY_SURFACE:
+	case Keywords::KEYWORDS::KEY_SURFACE:
 		return Utilities::Rxn_next_user_number(Rxn_surface_map);
 		break;
-	case Keywords::KEY_EXCHANGE:
+	case Keywords::KEYWORDS::KEY_EXCHANGE:
 		return Utilities::Rxn_next_user_number(Rxn_exchange_map);
 		break;
-	case Keywords::KEY_KINETICS:
+	case Keywords::KEYWORDS::KEY_KINETICS:
 		return Utilities::Rxn_next_user_number(Rxn_kinetics_map);
 		break;
-	case Keywords::KEY_MIX:
+	case Keywords::KEYWORDS::KEY_MIX:
 		return Utilities::Rxn_next_user_number(Rxn_mix_map);
 		break;
-	case Keywords::KEY_REACTION:
+	case Keywords::KEYWORDS::KEY_REACTION:
 		return Utilities::Rxn_next_user_number(Rxn_reaction_map);
 		break;
-	case Keywords::KEY_GAS_PHASE:
+	case Keywords::KEYWORDS::KEY_GAS_PHASE:
 		return Utilities::Rxn_next_user_number(Rxn_gas_phase_map);
 		break;
-	case Keywords::KEY_SOLID_SOLUTIONS:
+	case Keywords::KEYWORDS::KEY_SOLID_SOLUTIONS:
 		return Utilities::Rxn_next_user_number(Rxn_ss_assemblage_map);
 		break;
-	case Keywords::KEY_EQUILIBRIUM_PHASES:
+	case Keywords::KEYWORDS::KEY_EQUILIBRIUM_PHASES:
 		return Utilities::Rxn_next_user_number(Rxn_pp_assemblage_map);
 		break;
-	case Keywords::KEY_SOLUTION:
+	case Keywords::KEYWORDS::KEY_SOLUTION:
 		return Utilities::Rxn_next_user_number(Rxn_solution_map);
 		break;
 	default:

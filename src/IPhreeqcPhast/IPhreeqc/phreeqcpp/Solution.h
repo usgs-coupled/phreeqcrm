@@ -60,7 +60,7 @@ class cxxSolution:public cxxNumKeyword
 	void Set_totals(cxxNameDouble & nd)
 	{
 		this->totals = nd;
-		this->totals.type = cxxNameDouble::ND_ELT_MOLES;
+		this->totals.type = cxxNameDouble::ND_TYPE::ND_ELT_MOLES;
 	}
 	cxxNameDouble & Get_master_activity(void)           {return this->master_activity;}
 	cxxNameDouble & Get_species_gamma(void)             {return this->species_gamma;}

@@ -27,7 +27,7 @@ cxxNameDouble::cxxNameDouble()
 	// default constructor for cxxNameDouble 
 	//
 {
-	this->type = ND_ELT_MOLES;
+	this->type = ND_TYPE::ND_ELT_MOLES;
 }
 
 cxxNameDouble::cxxNameDouble(struct elt_list *elt_list_ptr)
@@ -43,7 +43,7 @@ cxxNameDouble::cxxNameDouble(struct elt_list *elt_list_ptr)
 			(*this)[elt_list_ptr[i].elt->name] = elt_list_ptr[i].coef;
 		}
 	}
-	this->type = ND_ELT_MOLES;
+	this->type = ND_TYPE::ND_ELT_MOLES;
 }
 
 cxxNameDouble::cxxNameDouble(struct elt_list *elt_list_ptr, int count)
@@ -59,7 +59,7 @@ cxxNameDouble::cxxNameDouble(struct elt_list *elt_list_ptr, int count)
 			(*this)[elt_list_ptr[i].elt->name] = elt_list_ptr[i].coef;
 		}
 	}
-	this->type = ND_ELT_MOLES;
+	this->type = ND_TYPE::ND_ELT_MOLES;
 }
 
 cxxNameDouble::cxxNameDouble(const cxxNameDouble & old, LDBLE factor)
@@ -70,7 +70,7 @@ cxxNameDouble::cxxNameDouble(const cxxNameDouble & old, LDBLE factor)
 	for (cxxNameDouble::const_iterator it = old.begin(); it != old.end();
 		 it++)
 	{
-		if (old.type == ND_ELT_MOLES)
+		if (old.type == ND_TYPE::ND_ELT_MOLES)
 		{
 			if (it->second * factor > 0)
 			{
@@ -94,11 +94,11 @@ cxxNameDouble::cxxNameDouble(std::map < std::string, cxxISolutionComp > &comps)
 	{
 		(*this)[it->first] = it->second.Get_moles();
 	}
-	this->type = ND_ELT_MOLES;
+	this->type = ND_TYPE::ND_ELT_MOLES;
 }
 #ifdef SKIP
 cxxNameDouble::cxxNameDouble(struct master_activity *ma, int count,
-							 cxxNameDouble::ND_TYPE l_type)
+							 cxxNameDouble::ND_TYPE::ND_TYPE l_type)
 		//
 		// constructor for cxxNameDouble from list of elt_list
 		//
@@ -134,7 +134,7 @@ cxxNameDouble::cxxNameDouble(struct name_coef *nc, int count)
 		}
 
 	}
-	this->type = ND_NAME_COEF;
+	this->type = ND_TYPE::ND_NAME_COEF;
 }
 
 cxxNameDouble::~cxxNameDouble()
@@ -155,22 +155,22 @@ cxxNameDouble::dump_xml(std::ostream & s_oss, unsigned int indent) const
 
 	switch ((*this).type)
 	{
-	case cxxNameDouble::ND_SPECIES_LA:
+	case cxxNameDouble::ND_TYPE::ND_SPECIES_LA:
 		xmlElement = "<soln_m_a ";
 		xmlAtt1 = " m_a_desc=\"";
 		xmlAtt1 = " m_a_la=\"";
 		break;
-	case cxxNameDouble::ND_SPECIES_GAMMA:
+	case cxxNameDouble::ND_TYPE::ND_SPECIES_GAMMA:
 		xmlElement = "<soln_s_g ";
 		xmlAtt1 = " m_a_desc=\"";
 		xmlAtt1 = " m_a_la=\"";
 		break;
-	case cxxNameDouble::ND_ELT_MOLES:
+	case cxxNameDouble::ND_TYPE::ND_ELT_MOLES:
 		xmlElement = "<soln_total ";
 		xmlAtt1 = " conc_desc=\"";
 		xmlAtt1 = " conc_moles=\"";
 		break;
-	case cxxNameDouble::ND_NAME_COEF:
+	case cxxNameDouble::ND_TYPE::ND_NAME_COEF:
 		xmlElement = "<NameCoef ";
 		xmlAtt1 = " name=\"";
 		xmlAtt1 = " coef=\"";
@@ -303,7 +303,7 @@ cxxNameDouble::Simplify_redox(void) const
 	cxxNameDouble const &nd = *this;
 	std::basic_string < char >::size_type indexCh;
 	cxxNameDouble new_totals;
-	new_totals.type = cxxNameDouble::ND_ELT_MOLES;
+	new_totals.type = cxxNameDouble::ND_TYPE::ND_ELT_MOLES;
 	{
 		std::string current_ename;
 		std::string const *ename_ptr;
@@ -402,7 +402,7 @@ cxxNameDouble::Simplify_redox(void)
 	}
 
 	cxxNameDouble new_totals;
-	new_totals.type = cxxNameDouble::ND_ELT_MOLES;
+	new_totals.type = cxxNameDouble::ND_TYPE::ND_ELT_MOLES;
 	std::set<std::string>::iterator nt_it = list_of_elements.begin();
 	for( ; nt_it != list_of_elements.end(); nt_it++)
 	{

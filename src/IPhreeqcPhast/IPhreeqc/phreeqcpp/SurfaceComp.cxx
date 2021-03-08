@@ -26,7 +26,7 @@ PHRQ_base(io)
 {
 	formula_z = 0.0;
 	moles = 0.0;
-	totals.type = cxxNameDouble::ND_ELT_MOLES;
+	totals.type = cxxNameDouble::ND_TYPE::ND_ELT_MOLES;
 	la = 0.0;
 	charge_balance = 0;
 	phase_proportion = 0.0;
@@ -121,7 +121,7 @@ cxxSurfaceComp::read_raw(CParser & parser, bool check)
 	std::string token;
 	int opt_save;
 
-	opt_save = CParser::OPT_ERROR;
+	opt_save = CParser::OPT_TYPE::OPT_ERROR;
 
 	bool master_element_defined(false);
 	bool charge_name_defined(false);
@@ -135,20 +135,20 @@ cxxSurfaceComp::read_raw(CParser & parser, bool check)
 	for (;;)
 	{
 		int opt = parser.get_option(vopts, next_char);
-		if (opt == CParser::OPT_DEFAULT)
+		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
 
 		switch (opt)
 		{
-		case CParser::OPT_EOF:
+		case CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_KEYWORD:
+		case CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_DEFAULT:
-		case CParser::OPT_ERROR:
-			opt = CParser::OPT_KEYWORD;
+		case CParser::OPT_TYPE::OPT_DEFAULT:
+		case CParser::OPT_TYPE::OPT_ERROR:
+			opt = CParser::OPT_TYPE::OPT_KEYWORD;
 			// Allow return to Surface for more processing
 			break;
 
@@ -299,7 +299,7 @@ cxxSurfaceComp::read_raw(CParser & parser, bool check)
 			master_element_defined = true;
 			break;
 		}
-		if (opt == CParser::OPT_EOF || opt == CParser::OPT_KEYWORD)
+		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	if (check)

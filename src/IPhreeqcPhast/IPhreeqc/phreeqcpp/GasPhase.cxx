@@ -233,7 +233,7 @@ cxxGasPhase::cxxGasPhase(const std::map < int, cxxGasPhase > &entities,
 cxxNumKeyword(io)
 {
 	this->n_user = this->n_user_end = l_n_user;
-	gasPhaseComps.type = cxxNameDouble::ND_NAME_COEF;
+	gasPhaseComps.type = cxxNameDouble::ND_TYPE::ND_NAME_COEF;
 	total_p = 0;
 	volume = 0;
 	v_m = 0;
@@ -394,7 +394,7 @@ cxxGasPhase::read_raw(CParser & parser, bool check)
 	this->read_number_description(parser);
 	this->Set_new_def(false);
 
-	opt_save = CParser::OPT_ERROR;
+	opt_save = CParser::OPT_TYPE::OPT_ERROR;
 	bool type_defined(false);
 	bool total_p_defined(false);
 	bool volume_defined(false);
@@ -413,19 +413,19 @@ cxxGasPhase::read_raw(CParser & parser, bool check)
 			opt = parser.getOptionFromLastLine(vopts, next_char, true);
 			parser.set_echo_file(eo);
 		}
-		if (opt == CParser::OPT_DEFAULT)
+		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
 		switch (opt)
 		{
-		case CParser::OPT_EOF:
+		case CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_KEYWORD:
+		case CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_DEFAULT:
-		case CParser::OPT_ERROR:
-			opt = CParser::OPT_EOF;
+		case CParser::OPT_TYPE::OPT_DEFAULT:
+		case CParser::OPT_TYPE::OPT_ERROR:
+			opt = CParser::OPT_TYPE::OPT_EOF;
 			parser.error_msg("Unknown input in GAS_PHASE_COMP_RAW keyword.",
 							 PHRQ_io::OT_CONTINUE);
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
@@ -520,7 +520,7 @@ cxxGasPhase::read_raw(CParser & parser, bool check)
 				}
 			}
 			
-			opt_save = CParser::OPT_DEFAULT;
+			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 		case 6:				// pr_in
 			if (!(parser.get_iss() >> i))
@@ -599,7 +599,7 @@ cxxGasPhase::read_raw(CParser & parser, bool check)
 			opt_save = 12;
 			break;
 		}
-		if (opt == CParser::OPT_EOF || opt == CParser::OPT_KEYWORD)
+		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	if (check)

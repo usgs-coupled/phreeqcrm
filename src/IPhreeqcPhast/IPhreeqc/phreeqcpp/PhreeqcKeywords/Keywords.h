@@ -5,7 +5,7 @@
 class Keywords
 {
 public:
-		enum KEYWORDS
+		enum class KEYWORDS
 	{
 		KEY_NONE,
 		KEY_END,

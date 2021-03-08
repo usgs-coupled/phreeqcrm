@@ -1055,7 +1055,7 @@ void IPhreeqc::SetSelectedOutputStringOn(bool bValue)
 int IPhreeqc::test_db(void)
 {
 	std::ostringstream oss;
-	int sn = this->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
+	int sn = this->PhreeqcPtr->next_user_number(Keywords::KEYWORDS::KEY_SOLUTION);
 	oss << "SOLUTION " << sn <<"; DELETE; -solution " << sn;
 
 	this->PhreeqcPtr->set_reading_database(TRUE);

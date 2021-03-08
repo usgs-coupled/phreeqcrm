@@ -2791,7 +2791,7 @@ PhreeqcRM::FindComponents(void)
 		}
 		// Make lists regardless of species_save_on
 		{
-			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
+			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEYWORDS::KEY_SOLUTION);
 			{
 				std::ostringstream in;
 				in << "SOLUTION " << next << "\n";
@@ -2890,7 +2890,7 @@ PhreeqcRM::FindComponents(void)
 				}
 			}
 			// write solution
-			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
+			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEYWORDS::KEY_SOLUTION);
 			if (ex_set.size() > 0 || surface_types_set.size() > 0)
 			{
 				std::ostringstream in;
@@ -2912,7 +2912,7 @@ PhreeqcRM::FindComponents(void)
 				}
 			}
 			// write surface and save vectors
-			int next_surf = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SURFACE);
+			int next_surf = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEYWORDS::KEY_SURFACE);
 			this->SurfaceSpeciesNamesList.clear();
 			this->SurfaceTypesList.clear();
 			this->SurfaceNamesList.clear();
@@ -2954,7 +2954,7 @@ PhreeqcRM::FindComponents(void)
 				}
 			}
 			// Exchange species
-			int next_ex = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_EXCHANGE);
+			int next_ex = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEYWORDS::KEY_EXCHANGE);
 			this->ExchangeSpeciesNamesList.clear();
 			this->ExchangeNamesList.clear();
 			if (ex_set.size() > 0)
@@ -5107,12 +5107,12 @@ PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
 				n_old1 = boundary_solution1[i];
 				if (n_old1 < 0)
 				{
-					int next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEY_SOLUTION);
+					int next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEYWORDS::KEY_SOLUTION);
 					if (next != 0)
 					{
 						n_old1 = next - 1;
 					}
-					next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEY_MIX);
+					next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEYWORDS::KEY_MIX);
 					if (next - 1 > n_old1)
 						n_old1 = next -1;
 				}
@@ -5444,12 +5444,12 @@ PhreeqcRM::InitialPhreeqc2SpeciesConcentrations(std::vector < double > &destinat
 				n_old1 = boundary_solution1[i];
 				if (n_old1 < 0)
 				{
-					int next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEY_SOLUTION);
+					int next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEYWORDS::KEY_SOLUTION);
 					if (next != 0)
 					{
 						n_old1 = next - 1;
 					}
-					next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEY_MIX);
+					next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEYWORDS::KEY_MIX);
 					if (next - 1 > n_old1)
 						n_old1 = next -1;
 				}
@@ -5546,7 +5546,7 @@ PhreeqcRM::InitialPhreeqcCell2Module(int cell, const std::vector<int> &cell_numb
 		// determine last solution number
 		if (cell < 0)
 		{
-			int next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEY_SOLUTION);
+			int next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEYWORDS::KEY_SOLUTION);
 			if (next != 0)
 			{
 				cell = next - 1;
@@ -5720,7 +5720,7 @@ PhreeqcRM::InitialPhreeqcCell2Module(int cell, const std::vector<int> &cell_numb
 		// determine last solution number
 		if (cell < 0)
 		{
-			int next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEY_SOLUTION);
+			int next = this->GetWorkers()[this->nthreads]->Get_PhreeqcPtr()->next_user_number(Keywords::KEYWORDS::KEY_SOLUTION);
 			if (next != 0)
 			{
 				cell = next - 1;
@@ -8845,7 +8845,7 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 	{
 		std::ostringstream input;
 		input << "PRINT; -selected_output true\n";
-		int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
+		int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEYWORDS::KEY_SOLUTION);
 		input << "SOLUTION " << next << "; DELETE; -solution " << next << "\n";
 		if (phast_iphreeqc_worker->RunString(input.str().c_str()) < 0)
 		{
@@ -9142,7 +9142,7 @@ PhreeqcRM::RunCellsThread(int n)
 				phast_iphreeqc_worker->SetSelectedOutputStringOn(true);
 				std::ostringstream input;
 				input << "PRINT; -selected_output true\n";
-				int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
+				int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEYWORDS::KEY_SOLUTION);
 				input << "SOLUTION " << next << "; DELETE; -solution " << next << "\n";
 				if (phast_iphreeqc_worker->RunString(input.str().c_str()) < 0)
 				{

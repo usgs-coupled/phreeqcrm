@@ -22,7 +22,7 @@ CParser::CParser(PHRQ_io *io):
 PHRQ_base(io),
 m_input_stream(std::cin), 
 m_input_error(0),
-m_next_keyword(Keywords::KEY_NONE)
+m_next_keyword(Keywords::KEYWORDS::KEY_NONE)
 {
 	if (!io)
 	{
@@ -52,7 +52,7 @@ CParser::CParser(std::istream & input, PHRQ_io *io):
 PHRQ_base(io),
 m_input_stream(input), 
 m_input_error(0),
-m_next_keyword(Keywords::KEY_NONE)
+m_next_keyword(Keywords::KEYWORDS::KEY_NONE)
 {
 	m_line_save.reserve(80);
 	m_line.reserve(80);
@@ -213,7 +213,7 @@ PHRQ_io::LINE_TYPE CParser::get_line()
 				//{{MOD
 				m_line.erase(m_line.begin(), m_line.end());	// m_line.clear();
 				//}}MOD
-				m_next_keyword = Keywords::KEY_END;
+				m_next_keyword = Keywords::KEYWORDS::KEY_END;
 				return PHRQ_io::LT_EOF;
 			}
 		}
@@ -362,7 +362,7 @@ CParser::check_key(std::string::iterator begin, std::string::iterator end)
 	std::transform(lowercase.begin(), lowercase.end(), lowercase.begin(),
 				   tolower);
 	m_next_keyword = Keywords::Keyword_search(lowercase);
-	if (m_next_keyword == Keywords::KEY_NONE)
+	if (m_next_keyword == Keywords::KEYWORDS::KEY_NONE)
 	{
 		return false;
 	}
@@ -630,7 +630,7 @@ CParser::FIND_TYPE CParser::find_option(const std::string & item, int *n,
 			if (list[i].compare(token) == 0)
 			{
 				*n = i;
-				return FT_OK;
+				return FIND_TYPE::FT_OK;
 			}
 		}
 		else
@@ -638,7 +638,7 @@ CParser::FIND_TYPE CParser::find_option(const std::string & item, int *n,
 			if (list[i].find(token) == 0)
 			{
 				*n = i;
-				return FT_OK;
+				return FIND_TYPE::FT_OK;
 			}
 		}
 	}
@@ -679,7 +679,7 @@ CParser::get_option(const std::vector < std::string > &opt_list,
 		opt_ptr = m_line.begin();
 		std::string::iterator end = m_line.end();
 		copy_token(option, opt_ptr, end);
-		if (find_option(option, &opt, opt_list, false) == CParser::FT_OK)
+		if (find_option(option, &opt, opt_list, false) == CParser::FIND_TYPE::FT_OK)
 		{
 			j = opt;
 			m_line_save.replace(m_line_save.find(option), option.size(),
@@ -1052,7 +1052,7 @@ CParser::getOptionFromLastLine(const std::vector < std::string > &opt_list,
 		opt_ptr = m_line.begin();
 		std::string::iterator end = m_line.end();
 		copy_token(option, opt_ptr, end);
-		if (find_option(option, &opt, opt_list, false) == CParser::FT_OK)
+		if (find_option(option, &opt, opt_list, false) == CParser::FIND_TYPE::FT_OK)
 		{
 			j = opt;
 			m_line_save.replace(m_line_save.find(option), option.size(),

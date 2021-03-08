@@ -140,7 +140,7 @@ cxxSSassemblage::read_raw(CParser & parser, bool check)
 	this->read_number_description(parser);
 	this->Set_new_def(false);
 
-	opt_save = CParser::OPT_ERROR;
+	opt_save = CParser::OPT_TYPE::OPT_ERROR;
 
 	for (;;)
 	{
@@ -153,20 +153,20 @@ cxxSSassemblage::read_raw(CParser & parser, bool check)
 		{
 			opt = parser.getOptionFromLastLine(vopts, next_char, true);
 		}
-		if (opt == CParser::OPT_DEFAULT)
+		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
 		useLastLine = false;
 		switch (opt)
 		{
-		case CParser::OPT_EOF:
+		case CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_KEYWORD:
+		case CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_DEFAULT:
-		case CParser::OPT_ERROR:
-			opt = CParser::OPT_EOF;
+		case CParser::OPT_TYPE::OPT_DEFAULT:
+		case CParser::OPT_TYPE::OPT_ERROR:
+			opt = CParser::OPT_TYPE::OPT_EOF;
 			parser.
 				error_msg("Unknown input in SOLID_SOLUTIONS_RAW or SOLID_SOLUTIONS_MODIFY keyword.",
 						  PHRQ_io::OT_CONTINUE);
@@ -221,7 +221,7 @@ cxxSSassemblage::read_raw(CParser & parser, bool check)
 			}
 			break;
 		}
-		if (opt == CParser::OPT_EOF || opt == CParser::OPT_KEYWORD)
+		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 }

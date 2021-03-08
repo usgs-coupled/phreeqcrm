@@ -619,7 +619,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 			string = "solution_s ";
 			string.append( data->char_vector[i] );
 			next_keyword_save = next_keyword;
-			next_keyword = Keywords::KEY_SOLUTION_SPREAD;
+			next_keyword = Keywords::KEYWORDS::KEY_SOLUTION_SPREAD;
 			cxxNumKeyword nk;
 			nk.read_number_description(string);
 			n_user = nk.Get_n_user();

@@ -995,114 +995,114 @@ cxxStorageBin::read_raw(CParser & parser)
 	{
 		switch (parser.next_keyword())
 		{
-		case Keywords::KEY_END:
-		case Keywords::KEY_NONE:
+		case Keywords::KEYWORDS::KEY_END:
+		case Keywords::KEYWORDS::KEY_NONE:
 			goto END_OF_SIMULATION_INPUT;
 			break;
-		case Keywords::KEY_SOLUTION_RAW:
+		case Keywords::KEYWORDS::KEY_SOLUTION_RAW:
 			{
 				cxxSolution entity(this->Get_io());
 				entity.read_raw(parser);
 				Solutions[entity.Get_n_user()] = entity;
 			}
 			break;
-		case Keywords::KEY_SOLUTION_MODIFY:
+		case Keywords::KEYWORDS::KEY_SOLUTION_MODIFY:
 			{
 				Utilities::SB_read_modify(this->Solutions, parser);
 			}
 			break;
-		case Keywords::KEY_EXCHANGE_RAW:
+		case Keywords::KEYWORDS::KEY_EXCHANGE_RAW:
 			{
 				cxxExchange entity(this->Get_io());
 				entity.read_raw(parser);
 				Exchangers[entity.Get_n_user()] = entity;
 			}
 			break;
-		case Keywords::KEY_EXCHANGE_MODIFY:
+		case Keywords::KEYWORDS::KEY_EXCHANGE_MODIFY:
 			{
 				Utilities::SB_read_modify(this->Exchangers, parser);
 			}
 			break;
-		case Keywords::KEY_GAS_PHASE_RAW:
+		case Keywords::KEYWORDS::KEY_GAS_PHASE_RAW:
 			{
 				cxxGasPhase entity(this->Get_io());
 				entity.read_raw(parser);
 				GasPhases[entity.Get_n_user()] = entity;
 			}
 			break;
-		case Keywords::KEY_GAS_PHASE_MODIFY:
+		case Keywords::KEYWORDS::KEY_GAS_PHASE_MODIFY:
 			{
 				Utilities::SB_read_modify(this->GasPhases, parser);
 			}
 			break;
-		case Keywords::KEY_KINETICS_RAW:
+		case Keywords::KEYWORDS::KEY_KINETICS_RAW:
 			{
 				cxxKinetics entity(this->Get_io());
 				entity.read_raw(parser);
 				Kinetics[entity.Get_n_user()] = entity;
 			}
 			break;
-		case Keywords::KEY_KINETICS_MODIFY:
+		case Keywords::KEYWORDS::KEY_KINETICS_MODIFY:
 			{
 				Utilities::SB_read_modify(this->Kinetics, parser);
 			}
 			break;
-		case Keywords::KEY_EQUILIBRIUM_PHASES_RAW:
+		case Keywords::KEYWORDS::KEY_EQUILIBRIUM_PHASES_RAW:
 			{
 				cxxPPassemblage entity(this->Get_io());
 				entity.read_raw(parser);
 				PPassemblages[entity.Get_n_user()] = entity;
 			}
 			break;
-		case Keywords::KEY_EQUILIBRIUM_PHASES_MODIFY:
+		case Keywords::KEYWORDS::KEY_EQUILIBRIUM_PHASES_MODIFY:
 			{
 				Utilities::SB_read_modify(this->PPassemblages, parser);
 			}
 			break;
-		case Keywords::KEY_SOLID_SOLUTIONS_RAW:
+		case Keywords::KEYWORDS::KEY_SOLID_SOLUTIONS_RAW:
 			{
 				cxxSSassemblage entity(this->Get_io());
 				entity.read_raw(parser);
 				SSassemblages[entity.Get_n_user()] = entity;
 			}
 			break;
-		case Keywords::KEY_SOLID_SOLUTIONS_MODIFY:
+		case Keywords::KEYWORDS::KEY_SOLID_SOLUTIONS_MODIFY:
 			{
 				Utilities::SB_read_modify(this->SSassemblages, parser);
 			}
 			break;
-		case Keywords::KEY_SURFACE_RAW:
+		case Keywords::KEYWORDS::KEY_SURFACE_RAW:
 			{
 				cxxSurface entity(this->Get_io());
 				entity.read_raw(parser);
 				Surfaces[entity.Get_n_user()] = entity;
 			}
 			break;
-		case Keywords::KEY_SURFACE_MODIFY:
+		case Keywords::KEYWORDS::KEY_SURFACE_MODIFY:
 			{
 				Utilities::SB_read_modify(this->Surfaces, parser);
 			}
 			break;
-		case Keywords::KEY_REACTION_TEMPERATURE_RAW:
+		case Keywords::KEYWORDS::KEY_REACTION_TEMPERATURE_RAW:
 			{
 				cxxTemperature entity(this->Get_io());
 				entity.read_raw(parser);
 				Temperatures[entity.Get_n_user()] = entity;
 			}
 			break;
-		case Keywords::KEY_REACTION_RAW:
+		case Keywords::KEYWORDS::KEY_REACTION_RAW:
 			{
 				cxxReaction entity;
 				entity.read_raw(parser, true);
 				Reactions[entity.Get_n_user()] = entity;
 			}
 			break;
-		case Keywords::KEY_REACTION_MODIFY:
+		case Keywords::KEYWORDS::KEY_REACTION_MODIFY:
 		{
 			Utilities::SB_read_modify(this->Reactions, parser);
 		}
 		break;
-		case Keywords::KEY_MIX_RAW:
+		case Keywords::KEYWORDS::KEY_MIX_RAW:
 			{
 				cxxMix entity;
 				entity.read_raw(parser);
@@ -1137,8 +1137,8 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 
 	switch (parser.next_keyword())
 	{
-	case Keywords::KEY_NONE:
-	case Keywords::KEY_END:
+	case Keywords::KEYWORDS::KEY_NONE:
+	case Keywords::KEYWORDS::KEY_END:
 		while ((i =
 				parser.check_line("StorageBin read_raw_keyword", false, true,
 								  true, true)) != PHRQ_io::LT_KEYWORD)
@@ -1148,7 +1148,7 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 		}
 		break;
 
-	case Keywords::KEY_SOLUTION_RAW:
+	case Keywords::KEYWORDS::KEY_SOLUTION_RAW:
 		{
 			cxxSolution entity(this->Get_io());
 			entity.read_raw(parser);
@@ -1157,7 +1157,7 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 		}
 		break;
 
-	case Keywords::KEY_EXCHANGE_RAW:
+	case Keywords::KEYWORDS::KEY_EXCHANGE_RAW:
 		{
 			cxxExchange entity(this->Get_io());
 			entity.read_raw(parser);
@@ -1166,7 +1166,7 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 		}
 		break;
 
-	case Keywords::KEY_GAS_PHASE_RAW:
+	case Keywords::KEYWORDS::KEY_GAS_PHASE_RAW:
 		{
 			cxxGasPhase entity(this->Get_io());
 			entity.read_raw(parser);
@@ -1175,7 +1175,7 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 		}
 		break;
 
-	case Keywords::KEY_KINETICS_RAW:
+	case Keywords::KEYWORDS::KEY_KINETICS_RAW:
 		{
 			cxxKinetics entity(this->Get_io());
 			entity.read_raw(parser);
@@ -1184,7 +1184,7 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 		}
 		break;
 
-	case Keywords::KEY_EQUILIBRIUM_PHASES_RAW:
+	case Keywords::KEYWORDS::KEY_EQUILIBRIUM_PHASES_RAW:
 		{
 			cxxPPassemblage entity(this->Get_io());
 			entity.read_raw(parser);
@@ -1193,7 +1193,7 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 		}
 		break;
 
-	case Keywords::KEY_SOLID_SOLUTIONS_RAW:
+	case Keywords::KEYWORDS::KEY_SOLID_SOLUTIONS_RAW:
 		{
 			cxxSSassemblage entity(this->Get_io());
 			entity.read_raw(parser);
@@ -1202,7 +1202,7 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 		}
 		break;
 
-	case Keywords::KEY_SURFACE_RAW:
+	case Keywords::KEYWORDS::KEY_SURFACE_RAW:
 		{
 			cxxSurface entity(this->Get_io());
 			entity.read_raw(parser);
@@ -1211,7 +1211,7 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 		}
 		break;
 
-	case Keywords::KEY_REACTION_TEMPERATURE_RAW:
+	case Keywords::KEYWORDS::KEY_REACTION_TEMPERATURE_RAW:
 		{
 			cxxTemperature entity(this->Get_io());
 			entity.read_raw(parser);
@@ -1220,7 +1220,7 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 		}
 		break;
 
-	case Keywords::KEY_REACTION_RAW:
+	case Keywords::KEYWORDS::KEY_REACTION_RAW:
 		{
 			cxxReaction entity;
 			entity.read_raw(parser, true);
@@ -1229,7 +1229,7 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 		}
 		break;
 
-	case Keywords::KEY_MIX_RAW:
+	case Keywords::KEYWORDS::KEY_MIX_RAW:
 		{
 			cxxMix entity;
 			entity.read_raw(parser);

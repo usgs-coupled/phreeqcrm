@@ -3609,37 +3609,37 @@ get_entity_enum(char *name)
 
 	switch (next_keyword)
 	{
-	case Keywords::KEY_SOLUTION:					/* Solution */
+	case Keywords::KEYWORDS::KEY_SOLUTION:					/* Solution */
 		return (Solution);
 		break;
-	case Keywords::KEY_EQUILIBRIUM_PHASES:		/* Pure phases */
+	case Keywords::KEYWORDS::KEY_EQUILIBRIUM_PHASES:		/* Pure phases */
 		return (Pure_phase);
 		break;
-	case Keywords::KEY_REACTION:					/* Reaction */
+	case Keywords::KEYWORDS::KEY_REACTION:					/* Reaction */
 		return (Reaction);
 		break;
-	case Keywords::KEY_MIX:						/* Mix */
+	case Keywords::KEYWORDS::KEY_MIX:						/* Mix */
 		return (Mix);
 		break;
-	case Keywords::KEY_EXCHANGE:					/* Ex */
+	case Keywords::KEYWORDS::KEY_EXCHANGE:					/* Ex */
 		return (Exchange);
 		break;
-	case Keywords::KEY_SURFACE:					/* Surface */
+	case Keywords::KEYWORDS::KEY_SURFACE:					/* Surface */
 		return (Surface);
 		break;
-	case Keywords::KEY_REACTION_TEMPERATURE:		/* Temperature */
+	case Keywords::KEYWORDS::KEY_REACTION_TEMPERATURE:		/* Temperature */
 		return (Temperature);
 		break;
-	case Keywords::KEY_REACTION_PRESSURE:		/* Pressure */
+	case Keywords::KEYWORDS::KEY_REACTION_PRESSURE:		/* Pressure */
 		return (Pressure);
 		break;
-	case Keywords::KEY_GAS_PHASE:					/* Gas */
+	case Keywords::KEYWORDS::KEY_GAS_PHASE:					/* Gas */
 		return (Gas_phase);
 		break;
-	case Keywords::KEY_KINETICS:					/* Kinetics */
+	case Keywords::KEYWORDS::KEY_KINETICS:					/* Kinetics */
 		return (Kinetics);
 		break;
-	case Keywords::KEY_SOLID_SOLUTIONS:			/* solid_solutions */
+	case Keywords::KEYWORDS::KEY_SOLID_SOLUTIONS:			/* solid_solutions */
 		return (Ss_phase);
 		break;
 	default:

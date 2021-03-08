@@ -36,7 +36,7 @@ PHRQ_io(void)
 	screen_on = true;
 	echo_destination = ECHO_OUTPUT;
 
-	m_next_keyword = Keywords::KEY_NONE;
+	m_next_keyword = Keywords::KEYWORDS::KEY_NONE;
 	accumulate = false;
 	m_line_type = PHRQ_io::LT_EMPTY;
 }
@@ -808,7 +808,7 @@ get_line(void)
 		}
 		return return_value;
 	}
-	m_next_keyword = Keywords::KEY_END;
+	m_next_keyword = Keywords::KEYWORDS::KEY_END;
 	return LT_EOF;
 }
 
@@ -896,7 +896,7 @@ check_key(std::string::iterator begin, std::string::iterator end)
 				   tolower);
 
 	m_next_keyword = Keywords::Keyword_search(lowercase);
-	if (m_next_keyword == Keywords::KEY_NONE)
+	if (m_next_keyword == Keywords::KEYWORDS::KEY_NONE)
 	{
 		return false;
 	}

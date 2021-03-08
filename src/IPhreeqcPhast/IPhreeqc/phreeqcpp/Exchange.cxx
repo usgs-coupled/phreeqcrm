@@ -224,13 +224,13 @@ cxxExchange::read_raw(CParser & parser, bool check)
 		useLastLine = false;
 		switch (opt)
 		{
-		case CParser::OPT_EOF:
+		case CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_KEYWORD:
+		case CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_DEFAULT:
-		case CParser::OPT_ERROR:
-			opt = CParser::OPT_EOF;
+		case CParser::OPT_TYPE::OPT_DEFAULT:
+		case CParser::OPT_TYPE::OPT_ERROR:
+			opt = CParser::OPT_TYPE::OPT_EOF;
 			parser.error_msg("Unknown input in EXCH_COMP_RAW keyword.",
 							 PHRQ_io::OT_CONTINUE);
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
@@ -331,7 +331,7 @@ cxxExchange::read_raw(CParser & parser, bool check)
 			}
 			break;
 		}
-		if (opt == CParser::OPT_EOF || opt == CParser::OPT_KEYWORD)
+		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	// members that must be defined
