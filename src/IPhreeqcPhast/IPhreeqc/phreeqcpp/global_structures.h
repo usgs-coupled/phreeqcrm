@@ -194,8 +194,8 @@ typedef struct entry
 	const char *key;
 	void *data;
 } ENTRY;
-typedef enum
-{ FIND, ENTER } ACTION;
+//typedef enum
+//{ FIND, ENTER } ACTION;
 
 /* TSEARCH(3C) */
 typedef enum

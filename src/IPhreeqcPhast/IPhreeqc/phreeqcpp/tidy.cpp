@@ -570,7 +570,7 @@ add_other_logk(LDBLE * source_k, int count_add_logk,
 		str_tolower(token);
 		item.key = token;
 		item.data = NULL;
-		found_item = hsearch_multi(logk_hash_table, item, FIND);
+		found_item = hsearch_multi(logk_hash_table, item, Utilities::ACTION::FIND);
 		if (found_item == NULL)
 		{
 			input_error++;
@@ -639,7 +639,7 @@ add_logks(struct logk *logk_ptr, int repeats)
 		str_tolower(token);
 		item.key = token;
 		item.data = NULL;
-		found_item = hsearch_multi(logk_hash_table, item, FIND);
+		found_item = hsearch_multi(logk_hash_table, item, Utilities::ACTION::FIND);
 		if (found_item == NULL)
 		{
 			input_error++;

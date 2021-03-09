@@ -473,7 +473,7 @@ element_store(const char *element)
 
 	item.key = token;
 	item.data = NULL;
-	found_item = hsearch_multi(elements_hash_table, item, FIND);
+	found_item = hsearch_multi(elements_hash_table, item, Utilities::ACTION::FIND);
 	if (found_item != NULL)
 	{
 		elts_ptr = (struct element *) (found_item->data);
@@ -504,7 +504,7 @@ element_store(const char *element)
  */
 	item.key = elements[n]->name;
 	item.data = (void *) elements[n];
-	found_item = hsearch_multi(elements_hash_table, item, ENTER);
+	found_item = hsearch_multi(elements_hash_table, item, Utilities::ACTION::ENTER);
 	if (found_item == NULL)
 	{
 		error_string = sformatf( "Hash table error in element_store.");
@@ -1536,7 +1536,7 @@ phase_store(const char *name)
 
 	item.key = ptr;
 	item.data = NULL;
-	found_item = hsearch_multi(phases_hash_table, item, FIND);
+	found_item = hsearch_multi(phases_hash_table, item, Utilities::ACTION::FIND);
 	if (found_item != NULL)
 	{
 		phase_ptr = (struct phase *) (found_item->data);
@@ -1563,7 +1563,7 @@ phase_store(const char *name)
  */
 	item.key = ptr;
 	item.data = (void *) phases[n];
-	found_item = hsearch_multi(phases_hash_table, item, ENTER);
+	found_item = hsearch_multi(phases_hash_table, item, Utilities::ACTION::ENTER);
 	if (found_item == NULL)
 	{
 		error_string = sformatf( "Hash table error in phase_store.");
@@ -2174,7 +2174,7 @@ s_search(const char *name)
 	strcpy(safe_name, name);
 	item.key = safe_name;
 	item.data = NULL;
-	found_item = hsearch_multi(species_hash_table, item, FIND);
+	found_item = hsearch_multi(species_hash_table, item, Utilities::ACTION::FIND);
 	if (found_item != NULL)
 	{
 		s_ptr = (struct species *) (found_item->data);
@@ -2219,7 +2219,7 @@ s_store(const char *name, LDBLE l_z, int replace_if_found)
  */
 	item.key = name;
 	item.data = NULL;
-	found_item = hsearch_multi(species_hash_table, item, FIND);
+	found_item = hsearch_multi(species_hash_table, item, Utilities::ACTION::FIND);
 
 	if (found_item != NULL && replace_if_found == FALSE)
 	{
@@ -2253,7 +2253,7 @@ s_store(const char *name, LDBLE l_z, int replace_if_found)
  */
 	item.key = s_ptr->name;
 	item.data = (void *) s_ptr;
-	found_item = hsearch_multi(species_hash_table, item, ENTER);
+	found_item = hsearch_multi(species_hash_table, item, Utilities::ACTION::ENTER);
 	if (found_item == NULL)
 	{
 		error_string = sformatf( "Hash table error in species_store.");
@@ -3333,7 +3333,7 @@ logk_store(char *name, int replace_if_found)
 	str_tolower(name);
 	item.key = name;
 	item.data = NULL;
-	found_item = hsearch_multi(logk_hash_table, item, FIND);
+	found_item = hsearch_multi(logk_hash_table, item, Utilities::ACTION::FIND);
 
 	if (found_item != NULL && replace_if_found == FALSE)
 	{
@@ -3365,7 +3365,7 @@ logk_store(char *name, int replace_if_found)
  */
 	item.key = logk_ptr->name;
 	item.data = (void *) logk_ptr;
-	found_item = hsearch_multi(logk_hash_table, item, ENTER);
+	found_item = hsearch_multi(logk_hash_table, item, Utilities::ACTION::ENTER);
 	if (found_item == NULL)
 	{
 		error_string = sformatf( "Hash table error in logk_store.");
@@ -3464,7 +3464,7 @@ logk_search(const char *name_in)
 	str_tolower(name);
 	item.key = name;
 	item.data = NULL;
-	found_item = hsearch_multi(logk_hash_table, item, FIND);
+	found_item = hsearch_multi(logk_hash_table, item, Utilities::ACTION::FIND);
 	free_check_null(name);
 	if (found_item != NULL)
 	{

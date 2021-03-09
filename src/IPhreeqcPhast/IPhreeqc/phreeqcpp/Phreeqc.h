@@ -1117,7 +1117,7 @@ protected:
 	int get_token(char **eqnaddr, char *string, LDBLE * z, int *l);
 	int hcreate_multi(unsigned Count, HashTable ** HashTable_ptr);
 	void hdestroy_multi(HashTable * HashTable_ptr);
-	ENTRY *hsearch_multi(HashTable * Table, ENTRY item, ACTION action);
+	ENTRY *hsearch_multi(HashTable * Table, ENTRY item, Utilities::ACTION action);
 	int islegit(const char c);
 public:
 	void malloc_error(void);

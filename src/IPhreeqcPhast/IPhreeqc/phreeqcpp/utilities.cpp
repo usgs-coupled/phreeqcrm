@@ -1666,7 +1666,7 @@ hdestroy_multi(HashTable * Table)
 }
 
 ENTRY * Phreeqc::
-hsearch_multi(HashTable * Table, ENTRY item, ACTION action)
+hsearch_multi(HashTable * Table, ENTRY item, Utilities::ACTION action)
 /* ACTION       FIND/ENTER	*/
 {
 	Address h;
@@ -1702,7 +1702,7 @@ hsearch_multi(HashTable * Table, ENTRY item, ACTION action)
 #endif
 	}
 	if (q != NULL				/* found        */
-		|| action == FIND		/* not found, search only       */
+		|| action == Utilities::ACTION::FIND		/* not found, search only       */
 		)
 	{
 		return ((ENTRY *) q);

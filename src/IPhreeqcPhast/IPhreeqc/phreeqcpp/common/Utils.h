@@ -36,6 +36,10 @@ namespace Utilities
 	  TYPE_SIT_EPSILON, TYPE_SIT_EPSILON_MU, TYPE_APHI
 	};
 
+	enum class ACTION
+	{
+		FIND, ENTER
+	};
 
 	const char INDENT[] = "  ";
 

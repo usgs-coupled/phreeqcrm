@@ -1471,7 +1471,7 @@ master_isotope_store(const char *name, int replace_if_found)
 
 	item.key = token;
 	item.data = NULL;
-	found_item = hsearch_multi(master_isotope_hash_table, item, FIND);
+	found_item = hsearch_multi(master_isotope_hash_table, item, Utilities::ACTION::FIND);
 
 	if (found_item != NULL && replace_if_found == FALSE)
 	{
@@ -1503,7 +1503,7 @@ master_isotope_store(const char *name, int replace_if_found)
  */
 	item.key = master_isotope_ptr->name;
 	item.data = (void *) master_isotope_ptr;
-	found_item = hsearch_multi(master_isotope_hash_table, item, ENTER);
+	found_item = hsearch_multi(master_isotope_hash_table, item, Utilities::ACTION::ENTER);
 	if (found_item == NULL)
 	{
 		error_string = sformatf( "Hash table error in master_isotope_store.");
@@ -1588,7 +1588,7 @@ master_isotope_search(const char *name)
 
 	item.key = token;
 	item.data = NULL;
-	found_item = hsearch_multi(master_isotope_hash_table, item, FIND);
+	found_item = hsearch_multi(master_isotope_hash_table, item, Utilities::ACTION::FIND);
 
 	if (found_item != NULL)
 	{
@@ -1638,7 +1638,7 @@ calculate_value_store(const char *name, int replace_if_found)
 	str_tolower(token);
 	item.key = token;
 	item.data = NULL;
-	found_item = hsearch_multi(calculate_value_hash_table, item, FIND);
+	found_item = hsearch_multi(calculate_value_hash_table, item, Utilities::ACTION::FIND);
 
 	if (found_item != NULL && replace_if_found == FALSE)
 	{
@@ -1672,7 +1672,7 @@ calculate_value_store(const char *name, int replace_if_found)
  */
 	item.key = string_hsave(token);
 	item.data = (void *) calculate_value_ptr;
-	found_item = hsearch_multi(calculate_value_hash_table, item, ENTER);
+	found_item = hsearch_multi(calculate_value_hash_table, item, Utilities::ACTION::ENTER);
 	if (found_item == NULL)
 	{
 		error_string = sformatf( "Hash table error in calculate_value_store.");
@@ -1757,7 +1757,7 @@ calculate_value_search(const char *name)
 	str_tolower(token);
 	item.key = token;
 	item.data = NULL;
-	found_item = hsearch_multi(calculate_value_hash_table, item, FIND);
+	found_item = hsearch_multi(calculate_value_hash_table, item, Utilities::ACTION::FIND);
 
 	if (found_item != NULL)
 	{
@@ -1831,7 +1831,7 @@ isotope_ratio_store(const char *name, int replace_if_found)
 	str_tolower(token);
 	item.key = token;
 	item.data = NULL;
-	found_item = hsearch_multi(isotope_ratio_hash_table, item, FIND);
+	found_item = hsearch_multi(isotope_ratio_hash_table, item, Utilities::ACTION::FIND);
 
 	if (found_item != NULL && replace_if_found == FALSE)
 	{
@@ -1863,7 +1863,7 @@ isotope_ratio_store(const char *name, int replace_if_found)
  */
 	item.key = string_hsave(token);
 	item.data = (void *) isotope_ratio_ptr;
-	found_item = hsearch_multi(isotope_ratio_hash_table, item, ENTER);
+	found_item = hsearch_multi(isotope_ratio_hash_table, item, Utilities::ACTION::ENTER);
 	if (found_item == NULL)
 	{
 		error_string = sformatf( "Hash table error in isotope_ratio_store.");
@@ -1943,7 +1943,7 @@ isotope_ratio_search(const char *name)
 	str_tolower(token);
 	item.key = token;
 	item.data = NULL;
-	found_item = hsearch_multi(isotope_ratio_hash_table, item, FIND);
+	found_item = hsearch_multi(isotope_ratio_hash_table, item, Utilities::ACTION::FIND);
 
 	if (found_item != NULL)
 	{
@@ -1993,7 +1993,7 @@ isotope_alpha_store(const char *name, int replace_if_found)
 	str_tolower(token);
 	item.key = token;
 	item.data = NULL;
-	found_item = hsearch_multi(isotope_alpha_hash_table, item, FIND);
+	found_item = hsearch_multi(isotope_alpha_hash_table, item, Utilities::ACTION::FIND);
 
 	if (found_item != NULL && replace_if_found == FALSE)
 	{
@@ -2025,7 +2025,7 @@ isotope_alpha_store(const char *name, int replace_if_found)
  */
 	item.key = string_hsave(token);
 	item.data = (void *) isotope_alpha_ptr;
-	found_item = hsearch_multi(isotope_alpha_hash_table, item, ENTER);
+	found_item = hsearch_multi(isotope_alpha_hash_table, item, Utilities::ACTION::ENTER);
 	if (found_item == NULL)
 	{
 		error_string = sformatf( "Hash table error in isotope_alpha_store.");
@@ -2104,7 +2104,7 @@ isotope_alpha_search(const char *name)
 	str_tolower(token);
 	item.key = token;
 	item.data = NULL;
-	found_item = hsearch_multi(isotope_alpha_hash_table, item, FIND);
+	found_item = hsearch_multi(isotope_alpha_hash_table, item, Utilities::ACTION::FIND);
 
 	if (found_item != NULL)
 	{
