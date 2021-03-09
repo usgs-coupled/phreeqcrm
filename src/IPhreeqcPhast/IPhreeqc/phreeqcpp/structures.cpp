@@ -1457,7 +1457,7 @@ phase_init(struct phase *phase_ptr)
 	phase_ptr->lk = 0.0;
 	for (i = 0; i < MAX_LOG_K_INDICES; i++)
 		phase_ptr->logk[i] = 0.0;
-	phase_ptr->original_units = kjoules;
+	phase_ptr->original_units = Utilities::DELTA_H_UNIT::kjoules;
 	phase_ptr->count_add_logk = 0;
 	phase_ptr->add_logk = NULL;
 	phase_ptr->moles_x = 0;
@@ -1494,7 +1494,7 @@ phase_init(struct phase *phase_ptr)
 	phase_ptr->rxn_x = NULL;
 	phase_ptr->replaced = 0;
 	phase_ptr->in_system = 1;
-	phase_ptr->original_deltav_units = cm3_per_mol;
+	phase_ptr->original_deltav_units = Utilities::DELTA_V_UNIT::cm3_per_mol;
 	return (OK);
 }
 
@@ -2117,7 +2117,7 @@ s_init(struct species *s_ptr)
 		s_ptr->millero[i] = 0.0;
 	}
 /* VP: Density End */
-	s_ptr->original_units = kjoules;
+	s_ptr->original_units = Utilities::DELTA_H_UNIT::kjoules;
 	s_ptr->count_add_logk = 0;
 	s_ptr->add_logk = NULL;
 	s_ptr->lg = 0.0;
@@ -2147,7 +2147,7 @@ s_init(struct species *s_ptr)
 	{
 		s_ptr->dz[i] = 0.0;
 	}
-	s_ptr->original_deltav_units = cm3_per_mol;
+	s_ptr->original_deltav_units = Utilities::DELTA_V_UNIT::cm3_per_mol;
 	return (OK);
 }
 

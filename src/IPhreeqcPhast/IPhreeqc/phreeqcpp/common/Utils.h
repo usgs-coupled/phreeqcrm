@@ -9,7 +9,21 @@
 #include "phrqtype.h"
 namespace Utilities
 {
-
+	//typedef enum { kcal, cal, kjoules, joules } Utilities::DELTA_H_UNIT;
+	//typedef enum { cm3_per_mol, dm3_per_mol, m3_per_mol } Utilities::DELTA_V_UNIT;
+	enum class DELTA_H_UNIT
+	{
+		kcal, 
+		cal, 
+		kjoules, 
+		joules
+	};
+	enum class DELTA_V_UNIT
+	{
+		cm3_per_mol, 
+		dm3_per_mol, 
+		m3_per_mol
+	};
 	const char INDENT[] = "  ";
 
 	int strcmp_nocase(const char *str1, const char *str2);

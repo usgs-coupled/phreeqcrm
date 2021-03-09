@@ -2,6 +2,7 @@
 #define _INC_GLOBAL_STRUCTURES_H
 #include "Surface.h"
 #include "GasPhase.h"
+#include "Utils.h"
 /* ----------------------------------------------------------------------
  *   #define DEFINITIONS
  * ---------------------------------------------------------------------- */
@@ -162,8 +163,8 @@
 //
 // Typedefs and structure definitions
 //
-typedef enum { kcal, cal, kjoules, joules } DELTA_H_UNIT;
-typedef enum { cm3_per_mol, dm3_per_mol, m3_per_mol } DELTA_V_UNIT;
+//typedef enum { kcal, cal, kjoules, joules } Utilities::DELTA_H_UNIT;
+//typedef enum { cm3_per_mol, dm3_per_mol, m3_per_mol } Utilities::DELTA_V_UNIT;
 enum entity_type
 { Solution, Reaction, Exchange, Surface, Gas_phase, Pure_phase, Ss_phase,
 	Kinetics, Mix, Temperature, Pressure, UnKnown
@@ -693,7 +694,7 @@ struct species
 /* VP: Density Start */
 	LDBLE millero[7];		    /* regression coefficients to calculate temperature dependent phi_0 and b_v of Millero density model */
 	/* VP: Density End */
-	DELTA_H_UNIT original_units;	/* enum with original delta H units */
+	Utilities::DELTA_H_UNIT original_units;	/* enum with original delta H units */
 	int count_add_logk;
 	struct name_coef *add_logk;
 	LDBLE lg;					/* log10 activity coefficient, gamma */
@@ -718,19 +719,19 @@ struct species
 	LDBLE tot_dh2o_moles;		/* sum(moles*g*Ws/Waq) */
 	LDBLE cd_music[5];
 	LDBLE dz[3];
-	DELTA_V_UNIT original_deltav_units;
+	Utilities::DELTA_V_UNIT original_deltav_units;
 };
 struct logk
 {								/* Named log K's */
 	const char *name;					/* name of species */
 	LDBLE lk;					/* log10 k at working temperature */
 	LDBLE log_k[MAX_LOG_K_INDICES];				/* log kt0, delh, 6 coefficients analalytical expression */
-	DELTA_H_UNIT original_units;	/* enum with original delta H units */
+	Utilities::DELTA_H_UNIT original_units;	/* enum with original delta H units */
 	int count_add_logk;
 	int done;
 	struct name_coef *add_logk;
 	LDBLE log_k_original[MAX_LOG_K_INDICES];	/* log kt0, delh, 5 coefficients analalytical expression */
-	DELTA_V_UNIT original_deltav_units;
+	Utilities::DELTA_V_UNIT original_deltav_units;
 };
 
 /*----------------------------------------------------------------------
@@ -743,8 +744,8 @@ struct phase
 	int in;						/* species used in model if TRUE */
 	LDBLE lk;					/* log10 k at working temperature */
 	LDBLE logk[MAX_LOG_K_INDICES];				/* log kt0, delh, 6 coefficients analalytical expression */
-	DELTA_H_UNIT original_units;	/* enum with original delta H units */
-	DELTA_V_UNIT original_deltav_units;
+	Utilities::DELTA_H_UNIT original_units;	/* enum with original delta H units */
+	Utilities::DELTA_V_UNIT original_deltav_units;
 	int count_add_logk;
 	struct name_coef *add_logk;
 	LDBLE moles_x;

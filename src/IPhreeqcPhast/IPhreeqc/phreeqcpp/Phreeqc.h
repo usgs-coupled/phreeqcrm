@@ -715,12 +715,12 @@ public:
 	int read_copy(void);
 	int read_debug(void);
 	int read_delta_h_only(char *ptr, LDBLE * delta_h,
-		DELTA_H_UNIT * units);
+		Utilities::DELTA_H_UNIT * units);
 	int read_aq_species_vm_parms(char *ptr, LDBLE * delta_v);
 	int read_vm_only(char *ptr, LDBLE * delta_v,
-		DELTA_V_UNIT * units);
+		Utilities::DELTA_V_UNIT * units);
 	int read_phase_vm(char *ptr, LDBLE * delta_v,
-		DELTA_V_UNIT * units);
+		Utilities::DELTA_V_UNIT * units);
 	int read_llnl_aqueous_model_parameters(void);
 	int read_exchange(void);
 	int read_exchange_master_species(void);

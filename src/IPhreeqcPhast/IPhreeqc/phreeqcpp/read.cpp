@@ -2881,7 +2881,7 @@ read_aq_species_vm_parms(char *ptr, LDBLE * delta_v)
 }
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
-read_vm_only(char *ptr, LDBLE * delta_v, DELTA_V_UNIT * units)
+read_vm_only(char *ptr, LDBLE * delta_v, Utilities::DELTA_V_UNIT * units)
 /* ---------------------------------------------------------------------- */
 {
 	int j, l;
@@ -2906,7 +2906,7 @@ read_vm_only(char *ptr, LDBLE * delta_v, DELTA_V_UNIT * units)
 	/*
 	*   Read delta V units
 	*/
-	*units = cm3_per_mol;
+	*units = Utilities::DELTA_V_UNIT::cm3_per_mol;
 	do
 	{
 		j = copy_token(token, &ptr, &l);
@@ -2947,7 +2947,7 @@ read_vm_only(char *ptr, LDBLE * delta_v, DELTA_V_UNIT * units)
 
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
-read_phase_vm(char *ptr, LDBLE * delta_v, DELTA_V_UNIT * units)
+read_phase_vm(char *ptr, LDBLE * delta_v, Utilities::DELTA_V_UNIT * units)
 /* ---------------------------------------------------------------------- */
 {
 	int j, l;
@@ -2972,7 +2972,7 @@ read_phase_vm(char *ptr, LDBLE * delta_v, DELTA_V_UNIT * units)
 	/*
 	*   Read delta V units
 	*/
-	*units = cm3_per_mol;
+	*units = Utilities::DELTA_V_UNIT::cm3_per_mol;
 	do
 	{
 		j = copy_token(token, &ptr, &l);
@@ -2996,13 +2996,13 @@ read_phase_vm(char *ptr, LDBLE * delta_v, DELTA_V_UNIT * units)
 		{
 			/* Convert dm3/mol to cm3/mol */
 			factor = 1e3;
-			*units = dm3_per_mol;
+			*units = Utilities::DELTA_V_UNIT::dm3_per_mol;
 		}
 		else if (strstr(token, "m3") != NULL)
 		{
 			/* Convert m3/mol to cm3/mol */
 			factor = 1e6;
-			*units = m3_per_mol;
+			*units = Utilities::DELTA_V_UNIT::m3_per_mol;
 		}
 
 		for (int i = 0; i < 1; i++)
@@ -3015,7 +3015,7 @@ read_phase_vm(char *ptr, LDBLE * delta_v, DELTA_V_UNIT * units)
 
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
-read_delta_h_only(char *ptr, LDBLE * delta_h, DELTA_H_UNIT * units)
+read_delta_h_only(char *ptr, LDBLE * delta_h, Utilities::DELTA_H_UNIT * units)
 /* ---------------------------------------------------------------------- */
 {
 	int j, l, kilo, joul;
@@ -3042,7 +3042,7 @@ read_delta_h_only(char *ptr, LDBLE * delta_h, DELTA_H_UNIT * units)
  *   Read delta H units
  */
 	j = copy_token(token, &ptr, &l);
-	*units = kjoules;
+	*units = Utilities::DELTA_H_UNIT::kjoules;
 	kilo = TRUE;
 	joul = TRUE;
 	if (j == EMPTY)
@@ -3067,19 +3067,19 @@ read_delta_h_only(char *ptr, LDBLE * delta_h, DELTA_H_UNIT * units)
 	}
 	if (kilo == TRUE && joul == TRUE)
 	{
-		*units = kjoules;
+		*units = Utilities::DELTA_H_UNIT::kjoules;
 	}
 	else if (kilo == FALSE && joul == TRUE)
 	{
-		*units = joules;
+		*units = Utilities::DELTA_H_UNIT::joules;
 	}
 	else if (kilo == TRUE && joul == FALSE)
 	{
-		*units = kcal;
+		*units = Utilities::DELTA_H_UNIT::kcal;
 	}
 	else if (kilo == FALSE && joul == FALSE)
 	{
-		*units = cal;
+		*units = Utilities::DELTA_H_UNIT::cal;
 	}
 	return (OK);
 }
