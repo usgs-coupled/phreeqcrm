@@ -103,8 +103,8 @@ sit_tidy(void)
 			sit_params[i]->ispec[j] = sit_ISPEC(sit_params[i]->species[j]);
 			if ((j < 2 && sit_params[i]->ispec[j] == -1) ||
 				(j == 3
-				 && (sit_params[i]->type == TYPE_PSI
-					 || sit_params[i]->type == TYPE_ZETA)
+				 && (sit_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_PSI
+					 || sit_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_ZETA)
 				 && sit_params[i]->ispec[j] == -1))
 			{
 				input_error++;
@@ -125,7 +125,7 @@ sit_tidy(void)
 				if (sit_params[j]->species[i] != NULL) header.insert(sit_params[j]->species[i]);
 			}
 			std::ostringstream key_str;
-			key_str << sit_params[j]->type << " ";
+			key_str << (int)sit_params[j]->type << " ";
 			std::set< std::string >::iterator it = header.begin();
 			for(; it != header.end(); ++it)
 			{
@@ -186,7 +186,7 @@ read_sit(void)
    */
   int n;
   struct pitz_param *pzp_ptr;
-  pitz_param_type  pzp_type;
+  Utilities::PITZ_PARAM_TYPE pzp_type;
 
   int return_value, opt, opt_save;
   char *next_char;
@@ -201,7 +201,7 @@ read_sit(void)
   opt_save = OPTION_ERROR;
   return_value = UNKNOWN;
   n = -1;
-  pzp_type = TYPE_Other;
+  pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_Other;
   pitzer_pe = TRUE;
   for (;;)
   {
@@ -232,12 +232,12 @@ read_sit(void)
       error_msg(line_save, CONTINUE);
       break;
     case 0:				/* epsilon */
-      pzp_type = TYPE_SIT_EPSILON;
+      pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_SIT_EPSILON;
       n = 2;
       opt_save = OPTION_DEFAULT;
       break;
     case 1:				/* epsilon1 */
-      pzp_type = TYPE_SIT_EPSILON_MU;
+      pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_SIT_EPSILON_MU;
       n = 2;
       opt_save = OPTION_DEFAULT;
       break;
@@ -273,13 +273,13 @@ calc_sit_param(struct pitz_param *pz_ptr, LDBLE TK, LDBLE TR)
 	pz_ptr->p = param;
 	switch (pz_ptr->type)
 	{
-	case TYPE_SIT_EPSILON:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_SIT_EPSILON:
 		pz_ptr->U.eps = param;
 		break;
-	case TYPE_SIT_EPSILON_MU:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_SIT_EPSILON_MU:
 		pz_ptr->U.eps1 = param;
 		break;
-	case TYPE_Other:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_Other:
 	default:
 		error_msg("Should not be TYPE_Other in function calc_sit_param",
 				  STOP);
@@ -393,7 +393,7 @@ sit(void)
 		param = sit_params[i]->p;
 		switch (sit_params[i]->type)
 		{
-		case TYPE_SIT_EPSILON:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_SIT_EPSILON:
 			sit_LGAMMA[i0] += sit_M[i1] * param;
 			sit_LGAMMA[i1] += sit_M[i0] * param;
 			if (z0 == 0.0 && z1 == 0.0)
@@ -405,7 +405,7 @@ sit(void)
 				OSMOT += sit_M[i0] * sit_M[i1] * param;
 			}
 			break;
-		case TYPE_SIT_EPSILON_MU:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_SIT_EPSILON_MU:
 			sit_LGAMMA[i0] += sit_M[i1] * I * param;
 			sit_LGAMMA[i1] += sit_M[i0] * I * param;
 			OSMOT += sit_M[i0] * sit_M[i1] * param;
@@ -419,7 +419,7 @@ sit(void)
 			}
 			break;
 		default:
-		case TYPE_Other:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_Other:
 			error_msg("TYPE_Other in pitz_param list.", STOP);
 			break;
 		}
@@ -595,7 +595,7 @@ sit(void)
 		param = sit_params[i]->p;
 		switch (sit_params[i]->type)
 		{
-		case TYPE_SIT_EPSILON:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_SIT_EPSILON:
 			sit_LGAMMA[i0] += sit_M[i1] * param;
 			sit_LGAMMA[i1] += sit_M[i0] * param;
 			if (z0 == 0.0 && z1 == 0.0)
@@ -607,7 +607,7 @@ sit(void)
 				OSMOT += sit_M[i0] * sit_M[i1] * param;
 			}
 			break;
-		case TYPE_SIT_EPSILON_MU:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_SIT_EPSILON_MU:
 			sit_LGAMMA[i0] += sit_M[i1] * I * param;
 			sit_LGAMMA[i1] += sit_M[i0] * I * param;
 			OSMOT += sit_M[i0] * sit_M[i1] * param;
@@ -621,7 +621,7 @@ sit(void)
 			}
 			break;
 		default:
-		case TYPE_Other:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_Other:
 			error_msg("TYPE_Other in pitz_param list.", STOP);
 			break;
 		}

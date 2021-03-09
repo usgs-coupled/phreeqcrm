@@ -40,7 +40,7 @@ pitz_param_init(struct pitz_param *pitz_param_ptr)
 	pitz_param_ptr->ispec[0] = -1;
 	pitz_param_ptr->ispec[1] = -1;
 	pitz_param_ptr->ispec[2] = -1;
-	pitz_param_ptr->type = TYPE_Other;
+	pitz_param_ptr->type = Utilities::PITZ_PARAM_TYPE::TYPE_Other;
 	pitz_param_ptr->p = 0.0;
 	pitz_param_ptr->U.b0 = 0.0;
 	for (i = 0; i < 6; i++)
@@ -159,7 +159,7 @@ pitz_param_store(struct pitz_param *pzp_ptr, bool force_copy)
 	int i;
 	if (pzp_ptr == NULL)
 		return;
-	if (pzp_ptr->type == TYPE_Other)
+	if (pzp_ptr->type == Utilities::PITZ_PARAM_TYPE::TYPE_Other)
 		return;
 
 	std::set< std::string > header;
@@ -169,7 +169,7 @@ pitz_param_store(struct pitz_param *pzp_ptr, bool force_copy)
 	}
 
 	std::ostringstream key_str;
-	key_str << pzp_ptr->type << " ";
+	key_str << (int)pzp_ptr->type << " ";
 	std::set< std::string >::iterator it = header.begin();
 	for(; it != header.end(); ++it)
 	{
@@ -237,7 +237,7 @@ sit_param_store(struct pitz_param *pzp_ptr, bool force_copy)
 	int i;
 	if (pzp_ptr == NULL)
 		return;
-	if (pzp_ptr->type == TYPE_Other)
+	if (pzp_ptr->type == Utilities::PITZ_PARAM_TYPE::TYPE_Other)
 		return;
 
 	std::set< std::string > header;
@@ -247,7 +247,7 @@ sit_param_store(struct pitz_param *pzp_ptr, bool force_copy)
 	}
 
 	std::ostringstream key_str;
-	key_str << pzp_ptr->type << " ";
+	key_str << (int)pzp_ptr->type << " ";
 	std::set< std::string >::iterator it = header.begin();
 	for(; it != header.end(); ++it)
 	{

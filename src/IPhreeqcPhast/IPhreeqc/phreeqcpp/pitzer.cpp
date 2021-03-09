@@ -132,7 +132,7 @@ pitzer_tidy(void)
 	j = 0;
 	for (i = 0; i < count_pitz_param; i++)
 	{
-		if (pitz_params[i]->type == TYPE_ETHETA)
+		if (pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_ETHETA)
 		{
 			pitz_params[i] =
 				(struct pitz_param *) free_check_null(pitz_params[i]);
@@ -149,7 +149,7 @@ pitzer_tidy(void)
 		{
 			sprintf(line, "%s %s 1", spec[i]->name, spec[j]->name);
 			pzp_ptr = pitz_param_read(line, 2);
-			pzp_ptr->type = TYPE_ETHETA;
+			pzp_ptr->type = Utilities::PITZ_PARAM_TYPE::TYPE_ETHETA;
 			if (count_pitz_param >= max_pitz_param)
 			{
 				space((void **) ((void *) &pitz_params), count_pitz_param,
@@ -165,7 +165,7 @@ pitzer_tidy(void)
 		{
 			sprintf(line, "%s %s 1", spec[i]->name, spec[j]->name);
 			pzp_ptr = pitz_param_read(line, 2);
-			pzp_ptr->type = TYPE_ETHETA;
+			pzp_ptr->type = Utilities::PITZ_PARAM_TYPE::TYPE_ETHETA;
 			if (count_pitz_param >= max_pitz_param)
 			{
 				space((void **) ((void *) &pitz_params), count_pitz_param,
@@ -187,8 +187,8 @@ pitzer_tidy(void)
 			pitz_params[i]->ispec[j] = ISPEC(pitz_params[i]->species[j]);
 			if ((j < 2 && pitz_params[i]->ispec[j] == -1) ||
 				(j == 2
-				 && (pitz_params[i]->type == TYPE_PSI
-					 || pitz_params[i]->type == TYPE_ZETA)
+				 && (pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_PSI
+					 || pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_ZETA)
 				 && pitz_params[i]->ispec[j] == -1))
 			{
 				input_error++;
@@ -215,25 +215,25 @@ pitzer_tidy(void)
 		{
 			switch (pitz_params[i]->type)
 			{
-			case TYPE_B0:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_B0:
 				mcb0 = pitz_params[i];
 				break;
-			case TYPE_B1:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_B1:
 				mcb1 = pitz_params[i];
 				break;
-			case TYPE_C0:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_C0:
 				mcc0 = pitz_params[i];
 				break;
-			case TYPE_B2:
-			case TYPE_THETA:
-			case TYPE_LAMDA:
-			case TYPE_ZETA:
-			case TYPE_PSI:
-			case TYPE_ETHETA:
-			case TYPE_ALPHAS:
-			case TYPE_MU:
-			case TYPE_ETA:
-			case TYPE_Other:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_B2:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_THETA:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_LAMDA:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_ZETA:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_PSI:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_ETHETA:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_ALPHAS:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_MU:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_ETA:
+			case Utilities::PITZ_PARAM_TYPE::TYPE_Other:
 			default:
 				break;
 			}
@@ -265,7 +265,7 @@ pitzer_tidy(void)
 		{
 			order = 3;
 		}
-		if (pitz_params[i]->type == TYPE_B1)
+		if (pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_B1)
 		{
 			switch (order)
 			{
@@ -278,7 +278,7 @@ pitzer_tidy(void)
 				break;
 			}
 		}
-		else if (pitz_params[i]->type == TYPE_B2)
+		else if (pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_B2)
 		{
 			switch (order)
 			{
@@ -299,11 +299,11 @@ pitzer_tidy(void)
 	 */
 	for (i = 0; i < count_pitz_param; i++)
 	{
-		if (pitz_params[i]->type == TYPE_ALPHAS)
+		if (pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_ALPHAS)
 		{
 			for (j = 0; j < count_pitz_param; j++)
 			{
-				if (pitz_params[j]->type != TYPE_B1)
+				if (pitz_params[j]->type != Utilities::PITZ_PARAM_TYPE::TYPE_B1)
 					continue;
 				if (pitz_params[i]->ispec[0] != pitz_params[j]->ispec[0])
 					continue;
@@ -314,7 +314,7 @@ pitzer_tidy(void)
 			}
 			for (j = 0; j < count_pitz_param; j++)
 			{
-				if (pitz_params[j]->type != TYPE_B2)
+				if (pitz_params[j]->type != Utilities::PITZ_PARAM_TYPE::TYPE_B2)
 					continue;
 				if (pitz_params[i]->ispec[0] != pitz_params[j]->ispec[0])
 					continue;
@@ -341,7 +341,7 @@ pitzer_tidy(void)
 	count_theta_param = 0;
 	for (i = 0; i < count_pitz_param; i++)
 	{
-		if (pitz_params[i]->type == TYPE_ETHETA)
+		if (pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_ETHETA)
 		{
 			z0 = spec[pitz_params[i]->ispec[0]]->z;
 			z1 = spec[pitz_params[i]->ispec[1]]->z;
@@ -372,7 +372,7 @@ pitzer_tidy(void)
 
 	for (i = 0; i < count_pitz_param; i++)
 	{
-		if (pitz_params[i]->type == TYPE_MU)
+		if (pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_MU)
 		{
 			i0 = pitz_params[i]->ispec[0];
 			i1 = pitz_params[i]->ispec[1];
@@ -435,7 +435,7 @@ pitzer_tidy(void)
 
 	for (i = 0; i < count_pitz_param; i++)
 	{
-		if (pitz_params[i]->type == TYPE_MU)
+		if (pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_MU)
 		{
 			for (j = 0; j <= 2; j++)
 			{
@@ -507,7 +507,7 @@ pitzer_tidy(void)
 
 	for (i = 0; i < count_pitz_param; i++)
 	{
-		if (pitz_params[i]->type == TYPE_LAMDA)
+		if (pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_LAMDA)
 		{
 			i0 = pitz_params[i]->ispec[0];
 			i1 = pitz_params[i]->ispec[1];
@@ -551,7 +551,7 @@ pitzer_tidy(void)
 				if (pitz_params[j]->species[i] != NULL) header.insert(pitz_params[j]->species[i]);
 			}
 			std::ostringstream key_str;
-			key_str << pitz_params[j]->type << " ";
+			key_str <<(int)pitz_params[j]->type << " ";
 			std::set< std::string >::iterator it = header.begin();
 			for(; it != header.end(); ++it)
 			{
@@ -611,7 +611,7 @@ read_pitzer(void)
 	 */
 	int n;
 	struct pitz_param *pzp_ptr;
-	pitz_param_type pzp_type;
+	Utilities::PITZ_PARAM_TYPE pzp_type;
 
 	int return_value, opt, opt_save;
 	char *next_char;
@@ -644,7 +644,7 @@ read_pitzer(void)
 	opt_save = OPTION_ERROR;
 	return_value = UNKNOWN;
 	n = -1;
-	pzp_type = TYPE_Other;
+	pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_Other;
 	for (;;)
 	{
 		opt = get_option(opt_list, count_opt_list, &next_char);
@@ -665,7 +665,7 @@ read_pitzer(void)
 			if (pzp_ptr != NULL)
 			{
 				pzp_ptr->type = pzp_type;
-				if (pzp_type == TYPE_APHI)
+				if (pzp_type == Utilities::PITZ_PARAM_TYPE::TYPE_APHI)
 				{
 					aphi = (struct pitz_param *) free_check_null(aphi);
 					aphi = pzp_ptr;
@@ -682,48 +682,48 @@ read_pitzer(void)
 			error_msg(line_save, CONTINUE);
 			break;
 		case 0:				/* b0 */
-			pzp_type = TYPE_B0;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_B0;
 			n = 2;
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 1:				/* b1 */
-			pzp_type = TYPE_B1;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_B1;
 			n = 2;
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 2:				/* b2 */
-			pzp_type = TYPE_B2;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_B2;
 			n = 2;
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 3:				/* c0 */
-			pzp_type = TYPE_C0;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_C0;
 			n = 2;
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 4:				/* theta */
-			pzp_type = TYPE_THETA;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_THETA;
 			n = 2;
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 5:				/* lamda */
 		case 18:            /* lambda */
-			pzp_type = TYPE_LAMDA;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_LAMDA;
 			n = 2;
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 6:				/* zeta */
-			pzp_type = TYPE_ZETA;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_ZETA;
 			n = 3;
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 7:				/* psi */
-			pzp_type = TYPE_PSI;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_PSI;
 			n = 3;
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 13:				/* alphas */
-			pzp_type = TYPE_ALPHAS;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_ALPHAS;
 			n = 2;
 			opt_save = OPTION_DEFAULT;
 			break;
@@ -739,12 +739,12 @@ read_pitzer(void)
 			pitzer_pe = get_true_false(next_char, TRUE);
 			break;
 		case 14:				/* mu */
-			pzp_type = TYPE_MU;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_MU;
 			n = 3;
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 15:				/* eta */
-			pzp_type = TYPE_ETA;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_ETA;
 			n = 3;
 			opt_save = OPTION_DEFAULT;
 			break;
@@ -754,7 +754,7 @@ read_pitzer(void)
 			use_etheta = get_true_false(next_char, TRUE);
 			break;
 		case 19:				/* aphi */
-			pzp_type = TYPE_APHI;
+			pzp_type = Utilities::PITZ_PARAM_TYPE::TYPE_APHI;
 			n = 0;
 			opt_save = OPTION_DEFAULT;
 			break;
@@ -841,44 +841,44 @@ calc_pitz_param(struct pitz_param *pz_ptr, LDBLE TK, LDBLE TR)
 	pz_ptr->p = param;
 	switch (pz_ptr->type)
 	{
-	case TYPE_B0:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_B0:
 		pz_ptr->U.b0 = param;
 		break;
-	case TYPE_B1:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_B1:
 		pz_ptr->U.b1 = param;
 		break;
-	case TYPE_B2:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_B2:
 		pz_ptr->U.b2 = param;
 		break;
-	case TYPE_C0:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_C0:
 		pz_ptr->U.c0 = param;
 		break;
-	case TYPE_THETA:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_THETA:
 		pz_ptr->U.theta = param;
 		break;
-	case TYPE_LAMDA:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_LAMDA:
 		pz_ptr->U.lamda = param;
 		break;
-	case TYPE_ZETA:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_ZETA:
 		pz_ptr->U.zeta = param;
 		break;
-	case TYPE_ETHETA:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_ETHETA:
 		break;
-	case TYPE_PSI:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_PSI:
 		pz_ptr->U.psi = param;
 		break;
-	case TYPE_ALPHAS:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_ALPHAS:
 		break;
-	case TYPE_MU:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_MU:
 		pz_ptr->U.mu = param;
 		break;
-	case TYPE_ETA:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_ETA:
 		pz_ptr->U.eta = param;
 		break;
-	case TYPE_APHI:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_APHI:
 		pz_ptr->U.aphi = param;
 		break;
-	case TYPE_Other:
+	case Utilities::PITZ_PARAM_TYPE::TYPE_Other:
 	default:
 		error_msg("Should not be TYPE_Other in function calc_pitz_param",
 				  STOP);
@@ -1032,12 +1032,12 @@ pitzer(void)
 		F_var = 0;
 		switch (pitz_params[i]->type)
 		{
-		case TYPE_B0:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_B0:
 			LGAMMA[i0] += M[i1] * 2.0 * param;
 			LGAMMA[i1] += M[i0] * 2.0 * param;
 			OSMOT += M[i0] * M[i1] * param;
 			break;
-		case TYPE_B1:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_B1:
 			if (param != 0.0)
 			{
 				F_var = M[i0] * M[i1] * param * GP(l_alpha * DI) / I;
@@ -1046,7 +1046,7 @@ pitzer(void)
 				OSMOT += M[i0] * M[i1] * param * exp(-l_alpha * DI);
 			}
 			break;
-		case TYPE_B2:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_B2:
 			if (param != 0.0)
 			{
 				F_var = M[i0] * M[i1] * param * GP(l_alpha * DI) / I;
@@ -1055,7 +1055,7 @@ pitzer(void)
 				OSMOT += M[i0] * M[i1] * param * exp(-l_alpha * DI);
 			}
 			break;
-		case TYPE_C0:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_C0:
 			CSUM +=
 				M[i0] * M[i1] * pitz_params[i]->p / (2.0 *
 													 sqrt(fabs(z0 * z1)));
@@ -1064,12 +1064,12 @@ pitzer(void)
 			OSMOT +=
 				M[i0] * M[i1] * BIGZ * param / (2.0 * sqrt(fabs(z0 * z1)));
 			break;
-		case TYPE_THETA:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_THETA:
 			LGAMMA[i0] += 2.0 * M[i1] * (param /*+ ETHETA(z0, z1, I) */ );
 			LGAMMA[i1] += 2.0 * M[i0] * (param /*+ ETHETA(z0, z1, I) */ );
 			OSMOT += M[i0] * M[i1] * param;
 			break;
-		case TYPE_ETHETA:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_ETHETA:
 			/*
 			   ETHETAS(z0, z1, I, &etheta, &ethetap);
 			 */
@@ -1089,7 +1089,7 @@ pitzer(void)
 				 */
 			}
 			break;
-		case TYPE_PSI:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_PSI:
 			i2 = pitz_params[i]->ispec[2];
 			if (IPRSNT[i2] == FALSE)
 				continue;
@@ -1098,12 +1098,12 @@ pitzer(void)
 			LGAMMA[i2] += M[i0] * M[i1] * param;
 			OSMOT += M[i0] * M[i1] * M[i2] * param;
 			break;
-		case TYPE_LAMDA:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_LAMDA:
 			LGAMMA[i0] += M[i1] * param * pitz_params[i]->ln_coef[0];
 			LGAMMA[i1] += M[i0] * param * pitz_params[i]->ln_coef[1];
 			OSMOT += M[i0] * M[i1] * param * pitz_params[i]->os_coef;
 			break;
-		case TYPE_ZETA:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_ZETA:
 			i2 = pitz_params[i]->ispec[2];
 			if (IPRSNT[i2] == FALSE)
 				continue;
@@ -1112,7 +1112,7 @@ pitzer(void)
 			LGAMMA[i2] += M[i0] * M[i1] * param;
 			OSMOT += M[i0] * M[i1] * M[i2] * param;
 			break;
-		case TYPE_MU:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_MU:
 			i2 = pitz_params[i]->ispec[2];
 			if (IPRSNT[i2] == FALSE)
 				continue;
@@ -1122,7 +1122,7 @@ pitzer(void)
 			LGAMMA[i2] += M[i0] * M[i1] * param * pitz_params[i]->ln_coef[2];
 			OSMOT += M[i0] * M[i1] * M[i2] * param * pitz_params[i]->os_coef;
 			break;
-		case TYPE_ETA:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_ETA:
 			i2 = pitz_params[i]->ispec[2];
 			if (IPRSNT[i2] == FALSE)
 				continue;
@@ -1131,9 +1131,9 @@ pitzer(void)
 			LGAMMA[i2] += M[i0] * M[i1] * param;
 			OSMOT += M[i0] * M[i1] * M[i2] * param;
 			break;
-		case TYPE_ALPHAS:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_ALPHAS:
 			break;
-		case TYPE_Other:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_Other:
 		default:
 			error_msg("TYPE_Other in pitz_param list.", STOP);
 			break;
@@ -1356,12 +1356,12 @@ pitzer(void)
 		F_var = 0;
 		switch (pitz_params[i]->type)
 		{
-		case TYPE_B0:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_B0:
 			LGAMMA[i0] += M[i1] * 2.0 * param;
 			LGAMMA[i1] += M[i0] * 2.0 * param;
 			OSMOT += M[i0] * M[i1] * param;
 			break;
-		case TYPE_B1:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_B1:
 			if (param != 0.0)
 			{
 				F_var = M[i0] * M[i1] * param * GP(l_alpha * DI) / I;
@@ -1370,7 +1370,7 @@ pitzer(void)
 				OSMOT += M[i0] * M[i1] * param * exp(-l_alpha * DI);
 			}
 			break;
-		case TYPE_B2:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_B2:
 			if (param != 0.0)
 			{
 				F_var = M[i0] * M[i1] * param * GP(l_alpha * DI) / I;
@@ -1379,7 +1379,7 @@ pitzer(void)
 				OSMOT += M[i0] * M[i1] * param * exp(-l_alpha * DI);
 			}
 			break;
-		case TYPE_C0:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_C0:
 			CSUM +=
 				M[i0] * M[i1] * pitz_params[i]->p / (2.0 *
 													 sqrt(fabs(z0 * z1)));
@@ -1388,12 +1388,12 @@ pitzer(void)
 			OSMOT +=
 				M[i0] * M[i1] * BIGZ * param / (2.0 * sqrt(fabs(z0 * z1)));
 			break;
-		case TYPE_THETA:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_THETA:
 			LGAMMA[i0] += 2.0 * M[i1] * (param /*+ ETHETA(z0, z1, I) */ );
 			LGAMMA[i1] += 2.0 * M[i0] * (param /*+ ETHETA(z0, z1, I) */ );
 			OSMOT += M[i0] * M[i1] * param;
 			break;
-		case TYPE_ETHETA:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_ETHETA:
 			/*
 			   ETHETAS(z0, z1, I, &etheta, &ethetap);
 			 */
@@ -1407,7 +1407,7 @@ pitzer(void)
 				OSMOT += M[i0] * M[i1] * (etheta + I * ethetap);
 			}
 			break;
-		case TYPE_PSI:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_PSI:
 			i2 = pitz_params[i]->ispec[2];
 			if (IPRSNT[i2] == FALSE)
 				continue;
@@ -1416,12 +1416,12 @@ pitzer(void)
 			LGAMMA[i2] += M[i0] * M[i1] * param;
 			OSMOT += M[i0] * M[i1] * M[i2] * param;
 			break;
-		case TYPE_LAMDA:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_LAMDA:
 			LGAMMA[i0] += M[i1] * param * pitz_params[i]->ln_coef[0];
 			LGAMMA[i1] += M[i0] * param * pitz_params[i]->ln_coef[1];
 			OSMOT += M[i0] * M[i1] * param * pitz_params[i]->os_coef;
 			break;
-		case TYPE_ZETA:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_ZETA:
 			i2 = pitz_params[i]->ispec[2];
 			if (IPRSNT[i2] == FALSE)
 				continue;
@@ -1430,7 +1430,7 @@ pitzer(void)
 			LGAMMA[i2] += M[i0] * M[i1] * param;
 			OSMOT += M[i0] * M[i1] * M[i2] * param;
 			break;
-		case TYPE_MU:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_MU:
 			i2 = pitz_params[i]->ispec[2];
 			if (IPRSNT[i2] == FALSE)
 				continue;
@@ -1440,7 +1440,7 @@ pitzer(void)
 			LGAMMA[i2] += M[i0] * M[i1] * param * pitz_params[i]->ln_coef[2];
 			OSMOT += M[i0] * M[i1] * M[i2] * param * pitz_params[i]->os_coef;
 			break;
-		case TYPE_ETA:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_ETA:
 			i2 = pitz_params[i]->ispec[2];
 			if (IPRSNT[i2] == FALSE)
 				continue;
@@ -1449,9 +1449,9 @@ pitzer(void)
 			LGAMMA[i2] += M[i0] * M[i1] * param;
 			OSMOT += M[i0] * M[i1] * M[i2] * param;
 			break;
-		case TYPE_ALPHAS:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_ALPHAS:
 			break;
-		case TYPE_Other:
+		case Utilities::PITZ_PARAM_TYPE::TYPE_Other:
 		default:
 			error_msg("TYPE_Other in pitz_param list.", STOP);
 			break;
@@ -2685,10 +2685,10 @@ pitzer_make_lists(void)
 		int i1 = pitz_params[i]->ispec[1];
 		if (IPRSNT[i0] == FALSE || IPRSNT[i1] == FALSE) continue;
 		int i2 = pitz_params[i]->ispec[2];
-		if (pitz_params[i]->type == TYPE_PSI ||
-			pitz_params[i]->type == TYPE_ZETA ||
-			pitz_params[i]->type == TYPE_MU ||
-			pitz_params[i]->type == TYPE_ETA)
+		if (pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_PSI ||
+			pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_ZETA ||
+			pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_MU ||
+			pitz_params[i]->type == Utilities::PITZ_PARAM_TYPE::TYPE_ETA)
 		{
 			if (IPRSNT[i2] == FALSE)
 				continue;

@@ -30,6 +30,13 @@ namespace Utilities
 		Kinetics, Mix, Temperature, Pressure, UnKnown
 	};
 
+	enum class PITZ_PARAM_TYPE
+	{ TYPE_B0, TYPE_B1, TYPE_B2, TYPE_C0, TYPE_THETA, TYPE_LAMDA, TYPE_ZETA,
+	  TYPE_PSI, TYPE_ETHETA, TYPE_ALPHAS, TYPE_MU, TYPE_ETA, TYPE_Other,
+	  TYPE_SIT_EPSILON, TYPE_SIT_EPSILON_MU, TYPE_APHI
+	};
+
+
 	const char INDENT[] = "  ";
 
 	int strcmp_nocase(const char *str1, const char *str2);
