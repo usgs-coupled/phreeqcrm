@@ -3494,7 +3494,7 @@ entity_exists(const char *name, int n_user)
  */
 	int return_value;
 	char token[MAX_LENGTH];
-	enum entity_type type;
+	Utilities::ENTITY_TYPE type;
 /*
  *   Read keyword
  */
@@ -3504,70 +3504,70 @@ entity_exists(const char *name, int n_user)
 	return_value = TRUE;
 	switch (type)
 	{
-	case UnKnown:
+	case Utilities::ENTITY_TYPE::UnKnown:
 		warning_msg
 			("EXISTS expecting keyword solution, mix, kinetics, reaction, reaction_temperature, equilibrium_phases, exchange, surface, gas_phase, or solid_solutions.");
 		return_value = 2;
 		break;
-	case Solution:				/* Solution */
+	case Utilities::ENTITY_TYPE::Solution:				/* Solution */
 		if (Utilities::Rxn_find(Rxn_solution_map, n_user) == NULL)
 		{
 			return_value = FALSE;
 		}
 		break;
-	case Pure_phase:			/* Pure phases */
+	case Utilities::ENTITY_TYPE::Pure_phase:			/* Pure phases */
 		if (Utilities::Rxn_find(Rxn_pp_assemblage_map, n_user) == NULL)
 		{
 			return_value = FALSE;
 		}
 		break;
-	case Reaction:				/* Reaction */
+	case Utilities::ENTITY_TYPE::Reaction:				/* Reaction */
 		if (Utilities::Rxn_find(Rxn_reaction_map, n_user) == NULL)
 		{
 			return_value = FALSE;
 		}
 		break;
-	case Mix:					/* Mix */
+	case Utilities::ENTITY_TYPE::Mix:					/* Mix */
 		if (Utilities::Rxn_find(Rxn_mix_map, n_user) == NULL)
 		{
 			return_value = FALSE;
 		}
 		break;
-	case Exchange:				/* Ex */
+	case Utilities::ENTITY_TYPE::Exchange:				/* Ex */
 		if (Utilities::Rxn_find(Rxn_exchange_map, n_user) == NULL)
 		{
 			return_value = FALSE;
 		}
 		break;
-	case Surface:				/* Surface */
+	case Utilities::ENTITY_TYPE::Surface:				/* Surface */
 		if (Utilities::Rxn_find(Rxn_surface_map, n_user) == NULL)
 		{
 			return_value = FALSE;
 		}
 		break;
-	case Temperature:
+	case Utilities::ENTITY_TYPE::Temperature:
 		if (Utilities::Rxn_find(Rxn_temperature_map, n_user) == NULL)
 		{
 			return_value = FALSE;
 		}
-	case Pressure:
+	case Utilities::ENTITY_TYPE::Pressure:
 		if (Utilities::Rxn_find(Rxn_pressure_map, n_user) == NULL)
 		{
 			return_value = FALSE;
 		}
-	case Gas_phase:			/* Gas */
+	case Utilities::ENTITY_TYPE::Gas_phase:			/* Gas */
 		if (Utilities::Rxn_find(Rxn_gas_phase_map, n_user) == NULL)
 		{
 			return_value = FALSE;
 		}
 		break;
-	case Kinetics:				/* Kinetics */
+	case Utilities::ENTITY_TYPE::Kinetics:				/* Kinetics */
 		if (Utilities::Rxn_find(Rxn_kinetics_map, n_user) == NULL)
 		{
 			return_value = FALSE;
 		}
 		break;
-	case Ss_phase:				/* solid_solutions */
+	case Utilities::ENTITY_TYPE::Ss_phase:				/* solid_solutions */
 		if (Utilities::Rxn_find(Rxn_ss_assemblage_map, n_user) == NULL)
 		{
 			return_value = FALSE;
@@ -3578,7 +3578,7 @@ entity_exists(const char *name, int n_user)
 }
 
 /* ---------------------------------------------------------------------- */
-enum entity_type Phreeqc::
+Utilities::ENTITY_TYPE  Phreeqc::
 get_entity_enum(char *name)
 /* ---------------------------------------------------------------------- */
 {
@@ -3610,44 +3610,44 @@ get_entity_enum(char *name)
 	switch (next_keyword)
 	{
 	case Keywords::KEYWORDS::KEY_SOLUTION:					/* Solution */
-		return (Solution);
+		return (Utilities::ENTITY_TYPE::Solution);
 		break;
 	case Keywords::KEYWORDS::KEY_EQUILIBRIUM_PHASES:		/* Pure phases */
-		return (Pure_phase);
+		return (Utilities::ENTITY_TYPE::Pure_phase);
 		break;
 	case Keywords::KEYWORDS::KEY_REACTION:					/* Reaction */
-		return (Reaction);
+		return (Utilities::ENTITY_TYPE::Reaction);
 		break;
 	case Keywords::KEYWORDS::KEY_MIX:						/* Mix */
-		return (Mix);
+		return (Utilities::ENTITY_TYPE::Mix);
 		break;
 	case Keywords::KEYWORDS::KEY_EXCHANGE:					/* Ex */
-		return (Exchange);
+		return (Utilities::ENTITY_TYPE::Exchange);
 		break;
 	case Keywords::KEYWORDS::KEY_SURFACE:					/* Surface */
-		return (Surface);
+		return (Utilities::ENTITY_TYPE::Surface);
 		break;
 	case Keywords::KEYWORDS::KEY_REACTION_TEMPERATURE:		/* Temperature */
-		return (Temperature);
+		return (Utilities::ENTITY_TYPE::Temperature);
 		break;
 	case Keywords::KEYWORDS::KEY_REACTION_PRESSURE:		/* Pressure */
-		return (Pressure);
+		return (Utilities::ENTITY_TYPE::Pressure);
 		break;
 	case Keywords::KEYWORDS::KEY_GAS_PHASE:					/* Gas */
-		return (Gas_phase);
+		return (Utilities::ENTITY_TYPE::Gas_phase);
 		break;
 	case Keywords::KEYWORDS::KEY_KINETICS:					/* Kinetics */
-		return (Kinetics);
+		return (Utilities::ENTITY_TYPE::Kinetics);
 		break;
 	case Keywords::KEYWORDS::KEY_SOLID_SOLUTIONS:			/* solid_solutions */
-		return (Ss_phase);
+		return (Utilities::ENTITY_TYPE::Ss_phase);
 		break;
 	default:
 		warning_msg
 			("EXISTS expecting keyword solution, mix, kinetics, reaction, reaction_temperature, equilibrium_phases, exchange, surface, gas_phase, or solid_solutions.");
 		break;
 	}
-	return (UnKnown);
+	return (Utilities::ENTITY_TYPE::UnKnown);
 }
 
 /*

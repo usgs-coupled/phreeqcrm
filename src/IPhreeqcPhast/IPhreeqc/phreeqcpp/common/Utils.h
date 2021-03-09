@@ -24,6 +24,12 @@ namespace Utilities
 		dm3_per_mol, 
 		m3_per_mol
 	};
+
+	enum class ENTITY_TYPE
+	{ Solution, Reaction, Exchange, Surface, Gas_phase, Pure_phase, Ss_phase,
+		Kinetics, Mix, Temperature, Pressure, UnKnown
+	};
+
 	const char INDENT[] = "  ";
 
 	int strcmp_nocase(const char *str1, const char *str2);

@@ -69,6 +69,13 @@ class PBasic;
 class Phreeqc
 {
 public:
+	//enum class PITZ_PARAM_TYPE
+	//{
+	//	TYPE_B0, TYPE_B1, TYPE_B2, TYPE_C0, TYPE_THETA, TYPE_LAMDA, TYPE_ZETA,
+	//	TYPE_PSI, TYPE_ETHETA, TYPE_ALPHAS, TYPE_MU, TYPE_ETA, TYPE_Other,
+	//	TYPE_SIT_EPSILON, TYPE_SIT_EPSILON_MU, TYPE_APHI
+	//};
+
 	Phreeqc(PHRQ_io *io = NULL);
 	Phreeqc(const Phreeqc &src);
 	void InternalCopy(const Phreeqc *pSrc);
@@ -879,7 +886,7 @@ protected:
 	cxxNameDouble elt_list_NameDouble(void);
 	struct elt_list * NameDouble2elt_list(const cxxNameDouble &nd);
 public:
-	enum entity_type get_entity_enum(char *name);
+	Utilities::ENTITY_TYPE get_entity_enum(char *name);
 	struct inverse *inverse_alloc(void);
 	int inverse_delete(int i);
 	static int inverse_isotope_compare(const void *ptr1, const void *ptr2);
@@ -2027,6 +2034,8 @@ protected:
 public:
 	static const struct const_iso iso_defaults[];
 	static const int count_iso_defaults;
+
+
 };
 #endif /* _INC_PHREEQC_H */
 

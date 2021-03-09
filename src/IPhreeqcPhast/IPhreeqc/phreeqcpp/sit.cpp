@@ -186,7 +186,7 @@ read_sit(void)
    */
   int n;
   struct pitz_param *pzp_ptr;
-  pitz_param_type pzp_type;
+  pitz_param_type  pzp_type;
 
   int return_value, opt, opt_save;
   char *next_char;

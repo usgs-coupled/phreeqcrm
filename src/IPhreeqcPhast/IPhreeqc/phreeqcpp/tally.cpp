@@ -360,7 +360,7 @@ get_tally_table_column_heading(int column, int *type, char *string)
 		return (ERROR);
 	}
 	strcpy(string, tally_table[column].name);
-	*type = tally_table[column].type;
+	*type = (int)tally_table[column].type;
 	return (OK);
 }
 
@@ -482,11 +482,11 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 	{
 		switch (tally_table[i].type)
 		{
-		case Solution:
+		case Utilities::ENTITY_TYPE::Solution:
 /*
  *   fill solution
  */
-			if (n_user[Solution] < 0 || n_buffer == 0)
+			if (n_user[(size_t)Utilities::ENTITY_TYPE::Solution] < 0 || n_buffer == 0)
 				break;
 			{
 				cxxSolution *solution_ptr = NULL;;
@@ -496,7 +496,7 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 				}
 				else if (i == 1)
 				{
-					solution_ptr = Utilities::Rxn_find(Rxn_solution_map, n_user[Solution]);
+					solution_ptr = Utilities::Rxn_find(Rxn_solution_map, n_user[(size_t)Utilities::ENTITY_TYPE::Solution]);
 				}
 				else
 				{
@@ -582,14 +582,14 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 			}
 			break;
 #endif
-		case Reaction:
+		case Utilities::ENTITY_TYPE::Reaction:
 			/*
 			 *   fill reaction
 			 */
-			if (n_user[Reaction] < 0)
+			if (n_user[(size_t)Utilities::ENTITY_TYPE::Reaction] < 0)
 				break;
 			{
-				cxxReaction *reaction_ptr = Utilities::Rxn_find(Rxn_reaction_map, n_user[Reaction]);
+				cxxReaction *reaction_ptr = Utilities::Rxn_find(Rxn_reaction_map, n_user[(size_t)Utilities::ENTITY_TYPE::Reaction]);
 				if (reaction_ptr == NULL)
 					break;
 				count_elts = 0;
@@ -607,14 +607,14 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 				elt_list_to_tally_table(tally_table[i].total[n_buffer]);
 			}
 			break;
-		case Pure_phase:
+		case Utilities::ENTITY_TYPE::Pure_phase:
 			/*
 			 *   fill an equilibrium phase
 			 */
-			if (n_user[Pure_phase] < 0)
+			if (n_user[(size_t)Utilities::ENTITY_TYPE::Pure_phase] < 0)
 				break;
 			{
-				cxxPPassemblage * pp_assemblage_ptr = Utilities::Rxn_find(Rxn_pp_assemblage_map, n_user[Pure_phase]);
+				cxxPPassemblage * pp_assemblage_ptr = Utilities::Rxn_find(Rxn_pp_assemblage_map, n_user[(size_t)Utilities::ENTITY_TYPE::Pure_phase]);
 				if (pp_assemblage_ptr == NULL)
 					break;
 				std::map<std::string, cxxPPassemblageComp>::iterator it;
@@ -638,14 +638,14 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 				elt_list_to_tally_table(tally_table[i].total[n_buffer]);
 			}
 			break;
-		case Exchange:
+		case Utilities::ENTITY_TYPE::Exchange:
 			{
 				/*
 				*   fill exchange
 				*/
-				if (n_user[Exchange] < 0)
+				if (n_user[(size_t)Utilities::ENTITY_TYPE::Exchange] < 0)
 					break;
-				cxxExchange * exchange_ptr = Utilities::Rxn_find(Rxn_exchange_map, n_user[Exchange]);
+				cxxExchange * exchange_ptr = Utilities::Rxn_find(Rxn_exchange_map, n_user[(size_t)Utilities::ENTITY_TYPE::Exchange]);
 				if (exchange_ptr == NULL)
 					break;
 				count_elts = 0;
@@ -660,14 +660,14 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 				elt_list_to_tally_table(tally_table[i].total[n_buffer]);
 			}
 			break;
-		case Surface:
+		case Utilities::ENTITY_TYPE::Surface:
 			/*
 			 *   fill surface
 			 */
-			if (n_user[Surface] < 0)
+			if (n_user[(size_t)Utilities::ENTITY_TYPE::Surface] < 0)
 				break;
 			{
-				cxxSurface * surface_ptr = Utilities::Rxn_find(Rxn_surface_map, n_user[Surface]);
+				cxxSurface * surface_ptr = Utilities::Rxn_find(Rxn_surface_map, n_user[(size_t)Utilities::ENTITY_TYPE::Surface]);
 				if (surface_ptr == NULL)
 					break;
 				count_elts = 0;
@@ -682,15 +682,15 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 				elt_list_to_tally_table(tally_table[i].total[n_buffer]);
 			}
 			break;
-		case Ss_phase:
-			if (n_user[Ss_phase] < 0)
+		case Utilities::ENTITY_TYPE::Ss_phase:
+			if (n_user[(size_t)Utilities::ENTITY_TYPE::Ss_phase] < 0)
 				break;
 			{
 				/*
 				*   fill an solid solution phase
 			    */
 
-				cxxSSassemblage * ss_assemblage_ptr = Utilities::Rxn_find(Rxn_ss_assemblage_map, n_user[Ss_phase]);
+				cxxSSassemblage * ss_assemblage_ptr = Utilities::Rxn_find(Rxn_ss_assemblage_map, n_user[(size_t)Utilities::ENTITY_TYPE::Ss_phase]);
 				if (ss_assemblage_ptr == NULL)
 					break;
 				found = FALSE;
@@ -727,14 +727,14 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 				elt_list_to_tally_table(tally_table[i].total[n_buffer]);
 			}
 			break;
-		case Gas_phase:
+		case Utilities::ENTITY_TYPE::Gas_phase:
 			/*
 			 *   fill in gas phase
 			 */
-			if (n_user[Gas_phase] < 0)
+			if (n_user[(size_t)Utilities::ENTITY_TYPE::Gas_phase] < 0)
 				break;
 			{
-				cxxGasPhase * gas_phase_ptr = Utilities::Rxn_find(Rxn_gas_phase_map, n_user[Gas_phase]);
+				cxxGasPhase * gas_phase_ptr = Utilities::Rxn_find(Rxn_gas_phase_map, n_user[(size_t)Utilities::ENTITY_TYPE::Gas_phase]);
 				if (gas_phase_ptr == NULL)
 					break;
 				count_elts = 0;
@@ -753,14 +753,14 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 				elt_list_to_tally_table(tally_table[i].total[n_buffer]);
 				break;
 			}
-		case Kinetics:
+		case Utilities::ENTITY_TYPE::Kinetics:
 			{
 				/*
 				*   fill in kinetics
 				*/
-				if (n_user[Kinetics] < 0)
+				if (n_user[(size_t)Utilities::ENTITY_TYPE::Kinetics] < 0)
 					break;
-				cxxKinetics *kinetics_ptr = Utilities::Rxn_find(Rxn_kinetics_map, n_user[Kinetics]);
+				cxxKinetics *kinetics_ptr = Utilities::Rxn_find(Rxn_kinetics_map, n_user[(size_t)Utilities::ENTITY_TYPE::Kinetics]);
 				if (kinetics_ptr == NULL)
 					break;
 				cxxKineticsComp * kinetics_comp_ptr = NULL;
@@ -788,12 +788,12 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 				elt_list_to_tally_table(tally_table[i].total[n_buffer]);
 			}
 			break;
-		case Mix:
+		case Utilities::ENTITY_TYPE::Mix:
 			break;
-		case Temperature:
-		case Pressure:
+		case Utilities::ENTITY_TYPE::Temperature:
+		case Utilities::ENTITY_TYPE::Pressure:
 			break;
-		case UnKnown:
+		case Utilities::ENTITY_TYPE::UnKnown:
 			break;
 		}
 	}
@@ -922,14 +922,14 @@ build_tally_table(void)
 	n = count_tally_table_columns;
 	extend_tally_table();
 	tally_table[n].name = string_hsave("Solution_conservative");
-	tally_table[n].type = Solution;
+	tally_table[n].type = Utilities::ENTITY_TYPE::Solution;
 /*
  *   add one for mixing plus reaction
  */
 	n = count_tally_table_columns;
 	extend_tally_table();
 	tally_table[n].name = string_hsave("Solution_reaction");
-	tally_table[n].type = Solution;
+	tally_table[n].type = Utilities::ENTITY_TYPE::Solution;
 /*
  *   add one for reactions
  */
@@ -938,7 +938,7 @@ build_tally_table(void)
 		n = count_tally_table_columns;
 		extend_tally_table();
 		tally_table[n].name = string_hsave("Reaction");
-		tally_table[n].type = Reaction;
+		tally_table[n].type = Utilities::ENTITY_TYPE::Reaction;
 	}
 /*
  *   add one for exchangers
@@ -948,7 +948,7 @@ build_tally_table(void)
 		n = count_tally_table_columns;
 		extend_tally_table();
 		tally_table[n].name = string_hsave("Exchange");
-		tally_table[n].type = Exchange;
+		tally_table[n].type = Utilities::ENTITY_TYPE::Exchange;
 	}
 /*
  *   add one for surface
@@ -958,7 +958,7 @@ build_tally_table(void)
 		n = count_tally_table_columns;
 		extend_tally_table();
 		tally_table[n].name = string_hsave("Surface");
-		tally_table[n].type = Surface;
+		tally_table[n].type = Utilities::ENTITY_TYPE::Surface;
 	}
 /*
  *   add one for gases
@@ -968,7 +968,7 @@ build_tally_table(void)
 		n = count_tally_table_columns;
 		extend_tally_table();
 		tally_table[n].name = string_hsave("Gas_phase");
-		tally_table[n].type = Gas_phase;
+		tally_table[n].type = Utilities::ENTITY_TYPE::Gas_phase;
 	}
 /*
  *   Count pure phases
@@ -995,7 +995,7 @@ build_tally_table(void)
 				 */
 				for (k = 1; k < count_tally_table_columns; k++)
 				{
-					if (tally_table[k].type == Pure_phase &&
+					if (tally_table[k].type == Utilities::ENTITY_TYPE::Pure_phase &&
 						tally_table[k].name == phase_ptr->name &&
 						tally_table[k].add_formula ==
 						string_hsave(comp_ptr->Get_add_formula().c_str()))
@@ -1010,7 +1010,7 @@ build_tally_table(void)
 				n = count_tally_table_columns;
 				extend_tally_table();
 				tally_table[n].name = phase_ptr->name;
-				tally_table[n].type = Pure_phase;
+				tally_table[n].type = Utilities::ENTITY_TYPE::Pure_phase;
 				tally_table[n].add_formula = string_hsave(comp_ptr->Get_add_formula().c_str());
 				count_elts = 0;
 				paren_count = 0;
@@ -1059,7 +1059,7 @@ build_tally_table(void)
 					 */
 					for (l = 1; l < count_tally_table_columns; l++)
 					{
-						if (tally_table[l].type == Ss_phase &&
+						if (tally_table[l].type == Utilities::ENTITY_TYPE::Ss_phase &&
 							tally_table[l].name == phase_ptr->name)
 							break;
 					}
@@ -1072,7 +1072,7 @@ build_tally_table(void)
 					n = count_tally_table_columns;
 					extend_tally_table();
 					tally_table[n].name = phase_ptr->name;
-					tally_table[n].type = Ss_phase;
+					tally_table[n].type = Utilities::ENTITY_TYPE::Ss_phase;
 					count_elts = 0;
 					paren_count = 0;
 					strcpy(token, phase_ptr->formula);
@@ -1103,7 +1103,7 @@ build_tally_table(void)
 				 */
 				for (l = 1; l < count_tally_table_columns; l++)
 				{
-					if (tally_table[l].type == Kinetics &&
+					if (tally_table[l].type == Utilities::ENTITY_TYPE::Kinetics &&
 						tally_table[l].name == string_hsave(kinetics_comp_ptr->Get_rate_name().c_str()))
 						break;
 				}
@@ -1116,7 +1116,7 @@ build_tally_table(void)
 				n = count_tally_table_columns;
 				extend_tally_table();
 				tally_table[n].name = string_hsave(kinetics_comp_ptr->Get_rate_name().c_str());
-				tally_table[n].type = Kinetics;
+				tally_table[n].type = Utilities::ENTITY_TYPE::Kinetics;
 				/*
 				 * get formula for kinetic component
 				 */
@@ -1374,7 +1374,7 @@ extend_tally_table(void)
 		}
 	}
 	tally_table[count_tally_table_columns].name = NULL;
-	tally_table[count_tally_table_columns].type = UnKnown;
+	tally_table[count_tally_table_columns].type = Utilities::ENTITY_TYPE::UnKnown;
 	tally_table[count_tally_table_columns].add_formula = NULL;
 	tally_table[count_tally_table_columns].moles = 0.0;
 	tally_table[count_tally_table_columns].formula = NULL;

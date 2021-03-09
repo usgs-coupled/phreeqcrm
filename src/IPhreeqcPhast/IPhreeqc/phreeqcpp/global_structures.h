@@ -165,10 +165,10 @@
 //
 //typedef enum { kcal, cal, kjoules, joules } Utilities::DELTA_H_UNIT;
 //typedef enum { cm3_per_mol, dm3_per_mol, m3_per_mol } Utilities::DELTA_V_UNIT;
-enum entity_type
-{ Solution, Reaction, Exchange, Surface, Gas_phase, Pure_phase, Ss_phase,
-	Kinetics, Mix, Temperature, Pressure, UnKnown
-};
+//enum entity_type
+//{ Solution, Reaction, Exchange, Surface, Gas_phase, Pure_phase, Ss_phase,
+//	Kinetics, Mix, Temperature, Pressure, UnKnown
+//};
 
 typedef enum {
 	logK_T0,
@@ -1018,7 +1018,7 @@ struct tally_buffer
 struct tally
 {
 	const char *name;
-	enum entity_type type;
+	Utilities::ENTITY_TYPE type;
 	const char *add_formula;
 	LDBLE moles;
 	struct elt_list *formula;
