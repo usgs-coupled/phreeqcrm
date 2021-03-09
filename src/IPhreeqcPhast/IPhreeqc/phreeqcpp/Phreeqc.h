@@ -69,12 +69,6 @@ class PBasic;
 class Phreeqc
 {
 public:
-	//enum class PITZ_PARAM_TYPE
-	//{
-	//	TYPE_B0, TYPE_B1, TYPE_B2, TYPE_C0, TYPE_THETA, TYPE_LAMDA, TYPE_ZETA,
-	//	TYPE_PSI, TYPE_ETHETA, TYPE_ALPHAS, TYPE_MU, TYPE_ETA, TYPE_Other,
-	//	TYPE_SIT_EPSILON, TYPE_SIT_EPSILON_MU, TYPE_APHI
-	//};
 
 	Phreeqc(PHRQ_io *io = NULL);
 	Phreeqc(const Phreeqc &src);
