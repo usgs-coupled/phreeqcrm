@@ -668,11 +668,11 @@ CParser::get_option(const std::vector < std::string > &opt_list,
 	PHRQ_io::LINE_TYPE lt = check_line("get_option", false, true, true, true);
 	if (lt == PHRQ_io::LT_EOF)
 	{
-		j = OPT_EOF;
+		j = (int)OPT_TYPE::OPT_EOF;
 	}
 	else if (lt == PHRQ_io::LT_KEYWORD)
 	{
-		j = OPT_KEYWORD;
+		j = (int)OPT_TYPE::OPT_KEYWORD;
 	}
 	else if (lt == PHRQ_io::LT_OPTION)
 	{
@@ -715,7 +715,7 @@ CParser::get_option(const std::vector < std::string > &opt_list,
 			err << m_line_save << "\n";
 			error_msg(err.str().c_str());
 
-			j = OPT_ERROR;
+			j = (int)OPT_TYPE::OPT_ERROR;
 			next_char = m_line.begin();
 		}
 	}
@@ -731,7 +731,7 @@ CParser::get_option(const std::vector < std::string > &opt_list,
 		}
 		else
 		{
-			j = OPT_DEFAULT;
+			j = (int)OPT_TYPE::OPT_DEFAULT;
 			next_char = m_line.begin();
 		}
 		if (true)				// pr.echo_input == TRUE
@@ -765,11 +765,11 @@ CParser::get_option(const std::vector < std::string > &opt_list,
 	PHRQ_io::LINE_TYPE lt = check_line("get_option", false, true, true, true);
 	if (lt == PHRQ_io::LT_EOF)
 	{
-		j = OPT_EOF;
+		j = (int)OPT_TYPE::OPT_EOF;
 	}
 	else if (lt == PHRQ_io::LT_KEYWORD)
 	{
-		j = OPT_KEYWORD;
+		j = (int)OPT_TYPE::OPT_KEYWORD;
 	}
 	else if (lt == PHRQ_io::LT_OPTION)
 	{
@@ -795,7 +795,7 @@ CParser::get_option(const std::vector < std::string > &opt_list,
 		}
 		else
 		{
-			j = OPT_ERROR;
+			j = (int)OPT_TYPE::OPT_ERROR;
 			next_pos = pos_ptr;
 		}
 	}
@@ -810,7 +810,7 @@ CParser::get_option(const std::vector < std::string > &opt_list,
 		}
 		else
 		{
-			j = OPT_DEFAULT;
+			j = (int)OPT_TYPE::OPT_DEFAULT;
 			m_line_iss.seekg(pos_ptr);
 			m_line_iss.clear();
 			next_pos = pos_ptr;
@@ -1041,11 +1041,11 @@ CParser::getOptionFromLastLine(const std::vector < std::string > &opt_list,
 	PHRQ_io::LINE_TYPE lt = m_line_type;
 	if (lt == PHRQ_io::LT_EOF)
 	{
-		j = OPT_EOF;
+		j = (int)OPT_TYPE::OPT_EOF;
 	}
 	else if (lt == PHRQ_io::LT_KEYWORD)
 	{
-		j = OPT_KEYWORD;
+		j = (int)OPT_TYPE::OPT_KEYWORD;
 	}
 	else if (lt == PHRQ_io::LT_OPTION)
 	{
@@ -1087,7 +1087,7 @@ CParser::getOptionFromLastLine(const std::vector < std::string > &opt_list,
 				err << m_line_save << "\n";
 				error_msg(err.str().c_str());
 			}
-			j = OPT_ERROR;
+			j = (int)OPT_TYPE::OPT_ERROR;
 			next_char = m_line.begin();
 		}
 	}
@@ -1103,7 +1103,7 @@ CParser::getOptionFromLastLine(const std::vector < std::string > &opt_list,
 		}
 		else
 		{
-			j = OPT_DEFAULT;
+			j = (int)OPT_TYPE::OPT_DEFAULT;
 			next_char = m_line.begin();
 		}
 		if (true)				// pr.echo_input == TRUE
@@ -1137,11 +1137,11 @@ CParser::getOptionFromLastLine(const std::vector < std::string > &opt_list,
 	PHRQ_io::LINE_TYPE lt = m_line_type;
 	if (lt == PHRQ_io::LT_EOF)
 	{
-		j = OPT_EOF;
+		j = (int)OPT_TYPE::OPT_EOF;
 	}
 	else if (lt == PHRQ_io::LT_KEYWORD)
 	{
-		j = OPT_KEYWORD;
+		j = (int)OPT_TYPE::OPT_KEYWORD;
 	}
 	else if (lt == PHRQ_io::LT_OPTION)
 	{
@@ -1189,7 +1189,7 @@ CParser::getOptionFromLastLine(const std::vector < std::string > &opt_list,
 				error_msg(m_line_save.c_str(), PHRQ_io::OT_CONTINUE);
 				incr_input_error();
 			}
-			j = OPT_ERROR;
+			j = (int)OPT_TYPE::OPT_ERROR;
 			next_pos = pos_ptr;
 		}
 	}
@@ -1204,7 +1204,7 @@ CParser::getOptionFromLastLine(const std::vector < std::string > &opt_list,
 		}
 		else
 		{
-			j = OPT_DEFAULT;
+			j = (int)OPT_TYPE::OPT_DEFAULT;
 			next_pos = 0;
 		}
 		if (true)				// pr.echo_input == TRUE

@@ -39,7 +39,7 @@ bool dumper::Read(CParser & parser)
 	std::string token;
 	int opt_save;
 
-	opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+	opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 	bool cleared_once = false;
 	this->on = true;
 
@@ -48,7 +48,7 @@ bool dumper::Read(CParser & parser)
 		int opt;
 		StorageBinListItem cells;
 		opt = parser.get_option(vopts, next_char);
-		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
+		if (opt == (int)CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
@@ -150,9 +150,9 @@ bool dumper::Read(CParser & parser)
 		std::set < int >::iterator it;
 		switch (opt)
 		{
-		case CParser::OPT_TYPE::OPT_EOF:
+		case (int)CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_TYPE::OPT_KEYWORD:
+		case (int)CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
 		case 3:
 		case 4:
@@ -204,9 +204,9 @@ bool dumper::Read(CParser & parser)
 			this->SetAll(true);
 			break;
 		default:
-		case CParser::OPT_TYPE::OPT_DEFAULT:
-		case CParser::OPT_TYPE::OPT_ERROR:
-			opt = CParser::OPT_TYPE::OPT_EOF;
+		case (int)CParser::OPT_TYPE::OPT_DEFAULT:
+		case (int)CParser::OPT_TYPE::OPT_ERROR:
+			opt = (int)CParser::OPT_TYPE::OPT_EOF;
 			parser.error_msg("Unknown input reading DUMP definition.",
 							 PHRQ_io::OT_CONTINUE);
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
@@ -214,7 +214,7 @@ bool dumper::Read(CParser & parser)
 			break;
 		}
 		
-		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
+		if (opt == (int)CParser::OPT_TYPE::OPT_EOF || opt == (int)CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	return(return_value);

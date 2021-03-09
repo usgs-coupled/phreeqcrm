@@ -139,7 +139,7 @@ cxxSurfaceCharge::read_raw(CParser & parser, bool check)
 	std::string token;
 	int opt_save;
 
-	opt_save = CParser::OPT_TYPE::OPT_ERROR;
+	opt_save = (int)CParser::OPT_TYPE::OPT_ERROR;
 	bool specific_area_defined(false);
 	bool grams_defined(false);
 	bool charge_balance_defined(false);
@@ -152,20 +152,20 @@ cxxSurfaceCharge::read_raw(CParser & parser, bool check)
 	for (;;)
 	{
 		int opt = parser.get_option(vopts, next_char);
-		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
+		if (opt == (int)CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
 
 		switch (opt)
 		{
-		case CParser::OPT_TYPE::OPT_EOF:
+		case (int)CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_TYPE::OPT_KEYWORD:
+		case (int)CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_TYPE::OPT_DEFAULT:
-		case CParser::OPT_TYPE::OPT_ERROR:
-			opt = CParser::OPT_TYPE::OPT_KEYWORD;
+		case (int)CParser::OPT_TYPE::OPT_DEFAULT:
+		case (int)CParser::OPT_TYPE::OPT_ERROR:
+			opt = (int)CParser::OPT_TYPE::OPT_KEYWORD;
 			// Allow return to Surface for more processing
 			break;
 
@@ -364,7 +364,7 @@ cxxSurfaceCharge::read_raw(CParser & parser, bool check)
 
 			break;
 		}
-		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
+		if (opt == (int)CParser::OPT_TYPE::OPT_EOF || opt == (int)CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	if (check)

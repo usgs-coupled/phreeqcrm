@@ -83,13 +83,13 @@ cxxGasComp::read_raw(CParser & parser, bool check)
 
 		switch (opt)
 		{
-		case CParser::OPT_TYPE::OPT_EOF:
+		case (int)CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_TYPE::OPT_KEYWORD:
+		case (int)CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_TYPE::OPT_DEFAULT:
-		case CParser::OPT_TYPE::OPT_ERROR:
-			opt = CParser::OPT_TYPE::OPT_KEYWORD;
+		case (int)CParser::OPT_TYPE::OPT_DEFAULT:
+		case (int)CParser::OPT_TYPE::OPT_ERROR:
+			opt = (int)CParser::OPT_TYPE::OPT_KEYWORD;
 			// Allow return to Exchange for more processing
 			break;
 
@@ -163,7 +163,7 @@ cxxGasComp::read_raw(CParser & parser, bool check)
 			break;
 
 		}
-		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
+		if (opt == (int)CParser::OPT_TYPE::OPT_EOF || opt == (int)CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	if (check)

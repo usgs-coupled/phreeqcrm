@@ -50,7 +50,7 @@ class CParser: public PHRQ_base
 		FT_ERROR = 1
 	};
 
-	enum OPT_TYPE
+	enum class OPT_TYPE
 	{
 		OPT_DEFAULT = -4,
 		OPT_ERROR = -3,

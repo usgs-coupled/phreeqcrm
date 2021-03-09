@@ -273,13 +273,13 @@ cxxSurface::read_raw(CParser & parser, bool check)
 		useLastLine = false;
 		switch (opt)
 		{
-		case CParser::OPT_TYPE::OPT_EOF:
+		case (int)CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_TYPE::OPT_KEYWORD:
+		case (int)CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_TYPE::OPT_DEFAULT:
-		case CParser::OPT_TYPE::OPT_ERROR:
-			opt = CParser::OPT_TYPE::OPT_EOF;
+		case (int)CParser::OPT_TYPE::OPT_DEFAULT:
+		case (int)CParser::OPT_TYPE::OPT_ERROR:
+			opt = (int)CParser::OPT_TYPE::OPT_EOF;
 			parser.error_msg("Unknown input in SURFACE keyword.",
 							 PHRQ_io::OT_CONTINUE);
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
@@ -530,7 +530,7 @@ cxxSurface::read_raw(CParser & parser, bool check)
 			}
 			break;
 		}
-		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
+		if (opt == (int)CParser::OPT_TYPE::OPT_EOF || opt == (int)CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	if (check)

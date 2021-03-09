@@ -706,7 +706,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 	// Read solution number and description
 	this->read_number_description(parser.line());
 
-	opt_save = CParser::OPT_TYPE::OPT_ERROR;
+	opt_save = (int)CParser::OPT_TYPE::OPT_ERROR;
 	bool tc_defined(false);
 	bool ph_defined(false);
 	bool pe_defined(false);
@@ -721,20 +721,20 @@ cxxSolution::read_raw(CParser & parser, bool check)
 	for (;;)
 	{
 		int opt = parser.get_option(vopts, next_char);
-		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
+		if (opt == (int)CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
 
 		switch (opt)
 		{
-		case CParser::OPT_TYPE::OPT_EOF:
+		case (int)CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_TYPE::OPT_KEYWORD:
+		case (int)CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_TYPE::OPT_DEFAULT:
-		case CParser::OPT_TYPE::OPT_ERROR:
-			opt = CParser::OPT_TYPE::OPT_EOF;
+		case (int)CParser::OPT_TYPE::OPT_DEFAULT:
+		case (int)CParser::OPT_TYPE::OPT_ERROR:
+			opt = (int)CParser::OPT_TYPE::OPT_EOF;
 			parser.error_msg("Unknown input in SOLUTION_RAW keyword.",
 							 PHRQ_io::OT_CONTINUE);
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
@@ -801,7 +801,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 					this->isotopes[name] = iso;
 				}
 			}
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 4:				// temp
@@ -815,7 +815,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 								 PHRQ_io::OT_CONTINUE);
 			}
 			tc_defined = true;
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 7:				// ph
@@ -827,7 +827,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 								 PHRQ_io::OT_CONTINUE);
 			}
 			ph_defined = true;
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 8:				// pe
@@ -839,7 +839,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 								 PHRQ_io::OT_CONTINUE);
 			}
 			pe_defined = true;
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 9:				// mu
@@ -852,7 +852,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 								 PHRQ_io::OT_CONTINUE);
 			}
 			mu_defined = true;
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 11:				// ah2o
@@ -866,7 +866,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 							  PHRQ_io::OT_CONTINUE);
 			}
 			ah2o_defined = true;
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 13:				// total_h
@@ -878,7 +878,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 								 PHRQ_io::OT_CONTINUE);
 			}
 			total_h_defined = true;
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 14:				// total_o
@@ -890,7 +890,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 								 PHRQ_io::OT_CONTINUE);
 			}
 			total_o_defined = true;
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 15:				// mass_water
@@ -903,7 +903,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 								 PHRQ_io::OT_CONTINUE);
 			}
 			mass_water_defined = true;
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 17:				// total_alkalinity
@@ -917,7 +917,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 							  PHRQ_io::OT_CONTINUE);
 			}
 			total_alkalinity_defined = true;
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 19:				// cb
@@ -930,7 +930,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 								 PHRQ_io::OT_CONTINUE);
 			}
 			cb_defined = true;
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 		case 21:				// density
 			if (!(parser.get_iss() >> this->density))
@@ -940,7 +940,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 				parser.error_msg("Expected numeric value for density.",
 					PHRQ_io::OT_CONTINUE);
 			}
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 		case 22:				// pressure
 			if (!(parser.get_iss() >> this->patm))
@@ -950,7 +950,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 				parser.error_msg("Expected numeric value for pressure.",
 					PHRQ_io::OT_CONTINUE);
 			}
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 23:				// soln_vol
@@ -961,7 +961,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 				parser.error_msg("Expected numeric value for solution volume.",
 								 PHRQ_io::OT_CONTINUE);
 			}
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 
 		case 24:				// species_map
@@ -1025,7 +1025,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 				parser.error_msg("Expected numeric value for potential (V).",
 					PHRQ_io::OT_CONTINUE);
 			}
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 		case 27:				// log_molalities_map
 		{
@@ -1054,7 +1054,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 		}
 		break;
 		}
-		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
+		if (opt == (int)CParser::OPT_TYPE::OPT_EOF || opt == (int)CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	if (check)

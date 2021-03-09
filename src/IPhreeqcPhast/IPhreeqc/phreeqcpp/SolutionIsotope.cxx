@@ -100,7 +100,7 @@ void cxxSolutionIsotope::read_raw(CParser & parser, bool check )
 	std::string token;
 	int opt_save;
 
-	opt_save = CParser::OPT_TYPE::OPT_ERROR;
+	opt_save = (int)CParser::OPT_TYPE::OPT_ERROR;
 	bool isotope_number_defined(false);
 	bool elt_name_defined(false);
 	bool total_defined(false);
@@ -109,21 +109,21 @@ void cxxSolutionIsotope::read_raw(CParser & parser, bool check )
 	for (;;)
 	{
 		int opt = parser.get_option(vopts, next_char);
-		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
+		if (opt == (int)CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
 		
-		opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+		opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 		switch (opt)
 		{
-		case CParser::OPT_TYPE::OPT_EOF:
+		case (int)CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_TYPE::OPT_KEYWORD:
+		case (int)CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_TYPE::OPT_DEFAULT:
-		case CParser::OPT_TYPE::OPT_ERROR:
-			opt = CParser::OPT_TYPE::OPT_EOF;
+		case (int)CParser::OPT_TYPE::OPT_DEFAULT:
+		case (int)CParser::OPT_TYPE::OPT_ERROR:
+			opt = (int)CParser::OPT_TYPE::OPT_EOF;
 			parser.error_msg("Unknown input in isotopes of SOLUTION_RAW keyword.",
 							 PHRQ_io::OT_CONTINUE);
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
@@ -214,7 +214,7 @@ void cxxSolutionIsotope::read_raw(CParser & parser, bool check )
 			break;
 		}
 
-		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
+		if (opt == (int)CParser::OPT_TYPE::OPT_EOF || opt == (int)CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	if (check)

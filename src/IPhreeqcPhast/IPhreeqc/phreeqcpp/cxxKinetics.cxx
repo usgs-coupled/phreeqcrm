@@ -202,7 +202,7 @@ cxxKinetics::read_raw(CParser & parser, bool check)
 	// Read kinetics number and description
 	this->read_number_description(parser);
 
-	opt_save = CParser::OPT_TYPE::OPT_ERROR;
+	opt_save = (int)CParser::OPT_TYPE::OPT_ERROR;
 	bool step_divide_defined(false);
 	bool rk_defined(false);
 	bool bad_step_max_defined(false);
@@ -222,20 +222,20 @@ cxxKinetics::read_raw(CParser & parser, bool check)
 		{
 			opt = parser.getOptionFromLastLine(vopts, next_char, true);
 		}
-		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
+		if (opt == (int)CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
 		useLastLine = false;
 		switch (opt)
 		{
-		case CParser::OPT_TYPE::OPT_EOF:
+		case (int)CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_TYPE::OPT_KEYWORD:
+		case (int)CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_TYPE::OPT_DEFAULT:
-		case CParser::OPT_TYPE::OPT_ERROR:
-			opt = CParser::OPT_TYPE::OPT_EOF;
+		case (int)CParser::OPT_TYPE::OPT_DEFAULT:
+		case (int)CParser::OPT_TYPE::OPT_ERROR:
+			opt = (int)CParser::OPT_TYPE::OPT_EOF;
 			parser.error_msg("Unknown input in KINETICS_COMP_RAW keyword.",
 							 PHRQ_io::OT_CONTINUE);
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
@@ -398,7 +398,7 @@ cxxKinetics::read_raw(CParser & parser, bool check)
 			break;
 
 		}
-		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
+		if (opt == (int)CParser::OPT_TYPE::OPT_EOF || opt == (int)CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	if (steps_defined)

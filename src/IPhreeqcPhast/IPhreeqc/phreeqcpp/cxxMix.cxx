@@ -105,7 +105,7 @@ cxxMix::read_raw(CParser & parser)
 	// Read mix number and description
 	this->read_number_description(parser);
 
-	opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+	opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 
 	for (;;)
 	{
@@ -118,25 +118,25 @@ cxxMix::read_raw(CParser & parser)
 		{
 			opt = parser.getOptionFromLastLine(vopts, next_char, true);
 		}
-		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
+		if (opt == (int)CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
 		switch (opt)
 		{
-		case CParser::OPT_TYPE::OPT_EOF:
+		case (int)CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_TYPE::OPT_KEYWORD:
+		case (int)CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_TYPE::OPT_ERROR:
-			opt = CParser::OPT_TYPE::OPT_EOF;
+		case (int)CParser::OPT_TYPE::OPT_ERROR:
+			opt = (int)CParser::OPT_TYPE::OPT_EOF;
 			parser.error_msg("Unknown input in MIX_COMP_RAW keyword.",
 							 PHRQ_io::OT_CONTINUE);
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
 			useLastLine = false;
 			break;
 
-		case CParser::OPT_TYPE::OPT_DEFAULT:	// solution number, mix fraction
+		case (int)CParser::OPT_TYPE::OPT_DEFAULT:	// solution number, mix fraction
 			if (parser.copy_token(token, next_char) != CParser::TOKEN_TYPE::TT_EMPTY)
 			{
 				std::istringstream iss(token);
@@ -160,10 +160,10 @@ cxxMix::read_raw(CParser & parser)
 				}
 				this->mixComps[i] = d;
 			}
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			break;
 		}
-		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
+		if (opt == (int)CParser::OPT_TYPE::OPT_EOF || opt == (int)CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 }

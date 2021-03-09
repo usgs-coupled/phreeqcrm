@@ -143,7 +143,7 @@ cxxReaction::read_raw(CParser & parser, const bool check)
 	// Read irrev number and description
 	this->read_number_description(parser);
 
-	opt_save = CParser::OPT_TYPE::OPT_ERROR;
+	opt_save = (int)CParser::OPT_TYPE::OPT_ERROR;
 	bool units_defined(false);
 	bool equalIncrements_defined(false);
 	bool countSteps_defined(false);
@@ -159,19 +159,19 @@ cxxReaction::read_raw(CParser & parser, const bool check)
 		{
 			opt = parser.getOptionFromLastLine(vopts, next_char, true);
 		}
-		if (opt == CParser::OPT_TYPE::OPT_DEFAULT)
+		if (opt == (int)CParser::OPT_TYPE::OPT_DEFAULT)
 		{
 			opt = opt_save;
 		}
 		switch (opt)
 		{
-		case CParser::OPT_TYPE::OPT_EOF:
+		case (int)CParser::OPT_TYPE::OPT_EOF:
 			break;
-		case CParser::OPT_TYPE::OPT_KEYWORD:
+		case (int)CParser::OPT_TYPE::OPT_KEYWORD:
 			break;
-		case CParser::OPT_TYPE::OPT_DEFAULT:
-		case CParser::OPT_TYPE::OPT_ERROR:
-			opt = CParser::OPT_TYPE::OPT_EOF;
+		case (int)CParser::OPT_TYPE::OPT_DEFAULT:
+		case (int)CParser::OPT_TYPE::OPT_ERROR:
+			opt = (int)CParser::OPT_TYPE::OPT_EOF;
 			parser.error_msg("Unknown input in IRREV_COMP_RAW keyword.",
 				PHRQ_io::OT_CONTINUE);
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
@@ -184,7 +184,7 @@ cxxReaction::read_raw(CParser & parser, const bool check)
 			if (j_tt == CParser::TOKEN_TYPE::TT_EMPTY)
 				break;
 			this->Set_units(token.c_str());
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			useLastLine = false;
 			units_defined = true;
 		}
@@ -248,7 +248,7 @@ cxxReaction::read_raw(CParser & parser, const bool check)
 					error_msg("Expected boolean value for equalIncrements.",
 							  PHRQ_io::OT_CONTINUE);
 			}
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			useLastLine = false;
 			equalIncrements_defined = true;
 			break;
@@ -261,12 +261,12 @@ cxxReaction::read_raw(CParser & parser, const bool check)
 				parser.error_msg("Expected integer value for countSteps.",
 								 PHRQ_io::OT_CONTINUE);
 			}
-			opt_save = CParser::OPT_TYPE::OPT_DEFAULT;
+			opt_save = (int)CParser::OPT_TYPE::OPT_DEFAULT;
 			useLastLine = false;
 			countSteps_defined = true;
 			break;
 		}
-		if (opt == CParser::OPT_TYPE::OPT_EOF || opt == CParser::OPT_TYPE::OPT_KEYWORD)
+		if (opt == (int)CParser::OPT_TYPE::OPT_EOF || opt == (int)CParser::OPT_TYPE::OPT_KEYWORD)
 			break;
 	}
 	if (check)
