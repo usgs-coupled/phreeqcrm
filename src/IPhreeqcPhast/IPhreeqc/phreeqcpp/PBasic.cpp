@@ -597,7 +597,7 @@ parse(char * l_inbuf, tokenrec ** l_buf)
 			case '"':
 			case '\'':
 				q += 1;
-				t->kind = tokstr;
+				t->kind = (int)BASIC_TOKEN::tokstr;
 				j = 0;
 				len = (int) strlen(l_inbuf);
 				begin = i;
@@ -626,80 +626,80 @@ parse(char * l_inbuf, tokenrec ** l_buf)
 				break;
 
 			case '+':
-				t->kind = tokplus;
+				t->kind = (int)BASIC_TOKEN::tokplus;
 				break;
 
 			case '-':
-				t->kind = tokminus;
+				t->kind = (int)BASIC_TOKEN::tokminus;
 				break;
 
 			case '*':
-				t->kind = toktimes;
+				t->kind = (int)BASIC_TOKEN::toktimes;
 				break;
 
 			case '/':
-				t->kind = tokdiv;
+				t->kind = (int)BASIC_TOKEN::tokdiv;
 				break;
 
 			case '^':
-				t->kind = tokup;
+				t->kind = (int)BASIC_TOKEN::tokup;
 				break;
 
 			case '(':
 			case '[':
-				t->kind = toklp;
+				t->kind = (int)BASIC_TOKEN::toklp;
 				lp += 1;
 				break;
 
 			case ')':
 			case ']':
-				t->kind = tokrp;
+				t->kind = (int)BASIC_TOKEN::tokrp;
 				lp -= 1;
 				break;
 
 			case ',':
-				t->kind = tokcomma;
+				t->kind = (int)BASIC_TOKEN::tokcomma;
 				break;
 
 			case ';':
-				t->kind = toksemi;
+				t->kind = (int)BASIC_TOKEN::toksemi;
 				break;
 
 			case ':':
-				t->kind = tokcolon;
+				t->kind = (int)BASIC_TOKEN::tokcolon;
 				break;
 
 			case '?':
-				t->kind = tokprint;
+				t->kind = (int)BASIC_TOKEN::tokprint;
 				break;
 
 			case '=':
-				t->kind = tokeq;
+				t->kind = (int)BASIC_TOKEN::tokeq;
 				break;
 
 			case '<':
 				if (i <= (int) strlen(l_inbuf) && l_inbuf[i - 1] == '=')
 				{
-					t->kind = tokle;
+					t->kind = (int)BASIC_TOKEN::tokle;
 					i++;
 				}
 				else if (i <= (int) strlen(l_inbuf) && l_inbuf[i - 1] == '>')
 				{
-					t->kind = tokne;
+					t->kind = (int)BASIC_TOKEN::tokne;
 					i++;
 				}
 				else
-					t->kind = toklt;
+					t->kind = (int)BASIC_TOKEN::toklt;
 				break;
 
 			case '>':
 				if (i <= (int) strlen(l_inbuf) && l_inbuf[i - 1] == '=')
 				{
-					t->kind = tokge;
+					t->kind = (int)BASIC_TOKEN::tokge;
 					i++;
 				}
 				else
-					t->kind = tokgt;
+					t->kind = (int)BASIC_TOKEN::tokgt;
 				break;
 
 			default:
@@ -731,8 +731,8 @@ parse(char * l_inbuf, tokenrec ** l_buf)
 					item = command_tokens.find(token);
 					if (item != command_tokens.end())
 					{
-						t->kind = item->second;
-						if (t->kind == tokrem)
+						t->kind = (int)item->second;
+						if (t->kind == (int)BASIC_TOKEN::tokrem)
 						{
 							m = (int) strlen(l_inbuf) + 1;
 							if (m < 256)
@@ -753,7 +753,7 @@ parse(char * l_inbuf, tokenrec ** l_buf)
 					}
 					else
 					{
-						t->kind = tokvar;
+						t->kind = (int)BASIC_TOKEN::tokvar;
 						v = varbase;
 						while (v != NULL && strcmp(v->name, token))
 							v = v->next;
@@ -790,7 +790,7 @@ parse(char * l_inbuf, tokenrec ** l_buf)
 				}
 				else if (isdigit((int) ch) || ch == '.')
 				{
-					t->kind = toknum;
+					t->kind = (int)BASIC_TOKEN::toknum;
 					i--;
 					t->UU.num = strtod(&l_inbuf[i - 1], &ptr);
 					if (&l_inbuf[i - 1] == ptr)
@@ -799,7 +799,7 @@ parse(char * l_inbuf, tokenrec ** l_buf)
 						   Note: the following causes an infinite loop:
 						   X = ..9
 						 */
-						t->kind = toksnerr;
+						t->kind = (int)BASIC_TOKEN::toksnerr;
 						t->UU.snch = ch;
 						i++;
 						break;
@@ -830,7 +830,7 @@ parse(char * l_inbuf, tokenrec ** l_buf)
 				}
 				else
 				{
-					t->kind = toksnerr;
+					t->kind = (int)BASIC_TOKEN::toksnerr;
 					t->UU.snch = ch;
 				}
 				break;
@@ -841,9 +841,9 @@ parse(char * l_inbuf, tokenrec ** l_buf)
 	if (q) {
 		if (phreeqci_gui)
 		{
-			_ASSERTE(nIDErrPrompt == 0);
+			_ASSERTE((int)nIDErrPrompt == 0);
 			_ASSERTE(P_escapecode == 0);
-			nIDErrPrompt = IDS_ERR_MISSING_Q;
+			nIDErrPrompt = PBasic::IDErr::IDS_ERR_MISSING_Q;
 			P_escapecode = -20;
 			return;
 		}
@@ -856,9 +856,9 @@ parse(char * l_inbuf, tokenrec ** l_buf)
 	if (lp > 0) {
 		if (phreeqci_gui)
 		{
-			_ASSERTE(nIDErrPrompt == 0);
+			_ASSERTE((int)nIDErrPrompt == 0);
 			_ASSERTE(P_escapecode == 0);
-			nIDErrPrompt = IDS_ERR_MISSING_RP;
+			nIDErrPrompt = PBasic::IDErr::IDS_ERR_MISSING_RP;
 			P_escapecode = -20;
 			return;
 		}
@@ -871,9 +871,9 @@ parse(char * l_inbuf, tokenrec ** l_buf)
 	else if (lp < 0) {
 		if (phreeqci_gui)
 		{
-			_ASSERTE(nIDErrPrompt == 0);
+			_ASSERTE((int)nIDErrPrompt == 0);
 			_ASSERTE(P_escapecode == 0);
-			nIDErrPrompt = IDS_ERR_MISSING_RP;
+			nIDErrPrompt = PBasic::IDErr::IDS_ERR_MISSING_RP;
 			P_escapecode = -20;
 			return;
 		}
@@ -896,33 +896,33 @@ listtokens(FILE * f, tokenrec * l_buf)
 	ltr = false;
 	while (l_buf != NULL)
 	{
-		if ((l_buf->kind >= (long) toknot && l_buf->kind <= (long) tokrenum) ||
-			l_buf->kind == (long) toknum || l_buf->kind == (long) tokvar ||
-			l_buf->kind >= (long) toktc)
+		if ((l_buf->kind >= (long)BASIC_TOKEN::toknot && l_buf->kind <= (long)BASIC_TOKEN::tokrenum) ||
+			l_buf->kind == (long)BASIC_TOKEN::toknum || l_buf->kind == (long)BASIC_TOKEN::tokvar ||
+			l_buf->kind >= (long)BASIC_TOKEN::toktc)
 		{
 			if (ltr)
 				/*putc(' ', f); */
 				output_msg(" ");
-			ltr = (bool) (l_buf->kind != toknot);
+			ltr = (bool) (l_buf->kind != (int)BASIC_TOKEN::toknot);
 		}
 		else
 			ltr = false;
 		switch (l_buf->kind)
 		{
 
-		case tokvar:
+		case (int)BASIC_TOKEN::tokvar:
 			/*fputs(l_buf->UU.vp->name, f); */
 			PhreeqcPtr->output_msg(PhreeqcPtr->sformatf("%s", l_buf->UU.vp->name));
 			break;
 
-		case toknum:
+		case (int)BASIC_TOKEN::toknum:
 			/*fputs(numtostr(STR1, l_buf->UU.num), f); */
 			string = numtostr(STR1, l_buf->UU.num);
 			PhreeqcPtr->string_trim(string);
 			output_msg(PhreeqcPtr->sformatf("%s", string));
 			break;
 
-		case tokstr:
+		case (int)BASIC_TOKEN::tokstr:
 			if (strchr(l_buf->UU.sp, '\"'))
 			{
 				output_msg(PhreeqcPtr->sformatf("\'%s\'", l_buf->UU.sp));
@@ -933,759 +933,759 @@ listtokens(FILE * f, tokenrec * l_buf)
 			}
 			break;
 
-		case toksnerr:
+		case (int)BASIC_TOKEN::toksnerr:
 			output_msg(PhreeqcPtr->sformatf("{%c}", l_buf->UU.snch));
 			break;
 
-		case tokplus:
+		case (int)BASIC_TOKEN::tokplus:
 			/*putc('+', f); */
 			output_msg("+");
 			break;
 
-		case tokminus:
+		case (int)BASIC_TOKEN::tokminus:
 			/*putc('-', f); */
 			output_msg("-");
 			break;
 
-		case toktimes:
+		case (int)BASIC_TOKEN::toktimes:
 			/*putc('*', f); */
 			output_msg("*");
 			break;
 
-		case tokdiv:
+		case (int)BASIC_TOKEN::tokdiv:
 			/*putc('/', f); */
 			output_msg("/");
 			break;
 
-		case tokup:
+		case (int)BASIC_TOKEN::tokup:
 			/*putc('^', f); */
 			output_msg("^");
 			break;
 
-		case toklp:
+		case (int)BASIC_TOKEN::toklp:
 			/*putc('(', f); */
 			output_msg("(");
 			break;
 
-		case tokrp:
+		case (int)BASIC_TOKEN::tokrp:
 			/*putc(')', f); */
 			output_msg(")");
 			break;
 
-		case tokcomma:
+		case (int)BASIC_TOKEN::tokcomma:
 			/*putc(',', f); */
 			output_msg(",");
 			break;
 
-		case toksemi:
+		case (int)BASIC_TOKEN::toksemi:
 			/*putc(';', f); */
 			output_msg(";");
 			break;
 
-		case tokcolon:
+		case (int)BASIC_TOKEN::tokcolon:
 			output_msg(" : ");
 			break;
 
-		case tokeq:
+		case (int)BASIC_TOKEN::tokeq:
 			output_msg(" = ");
 			break;
 
-		case toklt:
+		case (int)BASIC_TOKEN::toklt:
 			output_msg(" < ");
 			break;
 
-		case tokgt:
+		case (int)BASIC_TOKEN::tokgt:
 			output_msg(" > ");
 			break;
 
-		case tokle:
+		case (int)BASIC_TOKEN::tokle:
 			output_msg(" <= ");
 			break;
 
-		case tokge:
+		case (int)BASIC_TOKEN::tokge:
 			output_msg(" >= ");
 			break;
 
-		case tokne:
+		case (int)BASIC_TOKEN::tokne:
 			output_msg(" <> ");
 			break;
 
-		case tokand:
+		case (int)BASIC_TOKEN::tokand:
 			output_msg(" AND ");
 			break;
 
-		case tokor:
+		case (int)BASIC_TOKEN::tokor:
 			output_msg(" OR ");
 			break;
 
-		case tokxor:
+		case (int)BASIC_TOKEN::tokxor:
 			output_msg(" XOR ");
 			break;
 
-		case tokmod:
+		case (int)BASIC_TOKEN::tokmod:
 			output_msg(" MOD ");
 			break;
 
-		case toknot:
+		case (int)BASIC_TOKEN::toknot:
 			output_msg("NOT ");
 			break;
 
-		case toksqr:
+		case (int)BASIC_TOKEN::toksqr:
 			output_msg("SQR");
 			break;
 
-		case toksqrt:
+		case (int)BASIC_TOKEN::toksqrt:
 			output_msg("SQRT");
 			break;
 
-		case tokceil:
+		case (int)BASIC_TOKEN::tokceil:
 			output_msg("CEIL");
 			break;
 
-		case tokfloor:
+		case (int)BASIC_TOKEN::tokfloor:
 			output_msg("FLOOR");
 			break;
 
-		case toksin:
+		case (int)BASIC_TOKEN::toksin:
 			output_msg("SIN");
 			break;
 
-		case tokcos:
+		case (int)BASIC_TOKEN::tokcos:
 			output_msg("COS");
 			break;
 
-		case toktan:
+		case (int)BASIC_TOKEN::toktan:
 			output_msg("TAN");
 			break;
 
-		case tokarctan:
+		case (int)BASIC_TOKEN::tokarctan:
 			output_msg("ARCTAN");
 			break;
 
-		case toklog:
+		case (int)BASIC_TOKEN::toklog:
 			output_msg("LOG");
 			break;
 
-		case tokexp:
+		case (int)BASIC_TOKEN::tokexp:
 			output_msg("EXP");
 			break;
 
-		case tokabs:
+		case (int)BASIC_TOKEN::tokabs:
 			output_msg("ABS");
 			break;
 
-		case toksgn:
+		case (int)BASIC_TOKEN::toksgn:
 			output_msg("SGN");
 			break;
 
-		case tokstr_:
+		case (int)BASIC_TOKEN::tokstr_:
 			output_msg("STR$");
 			break;
 
-		case tokval:
+		case (int)BASIC_TOKEN::tokval:
 			output_msg("VAL");
 			break;
 
-		case tokchr_:
+		case (int)BASIC_TOKEN::tokchr_:
 			output_msg("CHR$");
 			break;
 
-		case tokeol_:
+		case (int)BASIC_TOKEN::tokeol_:
 			output_msg("EOL$");
 			break;
 
-		case tokeol_notab_:
+		case (int)BASIC_TOKEN::tokeol_notab_:
 			output_msg("EOL_NOTAB$");
 			break;
 
-		case tokno_newline_:
+		case (int)BASIC_TOKEN::tokno_newline_:
 			output_msg("NO_NEWLINE$");
 			break;
 
-		case tokasc:
+		case (int)BASIC_TOKEN::tokasc:
 			output_msg("ASC");
 			break;
 
-		case toklen:
+		case (int)BASIC_TOKEN::toklen:
 			output_msg("LEN");
 			break;
 
-		case tokmid_:
+		case (int)BASIC_TOKEN::tokmid_:
 			output_msg("MID$");
 			break;
 
-		case tokpeek:
+		case (int)BASIC_TOKEN::tokpeek:
 			output_msg("PEEK");
 			break;
 
-		case tokrem:
+		case (int)BASIC_TOKEN::tokrem:
 			output_msg(PhreeqcPtr->sformatf("REM%s", l_buf->UU.sp));
 			break;
 
-		case toklet:
+		case (int)BASIC_TOKEN::toklet:
 			output_msg("LET");
 			break;
 
-		case tokprint:
+		case (int)BASIC_TOKEN::tokprint:
 			output_msg("PRINT");
 			break;
 
-		case tokinput:
+		case (int)BASIC_TOKEN::tokinput:
 			output_msg("INPUT");
 			break;
 
-		case tokgoto:
+		case (int)BASIC_TOKEN::tokgoto:
 			output_msg("GOTO");
 			break;
 
-		case tokif:
+		case (int)BASIC_TOKEN::tokif:
 			output_msg("IF");
 			break;
 
-		case tokend:
+		case (int)BASIC_TOKEN::tokend:
 			output_msg("END");
 			break;
 
-		case tokstop:
+		case (int)BASIC_TOKEN::tokstop:
 			output_msg("STOP");
 			break;
 
-		case tokfor:
+		case (int)BASIC_TOKEN::tokfor:
 			output_msg("FOR");
 			break;
 
-		case toknext:
+		case (int)BASIC_TOKEN::toknext:
 			output_msg("NEXT");
 			break;
 
-		case tokwhile:
+		case (int)BASIC_TOKEN::tokwhile:
 			output_msg("WHILE");
 			break;
 
-		case tokwend:
+		case (int)BASIC_TOKEN::tokwend:
 			output_msg("WEND");
 			break;
 
-		case tokgosub:
+		case (int)BASIC_TOKEN::tokgosub:
 			output_msg("GOSUB");
 			break;
 
-		case tokreturn:
+		case (int)BASIC_TOKEN::tokreturn:
 			output_msg("RETURN");
 			break;
 
-		case tokread:
+		case (int)BASIC_TOKEN::tokread:
 			output_msg("READ");
 			break;
 
-		case tokdata:
+		case (int)BASIC_TOKEN::tokdata:
 			output_msg("DATA");
 			break;
 
-		case tokrestore:
+		case (int)BASIC_TOKEN::tokrestore:
 			output_msg("RESTORE");
 			break;
 
-		case tokgotoxy:
+		case (int)BASIC_TOKEN::tokgotoxy:
 			output_msg("GOTOXY");
 			break;
 
-		case tokon:
+		case (int)BASIC_TOKEN::tokon:
 			output_msg("ON");
 			break;
 
-		case tokdim:
+		case (int)BASIC_TOKEN::tokdim:
 			output_msg("DIM");
 			break;
 
-		case tokerase:
+		case (int)BASIC_TOKEN::tokerase:
 			output_msg("ERASE");
 			break;
 
-		case tokpoke:
+		case (int)BASIC_TOKEN::tokpoke:
 			output_msg("POKE");
 			break;
 
-		case toklist:
+		case (int)BASIC_TOKEN::toklist:
 			output_msg("LIST");
 			break;
 
-		case tokrun:
+		case (int)BASIC_TOKEN::tokrun:
 			output_msg("RUN");
 			break;
 
-		case toknew:
+		case (int)BASIC_TOKEN::toknew:
 			output_msg("NEW");
 			break;
 
-		case tokload:
+		case (int)BASIC_TOKEN::tokload:
 			output_msg("LOAD");
 			break;
 
-		case tokmerge:
+		case (int)BASIC_TOKEN::tokmerge:
 			output_msg("MERGE");
 			break;
 
-		case toksave:
+		case (int)BASIC_TOKEN::toksave:
 			output_msg("SAVE");
 			break;
 
-		case tokbye:
+		case (int)BASIC_TOKEN::tokbye:
 			output_msg("BYE");
 			break;
 
-		case tokdel:
+		case (int)BASIC_TOKEN::tokdel:
 			output_msg("DEL");
 			break;
 
-		case tokrenum:
+		case (int)BASIC_TOKEN::tokrenum:
 			output_msg("RENUM");
 			break;
 
-		case tokthen:
+		case (int)BASIC_TOKEN::tokthen:
 			output_msg(" THEN ");
 			break;
 
-		case tokelse:
+		case (int)BASIC_TOKEN::tokelse:
 			output_msg(" ELSE ");
 			break;
 
-		case tokto:
+		case (int)BASIC_TOKEN::tokto:
 			output_msg(" TO ");
 			break;
 
-		case tokstep:
+		case (int)BASIC_TOKEN::tokstep:
 			output_msg(" STEP ");
 			break;
 
-		case toktc:
+		case (int)BASIC_TOKEN::toktc:
 			output_msg("TC");
 			break;
 
-		case tokm0:
+		case (int)BASIC_TOKEN::tokm0:
 			output_msg("M0");
 			break;
 
-		case tokm:
+		case (int)BASIC_TOKEN::tokm:
 			output_msg("M");
 			break;
 
-		case tokparm:
+		case (int)BASIC_TOKEN::tokparm:
 			output_msg("PARM");
 			break;
 
-		case tokact:
+		case (int)BASIC_TOKEN::tokact:
 			output_msg("ACT");
 			break;
 
-		case tokchange_por:
+		case (int)BASIC_TOKEN::tokchange_por:
 			output_msg("CHANGE_POR");
 			break;
 
-		case tokget_por:
+		case (int)BASIC_TOKEN::tokget_por:
 			output_msg("GET_POR");
 			break;
 
-		case tokchange_surf:
+		case (int)BASIC_TOKEN::tokchange_surf:
 			output_msg("CHANGE_SURF");
 			break;
 
-		case tokporevolume:
+		case (int)BASIC_TOKEN::tokporevolume:
 			output_msg("POREVOLUME");
 			break;
 
-		case tokmol:
+		case (int)BASIC_TOKEN::tokmol:
 			output_msg("MOL");
 			break;
 
-		case tokla:
+		case (int)BASIC_TOKEN::tokla:
 			output_msg("LA");
 			break;
 
-		case toklm:
+		case (int)BASIC_TOKEN::toklm:
 			output_msg("LM");
 			break;
 
-		case toksr:
+		case (int)BASIC_TOKEN::toksr:
 			output_msg("SR");
 			break;
 
-		case toksi:
+		case (int)BASIC_TOKEN::toksi:
 			output_msg("SI");
 			break;
 
-		case toktot:
+		case (int)BASIC_TOKEN::toktot:
 			output_msg("TOT");
 			break;
 
-		case toktotmole:
-		case toktotmol:
-		case toktotmoles:
+		case (int)BASIC_TOKEN::toktotmole:
+		case (int)BASIC_TOKEN::toktotmol:
+		case (int)BASIC_TOKEN::toktotmoles:
 			output_msg("TOTMOLE");
 			break;
 
-		case toktk:
+		case (int)BASIC_TOKEN::toktk:
 			output_msg("TK");
 			break;
 
-		case toktime:
+		case (int)BASIC_TOKEN::toktime:
 			output_msg("TIME");
 			break;
 
-		case toklog10:
+		case (int)BASIC_TOKEN::toklog10:
 			output_msg("LOG10");
 			break;
 
-		case toksim_time:
+		case (int)BASIC_TOKEN::toksim_time:
 			output_msg("SIM_TIME");
 			break;
 
-		case tokequi:
+		case (int)BASIC_TOKEN::tokequi:
 			output_msg("EQUI");
 			break;
 
-		case tokequi_delta:
+		case (int)BASIC_TOKEN::tokequi_delta:
 			output_msg("EQUI_DELTA");
 			break;
 
-		case tokgas:
+		case (int)BASIC_TOKEN::tokgas:
 			output_msg("GAS");
 			break;
 
-		case tokpunch:
+		case (int)BASIC_TOKEN::tokpunch:
 			output_msg("PUNCH");
 			break;
 
-		case tokkin:
+		case (int)BASIC_TOKEN::tokkin:
 			output_msg("KIN");
 			break;
 
-		case tokkin_delta:
+		case (int)BASIC_TOKEN::tokkin_delta:
 			output_msg("KIN_DELTA");
 			break;
 
-		case tokkin_time:
+		case (int)BASIC_TOKEN::tokkin_time:
 			output_msg("KIN_TIME");
 			break;
 
-		case toks_s:
+		case (int)BASIC_TOKEN::toks_s:
 			output_msg("S_S");
 			break;
 
-		case tokmu:
+		case (int)BASIC_TOKEN::tokmu:
 			output_msg("MU");
 			break;
 
-		case tokosmotic:
+		case (int)BASIC_TOKEN::tokosmotic:
 			output_msg("OSMOTIC");
 			break;
 
-		case tokalk:
+		case (int)BASIC_TOKEN::tokalk:
 			output_msg("ALK");
 			break;
 
-		case toklk_species:
+		case (int)BASIC_TOKEN::toklk_species:
 			output_msg("LK_SPECIES");
 			break;
 
-		case toklk_named:
+		case (int)BASIC_TOKEN::toklk_named:
 			output_msg("LK_NAMED");
 			break;
 
-		case toklk_phase:
+		case (int)BASIC_TOKEN::toklk_phase:
 			output_msg("LK_PHASE");
 			break;
 
-		case toksum_species:
+		case (int)BASIC_TOKEN::toksum_species:
 			output_msg("SUM_SPECIES");
 			break;
 
-		case toksum_gas:
+		case (int)BASIC_TOKEN::toksum_gas:
 			output_msg("SUM_GAS");
 			break;
 
-		case toksum_s_s:
+		case (int)BASIC_TOKEN::toksum_s_s:
 			output_msg("SUM_s_s");
 			break;
 
-		case tokcalc_value:
+		case (int)BASIC_TOKEN::tokcalc_value:
 			output_msg("CALC_VALUE");
 			break;
 
-		case tokdescription:
+		case (int)BASIC_TOKEN::tokdescription:
 			output_msg("DESCRIPTION");
 			break;
 
-		case toktitle:
+		case (int)BASIC_TOKEN::toktitle:
 			output_msg("TITLE");
 			break;
 
-		case toksys:
+		case (int)BASIC_TOKEN::toksys:
 			output_msg("SYS");
 			break;
 
-		case tokadd_heading:
+		case (int)BASIC_TOKEN::tokadd_heading:
 			output_msg("ADD_HEADING");
 			break;
 
-		case tokinstr:
+		case (int)BASIC_TOKEN::tokinstr:
 			output_msg("INSTR");
 			break;
 
-		case tokltrim:
+		case (int)BASIC_TOKEN::tokltrim:
 			output_msg("LTRIM");
 			break;
 
-		case tokrtrim:
+		case (int)BASIC_TOKEN::tokrtrim:
 			output_msg("RTRIM");
 			break;
 
-		case toktrim:
+		case (int)BASIC_TOKEN::toktrim:
 			output_msg("TRIM");
 			break;
 
-		case tokpad:
+		case (int)BASIC_TOKEN::tokpad:
 			output_msg("PAD");
 			break;
 
-		case tokrxn:
+		case (int)BASIC_TOKEN::tokrxn:
 			output_msg("RXN");
 			break;
 
-		case tokdist:
+		case (int)BASIC_TOKEN::tokdist:
 			output_msg("DIST");
 			break;
 
-		case tokmisc1:
+		case (int)BASIC_TOKEN::tokmisc1:
 			output_msg("MISC1");
 			break;
 
-		case tokmisc2:
+		case (int)BASIC_TOKEN::tokmisc2:
 			output_msg("MISC2");
 			break;
 
-		case tokedl:
+		case (int)BASIC_TOKEN::tokedl:
 			output_msg("EDL");
 			break;
 
-		case toksurf:
+		case (int)BASIC_TOKEN::toksurf:
 			output_msg("SURF");
 			break;
 
-		case tokedl_species:
+		case (int)BASIC_TOKEN::tokedl_species:
 			output_msg("EDL_SPECIES");
 			break;
 
-		case tokstep_no:
+		case (int)BASIC_TOKEN::tokstep_no:
 			output_msg("STEP_NO");
 			break;
 
-		case toksim_no:
+		case (int)BASIC_TOKEN::toksim_no:
 			output_msg("SIM_NO");
 			break;
 
-		case toktotal_time:
+		case (int)BASIC_TOKEN::toktotal_time:
 			output_msg("TOTAL_TIME");
 			break;
 
-		case tokput:
+		case (int)BASIC_TOKEN::tokput:
 			output_msg("PUT");
 			break;
 
-		case tokget:
+		case (int)BASIC_TOKEN::tokget:
 			output_msg("GET");
 			break;
 
-		case tokcharge_balance:
+		case (int)BASIC_TOKEN::tokcharge_balance:
 			output_msg("CHARGE_BALANCE");
 			break;
 
-		case tokpercent_error:
+		case (int)BASIC_TOKEN::tokpercent_error:
 			output_msg("PERCENT_ERROR");
 			break;
 
 #if defined PHREEQ98 || defined MULTICHART
-		case tokgraph_x:
+		case (int)BASIC_TOKEN::tokgraph_x:
 			output_msg("GRAPH_X");
 			break;
 
-		case tokgraph_y:
+		case (int)BASIC_TOKEN::tokgraph_y:
 			output_msg("GRAPH_Y");
 			break;
 
-		case tokgraph_sy:
+		case (int)BASIC_TOKEN::tokgraph_sy:
 			output_msg("GRAPH_SY");
 			break;
 #endif
 
 #if defined MULTICHART
-		case tokplot_xy:
+		case (int)BASIC_TOKEN::tokplot_xy:
 			output_msg("PLOT_XY");
 			break;
 #endif
 
-		case tokcell_no:
+		case (int)BASIC_TOKEN::tokcell_no:
 			output_msg("CELL_NO");
 			break;
 
-		case tokexists:
+		case (int)BASIC_TOKEN::tokexists:
 			output_msg("EXISTS");
 			break;
 
-		case toksc:
+		case (int)BASIC_TOKEN::toksc:
 			output_msg("SC");
 			break;
 
-		case tokgamma:
+		case (int)BASIC_TOKEN::tokgamma:
 			output_msg("GAMMA");
 			break;
 
-		case toklg:
+		case (int)BASIC_TOKEN::toklg:
 			output_msg("LG");
 			break;
 
 /* VP: Density Start */
-		case tokrho:
+		case (int)BASIC_TOKEN::tokrho:
 			output_msg("RHO");
 			break;
-		case tokrho_0:
+		case (int)BASIC_TOKEN::tokrho_0:
 			output_msg("RHO_0");
 			break;
 /* VP: Density End */
-		case tokcell_volume:
+		case (int)BASIC_TOKEN::tokcell_volume:
 			output_msg("CELL_VOLUME");
 			break;
-		case tokcell_pore_volume:
+		case (int)BASIC_TOKEN::tokcell_pore_volume:
 			output_msg("CELL_PORE_VOLUME");
 			break;
-		case tokcell_porosity:
+		case (int)BASIC_TOKEN::tokcell_porosity:
 			output_msg("CELL_POROSITY");
 			break;
-		case tokcell_saturation:
+		case (int)BASIC_TOKEN::tokcell_saturation:
 			output_msg("CELL_SATURATION");
 			break;
-		case tokvelocity_x:
+		case (int)BASIC_TOKEN::tokvelocity_x:
 			output_msg("VELOCITY_X");
 			break;
-		case tokvelocity_y:
+		case (int)BASIC_TOKEN::tokvelocity_y:
 			output_msg("VELOCITY_Y");
 			break;
-		case tokvelocity_z:
+		case (int)BASIC_TOKEN::tokvelocity_z:
 			output_msg("VELOCITY_Z");
 			break;
-		case toktransport_cell_no:
+		case (int)BASIC_TOKEN::toktransport_cell_no:
 			output_msg("TRANSPORT_CELL_NO");
 			break;
-		case tokiso:
+		case (int)BASIC_TOKEN::tokiso:
 			output_msg("ISO");
 			break;
-		case tokiso_unit:
+		case (int)BASIC_TOKEN::tokiso_unit:
 			output_msg("ISO_UNIT");
 			break;
-		case tokkinetics_formula:
-		case tokkinetics_formula_:
+		case (int)BASIC_TOKEN::tokkinetics_formula:
+		case (int)BASIC_TOKEN::tokkinetics_formula_:
 			output_msg("KINETICS_FORMULA$");
 			break;
-		case tokphase_formula:
-		case tokphase_formula_:
+		case (int)BASIC_TOKEN::tokphase_formula:
+		case (int)BASIC_TOKEN::tokphase_formula_:
 			output_msg("PHASE_FORMULA$");
 			break;
-		case tokspecies_formula:
-		case tokspecies_formula_:
+		case (int)BASIC_TOKEN::tokspecies_formula:
+		case (int)BASIC_TOKEN::tokspecies_formula_:
 			output_msg("SPECIES_FORMULA$");
 			break;			
-		case toklist_s_s:
+		case (int)BASIC_TOKEN::toklist_s_s:
 			output_msg("LIST_S_S");
 			break;
-		case tokpr_p:
+		case (int)BASIC_TOKEN::tokpr_p:
 			output_msg("PR_P");
 			break;
-		case tokpr_phi:
+		case (int)BASIC_TOKEN::tokpr_phi:
 			output_msg("PR_PHI");
 			break;
- 		case tokgas_p:
+ 		case (int)BASIC_TOKEN::tokgas_p:
  			output_msg("GAS_P");
  			break;
- 		case tokgas_vm:
+ 		case (int)BASIC_TOKEN::tokgas_vm:
  			output_msg("GAS_VM");
  			break;
-  		case tokpressure:
+  		case (int)BASIC_TOKEN::tokpressure:
   			output_msg("PRESSURE");
   			break;
-		case tokeps_r:
+		case (int)BASIC_TOKEN::tokeps_r:
 			output_msg("EPS_R"); // dielectric constant
 			break;
- 		case tokvm:
+ 		case (int)BASIC_TOKEN::tokvm:
  			output_msg("VM"); // mole volume of aqueous solute
  			break;
- 		case tokphase_vm:
+ 		case (int)BASIC_TOKEN::tokphase_vm:
  			output_msg("PHASE_VM"); // mole volume of a phase 
  			break;
- 		case tokaphi:
+ 		case (int)BASIC_TOKEN::tokaphi:
  			output_msg("APHI"); // mole volume of a phase 
  			break;
- 		case tokdh_a:
+ 		case (int)BASIC_TOKEN::tokdh_a:
  			output_msg("DH_A"); // Debye-Hueckel A
  			break;
-		case tokdebye_length:
+		case (int)BASIC_TOKEN::tokdebye_length:
 			output_msg("DEBYE_LENGTH"); // Debye-Hueckel length
 			break;
- 		case tokdh_b:
+ 		case (int)BASIC_TOKEN::tokdh_b:
  			output_msg("DH_B"); // Debye-Hueckel B
  			break;
- 		case tokdh_av:
+ 		case (int)BASIC_TOKEN::tokdh_av:
  			output_msg("DH_Av"); // Debye-Hueckel Av
  			break;
- 		case tokqbrn:
+ 		case (int)BASIC_TOKEN::tokqbrn:
  			output_msg("QBrn"); // Q_Born, d(eps_r)/d(P)/(eps_r^2)
  			break;
- 		case tokkappa:
+ 		case (int)BASIC_TOKEN::tokkappa:
  			output_msg("KAPPA"); // compressibility of pure water, d(rho)/d(P) / rho
  			break;
- 		case tokgfw:
+ 		case (int)BASIC_TOKEN::tokgfw:
  			output_msg("GFW"); // gram formula weight of a formula
  			break;
- 		case toksoln_vol:
+ 		case (int)BASIC_TOKEN::toksoln_vol:
  			output_msg("SOLN_VOL"); // volume of solution
  			break;		
-		case tokstr_f_:
+		case (int)BASIC_TOKEN::tokstr_f_:
 			output_msg("STR_F$");
 			break;
-		case tokstr_e_:
+		case (int)BASIC_TOKEN::tokstr_e_:
 			output_msg("STR_E$");
 			break;
-		case tokeq_frac:
-		case tokequiv_frac:
+		case (int)BASIC_TOKEN::tokeq_frac:
+		case (int)BASIC_TOKEN::tokequiv_frac:
 			output_msg("EQ_FRAC");
 			break;
-		case tokcallback:
+		case (int)BASIC_TOKEN::tokcallback:
 			output_msg("CALLBACK");
 			break;
-		case tokdiff_c:
+		case (int)BASIC_TOKEN::tokdiff_c:
 			output_msg("DIFF_C");
 			break;
-		case toksetdiff_c:
+		case (int)BASIC_TOKEN::toksetdiff_c:
 			output_msg("SETDIFF_C");
 			break;
-		case toksa_declercq:
+		case (int)BASIC_TOKEN::toksa_declercq:
 			output_msg("SA_DECLERCQ");
 			break;
-		case tokviscos:
+		case (int)BASIC_TOKEN::tokviscos:
 			output_msg("VISCOS");
 			break;
-		case tokviscos_0:
+		case (int)BASIC_TOKEN::tokviscos_0:
 			output_msg("VISCOS_0");
 			break;
-		case tokcurrent_a:
+		case (int)BASIC_TOKEN::tokcurrent_a:
 			output_msg("CURRENT_A");
 			break;
-		case tokpot_v:
+		case (int)BASIC_TOKEN::tokpot_v:
 			output_msg("POT_V");
 			break;
-		case tokt_sc:
+		case (int)BASIC_TOKEN::tokt_sc:
 			output_msg("T_SC");
 			break;
-		case tokiterations:
+		case (int)BASIC_TOKEN::tokiterations:
 			output_msg("ITERATIONS");
 			break;
 		}
@@ -1703,7 +1703,7 @@ disposetokens(tokenrec ** tok)
 		tok1 = (*tok)->next;
 		if (phreeqci_gui)
 		{
-			if ((*tok)->kind == (long) toknum)
+			if ((*tok)->kind == (long)BASIC_TOKEN::toknum)
 			{
 				PhreeqcPtr->PHRQ_free((*tok)->sz_num);
 			}
@@ -1714,7 +1714,7 @@ disposetokens(tokenrec ** tok)
 			}
 #endif /* _DEBUG */
 		}
-		if ((*tok)->kind == (long) tokrem || (*tok)->kind == (long) tokstr)
+		if ((*tok)->kind == (long)BASIC_TOKEN::tokrem || (*tok)->kind == (long)BASIC_TOKEN::tokstr)
 		{
 			(*tok)->UU.sp = (char *) PhreeqcPtr->free_check_null((*tok)->UU.sp);
 		}
@@ -1788,7 +1788,7 @@ errormsg(const char * l_s)
 	if (phreeqci_gui)
 	{
 		/* set nIDErrPrompt before calling errormsg see snerr */
-		_ASSERTE(nIDErrPrompt != 0);
+		_ASSERTE((int)nIDErrPrompt != 0);
 	}
 	else
 	{
@@ -1804,8 +1804,8 @@ void PBasic::
 	strcpy(str, "Syntax_error ");
 	if (phreeqci_gui)
 	{
-		_ASSERTE(nIDErrPrompt == 0);
-		nIDErrPrompt = IDS_ERR_SYNTAX;
+		_ASSERTE((int)nIDErrPrompt == 0);
+		nIDErrPrompt = PBasic::IDErr::IDS_ERR_SYNTAX;
 	}
 	strcat(str, l_s);
 	strcat(str, " in line: ");
@@ -1821,8 +1821,8 @@ void PBasic::
 	strcpy(str, "Type mismatch error");
 	if (phreeqci_gui)
 	{
-		_ASSERTE(nIDErrPrompt == 0);
-		nIDErrPrompt = IDS_ERR_MISMATCH;
+		_ASSERTE((int)nIDErrPrompt == 0);
+		nIDErrPrompt = PBasic::IDErr::IDS_ERR_MISMATCH;
 	}
 	strcat(str, l_s);
 	strcat(str, " in line: ");
@@ -1836,8 +1836,8 @@ void PBasic::
 {
 	if (phreeqci_gui)
 	{
-		_ASSERTE(nIDErrPrompt == 0);
-		nIDErrPrompt = IDS_ERR_BAD_SUBSCRIPT;
+		_ASSERTE((int)nIDErrPrompt == 0);
+		nIDErrPrompt = PBasic::IDErr::IDS_ERR_BAD_SUBSCRIPT;
 	}
 	errormsg("Bad subscript");
 }
@@ -1949,7 +1949,7 @@ require(int k, struct LOC_exec *LINK)
 		std::map<const std::string, BASIC_TOKEN>::const_iterator item;
 		for (item = command_tokens.begin(); item != command_tokens.end(); item++)
 		{
-			if (item->second == k)
+			if ((int)item->second == k)
 				break;
 		}
 
@@ -1979,9 +1979,9 @@ skipparen(struct LOC_exec *LINK)
 			exit(4);
 #endif
 		}
-		if (LINK->t->kind == tokrp || LINK->t->kind == tokcomma)
+		if (LINK->t->kind == (int)BASIC_TOKEN::tokrp || LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 			goto _L1;
-		if (LINK->t->kind == toklp)
+		if (LINK->t->kind == (int)BASIC_TOKEN::toklp)
 		{
 			LINK->t = LINK->t->next;
 			skipparen(LINK);
@@ -2000,7 +2000,7 @@ findvar(struct LOC_exec *LINK)
 	tokenrec *tok;
 	long FORLIM;
 
-	if (LINK->t == NULL || LINK->t->kind != tokvar)
+	if (LINK->t == NULL || LINK->t->kind != (int)BASIC_TOKEN::tokvar)
 	{
 		snerr(": can`t find variable");
 #if !defined(R_SO)
@@ -2009,7 +2009,7 @@ findvar(struct LOC_exec *LINK)
 	}
 	v = LINK->t->UU.vp;
 	LINK->t = LINK->t->next;
-	if (LINK->t == NULL || LINK->t->kind != toklp)
+	if (LINK->t == NULL || LINK->t->kind != (int)BASIC_TOKEN::toklp)
 	{
 		if (v->numdims != 0)
 			badsubscr();
@@ -2030,7 +2030,7 @@ findvar(struct LOC_exec *LINK)
 			i++;
 			v->dims[i - 1] = 11;
 		}
-		while (LINK->t->kind != tokrp);
+		while (LINK->t->kind != (int)BASIC_TOKEN::tokrp);
 		v->numdims = (char) i;
 		if (v->stringvar)
 		{
@@ -2060,9 +2060,9 @@ findvar(struct LOC_exec *LINK)
 			badsubscr();
 		k = k * v->dims[i - 1] + j;
 		if (i < v->numdims)
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 	}
-	require(tokrp, LINK);
+	require((int)BASIC_TOKEN::tokrp, LINK);
 	if (v->stringvar)
 		v->UU.U1.sval = &v->UU.U1.sarr[k];
 	else
@@ -2113,11 +2113,11 @@ factor(struct LOC_exec * LINK)
 	switch (facttok->kind)
 	{
 
-	case toknum:
+	case (int)BASIC_TOKEN::toknum:
 		n.UU.val = facttok->UU.num;
 		break;
 
-	case tokstr:
+	case (int)BASIC_TOKEN::tokstr:
 		n.stringval = true;
 		m = (int)strlen(facttok->UU.sp) + 1;
 		if (m < 256)
@@ -2131,7 +2131,7 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case tokvar:
+	case (int)BASIC_TOKEN::tokvar:
 		LINK->t = facttok;
 		v = findvar(LINK);
 		n.stringval = v->stringvar;
@@ -2163,53 +2163,53 @@ factor(struct LOC_exec * LINK)
 			n.UU.val = *v->UU.U0.val;
 		break;
 
-	case toklp:
+	case (int)BASIC_TOKEN::toklp:
 		n = expr(LINK);
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		break;
 
-	case tokminus:
+	case (int)BASIC_TOKEN::tokminus:
 		n.UU.val = -realfactor(LINK);
 		break;
 
-	case tokplus:
+	case (int)BASIC_TOKEN::tokplus:
 		n.UU.val = realfactor(LINK);
 		break;
 
-	case toknot:
+	case (int)BASIC_TOKEN::toknot:
 		n.UU.val = ~intfactor(LINK);
 		break;
 
-	case toksqr:
+	case (int)BASIC_TOKEN::toksqr:
 		TEMP = realfactor(LINK);
 		n.UU.val = TEMP * TEMP;
 		break;
 
-	case toksqrt:
+	case (int)BASIC_TOKEN::toksqrt:
 		n.UU.val = sqrt(realfactor(LINK));
 		break;
 
-	case tokceil:
+	case (int)BASIC_TOKEN::tokceil:
 		n.UU.val = ceil(realfactor(LINK));
 		break;
 
-	case tokfloor:
+	case (int)BASIC_TOKEN::tokfloor:
 		n.UU.val = floor(realfactor(LINK));
 		break;
 
-	case toktc:
+	case (int)BASIC_TOKEN::toktc:
 		n.UU.val = PhreeqcPtr->tc_x;
 		break;
 
-	case toktk:
+	case (int)BASIC_TOKEN::toktk:
 		n.UU.val = PhreeqcPtr->tc_x + 273.15;
 		break;
 
-	case toktime:
+	case (int)BASIC_TOKEN::toktime:
 		n.UU.val = PhreeqcPtr->rate_time;
 		break;
 
-	case toksim_time:
+	case (int)BASIC_TOKEN::toksim_time:
 		if (!PhreeqcPtr->use.Get_kinetics_in())
 		{
 			if (PhreeqcPtr->state == PHAST)
@@ -2242,7 +2242,7 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case toktotal_time:
+	case (int)BASIC_TOKEN::toktotal_time:
 		if (!PhreeqcPtr->use.Get_kinetics_in())
 		{
 			if (PhreeqcPtr->state == PHAST)
@@ -2269,15 +2269,15 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case tokm0:
+	case (int)BASIC_TOKEN::tokm0:
 		n.UU.val = PhreeqcPtr->rate_m0;
 		break;
 
-	case tokm:
+	case (int)BASIC_TOKEN::tokm:
 		n.UU.val = PhreeqcPtr->rate_m;
 		break;
 
-	case tokparm:
+	case (int)BASIC_TOKEN::tokparm:
 		i_rate = intfactor(LINK);
 		if (parse_all)
 		{
@@ -2294,28 +2294,28 @@ factor(struct LOC_exec * LINK)
 
 		break;
 
-	case tokact:
+	case (int)BASIC_TOKEN::tokact:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->activity(str);
 	}
 	break;
 
-	case tokgamma:
+	case (int)BASIC_TOKEN::tokgamma:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->activity_coefficient(str);
 	}
 	break;
 
-	case toklg:
+	case (int)BASIC_TOKEN::toklg:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->log_activity_coefficient(str);
 	}
 	break;
 
-	case tokget_por:
+	case (int)BASIC_TOKEN::tokget_por:
 		i = intfactor(LINK);
 		if (parse_all)
 		{
@@ -2343,10 +2343,10 @@ factor(struct LOC_exec * LINK)
 			}
 		}
 		break;
-	case tokedl:
-		require(toklp, LINK);
+	case (int)BASIC_TOKEN::tokedl:
+		require((int)BASIC_TOKEN::toklp, LINK);
 		elt_name = stringfactor(STR1, LINK);
-		if (LINK->t != NULL && LINK->t->kind == tokcomma)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 		{
 			LINK->t = LINK->t->next;
 			surface_name = stringfactor(STR2, LINK);
@@ -2355,14 +2355,14 @@ factor(struct LOC_exec * LINK)
 		{
 			surface_name = NULL;
 		}
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->diff_layer_total(elt_name, surface_name);
 		break;
 
-	case toksurf:
-		require(toklp, LINK);
+	case (int)BASIC_TOKEN::toksurf:
+		require((int)BASIC_TOKEN::toklp, LINK);
 		elt_name = stringfactor(STR1, LINK);
-		if (LINK->t != NULL && LINK->t->kind == tokcomma)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 		{
 			LINK->t = LINK->t->next;
 			surface_name = stringfactor(STR2, LINK);
@@ -2371,77 +2371,77 @@ factor(struct LOC_exec * LINK)
 		{
 			surface_name = NULL;
 		}
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->surf_total(elt_name, surface_name);
 		break;
 
-	case tokequi:
+	case (int)BASIC_TOKEN::tokequi:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->equi_phase(str);
 	}
 	break;
 
-	case tokequi_delta:
+	case (int)BASIC_TOKEN::tokequi_delta:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->equi_phase_delta(str);
 	}
 	break;
 
-	case tokkin:
+	case (int)BASIC_TOKEN::tokkin:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->kinetics_moles(str);
 	}
 	break;
 
-	case tokkin_delta:
+	case (int)BASIC_TOKEN::tokkin_delta:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->kinetics_moles_delta(str);
 	}
 	break;
 
-	case tokkin_time:
+	case (int)BASIC_TOKEN::tokkin_time:
 	{
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->rate_kin_time;
 	}
 	break;
 
-	case tokgas:
+	case (int)BASIC_TOKEN::tokgas:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_gas_comp(str);
 	}
 	break;
 
-	case toks_s:
+	case (int)BASIC_TOKEN::toks_s:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_ss_comp(str);
 	}
 	break;
 
-	case tokmisc1:
+	case (int)BASIC_TOKEN::tokmisc1:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_misc1(str);
 	}
 	break;
 
-	case tokmisc2:
+	case (int)BASIC_TOKEN::tokmisc2:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_misc2(str);
 	}
 	break;
 
-	case tokmu:
+	case (int)BASIC_TOKEN::tokmu:
 		n.UU.val = PhreeqcPtr->mu_x;
 		break;
 
-	case tokosmotic:
+	case (int)BASIC_TOKEN::tokosmotic:
 		if (PhreeqcPtr->pitzer_model == TRUE || PhreeqcPtr->sit_model == TRUE)
 		{
 			n.UU.val = PhreeqcPtr->COSMOT;
@@ -2452,35 +2452,35 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case tokalk:
+	case (int)BASIC_TOKEN::tokalk:
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->total_alkalinity / PhreeqcPtr->mass_water_aq_x;
 		break;
 
-	case toklk_species:
+	case (int)BASIC_TOKEN::toklk_species:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_logk_s(str);
 	}
 	break;
 
-	case toklk_named:
+	case (int)BASIC_TOKEN::toklk_named:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_logk_n(str);
 	}
 	break;
 
-	case toklk_phase:
+	case (int)BASIC_TOKEN::toklk_phase:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_logk_p(str);
 	}
 	break;
 
-	case toksum_species:
-		require(toklp, LINK);
+	case (int)BASIC_TOKEN::toksum_species:
+		require((int)BASIC_TOKEN::toklp, LINK);
 		mytemplate = stringfactor(STR1, LINK);
-		if (LINK->t != NULL && LINK->t->kind == tokcomma)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 		{
 			LINK->t = LINK->t->next;
 			elt_name = stringfactor(STR2, LINK);
@@ -2489,14 +2489,14 @@ factor(struct LOC_exec * LINK)
 		{
 			elt_name = NULL;
 		}
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->sum_match_species(mytemplate, elt_name);
 		break;
 
-	case toksum_gas:
-		require(toklp, LINK);
+	case (int)BASIC_TOKEN::toksum_gas:
+		require((int)BASIC_TOKEN::toklp, LINK);
 		mytemplate = stringfactor(STR1, LINK);
-		if (LINK->t != NULL && LINK->t->kind == tokcomma)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 		{
 			LINK->t = LINK->t->next;
 			elt_name = stringfactor(STR2, LINK);
@@ -2505,14 +2505,14 @@ factor(struct LOC_exec * LINK)
 		{
 			elt_name = NULL;
 		}
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->sum_match_gases(mytemplate, elt_name);
 		break;
 
-	case toksum_s_s:
-		require(toklp, LINK);
+	case (int)BASIC_TOKEN::toksum_s_s:
+		require((int)BASIC_TOKEN::toklp, LINK);
 		mytemplate = stringfactor(STR1, LINK);
-		if (LINK->t != NULL && LINK->t->kind == tokcomma)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 		{
 			LINK->t = LINK->t->next;
 			elt_name = stringfactor(STR2, LINK);
@@ -2521,18 +2521,18 @@ factor(struct LOC_exec * LINK)
 		{
 			elt_name = NULL;
 		}
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->sum_match_ss(mytemplate, elt_name);
 		break;
 
-	case tokcalc_value:
-		require(toklp, LINK);
+	case (int)BASIC_TOKEN::tokcalc_value:
+		require((int)BASIC_TOKEN::toklp, LINK);
 		name = stringfactor(STR1, LINK);
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->get_calculate_value(name);
 		break;
 
-	case tokdescription:
+	case (int)BASIC_TOKEN::tokdescription:
 		n.stringval = true;
 		if (PhreeqcPtr->state == REACTION)
 		{
@@ -2574,7 +2574,7 @@ factor(struct LOC_exec * LINK)
 		while (PhreeqcPtr->replace("\t", " ", n.UU.sval));
 		break;
 
-	case toktitle:
+	case (int)BASIC_TOKEN::toktitle:
 		n.stringval = true;
 		if (strlen(PhreeqcPtr->last_title_x.c_str()) == 0)
 		{
@@ -2584,12 +2584,12 @@ factor(struct LOC_exec * LINK)
 		while (PhreeqcPtr->replace("\t", " ", n.UU.sval));
 		break;
 
-	case tokinstr:
-		require(toklp, LINK);
+	case (int)BASIC_TOKEN::tokinstr:
+		require((int)BASIC_TOKEN::toklp, LINK);
 		string1 = stringfactor(STR1, LINK);
-		require(tokcomma, LINK);
+		require((int)BASIC_TOKEN::tokcomma, LINK);
 		string2 = stringfactor(STR2, LINK);
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		{
 			const char* cptr = strstr(string1, string2);
 			if (cptr == NULL)
@@ -2603,79 +2603,79 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case tokltrim:
+	case (int)BASIC_TOKEN::tokltrim:
 		n.stringval = true;
-		require(toklp, LINK);
+		require((int)BASIC_TOKEN::toklp, LINK);
 		string1 = stringfactor(STR1, LINK);
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		trim_left(STR1);
 		n.UU.sval = PhreeqcPtr->string_duplicate(STR1.c_str());
 		break;
 
-	case tokrtrim:
+	case (int)BASIC_TOKEN::tokrtrim:
 		n.stringval = true;
-		require(toklp, LINK);
+		require((int)BASIC_TOKEN::toklp, LINK);
 		string1 = stringfactor(STR1, LINK);
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		trim_right(STR1);
 		n.UU.sval = PhreeqcPtr->string_duplicate(STR1.c_str());
 		break;
 
-	case toktrim:
+	case (int)BASIC_TOKEN::toktrim:
 		n.stringval = true;
-		require(toklp, LINK);
+		require((int)BASIC_TOKEN::toklp, LINK);
 		string1 = stringfactor(STR1, LINK);
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		STR1 = trim(STR1);
 		n.UU.sval = PhreeqcPtr->string_duplicate(STR1.c_str());
 		break;
 
-	case tokiso:
+	case (int)BASIC_TOKEN::tokiso:
 	{
 		const char* str = stringfactor(STR1, LINK);
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->iso_value(str);
 	}
 	break;
 
-	case tokiso_unit:
+	case (int)BASIC_TOKEN::tokiso_unit:
 		n.stringval = true;
-		require(toklp, LINK);
+		require((int)BASIC_TOKEN::toklp, LINK);
 		string1 = stringfactor(STR1, LINK);
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		trim(STR1);
 		n.UU.sval = (parse_all) ? PhreeqcPtr->string_duplicate("unknown") : PhreeqcPtr->iso_unit(STR1.c_str());
 		break;
 
-	case tokpad:
+	case (int)BASIC_TOKEN::tokpad:
 		n.stringval = true;
-		require(toklp, LINK);
+		require((int)BASIC_TOKEN::toklp, LINK);
 		string1 = stringfactor(STR1, LINK);
-		require(tokcomma, LINK);
+		require((int)BASIC_TOKEN::tokcomma, LINK);
 		i = intexpr(LINK);
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		n.UU.sval = PhreeqcPtr->string_pad(string1, i);
 		break;
 
-	case tokadd_heading:
-		require(toklp, LINK);
+	case (int)BASIC_TOKEN::tokadd_heading:
+		require((int)BASIC_TOKEN::toklp, LINK);
 		name = stringfactor(STR1, LINK);
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		PhreeqcPtr->current_user_punch->Get_headings().push_back(name);
 		n.UU.val = (parse_all) ? 1 : (double)PhreeqcPtr->current_user_punch->Get_headings().size();
 		break;
 
-	case toksys:
-		require(toklp, LINK);
+	case (int)BASIC_TOKEN::toksys:
+		require((int)BASIC_TOKEN::toklp, LINK);
 		elt_name = stringfactor(STR1, LINK);
 		/*
 		 *  Parse arguments
 		 */
-		if (LINK->t != NULL && LINK->t->kind == tokcomma)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 		{
 			/* return number of species */
 			LINK->t = LINK->t->next;
 			count_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || !count_varrec || count_varrec->stringvar != 0)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || !count_varrec || count_varrec->stringvar != 0)
 			{
 				snerr(": can`t find variable");
 #if !defined(R_SO)
@@ -2685,9 +2685,9 @@ factor(struct LOC_exec * LINK)
 
 			/* return number of names of species */
 			LINK->t = LINK->t->next;
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			names_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || !names_varrec || names_varrec->stringvar != 1)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || !names_varrec || names_varrec->stringvar != 1)
 			{
 				snerr(": can`t find name of species");
 #if !defined(R_SO)
@@ -2697,16 +2697,16 @@ factor(struct LOC_exec * LINK)
 
 			/* return number of types of species */
 			LINK->t = LINK->t->next;
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			types_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || types_varrec->stringvar != 1)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || types_varrec->stringvar != 1)
 				snerr(": can`t find type of species");
 
 			/* return number of moles  of species */
 			LINK->t = LINK->t->next;
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			moles_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || moles_varrec->stringvar != 0)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || moles_varrec->stringvar != 0)
 				snerr(": can`t find moles of species");
 			LINK->t = LINK->t->next;
 			arg_num = 4;
@@ -2715,7 +2715,7 @@ factor(struct LOC_exec * LINK)
 		{
 			arg_num = 1;
 		}
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 
 		if (arg_num > 1)
 		{
@@ -2807,15 +2807,15 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case tokedl_species:
+	case (int)BASIC_TOKEN::tokedl_species:
 		{
 			double area=0.0, thickness=0.0;
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 			const char *surf_name = stringfactor(STR1, LINK);
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			// variable for number of species
 			count_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || !count_varrec || count_varrec->stringvar != 0)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || !count_varrec || count_varrec->stringvar != 0)
 			{
 				snerr(": Missing or wrong type count variable.");
 #if !defined(R_SO)
@@ -2824,9 +2824,9 @@ factor(struct LOC_exec * LINK)
 			}
 			// variable for species names
 			LINK->t = LINK->t->next;
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			names_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || !names_varrec || names_varrec->stringvar != 1)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || !names_varrec || names_varrec->stringvar != 1)
 			{
 				snerr(": Missing or wrong type name variable.");
 #if !defined(R_SO)
@@ -2835,24 +2835,24 @@ factor(struct LOC_exec * LINK)
 			}
 			// variable for species concentrations
 			LINK->t = LINK->t->next;
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			moles_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || moles_varrec->stringvar != 0)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || moles_varrec->stringvar != 0)
 				snerr(": Missing or wrong type moles variable.");
 			// variable for area
 			LINK->t = LINK->t->next;
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			varrec *area_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || area_varrec->stringvar != 0)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || area_varrec->stringvar != 0)
 				snerr(": Missing or wrong type area varaiable.");
 			// varaiable for thickness
 			LINK->t = LINK->t->next;
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			varrec *thickness_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || thickness_varrec->stringvar != 0)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || thickness_varrec->stringvar != 0)
 				snerr(": Missing or wrong type thickness variable.");
 			LINK->t = LINK->t->next;
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 
 			free_dim_stringvar(names_varrec);
 			PhreeqcPtr->free_check_null(moles_varrec->UU.U0.arr);
@@ -2912,36 +2912,36 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case toklist_s_s:
+	case (int)BASIC_TOKEN::toklist_s_s:
 		{
 			/* list_s_s("calcite", count, name$, moles) */
 			/* return total moles */
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 			std::string s_s_name(stringfactor(STR1, LINK));
 			cxxNameDouble composition;
 			/*
 			*  Parse arguments
 			*/
 			arg_num = -1;
-			if (LINK->t != NULL && LINK->t->kind == tokcomma)
+			if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 			{
 				LINK->t = LINK->t->next;
 				count_varrec = LINK->t->UU.vp;
-				if (LINK->t->kind != tokvar || count_varrec->stringvar != 0)
+				if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || count_varrec->stringvar != 0)
 					snerr(": Cannot find count variable");
 
 				/* return number of names of components */
 				LINK->t = LINK->t->next;
-				require(tokcomma, LINK);
+				require((int)BASIC_TOKEN::tokcomma, LINK);
 				names_varrec = LINK->t->UU.vp;
-				if (LINK->t->kind != tokvar || names_varrec->stringvar != 1)
+				if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || names_varrec->stringvar != 1)
 					snerr(": Cannot find component string variable");
 
 				/* return number of moles  of components */
 				LINK->t = LINK->t->next;
-				require(tokcomma, LINK);
+				require((int)BASIC_TOKEN::tokcomma, LINK);
 				moles_varrec = LINK->t->UU.vp;
-				if (LINK->t->kind != tokvar || moles_varrec->stringvar != 0)
+				if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || moles_varrec->stringvar != 0)
 					snerr(": Cannot find moles of component variable");
 				LINK->t = LINK->t->next;
 				arg_num = 4;
@@ -2953,7 +2953,7 @@ factor(struct LOC_exec * LINK)
 				exit(4);
 #endif
 			}
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 
 			if (arg_num > 1)
 			{
@@ -3028,17 +3028,17 @@ factor(struct LOC_exec * LINK)
 			break;
 		}
 
-	case tokkinetics_formula:
-	case tokkinetics_formula_:
+	case (int)BASIC_TOKEN::tokkinetics_formula:
+	case (int)BASIC_TOKEN::tokkinetics_formula_:
 		{
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 			std::string kinetics_name(stringfactor(STR1, LINK));
 			varrec *elts_varrec = NULL, *coef_varrec = NULL;
 			cxxNameDouble stoichiometry;
 			/*
 			*  Parse arguments
 			*/
-			if (LINK->t != NULL && LINK->t->kind == tokcomma)
+			if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 			{
 				/* kinetics_formula("calcite", count, elt, coef) */
 				/* return formula */
@@ -3048,21 +3048,21 @@ factor(struct LOC_exec * LINK)
 				/* return number of species */
 				LINK->t = LINK->t->next;
 				count_varrec = LINK->t->UU.vp;
-				if (LINK->t->kind != tokvar || count_varrec->stringvar != 0)
+				if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || count_varrec->stringvar != 0)
 					snerr(": Cannot find count variable");
 
 				/* return number of names of elements */
 				LINK->t = LINK->t->next;
-				require(tokcomma, LINK);
+				require((int)BASIC_TOKEN::tokcomma, LINK);
 				elts_varrec = LINK->t->UU.vp;
-				if (LINK->t->kind != tokvar || elts_varrec->stringvar != 1)
+				if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || elts_varrec->stringvar != 1)
 					snerr(": Cannot find element string variable");
 
 				/* return coefficients of species */
 				LINK->t = LINK->t->next;
-				require(tokcomma, LINK);
+				require((int)BASIC_TOKEN::tokcomma, LINK);
 				coef_varrec = LINK->t->UU.vp;
-				if (LINK->t->kind != tokvar || coef_varrec->stringvar != 0)
+				if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || coef_varrec->stringvar != 0)
 					snerr(": Cannot find coefficient variable");
 				LINK->t = LINK->t->next;
 				arg_num = 4;
@@ -3071,7 +3071,7 @@ factor(struct LOC_exec * LINK)
 			{
 				arg_num = 1;
 			}
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 
 			if (arg_num > 1)
 			{
@@ -3134,17 +3134,17 @@ factor(struct LOC_exec * LINK)
 			}
 			break;
 		}
-	case tokphase_formula:
-	case tokphase_formula_:
+	case (int)BASIC_TOKEN::tokphase_formula:
+	case (int)BASIC_TOKEN::tokphase_formula_:
 		{
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 			std::string phase_name(stringfactor(STR1, LINK));
 			varrec *elts_varrec = NULL, *coef_varrec = NULL;
 			cxxNameDouble stoichiometry;
 			/*
 			*  Parse arguments
 			*/
-			if (LINK->t != NULL && LINK->t->kind == tokcomma)
+			if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 			{
 				/* phase_formula("calcite", count, elt, coef) */
 				/* return formula */
@@ -3154,21 +3154,21 @@ factor(struct LOC_exec * LINK)
 				/* return number of species */
 				LINK->t = LINK->t->next;
 				count_varrec = LINK->t->UU.vp;
-				if (LINK->t->kind != tokvar || count_varrec->stringvar != 0)
+				if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || count_varrec->stringvar != 0)
 					snerr(": Cannot find count variable");
 
 				/* return number of names of species */
 				LINK->t = LINK->t->next;
-				require(tokcomma, LINK);
+				require((int)BASIC_TOKEN::tokcomma, LINK);
 				elts_varrec = LINK->t->UU.vp;
-				if (LINK->t->kind != tokvar || elts_varrec->stringvar != 1)
+				if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || elts_varrec->stringvar != 1)
 					snerr(": Cannot find element string variable");
 
 				/* return coefficients of species */
 				LINK->t = LINK->t->next;
-				require(tokcomma, LINK);
+				require((int)BASIC_TOKEN::tokcomma, LINK);
 				coef_varrec = LINK->t->UU.vp;
-				if (LINK->t->kind != tokvar || coef_varrec->stringvar != 0)
+				if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || coef_varrec->stringvar != 0)
 					snerr(": Cannot find coefficient variable");
 				LINK->t = LINK->t->next;
 				arg_num = 4;
@@ -3177,7 +3177,7 @@ factor(struct LOC_exec * LINK)
 			{
 				arg_num = 1;
 			}
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 
 			if (arg_num > 1)
 			{
@@ -3240,38 +3240,38 @@ factor(struct LOC_exec * LINK)
 			}
 			break;
 		}
-	case tokspecies_formula:
-	case tokspecies_formula_:
+	case (int)BASIC_TOKEN::tokspecies_formula:
+	case (int)BASIC_TOKEN::tokspecies_formula_:
 		{
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 			std::string species_name(stringfactor(STR1, LINK));
 			varrec *elts_varrec = NULL, *coef_varrec = NULL;
 			cxxNameDouble stoichiometry;
 			/*
 			*  Parse arguments
 			*/
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 
 			count_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || count_varrec->stringvar != 0)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || count_varrec->stringvar != 0)
 				snerr(": Cannot find count variable");
 
 			/* return number of names of species */
 			LINK->t = LINK->t->next;
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			elts_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || elts_varrec->stringvar != 1)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || elts_varrec->stringvar != 1)
 				snerr(": Cannot find element string variable");
 
 			/* return coefficients of species */
 			LINK->t = LINK->t->next;
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			coef_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || coef_varrec->stringvar != 0)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || coef_varrec->stringvar != 0)
 				snerr(": Cannot find coefficient variable");
 			LINK->t = LINK->t->next;
 
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 
 			free_dim_stringvar(elts_varrec);
 			PhreeqcPtr->free_check_null(coef_varrec->UU.U0.arr);
@@ -3338,7 +3338,7 @@ factor(struct LOC_exec * LINK)
 
 			break;
 		}
-	case tokrxn:
+	case (int)BASIC_TOKEN::tokrxn:
 		if (PhreeqcPtr->state == REACTION || 
 			PhreeqcPtr->state == ADVECTION ||
 			PhreeqcPtr->state == TRANSPORT)
@@ -3351,7 +3351,7 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case tokdist:
+	case (int)BASIC_TOKEN::tokdist:
 		if (PhreeqcPtr->state == PHAST)
 		{
 			n.UU.val = 0;
@@ -3370,35 +3370,35 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case tokmol:
+	case (int)BASIC_TOKEN::tokmol:
 		{
 			const char * str = stringfactor(STR1, LINK);
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->molality(str);
 		}
 		break;
 
-	case tokla:
+	case (int)BASIC_TOKEN::tokla:
 		{
 			const char * str = stringfactor(STR1, LINK);
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->log_activity(str);
 		}
 		break;
 
-	case toklm:
+	case (int)BASIC_TOKEN::toklm:
 		{
 			const char * str = stringfactor(STR1, LINK);
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->log_molality(str);
 		}
 		break;
 
-	case toksr:
+	case (int)BASIC_TOKEN::toksr:
 		{
 			const char * str = stringfactor(STR1, LINK);
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->saturation_ratio(str);
 		}
 		break;
 
-	case tokstep_no:
+	case (int)BASIC_TOKEN::tokstep_no:
 		if (PhreeqcPtr->state == PHAST)
 		{
 			n.UU.val = 0;
@@ -3421,7 +3421,7 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case tokcell_no:
+	case (int)BASIC_TOKEN::tokcell_no:
 		if (parse_all)
 		{
 			n.UU.val = 1;
@@ -3459,16 +3459,16 @@ factor(struct LOC_exec * LINK)
 #endif
 		break;
 
-	case toksim_no:
+	case (int)BASIC_TOKEN::toksim_no:
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->simulation;
 		break;
 
-	case tokget:
-		require(toklp, LINK);
+	case (int)BASIC_TOKEN::tokget:
+		require((int)BASIC_TOKEN::toklp, LINK);
 
 		s_v.count_subscripts = 0;
 		/* get first subscript */
-		if (LINK->t != NULL && LINK->t->kind != tokrp)
+		if (LINK->t != NULL && LINK->t->kind != (int)BASIC_TOKEN::tokrp)
 		{
 			i = intexpr(LINK);
 			if (s_v.subscripts == NULL)
@@ -3488,7 +3488,7 @@ factor(struct LOC_exec * LINK)
 		/* get other subscripts */
 		for (;;)
 		{
-			if (LINK->t != NULL && LINK->t->kind == tokcomma)
+			if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 			{
 				LINK->t = LINK->t->next;
 				j = intexpr(LINK);
@@ -3508,7 +3508,7 @@ factor(struct LOC_exec * LINK)
 			else
 			{
 				/* get right parentheses */
-				require(tokrp, LINK);
+				require((int)BASIC_TOKEN::tokrp, LINK);
 				break;
 			}
 		}
@@ -3523,12 +3523,12 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case tokexists:
-		require(toklp, LINK);
+	case (int)BASIC_TOKEN::tokexists:
+		require((int)BASIC_TOKEN::toklp, LINK);
 
 		s_v.count_subscripts = 0;
 		/* get first subscript */
-		if (LINK->t != NULL && LINK->t->kind != tokrp)
+		if (LINK->t != NULL && LINK->t->kind != (int)BASIC_TOKEN::tokrp)
 		{
 			i = intexpr(LINK);
 			if (s_v.subscripts == NULL)
@@ -3553,7 +3553,7 @@ factor(struct LOC_exec * LINK)
 		/* get other subscripts */
 		for (;;)
 		{
-			if (LINK->t != NULL && LINK->t->kind == tokcomma)
+			if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 			{
 				LINK->t = LINK->t->next;
 				j = intexpr(LINK);
@@ -3578,7 +3578,7 @@ factor(struct LOC_exec * LINK)
 			else
 			{
 				/* get right parentheses */
-				require(tokrp, LINK);
+				require((int)BASIC_TOKEN::tokrp, LINK);
 				break;
 			}
 		}
@@ -3600,15 +3600,15 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case tokcharge_balance:
+	case (int)BASIC_TOKEN::tokcharge_balance:
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->cb_x;
 		break;
 
-	case tokpercent_error:
+	case (int)BASIC_TOKEN::tokpercent_error:
 		n.UU.val = (parse_all) ? 1 : 100 * PhreeqcPtr->cb_x / PhreeqcPtr->total_ions_x;
 		break;
 
-	case toksi:
+	case (int)BASIC_TOKEN::toksi:
 		{
 			const char * str = stringfactor(STR1, LINK);
 			if (parse_all)
@@ -3622,24 +3622,24 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case toktot:
+	case (int)BASIC_TOKEN::toktot:
 		{
 			const char * str = stringfactor(STR1, LINK);
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->total(str);
 		}
 		break;
 
-	case toktotmole:
-	case toktotmol:
-	case toktotmoles:
+	case (int)BASIC_TOKEN::toktotmole:
+	case (int)BASIC_TOKEN::toktotmol:
+	case (int)BASIC_TOKEN::toktotmoles:
 		{
 			const char * str = stringfactor(STR1, LINK);
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->total_mole(str);
 		}
 		break;
 
-	case tokcell_pore_volume:
-	case tokporevolume:
+	case (int)BASIC_TOKEN::tokcell_pore_volume:
+	case (int)BASIC_TOKEN::tokporevolume:
 		{
 			double x1 = (double) PhreeqcPtr->solution_number();
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "cell_pore_volume");
@@ -3647,80 +3647,80 @@ factor(struct LOC_exec * LINK)
 		break;
 
 /* VP : Density Start */
-	case tokrho:
+	case (int)BASIC_TOKEN::tokrho:
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_dens();
 		break;
-	case tokrho_0:
+	case (int)BASIC_TOKEN::tokrho_0:
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->rho_0;
 		break;
 /* VP: Density End */
-	case tokcell_volume:
+	case (int)BASIC_TOKEN::tokcell_volume:
 		{
 			double x1 = (double) PhreeqcPtr->solution_number();
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "cell_volume");
 		}
 		break;
-	case tokcell_porosity:
+	case (int)BASIC_TOKEN::tokcell_porosity:
 		{
 			double x1 = (double) PhreeqcPtr->solution_number();
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "cell_porosity");
 		}
 		break;
-	case tokcell_saturation:
+	case (int)BASIC_TOKEN::tokcell_saturation:
 		{
 			double x1 = (double) PhreeqcPtr->solution_number();
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "cell_saturation");
 		}
 		break;
-	case tokvelocity_x:
+	case (int)BASIC_TOKEN::tokvelocity_x:
 		{
 			double x1 = (double)PhreeqcPtr->solution_number();
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "velocity_x");
 		}
 		break;
-	case tokvelocity_y:
+	case (int)BASIC_TOKEN::tokvelocity_y:
 		{
 			double x1 = (double)PhreeqcPtr->solution_number();
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "velocity_y");
 		}
 		break;
-	case tokvelocity_z:
+	case (int)BASIC_TOKEN::tokvelocity_z:
 		{
 			double x1 = (double)PhreeqcPtr->solution_number();
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "velocity_z");
 		}
 		break;
-	case toktransport_cell_no:
+	case (int)BASIC_TOKEN::toktransport_cell_no:
 	{
 		double x1 = (double)PhreeqcPtr->solution_number();
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "transport_cell_no");
 	}
 	break;
-	case toksc:
+	case (int)BASIC_TOKEN::toksc:
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_SC();
 		break;
-	case tokpr_p:
+	case (int)BASIC_TOKEN::tokpr_p:
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->pr_pressure(stringfactor(STR1, LINK));
 		break;
-	case tokpressure:
+	case (int)BASIC_TOKEN::tokpressure:
 		n.UU.val = PhreeqcPtr->pressure();
 		break;
-	case tokpr_phi:
+	case (int)BASIC_TOKEN::tokpr_phi:
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->pr_phi(stringfactor(STR1, LINK));
 		break;
- 	case tokgas_p:
+ 	case (int)BASIC_TOKEN::tokgas_p:
  		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_gas_p();
  		break;
-  	case tokgas_vm:
+  	case (int)BASIC_TOKEN::tokgas_vm:
  		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->find_gas_vm();
  		break;
-	case tokeps_r:
+	case (int)BASIC_TOKEN::tokeps_r:
 		n.UU.val = PhreeqcPtr->eps_r;
 		break;
-	case tokaphi:
+	case (int)BASIC_TOKEN::tokaphi:
 		n.UU.val = PhreeqcPtr->A0;
 		break;
-	case tokdh_a:
+	case (int)BASIC_TOKEN::tokdh_a:
 		if (PhreeqcPtr->llnl_count_temp > 0)
 		{
 			n.UU.val = PhreeqcPtr->a_llnl;
@@ -3730,14 +3730,14 @@ factor(struct LOC_exec * LINK)
 			n.UU.val = PhreeqcPtr->DH_A;
 		}
 		break;
-	case tokdebye_length:
+	case (int)BASIC_TOKEN::tokdebye_length:
 		{
 			double debye_length = (PhreeqcPtr->eps_r * EPSILON_ZERO * R_KJ_DEG_MOL * 1000.0 * PhreeqcPtr->tk_x)
 				/ (2. * F_C_MOL * F_C_MOL * PhreeqcPtr->mu_x * 1000.);
 			n.UU.val = sqrt(debye_length);
 			break;
 		}
-	case tokdh_b:
+	case (int)BASIC_TOKEN::tokdh_b:
 		if (PhreeqcPtr->llnl_count_temp > 0)
 		{
 			n.UU.val = PhreeqcPtr->b_llnl;
@@ -3747,16 +3747,16 @@ factor(struct LOC_exec * LINK)
 			n.UU.val = PhreeqcPtr->DH_B;
 		}
 		break;
-	case tokdh_av:
+	case (int)BASIC_TOKEN::tokdh_av:
 		n.UU.val = PhreeqcPtr->DH_Av;
 		break;
-	case tokqbrn:
+	case (int)BASIC_TOKEN::tokqbrn:
 		n.UU.val = PhreeqcPtr->QBrn;
 		break;
-	case tokkappa:
+	case (int)BASIC_TOKEN::tokkappa:
 		n.UU.val = PhreeqcPtr->kappa_0;
 		break;
-  	case tokgfw:
+  	case (int)BASIC_TOKEN::tokgfw:
 		{
 			const char * str = stringfactor(STR1, LINK);
 			LDBLE gfw;
@@ -3764,49 +3764,49 @@ factor(struct LOC_exec * LINK)
  			n.UU.val = (parse_all) ? 1 : gfw;
 		}
  		break;
-  	case toksoln_vol:
+  	case (int)BASIC_TOKEN::toksoln_vol:
  		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_solution_volume();
  		break;
-  	case tokvm:
+  	case (int)BASIC_TOKEN::tokvm:
 		{
 			const char * str = stringfactor(STR1, LINK);
  			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->aqueous_vm(str);
 		}
  		break;
-  	case tokphase_vm:
+  	case (int)BASIC_TOKEN::tokphase_vm:
 		{
 			const char * str = stringfactor(STR1, LINK);
  			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->phase_vm(str);
 		}
  		break;
-  	case tokviscos:
+  	case (int)BASIC_TOKEN::tokviscos:
 		{
  			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->viscos;
 		}
  		break;
-  	case tokviscos_0:
+  	case (int)BASIC_TOKEN::tokviscos_0:
 		{
  			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->viscos_0;
 		}
  		break;
-	case tokcurrent_a:
+	case (int)BASIC_TOKEN::tokcurrent_a:
 		//n.UU.val = (parse_all) ? 1 : PhreeqcPtr->current_x;
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->current_A;
 		break;
-	case tokpot_v:
+	case (int)BASIC_TOKEN::tokpot_v:
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->use.Get_solution_ptr()->Get_potV();
 		break;
-	case tokt_sc:
+	case (int)BASIC_TOKEN::tokt_sc:
 		{
 			const char * str = stringfactor(STR1, LINK);
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_t_sc(str);
 		}
 		break;
-	case tokiterations:
+	case (int)BASIC_TOKEN::tokiterations:
 		n.UU.val = (parse_all) ? 0 : PhreeqcPtr->overall_iterations;
 		break;
 
-	case toklog10:
+	case (int)BASIC_TOKEN::toklog10:
 		{
 			LDBLE t = realfactor(LINK);
 			//if (t > 0.0)
@@ -3819,41 +3819,41 @@ factor(struct LOC_exec * LINK)
 			//}
 		}
 		break;
-	case toksin:
+	case (int)BASIC_TOKEN::toksin:
 		n.UU.val = sin(realfactor(LINK));
 		break;
 
-	case tokcos:
+	case (int)BASIC_TOKEN::tokcos:
 		n.UU.val = cos(realfactor(LINK));
 		break;
 
-	case toktan:
+	case (int)BASIC_TOKEN::toktan:
 		n.UU.val = realfactor(LINK);
 		n.UU.val = sin(n.UU.val) / cos(n.UU.val);
 		break;
 
-	case tokarctan:
+	case (int)BASIC_TOKEN::tokarctan:
 		n.UU.val = atan(realfactor(LINK));
 		break;
 
-	case toklog:
+	case (int)BASIC_TOKEN::toklog:
 		n.UU.val = log(realfactor(LINK));
 		break;
 
-	case tokexp:
+	case (int)BASIC_TOKEN::tokexp:
 		n.UU.val = exp(realfactor(LINK));
 		break;
 
-	case tokabs:
+	case (int)BASIC_TOKEN::tokabs:
 		n.UU.val = fabs(realfactor(LINK));
 		break;
 
-	case toksgn:
+	case (int)BASIC_TOKEN::toksgn:
 		n.UU.val = realfactor(LINK);
 		n.UU.val = (double)(n.UU.val > 0) - (double)(n.UU.val < 0);
 		break;
 
-	case tokstr_:
+	case (int)BASIC_TOKEN::tokstr_:
 		n.stringval = true;
 		n.UU.sval = (char *) PhreeqcPtr->PHRQ_calloc(256, sizeof(char));
 		if (n.UU.sval == NULL)
@@ -3861,25 +3861,25 @@ factor(struct LOC_exec * LINK)
 		numtostr(n.UU.sval, realfactor(LINK));
 		break;
 
-	case tokstr_f_:
+	case (int)BASIC_TOKEN::tokstr_f_:
 		{		
 			// left parenthesis
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 
 			// set number
 			LDBLE nmbr;
 			nmbr = realexpr(LINK);	
 
 			// set total length
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			int length = (int) realexpr(LINK);
 
 			// set total length
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			int width = (int) realexpr(LINK);
 
 			// right parenthesis
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 
 			// Make work space
 			int max_length = length < 256 ? 256 : length;
@@ -3904,25 +3904,25 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case tokstr_e_:
+	case (int)BASIC_TOKEN::tokstr_e_:
 		{		
 			// left parenthesis
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 
 			// set number
 			LDBLE nmbr;
 			nmbr = realexpr(LINK);	
 
 			// set total length
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			int length = (int) realexpr(LINK);
 
 			// set total length
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			int width = (int) realexpr(LINK);
 
 			// right parenthesis
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 
 			// Make work space
 			int max_length = length < 256 ? 256 : length;
@@ -3946,36 +3946,36 @@ factor(struct LOC_exec * LINK)
 			PhreeqcPtr->free_check_null(token);
 		}
 		break;
-	case tokeq_frac:
-	case tokequiv_frac:
+	case (int)BASIC_TOKEN::tokeq_frac:
+	case (int)BASIC_TOKEN::tokequiv_frac:
 		{			
 			// left parenthesis
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 
 			// species name
 			std::string species_name(stringfactor(STR1, LINK));
 
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 
 			// equivalents
 			count_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || count_varrec->stringvar != 0)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || count_varrec->stringvar != 0)
 				snerr(": Cannot find equivalents variable");
 
 			LINK->t = LINK->t->next;
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 
 			// exchange or surface element 
 			varrec *elt_varrec = NULL;
 			elt_varrec = LINK->t->UU.vp;
-			if (LINK->t->kind != tokvar || elt_varrec->stringvar != 1)
+			if (LINK->t->kind != (int)BASIC_TOKEN::tokvar || elt_varrec->stringvar != 1)
 				snerr(": Cannot find element string variable");
 			free_dim_stringvar(elt_varrec);
 			*elt_varrec->UU.U1.sval = (char *) PhreeqcPtr->free_check_null(*elt_varrec->UU.U1.sval);
 
 			// right parenthesis
 			LINK->t = LINK->t->next;
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 
 			// Make work space
 			//int max_length = length < 256 ? 256 : length;
@@ -4000,26 +4000,26 @@ factor(struct LOC_exec * LINK)
 			*elt_varrec->UU.U1.sval = token;
 		}
 		break;
-	case tokcallback:
+	case (int)BASIC_TOKEN::tokcallback:
 		{		
 			double x1, x2;
 			char * str;
 
 			// left parenthesis
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 
 			// first double arugument
 			x1 = realfactor(LINK);
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 
 			// second double arugument
 			x2 = realfactor(LINK);
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			
 			// string arugument
 			str = strexpr(LINK);
 
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 
 			// call callback Basic function
 
@@ -4028,67 +4028,67 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 
-	case toksa_declercq:
+	case (int)BASIC_TOKEN::toksa_declercq:
 		{
 			double type, sa, d, m, m0, gfw;
 
 			// left parenthesis
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 
 			// first double arugument, type
 			type = realfactor(LINK);
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 
 			// second double arugument, Sa
 			sa = realfactor(LINK);
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			
 			// third double arugument, Sa
 			d = realfactor(LINK);
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 
 			// fourth double arugument, m
 			m = realfactor(LINK);
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 
 			// fifth double arugument, m0
 			m0 = realfactor(LINK);
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 
 			// sixth double arugument, gfw
 			gfw = realfactor(LINK);
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->sa_declercq(type, sa, d, m, m0, gfw);
 		}
 		break;
 
-	case tokdiff_c:
+	case (int)BASIC_TOKEN::tokdiff_c:
 		{
 			const char * str = stringfactor(STR1, LINK);
  			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->diff_c(str);
 		}
 		break;
 			
-	case toksetdiff_c:
+	case (int)BASIC_TOKEN::toksetdiff_c:
 		{
 			double d;
 
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 
 			const char * str = stringfactor(STR1, LINK);
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 
 			// double arugument
 			d = realexpr(LINK);
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 
  			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->setdiff_c(str, d);
 			
 			//PhreeqcPtr->PHRQ_free((void *) str);
 		}
 		break;
-	case tokval:
+	case (int)BASIC_TOKEN::tokval:
 		l_s = strfactor(LINK);
 		tok1 = LINK->t;
 		parse(l_s, &LINK->t);
@@ -4102,7 +4102,7 @@ factor(struct LOC_exec * LINK)
 		PhreeqcPtr->PHRQ_free(l_s);
 		break;
 
-	case tokchr_:
+	case (int)BASIC_TOKEN::tokchr_:
 		n.stringval = true;
 		n.UU.sval = (char *) PhreeqcPtr->PHRQ_calloc(256, sizeof(char));
 		if (n.UU.sval == NULL)
@@ -4111,7 +4111,7 @@ factor(struct LOC_exec * LINK)
 		n.UU.sval[0] = (char) intfactor(LINK);
 		break;
 
-	case tokeol_:
+	case (int)BASIC_TOKEN::tokeol_:
 		n.stringval = true;
 		n.UU.sval = (char *) PhreeqcPtr->PHRQ_calloc(256, sizeof(char));
 		if (n.UU.sval == NULL)
@@ -4119,7 +4119,7 @@ factor(struct LOC_exec * LINK)
 		strcpy(n.UU.sval, "\n");
 		break;
 
-	case tokeol_notab_:
+	case (int)BASIC_TOKEN::tokeol_notab_:
 		n.stringval = true;
 		n.UU.sval = (char*)PhreeqcPtr->PHRQ_calloc(256, sizeof(char));
 		if (n.UU.sval == NULL)
@@ -4128,13 +4128,13 @@ factor(struct LOC_exec * LINK)
 		punch_tab = false;
 		break;
 
-	case tokno_newline_:
+	case (int)BASIC_TOKEN::tokno_newline_:
 		n.stringval = true;
 		PhreeqcPtr->current_selected_output->Set_punch_newline(false);
 		this->skip_punch = true;
 		break;
 
-	case tokasc:
+	case (int)BASIC_TOKEN::tokasc:
 		l_s = strfactor(LINK);
 		if (*l_s == '\0')
 			n.UU.val = 0.0;
@@ -4143,16 +4143,16 @@ factor(struct LOC_exec * LINK)
 		PhreeqcPtr->PHRQ_free(l_s);
 		break;
 
-	case tokmid_:
+	case (int)BASIC_TOKEN::tokmid_:
 		n.stringval = true;
-		require(toklp, LINK);
+		require((int)BASIC_TOKEN::toklp, LINK);
 		n.UU.sval = strexpr(LINK);
-		require(tokcomma, LINK);
+		require((int)BASIC_TOKEN::tokcomma, LINK);
 		i = intexpr(LINK);
 		if (i < 1)
 			i = 1;
 		j = (int) strlen(n.UU.sval);
-		if (LINK->t != NULL && LINK->t->kind == tokcomma)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 		{
 			LINK->t = LINK->t->next;
 			j = intexpr(LINK);
@@ -4162,15 +4162,15 @@ factor(struct LOC_exec * LINK)
 			str = str.substr((size_t)i - 1, j);
 			strcpy(n.UU.sval, str.c_str());
 		}
-		require(tokrp, LINK);
+		require((int)BASIC_TOKEN::tokrp, LINK);
 		break;
-	case toklen:
+	case (int)BASIC_TOKEN::toklen:
 		l_s = strfactor(LINK);
 		n.UU.val = (double) strlen(l_s);
 		PhreeqcPtr->PHRQ_free(l_s);
 		break;
 
-	case tokpeek:
+	case (int)BASIC_TOKEN::tokpeek:
 /* p2c: basic.p, line 1029: Note: Range checking is OFF [216] */
 		if (parse_all)
 		{
@@ -4199,7 +4199,7 @@ upexpr(struct LOC_exec * LINK)
 	valrec n, n2;
 
 	n = factor(LINK);
-	while (LINK->t != NULL && LINK->t->kind == tokup)
+	while (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokup)
 	{
 		if (n.stringval)
 			tmerr(": not a number before ^");
@@ -4238,16 +4238,16 @@ term(struct LOC_exec * LINK)
 
 	n = upexpr(LINK);
 	while (LINK->t != NULL && (unsigned long) LINK->t->kind < 32 &&
-		   ((1L << ((long) LINK->t->kind)) & ((1L << ((long) toktimes)) |
-											  (1L << ((long) tokdiv)) | (1L <<
-																		 ((long) tokmod)))) != 0)
+		   ((1L << ((long) LINK->t->kind)) & ((1L << ((long)BASIC_TOKEN::toktimes)) |
+											  (1L << ((long)BASIC_TOKEN::tokdiv)) | (1L <<
+																		 ((long)BASIC_TOKEN::tokmod)))) != 0)
 	{
 		k = LINK->t->kind;
 		LINK->t = LINK->t->next;
 		n2 = upexpr(LINK);
 		if (n.stringval || n2.stringval)
 			tmerr(": found char, but need a number for * or /");
-		if (k == tokmod)
+		if (k == (int)BASIC_TOKEN::tokmod)
 		{
 			/*      n.UU.val = (long)floor(n.UU.val + 0.5) % (long)floor(n2.UU.val + 0.5); */
 			if (n.UU.val != 0)
@@ -4263,7 +4263,7 @@ term(struct LOC_exec * LINK)
 /* p2c: basic.p, line 1078:
  * Note: Using % for possibly-negative arguments [317] */
 		}
-		else if (k == toktimes)
+		else if (k == (int)BASIC_TOKEN::toktimes)
 			n.UU.val *= n2.UU.val;
 		else if (n2.UU.val != 0)
 		{
@@ -4292,14 +4292,14 @@ sexpr(struct LOC_exec * LINK)
 	n = term(LINK);
 	while (LINK->t != NULL && (unsigned long) LINK->t->kind < 32 &&
 		   ((1L << ((long) LINK->t->kind)) &
-			((1L << ((long) tokplus)) | (1L << ((long) tokminus)))) != 0)
+			((1L << ((long)BASIC_TOKEN::tokplus)) | (1L << ((long)BASIC_TOKEN::tokminus)))) != 0)
 	{
 		k = LINK->t->kind;
 		LINK->t = LINK->t->next;
 		n2 = term(LINK);
 		if (n.stringval != n2.stringval)
 			tmerr(": found char, but need a number for + or - ");
-		if (k == tokplus)
+		if (k == (int)BASIC_TOKEN::tokplus)
 		{
 			if (n.stringval)
 			{
@@ -4355,7 +4355,7 @@ relexpr(struct LOC_exec * LINK)
 	n = sexpr(LINK);
 	while (LINK->t != NULL && (unsigned long) LINK->t->kind < 32 &&
 		   ((1L << ((long) LINK->t->kind)) &
-			((1L << ((long) tokne + 1)) - (1L << ((long) tokeq)))) != 0)
+			((1L << ((long)BASIC_TOKEN::tokne + 1)) - (1L << ((long)BASIC_TOKEN::tokeq)))) != 0)
 	{
 		k = LINK->t->kind;
 		LINK->t = LINK->t->next;
@@ -4367,25 +4367,22 @@ relexpr(struct LOC_exec * LINK)
 			f = (bool) ((!strcmp(n.UU.sval, n2.UU.sval)
 							&& (unsigned long) k < 32
 							&& ((1L << ((long) k)) &
-								((1L << ((long) tokeq)) |
-								 (1L << ((long) tokge)) | (1L <<
-														   ((long) tokle))))
+								((1L << ((long)BASIC_TOKEN::tokeq)) |
+								 (1L << ((long)BASIC_TOKEN::tokge)) | (1L <<
+														   ((long)BASIC_TOKEN::tokle))))
 							!= 0) || (strcmp(n.UU.sval, n2.UU.sval) < 0
 									  && (unsigned long) k < 32
 									  && ((1L << ((long) k)) &
-										  ((1L << ((long) toklt)) |
-										   (1L << ((long) tokle)) | (1L <<
-																	 ((long)
-																	  tokne))))
+										  ((1L << ((long)BASIC_TOKEN::toklt)) |
+										   (1L << ((long)BASIC_TOKEN::tokle)) | 
+											  (1L << ((long)BASIC_TOKEN::tokne))))
 									  != 0)
 						   || (strcmp(n.UU.sval, n2.UU.sval) > 0
 							   && (unsigned long) k < 32
 							   && ((1L << ((long) k)) &
-								   ((1L << ((long) tokgt)) |
-									(1L << ((long) tokge)) | (1L <<
-															  ((long)
-															   tokne)))) !=
-							   0));
+								   ((1L << ((long)BASIC_TOKEN::tokgt)) |
+									(1L << ((long)BASIC_TOKEN::tokge)) | (1L <<
+									((long) BASIC_TOKEN::tokne)))) != 0));
 			/* p2c: basic.p, line 2175: Note:
 			 * Line breaker spent 0.0+1.00 seconds, 5000 tries on line 1518 [251] */
 			PhreeqcPtr->PHRQ_free(n.UU.sval);
@@ -4393,23 +4390,21 @@ relexpr(struct LOC_exec * LINK)
 		}
 		else
 			f = (bool) ((n.UU.val == n2.UU.val && (unsigned long) k < 32 &&
-							((1L << ((long) k)) & ((1L << ((long) tokeq)) |
-												   (1L << ((long) tokge)) |
-												   (1L << ((long) tokle)))) !=
+							((1L << ((long) k)) & ((1L << ((long)BASIC_TOKEN::tokeq)) |
+												   (1L << ((long)BASIC_TOKEN::tokge)) |
+												   (1L << ((long)BASIC_TOKEN::tokle)))) !=
 							0) || (n.UU.val < n2.UU.val
-								   && (unsigned long) k < 32
-								   && ((1L << ((long) k)) &
-									   ((1L << ((long) toklt)) |
-										(1L << ((long) tokle)) | (1L <<
-																  ((long)
-																   tokne))))
-								   != 0) || (n.UU.val > n2.UU.val
-											 && (unsigned long) k < 32
-											 && ((1L << ((long) k)) &
-												 ((1L << ((long) tokgt)) |
-												  (1L << ((long) tokge)) | (1L
-																			<<
-																			((long) tokne)))) != 0));
+								&& (unsigned long)k < 32
+								&& ((1L << ((long)k)) &
+									((1L << ((long)BASIC_TOKEN::toklt)) |
+										(1L << ((long)BASIC_TOKEN::tokle)) |
+										(1L << ((long)BASIC_TOKEN::tokne))))
+								!= 0) || (n.UU.val > n2.UU.val
+									&& (unsigned long)k < 32
+									&& ((1L << ((long)k)) &
+										((1L << ((long)BASIC_TOKEN::tokgt)) |
+											(1L << ((long)BASIC_TOKEN::tokge)) |
+											(1L << ((long)BASIC_TOKEN::tokne)))) != 0));
 		/* p2c: basic.p, line 2175: Note:
 		 * Line breaker spent 0.0+2.00 seconds, 5000 tries on line 1532 [251] */
 		n.stringval = false;
@@ -4424,7 +4419,7 @@ andexpr(struct LOC_exec * LINK)
 	valrec n, n2;
 
 	n = relexpr(LINK);
-	while (LINK->t != NULL && LINK->t->kind == tokand)
+	while (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokand)
 	{
 		LINK->t = LINK->t->next;
 		n2 = relexpr(LINK);
@@ -4445,14 +4440,14 @@ expr(struct LOC_exec * LINK)
 	n = andexpr(LINK);
 	while (LINK->t != NULL && (unsigned long) LINK->t->kind < 32 &&
 		   ((1L << ((long) LINK->t->kind)) &
-			((1L << ((long) tokor)) | (1L << ((long) tokxor)))) != 0)
+			((1L << ((long)BASIC_TOKEN::tokor)) | (1L << ((long)BASIC_TOKEN::tokxor)))) != 0)
 	{
 		k = LINK->t->kind;
 		LINK->t = LINK->t->next;
 		n2 = andexpr(LINK);
 		if (n.stringval || n2.stringval)
 			tmerr("");
-		if (k == tokor)
+		if (k == (int)BASIC_TOKEN::tokor)
 			n.UU.val = ((long) n.UU.val) | ((long) n2.UU.val);
 		else
 			n.UU.val = ((long) n.UU.val) ^ ((long) n2.UU.val);
@@ -4467,8 +4462,8 @@ checkextra(struct LOC_exec *LINK)
 	{
 		if (phreeqci_gui)
 		{
-			_ASSERTE(nIDErrPrompt == 0);
-			nIDErrPrompt = IDS_ERR_EXTRA;
+			_ASSERTE((int)nIDErrPrompt == 0);
+			nIDErrPrompt = PBasic::IDErr::IDS_ERR_EXTRA;
 		}
 		errormsg("Extra information on line");
 	}
@@ -4477,8 +4472,8 @@ checkextra(struct LOC_exec *LINK)
 bool PBasic::
 iseos(struct LOC_exec *LINK)
 {
-	return ((bool) (LINK->t == NULL || LINK->t->kind == (long) tokelse ||
-					   LINK->t->kind == (long) tokcolon));
+	return ((bool) (LINK->t == NULL || LINK->t->kind == (long)BASIC_TOKEN::tokelse ||
+					   LINK->t->kind == (long)BASIC_TOKEN::tokcolon));
 }
 
 void PBasic::
@@ -4525,8 +4520,8 @@ mustfindline(long n)
 		{
 			if (l == NULL) 
 			{
-				_ASSERTE(nIDErrPrompt == 0);
-				nIDErrPrompt = IDS_ERR_UNDEF_LINE;
+				_ASSERTE((int)nIDErrPrompt == 0);
+				nIDErrPrompt = PBasic::IDErr::IDS_ERR_UNDEF_LINE;
 				char * error_string = PhreeqcPtr->sformatf( "Undefined line %ld", n);
 				errormsg(error_string);
 			}
@@ -4610,17 +4605,17 @@ cmdlist(struct LOC_exec *LINK)
 	{
 		n1 = 0;
 		n2 = LONG_MAX;
-		if (LINK->t != NULL && LINK->t->kind == toknum)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::toknum)
 		{
 			n1 = (long) LINK->t->UU.num;
 			LINK->t = LINK->t->next;
-			if (LINK->t == NULL || LINK->t->kind != tokminus)
+			if (LINK->t == NULL || LINK->t->kind != (int)BASIC_TOKEN::tokminus)
 				n2 = n1;
 		}
-		if (LINK->t != NULL && LINK->t->kind == tokminus)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokminus)
 		{
 			LINK->t = LINK->t->next;
-			if (LINK->t != NULL && LINK->t->kind == toknum)
+			if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::toknum)
 			{
 				n2 = (long) LINK->t->UU.num;
 				LINK->t = LINK->t->next;
@@ -4643,7 +4638,7 @@ cmdlist(struct LOC_exec *LINK)
 			l = l->next;
 		}
 		if (!iseos(LINK))
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 	}
 	while (!iseos(LINK));
 }
@@ -4708,7 +4703,7 @@ cmdrun(struct LOC_exec *LINK)
 	l = linebase;
 	if (!iseos(LINK))
 	{
-		if (LINK->t->kind == toknum)
+		if (LINK->t->kind == (int)BASIC_TOKEN::toknum)
 			/*l = mustfindline(intexpr(LINK), LINK); */
 			l = mustfindline(intexpr(LINK));
 		else
@@ -4717,7 +4712,7 @@ cmdrun(struct LOC_exec *LINK)
 			i = 0;
 			if (!iseos(LINK))
 			{
-				require(tokcomma, LINK);
+				require((int)BASIC_TOKEN::tokcomma, LINK);
 				i = intexpr(LINK);
 			}
 			checkextra(LINK);
@@ -4747,7 +4742,7 @@ cmdsave(struct LOC_exec *LINK)
 	{
 		if ((unsigned long) LINK->t->kind < 32 &&
 			((1L << ((long) LINK->t->kind)) &
-			 ((1L << ((long) toksemi)) | (1L << ((long) tokcomma)))) != 0)
+			 ((1L << ((long)BASIC_TOKEN::toksemi)) | (1L << ((long)BASIC_TOKEN::tokcomma)))) != 0)
 		{
 			LINK->t = LINK->t->next;
 			continue;
@@ -4774,14 +4769,14 @@ cmdput(struct LOC_exec *LINK)
 	s_v.subscripts = (int *) PhreeqcPtr->PHRQ_malloc(sizeof(int));
 
 	/* get parentheses */
-	require(toklp, LINK);
+	require((int)BASIC_TOKEN::toklp, LINK);
 
 	/* get first argumen */
 	s_v.value = realexpr(LINK);
 
 	for (;;)
 	{
-		if (LINK->t != NULL && LINK->t->kind == tokcomma)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokcomma)
 		{
 			LINK->t = LINK->t->next;
 			j = intexpr(LINK);
@@ -4797,7 +4792,7 @@ cmdput(struct LOC_exec *LINK)
 		else
 		{
 			/* get right parentheses */
-			require(tokrp, LINK);
+			require((int)BASIC_TOKEN::tokrp, LINK);
 			break;
 		}
 	}
@@ -4813,13 +4808,13 @@ cmdchange_por(struct LOC_exec *LINK)
 {
 	int j;
 	LDBLE TEMP;
-	require(toklp, LINK);
+	require((int)BASIC_TOKEN::toklp, LINK);
 	/* get new porosity */
 	TEMP = realexpr(LINK);
-	require(tokcomma, LINK);
+	require((int)BASIC_TOKEN::tokcomma, LINK);
 	/* get cell_no */
 	j = intexpr(LINK);
-	require(tokrp, LINK);
+	require((int)BASIC_TOKEN::tokrp, LINK);
 	if (j > 0 && j <= PhreeqcPtr->count_cells * (1 + PhreeqcPtr->stag_data->count_stag) + 1
 		&& j != PhreeqcPtr->count_cells + 1)
 		PhreeqcPtr->cell_data[j].por = TEMP;
@@ -4840,26 +4835,26 @@ cmdchange_surf(struct LOC_exec *LINK)
 	if (PhreeqcPtr->change_surf[count - 1].next == FALSE)
 		PhreeqcPtr->change_surf = PhreeqcPtr->change_surf_alloc(count + 1);
 
-	require(toklp, LINK);
+	require((int)BASIC_TOKEN::toklp, LINK);
 	/* get surface component name (change affects all comps of the same charge structure) */
 	c1 = strexpr(LINK);
 	PhreeqcPtr->change_surf[count - 1].comp_name = PhreeqcPtr->string_hsave(c1);
 	PhreeqcPtr->PHRQ_free(c1);
-	require(tokcomma, LINK);
+	require((int)BASIC_TOKEN::tokcomma, LINK);
 	/* get fraction of comp to change */
 	PhreeqcPtr->change_surf[count - 1].fraction = realexpr(LINK);
-	require(tokcomma, LINK);
+	require((int)BASIC_TOKEN::tokcomma, LINK);
 	/* get new surface component name */
 	c1 = strexpr(LINK);
 	PhreeqcPtr->change_surf[count - 1].new_comp_name = PhreeqcPtr->string_hsave(c1);
 	PhreeqcPtr->PHRQ_free(c1);
-	require(tokcomma, LINK);
+	require((int)BASIC_TOKEN::tokcomma, LINK);
 	/* get new Dw (no transport if 0) */
 	PhreeqcPtr->change_surf[count - 1].new_Dw = realexpr(LINK);
-	require(tokcomma, LINK);
+	require((int)BASIC_TOKEN::tokcomma, LINK);
 	/* get cell_no */
 	PhreeqcPtr->change_surf[count - 1].cell_no = intexpr(LINK);
-	require(tokrp, LINK);
+	require((int)BASIC_TOKEN::tokrp, LINK);
 
 	if (PhreeqcPtr->change_surf->cell_no == 0 || PhreeqcPtr->change_surf->cell_no == PhreeqcPtr->count_cells + 1)
 		PhreeqcPtr->change_surf[count - 1].cell_no = -99;
@@ -4883,17 +4878,17 @@ cmddel(struct LOC_exec *LINK)
 			snerr(": no variable name after del");
 		n1 = 0;
 		n2 = LONG_MAX;
-		if (LINK->t != NULL && LINK->t->kind == toknum)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::toknum)
 		{
 			n1 = (long) LINK->t->UU.num;
 			LINK->t = LINK->t->next;
-			if (LINK->t == NULL || LINK->t->kind != tokminus)
+			if (LINK->t == NULL || LINK->t->kind != (int)BASIC_TOKEN::tokminus)
 				n2 = n1;
 		}
-		if (LINK->t != NULL && LINK->t->kind == tokminus)
+		if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokminus)
 		{
 			LINK->t = LINK->t->next;
-			if (LINK->t != NULL && LINK->t->kind == toknum)
+			if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::toknum)
 			{
 				n2 = (long) LINK->t->UU.num;
 				LINK->t = LINK->t->next;
@@ -4926,7 +4921,7 @@ cmddel(struct LOC_exec *LINK)
 			l = l1;
 		}
 		if (!iseos(LINK))
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 	}
 	while (!iseos(LINK));
 }
@@ -4945,7 +4940,7 @@ cmdrenum(struct LOC_exec *LINK)
 		lnum = intexpr(LINK);
 		if (!iseos(LINK))
 		{
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 			step = intexpr(LINK);
 		}
 	}
@@ -4964,13 +4959,13 @@ cmdrenum(struct LOC_exec *LINK)
 		tok = l->txt;
 		do
 		{
-			if (tok->kind == (long) tokdel || tok->kind == (long) tokrestore
-				|| tok->kind == (long) toklist || tok->kind == (long) tokrun
-				|| tok->kind == (long) tokelse || tok->kind == (long) tokthen
-				|| tok->kind == (long) tokgosub
-				|| tok->kind == (long) tokgoto)
+			if (tok->kind == (long)BASIC_TOKEN::tokdel || tok->kind == (long)BASIC_TOKEN::tokrestore
+				|| tok->kind == (long)BASIC_TOKEN::toklist || tok->kind == (long)BASIC_TOKEN::tokrun
+				|| tok->kind == (long)BASIC_TOKEN::tokelse || tok->kind == (long)BASIC_TOKEN::tokthen
+				|| tok->kind == (long)BASIC_TOKEN::tokgosub
+				|| tok->kind == (long)BASIC_TOKEN::tokgoto)
 			{
-				while (tok->next != NULL && tok->next->kind == toknum)
+				while (tok->next != NULL && tok->next->kind == (int)BASIC_TOKEN::toknum)
 				{
 					tok = tok->next;
 					lnum = (long) floor(tok->UU.num + 0.5);
@@ -4993,7 +4988,7 @@ cmdrenum(struct LOC_exec *LINK)
 #endif
 						tok->UU.num = l1->num2;
 					}
-					if (tok->next != NULL && tok->next->kind == tokcomma)
+					if (tok->next != NULL && tok->next->kind == (int)BASIC_TOKEN::tokcomma)
 						tok = tok->next;
 				}
 			}
@@ -5025,7 +5020,7 @@ cmdprint(struct LOC_exec *LINK)
 		semiflag = false;
 		if ((unsigned long) LINK->t->kind < 32 &&
 			((1L << ((long) LINK->t->kind)) &
-			 ((1L << ((long) toksemi)) | (1L << ((long) tokcomma)))) != 0)
+			 ((1L << ((long)BASIC_TOKEN::toksemi)) | (1L << ((long)BASIC_TOKEN::tokcomma)))) != 0)
 		{
 			semiflag = true;
 			LINK->t = LINK->t->next;
@@ -5058,7 +5053,7 @@ cmdpunch(struct LOC_exec *LINK)
 	{
 		if ((unsigned long) LINK->t->kind < 32 &&
 			((1L << ((long) LINK->t->kind)) &
-			 ((1L << ((long) toksemi)) | (1L << ((long) tokcomma)))) != 0)
+			 ((1L << ((long)BASIC_TOKEN::toksemi)) | (1L << ((long)BASIC_TOKEN::tokcomma)))) != 0)
 		{
 			LINK->t = LINK->t->next;
 			continue;
@@ -5149,7 +5144,7 @@ cmdgraph_x(struct LOC_exec *LINK)
 		semiflag = false;
 		if ((unsigned long) LINK->t->kind < 32 &&
 			((1L << ((long) LINK->t->kind)) &
-			 ((1L << ((long) toksemi)) | (1L << ((long) tokcomma)))) != 0)
+			 ((1L << ((long)BASIC_TOKEN::toksemi)) | (1L << ((long)BASIC_TOKEN::tokcomma)))) != 0)
 		{
 			semiflag = true;
 			LINK->t = LINK->t->next;
@@ -5185,7 +5180,7 @@ cmdgraph_y(struct LOC_exec *LINK)
 		semiflag = false;
 		if ((unsigned long) LINK->t->kind < 32 &&
 			((1L << ((long) LINK->t->kind)) &
-			 ((1L << ((long) toksemi)) | (1L << ((long) tokcomma)))) != 0)
+			 ((1L << ((long)BASIC_TOKEN::toksemi)) | (1L << ((long)BASIC_TOKEN::tokcomma)))) != 0)
 		{
 			semiflag = true;
 			LINK->t = LINK->t->next;
@@ -5221,7 +5216,7 @@ cmdgraph_sy(struct LOC_exec *LINK)
 		semiflag = false;
 		if ((unsigned long) LINK->t->kind < 32 &&
 			((1L << ((long) LINK->t->kind)) &
-			 ((1L << ((long) toksemi)) | (1L << ((long) tokcomma)))) != 0)
+			 ((1L << ((long)BASIC_TOKEN::toksemi)) | (1L << ((long)BASIC_TOKEN::tokcomma)))) != 0)
 		{
 			semiflag = true;
 			LINK->t = LINK->t->next;
@@ -5266,7 +5261,7 @@ cmdlet(bool implied, struct LOC_exec *LINK)
 	{
 		target = v->UU.U0.val;
 	}
-	require(tokeq, LINK);
+	require((int)BASIC_TOKEN::tokeq, LINK);
 	if (!v->stringvar)
 	{
 		/* in case array is used on right hand side */
@@ -5299,7 +5294,7 @@ cmdif(struct LOC_exec *LINK)
 	long i;
 
 	n = realexpr(LINK);
-	require(tokthen, LINK);
+	require((int)BASIC_TOKEN::tokthen, LINK);
 	if (n == 0)
 	{
 		i = 0;
@@ -5307,16 +5302,16 @@ cmdif(struct LOC_exec *LINK)
 		{
 			if (LINK->t != NULL)
 			{
-				if (LINK->t->kind == tokif)
+				if (LINK->t->kind == (int)BASIC_TOKEN::tokif)
 					i++;
-				if (LINK->t->kind == tokelse)
+				if (LINK->t->kind == (int)BASIC_TOKEN::tokelse)
 					i--;
 				LINK->t = LINK->t->next;
 			}
 		}
 		while (LINK->t != NULL && i >= 0);
 	}
-	if (LINK->t != NULL && LINK->t->kind == toknum)
+	if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::toknum)
 		cmdgoto(LINK);
 	else
 		LINK->elseflag = true;
@@ -5372,11 +5367,11 @@ cmdfor(struct LOC_exec *LINK)
 	lr.UU.U0.vp = findvar(LINK);
 	if (lr.UU.U0.vp->stringvar)
 		snerr(": error in FOR command");
-	require(tokeq, LINK);
+	require((int)BASIC_TOKEN::tokeq, LINK);
 	*lr.UU.U0.vp->UU.U0.val = realexpr(LINK);
-	require(tokto, LINK);
+	require((int)BASIC_TOKEN::tokto, LINK);
 	lr.UU.U0.max = realexpr(LINK);
-	if (LINK->t != NULL && LINK->t->kind == tokstep)
+	if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokstep)
 	{
 		LINK->t = LINK->t->next;
 		lr.UU.U0.step = realexpr(LINK);
@@ -5402,25 +5397,25 @@ cmdfor(struct LOC_exec *LINK)
 					stmtline = saveline;
 					if (phreeqci_gui)
 					{
-						_ASSERTE(nIDErrPrompt == 0);
-						nIDErrPrompt = IDS_ERR_FOR_WO_NEXT;
+						_ASSERTE((int)nIDErrPrompt == 0);
+						nIDErrPrompt = PBasic::IDErr::IDS_ERR_FOR_WO_NEXT;
 					}
 					errormsg("FOR without NEXT");
 				}
 				stmtline = stmtline->next;
 				LINK->t = stmtline->txt;
 			}
-			if (LINK->t->kind == tokfor)
+			if (LINK->t->kind == (int)BASIC_TOKEN::tokfor)
 			{
-				if (LINK->t->next != NULL && LINK->t->next->kind == tokvar &&
+				if (LINK->t->next != NULL && LINK->t->next->kind == (int)BASIC_TOKEN::tokvar &&
 					LINK->t->next->UU.vp == lr.UU.U0.vp)
 					j++;
 				else
 					i++;
 			}
-			if (LINK->t->kind == toknext)
+			if (LINK->t->kind == (int)BASIC_TOKEN::toknext)
 			{
-				if (LINK->t->next != NULL && LINK->t->next->kind == tokvar &&
+				if (LINK->t->next != NULL && LINK->t->next->kind == (int)BASIC_TOKEN::tokvar &&
 					LINK->t->next->UU.vp == lr.UU.U0.vp)
 					j--;
 				else
@@ -5461,8 +5456,8 @@ cmdnext(struct LOC_exec *LINK)
 		{
 			if (phreeqci_gui)
 			{
-				_ASSERTE(nIDErrPrompt == 0);
-				nIDErrPrompt = IDS_ERR_NEXT_WO_FOR;
+				_ASSERTE((int)nIDErrPrompt == 0);
+				nIDErrPrompt = PBasic::IDErr::IDS_ERR_NEXT_WO_FOR;
 			}
 			errormsg("NEXT without FOR");
 		}
@@ -5516,10 +5511,10 @@ cmdwhile(struct LOC_exec *LINK)
 	{
 		if (parse_whole_program == TRUE)
 		{
-			if (!skiploop(tokwhile, tokwend, LINK))
+			if (!skiploop((int)BASIC_TOKEN::tokwhile, (int)BASIC_TOKEN::tokwend, LINK))
 			{
-				_ASSERTE(nIDErrPrompt == 0);
-				nIDErrPrompt = IDS_ERR_WHILE_WO_WEND;
+				_ASSERTE((int)nIDErrPrompt == 0);
+				nIDErrPrompt = PBasic::IDErr::IDS_ERR_WHILE_WO_WEND;
 				errormsg("WHILE without WEND");
 			}
 			l = loopbase->next;
@@ -5530,7 +5525,7 @@ cmdwhile(struct LOC_exec *LINK)
 	}
 	else
 	{
-		if (!skiploop(tokwhile, tokwend, LINK))
+		if (!skiploop((int)BASIC_TOKEN::tokwhile, (int)BASIC_TOKEN::tokwend, LINK))
 		{
 			errormsg("WHILE without WEND");
 		}
@@ -5558,8 +5553,8 @@ cmdwend(struct LOC_exec *LINK)
 		{
 			if (phreeqci_gui)
 			{
-				_ASSERTE(nIDErrPrompt == 0);
-				nIDErrPrompt = IDS_ERR_WEND_WO_WHILE;
+				_ASSERTE((int)nIDErrPrompt == 0);
+				nIDErrPrompt = PBasic::IDErr::IDS_ERR_WEND_WO_WHILE;
 			}
 			errormsg("WEND without WHILE");
 		}
@@ -5634,8 +5629,8 @@ cmdreturn(struct LOC_exec *LINK)
 		{
 			if (phreeqci_gui)
 			{
-				_ASSERTE(nIDErrPrompt == 0);
-				nIDErrPrompt = IDS_ERR_RETURN_WO_GOSUB;
+				_ASSERTE((int)nIDErrPrompt == 0);
+				nIDErrPrompt = PBasic::IDErr::IDS_ERR_RETURN_WO_GOSUB;
 			}
 			errormsg("RETURN without GOSUB");
 		}
@@ -5677,7 +5672,7 @@ cmdread(struct LOC_exec *LINK)
 					dataline = linebase;
 					LINK->t = dataline->txt;
 				}
-				if (LINK->t == NULL || LINK->t->kind != tokcomma)
+				if (LINK->t == NULL || LINK->t->kind != (int)BASIC_TOKEN::tokcomma)
 				{
 					do
 					{
@@ -5685,14 +5680,14 @@ cmdread(struct LOC_exec *LINK)
 						{
 							if (dataline == NULL || dataline->next == NULL)
 							{
-								_ASSERTE(nIDErrPrompt == 0);
-								nIDErrPrompt = IDS_ERR_OUT_OF_DATA;
+								_ASSERTE((int)nIDErrPrompt == 0);
+								nIDErrPrompt = PBasic::IDErr::IDS_ERR_OUT_OF_DATA;
 								errormsg("Out of Data");
 							}
 							dataline = dataline->next;
 							LINK->t = dataline->txt;
 						}
-						found = (bool) (LINK->t->kind == tokdata);
+						found = (bool) (LINK->t->kind == (int)BASIC_TOKEN::tokdata);
 						LINK->t = LINK->t->next;
 					}
 					while (!found || iseos(LINK));
@@ -5716,7 +5711,7 @@ cmdread(struct LOC_exec *LINK)
 				dataline = linebase;
 				LINK->t = dataline->txt;
 			}
-			if (LINK->t == NULL || LINK->t->kind != tokcomma)
+			if (LINK->t == NULL || LINK->t->kind != (int)BASIC_TOKEN::tokcomma)
 			{
 				do
 				{
@@ -5727,7 +5722,7 @@ cmdread(struct LOC_exec *LINK)
 						dataline = dataline->next;
 						LINK->t = dataline->txt;
 					}
-					found = (bool) (LINK->t->kind == tokdata);
+					found = (bool) (LINK->t->kind == (int)BASIC_TOKEN::tokdata);
 					LINK->t = LINK->t->next;
 				}
 				while (!found || iseos(LINK));
@@ -5746,7 +5741,7 @@ cmdread(struct LOC_exec *LINK)
 		datatok = LINK->t;
 		LINK->t = tok;
 		if (!iseos(LINK))
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 
 	}
 	while (!iseos(LINK));
@@ -5784,7 +5779,7 @@ void PBasic::
 cmdgotoxy(struct LOC_exec *LINK)
 {
 	intexpr(LINK);
-	require(tokcomma, LINK);
+	require((int)BASIC_TOKEN::tokcomma, LINK);
 }
 
 void PBasic::
@@ -5794,7 +5789,7 @@ cmdon(struct LOC_exec *LINK)
 	looprec *l;
 
 	i = intexpr(LINK);
-	if (LINK->t != NULL && LINK->t->kind == tokgosub)
+	if (LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokgosub)
 	{
 		l = (looprec *) PhreeqcPtr->PHRQ_calloc(1, sizeof(looprec));
 		if (l == NULL)
@@ -5812,7 +5807,7 @@ cmdon(struct LOC_exec *LINK)
 		}
 	}
 	else
-		require(tokgoto, LINK);
+		require((int)BASIC_TOKEN::tokgoto, LINK);
 	if (i < 1)
 	{
 		skiptoeos(LINK);
@@ -5820,9 +5815,9 @@ cmdon(struct LOC_exec *LINK)
 	}
 	while (i > 1 && !iseos(LINK))
 	{
-		require(toknum, LINK);
+		require((int)BASIC_TOKEN::toknum, LINK);
 		if (!iseos(LINK))
-			require(tokcomma, LINK);
+			require((int)BASIC_TOKEN::tokcomma, LINK);
 		i--;
 	}
 	if (!iseos(LINK))
@@ -5838,7 +5833,7 @@ cmddim(struct LOC_exec *LINK)
 
 	do
 	{
-		if (LINK == NULL || LINK->t == NULL || LINK->t->kind != tokvar)
+		if (LINK == NULL || LINK->t == NULL || LINK->t->kind != (int)BASIC_TOKEN::tokvar)
 		{
 			snerr(": error in DIM command");
 		}
@@ -5850,14 +5845,14 @@ cmddim(struct LOC_exec *LINK)
 			{
 				if (phreeqci_gui)
 				{
-					_ASSERTE(nIDErrPrompt == 0);
-					nIDErrPrompt = IDS_ERR_ARRAY_ALREADY;
+					_ASSERTE((int)nIDErrPrompt == 0);
+					nIDErrPrompt = PBasic::IDErr::IDS_ERR_ARRAY_ALREADY;
 				}
 				errormsg("Array already dimensioned before");
 			}
 			j = 1;
 			i = 0;
-			require(toklp, LINK);
+			require((int)BASIC_TOKEN::toklp, LINK);
 			do
 			{
 				k = intexpr(LINK) + 1;
@@ -5868,9 +5863,9 @@ cmddim(struct LOC_exec *LINK)
 				i++;
 				v->dims[i - 1] = k;
 				j *= k;
-				done = (bool)(LINK->t != NULL && LINK->t->kind == tokrp);
+				done = (bool)(LINK->t != NULL && LINK->t->kind == (int)BASIC_TOKEN::tokrp);
 				if (!done)
-					require(tokcomma, LINK);
+					require((int)BASIC_TOKEN::tokcomma, LINK);
 			} while (!done);
 			LINK->t = LINK->t->next;
 			v->numdims = (char)i;
@@ -5903,7 +5898,7 @@ cmddim(struct LOC_exec *LINK)
 				}
 			}
 			if (!iseos(LINK))
-				require(tokcomma, LINK);
+				require((int)BASIC_TOKEN::tokcomma, LINK);
 		}
 	}
 	while (!iseos(LINK));
@@ -5915,7 +5910,7 @@ cmderase(struct LOC_exec *LINK)
 	varrec *v = NULL;
 	do
 	{
-		if (LINK->t == NULL || LINK->t->kind != tokvar)
+		if (LINK->t == NULL || LINK->t->kind != (int)BASIC_TOKEN::tokvar)
 		{
 			snerr(": error in DIM command");
 		}
@@ -5924,7 +5919,7 @@ cmderase(struct LOC_exec *LINK)
 			v = LINK->t->UU.vp;
 			LINK->t = LINK->t->next;
 			clearvar(v);
-			if (!iseos(LINK)) require(tokcomma, LINK);
+			if (!iseos(LINK)) require((int)BASIC_TOKEN::tokcomma, LINK);
 		}
 	}
 	while (!iseos(LINK));
@@ -5942,7 +5937,7 @@ cmdpoke(struct LOC_exec *LINK)
 
 /* p2c: basic.p, line 2073: Note: Range checking is OFF [216] */
 	trick.i = intexpr(LINK);
-	require(tokcomma, LINK);
+	require((int)BASIC_TOKEN::tokcomma, LINK);
 	*trick.c = (char) intexpr(LINK);
 /* p2c: basic.p, line 2077: Note: Range checking is ON [216] */
 }
@@ -5964,7 +5959,7 @@ exec(void)
 			{
 				V.gotoflag = false;
 				V.elseflag = false;
-				while (stmttok != NULL && stmttok->kind == tokcolon)
+				while (stmttok != NULL && stmttok->kind == (int)BASIC_TOKEN::tokcolon)
 					stmttok = stmttok->next;
 				V.t = stmttok;
 				if (V.t != NULL)
@@ -5975,7 +5970,7 @@ exec(void)
 					{
 						if (WaitForSingleObject(hInfiniteLoop, 0) == WAIT_OBJECT_0)
 						{
-							nIDErrPrompt = IDS_ERR_INFINITE_LOOP;
+							nIDErrPrompt = PBasic::IDErr::IDS_ERR_INFINITE_LOOP;
 							errormsg("Possible infinite loop");
 						}
 					}
@@ -5983,98 +5978,98 @@ exec(void)
 					switch (stmttok->kind)
 					{
 
-					case tokrem:
+					case (int)BASIC_TOKEN::tokrem:
 						/* blank case */
 						break;
 
-					case toklist:
+					case (int)BASIC_TOKEN::toklist:
 						cmdlist(&V);
 						break;
 
-					case tokrun:
+					case (int)BASIC_TOKEN::tokrun:
 						cmdrun(&V);
 						break;
 
-					case toknew:
+					case (int)BASIC_TOKEN::toknew:
 						cmdnew(&V);
 						break;
 
-					case tokload:
+					case (int)BASIC_TOKEN::tokload:
 						cmdload(false, stringexpr(STR1, &V), &V);
 						break;
 
-					case tokmerge:
+					case (int)BASIC_TOKEN::tokmerge:
 						cmdload(true, stringexpr(STR1, &V), &V);
 						break;
 
-					case toksave:
+					case (int)BASIC_TOKEN::toksave:
 						cmdsave(&V);
 						break;
 
-					case tokbye:
+					case (int)BASIC_TOKEN::tokbye:
 						cmdbye();
 						break;
 
-					case tokdel:
+					case (int)BASIC_TOKEN::tokdel:
 						cmddel(&V);
 						break;
 
-					case tokrenum:
+					case (int)BASIC_TOKEN::tokrenum:
 						cmdrenum(&V);
 						break;
 
-					case toklet:
+					case (int)BASIC_TOKEN::toklet:
 						cmdlet(false, &V);
 						break;
 
-					case tokvar:
+					case (int)BASIC_TOKEN::tokvar:
 						cmdlet(true, &V);
 						break;
 
-					case tokprint:
+					case (int)BASIC_TOKEN::tokprint:
 						cmdprint(&V);
 						break;
 
-					case tokpunch:
+					case (int)BASIC_TOKEN::tokpunch:
 						cmdpunch(&V);
 						break;
 
-					case tokput:
+					case (int)BASIC_TOKEN::tokput:
 						cmdput(&V);
 						break;
 
-					case tokchange_por:
+					case (int)BASIC_TOKEN::tokchange_por:
 						cmdchange_por(&V);
 						break;
 
-					case tokchange_surf:
+					case (int)BASIC_TOKEN::tokchange_surf:
 						cmdchange_surf(&V);
 						break;
 
 #if defined PHREEQ98 || defined MULTICHART
-					case tokgraph_x:
+					case (int)BASIC_TOKEN::tokgraph_x:
 						cmdgraph_x(&V);
 						break;
 
-					case tokgraph_y:
+					case (int)BASIC_TOKEN::tokgraph_y:
 						cmdgraph_y(&V);
 						break;
 
-					case tokgraph_sy:
+					case (int)BASIC_TOKEN::tokgraph_sy:
 						cmdgraph_sy(&V);
 						break;
 #endif
 #if defined MULTICHART
-					case tokplot_xy:
+					case (int)BASIC_TOKEN::tokplot_xy:
 						cmdplot_xy(&V);
 						break;
 #endif
 
-					case tokinput:
+					case (int)BASIC_TOKEN::tokinput:
 						if (phreeqci_gui)
 						{
-							_ASSERTE(nIDErrPrompt == 0);
-							nIDErrPrompt = IDS_ERR_INPUT_NOTLEGAL;
+							_ASSERTE((int)nIDErrPrompt == 0);
+							nIDErrPrompt = PBasic::IDErr::IDS_ERR_INPUT_NOTLEGAL;
 							errormsg ("Basic command INPUT is not a legal command in PHREEQC.");
 						}
 						else
@@ -6083,89 +6078,89 @@ exec(void)
 						}
 						break;
 
-					case tokgoto:
+					case (int)BASIC_TOKEN::tokgoto:
 						cmdgoto(&V);
 						break;
 
-					case tokif:
+					case (int)BASIC_TOKEN::tokif:
 						cmdif(&V);
 						break;
 
-					case tokelse:
+					case (int)BASIC_TOKEN::tokelse:
 						cmdelse(&V);
 						break;
 
-					case tokend:
+					case (int)BASIC_TOKEN::tokend:
 						cmdend(&V);
 						break;
 
-					case tokstop:
+					case (int)BASIC_TOKEN::tokstop:
 						P_escapecode = -20;
 						throw PBasicStop();
 						//goto _Ltry1;
 						break;
 
-					case tokfor:
+					case (int)BASIC_TOKEN::tokfor:
 						cmdfor(&V);
 						break;
 
-					case toknext:
+					case (int)BASIC_TOKEN::toknext:
 						cmdnext(&V);
 						break;
 
-					case tokwhile:
+					case (int)BASIC_TOKEN::tokwhile:
 						cmdwhile(&V);
 						break;
 
-					case tokwend:
+					case (int)BASIC_TOKEN::tokwend:
 						cmdwend(&V);
 						break;
 
-					case tokgosub:
+					case (int)BASIC_TOKEN::tokgosub:
 						cmdgosub(&V);
 						break;
 
-					case tokreturn:
+					case (int)BASIC_TOKEN::tokreturn:
 						cmdreturn(&V);
 						break;
 
-					case tokread:
+					case (int)BASIC_TOKEN::tokread:
 						cmdread(&V);
 						break;
 
-					case tokdata:
+					case (int)BASIC_TOKEN::tokdata:
 						cmddata(&V);
 						break;
 
-					case tokrestore:
+					case (int)BASIC_TOKEN::tokrestore:
 						cmdrestore(&V);
 						break;
 
-					case tokgotoxy:
+					case (int)BASIC_TOKEN::tokgotoxy:
 						cmdgotoxy(&V);
 						break;
 
-					case tokon:
+					case (int)BASIC_TOKEN::tokon:
 						cmdon(&V);
 						break;
 
-					case tokdim:
+					case (int)BASIC_TOKEN::tokdim:
 						cmddim(&V);
 						break;
 
-					case tokerase:
+					case (int)BASIC_TOKEN::tokerase:
 						cmderase(&V);
 						break;
 
-					case tokpoke:
+					case (int)BASIC_TOKEN::tokpoke:
 						cmdpoke(&V);
 						break;
 
 					default:
 						if (phreeqci_gui)
 						{
-							_ASSERTE(nIDErrPrompt == 0);
-							nIDErrPrompt = IDS_ERR_ILLEGAL;
+							_ASSERTE((int)nIDErrPrompt == 0);
+							nIDErrPrompt = PBasic::IDErr::IDS_ERR_ILLEGAL;
 						}
 						strcat(STR1, "Illegal command in line: ");
 						if (strcmp(inbuf, "run"))
@@ -6309,7 +6304,7 @@ cmdplot_xy(struct LOC_exec *LINK)
 		semiflag = false;
 		if ((unsigned long) LINK->t->kind < 32 &&
 			((1L << ((long) LINK->t->kind)) &
-			 ((1L << ((long) toksemi)) | (1L << ((long) tokcomma)))) != 0)
+			 ((1L << ((long)BASIC_TOKEN::toksemi)) | (1L << ((long)BASIC_TOKEN::tokcomma)))) != 0)
 		{
 			semiflag = true;
 			LINK->t = LINK->t->next;
@@ -6400,7 +6395,7 @@ cmdgraph_x(struct LOC_exec *LINK)
 		semiflag = false;
 		if ((unsigned long) LINK->t->kind < 32 &&
 			((1L << ((long) LINK->t->kind)) &
-			 ((1L << ((long) toksemi)) | (1L << ((long) tokcomma)))) != 0)
+			 ((1L << ((long)BASIC_TOKEN::toksemi)) | (1L << ((long)BASIC_TOKEN::tokcomma)))) != 0)
 		{
 			semiflag = true;
 			LINK->t = LINK->t->next;
@@ -6448,7 +6443,7 @@ cmdgraph_y(struct LOC_exec *LINK)
 		semiflag = false;
 		if ((unsigned long) LINK->t->kind < 32 &&
 			((1L << ((long) LINK->t->kind)) &
-			 ((1L << ((long) toksemi)) | (1L << ((long) tokcomma)))) != 0)
+			 ((1L << ((long)BASIC_TOKEN::toksemi)) | (1L << ((long)BASIC_TOKEN::tokcomma)))) != 0)
 		{
 			semiflag = true;
 			LINK->t = LINK->t->next;
@@ -6505,7 +6500,7 @@ cmdgraph_sy(struct LOC_exec *LINK)
 		semiflag = false;
 		if ((unsigned long) LINK->t->kind < 32 &&
 			((1L << ((long) LINK->t->kind)) &
-			 ((1L << ((long) toksemi)) | (1L << ((long) tokcomma)))) != 0)
+			 ((1L << ((long)BASIC_TOKEN::toksemi)) | (1L << ((long)BASIC_TOKEN::tokcomma)))) != 0)
 		{
 			semiflag = true;
 			LINK->t = LINK->t->next;
@@ -7285,211 +7280,211 @@ _EscIO(int code)
 }
 
 const std::map<const std::string, PBasic::BASIC_TOKEN>::value_type temp_tokens[] = {
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("+",                  PBasic::tokplus),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("-",                  PBasic::tokminus),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("*",                  PBasic::toktimes),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("/",                  PBasic::tokdiv),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("^",                  PBasic::tokup),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("( or [",             PBasic::toklp),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type(") or ]",             PBasic::tokrp),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("]",                  PBasic::tokcomma),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type(";",                  PBasic::toksemi),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type(":",                  PBasic::tokcolon),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("=",                  PBasic::tokeq),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("<",                  PBasic::toklt),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("<=",                 PBasic::tokle),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type(">",                  PBasic::tokgt),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type(">=",                 PBasic::tokge),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("and",                PBasic::tokand),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("or",                 PBasic::tokor),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("xor",                PBasic::tokxor),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("not",                PBasic::toknot),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("mod",                PBasic::tokmod),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sqr",                PBasic::toksqr),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sqrt",               PBasic::toksqrt),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("ceil",               PBasic::tokceil),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("floor",              PBasic::tokfloor),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sin",                PBasic::toksin),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cos",                PBasic::tokcos),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("tan",                PBasic::toktan),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("arctan",             PBasic::tokarctan),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("log",                PBasic::toklog),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("exp",                PBasic::tokexp),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("abs",                PBasic::tokabs),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sgn",                PBasic::toksgn),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("str$",               PBasic::tokstr_),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("val",                PBasic::tokval),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("chr$",               PBasic::tokchr_),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("eol$",               PBasic::tokeol_),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("eol_notab$",         PBasic::tokeol_notab_),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("no_newline$",        PBasic::tokno_newline_),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("asc",                PBasic::tokasc),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("len",                PBasic::toklen),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("mid$",               PBasic::tokmid_),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("peek",               PBasic::tokpeek),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("let",                PBasic::toklet),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("print",              PBasic::tokprint),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("punch",              PBasic::tokpunch),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("+",                  PBasic::BASIC_TOKEN::tokplus),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("-",                  PBasic::BASIC_TOKEN::tokminus),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("*",                  PBasic::BASIC_TOKEN::toktimes),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("/",                  PBasic::BASIC_TOKEN::tokdiv),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("^",                  PBasic::BASIC_TOKEN::tokup),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("( or [",             PBasic::BASIC_TOKEN::toklp),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type(") or ]",             PBasic::BASIC_TOKEN::tokrp),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("]",                  PBasic::BASIC_TOKEN::tokcomma),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type(";",                  PBasic::BASIC_TOKEN::toksemi),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type(":",                  PBasic::BASIC_TOKEN::tokcolon),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("=",                  PBasic::BASIC_TOKEN::tokeq),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("<",                  PBasic::BASIC_TOKEN::toklt),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("<=",                 PBasic::BASIC_TOKEN::tokle),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type(">",                  PBasic::BASIC_TOKEN::tokgt),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type(">=",                 PBasic::BASIC_TOKEN::tokge),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("and",                PBasic::BASIC_TOKEN::tokand),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("or",                 PBasic::BASIC_TOKEN::tokor),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("xor",                PBasic::BASIC_TOKEN::tokxor),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("not",                PBasic::BASIC_TOKEN::toknot),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("mod",                PBasic::BASIC_TOKEN::tokmod),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sqr",                PBasic::BASIC_TOKEN::toksqr),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sqrt",               PBasic::BASIC_TOKEN::toksqrt),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("ceil",               PBasic::BASIC_TOKEN::tokceil),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("floor",              PBasic::BASIC_TOKEN::tokfloor),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sin",                PBasic::BASIC_TOKEN::toksin),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cos",                PBasic::BASIC_TOKEN::tokcos),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("tan",                PBasic::BASIC_TOKEN::toktan),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("arctan",             PBasic::BASIC_TOKEN::tokarctan),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("log",                PBasic::BASIC_TOKEN::toklog),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("exp",                PBasic::BASIC_TOKEN::tokexp),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("abs",                PBasic::BASIC_TOKEN::tokabs),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sgn",                PBasic::BASIC_TOKEN::toksgn),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("str$",               PBasic::BASIC_TOKEN::tokstr_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("val",                PBasic::BASIC_TOKEN::tokval),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("chr$",               PBasic::BASIC_TOKEN::tokchr_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("eol$",               PBasic::BASIC_TOKEN::tokeol_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("eol_notab$",         PBasic::BASIC_TOKEN::tokeol_notab_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("no_newline$",        PBasic::BASIC_TOKEN::tokno_newline_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("asc",                PBasic::BASIC_TOKEN::tokasc),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("len",                PBasic::BASIC_TOKEN::toklen),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("mid$",               PBasic::BASIC_TOKEN::tokmid_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("peek",               PBasic::BASIC_TOKEN::tokpeek),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("let",                PBasic::BASIC_TOKEN::toklet),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("print",              PBasic::BASIC_TOKEN::tokprint),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("punch",              PBasic::BASIC_TOKEN::tokpunch),
 #if defined (PHREEQ98) || defined (MULTICHART)
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("graph_x",            PBasic::tokgraph_x),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("graph_y",            PBasic::tokgraph_y),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("graph_sy",           PBasic::tokgraph_sy),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("graph_x",            PBasic::BASIC_TOKEN::tokgraph_x),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("graph_y",            PBasic::BASIC_TOKEN::tokgraph_y),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("graph_sy",           PBasic::BASIC_TOKEN::tokgraph_sy),
 #endif
 #if defined MULTICHART
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("plot_xy",            PBasic::tokplot_xy),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("plot_xy",            PBasic::BASIC_TOKEN::tokplot_xy),
 #endif
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("input",              PBasic::tokinput),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("goto",               PBasic::tokgoto),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("go to",              PBasic::tokgoto),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("if",                 PBasic::tokif),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("end",                PBasic::tokend),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("stop",               PBasic::tokstop),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("for",                PBasic::tokfor),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("next",               PBasic::toknext),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("while",              PBasic::tokwhile),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("wend",               PBasic::tokwend),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gosub",              PBasic::tokgosub),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("return",             PBasic::tokreturn),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("read",               PBasic::tokread),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("data",               PBasic::tokdata),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("restore",            PBasic::tokrestore),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gotoxy",             PBasic::tokgotoxy),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("on",                 PBasic::tokon),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("dim",                PBasic::tokdim),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("erase",              PBasic::tokerase),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("poke",               PBasic::tokpoke),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("list",               PBasic::toklist),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("run",                PBasic::tokrun),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("new",                PBasic::toknew),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("load",               PBasic::tokload),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("merge",              PBasic::tokmerge),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("save",               PBasic::toksave),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("bye",                PBasic::tokbye),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("quit",               PBasic::tokbye),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("del",                PBasic::tokdel),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("renum",              PBasic::tokrenum),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("then",               PBasic::tokthen),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("else",               PBasic::tokelse),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("to",                 PBasic::tokto),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("step",               PBasic::tokstep),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("tc",                 PBasic::toktc),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("tk",                 PBasic::toktk),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("time",               PBasic::toktime),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sim_time",           PBasic::toksim_time),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("total_time",         PBasic::toktotal_time),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("m0",                 PBasic::tokm0),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("m",                  PBasic::tokm),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("parm",               PBasic::tokparm),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("act",                PBasic::tokact),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("edl",                PBasic::tokedl),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("surf",               PBasic::toksurf),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("equi",               PBasic::tokequi),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kin",                PBasic::tokkin),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gas",                PBasic::tokgas),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("s_s",                PBasic::toks_s),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("misc1",              PBasic::tokmisc1),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("misc2",              PBasic::tokmisc2),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("mu",                 PBasic::tokmu),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("osmotic",            PBasic::tokosmotic),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("alk",                PBasic::tokalk),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("lk_species",         PBasic::toklk_species),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("lk_named",           PBasic::toklk_named),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("lk_phase",           PBasic::toklk_phase),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sum_species",        PBasic::toksum_species),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sum_gas",            PBasic::toksum_gas),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sum_s_s",            PBasic::toksum_s_s),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("calc_value",         PBasic::tokcalc_value),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("description",        PBasic::tokdescription),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("title",              PBasic::toktitle),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sys",                PBasic::toksys),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("add_heading",        PBasic::tokadd_heading),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("instr",              PBasic::tokinstr),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("ltrim",              PBasic::tokltrim),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rtrim",              PBasic::tokrtrim),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("trim",               PBasic::toktrim),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("pad",                PBasic::tokpad),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rxn",                PBasic::tokrxn),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("dist",               PBasic::tokdist),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("mol",                PBasic::tokmol),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("la",                 PBasic::tokla),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("lm",                 PBasic::toklm),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sr",                 PBasic::toksr),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("si",                 PBasic::toksi),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("step_no",            PBasic::tokstep_no),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_no",            PBasic::tokcell_no),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sim_no",             PBasic::toksim_no),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("tot",                PBasic::toktot),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("log10",              PBasic::toklog10),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("charge_balance",     PBasic::tokcharge_balance),     
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("percent_error",      PBasic::tokpercent_error),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("put",                PBasic::tokput),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("get",                PBasic::tokget),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("exists",             PBasic::tokexists),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rem",                PBasic::tokrem),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("change_por",         PBasic::tokchange_por),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("get_por",            PBasic::tokget_por),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("change_surf",        PBasic::tokchange_surf),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("porevolume",         PBasic::tokporevolume),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sc",                 PBasic::toksc),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gamma",              PBasic::tokgamma),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("lg",                 PBasic::toklg),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rho",                PBasic::tokrho),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_volume",        PBasic::tokcell_volume),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_pore_volume",   PBasic::tokcell_pore_volume),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_porosity",      PBasic::tokcell_porosity),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_saturation",    PBasic::tokcell_saturation),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("velocity_x",         PBasic::tokvelocity_x),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("velocity_y",         PBasic::tokvelocity_y),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("velocity_z",         PBasic::tokvelocity_z),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("transport_cell_no",  PBasic::toktransport_cell_no),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmole",            PBasic::toktotmole),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmol",             PBasic::toktotmol),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmoles",           PBasic::toktotmoles),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("iso",                PBasic::tokiso),	     
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("iso_unit",           PBasic::tokiso_unit),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("phase_formula",      PBasic::tokphase_formula),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("phase_formula$",     PBasic::tokphase_formula_),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("list_s_s",           PBasic::toklist_s_s),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("pr_p",               PBasic::tokpr_p),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("pr_phi",             PBasic::tokpr_phi),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gas_p",              PBasic::tokgas_p),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gas_vm",             PBasic::tokgas_vm),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("pressure",           PBasic::tokpressure),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("eps_r",              PBasic::tokeps_r),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("vm",                 PBasic::tokvm),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("dh_a",               PBasic::tokdh_a),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("debye_length",       PBasic::tokdebye_length),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("dh_b",               PBasic::tokdh_b),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("dh_av",              PBasic::tokdh_av),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("qbrn",               PBasic::tokqbrn),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kappa",              PBasic::tokkappa),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gfw",                PBasic::tokgfw),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("soln_vol",           PBasic::toksoln_vol),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("equi_delta",         PBasic::tokequi_delta),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kin_delta",          PBasic::tokkin_delta),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kin_time",           PBasic::tokkin_time),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("str_f$",             PBasic::tokstr_f_),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("str_e$",             PBasic::tokstr_e_),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("species_formula",    PBasic::tokspecies_formula),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("species_formula$",   PBasic::tokspecies_formula_),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("eq_frac",            PBasic::tokeq_frac),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("equiv_frac",         PBasic::tokeq_frac),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("callback",           PBasic::tokcallback),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("diff_c",             PBasic::tokdiff_c),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sa_declercq",        PBasic::toksa_declercq),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("edl_species",        PBasic::tokedl_species),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("viscos",             PBasic::tokviscos),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("viscos_0",           PBasic::tokviscos_0),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rho_0",              PBasic::tokrho_0),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kinetics_formula",   PBasic::tokkinetics_formula),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kinetics_formula$",  PBasic::tokkinetics_formula),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("phase_vm",           PBasic::tokphase_vm),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("current_a",          PBasic::tokcurrent_a),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("pot_v",              PBasic::tokpot_v),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("t_sc",               PBasic::tokt_sc),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("setdiff_c",          PBasic::toksetdiff_c),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("aphi",               PBasic::tokaphi),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("iterations",         PBasic::tokiterations)
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("input",              PBasic::BASIC_TOKEN::tokinput),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("goto",               PBasic::BASIC_TOKEN::tokgoto),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("go to",              PBasic::BASIC_TOKEN::tokgoto),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("if",                 PBasic::BASIC_TOKEN::tokif),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("end",                PBasic::BASIC_TOKEN::tokend),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("stop",               PBasic::BASIC_TOKEN::tokstop),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("for",                PBasic::BASIC_TOKEN::tokfor),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("next",               PBasic::BASIC_TOKEN::toknext),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("while",              PBasic::BASIC_TOKEN::tokwhile),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("wend",               PBasic::BASIC_TOKEN::tokwend),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gosub",              PBasic::BASIC_TOKEN::tokgosub),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("return",             PBasic::BASIC_TOKEN::tokreturn),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("read",               PBasic::BASIC_TOKEN::tokread),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("data",               PBasic::BASIC_TOKEN::tokdata),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("restore",            PBasic::BASIC_TOKEN::tokrestore),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gotoxy",             PBasic::BASIC_TOKEN::tokgotoxy),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("on",                 PBasic::BASIC_TOKEN::tokon),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("dim",                PBasic::BASIC_TOKEN::tokdim),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("erase",              PBasic::BASIC_TOKEN::tokerase),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("poke",               PBasic::BASIC_TOKEN::tokpoke),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("list",               PBasic::BASIC_TOKEN::toklist),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("run",                PBasic::BASIC_TOKEN::tokrun),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("new",                PBasic::BASIC_TOKEN::toknew),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("load",               PBasic::BASIC_TOKEN::tokload),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("merge",              PBasic::BASIC_TOKEN::tokmerge),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("save",               PBasic::BASIC_TOKEN::toksave),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("bye",                PBasic::BASIC_TOKEN::tokbye),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("quit",               PBasic::BASIC_TOKEN::tokbye),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("del",                PBasic::BASIC_TOKEN::tokdel),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("renum",              PBasic::BASIC_TOKEN::tokrenum),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("then",               PBasic::BASIC_TOKEN::tokthen),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("else",               PBasic::BASIC_TOKEN::tokelse),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("to",                 PBasic::BASIC_TOKEN::tokto),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("step",               PBasic::BASIC_TOKEN::tokstep),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("tc",                 PBasic::BASIC_TOKEN::toktc),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("tk",                 PBasic::BASIC_TOKEN::toktk),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("time",               PBasic::BASIC_TOKEN::toktime),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sim_time",           PBasic::BASIC_TOKEN::toksim_time),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("total_time",         PBasic::BASIC_TOKEN::toktotal_time),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("m0",                 PBasic::BASIC_TOKEN::tokm0),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("m",                  PBasic::BASIC_TOKEN::tokm),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("parm",               PBasic::BASIC_TOKEN::tokparm),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("act",                PBasic::BASIC_TOKEN::tokact),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("edl",                PBasic::BASIC_TOKEN::tokedl),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("surf",               PBasic::BASIC_TOKEN::toksurf),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("equi",               PBasic::BASIC_TOKEN::tokequi),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kin",                PBasic::BASIC_TOKEN::tokkin),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gas",                PBasic::BASIC_TOKEN::tokgas),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("s_s",                PBasic::BASIC_TOKEN::toks_s),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("misc1",              PBasic::BASIC_TOKEN::tokmisc1),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("misc2",              PBasic::BASIC_TOKEN::tokmisc2),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("mu",                 PBasic::BASIC_TOKEN::tokmu),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("osmotic",            PBasic::BASIC_TOKEN::tokosmotic),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("alk",                PBasic::BASIC_TOKEN::tokalk),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("lk_species",         PBasic::BASIC_TOKEN::toklk_species),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("lk_named",           PBasic::BASIC_TOKEN::toklk_named),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("lk_phase",           PBasic::BASIC_TOKEN::toklk_phase),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sum_species",        PBasic::BASIC_TOKEN::toksum_species),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sum_gas",            PBasic::BASIC_TOKEN::toksum_gas),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sum_s_s",            PBasic::BASIC_TOKEN::toksum_s_s),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("calc_value",         PBasic::BASIC_TOKEN::tokcalc_value),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("description",        PBasic::BASIC_TOKEN::tokdescription),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("title",              PBasic::BASIC_TOKEN::toktitle),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sys",                PBasic::BASIC_TOKEN::toksys),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("add_heading",        PBasic::BASIC_TOKEN::tokadd_heading),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("instr",              PBasic::BASIC_TOKEN::tokinstr),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("ltrim",              PBasic::BASIC_TOKEN::tokltrim),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rtrim",              PBasic::BASIC_TOKEN::tokrtrim),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("trim",               PBasic::BASIC_TOKEN::toktrim),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("pad",                PBasic::BASIC_TOKEN::tokpad),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rxn",                PBasic::BASIC_TOKEN::tokrxn),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("dist",               PBasic::BASIC_TOKEN::tokdist),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("mol",                PBasic::BASIC_TOKEN::tokmol),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("la",                 PBasic::BASIC_TOKEN::tokla),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("lm",                 PBasic::BASIC_TOKEN::toklm),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sr",                 PBasic::BASIC_TOKEN::toksr),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("si",                 PBasic::BASIC_TOKEN::toksi),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("step_no",            PBasic::BASIC_TOKEN::tokstep_no),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_no",            PBasic::BASIC_TOKEN::tokcell_no),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sim_no",             PBasic::BASIC_TOKEN::toksim_no),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("tot",                PBasic::BASIC_TOKEN::toktot),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("log10",              PBasic::BASIC_TOKEN::toklog10),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("charge_balance",     PBasic::BASIC_TOKEN::tokcharge_balance),     
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("percent_error",      PBasic::BASIC_TOKEN::tokpercent_error),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("put",                PBasic::BASIC_TOKEN::tokput),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("get",                PBasic::BASIC_TOKEN::tokget),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("exists",             PBasic::BASIC_TOKEN::tokexists),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rem",                PBasic::BASIC_TOKEN::tokrem),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("change_por",         PBasic::BASIC_TOKEN::tokchange_por),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("get_por",            PBasic::BASIC_TOKEN::tokget_por),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("change_surf",        PBasic::BASIC_TOKEN::tokchange_surf),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("porevolume",         PBasic::BASIC_TOKEN::tokporevolume),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sc",                 PBasic::BASIC_TOKEN::toksc),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gamma",              PBasic::BASIC_TOKEN::tokgamma),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("lg",                 PBasic::BASIC_TOKEN::toklg),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rho",                PBasic::BASIC_TOKEN::tokrho),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_volume",        PBasic::BASIC_TOKEN::tokcell_volume),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_pore_volume",   PBasic::BASIC_TOKEN::tokcell_pore_volume),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_porosity",      PBasic::BASIC_TOKEN::tokcell_porosity),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_saturation",    PBasic::BASIC_TOKEN::tokcell_saturation),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("velocity_x",         PBasic::BASIC_TOKEN::tokvelocity_x),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("velocity_y",         PBasic::BASIC_TOKEN::tokvelocity_y),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("velocity_z",         PBasic::BASIC_TOKEN::tokvelocity_z),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("transport_cell_no",  PBasic::BASIC_TOKEN::toktransport_cell_no),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmole",            PBasic::BASIC_TOKEN::toktotmole),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmol",             PBasic::BASIC_TOKEN::toktotmol),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmoles",           PBasic::BASIC_TOKEN::toktotmoles),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("iso",                PBasic::BASIC_TOKEN::tokiso),	     
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("iso_unit",           PBasic::BASIC_TOKEN::tokiso_unit),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("phase_formula",      PBasic::BASIC_TOKEN::tokphase_formula),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("phase_formula$",     PBasic::BASIC_TOKEN::tokphase_formula_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("list_s_s",           PBasic::BASIC_TOKEN::toklist_s_s),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("pr_p",               PBasic::BASIC_TOKEN::tokpr_p),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("pr_phi",             PBasic::BASIC_TOKEN::tokpr_phi),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gas_p",              PBasic::BASIC_TOKEN::tokgas_p),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gas_vm",             PBasic::BASIC_TOKEN::tokgas_vm),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("pressure",           PBasic::BASIC_TOKEN::tokpressure),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("eps_r",              PBasic::BASIC_TOKEN::tokeps_r),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("vm",                 PBasic::BASIC_TOKEN::tokvm),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("dh_a",               PBasic::BASIC_TOKEN::tokdh_a),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("debye_length",       PBasic::BASIC_TOKEN::tokdebye_length),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("dh_b",               PBasic::BASIC_TOKEN::tokdh_b),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("dh_av",              PBasic::BASIC_TOKEN::tokdh_av),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("qbrn",               PBasic::BASIC_TOKEN::tokqbrn),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kappa",              PBasic::BASIC_TOKEN::tokkappa),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("gfw",                PBasic::BASIC_TOKEN::tokgfw),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("soln_vol",           PBasic::BASIC_TOKEN::toksoln_vol),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("equi_delta",         PBasic::BASIC_TOKEN::tokequi_delta),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kin_delta",          PBasic::BASIC_TOKEN::tokkin_delta),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kin_time",           PBasic::BASIC_TOKEN::tokkin_time),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("str_f$",             PBasic::BASIC_TOKEN::tokstr_f_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("str_e$",             PBasic::BASIC_TOKEN::tokstr_e_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("species_formula",    PBasic::BASIC_TOKEN::tokspecies_formula),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("species_formula$",   PBasic::BASIC_TOKEN::tokspecies_formula_),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("eq_frac",            PBasic::BASIC_TOKEN::tokeq_frac),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("equiv_frac",         PBasic::BASIC_TOKEN::tokeq_frac),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("callback",           PBasic::BASIC_TOKEN::tokcallback),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("diff_c",             PBasic::BASIC_TOKEN::tokdiff_c),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sa_declercq",        PBasic::BASIC_TOKEN::toksa_declercq),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("edl_species",        PBasic::BASIC_TOKEN::tokedl_species),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("viscos",             PBasic::BASIC_TOKEN::tokviscos),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("viscos_0",           PBasic::BASIC_TOKEN::tokviscos_0),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rho_0",              PBasic::BASIC_TOKEN::tokrho_0),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kinetics_formula",   PBasic::BASIC_TOKEN::tokkinetics_formula),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kinetics_formula$",  PBasic::BASIC_TOKEN::tokkinetics_formula),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("phase_vm",           PBasic::BASIC_TOKEN::tokphase_vm),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("current_a",          PBasic::BASIC_TOKEN::tokcurrent_a),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("pot_v",              PBasic::BASIC_TOKEN::tokpot_v),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("t_sc",               PBasic::BASIC_TOKEN::tokt_sc),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("setdiff_c",          PBasic::BASIC_TOKEN::toksetdiff_c),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("aphi",               PBasic::BASIC_TOKEN::tokaphi),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("iterations",         PBasic::BASIC_TOKEN::tokiterations)
 };
 std::map<const std::string, PBasic::BASIC_TOKEN> PBasic::command_tokens(temp_tokens, temp_tokens + sizeof temp_tokens / sizeof temp_tokens[0]);
 

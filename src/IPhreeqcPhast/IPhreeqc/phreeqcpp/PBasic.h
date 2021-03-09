@@ -12,6 +12,7 @@
 #include "phrqtype.h"
 #include "PHRQ_base.h"
 #include "global_structures.h"
+#include "Utils.h"
 class Phreeqc;
 
 class PBasicStop : public std::exception
@@ -136,7 +137,7 @@ public:
 	PBasic(Phreeqc *ptr, PHRQ_io *phrq_io=NULL);
 	virtual ~PBasic();
 
-	enum BASIC_TOKEN
+	enum class BASIC_TOKEN
 	{
 		tokvar,
 		toknum,
@@ -349,7 +350,7 @@ public:
 	};
 
 #if !defined(PHREEQCI_GUI)
-	enum IDErr
+	enum class IDErr
 	{
 		IDS_ERR_ARRAY_ALREADY,
 		IDS_ERR_BAD_SUBSCRIPT,
