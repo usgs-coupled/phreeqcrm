@@ -2703,9 +2703,9 @@ PhreeqcRM::FileRename(const std::string &temp_name, const std::string &name,
 	{
 		if (PhreeqcRM::FileExists(backup_name.c_str()))
 			remove(backup_name.c_str());
-		rename(name.c_str(), backup_name.c_str());
+		(void)rename(name.c_str(), backup_name.c_str());
 	}
-	rename(temp_name.c_str(), name.c_str());
+	(void)rename(temp_name.c_str(), name.c_str());
 }
 /* ---------------------------------------------------------------------- */
 int

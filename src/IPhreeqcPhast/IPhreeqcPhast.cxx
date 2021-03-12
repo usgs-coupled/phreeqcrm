@@ -22,6 +22,8 @@ IPhreeqcPhast::IPhreeqcPhast(void)
 	punch_stream = NULL;
 	this->thread_clock_time = 0;
 	this->standard_clock_time = 1;
+	this->start_cell = -1;
+	this->end_cell = -1;
 }
 IPhreeqcPhast::~IPhreeqcPhast(void)
 {
