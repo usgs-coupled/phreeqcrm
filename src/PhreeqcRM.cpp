@@ -2816,7 +2816,7 @@ PhreeqcRM::FindComponents(void)
 			species_z.clear();
 			s_num2rm_species_num.clear();
 			species_stoichiometry.clear();
-			for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_s_x; i++)
+			for (int i = 0; i < (int)phast_iphreeqc_worker->PhreeqcPtr->s_x.size(); i++)
 			{
 				species_names.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
 				species_z.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->z);
@@ -2826,7 +2826,7 @@ PhreeqcRM::FindComponents(void)
 				nd.add("Charge", phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->z);
 				species_stoichiometry.push_back(nd);
 			}
-			for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_phases; i++)
+			for (int i = 0; i < (int)phast_iphreeqc_worker->PhreeqcPtr->phases.size(); i++)
 			{
 				if (phast_iphreeqc_worker->PhreeqcPtr->phases[i]->in == TRUE)
 				{
@@ -2934,7 +2934,7 @@ PhreeqcRM::FindComponents(void)
 						throw PhreeqcRMStop();
 					}
 					// fill surface vectors
-					for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_s_x; i++)
+					for (int i = 0; i < (int)phast_iphreeqc_worker->PhreeqcPtr->s_x.size(); i++)
 					{
 						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == SURF)
 						{
@@ -2974,7 +2974,7 @@ PhreeqcRM::FindComponents(void)
 						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
 						throw PhreeqcRMStop();
 					}
-					for (int i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->count_s_x; i++)
+					for (int i = 0; i < (int)phast_iphreeqc_worker->PhreeqcPtr->s_x.size(); i++)
 					{
 						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == EX)
 						{
