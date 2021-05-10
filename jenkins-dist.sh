@@ -129,9 +129,11 @@ DISTNAME="${NAME}-${VERSION}${VER_NUMTAG}"
 DIST_SANDBOX=.dist_sandbox
 #DISTPATH="$DIST_SANDBOX/$DISTNAME"
 DISTPATH="."
+GIT_COMMIT=`git rev-parse HEAD`
 
 echo "Distribution will be named: $DISTNAME"
 echo " release branch's revision: $REVISION"
+echo "                git commit: $GIT_COMMIT"
 echo "     executable's revision: $REVISION_SVN"
 echo "     constructed from path: /$REPOS_PATH"
 echo "              release date: $RELEASE_DATE"
@@ -178,7 +180,10 @@ SED_FILES="$DISTPATH/configure.ac \
            $DISTPATH/Makefile.am \
            $DISTPATH/doc/NOTICE.TXT \
            $DISTPATH/doc/README.TXT \
-           $DISTPATH/src/PhreeqcRM.h"
+           $DISTPATH/src/PhreeqcRM.h \
+           $DISTPATH/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h \
+           $DISTPATH/src/IPhreeqcPhast/IPhreeqc/Makefile.am \
+           $DISTPATH/src/IPhreeqcPhast/IPhreeqc/Version.h"
 
 env
 
@@ -191,6 +196,7 @@ do
    -e "/#define *VER_MINOR/s/[0-9]\+/$ver_minor/" \
    -e "/#define *VER_PATCH/s/[0-9]\+/$ver_patch/" \
    -e "/#define *VER_REVISION/s/[0-9]\+/$REVISION_SVN/" \
+   -e "/#define *GIT_COMMIT/s/[0-9a-f]\{40\}/$GIT_COMMIT/" \
    -e "s/@RELEASE_DATE@/$RELEASE_DATE/g" \
    -e "s/@VERSION@/$VER/g" \
    -e "s/@PHREEQC_VER@/$VER/g" \
