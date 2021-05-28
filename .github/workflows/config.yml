@@ -27,7 +27,10 @@ jobs:
       shell: bash
       working-directory: ${{runner.workspace}}/_build
       run: |
-        printenv
+        echo "GITHUB_WORKSPACE = $GITHUB_WORKSPACE"
+        echo "github.workspace = ${{ github.workspace }}"
+        echo "runner.workspace = ${{ runner.workspace }}"
+        printenv | sort
         pwd
         find ..
         ../configure --prefix=$(pwd)/INSTALL
