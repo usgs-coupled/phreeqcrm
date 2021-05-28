@@ -27,8 +27,9 @@ jobs:
       shell: bash
       working-directory: ${{runner.workspace}}/_build
       run: |
+        printenv
         pwd
-        dir ..
+        find ..
         ../configure --prefix=$(pwd)/INSTALL
 
     - name: Build
