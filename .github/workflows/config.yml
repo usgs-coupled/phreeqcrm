@@ -26,7 +26,10 @@ jobs:
       # access regardless of the host operating system
       shell: bash
       working-directory: ${{runner.workspace}}/_build
-      run: ../configure --prefix=$(pwd)/INSTALL
+      run: |
+        pwd
+        dir ..
+        ../configure --prefix=$(pwd)/INSTALL
 
     - name: Build
       working-directory: ${{runner.workspace}}/_build
