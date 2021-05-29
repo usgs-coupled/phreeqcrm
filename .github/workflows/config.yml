@@ -23,7 +23,7 @@ jobs:
       run: autoreconf -fvi
 
     - name: Versioning
-      run: echo '*** TODO ***''
+      run: echo '*** TODO ***'
 
     - name: Doxygen
       run: cd Doxygen && make
