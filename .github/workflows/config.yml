@@ -25,7 +25,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: autoreconf
+    - name: Autoreconf
       run: autoreconf -fvi
 
     - name: Versioning
@@ -68,3 +68,9 @@ jobs:
       working-directory: ${{github.workspace}}/_build
       shell: bash
       run: make dist
+
+    - name: Artifacts
+      working-directory: ${{github.workspace}}/_build
+      uses: actions/upload-artifact@v2
+        with:
+          path: *.tar.gz
