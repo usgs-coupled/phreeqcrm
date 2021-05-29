@@ -2,6 +2,9 @@ name: autoconf/automake
 
 on: [push]
 
+env:
+  VER: 3.7.1
+
 jobs:
   build:
     # The CMake configure and build commands are platform agnostic and should work equally
@@ -23,7 +26,7 @@ jobs:
       run: autoreconf -fvi
 
     - name: Versioning
-      run: echo '*** TODO ***'
+      run: ./jenkins-dist.sh -v ${VER}
 
     - name: Doxygen
       run: |
@@ -46,7 +49,7 @@ jobs:
       working-directory: ${{github.workspace}}/_build
       shell: bash
       # make -j4 distcheck
-      run: make
+      run: make -j2
 
     - name: Test
       working-directory: ${{github.workspace}}/_build
@@ -57,3 +60,8 @@ jobs:
       working-directory: ${{github.workspace}}/_build
       shell: bash
       run: make install
+
+    - name: Tarball
+      working-directory: ${{github.workspace}}/_build
+      shell: bash
+      run: make dist
