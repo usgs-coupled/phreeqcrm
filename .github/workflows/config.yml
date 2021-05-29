@@ -3,6 +3,7 @@ name: autoconf/automake
 on: [push]
 
 env:
+  NAME: PhreeqcRM
   VER: 3.7.1
   DATE: 5/29/2021
   REL: 15000
