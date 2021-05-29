@@ -4,6 +4,8 @@ on: [push]
 
 env:
   VER: 3.7.1
+  DATE: 5/29/2021
+  REL: 15000
 
 jobs:
   build:
@@ -26,7 +28,7 @@ jobs:
       run: autoreconf -fvi
 
     - name: Versioning
-      run: ./jenkins-dist.sh -v ${VER}
+      run: ./jenkins-dist.sh -v ${VER} -r ${REL} -d ${DATE}
 
     - name: Doxygen
       run: |
