@@ -26,7 +26,9 @@ jobs:
       run: echo '*** TODO ***'
 
     - name: Doxygen
-      run: cd Doxygen && make
+      run: |
+        sudo apt-get install doxygen
+        cd Doxygen && make
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
