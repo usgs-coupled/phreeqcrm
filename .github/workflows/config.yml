@@ -72,5 +72,5 @@ jobs:
     - name: Artifacts
       working-directory: ${{github.workspace}}/_build
       uses: actions/upload-artifact@v2
-        with:
-          path: *.tar.gz
+      with:
+        path: *.tar.gz
