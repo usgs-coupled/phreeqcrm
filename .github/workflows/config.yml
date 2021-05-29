@@ -46,7 +46,7 @@ jobs:
       working-directory: ${{github.workspace}}/_build
       shell: bash
       # make -j4 distcheck
-      run: make -j4
+      run: make
 
     - name: Test
       working-directory: ${{github.workspace}}/_build
