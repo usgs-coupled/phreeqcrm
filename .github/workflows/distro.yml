@@ -69,7 +69,7 @@ jobs:
           name: tarball
       
       - name: printenv
-        run: Get-ChildItem env:
+        run: Get-ChildItem 'env:'
       
       - name: dir
         run: Get-ChildItem
