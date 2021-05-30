@@ -13,7 +13,7 @@ jobs:
 
   distcheck:
     name: make distcheck
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
 
@@ -47,7 +47,7 @@ jobs:
   cmake-ubuntu:
     name: cmake ubuntu
     needs: distcheck
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -62,14 +62,14 @@ jobs:
   cmake-windows:
     name: cmake windows
     needs: distcheck
-    runs-on: windows-lastest
+    runs-on: windows-latest
     steps:
       - uses: actions/download-artifact@v2
         with:
           name: tarball
       
       - name: printenv
-        run: Get-ChildItem "env:"
+        run: Get-ChildItem 'env:'
       
       - name: dir
         run: Get-ChildItem
