@@ -69,8 +69,12 @@ jobs:
       shell: bash
       run: make dist
 
-    - name: Artifacts
-      working-directory: ${{github.workspace}}/_build
-      uses: actions/upload-artifact@v2
+    # - name: Artifacts
+    #   working-directory: ${{github.workspace}}/_build
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     path: *.tar.gz
+
+    - uses: actions/upload-artifact@v2
       with:
         path: *.tar.gz
