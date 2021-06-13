@@ -7,6 +7,7 @@
 
 const float INACTIVE_CELL_VALUE = 1.0e30f;
 class PHRQ_io;
+class State;
 #include "IPhreeqc.hpp"
 class IPhreeqcPhast: public IPhreeqc
 {
@@ -53,5 +54,16 @@ protected:
 	std::vector<double> cell_clock_times;
 	double standard_clock_time;
 	cxxStorageBin uz_bin;
+	std::map<int, State> state_map;
+};
+class State
+{
+public:
+	State(void) {}
+	~State(void) {}
+	cxxStorageBin worker_bin;
+	cxxStorageBin uz_bin;
+	std::vector<int> start_cell;
+	std::vector<int> end_cell;
 };
 #endif // !defined(PHAST_IPHREEQC_H_INCLUDED)

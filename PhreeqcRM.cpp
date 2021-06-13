@@ -19,6 +19,7 @@
 #include "IPhreeqcPhast.h"
 #include "IPhreeqcPhastLib.h"
 #include "Serializer.h"
+#include "StorageBin.h"
 #include <assert.h>
 #include "System.h"
 #ifdef USE_GZ
@@ -6372,6 +6373,27 @@ PhreeqcRM::MpiWorker()
 					return_value = this->SpeciesConcentrations2Module(c);
 				}
 				break;
+			case METHOD_STATESAVE:
+				if (debug_worker) std::cerr << "METHOD_STATESAVE" << std::endl;
+				{
+					int idummy = 0;
+					return_value = this->StateSave(idummy);
+				}
+				break;
+			case METHOD_STATEAPPLY:
+				if (debug_worker) std::cerr << "METHOD_STATEAPPLY" << std::endl;
+				{
+					int idummy = 0;
+					return_value = this->StateApply(idummy);
+				}
+				break;
+			case METHOD_STATEDELETE:
+					if (debug_worker) std::cerr << "METHOD_STATEDELETE" << std::endl;
+					{
+						int idummy = 0;
+						return_value = this->StateDelete(idummy);
+					}
+					break;
 			case METHOD_USESOLUTIONDENSITYVOLUME:
 				if (debug_worker) std::cerr << "METHOD_USESOLUTIONDENSITYVOLUME" << std::endl;
 				{
@@ -11567,6 +11589,94 @@ PhreeqcRM::SpeciesConcentrations2Module(std::vector<double> & species_conc_root)
 }
 
 #endif
+IRM_RESULT PhreeqcRM::StateSave(int istate) 
+{
+#ifdef USE_MPI
+	if (this->mpi_myself == 0)
+	{
+		int method = METHOD_STATESAVE;
+		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+	}
+	MPI_Bcast(&istate, 1, MPI_INT, 0, phreeqcrm_comm);
+#endif
+
+#ifdef USE_OPENMP
+	omp_set_num_threads(this->nthreads);
+#pragma omp parallel
+#pragma omp for
+#endif
+	for (int i = 0; i < nthreads; i++)
+	{
+		Phreeqc *phrqc_ptr = workers[i]->Get_PhreeqcPtr();
+		State st;
+		workers[i]->state_map[istate] = st;
+		phrqc_ptr->phreeqc2cxxStorageBin(workers[i]->state_map[istate].worker_bin);
+		workers[i]->state_map[istate].uz_bin = workers[i]->uz_bin;
+		workers[i]->state_map[istate].start_cell = this->start_cell;
+		workers[i]->state_map[istate].end_cell = this->end_cell;
+	}
+	return IRM_OK;
+}
+IRM_RESULT PhreeqcRM::StateApply(int istate) 
+{
+#ifdef USE_MPI
+	if (this->mpi_myself == 0)
+	{
+		int method = METHOD_STATEAPPLY;
+		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+	}
+	MPI_Bcast(&istate, 1, MPI_INT, 0, phreeqcrm_comm);
+#endif
+
+	this->start_cell = workers[0]->state_map[istate].start_cell;
+	this->end_cell = workers[0]->state_map[istate].end_cell;
+#ifdef USE_OPENMP
+	omp_set_num_threads(this->nthreads);
+#pragma omp parallel
+#pragma omp for
+#endif
+	for (int i = 0; i < nthreads; i++)
+	{
+		Phreeqc* phrqc_ptr = workers[i]->Get_PhreeqcPtr();
+		phrqc_ptr->Get_Rxn_solution_map() = workers[i]->state_map[istate].worker_bin.Get_Solutions();
+		phrqc_ptr->Get_Rxn_exchange_map() = workers[i]->state_map[istate].worker_bin.Get_Exchangers();
+		phrqc_ptr->Get_Rxn_gas_phase_map() = workers[i]->state_map[istate].worker_bin.Get_GasPhases();
+		phrqc_ptr->Get_Rxn_kinetics_map() = workers[i]->state_map[istate].worker_bin.Get_Kinetics();
+		phrqc_ptr->Get_Rxn_pp_assemblage_map() = workers[i]->state_map[istate].worker_bin.Get_PPassemblages();
+		phrqc_ptr->Get_Rxn_ss_assemblage_map() = workers[i]->state_map[istate].worker_bin.Get_SSassemblages();
+		phrqc_ptr->Get_Rxn_surface_map() = workers[i]->state_map[istate].worker_bin.Get_Surfaces();
+		phrqc_ptr->Get_Rxn_mix_map() = workers[i]->state_map[istate].worker_bin.Get_Mixes();
+		phrqc_ptr->Get_Rxn_reaction_map() = workers[i]->state_map[istate].worker_bin.Get_Reactions();
+		phrqc_ptr->Get_Rxn_temperature_map() = workers[i]->state_map[istate].worker_bin.Get_Temperatures();
+		phrqc_ptr->Get_Rxn_pressure_map() = workers[i]->state_map[istate].worker_bin.Get_Pressures();
+		workers[i]->uz_bin = workers[i]->state_map[istate].uz_bin;
+		workers[i]->start_cell = workers[i]->state_map[istate].start_cell[i];
+		workers[i]->end_cell = workers[i]->state_map[istate].end_cell[i];
+	}
+	return IRM_OK;
+}
+IRM_RESULT PhreeqcRM::StateDelete(int istate) 
+{
+#ifdef USE_MPI
+	if (this->mpi_myself == 0)
+	{
+		int method = METHOD_STATEDELETE;
+		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+	}
+	MPI_Bcast(&istate, 1, MPI_INT, 0, phreeqcrm_comm);
+#endif
+
+#ifdef USE_OPENMP
+	omp_set_num_threads(this->nthreads);
+#pragma omp parallel
+#pragma omp for
+#endif
+	for (int i = 0; i < nthreads; i++)
+	{
+		workers[i]->state_map.erase(istate);
+	}
+	return IRM_OK;
+}
 /* ---------------------------------------------------------------------- */
 double
 PhreeqcRM::TimeStandardTask()
