@@ -1,0 +1,75 @@
+name: Build Distro
+
+on: [push]
+
+env:
+  NAME: PhreeqcRM
+  VER: 3.7.1
+  DATE: 5/29/2021
+  REL: 15000
+  BUILD_TYPE: Release
+
+jobs:
+
+  distcheck:
+    name: make distcheck
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: autoreconf
+      run: autoreconf -fvi
+
+    - name: versioning
+      run: ./jenkins-dist.sh -v ${VER} -r ${REL} -d ${DATE}
+
+    - name: doxygen
+      run: sudo apt-get install doxygen && cd Doxygen && make
+
+    - name: mkdir
+      run: mkdir ${{github.workspace}}/_build
+
+    - name: configure
+      shell: bash
+      working-directory: ${{github.workspace}}/_build
+      run: ../configure --prefix=$(pwd)/INSTALL
+
+    - name: make
+      shell: bash
+      working-directory: ${{github.workspace}}/_build
+      run: make -j2 distcheck
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: tarball
+        path: ${{github.workspace}}/_build/*.tar.gz
+
+  cmake-ubuntu:
+    name: cmake ubuntu
+    needs: distcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: tarball
+      
+      - name: printenv
+        run: printenv
+      
+      - name: dir
+        run: pwd && find .
+
+  cmake-windows:
+    name: cmake windows
+    needs: distcheck
+    runs-on: windows-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: tarball
+      
+      - name: printenv
+        run: Get-ChildItem 'env:'
+      
+      - name: dir
+        run: Get-ChildItem
