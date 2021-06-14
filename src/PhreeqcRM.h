@@ -4575,12 +4575,14 @@ EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFAC
 Although not generally used, MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs 
 will be saved for each cell, if they have been defined in the worker IPhreeqc instances. 
 The distribution of cells among the workers and the chemistry of fully or partially 
-unsaturated cells are also saved. PhreeqcRM can be reset to this state by using @ref StateApply.
+unsaturated cells are also saved. The state is saved in memory; use @ref DumpModule to save the state
+to file. PhreeqcRM can be reset to this state by using @ref StateApply.
 A state is identified by an integer, and multiple states can be saved. 
 
 @param istate     Integer identifying the state that is saved. 
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref StateApply and
+@see                    @ref DumpModule,
+@ref StateApply, and
 @ref StateDelete.
 @par C++ Example:
 @htmlonly
