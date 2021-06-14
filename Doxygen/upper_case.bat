@@ -478,6 +478,18 @@
   @sed -i "s/rm_getsiname/RM_GetSIName/g" %%f 
   @del sed*
 )
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_statesave/RM_StateSave/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_stateapply/RM_StateApply/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_statedelete/RM_StateDelete/g" %%f 
+  @del sed*
+)
 
 @REM Rename PhreeqcRM to mixed case 
 @FOR %%f IN (.\html\*.html) DO @(
