@@ -4105,6 +4105,7 @@ unsaturated cells are also saved.The state is saved in memory; use @ref RM_DumpM
 to file.PhreeqcRM can be reset to this state by using @ref RM_StateApply.
 A state is identified by an integer, and multiple states can be saved.
 
+@param id               The instance @a id returned from @ref RM_Create.
 @param istate     Integer identifying the state that is saved.
 @retval IRM_RESULT      0 is success, negative is failure(See @ref RM_DecodeError).
 @see                    @ref RM_DumpModule,
@@ -4136,6 +4137,7 @@ The distribution of cells among the workersand the chemistry of fully or partial
 unsaturated cells are also reset to the saved state.
 The state to be applied is identified by an integer.
 
+@param id               The instance @a id returned from @ref RM_Create.
 @param istate     Integer identifying the state that is to be applied.
 @retval IRM_RESULT      0 is success, negative is failure(See @ref RM_DecodeError).
 @see                    @ref RM_StateSave and
@@ -4158,6 +4160,7 @@ IRM_DLL_EXPORT IRM_RESULT RM_StateApply(int id, int istate);
 /**
 Delete a state previously saved with @ref RM_StateSave.
 
+@param id               The instance @a id returned from @ref RM_Create.
 @param istate     Integer identifying the state that is to be deleted.
 @retval IRM_RESULT      0 is success, negative is failure(See @ref RM_DecodeError).
 @see                    @ref RM_StateSave and
@@ -4172,7 +4175,7 @@ status = RM_StateApply(id, 1);
 status = RM_StateDelete(id, 1);
 </PRE>
 </CODE>
-endhtmlonly
+@endhtmlonly
 @par MPI :
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
