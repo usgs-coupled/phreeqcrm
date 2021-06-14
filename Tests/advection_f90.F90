@@ -335,6 +335,10 @@ subroutine advection_f90()  BIND(C)
           time * RM_GetTimeConversion(id), " days"
      status = RM_LogMessage(id, string) 
      status = RM_ScreenMessage(id, string) 
+     ! Demonstration of state
+     status = RM_StateSave(id, 1)
+     status = RM_StateApply(id, 1)
+     status = RM_StateDelete(id, 1)
      status = RM_RunCells(id)  
      ! Transfer data from PhreeqcRM for transport
      status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
