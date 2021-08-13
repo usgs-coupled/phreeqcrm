@@ -1950,6 +1950,7 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 	const size_t gzblock = 4094;
 	char buffer[gzblock + 2];
 	int total_cells = this->end_cell[this->mpi_tasks - 1];
+	if (total_cells <= 0) total_cells = 1;
 	int pct = 10;
 	int block_count = 0;
 	if (mpi_myself == 0)
@@ -2193,6 +2194,7 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 	const size_t gzblock = 4094;
 	char buffer[gzblock+2];
 	int total_cells = this->end_cell[this->mpi_tasks -1];
+	if (total_cells <= 0) total_cells = 1;
 	int pct = 10;
 	int block_count = 0;
 	if (mpi_myself == 0)
@@ -2283,7 +2285,6 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 					}
 				}
 			}
-			if(total_cells <= 0) total_cells = 1;
 			if (mpi_myself == 0 && block_count * 100 / total_cells > pct)
 			{
 				int pct_block_count = (block_count * 10 / total_cells) * 10;
@@ -2389,6 +2390,7 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 		const size_t gzblock = 4094;
 		char buffer[gzblock + 2];
 		int total_cells = this->end_cell[this->nthreads - 1];
+		if (total_cells <= 0) total_cells = 1;
 		int pct = 10;
 		int block_count = 0;
 
@@ -2556,6 +2558,7 @@ PhreeqcRM::DumpModule(bool dump_on, bool append)
 		const size_t gzblock = 4094;
 		char buffer[gzblock+2];
 		int total_cells = this->end_cell[this->nthreads -1];
+		if (total_cells <= 0) total_cells = 1;
 		int pct = 10;
 		int block_count = 0;
 
