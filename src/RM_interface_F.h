@@ -166,6 +166,9 @@ IRM_DLL_EXPORT IRM_RESULT RMF_SetUnitsSolution(int *id, int *i);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetUnitsSSassemblage(int *id, int *i);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetUnitsSurface(int *id, int *i);
 IRM_DLL_EXPORT IRM_RESULT RMF_SpeciesConcentrations2Module(int *id, double * species_conc);
+IRM_DLL_EXPORT IRM_RESULT RMF_StateSave(int* id, int* istate);
+IRM_DLL_EXPORT IRM_RESULT RMF_StateApply(int* id, int* istate);
+IRM_DLL_EXPORT IRM_RESULT RMF_StateDelete(int* id, int* istate);
 IRM_DLL_EXPORT IRM_RESULT RMF_UseSolutionDensityVolume(int *id, int *tf);
 IRM_DLL_EXPORT IRM_RESULT RMF_WarningMessage(int *id, const char *warn_str);
 

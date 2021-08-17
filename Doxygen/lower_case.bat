@@ -121,5 +121,9 @@ sed -i -e "s/RM_GetSolidSolutionComponentsName/rm_getsolidsolutioncomponentsname
 sed -i -e "s/RM_GetSolidSolutionName/rm_getsolidsolutionname/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSICount/rm_getsicount/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSIName/rm_getsiname/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_StateSave/rm_statesave/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_StateApply/rm_stateapply/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_StateDelete/rm_statedelete/g" %RM_INTERFACE_F90%
+
 
 del sed*

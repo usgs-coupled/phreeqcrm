@@ -361,6 +361,15 @@ done
 for f in html/*.html; do
   sed -i "s/rm_getsiname/RM_GetSIName/g"  $f
 done
+for f in html/*.html; do
+  sed -i "s/rm_statesave/RM_StateSave/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_stateapply/RM_StateApply/g"  $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_statedelete/RM_StateDelete/g"  $f
+done
 
 # Rename PhreeqcRM to mixed case 
 for f in html/*.html; do
