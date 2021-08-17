@@ -101,7 +101,7 @@ build_fixed_volume_gas(void)
 		}
 
 		/* All elements in gas */
-		for (j = 0; j < count_elts; j++)
+		for (j = 0; j < (int) count_elts; j++)
 		{
 			unknown_ptr = NULL;
 			if (strcmp(elt_list[j].elt->name, "H") == 0)
@@ -149,7 +149,7 @@ build_fixed_volume_gas(void)
 			output_msg(sformatf( "\n\tJacobian summations %s.\n\n",
 					   phase_ptr->name));
 		}
-		for (j = 0; j < count_elts; j++)
+		for (j = 0; j < (int) count_elts; j++)
 		{
 			unknown_ptr = NULL;
 			if (strcmp(elt_list[j].elt->name, "H") == 0)
@@ -436,23 +436,31 @@ calc_PR(void)
 			{
 				if (!strcmp(phase_ptr1->name, "CO2(g)"))
 					a_aa *= 0.81; // Soreide and Whitson, 1992, FPE 77, 217
-				else if (!strcmp(phase_ptr1->name, "H2S(g)"))
+				else if (!strcmp(phase_ptr1->name, "H2S(g)") || !strcmp(phase_ptr1->name, "H2Sg(g)"))
 					a_aa *= 0.81;
-				else if (!strcmp(phase_ptr1->name, "CH4(g)"))
+				else if (!strcmp(phase_ptr1->name, "CH4(g)") || !strcmp(phase_ptr1->name, "Mtg(g)") || !strcmp(phase_ptr1->name, "Methane(g)"))
 					a_aa *= 0.51;
-				else if (!strcmp(phase_ptr1->name, "N2(g)"))
+				else if (!strcmp(phase_ptr1->name, "N2(g)") || !strcmp(phase_ptr1->name, "Ntg(g)"))
 					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr1->name, "Ethane(g)"))
+					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr1->name, "Propane(g)"))
+					a_aa *= 0.45;
 			}
 			if (!strcmp(phase_ptr1->name, "H2O(g)"))
 			{
 				if (!strcmp(phase_ptr->name, "CO2(g)"))
 					a_aa *= 0.81;
-				else if (!strcmp(phase_ptr->name, "H2S(g)"))
+				else if (!strcmp(phase_ptr->name, "H2S(g)") || !strcmp(phase_ptr->name, "H2Sg(g)"))
 					a_aa *= 0.81;
-				else if (!strcmp(phase_ptr->name, "CH4(g)"))
+				else if (!strcmp(phase_ptr->name, "CH4(g)") || !strcmp(phase_ptr->name, "Mtg(g)") || !strcmp(phase_ptr->name, "Methane(g)"))
 					a_aa *= 0.51;
-				else if (!strcmp(phase_ptr->name, "N2(g)"))
+				else if (!strcmp(phase_ptr->name, "N2(g)") || !strcmp(phase_ptr->name, "Ntg(g)"))
 					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr->name, "Ethane(g)"))
+					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr->name, "Propane(g)"))
+					a_aa *= 0.45;
 			}
 			a_aa_sum += phase_ptr->fraction_x * phase_ptr1->fraction_x * a_aa;
 			a_aa_sum2 += phase_ptr1->fraction_x * a_aa;
@@ -598,10 +606,10 @@ calc_PR(void)
 		{
 			phi = B_r * (rz - 1) - log(rz - B) + A / (2.828427 * B) * (B_r - 2.0 * phase_ptr->pr_aa_sum2 / a_aa_sum) *
 				  log((rz + 2.41421356 * B) / (rz - 0.41421356 * B));
-			phi = (phi > 4.44 ? 4.44 : (phi < -3 ? -3 : phi));
+			//phi = (phi > 4.44 ? 4.44 : (phi < -3 ? -3 : phi));
 		}
 		else
-			phi = -3.0; // fugacity coefficient > 0.05
+			phi = -3.0; // fugacity coefficient = 0.05
 		phase_ptr->pr_phi = exp(phi);
 		phase_ptr->pr_si_f = phi / LOG_10;										// pr_si_f updated
 		// ****
