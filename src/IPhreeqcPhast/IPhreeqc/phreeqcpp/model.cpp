@@ -2613,13 +2613,12 @@ calc_gas_pressures(void)
 					V_m = (2. * gas_phase_ptr->Get_v_m() + V_m) / 3;
 				else
 					V_m = (1. * gas_phase_ptr->Get_v_m() + V_m) / 2;
-				if (iterations > 99 && numerical_fixed_volume == false)
+				if ((pitzer_model || iterations > 99) && numerical_fixed_volume == false)
 				{
 					//V_m *= 1; /* debug */
 					numerical_fixed_volume = true;
 					//switch_numerical = true;
-					warning_msg
-						("Numerical method failed, switching to numerical derivatives.");
+					if (!pitzer_model) warning_msg("Numerical method failed, switching to numerical derivatives.");
 					prep();
 					//switch_numerical = false;
 				}
@@ -2649,8 +2648,8 @@ calc_gas_pressures(void)
 				lp += rxn_ptr->s->la * rxn_ptr->coef;
 			}
 			phase_ptr->p_soln_x = exp(LOG_10 * (lp - phase_ptr->pr_si_f));
-			if (!strcmp(phase_ptr->name, "H2O(g)") && phase_ptr->p_soln_x > 90)
-					phase_ptr->p_soln_x = 90;
+			//if (!strcmp(phase_ptr->name, "H2O(g)") && phase_ptr->p_soln_x > 90)
+			//		phase_ptr->p_soln_x = 90;
 
 			if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
 			{
@@ -5305,7 +5304,8 @@ ss_f(LDBLE xb, LDBLE l_a0, LDBLE l_a1, LDBLE l_kc, LDBLE l_kb, LDBLE xcaq,
 	f = xcaq * (xb / r + xc) + xbaq * (xb + r * xc) - 1;
 	return (f);
 }
-
+//#define ORIGINAL
+#ifdef ORIGINAL
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
 numerical_jacobian(void)
@@ -5425,8 +5425,8 @@ numerical_jacobian(void)
 		case GAS_MOLES:
 			if (gas_in == FALSE)
 				continue;
-
-			d2 = d * x[i]->moles;
+			d2 = (x[i]->moles > 1 ? 1 : 20);
+			d2 *= d * x[i]->moles;
 			if (d2 < 1e-14)
 				d2 = 1e-14;
 			x[i]->moles += d2;
@@ -5546,7 +5546,265 @@ numerical_jacobian(void)
 	calculating_deriv = FALSE;
 	return OK;
 }
+#else
+/* ---------------------------------------------------------------------- */
+int Phreeqc::
+numerical_jacobian(void)
+/* ---------------------------------------------------------------------- */
+{
+	std::vector<double> base;
+	LDBLE d, d1, d2;
+	int i, j;
+	cxxGasPhase* gas_phase_ptr = use.Get_gas_phase_ptr();
+	std::vector<class phase*> phase_ptrs;
+	std::vector<class phase> base_phases;
+	double base_mass_water_bulk_x = 0, base_moles_h2o = 0;
+	cxxGasPhase base_gas_phase;
+	cxxSurface base_surface;
 
+	if (!
+		(numerical_deriv ||
+			(use.Get_surface_ptr() != NULL && use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC) ||
+			(gas_phase_ptr != NULL && gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME &&
+				(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) && numerical_fixed_volume)
+			))
+		return(OK);
+
+	//jacobian_sums();
+	if (use.Get_surface_ptr() != NULL)
+	{
+		base_surface = *use.Get_surface_ptr();
+	}
+	if (use.Get_gas_phase_ptr() != NULL)
+	{
+		//cxxGasPhase* gas_phase_ptr = use.Get_gas_phase_ptr();
+		base_gas_phase = *gas_phase_ptr;
+		base_phases.resize(gas_phase_ptr->Get_gas_comps().size());
+		for (size_t i = 0; i < gas_phase_ptr->Get_gas_comps().size(); i++)
+		{
+			const cxxGasComp* gas_comp_ptr = &(gas_phase_ptr->Get_gas_comps()[i]);
+			class phase* phase_ptr = phase_bsearch(gas_comp_ptr->Get_phase_name().c_str(), &j, FALSE);
+			phase_ptrs.push_back(phase_ptr);
+			base_phases[i] = *phase_ptr;
+		}
+	}
+	calculating_deriv = TRUE;
+	gammas(mu_x);
+	molalities(TRUE);
+	mb_sums();
+	//mb_gases();
+	//mb_ss();
+	residuals();
+	/*
+	 *   Clear array, note residuals are in array[i, count_unknowns+1]
+	 */
+
+	//for (i = 0; i < count_unknowns; i++)
+	//{
+	//	my_array[i] = 0.0;
+	//}
+	//for (i = 1; i < count_unknowns; i++)
+	//{
+	//	memcpy((void*)&(my_array[(size_t)i * (count_unknowns + 1)]),
+	//		(void*)&(my_array[0]), count_unknowns * sizeof(LDBLE));
+	//}
+
+	base.resize(count_unknowns);
+	base = residual;
+	d = 0.0001;
+	d1 = d * LOG_10;
+	d2 = 0;
+	for (i = 0; i < count_unknowns; i++)
+	{
+		switch (x[i]->type)
+		{
+		case MB:
+		case ALK:
+		case CB:
+		case SOLUTION_PHASE_BOUNDARY:
+		case EXCH:
+		case SURFACE:
+		case SURFACE_CB:
+		case SURFACE_CB1:
+		case SURFACE_CB2:
+			x[i]->master[0]->s->la += d;
+			d2 = d;// *LOG_10;
+			break;
+		case MH:
+			s_eminus->la += d;
+			d2 = d;// *LOG_10;
+			break;
+		case AH2O:
+			x[i]->master[0]->s->la += d;
+			d2 = d;// *LOG_10;
+			break;
+		case PITZER_GAMMA:
+			x[i]->s->lg += d;
+			d2 = d;
+			break;
+		case MH2O:
+			//mass_water_aq_x *= (1 + d);
+			//x[i]->master[0]->s->moles = mass_water_aq_x / gfw_water;
+			//d2 = log(1.0 + d);
+			//break;
+			// DL_pitz
+			d1 = mass_water_aq_x * d;
+			mass_water_aq_x += d1;
+			if (use.Get_surface_in() && dl_type_x == cxxSurface::DONNAN_DL)
+				mass_water_bulk_x += d1;
+			x[i]->master[0]->s->moles = mass_water_aq_x / gfw_water;
+			d2 = d1;
+			break;
+		case MU:
+			d2 = d * mu_x;
+			mu_x += d2;
+			//gammas(mu_x);
+			break;
+		case PP:
+			for (j = 0; j < count_unknowns; j++)
+			{
+				delta[j] = 0.0;
+			}
+			d2 = -1e-8;
+			delta[i] = d2;
+			reset();
+			d2 = delta[i];
+			break;
+		case SS_MOLES:
+			if (x[i]->ss_in == FALSE)
+				continue;
+			for (j = 0; j < count_unknowns; j++)
+			{
+				delta[j] = 0.0;
+			}
+			/*d2 = -1e-8; */
+			d2 = d * 10 * x[i]->moles;
+			//d2 = -.1 * x[i]->moles;
+			/*
+			   if (d2 > -1e-10) d2 = -1e-10;
+			   calculating_deriv = FALSE;
+			 */
+			delta[i] = d2;
+			/*fprintf (stderr, "delta before reset %e\n", delta[i]); */
+			reset();
+			d2 = delta[i];
+			/*fprintf (stderr, "delta after reset %e\n", delta[i]); */
+			break;
+		case GAS_MOLES:
+			if (gas_in == FALSE)
+				continue;
+			d2 = (x[i]->moles > 1 ? 1 : 30);
+			d2 *= d * x[i]->moles;
+			d2 = (d2 < ineq_tol ? ineq_tol : d2);
+			//if (d2 < 1e-14)
+			//	d2 = 1e-14;
+			x[i]->moles += d2;
+			break;
+		}
+		gammas(mu_x);
+		molalities(TRUE);
+		mb_sums();
+		//mb_gases();
+		//mb_ss();
+		residuals();
+
+		for (j = 0; j < count_unknowns; j++)
+		{
+			my_array[(size_t)j * (count_unknowns + 1) + (size_t)i] = -(residual[j] - base[j]) / d2;
+			if (x[i]->type == MH2O) // DL_pitz
+				my_array[(size_t)j * (count_unknowns + 1) + (size_t)i] *= mass_water_aq_x;
+		}
+		switch (x[i]->type)
+		{
+		case MB:
+		case ALK:
+		case CB:
+		case SOLUTION_PHASE_BOUNDARY:
+		case EXCH:
+		case SURFACE:
+		case SURFACE_CB:
+		case SURFACE_CB1:
+		case SURFACE_CB2:
+		case AH2O:
+			x[i]->master[0]->s->la -= d2;
+			break;
+		case MH:
+			s_eminus->la -= d2;
+			if (my_array[(size_t)i * (count_unknowns + 1) + (size_t)i] == 0)
+			{
+				/*output_msg(sformatf( "Zero diagonal for MH\n")); */
+				my_array[(size_t)i * (count_unknowns + 1) + (size_t)i] =
+					under(s_h2->lm) * 2;
+			}
+			break;
+		case PITZER_GAMMA:
+			x[i]->s->lg -= d2;
+			break;
+		case MH2O:
+			//mass_water_aq_x /= (1 + d);
+			//x[i]->master[0]->s->moles = mass_water_aq_x / gfw_water;
+			//break;
+			//DL_pitz
+			mass_water_aq_x -= d2;
+			if (use.Get_surface_in() && dl_type_x == cxxSurface::DONNAN_DL)
+				mass_water_bulk_x -= d2;
+			x[i]->master[0]->s->moles = mass_water_aq_x / gfw_water;
+			break;
+		case MU:
+			mu_x -= d2;
+			//gammas(mu_x);
+			break;
+		case PP:
+			delta[i] = -d2;
+			reset();
+			break;
+		case SS_MOLES:
+			delta[i] = -d2;
+			reset();
+			break;
+		case GAS_MOLES:
+			x[i]->moles -= d2;
+			break;
+		}
+		if (use.Get_surface_ptr() != NULL)
+		{
+			*use.Get_surface_ptr() = base_surface;
+		}
+		if (use.Get_gas_phase_ptr() != NULL)
+		{
+			*use.Get_gas_phase_ptr() = base_gas_phase;
+			for (size_t g = 0; g < base_phases.size(); g++)
+			{
+				*phase_ptrs[g] = base_phases[g];
+			}
+		}
+		//gammas(mu_x);
+		//molalities(TRUE);
+		//mb_sums();
+		////mb_gases();
+		////mb_ss();
+		//residuals();
+	}
+	gammas(mu_x);
+	molalities(TRUE);
+	mb_sums();
+	//mb_gases();
+	//mb_ss();
+	residuals();
+	//for (i = 0; i < count_unknowns; i++)
+	//{
+	//	//Debugging
+	//	if (fabs(2.0 * (residual[i] - base[i]) / (residual[i] + base[i])) > 1e-2 &&
+	//		fabs(residual[i]) + fabs(base[i]) > 1e-8)
+	//	{
+	//		std::cerr << iterations << ": " << x[i]->description << "  " << residual[i] << "  " << base[i] << std::endl;
+	//	}
+	//}
+	base.clear();
+	calculating_deriv = FALSE;
+	return OK;
+}
+#endif
 /* ---------------------------------------------------------------------- */
 void Phreeqc::
 set_inert_moles(void)

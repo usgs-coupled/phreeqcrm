@@ -1948,19 +1948,40 @@ jacobian_pz(void)
 /* ---------------------------------------------------------------------- */
 { // calculate the derivatives numerically
 	std::vector<double> base;
+	std::vector<class phase*> phase_ptrs;
+	std::vector<class phase> base_phases;
+	cxxGasPhase base_gas_phase;
+	cxxSurface base_surface;
 	LDBLE d, d1, d2;
 	int i, j;
-
-	calculating_deriv = 1;
 Restart:
-	size_t pz_max_unknowns = max_unknowns;
-	//k_temp(tc_x, patm_x);
+	if (use.Get_surface_ptr() != NULL)
+	{
+		base_surface = *use.Get_surface_ptr();
+	}
+	if (use.Get_gas_phase_ptr() != NULL)
+	{
+		cxxGasPhase* gas_phase_ptr = use.Get_gas_phase_ptr();
+		base_gas_phase = *gas_phase_ptr;
+		base_phases.resize(gas_phase_ptr->Get_gas_comps().size());
+		for (size_t i = 0; i < gas_phase_ptr->Get_gas_comps().size(); i++)
+		{
+			const cxxGasComp* gas_comp_ptr = &(gas_phase_ptr->Get_gas_comps()[i]);
+			class phase* phase_ptr = phase_bsearch(gas_comp_ptr->Get_phase_name().c_str(), &j, FALSE);
+			phase_ptrs.push_back(phase_ptr);
+			base_phases[i] = *phase_ptr;
+		}
+	}
+	calculating_deriv = 1;
+	molalities(TRUE);
 	if (full_pitzer == TRUE)
 	{
-		molalities(TRUE);
 		pitzer();
-		residuals();
 	}
+	mb_sums();
+	residuals();
+
+	size_t pz_max_unknowns = max_unknowns;
 	base.resize(count_unknowns);
 	for (i = 0; i < count_unknowns; i++)
 	{
@@ -2026,9 +2047,11 @@ Restart:
 		case GAS_MOLES:
 			if (gas_in == FALSE)
 				continue;
-			d2 = d * x[i]->moles;
-			if (d2 < 1e-14)
-				d2 = 1e-14;
+			d2 = (x[i]->moles > 1 ? 1 : 30);
+			d2 *= d * x[i]->moles;
+			d2 = (d2 < ineq_tol ? ineq_tol : d2);
+			//if (d2 < 1e-14)
+			//	d2 = 1e-14;
 			x[i]->moles += d2;
 			break;
 		case MU:
@@ -2124,12 +2147,38 @@ Restart:
 			reset();
 			break;
 		}
+		if (use.Get_surface_ptr() != NULL)
+		{
+			*use.Get_surface_ptr() = base_surface;
+		}
+		if (use.Get_gas_phase_ptr() != NULL)
+		{
+			*use.Get_gas_phase_ptr() = base_gas_phase;
+			for (size_t g = 0; g < base_phases.size(); g++)
+			{
+				*phase_ptrs[g] = base_phases[g];
+			}
+		}
+		//molalities(TRUE);
+		//if (full_pitzer == TRUE)
+		//	pitzer();
+		//mb_sums();
+		//residuals();
 	}
 	molalities(TRUE);
 	if (full_pitzer == TRUE)
 		pitzer();
 	mb_sums();
 	residuals();
+	//for (i = 0; i < count_unknowns; i++)
+	//{
+	//	//Debugging
+	//	if (fabs(2.0 * (residual[i] - base[i]) / (residual[i] + base[i])) > 1e-2 &&
+	//		fabs(residual[i]) + fabs(base[i]) > 1e-6)
+	//	{
+	//		std::cerr << iterations << ": " << x[i]->description << "  " << residual[i] << "  " << base[i] << std::endl;
+	//	}
+	//}
 	base.clear();
 	calculating_deriv = 0;
 	return OK;
