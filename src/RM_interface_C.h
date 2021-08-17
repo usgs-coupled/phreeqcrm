@@ -4096,6 +4096,91 @@ Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SpeciesConcentrations2Module(int id, double * species_conc);
 /**
+Save the state of the chemistry in all model cells, including SOLUTIONs,
+EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs.
+Although not generally used, MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs
+will be saved for each cell, if they have been defined in the worker IPhreeqc instances.
+The distribution of cells among the workersand the chemistry of fully or partially
+unsaturated cells are also saved.The state is saved in memory; use @ref RM_DumpModule to save the state
+to file.PhreeqcRM can be reset to this state by using @ref RM_StateApply.
+A state is identified by an integer, and multiple states can be saved.
+
+@param id               The instance @a id returned from @ref RM_Create.
+@param istate     Integer identifying the state that is saved.
+@retval IRM_RESULT      0 is success, negative is failure(See @ref RM_DecodeError).
+@see                    @ref RM_DumpModule,
+@ref RM_StateApply, and
+@ref RM_StateDelete.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = RM_StateSave(id, 1);
+...
+status = RM_StateApply(id, 1);
+status = RM_StateDelete(id, 1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI :
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_StateSave(int id, int istate);
+/**
+Reset the state of the module to a state previously saved with @ref RM_StateSave.
+The chemistry of all model cells are reset, including SOLUTIONs,
+EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs.
+MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs
+will be reset for each cell, if they were defined in the worker IPhreeqc instances
+at the time the state was saved.
+The distribution of cells among the workersand the chemistry of fully or partially
+unsaturated cells are also reset to the saved state.
+The state to be applied is identified by an integer.
+
+@param id               The instance @a id returned from @ref RM_Create.
+@param istate     Integer identifying the state that is to be applied.
+@retval IRM_RESULT      0 is success, negative is failure(See @ref RM_DecodeError).
+@see                    @ref RM_StateSave and
+@ref RM_StateDelete.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = RM_StateSave(id, 1);
+...
+status = RM_StateApply(id, 1);
+status = RM_StateDelete(id, 1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI :
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_StateApply(int id, int istate);
+/**
+Delete a state previously saved with @ref RM_StateSave.
+
+@param id               The instance @a id returned from @ref RM_Create.
+@param istate     Integer identifying the state that is to be deleted.
+@retval IRM_RESULT      0 is success, negative is failure(See @ref RM_DecodeError).
+@see                    @ref RM_StateSave and
+ref RM_StateApply.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = RM_StateSave(id, 1);
+...
+status = RM_StateApply(id, 1);
+status = RM_StateDelete(id, 1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI :
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
+IRM_DLL_EXPORT IRM_RESULT RM_StateDelete(int id, int istate);
+/**
 Determines the volume and density to use when converting from the reaction-module concentrations
 to transport concentrations (@ref RM_GetConcentrations).
 Two options are available to convert concentration units:

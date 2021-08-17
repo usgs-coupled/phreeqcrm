@@ -368,6 +368,10 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 			sprintf(str, "%s%10.1f%s", "Beginning reaction calculation       ", RM_GetTime(id) * RM_GetTimeConversion(id), " days\n");
 			status = RM_LogMessage(id, str);
 			status = RM_ScreenMessage(id, str);
+			// Demonstration of state 
+			status = RM_StateSave(id, 1);
+			status = RM_StateApply(id, 1);
+			status = RM_StateDelete(id, 1);
 			status = RM_RunCells(id);  
 			// Transfer data from PhreeqcRM for transport
 			status = RM_GetConcentrations(id, c);          // Concentrations after reaction 

@@ -300,6 +300,10 @@ int advection_cpp()
 				phreeqc_rm.LogMessage(strm.str());
 				phreeqc_rm.ScreenMessage(strm.str());
 			}
+			// Demonstration of state
+			status = phreeqc_rm.StateSave(1);
+			status = phreeqc_rm.StateApply(1);
+			status = phreeqc_rm.StateDelete(1);
 			status = phreeqc_rm.RunCells();
 			// Transfer data from PhreeqcRM for transport
 			status = phreeqc_rm.GetConcentrations(c);

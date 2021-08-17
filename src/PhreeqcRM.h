@@ -101,6 +101,9 @@ enum {
 	METHOD_SETUNITSSSASSEMBLAGE,
 	METHOD_SETUNITSSURFACE,
 	METHOD_SPECIESCONCENTRATIONS2MODULE,
+	METHOD_STATESAVE,
+	METHOD_STATEAPPLY,
+	METHOD_STATEDELETE,
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
 
@@ -2036,92 +2039,92 @@ const std::vector < double > & species_d = phreeqc_rm.GetSpeciesD25();
 Called by root and (or) workers.
  */
 	const std::vector<double> &               GetSpeciesD25(void) {return this->species_d_25;}
-	/**
-	Returns a vector reference to log10 aqueous species activity coefficients (@a species_log10gammas).
-	This method is intended for use with multicomponent-diffusion transport calculations,
-	and @ref SetSpeciesSaveOn must be set to @a true.
-	The list of aqueous species is determined by @ref FindComponents and includes all
-	aqueous species that can be made from the set of components.
+/**
+Returns a vector reference to log10 aqueous species activity coefficients (@a species_log10gammas).
+This method is intended for use with multicomponent-diffusion transport calculations,
+and @ref SetSpeciesSaveOn must be set to @a true.
+The list of aqueous species is determined by @ref FindComponents and includes all
+aqueous species that can be made from the set of components.
 
-	@param species_log10gammas     Vector to receive the log10 aqueous species activity coefficients.
-	Dimension of the vector is set to @a nspecies times @a nxyz,
-	where @a nspecies is the number of aqueous species (@ref GetSpeciesCount),
-	and @a nxyz is the number of grid cells (@ref GetGridCellCount).
-	Values for inactive cells are set to 1e30.
-	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-	@see                    @ref FindComponents
-    @ref GetSpeciesConcentrations, 
-	@ref GetSpeciesCount,
-	@ref GetSpeciesD25,
-    @ref GetSpeciesLog10Molalities,
-	@ref GetSpeciesNames,
-	@ref GetSpeciesSaveOn,
-	@ref GetSpeciesStoichiometry,
-	@ref GetSpeciesZ,
-	@ref SetSpeciesSaveOn,
-	@ref SpeciesConcentrations2Module.
+@param species_log10gammas     Vector to receive the log10 aqueous species activity coefficients.
+Dimension of the vector is set to @a nspecies times @a nxyz,
+where @a nspecies is the number of aqueous species (@ref GetSpeciesCount),
+and @a nxyz is the number of grid cells (@ref GetGridCellCount).
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref FindComponents
+@ref GetSpeciesConcentrations, 
+@ref GetSpeciesCount,
+@ref GetSpeciesD25,
+@ref GetSpeciesLog10Molalities,
+@ref GetSpeciesNames,
+@ref GetSpeciesSaveOn,
+@ref GetSpeciesStoichiometry,
+@ref GetSpeciesZ,
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module.
 
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	status = phreeqc_rm.SetSpeciesSaveOn(true);
-	int ncomps = phreeqc_rm.FindComponents();
-	int npecies = phreeqc_rm.GetSpeciesCount();
-	status = phreeqc_rm.RunCells();
-	std::vector<double> species_gammas;
-	status = phreeqc_rm.GetSpeciesLog10Gammas(species_gammas);
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	*/
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.SetSpeciesSaveOn(true);
+int ncomps = phreeqc_rm.FindComponents();
+int npecies = phreeqc_rm.GetSpeciesCount();
+status = phreeqc_rm.RunCells();
+std::vector<double> species_gammas;
+status = phreeqc_rm.GetSpeciesLog10Gammas(species_gammas);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
 	IRM_RESULT                                GetSpeciesLog10Gammas(std::vector<double> & species_log10gammas);	
 
-	/**
-	Returns a vector reference to log10 aqueous species molalities (@a species_log10molalities).
-	To use this method @ref SetSpeciesSaveOn must be set to @a true.
-	The list of aqueous species is determined by @ref FindComponents and includes all
-	aqueous species that can be made from the set of components.
+/**
+Returns a vector reference to log10 aqueous species molalities (@a species_log10molalities).
+To use this method @ref SetSpeciesSaveOn must be set to @a true.
+The list of aqueous species is determined by @ref FindComponents and includes all
+aqueous species that can be made from the set of components.
 
-	@param species_log10molalities     Vector to receive the log10 aqueous species molalites.
-	Dimension of the vector is set to @a nspecies times @a nxyz,
-	where @a nspecies is the number of aqueous species (@ref GetSpeciesCount),
-	and @a nxyz is the number of grid cells (@ref GetGridCellCount).
-	Values for inactive cells are set to 1e30.
-	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-	@see                    @ref FindComponents
-	@ref GetSpeciesConcentrations,
-	@ref GetSpeciesCount,
-	@ref GetSpeciesD25,
-	@ref GetSpeciesLog10Gammas,
-	@ref GetSpeciesNames,
-	@ref GetSpeciesSaveOn,
-	@ref GetSpeciesStoichiometry,
-	@ref GetSpeciesZ,
-	@ref SetSpeciesSaveOn,
-	@ref SpeciesConcentrations2Module.
+@param species_log10molalities     Vector to receive the log10 aqueous species molalites.
+Dimension of the vector is set to @a nspecies times @a nxyz,
+where @a nspecies is the number of aqueous species (@ref GetSpeciesCount),
+and @a nxyz is the number of grid cells (@ref GetGridCellCount).
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref FindComponents
+@ref GetSpeciesConcentrations,
+@ref GetSpeciesCount,
+@ref GetSpeciesD25,
+@ref GetSpeciesLog10Gammas,
+@ref GetSpeciesNames,
+@ref GetSpeciesSaveOn,
+@ref GetSpeciesStoichiometry,
+@ref GetSpeciesZ,
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module.
 
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	status = phreeqc_rm.SetSpeciesSaveOn(true);
-	int ncomps = phreeqc_rm.FindComponents();
-	int npecies = phreeqc_rm.GetSpeciesCount();
-	status = phreeqc_rm.RunCells();
-	std::vector<double> species_molalities;
-	status = phreeqc_rm.GetSpeciesLog10Molalities(species_molalities);
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.SetSpeciesSaveOn(true);
+int ncomps = phreeqc_rm.FindComponents();
+int npecies = phreeqc_rm.GetSpeciesCount();
+status = phreeqc_rm.RunCells();
+std::vector<double> species_molalities;
+status = phreeqc_rm.GetSpeciesLog10Molalities(species_molalities);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
-	IRM_RESULT                                GetSpeciesLog10Molalities(std::vector<double>& species_log10molalities);	/**
+IRM_RESULT                                GetSpeciesLog10Molalities(std::vector<double>& species_log10molalities);	
 
-	/**
+/**
 Returns a vector reference to the names of the aqueous species.
 This method is intended for use with multicomponent-diffusion transport calculations,
 and @ref SetSpeciesSaveOn must be set to @a true.
@@ -4564,7 +4567,90 @@ status = phreeqc_rm.RunCells();
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT								  SpeciesConcentrations2Module(std::vector<double> & species_conc);
+IRM_RESULT								  SpeciesConcentrations2Module(std::vector<double> & species_conc);
+
+/**
+Save the state of the chemistry in all model cells, including SOLUTIONs, 
+EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs. 
+Although not generally used, MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs 
+will be saved for each cell, if they have been defined in the worker IPhreeqc instances. 
+The distribution of cells among the workers and the chemistry of fully or partially 
+unsaturated cells are also saved. The state is saved in memory; use @ref DumpModule to save the state
+to file. PhreeqcRM can be reset to this state by using @ref StateApply.
+A state is identified by an integer, and multiple states can be saved. 
+
+@param istate     Integer identifying the state that is saved. 
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref DumpModule,
+@ref StateApply, and
+@ref StateDelete.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.StateSave(1);
+...
+status = phreeqc_rm.StateApply(1);
+status = phreeqc_rm.StateDelete(1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+*/
+IRM_RESULT StateSave(int istate);
+/**
+Reset the state of the module to a state previously saved with @ref StateSave. 
+The chemistry of all model cells are reset, including SOLUTIONs,
+EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs.
+MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs
+will be reset for each cell, if they were defined in the worker IPhreeqc instances
+at the time the state was saved.
+The distribution of cells among the workers and the chemistry of fully or partially
+unsaturated cells are also reset to the saved state. 
+The state to be applied is identified by an integer.
+
+@param istate     Integer identifying the state that is to be applied.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref StateSave and
+@ref StateDelete.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.StateSave(1);
+...
+status = phreeqc_rm.StateApply(1);
+status = phreeqc_rm.StateDelete(1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+*/
+IRM_RESULT StateApply(int istate);
+/**
+Delete a state previously saved with @ref StateSave.
+
+@param istate     Integer identifying the state that is to be deleted.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref StateSave and
+@ref StateApply.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.StateSave(1);
+...
+status = phreeqc_rm.StateApply(1);
+status = phreeqc_rm.StateDelete(1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+*/
+IRM_RESULT StateDelete(int istate);
 /**
 Determines the volume and density to use when converting from the reaction-cell concentrations
 to transport concentrations (@ref GetConcentrations).
