@@ -1,5 +1,5 @@
 /*! @file PhreeqcRM.h
-	@brief C++ Documentation
+	@brief C++ Documentation 
 */
 #if !defined(PHREEQCRM_H_INCLUDED)
 #define PHREEQCRM_H_INCLUDED
@@ -34,7 +34,7 @@ class IPhreeqc;
  * @class PhreeqcRMStop
  *
  * @brief This class is derived from std::exception and is thrown
- * when an unrecoverable error has occured.
+ * when an unrecoverable error has occurred.
  */
 class IRM_DLL_EXPORT PhreeqcRMStop : public std::exception
 {
@@ -52,11 +52,17 @@ enum {
 	METHOD_GETCONCENTRATIONS,
 	METHOD_GETDENSITY,
 	METHOD_GETERRORSTRING,
+	METHOD_GETGASCOMPMOLES,
+	METHOD_GETGASCOMPPRESSURES,
+	METHOD_GETGASCOMPPHI,
+	METHOD_GETGASPHASEVOLUME,
 	METHOD_GETPRESSURE,
 	METHOD_GETSATURATION,
 	METHOD_GETSELECTEDOUTPUT,
 	METHOD_GETSOLUTIONVOLUME,
 	METHOD_GETSPECIESCONCENTRATIONS,
+	METHOD_GETSPECIESLOG10GAMMAS,
+	METHOD_GETSPECIESLOG10MOLALITIES,
 	METHOD_GETTEMPERATURE,
 	METHOD_INITIALPHREEQC2MODULE,
 	METHOD_INITIALPHREEQCCELL2MODULE,
@@ -70,6 +76,8 @@ enum {
 	METHOD_SETDENSITY,
 	METHOD_SETERRORHANDLERMODE,
 	METHOD_SETFILEPREFIX,
+	METHOD_SETGASCOMPMOLES,
+	METHOD_SETGASPHASEVOLUME,
 	METHOD_SETPARTITIONUZSOLIDS,
 	METHOD_SETPOROSITY,
 	METHOD_SETPRESSURE,
@@ -93,6 +101,9 @@ enum {
 	METHOD_SETUNITSSSASSEMBLAGE,
 	METHOD_SETUNITSSURFACE,
 	METHOD_SPECIESCONCENTRATIONS2MODULE,
+	METHOD_STATESAVE,
+	METHOD_STATEAPPLY,
+	METHOD_STATEDELETE,
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
 
@@ -234,7 +245,7 @@ Called only by root.
 Provides a mapping from grid cells in the user's model to reaction cells for which chemistry needs to be run.
 The mapping is used to eliminate inactive cells and to use symmetry to decrease the number of cells
 for which chemistry must be run. 
-The array @grid2chem of size @a nxyz (the number of grid cells, @ref GetGridCellCount) 
+The array @a grid2chem of size @a nxyz (the number of grid cells, @ref GetGridCellCount) 
 must contain the set of all integers 0 <= @a i < @a count_chemistry, 
 where @a count_chemistry is a number less than or equal to @a nxyz.
 Inactive cells are assigned a negative integer. 
@@ -378,13 +389,17 @@ MCD by using individual species concentrations
 (@ref SpeciesConcentrations2Module).
 To use these methods the save-species property needs to be turned on (@ref SetSpeciesSaveOn).
 If the save-species property is on, FindComponents will generate
-a list of aqueous species (@ref GetSpeciesCount, @ref GetSpeciesNames), their diffusion coefficients at 25 C (@ref GetSpeciesD25),
+a list of aqueous species (@ref GetSpeciesCount, @ref GetSpeciesNames), 
+their diffusion coefficients at 25 C (@ref GetSpeciesD25),
 and their charge (@ref GetSpeciesZ).
-@retval              Number of components currently in the list, or IRM_RESULT error code (negative value, see @ref DecodeError).
+@retval              Number of components currently in the list, or IRM_RESULT error code 
+(negative value, see @ref DecodeError).
 @see                   @ref GetComponents, 
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount, 
 @ref GetSpeciesD25, 
+@ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -392,6 +407,31 @@ and their charge (@ref GetSpeciesZ).
 @ref SetComponentH2O,
 @ref SetSpeciesSaveOn,
 @ref SpeciesConcentrations2Module. 
+@par The FindComponents method also generates lists of reactants--equilibrium phases,
+exchangers, gas components, kinetic reactants, solid solution components, and surfaces. 
+The lists are cumulative, including all reactants that were
+defined in the initial phreeqc instance at any time FindComponents was called.
+In addition, a list of phases is generated for which saturation indices may be calculated from the
+cumulative list of components.
+@see also
+@ref GetEquilibriumPhases,
+@ref GetEquilibriumPhasesCount,
+@ref GetExchangeNames,
+@ref GetExchangeSpecies,
+@ref GetExchangeSpeciesCount,
+@ref GetGasComponents,
+@ref GetGasComponentsCount,
+@ref GetKineticReactions,
+@ref GetKineticReactionsCount,
+@ref GetSICount,
+@ref GetSINames,
+@ref GetSolidSolutionComponents,
+@ref GetSolidSolutionComponentsCount,
+@ref GetSolidSolutionNames,
+@ref GetSurfaceNames,
+@ref GetSurfaceSpecies,
+@ref GetSurfaceSpeciesCount,
+@ref GetSurfaceTypes.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -506,7 +546,8 @@ for (int i = 0; i < ncomps; i++)
 @par MPI:
 Called by root and (or) workers.
  */
-	const std::vector<std::string> &          GetComponents(void) const {return this->components;}
+const std::vector<std::string> &          GetComponents(void) const {return this->components;}
+	
 /**
 Transfer solution concentrations from each reaction cell
 to the concentration vector given in the argument list (@a c).
@@ -626,6 +667,66 @@ Called by root and (or) workers.
  */
 	const std::vector < int> &                GetEndCell(void) const {return this->end_cell;}
 /**
+Returns a reference to the vector of all equilibrium phases.
+The list includes all phases included in any EQUILIBRIUM_PHASES definitions in
+the initial-phreeqc module.
+@ref FindComponents must be called before @ref GetEquilibriumPhases.
+This method may be useful when generating selected output definitions related to equilibrium phases.
+
+@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+equilibrium phases name.
+
+@see                    @ref FindComponents,
+@ref GetEquilibriumPhasesCount.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+oss << "  -equilibrium_phases " << "\n";
+// equilibrium phases
+const std::vector<std::string> &eq_phases = phreeqc_rm.GetEquilibriumPhases();
+for (size_t i = 0; i < phreeqc_rm.GetEquilibriumPhasesCount(); i++)
+{
+oss << "    " << eq_phases[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+const std::vector<std::string> &          GetEquilibriumPhases(void) const { return this->EquilibriumPhasesList; }
+/**
+Returns the number of equilibrium phases in the initial-phreeqc module.
+@ref FindComponents must be called before @ref GetEquilibriumPhasesCount.
+This method may be useful when generating selected output definitions related to
+equilibrium phases.
+
+@retval                 The number of equilibrium phases in the initial-phreeqc module.
+
+@see                    @ref FindComponents,
+@ref GetEquilibriumPhases.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+oss << "  -equilibrium_phases " << "\n";
+// equilibrium phases
+const std::vector<std::string> &eq_phases = phreeqc_rm.GetEquilibriumPhases();
+for (size_t i = 0; i < phreeqc_rm.GetEquilibriumPhasesCount(); i++)
+{
+oss << "    " << eq_phases[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+int                                       GetEquilibriumPhasesCount(void) const { return (int) this->EquilibriumPhasesList.size(); }
+
+
+/**
 Get the setting for the action to be taken when the reaction module encounters an error.
 Options are 0, return to calling program with an error return code (default);
 1, throw an exception, which can be caught in C++ (for C and Fortran, the program will exit);
@@ -665,6 +766,112 @@ if (status != IRM_OK)
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	std::string                                  GetErrorString(void);
+
+/**
+Returns a reference to the vector of exchange names (such as "X") that correspond with
+the exchange species names.
+@ref FindComponents must be called before @ref GetExchangeNames.
+The exchange names vector is the same length as the exchange species names vector
+and provides the corresponding exchange site.
+This method may be useful when generating selected output definitions related to exchangers.
+
+@retval const std::vector<std::string>&       A vector of strings; each string is an
+exchange name corresponding to the exchange species vector; an exchange name may occur
+multiple times.
+
+@see                    @ref FindComponents,
+@ref GetExchangeSpeciesCount, @ref GetExchangeSpecies.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+// molalities of exchange species
+const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpecies();
+const std::vector<std::string> &ex_names = phreeqc_rm.GetExchangeNames();
+for (size_t i = 0; i < phreeqc_rm.GetExchangeSpeciesCount(); i++)
+{
+
+oss << "    ";
+oss.width(15);
+oss << std::left << ex_species[i];
+oss << " # " << ex_names[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+const std::vector<std::string> &          GetExchangeNames(void) const { return this->ExchangeNamesList; }
+/**
+Returns a reference to the vector of exchange species names (such as "NaX").
+The list of exchange species (such as "NaX") is derived from the list of components
+(@ref FindComponents) and the list of all exchange names (such as "X")
+that are included in EXCHANGE definitions in the initial-phreeqc module.
+@ref FindComponents must be called before @ref GetExchangeSpecies.
+This method may be useful when generating selected output definitions related to exchangers.
+
+@retval const std::vector<std::string>&       A vector of strings; each string is a
+unique exchange species name.
+
+@see                    @ref FindComponents,
+@ref GetExchangeSpeciesCount, @ref GetExchangeNames.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+// molalities of exchange species
+const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpecies();
+const std::vector<std::string> &ex_names = phreeqc_rm.GetExchangeNames();
+for (size_t i = 0; i < phreeqc_rm.GetExchangeSpeciesCount(); i++)
+{
+
+oss << "    ";
+oss.width(15);
+oss << std::left << ex_species[i];
+oss << " # " << ex_names[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+const std::vector<std::string> &          GetExchangeSpecies(void) const { return this->ExchangeSpeciesNamesList; }
+/**
+Returns the number of exchange species in the initial-phreeqc module.
+@ref FindComponents must be called before @ref GetExchangeSpeciesCount.
+This method may be useful when generating selected output definitions related to exchangers.
+
+@retval                 The number of exchange species in the initial-phreeqc module.
+
+@see                    @ref FindComponents,
+@ref GetExchangeSpecies, @ref GetExchangeNames.
+
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+// molalities of exchange species
+const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpecies();
+const std::vector<std::string> &ex_names = phreeqc_rm.GetExchangeNames();
+for (size_t i = 0; i < phreeqc_rm.GetExchangeSpeciesCount(); i++)
+{
+
+oss << "    ";
+oss.width(15);
+oss << std::left << ex_species[i];
+oss << " # " << ex_names[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+int                                       GetExchangeSpeciesCount(void) const { return (int) this->ExchangeSpeciesNamesList.size(); }
+
+
 /**
 Returns the file prefix for the output (.chem.txt) and log files (.log.txt).
 @retval std::string     The file prefix as set by @ref SetFilePrefix, or "myrun", by default.
@@ -703,7 +910,203 @@ const std::vector<int> &f_map = phreeqc_rm.GetForwardMapping();
 @par MPI:
 Called by root.
  */
-	const std::vector < int > &               GetForwardMapping(void) {return this->forward_mapping_root;}
+const std::vector < int > &               GetForwardMapping(void) {return this->forward_mapping_root;}
+
+/**
+Returns a reference to the vector of all gas components in the initial-phreeqc module.
+The list includes all gas components included in any GAS_PHASE definitions in
+the initial-phreeqc module.
+@ref FindComponents must be called before @ref GetGasComponents.
+This method may be useful when generating selected output definitions related to gas phases.
+
+@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+gas component name.
+
+@see                    @ref FindComponents,
+@ref GetGasComponentsCount.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+oss << "  -gases " << "\n";
+// gas components
+const std::vector<std::string> &gas_phases = phreeqc_rm.GetGasComponents();
+for (size_t i = 0; i < phreeqc_rm.GetGasComponentsCount(); i++)
+{
+oss << "    " << gas_phases[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+const std::vector<std::string> &          GetGasComponents(void) const { return this->GasComponentsList; }
+/**
+Returns the number of gas phase components in the initial-phreeqc module.
+@ref FindComponents must be called before @ref GetGasComponentsCount.
+This method may be useful when generating selected output definitions related to
+gas phases.
+
+@retval                 The number of gas phase components in the initial-phreeqc module.
+
+@see                    @ref FindComponents,
+@ref GetGasComponents.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+oss << "  -gases " << "\n";
+// gas components
+const std::vector<std::string> &gas_phases = phreeqc_rm.GetGasComponents();
+for (size_t i = 0; i < phreeqc_rm.GetGasComponentsCount(); i++)
+{
+oss << "    " << gas_phases[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+int                                       GetGasComponentsCount(void) const { return (int) this->GasComponentsList.size(); }
+
+/**
+Transfer moles of gas components from each reaction cell
+to the vector given in the argument list (@a gas_moles).
+
+@param  gas_moles               Vector to receive the moles of gas components.
+Dimension of the vector is set to @a ngas_comps times @a nxyz,
+where, @a ngas_comps is the result of @ref GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas component is not defined for a cell, the number of moles is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    
+@ref FindComponents, 
+@ref GetGasComponentsCount, 
+@ref GetGasCompPressures,
+@ref GetGasCompPhi,
+@ref GetGasPhaseVolume,
+@ref SetGasCompMoles,
+@ref SetGasPhaseVolume.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_moles;
+status = phreeqc_rm.RunCells();
+status = phreeqc_rm.GetGasCompMoles(gas_moles);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                GetGasCompMoles(std::vector<double>& gas_moles);
+
+/**
+Transfer pressures of gas components from each reaction cell
+to the vector given in the argument list (@a gas_pressure).
+
+@param  gas_pressure               Vector to receive the pressures of gas components.
+Dimension of the vector is set to @a ngas_comps times @a nxyz,
+where, @a ngas_comps is the result of @ref GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas component is not defined for a cell, the pressure is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    
+@ref FindComponents, 
+@ref GetGasComponentsCount, 
+@ref GetGasCompMoles,
+@ref GetGasCompPhi,
+@ref GetGasPhaseVolume,
+@ref SetGasCompMoles,
+@ref SetGasPhaseVolume.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_pressure;
+status = phreeqc_rm.RunCells();
+status = phreeqc_rm.GetGasCompPressures(gas_pressure);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                GetGasCompPressures(std::vector<double>& gas_pressure);
+
+/**
+Transfer fugacity coefficients (phi) of gas components from each reaction cell
+to the vector given in the argument list (@a gas_phi). Fugacity is
+equal to the gas component pressure times the fugacity coefficient.
+
+@param  gas_phi               Vector to receive the fugacity coefficients of gas components.
+Dimension of the vector is set to @a ngas_comps times @a nxyz,
+where, @a ngas_comps is the result of @ref GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas component is not defined for a cell, the fugacity coefficient is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref FindComponents,
+@ref GetGasComponentsCount,
+@ref GetGasCompMoles,
+@ref GetGasCompPressures,
+@ref GetGasPhaseVolume,
+@ref SetGasCompMoles,
+@ref SetGasPhaseVolume.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_phi;
+status = phreeqc_rm.RunCells();
+status = phreeqc_rm.GetGasCompPhi(gas_phi);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                GetGasCompPhi(std::vector<double>& gas_phi);
+
+/**
+Transfer volume of gas phase from each reaction cell
+to the vector given in the argument list (@a gas_volume). 
+
+@param  gas_volume               Vector to receive the gas phase volumes.
+Dimension of the vector is set to @a nxyz,
+where,  @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas phase is not defined for a cell, the volume is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref FindComponents,
+@ref GetGasComponentsCount,
+@ref GetGasCompMoles,
+@ref GetGasCompPressures,
+@ref GetGasCompPhi,
+@ref SetGasCompMoles,
+@ref SetGasPhaseVolume.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_volume;
+status = phreeqc_rm.RunCells();
+status = phreeqc_rm.GetGasPhaseVolume(gas_volume);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                GetGasPhaseVolume(std::vector<double>& gas_volume);
+
 /**
 Returns a reference to a vector of doubles that contains the gram-formula weight of
 each component. Called after @ref FindComponents. Order of weights corresponds to the list of components from
@@ -779,7 +1182,67 @@ IPhreeqc * util_ptr = phreeqc_rm.GetIPhreeqcPointer(phreeqc_rm.GetThreadCount() 
 @par MPI:
 Called by root and (or) workers.
  */
-	IPhreeqc *                                GetIPhreeqcPointer(int i);
+IPhreeqc *                                GetIPhreeqcPointer(int i);
+
+/**
+Returns a reference to the vector of all kinetic reactions in the initial-phreeqc module.
+The list includes all kinetic reactions included in any KINETICS definitions in
+the reaction model.
+@ref FindComponents must be called before @ref GetKineticReactions.
+This method may be useful when generating selected output definitions related to kinetic reactions.
+
+@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+kinetic reaction name.
+
+@see                    @ref FindComponents,
+@ref GetKineticReactionsCount.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+oss << "  -kinetics " << "\n";
+// kinetic reactions
+const std::vector<std::string> &kin_reactions = phreeqc_rm.GetKineticReactions();
+for (size_t i = 0; i < phreeqc_rm.GetKineticReactionsCount(); i++)
+{
+oss << "    " << kin_reactions[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+const std::vector<std::string> &          GetKineticReactions(void) const { return this->KineticReactionsList; }
+/**
+Returns the number of kinetic reactions in the initial-phreeqc module.
+@ref FindComponents must be called before @ref GetKineticReactionsCount.
+This method may be useful when generating selected output definitions related to
+kinetic reactions.
+
+@retval                 The number of kinetic reactions in the initial-phreeqc module.
+
+@see                    @ref FindComponents,
+@ref GetKineticReactions.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+oss << "  -kinetics " << "\n";
+// kinetic reactions
+const std::vector<std::string> &kin_reactions = phreeqc_rm.GetKineticReactions();
+for (size_t i = 0; i < phreeqc_rm.GetKineticReactionsCount(); i++)
+{
+oss << "    " << kin_reactions[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+int                                       GetKineticReactionsCount(void) const { return (int) this->KineticReactionsList.size(); }
+
 /**
 Returns the MPI process (task) number. For the MPI version,
 the root task number is zero, and all MPI tasks have unique task numbers greater than zero.
@@ -1270,7 +1733,178 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 @par MPI:
 Called by root.
  */
-	int                                       GetSelectedOutputRowCount(void);
+int                                       GetSelectedOutputRowCount(void);
+
+/**
+Returns the number of phases in the initial-phreeqc module for which saturation indices could be calculated.
+@ref FindComponents must be called before @ref GetSICount.
+This method may be useful when generating selected output definitions related to
+saturation indices.
+
+@retval                 The number of phases in the initial-phreeqc module for which saturation indices
+could be calculated.
+
+@see                    @ref FindComponents,
+@ref GetSINames.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+const std::vector<std::string> &si = phreeqc_rm.GetSINames();
+for (size_t i = 0; i < phreeqc_rm.GetSICount(); i++)
+{
+oss << "    " << si[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+int                                       GetSICount(void) const { return (int) this->SINamesList.size(); }
+/**
+Returns a reference to the vector of the names of all phases for which
+saturation indices (SIs) could be calculated.
+The list includes all phases that contain only elements included in the components in
+the initial-phreeqc module.
+The list assumes that all components are present to be able to calculate the entire list of SIs;
+it may be that one or more components are missing in any specific cell.
+@ref FindComponents must be called before @ref GetSINames.
+This method may be useful when generating selected output definitions related to
+saturation indices.
+
+@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+phase name.
+
+@see                    @ref FindComponents,
+@ref GetSICount.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+oss << "  -saturation_indices " << "\n";
+// molalities of aqueous species
+const std::vector<std::string> &si = phreeqc_rm.GetSINames();
+for (size_t i = 0; i < phreeqc_rm.GetSICount(); i++)
+{
+oss << "    " << si[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+const std::vector<std::string> &          GetSINames(void) const { return this->SINamesList; }
+
+/**
+Returns a reference to the vector of solid solution components.
+The list of solid solution components includes all components in any SOLID_SOLUTION
+definitions in the initial-phreeqc module.
+@ref FindComponents must be called before @ref GetSolidSolutionComponents.
+This method may be useful when generating selected output definitions related to
+solid solutions.
+
+@retval const std::vector<std::string>&       A vector of strings; each string is a
+unique solid solution component.
+
+@see                    @ref FindComponents,
+@ref GetSolidSolutionComponentsCount, @ref GetSolidSolutionNames.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+oss << "  -solid_solutions " << "\n";
+// solid solutions
+const std::vector<std::string> &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
+const std::vector<std::string> &ss_names = phreeqc_rm.GetSolidSolutionNames();
+for (size_t i = 0; i < phreeqc_rm.GetSolidSolutionComponentsCount(); i++)
+{
+
+oss << "    ";
+oss.width(15);
+oss  << std::left << ss_comps[i];
+oss << " # " << ss_names[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+const std::vector<std::string> &          GetSolidSolutionComponents(void) const { return this->SolidSolutionComponentsList; }
+/**
+Returns the number of solid solution components in the initial-phreeqc module.
+@ref FindComponents must be called before @ref GetSolidSolutionComponentsCount.
+This method may be useful when generating selected output definitions related to solid solutions.
+
+@retval                 The number of solid solution components in the initial-phreeqc module.
+
+@see                    @ref FindComponents,
+@ref GetSolidSolutionComponents, @ref GetSolidSolutionNames.
+
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+oss << "  -solid_solutions " << "\n";
+// solid solutions
+const std::vector<std::string> &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
+const std::vector<std::string> &ss_names = phreeqc_rm.GetSolidSolutionNames();
+for (size_t i = 0; i < phreeqc_rm.GetSolidSolutionComponentsCount(); i++)
+{
+
+oss << "    ";
+oss.width(15);
+oss  << std::left << ss_comps[i];
+oss << " # " << ss_names[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+int                                       GetSolidSolutionComponentsCount(void) const { return (int) this->SolidSolutionComponentsList.size(); }
+
+/**
+Returns a reference to the vector of solid solution names that correspond with
+the solid solution components.
+@ref FindComponents must be called before @ref GetSolidSolutionNames.
+The solid solution names vector is the same length as the solid solution components vector
+and provides the corresponding name of solid solution containing the component.
+This method may be useful when generating selected output definitions related to solid solutions.
+
+@retval const std::vector<std::string>&       A vector of strings; each string is a
+solid solution name corresponding to the solid solution components vector; a solid solution name may occur
+multiple times.
+
+@see                    @ref FindComponents,
+@ref GetSolidSolutionComponentsCount, @ref GetSolidSolutionComponents.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+oss << "  -solid_solutions " << "\n";
+// solid solutions
+const std::vector<std::string> &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
+const std::vector<std::string> &ss_names = phreeqc_rm.GetSolidSolutionNames();
+for (size_t i = 0; i < phreeqc_rm.GetSolidSolutionComponentsCount(); i++)
+{
+
+oss << "    ";
+oss.width(15);
+oss  << std::left << ss_comps[i];
+oss << " # " << ss_names[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+const std::vector<std::string> &          GetSolidSolutionNames(void) const { return this->SolidSolutionNamesList; }
+
 /**
 Return a vector reference to the current solution volumes as calculated by the reaction module.
 Dimension of the vector will be @a nxyz, where @a nxyz is the number of user grid cells.
@@ -1312,6 +1946,8 @@ Values for inactive cells are set to 1e30.
 @see                    @ref FindComponents, 
 @ref GetSpeciesCount, 
 @ref GetSpeciesD25, 
+@ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -1346,6 +1982,8 @@ aqueous species that can be made from the set of components.
 @see                    @ref FindComponents, 
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesD25, 
+@ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -1378,6 +2016,8 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @see                    @ref FindComponents, 
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount,
+@ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -1400,6 +2040,91 @@ Called by root and (or) workers.
  */
 	const std::vector<double> &               GetSpeciesD25(void) {return this->species_d_25;}
 /**
+Returns a vector reference to log10 aqueous species activity coefficients (@a species_log10gammas).
+This method is intended for use with multicomponent-diffusion transport calculations,
+and @ref SetSpeciesSaveOn must be set to @a true.
+The list of aqueous species is determined by @ref FindComponents and includes all
+aqueous species that can be made from the set of components.
+
+@param species_log10gammas     Vector to receive the log10 aqueous species activity coefficients.
+Dimension of the vector is set to @a nspecies times @a nxyz,
+where @a nspecies is the number of aqueous species (@ref GetSpeciesCount),
+and @a nxyz is the number of grid cells (@ref GetGridCellCount).
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref FindComponents
+@ref GetSpeciesConcentrations, 
+@ref GetSpeciesCount,
+@ref GetSpeciesD25,
+@ref GetSpeciesLog10Molalities,
+@ref GetSpeciesNames,
+@ref GetSpeciesSaveOn,
+@ref GetSpeciesStoichiometry,
+@ref GetSpeciesZ,
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module.
+
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.SetSpeciesSaveOn(true);
+int ncomps = phreeqc_rm.FindComponents();
+int npecies = phreeqc_rm.GetSpeciesCount();
+status = phreeqc_rm.RunCells();
+std::vector<double> species_gammas;
+status = phreeqc_rm.GetSpeciesLog10Gammas(species_gammas);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+	IRM_RESULT                                GetSpeciesLog10Gammas(std::vector<double> & species_log10gammas);	
+
+/**
+Returns a vector reference to log10 aqueous species molalities (@a species_log10molalities).
+To use this method @ref SetSpeciesSaveOn must be set to @a true.
+The list of aqueous species is determined by @ref FindComponents and includes all
+aqueous species that can be made from the set of components.
+
+@param species_log10molalities     Vector to receive the log10 aqueous species molalites.
+Dimension of the vector is set to @a nspecies times @a nxyz,
+where @a nspecies is the number of aqueous species (@ref GetSpeciesCount),
+and @a nxyz is the number of grid cells (@ref GetGridCellCount).
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref FindComponents
+@ref GetSpeciesConcentrations,
+@ref GetSpeciesCount,
+@ref GetSpeciesD25,
+@ref GetSpeciesLog10Gammas,
+@ref GetSpeciesNames,
+@ref GetSpeciesSaveOn,
+@ref GetSpeciesStoichiometry,
+@ref GetSpeciesZ,
+@ref SetSpeciesSaveOn,
+@ref SpeciesConcentrations2Module.
+
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.SetSpeciesSaveOn(true);
+int ncomps = phreeqc_rm.FindComponents();
+int npecies = phreeqc_rm.GetSpeciesCount();
+status = phreeqc_rm.RunCells();
+std::vector<double> species_molalities;
+status = phreeqc_rm.GetSpeciesLog10Molalities(species_molalities);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+	*/
+IRM_RESULT                                GetSpeciesLog10Molalities(std::vector<double>& species_log10molalities);	
+
+/**
 Returns a vector reference to the names of the aqueous species.
 This method is intended for use with multicomponent-diffusion transport calculations,
 and @ref SetSpeciesSaveOn must be set to @a true.
@@ -1411,6 +2136,8 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount,
 @ref GetSpeciesD25, 
+@ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
@@ -1438,7 +2165,7 @@ aqueous species concentrations to be retrieved
 with @ref GetSpeciesConcentrations, and solution compositions to be set with
 @ref SpeciesConcentrations2Module.
 
-@retval @a True indicates solution species concentrations are saved and can be used for multicomponent-diffusion calculations;
+@retval True indicates solution species concentrations are saved and can be used for multicomponent-diffusion calculations;
 @a False indicates that solution species concentrations are not saved.
 @see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesCount,
 @ref GetSpeciesD25, @ref GetSpeciesSaveOn, @ref GetSpeciesZ,
@@ -1447,6 +2174,8 @@ with @ref GetSpeciesConcentrations, and solution compositions to be set with
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
+@ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesStoichiometry, 
 @ref GetSpeciesZ,
@@ -1480,6 +2209,8 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
+@ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesZ,
@@ -1526,6 +2257,8 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
+@ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -1580,7 +2313,157 @@ phreeqc_rm.OutputMessage(oss.str());
 @par MPI:
 Called by root and (or) workers.
  */
-	const std::vector < int> &                GetStartCell(void) const {return this->start_cell;}
+const std::vector < int> &                GetStartCell(void) const {return this->start_cell;}
+
+/**
+Returns a reference to the vector of surface names (such as "Hfo") that correspond with
+the surface species names. The vectors referenced by @ref GetSurfaceSpecies
+and @ref GetSurfaceNames are the same length.
+@ref FindComponents must be called before @ref GetSurfaceNames.
+This method may be useful when generating selected output definitions related to surfaces.
+
+@retval const std::vector<std::string>&       A vector of strings; each string is a
+surface name corresponding to the surface species vector;
+a surface name may occur multiple times.
+
+@see                    @ref FindComponents,
+@ref GetSurfaceSpeciesCount, @ref GetSurfaceSpecies, @ref GetSurfaceTypes.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+// molalities of surface species
+const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpecies();
+const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
+const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesCount(); i++)
+{
+oss << "    ";
+oss.width(15);
+oss << std::left << surf_species[i];
+oss << " # ";
+oss.width(15);
+oss << surf_types[i] << "   " << surf_names[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+const std::vector<std::string> &          GetSurfaceNames(void) const { return this->SurfaceNamesList; }
+
+/**
+Returns a reference to the vector of surface species names (such as "Hfo_wOH").
+The list of surface species is derived from the list of components
+(@ref FindComponents) and the list of all surface site types (such as "Hfo_w")
+that are included in SURFACE definitions in the initial-phreeqc module.
+@ref FindComponents must be called before @ref GetSurfaceSpecies.
+This method may be useful when generating selected output definitions related to surfaces.
+
+@retval const std::vector<std::string>&       A vector of strings; each string is a
+unique surface species name.
+@see                    @ref FindComponents,
+@ref GetSurfaceSpeciesCount, @ref GetSurfaceTypes, @ref GetSurfaceNames.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+// molalities of surface species
+const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpecies();
+const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
+const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesCount(); i++)
+{
+oss << "    ";
+oss.width(15);
+oss << std::left << surf_species[i];
+oss << " # ";
+oss.width(15);
+oss << surf_types[i] << "   " << surf_names[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+const std::vector<std::string> &          GetSurfaceSpecies(void) const { return this->SurfaceSpeciesNamesList; }
+
+/**
+Returns the number of surface species (such as "Hfo_wOH") in the initial-phreeqc module.
+@ref FindComponents must be called before @ref GetSurfaceSpeciesCount.
+This method may be useful when generating selected output definitions related to surfaces.
+
+@retval                 The number of surface species in the initial-phreeqc module.
+
+@see                    @ref FindComponents,
+@ref GetSurfaceSpecies, @ref GetSurfaceTypes, @ref GetSurfaceNames.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+// molalities of surface species
+const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpecies();
+const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
+const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesCount(); i++)
+{
+oss << "    ";
+oss.width(15);
+oss << std::left << surf_species[i];
+oss << " # ";
+oss.width(15);
+oss << surf_types[i] << "   " << surf_names[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+int                                       GetSurfaceSpeciesCount(void) const { return (int) this->SurfaceSpeciesNamesList.size(); }
+
+
+/**
+Returns a reference to the vector of surface site types (such as "Hfo_w") that correspond with
+the surface species names.
+The vectors referenced by @ref GetSurfaceSpecies and
+@ref GetSurfaceTypes are the same length.
+@ref FindComponents must be called before @ref GetSurfaceTypes.
+This method may be useful when generating selected output definitions related to surfaces.
+
+@retval const std::vector<std::string>&       A vector of strings; each string is a
+surface site type for the corresponding species in the surface species vector;
+a surface site type may occur multiple times.
+
+@see                    @ref FindComponents,
+@ref GetSurfaceSpeciesCount, @ref GetSurfaceSpecies, @ref GetSurfaceNames.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+// molalities of surface species
+const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpecies();
+const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
+const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesCount(); i++)
+{
+oss << "    ";
+oss.width(15);
+oss << std::left << surf_species[i];
+oss << " # ";
+oss.width(15);
+oss << surf_types[i] << "   " << surf_names[i] << "\n";
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+const std::vector<std::string> &          GetSurfaceTypes(void) const { return this->SurfaceTypesList; }
+
 /**
 Vector reference to the current temperatures of the cells.
 By default, the temperature vector is initialized to 25 C;
@@ -2664,6 +3547,26 @@ status = phreeqc_rm.SetErrorHandlerMode(1);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                SetErrorHandlerMode(int mode);
+	/**
+	Set the property that controls whether error messages are generated and displayed.
+	Messages include PHREEQC "ERROR" messages, and
+	any messages written with @ref ErrorMessage.
+
+	@param tf  @a True, enable error messages; @a False, disable error messages. Default is true.
+	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+	@see                    @ref ErrorMessage, @ref ScreenMessage.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	status = phreeqc_rm.SetErrorOn(true);
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	IRM_RESULT                                SetErrorOn(bool tf);
 /**
 Set the prefix for the output (prefix.chem.txt) and log (prefix.log.txt) files.
 These files are opened by @ref OpenFiles.
@@ -2683,6 +3586,83 @@ phreeqc_rm.OpenFiles();
 Called by root.
  */
 	IRM_RESULT                                SetFilePrefix(const std::string & prefix);
+
+/**
+Transfer moles of gas components from
+the vector given in the argument list (@a gas_moles) to each reaction cell.
+
+@param  gas_moles               Vector of moles of gas components.
+Dimension of the vector is set to @a ngas_comps times @a nxyz,
+where, @a ngas_comps is the result of @ref GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If the number of moles is set to a negative number, the gas component will
+not be defined for the GAS_PHASE of the reaction cell.
+
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    
+@ref FindComponents, 
+@ref GetGasComponentsCount, 
+@ref GetGasCompMoles,
+@ref GetGasCompPressures,
+@ref GetGasPhaseVolume,
+@ref GetGasCompPhi,
+@ref SetGasPhaseVolume.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_moles;
+gas_moles.resize(nxyz*ngas);
+...
+status = phreeqc_rm.SetGasCompMoles(gas_moles);
+status = phreeqc_rm.RunCells();
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+	*/
+IRM_RESULT                                SetGasCompMoles(const std::vector<double>& gas_moles);
+/**
+Transfer volumes of gas phases from
+the vector given in the argument list (@a gas_volume) to each reaction cell.
+The gas-phase volume affects the gas-component pressures calculated for fixed-volume
+gas phases. If a gas-phase volume is defined with this methood 
+for a GAS_PHASE in a cell, 
+the gas phase is forced to be a fixed-volume gas phase.
+
+@param  gas_volume               Vector of volumes for each gas phase.
+Dimension of the vector is @a nxyz,
+where @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If the volume is set to a negative number for a cell, the gas-phase volume for that cell is
+not changed.
+
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref FindComponents,
+@ref GetGasComponentsCount,
+@ref GetGasCompMoles,
+@ref GetGasCompPressures,
+@ref GetGasCompPhi,
+@ref GetGasPhaseVolume,
+@ref SetGasCompMoles.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector<double> gas_volume;
+gas_volume.resize(nxyz, -1.0);
+...
+status = phreeqc_rm.SetGasPhaseVolume(gas_volume);
+status = phreeqc_rm.RunCells();
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+	*/
+IRM_RESULT                                SetGasPhaseVolume(const std::vector<double>& gas_volume);
+
 /**
 MPI and C/C++ only. Defines a callback function that allows additional tasks to be done
 by the workers. The method @ref MpiWorker contains a loop,
@@ -3055,7 +4035,7 @@ Called by root, workers must be in the loop of @ref MpiWorker.
 /**
 Set the representative volume of each reaction cell.
 By default the representative volume of each reaction cell is 1 liter.
-The volume of water in a reaction cell is determined by the procuct of the representative volume,
+The volume of water in a reaction cell is determined by the product of the representative volume,
 the porosity (@ref SetPorosity), and the saturation (@ref SetSaturation).
 The numerical method of PHREEQC is more robust if the water volume for a reaction cell is
 within a couple orders of magnitude of 1.0.
@@ -3172,6 +4152,8 @@ with @ref GetSpeciesConcentrations, and solution compositions to be set with
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
+@ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -3559,6 +4541,8 @@ Concentrations are moles per liter.
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
+@ref GetSpeciesLog10Gammas, 
+@ref GetSpeciesLog10Molalities,
 @ref GetSpeciesNames, 
 @ref GetSpeciesSaveOn, 
 @ref GetSpeciesStoichiometry, 
@@ -3583,7 +4567,90 @@ status = phreeqc_rm.RunCells();
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT								  SpeciesConcentrations2Module(std::vector<double> & species_conc);
+IRM_RESULT								  SpeciesConcentrations2Module(std::vector<double> & species_conc);
+
+/**
+Save the state of the chemistry in all model cells, including SOLUTIONs, 
+EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs. 
+Although not generally used, MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs 
+will be saved for each cell, if they have been defined in the worker IPhreeqc instances. 
+The distribution of cells among the workers and the chemistry of fully or partially 
+unsaturated cells are also saved. The state is saved in memory; use @ref DumpModule to save the state
+to file. PhreeqcRM can be reset to this state by using @ref StateApply.
+A state is identified by an integer, and multiple states can be saved. 
+
+@param istate     Integer identifying the state that is saved. 
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref DumpModule,
+@ref StateApply, and
+@ref StateDelete.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.StateSave(1);
+...
+status = phreeqc_rm.StateApply(1);
+status = phreeqc_rm.StateDelete(1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+*/
+IRM_RESULT StateSave(int istate);
+/**
+Reset the state of the module to a state previously saved with @ref StateSave. 
+The chemistry of all model cells are reset, including SOLUTIONs,
+EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs.
+MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs
+will be reset for each cell, if they were defined in the worker IPhreeqc instances
+at the time the state was saved.
+The distribution of cells among the workers and the chemistry of fully or partially
+unsaturated cells are also reset to the saved state. 
+The state to be applied is identified by an integer.
+
+@param istate     Integer identifying the state that is to be applied.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref StateSave and
+@ref StateDelete.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.StateSave(1);
+...
+status = phreeqc_rm.StateApply(1);
+status = phreeqc_rm.StateDelete(1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+*/
+IRM_RESULT StateApply(int istate);
+/**
+Delete a state previously saved with @ref StateSave.
+
+@param istate     Integer identifying the state that is to be deleted.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref StateSave and
+@ref StateApply.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.StateSave(1);
+...
+status = phreeqc_rm.StateApply(1);
+status = phreeqc_rm.StateDelete(1);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+*/
+IRM_RESULT StateDelete(int istate);
 /**
 Determines the volume and density to use when converting from the reaction-cell concentrations
 to transport concentrations (@ref GetConcentrations).
@@ -3781,6 +4848,20 @@ protected:
 	std::vector <cxxNameDouble> species_stoichiometry;
 	std::map<int, int> s_num2rm_species_num;
 	std::vector<double> standard_task_vector;   // root only
+
+	// reactant lists
+	std::vector <std::string> ExchangeSpeciesNamesList;
+	std::vector <std::string> ExchangeNamesList;
+	std::vector <std::string> SurfaceSpeciesNamesList;
+	std::vector <std::string> SurfaceTypesList;
+	std::vector <std::string> SurfaceNamesList;
+
+	std::vector <std::string> EquilibriumPhasesList;
+	std::vector <std::string> GasComponentsList;
+	std::vector <std::string> KineticReactionsList;
+	std::vector <std::string> SolidSolutionComponentsList;
+	std::vector <std::string> SolidSolutionNamesList;
+	std::vector <std::string> SINamesList;
 
 private:
 	//friend class RM_interface;
