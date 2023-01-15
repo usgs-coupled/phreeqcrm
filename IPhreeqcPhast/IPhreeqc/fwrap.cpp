@@ -347,13 +347,13 @@ GetSelectedOutputValueF(int *id, int *row, int *col, int *vtype, double* dvalue,
 	case TT_LONG:
 		*vtype = TT_DOUBLE;
 		*dvalue = (double)v.lVal;
-		::sprintf(buffer, "%ld", v.lVal);
+		::snprintf(buffer, sizeof(buffer), "%ld", v.lVal);
 		padfstring(svalue, buffer, (unsigned int) svalue_length);
 		break;
 	case TT_DOUBLE:
 		*vtype = v.type;
 		*dvalue = v.dVal;
-		::sprintf(buffer, "%23.15e", v.dVal);
+		::snprintf(buffer, sizeof(buffer), "%23.15e", v.dVal);
 		padfstring(svalue, buffer, (unsigned int) svalue_length);
 		break;
 	case TT_STRING:

@@ -485,7 +485,7 @@ VRESULT IPhreeqc::GetSelectedOutputValue(int row, int col, VAR* pVAR)
 	{
 		char buffer[120];
 		v = VR_INVALIDARG;
-		::sprintf(buffer, "GetSelectedOutputValue: VR_INVALIDARG Invalid selected-output user number %d.\n", this->CurrentSelectedOutputUserNumber);
+		::snprintf(buffer, sizeof(buffer), "GetSelectedOutputValue: VR_INVALIDARG Invalid selected-output user number %d.\n", this->CurrentSelectedOutputUserNumber);
 		this->AddError(buffer);
 		this->update_errors();
 	}
@@ -512,13 +512,13 @@ VRESULT IPhreeqc::GetSelectedOutputValue2(int row, int col, int *vtype, double* 
 	case TT_LONG:
 		*vtype = TT_DOUBLE;
 		*dvalue = (double)v.lVal;
-		::sprintf(buffer, "%ld", v.lVal);
+		::snprintf(buffer, sizeof(buffer), "%ld", v.lVal);
 		::strncpy(svalue, buffer, svalue_length);
 		break;
 	case TT_DOUBLE:
 		*vtype = v.type;
 		*dvalue = v.dVal;
-		::sprintf(buffer, "%23.15e", v.dVal);
+		::snprintf(buffer, sizeof(buffer), "%23.15e", v.dVal);
 		::strncpy(svalue, buffer, svalue_length);
 		break;
 	case TT_STRING:
@@ -1238,7 +1238,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 #ifdef PHREEQ98
    		AddSeries = !connect_simulations;
 #endif
-		::sprintf(token, "Reading input data for simulation %d.", this->PhreeqcPtr->simulation);
+		::snprintf(token, sizeof(token), "Reading input data for simulation %d.", this->PhreeqcPtr->simulation);
 
 		// bool save_punch_in = this->PhreeqcPtr->SelectedOutput_map.size() > 0;
 
@@ -1270,7 +1270,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		ASSERT(this->PhreeqcPtr->SelectedOutput_map.size() == this->SelectedOutputStringMap.size());
 		if (!this->PhreeqcPtr->title_x.empty())
 		{
-			::sprintf(token, "TITLE");
+			::snprintf(token, sizeof(token), "TITLE");
 			this->PhreeqcPtr->dup_print(token, TRUE);
 			if (this->PhreeqcPtr->pr.headings == TRUE)
 			{
