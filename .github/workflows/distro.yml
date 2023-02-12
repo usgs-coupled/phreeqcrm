@@ -4,40 +4,39 @@ on: [push]
 
 env:
   NAME: PhreeqcRM
-  VER: 3.7.1
-  DATE: 5/29/2021
-  REL: 15000
   BUILD_TYPE: Release
 
 jobs:
 
   init:
-    name: setup env
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+    # Map step outputs to job outputs
+    outputs:
+      VER: ${{ steps.vars.outputs.VER }}
+      REL: ${{ steps.vars.outputs.REL }}
+      DATE: ${{ steps.vars.outputs.DATE }}
+      DATE_RFC_3339: ${{ steps.vars.outputs.DATE_RFC_3339 }}
     steps:
-    - name: rel
-      run: |
-        Get-Command python
-        Write-Output "DATE=8/29/2021" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        Write-Output "REL=15001" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-    - name: test rel
-      run: |
-        Get-Command python
-
+      - name: Setup vars
+        id: vars
+        run: |
+          echo VER=$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/next_ver.sh | sh) >> $GITHUB_OUTPUT
+          echo REL=$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/rel.py | python3) >> $GITHUB_OUTPUT
+          echo DATE=$(date "+%x")                                                                                   >> $GITHUB_OUTPUT
+          echo DATE_RFC_3339=$(date --rfc-3339=date)                                                                >> $GITHUB_OUTPUT
 
   distcheck:
     name: make distcheck
     needs: init
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: autoreconf
       run: autoreconf -fvi
 
     - name: versioning
-      run: ./jenkins-dist.sh -v ${VER} -r ${REL} -d ${DATE}
+      run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
 
     - name: doxygen
       run: sudo apt-get install doxygen && cd Doxygen && make
@@ -55,7 +54,7 @@ jobs:
       working-directory: ${{github.workspace}}/_build
       run: make -j2 distcheck
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: tarball
         path: ${{github.workspace}}/_build/*.tar.gz
@@ -65,7 +64,7 @@ jobs:
     needs: distcheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: tarball
       
@@ -80,7 +79,7 @@ jobs:
     needs: distcheck
     runs-on: windows-latest
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: tarball
       
