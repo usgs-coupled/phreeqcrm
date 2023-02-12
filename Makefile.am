@@ -182,6 +182,7 @@ include_HEADERS=\
 	$(top_srcdir)/src/RM_interface_C.h\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/Parser.h\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_base.h\
+	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_exports.h\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_io.h\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/phrqtype.h\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/NameDouble.h\
