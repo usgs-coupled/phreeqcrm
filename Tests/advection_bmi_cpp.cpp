@@ -400,7 +400,7 @@ int advection_bmi_cpp()
 		// Dump results
 		bool dump_on = true;
 		bool append = false;
-		status = phreeqc_rm.SetDumpFileName("advection_cpp.dmp");
+		status = phreeqc_rm.SetDumpFileName("advection_bmi_cpp.dmp");
 		status = phreeqc_rm.DumpModule(dump_on, append);    // gz disabled unless compiled with #define USE_GZ
 		// Get pointer to worker
 		const std::vector<IPhreeqcPhast*> w = phreeqc_rm.GetWorkers();
