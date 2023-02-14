@@ -22,6 +22,7 @@
 #include "StorageBin.h"
 #include <assert.h>
 #include "System.h"
+#include "BMI_Var.h"
 #ifdef USE_GZ
 #include <zlib.h>
 #else
@@ -323,6 +324,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 	mpi_worker_callback_fortran = NULL;
 	mpi_worker_callback_c = NULL;
 	mpi_worker_callback_cookie = NULL;
+	BMI_MakeVarMap();
 }
 PhreeqcRM::~PhreeqcRM(void)
 {
