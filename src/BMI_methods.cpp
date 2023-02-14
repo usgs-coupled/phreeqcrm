@@ -412,7 +412,9 @@ int PhreeqcRM::BMI_GetVarItemsize(std::string name)
     else
     {
         throw LetItThrow("Item not found");
+        return -1;
     }
+    return -1;
 }
 std::string PhreeqcRM::BMI_GetVarType(std::string name)
 {
