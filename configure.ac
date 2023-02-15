@@ -1,8 +1,8 @@
 <#                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.61])
-AC_INIT([PhreeqcRM], [0.1.0-9067], [dlpark@usgs.gov])
+AC_PREREQ([2.71])
+AC_INIT([PhreeqcRM],[0.1.0-9067],[dlpark@usgs.gov])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -109,16 +109,16 @@ AC_FUNC_REALLOC
 AC_FUNC_STRTOD
 
 # libc functions
-AC_CHECK_FUNCS([memmove], , AC_ERROR([memmove not found in libc]))
-AC_CHECK_FUNCS([memset],  , AC_ERROR([memset not found in libc]))
-AC_CHECK_FUNCS([strchr],  , AC_ERROR([strchr not found in libc]))
-AC_CHECK_FUNCS([strcspn], , AC_ERROR([strcspn not found in libc]))
-AC_CHECK_FUNCS([strtol],  , AC_ERROR([strtol not found in libc]))
+AC_CHECK_FUNCS([memmove], , AC_MSG_ERROR(memmove not found in libc))
+AC_CHECK_FUNCS([memset],  , AC_MSG_ERROR(memset not found in libc))
+AC_CHECK_FUNCS([strchr],  , AC_MSG_ERROR(strchr not found in libc))
+AC_CHECK_FUNCS([strcspn], , AC_MSG_ERROR(strcspn not found in libc))
+AC_CHECK_FUNCS([strtol],  , AC_MSG_ERROR(strtol not found in libc))
 
 # libm functions
-AC_CHECK_FUNCS([floor],   , AC_CHECK_LIB(m, floor, , AC_ERROR([cannot find floor])) )
-AC_CHECK_FUNCS([pow],     , AC_CHECK_LIB(m, pow,   , AC_ERROR([cannot find pow])) )
-AC_CHECK_FUNCS([sqrt],    , AC_CHECK_LIB(m, sqrt,  , AC_ERROR([cannot find sqrt])) )
+AC_CHECK_FUNCS([floor],   , AC_CHECK_LIB(m, floor, , AC_MSG_ERROR(cannot find floor)) )
+AC_CHECK_FUNCS([pow],     , AC_CHECK_LIB(m, pow,   , AC_MSG_ERROR(cannot find pow)) )
+AC_CHECK_FUNCS([sqrt],    , AC_CHECK_LIB(m, sqrt,  , AC_MSG_ERROR(cannot find sqrt)) )
 
 case $host_os in
      solaris*)
@@ -131,11 +131,8 @@ esac
 # isfinite
 AC_LANG_PUSH(C++)
 AC_CACHE_CHECK([for isfinite], ac_cv_isfinite,
- [AC_TRY_LINK([#include <math.h>],
- [double x; int y; y = isfinite(x);],
- ac_cv_isfinite=yes,
- ac_cv_isfinite=no
-)])
+ [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]], [[double x; int y; y = isfinite(x);]])],[ac_cv_isfinite=yes],[ac_cv_isfinite=no
+])])
 if test x"$ac_cv_isfinite" = x"yes"; then
   AC_DEFINE(HAVE_ISFINITE, [], [Has isfinite])
 fi
@@ -144,11 +141,8 @@ AC_LANG_POP(C++)
 # finite
 AC_LANG_PUSH(C++)
 AC_CACHE_CHECK([for finite], ac_cv_finite,
- [AC_TRY_LINK([#include <math.h>],
- [double x; int y; y = finite(x);],
- ac_cv_finite=yes,
- ac_cv_finite=no
-)])
+ [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]], [[double x; int y; y = finite(x);]])],[ac_cv_finite=yes],[ac_cv_finite=no
+])])
 if test x"$ac_cv_finite" = x"yes"; then
   AC_DEFINE(HAVE_FINITE, [], [Has finite])
 fi
@@ -181,8 +175,7 @@ files and libraries are in two different ways:
 #  If the library path is specified then it must be preceded by a comma.
 #
 AC_ARG_WITH([zlib],
-            [AC_HELP_STRING([--with-zlib=DIR],
-                            [Use zlib compression for dump files [default=no]])],,withval=no)
+            [AS_HELP_STRING([--with-zlib=DIR],[Use zlib compression for dump files [default=no]])],,withval=no)
 
 case $withval in
   no)

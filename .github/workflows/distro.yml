@@ -1,6 +1,9 @@
 name: Build Distro
 
-on: [push]
+on:
+  push:
+  pull_request:
+    branches: [ master ]
 
 env:
   NAME: PhreeqcRM
