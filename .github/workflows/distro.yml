@@ -125,8 +125,6 @@ jobs:
       with:
         arch: x64
 
-    - env: 
-
     - name: Extract tarball
       run: tar xvzf phreeqcrm-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}.tar.gz
 
