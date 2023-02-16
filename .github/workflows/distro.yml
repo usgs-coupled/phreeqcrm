@@ -92,15 +92,6 @@ jobs:
   #     - name: dir
   #       run: Get-ChildItem
 
-  cmake-ubuntu:
-    name: cmake ubuntu
-    needs: distcheck
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: tarball
-
   cmake:
     name: cmake
     needs: distcheck
