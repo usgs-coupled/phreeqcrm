@@ -62,6 +62,36 @@ jobs:
         name: tarball
         path: ${{github.workspace}}/_build/*.tar.gz
 
+  # cmake-ubuntu:
+  #   name: cmake ubuntu
+  #   needs: distcheck
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         name: tarball
+      
+  #     - name: printenv
+  #       run: printenv
+      
+  #     - name: dir
+  #       run: pwd && find .
+
+  # cmake-windows:
+  #   name: cmake windows
+  #   needs: distcheck
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         name: tarball
+      
+  #     - name: printenv
+  #       run: Get-ChildItem 'env:'
+      
+  #     - name: dir
+  #       run: Get-ChildItem
+
   cmake-ubuntu:
     name: cmake ubuntu
     needs: distcheck
@@ -70,24 +100,36 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: tarball
-      
-      - name: printenv
-        run: printenv
-      
-      - name: dir
-        run: pwd && find .
 
-  cmake-windows:
-    name: cmake windows
+  cmake:
+    name: cmake
     needs: distcheck
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: tarball
-      
-      - name: printenv
-        run: Get-ChildItem 'env:'
-      
-      - name: dir
-        run: Get-ChildItem
+    - uses: actions/download-artifact@v3
+      with:
+        name: tarball
+
+    - name: Install ninja valgrind (Linux)
+      if: runner.os == 'Linux'
+      run: sudo apt-get install -y ninja-build valgrind
+
+    - name: Install ninja (macOS)
+      if: runner.os == 'macOS'
+      run: brew install ninja
+
+    - name: Set up Visual Studio shell (Windows)
+      if: runner.os == 'Windows'
+      uses: egor-tensin/vs-shell@v2
+      with:
+        arch: x64
+
+    - name: Extract tarball
+      run: tar xvzf phreeqcrm-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}.tar.gz
+

@@ -1,4 +1,5 @@
-cmake_minimum_required (VERSION 3.10)
+# CMAKE_MSVC_RUNTIME_LIBRARY requires 3.15
+cmake_minimum_required (VERSION 3.20)
 
 project (PhreeqcRM CXX C)
 
@@ -22,16 +23,16 @@ endif()
 
 include(GNUInstallDirs)
 
-# iphreeqc defs
-ADD_DEFINITIONS(-DSWIG_SHARED_OBJ)
-ADD_DEFINITIONS(-DUSE_PHRQ_ALLOC)
+# # iphreeqc defs
+# ADD_DEFINITIONS(-DSWIG_SHARED_OBJ)
+# ADD_DEFINITIONS(-DUSE_PHRQ_ALLOC)
 
-# Disable deprecation warnings for standard C and STL functions in VS2005
-# and later
-IF(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
-  ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
-  ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)
-ENDIF(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400) 
+# # Disable deprecation warnings for standard C and STL functions in VS2005
+# # and later
+# IF(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
+#   ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
+#   ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)
+# ENDIF(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400) 
 
 # check for zlib
 if(NOT ZLIB_ROOT)
@@ -239,8 +240,25 @@ SET(LIB_TYPE STATIC)
 if (BUILD_SHARED_LIBS)
   SET(LIB_TYPE SHARED)
 endif()
+
 add_library(PhreeqcRM ${LIB_TYPE} ${PhreeqcRM_SOURCES})
-set_target_properties(PhreeqcRM PROPERTIES DEBUG_POSTFIX "d")
+
+# iphreeqc defs
+target_compile_definitions(PhreeqcRM PRIVATE SWIG_SHARED_OBJ)
+target_compile_definitions(PhreeqcRM PRIVATE USE_PHRQ_ALLOC)
+
+# Disable deprecation warnings for standard C and STL functions in VS2005
+# and later
+if (MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
+  target_compile_definitions(PhreeqcRM PRIVATE _CRT_SECURE_NO_DEPRECATE)
+  target_compile_definitions(PhreeqcRM PRIVATE _SCL_SECURE_NO_WARNINGS)
+endif()
+
+# Allow user to override POSTFIX properties (but mandate them so that
+# all builds can be installed to the same directory)
+if (NOT CMAKE_DEBUG_POSTFIX)
+  set_target_properties(PhreeqcRM PROPERTIES DEBUG_POSTFIX "d")
+endif()
 
 # At least with MSMPI PhreeqcRM.dll requires MPI_CXX_LIBRARIES to link
 if (MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_BUILD_MPI)
