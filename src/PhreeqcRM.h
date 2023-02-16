@@ -110,6 +110,7 @@ enum {
 	METHOD_STATEDELETE,
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
+
 /**
  * @mainpage PhreeqcRM Library Documentation (@PHREEQC_VER@-@REVISION_SVN@)
  *

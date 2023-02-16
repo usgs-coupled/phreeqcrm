@@ -21,7 +21,7 @@ void AdvectBMICpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomp
 int bmi_example_selected_output(PhreeqcRM& phreeqc_rm);
 double bmi_basic_callback(double x1, double x2, const char* str, void* cookie);
 void BMI_testing(PhreeqcRM &phreeqc_rm);
-void GenerateYAML();
+void GenerateYAML(PhreeqcRM& phreeqc_rm);
 class my_data
 {
 public:
@@ -73,7 +73,7 @@ int advection_bmi_cpp()
 		PhreeqcRM phreeqc_rm(nxyz, nthreads);
 		some_data.PhreeqcRM_ptr = &phreeqc_rm;
 #endif
-		GenerateYAML();
+		GenerateYAML(phreeqc_rm);
 		IRM_RESULT status;
 // Initialize-----------------------------------------------------------
 		// Set properties
@@ -1020,9 +1020,10 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 	//void BMI_Finalize();
 
 }
-void GenerateYAML()
+void GenerateYAML(PhreeqcRM &phreeqc_rm)
 {
-	int nxyz = 40;
+	int nxyz = 0;
+	phreeqc_rm.BMI_GetValue("GridCellCount", &nxyz);
 	YAMLPhreeqcRM yrm;
 	YAML::Node node2;
 	YAML::Node node;
@@ -1051,54 +1052,34 @@ void GenerateYAML()
 	yrm.YAMLSetUnitsSSassemblage(1);       // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
 	yrm.YAMLSetUnitsKinetics(1);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 
-	//const YAML::Node &ref = yrm.GetYAMLDoc();
-	//std::cerr << ref.size() << std::endl;
-	//std::cerr << ref << std::endl;
-	//for (YAML::const_iterator it = ref.begin();it != ref.end();++it)
-	//{
-	//	std::cerr << "  " << it->first << std::endl;
-	//	std::cerr << "  " << it->second << std::endl;
-	//	std::cerr << std::endl;
-	//}
-
-#ifdef SKIP
 	// Set conversion from seconds to user units (days)
 	double time_conversion = 1.0 / 86400;
-	status = phreeqc_rm.SetTimeConversion(time_conversion);
+	yrm.YAMLSetTimeConversion(time_conversion);
 	// Set representative volume
-	std::vector<double> rv;
-	rv.resize(nxyz, 1.0);
-	status = phreeqc_rm.SetRepresentativeVolume(rv);
+	std::vector<double> rv(nxyz, 1.0);
+	yrm.YAMLSetRepresentativeVolume(rv);
 	// Set initial porosity
-	std::vector<double> por;
-	por.resize(nxyz, 0.2);
-	status = phreeqc_rm.SetPorosity(por);
+	std::vector<double> por(nxyz, 0.2);
+	yrm.YAMLSetPorosity(por);
 	// Set initial saturation
-	std::vector<double> sat;
-	sat.resize(nxyz, 1.0);
-	status = phreeqc_rm.SetSaturation(sat);
+	std::vector<double> sat(nxyz, 1.0);
+	yrm.YAMLSetSaturation(sat);
 	// Set cells to print chemistry when print chemistry is turned on
-	std::vector<int> print_chemistry_mask;
-	print_chemistry_mask.resize(nxyz, 0);
+	std::vector<int> print_chemistry_mask(nxyz, 0);
 	for (int i = 0; i < nxyz / 2; i++)
 	{
 		print_chemistry_mask[i] = 1;
 	}
-	status = phreeqc_rm.SetPrintChemistryMask(print_chemistry_mask);
-	// test getters
-	const std::vector<int>& print_chemistry_mask1 = phreeqc_rm.GetPrintChemistryMask();
-	const std::vector<bool>& print_on = phreeqc_rm.GetPrintChemistryOn();
-	bool rebalance = phreeqc_rm.GetRebalanceByCell();
-	double f_rebalance = phreeqc_rm.GetRebalanceFraction();
-	bool so_on = phreeqc_rm.GetSelectedOutputOn();
-	int units_exchange = phreeqc_rm.GetUnitsExchange();
-	int units_gas_phase = phreeqc_rm.GetUnitsGasPhase();
-	int units_kinetics = phreeqc_rm.GetUnitsKinetics();
-	int units_pp_assemblage = phreeqc_rm.GetUnitsPPassemblage();
-	int units_solution = phreeqc_rm.GetUnitsSolution();
-	int units_ss_exchange = phreeqc_rm.GetUnitsSSassemblage();
-	int units_surface = phreeqc_rm.GetUnitsSurface();
-#endif
+	yrm.YAMLSetPrintChemistryMask(print_chemistry_mask);
+
+	// Initialize with YAML defined to this point
+	std::ostringstream yaml;
+	yaml << yrm.GetYAMLDoc() << std::endl;
+	const YAML::Node &ref = yrm.GetYAMLDoc();
+	phreeqc_rm.BMI_Initialize(yaml.str()); // TODO TODO TODO
+
+
+
 	// Demonstation of mapping, two equivalent rows by symmetry
 	std::vector<int> grid2chem;
 	grid2chem.resize(nxyz, -1);
@@ -1108,40 +1089,36 @@ void GenerateYAML()
 		grid2chem[i + nxyz / 2] = i;
 	}
 	yrm.YAMLCreateMapping(grid2chem);
-	std::cerr << yrm.GetYAMLDoc();
-#ifdef SKIP
-	if (status < 0) phreeqc_rm.DecodeError(status);
-	int nchem = phreeqc_rm.GetChemistryCellCount();
-
-	// --------------------------------------------------------------------------
-	// Set initial conditions
-	// --------------------------------------------------------------------------
 
 	// Set printing of chemistry file
-	status = phreeqc_rm.SetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
+	yrm.YAMLSetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
 	// Load database
-	status = phreeqc_rm.LoadDatabase("phreeqc.dat");
+	yrm.YAMLLoadDatabase("phreeqc.dat");
 
-	// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
-	bmi_register_basic_callback(&some_data);
-
-	// Demonstration of error handling if ErrorHandlerMode is 0
-	if (status != IRM_OK)
-	{
-		std::cerr << phreeqc_rm.GetErrorString(); // retrieve error messages if needed
-		throw PhreeqcRMStop();
-	}
 	// Run file to define solutions and reactants for initial conditions, selected output
 	bool workers = true;             // Worker instances do the reaction calculations for transport
 	bool initial_phreeqc = true;     // InitialPhreeqc instance accumulates initial and boundary conditions
 	bool utility = true;             // Utility instance is available for processing
-	status = phreeqc_rm.RunFile(workers, initial_phreeqc, utility, "advect.pqi");
+	yrm.YAMLRunFile(workers, initial_phreeqc, utility, "advect.pqi");
 	// Clear contents of workers and utility
 	initial_phreeqc = false;
 	std::string input = "DELETE; -all";
-	status = phreeqc_rm.RunString(workers, initial_phreeqc, utility, input.c_str());
+	yrm.YAMLRunString(workers, initial_phreeqc, utility, input.c_str());
 	// Determine number of components to transport
-	int ncomps = phreeqc_rm.FindComponents();
-#endif
+	yrm.YAMLFindComponents();
 
+	// Initialize with YAML
+	{
+		std::ostringstream yaml;
+		yaml << yrm.GetYAMLDoc() << std::endl;
+		const YAML::Node& ref = yrm.GetYAMLDoc();
+		phreeqc_rm.BMI_Initialize(yaml.str()); // TODO TODO TODO
+		//for (YAML::const_iterator it = ref.begin();it != ref.end();++it)
+		//{
+		//	std::cerr << "  " << it->first << std::endl;
+		//	std::cerr << "  " << it->second << std::endl;
+		//	std::cerr << std::endl;
+		//}
+		yrm.clear();
+	}
 };

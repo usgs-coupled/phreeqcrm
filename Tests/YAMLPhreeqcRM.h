@@ -163,8 +163,6 @@ public:
 	void YAMLFindComponents();
 	void YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1);
 	void YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
-	void YAMLInitialPhreeqc2SpeciesConcentrations(std::vector< double > destination_c, std::vector< int > boundary_solution1);
-	void YAMLInitialPhreeqc2SpeciesConcentrations(std::vector< double > destination_c, std::vector< int > boundary_solution1, std::vector< int > boundary_solution2, std::vector< double > fraction1);
 	void YAMLInitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
 	void YAMLLoadDatabase(std::string database);
 	void YAMLOpenFiles(void);
