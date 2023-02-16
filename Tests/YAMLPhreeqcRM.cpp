@@ -175,21 +175,24 @@ void YAMLPhreeqcRM::YAMLCreateMapping(std::vector< int >& grid2chem)
 	YAML_doc["CreateMapping"] = grid2chem;
 	return;
 };
-void YAMLPhreeqcRM::YAMLDumpModule(bool dump_on, bool append ) 
-{
-	YAML::Node node;
-	node["dump_on"] = dump_on;
-	node["append"] = append;
-	YAML_doc["CreateMapping"] = node;
-	return;
-};
 void YAMLPhreeqcRM::YAMLFindComponents()
 {
 	YAML_doc["FindComponents"] = true;
 	return;
 }
-//void YAMLPhreeqcRM::YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1) {};
-//void YAMLPhreeqcRM::YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1) {};
+void YAMLPhreeqcRM::YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1) 
+{
+	YAML_doc["InitialPhreeqc2Module"] = initial_conditions1;
+	return;
+};
+void YAMLPhreeqcRM::YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1) 
+{
+	YAML::Node node;
+	node[initial_conditions1] = initial_conditions1;
+	node[initial_conditions2] = initial_conditions2;
+	node[fraction1] = fraction1;
+	YAML_doc["InitialPhreeqc2Module"] = node;
+};
 //void YAMLPhreeqcRM::YAMLInitialPhreeqc2SpeciesConcentrations(std::vector< double > destination_c, std::vector< int > boundary_solution1) {};
 //void YAMLPhreeqcRM::YAMLInitialPhreeqc2SpeciesConcentrations(std::vector< double > destination_c, std::vector< int > boundary_solution1, std::vector< int > boundary_solution2, std::vector< double > fraction1) {};
 //void YAMLPhreeqcRM::YAMLInitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers) {};

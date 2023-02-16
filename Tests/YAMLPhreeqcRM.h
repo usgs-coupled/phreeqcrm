@@ -160,7 +160,6 @@ public:
 	// methods
 	void YAMLCloseFiles(void);
 	void YAMLCreateMapping(std::vector< int >& grid2chem);
-	void YAMLDumpModule(bool dump_on, bool append = false);
 	void YAMLFindComponents();
 	void YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1);
 	void YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
