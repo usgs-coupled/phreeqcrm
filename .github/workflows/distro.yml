@@ -62,35 +62,50 @@ jobs:
         name: tarball
         path: ${{github.workspace}}/_build/*.tar.gz
 
-  # cmake-ubuntu:
-  #   name: cmake ubuntu
-  #   needs: distcheck
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: tarball
-      
-  #     - name: printenv
-  #       run: printenv
-      
-  #     - name: dir
-  #       run: pwd && find .
+  autotools:
+    name: autotools
+    needs: [init, distcheck]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
 
-  # cmake-windows:
-  #   name: cmake windows
-  #   needs: distcheck
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: tarball
-      
-  #     - name: printenv
-  #       run: Get-ChildItem 'env:'
-      
-  #     - name: dir
-  #       run: Get-ChildItem
+    runs-on: ${{ matrix.os }}
+
+    env:
+      VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
+
+    steps:
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: tarball
+
+    - name: Install ninja valgrind (Linux)
+      if: runner.os == 'Linux'
+      run: sudo apt-get install -y ninja-build valgrind
+
+    - name: Install ninja (macOS)
+      if: runner.os == 'macOS'
+      run: brew install ninja
+
+    - name: Extract tarball
+      run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
+
+    - name: mkdir build
+      run: mkdir ${{ github.workspace }}/build
+
+    - name: Configure with autotools
+      working-directory: ${{ github.workspace }}/build
+      run: ../phreeqcrm-${{ env.VER_STRING }}/configure
+
+    - name: Build with autotools
+      working-directory: ${{ github.workspace }}/build
+      run: make -j2
+
+    - name: Install with autotools
+      working-directory: ${{ github.workspace }}/build
+      run: sudo make install
 
   cmake:
     name: cmake
@@ -126,10 +141,10 @@ jobs:
         arch: x64
 
     - name: Extract tarball
-      run: tar xvzf phreeqcrm-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}.tar.gz
+      run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
 
     - name: Configure with CMake
-      run: cmake -B build -S phreeqcrm-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
     - name: Build with CMake
       run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
