@@ -110,7 +110,6 @@ enum {
 	METHOD_STATEDELETE,
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
-
 /**
  * @mainpage PhreeqcRM Library Documentation (@PHREEQC_VER@-@REVISION_SVN@)
  *
@@ -4951,6 +4950,7 @@ protected:
 	bool need_error_check;
 	std::string phreeqcrm_error_string;
 
+	std::map<std::string, int> method_map;
 	// threading
 	int nthreads;
 	std::vector<IPhreeqcPhast *> workers;
