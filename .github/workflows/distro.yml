@@ -94,7 +94,7 @@ jobs:
 
   cmake:
     name: cmake
-    needs: distcheck
+    needs: [init, distcheck]
     strategy:
       fail-fast: false
       matrix:
