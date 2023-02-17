@@ -3,6 +3,7 @@
 #endif
 #include <stdlib.h>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include "PhreeqcRM.h"
@@ -21,7 +22,7 @@ void AdvectBMICpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomp
 int bmi_example_selected_output(PhreeqcRM& phreeqc_rm);
 double bmi_basic_callback(double x1, double x2, const char* str, void* cookie);
 void BMI_testing(PhreeqcRM &phreeqc_rm);
-void GenerateYAML(PhreeqcRM& phreeqc_rm);
+void GenerateYAML(int nxyz, std::string YAML_filename);
 class my_data
 {
 public:
@@ -34,14 +35,23 @@ public:
 
 int advection_bmi_cpp()
 {
+
+	// --------------------------------------------------------------------------
+	// Write file to initialize PhreeqcRM
 	// Based on PHREEQC Example 11
+	// --------------------------------------------------------------------------
+
 	try
 	{
-		// --------------------------------------------------------------------------
-		// Create PhreeqcRM
-		// --------------------------------------------------------------------------
-
+		// Write file to initialize PhreeqcRM
+		// emulates a file created by a GUI
+		// No PhreeqcRM methods are used to create
+		// this file
 		int nxyz = 40;
+		std::string YAML_filename = "advect_bmi_cpp.yaml";
+		GenerateYAML(nxyz, YAML_filename);
+
+		// Data for call_back demostration
 		std::vector<double> hydraulic_K;
 		for (int i = 0; i < nxyz; i++)
 		{
@@ -73,110 +83,18 @@ int advection_bmi_cpp()
 		PhreeqcRM phreeqc_rm(nxyz, nthreads);
 		some_data.PhreeqcRM_ptr = &phreeqc_rm;
 #endif
-		GenerateYAML(phreeqc_rm);
-		IRM_RESULT status;
-// Initialize-----------------------------------------------------------
-		// Set properties
-		status = phreeqc_rm.SetErrorHandlerMode(1);
-		status = phreeqc_rm.SetComponentH2O(false);
-		status = phreeqc_rm.SetRebalanceFraction(0.5);
-		status = phreeqc_rm.SetRebalanceByCell(true);
-		phreeqc_rm.UseSolutionDensityVolume(false);
-		phreeqc_rm.SetPartitionUZSolids(false);
-		// Open files
-		status = phreeqc_rm.SetFilePrefix("Advect_bmi_cpp");
-		phreeqc_rm.OpenFiles();
-#ifdef USE_MPI
-		// Optional callback for MPI
-		int istatus = do_something(&some_data);                 // Root calls do_something, workers respond
-#endif
-		// Set concentration units
-		status = phreeqc_rm.SetUnitsSolution(2);           // 1, mg/L; 2, mol/L; 3, kg/kgs
-		status = phreeqc_rm.SetUnitsPPassemblage(1);       // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
-		status = phreeqc_rm.SetUnitsExchange(1);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
-		status = phreeqc_rm.SetUnitsSurface(1);            // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
-		status = phreeqc_rm.SetUnitsGasPhase(1);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
-		status = phreeqc_rm.SetUnitsSSassemblage(1);       // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
-		status = phreeqc_rm.SetUnitsKinetics(1);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
-		// Set conversion from seconds to user units (days)
-		double time_conversion = 1.0 / 86400;
-		status = phreeqc_rm.SetTimeConversion(time_conversion);
-		// Set representative volume
-		std::vector<double> rv;
-		rv.resize(nxyz, 1.0);
-		status = phreeqc_rm.SetRepresentativeVolume(rv);
-		// Set initial porosity
-		std::vector<double> por;
-		por.resize(nxyz, 0.2);
-		status = phreeqc_rm.SetPorosity(por);
-		// Set initial saturation
-		std::vector<double> sat;
-		sat.resize(nxyz, 1.0);
-		status = phreeqc_rm.SetSaturation(sat);
-		// Set cells to print chemistry when print chemistry is turned on
-		std::vector<int> print_chemistry_mask;
-		print_chemistry_mask.resize(nxyz, 0);
-		for (int i = 0; i < nxyz / 2; i++)
-		{
-			print_chemistry_mask[i] = 1;
-		}
-		status = phreeqc_rm.SetPrintChemistryMask(print_chemistry_mask);
-		// test getters
-		const std::vector<int>& print_chemistry_mask1 = phreeqc_rm.GetPrintChemistryMask();
-		const std::vector<bool>& print_on = phreeqc_rm.GetPrintChemistryOn();
-		bool rebalance = phreeqc_rm.GetRebalanceByCell();
-		double f_rebalance = phreeqc_rm.GetRebalanceFraction();
-		bool so_on = phreeqc_rm.GetSelectedOutputOn();
-		int units_exchange = phreeqc_rm.GetUnitsExchange();
-		int units_gas_phase = phreeqc_rm.GetUnitsGasPhase();
-		int units_kinetics = phreeqc_rm.GetUnitsKinetics();
-		int units_pp_assemblage = phreeqc_rm.GetUnitsPPassemblage();
-		int units_solution = phreeqc_rm.GetUnitsSolution();
-		int units_ss_exchange = phreeqc_rm.GetUnitsSSassemblage();
-		int units_surface = phreeqc_rm.GetUnitsSurface();
-		// Demonstation of mapping, two equivalent rows by symmetry
-		std::vector<int> grid2chem;
-		grid2chem.resize(nxyz, -1);
-		for (int i = 0; i < nxyz / 2; i++)
-		{
-			grid2chem[i] = i;
-			grid2chem[i + nxyz / 2] = i;
-		}
-		status = phreeqc_rm.CreateMapping(grid2chem);
-		if (status < 0) phreeqc_rm.DecodeError(status);
-		int nchem = phreeqc_rm.GetChemistryCellCount();
-
-		// --------------------------------------------------------------------------
-		// Set initial conditions
-		// --------------------------------------------------------------------------
-
-		// Set printing of chemistry file
-		status = phreeqc_rm.SetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
-		// Load database
-		status = phreeqc_rm.LoadDatabase("phreeqc.dat");
-
 		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
 		bmi_register_basic_callback(&some_data);
 
-		// Demonstration of error handling if ErrorHandlerMode is 0
-		if (status != IRM_OK)
-		{
-			std::cerr << phreeqc_rm.GetErrorString(); // retrieve error messages if needed
-			throw PhreeqcRMStop();
-		}
-		// Run file to define solutions and reactants for initial conditions, selected output
-		bool workers = true;             // Worker instances do the reaction calculations for transport
-		bool initial_phreeqc = true;     // InitialPhreeqc instance accumulates initial and boundary conditions
-		bool utility = true;             // Utility instance is available for processing
-		status = phreeqc_rm.RunFile(workers, initial_phreeqc, utility, "advect.pqi");
-		// Clear contents of workers and utility
-		initial_phreeqc = false;
-		std::string input = "DELETE; -all";
-		status = phreeqc_rm.RunString(workers, initial_phreeqc, utility, input.c_str());
-		// Determine number of components to transport
-		int ncomps = phreeqc_rm.FindComponents();
+		// Use YAML file to initialize
+		phreeqc_rm.InitializeYAML(YAML_filename);
 
-// End Initialize-----------------------------------------------------------
+		// Get number of components
+		int ncomps;
+		phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
+		// Example for generating automatic selected-output definitions
+		bmi_example_selected_output(phreeqc_rm);
+
 		// Print some of the reaction module information
 		{
 			std::ostringstream oss;
@@ -192,12 +110,35 @@ int advection_bmi_cpp()
 			oss << "Error handler mode:                               " << phreeqc_rm.GetErrorHandlerMode() << "\n";
 			phreeqc_rm.OutputMessage(oss.str());
 		}
-		bmi_example_selected_output(phreeqc_rm);
-
 		const std::vector<int>& f_map = phreeqc_rm.GetForwardMapping();
-		// Get component information
-		const std::vector<std::string>& components = phreeqc_rm.GetComponents();
-		const std::vector < double >& gfw = phreeqc_rm.GetGfw();
+
+		// BMI version of getting component list
+		// equivalent to following statement
+		// const std::vector<std::string>& components = phreeqc_rm.GetComponents();
+		std::vector<std::string> components;
+		{
+			size_t nbytes = (size_t)phreeqc_rm.BMI_GetVarNbytes("Components");
+			std::string all_comps(nbytes, ' ');
+			phreeqc_rm.BMI_GetValue("Components", (void*)all_comps.data());
+			size_t string_size = (size_t)phreeqc_rm.BMI_GetVarItemsize("Components");
+			for (size_t i = 0; i < ncomps; i++)
+			{
+				std::string bmi_comp = all_comps.substr((i * string_size), string_size);
+				// strip trailing spaces
+				size_t end = bmi_comp.find_last_not_of(' ');
+				bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
+				// store in components
+				components.push_back(bmi_comp);
+			}
+		}
+
+		// BMI version of getting gram formula weights of components
+		// equivalent to following statement
+		//const std::vector < double >& gfw = phreeqc_rm.GetGfw();
+		std::vector<double> gfw(ncomps, 0);
+		phreeqc_rm.BMI_GetValue("Gfw", gfw.data());
+
+		// write component information
 		for (int i = 0; i < ncomps; i++)
 		{
 			std::ostringstream strm;
@@ -206,48 +147,21 @@ int advection_bmi_cpp()
 			phreeqc_rm.OutputMessage(strm.str());
 		}
 		phreeqc_rm.OutputMessage("\n");
-		// Set array of initial conditions
-		std::vector<int> ic1, ic2;
-		ic1.resize(nxyz * 7, -1);
-		ic2.resize(nxyz * 7, -1);
-		std::vector<double> f1;
-		f1.resize(nxyz * 7, 1.0);
-		for (int i = 0; i < nxyz; i++)
-		{
-			ic1[i] = 1;              // Solution 1
-			ic1[nxyz + i] = -1;      // Equilibrium phases none
-			ic1[2 * nxyz + i] = 1;     // Exchange 1
-			ic1[3 * nxyz + i] = -1;    // Surface none
-			ic1[4 * nxyz + i] = -1;    // Gas phase none
-			ic1[5 * nxyz + i] = -1;    // Solid solutions none
-			ic1[6 * nxyz + i] = -1;    // Kinetics none
-		}
-		status = phreeqc_rm.InitialPhreeqc2Module(ic1, ic2, f1);
-		// No mixing is defined, so the following is equivalent
-		// status = phreeqc_rm.InitialPhreeqc2Module(ic1.data());
 
-		// alternative for setting initial conditions
-		// cell number in first argument (-1 indicates last solution, 40 in this case)
-		// in advect.pqi and any reactants with the same number--
-		// Equilibrium phases, exchange, surface, gas phase, solid solution, and (or) kinetics--
-		// will be written to cells 18 and 19 (0 based)
-		std::vector<int> module_cells;
-		module_cells.push_back(18);
-		module_cells.push_back(19);
-		status = phreeqc_rm.InitialPhreeqcCell2Module(-1, module_cells);
-		// Get temperatures
+		// Get temperatures (unchanged by PhreeqcRM)
 		const std::vector<double>& tempc = phreeqc_rm.GetTemperature();
-		// get current saturation
+
+		// get current saturation (unchanged by PhreeqcRM)
 		std::vector<double> current_sat;
-		status = phreeqc_rm.GetSaturation(current_sat);
-		// Initial equilibration of cells
-		double time = 0.0;
-		double time_step = 0.0;
+		IRM_RESULT status = phreeqc_rm.GetSaturation(current_sat);		// Demonstration of error handling if ErrorHandlerMode is 0
+		if (status != IRM_OK)
+		{
+			std::cerr << phreeqc_rm.GetErrorString(); // retrieve error messages if needed
+			throw PhreeqcRMStop();
+		}
+
 		std::vector<double> c;
 		c.resize(nxyz * components.size());
-		status = phreeqc_rm.SetTime(time);
-		status = phreeqc_rm.SetTimeStep(time_step);
-		status = phreeqc_rm.RunCells();
 		status = phreeqc_rm.GetConcentrations(c);
 
 		// --------------------------------------------------------------------------
@@ -267,15 +181,15 @@ int advection_bmi_cpp()
 		// --------------------------------------------------------------------------
 
 		int nsteps = 10;
-		std::vector<double> initial_density, temperature, pressure;
-		initial_density.resize(nxyz, 1.0);
-		temperature.resize(nxyz, 20.0);
-		pressure.resize(nxyz, 2.0);
-		phreeqc_rm.SetDensity(initial_density);
-		phreeqc_rm.SetTemperature(temperature);
-		phreeqc_rm.SetPressure(pressure);
-		time_step = 86400.;
-		status = phreeqc_rm.SetTimeStep(time_step);
+		std::vector<double> por(nxyz, 0.2);
+		std::vector<double> sat(nxyz, 1.0);
+		std::vector<double> temperature(nxyz,20.0);
+		std::vector<double> density(nxyz, 1.0);
+		std::vector<double> pressure(nxyz, 2.0);
+
+		double time_step = phreeqc_rm.BMI_GetTimeStep();
+		double time = phreeqc_rm.BMI_GetCurrentTime();
+
 		for (int steps = 0; steps < nsteps; steps++)
 		{
 			// Transport calculation here
@@ -292,16 +206,24 @@ int advection_bmi_cpp()
 			// Transfer data to PhreeqcRM for reactions
 			bool print_selected_output_on = (steps == nsteps - 1) ? true : false;
 			bool print_chemistry_on = (steps == nsteps - 1) ? true : false;
-			status = phreeqc_rm.SetSelectedOutputOn(print_selected_output_on);
+			//status = phreeqc_rm.SetSelectedOutputOn(print_selected_output_on);
+			phreeqc_rm.BMI_SetValue("SelectedOutputOn",&print_selected_output_on);
 			status = phreeqc_rm.SetPrintChemistryOn(print_chemistry_on, false, false); // workers, initial_phreeqc, utility
-			status = phreeqc_rm.SetPorosity(por);             // If pororosity changes due to compressibility
-			status = phreeqc_rm.SetSaturation(sat);           // If saturation changes
-			status = phreeqc_rm.SetTemperature(temperature);  // If temperature changes
-			status = phreeqc_rm.SetPressure(pressure);        // If pressure changes
-			status = phreeqc_rm.SetConcentrations(c);         // Transported concentrations
-			status = phreeqc_rm.SetTimeStep(time_step);		  // Time step for kinetic reactions
+			//status = phreeqc_rm.SetPorosity(por);             // If pororosity changes due to compressibility
+			phreeqc_rm.BMI_SetValue("Porosity", por.data());
+			//status = phreeqc_rm.SetSaturation(sat);           // If saturation changes
+			phreeqc_rm.BMI_SetValue("Saturation", sat.data());
+			//status = phreeqc_rm.SetTemperature(temperature);  // If temperature changes
+			phreeqc_rm.BMI_SetValue("Temperature", temperature.data());
+			//status = phreeqc_rm.SetPressure(pressure);        // If pressure changes
+			phreeqc_rm.BMI_SetValue("Pressure", pressure.data());
+			//status = phreeqc_rm.SetConcentrations(c);         // Transported concentrations
+			phreeqc_rm.BMI_SetValue("Concentrations", c.data());
+			//status = phreeqc_rm.SetTimeStep(time_step);		  // Time step for kinetic reactions
+			phreeqc_rm.BMI_SetValue("TimeStep", &time_step);
 			time += time_step;
-			status = phreeqc_rm.SetTime(time);
+			//status = phreeqc_rm.SetTime(time);
+			phreeqc_rm.BMI_SetValue("Time", &time);
 			// Run cells with transported conditions
 			{
 				std::ostringstream strm;
@@ -314,11 +236,13 @@ int advection_bmi_cpp()
 			status = phreeqc_rm.StateSave(1);
 			status = phreeqc_rm.StateApply(1);
 			status = phreeqc_rm.StateDelete(1);
-			status = phreeqc_rm.RunCells();
+			//status = phreeqc_rm.RunCells();
+			phreeqc_rm.BMI_Update();
 			// Transfer data from PhreeqcRM for transport
-			status = phreeqc_rm.GetConcentrations(c);
-			std::vector<double> density;
-			status = phreeqc_rm.GetDensity(density);
+			//status = phreeqc_rm.GetConcentrations(c);
+			phreeqc_rm.BMI_GetValue("Concentrations", c.data());
+			//status = phreeqc_rm.GetDensity(density);
+			phreeqc_rm.BMI_GetValue("Density", density.data());
 			const std::vector<double>& volume = phreeqc_rm.GetSolutionVolume();
 			// Print results at last time step
 			if (print_chemistry_on != 0)
@@ -336,20 +260,52 @@ int advection_bmi_cpp()
 					}
 					phreeqc_rm.OutputMessage(oss.str());
 				}
-				for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
+				int selected_output_count;
+				phreeqc_rm.BMI_GetValue("SelectedOutputCount", &selected_output_count);
+				for (int isel = 0; isel < selected_output_count; isel++)
 				{
 					std::ostringstream oss;
 					// Loop through possible multiple selected output definitions
-					int n_user = phreeqc_rm.GetNthSelectedOutputUserNumber(isel);
-					status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
+					//int n_user = phreeqc_rm.GetNthSelectedOutputUserNumber(isel);
+					//status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
+					phreeqc_rm.BMI_SetValue("NthSelectedOutput", &isel);
 					oss << "Selected output sequence number: " << isel << "\n";
+					int n_user=-1;
+					phreeqc_rm.BMI_GetValue("CurrentSelectedOutputUserNumber", &n_user);
 					oss << "Selected output user number:     " << n_user << "\n";
 					// Get double array of selected output values
-					std::vector<double> so;
-					int col = phreeqc_rm.GetSelectedOutputColumnCount();
-					status = phreeqc_rm.GetSelectedOutput(so);
+					//std::vector<double> so;
+					//int col = phreeqc_rm.GetSelectedOutputColumnCount();
+					//status = phreeqc_rm.GetSelectedOutput(so);
+					
+					int col;
+					phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", &col);
+					int bmi_row_count;
+					phreeqc_rm.BMI_GetValue("SelectedOutputRowCount", &bmi_row_count);
+
+					// Get selected output
+					int bmi_nbytes = phreeqc_rm.BMI_GetVarNbytes("SelectedOutput");
+					int bmi_itemsize = phreeqc_rm.BMI_GetVarItemsize("SelectedOutput");
+					int bmi_dim = bmi_nbytes / bmi_itemsize;
+					std::vector<double> so(bmi_dim, INACTIVE_CELL_VALUE);
+					phreeqc_rm.BMI_GetValue("SelectedOutput", so.data());
+
+					// Get headings
+					bmi_nbytes = phreeqc_rm.BMI_GetVarNbytes("SelectedOutputHeadings");
+					int bmi_string_size = phreeqc_rm.BMI_GetVarItemsize("SelectedOutputHeadings");
+					std::string all_headings(bmi_nbytes, ' ');
+					phreeqc_rm.BMI_GetValue("SelectedOutputHeadings", (void*)all_headings.c_str());
+					std::vector<std::string> headings;
+					for (int j = 0; j < col; j++)
+					{
+						std::string bmi_head = all_headings.substr((size_t)(j * bmi_string_size), bmi_string_size);
+						size_t end = bmi_head.find_last_not_of(' ');
+						bmi_head = (end == std::string::npos) ? "" : bmi_head.substr(0, end + 1);
+						headings.push_back(bmi_head);
+					}
+
 					// Print results
-					for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount() / 2; i++)
+					for (int i = 0; i < bmi_row_count / 2; i++)
 					{
 						oss << "Cell number " << i << "\n";
 						oss << "     Density: " << density[i] << "\n";
@@ -359,12 +315,13 @@ int advection_bmi_cpp()
 						{
 							oss << "          " << j << " " << components[j] << ": " << c[j * nxyz + i] << "\n";
 						}
-						std::vector<std::string> headings;
-						headings.resize(col);
+						//std::vector<std::string> headings;
+						//headings.resize(col);
+
 						oss << "     Selected output: " << "\n";
 						for (int j = 0; j < col; j++)
 						{
-							status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
+							//status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
 							oss << "          " << j << " " << headings[j] << ": " << so[j * nxyz + i] << "\n";
 						}
 					}
@@ -372,7 +329,7 @@ int advection_bmi_cpp()
 				}
 			}
 		}
-		BMI_testing(phreeqc_rm);
+		BMI_testing(phreeqc_rm); // Tests BMI_GetValue
 		// --------------------------------------------------------------------------
 		// Additional features and finalize
 		// --------------------------------------------------------------------------
@@ -388,7 +345,7 @@ int advection_bmi_cpp()
 		tc.resize(1, 15.0);
 		p_atm.resize(1, 3.0);
 		IPhreeqc* util_ptr = phreeqc_rm.Concentrations2Utility(c_well, tc, p_atm);
-		input = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1";
+		std::string input = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1";
 		int iphreeqc_result;
 		util_ptr->SetOutputFileName("utility_cpp.txt");
 		util_ptr->SetOutputFileOn(true);
@@ -428,7 +385,7 @@ int advection_bmi_cpp()
 	}
 	catch (...)
 	{
-		std::string e_string = "Advection_cpp failed with an unhandled exception.";
+		std::string e_string = "Advection_bmi_cpp failed with an unhandled exception.";
 		std::cerr << e_string << std::endl;
 #ifdef USE_MPI
 		MPI_Abort(MPI_COMM_WORLD, 1);
@@ -1020,14 +977,21 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 	//void BMI_Finalize();
 
 }
-void GenerateYAML(PhreeqcRM &phreeqc_rm)
+void GenerateYAML(int nxyz, std::string YAML_filename)
 {
-	int nxyz = 0;
-	phreeqc_rm.BMI_GetValue("GridCellCount", &nxyz);
 	YAMLPhreeqcRM yrm;
-	YAML::Node node2;
-	YAML::Node node;
-	YAML::Node yaml_initializer;
+	// Load database
+	yrm.YAMLLoadDatabase("phreeqc.dat");
+
+	// Run file to define solutions and reactants for initial conditions, selected output
+	bool workers = true;             // Worker instances do the reaction calculations for transport
+	bool initial_phreeqc = true;     // InitialPhreeqc instance accumulates initial and boundary conditions
+	bool utility = true;             // Utility instance is available for processing
+	yrm.YAMLRunFile(workers, initial_phreeqc, utility, "advect.pqi");
+	// Determine number of components to transport
+	yrm.YAMLFindComponents();
+
+	// Set some properties
 	yrm.YAMLSetErrorHandlerMode(1);
 	yrm.YAMLSetComponentH2O(false);
 	yrm.YAMLSetRebalanceFraction(0.5);
@@ -1052,7 +1016,7 @@ void GenerateYAML(PhreeqcRM &phreeqc_rm)
 	yrm.YAMLSetUnitsSSassemblage(1);       // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
 	yrm.YAMLSetUnitsKinetics(1);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 
-	// Set conversion from seconds to user units (days)
+	// Set conversion from seconds to user units (days) Only affects one print statement
 	double time_conversion = 1.0 / 86400;
 	yrm.YAMLSetTimeConversion(time_conversion);
 	// Set representative volume
@@ -1072,14 +1036,6 @@ void GenerateYAML(PhreeqcRM &phreeqc_rm)
 	}
 	yrm.YAMLSetPrintChemistryMask(print_chemistry_mask);
 
-	// Initialize with YAML defined to this point
-	std::ostringstream yaml;
-	yaml << yrm.GetYAMLDoc() << std::endl;
-	const YAML::Node &ref = yrm.GetYAMLDoc();
-	phreeqc_rm.BMI_Initialize(yaml.str()); // TODO TODO TODO
-
-
-
 	// Demonstation of mapping, two equivalent rows by symmetry
 	std::vector<int> grid2chem;
 	grid2chem.resize(nxyz, -1);
@@ -1092,27 +1048,66 @@ void GenerateYAML(PhreeqcRM &phreeqc_rm)
 
 	// Set printing of chemistry file
 	yrm.YAMLSetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
-	// Load database
-	yrm.YAMLLoadDatabase("phreeqc.dat");
 
-	// Run file to define solutions and reactants for initial conditions, selected output
-	bool workers = true;             // Worker instances do the reaction calculations for transport
-	bool initial_phreeqc = true;     // InitialPhreeqc instance accumulates initial and boundary conditions
-	bool utility = true;             // Utility instance is available for processing
-	yrm.YAMLRunFile(workers, initial_phreeqc, utility, "advect.pqi");
 	// Clear contents of workers and utility
 	initial_phreeqc = false;
 	std::string input = "DELETE; -all";
 	yrm.YAMLRunString(workers, initial_phreeqc, utility, input.c_str());
-	// Determine number of components to transport
-	yrm.YAMLFindComponents();
 
-	// Initialize with YAML
+	// set array of initial conditions
+	std::vector<int> ic1, ic2;
+	ic1.resize(nxyz * 7, -1);
+	ic2.resize(nxyz * 7, -1);
+	std::vector<double> f1;
+	f1.resize(nxyz * 7, 1.1);
+	for (int i = 0; i < nxyz; i++)
 	{
-		std::ostringstream yaml;
-		yaml << yrm.GetYAMLDoc() << std::endl;
-		const YAML::Node& ref = yrm.GetYAMLDoc();
-		phreeqc_rm.BMI_Initialize(yaml.str()); // TODO TODO TODO
+		ic1[i] = 1;              // Solution 1
+		ic1[nxyz + i] = -1;      // Equilibrium phases none
+		ic1[2 * nxyz + i] = 1;     // Exchange 1
+		ic1[3 * nxyz + i] = -1;    // Surface none
+		ic1[4 * nxyz + i] = -1;    // Gas phase none
+		ic1[5 * nxyz + i] = -1;    // Solid solutions none
+		ic1[6 * nxyz + i] = -1;    // Kinetics none
+	}
+	yrm.YAMLInitialPhreeqc2Module(ic1, ic2, f1);
+	// No mixing is defined, so the following is equivalent
+	yrm.YAMLInitialPhreeqc2Module(ic1);
+
+	// alternative for setting initial conditions
+	// cell number in first argument (-1 indicates last solution, 40 in this case)
+	// in advect.pqi and any reactants with the same number--
+	// Equilibrium phases, exchange, surface, gas phase, solid solution, and (or) kinetics--
+	// will be written to cells 18 and 19 (0 based)
+	std::vector<int> module_cells;
+	module_cells.push_back(18);
+	module_cells.push_back(19);
+	yrm.YAMLInitialPhreeqcCell2Module(-1, module_cells);
+
+	// Set density, temperature, and pressure
+	std::vector<double> initial_density(nxyz, 1.0);
+	std::vector<double> temperature(nxyz, 20.0);
+	std::vector<double> pressure(nxyz, 2.0);
+	yrm.YAMLSetDensity(initial_density);
+	yrm.YAMLSetTemperature(temperature);
+	yrm.YAMLSetPressure(pressure);
+
+	// Initial equilibration of cells
+	double time_step = 0.0;  // no kinetics
+	yrm.YAMLSetTimeStep(time_step);
+	double time = 0.0;
+	yrm.YAMLSetTime(time);
+	yrm.YAMLRunCells();
+
+	// Write YAML file
+	{
+		std::ostringstream oss;
+		oss << yrm.GetYAMLDoc();
+		std::ofstream ofs = std::ofstream(YAML_filename.c_str(), std::ofstream::out);
+		ofs << oss.str();
+		ofs.close();
+
+		//phreeqc_rm.BMI_Initialize(yaml.str()); // TODO TODO TODO
 		//for (YAML::const_iterator it = ref.begin();it != ref.end();++it)
 		//{
 		//	std::cerr << "  " << it->first << std::endl;

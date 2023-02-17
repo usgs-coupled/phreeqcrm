@@ -4715,8 +4715,8 @@ private:
 	std::vector<std::string> bmi_output_vars;
 public:
 	void InitializeYAML(std::string config);
-	void BMI_Initialize(std::string config) { InitializeYAML(config); }
-	void BMI_Update();
+	void BMI_Initialize(std::string config) { InitializeYAML(config); };
+	void BMI_Update(void) { this->RunCells(); };
 	//void BMI_Finalize();
 	std::string BMI_GetComponentName() { return "PhreeqcRM"; }
 	int BMI_GetInputItemCount() { return (int)this->bmi_input_vars.size(); }
