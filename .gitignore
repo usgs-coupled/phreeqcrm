@@ -37,3 +37,13 @@ m4/lt~obsolete.m4
 
 # ignore directories beginning with '_'
 /_*/
+
+# dist files
+configure.ac.dist
+Makefile.am.dist
+doc/NOTICE.TXT.dist
+doc/README.TXT.dist
+src/PhreeqcRM.h.dist
+src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h.dist
+src/IPhreeqcPhast/IPhreeqc/Version.h.dist
+CMakeLists.txt.dist

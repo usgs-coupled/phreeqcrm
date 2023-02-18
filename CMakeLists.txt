@@ -1,7 +1,11 @@
 # CMAKE_MSVC_RUNTIME_LIBRARY requires 3.15
 cmake_minimum_required (VERSION 3.20)
 
-project (PhreeqcRM CXX C)
+project (
+  PhreeqcRM
+  VERSION 3.7.0
+  LANGUAGES CXX C
+  )
 
 # check if this is the root project
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
