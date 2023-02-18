@@ -96,7 +96,9 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             return;
         }
     }
-    throw LetItThrow("Item not found");
+    //throw LetItThrow("Item not found");
+    ErrorMessage("Item not found");
+    throw PhreeqcRMStop();
 }
 void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
 {
@@ -211,7 +213,9 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
             return;
         }
     }
-    throw LetItThrow("Item not found");
+    //throw LetItThrow("Item not found");
+    ErrorMessage("Item not found");
+    throw PhreeqcRMStop();
 }
 int PhreeqcRM::BMI_GetVarNbytes(std::string name)
 {
@@ -298,7 +302,9 @@ int PhreeqcRM::BMI_GetVarNbytes(std::string name)
             return (int)sizeof(double) * this->GetGridCellCount();
         }
     }
-	throw LetItThrow("Item not found");
+	//throw LetItThrow("Item not found");
+    ErrorMessage("Item not found");
+    throw PhreeqcRMStop();
 }
 std::string PhreeqcRM::BMI_GetVarUnits(std::string name)
 {
@@ -320,13 +326,17 @@ std::string PhreeqcRM::BMI_GetVarUnits(std::string name)
                 return "kg kgs-1";
 				break;
 			default:
-				throw LetItThrow("Unknown units for GetUnitsSolution in GetVarUnits");
+				//throw LetItThrow("Unknown units for GetUnitsSolution in GetVarUnits");
+                ErrorMessage("Unknown units for GetUnitsSolution in GetVarUnits");
+                throw PhreeqcRMStop();
 				break;
 			}
         }
         return it->second.GetUnits();
     }
-    throw LetItThrow("Item not found");
+    //throw LetItThrow("Item not found");
+    ErrorMessage("Item not found");
+    throw PhreeqcRMStop();
 }
 int PhreeqcRM::BMI_GetVarItemsize(std::string name)
 {
@@ -426,8 +436,9 @@ int PhreeqcRM::BMI_GetVarItemsize(std::string name)
     }
     else
     {
-        throw LetItThrow("Item not found");
-        return -1;
+        //throw LetItThrow("Item not found");
+        ErrorMessage("Item not found");
+        throw PhreeqcRMStop();
     }
     return -1;
 }
@@ -440,7 +451,9 @@ std::string PhreeqcRM::BMI_GetVarType(std::string name)
     }
     else
     {
-        throw LetItThrow("Item not found");
+        //throw LetItThrow("Item not found");
+        ErrorMessage("Item not found");
+        throw PhreeqcRMStop();
     }
 }
 void PhreeqcRM::BMI_MakeVarMap()
@@ -610,7 +623,9 @@ void PhreeqcRM::InitializeYAML(std::string config)
 				this->InitialPhreeqc2Module(ic1, ic2, f1);
 				continue;
 	        }
-            LetItThrow("YAML argument mismatch InitialPhreeqc2Module");
+            //throw LetItThrow("YAML argument mismatch InitialPhreeqc2Module");
+            ErrorMessage("YAML argument mismatch InitialPhreeqc2Module");
+            throw PhreeqcRMStop();
         }
         if (keyword == "InitialPhreeqcCell2Module")
         {
@@ -948,7 +963,9 @@ void PhreeqcRM::InitializeYAML(std::string config)
             this->WarningMessage(str);
             continue;
         }
-		LetItThrow("YAML keyword not found");
+		//throw LetItThrow("YAML keyword not found");
+        ErrorMessage("YAML keyword not found");
+        throw PhreeqcRMStop();
 	}
     return;
 }

@@ -42,10 +42,10 @@ class IRM_DLL_EXPORT PhreeqcRMStop : public std::exception
 public:
   const char *what() const throw () {return "Failure in PhreeqcRM\n";}
 };
-class LetItThrow : public std::logic_error {
-public:
-	LetItThrow(std::string error_string) : std::logic_error(error_string.c_str()) { };
-};
+//class LetItThrow : public std::logic_error {
+//public:
+//	LetItThrow(std::string error_string) : std::logic_error(error_string.c_str()) { };
+//};
 /*! @brief Enumeration used to return error codes.
 */
 #include "IrmResult.h"
@@ -4715,117 +4715,163 @@ private:
 	std::vector<std::string> bmi_output_vars;
 public:
 	void InitializeYAML(std::string config);
-	void BMI_Initialize(std::string config) { InitializeYAML(config); };
-	void BMI_Update(void) { this->RunCells(); };
 	//void BMI_Finalize();
 	std::string BMI_GetComponentName() { return "PhreeqcRM"; }
-	int BMI_GetInputItemCount() { return (int)this->bmi_input_vars.size(); }
-	int BMI_GetOutputItemCount() { return (int)this->bmi_output_vars.size(); }
-	std::vector<std::string> BMI_GetInputVarNames() { return this->bmi_input_vars; }
-	std::vector<std::string> BMI_GetOutputVarNames() { return this->bmi_output_vars; };
-	std::string BMI_GetVarType(std::string name);
-	int BMI_GetVarItemsize(std::string name);
-	std::string BMI_GetVarUnits(std::string name);
-	int BMI_GetVarNbytes(std::string name);
 	double BMI_GetCurrentTime() { return this->GetTime(); }
 	double BMI_GetEndTime() { return this->GetTime() + this->GetTimeStep(); }
-	std::string BMI_GetTimeUnits() { return "seconds"; };
+	void BMI_Initialize(std::string config) { InitializeYAML(config); };
+	int BMI_GetInputItemCount() { return (int)this->bmi_input_vars.size(); }
+	std::vector<std::string> BMI_GetInputVarNames() { return this->bmi_input_vars; }
+	int BMI_GetOutputItemCount() { return (int)this->bmi_output_vars.size(); }
+	std::vector<std::string> BMI_GetOutputVarNames() { return this->bmi_output_vars; };
 	double BMI_GetTimeStep() { return this->GetTimeStep(); }
+	std::string BMI_GetTimeUnits() { return "seconds"; };
 	void BMI_GetValue(std::string name, void* dest);
+	int BMI_GetVarItemsize(std::string name);
+	int BMI_GetVarNbytes(std::string name);
+	std::string BMI_GetVarType(std::string name);
+	std::string BMI_GetVarUnits(std::string name);
 	void BMI_SetValue(std::string name, void* src);
+	void BMI_Update(void) { this->RunCells(); };
 #ifdef NOT_IMPLEMENTED
 	void BMI_UpdateUntil(double time)
 	{
-		throw LetItThrow("Not implemented");
+		//throw LetItThrow("Not implemented");
+		ErrorMessage("Not implemented");
+		throw PhreeqcRMStop();
 	}
 	int BMI_GetVarGrid(std::string name)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	std::string BMI_GetVarLocation(std::string name)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	double BMI_GetStartTime()
 	{
-		throw LetItThrow("Not implemented");
+		//throw LetItThrow("Not implemented");
+		ErrorMessage("Not implemented");
+		throw PhreeqcRMStop();
 	};
 	void* BMI_GetValuePtr(std::string name)
 	{
-		throw LetItThrow("Not implemented");
+		//throw LetItThrow("Not implemented");
+		ErrorMessage("Not implemented");
+		throw PhreeqcRMStop();
 	}
 	void BMI_GetValueAtIndices(std::string name, void* dest, int* inds, int count)
 	{
-		throw LetItThrow("Not implemented");
+		//throw LetItThrow("Not implemented");
+		ErrorMessage("Not implemented");
+		throw PhreeqcRMStop();
 	};
 	void BMI_SetValueAtIndices(std::string name, int* inds, int len, void* src)
 	{
-		throw LetItThrow("Not implemented");
+		//throw LetItThrow("Not implemented");
+		ErrorMessage("Not implemented");
+		throw PhreeqcRMStop();
 	};
 	int BMI_GetGridRank(const int grid)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	int BMI_GetGridSize(const int grid)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	std::string BMI_GetGridType(const int grid)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	void BMI_GetGridShape(const int grid, int* shape)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	void BMI_GetGridSpacing(const int grid, double* spacing)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	void GetGridOrigin(const int grid, double* origin)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	void BMI_GetGridX(const int grid, double* x)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	void BMI_GetGridY(const int grid, double* y)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	void BMI_GetGridZ(const int grid, double* z)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 
 	int BMI_GetGridNodeCount(const int grid)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	int BMI_GetGridEdgeCount(const int grid)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	int BMI_GetGridFaceCount(const int grid)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	void BMI_GetGridEdgeNodes(const int grid, int* edge_nodes)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	void BMI_GetGridFaceEdges(const int grid, int* face_edges)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	void BMI_GetGridFaceNodes(const int grid, int* face_nodes)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 	void BMI_GetGridNodesPerFace(const int grid, int* nodes_per_face)
 	{
-		throw LetItThrow("Not applicable");
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
 	};
 #endif
 private:
