@@ -591,6 +591,54 @@ status = phreeqc_rm.GetConcentrations(c);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                GetConcentrations(std::vector<double> &c);
+	/**
+	Returns the user number of the current selected-output definition.
+	@ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput specifies which of the
+	selected-output definitions is used.
+	@retval                 User number of the the current selected-output definition,
+	negative is failure (See @ref DecodeError).
+@see
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
+@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
+	{
+	  status = phreeqc_rm.SetCurrentSelectedOutput(isel);
+	  int n_user = phreeqc_rm.GetCurrentSelectedOutputUserNumber(isel);
+	  std::vector<double> so;
+	  int col = phreeqc_rm.GetSelectedOutputColumnCount();
+	  status = phreeqc_rm.GetSelectedOutput(so);
+	  // Print results
+	  for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
+	  {
+		std::vector<std::string> headings;
+		headings.resize(col);
+		std::cerr << "     Selected output " << n_user <<": " << "\n";
+		for (int j = 0; j < col; j++)
+		{
+		  status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
+		  std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
+		}
+	  }
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	int                                       GetCurrentSelectedOutputUserNumber(void);
 /**
 Returns the file name of the database. Should be called after @ref LoadDatabase.
 @retval std::string      The file name defined in @ref LoadDatabase.
@@ -1310,10 +1358,17 @@ that user number for selected-output processing.
 @param n                The sequence number of the selected-output definition for which the user number will be returned.
 Fortran, 1 based; C, 0 based.
 @retval                 The user number of the @a nth selected-output definition, negative is failure (See @ref DecodeError).
-@see                    @ref GetSelectedOutput,
-@ref GetSelectedOutputColumnCount, @ref GetSelectedOutputCount,
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
 @ref GetSelectedOutputHeading,
-@ref GetSelectedOutputRowCount, @ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1553,9 +1608,17 @@ Size of the vector is set to @a col times @a nxyz, where @a col is the number of
 columns in the selected-output definition (@ref GetSelectedOutputColumnCount),
 and @a nxyz is the number of grid cells in the user's model (@ref GetGridCellCount).
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber,
-@ref GetSelectedOutputColumnCount, @ref GetSelectedOutputCount, @ref GetSelectedOutputHeading,
-@ref GetSelectedOutputRowCount, @ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1581,9 +1644,17 @@ Returns the number of columns in the current selected-output definition.
 @ref SetCurrentSelectedOutputUserNumber specifies which of the selected-output definitions is used.
 @retval                 Number of columns in the current selected-output definition,
 negative is failure (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber, @ref GetSelectedOutput,
-@ref GetSelectedOutputCount, @ref GetSelectedOutputHeading,
-@ref GetSelectedOutputRowCount, @ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1619,9 +1690,17 @@ Called by root.
 Returns the number of selected-output definitions.
 @ref SetCurrentSelectedOutputUserNumber specifies which of the selected-output definitions is used.
 @retval                 Number of selected-output definitions, negative is failure (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber, @ref GetSelectedOutput,
-@ref GetSelectedOutputColumnCount, @ref GetSelectedOutputHeading,
-@ref GetSelectedOutputRowCount, @ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1649,9 +1728,17 @@ The number of headings is determined by @ref GetSelectedOutputColumnCount.
 @param icol             The sequence number of the heading to be retrieved, 0 based.
 @param heading          A string to receive the heading.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber, @ref GetSelectedOutput,
-@ref GetSelectedOutputColumnCount, @ref GetSelectedOutputCount,
-@ref GetSelectedOutputRowCount, @ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1685,7 +1772,17 @@ A value of true for this property indicates that selected output data will be re
 A value of false indicates that selected output will not be retrieved for this time step;
 processing the selected output is avoided with some time savings.
 @retval bool      @a True, selected output will be requested; @a false, selected output will not be retrieved.
-@see              @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1704,9 +1801,17 @@ is included only for convenience; the number of rows is always equal to the numb
 grid cells in the user's model (@ref GetGridCellCount).
 @retval                 Number of rows in the current selected-output definition, negative is failure
 (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber, @ref GetSelectedOutput, @ref GetSelectedOutputColumnCount,
-@ref GetSelectedOutputCount, @ref GetSelectedOutputHeading,
-@ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -3460,9 +3565,16 @@ the argument @a n_user selects which of the SELECTED_OUTPUT definitions will be 
 for selected-output operations.
 @param n_user           User number of the SELECTED_OUTPUT data block that is to be used.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber, @ref GetSelectedOutput,
-@ref GetSelectedOutputColumnCount, @ref GetSelectedOutputCount,
-@ref GetSelectedOutputRowCount, @ref GetSelectedOutputHeading,
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetNthSelectedOutput,
 @ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
@@ -3839,6 +3951,56 @@ MPI and Fortran only. Defines a callback function that allows additional tasks t
 by the workers. See documentation of PhreeqcRM for Fortran, method SetMpiWorkerCallback.
  */
 	IRM_RESULT								  SetMpiWorkerCallbackFortran(int (*fcn)(int *method));
+	/**
+	Specify the current selected output by sequence number. The user may define multiple SELECTED_OUTPUT
+	data blocks for the workers. A user number is specified for each data block, and the blocks are
+	stored in user-number order. The value of
+	the argument @a n selects the sequence number of the SELECTED_OUTPUT definition that will be used
+	for selected-output operations.
+	@param n           Sequence number of the SELECTED_OUTPUT data block that is to be used.
+	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetSelectedOutputOn.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
+	{
+	  status = phreeqc_rm.SetCurrentSelectedOutput(isel);
+	  int n_user = phreeqc_rm.GetCurrentSelectedOutputUserNumber(isel);
+	  std::vector<double> so;
+	  int col = phreeqc_rm.GetSelectedOutputColumnCount();
+	  status = phreeqc_rm.GetSelectedOutput(so);
+	  // Print results
+	  for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
+	  {
+		std::vector<std::string> headings;
+		headings.resize(col);
+		std::cerr << "     Selected output " << n_user <<": " << "\n";
+		for (int j = 0; j < col; j++)
+		{
+		  status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
+		  std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
+		}
+	  }
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	IRM_RESULT                                SetNthSelectedOutput(int n);
 /**
 Sets the property for partitioning solids between the saturated and unsaturated
 parts of a partially saturated cell.
@@ -4126,7 +4288,18 @@ be accumulated during @ref RunCells.
 
 @param tf  @a True, enable selected output; @a False, disable selected output.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref GetSelectedOutput, @ref SetPrintChemistryOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>

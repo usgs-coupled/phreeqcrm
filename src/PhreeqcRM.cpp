@@ -3355,6 +3355,22 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 }
 #endif
 /* ---------------------------------------------------------------------- */
+int
+PhreeqcRM::GetCurrentSelectedOutputUserNumber(void)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	int return_value = IRM_INVALIDARG;
+	try
+	{
+		return_value = this->workers[0]->GetCurrentSelectedOutputUserNumber();
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetCurrentSelectedOutputUserNumber");
+}
+/* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::GetDensity(std::vector<double> & density_arg)
 /* ---------------------------------------------------------------------- */
@@ -10747,6 +10763,23 @@ PhreeqcRM::SetMpiWorkerCallbackFortran(int (*fcn)(int *method))
 	this->phreeqcrm_error_string.clear();
 	this->mpi_worker_callback_fortran = fcn;
 	return IRM_OK;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::SetNthSelectedOutput(int n)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	int return_value = IRM_INVALIDARG;
+	if (n >= 0)
+	{
+		int n_user = this->workers[0]->GetNthSelectedOutputUserNumber(n);
+		if (n_user >= 0)
+		{
+			return_value = this->workers[0]->SetCurrentSelectedOutputUserNumber(n_user);
+		}
+	}
+	return this->ReturnHandler(PhreeqcRM::Int2IrmResult(return_value, false), "PhreeqcRM::SetNthSelectedOutput");
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
