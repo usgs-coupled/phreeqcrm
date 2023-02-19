@@ -511,6 +511,44 @@ Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetConcentrations(int id, double *c);
 /**
+Returns the user number of the current selected-output definition.
+@ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput specifies which of the
+selected-output definitions is used.
+@retval                 User number of the the current selected-output definition,
+negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_GetNthSelectedOutputUserNumber,
+@ref RM_GetSelectedOutput,
+@ref RM_GetSelectedOutputColumnCount,
+@ref RM_GetSelectedOutputCount,
+@ref RM_GetSelectedOutputHeading,
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
+@ref RM_SetSelectedOutputOn.
+@par C Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	for (isel = 0; isel < RM_GetSelectedOutputCount(id); isel++)
+	{
+	  status = RM_SetNthSelectedOutputUser(id, isel);
+	  n_user = RM_GetCurrentSelectedOutputUserNumber(id);
+	  col = RM_GetSelectedOutputColumnCount(id);
+	  selected_out = (double *) malloc((size_t) (col * nxyz * sizeof(double)));
+	  status = RM_GetSelectedOutput(id, selected_out);
+	  // Process results here
+	  free(selected_out);
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+*/
+IRM_DLL_EXPORT int RM_GetCurrentSelectedOutputUserNumber(int id);
+
+/**
 Transfer solution densities from the reaction cells to the array given in the argument list (@a density).
 Densities are those calculated by the reaction module.
 Only the following databases distributed with PhreeqcRM have molar volume information needed to accurately calculate density:
@@ -1221,13 +1259,15 @@ that user number for selected-output processing.
 @param n                The sequence number of the selected-output definition for which the user number will be returned.
 C, 0 based.
 @retval                 The user number of the @a nth selected-output definition, negative is failure (See @ref RM_DecodeError).
-@see                    
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
 @ref RM_GetSelectedOutput,
-@ref RM_GetSelectedOutputColumnCount, 
+@ref RM_GetSelectedOutputColumnCount,
 @ref RM_GetSelectedOutputCount,
 @ref RM_GetSelectedOutputHeading,
-@ref RM_GetSelectedOutputRowCount, 
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -1298,13 +1338,15 @@ determines which of the selected-output definitions is used to populate the arra
 where @a nxyz is the number of grid cells in the user's model (@ref RM_GetGridCellCount), and @a col is the number of
 columns in the selected-output definition (@ref RM_GetSelectedOutputColumnCount).
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-@see                    
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
 @ref RM_GetNthSelectedOutputUserNumber,
-@ref RM_GetSelectedOutputColumnCount, 
-@ref RM_GetSelectedOutputCount, 
+@ref RM_GetSelectedOutputColumnCount,
+@ref RM_GetSelectedOutputCount,
 @ref RM_GetSelectedOutputHeading,
-@ref RM_GetSelectedOutputRowCount, 
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -1333,13 +1375,15 @@ Returns the number of columns in the current selected-output definition. @ref RM
 determines which of the selected-output definitions is used.
 @param id               The instance @a id returned from @ref RM_Create.
 @retval                 Number of columns in the current selected-output definition, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetNthSelectedOutputUserNumber, 
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
 @ref RM_GetSelectedOutput,
-@ref RM_GetSelectedOutputCount, 
+@ref RM_GetSelectedOutputCount,
 @ref RM_GetSelectedOutputHeading,
-@ref RM_GetSelectedOutputRowCount, 
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -1367,13 +1411,15 @@ Returns the number of selected-output definitions. @ref RM_SetCurrentSelectedOut
 determines which of the selected-output definitions is used.
 @param id               The instance @a id returned from @ref RM_Create.
 @retval                 Number of selected-output definitions, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetNthSelectedOutputUserNumber, 
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
 @ref RM_GetSelectedOutput,
-@ref RM_GetSelectedOutputColumnCount, 
+@ref RM_GetSelectedOutputColumnCount,
 @ref RM_GetSelectedOutputHeading,
-@ref RM_GetSelectedOutputRowCount, 
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -1405,13 +1451,15 @@ determines which of the selected-output definitions is used.
 @param heading          A string buffer to receive the heading.
 @param length           The maximum number of characters that can be written to the string buffer.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetNthSelectedOutputUserNumber, 
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
 @ref RM_GetSelectedOutput,
-@ref RM_GetSelectedOutputColumnCount, 
+@ref RM_GetSelectedOutputColumnCount,
 @ref RM_GetSelectedOutputCount,
-@ref RM_GetSelectedOutputRowCount, 
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -1442,13 +1490,15 @@ is included only for convenience; the number of rows is always equal to the numb
 grid cells in the user's model, and is equal to @ref RM_GetGridCellCount.
 @param id               The instance @a id returned from @ref RM_Create.
 @retval                 Number of rows in the current selected-output definition, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetNthSelectedOutputUserNumber, 
-@ref RM_GetSelectedOutput, 
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
+@ref RM_GetSelectedOutput,
 @ref RM_GetSelectedOutputColumnCount,
-@ref RM_GetSelectedOutputCount, 
+@ref RM_GetSelectedOutputCount,
 @ref RM_GetSelectedOutputHeading,
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -2882,13 +2932,15 @@ for selected-output operations.
 @param id               The instance @a id returned from @ref RM_Create.
 @param n_user           User number of the SELECTED_OUTPUT data block that is to be used.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetNthSelectedOutputUserNumber, 
-@ref RM_GetSelectedOutput, 
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
+@ref RM_GetSelectedOutput,
 @ref RM_GetSelectedOutputColumnCount,
-@ref RM_GetSelectedOutputCount, 
-@ref RM_GetSelectedOutputHeading, 
+@ref RM_GetSelectedOutputCount,
+@ref RM_GetSelectedOutputHeading,
 @ref RM_GetSelectedOutputRowCount,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -3283,6 +3335,45 @@ Called by workers, before call to @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SetMpiWorkerCallbackCookie(int id, void *cookie);
 /**
+Specify the current selected output by sequence number. The user may define multiple SELECTED_OUTPUT
+data blocks for the workers. A user number is specified for each data block, and the blocks are
+stored in user-number order. The value of
+the argument @a n selects the sequence number of the SELECTED_OUTPUT definition that will be used
+for selected-output operations.
+@param n           Sequence number of the SELECTED_OUTPUT data block that is to be used.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
+@ref RM_GetSelectedOutput,
+@ref RM_GetSelectedOutputColumnCount,
+@ref RM_GetSelectedOutputCount,
+@ref RM_GetSelectedOutputHeading,
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetSelectedOutputOn.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	for (isel = 0; isel < RM_GetSelectedOutputCount(id); isel++)
+	{
+	  status = RM_SetNthSelectedOutputUser(id, isel);
+	  n_user = RM_GetCurrentSelectedOutputUserNumber(id);
+	  col = RM_GetSelectedOutputColumnCount(id);
+	  selected_out = (double *) malloc((size_t) (col * nxyz * sizeof(double)));
+	  status = RM_GetSelectedOutput(id, selected_out);
+	  // Process results here
+	  free(selected_out);
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_SetNthSelectedOutput(int id, int n);
+/**
 Sets the property for partitioning solids between the saturated and unsaturated
 parts of a partially saturated cell.
 
@@ -3601,9 +3692,16 @@ be accumulated during @ref RM_RunCells.
 @param id               The instance @a id returned from @ref RM_Create.
 @param selected_output  0, disable selected output; 1, enable selected output.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetSelectedOutput, 
-@ref RM_SetPrintChemistryOn.
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
+@ref RM_GetSelectedOutput,
+@ref RM_GetSelectedOutputColumnCount,
+@ref RM_GetSelectedOutputCount,
+@ref RM_GetSelectedOutputHeading,
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput.
 
 @par C Example:
 @htmlonly
