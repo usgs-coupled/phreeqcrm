@@ -841,6 +841,53 @@ INTEGER FUNCTION RM_GetConcentrations1D(id, c)
     return
 END FUNCTION RM_GetConcentrations1D    
 #endif
+!> Returns the user number of the current selected-output definition.
+!> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput specifies which of the
+!> selected-output definitions is used.
+!> @retval                 User number of the the current selected-output definition,
+!> negative is failure (See @ref RM_DecodeError).
+!> @see
+!> @ref RM_GetNthSelectedOutputUserNumber,
+!> @ref RM_GetSelectedOutput,
+!> @ref RM_GetSelectedOutputColumnCount,
+!> @ref RM_GetSelectedOutputCount,
+!> @ref RM_GetSelectedOutputHeading,
+!> @ref RM_GetSelectedOutputRowCount,
+!> @ref RM_SetCurrentSelectedOutputUserNumber,
+!> @ref RM_SetNthSelectedOutput,
+!> @ref RM_SetSelectedOutputOn.
+!> @par Fortran Example:
+!> 	@htmlonly
+!> 	<CODE>
+!> 	<PRE>
+!> do isel = 1, RM_GetSelectedOutputCount(id)
+!>   status = RM_SetNthSelectedOutput(id, isel)
+!>   n_user = RM_GetCurrentSelectedOutputUserNumber(id)
+!>   col = RM_GetSelectedOutputColumnCount(id)
+!>   allocate(selected_out(nxyz,col))
+!>   status = RM_GetSelectedOutput(id, selected_out)
+!>   ! Process results here
+!>   deallocate(selected_out)
+!> enddo
+!> 	</PRE>
+!> 	</CODE>
+!> 	@endhtmlonly
+!> 	@par MPI:
+!> 	Called by root.
+INTEGER FUNCTION RM_GetCurrentSelectedOutputUserNumber(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetCurrentSelectedOutputUserNumber(id) &
+            BIND(C, NAME='RMF_GetCurrentSelectedOutputUserNumber')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_GetCurrentSelectedOutputUserNumber 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    RM_GetCurrentSelectedOutputUserNumber = RMF_GetCurrentSelectedOutputUserNumber(id)
+END FUNCTION RM_GetCurrentSelectedOutputUserNumber
 !> Transfer solution densities from the reaction cells to the array given in the argument list (@a density). 
 !> Densities are those calculated by the reaction module.
 !> Only the following databases distributed with PhreeqcRM have molar volume information needed to accurately calculate density:
@@ -1954,13 +2001,15 @@ END FUNCTION RM_GetMpiTasks
 !> @param n                The sequence number of the selected-output definition for which the user number will be returned.
 !> Fortran, 1 based.
 !> @retval                 The user number of the @a nth selected-output definition, negative is failure (See @ref RM_DecodeError).
-!> @see                    
+!> @see
+!> @ref RM_GetCurrentSelectedOutputUserNumber,
 !> @ref RM_GetSelectedOutput,
-!> @ref RM_GetSelectedOutputColumnCount, 
+!> @ref RM_GetSelectedOutputColumnCount,
 !> @ref RM_GetSelectedOutputCount,
 !> @ref RM_GetSelectedOutputHeading,
-!> @ref RM_GetSelectedOutputRowCount, 
-!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_GetSelectedOutputRowCount,
+!> @ref RM_SetCurrentSelectedOutputUserNumber,
+!> @ref RM_SetNthSelectedOutput,
 !> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
@@ -2069,13 +2118,15 @@ END SUBROUTINE Chk_GetSaturation
 !> where @a nxyz is the number of grid cells in the user's model (@ref RM_GetGridCellCount), and @a col is the number of
 !> columns in the selected-output definition (@ref RM_GetSelectedOutputColumnCount).
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    
+!> @see
+!> @ref RM_GetCurrentSelectedOutputUserNumber,
 !> @ref RM_GetNthSelectedOutputUserNumber,
-!> @ref RM_GetSelectedOutputColumnCount, 
-!> @ref RM_GetSelectedOutputCount, 
+!> @ref RM_GetSelectedOutputColumnCount,
+!> @ref RM_GetSelectedOutputCount,
 !> @ref RM_GetSelectedOutputHeading,
-!> @ref RM_GetSelectedOutputRowCount, 
-!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_GetSelectedOutputRowCount,
+!> @ref RM_SetCurrentSelectedOutputUserNumber,
+!> @ref RM_SetNthSelectedOutput,
 !> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
@@ -2131,13 +2182,15 @@ END SUBROUTINE Chk_GetSelectedOutput
 !> determines which of the selected-output definitions is used.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 Number of columns in the current selected-output definition, negative is failure (See @ref RM_DecodeError).
-!> @see                    
-!> @ref RM_GetNthSelectedOutputUserNumber, 
+!> @see
+!> @ref RM_GetCurrentSelectedOutputUserNumber,
+!> @ref RM_GetNthSelectedOutputUserNumber,
 !> @ref RM_GetSelectedOutput,
-!> @ref RM_GetSelectedOutputCount, 
+!> @ref RM_GetSelectedOutputCount,
 !> @ref RM_GetSelectedOutputHeading,
-!> @ref RM_GetSelectedOutputRowCount, 
-!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_GetSelectedOutputRowCount,
+!> @ref RM_SetCurrentSelectedOutputUserNumber,
+!> @ref RM_SetNthSelectedOutput,
 !> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
@@ -2177,13 +2230,15 @@ END FUNCTION RM_GetSelectedOutputColumnCount
 !> determines which of the selected-output definitions is used.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 Number of selected-output definitions, negative is failure (See @ref RM_DecodeError).
-!> @see                    
-!> @ref RM_GetNthSelectedOutputUserNumber, 
+!> @see
+!> @ref RM_GetCurrentSelectedOutputUserNumber,
+!> @ref RM_GetNthSelectedOutputUserNumber,
 !> @ref RM_GetSelectedOutput,
-!> @ref RM_GetSelectedOutputColumnCount, 
+!> @ref RM_GetSelectedOutputColumnCount,
 !> @ref RM_GetSelectedOutputHeading,
-!> @ref RM_GetSelectedOutputRowCount, 
-!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_GetSelectedOutputRowCount,
+!> @ref RM_SetCurrentSelectedOutputUserNumber,
+!> @ref RM_SetNthSelectedOutput,
 !> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
@@ -2226,13 +2281,15 @@ END FUNCTION RM_GetSelectedOutputCount
 !> @param icol             The sequence number of the heading to be retrieved. Fortran, 1 based.
 !> @param heading          A string buffer to receive the heading.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    
-!> @ref RM_GetNthSelectedOutputUserNumber, 
+!> @see
+!> @ref RM_GetCurrentSelectedOutputUserNumber,
+!> @ref RM_GetNthSelectedOutputUserNumber,
 !> @ref RM_GetSelectedOutput,
-!> @ref RM_GetSelectedOutputColumnCount, 
+!> @ref RM_GetSelectedOutputColumnCount,
 !> @ref RM_GetSelectedOutputCount,
-!> @ref RM_GetSelectedOutputRowCount, 
-!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_GetSelectedOutputRowCount,
+!> @ref RM_SetCurrentSelectedOutputUserNumber,
+!> @ref RM_SetNthSelectedOutput,
 !> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
@@ -2275,13 +2332,15 @@ END FUNCTION RM_GetSelectedOutputHeading
 !> grid cells in the user's model, and is equal to @ref RM_GetGridCellCount.
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @retval                 Number of rows in the current selected-output definition, negative is failure (See @ref RM_DecodeError).
-!> @see                    
-!> @ref RM_GetNthSelectedOutputUserNumber, 
-!> @ref RM_GetSelectedOutput, 
+!> @see
+!> @ref RM_GetCurrentSelectedOutputUserNumber,
+!> @ref RM_GetNthSelectedOutputUserNumber,
+!> @ref RM_GetSelectedOutput,
 !> @ref RM_GetSelectedOutputColumnCount,
-!> @ref RM_GetSelectedOutputCount, 
+!> @ref RM_GetSelectedOutputCount,
 !> @ref RM_GetSelectedOutputHeading,
-!> @ref RM_SetCurrentSelectedOutputUserNumber, 
+!> @ref RM_SetCurrentSelectedOutputUserNumber,
+!> @ref RM_SetNthSelectedOutput,
 !> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
@@ -4487,14 +4546,16 @@ END FUNCTION RM_SetConcentrations1D
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param n_user           User number of the SELECTED_OUTPUT data block that is to be used.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    
-!> @ref RM_GetNthSelectedOutputUserNumber, 
-!> @ref RM_GetSelectedOutput, 
+!> @see
+!> @ref RM_GetCurrentSelectedOutputUserNumber,
+!> @ref RM_GetNthSelectedOutputUserNumber,
+!> @ref RM_GetSelectedOutput,
 !> @ref RM_GetSelectedOutputColumnCount,
-!> @ref RM_GetSelectedOutputCount, 
+!> @ref RM_GetSelectedOutputCount,
 !> @ref RM_GetSelectedOutputHeading,
-!> @ref RM_SetSelectedOutputOn,
-!> @ref RM_GetSelectedOutputRowCount. 
+!> @ref RM_GetSelectedOutputRowCount,
+!> @ref RM_SetNthSelectedOutput,
+!> @ref RM_SetSelectedOutputOn.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -4994,6 +5055,58 @@ INTEGER FUNCTION RM_SetMpiWorkerCallback(id, fcn)
 
   RM_SetMpiWorkerCallback = RMF_SetMpiWorkerCallback(id, fcn)
 END FUNCTION RM_SetMpiWorkerCallback
+
+!> Specify the current selected output by sequence number. The user may define multiple SELECTED_OUTPUT
+!> data blocks for the workers. A user number is specified for each data block, and the blocks are
+!> stored in user-number order. The value of
+!> the argument @a n selects the sequence number of the SELECTED_OUTPUT definition that will be used
+!> for selected-output operations.
+!> @param n           Sequence number of the SELECTED_OUTPUT data block that is to be used.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see
+!> @ref RM_GetCurrentSelectedOutputUserNumber,
+!> @ref RM_GetNthSelectedOutputUserNumber,
+!> @ref RM_GetSelectedOutput,
+!> @ref RM_GetSelectedOutputColumnCount,
+!> @ref RM_GetSelectedOutputCount,
+!> @ref RM_GetSelectedOutputHeading,
+!> @ref RM_GetSelectedOutputRowCount,
+!> @ref RM_SetCurrentSelectedOutputUserNumber,
+!> @ref RM_SetSelectedOutputOn.
+!> 	@par Fortran Example:
+!> 	@htmlonly
+!> 	<CODE>
+!> 	<PRE>
+!> do isel = 1, RM_GetSelectedOutputCount(id)
+!>   status = RM_SetNthSelectedOutput(id, isel)
+!>   n_user = RM_GetCurrentSelectedOutputUserNumber(id)
+!>   col = RM_GetSelectedOutputColumnCount(id)
+!>   allocate(selected_out(nxyz,col))
+!>   status = RM_GetSelectedOutput(id, selected_out)
+!>   ! Process results here
+!>   deallocate(selected_out)
+!> enddo
+!> 	</PRE>
+!> 	</CODE>
+!> 	@endhtmlonly
+!> 	@par MPI:
+!> 	Called by root.
+INTEGER FUNCTION RM_SetNthSelectedOutput(id, n)   
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_SetNthSelectedOutput(id, n) &
+            BIND(C, NAME='RMF_SetNthSelectedOutput')   
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            INTEGER(KIND=C_INT), INTENT(in) :: n
+        END FUNCTION RMF_SetNthSelectedOutput  
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in) :: n
+    RM_SetNthSelectedOutput = RMF_SetNthSelectedOutput(id, n)
+END FUNCTION RM_SetNthSelectedOutput  
 
 !> Sets the property for partitioning solids between the saturated and unsaturated 
 !> parts of a partially saturated cell. 
@@ -5513,9 +5626,16 @@ END FUNCTION RM_SetScreenOn
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param tf               0, disable selected output; 1, enable selected output.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-!> @see                    
-!> @ref RM_GetSelectedOutput, 
-!> @ref RM_SetPrintChemistryOn.
+!> @see
+!> @ref RM_GetCurrentSelectedOutputUserNumber,
+!> @ref RM_GetNthSelectedOutputUserNumber,
+!> @ref RM_GetSelectedOutput,
+!> @ref RM_GetSelectedOutputColumnCount,
+!> @ref RM_GetSelectedOutputCount,
+!> @ref RM_GetSelectedOutputHeading,
+!> @ref RM_GetSelectedOutputRowCount,
+!> @ref RM_SetCurrentSelectedOutputUserNumber,
+!> @ref RM_SetNthSelectedOutput.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -6256,7 +6376,7 @@ END SUBROUTINE Chk_SpeciesConcentrations2Module
 !> @see                    @ref RM_DumpModule,
 !> @ref RM_StateApply, and
 !> @ref RM_StateDelete.
-!> @par C++ Example:
+!> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
 !> <PRE>
@@ -6302,7 +6422,7 @@ END FUNCTION RM_StateSave
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> @see                    @ref RM_StateSave and
 !> @ref RM_StateDelete.
-!> @par C++ Example:
+!> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
 !> <PRE>
@@ -6340,7 +6460,7 @@ END FUNCTION RM_StateApply
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> @see                    @ref RM_StateSave and
 !> ref RM_StateApply.
-!> @par C++ Example:
+!> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
 !> <PRE>

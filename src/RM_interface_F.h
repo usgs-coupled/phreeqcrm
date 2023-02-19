@@ -28,6 +28,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetBackwardMapping(int *id, int *n, int *list, int
 IRM_DLL_EXPORT int        RMF_GetChemistryCellCount(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetComponent(int * id, int * num, char *chem_name, int *l1);
 IRM_DLL_EXPORT int        RMF_GetComponentCount(int * id);
+IRM_DLL_EXPORT int        RMF_GetCurrentSelectedOutputUserNumber(int* id);
 
 
 IRM_DLL_EXPORT int        RMF_GetExchangeSpeciesCount(int * id);
@@ -142,6 +143,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_SetFilePrefix(int *id, const char *prefix);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetGasCompMoles(int *id, double *m);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetGasPhaseVolume(int* id, double* v);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetMpiWorkerCallback(int *id, int (*fcn)(int *x1));
+IRM_DLL_EXPORT IRM_RESULT RMF_SetNthSelectedOutput(int* id, int* n);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetPartitionUZSolids(int *id, int *t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetPorosity(int *id, double *t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetPressure(int *id, double *t);

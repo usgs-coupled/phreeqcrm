@@ -3352,7 +3352,7 @@ for selected-output operations.
 @ref RM_GetSelectedOutputRowCount,
 @ref RM_SetCurrentSelectedOutputUserNumber,
 @ref RM_SetSelectedOutputOn.
-	@par C++ Example:
+	@par C Example:
 	@htmlonly
 	<CODE>
 	<PRE>
@@ -4209,7 +4209,7 @@ A state is identified by an integer, and multiple states can be saved.
 @see                    @ref RM_DumpModule,
 @ref RM_StateApply, and
 @ref RM_StateDelete.
-@par C++ Example:
+@par C Example:
 @htmlonly
 <CODE>
 <PRE>
@@ -4240,7 +4240,7 @@ The state to be applied is identified by an integer.
 @retval IRM_RESULT      0 is success, negative is failure(See @ref RM_DecodeError).
 @see                    @ref RM_StateSave and
 @ref RM_StateDelete.
-@par C++ Example:
+@par C Example:
 @htmlonly
 <CODE>
 <PRE>
@@ -4263,7 +4263,7 @@ Delete a state previously saved with @ref RM_StateSave.
 @retval IRM_RESULT      0 is success, negative is failure(See @ref RM_DecodeError).
 @see                    @ref RM_StateSave and
 ref RM_StateApply.
-@par C++ Example:
+@par C Example:
 @htmlonly
 <CODE>
 <PRE>
