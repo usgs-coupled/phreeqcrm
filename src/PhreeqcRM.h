@@ -5357,11 +5357,15 @@ Called by root.
 	//--------------------------	
 
 	/**
-	Basic Model Interface method that retrieves size of an individual item that can be set or retrived.
-	Sizes may be sizeof(int), sizeof(double), or a character length for string variables. Only variables in the list
-	provided by @ref BMI_GetInputVarNames can be set. See @ref SetValue for the list of input variable names.
+	Basic Model Interface method that retrieves size of an 
+	individual item that can be set or retrived.
+	Sizes may be sizeof(int), sizeof(double), 
+	or a character length for string variables. Only variables in the list
+	provided by @ref BMI_GetInputVarNames can be set. 
+	See @ref BMI_SetValue for the list of input variable names.
 	Only variables in the list
-	provided by @ref BMI_GetOutputVarNames can be retrieved. See @ref GetValue for the list of output variable names.
+	provided by @ref BMI_GetOutputVarNames can be retrieved. 
+	See @ref BMI_GetValue for the list of output variable names.
 
 
 	@see
@@ -5417,9 +5421,11 @@ Called by root.
 	Basic Model Interface method that retrieves the total number of bytes that are set for a variable with
 	@ref BMI_SetValue or retrieved for a variable with @ref BMI_GetValue.
 	Only variables in the list
-	provided by @ref BMI_GetInputVarNames can be set. See @ref SetValue for the list of input variable names.
+	provided by @ref BMI_GetInputVarNames can be set. 
+	See @ref BMI_SetValue for the list of input variable names.
 	Only variables in the list
-	provided by @ref BMI_GetOutputVarNames can be retrieved. See @ref GetValue for the list of output variable names.
+	provided by @ref BMI_GetOutputVarNames can be retrieved. 
+	See @ref BMI_GetValue for the list of output variable names.
 
 
 	@see
@@ -5428,7 +5434,7 @@ Called by root.
 	@ref BMI_GetOutputVarNames,
 	@ref BMI_GetOutputItemCount,
 	@ref BMI_GetValue,
-	@ref BMI_GetVarItemSize,
+	@ref BMI_GetVarItemsize,
 	@ref BMI_SetValue.
 	@par C++ Example:
 	@htmlonly
@@ -5476,9 +5482,11 @@ Called by root.
 	Basic Model Interface method that retrieves the type of a variable that can be set with
 	@ref BMI_SetValue or retrieved with @ref BMI_GetValue. Types are "int", "double", or "string".
 	Only variables in the list
-	provided by @ref BMI_GetInputVarNames can be set. See @ref SetValue for the list of input variable names.
+	provided by @ref BMI_GetInputVarNames can be set. 
+	See @ref BMI_SetValue for the list of input variable names.
 	Only variables in the list
-	provided by @ref BMI_GetOutputVarNames can be retrieved. See @ref GetValue for the list of output variable names.
+	provided by @ref BMI_GetOutputVarNames can be retrieved. 
+	See @ref BMI_GetValue for the list of output variable names.
 
 
 	@see
@@ -5518,9 +5526,11 @@ Called by root.
 	Basic Model Interface method that retrieves the units of a variable that can be set with
 	@ref BMI_SetValue or retrieved with @ref BMI_GetValue.
 	Only variables in the list
-	provided by @ref BMI_GetInputVarNames can be set. See @ref SetValue for the list of input variable names.
+	provided by @ref BMI_GetInputVarNames can be set. 
+	See @ref BMI_SetValue for the list of input variable names.
 	Only variables in the list
-	provided by @ref BMI_GetOutputVarNames can be retrieved. See @ref GetValue for the list of output variable names.
+	provided by @ref BMI_GetOutputVarNames can be retrieved. 
+	See @ref BMI_GetValue for the list of output variable names.
 
 
 	@see
