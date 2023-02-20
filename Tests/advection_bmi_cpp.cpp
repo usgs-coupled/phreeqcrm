@@ -782,8 +782,8 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		std::vector<std::string> InputVarNames = phreeqc_rm.BMI_GetInputVarNames();
 		int count = phreeqc_rm.BMI_GetInputItemCount();
 		assert(InputVarNames.size() == (size_t)count);
-		oss << "BMI SetVar variables:\n";
-		for (size_t i = 0; i < InputVarNames.size(); i++)
+		oss << "BMI_SetValues variables:\n";
+		for (size_t i = 0; i < count; i++)
 		{
 			oss << "  " << i << "  " << InputVarNames[i] << "\n";
 			oss << "     Type:  " << phreeqc_rm.BMI_GetVarType(InputVarNames[i]) << "\n";
@@ -796,8 +796,8 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
 		int count = phreeqc_rm.BMI_GetOutputItemCount();
 		assert(OutputVarNames.size() == (size_t)count);
-		oss << "BMI GetVar variables:\n";
-		for (size_t i = 0; i < OutputVarNames.size(); i++)
+		oss << "BMI_GetValues variables:\n";
+		for (size_t i = 0; i < count; i++)
 		{
 			oss << "  " << i << "  " << OutputVarNames[i] << "\n";
 			oss << "     Type:  " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";

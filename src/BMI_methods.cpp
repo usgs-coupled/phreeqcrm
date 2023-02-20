@@ -492,7 +492,7 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["MpiTasks"] = Var_BMI("MpiTasks", "int", "count", sizeof(int));
         bmi_var_map["NthSelectedOutput"] = BMI_Var("NthSelectedOutput", "int", "id", true, false);
         bmi_var_map["Saturation"] = BMI_Var("Saturation", "double", "unitless", true, false);
-        bmi_var_map["SelectedOutput"] = BMI_Var("SelectedOutput", "var", "user", false, true);
+        bmi_var_map["SelectedOutput"] = BMI_Var("SelectedOutput", "double", "user", false, true);
         bmi_var_map["SelectedOutputColumnCount"] = BMI_Var("SelectedOutputColumnCount", "int", "count", false, true);
         bmi_var_map["SelectedOutputCount"] = BMI_Var("SelectedOutputCount", "int", "count", false, true);
         bmi_var_map["SelectedOutputHeadings"] = BMI_Var("SelectedOutputHeadings", "string", "names", false, true);
