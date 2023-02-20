@@ -591,12 +591,12 @@ status = phreeqc_rm.GetConcentrations(c);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                GetConcentrations(std::vector<double> &c);
-	/**
-	Returns the user number of the current selected-output definition.
-	@ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput specifies which of the
-	selected-output definitions is used.
-	@retval                 User number of the the current selected-output definition,
-	negative is failure (See @ref DecodeError).
+/**
+Returns the user number of the current selected-output definition.
+@ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput specifies which of the
+selected-output definitions is used.
+@retval                 User number of the the current selected-output definition,
+negative is failure (See @ref DecodeError).
 @see
 @ref GetNthSelectedOutputUserNumber,
 @ref GetSelectedOutput,
@@ -609,35 +609,35 @@ Called by root, workers must be in the loop of @ref MpiWorker.
 @ref SetNthSelectedOutput,
 @ref SetSelectedOutputOn.
 @par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
+@htmlonly
+<CODE>
+<PRE>
+for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
+{
+	status = phreeqc_rm.SetCurrentSelectedOutput(isel);
+	int n_user = phreeqc_rm.GetCurrentSelectedOutputUserNumber(isel);
+	std::vector<double> so;
+	int col = phreeqc_rm.GetSelectedOutputColumnCount();
+	status = phreeqc_rm.GetSelectedOutput(so);
+	// Print results
+	for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
 	{
-	  status = phreeqc_rm.SetCurrentSelectedOutput(isel);
-	  int n_user = phreeqc_rm.GetCurrentSelectedOutputUserNumber(isel);
-	  std::vector<double> so;
-	  int col = phreeqc_rm.GetSelectedOutputColumnCount();
-	  status = phreeqc_rm.GetSelectedOutput(so);
-	  // Print results
-	  for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
-	  {
-		std::vector<std::string> headings;
-		headings.resize(col);
-		std::cerr << "     Selected output " << n_user <<": " << "\n";
-		for (int j = 0; j < col; j++)
-		{
-		  status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
-		  std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
-		}
-	  }
+	std::vector<std::string> headings;
+	headings.resize(col);
+	std::cerr << "     Selected output " << n_user <<": " << "\n";
+	for (int j = 0; j < col; j++)
+	{
+		status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
+		std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
 	}
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
+	}
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
 	int                                       GetCurrentSelectedOutputUserNumber(void);
 /**
 Returns the file name of the database. Should be called after @ref LoadDatabase.
