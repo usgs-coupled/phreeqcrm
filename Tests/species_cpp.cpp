@@ -111,19 +111,19 @@ int species_cpp()
 		// Print some of the reaction module information
 		{
 			char str1[100];
-			sprintf(str1, "Number of threads:                                %d\n", phreeqc_rm.GetThreadCount());
+			snprintf(str1, sizeof(str1), "Number of threads:                                %d\n", phreeqc_rm.GetThreadCount());
 			phreeqc_rm.OutputMessage(str1);
-			sprintf(str1, "Number of MPI processes:                          %d\n", phreeqc_rm.GetMpiTasks());
+			snprintf(str1, sizeof(str1), "Number of MPI processes:                          %d\n", phreeqc_rm.GetMpiTasks());
 			phreeqc_rm.OutputMessage(str1);
-			sprintf(str1, "MPI task number:                                  %d\n", phreeqc_rm.GetMpiMyself());
+			snprintf(str1, sizeof(str1), "MPI task number:                                  %d\n", phreeqc_rm.GetMpiMyself());
 			phreeqc_rm.OutputMessage(str1);
-			sprintf(str1, "File prefix:                                      %s\n", phreeqc_rm.GetFilePrefix().c_str());
+			snprintf(str1, sizeof(str1), "File prefix:                                      %s\n", phreeqc_rm.GetFilePrefix().c_str());
 			phreeqc_rm.OutputMessage(str1);
-			sprintf(str1, "Number of grid cells in the user's model:         %d\n", phreeqc_rm.GetGridCellCount());
+			snprintf(str1, sizeof(str1), "Number of grid cells in the user's model:         %d\n", phreeqc_rm.GetGridCellCount());
 			phreeqc_rm.OutputMessage(str1);
-			sprintf(str1, "Number of chemistry cells in the reaction module: %d\n", phreeqc_rm.GetChemistryCellCount());
+			snprintf(str1, sizeof(str1), "Number of chemistry cells in the reaction module: %d\n", phreeqc_rm.GetChemistryCellCount());
 			phreeqc_rm.OutputMessage(str1);
-			sprintf(str1, "Number of components for transport:               %d\n", phreeqc_rm.GetComponentCount());
+			snprintf(str1, sizeof(str1), "Number of components for transport:               %d\n", phreeqc_rm.GetComponentCount());
 			phreeqc_rm.OutputMessage(str1);
 		}
 		const std::vector<std::string> &components = phreeqc_rm.GetComponents();

@@ -232,7 +232,9 @@ if test "X$with_mpi" != "Xno"; then
   PHAST_SUFFIX=mpi
 else
   if test "X$enable_openmp" != "Xno"; then
-    AC_DEFINE([USE_OPENMP], [], [Set to to use OpenMP])
+    if test "X$ac_cv_prog_cxx_openmp" != "Xunsupported"; then
+      AC_DEFINE([USE_OPENMP], [], [Set to use OpenMP])
+    fi
   fi
 fi
 
@@ -258,7 +260,11 @@ echo "Fortran Compiler             = $FC"
 echo "Fortran Libs                 = $FCLIBS"
 echo "LDFLAGS                      = $LDFLAGS"
 if test "X$enable_openmp" != "Xno"; then
-  echo "Enable OpenMP                = yes"
+  if test "X$ac_cv_prog_cxx_openmp" != "Xunsupported"; then
+    echo "Enable OpenMP                = yes"
+  else
+    echo "Enable OpenMP                = no"
+  fi
 else
   echo "Enable OpenMP                = no"
 fi

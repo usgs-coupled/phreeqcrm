@@ -29,7 +29,7 @@
 #NAME=PhreeqcRM
 
 # echo everything
-set -x
+#set -x
 
 # A quick and dirty usage message
 USAGE="USAGE: ./dist.sh -v VERSION -r REVISION -d RELEASE_DATE \
@@ -125,9 +125,12 @@ else
   REPOS_PATH="`echo $REPOS_PATH | sed 's/^\/*//'`"
 fi
 
+if [ -z "$NAME" ]; then
+  NAME="PhreeqcRM"
+fi
+
 DISTNAME="${NAME}-${VERSION}${VER_NUMTAG}"
 DIST_SANDBOX=.dist_sandbox
-#DISTPATH="$DIST_SANDBOX/$DISTNAME"
 DISTPATH="."
 GIT_COMMIT=`git rev-parse HEAD`
 
@@ -135,36 +138,7 @@ echo "Distribution will be named: $DISTNAME"
 echo " release branch's revision: $REVISION"
 echo "                git commit: $GIT_COMMIT"
 echo "     executable's revision: $REVISION_SVN"
-echo "     constructed from path: /$REPOS_PATH"
 echo "              release date: $RELEASE_DATE"
-
-# rm -rf "$DIST_SANDBOX"
-# mkdir "$DIST_SANDBOX"
-# echo "Removed and recreated $DIST_SANDBOX"
-
-# echo "Exporting revision $REVISION of phreeqcrm into sandbox..."
-# (cd "$DIST_SANDBOX" && \
-#  	${SVN:-svn} export -q $EXTRA_EXPORT_OPTIONS --ignore-externals -r "$REVISION" \
-# 	     "http://internalbrr.cr.usgs.gov/svn_GW/PhreeqcRM/$REPOS_PATH" \
-# 	     "$DISTNAME")
-
-# echo "Exporting revision $REVISION of external IPhreeqc into sandbox..."
-# (cd "$DIST_SANDBOX" && \
-#  	${SVN:-svn} export -q $EXTRA_EXPORT_OPTIONS --ignore-externals -r "$REVISION" \
-# 	     "http://internalbrr.cr.usgs.gov/svn_GW/IPhreeqc/trunk/src" \
-# 	     "$DISTNAME/src/IPhreeqcPhast/IPhreeqc")
-
-# echo "Exporting revision $REVISION of external database into sandbox..."
-# (cd "$DIST_SANDBOX" && \
-#  	${SVN:-svn} export -q $EXTRA_EXPORT_OPTIONS --ignore-externals -r "$REVISION" \
-# 	     "http://internalbrr.cr.usgs.gov/svn_GW/phreeqc3/trunk/database" \
-# 	     "$DISTNAME/database")
-
-# echo "Exporting revision $REVISION of external phreeqcpp into sandbox..."
-# (cd "$DIST_SANDBOX" && \
-#  	${SVN:-svn} export -q $EXTRA_EXPORT_OPTIONS --ignore-externals -r "$REVISION" \
-# 	     "http://internalbrr.cr.usgs.gov/svn_GW/phreeqc3/trunk/src" \
-# 	     "$DISTNAME/src/IPhreeqcPhast/IPhreeqc/phreeqcpp")
 
 ver_major=`echo $VERSION | cut -d '.' -f 1`
 ver_minor=`echo $VERSION | cut -d '.' -f 2`
@@ -176,7 +150,8 @@ fi
 
 VERSION_LONG="$ver_major.$ver_minor.$ver_patch.$REVISION_SVN"
 
-SED_FILES="$DISTPATH/configure.ac \
+SED_FILES="$DISTPATH/CMakeLists.txt \
+           $DISTPATH/configure.ac \
            $DISTPATH/Makefile.am \
            $DISTPATH/doc/NOTICE.TXT \
            $DISTPATH/doc/README.TXT \
@@ -185,11 +160,10 @@ SED_FILES="$DISTPATH/configure.ac \
            $DISTPATH/src/IPhreeqcPhast/IPhreeqc/Makefile.am \
            $DISTPATH/src/IPhreeqcPhast/IPhreeqc/Version.h"
 
-env
-
 for vsn_file in $SED_FILES
 do
   sed \
+   -e "s/^  VERSION \(\([0]\|[1-9]\d*\)\.\([0]\|[1-9]\d*\.\)\([0]\|[1-9]\d*\).*\)/  VERSION $VERSION/g" \
    -e "s/AC_INIT(.*)/AC_INIT([$NAME], [$VERSION-$REVISION], [dlpark@usgs.gov])/g" \
    -e "s/AM_LDFLAGS=-release.*/AM_LDFLAGS=-release $ver_major.$ver_minor.$ver_patch/g" \
    -e "/#define *VER_MAJOR/s/[0-9]\+/$ver_major/" \
@@ -198,8 +172,8 @@ do
    -e "/#define *VER_REVISION/s/[0-9]\+/$REVISION_SVN/" \
    -e "/#define *GIT_COMMIT/s/[0-9a-f]\{40\}/$GIT_COMMIT/" \
    -e "s/@RELEASE_DATE@/$RELEASE_DATE/g" \
-   -e "s/@VERSION@/$VER/g" \
-   -e "s/@PHREEQC_VER@/$VER/g" \
+   -e "s/@VERSION@/$VERSION/g" \
+   -e "s/@PHREEQC_VER@/$VERSION/g" \
    -e "s/@DATE@/$RELEASE_DATE/g" \
    -e "s/@REVISION_SVN@/$REVISION_SVN/g" \
    -e "s/@REVISION@/$REVISION_SVN/g" \
@@ -211,37 +185,3 @@ do
   fi  
   cp "$vsn_file" "$vsn_file.dist"
 done
-
-# cp $DISTPATH/phreeqc3-doc/RELEASE.TXT     $DISTPATH/doc/RELEASE
-# cp $DISTPATH/phreeqc3-doc/NOTICE.TXT      $DISTPATH/doc/NOTICE
-
-# (cd "$DISTPATH/Doxygen" && "make")
-
-# if [ -n "$WIN" ]; then
-#   echo "Rolling $DISTNAME.zip ..."
-#   (cd "$DIST_SANDBOX" > /dev/null && zip -q -r - "$DISTNAME") > \
-#     "$DISTNAME.zip"
-# else
-#   echo "Rolling $DISTNAME.tar ..."
-#   (cd "$DIST_SANDBOX" > /dev/null && tar c "$DISTNAME") > \
-#   "$DISTNAME.tar"
-
-#   echo "Compressing to $DISTNAME.tar.gz ..."
-#   gzip -9f "$DISTNAME.tar"
-# fi  
-
-# echo "Removing sandbox..."
-# rm -rf "$DIST_SANDBOX"
-
-# echo ""
-# echo "Done:"
-# ls -l "$DISTNAME.tar.gz"
-# echo ""
-# echo "md5sums:"
-# md5sum "$DISTNAME.tar.gz"
-# type sha1sum > /dev/null 2>&1
-# if [ $? -eq 0 ]; then
-#   echo ""
-#   echo "sha1sums:"
-#   sha1sum "$DISTNAME.tar.gz"
-# fi

@@ -2,55 +2,49 @@
 if (PHREEQCRM_FORTRAN_TESTING)
   project(FortranAdvect Fortran)
   
-  # source
-  SET(FortranAdvect_SOURCES
-    advection_f90.F90
-	gas_f90.F90
-    ../src/RM_interface.F90
+  # TestRM Fortran library
+  add_library(FortranAdvect STATIC)
+
+  # TestRM Fortran source
+  target_sources(FortranAdvect PRIVATE
     ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
+    ../src/RM_interface.F90
+    advection_f90.F90
+    gas_f90.F90
     species_f90.F90
   )
-  
+
   # place [*.F[90]] files into "Source Files"
+  source_group("Source Files" FILES "../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90")
+  source_group("Source Files" FILES "../src/RM_interface.F90")
   source_group("Source Files" FILES "advection_f90.F90")
   source_group("Source Files" FILES "gas_f90.F90")
-  source_group("Source Files" FILES "../src/RM_interface.F90")
-  source_group("Source Files" FILES "../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90")
   source_group("Source Files" FILES "species_f90.F90")
   
-  add_library(FortranAdvect STATIC ${FortranAdvect_SOURCES})
-  
-  set_target_properties(FortranAdvect PROPERTIES COMPILE_DEFINITIONS "TEST_FORTRAN")
+  # The next line sets defines/includes/libraries
+  # for compiling and linking the FortranAdvect library
+  target_link_libraries(FortranAdvect PhreeqcRM::PhreeqcRM)
 endif()
 
 project(TestRM CXX)
 
 # Tests/advect.pqi
-configure_file (
-  "advect.pqi.in"
-  "advect.pqi"
-  )
+configure_file(advect.pqi.in advect.pqi COPYONLY)
 
 # Tests/phreeqc.dat
-configure_file (
-  "phreeqc.dat.in"
-  "phreeqc.dat"
-  )
+configure_file(phreeqc.dat.in phreeqc.dat COPYONLY)
  
 # Tests/units.pqi
-configure_file (
-  "units.pqi.in"
-  "units.pqi"
-  )
+configure_file(units.pqi.in units.pqi COPYONLY)
   
 # Tests/units.pqi
-configure_file (
-  "gas.pqi.in"
-  "gas.pqi"
-  )
+configure_file(gas.pqi.in gas.pqi COPYONLY)
 
-# source
-SET(TestRM_SOURCES
+# test executable
+add_executable(TestRM)
+
+# TestRM C/CXX source
+target_sources(TestRM PRIVATE
   advection_c.c
   advection_cpp.cpp
   gas_c.c
@@ -60,61 +54,43 @@ SET(TestRM_SOURCES
   species_cpp.cpp
 )
 
-# test executable
-add_executable(TestRM ${TestRM_SOURCES})
-
-if (PHREEQCRM_FORTRAN_TESTING)
-  set_target_properties(TestRM PROPERTIES COMPILE_DEFINITIONS "TEST_FORTRAN")
-endif ()
+if(PHREEQCRM_FORTRAN_TESTING)
+  target_compile_definitions(TestRM PRIVATE TEST_FORTRAN)
+endif()
 
 # library dependencies
-if (PHREEQCRM_FORTRAN_TESTING)
-  if (PHREEQCRM_BUILD_MPI)
-    SET(EXTRA_LIBS ${EXTRA_LIBS} FortranAdvect PhreeqcRM ${MPI_CXX_LIBRARIES} ${MPI_Fortran_LIBRARIES})
-  else ()
-    SET(EXTRA_LIBS ${EXTRA_LIBS} FortranAdvect PhreeqcRM)
-  endif ()
+if(PHREEQCRM_FORTRAN_TESTING)
   # Override bug reported on:
   # http://www.cmake.org/pipermail/cmake/2009-July/030954.html
   if(WIN32 AND ${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")  
-    if (NOT CMAKE_Fortran_FLAGS_DEBUG MATCHES "/Od")
+    if(NOT CMAKE_Fortran_FLAGS_DEBUG MATCHES "/Od")
       set(CMAKE_Fortran_FLAGS_DEBUG "/Od ${CMAKE_Fortran_FLAGS_DEBUG}")
     endif()
   endif()
-else ()
-  if (PHREEQCRM_BUILD_MPI)
-    SET(EXTRA_LIBS ${EXTRA_LIBS} PhreeqcRM ${MPI_CXX_LIBRARIES})
-  else ()
-    SET(EXTRA_LIBS ${EXTRA_LIBS} PhreeqcRM)
-  endif ()
-endif ()
 
-# link (zlib must be last on linux)
-if (PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
-  set(EXTRA_LIBS ${EXTRA_LIBS} ${ZLIB_LIBRARIES})
+  target_link_libraries(TestRM PhreeqcRM::PhreeqcRM FortranAdvect)
+else()
+  target_link_libraries(TestRM PhreeqcRM::PhreeqcRM)
 endif()
-target_link_libraries(TestRM ${EXTRA_LIBS})
 
 # test compile and run
 add_test(TestCompileAndRun TestRM)
 
-if (MSVC AND BUILD_SHARED_LIBS)
+if(MSVC AND BUILD_SHARED_LIBS)
   # copy dll
   add_custom_command(TARGET TestRM POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PhreeqcRM> $<TARGET_FILE_DIR:TestRM>
   )
 endif()
 
-
-# MPI test (TODO Need to check if this works in Cmake 2.8)
-# 2.8 => change $<TARGET_FILE:TestRM>
+# MPI test
 # get_property(exe_location TARGET testrm PROPERTY LOCATION)
 # message (STATUS "exe_location = ${exe_location}")
-if (PHREEQCRM_BUILD_MPI)
+if(PHREEQCRM_BUILD_MPI)
   add_test(NAME TestMPI
            COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
            ${MPIEXEC_PREFLAGS}
            $<TARGET_FILE:TestRM>
            ${MPIEXEC_POSTFLAGS}
            )
-endif ()
+endif()

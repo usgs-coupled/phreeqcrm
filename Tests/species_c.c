@@ -161,20 +161,20 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		// Make list of components
 		ncomps = RM_FindComponents(id);
 		// Print some of the reaction module information
-		sprintf(str1, "Number of threads:                                %d\n", RM_GetThreadCount(id));
+		snprintf(str1, sizeof(str1), "Number of threads:                                %d\n", RM_GetThreadCount(id));
 		status = RM_OutputMessage(id, str1);
-		sprintf(str1, "Number of MPI processes:                          %d\n", RM_GetMpiTasks(id));
+		snprintf(str1, sizeof(str1), "Number of MPI processes:                          %d\n", RM_GetMpiTasks(id));
 		status = RM_OutputMessage(id, str1);
-		sprintf(str1, "MPI task number:                                  %d\n", RM_GetMpiMyself(id));
+		snprintf(str1, sizeof(str1), "MPI task number:                                  %d\n", RM_GetMpiMyself(id));
 		status = RM_OutputMessage(id, str1);
 		status = RM_GetFilePrefix(id, str, 100);
-		sprintf(str1, "File prefix:                                      %s\n", str);
+		snprintf(str1, sizeof(str1), "File prefix:                                      %s\n", str);
 		status = RM_OutputMessage(id, str1);
-		sprintf(str1, "Number of grid cells in the user's model:         %d\n", RM_GetGridCellCount(id));
+		snprintf(str1, sizeof(str1), "Number of grid cells in the user's model:         %d\n", RM_GetGridCellCount(id));
 		status = RM_OutputMessage(id, str1);
-		sprintf(str1, "Number of chemistry cells in the reaction module: %d\n", RM_GetChemistryCellCount(id));
+		snprintf(str1, sizeof(str1), "Number of chemistry cells in the reaction module: %d\n", RM_GetChemistryCellCount(id));
 		status = RM_OutputMessage(id, str1);
-		sprintf(str1, "Number of components for transport:               %d\n", RM_GetComponentCount(id));
+		snprintf(str1, sizeof(str1), "Number of components for transport:               %d\n", RM_GetComponentCount(id));
 		status = RM_OutputMessage(id, str1);
 		components = (char **) malloc((size_t) (ncomps * sizeof(char *)));
 		gfw = (double *) malloc((size_t) (ncomps * sizeof(double)));
@@ -183,7 +183,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		{
 			components[i] = (char *) malloc((size_t) (100 * sizeof(char *)));
 			status = RM_GetComponent(id, i, components[i], 100);
-			sprintf(str,"%10s    %10.3f\n", components[i], gfw[i]);
+			snprintf(str, sizeof(str),"%10s    %10.3f\n", components[i], gfw[i]);
 			status = RM_OutputMessage(id, str);
 		}
 		status = RM_OutputMessage(id, "\n");
@@ -196,11 +196,11 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		for (i = 0; i < nspecies; i++)
 		{
 			status = RM_GetSpeciesName(id, i, str, 100);
-			sprintf(str1, "%s\n", str);
+			snprintf(str1, sizeof(str1), "%s\n", str);
 			status = RM_OutputMessage(id, str1);
-			sprintf(str1, "%s%g\n", "    Charge: ", species_z[i]);
+			snprintf(str1, sizeof(str1), "%s%g\n", "    Charge: ", species_z[i]);
 			status = RM_OutputMessage(id, str1);
-			sprintf(str1, "%s%g\n", "    Dw:     ", species_d[i]);
+			snprintf(str1, sizeof(str1), "%s%g\n", "    Dw:     ", species_d[i]);
 			status = RM_OutputMessage(id, str1);
 		}
 		status = RM_OutputMessage(id, "\n");
@@ -300,11 +300,11 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 		for (isteps = 0; isteps < nsteps; isteps++)
 		{
 			// Transport calculation here
-			sprintf(str, "%s%10.1f%s", "Beginning transport calculation      ", 
+			snprintf(str, sizeof(str), "%s%10.1f%s", "Beginning transport calculation      ", 
 				RM_GetTime(id) * RM_GetTimeConversion(id), " days\n");
 			status = RM_LogMessage(id, str);
 			status = RM_ScreenMessage(id, str);
-			sprintf(str, "%s%10.1f%s", "          Time step                  ", 
+			snprintf(str, sizeof(str), "%s%10.1f%s", "          Time step                  ", 
 				RM_GetTimeStep(id) * RM_GetTimeConversion(id), " days\n");
 			status = RM_LogMessage(id, str);
 			status = RM_ScreenMessage(id, str);
@@ -330,7 +330,7 @@ void species_advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim)
 			time = time + time_step;
 			status = RM_SetTime(id, time);                 // Current time
 			// Run cells with transported conditions
-			sprintf(str, "%s%10.1f%s", "Beginning reaction calculation       ", RM_GetTime(id) * RM_GetTimeConversion(id), " days\n");
+			snprintf(str, sizeof(str), "%s%10.1f%s", "Beginning reaction calculation       ", RM_GetTime(id) * RM_GetTimeConversion(id), " days\n");
 			status = RM_LogMessage(id, str);
 			status = RM_ScreenMessage(id, str);
 			status = RM_RunCells(id);  

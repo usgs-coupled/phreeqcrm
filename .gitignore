@@ -1,23 +1,49 @@
 
 # /
 
-# /Doxygen/
-/Doxygen/html
+# Doxygen/
+Doxygen/html
 
-# /Tests/
-/Tests/Makefile.in
+# Tests/
+Tests/Makefile.in
 
-# /Tests/vs2012/
-/Tests/vs2012/FortranAdvect.u2d
-/Tests/vs2012/Tests.opensdf
-/Tests/vs2012/Tests.sdf
-/Tests/vs2012/Tests.v11.suo
-/Tests/vs2012/mpi
-/Tests/vs2012/mpi_debug
-/Tests/vs2012/openmp
-/Tests/vs2012/openmp_debug
-/Tests/vs2012/vc110.pdb
-/Tests/vs2012/x64
+# Tests/vs2012/
+Tests/vs2012/FortranAdvect.u2d
+Tests/vs2012/Tests.opensdf
+Tests/vs2012/Tests.sdf
+Tests/vs2012/Tests.v11.suo
+Tests/vs2012/mpi
+Tests/vs2012/mpi_debug
+Tests/vs2012/openmp
+Tests/vs2012/openmp_debug
+Tests/vs2012/vc110.pdb
+Tests/vs2012/x64
 
-# /src/IPhreeqcPhast/
-/_build*
+# backup files
+*~
+
+# autotools
+aclocal.m4
+configure
+Makefile.in
+autom4te.cache/
+config/
+m4/libtool.m4
+m4/ltoptions.m4
+m4/ltsugar.m4
+m4/ltversion.m4
+m4/lt~obsolete.m4
+
+
+# ignore directories beginning with '_'
+/_*/
+
+# dist files
+configure.ac.dist
+Makefile.am.dist
+doc/NOTICE.TXT.dist
+doc/README.TXT.dist
+src/PhreeqcRM.h.dist
+src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h.dist
+src/IPhreeqcPhast/IPhreeqc/Version.h.dist
+CMakeLists.txt.dist

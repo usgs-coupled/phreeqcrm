@@ -1,7 +1,8 @@
 ACLOCAL_AMFLAGS=-I m4
 
 PHREEQCRM_CMAKELISTS=\
-	CMakeLists.txt
+	CMakeLists.txt\
+	PhreeqcRMConfig.cmake.in
 
 EXTRA_DIST=$(PHREEQCRM_CMAKELISTS)
 

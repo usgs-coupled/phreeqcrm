@@ -214,20 +214,20 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		// Determine number of components to transport
 		ncomps = RM_FindComponents(id);
 		// Print some of the reaction module information
-		sprintf(str1, "Number of threads:                                %d\n", RM_GetThreadCount(id));
+		snprintf(str1, sizeof(str1), "Number of threads:                                %d\n", RM_GetThreadCount(id));
 		status = RM_OutputMessage(id, str1);
-		sprintf(str1, "Number of MPI processes:                          %d\n", RM_GetMpiTasks(id));
+		snprintf(str1, sizeof(str1), "Number of MPI processes:                          %d\n", RM_GetMpiTasks(id));
 		status = RM_OutputMessage(id, str1);
-		sprintf(str1, "MPI task number:                                  %d\n", RM_GetMpiMyself(id));
+		snprintf(str1, sizeof(str1), "MPI task number:                                  %d\n", RM_GetMpiMyself(id));
 		status = RM_OutputMessage(id, str1);
 		status = RM_GetFilePrefix(id, str, 100);
-		sprintf(str1, "File prefix:                                      %s\n", str);
+		snprintf(str1, sizeof(str1), "File prefix:                                      %s\n", str);
 		status = RM_OutputMessage(id, str1);
-		sprintf(str1, "Number of grid cells in the user's model:         %d\n", RM_GetGridCellCount(id));
+		snprintf(str1, sizeof(str1), "Number of grid cells in the user's model:         %d\n", RM_GetGridCellCount(id));
 		status = RM_OutputMessage(id, str1);
-		sprintf(str1, "Number of chemistry cells in the reaction module: %d\n", RM_GetChemistryCellCount(id));
+		snprintf(str1, sizeof(str1), "Number of chemistry cells in the reaction module: %d\n", RM_GetChemistryCellCount(id));
 		status = RM_OutputMessage(id, str1);
-		sprintf(str1, "Number of components for transport:               %d\n", RM_GetComponentCount(id));
+		snprintf(str1, sizeof(str1), "Number of components for transport:               %d\n", RM_GetComponentCount(id));
 		status = RM_OutputMessage(id, str1);
 		// Get component information
 		components = (char **) malloc((size_t) (ncomps * sizeof(char *)));
@@ -237,7 +237,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		{
 			components[i] = (char *) malloc((size_t) (100 * sizeof(char *)));
 			status = RM_GetComponent(id, i, components[i], 100);
-			sprintf(str,"%10s    %10.3f\n", components[i], gfw[i]);
+			snprintf(str, sizeof(str),"%10s    %10.3f\n", components[i], gfw[i]);
 			status = RM_OutputMessage(id, str);
 		}
 		status = RM_OutputMessage(id, "\n");
@@ -334,12 +334,12 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 		for (isteps = 0; isteps < nsteps; isteps++)
 		{
 			// Advection calculation
-			sprintf(str, "%s%10.1f%s", "Beginning transport calculation      ", 
+			snprintf(str, sizeof(str), "%s%10.1f%s", "Beginning transport calculation      ", 
 				RM_GetTime(id) * RM_GetTimeConversion(id), " days\n");
 			status = RM_LogMessage(id, str);
 			status = RM_SetScreenOn(id, 1);
 			status = RM_ScreenMessage(id, str);
-			sprintf(str, "%s%10.1f%s", "          Time step                  ", 
+			snprintf(str, sizeof(str), "%s%10.1f%s", "          Time step                  ", 
 				RM_GetTimeStep(id) * RM_GetTimeConversion(id), " days\n");
 			status = RM_LogMessage(id, str);
 			status = RM_ScreenMessage(id, str);
@@ -365,7 +365,7 @@ void advect_c(double *c, double *bc_conc, int ncomps, int nxyz, int dim);
 				status = RM_SetPrintChemistryOn(id, 0, 0, 0); // workers, initial_phreeqc, utility
 			}
 			// Run cells with transported conditions
-			sprintf(str, "%s%10.1f%s", "Beginning reaction calculation       ", RM_GetTime(id) * RM_GetTimeConversion(id), " days\n");
+			snprintf(str, sizeof(str), "%s%10.1f%s", "Beginning reaction calculation       ", RM_GetTime(id) * RM_GetTimeConversion(id), " days\n");
 			status = RM_LogMessage(id, str);
 			status = RM_ScreenMessage(id, str);
 			// Demonstration of state 
@@ -643,7 +643,7 @@ int example_selected_output(int id)
 		strcpy(line, "");
 		status = RM_GetExchangeSpeciesName(id, i, line1, 100);
 		status = RM_GetExchangeName(id, i, line2, 100);
-		sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+		snprintf(line, sizeof(line), "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
 		strcat(input, line);
 	}
 	// molalities of surface species
@@ -652,7 +652,7 @@ int example_selected_output(int id)
 		status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
 		status = RM_GetSurfaceType(id, i, line2, 100);
 		status = RM_GetSurfaceName(id, i, line3, 100);
-		sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+		snprintf(line, sizeof(line), "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
 		strcat(input, line);
 	}
 	strcat(input, "  -equilibrium_phases\n");
@@ -660,7 +660,7 @@ int example_selected_output(int id)
 	for (i = 0; i < RM_GetEquilibriumPhasesCount(id); i++)
 	{
 		status = RM_GetEquilibriumPhasesName(id, i, line1, 100);
-		sprintf(line, "%4s%20s\n", "    ", line1);
+		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
 		strcat(input, line);
 	}
 	strcat(input, "  -gases\n");
@@ -668,7 +668,7 @@ int example_selected_output(int id)
 	for (i = 0; i < RM_GetGasComponentsCount(id); i++)
 	{
 		status = RM_GetGasComponentsName(id, i, line1, 100);
-		sprintf(line, "%4s%20s\n", "    ", line1);
+		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
 		strcat(input, line);
 	}
 	strcat(input, "  -kinetics\n");
@@ -676,7 +676,7 @@ int example_selected_output(int id)
 	for (i = 0; i < RM_GetKineticReactionsCount(id); i++)
 	{
 		status = RM_GetKineticReactionsName(id, i, line1, 100);
-		sprintf(line, "%4s%20s\n", "    ", line1);
+		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
 		strcat(input, line);
 	}
 	strcat(input, "  -solid_solutions\n");
@@ -685,7 +685,7 @@ int example_selected_output(int id)
 	{
 		status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
 		status = RM_GetSolidSolutionName(id, i, line2, 100);
-		sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+		snprintf(line, sizeof(line), "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
 		strcat(input, line);
 	}
 	strcat(input, "  -saturation_indices\n");
@@ -693,7 +693,7 @@ int example_selected_output(int id)
 	for (i = 0; i < RM_GetSICount(id); i++)
 	{
 		status = RM_GetSIName(id, i, line1, 100);
-		sprintf(line, "%4s%20s\n", "    ", line1);
+		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
 		strcat(input, line);
 	}
 
