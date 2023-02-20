@@ -1,0 +1,6 @@
+include(CMakeFindDependencyMacro)
+
+@exportPackageDependencies@
+@PACKAGE_INIT@
+include("${CMAKE_CURRENT_LIST_DIR}/PhreeqcRMTargets.cmake")
+check_required_components("PhreeqcRM")
