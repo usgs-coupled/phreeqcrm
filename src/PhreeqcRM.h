@@ -5728,11 +5728,8 @@ Called by root.
 	@ref RunCells. PhreeqcRM will equilibrate the solutions with all equilibrium reactants (EQUILIBRIUM_PHASES,
 	EXCHANGE, GAS_PHASE, SOLID_SOLUTIONS, and SURFACE) and
 	integrate KINETICS reactions for the specified time step (@ref SetTimeStep).
-	</PRE>
-	</CODE>
-	@endhtmlonly
 	@see
-	@ref BMI_Update.
+	@ref BMI_Initialize.
 	@par C++ Example:
 	@htmlonly
 	<CODE>

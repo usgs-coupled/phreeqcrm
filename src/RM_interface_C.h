@@ -3340,6 +3340,7 @@ data blocks for the workers. A user number is specified for each data block, and
 stored in user-number order. The value of
 the argument @a n selects the sequence number of the SELECTED_OUTPUT definition that will be used
 for selected-output operations.
+@param id               The instance id returned from @ref RM_Create.
 @param n           Sequence number of the SELECTED_OUTPUT data block that is to be used.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see
