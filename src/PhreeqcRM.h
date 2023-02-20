@@ -4053,14 +4053,14 @@ MPI and Fortran only. Defines a callback function that allows additional tasks t
 by the workers. See documentation of PhreeqcRM for Fortran, method SetMpiWorkerCallback.
  */
 	IRM_RESULT								  SetMpiWorkerCallbackFortran(int (*fcn)(int *method));
-	/**
-	Specify the current selected output by sequence number. The user may define multiple SELECTED_OUTPUT
-	data blocks for the workers. A user number is specified for each data block, and the blocks are
-	stored in user-number order. The value of
-	the argument @a n selects the sequence number of the SELECTED_OUTPUT definition that will be used
-	for selected-output operations.
-	@param n           Sequence number of the SELECTED_OUTPUT data block that is to be used.
-	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+/**
+Specify the current selected output by sequence number. The user may define multiple SELECTED_OUTPUT
+data blocks for the workers. A user number is specified for each data block, and the blocks are
+stored in user-number order. The value of
+the argument @a n selects the sequence number of the SELECTED_OUTPUT definition that will be used
+for selected-output operations.
+@param n           Sequence number of the SELECTED_OUTPUT data block that is to be used.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
 @see
 @ref GetCurrentSelectedOutputUserNumber,
 @ref GetNthSelectedOutputUserNumber,
@@ -4072,36 +4072,36 @@ by the workers. See documentation of PhreeqcRM for Fortran, method SetMpiWorkerC
 @ref GetSelectedOutputRowCount,
 @ref SetCurrentSelectedOutputUserNumber,
 @ref SetSelectedOutputOn.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
+{
+	status = phreeqc_rm.SetCurrentSelectedOutput(isel);
+	int n_user = phreeqc_rm.GetCurrentSelectedOutputUserNumber(isel);
+	std::vector<double> so;
+	int col = phreeqc_rm.GetSelectedOutputColumnCount();
+	status = phreeqc_rm.GetSelectedOutput(so);
+	// Print results
+	for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
 	{
-	  status = phreeqc_rm.SetCurrentSelectedOutput(isel);
-	  int n_user = phreeqc_rm.GetCurrentSelectedOutputUserNumber(isel);
-	  std::vector<double> so;
-	  int col = phreeqc_rm.GetSelectedOutputColumnCount();
-	  status = phreeqc_rm.GetSelectedOutput(so);
-	  // Print results
-	  for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
-	  {
-		std::vector<std::string> headings;
-		headings.resize(col);
-		std::cerr << "     Selected output " << n_user <<": " << "\n";
-		for (int j = 0; j < col; j++)
-		{
-		  status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
-		  std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
-		}
-	  }
+	std::vector<std::string> headings;
+	headings.resize(col);
+	std::cerr << "     Selected output " << n_user <<": " << "\n";
+	for (int j = 0; j < col; j++)
+	{
+		status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
+		std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
 	}
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
+	}
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
 	IRM_RESULT                                SetNthSelectedOutput(int n);
 /**
 Sets the property for partitioning solids between the saturated and unsaturated

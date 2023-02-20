@@ -980,16 +980,16 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 void GenerateYAML(int nxyz, std::string YAML_filename)
 {
 	YAMLPhreeqcRM yrm;
-	// Load database
-	yrm.YAMLLoadDatabase("phreeqc.dat");
+	//// Load database
+	//yrm.YAMLLoadDatabase("phreeqc.dat");
 
-	// Run file to define solutions and reactants for initial conditions, selected output
-	bool workers = true;             // Worker instances do the reaction calculations for transport
-	bool initial_phreeqc = true;     // InitialPhreeqc instance accumulates initial and boundary conditions
-	bool utility = true;             // Utility instance is available for processing
-	yrm.YAMLRunFile(workers, initial_phreeqc, utility, "advect.pqi");
-	// Determine number of components to transport
-	yrm.YAMLFindComponents();
+	//// Run file to define solutions and reactants for initial conditions, selected output
+	//bool workers = true;             // Worker instances do the reaction calculations for transport
+	//bool initial_phreeqc = true;     // InitialPhreeqc instance accumulates initial and boundary conditions
+	//bool utility = true;             // Utility instance is available for processing
+	//yrm.YAMLRunFile(workers, initial_phreeqc, utility, "advect.pqi");
+	//// Determine number of components to transport
+	//yrm.YAMLFindComponents();
 
 	// Set some properties
 	yrm.YAMLSetErrorHandlerMode(1);
@@ -1048,18 +1048,27 @@ void GenerateYAML(int nxyz, std::string YAML_filename)
 
 	// Set printing of chemistry file
 	yrm.YAMLSetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
+	// Load database
+	yrm.YAMLLoadDatabase("phreeqc.dat");
+
+	// Run file to define solutions and reactants for initial conditions, selected output
+	bool workers = true;             // Worker instances do the reaction calculations for transport
+	bool initial_phreeqc = true;     // InitialPhreeqc instance accumulates initial and boundary conditions
+	bool utility = true;             // Utility instance is available for processing
+	yrm.YAMLRunFile(workers, initial_phreeqc, utility, "advect.pqi");
 
 	// Clear contents of workers and utility
 	initial_phreeqc = false;
 	std::string input = "DELETE; -all";
 	yrm.YAMLRunString(workers, initial_phreeqc, utility, input.c_str());
-
+	// Determine number of components to transport
+	yrm.YAMLFindComponents();
 	// set array of initial conditions
 	std::vector<int> ic1, ic2;
 	ic1.resize(nxyz * 7, -1);
 	ic2.resize(nxyz * 7, -1);
 	std::vector<double> f1;
-	f1.resize(nxyz * 7, 1.1);
+	f1.resize(nxyz * 7, 1.0);
 	for (int i = 0; i < nxyz; i++)
 	{
 		ic1[i] = 1;              // Solution 1
@@ -1072,7 +1081,7 @@ void GenerateYAML(int nxyz, std::string YAML_filename)
 	}
 	yrm.YAMLInitialPhreeqc2Module(ic1, ic2, f1);
 	// No mixing is defined, so the following is equivalent
-	yrm.YAMLInitialPhreeqc2Module(ic1);
+	//yrm.YAMLInitialPhreeqc2Module(ic1);
 
 	// alternative for setting initial conditions
 	// cell number in first argument (-1 indicates last solution, 40 in this case)
@@ -1098,6 +1107,7 @@ void GenerateYAML(int nxyz, std::string YAML_filename)
 	double time = 0.0;
 	yrm.YAMLSetTime(time);
 	yrm.YAMLRunCells();
+	yrm.YAMLSetTimeStep(86400);
 
 	// Write YAML file
 	{

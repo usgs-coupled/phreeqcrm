@@ -1,3 +1,4 @@
+#DOXYGEN ?= "/C/Program Files/doxygen/bin/doxygen"
 DOXYGEN ?= doxygen
 
 all:
