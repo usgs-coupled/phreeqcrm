@@ -980,16 +980,6 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 void GenerateYAML(int nxyz, std::string YAML_filename)
 {
 	YAMLPhreeqcRM yrm;
-	//// Load database
-	//yrm.YAMLLoadDatabase("phreeqc.dat");
-
-	//// Run file to define solutions and reactants for initial conditions, selected output
-	//bool workers = true;             // Worker instances do the reaction calculations for transport
-	//bool initial_phreeqc = true;     // InitialPhreeqc instance accumulates initial and boundary conditions
-	//bool utility = true;             // Utility instance is available for processing
-	//yrm.YAMLRunFile(workers, initial_phreeqc, utility, "advect.pqi");
-	//// Determine number of components to transport
-	//yrm.YAMLFindComponents();
 
 	// Set some properties
 	yrm.YAMLSetErrorHandlerMode(1);
