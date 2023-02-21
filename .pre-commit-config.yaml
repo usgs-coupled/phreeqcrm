@@ -1,0 +1,10 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: c8bad492e1b1d65d9126dba3fe3bd49a5a52b9d6 # v2.1.0
+    hooks:
+    -   id: end-of-file-fixer
+        files: CMakeLists.txt
+    -   id: trailing-whitespace
+        files: CMakeLists.txt
+    -   id: no-commit-to-branch
+        args: [--branch, main, --branch, master, --branch, develop]

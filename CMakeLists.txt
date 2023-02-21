@@ -344,7 +344,7 @@ if(STANDALONE_BUILD EQUAL 1)
     FILE PhreeqcRMTargets.cmake
     NAMESPACE PhreeqcRM::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PhreeqcRM
-  )  
+  )
 
   install(FILES ${PhreeqcRM_Headers}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
@@ -406,6 +406,7 @@ if(STANDALONE_BUILD EQUAL 1)
   add_subdirectory(doc)
   add_subdirectory(Doxygen)
   add_subdirectory(Tests)
+  add_subdirectory(swig)
 endif()
 
 # Turn off Incremental Linking for Debug and RelWithDebInfo
@@ -417,7 +418,7 @@ if(MSVC)
     string(REPLACE "/INCREMENTAL " "/INCREMENTAL:NO " CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG})
     string(REGEX REPLACE " /INCREMENTAL$" " /INCREMENTAL:NO" CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG})
     set(CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG
-        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG}" CACHE STRING 
+        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG}" CACHE STRING
         "Flags used by the shared libraries linker during Debug builds."
         FORCE
     )
@@ -428,7 +429,7 @@ if(MSVC)
     string(REPLACE "/INCREMENTAL " "/INCREMENTAL:NO " CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO})
     string(REGEX REPLACE " /INCREMENTAL$" " /INCREMENTAL:NO" CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO})
     set(CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO
-        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO}" CACHE STRING 
+        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO}" CACHE STRING
         "Flags used by the shared libraries linker during Release with Debug Info builds."
         FORCE
     )
