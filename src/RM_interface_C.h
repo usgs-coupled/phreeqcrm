@@ -2327,7 +2327,8 @@ A YAML file can be used to initialize an instance of PhreeqcRM.
 @param yamlfile         String containing the YAML file name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 
-@par The file contains a YAML map of PhreeqcRM methods
+@par 
+The file contains a YAML map of PhreeqcRM methods
 and the arguments corresponding to the methods.
 Note that the PhreeqcRM methods do not have the "RM_" prefix
 and the id argument is not included.
@@ -2356,7 +2357,8 @@ The names of the map keys for map
 arguments are not used in parsing the YAML file; only the order of
 the arguments is important.
 
-@par The following list gives the PhreeqcRM methods that can be specified in a YAML file
+@par 
+The following list gives the PhreeqcRM methods that can be specified in a YAML file
 and the arguments that are required. The arguments are described with C++ formats, which
 are sufficient to identify which arguments are YAML scalars (single bool, int, double, string argument),
 sequences (single vector argument), or maps (multiple arguments).
