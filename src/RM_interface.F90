@@ -3596,7 +3596,7 @@ END FUNCTION RM_GetTimeStep
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
-!> 
+!> @par
 !> @ref RM_InitializeYAML will read the YAML file and execute the specified methods with 
 !> the specified arguments. Using YAML
 !> terminology, the argument(s) for a method may be a scalar, a sequence, or a map, 
