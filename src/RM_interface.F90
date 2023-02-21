@@ -3584,6 +3584,7 @@ END FUNCTION RM_GetTimeStep
 !> Note that the PhreeqcRM methods do not have the "RM_" prefix
 !> and the id argument is not included.
 !> For example,
+!> @par
 !> @htmlonly
 !> <CODE>
 !> <PRE>

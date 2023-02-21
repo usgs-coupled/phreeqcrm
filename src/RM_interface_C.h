@@ -2333,6 +2333,7 @@ and the arguments corresponding to the methods.
 Note that the PhreeqcRM methods do not have the "RM_" prefix
 and the id argument is not included.
 For example,
+@par
 @htmlonly
 <CODE>
 <PRE>
