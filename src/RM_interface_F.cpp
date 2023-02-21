@@ -1264,6 +1264,22 @@ double RMF_GetTimeStep(int * id)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+RMF_InitializeYAML(int* id, const char* yaml_name)
+/* ---------------------------------------------------------------------- */
+{
+	// Loads a database, must be done before any simulations
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::string yaml(yaml_name);
+		size_t strEnd = yaml.find_last_not_of(" \t\n");
+		yaml = yaml.substr(0, strEnd + 1);
+		return Reaction_module_ptr->InitializeYAML(yaml.c_str());
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 RMF_InitialPhreeqc2Concentrations(
 			int *id,
 			double *boundary_c,

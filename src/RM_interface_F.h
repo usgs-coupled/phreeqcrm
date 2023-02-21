@@ -88,6 +88,7 @@ IRM_DLL_EXPORT int        RMF_GetThreadCount(int *id);
 IRM_DLL_EXPORT double     RMF_GetTime(int *id);
 IRM_DLL_EXPORT double     RMF_GetTimeConversion(int *id);
 IRM_DLL_EXPORT double     RMF_GetTimeStep(int *id);
+IRM_DLL_EXPORT IRM_RESULT RMF_InitializeYAML(int* id, const char* yaml_name);
 IRM_DLL_EXPORT IRM_RESULT RMF_InitialPhreeqc2Concentrations(
                 int *id,
                 double *c,

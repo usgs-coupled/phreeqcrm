@@ -2915,108 +2915,111 @@ int iphreeqc_result = w[0]->RunAccumulated();
 Called by root and (or) workers.
  */
 	const std::vector<IPhreeqcPhast *> &      GetWorkers() {return this->workers;}
-	/**
-	A YAML file can be used to initialize an instance of PhreeqcRM. 
-	The file contains a YAML map of PhreeqcRM methods
-	and the arguments corresponding to the methods. For example,
-	@htmlonly
-	<CODE>
-	<PRE>
-	LoadDatabase: phreeqc.dat
-	RunFile:
-	  workers: true
-	  initial_phreeqc: true
-	  utility: true
-	  chemistry_name: advect.pqi
-	</PRE>
-	</CODE>
-	@endhtmlonly
+/**
+A YAML file can be used to initialize an instance of PhreeqcRM. 
+@param database         String containing the YAML file name.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
 
-	@ref InitializeYAML will read the YAML file and execute the specified methods with 
-	the specified arguments. Using YAML
-	terminology, the argument(s) for a method may be a scalar, a sequence, or a map, 
-	depending if the argument is
-	a single item, a single vector, or there are multiple arguments. 
-	In the case of a map, the names associated
-	with each argument (for example "chemistry_name" above) is arbitrary. 
-	The names of the map keys for map
-	arguments are not used in parsing the YAML file; only the order of 
-	the arguments is important.
+The file contains a YAML map of PhreeqcRM methods
+and the arguments corresponding to the methods. For example,
+@htmlonly
+<CODE>
+<PRE>
+LoadDatabase: phreeqc.dat
+RunFile:
+	workers: true
+	initial_phreeqc: true
+	utility: true
+	chemistry_name: advect.pqi
+</PRE>
+</CODE>
+@endhtmlonly
 
-	The PhreeqcRM methods that can be specified in a YAML file include:
-	@htmlonly
-	<CODE>
-	<PRE>
-	CloseFiles(void);
-	CreateMapping(std::vector< int >& grid2chem);
-	DumpModule();
-	FindComponents();
-	InitialPhreeqc2Module(std::vector< int > initial_conditions1);
-	InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
-	InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
-	LoadDatabase(std::string database);
-	OpenFiles(void);
-	OutputMessage(std::string str);
-	RunCells(void);
-	RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
-	RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
-	ScreenMessage(std::string str);
-	SetComponentH2O(bool tf);
-	SetConcentrations(std::vector< double > c);
-	SetCurrentSelectedOutputUserNumber(int n_user);
-	SetDensity(std::vector< double > density);
-	SetDumpFileName(std::string dump_name);
-	SetErrorHandlerMode(int mode);
-	SetErrorOn(bool tf);
-	SetFilePrefix(std::string prefix);
-	SetGasCompMoles(std::vector< double > gas_moles);
-	SetGasPhaseVolume(std::vector< double > gas_volume);
-	SetPartitionUZSolids(bool tf);
-	SetPorosity(std::vector< double > por);
-	SetPressure(std::vector< double > p);
-	SetPrintChemistryMask(std::vector< int > cell_mask);
-	SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
-	SetRebalanceByCell(bool tf);
-	SetRebalanceFraction(double f);
-	SetRepresentativeVolume(std::vector< double > rv);
-	SetSaturation(std::vector< double > sat);
-	SetScreenOn(bool tf);
-	SetSelectedOutputOn(bool tf);
-	SetSpeciesSaveOn(bool save_on);
-	SetTemperature(std::vector< double > t);
-	SetTime(double time);
-	SetTimeConversion(double conv_factor);
-	SetTimeStep(double time_step);
-	SetUnitsExchange(int option);
-	SetUnitsGasPhase(int option);
-	SetUnitsKinetics(int option);
-	SetUnitsPPassemblage(int option);
-	SetUnitsSolution(int option);
-	SetUnitsSSassemblage(int option);
-	SetUnitsSurface(int option);
-	SpeciesConcentrations2Module(std::vector< double > species_conc);
-	StateSave(int istate);
-	StateApply(int istate);
-	StateDelete(int istate);
-	UseSolutionDensityVolume(bool tf);
-	WarningMessage(std::string warnstr);
-	</PRE>
-	</CODE>
-	@endhtmlonly
+@ref InitializeYAML will read the YAML file and execute the specified methods with 
+the specified arguments. Using YAML
+terminology, the argument(s) for a method may be a scalar, a sequence, or a map, 
+depending if the argument is
+a single item, a single vector, or there are multiple arguments. 
+In the case of a map, the names associated
+with each argument (for example "chemistry_name" above) is arbitrary. 
+The names of the map keys for map
+arguments are not used in parsing the YAML file; only the order of 
+the arguments is important.
 
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			PhreeqcRM phreeqc_rm(nxyz, nthreads);
-			phreeqc_rm.InitializeYAML("myfile.yaml");
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	 */
-	void InitializeYAML(std::string config);
+The PhreeqcRM methods that can be specified in a YAML file include:
+@htmlonly
+<CODE>
+<PRE>
+CloseFiles(void);
+CreateMapping(std::vector< int >& grid2chem);
+DumpModule();
+FindComponents();
+InitialPhreeqc2Module(std::vector< int > initial_conditions1);
+InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
+InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
+LoadDatabase(std::string database);
+OpenFiles(void);
+OutputMessage(std::string str);
+RunCells(void);
+RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
+RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
+ScreenMessage(std::string str);
+SetComponentH2O(bool tf);
+SetConcentrations(std::vector< double > c);
+SetCurrentSelectedOutputUserNumber(int n_user);
+SetDensity(std::vector< double > density);
+SetDumpFileName(std::string dump_name);
+SetErrorHandlerMode(int mode);
+SetErrorOn(bool tf);
+SetFilePrefix(std::string prefix);
+SetGasCompMoles(std::vector< double > gas_moles);
+SetGasPhaseVolume(std::vector< double > gas_volume);
+SetPartitionUZSolids(bool tf);
+SetPorosity(std::vector< double > por);
+SetPressure(std::vector< double > p);
+SetPrintChemistryMask(std::vector< int > cell_mask);
+SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
+SetRebalanceByCell(bool tf);
+SetRebalanceFraction(double f);
+SetRepresentativeVolume(std::vector< double > rv);
+SetSaturation(std::vector< double > sat);
+SetScreenOn(bool tf);
+SetSelectedOutputOn(bool tf);
+SetSpeciesSaveOn(bool save_on);
+SetTemperature(std::vector< double > t);
+SetTime(double time);
+SetTimeConversion(double conv_factor);
+SetTimeStep(double time_step);
+SetUnitsExchange(int option);
+SetUnitsGasPhase(int option);
+SetUnitsKinetics(int option);
+SetUnitsPPassemblage(int option);
+SetUnitsSolution(int option);
+SetUnitsSSassemblage(int option);
+SetUnitsSurface(int option);
+SpeciesConcentrations2Module(std::vector< double > species_conc);
+StateSave(int istate);
+StateApply(int istate);
+StateDelete(int istate);
+UseSolutionDensityVolume(bool tf);
+WarningMessage(std::string warnstr);
+</PRE>
+</CODE>
+@endhtmlonly
+
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+		PhreeqcRM phreeqc_rm(nxyz, nthreads);
+		phreeqc_rm.InitializeYAML("myfile.yaml");
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+*/
+IRM_RESULT		InitializeYAML(std::string config);
 /**
 Fills a vector (@a destination_c) with concentrations from solutions in the InitialPhreeqc instance.
 The method is used to obtain concentrations for boundary conditions. If a negative value
@@ -5585,7 +5588,7 @@ Called by root.
 
 	BMI_Initialize will read the YAML file and execute the specified methods with the specified arguments. Using YAML
 	terminology, the argument(s) for a method may be a scalar, a sequence, or a map, depending if the argument is
-	a single item, a single vector, or there are multiple arguments. In the case of a map, the names associated
+	a single item, a single vector, or there are multiple arguments. In the case of a map, the name associated
 	with each argument (for example "chemistry_name" above) is arbitrary. The names of the map keys for map
 	arguments are not used in parsing the YAML file; only the order of the arguments is important.
 
@@ -5678,7 +5681,7 @@ Called by root.
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	 */
-	void BMI_Initialize(std::string config_file) { InitializeYAML(config_file); };
+	void BMI_Initialize(std::string config_file) { IRM_RESULT status = InitializeYAML(config_file); };
 
 	//--------------------------	
 

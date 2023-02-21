@@ -560,7 +560,7 @@ void PhreeqcRM::BMI_MakeVarMap()
         }
     }
 }
-void PhreeqcRM::InitializeYAML(std::string config)
+IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 {
     YAML::Node yaml = YAML::LoadFile(config);
     std::string keyword;
@@ -967,7 +967,7 @@ void PhreeqcRM::InitializeYAML(std::string config)
         ErrorMessage("YAML keyword not found");
         throw PhreeqcRMStop();
 	}
-    return;
+    return IRM_RESULT::IRM_OK;
 }
 
 
