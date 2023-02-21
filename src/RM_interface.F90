@@ -3576,7 +3576,7 @@ END FUNCTION RM_GetTimeStep
 
 !> A YAML file can be used to initialize an instance of PhreeqcRM. 
 !> @param id               The instance @a id returned from @ref RM_Create.
-!> @param database         String containing the YAML file name.
+!> @param yaml_name         String containing the YAML file name.
 !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 !> The file contains a YAML map of PhreeqcRM methods
 !> and the arguments corresponding to the methods. 
@@ -3682,7 +3682,7 @@ END FUNCTION RM_GetTimeStep
 !> </CODE>
 !> @endhtmlonly
 !> @par MPI:
-!> Called by root, workers must be in the loop of @ref MpiWorker.
+!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
 INTEGER FUNCTION RM_InitializeYAML(id, yaml_name) 
     USE ISO_C_BINDING
@@ -4648,22 +4648,22 @@ SUBROUTINE Chk_SetConcentrations(id, c)
 END SUBROUTINE Chk_SetConcentrations
 
 #ifdef SKIP
-INTEGER FUNCTION RM_SetConcentrations1D(id, c)   
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_SetConcentrations(id, c) &
-            BIND(C, NAME='RMF_SetConcentrations')   
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            REAL(KIND=C_DOUBLE), INTENT(in) :: c(*)
-        END FUNCTION RMF_SetConcentrations
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: c
-    RM_SetConcentrations1D = RMF_SetConcentrations(id, c)
-END FUNCTION RM_SetConcentrations1D
+!INTEGER FUNCTION RM_SetConcentrations1D(id, c)   
+!    USE ISO_C_BINDING
+!    IMPLICIT NONE
+!    INTERFACE
+!        INTEGER(KIND=C_INT) FUNCTION RMF_SetConcentrations(id, c) &
+!            BIND(C, NAME='RMF_SetConcentrations')   
+!            USE ISO_C_BINDING
+!            IMPLICIT NONE
+!            INTEGER(KIND=C_INT), INTENT(in) :: id
+!            REAL(KIND=C_DOUBLE), INTENT(in) :: c(*)
+!        END FUNCTION RMF_SetConcentrations
+!    END INTERFACE
+!    INTEGER, INTENT(in) :: id
+!    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: c
+!    RM_SetConcentrations1D = RMF_SetConcentrations(id, c)
+!END FUNCTION RM_SetConcentrations1D
 #endif
 
 !> Select the current selected output by user number. The user may define multiple SELECTED_OUTPUT

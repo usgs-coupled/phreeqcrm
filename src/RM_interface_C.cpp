@@ -1258,6 +1258,23 @@ double RM_GetTimeStep(int id)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+RM_InitializeYAML(int id, const char* yamlname)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (yamlname != NULL)
+		{
+			std::string name = PhreeqcRM::Char2TrimString(yamlname);
+			return Reaction_module_ptr->LoadDatabase(name.c_str());
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 RM_InitialPhreeqc2Concentrations(
 			int id,
 			double *boundary_c,

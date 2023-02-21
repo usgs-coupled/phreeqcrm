@@ -2324,7 +2324,7 @@ IRM_DLL_EXPORT double     RM_GetTimeStep(int id);
 /**
 A YAML file can be used to initialize an instance of PhreeqcRM.
 @param id               The instance @a id returned from @ref RM_Create.
-@param database         String containing the YAML file name.
+@param yamlfile         String containing the YAML file name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 The file contains a YAML map of PhreeqcRM methods
 and the arguments corresponding to the methods.
@@ -2432,7 +2432,7 @@ WarningMessage(std::string warnstr);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 
-IRM_DLL_EXPORT IRM_RESULT RM_InitializeYAML(int id, const char* db_name);
+IRM_DLL_EXPORT IRM_RESULT RM_InitializeYAML(int id, const char* yamlfile);
 /**
 Fills an array (@a c) with concentrations from solutions in the InitialPhreeqc instance.
 The method is used to obtain concentrations for boundary conditions. If a negative value

@@ -2917,7 +2917,7 @@ Called by root and (or) workers.
 	const std::vector<IPhreeqcPhast *> &      GetWorkers() {return this->workers;}
 /**
 A YAML file can be used to initialize an instance of PhreeqcRM. 
-@param database         String containing the YAML file name.
+@param yamlfile         String containing the YAML file name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
 
 The file contains a YAML map of PhreeqcRM methods
@@ -3019,7 +3019,7 @@ WarningMessage(std::string warnstr);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
 */
-IRM_RESULT		InitializeYAML(std::string config);
+IRM_RESULT		InitializeYAML(std::string yamlfile);
 /**
 Fills a vector (@a destination_c) with concentrations from solutions in the InitialPhreeqc instance.
 The method is used to obtain concentrations for boundary conditions. If a negative value
