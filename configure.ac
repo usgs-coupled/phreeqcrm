@@ -61,7 +61,7 @@ if test "X$IRM_FORTRAN" = "Xyes"; then
     fi
   ])
   AC_FC_LIBRARY_LDFLAGS
-  AC_FC_WRAPPERS 
+  AC_FC_WRAPPERS
   AC_FC_MAIN
   m4_ifdef([AC_FC_MODULE_EXTENSION], [AC_FC_MODULE_EXTENSION], [
     AX_F90_MODULE_EXTENSION
@@ -72,7 +72,7 @@ if test "X$IRM_FORTRAN" = "Xyes"; then
     AC_SUBST(FC_MODEXT)
   ])
   AC_SUBST(F77, $FC)
-  AC_SUBST(FFLAGS, $FCFLAGS) 
+  AC_SUBST(FFLAGS, $FCFLAGS)
 else
   AC_MSG_RESULT(no)
 fi
@@ -243,6 +243,7 @@ AC_CONFIG_FILES([
   database/Makefile
   doc/Makefile
   Doxygen/Makefile
+  swig/Makefile
   Tests/Makefile
   Tests/advect.pqi
   Tests/gas.pqi

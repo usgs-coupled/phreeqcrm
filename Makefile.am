@@ -219,5 +219,4 @@ LTPPFCCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=FC $(AM_LIBTOOLFLAGS) \
         $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
         $(AM_FCFLAGS) $(FCFLAGS)
 
-SUBDIRS = database doc Doxygen Tests
-
+SUBDIRS = database doc Doxygen swig Tests

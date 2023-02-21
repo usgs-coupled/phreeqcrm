@@ -21,7 +21,7 @@ EXTRA_DIST=\
 	phreeqcpp/CurveObject.h\
 	phreeqcpp/Form1.h\
 	phreeqcpp/Form1.resX\
-	phreeqcpp/ZedGraph.dll	
+	phreeqcpp/ZedGraph.dll
 
 AM_CPPFLAGS=-I$(top_srcdir)/src -I$(top_srcdir)/src/phreeqcpp -I$(top_srcdir)/src/phreeqcpp/common -I$(top_srcdir)/src/phreeqcpp/PhreeqcKeywords
 
