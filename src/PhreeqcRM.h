@@ -622,14 +622,14 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 	// Print results
 	for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
 	{
-	std::vector<std::string> headings;
-	headings.resize(col);
-	std::cerr << "     Selected output " << n_user <<": " << "\n";
-	for (int j = 0; j < col; j++)
-	{
-		status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
-		std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
-	}
+		std::vector<std::string> headings;
+		headings.resize(col);
+		std::cerr << "     Selected output " << n_user <<": " << "\n";
+		for (int j = 0; j < col; j++)
+		{
+			status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
+			std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
+		}
 	}
 }
 </PRE>
@@ -4089,14 +4089,14 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 	// Print results
 	for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
 	{
-	std::vector<std::string> headings;
-	headings.resize(col);
-	std::cerr << "     Selected output " << n_user <<": " << "\n";
-	for (int j = 0; j < col; j++)
-	{
-		status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
-		std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
-	}
+		std::vector<std::string> headings;
+		headings.resize(col);
+		std::cerr << "     Selected output " << n_user <<": " << "\n";
+		for (int j = 0; j < col; j++)
+		{
+			status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
+			std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
+		}
 	}
 }
 </PRE>
