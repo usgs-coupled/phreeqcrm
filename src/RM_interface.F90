@@ -3608,7 +3608,6 @@ END FUNCTION RM_GetTimeStep
 !> The names of the map keys for map
 !> arguments are not used in parsing the YAML file; only the order of 
 !> the arguments is important.
-!> 
 !> @par 
 !> The following list gives the PhreeqcRM methods that can be specified in a YAML file
 !> and the arguments that are required. The arguments are described with C++ formats, which
