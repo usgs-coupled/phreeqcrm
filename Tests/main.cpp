@@ -26,6 +26,7 @@ extern int advection_bmi_cpp();
 extern int species_cpp();
 extern int units_tester();
 extern int gas_cpp();
+extern void WriteYAMLFile();
 
 int main(int argc, char* argv[])
 {
@@ -57,6 +58,7 @@ int main(int argc, char* argv[])
 	if (root) std::cerr << "Done units_tester.===================================" << std::endl;
 	advection_cpp();
 	if (root) std::cerr << "Done advection_cpp.==================================" << std::endl;
+	WriteYAMLFile();
 	advection_bmi_cpp();
 	if (root) std::cerr << "Done advection_bmi_cpp.==================================" << std::endl;
 	advection_c();

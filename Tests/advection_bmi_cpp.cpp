@@ -22,7 +22,7 @@ void AdvectBMICpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomp
 int bmi_example_selected_output(PhreeqcRM& phreeqc_rm);
 double bmi_basic_callback(double x1, double x2, const char* str, void* cookie);
 void BMI_testing(PhreeqcRM &phreeqc_rm);
-void GenerateYAML(int nxyz, std::string YAML_filename);
+//void GenerateYAML(int nxyz, std::string YAML_filename);
 class my_data
 {
 public:
@@ -48,8 +48,8 @@ int advection_bmi_cpp()
 		// No PhreeqcRM methods are used to create
 		// this file
 		int nxyz = 40;
-		std::string YAML_filename = "advect_bmi_cpp.yaml";
-		GenerateYAML(nxyz, YAML_filename);
+		//std::string YAML_filename = "advect.yaml";
+		//GenerateYAML(nxyz, YAML_filename);
 
 		// Data for call_back demostration
 		std::vector<double> hydraulic_K;
@@ -87,7 +87,7 @@ int advection_bmi_cpp()
 		bmi_register_basic_callback(&some_data);
 
 		// Use YAML file to initialize
-		phreeqc_rm.InitializeYAML(YAML_filename);
+		phreeqc_rm.InitializeYAML("advect.yaml");
 
 		// Get number of components
 		int ncomps;
@@ -164,6 +164,13 @@ int advection_bmi_cpp()
 		c.resize(nxyz * components.size());
 		status = phreeqc_rm.GetConcentrations(c);
 
+		// Set density, temperature, and pressure
+		std::vector<double> density(nxyz, 1.0);
+		std::vector<double> temperature(nxyz, 20.0);
+		std::vector<double> pressure(nxyz, 2.0);
+		phreeqc_rm.BMI_SetValue("Density", density.data());
+		phreeqc_rm.BMI_SetValue("Temperature", temperature.data());
+		phreeqc_rm.BMI_SetValue("Pressure", pressure.data());
 		// --------------------------------------------------------------------------
 		// Set boundary condition
 		// --------------------------------------------------------------------------
@@ -183,9 +190,6 @@ int advection_bmi_cpp()
 		int nsteps = 10;
 		std::vector<double> por(nxyz, 0.2);
 		std::vector<double> sat(nxyz, 1.0);
-		std::vector<double> temperature(nxyz,20.0);
-		std::vector<double> density(nxyz, 1.0);
-		std::vector<double> pressure(nxyz, 2.0);
 
 		double time_step = phreeqc_rm.BMI_GetTimeStep();
 		double time = phreeqc_rm.BMI_GetCurrentTime();
@@ -200,7 +204,6 @@ int advection_bmi_cpp()
 				phreeqc_rm.LogMessage(strm.str());
 				phreeqc_rm.SetScreenOn(true);
 				phreeqc_rm.ScreenMessage(strm.str());
-				phreeqc_rm.OutputMessage(strm.str());
 			}
 			AdvectBMICpp(c, bc_conc, ncomps, nxyz, nbound);
 			// Transfer data to PhreeqcRM for reactions
@@ -230,7 +233,6 @@ int advection_bmi_cpp()
 				strm << "Beginning reaction calculation              " << time * phreeqc_rm.GetTimeConversion() << " days\n";
 				phreeqc_rm.LogMessage(strm.str());
 				phreeqc_rm.ScreenMessage(strm.str());
-				phreeqc_rm.OutputMessage(strm.str());
 			}
 			// Demonstration of state
 			status = phreeqc_rm.StateSave(1);
@@ -970,13 +972,8 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		int rm_so_row_count = phreeqc_rm.GetSelectedOutputRowCount();
 		assert(bmi_so_row_count == rm_so_row_count);
 	}
-	
-	//void InitializeYAML(std::string config);
-	//void BMI_Initialize(std::string config) { InitializeYAML(config); }
-	//void BMI_Update();
-	//void BMI_Finalize();
-
 }
+#ifdef SKIP
 void GenerateYAML(int nxyz, std::string YAML_filename)
 {
 	YAMLPhreeqcRM yrm;
@@ -1117,3 +1114,4 @@ void GenerateYAML(int nxyz, std::string YAML_filename)
 		yrm.clear();
 	}
 };
+#endif
