@@ -17,4 +17,6 @@ namespace std {
 // need to modify
 %ignore PhreeqcRM::GetSelectedOutputHeading(int icol, std::string& heading);  // no passing by ref???
 
+%ignore PhreeqcRM::ReturnHandler(IRM_RESULT result, const std::string & e_string);
+
 %include "../src/PhreeqcRM.h"
