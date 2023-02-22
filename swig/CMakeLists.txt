@@ -36,3 +36,16 @@ target_link_libraries(phreeqcrm
     Python::Python
     PhreeqcRM::PhreeqcRM
 )
+
+if (MSVC AND BUILD_SHARED_LIBS)
+  # copy dll
+  add_custom_command(TARGET phreeqcrm POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PhreeqcRM::PhreeqcRM> $<TARGET_FILE_DIR:phreeqcrm>
+  )
+  # @TODO Update for python install
+  if (PHREEQCRM_USE_ZLIB)
+    add_custom_command(TARGET phreeqcrm POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E echo "When running tests you may need to copy the zlib.dll to the directory: $<TARGET_FILE_DIR:phreeqcrm>"
+    )
+  endif()
+endif()
