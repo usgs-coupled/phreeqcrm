@@ -162,7 +162,8 @@ int advection_bmi_cpp()
 
 		std::vector<double> c;
 		c.resize(nxyz * components.size());
-		status = phreeqc_rm.GetConcentrations(c);
+		//status = phreeqc_rm.GetConcentrations(c);
+		phreeqc_rm.BMI_GetValue("Concentrations", c.data());
 
 		// Set density, temperature, and pressure
 		std::vector<double> density(nxyz, 1.0);
