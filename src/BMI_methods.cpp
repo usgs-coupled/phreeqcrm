@@ -167,6 +167,19 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
         //    memcpy(dest, &num, sizeof(int));
         //    return;
         //}
+        if (it->first == "Pressure")
+        {
+            const std::vector<double> &pressure = this->GetPressure();
+            memcpy(dest, pressure.data(), pressure.size() * sizeof(double));
+            return;
+        }
+        if (it->first == "Saturation")
+        {
+            std::vector<double> saturation;
+            this->GetSaturation(saturation);
+            memcpy(dest, saturation.data(), saturation.size() * sizeof(double));
+            return;
+        }
         if (it->first == "SelectedOutput")
         {
             std::vector<double> so;
@@ -210,6 +223,12 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
         {
             int count = this->GetSelectedOutputRowCount();
             memcpy(dest, &count, sizeof(int));
+            return;
+        }
+        if (it->first == "Temperature")
+        {
+            const std::vector<double> &temperature = this->GetTemperature();
+            memcpy(dest, temperature.data(), temperature.size() * sizeof(double));
             return;
         }
     }
@@ -491,7 +510,7 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["MpiMyself"] = Var_BMI("MpiMyself", "int", "id", sizeof(int));
         //var_map["MpiTasks"] = Var_BMI("MpiTasks", "int", "count", sizeof(int));
         bmi_var_map["NthSelectedOutput"] = BMI_Var("NthSelectedOutput", "int", "id", true, false);
-        bmi_var_map["Saturation"] = BMI_Var("Saturation", "double", "unitless", true, false);
+        bmi_var_map["Saturation"] = BMI_Var("Saturation", "double", "unitless", true, true);
         bmi_var_map["SelectedOutput"] = BMI_Var("SelectedOutput", "double", "user", false, true);
         bmi_var_map["SelectedOutputColumnCount"] = BMI_Var("SelectedOutputColumnCount", "int", "count", false, true);
         bmi_var_map["SelectedOutputCount"] = BMI_Var("SelectedOutputCount", "int", "count", false, true);
@@ -525,7 +544,7 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["PartitionUZSolids"] = Var_BMI("PartitionUZSolids", "int", "flag", sizeof(int));
         bmi_var_map["Porosity"] = BMI_Var("Porosity", "double", "unitless", true, false);
         //var_map["PartitionUZSolids"] = Var_BMI("PartitionUZSolids", "int", "flag", sizeof(int));
-        bmi_var_map["Pressure"] = BMI_Var("Pressure", "double", "atm", true, false);
+        bmi_var_map["Pressure"] = BMI_Var("Pressure", "double", "atm", true, true);
         //var_map["PrintChemistryMask"] = Var_BMI("PrintChemistryMask", "int", "flags", sizeof(int));
         //var_map["PrintChemistryOn"] = Var_BMI("PrintChemistryOn", "int", "flag", sizeof(int));
         //var_map["RebalanceByCell"] = Var_BMI("RebalanceByCell", "int", "flag", sizeof(int));
@@ -534,7 +553,7 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["RebalanceByCell"] = Var_BMI("RebalanceByCell", "int", "flag", sizeof(int));
         //var_map["ScreenOn"] = Var_BMI("ScreenOn", "int", "flag", sizeof(int));
         bmi_var_map["SelectedOutputOn"] = BMI_Var("SelectedOutputOn", "int", "flag", true, false);
-        bmi_var_map["Temperature"] = BMI_Var("Temperature", "double", "C", true, false);
+        bmi_var_map["Temperature"] = BMI_Var("Temperature", "double", "C", true, true);
         //var_map["UnitsExchange"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));
         //var_map["UnitsGasPhase"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));
         //var_map["UnitsKinetics"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));

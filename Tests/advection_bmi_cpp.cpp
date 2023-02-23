@@ -149,16 +149,21 @@ int advection_bmi_cpp()
 		phreeqc_rm.OutputMessage("\n");
 
 		// Get temperatures (unchanged by PhreeqcRM)
-		const std::vector<double>& tempc = phreeqc_rm.GetTemperature();
+		//const std::vector<double>& tempc = phreeqc_rm.GetTemperature();
+		std::vector<double> tempc(nxyz, 0.0);
+		phreeqc_rm.BMI_GetValue("Temperature", tempc.data());
 
 		// get current saturation (unchanged by PhreeqcRM)
-		std::vector<double> current_sat;
-		IRM_RESULT status = phreeqc_rm.GetSaturation(current_sat);		// Demonstration of error handling if ErrorHandlerMode is 0
-		if (status != IRM_OK)
-		{
-			std::cerr << phreeqc_rm.GetErrorString(); // retrieve error messages if needed
-			throw PhreeqcRMStop();
-		}
+		//std::vector<double> current_sat;
+		//IRM_RESULT status = phreeqc_rm.GetSaturation(current_sat);		// Demonstration of error handling if ErrorHandlerMode is 0
+		//if (status != IRM_OK)
+		//{
+		//	std::cerr << phreeqc_rm.GetErrorString(); // retrieve error messages if needed
+		//	throw PhreeqcRMStop();
+		//}
+		IRM_RESULT status;
+		std::vector<double> current_sat(nxyz, 0.0);
+		phreeqc_rm.BMI_GetValue("Saturation", current_sat.data());
 
 		std::vector<double> c;
 		c.resize(nxyz * components.size());
@@ -881,6 +886,25 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		// tested in "SelectedOutput"
 		// tested in "SelectedOutputHeadings"
 	}
+	// GetValue("Pressure")
+	{
+		int ngrid;
+		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
+		std::vector<double> bmi_pressure(ngrid, INACTIVE_CELL_VALUE);
+		phreeqc_rm.BMI_GetValue("Pressure", bmi_pressure.data());
+		const std::vector<double> rm_pressure = phreeqc_rm.GetPressure();
+		assert(bmi_pressure == rm_pressure);
+	}
+	// GetValue("Saturation")
+	{
+		int ngrid;
+		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
+		std::vector<double> bmi_sat(ngrid, INACTIVE_CELL_VALUE);
+		phreeqc_rm.BMI_GetValue("Saturation", bmi_sat.data());
+		std::vector<double> rm_sat;
+		phreeqc_rm.GetSaturation(rm_sat);
+		assert(bmi_sat == rm_sat);
+	}
 	// GetValue("SelectedOutput")
 	{
 		int bmi_so_count;
@@ -972,6 +996,15 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		phreeqc_rm.BMI_GetValue("SelectedOutputRowCount", &bmi_so_row_count);
 		int rm_so_row_count = phreeqc_rm.GetSelectedOutputRowCount();
 		assert(bmi_so_row_count == rm_so_row_count);
+	}
+	// GetValue("Temperature")
+	{
+		int ngrid;
+		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
+		std::vector<double> bmi_temp(ngrid, INACTIVE_CELL_VALUE);
+		phreeqc_rm.BMI_GetValue("Temperature", bmi_temp.data());
+		const std::vector<double> rm_temp = phreeqc_rm.GetTemperature();
+		assert(bmi_temp == rm_temp);
 	}
 }
 #ifdef SKIP

@@ -5304,11 +5304,14 @@ Called by root.
 	"ErrorString", @ref GetErrorString;
 	"Gfw", @ref GetGfw;
 	"GridCellCount", @ref GetGridCellCount;
+	"Pressure", @ref GetPressure;
+	"Saturation", @ref GetSaturation;
 	"SelectedOutput", @ref GetSelectedOutput;
 	"SelectedOutputColumnCount", @ref GetSelectedOutputColumnCount
 	"SelectedOutputCount", @ref GetSelectedOutputCount;
 	"SelectedOutputHeadings, @ref GetSelectedOutputHeadings;
-	"SelectedOutputRowCount", @ref GetSelectedOutputRowCount.
+	"SelectedOutputRowCount", @ref GetSelectedOutputRowCount;
+	"Temperature", @ref GetTemperature.
 
 	@see
 	@ref BMI_GetOutputVarNames,
