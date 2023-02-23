@@ -125,10 +125,8 @@ void WriteYAMLFile(void)
 
 	// Write YAML file
 	{
-		std::ostringstream oss;
-		oss << yrm.GetYAMLDoc();
 		std::ofstream ofs = std::ofstream(YAML_filename.c_str(), std::ofstream::out);
-		ofs << oss.str();
+		ofs << yrm.GetYAMLDoc();
 		ofs.close();
 		yrm.clear();
 	}
