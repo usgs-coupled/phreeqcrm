@@ -12,5 +12,3 @@ To make html documentation for C++, C, and Fortran
 
 (6) Revert RM_interface.F90
 
-/C/3rdParty/GnuWin32/bin/make
-"/C/Program Files/doxygen/bin/doxygen"
