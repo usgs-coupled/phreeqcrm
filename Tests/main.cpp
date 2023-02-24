@@ -21,10 +21,13 @@ extern void gas_f90(void);
 #endif
 
 // C++ function
+extern int SimpleAdvection_cpp();
 extern int advection_cpp();
+extern int advection_bmi_cpp();
 extern int species_cpp();
 extern int units_tester();
 extern int gas_cpp();
+extern void WriteYAMLFile();
 
 int main(int argc, char* argv[])
 {
@@ -54,8 +57,13 @@ int main(int argc, char* argv[])
 	bool root = (mpi_myself == 0);
 	units_tester();
 	if (root) std::cerr << "Done units_tester.===================================" << std::endl;
+	SimpleAdvection_cpp();
+	if (root) std::cerr << "Done SimpleAdvection_cpp.==================================" << std::endl;
 	advection_cpp();
 	if (root) std::cerr << "Done advection_cpp.==================================" << std::endl;
+	WriteYAMLFile();
+	advection_bmi_cpp();
+	if (root) std::cerr << "Done advection_bmi_cpp.==================================" << std::endl;
 	advection_c();
 	if (root) std::cerr << "Done advection_c.====================================" << std::endl;
 	species_cpp();

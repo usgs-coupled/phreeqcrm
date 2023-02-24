@@ -45,6 +45,9 @@ for f in html/*.html; do
   sed -i "s/rm_getconcentrations/RM_GetConcentrations/g" $f 
 done
 for f in html/*.html; do
+  sed -i "s/rm_getcurrentselectedoutputusernumber/RM_GetCurrentSelectedOutputUserNumber/g" $f 
+done
+for f in html/*.html; do
   sed -i "s/rm_getdensity/RM_GetDensity/g" $f 
 done
 for f in html/*.html; do
@@ -155,6 +158,9 @@ for f in html/*.html; do
   sed -i "s/rm_gettimestep/RM_GetTimeStep/g" $f 
 done
 for f in html/*.html; do
+  sed -i "s/rm_initializeyaml/RM_InitializeYAML/g" $f 
+done
+for f in html/*.html; do
   sed -i "s/rm_initialphreeqc2concentrations/RM_InitialPhreeqc2Concentrations/g" $f 
 done
 for f in html/*.html; do
@@ -222,6 +228,9 @@ for f in html/*.html; do
 done
 for f in html/*.html; do
   sed -i "s/rm_setmpiworkercallback/RM_SetMpiWorkerCallback/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/rm_setnthselectedoutput/RM_SetNthSelectedOutput/g" $f 
 done
 for f in html/*.html; do
   sed -i "s/rm_setpartitionuzsolids/RM_SetPartitionUZSolids/g" $f 

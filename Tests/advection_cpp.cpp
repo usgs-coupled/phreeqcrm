@@ -216,7 +216,7 @@ int advection_cpp()
 		}
 		status = phreeqc_rm.InitialPhreeqc2Module(ic1, ic2, f1);
 		// No mixing is defined, so the following is equivalent
-		// status = phreeqc_rm.InitialPhreeqc2Module(ic1.data());
+		// status = phreeqc_rm.InitialPhreeqc2Module(ic1);
 
 		// alternative for setting initial conditions
 		// cell number in first argument (-1 indicates last solution, 40 in this case)

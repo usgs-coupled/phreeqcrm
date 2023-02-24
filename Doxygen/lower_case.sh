@@ -17,6 +17,7 @@ sed -i -e "s/RM_GetChemistryCellCount/rm_getchemistrycellcount/g" $RM_INTERFACE_
 sed -i -e "s/RM_GetComponentCount/rm_getcomponentcount/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetComponent/rm_getcomponent/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetConcentrations/rm_getconcentrations/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_GetCurrentSelectedOutputUserNumber/rm_getcurrentselectedoutputusernumber/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetDensity/rm_getdensity/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetEndCell/rm_getendcell/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetErrorString/rm_geterrorstring/g" $RM_INTERFACE_F90
@@ -51,6 +52,7 @@ sed -i -e "s/RM_GetThreadCount/rm_getthreadcount/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetTimeConversion/rm_gettimeconversion/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetTimeStep/rm_gettimestep/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetTime/rm_gettime/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_InitializeYAML/rm_initializeyaml/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_InitialPhreeqc2Concentrations/rm_initialphreeqc2concentrations/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_InitialPhreeqc2Module/rm_initialphreeqc2module/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_InitialPhreeqcCell2Module/rm_initialphreeqccell2module/g" $RM_INTERFACE_F90
@@ -76,6 +78,7 @@ sed -i -e "s/RM_SetFilePrefix/rm_setfileprefix/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SetGasCompMoles/rm_setgascompmoles/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SetGasPhaseVolume/rm_setgasphasevolume/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SetMpiWorkerCallback/rm_setmpiworkercallback/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_SetNthSelectedOutput/rm_setnthselectedoutput/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SetPartitionUZSolids/rm_setpartitionuzsolids/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SetPorosity/rm_setporosity/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_SetPrintChemistryMask/rm_setprintchemistrymask/g" $RM_INTERFACE_F90
