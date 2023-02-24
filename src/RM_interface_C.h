@@ -2432,7 +2432,7 @@ WarningMessage(std::string warnstr);
 </CODE>
 @endhtmlonly
 @par MPI:
-Called by root, workers must be in the loop of @ref MpiWorker.
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 
 IRM_DLL_EXPORT IRM_RESULT RM_InitializeYAML(int id, const char* yamlfile);
