@@ -63,6 +63,11 @@ void YAMLPhreeqcRM::YAMLLoadDatabase(std::string database)
 	YAML_doc["LoadDatabase"] = database;
 	return;
 }
+void YAMLPhreeqcRM::YAMLLogMessage(std::string str)
+{
+	YAML_doc["LogMessage"] = str;
+	return;
+}
 void YAMLPhreeqcRM::YAMLOpenFiles(void)
 {
 	YAML_doc["OpenFiles"] = true;
@@ -108,7 +113,7 @@ void YAMLPhreeqcRM::YAMLSetComponentH2O(bool tf)
 	YAML_doc["SetComponentH2O"] = tf;
 	return;
 };
-void YAMLPhreeqcRM::YAMLSetConcentrations(std::vector< double > c) 
+void YAMLPhreeqcRM::YAMLSetConcentrations(std::vector< double >& c) 
 {
 	YAML_doc["SetConcentrations"] = c;
 	return;
@@ -151,6 +156,11 @@ void YAMLPhreeqcRM::YAMLSetGasCompMoles(std::vector< double > gas_moles)
 void YAMLPhreeqcRM::YAMLSetGasPhaseVolume(std::vector< double > gas_volume) 
 {
 	YAML_doc["SetGasPhaseVolume"] = gas_volume;
+	return;
+}
+void YAMLPhreeqcRM::YAMLSetNthSelectedOutput(int n)
+{
+	YAML_doc["SetGasPhaseVolume"] = n;
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetPartitionUZSolids(bool tf)  
