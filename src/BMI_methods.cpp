@@ -1,6 +1,6 @@
 // PhreeqcRM.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-
+#include <cstring>
 #include <iostream>
 #include <map>
 #include <string>
@@ -11,6 +11,7 @@
 #include "IPhreeqcPhast.h"
 #include "BMI_Var.h"
 #include "yaml-cpp/yaml.h"
+
 void PhreeqcRM::BMI_SetValue(std::string name, void* src)
 {
     std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name);

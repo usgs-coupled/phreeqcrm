@@ -27,6 +27,8 @@ endif()
 
 include(GNUInstallDirs)
 
+find_package(yaml-cpp REQUIRED)
+
 option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" "OFF")
 if(NOT PHREEQCRM_DISABLE_OPENMP)
   if(STANDALONE_BUILD EQUAL 1)
@@ -193,6 +195,8 @@ set(PhreeqcRM_SOURCES
   src/IPhreeqcPhast/IPhreeqcPhast.h
   src/IPhreeqcPhast/IPhreeqcPhastLib.cpp
   src/IPhreeqcPhast/IPhreeqcPhastLib.h
+  src/BMI_methods.cpp
+  src/BMI_Var.h
   src/IrmResult.h
   src/PhreeqcRM.cpp
   src/PhreeqcRM.h
