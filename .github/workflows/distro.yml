@@ -44,6 +44,9 @@ jobs:
     - name: doxygen
       run: sudo apt-get install doxygen && cd Doxygen && make
 
+    - name: install yaml-cpp
+      run: sudo apt-get install libyaml-cpp-dev
+
     - name: mkdir
       run: mkdir ${{github.workspace}}/_build
 
@@ -81,13 +84,13 @@ jobs:
       with:
         name: tarball
 
-    - name: Install ninja valgrind (Linux)
+    - name: Install ninja yaml-cpp valgrind (Linux)
       if: runner.os == 'Linux'
-      run: sudo apt-get install -y ninja-build valgrind
+      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
-    - name: Install ninja (macOS)
+    - name: Install ninja yaml-cpp (macOS)
       if: runner.os == 'macOS'
-      run: brew install ninja
+      run: brew install ninja yaml-cpp
 
     - name: Extract tarball
       run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
