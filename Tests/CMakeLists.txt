@@ -73,9 +73,9 @@ if(PHREEQCRM_FORTRAN_TESTING)
     endif()
   endif()
 
-  target_link_libraries(TestRM PhreeqcRM::PhreeqcRM yaml-cpp FortranAdvect)
+  target_link_libraries(TestRM PhreeqcRM::PhreeqcRM FortranAdvect)
 else()
-  target_link_libraries(TestRM PhreeqcRM::PhreeqcRM yaml-cpp)
+  target_link_libraries(TestRM PhreeqcRM::PhreeqcRM)
 endif()
 
 # test compile and run

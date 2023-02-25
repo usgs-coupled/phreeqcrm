@@ -234,6 +234,9 @@ if(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
   target_compile_definitions(PhreeqcRM PRIVATE _SCL_SECURE_NO_WARNINGS)
 endif()
 
+# yaml-cpp
+target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+
 # init exportPackageDependencies
 set(exportPackageDependencies "")
 
@@ -438,3 +441,9 @@ if(MSVC)
     )
   endforeach()
 endif()
+
+# get_cmake_property(_variableNames VARIABLES)
+# list (SORT _variableNames)
+# foreach (_variableName ${_variableNames})
+#   message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()
