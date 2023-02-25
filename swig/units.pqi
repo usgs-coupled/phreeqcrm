@@ -1,0 +1,28 @@
+# database ..\phreeqc.dat
+selected_output
+-high_precision true
+-file sel.out
+-reset false
+-eq Calcite
+solution 1
+pH 7
+-units mg/L
+Na   1000.
+Cl   1000. charge
+end
+solution 2
+pH 7 charge
+-units mol/L
+Na   1.0 
+Cl   1.0
+end
+solution 3
+pH 7 charge
+-units mg/kgs
+Na   1000. 
+Cl   1000.
+end
+equilibrium_phases 1
+calcite 0 1.0
+END
+

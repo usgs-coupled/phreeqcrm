@@ -7,6 +7,21 @@ project(
   LANGUAGES CXX C
 )
 
+# function (ixm::exit variable access value current stack)
+#   message(STATUS "variable=${variable}")
+#   message(STATUS "access=${access}")
+#   message(STATUS "value=${value}")
+#   message(STATUS "current=${current}")
+#   message(STATUS "stack=${stack}")
+#   if (NOT(access MATCHES "READ_ACCESS"))
+#     ##message(FATAL_ERROR "STOPPING")
+#   endif()
+# endfunction()
+# ##variable_watch(MPI_Fortran_F77_HEADER_DIR ixm::exit)
+# ##variable_watch(MPI_FORTRAN_FOUND ixm::exit)
+# ##variable_watch(MPI_Fortran_WORKS ixm::exit)
+# variable_watch(MPI_RESULT_Fortran_test_mpi_F77_HEADER ixm::exit)
+
 # check if this is the root project
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set(STANDALONE_BUILD 1)
@@ -27,6 +42,19 @@ endif()
 
 include(GNUInstallDirs)
 
+# check for zlib
+option(PHREEQCRM_USE_ZLIB "Use zlib compression for dump files" OFF)
+if(NOT ZLIB_ROOT)
+  # A user may set ZLIB_ROOT to a zlib installation root to tell this module where to look.
+  if(EXISTS $ENV{ZLIB_ROOT})
+    set(ZLIB_ROOT $ENV{ZLIB_ROOT})
+  endif()
+endif()
+if(PHREEQCRM_USE_ZLIB)
+  find_package(ZLIB REQUIRED)
+endif()
+
+# check for disable OpenMP
 option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" "OFF")
 if(NOT PHREEQCRM_DISABLE_OPENMP)
   if(STANDALONE_BUILD EQUAL 1)
@@ -38,6 +66,7 @@ endif()
 # check for MPI
 option(PHREEQCRM_BUILD_MPI "Build MPI configuration" "OFF")
 if(PHREEQCRM_BUILD_MPI)
+  # set(MPI_GUESS_LIBRARY_NAME MSMPI) @TODO check this
   find_package(MPI REQUIRED)
 endif()
 
@@ -202,14 +231,6 @@ set(PhreeqcRM_SOURCES
   src/RM_interface_F.h
 )
 
-# setup include directories
-include_directories("${PROJECT_SOURCE_DIR}/src")
-include_directories("${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast")
-include_directories("${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc")
-include_directories("${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp")
-include_directories("${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common")
-include_directories("${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords")
-
 # dll/shared objects
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 set(LIB_TYPE STATIC)
@@ -218,52 +239,51 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 add_library(PhreeqcRM ${LIB_TYPE} ${PhreeqcRM_SOURCES})
+add_library(PhreeqcRM::PhreeqcRM ALIAS PhreeqcRM)
 
 # iphreeqc defs
+target_compile_definitions(PhreeqcRM PRIVATE IPhreeqc_EXPORTS)
 target_compile_definitions(PhreeqcRM PRIVATE SWIG_SHARED_OBJ)
 target_compile_definitions(PhreeqcRM PRIVATE USE_PHRQ_ALLOC)
 
 # Disable deprecation warnings for standard C and STL functions in VS2005
 # and later
-if(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
+if (MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
   target_compile_definitions(PhreeqcRM PRIVATE _CRT_SECURE_NO_DEPRECATE)
   target_compile_definitions(PhreeqcRM PRIVATE _SCL_SECURE_NO_WARNINGS)
 endif()
 
-# init exportPackageDependencies
-set(exportPackageDependencies "")
+# setup include directories
+target_include_directories(PhreeqcRM
+  PUBLIC
+  $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src>
+  $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src/IPhreeqcPhast>
+  $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc>
+  $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp>
+  $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common>
+  $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
-# check for zlib
-if(NOT ZLIB_ROOT)
-  if(EXISTS $ENV{ZLIB_ROOT})
-    set(ZLIB_ROOT $ENV{ZLIB_ROOT})
-  endif()
-endif()
-option(PHREEQCRM_USE_ZLIB "Use zlib compression for dump files" OFF)
-if(PHREEQCRM_USE_ZLIB)
-  find_package(ZLIB REQUIRED)
-endif()
-
-if(PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
-  target_compile_definitions(PhreeqcRM PRIVATE USE_GZ)
-  target_link_libraries(PhreeqcRM PRIVATE ZLIB::ZLIB)
-  string(APPEND exportPackageDependencies "find_dependency(ZLIB)\n")
-endif()
 
 # Allow user to override POSTFIX properties (but mandate them so that
 # all builds can be installed to the same directory)
 if(NOT CMAKE_DEBUG_POSTFIX)
   set_target_properties(PhreeqcRM PROPERTIES DEBUG_POSTFIX "d")
 endif()
-
-# At least with MSMPI PhreeqcRM.dll requires MPI_CXX_LIBRARIES to link
-if(MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_BUILD_MPI)
-  target_link_libraries(PhreeqcRM ${MPI_CXX_LIBRARIES})
+if(NOT CMAKE_MINSIZEREL_POSTFIX)
+  set_target_properties(PhreeqcRM PROPERTIES MINSIZEREL_POSTFIX "msr")
+endif()
+if(NOT CMAKE_RELWITHDEBINFO_POSTFIX)
+  set_target_properties(PhreeqcRM PROPERTIES RELWITHDEBINFO_POSTFIX "rwd")
 endif()
 
-if(MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
-  target_link_libraries(PhreeqcRM ${ZLIB_LIBRARIES})
-endif()
+# @TODO this needs to be checked
+# # At least with MSMPI PhreeqcRM.dll requires MPI_CXX_LIBRARIES to link
+# if (MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_BUILD_MPI)
+#   ##target_link_libraries(PhreeqcRM PUBLIC ${MPI_CXX_LIBRARIES})
+#   target_link_libraries(PhreeqcRM PUBLIC MPI::MPI_CXX)
+# endif()
 
 set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h
@@ -290,19 +310,28 @@ set(PhreeqcRM_SRC
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
 )
 
+# init exportPackageDependencies
+set(exportPackageDependencies "")
+
+# zlib
+if (PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
+  target_compile_definitions(PhreeqcRM PRIVATE USE_GZ)
+  target_link_libraries(PhreeqcRM PUBLIC ZLIB::ZLIB)
+  string(APPEND exportPackageDependencies "find_dependency(ZLIB)\n")
+endif()
+
 if(PHREEQCRM_BUILD_MPI)
   # USE_MPI needs to be public in order to compile the
   # fortran interface files
   target_compile_definitions(PhreeqcRM PUBLIC USE_MPI)
   target_link_libraries(PhreeqcRM PUBLIC MPI::MPI_CXX)
   if(PHREEQCRM_FORTRAN_TESTING)
-    ##include_directories(${MPI_Fortran_INCLUDE_PATH})
     target_link_libraries(PhreeqcRM PUBLIC MPI::MPI_Fortran)
   endif()
   string(APPEND exportPackageDependencies "find_dependency(MPI)\n")
 else()
   if(NOT PHREEQCRM_DISABLE_OPENMP)
-    if(OPENMP_FOUND)
+    if(OpenMP_FOUND)
       target_compile_definitions(PhreeqcRM PRIVATE USE_OPENMP)
       target_link_libraries(PhreeqcRM PUBLIC OpenMP::OpenMP_CXX)
       string(APPEND exportPackageDependencies "find_dependency(OpenMP)\n")
@@ -344,7 +373,7 @@ if(STANDALONE_BUILD EQUAL 1)
     FILE PhreeqcRMTargets.cmake
     NAMESPACE PhreeqcRM::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PhreeqcRM
-  )  
+  )
 
   install(FILES ${PhreeqcRM_Headers}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
@@ -395,8 +424,6 @@ if(STANDALONE_BUILD EQUAL 1 AND MSVC)
   endif()
 endif()
 
-add_library(PhreeqcRM::PhreeqcRM ALIAS PhreeqcRM)
-
 if(STANDALONE_BUILD EQUAL 1)
   # tests
   enable_testing()
@@ -405,6 +432,7 @@ if(STANDALONE_BUILD EQUAL 1)
   add_subdirectory(database)
   add_subdirectory(doc)
   add_subdirectory(Doxygen)
+  add_subdirectory(swig)
   add_subdirectory(Tests)
 endif()
 
@@ -417,7 +445,7 @@ if(MSVC)
     string(REPLACE "/INCREMENTAL " "/INCREMENTAL:NO " CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG})
     string(REGEX REPLACE " /INCREMENTAL$" " /INCREMENTAL:NO" CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG})
     set(CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG
-        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG}" CACHE STRING 
+        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG}" CACHE STRING
         "Flags used by the shared libraries linker during Debug builds."
         FORCE
     )
@@ -428,9 +456,15 @@ if(MSVC)
     string(REPLACE "/INCREMENTAL " "/INCREMENTAL:NO " CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO})
     string(REGEX REPLACE " /INCREMENTAL$" " /INCREMENTAL:NO" CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO})
     set(CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO
-        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO}" CACHE STRING 
+        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO}" CACHE STRING
         "Flags used by the shared libraries linker during Release with Debug Info builds."
         FORCE
     )
   endforeach()
 endif()
+
+# get_cmake_property(_variableNames VARIABLES)
+# list (SORT _variableNames)
+# foreach (_variableName ${_variableNames})
+#   message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()
