@@ -142,13 +142,13 @@ jobs:
       with:
         name: tarball
 
-    - name: Install ninja valgrind (Linux)
+    - name: Install ninja yaml-cpp valgrind (Linux)
       if: runner.os == 'Linux'
-      run: sudo apt-get install -y ninja-build valgrind
+      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
-    - name: Install ninja (macOS)
+    - name: Install ninja yaml-cpp (macOS)
       if: runner.os == 'macOS'
-      run: brew install ninja
+      run: brew install ninja yaml-cpp
 
     - name: Set up Visual Studio shell (Windows)
       if: runner.os == 'Windows'
