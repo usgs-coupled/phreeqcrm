@@ -5,42 +5,64 @@ AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcd
 TESTS = test
 check_PROGRAMS = test
 
-test_SOURCES = advection_c.c advection_cpp.cpp main.cpp species_c.c species_cpp.cpp gas_c.c gas_cpp.cpp
-test_LDADD = $(top_builddir)/libphreeqcrm.la
+test_SOURCES =\
+	advection_bmi_cpp.cpp\
+	advection_c.c\
+	advection_cpp.cpp\
+	gas_c.c\
+	gas_cpp.cpp\
+	main.cpp\
+	SimpleAdvection.cpp\
+	species_c.c\
+	species_cpp.cpp\
+	WriteYAMLFile.cpp\
+	YAMLPhreeqcRM.cpp\
+	YAMLPhreeqcRM.h
+
+
+# Ubuntu 22.04.1
+# sudo apt install libyaml-cpp-dev
+test_LDADD = $(top_builddir)/libphreeqcrm.la -lyaml-cpp
 test_LINK = $(CXXLINK)
 
 CLEANFILES =\
-	species_cpp.dmp\
-	Species_cpp.log.txt\
-	species_c.dmp\
-	advection_c.dmp\
+	Advect_bmi_cpp.chem.txt\
+	Advect_bmi_cpp.log.txt\
 	Advect_c.chem.txt\
-	Units_Worker.chem.txt\
-	Species_c.chem.txt\
-	Units_InitialPhreeqc_1.log.txt\
-	species_utility_c.txt\
-	Advect_cpp.chem.txt\
-	Species_c.log.txt\
-	utility_c.txt\
-	advection_cpp.dmp\
-	Units_InitialPhreeqc_2.log.txt\
-	species_utility_cpp.txt\
-	Units_Worker.log.txt\
-	Units_utility.out\
-	Advect_cpp.log.txt\
-	Species_cpp.chem.txt\
-	Units_InitialPhreeqc_2.chem.txt\
 	Advect_c.log.txt\
-	utility_cpp.txt\
-	Units_InitialPhreeqc_1.chem.txt \
+	Advect_cpp.chem.txt\
+	Advect_cpp.log.txt\
+	advect.yaml\
+	advection_bmi_cpp.dmp\
+	advection_c.dmp\
+	advection_cpp.dmp\
+	gas_c.chem.txt\
+	gas_c.dmp\
+	gas_c.log.txt\
+	gas_cpp.chem.txt\
 	gas_cpp.dmp\
 	gas_cpp.log.txt\
-	gas_c.dmp\
-	gas_c.chem.txt\
 	gas_utility_c.txt\
-	gas_c.log.txt\
 	gas_utility_cpp.txt\
-	gas_cpp.chem.txt
+	SimpleAdvection_cpp.chem.txt\
+	SimpleAdvection_cpp.log.txt\
+	Species_c.chem.txt\
+	species_c.dmp\
+	Species_c.log.txt\
+	Species_cpp.chem.txt\
+	species_cpp.dmp\
+	Species_cpp.log.txt\
+	species_utility_c.txt\
+	species_utility_cpp.txt\
+	Units_InitialPhreeqc_1.chem.txt\
+	Units_InitialPhreeqc_1.log.txt\
+	Units_InitialPhreeqc_2.chem.txt\
+	Units_InitialPhreeqc_2.log.txt\
+	Units_utility.out\
+	Units_Worker.chem.txt\
+	Units_Worker.log.txt\
+	utility_c.txt\
+	utility_cpp.txt
 
 if PHREEQCRM_TEST_FORTRAN
 

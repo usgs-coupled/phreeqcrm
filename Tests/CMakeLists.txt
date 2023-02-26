@@ -45,13 +45,18 @@ add_executable(TestRM)
 
 # TestRM C/CXX source
 target_sources(TestRM PRIVATE
+  advection_bmi_cpp.cpp
   advection_c.c
   advection_cpp.cpp
   gas_c.c
   gas_cpp.cpp
   main.cpp
+  SimpleAdvection.cpp
   species_c.c
   species_cpp.cpp
+  WriteYAMLFile.cpp
+  YAMLPhreeqcRM.cpp
+  YAMLPhreeqcRM.h
 )
 
 if(PHREEQCRM_FORTRAN_TESTING)

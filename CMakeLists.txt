@@ -27,6 +27,8 @@ endif()
 
 include(GNUInstallDirs)
 
+find_package(yaml-cpp REQUIRED)
+
 option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" "OFF")
 if(NOT PHREEQCRM_DISABLE_OPENMP)
   if(STANDALONE_BUILD EQUAL 1)
@@ -193,6 +195,8 @@ set(PhreeqcRM_SOURCES
   src/IPhreeqcPhast/IPhreeqcPhast.h
   src/IPhreeqcPhast/IPhreeqcPhastLib.cpp
   src/IPhreeqcPhast/IPhreeqcPhastLib.h
+  src/BMI_methods.cpp
+  src/BMI_Var.h
   src/IrmResult.h
   src/PhreeqcRM.cpp
   src/PhreeqcRM.h
@@ -219,6 +223,9 @@ endif()
 
 add_library(PhreeqcRM ${LIB_TYPE} ${PhreeqcRM_SOURCES})
 
+# c++11
+target_compile_features(PhreeqcRM PUBLIC cxx_std_11)
+
 # iphreeqc defs
 target_compile_definitions(PhreeqcRM PRIVATE SWIG_SHARED_OBJ)
 target_compile_definitions(PhreeqcRM PRIVATE USE_PHRQ_ALLOC)
@@ -229,6 +236,9 @@ if(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
   target_compile_definitions(PhreeqcRM PRIVATE _CRT_SECURE_NO_DEPRECATE)
   target_compile_definitions(PhreeqcRM PRIVATE _SCL_SECURE_NO_WARNINGS)
 endif()
+
+# yaml-cpp
+target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
 
 # init exportPackageDependencies
 set(exportPackageDependencies "")
@@ -434,3 +444,9 @@ if(MSVC)
     )
   endforeach()
 endif()
+
+# get_cmake_property(_variableNames VARIABLES)
+# list (SORT _variableNames)
+# foreach (_variableName ${_variableNames})
+#   message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()

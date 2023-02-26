@@ -44,6 +44,9 @@ AX_PROG_CXX_MPI([test x"$with_mpi" != xno],[use_mpi=yes],[
 AC_PROG_AWK
 AC_PROG_CPP
 
+# testing if this fixes macOS build on github actions
+# c++11 is required by Darwin for yaml-cpp
+AX_CXX_COMPILE_STDCXX(11, [ext], [mandatory])
 
 # Check if the fortran test should be included
 AC_MSG_CHECKING([if Fortran test is added])
