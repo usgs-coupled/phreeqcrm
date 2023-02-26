@@ -223,6 +223,9 @@ endif()
 
 add_library(PhreeqcRM ${LIB_TYPE} ${PhreeqcRM_SOURCES})
 
+# c++11
+target_compile_features(PhreeqcRM PUBLIC cxx_std_11)
+
 # iphreeqc defs
 target_compile_definitions(PhreeqcRM PRIVATE SWIG_SHARED_OBJ)
 target_compile_definitions(PhreeqcRM PRIVATE USE_PHRQ_ALLOC)
