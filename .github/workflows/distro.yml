@@ -121,7 +121,7 @@ jobs:
         echo 'objects = advection_bmi_cpp.o advection_c.o advection_cpp.o gas_c.o gas_cpp.o main.o SimpleAdvection.o species_c.o species_cpp.o WriteYAMLFile.o YAMLPhreeqcRM.o' > Makefile
         echo 'test : $(objects)'                                  >> Makefile
         echo '	$(CXX) -o test $(objects) -lphreeqcrm -lyaml-cpp' >> Makefile
-        make test
+        env CC='gcc' CXX='g++ -std=gnu++11' make test
 
   cmake:
     name: cmake
