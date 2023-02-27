@@ -1,3 +1,4 @@
+#ifdef USE_YAML
 #include <map>
 #include <string>
 #include "yaml-cpp/yaml.h"
@@ -1636,3 +1637,4 @@ private:
 	std::map<std::string, int> method_map;
 };
 
+#endif

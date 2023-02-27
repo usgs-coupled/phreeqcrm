@@ -1262,6 +1262,7 @@ double RMF_GetTimeStep(int * id)
 	}
 	return (double) IRM_BADINSTANCE;
 }
+#ifdef USE_YAML
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RMF_InitializeYAML(int* id, const char* yaml_name)
@@ -1278,6 +1279,7 @@ RMF_InitializeYAML(int* id, const char* yaml_name)
 	}
 	return IRM_BADINSTANCE;
 }
+#endif
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RMF_InitialPhreeqc2Concentrations(

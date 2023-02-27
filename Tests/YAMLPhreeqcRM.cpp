@@ -1,3 +1,4 @@
+#ifdef USE_YAML
 #include "yaml-cpp/yaml.h"
 #include <iostream>
 #include <fstream>
@@ -314,3 +315,4 @@ void YAMLPhreeqcRM::YAMLWarningMessage(std::string warnstr)
 }
 //
 
+#endif

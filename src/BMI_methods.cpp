@@ -1,6 +1,6 @@
 // PhreeqcRM.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-#include <cstring>
+
 #include <iostream>
 #include <map>
 #include <string>
@@ -10,8 +10,9 @@
 #include "IPhreeqc.h"
 #include "IPhreeqcPhast.h"
 #include "BMI_Var.h"
+#ifdef USE_YAML
 #include "yaml-cpp/yaml.h"
-
+#endif
 void PhreeqcRM::BMI_SetValue(std::string name, void* src)
 {
     std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name);
@@ -580,6 +581,7 @@ void PhreeqcRM::BMI_MakeVarMap()
         }
     }
 }
+#ifdef USE_YAML
 IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 {
     YAML::Node yaml = YAML::LoadFile(config);
@@ -989,6 +991,7 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 	}
     return IRM_RESULT::IRM_OK;
 }
+#endif
 
 
 

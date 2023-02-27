@@ -61,8 +61,10 @@ int main(int argc, char* argv[])
 	if (root) std::cerr << "Done SimpleAdvection_cpp.==================================" << std::endl;
 	advection_cpp();
 	if (root) std::cerr << "Done advection_cpp.==================================" << std::endl;
+#ifdef USE_YAML
 	WriteYAMLFile();
 	advection_bmi_cpp();
+#endif
 	if (root) std::cerr << "Done advection_bmi_cpp.==================================" << std::endl;
 	advection_c();
 	if (root) std::cerr << "Done advection_c.====================================" << std::endl;

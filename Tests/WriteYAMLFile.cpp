@@ -1,3 +1,4 @@
+#ifdef USE_YAML
 #if defined(USE_MPI)
 #include <mpi.h>
 #endif
@@ -131,3 +132,4 @@ void WriteYAMLFile(void)
 		yrm.clear();
 	}
 };
+#endif
