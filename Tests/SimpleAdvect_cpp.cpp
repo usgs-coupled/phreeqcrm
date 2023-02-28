@@ -85,9 +85,8 @@ int SimpleAdvection_cpp()
 		}
 		phreeqc_rm.OutputMessage("\n");
 		// Set array of initial conditions
-		std::vector<int> ic1, ic2;
+		std::vector<int> ic1;
 		ic1.resize(nxyz*7, -1);
-		ic2.resize(nxyz*7, -1);
 		std::vector<double> f1;
 		f1.resize(nxyz*7, 1.0);
 		for (int i = 0; i < nxyz; i++)
@@ -113,18 +112,16 @@ int SimpleAdvection_cpp()
 		// --------------------------------------------------------------------------
 		// Set boundary condition
 		// --------------------------------------------------------------------------
-		std::vector<double> bc_conc, bc_f1;
-		std::vector<int> bc1, bc2;
+		std::vector<double> bc_conc;
+		std::vector<int> bc1;
 		int nbound = 1;
 		bc1.resize(nbound, 0);                      // solution 0 from Initial IPhreeqc instance
-		bc2.resize(nbound, -1);                     // no bc2 solution for mixing
-		bc_f1.resize(nbound, 1.0);                  // mixing fraction for bc1
-		status = phreeqc_rm.InitialPhreeqc2Concentrations(bc_conc, bc1, bc2, bc_f1);
+		status = phreeqc_rm.InitialPhreeqc2Concentrations(bc_conc, bc1);
 		// --------------------------------------------------------------------------
 		// Transient loop
 		// --------------------------------------------------------------------------
 		int nsteps = 10;
-		std::vector<double> initial_density, temperature, pressure;
+		std::vector<double> temperature, pressure;
 		temperature.resize(nxyz, 20.0);
 		pressure.resize(nxyz, 2.0);
 		phreeqc_rm.SetTemperature(temperature);
@@ -162,6 +159,9 @@ int SimpleAdvection_cpp()
 			// Transfer data from PhreeqcRM for transport
 			status = phreeqc_rm.GetConcentrations(c);
 		}
+		// Clean up
+		status = phreeqc_rm.CloseFiles();
+		status = phreeqc_rm.MpiWorkerBreak();
 	}
 	catch (PhreeqcRMStop)
 	{
