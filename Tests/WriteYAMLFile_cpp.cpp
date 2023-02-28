@@ -14,10 +14,10 @@
 #include "yaml-cpp/yaml.h"
 #include "YAMLPhreeqcRM.h"
 
-void WriteYAMLFile(void)
+void WriteYAMLFile_cpp(void)
 {
 	int nxyz = 40;
-	std::string YAML_filename = "advect.yaml";
+	std::string YAML_filename = "AdvectBMI_cpp.yaml";
 	YAMLPhreeqcRM yrm;
 
 	// Set some properties
@@ -28,7 +28,7 @@ void WriteYAMLFile(void)
 	yrm.YAMLUseSolutionDensityVolume(false);
 	yrm.YAMLSetPartitionUZSolids(false);
 	// Open files
-	yrm.YAMLSetFilePrefix("Advect_bmi_cpp");
+	yrm.YAMLSetFilePrefix("AdvectBMI_cpp");
 	yrm.YAMLOpenFiles();
 
 	// Set concentration units

@@ -1,6 +1,6 @@
 
 
-subroutine species_f90()  BIND(C)
+subroutine Species_f90()  BIND(C)
   USE, intrinsic :: ISO_C_BINDING
   USE PhreeqcRM
   USE IPhreeqc
@@ -9,12 +9,12 @@ subroutine species_f90()  BIND(C)
   INCLUDE 'mpif.h'
 #endif 
   interface
-     subroutine species_advect_f90(c, bc_conc, ncomps, nxyz)
+     subroutine speciesadvection_f90(c, bc_conc, ncomps, nxyz)
        implicit none
        double precision, dimension(:,:), allocatable :: bc_conc
        double precision, dimension(:,:), allocatable :: c 
        integer                                       :: ncomps, nxyz
-     end subroutine species_advect_f90
+     end subroutine speciesadvection_f90
   end interface
 
   ! Based on PHREEQC Example 11, transporting species rather than components
@@ -277,7 +277,7 @@ subroutine species_f90()  BIND(C)
           RM_GetTimeStep(id) * RM_GetTimeConversion(id), " days"
      status = RM_LogMessage(id, string)
      status = RM_ScreenMessage(id, string)        
-     call species_advect_f90(species_c, bc_conc, nspecies, nxyz)
+     call speciesadvection_f90(species_c, bc_conc, nspecies, nxyz)
 
      ! print at last time step
      if (isteps == nsteps) then
@@ -361,14 +361,14 @@ subroutine species_f90()  BIND(C)
   p_atm(1) = 3.0
   iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm)
   string = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1"
-  status = SetOutputFileName(iphreeqc_id, "species_utility_f90.txt")
+  status = SetOutputFileName(iphreeqc_id, "Species_f90_utility.out")
   status = SetOutputFileOn(iphreeqc_id, .true.)
   status = RunString(iphreeqc_id, string)
   if (status .ne. 0) status = RM_Abort(id, status, "IPhreeqc RunString failed");
   status = SetCurrentSelectedOutputUserNumber(iphreeqc_id, 5);
   status = GetSelectedOutputValue(iphreeqc_id, 1, 1, vtype, pH, svalue)
   ! Dump results   
-  status = RM_SetDumpFileName(id, "species_f90.dmp")  
+  status = RM_SetDumpFileName(id, "Species_f90.dmp")  
   dump_on = 1
   append = 0  
   status = RM_DumpModule(id, dump_on, append)    
@@ -402,7 +402,7 @@ subroutine species_f90()  BIND(C)
   return 
 end subroutine species_f90
 
-subroutine species_advect_f90(c, bc_conc, ncomps, nxyz)
+subroutine speciesadvection_f90(c, bc_conc, ncomps, nxyz)
   implicit none
   double precision, dimension(:,:), allocatable :: bc_conc
   double precision, dimension(:,:), allocatable :: c 
@@ -419,5 +419,5 @@ subroutine species_advect_f90(c, bc_conc, ncomps, nxyz)
      c(1,j) = bc_conc(1,j)
   enddo
 
-end subroutine species_advect_f90
+end subroutine speciesadvection_f90
 

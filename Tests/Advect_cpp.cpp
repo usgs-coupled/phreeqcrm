@@ -8,27 +8,27 @@
 #include "PhreeqcRM.h"
 #include "IPhreeqc.hpp"
 #include "IPhreeqcPhast.h"
-int worker_tasks_cc(int *task_number, void * cookie);
-int do_something(void *cookie);
+int worker_tasks_cc(int* task_number, void* cookie);
+int do_something(void* cookie);
 
-double my_basic_callback(double x1, double x2, const char *str, void *cookie);
-void register_basic_callback(void *cookie);
+double my_basic_callback(double x1, double x2, const char* str, void* cookie);
+void register_basic_callback(void* cookie);
 
-void AdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
-int example_selected_output(PhreeqcRM &phreeqc_rm);
-double my_basic_callback(double x1, double x2, const char *str, void *cookie);
+void advection_cpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
+int example_selected_output(PhreeqcRM& phreeqc_rm);
+double my_basic_callback(double x1, double x2, const char* str, void* cookie);
 
 class my_data
 {
 public:
-	PhreeqcRM *PhreeqcRM_ptr;
+	PhreeqcRM* PhreeqcRM_ptr;
 #ifdef USE_MPI
 	MPI_Comm rm_commxx;
 #endif
-	std::vector<double> *hydraulic_K;
+	std::vector<double>* hydraulic_K;
 };
 
-int advection_cpp()
+int Advect_cpp()
 {
 	// Based on PHREEQC Example 11
 	try
@@ -41,7 +41,7 @@ int advection_cpp()
 		std::vector<double> hydraulic_K;
 		for (int i = 0; i < nxyz; i++)
 		{
-			hydraulic_K.push_back(i*2.0);
+			hydraulic_K.push_back(i * 2.0);
 		}
 		my_data some_data;
 		some_data.hydraulic_K = &hydraulic_K;
@@ -110,14 +110,14 @@ int advection_cpp()
 		// Set cells to print chemistry when print chemistry is turned on
 		std::vector<int> print_chemistry_mask;
 		print_chemistry_mask.resize(nxyz, 0);
-		for (int i = 0; i < nxyz/2; i++)
+		for (int i = 0; i < nxyz / 2; i++)
 		{
 			print_chemistry_mask[i] = 1;
 		}
 		status = phreeqc_rm.SetPrintChemistryMask(print_chemistry_mask);
 		// test getters
-		const std::vector<int> & print_chemistry_mask1 = phreeqc_rm.GetPrintChemistryMask();
-		const std::vector<bool> & print_on = phreeqc_rm.GetPrintChemistryOn();
+		const std::vector<int>& print_chemistry_mask1 = phreeqc_rm.GetPrintChemistryMask();
+		const std::vector<bool>& print_on = phreeqc_rm.GetPrintChemistryOn();
 		bool rebalance = phreeqc_rm.GetRebalanceByCell();
 		double f_rebalance = phreeqc_rm.GetRebalanceFraction();
 		bool so_on = phreeqc_rm.GetSelectedOutputOn();
@@ -131,10 +131,10 @@ int advection_cpp()
 		// Demonstation of mapping, two equivalent rows by symmetry
 		std::vector<int> grid2chem;
 		grid2chem.resize(nxyz, -1);
-		for (int i = 0; i < nxyz/2; i++)
+		for (int i = 0; i < nxyz / 2; i++)
 		{
 			grid2chem[i] = i;
-			grid2chem[i + nxyz/2] = i;
+			grid2chem[i + nxyz / 2] = i;
 		}
 		status = phreeqc_rm.CreateMapping(grid2chem);
 		if (status < 0) phreeqc_rm.DecodeError(status);
@@ -186,10 +186,10 @@ int advection_cpp()
 		}
 		example_selected_output(phreeqc_rm);
 
-		const std::vector<int> &f_map = phreeqc_rm.GetForwardMapping();
+		const std::vector<int>& f_map = phreeqc_rm.GetForwardMapping();
 		// Get component information
-		const std::vector<std::string> &components = phreeqc_rm.GetComponents();
-		const std::vector < double > & gfw = phreeqc_rm.GetGfw();
+		const std::vector<std::string>& components = phreeqc_rm.GetComponents();
+		const std::vector < double >& gfw = phreeqc_rm.GetGfw();
 		for (int i = 0; i < ncomps; i++)
 		{
 			std::ostringstream strm;
@@ -200,19 +200,19 @@ int advection_cpp()
 		phreeqc_rm.OutputMessage("\n");
 		// Set array of initial conditions
 		std::vector<int> ic1, ic2;
-		ic1.resize(nxyz*7, -1);
-		ic2.resize(nxyz*7, -1);
+		ic1.resize(nxyz * 7, -1);
+		ic2.resize(nxyz * 7, -1);
 		std::vector<double> f1;
-		f1.resize(nxyz*7, 1.0);
+		f1.resize(nxyz * 7, 1.0);
 		for (int i = 0; i < nxyz; i++)
 		{
 			ic1[i] = 1;              // Solution 1
 			ic1[nxyz + i] = -1;      // Equilibrium phases none
-			ic1[2*nxyz + i] = 1;     // Exchange 1
-			ic1[3*nxyz + i] = -1;    // Surface none
-			ic1[4*nxyz + i] = -1;    // Gas phase none
-			ic1[5*nxyz + i] = -1;    // Solid solutions none
-			ic1[6*nxyz + i] = -1;    // Kinetics none
+			ic1[2 * nxyz + i] = 1;     // Exchange 1
+			ic1[3 * nxyz + i] = -1;    // Surface none
+			ic1[4 * nxyz + i] = -1;    // Gas phase none
+			ic1[5 * nxyz + i] = -1;    // Solid solutions none
+			ic1[6 * nxyz + i] = -1;    // Kinetics none
 		}
 		status = phreeqc_rm.InitialPhreeqc2Module(ic1, ic2, f1);
 		// No mixing is defined, so the following is equivalent
@@ -228,7 +228,7 @@ int advection_cpp()
 		module_cells.push_back(19);
 		status = phreeqc_rm.InitialPhreeqcCell2Module(-1, module_cells);
 		// Get temperatures
-		const std::vector<double> &  tempc = phreeqc_rm.GetTemperature();
+		const std::vector<double>& tempc = phreeqc_rm.GetTemperature();
 		// get current saturation
 		std::vector<double> current_sat;
 		status = phreeqc_rm.GetSaturation(current_sat);
@@ -273,13 +273,13 @@ int advection_cpp()
 			// Transport calculation here
 			{
 				std::ostringstream strm;
-				strm << "Beginning transport calculation             " <<   phreeqc_rm.GetTime() * phreeqc_rm.GetTimeConversion() << " days\n";
-				strm << "          Time step                         " <<   phreeqc_rm.GetTimeStep() * phreeqc_rm.GetTimeConversion() << " days\n";
+				strm << "Beginning transport calculation             " << phreeqc_rm.GetTime() * phreeqc_rm.GetTimeConversion() << " days\n";
+				strm << "          Time step                         " << phreeqc_rm.GetTimeStep() * phreeqc_rm.GetTimeConversion() << " days\n";
 				phreeqc_rm.LogMessage(strm.str());
 				phreeqc_rm.SetScreenOn(true);
 				phreeqc_rm.ScreenMessage(strm.str());
 			}
-			AdvectCpp(c, bc_conc, ncomps, nxyz, nbound);
+			advection_cpp(c, bc_conc, ncomps, nxyz, nbound);
 			// Transfer data to PhreeqcRM for reactions
 			bool print_selected_output_on = (steps == nsteps - 1) ? true : false;
 			bool print_chemistry_on = (steps == nsteps - 1) ? true : false;
@@ -309,7 +309,7 @@ int advection_cpp()
 			status = phreeqc_rm.GetConcentrations(c);
 			std::vector<double> density;
 			status = phreeqc_rm.GetDensity(density);
-			const std::vector<double> &volume = phreeqc_rm.GetSolutionVolume();
+			const std::vector<double>& volume = phreeqc_rm.GetSolutionVolume();
 			// Print results at last time step
 			if (print_chemistry_on != 0)
 			{
@@ -338,7 +338,7 @@ int advection_cpp()
 					int col = phreeqc_rm.GetSelectedOutputColumnCount();
 					status = phreeqc_rm.GetSelectedOutput(so);
 					// Print results
-					for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
+					for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount() / 2; i++)
 					{
 						std::cerr << "Cell number " << i << "\n";
 						std::cerr << "     Density: " << density[i] << "\n";
@@ -346,7 +346,7 @@ int advection_cpp()
 						std::cerr << "     Components: " << "\n";
 						for (int j = 0; j < ncomps; j++)
 						{
-							std::cerr << "          " << j << " " << components[j] << ": " << c[j*nxyz + i] << "\n";
+							std::cerr << "          " << j << " " << components[j] << ": " << c[j * nxyz + i] << "\n";
 						}
 						std::vector<std::string> headings;
 						headings.resize(col);
@@ -354,7 +354,7 @@ int advection_cpp()
 						for (int j = 0; j < col; j++)
 						{
 							status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
-							std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
+							std::cerr << "          " << j << " " << headings[j] << ": " << so[j * nxyz + i] << "\n";
 						}
 					}
 				}
@@ -365,24 +365,24 @@ int advection_cpp()
 		// Additional features and finalize
 		// --------------------------------------------------------------------------
 
- 		// Use utility instance of PhreeqcRM to calculate pH of a mixture
+		// Use utility instance of PhreeqcRM to calculate pH of a mixture
 		std::vector <double> c_well;
-		c_well.resize(1*ncomps, 0.0);
+		c_well.resize(1 * ncomps, 0.0);
 		for (int i = 0; i < ncomps; i++)
 		{
-			c_well[i] = 0.5 * c[0 + nxyz*i] + 0.5 * c[9 + nxyz*i];
+			c_well[i] = 0.5 * c[0 + nxyz * i] + 0.5 * c[9 + nxyz * i];
 		}
 		std::vector<double> tc, p_atm;
 		tc.resize(1, 15.0);
 		p_atm.resize(1, 3.0);
-		IPhreeqc * util_ptr = phreeqc_rm.Concentrations2Utility(c_well, tc, p_atm);
+		IPhreeqc* util_ptr = phreeqc_rm.Concentrations2Utility(c_well, tc, p_atm);
 		input = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1";
 		int iphreeqc_result;
-		util_ptr->SetOutputFileName("utility_cpp.txt");
+		util_ptr->SetOutputFileName("Advect_cpp_utility.out");
 		util_ptr->SetOutputFileOn(true);
 		iphreeqc_result = util_ptr->RunString(input.c_str());
 		// Alternatively, utility pointer is worker nthreads + 1
-		IPhreeqc * util_ptr1 = phreeqc_rm.GetIPhreeqcPointer(phreeqc_rm.GetThreadCount() + 1);
+		IPhreeqc* util_ptr1 = phreeqc_rm.GetIPhreeqcPointer(phreeqc_rm.GetThreadCount() + 1);
 		if (iphreeqc_result != 0)
 		{
 			phreeqc_rm.ErrorHandler(IRM_FAIL, "IPhreeqc RunString failed");
@@ -395,10 +395,10 @@ int advection_cpp()
 		// Dump results
 		bool dump_on = true;
 		bool append = false;
-		status = phreeqc_rm.SetDumpFileName("advection_cpp.dmp");
+		status = phreeqc_rm.SetDumpFileName("Advect_cpp.dmp");
 		status = phreeqc_rm.DumpModule(dump_on, append);    // gz disabled unless compiled with #define USE_GZ
 		// Get pointer to worker
-		const std::vector<IPhreeqcPhast *> w = phreeqc_rm.GetWorkers();
+		const std::vector<IPhreeqcPhast*> w = phreeqc_rm.GetWorkers();
 		w[0]->AccumulateLine("Delete; -all");
 		iphreeqc_result = w[0]->RunAccumulated();
 		// Clean up
@@ -426,9 +426,9 @@ int advection_cpp()
 	return EXIT_SUCCESS;
 }
 void
-AdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim)
+advection_cpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim)
 {
-	for (int i = nxyz/2 - 1 ; i > 0; i--)
+	for (int i = nxyz / 2 - 1; i > 0; i--)
 	{
 		for (int j = 0; j < ncomps; j++)
 		{
@@ -472,7 +472,7 @@ int units_tester()
 		// Set properties
 		status = phreeqc_rm.SetErrorOn(true);
 		status = phreeqc_rm.SetErrorHandlerMode(1);
-		status = phreeqc_rm.SetFilePrefix("Units_InitialPhreeqc_1");
+		status = phreeqc_rm.SetFilePrefix("Advect_cpp");
 		if (phreeqc_rm.GetMpiMyself() == 0)
 		{
 			phreeqc_rm.OpenFiles();
@@ -515,14 +515,14 @@ int units_tester()
 			std::string input = "DELETE; -all";
 			status = phreeqc_rm.RunString(true, false, true, input.c_str());
 		}
-		status = phreeqc_rm.SetFilePrefix("Units_InitialPhreeqc_2");
+		//status = phreeqc_rm.SetFilePrefix("Units_InitialPhreeqc_2");
 		if (phreeqc_rm.GetMpiMyself() == 0)
 		{
 			phreeqc_rm.OpenFiles();
 		}
 		// Set reference to components
 		int ncomps = phreeqc_rm.FindComponents();
-		const std::vector<std::string> &components = phreeqc_rm.GetComponents();
+		const std::vector<std::string>& components = phreeqc_rm.GetComponents();
 		// Set initial conditions
 		std::vector < int > cell_numbers;
 		cell_numbers.push_back(0);
@@ -533,7 +533,7 @@ int units_tester()
 		status = phreeqc_rm.InitialPhreeqcCell2Module(3, cell_numbers);
 		// Retrieve concentrations
 		std::vector<double> c;
-		status = phreeqc_rm.SetFilePrefix("Units_Worker");
+		status = phreeqc_rm.SetFilePrefix("Advect_cpp_units_worker");
 		if (phreeqc_rm.GetMpiMyself() == 0)
 		{
 			phreeqc_rm.OpenFiles();
@@ -541,7 +541,7 @@ int units_tester()
 		std::vector < int > print_mask;
 		print_mask.resize(3, 1);
 		phreeqc_rm.SetPrintChemistryMask(print_mask);
-		phreeqc_rm.SetPrintChemistryOn(true,true,true);
+		phreeqc_rm.SetPrintChemistryOn(true, true, true);
 		status = phreeqc_rm.RunCells();
 		status = phreeqc_rm.GetConcentrations(c);
 		std::vector<double> so;
@@ -560,12 +560,12 @@ int units_tester()
 		std::vector<double> tc, p_atm;
 		tc.resize(nxyz, 25.0);
 		p_atm.resize(nxyz, 1.0);
-		IPhreeqc * util_ptr = phreeqc_rm.Concentrations2Utility(c, tc, p_atm);
+		IPhreeqc* util_ptr = phreeqc_rm.Concentrations2Utility(c, tc, p_atm);
 		std::string input;
 		input = "RUN_CELLS; -cells 0-2";
 		// Output goes to new file
 		int iphreeqc_result;
-		util_ptr->SetOutputFileName("Units_utility.out");
+		util_ptr->SetOutputFileName("Advect_cpp_units_utility.out");
 		util_ptr->SetOutputFileOn(true);
 		iphreeqc_result = util_ptr->RunString(input.c_str());
 		status = phreeqc_rm.MpiWorkerBreak();
@@ -591,7 +591,7 @@ int units_tester()
 	return EXIT_SUCCESS;
 }
 #ifdef USE_MPI
-int worker_tasks_cc(int *task_number, void * cookie)
+int worker_tasks_cc(int* task_number, void* cookie)
 {
 	if (*task_number == 1000)
 	{
@@ -603,10 +603,10 @@ int worker_tasks_cc(int *task_number, void * cookie)
 	}
 	return 0;
 }
-int do_something(void *cookie)
+int do_something(void* cookie)
 {
 	int method_number = 1000;
-	my_data *data = (my_data *) cookie;
+	my_data* data = (my_data*)cookie;
 	int mpi_tasks, mpi_myself, worker_number;
 	MPI_Comm_size(MPI_COMM_WORLD, &mpi_tasks);
 	MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself);
@@ -629,14 +629,14 @@ int do_something(void *cookie)
 	return 0;
 }
 #endif
-void register_basic_callback(void *cookie)
+void register_basic_callback(void* cookie)
 {
-	my_data *data;
+	my_data* data;
 #ifdef USE_MPI
 	int mpi_tasks, mpi_myself;
 #endif
 	int	method_number = 1001;
-	data = (my_data *) cookie;
+	data = (my_data*)cookie;
 
 #ifdef USE_MPI
 	MPI_Comm_size(MPI_COMM_WORLD, &mpi_tasks);
@@ -647,22 +647,22 @@ void register_basic_callback(void *cookie)
 	}
 #endif
 
-	const std::vector<IPhreeqcPhast *> w = data->PhreeqcRM_ptr->GetWorkers();
-	for (int i = 0; i < (int) w.size(); i++)
+	const std::vector<IPhreeqcPhast*> w = data->PhreeqcRM_ptr->GetWorkers();
+	for (int i = 0; i < (int)w.size(); i++)
 	{
 		w[i]->SetBasicCallback(my_basic_callback, cookie);
 	}
 }
-double my_basic_callback(double x1, double x2, const char *str, void *cookie)
+double my_basic_callback(double x1, double x2, const char* str, void* cookie)
 {
-	my_data * data_ptr = (my_data *) cookie;
-	PhreeqcRM *phreeqcrm_ptr = data_ptr->PhreeqcRM_ptr;
+	my_data* data_ptr = (my_data*)cookie;
+	PhreeqcRM* phreeqcrm_ptr = data_ptr->PhreeqcRM_ptr;
 	std::string option(str);
 
-	int rm_cell_number = (int) x1;
+	int rm_cell_number = (int)x1;
 	if (rm_cell_number >= 0 && rm_cell_number < phreeqcrm_ptr->GetChemistryCellCount())
 	{
-		const std::vector < std::vector <int> > & back = phreeqcrm_ptr->GetBackwardMapping();
+		const std::vector < std::vector <int> >& back = phreeqcrm_ptr->GetBackwardMapping();
 		if (option == "HYDRAULIC_K")
 		{
 			return (*data_ptr->hydraulic_K)[back[rm_cell_number][0]];
@@ -670,14 +670,14 @@ double my_basic_callback(double x1, double x2, const char *str, void *cookie)
 	}
 	return -999.9;
 }
-int example_selected_output(PhreeqcRM &phreeqc_rm)
+int example_selected_output(PhreeqcRM& phreeqc_rm)
 {
 
 	std::ostringstream oss;
 	oss << "SELECTED_OUTPUT 2" << "\n";
 	// totals
 	oss << "  -totals " << "\n";
-	const std::vector<std::string> &components = phreeqc_rm.GetComponents();
+	const std::vector<std::string>& components = phreeqc_rm.GetComponents();
 	for (size_t i = 0; i < phreeqc_rm.GetComponents().size(); i++)
 	{
 		if (components[i] != "H" &&
@@ -693,7 +693,7 @@ int example_selected_output(PhreeqcRM &phreeqc_rm)
 	oss << "  -molalities " << "\n";
 	{
 		// molalities of aqueous species 
-		const std::vector<std::string> &aq_species = phreeqc_rm.GetSpeciesNames();
+		const std::vector<std::string>& aq_species = phreeqc_rm.GetSpeciesNames();
 		for (size_t i = 0; i < phreeqc_rm.GetSpeciesNames().size(); i++)
 		{
 			oss << "    " << aq_species[i] << "\n";
@@ -701,8 +701,8 @@ int example_selected_output(PhreeqcRM &phreeqc_rm)
 	}
 	{
 		// molalities of exchange species
-		const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpecies();
-		const std::vector<std::string> &ex_names = phreeqc_rm.GetExchangeNames();
+		const std::vector<std::string>& ex_species = phreeqc_rm.GetExchangeSpecies();
+		const std::vector<std::string>& ex_names = phreeqc_rm.GetExchangeNames();
 		for (size_t i = 0; i < phreeqc_rm.GetExchangeSpeciesCount(); i++)
 		{
 
@@ -714,9 +714,9 @@ int example_selected_output(PhreeqcRM &phreeqc_rm)
 	}
 	{
 		// molalities of surface species
-		const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpecies();
-		const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
-		const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+		const std::vector<std::string>& surf_species = phreeqc_rm.GetSurfaceSpecies();
+		const std::vector<std::string>& surf_types = phreeqc_rm.GetSurfaceTypes();
+		const std::vector<std::string>& surf_names = phreeqc_rm.GetSurfaceNames();
 		for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesCount(); i++)
 		{
 			oss << "    ";
@@ -730,7 +730,7 @@ int example_selected_output(PhreeqcRM &phreeqc_rm)
 	oss << "  -equilibrium_phases " << "\n";
 	{
 		// equilibrium phases 
-		const std::vector<std::string> &eq_phases = phreeqc_rm.GetEquilibriumPhases();
+		const std::vector<std::string>& eq_phases = phreeqc_rm.GetEquilibriumPhases();
 		for (size_t i = 0; i < phreeqc_rm.GetEquilibriumPhasesCount(); i++)
 		{
 			oss << "    " << eq_phases[i] << "\n";
@@ -739,7 +739,7 @@ int example_selected_output(PhreeqcRM &phreeqc_rm)
 	oss << "  -gases " << "\n";
 	{
 		// gas components
-		const std::vector<std::string> &gas_phases = phreeqc_rm.GetGasComponents();
+		const std::vector<std::string>& gas_phases = phreeqc_rm.GetGasComponents();
 		for (size_t i = 0; i < phreeqc_rm.GetGasComponentsCount(); i++)
 		{
 			oss << "    " << gas_phases[i] << "\n";
@@ -748,7 +748,7 @@ int example_selected_output(PhreeqcRM &phreeqc_rm)
 	oss << "  -kinetics " << "\n";
 	{
 		// kinetic reactions 
-		const std::vector<std::string> &kin_reactions = phreeqc_rm.GetKineticReactions();
+		const std::vector<std::string>& kin_reactions = phreeqc_rm.GetKineticReactions();
 		for (size_t i = 0; i < phreeqc_rm.GetKineticReactionsCount(); i++)
 		{
 			oss << "    " << kin_reactions[i] << "\n";
@@ -757,21 +757,21 @@ int example_selected_output(PhreeqcRM &phreeqc_rm)
 	oss << "  -solid_solutions " << "\n";
 	{
 		// solid solutions 
-		const std::vector<std::string> &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
-		const std::vector<std::string> &ss_names = phreeqc_rm.GetSolidSolutionNames();
+		const std::vector<std::string>& ss_comps = phreeqc_rm.GetSolidSolutionComponents();
+		const std::vector<std::string>& ss_names = phreeqc_rm.GetSolidSolutionNames();
 		for (size_t i = 0; i < phreeqc_rm.GetSolidSolutionComponentsCount(); i++)
 		{
-			
+
 			oss << "    ";
 			oss.width(15);
-			oss  << std::left << ss_comps[i];
+			oss << std::left << ss_comps[i];
 			oss << " # " << ss_names[i] << "\n";
 		}
 	}
 	oss << "  -saturation_indices " << "\n";
 	{
 		// molalities of aqueous species 
-		const std::vector<std::string> &si = phreeqc_rm.GetSINames();
+		const std::vector<std::string>& si = phreeqc_rm.GetSINames();
 		for (size_t i = 0; i < phreeqc_rm.GetSICount(); i++)
 		{
 			oss << "    " << si[i] << "\n";

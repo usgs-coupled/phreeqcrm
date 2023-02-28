@@ -19,10 +19,10 @@ int do_something(void* cookie);
 double bmi_basic_callback(double x1, double x2, const char* str, void* cookie);
 void bmi_register_basic_callback(void* cookie);
 
-void AdvectBMICpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
+void advectionbmi_cpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
 int bmi_example_selected_output(PhreeqcRM& phreeqc_rm);
 double bmi_basic_callback(double x1, double x2, const char* str, void* cookie);
-void BMI_testing(PhreeqcRM &phreeqc_rm);
+void BMI_testing(PhreeqcRM& phreeqc_rm);
 //void GenerateYAML(int nxyz, std::string YAML_filename);
 class my_data
 {
@@ -34,7 +34,7 @@ public:
 	std::vector<double>* hydraulic_K;
 };
 
-int advection_bmi_cpp()
+int AdvectBMI_cpp()
 {
 
 	// --------------------------------------------------------------------------
@@ -44,13 +44,8 @@ int advection_bmi_cpp()
 
 	try
 	{
-		// Write file to initialize PhreeqcRM
-		// emulates a file created by a GUI
-		// No PhreeqcRM methods are used to create
-		// this file
+
 		int nxyz = 40;
-		//std::string YAML_filename = "advect.yaml";
-		//GenerateYAML(nxyz, YAML_filename);
 
 		// Data for call_back demostration
 		std::vector<double> hydraulic_K;
@@ -88,7 +83,7 @@ int advection_bmi_cpp()
 		bmi_register_basic_callback(&some_data);
 
 		// Use YAML file to initialize
-		phreeqc_rm.InitializeYAML("advect.yaml");
+		phreeqc_rm.InitializeYAML("AdvectBMI_cpp.yaml");
 
 		// Get number of components
 		int ncomps;
@@ -212,12 +207,12 @@ int advection_bmi_cpp()
 				phreeqc_rm.SetScreenOn(true);
 				phreeqc_rm.ScreenMessage(strm.str());
 			}
-			AdvectBMICpp(c, bc_conc, ncomps, nxyz, nbound);
+			advectionbmi_cpp(c, bc_conc, ncomps, nxyz, nbound);
 			// Transfer data to PhreeqcRM for reactions
 			bool print_selected_output_on = (steps == nsteps - 1) ? true : false;
 			bool print_chemistry_on = (steps == nsteps - 1) ? true : false;
 			//status = phreeqc_rm.SetSelectedOutputOn(print_selected_output_on);
-			phreeqc_rm.BMI_SetValue("SelectedOutputOn",&print_selected_output_on);
+			phreeqc_rm.BMI_SetValue("SelectedOutputOn", &print_selected_output_on);
 			status = phreeqc_rm.SetPrintChemistryOn(print_chemistry_on, false, false); // workers, initial_phreeqc, utility
 			//status = phreeqc_rm.SetPorosity(por);             // If pororosity changes due to compressibility
 			phreeqc_rm.BMI_SetValue("Porosity", por.data());
@@ -279,14 +274,14 @@ int advection_bmi_cpp()
 					//status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
 					phreeqc_rm.BMI_SetValue("NthSelectedOutput", &isel);
 					oss << "Selected output sequence number: " << isel << "\n";
-					int n_user=-1;
+					int n_user = -1;
 					phreeqc_rm.BMI_GetValue("CurrentSelectedOutputUserNumber", &n_user);
 					oss << "Selected output user number:     " << n_user << "\n";
 					// Get double array of selected output values
 					//std::vector<double> so;
 					//int col = phreeqc_rm.GetSelectedOutputColumnCount();
 					//status = phreeqc_rm.GetSelectedOutput(so);
-					
+
 					int col;
 					phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", &col);
 					int bmi_row_count;
@@ -356,7 +351,7 @@ int advection_bmi_cpp()
 		IPhreeqc* util_ptr = phreeqc_rm.Concentrations2Utility(c_well, tc, p_atm);
 		std::string input = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1";
 		int iphreeqc_result;
-		util_ptr->SetOutputFileName("utility_cpp.txt");
+		util_ptr->SetOutputFileName("AdvectBMI_cpp_utility.out");
 		util_ptr->SetOutputFileOn(true);
 		iphreeqc_result = util_ptr->RunString(input.c_str());
 		// Alternatively, utility pointer is worker nthreads + 1
@@ -373,7 +368,7 @@ int advection_bmi_cpp()
 		// Dump results
 		bool dump_on = true;
 		bool append = false;
-		status = phreeqc_rm.SetDumpFileName("advection_bmi_cpp.dmp");
+		status = phreeqc_rm.SetDumpFileName("AdvectBMI_cpp.dmp");
 		status = phreeqc_rm.DumpModule(dump_on, append);    // gz disabled unless compiled with #define USE_GZ
 		// Get pointer to worker
 		const std::vector<IPhreeqcPhast*> w = phreeqc_rm.GetWorkers();
@@ -404,7 +399,7 @@ int advection_bmi_cpp()
 	return EXIT_SUCCESS;
 }
 void
-AdvectBMICpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim)
+advectionbmi_cpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim)
 {
 	for (int i = nxyz / 2 - 1; i > 0; i--)
 	{
@@ -450,7 +445,7 @@ int bmi_units_tester()
 		// Set properties
 		status = phreeqc_rm.SetErrorOn(true);
 		status = phreeqc_rm.SetErrorHandlerMode(1);
-		status = phreeqc_rm.SetFilePrefix("Units_InitialPhreeqc_1");
+		status = phreeqc_rm.SetFilePrefix("AdvectBMI_cpp");
 		if (phreeqc_rm.GetMpiMyself() == 0)
 		{
 			phreeqc_rm.OpenFiles();
@@ -493,7 +488,7 @@ int bmi_units_tester()
 			std::string input = "DELETE; -all";
 			status = phreeqc_rm.RunString(true, false, true, input.c_str());
 		}
-		status = phreeqc_rm.SetFilePrefix("Units_InitialPhreeqc_2");
+		//status = phreeqc_rm.SetFilePrefix("Units_InitialPhreeqc_2");
 		if (phreeqc_rm.GetMpiMyself() == 0)
 		{
 			phreeqc_rm.OpenFiles();
@@ -511,7 +506,7 @@ int bmi_units_tester()
 		status = phreeqc_rm.InitialPhreeqcCell2Module(3, cell_numbers);
 		// Retrieve concentrations
 		std::vector<double> c;
-		status = phreeqc_rm.SetFilePrefix("Units_Worker");
+		status = phreeqc_rm.SetFilePrefix("AdvectBMI_cpp_units_worker");
 		if (phreeqc_rm.GetMpiMyself() == 0)
 		{
 			phreeqc_rm.OpenFiles();
@@ -543,7 +538,7 @@ int bmi_units_tester()
 		input = "RUN_CELLS; -cells 0-2";
 		// Output goes to new file
 		int iphreeqc_result;
-		util_ptr->SetOutputFileName("Units_utility.out");
+		util_ptr->SetOutputFileName("AdvectBMI_cpp_units_utility.out");
 		util_ptr->SetOutputFileOn(true);
 		iphreeqc_result = util_ptr->RunString(input.c_str());
 		status = phreeqc_rm.MpiWorkerBreak();
@@ -821,7 +816,7 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		assert(ncomps == (size_t)phreeqc_rm.GetComponentCount());
 		size_t nbytes = (size_t)phreeqc_rm.BMI_GetVarNbytes("Components");
 		std::string all_comps(nbytes, ' ');
-		phreeqc_rm.BMI_GetValue("Components", (void*) all_comps.data());
+		phreeqc_rm.BMI_GetValue("Components", (void*)all_comps.data());
 		size_t string_size = (size_t)phreeqc_rm.BMI_GetVarItemsize("Components");
 		std::vector<std::string> bmi_comps;
 		for (size_t i = 0; i < ncomps; i++)
@@ -973,7 +968,7 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 			int bmi_nbytes = phreeqc_rm.BMI_GetVarNbytes("SelectedOutputHeadings");
 			int bmi_string_size = phreeqc_rm.BMI_GetVarItemsize("SelectedOutputHeadings");
 			std::string all_headings(bmi_nbytes, ' ');
-			phreeqc_rm.BMI_GetValue("SelectedOutputHeadings", (void *)all_headings.c_str());
+			phreeqc_rm.BMI_GetValue("SelectedOutputHeadings", (void*)all_headings.c_str());
 
 			int bmi_col_count;
 			phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", &bmi_col_count);

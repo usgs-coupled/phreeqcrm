@@ -12,9 +12,9 @@
 
 
 
-void SpeciesAdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
+void speciesadvection_cpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
 
-int species_cpp()
+int Species_cpp()
 {
 	// Based on PHREEQC Example 11, transporting species rather than components
 
@@ -76,7 +76,7 @@ int species_cpp()
 		// Set cells to print chemistry when print chemistry is turned on
 		std::vector<int> print_chemistry_mask;
 		print_chemistry_mask.resize(nxyz, 0);
-		for (int i = 0; i < nxyz/2; i++)
+		for (int i = 0; i < nxyz / 2; i++)
 		{
 			print_chemistry_mask[i] = 1;
 		}
@@ -84,10 +84,10 @@ int species_cpp()
 		// Demonstation of mapping, two equivalent rows by symmetry
 		std::vector<int> grid2chem;
 		grid2chem.resize(nxyz, -1);
-		for (int i = 0; i < nxyz/2; i++)
+		for (int i = 0; i < nxyz / 2; i++)
 		{
 			grid2chem[i] = i;
-			grid2chem[i + nxyz/2] = i;
+			grid2chem[i + nxyz / 2] = i;
 		}
 		status = phreeqc_rm.CreateMapping(grid2chem);
 		if (status < 0) phreeqc_rm.DecodeError(status);
@@ -126,8 +126,8 @@ int species_cpp()
 			snprintf(str1, sizeof(str1), "Number of components for transport:               %d\n", phreeqc_rm.GetComponentCount());
 			phreeqc_rm.OutputMessage(str1);
 		}
-		const std::vector<std::string> &components = phreeqc_rm.GetComponents();
-		const std::vector < double > & gfw = phreeqc_rm.GetGfw();
+		const std::vector<std::string>& components = phreeqc_rm.GetComponents();
+		const std::vector < double >& gfw = phreeqc_rm.GetGfw();
 		for (int i = 0; i < ncomps; i++)
 		{
 			std::ostringstream strm;
@@ -137,9 +137,9 @@ int species_cpp()
 		}
 		phreeqc_rm.OutputMessage("\n");
 		// Determine species information
-		const std::vector<std::string> &species = phreeqc_rm.GetSpeciesNames();
-		const std::vector < double > & species_z = phreeqc_rm.GetSpeciesZ();
-		const std::vector < double > & species_d = phreeqc_rm.GetSpeciesD25();
+		const std::vector<std::string>& species = phreeqc_rm.GetSpeciesNames();
+		const std::vector < double >& species_z = phreeqc_rm.GetSpeciesZ();
+		const std::vector < double >& species_d = phreeqc_rm.GetSpeciesD25();
 		bool species_on = phreeqc_rm.GetSpeciesSaveOn();
 		int nspecies = phreeqc_rm.GetSpeciesCount();
 		for (int i = 0; i < nspecies; i++)
@@ -158,17 +158,17 @@ int species_cpp()
 		phreeqc_rm.OutputMessage("\n");
 		// Set array of initial conditions
 		std::vector<int> ic1, ic2;
-		ic1.resize(nxyz*7, -1);
+		ic1.resize(nxyz * 7, -1);
 		for (int i = 0; i < nxyz; i++)
 		{
 			ic1[i] = 1;              // Solution 1
-			ic1[2*nxyz + i] = 1;     // Exchange 1
+			ic1[2 * nxyz + i] = 1;     // Exchange 1
 		}
 		status = phreeqc_rm.InitialPhreeqc2Module(ic1);
 		// Initial equilibration of cells
 		double time = 0.0;
 		double time_step = 0.0;
-		std::vector<double> c,lg,lm;
+		std::vector<double> c, lg, lm;
 		status = phreeqc_rm.SetTime(time);
 		status = phreeqc_rm.SetTimeStep(time_step);
 		status = phreeqc_rm.RunCells();
@@ -209,12 +209,12 @@ int species_cpp()
 			// Transport calculation here
 			{
 				std::ostringstream strm;
-				strm << "Beginning transport calculation             " <<   phreeqc_rm.GetTime() * phreeqc_rm.GetTimeConversion() << " days\n";
-				strm << "          Time step                         " <<   phreeqc_rm.GetTimeStep() * phreeqc_rm.GetTimeConversion() << " days\n";
+				strm << "Beginning transport calculation             " << phreeqc_rm.GetTime() * phreeqc_rm.GetTimeConversion() << " days\n";
+				strm << "          Time step                         " << phreeqc_rm.GetTimeStep() * phreeqc_rm.GetTimeConversion() << " days\n";
 				phreeqc_rm.LogMessage(strm.str());
 				phreeqc_rm.ScreenMessage(strm.str());
 			}
-			SpeciesAdvectCpp(c, bc_conc, nspecies, nxyz, nbound);
+			speciesadvection_cpp(c, bc_conc, nspecies, nxyz, nbound);
 			// Transfer data to PhreeqcRM for reactions
 			bool print_selected_output_on = (steps == nsteps - 1) ? true : false;
 			bool print_chemistry_on = (steps == nsteps - 1) ? true : false;
@@ -245,7 +245,7 @@ int species_cpp()
 			phreeqc_rm.GetConcentrations(component_c);
 			std::vector<double> density;
 			status = phreeqc_rm.GetDensity(density);
-			const std::vector<double> &volume = phreeqc_rm.GetSolutionVolume();
+			const std::vector<double>& volume = phreeqc_rm.GetSolutionVolume();
 			// Print results at last time step
 			if (print_chemistry_on != 0)
 			{
@@ -259,10 +259,10 @@ int species_cpp()
 					// Get double array of selected output values
 					std::vector<double> so;
 					int col = phreeqc_rm.GetSelectedOutputColumnCount();
-					so.resize(nxyz*col, 0);
+					so.resize(nxyz * col, 0);
 					status = phreeqc_rm.GetSelectedOutput(so);
 					// Print results
-					for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
+					for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount() / 2; i++)
 					{
 						std::cerr << "Cell number " << i << "\n";
 						std::cerr << "     Density: " << density[i] << "\n";
@@ -270,13 +270,13 @@ int species_cpp()
 						std::cerr << "     Components: " << "\n";
 						for (int j = 0; j < ncomps; j++)
 						{
-							std::cerr << "          " << j << " " << components[j] << ": " << component_c[j*nxyz + i] << "\n";
+							std::cerr << "          " << j << " " << components[j] << ": " << component_c[j * nxyz + i] << "\n";
 						}
 						std::cerr << "     Species: " << "\n";
 						for (int j = 0; j < nspecies; j++)
 						{
-							std::cerr << "          " << j << " " << species[j] << " c: " << c[j*nxyz + i] << 
-								" lg: " << lg[j*nxyz + i] << " lm: " << lm[j * nxyz + i] <<"\n";
+							std::cerr << "          " << j << " " << species[j] << " c: " << c[j * nxyz + i] <<
+								" lg: " << lg[j * nxyz + i] << " lm: " << lm[j * nxyz + i] << "\n";
 						}
 						std::vector<std::string> headings;
 						headings.resize(col);
@@ -284,7 +284,7 @@ int species_cpp()
 						for (int j = 0; j < col; j++)
 						{
 							status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
-							std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
+							std::cerr << "          " << j << " " << headings[j] << ": " << so[j * nxyz + i] << "\n";
 						}
 					}
 				}
@@ -295,22 +295,22 @@ int species_cpp()
 		// Additional features and finalize
 		// --------------------------------------------------------------------------
 
- 		// Use utility instance of PhreeqcRM to calculate pH of a mixture
+		// Use utility instance of PhreeqcRM to calculate pH of a mixture
 		std::vector <double> c_well;
-		c_well.resize(1*ncomps, 0.0);
+		c_well.resize(1 * ncomps, 0.0);
 		for (int i = 0; i < ncomps; i++)
 		{
-			c_well[i] = 0.5 * component_c[0 + nxyz*i] + 0.5 * component_c[9 + nxyz*i];
+			c_well[i] = 0.5 * component_c[0 + nxyz * i] + 0.5 * component_c[9 + nxyz * i];
 		}
 		std::vector<double> tc, p_atm;
 		tc.resize(1, 15.0);
 		p_atm.resize(1, 3.0);
-		IPhreeqc * util_ptr = phreeqc_rm.Concentrations2Utility(c_well, tc, p_atm);
+		IPhreeqc* util_ptr = phreeqc_rm.Concentrations2Utility(c_well, tc, p_atm);
 		{
 			std::string input;
 			input = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1";
 			int iphreeqc_result;
-			util_ptr->SetOutputFileName("species_utility_cpp.txt");
+			util_ptr->SetOutputFileName("Species_cpp_utility.out");
 			util_ptr->SetOutputFileOn(true);
 			iphreeqc_result = util_ptr->RunString(input.c_str());
 			if (iphreeqc_result != 0)
@@ -326,7 +326,7 @@ int species_cpp()
 		// Dump results
 		bool dump_on = true;
 		bool append = false;
-		status = phreeqc_rm.SetDumpFileName("species_cpp.dmp");
+		status = phreeqc_rm.SetDumpFileName("Species_cpp.dmp");
 		status = phreeqc_rm.DumpModule(dump_on, append);
 		// Finalize
 		status = phreeqc_rm.CloseFiles();
@@ -347,9 +347,9 @@ int species_cpp()
 	return EXIT_SUCCESS;
 }
 void
-SpeciesAdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim)
+speciesadvection_cpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim)
 {
-	for (int i = nxyz/2 - 1 ; i > 0; i--)
+	for (int i = nxyz / 2 - 1; i > 0; i--)
 	{
 		for (int j = 0; j < ncomps; j++)
 		{

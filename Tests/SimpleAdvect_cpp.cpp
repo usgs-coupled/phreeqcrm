@@ -9,9 +9,9 @@
 #include "IPhreeqc.hpp"
 #include "IPhreeqcPhast.h"
 
-void SimpleAdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
+void simpleadvection_cpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
 
-int SimpleAdvection_cpp()
+int SimpleAdvect_cpp()
 {
 	// Based on PHREEQC Example 11
 	try
@@ -43,7 +43,7 @@ int SimpleAdvection_cpp()
 		IRM_RESULT status = phreeqc_rm.SetComponentH2O(false);
 		phreeqc_rm.UseSolutionDensityVolume(false);
 		// Open files
-		status = phreeqc_rm.SetFilePrefix("SimpleAdvection_cpp");
+		status = phreeqc_rm.SetFilePrefix("SimpleAdvect_cpp");
 		phreeqc_rm.OpenFiles();
 		// Set concentration units
 		status = phreeqc_rm.SetUnitsSolution(2);           // 1, mg/L; 2, mol/L; 3, kg/kgs
@@ -75,7 +75,7 @@ int SimpleAdvection_cpp()
 		// Determine number of components to transport
 		int ncomps = phreeqc_rm.FindComponents();
 		// Get component information
-		const std::vector<std::string> &components = phreeqc_rm.GetComponents();
+		const std::vector<std::string>& components = phreeqc_rm.GetComponents();
 		for (int i = 0; i < ncomps; i++)
 		{
 			std::ostringstream strm;
@@ -86,18 +86,18 @@ int SimpleAdvection_cpp()
 		phreeqc_rm.OutputMessage("\n");
 		// Set array of initial conditions
 		std::vector<int> ic1;
-		ic1.resize(nxyz*7, -1);
+		ic1.resize(nxyz * 7, -1);
 		std::vector<double> f1;
-		f1.resize(nxyz*7, 1.0);
+		f1.resize(nxyz * 7, 1.0);
 		for (int i = 0; i < nxyz; i++)
 		{
 			ic1[i] = 1;              // Solution 1
 			ic1[nxyz + i] = -1;      // Equilibrium phases none
-			ic1[2*nxyz + i] = 1;     // Exchange 1
-			ic1[3*nxyz + i] = -1;    // Surface none
-			ic1[4*nxyz + i] = -1;    // Gas phase none
-			ic1[5*nxyz + i] = -1;    // Solid solutions none
-			ic1[6*nxyz + i] = -1;    // Kinetics none
+			ic1[2 * nxyz + i] = 1;     // Exchange 1
+			ic1[3 * nxyz + i] = -1;    // Surface none
+			ic1[4 * nxyz + i] = -1;    // Gas phase none
+			ic1[5 * nxyz + i] = -1;    // Solid solutions none
+			ic1[6 * nxyz + i] = -1;    // Kinetics none
 		}
 		status = phreeqc_rm.InitialPhreeqc2Module(ic1);
 		// Initial equilibration of cells
@@ -133,13 +133,13 @@ int SimpleAdvection_cpp()
 			// Transport calculation here
 			{
 				std::ostringstream strm;
-				strm << "Beginning transport calculation             " <<   phreeqc_rm.GetTime() * phreeqc_rm.GetTimeConversion() << " days\n";
-				strm << "          Time step                         " <<   phreeqc_rm.GetTimeStep() * phreeqc_rm.GetTimeConversion() << " days\n";
+				strm << "Beginning transport calculation             " << phreeqc_rm.GetTime() * phreeqc_rm.GetTimeConversion() << " days\n";
+				strm << "          Time step                         " << phreeqc_rm.GetTimeStep() * phreeqc_rm.GetTimeConversion() << " days\n";
 				phreeqc_rm.LogMessage(strm.str());
 				phreeqc_rm.SetScreenOn(true);
 				phreeqc_rm.ScreenMessage(strm.str());
 			}
-			SimpleAdvectCpp(c, bc_conc, ncomps, nxyz, nbound);
+			simpleadvection_cpp(c, bc_conc, ncomps, nxyz, nbound);
 			// Transfer data to PhreeqcRM for reactions
 			bool print_selected_output_on = (steps == nsteps - 1) ? true : false;
 			bool print_chemistry_on = (steps == nsteps - 1) ? true : false;
@@ -184,9 +184,9 @@ int SimpleAdvection_cpp()
 	return EXIT_SUCCESS;
 }
 void
-SimpleAdvectCpp(std::vector<double> &c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim)
+simpleadvection_cpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim)
 {
-	for (int i = nxyz/2 - 1 ; i > 0; i--)
+	for (int i = nxyz / 2 - 1; i > 0; i--)
 	{
 		for (int j = 0; j < ncomps; j++)
 		{

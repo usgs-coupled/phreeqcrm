@@ -1,4 +1,4 @@
-subroutine gas_f90()  BIND(C)
+subroutine Gas_f90()  BIND(C)
   USE, intrinsic :: ISO_C_BINDING
   USE PhreeqcRM
   USE IPhreeqc
@@ -67,7 +67,7 @@ end interface
   rm_id = id
 #endif
   ! Open files
-  status = RM_SetFilePrefix(id, "gas_f90")
+  status = RM_SetFilePrefix(id, "Gas_f90")
   status = RM_OpenFiles(id)
 
   ! Set concentration units

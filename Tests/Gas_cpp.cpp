@@ -10,7 +10,7 @@
 void PrintCells(const std::vector<std::string>& gcomps, const std::vector<double>& gas_moles,
 	const std::vector<double>& gas_p, const std::vector<double>& gas_phi, int nxyz,
 	const std::string str);
-int gas_cpp()
+int Gas_cpp()
 {
 	try
 	{
@@ -42,7 +42,7 @@ int gas_cpp()
 
 		IRM_RESULT status;
 		// Open files
-		status = phreeqc_rm.SetFilePrefix("gas_cpp");
+		status = phreeqc_rm.SetFilePrefix("Gas_cpp");
 		phreeqc_rm.OpenFiles();
 		// Set concentration units
 		status = phreeqc_rm.SetUnitsSolution(2);           // 1, mg/L; 2, mol/L; 3, kg/kgs
@@ -175,7 +175,7 @@ void
 PrintCells(const std::vector<std::string>& gcomps, const std::vector<double>& gas_moles,
 	const std::vector<double>& gas_p, const std::vector<double>& gas_phi, int nxyz,
 	const std::string str)
-/* ---------------------------------------------------------------------- */
+	/* ---------------------------------------------------------------------- */
 {
 	std::cerr << "\n" << str << std::endl;
 	// print cells 0,1,2

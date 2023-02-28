@@ -5,7 +5,7 @@ module mydata
   integer                                 :: rm_id
 end module mydata
     
-subroutine advection_f90()  BIND(C)
+subroutine Advect_f90()  BIND(C)
   USE, intrinsic :: ISO_C_BINDING
   USE PhreeqcRM
   USE IPhreeqc
@@ -15,12 +15,12 @@ subroutine advection_f90()  BIND(C)
   INCLUDE 'mpif.h'
 #endif
     interface
-        subroutine advect_f90(c, bc_conc, ncomps, nxyz)
+        subroutine advection_f90(c, bc_conc, ncomps, nxyz)
             implicit none
             double precision, dimension(:,:), allocatable, intent(inout) :: c 
             double precision, dimension(:,:), allocatable, intent(in) :: bc_conc
             integer, intent(in)                                       :: ncomps, nxyz
-        end subroutine advect_f90
+        end subroutine advection_f90
         integer function do_something()
         end function do_something
         integer(kind=C_INT) function worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
@@ -312,7 +312,7 @@ subroutine advection_f90()  BIND(C)
           RM_GetTimeStep(id) * RM_GetTimeConversion(id), " days"
      status = RM_LogMessage(id, string)
      status = RM_ScreenMessage(id, string)        
-     call advect_f90(c, bc_conc, ncomps, nxyz)
+     call advection_f90(c, bc_conc, ncomps, nxyz)
      ! print at last time step
      if (isteps == nsteps) then
         status = RM_SetSelectedOutputOn(id, 1)         ! enable selected output
@@ -403,14 +403,14 @@ subroutine advection_f90()  BIND(C)
   string = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1"
   ! Alternatively, utility pointer is worker number nthreads + 1 
   iphreeqc_id1 = RM_GetIPhreeqcId(id, RM_GetThreadCount(id) + 1)
-  status = SetOutputFileName(iphreeqc_id, "utility_f90.txt")
+  status = SetOutputFileName(iphreeqc_id, "Advect_f90_utility.out")
   status = SetOutputFileOn(iphreeqc_id, .true.)
   status = RunString(iphreeqc_id, string)
   if (status .ne. 0) status = RM_Abort(id, status, "IPhreeqc RunString failed") 
   status = SetCurrentSelectedOutputUserNumber(iphreeqc_id, 5) 
   status = GetSelectedOutputValue(iphreeqc_id, 1, 1, vtype, pH, svalue)
   ! Dump results   
-  status = RM_SetDumpFileName(id, "advection_f90.dmp")  
+  status = RM_SetDumpFileName(id, "Advect_f90.dmp")  
   dump_on = 1
   append = 0  
   status = RM_DumpModule(id, dump_on, append)    
@@ -440,9 +440,9 @@ subroutine advection_f90()  BIND(C)
   deallocate(tc) 
   deallocate(p_atm) 
   return 
-end subroutine advection_f90
+end subroutine Advect_f90
 
-SUBROUTINE ADVECT_F90(c, bc_conc, ncomps, nxyz)
+SUBROUTINE advection_f90(c, bc_conc, ncomps, nxyz)
   implicit none
   double precision, dimension(:,:), allocatable, intent(inout) :: c 
   double precision, dimension(:,:), allocatable, intent(in)    :: bc_conc
@@ -458,7 +458,7 @@ SUBROUTINE ADVECT_F90(c, bc_conc, ncomps, nxyz)
   do j = 1, ncomps
      c(1,j) = bc_conc(1,j)
   enddo
-END SUBROUTINE ADVECT_F90
+END SUBROUTINE advection_f90
 
 #ifdef USE_MPI
 integer(kind=C_INT) function worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
