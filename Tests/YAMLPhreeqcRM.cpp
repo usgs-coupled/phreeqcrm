@@ -16,7 +16,7 @@ void YAMLPhreeqcRM::clear()
 }
 void YAMLPhreeqcRM::YAMLCloseFiles (void)
 {
-	YAML_doc["CloseFiles"] = true;
+	YAML_doc["CloseFiles"] = "";
 	return;
 };
 void YAMLPhreeqcRM::YAMLCreateMapping(std::vector< int >& grid2chem)
@@ -26,12 +26,12 @@ void YAMLPhreeqcRM::YAMLCreateMapping(std::vector< int >& grid2chem)
 };
 void YAMLPhreeqcRM::YAMLDumpModule()
 {
-	YAML_doc["YAMLDumpModule"] = true;
+	YAML_doc["YAMLDumpModule"] = "";
 	return;
 }
 void YAMLPhreeqcRM::YAMLFindComponents()
 {
-	YAML_doc["FindComponents"] = true;
+	YAML_doc["FindComponents"] = "";
 	return;
 }
 void YAMLPhreeqcRM::YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1) 
@@ -71,7 +71,7 @@ void YAMLPhreeqcRM::YAMLLogMessage(std::string str)
 }
 void YAMLPhreeqcRM::YAMLOpenFiles(void)
 {
-	YAML_doc["OpenFiles"] = true;
+	YAML_doc["OpenFiles"] = "";
 	return;
 };
 void YAMLPhreeqcRM::YAMLOutputMessage(std::string str) 
@@ -81,7 +81,7 @@ void YAMLPhreeqcRM::YAMLOutputMessage(std::string str)
 }
 void YAMLPhreeqcRM::YAMLRunCells(void) 
 {
-	YAML_doc["RunCells"] = true;
+	YAML_doc["RunCells"] = "";
 	return;
 }
 void YAMLPhreeqcRM::YAMLRunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name) 
