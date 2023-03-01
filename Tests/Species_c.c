@@ -402,7 +402,7 @@ void Species_c()
 	p_atm[0] = 3.0;
 	iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
 	strcpy(str, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
-	SetOutputFileName(iphreeqc_id, "Species_c_utility.out");
+	SetOutputFileName(iphreeqc_id, "Species_c_utility.txt");
 	SetOutputFileOn(iphreeqc_id, 1);
 	status = RunString(iphreeqc_id, str);
 	if (status != 0) status = RM_Abort(id, status, "IPhreeqc RunString failed");

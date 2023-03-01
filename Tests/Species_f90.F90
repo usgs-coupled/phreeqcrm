@@ -1,6 +1,6 @@
 
 
-subroutine Species_f90()  BIND(C)
+subroutine Species_f90()  BIND(C, NAME='Species_f90')
   USE, intrinsic :: ISO_C_BINDING
   USE PhreeqcRM
   USE IPhreeqc
@@ -361,7 +361,7 @@ subroutine Species_f90()  BIND(C)
   p_atm(1) = 3.0
   iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm)
   string = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1"
-  status = SetOutputFileName(iphreeqc_id, "Species_f90_utility.out")
+  status = SetOutputFileName(iphreeqc_id, "Species_f90_utility.txt")
   status = SetOutputFileOn(iphreeqc_id, .true.)
   status = RunString(iphreeqc_id, string)
   if (status .ne. 0) status = RM_Abort(id, status, "IPhreeqc RunString failed");

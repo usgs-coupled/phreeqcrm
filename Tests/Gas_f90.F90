@@ -1,4 +1,4 @@
-subroutine Gas_f90()  BIND(C)
+subroutine Gas_f90()  BIND(C, NAME='Gas_f90')
   USE, intrinsic :: ISO_C_BINDING
   USE PhreeqcRM
   USE IPhreeqc

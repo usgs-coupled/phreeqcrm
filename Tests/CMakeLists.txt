@@ -9,17 +9,19 @@ if (PHREEQCRM_FORTRAN_TESTING)
   target_sources(FortranAdvect PRIVATE
     ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
     ../src/RM_interface.F90
-    advection_f90.F90
-    gas_f90.F90
-    species_f90.F90
+    Advect_f90.F90
+    Gas_f90.F90
+	SimpleAdvect_f90.F90
+    Species_f90.F90
   )
 
   # place [*.F[90]] files into "Source Files"
   source_group("Source Files" FILES "../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90")
   source_group("Source Files" FILES "../src/RM_interface.F90")
-  source_group("Source Files" FILES "advection_f90.F90")
-  source_group("Source Files" FILES "gas_f90.F90")
-  source_group("Source Files" FILES "species_f90.F90")
+  source_group("Source Files" FILES "Advect_f90.F90")
+  source_group("Source Files" FILES "Gas_f90.F90")
+  source_group("Source Files" FILES "SimpleAdvect_f90.F90")
+  source_group("Source Files" FILES "Species_f90.F90")
   
   # The next line sets defines/includes/libraries
   # for compiling and linking the FortranAdvect library
@@ -45,16 +47,16 @@ add_executable(TestRM)
 
 # TestRM C/CXX source
 target_sources(TestRM PRIVATE
-  advection_bmi_cpp.cpp
-  advection_c.c
-  advection_cpp.cpp
-  gas_c.c
-  gas_cpp.cpp
+  AdvectBMI_cpp.cpp
+  Advect_c.c
+  Advect_cpp.cpp
+  Gas_c.c
+  Gas_cpp.cpp
   main.cpp
-  SimpleAdvection.cpp
-  species_c.c
-  species_cpp.cpp
-  WriteYAMLFile.cpp
+  SimpleAdvect_cpp.cpp
+  Species_c.c
+  Species_cpp.cpp
+  WriteYAMLFile_cpp.cpp
   YAMLPhreeqcRM.cpp
   YAMLPhreeqcRM.h
 )

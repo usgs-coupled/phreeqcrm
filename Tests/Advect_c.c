@@ -445,7 +445,7 @@ void Advect_c()
 	strcpy(str, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
 	// Alternatively, utility pointer is worker number nthreads + 1 
 	iphreeqc_id1 = RM_GetIPhreeqcId(id, RM_GetThreadCount(id) + 1);
-	SetOutputFileName(iphreeqc_id, "Advect_c_utility.out");
+	SetOutputFileName(iphreeqc_id, "Advect_c_utility.txt");
 	SetOutputFileOn(iphreeqc_id, 1);
 	status = RunString(iphreeqc_id, str);
 	if (status != 0) status = RM_Abort(id, status, "IPhreeqc RunString failed");

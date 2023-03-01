@@ -5,7 +5,7 @@ module mydata
   integer                                 :: rm_id
 end module mydata
     
-subroutine Advect_f90()  BIND(C)
+subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   USE, intrinsic :: ISO_C_BINDING
   USE PhreeqcRM
   USE IPhreeqc
@@ -403,7 +403,7 @@ subroutine Advect_f90()  BIND(C)
   string = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1"
   ! Alternatively, utility pointer is worker number nthreads + 1 
   iphreeqc_id1 = RM_GetIPhreeqcId(id, RM_GetThreadCount(id) + 1)
-  status = SetOutputFileName(iphreeqc_id, "Advect_f90_utility.out")
+  status = SetOutputFileName(iphreeqc_id, "Advect_f90_utility.txt")
   status = SetOutputFileOn(iphreeqc_id, .true.)
   status = RunString(iphreeqc_id, string)
   if (status .ne. 0) status = RM_Abort(id, status, "IPhreeqc RunString failed") 

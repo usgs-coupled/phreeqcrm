@@ -310,7 +310,7 @@ int Species_cpp()
 			std::string input;
 			input = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1";
 			int iphreeqc_result;
-			util_ptr->SetOutputFileName("Species_cpp_utility.out");
+			util_ptr->SetOutputFileName("Species_cpp_utility.txt");
 			util_ptr->SetOutputFileOn(true);
 			iphreeqc_result = util_ptr->RunString(input.c_str());
 			if (iphreeqc_result != 0)

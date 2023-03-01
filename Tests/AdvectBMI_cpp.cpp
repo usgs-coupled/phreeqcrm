@@ -351,7 +351,7 @@ int AdvectBMI_cpp()
 		IPhreeqc* util_ptr = phreeqc_rm.Concentrations2Utility(c_well, tc, p_atm);
 		std::string input = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1";
 		int iphreeqc_result;
-		util_ptr->SetOutputFileName("AdvectBMI_cpp_utility.out");
+		util_ptr->SetOutputFileName("AdvectBMI_cpp_utility.txt");
 		util_ptr->SetOutputFileOn(true);
 		iphreeqc_result = util_ptr->RunString(input.c_str());
 		// Alternatively, utility pointer is worker nthreads + 1
@@ -538,7 +538,7 @@ int bmi_units_tester()
 		input = "RUN_CELLS; -cells 0-2";
 		// Output goes to new file
 		int iphreeqc_result;
-		util_ptr->SetOutputFileName("AdvectBMI_cpp_units_utility.out");
+		util_ptr->SetOutputFileName("AdvectBMI_cpp_units_utility.txt");
 		util_ptr->SetOutputFileOn(true);
 		iphreeqc_result = util_ptr->RunString(input.c_str());
 		status = phreeqc_rm.MpiWorkerBreak();
