@@ -110,7 +110,7 @@ yrm.YAMLCloseFiles();
 	<PRE>
 	bool dump_on = true;
 	bool append = false;
-	yrm.YAMLSetDumpFileName("advection_cpp.dmp");
+	yrm.YAMLSetDumpFileName("Advect_cpp.dmp");
 	yrm.YAMLDumpModule(dump_on, append);
 	</PRE>
 	</CODE>
@@ -585,7 +585,7 @@ yrm.YAMLRunString(true, false, true, input.c_str());
 	@htmlonly
 	<CODE>
 	<PRE>
-	yrm.YAMLSetDumpFileName("advection_cpp.dmp");
+	yrm.YAMLSetDumpFileName("Advect_cpp.dmp");
 	bool dump_on = true;
 	bool append = false;
 	yrm.YAMLDumpModule(dump_on, append);
