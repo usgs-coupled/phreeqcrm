@@ -323,6 +323,71 @@
         221 -23.267950617736
         225 -3.572624118958
         226 -7.0649791466463
+    SOLUTION_RAW                 5 Solution after simulation 1.
+      -temp                      20
+      -pressure                  2
+      -potential                 0
+      -total_h                   22.162948776699
+      -total_o                   11.081581210618
+      -cb                        1.0286522969262e-13
+      -density                   0.99830599745848
+      -totals
+        Ca                   2.1789424969625e-06
+        Cl                   0.00023957261064281
+        K                    0.00021232055257124
+        Na                   2.2894173180509e-05
+      -pH                        7.0815712902228
+      -pe                        13.966566664473
+      -mu                        0.0012110000876024
+      -ah2o                      0.99995483457207
+      -mass_water                0.19964384227126
+      -soln_vol                  0.20000176462488
+      -total_alkalinity          2.7906757761824e-19
+      -activities
+        Ca                   -5.0284103997467
+        Cl                   -2.9376977710625
+        E                    -13.966566664473
+        H(0)                 -45.22480166662
+        K                    -2.9901694145148
+        Na                   -3.95724839021
+        O(0)                 -3.5725030189783
+      -gammas
+      -species_map
+        28 1.0894596898392e-05
+        34 1.9461865001205e-11
+        63 0.0011978524844126
+        118 8.5824609739096e-08
+        119 0
+        121 55.406882994103
+        178 0.0010615933962856
+        216 0.00011446985592077
+        221 9.1014482447923e-22
+        225 0.00026705331483471
+        226 8.5805147875489e-08
+      -log_gamma_map
+        28 -0.066399473606212
+        34 -0.016823593711558
+        63 -0.016879016960186
+        118 -0.01596103544148
+        119 0.00012110000876024
+        121 0
+        178 -0.016905530757508
+        216 -0.01671743433463
+        221 0.00012110000876024
+        225 0.00012110000876024
+        226 -0.016923695758822
+      -log_molalities_map
+        28 -4.9620109261405
+        34 -10.710037636351
+        63 -2.9208187541023
+        118 -7.0656102547813
+        119 -45.224922766629
+        121 -1.9615539096873e-05
+        178 -2.9732638837573
+        216 -3.9405309558754
+        221 -21.040111588239
+        225 -3.5726241189871
+        226 -7.0657087479578
     EXCHANGE_RAW                 0 Exchange assemblage after simulation 1.
       # EXCHANGE_MODIFY candidate identifiers #
       -exchange_gammas           1
@@ -423,71 +488,26 @@
       -n_solution                -999
       # Exchange workspace variables #
       -totals
-    SOLUTION_RAW                 5 Solution after simulation 1.
-      -temp                      20
-      -pressure                  2
-      -potential                 0
-      -total_h                   22.162948776699
-      -total_o                   11.081581210618
-      -cb                        1.0286522969262e-13
-      -density                   0.99830599745848
+    EXCHANGE_RAW                 5 Exchange assemblage after simulation 1.
+      # EXCHANGE_MODIFY candidate identifiers #
+      -exchange_gammas           1
+      -component                 X
+        # EXCHANGE_MODIFY candidate identifiers #
+        -totals
+          Ca                 5.5744648454769e-05
+          K                  0.00010629152689824
+          Na                 2.2191763238232e-06
+          X                  0.0002200000001316
+        -charge_balance          0
+        -la                      1.944331735805
+        -phase_proportion        0
+        -formula_z               0
+      # EXCHANGE_MODIFY candidates with new_def=true #
+      -new_def                   0
+      -solution_equilibria       0
+      -n_solution                -999
+      # Exchange workspace variables #
       -totals
-        Ca                   2.1789424969625e-06
-        Cl                   0.00023957261064281
-        K                    0.00021232055257124
-        Na                   2.2894173180509e-05
-      -pH                        7.0815712902228
-      -pe                        13.966566664473
-      -mu                        0.0012110000876024
-      -ah2o                      0.99995483457207
-      -mass_water                0.19964384227126
-      -soln_vol                  0.20000176462488
-      -total_alkalinity          2.7906757761824e-19
-      -activities
-        Ca                   -5.0284103997467
-        Cl                   -2.9376977710625
-        E                    -13.966566664473
-        H(0)                 -45.22480166662
-        K                    -2.9901694145148
-        Na                   -3.95724839021
-        O(0)                 -3.5725030189783
-      -gammas
-      -species_map
-        28 1.0894596898392e-05
-        34 1.9461865001205e-11
-        63 0.0011978524844126
-        118 8.5824609739096e-08
-        119 0
-        121 55.406882994103
-        178 0.0010615933962856
-        216 0.00011446985592077
-        221 9.1014482447923e-22
-        225 0.00026705331483471
-        226 8.5805147875489e-08
-      -log_gamma_map
-        28 -0.066399473606212
-        34 -0.016823593711558
-        63 -0.016879016960186
-        118 -0.01596103544148
-        119 0.00012110000876024
-        121 0
-        178 -0.016905530757508
-        216 -0.01671743433463
-        221 0.00012110000876024
-        225 0.00012110000876024
-        226 -0.016923695758822
-      -log_molalities_map
-        28 -4.9620109261405
-        34 -10.710037636351
-        63 -2.9208187541023
-        118 -7.0656102547813
-        119 -45.224922766629
-        121 -1.9615539096873e-05
-        178 -2.9732638837573
-        216 -3.9405309558754
-        221 -21.040111588239
-        225 -3.5726241189871
-        226 -7.0657087479578
     SOLUTION_RAW                 6 Solution after simulation 1.
       -temp                      20
       -pressure                  2
@@ -740,105 +760,6 @@
         221 -20.098143010822
         225 -3.5726237741928
         226 -7.0657289997233
-    EXCHANGE_RAW                 5 Exchange assemblage after simulation 1.
-      # EXCHANGE_MODIFY candidate identifiers #
-      -exchange_gammas           1
-      -component                 X
-        # EXCHANGE_MODIFY candidate identifiers #
-        -totals
-          Ca                 5.5744648454769e-05
-          K                  0.00010629152689824
-          Na                 2.2191763238232e-06
-          X                  0.0002200000001316
-        -charge_balance          0
-        -la                      1.944331735805
-        -phase_proportion        0
-        -formula_z               0
-      # EXCHANGE_MODIFY candidates with new_def=true #
-      -new_def                   0
-      -solution_equilibria       0
-      -n_solution                -999
-      # Exchange workspace variables #
-      -totals
-    EXCHANGE_RAW                 6 Exchange assemblage after simulation 1.
-      # EXCHANGE_MODIFY candidate identifiers #
-      -exchange_gammas           1
-      -component                 X
-        # EXCHANGE_MODIFY candidate identifiers #
-        -totals
-          Ca                 7.8889599963695e-09
-          K                  0.00018164031591582
-          Na                 3.8343906364582e-05
-          X                  0.0002200000002004
-        -charge_balance          0
-        -la                      2.4447973951359
-        -phase_proportion        0
-        -formula_z               0
-      # EXCHANGE_MODIFY candidates with new_def=true #
-      -new_def                   0
-      -solution_equilibria       0
-      -n_solution                -999
-      # Exchange workspace variables #
-      -totals
-    EXCHANGE_RAW                 7 Exchange assemblage after simulation 1.
-      # EXCHANGE_MODIFY candidate identifiers #
-      -exchange_gammas           1
-      -component                 X
-        # EXCHANGE_MODIFY candidate identifiers #
-        -totals
-          Ca                 1.2401487591103e-14
-          K                  0.00012430966894713
-          Na                 9.5690331159543e-05
-          X                  0.00022000000013147
-        -charge_balance          0
-        -la                      2.6567385148108
-        -phase_proportion        0
-        -formula_z               0
-      # EXCHANGE_MODIFY candidates with new_def=true #
-      -new_def                   0
-      -solution_equilibria       0
-      -n_solution                -999
-      # Exchange workspace variables #
-      -totals
-    EXCHANGE_RAW                 8 Exchange assemblage after simulation 1.
-      # EXCHANGE_MODIFY candidate identifiers #
-      -exchange_gammas           1
-      -component                 X
-        # EXCHANGE_MODIFY candidate identifiers #
-        -totals
-          Ca                 2.9132510369212e-21
-          K                  0.00011162525008285
-          Na                 0.00010837475004853
-          X                  0.00022000000013137
-        -charge_balance          0
-        -la                      2.6923314222035
-        -phase_proportion        0
-        -formula_z               0
-      # EXCHANGE_MODIFY candidates with new_def=true #
-      -new_def                   0
-      -solution_equilibria       0
-      -n_solution                -999
-      # Exchange workspace variables #
-      -totals
-    EXCHANGE_RAW                 9 Exchange assemblage after simulation 1.
-      # EXCHANGE_MODIFY candidate identifiers #
-      -exchange_gammas           1
-      -component                 X
-        # EXCHANGE_MODIFY candidate identifiers #
-        -totals
-          K                  0.00011077759538494
-          Na                 0.00010922240474649
-          X                  0.00022000000013143
-        -charge_balance          0
-        -la                      2.6946091280289
-        -phase_proportion        0
-        -formula_z               0
-      # EXCHANGE_MODIFY candidates with new_def=true #
-      -new_def                   0
-      -solution_equilibria       0
-      -n_solution                -999
-      # Exchange workspace variables #
-      -totals
     SOLUTION_RAW                 10 Solution after simulation 1.
       -temp                      20
       -pressure                  2
@@ -983,6 +904,127 @@
         221 -20.098107260029
         225 -3.5725641150874
         226 -7.0657289998583
+    EXCHANGE_RAW                 6 Exchange assemblage after simulation 1.
+      # EXCHANGE_MODIFY candidate identifiers #
+      -exchange_gammas           1
+      -component                 X
+        # EXCHANGE_MODIFY candidate identifiers #
+        -totals
+          Ca                 7.8889599963695e-09
+          K                  0.00018164031591582
+          Na                 3.8343906364582e-05
+          X                  0.0002200000002004
+        -charge_balance          0
+        -la                      2.4447973951359
+        -phase_proportion        0
+        -formula_z               0
+      # EXCHANGE_MODIFY candidates with new_def=true #
+      -new_def                   0
+      -solution_equilibria       0
+      -n_solution                -999
+      # Exchange workspace variables #
+      -totals
+    EXCHANGE_RAW                 7 Exchange assemblage after simulation 1.
+      # EXCHANGE_MODIFY candidate identifiers #
+      -exchange_gammas           1
+      -component                 X
+        # EXCHANGE_MODIFY candidate identifiers #
+        -totals
+          Ca                 1.2401487591103e-14
+          K                  0.00012430966894713
+          Na                 9.5690331159543e-05
+          X                  0.00022000000013147
+        -charge_balance          0
+        -la                      2.6567385148108
+        -phase_proportion        0
+        -formula_z               0
+      # EXCHANGE_MODIFY candidates with new_def=true #
+      -new_def                   0
+      -solution_equilibria       0
+      -n_solution                -999
+      # Exchange workspace variables #
+      -totals
+    EXCHANGE_RAW                 8 Exchange assemblage after simulation 1.
+      # EXCHANGE_MODIFY candidate identifiers #
+      -exchange_gammas           1
+      -component                 X
+        # EXCHANGE_MODIFY candidate identifiers #
+        -totals
+          Ca                 2.9132510369212e-21
+          K                  0.00011162525008285
+          Na                 0.00010837475004853
+          X                  0.00022000000013137
+        -charge_balance          0
+        -la                      2.6923314222035
+        -phase_proportion        0
+        -formula_z               0
+      # EXCHANGE_MODIFY candidates with new_def=true #
+      -new_def                   0
+      -solution_equilibria       0
+      -n_solution                -999
+      # Exchange workspace variables #
+      -totals
+    EXCHANGE_RAW                 9 Exchange assemblage after simulation 1.
+      # EXCHANGE_MODIFY candidate identifiers #
+      -exchange_gammas           1
+      -component                 X
+        # EXCHANGE_MODIFY candidate identifiers #
+        -totals
+          K                  0.00011077759538494
+          Na                 0.00010922240474649
+          X                  0.00022000000013143
+        -charge_balance          0
+        -la                      2.6946091280289
+        -phase_proportion        0
+        -formula_z               0
+      # EXCHANGE_MODIFY candidates with new_def=true #
+      -new_def                   0
+      -solution_equilibria       0
+      -n_solution                -999
+      # Exchange workspace variables #
+      -totals
+    EXCHANGE_RAW                 10 Exchange assemblage after simulation 1.
+      # EXCHANGE_MODIFY candidate identifiers #
+      -exchange_gammas           1
+      -component                 X
+        # EXCHANGE_MODIFY candidate identifiers #
+        -totals
+          H                  1.5569735078322e-64
+          K                  0.0001107500084442
+          N                  3.8924337695805e-65
+          Na                 0.00010924999168717
+          X                  0.00022000000013137
+        -charge_balance          0
+        -la                      2.6946830555387
+        -phase_proportion        0
+        -formula_z               0
+      # EXCHANGE_MODIFY candidates with new_def=true #
+      -new_def                   0
+      -solution_equilibria       0
+      -n_solution                -999
+      # Exchange workspace variables #
+      -totals
+    EXCHANGE_RAW                 11 Exchange assemblage after simulation 1.
+      # EXCHANGE_MODIFY candidate identifiers #
+      -exchange_gammas           1
+      -component                 X
+        # EXCHANGE_MODIFY candidate identifiers #
+        -totals
+          H                  1.5569735078322e-64
+          K                  0.0001107500084442
+          N                  3.8924337695805e-65
+          Na                 0.00010924999168717
+          X                  0.00022000000013137
+        -charge_balance          0
+        -la                      2.6946830555387
+        -phase_proportion        0
+        -formula_z               0
+      # EXCHANGE_MODIFY candidates with new_def=true #
+      -new_def                   0
+      -solution_equilibria       0
+      -n_solution                -999
+      # Exchange workspace variables #
+      -totals
     SOLUTION_RAW                 12 Solution after simulation 1.
       -temp                      20
       -pressure                  2
@@ -1559,48 +1601,6 @@
         221 -20.098107260029
         225 -3.5725641150874
         226 -7.0657289998583
-    EXCHANGE_RAW                 10 Exchange assemblage after simulation 1.
-      # EXCHANGE_MODIFY candidate identifiers #
-      -exchange_gammas           1
-      -component                 X
-        # EXCHANGE_MODIFY candidate identifiers #
-        -totals
-          H                  1.5569735078322e-64
-          K                  0.0001107500084442
-          N                  3.8924337695805e-65
-          Na                 0.00010924999168717
-          X                  0.00022000000013137
-        -charge_balance          0
-        -la                      2.6946830555387
-        -phase_proportion        0
-        -formula_z               0
-      # EXCHANGE_MODIFY candidates with new_def=true #
-      -new_def                   0
-      -solution_equilibria       0
-      -n_solution                -999
-      # Exchange workspace variables #
-      -totals
-    EXCHANGE_RAW                 11 Exchange assemblage after simulation 1.
-      # EXCHANGE_MODIFY candidate identifiers #
-      -exchange_gammas           1
-      -component                 X
-        # EXCHANGE_MODIFY candidate identifiers #
-        -totals
-          H                  1.5569735078322e-64
-          K                  0.0001107500084442
-          N                  3.8924337695805e-65
-          Na                 0.00010924999168717
-          X                  0.00022000000013137
-        -charge_balance          0
-        -la                      2.6946830555387
-        -phase_proportion        0
-        -formula_z               0
-      # EXCHANGE_MODIFY candidates with new_def=true #
-      -new_def                   0
-      -solution_equilibria       0
-      -n_solution                -999
-      # Exchange workspace variables #
-      -totals
     EXCHANGE_RAW                 12 Exchange assemblage after simulation 1.
       # EXCHANGE_MODIFY candidate identifiers #
       -exchange_gammas           1
