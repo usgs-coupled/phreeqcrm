@@ -8,14 +8,15 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
-	
-extern void Advect_f90(void);
+
 extern void Advect_c(void);
-extern void SimpleAdvect_f90(void);
-extern void Species_f90(void);
-extern void Species_c(void);
+extern void Advect_f90(void);
 extern void Gas_c(void);
 extern void Gas_f90(void);
+extern void SimpleAdvect_c(void);
+extern void SimpleAdvect_f90(void);
+extern void Species_c(void);
+extern void Species_f90(void);
 
 #if defined(__cplusplus)
 }
@@ -67,6 +68,8 @@ int main(int argc, char* argv[])
 	AdvectBMI_cpp();
 #endif
 	if (root) std::cerr << "Done AdvectBMI_cpp.==================================" << std::endl;
+	SimpleAdvect_c();
+	if (root) std::cerr << "Done SimpleAdvect_c.====================================" << std::endl;
 	Advect_c();
 	if (root) std::cerr << "Done Advect_c.====================================" << std::endl;
 	Species_cpp();
