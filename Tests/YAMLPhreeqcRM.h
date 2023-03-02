@@ -25,8 +25,7 @@ public:
 	 */
 	void clear();
 	/**
-	Returns a constant reference to the YAML document to be able to write
-	the document to file.
+	Returns a constant reference to the YAML document.
 	@par C++ Example:
 	@htmlonly
 	<CODE>
@@ -40,6 +39,20 @@ public:
 	@endhtmlonly
 	 */
 	const YAML::Node& GetYAMLDoc() { return this->YAML_doc; };
+	/**
+	Writes the YAML document to file.
+	@param file_name        Name of file where YAML document will be written.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	yrm.WriteYAMLDoc(YAML_filename);
+	yrm.clear();
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	 */
+	void WriteYAMLDoc(std::string file_name);
 	// methods
 /**
 Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
@@ -1636,5 +1649,4 @@ yrm.YAMLRunString(true, false, true, input.c_str());
 private:
 	std::map<std::string, int> method_map;
 };
-
 #endif

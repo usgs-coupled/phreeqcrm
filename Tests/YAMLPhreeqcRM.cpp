@@ -14,6 +14,13 @@ void YAMLPhreeqcRM::clear()
 	YAML::Node empty;
 	YAML_doc = empty;
 }
+
+void YAMLPhreeqcRM::WriteYAMLDoc(std::string file_name)
+{
+	std::ofstream ofs = std::ofstream(file_name.c_str(), std::ofstream::out);
+	ofs << this->GetYAMLDoc();
+	ofs.close();
+}
 void YAMLPhreeqcRM::YAMLCloseFiles (void)
 {
 	YAML_doc["CloseFiles"] = "";

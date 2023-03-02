@@ -125,11 +125,7 @@ void WriteYAMLFile_cpp(void)
 	yrm.YAMLSetTimeStep(86400);
 
 	// Write YAML file
-	{
-		std::ofstream ofs = std::ofstream(YAML_filename.c_str(), std::ofstream::out);
-		ofs << yrm.GetYAMLDoc();
-		ofs.close();
-		yrm.clear();
-	}
+	yrm.WriteYAMLDoc(YAML_filename);
+	yrm.clear();
 };
 #endif
