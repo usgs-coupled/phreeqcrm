@@ -53,6 +53,7 @@ target_sources(TestRM PRIVATE
   Gas_c.c
   Gas_cpp.cpp
   main.cpp
+  SimpleAdvect_c.c
   SimpleAdvect_cpp.cpp
   Species_c.c
   Species_cpp.cpp
