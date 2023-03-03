@@ -16,10 +16,11 @@
 
 void WriteYAMLFile_cpp(void)
 {
-	int nxyz = 40;
-	std::string YAML_filename = "AdvectBMI_cpp.yaml";
 	YAMLPhreeqcRM yrm;
-
+	std::string YAML_filename = "AdvectBMI_cpp.yaml";
+	int nxyz = 40;
+	// Set GridCellCount
+	yrm.YAMLSetGridCellCount(nxyz);
 	// Set some properties
 	yrm.YAMLSetErrorHandlerMode(1);
 	yrm.YAMLSetComponentH2O(false);

@@ -166,6 +166,11 @@ void YAMLPhreeqcRM::YAMLSetGasPhaseVolume(std::vector< double > gas_volume)
 	YAML_doc["SetGasPhaseVolume"] = gas_volume;
 	return;
 }
+void YAMLPhreeqcRM::YAMLSetGridCellCount(int count)
+{
+	YAML_doc["SetGridCellCount"] = count;
+	return;
+}
 void YAMLPhreeqcRM::YAMLSetNthSelectedOutput(int n)
 {
 	YAML_doc["SetGasPhaseVolume"] = n;

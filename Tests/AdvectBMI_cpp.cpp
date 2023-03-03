@@ -41,11 +41,20 @@ int AdvectBMI_cpp()
 	// Write file to initialize PhreeqcRM
 	// Based on PHREEQC Example 11
 	// --------------------------------------------------------------------------
-
 	try
 	{
-
-		int nxyz = 40;
+		std::string yaml_file("AdvectBMI_cpp.yaml");
+		// GetGridCellCountYAML must be called BEFORE
+		// the PhreeqcRM instance is created. The
+		// return value can be used to create the
+		// PhreeqcRM instance.
+		// 
+		// If the YAML file does not contain 
+		// a node "SetGridCellCount:" (usually written
+		// using the YAMLPhreeqcRM class and the method
+		// YAMLSetGridCellCount), the return
+		// value is zero.
+		int nxyz = GetGridCellCountYAML(yaml_file);
 
 		// Data for call_back demostration
 		std::vector<double> hydraulic_K;
@@ -83,7 +92,7 @@ int AdvectBMI_cpp()
 		bmi_register_basic_callback(&some_data);
 
 		// Use YAML file to initialize
-		phreeqc_rm.InitializeYAML("AdvectBMI_cpp.yaml");
+		phreeqc_rm.InitializeYAML(yaml_file);
 
 		// Get number of components
 		int ncomps;

@@ -732,6 +732,28 @@ yrm.YAMLRunString(true, false, true, input.c_str());
 		*/
 	void YAMLSetGasPhaseVolume(std::vector< double > gas_volume);
 	/**
+Inserts data into the YAML document to define the number of cells.
+Once the YAML document is written, the number of model cells can be extracted
+with the method GetGridCellCountYAML. GetGridCellCountYAML is NOT a PhreeqcRM 
+method; it is a global method and must be used BEFORE the PhreeqcRM instance
+is created. SetGridCellCount will be ignored once the PhreeqcRM instance exists.
+@param n           Number of cells for the PhreeqcRM instance. The number of cells
+can be used in the creation of the PhreeqcRM instance. The PhreeqcRM constructor
+takes two arguments. GetGridCellCountYAML
+provides the value for the first argument. If the YAML file does not contain the
+node "SetGridCellCount:", GetGridCellCountYAML will return zero.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+	int nxyz = 40;
+	yrm.YAMLSetGridCellCount(nxyz);
+</PRE>
+</CODE>
+@endhtmlonly
+*/
+	void YAMLSetGridCellCount(int n);
+	/**
 	Inserts data into the YAML document for the PhreeqcRM method SetNthSelectedOutput.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.

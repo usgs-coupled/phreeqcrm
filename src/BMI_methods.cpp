@@ -779,6 +779,10 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
             this->SetGasPhaseVolume(vol);
             continue;
         }
+        if (keyword == "SetGridCellCount") {
+            this->WarningMessage("SetGridCellCount has no effect after the PhreeqcRM instance is created.");
+            continue;
+        }
 		if (keyword == "SetPartitionUZSolids") 
         {
             assert(node.IsScalar());
@@ -990,6 +994,19 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
         throw PhreeqcRMStop();
 	}
     return IRM_RESULT::IRM_OK;
+}
+// Global method
+int 
+GetGridCellCountYAML(std::string YAML_file)
+{
+    YAML::Node yaml = YAML::LoadFile(YAML_file);
+    std::string keyword;
+    YAML::Node node;
+    if (yaml["SetGridCellCount"].IsDefined())
+    {
+        return yaml["SetGridCellCount"].as<int>();
+    }
+    return 0;
 }
 #endif
 
