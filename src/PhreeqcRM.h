@@ -3013,8 +3013,11 @@ WarningMessage(std::string warnstr);
 @htmlonly
 <CODE>
 <PRE>
+		int nthreads = 0;
+		std::string yaml_file = "myfile.yaml";
+		int nxyz = GetGridCellCountYAML(yaml_file);
 		PhreeqcRM phreeqc_rm(nxyz, nthreads);
-		phreeqc_rm.InitializeYAML("myfile.yaml");
+		phreeqc_rm.InitializeYAML(yaml_file);
 </PRE>
 </CODE>
 @endhtmlonly
@@ -5664,8 +5667,11 @@ Called by root.
 	@htmlonly
 	<CODE>
 	<PRE>
+			int nthreads = 0;
+			std::string yaml_file = "myfile.yaml";
+			int nxyz = GetGridCellCountYAML(yaml_file);
 			PhreeqcRM phreeqc_rm(nxyz, nthreads);
-			phreeqc_rm.BMI_Initialize("myfile.yaml");
+			phreeqc_rm.BMI_Initialize(yaml_file);
 			int ncomps;
 			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
 			int ngrid;
