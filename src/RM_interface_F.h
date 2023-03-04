@@ -174,6 +174,20 @@ IRM_DLL_EXPORT IRM_RESULT RMF_StateApply(int* id, int* istate);
 IRM_DLL_EXPORT IRM_RESULT RMF_StateDelete(int* id, int* istate);
 IRM_DLL_EXPORT IRM_RESULT RMF_UseSolutionDensityVolume(int *id, int *tf);
 IRM_DLL_EXPORT IRM_RESULT RMF_WarningMessage(int *id, const char *warn_str);
+IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetComponentName(int* id, char* chem_name, int* l1);
+IRM_DLL_EXPORT double     RMF_BMI_GetCurrentTime(int* id);
+IRM_DLL_EXPORT int        RMF_BMI_GetInputItemCount(int* id);
+IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetInputVarNames(int* id, char* names, int* l1);
+IRM_DLL_EXPORT int        RMF_BMI_GetOutputItemCount(int* id);
+IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetOutputVarNames(int* id, char* names, int* l1);
+IRM_DLL_EXPORT double     RMF_BMI_GetTimeStep(int* id);
+IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetTimeUnits(int* id, char* units, int* l1);
+IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetValue(int* id, char* name, void* dest);
+IRM_DLL_EXPORT int        RMF_BMI_GetVarItemsize(int* id, char* name);
+IRM_DLL_EXPORT int        RMF_BMI_GetVarNbytes(int* id, char* name);
+
+//std::string BMI_GetVarType(std::string name);
+
 
 #if defined(__cplusplus)
 }
