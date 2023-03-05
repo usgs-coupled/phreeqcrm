@@ -1,13 +1,27 @@
 #ifdef USE_YAML
+/*! @file YAMLPhreeqcRM.h
+	@brief YAMLPhreeqcRM C++ Documentation 
+*/
 #include <map>
 #include <string>
 #include "yaml-cpp/yaml.h"
 #pragma once
+
+/**
+ * @class YAMLPhreeqcRM
+ *
+ * @brief YAML helper class
+ */
+
 class YAMLPhreeqcRM
 {
 private:
 	YAML::Node YAML_doc;
 public:
+
+	/**
+	Constructor
+	*/
 	YAMLPhreeqcRM();
 	/**
 	Clears all definitions from the YAML document.
