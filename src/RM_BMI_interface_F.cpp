@@ -172,7 +172,7 @@ IRM_RESULT
 RMF_BMI_GetValue(int* id, char* var, void* dest)
 /* ---------------------------------------------------------------------- */
 {
-	// Returns "PhreeqcRM"
+	// Returns value(s) for var
 	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
 	if (Reaction_module_ptr)
 	{
@@ -193,7 +193,7 @@ int
 RMF_BMI_GetVarItemsize(int* id, char* var)
 /* ---------------------------------------------------------------------- */
 {
-	// Retrieves number of variables that can be retrieved
+	// Retrieves number of bytes needed for one item
 	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
 	if (Reaction_module_ptr)
 	{
@@ -209,7 +209,7 @@ int
 RMF_BMI_GetVarNbytes(int* id, char* var)
 /* ---------------------------------------------------------------------- */
 {
-	// Retrieves number of variables that can be retrieved
+	// Retrieves number total number of bytes needed for the buffer
 	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
 	if (Reaction_module_ptr)
 	{
@@ -217,6 +217,28 @@ RMF_BMI_GetVarNbytes(int* id, char* var)
 		size_t end = str_var.find_last_not_of(' ');
 		str_var = (end == std::string::npos) ? "" : str_var.substr(0, end + 1);
 		return Reaction_module_ptr->BMI_GetVarNbytes(str_var);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_BMI_GetVarType(int* id, char* var, char* type, int* l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns type of variable var
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::string str_var = var;
+		size_t end = str_var.find_last_not_of(' ');
+		str_var = (end == std::string::npos) ? "" : str_var.substr(0, end + 1);
+		std::string type_cpp = Reaction_module_ptr->BMI_GetVarType(str_var);
+		if (*l1 > 0)
+		{
+			rmpadfstring(type, type_cpp.c_str(), (unsigned int)*l1);
+			return IRM_OK;
+		}
+		return IRM_INVALIDARG;
 	}
 	return IRM_BADINSTANCE;
 }

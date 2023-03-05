@@ -199,6 +199,7 @@ INTEGER FUNCTION RM_BMI_GetVarNbytes(id, var)
     RM_BMI_GetVarNbytes = RMF_BMI_GetVarNbytes(id, var)
 END FUNCTION RM_BMI_GetVarNbytes
 
+!RMF_BMI_GetVarType(int* id, char* var, char* type, int* l1)
 
 
 
