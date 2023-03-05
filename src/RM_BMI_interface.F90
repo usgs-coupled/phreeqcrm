@@ -12,6 +12,22 @@
     
     CONTAINS
     
+INTEGER FUNCTION RM_BMI_Finalize(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RM_Destroy(id) &
+            BIND(C, NAME='RM_Destroy')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RM_Destroy 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    RM_BMI_Finalize = RM_Destroy(id)
+    return
+END FUNCTION RM_BMI_Finalize 
+
 INTEGER FUNCTION RM_BMI_GetComponentName(id, component_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -199,11 +215,67 @@ INTEGER FUNCTION RM_BMI_GetVarNbytes(id, var)
     RM_BMI_GetVarNbytes = RMF_BMI_GetVarNbytes(id, var)
 END FUNCTION RM_BMI_GetVarNbytes
 
-!RMF_BMI_GetVarType(int* id, char* var, char* type, int* l1)
+INTEGER FUNCTION RM_BMI_GetVarType(id, var, vtype)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarType(id, var, vtype, l) &
+            BIND(C, NAME='RMF_BMI_GetVarType')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, l
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: vtype(*)
+        END FUNCTION RMF_BMI_GetVarType 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    CHARACTER(len=*), INTENT(out) :: vtype
+    RM_BMI_GetVarType = RMF_BMI_GetVarType(id, var, vtype, len(vtype))
+    return
+END FUNCTION RM_BMI_GetVarType 
 
+INTEGER FUNCTION RM_BMI_GetVarUnits(id, var, units)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarUnits(id, var, units, l) &
+            BIND(C, NAME='RMF_BMI_GetVarUnits')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id, l
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: units(*)
+        END FUNCTION RMF_BMI_GetVarUnits 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    CHARACTER(len=*), INTENT(out) :: units
+    RM_BMI_GetVarUnits = RMF_BMI_GetVarUnits(id, var, units, len(units))
+    return
+END FUNCTION RM_BMI_GetVarUnits 
 
+INTEGER FUNCTION RM_BMI_Initialize(id, config_file)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_Initialize(id, config_file) &
+            BIND(C, NAME='RMF_BMI_Initialize')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: config_file(*)
+        END FUNCTION RMF_BMI_Initialize 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: config_file
+    RM_BMI_Initialize = RMF_BMI_Initialize(id, config_file)
+    return
+END FUNCTION RM_BMI_Initialize 
 
 END MODULE BMI_PhreeqcRM
+
+
 
 
     

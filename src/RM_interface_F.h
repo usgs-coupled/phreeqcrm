@@ -29,8 +29,6 @@ IRM_DLL_EXPORT int        RMF_GetChemistryCellCount(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetComponent(int * id, int * num, char *chem_name, int *l1);
 IRM_DLL_EXPORT int        RMF_GetComponentCount(int * id);
 IRM_DLL_EXPORT int        RMF_GetCurrentSelectedOutputUserNumber(int* id);
-
-
 IRM_DLL_EXPORT int        RMF_GetExchangeSpeciesCount(int * id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetExchangeSpeciesName(int * id, int * num, char *name, int *l1);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetExchangeName(int * id, int * num, char *name, int *l1);
@@ -49,8 +47,6 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetSolidSolutionComponentsName(int * id, int * num
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSolidSolutionName(int * id, int * num, char *name, int *l1);
 IRM_DLL_EXPORT int        RMF_GetSICount(int * id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSIName(int * id, int * num, char *name, int *l1);
-
-
 
 IRM_DLL_EXPORT IRM_RESULT RMF_GetConcentrations(int *id, double *c);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetDensity(int *id, double *density);
@@ -185,9 +181,9 @@ IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetTimeUnits(int* id, char* units, int* l1);
 IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetValue(int* id, char* name, void* dest);
 IRM_DLL_EXPORT int        RMF_BMI_GetVarItemsize(int* id, char* name);
 IRM_DLL_EXPORT int        RMF_BMI_GetVarNbytes(int* id, char* name);
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetVarType(int* id, char* name, char* type, int* l1);
-
-
+IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetVarType(int* id, char* name, char* vtype, int* l1);
+IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetVarUnits(int* id, char* name, char* units, int* l1);
+IRM_DLL_EXPORT IRM_RESULT RMF_BMI_Initialize(int* id, char* config_file);
 
 #if defined(__cplusplus)
 }

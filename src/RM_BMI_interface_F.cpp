@@ -222,7 +222,7 @@ RMF_BMI_GetVarNbytes(int* id, char* var)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_BMI_GetVarType(int* id, char* var, char* type, int* l1)
+RMF_BMI_GetVarType(int* id, char* var, char* vtype, int* l1)
 /* ---------------------------------------------------------------------- */
 {
 	// Returns type of variable var
@@ -235,10 +235,48 @@ RMF_BMI_GetVarType(int* id, char* var, char* type, int* l1)
 		std::string type_cpp = Reaction_module_ptr->BMI_GetVarType(str_var);
 		if (*l1 > 0)
 		{
-			rmpadfstring(type, type_cpp.c_str(), (unsigned int)*l1);
+			rmpadfstring(vtype, type_cpp.c_str(), (unsigned int)*l1);
 			return IRM_OK;
 		}
 		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_BMI_GetVarUnits(int* id, char* var, char* units, int* l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns units of variable var
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::string str_var = var;
+		size_t end = str_var.find_last_not_of(' ');
+		str_var = (end == std::string::npos) ? "" : str_var.substr(0, end + 1);
+		std::string units_cpp = Reaction_module_ptr->BMI_GetVarUnits(str_var);
+		if (*l1 > 0)
+		{
+			rmpadfstring(units, units_cpp.c_str(), (unsigned int)*l1);
+			return IRM_OK;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+//IRM_DLL_EXPORT IRM_RESULT RMF_BMI_Initialize(int* id, char* config_file);
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_BMI_Initialize(int* id, char* config_file)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns units of variable var
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		Reaction_module_ptr->BMI_Initialize(config_file);
+		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
 }
