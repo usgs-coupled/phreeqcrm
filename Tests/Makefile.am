@@ -71,7 +71,7 @@ test_SOURCES+=\
 	SimpleAdvect_f90.F90\
 	Species_f90.F90\
 	../src/RM_interface.F90\
-	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90 
+	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
 
 test_LDADD+=$(FCLIBS)
 
@@ -82,9 +82,9 @@ clean-modules:
 
 advection_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT)
 
-species_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) 
+species_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT)
 
-gas_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) 
+gas_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT)
 
 
 endif

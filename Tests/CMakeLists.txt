@@ -1,7 +1,7 @@
 ### tests
 if (PHREEQCRM_FORTRAN_TESTING)
   project(FortranAdvect Fortran)
-  
+
   # TestRM Fortran library
   add_library(FortranAdvect STATIC)
 
@@ -11,7 +11,7 @@ if (PHREEQCRM_FORTRAN_TESTING)
     ../src/RM_interface.F90
     Advect_f90.F90
     Gas_f90.F90
-	SimpleAdvect_f90.F90
+	  SimpleAdvect_f90.F90
     Species_f90.F90
   )
 
@@ -22,7 +22,7 @@ if (PHREEQCRM_FORTRAN_TESTING)
   source_group("Source Files" FILES "Gas_f90.F90")
   source_group("Source Files" FILES "SimpleAdvect_f90.F90")
   source_group("Source Files" FILES "Species_f90.F90")
-  
+
   # The next line sets defines/includes/libraries
   # for compiling and linking the FortranAdvect library
   target_link_libraries(FortranAdvect PhreeqcRM::PhreeqcRM)
@@ -35,10 +35,10 @@ configure_file(advect.pqi.in advect.pqi COPYONLY)
 
 # Tests/phreeqc.dat
 configure_file(phreeqc.dat.in phreeqc.dat COPYONLY)
- 
+
 # Tests/units.pqi
 configure_file(units.pqi.in units.pqi COPYONLY)
-  
+
 # Tests/units.pqi
 configure_file(gas.pqi.in gas.pqi COPYONLY)
 
@@ -70,7 +70,7 @@ endif()
 if(PHREEQCRM_FORTRAN_TESTING)
   # Override bug reported on:
   # http://www.cmake.org/pipermail/cmake/2009-July/030954.html
-  if(WIN32 AND ${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")  
+  if(WIN32 AND ${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
     if(NOT CMAKE_Fortran_FLAGS_DEBUG MATCHES "/Od")
       set(CMAKE_Fortran_FLAGS_DEBUG "/Od ${CMAKE_Fortran_FLAGS_DEBUG}")
     endif()
