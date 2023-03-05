@@ -6,18 +6,17 @@ TESTS = test
 check_PROGRAMS = test
 
 test_SOURCES =\
-	Advect_cpp.cpp\
 	Advect_c.c\
+	AdvectBMI_cpp.cpp\
 	Advect_cpp.cpp\
 	Gas_c.c\
 	Gas_cpp.cpp\
 	main.cpp\
+	SimpleAdvect_c.c\
 	SimpleAdvect_cpp.cpp\
 	Species_c.c\
 	Species_cpp.cpp\
-	WriteYAMLFile_cpp.cpp\
-	YAMLPhreeqcRM.cpp\
-	YAMLPhreeqcRM.h
+	WriteYAMLFile_cpp.cpp
 
 
 # Ubuntu 22.04.1
@@ -26,41 +25,48 @@ test_LDADD = $(top_builddir)/libphreeqcrm.la -lyaml-cpp
 test_LINK = $(CXXLINK)
 
 CLEANFILES =\
-	AdvectBMI_cpp.chem.out\
-	AdvectBMI_cpp.dmp\
-	AdvectBMI_cpp.log.out\
-	AdvectBMI_cpp_units_utility.out\
-	AdvectBMI_cpp_units_worker.out\
-	AdvectBMI_cpp.yaml\
-	Advect_c.chem.out\
+	Advect_c_utility.txt\
+	Advect_c.chem.txt\
 	Advect_c.dmp\
-	Advect_c.log.out\
-	Advect_cpp.chem.out\
-	Advect_cpp.log.out\
+	Advect_c.log.txt\
+	Advect_cpp_units_utility.txt\
+	Advect_cpp_units_worker.chem.txt\
+	Advect_cpp_units_worker.log.txt\
+	Advect_cpp_units_worker.txt\
+	Advect_cpp_utility.txt\
+	Advect_cpp.chem.txt\
 	Advect_cpp.dmp\
-	Advect_cpp_units_utility.out\
-	Advect_cpp_units_worker.out\
-	Gas_c.chem.out\
+	Advect_cpp.log.txt\
+	AdvectBMI_cpp_units_utility.txt\
+	AdvectBMI_cpp_units_worker.txt\
+	AdvectBMI_cpp_utility.txt\
+	AdvectBMI_cpp.chem.txt\
+	AdvectBMI_cpp.dmp\
+	AdvectBMI_cpp.log.txt\
+	AdvectBMI_cpp.yaml\
+	Gas_c_utility.txt\
+	Gas_c.chem.txt\
 	Gas_c.dmp\
-	Gas_c.log.out\
-	Gas_c_utility.out\
-	Gas_cpp.chem.out\
+	Gas_c.log.txt\
+	Gas_cpp_utility.txt\
+	Gas_cpp.chem.txt\
 	Gas_cpp.dmp\
-	Gas_cpp.log.out\
-	Gas_cpp_utility.out\
-	SimpleAdvect_cpp.chem.out\
-	SimpleAdvect_cpp.log.out\
-	Species_c.chem.out\
+	Gas_cpp.log.txt\
+	SimpleAdvect_c.chem.txt\
+	SimpleAdvect_c.log.txt\
+	SimpleAdvect_cpp.chem.txt\
+	SimpleAdvect_cpp.log.txt\
+	Species_c_utility.txt\
+	Species_c.chem.txt\
 	Species_c.dmp\
-	Species_c.log.out\
-	Species_c_utility.out\
-	Species_cpp.chem.out\
+	Species_c.log.txt\
+	Species_cpp_utility.txt\
+	Species_cpp.chem.txt\
 	Species_cpp.dmp\
-	Species_cpp.log.out\
-	Species_cpp_utility.out\
-	Units_Worker.chem.out\
-	Units_Worker.log.out\
-	Utility_c.out\
+	Species_cpp.log.txt\
+	Units_Worker.chem.txt\
+	Units_Worker.log.txt\
+	Utility_c.txt\
 	Utility_cpp.out
 
 if PHREEQCRM_TEST_FORTRAN

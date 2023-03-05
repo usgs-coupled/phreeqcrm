@@ -27,7 +27,11 @@ endif()
 
 include(GNUInstallDirs)
 
-find_package(yaml-cpp REQUIRED)
+option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
+find_package(yaml-cpp)
+if(PHREEQCRM_WITH_YAML_CPP)
+  find_package(yaml-cpp REQUIRED)
+endif()
 
 option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" "OFF")
 if(NOT PHREEQCRM_DISABLE_OPENMP)
@@ -204,6 +208,8 @@ set(PhreeqcRM_SOURCES
   src/RM_interface_C.h
   src/RM_interface_F.cpp
   src/RM_interface_F.h
+  src/YAMLPhreeqcRM.cpp
+  src/YAMLPhreeqcRM.h
 )
 
 # setup include directories
@@ -238,7 +244,10 @@ if(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
 endif()
 
 # yaml-cpp
-target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+if(yaml-cpp_FOUND)
+  target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
+  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+endif()
 
 # init exportPackageDependencies
 set(exportPackageDependencies "")
@@ -293,6 +302,7 @@ set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/IrmResult.h
   ${PROJECT_SOURCE_DIR}/src/PhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/RM_interface_C.h
+  ${PROJECT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
 )
 
 set(PhreeqcRM_SRC

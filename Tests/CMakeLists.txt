@@ -58,8 +58,6 @@ target_sources(TestRM PRIVATE
   Species_c.c
   Species_cpp.cpp
   WriteYAMLFile_cpp.cpp
-  YAMLPhreeqcRM.cpp
-  YAMLPhreeqcRM.h
 )
 
 if(PHREEQCRM_FORTRAN_TESTING)
@@ -83,6 +81,42 @@ endif()
 
 # test compile and run
 add_test(TestCompileAndRun TestRM)
+
+set_property(TARGET TestRM APPEND
+  PROPERTY ADDITIONAL_CLEAN_FILES
+    $<TARGET_FILE_DIR:TestRM>/AdvectBMI_cpp.chem.txt
+    $<TARGET_FILE_DIR:TestRM>/AdvectBMI_cpp.dmp
+    $<TARGET_FILE_DIR:TestRM>/AdvectBMI_cpp.log.txt
+    $<TARGET_FILE_DIR:TestRM>/AdvectBMI_cpp_utility.txt
+    $<TARGET_FILE_DIR:TestRM>/AdvectBMI_cpp.yaml
+    $<TARGET_FILE_DIR:TestRM>/Advect_c.chem.txt
+    $<TARGET_FILE_DIR:TestRM>/Advect_c.dmp
+    $<TARGET_FILE_DIR:TestRM>/Advect_c.log.txt
+    $<TARGET_FILE_DIR:TestRM>/Advect_cpp.chem.txt
+    $<TARGET_FILE_DIR:TestRM>/Advect_cpp.dmp
+    $<TARGET_FILE_DIR:TestRM>/Advect_cpp.log.txt
+    $<TARGET_FILE_DIR:TestRM>/Advect_cpp_units_utility.txt
+    $<TARGET_FILE_DIR:TestRM>/Advect_cpp_units_worker.chem.txt
+    $<TARGET_FILE_DIR:TestRM>/Advect_cpp_units_worker.log.txt
+    $<TARGET_FILE_DIR:TestRM>/Advect_cpp_utility.txt
+    $<TARGET_FILE_DIR:TestRM>/Advect_c_utility.txt
+    $<TARGET_FILE_DIR:TestRM>/Gas_c.chem.txt
+    $<TARGET_FILE_DIR:TestRM>/Gas_c.log.txt
+    $<TARGET_FILE_DIR:TestRM>/Gas_cpp.chem.txt
+    $<TARGET_FILE_DIR:TestRM>/Gas_cpp.log.txt
+    $<TARGET_FILE_DIR:TestRM>/SimpleAdvect_c.chem.txt
+    $<TARGET_FILE_DIR:TestRM>/SimpleAdvect_c.log.txt
+    $<TARGET_FILE_DIR:TestRM>/SimpleAdvect_cpp.chem.txt
+    $<TARGET_FILE_DIR:TestRM>/SimpleAdvect_cpp.log.txt
+    $<TARGET_FILE_DIR:TestRM>/Species_c.chem.txt
+    $<TARGET_FILE_DIR:TestRM>/Species_c.dmp
+    $<TARGET_FILE_DIR:TestRM>/Species_c.log.txt
+    $<TARGET_FILE_DIR:TestRM>/Species_cpp.chem.txt
+    $<TARGET_FILE_DIR:TestRM>/Species_cpp.dmp
+    $<TARGET_FILE_DIR:TestRM>/Species_cpp.log.txt
+    $<TARGET_FILE_DIR:TestRM>/Species_cpp_utility.txt
+    $<TARGET_FILE_DIR:TestRM>/Species_c_utility.txt
+)
 
 if(MSVC AND BUILD_SHARED_LIBS)
   # copy dll
