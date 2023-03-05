@@ -854,6 +854,15 @@ RMF_GetGridCellCount(int * id)
 }
 /* ---------------------------------------------------------------------- */
 int
+RMF_GetGridCellCountYAML(char* config_file)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns the number of grid cells extracted from YAML file
+
+	return GetGridCellCountYAML(config_file);
+}
+/* ---------------------------------------------------------------------- */
+int
 RMF_GetIPhreeqcId(int * id, int * i)
 	/* ---------------------------------------------------------------------- */
 {

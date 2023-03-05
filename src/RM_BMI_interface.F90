@@ -271,7 +271,25 @@ INTEGER FUNCTION RM_BMI_Initialize(id, config_file)
     CHARACTER(len=*), INTENT(in) :: config_file
     RM_BMI_Initialize = RMF_BMI_Initialize(id, config_file)
     return
-END FUNCTION RM_BMI_Initialize 
+END FUNCTION RM_BMI_Initialize
+
+INTEGER FUNCTION RM_GetGridCellCountYAML(config_file)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION GetGridCellCountYAML(config_file) &
+            BIND(C, NAME='GetGridCellCountYAML')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: config_file(*)
+        END FUNCTION GetGridCellCountYAML 
+    END INTERFACE
+    CHARACTER(len=*), INTENT(in) :: config_file
+    RM_GetGridCellCountYAML = GetGridCellCountYAML(config_file)
+    return
+END FUNCTION RM_GetGridCellCountYAML 
+
+
 
 END MODULE BMI_PhreeqcRM
 

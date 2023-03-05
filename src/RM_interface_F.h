@@ -59,6 +59,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetGasCompPressures(int* id, double* p);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGasCompPhi(int* id, double* phi);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGasPhaseVolume(int* id, double* v);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGfw(int *id, double * gfw);
+IRM_DLL_EXPORT int        RMF_GetGridCellCountYAML(char* config_file);
 IRM_DLL_EXPORT int        RMF_GetGridCellCount(int *id);
 IRM_DLL_EXPORT int        RMF_GetIPhreeqcId(int *id, int *i);
 IRM_DLL_EXPORT int        RMF_GetMpiMyself(int *id);
