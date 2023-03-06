@@ -31,16 +31,16 @@ endif()
 project(TestRM CXX)
 
 # Tests/advect.pqi
-configure_file(advect.pqi.in advect.pqi COPYONLY)
+configure_file(advect.pqi advect.pqi COPYONLY)
 
 # Tests/phreeqc.dat
-configure_file(phreeqc.dat.in phreeqc.dat COPYONLY)
+configure_file(phreeqc.dat phreeqc.dat COPYONLY)
 
 # Tests/units.pqi
-configure_file(units.pqi.in units.pqi COPYONLY)
+configure_file(units.pqi units.pqi COPYONLY)
 
 # Tests/units.pqi
-configure_file(gas.pqi.in gas.pqi COPYONLY)
+configure_file(gas.pqi gas.pqi COPYONLY)
 
 # test executable
 add_executable(TestRM)

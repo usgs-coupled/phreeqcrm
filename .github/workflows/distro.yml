@@ -117,11 +117,7 @@ jobs:
 
     - name: Test install
       working-directory: ${{ github.workspace }}/Tests
-      run: |
-        echo 'objects = advection_bmi_cpp.o advection_c.o advection_cpp.o gas_c.o gas_cpp.o main.o SimpleAdvection.o species_c.o species_cpp.o WriteYAMLFile.o YAMLPhreeqcRM.o' > Makefile
-        echo 'test : $(objects)'                                  >> Makefile
-        echo '	$(CXX) -o test $(objects) -lphreeqcrm -lyaml-cpp' >> Makefile
-        env CC='gcc' CXX='g++ -std=gnu++11' make test
+      run: env CC='gcc' CXX='g++ -std=gnu++11' make -f check.mk test && ./test
 
   cmake:
     name: cmake

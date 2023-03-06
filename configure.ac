@@ -275,10 +275,10 @@ AC_CONFIG_FILES([
   doc/Makefile
   Doxygen/Makefile
   Tests/Makefile
-  Tests/advect.pqi
-  Tests/gas.pqi
-  Tests/phreeqc.dat
-  Tests/units.pqi
+  Tests/advect.pqi:Tests/advect.pqi
+  Tests/gas.pqi:Tests/gas.pqi
+  Tests/phreeqc.dat:Tests/phreeqc.dat
+  Tests/units.pqi:Tests/units.pqi
 ])
 
 AC_OUTPUT
