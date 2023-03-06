@@ -203,12 +203,21 @@ END FUNCTION RM_Concentrations2Utility
 
 SUBROUTINE ChK_Concentrations2Utility(id, c, n, tc, p_atm)
     IMPLICIT NONE
+	INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
+			BIND(C, NAME='RMF_GetComponentCount')
+			USE ISO_C_BINDING
+			IMPLICIT NONE
+			INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_GetComponentCount 
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
     INTEGER, INTENT(in) :: n
     DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: tc, p_atm
     INTEGER :: errors
     errors = 0
+	rmf_ncomps = RMF_GetComponentCount(id)
     errors = errors + Chk_Double2D(id, c, n, rmf_ncomps, "Concentration", "RM_Concentrations2Utility")
     errors = errors + Chk_Double1D(id, tc, n, "Temperature", "RM_Concentrations2Utility")
     errors = errors + Chk_Double1D(id, p_atm, n, "Pressure", "RM_Concentrations2Utility")
@@ -813,10 +822,19 @@ END FUNCTION RM_GetConcentrations
 
 SUBROUTINE Chk_GetConcentrations(id, c)
     IMPLICIT NONE
+	INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
+			BIND(C, NAME='RMF_GetComponentCount')
+			USE ISO_C_BINDING
+			IMPLICIT NONE
+			INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_GetComponentCount 
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
     INTEGER :: errors
     errors = 0
+    rmf_ncomps = RMF_GetComponentCount(id)
     errors = errors + Chk_Double2D(id, c, rmf_nxyz, rmf_ncomps, "concentration", "RM_GetConcentrations")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetConcentrations")
@@ -1731,10 +1749,19 @@ END FUNCTION RM_GetGfw
 
 SUBROUTINE Chk_GetGfw(id, gfw) 
     IMPLICIT NONE
+	INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
+			BIND(C, NAME='RMF_GetComponentCount')
+			USE ISO_C_BINDING
+			IMPLICIT NONE
+			INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_GetComponentCount 
+    END INTERFACE	
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: gfw
     INTEGER :: errors
     errors = 0
+	rmf_ncomps = RMF_GetComponentCount(id)
     errors = errors + Chk_Double1D(id, gfw, rmf_ncomps, "gfw", "RM_GetGfw")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_GetGfw")
@@ -3786,6 +3813,14 @@ END FUNCTION RM_InitialPhreeqc2Concentrations
 
 SUBROUTINE Chk_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, bc2, f1) 
     IMPLICIT NONE
+	INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
+			BIND(C, NAME='RMF_GetComponentCount')
+			USE ISO_C_BINDING
+			IMPLICIT NONE
+			INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_GetComponentCount 
+    END INTERFACE	
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(IN), DIMENSION(:,:) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary 
@@ -3794,6 +3829,7 @@ SUBROUTINE Chk_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, bc2, 
     DOUBLE PRECISION, INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
     INTEGER :: errors
     errors = 0
+	rmf_ncomps = RMF_GetComponentCount(id)
     errors = errors + Chk_Double2D(id, bc_conc, n_boundary, rmf_ncomps, "concentration", "RM_InitialPhreeqc2Concentrations")
     errors = errors + Chk_Integer1D(id, bc1, n_boundary, "bc1", "RM_InitialPhreeqc2Concentrations")
     if (present(bc2)) then
@@ -4639,10 +4675,19 @@ END FUNCTION RM_SetConcentrations
     
 SUBROUTINE Chk_SetConcentrations(id, c)
     IMPLICIT NONE
+	INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
+			BIND(C, NAME='RMF_GetComponentCount')
+			USE ISO_C_BINDING
+			IMPLICIT NONE
+			INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_GetComponentCount 
+    END INTERFACE	
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
     INTEGER :: errors
     errors = 0
+	rmf_ncomps = RMF_GetComponentCount(id)
     errors = errors + Chk_Double2D(id, c, rmf_nxyz, rmf_ncomps, "concentration", "RM_SetConcentrations")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetConcentrations")

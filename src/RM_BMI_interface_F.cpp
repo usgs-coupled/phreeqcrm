@@ -280,3 +280,48 @@ RMF_BMI_Initialize(int* id, char* config_file)
 	}
 	return IRM_BADINSTANCE;
 }
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_BMI_SetValue(int* id, char* var, void* src)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns value(s) for var
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		if (var != NULL)
+		{
+			std::string str_var = var;
+			size_t end = str_var.find_last_not_of(' ');
+			str_var = (end == std::string::npos) ? "" : str_var.substr(0, end + 1);
+			Reaction_module_ptr->BMI_SetValue(str_var, src);
+			return IRM_OK;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+// IRM_RESULT RMF_BMI_Update(int* id);
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_BMI_Update(int* id)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns units of variable var
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		Reaction_module_ptr->BMI_Update();
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+int
+RMF_GetGridCellCountYAML(const char* config)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns units of variable var
+	return GetGridCellCountYAML(config);
+}

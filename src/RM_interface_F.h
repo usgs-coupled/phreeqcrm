@@ -59,7 +59,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetGasCompPressures(int* id, double* p);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGasCompPhi(int* id, double* phi);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGasPhaseVolume(int* id, double* v);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGfw(int *id, double * gfw);
-IRM_DLL_EXPORT int        RMF_GetGridCellCountYAML(char* config_file);
+IRM_DLL_EXPORT int        RMF_GetGridCellCountYAML(const char* config_file);
 IRM_DLL_EXPORT int        RMF_GetGridCellCount(int *id);
 IRM_DLL_EXPORT int        RMF_GetIPhreeqcId(int *id, int *i);
 IRM_DLL_EXPORT int        RMF_GetMpiMyself(int *id);
@@ -185,7 +185,8 @@ IRM_DLL_EXPORT int        RMF_BMI_GetVarNbytes(int* id, char* name);
 IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetVarType(int* id, char* name, char* vtype, int* l1);
 IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetVarUnits(int* id, char* name, char* units, int* l1);
 IRM_DLL_EXPORT IRM_RESULT RMF_BMI_Initialize(int* id, char* config_file);
-
+IRM_DLL_EXPORT IRM_RESULT RMF_BMI_SetValue(int* id, char* name, void* src);
+IRM_DLL_EXPORT IRM_RESULT RMF_BMI_Update(int* id);
 #if defined(__cplusplus)
 }
 #endif

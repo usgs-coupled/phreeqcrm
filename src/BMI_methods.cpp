@@ -51,6 +51,14 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             this->SetPorosity(porosity);
             return;
         }
+        if (it->first == "Porosity")
+        {
+            int ngrid = this->GetGridCellCount();
+            std::vector<double> porosity(ngrid, INACTIVE_CELL_VALUE);
+            memcpy(porosity.data(), src, ngrid * sizeof(double));
+            this->SetPorosity(porosity);
+            return;
+        }
         if (it->first == "Pressure")
         {
             int ngrid = this->GetGridCellCount();
@@ -169,6 +177,12 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
         //    memcpy(dest, &num, sizeof(int));
         //    return;
         //}
+        if (it->first == "Porosity")
+        {
+            const std::vector<double>& porosity = this->GetPorosity();
+            memcpy(dest, porosity.data(), porosity.size() * sizeof(double));
+            return;
+        }
         if (it->first == "Pressure")
         {
             const std::vector<double> &pressure = this->GetPressure();
@@ -225,6 +239,12 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
         {
             int count = this->GetSelectedOutputRowCount();
             memcpy(dest, &count, sizeof(int));
+            return;
+        }
+        if (it->first == "SolutionVolume")
+        {
+            const std::vector<double>& vol = this->GetSolutionVolume();
+            memcpy(dest, vol.data(), vol.size() * sizeof(double));
             return;
         }
         if (it->first == "Temperature")
@@ -318,6 +338,10 @@ int PhreeqcRM::BMI_GetVarNbytes(std::string name)
         {
             return (int)sizeof(int);
         }
+        if (it->first == "SolutionVolume")
+        {
+            return (int)sizeof(double) * this->GetGridCellCount();
+        }
         if (it->first == "Temperature")
         {
             return (int)sizeof(double) * this->GetGridCellCount();
@@ -370,7 +394,6 @@ int PhreeqcRM::BMI_GetVarItemsize(std::string name)
         }
         if (it->first == "Components")
         {
-            const std::vector< std::string >& ref = this->GetComponents();
             size_t max = 0;
             for (size_t i = 0; i < this->GetComponents().size(); i++)
             {
@@ -450,6 +473,10 @@ int PhreeqcRM::BMI_GetVarItemsize(std::string name)
         {
             return (int)sizeof(int);
         }
+        if (it->first == "SolutionVolume")
+        {
+            return (int)sizeof(double);
+        }
         if (it->first == "Temperature")
         {
             return (int)sizeof(double);
@@ -521,7 +548,7 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["SINames"] = Var_BMI("SINames", "string", "names", 0);
         //var_map["SolidSolutionComponentsNames"] = Var_BMI("SolidSolutionComponentsNames", "string", "names", sizeof(char));
         //var_map["SolidSolutionNames"] = Var_BMI("SolidSolutionNames", "string", "names", sizeof(char));
-        //var_map["SolutionVolume"] = Var_BMI("SolutionVolume", "double", "L", sizeof(double));
+        bmi_var_map["SolutionVolume"] = BMI_Var("SolutionVolume", "double", "L", false, true);
         //!var_map["SpeciesConcentrations"] = Var_BMI("SpeciesConcentrations", "double", "mg L-1", sizeof(double));
         //!var_map["SpeciesD25"] = Var_BMI("SpeciesD25", "double", "cm2 s-1", sizeof(double));
         //!var_map["SpeciesLog10Gammas"] = Var_BMI("SpeciesLog10Gammas", "double", "log L mol-1", sizeof(double));
@@ -544,7 +571,7 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["ErrorHandlerMode"] = Var_BMI("ErrorHandlerMode", "int", "flag", sizeof(int));
         //var_map["ErrorOn"] = Var_BMI("ErrorOn", "int", "flag", sizeof(int));
         //var_map["PartitionUZSolids"] = Var_BMI("PartitionUZSolids", "int", "flag", sizeof(int));
-        bmi_var_map["Porosity"] = BMI_Var("Porosity", "double", "unitless", true, false);
+        bmi_var_map["Porosity"] = BMI_Var("Porosity", "double", "unitless", true, true);
         //var_map["PartitionUZSolids"] = Var_BMI("PartitionUZSolids", "int", "flag", sizeof(int));
         bmi_var_map["Pressure"] = BMI_Var("Pressure", "double", "atm", true, true);
         //var_map["PrintChemistryMask"] = Var_BMI("PrintChemistryMask", "int", "flags", sizeof(int));
@@ -591,14 +618,6 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
     {
         keyword = it->first.as<std::string>();
         YAML::Node node = it->second;
-
-        bool is_defined = node.IsDefined();
-        bool is_map = node.IsMap();
-        bool is_null = node.IsNull();
-        bool is_scalar = node.IsScalar();
-        bool is_sequence = node.IsSequence();
-        size_t node_size = node.size();
-
         if (keyword == "CloseFiles")
         {
             this->CloseFiles();
@@ -997,7 +1016,7 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 }
 // Global method
 int 
-GetGridCellCountYAML(std::string YAML_file)
+GetGridCellCountYAML(const char* YAML_file)
 {
     YAML::Node yaml = YAML::LoadFile(YAML_file);
     std::string keyword;

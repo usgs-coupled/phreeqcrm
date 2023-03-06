@@ -54,7 +54,7 @@ int AdvectBMI_cpp()
 		// using the YAMLPhreeqcRM class and the method
 		// YAMLSetGridCellCount), the return
 		// value is zero.
-		int nxyz = GetGridCellCountYAML(yaml_file);
+		int nxyz = GetGridCellCountYAML(yaml_file.c_str());
 
 		// Data for call_back demostration
 		std::vector<double> hydraulic_K;
@@ -88,6 +88,8 @@ int AdvectBMI_cpp()
 		PhreeqcRM phreeqc_rm(nxyz, nthreads);
 		some_data.PhreeqcRM_ptr = &phreeqc_rm;
 #endif
+		phreeqc_rm.SetFilePrefix("AdvectBMI_cpp");
+		phreeqc_rm.OpenFiles();
 		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
 		bmi_register_basic_callback(&some_data);
 
