@@ -2,7 +2,13 @@
 #include <map>
 #include <string>
 
-class BMI_Var
+#if defined(_WINDLL)
+#define IRM_DLL_EXPORT __declspec(dllexport)
+#else
+#define IRM_DLL_EXPORT
+#endif
+
+class IRM_DLL_EXPORT BMI_Var
 {
 private:
 	std::string name;

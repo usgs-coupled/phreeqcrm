@@ -235,6 +235,7 @@ target_compile_features(PhreeqcRM PUBLIC cxx_std_11)
 # iphreeqc defs
 target_compile_definitions(PhreeqcRM PRIVATE SWIG_SHARED_OBJ)
 target_compile_definitions(PhreeqcRM PRIVATE USE_PHRQ_ALLOC)
+target_compile_definitions(PhreeqcRM PRIVATE IPhreeqc_EXPORTS)
 
 # Disable deprecation warnings for standard C and STL functions in VS2005
 # and later

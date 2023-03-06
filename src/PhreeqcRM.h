@@ -110,8 +110,10 @@ enum {
 	METHOD_STATEDELETE,
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
-int
+
+int IRM_DLL_EXPORT
 GetGridCellCountYAML(std::string YAML_file);
+
 /**
  * @mainpage PhreeqcRM Library Documentation (@PHREEQC_VER@-@REVISION_SVN@)
  *

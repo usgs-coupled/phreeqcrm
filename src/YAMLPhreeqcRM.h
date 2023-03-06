@@ -7,13 +7,19 @@
 #include "yaml-cpp/yaml.h"
 #pragma once
 
+#if defined(_WINDLL)
+#define IRM_DLL_EXPORT __declspec(dllexport)
+#else
+#define IRM_DLL_EXPORT
+#endif
+
 /**
  * @class YAMLPhreeqcRM
  *
  * @brief YAML helper class
  */
 
-class YAMLPhreeqcRM
+class IRM_DLL_EXPORT YAMLPhreeqcRM
 {
 private:
 	YAML::Node YAML_doc;
