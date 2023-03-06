@@ -42,10 +42,10 @@ jobs:
       run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
 
     - name: doxygen
-      run: sudo apt-get install doxygen && cd Doxygen && make
+      run: sudo apt-get -y install doxygen graphviz && cd Doxygen && make
 
     - name: install yaml-cpp
-      run: sudo apt-get install libyaml-cpp-dev
+      run: sudo apt-get -y install libyaml-cpp-dev
 
     - name: mkdir
       run: mkdir ${{github.workspace}}/_build

@@ -1,3 +1,4 @@
+LIBDIR =/usr/local/lib
 objects =\
 	AdvectBMI_cpp.o\
 	Advect_c.o\
@@ -58,7 +59,7 @@ cleanfiles =\
 
 
 test : $(objects)
-	$(CXX) -o test $(objects) -lphreeqcrm -lyaml-cpp
+	$(CXX) -o test $(objects) -L$(LIBDIR) -lphreeqcrm -lyaml-cpp
 
 clean :
 	rm -f $(objects) $(cleanfiles) test
