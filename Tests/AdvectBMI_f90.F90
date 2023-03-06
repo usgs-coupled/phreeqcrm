@@ -289,7 +289,6 @@
                 write(*,*) "Selected output sequence number: ", isel
                 write(*,*) "Selected output user number:     ", n_user
                 ! Get double array of selected output values
-                !col = RM_GetSelectedOutputColumnCount(id)
                 status = RM_BMI_GetValue(id, "SelectedOutputColumnCount", col)
                 allocate(selected_out(nxyz,col))
                 ! Get headings

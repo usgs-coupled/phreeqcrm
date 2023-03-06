@@ -10,16 +10,43 @@
     MODULE BMI_PhreeqcRM
     IMPLICIT NONE
 INTERFACE RM_BMI_GetValue
-    procedure RM_BMI_GetValue_c, RM_BMI_GetValue_d, RM_BMI_GetValue_i, &
-        RM_BMI_GetValue_i_ptr, RM_BMI_GetValue_d_ptr, RM_BMI_GetValue_d2_ptr
+    procedure RM_BMI_GetValue_c
+    procedure RM_BMI_GetValue_c1
+    procedure RM_BMI_GetValue_d
+    procedure RM_BMI_GetValue_d1
+    procedure RM_BMI_GetValue_d2
+    procedure RM_BMI_GetValue_i
+    procedure RM_BMI_GetValue_i1
+    procedure RM_BMI_GetValue_i2
 END INTERFACE RM_BMI_GetValue
 
 INTERFACE RM_BMI_SetValue
-  procedure RM_BMI_SetValue_c, &
-      RM_BMI_SetValue_d, RM_BMI_SetValue_d_ptr, &
-      RM_BMI_SetValue_d2_ptr, RM_BMI_SetValue_i, &
-      RM_BMI_SetValue_i_ptr, RM_BMI_SetValue_i2_ptr
+  procedure RM_BMI_SetValue_c
+  procedure RM_BMI_SetValue_d
+  procedure RM_BMI_SetValue_d1
+  procedure RM_BMI_SetValue_d2
+  procedure RM_BMI_SetValue_i
+  procedure RM_BMI_SetValue_i1
+  procedure RM_BMI_SetValue_i2
 END INTERFACE RM_BMI_SetValue 
+
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
+            BIND(C, NAME='RMF_BMI_GetVarItemsize')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+        END FUNCTION RMF_BMI_GetVarItemsize
+
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
+            BIND(C, NAME='RMF_BMI_GetVarNbytes')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+        END FUNCTION RMF_BMI_GetVarNbytes
+    END INTERFACE
     CONTAINS
     
 INTEGER FUNCTION RM_BMI_Finalize(id)
@@ -190,8 +217,7 @@ INTEGER FUNCTION RM_BMI_GetValue_c(id, var, dest)
     RM_BMI_GetValue_c = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
     return
 END FUNCTION RM_BMI_GetValue_c
-
-INTEGER FUNCTION RM_BMI_GetValue_i(id, var, dest)
+INTEGER FUNCTION RM_BMI_GetValue_c1(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -201,57 +227,20 @@ INTEGER FUNCTION RM_BMI_GetValue_i(id, var, dest)
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-            INTEGER(KIND=C_INT), INTENT(out) :: dest
+            CHARACTER(KIND=C_CHAR), INTENT(out) :: dest
         END FUNCTION RMF_BMI_GetValue 
     END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: dest
-    RM_BMI_GetValue_i = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
-    return
-END FUNCTION RM_BMI_GetValue_i
 
-INTEGER FUNCTION RM_BMI_GetValue_i_ptr(id, var, dest)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-            BIND(C, NAME='RMF_BMI_GetValue')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-            INTEGER(KIND=C_INT), INTENT(out) :: dest
-        END FUNCTION RMF_BMI_GetValue 
-    END INTERFACE
-        INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarNbytes')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarItemsize')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarItemsize
-    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(out) :: dest(:)
-    if (RMF_BMI_GetVarNBytes(id, var) / RMF_BMI_GetVarItemsize(id, var) &
-        .ne. SIZE(dest) ) then
+    CHARACTER(len=*), INTENT(out) :: dest(:)
+    if ((RMF_BMI_GetVarNBytes(id, var) / RMF_BMI_GetVarItemsize(id, var) .ne. SIZE(dest)) &
+        .or. (len(dest(1)) .ne. RMF_BMI_GetVarItemsize(id, var))) then
         stop "Dimension error in RMF_BMI_GetValue"
     endif
-    RM_BMI_GetValue_i_ptr = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1))
+    RM_BMI_GetValue_c1 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1))
     return
-END FUNCTION RM_BMI_GetValue_i_ptr
+END FUNCTION RM_BMI_GetValue_c1
 
 INTEGER FUNCTION RM_BMI_GetValue_d(id, var, dest)
     USE ISO_C_BINDING
@@ -273,7 +262,7 @@ INTEGER FUNCTION RM_BMI_GetValue_d(id, var, dest)
     return
 END FUNCTION RM_BMI_GetValue_d
 
-INTEGER FUNCTION RM_BMI_GetValue_d_ptr(id, var, dest)
+INTEGER FUNCTION RM_BMI_GetValue_d1(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -285,24 +274,6 @@ INTEGER FUNCTION RM_BMI_GetValue_d_ptr(id, var, dest)
         CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
         REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue 
-    END INTERFACE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarNbytes')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarItemsize')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarItemsize
     END INTERFACE
     
     INTEGER, INTENT(in) :: id
@@ -312,11 +283,11 @@ INTEGER FUNCTION RM_BMI_GetValue_d_ptr(id, var, dest)
         .ne. SIZE(dest) ) then
         stop "Dimension error in RMF_BMI_GetValue"
     endif
-    RM_BMI_GetValue_d_ptr = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1))
+    RM_BMI_GetValue_d1 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1))
     return
-END FUNCTION RM_BMI_GetValue_d_ptr
+END FUNCTION RM_BMI_GetValue_d1
 
-INTEGER FUNCTION RM_BMI_GetValue_d2_ptr(id, var, dest)
+INTEGER FUNCTION RM_BMI_GetValue_d2(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -329,25 +300,7 @@ INTEGER FUNCTION RM_BMI_GetValue_d2_ptr(id, var, dest)
         REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue 
     END INTERFACE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarNbytes')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarItemsize')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarItemsize
-    END INTERFACE
-    
+   
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, INTENT(out) :: dest(:,:)
@@ -355,23 +308,83 @@ INTEGER FUNCTION RM_BMI_GetValue_d2_ptr(id, var, dest)
         .ne. SIZE(dest, 1)*SIZE(dest, 2) ) then
         stop "Dimension error in RMF_BMI_GetValue"
     endif
-    RM_BMI_GetValue_d2_ptr = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
+    RM_BMI_GetValue_d2 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
     return
-END FUNCTION RM_BMI_GetValue_d2_ptr
+END FUNCTION RM_BMI_GetValue_d2
 
-
-INTEGER FUNCTION RM_BMI_GetVarItemsize(id, var)
+INTEGER FUNCTION RM_BMI_GetValue_i(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarItemsize')
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+            BIND(C, NAME='RMF_BMI_GetValue')
             USE ISO_C_BINDING
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarItemsize
+            INTEGER(KIND=C_INT), INTENT(out) :: dest
+        END FUNCTION RMF_BMI_GetValue 
     END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    integer, INTENT(inout) :: dest
+    RM_BMI_GetValue_i = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
+    return
+END FUNCTION RM_BMI_GetValue_i
+
+INTEGER FUNCTION RM_BMI_GetValue_i1(id, var, dest)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+            BIND(C, NAME='RMF_BMI_GetValue')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+            INTEGER(KIND=C_INT), INTENT(out) :: dest
+        END FUNCTION RMF_BMI_GetValue 
+    END INTERFACE
+
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    integer, INTENT(out) :: dest(:)
+    if (RMF_BMI_GetVarNBytes(id, var) / RMF_BMI_GetVarItemsize(id, var) &
+        .ne. SIZE(dest) ) then
+        stop "Dimension error in RMF_BMI_GetValue"
+    endif
+    RM_BMI_GetValue_i1 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1))
+    return
+END FUNCTION RM_BMI_GetValue_i1
+
+INTEGER FUNCTION RM_BMI_GetValue_i2(id, var, dest)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+        BIND(C, NAME='RMF_BMI_GetValue')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+        INTEGER(KIND=C_INT), INTENT(out) :: dest
+        END FUNCTION RMF_BMI_GetValue 
+    END INTERFACE
+   
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    integer, INTENT(out) :: dest(:,:)
+    if (RMF_BMI_GetVarNBytes(id, var) / RMF_BMI_GetVarItemsize(id, var) &
+        .ne. SIZE(dest, 1)*SIZE(dest, 2) ) then
+        stop "Dimension error in RMF_BMI_GetValue"
+    endif
+    RM_BMI_GetValue_i2 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
+    return
+END FUNCTION RM_BMI_GetValue_i2
+
+INTEGER FUNCTION RM_BMI_GetVarItemsize(id, var)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     RM_BMI_GetVarItemsize = RMF_BMI_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
@@ -380,15 +393,7 @@ END FUNCTION RM_BMI_GetVarItemsize
 INTEGER FUNCTION RM_BMI_GetVarNbytes(id, var)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarNbytes')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
+
     INTEGER, INTENT(in) :: id
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
     RM_BMI_GetVarNbytes = RMF_BMI_GetVarNbytes(id, var)
@@ -492,7 +497,7 @@ INTEGER FUNCTION RM_BMI_SetValue_i(id, var, dest)
     return
 END FUNCTION RM_BMI_SetValue_i
 
-INTEGER FUNCTION RM_BMI_SetValue_i_ptr(id, var, dest)
+INTEGER FUNCTION RM_BMI_SetValue_i1(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -505,24 +510,7 @@ INTEGER FUNCTION RM_BMI_SetValue_i_ptr(id, var, dest)
             INTEGER(KIND=C_INT), INTENT(out) :: dest
         END FUNCTION RMF_BMI_SetValue 
     END INTERFACE
-	INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarNbytes')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarItemsize')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarItemsize
-    END INTERFACE
+
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(out) :: dest(:)
@@ -530,11 +518,11 @@ INTEGER FUNCTION RM_BMI_SetValue_i_ptr(id, var, dest)
         .ne. SIZE(dest) ) then
         stop "Dimension error in RMF_BMI_GetValue"
     endif
-    RM_BMI_SetValue_i_ptr = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1))
+    RM_BMI_SetValue_i1 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1))
     return
-END FUNCTION RM_BMI_SetValue_i_ptr
+END FUNCTION RM_BMI_SetValue_i1
 
-INTEGER FUNCTION RM_BMI_SetValue_i2_ptr(id, var, dest)
+INTEGER FUNCTION RM_BMI_SetValue_i2(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -546,24 +534,6 @@ INTEGER FUNCTION RM_BMI_SetValue_i2_ptr(id, var, dest)
             CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
             INTEGER(KIND=C_INT), INTENT(out) :: dest
         END FUNCTION RMF_BMI_SetValue 
-    END INTERFACE
-	    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarNbytes')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarItemsize')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarItemsize
     END INTERFACE
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
@@ -572,9 +542,9 @@ INTEGER FUNCTION RM_BMI_SetValue_i2_ptr(id, var, dest)
         .ne. SIZE(dest,1)*SIZE(dest,2) ) then
         stop "Dimension error in RMF_BMI_GetValue"
     endif
-    RM_BMI_SetValue_i2_ptr = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
+    RM_BMI_SetValue_i2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
     return
-END FUNCTION RM_BMI_SetValue_i2_ptr
+END FUNCTION RM_BMI_SetValue_i2
 
 INTEGER FUNCTION RM_BMI_SetValue_d(id, var, dest)
     USE ISO_C_BINDING
@@ -596,7 +566,7 @@ INTEGER FUNCTION RM_BMI_SetValue_d(id, var, dest)
     return
 END FUNCTION RM_BMI_SetValue_d
 
-INTEGER FUNCTION RM_BMI_SetValue_d_ptr(id, var, dest)
+INTEGER FUNCTION RM_BMI_SetValue_d1(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -609,24 +579,7 @@ INTEGER FUNCTION RM_BMI_SetValue_d_ptr(id, var, dest)
             REAL(KIND=C_DOUBLE), INTENT(out) :: dest
         END FUNCTION RMF_BMI_SetValue 
     END INTERFACE
-	    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarNbytes')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarItemsize')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarItemsize
-    END INTERFACE
+
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, INTENT(out) :: dest(:)
@@ -634,11 +587,11 @@ INTEGER FUNCTION RM_BMI_SetValue_d_ptr(id, var, dest)
         .ne. SIZE(dest) ) then
         stop "Dimension error in RMF_BMI_GetValue"
     endif
-    RM_BMI_SetValue_d_ptr = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1))
+    RM_BMI_SetValue_d1 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1))
     return
-END FUNCTION RM_BMI_SetValue_d_ptr
+END FUNCTION RM_BMI_SetValue_d1
 
-INTEGER FUNCTION RM_BMI_SetValue_d2_ptr(id, var, dest)
+INTEGER FUNCTION RM_BMI_SetValue_d2(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -651,24 +604,8 @@ INTEGER FUNCTION RM_BMI_SetValue_d2_ptr(id, var, dest)
             REAL(KIND=C_DOUBLE), INTENT(out) :: dest
         END FUNCTION RMF_BMI_SetValue 
     END INTERFACE
-	    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarNbytes')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarItemsize')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarItemsize
-    END INTERFACE
+
+
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, INTENT(out) :: dest(:,:)
@@ -676,9 +613,9 @@ INTEGER FUNCTION RM_BMI_SetValue_d2_ptr(id, var, dest)
         .ne. SIZE(dest,1)*SIZE(dest,2) ) then
         stop "Dimension error in RMF_BMI_GetValue"
     endif
-    RM_BMI_SetValue_d2_ptr = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
+    RM_BMI_SetValue_d2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
     return
-END FUNCTION RM_BMI_SetValue_d2_ptr
+END FUNCTION RM_BMI_SetValue_d2
 
 INTEGER FUNCTION RM_BMI_Update(id)
     USE ISO_C_BINDING
