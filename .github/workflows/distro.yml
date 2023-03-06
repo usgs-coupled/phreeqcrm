@@ -110,6 +110,11 @@ jobs:
       working-directory: ${{ github.workspace }}/build
       run: sudo make install
 
+    - name: Run ldconfig (Linux)
+      if: runner.os == 'Linux'
+      working-directory: ${{ github.workspace }}/build
+      run: sudo ldconfig -n /usr/local/lib
+
     - name: Cleanup
       run: rm -rf *
 
