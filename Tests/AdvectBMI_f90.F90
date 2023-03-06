@@ -43,20 +43,14 @@
     integer :: status
     integer :: bytes, nbytes
     double precision, dimension(:), allocatable, target :: hydraulic_K
-    double precision, dimension(:), allocatable   :: rv
     double precision, dimension(:), allocatable   :: por
     double precision, dimension(:), allocatable   :: sat
-    integer,          dimension(:), allocatable   :: print_chemistry_mask
-    integer,          dimension(:), allocatable   :: grid2chem
     integer                                       :: nchem
     character(100)                                :: string
     character(200)                                :: string1
     integer                                       :: ncomps, ncomps1
-    character(100),   dimension(:), allocatable   :: components
-    character,   allocatable                      :: allcomps
-    double precision, dimension(:), allocatable, target  :: gfw
-    integer,          dimension(:,:), allocatable :: ic1, ic2
-    double precision, dimension(:,:), allocatable :: f1
+    character(LEN=:), dimension(:), allocatable   :: components
+    double precision, dimension(:), allocatable   :: gfw
     integer                                       :: nbound
     integer,          dimension(:), allocatable   :: bc1, bc2
     double precision, dimension(:), allocatable   :: bc_f1
@@ -72,8 +66,7 @@
     integer                                       :: isteps, nsteps
     double precision, dimension(:,:), allocatable :: selected_out
     integer                                       :: col, isel, n_user, rows
-    character, allocatable                        :: all_headings
-    character, dimension(:), allocatable          :: headings
+    character(LEN=:), dimension(:), allocatable   :: headings
     double precision, dimension(:,:), allocatable :: c_well
     double precision, dimension(:), allocatable   :: tc, p_atm
     integer                                       :: vtype
@@ -93,7 +86,6 @@
     ! Create PhreeqcRM
     ! --------------------------------------------------------------------------
     yaml_file = "AdvectBMI_cpp.yaml"
-    !nxyz = 40
     ! RM_GetGridCellCountYAML must be called BEFORE
     ! the PhreeqcRM instance is created. The
     ! return value can be used to create the
@@ -131,7 +123,6 @@
     id = RM_Create(nxyz, nthreads)
     rm_id = id
 #endif
-
     ! Open files
     status = RM_SetFilePrefix(id, "AdvectBMI_f90")
     status = RM_OpenFiles(id)
@@ -164,16 +155,10 @@
     status = RM_OutputMessage(id, trim(string1))
     write(string1, "(A,I10)") "Number of components for transport:               ", ncomps
     status = RM_OutputMessage(id, trim(string1))
-    
     ! Get component information
     bytes = RM_BMI_GetVarItemsize(id, "Components")
     allocate(character(len=bytes) :: components(ncomps))    
-    allocate (character(len=(ncomps*bytes)) :: allcomps)
-    status = RM_BMI_GetValue(id, "Components", allcomps)
-    do i = 1, ncomps
-        components(i) = allcomps(((i-1)*bytes + 1):i*bytes)
-    enddo
-    !status = RM_BMI_GetValue(id, "Components", components(1))
+    status = RM_BMI_GetValue(id, "Components", components)
     allocate(gfw(ncomps))
     status = RM_BMI_GetValue(id, "Gfw", gfw)
     do i = 1, ncomps
@@ -181,7 +166,6 @@
         status = RM_OutputMessage(id, string)
     enddo
     status = RM_OutputMessage(id, " ")	
-    
     ! Get initial temperatures
     allocate(temperature(nxyz))
     status = RM_BMI_GetValue(id, "Temperature", temperature)
@@ -196,7 +180,6 @@
     ! Get initial concentrations
     allocate(c(nxyz, ncomps))
     status = RM_BMI_GetValue(id, "Concentrations", c)
-    
     ! Set density, pressure, and temperature
     allocate(density(nxyz), pressure(nxyz))
     density = 1.0
@@ -204,7 +187,7 @@
     pressure = 2.0
     status = RM_BMI_SetValue(id, "Pressure", pressure)  
     temperature = 20.0
-    status = RM_BMI_SetValue(id, "Temperature", temperature)
+    status = RM_BMI_SetValue(id, "Temperature", temperature)  
     ! --------------------------------------------------------------------------
     ! Set boundary condition
     ! --------------------------------------------------------------------------
@@ -222,7 +205,7 @@
     time = 0.0
     status = RM_BMI_SetValue(id, "Time", time)
     time_step = 86400.0
-    status = RM_BMI_SetValue(id, "TimeStep", time_step)
+    status = RM_BMI_SetValue(id, "TimeStep", time_step)   
     do isteps = 1, nsteps
         write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
             time/86400., " days"
@@ -233,8 +216,9 @@
             time_step / 86400., " days"
         status = RM_LogMessage(id, string)
         status = RM_ScreenMessage(id, string)    
-        ! Transport calculation here
+        ! Transport calculation here, changes c
         call advectionbmi_f90(c, bc_conc, ncomps, nxyz)
+    
         ! print at last time step
         if (isteps == nsteps) then
             status = RM_SetSelectedOutputOn(id, 1)         ! enable selected output
@@ -243,14 +227,14 @@
             status = RM_SetSelectedOutputOn(id, 0)         ! disable selected output
             status = RM_SetPrintChemistryOn(id, 0, 0, 0)   ! workers, initial_phreeqc, utility
         endif
-        ! Transfer data to PhreeqcRM after transport
-        status = RM_BMI_SetValue(id, "Concentrations", c)           ! Transported concentrations
-        ! Optionally if values changed during transport
+        ! Transfer data to PhreeqcRM after transport      
+        status = RM_BMI_SetValue(id, "Concentrations", c)  ! Transported concentrations
+        ! Optionally, if values changed during transport
         status = RM_BMI_SetValue(id, "Porosity", por)              
         status = RM_BMI_SetValue(id, "Saturation", sat)            
         status = RM_BMI_SetValue(id, "Temperature", temperature) 
         status = RM_BMI_SetValue(id, "Pressure", pressure)          
-        status = RM_BMI_SetValue(id, "TimeStep", time_step)   
+        status = RM_BMI_SetValue(id, "TimeStep", time_step) 
         ! Set new time
         time = time + time_step              
         status = RM_BMI_SetValue(id, "Time", time)  ! Current time
@@ -259,15 +243,16 @@
             time / 86400., " days"
         status = RM_LogMessage(id, string)
         status = RM_ScreenMessage(id, string)
-        ! Demonstration of state
+        ! Demonstration of state 
         status = RM_StateSave(id, 1)
         status = RM_StateApply(id, 1)
         status = RM_StateDelete(id, 1)
-        status = RM_RunCells(id)
+        ! Run chemistry
+        status = RM_BMI_Update(id)
         ! Get new data calculated by PhreeqcRM for transport
         status = RM_BMI_GetValue(id, "Concentrations", c)
         status = RM_BMI_GetValue(id, "Density", density)
-        status = RM_BMI_GetValue(id, "SolutionVolume", volume)      
+        status = RM_BMI_GetValue(id, "SolutionVolume", volume)   
        ! Print results at last time step
         if (isteps == nsteps) then
             write(*,*) "Current distribution of cells for workers"
@@ -279,7 +264,6 @@
             do i = 1, n
                 write(*,*) i,"           ", sc(i),"                 ",ec(i)
             enddo
-
             ! Loop through possible multiple selected output definitions
             status = RM_BMI_GetValue(id, "SelectedOutputCount", n)
             do isel = 0, n-1
@@ -288,22 +272,17 @@
                 status = RM_BMI_GetValue(id, "CurrentSelectedOutputUserNumber", n_user)
                 write(*,*) "Selected output sequence number: ", isel
                 write(*,*) "Selected output user number:     ", n_user
-                ! Get double array of selected output values
+                ! Get 2D array of selected output values
                 status = RM_BMI_GetValue(id, "SelectedOutputColumnCount", col)
-                allocate(selected_out(nxyz,col))
+                status = RM_BMI_GetValue(id, "SelectedOutputRowCount", rows)
+                allocate(selected_out(rows,col))
                 ! Get headings
                 bytes = RM_BMI_GetVarItemsize(id, "SelectedOutputHeadings")
-                !allocate(character(len = bytes*col) :: all_headings)
-                !status = RM_BMI_GetValue(id, "SelectedOutputHeadings", all_headings)
                 allocate(character(len=bytes) :: headings(col))    
-                !do i = 1 to col
-                !    heading(i) = all_headings((i-1)*bytes + 1:i*bytes)
-                !enddo 
-                status = RM_BMI_GetValue(id, "SelectedOutputHeadings", headings(1))
-                !status = RM_GetSelectedOutput(id, selected_out)
-                status = RM_BMI_GetValue(id, "SelectedOutput", selected_out(1,1))
+                status = RM_BMI_GetValue(id, "SelectedOutputHeadings", headings)
+                ! Get selected output
+                status = RM_BMI_GetValue(id, "SelectedOutput", selected_out)
                 ! Print results
-                status = RM_BMI_GetValue(id, "SelectedOutputRowCount", rows)
                 do i = 1, rows/2
                     write(*,*) "Cell number ", i
                     write(*,*) "     Density: ", density(i)
@@ -314,19 +293,16 @@
                     enddo
                     write(*,*) "     Selected output: "
                     do j = 1, col
-                        !status = RM_GetSelectedOutputHeading(id, j, heading)
                         write(*,'(10x,i3,A2,A20,A2,1pe15.4)') j, " ", trim(headings(j)),": ", selected_out(i,j)
                     enddo
                 enddo
                 deallocate(selected_out)
-            enddo
+            enddo           
         endif
-    enddo
-
+    enddo 
     ! --------------------------------------------------------------------------
     ! Additional features and finalize
     ! --------------------------------------------------------------------------
-
     ! Use utility instance of PhreeqcRM to calculate pH of a mixture
     allocate (c_well(1,ncomps))
     do i = 1, ncomps
@@ -346,24 +322,19 @@
     status = SetCurrentSelectedOutputUserNumber(iphreeqc_id, 5)
     status = GetSelectedOutputValue(iphreeqc_id, 1, 1, vtype, pH, svalue)
     ! Dump results
-    status = RM_SetDumpFileName(id, "Advect_f90.dmp")
+    status = RM_SetDumpFileName(id, "AdvectBMI_f90.dmp")
     dump_on = 1
     append = 0
     status = RM_DumpModule(id, dump_on, append)
     ! Clean up
     status = RM_CloseFiles(id)
     status = RM_MpiWorkerBreak(id)
-    status = RM_Destroy(id)
+    status = RM_BMI_Finalize(id)
     ! Deallocate
-    deallocate(rv)
     deallocate(por)
     deallocate(sat)
-    deallocate(print_chemistry_mask)
-    deallocate(grid2chem)
     deallocate(components)
-    deallocate(ic1)
-    deallocate(ic2)
-    deallocate(f1)
+    deallocate(headings)
     deallocate(bc1)
     deallocate(bc2)
     deallocate(bc_f1)
@@ -375,6 +346,7 @@
     deallocate(pressure)
     deallocate(tc)
     deallocate(p_atm)
+    
     return
     end subroutine AdvectBMI_f90
 
