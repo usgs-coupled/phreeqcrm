@@ -626,6 +626,17 @@ RM_GetConcentrations(int id, double * c)
 	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
+int RM_GetCurrentSelectedOutputUserNumber(int id)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->GetCurrentSelectedOutputUserNumber();
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
 IRM_RESULT
 RM_GetDensity(int id, double * d)
 /* ---------------------------------------------------------------------- */
@@ -1247,6 +1258,23 @@ double RM_GetTimeStep(int id)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+RM_InitializeYAML(int id, const char* yamlname)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		if (yamlname != NULL)
+		{
+			std::string name = PhreeqcRM::Char2TrimString(yamlname);
+			return Reaction_module_ptr->LoadDatabase(name.c_str());
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 RM_InitialPhreeqc2Concentrations(
 			int id,
 			double *boundary_c,
@@ -1762,6 +1790,18 @@ RM_SetMpiWorkerCallbackCookie(int id, void *cookie)
 	if (Reaction_module_ptr)
 	{
 		return Reaction_module_ptr->SetMpiWorkerCallbackCookie(cookie);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_SetNthSelectedOutput(int id, int i)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->SetNthSelectedOutput(i);
 	}
 	return IRM_BADINSTANCE;
 }

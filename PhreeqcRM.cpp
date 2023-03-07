@@ -22,6 +22,7 @@
 #include "StorageBin.h"
 #include <assert.h>
 #include "System.h"
+#include "BMI_Var.h"
 #ifdef USE_GZ
 #include <zlib.h>
 #else
@@ -323,6 +324,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 	mpi_worker_callback_fortran = NULL;
 	mpi_worker_callback_c = NULL;
 	mpi_worker_callback_cookie = NULL;
+	BMI_MakeVarMap();
 }
 PhreeqcRM::~PhreeqcRM(void)
 {
@@ -3352,6 +3354,22 @@ PhreeqcRM::GetConcentrations(std::vector<double> &c)
 	return this->ReturnHandler(return_value, "PhreeqcRM::GetConcentrations");
 }
 #endif
+/* ---------------------------------------------------------------------- */
+int
+PhreeqcRM::GetCurrentSelectedOutputUserNumber(void)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	int return_value = IRM_INVALIDARG;
+	try
+	{
+		return_value = this->workers[0]->GetCurrentSelectedOutputUserNumber();
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetCurrentSelectedOutputUserNumber");
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::GetDensity(std::vector<double> & density_arg)
@@ -10748,6 +10766,23 @@ PhreeqcRM::SetMpiWorkerCallbackFortran(int (*fcn)(int *method))
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+PhreeqcRM::SetNthSelectedOutput(int n)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	int return_value = IRM_INVALIDARG;
+	if (n >= 0)
+	{
+		int n_user = this->workers[0]->GetNthSelectedOutputUserNumber(n);
+		if (n_user >= 0)
+		{
+			return_value = this->workers[0]->SetCurrentSelectedOutputUserNumber(n_user);
+		}
+	}
+	return this->ReturnHandler(PhreeqcRM::Int2IrmResult(return_value, false), "PhreeqcRM::SetNthSelectedOutput");
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 PhreeqcRM::SetPartitionUZSolids(bool tf)
 /* ---------------------------------------------------------------------- */
 {
@@ -11864,6 +11899,7 @@ PhreeqcRM::WarningMessage(const std::string &str)
 		this->phreeqcrm_io->warning_msg(str.c_str());
 	}
 }
+
 
 
 

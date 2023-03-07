@@ -511,6 +511,44 @@ Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetConcentrations(int id, double *c);
 /**
+Returns the user number of the current selected-output definition.
+@ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput specifies which of the
+selected-output definitions is used.
+@retval                 User number of the the current selected-output definition,
+negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_GetNthSelectedOutputUserNumber,
+@ref RM_GetSelectedOutput,
+@ref RM_GetSelectedOutputColumnCount,
+@ref RM_GetSelectedOutputCount,
+@ref RM_GetSelectedOutputHeading,
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
+@ref RM_SetSelectedOutputOn.
+@par C Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	for (isel = 0; isel < RM_GetSelectedOutputCount(id); isel++)
+	{
+	  status = RM_SetNthSelectedOutputUser(id, isel);
+	  n_user = RM_GetCurrentSelectedOutputUserNumber(id);
+	  col = RM_GetSelectedOutputColumnCount(id);
+	  selected_out = (double *) malloc((size_t) (col * nxyz * sizeof(double)));
+	  status = RM_GetSelectedOutput(id, selected_out);
+	  // Process results here
+	  free(selected_out);
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+*/
+IRM_DLL_EXPORT int RM_GetCurrentSelectedOutputUserNumber(int id);
+
+/**
 Transfer solution densities from the reaction cells to the array given in the argument list (@a density).
 Densities are those calculated by the reaction module.
 Only the following databases distributed with PhreeqcRM have molar volume information needed to accurately calculate density:
@@ -1221,13 +1259,15 @@ that user number for selected-output processing.
 @param n                The sequence number of the selected-output definition for which the user number will be returned.
 C, 0 based.
 @retval                 The user number of the @a nth selected-output definition, negative is failure (See @ref RM_DecodeError).
-@see                    
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
 @ref RM_GetSelectedOutput,
-@ref RM_GetSelectedOutputColumnCount, 
+@ref RM_GetSelectedOutputColumnCount,
 @ref RM_GetSelectedOutputCount,
 @ref RM_GetSelectedOutputHeading,
-@ref RM_GetSelectedOutputRowCount, 
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -1298,13 +1338,15 @@ determines which of the selected-output definitions is used to populate the arra
 where @a nxyz is the number of grid cells in the user's model (@ref RM_GetGridCellCount), and @a col is the number of
 columns in the selected-output definition (@ref RM_GetSelectedOutputColumnCount).
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-@see                    
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
 @ref RM_GetNthSelectedOutputUserNumber,
-@ref RM_GetSelectedOutputColumnCount, 
-@ref RM_GetSelectedOutputCount, 
+@ref RM_GetSelectedOutputColumnCount,
+@ref RM_GetSelectedOutputCount,
 @ref RM_GetSelectedOutputHeading,
-@ref RM_GetSelectedOutputRowCount, 
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -1333,13 +1375,15 @@ Returns the number of columns in the current selected-output definition. @ref RM
 determines which of the selected-output definitions is used.
 @param id               The instance @a id returned from @ref RM_Create.
 @retval                 Number of columns in the current selected-output definition, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetNthSelectedOutputUserNumber, 
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
 @ref RM_GetSelectedOutput,
-@ref RM_GetSelectedOutputCount, 
+@ref RM_GetSelectedOutputCount,
 @ref RM_GetSelectedOutputHeading,
-@ref RM_GetSelectedOutputRowCount, 
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -1367,13 +1411,15 @@ Returns the number of selected-output definitions. @ref RM_SetCurrentSelectedOut
 determines which of the selected-output definitions is used.
 @param id               The instance @a id returned from @ref RM_Create.
 @retval                 Number of selected-output definitions, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetNthSelectedOutputUserNumber, 
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
 @ref RM_GetSelectedOutput,
-@ref RM_GetSelectedOutputColumnCount, 
+@ref RM_GetSelectedOutputColumnCount,
 @ref RM_GetSelectedOutputHeading,
-@ref RM_GetSelectedOutputRowCount, 
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -1405,13 +1451,15 @@ determines which of the selected-output definitions is used.
 @param heading          A string buffer to receive the heading.
 @param length           The maximum number of characters that can be written to the string buffer.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetNthSelectedOutputUserNumber, 
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
 @ref RM_GetSelectedOutput,
-@ref RM_GetSelectedOutputColumnCount, 
+@ref RM_GetSelectedOutputColumnCount,
 @ref RM_GetSelectedOutputCount,
-@ref RM_GetSelectedOutputRowCount, 
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -1442,13 +1490,15 @@ is included only for convenience; the number of rows is always equal to the numb
 grid cells in the user's model, and is equal to @ref RM_GetGridCellCount.
 @param id               The instance @a id returned from @ref RM_Create.
 @retval                 Number of rows in the current selected-output definition, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetNthSelectedOutputUserNumber, 
-@ref RM_GetSelectedOutput, 
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
+@ref RM_GetSelectedOutput,
 @ref RM_GetSelectedOutputColumnCount,
-@ref RM_GetSelectedOutputCount, 
+@ref RM_GetSelectedOutputCount,
 @ref RM_GetSelectedOutputHeading,
-@ref RM_SetCurrentSelectedOutputUserNumber, 
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -2270,6 +2320,122 @@ status = RM_LogMessage(id, str);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT double     RM_GetTimeStep(int id);
+
+/**
+A YAML file can be used to initialize an instance of PhreeqcRM.
+@param id               The instance @a id returned from @ref RM_Create.
+@param yamlfile         String containing the YAML file name.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+
+@par 
+The file contains a YAML map of PhreeqcRM methods
+and the arguments corresponding to the methods.
+Note that the PhreeqcRM methods do not have the "RM_" prefix
+and the id argument is not included.
+For example,
+@par
+@htmlonly
+<CODE>
+<PRE>
+LoadDatabase: phreeqc.dat
+RunFile:
+	workers: true
+	initial_phreeqc: true
+	utility: true
+	chemistry_name: advect.pqi
+</PRE>
+</CODE>
+@endhtmlonly
+@par
+@ref RM_InitializeYAML will read the YAML file and execute the specified methods with
+the specified arguments. Using YAML
+terminology, the argument(s) for a method may be a scalar, a sequence, or a map,
+depending if the argument is
+a single item, a single vector, or there are multiple arguments.
+In the case of a map, the name associated
+with each argument (for example "chemistry_name" above) is arbitrary.
+The names of the map keys for map
+arguments are not used in parsing the YAML file; only the order of
+the arguments is important.
+@par 
+The following list gives the PhreeqcRM methods that can be specified in a YAML file
+and the arguments that are required. The arguments are described with C++ formats, which
+are sufficient to identify which arguments are YAML scalars (single bool, int, double, string argument),
+sequences (single vector argument), or maps (multiple arguments).
+@htmlonly
+<CODE>
+<PRE>
+CloseFiles(void);
+CreateMapping(std::vector< int >& grid2chem);
+DumpModule();
+FindComponents();
+InitialPhreeqc2Module(std::vector< int > initial_conditions1);
+InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
+InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
+LoadDatabase(std::string database);
+OpenFiles(void);
+OutputMessage(std::string str);
+RunCells(void);
+RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
+RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
+ScreenMessage(std::string str);
+SetComponentH2O(bool tf);
+SetConcentrations(std::vector< double > c);
+SetCurrentSelectedOutputUserNumber(int n_user);
+SetDensity(std::vector< double > density);
+SetDumpFileName(std::string dump_name);
+SetErrorHandlerMode(int mode);
+SetErrorOn(bool tf);
+SetFilePrefix(std::string prefix);
+SetGasCompMoles(std::vector< double > gas_moles);
+SetGasPhaseVolume(std::vector< double > gas_volume);
+SetPartitionUZSolids(bool tf);
+SetPorosity(std::vector< double > por);
+SetPressure(std::vector< double > p);
+SetPrintChemistryMask(std::vector< int > cell_mask);
+SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
+SetRebalanceByCell(bool tf);
+SetRebalanceFraction(double f);
+SetRepresentativeVolume(std::vector< double > rv);
+SetSaturation(std::vector< double > sat);
+SetScreenOn(bool tf);
+SetSelectedOutputOn(bool tf);
+SetSpeciesSaveOn(bool save_on);
+SetTemperature(std::vector< double > t);
+SetTime(double time);
+SetTimeConversion(double conv_factor);
+SetTimeStep(double time_step);
+SetUnitsExchange(int option);
+SetUnitsGasPhase(int option);
+SetUnitsKinetics(int option);
+SetUnitsPPassemblage(int option);
+SetUnitsSolution(int option);
+SetUnitsSSassemblage(int option);
+SetUnitsSurface(int option);
+SpeciesConcentrations2Module(std::vector< double > species_conc);
+StateSave(int istate);
+StateApply(int istate);
+StateDelete(int istate);
+UseSolutionDensityVolume(bool tf);
+WarningMessage(std::string warnstr);
+</PRE>
+</CODE>
+@endhtmlonly
+!>
+@par Fortran Example:
+@htmlonly
+<CODE>
+<PRE>
+		id = RM_Create(nxyz, MPI_COMM_WORLD)
+		status = RM_InitializeYAML(id, "myfile.yaml")
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+ */
+
+IRM_DLL_EXPORT IRM_RESULT RM_InitializeYAML(int id, const char* yamlfile);
 /**
 Fills an array (@a c) with concentrations from solutions in the InitialPhreeqc instance.
 The method is used to obtain concentrations for boundary conditions. If a negative value
@@ -2882,13 +3048,15 @@ for selected-output operations.
 @param id               The instance @a id returned from @ref RM_Create.
 @param n_user           User number of the SELECTED_OUTPUT data block that is to be used.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetNthSelectedOutputUserNumber, 
-@ref RM_GetSelectedOutput, 
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
+@ref RM_GetSelectedOutput,
 @ref RM_GetSelectedOutputColumnCount,
-@ref RM_GetSelectedOutputCount, 
-@ref RM_GetSelectedOutputHeading, 
+@ref RM_GetSelectedOutputCount,
+@ref RM_GetSelectedOutputHeading,
 @ref RM_GetSelectedOutputRowCount,
+@ref RM_SetNthSelectedOutput,
 @ref RM_SetSelectedOutputOn.
 @par C Example:
 @htmlonly
@@ -3283,6 +3451,46 @@ Called by workers, before call to @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SetMpiWorkerCallbackCookie(int id, void *cookie);
 /**
+Specify the current selected output by sequence number. The user may define multiple SELECTED_OUTPUT
+data blocks for the workers. A user number is specified for each data block, and the blocks are
+stored in user-number order. The value of
+the argument @a n selects the sequence number of the SELECTED_OUTPUT definition that will be used
+for selected-output operations.
+@param id               The instance id returned from @ref RM_Create.
+@param n           Sequence number of the SELECTED_OUTPUT data block that is to be used.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
+@ref RM_GetSelectedOutput,
+@ref RM_GetSelectedOutputColumnCount,
+@ref RM_GetSelectedOutputCount,
+@ref RM_GetSelectedOutputHeading,
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetSelectedOutputOn.
+	@par C Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	for (isel = 0; isel < RM_GetSelectedOutputCount(id); isel++)
+	{
+	  status = RM_SetNthSelectedOutputUser(id, isel);
+	  n_user = RM_GetCurrentSelectedOutputUserNumber(id);
+	  col = RM_GetSelectedOutputColumnCount(id);
+	  selected_out = (double *) malloc((size_t) (col * nxyz * sizeof(double)));
+	  status = RM_GetSelectedOutput(id, selected_out);
+	  // Process results here
+	  free(selected_out);
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_SetNthSelectedOutput(int id, int n);
+/**
 Sets the property for partitioning solids between the saturated and unsaturated
 parts of a partially saturated cell.
 
@@ -3601,9 +3809,16 @@ be accumulated during @ref RM_RunCells.
 @param id               The instance @a id returned from @ref RM_Create.
 @param selected_output  0, disable selected output; 1, enable selected output.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-@see                    
-@ref RM_GetSelectedOutput, 
-@ref RM_SetPrintChemistryOn.
+@see
+@ref RM_GetCurrentSelectedOutputUserNumber,
+@ref RM_GetNthSelectedOutputUserNumber,
+@ref RM_GetSelectedOutput,
+@ref RM_GetSelectedOutputColumnCount,
+@ref RM_GetSelectedOutputCount,
+@ref RM_GetSelectedOutputHeading,
+@ref RM_GetSelectedOutputRowCount,
+@ref RM_SetCurrentSelectedOutputUserNumber,
+@ref RM_SetNthSelectedOutput.
 
 @par C Example:
 @htmlonly
@@ -4111,7 +4326,7 @@ A state is identified by an integer, and multiple states can be saved.
 @see                    @ref RM_DumpModule,
 @ref RM_StateApply, and
 @ref RM_StateDelete.
-@par C++ Example:
+@par C Example:
 @htmlonly
 <CODE>
 <PRE>
@@ -4142,7 +4357,7 @@ The state to be applied is identified by an integer.
 @retval IRM_RESULT      0 is success, negative is failure(See @ref RM_DecodeError).
 @see                    @ref RM_StateSave and
 @ref RM_StateDelete.
-@par C++ Example:
+@par C Example:
 @htmlonly
 <CODE>
 <PRE>
@@ -4165,7 +4380,7 @@ Delete a state previously saved with @ref RM_StateSave.
 @retval IRM_RESULT      0 is success, negative is failure(See @ref RM_DecodeError).
 @see                    @ref RM_StateSave and
 ref RM_StateApply.
-@par C++ Example:
+@par C Example:
 @htmlonly
 <CODE>
 <PRE>

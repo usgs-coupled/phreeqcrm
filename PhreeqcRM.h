@@ -30,6 +30,7 @@ class PHRQ_io;
 
 class PHRQ_io;
 class IPhreeqc;
+class BMI_Var;
 /**
  * @class PhreeqcRMStop
  *
@@ -41,7 +42,10 @@ class IRM_DLL_EXPORT PhreeqcRMStop : public std::exception
 public:
   const char *what() const throw () {return "Failure in PhreeqcRM\n";}
 };
-
+//class LetItThrow : public std::logic_error {
+//public:
+//	LetItThrow(std::string error_string) : std::logic_error(error_string.c_str()) { };
+//};
 /*! @brief Enumeration used to return error codes.
 */
 #include "IrmResult.h"
@@ -587,6 +591,54 @@ status = phreeqc_rm.GetConcentrations(c);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                GetConcentrations(std::vector<double> &c);
+/**
+Returns the user number of the current selected-output definition.
+@ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput specifies which of the
+selected-output definitions is used.
+@retval                 User number of the the current selected-output definition,
+negative is failure (See @ref DecodeError).
+@see
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
+{
+	status = phreeqc_rm.SetCurrentSelectedOutput(isel);
+	int n_user = phreeqc_rm.GetCurrentSelectedOutputUserNumber(isel);
+	std::vector<double> so;
+	int col = phreeqc_rm.GetSelectedOutputColumnCount();
+	status = phreeqc_rm.GetSelectedOutput(so);
+	// Print results
+	for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
+	{
+		std::vector<std::string> headings;
+		headings.resize(col);
+		std::cerr << "     Selected output " << n_user <<": " << "\n";
+		for (int j = 0; j < col; j++)
+		{
+			status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
+			std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
+		}
+	}
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+	int                                       GetCurrentSelectedOutputUserNumber(void);
 /**
 Returns the file name of the database. Should be called after @ref LoadDatabase.
 @retval std::string      The file name defined in @ref LoadDatabase.
@@ -1306,10 +1358,17 @@ that user number for selected-output processing.
 @param n                The sequence number of the selected-output definition for which the user number will be returned.
 Fortran, 1 based; C, 0 based.
 @retval                 The user number of the @a nth selected-output definition, negative is failure (See @ref DecodeError).
-@see                    @ref GetSelectedOutput,
-@ref GetSelectedOutputColumnCount, @ref GetSelectedOutputCount,
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
 @ref GetSelectedOutputHeading,
-@ref GetSelectedOutputRowCount, @ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1549,9 +1608,17 @@ Size of the vector is set to @a col times @a nxyz, where @a col is the number of
 columns in the selected-output definition (@ref GetSelectedOutputColumnCount),
 and @a nxyz is the number of grid cells in the user's model (@ref GetGridCellCount).
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber,
-@ref GetSelectedOutputColumnCount, @ref GetSelectedOutputCount, @ref GetSelectedOutputHeading,
-@ref GetSelectedOutputRowCount, @ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1577,9 +1644,17 @@ Returns the number of columns in the current selected-output definition.
 @ref SetCurrentSelectedOutputUserNumber specifies which of the selected-output definitions is used.
 @retval                 Number of columns in the current selected-output definition,
 negative is failure (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber, @ref GetSelectedOutput,
-@ref GetSelectedOutputCount, @ref GetSelectedOutputHeading,
-@ref GetSelectedOutputRowCount, @ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1615,9 +1690,17 @@ Called by root.
 Returns the number of selected-output definitions.
 @ref SetCurrentSelectedOutputUserNumber specifies which of the selected-output definitions is used.
 @retval                 Number of selected-output definitions, negative is failure (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber, @ref GetSelectedOutput,
-@ref GetSelectedOutputColumnCount, @ref GetSelectedOutputHeading,
-@ref GetSelectedOutputRowCount, @ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1645,9 +1728,17 @@ The number of headings is determined by @ref GetSelectedOutputColumnCount.
 @param icol             The sequence number of the heading to be retrieved, 0 based.
 @param heading          A string to receive the heading.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber, @ref GetSelectedOutput,
-@ref GetSelectedOutputColumnCount, @ref GetSelectedOutputCount,
-@ref GetSelectedOutputRowCount, @ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1681,7 +1772,17 @@ A value of true for this property indicates that selected output data will be re
 A value of false indicates that selected output will not be retrieved for this time step;
 processing the selected output is avoided with some time savings.
 @retval bool      @a True, selected output will be requested; @a false, selected output will not be retrieved.
-@see              @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -1700,9 +1801,17 @@ is included only for convenience; the number of rows is always equal to the numb
 grid cells in the user's model (@ref GetGridCellCount).
 @retval                 Number of rows in the current selected-output definition, negative is failure
 (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber, @ref GetSelectedOutput, @ref GetSelectedOutputColumnCount,
-@ref GetSelectedOutputCount, @ref GetSelectedOutputHeading,
-@ref SetCurrentSelectedOutputUserNumber, @ref SetSelectedOutputOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -2807,6 +2916,111 @@ Called by root and (or) workers.
  */
 	const std::vector<IPhreeqcPhast *> &      GetWorkers() {return this->workers;}
 /**
+A YAML file can be used to initialize an instance of PhreeqcRM. 
+@param yamlfile         String containing the YAML file name.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+
+The file contains a YAML map of PhreeqcRM methods
+and the arguments corresponding to the methods. For example,
+@htmlonly
+<CODE>
+<PRE>
+LoadDatabase: phreeqc.dat
+RunFile:
+	workers: true
+	initial_phreeqc: true
+	utility: true
+	chemistry_name: advect.pqi
+</PRE>
+</CODE>
+@endhtmlonly
+
+@ref InitializeYAML will read the YAML file and execute the specified methods with 
+the specified arguments. Using YAML
+terminology, the argument(s) for a method may be a scalar, a sequence, or a map, 
+depending if the argument is
+a single item, a single vector, or there are multiple arguments. 
+In the case of a map, the names associated
+with each argument (for example "chemistry_name" above) is arbitrary. 
+The names of the map keys for map
+arguments are not used in parsing the YAML file; only the order of 
+the arguments is important.
+
+The PhreeqcRM methods that can be specified in a YAML file include:
+@htmlonly
+<CODE>
+<PRE>
+CloseFiles(void);
+CreateMapping(std::vector< int >& grid2chem);
+DumpModule();
+FindComponents();
+InitialPhreeqc2Module(std::vector< int > initial_conditions1);
+InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
+InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
+LoadDatabase(std::string database);
+OpenFiles(void);
+OutputMessage(std::string str);
+RunCells(void);
+RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
+RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
+ScreenMessage(std::string str);
+SetComponentH2O(bool tf);
+SetConcentrations(std::vector< double > c);
+SetCurrentSelectedOutputUserNumber(int n_user);
+SetDensity(std::vector< double > density);
+SetDumpFileName(std::string dump_name);
+SetErrorHandlerMode(int mode);
+SetErrorOn(bool tf);
+SetFilePrefix(std::string prefix);
+SetGasCompMoles(std::vector< double > gas_moles);
+SetGasPhaseVolume(std::vector< double > gas_volume);
+SetPartitionUZSolids(bool tf);
+SetPorosity(std::vector< double > por);
+SetPressure(std::vector< double > p);
+SetPrintChemistryMask(std::vector< int > cell_mask);
+SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
+SetRebalanceByCell(bool tf);
+SetRebalanceFraction(double f);
+SetRepresentativeVolume(std::vector< double > rv);
+SetSaturation(std::vector< double > sat);
+SetScreenOn(bool tf);
+SetSelectedOutputOn(bool tf);
+SetSpeciesSaveOn(bool save_on);
+SetTemperature(std::vector< double > t);
+SetTime(double time);
+SetTimeConversion(double conv_factor);
+SetTimeStep(double time_step);
+SetUnitsExchange(int option);
+SetUnitsGasPhase(int option);
+SetUnitsKinetics(int option);
+SetUnitsPPassemblage(int option);
+SetUnitsSolution(int option);
+SetUnitsSSassemblage(int option);
+SetUnitsSurface(int option);
+SpeciesConcentrations2Module(std::vector< double > species_conc);
+StateSave(int istate);
+StateApply(int istate);
+StateDelete(int istate);
+UseSolutionDensityVolume(bool tf);
+WarningMessage(std::string warnstr);
+</PRE>
+</CODE>
+@endhtmlonly
+
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+		PhreeqcRM phreeqc_rm(nxyz, nthreads);
+		phreeqc_rm.InitializeYAML("myfile.yaml");
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+*/
+IRM_RESULT		InitializeYAML(std::string yamlfile);
+/**
 Fills a vector (@a destination_c) with concentrations from solutions in the InitialPhreeqc instance.
 The method is used to obtain concentrations for boundary conditions. If a negative value
 is used for a cell in @a boundary_solution1, then the highest numbered solution in the InitialPhreeqc instance
@@ -3456,9 +3670,16 @@ the argument @a n_user selects which of the SELECTED_OUTPUT definitions will be 
 for selected-output operations.
 @param n_user           User number of the SELECTED_OUTPUT data block that is to be used.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref GetNthSelectedOutputUserNumber, @ref GetSelectedOutput,
-@ref GetSelectedOutputColumnCount, @ref GetSelectedOutputCount,
-@ref GetSelectedOutputRowCount, @ref GetSelectedOutputHeading,
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetNthSelectedOutput,
 @ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
@@ -3836,6 +4057,56 @@ by the workers. See documentation of PhreeqcRM for Fortran, method SetMpiWorkerC
  */
 	IRM_RESULT								  SetMpiWorkerCallbackFortran(int (*fcn)(int *method));
 /**
+Specify the current selected output by sequence number. The user may define multiple SELECTED_OUTPUT
+data blocks for the workers. A user number is specified for each data block, and the blocks are
+stored in user-number order. The value of
+the argument @a n selects the sequence number of the SELECTED_OUTPUT definition that will be used
+for selected-output operations.
+@param n           Sequence number of the SELECTED_OUTPUT data block that is to be used.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetSelectedOutputOn.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
+{
+	status = phreeqc_rm.SetCurrentSelectedOutput(isel);
+	int n_user = phreeqc_rm.GetCurrentSelectedOutputUserNumber(isel);
+	std::vector<double> so;
+	int col = phreeqc_rm.GetSelectedOutputColumnCount();
+	status = phreeqc_rm.GetSelectedOutput(so);
+	// Print results
+	for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
+	{
+		std::vector<std::string> headings;
+		headings.resize(col);
+		std::cerr << "     Selected output " << n_user <<": " << "\n";
+		for (int j = 0; j < col; j++)
+		{
+			status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
+			std::cerr << "          " << j << " " << headings[j] << ": " << so[j*nxyz + i] << "\n";
+		}
+	}
+}
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+	IRM_RESULT                                SetNthSelectedOutput(int n);
+/**
 Sets the property for partitioning solids between the saturated and unsaturated
 parts of a partially saturated cell.
 
@@ -4122,7 +4393,18 @@ be accumulated during @ref RunCells.
 
 @param tf  @a True, enable selected output; @a False, disable selected output.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    @ref GetSelectedOutput, @ref SetPrintChemistryOn.
+@see
+@ref GetCurrentSelectedOutputUserNumber,
+@ref GetNthSelectedOutputUserNumber,
+@ref GetSelectedOutput,
+@ref GetSelectedOutputColumnCount,
+@ref GetSelectedOutputCount,
+@ref GetSelectedOutputHeading,
+@ref GetSelectedOutputOn,
+@ref GetSelectedOutputRowCount,
+@ref SetCurrentSelectedOutputUserNumber,
+@ref SetNthSelectedOutput,
+@ref SetSelectedOutputOn.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -4704,8 +4986,940 @@ phreeqc_rm.WarningMessage("Parameter is out of range, using default");
 Called by root and (or) workers; only root writes to the log file.
  */
 	void                                      WarningMessage(const std::string &warnstr);
+// BMI data and methods
+private:
+	std::map<std::string, class BMI_Var> bmi_var_map;
+	std::vector<std::string> bmi_input_vars;
+	std::vector<std::string> bmi_output_vars;
+public:
 
-	// Utilities
+	//void BMI_Finalize();
+/**
+Basic Model Interface method that returns the component name--PhreeqcRM. The BMI interface to PhreeqcRM is
+only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
+prefix) provide a complete interface, and it is expected that the native methods will be used in preference to the BMI_
+methods.
+
+@retval The string "PhreeqcRM".
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::cout << phreeqc_rm.BMI_GetComponentName();
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
+	std::string BMI_GetComponentName() { return "PhreeqcRM"; }
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that returns the current simulation time, in seconds. (Same as @ref GetTime.)
+	The reaction module does not change the time value, so the
+	returned value is equal to the default (0.0) or the last time set by
+	@ref BMI_SetValue("Time", time) or @ref SetTime.
+	@retval                 The current simulation time, in seconds.
+	@see
+	@ref BMI_GetEndTime,
+	@ref BMI_GetTimeStep,
+	@ref BMI_SetValue,
+	@ref GetTime,
+	@ref GetTimeStep,
+	@ref SetTime,
+	@ref SetTimeStep.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::cout << "Current time: "
+		 << BMI_GetCurrentTime()
+		 << " seconds\n";
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	double BMI_GetCurrentTime() { return this->GetTime(); }
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that returns @ref BMI_GetCurrentTime plus @ref BMI_GetTimeStep, in seconds.
+	@retval                 The end of the time step, in seconds.
+	@see
+	@ref BMI_GetCurrentTime,
+	@ref BMI_GetTimeStep,
+	@ref BMI_SetValue,
+	@ref GetTime,
+	@ref GetTimeStep,
+	@ref SetTime,
+	@ref SetTimeStep.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::cout << "End of time step "
+		 << BMI_GetEndTime()
+		 << " seconds\n";
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	double BMI_GetEndTime() { return this->GetTime() + this->GetTimeStep(); }
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that returns count of input variables that can be set with @ref BMI_SetValue.
+	@retval  Count of input variables that can be set with @ref BMI_SetValue.
+
+	@see
+	@ref BMI_GetInputVarNames,
+	@ref BMI_GetVarItemsize,
+	@ref BMI_GetVarNbytes,
+	@ref BMI_GetVarType,
+	@ref BMI_GetVarUnits,
+	@ref BMI_SetValue.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			std::vector<std::string> InputVarNames = phreeqc_rm.BMI_GetInputVarNames();
+			int count = phreeqc_rm.BMI_GetInputItemCount();
+			oss << "BMI_SetValue variables:\n";
+			for (size_t i = 0; i < count; i++)
+			{
+				oss << "  " << i << "  " << InputVarNames[i] << "\n";
+				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(InputVarNames[i]) << "\n";
+				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(InputVarNames[i]) << "\n";
+				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) << "\n";
+				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
+				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) /
+											   phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
+			}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	int BMI_GetInputItemCount() { return (int)this->bmi_input_vars.size(); }
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that returns a list of the variable names that can be set with @ref BMI_SetValue.
+	@retval  A list of the variable names that can be set with @ref BMI_SetValue.
+
+	@see
+	@ref BMI_GetInputItemCount,
+	@ref BMI_GetVarItemsize,
+	@ref BMI_GetVarNbytes,
+	@ref BMI_GetVarType,
+	@ref BMI_GetVarUnits,
+	@ref BMI_SetValue.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			std::vector<std::string> InputVarNames = phreeqc_rm.BMI_GetInputVarNames();
+			int count = phreeqc_rm.BMI_GetInputItemCount();
+			oss << "BMI_SetValue variables:\n";
+			for (size_t i = 0; i < count; i++)
+			{
+				oss << "  " << i << "  " << InputVarNames[i] << "\n";
+				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(InputVarNames[i]) << "\n";
+				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(InputVarNames[i]) << "\n";
+				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) << "\n";
+				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
+				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) /
+											   phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
+			}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	std::vector<std::string> BMI_GetInputVarNames() { return this->bmi_input_vars; }
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that returns count of output variables that can be retrieved with @ref BMI_GetValue.
+	@retval  Count of output variables that can be retrieved with @ref BMI_GetValue.
+
+	@see
+	@ref BMI_GetOutputVarNames,
+	@ref BMI_GetValue,
+	@ref BMI_GetVarItemsize,
+	@ref BMI_GetVarNbytes,
+	@ref BMI_GetVarType,
+	@ref BMI_GetVarUnits.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
+			int count = phreeqc_rm.BMI_GetOutputItemCount();
+			oss << "BMI_GetValue variables:\n";
+			for (size_t i = 0; i < count; i++)
+			{
+				oss << "  " << i << "  " << OutputVarNames[i] << "\n";
+				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
+				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
+				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
+				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
+											   phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+			}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	int BMI_GetOutputItemCount() { return (int)this->bmi_output_vars.size(); }
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that returns a list of the variable names that can be retrieved with @ref BMI_GetValue.
+	@retval  A list of the variable names that can be retrieved with @ref BMI_GetValue.
+
+	@see
+	@ref BMI_GetOutputItemCount,
+	@ref BMI_GetValue,
+	@ref BMI_GetVarItemsize,
+	@ref BMI_GetVarNbytes,
+	@ref BMI_GetVarType,
+	@ref BMI_GetVarUnits.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
+			int count = phreeqc_rm.BMI_GetOutputItemCount();
+			oss << "BMI_GetValue variables:\n";
+			for (size_t i = 0; i < count; i++)
+			{
+				oss << "  " << i << "  " << OutputVarNames[i] << "\n";
+				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
+				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
+				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
+				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
+											   phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+			}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	std::vector<std::string> BMI_GetOutputVarNames() { return this->bmi_output_vars; };
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that returns the current simulation time step, in seconds. (Same as @ref GetTimeStep.)
+	The reaction module does not change the time-step value, so the
+	returned value is equal to the last time steo set by
+	@ref BMI_SetValue("TimeStep", time_step) or @ref SetTimeStep.
+	@retval                 The current simulation time step, in seconds.
+	@see
+	@ref BMI_GetCurrentTime,
+	@ref BMI_GetEndTime,
+	@ref BMI_SetValue,
+	@ref GetTime,
+	@ref GetTimeStep,
+	@ref SetTime,
+	@ref SetTimeStep.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::cout << "Current time step: "
+		 << BMI_GetTimeStep()
+		 << " seconds\n";
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root..
+	 */
+	double BMI_GetTimeStep() { return this->GetTimeStep(); }
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that returns the time units of PhreeqcRM.
+	All time units are seconds for PhreeqcRM.
+	@retval                 Returns the string "seconds".
+	@see
+	@ref BMI_GetCurrentTime,
+	@ref BMI_GetEndTime,
+	@ref BMI_GetTimeStep,
+	@ref BMI_SetValue,
+	@ref GetTime,
+	@ref GetTimeStep,
+	@ref SetTime,
+	@ref SetTimeStep.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::cout << "PhreeqcRM time units are "
+		 << BMI_GetTimeUnits() << ".\n";
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	std::string BMI_GetTimeUnits() { return "seconds"; };
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that retrieves model variables. Only variables in the list
+	provided by @ref BMI_GetOutputVarNames can be retrieved. The BMI interface to PhreeqcRM is
+	only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
+	prefix) provide a complete interface, and it is expected that the native methods will be used in preference to the BMI_
+	methods.
+
+	Variable names for the first argument
+	of BMI_GetValue and the equivalent PhreeqcRM method are as follows:
+	"ComponentCount", @ref GetComponentCount;
+	"Components", @ref GetComponents;
+	"Concentrations", @ref GetConcentrations;
+	"CurrentSelectedOutputUserNumber", @ref GetCurrentSelectedOutputUserNumber;
+	"Density", @ref GetDensity;
+	"ErrorString", @ref GetErrorString;
+	"Gfw", @ref GetGfw;
+	"GridCellCount", @ref GetGridCellCount;
+	"Pressure", @ref GetPressure;
+	"Saturation", @ref GetSaturation;
+	"SelectedOutput", @ref GetSelectedOutput;
+	"SelectedOutputColumnCount", @ref GetSelectedOutputColumnCount
+	"SelectedOutputCount", @ref GetSelectedOutputCount;
+	"SelectedOutputHeadings, @ref GetSelectedOutputHeadings;
+	"SelectedOutputRowCount", @ref GetSelectedOutputRowCount;
+	"Temperature", @ref GetTemperature.
+
+	@see
+	@ref BMI_GetOutputVarNames,
+	@ref BMI_GetOutputItemCount,
+	@ref BMI_GetValue,
+	@ref BMI_GetVarItemsize,
+	@ref BMI_GetVarNbytes,
+	@ref BMI_GetVarType,
+	@ref BMI_GetVarUnits.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			int nbytes;
+			phreeqc_rm.BMI_GetVarNbytes("Density", &nbytes);
+			int item_size;
+			phreeqc_rm.BMI_GetVarItemSize("Density", &item_size);
+			int dim = nbytes/item_size;
+			std::vector<double> bmi_density(dim, 0.0);
+			phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
+			// equivalent to:
+			// std::vector<double> rm_density;
+			// phreeqc_rm.GetDensity(rm_density);
+
+			int ncomps;
+			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
+			int nbytes = phreeqc_rm.BMI_GetVarNbytes("Components");
+			std::string all_comps(nbytes, ' ');
+			phreeqc_rm.BMI_GetValue("Components", all_comps.data());
+			int string_size = phreeqc_rm.BMI_GetVarItemsize("Components");
+			std::vector<std::string> bmi_comps;
+			for (size_t i = 0; i < ncomps; i++)
+			{
+				std::string bmi_comp = all_comps.substr((i * string_size), string_size);
+				size_t end = bmi_comp.find_last_not_of(' ');
+				bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
+				bmi_comps.push_back(bmi_comp);
+			}
+			// equivalent to:
+			// std::vector< std::string > components = phreeqc_rm.GetComponents();
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	*/
+	void BMI_GetValue(std::string name, void* dest);
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that retrieves size of an 
+	individual item that can be set or retrived.
+	Sizes may be sizeof(int), sizeof(double), 
+	or a character length for string variables. Only variables in the list
+	provided by @ref BMI_GetInputVarNames can be set. 
+	See @ref BMI_SetValue for the list of input variable names.
+	Only variables in the list
+	provided by @ref BMI_GetOutputVarNames can be retrieved. 
+	See @ref BMI_GetValue for the list of output variable names.
+
+
+	@see
+	@ref BMI_GetInputVarNames,
+	@ref BMI_GetInputItemCount,
+	@ref BMI_GetOutputVarNames,
+	@ref BMI_GetOutputItemCount,
+	@ref BMI_GetValue,
+	@ref BMI_GetVarNbytes,
+	@ref BMI_SetValue.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			int nbytes;
+			phreeqc_rm.BMI_GetVarNbytes("Density", &nbytes);
+			int item_size;
+			phreeqc_rm.BMI_GetVarItemSize("Density", &item_size);
+			int dim = nbytes/item_size;
+			std::vector<double> bmi_density(dim, 0.0);
+			phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
+			// equivalent to:
+			// std::vector<double> rm_density;
+			// phreeqc_rm.GetDensity(rm_density);
+
+			int ncomps;
+			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
+			int nbytes = phreeqc_rm.BMI_GetVarNbytes("Components");
+			std::string all_comps(nbytes, ' ');
+			phreeqc_rm.BMI_GetValue("Components", all_comps.data());
+			int string_size = phreeqc_rm.BMI_GetVarItemsize("Components");
+			std::vector<std::string> bmi_comps;
+			for (size_t i = 0; i < ncomps; i++)
+			{
+				std::string bmi_comp = all_comps.substr((i * string_size), string_size);
+				size_t end = bmi_comp.find_last_not_of(' ');
+				bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
+				bmi_comps.push_back(bmi_comp);
+			}
+			// equivalent to:
+			// std::vector< std::string > components = phreeqc_rm.GetComponents();
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	int BMI_GetVarItemsize(std::string name);
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that retrieves the total number of bytes that are set for a variable with
+	@ref BMI_SetValue or retrieved for a variable with @ref BMI_GetValue.
+	Only variables in the list
+	provided by @ref BMI_GetInputVarNames can be set. 
+	See @ref BMI_SetValue for the list of input variable names.
+	Only variables in the list
+	provided by @ref BMI_GetOutputVarNames can be retrieved. 
+	See @ref BMI_GetValue for the list of output variable names.
+
+
+	@see
+	@ref BMI_GetInputVarNames,
+	@ref BMI_GetInputItemCount,
+	@ref BMI_GetOutputVarNames,
+	@ref BMI_GetOutputItemCount,
+	@ref BMI_GetValue,
+	@ref BMI_GetVarItemsize,
+	@ref BMI_SetValue.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			int nbytes;
+			phreeqc_rm.BMI_GetVarNbytes("Density", &nbytes);
+			int item_size;
+			phreeqc_rm.BMI_GetVarItemSize("Density", &item_size);
+			int dim = nbytes/item_size;
+			std::vector<double> bmi_density(dim, 0.0);
+			phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
+			// equivalent to:
+			// std::vector<double> rm_density;
+			// phreeqc_rm.GetDensity(rm_density);
+
+			int ncomps;
+			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
+			int nbytes = phreeqc_rm.BMI_GetVarNbytes("Components");
+			std::string all_comps(nbytes, ' ');
+			phreeqc_rm.BMI_GetValue("Components", all_comps.data());
+			int string_size = phreeqc_rm.BMI_GetVarItemsize("Components");
+			std::vector<std::string> bmi_comps;
+			for (size_t i = 0; i < ncomps; i++)
+			{
+				std::string bmi_comp = all_comps.substr((i * string_size), string_size);
+				size_t end = bmi_comp.find_last_not_of(' ');
+				bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
+				bmi_comps.push_back(bmi_comp);
+			}
+			// equivalent to:
+			// std::vector< std::string > components = phreeqc_rm.GetComponents();
+		}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	int BMI_GetVarNbytes(std::string name);
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that retrieves the type of a variable that can be set with
+	@ref BMI_SetValue or retrieved with @ref BMI_GetValue. Types are "int", "double", or "string".
+	Only variables in the list
+	provided by @ref BMI_GetInputVarNames can be set. 
+	See @ref BMI_SetValue for the list of input variable names.
+	Only variables in the list
+	provided by @ref BMI_GetOutputVarNames can be retrieved. 
+	See @ref BMI_GetValue for the list of output variable names.
+
+
+	@see
+	@ref BMI_GetInputVarNames,
+	@ref BMI_GetInputItemCount,
+	@ref BMI_GetOutputVarNames,
+	@ref BMI_GetOutputItemCount,
+	@ref BMI_GetVarUnits.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
+			int count = phreeqc_rm.BMI_GetOutputItemCount();
+			oss << "BMI_GetValue variables:\n";
+			for (size_t i = 0; i < count; i++)
+			{
+				oss << "  " << i << "  " << OutputVarNames[i] << "\n";
+				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
+				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
+				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
+				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
+											   phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+			}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	std::string BMI_GetVarType(std::string name);
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that retrieves the units of a variable that can be set with
+	@ref BMI_SetValue or retrieved with @ref BMI_GetValue.
+	Only variables in the list
+	provided by @ref BMI_GetInputVarNames can be set. 
+	See @ref BMI_SetValue for the list of input variable names.
+	Only variables in the list
+	provided by @ref BMI_GetOutputVarNames can be retrieved. 
+	See @ref BMI_GetValue for the list of output variable names.
+
+
+	@see
+	@ref BMI_GetInputVarNames,
+	@ref BMI_GetInputItemCount,
+	@ref BMI_GetOutputVarNames,
+	@ref BMI_GetOutputItemCount,
+	@ref BMI_GetVarType.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
+			int count = phreeqc_rm.BMI_GetOutputItemCount();
+			oss << "BMI_GetValue variables:\n";
+			for (size_t i = 0; i < count; i++)
+			{
+				oss << "  " << i << "  " << OutputVarNames[i] << "\n";
+				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
+				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
+				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
+				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
+											   phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+			}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	std::string BMI_GetVarUnits(std::string name);
+
+	//--------------------------
+
+	/**
+	Basic Model Interface method that can be used to initialize a PhreeqcRM instance. This method is equivalent to
+	@ref InitializeYAML. A YAML file can be used in initialization. The file contains a YAML map of PhreeqcRM methods
+	and the arguments corresponding to the method. For example,
+	@htmlonly
+	<CODE>
+	<PRE>
+	LoadDatabase: phreeqc.dat
+	RunFile:
+	  workers: true
+	  initial_phreeqc: true
+	  utility: true
+	  chemistry_name: advect.pqi
+	</PRE>
+	</CODE>
+	@endhtmlonly
+
+	BMI_Initialize will read the YAML file and execute the specified methods with the specified arguments. Using YAML
+	terminology, the argument(s) for a method may be a scalar, a sequence, or a map, depending if the argument is
+	a single item, a single vector, or there are multiple arguments. In the case of a map, the name associated
+	with each argument (for example "chemistry_name" above) is arbitrary. The names of the map keys for map
+	arguments are not used in parsing the YAML file; only the order of the arguments is important.
+
+	The PhreeqcRM methods that can be specified in a YAML file include:
+	@htmlonly
+	<CODE>
+	<PRE>
+	CloseFiles(void);
+	CreateMapping(std::vector< int >& grid2chem);
+	DumpModule();
+	FindComponents();
+	InitialPhreeqc2Module(std::vector< int > initial_conditions1);
+	InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
+	InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
+	LoadDatabase(std::string database);
+	OpenFiles(void);
+	OutputMessage(std::string str);
+	RunCells(void);
+	RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
+	RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
+	ScreenMessage(std::string str);
+	SetComponentH2O(bool tf);
+	SetConcentrations(std::vector< double > c);
+	SetCurrentSelectedOutputUserNumber(int n_user);
+	SetDensity(std::vector< double > density);
+	SetDumpFileName(std::string dump_name);
+	SetErrorHandlerMode(int mode);
+	SetErrorOn(bool tf);
+	SetFilePrefix(std::string prefix);
+	SetGasCompMoles(std::vector< double > gas_moles);
+	SetGasPhaseVolume(std::vector< double > gas_volume);
+	SetPartitionUZSolids(bool tf);
+	SetPorosity(std::vector< double > por);
+	SetPressure(std::vector< double > p);
+	SetPrintChemistryMask(std::vector< int > cell_mask);
+	SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
+	SetRebalanceByCell(bool tf);
+	SetRebalanceFraction(double f);
+	SetRepresentativeVolume(std::vector< double > rv);
+	SetSaturation(std::vector< double > sat);
+	SetScreenOn(bool tf);
+	SetSelectedOutputOn(bool tf);
+	SetSpeciesSaveOn(bool save_on);
+	SetTemperature(std::vector< double > t);
+	SetTime(double time);
+	SetTimeConversion(double conv_factor);
+	SetTimeStep(double time_step);
+	SetUnitsExchange(int option);
+	SetUnitsGasPhase(int option);
+	SetUnitsKinetics(int option);
+	SetUnitsPPassemblage(int option);
+	SetUnitsSolution(int option);
+	SetUnitsSSassemblage(int option);
+	SetUnitsSurface(int option);
+	SpeciesConcentrations2Module(std::vector< double > species_conc);
+	StateSave(int istate);
+	StateApply(int istate);
+	StateDelete(int istate);
+	UseSolutionDensityVolume(bool tf);
+	WarningMessage(std::string warnstr);
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@see
+	@ref BMI_Update.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			PhreeqcRM phreeqc_rm(nxyz, nthreads);
+			phreeqc_rm.BMI_Initialize("myfile.yaml");
+			int ncomps;
+			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
+			int ngrid;
+			phreeqc_rm.BMI_GetValue("GridCellCount", ngrid);
+			std::vector<double> c(ngrid*ncomps, 0.0);
+			phreeqc_rm.BMI_GetValue("Concentrations", c.data());
+			phreeqc_rm.BMI_SetValue("TimeStep", 86400);
+			for(double time = 0; time < 864000; time+=86400)
+			{
+				// Take a transport time step here and update the vector c.
+				phreeqc_rm.BMI_SetValue("Time", time);
+				phreeqc_rm.SetValue("Concentrations", c.data());
+				phreeqc_rm.BMI_Update();
+				phreeqc_rm.BMI_GetValue("Concentrations", c.data());
+			}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
+	void BMI_Initialize(std::string config_file) { IRM_RESULT status = InitializeYAML(config_file); };
+
+	//--------------------------	
+
+	/**
+	Basic Model Interface method that sets model variables. Only variables in the list
+	provided by @ref BMI_GetInputVarNames can be set. The BMI interface to PhreeqcRM is
+	only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
+	prefix) provide a complete interface, and it is expected that the native methods will be used in preference to the BMI_
+	methods.
+
+	Variable names for the first argument
+	of BMI_SetValue and the equivalent PhreeqcRM method are as follows:
+	"Concentrations", @ref SetConcentrations;
+	"Density", @ref SetDensity;
+	"NthSelectedOutput", @ref SetNthSelectedOutput;
+	"Porosity", @ref SetPorosity;
+	"Pressure", @ref SetPressure;
+	"Saturation", @ref SetSaturation;
+	"SelectedOutputOn", @ref SetSelectedOutputOn;
+	"Temperature", @ref SetTemperature;
+	"Time", @ref SetTime;
+	"TimeStep", @ref SetTimeStep.
+
+	@see
+	@ref BMI_GetInputVarNames,
+	@ref BMI_GetInputItemCount,
+	@ref BMI_GetVarItemsize,
+	@ref BMI_GetVarNbytes,
+	@ref BMI_GetVarType,
+	@ref BMI_GetVarUnits,
+	@ref BMI_SetValue.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			int nbytes;
+			phreeqc_rm.BMI_GetVarNbytes("Temperature", &nbytes);
+			int item_size;
+			phreeqc_rm.BMI_GetVarItemSize("Temperature", &item_size);
+			int dim = nbytes/item_size;
+			std::vector<double> bmi_temperature(dim, 28.0);
+			phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature.data());
+			// equivalent to:
+			// std::vector<double> rm_temperature(dim, 28.0);
+			// phreeqc_rm.SetTemperature(rm_temperature);
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
+	void BMI_SetValue(std::string name, void* src);
+
+	//--------------------------	
+	/**
+	Basic Model Interface method that runs PhreeqcRM for one time step. This method is equivalent to
+	@ref RunCells. PhreeqcRM will equilibrate the solutions with all equilibrium reactants (EQUILIBRIUM_PHASES,
+	EXCHANGE, GAS_PHASE, SOLID_SOLUTIONS, and SURFACE) and
+	integrate KINETICS reactions for the specified time step (@ref SetTimeStep).
+	@see
+	@ref BMI_Initialize.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+			PhreeqcRM phreeqc_rm(nxyz, nthreads);
+			phreeqc_rm.BMI_Initialize("myfile.yaml");
+			int ncomps;
+			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
+			int ngrid;
+			phreeqc_rm.BMI_GetValue("GridCellCount", ngrid);
+			std::vector<double> c(ngrid*ncomps, 0.0);
+			phreeqc_rm.BMI_GetValue("Concentrations", c.data());
+			phreeqc_rm.BMI_SetValue("TimeStep", 86400);
+			for(double time = 0; time < 864000; time+=86400)
+			{
+				// Take a transport time step here and update the vector c.
+				phreeqc_rm.BMI_SetValue("Time", time);
+				phreeqc_rm.SetValue("Concentrations", c.data());
+				phreeqc_rm.BMI_Update();
+				phreeqc_rm.BMI_GetValue("Concentrations", c.data());
+			}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
+	void BMI_Update(void) { this->RunCells(); };
+#ifdef NOT_IMPLEMENTED
+	void BMI_UpdateUntil(double time)
+	{
+		//throw LetItThrow("Not implemented");
+		ErrorMessage("Not implemented");
+		throw PhreeqcRMStop();
+	}
+	int BMI_GetVarGrid(std::string name)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	std::string BMI_GetVarLocation(std::string name)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	double BMI_GetStartTime()
+	{
+		//throw LetItThrow("Not implemented");
+		ErrorMessage("Not implemented");
+		throw PhreeqcRMStop();
+	};
+	void* BMI_GetValuePtr(std::string name)
+	{
+		//throw LetItThrow("Not implemented");
+		ErrorMessage("Not implemented");
+		throw PhreeqcRMStop();
+	}
+	void BMI_GetValueAtIndices(std::string name, void* dest, int* inds, int count)
+	{
+		//throw LetItThrow("Not implemented");
+		ErrorMessage("Not implemented");
+		throw PhreeqcRMStop();
+	};
+	void BMI_SetValueAtIndices(std::string name, int* inds, int len, void* src)
+	{
+		//throw LetItThrow("Not implemented");
+		ErrorMessage("Not implemented");
+		throw PhreeqcRMStop();
+	};
+	int BMI_GetGridRank(const int grid)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	int BMI_GetGridSize(const int grid)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	std::string BMI_GetGridType(const int grid)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	void BMI_GetGridShape(const int grid, int* shape)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	void BMI_GetGridSpacing(const int grid, double* spacing)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	void GetGridOrigin(const int grid, double* origin)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	void BMI_GetGridX(const int grid, double* x)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	void BMI_GetGridY(const int grid, double* y)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	void BMI_GetGridZ(const int grid, double* z)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+
+	int BMI_GetGridNodeCount(const int grid)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	int BMI_GetGridEdgeCount(const int grid)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	int BMI_GetGridFaceCount(const int grid)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	void BMI_GetGridEdgeNodes(const int grid, int* edge_nodes)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	void BMI_GetGridFaceEdges(const int grid, int* face_edges)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	void BMI_GetGridFaceNodes(const int grid, int* face_nodes)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+	void BMI_GetGridNodesPerFace(const int grid, int* nodes_per_face)
+	{
+		//throw LetItThrow("Not applicable");
+		ErrorMessage("Not applicable");
+		throw PhreeqcRMStop();
+	};
+#endif
+private:
+	void BMI_MakeVarMap();
+// End BMI data and methods
+public:
+// Utilities
 	static std::string                        Char2TrimString(const char * str, size_t l = 0);
 	static bool                               FileExists(const std::string &name);
 	static void                               FileRename(const std::string &temp_name, const std::string &name,
@@ -4824,6 +6038,7 @@ protected:
 	bool need_error_check;
 	std::string phreeqcrm_error_string;
 
+	std::map<std::string, int> method_map;
 	// threading
 	int nthreads;
 	std::vector<IPhreeqcPhast *> workers;
