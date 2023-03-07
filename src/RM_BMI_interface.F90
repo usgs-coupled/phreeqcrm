@@ -10,6 +10,7 @@
     MODULE BMI_PhreeqcRM
     IMPLICIT NONE
 INTERFACE RM_BMI_GetValue
+    procedure RM_BMI_GetValue_b
     procedure RM_BMI_GetValue_c
     procedure RM_BMI_GetValue_c1
     procedure RM_BMI_GetValue_d
@@ -21,6 +22,7 @@ INTERFACE RM_BMI_GetValue
 END INTERFACE RM_BMI_GetValue
 
 INTERFACE RM_BMI_SetValue
+  procedure RM_BMI_SetValue_b
   procedure RM_BMI_SetValue_c
   procedure RM_BMI_SetValue_d
   procedure RM_BMI_SetValue_d1
@@ -197,6 +199,25 @@ INTEGER FUNCTION RM_BMI_GetTimeUnits(id, time_units)
     return
 END FUNCTION RM_BMI_GetTimeUnits 
 
+INTEGER FUNCTION RM_BMI_GetValue_b(id, var, dest)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+            BIND(C, NAME='RMF_BMI_GetValue')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+            LOGICAL(KIND=C_INT), INTENT(inout) :: dest
+        END FUNCTION RMF_BMI_GetValue 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    LOGICAL(KIND=4), INTENT(inout) :: dest
+   RM_BMI_GetValue_b = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
+    return
+END FUNCTION RM_BMI_GetValue_b
 
 INTEGER FUNCTION RM_BMI_GetValue_c(id, var, dest)
     USE ISO_C_BINDING
@@ -461,6 +482,26 @@ INTEGER FUNCTION RM_BMI_Initialize(id, config_file)
     return
 END FUNCTION RM_BMI_Initialize
 
+INTEGER FUNCTION RM_BMI_SetValue_b(id, var, dest)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, dest) &
+            BIND(C, NAME='RMF_BMI_SetValue')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+            LOGICAL(KIND=C_BOOL), INTENT(in) :: dest
+        END FUNCTION RMF_BMI_SetValue 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    LOGICAL, INTENT(in) :: dest
+    RM_BMI_SetValue_b = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest)
+    return
+END FUNCTION RM_BMI_SetValue_b
+
 INTEGER FUNCTION RM_BMI_SetValue_c(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -471,13 +512,13 @@ INTEGER FUNCTION RM_BMI_SetValue_c(id, var, dest)
             IMPLICIT NONE
             INTEGER(KIND=C_INT), INTENT(in) :: id
             CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-            CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: dest
         END FUNCTION RMF_BMI_SetValue 
     END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    CHARACTER(len=*), INTENT(inout) :: dest
-    RM_BMI_SetValue_c = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest)
+    CHARACTER(len=*), INTENT(in) :: dest
+    RM_BMI_SetValue_c = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, trim(dest)//C_NULL_CHAR)
     return
 END FUNCTION RM_BMI_SetValue_c
 

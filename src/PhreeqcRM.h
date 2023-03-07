@@ -5328,6 +5328,7 @@ Called by root.
 	"CurrentSelectedOutputUserNumber", @ref GetCurrentSelectedOutputUserNumber;
 	"Density", @ref GetDensity;
 	"ErrorString", @ref GetErrorString;
+	"FilePrefix", @ref GetFilePrefix;
 	"Gfw", @ref GetGfw;
 	"GridCellCount", @ref GetGridCellCount;
 	"Porosity", @ref GetPorosity;
@@ -5337,6 +5338,7 @@ Called by root.
 	"SelectedOutputColumnCount", @ref GetSelectedOutputColumnCount;
 	"SelectedOutputCount", @ref GetSelectedOutputCount;
 	"SelectedOutputHeadings, @ref GetSelectedOutputHeadings;
+	"SelectedOutputOn", @ref GetSelectedOutputOn;
 	"SelectedOutputRowCount", @ref GetSelectedOutputRowCount;
 	"SolutionVolume", @ref GetSolutionVolume;
 	"Temperature", @ref GetTemperature.
@@ -5730,6 +5732,7 @@ Called by root.
 	of BMI_SetValue and the equivalent PhreeqcRM method are as follows:
 	"Concentrations", @ref SetConcentrations;
 	"Density", @ref SetDensity;
+	"FilePrefix", @ref SetFilePrefix;
 	"NthSelectedOutput", @ref SetNthSelectedOutput;
 	"Porosity", @ref SetPorosity;
 	"Pressure", @ref SetPressure;

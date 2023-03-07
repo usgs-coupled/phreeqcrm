@@ -15,10 +15,12 @@
 #endif
 void PhreeqcRM::BMI_SetValue(std::string name, void* src)
 {
-    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name);
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
     if (it != bmi_var_map.end())
     {
-        if (it->first == "Concentrations")
+        if (it->first == "concentrations")
         {
             int ngrid = this->GetGridCellCount();
             int ncomps = this->GetComponentCount();
@@ -27,7 +29,7 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             this->SetConcentrations(conc);
             return;
         }
-        if (it->first == "Density")
+        if (it->first == "density")
         {
             int ngrid = this->GetGridCellCount();
             std::vector<double> density(ngrid, INACTIVE_CELL_VALUE);
@@ -35,7 +37,13 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             this->SetDensity(density);
             return;
         }
-        if (it->first == "NthSelectedOutput")
+        if (it->first == "fileprefix")
+        {
+            std::string file = (char*) src;
+            this->SetFilePrefix(file);
+            return;
+        }
+        if (it->first == "nthselectedoutput")
         {
             int nth_so;
             memcpy(&nth_so, src, sizeof(int));
@@ -43,7 +51,7 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             this->SetCurrentSelectedOutputUserNumber(nuser);
             return;
         }
-        if (it->first == "Porosity")
+        if (it->first == "porosity")
         {
             int ngrid = this->GetGridCellCount();
             std::vector<double> porosity(ngrid, INACTIVE_CELL_VALUE);
@@ -51,7 +59,7 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             this->SetPorosity(porosity);
             return;
         }
-        if (it->first == "Porosity")
+        if (it->first == "porosity")
         {
             int ngrid = this->GetGridCellCount();
             std::vector<double> porosity(ngrid, INACTIVE_CELL_VALUE);
@@ -59,7 +67,7 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             this->SetPorosity(porosity);
             return;
         }
-        if (it->first == "Pressure")
+        if (it->first == "pressure")
         {
             int ngrid = this->GetGridCellCount();
             std::vector<double> pressure(ngrid, INACTIVE_CELL_VALUE);
@@ -67,7 +75,7 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             this->SetPressure(pressure);
             return;
         }
-        if (it->first == "Saturation")
+        if (it->first == "saturation")
         {
             int ngrid = this->GetGridCellCount();
             std::vector<double> sat(ngrid, INACTIVE_CELL_VALUE);
@@ -75,7 +83,7 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             this->SetSaturation(sat);
             return;
         }
-        if (it->first == "SelectedOutputOn")
+        if (it->first == "selectedoutputon")
         {
             int so_on;
             memcpy(&so_on, src, sizeof(int));
@@ -83,7 +91,7 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             this->SetSelectedOutputOn(so_on_bool);
             return;
         }
-        if (it->first == "Temperature")
+        if (it->first == "temperature")
         {
             int ngrid = this->GetGridCellCount();
             std::vector<double> temp(ngrid, INACTIVE_CELL_VALUE);
@@ -91,14 +99,14 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             this->SetTemperature(temp);
             return;
         }
-        if (it->first == "Time")
+        if (it->first == "time")
         {
             double time;
             memcpy(&time, src, sizeof(double));
             this->SetTime(time);
             return;
         }
-        if (it->first == "TimeStep")
+        if (it->first == "timestep")
         {
             double timestep=0;
             memcpy(&timestep, src, sizeof(double));
@@ -112,16 +120,18 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
 }
 void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
 {
-    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name);
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
     if (it != bmi_var_map.end())
     {
-        if (it->first == "ComponentCount")
+        if (it->first == "componentcount")
         {
             int count = this->GetComponentCount();
             memcpy(dest, &count, sizeof(int));
             return;
         }
-        if (it->first == "Components")
+        if (it->first == "components")
         {
             int string_length = this->BMI_GetVarItemsize("Components");
             std::vector<std::string> comps = this->GetComponents();
@@ -133,39 +143,45 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
             memcpy(dest, all_comps.str().c_str(), all_comps.str().size());
             return;
         }
-        if (it->first == "Concentrations")
+        if (it->first == "concentrations")
         {
             std::vector<double> rm_conc;
             this->GetConcentrations(rm_conc);
             memcpy(dest, rm_conc.data(), rm_conc.size()*sizeof(double));
             return;
         }
-        if (it->first == "CurrentSelectedOutputUserNumber")
+        if (it->first == "currentselectedoutputusernumber")
         {
             int count = this->GetIPhreeqcPointer(0)->GetCurrentSelectedOutputUserNumber();
             memcpy(dest, &count, sizeof(int));
             return;
         }
-        if (it->first == "Density")
+        if (it->first == "density")
         {
             std::vector<double> density;
             this->GetDensity(density);
             memcpy(dest, density.data(), density.size()*sizeof(double));
             return;
         }
-        if (it->first == "ErrorString")
+        if (it->first == "fileprefix")
+        {
+            std::string filep = this->GetFilePrefix();
+            memcpy(dest, filep.c_str(), filep.size());
+            return;
+        }
+        if (it->first == "errorstring")
         {
             std::string err = this->GetErrorString();
             memcpy(dest, err.c_str(), err.size());
             return;
         }
-        if (it->first == "Gfw")
+        if (it->first == "gfw")
         {
             const std::vector<double> gfw = this->GetGfw();
             memcpy(dest, gfw.data(), gfw.size() * sizeof(double));
             return;
         }
-        if (it->first == "GridCellCount")
+        if (it->first == "gridcellcount")
         {
             int count = this->GetGridCellCount();
             memcpy(dest, &count, sizeof(int));
@@ -177,45 +193,45 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
         //    memcpy(dest, &num, sizeof(int));
         //    return;
         //}
-        if (it->first == "Porosity")
+        if (it->first == "porosity")
         {
             const std::vector<double>& porosity = this->GetPorosity();
             memcpy(dest, porosity.data(), porosity.size() * sizeof(double));
             return;
         }
-        if (it->first == "Pressure")
+        if (it->first == "pressure")
         {
             const std::vector<double> &pressure = this->GetPressure();
             memcpy(dest, pressure.data(), pressure.size() * sizeof(double));
             return;
         }
-        if (it->first == "Saturation")
+        if (it->first == "saturation")
         {
             std::vector<double> saturation;
             this->GetSaturation(saturation);
             memcpy(dest, saturation.data(), saturation.size() * sizeof(double));
             return;
         }
-        if (it->first == "SelectedOutput")
+        if (it->first == "selectedoutput")
         {
             std::vector<double> so;
             IRM_RESULT status = this->GetSelectedOutput(so);
             memcpy(dest, so.data(), so.size() * sizeof(double));
             return;
         }
-        if (it->first == "SelectedOutputColumnCount")
+        if (it->first == "selectedoutputcolumncount")
         {
             int count = this->GetSelectedOutputColumnCount();
             memcpy(dest, &count, sizeof(int));
             return;
         }
-        if (it->first == "SelectedOutputCount")
+        if (it->first == "selectedoutputcount")
         {
             int count = this->GetSelectedOutputCount();
             memcpy(dest, &count, sizeof(int));
             return;
         }
-        if (it->first == "SelectedOutputHeadings")
+        if (it->first == "selectedoutputheadings")
         {
             int string_length = this->BMI_GetVarItemsize("SelectedOutputHeadings");
             int count = this->GetSelectedOutputColumnCount();
@@ -229,28 +245,46 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
             memcpy(dest, all_headings.str().c_str(), all_headings.str().size());
             return;
         }
-        if (it->first == "SelectedOutputOn")
+        if (it->first == "selectedoutputon")
         {
             int flag = (int)this->GetSelectedOutputOn();
             memcpy(dest, &flag, sizeof(int));
             return;
         }
-        if (it->first == "SelectedOutputRowCount")
+        if (it->first == "selectedoutputon")
+        {
+            bool tf = this->GetSelectedOutputOn();
+            memcpy(dest, &tf, sizeof(bool));
+            return;
+        }
+        if (it->first == "selectedoutputrowcount")
         {
             int count = this->GetSelectedOutputRowCount();
             memcpy(dest, &count, sizeof(int));
             return;
         }
-        if (it->first == "SolutionVolume")
+        if (it->first == "solutionvolume")
         {
             const std::vector<double>& vol = this->GetSolutionVolume();
             memcpy(dest, vol.data(), vol.size() * sizeof(double));
             return;
         }
-        if (it->first == "Temperature")
+        if (it->first == "temperature")
         {
             const std::vector<double> &temperature = this->GetTemperature();
             memcpy(dest, temperature.data(), temperature.size() * sizeof(double));
+            return;
+        }
+        if (it->first == "time")
+        {
+            double time = this->GetTime();
+            memcpy(dest, &time, sizeof(double));
+            return;
+        }
+        if (it->first == "timestep")
+        {
+            double timestep = this->GetTimeStep();
+            memcpy(dest, &timestep, sizeof(double));
             return;
         }
     }
@@ -260,89 +294,96 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
 }
 int PhreeqcRM::BMI_GetVarNbytes(std::string name)
 {
-    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name);
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
     if (it != bmi_var_map.end())
     {
-        if (it->first == "ComponentCount")
+        if (it->first == "componentcount")
         {
             return this->GetComponentCount();
         }
-        if (it->first == "Components")
+        if (it->first == "components")
         {
-            int string_size = this->BMI_GetVarItemsize("Components");
+            int string_size = this->BMI_GetVarItemsize("components");
             int dim = this->GetComponentCount();
             return string_size * dim * (int)sizeof(char);
         }
-        if (it->first == "Concentrations")
+        if (it->first == "concentrations")
         {
             return (int)sizeof(double) * this->GetGridCellCount() * this->GetComponentCount();
         }
-        if (it->first == "CurrentSelectedOutputUserNumber")
+        if (it->first == "currentselectedoutputusernumber")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "Density")
+        if (it->first == "density")
         {
             return (int)sizeof(double) * this->GetGridCellCount();
         }
-        if (it->first == "ErrorString")
+
+        if (it->first == "fileprefix")
+        {
+            return (int)this->GetFilePrefix().size();
+        }
+        if (it->first == "errorstring")
         {
             return (int)this->GetErrorString().size();
         }
-        if (it->first == "Gfw")
+        if (it->first == "gfw")
         {
             return (int)sizeof(double) * this->GetComponentCount();
         }
-        if (it->first == "GridCellCount")
+        if (it->first == "gridcellcount")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "NthSelectedOutput")
+        if (it->first == "nthselectedoutput")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "Porosity")
+        if (it->first == "porosity")
         {
             return (int)sizeof(double) * this->GetGridCellCount();
         }
-        if (it->first == "Pressure")
+        if (it->first == "pressure")
         {
             return (int)sizeof(double) * this->GetGridCellCount();
         }
-        if (it->first == "Saturation")
+        if (it->first == "saturation")
         {
             return (int)sizeof(double) * this->GetGridCellCount();
         }
-        if (it->first == "SelectedOutput")
+        if (it->first == "selectedoutput")
         {
             return (int)sizeof(double) * this->GetSelectedOutputColumnCount() * this->GetSelectedOutputRowCount();
         }
-        if (it->first == "SelectedOutputColumnCount")
+        if (it->first == "selectedoutputcolumncount")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "SelectedOutputCount")
+        if (it->first == "selectedoutputcount")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "SelectedOutputHeadings")
+        if (it->first == "selectedoutputheadings")
         {
-            int string_size = this->BMI_GetVarItemsize("SelectedOutputHeadings");
+            int string_size = this->BMI_GetVarItemsize("selectedoutputheadings");
             return string_size * this->GetSelectedOutputColumnCount() * (int)sizeof(char);
         }
-        if (it->first == "SelectedOutputOn")
+        if (it->first == "selectedoutputon")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "SelectedOutputRowCount")
+        if (it->first == "selectedoutputrowcount")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "SolutionVolume")
+        if (it->first == "solutionvolume")
         {
             return (int)sizeof(double) * this->GetGridCellCount();
         }
-        if (it->first == "Temperature")
+        if (it->first == "temperature")
         {
             return (int)sizeof(double) * this->GetGridCellCount();
         }
@@ -353,10 +394,12 @@ int PhreeqcRM::BMI_GetVarNbytes(std::string name)
 }
 std::string PhreeqcRM::BMI_GetVarUnits(std::string name)
 {
-    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name);
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
     if (it != bmi_var_map.end())
     {
-        if (it->first == "Concentrations")
+        if (it->first == "concentrations")
         {
             int units = this->GetUnitsSolution();
             switch (units)
@@ -385,14 +428,16 @@ std::string PhreeqcRM::BMI_GetVarUnits(std::string name)
 }
 int PhreeqcRM::BMI_GetVarItemsize(std::string name)
 {
-    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name);
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
     if (it != bmi_var_map.end())
     {
-        if (it->first == "ComponentCount")
+        if (it->first == "componentcount")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "Components")
+        if (it->first == "components")
         {
             size_t max = 0;
             for (size_t i = 0; i < this->GetComponents().size(); i++)
@@ -401,59 +446,63 @@ int PhreeqcRM::BMI_GetVarItemsize(std::string name)
             }
             return (int)max;
         }
-        if (it->first == "Concentrations")
+        if (it->first == "concentrations")
         {
             return (int)sizeof(double);
         }
-        if (it->first == "CurrentSelectedOutputUserNumber")
+        if (it->first == "currentselectedoutputusernumber")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "Density")
+        if (it->first == "density")
 		{
             return (int)sizeof(double);
 		}
-        if (it->first == "ErrorString")
+        if (it->first == "fileprefix")
+        {
+            return (int)this->GetFilePrefix().size();
+        }
+        if (it->first == "errorstring")
         {
             return (int)this->GetErrorString().size();
         }
-        if (it->first == "Gfw")
+        if (it->first == "gfw")
 		{
             return (int)sizeof(double);
 		}
-        if (it->first == "GridCellCount")
+        if (it->first == "gridcellcount")
 		{
             return (int)sizeof(int);
 		}
-		if (it->first == "NthSelectedOutput")
+		if (it->first == "nthselectedoutput")
 		{
             return (int)sizeof(int);
 		}
-		if (it->first == "Porosity")
+		if (it->first == "porosity")
 		{
             return (int)sizeof(double);
 		}
-        if (it->first == "Pressure")
+        if (it->first == "pressure")
         {
             return (int)sizeof(double);
         }
-        if (it->first == "Saturation")
+        if (it->first == "saturation")
         {
             return (int)sizeof(double);
         }
-        if (it->first == "SelectedOutput")
+        if (it->first == "selectedoutput")
         {
             return (int)sizeof(double);
         }
-        if (it->first == "SelectedOutputColumnCount")
+        if (it->first == "selectedoutputcolumncount")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "SelectedOutputCount")
+        if (it->first == "selectedoutputcount")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "SelectedOutputHeadings")
+        if (it->first == "selectedoutputheadings")
         {
             int nhead = this->GetSelectedOutputColumnCount();
             size_t max = 0;
@@ -465,19 +514,19 @@ int PhreeqcRM::BMI_GetVarItemsize(std::string name)
             }
             return (int)max;
         }
-        if (it->first == "SelectedOutputOn")
+        if (it->first == "selectedoutputon")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "SelectedOutputRowCount")
+        if (it->first == "selectedoutputrowcount")
         {
             return (int)sizeof(int);
         }
-        if (it->first == "SolutionVolume")
+        if (it->first == "solutionvolume")
         {
             return (int)sizeof(double);
         }
-        if (it->first == "Temperature")
+        if (it->first == "temperature")
         {
             return (int)sizeof(double);
         }
@@ -518,37 +567,37 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["BackwardMapping"] = Var_BMI("BackwardMapping", "int", "mapping", sizeof(int));
         //var_map["CreateMapping"] = Var_BMI("CreateMapping", "int", "mapping", sizeof(int));
         //var_map["ChemistryCellCount"] = Var_BMI("ChemistryCellCount", "int", "count", sizeof(int));
-        bmi_var_map["Components"] = BMI_Var("Components", "string", "names", false, true);
-        bmi_var_map["ComponentCount"] = BMI_Var("ComponentCount", "int", "names", false, true);
-        bmi_var_map["Concentrations"] = BMI_Var("Concentrations", "double", "mol L-1", true, true);
-        bmi_var_map["Density"] = BMI_Var("Density", "double", "kg L-1", true, true);
+        bmi_var_map["components"] = BMI_Var("Components", "string", "names", false, true);
+        bmi_var_map["componentcount"] = BMI_Var("Componentcount", "int", "names", false, true);
+        bmi_var_map["concentrations"] = BMI_Var("Concentrations", "double", "mol L-1", true, true);
+        bmi_var_map["density"] = BMI_Var("Density", "double", "kg L-1", true, true);
         //var_map["EndCell"] = Var_BMI("EndCell", "int", "cell numbers", sizeof(int));
         //var_map["EquilibriumPhasesNames"] = Var_BMI("EquilibriumPhasesNames", "string", "names", sizeof(char));
-        bmi_var_map["ErrorString"] = BMI_Var("ErrorString", "string", "error", false, true);
+        bmi_var_map["errorstring"] = BMI_Var("ErrorString", "string", "error", false, true);
         //var_map["ExchangeNames"] = Var_BMI("ExchangeNames", "string", "names", sizeof(char));
         //var_map["ExchangeSpeciesNames"] = Var_BMI("ExchangeSpeciesNames", "string", "names", sizeof(char));
-        //var_map["FilePrefix"] = Var_BMI("FilePrefix", "string", "name", sizeof(char));
+        bmi_var_map["fileprefix"] = BMI_Var("FilePrefix", "string", "name", true, true);
         //!var_map["GasComponentNames"] = Var_BMI("GasComponentsNames", "string", "names", sizeof(char));
         //!var_map["GasCompMoles"] = Var_BMI("GasCompMoles", "double", "mol", sizeof(double));
         //!var_map["GasCompPressures"] = Var_BMI("GasCompPressures", "double", "atm", sizeof(double));
         //!var_map["GasCompPhi"] = Var_BMI("GasCompPhi", "double", "atm-1", sizeof(double));
         //!var_map["GasPhaseVolume"] = Var_BMI("GasPhaseVolume", "double", "L", sizeof(double));
-        bmi_var_map["Gfw"] = BMI_Var("Gfw", "double", "g mol-1", false, true);
-        bmi_var_map["GridCellCount"] = BMI_Var("GridCellCount", "int", "count", false, true);
+        bmi_var_map["gfw"] = BMI_Var("Gfw", "double", "g mol-1", false, true);
+        bmi_var_map["gridcellcount"] = BMI_Var("GridCellCount", "int", "count", false, true);
         //var_map["KineticReactions"] = Var_BMI("KineticReactions", "string", "names", sizeof(char));
         //var_map["MpiMyself"] = Var_BMI("MpiMyself", "int", "id", sizeof(int));
         //var_map["MpiTasks"] = Var_BMI("MpiTasks", "int", "count", sizeof(int));
-        bmi_var_map["NthSelectedOutput"] = BMI_Var("NthSelectedOutput", "int", "id", true, false);
-        bmi_var_map["Saturation"] = BMI_Var("Saturation", "double", "unitless", true, true);
-        bmi_var_map["SelectedOutput"] = BMI_Var("SelectedOutput", "double", "user", false, true);
-        bmi_var_map["SelectedOutputColumnCount"] = BMI_Var("SelectedOutputColumnCount", "int", "count", false, true);
-        bmi_var_map["SelectedOutputCount"] = BMI_Var("SelectedOutputCount", "int", "count", false, true);
-        bmi_var_map["SelectedOutputHeadings"] = BMI_Var("SelectedOutputHeadings", "string", "names", false, true);
-        bmi_var_map["SelectedOutputRowCount"] = BMI_Var("SelectedOutputRowCount", "int", "count", false, true);
+        bmi_var_map["nthselectedoutput"] = BMI_Var("NthSelectedOutput", "int", "id", true, false);
+        bmi_var_map["saturation"] = BMI_Var("Saturation", "double", "unitless", true, true);
+        bmi_var_map["selectedoutput"] = BMI_Var("SelectedOutput", "double", "user", false, true);
+        bmi_var_map["selectedoutputcolumncount"] = BMI_Var("SelectedOutputColumnCount", "int", "count", false, true);
+        bmi_var_map["selectedoutputcount"] = BMI_Var("SelectedOutputCount", "int", "count", false, true);
+        bmi_var_map["selectedoutputheadings"] = BMI_Var("SelectedOutputHeadings", "string", "names", false, true);
+        bmi_var_map["selectedoutputrowcount"] = BMI_Var("SelectedOutputRowCount", "int", "count", false, true);
         //var_map["SINames"] = Var_BMI("SINames", "string", "names", 0);
         //var_map["SolidSolutionComponentsNames"] = Var_BMI("SolidSolutionComponentsNames", "string", "names", sizeof(char));
         //var_map["SolidSolutionNames"] = Var_BMI("SolidSolutionNames", "string", "names", sizeof(char));
-        bmi_var_map["SolutionVolume"] = BMI_Var("SolutionVolume", "double", "L", false, true);
+        bmi_var_map["solutionvolume"] = BMI_Var("SolutionVolume", "double", "L", false, true);
         //!var_map["SpeciesConcentrations"] = Var_BMI("SpeciesConcentrations", "double", "mg L-1", sizeof(double));
         //!var_map["SpeciesD25"] = Var_BMI("SpeciesD25", "double", "cm2 s-1", sizeof(double));
         //!var_map["SpeciesLog10Gammas"] = Var_BMI("SpeciesLog10Gammas", "double", "log L mol-1", sizeof(double));
@@ -561,19 +610,19 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["SurfaceSpeciesNames"] = Var_BMI("SurfaceSpeciesNames", "string", "names", sizeof(char));
         //var_map["SurfaceTypes"] = Var_BMI("SurfaceTypes", "string", "names", sizeof(char));
         //var_map["ThreadCount"] = Var_BMI("ThreadCount", "int", "count", sizeof(int));
-        bmi_var_map["Time"] = BMI_Var("Time", "double", "s", true, false);
+        bmi_var_map["time"] = BMI_Var("Time", "double", "s", true, true);
         //var_map["TimeConversion"] = Var_BMI("TimeConversion", "double", "unitless", sizeof(double));
-        bmi_var_map["TimeStep"] = BMI_Var("TimeStep", "double", "s", true, false);
+        bmi_var_map["timestep"] = BMI_Var("TimeStep", "double", "s", true, true);
         //var_map["MpiWorker"] = Var_BMI("MpiWorker", "int", "id", sizeof(int));
         //var_map["ComponentH2O"] = Var_BMI("ComponentH2O", "int", "flag", sizeof(int));
-        bmi_var_map["CurrentSelectedOutputUserNumber"] = BMI_Var("CurrentSelectedOutputUserNumber", "int", "id", false, true);
+        bmi_var_map["currentselectedoutputusernumber"] = BMI_Var("CurrentSelectedOutputUserNumber", "int", "id", false, true);
         //var_map["DumpFileName"] = Var_BMI("DumpFileName", "string", "name", sizeof(char));
         //var_map["ErrorHandlerMode"] = Var_BMI("ErrorHandlerMode", "int", "flag", sizeof(int));
         //var_map["ErrorOn"] = Var_BMI("ErrorOn", "int", "flag", sizeof(int));
         //var_map["PartitionUZSolids"] = Var_BMI("PartitionUZSolids", "int", "flag", sizeof(int));
-        bmi_var_map["Porosity"] = BMI_Var("Porosity", "double", "unitless", true, true);
+        bmi_var_map["porosity"] = BMI_Var("Porosity", "double", "unitless", true, true);
         //var_map["PartitionUZSolids"] = Var_BMI("PartitionUZSolids", "int", "flag", sizeof(int));
-        bmi_var_map["Pressure"] = BMI_Var("Pressure", "double", "atm", true, true);
+        bmi_var_map["pressure"] = BMI_Var("Pressure", "double", "atm", true, true);
         //var_map["PrintChemistryMask"] = Var_BMI("PrintChemistryMask", "int", "flags", sizeof(int));
         //var_map["PrintChemistryOn"] = Var_BMI("PrintChemistryOn", "int", "flag", sizeof(int));
         //var_map["RebalanceByCell"] = Var_BMI("RebalanceByCell", "int", "flag", sizeof(int));
@@ -581,8 +630,8 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["RepresentativeVolume"] = Var_BMI("RepresentativeVolume", "double", "L", sizeof(double));
         //var_map["RebalanceByCell"] = Var_BMI("RebalanceByCell", "int", "flag", sizeof(int));
         //var_map["ScreenOn"] = Var_BMI("ScreenOn", "int", "flag", sizeof(int));
-        bmi_var_map["SelectedOutputOn"] = BMI_Var("SelectedOutputOn", "int", "flag", true, false);
-        bmi_var_map["Temperature"] = BMI_Var("Temperature", "double", "C", true, true);
+        bmi_var_map["selectedoutputon"] = BMI_Var("SelectedOutputOn", "int", "flag", true, true);
+        bmi_var_map["temperature"] = BMI_Var("Temperature", "double", "C", true, true);
         //var_map["UnitsExchange"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));
         //var_map["UnitsGasPhase"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));
         //var_map["UnitsKinetics"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));

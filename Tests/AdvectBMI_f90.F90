@@ -37,6 +37,7 @@
     character(100) :: yaml_file
     integer :: mpi_myself
     integer :: i, j
+    logical :: tf
     integer :: nxyz
     integer :: nthreads
     integer :: id
@@ -124,7 +125,7 @@
     rm_id = id
 #endif
     ! Open files
-    status = RM_SetFilePrefix(id, "AdvectBMI_f90")
+    status = RM_BMI_SetValue(id, "FilePrefix", "AdvectBMI_f90")
     status = RM_OpenFiles(id)
     ! Initialize with YAML file
     status = RM_BMI_Initialize(id, yaml_file)
@@ -135,8 +136,6 @@
     ! Optional callback for MPI
     status = do_something()   ! only root is calling do_something here
 #endif
-
-    nchem = RM_GetChemistryCellCount(id)
     status = RM_BMI_GetValue(id, "ComponentCount", ncomps)
     
     ! Print some of the reaction module information
@@ -146,7 +145,8 @@
     status = RM_OutputMessage(id, string1)
     write(string1, "(A,I10)") "MPI task number:                                  ", RM_GetMpiMyself(id)
     status = RM_OutputMessage(id, string1)
-    status = RM_GetFilePrefix(id, string)
+    !status = RM_GetFilePrefix(id, string)
+    status = RM_BMI_GetValue(id, "FilePrefix", string)
     write(string1, "(A,A)") "File prefix:                                      ", string
     status = RM_OutputMessage(id, trim(string1))
     write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", nxyz
@@ -220,12 +220,12 @@
         call advectionbmi_f90(c, bc_conc, ncomps, nxyz)
     
         ! print at last time step
-        if (isteps == nsteps) then
-            status = RM_SetSelectedOutputOn(id, 1)         ! enable selected output
-            status = RM_SetPrintChemistryOn(id, 1, 0, 0)   ! workers, initial_phreeqc, utility
-        else
-            status = RM_SetSelectedOutputOn(id, 0)         ! disable selected output
-            status = RM_SetPrintChemistryOn(id, 0, 0, 0)   ! workers, initial_phreeqc, utility
+        if (isteps == nsteps) then     
+            status = RM_BMI_SetValue(id, "SelectedOutputOn", .true.)    ! enable selected output
+            status = RM_SetPrintChemistryOn(id, 1, 0, 0)                ! workers, initial_phreeqc, utility
+        else        
+            status = RM_BMI_SetValue(id, "SelectedOutputOn", .false.)   ! disable selected output
+            status = RM_SetPrintChemistryOn(id, 0, 0, 0)                ! workers, initial_phreeqc, utility
         endif
         ! Transfer data to PhreeqcRM after transport      
         status = RM_BMI_SetValue(id, "Concentrations", c)  ! Transported concentrations

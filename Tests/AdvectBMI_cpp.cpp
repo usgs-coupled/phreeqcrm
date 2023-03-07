@@ -88,13 +88,13 @@ int AdvectBMI_cpp()
 		PhreeqcRM phreeqc_rm(nxyz, nthreads);
 		some_data.PhreeqcRM_ptr = &phreeqc_rm;
 #endif
-		phreeqc_rm.SetFilePrefix("AdvectBMI_cpp");
+		phreeqc_rm.BMI_SetValue("FilePrefix", "AdvectBMI_cpp");
 		phreeqc_rm.OpenFiles();
 		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
 		bmi_register_basic_callback(&some_data);
 
 		// Use YAML file to initialize
-		phreeqc_rm.InitializeYAML(yaml_file);
+		phreeqc_rm.BMI_Initialize(yaml_file);
 
 		// Get number of components
 		int ncomps;
@@ -120,7 +120,7 @@ int AdvectBMI_cpp()
 		const std::vector<int>& f_map = phreeqc_rm.GetForwardMapping();
 
 		// BMI version of getting component list
-		// equivalent to following statement
+		// following equivalent statement is much easier
 		// const std::vector<std::string>& components = phreeqc_rm.GetComponents();
 		std::vector<std::string> components;
 		{
@@ -140,8 +140,8 @@ int AdvectBMI_cpp()
 		}
 
 		// BMI version of getting gram formula weights of components
-		// equivalent to following statement
-		//const std::vector < double >& gfw = phreeqc_rm.GetGfw();
+		// following is an equivalent statement
+		// const std::vector < double >& gfw = phreeqc_rm.GetGfw();
 		std::vector<double> gfw(ncomps, 0);
 		phreeqc_rm.BMI_GetValue("Gfw", gfw.data());
 
@@ -169,9 +169,15 @@ int AdvectBMI_cpp()
 		//	throw PhreeqcRMStop();
 		//}
 		IRM_RESULT status;
-		std::vector<double> current_sat(nxyz, 0.0);
-		phreeqc_rm.BMI_GetValue("Saturation", current_sat.data());
-
+		std::vector<double> sat(nxyz, 0.0);
+		phreeqc_rm.BMI_GetValue("Saturation", sat.data());
+		//Get initial porosity
+		std::vector<double> por(nxyz, 0.0);
+		phreeqc_rm.BMI_GetValue("Porosity", por.data());
+		//Get initial solution volume
+		std::vector<double> volume(nxyz, 0.0);
+		phreeqc_rm.BMI_GetValue("SolutionVolume", volume.data());
+		//Get initial concentrations
 		std::vector<double> c;
 		c.resize(nxyz * components.size());
 		//status = phreeqc_rm.GetConcentrations(c);
@@ -187,7 +193,6 @@ int AdvectBMI_cpp()
 		// --------------------------------------------------------------------------
 		// Set boundary condition
 		// --------------------------------------------------------------------------
-
 		std::vector<double> bc_conc, bc_f1;
 		std::vector<int> bc1, bc2;
 		int nbound = 1;
@@ -195,21 +200,17 @@ int AdvectBMI_cpp()
 		bc2.resize(nbound, -1);                     // no bc2 solution for mixing
 		bc_f1.resize(nbound, 1.0);                  // mixing fraction for bc1
 		status = phreeqc_rm.InitialPhreeqc2Concentrations(bc_conc, bc1, bc2, bc_f1);
-
 		// --------------------------------------------------------------------------
 		// Transient loop
 		// --------------------------------------------------------------------------
-
 		int nsteps = 10;
-		std::vector<double> por(nxyz, 0.2);
-		std::vector<double> sat(nxyz, 1.0);
-
-		double time_step = phreeqc_rm.BMI_GetTimeStep();
-		double time = phreeqc_rm.BMI_GetCurrentTime();
+		double time = 0.0;
+		phreeqc_rm.BMI_SetValue("Time", &time);
+		double time_step = 86400;
+		phreeqc_rm.BMI_SetValue("TimeStep", &time_step);
 
 		for (int steps = 0; steps < nsteps; steps++)
 		{
-			// Transport calculation here
 			{
 				std::ostringstream strm;
 				strm << "Beginning transport calculation             " << phreeqc_rm.GetTime() * phreeqc_rm.GetTimeConversion() << " days\n";
@@ -218,6 +219,7 @@ int AdvectBMI_cpp()
 				phreeqc_rm.SetScreenOn(true);
 				phreeqc_rm.ScreenMessage(strm.str());
 			}
+			// Transport calculation here
 			advectionbmi_cpp(c, bc_conc, ncomps, nxyz, nbound);
 			// Transfer data to PhreeqcRM for reactions
 			bool print_selected_output_on = (steps == nsteps - 1) ? true : false;
@@ -225,6 +227,9 @@ int AdvectBMI_cpp()
 			//status = phreeqc_rm.SetSelectedOutputOn(print_selected_output_on);
 			phreeqc_rm.BMI_SetValue("SelectedOutputOn", &print_selected_output_on);
 			status = phreeqc_rm.SetPrintChemistryOn(print_chemistry_on, false, false); // workers, initial_phreeqc, utility
+
+			//status = phreeqc_rm.SetConcentrations(c);         // Transported concentrations
+			phreeqc_rm.BMI_SetValue("Concentrations", c.data());
 			//status = phreeqc_rm.SetPorosity(por);             // If pororosity changes due to compressibility
 			phreeqc_rm.BMI_SetValue("Porosity", por.data());
 			//status = phreeqc_rm.SetSaturation(sat);           // If saturation changes
@@ -233,8 +238,6 @@ int AdvectBMI_cpp()
 			phreeqc_rm.BMI_SetValue("Temperature", temperature.data());
 			//status = phreeqc_rm.SetPressure(pressure);        // If pressure changes
 			phreeqc_rm.BMI_SetValue("Pressure", pressure.data());
-			//status = phreeqc_rm.SetConcentrations(c);         // Transported concentrations
-			phreeqc_rm.BMI_SetValue("Concentrations", c.data());
 			//status = phreeqc_rm.SetTimeStep(time_step);		  // Time step for kinetic reactions
 			phreeqc_rm.BMI_SetValue("TimeStep", &time_step);
 			time += time_step;
@@ -251,14 +254,17 @@ int AdvectBMI_cpp()
 			status = phreeqc_rm.StateSave(1);
 			status = phreeqc_rm.StateApply(1);
 			status = phreeqc_rm.StateDelete(1);
+			//Run chemistry
 			//status = phreeqc_rm.RunCells();
 			phreeqc_rm.BMI_Update();
+
 			// Transfer data from PhreeqcRM for transport
 			//status = phreeqc_rm.GetConcentrations(c);
 			phreeqc_rm.BMI_GetValue("Concentrations", c.data());
 			//status = phreeqc_rm.GetDensity(density);
 			phreeqc_rm.BMI_GetValue("Density", density.data());
-			const std::vector<double>& volume = phreeqc_rm.GetSolutionVolume();
+			//const std::vector<double>& volume = phreeqc_rm.GetSolutionVolume();
+			phreeqc_rm.BMI_GetValue("SolutionVolume", volume.data());
 			// Print results at last time step
 			if (print_chemistry_on != 0)
 			{
@@ -281,14 +287,12 @@ int AdvectBMI_cpp()
 				{
 					std::ostringstream oss;
 					// Loop through possible multiple selected output definitions
-					//int n_user = phreeqc_rm.GetNthSelectedOutputUserNumber(isel);
-					//status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
 					phreeqc_rm.BMI_SetValue("NthSelectedOutput", &isel);
 					oss << "Selected output sequence number: " << isel << "\n";
 					int n_user = -1;
 					phreeqc_rm.BMI_GetValue("CurrentSelectedOutputUserNumber", &n_user);
 					oss << "Selected output user number:     " << n_user << "\n";
-					// Get double array of selected output values
+					// Get array of selected output values
 					//std::vector<double> so;
 					//int col = phreeqc_rm.GetSelectedOutputColumnCount();
 					//status = phreeqc_rm.GetSelectedOutput(so);
