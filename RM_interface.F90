@@ -3573,7 +3573,7 @@ DOUBLE PRECISION FUNCTION RM_GetTimeStep(id)
     INTEGER, INTENT(in) :: id
     RM_GetTimeStep = RMF_GetTimeStep(id)
 END FUNCTION RM_GetTimeStep 
-
+#ifdef USE_YAML
 !> A YAML file can be used to initialize an instance of PhreeqcRM. 
 !> @param id               The instance @a id returned from @ref RM_Create.
 !> @param yaml_name         String containing the YAML file name.
@@ -3702,7 +3702,7 @@ INTEGER FUNCTION RM_InitializeYAML(id, yaml_name)
     CHARACTER(len=*), INTENT(in) :: yaml_name
     RM_InitializeYAML = RMF_InitializeYAML(id, trim(yaml_name)//C_NULL_CHAR)
 END FUNCTION RM_InitializeYAML 
-
+#endif
 !> Fills an array (@a bc_conc) with concentrations from solutions in the InitialPhreeqc instance.
 !> The method is used to obtain concentrations for boundary conditions. If a negative value
 !> is used for a cell in @a bc1, then the highest numbered solution in the InitialPhreeqc instance

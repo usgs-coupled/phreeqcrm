@@ -1,6 +1,7 @@
 #ifdef USE_MPI
 #include "mpi.h"
 #endif
+#include "BMI_Var.h"
 #include "PhreeqcRM.h"
 #include "RM_interface_C.h"
 #include "IPhreeqcPhastLib.h"
@@ -1256,6 +1257,7 @@ double RM_GetTimeStep(int id)
 	}
 	return (double) IRM_BADINSTANCE;
 }
+#ifdef USE_YAML
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RM_InitializeYAML(int id, const char* yamlname)
@@ -1273,6 +1275,7 @@ RM_InitializeYAML(int id, const char* yamlname)
 	}
 	return IRM_BADINSTANCE;
 }
+#endif
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RM_InitialPhreeqc2Concentrations(
