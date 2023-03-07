@@ -1,12 +1,4 @@
-!*MODULE BMI_PhreeqcRM PhreeqcRM BMI interface
-!> @brief Fortran Documentation for the geochemical reaction module PhreeqcRM. 
-!> @par "" 
-!> "USE PhreeqcRM" is included in Fortran source code to define the PhreeqcRM functions.
-!> For Windows, define the module by including the file RM_interface.F90 in your project.
-!> For Linux, configure, compile, and install the PhreeqcRM library and module file. 
-!> You will need installed include directory (-I) added to the project) to reference the module file.
-!> You will need to link to the library to produce the executable for your code.
-!>
+
     MODULE BMI_PhreeqcRM
     IMPLICIT NONE
 INTERFACE RM_BMI_GetValue
@@ -67,6 +59,24 @@ INTEGER FUNCTION RM_BMI_Finalize(id)
     return
 END FUNCTION RM_BMI_Finalize 
 
+!> Basic Model Interface method that returns the component name--PhreeqcRM. The BMI interface to PhreeqcRM is
+!> only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
+!> prefix) provide a complete interface, and it is expected that the native methods will be used in preference to the BMI_
+!> methods.
+!> 
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> @param component_name is filled with "PhreeqcRM", the name of the component.
+!> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = RM_BMI_GetComponentName(id, component_name)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
 INTEGER FUNCTION RM_BMI_GetComponentName(id, component_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -85,6 +95,32 @@ INTEGER FUNCTION RM_BMI_GetComponentName(id, component_name)
     return
 END FUNCTION RM_BMI_GetComponentName 
 
+
+!> Basic Model Interface method that returns the current simulation time, in seconds. (Same as @ref GetTime.)
+!> The reaction module does not change the time value, so the
+!> returned value is equal to the default (0.0) or the last time set by
+!> @ref BMI_SetValue("Time", time) or @ref RM_SetTime.
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> @retval                 The current simulation time, in seconds.
+!> @see
+!> @ref RM_BMI_GetEndTime,
+!> @ref RM_BMI_GetTimeStep,
+!> @ref RM_BMI_SetValue,
+!> @ref RM_GetTime,
+!> @ref RM_GetTimeStep,
+!> @ref RM_SetTime,
+!> @ref RM_SetTimeStep.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> time = RM_BMI_GetCurrentTime(id)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
 DOUBLE PRECISION FUNCTION RM_BMI_GetCurrentTime(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -100,6 +136,79 @@ DOUBLE PRECISION FUNCTION RM_BMI_GetCurrentTime(id)
     RM_BMI_GetCurrentTime = RMF_BMI_GetCurrentTime(id)
 END FUNCTION RM_BMI_GetCurrentTime
 
+!> Basic Model Interface method that returns @ref RM_BMI_GetCurrentTime plus 
+!> @ref RM_BMI_GetTimeStep, in seconds.
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> @retval                 The end of the time step, in seconds.
+!> @see
+!> @ref RM_BMI_GetCurrentTime,
+!> @ref RM_BMI_GetTimeStep,
+!> @ref RM_BMI_SetValue,
+!> @ref RM_GetTime,
+!> @ref RM_GetTimeStep,
+!> @ref RM_SetTime,
+!> @ref RM_SetTimeStep.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> time = RM_BMI_GetEndTime(id)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+DOUBLE PRECISION FUNCTION RM_BMI_GetEndTime(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_GetEndTime(id) &
+            BIND(C, NAME='RMF_BMI_GetEndTime')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_BMI_GetEndTime
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    RM_BMI_GetEndTime = RMF_BMI_GetEndTime(id)
+END FUNCTION RM_BMI_GetEndTime
+
+!> Basic Model Interface method that returns count of input variables that 
+!> can be set with @ref RM_BMI_SetValue.
+!> @retval  Count of input variables that can be set with @ref RM_BMI_SetValue.
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> 
+!> @see
+!> @ref RM_BMI_GetInputVarNames,
+!> @ref RM_BMI_GetVarItemsize,
+!> @ref RM_BMI_GetVarNbytes,
+!> @ref RM_BMI_GetVarType,
+!> @ref RM_BMI_GetVarUnits,
+!> @ref RM_BMI_SetValue.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> 		std::vector<std::string> InputVarNames = phreeqc_rm.BMI_GetInputVarNames();
+!> 		int count = phreeqc_rm.BMI_GetInputItemCount();
+!> 		oss << "BMI_SetValue variables:\n";
+!> 		for (size_t i = 0; i < count; i++)
+!> 		{
+!> 			oss << "  " << i << "  " << InputVarNames[i] << "\n";
+!> 			oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(InputVarNames[i]) << "\n";
+!> 			oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(InputVarNames[i]) << "\n";
+!> 			oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) << "\n";
+!> 			oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
+!> 			oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) /
+!> 										   phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
+!> 		}
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+!> 
 INTEGER FUNCTION RM_BMI_GetInputItemCount(id)
     USE ISO_C_BINDING
     IMPLICIT NONE

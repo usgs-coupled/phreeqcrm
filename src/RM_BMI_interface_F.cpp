@@ -56,6 +56,19 @@ RMF_BMI_GetCurrentTime(int* id)
 	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
+double
+RMF_BMI_GetEndTime(int* id)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves current simulation time, in seconds
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		return Reaction_module_ptr->BMI_GetEndTime();
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
 int        
 RMF_BMI_GetInputItemCount(int* id)
 /* ---------------------------------------------------------------------- */

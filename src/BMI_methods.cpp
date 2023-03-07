@@ -187,12 +187,36 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
             memcpy(dest, &count, sizeof(int));
             return;
         }
+        if (it->first == "inputvarnames")
+        {
+            int string_length = this->BMI_GetVarItemsize("inputvarnames");
+            std::vector < std::string > varnames = this->BMI_GetInputVarNames();
+            std::stringstream all_varnames;
+            for (size_t i = 0; i < varnames.size(); i++)
+            {
+                all_varnames << std::left << std::setfill(' ') << std::setw(string_length) << varnames[i];
+            }
+            memcpy(dest, all_varnames.str().c_str(), all_varnames.str().size());
+            return;
+        }
         //if (it->first == "NthSelectedOutputUserNumber")
         //{
         //    int num = this->GetNthSelectedOutputUserNumber();
         //    memcpy(dest, &num, sizeof(int));
         //    return;
         //}
+        if (it->first == "outputvarnames")
+        {
+            int string_length = this->BMI_GetVarItemsize("outputvarnames");
+            std::vector < std::string > varnames = this->BMI_GetOutputVarNames();
+            std::stringstream all_varnames;
+            for (size_t i = 0; i < varnames.size(); i++)
+            {
+                all_varnames << std::left << std::setfill(' ') << std::setw(string_length) << varnames[i];
+            }
+            memcpy(dest, all_varnames.str().c_str(), all_varnames.str().size());
+            return;
+        }
         if (it->first == "porosity")
         {
             const std::vector<double>& porosity = this->GetPorosity();
@@ -338,9 +362,21 @@ int PhreeqcRM::BMI_GetVarNbytes(std::string name)
         {
             return (int)sizeof(int);
         }
+        if (it->first == "inputvarnames")
+        {
+            int string_length = this->BMI_GetVarItemsize("inputvarnames");
+            std::vector < std::string > varnames = this->BMI_GetInputVarNames();
+            return string_length * (int)(varnames.size() * sizeof(char));
+        }
         if (it->first == "nthselectedoutput")
         {
             return (int)sizeof(int);
+        }
+        if (it->first == "outputvarnames")
+        {
+            int string_length = this->BMI_GetVarItemsize("outputvarnames");
+            std::vector < std::string > varnames = this->BMI_GetOutputVarNames();
+            return string_length * (int)(varnames.size() * sizeof(char));
         }
         if (it->first == "porosity")
         {
@@ -474,10 +510,30 @@ int PhreeqcRM::BMI_GetVarItemsize(std::string name)
 		{
             return (int)sizeof(int);
 		}
+        if (it->first == "inputvarnames")
+        {
+            std::vector < std::string > varnames = this->BMI_GetInputVarNames();
+            size_t max = 0;
+            for (size_t i = 0; i < varnames.size(); i++)
+            {
+                if (varnames[i].size() > max) max = varnames[i].size();
+            }
+            return (int)max;
+        }
 		if (it->first == "nthselectedoutput")
 		{
             return (int)sizeof(int);
 		}
+        if (it->first == "outputvarnames")
+        {
+            std::vector < std::string > varnames = this->BMI_GetOutputVarNames();
+            size_t max = 0;
+            for (size_t i = 0; i < varnames.size(); i++)
+            {
+                if (varnames[i].size() > max) max = varnames[i].size();
+            }
+            return (int)max;
+        }
 		if (it->first == "porosity")
 		{
             return (int)sizeof(double);
@@ -568,7 +624,7 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["CreateMapping"] = Var_BMI("CreateMapping", "int", "mapping", sizeof(int));
         //var_map["ChemistryCellCount"] = Var_BMI("ChemistryCellCount", "int", "count", sizeof(int));
         bmi_var_map["components"] = BMI_Var("Components", "string", "names", false, true);
-        bmi_var_map["componentcount"] = BMI_Var("Componentcount", "int", "names", false, true);
+        bmi_var_map["componentcount"] = BMI_Var("ComponentCount", "int", "names", false, true);
         bmi_var_map["concentrations"] = BMI_Var("Concentrations", "double", "mol L-1", true, true);
         bmi_var_map["density"] = BMI_Var("Density", "double", "kg L-1", true, true);
         //var_map["EndCell"] = Var_BMI("EndCell", "int", "cell numbers", sizeof(int));
@@ -640,7 +696,8 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["UnitsSSassemblage"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));
         //var_map["UnitsSurface"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));
         //var_map["UseSolutionDensityVolume"] = Var_BMI("UseSolutionDensityVolume", "int", "flag", sizeof(int));
-
+        bmi_var_map["inputvarnames"] = BMI_Var("InputVarNames", "int", "string", false, true);
+        bmi_var_map["outputvarnames"] = BMI_Var("OutputVarNames", "int", "string", false, true);
     }
     this->bmi_input_vars.clear();
     this->bmi_output_vars.clear();
@@ -649,11 +706,11 @@ void PhreeqcRM::BMI_MakeVarMap()
     {
         if (it->second.GetSet())
         {
-            bmi_input_vars.push_back(it->first);
+            bmi_input_vars.push_back(it->second.GetName());
         }
         if (it->second.GetGet())
         {
-            bmi_output_vars.push_back(it->first);
+            bmi_output_vars.push_back(it->second.GetName());
         }
     }
 }

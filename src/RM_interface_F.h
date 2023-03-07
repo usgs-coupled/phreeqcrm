@@ -173,6 +173,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_UseSolutionDensityVolume(int *id, int *tf);
 IRM_DLL_EXPORT IRM_RESULT RMF_WarningMessage(int *id, const char *warn_str);
 IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetComponentName(int* id, char* chem_name, int* l1);
 IRM_DLL_EXPORT double     RMF_BMI_GetCurrentTime(int* id);
+IRM_DLL_EXPORT double     RMF_BMI_GetEndTime(int* id);
 IRM_DLL_EXPORT int        RMF_BMI_GetInputItemCount(int* id);
 IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetInputVarNames(int* id, char* names, int* l1);
 IRM_DLL_EXPORT int        RMF_BMI_GetOutputItemCount(int* id);
