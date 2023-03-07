@@ -171,7 +171,10 @@ libphreeqcrm_la_SOURCES=\
 	src/PhreeqcRM.cpp\
 	src/RM_interface_C.cpp\
 	src/RM_interface_F.cpp\
-	src/RM_interface_F.h
+	src/RM_interface_F.h\
+	src/YAMLPhreeqcRM.cpp\
+	src/YAMLPhreeqcRM.h
+
 
 
 include_HEADERS=\
@@ -183,6 +186,7 @@ include_HEADERS=\
 	$(top_srcdir)/src/IrmResult.h\
 	$(top_srcdir)/src/PhreeqcRM.h\
 	$(top_srcdir)/src/RM_interface_C.h\
+	$(top_srcdir)/src/YAMLPhreeqcRM.h\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/Parser.h\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_base.h\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_exports.h\
@@ -222,4 +226,3 @@ LTPPFCCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=FC $(AM_LIBTOOLFLAGS) \
         $(AM_FCFLAGS) $(FCFLAGS)
 
 SUBDIRS = database doc Doxygen Tests
-

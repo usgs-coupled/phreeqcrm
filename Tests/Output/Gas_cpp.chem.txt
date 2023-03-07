@@ -1,0 +1,132 @@
+------------------------------------
+Reading input data for simulation 1.
+------------------------------------
+
+	SOLUTION 1
+	Na 1000
+	Cl 1000
+	END
+-------------------------------------------
+Beginning of initial solution calculations.
+-------------------------------------------
+
+Initial solution 1.	
+
+-----------------------------Solution composition------------------------------
+
+	Elements           Molality       Moles
+
+	Cl                1.000e+00   1.000e+00
+	Na                1.000e+00   1.000e+00
+
+----------------------------Description of solution----------------------------
+
+                                       pH  =   7.000    
+                                       pe  =   4.000    
+      Specific Conductance (µS/cm,  25°C)  = 79726
+                          Density (g/cm³)  =   1.03606
+                               Volume (L)  =   1.02160
+                        Activity of water  =   0.966
+                 Ionic strength (mol/kgw)  =   1.000e+00
+                       Mass of water (kg)  =   1.000e+00
+                 Total alkalinity (eq/kg)  =   3.428e-08
+                         Temperature (°C)  =  25.00
+                  Electrical balance (eq)  =  -3.428e-08
+ Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
+                               Iterations  =   4
+                                  Total H  = 1.110124e+02
+                                  Total O  = 5.550622e+01
+
+----------------------------Distribution of species----------------------------
+
+                                               Log       Log       Log    mole V
+   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+
+   OH-             1.688e-07   9.777e-08    -6.773    -7.010    -0.237     -2.10
+   H+              1.346e-07   1.000e-07    -6.871    -7.000    -0.129      0.00
+   H2O             5.551e+01   9.660e-01     1.744    -0.015     0.000     18.07
+Cl            1.000e+00
+   Cl-             1.000e+00   6.087e-01     0.000    -0.216    -0.216     18.94
+H(0)          1.125e-25
+   H2              5.623e-26   7.079e-26   -25.250   -25.150     0.100     28.61
+Na            1.000e+00
+   Na+             1.000e+00   7.312e-01     0.000    -0.136    -0.136     -0.31
+   NaOH            5.679e-18   7.150e-18   -17.246   -17.146     0.100     (0)  
+O(0)          0.000e+00
+   O2              0.000e+00   0.000e+00   -42.210   -42.110     0.100     30.40
+
+------------------------------Saturation indices-------------------------------
+
+  Phase               SI** log IAP   log K(298 K,   1 atm)
+
+  H2(g)           -22.05    -25.15   -3.10  H2
+  H2O(g)           -1.52     -0.02    1.50  H2O
+  Halite           -1.92     -0.35    1.57  NaCl
+  O2(g)           -39.22    -42.11   -2.89  O2
+
+**For a gas, SI = log10(fugacity). Fugacity = pressure * phi / 1 atm.
+  For ideal gases, phi = 1.
+
+------------------
+End of simulation.
+------------------
+
+------------------------------------
+Reading input data for simulation 2.
+------------------------------------
+
+	GAS_PHASE 1
+	fixed_volume 
+	pressure 1
+	temp 25
+	volume 24.5
+	CH4(g) .01
+	Ntg(g) .02
+	Oxg(g) .03
+	END
+------------------
+End of simulation.
+------------------
+
+------------------------------------
+Reading input data for simulation 3.
+------------------------------------
+
+	GAS_PHASE 2
+	fixed_volume 
+	pressure 1
+	temp 25
+	volume 24.5
+	CH4(g) .05
+	Ntg(g) .07
+	Oxg(g) .11
+	END
+------------------
+End of simulation.
+------------------
+
+------------------------------------
+Reading input data for simulation 4.
+------------------------------------
+
+	GAS_PHASE 3
+	fixed_volume 
+	pressure 1
+	temp 25
+	volume 24.5
+	CH4(g) .13
+	Ntg(g) .17
+	Oxg(g) .19
+	END
+------------------
+End of simulation.
+------------------
+
+------------------------------------
+Reading input data for simulation 5.
+------------------------------------
+
+--------------------------------
+End of Run after 10.306 Seconds.
+--------------------------------
+

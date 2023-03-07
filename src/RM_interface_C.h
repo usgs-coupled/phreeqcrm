@@ -2320,7 +2320,7 @@ status = RM_LogMessage(id, str);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT double     RM_GetTimeStep(int id);
-
+#ifdef USE_YAML
 /**
 A YAML file can be used to initialize an instance of PhreeqcRM.
 @param id               The instance @a id returned from @ref RM_Create.
@@ -2436,6 +2436,7 @@ Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 
 IRM_DLL_EXPORT IRM_RESULT RM_InitializeYAML(int id, const char* yamlfile);
+#endif
 /**
 Fills an array (@a c) with concentrations from solutions in the InitialPhreeqc instance.
 The method is used to obtain concentrations for boundary conditions. If a negative value

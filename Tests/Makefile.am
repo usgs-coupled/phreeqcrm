@@ -6,18 +6,17 @@ TESTS = test
 check_PROGRAMS = test
 
 test_SOURCES =\
-	advection_bmi_cpp.cpp\
-	advection_c.c\
-	advection_cpp.cpp\
-	gas_c.c\
-	gas_cpp.cpp\
+	Advect_c.c\
+	AdvectBMI_cpp.cpp\
+	Advect_cpp.cpp\
+	Gas_c.c\
+	Gas_cpp.cpp\
 	main.cpp\
-	SimpleAdvection.cpp\
-	species_c.c\
-	species_cpp.cpp\
-	WriteYAMLFile.cpp\
-	YAMLPhreeqcRM.cpp\
-	YAMLPhreeqcRM.h
+	SimpleAdvect_c.c\
+	SimpleAdvect_cpp.cpp\
+	Species_c.c\
+	Species_cpp.cpp\
+	WriteYAMLFile_cpp.cpp
 
 
 # Ubuntu 22.04.1
@@ -26,52 +25,59 @@ test_LDADD = $(top_builddir)/libphreeqcrm.la -lyaml-cpp
 test_LINK = $(CXXLINK)
 
 CLEANFILES =\
-	Advect_bmi_cpp.chem.txt\
-	Advect_bmi_cpp.log.txt\
+	Advect_c_utility.txt\
 	Advect_c.chem.txt\
+	Advect_c.dmp\
 	Advect_c.log.txt\
+	Advect_cpp_units_utility.txt\
+	Advect_cpp_units_worker.chem.txt\
+	Advect_cpp_units_worker.log.txt\
+	Advect_cpp_units_worker.txt\
+	Advect_cpp_utility.txt\
 	Advect_cpp.chem.txt\
+	Advect_cpp.dmp\
 	Advect_cpp.log.txt\
-	advect.yaml\
-	advection_bmi_cpp.dmp\
-	advection_c.dmp\
-	advection_cpp.dmp\
-	gas_c.chem.txt\
-	gas_c.dmp\
-	gas_c.log.txt\
-	gas_cpp.chem.txt\
-	gas_cpp.dmp\
-	gas_cpp.log.txt\
-	gas_utility_c.txt\
-	gas_utility_cpp.txt\
-	SimpleAdvection_cpp.chem.txt\
-	SimpleAdvection_cpp.log.txt\
+	AdvectBMI_cpp_units_utility.txt\
+	AdvectBMI_cpp_units_worker.txt\
+	AdvectBMI_cpp_utility.txt\
+	AdvectBMI_cpp.chem.txt\
+	AdvectBMI_cpp.dmp\
+	AdvectBMI_cpp.log.txt\
+	AdvectBMI_cpp.yaml\
+	Gas_c_utility.txt\
+	Gas_c.chem.txt\
+	Gas_c.dmp\
+	Gas_c.log.txt\
+	Gas_cpp_utility.txt\
+	Gas_cpp.chem.txt\
+	Gas_cpp.dmp\
+	Gas_cpp.log.txt\
+	SimpleAdvect_c.chem.txt\
+	SimpleAdvect_c.log.txt\
+	SimpleAdvect_cpp.chem.txt\
+	SimpleAdvect_cpp.log.txt\
+	Species_c_utility.txt\
 	Species_c.chem.txt\
-	species_c.dmp\
+	Species_c.dmp\
 	Species_c.log.txt\
+	Species_cpp_utility.txt\
 	Species_cpp.chem.txt\
-	species_cpp.dmp\
+	Species_cpp.dmp\
 	Species_cpp.log.txt\
-	species_utility_c.txt\
-	species_utility_cpp.txt\
-	Units_InitialPhreeqc_1.chem.txt\
-	Units_InitialPhreeqc_1.log.txt\
-	Units_InitialPhreeqc_2.chem.txt\
-	Units_InitialPhreeqc_2.log.txt\
-	Units_utility.out\
 	Units_Worker.chem.txt\
 	Units_Worker.log.txt\
-	utility_c.txt\
-	utility_cpp.txt
+	Utility_c.txt\
+	Utility_cpp.out
 
 if PHREEQCRM_TEST_FORTRAN
 
 test_SOURCES+=\
-	advection_f90.F90\
-	gas_f90.F90\
-	species_f90.F90\
+	Advect_f90.F90\
+	Gas_f90.F90\
+	SimpleAdvect_f90.F90\
+	Species_f90.F90\
 	../src/RM_interface.F90\
-	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90 
+	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
 
 test_LDADD+=$(FCLIBS)
 
@@ -82,9 +88,9 @@ clean-modules:
 
 advection_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT)
 
-species_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) 
+species_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT)
 
-gas_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) 
+gas_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT)
 
 
 endif

@@ -111,6 +111,9 @@ enum {
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
 
+int IRM_DLL_EXPORT
+GetGridCellCountYAML(std::string YAML_file);
+
 /**
  * @mainpage PhreeqcRM Library Documentation (@PHREEQC_VER@-@REVISION_SVN@)
  *
@@ -118,8 +121,9 @@ enum {
  *  <table>
  *   <tr><td class="indexkey"><a class="el" href="class_phreeqc_r_m.html">PhreeqRM.h</a> </td><td class="indexvalue">C++ Documentation</td></tr>
  *   <tr><td class="indexkey"><a class="el" href="_r_m__interface___c_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">C Documentation </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="classphreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">Fortran Documentation </td></tr>
  *   <tr><td class="indexkey"><a class="el" href="_irm_result_8h.html">IrmResult.h</a></td><td class="indexvalue">Return codes </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="class_y_a_m_l_phreeqc_r_m.html">YAMLPhreeqcRM.h</a></td><td class="indexvalue">C++ YAML Support </td></tr>
  *  </table>
  *  @endhtmlonly
  */
@@ -2915,6 +2919,7 @@ int iphreeqc_result = w[0]->RunAccumulated();
 Called by root and (or) workers.
  */
 	const std::vector<IPhreeqcPhast *> &      GetWorkers() {return this->workers;}
+#ifdef USE_YAML
 /**
 A YAML file can be used to initialize an instance of PhreeqcRM. 
 @param yamlfile         String containing the YAML file name.
@@ -3020,6 +3025,7 @@ WarningMessage(std::string warnstr);
 Called by root, workers must be in the loop of @ref MpiWorker.
 */
 IRM_RESULT		InitializeYAML(std::string yamlfile);
+#endif
 /**
 Fills a vector (@a destination_c) with concentrations from solutions in the InitialPhreeqc instance.
 The method is used to obtain concentrations for boundary conditions. If a negative value
@@ -5571,7 +5577,7 @@ Called by root.
 	std::string BMI_GetVarUnits(std::string name);
 
 	//--------------------------
-
+#ifdef USE_YAML
 	/**
 	Basic Model Interface method that can be used to initialize a PhreeqcRM instance. This method is equivalent to
 	@ref InitializeYAML. A YAML file can be used in initialization. The file contains a YAML map of PhreeqcRM methods
@@ -5674,7 +5680,7 @@ Called by root.
 			{
 				// Take a transport time step here and update the vector c.
 				phreeqc_rm.BMI_SetValue("Time", time);
-				phreeqc_rm.SetValue("Concentrations", c.data());
+				phreeqc_rm.BMI_SetValue("Concentrations", c.data());
 				phreeqc_rm.BMI_Update();
 				phreeqc_rm.BMI_GetValue("Concentrations", c.data());
 			}
@@ -5685,7 +5691,7 @@ Called by root.
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	 */
 	void BMI_Initialize(std::string config_file) { IRM_RESULT status = InitializeYAML(config_file); };
-
+#endif
 	//--------------------------	
 
 	/**
@@ -5763,7 +5769,7 @@ Called by root.
 			{
 				// Take a transport time step here and update the vector c.
 				phreeqc_rm.BMI_SetValue("Time", time);
-				phreeqc_rm.SetValue("Concentrations", c.data());
+				phreeqc_rm.BMI_SetValue("Concentrations", c.data());
 				phreeqc_rm.BMI_Update();
 				phreeqc_rm.BMI_GetValue("Concentrations", c.data());
 			}

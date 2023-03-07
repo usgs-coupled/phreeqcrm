@@ -18,13 +18,40 @@ AC_DEFINE([SWIG_SHARED_OBJ], , [Must be set for PhreeqcRM])
 AC_DEFINE([USE_PHRQ_ALLOC], , [Must be set for PhreeqcRM])
 AC_DEFINE([NDEBUG], , [Must be set for PhreeqcRM])
 
+
+AC_ARG_WITH([curl],
+            AS_HELP_STRING([--with-curl],
+                           [Build with libcurl which supports processing an image URL @<:@default=check@:>@]),
+            [], [with_curl=check])
+
+# check for --yaml-cpp
+AC_ARG_WITH([yaml-cpp],
+            AS_HELP_STRING([--with-yaml-cpp],
+                           [compile with yaml-cpp support. @<:@default=check@:>@]),
+            [], [with_yaml_cpp=check])
+
+AS_IF([test "x$with_yaml_cpp" != xno], [
+  PKG_CHECK_MODULES([yaml_cpp], [yaml-cpp], [have_yaml_cpp=true], [have_yaml_cpp=false])
+  if $have_yaml_cpp; then
+    AC_DEFINE([USE_YAML], [], [Enable yaml-cpp])
+    CPPFLAGS="$yaml_cpp_CFLAGS $CPPFLAGS"
+    LDFLAGS="$yaml_cpp_LIBS $LDFLAGS"
+  else
+    AS_IF([test "x$with_yaml_cpp" != xcheck], [
+      AC_MSG_FAILURE(
+        [--with-yaml-cpp was given, but test for yaml-cpp failed (try sudo apt install libyaml-cpp-dev)])
+    ])
+  fi
+])
+
+
 # check for --with-mpi
 # If --with-mpi=auto is used, try to find MPI, but use standard C compiler if it is not found.
 # If --with-mpi=yes is used, try to find MPI and fail if it isn't found.
 # If --with-mpi=no is used, use a standard C compiler instead.
 AC_ARG_WITH(mpi, [AS_HELP_STRING([--with-mpi],
     [compile with MPI (parallelization) support. If none is found,
-    MPI is not used. Default: no])
+    MPI is not used. @<:@default=no@:>@])
 ],,[with_mpi=no])
 
 
@@ -44,9 +71,10 @@ AX_PROG_CXX_MPI([test x"$with_mpi" != xno],[use_mpi=yes],[
 AC_PROG_AWK
 AC_PROG_CPP
 
-# testing if this fixes macOS build on github actions
 # c++11 is required by Darwin for yaml-cpp
-AX_CXX_COMPILE_STDCXX(11, [ext], [mandatory])
+if test "X$with_yaml_cpp" != "Xno"; then
+  AX_CXX_COMPILE_STDCXX(11, [ext], [mandatory])
+fi
 
 # Check if the fortran test should be included
 AC_MSG_CHECKING([if Fortran test is added])
@@ -64,7 +92,7 @@ if test "X$IRM_FORTRAN" = "Xyes"; then
     fi
   ])
   AC_FC_LIBRARY_LDFLAGS
-  AC_FC_WRAPPERS 
+  AC_FC_WRAPPERS
   AC_FC_MAIN
   m4_ifdef([AC_FC_MODULE_EXTENSION], [AC_FC_MODULE_EXTENSION], [
     AX_F90_MODULE_EXTENSION
@@ -75,7 +103,7 @@ if test "X$IRM_FORTRAN" = "Xyes"; then
     AC_SUBST(FC_MODEXT)
   ])
   AC_SUBST(F77, $FC)
-  AC_SUBST(FFLAGS, $FCFLAGS) 
+  AC_SUBST(FFLAGS, $FCFLAGS)
 else
   AC_MSG_RESULT(no)
 fi
@@ -247,10 +275,10 @@ AC_CONFIG_FILES([
   doc/Makefile
   Doxygen/Makefile
   Tests/Makefile
-  Tests/advect.pqi
-  Tests/gas.pqi
-  Tests/phreeqc.dat
-  Tests/units.pqi
+  Tests/advect.pqi:Tests/advect.pqi
+  Tests/gas.pqi:Tests/gas.pqi
+  Tests/phreeqc.dat:Tests/phreeqc.dat
+  Tests/units.pqi:Tests/units.pqi
 ])
 
 AC_OUTPUT
@@ -272,4 +300,9 @@ else
   echo "Enable OpenMP                = no"
 fi
 echo "Enable MPI                   = $with_mpi"
+if test "X$with_yaml_cpp" != "Xno"; then
+  echo "Enable YAML-CPP              = yes"
+else
+  echo "Enable YAML-CPP              = no"
+fi
 echo "*************************************"

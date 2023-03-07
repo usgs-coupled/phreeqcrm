@@ -1,5 +1,6 @@
 // PhreeqcRM.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
+
 #include <cstring>
 #include <iostream>
 #include <map>
@@ -10,8 +11,9 @@
 #include "IPhreeqc.h"
 #include "IPhreeqcPhast.h"
 #include "BMI_Var.h"
+#ifdef USE_YAML
 #include "yaml-cpp/yaml.h"
-
+#endif
 void PhreeqcRM::BMI_SetValue(std::string name, void* src)
 {
     std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name);
@@ -580,6 +582,7 @@ void PhreeqcRM::BMI_MakeVarMap()
         }
     }
 }
+#ifdef USE_YAML
 IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 {
     YAML::Node yaml = YAML::LoadFile(config);
@@ -775,6 +778,10 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
             assert(node.IsSequence());
             std::vector<double> vol = node.as< std::vector < double > >();
             this->SetGasPhaseVolume(vol);
+            continue;
+        }
+        if (keyword == "SetGridCellCount") {
+            this->WarningMessage("SetGridCellCount has no effect after the PhreeqcRM instance is created.");
             continue;
         }
 		if (keyword == "SetPartitionUZSolids") 
@@ -989,6 +996,20 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 	}
     return IRM_RESULT::IRM_OK;
 }
+// Global method
+int 
+GetGridCellCountYAML(std::string YAML_file)
+{
+    YAML::Node yaml = YAML::LoadFile(YAML_file);
+    std::string keyword;
+    YAML::Node node;
+    if (yaml["SetGridCellCount"].IsDefined())
+    {
+        return yaml["SetGridCellCount"].as<int>();
+    }
+    return 0;
+}
+#endif
 
 
 

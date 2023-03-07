@@ -1,0 +1,96 @@
+------------------------------------
+Reading input data for simulation 1.
+------------------------------------
+
+	SELECTED_OUTPUT 5
+	 ph
+	 RUN_CELLS
+	 -cells 1
+--------------------------
+Beginning of run as cells.
+--------------------------
+
+-----------------------------------------
+Beginning of batch-reaction calculations.
+-----------------------------------------
+
+Reaction step 1.
+
+Using solution 1.	
+
+-----------------------------Solution composition------------------------------
+
+	Elements           Molality       Moles
+
+	Ca                3.000e-04   2.991e-04
+	Cl                1.200e-03   1.196e-03
+	K                 9.849e-05   9.819e-05
+	Na                5.015e-04   5.000e-04
+
+----------------------------Description of solution----------------------------
+
+                                       pH  =   7.169      Charge balance
+                                       pe  =  14.315      Adjusted to redox equilibrium
+      Specific Conductance (µS/cm,  15°C)  = 120
+                          Density (g/cm³)  =   0.99925
+                               Volume (L)  =   0.99785
+                        Activity of water  =   1.000
+                 Ionic strength (mol/kgw)  =   1.500e-03
+                       Mass of water (kg)  =   9.970e-01
+                 Total alkalinity (eq/kg)  =  -7.786e-19
+                         Temperature (°C)  =  15.00
+                           Pressure (atm)  =  3.00
+                  Electrical balance (eq)  =  -3.611e-17
+ Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
+                               Iterations  =  12
+                                  Total H  = 1.106821e+02
+                                  Total O  = 5.534157e+01
+
+----------------------------Distribution of species----------------------------
+
+                                               Log       Log       Log    mole V
+   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+
+   H+              7.060e-08   6.782e-08    -7.151    -7.169    -0.017      0.00
+   OH-             6.995e-08   6.702e-08    -7.155    -7.174    -0.019     -4.60
+   H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.03
+Ca            3.000e-04
+   Ca+2            3.000e-04   2.537e-04    -3.523    -3.596    -0.073    -18.26
+   CaOH+           6.477e-10   6.207e-10    -9.189    -9.207    -0.018     (0)  
+Cl            1.200e-03
+   Cl-             1.200e-03   1.150e-03    -2.921    -2.939    -0.019     17.68
+H(0)          0.000e+00
+   H2              0.000e+00   0.000e+00   -46.074   -46.074     0.000     28.62
+K             9.849e-05
+   K+              9.849e-05   9.436e-05    -4.007    -4.025    -0.019      8.65
+Na            5.015e-04
+   Na+             5.015e-04   4.808e-04    -3.300    -3.318    -0.018     -2.08
+   NaOH            3.219e-21   3.220e-21   -20.492   -20.492     0.000     (0)  
+O(0)          5.351e-04
+   O2              2.675e-04   2.676e-04    -3.573    -3.572     0.000     29.50
+
+------------------------------Saturation indices-------------------------------
+
+  Phase               SI** log IAP   log K(288 K,   3 atm)
+
+  H2(g)           -43.00    -46.07   -3.07  H2
+  H2O(g)           -1.77     -0.00    1.77  H2O
+  Halite           -7.82     -6.26    1.56  NaCl
+  O2(g)            -0.76     -3.57   -2.81  O2
+  Sylvite          -7.81     -6.96    0.85  KCl
+
+**For a gas, SI = log10(fugacity). Fugacity = pressure * phi / 1 atm.
+  For ideal gases, phi = 1.
+
+------------------
+End of simulation.
+------------------
+
+------------------------------------
+Reading input data for simulation 2.
+------------------------------------
+
+------------------------------
+End of Run after 5.66 Seconds.
+------------------------------
+

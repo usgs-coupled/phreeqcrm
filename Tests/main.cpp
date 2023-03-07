@@ -8,26 +8,28 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
-	
-extern void advection_f90(void);
-extern void advection_c(void);
-extern void species_f90(void);
-extern void species_c(void);
-extern void gas_c(void);
-extern void gas_f90(void);
+
+extern void Advect_c(void);
+extern void Advect_f90(void);
+extern void Gas_c(void);
+extern void Gas_f90(void);
+extern void SimpleAdvect_c(void);
+extern void SimpleAdvect_f90(void);
+extern void Species_c(void);
+extern void Species_f90(void);
 
 #if defined(__cplusplus)
 }
 #endif
 
 // C++ function
-extern int SimpleAdvection_cpp();
-extern int advection_cpp();
-extern int advection_bmi_cpp();
-extern int species_cpp();
+extern int SimpleAdvect_cpp();
+extern int Advect_cpp();
+extern int AdvectBMI_cpp();
+extern int Species_cpp();
 extern int units_tester();
-extern int gas_cpp();
-extern void WriteYAMLFile();
+extern int Gas_cpp();
+extern void WriteYAMLFile_cpp();
 
 int main(int argc, char* argv[])
 {
@@ -57,30 +59,36 @@ int main(int argc, char* argv[])
 	bool root = (mpi_myself == 0);
 	units_tester();
 	if (root) std::cerr << "Done units_tester.===================================" << std::endl;
-	SimpleAdvection_cpp();
+	SimpleAdvect_cpp();
 	if (root) std::cerr << "Done SimpleAdvection_cpp.==================================" << std::endl;
-	advection_cpp();
-	if (root) std::cerr << "Done advection_cpp.==================================" << std::endl;
-	WriteYAMLFile();
-	advection_bmi_cpp();
-	if (root) std::cerr << "Done advection_bmi_cpp.==================================" << std::endl;
-	advection_c();
-	if (root) std::cerr << "Done advection_c.====================================" << std::endl;
-	species_cpp();
-	if (root) std::cerr << "Done species_cpp.====================================" << std::endl;
-	species_c();
-	if (root) std::cerr << "Done species_c.======================================" << std::endl;
-	gas_cpp();
-	if (root) std::cerr << "Done gas_ccp.========================================" << std::endl;
-	gas_c();
-	if (root) std::cerr << "Done gas_c.==========================================" << std::endl;
+	Advect_cpp();
+	if (root) std::cerr << "Done Advect_cpp.==================================" << std::endl;
+#ifdef USE_YAML
+	WriteYAMLFile_cpp();
+	AdvectBMI_cpp();
+#endif
+	if (root) std::cerr << "Done AdvectBMI_cpp.==================================" << std::endl;
+	SimpleAdvect_c();
+	if (root) std::cerr << "Done SimpleAdvect_c.====================================" << std::endl;
+	Advect_c();
+	if (root) std::cerr << "Done Advect_c.====================================" << std::endl;
+	Species_cpp();
+	if (root) std::cerr << "Done Species_cpp.====================================" << std::endl;
+	Species_c();
+	if (root) std::cerr << "Done Species_c.======================================" << std::endl;
+	Gas_cpp();
+	if (root) std::cerr << "Done Gas_ccp.========================================" << std::endl;
+	Gas_c();
+	if (root) std::cerr << "Done Gas_c.==========================================" << std::endl;
 #if defined(TEST_FORTRAN)
-	advection_f90();
-	if (root) std::cerr << "Done advection_f90.==================================" << std::endl;
-	species_f90();
-	if (root) std::cerr << "Done species_f90.====================================" << std::endl;
-	gas_f90();
-	if (root) std::cerr << "Done gas_f90.========================================" << std::endl;
+	SimpleAdvect_f90();
+	if (root) std::cerr << "Done SimpleAdvect_f90.==================================" << std::endl;
+	Advect_f90();
+	if (root) std::cerr << "Done Advect_f90.==================================" << std::endl;
+	Species_f90();
+	if (root) std::cerr << "Done Species_f90.====================================" << std::endl;
+	Gas_f90();
+	if (root) std::cerr << "Done Gas_f90.========================================" << std::endl;
 #endif
 #if defined(USE_MPI)
 	MPI_Finalize();

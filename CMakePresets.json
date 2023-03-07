@@ -7,8 +7,8 @@
   },
   "configurePresets": [
     {
-      "name": "ninja",
-      "displayName": "Ninja",
+      "name": "ninja-static",
+      "displayName": "Ninja static",
       "description": "Default build using Ninja generator",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/_builds/${presetName}",
@@ -16,26 +16,54 @@
         "CMAKE_TOOLCHAIN_FILE": {
           "type": "PATH",
           "value": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        },
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "OFF"
         }
-      },
-      "vendor": {
-        "example.com/ExampleIDE/1.0": {
-          "autoFormat": true
+      }
+    },
+    {
+      "name": "ninja-shared",
+      "displayName": "Ninja shared",
+      "description": "Default build using Ninja generator",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/_builds/${presetName}",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": {
+          "type": "PATH",
+          "value": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        },
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "ON"
         }
       }
     },
     {
       "name": "ninja-multi",
-      "inherits": "ninja",
+      "inherits": "ninja-static",
       "displayName": "Ninja Multi-Config",
       "description": "Default build using Ninja Multi-Config generator",
       "generator": "Ninja Multi-Config"
     },
     {
-      "name": "vs2019-x64",
-      "inherits": "ninja",
-      "displayName": "Visual Studio 2019 x64",
-      "description": "Default build using Visual Studio 16 2019 generator",
+      "name": "vs2019-static",
+      "inherits": "ninja-static",
+      "displayName": "vs2019-static",
+      "description": "Build static library using vs2019",
+      "generator": "Visual Studio 16 2019",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "vs2019-shared",
+      "inherits": "ninja-shared",
+      "displayName": "vs2019-shared",
+      "description": "Build shared library using vs2019",
       "generator": "Visual Studio 16 2019",
       "condition": {
         "type": "equals",
@@ -46,51 +74,46 @@
   ],
   "buildPresets": [
     {
-      "name": "ninja",
-      "configurePreset": "ninja"
+      "name": "ninja-static",
+      "configurePreset": "ninja-static"
     },
     {
-      "name": "ninja-multi",
-      "configurePreset": "ninja-multi"
+      "name": "ninja-shared",
+      "configurePreset": "ninja-shared"
     },
     {
-      "name": "vs2019-x64",
-      "configurePreset": "vs2019-x64"
+      "name": "vs2019-static",
+      "configurePreset": "vs2019-static"
+    },
+    {
+      "name": "vs2019-shared",
+      "configurePreset": "vs2019-shared"
     }
   ],
   "testPresets": [
     {
-      "name": "ninja",
-      "configurePreset": "ninja",
-      "output": {
-        "outputOnFailure": true
-      },
-      "execution": {
-        "noTestsAction": "error",
-        "stopOnFailure": true
-      }
+      "name": "ninja-static",
+      "configurePreset": "ninja-static",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
     },
     {
-      "name": "ninja-multi",
-      "configurePreset": "ninja-multi",
-      "output": {
-        "outputOnFailure": true
-      },
-      "execution": {
-        "noTestsAction": "error",
-        "stopOnFailure": true
-      }
+      "name": "ninja-shared",
+      "configurePreset": "ninja-shared",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
     },
     {
-      "name": "vs2019-x64",
-      "configurePreset": "vs2019-x64",
-      "output": {
-        "outputOnFailure": true
-      },
-      "execution": {
-        "noTestsAction": "error",
-        "stopOnFailure": true
-      }
+      "name": "vs2019-static",
+      "configurePreset": "vs2019-static",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-shared",
+      "configurePreset": "vs2019-shared",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
     }
   ],
   "vendor": {
