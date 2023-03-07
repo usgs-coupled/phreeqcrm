@@ -7,6 +7,7 @@
 #include <cstring>
 #include "phrqtype.h"
 #include "IPhreeqc.h"
+#include "Phreeqc.h" /* snprintf */
 
 #include "IPhreeqc_interface_F.h"
 #ifdef SKIP
