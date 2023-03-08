@@ -5331,6 +5331,8 @@ Called by root.
 	"FilePrefix", @ref GetFilePrefix;
 	"Gfw", @ref GetGfw;
 	"GridCellCount", @ref GetGridCellCount;
+	"InputVarNames", @ref BMI_GetInputVarNames;
+	"OutputVarNames", @ref BMI_GetOutputVarNames;
 	"Porosity", @ref GetPorosity;
 	"Pressure", @ref GetPressure;
 	"Saturation", @ref GetSaturation;

@@ -423,6 +423,14 @@ int PhreeqcRM::BMI_GetVarNbytes(std::string name)
         {
             return (int)sizeof(double) * this->GetGridCellCount();
         }
+        if (it->first == "time")
+        {
+            return (int)sizeof(double);
+        }
+        if (it->first == "timestep")
+        {
+            return (int)sizeof(double);
+        }
     }
 	//throw LetItThrow("Item not found");
     ErrorMessage("Item not found");
@@ -586,6 +594,14 @@ int PhreeqcRM::BMI_GetVarItemsize(std::string name)
         {
             return (int)sizeof(double);
         }
+        if (it->first == "time")
+        {
+            return (int)sizeof(double);
+        }
+        if (it->first == "timestep")
+        {
+            return (int)sizeof(double);
+        }
     }
     else
     {
@@ -597,7 +613,9 @@ int PhreeqcRM::BMI_GetVarItemsize(std::string name)
 }
 std::string PhreeqcRM::BMI_GetVarType(std::string name)
 {
-    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name);
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
     if (it != bmi_var_map.end())
     {
         return it->second.GetType();
@@ -623,37 +641,37 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["BackwardMapping"] = Var_BMI("BackwardMapping", "int", "mapping", sizeof(int));
         //var_map["CreateMapping"] = Var_BMI("CreateMapping", "int", "mapping", sizeof(int));
         //var_map["ChemistryCellCount"] = Var_BMI("ChemistryCellCount", "int", "count", sizeof(int));
-        bmi_var_map["components"] = BMI_Var("Components", "string", "names", false, true);
-        bmi_var_map["componentcount"] = BMI_Var("ComponentCount", "int", "names", false, true);
-        bmi_var_map["concentrations"] = BMI_Var("Concentrations", "double", "mol L-1", true, true);
-        bmi_var_map["density"] = BMI_Var("Density", "double", "kg L-1", true, true);
+        bmi_var_map["components"] = BMI_Var("Components", "character,1d", "names", false, true);
+        bmi_var_map["componentcount"] = BMI_Var("ComponentCount", "integer", "names", false, true);
+        bmi_var_map["concentrations"] = BMI_Var("Concentrations", "double,2d", "mol L-1", true, true);
+        bmi_var_map["density"] = BMI_Var("Density", "double,1d", "kg L-1", true, true);
         //var_map["EndCell"] = Var_BMI("EndCell", "int", "cell numbers", sizeof(int));
         //var_map["EquilibriumPhasesNames"] = Var_BMI("EquilibriumPhasesNames", "string", "names", sizeof(char));
-        bmi_var_map["errorstring"] = BMI_Var("ErrorString", "string", "error", false, true);
+        bmi_var_map["errorstring"] = BMI_Var("ErrorString", "character", "error", false, true);
         //var_map["ExchangeNames"] = Var_BMI("ExchangeNames", "string", "names", sizeof(char));
         //var_map["ExchangeSpeciesNames"] = Var_BMI("ExchangeSpeciesNames", "string", "names", sizeof(char));
-        bmi_var_map["fileprefix"] = BMI_Var("FilePrefix", "string", "name", true, true);
+        bmi_var_map["fileprefix"] = BMI_Var("FilePrefix", "character", "name", true, true);
         //!var_map["GasComponentNames"] = Var_BMI("GasComponentsNames", "string", "names", sizeof(char));
         //!var_map["GasCompMoles"] = Var_BMI("GasCompMoles", "double", "mol", sizeof(double));
         //!var_map["GasCompPressures"] = Var_BMI("GasCompPressures", "double", "atm", sizeof(double));
         //!var_map["GasCompPhi"] = Var_BMI("GasCompPhi", "double", "atm-1", sizeof(double));
         //!var_map["GasPhaseVolume"] = Var_BMI("GasPhaseVolume", "double", "L", sizeof(double));
-        bmi_var_map["gfw"] = BMI_Var("Gfw", "double", "g mol-1", false, true);
-        bmi_var_map["gridcellcount"] = BMI_Var("GridCellCount", "int", "count", false, true);
+        bmi_var_map["gfw"] = BMI_Var("Gfw", "double,1d", "g mol-1", false, true);
+        bmi_var_map["gridcellcount"] = BMI_Var("GridCellCount", "integer", "count", false, true);
         //var_map["KineticReactions"] = Var_BMI("KineticReactions", "string", "names", sizeof(char));
         //var_map["MpiMyself"] = Var_BMI("MpiMyself", "int", "id", sizeof(int));
         //var_map["MpiTasks"] = Var_BMI("MpiTasks", "int", "count", sizeof(int));
-        bmi_var_map["nthselectedoutput"] = BMI_Var("NthSelectedOutput", "int", "id", true, false);
-        bmi_var_map["saturation"] = BMI_Var("Saturation", "double", "unitless", true, true);
-        bmi_var_map["selectedoutput"] = BMI_Var("SelectedOutput", "double", "user", false, true);
-        bmi_var_map["selectedoutputcolumncount"] = BMI_Var("SelectedOutputColumnCount", "int", "count", false, true);
-        bmi_var_map["selectedoutputcount"] = BMI_Var("SelectedOutputCount", "int", "count", false, true);
-        bmi_var_map["selectedoutputheadings"] = BMI_Var("SelectedOutputHeadings", "string", "names", false, true);
-        bmi_var_map["selectedoutputrowcount"] = BMI_Var("SelectedOutputRowCount", "int", "count", false, true);
+        bmi_var_map["nthselectedoutput"] = BMI_Var("NthSelectedOutput", "integer", "id", true, false);
+        bmi_var_map["saturation"] = BMI_Var("Saturation", "double,1d", "unitless", true, true);
+        bmi_var_map["selectedoutput"] = BMI_Var("SelectedOutput", "double,2d", "user", false, true);
+        bmi_var_map["selectedoutputcolumncount"] = BMI_Var("SelectedOutputColumnCount", "integer", "count", false, true);
+        bmi_var_map["selectedoutputcount"] = BMI_Var("SelectedOutputCount", "integer", "count", false, true);
+        bmi_var_map["selectedoutputheadings"] = BMI_Var("SelectedOutputHeadings", "character,1d", "names", false, true);
+        bmi_var_map["selectedoutputrowcount"] = BMI_Var("SelectedOutputRowCount", "integer", "count", false, true);
         //var_map["SINames"] = Var_BMI("SINames", "string", "names", 0);
         //var_map["SolidSolutionComponentsNames"] = Var_BMI("SolidSolutionComponentsNames", "string", "names", sizeof(char));
         //var_map["SolidSolutionNames"] = Var_BMI("SolidSolutionNames", "string", "names", sizeof(char));
-        bmi_var_map["solutionvolume"] = BMI_Var("SolutionVolume", "double", "L", false, true);
+        bmi_var_map["solutionvolume"] = BMI_Var("SolutionVolume", "double,1d", "L", false, true);
         //!var_map["SpeciesConcentrations"] = Var_BMI("SpeciesConcentrations", "double", "mg L-1", sizeof(double));
         //!var_map["SpeciesD25"] = Var_BMI("SpeciesD25", "double", "cm2 s-1", sizeof(double));
         //!var_map["SpeciesLog10Gammas"] = Var_BMI("SpeciesLog10Gammas", "double", "log L mol-1", sizeof(double));
@@ -671,14 +689,14 @@ void PhreeqcRM::BMI_MakeVarMap()
         bmi_var_map["timestep"] = BMI_Var("TimeStep", "double", "s", true, true);
         //var_map["MpiWorker"] = Var_BMI("MpiWorker", "int", "id", sizeof(int));
         //var_map["ComponentH2O"] = Var_BMI("ComponentH2O", "int", "flag", sizeof(int));
-        bmi_var_map["currentselectedoutputusernumber"] = BMI_Var("CurrentSelectedOutputUserNumber", "int", "id", false, true);
+        bmi_var_map["currentselectedoutputusernumber"] = BMI_Var("CurrentSelectedOutputUserNumber", "integer", "id", false, true);
         //var_map["DumpFileName"] = Var_BMI("DumpFileName", "string", "name", sizeof(char));
         //var_map["ErrorHandlerMode"] = Var_BMI("ErrorHandlerMode", "int", "flag", sizeof(int));
         //var_map["ErrorOn"] = Var_BMI("ErrorOn", "int", "flag", sizeof(int));
         //var_map["PartitionUZSolids"] = Var_BMI("PartitionUZSolids", "int", "flag", sizeof(int));
-        bmi_var_map["porosity"] = BMI_Var("Porosity", "double", "unitless", true, true);
+        bmi_var_map["porosity"] = BMI_Var("Porosity", "double,1d", "unitless", true, true);
         //var_map["PartitionUZSolids"] = Var_BMI("PartitionUZSolids", "int", "flag", sizeof(int));
-        bmi_var_map["pressure"] = BMI_Var("Pressure", "double", "atm", true, true);
+        bmi_var_map["pressure"] = BMI_Var("Pressure", "double,1d", "atm", true, true);
         //var_map["PrintChemistryMask"] = Var_BMI("PrintChemistryMask", "int", "flags", sizeof(int));
         //var_map["PrintChemistryOn"] = Var_BMI("PrintChemistryOn", "int", "flag", sizeof(int));
         //var_map["RebalanceByCell"] = Var_BMI("RebalanceByCell", "int", "flag", sizeof(int));
@@ -686,8 +704,8 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["RepresentativeVolume"] = Var_BMI("RepresentativeVolume", "double", "L", sizeof(double));
         //var_map["RebalanceByCell"] = Var_BMI("RebalanceByCell", "int", "flag", sizeof(int));
         //var_map["ScreenOn"] = Var_BMI("ScreenOn", "int", "flag", sizeof(int));
-        bmi_var_map["selectedoutputon"] = BMI_Var("SelectedOutputOn", "int", "flag", true, true);
-        bmi_var_map["temperature"] = BMI_Var("Temperature", "double", "C", true, true);
+        bmi_var_map["selectedoutputon"] = BMI_Var("SelectedOutputOn", "logical", "flag", true, true);
+        bmi_var_map["temperature"] = BMI_Var("Temperature", "double,1d", "C", true, true);
         //var_map["UnitsExchange"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));
         //var_map["UnitsGasPhase"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));
         //var_map["UnitsKinetics"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));
@@ -696,8 +714,8 @@ void PhreeqcRM::BMI_MakeVarMap()
         //var_map["UnitsSSassemblage"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));
         //var_map["UnitsSurface"] = Var_BMI("UnitsExchange", "int", "flag", sizeof(int));
         //var_map["UseSolutionDensityVolume"] = Var_BMI("UseSolutionDensityVolume", "int", "flag", sizeof(int));
-        bmi_var_map["inputvarnames"] = BMI_Var("InputVarNames", "int", "string", false, true);
-        bmi_var_map["outputvarnames"] = BMI_Var("OutputVarNames", "int", "string", false, true);
+        bmi_var_map["inputvarnames"] = BMI_Var("InputVarNames", "character,1d", "string", false, true);
+        bmi_var_map["outputvarnames"] = BMI_Var("OutputVarNames", "character,1d", "string", false, true);
     }
     this->bmi_input_vars.clear();
     this->bmi_output_vars.clear();

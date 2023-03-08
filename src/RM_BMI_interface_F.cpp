@@ -81,32 +81,7 @@ RMF_BMI_GetInputItemCount(int* id)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetInputVarNames(int* id, char* names, int* l1)
-{	
-	// Retrieves names of variables that can be set
-	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
-	if (Reaction_module_ptr)
-	{
-		std::vector< std::string > VarNames = Reaction_module_ptr->BMI_GetInputVarNames();
-		size_t len = 0;
-		for (size_t i = 0; i < VarNames.size(); i++)
-		{
-			if (VarNames[i].size() > len) len = VarNames[i].size();
-		}
-		size_t total_len = VarNames.size() * len;
-		if (*l1 < (int)total_len)
-		{
-			std::stringstream all;
-			for (size_t i = 0; i < VarNames.size(); i++)
-			{
-				all << std::left << std::setfill(' ') << std::setw(len) << VarNames[i];
-				memcpy(names, all.str().c_str(), all.str().size());
-			}
-		}
-		return IRM_INVALIDARG;
-	}
-	return IRM_BADINSTANCE;
-}
+
 /* ---------------------------------------------------------------------- */
 int
 RMF_BMI_GetOutputItemCount(int* id)
@@ -120,32 +95,7 @@ RMF_BMI_GetOutputItemCount(int* id)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetOutputVarNames(int* id, char* names, int* l1)
-{
-	// Retrieves names of variables that can be retrieved
-	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
-	if (Reaction_module_ptr)
-	{
-		std::vector< std::string > VarNames = Reaction_module_ptr->BMI_GetOutputVarNames();
-		size_t len = 0;
-		for (size_t i = 0; i < VarNames.size(); i++)
-		{
-			if (VarNames[i].size() > len) len = VarNames[i].size();
-		}
-		size_t total_len = VarNames.size() * len;
-		if (*l1 < (int)total_len)
-		{
-			std::stringstream all;
-			for (size_t i = 0; i < VarNames.size(); i++)
-			{
-				all << std::left << std::setfill(' ') << std::setw(len) << VarNames[i];
-				memcpy(names, all.str().c_str(), all.str().size());
-			}
-		}
-		return IRM_INVALIDARG;
-	}
-	return IRM_BADINSTANCE;
-}
+
 /* ---------------------------------------------------------------------- */
 double
 RMF_BMI_GetTimeStep(int* id)

@@ -52,10 +52,12 @@
     double precision, dimension(:), allocatable   :: por
     double precision, dimension(:), allocatable   :: sat
     integer                                       :: nchem
+    character(len=:), allocatable                 :: prefix
+    character(len=:), allocatable                 :: alloc_string
     character(100)                                :: string
     character(200)                                :: string1
     integer                                       :: ncomps, ncomps1
-    character(LEN=:), dimension(:), allocatable   :: components
+    character(len=:), dimension(:), allocatable          :: components
     double precision, dimension(:), allocatable   :: gfw
     integer                                       :: nbound
     integer,          dimension(:), allocatable   :: bc1, bc2
@@ -72,7 +74,7 @@
     integer                                       :: isteps, nsteps
     double precision, dimension(:,:), allocatable :: selected_out
     integer                                       :: col, isel, n_user, rows
-    character(LEN=:), dimension(:), allocatable   :: headings
+    character(len=:), dimension(:), allocatable   :: headings
     double precision, dimension(:,:), allocatable :: c_well
     double precision, dimension(:), allocatable   :: tc, p_atm
     integer                                       :: vtype
@@ -151,8 +153,7 @@
     status = RM_OutputMessage(id, string1)
     write(string1, "(A,I10)") "MPI task number:                                  ", RM_GetMpiMyself(id)
     status = RM_OutputMessage(id, string1)
-    !status = RM_GetFilePrefix(id, string)
-    status = RM_BMI_GetValue(id, "FilePrefix", string)
+    status = RM_BMI_GetValue(id, "FilePrefix", prefix)
     write(string1, "(A,A)") "File prefix:                                      ", string
     status = RM_OutputMessage(id, trim(string1))
     write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", nxyz
@@ -162,10 +163,7 @@
     write(string1, "(A,I10)") "Number of components for transport:               ", ncomps
     status = RM_OutputMessage(id, trim(string1))
     ! Get component information
-    bytes = RM_BMI_GetVarItemsize(id, "Components")
-    allocate(character(len=bytes) :: components(ncomps))    
     status = RM_BMI_GetValue(id, "Components", components)
-    allocate(gfw(ncomps))
     status = RM_BMI_GetValue(id, "Gfw", gfw)
     do i = 1, ncomps
         write(string,"(A10, F15.4)") trim(components(i)), gfw(i)
@@ -173,21 +171,18 @@
     enddo
     status = RM_OutputMessage(id, " ")	
     ! Get initial temperatures
-    allocate(temperature(nxyz))
     status = RM_BMI_GetValue(id, "Temperature", temperature)
     ! Get initial saturation
-    allocate(sat(nxyz))
     status = RM_BMI_GetValue(id, "Saturation", sat)
     ! Get initial porosity
-    allocate(por(nxyz))
     status = RM_BMI_GetValue(id, "Porosity", por)
-    allocate(volume(nxyz))
+    ! Get initial saturation
     status = RM_BMI_GetValue(id, "SolutionVolume", volume)
     ! Get initial concentrations
-    allocate(c(nxyz, ncomps))
     status = RM_BMI_GetValue(id, "Concentrations", c)
-    ! Set density, pressure, and temperature
-    allocate(density(nxyz), pressure(nxyz))
+    ! Set density, pressure, and temperature (previously allocated)
+    allocate(density(nxyz))
+    allocate(pressure(nxyz))
     density = 1.0
     status = RM_BMI_SetValue(id, "Density", density)
     pressure = 2.0
@@ -434,16 +429,18 @@ USE, intrinsic :: ISO_C_BINDING
     character(100) :: string
     integer :: status, dim, nxyz
     integer :: i, j, n, ncomps, bytes, nbytes
-    character(LEN=:), dimension(:), allocatable   :: components
-    character(LEN=:), dimension(:), allocatable   :: inputvars
-    character(LEN=:), dimension(:), allocatable   :: outputvars  
-    double precision, dimension(:), allocatable   :: gfw
+    character(len=:), dimension(:), allocatable          :: components
+    character(len=:), dimension(:), allocatable          :: inputvars
+    character(len=:), dimension(:), allocatable          :: outputvars 
+    character(len=:), allocatable                        :: prefix 
+    double precision, dimension(:), allocatable   :: gfw, rm_gfw
     double precision, dimension(:,:), allocatable :: c, c_rm
     logical :: tf
+    character(LEN=:), allocatable :: alloc_string
     !--------------------------
     double precision, dimension(:), allocatable, target :: hydraulic_K
-    double precision, dimension(:), allocatable   :: por
-    double precision, dimension(:), allocatable   :: sat
+    double precision, dimension(:), allocatable   :: porosity, rm_porosity
+    double precision, dimension(:), allocatable   :: saturation, rm_saturation
     integer                                       :: nchem
     character(200)                                :: string1
     integer                                       :: ncomps1
@@ -453,11 +450,11 @@ USE, intrinsic :: ISO_C_BINDING
     integer,          dimension(:), allocatable   :: module_cells
     double precision, dimension(:,:), allocatable :: bc_conc
     double precision                              :: time, time_step
-    double precision, dimension(:), allocatable   :: density
+    double precision, dimension(:), allocatable   :: density, rm_density
     double precision, dimension(:), allocatable   :: sat_calc
-    double precision, dimension(:), allocatable   :: volume
-    double precision, dimension(:), allocatable   :: temperature
-    double precision, dimension(:), allocatable   :: pressure
+    double precision, dimension(:), allocatable   :: volume, rm_volume
+    double precision, dimension(:), allocatable   :: temperature, rm_temperature
+    double precision, dimension(:), allocatable   :: pressure, rm_pressure
     integer                                       :: isteps, nsteps
     double precision, dimension(:,:), allocatable :: selected_out
     integer                                       :: col, isel, n_user, rows
@@ -477,61 +474,49 @@ USE, intrinsic :: ISO_C_BINDING
     write(*,*) string
     write(*,*) RM_BMI_GetTimeStep(id)
 
-    n = RM_BMI_GetInputItemCount(id)
-    bytes = RM_BMI_GetVarItemsize(id, "InputVarNames")
-    allocate(character(len=bytes) :: inputvars(n)) 
+    status = RM_BMI_GetInputVarNames(id, inputvars)
     status = RM_BMI_GetValue(id, "InputVarNames", inputvars)
     write(*,*) "Input variables (setters)"
-    do i = 1, n
-        write(*,"(1x, I4, A20)") i, trim(inputvars(i))
+    do i = 1, size(inputvars)
+        write(*,"(1x, I4, A40)") i, trim(inputvars(i))
         status = RM_BMI_GetVarUnits(id, inputvars(i), string)
-        write(*,"(5x, A10)") trim(string)
+        write(*,"(5x, A15)") trim(string)
         status = RM_BMI_GetVarType(id, inputvars(i), string)
-        write(*,"(5x, A10)") trim(string)
-        write(*, "(5x, I10)") RM_BMI_GetVarItemsize(id, inputvars(i))
-        write(*, "(5x, I10)") RM_BMI_GetVarNbytes(id, inputvars(i))
+        write(*,"(5x, A15)") trim(string)
+        write(*, "(5x, I15)") RM_BMI_GetVarItemsize(id, inputvars(i))
+        write(*, "(5x, I15)") RM_BMI_GetVarNbytes(id, inputvars(i))
     enddo
     
-    n = RM_BMI_GetOutputItemCount(id)
-    bytes = RM_BMI_GetVarItemsize(id, "OutputVarNames")
-    allocate(character(len=bytes) :: outputvars(n)) 
+    status = RM_BMI_GetOutputVarNames(id, outputvars)
     status = RM_BMI_GetValue(id, "OutputVarNames", outputvars)
-    write(*,*) "Output variables (setters)"
-    do i = 1, n
-        write(*,"(1x, I4, A20)") i, trim(outputvars(i))
+    write(*,*) "Output variables (getters)"
+    do i = 1, size(outputvars)
+        write(*,"(1x, I4, A40)") i, trim(outputvars(i))
         status = RM_BMI_GetVarUnits(id, outputvars(i), string)
-        write(*,"(5x, A10)") trim(string)
+        write(*,"(5x, A15)") trim(string)
         status = RM_BMI_GetVarType(id, outputvars(i), string)
-        write(*,"(5x, A10)") trim(string)
-        write(*, "(5x, I10)") RM_BMI_GetVarItemsize(id, outputvars(i))
-        write(*, "(5x, I10)") RM_BMI_GetVarNbytes(id, outputvars(i))
+        write(*,"(5x, A15)") trim(string)
+        write(*, "(5x, I15)") RM_BMI_GetVarItemsize(id, outputvars(i))
+        write(*, "(5x, I15)") RM_BMI_GetVarNbytes(id, outputvars(i))
     enddo
 
+     ! Get component information  
     status = RM_BMI_GetValue(id, "ComponentCount", ncomps)
-     ! Get component information
-    bytes = RM_BMI_GetVarItemsize(id, "Components")
-    allocate(character(len=bytes) :: components(ncomps))    
+    status = assert(ncomps .eq. RM_GetComponentCount(id))
     status = RM_BMI_GetValue(id, "Components", components)
-    allocate(gfw(ncomps))
     status = RM_BMI_GetValue(id, "Gfw", gfw)
-    do i = 1, ncomps
+    do i = 1, size(components)
         write(*,"(A10, F15.4)") trim(components(i)), gfw(i)
     enddo
     write(*,*)	   
     
     ! Concentrations
-    status = assert(ncomps .eq. RM_GetComponentCount(id))
-	nbytes = RM_BMI_GetVarNbytes(id, "Concentrations")
-	bytes = RM_BMI_GetVarItemsize(id, "Concentrations")
-	dim = nbytes / bytes;
     status = RM_BMI_GetValue(id, "GridCellCount", nxyz)
     status = assert(nxyz .eq. RM_GetGridCellCount(id))
-	allocate(c(nxyz, ncomps))
     status = RM_BMI_GetValue(id, "Concentrations", c)
     allocate(c_rm(nxyz, ncomps))
     status = RM_GetConcentrations(id, c_rm)
     tf = .true.
-    
     do j = 1, ncomps
         do i = 1, nxyz
             if (c(i,j) .ne. c_rm(i,j)) then
@@ -542,65 +527,67 @@ USE, intrinsic :: ISO_C_BINDING
         if (.not. tf) exit
     enddo
 	status = assert(tf)
+   
+	! GetValue("Density")
+    status = RM_BMI_GetValue(id, "Density", density)
+    allocate(rm_density(nxyz))
+	status = RM_GetDensity(id, rm_density);
+    do i = 1, nxyz
+        if (density(i) .ne. rm_density(i)) then
+            tf = .false.
+            exit
+        endif
+    enddo
+    status = assert(tf)
+         
+	! GetValue("Gfw")
+    status = RM_BMI_GetValue(id, "Gfw", gfw)
+    allocate(rm_gfw(ncomps))
+	status = RM_GetGfw(id, rm_gfw);
+    do i = 1, ncomps
+        if (gfw(i) .ne. rm_gfw(i)) then
+            tf = .false.
+            exit
+        endif
+    enddo
+    status = assert(tf)
+    
+    !  GetValue("Porosity")
+    status = RM_BMI_GetValue(id, "Porosity", porosity)
+    allocate(rm_porosity(nxyz))
+	status = RM_GetPorosity(id, rm_porosity);
+    do i = 1, nxyz
+        if (porosity(i) .ne. rm_porosity(i)) then
+            tf = .false.
+            exit
+        endif
+    enddo
+    status = assert(tf)
+    
+    !  GetValue("Pressure")
+    status = RM_BMI_GetValue(id, "Pressure", pressure)
+    allocate(rm_pressure(nxyz))
+	status = RM_GetPressure(id, rm_pressure);
+    do i = 1, nxyz
+        if (pressure(i) .ne. rm_pressure(i)) then
+            tf = .false.
+            exit
+        endif
+    enddo
+    status = assert(tf)
 
-#ifdef SKIP    
-	// GetValue("Density")
-	{
-		int ngrid;
-		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
-		std::vector<double> bmi_density(ngrid, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
-		std::vector<double> rm_density;
-		phreeqc_rm.GetDensity(rm_density);
-		assert(bmi_density == rm_density);
-	}
-	// GetValue("ErrorString")
-	{
-		int nbytes = phreeqc_rm.BMI_GetVarNbytes("ErrorString");
-		std::string bmi_err(nbytes, ' ');
-		std::string rm_err = phreeqc_rm.GetErrorString();
-		assert(bmi_err == rm_err);
-	}
-	// GetValue("Gfw")
-	{
-		int ncomps = -1;
-		phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
-		std::vector<double> bmi_gfw(ncomps, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Gfw", bmi_gfw.data());
-		const std::vector<double> rm_gfw = phreeqc_rm.GetGfw();
-		assert(bmi_gfw == rm_gfw);
-	}
-	// GetValue("GridCellCount")
-	{
-		int bmi_ngrid;
-		phreeqc_rm.BMI_GetValue("GridCellCount", &bmi_ngrid);
-		int rm_ngrid = phreeqc_rm.GetGridCellCount();
-		assert(bmi_ngrid == rm_ngrid);
-	}
-	// SetValue("NthSelectedOutput") 
-	{
-		// tested in "SelectedOutput"
-		// tested in "SelectedOutputHeadings"
-	}
-	// GetValue("Pressure")
-	{
-		int ngrid;
-		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
-		std::vector<double> bmi_pressure(ngrid, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Pressure", bmi_pressure.data());
-		const std::vector<double> rm_pressure = phreeqc_rm.GetPressure();
-		assert(bmi_pressure == rm_pressure);
-	}
-	// GetValue("Saturation")
-	{
-		int ngrid;
-		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
-		std::vector<double> bmi_sat(ngrid, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Saturation", bmi_sat.data());
-		std::vector<double> rm_sat;
-		phreeqc_rm.GetSaturation(rm_sat);
-		assert(bmi_sat == rm_sat);
-	}
+	! GetValue("Saturation")
+    status = RM_BMI_GetValue(id, "Saturation", saturation)
+    allocate(rm_saturation(nxyz))
+	status = RM_Getsaturation(id, rm_saturation);
+    do i = 1, nxyz
+        if (saturation(i) .ne. rm_saturation(i)) then
+            tf = .false.
+            exit
+        endif
+    enddo
+    status = assert(tf)
+#ifdef SKIP
 	// GetValue("SelectedOutput")
 	{
 		int bmi_so_count;

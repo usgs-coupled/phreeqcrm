@@ -65,6 +65,8 @@ IRM_DLL_EXPORT int        RMF_GetIPhreeqcId(int *id, int *i);
 IRM_DLL_EXPORT int        RMF_GetMpiMyself(int *id);
 IRM_DLL_EXPORT int        RMF_GetMpiTasks(int *id);
 IRM_DLL_EXPORT int        RMF_GetNthSelectedOutputUserNumber(int *id, int *i);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetPorosity(int* id, double* porosity);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetPressure(int* id, double* pressure);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSaturation(int *id, double *sat);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSelectedOutput(int *id, double *so);
 IRM_DLL_EXPORT int        RMF_GetSelectedOutputColumnCount(int *id);
@@ -175,9 +177,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetComponentName(int* id, char* chem_name, int
 IRM_DLL_EXPORT double     RMF_BMI_GetCurrentTime(int* id);
 IRM_DLL_EXPORT double     RMF_BMI_GetEndTime(int* id);
 IRM_DLL_EXPORT int        RMF_BMI_GetInputItemCount(int* id);
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetInputVarNames(int* id, char* names, int* l1);
 IRM_DLL_EXPORT int        RMF_BMI_GetOutputItemCount(int* id);
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetOutputVarNames(int* id, char* names, int* l1);
 IRM_DLL_EXPORT double     RMF_BMI_GetTimeStep(int* id);
 IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetTimeUnits(int* id, char* units, int* l1);
 IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetValue(int* id, char* name, void* dest);
