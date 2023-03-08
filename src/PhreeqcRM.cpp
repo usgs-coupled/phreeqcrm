@@ -3360,10 +3360,9 @@ PhreeqcRM::GetCurrentSelectedOutputUserNumber(void)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
-	int return_value = IRM_INVALIDARG;
 	try
 	{
-		return_value = this->workers[0]->GetCurrentSelectedOutputUserNumber();
+		return this->workers[0]->GetCurrentSelectedOutputUserNumber();
 	}
 	catch (...)
 	{

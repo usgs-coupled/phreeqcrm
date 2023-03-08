@@ -928,7 +928,7 @@ RMF_GetNthSelectedOutputUserNumber(int * id, int * i)
 	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
 	if (Reaction_module_ptr)
 	{
-		return Reaction_module_ptr->GetNthSelectedOutputUserNumber(*i - 1);
+		return Reaction_module_ptr->GetNthSelectedOutputUserNumber(*i);
 	}
 	return IRM_BADINSTANCE;
 }

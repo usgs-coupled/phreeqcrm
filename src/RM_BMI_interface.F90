@@ -951,6 +951,38 @@ INTEGER FUNCTION RM_BMI_Update(id)
     return
 END FUNCTION RM_BMI_Update
 
+!> Returns a list of the names of the components identified by PhreeqcRM.
+!> The list contains all components (elements) found in solutions and reactants in the
+!> InitialPhreeqc instance by call(s) to @ref FindComponents.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param components          A deferred length, allocatable, 1D character variable.
+!> to receive the component names. Character length and dimension will be allocated as needed.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see
+!> @ref RM_BMI_GetValue,
+!> @ref RM_BMI_SetValue
+!> @ref RM_GetComponent,
+!> @ref RM_FindComponents.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> character(len=:), allocatable, dimension(:) :: components
+!> status = RM_GetComponents(id, components)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetComponents(id, components)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, INTENT(out) :: components(:)
+    RM_GetComponents = RM_BMI_GetValue(id, "Components", components)
+END FUNCTION RM_GetComponents
+
 INTEGER FUNCTION RM_GetGridCellCountYAML(config_file)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -966,6 +998,87 @@ INTEGER FUNCTION RM_GetGridCellCountYAML(config_file)
     RM_GetGridCellCountYAML = RMF_GetGridCellCountYAML(trim(config_file)//C_NULL_CHAR)
     return
 END FUNCTION RM_GetGridCellCountYAML 
+
+!> Returns the selected-output headings for the current selected-output file.
+!> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput
+!> determine which of the selected-output definitions is used.
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param headings          A deferred length, allocatable, 1D character variable.
+!> to receive the headings. Character length and dimension will be allocated as needed.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see
+!> @ref RM_BMI_GetValue,
+!> @ref RM_BMI_SetValue,
+!> @ref RM_GetCurrentSelectedOutputUserNumber,
+!> @ref RM_GetNthSelectedOutputUserNumber,
+!> @ref RM_GetSelectedOutput,
+!> @ref RM_GetSelectedOutputColumnCount,
+!> @ref RM_GetSelectedOutputCount,
+!> @ref RM_GetSelectedOutputHeading,
+!> @ref RM_GetSelectedOutputRowCount,
+!> @ref RM_SetCurrentSelectedOutputUserNumber,
+!> @ref RM_SetNthSelectedOutput,
+!> @ref RM_SetSelectedOutputOn.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> character(len=:), allocatable, dimension(:) :: headings
+!> do isel = 1, RM_GetSelectedOutputCount(id)
+!>   status = RM_SetNthSelectedOutput(id, isel)
+!>   status = RM_GetSelectedOutputHeadings(id, headings)
+!> enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+INTEGER FUNCTION RM_GetSelectedOutputHeadings(id, headings)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, INTENT(out) :: headings(:)
+    RM_GetSelectedOutputHeadings = RM_BMI_GetValue(id, "SelectedOutputHeadings", headings)
+END FUNCTION RM_GetSelectedOutputHeadings
+
+!> Returns a vector of temperatures (@a temperature) from the reaction module.
+!> Reactions do not change the temperature, so the temperatures are either the 
+!> temperatures at initialization, or the values set with the last call to 
+!> @ref RM_SetTemperature.
+!> 
+!> @param id               The instance @a id returned from @ref RM_Create.
+!> @param temperature              Vector to receive the temperatures. 
+!> Dimension of the array is @a nxyz,
+!> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
+!> Values for inactive cells are set to 1e30.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> 
+!> @see 
+!> @ref RM_BMI_GetValue,
+!> @ref RM_BMI_SetValue,      
+!> @ref RM_SetTemperature.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> allocate(temperature(nxyz))
+!> status = RM_GetTemperature(id, temperature)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+
+INTEGER FUNCTION RM_GetTemperature(id, temperature)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: temperature
+    DOUBLE PRECISION, ALLOCATABLE, DIMENSION(:) :: a_temperature
+    RM_GetTemperature = RM_BMI_GetValue(id, "Temperature", a_temperature)
+    temperature = a_temperature
+END FUNCTION RM_GetTemperature
 
 FUNCTION Lower(s1)  RESULT (s2)
 CHARACTER(*)       :: s1

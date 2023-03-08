@@ -172,11 +172,11 @@
     status = RM_OutputMessage(id, " ")	
     ! Get initial temperatures
     status = RM_BMI_GetValue(id, "Temperature", temperature)
-    ! Get initial saturation
+    ! Get initial temperature
     status = RM_BMI_GetValue(id, "Saturation", sat)
     ! Get initial porosity
     status = RM_BMI_GetValue(id, "Porosity", por)
-    ! Get initial saturation
+    ! Get initial temperature
     status = RM_BMI_GetValue(id, "SolutionVolume", volume)
     ! Get initial concentrations
     status = RM_BMI_GetValue(id, "Concentrations", c)
@@ -427,45 +427,36 @@ USE, intrinsic :: ISO_C_BINDING
     end interface
     integer, intent(in) :: id
     character(100) :: string
-    integer :: status, dim, nxyz
-    integer :: i, j, n, ncomps, bytes, nbytes
-    character(len=:), dimension(:), allocatable          :: components
+    integer :: status, dim, isel
+    integer :: i, j, n, bytes, nbytes
+    integer                                              :: nxyz, rm_nxyz
+    integer                                              :: ncomps, rm_ncomps
+    character(len=:), dimension(:), allocatable          :: components, rm_components
+    character(len=:), allocatable                        :: component
     character(len=:), dimension(:), allocatable          :: inputvars
     character(len=:), dimension(:), allocatable          :: outputvars 
-    character(len=:), allocatable                        :: prefix 
-    double precision, dimension(:), allocatable   :: gfw, rm_gfw
-    double precision, dimension(:,:), allocatable :: c, c_rm
+    character(len=:), allocatable                        :: prefix, rm_prefix
+    double precision, dimension(:), allocatable          :: gfw, rm_gfw
+    double precision, dimension(:,:), allocatable        :: c, c_rm
+    integer                                              :: so_count, rm_so_count
+    integer                                              :: nuser, rm_nuser
+    integer                                              :: col_count, rm_col_count
+    integer                                              :: row_count, rm_row_count
+    integer                                              :: itemsize
+    double precision, dimension(:,:), allocatable        :: so, rm_so
+    character(LEN=:), dimension(:), allocatable          :: headings, rm_headings
+    character(LEN=:), allocatable                        :: heading
+    double precision                                     :: time, rm_time
+    double precision                                     :: time_step, rm_time_step
+    double precision, dimension(:), allocatable          :: density, rm_density
+    double precision, dimension(:), allocatable          :: porosity, rm_porosity
+    double precision, dimension(:), allocatable          :: pressure, rm_pressure
+    double precision, dimension(:), allocatable          :: saturation, rm_saturation
+    double precision, dimension(:), allocatable          :: temperature, rm_temperature
+    double precision, dimension(:), allocatable          :: volume, rm_volume
     logical :: tf
     character(LEN=:), allocatable :: alloc_string
-    !--------------------------
-    double precision, dimension(:), allocatable, target :: hydraulic_K
-    double precision, dimension(:), allocatable   :: porosity, rm_porosity
-    double precision, dimension(:), allocatable   :: saturation, rm_saturation
-    integer                                       :: nchem
-    character(200)                                :: string1
-    integer                                       :: ncomps1
-    integer                                       :: nbound
-    integer,          dimension(:), allocatable   :: bc1, bc2
-    double precision, dimension(:), allocatable   :: bc_f1
-    integer,          dimension(:), allocatable   :: module_cells
-    double precision, dimension(:,:), allocatable :: bc_conc
-    double precision                              :: time, time_step
-    double precision, dimension(:), allocatable   :: density, rm_density
-    double precision, dimension(:), allocatable   :: sat_calc
-    double precision, dimension(:), allocatable   :: volume, rm_volume
-    double precision, dimension(:), allocatable   :: temperature, rm_temperature
-    double precision, dimension(:), allocatable   :: pressure, rm_pressure
-    integer                                       :: isteps, nsteps
-    double precision, dimension(:,:), allocatable :: selected_out
-    integer                                       :: col, isel, n_user, rows
-    character(LEN=:), dimension(:), allocatable   :: headings
-    double precision, dimension(:,:), allocatable :: c_well
-    double precision, dimension(:), allocatable   :: tc, p_atm
-    integer                                       :: vtype
-    double precision                              :: pH
-    character(100)                                :: svalue
-    integer                                       :: iphreeqc_id, iphreeqc_id1
-    integer                                       :: dump_on, append    
+
     status = RM_BMI_GetComponentName(id, string)
     write(*,*) trim(string)
     write(*,*) RM_BMI_GetCurrentTime(id)
@@ -473,7 +464,19 @@ USE, intrinsic :: ISO_C_BINDING
     status = RM_BMI_GetTimeUnits(id, string)
     write(*,*) string
     write(*,*) RM_BMI_GetTimeStep(id)
-
+    ! Time
+    status = RM_BMI_Getvalue(id, "Time", time)
+    rm_time = RM_GetTime(id)
+    status = assert(time .eq. rm_time)
+    time = RM_BMI_GetCurrentTime(id)
+    status = assert(time .eq. rm_time)
+    ! TimeStep
+    status = RM_BMI_GetValue(id, "TimeStep", time_step)
+    rm_time_step = RM_GetTimeStep(id)
+    status = assert(time_step .eq. rm_time_step)
+    time_step = RM_BMI_GetTimeStep(id)
+    status = assert(time_step .eq. rm_time_step)
+    ! InputVarNames
     status = RM_BMI_GetInputVarNames(id, inputvars)
     status = RM_BMI_GetValue(id, "InputVarNames", inputvars)
     write(*,*) "Input variables (setters)"
@@ -486,7 +489,7 @@ USE, intrinsic :: ISO_C_BINDING
         write(*, "(5x, I15)") RM_BMI_GetVarItemsize(id, inputvars(i))
         write(*, "(5x, I15)") RM_BMI_GetVarNbytes(id, inputvars(i))
     enddo
-    
+    ! OutputVarNames
     status = RM_BMI_GetOutputVarNames(id, outputvars)
     status = RM_BMI_GetValue(id, "OutputVarNames", outputvars)
     write(*,*) "Output variables (getters)"
@@ -500,10 +503,27 @@ USE, intrinsic :: ISO_C_BINDING
         write(*, "(5x, I15)") RM_BMI_GetVarNbytes(id, outputvars(i))
     enddo
 
-     ! Get component information  
+    ! ComponentCount
     status = RM_BMI_GetValue(id, "ComponentCount", ncomps)
-    status = assert(ncomps .eq. RM_GetComponentCount(id))
+    rm_ncomps = RM_GetComponentCount(id)
+    status = assert(ncomps .eq. rm_ncomps)
+    ! Components
     status = RM_BMI_GetValue(id, "Components", components)
+    itemsize = RM_BMI_GetVarItemsize(id, "Components")
+    nbytes = RM_BMI_GetVarNBytes(id, "Components")
+    dim = nbytes / itemsize
+    status = assert(dim .eq. size(components))
+    allocate(character(len=itemsize) :: component)
+    do i = 1, dim
+        j = i
+        status = RM_GetComponent(id, j, component)
+        status = assert(component .eq. components(i))
+    enddo
+    status = RM_GetComponents(id, rm_components)
+    do i = 1, dim
+        status = assert(components(i) .eq. rm_components(i))
+    enddo
+
     status = RM_BMI_GetValue(id, "Gfw", gfw)
     do i = 1, size(components)
         write(*,"(A10, F15.4)") trim(components(i)), gfw(i)
@@ -516,181 +536,187 @@ USE, intrinsic :: ISO_C_BINDING
     status = RM_BMI_GetValue(id, "Concentrations", c)
     allocate(c_rm(nxyz, ncomps))
     status = RM_GetConcentrations(id, c_rm)
-    tf = .true.
     do j = 1, ncomps
         do i = 1, nxyz
             if (c(i,j) .ne. c_rm(i,j)) then
-                tf = .false.
+                status = assert(.false.)
                 exit
             endif
         enddo
-        if (.not. tf) exit
     enddo
-	status = assert(tf)
    
 	! GetValue("Density")
     status = RM_BMI_GetValue(id, "Density", density)
-    allocate(rm_density(nxyz))
+    itemsize = RM_BMI_GetVarItemsize(id, "Density")
+    nbytes = RM_BMI_GetVarNBytes(id, "Density")
+    dim = nbytes / itemsize
+    allocate(rm_density(dim))
 	status = RM_GetDensity(id, rm_density);
     do i = 1, nxyz
         if (density(i) .ne. rm_density(i)) then
-            tf = .false.
+            status = assert(.false.)
             exit
         endif
     enddo
-    status = assert(tf)
+    
+    ! FilePrefix
+    status = RM_BMI_GetValue(id, "FilePrefix", prefix)
+    itemsize = RM_BMI_GetVarItemsize(id, "FilePrefix")
+    nbytes = RM_BMI_GetVarNBytes(id, "FilePrefix")
+    status = assert(itemsize .eq. nbytes)
+    allocate(character(len=itemsize) :: rm_prefix)
+    status = RM_GetFilePrefix(id, rm_prefix)
+    status = assert(prefix .eq. rm_prefix)
          
 	! GetValue("Gfw")
     status = RM_BMI_GetValue(id, "Gfw", gfw)
-    allocate(rm_gfw(ncomps))
+    itemsize = RM_BMI_GetVarItemsize(id, "Gfw")
+    nbytes = RM_BMI_GetVarNBytes(id, "Gfw")
+    dim = nbytes / itemsize
+    allocate(rm_gfw(dim))
 	status = RM_GetGfw(id, rm_gfw);
     do i = 1, ncomps
         if (gfw(i) .ne. rm_gfw(i)) then
-            tf = .false.
+            status = assert(.false.)
             exit
         endif
     enddo
-    status = assert(tf)
     
-    !  GetValue("Porosity")
+    ! GridCellCount
+    status = RM_BMI_GetValue(id, "GridCellCount", nxyz)
+    rm_nxyz = RM_GetGridCellCount(id)
+    status = assert(nxyz .eq. rm_nxyz)
+    
+	! GetValue("Porosity")
     status = RM_BMI_GetValue(id, "Porosity", porosity)
-    allocate(rm_porosity(nxyz))
+    itemsize = RM_BMI_GetVarItemsize(id, "Porosity")
+    nbytes = RM_BMI_GetVarNBytes(id, "Porosity")
+    dim = nbytes / itemsize
+    allocate(rm_porosity(dim))
 	status = RM_GetPorosity(id, rm_porosity);
     do i = 1, nxyz
         if (porosity(i) .ne. rm_porosity(i)) then
-            tf = .false.
+            status = assert(.false.)
             exit
         endif
     enddo
-    status = assert(tf)
     
-    !  GetValue("Pressure")
+	! GetValue("Pressure")
     status = RM_BMI_GetValue(id, "Pressure", pressure)
-    allocate(rm_pressure(nxyz))
+    itemsize = RM_BMI_GetVarItemsize(id, "Pressure")
+    nbytes = RM_BMI_GetVarNBytes(id, "Pressure")
+    dim = nbytes / itemsize
+    allocate(rm_pressure(dim))
 	status = RM_GetPressure(id, rm_pressure);
     do i = 1, nxyz
         if (pressure(i) .ne. rm_pressure(i)) then
-            tf = .false.
+            status = assert(.false.)
             exit
         endif
     enddo
-    status = assert(tf)
 
 	! GetValue("Saturation")
     status = RM_BMI_GetValue(id, "Saturation", saturation)
-    allocate(rm_saturation(nxyz))
-	status = RM_Getsaturation(id, rm_saturation);
+    itemsize = RM_BMI_GetVarItemsize(id, "Saturation")
+    nbytes = RM_BMI_GetVarNBytes(id, "Saturation")
+    dim = nbytes / itemsize
+    allocate(rm_saturation(dim))
+	status = RM_GetSaturation(id, rm_saturation);
     do i = 1, nxyz
         if (saturation(i) .ne. rm_saturation(i)) then
-            tf = .false.
+            status = assert(.false.)
             exit
         endif
     enddo
-    status = assert(tf)
-#ifdef SKIP
-	// GetValue("SelectedOutput")
-	{
-		int bmi_so_count;
-		phreeqc_rm.BMI_GetValue("SelectedOutputCount", &bmi_so_count);
-		int rm_so_count = phreeqc_rm.GetSelectedOutputCount();
-		assert(bmi_so_count == rm_so_count);
-		for (int i = 0; i < bmi_so_count; i++)
-		{
-			phreeqc_rm.BMI_SetValue("NthSelectedOutput", &i);
-			int bmi_nuser;
-			phreeqc_rm.BMI_GetValue("CurrentSelectedOutputUserNumber", &bmi_nuser);
-			int rm_nuser = phreeqc_rm.GetNthSelectedOutputUserNumber(i);
-			assert(bmi_nuser == rm_nuser);
+    
+    ! GetValue("SolutionVolume")
+    status = RM_BMI_GetValue(id, "SolutionVolume", volume)
+    itemsize = RM_BMI_GetVarItemsize(id, "SolutionVolume")
+    nbytes = RM_BMI_GetVarNBytes(id, "SolutionVolume")
+    dim = nbytes / itemsize
+    allocate(rm_volume(dim))
+	status = RM_GetSolutionVolume(id, rm_volume);
+    do i = 1, nxyz
+        if (volume(i) .ne. rm_volume(i)) then
+            status = assert(.false.)
+            exit
+        endif
+    enddo
+    
+	! GetValue("Temperature")
+    status = RM_BMI_GetValue(id, "Temperature", temperature)
+    itemsize = RM_BMI_GetVarItemsize(id, "Temperature")
+    nbytes = RM_BMI_GetVarNBytes(id, "Temperature")
+    dim = nbytes / itemsize
+    allocate(rm_temperature(dim))
+	status = RM_GetTemperature(id, rm_temperature);
+    do i = 1, nxyz
+        if (temperature(i) .ne. rm_temperature(i)) then
+            status = assert(.false.)
+            exit
+        endif
+    enddo
 
-			int bmi_col_count;
-			phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", &bmi_col_count);
-			int rm_col_count = phreeqc_rm.GetSelectedOutputColumnCount();
-			assert(bmi_col_count == rm_col_count);
+	! GetValue("SelectedOutput")
+    status = RM_BMI_GetValue(id, "SelectedOutputCount", so_count);
+	rm_so_count = RM_GetSelectedOutputCount(id);
+    status = assert(so_count .eq. rm_so_count)
+    do isel = 0, so_count - 1 ! zero based
+        i = isel
+		status = RM_BMI_SetValue(id, "NthSelectedOutput", i)
+        status = RM_BMI_GetValue(id, "CurrentSelectedOutputUserNumber", nuser)
+        rm_nuser = RM_GetCurrentSelectedOutputUserNumber(id)
+        status = assert(nuser .eq. rm_nuser)
+        i = isel        
+		rm_nuser = RM_GetNthSelectedOutputUserNumber(id, i)
+        status = assert(nuser .eq. rm_nuser)
 
-			int bmi_row_count;
-			phreeqc_rm.BMI_GetValue("SelectedOutputRowCount", &bmi_row_count);
-			int rm_row_count = phreeqc_rm.GetSelectedOutputRowCount();
-			assert(bmi_row_count == rm_row_count);
+        status = RM_BMI_GetValue(id, "SelectedOutputColumnCount", col_count)
+        rm_col_count =RM_GetSelectedOutputColumnCount(id)
+        status = assert(col_count .eq. rm_col_count)
 
-			int bmi_nbytes = phreeqc_rm.BMI_GetVarNbytes("SelectedOutput");
-			int bmi_itemsize = phreeqc_rm.BMI_GetVarItemsize("SelectedOutput");
-			int bmi_dim = bmi_nbytes / bmi_itemsize;
-			std::vector<double> bmi_so(bmi_dim, INACTIVE_CELL_VALUE);
-			phreeqc_rm.BMI_GetValue("SelectedOutput", bmi_so.data());
-			std::vector<double> rm_so;
-			phreeqc_rm.GetSelectedOutput(rm_so);
-			assert(bmi_dim == (int)rm_so.size());
-			assert(bmi_nbytes == (int)(rm_so.size() * sizeof(double)));
-			assert(bmi_so == rm_so);
-		}
-	}
-	// GetValue("SelectedOutputColumnCount")
-	{
-		int bmi_so_col_count;
-		phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", &bmi_so_col_count);
-		int rm_so_col_count = phreeqc_rm.GetSelectedOutputColumnCount();
-		assert(bmi_so_col_count == rm_so_col_count);
-	}
-	// GetValue("SelectedOutputCount")
-	{
-		int bmi_so_count;
-		phreeqc_rm.BMI_GetValue("SelectedOutputCount", &bmi_so_count);
-		int rm_so_count = phreeqc_rm.GetSelectedOutputCount();
-		assert(bmi_so_count == rm_so_count);
-	}
-	// GetValue("SelectedOutputHeadings")
-	{
-		int bmi_so_count;
-		phreeqc_rm.BMI_GetValue("SelectedOutputCount", &bmi_so_count);
-		int rm_so_count = phreeqc_rm.GetSelectedOutputCount();
-		assert(bmi_so_count == rm_so_count);
-		for (int i = 0; i < bmi_so_count; i++)
-		{
-			phreeqc_rm.BMI_SetValue("NthSelectedOutput", &i);
-			int bmi_nuser;
-			phreeqc_rm.BMI_GetValue("CurrentSelectedOutputUserNumber", &bmi_nuser);
-			int rm_nuser = phreeqc_rm.GetNthSelectedOutputUserNumber(i);
-			assert(bmi_nuser == rm_nuser);
+        status = RM_BMI_GetValue(id, "SelectedOutputRowCount", row_count)
+        rm_row_count = RM_GetSelectedOutputRowCount(id)
+        status = assert(row_count .eq. rm_row_count)
 
-			int bmi_nbytes = phreeqc_rm.BMI_GetVarNbytes("SelectedOutputHeadings");
-			int bmi_string_size = phreeqc_rm.BMI_GetVarItemsize("SelectedOutputHeadings");
-			std::string all_headings(bmi_nbytes, ' ');
-			phreeqc_rm.BMI_GetValue("SelectedOutputHeadings", (void*)all_headings.c_str());
+        nbytes = RM_BMI_GetVarNbytes(id, "SelectedOutput");
+        itemsize = RM_BMI_GetVarItemsize(id, "SelectedOutput");
+        dim = nbytes / itemsize;
+        status = assert(dim .eq. rm_row_count*rm_col_count)
+        status = RM_BMI_GetValue(id, "SelectedOutput", so)
+        allocate(rm_so(rm_row_count, rm_col_count))
+        status = RM_GetSelectedOutput(id, rm_so);
+        do j = 1, col_count
+            do i = 1, row_count
+                if (so(i,j) .ne. rm_so(i,j)) then
+                    status = assert(.false.)
+                    exit
+                endif
+            enddo
+        enddo
+        ! check headings
+        nbytes = RM_BMI_GetVarNbytes(id, "SelectedOutputHeadings")
+        itemsize = RM_BMI_GetVarItemsize(id, "SelectedOutputHeadings")
+        dim = nbytes / itemsize
+        status = assert(dim .eq. RM_GetSelectedOutputColumnCount(id))
+        status = RM_BMI_GetValue(id, "SelectedOutputHeadings", headings)
+        !allocate(character(len=itemsize) :: rm_headings(dim))
+        status = RM_GetSelectedOutputHeadings(id, rm_headings)
+        do j = 1, col_count
+            if (headings(j) .ne. rm_headings(j)) then
+                status = assert(.false.)
+            endif
+        enddo
+        itemsize = RM_BMI_GetVarItemsize(id, "SelectedOutputHeadings")
+        allocate(character(len=itemsize) :: heading)
+        do j = 1, col_count
+            status = RM_GetSelectedOutputHeading(id, j, heading)
+            if (heading .ne. rm_headings(j)) then
+                status = assert(.false.)
+            endif
+        enddo
+    enddo
 
-			int bmi_col_count;
-			phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", &bmi_col_count);
-			int rm_col_count = phreeqc_rm.GetSelectedOutputColumnCount();
-			assert(bmi_col_count == rm_col_count);
-
-			for (int j = 0; j < bmi_col_count; j++)
-			{
-				std::string bmi_head = all_headings.substr((j * bmi_string_size), bmi_string_size);
-				size_t end = bmi_head.find_last_not_of(' ');
-				bmi_head = (end == std::string::npos) ? "" : bmi_head.substr(0, end + 1);
-				std::string rm_head;
-				phreeqc_rm.GetSelectedOutputHeading(j, rm_head);
-				assert(bmi_head == rm_head);
-			}
-		}
-	}
-	// GetValue("SelectedOutputRowCount")
-	{
-		int bmi_so_row_count;
-		phreeqc_rm.BMI_GetValue("SelectedOutputRowCount", &bmi_so_row_count);
-		int rm_so_row_count = phreeqc_rm.GetSelectedOutputRowCount();
-		assert(bmi_so_row_count == rm_so_row_count);
-	}
-	// GetValue("Temperature")
-	{
-		int ngrid;
-		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
-		std::vector<double> bmi_temp(ngrid, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Temperature", bmi_temp.data());
-		const std::vector<double> rm_temp = phreeqc_rm.GetTemperature();
-		assert(bmi_temp == rm_temp);
-	}
-}
-#endif ! SKIP
 END subroutine BMI_testing
 integer function assert(tf)
 logical :: tf
