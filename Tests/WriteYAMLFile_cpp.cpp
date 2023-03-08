@@ -29,8 +29,8 @@ void WriteYAMLFile_cpp(void)
 	yrm.YAMLUseSolutionDensityVolume(false);
 	yrm.YAMLSetPartitionUZSolids(false);
 	// Open files
-	yrm.YAMLSetFilePrefix("AdvectBMI_cpp");
-	yrm.YAMLOpenFiles();
+	//yrm.YAMLSetFilePrefix("AdvectBMI_cpp");
+	//yrm.YAMLOpenFiles();
 
 	// Set concentration units
 	yrm.YAMLSetUnitsSolution(2);           // 1, mg/L); 2, mol/L); 3, kg/kgs

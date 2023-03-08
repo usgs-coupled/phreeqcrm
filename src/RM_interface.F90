@@ -203,12 +203,21 @@ END FUNCTION RM_Concentrations2Utility
 
 SUBROUTINE ChK_Concentrations2Utility(id, c, n, tc, p_atm)
     IMPLICIT NONE
+	INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
+			BIND(C, NAME='RMF_GetComponentCount')
+			USE ISO_C_BINDING
+			IMPLICIT NONE
+			INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_GetComponentCount 
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
     INTEGER, INTENT(in) :: n
     DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: tc, p_atm
     INTEGER :: errors
     errors = 0
+	rmf_ncomps = RMF_GetComponentCount(id)
     errors = errors + Chk_Double2D(id, c, n, rmf_ncomps, "Concentration", "RM_Concentrations2Utility")
     errors = errors + Chk_Double1D(id, tc, n, "Temperature", "RM_Concentrations2Utility")
     errors = errors + Chk_Double1D(id, p_atm, n, "Pressure", "RM_Concentrations2Utility")
@@ -813,10 +822,19 @@ END FUNCTION RM_GetConcentrations
 
 SUBROUTINE Chk_GetConcentrations(id, c)
     IMPLICIT NONE
+	INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
+			BIND(C, NAME='RMF_GetComponentCount')
+			USE ISO_C_BINDING
+			IMPLICIT NONE
+			INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_GetComponentCount 
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
     INTEGER :: errors
     errors = 0
+    rmf_ncomps = RMF_GetComponentCount(id)
     errors = errors + Chk_Double2D(id, c, rmf_nxyz, rmf_ncomps, "concentration", "RM_GetConcentrations")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetConcentrations")
@@ -1731,10 +1749,19 @@ END FUNCTION RM_GetGfw
 
 SUBROUTINE Chk_GetGfw(id, gfw) 
     IMPLICIT NONE
+	INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
+			BIND(C, NAME='RMF_GetComponentCount')
+			USE ISO_C_BINDING
+			IMPLICIT NONE
+			INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_GetComponentCount 
+    END INTERFACE	
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: gfw
     INTEGER :: errors
     errors = 0
+	rmf_ncomps = RMF_GetComponentCount(id)
     errors = errors + Chk_Double1D(id, gfw, rmf_ncomps, "gfw", "RM_GetGfw")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_GetGfw")
@@ -1762,7 +1789,6 @@ END SUBROUTINE Chk_GetGfw
 !> @endhtmlonly
 !> @par MPI:
 !> Called by root and (or) workers.
-
 INTEGER FUNCTION RM_GetGridCellCount(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2046,6 +2072,111 @@ INTEGER FUNCTION RM_GetNthSelectedOutputUserNumber(id, n)
     INTEGER, INTENT(in) :: id, n
     RM_GetNthSelectedOutputUserNumber = RMF_GetNthSelectedOutputUserNumber(id, n)
 END FUNCTION RM_GetNthSelectedOutputUserNumber 
+
+!> Transfer current porosities to the array given in the argument list (@a porosity). 
+!> Porosity is not changed by PhreeqcRM; the values are either the default values
+!> or the values set by the last call to @ref RM_SetPorosity.
+!> 
+!> @param id                   The instance @a id returned from @ref RM_Create.
+!> @param porosity              Array to receive the porosities. Dimension of the array is @a nxyz,
+!> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+!> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
+!> 
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> allocate(porosity(nxyz))
+!> status = RM_GetPorosity(id, porosity)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+
+INTEGER FUNCTION RM_GetPorosity(id, porosity)   
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetPorosity(id, porosity) &
+            BIND(C, NAME='RMF_GetPorosity')   
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            REAL(KIND=C_DOUBLE), INTENT(out) :: porosity(*)
+        END FUNCTION RMF_GetPorosity 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(out), dimension(:) :: porosity
+    if (rmf_debug) call Chk_GetPorosity(id, porosity)
+    RM_GetPorosity = RMF_GetPorosity(id, porosity) 
+    return
+END FUNCTION RM_GetPorosity 
+
+!> Transfer current pressures to the array given in the argument list (@a pressure). 
+!> Pressure is not usually calculated by PhreeqcRM; the values are either the default values
+!> or the values set by the last call to @ref RM_SetPressure. Pressures can be calculated
+!> by PhreeqcRM if a fixed-volume GAS_PHASE is used.
+!> 
+!> @param id                   The instance @a id returned from @ref RM_Create.
+!> @param pressure              Array to receive the porosities. Dimension of the array is @a nxyz,
+!> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+!> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
+!> 
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> allocate(pressure(nxyz))
+!> status = RM_GetPressure(id, pressure)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+
+INTEGER FUNCTION RM_GetPressure(id, pressure)   
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetPressure(id, pressure) &
+            BIND(C, NAME='RMF_GetPressure')   
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            REAL(KIND=C_DOUBLE), INTENT(out) :: pressure(*)
+        END FUNCTION RMF_GetPressure 
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(out), dimension(:) :: pressure
+    if (rmf_debug) call Chk_GetPressure(id, pressure)
+    RM_GetPressure = RMF_GetPressure(id, pressure) 
+    return
+END FUNCTION RM_GetPressure 
+
+SUBROUTINE Chk_GetPressure(id, pressure)
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: pressure
+    INTEGER :: errors
+    errors = 0
+    errors = errors + Chk_Double1D(id, pressure, rmf_nxyz, "pressure", "RM_GetPressure")
+    if (errors .gt. 0) then
+        errors = RM_Abort(id, -3, "Invalid argument in RM_GetPressure")
+    endif
+END SUBROUTINE Chk_GetPressure
+
+SUBROUTINE Chk_GetPorosity(id, porosity)
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: porosity
+    INTEGER :: errors
+    errors = 0
+    errors = errors + Chk_Double1D(id, porosity, rmf_nxyz, "porosity", "RM_GetPorosity")
+    if (errors .gt. 0) then
+        errors = RM_Abort(id, -3, "Invalid argument in RM_GetPorosity")
+    endif
+END SUBROUTINE Chk_GetPorosity
 
 !> Returns a vector of saturations (@a sat_calc) as calculated by the reaction module.
 !> Reactions will change the volume of solution in a cell.
@@ -3786,6 +3917,14 @@ END FUNCTION RM_InitialPhreeqc2Concentrations
 
 SUBROUTINE Chk_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, bc2, f1) 
     IMPLICIT NONE
+	INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
+			BIND(C, NAME='RMF_GetComponentCount')
+			USE ISO_C_BINDING
+			IMPLICIT NONE
+			INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_GetComponentCount 
+    END INTERFACE	
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(IN), DIMENSION(:,:) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary 
@@ -3794,6 +3933,7 @@ SUBROUTINE Chk_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, bc2, 
     DOUBLE PRECISION, INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
     INTEGER :: errors
     errors = 0
+	rmf_ncomps = RMF_GetComponentCount(id)
     errors = errors + Chk_Double2D(id, bc_conc, n_boundary, rmf_ncomps, "concentration", "RM_InitialPhreeqc2Concentrations")
     errors = errors + Chk_Integer1D(id, bc1, n_boundary, "bc1", "RM_InitialPhreeqc2Concentrations")
     if (present(bc2)) then
@@ -4639,10 +4779,19 @@ END FUNCTION RM_SetConcentrations
     
 SUBROUTINE Chk_SetConcentrations(id, c)
     IMPLICIT NONE
+	INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
+			BIND(C, NAME='RMF_GetComponentCount')
+			USE ISO_C_BINDING
+			IMPLICIT NONE
+			INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_GetComponentCount 
+    END INTERFACE	
     INTEGER, INTENT(in) :: id
     DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
     INTEGER :: errors
     errors = 0
+	rmf_ncomps = RMF_GetComponentCount(id)
     errors = errors + Chk_Double2D(id, c, rmf_nxyz, rmf_ncomps, "concentration", "RM_SetConcentrations")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetConcentrations")

@@ -204,6 +204,7 @@ set(PhreeqcRM_SOURCES
   src/IrmResult.h
   src/PhreeqcRM.cpp
   src/PhreeqcRM.h
+  src/RM_BMI_interface_F.cpp
   src/RM_interface_C.cpp
   src/RM_interface_C.h
   src/RM_interface_F.cpp
@@ -308,6 +309,7 @@ set(PhreeqcRM_Headers
 
 set(PhreeqcRM_SRC
   ${PROJECT_SOURCE_DIR}/src/RM_interface.F90
+  ${PROJECT_SOURCE_DIR}/src/RM_BMI_interface.F90
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
 )
 

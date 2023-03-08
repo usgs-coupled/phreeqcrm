@@ -4055,6 +4055,14 @@ PhreeqcRM::GetNthSelectedOutputUserNumber(int i)
 	this->ReturnHandler(PhreeqcRM::Int2IrmResult(return_value, true), "PhreeqcRM::GetNthSelectedOutputUserNumber");
 	return return_value;
 }
+
+/* ---------------------------------------------------------------------- */
+const std::vector<double>&
+PhreeqcRM::GetPorosity(void)
+/* ---------------------------------------------------------------------- */
+{
+	return this->porosity_root;
+}
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 const std::vector<double> &

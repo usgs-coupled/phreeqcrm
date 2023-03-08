@@ -855,6 +855,15 @@ RMF_GetGridCellCount(int * id)
 }
 /* ---------------------------------------------------------------------- */
 int
+RMF_GetGridCellCountYAML(char* config_file)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns the number of grid cells extracted from YAML file
+
+	return GetGridCellCountYAML(config_file);
+}
+/* ---------------------------------------------------------------------- */
+int
 RMF_GetIPhreeqcId(int * id, int * i)
 	/* ---------------------------------------------------------------------- */
 {
@@ -920,6 +929,58 @@ RMF_GetNthSelectedOutputUserNumber(int * id, int * i)
 	if (Reaction_module_ptr)
 	{
 		return Reaction_module_ptr->GetNthSelectedOutputUserNumber(*i - 1);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_GetPorosity(int* id, double* porosity)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves porosity for all grid nodes in sat
+	// size of sat must be the number of grid nodes
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		IRM_RESULT return_value = IRM_OK;
+		std::vector <double> porosity_vector;
+		porosity_vector = Reaction_module_ptr->GetPorosity();
+		if ((int)porosity_vector.size() == Reaction_module_ptr->GetGridCellCount())
+		{
+			memcpy(porosity, &porosity_vector.front(), (size_t)(Reaction_module_ptr->GetGridCellCount() * sizeof(double)));
+		}
+		else
+		{
+			porosity_vector.resize(Reaction_module_ptr->GetGridCellCount(), INACTIVE_CELL_VALUE);
+			return_value = IRM_FAIL;
+		}
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_GetPressure(int* id, double* pressure)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves pressure for all grid nodes in sat
+	// size of sat must be the number of grid nodes
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		IRM_RESULT return_value = IRM_OK;
+		std::vector <double> pressure_vector;
+		pressure_vector = Reaction_module_ptr->GetPressure();
+		if ((int)pressure_vector.size() == Reaction_module_ptr->GetGridCellCount())
+		{
+			memcpy(pressure, &pressure_vector.front(), (size_t)(Reaction_module_ptr->GetGridCellCount() * sizeof(double)));
+		}
+		else
+		{
+			pressure_vector.resize(Reaction_module_ptr->GetGridCellCount(), INACTIVE_CELL_VALUE);
+			return_value = IRM_FAIL;
+		}
+		return return_value;
 	}
 	return IRM_BADINSTANCE;
 }

@@ -112,7 +112,7 @@ enum {
 } /* MPI_METHOD */;
 
 int IRM_DLL_EXPORT
-GetGridCellCountYAML(std::string YAML_file);
+GetGridCellCountYAML(const char* YAML_file);
 
 /**
  * @mainpage PhreeqcRM Library Documentation (@PHREEQC_VER@-@REVISION_SVN@)
@@ -1451,6 +1451,26 @@ Called by root and (or) workers.
  */
 	std::vector<double> &                     GetPoreVolume(void) {return this->pore_volume;}
 #endif
+/**
+	Returns the porosity for each cell.
+	By default, the porosity vector is initialized with 0.1, unitless.
+	PhreeqcRM does not change the porosity, so the values that are retrieved are
+	either the default, or the values set by the last call to @ref SetPorosity. 
+	@retval const std::vector<double>&       A vector reference to the porosities in each cell, unitless.
+	Size of vector is @a nxyz, the number of grid cells in the user's model (@ref GetGridCellCount).
+	@see                 @ref SetPorosity, ref SetPressure, @ref GetTemperature, @ref SetTemperature.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector<double> & por = phreeqc_rm.GetPorosity();
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	const std::vector<double>& GetPorosity(void);
 /**
 Returns the pressure for each cell.
 By default, the pressure vector is initialized with 1 atm;
@@ -5311,25 +5331,31 @@ Called by root.
 	"CurrentSelectedOutputUserNumber", @ref GetCurrentSelectedOutputUserNumber;
 	"Density", @ref GetDensity;
 	"ErrorString", @ref GetErrorString;
+	"FilePrefix", @ref GetFilePrefix;
 	"Gfw", @ref GetGfw;
 	"GridCellCount", @ref GetGridCellCount;
+	"InputVarNames", @ref BMI_GetInputVarNames;
+	"OutputVarNames", @ref BMI_GetOutputVarNames;
+	"Porosity", @ref GetPorosity;
 	"Pressure", @ref GetPressure;
 	"Saturation", @ref GetSaturation;
 	"SelectedOutput", @ref GetSelectedOutput;
-	"SelectedOutputColumnCount", @ref GetSelectedOutputColumnCount
+	"SelectedOutputColumnCount", @ref GetSelectedOutputColumnCount;
 	"SelectedOutputCount", @ref GetSelectedOutputCount;
 	"SelectedOutputHeadings, @ref GetSelectedOutputHeadings;
+	"SelectedOutputOn", @ref GetSelectedOutputOn;
 	"SelectedOutputRowCount", @ref GetSelectedOutputRowCount;
+	"SolutionVolume", @ref GetSolutionVolume;
 	"Temperature", @ref GetTemperature.
 
 	@see
 	@ref BMI_GetOutputVarNames,
 	@ref BMI_GetOutputItemCount,
-	@ref BMI_GetValue,
 	@ref BMI_GetVarItemsize,
 	@ref BMI_GetVarNbytes,
 	@ref BMI_GetVarType,
-	@ref BMI_GetVarUnits.
+	@ref BMI_GetVarUnits,
+	@ref BMI_SetValue.
 	@par C++ Example:
 	@htmlonly
 	<CODE>
@@ -5696,7 +5722,7 @@ Called by root.
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	 */
-	void BMI_Initialize(std::string config_file) { IRM_RESULT status = InitializeYAML(config_file); };
+	void BMI_Initialize(std::string config_file) { InitializeYAML(config_file); };
 #endif
 	//--------------------------	
 
@@ -5711,6 +5737,7 @@ Called by root.
 	of BMI_SetValue and the equivalent PhreeqcRM method are as follows:
 	"Concentrations", @ref SetConcentrations;
 	"Density", @ref SetDensity;
+	"FilePrefix", @ref SetFilePrefix;
 	"NthSelectedOutput", @ref SetNthSelectedOutput;
 	"Porosity", @ref SetPorosity;
 	"Pressure", @ref SetPressure;
@@ -5722,12 +5749,12 @@ Called by root.
 
 	@see
 	@ref BMI_GetInputVarNames,
-	@ref BMI_GetInputItemCount,
+	@ref BMI_GetInputItemCount,,
+	@ref BMI_GetValue,
 	@ref BMI_GetVarItemsize,
 	@ref BMI_GetVarNbytes,
 	@ref BMI_GetVarType,
-	@ref BMI_GetVarUnits,
-	@ref BMI_SetValue.
+	@ref BMI_GetVarUnits.
 	@par C++ Example:
 	@htmlonly
 	<CODE>
