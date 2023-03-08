@@ -5,7 +5,9 @@
     <tab type="mainpage" visible="yes" title="Home"/>
      <tab type="user" url="class_phreeqc_r_m.html" title="C++ Documentation"/>
      <tab type="user" url="_r_m__interface___c_8h.html" title="C Documentation"/>
-     <tab type="user" url="classphreeqcrm.html" title="Fortran Documentation"/>
+     <tab type="user" url="namespacephreeqcrm.html" title="Fortran Documentation"/>
+     <tab type="user" url="class_y_a_m_l_phreeqc_r_m.html" title="YAML Helper Documentation"/>
+
 <!--
     <tab type="pages" visible="yes" title="" intro=""/>
     <tab type="modules" visible="yes" title="" intro=""/>
@@ -15,7 +17,7 @@
     </tab>
     <tab type="classes" visible="yes" title="">
       <tab type="classlist" visible="yes" title="" intro=""/>
-      <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/> 
+      <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/>
       <tab type="hierarchy" visible="yes" title="" intro=""/>
       <tab type="classmembers" visible="yes" title="" intro=""/>
     </tab>
@@ -23,7 +25,7 @@
       <tab type="filelist" visible="yes" title="" intro=""/>
       <tab type="globals" visible="yes" title="" intro=""/>
     </tab>
-    <tab type="examples" visible="yes" title="" intro=""/>  
+    <tab type="examples" visible="yes" title="" intro=""/>
 -->
   </navindex>
 

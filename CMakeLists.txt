@@ -27,7 +27,11 @@ endif()
 
 include(GNUInstallDirs)
 
-find_package(yaml-cpp REQUIRED)
+option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
+find_package(yaml-cpp)
+if(PHREEQCRM_WITH_YAML_CPP)
+  find_package(yaml-cpp REQUIRED)
+endif()
 
 option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" "OFF")
 if(NOT PHREEQCRM_DISABLE_OPENMP)
@@ -204,6 +208,8 @@ set(PhreeqcRM_SOURCES
   src/RM_interface_C.h
   src/RM_interface_F.cpp
   src/RM_interface_F.h
+  src/YAMLPhreeqcRM.cpp
+  src/YAMLPhreeqcRM.h
 )
 
 # setup include directories
@@ -229,6 +235,7 @@ target_compile_features(PhreeqcRM PUBLIC cxx_std_11)
 # iphreeqc defs
 target_compile_definitions(PhreeqcRM PRIVATE SWIG_SHARED_OBJ)
 target_compile_definitions(PhreeqcRM PRIVATE USE_PHRQ_ALLOC)
+target_compile_definitions(PhreeqcRM PRIVATE IPhreeqc_EXPORTS)
 
 # Disable deprecation warnings for standard C and STL functions in VS2005
 # and later
@@ -238,7 +245,10 @@ if(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
 endif()
 
 # yaml-cpp
-target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+if(yaml-cpp_FOUND)
+  target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
+  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+endif()
 
 # init exportPackageDependencies
 set(exportPackageDependencies "")
@@ -293,6 +303,7 @@ set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/IrmResult.h
   ${PROJECT_SOURCE_DIR}/src/PhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/RM_interface_C.h
+  ${PROJECT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
 )
 
 set(PhreeqcRM_SRC
@@ -354,7 +365,7 @@ if(STANDALONE_BUILD EQUAL 1)
     FILE PhreeqcRMTargets.cmake
     NAMESPACE PhreeqcRM::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PhreeqcRM
-  )  
+  )
 
   install(FILES ${PhreeqcRM_Headers}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
@@ -427,7 +438,7 @@ if(MSVC)
     string(REPLACE "/INCREMENTAL " "/INCREMENTAL:NO " CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG})
     string(REGEX REPLACE " /INCREMENTAL$" " /INCREMENTAL:NO" CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG})
     set(CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG
-        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG}" CACHE STRING 
+        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_DEBUG}" CACHE STRING
         "Flags used by the shared libraries linker during Debug builds."
         FORCE
     )
@@ -438,7 +449,7 @@ if(MSVC)
     string(REPLACE "/INCREMENTAL " "/INCREMENTAL:NO " CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO})
     string(REGEX REPLACE " /INCREMENTAL$" " /INCREMENTAL:NO" CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO ${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO})
     set(CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO
-        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO}" CACHE STRING 
+        "${CMAKE_${FLAG_TYPE}_LINKER_FLAGS_RELWITHDEBINFO}" CACHE STRING
         "Flags used by the shared libraries linker during Release with Debug Info builds."
         FORCE
     )

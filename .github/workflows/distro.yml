@@ -1,9 +1,11 @@
 name: Build Distro
 
 on:
-  push:
   pull_request:
-    branches: [ master ]
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - master
 
 env:
   NAME: PhreeqcRM
@@ -12,6 +14,7 @@ env:
 jobs:
 
   init:
+    if: github.event.pull_request.draft == false 
     runs-on: ubuntu-latest
     # Map step outputs to job outputs
     outputs:
@@ -42,10 +45,10 @@ jobs:
       run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
 
     - name: doxygen
-      run: sudo apt-get install doxygen && cd Doxygen && make
+      run: sudo apt-get -y install doxygen graphviz && cd Doxygen && make
 
     - name: install yaml-cpp
-      run: sudo apt-get install libyaml-cpp-dev
+      run: sudo apt-get -y install libyaml-cpp-dev
 
     - name: mkdir
       run: mkdir ${{github.workspace}}/_build
@@ -110,6 +113,11 @@ jobs:
       working-directory: ${{ github.workspace }}/build
       run: sudo make install
 
+    - name: Run ldconfig (Linux)
+      if: runner.os == 'Linux'
+      working-directory: ${{ github.workspace }}/build
+      run: sudo ldconfig
+
     - name: Cleanup
       run: rm -rf *
 
@@ -117,11 +125,7 @@ jobs:
 
     - name: Test install
       working-directory: ${{ github.workspace }}/Tests
-      run: |
-        echo 'objects = advection_bmi_cpp.o advection_c.o advection_cpp.o gas_c.o gas_cpp.o main.o SimpleAdvection.o species_c.o species_cpp.o WriteYAMLFile.o YAMLPhreeqcRM.o' > Makefile
-        echo 'test : $(objects)'                                  >> Makefile
-        echo '	$(CXX) -o test $(objects) -lphreeqcrm -lyaml-cpp' >> Makefile
-        env CC='gcc' CXX='g++ -std=gnu++11' make test
+      run: env CC='gcc' CXX='g++ -std=gnu++11' make -f check.mk test && ./test
 
   cmake:
     name: cmake
@@ -129,7 +133,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        build_shared_libs: [OFF, ON]
+        phreeqcrm_with_yaml_cpp: [OFF, ON]
 
     runs-on: ${{ matrix.os }}
 
@@ -151,7 +157,7 @@ jobs:
       run: brew install ninja yaml-cpp
 
     - name: Install yaml-cpp (Windows)
-      if: runner.os == 'Windows'
+      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
       run: vcpkg install yaml-cpp:x64-windows
 
     - name: Set up Visual Studio shell (Windows)
@@ -165,11 +171,15 @@ jobs:
 
     - name: Configure with CMake (Not Windows)
       if: runner.os != 'Windows'
-      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
 
     - name: Configure with CMake (Windows)
-      if: runner.os == 'Windows'
-      run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
+      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
+
+    - name: Configure with CMake (Windows)
+      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
 
     - name: Build with CMake
       run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}

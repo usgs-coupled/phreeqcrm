@@ -1,13 +1,33 @@
 #ifdef USE_YAML
+/*! @file YAMLPhreeqcRM.h
+	@brief YAMLPhreeqcRM C++ Documentation 
+*/
 #include <map>
 #include <string>
 #include "yaml-cpp/yaml.h"
 #pragma once
-class YAMLPhreeqcRM
+
+#if defined(_WINDLL)
+#define IRM_DLL_EXPORT __declspec(dllexport)
+#else
+#define IRM_DLL_EXPORT
+#endif
+
+/**
+ * @class YAMLPhreeqcRM
+ *
+ * @brief YAML helper class
+ */
+
+class IRM_DLL_EXPORT YAMLPhreeqcRM
 {
 private:
 	YAML::Node YAML_doc;
 public:
+
+	/**
+	Constructor
+	*/
 	YAMLPhreeqcRM();
 	/**
 	Clears all definitions from the YAML document.
