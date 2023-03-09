@@ -28,7 +28,7 @@ endif()
 include(GNUInstallDirs)
 
 option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
-find_package(yaml-cpp)
+find_package(yaml-cpp QUIET)
 if(PHREEQCRM_WITH_YAML_CPP)
   find_package(yaml-cpp REQUIRED)
 endif()
