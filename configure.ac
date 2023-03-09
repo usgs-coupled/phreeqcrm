@@ -1,7 +1,7 @@
 <#                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.71])
+AC_PREREQ([2.61])
 AC_INIT([PhreeqcRM],[0.1.0-9067],[dlpark@usgs.gov])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -18,13 +18,7 @@ AC_DEFINE([SWIG_SHARED_OBJ], , [Must be set for PhreeqcRM])
 AC_DEFINE([USE_PHRQ_ALLOC], , [Must be set for PhreeqcRM])
 AC_DEFINE([NDEBUG], , [Must be set for PhreeqcRM])
 
-
-AC_ARG_WITH([curl],
-            AS_HELP_STRING([--with-curl],
-                           [Build with libcurl which supports processing an image URL @<:@default=check@:>@]),
-            [], [with_curl=check])
-
-# check for --yaml-cpp
+# check for --with-yaml-cpp
 AC_ARG_WITH([yaml-cpp],
             AS_HELP_STRING([--with-yaml-cpp],
                            [compile with yaml-cpp support. @<:@default=check@:>@]),
@@ -43,7 +37,6 @@ AS_IF([test "x$with_yaml_cpp" != xno], [
     ])
   fi
 ])
-
 
 # check for --with-mpi
 # If --with-mpi=auto is used, try to find MPI, but use standard C compiler if it is not found.
@@ -73,7 +66,9 @@ AC_PROG_CPP
 
 # c++11 is required by Darwin for yaml-cpp
 if test "X$with_yaml_cpp" != "Xno"; then
-  AX_CXX_COMPILE_STDCXX(11, [ext], [mandatory])
+  if test "X$have_yaml_cpp" != "Xfalse"; then
+    AX_CXX_COMPILE_STDCXX(11, [ext], [mandatory])
+  fi
 fi
 
 # Check if the fortran test should be included
@@ -301,7 +296,11 @@ else
 fi
 echo "Enable MPI                   = $with_mpi"
 if test "X$with_yaml_cpp" != "Xno"; then
-  echo "Enable YAML-CPP              = yes"
+  if test "X$have_yaml_cpp" != "Xfalse"; then
+    echo "Enable YAML-CPP              = yes"
+  else
+    echo "Enable YAML-CPP              = no"
+  fi
 else
   echo "Enable YAML-CPP              = no"
 fi
