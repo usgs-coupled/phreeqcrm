@@ -4417,6 +4417,35 @@ PhreeqcRM::GetSelectedOutputHeading(int icol, std::string &heading)
 	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetSelectedOutputHeading");
 }
 /* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSelectedOutputHeadings(std::vector<std::string>& headings)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+		int ncol = this->GetSelectedOutputColumnCount();
+		if (ncol >= 0) 
+		{
+			for (size_t i = 0; i < ncol; i++)
+			{
+				std::string heading;
+				this->GetSelectedOutputHeading(i, heading);
+				headings.push_back(heading);
+			}
+			return IRM_OK;
+		}
+		else
+		{
+			this->ErrorHandler(IRM_INVALIDARG, "Selected output not found.");
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetSelectedOutputHeadings");
+}
+/* ---------------------------------------------------------------------- */
 int
 PhreeqcRM::GetSelectedOutputRowCount()
 /* ---------------------------------------------------------------------- */

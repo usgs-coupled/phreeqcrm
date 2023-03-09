@@ -1789,7 +1789,53 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 @par MPI:
 Called by root.
  */
-	IRM_RESULT                                GetSelectedOutputHeading(int icol, std::string &heading);
+	IRM_RESULT                  GetSelectedOutputHeading(int icol, std::string &heading);
+	/**
+	Returns a list of the current selected-output headings.
+	The number of headings is determined by @ref GetSelectedOutputColumnCount.
+	@ref SetCurrentSelectedOutputUserNumber or @ref BMI_SetValue("NthSelectedOutput",i) are
+	used to specify which of the selected-output definitions is used.
+	@param headings          A vector of std::strings to receive the headings.
+	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+	@see
+	@ref BMI_GetValue,
+	@ref GetCurrentSelectedOutputUserNumber,
+	@ref GetNthSelectedOutputUserNumber,
+	@ref GetSelectedOutput,
+	@ref GetSelectedOutputColumnCount,
+	@ref GetSelectedOutputCount,
+	@ref GetSelectedOutputHeading,
+	@ref GetSelectedOutputOn,
+	@ref GetSelectedOutputRowCount,
+	@ref SetCurrentSelectedOutputUserNumber,
+	@ref SetNthSelectedOutput,
+	@ref SetSelectedOutputOn.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
+	{
+	  int n_user = phreeqc_rm.GetNthSelectedOutputUserNumber(isel);
+	  status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
+	  std::vector<double> so;
+	  int col = phreeqc_rm.GetSelectedOutputColumnCount();
+	  status = phreeqc_rm.GetSelectedOutput(so);
+	  std::vector<std::string> headings;
+	  status = phreeqc_rm.GetSelectedOutputHeadings(headings);
+	  std::cerr << "     Selected output: " << "\n";
+	  for (int j = 0; j < col; j++)
+	  {
+		std::cerr << "          " << j << " " << headings[j] << "\n";
+	  }
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	IRM_RESULT                  GetSelectedOutputHeadings(std::vector<std::string>& headings);
 /**
 Returns the current value of the selected-output property.
 A value of true for this property indicates that selected output data will be requested this time step.
@@ -5394,6 +5440,12 @@ Called by root.
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
 	void BMI_GetValue(std::string name, void* dest);
+	void BMI_GetValue(std::string name, bool& dest);
+	void BMI_GetValue(std::string name, double& dest);
+	void BMI_GetValue(std::string name, int& dest);
+	void BMI_GetValue(std::string name, std::string& dest);
+	void BMI_GetValue(std::string name, std::vector < double >& dest);
+	void BMI_GetValue(std::string name, std::vector < std::string >& dest);
 
 	//--------------------------	
 
@@ -5776,6 +5828,13 @@ Called by root.
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	 */
 	void BMI_SetValue(std::string name, void* src);
+	void BMI_SetValue(std::string name, bool& src);
+	void BMI_SetValue(std::string name, double& src);
+	void BMI_SetValue(std::string name, int& src);
+	void BMI_SetValue(std::string name, const std::string& src);
+	void BMI_SetValue(std::string name, std::vector < double >& src);
+	void BMI_SetValue(std::string name, std::vector < int >& src);
+	void BMI_SetValue(std::string name, std::vector < std::string >& src);
 
 	//--------------------------	
 	/**

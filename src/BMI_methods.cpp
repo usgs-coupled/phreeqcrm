@@ -115,8 +115,378 @@ void PhreeqcRM::BMI_SetValue(std::string name, void* src)
             return;
         }
     }
-    //throw LetItThrow("Item not found");
     ErrorMessage("Item not found");
+    throw PhreeqcRMStop();
+}
+void PhreeqcRM::BMI_SetValue(std::string name, bool& src)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+
+        if (it->first == "selectedoutputon")
+        {
+            this->SetSelectedOutputOn(src);
+            return;
+        }
+    }
+    ErrorMessage("Item not found for BMI_SetValue with bool argument.");
+    throw PhreeqcRMStop();
+}
+void PhreeqcRM::BMI_SetValue(std::string name, double& src)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+
+        if (it->first == "time")
+        {
+            this->SetTime(src);
+            return;
+        }
+        if (it->first == "timestep")
+        {
+            this->SetTimeStep(src);
+            return;
+        }
+    }
+    ErrorMessage("Item not found for BMI_SetValue with double argument.");
+    throw PhreeqcRMStop();
+}
+void PhreeqcRM::BMI_SetValue(const std::string name, int& src)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+        if (it->first == "nthselectedoutput")
+        {
+            this->SetNthSelectedOutput(src);
+            return;
+        }
+    }
+    ErrorMessage("Item not found for BMI_SetValue with int argument.");
+    throw PhreeqcRMStop();
+}
+
+void PhreeqcRM::BMI_SetValue(std::string name, const std::string& src)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+        if (it->first == "fileprefix")
+        {
+            this->SetFilePrefix(src);
+            return;
+        }
+    }
+    ErrorMessage("Item not found for BMI_SetValue with std::string argument.");
+    throw PhreeqcRMStop();
+}
+void PhreeqcRM::BMI_SetValue(std::string name, std::vector< double >& src)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+        if (it->first == "concentrations")
+        {
+            int ngrid = this->GetGridCellCount();
+            int ncomps = this->GetComponentCount();
+            if ((int)src.size() != ngrid * ncomps)
+            {
+                ErrorMessage("Dimension error for concentration vector.");
+            }
+            this->SetConcentrations(src);
+            return;
+        }
+        if (it->first == "density")
+        {
+            int ngrid = this->GetGridCellCount();
+            if ((int)src.size() != ngrid )
+            {
+                ErrorMessage("Dimension error for density vector.");
+            }
+            this->SetDensity(src);
+            return;
+        }
+
+        if (it->first == "porosity")
+        {
+            int ngrid = this->GetGridCellCount();
+            if ((int)src.size() != ngrid)
+            {
+                ErrorMessage("Dimension error for porosity vector.");
+            }
+            this->SetPorosity(src);
+            return;
+        }
+        if (it->first == "pressure")
+        {
+            int ngrid = this->GetGridCellCount();
+            if ((int)src.size() != ngrid)
+            {
+                ErrorMessage("Dimension error for pressure vector.");
+            }
+            this->SetPressure(src);
+            return;
+        }
+        if (it->first == "saturation")
+        {
+            int ngrid = this->GetGridCellCount();
+            if ((int)src.size() != ngrid)
+            {
+                ErrorMessage("Dimension error for saturation vector.");
+            }
+            this->SetSaturation(src);
+            return;
+        }
+        if (it->first == "temperature")
+        {
+            int ngrid = this->GetGridCellCount();
+            if ((int)src.size() != ngrid)
+            {
+                ErrorMessage("Dimension error for temperature vector.");
+            }
+            this->SetTemperature(src);
+            return;
+        }
+    }
+    ErrorMessage("Item not found for BMI_SetValue with std::vector < double > argument.");
+    throw PhreeqcRMStop();
+}
+
+void PhreeqcRM::BMI_SetValue(std::string name, std::vector< int>& src)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+    }
+    ErrorMessage("Item not found for BMI_SetValue with std::vector < int > argument.");
+    throw PhreeqcRMStop();
+}
+
+void PhreeqcRM::BMI_SetValue(std::string name, std::vector<std::string>& src)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+    }
+    ErrorMessage("Item not found for BMI_SetValue with std::vector < std::string > argument.");
+    throw PhreeqcRMStop();
+}
+
+
+void PhreeqcRM::BMI_GetValue(std::string name, bool& dest)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+
+        if (it->first == "selectedoutputon")
+        {
+            dest = this->GetSelectedOutputOn();
+            return;
+        }
+    }
+    ErrorMessage("Item not found for BMI_GetValue with bool argument.");
+    throw PhreeqcRMStop();
+}
+void PhreeqcRM::BMI_GetValue(std::string name, double& dest)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+        if (it->first == "time")
+        {
+            dest = this->GetTime();
+            return;
+        }
+        if (it->first == "timestep")
+        {
+            dest = this->GetTimeStep();
+            return;
+        }
+    }
+    //throw LetItThrow("Item not found");
+    ErrorMessage("Item not found for BMI_GetValue with double argument.");
+    throw PhreeqcRMStop();
+}
+
+void PhreeqcRM::BMI_GetValue(std::string name, int& dest)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+        if (it->first == "componentcount")
+        {
+            dest = this->GetComponentCount();
+            return;
+        }
+        if (it->first == "currentselectedoutputusernumber")
+        {
+            dest = this->GetIPhreeqcPointer(0)->GetCurrentSelectedOutputUserNumber();
+            return;
+        }
+        if (it->first == "gridcellcount")
+        {
+            dest = this->GetGridCellCount();
+            return;
+        }
+        if (it->first == "selectedoutputcolumncount")
+        {
+            dest = this->GetSelectedOutputColumnCount();
+            return;
+        }
+        if (it->first == "selectedoutputcount")
+        {
+            dest = this->GetSelectedOutputCount();
+            return;
+        }
+        if (it->first == "selectedoutputrowcount")
+        {
+            dest = this->GetSelectedOutputRowCount();
+            return;
+        }
+    }
+    ErrorMessage("Item not found for BMI_GetValue with double argument.");
+    throw PhreeqcRMStop();
+}
+
+void PhreeqcRM::BMI_GetValue(std::string name, std::string& dest)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+        if (it->first == "fileprefix")
+        {
+            dest = this->GetFilePrefix();
+            return;
+        }
+        if (it->first == "errorstring")
+        {
+            dest = this->GetErrorString();
+            return;
+        }
+    }
+    ErrorMessage("Item not found for BMI_GetValue with std::string argument.");
+    throw PhreeqcRMStop();
+}
+void PhreeqcRM::BMI_GetValue(std::string name, std::vector < double >& dest)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+        if (it->first == "concentrations")
+        {
+            this->GetConcentrations(dest);
+            return;
+        }
+        if (it->first == "density")
+        {
+            this->GetDensity(dest);
+            return;
+        }
+        if (it->first == "gfw")
+        {
+            dest = this->GetGfw();
+            return;
+        }
+        if (it->first == "porosity")
+        {
+            dest = this->GetPorosity();
+            return;
+        }
+        if (it->first == "pressure")
+        {
+            dest = this->GetPressure();
+            return;
+        }
+        if (it->first == "saturation")
+        {
+            this->GetSaturation(dest);
+            return;
+        }
+        if (it->first == "selectedoutput")
+        {
+            IRM_RESULT status = this->GetSelectedOutput(dest);
+            return;
+        }
+        if (it->first == "solutionvolume")
+        {
+            dest = this->GetSolutionVolume();
+            return;
+        }
+        if (it->first == "temperature")
+        {
+           dest = this->GetTemperature();
+           return;
+        }
+
+    }
+    ErrorMessage("Item not found for BMI_GetValue with std::vector < double > argument.");
+    throw PhreeqcRMStop();
+}
+void PhreeqcRM::BMI_GetValue(std::string name, std::vector < std::string >& dest)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+        if (it->first == "components")
+        {
+            dest = this->GetComponents();
+            return;
+        }
+
+        if (it->first == "inputvarnames")
+        {
+            dest = this->BMI_GetInputVarNames();
+            return;
+        }
+
+        if (it->first == "outputvarnames")
+        {
+            dest = this->BMI_GetOutputVarNames();
+            return;
+        }
+         if (it->first == "selectedoutputheadings")
+        {
+            int count = this->GetSelectedOutputColumnCount();
+            dest.clear();
+            for (int i = 0; i < count; i++)
+            {
+                std::string heading;
+                IRM_RESULT status = this->GetSelectedOutputHeading(i, heading);
+                dest.push_back(heading);
+            }
+            return;
+        }
+    }
+    ErrorMessage("Item not found for BMI_GetValue with std::vector < std::string > argument.");
     throw PhreeqcRMStop();
 }
 void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
@@ -148,7 +518,7 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
         {
             std::vector<double> rm_conc;
             this->GetConcentrations(rm_conc);
-            memcpy(dest, rm_conc.data(), rm_conc.size()*sizeof(double));
+            memcpy(dest, rm_conc.data(), rm_conc.size() * sizeof(double));
             return;
         }
         if (it->first == "currentselectedoutputusernumber")
@@ -161,7 +531,7 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
         {
             std::vector<double> density;
             this->GetDensity(density);
-            memcpy(dest, density.data(), density.size()*sizeof(double));
+            memcpy(dest, density.data(), density.size() * sizeof(double));
             return;
         }
         if (it->first == "fileprefix")
@@ -226,7 +596,7 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
         }
         if (it->first == "pressure")
         {
-            const std::vector<double> &pressure = this->GetPressure();
+            const std::vector<double>& pressure = this->GetPressure();
             memcpy(dest, pressure.data(), pressure.size() * sizeof(double));
             return;
         }
@@ -296,7 +666,7 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
         }
         if (it->first == "temperature")
         {
-            const std::vector<double> &temperature = this->GetTemperature();
+            const std::vector<double>& temperature = this->GetTemperature();
             memcpy(dest, temperature.data(), temperature.size() * sizeof(double));
             return;
         }
@@ -305,7 +675,7 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
             double time = this->GetTime();
             memcpy(dest, &time, sizeof(double));
             return;
-        }
+    }
         if (it->first == "timestep")
         {
             double timestep = this->GetTimeStep();
@@ -313,7 +683,6 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
             return;
         }
     }
-    //throw LetItThrow("Item not found");
     ErrorMessage("Item not found");
     throw PhreeqcRMStop();
 }
