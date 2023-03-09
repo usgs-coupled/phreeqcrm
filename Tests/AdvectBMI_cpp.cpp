@@ -779,9 +779,29 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 	{
 		oss << phreeqc_rm.BMI_GetComponentName() << "\n";
 	}
-	//double BMI_GetCurrentTime() { return this->GetTime(); }
+	// Time
 	{
-		oss << "BMI_GetCurrentTime: " << phreeqc_rm.BMI_GetCurrentTime() << "\n";
+		double rm_time = 3600.0;
+		phreeqc_rm.BMI_SetValue("Time", &rm_time);
+		double bmi_time = 0.0;
+		phreeqc_rm.BMI_GetValue("Time", &bmi_time);
+		assert(rm_time == bmi_time);
+		rm_time = phreeqc_rm.GetTime();
+		assert(rm_time == bmi_time);
+		bmi_time = phreeqc_rm.BMI_GetCurrentTime();
+		assert(rm_time == bmi_time);
+	}
+	// TimeStep
+	{
+		double rm_timestep = 60.;
+		phreeqc_rm.BMI_SetValue("TimeStep", &rm_timestep);
+		double bmi_timestep = 0.0;
+		phreeqc_rm.BMI_GetValue("TimeStep", &bmi_timestep);
+		assert(rm_timestep == bmi_timestep);
+		rm_timestep = phreeqc_rm.GetTimeStep();
+		assert(rm_timestep == bmi_timestep);
+		bmi_timestep = phreeqc_rm.BMI_GetTimeStep();
+		assert(rm_timestep == bmi_timestep);
 	}
 	//double BMI_GetEndTime() { return this->GetTime() + this->GetTimeStep(); }
 	{
@@ -807,6 +827,8 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 			oss << "  " << i << "  " << InputVarNames[i] << "\n";
 			oss << "     Type:  " << phreeqc_rm.BMI_GetVarType(InputVarNames[i]) << "\n";
 			oss << "     Units: " << phreeqc_rm.BMI_GetVarUnits(InputVarNames[i]) << "\n";
+			oss << "  Itemsize: " << phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
+			oss << "    NBytes: " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) << "\n";
 		}
 	}
 	// std::vector<std::string> BMI_GetOutputVarNames() { return this->bmi_output_vars; };
@@ -821,6 +843,8 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 			oss << "  " << i << "  " << OutputVarNames[i] << "\n";
 			oss << "     Type:  " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
 			oss << "     Units: " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
+			oss << "  Itemsize: " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+			oss << "    NBytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
 		}
 	}
 	phreeqc_rm.OutputMessage(oss.str());
@@ -860,13 +884,16 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		assert(rm_conc == bmi_conc);
 	}
 	// GetValue("Density")
+	// GetDensity and BMI_GetValue("Density) always return 
+	// the calculated solution density
 	{
 		int ngrid;
 		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
-		std::vector<double> bmi_density(ngrid, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
+		std::vector<double> bmi_density(ngrid, 1.1);
+		phreeqc_rm.BMI_SetValue("Density", bmi_density.data());
 		std::vector<double> rm_density;
 		phreeqc_rm.GetDensity(rm_density);
+		phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
 		assert(bmi_density == rm_density);
 	}
 	// GetValue("ErrorString")
@@ -875,6 +902,19 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		std::string bmi_err(nbytes, ' ');
 		std::string rm_err = phreeqc_rm.GetErrorString();
 		assert(bmi_err == rm_err);
+	}
+	//FilePrefix
+	{
+		std::string str = "NewPrefix";
+		phreeqc_rm.BMI_SetValue("FilePrefix", (void*)str.c_str());
+		int itemsize = phreeqc_rm.BMI_GetVarItemsize("FilePrefix");
+		int	nbytes = phreeqc_rm.BMI_GetVarNbytes("FilePrefix");
+		assert(itemsize == nbytes);
+		std::string rm_prefix = phreeqc_rm.GetFilePrefix();
+		assert(str == rm_prefix);
+		std::string prefix(itemsize, ' ');
+		phreeqc_rm.BMI_GetValue("FilePrefix", (void*) prefix.data());
+		assert(prefix == rm_prefix);
 	}
 	// GetValue("Gfw")
 	{
@@ -897,16 +937,32 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		// tested in "SelectedOutput"
 		// tested in "SelectedOutputHeadings"
 	}
+	// GetValue("Porosity")
+	{
+		int ngrid;
+		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
+		std::vector<double> bmi_porosity(ngrid, 1.1);
+		phreeqc_rm.BMI_SetValue("Porosity", bmi_porosity.data());
+		std::vector<double> rm_porosity;
+		rm_porosity = phreeqc_rm.GetPorosity();
+		assert(bmi_porosity == rm_porosity);
+		phreeqc_rm.BMI_GetValue("Porosity", bmi_porosity.data());
+		assert(bmi_porosity == rm_porosity);
+	}
 	// GetValue("Pressure")
 	{
 		int ngrid;
 		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
-		std::vector<double> bmi_pressure(ngrid, INACTIVE_CELL_VALUE);
+		std::vector<double> bmi_pressure(ngrid, 1.1);
+		phreeqc_rm.BMI_SetValue("Pressure", bmi_pressure.data());
+		std::vector<double> rm_pressure;
+		rm_pressure = phreeqc_rm.GetPressure();
+		assert(bmi_pressure == rm_pressure);
 		phreeqc_rm.BMI_GetValue("Pressure", bmi_pressure.data());
-		const std::vector<double> rm_pressure = phreeqc_rm.GetPressure();
 		assert(bmi_pressure == rm_pressure);
 	}
 	// GetValue("Saturation")
+	// Always returns solution_volume / (rv * porosity) for each cell
 	{
 		int ngrid;
 		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
@@ -915,6 +971,29 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		std::vector<double> rm_sat;
 		phreeqc_rm.GetSaturation(rm_sat);
 		assert(bmi_sat == rm_sat);
+	}
+	// GetValue("SolutionVolume")
+	// Always returns solution_volume / (rv * porosity) for each cell
+	{
+		int ngrid;
+		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
+		std::vector<double> bmi_vol(ngrid, INACTIVE_CELL_VALUE);
+		phreeqc_rm.BMI_GetValue("SolutionVolume", bmi_vol.data());
+		std::vector<double> rm_vol;
+		rm_vol = phreeqc_rm.GetSolutionVolume();
+		assert(bmi_vol == rm_vol);
+	}
+	// GetValue("Temperature")
+	{
+		int ngrid;
+		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
+		std::vector<double> bmi_temperature(ngrid, 1.1);
+		phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature.data());
+		std::vector<double> rm_temperature;
+		rm_temperature = phreeqc_rm.GetTemperature();
+		assert(bmi_temperature == rm_temperature);
+		phreeqc_rm.BMI_GetValue("Temperature", bmi_temperature.data());
+		assert(bmi_temperature == rm_temperature);
 	}
 	// GetValue("SelectedOutput")
 	{
@@ -1007,15 +1086,6 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		phreeqc_rm.BMI_GetValue("SelectedOutputRowCount", &bmi_so_row_count);
 		int rm_so_row_count = phreeqc_rm.GetSelectedOutputRowCount();
 		assert(bmi_so_row_count == rm_so_row_count);
-	}
-	// GetValue("Temperature")
-	{
-		int ngrid;
-		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
-		std::vector<double> bmi_temp(ngrid, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Temperature", bmi_temp.data());
-		const std::vector<double> rm_temp = phreeqc_rm.GetTemperature();
-		assert(bmi_temp == rm_temp);
 	}
 }
 #endif // YAML

@@ -465,13 +465,19 @@ USE, intrinsic :: ISO_C_BINDING
     write(*,*) string
     write(*,*) RM_BMI_GetTimeStep(id)
     ! Time
-    status = RM_BMI_Getvalue(id, "Time", time)
+    rm_time = 3600
+    status = RM_BMI_SetValue(id, "Time", rm_time)
+    status = RM_BMI_GetValue(id, "Time", time)
+    status = assert(rm_time .eq. time)
     rm_time = RM_GetTime(id)
     status = assert(time .eq. rm_time)
     time = RM_BMI_GetCurrentTime(id)
     status = assert(time .eq. rm_time)
     ! TimeStep
+    rm_time_step = 60
+    status = RM_BMI_SetValue(id, "TimeStep", rm_time_step)
     status = RM_BMI_GetValue(id, "TimeStep", time_step)
+    status = assert(time_step .eq. rm_time_step)
     rm_time_step = RM_GetTimeStep(id)
     status = assert(time_step .eq. rm_time_step)
     time_step = RM_BMI_GetTimeStep(id)
@@ -546,12 +552,14 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
    
 	! GetValue("Density")
-    status = RM_BMI_GetValue(id, "Density", density)
+    ! RM_GetDensity and RM_BMI_GetValue("Density) always return 
+    ! the calculated solution density
     itemsize = RM_BMI_GetVarItemsize(id, "Density")
     nbytes = RM_BMI_GetVarNBytes(id, "Density")
     dim = nbytes / itemsize
     allocate(rm_density(dim))
-	status = RM_GetDensity(id, rm_density);
+    status = RM_GetDensity(id, rm_density)
+    status = RM_BMI_GetValue(id, "Density", density)
     do i = 1, nxyz
         if (density(i) .ne. rm_density(i)) then
             status = assert(.false.)
@@ -560,12 +568,16 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
     
     ! FilePrefix
-    status = RM_BMI_GetValue(id, "FilePrefix", prefix)
+    string = "NewPrefix"
+    status = RM_BMI_SetValue(id, "FilePrefix", string)
     itemsize = RM_BMI_GetVarItemsize(id, "FilePrefix")
     nbytes = RM_BMI_GetVarNBytes(id, "FilePrefix")
-    status = assert(itemsize .eq. nbytes)
     allocate(character(len=itemsize) :: rm_prefix)
+    status = assert(itemsize .eq. nbytes)
     status = RM_GetFilePrefix(id, rm_prefix)
+    status = assert(string .eq. rm_prefix)
+    allocate(character(len=itemsize) :: prefix)
+    status = RM_BMI_GetValue(id, "FilePrefix", prefix)
     status = assert(prefix .eq. rm_prefix)
          
 	! GetValue("Gfw")
@@ -588,26 +600,42 @@ USE, intrinsic :: ISO_C_BINDING
     status = assert(nxyz .eq. rm_nxyz)
     
 	! GetValue("Porosity")
-    status = RM_BMI_GetValue(id, "Porosity", porosity)
     itemsize = RM_BMI_GetVarItemsize(id, "Porosity")
     nbytes = RM_BMI_GetVarNBytes(id, "Porosity")
     dim = nbytes / itemsize
     allocate(rm_porosity(dim))
-	status = RM_GetPorosity(id, rm_porosity);
+    rm_porosity = 0.25
+    status = RM_BMI_SetValue(id, "Porosity", rm_porosity)
+    status = RM_BMI_GetValue(id, "Porosity", porosity)
     do i = 1, nxyz
         if (porosity(i) .ne. rm_porosity(i)) then
             status = assert(.false.)
             exit
         endif
     enddo
-    
+	status = RM_GetPorosity(id, rm_porosity);
+        do i = 1, nxyz
+        if (porosity(i) .ne. rm_porosity(i)) then
+            status = assert(.false.)
+            exit
+        endif
+    enddo
+
 	! GetValue("Pressure")
-    status = RM_BMI_GetValue(id, "Pressure", pressure)
     itemsize = RM_BMI_GetVarItemsize(id, "Pressure")
     nbytes = RM_BMI_GetVarNBytes(id, "Pressure")
     dim = nbytes / itemsize
     allocate(rm_pressure(dim))
-	status = RM_GetPressure(id, rm_pressure);
+    rm_pressure = 10.
+    status = RM_BMI_SetValue(id, "Pressure", rm_pressure)
+    status = RM_BMI_GetValue(id, "Pressure", pressure)
+    do i = 1, nxyz
+        if (pressure(i) .ne. rm_pressure(i)) then
+            status = assert(.false.)
+            exit
+        endif
+    enddo
+    status = RM_GetPressure(id, rm_pressure);
     do i = 1, nxyz
         if (pressure(i) .ne. rm_pressure(i)) then
             status = assert(.false.)
@@ -616,11 +644,12 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
 
 	! GetValue("Saturation")
-    status = RM_BMI_GetValue(id, "Saturation", saturation)
+    ! Always returns solution_volume/(rv * porosity) for each cell
     itemsize = RM_BMI_GetVarItemsize(id, "Saturation")
     nbytes = RM_BMI_GetVarNBytes(id, "Saturation")
     dim = nbytes / itemsize
     allocate(rm_saturation(dim))
+    status = RM_BMI_GetValue(id, "Saturation", saturation)
 	status = RM_GetSaturation(id, rm_saturation);
     do i = 1, nxyz
         if (saturation(i) .ne. rm_saturation(i)) then
@@ -630,11 +659,11 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
     
     ! GetValue("SolutionVolume")
-    status = RM_BMI_GetValue(id, "SolutionVolume", volume)
     itemsize = RM_BMI_GetVarItemsize(id, "SolutionVolume")
     nbytes = RM_BMI_GetVarNBytes(id, "SolutionVolume")
     dim = nbytes / itemsize
     allocate(rm_volume(dim))
+    status = RM_BMI_GetValue(id, "SolutionVolume", volume)
 	status = RM_GetSolutionVolume(id, rm_volume);
     do i = 1, nxyz
         if (volume(i) .ne. rm_volume(i)) then
@@ -644,12 +673,20 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
     
 	! GetValue("Temperature")
-    status = RM_BMI_GetValue(id, "Temperature", temperature)
     itemsize = RM_BMI_GetVarItemsize(id, "Temperature")
     nbytes = RM_BMI_GetVarNBytes(id, "Temperature")
     dim = nbytes / itemsize
     allocate(rm_temperature(dim))
-	status = RM_GetTemperature(id, rm_temperature);
+    rm_temperature = 11.
+    status = RM_BMI_SetValue(id, "Temperature", rm_temperature)
+    status = RM_BMI_GetValue(id, "Temperature", temperature)
+    do i = 1, nxyz
+        if (temperature(i) .ne. rm_temperature(i)) then
+            status = assert(.false.)
+            exit
+        endif
+    enddo
+    status = RM_GetTemperature(id, rm_temperature);
     do i = 1, nxyz
         if (temperature(i) .ne. rm_temperature(i)) then
             status = assert(.false.)

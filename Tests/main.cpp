@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 //	if (root) std::cerr << "Done Advect_cpp.==================================" << std::endl;
 //#ifdef USE_YAML
 	WriteYAMLFile_cpp();
-//	AdvectBMI_cpp();
+	AdvectBMI_cpp();
 //#endif
 //	if (root) std::cerr << "Done AdvectBMI_cpp.==================================" << std::endl;
 //	SimpleAdvect_c();
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 //	Advect_f90();
 //	if (root) std::cerr << "Done Advect_f90.==================================" << std::endl;
 //#ifdef USE_YAML
-	AdvectBMI_f90();
+//	AdvectBMI_f90();
 //#endif
 //	if (root) std::cerr << "Done AdvectBMI_f90.==================================" << std::endl;
 //	Species_f90();
