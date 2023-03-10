@@ -5305,7 +5305,7 @@ Called by root.
 	/**
 	Basic Model Interface method that returns the current simulation time step, in seconds. (Same as @ref GetTimeStep.)
 	The reaction module does not change the time-step value, so the
-	returned value is equal to the last time steo set by
+	returned value is equal to the last time step set by
 	@ref BMI_SetValue("TimeStep", time_step) or @ref SetTimeStep.
 	@retval                 The current simulation time step, in seconds.
 	@see
@@ -5327,7 +5327,7 @@ Called by root.
 	</CODE>
 	@endhtmlonly
 	@par MPI:
-	Called by root..
+	Called by root.
 	 */
 	double BMI_GetTimeStep() { return this->GetTimeStep(); }
 
@@ -5366,33 +5366,36 @@ Called by root.
 	Basic Model Interface method that retrieves model variables. Only variables in the list
 	provided by @ref BMI_GetOutputVarNames can be retrieved. The BMI interface to PhreeqcRM is
 	only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
-	prefix) provide a complete interface, and it is expected that the native methods will be used in preference to the BMI_
-	methods.
+	prefix) provide a complete interface.
+	@param name Name of the variable to retrieve.
+	@param dest Variable in which to place results.
 
-	Variable names for the first argument
-	of BMI_GetValue and the equivalent PhreeqcRM method are as follows:
-	"ComponentCount", @ref GetComponentCount;
-	"Components", @ref GetComponents;
-	"Concentrations", @ref GetConcentrations;
-	"CurrentSelectedOutputUserNumber", @ref GetCurrentSelectedOutputUserNumber;
-	"Density", @ref GetDensity;
-	"ErrorString", @ref GetErrorString;
-	"FilePrefix", @ref GetFilePrefix;
-	"Gfw", @ref GetGfw;
-	"GridCellCount", @ref GetGridCellCount;
-	"InputVarNames", @ref BMI_GetInputVarNames;
-	"OutputVarNames", @ref BMI_GetOutputVarNames;
-	"Porosity", @ref GetPorosity;
-	"Pressure", @ref GetPressure;
-	"Saturation", @ref GetSaturation;
-	"SelectedOutput", @ref GetSelectedOutput;
-	"SelectedOutputColumnCount", @ref GetSelectedOutputColumnCount;
-	"SelectedOutputCount", @ref GetSelectedOutputCount;
-	"SelectedOutputHeadings, @ref GetSelectedOutputHeadings;
-	"SelectedOutputOn", @ref GetSelectedOutputOn;
-	"SelectedOutputRowCount", @ref GetSelectedOutputRowCount;
-	"SolutionVolume", @ref GetSolutionVolume;
-	"Temperature", @ref GetTemperature.
+	Variable names for the first argument (@a name) and variable type of the
+	second argument (@a dest).
+	"ComponentCount", @a dest: int;
+	"Components", @a dest: std::vector<std::string>;
+	"Concentrations", @a dest: std::vector<double>;
+	"CurrentSelectedOutputUserNumber", @a dest: int;
+	"Density", @a dest: std::vector<double>;
+	"ErrorString", @a dest: std::string;
+	"FilePrefix", @a dest: std::string;
+	"Gfw", @a ref GetGfw,	@a dest: std::vector<double>;
+	"GridCellCount", @a dest: int;
+	"InputVarNames", @a dest: std::vector<std::string>;
+	"OutputVarNames", @a dest: std::vector<std::string>;
+	"Porosity", @a dest: std::vector<double>;
+	"Pressure", @a dest: std::vector<double>;
+	"Saturation", @a dest: std::vector<double>;
+	"SelectedOutput", @a dest: std::vector<double>;
+	"SelectedOutputColumnCount", @a dest: int;
+	"SelectedOutputCount", @a dest: int;
+	"SelectedOutputHeadings, @a dest: std::vector<std::string>;
+	"SelectedOutputOn", @a dest: bool;
+	"SelectedOutputRowCount", @a dest: int;
+	"SolutionVolume", @a dest: std::vector<double>;
+	"Temperature", @a dest: std::vector<double>;
+	"Time",	@a dest: double;
+	"TimeStep",	@a dest: double.
 
 	@see
 	@ref BMI_GetOutputVarNames,
@@ -5406,40 +5409,16 @@ Called by root.
 	@htmlonly
 	<CODE>
 	<PRE>
-			int nbytes;
-			phreeqc_rm.BMI_GetVarNbytes("Density", &nbytes);
-			int item_size;
-			phreeqc_rm.BMI_GetVarItemSize("Density", &item_size);
-			int dim = nbytes/item_size;
-			std::vector<double> bmi_density(dim, 0.0);
-			phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
-			// equivalent to:
-			// std::vector<double> rm_density;
-			// phreeqc_rm.GetDensity(rm_density);
-
-			int ncomps;
-			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
-			int nbytes = phreeqc_rm.BMI_GetVarNbytes("Components");
-			std::string all_comps(nbytes, ' ');
-			phreeqc_rm.BMI_GetValue("Components", all_comps.data());
-			int string_size = phreeqc_rm.BMI_GetVarItemsize("Components");
-			std::vector<std::string> bmi_comps;
-			for (size_t i = 0; i < ncomps; i++)
-			{
-				std::string bmi_comp = all_comps.substr((i * string_size), string_size);
-				size_t end = bmi_comp.find_last_not_of(' ');
-				bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
-				bmi_comps.push_back(bmi_comp);
-			}
-			// equivalent to:
-			// std::vector< std::string > components = phreeqc_rm.GetComponents();
+		std::vector<double> bmi_density;
+		phreeqc_rm.BMI_GetValue("Density", bmi_density);
+		std::vector<std::string> bmi_comps;
+		phreeqc_rm.BMI_GetValue("Components", bmi_comps);
 	</PRE>
 	</CODE>
 	@endhtmlonly
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
-	void BMI_GetValue(std::string name, void* dest);
 	void BMI_GetValue(std::string name, bool& dest);
 	void BMI_GetValue(std::string name, double& dest);
 	void BMI_GetValue(std::string name, int& dest);
@@ -5827,7 +5806,6 @@ Called by root.
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	 */
-	void BMI_SetValue(std::string name, void* src);
 	void BMI_SetValue(std::string name, bool& src);
 	void BMI_SetValue(std::string name, double& src);
 	void BMI_SetValue(std::string name, int& src);
