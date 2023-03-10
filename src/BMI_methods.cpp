@@ -1191,7 +1191,7 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
             continue;
         }
         if (keyword == "SetGridCellCount") {
-            this->WarningMessage("SetGridCellCount has no effect after the PhreeqcRM instance is created.");
+            //this->WarningMessage("SetGridCellCount has no effect after the PhreeqcRM instance is created.");
             continue;
         }
 		if (keyword == "SetPartitionUZSolids") 

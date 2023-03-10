@@ -1,60 +1,14 @@
-
-    MODULE BMI_PhreeqcRM
-    USE PhreeqcRM
-    IMPLICIT NONE
-    INTERFACE RM_BMI_GetValue
-        procedure RM_BMI_GetValue_b
-        procedure RM_BMI_GetValue_c
-        procedure RM_BMI_GetValue_c1
-        procedure RM_BMI_GetValue_d
-        procedure RM_BMI_GetValue_d1
-        procedure RM_BMI_GetValue_d2
-        procedure RM_BMI_GetValue_i
-        procedure RM_BMI_GetValue_i1
-        procedure RM_BMI_GetValue_i2
-    END INTERFACE RM_BMI_GetValue
-
-    INTERFACE RM_BMI_SetValue
-        procedure RM_BMI_SetValue_b
-        procedure RM_BMI_SetValue_c
-        procedure RM_BMI_SetValue_d
-        procedure RM_BMI_SetValue_d1
-        procedure RM_BMI_SetValue_d2
-        procedure RM_BMI_SetValue_i
-        procedure RM_BMI_SetValue_i1
-        procedure RM_BMI_SetValue_i2
-    END INTERFACE RM_BMI_SetValue
-
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarItemsize')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarItemsize
-
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarNbytes')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
-    CONTAINS
-    
 INTEGER FUNCTION RM_BMI_Finalize(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RM_Destroy(id) &
-            BIND(C, NAME='RM_Destroy')
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-        END FUNCTION RM_Destroy 
-    END INTERFACE
+    !INTERFACE
+    !    INTEGER(KIND=C_INT) FUNCTION RM_Destroy(id) &
+    !        BIND(C, NAME='RM_Destroy')
+    !        USE ISO_C_BINDING
+    !        IMPLICIT NONE
+    !        INTEGER(KIND=C_INT), INTENT(in) :: id
+    !    END FUNCTION RM_Destroy 
+    !END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_BMI_Finalize = RM_Destroy(id)
     return
@@ -424,26 +378,28 @@ END FUNCTION RM_BMI_GetTimeUnits
 !> provided by @ref RM_BMI_GetOutputVarNames can be retrieved. The BMI interface to PhreeqcRM is
 !> only partial, and provides only the most basic functions. The native PhreeqcRM methods 
 !> (those without the the RM_BMI_ prefix) provide a complete interface.
-!> @param name Name of the variable to retrieve.
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> @param var Name of the variable to retrieve.
 !> @param dest Variable in which to place results.
+!> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
 !> 
 !> Variable names for the first argument (@a name) and variable type of the
 !> second argument (@a dest):
 !> "ComponentCount", @a dest: integer;
 !> "Components", @a dest: character(len=:), allocatable, dimension(:);
-!> "Concentrations", @a dest: double precision, allocatable, dimension(:,:);
+!> "Concentrations", @a dest: double precision, allocatable, dimension(:);
 !> "CurrentSelectedOutputUserNumber", @a dest: integer;
 !> "Density", @a dest: double precision, allocatable, dimension(:);
 !> "ErrorString", @a dest: character;
 !> "FilePrefix", @a dest: character;
-!> "Gfw", @a dest: double precision, allocatable, dimension(:);
+!> "Gfw", @a ref GetGfw, @a dest: double precision, allocatable, dimension(:);
 !> "GridCellCount", @a dest: integer;
 !> "InputVarNames", @a dest: character(len=:), allocatable, dimension(:);
 !> "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
 !> "Porosity", @a dest: double precision, allocatable, dimension(:);
 !> "Pressure", @a dest: double precision, allocatable, dimension(:);
 !> "Saturation", @a dest: double precision, allocatable, dimension(:);
-!> "SelectedOutput", @a dest: double precision, allocatable, dimension(:,:);
+!> "SelectedOutput", @a dest: double precision, allocatable, dimension(:);
 !> "SelectedOutputColumnCount", @a dest: integer;
 !> "SelectedOutputCount", @a dest: integer;
 !> "SelectedOutputHeadings, @a dest: character(len=:), allocatable, dimension(:);
@@ -796,8 +752,44 @@ INTEGER FUNCTION RM_BMI_GetValue_i2(id, var, dest)
     stop "Unknown 2d variable"
     RM_BMI_GetValue_i2 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
     return
-END FUNCTION RM_BMI_GetValue_i2
+    END FUNCTION RM_BMI_GetValue_i2
 
+!> Basic Model Interface method that retrieves the size of an 
+!> individual item that can be set or retrived.
+!> Sizes may be sizeof(int), sizeof(double), 
+!> or a character length for string variables. Only variables in the list
+!> provided by @ref RM_BMI_GetInputVarNames can be set. 
+!> Only variables in the list
+!> provided by @ref RM_BMI_GetOutputVarNames can be retrieved. 
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> @param var Name of the variable to retrieve.
+!> @retval   Size of one element of the variable.
+!> 
+!> @see
+!> @ref RM_BMI_GetInputVarNames,
+!> @ref RM_BMI_GetInputItemCount,
+!> @ref RM_BMI_GetOutputVarNames,
+!> @ref RM_BMI_GetOutputItemCount,
+!> @ref RM_BMI_GetValue,
+!> @ref RM_BMI_GetVarNbytes,
+!> @ref RM_BMI_SetValue.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> 		integer nbytes, item_size, dim
+!>      double precision, allocatable, dimension(:) :: bmi_temperature
+!> 		nbytes = RM_BMI_GetVarNbytes(id, "Temperature")
+!> 		item_size = RM_BMI_GetVarItemSize(id, "Temperature");
+!> 		int dim = nbytes/item_size;
+!> 		allocate(bmi_temperature(dim))
+!>      bmi_temperature = 25.0
+!> 		status = RM_BMI_SetValue("Temperature", bmi_temperature);
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
 INTEGER FUNCTION RM_BMI_GetVarItemsize(id, var)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -805,7 +797,42 @@ INTEGER FUNCTION RM_BMI_GetVarItemsize(id, var)
     CHARACTER(len=*), INTENT(in) :: var
     RM_BMI_GetVarItemsize = RMF_BMI_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
 END FUNCTION RM_BMI_GetVarItemsize
-
+!> Basic Model Interface method that retrieves the size of an 
+!> individual item that can be set or retrived.
+!> Sizes may be sizeof(int), sizeof(double), 
+!> or a character length for string variables. Only variables in the list
+!> provided by @ref RM_BMI_GetInputVarNames can be set. 
+!> Only variables in the list
+!> provided by @ref RM_BMI_GetOutputVarNames can be retrieved. 
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> @param var Name of the variable to retrieve size.
+!> @retval Size of one element of the variable.
+!> 
+!> @see
+!> @ref RM_BMI_GetInputVarNames,
+!> @ref RM_BMI_GetInputItemCount,
+!> @ref RM_BMI_GetOutputVarNames,
+!> @ref RM_BMI_GetOutputItemCount,
+!> @ref RM_BMI_GetValue,
+!> @ref RM_BMI_GetVarNbytes,
+!> @ref RM_BMI_SetValue.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> 		integer nbytes, item_size, dim
+!>      double precision, allocatable, dimension(:) :: bmi_temperature
+!> 		nbytes = RM_BMI_GetVarNbytes(id, "Temperature")
+!> 		item_size = RM_BMI_GetVarItemSize(id, "Temperature");
+!> 		int dim = nbytes/item_size;
+!> 		allocate(bmi_temperature(dim))
+!>      bmi_temperature = 25.0
+!> 		status = RM_BMI_SetValue("Temperature", bmi_temperature);
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
 INTEGER FUNCTION RM_BMI_GetVarNbytes(id, var)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -813,9 +840,46 @@ INTEGER FUNCTION RM_BMI_GetVarNbytes(id, var)
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     RM_BMI_GetVarNbytes = RMF_BMI_GetVarNbytes(id, trim(var)//C_NULL_CHAR)
-END FUNCTION RM_BMI_GetVarNbytes
+    END FUNCTION RM_BMI_GetVarNbytes
 
-INTEGER FUNCTION RM_BMI_GetVarType(id, var, vtype)
+!> Basic Model Interface method that retrieves the type of a variable that can be set with
+!> @ref RM_BMI_SetValue or retrieved with @ref RM_BMI_GetValue. Types are "character","double", 
+!> "int", or "logical",
+!> followed by the dimension if the variable is a array.
+!> Only variables in the list
+!> provided by @ref RM_BMI_GetInputVarNames can be set. 
+!> Only variables in the list
+!> provided by @ref RM_BMI_GetOutputVarNames can be retrieved. 
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> @param var Name of the variable to retrieve total bytes.
+!> @param vtype Type of the variable.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see
+!> @ref RM_BMI_GetInputVarNames,
+!> @ref RM_BMI_GetInputItemCount,
+!> @ref RM_BMI_GetOutputVarNames,
+!> @ref RM_BMI_GetOutputItemCount,
+!> @ref RM_BMI_GetVarUnits.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!>     do i = 1, size(inputvars)
+!>         write(*,"(1x, I4, A40)") i, trim(inputvars(i))
+!>         status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
+!>         write(*,"(5x, A15)") trim(string)
+!>         status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
+!>         write(*,"(5x, A15)") trim(string)
+!>         write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
+!>         write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
+!>     enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+    INTEGER FUNCTION RM_BMI_GetVarType(id, var, vtype)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -834,7 +898,41 @@ INTEGER FUNCTION RM_BMI_GetVarType(id, var, vtype)
     RM_BMI_GetVarType = RMF_BMI_GetVarType(id, trim(var)//C_NULL_CHAR, vtype, len(vtype))
     return
 END FUNCTION RM_BMI_GetVarType 
-
+!> Basic Model Interface method that retrieves the units of a 
+!> variable that can be set with
+!> @ref RM_BMI_SetValue or retrieved with @ref RM_BMI_GetValue.
+!> Only variables in the list
+!> provided by @ref RM_BMI_GetInputVarNames can be set. 
+!> Only variables in the list
+!> provided by @ref RM_BMI_GetOutputVarNames can be retrieved. 
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> @param var Name of the variable to retrieve total bytes.
+!> @param vtype Units of the variable.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see
+!> @ref RM_BMI_GetInputVarNames,
+!> @ref RM_BMI_GetInputItemCount,
+!> @ref RM_BMI_GetOutputVarNames,
+!> @ref RM_BMI_GetOutputItemCount,
+!> @ref RM_BMI_GetVarType.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!>     do i = 1, size(inputvars)
+!>         write(*,"(1x, I4, A40)") i, trim(inputvars(i))
+!>         status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
+!>         write(*,"(5x, A15)") trim(string)
+!>         status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
+!>         write(*,"(5x, A15)") trim(string)
+!>         write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
+!>         write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
+!>     enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
 INTEGER FUNCTION RM_BMI_GetVarUnits(id, var, units)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1258,10 +1356,3 @@ DO i = 1,LEN(s1)
    s2(i:i) = ch
 END DO
 END FUNCTION Lower
-
-END MODULE BMI_PhreeqcRM
-
-
-
-
-    

@@ -58,9 +58,47 @@
 #ifdef SKIP    
     PRIVATE :: RM_SETCONCENTRATIONS1D
 #endif   
-    
+    INTERFACE RM_BMI_GetValue
+        procedure RM_BMI_GetValue_b
+        procedure RM_BMI_GetValue_c
+        procedure RM_BMI_GetValue_c1
+        procedure RM_BMI_GetValue_d
+        procedure RM_BMI_GetValue_d1
+        procedure RM_BMI_GetValue_d2
+        procedure RM_BMI_GetValue_i
+        procedure RM_BMI_GetValue_i1
+        procedure RM_BMI_GetValue_i2
+    END INTERFACE RM_BMI_GetValue
+
+    INTERFACE RM_BMI_SetValue
+        procedure RM_BMI_SetValue_b
+        procedure RM_BMI_SetValue_c
+        procedure RM_BMI_SetValue_d
+        procedure RM_BMI_SetValue_d1
+        procedure RM_BMI_SetValue_d2
+        procedure RM_BMI_SetValue_i
+        procedure RM_BMI_SetValue_i1
+        procedure RM_BMI_SetValue_i2
+    END INTERFACE RM_BMI_SetValue
+
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
+            BIND(C, NAME='RMF_BMI_GetVarItemsize')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+        END FUNCTION RMF_BMI_GetVarItemsize
+
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
+            BIND(C, NAME='RMF_BMI_GetVarNbytes')
+            USE ISO_C_BINDING
+            IMPLICIT NONE
+            INTEGER(KIND=C_INT), INTENT(in) :: id
+            CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+        END FUNCTION RMF_BMI_GetVarNbytes
+    END INTERFACE    
     CONTAINS
-    
 !> Abort the program. 
 !> @a irm_result will be interpreted as
 !> an IRM_RESULT value and decoded; @a err_str will be printed; and the reaction module
@@ -6948,6 +6986,8 @@ INTEGER FUNCTION Chk_Integer2D(id, t, n1, n2, var, func)
     Chk_Integer2D = errors
 END FUNCTION Chk_Integer2D
 
+
+    INCLUDE 'RM_BMI_interface.F90'
 END MODULE PhreeqcRM
 
     

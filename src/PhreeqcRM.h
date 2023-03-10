@@ -110,10 +110,37 @@ enum {
 	METHOD_STATEDELETE,
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
-
+#ifdef USE_YAML
+/**
+@a GetGridCellCountYAML will read the YAML file and extract the value
+of GridCellCount, which can be used to construct a PhreeqcRM
+instance. The constructor for a PhreeqcRM instance requires a 
+value for the number of cells. If a GUI or preprocessor is
+used to write a YAML file to initialize PhreeqcRM, the number
+of cells can be written to the YAML file and extracted with
+this method.
+@param yamlfile         String containing the YAML file name.
+@retval Number of grid cells specified in the YAML file; returns
+zero if GridCellCount is not defined.
+@see @ref InitializeYAML @ref PhreeqcRM.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+	int nthreads = 0;
+	std::string yaml_file = "myfile.yaml";
+	int nxyz = GetGridCellCountYAML(yaml_file);
+	PhreeqcRM phreeqc_rm(nxyz, nthreads);
+	phreeqc_rm.InitializeYAML(yaml_file);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called before PhreeqcRM is created.
+*/
 int IRM_DLL_EXPORT
 GetGridCellCountYAML(const char* YAML_file);
-
+#endif
 /**
  * @mainpage PhreeqcRM Library Documentation (@PHREEQC_VER@-@REVISION_SVN@)
  *
@@ -3017,7 +3044,11 @@ The names of the map keys for map
 arguments are not used in parsing the YAML file; only the order of 
 the arguments is important.
 
-The PhreeqcRM methods that can be specified in a YAML file include:
+The class YAMLPhreeqcRM can be used to write a YAML file.
+The methods defined in the YAMLPhreeqcRM class include the
+following list; 
+all but SetGridCellCount correspond to PhreeqcRM methods.
+include:
 @htmlonly
 <CODE>
 <PRE>
@@ -3045,6 +3076,7 @@ SetErrorOn(bool tf);
 SetFilePrefix(std::string prefix);
 SetGasCompMoles(std::vector< double > gas_moles);
 SetGasPhaseVolume(std::vector< double > gas_volume);
+SetGridCellCount(int nxyz);
 SetPartitionUZSolids(bool tf);
 SetPorosity(std::vector< double > por);
 SetPressure(std::vector< double > p);
@@ -5434,11 +5466,10 @@ Called by root.
 	Sizes may be sizeof(int), sizeof(double), 
 	or a character length for string variables. Only variables in the list
 	provided by @ref BMI_GetInputVarNames can be set. 
-	See @ref BMI_SetValue for the list of input variable names.
 	Only variables in the list
 	provided by @ref BMI_GetOutputVarNames can be retrieved. 
-	See @ref BMI_GetValue for the list of output variable names.
-
+	@param name Name of the variable to retrieve size.
+	@retval Size of one element of variable.
 
 	@see
 	@ref BMI_GetInputVarNames,
@@ -5452,13 +5483,11 @@ Called by root.
 	@htmlonly
 	<CODE>
 	<PRE>
-			int nbytes;
-			phreeqc_rm.BMI_GetVarNbytes("Temperature", &nbytes);
-			int item_size;
-			phreeqc_rm.BMI_GetVarItemSize("Temperature", &item_size);
-			int dim = nbytes/item_size;
-			std::vector<double> bmi_temperature(dim, 25.0);
-			phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature);
+		int nbytes = phreeqc_rm.BMI_GetVarNbytes("Temperature");
+		int item_size = phreeqc_rm.BMI_GetVarItemSize("Temperature");
+		int dim = nbytes/item_size;
+		std::vector<double> bmi_temperature(dim, 25.0);
+		phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature);
 	</PRE>
 	</CODE>
 	@endhtmlonly
@@ -5474,12 +5503,10 @@ Called by root.
 	@ref BMI_SetValue or retrieved for a variable with @ref BMI_GetValue.
 	Only variables in the list
 	provided by @ref BMI_GetInputVarNames can be set. 
-	See @ref BMI_SetValue for the list of input variable names.
 	Only variables in the list
 	provided by @ref BMI_GetOutputVarNames can be retrieved. 
-	See @ref BMI_GetValue for the list of output variable names.
-
-
+	@param name Name of the variable to retrieve total bytes.
+	@retval Total number of bytes set or retrieved for variable.
 	@see
 	@ref BMI_GetInputVarNames,
 	@ref BMI_GetInputItemCount,
@@ -5492,14 +5519,11 @@ Called by root.
 	@htmlonly
 	<CODE>
 	<PRE>
-			int nbytes;
-			phreeqc_rm.BMI_GetVarNbytes("Temperature", &nbytes);
-			int item_size;
-			phreeqc_rm.BMI_GetVarItemSize("Temperature", &item_size);
-			int dim = nbytes/item_size;
-			std::vector<double> bmi_temperature(dim, 25.0);
-			phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature);
-		}
+		int nbytes = phreeqc_rm.BMI_GetVarNbytes("Temperature");
+		int item_size = phreeqc_rm.BMI_GetVarItemSize("Temperature");
+		int dim = nbytes/item_size;
+		std::vector<double> bmi_temperature(dim, 25.0);
+		phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature);
 	</PRE>
 	</CODE>
 	@endhtmlonly
@@ -5515,11 +5539,11 @@ Called by root.
 	@ref BMI_SetValue or retrieved with @ref BMI_GetValue. Types are "int", "double", or "string".
 	Only variables in the list
 	provided by @ref BMI_GetInputVarNames can be set. 
-	See @ref BMI_SetValue for the list of input variable names.
 	Only variables in the list
 	provided by @ref BMI_GetOutputVarNames can be retrieved. 
-	See @ref BMI_GetValue for the list of output variable names.
 
+	@param name Name of the variable to retrieve type.
+	@retval Character string of variable type.
 
 	@see
 	@ref BMI_GetInputVarNames,
@@ -5531,19 +5555,19 @@ Called by root.
 	@htmlonly
 	<CODE>
 	<PRE>
-			std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
-			int count = phreeqc_rm.BMI_GetOutputItemCount();
-			oss << "BMI_GetValue variables:\n";
-			for (size_t i = 0; i < count; i++)
-			{
-				oss << "  " << i << "  " << OutputVarNames[i] << "\n";
-				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
-				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
-				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
-				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
-											   phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-			}
+	std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
+	int count = phreeqc_rm.BMI_GetOutputItemCount();
+	oss << "BMI_GetValue variables:\n";
+	for (size_t i = 0; i < count; i++)
+	{
+		oss << "  " << i << "  " << OutputVarNames[i] << "\n";
+		oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
+		oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
+		oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
+		oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+		oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
+										phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+	}
 	</PRE>
 	</CODE>
 	@endhtmlonly
@@ -5559,12 +5583,11 @@ Called by root.
 	@ref BMI_SetValue or retrieved with @ref BMI_GetValue.
 	Only variables in the list
 	provided by @ref BMI_GetInputVarNames can be set. 
-	See @ref BMI_SetValue for the list of input variable names.
 	Only variables in the list
 	provided by @ref BMI_GetOutputVarNames can be retrieved. 
-	See @ref BMI_GetValue for the list of output variable names.
 
-
+	@param name Name of the variable to retrieve type.
+	@retval Character string of units for variable.
 	@see
 	@ref BMI_GetInputVarNames,
 	@ref BMI_GetInputItemCount,
@@ -5575,19 +5598,19 @@ Called by root.
 	@htmlonly
 	<CODE>
 	<PRE>
-			std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
-			int count = phreeqc_rm.BMI_GetOutputItemCount();
-			oss << "BMI_GetValue variables:\n";
-			for (size_t i = 0; i < count; i++)
-			{
-				oss << "  " << i << "  " << OutputVarNames[i] << "\n";
-				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
-				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
-				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
-				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
-											   phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-			}
+	std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
+	int count = phreeqc_rm.BMI_GetOutputItemCount();
+	oss << "BMI_GetValue variables:\n";
+	for (size_t i = 0; i < count; i++)
+	{
+		oss << "  " << i << "  " << OutputVarNames[i] << "\n";
+		oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
+		oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
+		oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
+		oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+		oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
+										phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+	}
 	</PRE>
 	</CODE>
 	@endhtmlonly

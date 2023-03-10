@@ -9,7 +9,7 @@
     USE PhreeqcRM
     USE IPhreeqc
     USE mydata
-    USE BMI_PhreeqcRM
+    !USE BMI_PhreeqcRM
     implicit none
 #ifdef USE_MPI    
     INCLUDE 'mpif.h'
@@ -418,7 +418,7 @@ subroutine BMI_testing(id)
 USE, intrinsic :: ISO_C_BINDING
     USE PhreeqcRM
     USE IPhreeqc
-    USE BMI_PhreeqcRM
+    !USE BMI_PhreeqcRM
     implicit none
     interface
         integer function assert(tf)
