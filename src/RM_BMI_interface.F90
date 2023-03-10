@@ -431,19 +431,19 @@ END FUNCTION RM_BMI_GetTimeUnits
 !> second argument (@a dest):
 !> "ComponentCount", @a dest: integer;
 !> "Components", @a dest: character(len=:), allocatable, dimension(:);
-!> "Concentrations", @a dest: double precision, allocatable, dimension(:);
+!> "Concentrations", @a dest: double precision, allocatable, dimension(:,:);
 !> "CurrentSelectedOutputUserNumber", @a dest: integer;
 !> "Density", @a dest: double precision, allocatable, dimension(:);
 !> "ErrorString", @a dest: character;
 !> "FilePrefix", @a dest: character;
-!> "Gfw", @a ref GetGfw, @a dest: double precision, allocatable, dimension(:);
+!> "Gfw", @a dest: double precision, allocatable, dimension(:);
 !> "GridCellCount", @a dest: integer;
 !> "InputVarNames", @a dest: character(len=:), allocatable, dimension(:);
 !> "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
 !> "Porosity", @a dest: double precision, allocatable, dimension(:);
 !> "Pressure", @a dest: double precision, allocatable, dimension(:);
 !> "Saturation", @a dest: double precision, allocatable, dimension(:);
-!> "SelectedOutput", @a dest: double precision, allocatable, dimension(:);
+!> "SelectedOutput", @a dest: double precision, allocatable, dimension(:,:);
 !> "SelectedOutputColumnCount", @a dest: integer;
 !> "SelectedOutputCount", @a dest: integer;
 !> "SelectedOutputHeadings, @a dest: character(len=:), allocatable, dimension(:);
@@ -493,7 +493,7 @@ INTEGER FUNCTION RM_BMI_GetValue_b(id, var, dest)
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL(KIND=4), INTENT(inout) :: dest
     character(20) :: vartype
-    integer :: bytes, nbytes, status, dim
+    integer :: status
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "logical") then
         stop "Variable type error."
@@ -519,7 +519,7 @@ INTEGER FUNCTION RM_BMI_GetValue_c(id, var, dest)
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=:), allocatable, INTENT(inout) :: dest
     character(20) :: vartype
-    integer :: bytes, nbytes, status, dim
+    integer :: bytes, status
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "character") then
         stop "Variable type error."

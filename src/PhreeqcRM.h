@@ -5080,7 +5080,7 @@ methods.
 @htmlonly
 <CODE>
 <PRE>
-std::cout << phreeqc_rm.BMI_GetComponentName();
+std::string comp_name = phreeqc_rm.BMI_GetComponentName();
 </PRE>
 </CODE>
 @endhtmlonly
@@ -5379,7 +5379,7 @@ Called by root.
 	"Density", @a dest: std::vector<double>;
 	"ErrorString", @a dest: std::string;
 	"FilePrefix", @a dest: std::string;
-	"Gfw", @a ref GetGfw,	@a dest: std::vector<double>;
+	"Gfw", @a dest: std::vector<double>;
 	"GridCellCount", @a dest: int;
 	"InputVarNames", @a dest: std::vector<std::string>;
 	"OutputVarNames", @a dest: std::vector<std::string>;
@@ -5453,32 +5453,12 @@ Called by root.
 	<CODE>
 	<PRE>
 			int nbytes;
-			phreeqc_rm.BMI_GetVarNbytes("Density", &nbytes);
+			phreeqc_rm.BMI_GetVarNbytes("Temperature", &nbytes);
 			int item_size;
-			phreeqc_rm.BMI_GetVarItemSize("Density", &item_size);
+			phreeqc_rm.BMI_GetVarItemSize("Temperature", &item_size);
 			int dim = nbytes/item_size;
-			std::vector<double> bmi_density(dim, 0.0);
-			phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
-			// equivalent to:
-			// std::vector<double> rm_density;
-			// phreeqc_rm.GetDensity(rm_density);
-
-			int ncomps;
-			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
-			int nbytes = phreeqc_rm.BMI_GetVarNbytes("Components");
-			std::string all_comps(nbytes, ' ');
-			phreeqc_rm.BMI_GetValue("Components", all_comps.data());
-			int string_size = phreeqc_rm.BMI_GetVarItemsize("Components");
-			std::vector<std::string> bmi_comps;
-			for (size_t i = 0; i < ncomps; i++)
-			{
-				std::string bmi_comp = all_comps.substr((i * string_size), string_size);
-				size_t end = bmi_comp.find_last_not_of(' ');
-				bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
-				bmi_comps.push_back(bmi_comp);
-			}
-			// equivalent to:
-			// std::vector< std::string > components = phreeqc_rm.GetComponents();
+			std::vector<double> bmi_temperature(dim, 25.0);
+			phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature);
 	</PRE>
 	</CODE>
 	@endhtmlonly
@@ -5513,32 +5493,12 @@ Called by root.
 	<CODE>
 	<PRE>
 			int nbytes;
-			phreeqc_rm.BMI_GetVarNbytes("Density", &nbytes);
+			phreeqc_rm.BMI_GetVarNbytes("Temperature", &nbytes);
 			int item_size;
-			phreeqc_rm.BMI_GetVarItemSize("Density", &item_size);
+			phreeqc_rm.BMI_GetVarItemSize("Temperature", &item_size);
 			int dim = nbytes/item_size;
-			std::vector<double> bmi_density(dim, 0.0);
-			phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
-			// equivalent to:
-			// std::vector<double> rm_density;
-			// phreeqc_rm.GetDensity(rm_density);
-
-			int ncomps;
-			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
-			int nbytes = phreeqc_rm.BMI_GetVarNbytes("Components");
-			std::string all_comps(nbytes, ' ');
-			phreeqc_rm.BMI_GetValue("Components", all_comps.data());
-			int string_size = phreeqc_rm.BMI_GetVarItemsize("Components");
-			std::vector<std::string> bmi_comps;
-			for (size_t i = 0; i < ncomps; i++)
-			{
-				std::string bmi_comp = all_comps.substr((i * string_size), string_size);
-				size_t end = bmi_comp.find_last_not_of(' ');
-				bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
-				bmi_comps.push_back(bmi_comp);
-			}
-			// equivalent to:
-			// std::vector< std::string > components = phreeqc_rm.GetComponents();
+			std::vector<double> bmi_temperature(dim, 25.0);
+			phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature);
 		}
 	</PRE>
 	</CODE>
@@ -5736,16 +5696,16 @@ Called by root.
 			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
 			int ngrid;
 			phreeqc_rm.BMI_GetValue("GridCellCount", ngrid);
-			std::vector<double> c(ngrid*ncomps, 0.0);
-			phreeqc_rm.BMI_GetValue("Concentrations", c.data());
+			std::vector<double> c;
+			phreeqc_rm.BMI_GetValue("Concentrations", c);
 			phreeqc_rm.BMI_SetValue("TimeStep", 86400);
 			for(double time = 0; time < 864000; time+=86400)
 			{
 				// Take a transport time step here and update the vector c.
 				phreeqc_rm.BMI_SetValue("Time", time);
-				phreeqc_rm.BMI_SetValue("Concentrations", c.data());
+				phreeqc_rm.BMI_SetValue("Concentrations", c);
 				phreeqc_rm.BMI_Update();
-				phreeqc_rm.BMI_GetValue("Concentrations", c.data());
+				phreeqc_rm.BMI_GetValue("Concentrations", c);
 			}
 	</PRE>
 	</CODE>
@@ -5790,16 +5750,8 @@ Called by root.
 	@htmlonly
 	<CODE>
 	<PRE>
-			int nbytes;
-			phreeqc_rm.BMI_GetVarNbytes("Temperature", &nbytes);
-			int item_size;
-			phreeqc_rm.BMI_GetVarItemSize("Temperature", &item_size);
-			int dim = nbytes/item_size;
-			std::vector<double> bmi_temperature(dim, 28.0);
-			phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature.data());
-			// equivalent to:
-			// std::vector<double> rm_temperature(dim, 28.0);
-			// phreeqc_rm.SetTemperature(rm_temperature);
+			std::vector<double> bmi_temperature(ngrid, 28.0);
+			phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature);
 	</PRE>
 	</CODE>
 	@endhtmlonly
@@ -5832,16 +5784,16 @@ Called by root.
 			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
 			int ngrid;
 			phreeqc_rm.BMI_GetValue("GridCellCount", ngrid);
-			std::vector<double> c(ngrid*ncomps, 0.0);
-			phreeqc_rm.BMI_GetValue("Concentrations", c.data());
+			std::vector<double> c;
+			phreeqc_rm.BMI_GetValue("Concentrations", c);
 			phreeqc_rm.BMI_SetValue("TimeStep", 86400);
 			for(double time = 0; time < 864000; time+=86400)
 			{
 				// Take a transport time step here and update the vector c.
 				phreeqc_rm.BMI_SetValue("Time", time);
-				phreeqc_rm.BMI_SetValue("Concentrations", c.data());
+				phreeqc_rm.BMI_SetValue("Concentrations", c);
 				phreeqc_rm.BMI_Update();
-				phreeqc_rm.BMI_GetValue("Concentrations", c.data());
+				phreeqc_rm.BMI_GetValue("Concentrations", c);
 			}
 	</PRE>
 	</CODE>
