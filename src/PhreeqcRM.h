@@ -5450,6 +5450,7 @@ Called by root.
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
+	void BMI_GetValue(std::string name, void* dest);
 	void BMI_GetValue(std::string name, bool& dest);
 	void BMI_GetValue(std::string name, double& dest);
 	void BMI_GetValue(std::string name, int& dest);
@@ -5780,6 +5781,7 @@ Called by root.
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	 */
+	void BMI_SetValue(std::string name, void* src);
 	void BMI_SetValue(std::string name, bool& src);
 	void BMI_SetValue(std::string name, double& src);
 	void BMI_SetValue(std::string name, int& src);

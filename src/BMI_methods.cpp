@@ -14,6 +14,112 @@
 #ifdef USE_YAML
 #include "yaml-cpp/yaml.h"
 #endif
+
+void PhreeqcRM::BMI_SetValue(std::string name, void* src)
+{
+    std::string name_lc = name;
+    std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+    std::map < std::string, BMI_Var >::iterator it = this->bmi_var_map.find(name_lc);
+    if (it != bmi_var_map.end())
+    {
+        if (it->first == "concentrations")
+        {
+            int ngrid = this->GetGridCellCount();
+            int ncomps = this->GetComponentCount();
+            std::vector<double> conc(ngrid * ncomps, INACTIVE_CELL_VALUE);
+            memcpy(conc.data(), src, ngrid * ncomps * sizeof(double));
+            this->SetConcentrations(conc);
+            return;
+        }
+        if (it->first == "density")
+        {
+            int ngrid = this->GetGridCellCount();
+            std::vector<double> density(ngrid, INACTIVE_CELL_VALUE);
+            memcpy(density.data(), src, ngrid * sizeof(double));
+            this->SetDensity(density);
+            return;
+        }
+        if (it->first == "fileprefix")
+        {
+            std::string file = (char*)src;
+            this->SetFilePrefix(file);
+            return;
+        }
+        if (it->first == "nthselectedoutput")
+        {
+            int nth_so;
+            memcpy(&nth_so, src, sizeof(int));
+            int nuser = this->GetNthSelectedOutputUserNumber(nth_so - 1);
+            this->SetCurrentSelectedOutputUserNumber(nuser);
+            return;
+        }
+        if (it->first == "porosity")
+        {
+            int ngrid = this->GetGridCellCount();
+            std::vector<double> porosity(ngrid, INACTIVE_CELL_VALUE);
+            memcpy(porosity.data(), src, ngrid * sizeof(double));
+            this->SetPorosity(porosity);
+            return;
+        }
+        if (it->first == "porosity")
+        {
+            int ngrid = this->GetGridCellCount();
+            std::vector<double> porosity(ngrid, INACTIVE_CELL_VALUE);
+            memcpy(porosity.data(), src, ngrid * sizeof(double));
+            this->SetPorosity(porosity);
+            return;
+        }
+        if (it->first == "pressure")
+        {
+            int ngrid = this->GetGridCellCount();
+            std::vector<double> pressure(ngrid, INACTIVE_CELL_VALUE);
+            memcpy(pressure.data(), src, ngrid * sizeof(double));
+            this->SetPressure(pressure);
+            return;
+        }
+        if (it->first == "saturation")
+        {
+            int ngrid = this->GetGridCellCount();
+            std::vector<double> sat(ngrid, INACTIVE_CELL_VALUE);
+            memcpy(sat.data(), src, ngrid * sizeof(double));
+            this->SetSaturation(sat);
+            return;
+        }
+        if (it->first == "selectedoutputon")
+        {
+            int so_on;
+            memcpy(&so_on, src, sizeof(int));
+            bool so_on_bool = (bool)so_on;
+            this->SetSelectedOutputOn(so_on_bool);
+            return;
+        }
+        if (it->first == "temperature")
+        {
+            int ngrid = this->GetGridCellCount();
+            std::vector<double> temp(ngrid, INACTIVE_CELL_VALUE);
+            memcpy(temp.data(), src, ngrid * sizeof(double));
+            this->SetTemperature(temp);
+            return;
+        }
+        if (it->first == "time")
+        {
+            double time;
+            memcpy(&time, src, sizeof(double));
+            this->SetTime(time);
+            return;
+        }
+        if (it->first == "timestep")
+        {
+            double timestep = 0;
+            memcpy(&timestep, src, sizeof(double));
+            this->SetTimeStep(timestep);
+            return;
+        }
+    }
+    ErrorMessage("Item not found");
+    throw PhreeqcRMStop();
+}
+
 void PhreeqcRM::BMI_SetValue(std::string name, bool& src)
 {
     std::string name_lc = name;
@@ -183,7 +289,6 @@ void PhreeqcRM::BMI_SetValue(std::string name, std::vector<std::string>& src)
     ErrorMessage("Item not found for BMI_SetValue with std::vector < std::string > argument.");
     throw PhreeqcRMStop();
 }
-
 
 void PhreeqcRM::BMI_GetValue(std::string name, bool& dest)
 {
@@ -385,7 +490,6 @@ void PhreeqcRM::BMI_GetValue(std::string name, std::vector < std::string >& dest
     ErrorMessage("Item not found for BMI_GetValue with std::vector < std::string > argument.");
     throw PhreeqcRMStop();
 }
-#ifdef SKIP
 void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
 {
     std::string name_lc = name;
@@ -583,7 +687,6 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
     ErrorMessage("Item not found");
     throw PhreeqcRMStop();
 }
-#endif
 int PhreeqcRM::BMI_GetVarNbytes(std::string name)
 {
     std::string name_lc = name;

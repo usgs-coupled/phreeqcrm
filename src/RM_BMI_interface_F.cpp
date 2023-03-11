@@ -131,6 +131,28 @@ RMF_BMI_GetTimeUnits(int* id, char* units, int* l1)
 	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_BMI_GetValue(int* id, char* var, void* dest)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns value(s) for var
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		if (var != NULL)
+		{
+			std::string str_var = var;
+			size_t end = str_var.find_last_not_of(' ');
+			str_var = (end == std::string::npos) ? "" : str_var.substr(0, end + 1);
+			std::string type = Reaction_module_ptr->BMI_GetVarType(var);
+			Reaction_module_ptr->BMI_GetValue(str_var, dest);
+			return IRM_OK;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
 int
 RMF_BMI_GetVarItemsize(int* id, char* var)
 /* ---------------------------------------------------------------------- */
@@ -219,6 +241,27 @@ RMF_BMI_Initialize(int* id, char* config_file)
 	{
 		Reaction_module_ptr->BMI_Initialize(config_file);
 		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_BMI_SetValue(int* id, char* var, void* src)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns value(s) for var
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		if (var != NULL)
+		{
+			std::string str_var = var;
+			size_t end = str_var.find_last_not_of(' ');
+			str_var = (end == std::string::npos) ? "" : str_var.substr(0, end + 1);
+			Reaction_module_ptr->BMI_SetValue(str_var, src);
+			return IRM_OK;
+		}
+		return IRM_INVALIDARG;
 	}
 	return IRM_BADINSTANCE;
 }

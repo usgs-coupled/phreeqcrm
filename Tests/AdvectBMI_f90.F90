@@ -267,7 +267,7 @@
             enddo
             ! Loop through possible multiple selected output definitions
             status = RM_BMI_GetValue(id, "SelectedOutputCount", n)
-            do isel = 0, n-1
+            do isel = 1, n  ! one based
                 i = isel
                 status = RM_BMI_SetValue(id, "NthSelectedOutput", i)
                 status = RM_BMI_GetValue(id, "CurrentSelectedOutputUserNumber", n_user)
@@ -698,7 +698,7 @@ USE, intrinsic :: ISO_C_BINDING
     status = RM_BMI_GetValue(id, "SelectedOutputCount", so_count);
 	rm_so_count = RM_GetSelectedOutputCount(id);
     status = assert(so_count .eq. rm_so_count)
-    do isel = 0, so_count - 1 ! zero based
+    do isel = 1, so_count ! one based
         i = isel
 		status = RM_BMI_SetValue(id, "NthSelectedOutput", i)
         status = RM_BMI_GetValue(id, "CurrentSelectedOutputUserNumber", nuser)

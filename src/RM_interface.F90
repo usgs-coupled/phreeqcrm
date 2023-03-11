@@ -2171,7 +2171,7 @@ INTEGER FUNCTION RM_GetNthSelectedOutputUserNumber(id, n)
         END FUNCTION RMF_GetNthSelectedOutputUserNumber 
     END INTERFACE
     INTEGER, INTENT(in) :: id, n
-    RM_GetNthSelectedOutputUserNumber = RMF_GetNthSelectedOutputUserNumber(id, n)
+    RM_GetNthSelectedOutputUserNumber = RMF_GetNthSelectedOutputUserNumber(id, n-1)
 END FUNCTION RM_GetNthSelectedOutputUserNumber 
 
 !> Transfer current porosities to the array given in the argument list (@a porosity). 
@@ -5485,7 +5485,7 @@ INTEGER FUNCTION RM_SetNthSelectedOutput(id, n)
     END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: n
-    RM_SetNthSelectedOutput = RMF_SetNthSelectedOutput(id, n)
+    RM_SetNthSelectedOutput = RMF_SetNthSelectedOutput(id, n-1)
 END FUNCTION RM_SetNthSelectedOutput  
 
 !> Sets the property for partitioning solids between the saturated and unsaturated 
