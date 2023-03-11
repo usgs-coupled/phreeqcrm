@@ -1,14 +1,6 @@
 INTEGER FUNCTION RM_BMI_Finalize(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    !INTERFACE
-    !    INTEGER(KIND=C_INT) FUNCTION RM_Destroy(id) &
-    !        BIND(C, NAME='RM_Destroy')
-    !        USE ISO_C_BINDING
-    !        IMPLICIT NONE
-    !        INTEGER(KIND=C_INT), INTENT(in) :: id
-    !    END FUNCTION RM_Destroy 
-    !END INTERFACE
     INTEGER, INTENT(in) :: id
     RM_BMI_Finalize = RM_Destroy(id)
     return
@@ -373,64 +365,6 @@ INTEGER FUNCTION RM_BMI_GetTimeUnits(id, time_units)
     RM_BMI_GetTimeUnits = RMF_BMI_GetTimeUnits(id, time_units, len(time_units))
     return
 END FUNCTION RM_BMI_GetTimeUnits 
-
-!> Basic Model Interface method that retrieves model variables. Only variables in the list
-!> provided by @ref RM_BMI_GetOutputVarNames can be retrieved. The BMI interface to PhreeqcRM is
-!> only partial, and provides only the most basic functions. The native PhreeqcRM methods 
-!> (those without the the RM_BMI_ prefix) provide a complete interface.
-!> @param id            The instance @a id returned from @ref RM_Create.
-!> @param var Name of the variable to retrieve.
-!> @param dest Variable in which to place results.
-!> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
-!> 
-!> Variable names for the first argument (@a name) and variable type of the
-!> second argument (@a dest):
-!> "ComponentCount", @a dest: integer;
-!> "Components", @a dest: character(len=:), allocatable, dimension(:);
-!> "Concentrations", @a dest: double precision, allocatable, dimension(:);
-!> "CurrentSelectedOutputUserNumber", @a dest: integer;
-!> "Density", @a dest: double precision, allocatable, dimension(:);
-!> "ErrorString", @a dest: character;
-!> "FilePrefix", @a dest: character;
-!> "Gfw", @a ref GetGfw, @a dest: double precision, allocatable, dimension(:);
-!> "GridCellCount", @a dest: integer;
-!> "InputVarNames", @a dest: character(len=:), allocatable, dimension(:);
-!> "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
-!> "Porosity", @a dest: double precision, allocatable, dimension(:);
-!> "Pressure", @a dest: double precision, allocatable, dimension(:);
-!> "Saturation", @a dest: double precision, allocatable, dimension(:);
-!> "SelectedOutput", @a dest: double precision, allocatable, dimension(:);
-!> "SelectedOutputColumnCount", @a dest: integer;
-!> "SelectedOutputCount", @a dest: integer;
-!> "SelectedOutputHeadings, @a dest: character(len=:), allocatable, dimension(:);
-!> "SelectedOutputOn", @a dest: logical;
-!> "SelectedOutputRowCount", @a dest: integer;
-!> "SolutionVolume", @a dest: double precision, allocatable, dimension(:);
-!> "Temperature", @a dest: double precision, allocatable, dimension(:);
-!> "Time", @a dest: double precision;
-!> "TimeStep", @a dest: double precision.
-!> 
-!> @see
-!> @ref RM_BMI_GetOutputVarNames,
-!> @ref RM_BMI_GetOutputItemCount,
-!> @ref RM_BMI_GetVarItemsize,
-!> @ref RM_BMI_GetVarNbytes,
-!> @ref RM_BMI_GetVarType,
-!> @ref RM_BMI_GetVarUnits,
-!> @ref RM_BMI_SetValue.
-!> @par Fortran Example:
-!> @htmlonly
-!> <CODE>
-!> <PRE>
-!> 	std::vector<double> bmi_density;
-!> 	phreeqc_rm.BMI_GetValue("Density", bmi_density);
-!> 	std::vector<std::string> bmi_comps;
-!> 	phreeqc_rm.BMI_GetValue("Components", bmi_comps);
-!> </PRE>
-!> </CODE>
-!> @endhtmlonly
-!> @par MPI:
-!> Called by root, workers must be in the loop of @ref MpiWorker.
 
 INTEGER FUNCTION RM_BMI_GetValue_b(id, var, dest)
     USE ISO_C_BINDING
