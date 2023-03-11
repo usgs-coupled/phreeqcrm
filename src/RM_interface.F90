@@ -161,6 +161,13 @@
             CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
         END FUNCTION RMF_BMI_GetVarNbytes
     END INTERFACE    
+
+interface
+module FUNCTION Lower(s1)  RESULT (s2)
+CHARACTER(*)       :: s1
+CHARACTER(LEN(s1)) :: s2
+END FUNCTION Lower
+end interface
     CONTAINS
 !> Abort the program. 
 !> @a irm_result will be interpreted as

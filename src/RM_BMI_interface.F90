@@ -1370,18 +1370,21 @@ INTEGER FUNCTION RM_GetTemperature(id, temperature)
     DOUBLE PRECISION, ALLOCATABLE, DIMENSION(:) :: a_temperature
     RM_GetTemperature = RM_BMI_GetValue(id, "Temperature", a_temperature)
     temperature = a_temperature
-END FUNCTION RM_GetTemperature
+    END FUNCTION RM_GetTemperature
 
-FUNCTION Lower(s1)  RESULT (s2)
-CHARACTER(*)       :: s1
-CHARACTER(LEN(s1)) :: s2
-CHARACTER          :: ch
-INTEGER,PARAMETER  :: DUC = ICHAR('A') - ICHAR('a')
-INTEGER            :: i
-
-DO i = 1,LEN(s1)
-   ch = s1(i:i)
-   IF (ch >= 'A'.AND.ch <= 'Z') ch = CHAR(ICHAR(ch)-DUC)
-   s2(i:i) = ch
-END DO
-END FUNCTION Lower
+!    submodule (PhreeqcRM) PhreeqcRM_BMI
+!	contains
+!module FUNCTION Lower(s1)  RESULT (s2)
+!CHARACTER(*)       :: s1
+!CHARACTER(LEN(s1)) :: s2
+!CHARACTER          :: ch
+!INTEGER,PARAMETER  :: DUC = ICHAR('A') - ICHAR('a')
+!INTEGER            :: i
+!
+!DO i = 1,LEN(s1)
+!   ch = s1(i:i)
+!   IF (ch >= 'A'.AND.ch <= 'Z') ch = CHAR(ICHAR(ch)-DUC)
+!   s2(i:i) = ch
+!END DO
+!END FUNCTION Lower
+!end submodule PhreeqcRM_BMI
