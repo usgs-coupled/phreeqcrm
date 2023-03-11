@@ -1,3 +1,19 @@
+    !> Destroys a reaction module, same as @ref RM_Destroy.
+    !> @param id               The instance @a id returned from @ref RM_Create.
+    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @see
+    !> @ref RM_Create.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> status = RM_BMI_Finalize(id)
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root and workers.
+    
     INTEGER FUNCTION RM_BMI_Finalize(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -137,19 +153,19 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> 		std::vector<std::string> InputVarNames = phreeqc_rm.BMI_GetInputVarNames();
-    !> 		int count = phreeqc_rm.BMI_GetInputItemCount();
-    !> 		oss << "BMI_SetValue variables:\n";
-    !> 		for (size_t i = 0; i < count; i++)
-    !> 		{
-    !> 			oss << "  " << i << "  " << InputVarNames[i] << "\n";
-    !> 			oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(InputVarNames[i]) << "\n";
-    !> 			oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(InputVarNames[i]) << "\n";
-    !> 			oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) << "\n";
-    !> 			oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
-    !> 			oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) /
-    !> 										   phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
-    !> 		}
+    !> 	std::vector<std::string> InputVarNames = phreeqc_rm.BMI_GetInputVarNames();
+    !> 	int count = phreeqc_rm.BMI_GetInputItemCount();
+    !> 	oss << "BMI_SetValue variables:\n";
+    !> 	for (size_t i = 0; i < count; i++)
+    !> 	{
+    !> 		oss << "  " << i << "  " << InputVarNames[i] << "\n";
+    !> 		oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(InputVarNames[i]) << "\n";
+    !> 		oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(InputVarNames[i]) << "\n";
+    !> 		oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) << "\n";
+    !> 		oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
+    !> 		oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) /
+    !> 									   phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
+    !> 	}
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -280,31 +296,31 @@
     return
     END FUNCTION RM_BMI_GetOutputVarNames
 
-    !> 	Basic Model Interface method that returns the current simulation time step,
-    !>  in seconds. (Same as @ref RM_GetTimeStep.)
-    !> 	The reaction module does not change the time-step value, so the
-    !> 	returned value is equal to the last time step set by
-    !> 	@ref RM_BMI_SetValue("TimeStep", time_step) or @ref SetTimeStep.
-    !>  @param id            The instance @a id returned from @ref RM_Create.
-    !> 	@retval                 The current simulation time step, in seconds.
-    !> 	@see
-    !> 	@ref RM_BMI_GetCurrentTime,
-    !> 	@ref RM_BMI_GetEndTime,
-    !> 	@ref RM_BMI_SetValue,
-    !> 	@ref RM_GetTime,
-    !> 	@ref RM_GetTimeStep,
-    !> 	@ref RM_SetTime,
-    !> 	@ref RM_SetTimeStep.
-    !> 	@par Fortran Example:
-    !> 	@htmlonly
-    !> 	<CODE>
-    !> 	<PRE>
-    !> 	time_step = RM_BMI_GetTimeStep(id)
-    !> 	</PRE>
-    !> 	</CODE>
-    !> 	@endhtmlonly
-    !> 	@par MPI:
-    !> 	Called by root.
+    !> Basic Model Interface method that returns the current simulation time step,
+    !> in seconds. (Same as @ref RM_GetTimeStep.)
+    !> The reaction module does not change the time-step value, so the
+    !> returned value is equal to the last time step set by
+    !> @ref RM_BMI_SetValue("TimeStep", time_step) or @ref SetTimeStep.
+    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @retval                 The current simulation time step, in seconds.
+    !> @see
+    !> @ref RM_BMI_GetCurrentTime,
+    !> @ref RM_BMI_GetEndTime,
+    !> @ref RM_BMI_SetValue,
+    !> @ref RM_GetTime,
+    !> @ref RM_GetTimeStep,
+    !> @ref RM_SetTime,
+    !> @ref RM_SetTimeStep.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> time_step = RM_BMI_GetTimeStep(id)
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
 
     DOUBLE PRECISION FUNCTION RM_BMI_GetTimeStep(id)
     USE ISO_C_BINDING
@@ -387,15 +403,15 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !>     do i = 1, size(inputvars)
-    !>         write(*,"(1x, I4, A40)") i, trim(inputvars(i))
-    !>         status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
-    !>         write(*,"(5x, A15)") trim(string)
-    !>         status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
-    !>         write(*,"(5x, A15)") trim(string)
-    !>         write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
-    !>         write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
-    !>     enddo
+    !> do i = 1, size(inputvars)
+    !>     write(*,"(1x, I4, A40)") i, trim(inputvars(i))
+    !>     status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
+    !>     write(*,"(5x, A15)") trim(string)
+    !>     status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
+    !>     write(*,"(5x, A15)") trim(string)
+    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
+    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
+    !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -451,10 +467,10 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> 	double precision, allocatable, dimension(:) :: bmi_density
-    !>  character(len=:), allocatable, dimension(:) :: bmi_comps
-    !> 	status = RM_BMI_GetValue(id, "Density", bmi_density)
-    !> 	status = RM_BMI_GetValue("Components", bmi_comps)
+    !> double precision, allocatable, dimension(:) :: bmi_density
+    !> character(len=:), allocatable, dimension(:) :: bmi_comps
+    !> status = RM_BMI_GetValue(id, "Density", bmi_density)
+    !> status = RM_BMI_GetValue("Components", bmi_comps)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -806,14 +822,14 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> 		integer nbytes, item_size, dim
-    !>      double precision, allocatable, dimension(:) :: bmi_temperature
-    !> 		nbytes = RM_BMI_GetVarNbytes(id, "Temperature")
-    !> 		item_size = RM_BMI_GetVarItemSize(id, "Temperature");
-    !> 		int dim = nbytes/item_size;
-    !> 		allocate(bmi_temperature(dim))
-    !>      bmi_temperature = 25.0
-    !> 		status = RM_BMI_SetValue("Temperature", bmi_temperature);
+    !> integer nbytes, item_size, dim
+    !> double precision, allocatable, dimension(:) :: bmi_temperature
+    !> nbytes = RM_BMI_GetVarNbytes(id, "Temperature")
+    !> item_size = RM_BMI_GetVarItemSize(id, "Temperature");
+    !> int dim = nbytes/item_size;
+    !> allocate(bmi_temperature(dim))
+    !> bmi_temperature = 25.0
+    !> status = RM_BMI_SetValue("Temperature", bmi_temperature);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -849,14 +865,14 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> 		integer nbytes, item_size, dim
-    !>      double precision, allocatable, dimension(:) :: bmi_temperature
-    !> 		nbytes = RM_BMI_GetVarNbytes(id, "Temperature")
-    !> 		item_size = RM_BMI_GetVarItemSize(id, "Temperature");
-    !> 		int dim = nbytes/item_size;
-    !> 		allocate(bmi_temperature(dim))
-    !>      bmi_temperature = 25.0
-    !> 		status = RM_BMI_SetValue("Temperature", bmi_temperature);
+    !> integer nbytes, item_size, dim
+    !>  double precision, allocatable, dimension(:) :: bmi_temperature
+    !> nbytes = RM_BMI_GetVarNbytes(id, "Temperature")
+    !> item_size = RM_BMI_GetVarItemSize(id, "Temperature");
+    !> int dim = nbytes/item_size;
+    !> allocate(bmi_temperature(dim))
+    !>  bmi_temperature = 25.0
+    !> status = RM_BMI_SetValue("Temperature", bmi_temperature);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -893,15 +909,15 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !>     do i = 1, size(inputvars)
-    !>         write(*,"(1x, I4, A40)") i, trim(inputvars(i))
-    !>         status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
-    !>         write(*,"(5x, A15)") trim(string)
-    !>         status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
-    !>         write(*,"(5x, A15)") trim(string)
-    !>         write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
-    !>         write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
-    !>     enddo
+    !> do i = 1, size(inputvars)
+    !>     write(*,"(1x, I4, A40)") i, trim(inputvars(i))
+    !>     status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
+    !>     write(*,"(5x, A15)") trim(string)
+    !>     status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
+    !>     write(*,"(5x, A15)") trim(string)
+    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
+    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
+    !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -948,15 +964,15 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !>     do i = 1, size(inputvars)
-    !>         write(*,"(1x, I4, A40)") i, trim(inputvars(i))
-    !>         status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
-    !>         write(*,"(5x, A15)") trim(string)
-    !>         status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
-    !>         write(*,"(5x, A15)") trim(string)
-    !>         write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
-    !>         write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
-    !>     enddo
+    !> do i = 1, size(inputvars)
+    !>     write(*,"(1x, I4, A40)") i, trim(inputvars(i))
+    !>     status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
+    !>     write(*,"(5x, A15)") trim(string)
+    !>     status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
+    !>     write(*,"(5x, A15)") trim(string)
+    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
+    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
+    !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -981,7 +997,118 @@
     RM_BMI_GetVarUnits = RMF_BMI_GetVarUnits(id, trim(var)//C_NULL_CHAR, units, len(units))
     return
     END FUNCTION RM_BMI_GetVarUnits
-
+	!> A YAML file can be used to initialize an instance of PhreeqcRM. Same as
+	!> @ref RM_InitializeYAML.
+    !> @param id               The instance @a id returned from @ref RM_Create.
+    !> @param yaml_name         String containing the YAML file name.
+    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @par
+    !> The file contains a YAML map of PhreeqcRM methods
+    !> and the arguments corresponding to the methods.
+    !> Note that the PhreeqcRM methods do not have the "RM_" prefix
+    !> and the id argument is not included.
+    !> For example,
+    !> @par
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> LoadDatabase: phreeqc.dat
+    !> RunFile:
+    !> workers: true
+    !> initial_phreeqc: true
+    !> utility: true
+    !> chemistry_name: advect.pqi
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par
+    !> @ref RM_BMI_Initialize will read the YAML file and execute the specified methods with
+    !> the specified arguments. Using YAML
+    !> terminology, the argument(s) for a method may be a scalar, a sequence, or a map,
+    !> depending if the argument is
+    !> a single item, a single vector, or there are multiple arguments.
+    !> In the case of a map, the name associated
+    !> with each argument (for example "chemistry_name" above) is arbitrary.
+    !> The names of the map keys for map
+    !> arguments are not used in parsing the YAML file; only the order of
+    !> the arguments is important.
+    !> @par
+    !> The following list gives the PhreeqcRM methods that can be specified in a YAML file
+    !> and the arguments that are required. The arguments are described with C++ formats, which
+    !> are sufficient to identify which arguments are YAML scalars (single bool/logical,
+    !> int, double, string/character argument),
+    !> sequences (single vector argument), or maps (multiple arguments).
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> CloseFiles(void);
+    !> CreateMapping(std::vector< int >& grid2chem);
+    !> DumpModule();
+    !> FindComponents();
+    !> InitialPhreeqc2Module(std::vector< int > initial_conditions1);
+    !> InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
+    !> InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
+    !> LoadDatabase(std::string database);
+    !> OpenFiles(void);
+    !> OutputMessage(std::string str);
+    !> RunCells(void);
+    !> RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
+    !> RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
+    !> ScreenMessage(std::string str);
+    !> SetComponentH2O(bool tf);
+    !> SetConcentrations(std::vector< double > c);
+    !> SetCurrentSelectedOutputUserNumber(int n_user);
+    !> SetDensity(std::vector< double > density);
+    !> SetDumpFileName(std::string dump_name);
+    !> SetErrorHandlerMode(int mode);
+    !> SetErrorOn(bool tf);
+    !> SetFilePrefix(std::string prefix);
+    !> SetGasCompMoles(std::vector< double > gas_moles);
+    !> SetGasPhaseVolume(std::vector< double > gas_volume);
+    !> SetPartitionUZSolids(bool tf);
+    !> SetPorosity(std::vector< double > por);
+    !> SetPressure(std::vector< double > p);
+    !> SetPrintChemistryMask(std::vector< int > cell_mask);
+    !> SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
+    !> SetRebalanceByCell(bool tf);
+    !> SetRebalanceFraction(double f);
+    !> SetRepresentativeVolume(std::vector< double > rv);
+    !> SetSaturation(std::vector< double > sat);
+    !> SetScreenOn(bool tf);
+    !> SetSelectedOutputOn(bool tf);
+    !> SetSpeciesSaveOn(bool save_on);
+    !> SetTemperature(std::vector< double > t);
+    !> SetTime(double time);
+    !> SetTimeConversion(double conv_factor);
+    !> SetTimeStep(double time_step);
+    !> SetUnitsExchange(int option);
+    !> SetUnitsGasPhase(int option);
+    !> SetUnitsKinetics(int option);
+    !> SetUnitsPPassemblage(int option);
+    !> SetUnitsSolution(int option);
+    !> SetUnitsSSassemblage(int option);
+    !> SetUnitsSurface(int option);
+    !> SpeciesConcentrations2Module(std::vector< double > species_conc);
+    !> StateSave(int istate);
+    !> StateApply(int istate);
+    !> StateDelete(int istate);
+    !> UseSolutionDensityVolume(bool tf);
+    !> WarningMessage(std::string warnstr);
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !>
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> id = RM_Create(nxyz, MPI_COMM_WORLD)
+    !> status = RM_InitializeYAML(id, "myfile.yaml")
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
     INTEGER FUNCTION RM_BMI_Initialize(id, config_file)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1226,7 +1353,42 @@
     RM_BMI_SetValue_d2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
     return
     END FUNCTION RM_BMI_SetValue_d2
-
+	!> Runs a reaction step for all of the cells in the reaction module.
+	!> Same as @ref RunCells.
+    !> Normally, tranport concentrations are transferred to the reaction cells 
+	!> (@ref RM_BMI_SetValue "Concentrations" before
+    !> reaction calculations are run. The length of time over which kinetic 
+	!> reactions are integrated is set
+    !> by @ref RM_BMI_SetTimeStep. Other properties that may need to be updated 
+	!> as a result of the transport
+    !> calculations include porosity (@ref RM_BMI_SetValue "Porosity"), 
+	!> pressure (@ref RM_BMI_SetValue "Pressure"),
+	!> saturation (@ref RM_BMI_SetValue "Saturation"),
+    !> temperature (@ref RM_BMI_SetValue "Temperature").
+    !> @param id               The instance @a id returned from @ref RM_BMI_Create.
+    !> @retval IRM_BMI_RESULT      0 is success, negative is failure (See @ref RM_BMI_DecodeError).
+    !> @see
+    !> @ref RM_BMI_SetValue, 
+    !> @ref RM_BMI_SetTimeStep.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> status = RM_BMI_SetValue(id, "Porosity", por)                ! If pore volume changes
+    !> status = RM_BMI_SetValue(id, "Saturation", sat)              ! If saturation changes
+    !> status = RM_BMI_SetValue(id, "Temperature", temperature)     ! If temperature changes
+    !> status = RM_BMI_SetValue(id, "Pressure", pressure)           ! If pressure changes
+    !> status = RM_BMI_SetValue(id, "Concentrations", c)            ! Transported concentrations
+    !> status = RM_BMI_SetValue(id, "TimeStep", time_step)          ! Time step for kinetic reactions
+    !> status = RM_BMI_RunCells(id)
+    !> status = RM_BMI_GetValue(id, "Concentrations", c)            ! Concentrations after reaction
+    !> status = RM_BMI_GetValue(id, "Density", density)             ! Density after reaction
+    !> status = RM_BMI_GetValue(id, "SolutionVolume", volume)       ! Solution volume after reaction
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
     INTEGER FUNCTION RM_BMI_Update(id)
     USE ISO_C_BINDING
     IMPLICIT NONE

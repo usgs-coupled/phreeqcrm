@@ -161,6 +161,7 @@
     END INTERFACE
 
     CONTAINS
+#ifdef USE_YAML    
 !> @a GetGridCellCountYAML will read a YAML file and extract the value
 !> of GridCellCount, which can be used to construct a PhreeqcRM
 !> instance. @ref RM_Create requires a 
@@ -202,7 +203,7 @@
     GetGridCellCountYAML = RMF_GetGridCellCountYAML(trim(config_file)//C_NULL_CHAR)
     return
     END FUNCTION GetGridCellCountYAML    
-    
+#endif    
     !> Abort the program.
     !> @a irm_result will be interpreted as
     !> an IRM_RESULT value and decoded; @a err_str will be printed; and the reaction module
