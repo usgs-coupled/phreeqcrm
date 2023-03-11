@@ -3048,7 +3048,6 @@ The class YAMLPhreeqcRM can be used to write a YAML file.
 The methods defined in the YAMLPhreeqcRM class include the
 following list; 
 all but SetGridCellCount correspond to PhreeqcRM methods.
-include:
 @htmlonly
 <CODE>
 <PRE>
