@@ -941,25 +941,7 @@ SUBROUTINE Chk_GetConcentrations(id, c)
         errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetConcentrations")
     endif
 END SUBROUTINE Chk_GetConcentrations
-#ifdef SKIP
-INTEGER FUNCTION RM_GetConcentrations1D(id, c) 
-    USE ISO_C_BINDING  
-    IMPLICIT NONE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_GetConcentrations(id, c) &
-            BIND(C, NAME='RMF_GetConcentrations')   
-            USE ISO_C_BINDING
-            IMPLICIT NONE
-            INTEGER(KIND=C_INT), INTENT(in) :: id
-            REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
-        END FUNCTION RMF_GetConcentrations 
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: c
-    RM_GetConcentrations1D = RMF_GetConcentrations(id, c)   
-    return
-END FUNCTION RM_GetConcentrations1D    
-#endif
+
 !> Returns the user number of the current selected-output definition.
 !> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput specifies which of the
 !> selected-output definitions is used.

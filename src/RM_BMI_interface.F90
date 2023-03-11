@@ -364,8 +364,103 @@ INTEGER FUNCTION RM_BMI_GetTimeUnits(id, time_units)
     CHARACTER(len=*), INTENT(inout) :: time_units
     RM_BMI_GetTimeUnits = RMF_BMI_GetTimeUnits(id, time_units, len(time_units))
     return
-END FUNCTION RM_BMI_GetTimeUnits 
+    END FUNCTION RM_BMI_GetTimeUnits 
 
+    !> Basic Model Interface method that retrieves the units of a 
+!> variable that can be set with
+!> @ref RM_BMI_SetValue or retrieved with @ref RM_BMI_GetValue.
+!> Only variables in the list
+!> provided by @ref RM_BMI_GetInputVarNames can be set. 
+!> Only variables in the list
+!> provided by @ref RM_BMI_GetOutputVarNames can be retrieved. 
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> @param var Name of the variable to retrieve total bytes.
+!> @param vtype Units of the variable.
+!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+!> @see
+!> @ref RM_BMI_GetInputVarNames,
+!> @ref RM_BMI_GetInputItemCount,
+!> @ref RM_BMI_GetOutputVarNames,
+!> @ref RM_BMI_GetOutputItemCount,
+!> @ref RM_BMI_GetVarType.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!>     do i = 1, size(inputvars)
+!>         write(*,"(1x, I4, A40)") i, trim(inputvars(i))
+!>         status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
+!>         write(*,"(5x, A15)") trim(string)
+!>         status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
+!>         write(*,"(5x, A15)") trim(string)
+!>         write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
+!>         write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
+!>     enddo
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root.
+
+
+!> Basic Model Interface method that retrieves model variables. Only variables in the list
+!> provided by @ref RM_BMI_GetOutputVarNames can be retrieved. The BMI interface to PhreeqcRM is
+!> only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the RM_BMI_
+!> prefix) provide a complete interface.
+!> @param id            The instance @a id returned from @ref RM_Create.
+!> @param var Name of the variable to retrieve.
+!> @param dest Variable in which to place results.
+!> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+!> 
+!> Variable names for the second argument (@a name) and variable type of the
+!> third argument (@a dest).
+!> @n "ComponentCount", @a dest: integer;
+!> @n "Components", @a dest: character(len=:), allocatable, dimension(:);
+!> @n "Concentrations", @a dest: double precision, allocatable, dimension(:,:);
+!> @n "CurrentSelectedOutputUserNumber", @a dest: integer;
+!> @n "Density", @a dest: double precision, allocatable, dimension(:);
+!> @n "ErrorString", @a dest: character;
+!> @n "FilePrefix", @a dest: character;
+!> @n "Gfw", @a dest: double precision, allocatable, dimension(:);
+!> @n "GridCellCount", @a dest: integer;
+!> @n "InputVarNames", @a dest: character(len=:), allocatable, dimension(:);
+!> @n "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
+!> @n "Porosity", @a dest: double precision, allocatable, dimension(:);
+!> @n "Pressure", @a dest: double precision, allocatable, dimension(:);
+!> @n "Saturation", @a dest: double precision, allocatable, dimension(:);
+!> @n "SelectedOutput", @a dest: double precision, allocatable, dimension(:,:);
+!> @n "SelectedOutputColumnCount", @a dest: integer;
+!> @n "SelectedOutputCount", @a dest: integer;
+!> @n "SelectedOutputHeadings", @a dest: character(len=:), allocatable, dimension(:);
+!> @n "SelectedOutputOn", @a dest: logical;
+!> @n "SelectedOutputRowCount", @a dest: integer;
+!> @n "SolutionVolume", @a dest: double precision, allocatable, dimension(:);
+!> @n "Temperature", @a dest: double precision, allocatable, dimension(:);
+!> @n "Time",	@a dest: double precision;
+!> @n "TimeStep",	@a dest: double precision.
+!> 
+!> @see
+!> @ref RM_BMI_GetOutputVarNames,
+!> @ref RM_BMI_GetOutputItemCount,
+!> @ref RM_BMI_GetVarItemsize,
+!> @ref RM_BMI_GetVarNbytes,
+!> @ref RM_BMI_GetVarType,
+!> @ref RM_BMI_GetVarUnits,
+!> @ref RM_BMI_SetValue.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> 	double precision, allocatable, dimension(:) :: bmi_density
+!>  character(len=:), allocatable, dimension(:) :: bmi_comps
+!> 	status = RM_BMI_GetValue(id, "Density", bmi_density)
+!> 	status = RM_BMI_GetValue("Components", bmi_comps)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root, workers must be in the loop of @ref MpiWorker.
+    
 INTEGER FUNCTION RM_BMI_GetValue_b(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
