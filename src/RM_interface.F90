@@ -7030,8 +7030,8 @@
     Chk_Integer2D = errors
     END FUNCTION Chk_Integer2D
 
-
     INCLUDE 'RM_BMI_interface.F90'
+    
     END MODULE PhreeqcRM
 
 
