@@ -1,4 +1,5 @@
-    !> Destroys a reaction module, same as @ref RM_Destroy.
+
+        !> Destroys a reaction module, same as @ref RM_Destroy.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
@@ -153,19 +154,8 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> 	std::vector<std::string> InputVarNames = phreeqc_rm.BMI_GetInputVarNames();
-    !> 	int count = phreeqc_rm.BMI_GetInputItemCount();
-    !> 	oss << "BMI_SetValue variables:\n";
-    !> 	for (size_t i = 0; i < count; i++)
-    !> 	{
-    !> 		oss << "  " << i << "  " << InputVarNames[i] << "\n";
-    !> 		oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(InputVarNames[i]) << "\n";
-    !> 		oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(InputVarNames[i]) << "\n";
-    !> 		oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) << "\n";
-    !> 		oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
-    !> 		oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) /
-    !> 									   phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
-    !> 	}
+    !> integer inputvarcount
+    !> inputvarcount = RM_BMI_GetInputItemCount(id);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -1041,59 +1031,59 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> CloseFiles(void);
-    !> CreateMapping(std::vector< int >& grid2chem);
-    !> DumpModule();
-    !> FindComponents();
-    !> InitialPhreeqc2Module(std::vector< int > initial_conditions1);
-    !> InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
-    !> InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
-    !> LoadDatabase(std::string database);
-    !> OpenFiles(void);
-    !> OutputMessage(std::string str);
-    !> RunCells(void);
-    !> RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
-    !> RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
-    !> ScreenMessage(std::string str);
-    !> SetComponentH2O(bool tf);
-    !> SetConcentrations(std::vector< double > c);
-    !> SetCurrentSelectedOutputUserNumber(int n_user);
-    !> SetDensity(std::vector< double > density);
-    !> SetDumpFileName(std::string dump_name);
-    !> SetErrorHandlerMode(int mode);
-    !> SetErrorOn(bool tf);
-    !> SetFilePrefix(std::string prefix);
-    !> SetGasCompMoles(std::vector< double > gas_moles);
-    !> SetGasPhaseVolume(std::vector< double > gas_volume);
-    !> SetPartitionUZSolids(bool tf);
-    !> SetPorosity(std::vector< double > por);
-    !> SetPressure(std::vector< double > p);
-    !> SetPrintChemistryMask(std::vector< int > cell_mask);
-    !> SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
-    !> SetRebalanceByCell(bool tf);
-    !> SetRebalanceFraction(double f);
-    !> SetRepresentativeVolume(std::vector< double > rv);
-    !> SetSaturation(std::vector< double > sat);
-    !> SetScreenOn(bool tf);
-    !> SetSelectedOutputOn(bool tf);
-    !> SetSpeciesSaveOn(bool save_on);
-    !> SetTemperature(std::vector< double > t);
-    !> SetTime(double time);
-    !> SetTimeConversion(double conv_factor);
-    !> SetTimeStep(double time_step);
-    !> SetUnitsExchange(int option);
-    !> SetUnitsGasPhase(int option);
-    !> SetUnitsKinetics(int option);
-    !> SetUnitsPPassemblage(int option);
-    !> SetUnitsSolution(int option);
-    !> SetUnitsSSassemblage(int option);
-    !> SetUnitsSurface(int option);
-    !> SpeciesConcentrations2Module(std::vector< double > species_conc);
-    !> StateSave(int istate);
-    !> StateApply(int istate);
-    !> StateDelete(int istate);
-    !> UseSolutionDensityVolume(bool tf);
-    !> WarningMessage(std::string warnstr);
+    !> @n CloseFiles(void);
+    !> @n CreateMapping(std::vector< int >& grid2chem);
+    !> @n DumpModule();
+    !> @n FindComponents();
+    !> @n InitialPhreeqc2Module(std::vector< int > initial_conditions1);
+    !> @n InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
+    !> @n InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
+    !> @n LoadDatabase(std::string database);
+    !> @n OpenFiles(void);
+    !> @n OutputMessage(std::string str);
+    !> @n RunCells(void);
+    !> @n RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
+    !> @n RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
+    !> @n ScreenMessage(std::string str);
+    !> @n SetComponentH2O(bool tf);
+    !> @n SetConcentrations(std::vector< double > c);
+    !> @n SetCurrentSelectedOutputUserNumber(int n_user);
+    !> @n SetDensity(std::vector< double > density);
+    !> @n SetDumpFileName(std::string dump_name);
+    !> @n SetErrorHandlerMode(int mode);
+    !> @n SetErrorOn(bool tf);
+    !> @n SetFilePrefix(std::string prefix);
+    !> @n SetGasCompMoles(std::vector< double > gas_moles);
+    !> @n SetGasPhaseVolume(std::vector< double > gas_volume);
+    !> @n SetPartitionUZSolids(bool tf);
+    !> @n SetPorosity(std::vector< double > por);
+    !> @n SetPressure(std::vector< double > p);
+    !> @n SetPrintChemistryMask(std::vector< int > cell_mask);
+    !> @n SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
+    !> @n SetRebalanceByCell(bool tf);
+    !> @n SetRebalanceFraction(double f);
+    !> @n SetRepresentativeVolume(std::vector< double > rv);
+    !> @n SetSaturation(std::vector< double > sat);
+    !> @n SetScreenOn(bool tf);
+    !> @n SetSelectedOutputOn(bool tf);
+    !> @n SetSpeciesSaveOn(bool save_on);
+    !> @n SetTemperature(std::vector< double > t);
+    !> @n SetTime(double time);
+    !> @n SetTimeConversion(double conv_factor);
+    !> @n SetTimeStep(double time_step);
+    !> @n SetUnitsExchange(int option);
+    !> @n SetUnitsGasPhase(int option);
+    !> @n SetUnitsKinetics(int option);
+    !> @n SetUnitsPPassemblage(int option);
+    !> @n SetUnitsSolution(int option);
+    !> @n SetUnitsSSassemblage(int option);
+    !> @n SetUnitsSurface(int option);
+    !> @n SpeciesConcentrations2Module(std::vector< double > species_conc);
+    !> @n StateSave(int istate);
+    !> @n StateApply(int istate);
+    !> @n StateDelete(int istate);
+    !> @n UseSolutionDensityVolume(bool tf);
+    !> @n WarningMessage(std::string warnstr);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -1368,8 +1358,7 @@
     !> @param id               The instance @a id returned from @ref RM_BMI_Create.
     !> @retval IRM_BMI_RESULT      0 is success, negative is failure (See @ref RM_BMI_DecodeError).
     !> @see
-    !> @ref RM_BMI_SetValue, 
-    !> @ref RM_BMI_SetTimeStep.
+    !> @ref RM_BMI_SetValue.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -1380,7 +1369,7 @@
     !> status = RM_BMI_SetValue(id, "Pressure", pressure)           ! If pressure changes
     !> status = RM_BMI_SetValue(id, "Concentrations", c)            ! Transported concentrations
     !> status = RM_BMI_SetValue(id, "TimeStep", time_step)          ! Time step for kinetic reactions
-    !> status = RM_BMI_RunCells(id)
+    !> status = RM_BMI_Update(id)
     !> status = RM_BMI_GetValue(id, "Concentrations", c)            ! Concentrations after reaction
     !> status = RM_BMI_GetValue(id, "Density", density)             ! Density after reaction
     !> status = RM_BMI_GetValue(id, "SolutionVolume", volume)       ! Solution volume after reaction
@@ -1418,3 +1407,4 @@
         s2(i:i) = ch
     END DO
     END FUNCTION Lower
+    END MODULE PhreeqcRM

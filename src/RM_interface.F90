@@ -109,10 +109,10 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> 	double precision, allocatable, dimension(:) :: bmi_density
-    !>  character(len=:), allocatable, dimension(:) :: bmi_comps
-    !> 	status = RM_BMI_GetValue(id, "Density", bmi_density)
-    !> 	status = RM_BMI_GetValue("Components", bmi_comps)
+    !> double precision, allocatable, dimension(:) :: bmi_density
+    !> character(len=:), allocatable, dimension(:) :: bmi_comps
+    !> status = RM_BMI_GetValue(id, "Density", bmi_density)
+    !> status = RM_BMI_GetValue("Components", bmi_comps)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -495,14 +495,14 @@
     !> <CODE>
     !> <PRE>
     !> typedef enum {
-    !>   IRM_OK            =  0,  //Success
-    !>   IRM_OUTOFMEMORY   = -1,  //Failure, Out of memory
-    !>   IRM_BADVARTYPE    = -2,  //Failure, Invalid VAR type
-    !>   IRM_INVALIDARG    = -3,  //Failure, Invalid argument
-    !>   IRM_INVALIDROW    = -4,  //Failure, Invalid row
-    !>   IRM_INVALIDCOL    = -5,  //Failure, Invalid column
-    !>   IRM_BADINSTANCE   = -6,  //Failure, Invalid rm instance id
-    !>   IRM_FAIL          = -7,  //Failure, Unspecified
+    !>   IRM_OK            =  0,  ! Success
+    !>   IRM_OUTOFMEMORY   = -1,  ! Failure, Out of memory
+    !>   IRM_BADVARTYPE    = -2,  ! Failure, Invalid VAR type
+    !>   IRM_INVALIDARG    = -3,  ! Failure, Invalid argument
+    !>   IRM_INVALIDROW    = -4,  ! Failure, Invalid row
+    !>   IRM_INVALIDCOL    = -5,  ! Failure, Invalid column
+    !>   IRM_BADINSTANCE   = -6,  ! Failure, Invalid rm instance id
+    !>   IRM_FAIL          = -7,  ! Failure, Unspecified
     !> } IRM_RESULT;
     !> </PRE>
     !> </CODE>
@@ -579,7 +579,8 @@
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
-    !> <PRE>      dump_on = 1
+    !> <PRE>      
+    !> dump_on = 1
     !> append = 0
     !> status = RM_SetDumpFileName(id, "advection_f90.dmp")
     !> status = RM_DumpModule(id, dump_on, append)
@@ -3793,7 +3794,7 @@
     !> For the OPENMP version, the number of threads is set implicitly or explicitly with @ref RM_Create. For the
     !> MPI version, the number of threads is always one for each process.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 The number of threads, negative is failure (See @ref RM_DecodeError).
+    !> @retval                 Number of threads, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_GetMpiTasks.
     !> @par Fortran Example:
@@ -4697,7 +4698,7 @@
     !> write(string1, "(A,I10)") "MPI task number:                                  ", RM_GetMpiMyself(id)
     !> status = RM_OutputMessage(id, string1)
     !> status = RM_GetFilePrefix(id, string)
-    !> write(string1, "(A,A)") "File prefix:                                      ", string
+    !> write(string1, "(A,A)") "File prefix:                                        ", string
     !> status = RM_OutputMessage(id, trim(string1))
     !> write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", RM_GetGridCellCount(id)
     !> status = RM_OutputMessage(id, trim(string1))
@@ -4751,10 +4752,10 @@
     !> status = RM_SetSaturation(id, sat)              ! If saturation changes
     !> status = RM_SetTemperature(id, temperature)     ! If temperature changes
     !> status = RM_SetPressure(id, pressure)           ! If pressure changes
-    !> status = RM_SetConcentrations(id, c)          ! Transported concentrations
-    !> status = RM_SetTimeStep(id, time_step)             ! Time step for kinetic reactions
+    !> status = RM_SetConcentrations(id, c)            ! Transported concentrations
+    !> status = RM_SetTimeStep(id, time_step)          ! Time step for kinetic reactions
     !> status = RM_RunCells(id)
-    !> status = RM_GetConcentrations(id, c)          ! Concentrations after reaction
+    !> status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
     !> status = RM_GetDensity(id, density)             ! Density after reaction
     !> status = RM_GetSolutionVolume(id, volume)       ! Solution volume after reaction
     !> </PRE>
@@ -5089,7 +5090,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    !>  */
 
     INTEGER FUNCTION RM_SetCurrentSelectedOutputUserNumber(id, n_user)
     USE ISO_C_BINDING
@@ -5130,7 +5130,7 @@
     !> <PRE>
     !> allocate(density(nxyz))
     !> density = 1.0
-    !> status = RM_SetDensity(id, density(1))
+    !> status = RM_SetDensity(id, density)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -5694,7 +5694,7 @@
     !> <PRE>
     !> allocate(por(nxyz))
     !> por = 0.2
-    !> status = RM_SetPorosity(id, por(1))
+    !> status = RM_SetPorosity(id, por)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -5745,7 +5745,7 @@
     !> <PRE>
     !> allocate(pressure(nxyz))
     !> pressure = 2.0
-    !> status = RM_SetPressure(id, pressure(1))
+    !> status = RM_SetPressure(id, pressure)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -5803,7 +5803,7 @@
     !>   print_chemistry_mask(i) = 1
     !>   print_chemistry_mask(i+nxyz/2) = 0
     !> enddo
-    !> status = RM_SetPrintChemistryMask(id, print_chemistry_mask(1))
+    !> status = RM_SetPrintChemistryMask(id, print_chemistry_mask)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -6008,7 +6008,7 @@
     !> double precision, dimension(:), allocatable   :: rv
     !> allocate(rv(nxyz))
     !> rv = 1.0
-    !> status = RM_SetRepresentativeVolume(id, rv(1))
+    !> status = RM_SetRepresentativeVolume(id, rv)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -6058,7 +6058,7 @@
     !> <PRE>
     !> allocate(sat(nxyz))
     !> sat = 1.0
-    !> status = RM_SetSaturation(id, sat(1))
+    !> status = RM_SetSaturation(id, sat)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -6252,7 +6252,7 @@
     !> <PRE>
     !> allocate(temperature(nxyz))
     !> temperature = 20.0
-    !> status = RM_SetTemperature(id, temperature(1))
+    !> status = RM_SetTemperature(id, temperature)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -7187,7 +7187,5 @@
 
     INCLUDE 'RM_BMI_interface.F90'
     
-    
-    END MODULE PhreeqcRM
 
 
