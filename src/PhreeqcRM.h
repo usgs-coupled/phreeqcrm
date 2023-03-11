@@ -135,7 +135,7 @@ zero if GridCellCount is not defined.
 </PRE>
 </CODE>
 @endhtmlonly
-@par MPI:
+@par Sequence:
 Called before PhreeqcRM is created.
 */
 int IRM_DLL_EXPORT

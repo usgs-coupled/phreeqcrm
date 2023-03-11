@@ -104,7 +104,7 @@
     ! using the YAMLPhreeqcRM class and the method
     ! YAMLSetGridCellCount), the return
     ! value is zero.
-    nxyz = RM_GetGridCellCountYAML(yaml_file)
+    nxyz = GetGridCellCountYAML(yaml_file)
 
     ! Bogus conductivity field for Basic callback demonstration
     allocate(hydraulic_K(nxyz))
