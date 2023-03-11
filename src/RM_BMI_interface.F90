@@ -1,5 +1,5 @@
-
-        !> Destroys a reaction module, same as @ref RM_Destroy.
+    
+    !> Destroys a reaction module, same as @ref RM_Destroy.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
