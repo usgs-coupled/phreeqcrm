@@ -689,7 +689,9 @@ Called by root and (or) workers.
  */
 	std::string                               GetDatabaseFileName(void) {return this->database_file_name;}
 /**
-Transfer solution densities from the reaction-module workers to the vector given in the argument list (@a density).
+Transfer solution densities from the reaction-module workers to the vector given 
+in the argument list (@a density). This method always returns the calculated
+densities; @ref SetDensity does not affect the result.
 @param density              Vector to receive the densities. Dimension of the array is set to @a nxyz,
 where @a nxyz is the number of user grid cells (@ref GetGridCellCount).
 Values for inactive cells are set to 1e30.
@@ -1620,7 +1622,9 @@ Called by root.
  */
 	double                                    GetRebalanceFraction(void) const {return this->rebalance_fraction;}
 /**
-Returns a vector of saturations (@a sat) as calculated by the reaction module.
+Returns a vector of saturations (@a sat) as calculated by the reaction module. 
+This method always returns solution_volume/(rv * porosity); the method 
+@ref SetSaturation has no effect on the values returned.
 Reactions will change the volume of solution in a cell.
 The transport code must decide whether to ignore or account for this change in solution volume due to reactions.
 Following reactions, the cell saturation is calculated as solution volume (@ref GetSolutionVolume)
