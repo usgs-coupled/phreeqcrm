@@ -6,7 +6,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../database/phreeqc.dat phreeqc
 # copy advect.pqi to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../Tests/advect.pqi advect.pqi COPYONLY)
 
-
 # copy database to build directory for testing
 configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
 
@@ -16,7 +15,6 @@ set(phreeqcrm_INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/../../PhreeqcRM.i)
 
 set_source_files_properties(${phreeqcrm_INTERFACE} PROPERTIES SWIG_FLAGS "-Wall")
 set_source_files_properties(${phreeqcrm_INTERFACE} PROPERTIES CPLUSPLUS ON)
-
 
 swig_add_library(
   ${PYTHON_TARGET_NAME}
