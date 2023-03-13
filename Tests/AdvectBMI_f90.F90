@@ -1,4 +1,4 @@
-!#ifdef USE_YAML
+#ifdef USE_YAML
     !module mydata
     !  double precision, dimension(:), pointer :: K_ptr
     !  integer                                 :: rm_id
@@ -764,4 +764,4 @@ endif
 stop "Assert failed"
 end function assert
 
-!#endif ! USE_YAML
+#endif ! USE_YAML

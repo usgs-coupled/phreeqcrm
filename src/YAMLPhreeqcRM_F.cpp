@@ -23,7 +23,7 @@ IRM_RESULT YAMLClear_F(int* id)
 	return IRM_BADINSTANCE;
 
 }
-IRM_RESULT WriteYAMLDoc_F(int* id, char* file_name)
+IRM_RESULT WriteYAMLDoc_F(int* id, const char* file_name)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
@@ -80,7 +80,7 @@ IRM_RESULT YAMLInitialPhreeqc2Module_F(int* id, int* ic1, int* dim)
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		std::vector<int> ic1_v(*dim, 0.0);
+		std::vector<int> ic1_v(*dim, -1);
 		memcpy(ic1_v.data(), ic1, (*dim) * sizeof(int));
 		yrm_ptr->YAMLInitialPhreeqc2Module(ic1_v);
 		return IRM_OK;
@@ -92,11 +92,11 @@ IRM_RESULT YAMLInitialPhreeqc2Module_mix_F(int* id, int* ic1, int* ic2, double* 
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		std::vector<int> ic1_v(*dim, 0), ic2_v(*dim, 0);
+		std::vector<int> ic1_v(*dim, -1), ic2_v(*dim, -1);
 		std::vector<double> f1_v(*dim, 0.0);
 		memcpy(ic1_v.data(), ic1, (*dim)*sizeof(int));
 		memcpy(ic2_v.data(), ic2, (*dim) * sizeof(int));
-		memcpy(f1_v.data(), ic1, (*dim) * sizeof(double));
+		memcpy(f1_v.data(), f1, (*dim) * sizeof(double));
 		yrm_ptr->YAMLInitialPhreeqc2Module(ic1_v, ic2_v, f1_v);
 		return IRM_OK;
 	}
@@ -117,7 +117,7 @@ IRM_RESULT YAMLInitialPhreeqcCell2Module_F(int* id,
 	return IRM_BADINSTANCE;
 }
 
-IRM_RESULT YAMLLoadDatabase_F(int* id, char* database)
+IRM_RESULT YAMLLoadDatabase_F(int* id, const char* database)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
@@ -127,7 +127,7 @@ IRM_RESULT YAMLLoadDatabase_F(int* id, char* database)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLLogMessage_F(int* id, char* str)
+IRM_RESULT YAMLLogMessage_F(int* id, const char* str)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
@@ -147,7 +147,7 @@ IRM_RESULT YAMLOpenFiles_F(int* id)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLOutputMessage_F(int* id, char* str)
+IRM_RESULT YAMLOutputMessage_F(int* id, const char* str)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
@@ -168,7 +168,7 @@ IRM_RESULT YAMLRunCells_F(int* id)
 	return IRM_BADINSTANCE;
 }
 IRM_RESULT YAMLRunFile_F(int* id, bool* workers, bool* initial_phreeqc, 
-	bool* utility, char* file_name)
+	bool* utility, const char* file_name)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
@@ -179,7 +179,7 @@ IRM_RESULT YAMLRunFile_F(int* id, bool* workers, bool* initial_phreeqc,
 	return IRM_BADINSTANCE;
 }
 IRM_RESULT YAMLRunString_F(int* id, bool* workers, bool* initial_phreeqc, 
-	bool* utility, char* input_string)
+	bool* utility, const char* input_string)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
@@ -189,7 +189,7 @@ IRM_RESULT YAMLRunString_F(int* id, bool* workers, bool* initial_phreeqc,
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLScreenMessage_F(int* id, char* str)
+IRM_RESULT YAMLScreenMessage_F(int* id, const char* str)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
@@ -243,7 +243,7 @@ IRM_RESULT YAMLSetDensity_F(int* id, double* density, int* dim)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetDumpFileName_F(int* id, char* dump_name)
+IRM_RESULT YAMLSetDumpFileName_F(int* id, const char* dump_name)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
@@ -273,7 +273,7 @@ IRM_RESULT YAMLSetErrorOn_F(int* id, bool* tf)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetFilePrefix_F(int* id, char* prefix)
+IRM_RESULT YAMLSetFilePrefix_F(int* id, const char* prefix)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
@@ -411,7 +411,7 @@ IRM_RESULT YAMLSetRepresentativeVolume_F(int* id, double* rv, int* dim)
 	{
 		std::vector<double> rv_v(*dim, 0.0);
 		memcpy(rv_v.data(), rv, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetConcentrations(rv_v);
+		yrm_ptr->YAMLSetRepresentativeVolume(rv_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -622,7 +622,7 @@ IRM_RESULT YAMLUseSolutionDensityVolume_F(int* id, bool* tf)
 	}
 	return IRM_BADINSTANCE;
 };
-IRM_RESULT YAMLWarningMessage_F(int* id, char* warnstr)
+IRM_RESULT YAMLWarningMessage_F(int* id, const char* warnstr)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)

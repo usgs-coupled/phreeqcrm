@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 #include "yaml-cpp/yaml.h"
+#include "IrmResult.h"
 //#pragma once
 
 #if defined(_WINDLL)
@@ -1703,8 +1704,6 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	// data
 
 };
-#include "YAMLPhreeqcRM.h"
-#include "IrmResult.h"
 class YAMLPhreeqcRMLib
 {
 public:

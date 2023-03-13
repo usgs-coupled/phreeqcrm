@@ -20,7 +20,7 @@
     double precision, allocatable, dimension(:,:) :: f1
     integer,          allocatable, dimension(:)   :: module_cells
     ! Create YAMLPhreeqcRM document
-    id = CreateYAMLPhreeqcRM()
+    id = CreateYAMLPhreeqcRM()   
     ! Number of cells
     nxyz = 40;
 	! Set GridCellCount
@@ -42,7 +42,7 @@
 	status = YAMLSetUnitsKinetics(id, 1)           ! 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 
 	! Set conversion from seconds to user units (days) Only affects one print statement
-	time_conversion = 1.0 / 86400
+	time_conversion = 1.0d0 / 86400.0d0
 	status = YAMLSetTimeConversion(id, time_conversion)
     
 	! Set representative volume
@@ -56,21 +56,21 @@
 	! Set initial saturation
     allocate(sat(nxyz))
     sat = 1.0d0
-	status = YAMLSetSaturation(id, sat)
+	status = YAMLSetSaturation(id, sat)   
 	! Set cells to print chemistry when print chemistry is turned on
     allocate(print_chemistry_mask(nxyz))
     print_chemistry_mask = 0
-	do i = 0, nxyz / 2 
+	do i = 1, nxyz / 2 
 		print_chemistry_mask(i) = 1
 	enddo
-	status = YAMLSetPrintChemistryMask(id, print_chemistry_mask)    
-    
+	status = YAMLSetPrintChemistryMask(id, print_chemistry_mask)  
 	! Demonstation of mapping, two equivalent rows by symmetry
+    ! zero-based indexing
     allocate(grid2chem(nxyz))
     grid2chem = -1
 	do i = 1, nxyz / 2 
-		grid2chem(i) = i
-		grid2chem(i + nxyz / 2) = i
+		grid2chem(i) = i - 1
+		grid2chem(i + nxyz / 2) = i - 1
 	enddo
 	status = YAMLCreateMapping(id, grid2chem)
 	! Set printing of chemistry file
@@ -84,7 +84,7 @@
 	status = YAMLRunFile(id, workers, initial_phreeqc, utility, "advect.pqi")
 	! Clear contents of workers and utility
 	initial_phreeqc = .false.
-	input = "DELETE -all"
+	input = "DELETE; -all"
 	status = YAMLRunString(id, workers, initial_phreeqc, utility, input)
 	! Determine number of components to transport
 	status = YAMLFindComponents(id)
@@ -92,7 +92,7 @@
     allocate(ic1(nxyz,7), ic2(nxyz,7), f1(nxyz,7))
     ic1 = -1
     ic2 = -1
-    f1 = 1.0
+    f1 = 1.0d0
 	do i = 1, nxyz
 		ic1(i,1) = 1     ! Solution 1
 		ic1(i,2) = -1    ! Equilibrium phases none
@@ -124,11 +124,11 @@
     time_step = 86400.0d0 
 	status = YAMLSetTimeStep(id, time_step)    
 
-    
-    YAML_filename = "AdvectBMI_f90.yaml"
 	! Write YAML file
+    YAML_filename = "AdvectBMI_f90.yaml"
 	status = WriteYAMLDoc(id, YAML_filename)
 	status = YAMLClear(id)  
     status = DestroyYAMLPhreeqcRM(id)
+    status = 0
     end subroutine WriteYAMLFile_f90
 #endif ! USE_YAML    
