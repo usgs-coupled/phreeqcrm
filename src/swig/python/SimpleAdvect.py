@@ -72,13 +72,13 @@ for i in range(nxyz):
     ic1[6 * nxyz + i] = -1  # Kinetics none
 
 status = phreeqc_rm.InitialPhreeqc2Module(ic1)
+
 # Initial equilibration of cells
 time = 0.0
 time_step = 0.0
-##std::vector<double> c
-##c.resize(nxyz * components.size())
-c = [] * nxyz * len(components)
 status = phreeqc_rm.SetTime(time)
 status = phreeqc_rm.SetTimeStep(time_step)
 status = phreeqc_rm.RunCells()
+
+##c = [] * nxyz * len(components)
 ##status = phreeqc_rm.GetConcentrations(c)
