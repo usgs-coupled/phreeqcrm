@@ -3055,7 +3055,7 @@ Called by root.
  */
 	IRM_RESULT                                InitialPhreeqc2Concentrations(
 													std::vector < double > & destination_c,
-													std::vector < int >    & boundary_solution1);
+													const std::vector < int >    & boundary_solution1);
 /**
 Fills a vector (@a destination_c) with concentrations from solutions in the InitialPhreeqc instance.
 The method is used to obtain concentrations for boundary conditions that are mixtures of solutions. If a negative value
@@ -3096,9 +3096,9 @@ Called by root.
  */
 	IRM_RESULT								  InitialPhreeqc2Concentrations(
 													std::vector < double > & destination_c,
-													std::vector < int >    & boundary_solution1,
-													std::vector < int >    & boundary_solution2,
-													std::vector < double > & fraction1);
+													const std::vector < int >    & boundary_solution1,
+													const std::vector < int >    & boundary_solution2,
+													const std::vector < double > & fraction1);
 /**
 Transfer solutions and reactants from the InitialPhreeqc instance to the reaction-module workers.
 @a Initial_conditions1 is used to select initial conditions, including solutions and reactants,

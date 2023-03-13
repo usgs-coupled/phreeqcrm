@@ -1,4 +1,5 @@
-%module(directors="1") phreeqcrm
+// %module(directors="1") phreeqcrm
+%module phreeqcrm
 
 %{
 #define SWIG_FILE_WITH_INIT
@@ -13,10 +14,10 @@
 import_array();
 %}
 
-%include "std_string.i" // req'd for PhreeqcRM::LoadDatabase
+%include "std_string.i"
 %include "std_vector.i"
 %template(DoubleVector) std::vector<double>;
-%template(IntVector) std::vector<int>;
+%template(IntVector)    std::vector<int>;
 %template(StringVector) std::vector<std::string>;
 
 // Adding (%include "IPhreeqcPhast.h") forces inclusion of the

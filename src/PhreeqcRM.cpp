@@ -5071,7 +5071,7 @@ PhreeqcRM::HandleErrorsInternal(std::vector< int > &rtn)
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
-					std::vector < int > & boundary_solution1)
+					const std::vector < int > & boundary_solution1)
 {
 	this->phreeqcrm_error_string.clear();
 	std::vector< int > dummy;
@@ -5081,9 +5081,9 @@ PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
-					std::vector < int > & boundary_solution1,
-					std::vector < int > & boundary_solution2,
-					std::vector < double > & fraction1)
+					const std::vector < int > & boundary_solution1,
+					const std::vector < int > & boundary_solution2,
+					const std::vector < double > & fraction1)
 /* ---------------------------------------------------------------------- */
 {
 /*
