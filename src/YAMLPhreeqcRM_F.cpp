@@ -237,7 +237,7 @@ IRM_RESULT YAMLSetDensity_F(int* id, double* density, int* dim)
 	{
 		std::vector<double> density_v(*dim, 0.0);
 		memcpy(density_v.data(), density, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetConcentrations(density_v);
+		yrm_ptr->YAMLSetDensity(density_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -289,7 +289,7 @@ IRM_RESULT YAMLSetGasCompMoles_F(int* id, double* gas_moles, int* dim)
 	{
 		std::vector<double> gas_moles_v(*dim, 0.0);
 		memcpy(gas_moles_v.data(), gas_moles, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetConcentrations(gas_moles_v);
+		yrm_ptr->YAMLSetGasCompMoles(gas_moles_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -301,7 +301,7 @@ IRM_RESULT YAMLSetGasPhaseVolume_F(int* id, double* gas_volume, int* dim)
 	{
 		std::vector<double> gas_volume_v(*dim, 0.0);
 		memcpy(gas_volume_v.data(), gas_volume, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetConcentrations(gas_volume_v);
+		yrm_ptr->YAMLSetGasPhaseVolume(gas_volume_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -343,7 +343,7 @@ IRM_RESULT YAMLSetPorosity_F(int* id, double* por, int* dim)
 	{
 		std::vector<double> por_v(*dim, 0.0);
 		memcpy(por_v.data(), por, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetConcentrations(por_v);
+		yrm_ptr->YAMLSetPorosity(por_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -355,7 +355,7 @@ IRM_RESULT YAMLSetPressure_F(int* id, double* p, int* dim)
 	{
 		std::vector<double> p_v(*dim, 0.0);
 		memcpy(p_v.data(), p, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetConcentrations(p_v);
+		yrm_ptr->YAMLSetPressure(p_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -365,9 +365,9 @@ IRM_RESULT YAMLSetPrintChemistryMask_F(int* id, int* cell_mask, int* dim)
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		std::vector<double> cell_mask_v(*dim, 0.0);
+		std::vector<int> cell_mask_v(*dim, 0.0);
 		memcpy(cell_mask_v.data(), cell_mask, (*dim) * sizeof(int));
-		yrm_ptr->YAMLSetConcentrations(cell_mask_v);
+		yrm_ptr->YAMLSetPrintChemistryMask(cell_mask_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -422,7 +422,7 @@ IRM_RESULT YAMLSetSaturation_F(int* id, double* sat, int* dim)
 	{
 		std::vector<double> sat_v(*dim, 0.0);
 		memcpy(sat_v.data(), sat, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetConcentrations(sat_v);
+		yrm_ptr->YAMLSetSaturation(sat_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -464,7 +464,7 @@ IRM_RESULT YAMLSetTemperature_F(int* id, double* t, int* dim)
 	{
 		std::vector<double> t_v(*dim, 0.0);
 		memcpy(t_v.data(), t, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetConcentrations(t_v);
+		yrm_ptr->YAMLSetTemperature(t_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
