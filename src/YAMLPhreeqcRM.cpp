@@ -5,16 +5,39 @@
 #include <string>
 #include <vector>
 #include "YAMLPhreeqcRM.h"
+#define _INC_PHREEQC_H
+#include "thread.h"
+
+std::map<size_t, YAMLPhreeqcRM*> YAMLPhreeqcRM::Instances;
+size_t YAMLPhreeqcRM::InstancesIndex = 0;
 
 YAMLPhreeqcRM::YAMLPhreeqcRM()
 {
+	mutex_lock(&map_lock);
+	this->Index = YAMLPhreeqcRM::InstancesIndex++;
+	std::map<size_t, YAMLPhreeqcRM*>::value_type instance(this->Index, this);
+	YAMLPhreeqcRM::Instances.insert(instance);
+	mutex_unlock(&map_lock);
 }
-void YAMLPhreeqcRM::clear()
+YAMLPhreeqcRM::~YAMLPhreeqcRM()
+{
+	mutex_lock(&map_lock);
+	std::map<size_t, YAMLPhreeqcRM*>::iterator it = YAMLPhreeqcRM::Instances.find(this->Index);
+	if (it != YAMLPhreeqcRM::Instances.end())
+	{
+		YAMLPhreeqcRM::Instances.erase(it);
+	}
+	mutex_unlock(&map_lock);
+}
+void YAMLPhreeqcRM::Clear()
 {
 	YAML::Node empty;
 	YAML_doc = empty;
 }
-
+int YAMLPhreeqcRM::GetId(void)const
+{
+	return (int)this->Index;
+}
 void YAMLPhreeqcRM::WriteYAMLDoc(std::string file_name)
 {
 	std::ofstream ofs = std::ofstream(file_name.c_str(), std::ofstream::out);
@@ -326,5 +349,51 @@ void YAMLPhreeqcRM::YAMLWarningMessage(std::string warnstr)
 	return;
 }
 //
+// helper functions
+//
+int
+YAMLPhreeqcRMLib::CreateYAMLPhreeqcRM(void)
+{
+	int n = IRM_OUTOFMEMORY;
+	YAMLPhreeqcRM* YAMLPhreeqcRMPtr;
+	try
+	{
+		YAMLPhreeqcRMPtr = new YAMLPhreeqcRM;
+		n = (int)YAMLPhreeqcRMPtr->Index;
+	}
+	catch (const std::bad_alloc&)
+	{
+		return IRM_OUTOFMEMORY;
+	}
+	return n;
+}
 
+IRM_RESULT
+YAMLPhreeqcRMLib::DestroyYAMLPhreeqcRM(int id)
+{
+	IRM_RESULT retval = IRM_BADINSTANCE;
+	if (id >= 0)
+	{
+		if (YAMLPhreeqcRM* ptr = YAMLPhreeqcRMLib::GetInstance(id))
+		{
+			delete ptr;
+			retval = IRM_OK;
+		}
+	}
+	return retval;
+}
+
+YAMLPhreeqcRM*
+YAMLPhreeqcRMLib::GetInstance(int id)
+{
+	YAMLPhreeqcRM* instance = 0;
+	mutex_lock(&map_lock);
+	std::map<size_t, YAMLPhreeqcRM*>::iterator it = YAMLPhreeqcRM::Instances.find(size_t(id));
+	if (it != YAMLPhreeqcRM::Instances.end())
+	{
+		instance = (*it).second;
+	}
+	mutex_unlock(&map_lock);
+	return instance;
+}
 #endif

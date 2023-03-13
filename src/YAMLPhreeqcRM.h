@@ -2,10 +2,12 @@
 /*! @file YAMLPhreeqcRM.h
 	@brief YAMLPhreeqcRM C++ Documentation 
 */
+#ifndef INC_YAMLPHREEQCRM_H
+#define INC_YAMLPHREEQCRM_H
 #include <map>
 #include <string>
 #include "yaml-cpp/yaml.h"
-#pragma once
+//#pragma once
 
 #if defined(_WINDLL)
 #define IRM_DLL_EXPORT __declspec(dllexport)
@@ -18,17 +20,23 @@
  *
  * @brief YAML helper class
  */
-
 class IRM_DLL_EXPORT YAMLPhreeqcRM
 {
 private:
 	YAML::Node YAML_doc;
+	std::map<std::string, int> method_map;
+protected:
+	friend class YAMLPhreeqcRMLib;
+	static std::map<size_t, YAMLPhreeqcRM*> Instances;
+	static size_t InstancesIndex;
+	size_t Index;
 public:
 
 	/**
 	Constructor
 	*/
 	YAMLPhreeqcRM();
+	~YAMLPhreeqcRM();
 	/**
 	Clears all definitions from the YAML document.
 	@par C++ Example:
@@ -43,7 +51,12 @@ public:
 	</CODE>
 	@endhtmlonly
 	 */
-	void clear();
+	void Clear();	/**
+	 *  Retrieves the id of this object.  Each instance receives an id which is incremented for each instance
+	 *  starting with the value zero.
+	 *  @return                 The id.
+	 */
+	int                      GetId(void)const;
 	/**
 	Returns a constant reference to the YAML document.
 	@par C++ Example:
@@ -1688,7 +1701,18 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	 */
 	void YAMLWarningMessage(std::string warnstr);
 	// data
-private:
-	std::map<std::string, int> method_map;
+
 };
+#include "YAMLPhreeqcRM.h"
+#include "IrmResult.h"
+class YAMLPhreeqcRMLib
+{
+public:
+	//static void CleanupYAMLPhreeqcRMInstances(void);
+	static int CreateYAMLPhreeqcRM(void);
+	static IRM_RESULT DestroyYAMLPhreeqcRM(int n);
+	static YAMLPhreeqcRM* GetInstance(int n);
+};
+
+#endif // INC_YAMLPHREEQCRM_H
 #endif

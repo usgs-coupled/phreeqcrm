@@ -127,6 +127,6 @@ void WriteYAMLFile_cpp(void)
 
 	// Write YAML file
 	yrm.WriteYAMLDoc(YAML_filename);
-	yrm.clear();
+	yrm.Clear();
 };
 #endif
