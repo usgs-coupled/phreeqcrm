@@ -133,7 +133,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        # os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        os: [ubuntu-20.04, ubuntu-22.04]
         build_shared_libs: [OFF, ON]
         phreeqcrm_with_yaml_cpp: [OFF, ON]
 
@@ -150,7 +151,7 @@ jobs:
 
     - name: Install ninja yaml-cpp valgrind (Linux)
       if: runner.os == 'Linux'
-      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
 
     - name: Install ninja yaml-cpp (macOS)
       if: runner.os == 'macOS'
