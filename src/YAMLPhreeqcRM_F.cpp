@@ -2,8 +2,9 @@
 #include <string>
 #include <vector>
 #include "YAMLPhreeqcRM.h"
+#include "YAMLPhreeqcRM_F.h"
 
-int CreateYAMLPhreeqcRM_F()
+int CreateYAMLPhreeqcRM_F(void)
 {
 	return YAMLPhreeqcRMLib::CreateYAMLPhreeqcRM();
 }
@@ -86,7 +87,7 @@ IRM_RESULT YAMLInitialPhreeqc2Module_F(int* id, int* ic1, int* dim)
 	}
 	return IRM_BADINSTANCE;
 };
-IRM_RESULT YAMLInitialPhreeqc2Module_F(int* id, int* ic1, int* ic2, double* f1, int* dim)
+IRM_RESULT YAMLInitialPhreeqc2Module_mix_F(int* id, int* ic1, int* ic2, double* f1, int* dim)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)

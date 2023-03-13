@@ -93,7 +93,7 @@
     ! --------------------------------------------------------------------------
     ! Create PhreeqcRM
     ! --------------------------------------------------------------------------
-    yaml_file = "AdvectBMI_cpp.yaml"
+    yaml_file = "AdvectBMI_f90.yaml"
     ! RM_GetGridCellCountYAML must be called BEFORE
     ! the PhreeqcRM instance is created. The
     ! return value can be used to create the
