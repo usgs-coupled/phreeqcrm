@@ -3139,7 +3139,7 @@ status = phreeqc_rm.InitialPhreeqc2Module(ic1);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT  InitialPhreeqc2Module(std::vector < int >    & initial_conditions1);
+	IRM_RESULT  InitialPhreeqc2Module(const std::vector < int >    & initial_conditions1);
 /**
 Transfer solutions and reactants from the InitialPhreeqc instance to the reaction-module workers, possibly with mixing.
 In its simplest form, @a  initial_conditions1 is used to select initial conditions, including solutions and reactants,
@@ -3203,7 +3203,7 @@ status = phreeqc_rm.InitialPhreeqc2Module(ic1, ic2, f1);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT InitialPhreeqc2Module(
-		std::vector < int >    & initial_conditions1,
+		const std::vector < int >    & initial_conditions1,
 		std::vector < int >    & initial_conditions2,
 		std::vector < double > & fraction1);
 /**
@@ -4219,7 +4219,7 @@ status = phreeqc_rm.SetPrintChemistryMask(print_chemistry_mask);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                SetPrintChemistryMask(std::vector<int> & cell_mask);
+	IRM_RESULT                                SetPrintChemistryMask(const std::vector<int> & cell_mask);
 /**
 Set property that enables or disables printing detailed output from reaction calculations
 to the output file for a set of cells defined by @ref SetPrintChemistryMask.
@@ -5935,8 +5935,8 @@ protected:
 	IRM_RESULT                                CellInitialize(
 		                                          int i,
 		                                          int n_user_new,
-		                                          int *initial_conditions1,
-		                                          int *initial_conditions2,
+		                                          const int *initial_conditions1,
+		                                          const int *initial_conditions2,
 		                                          double *fraction1,
 		                                          std::set<std::string> &error_set);
 	IRM_RESULT                                CheckCells();
