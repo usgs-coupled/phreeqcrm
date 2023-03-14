@@ -3,6 +3,7 @@
 
 %{
 #define SWIG_FILE_WITH_INIT
+#include "BMI_Var.h"
 #include "IrmResult.h"
 #include "PhreeqcRM.h"
 %}
@@ -24,5 +25,6 @@ import_array();
 // following classes cxxSolution, cxxExchange, cxxGasPhase,
 // cxxKinetics, cxxPPassemblage, cxxSSassemblage, cxxSurface
 // cxxMix, cxxReaction, cxxTemperature, cxxPressure
+%include "BMI_Var.h"
 %include "IrmResult.h"
 %include "PhreeqcRM.h"

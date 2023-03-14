@@ -52,7 +52,7 @@ endif()
 option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" "ON")
 if (PHREEQCRM_BUILD_PYTHON)
   find_package(SWIG REQUIRED)
-  find_package(Python REQUIRED COMPONENTS Interpreter Development)
+  find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
 endif()
 ##}}
 

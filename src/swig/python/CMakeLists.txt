@@ -1,4 +1,4 @@
-set(PYTHON_TARGET_NAME phreeqcrm)
+set(PYTHON_TARGET_NAME phreeqcrmpy)
 
 # copy database to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../database/phreeqc.dat phreeqc.dat COPYONLY)
@@ -31,4 +31,5 @@ target_include_directories(${PYTHON_TARGET_NAME}
 target_link_libraries(${PYTHON_TARGET_NAME}
   PRIVATE
     Python::Python
+    Python::NumPy
 )
