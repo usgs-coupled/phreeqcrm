@@ -33,3 +33,9 @@ target_link_libraries(${PYTHON_TARGET_NAME}
     Python::Python
     Python::NumPy
 )
+
+add_test(NAME SimpleAdvect
+  COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
+)
+
+set_tests_properties(SimpleAdvect PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")

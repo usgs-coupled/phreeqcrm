@@ -171,8 +171,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install numpy
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        python -m pip install numpy
+        # @todo if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Set up Visual Studio shell (Windows)
       if: runner.os == 'Windows'
