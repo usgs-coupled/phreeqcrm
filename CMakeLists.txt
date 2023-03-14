@@ -206,6 +206,7 @@ set(PhreeqcRM_SOURCES
   src/PhreeqcRM.h
   src/RM_interface_C.cpp
   src/RM_interface_C.h
+  src/RM_BMI_interface_F.cpp
   src/RM_interface_F.cpp
   src/RM_interface_F.h
   src/YAMLPhreeqcRM.cpp
