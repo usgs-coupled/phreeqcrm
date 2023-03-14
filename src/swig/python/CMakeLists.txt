@@ -19,7 +19,7 @@ set_source_files_properties(${phreeqcrm_INTERFACE} PROPERTIES CPLUSPLUS ON)
 swig_add_library(
   ${PYTHON_TARGET_NAME}
   LANGUAGE python
-  TYPE SHARED
+  TYPE MODULE
   SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../../PhreeqcRM.i ${PhreeqcRM_SOURCES}
 )
 
