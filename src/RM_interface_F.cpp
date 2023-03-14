@@ -840,6 +840,7 @@ RMF_GetGfw(int *id, double * gfw)
 	}
 	return IRM_BADINSTANCE;
 }
+
 /* ---------------------------------------------------------------------- */
 int
 RMF_GetGridCellCount(int * id)
@@ -853,6 +854,7 @@ RMF_GetGridCellCount(int * id)
 	}
 	return IRM_BADINSTANCE;
 }
+#ifdef USE_YAML
 /* ---------------------------------------------------------------------- */
 int
 RMF_GetGridCellCountYAML(char* config_file)
@@ -862,6 +864,7 @@ RMF_GetGridCellCountYAML(char* config_file)
 
 	return GetGridCellCountYAML(config_file);
 }
+#endif
 /* ---------------------------------------------------------------------- */
 int
 RMF_GetIPhreeqcId(int * id, int * i)

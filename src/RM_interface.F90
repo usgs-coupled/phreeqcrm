@@ -187,7 +187,6 @@
 !> @endhtmlonly
 !> @par Sequence:
 !> Called before RM_Create.    
-
     INTEGER FUNCTION GetGridCellCountYAML(config_file)
     USE ISO_C_BINDING
     IMPLICIT NONE

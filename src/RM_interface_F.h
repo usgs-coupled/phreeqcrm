@@ -59,7 +59,9 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetGasCompPressures(int* id, double* p);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGasCompPhi(int* id, double* phi);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGasPhaseVolume(int* id, double* v);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGfw(int *id, double * gfw);
+#ifdef USE_YAML
 IRM_DLL_EXPORT int        RMF_GetGridCellCountYAML(const char* config_file);
+#endif
 IRM_DLL_EXPORT int        RMF_GetGridCellCount(int *id);
 IRM_DLL_EXPORT int        RMF_GetIPhreeqcId(int *id, int *i);
 IRM_DLL_EXPORT int        RMF_GetMpiMyself(int *id);
@@ -87,7 +89,9 @@ IRM_DLL_EXPORT int        RMF_GetThreadCount(int *id);
 IRM_DLL_EXPORT double     RMF_GetTime(int *id);
 IRM_DLL_EXPORT double     RMF_GetTimeConversion(int *id);
 IRM_DLL_EXPORT double     RMF_GetTimeStep(int *id);
+#ifdef USE_YAML
 IRM_DLL_EXPORT IRM_RESULT RMF_InitializeYAML(int* id, const char* yaml_name);
+#endif
 IRM_DLL_EXPORT IRM_RESULT RMF_InitialPhreeqc2Concentrations(
                 int *id,
                 double *c,

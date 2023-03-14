@@ -13,7 +13,7 @@ contains
     END INTERFACE
 	CreateYAMLPhreeqcRM = CreateYAMLPhreeqcRM_F()
     END FUNCTION CreateYAMLPhreeqcRM
-!END MODULE YAMLPhreeqcRM       
+    
     
     INTEGER FUNCTION DestroyYAMLPhreeqcRM(id)
     USE ISO_C_BINDING

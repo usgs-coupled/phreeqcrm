@@ -211,6 +211,8 @@ set(PhreeqcRM_SOURCES
   src/RM_interface_F.h
   src/YAMLPhreeqcRM.cpp
   src/YAMLPhreeqcRM.h
+  src/YAMLPhreeqcRM_F.cpp
+  src/YAMLPhreeqcRM_F.h
 )
 
 # setup include directories
@@ -305,11 +307,13 @@ set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/PhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/RM_interface_C.h
   ${PROJECT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
+  ${PROJECT_SOURCE_DIR}/src/YAMLPhreeqcRM_F.h
 )
 
 set(PhreeqcRM_SRC
   ${PROJECT_SOURCE_DIR}/src/RM_interface.F90
   ${PROJECT_SOURCE_DIR}/src/RM_BMI_interface.F90
+  ${PROJECT_SOURCE_DIR}/src/YAMLPhreeqcRM.F90
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
 )
 

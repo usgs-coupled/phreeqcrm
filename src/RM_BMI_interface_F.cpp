@@ -229,7 +229,7 @@ RMF_BMI_GetVarUnits(int* id, char* var, char* units, int* l1)
 	}
 	return IRM_BADINSTANCE;
 }
-//IRM_DLL_EXPORT IRM_RESULT RMF_BMI_Initialize(int* id, char* config_file);
+#ifdef USE_YAML
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RMF_BMI_Initialize(int* id, char* config_file)
@@ -244,6 +244,7 @@ RMF_BMI_Initialize(int* id, char* config_file)
 	}
 	return IRM_BADINSTANCE;
 }
+#endif
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RMF_BMI_SetValue(int* id, char* var, void* src)
@@ -280,7 +281,7 @@ RMF_BMI_Update(int* id)
 	}
 	return IRM_BADINSTANCE;
 }
-
+#ifdef USE_YAML
 /* ---------------------------------------------------------------------- */
 int
 RMF_GetGridCellCountYAML(const char* config)
@@ -289,3 +290,4 @@ RMF_GetGridCellCountYAML(const char* config)
 	// Returns units of variable var
 	return GetGridCellCountYAML(config);
 }
+#endif

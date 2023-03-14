@@ -987,6 +987,7 @@
     RM_BMI_GetVarUnits = RMF_BMI_GetVarUnits(id, trim(var)//C_NULL_CHAR, units, len(units))
     return
     END FUNCTION RM_BMI_GetVarUnits
+    
 	!> A YAML file can be used to initialize an instance of PhreeqcRM. Same as
 	!> @ref RM_InitializeYAML.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -1099,6 +1100,7 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+#if defined(USE_YAML)
     INTEGER FUNCTION RM_BMI_Initialize(id, config_file)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1116,7 +1118,7 @@
     RM_BMI_Initialize = RMF_BMI_Initialize(id, trim(config_file//C_NULL_CHAR))
     return
     END FUNCTION RM_BMI_Initialize
-
+#endif
     INTEGER FUNCTION RM_BMI_SetValue_b(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
