@@ -47,14 +47,11 @@ if(PHREEQCRM_BUILD_MPI)
   find_package(MPI REQUIRED)
 endif()
 
-##{{
-##option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" "OFF")
-option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" "ON")
+option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" "OFF")
 if (PHREEQCRM_BUILD_PYTHON)
   find_package(SWIG REQUIRED)
   find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
 endif()
-##}}
 
 set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/CSelectedOutput.cpp
