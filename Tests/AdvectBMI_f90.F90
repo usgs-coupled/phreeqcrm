@@ -154,12 +154,12 @@
     write(string1, "(A,I10)") "MPI task number:                                  ", RM_GetMpiMyself(id)
     status = RM_OutputMessage(id, string1)
     status = RM_BMI_GetValue(id, "FilePrefix", prefix)
-    write(string1, "(A,A)") "File prefix:                                      ", string
+    write(string1, "(A,A)") "File prefix:                                        ", prefix
     status = RM_OutputMessage(id, trim(string1))
     write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", nxyz
     status = RM_OutputMessage(id, trim(string1))
-    write(string1, "(A,I10)") "Number of chemistry cells in the reaction module: ", nchem
-    status = RM_OutputMessage(id, trim(string1))
+    !write(string1, "(A,I10)") "Number of chemistry cells in the reaction module: ", nchem
+    !status = RM_OutputMessage(id, trim(string1))
     write(string1, "(A,I10)") "Number of components for transport:               ", ncomps
     status = RM_OutputMessage(id, trim(string1))
     ! Get component information

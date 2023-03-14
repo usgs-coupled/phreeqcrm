@@ -1,5 +1,5 @@
 #ifdef USE_YAML
-MODULE YAMLPhreeqcRM
+MODULE YAML_interface
 contains
     INTEGER FUNCTION CreateYAMLPhreeqcRM()
     USE ISO_C_BINDING
@@ -1048,6 +1048,6 @@ contains
 	YAMLWarningMessage = YAMLWarningMessage_F(id, trim(str)//C_NULL_CHAR)
     END FUNCTION YAMLWarningMessage
     
-END MODULE YAMLPhreeqcRM 
+END MODULE YAML_interface 
  
 #endif

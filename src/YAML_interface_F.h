@@ -1,6 +1,6 @@
 #ifdef USE_YAML
-#ifndef INC_YAMLPHREEQCRM_F_H
-#define INC_YAMLPHREEQCRM_F_H
+#ifndef INC_YAML_interface_F_H
+#define INC_YAML_interface_F_H
 #if defined(_WINDLL)
 #define IRM_DLL_EXPORT __declspec(dllexport)
 #else
@@ -80,5 +80,5 @@ IRM_DLL_EXPORT IRM_RESULT YAMLWarningMessage_F(int* id, const char* warnstr);
 }
 #endif
 
-#endif // INC_YAMLPHREEQCRM_F_H
+#endif // INC_YAML_interface_F_H
 #endif // USE_YAML

@@ -9,7 +9,7 @@ if (PHREEQCRM_FORTRAN_TESTING)
   target_sources(FortranAdvect PRIVATE
     ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
     ../src/RM_interface.F90
-	../src/YAMLPhreeqcRM.F90
+	../src/YAML_interface.F90
     Advect_f90.F90
     AdvectBMI_f90.F90
     Gas_f90.F90

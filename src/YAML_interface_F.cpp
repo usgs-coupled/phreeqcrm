@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include "YAMLPhreeqcRM.h"
-#include "YAMLPhreeqcRM_F.h"
+#include "YAML_interface_F.h"
 
 int CreateYAMLPhreeqcRM_F(void)
 {
