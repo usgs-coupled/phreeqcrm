@@ -1,6 +1,20 @@
 #ifdef USE_YAML
 MODULE YAML_interface
-contains
+    contains
+!> Creates a YAMLPhreeqcRM instance with a YAML document that is ready to 
+!> for writing data for initiation of a PhreeqcRM instance.
+!> @retval id   Id of the new YAMLPhreeqcRM instance.
+!> @see
+!> @ref DestroyYAMLPhreeqcRM.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> ! Create YAMLPhreeqcRM document
+!> id = CreateYAMLPhreeqcRM() 
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
     INTEGER FUNCTION CreateYAMLPhreeqcRM()
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -13,8 +27,22 @@ contains
     END INTERFACE
 	CreateYAMLPhreeqcRM = CreateYAMLPhreeqcRM_F()
     END FUNCTION CreateYAMLPhreeqcRM
-    
-    
+!> Deletes the YAMLPhreeqcRM instance and all data.
+!> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @see
+!> @ref YAMLClear.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> YAML_filename = "AdvectBMI_f90.yaml"
+!> status = WriteYAMLDoc(id, YAML_filename)
+!> status = YAMLClear(id)  
+!> status = DestroyYAMLPhreeqcRM(id)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly 
     INTEGER FUNCTION DestroyYAMLPhreeqcRM(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -29,23 +57,23 @@ contains
     integer, intent(in) :: id
 	DestroyYAMLPhreeqcRM = DestroyYAMLPhreeqcRM_F(id)
     END FUNCTION DestroyYAMLPhreeqcRM
-     
-    INTEGER FUNCTION YAMLClear(id)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLClear_F(id) &
-			BIND(C, NAME='YAMLClear_F')
-		USE ISO_C_BINDING
-		IMPLICIT NONE
-        integer(kind=C_INT), intent(in) :: id
-		END FUNCTION YAMLClear_F
-    END INTERFACE
-    integer, intent(in) :: id
-	YAMLClear = YAMLClear_F(id)
-    END FUNCTION YAMLClear
-    
-    
+!> Writes YAML document to file.
+!> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param file_name     Name of file to write YAML document.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @see
+!> @ref DestroyYAMLPhreeqcRM, @ref YAMLClear.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> YAML_filename = "AdvectBMI_f90.yaml"
+!> status = WriteYAMLDoc(id, YAML_filename)
+!> status = YAMLClear(id)  
+!> status = DestroyYAMLPhreeqcRM(id)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
     INTEGER FUNCTION WriteYAMLDoc(id, file_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -62,7 +90,51 @@ contains
     character(len=*), intent(in) :: file_name
 	WriteYAMLDoc = WriteYAMLDoc_F(id, trim(file_name)//C_NULL_CHAR)
     END FUNCTION WriteYAMLDoc
-    
+!> Clears all definitions from the YAML document.
+!> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @see
+!> @ref DestroyYAMLPhreeqcRM.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> YAML_filename = "AdvectBMI_f90.yaml"
+!> status = WriteYAMLDoc(id, YAML_filename)
+!> status = YAMLClear(id)  
+!> status = DestroyYAMLPhreeqcRM(id)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+    INTEGER FUNCTION YAMLClear(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLClear_F(id) &
+			BIND(C, NAME='YAMLClear_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id
+		END FUNCTION YAMLClear_F
+    END INTERFACE
+    integer, intent(in) :: id
+	YAMLClear = YAMLClear_F(id)
+    END FUNCTION YAMLClear
+!> Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance.
+!> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par
+!> CloseFiles closes the output and log files.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = YAMLCloseFiles(id)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
     INTEGER FUNCTION YAMLCloseFiles(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -77,7 +149,44 @@ contains
     integer, intent(in) :: id
 	YAMLCloseFiles = YAMLCloseFiles_F(id)
     END FUNCTION YAMLCloseFiles
-       
+!> Inserts data into the YAML document for the PhreeqcRM method CreateMapping.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance.
+!> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param grid2chem     Integer array of mapping from user's model grid to cells
+!> for which chemistry will be run. 
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par
+!> CreateMapping
+!> provides a mapping from grid cells in the user's model to reaction cells for which chemistry needs to be run.
+!> The mapping is used to eliminate inactive cells and to use symmetry to decrease the number of cells
+!> for which chemistry must be run.
+!> The array @a grid2chem of size @a nxyz (the number of grid cells)
+!> must contain the set of all integers 0 <= @a i < @a count_chemistry,
+!> where @a count_chemistry is a number less than or equal to @a nxyz.
+!> Inactive cells are assigned a negative integer.
+!> The mapping may be many-to-one to account for symmetry.
+!> Default is a one-to-one mapping--all user grid cells are reaction cells
+!> (equivalent to @a grid2chem values of 0,1,2,3,...,nxyz-1).
+!> @param grid2chem        A vector of integers: Nonnegative is a reaction-cell number (0 based),
+!> negative is an inactive cell. Vector is of size @a nxyz (number of grid cells).
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> ! Demonstation of mapping, two equivalent rows by symmetry
+!> ! zero-based indexing
+!> integer, allocatable, dimension(:) :: grid2chem
+!> allocate(grid2chem(nxyz))
+!> grid2chem = -1
+!> do i = 1, nxyz / 2 
+!> 	 grid2chem(i) = i - 1
+!> 	 grid2chem(i + nxyz / 2) = i - 1
+!> enddo
+!> status = YAMLCreateMapping(id, grid2chem)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
     INTEGER FUNCTION YAMLCreateMapping(id, grid2chem)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -95,20 +204,44 @@ contains
     integer, allocatable, dimension(:), intent(in) :: grid2chem
 	YAMLCreateMapping = YAMLCreateMapping_F(id, grid2chem(1), size(grid2chem))
     END FUNCTION YAMLCreateMapping
-     
-    INTEGER FUNCTION YAMLDumpModule(id)
+!> Inserts data into the YAML document for the PhreeqcRM method DumpModule.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance.
+!> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param dump_on          Signal for writing the dump file, true or false.
+!> @param append           Signal to append to the contents of the dump file, true or false.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par
+!> DumpModule writes the contents of all workers to file in _RAW formats (see appendix of PHREEQC version 3 manual),
+!> including SOLUTIONs and all reactants.
+!> @see                    @ref YAMLSetDumpFileName.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> logical dump_on, append
+!> dump_on = .true.
+!> append = .false.
+!> status = YAMLSetDumpFileName("Advect_cpp.dmp")
+!> status = YAMLDumpModule(dump_on, append)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+    INTEGER FUNCTION YAMLDumpModule(id, dump_on, append)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLDumpModule_F(id) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLDumpModule_F(id, dump_on, append) &
 			BIND(C, NAME='YAMLDumpModule_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer, intent(in) :: id
+        logical(kind=C_INT), intent(in) :: dump_on, append
 		END FUNCTION YAMLDumpModule_F
     END INTERFACE
     integer, intent(in) :: id
-	YAMLDumpModule = YAMLDumpModule_F(id)
+    logical(kind=4), intent(in) :: dump_on, append   
+	YAMLDumpModule = YAMLDumpModule_F(id, dump_on, append)
     END FUNCTION YAMLDumpModule
     
     INTEGER FUNCTION YAMLFindComponents(id)

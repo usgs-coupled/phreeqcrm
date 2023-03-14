@@ -54,9 +54,12 @@ void YAMLPhreeqcRM::YAMLCreateMapping(std::vector< int >& grid2chem)
 	YAML_doc["CreateMapping"] = grid2chem;
 	return;
 };
-void YAMLPhreeqcRM::YAMLDumpModule()
+void YAMLPhreeqcRM::YAMLDumpModule(bool dump_on, bool append)
 {
-	YAML_doc["YAMLDumpModule"] = "";
+	YAML::Node node;
+	node["dump_on"] = dump_on;
+	node["append"] = append;
+	YAML_doc["YAMLDumpModule"] = node;
 	return;
 }
 void YAMLPhreeqcRM::YAMLFindComponents()

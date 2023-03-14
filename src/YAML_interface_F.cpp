@@ -55,12 +55,12 @@ IRM_RESULT YAMLCreateMapping_F(int* id, int* grid2chem, int* dim)
 	}
 	return IRM_BADINSTANCE;
 };
-IRM_RESULT YAMLDumpModule_F(int* id)
+IRM_RESULT YAMLDumpModule_F(int* id, bool* dump_on, bool* append)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLDumpModule();
+		yrm_ptr->YAMLDumpModule(*dump_on, *append);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;

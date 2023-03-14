@@ -163,7 +163,7 @@ yrm.YAMLCloseFiles();
 	</CODE>
 	@endhtmlonly
 	 */
-	void YAMLDumpModule();
+	void YAMLDumpModule(bool dump_on, bool append);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method FindComponents.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to

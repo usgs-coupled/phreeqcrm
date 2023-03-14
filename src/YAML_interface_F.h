@@ -17,7 +17,7 @@ IRM_DLL_EXPORT IRM_RESULT YAMLClear_F(int* id);
 IRM_DLL_EXPORT IRM_RESULT WriteYAMLDoc_F(int* id, const char* file_name);
 IRM_DLL_EXPORT IRM_RESULT YAMLCloseFiles_F(int* id);
 IRM_DLL_EXPORT IRM_RESULT YAMLCreateMapping_F(int* id, int* grid2chem, int* dim);
-IRM_DLL_EXPORT IRM_RESULT YAMLDumpModule_F(int* id);
+IRM_DLL_EXPORT IRM_RESULT YAMLDumpModule_F(int* id, bool* dump_on, bool* append);
 IRM_DLL_EXPORT IRM_RESULT YAMLFindComponents_F(int* id);
 IRM_DLL_EXPORT IRM_RESULT YAMLInitialPhreeqc2Module_F(int* id, int* ic1, int* dim);
 IRM_DLL_EXPORT IRM_RESULT YAMLInitialPhreeqc2Module_mix_F(int* id, int* ic1, int* ic2, double* f1, int* dim);
