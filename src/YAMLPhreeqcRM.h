@@ -421,8 +421,9 @@ yrm.YAMLCloseFiles();
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
 	@par
-	RunCells runs a reactions for all cells in the reaction module.
-	During initialization, RunCells can be used to equilibrate each solution with all reacts in a cell while
+	RunCells runs reactions for all cells in the reaction module.
+	During initialization, RunCells can be used to equilibrate 
+	each solution with all reactants in a cell while
 	using a time step of zero (@ref YAMLSetTimeStep) to avoid kinetic reactions.
 	Other properties that may need to be initialized before RunCells is invoked
 	include porosity (@ref YAMLSetPorosity),
@@ -551,9 +552,9 @@ yrm.YAMLRunString(true, false, true, input.c_str());
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
 	@par
-	SetConcentrations uses the vector of concentrations (@a c) to set the moles of components in each reaction cell.
-	For YAML initialization, it is unlikely that accurate concentrations are available unless previously calculated
-	concentrations are available.
+	The only way to use this method is to have pre-calculated PHREEQC solution concentrations,
+	which is not common. Concentrations are normally initialized
+	with @ref YAMLInitialPhreeqc2Module or @ref YAMLInitialPhreeqcCell2Module.
 	@param c               Vector of component concentrations. Size of vector is @a ncomps times @a nxyz,
 	where @a ncomps is the number of components as determined
 	by FindComponents or GetComponentCount and
@@ -766,7 +767,8 @@ yrm.YAMLRunString(true, false, true, input.c_str());
 		*/
 	void YAMLSetGasPhaseVolume(std::vector< double > gas_volume);
 	/**
-Inserts data into the YAML document to define the number of cells.
+Inserts data into the YAML document to define the number of cells in the 
+user's model.
 Once the YAML document is written, the number of model cells can be extracted
 with the method GetGridCellCountYAML. GetGridCellCountYAML is NOT a PhreeqcRM 
 method; it is a global method and must be used BEFORE the PhreeqcRM instance
@@ -1179,8 +1181,6 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	</PRE>
 	</CODE>
 	@endhtmlonly
-	@par MPI:
-	Called by root and (or) workers.
 	 */
 	void YAMLSetTemperature(std::vector< double > t);
 	/**
@@ -1556,7 +1556,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	@htmlonly
 	<CODE>
 	<PRE>
-	yrm.YAMLGetSpeciesConcentrations(c);
+	yrm.YAMLSetSpeciesConcentrations(c);
 	</PRE>
 	</CODE>
 	@endhtmlonly
@@ -1695,7 +1695,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	@htmlonly
 	<CODE>
 	<PRE>
-	phreeqc_rm.WarningMessage("Need to check these definitions.");
+	yrm.YAMLWarningMessage("Need to check these definitions.");
 	</PRE>
 	</CODE>
 	@endhtmlonly

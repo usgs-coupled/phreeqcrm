@@ -10,6 +10,7 @@
     double precision :: time_conversion
     logical :: workers, initial_phreeqc, utility
     double precision :: time, time_step
+    double precision, allocatable, dimension(:)   :: density
     double precision, allocatable, dimension(:)   :: rv
     double precision, allocatable, dimension(:)   :: por
     double precision, allocatable, dimension(:)   :: sat
@@ -49,7 +50,11 @@
     allocate(rv(nxyz))
     rv = 1.0d0
 	status = YAMLSetRepresentativeVolume(id, rv)
-	! Set initial porosity
+	! Set initial density
+    allocate(density(nxyz))
+    por = 1.0d0
+	status = YAMLSetDensity(id, density)
+    ! Set initial porosity
     allocate(por(nxyz))
     por = 0.2d0
 	status = YAMLSetPorosity(id, por)
