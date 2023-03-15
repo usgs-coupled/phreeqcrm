@@ -243,7 +243,50 @@ MODULE YAML_interface
     logical(kind=4), intent(in) :: dump_on, append   
 	YAMLDumpModule = YAMLDumpModule_F(id, dump_on, append)
     END FUNCTION YAMLDumpModule
-    
+!> Inserts data into the YAML document for the PhreeqcRM method FindComponents.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance.
+!> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par
+!> FindComponents accumulates a list of elements. Elements are those that have been
+!> defined in a solution or any other reactant
+!> (EQUILIBRIUM_PHASE, KINETICS, and others), including charge imbalance.
+!> This method can be called multiple times and the list that is created is cummulative.
+!> The list is the set of components that needs to be transported. By default the list
+!> includes water, excess H and excess O (the H and O not contained in water);
+!> alternatively, the list may be set to contain total H and total O (@ref YAMLSetComponentH2O),
+!> which requires transport results to be accurate to eight or nine significant digits.
+!> If multicomponent diffusion (MCD) is to be modeled,
+!> there is a capability to retrieve aqueous species concentrations 
+!> and to set new solution concentrations after
+!> MCD by using individual species concentrations
+!> (@ref YAMLSpeciesConcentrations2Module).
+!> To use these methods, the save-species property needs to be turned on (@ref YAMLSetSpeciesSaveOn).
+!> If the save-species property is on, FindComponents will generate
+!> a list of aqueous species,
+!> their diffusion coefficients at 25 C,
+!> and their charge.
+!> @see
+!> @ref YAMLSetComponentH2O,
+!> @ref YAMLSetSpeciesSaveOn,
+!> @ref YAMLSpeciesConcentrations2Module.
+!> @par 
+!> The FindComponents method also generates lists of reactants--equilibrium phases,
+!> exchangers, gas components, kinetic reactants, solid solution components, and surfaces.
+!> The lists are cumulative, including all reactants that were
+!> defined in the initial phreeqc instance at any time FindComponents was called.
+!> In addition, a list of phases is generated for which saturation indices may be calculated from the
+!> cumulative list of components.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = YAMLRunFile(id, yaml_file)
+!> status = YAMLFindComponents(id)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly    
     INTEGER FUNCTION YAMLFindComponents(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -258,7 +301,50 @@ MODULE YAML_interface
     integer, intent(in) :: id
 	YAMLFindComponents = YAMLFindComponents_F(id)
     END FUNCTION YAMLFindComponents    
-
+!> Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance.
+!> @param id   The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param ic1  Vector of solution and reactant index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par
+!> InitialPhreeqc2Module transfers solutions and reactants from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a ic1 is used to select initial conditions, including solutions and reactants,
+!> for each cell of the model, without mixing.
+!> @a ic1 is dimensioned 7 times @a nxyz, where @a nxyz is the 
+!> number of grid cells in the user's model. 
+!> The dimension of 7 refers to solutions and reactants in the following order:
+!> (0) SOLUTIONS, (1) EQUILIBRIUM_PHASES, (2) EXCHANGE, (3) SURFACE, (4) GAS_PHASE,
+!> (5) SOLID_SOLUTIONS, and (6) KINETICS.
+!> The definition initial_solution1[3*nxyz + 99] = 2, indicates that
+!> cell 99 (0 based) contains the SURFACE definition (index 3) defined by SURFACE 2 
+!> in the InitialPhreeqc instance.
+!> 
+!> Size is 7 times @a nxyz. The order of definitions is given above.
+!> Negative values are ignored, resulting in no definition of that entity for that cell.
+!> @see                        @ref YAMLInitialPhreeqcCell2Module, 
+!> @ref YAMLInitialPhreeqc2Module_mix.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> integer, allocatable, dimension(:,:) :: ic1
+!> allocate(ic1(nxyz,7))
+!> do i = 1, nxyz
+!> 	ic1(i,1) = 1     ! Solution 1
+!> 	ic1(i,2) = -1    ! Equilibrium phases none
+!> 	ic1(i,3) = 1     ! Exchange 1
+!> 	ic1(i,4) = -1    ! Surface none
+!> 	ic1(i,5) = -1    ! Gas phase none
+!> 	ic1(i,6) = -1    ! Solid solutions none
+!> 	ic1(i,7) = -1    ! Kinetics none
+!> enddo
+!> status = YAMLInitialPhreeqc2Module_mix(id, ic1) 
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
     INTEGER FUNCTION YAMLInitialPhreeqc2Module(id, ic1)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -278,7 +364,74 @@ MODULE YAML_interface
     l = size(ic1,1)*size(ic1,2)
 	YAMLInitialPhreeqc2Module = YAMLInitialPhreeqc2Module_F(id, ic1(1,1), l)
     END FUNCTION YAMLInitialPhreeqc2Module  
-    
+!> Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance.
+!> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param ic1    Vector of solution and reactant index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+!> Size is 7 times @a nxyz, where @a nxyz is the number of grid cells in the user's model.
+!> The order of reactants is given below and in the example.
+!> Negative values are ignored, resulting in no definition of that entity for that cell.
+!> @param ic2    Vector of solution and reactant index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+!> Nonnegative values of @a ic2 result in mixing with the entities defined in @a ic1.
+!> Negative values result in no mixing.
+!> Size is 7 times @a nxyz. 
+!> @param f1           Fraction of @a ic1 that mixes with (1 - @a f1)
+!> of @a ic2.
+!> Size is 7 times @a nxyz. 
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par
+!> InitialPhreeqc2Module transfers solutions and reactants from the InitialPhreeqc instance to
+!> the reaction-module workers, possibly with mixing.
+!> In its simplest form, @a  ic1 is used to select initial conditions, including solutions and reactants,
+!> for each cell of the model, without mixing.
+!> The dimension of 7 refers to solutions and reactants in the following order:
+!> (0) SOLUTIONS, (1) EQUILIBRIUM_PHASES, (2) EXCHANGE, (3) SURFACE, (4) GAS_PHASE,
+!> (5) SOLID_SOLUTIONS, and (6) KINETICS.
+!> The definition ic1[3*nxyz + 99] = 2, indicates that
+!> cell 99 (0 based) contains the SURFACE definition (index 3) defined by SURFACE 2 
+!> in the InitialPhreeqc instance (either by RunFile or RunString).
+!> @n@n
+!> It is also possible to mix solutions and reactants to obtain the initial conditions 
+!> for cells. For mixing,
+!> @a initials_conditions2 contains numbers for a second entity that mixes with 
+!> the entity defined in @a ic1.
+!> @a f1 contains the mixing fraction for @a ic1,
+!> whereas (1 - @a f1) is the mixing fraction for @a ic2.
+!> The definitions ic1[3*nxyz + 99] = 2, initial_solution2[3*nxyz + 99] = 3,
+!> f1[3*nxyz + 99] = 0.25 indicates that
+!> cell 99 (0 based) contains a mixture of 0.25 SURFACE 2 and 0.75 SURFACE 3,
+!> where the surface compositions have been defined in the InitialPhreeqc instance.
+!> If the user number in @a ic2 is negative, no mixing occurs.
+!> 
+!> @see                        @ref YAMLInitialPhreeqcCell2Module,
+!> @ref YAMLInitialPhreeqc2Module.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> integer, allocatable, dimension(:,:) :: ic1
+!> integer, allocatable, dimension(:,:) :: ic2
+!> double precision, allocatable, dimension(:,:) :: f1
+!> allocate(ic1(nxyz,7), ic2(nxyz,7), f1(nxyz,7))
+!> ic1 = -1
+!> ic2 = -1
+!> f1 = 1.0d0
+!> do i = 1, nxyz
+!> 	ic1(i,1) = 1     ! Solution 1
+!> 	ic1(i,2) = -1    ! Equilibrium phases none
+!> 	ic1(i,3) = 1     ! Exchange 1
+!> 	ic1(i,4) = -1    ! Surface none
+!> 	ic1(i,5) = -1    ! Gas phase none
+!> 	ic1(i,6) = -1    ! Solid solutions none
+!> 	ic1(i,7) = -1    ! Kinetics none
+!> enddo
+!> status = YAMLInitialPhreeqc2Module_mix(id, ic1, ic2, f1) 
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
     INTEGER FUNCTION YAMLInitialPhreeqc2Module_mix(id, ic1, ic2, f1)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -307,7 +460,39 @@ MODULE YAML_interface
     endif
 	YAMLInitialPhreeqc2Module_mix = YAMLInitialPhreeqc2Module_mix_F(id, ic1(1,1), ic2(1,1), f1(1,1), l1)
     END FUNCTION YAMLInitialPhreeqc2Module_mix  
-    
+!> Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqcCell2Module.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance.
+!> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param n                  Number that refers to a solution or MIX and associated 
+!> reactants in the InitialPhreeqc instance.
+!> @param cell_numbers       A vector of grid-cell numbers (user's grid-cell numbering system) that
+!> will be populated with cell @a n from the InitialPhreeqc instance.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par
+!> InitialPhreeqcCell2Module uses a cell numbered @a n in the InitialPhreeqc instance to 
+!> populate a series of transport cells.
+!> All reactants with the number @a n are transferred along with the solution.
+!> If MIX @a n exists, it is used for the definition of the solution.
+!> If @a n is negative, @a n is redefined to be the largest solution or MIX number 
+!> in the InitialPhreeqc instance.
+!> All reactants for each cell in the list @a cell_numbers are removed before the cell
+!> definition is copied from the InitialPhreeqc instance to the workers.
+!> 
+!> @see                      @ref YAMLInitialPhreeqc2Module,
+!> @ref @ref YAMLInitialPhreeqc2Module_mix.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> integer, allocatable, dimension(:) :: module_cells
+!> allocate(module_cells(2))
+!> module_cells(1) = 18
+!> module_cells(2) = 19
+!> status = YAMLInitialPhreeqcCell2Module(id, -1, module_cells)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly  
     INTEGER FUNCTION YAMLInitialPhreeqcCell2Module(id, n, cell_numbers)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -329,7 +514,24 @@ MODULE YAML_interface
     l = size(cell_numbers)
 	YAMLInitialPhreeqcCell2Module = YAMLInitialPhreeqcCell2Module_F(id, n, cell_numbers(1), l)
     END FUNCTION YAMLInitialPhreeqcCell2Module    
-    
+!> Inserts data into the YAML document for the PhreeqcRM method LoadDatabase.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance.
+!> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param file_name         String containing the database name.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par
+!> LoadDatabase loads a database for all IPhreeqc instances--workers, InitialPhreeqc, and Utility. All definitions
+!> of the reaction module are cleared (SOLUTION_SPECIES, PHASES, SOLUTIONs, etc.), and the database is read.
+!> 
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = YAMLLoadDatabase(id, "phreeqc.dat") 
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
     INTEGER FUNCTION YAMLLoadDatabase(id, file_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -346,7 +548,23 @@ MODULE YAML_interface
     character(len=*), intent(in) :: file_name
 	YAMLLoadDatabase = YAMLLoadDatabase_F(id, trim(file_name)//C_NULL_CHAR)
     END FUNCTION YAMLLoadDatabase
-    
+!> Inserts data into the YAML document for the PhreeqcRM method LogMessage.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance.
+!> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param str              String to be printed.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par
+!> LogMessage prints a message to the log file.
+!> @see                    @ref YAMLOutputMessage, @ref YAMLScreenMessage, @ref YAMLWarningMessage.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = YAMLLogMessage("Finished section 1 of initialization");
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
     INTEGER FUNCTION YAMLLogMessage(id, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -363,7 +581,25 @@ MODULE YAML_interface
     character(len=*), intent(in) :: str
 	YAMLLogMessage = YAMLLogMessage_F(id, trim(str)//C_NULL_CHAR)
     END FUNCTION YAMLLogMessage
-    
+!> Inserts data into the YAML document for the PhreeqcRM method OpenFiles.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance.
+!> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par
+!> OpenFiles opens the output and log files. Files are named prefix.chem.txt and prefix.log.txt
+!> based on the prefix defined by @ref YAMLSetFilePrefix.
+!> @see                    @ref YAMLSetFilePrefix, @ref YAMLCloseFiles,
+!> @ref YAMLLogMessage, @ref YAMLOutputMessage, and @ref YAMLWarningMessage.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = YAMLSetFilePrefix("Advect_cpp");
+!> status = YAMLOpenFiles();
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly    
     INTEGER FUNCTION YAMLOpenFiles(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -378,7 +614,23 @@ MODULE YAML_interface
     integer, intent(in) :: id
 	YAMLOpenFiles = YAMLOpenFiles_F(id)
     END FUNCTION YAMLOpenFiles   
-    
+!> Inserts data into the YAML document for the PhreeqcRM method OutputMessage.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance.
+!> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param str              String to be printed.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par
+!> OutputMessage prints a message to the output file.
+!> @see                    @ref YAMLLogMessage, @ref YAMLScreenMessage, @ref YAMLWarningMessage.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = YAMLOutputMessage("Finished section 1 of initialization");
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly    
     INTEGER FUNCTION YAMLOutputMessage(id, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
