@@ -350,8 +350,8 @@ IRM_RESULT
 PhreeqcRM::CellInitialize(
 					int ixyz,
 					int n_user_new,
-					int *initial_conditions1,
-					int *initial_conditions2,
+					const int *initial_conditions1,
+					const int *initial_conditions2,
 					double *fraction1,
 					std::set<std::string> &error_set)
 /* ---------------------------------------------------------------------- */
@@ -5071,7 +5071,7 @@ PhreeqcRM::HandleErrorsInternal(std::vector< int > &rtn)
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
-					std::vector < int > & boundary_solution1)
+					const std::vector < int > & boundary_solution1)
 {
 	this->phreeqcrm_error_string.clear();
 	std::vector< int > dummy;
@@ -5081,9 +5081,9 @@ PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
-					std::vector < int > & boundary_solution1,
-					std::vector < int > & boundary_solution2,
-					std::vector < double > & fraction1)
+					const std::vector < int > & boundary_solution1,
+					const std::vector < int > & boundary_solution2,
+					const std::vector < double > & fraction1)
 /* ---------------------------------------------------------------------- */
 {
 /*
@@ -5194,7 +5194,7 @@ PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Module(
-					std::vector < int >    & initial_conditions1_in)
+					const std::vector < int >    & initial_conditions1_in)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -5210,7 +5210,7 @@ PhreeqcRM::InitialPhreeqc2Module(
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Module(
-					std::vector < int >    & initial_conditions1,
+					const std::vector < int >    & initial_conditions1,
 					std::vector < int >    & initial_conditions2,
 					std::vector < double > & fraction1)
 /* ---------------------------------------------------------------------- */
@@ -10934,7 +10934,7 @@ PhreeqcRM::SetPrintChemistryOn(bool worker, bool ip, bool utility)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::SetPrintChemistryMask(std::vector<int> & m)
+PhreeqcRM::SetPrintChemistryMask(const std::vector<int> & m)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
