@@ -57,8 +57,8 @@
     PRIVATE :: Chk_Integer1D
     PRIVATE :: Chk_Integer2D
     PRIVATE :: RMF_debug
-    PRIVATE :: RMF_BMI_GetVarItemsize
-    PRIVATE :: RMF_BMI_GetVarNbytes
+!    PRIVATE :: RMF_BMI_GetVarItemsize
+!    PRIVATE :: RMF_BMI_GetVarNbytes
     PRIVATE :: Lower
 
     !> INTERFACE-----Basic Model Interface method that retrieves model variables. Only variables in the list
@@ -141,25 +141,6 @@
     procedure RM_BMI_SetValue_i1
     procedure RM_BMI_SetValue_i2
     END INTERFACE RM_BMI_SetValue
-
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-        BIND(C, NAME='RMF_BMI_GetVarItemsize')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    END FUNCTION RMF_BMI_GetVarItemsize
-
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-        BIND(C, NAME='RMF_BMI_GetVarNbytes')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
-
     CONTAINS
 #ifdef USE_YAML    
 !> @a GetGridCellCountYAML will read a YAML file and extract the value
@@ -7982,6 +7963,15 @@
     INTEGER FUNCTION RM_BMI_GetVarItemsize(id, var)
     USE ISO_C_BINDING
     IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
+            BIND(C, NAME='RMF_BMI_GetVarItemsize')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+        END FUNCTION RMF_BMI_GetVarItemsize
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     RM_BMI_GetVarItemsize = RMF_BMI_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
@@ -8025,7 +8015,15 @@
     INTEGER FUNCTION RM_BMI_GetVarNbytes(id, var)
     USE ISO_C_BINDING
     IMPLICIT NONE
-
+	INTERFACE 
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
+			BIND(C, NAME='RMF_BMI_GetVarNbytes')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		END FUNCTION RMF_BMI_GetVarNbytes
+    END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     RM_BMI_GetVarNbytes = RMF_BMI_GetVarNbytes(id, trim(var)//C_NULL_CHAR)
@@ -8273,230 +8271,275 @@
     return
     END FUNCTION RM_BMI_Initialize
 #endif
-    INTEGER FUNCTION RM_BMI_SetValue_b(id, var, dest)
+!> Basic Model Interface method that sets model variables. Only variables in the list
+!> provided by @ref RM_BMI_GetInputVarNames can be set. The BMI interface to PhreeqcRM is
+!> only partial, and provides only the most basic functions. The native PhreeqcRM methods 
+!> (those without the the RM_BMI_
+!> prefix) provide a complete interface.
+!> @param id     The instance id returned from @ref RM_Create.
+!> @param var    String defining variable to set.
+!> @param src    Data to use to set the variable in PhreeqcRM. 
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> 
+!> Variable names for the second argument (@a var)
+!> and required variable type for the third argument (@a src):
+!> @n "Concentrations", double precision, allocatable, dimension(:,:);
+!> @n "Density", double precision, allocatable, dimension(:);
+!> @n "FilePrefix", character;
+!> @n "NthSelectedOutput", integer;
+!> @n "Porosity", double precision, allocatable, dimension(:);
+!> @n "Pressure", double precision, allocatable, dimension(:);
+!> @n "Saturation", double precision, allocatable, dimension(:);
+!> @n "SelectedOutputOn", logical;
+!> @n "Temperature", double precision, allocatable, dimension(:);
+!> @n "Time", double precision;
+!> @n "TimeStep", double precision.
+!> 
+!> @see
+!> @ref RM_BMI_GetInputVarNames,
+!> @ref RM_BMI_GetInputItemCount,,
+!> @ref RM_BMI_GetValue,
+!> @ref RM_BMI_GetVarItemsize,
+!> @ref RM_BMI_GetVarNbytes,
+!> @ref RM_BMI_GetVarType,
+!> @ref RM_BMI_GetVarUnits.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> double precision, allocatable, dimension(:) :: tc
+!> allocate(tc(nxyz))
+!> tc = 28.0d0
+!> status = RM_BMI_SetValue(id, "Temperature", tc);
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+!> @par MPI:
+!> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION RM_BMI_SetValue_b(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, dest) &
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
         BIND(C, NAME='RMF_BMI_SetValue')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    LOGICAL(KIND=C_INT), INTENT(in) :: dest
+    LOGICAL(KIND=C_INT), INTENT(in) :: src
     END FUNCTION RMF_BMI_SetValue
     END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    LOGICAL(kind=4), INTENT(in) :: dest
+    LOGICAL(kind=4), INTENT(in) :: src
     CHARACTER(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "logical") then
         stop "Variable type error."
     endif
-    RM_BMI_SetValue_b = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest)
+    RM_BMI_SetValue_b = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
     return
     END FUNCTION RM_BMI_SetValue_b
 
-    INTEGER FUNCTION RM_BMI_SetValue_c(id, var, dest)
+    INTEGER FUNCTION RM_BMI_SetValue_c(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, dest) &
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
         BIND(C, NAME='RMF_BMI_SetValue')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: dest
+    CHARACTER(KIND=C_CHAR), INTENT(in) :: src
     END FUNCTION RMF_BMI_SetValue
     END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    CHARACTER(len=*), INTENT(in) :: dest
+    CHARACTER(len=*), INTENT(in) :: src
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "character") then
         stop "Variable type error."
     endif
-    RM_BMI_SetValue_c = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, trim(dest)//C_NULL_CHAR)
+    RM_BMI_SetValue_c = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, trim(src)//C_NULL_CHAR)
     return
     END FUNCTION RM_BMI_SetValue_c
 
-    INTEGER FUNCTION RM_BMI_SetValue_i(id, var, dest)
+    INTEGER FUNCTION RM_BMI_SetValue_i(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, dest) &
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
         BIND(C, NAME='RMF_BMI_SetValue')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: dest
+    INTEGER(KIND=C_INT), INTENT(inout) :: src
     END FUNCTION RMF_BMI_SetValue
     END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: dest
+    integer, INTENT(inout) :: src
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "integer") then
         stop "Variable type error."
     endif
-    RM_BMI_SetValue_i = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest)
+    RM_BMI_SetValue_i = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
     return
     END FUNCTION RM_BMI_SetValue_i
 
-    INTEGER FUNCTION RM_BMI_SetValue_i1(id, var, dest)
+    INTEGER FUNCTION RM_BMI_SetValue_i1(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, dest) &
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
         BIND(C, NAME='RMF_BMI_SetValue')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: dest
+    INTEGER(KIND=C_INT), INTENT(inout) :: src
     END FUNCTION RMF_BMI_SetValue
     END INTERFACE
 
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: dest(:)
+    integer, INTENT(inout) :: src(:)
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "integer,1d") then
         stop "Variable type error."
     endif
-    dim = RM_BMI_GetVarNBytes(id, var) / RMF_BMI_GetVarItemsize(id, var)
-    if (dim .ne. size(dest)) then
+    dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
+    if (dim .ne. size(src)) then
         stop "Variable dimension error"
     endif
-    RM_BMI_SetValue_i1 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1))
+    RM_BMI_SetValue_i1 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1))
     return
     END FUNCTION RM_BMI_SetValue_i1
 
-    INTEGER FUNCTION RM_BMI_SetValue_i2(id, var, dest)
+    INTEGER FUNCTION RM_BMI_SetValue_i2(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, dest) &
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
         BIND(C, NAME='RMF_BMI_SetValue')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: dest
+    INTEGER(KIND=C_INT), INTENT(inout) :: src
     END FUNCTION RMF_BMI_SetValue
     END INTERFACE
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: dest(:,:)
+    integer, INTENT(inout) :: src(:,:)
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "integer,2d") then
         stop "Variable type error."
     endif
-    dim = RM_BMI_GetVarNBytes(id, var) / RMF_BMI_GetVarItemsize(id, var)
-    if (dim .ne. size(dest,1)*size(dest,2)) then
+    dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
+    if (dim .ne. size(src,1)*size(src,2)) then
         stop "Variable dimension error"
     endif
-    RM_BMI_SetValue_i2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
+    RM_BMI_SetValue_i2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1,1))
     return
     END FUNCTION RM_BMI_SetValue_i2
 
-    INTEGER FUNCTION RM_BMI_SetValue_d(id, var, dest)
+    INTEGER FUNCTION RM_BMI_SetValue_d(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, dest) &
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
         BIND(C, NAME='RMF_BMI_SetValue')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: src
     END FUNCTION RMF_BMI_SetValue
     END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    double precision, INTENT(inout) :: dest
+    double precision, INTENT(inout) :: src
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "double") then
         stop "Variable type error."
     endif
-    RM_BMI_SetValue_d = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest)
+    RM_BMI_SetValue_d = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
     return
     END FUNCTION RM_BMI_SetValue_d
 
-    INTEGER FUNCTION RM_BMI_SetValue_d1(id, var, dest)
+    INTEGER FUNCTION RM_BMI_SetValue_d1(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, dest) &
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
         BIND(C, NAME='RMF_BMI_SetValue')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: src
     END FUNCTION RMF_BMI_SetValue
     END INTERFACE
 
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    double precision, INTENT(inout) :: dest(:)
+    double precision, INTENT(inout) :: src(:)
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "double,1d") then
         stop "Variable type error."
     endif
-    dim = RM_BMI_GetVarNBytes(id, var) / RMF_BMI_GetVarItemsize(id, var)
-    if (dim .ne. size(dest)) then
+    dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
+    if (dim .ne. size(src)) then
         stop "Variable dimension error"
     endif
-    RM_BMI_SetValue_d1 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1))
+    RM_BMI_SetValue_d1 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1))
     return
     END FUNCTION RM_BMI_SetValue_d1
 
-    INTEGER FUNCTION RM_BMI_SetValue_d2(id, var, dest)
+    INTEGER FUNCTION RM_BMI_SetValue_d2(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, dest) &
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
         BIND(C, NAME='RMF_BMI_SetValue')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: src
     END FUNCTION RMF_BMI_SetValue
     END INTERFACE
 
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    double precision, INTENT(inout) :: dest(:,:)
+    double precision, INTENT(inout) :: src(:,:)
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "double,2d") then
         stop "Variable type error."
     endif
-    dim = RM_BMI_GetVarNBytes(id, var) / RMF_BMI_GetVarItemsize(id, var)
-    if (dim .ne. size(dest,1)*size(dest,2)) then
+    dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
+    if (dim .ne. size(src,1)*size(src,2)) then
         stop "Variable dimension error"
     endif
-    RM_BMI_SetValue_d2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
+    RM_BMI_SetValue_d2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1,1))
     return
     END FUNCTION RM_BMI_SetValue_d2
 	!> Runs a reaction step for all of the cells in the reaction module.
