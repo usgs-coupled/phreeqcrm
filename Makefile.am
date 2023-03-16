@@ -1,10 +1,17 @@
 ACLOCAL_AMFLAGS=-I m4
 
-PHREEQCRM_CMAKELISTS=\
+PHREEQCRM_EXTRA_DIST=\
 	CMakeLists.txt\
+	src/CMakeLists.txt\
+	src/PhreeqcRM.i\
+	src/numpy.i\
+	src/pyfragments.swg\
+	src/swig/CMakeLists.txt\
+	src/swig/python/CMakeLists.txt\
+	src/swig/python/SimpleAdvect.py\
 	PhreeqcRMConfig.cmake.in
 
-EXTRA_DIST=$(PHREEQCRM_CMAKELISTS)
+EXTRA_DIST=$(PHREEQCRM_EXTRA_DIST)
 
 AM_CPPFLAGS=-I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords
 

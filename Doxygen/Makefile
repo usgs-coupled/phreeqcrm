@@ -1,3 +1,4 @@
+USE_YAML = true
 DOXYGEN ?= doxygen
 
 all:

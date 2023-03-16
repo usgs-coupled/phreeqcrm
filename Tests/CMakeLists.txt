@@ -9,19 +9,25 @@ if (PHREEQCRM_FORTRAN_TESTING)
   target_sources(FortranAdvect PRIVATE
     ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
     ../src/RM_interface.F90
+	../src/YAML_interface.F90
     Advect_f90.F90
+    AdvectBMI_f90.F90
     Gas_f90.F90
-	  SimpleAdvect_f90.F90
+	SimpleAdvect_f90.F90
     Species_f90.F90
+    WriteYAMLFile_f90.F90
   )
 
   # place [*.F[90]] files into "Source Files"
   source_group("Source Files" FILES "../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90")
   source_group("Source Files" FILES "../src/RM_interface.F90")
+  source_group("Source Files" FILES "../src/YAML_interface.F90")
   source_group("Source Files" FILES "Advect_f90.F90")
+  source_group("Source Files" FILES "AdvectBMI_f90.F90")
   source_group("Source Files" FILES "Gas_f90.F90")
   source_group("Source Files" FILES "SimpleAdvect_f90.F90")
   source_group("Source Files" FILES "Species_f90.F90")
+  source_group("Source Files" FILES "WriteYAMLFile_f90.F90")
 
   # The next line sets defines/includes/libraries
   # for compiling and linking the FortranAdvect library

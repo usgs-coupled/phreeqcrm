@@ -150,6 +150,7 @@ jobs:
 
     - name: Install ninja yaml-cpp valgrind (Linux)
       if: runner.os == 'Linux'
+      #run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
       run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
     - name: Install ninja yaml-cpp (macOS)
@@ -159,6 +160,19 @@ jobs:
     - name: Install yaml-cpp (Windows)
       if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
       run: vcpkg install yaml-cpp:x64-windows
+
+    # - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v4
+      with:
+        # python-version: ${{ matrix.python-version }}
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install numpy
+        # @todo if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Set up Visual Studio shell (Windows)
       if: runner.os == 'Windows'
@@ -171,19 +185,19 @@ jobs:
 
     - name: Configure with CMake (Not Windows)
       if: runner.os != 'Windows'
-      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
+      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
     - name: Configure with CMake (Windows)
       if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
-      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
+      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
     - name: Configure with CMake (Windows)
       if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
+      run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
     - name: Build with CMake
       run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
 
     - name: Test with CMake
       working-directory: ${{ github.workspace }}/build
-      run: ctest -C ${{ env.BUILD_TYPE }}
+      run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure

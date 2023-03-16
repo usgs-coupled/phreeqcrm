@@ -1,3 +1,5 @@
+#if !defined(BMI_VAR_H_INCLUDED)
+#define BMI_VAR_H_INCLUDED
 #include <iostream>
 #include <map>
 #include <string>
@@ -42,3 +44,4 @@ public:
 	bool GetGet(void) { return this->get; };
 	void SetGet(bool out_in) { this->get = out_in; };
 };
+#endif // BMI_VAR_H_INCLUDED

@@ -550,7 +550,8 @@ IRM_DLL_EXPORT int RM_GetCurrentSelectedOutputUserNumber(int id);
 
 /**
 Transfer solution densities from the reaction cells to the array given in the argument list (@a density).
-Densities are those calculated by the reaction module.
+Densities are those calculated by the reaction module. This method always 
+returns the calculated densities; @ref RM_SetDensity does not affect the result.
 Only the following databases distributed with PhreeqcRM have molar volume information needed to accurately calculate density:
 phreeqc.dat, Amm.dat, and pitzer.dat.
 
@@ -1295,6 +1296,8 @@ IRM_DLL_EXPORT int        RM_GetNthSelectedOutputUserNumber(int id, int n);
 
 /**
 Returns a vector of saturations (@a sat) as calculated by the reaction module.
+This method always returns solution_volume/(rv * porosity); the method 
+@ref RM_SetSaturation has no effect on the values returned.
 Reactions will change the volume of solution in a cell.
 The transport code must decide whether to ignore or account for this change in solution volume due to reactions.
 Following reactions, the cell saturation is calculated as solution volume (@ref RM_GetSolutionVolume)

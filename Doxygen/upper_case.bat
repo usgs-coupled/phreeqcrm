@@ -1,4 +1,12 @@
 @FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/getgridcellcountyaml/GetGridCellCountYAML/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/setgridcellcountyaml/SetGridCellCountYAML/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_abort/RM_Abort/g" %%f 
   @del sed*
 )
@@ -120,6 +128,14 @@
 )
 @FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_getnthselectedoutputusernumber/RM_GetNthSelectedOutputUserNumber/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getporosity/RM_GetPorosity/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/rm_getpressure/RM_GetPressure/g" %%f 
   @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
@@ -500,6 +516,95 @@
 )
 @FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_statedelete/RM_StateDelete/g" %%f 
+  @del sed*
+)
+
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_finalize\b/RM_BMI_Finalize/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getcomponentname\b/RM_BMI_GetComponentName/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getcurrenttime\b/RM_BMI_GetCurrentTime/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getendtime\b/RM_BMI_GetEndTime/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getinputitemcount\b/RM_BMI_GetInputItemCount/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getinputvarnames\b/RM_BMI_GetInputVarNames/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getoutputitemcount\b/RM_BMI_GetOutputItemCount/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getoutputvarnames\b/RM_BMI_GetOutputVarNames/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_gettimestep\b/RM_BMI_GetTimeStep/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_gettimeunits\b/RM_BMI_GetTimeUnits/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getvalue\b/RM_BMI_GetValue/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getvaritemsize\b/RM_BMI_GetVarItemsize/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getvarnbytes\b/RM_BMI_GetVarNbytes/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getvartype\b/RM_BMI_GetVarType/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_getvarunits\b/RM_BMI_GetVarUnits/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_initialize\b/RM_BMI_Initialize/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_setvalue\b/RM_BMI_SetValue/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_bmi_update\b/RM_BMI_Update/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_getcomponents\b/RM_GetComponents/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_getgridcellcountyaml\b/RM_GetGridCellCountYAML/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_getselectedoutputheadings\b/RM_GetSelectedOutputHeadings/g" %%f
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_gettemperature\b/RM_GetTemperature/g" %%f
   @del sed*
 )
 

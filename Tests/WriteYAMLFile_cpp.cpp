@@ -29,16 +29,16 @@ void WriteYAMLFile_cpp(void)
 	yrm.YAMLUseSolutionDensityVolume(false);
 	yrm.YAMLSetPartitionUZSolids(false);
 	// Open files
-	yrm.YAMLSetFilePrefix("AdvectBMI_cpp");
-	yrm.YAMLOpenFiles();
+	//yrm.YAMLSetFilePrefix("AdvectBMI_cpp");
+	//yrm.YAMLOpenFiles();
 
 	// Set concentration units
-	yrm.YAMLSetUnitsSolution(2);           // 1, mg/L); 2, mol/L); 3, kg/kgs
-	yrm.YAMLSetUnitsPPassemblage(1);       // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
-	yrm.YAMLSetUnitsExchange(1);           // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
-	yrm.YAMLSetUnitsSurface(1);            // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
-	yrm.YAMLSetUnitsGasPhase(1);           // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
-	yrm.YAMLSetUnitsSSassemblage(1);       // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
+	yrm.YAMLSetUnitsSolution(2);           // 1, mg/L; 2, mol/L; 3, kg/kgs
+	yrm.YAMLSetUnitsPPassemblage(1);       // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
+	yrm.YAMLSetUnitsExchange(1);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
+	yrm.YAMLSetUnitsSurface(1);            // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
+	yrm.YAMLSetUnitsGasPhase(1);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
+	yrm.YAMLSetUnitsSSassemblage(1);       // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 	yrm.YAMLSetUnitsKinetics(1);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 
 	// Set conversion from seconds to user units (days) Only affects one print statement
@@ -127,6 +127,6 @@ void WriteYAMLFile_cpp(void)
 
 	// Write YAML file
 	yrm.WriteYAMLDoc(YAML_filename);
-	yrm.clear();
+	yrm.Clear();
 };
 #endif

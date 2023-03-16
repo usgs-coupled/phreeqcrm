@@ -1,5 +1,7 @@
 set RM_INTERFACE_F90=..\src\RM_interface.F90
 REM sed -i -e "s/PhreeqcRM/phreeqcrm/g" %RM_INTERFACE_F90%
+sed -i -e "s/GetGridCellCountYAML/getgridcellcountyaml/g" %RM_INTERFACE_F90%
+sed -i -e "s/SetGridCellCountYAML/setgridcellcountyaml/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_Abort/rm_abort/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_Abort/rm_abort/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_CloseFiles/rm_closefiles/g" %RM_INTERFACE_F90%
@@ -32,6 +34,8 @@ sed -i -e "s/RM_GetIPhreeqcId/rm_getiphreeqcid/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetMpiMyself/rm_getmpimyself/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetMpiTasks/rm_getmpitasks/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetNthSelectedOutputUserNumber/rm_getnthselectedoutputusernumber/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetPorosity/rm_getporosity/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetPressure/rm_getpressure/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSaturation/rm_getsaturation/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSelectedOutputColumnCount/rm_getselectedoutputcolumncount/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSelectedOutputCount/rm_getselectedoutputcount/g" %RM_INTERFACE_F90%
@@ -127,6 +131,28 @@ sed -i -e "s/RM_GetSIName/rm_getsiname/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_StateSave/rm_statesave/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_StateApply/rm_stateapply/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_StateDelete/rm_statedelete/g" %RM_INTERFACE_F90%
-
+sed -i -e "s/RM_BMI_Finalize/rm_bmi_finalize/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetComponentName/rm_bmi_getcomponentname/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetCurrentTime/rm_bmi_getcurrenttime/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetEndTime/rm_bmi_getendtime/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetInputItemCount/rm_bmi_getinputitemcount/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetInputVarNames/rm_bmi_getinputvarnames/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetOutputItemCount/rm_bmi_getoutputitemcount/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetOutputVarNames/rm_bmi_getoutputvarnames/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetTimeStep/rm_bmi_gettimestep/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetTimeUnits/rm_bmi_gettimeunits/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetValue/rm_bmi_getvalue/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetVarItemsize/rm_bmi_getvaritemsize/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetVarNbytes/rm_bmi_getvarnbytes/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetVarType/rm_bmi_getvartype/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_GetVarUnits/rm_bmi_getvarunits/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_Initialize/rm_bmi_initialize/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_SetValue/rm_bmi_setvalue/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_BMI_Update/rm_bmi_update/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetComponents/rm_getcomponents/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetGridCellCountYAML/rm_getgridcellcountyaml/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSelectedOutputHeadings/rm_getselectedoutputheadings/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetTemperature/rm_gettemperature/g" %RM_INTERFACE_F90%
 
 del sed*
+
