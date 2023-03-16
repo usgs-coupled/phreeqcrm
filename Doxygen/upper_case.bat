@@ -1,4 +1,12 @@
 @FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/getgridcellcountyaml/GetGridCellCountYAML/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+  @sed -i "s/setgridcellcountyaml/SetGridCellCountYAML/g" %%f 
+  @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/rm_abort/RM_Abort/g" %%f 
   @del sed*
 )

@@ -1897,7 +1897,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> status = YAMLSetTime(id, 0.0);
+!> status = YAMLSetTime(id, 0.0)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -1933,7 +1933,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> time_conversion = 1.0 / 86400
+!> time_conversion = 1.0d0 / 86400.d0
 !> status = YAMLSetTimeConversion(id, time_conversion)
 !> </PRE>
 !> </CODE>
@@ -1970,7 +1970,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> time_step = 86400.
+!> time_step = 86400.d0
 !> status = YAMLSetTimeStep(time_step)
 !> </PRE>
 !> </CODE>
@@ -2589,7 +2589,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> status = YAMLUseSolutionDensityVolume(id, .false,)
+!> status = YAMLUseSolutionDensityVolume(id, .false.)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly

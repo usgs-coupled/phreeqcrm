@@ -1,5 +1,11 @@
 #!/bin/sh
 for f in html/*.html; do
+  sed -i "s/getgridcellcountyaml/GetGridCellCountYAML/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/setgridcellcountyaml/SetGridCellCountYAML/g" $f 
+done
+for f in html/*.html; do
   sed -i "s/rm_abort/RM_Abort/g" $f 
 done
 for f in html/*.html; do

@@ -117,7 +117,7 @@
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
     INTERFACE RM_BMI_GetValue
     procedure RM_BMI_GetValue_b
@@ -172,7 +172,7 @@
 !> @param config_file         String containing the YAML file name.
 !> @retval Number of grid cells specified in the YAML file; returns
 !> zero if GridCellCount is not defined.
-!> @see @ref RM_BMI_Initialize, @ref RM_Create, and @ref InitializeYAML.
+!> @see @ref RM_BMI_Initialize, @ref RM_Create, and @ref RM_InitializeYAML.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -863,9 +863,9 @@
     return
     END FUNCTION RM_GetComponent
 
-        !> Returns a list of the names of the components identified by PhreeqcRM.
+    !> Returns a list of the names of the components identified by PhreeqcRM.
     !> The list contains all components (elements) found in solutions and reactants in the
-    !> InitialPhreeqc instance by call(s) to @ref FindComponents.
+    !> InitialPhreeqc instance by call(s) to @ref RM_FindComponents.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param components          A deferred length, allocatable, 1D character variable.
     !> to receive the component names. Character length and dimension will be allocated as needed.
@@ -3985,6 +3985,7 @@
     !> are sufficient to identify which arguments are YAML scalars (single bool/logical,
     !> int, double, string/character argument),
     !> sequences (single vector argument), or maps (multiple arguments).
+    !> @par
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -5521,7 +5522,7 @@
     !>   do_something = 0
     !> end function do_something
     !>
-    !> Code called by workers from method MpiWorker:
+    !> Code called by workers from method RM_MpiWorker:
     !> integer(kind=C_INT) function worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
     !>   USE ISO_C_BINDING
     !>   implicit none
@@ -7250,10 +7251,10 @@
     END FUNCTION RM_BMI_GetComponentName
 
 
-    !> Basic Model Interface method that returns the current simulation time, in seconds. (Same as @ref GetTime.)
+    !> Basic Model Interface method that returns the current simulation time, in seconds. (Same as @ref RM_GetTime.)
     !> The reaction module does not change the time value, so the
     !> returned value is equal to the default (0.0) or the last time set by
-    !> @ref BMI_SetValue("Time", time) or @ref RM_SetTime.
+    !> @ref RM_BMI_SetValue("Time", time) or @ref RM_SetTime.
     !> @param id            The instance @a id returned from @ref RM_Create.
     !> @retval                 The current simulation time, in seconds.
     !> @see
@@ -7480,7 +7481,7 @@
     !> in seconds. (Same as @ref RM_GetTimeStep.)
     !> The reaction module does not change the time-step value, so the
     !> returned value is equal to the last time step set by
-    !> @ref RM_BMI_SetValue("TimeStep", time_step) or @ref SetTimeStep.
+    !> @ref RM_BMI_SetValue("TimeStep", time_step) or @ref RM_SetTimeStep.
     !> @param id            The instance @a id returned from @ref RM_Create.
     !> @retval                 The current simulation time step, in seconds.
     !> @see
@@ -7531,7 +7532,7 @@
     !> @ref RM_GetTimeStep,
     !> @ref RM_SetTime,
     !> @ref RM_SetTimeStep,
-    !> @ref RM_SetValue.
+    !> @ref RM_BMI_SetValue.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -7561,43 +7562,6 @@
     RM_BMI_GetTimeUnits = RMF_BMI_GetTimeUnits(id, time_units, len(time_units))
     return
     END FUNCTION RM_BMI_GetTimeUnits
-
-    !> Basic Model Interface method that retrieves the units of a
-    !> variable that can be set with
-    !> @ref RM_BMI_SetValue or retrieved with @ref RM_BMI_GetValue.
-    !> Only variables in the list
-    !> provided by @ref RM_BMI_GetInputVarNames can be set.
-    !> Only variables in the list
-    !> provided by @ref RM_BMI_GetOutputVarNames can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve total bytes.
-    !> @param vtype Units of the variable.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @see
-    !> @ref RM_BMI_GetInputVarNames,
-    !> @ref RM_BMI_GetInputItemCount,
-    !> @ref RM_BMI_GetOutputVarNames,
-    !> @ref RM_BMI_GetOutputItemCount,
-    !> @ref RM_BMI_GetVarType.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> do i = 1, size(inputvars)
-    !>     write(*,"(1x, I4, A40)") i, trim(inputvars(i))
-    !>     status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
-    !>     write(*,"(5x, A15)") trim(string)
-    !>     status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
-    !>     write(*,"(5x, A15)") trim(string)
-    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
-    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
-    !> enddo
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-
 
     !> Basic Model Interface method that retrieves model variables. Only variables in the list
     !> provided by @ref RM_BMI_GetOutputVarNames can be retrieved. The BMI interface to PhreeqcRM is
@@ -7655,7 +7619,7 @@
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
     INTEGER FUNCTION RM_BMI_GetValue_b(id, var, dest)
     USE ISO_C_BINDING
@@ -8132,7 +8096,7 @@
     !> provided by @ref RM_BMI_GetOutputVarNames can be retrieved.
     !> @param id            The instance @a id returned from @ref RM_Create.
     !> @param var Name of the variable to retrieve total bytes.
-    !> @param vtype Units of the variable.
+    !> @param units Units of the variable.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_BMI_GetInputVarNames,
@@ -8181,7 +8145,7 @@
 	!> A YAML file can be used to initialize an instance of PhreeqcRM. Same as
 	!> @ref RM_InitializeYAML.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param yaml_name         String containing the YAML file name.
+    !> @param config_file         String containing the YAML file name.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @par
     !> The file contains a YAML map of PhreeqcRM methods
@@ -8536,19 +8500,19 @@
     return
     END FUNCTION RM_BMI_SetValue_d2
 	!> Runs a reaction step for all of the cells in the reaction module.
-	!> Same as @ref RunCells.
+	!> Same as @ref RM_RunCells.
     !> Normally, tranport concentrations are transferred to the reaction cells 
 	!> (@ref RM_BMI_SetValue "Concentrations" before
     !> reaction calculations are run. The length of time over which kinetic 
 	!> reactions are integrated is set
-    !> by @ref RM_BMI_SetTimeStep. Other properties that may need to be updated 
+    !> by @ref RM_BMI_SetValue "TimeStep". Other properties that may need to be updated 
 	!> as a result of the transport
     !> calculations include porosity (@ref RM_BMI_SetValue "Porosity"), 
 	!> pressure (@ref RM_BMI_SetValue "Pressure"),
 	!> saturation (@ref RM_BMI_SetValue "Saturation"),
     !> temperature (@ref RM_BMI_SetValue "Temperature").
-    !> @param id               The instance @a id returned from @ref RM_BMI_Create.
-    !> @retval IRM_BMI_RESULT      0 is success, negative is failure (See @ref RM_BMI_DecodeError).
+    !> @param id               The instance @a id returned from @ref RM_Create.
+    !> @retval IRM_BMI_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_BMI_SetValue.
     !> @par Fortran Example:

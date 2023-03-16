@@ -1,6 +1,8 @@
 #!/bin/sh
 export RM_INTERFACE_F90=../src/RM_interface.F90
 # sed -i -e "s/PhreeqcRM/phreeqcrm/g" $RM_INTERFACE_F90
+sed -i -e "s/GetGridCellCountYAML/getgridcellcountyaml/g" $RM_INTERFACE_F90
+sed -i -e "s/SetGridCellCountYAML/setgridcellcountyaml/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_Abort/rm_abort/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_Abort/rm_abort/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_CloseFiles/rm_closefiles/g" $RM_INTERFACE_F90
@@ -181,7 +183,6 @@ sed -i -e "s/RM_GetThreadCount/rm_getthreadcount/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetTimeConversion/rm_gettimeconversion/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetTimeStep/rm_gettimestep/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetTime/rm_gettime/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitializeYAML/rm_initializeyaml/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_InitialPhreeqc2Concentrations/rm_initialphreeqc2concentrations/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_InitialPhreeqc2Module/rm_initialphreeqc2module/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_InitialPhreeqcCell2Module/rm_initialphreeqccell2module/g" $RM_INTERFACE_F90

@@ -119,7 +119,7 @@ value for the number of cells. If a GUI or preprocessor is
 used to write a YAML file to initialize PhreeqcRM, the number
 of cells can be written to the YAML file and extracted with
 this method.
-@param yamlfile         String containing the YAML file name.
+@param YAML_file         String containing the YAML file name.
 @retval Number of grid cells specified in the YAML file; returns
 zero if GridCellCount is not defined.
 @see @ref InitializeYAML @ref PhreeqcRM.
@@ -127,11 +127,11 @@ zero if GridCellCount is not defined.
 @htmlonly
 <CODE>
 <PRE>
-	int nthreads = 0;
-	std::string yaml_file = "myfile.yaml";
-	int nxyz = GetGridCellCountYAML(yaml_file);
-	PhreeqcRM phreeqc_rm(nxyz, nthreads);
-	phreeqc_rm.InitializeYAML(yaml_file);
+int nthreads = 0;
+std::string yaml_file = "myfile.yaml";
+int nxyz = GetGridCellCountYAML(yaml_file);
+PhreeqcRM phreeqc_rm(nxyz, nthreads);
+phreeqc_rm.InitializeYAML(yaml_file);
 </PRE>
 </CODE>
 @endhtmlonly
