@@ -5454,13 +5454,31 @@ Called by root.
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
-	void BMI_GetValue(std::string name, void* dest);
 	void BMI_GetValue(std::string name, bool& dest);
+	/*!
+ 	* \overload void BMI_GetValue(std::string name, double& dest)
+ 	*/
 	void BMI_GetValue(std::string name, double& dest);
+	/*!
+ 	* \overload void BMI_GetValue(std::string name, int& dest)
+ 	*/
 	void BMI_GetValue(std::string name, int& dest);
+	/*!
+ 	* \overload void BMI_GetValue(std::string name, std::string& dest)
+ 	*/
 	void BMI_GetValue(std::string name, std::string& dest);
+	/*!
+ 	* \overload void BMI_GetValue(std::string name, std::vector < double >& dest)
+ 	*/
 	void BMI_GetValue(std::string name, std::vector < double >& dest);
+	/*!
+ 	* \overload void BMI_GetValue(std::string name, std::vector < std::string >& dest)
+ 	*/
 	void BMI_GetValue(std::string name, std::vector < std::string >& dest);
+	/*!
+ 	* \overload void BMI_GetValue(std::string name, void* dest)
+ 	*/
+	void BMI_GetValue(std::string name, void* dest);
 
 	//--------------------------	
 

@@ -1,4 +1,5 @@
 #ifdef USE_YAML
+#include <cstring>
 #include <string>
 #include <vector>
 #include "YAMLPhreeqcRM.h"
