@@ -186,7 +186,7 @@ int SimpleAdvect_cpp()
 void
 simpleadvection_cpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim)
 {
-	for (int i = nxyz / 2 - 1; i > 0; i--)
+	for (int i = nxyz - 1; i > 0; i--)
 	{
 		for (int j = 0; j < ncomps; j++)
 		{

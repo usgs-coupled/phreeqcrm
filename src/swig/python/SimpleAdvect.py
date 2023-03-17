@@ -177,7 +177,7 @@ def simpleadvection(c, bc_conc, ncomps, nxyz, dim):
     """
     TODO
     """
-    for i in range(nxyz//2 -1, 0, -1):
+    for i in range(nxyz - 1, 0, -1):
         for j in range(ncomps):
             c[j * nxyz + i] = c[j * nxyz + i - 1]              # component j
     
