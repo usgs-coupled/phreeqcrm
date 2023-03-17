@@ -182,7 +182,6 @@ libphreeqcrm_la_SOURCES=\
 	src/RM_interface_F.h\
 	src/YAML_interface_F.cpp\
 	src/YAML_interface_F.h\
-	src/YAML_interface.F90\
 	src/YAMLPhreeqcRM.cpp\
 	src/YAMLPhreeqcRM.h
 
@@ -222,7 +221,8 @@ dist_source_DATA=$(SRC)
 
 SRC=\
 	src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90\
-	src/RM_interface.F90
+	src/RM_interface.F90\
+	src/YAML_interface.F90
 
 # We must override the default PPFCCOMPILE since ifort can't
 # handle the FC_FUNC define correctly so $(DEFS) is replaced
