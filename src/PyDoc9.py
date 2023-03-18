@@ -2169,7 +2169,8 @@ pointer. SetMpiWorkerCallbackCookie sets the value of the
 void pointer that is passed to the callback function.
 The void pointer may be a pointer to a struct of class instance that
 contains additonal pointers to data.
-@param cookie           Void pointer that can be used by subroutines called from the callback function
+Args:
+	cookie           Void pointer that can be used by subroutines called from the callback function
 to locate data needed to perform a task.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
