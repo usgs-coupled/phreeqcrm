@@ -9,7 +9,7 @@ used to write a YAML file to initialize PhreeqcRM, the number
 of cells can be written to the YAML file and extracted with
 this method.
 Args:
-	YAML_file(string): String containing the YAML file name.
+	YAML_file (string): String containing the YAML file name.
 Returns:
 	int: Number of grid cells specified in the YAML file; returns zero if GridCellCount is not defined.'
 %enddef
@@ -25,8 +25,8 @@ If the code is compiled with the preprocessor directive USE_MPI, the reaction
 module will use MPI and multiple processes. If neither preprocessor directive is used,
 the reaction module will be serial (unparallelized).
 Args:
-	nxyz(int): The number of grid cells in the users model. 
-	thread_count_or_communicator(int): If multithreaded, the number of threads to use in parallel segments of the code.
+	nxyz (int): The number of grid cells in the users model. 
+	thread_count_or_communicator (int): If multithreaded, the number of threads to use in parallel segments of the code.
 		If @a thread_count_or_communicator is <= 0, the number of threads is set equal to the number of processors in the computer.
 		If multiprocessor, the MPI communicator to use within the reaction module.
 	io(PHRQ_io): Optionally, a PHRQ_io input/output object can be provided to the constructor. By default
@@ -54,13 +54,11 @@ concentration units are mass fraction, one kilogram of solution is created in th
 The motivation for this
 method is the mixing of solutions in wells, where it may be necessary to calculate solution properties
 (pH for example) or react the mixture to form scale minerals.
-The code fragment below makes a mixture of
-concentrations and then calculates the pH of the mixture.
 Args:
-	c(DoubleVector): Vector of concentrations to be made SOLUTIONs in Utility IPhreeqc.
+	c (float list, numpy.ndarray, or tuple): Vector of concentrations to be made SOLUTIONs in Utility IPhreeqc.
 		Vector contains @a n values for each component (:meth: `GetComponentCount`) in sequence.
-	tc(DoubleVector): Vector of temperatures to apply to the SOLUTIONs, in degrees C. Vector of size @a n.
-	p_atm(DoubleVector): Vector of pressures to apply to the SOLUTIONs, in atm. Vector of size @a n.
+	tc (float list, numpy.ndarray, or tuple): Vector of temperatures to apply to the SOLUTIONs, in degrees C. Vector of size @a n.
+	p_atm (float list, numpy.ndarray, or tuple): Vector of pressures to apply to the SOLUTIONs, in atm. Vector of size @a n.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -81,7 +79,7 @@ The mapping may be many-to-one to account for symmetry.
 Default is a one-to-one mapping--all user grid cells are reaction cells
 (equivalent to @a grid2chem values of 0,1,2,3,...,nxyz-1).
 Args:
-	grid2chem(DoubleVector): A vector of integers: Nonnegative is a reaction-cell number (0 based),
+	grid2chem (int list, numpy.ndarray, or tuple): A vector of integers: Nonnegative is a reaction-cell number (0 based),
 		negative is an inactive cell. Vector is of size @a nxyz (number of grid cells, :meth: `GetGridCellCount`).
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -94,7 +92,7 @@ IRM_RESULT                                CreateMapping(std::vector< int > &grid
 'If @a result is negative, this method prints an error message corresponding to IRM_RESULT @a result.
 If @a result is non-negative, no action is taken.
 Args:
-	result(IRM_RESULT): An IRM_RESULT value returned by one of the reaction-module methods.
+	result (IRM_RESULT): An IRM_RESULT value returned by one of the reaction-module methods.
 @par IRM_RESULT definition:
 @htmlonly
 <CODE>
@@ -121,8 +119,8 @@ void                                      DecodeError(int result);
 'Writes the contents of all workers to file in _RAW formats (see appendix of PHREEQC version 3 manual),
 including SOLUTIONs and all reactants.
 Args:
-	dump_on(Boolean): Signal for writing the dump file, true or false.
-	append(Boolean): Signal to append to the contents of the dump file, true or false.
+	dump_on (Boolean): Signal for writing the dump file, true or false.
+	append (Boolean): Signal to append to the contents of the dump file, true or false.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -135,8 +133,8 @@ IRM_RESULT                                DumpModule(bool dump_on, bool append =
 and printed as an error message along with the @a e_string, and an exception is thrown. If the result
 is nonnegative, no action is taken.
 Args:
-	result(IRM_RESULT): IRM_RESULT to be checked for an error.
-	e_string(string): String to be printed if an error is found.'
+	result (IRM_RESULT): IRM_RESULT to be checked for an error.
+	e_string (string): String to be printed if an error is found.'
 %enddef
 %feature PhreeqcRM::ErrorHandler ErrorHandler_DOCSTRING
 */
@@ -145,8 +143,8 @@ void                                      ErrorHandler(int result, const std::st
 %define ErrorMessage_DOCSTRING
 'Send an error message to the screen, the output file, and the log file.
 Args:
-	error_string(string): String to be printed.
-	prepend(Boolean): True, prepends @a error_string with "Error: "; false, @a error_string is used with no prepended text.'
+	error_string (string): String to be printed.
+	prepend (Boolean): True, prepends @a error_string with "Error: "; false, @a error_string is used with no prepended text.'
 %enddef
 %feature PhreeqcRM::ErrorMessage ErrorMessage_DOCSTRING
 */
@@ -244,7 +242,7 @@ to accurately calculate solution volume are
 phreeqc.dat, Amm.dat, and pitzer.dat.
 
 Args:
-	c(DoubleVector): Vector to receive the concentrations.
+	c (DoubleVector): Vector to receive the concentrations.
 		Dimension of the vector is set to @a ncomps times @a nxyz,
 		where,  ncomps is the result of :meth: `FindComponents` or :meth: `GetComponentCount`,
 		and @a nxyz is the number of user grid cells (:meth: `GetGridCellCount`).
@@ -282,7 +280,7 @@ std::string                               GetDatabaseFileName(void) {return this
 in the argument list (@a density). This method always returns the calculated
 densities; :meth: `SetDensity` does not affect the result.
 Args:
-	density(DoubleVector): Vector to receive the densities. Dimension of the array is set to @a nxyz,
+	density (DoubleVector): Vector to receive the densities. Dimension of the array is set to @a nxyz,
 		where @a nxyz is the number of user grid cells (:meth: `GetGridCellCount`).
 		Values for inactive cells are set to 1e30.
 		Densities are those calculated by the reaction module.
@@ -471,7 +469,7 @@ int                                       GetGasComponentsCount(void) const { re
 to the vector given in the argument list (@a gas_moles).
 
 Args:
-	gas_moles(DoubleVector): Vector to receive the moles of gas components.
+	gas_moles (DoubleVector): Vector to receive the moles of gas components.
 		Dimension of the vector is set to @a ngas_comps times @a nxyz,
 		where, @a ngas_comps is the result of :meth: `GetGasComponentsCount`,
 		and @a nxyz is the number of user grid cells (:meth: `GetGridCellCount`).
@@ -490,7 +488,7 @@ IRM_RESULT                                GetGasCompMoles(std::vector< double >&
 to the vector given in the argument list (@a gas_pressure).
 
 Args:
-	gas_pressure(DoubleVector): Vector to receive the pressures of gas components.
+	gas_pressure (DoubleVector): Vector to receive the pressures of gas components.
 		Dimension of the vector is set to @a ngas_comps times @a nxyz,
 		where, @a ngas_comps is the result of :meth: `GetGasComponentsCount`,
 		and @a nxyz is the number of user grid cells (:meth: `GetGridCellCount`).
@@ -510,7 +508,7 @@ to the vector given in the argument list (@a gas_phi). Fugacity is
 equal to the gas component pressure times the fugacity coefficient.
 
 Args:
-	gas_phi(DoubleVector): Vector to receive the fugacity coefficients of gas components.
+	gas_phi (DoubleVector): Vector to receive the fugacity coefficients of gas components.
 		Dimension of the vector is set to @a ngas_comps times @a nxyz,
 		where, @a ngas_comps is the result of :meth: `GetGasComponentsCount`,
 		and @a nxyz is the number of user grid cells (:meth: `GetGridCellCount`).
@@ -529,7 +527,7 @@ IRM_RESULT                                GetGasCompPhi(std::vector< double >& g
 to the vector given in the argument list (@a gas_volume). 
 
 Args:
-	gas_volume(DoubleVector): Vector to receive the gas phase volumes.
+	gas_volume (DoubleVector): Vector to receive the gas phase volumes.
 		Dimension of the vector is set to @a nxyz,
 		where,  @a nxyz is the number of user grid cells (:meth: `GetGridCellCount`).
 		If a gas phase is not defined for a cell, the volume is set to -1.
@@ -578,7 +576,7 @@ on that instance.
 For MPI, each process has exactly three IPhreeqc instances, one worker (number 0),
 one InitialPhreeqc instance (number 1), and one Utility instance (number 2).
 Args:
-	i(int): The number of the IPhreeqc instance (0 based) to be retrieved.
+	i (int): The number of the IPhreeqc instance (0 based) to be retrieved.
 Returns:
 	IPhreeqc pointer to the @a ith IPhreeqc instance (0 based) in the reaction module.'
 %enddef
@@ -660,7 +658,7 @@ can be used to identify the user number for each selected-output definition
 in sequence. :meth: `SetCurrentSelectedOutputUserNumber` is then used to select
 that user number for selected-output processing.
 Args:
-	n(int): The sequence number of the selected-output definition for which the user number will be returned.
+	n (int): The sequence number of the selected-output definition for which the user number will be returned.
 		Fortran, 1 based; C, 0 based.
 Returns:
 	int: The user number of the @a nth selected-output definition, negative is failure (See :meth: `DecodeError`).'
@@ -823,7 +821,7 @@ Only the following databases distributed with PhreeqcRM have molar volume inform
 to accurately calculate solution volume and saturation: phreeqc.dat, Amm.dat, and pitzer.dat.
 
 Args:
-	sat(DoubleVector): Vector to receive the saturations. Dimension of the array is set to @a nxyz,
+	sat (DoubleVector): Vector to receive the saturations. Dimension of the array is set to @a nxyz,
 		where @a nxyz is the number of user grid cells (:meth: `GetGridCellCount`).
 		Values for inactive cells are set to 1e30.
 
@@ -839,7 +837,7 @@ IRM_RESULT               GetSaturation(std::vector< double > & sat);
 :meth: `SetCurrentSelectedOutputUserNumber`
 specifies which of the selected-output definitions is returned to the vector (@a so).
 Args:
-	so(DoubleVector): A vector to contain the selected-output values.
+	so (DoubleVector): A vector to contain the selected-output values.
 		Size of the vector is set to @a col times @a nxyz, where @a col is the number of
 		columns in the selected-output definition (:meth: `GetSelectedOutputColumnCount`),
 		and @a nxyz is the number of grid cells in the user's model (:meth: `GetGridCellCount`).
@@ -876,7 +874,7 @@ int                                       GetSelectedOutputCount(void);
 The number of headings is determined by :meth: `GetSelectedOutputColumnCount`.
 :meth: `SetCurrentSelectedOutputUserNumber` specifies which of the selected-output definitions is used.
 Args:
-	icol(int): The sequence number of the heading to be retrieved, 0 based.
+	icol (int): The sequence number of the heading to be retrieved, 0 based.
 	heading(string): A string to receive the heading.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -891,7 +889,7 @@ The number of headings is determined by :meth: `GetSelectedOutputColumnCount`.
 :meth: `SetCurrentSelectedOutputUserNumber` or :meth: `BMI`_SetValue("NthSelectedOutput",i) are
 used to specify which of the selected-output definitions is used.
 Args:
-	headings(tuple of strings): A vector of std::strings to receive the headings.
+	headings (tuple of strings): A vector of std::strings to receive the headings.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -1029,7 +1027,7 @@ Only the following databases distributed with PhreeqcRM have molar volume inform
 needed to accurately calculate solution volume: phreeqc.dat, Amm.dat, and pitzer.dat.
 
 Args:
-	species_conc(DoubleVector): Vector to receive the aqueous species concentrations.
+	species_conc (DoubleVector): Vector to receive the aqueous species concentrations.
 		Dimension of the vector is set to @a nspecies times @a nxyz,
 		where @a nspecies is the number of aqueous species (:meth: `GetSpeciesCount`),
 		and @a nxyz is the number of grid cells (:meth: `GetGridCellCount`).
@@ -1078,7 +1076,7 @@ The list of aqueous species is determined by :meth: `FindComponents` and include
 aqueous species that can be made from the set of components.
 
 Args:
-	species_log10gammas(DoubleVector): Vector to receive the log10 aqueous species activity coefficients.
+	species_log10gammas (DoubleVector): Vector to receive the log10 aqueous species activity coefficients.
 		Dimension of the vector is set to @a nspecies times @a nxyz,
 		where @a nspecies is the number of aqueous species (:meth: `GetSpeciesCount`),
 		and @a nxyz is the number of grid cells (:meth: `GetGridCellCount`).
@@ -1098,7 +1096,7 @@ The list of aqueous species is determined by :meth: `FindComponents` and include
 aqueous species that can be made from the set of components.
 
 Args:
-	species_log10molalities(DoubleVector): Vector to receive the log10 aqueous species molalites.
+	species_log10molalities (DoubleVector): Vector to receive the log10 aqueous species molalites.
 		Dimension of the vector is set to @a nspecies times @a nxyz,
 		where @a nspecies is the number of aqueous species (:meth: `GetSpeciesCount`),
 		and @a nxyz is the number of grid cells (:meth: `GetGridCellCount`).
@@ -1488,7 +1486,7 @@ const std::vector<IPhreeqcPhast *> &      GetWorkers() {return this->workers;}
 %define InitializeYAML_DOCSTRING
 'A YAML file can be used to initialize an instance of PhreeqcRM. 
 Args:
-	yamlfile(string): String containing the YAML file name.
+	yamlfile (string): String containing the YAML file name.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).
 
@@ -1596,7 +1594,7 @@ The method is used to obtain concentrations for boundary conditions. If a negati
 is used for a cell in @a boundary_solution1, then the highest numbered solution in the InitialPhreeqc instance
 will be used for that cell.
 Args:
-	destination_c(DoubleVector): Vector to receive the concentrations.The dimension of @a destination_c is set to @a ncomps times @a n_boundary,
+	destination_c (DoubleVector): Vector to receive the concentrations.The dimension of @a destination_c is set to @a ncomps times @a n_boundary,
 		where @a ncomps is the number of components returned from :meth: `FindComponents` or :meth: `GetComponentCount`, and @a n_boundary
 		is the dimension of the vector @a boundary_solution1.
 		boundary_solution1  Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
@@ -1619,16 +1617,16 @@ solutions, @a boundary_solution1 and @a boundary_solution2, with a mixing fracti
 @a fraction1 and mixing fraction for @a boundary_solution2 of (1 - @a fraction1).
 A negative value for @a boundary_solution2 implies no mixing, and the associated value for @a fraction1 is ignored.
 Args:
-	destination_c(DoubleVector): Vector of concentrations extracted from the InitialPhreeqc instance.
+	destination_c (DoubleVector): Vector of concentrations extracted from the InitialPhreeqc instance.
 		The dimension of @a destination_c is set to @a ncomps times @a n_boundary,
 		where @a ncomps is the number of components returned from :meth: `FindComponents` or :meth: `GetComponentCount`, and @a n_boundary
 		is the dimension of the vectors @a boundary_solution1, @a boundary_solution2, and @a fraction1.
-	boundary_solution1(IntVector): Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
+	boundary_solution1 (int list, numpy.ndarray, or tuple): Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
 		Size is @a n_boundary.
-	boundary_solution2(IntVector): Vector of solution index numbers that that refer to solutions in the InitialPhreeqc instance
+	boundary_solution2 (int list, numpy.ndarray, or tuple): Vector of solution index numbers that that refer to solutions in the InitialPhreeqc instance
 		and are defined to mix with @a boundary_solution1.
 		Size is @a n_boundary.
-	fraction1(DoubleVector): Fraction of boundary_solution1 that mixes with (1 - @a fraction1) of @a boundary_solution2.
+	fraction1 (float list, numpy.ndarray, or tuple): Fraction of boundary_solution1 that mixes with (1 - @a fraction1) of @a boundary_solution2.
 		Size is @a n_boundary.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -1653,7 +1651,7 @@ The definition initial_solution1[3*nxyz + 99] = 2, indicates that
 cell 99 (0 based) contains the SURFACE definition (index 3) defined by SURFACE 2 in the InitialPhreeqc instance
 (created in the InitialPhreeqc instance either by :meth: `RunFile` or :meth: `RunString`).
 Args:
-	initial_conditions1(DoubleVector): Vector of solution and reactant index numbers that refer to
+	initial_conditions1 (int list, numpy.ndarray, or tuple): Vector of solution and reactant index numbers that refer to
 		definitions in the InitialPhreeqc instance.
 		Size is 7 times @a nxyz. The order of definitions is given above.
 		Negative values are ignored, resulting in no definition of that entity for that cell.
@@ -1686,17 +1684,17 @@ cell 99 (0 based) contains a mixture of 0.25 SURFACE 2 and 0.75 SURFACE 3,
 where the surface compositions have been defined in the InitialPhreeqc instance.
 If the user number in @a initial_conditions2 is negative, no mixing occurs.
 Args:
-	initial_conditions1(IntVector): Vector of solution and reactant index numbers that refer to
+	initial_conditions1 (int list, numpy.ndarray, or tuple): Vector of solution and reactant index numbers that refer to
 		definitions in the InitialPhreeqc instance.
 		Size is 7 times @a nxyz, where @a nxyz is the number of grid cells in the user's model (:meth: `GetGridCellCount`).
 		The order of definitions is given above.
 		Negative values are ignored, resulting in no definition of that entity for that cell.
-	initial_conditions2(IntVector): Vector of solution and reactant index numbers that refer to
+	initial_conditions2 (int list, numpy.ndarray, or tuple): Vector of solution and reactant index numbers that refer to
 		definitions in the InitialPhreeqc instance.
 		Nonnegative values of @a initial_conditions2 result in mixing with the entities defined in @a initial_conditions1.
 		Negative values result in no mixing.
 		Size is 7 times @a nxyz. The order of definitions is given above.
-	fraction1(DoubleVector): Fraction of @a initial_conditions1 that mixes with (1 - @a fraction1)
+	fraction1 (float list, numpy.ndarray, or tuple): Fraction of @a initial_conditions1 that mixes with (1 - @a fraction1)
 		of @a initial_conditions2.
 		Size is 7 times @a nxyz. The order of definitions is given above.
 Returns:
@@ -1717,11 +1715,11 @@ The method is used to obtain aqueous species concentrations for boundary conditi
 is used for a cell in @a boundary_solution1, then the highest numbered solution in the InitialPhreeqc instance
 will be used for that cell.
 Args:
-	destination_c(DoubleVector): Vector of aqueous concentrations extracted from the InitialPhreeqc instance.
+	destination_c (DoubleVector): Vector of aqueous concentrations extracted from the InitialPhreeqc instance.
 		The dimension of @a species_c is @a nspecies times @a n_boundary,
 		where @a nspecies is the number of aqueous species returned from :meth: `GetSpeciesCount`,
 		and @a n_boundary is the dimension of @a boundary_solution1.
-	boundary_solution1(IntVector): Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
+	boundary_solution1 (int list, numpy.ndarray, or tuple): Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -1743,15 +1741,15 @@ solutions, @a boundary_solution1 and @a boundary_solution2, with a mixing fracti
 @a fraction1 and mixing fraction for @a boundary_solution2 of (1 - @a fraction1).
 A negative value for @a boundary_solution2 implies no mixing, and the associated value for @a fraction1 is ignored.
 Args:
-	destination_c(DoubleVector): Vector of aqueous concentrations extracted from the InitialPhreeqc instance.
+	destination_c (DoubleVector): Vector of aqueous concentrations extracted from the InitialPhreeqc instance.
 		The dimension of @a species_c is @a nspecies times @a n_boundary,
 		where @a nspecies is the number of aqueous species returned from :meth: `GetSpeciesCount`,
 		and @a n_boundary is the dimension
 		of @a boundary_solution1.
-	boundary_solution1(IntVector): Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
-	boundary_solution2(IntVector): Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance
+	boundary_solution1 (int list, numpy.ndarray, or tuple): Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance.
+	boundary_solution2 (int list, numpy.ndarray, or tuple): Vector of solution index numbers that refer to solutions in the InitialPhreeqc instance
 		and are defined to mix with @a boundary_solution1. Size is same as @a boundary_solution1.
-	fraction1(DoubleVector): Vector of fractions of @a boundary_solution1 that mix with (1 - @a fraction1) of @a boundary_solution2.
+	fraction1 (float list, numpy.ndarray, or tuple): Vector of fractions of @a boundary_solution1 that mix with (1 - @a fraction1) of @a boundary_solution2.
 		Size is same as @a boundary_solution1.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -1772,8 +1770,8 @@ If @a n is negative, @a n is redefined to be the largest solution or MIX number 
 All reactants for each cell in the list @a cell_numbers are removed before the cell
 definition is copied from the InitialPhreeqc instance to the workers.
 Args:
-	n(int): Number that refers to a solution or MIX and associated reactants in the InitialPhreeqc instance.
-	cell_numbers(int): A vector of grid-cell numbers (user's grid-cell numbering system) that
+	n (int): Number that refers to a solution or MIX and associated reactants in the InitialPhreeqc instance.
+	cell_numbers (int): A vector of grid-cell numbers (user's grid-cell numbering system) that
 		will be populated with cell @a n from the InitialPhreeqc instance.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -1786,7 +1784,7 @@ IRM_RESULT                                InitialPhreeqcCell2Module(int n, const
 'Load a database for all IPhreeqc instances--workers, InitialPhreeqc, and Utility. All definitions
 of the reaction module are cleared (SOLUTION_SPECIES, PHASES, SOLUTIONs, etc.), and the database is read.
 Args:
-	database(string): String containing the database name.
+	database (string): String containing the database name.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -1797,7 +1795,7 @@ IRM_RESULT                                LoadDatabase(const std::string &databa
 %define LogMessage_DOCSTRING
 'Print a message to the log file.
 Args:
-	str(string): String to be printed.'
+	str (string): String to be printed.'
 %enddef
 %feature PhreeqcRM::LogMessage LogMessage_DOCSTRING
 */
@@ -1867,7 +1865,7 @@ IRM_RESULT                                OpenFiles(void);
 %define OutputMessage_DOCSTRING
 'Print a message to the output file.
 Args:
-	str(string) String to be printed.'
+	str (string) String to be printed.'
 %enddef
 %feature PhreeqcRM::OutputMessage OutputMessage_DOCSTRING
 */
@@ -1894,8 +1892,8 @@ the return code is decoded and printed as an error message along with the second
 the method will return the same return code, throw an exception, or exit the program depending on the setting for
 :meth: `SetErrorHandlerMode`.
 Args:
-	result(IRM_RESULT): Return code to be processed.
-	e_string(string): Error message to be printed in case of an error.
+	result (IRM_RESULT): Return code to be processed.
+	e_string (string): Error message to be printed in case of an error.
 Returns:
 	IRM_RESULT: The first argument to the method is returned.'
 %enddef
@@ -1911,10 +1909,10 @@ Files with SELECTED_OUTPUT definitions that will be used during the time-steppin
 be run by the workers. Files that contain initial conditions or boundary conditions should
 be run by the InitialPhreeqc instance.
 Args:
-	workers(Boolean): @a True, the workers will run the file; @a False, the workers will not run the file.
-	initial_phreeqc(Boolean): @a True, the InitialPhreeqc instance will run the file; @a False, the InitialPhreeqc will not run the file.
-	utility(Boolean): @a True, the Utility instance will run the file; @a False, the Utility instance will not run the file.
-	chemistry_name(string): Name of the file to run.
+	workers (Boolean): @a True, the workers will run the file; @a False, the workers will not run the file.
+	initial_phreeqc (Boolean): @a True, the InitialPhreeqc instance will run the file; @a False, the InitialPhreeqc will not run the file.
+	utility (Boolean): @a True, the Utility instance will run the file; @a False, the Utility instance will not run the file.
+	chemistry_name (string): Name of the file to run.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -1931,10 +1929,10 @@ Strings with SELECTED_OUTPUT definitions that will be used during the time-stepp
 be run by the workers. Strings that contain initial conditions or boundary conditions should
 be run by the InitialPhreeqc instance.
 Args:
-	workers(Boolean): @a True, the workers will run the string; @a False, the workers will not run the string.
-	initial_phreeqc(Boolean): @a True, the InitialPhreeqc instance will run the string; @a False, the InitialPhreeqc will not run the string.
-	utility(Boolean): @a True, the Utility instance will run the string; @a False, the Utility instance will not run the string.
-	input_string(string): String containing PHREEQC input.
+	workers (Boolean): @a True, the workers will run the string; @a False, the workers will not run the string.
+	initial_phreeqc (Boolean): @a True, the InitialPhreeqc instance will run the string; @a False, the InitialPhreeqc will not run the string.
+	utility (Boolean): @a True, the Utility instance will run the string; @a False, the Utility instance will not run the string.
+	input_string (string): String containing PHREEQC input.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -1945,7 +1943,7 @@ IRM_RESULT                                RunString(bool workers, bool initial_p
 %define ScreenMessage_DOCSTRING
 'Print message to the screen.
 Args:
-	str(string): String to be printed.'
+	str (string): String to be printed.'
 %enddef
 %feature PhreeqcRM::ScreenMessage ScreenMessage_DOCSTRING
 */
@@ -1964,7 +1962,7 @@ A setting of @a false will include total H and total O as components.
 SetComponentH2O must be called before :meth: `FindComponents`.
 
 Args:
-	tf(Boolean): @a True (default), excess H, excess O, and water are included in the component list;
+	tf (Boolean): @a True (default), excess H, excess O, and water are included in the component list;
 		@a False, total H and O are included in the component list.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -1981,7 +1979,7 @@ The moles of each component are determined by the volume of water and per liter 
 If concentration units (:meth: `SetUnitsSolution`) are mass fraction, the
 density (as specified by :meth: `SetDensity`) is used to convert from mass fraction to per mass per liter.
 Args:
-	c(DoubleVector): Vector of component concentrations. Size of vector is @a ncomps times @a nxyz,
+	c (double list, numpy.ndarray, or tuple): Component concentrations. Size of vector is @a ncomps times @a nxyz,
 		where @a ncomps is the number of components as determined
 		by :meth: `FindComponents` or :meth: `GetComponentCount` and
 		@a nxyz is the number of grid cells in the user's model (:meth: `GetGridCellCount`).
@@ -1998,7 +1996,7 @@ data blocks for the workers. A user number is specified for each data block. The
 the argument @a n_user selects which of the SELECTED_OUTPUT definitions will be used
 for selected-output operations.
 Args:
-	n_user(int): User number of the SELECTED_OUTPUT data block that is to be used.
+	n_user (int): User number of the SELECTED_OUTPUT data block that is to be used.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2013,7 +2011,7 @@ produce per liter concentrations during a call to :meth: `SetConcentrations`.
 They are also used when converting from reaction-cell concentrations to transport concentrations
 (:meth: `GetConcentrations`), if :meth: `UseSolutionDensityVolume` is set to @a false.
 Args:
-	density(DoubleVector): Vector of densities. Size of vector is @a nxyz, where @a nxyz is the number
+	density (float list, numpy.ndarray, or tuple): Densities. Size of vector is @a nxyz, where @a nxyz is the number
 		of grid cells in the user's model (:meth: `GetGridCellCount`).
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -2025,7 +2023,7 @@ IRM_RESULT                                SetDensity(const std::vector< double >
 %define SetDumpFileName_DOCSTRING
 'Set the name of the dump file. It is the name used by :meth: `DumpModule`.
 Args:
-	dump_name(string): Name of dump file.
+	dump_name (string): Name of dump file.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2039,7 +2037,7 @@ Options are 0, return to calling program with an error return code (default);
 1, throw an exception, in C++, the exception can be caught, for C and Fortran, the program will exit; or
 2, attempt to exit gracefully.
 Args:
-	mode(int): Error handling mode: 0, 1, or 2.
+	mode (int): Error handling mode: 0, 1, or 2.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2053,7 +2051,7 @@ Messages include PHREEQC "ERROR" messages, and
 any messages written with :meth: `ErrorMessage`.
 
 Args:
-	tf(Boolean): @a True, enable error messages; @a False, disable error messages. Default is true.
+	tf (Boolean): @a True, enable error messages; @a False, disable error messages. Default is true.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2065,7 +2063,7 @@ IRM_RESULT                                SetErrorOn(bool tf);
 'Set the prefix for the output (prefix.chem.txt) and log (prefix.log.txt) files.
 These files are opened by :meth: `OpenFiles`.
 Args:
-	prefix(string): Prefix used when opening the output and log files.
+	prefix (string): Prefix used when opening the output and log files.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2079,7 +2077,7 @@ IRM_RESULT                                SetFilePrefix(const std::string & pref
 the vector given in the argument list (@a gas_moles) to each reaction cell.
 
 Args:
-	gas_moles(DoubleVector): Vector of moles of gas components.
+	gas_moles (float list, numpy.ndarray, or tuple): Moles of gas components.
 		Dimension of the vector is set to @a ngas_comps times @a nxyz,
 		where, @a ngas_comps is the result of :meth: `GetGasComponentsCount`,
 		and @a nxyz is the number of user grid cells (:meth: `GetGridCellCount`).
@@ -2102,7 +2100,7 @@ for a GAS_PHASE in a cell,
 the gas phase is forced to be a fixed-volume gas phase.
 
 Args:
-	gas_volume(DoubleVector): Vector of volumes for each gas phase.
+	gas_volume (float list, numpy.ndarray, or tuple): Volumes for each gas phase.
 		Dimension of the vector is @a nxyz,
 		where @a nxyz is the number of user grid cells (:meth: `GetGridCellCount`).
 		If the volume is set to a negative number for a cell, the gas-phase volume for that cell is
@@ -2152,7 +2150,7 @@ subroutines to receive data, calculate transport, and send data,
 and then resume processing PhreeqcRM messages from root with another
 call to :meth: `MpiWorker`.
 Args:
-	fcn(function pointer): A function that returns an integer and has an integer argument
+	fcn (function pointer): A function that returns an integer and has an integer argument
 		and a void * argument.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -2187,7 +2185,7 @@ stored in user-number order. The value of
 the argument @a n selects the sequence number of the SELECTED_OUTPUT definition that will be used
 for selected-output operations.
 Args:
-	n(int): Sequence number of the SELECTED_OUTPUT data block that is to be used.
+	n (int): Sequence number of the SELECTED_OUTPUT data block that is to be used.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2215,7 +2213,7 @@ saturated and unsaturated (unreactive) reservoirs of the cell.
 Unsaturated-zone flow and transport codes will probably use the default (false),
 which assumes all gases and solids are reactive regardless of saturation.
 Args:
-	tf(Boolean): @a True, the fraction of solids and gases available for
+	tf (Boolean): @a True, the fraction of solids and gases available for
 		reaction is equal to the saturation;
 		@a False (default), all solids and gases are reactive regardless of saturation.
 Returns:
@@ -2230,7 +2228,7 @@ IRM_RESULT                                SetPartitionUZSolids(bool tf);
 The volume of water in a reaction cell is the product of porosity, saturation
 (:meth: `SetSaturation`), and representative volume (:meth: `SetRepresentativeVolume`).
 Args:
-	por(DoubleVector): Vector of porosities, unitless. Default is 0.1.
+	por (float list, numpy.ndarray, or tuple): Porosities, unitless. Default is 0.1.
 		Size of vector is @a nxyz, where @a nxyz is the number
 		of grid cells in the user's model (:meth: `GetGridCellCount`).
 Returns:
@@ -2245,7 +2243,7 @@ IRM_RESULT                                SetPorosity(const std::vector< double 
 'Set the pressure for each reaction cell. Pressure effects are considered only in three of the
 databases distributed with PhreeqcRM: phreeqc.dat, Amm.dat, and pitzer.dat.
 Args:
-	p(DoubleVector): Vector of pressures, in atm. Size of vector is @a nxyz,
+	p (float list, numpy.ndarray, or tuple): Pressures, in atm. Size of vector is @a nxyz,
 		where @a nxyz is the number of grid cells in the user's model (:meth: `GetGridCellCount`).
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -2259,7 +2257,7 @@ IRM_RESULT                                SetPressure(const std::vector< double 
 Printing for a reaction cell will occur only when the
 printing is enabled with :meth: `SetPrintChemistryOn` and the @a cell_mask value is 1.
 Args:
-	cell_mask(IntVector): Vector of integers. Size of vector is @a nxyz, where @a nxyz is the number
+	cell_mask (IntVector): Vector of integers. Size of vector is @a nxyz, where @a nxyz is the number
 		of grid cells in the user's model (:meth: `GetGridCellCount`). A value of 0 will
 		disable printing detailed output for the cell; a value of 1 will enable printing detailed output for a cell.
 Returns:
@@ -2285,11 +2283,11 @@ and PhreeqcRM will run significantly faster
 when printing detailed output for the workers is disabled.
 
 Args:
-	workersDoubleVector): @a True, enable detailed printing in the worker instances;
+	workers (Boolean): @a True, enable detailed printing in the worker instances;
 		@a False, disable detailed printing in the worker instances.
-	initial_phreeqcDoubleVector): @a True, enable detailed printing in the InitialPhreeqc instance;
+	initial_phreeqc (Boolean): @a True, enable detailed printing in the InitialPhreeqc instance;
 		@a False, disable detailed printing in the InitialPhreeqc instance.
-	utilityDoubleVector): @a True, enable detailed printing in the Utility instance;
+	utility (Boolean): @a True, enable detailed printing in the Utility instance;
 		@a False, disable detailed printing in the Utility instance.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -2308,7 +2306,7 @@ saturation was zero (default), and
 the other assigns an average time to all cells.
 The methods are similar, but limited testing indicates the default method performs better.
 Args:
-	tfDoubleVector): @a True, indicates individual cell times are used in rebalancing (default);
+	tf (Boolean): @a True, indicates individual cell times are used in rebalancing (default);
 		@a False, indicates average times are used in rebalancing.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -2331,7 +2329,7 @@ when too many cells are transferred at one iteration, requiring reverse transfer
 Default is 0.5.
 
 Args:
-	f(float): Fraction from 0.0 to 1.0.
+	f (float): Fraction from 0.0 to 1.0.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2353,7 +2351,7 @@ that increasing the representative volume also increases
 the number of moles of the reactants in the reaction cell (minerals, surfaces, exchangers,
 and others), which are defined as moles per representative volume.
 Args:
-	rv(DoubleVector): Vector of representative volumes, in liters. Default is 1.0 liter.
+	rv (float list, numpy.ndarray, or tuple): Representative volumes, in liters. Default is 1.0 liter.
 		Size of array is @a nxyz, where @a nxyz is the number
 		of grid cells in the user's model (:meth: `GetGridCellCount`).
 Returns:
@@ -2374,7 +2372,7 @@ for these changes in the succeeding transport calculation.
 @a SetRepresentativeVolume should be called before initial conditions are defined for the reaction cells.
 
 Args:
-	sat(DoubleVector): Vector of saturations, unitless. Default 1.0. Size of vector is @a nxyz,
+	sat (float list, numpy.ndarray, or tuple): Saturations, unitless. Default 1.0. Size of vector is @a nxyz,
 		where @a nxyz is the number of grid cells in the user's model (:meth: `GetGridCellCount`).
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -2389,7 +2387,7 @@ Messages include information about rebalancing during :meth: `RunCells`, and
 any messages written with :meth: `ScreenMessage`.
 
 Args:
-	tf(Boolean): @a True, enable screen messages; @a False, disable screen messages. Default is true.
+	tf (Boolean): @a True, enable screen messages; @a False, disable screen messages. Default is true.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2405,7 +2403,7 @@ will be accumulated during :meth: `RunCells` and can be retrieved with :meth: `G
 be accumulated during :meth: `RunCells`.
 
 Args:
-	tf(Boolean): @a True, enable selected output; @a False, disable selected output.
+	tf (Boolean): @a True, enable selected output; @a False, disable selected output.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2424,7 +2422,7 @@ with :meth: `GetSpeciesConcentrations`, and solution compositions to be set with
 @a SetSpeciesSaveOn must be called before calls to :meth: `FindComponents`.
 
 Args:
-	save_on(Boolean): @a True indicates species concentrations are saved;
+	save_on (Boolean): @a True indicates species concentrations are saved;
 		@a False indicates species concentrations are not saved.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
@@ -2439,7 +2437,7 @@ worker solutions will have temperatures as defined by initial conditions
 (:meth: `InitialPhreeqc2Module` and :meth: `InitialPhreeqcCell2Module`).
 
 Args:
-	t(DoubleVector): Vector of temperatures, in degrees C.
+	t (float list, numpy.ndarray, or tuple): Temperatures, in degrees C.
 		Size of vector is @a nxyz, where @a nxyz is the number
 		of grid cells in the user's model (:meth: `GetGridCellCount`).
 Returns:
@@ -2452,7 +2450,7 @@ IRM_RESULT                                SetTemperature(const std::vector< doub
 %define SetTime_DOCSTRING
 'Set current simulation time for the reaction module.
 Args:
-	time(float): Current simulation time, in seconds.
+	time (float): Current simulation time, in seconds.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2464,7 +2462,7 @@ IRM_RESULT                                SetTime(double time);
 'Set a factor to convert from seconds to user time units. Factor times seconds produces user time units.
 
 Args:
-	conv_factor(float): Factor to convert seconds to user time units.
+	conv_factor (float): Factor to convert seconds to user time units.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2477,7 +2475,7 @@ IRM_RESULT                                SetTimeConversion(double conv_factor);
 of time over which kinetic reactions are integrated.
 
 Args:
-	time_step(float): Time step, in seconds.
+	time_step (float): Time step, in seconds.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2503,7 +2501,7 @@ For option 1, the number of moles of exchangers will be vary directly with poros
 For option 2, the number of moles of exchangers will vary directly with rock volume and inversely with porosity.
 
 Args:
-	option(int): Units option for exchangers: 0, 1, or 2.
+	option (int): Units option for exchangers: 0, 1, or 2.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2529,7 +2527,7 @@ For option 1, the number of moles of a gas component will be vary directly with 
 For option 2, the number of moles of a gas component will vary directly with rock volume and inversely with porosity.
 
 Args:
-	option(int): Units option for gas phases: 0, 1, or 2.
+	option (int): Units option for gas phases: 0, 1, or 2.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2569,7 +2567,7 @@ can be defined as a parameter (KINETICS; -parm), which is multiplied by the numb
 reactant (Basic function M) in RATES to obtain the surface area.
 
 Args:
-	option(int): Units option for kinetic reactants: 0, 1, or 2.
+	option (int): Units option for kinetic reactants: 0, 1, or 2.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2595,7 +2593,7 @@ For option 1, the number of moles of a mineral will be vary directly with porosi
 For option 2, the number of moles of a mineral will vary directly with rock volume and inversely with porosity.
 
 Args:
-	option(int): Units option for equilibrium phases: 0, 1, or 2.
+	option (int): Units option for equilibrium phases: 0, 1, or 2.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2639,7 +2637,7 @@ and the mass of solution is volume times density as defined by :meth: `SetDensit
 Which option is used is determined by :meth: `UseSolutionDensityVolume`.
 
 Args:
-	option(int): Units option for solutions: 1, 2, or 3, default is 1, mg/L.
+	option (int): Units option for solutions: 1, 2, or 3, default is 1, mg/L.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2665,7 +2663,7 @@ For option 1, the number of moles of a solid-solution component will be vary dir
 For option 2, the number of moles of a solid-solution component will vary directly with rock volume and inversely with porosity.
 
 Args:
-	option(int): Units option for solid solutions: 0, 1, or 2.
+	option (int): Units option for solid solutions: 0, 1, or 2.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2691,7 +2689,7 @@ For option 1, the number of moles of surface sites will be vary directly with po
 For option 2, the number of moles of surface sites will vary directly with rock volume and inversely with porosity.
 
 Args:
-	option(int): Units option for surfaces: 0, 1, or 2.
+	option (int): Units option for surfaces: 0, 1, or 2.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2712,7 +2710,8 @@ coefficient of the element in each species.
 Solution compositions in the reaction cells are updated with these component concentrations.
 
 Args:
-	species_conc(DoubleVector): Vector of aqueous species concentrations. Dimension of the array is @a nspecies times @a nxyz,
+	species_conc (float list, numpy.ndarray, or tuple): Aqueous species concentrations.
+		Dimension of the array is @a nspecies times @a nxyz,
 		where  @a nspecies is the number of aqueous species (:meth: `GetSpeciesCount`),
 		and @a nxyz is the number of user grid cells (:meth: `GetGridCellCount`).
 		Concentrations are moles per liter.
@@ -2735,7 +2734,7 @@ to file. PhreeqcRM can be reset to this state by using :meth: `StateApply`.
 A state is identified by an integer, and multiple states can be saved. 
 
 Args:
-	istate(int): Integer identifying the state that is saved. 
+	istate (int): Integer identifying the state that is saved. 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2755,7 +2754,7 @@ unsaturated cells are also reset to the saved state.
 The state to be applied is identified by an integer.
 
 Args:
-	istate(int): Integer identifying the state that is to be applied.
+	istate (int): Integer identifying the state that is to be applied.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2767,7 +2766,7 @@ IRM_RESULT StateApply(int istate);
 'Delete a state previously saved with :meth: `StateSave`.
 
 Args:
-	istate(int): Integer identifying the state that is to be deleted.
+	istate (int): Integer identifying the state that is to be deleted.
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth: `DecodeError`).'
 %enddef
@@ -2793,7 +2792,7 @@ needed to accurately calculate density and solution volume: phreeqc.dat, Amm.dat
 Density is only used when converting to or from transport units of mass fraction.
 
 Args:
-	tf(Boolean): @a True indicates that the solution density and volume as
+	tf (Boolean): @a True indicates that the solution density and volume as
 		calculated by PHREEQC will be used to calculate concentrations.
 		@a False indicates that the solution density set by :meth: `SetDensity` and the volume determined by the
 		product of  :meth: `SetSaturation`, :meth: `SetPorosity`, and :meth: `SetRepresentativeVolume`,
@@ -2807,7 +2806,7 @@ void UseSolutionDensityVolume(bool tf);
 'Print a warning message to the screen and the log file.
 
 Args:
-	warnstr(string): String to be printed.'
+	warnstr (string): String to be printed.'
 %enddef
 %feature PhreeqcRM::WarningMessage WarningMessage_DOCSTRING
 */
@@ -2821,7 +2820,7 @@ public:
 
 //void BMI_Finalize();
 /**
-%define GetComponentName_DOCSTRING
+%define BMI_GetComponentName_DOCSTRING
 'Basic Model Interface method that returns the component name--PhreeqcRM. The BMI interface to PhreeqcRM is
 only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
 prefix) provide a complete interface, and it is expected that the native methods will be used in preference to the BMI_
@@ -2830,13 +2829,13 @@ methods.
 Returns:
 	string: The string "PhreeqcRM".'
 %enddef
-%feature PhreeqcRM::GetComponentName GetComponentName_DOCSTRING
+%feature PhreeqcRM::BMI_GetComponentName BMI_GetComponentName_DOCSTRING
 */
 std::string BMI_GetComponentName() { return "PhreeqcRM"; }
 
 
 /**
-%define GetCurrentTime_DOCSTRING
+%define BMI_GetCurrentTime_DOCSTRING
 'Basic Model Interface method that returns the current simulation time, in seconds. (Same as :meth: `GetTime`.)
 The reaction module does not change the time value, so the
 returned value is equal to the default (0.0) or the last time set by
@@ -2844,69 +2843,69 @@ returned value is equal to the default (0.0) or the last time set by
 Returns:
 	float: The current simulation time, in seconds.'
 %enddef
-%feature PhreeqcRM::GetCurrentTime GetCurrentTime_DOCSTRING
+%feature PhreeqcRM::BMI_GetCurrentTime BMI_GetCurrentTime_DOCSTRING
 */
 double BMI_GetCurrentTime() { return this->GetTime(); }
 
 
 /**
-%define GetEndTime_DOCSTRING
+%define BMI_GetEndTime_DOCSTRING
 'Basic Model Interface method that returns :meth: `BMI`_GetCurrentTime plus :meth: `BMI`_GetTimeStep, in seconds.
 Returns:
 	float: The end of the time step, in seconds.'
 %enddef
-%feature PhreeqcRM::GetEndTime GetEndTime_DOCSTRING
+%feature PhreeqcRM::BMI_GetEndTime BMI_GetEndTime_DOCSTRING
 */
 double BMI_GetEndTime() { return this->GetTime() + this->GetTimeStep(); }
 
 
 /**
-%define GetInputItemCount_DOCSTRING
+%define BMI_GetInputItemCount_DOCSTRING
 'Basic Model Interface method that returns count of input variables that can be set with :meth: `BMI`_SetValue.
 Returns:
 	int: Count of input variables that can be set with :meth: `BMI`_SetValue.
 '
 %enddef
-%feature PhreeqcRM::GetInputItemCount GetInputItemCount_DOCSTRING
+%feature PhreeqcRM::BMI_GetInputItemCount BMI_GetInputItemCount_DOCSTRING
 */
 int BMI_GetInputItemCount() { return (int)this->bmi_input_vars.size(); }
 
 
 /**
-%define GetInputVarNames_DOCSTRING
+%define BMI_GetInputVarNames_DOCSTRING
 'Basic Model Interface method that returns a list of the variable names that can be set with :meth: `BMI`_SetValue.
 Returns:
 	tuple of strings: A list of the variable names that can be set with :meth: `BMI`_SetValue.'
 %enddef
-%feature PhreeqcRM::GetInputVarNames GetInputVarNames_DOCSTRING
+%feature PhreeqcRM::BMI_GetInputVarNames BMI_GetInputVarNames_DOCSTRING
 */
 std::vector< std::string > BMI_GetInputVarNames() { return this->bmi_input_vars; }
 
 
 /**
-%define GetOutputItemCount_DOCSTRING
+%define BMI_GetOutputItemCount_DOCSTRING
 'Basic Model Interface method that returns count of output variables that can be retrieved with :meth: `BMI`_GetValue.
 Returns:
 	int: Count of output variables that can be retrieved with :meth: `BMI`_GetValue.'
 %enddef
-%feature PhreeqcRM::GetOutputItemCount GetOutputItemCount_DOCSTRING
+%feature PhreeqcRM::BMI_GetOutputItemCount BMI_GetOutputItemCount_DOCSTRING
 */
 int BMI_GetOutputItemCount() { return (int)this->bmi_output_vars.size(); }
 
 
 /**
-%define GetOutputVarNames_DOCSTRING
+%define BMI_GetOutputVarNames_DOCSTRING
 'Basic Model Interface method that returns a list of the variable names that can be retrieved with :meth: `BMI`_GetValue.
 Returns:
 	tuple of strings: A list of the variable names that can be retrieved with :meth: `BMI`_GetValue.'
 %enddef
-%feature PhreeqcRM::GetOutputVarNames GetOutputVarNames_DOCSTRING
+%feature PhreeqcRM::BMI_GetOutputVarNames BMI_GetOutputVarNames_DOCSTRING
 */
 std::vector< std::string > BMI_GetOutputVarNames() { return this->bmi_output_vars; };
 
 
 /**
-%define GetTimeStep_DOCSTRING
+%define BMI_GetTimeStep_DOCSTRING
 'Basic Model Interface method that returns the current simulation time step, in seconds. (Same as :meth: `GetTimeStep`.)
 The reaction module does not change the time-step value, so the
 returned value is equal to the last time step set by
@@ -2914,32 +2913,32 @@ returned value is equal to the last time step set by
 Returns:
 	float: The current simulation time step, in seconds.'
 %enddef
-%feature PhreeqcRM::GetTimeStep GetTimeStep_DOCSTRING
+%feature PhreeqcRM::BMI_GetTimeStep BMI_GetTimeStep_DOCSTRING
 */
 double BMI_GetTimeStep() { return this->GetTimeStep(); }
 
 
 /**
-%define GetTimeUnits_DOCSTRING
+%define BMI_GetTimeUnits_DOCSTRING
 'Basic Model Interface method that returns the time units of PhreeqcRM.
 All time units are seconds for PhreeqcRM.
 Returns:
 	string: Returns the string "seconds".'
 %enddef
-%feature PhreeqcRM::GetTimeUnits GetTimeUnits_DOCSTRING
+%feature PhreeqcRM::BMI_GetTimeUnits BMI_GetTimeUnits_DOCSTRING
 */
 std::string BMI_GetTimeUnits() { return "seconds"; };
 
 
 /**
-%define GetValue_DOCSTRING
+%define BMI_GetValue_DOCSTRING
 'Basic Model Interface method that retrieves model variables. Only variables in the list
 provided by :meth: `BMI`_GetOutputVarNames can be retrieved. The BMI interface to PhreeqcRM is
 only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
 prefix) provide a complete interface.
 Args:
-	name(string): Name of the variable to retrieve.
-	dest(type defined below): Variable in which to place results.
+	name (string): Name of the variable to retrieve.
+	dest (type defined below): Variable in which to place results.
 
 Variable names for the first argument (@a name) and variable type of the
 second argument (@a dest).
@@ -2968,7 +2967,7 @@ second argument (@a dest).
 @n "Time",	@a dest: double;
 @n "TimeStep",	@a dest: double.'
 %enddef
-%feature PhreeqcRM::GetValue GetValue_DOCSTRING
+%feature PhreeqcRM::BMI_GetValue BMI_GetValue_DOCSTRING
 */
 void BMI_GetValue(std::string name, void* dest);
 void BMI_GetValue(std::string name, bool& dest);
@@ -2980,7 +2979,7 @@ void BMI_GetValue(std::string name, std::vector < std::string >& dest);
 
 
 /**
-%define GetVarItemsize_DOCSTRING
+%define BMI_GetVarItemsize_DOCSTRING
 'Basic Model Interface method that retrieves size of an 
 individual item that can be set or retrived.
 Sizes may be sizeof(int), sizeof(double), 
@@ -2989,17 +2988,17 @@ provided by :meth: `BMI`_GetInputVarNames can be set.
 Only variables in the list
 provided by :meth: `BMI`_GetOutputVarNames can be retrieved. 
 Args:
-	name(string): Name of the variable to retrieve size.
+	name (string): Name of the variable to retrieve size.
 Returns:
 	int: Size of one element of variable.'
 %enddef
-%feature PhreeqcRM::GetVarItemsize GetVarItemsize_DOCSTRING
+%feature PhreeqcRM::BMI_GetVarItemsize BMI_GetVarItemsize_DOCSTRING
 */
 int BMI_GetVarItemsize(std::string name);
 
 
 /**
-%define GetVarNbytes_DOCSTRING
+%define BMI_GetVarNbytes_DOCSTRING
 'Basic Model Interface method that retrieves the total number of bytes that are set for a variable with
 :meth: `BMI`_SetValue or retrieved for a variable with :meth: `BMI`_GetValue.
 Only variables in the list
@@ -3007,17 +3006,17 @@ provided by :meth: `BMI`_GetInputVarNames can be set.
 Only variables in the list
 provided by :meth: `BMI`_GetOutputVarNames can be retrieved. 
 Args:
-	name(string): Name of the variable to retrieve total bytes.
+	name (string): Name of the variable to retrieve total bytes.
 Returns:
 	int: Total number of bytes set or retrieved for variable.'
 %enddef
-%feature PhreeqcRM::GetVarNbytes GetVarNbytes_DOCSTRING
+%feature PhreeqcRM::BMI_GetVarNbytes BMI_GetVarNbytes_DOCSTRING
 */
 int BMI_GetVarNbytes(std::string name);
 
 
 /**
-%define GetVarType_DOCSTRING
+%define BMI_GetVarType_DOCSTRING
 'Basic Model Interface method that retrieves the type of a variable that can be set with
 :meth: `BMI`_SetValue or retrieved with :meth: `BMI`_GetValue. Types are "int", "double", or "string".
 Only variables in the list
@@ -3026,17 +3025,17 @@ Only variables in the list
 provided by :meth: `BMI`_GetOutputVarNames can be retrieved. 
 
 Args:
-	name(string): Name of the variable to retrieve type.
+	name (string): Name of the variable to retrieve type.
 Returns:
 	string: Character string of variable type.'
 %enddef
-%feature PhreeqcRM::GetVarType GetVarType_DOCSTRING
+%feature PhreeqcRM::BMI_GetVarType BMI_GetVarType_DOCSTRING
 */
 std::string BMI_GetVarType(std::string name);
 
 
 /**
-%define GetVarUnits_DOCSTRING
+%define BMI_GetVarUnits_DOCSTRING
 'Basic Model Interface method that retrieves the units of a variable that can be set with
 :meth: `BMI`_SetValue or retrieved with :meth: `BMI`_GetValue.
 Only variables in the list
@@ -3045,17 +3044,17 @@ Only variables in the list
 provided by :meth: `BMI`_GetOutputVarNames can be retrieved. 
 
 Args:
-	name(string): Name of the variable to retrieve type.
+	name (string): Name of the variable to retrieve type.
 Returns:
 	string: Character string of units for variable.'
 %enddef
-%feature PhreeqcRM::GetVarUnits GetVarUnits_DOCSTRING
+%feature PhreeqcRM::BMI_GetVarUnits BMI_GetVarUnits_DOCSTRING
 */
 std::string BMI_GetVarUnits(std::string name);
 
 
 /**
-%define Initialize_DOCSTRING
+%define BMI_Initialize_DOCSTRING
 'Basic Model Interface method that can be used to initialize a PhreeqcRM instance. This method is equivalent to
 :meth: `InitializeYAML`. A YAML file can be used in initialization. The file contains a YAML map of PhreeqcRM methods
 and the arguments corresponding to the method. For example,
@@ -3139,15 +3138,15 @@ WarningMessage(string warnstr);
 </CODE>
 @endhtmlonly'
 Args:
-	config_file(string): File with YAML definitions for PhreeqcRM initialization.
+	config_file (string): File with YAML definitions for PhreeqcRM initialization.
 %enddef
-%feature PhreeqcRM::Initialize Initialize_DOCSTRING
+%feature PhreeqcRM::BMI_Initialize BMI_Initialize_DOCSTRING
 */
 void BMI_Initialize(std::string config_file) { InitializeYAML(config_file); };
 #endif
 
 /**
-%define SetValue_DOCSTRING
+%define BMI_SetValue_DOCSTRING
 'Basic Model Interface method that sets model variables. Only variables in the list
 provided by :meth: `BMI`_GetInputVarNames can be set. The BMI interface to PhreeqcRM is
 only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
@@ -3169,7 +3168,7 @@ of BMI_SetValue and the equivalent PhreeqcRM method are as follows:
 "TimeStep", :meth: `SetTimeStep`.
 '
 %enddef
-%feature PhreeqcRM::SetValue SetValue_DOCSTRING
+%feature PhreeqcRM::BMI_SetValue BMI_SetValue_DOCSTRING
 */
 void BMI_SetValue(std::string name, void* src);
 void BMI_SetValue(std::string name, bool& src);
@@ -3181,12 +3180,12 @@ void BMI_SetValue(std::string name, std::vector < int >& src);
 void BMI_SetValue(std::string name, std::vector < std::string >& src);
 
 /**
-%define Update_DOCSTRING
+%define BMI_Update_DOCSTRING
 'Basic Model Interface method that runs PhreeqcRM for one time step. This method is equivalent to
 :meth: `RunCells`. PhreeqcRM will equilibrate the solutions with all equilibrium reactants (EQUILIBRIUM_PHASES,
 EXCHANGE, GAS_PHASE, SOLID_SOLUTIONS, and SURFACE) and
 integrate KINETICS reactions for the specified time step (:meth: `SetTimeStep`).'
 %enddef
-%feature PhreeqcRM::Update Update_DOCSTRING
+%feature PhreeqcRM::BMI_Update BMI_Update_DOCSTRING
 */
 void BMI_Update(void) { this->RunCells(); };
