@@ -5,7 +5,7 @@ PHREEQCRM_EXTRA_DIST=\
 	src/CMakeLists.txt\
 	src/PhreeqcRM.i\
 	src/numpy.i\
-	src/pyfragments.swg\
+	src/pyfragments.swg.in\
 	src/swig/CMakeLists.txt\
 	src/swig/python/CMakeLists.txt\
 	src/swig/python/SimpleAdvect.py\
