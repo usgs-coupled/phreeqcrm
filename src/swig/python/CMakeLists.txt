@@ -1,5 +1,13 @@
 set(PYTHON_TARGET_NAME phreeqcrmpy)
 
+set(phreeqcrm_INTERFACE PhreeqcRM.i)
+
+# copy PhreeqcRM.i in order to not have pyfragments.swg be automatically included
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_INTERFACE} ${phreeqcrm_INTERFACE} COPYONLY)
+
+# @todo
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../pyfragments.swg.in pyfragments.swg COPYONLY)
+
 # copy database to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../database/phreeqc.dat phreeqc.dat COPYONLY)
 
@@ -11,8 +19,6 @@ configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
 
 get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
 
-set(phreeqcrm_INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/../../PhreeqcRM.i)
-
 set_source_files_properties(${phreeqcrm_INTERFACE} PROPERTIES SWIG_FLAGS "-Wall")
 set_source_files_properties(${phreeqcrm_INTERFACE} PROPERTIES CPLUSPLUS ON)
 
@@ -20,22 +26,92 @@ swig_add_library(
   ${PYTHON_TARGET_NAME}
   LANGUAGE python
   TYPE MODULE
-  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../../PhreeqcRM.i ${PhreeqcRM_SOURCES}
-)
-
-target_include_directories(${PYTHON_TARGET_NAME}
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/../..
+  SOURCES ${CMAKE_CURRENT_BINARY_DIR}/${phreeqcrm_INTERFACE} ${PhreeqcRM_SOURCES}
 )
 
 target_link_libraries(${PYTHON_TARGET_NAME}
   PRIVATE
     Python::Python
-    Python::NumPy
+    # Python::NumPy
 )
 
-add_test(NAME SimpleAdvect
-  COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
+get_target_property(PhreeqcRM_INC PhreeqcRM INCLUDE_DIRECTORIES)
+target_include_directories(${PYTHON_TARGET_NAME}
+  PUBLIC
+    ${PhreeqcRM_INC}
 )
 
-set_tests_properties(SimpleAdvect PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
+if(NOT CMAKE_DEBUG_POSTFIX)
+  # SWIG BUG -- PyInit__phreeqcrmpy is misnamed when either of these properties is used:
+  # set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES DEBUG_POSTFIX "_d")
+  # set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES OUTPUT_NAME_DEBUG "${PYTHON_TARGET_NAME}_d")
+  if(WIN32)
+    # copy _phreeqcrmpy.pyd to _phreeqcrmpy_d.pyd
+    add_custom_command(TARGET ${PYTHON_TARGET_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:${PYTHON_TARGET_NAME}>
+        $<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>/_$<TARGET_FILE_BASE_NAME:${PYTHON_TARGET_NAME}>$<$<CONFIG:Debug>:_d>$<TARGET_FILE_SUFFIX:${PYTHON_TARGET_NAME}>
+    )
+  endif()
+endif()
+
+if(IS_MULTI_CONFIG)
+  add_test(NAME SimpleAdvect
+    COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
+    CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+  )
+  set_tests_properties(SimpleAdvect PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+else()
+  if("${CMAKE_BUILD_TYPE}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+    add_test(NAME SimpleAdvect
+      COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
+    )
+  endif()
+endif()
+
+if(WIN32)
+  string(REPLACE python.exe python_d.exe Python_d_EXECUTABLE ${Python_EXECUTABLE})
+
+  if(IS_MULTI_CONFIG)
+    add_test(NAME SimpleAdvect_d
+      COMMAND ${Python_d_EXECUTABLE} SimpleAdvect.py
+      CONFIGURATIONS Debug
+    )      
+    set_tests_properties(SimpleAdvect_d PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+  else()
+    if("${CMAKE_BUILD_TYPE}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+      add_test(NAME SimpleAdvect_d
+        COMMAND ${Python_d_EXECUTABLE} SimpleAdvect.py
+      )
+    endif()
+  endif()
+  if(NOT EXISTS ${Python_d_EXECUTABLE})
+    set_tests_properties(SimpleAdvect_d PROPERTIES DISABLED TRUE)
+    message(STATUS "Debug python interpreter not found")
+  endif()
+endif()
+
+if(MSVC)
+  # setup python Debugging
+  # Configuration Properties->Debugging
+
+  # Get the base name
+  get_filename_component(base_name ${Python_EXECUTABLE} NAME_WLE)
+  
+  # Get the extension
+  get_filename_component(ext ${Python_EXECUTABLE} LAST_EXT)
+
+  # Get the directory of the input file
+  get_filename_component(dir_name ${Python_EXECUTABLE} DIRECTORY)
+
+  set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND "${dir_name}/${base_name}$<$<CONFIG:Debug>:_d>${ext}")
+  set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+  set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "SimpleAdvect.py")
+endif()
+
+# include(CMakePrintHelpers)
+# cmake_print_variables(Python_EXECUTABLE)
+# cmake_print_variables(Python_d_EXECUTABLE)
+# cmake_print_variables(IS_MULTI_CONFIG)

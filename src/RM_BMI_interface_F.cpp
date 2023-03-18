@@ -1,6 +1,7 @@
 #ifdef USE_MPI
 #include "mpi.h"
 #endif
+#include "BMI_Var.h"
 #include "PhreeqcRM.h"
 #include "RM_interface_F.h"
 #include "IPhreeqcPhastLib.h"
