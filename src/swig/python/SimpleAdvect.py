@@ -47,7 +47,7 @@ def SimpleAdvect():
     phreeqc_rm.UseSolutionDensityVolume(False)
 
     # Open files
-    status = phreeqc_rm.SetFilePrefix("SimpleAdvect_cpp")
+    status = phreeqc_rm.SetFilePrefix("SimpleAdvect_py")
     phreeqc_rm.OpenFiles()
 
     # Set concentration units
@@ -168,11 +168,10 @@ def SimpleAdvect():
 
         # Transfer data from PhreeqcRM for transport
         status = phreeqc_rm.GetConcentrations(c_dbl_vect)
-
+        
     # Clean up
     status = phreeqc_rm.CloseFiles()
     status = phreeqc_rm.MpiWorkerBreak()
-
 def simpleadvection(c, bc_conc, ncomps, nxyz, dim):
     """
     TODO
