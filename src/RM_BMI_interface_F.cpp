@@ -283,12 +283,13 @@ RMF_BMI_Update(int* id)
 	return IRM_BADINSTANCE;
 }
 #ifdef USE_YAML
+#include "YAMLPhreeqcRM.h"
 /* ---------------------------------------------------------------------- */
 int
 RMF_GetGridCellCountYAML(const char* config)
 /* ---------------------------------------------------------------------- */
 {
 	// Returns units of variable var
-	return GetGridCellCountYAML(config);
+	return YAMLPhreeqcRM::GetGridCellCountYAML(config);
 }
 #endif

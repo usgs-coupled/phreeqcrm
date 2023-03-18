@@ -2,8 +2,10 @@ set(PYTHON_TARGET_NAME phreeqcrmpy)
 
 set(phreeqcrm_INTERFACE PhreeqcRM.i)
 
+set(phreeqcrm_INTERFACE_FULLPATH ${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_INTERFACE})
+
 # copy PhreeqcRM.i in order to not have pyfragments.swg be automatically included
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_INTERFACE} ${phreeqcrm_INTERFACE} COPYONLY)
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_INTERFACE} ${phreeqcrm_INTERFACE} COPYONLY)
 
 # @todo
 # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../pyfragments.swg.in pyfragments.swg COPYONLY)
@@ -19,14 +21,14 @@ configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
 
 get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
 
-set_source_files_properties(${phreeqcrm_INTERFACE} PROPERTIES SWIG_FLAGS "-Wall")
-set_source_files_properties(${phreeqcrm_INTERFACE} PROPERTIES CPLUSPLUS ON)
+set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES SWIG_FLAGS "-Wall")
+set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES CPLUSPLUS ON)
 
 swig_add_library(
   ${PYTHON_TARGET_NAME}
   LANGUAGE python
   TYPE MODULE
-  SOURCES ${CMAKE_CURRENT_BINARY_DIR}/${phreeqcrm_INTERFACE} ${PhreeqcRM_SOURCES}
+  SOURCES ${phreeqcrm_INTERFACE_FULLPATH} ${PhreeqcRM_SOURCES}
 )
 
 target_link_libraries(${PYTHON_TARGET_NAME}
@@ -107,7 +109,8 @@ if(MSVC)
   get_filename_component(dir_name ${Python_EXECUTABLE} DIRECTORY)
 
   set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND "${dir_name}/${base_name}$<$<CONFIG:Debug>:_d>${ext}")
-  set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+  # set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+  set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_ENVIRONMENT "PYTHONPATH=$(OutDirFullPath)")
   set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "SimpleAdvect.py")
 endif()
 

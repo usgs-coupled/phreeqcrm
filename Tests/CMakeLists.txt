@@ -1,5 +1,5 @@
 ### tests
-if (PHREEQCRM_FORTRAN_TESTING)
+if(PHREEQCRM_FORTRAN_TESTING)
   project(FortranAdvect Fortran)
 
   # TestRM Fortran library
@@ -9,25 +9,31 @@ if (PHREEQCRM_FORTRAN_TESTING)
   target_sources(FortranAdvect PRIVATE
     ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
     ../src/RM_interface.F90
-	../src/YAML_interface.F90
     Advect_f90.F90
     AdvectBMI_f90.F90
     Gas_f90.F90
-	SimpleAdvect_f90.F90
+    SimpleAdvect_f90.F90
     Species_f90.F90
-    WriteYAMLFile_f90.F90
   )
 
   # place [*.F[90]] files into "Source Files"
   source_group("Source Files" FILES "../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90")
   source_group("Source Files" FILES "../src/RM_interface.F90")
-  source_group("Source Files" FILES "../src/YAML_interface.F90")
   source_group("Source Files" FILES "Advect_f90.F90")
   source_group("Source Files" FILES "AdvectBMI_f90.F90")
   source_group("Source Files" FILES "Gas_f90.F90")
   source_group("Source Files" FILES "SimpleAdvect_f90.F90")
   source_group("Source Files" FILES "Species_f90.F90")
-  source_group("Source Files" FILES "WriteYAMLFile_f90.F90")
+
+  if(PHREEQCRM_WITH_YAML_CPP)
+    target_sources(FortranAdvect PRIVATE
+      ../src/YAML_interface.F90
+      WriteYAMLFile_f90.F90
+    )
+    source_group("Source Files" FILES "../src/YAML_interface.F90")
+    source_group("Source Files" FILES "WriteYAMLFile_f90.F90")
+  endif()
+
 
   # The next line sets defines/includes/libraries
   # for compiling and linking the FortranAdvect library
@@ -63,14 +69,21 @@ target_sources(TestRM PRIVATE
   SimpleAdvect_cpp.cpp
   Species_c.c
   Species_cpp.cpp
-  WriteYAMLFile_cpp.cpp
 )
+
+if(PHREEQCRM_WITH_YAML_CPP)
+  target_sources(TestRM PRIVATE
+    WriteYAMLFile_cpp.cpp
+  )
+endif()
 
 if(PHREEQCRM_FORTRAN_TESTING)
   target_compile_definitions(TestRM PRIVATE TEST_FORTRAN)
 endif()
 
 # library dependencies
+target_link_libraries(TestRM PhreeqcRM::PhreeqcRM)
+
 if(PHREEQCRM_FORTRAN_TESTING)
   # Override bug reported on:
   # http://www.cmake.org/pipermail/cmake/2009-July/030954.html
@@ -79,10 +92,7 @@ if(PHREEQCRM_FORTRAN_TESTING)
       set(CMAKE_Fortran_FLAGS_DEBUG "/Od ${CMAKE_Fortran_FLAGS_DEBUG}")
     endif()
   endif()
-
-  target_link_libraries(TestRM PhreeqcRM::PhreeqcRM FortranAdvect)
-else()
-  target_link_libraries(TestRM PhreeqcRM::PhreeqcRM)
+  target_link_libraries(TestRM FortranAdvect)
 endif()
 
 # test compile and run
@@ -125,10 +135,16 @@ set_property(TARGET TestRM APPEND
 )
 
 if(MSVC AND BUILD_SHARED_LIBS)
-  # copy dll
+  # copy PhreeqcRM dll
   add_custom_command(TARGET TestRM POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PhreeqcRM> $<TARGET_FILE_DIR:TestRM>
   )
+  if(PHREEQCRM_WITH_YAML_CPP)
+    # copy yaml-cpp dll
+    add_custom_command(TARGET TestRM POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:yaml-cpp> $<TARGET_FILE_DIR:TestRM>
+    )
+  endif()
 endif()
 
 # MPI test
