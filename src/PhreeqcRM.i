@@ -8,7 +8,7 @@
 #include "PhreeqcRM.h"
 %}
 
-%ignore GetGridCellCountYAML(std::string YAML_file);  // TODO
+//%ignore GetGridCellCountYAML(std::string YAML_file);  // TODO
 
 %include "numpy.i"
 %init %{
@@ -41,12 +41,18 @@ Returns:
 
 
 %define PhreeqcRM_DOCSTRING
-"Constructor for the PhreeqcRM reaction module. If the code is compiled with 
-the preprocessor directive USE_OPENMP, the reaction module use OPENMP and 
-multiple threads. If the code is compiled with the preprocessor directive 
-USE_MPI, the reaction module will use MPI and multiple processes. If neither 
-preprocessor directive is used, the reaction module will be serial 
-(unparallelized).
+"Constructor for the PhreeqcRM reaction module. PhreeqcRM is a reaction 
+module for reactive-transport simulators. Based on IPhreeqc, it
+allows access to all PHREEQC reaction capabilities. It contains methods for 
+initial and boundary conditions, running reactions on all model cells, 
+transfer of data to and from the module, and parallelization 
+by MPI or OpenMP.
+
+If the code is compiled with the preprocessor directive USE_OPENMP, 
+the reaction module use OPENMP and multiple threads. If the code is 
+compiled with the preprocessor directive USE_MPI, the reaction module 
+will use MPI and multiple processes. If neither preprocessor directive 
+is used, the reaction module will be serial (unparallelized).
 
 Args:
 	nxyz (int): The number of grid cells in the users model. 
@@ -191,12 +197,12 @@ multiple times and the list that is created is cummulative. The list is the
 set of components that needs to be transported. By default the list includes 
 water, excess H and excess O (the H and O not contained in water); 
 alternatively, the list may be set to contain total H and total O 
-(:meth:`SetComponentH2O`), which requires transport results to be accurate to eight 
-or nine significant digits. If multicomponent diffusion (MCD) is to be 
-modeled, there is a capability to retrieve aqueous species concentrations 
-(:meth:`GetSpeciesConcentrations`) and to set new solution concentrations 
-after MCD by using individual species concentrations (:meth:
-`SpeciesConcentrations2Module`). To use these methods the save-species 
+(:meth:`SetComponentH2O`), which requires transport results to be accurate 
+to eight or nine significant digits. If multicomponent diffusion (MCD) is 
+to be modeled, there is a capability to retrieve aqueous species 
+concentrations (:meth:`GetSpeciesConcentrations`) and to set new solution 
+concentrations after MCD by using individual species concentrations 
+(:meth:`SpeciesConcentrations2Module`). To use these methods the save-species 
 property needs to be turned on (:meth:`SetSpeciesSaveOn`). If the 
 save-species property is on, FindComponents will generate a list of aqueous 
 species (:meth:`GetSpeciesCount`, :meth:`GetSpeciesNames`), their diffusion 
@@ -279,9 +285,9 @@ accurately calculate solution volume are phreeqc.dat, Amm.dat, and pitzer.dat.
 Args:
 	c (DoubleVector): Vector to receive the concentrations. Dimension of the 
 		vector is set to ncomps times nxyz, where, ncomps is the result of 
-		:meth:` FindComponents` or :meth:`GetComponentCount`, and nxyz is the number 
-		of user grid cells (:meth:`GetGridCellCount`). Values for inactive cells are 
-		set to 1e30.
+		:meth:` FindComponents` or :meth:`GetComponentCount`, and nxyz is 
+		the number of user grid cells (:meth:`GetGridCellCount`). 
+		Values for inactive cells are set to 1e30.
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
@@ -311,20 +317,24 @@ Returns:
 
 
 %define GetDensity_DOCSTRING
-"Transfer solution densities from the reaction-module workers to the vector 
-given in the argument list (density). This method always returns the 
-calculated densities; :meth:`SetDensity` does not affect the result.
+"Transfer solution densities from the reaction-module workers to the 
+vector given in the argument list (density). This method always 
+returns the calculated densities; :meth:`SetDensity` does not 
+affect the result.
 
 Args:
-	density (DoubleVector): Vector to receive the densities. Dimension of the 
-		array is set to nxyz, where nxyz is the number of user grid cells 
-		(:meth:`GetGridCellCount`). Values for inactive cells are set to 1e30. 
-		Densities are those calculated by the reaction module. Only the following 
-		databases distributed with PhreeqcRM have molar volume information needed to 
-		accurately calculate density: phreeqc.dat, Amm.dat, and pitzer.dat.
+	density (DoubleVector): Vector to receive the densities. Dimension
+		of the array is set to nxyz, where nxyz is the number of 
+		user grid cells (:meth:`GetGridCellCount`). Values for 
+		inactive cells are set to 1e30. Densities are those calculated
+		by the reaction module. Only the following databases 
+		distributed with PhreeqcRM have molar volume information 
+		needed to accurately calculate density: phreeqc.dat, Amm.dat, 
+		and pitzer.dat.
 
 Returns:
-	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
+	IRM_RESULT: 0 is success, negative is failure 
+		(See :meth:`DecodeError`)."
 %enddef
 %feature("docstring") PhreeqcRM::GetDensity GetDensity_DOCSTRING
 
@@ -407,8 +417,8 @@ definitions related to exchangers.
 
 Returns:
 	const tuple of strings: A vector of strings; each string is an exchange 
-		name corresponding to the exchange species vector; an exchange name may 
-		occur multiple times."
+		name corresponding to the exchange species vector; an exchange 
+		name may occur multiple times."
 %enddef
 %feature("docstring") PhreeqcRM::GetExchangeNames GetExchangeNames_DOCSTRING
 
@@ -462,8 +472,8 @@ one-to-one mapping--all grid cells are reaction cells (vector contains
 
 Returns:
 	const IntVector: A vector of integers of size nxyz (number of grid cells, 
-		:meth:`GetGridCellCount`). Nonnegative is a reaction-cell number (0 based
-		), negative is an inactive cell."
+		:meth:`GetGridCellCount`). Nonnegative is a reaction-cell number 
+		(0 based), negative is an inactive cell."
 %enddef
 %feature("docstring") PhreeqcRM::GetForwardMapping GetForwardMapping_DOCSTRING
 
@@ -501,11 +511,11 @@ in the argument list (gas_moles).
 
 Args:
 	gas_moles (DoubleVector): Vector to receive the moles of gas components. 
-		Dimension of the vector is set to ngas_comps times nxyz, where, ngas_comps
-		is the result of :meth:`GetGasComponentsCount`, and nxyz is the number of
-		user grid cells (:meth:`GetGridCellCount`). If a gas component is not 
-		defined for a cell, the number of moles is set to -1. Values for inactive 
-		cells are set to 1e30.
+		Dimension of the vector is set to ngas_comps times nxyz, where, 
+		ngas_comps is the result of :meth:`GetGasComponentsCount`, and nxyz 
+		is the number of user grid cells (:meth:`GetGridCellCount`). If a 
+		gas component is not defined for a cell, the number of moles is set 
+		to -1. Values for inactive cells are set to 1e30.
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
@@ -523,8 +533,8 @@ Args:
 		components. Dimension of the vector is set to ngas_comps times nxyz, where
 		ngas_comps is the result of :meth:`GetGasComponentsCount`, and nxyz is 
 		the number of user grid cells (:meth:`GetGridCellCount`). If a gas 
-		component is not defined for a cell, the pressure is set to -1. Values for
-		inactive cells are set to 1e30.
+		component is not defined for a cell, the pressure is set to -1. Values 
+		for inactive cells are set to 1e30.
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
@@ -540,9 +550,10 @@ the gas component pressure times the fugacity coefficient.
 Args:
 	gas_phi (DoubleVector): Vector to receive the fugacity coefficients of gas
 		components. Dimension of the vector is set to ngas_comps times nxyz, 
-		where, ngas_comps is the result of :meth:`GetGasComponentsCount`, and nxyz
-		is the number of user grid cells (:meth:`GetGridCellCount`). If a gas 
-		component is not defined for a cell, the fugacity coefficient is set to -1.
+		where, ngas_comps is the result of :meth:`GetGasComponentsCount`, and 
+		nxyz is the number of user grid cells (:meth:`GetGridCellCount`). If 
+		a gas component is not defined for a cell, the fugacity coefficient 
+		is set to -1.
 		Values for inactive cells are set to 1e30.
 
 Returns:
@@ -685,8 +696,8 @@ the user number for each selected-output definition in sequence.
 number for selected-output processing.
 
 Args:
-	n (int): The sequence number of the selected-output definition for which the user number will be returned.
-		Fortran, 1 based; C, 0 based.
+	n (int): The sequence number of the selected-output definition for which 
+		the user number will be returned. Fortran, 1 based; C, 0 based.
 
 Returns:
 	int: The user number of the nth selected-output definition, negative is 
@@ -713,8 +724,8 @@ reactive regardless of saturation.
 
 Returns:
 	Boolean: True, the fraction of solids and gases available for reaction is 
-		equal to the saturation; False (default), all solids and gases are reactive 
-		regardless of saturation."
+		equal to the saturation; False (default), all solids and gases are 
+		reactive regardless of saturation."
 %enddef
 %feature("docstring") PhreeqcRM::GetPartitionUZSolids GetPartitionUZSolids_DOCSTRING
 
@@ -728,7 +739,8 @@ as a function of pressure, in which case they can be updated with
 
 Returns:
 	const DoubleVector: A vector reference to the pore volumes.
-		Size of vector is nxyz, the number of grid cells in the user model (:meth:`GetGridCellCount`)."
+		Size of vector is nxyz, the number of grid cells in the user model 
+		(:meth:`GetGridCellCount`)."
 %enddef
 %feature("docstring") PhreeqcRM::GetPoreVolume GetPoreVolume_DOCSTRING
 
@@ -741,8 +753,8 @@ call to :meth:`SetPorosity`.
 
 Returns:
 	const DoubleVector: A vector reference to the porosities in each cell, 
-		unitless. Size of vector is nxyz, the number of grid cells in the user model 
-		(:meth:`GetGridCellCount`)."
+		unitless. Size of vector is nxyz, the number of grid cells in the user 
+		model (:meth:`GetGridCellCount`)."
 %enddef
 %feature("docstring") PhreeqcRM::GetPorosity GetPorosity_DOCSTRING
 
@@ -758,8 +770,8 @@ Amm.dat, and pitzer.dat.
 
 Returns:
 	const DoubleVector: A vector reference to the pressures in each cell, in atm.
-		Size of vector is nxyz, the number of grid cells in the user model (:meth:`
-		GetGridCellCount`)."
+		Size of vector is nxyz, the number of grid cells in the user model 
+		(:meth:`GetGridCellCount`)."
 %enddef
 %feature("docstring") PhreeqcRM::GetPressure GetPressure_DOCSTRING
 
@@ -839,43 +851,47 @@ Returns:
 
 
 %define GetSaturation_DOCSTRING
-"Returns a vector of saturations (sat) as calculated by the reaction module. 
-This method always returns solution_volume/(rv * porosity); the method 
-:meth:`SetSaturation` has no effect on the values returned. Reactions will 
-change the volume of solution in a cell. The transport code must decide whether 
-to ignore or account for this change in solution volume due to reactions. 
-Following reactions, the cell saturation is calculated as solution volume 
-(:meth:`GetSolutionVolume`) divided by the product of representative volume 
+"Returns a vector of saturations (sat) as calculated by the reaction 
+module. This method always returns solution_volume/(rv * porosity); 
+the method :meth:`SetSaturation` has no effect on the values returned. 
+Reactions will change the volume of solution in a cell. The transport 
+code must decide whether to ignore or account for this change in 
+solution volume due to reactions. Following reactions, the cell 
+saturation is calculated as solution volume (:meth:`GetSolutionVolume`) 
+divided by the product of representative volume 
 (:meth:`SetRepresentativeVolume`) and the porosity (:meth:`SetPorosity`). The 
-cell saturation returned by GetSaturation may be less than or greater than the 
-saturation set by the transport code (:meth:`SetSaturation`), and may be greater 
-than or less than 1.0, even in fully saturated simulations. Only the following 
-databases distributed with PhreeqcRM have molar volume information needed to 
-accurately calculate solution volume and saturation: phreeqc.dat, Amm.dat, and 
-pitzer.dat.
+cell saturation returned by GetSaturation may be less than or greater 
+than the saturation set by the transport code (:meth:`SetSaturation`), 
+and may be greater than or less than 1.0, even in fully saturated 
+simulations. Only the following databases distributed with PhreeqcRM 
+have molar volume information needed to accurately calculate solution 
+volume and saturation: phreeqc.dat, Amm.dat, and pitzer.dat.
 
 Args:
-	sat (DoubleVector): Vector to receive the saturations. Dimension of the array
-		is set to nxyz, where nxyz is the number of user grid cells (:meth:`
-		GetGridCellCount`). Values for inactive cells are set to 1e30.
+	sat (DoubleVector): Vector to receive the saturations. Dimension 
+		of the array is set to nxyz, where nxyz is the number of user 
+		grid cells (:meth:`GetGridCellCount`). Values for inactive 
+		cells are set to 1e30.
 
 Returns:
-	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
+	IRM_RESULT: 0 is success, negative is failure 
+		(See :meth:`DecodeError`)."
 %enddef
 %feature("docstring") PhreeqcRM::GetSaturation GetSaturation_DOCSTRING
 
 
 %define GetSelectedOutput_DOCSTRING
-"Returns the array of selected-output values for the current selected-output 
-definition. :meth:`SetCurrentSelectedOutputUserNumber` specifies which of the 
-selected-output definitions is returned to the vector (so).
+"Returns the array of selected-output values for the current 
+selected-output definition. :meth:`SetCurrentSelectedOutputUserNumber` 
+specifies which of the selected-output definitions is returned to the 
+vector (so).
 
 Args:
-	so (DoubleVector): A vector to contain the selected-output values. Size of 
-the vector is set to col times nxyz, where col is the number of columns in 
-the selected-output definition (:meth:`GetSelectedOutputColumnCount`), and 
-nxyz is the number of grid cells in the user model (:meth:`GetGridCellCount`
-).
+	so (DoubleVector): A vector to contain the selected-output values. 
+		Size of the vector is set to col times nxyz, where col is the 
+		number of columns in the selected-output definition 
+		(:meth:`GetSelectedOutputColumnCount`), and nxyz is the number 
+		of grid cells in the user model (:meth:`GetGridCellCount`).
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
@@ -901,19 +917,21 @@ Returns:
 selected-output definitions is used.
 
 Returns:
-	int: Number of selected-output definitions, negative is failure (See :meth:`
-		DecodeError`)."
+	int: Number of selected-output definitions, negative is failure 
+		(See :meth:`DecodeError`)."
 %enddef
 %feature("docstring") PhreeqcRM::GetSelectedOutputCount GetSelectedOutputCount_DOCSTRING
 
 
 %define GetSelectedOutputHeading_DOCSTRING
-"Returns a selected-output heading. The number of headings is determined by 
-:meth:`GetSelectedOutputColumnCount`. :meth:`SetCurrentSelectedOutputUserNumber` 
-specifies which of the selected-output definitions is used.
+"Returns a selected-output heading. The number of headings is determined 
+by :meth:`GetSelectedOutputColumnCount`. 
+:meth:`SetCurrentSelectedOutputUserNumber` specifies which of the 
+selected-output definitions is used.
 
 Args:
-	icol (int): The sequence number of the heading to be retrieved, 0 based.
+	icol (int): The sequence number of the heading to be retrieved, 
+		0 based. 
 	heading(string): A string to receive the heading.
 
 Returns:
@@ -923,14 +941,15 @@ Returns:
 
 
 %define GetSelectedOutputHeadings_DOCSTRING
-"Returns a list of the current selected-output headings. The number of headings 
-is determined by :meth:`GetSelectedOutputColumnCount`. 
+"Returns a list of the current selected-output headings. The number of 
+headings is determined by :meth:`GetSelectedOutputColumnCount`. 
 :meth:`SetCurrentSelectedOutputUserNumber` or 
-:meth:`BMI_SetValue`('NthSelectedOutput',i) are used to specify which of the 
-selected-output definitions is used.
+:meth:`BMI_SetValue`('NthSelectedOutput',i) are used to specify which 
+of the selected-output definitions is used.
 
 Args:
-	headings (tuple of strings): A vector of std::strings to receive the headings.
+	headings (tuple of strings): A vector of std::strings to receive 
+		the headings.
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
@@ -939,39 +958,41 @@ Returns:
 
 
 %define GetSelectedOutputOn_DOCSTRING
-"Returns the current value of the selected-output property. A value of true for 
-this property indicates that selected output data will be requested this time 
-step. A value of false indicates that selected output will not be retrieved for 
-this time step; processing the selected output is avoided with some time savings.
+"Returns the current value of the selected-output property. A value of 
+true for this property indicates that selected output data will be 
+requested this time step. A value of false indicates that selected 
+output will not be retrieved for this time step; processing the selected 
+output is avoided with some time savings.
 
 Returns:
-	Boolean: True, selected output will be requested; false, selected output will not be retrieved."
+	Boolean: True, selected output will be requested; false, selected 
+		output will not be retrieved."
 %enddef
 %feature("docstring") PhreeqcRM::GetSelectedOutputOn GetSelectedOutputOn_DOCSTRING
 
 
 %define GetSelectedOutputRowCount_DOCSTRING
-"Returns the number of rows in the current selected-output definition. However, 
-the method is included only for convenience; the number of rows is always equal 
-to the number of grid cells in the user model (:meth:`GetGridCellCount`).
+"Returns the number of rows in the current selected-output definition. 
+However, the method is included only for convenience; the number of 
+rows is always equal to the number of grid cells in the user model 
+(:meth:`GetGridCellCount`).
 
 Returns:
-	int: Number of rows in the current selected-output definition, negative is 
-		failure."
+	int: Number of rows in the current selected-output definition, 
+		negative is failure."
 %enddef
 %feature("docstring") PhreeqcRM::GetSelectedOutputRowCount GetSelectedOutputRowCount_DOCSTRING
 
 
 %define GetSICount_DOCSTRING
-"Returns the number of phases in the initial-phreeqc module for which saturation 
-indices could be calculated. :meth:`FindComponents` must be called before 
-:meth:`GetSICount`. This method may be useful when generating selected output 
-definitions related to saturation indices.
-
+"Returns the number of phases in the initial-phreeqc module for which 
+saturation indices could be calculated. :meth:`FindComponents` must be 
+called before :meth:`GetSICount`. This method may be useful when 
+generating selected output definitions related to saturation indices.
 
 Returns:
-	int: The number of phases in the initial-phreeqc module for which saturation 
-		indices could be calculated."
+	int: The number of phases in the initial-phreeqc module for which 
+		saturation indices could be calculated."
 %enddef
 %feature("docstring") PhreeqcRM::GetSICount GetSICount_DOCSTRING
 
@@ -1017,7 +1038,8 @@ generating selected output definitions related to solid solutions.
 
 
 Returns:
-	int: The number of solid solution components in the initial-phreeqc module."
+	int: The number of solid solution components in the initial-phreeqc
+		module."
 %enddef
 %feature("docstring") PhreeqcRM::GetSolidSolutionComponentsCount GetSolidSolutionComponentsCount_DOCSTRING
 
@@ -1065,10 +1087,11 @@ pitzer.dat.
 
 Args:
 	species_conc (DoubleVector): Vector to receive the aqueous species 
-		concentrations. Dimension of the vector is set to nspecies times nxyz, where
-		nspecies is the number of aqueous species (:meth:`GetSpeciesCount`), and 
-		nxyz is the number of grid cells (:meth:`GetGridCellCount`). Concentrations 
-		are moles per liter. Values for inactive cells are set to 1e30.
+		concentrations. Dimension of the vector is set to nspecies times nxyz, 
+		where nspecies is the number of aqueous species (:meth:`GetSpeciesCount`), and 
+		nxyz is the number of grid cells (:meth:`GetGridCellCount`). 
+		Concentrations are moles per liter. Values for inactive cells are set 
+		to 1e30.
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
@@ -1138,8 +1161,8 @@ Args:
 	species_log10molalities (DoubleVector): Vector to receive the log10 aqueous 
 		species molalites. Dimension of the vector is set to nspecies times nxyz, 
 		where nspecies is the number of aqueous species (:meth:`GetSpeciesCount`), 
-		and nxyz is the number of grid cells (:meth:`GetGridCellCount`). Values for 
-		inactive cells are set to 1e30.
+		and nxyz is the number of grid cells (:meth:`GetGridCellCount`). 
+		Values for inactive cells are set to 1e30.
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
@@ -1187,8 +1210,8 @@ calculations, and :meth:`SetSpeciesSaveOn` must be set to true.
 Returns:
 	Vector of cxxNameDouble instances (maps) that contain the component names 
 		and associated stoichiometric coefficients for each aqueous species.  
-		Dimension of the vector is nspecies, where nspecies is the number of aqueous
-		species (:meth:`GetSpeciesCount`)."
+		Dimension of the vector is nspecies, where nspecies is the number of 
+		aqueous species (:meth:`GetSpeciesCount`)."
 %enddef
 %feature("docstring") PhreeqcRM::GetSpeciesStoichiometry GetSpeciesStoichiometry_DOCSTRING
 
@@ -1200,8 +1223,8 @@ is intended for use with multicomponent-diffusion transport calculations, and
 
 Returns:
 	DoubleVector: Vector containing the charge on each aqueous species. 
-		Dimension of the vector is nspecies, where nspecies is the number of aqueous
-		species (:meth:`GetSpeciesCount`)."
+		Dimension of the vector is nspecies, where nspecies is the number of 
+		aqueous species (:meth:`GetSpeciesCount`)."
 %enddef
 %feature("docstring") PhreeqcRM::GetSpeciesZ GetSpeciesZ_DOCSTRING
 
@@ -1279,8 +1302,8 @@ surfaces.
 
 Returns:
 	const tuple of strings: Vector of strings; each string is a surface site 
-		type for the corresponding species in the surface species vector; a surface 
-		site type may occur multiple times."
+		type for the corresponding species in the surface species vector; a 
+		surface site type may occur multiple times."
 %enddef
 %feature("docstring") PhreeqcRM::GetSurfaceTypes GetSurfaceTypes_DOCSTRING
 
@@ -1357,9 +1380,9 @@ defined by moles of exchange sites (Mp). :meth:`SetUnitsExchange` specifies how
 the number of moles of exchange sites in a reaction cell (Mc) is calculated 
 from the input value (Mp).
 
-Options are
-0, Mp is mol/L of RV (default),    Mc = Mp*RV, where RV is the representative volume (:meth:`SetRepresentativeVolume`);
-1, Mp is mol/L of water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
+Options are 0, Mp is mol/L of RV (default),    Mc = Mp*RV, where RV is the 
+representative volume (:meth:`SetRepresentativeVolume`); 1, Mp is mol/L of 
+water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
 2, Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
 
 Returns:
@@ -1374,11 +1397,10 @@ defined by moles of component gases (Mp). :meth:`SetUnitsGasPhase` specifies
 how the number of moles of component gases in a reaction cell (Mc) is 
 calculated from the input value (Mp).
 
-Options are
-0, Mp is mol/L of RV (default),    Mc = Mp*RV, where RV is the representative volume (:meth:`SetRepresentativeVolume`);
-1, Mp is mol/L of water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
+Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV, where RV is the 
+representative volume (:meth:`SetRepresentativeVolume`); 1, Mp is mol/L of 
+water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
 2, Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
-
 
 Returns:
 	int: Input units for gas phases (0, 1, or 2)."
@@ -1392,10 +1414,10 @@ defined by moles of kinetic reactants (Mp). :meth:`SetUnitsKinetics` specifies
 how the number of moles of kinetic reactants in a reaction cell (Mc) is 
 calculated from the input value (Mp).
 
-Options are
-0, Mp is mol/L of RV (default),    Mc = Mp*RV, where RV is the representative volume (:meth:`SetRepresentativeVolume`);
-1, Mp is mol/L of water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
-2, Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
+Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV, where RV is 
+the representative volume (:meth:`SetRepresentativeVolume`); 1, Mp is 
+mol/L of water in the RV, Mc = Mp*P*RV, where P is porosity 
+(:meth:`SetPorosity`); or 2, Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
 
 Returns:
 	int: Input units for kinetic reactants (0, 1, or 2)."
@@ -1409,10 +1431,10 @@ PHREEQC input, equilibrium phases are defined by moles of each phase (Mp).
 :meth:`SetUnitsPPassemblage` specifies how the number of moles of phases in a 
 reaction cell (Mc) is calculated from the input value (Mp).
 
-Options are
-0, Mp is mol/L of RV (default),    Mc = Mp*RV, where RV is the representative volume (:meth:`SetRepresentativeVolume`);
-1, Mp is mol/L of water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
-2, Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
+Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV, where RV is 
+the representative volume (:meth:`SetRepresentativeVolume`); 1, Mp is 
+mol/L of water in the RV, Mc = Mp*P*RV, where P is porosity 
+(:meth:`SetPorosity`); or 2, Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
 
 Returns:
 	int: Input units for equilibrium phases (0, 1, or 2)."
@@ -1464,9 +1486,9 @@ solid solutions are defined by moles of each component (Mp).
 :meth:`SetUnitsSSassemblage` specifies how the number of moles in a reaction 
 cell (Mc) is calculated from the input value (Mp).
 
-Options are
-0, Mp is mol/L of RV (default),    Mc = Mp*RV, where RV is the representative volume (:meth:`SetRepresentativeVolume`);
-1, Mp is mol/L of water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
+Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV, where RV is the 
+representative volume (:meth:`SetRepresentativeVolume`); 1, Mp is mol/L of 
+water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
 2, Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
 
 Returns:
@@ -1481,9 +1503,9 @@ by moles of surface sites  (Mp). :meth:`SetUnitsSurface` specifies how the
 number of moles of surface sites in a reaction cell (Mc) is calculated from the 
 input value (Mp).
 
-Options are
-0, Mp is mol/L of RV (default),    Mc = Mp*RV, where RV is the representative volume (:meth:`SetRepresentativeVolume`);
-1, Mp is mol/L of water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
+Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV, where RV is the 
+representative volume (:meth:`SetRepresentativeVolume`); 1, Mp is mol/L of 
+water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
 2, Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
 
 Returns:
@@ -1538,12 +1560,14 @@ the YAMLPhreeqcRM class include the following list; all but SetGridCellCount
 correspond to PhreeqcRM methods.
 
 CloseFiles(void);
-CreateMapping(DoubleVector grid2chem);
+CreateMapping(float list, numpy.ndarray, or tuple: grid2chem);
 DumpModule();
 FindComponents();
-InitialPhreeqc2Module(IntVector initial_conditions1);
-InitialPhreeqc2Module_mix(IntVector initial_conditions1, IntVector initial_conditions2, DoubleVector fraction1);
-InitialPhreeqcCell2Module(int n, IntVector cell_numbers);
+InitialPhreeqc2Module(int list, numpy.ndarray, or tuple: initial_conditions1);
+InitialPhreeqc2Module_mix(int list, numpy.ndarray, or tuple: initial_conditions1, 
+	int list, numpy.ndarray, or tuple initial_conditions2, 
+	float list, numpy.ndarray, or tuple: fraction1);
+InitialPhreeqcCell2Module(int n, int list, numpy.ndarray, or tuple cell_numbers);
 LoadDatabase(string database);
 OpenFiles(void);
 OutputMessage(string str);
@@ -1552,29 +1576,29 @@ RunFile(Boolean workers, Boolean initial_phreeqc, Boolean utility, string chemis
 RunString(Boolean workers, Boolean initial_phreeqc, Boolean utility, string input_string);
 ScreenMessage(string str);
 SetComponentH2O(Boolean tf);
-SetConcentrations(DoubleVector c);
+SetConcentrations(float list, numpy.ndarray, or tuple: c);
 SetCurrentSelectedOutputUserNumber(int n_user);
-SetDensity(DoubleVector density);
+SetDensity(float list, numpy.ndarray, or tuple: density);
 SetDumpFileName(string dump_name);
 SetErrorHandlerMode(int mode);
 SetErrorOn(Boolean tf);
 SetFilePrefix(string prefix);
-SetGasCompMoles(DoubleVector gas_moles);
-SetGasPhaseVolume(DoubleVector gas_volume);
+SetGasCompMoles(float list, numpy.ndarray, or tuple: gas_moles);
+SetGasPhaseVolume(float list, numpy.ndarray, or tuple: gas_volume);
 SetGridCellCount(int nxyz);
 SetPartitionUZSolids(Boolean tf);
-SetPorosity(DoubleVector por);
-SetPressure(DoubleVector p);
-SetPrintChemistryMask(IntVector cell_mask);
+SetPorosity(float list, numpy.ndarray, or tuple: por);
+SetPressure(float list, numpy.ndarray, or tuple: p);
+SetPrintChemistryMask(int list, numpy.ndarray, or tuple: cell_mask);
 SetPrintChemistryOn(Boolean workers, Boolean initial_phreeqc, Boolean utility);
 SetRebalanceByCell(Boolean tf);
 SetRebalanceFraction(float f);
-SetRepresentativeVolume(DoubleVector rv);
-SetSaturation(DoubleVector sat);
+SetRepresentativeVolume(float list, numpy.ndarray, or tuple: rv);
+SetSaturation(float list, numpy.ndarray, or tuple: sat);
 SetScreenOn(Boolean tf);
 SetSelectedOutputOn(Boolean tf);
 SetSpeciesSaveOn(Boolean save_on);
-SetTemperature(DoubleVector t);
+SetTemperature(float list, numpy.ndarray, or tuple: t);
 SetTime(float time);
 SetTimeConversion(float conv_factor);
 SetTimeStep(float time_step);
@@ -1585,7 +1609,7 @@ SetUnitsPPassemblage(int option);
 SetUnitsSolution(int option);
 SetUnitsSSassemblage(int option);
 SetUnitsSurface(int option);
-SpeciesConcentrations2Module(DoubleVector species_conc);
+SpeciesConcentrations2Module(float list, numpy.ndarray, or tuple: species_conc);
 StateSave(int istate);
 StateApply(int istate);
 StateDelete(int istate);
@@ -1607,12 +1631,13 @@ instance will be used for that cell.
 
 Args:
 	destination_c (DoubleVector): Vector to receive the concentrations.The 
-		dimension of destination_c is set to ncomps times n_boundary, where ncomps 
-		is the number of components returned from :meth:`FindComponents` or :meth:`
-		GetComponentCount`, and n_boundary is the dimension of the vector 
-		boundary_solution1.
-	boundary_solution1  Vector of solution index numbers that refer to solutions
-		in the InitialPhreeqc instance. Size is n_boundary.
+		dimension of destination_c is set to ncomps times n_boundary, where 
+		ncomps is the number of components returned from :meth:`FindComponents` 
+		or :meth:`GetComponentCount`, and n_boundary is the dimension of the 
+		vector boundary_solution1.
+	boundary_solution1(float list, numpy.ndarray, or tuple):  Vector of solution 
+		index numbers that refer to solutions in the InitialPhreeqc instance. 
+		Size is n_boundary.
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
@@ -2302,10 +2327,11 @@ reaction cell will occur only when the printing is enabled with
 :meth:`SetPrintChemistryOn` and the cell_mask value is 1.
 
 Args:
-	cell_mask (IntVector): Vector of integers. Size of vector is nxyz, where 
-		nxyz is the number of grid cells in the user model (:meth:`GetGridCellCount`). 
-		A value of 0 will disable printing detailed output for the cell; a value 
-		of 1 will enable printing detailed output for a cell.
+	cell_mask (Intfloat list, numpy.ndarray, or tuple): Vector of integers. 
+		Size of vector is nxyz, where nxyz is the number of grid cells in 
+		the user model (:meth:`GetGridCellCount`). A value of 0 will disable 
+		printing detailed output for the cell; a value of 1 will enable 
+		printing detailed output for a cell.
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
@@ -2543,9 +2569,9 @@ moles of exchange sites (Mp). SetUnitsExchange specifies how the number of
 moles of exchange sites in a reaction cell (Mc)
 is calculated from the input value (Mp).
 
-Options are
-0, Mp is mol/L of RV (default),    Mc = Mp*RV, where RV is the representative volume (:meth:`SetRepresentativeVolume`);
-1, Mp is mol/L of water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
+Options are 0, Mp is mol/L of RV (default),    Mc = Mp*RV, where RV is the 
+representative volume (:meth:`SetRepresentativeVolume`); 1, Mp is mol/L of 
+water in the RV, Mc = Mp*P*RV, where P is porosity (:meth:`SetPorosity`); or
 2, Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
 
 If a single EXCHANGE definition is used for cells with different initial 
@@ -2925,7 +2951,8 @@ Returns:
 
 
 %define BMI_GetOutputItemCount_DOCSTRING
-"Basic Model Interface method that returns count of output variables that can be retrieved with :meth:`BMI_GetValue`.
+"Basic Model Interface method that returns count of output variables that can be
+retrieved with :meth:`BMI_GetValue`.
 
 Returns:
 	int: Count of output variables that can be retrieved with 
@@ -2939,7 +2966,8 @@ Returns:
 can be retrieved with :meth:`BMI_GetValue`.
 
 Returns:
-	tuple of strings: A list of the variable names that can be retrieved with :meth:`BMI_GetValue`."
+	tuple of strings: A list of the variable names that can be retrieved with
+		:meth:`BMI_GetValue`."
 %enddef
 %feature("docstring") PhreeqcRM::BMI_GetOutputVarNames BMI_GetOutputVarNames_DOCSTRING
 
@@ -3094,12 +3122,14 @@ the YAML file; only the order of the arguments is important.
 The PhreeqcRM methods that can be specified in a YAML file include:
 
 CloseFiles(void);
-CreateMapping(IntVector& grid2chem);
+CreateMapping(int list, numpy.ndarray, or tuple: grid2chem);
 DumpModule();
 FindComponents();
-InitialPhreeqc2Module(IntVector initial_conditions1);
-InitialPhreeqc2Module(IntVector initial_conditions1, IntVector initial_conditions2, DoubleVector fraction1);
-InitialPhreeqcCell2Module(int n, IntVector cell_numbers);
+InitialPhreeqc2Module(int list, numpy.ndarray, or tuple: initial_conditions1);
+InitialPhreeqc2Module(int list, numpy.ndarray, or tuple: initial_conditions1, 
+	int list, numpy.ndarray, or tuple: initial_conditions2, 
+	float list, numpy.ndarray, or tuple: fraction1);
+InitialPhreeqcCell2Module(int n, int list, numpy.ndarray, or tuple: cell_numbers);
 LoadDatabase(string database);
 OpenFiles(void);
 OutputMessage(string str);
@@ -3108,28 +3138,28 @@ RunFile(Boolean workers, Boolean initial_phreeqc, Boolean utility, string chemis
 RunString(Boolean workers, Boolean initial_phreeqc, Boolean utility, string input_string);
 ScreenMessage(string str);
 SetComponentH2O(Boolean tf);
-SetConcentrations(DoubleVector c);
+SetConcentrations(float list, numpy.ndarray, or tuple: c);
 SetCurrentSelectedOutputUserNumber(int n_user);
-SetDensity(DoubleVector density);
+SetDensity(float list, numpy.ndarray, or tuple: density);
 SetDumpFileName(string dump_name);
 SetErrorHandlerMode(int mode);
 SetErrorOn(Boolean tf);
 SetFilePrefix(string prefix);
-SetGasCompMoles(DoubleVector gas_moles);
-SetGasPhaseVolume(DoubleVector gas_volume);
+SetGasCompMoles(float list, numpy.ndarray, or tuple: gas_moles);
+SetGasPhaseVolume(float list, numpy.ndarray, or tuple: gas_volume);
 SetPartitionUZSolids(Boolean tf);
-SetPorosity(DoubleVector por);
-SetPressure(DoubleVector p);
-SetPrintChemistryMask(IntVector cell_mask);
+SetPorosity(float list, numpy.ndarray, or tuple: por);
+SetPressure(float list, numpy.ndarray, or tuple: p);
+SetPrintChemistryMask(int list, numpy.ndarray, or tuple: cell_mask);
 SetPrintChemistryOn(Boolean workers, Boolean initial_phreeqc, Boolean utility);
 SetRebalanceByCell(Boolean tf);
 SetRebalanceFraction(float f);
-SetRepresentativeVolume(DoubleVector rv);
-SetSaturation(DoubleVector sat);
+SetRepresentativeVolume(float list, numpy.ndarray, or tuple: rv);
+SetSaturation(float list, numpy.ndarray, or tuple: sat);
 SetScreenOn(Boolean tf);
 SetSelectedOutputOn(Boolean tf);
 SetSpeciesSaveOn(Boolean save_on);
-SetTemperature(DoubleVector t);
+SetTemperature(float list, numpy.ndarray, or tuple: t);
 SetTime(float time);
 SetTimeConversion(float conv_factor);
 SetTimeStep(float time_step);
@@ -3140,7 +3170,7 @@ SetUnitsPPassemblage(int option);
 SetUnitsSolution(int option);
 SetUnitsSSassemblage(int option);
 SetUnitsSurface(int option);
-SpeciesConcentrations2Module(DoubleVector species_conc);
+SpeciesConcentrations2Module(float list, numpy.ndarray, or tuple: species_conc);
 StateSave(int istate);
 StateApply(int istate);
 StateDelete(int istate);
