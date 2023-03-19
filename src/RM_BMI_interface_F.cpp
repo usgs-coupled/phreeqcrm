@@ -7,6 +7,7 @@
 #include "IPhreeqcPhastLib.h"
 #include "Phreeqc.h"
 #include "PHRQ_io.h"
+#include "BMI_Var.h"
 #include <string>
 #include <map>
 #include <sstream>
