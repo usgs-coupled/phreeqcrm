@@ -33,6 +33,8 @@
 	status = YAMLSetRebalanceByCell(id, .true.)
 	status = YAMLUseSolutionDensityVolume(id, .false.)
 	status = YAMLSetPartitionUZSolids(id, .false.)
+    status = YAMLSetFilePrefix(id, "AdvectBMI_f90")
+    status = YAMLOpenFiles(id)
     ! Set concentration units
 	status = YAMLSetUnitsSolution(id, 2)           ! 1, mg/L; 2, mol/L; 3, kg/kgs
 	status = YAMLSetUnitsPPassemblage(id, 1)       ! 0, mol/L cell; 1, mol/L water; 2 mol/L rock
@@ -52,7 +54,7 @@
 	status = YAMLSetRepresentativeVolume(id, rv)
 	! Set initial density
     allocate(density(nxyz))
-    por = 1.0d0
+    density = 1.0d0
 	status = YAMLSetDensity(id, density)
     ! Set initial porosity
     allocate(por(nxyz))

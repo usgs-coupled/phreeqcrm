@@ -133,8 +133,8 @@
     rm_id = id
 #endif
     ! Open files
-    status = RM_BMI_SetValue(id, "FilePrefix", "AdvectBMI_f90")
-    status = RM_OpenFiles(id)
+    !status = RM_BMI_SetValue(id, "FilePrefix", "AdvectBMI_f90")
+    !status = RM_OpenFiles(id)
     ! Initialize with YAML file
     status = RM_BMI_Initialize(id, yaml_file)
 
