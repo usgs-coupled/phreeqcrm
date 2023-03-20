@@ -54,7 +54,7 @@
 	status = YAMLSetRepresentativeVolume(id, rv)
 	! Set initial density
     allocate(density(nxyz))
-    por = 1.0d0
+    density = 1.0d0
 	status = YAMLSetDensity(id, density)
     ! Set initial porosity
     allocate(por(nxyz))
