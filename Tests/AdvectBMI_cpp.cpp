@@ -54,7 +54,7 @@ int AdvectBMI_cpp()
 		// using the YAMLPhreeqcRM class and the method
 		// YAMLSetGridCellCount), the return
 		// value is zero.
-		int nxyz = GetGridCellCountYAML(yaml_file.c_str());
+		int nxyz = PhreeqcRM::GetGridCellCountYAML(yaml_file.c_str());
 
 		// Data for call_back demostration
 		std::vector<double> hydraulic_K;

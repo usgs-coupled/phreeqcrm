@@ -5,29 +5,28 @@
 #include <string>
 #include <vector>
 #include "YAMLPhreeqcRM.h"
-#define _INC_PHREEQC_H
-#include "thread.h"
 
 std::map<size_t, YAMLPhreeqcRM*> YAMLPhreeqcRM::Instances;
+std::mutex YAMLPhreeqcRM::InstancesLock;
 size_t YAMLPhreeqcRM::InstancesIndex = 0;
 
 YAMLPhreeqcRM::YAMLPhreeqcRM()
 {
-	mutex_lock(&map_lock);
+	InstancesLock.lock();
 	this->Index = YAMLPhreeqcRM::InstancesIndex++;
 	std::map<size_t, YAMLPhreeqcRM*>::value_type instance(this->Index, this);
 	YAMLPhreeqcRM::Instances.insert(instance);
-	mutex_unlock(&map_lock);
+	InstancesLock.unlock();
 }
 YAMLPhreeqcRM::~YAMLPhreeqcRM()
 {
-	mutex_lock(&map_lock);
+	InstancesLock.lock();
 	std::map<size_t, YAMLPhreeqcRM*>::iterator it = YAMLPhreeqcRM::Instances.find(this->Index);
 	if (it != YAMLPhreeqcRM::Instances.end())
 	{
 		YAMLPhreeqcRM::Instances.erase(it);
 	}
-	mutex_unlock(&map_lock);
+	InstancesLock.unlock();
 }
 void YAMLPhreeqcRM::Clear()
 {
@@ -390,13 +389,13 @@ YAMLPhreeqcRM*
 YAMLPhreeqcRMLib::GetInstance(int id)
 {
 	YAMLPhreeqcRM* instance = 0;
-	mutex_lock(&map_lock);
+	YAMLPhreeqcRM::InstancesLock.lock();
 	std::map<size_t, YAMLPhreeqcRM*>::iterator it = YAMLPhreeqcRM::Instances.find(size_t(id));
 	if (it != YAMLPhreeqcRM::Instances.end())
 	{
 		instance = (*it).second;
 	}
-	mutex_unlock(&map_lock);
+	YAMLPhreeqcRM::InstancesLock.unlock();
 	return instance;
 }
 #endif

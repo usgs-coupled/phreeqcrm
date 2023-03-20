@@ -1,6 +1,7 @@
 #ifdef USE_MPI
 #include "mpi.h"
 #endif
+#include "BMI_Var.h"
 #include "PhreeqcRM.h"
 #include "RM_interface_F.h"
 #include "IPhreeqcPhastLib.h"
@@ -289,6 +290,6 @@ RMF_GetGridCellCountYAML(const char* config)
 /* ---------------------------------------------------------------------- */
 {
 	// Returns units of variable var
-	return GetGridCellCountYAML(config);
+	return PhreeqcRM::GetGridCellCountYAML(config);
 }
 #endif

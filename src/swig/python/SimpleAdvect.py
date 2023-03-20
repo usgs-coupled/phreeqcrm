@@ -1,5 +1,6 @@
 import phreeqcrm
-import numpy as np
+import sys
+# import numpy as np
 
 """
     Functions that accept a constant vector reference
@@ -95,7 +96,11 @@ def SimpleAdvect():
     phreeqc_rm.OutputMessage("\n")
 
     # Set array of initial conditions
-    ic1 = np.full((nxyz * 7,), -1)
+    if 'numpy' in sys.modules:
+        # this may require numpy to be linked in
+        ic1 = np.full((nxyz * 7,), -1)
+    else:
+        ic1 = [-1] * nxyz * 7
     for i in range(nxyz):
         ic1[i]            =  1  # Solution 1
         ic1[nxyz + i]     = -1  # Equilibrium phases none

@@ -7,6 +7,9 @@
 #include "IPhreeqcPhastLib.h"
 #include "Phreeqc.h"
 #include "PHRQ_io.h"
+#ifdef USE_YAML
+#include "YAMLPhreeqcRM.h"
+#endif
 #include <string>
 #include <map>
 
@@ -862,7 +865,7 @@ RMF_GetGridCellCountYAML(char* config_file)
 {
 	// Returns the number of grid cells extracted from YAML file
 
-	return GetGridCellCountYAML(config_file);
+	return PhreeqcRM::GetGridCellCountYAML(config_file);
 }
 #endif
 /* ---------------------------------------------------------------------- */

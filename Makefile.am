@@ -5,7 +5,7 @@ PHREEQCRM_EXTRA_DIST=\
 	src/CMakeLists.txt\
 	src/PhreeqcRM.i\
 	src/numpy.i\
-	src/pyfragments.swg\
+	src/pyfragments.swg.in\
 	src/swig/CMakeLists.txt\
 	src/swig/python/CMakeLists.txt\
 	src/swig/python/SimpleAdvect.py\
@@ -174,14 +174,16 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.cpp\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.h\
 	src/BMI_methods.cpp\
-  	src/BMI_Var.h\
+	src/BMI_Var.h\
 	src/PhreeqcRM.cpp\
+	src/RM_BMI_interface_F.cpp\
 	src/RM_interface_C.cpp\
 	src/RM_interface_F.cpp\
 	src/RM_interface_F.h\
+	src/YAML_interface_F.cpp\
+	src/YAML_interface_F.h\
 	src/YAMLPhreeqcRM.cpp\
 	src/YAMLPhreeqcRM.h
-
 
 
 include_HEADERS=\
@@ -219,7 +221,8 @@ dist_source_DATA=$(SRC)
 
 SRC=\
 	src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90\
-	src/RM_interface.F90
+	src/RM_interface.F90\
+	src/YAML_interface.F90
 
 # We must override the default PPFCCOMPILE since ifort can't
 # handle the FC_FUNC define correctly so $(DEFS) is replaced

@@ -1509,19 +1509,6 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 	}
     return IRM_RESULT::IRM_OK;
 }
-// Global method
-int 
-GetGridCellCountYAML(const char* YAML_file)
-{
-    YAML::Node yaml = YAML::LoadFile(YAML_file);
-    std::string keyword;
-    YAML::Node node;
-    if (yaml["SetGridCellCount"].IsDefined())
-    {
-        return yaml["SetGridCellCount"].as<int>();
-    }
-    return 0;
-}
 #endif
 
 

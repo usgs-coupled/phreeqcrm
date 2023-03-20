@@ -5,6 +5,7 @@
 #ifndef INC_YAMLPHREEQCRM_H
 #define INC_YAMLPHREEQCRM_H
 #include <map>
+#include <mutex>
 #include <string>
 #include "yaml-cpp/yaml.h"
 #include "IrmResult.h"
@@ -29,6 +30,7 @@ private:
 protected:
 	friend class YAMLPhreeqcRMLib;
 	static std::map<size_t, YAMLPhreeqcRM*> Instances;
+	static std::mutex InstancesLock;
 	static size_t InstancesIndex;
 	size_t Index;
 public:

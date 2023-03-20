@@ -28,12 +28,11 @@ endif()
 include(GNUInstallDirs)
 
 option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
-find_package(yaml-cpp QUIET)
 if(PHREEQCRM_WITH_YAML_CPP)
   find_package(yaml-cpp REQUIRED)
 endif()
 
-option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" "OFF")
+option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" OFF)
 if(NOT PHREEQCRM_DISABLE_OPENMP)
   if(STANDALONE_BUILD EQUAL 1)
     # check for openmp
@@ -42,15 +41,16 @@ if(NOT PHREEQCRM_DISABLE_OPENMP)
 endif()
 
 # check for MPI
-option(PHREEQCRM_BUILD_MPI "Build MPI configuration" "OFF")
+option(PHREEQCRM_BUILD_MPI "Build MPI configuration" OFF)
 if(PHREEQCRM_BUILD_MPI)
   find_package(MPI REQUIRED)
 endif()
 
-option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" "OFF")
+option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" OFF)
 if (PHREEQCRM_BUILD_PYTHON)
   find_package(SWIG REQUIRED)
-  find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
+  # find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
+  find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development)
 endif()
 
 set(PhreeqcRM_SOURCES

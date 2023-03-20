@@ -464,7 +464,7 @@ done
 
 # Change Titles
 sed -i "s/PhreeqcRM Module Reference/PhreeqcRM Fortran Module Reference/g" html/namespacephreeqcrm.html
-sed -i "s/RM_interface_C.h File Reference/PhreeqcRM C Reference/g" html/_r_m__interface___c_8h.html
-sed -i "s/PhreeqcRM Class Reference/PhreeqcRM C++ Class Reference/g" html/class_phreeqc_r_m.html
+sed -i "s/RM_interface_C.h File Reference/PhreeqcRM C Reference/g" html/RM__interface__C_8h.html
+sed -i "s/PhreeqcRM Class Reference/PhreeqcRM C++ Class Reference/g" html/classPhreeqcRM.html
 
 echo finished

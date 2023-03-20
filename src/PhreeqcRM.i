@@ -9,11 +9,14 @@
 %}
 
 //%ignore GetGridCellCountYAML(std::string YAML_file);  // TODO
+%ignore GetGridCellCountYAML(const char* YAML_file);  // TODO
 
+#if 0
 %include "numpy.i"
 %init %{
 import_array();
 %}
+#endif
 
 %include "std_string.i"
 %include "std_vector.i"
