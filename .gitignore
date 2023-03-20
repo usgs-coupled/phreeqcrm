@@ -37,7 +37,7 @@ m4/lt~obsolete.m4
 
 
 # ignore directories beginning with '_'
-/_*/
+_*/
 
 # dist files
 configure.ac.dist

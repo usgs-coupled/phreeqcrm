@@ -120,26 +120,26 @@
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
     INTERFACE RM_BMI_GetValue
-    procedure RM_BMI_GetValue_b
-    procedure RM_BMI_GetValue_c
-    procedure RM_BMI_GetValue_c1
-    procedure RM_BMI_GetValue_d
-    procedure RM_BMI_GetValue_d1
-    procedure RM_BMI_GetValue_d2
-    procedure RM_BMI_GetValue_i
-    procedure RM_BMI_GetValue_i1
-    procedure RM_BMI_GetValue_i2
+        module procedure RM_BMI_GetValue_b
+        module procedure RM_BMI_GetValue_c
+        module procedure RM_BMI_GetValue_c1
+        module procedure RM_BMI_GetValue_d
+        module procedure RM_BMI_GetValue_d1
+        module procedure RM_BMI_GetValue_d2
+        module procedure RM_BMI_GetValue_i
+        module procedure RM_BMI_GetValue_i1
+        module procedure RM_BMI_GetValue_i2
     END INTERFACE RM_BMI_GetValue
 
     INTERFACE RM_BMI_SetValue
-    procedure RM_BMI_SetValue_b
-    procedure RM_BMI_SetValue_c
-    procedure RM_BMI_SetValue_d
-    procedure RM_BMI_SetValue_d1
-    procedure RM_BMI_SetValue_d2
-    procedure RM_BMI_SetValue_i
-    procedure RM_BMI_SetValue_i1
-    procedure RM_BMI_SetValue_i2
+        module procedure RM_BMI_SetValue_b
+        module procedure RM_BMI_SetValue_c
+        module procedure RM_BMI_SetValue_d
+        module procedure RM_BMI_SetValue_d1
+        module procedure RM_BMI_SetValue_d2
+        module procedure RM_BMI_SetValue_i
+        module procedure RM_BMI_SetValue_i1
+        module procedure RM_BMI_SetValue_i2
     END INTERFACE RM_BMI_SetValue
     CONTAINS
 #ifdef USE_YAML    
@@ -7602,6 +7602,7 @@
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_GetValue_b(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -7628,6 +7629,7 @@
     return
     END FUNCTION RM_BMI_GetValue_b
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_GetValue_c(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -7661,6 +7663,7 @@
     return
     END FUNCTION RM_BMI_GetValue_c
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_GetValue_c1(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -7703,6 +7706,7 @@
     return
     END FUNCTION RM_BMI_GetValue_c1
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_GetValue_d(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -7732,6 +7736,7 @@
     return
     END FUNCTION RM_BMI_GetValue_d
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_GetValue_d1(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -7771,6 +7776,7 @@
     return
     END FUNCTION RM_BMI_GetValue_d1
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_GetValue_d2(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -7823,6 +7829,7 @@
     return
     END FUNCTION RM_BMI_GetValue_d2
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_GetValue_i(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -7852,6 +7859,7 @@
     return
     END FUNCTION RM_BMI_GetValue_i
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_GetValue_i1(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -7891,6 +7899,7 @@
     return
     END FUNCTION RM_BMI_GetValue_i1
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_GetValue_i2(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -8316,6 +8325,7 @@
 !> @endhtmlonly
 !> @par MPI:
 !> Called by root, workers must be in the loop of @ref MpiWorker.
+    !> \overload
     INTEGER FUNCTION RM_BMI_SetValue_b(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -8342,6 +8352,7 @@
     return
     END FUNCTION RM_BMI_SetValue_b
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_SetValue_c(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -8368,6 +8379,7 @@
     return
     END FUNCTION RM_BMI_SetValue_c
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_SetValue_i(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -8394,6 +8406,7 @@
     return
     END FUNCTION RM_BMI_SetValue_i
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_SetValue_i1(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -8425,6 +8438,7 @@
     return
     END FUNCTION RM_BMI_SetValue_i1
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_SetValue_i2(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -8455,6 +8469,7 @@
     return
     END FUNCTION RM_BMI_SetValue_i2
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_SetValue_d(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -8481,6 +8496,7 @@
     return
     END FUNCTION RM_BMI_SetValue_d
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_SetValue_d1(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -8512,6 +8528,7 @@
     return
     END FUNCTION RM_BMI_SetValue_d1
 
+    !> \overload
     INTEGER FUNCTION RM_BMI_SetValue_d2(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE

@@ -865,7 +865,7 @@ RMF_GetGridCellCountYAML(char* config_file)
 {
 	// Returns the number of grid cells extracted from YAML file
 
-	return YAMLPhreeqcRM::GetGridCellCountYAML(config_file);
+	return PhreeqcRM::GetGridCellCountYAML(config_file);
 }
 #endif
 /* ---------------------------------------------------------------------- */

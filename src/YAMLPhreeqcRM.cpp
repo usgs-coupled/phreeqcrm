@@ -37,18 +37,6 @@ int YAMLPhreeqcRM::GetId(void)const
 {
 	return (int)this->Index;
 }
-// static method
-int YAMLPhreeqcRM::GetGridCellCountYAML(const char* YAML_file)
-{
-	YAML::Node yaml = YAML::LoadFile(YAML_file);
-	std::string keyword;
-	YAML::Node node;
-	if (yaml["SetGridCellCount"].IsDefined())
-	{
-		return yaml["SetGridCellCount"].as<int>();
-	}
-	return 0;
-}
 void YAMLPhreeqcRM::WriteYAMLDoc(std::string file_name)
 {
 	std::ofstream ofs = std::ofstream(file_name.c_str(), std::ofstream::out);

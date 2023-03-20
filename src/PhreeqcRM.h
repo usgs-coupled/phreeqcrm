@@ -110,7 +110,22 @@ enum {
 	METHOD_STATEDELETE,
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
-#ifdef USE_YAML
+
+/**
+ * @class PhreeqcRM
+ *
+ * @brief Geochemical reaction module
+ */
+
+
+class IRM_DLL_EXPORT PhreeqcRM
+{
+public:
+	static void             CleanupReactionModuleInstances(void);
+	static int              CreateReactionModule(int nxyz, MP_TYPE nthreads);
+	static IRM_RESULT       DestroyReactionModule(int n);
+	static PhreeqcRM      * GetInstance(int n);
+
 /**
 @a GetGridCellCountYAML will read the YAML file and extract the value
 of GridCellCount, which can be used to construct a PhreeqcRM
@@ -129,7 +144,7 @@ zero if GridCellCount is not defined.
 <PRE>
 int nthreads = 0;
 std::string yaml_file = "myfile.yaml";
-int nxyz = GetGridCellCountYAML(yaml_file);
+int nxyz = PhreeqcRM::GetGridCellCountYAML(yaml_file);
 PhreeqcRM phreeqc_rm(nxyz, nthreads);
 phreeqc_rm.InitializeYAML(yaml_file);
 </PRE>
@@ -138,37 +153,23 @@ phreeqc_rm.InitializeYAML(yaml_file);
 @par Sequence:
 Called before PhreeqcRM is created.
 */
-int IRM_DLL_EXPORT
-GetGridCellCountYAML(const char* YAML_file);
-#endif
+	static int GetGridCellCountYAML(const char* YAML_file);
+
 /**
  * @mainpage PhreeqcRM Library Documentation (@PHREEQC_VER@-@REVISION_SVN@)
  *
  *  @htmlonly
  *  <table>
- *   <tr><td class="indexkey"><a class="el" href="class_phreeqc_r_m.html">PhreeqRM.h</a> </td><td class="indexvalue">C++ Documentation</td></tr>
- *   <tr><td class="indexkey"><a class="el" href="_r_m__interface___c_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">C Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="classPhreeqcRM.html">PhreeqRM.h</a> </td><td class="indexvalue">C++ Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="RM__interface__C_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">C Documentation </td></tr>
  *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">Fortran Documentation </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="_irm_result_8h.html">IrmResult.h</a></td><td class="indexvalue">Return codes </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="class_y_a_m_l_phreeqc_r_m.html">YAMLPhreeqcRM.h</a></td><td class="indexvalue">C++ YAML Support </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="IrmResult_8h.html">IrmResult.h</a></td><td class="indexvalue">Return codes </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="classYAMLPhreeqcRM.html">YAMLPhreeqcRM.h</a></td><td class="indexvalue">C++ YAML Support </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="namespaceyaml__interface.html">YAML_interface.F90</a></td><td class="indexvalue">Fortran YAML Support </td></tr>
  *  </table>
  *  @endhtmlonly
  */
 
-/**
- * @class PhreeqcRM
- *
- * @brief Geochemical reaction module
- */
-
-
-class IRM_DLL_EXPORT PhreeqcRM
-{
-public:
-	static void             CleanupReactionModuleInstances(void);
-	static int              CreateReactionModule(int nxyz, MP_TYPE nthreads);
-	static IRM_RESULT       DestroyReactionModule(int n);
-	static PhreeqcRM      * GetInstance(int n);
 
 /**
 Constructor for the PhreeqcRM reaction module. If the code is compiled with

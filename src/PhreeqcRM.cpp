@@ -32,6 +32,9 @@
 #define gzprintf fprintf
 //#define ogzstream std::ofstream
 #endif
+#ifdef USE_YAML
+#include "yaml-cpp/yaml.h"
+#endif
 #include "cxxMix.h"
 #include "Solution.h"
 #include "Exchange.h"
@@ -62,7 +65,8 @@ size_t PhreeqcRM::InstancesIndex = 0;
 
 //// static PhreeqcRM methods
 /* ---------------------------------------------------------------------- */
-void PhreeqcRM::CleanupReactionModuleInstances(void)
+void
+PhreeqcRM::CleanupReactionModuleInstances(void)
 /* ---------------------------------------------------------------------- */
 {
 	std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.begin();
@@ -126,7 +130,22 @@ PhreeqcRM::ErrorHandler(int result, const std::string & e_string)
 		throw PhreeqcRMStop();
 	}
 }
-
+#ifdef USE_YAML
+/* ---------------------------------------------------------------------- */
+int
+PhreeqcRM::GetGridCellCountYAML(const char* YAML_file)
+/* ---------------------------------------------------------------------- */
+{
+	YAML::Node yaml = YAML::LoadFile(YAML_file);
+	std::string keyword;
+	YAML::Node node;
+	if (yaml["SetGridCellCount"].IsDefined())
+	{
+		return yaml["SetGridCellCount"].as<int>();
+	}
+	return 0;
+}
+#endif
 /* ---------------------------------------------------------------------- */
 PhreeqcRM*
 PhreeqcRM::GetInstance(int id)

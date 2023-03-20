@@ -80,7 +80,7 @@ if(WIN32)
     add_test(NAME SimpleAdvect_d
       COMMAND ${Python_d_EXECUTABLE} SimpleAdvect.py
       CONFIGURATIONS Debug
-    )      
+    )
     set_tests_properties(SimpleAdvect_d PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
   else()
     if("${CMAKE_BUILD_TYPE}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
@@ -101,7 +101,7 @@ if(MSVC)
 
   # Get the base name
   get_filename_component(base_name ${Python_EXECUTABLE} NAME_WLE)
-  
+
   # Get the extension
   get_filename_component(ext ${Python_EXECUTABLE} LAST_EXT)
 

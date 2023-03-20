@@ -35,9 +35,6 @@ protected:
 	size_t Index;
 public:
 
-	// static method
-	static int GetGridCellCountYAML(const char* YAML_file);
-
 	/**
 	Constructor
 	*/
