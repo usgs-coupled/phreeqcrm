@@ -118,7 +118,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.118 Seconds.
+End of Run after 0.105 Seconds.
 -------------------------------
 
 Time:                   0
@@ -162,9 +162,9 @@ Using solution 1.
                         Activity of water  =   0.964
                  Ionic strength (mol/kgw)  =   1.062e+00
                        Mass of water (kg)  =   1.955e-01
-                 Total alkalinity (eq/kg)  =  -2.121e-19
+                 Total alkalinity (eq/kg)  =  -2.127e-19
                          Temperature (°C)  =  25.00
-                  Electrical balance (eq)  =   7.597e-17
+                  Electrical balance (eq)  =   1.592e-16
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   6
                                   Total H  = 2.170705e+01
@@ -209,7 +209,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.114 Seconds.
+End of Run after 0.104 Seconds.
 -------------------------------
 
 Time:                   0
@@ -300,6 +300,6 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.113 Seconds.
+End of Run after 0.104 Seconds.
 -------------------------------
 
