@@ -33,6 +33,8 @@
 	status = YAMLSetRebalanceByCell(id, .true.)
 	status = YAMLUseSolutionDensityVolume(id, .false.)
 	status = YAMLSetPartitionUZSolids(id, .false.)
+    status = YAMLSetFilePrefix(id, "AdvectBMI_f90")
+    status = YAMLOpenFiles(id)
     ! Set concentration units
 	status = YAMLSetUnitsSolution(id, 2)           ! 1, mg/L; 2, mol/L; 3, kg/kgs
 	status = YAMLSetUnitsPPassemblage(id, 1)       ! 0, mol/L cell; 1, mol/L water; 2 mol/L rock

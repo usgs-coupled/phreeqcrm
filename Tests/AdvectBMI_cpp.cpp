@@ -88,8 +88,8 @@ int AdvectBMI_cpp()
 		PhreeqcRM phreeqc_rm(nxyz, nthreads);
 		some_data.PhreeqcRM_ptr = &phreeqc_rm;
 #endif
-		phreeqc_rm.BMI_SetValue("FilePrefix", "AdvectBMI_cpp");
-		phreeqc_rm.OpenFiles();
+		//phreeqc_rm.BMI_SetValue("FilePrefix", "AdvectBMI_cpp");
+		//phreeqc_rm.OpenFiles();
 		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
 		bmi_register_basic_callback(&some_data);
 		// Use YAML file to initialize
