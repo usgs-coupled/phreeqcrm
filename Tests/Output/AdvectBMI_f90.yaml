@@ -5,7 +5,7 @@ SetRebalanceFraction: 0.5
 SetRebalanceByCell: true
 UseSolutionDensityVolume: false
 SetPartitionUZSolids: false
-SetFilePrefix: AdvectBMI_cpp
+SetFilePrefix: AdvectBMI_f90
 OpenFiles: ""
 SetUnitsSolution: 2
 SetUnitsPPassemblage: 1

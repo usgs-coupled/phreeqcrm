@@ -1,5 +1,11 @@
 #!/bin/sh
 for f in html/*.html; do
+  sed -i "s/getgridcellcountyaml/GetGridCellCountYAML/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/setgridcellcountyaml/SetGridCellCountYAML/g" $f 
+done
+for f in html/*.html; do
   sed -i "s/rm_abort/RM_Abort/g" $f 
 done
 for f in html/*.html; do
@@ -102,6 +108,12 @@ for f in html/*.html; do
 done
 for f in html/*.html; do
   sed -i "s/rm_getnthselectedoutputusernumber/RM_GetNthSelectedOutputUserNumber/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/rm_getporosity/RM_GetPorosity/g" $f 
+done
+for f in html/*.html; do
+  sed -i "s/rm_getpressure/RM_GetPressure/g" $f  
 done
 for f in html/*.html; do
   sed -i "s/rm_getsaturation/RM_GetSaturation/g" $f 
@@ -379,7 +391,72 @@ done
 for f in html/*.html; do
   sed -i "s/rm_statedelete/RM_StateDelete/g"  $f
 done
-
+for f in html/*.html; do
+  sed -i "s/rm_bmi_finalize/RM_BMI_Finalize/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getcomponentname/RM_BMI_GetComponentName/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getcurrenttime/RM_BMI_GetCurrentTime/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getendtime/RM_BMI_GetEndTime/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getinputitemcount/RM_BMI_GetInputItemCount/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getinputvarnames/RM_BMI_GetInputVarNames/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getoutputitemcount/RM_BMI_GetOutputItemCount/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getoutputvarnames/RM_BMI_GetOutputVarNames/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_gettimestep/RM_BMI_GetTimeStep/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_gettimeunits/RM_BMI_GetTimeUnits/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getvalue/RM_BMI_GetValue/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getvaritemsize/RM_BMI_GetVarItemsize/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getvarnbytes/RM_BMI_GetVarNbytes/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getvartype/RM_BMI_GetVarType/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_getvarunits/RM_BMI_GetVarUnits/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_initialize/RM_BMI_Initialize/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_setvalue/RM_BMI_SetValue/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_bmi_update/RM_BMI_Update/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getcomponents/RM_GetComponents/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getgridcellcountyaml/RM_GetGridCellCountYAML/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_getselectedoutputheadings/RM_GetSelectedOutputHeadings/g" $f
+done
+for f in html/*.html; do
+  sed -i "s/rm_gettemperature/RM_GetTemperature/g" $f
+done
 # Rename PhreeqcRM to mixed case 
 for f in html/*.html; do
   sed -i "s/\bphreeqcrm\b/PhreeqcRM/g" $f
@@ -387,7 +464,7 @@ done
 
 # Change Titles
 sed -i "s/PhreeqcRM Module Reference/PhreeqcRM Fortran Module Reference/g" html/namespacephreeqcrm.html
-sed -i "s/RM_interface_C.h File Reference/PhreeqcRM C Reference/g" html/_r_m__interface___c_8h.html
-sed -i "s/PhreeqcRM Class Reference/PhreeqcRM C++ Class Reference/g" html/class_phreeqc_r_m.html
+sed -i "s/RM_interface_C.h File Reference/PhreeqcRM C Reference/g" html/RM__interface__C_8h.html
+sed -i "s/PhreeqcRM Class Reference/PhreeqcRM C++ Class Reference/g" html/classPhreeqcRM.html
 
 echo finished

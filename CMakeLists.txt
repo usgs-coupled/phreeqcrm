@@ -28,12 +28,11 @@ endif()
 include(GNUInstallDirs)
 
 option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
-find_package(yaml-cpp QUIET)
 if(PHREEQCRM_WITH_YAML_CPP)
   find_package(yaml-cpp REQUIRED)
 endif()
 
-option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" "OFF")
+option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" OFF)
 if(NOT PHREEQCRM_DISABLE_OPENMP)
   if(STANDALONE_BUILD EQUAL 1)
     # check for openmp
@@ -42,15 +41,16 @@ if(NOT PHREEQCRM_DISABLE_OPENMP)
 endif()
 
 # check for MPI
-option(PHREEQCRM_BUILD_MPI "Build MPI configuration" "OFF")
+option(PHREEQCRM_BUILD_MPI "Build MPI configuration" OFF)
 if(PHREEQCRM_BUILD_MPI)
   find_package(MPI REQUIRED)
 endif()
 
-option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" "OFF")
+option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" OFF)
 if (PHREEQCRM_BUILD_PYTHON)
   find_package(SWIG REQUIRED)
-  find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
+  # find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
+  find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development)
 endif()
 
 set(PhreeqcRM_SOURCES
@@ -212,10 +212,13 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PhreeqcRM.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_C.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_C.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_BMI_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_F.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/YAMLPhreeqcRM.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/YAML_interface_F.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/YAML_interface_F.h
 )
 
 # setup include directories
@@ -310,10 +313,12 @@ set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/PhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/RM_interface_C.h
   ${PROJECT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
+  ${PROJECT_SOURCE_DIR}/src/YAML_interface_F.h
 )
 
 set(PhreeqcRM_SRC
   ${PROJECT_SOURCE_DIR}/src/RM_interface.F90
+  ${PROJECT_SOURCE_DIR}/src/YAML_interface.F90
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
 )
 
@@ -436,7 +441,7 @@ if(STANDALONE_BUILD EQUAL 1)
 
   if (PHREEQCRM_BUILD_PYTHON)
     add_subdirectory(src)
-  endif()
+endif()
 endif()
 
 # Turn off Incremental Linking for Debug and RelWithDebInfo

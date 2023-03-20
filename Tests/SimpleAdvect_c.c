@@ -253,7 +253,7 @@ void simpleadvection_c(double* c, double* bc_conc, int ncomps, int nxyz, int dim
 {
 	int i, j;
 	// Advect
-	for (i = nxyz / 2 - 1; i > 0; i--)
+	for (i = nxyz - 1; i > 0; i--)
 	{
 		for (j = 0; j < ncomps; j++)
 		{

@@ -205,7 +205,7 @@ SUBROUTINE simpleadvection_f90(c, bc_conc, ncomps, nxyz)
   integer, intent(in)                                          :: ncomps, nxyz
   integer                                                      :: i, j
   ! Advect
-  do i = nxyz/2, 2, -1
+  do i = nxyz, 2, -1
      do j = 1, ncomps
         c(i,j) = c(i-1,j)
      enddo

@@ -54,7 +54,7 @@ int AdvectBMI_cpp()
 		// using the YAMLPhreeqcRM class and the method
 		// YAMLSetGridCellCount), the return
 		// value is zero.
-		int nxyz = GetGridCellCountYAML(yaml_file);
+		int nxyz = PhreeqcRM::GetGridCellCountYAML(yaml_file.c_str());
 
 		// Data for call_back demostration
 		std::vector<double> hydraulic_K;
@@ -88,18 +88,17 @@ int AdvectBMI_cpp()
 		PhreeqcRM phreeqc_rm(nxyz, nthreads);
 		some_data.PhreeqcRM_ptr = &phreeqc_rm;
 #endif
+		//phreeqc_rm.BMI_SetValue("FilePrefix", "AdvectBMI_cpp");
+		//phreeqc_rm.OpenFiles();
 		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
 		bmi_register_basic_callback(&some_data);
-
 		// Use YAML file to initialize
-		phreeqc_rm.InitializeYAML(yaml_file);
-
+		phreeqc_rm.BMI_Initialize(yaml_file);
 		// Get number of components
 		int ncomps;
-		phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
+		phreeqc_rm.BMI_GetValue("ComponentCount", ncomps);
 		// Example for generating automatic selected-output definitions
 		bmi_example_selected_output(phreeqc_rm);
-
 		// Print some of the reaction module information
 		{
 			std::ostringstream oss;
@@ -107,42 +106,27 @@ int AdvectBMI_cpp()
 			oss << "Number of threads:                                " << phreeqc_rm.GetThreadCount() << "\n";
 			oss << "Number of MPI processes:                          " << phreeqc_rm.GetMpiTasks() << "\n";
 			oss << "MPI task number:                                  " << phreeqc_rm.GetMpiMyself() << "\n";
-			oss << "File prefix:                                      " << phreeqc_rm.GetFilePrefix() << "\n";
-			oss << "Number of grid cells in the user's model:         " << phreeqc_rm.GetGridCellCount() << "\n";
+			std::string prefix;
+			phreeqc_rm.BMI_GetValue("FilePrefix", prefix);
+			oss << "File prefix:                                      " << prefix << "\n";
+			int ngrid;
+			phreeqc_rm.BMI_GetValue("GridCellCount", ngrid);
+			oss << "Number of grid cells in the user's model:         " << ngrid << "\n";
 			oss << "Number of chemistry cells in the reaction module: " << phreeqc_rm.GetChemistryCellCount() << "\n";
-			oss << "Number of components for transport:               " << phreeqc_rm.GetComponentCount() << "\n";
+			int ncomps;
+			phreeqc_rm.BMI_GetValue("ComponentCount", ncomps);
+			oss << "Number of components for transport:               " << ncomps << "\n";
 			oss << "Partioning of UZ solids:                          " << phreeqc_rm.GetPartitionUZSolids() << "\n";
 			oss << "Error handler mode:                               " << phreeqc_rm.GetErrorHandlerMode() << "\n";
 			phreeqc_rm.OutputMessage(oss.str());
 		}
 		const std::vector<int>& f_map = phreeqc_rm.GetForwardMapping();
-
-		// BMI version of getting component list
-		// equivalent to following statement
-		// const std::vector<std::string>& components = phreeqc_rm.GetComponents();
+		// Get components
 		std::vector<std::string> components;
-		{
-			size_t nbytes = (size_t)phreeqc_rm.BMI_GetVarNbytes("Components");
-			std::string all_comps(nbytes, ' ');
-			phreeqc_rm.BMI_GetValue("Components", (void*)all_comps.data());
-			size_t string_size = (size_t)phreeqc_rm.BMI_GetVarItemsize("Components");
-			for (size_t i = 0; i < ncomps; i++)
-			{
-				std::string bmi_comp = all_comps.substr((i * string_size), string_size);
-				// strip trailing spaces
-				size_t end = bmi_comp.find_last_not_of(' ');
-				bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
-				// store in components
-				components.push_back(bmi_comp);
-			}
-		}
-
-		// BMI version of getting gram formula weights of components
-		// equivalent to following statement
-		//const std::vector < double >& gfw = phreeqc_rm.GetGfw();
+		phreeqc_rm.BMI_GetValue("Components", components);
+		// Get gfw
 		std::vector<double> gfw(ncomps, 0);
-		phreeqc_rm.BMI_GetValue("Gfw", gfw.data());
-
+		phreeqc_rm.BMI_GetValue("Gfw", gfw);
 		// write component information
 		for (int i = 0; i < ncomps; i++)
 		{
@@ -152,40 +136,33 @@ int AdvectBMI_cpp()
 			phreeqc_rm.OutputMessage(strm.str());
 		}
 		phreeqc_rm.OutputMessage("\n");
-
 		// Get temperatures (unchanged by PhreeqcRM)
-		//const std::vector<double>& tempc = phreeqc_rm.GetTemperature();
-		std::vector<double> tempc(nxyz, 0.0);
-		phreeqc_rm.BMI_GetValue("Temperature", tempc.data());
-
-		// get current saturation (unchanged by PhreeqcRM)
-		//std::vector<double> current_sat;
-		//IRM_RESULT status = phreeqc_rm.GetSaturation(current_sat);		// Demonstration of error handling if ErrorHandlerMode is 0
-		//if (status != IRM_OK)
-		//{
-		//	std::cerr << phreeqc_rm.GetErrorString(); // retrieve error messages if needed
-		//	throw PhreeqcRMStop();
-		//}
+		std::vector<double> tempc;
+		phreeqc_rm.BMI_GetValue("Temperature", tempc);
+		// Get initial saturation
 		IRM_RESULT status;
-		std::vector<double> current_sat(nxyz, 0.0);
-		phreeqc_rm.BMI_GetValue("Saturation", current_sat.data());
-
+		std::vector<double> sat;
+		phreeqc_rm.BMI_GetValue("Saturation", sat);
+		//Get initial porosity
+		std::vector<double> por;
+		phreeqc_rm.BMI_GetValue("Porosity", por);
+		//Get initial solution volume
+		std::vector<double> volume;
+		phreeqc_rm.BMI_GetValue("SolutionVolume", volume);
+		//Get initial concentrations
 		std::vector<double> c;
-		c.resize(nxyz * components.size());
-		//status = phreeqc_rm.GetConcentrations(c);
-		phreeqc_rm.BMI_GetValue("Concentrations", c.data());
+		phreeqc_rm.BMI_GetValue("Concentrations", c);
 
 		// Set density, temperature, and pressure
 		std::vector<double> density(nxyz, 1.0);
 		std::vector<double> temperature(nxyz, 20.0);
 		std::vector<double> pressure(nxyz, 2.0);
-		phreeqc_rm.BMI_SetValue("Density", density.data());
-		phreeqc_rm.BMI_SetValue("Temperature", temperature.data());
-		phreeqc_rm.BMI_SetValue("Pressure", pressure.data());
+		phreeqc_rm.BMI_SetValue("Density", density);
+		phreeqc_rm.BMI_SetValue("Temperature", temperature);
+		phreeqc_rm.BMI_SetValue("Pressure", pressure);
 		// --------------------------------------------------------------------------
 		// Set boundary condition
 		// --------------------------------------------------------------------------
-
 		std::vector<double> bc_conc, bc_f1;
 		std::vector<int> bc1, bc2;
 		int nbound = 1;
@@ -193,21 +170,17 @@ int AdvectBMI_cpp()
 		bc2.resize(nbound, -1);                     // no bc2 solution for mixing
 		bc_f1.resize(nbound, 1.0);                  // mixing fraction for bc1
 		status = phreeqc_rm.InitialPhreeqc2Concentrations(bc_conc, bc1, bc2, bc_f1);
-
 		// --------------------------------------------------------------------------
 		// Transient loop
 		// --------------------------------------------------------------------------
-
 		int nsteps = 10;
-		std::vector<double> por(nxyz, 0.2);
-		std::vector<double> sat(nxyz, 1.0);
-
-		double time_step = phreeqc_rm.BMI_GetTimeStep();
-		double time = phreeqc_rm.BMI_GetCurrentTime();
+		double time = 0.0;
+		phreeqc_rm.BMI_SetValue("Time", time);
+		double time_step = 86400;
+		phreeqc_rm.BMI_SetValue("TimeStep", time_step);
 
 		for (int steps = 0; steps < nsteps; steps++)
 		{
-			// Transport calculation here
 			{
 				std::ostringstream strm;
 				strm << "Beginning transport calculation             " << phreeqc_rm.GetTime() * phreeqc_rm.GetTimeConversion() << " days\n";
@@ -216,28 +189,21 @@ int AdvectBMI_cpp()
 				phreeqc_rm.SetScreenOn(true);
 				phreeqc_rm.ScreenMessage(strm.str());
 			}
+			// Transport calculation here
 			advectionbmi_cpp(c, bc_conc, ncomps, nxyz, nbound);
 			// Transfer data to PhreeqcRM for reactions
 			bool print_selected_output_on = (steps == nsteps - 1) ? true : false;
+			phreeqc_rm.BMI_SetValue("SelectedOutputOn", print_selected_output_on);
 			bool print_chemistry_on = (steps == nsteps - 1) ? true : false;
-			//status = phreeqc_rm.SetSelectedOutputOn(print_selected_output_on);
-			phreeqc_rm.BMI_SetValue("SelectedOutputOn", &print_selected_output_on);
 			status = phreeqc_rm.SetPrintChemistryOn(print_chemistry_on, false, false); // workers, initial_phreeqc, utility
-			//status = phreeqc_rm.SetPorosity(por);             // If pororosity changes due to compressibility
-			phreeqc_rm.BMI_SetValue("Porosity", por.data());
-			//status = phreeqc_rm.SetSaturation(sat);           // If saturation changes
-			phreeqc_rm.BMI_SetValue("Saturation", sat.data());
-			//status = phreeqc_rm.SetTemperature(temperature);  // If temperature changes
-			phreeqc_rm.BMI_SetValue("Temperature", temperature.data());
-			//status = phreeqc_rm.SetPressure(pressure);        // If pressure changes
-			phreeqc_rm.BMI_SetValue("Pressure", pressure.data());
-			//status = phreeqc_rm.SetConcentrations(c);         // Transported concentrations
-			phreeqc_rm.BMI_SetValue("Concentrations", c.data());
-			//status = phreeqc_rm.SetTimeStep(time_step);		  // Time step for kinetic reactions
-			phreeqc_rm.BMI_SetValue("TimeStep", &time_step);
+			phreeqc_rm.BMI_SetValue("Concentrations", c);        // Transported concentrations
+			phreeqc_rm.BMI_SetValue("Porosity", por);            // If pororosity changes due to compressibility
+			phreeqc_rm.BMI_SetValue("Saturation", sat);          // If saturation changes
+			phreeqc_rm.BMI_SetValue("Temperature", temperature); // If temperature changes
+			phreeqc_rm.BMI_SetValue("Pressure", pressure);       // If pressure changes 
+			phreeqc_rm.BMI_SetValue("TimeStep", time_step);      // Time step for kinetic reactions
 			time += time_step;
-			//status = phreeqc_rm.SetTime(time);
-			phreeqc_rm.BMI_SetValue("Time", &time);
+			phreeqc_rm.BMI_SetValue("Time", time);
 			// Run cells with transported conditions
 			{
 				std::ostringstream strm;
@@ -249,14 +215,12 @@ int AdvectBMI_cpp()
 			status = phreeqc_rm.StateSave(1);
 			status = phreeqc_rm.StateApply(1);
 			status = phreeqc_rm.StateDelete(1);
-			//status = phreeqc_rm.RunCells();
+			//Run chemistry
 			phreeqc_rm.BMI_Update();
 			// Transfer data from PhreeqcRM for transport
-			//status = phreeqc_rm.GetConcentrations(c);
-			phreeqc_rm.BMI_GetValue("Concentrations", c.data());
-			//status = phreeqc_rm.GetDensity(density);
-			phreeqc_rm.BMI_GetValue("Density", density.data());
-			const std::vector<double>& volume = phreeqc_rm.GetSolutionVolume();
+			phreeqc_rm.BMI_GetValue("Concentrations", c);
+			phreeqc_rm.BMI_GetValue("Density", density);
+			phreeqc_rm.BMI_GetValue("SolutionVolume", volume);
 			// Print results at last time step
 			if (print_chemistry_on != 0)
 			{
@@ -274,49 +238,28 @@ int AdvectBMI_cpp()
 					phreeqc_rm.OutputMessage(oss.str());
 				}
 				int selected_output_count;
-				phreeqc_rm.BMI_GetValue("SelectedOutputCount", &selected_output_count);
+				phreeqc_rm.BMI_GetValue("SelectedOutputCount", selected_output_count);
 				for (int isel = 0; isel < selected_output_count; isel++)
 				{
 					std::ostringstream oss;
 					// Loop through possible multiple selected output definitions
-					//int n_user = phreeqc_rm.GetNthSelectedOutputUserNumber(isel);
-					//status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
-					phreeqc_rm.BMI_SetValue("NthSelectedOutput", &isel);
+					phreeqc_rm.BMI_SetValue("NthSelectedOutput", isel);
 					oss << "Selected output sequence number: " << isel << "\n";
-					int n_user = -1;
-					phreeqc_rm.BMI_GetValue("CurrentSelectedOutputUserNumber", &n_user);
+					int n_user;
+					phreeqc_rm.BMI_GetValue("CurrentSelectedOutputUserNumber", n_user);
 					oss << "Selected output user number:     " << n_user << "\n";
-					// Get double array of selected output values
-					//std::vector<double> so;
-					//int col = phreeqc_rm.GetSelectedOutputColumnCount();
-					//status = phreeqc_rm.GetSelectedOutput(so);
-
+					// Get array of selected output values
 					int col;
-					phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", &col);
+					phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", col);
 					int bmi_row_count;
-					phreeqc_rm.BMI_GetValue("SelectedOutputRowCount", &bmi_row_count);
+					phreeqc_rm.BMI_GetValue("SelectedOutputRowCount", bmi_row_count);
 
 					// Get selected output
-					int bmi_nbytes = phreeqc_rm.BMI_GetVarNbytes("SelectedOutput");
-					int bmi_itemsize = phreeqc_rm.BMI_GetVarItemsize("SelectedOutput");
-					int bmi_dim = bmi_nbytes / bmi_itemsize;
-					std::vector<double> so(bmi_dim, INACTIVE_CELL_VALUE);
-					phreeqc_rm.BMI_GetValue("SelectedOutput", so.data());
-
+					std::vector<double> so;
+					phreeqc_rm.BMI_GetValue("SelectedOutput", so);
 					// Get headings
-					bmi_nbytes = phreeqc_rm.BMI_GetVarNbytes("SelectedOutputHeadings");
-					int bmi_string_size = phreeqc_rm.BMI_GetVarItemsize("SelectedOutputHeadings");
-					std::string all_headings(bmi_nbytes, ' ');
-					phreeqc_rm.BMI_GetValue("SelectedOutputHeadings", (void*)all_headings.c_str());
 					std::vector<std::string> headings;
-					for (int j = 0; j < col; j++)
-					{
-						std::string bmi_head = all_headings.substr((size_t)(j * bmi_string_size), bmi_string_size);
-						size_t end = bmi_head.find_last_not_of(' ');
-						bmi_head = (end == std::string::npos) ? "" : bmi_head.substr(0, end + 1);
-						headings.push_back(bmi_head);
-					}
-
+					phreeqc_rm.BMI_GetValue("SelectedOutputHeadings", headings);
 					// Print results
 					for (int i = 0; i < bmi_row_count / 2; i++)
 					{
@@ -328,13 +271,9 @@ int AdvectBMI_cpp()
 						{
 							oss << "          " << j << " " << components[j] << ": " << c[j * nxyz + i] << "\n";
 						}
-						//std::vector<std::string> headings;
-						//headings.resize(col);
-
 						oss << "     Selected output: " << "\n";
 						for (int j = 0; j < col; j++)
 						{
-							//status = phreeqc_rm.GetSelectedOutputHeading(j, headings[j]);
 							oss << "          " << j << " " << headings[j] << ": " << so[j * nxyz + i] << "\n";
 						}
 					}
@@ -346,7 +285,6 @@ int AdvectBMI_cpp()
 		// --------------------------------------------------------------------------
 		// Additional features and finalize
 		// --------------------------------------------------------------------------
-
 		// Use utility instance of PhreeqcRM to calculate pH of a mixture
 		std::vector <double> c_well;
 		c_well.resize(1 * ncomps, 0.0);
@@ -769,120 +707,138 @@ int bmi_example_selected_output(PhreeqcRM& phreeqc_rm)
 void BMI_testing(PhreeqcRM& phreeqc_rm)
 {
 	std::ostringstream oss;
-	//std::string BMI_GetComponentName() { return "PhreeqcRM_BMI"; }
+	// ComponentName
+	oss << phreeqc_rm.BMI_GetComponentName() << "\n";
+	// Time
 	{
-		oss << phreeqc_rm.BMI_GetComponentName() << "\n";
+		double rm_time = 3600.0;
+		phreeqc_rm.BMI_SetValue("Time", rm_time);
+		double bmi_time = 0.0;
+		phreeqc_rm.BMI_GetValue("Time", bmi_time);
+		assert(rm_time == bmi_time);
+		rm_time = phreeqc_rm.GetTime();
+		assert(rm_time == bmi_time);
+		bmi_time = phreeqc_rm.BMI_GetCurrentTime();
+		assert(rm_time == bmi_time);
 	}
-	//double BMI_GetCurrentTime() { return this->GetTime(); }
+	// TimeStep
 	{
-		oss << "BMI_GetCurrentTime: " << phreeqc_rm.BMI_GetCurrentTime() << "\n";
+		double rm_timestep = 60.;
+		phreeqc_rm.BMI_SetValue("TimeStep", rm_timestep);
+		double bmi_timestep = 0.0;
+		phreeqc_rm.BMI_GetValue("TimeStep", bmi_timestep);
+		assert(rm_timestep == bmi_timestep);
+		rm_timestep = phreeqc_rm.GetTimeStep();
+		assert(rm_timestep == bmi_timestep);
+		bmi_timestep = phreeqc_rm.BMI_GetTimeStep();
+		assert(rm_timestep == bmi_timestep);
 	}
-	//double BMI_GetEndTime() { return this->GetTime() + this->GetTimeStep(); }
-	{
-		oss << "BMI_GetEndTime:     " << phreeqc_rm.BMI_GetEndTime() << "\n";
-	}
-	//std::string BMI_GetTimeUnits() { return "seconds"; };
-	{
-		oss << "BMI_GetTimeUnits:   " << phreeqc_rm.BMI_GetTimeUnits() << "\n";
-	}
-	//double BMI_GetTimeStep() { return this->GetTimeStep(); }
-	{
-		oss << "BMI_GetTimeStep:    " << phreeqc_rm.BMI_GetTimeStep() << "\n";
-	}
-	// std::vector<std::string> BMI_GetInputVarNames() { return this->bmi_input_vars; }
-	// int BMI_GetInputItemCount() { return (int)this->bmi_input_vars.size(); }
+	// EndTime
+	oss << "BMI_GetEndTime:     " << phreeqc_rm.BMI_GetEndTime() << "\n";
+	// TimeUnits
+	oss << "BMI_GetTimeUnits:   " << phreeqc_rm.BMI_GetTimeUnits() << "\n";
+	// TimeStep
+	oss << "BMI_GetTimeStep:    " << phreeqc_rm.BMI_GetTimeStep() << "\n";
+	// InputVarNames
 	{
 		std::vector<std::string> InputVarNames = phreeqc_rm.BMI_GetInputVarNames();
 		int count = phreeqc_rm.BMI_GetInputItemCount();
 		assert(InputVarNames.size() == (size_t)count);
+		std::vector<std::string> InputVarNames2;
+		phreeqc_rm.BMI_GetValue("InputVarNames", InputVarNames2);
+		assert(InputVarNames == InputVarNames2);
 		oss << "BMI_SetValues variables:\n";
 		for (size_t i = 0; i < count; i++)
 		{
 			oss << "  " << i << "  " << InputVarNames[i] << "\n";
 			oss << "     Type:  " << phreeqc_rm.BMI_GetVarType(InputVarNames[i]) << "\n";
 			oss << "     Units: " << phreeqc_rm.BMI_GetVarUnits(InputVarNames[i]) << "\n";
+			oss << "  Itemsize: " << phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
+			oss << "    NBytes: " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) << "\n";
 		}
 	}
-	// std::vector<std::string> BMI_GetOutputVarNames() { return this->bmi_output_vars; };
-	// int BMI_GetOutputItemCount() { return (int)this->bmi_output_vars.size(); }
+	// OutputVarNames
 	{
 		std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
 		int count = phreeqc_rm.BMI_GetOutputItemCount();
 		assert(OutputVarNames.size() == (size_t)count);
+		std::vector<std::string> OutputVarNames2;
+		phreeqc_rm.BMI_GetValue("OutputVarNames", OutputVarNames2);
+		assert(OutputVarNames == OutputVarNames2);
 		oss << "BMI_GetValues variables:\n";
 		for (size_t i = 0; i < count; i++)
 		{
 			oss << "  " << i << "  " << OutputVarNames[i] << "\n";
 			oss << "     Type:  " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
 			oss << "     Units: " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
+			oss << "  Itemsize: " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
+			oss << "    NBytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
 		}
 	}
 	phreeqc_rm.OutputMessage(oss.str());
 	// GetValue("Components")
 	{
-		int ncomps = -1;
-		phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
+		int ncomps;
+		phreeqc_rm.BMI_GetValue("ComponentCount", ncomps);
 		assert(ncomps == (size_t)phreeqc_rm.GetComponentCount());
-		size_t nbytes = (size_t)phreeqc_rm.BMI_GetVarNbytes("Components");
-		std::string all_comps(nbytes, ' ');
-		phreeqc_rm.BMI_GetValue("Components", (void*)all_comps.data());
-		size_t string_size = (size_t)phreeqc_rm.BMI_GetVarItemsize("Components");
 		std::vector<std::string> bmi_comps;
-		for (size_t i = 0; i < ncomps; i++)
-		{
-			std::string bmi_comp = all_comps.substr((i * string_size), string_size);
-			size_t end = bmi_comp.find_last_not_of(' ');
-			bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
-			bmi_comps.push_back(bmi_comp);
-		}
-		assert(bmi_comps == phreeqc_rm.GetComponents());
+		phreeqc_rm.BMI_GetValue("Components", bmi_comps);
+		std::vector<std::string> rm_comps;
+		rm_comps = phreeqc_rm.GetComponents();
+		assert(bmi_comps == rm_comps);
 	}
 	// GetValue("Concentrations")
 	{
-		int ncomps = -1;
-		phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
-		assert(ncomps == phreeqc_rm.GetComponentCount());
+		int ncomps;
+		phreeqc_rm.BMI_GetValue("ComponentCount", ncomps);
 		int conc_nbytes = phreeqc_rm.BMI_GetVarNbytes("Concentrations");
 		int conc_itemsize = phreeqc_rm.BMI_GetVarItemsize("Concentrations");
 		int conc_dim = conc_nbytes / conc_itemsize;
+		std::vector<double> bmi_conc;
+		phreeqc_rm.BMI_GetValue("Concentrations", bmi_conc);
+		assert(conc_dim == (int)bmi_conc.size());
 		std::vector<double> rm_conc;
 		phreeqc_rm.GetConcentrations(rm_conc);
-		assert(conc_nbytes == (int)(rm_conc.size() * sizeof(double)));
-		assert(conc_dim == (int)rm_conc.size());
-		std::vector<double> bmi_conc(conc_dim, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Concentrations", bmi_conc.data());
 		assert(rm_conc == bmi_conc);
 	}
 	// GetValue("Density")
+	// GetDensity and BMI_GetValue("Density) always return 
+	// the calculated solution density
 	{
-		int ngrid;
-		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
-		std::vector<double> bmi_density(ngrid, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
 		std::vector<double> rm_density;
 		phreeqc_rm.GetDensity(rm_density);
+		std::vector<double> bmi_density;
+		phreeqc_rm.BMI_GetValue("Density", bmi_density);
 		assert(bmi_density == rm_density);
 	}
 	// GetValue("ErrorString")
 	{
-		int nbytes = phreeqc_rm.BMI_GetVarNbytes("ErrorString");
-		std::string bmi_err(nbytes, ' ');
+		std::string bmi_err;
+		phreeqc_rm.BMI_GetValue("ErrorString", bmi_err);
 		std::string rm_err = phreeqc_rm.GetErrorString();
 		assert(bmi_err == rm_err);
 	}
+	//FilePrefix
+	{
+		std::string str = "NewPrefix";
+		phreeqc_rm.BMI_SetValue("FilePrefix", str);
+		std::string rm_prefix = phreeqc_rm.GetFilePrefix();
+		assert(str == rm_prefix);
+		std::string prefix;
+		phreeqc_rm.BMI_GetValue("FilePrefix", prefix);
+		assert(prefix == rm_prefix);
+	}
 	// GetValue("Gfw")
 	{
-		int ncomps = -1;
-		phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
-		std::vector<double> bmi_gfw(ncomps, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Gfw", bmi_gfw.data());
-		const std::vector<double> rm_gfw = phreeqc_rm.GetGfw();
+		std::vector<double> bmi_gfw;
+		phreeqc_rm.BMI_GetValue("Gfw", bmi_gfw);
+		std::vector<double> rm_gfw = phreeqc_rm.GetGfw();
 		assert(bmi_gfw == rm_gfw);
 	}
 	// GetValue("GridCellCount")
 	{
 		int bmi_ngrid;
-		phreeqc_rm.BMI_GetValue("GridCellCount", &bmi_ngrid);
+		phreeqc_rm.BMI_GetValue("GridCellCount", bmi_ngrid);
 		int rm_ngrid = phreeqc_rm.GetGridCellCount();
 		assert(bmi_ngrid == rm_ngrid);
 	}
@@ -891,125 +847,137 @@ void BMI_testing(PhreeqcRM& phreeqc_rm)
 		// tested in "SelectedOutput"
 		// tested in "SelectedOutputHeadings"
 	}
+	// GetValue("Porosity")
+	{
+		int ngrid;
+		phreeqc_rm.BMI_GetValue("GridCellCount", ngrid);
+		std::vector<double> bmi_porosity(ngrid, 0.3);
+		phreeqc_rm.BMI_SetValue("Porosity", bmi_porosity);
+		std::vector<double> rm_porosity;
+		rm_porosity = phreeqc_rm.GetPorosity();
+		assert(bmi_porosity == rm_porosity);
+		phreeqc_rm.BMI_GetValue("Porosity", bmi_porosity);
+		assert(bmi_porosity == rm_porosity);
+	}
 	// GetValue("Pressure")
 	{
 		int ngrid;
-		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
-		std::vector<double> bmi_pressure(ngrid, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Pressure", bmi_pressure.data());
-		const std::vector<double> rm_pressure = phreeqc_rm.GetPressure();
+		phreeqc_rm.BMI_GetValue("GridCellCount", ngrid);
+		std::vector<double> bmi_pressure(ngrid, 1.1);
+		phreeqc_rm.BMI_SetValue("Pressure", bmi_pressure);
+		std::vector<double> rm_pressure;
+		rm_pressure = phreeqc_rm.GetPressure();
+		assert(bmi_pressure == rm_pressure);
+		phreeqc_rm.BMI_GetValue("Pressure", bmi_pressure);
 		assert(bmi_pressure == rm_pressure);
 	}
 	// GetValue("Saturation")
+	// Always returns solution_volume / (rv * porosity) for each cell
 	{
-		int ngrid;
-		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
-		std::vector<double> bmi_sat(ngrid, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Saturation", bmi_sat.data());
+		std::vector<double> bmi_sat;
+		phreeqc_rm.BMI_GetValue("Saturation", bmi_sat);
 		std::vector<double> rm_sat;
 		phreeqc_rm.GetSaturation(rm_sat);
 		assert(bmi_sat == rm_sat);
 	}
+	// GetValue("SolutionVolume")
+	// Always returns solution_volume / (rv * porosity) for each cell
+	{
+		std::vector<double> bmi_vol;
+		phreeqc_rm.BMI_GetValue("SolutionVolume", bmi_vol);
+		std::vector<double> rm_vol;
+		rm_vol = phreeqc_rm.GetSolutionVolume();
+		assert(bmi_vol == rm_vol);
+	}
+	// GetValue("Temperature")
+	{
+		int ngrid;
+		phreeqc_rm.BMI_GetValue("GridCellCount", ngrid);
+		std::vector<double> bmi_temperature(ngrid, 50.);
+		phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature);
+		std::vector<double> rm_temperature;
+		rm_temperature = phreeqc_rm.GetTemperature();
+		assert(bmi_temperature == rm_temperature);
+		phreeqc_rm.BMI_GetValue("Temperature", bmi_temperature);
+		assert(bmi_temperature == rm_temperature);
+	}
 	// GetValue("SelectedOutput")
 	{
 		int bmi_so_count;
-		phreeqc_rm.BMI_GetValue("SelectedOutputCount", &bmi_so_count);
+		phreeqc_rm.BMI_GetValue("SelectedOutputCount", bmi_so_count);
 		int rm_so_count = phreeqc_rm.GetSelectedOutputCount();
 		assert(bmi_so_count == rm_so_count);
 		for (int i = 0; i < bmi_so_count; i++)
 		{
-			phreeqc_rm.BMI_SetValue("NthSelectedOutput", &i);
+			phreeqc_rm.BMI_SetValue("NthSelectedOutput", i);
 			int bmi_nuser;
-			phreeqc_rm.BMI_GetValue("CurrentSelectedOutputUserNumber", &bmi_nuser);
+			phreeqc_rm.BMI_GetValue("CurrentSelectedOutputUserNumber", bmi_nuser);
 			int rm_nuser = phreeqc_rm.GetNthSelectedOutputUserNumber(i);
 			assert(bmi_nuser == rm_nuser);
 
 			int bmi_col_count;
-			phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", &bmi_col_count);
+			phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", bmi_col_count);
 			int rm_col_count = phreeqc_rm.GetSelectedOutputColumnCount();
 			assert(bmi_col_count == rm_col_count);
 
 			int bmi_row_count;
-			phreeqc_rm.BMI_GetValue("SelectedOutputRowCount", &bmi_row_count);
+			phreeqc_rm.BMI_GetValue("SelectedOutputRowCount", bmi_row_count);
 			int rm_row_count = phreeqc_rm.GetSelectedOutputRowCount();
 			assert(bmi_row_count == rm_row_count);
 
-			int bmi_nbytes = phreeqc_rm.BMI_GetVarNbytes("SelectedOutput");
-			int bmi_itemsize = phreeqc_rm.BMI_GetVarItemsize("SelectedOutput");
-			int bmi_dim = bmi_nbytes / bmi_itemsize;
-			std::vector<double> bmi_so(bmi_dim, INACTIVE_CELL_VALUE);
-			phreeqc_rm.BMI_GetValue("SelectedOutput", bmi_so.data());
+			std::vector<double> bmi_so;
+			phreeqc_rm.BMI_GetValue("SelectedOutput", bmi_so);
 			std::vector<double> rm_so;
 			phreeqc_rm.GetSelectedOutput(rm_so);
-			assert(bmi_dim == (int)rm_so.size());
-			assert(bmi_nbytes == (int)(rm_so.size() * sizeof(double)));
 			assert(bmi_so == rm_so);
 		}
 	}
 	// GetValue("SelectedOutputColumnCount")
 	{
 		int bmi_so_col_count;
-		phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", &bmi_so_col_count);
+		phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", bmi_so_col_count);
 		int rm_so_col_count = phreeqc_rm.GetSelectedOutputColumnCount();
 		assert(bmi_so_col_count == rm_so_col_count);
 	}
 	// GetValue("SelectedOutputCount")
 	{
 		int bmi_so_count;
-		phreeqc_rm.BMI_GetValue("SelectedOutputCount", &bmi_so_count);
+		phreeqc_rm.BMI_GetValue("SelectedOutputCount", bmi_so_count);
 		int rm_so_count = phreeqc_rm.GetSelectedOutputCount();
 		assert(bmi_so_count == rm_so_count);
 	}
 	// GetValue("SelectedOutputHeadings")
 	{
 		int bmi_so_count;
-		phreeqc_rm.BMI_GetValue("SelectedOutputCount", &bmi_so_count);
+		phreeqc_rm.BMI_GetValue("SelectedOutputCount", bmi_so_count);
 		int rm_so_count = phreeqc_rm.GetSelectedOutputCount();
 		assert(bmi_so_count == rm_so_count);
 		for (int i = 0; i < bmi_so_count; i++)
 		{
-			phreeqc_rm.BMI_SetValue("NthSelectedOutput", &i);
+			phreeqc_rm.BMI_SetValue("NthSelectedOutput", i);
 			int bmi_nuser;
-			phreeqc_rm.BMI_GetValue("CurrentSelectedOutputUserNumber", &bmi_nuser);
+			phreeqc_rm.BMI_GetValue("CurrentSelectedOutputUserNumber", bmi_nuser);
 			int rm_nuser = phreeqc_rm.GetNthSelectedOutputUserNumber(i);
 			assert(bmi_nuser == rm_nuser);
 
-			int bmi_nbytes = phreeqc_rm.BMI_GetVarNbytes("SelectedOutputHeadings");
-			int bmi_string_size = phreeqc_rm.BMI_GetVarItemsize("SelectedOutputHeadings");
-			std::string all_headings(bmi_nbytes, ' ');
-			phreeqc_rm.BMI_GetValue("SelectedOutputHeadings", (void*)all_headings.c_str());
-
 			int bmi_col_count;
-			phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", &bmi_col_count);
+			phreeqc_rm.BMI_GetValue("SelectedOutputColumnCount", bmi_col_count);
 			int rm_col_count = phreeqc_rm.GetSelectedOutputColumnCount();
 			assert(bmi_col_count == rm_col_count);
 
-			for (int j = 0; j < bmi_col_count; j++)
-			{
-				std::string bmi_head = all_headings.substr((j * bmi_string_size), bmi_string_size);
-				size_t end = bmi_head.find_last_not_of(' ');
-				bmi_head = (end == std::string::npos) ? "" : bmi_head.substr(0, end + 1);
-				std::string rm_head;
-				phreeqc_rm.GetSelectedOutputHeading(j, rm_head);
-				assert(bmi_head == rm_head);
-			}
+			std::vector< std::string > bmi_headings;
+			phreeqc_rm.BMI_GetValue("SelectedOutputHeadings", bmi_headings);
+			std::vector< std::string > rm_headings;
+			IRM_RESULT status = phreeqc_rm.GetSelectedOutputHeadings(rm_headings);
+			assert(bmi_headings == rm_headings);
 		}
 	}
 	// GetValue("SelectedOutputRowCount")
 	{
 		int bmi_so_row_count;
-		phreeqc_rm.BMI_GetValue("SelectedOutputRowCount", &bmi_so_row_count);
+		phreeqc_rm.BMI_GetValue("SelectedOutputRowCount", bmi_so_row_count);
 		int rm_so_row_count = phreeqc_rm.GetSelectedOutputRowCount();
 		assert(bmi_so_row_count == rm_so_row_count);
-	}
-	// GetValue("Temperature")
-	{
-		int ngrid;
-		phreeqc_rm.BMI_GetValue("GridCellCount", &ngrid);
-		std::vector<double> bmi_temp(ngrid, INACTIVE_CELL_VALUE);
-		phreeqc_rm.BMI_GetValue("Temperature", bmi_temp.data());
-		const std::vector<double> rm_temp = phreeqc_rm.GetTemperature();
-		assert(bmi_temp == rm_temp);
 	}
 }
 #endif // YAML

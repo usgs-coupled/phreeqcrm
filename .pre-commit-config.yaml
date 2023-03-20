@@ -4,9 +4,9 @@ repos:
     hooks:
     -   id: end-of-file-fixer
         files: CMakeLists.txt|configure.ac|Makefile.am|\.xml$|\.yml$
-        exclude: src/IPhreeqcPhast/IPhreeqc/phreeqcpp/test.xml$
+        exclude: src/IPhreeqcPhast/IPhreeqc/phreeqcpp/test.xml$|Doxygen/DoxygenLayout.xml$
     -   id: trailing-whitespace
         files: CMakeLists.txt|configure.ac|Makefile.am|\.xml$|\.yml$
-        exclude: src/IPhreeqcPhast/IPhreeqc/phreeqcpp/test.xml$
+        exclude: src/IPhreeqcPhast/IPhreeqc/phreeqcpp/test.xml$|Doxygen/DoxygenLayout.xml$
     -   id: no-commit-to-branch
         args: [--branch, main, --branch, master, --branch, develop]

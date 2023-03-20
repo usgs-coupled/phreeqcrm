@@ -32,6 +32,9 @@
 #define gzprintf fprintf
 //#define ogzstream std::ofstream
 #endif
+#ifdef USE_YAML
+#include "yaml-cpp/yaml.h"
+#endif
 #include "cxxMix.h"
 #include "Solution.h"
 #include "Exchange.h"
@@ -62,7 +65,8 @@ size_t PhreeqcRM::InstancesIndex = 0;
 
 //// static PhreeqcRM methods
 /* ---------------------------------------------------------------------- */
-void PhreeqcRM::CleanupReactionModuleInstances(void)
+void
+PhreeqcRM::CleanupReactionModuleInstances(void)
 /* ---------------------------------------------------------------------- */
 {
 	std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.begin();
@@ -126,7 +130,22 @@ PhreeqcRM::ErrorHandler(int result, const std::string & e_string)
 		throw PhreeqcRMStop();
 	}
 }
-
+#ifdef USE_YAML
+/* ---------------------------------------------------------------------- */
+int
+PhreeqcRM::GetGridCellCountYAML(const char* YAML_file)
+/* ---------------------------------------------------------------------- */
+{
+	YAML::Node yaml = YAML::LoadFile(YAML_file);
+	std::string keyword;
+	YAML::Node node;
+	if (yaml["SetGridCellCount"].IsDefined())
+	{
+		return yaml["SetGridCellCount"].as<int>();
+	}
+	return 0;
+}
+#endif
 /* ---------------------------------------------------------------------- */
 PhreeqcRM*
 PhreeqcRM::GetInstance(int id)
@@ -3360,10 +3379,9 @@ PhreeqcRM::GetCurrentSelectedOutputUserNumber(void)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
-	int return_value = IRM_INVALIDARG;
 	try
 	{
-		return_value = this->workers[0]->GetCurrentSelectedOutputUserNumber();
+		return this->workers[0]->GetCurrentSelectedOutputUserNumber();
 	}
 	catch (...)
 	{
@@ -4055,6 +4073,14 @@ PhreeqcRM::GetNthSelectedOutputUserNumber(int i)
 	this->ReturnHandler(PhreeqcRM::Int2IrmResult(return_value, true), "PhreeqcRM::GetNthSelectedOutputUserNumber");
 	return return_value;
 }
+
+/* ---------------------------------------------------------------------- */
+const std::vector<double>&
+PhreeqcRM::GetPorosity(void)
+/* ---------------------------------------------------------------------- */
+{
+	return this->porosity_root;
+}
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 const std::vector<double> &
@@ -4408,6 +4434,35 @@ PhreeqcRM::GetSelectedOutputHeading(int icol, std::string &heading)
 	{
 	}
 	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetSelectedOutputHeading");
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSelectedOutputHeadings(std::vector<std::string>& headings)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+		int ncol = this->GetSelectedOutputColumnCount();
+		if (ncol >= 0) 
+		{
+			for (size_t i = 0; i < ncol; i++)
+			{
+				std::string heading;
+				this->GetSelectedOutputHeading(i, heading);
+				headings.push_back(heading);
+			}
+			return IRM_OK;
+		}
+		else
+		{
+			this->ErrorHandler(IRM_INVALIDARG, "Selected output not found.");
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetSelectedOutputHeadings");
 }
 /* ---------------------------------------------------------------------- */
 int

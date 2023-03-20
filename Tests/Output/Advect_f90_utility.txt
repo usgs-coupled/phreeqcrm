@@ -37,10 +37,10 @@ Using solution 1.
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.500e-03
                        Mass of water (kg)  =   9.970e-01
-                 Total alkalinity (eq/kg)  =   4.407e-20
+                 Total alkalinity (eq/kg)  =  -1.657e-19
                          Temperature (°C)  =  15.00
                            Pressure (atm)  =  3.00
-                  Electrical balance (eq)  =  -3.522e-17
+                  Electrical balance (eq)  =  -3.675e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =  12
                                   Total H  = 1.106821e+02
@@ -90,7 +90,7 @@ End of simulation.
 Reading input data for simulation 2.
 ------------------------------------
 
---------------------------------
-End of Run after 12.547 Seconds.
---------------------------------
+-------------------------------
+End of Run after 1.883 Seconds.
+-------------------------------
 

@@ -11,12 +11,14 @@ extern "C" {
 
 extern void Advect_c(void);
 extern void Advect_f90(void);
+extern void AdvectBMI_f90(void);
 extern void Gas_c(void);
 extern void Gas_f90(void);
 extern void SimpleAdvect_c(void);
 extern void SimpleAdvect_f90(void);
 extern void Species_c(void);
 extern void Species_f90(void);
+extern void WriteYAMLFile_f90(void);
 
 #if defined(__cplusplus)
 }
@@ -85,6 +87,11 @@ int main(int argc, char* argv[])
 	if (root) std::cerr << "Done SimpleAdvect_f90.==================================" << std::endl;
 	Advect_f90();
 	if (root) std::cerr << "Done Advect_f90.==================================" << std::endl;
+#ifdef USE_YAML
+	WriteYAMLFile_f90();
+	AdvectBMI_f90();
+#endif
+	if (root) std::cerr << "Done AdvectBMI_f90.==================================" << std::endl;
 	Species_f90();
 	if (root) std::cerr << "Done Species_f90.====================================" << std::endl;
 	Gas_f90();

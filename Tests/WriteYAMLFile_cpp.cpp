@@ -17,7 +17,6 @@
 void WriteYAMLFile_cpp(void)
 {
 	YAMLPhreeqcRM yrm;
-	std::string YAML_filename = "AdvectBMI_cpp.yaml";
 	int nxyz = 40;
 	// Set GridCellCount
 	yrm.YAMLSetGridCellCount(nxyz);
@@ -33,12 +32,12 @@ void WriteYAMLFile_cpp(void)
 	yrm.YAMLOpenFiles();
 
 	// Set concentration units
-	yrm.YAMLSetUnitsSolution(2);           // 1, mg/L); 2, mol/L); 3, kg/kgs
-	yrm.YAMLSetUnitsPPassemblage(1);       // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
-	yrm.YAMLSetUnitsExchange(1);           // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
-	yrm.YAMLSetUnitsSurface(1);            // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
-	yrm.YAMLSetUnitsGasPhase(1);           // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
-	yrm.YAMLSetUnitsSSassemblage(1);       // 0, mol/L cell); 1, mol/L water); 2 mol/L rock
+	yrm.YAMLSetUnitsSolution(2);           // 1, mg/L; 2, mol/L; 3, kg/kgs
+	yrm.YAMLSetUnitsPPassemblage(1);       // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
+	yrm.YAMLSetUnitsExchange(1);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
+	yrm.YAMLSetUnitsSurface(1);            // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
+	yrm.YAMLSetUnitsGasPhase(1);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
+	yrm.YAMLSetUnitsSSassemblage(1);       // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 	yrm.YAMLSetUnitsKinetics(1);           // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 
 	// Set conversion from seconds to user units (days) Only affects one print statement
@@ -47,6 +46,9 @@ void WriteYAMLFile_cpp(void)
 	// Set representative volume
 	std::vector<double> rv(nxyz, 1.0);
 	yrm.YAMLSetRepresentativeVolume(rv);
+	// Set density
+	std::vector<double> density(nxyz, 1.0);
+	yrm.YAMLSetDensity(density);
 	// Set initial porosity
 	std::vector<double> por(nxyz, 0.2);
 	yrm.YAMLSetPorosity(por);
@@ -126,7 +128,8 @@ void WriteYAMLFile_cpp(void)
 	yrm.YAMLSetTimeStep(86400);
 
 	// Write YAML file
+	std::string YAML_filename = "AdvectBMI_cpp.yaml";
 	yrm.WriteYAMLDoc(YAML_filename);
-	yrm.clear();
+	yrm.Clear();
 };
 #endif

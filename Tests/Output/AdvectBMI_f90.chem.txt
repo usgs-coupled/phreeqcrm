@@ -196,24 +196,23 @@ Reading input data for simulation 4.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.665 Seconds.
+End of Run after 1.806 Seconds.
 -------------------------------
 
 Number of threads:                                         3
 Number of MPI processes:                                   1
 MPI task number:                                           0
-File prefix:                                      Advect_f90
+File prefix:                                        AdvectBMI_f90
 Number of grid cells in the user's model:                 40
-Number of chemistry cells in the reaction module:         20
 Number of components for transport:                        8
-H                  1.0080
-O                 16.0000
-Charge             1.0000
-Ca                40.0800
-Cl                35.4530
-K                 39.1020
-N                 14.0067
-Na                22.9898
+         H         1.0080
+         O        16.0000
+    Charge         1.0000
+        Ca        40.0800
+        Cl        35.4530
+         K        39.1020
+         N        14.0067
+        Na        22.9898
 
 Time:                   10
 Chemistry cell:         0
@@ -270,10 +269,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.800e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   3.124e-20
+                 Total alkalinity (eq/kg)  =   1.157e-19
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =   1.045e-18
+                  Electrical balance (eq)  =   1.051e-18
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   2
                                   Total H  = 2.213642e+01
@@ -324,7 +323,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.699 Seconds.
+End of Run after 1.835 Seconds.
 -------------------------------
 
 Time:                   10
@@ -382,10 +381,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.800e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   1.225e-19
+                 Total alkalinity (eq/kg)  =   3.051e-19
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =   7.565e-19
+                  Electrical balance (eq)  =   7.408e-19
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   5
                                   Total H  = 2.213642e+01
@@ -436,7 +435,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.699 Seconds.
+End of Run after 1.835 Seconds.
 -------------------------------
 
 Time:                   10
@@ -494,10 +493,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.800e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   4.255e-19
+                 Total alkalinity (eq/kg)  =  -2.928e-19
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =   1.106e-18
+                  Electrical balance (eq)  =   1.087e-18
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   6
                                   Total H  = 2.213642e+01
@@ -547,9 +546,9 @@ End of simulation.
 Reading input data for simulation 2.
 ------------------------------------
 
------------------------------
-End of Run after 1.7 Seconds.
------------------------------
+-------------------------------
+End of Run after 1.836 Seconds.
+-------------------------------
 
 Time:                   10
 Chemistry cell:         3
@@ -606,10 +605,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.800e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   3.874e-19
+                 Total alkalinity (eq/kg)  =  -2.019e-19
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =   6.016e-18
+                  Electrical balance (eq)  =   6.299e-18
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   6
                                   Total H  = 2.213642e+01
@@ -659,9 +658,9 @@ End of simulation.
 Reading input data for simulation 2.
 ------------------------------------
 
------------------------------
-End of Run after 1.7 Seconds.
------------------------------
+-------------------------------
+End of Run after 1.836 Seconds.
+-------------------------------
 
 Time:                   10
 Chemistry cell:         4
@@ -718,10 +717,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.758e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   2.763e-19
+                 Total alkalinity (eq/kg)  =   2.447e-19
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =   2.788e-16
+                  Electrical balance (eq)  =   2.790e-16
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   7
                                   Total H  = 2.213642e+01
@@ -772,7 +771,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.701 Seconds.
+End of Run after 1.836 Seconds.
 -------------------------------
 
 Time:                   10
@@ -830,7 +829,7 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.211e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   3.368e-19
+                 Total alkalinity (eq/kg)  =   1.542e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
                   Electrical balance (eq)  =   9.176e-14
@@ -884,7 +883,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.701 Seconds.
+End of Run after 1.835 Seconds.
 -------------------------------
 
 Time:                   10
@@ -942,10 +941,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   3.480e-19
+                 Total alkalinity (eq/kg)  =   3.336e-19
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -7.020e-16
+                  Electrical balance (eq)  =  -7.013e-16
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   6
                                   Total H  = 2.213642e+01
@@ -996,7 +995,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.702 Seconds.
+End of Run after 1.835 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1054,7 +1053,7 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   4.161e-18
+                 Total alkalinity (eq/kg)  =   3.137e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
                   Electrical balance (eq)  =   7.519e-13
@@ -1108,7 +1107,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.699 Seconds.
+End of Run after 1.836 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1166,7 +1165,7 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -3.420e-19
+                 Total alkalinity (eq/kg)  =   2.785e-19
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
                   Electrical balance (eq)  =   1.445e-13
@@ -1180,8 +1179,8 @@ X                2.200e-04 mol
                                                Log       Log       Log    mole V
    Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
 
-   H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
+   H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Ca            1.785e-23
    Ca+2            1.785e-23   1.533e-23   -22.748   -22.815    -0.066    -18.19
@@ -1220,7 +1219,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.699 Seconds.
+End of Run after 1.836 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1276,10 +1275,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   2.175e-19
+                 Total alkalinity (eq/kg)  =  -5.725e-21
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -1.555e-17
+                  Electrical balance (eq)  =  -1.575e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213642e+01
@@ -1290,8 +1289,8 @@ X                2.200e-04 mol
                                                Log       Log       Log    mole V
    Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
 
-   OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
    H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
+   OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Cl            1.200e-03
    Cl-             1.200e-03   1.154e-03    -2.921    -2.938    -0.017     17.91
@@ -1326,9 +1325,9 @@ End of simulation.
 Reading input data for simulation 2.
 ------------------------------------
 
------------------------------
-End of Run after 1.7 Seconds.
------------------------------
+-------------------------------
+End of Run after 1.837 Seconds.
+-------------------------------
 
 Time:                   10
 Chemistry cell:         10
@@ -1384,10 +1383,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.361e-18
+                 Total alkalinity (eq/kg)  =  -3.398e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.820e-17
+                  Electrical balance (eq)  =  -6.800e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -1441,9 +1440,9 @@ End of simulation.
 Reading input data for simulation 2.
 ------------------------------------
 
------------------------------
-End of Run after 1.7 Seconds.
------------------------------
+-------------------------------
+End of Run after 1.835 Seconds.
+-------------------------------
 
 Time:                   10
 Chemistry cell:         11
@@ -1499,10 +1498,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.361e-18
+                 Total alkalinity (eq/kg)  =  -3.398e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.820e-17
+                  Electrical balance (eq)  =  -6.800e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -1557,7 +1556,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.699 Seconds.
+End of Run after 1.835 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1614,10 +1613,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.361e-18
+                 Total alkalinity (eq/kg)  =  -3.398e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.820e-17
+                  Electrical balance (eq)  =  -6.800e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -1672,7 +1671,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.699 Seconds.
+End of Run after 1.836 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1729,10 +1728,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.361e-18
+                 Total alkalinity (eq/kg)  =  -3.398e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.820e-17
+                  Electrical balance (eq)  =  -6.800e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -1786,9 +1785,9 @@ End of simulation.
 Reading input data for simulation 2.
 ------------------------------------
 
------------------------------
-End of Run after 1.7 Seconds.
------------------------------
+-------------------------------
+End of Run after 1.836 Seconds.
+-------------------------------
 
 Time:                   10
 Chemistry cell:         14
@@ -1844,10 +1843,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.361e-18
+                 Total alkalinity (eq/kg)  =  -3.398e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.820e-17
+                  Electrical balance (eq)  =  -6.800e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -1901,9 +1900,9 @@ End of simulation.
 Reading input data for simulation 2.
 ------------------------------------
 
------------------------------
-End of Run after 1.7 Seconds.
------------------------------
+-------------------------------
+End of Run after 1.836 Seconds.
+-------------------------------
 
 Time:                   10
 Chemistry cell:         15
@@ -1959,10 +1958,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.361e-18
+                 Total alkalinity (eq/kg)  =  -3.398e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.820e-17
+                  Electrical balance (eq)  =  -6.800e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -2017,7 +2016,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.701 Seconds.
+End of Run after 1.837 Seconds.
 -------------------------------
 
 Time:                   10
@@ -2074,10 +2073,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.361e-18
+                 Total alkalinity (eq/kg)  =  -3.398e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.820e-17
+                  Electrical balance (eq)  =  -6.800e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -2132,7 +2131,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.701 Seconds.
+End of Run after 1.838 Seconds.
 -------------------------------
 
 Time:                   10
@@ -2189,10 +2188,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.361e-18
+                 Total alkalinity (eq/kg)  =  -3.398e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.820e-17
+                  Electrical balance (eq)  =  -6.800e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -2247,7 +2246,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.702 Seconds.
+End of Run after 1.838 Seconds.
 -------------------------------
 
 Time:                   10
@@ -2304,10 +2303,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.361e-18
+                 Total alkalinity (eq/kg)  =  -3.398e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.820e-17
+                  Electrical balance (eq)  =  -6.800e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -2362,7 +2361,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.702 Seconds.
+End of Run after 1.839 Seconds.
 -------------------------------
 
 Time:                   10
@@ -2419,10 +2418,10 @@ X                2.200e-04 mol
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.361e-18
+                 Total alkalinity (eq/kg)  =  -3.398e-18
                          Temperature (°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.820e-17
+                  Electrical balance (eq)  =  -6.800e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -2477,6 +2476,6 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.703 Seconds.
+End of Run after 1.839 Seconds.
 -------------------------------
 

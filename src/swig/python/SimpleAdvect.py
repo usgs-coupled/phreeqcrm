@@ -1,5 +1,6 @@
 import phreeqcrm
-import numpy as np
+import sys
+# import numpy as np
 
 """
     Functions that accept a constant vector reference
@@ -47,7 +48,7 @@ def SimpleAdvect():
     phreeqc_rm.UseSolutionDensityVolume(False)
 
     # Open files
-    status = phreeqc_rm.SetFilePrefix("SimpleAdvect_cpp")
+    status = phreeqc_rm.SetFilePrefix("SimpleAdvect_py")
     phreeqc_rm.OpenFiles()
 
     # Set concentration units
@@ -95,7 +96,11 @@ def SimpleAdvect():
     phreeqc_rm.OutputMessage("\n")
 
     # Set array of initial conditions
-    ic1 = np.full((nxyz * 7,), -1)
+    if 'numpy' in sys.modules:
+        # this may require numpy to be linked in
+        ic1 = np.full((nxyz * 7,), -1)
+    else:
+        ic1 = [-1] * nxyz * 7
     for i in range(nxyz):
         ic1[i]            =  1  # Solution 1
         ic1[nxyz + i]     = -1  # Equilibrium phases none
@@ -168,16 +173,15 @@ def SimpleAdvect():
 
         # Transfer data from PhreeqcRM for transport
         status = phreeqc_rm.GetConcentrations(c_dbl_vect)
-
+        
     # Clean up
     status = phreeqc_rm.CloseFiles()
     status = phreeqc_rm.MpiWorkerBreak()
-
 def simpleadvection(c, bc_conc, ncomps, nxyz, dim):
     """
     TODO
     """
-    for i in range(nxyz//2 -1, 0, -1):
+    for i in range(nxyz - 1, 0, -1):
         for j in range(ncomps):
             c[j * nxyz + i] = c[j * nxyz + i - 1]              # component j
     
