@@ -201,3 +201,76 @@ jobs:
     - name: Test with CMake
       working-directory: ${{ github.workspace }}/build
       run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
+
+  cmake-fortran:
+    name: cmake-fortran
+    needs: [init, distcheck]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04]
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
+
+    steps:
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: tarball
+
+    - name: Install ninja yaml-cpp valgrind (Linux)
+      if: runner.os == 'Linux'
+      #run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
+      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+
+    - name: Install ninja yaml-cpp (macOS)
+      if: runner.os == 'macOS'
+      run: brew install ninja yaml-cpp
+
+    - name: Install yaml-cpp (Windows)
+      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: vcpkg install yaml-cpp:x64-windows
+
+    # - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v4
+      with:
+        # python-version: ${{ matrix.python-version }}
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install numpy
+        # @todo if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Set up Visual Studio shell (Windows)
+      if: runner.os == 'Windows'
+      uses: egor-tensin/vs-shell@v2
+      with:
+        arch: x64
+
+    - name: Extract tarball
+      run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
+
+    - name: Configure with CMake (Not Windows)
+      if: runner.os != 'Windows'
+      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
+
+    - name: Configure with CMake (Windows)
+      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
+      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
+
+    - name: Configure with CMake (Windows)
+      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
+
+    - name: Build with CMake
+      run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
+
+    - name: Test with CMake
+      working-directory: ${{ github.workspace }}/build
+      run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
