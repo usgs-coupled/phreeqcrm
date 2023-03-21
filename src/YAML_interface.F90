@@ -231,17 +231,22 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLDumpModule_F(id, dump_on, append) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLDumpModule_F(id, idump_on, iappend) &
 			BIND(C, NAME='YAMLDumpModule_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer, intent(in) :: id
-        logical(kind=C_INT), intent(in) :: dump_on, append
+        integer(kind=C_INT), intent(in) :: idump_on, iappend
 		END FUNCTION YAMLDumpModule_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: dump_on, append   
-	YAMLDumpModule = YAMLDumpModule_F(id, dump_on, append)
+    logical, intent(in) :: dump_on, append  
+    integer :: idump_on, iappend
+	idump_on = 0
+	iappend = 0
+    if (dump_on) idump_on = 1
+    if (append) iappend = 1
+	YAMLDumpModule = YAMLDumpModule_F(id, idump_on, iappend)
     END FUNCTION YAMLDumpModule
 !> Inserts data into the YAML document for the PhreeqcRM method FindComponents.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -716,19 +721,27 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLRunFile_F(id, workers, initial_phreeqc, utility, file_name) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLRunFile_F(id, iworkers, iinitial_phreeqc, iutility, file_name) &
 			BIND(C, NAME='YAMLRunFile_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        logical(kind=C_INT), intent(in) :: workers, initial_phreeqc, utility
+        integer(kind=C_INT), intent(in) :: iworkers, iinitial_phreeqc, iutility
         character(KIND=C_CHAR), intent(in) :: file_name(*)
 		END FUNCTION YAMLRunFile_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: workers, initial_phreeqc, utility
+    logical, intent(in) :: workers, initial_phreeqc, utility
+    integer :: iworkers, iinitial_phreeqc, iutility
     character(len=*), intent(in) :: file_name
-	YAMLRunFile = YAMLRunFile_F(id, workers, initial_phreeqc, utility, trim(file_name)//C_NULL_CHAR)
+	iworkers = 0
+	iinitial_phreeqc = 0
+	iutility = 0
+	if (workers) iworkers = 1
+	if (initial_phreeqc) iinitial_phreeqc = 1
+	if (utility) iutility = 1
+
+	YAMLRunFile = YAMLRunFile_F(id, iworkers, iinitial_phreeqc, iutility, trim(file_name)//C_NULL_CHAR)
     END FUNCTION YAMLRunFile   
 !> Inserts data into the YAML document for the PhreeqcRM method RunString.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -761,19 +774,26 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLRunString_F(id, workers, initial_phreeqc, utility, input_string) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLRunString_F(id, iworkers, iinitial_phreeqc, iutility, input_string) &
 			BIND(C, NAME='YAMLRunString_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        logical(kind=C_INT), intent(in) :: workers, initial_phreeqc, utility
+        integer(kind=C_INT), intent(in) :: iworkers, iinitial_phreeqc, iutility
         character(KIND=C_CHAR), intent(in) :: input_string(*)
 		END FUNCTION YAMLRunString_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: workers, initial_phreeqc, utility
+    logical, intent(in) :: workers, initial_phreeqc, utility
+    integer :: iworkers, iinitial_phreeqc, iutility
     character(len=*), intent(in) :: input_string
-	YAMLRunString = YAMLRunString_F(id, workers, initial_phreeqc, utility, trim(input_string)//C_NULL_CHAR)
+	iworkers = 0
+	iinitial_phreeqc = 0
+	iutility = 0
+	if (workers) iworkers = 1
+	if (initial_phreeqc) iinitial_phreeqc = 1
+	if (utility) iutility = 1
+	YAMLRunString = YAMLRunString_F(id, iworkers, iinitial_phreeqc, iutility, trim(input_string)//C_NULL_CHAR)
     END FUNCTION YAMLRunString 
 !> Inserts data into the YAML document for the PhreeqcRM method ScreenMessage.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -840,17 +860,20 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetComponentH2O_F(id, tf) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetComponentH2O_F(id, itf) &
 			BIND(C, NAME='YAMLSetComponentH2O_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        logical(kind=C_INT), intent(in) :: tf
+        integer(kind=C_INT), intent(in) :: itf
 		END FUNCTION YAMLSetComponentH2O_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: tf
-	YAMLSetComponentH2O = YAMLSetComponentH2O_F(id, tf)
+    logical, intent(in) :: tf
+    integer             :: itf
+	itf = 0
+	if (tf) itf = 1
+	YAMLSetComponentH2O = YAMLSetComponentH2O_F(id, itf)
     END FUNCTION YAMLSetComponentH2O
 !> Inserts data into the YAML document for the PhreeqcRM method SetConcentrations.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -1074,17 +1097,20 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetErrorOn_F(id, tf) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetErrorOn_F(id, itf) &
 			BIND(C, NAME='YAMLSetErrorOn_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        logical(kind=C_INT), intent(in) :: tf
+        integer(kind=C_INT), intent(in) :: itf
 		END FUNCTION YAMLSetErrorOn_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: tf
-	YAMLSetErrorOn = YAMLSetErrorOn_F(id, tf)
+    logical, intent(in) :: tf
+    integer :: itf
+	itf = 0
+	if (tf) itf = 1
+	YAMLSetErrorOn = YAMLSetErrorOn_F(id, itf)
     END FUNCTION YAMLSetErrorOn   
 !> Inserts data into the YAML document for the PhreeqcRM method SetFilePrefix.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -1334,17 +1360,20 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetPartitionUZSolids_F(id, tf) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetPartitionUZSolids_F(id, itf) &
 			BIND(C, NAME='YAMLSetPartitionUZSolids_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        logical(kind=C_INT), intent(in) :: tf
+        integer(kind=C_INT), intent(in) :: itf
 		END FUNCTION YAMLSetPartitionUZSolids_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: tf
-	YAMLSetPartitionUZSolids = YAMLSetPartitionUZSolids_F(id, tf)
+    logical, intent(in) :: tf
+	integer :: itf
+	itf = 0
+	if (tf) itf = 1
+	YAMLSetPartitionUZSolids = YAMLSetPartitionUZSolids_F(id, itf)
     END FUNCTION YAMLSetPartitionUZSolids       
 !> Inserts data into the YAML document for the PhreeqcRM method SetPorosity.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -1511,17 +1540,24 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetPrintChemistryOn_F(id, workers, initial_phreeqc, utility) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetPrintChemistryOn_F(id, iworkers, iinitial_phreeqc, iutility) &
 			BIND(C, NAME='YAMLSetPrintChemistryOn_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        logical(kind=C_INT), intent(in) :: workers, initial_phreeqc, utility
+        integer(kind=C_INT), intent(in) :: iworkers, iinitial_phreeqc, iutility
 		END FUNCTION YAMLSetPrintChemistryOn_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: workers, initial_phreeqc, utility
-	YAMLSetPrintChemistryOn = YAMLSetPrintChemistryOn_F(id, workers, initial_phreeqc, utility)
+    logical, intent(in) :: workers, initial_phreeqc, utility
+	integer :: iworkers, iinitial_phreeqc, iutility
+	iworkers = 0
+	iinitial_phreeqc = 0
+	iutility = 0
+	if (workers) iworkers = 1
+	if (initial_phreeqc) iinitial_phreeqc = 1
+	if (utility) iutility = 1
+	YAMLSetPrintChemistryOn = YAMLSetPrintChemistryOn_F(id, iworkers, iinitial_phreeqc, iutility)
     END FUNCTION YAMLSetPrintChemistryOn
 !> Inserts data into the YAML document for the PhreeqcRM method SetRebalanceByCell.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -1553,17 +1589,20 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetRebalanceByCell_F(id, tf) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetRebalanceByCell_F(id, itf) &
 			BIND(C, NAME='YAMLSetRebalanceByCell_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        logical(kind=C_INT), intent(in) :: tf
+        integer(kind=C_INT), intent(in) :: itf
 		END FUNCTION YAMLSetRebalanceByCell_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: tf
-	YAMLSetRebalanceByCell = YAMLSetRebalanceByCell_F(id, tf)
+    logical, intent(in) :: tf
+	integer :: itf
+	itf = 0
+	if (tf) itf = 1
+	YAMLSetRebalanceByCell = YAMLSetRebalanceByCell_F(id, itf)
     END FUNCTION YAMLSetRebalanceByCell  
 !> Inserts data into the YAML document for the PhreeqcRM method SetRebalanceFraction.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -1741,17 +1780,20 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetScreenOn_F(id, tf) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetScreenOn_F(id, itf) &
 			BIND(C, NAME='YAMLSetScreenOn_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        logical(kind=C_INT), intent(in) :: tf
+        integer(kind=C_INT), intent(in) :: itf
 		END FUNCTION YAMLSetScreenOn_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: tf
-	YAMLSetScreenOn = YAMLSetScreenOn_F(id, tf)
+    logical, intent(in) :: tf
+	integer :: itf
+	itf = 0
+	if (tf) itf = 1
+	YAMLSetScreenOn = YAMLSetScreenOn_F(id, itf)
     END FUNCTION YAMLSetScreenOn  
 !> Inserts data into the YAML document for the PhreeqcRM method SetSelectedOutputOn.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -1783,17 +1825,20 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetSelectedOutputOn_F(id, tf) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetSelectedOutputOn_F(id, itf) &
 			BIND(C, NAME='YAMLSetSelectedOutputOn_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        logical(kind=C_INT), intent(in) :: tf
+        integer(kind=C_INT), intent(in) :: itf
 		END FUNCTION YAMLSetSelectedOutputOn_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: tf
-	YAMLSetSelectedOutputOn = YAMLSetSelectedOutputOn_F(id, tf)
+    logical, intent(in) :: tf
+	integer :: itf
+	itf = 0
+	if (tf) itf = 1
+	YAMLSetSelectedOutputOn = YAMLSetSelectedOutputOn_F(id, itf)
     END FUNCTION YAMLSetSelectedOutputOn  
 !> Inserts data into the YAML document for the PhreeqcRM method SetSpeciesSaveOn.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -1827,17 +1872,20 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetSpeciesSaveOn_F(id, tf) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetSpeciesSaveOn_F(id, itf) &
 			BIND(C, NAME='YAMLSetSpeciesSaveOn_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        logical(kind=C_INT), intent(in) :: tf
+        integer(kind=C_INT), intent(in) :: itf
 		END FUNCTION YAMLSetSpeciesSaveOn_F
     END INTERFACE
     integer, intent(in) :: id
     logical(kind=4), intent(in) :: tf
-	YAMLSetSpeciesSaveOn = YAMLSetSpeciesSaveOn_F(id, tf)
+	integer :: itf
+	itf = 0
+	if (tf) itf = 1
+	YAMLSetSpeciesSaveOn = YAMLSetSpeciesSaveOn_F(id, itf)
     END FUNCTION YAMLSetSpeciesSaveOn 
 !> Inserts data into the YAML document for the PhreeqcRM method SetTemperature.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -2597,17 +2645,20 @@ MODULE YAML_interface
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLUseSolutionDensityVolume_F(id, tf) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLUseSolutionDensityVolume_F(id, itf) &
 			BIND(C, NAME='YAMLUseSolutionDensityVolume_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        logical(kind=C_INT), intent(in) :: tf
+        integer(kind=C_INT), intent(in) :: itf
 		END FUNCTION YAMLUseSolutionDensityVolume_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: tf
-	YAMLUseSolutionDensityVolume = YAMLUseSolutionDensityVolume_F(id, tf)
+    logical, intent(in) :: tf
+	integer :: itf
+	itf = 0
+	if (tf) itf = 1
+	YAMLUseSolutionDensityVolume = YAMLUseSolutionDensityVolume_F(id, itf)
     END FUNCTION YAMLUseSolutionDensityVolume 
 !> Inserts data into the YAML document for the PhreeqcRM method WarningMessage.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
