@@ -756,7 +756,7 @@ USE, intrinsic :: ISO_C_BINDING
 
 END subroutine BMI_testing
 integer function assert(tf)
-logical :: tf
+logical, intent(in) :: tf
 if(tf) then
     assert = 0
     return
@@ -764,4 +764,4 @@ endif
 stop "Assert failed"
 end function assert
 
-#endif ! USE_YAML
+#endif 
