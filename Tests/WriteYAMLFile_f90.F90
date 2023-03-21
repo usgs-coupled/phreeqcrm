@@ -138,4 +138,4 @@
     status = DestroyYAMLPhreeqcRM(id)
     status = 0
     end subroutine WriteYAMLFile_f90
-#endif ! USE_YAML    
+#endif     

@@ -7607,25 +7607,27 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, idest) &
         BIND(C, NAME='RMF_BMI_GetValue')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    LOGICAL(KIND=C_INT), INTENT(inout) :: dest
+    INTEGER(KIND=C_INT), INTENT(inout) :: idest
     END FUNCTION RMF_BMI_GetValue
     END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    LOGICAL(KIND=4), INTENT(inout) :: dest
+    LOGICAL, INTENT(inout) :: dest
     character(20) :: vartype
-    integer :: status
+    integer :: status, idest
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "logical") then
         stop "Variable type error."
     endif
-    RM_BMI_GetValue_b = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
+    RM_BMI_GetValue_b = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, idest)
+    dest = .true.
+    if (idest .eq. 0) dest = .false.
     return
     END FUNCTION RM_BMI_GetValue_b
 
@@ -8330,25 +8332,30 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, isrc) &
         BIND(C, NAME='RMF_BMI_SetValue')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    LOGICAL(KIND=C_INT), INTENT(in) :: src
+    INTEGER, INTENT(in) :: isrc
     END FUNCTION RMF_BMI_SetValue
     END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL(kind=4), INTENT(in) :: src
     CHARACTER(20) :: vartype
-    integer :: bytes, nbytes, status, dim
+    integer :: bytes, nbytes, status, dim, isrc
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "logical") then
         stop "Variable type error."
     endif
-    RM_BMI_SetValue_b = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
+    if (src) then
+        isrc = 1
+    else
+        isrc = 0
+    end if
+    RM_BMI_SetValue_b = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, isrc)
     return
     END FUNCTION RM_BMI_SetValue_b
 

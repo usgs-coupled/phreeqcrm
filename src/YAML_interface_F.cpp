@@ -56,12 +56,14 @@ IRM_RESULT YAMLCreateMapping_F(int* id, int* grid2chem, int* dim)
 	}
 	return IRM_BADINSTANCE;
 };
-IRM_RESULT YAMLDumpModule_F(int* id, bool* dump_on, bool* append)
+IRM_RESULT YAMLDumpModule_F(int* id, int* idump_on, int* iappend)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLDumpModule(*dump_on, *append);
+		bool dump_on = (bool)*idump_on;
+		bool append = (bool)*iappend;
+		yrm_ptr->YAMLDumpModule(dump_on, append);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -168,24 +170,31 @@ IRM_RESULT YAMLRunCells_F(int* id)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLRunFile_F(int* id, bool* workers, bool* initial_phreeqc, 
-	bool* utility, const char* file_name)
+IRM_RESULT YAMLRunFile_F(int* id, int* iworkers, int* iinitial_phreeqc, 
+	int* iutility, const char* file_name)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLRunFile(*workers, *initial_phreeqc, *utility, file_name);
+		bool workers = (bool)*iworkers;
+		bool initial_phreeqc = (bool)*iinitial_phreeqc;
+		bool utility = (bool)*iutility;
+
+		yrm_ptr->YAMLRunFile(workers, initial_phreeqc, utility, file_name);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLRunString_F(int* id, bool* workers, bool* initial_phreeqc, 
-	bool* utility, const char* input_string)
+IRM_RESULT YAMLRunString_F(int* id, int* iworkers, int* iinitial_phreeqc, 
+	int* iutility, const char* input_string)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLRunString(*workers, *initial_phreeqc, *utility, input_string);
+		bool workers = (bool)*iworkers;
+		bool initial_phreeqc = (bool)*iinitial_phreeqc;
+		bool utility = (bool)*iutility;
+		yrm_ptr->YAMLRunString(workers, initial_phreeqc, utility, input_string);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -200,12 +209,13 @@ IRM_RESULT YAMLScreenMessage_F(int* id, const char* str)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetComponentH2O_F(int* id, bool* tf)
+IRM_RESULT YAMLSetComponentH2O_F(int* id, int* itf)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLSetComponentH2O(*tf);
+		bool tf = (bool)itf;
+		yrm_ptr->YAMLSetComponentH2O(tf);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -264,12 +274,13 @@ IRM_RESULT YAMLSetErrorHandlerMode_F(int* id, int* mode)
 	}
 	return IRM_BADINSTANCE;
 };
-IRM_RESULT YAMLSetErrorOn_F(int* id, bool* tf)
+IRM_RESULT YAMLSetErrorOn_F(int* id, int* itf)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLSetErrorOn(*tf);
+		bool tf = (bool)*itf;
+		yrm_ptr->YAMLSetErrorOn(tf);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -328,12 +339,13 @@ IRM_RESULT YAMLSetNthSelectedOutput_F(int* id, int* n)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetPartitionUZSolids_F(int* id, bool* tf)
+IRM_RESULT YAMLSetPartitionUZSolids_F(int* id, int* itf)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLSetPartitionUZSolids(*tf);
+		bool tf = (bool)*itf;
+		yrm_ptr->YAMLSetPartitionUZSolids(tf);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -374,23 +386,27 @@ IRM_RESULT YAMLSetPrintChemistryMask_F(int* id, int* cell_mask, int* dim)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetPrintChemistryOn_F(int* id, bool* workers, bool* initial_phreeqc, 
-	bool* utility)
+IRM_RESULT YAMLSetPrintChemistryOn_F(int* id, int* iworkers, int* iinitial_phreeqc, 
+	int* iutility)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLSetPrintChemistryOn(*workers, *initial_phreeqc, *utility);
+		bool workers = (bool)*iworkers;
+		bool initial_phreeqc = (bool)*iinitial_phreeqc;
+		bool utility = (bool)*iutility;
+		yrm_ptr->YAMLSetPrintChemistryOn(workers, initial_phreeqc, utility);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetRebalanceByCell_F(int* id, bool* tf)
+IRM_RESULT YAMLSetRebalanceByCell_F(int* id, int* itf)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLSetRebalanceByCell(*tf);
+		bool tf = (bool)*itf;
+		yrm_ptr->YAMLSetRebalanceByCell(tf);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -429,32 +445,35 @@ IRM_RESULT YAMLSetSaturation_F(int* id, double* sat, int* dim)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetScreenOn_F(int* id, bool* tf)
+IRM_RESULT YAMLSetScreenOn_F(int* id, int* itf)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLSetScreenOn(*tf);
+		bool tf = (bool)*itf;
+		yrm_ptr->YAMLSetScreenOn(tf);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetSelectedOutputOn_F(int* id, bool* tf)
+IRM_RESULT YAMLSetSelectedOutputOn_F(int* id, int* itf)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLSetSelectedOutputOn(*tf);
+		bool tf = (bool)*itf;
+		yrm_ptr->YAMLSetSelectedOutputOn(tf);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetSpeciesSaveOn_F(int* id, bool* save_on)
+IRM_RESULT YAMLSetSpeciesSaveOn_F(int* id, int* isave_on)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLSetSpeciesSaveOn(*save_on);
+		bool save_on = (bool)*isave_on;
+		yrm_ptr->YAMLSetSpeciesSaveOn(save_on);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -613,12 +632,13 @@ IRM_RESULT YAMLStateDelete_F(int* id, int* istate)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLUseSolutionDensityVolume_F(int* id, bool* tf)
+IRM_RESULT YAMLUseSolutionDensityVolume_F(int* id, int* itf)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
-		yrm_ptr->YAMLUseSolutionDensityVolume(*tf);
+		bool tf = (bool)*itf;
+		yrm_ptr->YAMLUseSolutionDensityVolume(tf);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
