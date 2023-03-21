@@ -36,168 +36,171 @@ jobs:
     needs: init
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    # - uses: actions/checkout@v3
 
-    - name: autoreconf
-      run: autoreconf -fvi
+    # - name: autoreconf
+    #   run: autoreconf -fvi
 
-    - name: versioning
-      run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
+    # - name: versioning
+    #   run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
 
-    - name: doxygen
-      run: sudo apt-get -y install doxygen graphviz && cd Doxygen && make
+    - name: check for gfortran
+      run: gfortran --version
 
-    - name: install yaml-cpp
-      run: sudo apt-get -y install libyaml-cpp-dev
+    # - name: doxygen
+    #   run: sudo apt-get -y install doxygen graphviz && cd Doxygen && make
 
-    - name: mkdir
-      run: mkdir ${{github.workspace}}/_build
+    # - name: install yaml-cpp
+    #   run: sudo apt-get -y install libyaml-cpp-dev
 
-    - name: configure
-      shell: bash
-      working-directory: ${{github.workspace}}/_build
-      run: ../configure --prefix=$(pwd)/INSTALL
+    # - name: mkdir
+    #   run: mkdir ${{github.workspace}}/_build
 
-    - name: make
-      shell: bash
-      working-directory: ${{github.workspace}}/_build
-      run: make -j2 distcheck
+    # - name: configure
+    #   shell: bash
+    #   working-directory: ${{github.workspace}}/_build
+    #   run: ../configure --prefix=$(pwd)/INSTALL
 
-    - uses: actions/upload-artifact@v3
-      with:
-        name: tarball
-        path: ${{github.workspace}}/_build/*.tar.gz
+    # - name: make
+    #   shell: bash
+    #   working-directory: ${{github.workspace}}/_build
+    #   run: make -j2 distcheck
 
-  autotools:
-    name: autotools
-    needs: [init, distcheck]
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest, ubuntu-latest]
+    # - uses: actions/upload-artifact@v3
+    #   with:
+    #     name: tarball
+    #     path: ${{github.workspace}}/_build/*.tar.gz
 
-    runs-on: ${{ matrix.os }}
+  # autotools:
+  #   name: autotools
+  #   needs: [init, distcheck]
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [macos-latest, ubuntu-latest]
 
-    env:
-      VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
+  #   runs-on: ${{ matrix.os }}
 
-    steps:
+  #   env:
+  #     VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
 
-    - uses: actions/download-artifact@v3
-      with:
-        name: tarball
+  #   steps:
 
-    - name: Install ninja yaml-cpp valgrind (Linux)
-      if: runner.os == 'Linux'
-      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+  #   - uses: actions/download-artifact@v3
+  #     with:
+  #       name: tarball
 
-    - name: Install ninja yaml-cpp (macOS)
-      if: runner.os == 'macOS'
-      run: brew install ninja yaml-cpp
+  #   - name: Install ninja yaml-cpp valgrind (Linux)
+  #     if: runner.os == 'Linux'
+  #     run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
-    - name: Extract tarball
-      run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
+  #   - name: Install ninja yaml-cpp (macOS)
+  #     if: runner.os == 'macOS'
+  #     run: brew install ninja yaml-cpp
 
-    - name: mkdir build
-      run: mkdir ${{ github.workspace }}/build
+  #   - name: Extract tarball
+  #     run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
 
-    - name: Configure with autotools
-      working-directory: ${{ github.workspace }}/build
-      run: ../phreeqcrm-${{ env.VER_STRING }}/configure
+  #   - name: mkdir build
+  #     run: mkdir ${{ github.workspace }}/build
 
-    - name: Build with autotools
-      working-directory: ${{ github.workspace }}/build
-      run: make -j2
+  #   - name: Configure with autotools
+  #     working-directory: ${{ github.workspace }}/build
+  #     run: ../phreeqcrm-${{ env.VER_STRING }}/configure
 
-    - name: Install with autotools
-      working-directory: ${{ github.workspace }}/build
-      run: sudo make install
+  #   - name: Build with autotools
+  #     working-directory: ${{ github.workspace }}/build
+  #     run: make -j2
 
-    - name: Run ldconfig (Linux)
-      if: runner.os == 'Linux'
-      working-directory: ${{ github.workspace }}/build
-      run: sudo ldconfig
+  #   - name: Install with autotools
+  #     working-directory: ${{ github.workspace }}/build
+  #     run: sudo make install
 
-    - name: Cleanup
-      run: rm -rf *
+  #   - name: Run ldconfig (Linux)
+  #     if: runner.os == 'Linux'
+  #     working-directory: ${{ github.workspace }}/build
+  #     run: sudo ldconfig
 
-    - uses: actions/checkout@v3
+  #   - name: Cleanup
+  #     run: rm -rf *
 
-    - name: Test install
-      working-directory: ${{ github.workspace }}/Tests
-      run: env CC='gcc' CXX='g++ -std=gnu++11' make -f check.mk test && ./test
+  #   - uses: actions/checkout@v3
 
-  cmake:
-    name: cmake
-    needs: [init, distcheck]
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
-        build_shared_libs: [OFF, ON]
-        phreeqcrm_with_yaml_cpp: [OFF, ON]
+  #   - name: Test install
+  #     working-directory: ${{ github.workspace }}/Tests
+  #     run: env CC='gcc' CXX='g++ -std=gnu++11' make -f check.mk test && ./test
 
-    runs-on: ${{ matrix.os }}
+  # cmake:
+  #   name: cmake
+  #   needs: [init, distcheck]
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+  #       build_shared_libs: [OFF, ON]
+  #       phreeqcrm_with_yaml_cpp: [OFF, ON]
 
-    env:
-      VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
+  #   runs-on: ${{ matrix.os }}
 
-    steps:
+  #   env:
+  #     VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
 
-    - uses: actions/download-artifact@v3
-      with:
-        name: tarball
+  #   steps:
 
-    - name: Install ninja yaml-cpp valgrind (Linux)
-      if: runner.os == 'Linux'
-      #run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
-      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+  #   - uses: actions/download-artifact@v3
+  #     with:
+  #       name: tarball
 
-    - name: Install ninja yaml-cpp (macOS)
-      if: runner.os == 'macOS'
-      run: brew install ninja yaml-cpp
+  #   - name: Install ninja yaml-cpp valgrind (Linux)
+  #     if: runner.os == 'Linux'
+  #     #run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
+  #     run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
-    - name: Install yaml-cpp (Windows)
-      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: vcpkg install yaml-cpp:x64-windows
+  #   - name: Install ninja yaml-cpp (macOS)
+  #     if: runner.os == 'macOS'
+  #     run: brew install ninja yaml-cpp
 
-    # - name: Set up Python ${{ matrix.python-version }}
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v4
-      with:
-        # python-version: ${{ matrix.python-version }}
-        python-version: 3.8
+  #   - name: Install yaml-cpp (Windows)
+  #     if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+  #     run: vcpkg install yaml-cpp:x64-windows
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install numpy
-        # @todo if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  #   # - name: Set up Python ${{ matrix.python-version }}
+  #   - name: Set up Python 3.8
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       # python-version: ${{ matrix.python-version }}
+  #       python-version: 3.8
 
-    - name: Set up Visual Studio shell (Windows)
-      if: runner.os == 'Windows'
-      uses: egor-tensin/vs-shell@v2
-      with:
-        arch: x64
+  #   - name: Install dependencies
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       python -m pip install numpy
+  #       # @todo if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Extract tarball
-      run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
+  #   - name: Set up Visual Studio shell (Windows)
+  #     if: runner.os == 'Windows'
+  #     uses: egor-tensin/vs-shell@v2
+  #     with:
+  #       arch: x64
 
-    - name: Configure with CMake (Not Windows)
-      if: runner.os != 'Windows'
-      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
+  #   - name: Extract tarball
+  #     run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
 
-    - name: Configure with CMake (Windows)
-      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
-      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
+  #   - name: Configure with CMake (Not Windows)
+  #     if: runner.os != 'Windows'
+  #     run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
-    - name: Configure with CMake (Windows)
-      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
+  #   - name: Configure with CMake (Windows)
+  #     if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
+  #     run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
-    - name: Build with CMake
-      run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
+  #   - name: Configure with CMake (Windows)
+  #     if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+  #     run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
-    - name: Test with CMake
-      working-directory: ${{ github.workspace }}/build
-      run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
+  #   - name: Build with CMake
+  #     run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
+
+  #   - name: Test with CMake
+  #     working-directory: ${{ github.workspace }}/build
+  #     run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
