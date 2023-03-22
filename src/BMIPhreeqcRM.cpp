@@ -459,6 +459,88 @@ BMIPhreeqcRM::VarFunction BMIPhreeqcRM::GetFn(const std::string name)
 	return it->second;
 }
 ////////////////////////////////
+void Components_var(BMIPhreeqcRM& brm_ref)
+{
+	//name, type, std::string units, set, get
+	BMI_Var bv = BMI_Var("Components", "character,1d", "names", false, true);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::CountInput:
+	case BMIPhreeqcRM::BMI_TASKS::CountOutput:
+	case BMIPhreeqcRM::BMI_TASKS::Type:
+	case BMIPhreeqcRM::BMI_TASKS::Units:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Itemsize:
+	case BMIPhreeqcRM::BMI_TASKS::Nbytes:
+	{
+		std::vector<std::string> comps = brm_ref.GetComponents();
+		size_t size = 0;
+		for (size_t i = 0; i < comps.size(); i++)
+		{
+			if (comps[i].size() > size) size = comps[i].size();
+		}
+		brm_ref.bmi_variant.Itemsize = (int)size;
+		brm_ref.bmi_variant.Nbytes = (int)(size * comps.size());
+		break;
+	}
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.StringVector = brm_ref.GetComponents();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+void ComponentCount_var(BMIPhreeqcRM& brm_ref)
+{
+	//name, type, std::string units, set, get
+	BMI_Var bv = BMI_Var("ComponentCount", "integer", "names", false, true);
+	brm_ref.bmi_variant.bmi_var = bv;
+	brm_ref.bmi_variant.Itemsize = (int)sizeof(int);
+	brm_ref.bmi_variant.Nbytes = (int)sizeof(int);
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::CountInput:
+	case BMIPhreeqcRM::BMI_TASKS::CountOutput:
+	case BMIPhreeqcRM::BMI_TASKS::Type:
+	case BMIPhreeqcRM::BMI_TASKS::Units:
+	case BMIPhreeqcRM::BMI_TASKS::Itemsize:
+	case BMIPhreeqcRM::BMI_TASKS::Nbytes:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.i_var = brm_ref.GetComponentCount();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+void Concentrations_var(BMIPhreeqcRM& brm_ref)
+{
+	//name, type, std::string units, set, get
+	BMI_Var bv = BMI_Var("Concentrations", "double,2d", "mol L-1", true, true);
+	brm_ref.bmi_variant.bmi_var = bv;
+	brm_ref.bmi_variant.Itemsize = (int)sizeof(double);
+	brm_ref.bmi_variant.Nbytes = (int)sizeof(double) * 
+		brm_ref.GetGridCellCount() * brm_ref.GetComponentCount();
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::CountInput:
+	case BMIPhreeqcRM::BMI_TASKS::CountOutput:
+	case BMIPhreeqcRM::BMI_TASKS::Type:
+	case BMIPhreeqcRM::BMI_TASKS::Units:
+	case BMIPhreeqcRM::BMI_TASKS::Itemsize:
+	case BMIPhreeqcRM::BMI_TASKS::Nbytes:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		 brm_ref.GetConcentrations(brm_ref.bmi_variant.DoubleVector);
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		 brm_ref.SetConcentrations(brm_ref.bmi_variant.DoubleVector);
+		break;
+	}
+}
 void FilePrefix_var(BMIPhreeqcRM& brm_ref)
 {
 	//name, type, std::string units, set, get
