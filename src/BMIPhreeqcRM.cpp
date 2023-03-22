@@ -6,6 +6,20 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+void BMI_Variant::Clear()
+{
+	bmi_var = BMI_Var("", "", "", false, false);
+	Nbytes = 0;
+	Itemsize = 0;
+	b_var = false;
+	i_var = -1;
+	d_var = -1;
+	string_var = "";
+	IntVector.clear();
+	DoubleVector.clear();
+	StringVector.clear();
+	NotImplemented = true;
+}
 void FilePrefix_var(BMIPhreeqcRM& brm_ref);
 // Constructor
 BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads) :
@@ -94,56 +108,36 @@ std::vector<std::string>  BMIPhreeqcRM::GetOutputVarNames()
 }
 std::string BMIPhreeqcRM::GetVarType(const std::string name)
 {
-	this->task = BMIPhreeqcRM::BMI_TASKS::Type;
-	std::string name_lc = name;
-	std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
-	auto it = varfn_map.find(name_lc);
-	if (it == varfn_map.end())
-	{
-		return "";
-	}
-	it->second;
+
+	BMIPhreeqcRM::VarFunction fn = GetFn(name);
+	if (fn == NULL) return "";
+	fn;
 	return this->bmi_variant.GetType();
 }
 std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 {
 	this->task = BMIPhreeqcRM::BMI_TASKS::Units;
-	std::string name_lc = name;
-	std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
-	auto it = varfn_map.find(name_lc);
-	if (it == varfn_map.end())
-	{
-		return "";
-	}
-	it->second;
+	BMIPhreeqcRM::VarFunction fn = GetFn(name);
+	if (fn == NULL) return "";
+	fn;
 	return this->bmi_variant.GetUnits();
 }
 
 int BMIPhreeqcRM::GetVarItemsize(const std::string name)
 {
 	this->task = BMIPhreeqcRM::BMI_TASKS::Itemsize;
-	std::string name_lc = name;
-	std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
-	auto it = varfn_map.find(name_lc);
-	if (it == varfn_map.end())
-	{
-		return 0;
-	}
-	it->second;
+	BMIPhreeqcRM::VarFunction fn = GetFn(name);
+	if (fn == NULL) return 0;
+	fn;
 	return this->bmi_variant.GetItemsize();
 }
 
 int BMIPhreeqcRM::GetVarNbytes(const std::string name)
 {
 	this->task = BMIPhreeqcRM::BMI_TASKS::Nbytes;
-	std::string name_lc = name;
-	std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
-	auto it = varfn_map.find(name_lc);
-	if (it == varfn_map.end())
-	{
-		return 0;
-	}
-	it->second;
+	BMIPhreeqcRM::VarFunction fn = GetFn(name);
+	if (fn == NULL) return 0;
+	fn;
 	return this->bmi_variant.GetNbytes();
 }
 double BMIPhreeqcRM::GetCurrentTime()
@@ -419,6 +413,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src
 }
 BMIPhreeqcRM::VarFunction BMIPhreeqcRM::GetFn(const std::string name)
 {
+	this->bmi_variant.Clear();
 	std::string name_lc = name;
 	std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
 	auto it = varfn_map.find(name_lc);
@@ -489,17 +484,4 @@ void FilePrefix_var(BMIPhreeqcRM& brm_ref)
 		break;
 	}
 }
-void BMI_Variant::Clear()
-{
-	bmi_var = BMI_Var("","","",false,false);
-	Nbytes = 0;
-	Itemsize = 0;
-	b_var = false;
-	i_var = -1;
-	d_var = -1;
-	string_var = "";
-	IntVector.clear();
-	DoubleVector.clear();
-	StringVector.clear();
-	NotImplemented = true;
-}
+
