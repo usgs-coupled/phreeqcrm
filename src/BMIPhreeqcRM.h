@@ -6,8 +6,8 @@ class BMI_Variant
 {
 public:
     BMI_Var                  bmi_var;
-    int                      Nbytes;
-    int                      Itemsize;
+    //int                      Nbytes;
+    //int                      Itemsize;
     bool                     b_var;
     int                      i_var;
     double                   d_var;
@@ -26,10 +26,10 @@ public:
     void SetType(std::string s) { this->bmi_var.SetType(s); }
     std::string GetUnits() { return this->bmi_var.GetUnits(); }
     void SetUnits(std::string s) { this->bmi_var.SetUnits(s); }
-    int GetNbytes() { return (int)this->Nbytes; }
-    void SetNbytes(int n) { this->Nbytes = n; }
-    int GetItemsize() { return this->Itemsize; }
-    void SetItemsize(int n) { this->Itemsize = n; }
+    int GetNbytes() { return (int)this->bmi_var.GetNbytes(); }
+    void SetNbytes(int n) { this->bmi_var.SetNbytes(n); }
+    int GetItemsize() { return this->bmi_var.GetItemsize(); }
+    void SetItemsize(int n) { this->bmi_var.SetItemsize(n); }
 
     void Clear();
 };
@@ -38,12 +38,7 @@ class BMIPhreeqcRM : public bmi::Bmi, public PhreeqcRM
 public:
     BMIPhreeqcRM(int nxyz, int nthreads);
     enum class BMI_TASKS {
-        CountOutput,
-        CountInput,
-        Nbytes,
-        Itemsize,
-        Type,
-        Units,
+        Info,
         GetVar,
         SetVar,
         no_op

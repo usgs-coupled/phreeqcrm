@@ -8,9 +8,9 @@
 #include <sstream>
 void BMI_Variant::Clear()
 {
-	bmi_var = BMI_Var("", "", "", false, false);
-	Nbytes = 0;
-	Itemsize = 0;
+	bmi_var = BMI_Var("", "", "", false, false, 0, 0);
+	//Nbytes = 0;
+	//Itemsize = 0;
 	b_var = false;
 	i_var = -1;
 	d_var = -1;
@@ -18,7 +18,7 @@ void BMI_Variant::Clear()
 	IntVector.clear();
 	DoubleVector.clear();
 	StringVector.clear();
-	NotImplemented = true;
+	NotImplemented = false;
 }
 void FilePrefix_var(BMIPhreeqcRM& brm_ref);
 // Constructor
@@ -54,7 +54,7 @@ void BMIPhreeqcRM::Finalize()
 }
 int BMIPhreeqcRM::GetInputItemCount()
 {
-	this->task = BMIPhreeqcRM::BMI_TASKS::CountInput;
+	this->task = BMIPhreeqcRM::BMI_TASKS::Info;
 	int count = 0;
 	for (auto it = varfn_map.begin(); it != varfn_map.end(); it++)
 	{
@@ -66,7 +66,7 @@ int BMIPhreeqcRM::GetInputItemCount()
 }
 int BMIPhreeqcRM::GetOutputItemCount()
 {
-	this->task = BMIPhreeqcRM::BMI_TASKS::CountOutput;
+	this->task = BMIPhreeqcRM::BMI_TASKS::Info;
 	int count = 0;
 	for (auto it = varfn_map.begin(); it != varfn_map.end(); it++)
 	{
@@ -78,7 +78,7 @@ int BMIPhreeqcRM::GetOutputItemCount()
 }
 std::vector<std::string> BMIPhreeqcRM::GetInputVarNames()
 {
-	this->task = BMIPhreeqcRM::BMI_TASKS::CountInput;
+	this->task = BMIPhreeqcRM::BMI_TASKS::Info;
 	std::vector<std::string> names;
 	for (auto it = varfn_map.begin(); it != varfn_map.end(); it++)
 	{
@@ -93,7 +93,7 @@ std::vector<std::string> BMIPhreeqcRM::GetInputVarNames()
 }
 std::vector<std::string>  BMIPhreeqcRM::GetOutputVarNames()
 { 
-	this->task = BMIPhreeqcRM::BMI_TASKS::CountOutput;
+	this->task = BMIPhreeqcRM::BMI_TASKS::Info;
 	std::vector<std::string> names;
 	for (auto it = varfn_map.begin(); it != varfn_map.end(); it++)
 	{
@@ -116,7 +116,7 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 }
 std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 {
-	this->task = BMIPhreeqcRM::BMI_TASKS::Units;
+	this->task = BMIPhreeqcRM::BMI_TASKS::Info;
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return "";
 	fn;
@@ -125,7 +125,7 @@ std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 
 int BMIPhreeqcRM::GetVarItemsize(const std::string name)
 {
-	this->task = BMIPhreeqcRM::BMI_TASKS::Itemsize;
+	this->task = BMIPhreeqcRM::BMI_TASKS::Info;
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return 0;
 	fn;
@@ -134,7 +134,7 @@ int BMIPhreeqcRM::GetVarItemsize(const std::string name)
 
 int BMIPhreeqcRM::GetVarNbytes(const std::string name)
 {
-	this->task = BMIPhreeqcRM::BMI_TASKS::Nbytes;
+	this->task = BMIPhreeqcRM::BMI_TASKS::Info;
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return 0;
 	fn;
@@ -426,7 +426,7 @@ BMIPhreeqcRM::VarFunction BMIPhreeqcRM::GetFn(const std::string name)
 	}
 
 	BMIPhreeqcRM::BMI_TASKS task_save = this->task;
-	this->task = BMIPhreeqcRM::BMI_TASKS::Type;
+	this->task = BMIPhreeqcRM::BMI_TASKS::Info;
 	it->second;
 	this->task = task_save;
 	if (this->bmi_variant.NotImplemented)
@@ -461,29 +461,19 @@ BMIPhreeqcRM::VarFunction BMIPhreeqcRM::GetFn(const std::string name)
 ////////////////////////////////
 void Components_var(BMIPhreeqcRM& brm_ref)
 {
-	//name, type, std::string units, set, get
-	BMI_Var bv = BMI_Var("Components", "character,1d", "names", false, true);
+	std::vector<std::string> comps = brm_ref.GetComponents();
+	size_t size = 0;
+	for (size_t i = 0; i < comps.size(); i++)
+	{
+		if (comps[i].size() > size) size = comps[i].size();
+	}
+	int Itemsize = (int)size;
+	int Nbytes = (int)(size * comps.size());
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("Components", "character,1d", "names", false, true, Nbytes, Itemsize);
 	brm_ref.bmi_variant.bmi_var = bv;
 	switch (brm_ref.task)
 	{
-	case BMIPhreeqcRM::BMI_TASKS::CountInput:
-	case BMIPhreeqcRM::BMI_TASKS::CountOutput:
-	case BMIPhreeqcRM::BMI_TASKS::Type:
-	case BMIPhreeqcRM::BMI_TASKS::Units:
-		break;
-	case BMIPhreeqcRM::BMI_TASKS::Itemsize:
-	case BMIPhreeqcRM::BMI_TASKS::Nbytes:
-	{
-		std::vector<std::string> comps = brm_ref.GetComponents();
-		size_t size = 0;
-		for (size_t i = 0; i < comps.size(); i++)
-		{
-			if (comps[i].size() > size) size = comps[i].size();
-		}
-		brm_ref.bmi_variant.Itemsize = (int)size;
-		brm_ref.bmi_variant.Nbytes = (int)(size * comps.size());
-		break;
-	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ref.bmi_variant.StringVector = brm_ref.GetComponents();
 		break;
@@ -494,20 +484,13 @@ void Components_var(BMIPhreeqcRM& brm_ref)
 }
 void ComponentCount_var(BMIPhreeqcRM& brm_ref)
 {
-	//name, type, std::string units, set, get
-	BMI_Var bv = BMI_Var("ComponentCount", "integer", "names", false, true);
+	int Itemsize = (int)sizeof(int);
+	int Nbytes = (int)sizeof(int);
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("ComponentCount", "integer", "names", false, true, Nbytes, Itemsize);
 	brm_ref.bmi_variant.bmi_var = bv;
-	brm_ref.bmi_variant.Itemsize = (int)sizeof(int);
-	brm_ref.bmi_variant.Nbytes = (int)sizeof(int);
 	switch (brm_ref.task)
 	{
-	case BMIPhreeqcRM::BMI_TASKS::CountInput:
-	case BMIPhreeqcRM::BMI_TASKS::CountOutput:
-	case BMIPhreeqcRM::BMI_TASKS::Type:
-	case BMIPhreeqcRM::BMI_TASKS::Units:
-	case BMIPhreeqcRM::BMI_TASKS::Itemsize:
-	case BMIPhreeqcRM::BMI_TASKS::Nbytes:
-		break;
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ref.bmi_variant.i_var = brm_ref.GetComponentCount();
 		break;
@@ -518,21 +501,14 @@ void ComponentCount_var(BMIPhreeqcRM& brm_ref)
 }
 void Concentrations_var(BMIPhreeqcRM& brm_ref)
 {
-	//name, type, std::string units, set, get
-	BMI_Var bv = BMI_Var("Concentrations", "double,2d", "mol L-1", true, true);
-	brm_ref.bmi_variant.bmi_var = bv;
-	brm_ref.bmi_variant.Itemsize = (int)sizeof(double);
-	brm_ref.bmi_variant.Nbytes = (int)sizeof(double) * 
+	int Itemsize = (int)sizeof(double);
+	int Nbytes = (int)sizeof(double) *
 		brm_ref.GetGridCellCount() * brm_ref.GetComponentCount();
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("Concentrations", "double,2d", "mol L-1", true, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
 	switch (brm_ref.task)
 	{
-	case BMIPhreeqcRM::BMI_TASKS::CountInput:
-	case BMIPhreeqcRM::BMI_TASKS::CountOutput:
-	case BMIPhreeqcRM::BMI_TASKS::Type:
-	case BMIPhreeqcRM::BMI_TASKS::Units:
-	case BMIPhreeqcRM::BMI_TASKS::Itemsize:
-	case BMIPhreeqcRM::BMI_TASKS::Nbytes:
-		break;
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		 brm_ref.GetConcentrations(brm_ref.bmi_variant.DoubleVector);
 		break;
@@ -541,23 +517,49 @@ void Concentrations_var(BMIPhreeqcRM& brm_ref)
 		break;
 	}
 }
-void FilePrefix_var(BMIPhreeqcRM& brm_ref)
+void Density_var(BMIPhreeqcRM& brm_ref)
 {
-	//name, type, std::string units, set, get
-	BMI_Var bv = BMI_Var("FilePrefix", "character", "name", true, true);
+	int Itemsize = sizeof(double);
+	int Nbytes = Itemsize * brm_ref.GetGridCellCount();
+	//name, type, std::string units, set, get, Nbytes, Itemsize  
+	BMI_Var bv = BMI_Var("Density", "double,1d", "kg L-1", true, true, Nbytes, Itemsize);
 	brm_ref.bmi_variant.bmi_var = bv;
 	switch (brm_ref.task)
 	{
-	case BMIPhreeqcRM::BMI_TASKS::CountInput:
-	case BMIPhreeqcRM::BMI_TASKS::CountOutput:
-	case BMIPhreeqcRM::BMI_TASKS::Type:
-	case BMIPhreeqcRM::BMI_TASKS::Units:
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.GetDensity(brm_ref.bmi_variant.DoubleVector);
 		break;
-	case BMIPhreeqcRM::BMI_TASKS::Itemsize:
-		brm_ref.bmi_variant.Itemsize = brm_ref.GetFilePrefix().size();
-	case BMIPhreeqcRM::BMI_TASKS::Nbytes:
-		brm_ref.bmi_variant.Nbytes = brm_ref.GetFilePrefix().size();
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.SetDensity(brm_ref.bmi_variant.DoubleVector);
 		break;
+	}
+}
+void ErrorString_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = (int)brm_ref.GetErrorString().size();
+	int Nbytes = Itemsize;
+	//name, type, std::string units, set, get, Nbytes, Itemsize  
+	BMI_Var bv = BMI_Var("ErrorString", "character", "error", false, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.string_var = brm_ref.GetErrorString();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+void FilePrefix_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = brm_ref.GetFilePrefix().size();
+	int Nbytes = Itemsize;
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("FilePrefix", "character", "name", true, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ref.bmi_variant.string_var = brm_ref.GetFilePrefix();
 		break;
@@ -566,4 +568,244 @@ void FilePrefix_var(BMIPhreeqcRM& brm_ref)
 		break;
 	}
 }
+void Gfw_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = sizeof(double);
+	int Nbytes = Itemsize * brm_ref.GetComponentCount();
+	//name, type, std::string units, set, get, Nbytes, Itemsize  
+	BMI_Var bv = BMI_Var("Gfw", "double,1d", "g mol-1", false, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.DoubleVector = brm_ref.GetGfw();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+void GridCellCount_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = (int)sizeof(int);
+	int Nbytes = (int)sizeof(int);
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("GridCellCount", "integer", "count", false, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.i_var = brm_ref.GetGridCellCount();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+void NthSelectedOutput_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = (int)sizeof(int);
+	int Nbytes = (int)sizeof(int);
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("NthSelectedOutput", "integer", "id", true, false, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.SetNthSelectedOutput(brm_ref.bmi_variant.i_var);
+		break;
+	}
+}
+void Saturation_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = sizeof(double);
+	int Nbytes = Itemsize * brm_ref.GetGridCellCount();
+	//name, type, std::string units, set, get, Nbytes, Itemsize  
+	BMI_Var bv = BMI_Var("Saturation", "double,1d", "unitless", true, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.GetSaturation(brm_ref.bmi_variant.DoubleVector);
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.SetSaturation(brm_ref.bmi_variant.DoubleVector);
+		break;
+	}
+}
+void SelectedOutput_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = (int)sizeof(double);
+	int Nbytes = Itemsize * brm_ref.GetSelectedOutputRowCount() * 
+		brm_ref.GetSelectedOutputColumnCount();
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("SelectedOutput", "double,2d", "user", false, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.GetSelectedOutput(brm_ref.bmi_variant.DoubleVector);
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+void SelectedOutputColumnCount_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = (int)sizeof(int);
+	int Nbytes = (int)sizeof(int);
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("SelectedOutputColumnCount", "integer", "count", false, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.i_var = brm_ref.GetSelectedOutputColumnCount();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+void SelectedOutputCount_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = (int)sizeof(int);
+	int Nbytes = (int)sizeof(int);
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("SelectedOutputCount", "integer", "count", false, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.i_var = brm_ref.GetSelectedOutputCount();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+void SelectedOutputHeadings_var(BMIPhreeqcRM& brm_ref)
+{
+	std::vector<std::string> headings;
+	brm_ref.GetSelectedOutputHeadings(headings);
+	size_t size = 0;
+	for (size_t i = 0; i < headings.size(); i++)
+	{
+		if (headings[i].size() > size) size = headings[i].size();
+	}
+	int Itemsize = (int)size;
+	int Nbytes = (int)(size * headings.size());
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("SelectedOutputHeadings", "character,1d", "names", false, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.GetSelectedOutputHeadings(brm_ref.bmi_variant.StringVector);
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+void SelectedOutputRowCount_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = (int)sizeof(int);
+	int Nbytes = (int)sizeof(int);
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("SelectedOutputRowCount", "integer", "count", false, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.i_var = brm_ref.GetSelectedOutputRowCount();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+void SolutionVolume_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = sizeof(double);
+	int Nbytes = Itemsize * brm_ref.GetGridCellCount();
+	//name, type, std::string units, set, get, Nbytes, Itemsize  
+	BMI_Var bv = BMI_Var("SolutionVolume", "double,1d", "L", false, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.DoubleVector = brm_ref.GetSolutionVolume();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+void Time_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = sizeof(double);
+	int Nbytes = Itemsize;
+	//name, type, std::string units, set, get, Nbytes, Itemsize  
+	BMI_Var bv = BMI_Var("Time", "double", "s", true, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.d_var = brm_ref.GetTime();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.SetTime(brm_ref.bmi_variant.d_var);
+		break;
+	}
+}
+void TimeStep_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = sizeof(double);
+	int Nbytes = Itemsize;
+	//name, type, std::string units, set, get, Nbytes, Itemsize  
+	BMI_Var bv = BMI_Var("TimeStep", "double", "s", true, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.d_var = brm_ref.GetTimeStep();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.SetTimeStep(brm_ref.bmi_variant.d_var);
+		break;
+	}
+}
+void CurrentSelectedOutputUserNumber_var(BMIPhreeqcRM& brm_ref)
+{
+	int Itemsize = (int)sizeof(int);
+	int Nbytes = (int)sizeof(int);
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("CurrentSelectedOutputUserNumber", "integer", "id", false, true, Nbytes, Itemsize);
+	brm_ref.bmi_variant.bmi_var = bv;
+	switch (brm_ref.task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ref.bmi_variant.i_var = brm_ref.GetCurrentSelectedOutputUserNumber();
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ref.bmi_variant.NotImplemented = true;
+		break;
+	}
+}
+//bmi_var_map["porosity"] = BMI_Var("Porosity", "double,1d", "unitless", true, true);
+
+
+
+
+
+
+
+
+//////////////////
+
 
