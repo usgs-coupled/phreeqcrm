@@ -36,12 +36,14 @@ public:
 	};
 
 	std::string GetName() { return this->name; }
+	void SetName(std::string s) { this->name = s; }
 	std::string GetType() { return this->type; };
+	void SetType(std::string s) { this->type = s; };
 	std::string GetUnits() { return this->units; }
-	void SetUnits(std::string units_in) { this->units = units_in; };
-	bool GetSet(void) { return this->set; };
-	void SetSet(bool in_in) { this->set = in_in; };
-	bool GetGet(void) { return this->get; };
-	void SetGet(bool out_in) { this->get = out_in; };
+	void SetUnits(std::string units_in) { this->units = units_in; }
+	bool GetSet(void) { return this->set; }
+	void SetSet(bool in_in) { this->set = in_in; }
+	bool GetGet(void) { return this->get; }
+	void SetGet(bool out_in) { this->get = out_in; }
 };
 #endif // BMI_VAR_H_INCLUDED
