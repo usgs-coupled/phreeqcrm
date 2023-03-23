@@ -206,11 +206,10 @@ include_HEADERS=\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/StorageBin.h\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h
 
-
+FCDEFS=
 if PHREEQCRM_TEST_FORTRAN
-
-DEFS+=\
-	-DTEST_FORTRAN
+DEFS+=-DTEST_FORTRAN
+FCDEFS+=-DTEST_FORTRAN	
 endif
 
 # Docs
@@ -228,6 +227,9 @@ SRC=\
 # handle the FC_FUNC define correctly so $(DEFS) is replaced
 # by $(FCDEFS)
 #
+if PHREEQCRM_WITH_YAMLCPP
+FCDEFS+=-DUSE_YAML
+endif
 PPFCCOMPILE = $(FC) $(FCDEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
         $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_FCFLAGS) $(FCFLAGS)
 LTPPFCCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=FC $(AM_LIBTOOLFLAGS) \

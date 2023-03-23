@@ -8278,7 +8278,7 @@
     END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: config_file
-    RM_BMI_Initialize = RMF_BMI_Initialize(id, trim(config_file//C_NULL_CHAR))
+    RM_BMI_Initialize = RMF_BMI_Initialize(id, trim(config_file)//C_NULL_CHAR)
     return
     END FUNCTION RM_BMI_Initialize
 #endif
