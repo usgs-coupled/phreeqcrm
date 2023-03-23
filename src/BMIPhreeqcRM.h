@@ -33,7 +33,7 @@ public:
 
     void Clear();
 };
-class BMIPhreeqcRM : public bmi::Bmi, public PhreeqcRM
+class BMIPhreeqcRM : /*public bmi::Bmi,*/ public PhreeqcRM
 {
 public:
     BMIPhreeqcRM(int nxyz, int nthreads);
@@ -70,7 +70,7 @@ public:
     double GetStartTime();
     double GetEndTime();
     std::string GetTimeUnits() { return "seconds"; };
-    double GetTimeStep();
+    //double GetTimeStep();
 
     // Variable getters
     void GetValue(const std::string name, void* dest);
@@ -89,6 +89,7 @@ public:
     // Variable setters
     void SetValue(std::string name, void* src);
     void SetValue(std::string name, bool src);
+    void SetValue(std::string name, char* src);
     void SetValue(std::string name, double src);
     void SetValue(std::string name, int src);
     void SetValue(std::string name, std::string src);
@@ -124,9 +125,9 @@ public:
     // data
     BMI_TASKS task;
     BMI_Variant bmi_variant;
-    typedef void (*VarFunction)(BMIPhreeqcRM& bmi_rm_ref); // function pointer type
+    typedef void (*VarFunction)(BMIPhreeqcRM* brm_ptr); // function pointer type
     typedef std::map<std::string, VarFunction> VarFunction_map;
     VarFunction_map varfn_map;
-    BMIPhreeqcRM::VarFunction BMIPhreeqcRM::GetFn(const std::string name);
+    VarFunction GetFn(const std::string name);
 };
 
