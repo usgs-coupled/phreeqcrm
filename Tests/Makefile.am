@@ -21,7 +21,7 @@ test_SOURCES =\
 
 # Ubuntu 22.04.1
 # sudo apt install libyaml-cpp-dev
-test_LDADD = $(top_builddir)/libphreeqcrm.la -lyaml-cpp
+test_LDADD = $(top_builddir)/libphreeqcrm.la
 test_LINK = $(CXXLINK)
 
 CLEANFILES =\
@@ -77,7 +77,8 @@ test_SOURCES+=\
 	SimpleAdvect_f90.F90\
 	Species_f90.F90\
 	../src/RM_interface.F90\
-	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
+	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90\
+	../src/YAML_interface.F90
 
 test_LDADD+=$(FCLIBS)
 
@@ -86,7 +87,11 @@ mostlyclean-local: clean-modules
 clean-modules:
 	-test -z $(FC_MODEXT) || $(RM) *.$(FC_MODEXT)
 
-advection_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT)
+Advect_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT)
+
+Gas_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT)
+
+SimpleAdvect_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT)
 
 species_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT)
 
@@ -99,6 +104,9 @@ endif
 # handle the FC_FUNC define correctly so $(DEFS) is replaced
 # by $(FCDEFS)
 #
+if PHREEQCRM_WITH_YAMLCPP
+FCDEFS=-DUSE_YAML
+endif
 PPFCCOMPILE = $(FC) $(FCDEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
         $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_FCFLAGS) $(FCFLAGS)
 LTPPFCCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=FC $(AM_LIBTOOLFLAGS) \
