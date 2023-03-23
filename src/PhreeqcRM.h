@@ -5097,6 +5097,8 @@ phreeqc_rm.WarningMessage("Parameter is out of range, using default");
 Called by root and (or) workers; only root writes to the log file.
  */
 	void                                      WarningMessage(const std::string &warnstr);
+#include "bmi_methods.h"
+#ifdef SKIP
 // BMI data and methods
 private:
 	std::map<std::string, class BMI_Var> bmi_var_map;
@@ -5993,6 +5995,7 @@ Called by root.
 private:
 	void BMI_MakeVarMap();
 // End BMI data and methods
+#endif
 public:
 // Utilities
 	static std::string                        Char2TrimString(const char * str, size_t l = 0);
