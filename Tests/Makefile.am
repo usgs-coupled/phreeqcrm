@@ -37,6 +37,10 @@ CLEANFILES =\
 	Advect_cpp.chem.txt\
 	Advect_cpp.dmp\
 	Advect_cpp.log.txt\
+	Advect_f90_utility.txt\
+	Advect_f90.chem.txt\
+	Advect_f90.dmp\
+	Advect_f90.log.txt\
 	AdvectBMI_cpp_units_utility.txt\
 	AdvectBMI_cpp_units_worker.txt\
 	AdvectBMI_cpp_utility.txt\
@@ -44,6 +48,10 @@ CLEANFILES =\
 	AdvectBMI_cpp.dmp\
 	AdvectBMI_cpp.log.txt\
 	AdvectBMI_cpp.yaml\
+	AdvectBMI_f90.chem.txt\
+	AdvectBMI_f90.dmp\
+	AdvectBMI_f90.log.txt\
+	AdvectBMI_f90.yaml\
 	Gas_c_utility.txt\
 	Gas_c.chem.txt\
 	Gas_c.dmp\
@@ -52,10 +60,14 @@ CLEANFILES =\
 	Gas_cpp.chem.txt\
 	Gas_cpp.dmp\
 	Gas_cpp.log.txt\
+	Gas_f90.chem.txt\
+	Gas_f90.log.txt\
 	SimpleAdvect_c.chem.txt\
 	SimpleAdvect_c.log.txt\
 	SimpleAdvect_cpp.chem.txt\
 	SimpleAdvect_cpp.log.txt\
+	SimpleAdvect_f90.chem.txt\
+	SimpleAdvect_f90.log.txt\
 	Species_c_utility.txt\
 	Species_c.chem.txt\
 	Species_c.dmp\
@@ -64,6 +76,10 @@ CLEANFILES =\
 	Species_cpp.chem.txt\
 	Species_cpp.dmp\
 	Species_cpp.log.txt\
+	Species_f90_utility.txt\
+	Species_f90.chem.txt\
+	Species_f90.dmp\
+	Species_f90.log.txt\
 	Units_Worker.chem.txt\
 	Units_Worker.log.txt\
 	Utility_c.txt\
