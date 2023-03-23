@@ -24,14 +24,17 @@ AC_ARG_WITH([yaml-cpp],
             [],
             [with_yaml_cpp=no])
 
-AS_IF([test "x$yaml-cpp" != xno],
-      [PKG_CHECK_MODULES([YAML_CPP], [yaml-cpp], [have_yaml_cpp=true], [have_yaml_cpp=false])])
-if test "$have_yaml_cpp" = true; then
-  AC_DEFINE([USE_YAML], [1], [Enable yaml-cpp])
-  CPPFLAGS="$YAML_CPP_CFLAGS $CPPFLAGS"
-  LDFLAGS="$YAML_CPP_LIBS $LDFLAGS"
-fi
-AM_CONDITIONAL([PHREEQCRM_WITH_YAMLCPP], [test "$have_yaml_cpp" = true])
+AS_IF([test "x$with_yaml_cpp" != xno],
+  [PKG_CHECK_MODULES([YAML_CPP], [yaml-cpp],
+    [AC_DEFINE([USE_YAML],[1],[Enable yaml-cpp])
+      CPPFLAGS="$YAML_CPP_CFLAGS $CPPFLAGS"
+      LDFLAGS="$YAML_CPP_LIBS $LDFLAGS"
+    ],
+    [AC_MSG_FAILURE([--with-yaml-cpp was given, but test for yaml-cpp failed])
+    ])
+  ]
+)
+AM_CONDITIONAL([PHREEQCRM_WITH_YAMLCPP], [test x"$with_yaml_cpp" != xno])
 
 # check for --with-mpi
 # If --with-mpi=auto is used, try to find MPI, but use standard C compiler if it is not found.
@@ -60,10 +63,8 @@ AC_PROG_AWK
 AC_PROG_CPP
 
 # c++11 is required by Darwin for yaml-cpp
-if test "X$with_yaml_cpp" != "Xno"; then
-  if test "X$have_yaml_cpp" != "Xfalse"; then
-    AX_CXX_COMPILE_STDCXX(11, [ext], [mandatory])
-  fi
+if test x"$with_yaml_cpp" != xno; then
+  AX_CXX_COMPILE_STDCXX(11, [ext], [mandatory])
 fi
 
 # Check if the fortran test should be included
