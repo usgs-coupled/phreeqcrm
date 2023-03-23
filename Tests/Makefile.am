@@ -69,16 +69,24 @@ CLEANFILES =\
 	Utility_c.txt\
 	Utility_cpp.out
 
+FCDEFS=
+
 if PHREEQCRM_TEST_FORTRAN
 
+DEFS+=-DTEST_FORTRAN
+FCDEFS+=-DTEST_FORTRAN
+
 test_SOURCES+=\
+	AdvectBMI_f90.F90\
 	Advect_f90.F90\
 	Gas_f90.F90\
 	SimpleAdvect_f90.F90\
 	Species_f90.F90\
+	WriteYAMLFile_f90.F90\
 	../src/RM_interface.F90\
 	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90\
 	../src/YAML_interface.F90
+	
 
 test_LDADD+=$(FCLIBS)
 
@@ -87,16 +95,30 @@ mostlyclean-local: clean-modules
 clean-modules:
 	-test -z $(FC_MODEXT) || $(RM) *.$(FC_MODEXT)
 
-Advect_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT)
+AdvectBMI_f90.$(OBJEXT) : AdvectBMI_f90.F90 RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT)
 
-Gas_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT)
+Gas_f90.$(OBJEXT) : Gas_f90.F90 ../src/RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT)
 
-SimpleAdvect_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT)
+SimpleAdvect_f90.$(OBJEXT) : SimpleAdvect_f90.F90 RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT)
 
-species_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT)
+Species_f90.$(OBJEXT) : Species_f90.F90 RM_interface.$(OBJEXT)
 
-gas_f90.$(OBJEXT) : ../src/RM_interface.$(OBJEXT)
+WriteYAMLFile_f90.$(OBJEXT) : RM_interface.$(OBJEXT) YAML_interface.$(OBJEXT)
 
+# mydata.mod
+Advect_f90.$(OBJEXT) : Advect_f90.F90 RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT)
+
+# iphreeqc.mod
+IPhreeqc_interface.F90 : $(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
+	@LN_S@ $<
+
+# phreeqcrm.mod
+RM_interface.F90 : $(top_srcdir)/src/RM_interface.F90
+	@LN_S@ $<
+
+# yaml_interface.mod
+YAML_interface.F90 : $(top_srcdir)/src/YAML_interface.F90
+	@LN_S@ $<
 
 endif
 
@@ -105,7 +127,7 @@ endif
 # by $(FCDEFS)
 #
 if PHREEQCRM_WITH_YAMLCPP
-FCDEFS=-DUSE_YAML
+FCDEFS+=-DUSE_YAML
 endif
 PPFCCOMPILE = $(FC) $(FCDEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
         $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_FCFLAGS) $(FCFLAGS)

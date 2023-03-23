@@ -206,10 +206,10 @@ include_HEADERS=\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/StorageBin.h\
 	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h
 
-
+FCDEFS=
 if PHREEQCRM_TEST_FORTRAN
-DEFS+=\
-	-DTEST_FORTRAN
+DEFS+=-DTEST_FORTRAN
+FCDEFS+=-DTEST_FORTRAN	
 endif
 
 # Docs
@@ -228,7 +228,7 @@ SRC=\
 # by $(FCDEFS)
 #
 if PHREEQCRM_WITH_YAMLCPP
-FCDEFS=-DUSE_YAML
+FCDEFS+=-DUSE_YAML
 endif
 PPFCCOMPILE = $(FC) $(FCDEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
         $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_FCFLAGS) $(FCFLAGS)
