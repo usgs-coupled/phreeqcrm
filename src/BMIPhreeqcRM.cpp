@@ -551,7 +551,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src
 }
 BMIPhreeqcRM::VarFunction BMIPhreeqcRM::GetFn(const std::string name)
 {
-	//this->bmi_variant.Clear();
+	this->bmi_variant.Clear();
 	std::string name_lc = name;
 	std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
 	auto it = varfn_map.find(name_lc);
