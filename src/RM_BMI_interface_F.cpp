@@ -23,6 +23,29 @@ rmpadfstring(char* dest, const char* src, unsigned int len)
 	while (sofar++ < len)
 		*dest++ = ' ';
 }
+#ifdef USE_MPI
+/* ---------------------------------------------------------------------- */
+int
+BMIF_Create(int* nxyz, int* nthreads)
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	return BMIPhreeqcRM::CreateBMIModule(*nxyz, MPI_Comm_f2c(*nthreads));
+}
+#else
+/* ---------------------------------------------------------------------- */
+int
+BMIF_Create(int* nxyz, int* nthreads)
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	return BMIPhreeqcRM::CreateBMIModule(*nxyz, *nthreads);
+}
+#endif
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RMF_BMI_GetComponentName(int* id, char* chem_name, int* l1)

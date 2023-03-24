@@ -44,9 +44,9 @@ public:
 class IRM_DLL_EXPORT BMIPhreeqcRM : /*public bmi::Bmi,*/ public PhreeqcRM
 {
 public:
-    static void             CleanupBmiModuleInstances(void);
-    static int              CreateBmiModule(int nxyz, MP_TYPE nthreads);
-    static IRM_RESULT       DestroyBmiModule(int n);
+    static void             CleanupBMIModuleInstances(void);
+    static int              CreateBMIModule(int nxyz, MP_TYPE nthreads);
+    static IRM_RESULT       DestroyBMIModule(int n);
     static BMIPhreeqcRM*    GetInstance(int n);
 
     BMIPhreeqcRM(int nxyz, int nthreads);
@@ -138,10 +138,12 @@ public:
     // data
     BMI_TASKS task;
     BMI_Variant bmi_variant;
+    std::string language;
     typedef void (*VarFunction)(BMIPhreeqcRM* brm_ptr); // function pointer type
     typedef std::map<std::string, VarFunction> VarFunction_map;
     VarFunction_map varfn_map;
     VarFunction GetFn(const std::string name);
+
 private:
     //friend class RM_interface;
     static std::map<size_t, BMIPhreeqcRM*> Instances;

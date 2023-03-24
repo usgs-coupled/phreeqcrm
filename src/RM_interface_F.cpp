@@ -113,8 +113,7 @@ RMF_Create(int *nxyz, int *nthreads)
 	//
 	// Creates reaction module, called by root and MPI workers
 	//
-	//return PhreeqcRM::CreateReactionModule(*nxyz, *nthreads);
-	return BMIPhreeqcRM::CreateBmiModule(*nxyz, *nthreads);
+	return PhreeqcRM::CreateReactionModule(*nxyz, *nthreads);
 }
 #endif
 /* ---------------------------------------------------------------------- */

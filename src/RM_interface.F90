@@ -348,6 +348,100 @@
         errors = RM_Abort(id, -3, "Invalid argument(s) in RM_Concentrations2Utility")
     endif
     END SUBROUTINE Chk_Concentrations2Utility
+    !> Creates a reaction module. If the code is compiled with
+    !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
+    !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
+    !> module will use MPI and multiple processes. If neither preprocessor directive is used,
+    !> the reaction module will be serial (unparallelized).
+    !> @param nxyz                   The number of grid cells in the user's model.
+    !> @param nthreads (or @a comm, MPI)       When using OPENMP, the argument (@a nthreads) is the number of worker threads to be used.
+    !> If @a nthreads <= 0, the number of threads is set equal to the number of processors of the computer.
+    !> When using MPI, the argument (@a comm) is the MPI communicator to use within the reaction module.
+    !> @retval Id of the PhreeqcRM instance, negative is failure (See @ref RM_DecodeError).
+    !> @see
+    !> @ref RM_Destroy.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> nxyz = 40
+    !> #ifdef USE_MPI
+    !>   id = RM_Create(nxyz, MPI_COMM_WORLD)
+    !>   call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
+    !>   if (status .ne. MPI_SUCCESS) then
+    !>     stop "Failed to get mpi_myself"
+    !>   endif
+    !>   if (mpi_myself > 0) then
+    !>     status = RM_MpiWorker(id)
+    !>     status = RM_Destroy(id)
+    !>     return
+    !>   endif
+    !> #else
+    !>   nthreads = 3
+    !>   id = RM_Create(nxyz, nthreads)
+    !> #endif
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root and workers.
+
+    !> Creates a reaction module. If the code is compiled with
+    !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
+    !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
+    !> module will use MPI and multiple processes. If neither preprocessor directive is used,
+    !> the reaction module will be serial (unparallelized).
+    !> @param nxyz                   The number of grid cells in the user's model.
+    !> @param nthreads (or @a comm, MPI)       When using OPENMP, the argument (@a nthreads) is the number of worker threads to be used.
+    !> If @a nthreads <= 0, the number of threads is set equal to the number of processors of the computer.
+    !> When using MPI, the argument (@a comm) is the MPI communicator to use within the reaction module.
+    !> @retval Id of the PhreeqcRM instance, negative is failure (See @ref RM_DecodeError).
+    !> @see
+    !> @ref RM_Destroy.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> nxyz = 40
+    !> #ifdef USE_MPI
+    !>   id = RM_Create(nxyz, MPI_COMM_WORLD)
+    !>   call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
+    !>   if (status .ne. MPI_SUCCESS) then
+    !>     stop "Failed to get mpi_myself"
+    !>   endif
+    !>   if (mpi_myself > 0) then
+    !>     status = RM_MpiWorker(id)
+    !>     status = RM_Destroy(id)
+    !>     return
+    !>   endif
+    !> #else
+    !>   nthreads = 3
+    !>   id = RM_Create(nxyz, nthreads)
+    !> #endif
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root and workers.
+
+    INTEGER FUNCTION BMI_Create(nxyz, nthreads)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION BMIF_Create(nxyz, nthreads) &
+        BIND(C, NAME='BMIF_Create')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER(KIND=C_INT), INTENT(in) :: nxyz
+    INTEGER(KIND=C_INT), INTENT(in) :: nthreads
+    END FUNCTION BMIF_Create
+    END INTERFACE
+    INTEGER, INTENT(in) :: nxyz
+    INTEGER, INTENT(in) :: nthreads
+    BMI_Create = BMIF_Create(nxyz, nthreads)
+    rmf_nxyz = nxyz
+    return
+    END FUNCTION BMI_Create    
 
     !> Creates a reaction module. If the code is compiled with
     !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.

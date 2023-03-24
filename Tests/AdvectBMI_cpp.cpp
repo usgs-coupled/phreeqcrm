@@ -27,7 +27,7 @@ void testing(BMIPhreeqcRM& brm);
 class my_data
 {
 public:
-	PhreeqcRM* PhreeqcRM_ptr;
+	BMIPhreeqcRM* brm_ptr;
 #ifdef USE_MPI
 	MPI_Comm rm_commxx;
 #endif
@@ -86,7 +86,7 @@ int AdvectBMI_cpp()
 		// OpenMP
 		int nthreads = 3;
 		BMIPhreeqcRM brm(nxyz, nthreads);
-		some_data.PhreeqcRM_ptr = &brm;
+		some_data.brm_ptr = &brm;
 #endif
 		//brm.SetValue("FilePrefix", "Advectcpp");
 		//brm.OpenFiles();
@@ -567,7 +567,7 @@ void bmi_register_basic_callback(void* cookie)
 	}
 #endif
 
-	const std::vector<IPhreeqcPhast*> w = data->PhreeqcRM_ptr->GetWorkers();
+	const std::vector<IPhreeqcPhast*> w = data->brm_ptr->GetWorkers();
 	for (int i = 0; i < (int)w.size(); i++)
 	{
 		w[i]->SetBasicCallback(bmi_basic_callback, cookie);
@@ -576,13 +576,13 @@ void bmi_register_basic_callback(void* cookie)
 double bmi_basic_callback(double x1, double x2, const char* str, void* cookie)
 {
 	my_data* data_ptr = (my_data*)cookie;
-	PhreeqcRM* phreeqcrm_ptr = data_ptr->PhreeqcRM_ptr;
+	BMIPhreeqcRM* brm_ptr = data_ptr->brm_ptr;
 	std::string option(str);
 
 	int rm_cell_number = (int)x1;
-	if (rm_cell_number >= 0 && rm_cell_number < phreeqcrm_ptr->GetChemistryCellCount())
+	if (rm_cell_number >= 0 && rm_cell_number < brm_ptr->GetChemistryCellCount())
 	{
-		const std::vector < std::vector <int> >& back = phreeqcrm_ptr->GetBackwardMapping();
+		const std::vector < std::vector <int> >& back = brm_ptr->GetBackwardMapping();
 		if (option == "HYDRAULIC_K")
 		{
 			return (*data_ptr->hydraulic_K)[back[rm_cell_number][0]];

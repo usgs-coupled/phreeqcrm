@@ -42,7 +42,7 @@ size_t BMIPhreeqcRM::InstancesIndex = 0;
 //// static BMIPhreeqcRM methods
 /* ---------------------------------------------------------------------- */
 void
-BMIPhreeqcRM::CleanupBmiModuleInstances(void)
+BMIPhreeqcRM::CleanupBMIModuleInstances(void)
 /* ---------------------------------------------------------------------- */
 {
 	std::map<size_t, BMIPhreeqcRM*>::iterator it = BMIPhreeqcRM::Instances.begin();
@@ -58,7 +58,7 @@ BMIPhreeqcRM::CleanupBmiModuleInstances(void)
 }
 /* ---------------------------------------------------------------------- */
 int
-BMIPhreeqcRM::CreateBmiModule(int nxyz, MP_TYPE nthreads)
+BMIPhreeqcRM::CreateBMIModule(int nxyz, MP_TYPE nthreads)
 /* ---------------------------------------------------------------------- */
 {
 	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
@@ -82,7 +82,7 @@ BMIPhreeqcRM::CreateBmiModule(int nxyz, MP_TYPE nthreads)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-BMIPhreeqcRM::DestroyBmiModule(int id)
+BMIPhreeqcRM::DestroyBMIModule(int id)
 /* ---------------------------------------------------------------------- */
 {
 	IRM_RESULT retval = IRM_BADINSTANCE;
@@ -152,6 +152,7 @@ PhreeqcRM(nxyz, nthreads)
 	varfn_map["selectedoutputon"] = &SelectedOutputOn_var;
 	varfn_map["temperature"] = &Temperature_var;
 	this->task = BMIPhreeqcRM::BMI_TASKS::no_op;
+	this->language = "cpp";
 }
 // Model control functions.
 void BMIPhreeqcRM::Initialize(std::string config_file)
@@ -183,6 +184,14 @@ int BMIPhreeqcRM::GetInputItemCount()
 	int count = 0;
 	for (auto it = varfn_map.begin(); it != varfn_map.end(); it++)
 	{
+		if (it->first == "inputvarnames")
+		{
+			continue;
+		}
+		if (it->first == "outputvarnames")
+		{
+			continue;
+		}
 		this->bmi_variant.SetSet(false);
 		it->second(this);
 		if (this->bmi_variant.GetSet()) count++;
@@ -195,6 +204,16 @@ int BMIPhreeqcRM::GetOutputItemCount()
 	int count = 0;
 	for (auto it = varfn_map.begin(); it != varfn_map.end(); it++)
 	{
+		if (it->first == "inputvarnames")
+		{
+			count++;
+			continue;
+		}
+		if (it->first == "outputvarnames")
+		{
+			count++;
+			continue;
+		}
 		this->bmi_variant.SetGet(false);
 		it->second(this);
 		if (this->bmi_variant.GetGet()) count++;
@@ -210,12 +229,10 @@ std::vector<std::string> BMIPhreeqcRM::GetInputVarNames()
 	{
 		if (it->first == "inputvarnames")
 		{
-			names.push_back("InputVarNames");
 			continue;
 		}
 		if (it->first == "outputvarnames")
 		{
-			names.push_back("OutputVarNames");
 			continue;
 		}
 		this->bmi_variant.SetSet(false);
@@ -235,10 +252,12 @@ std::vector<std::string>  BMIPhreeqcRM::GetOutputVarNames()
 	{
 		if (it->first == "inputvarnames")
 		{
+			names.push_back("InputVarNames");
 			continue;
 		}
 		if (it->first == "outputvarnames")
 		{
+			names.push_back("OutputVarNames");
 			continue;
 		}
 		this->bmi_variant.SetGet(false);
@@ -256,7 +275,19 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return "";
 	fn(this);
-	return this->bmi_variant.GetCType();
+	if (this->language == "cpp")
+	{
+		return this->bmi_variant.GetCType();
+	} 
+	else if (this->language == "F90")
+	{
+		return this->bmi_variant.GetFType();
+	}
+	else if (this->language == "Py")
+	{
+		return this->bmi_variant.GetPType();
+	}
+	return "Unknown language.";
 }
 std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 {
