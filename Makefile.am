@@ -173,7 +173,8 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqcPhast.h\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.cpp\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.h\
-	src/BMI_methods.cpp\
+  	src/BMIPhreeqcRM.cpp\
+  	src/BMIPhreeqcRM.h\
 	src/BMI_Var.h\
 	src/PhreeqcRM.cpp\
 	src/RM_BMI_interface_F.cpp\

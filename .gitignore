@@ -48,3 +48,6 @@ src/PhreeqcRM.h.dist
 src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h.dist
 src/IPhreeqcPhast/IPhreeqc/Version.h.dist
 CMakeLists.txt.dist
+
+# mod files (vscode extension?)
+src/phreeqcrm.mod

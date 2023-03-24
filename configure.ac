@@ -61,6 +61,7 @@ AX_PROG_CXX_MPI([test x"$with_mpi" != xno],[use_mpi=yes],[
 ])
 AC_PROG_AWK
 AC_PROG_CPP
+AC_PROG_LN_S
 
 # c++11 is required by Darwin for yaml-cpp
 if test x"$with_yaml_cpp" != xno; then
