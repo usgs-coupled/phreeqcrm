@@ -254,14 +254,15 @@ if(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
   target_compile_definitions(PhreeqcRM PRIVATE _SCL_SECURE_NO_WARNINGS)
 endif()
 
-# yaml-cpp
-if(yaml-cpp_FOUND)
-  target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
-  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
-endif()
-
 # init exportPackageDependencies
 set(exportPackageDependencies "")
+
+# yaml-cpp
+if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
+  target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
+  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+  string(APPEND exportPackageDependencies "find_package(yaml-cpp)\n")
+endif()
 
 # check for zlib
 if(NOT ZLIB_ROOT)
