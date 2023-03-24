@@ -74,28 +74,28 @@
     !> third argument (@a dest).
     !> @n "ComponentCount", @a dest: integer;
     !> @n "Components", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "Concentrations", @a dest: double precision, allocatable, dimension(:,:);
+    !> @n "Concentrations", @a dest: real(kind=8), allocatable, dimension(:,:);
     !> @n "CurrentSelectedOutputUserNumber", @a dest: integer;
-    !> @n "Density", @a dest: double precision, allocatable, dimension(:);
+    !> @n "Density", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "ErrorString", @a dest: character;
     !> @n "FilePrefix", @a dest: character;
-    !> @n "Gfw", @a dest: double precision, allocatable, dimension(:);
+    !> @n "Gfw", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "GridCellCount", @a dest: integer;
     !> @n "InputVarNames", @a dest: character(len=:), allocatable, dimension(:);
     !> @n "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "Porosity", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Pressure", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Saturation", @a dest: double precision, allocatable, dimension(:);
-    !> @n "SelectedOutput", @a dest: double precision, allocatable, dimension(:,:);
+    !> @n "Porosity", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "Pressure", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "Saturation", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "SelectedOutput", @a dest: real(kind=8), allocatable, dimension(:,:);
     !> @n "SelectedOutputColumnCount", @a dest: integer;
     !> @n "SelectedOutputCount", @a dest: integer;
     !> @n "SelectedOutputHeadings", @a dest: character(len=:), allocatable, dimension(:);
     !> @n "SelectedOutputOn", @a dest: logical;
     !> @n "SelectedOutputRowCount", @a dest: integer;
-    !> @n "SolutionVolume", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Temperature", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Time",	@a dest: double precision;
-    !> @n "TimeStep",	@a dest: double precision.
+    !> @n "SolutionVolume", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "Temperature", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "Time",	@a dest: real(kind=8);
+    !> @n "TimeStep",	@a dest: real(kind=8).
     !>
     !> @see
     !> @ref RM_BMI_GetOutputVarNames,
@@ -109,7 +109,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> double precision, allocatable, dimension(:) :: bmi_density
+    !> real(kind=8), allocatable, dimension(:) :: bmi_density
     !> character(len=:), allocatable, dimension(:) :: bmi_comps
     !> status = RM_BMI_GetValue(id, "Density", bmi_density)
     !> status = RM_BMI_GetValue("Components", bmi_comps)
@@ -316,9 +316,9 @@
     END FUNCTION RMF_Concentrations2Utility
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: c
     INTEGER, INTENT(in) :: n
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: tc, p_atm
+    real(kind=8), INTENT(in), DIMENSION(:) :: tc, p_atm
     if (rmf_debug) CALL ChK_Concentrations2Utility(id, c, n, tc, p_atm)
     RM_Concentrations2Utility = RMF_Concentrations2Utility(id, c, n, tc, p_atm)
     return
@@ -335,9 +335,9 @@
     END FUNCTION RMF_GetComponentCount
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: c
     INTEGER, INTENT(in) :: n
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: tc, p_atm
+    real(kind=8), INTENT(in), DIMENSION(:) :: tc, p_atm
     INTEGER :: errors
     errors = 0
     rmf_ncomps = RMF_GetComponentCount(id)
@@ -1064,7 +1064,7 @@
     END FUNCTION RMF_GetConcentrations
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: c
+    real(kind=8), INTENT(out), DIMENSION(:,:) :: c
     if (rmf_debug) call Chk_GetConcentrations(id, c)
     RM_GetConcentrations = RMF_GetConcentrations(id, c)
     return
@@ -1081,7 +1081,7 @@
     END FUNCTION RMF_GetComponentCount
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: c
     INTEGER :: errors
     errors = 0
     rmf_ncomps = RMF_GetComponentCount(id)
@@ -1175,7 +1175,7 @@
     END FUNCTION RMF_GetDensity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), dimension(:) :: density
+    real(kind=8), INTENT(out), dimension(:) :: density
     if (rmf_debug) call Chk_GetDensity(id, density)
     RM_GetDensity = RMF_GetDensity(id, density)
     return
@@ -1184,7 +1184,7 @@
     SUBROUTINE Chk_GetDensity(id, density)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: density
+    real(kind=8), INTENT(in), DIMENSION(:) :: density
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_GetDensity")
@@ -1715,7 +1715,7 @@
     END FUNCTION RMF_GetGasCompMoles
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:), TARGET :: gas_moles
+    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_moles
     if (rmf_debug) call Chk_GetGasCompMoles(id, gas_moles)
     RM_GetGasCompMoles = RMF_GetGasCompMoles(id, gas_moles)
     return
@@ -1724,7 +1724,7 @@
     SUBROUTINE Chk_GetGasCompMoles(id, gas_moles)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: gas_moles
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_moles
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -1781,7 +1781,7 @@
     END FUNCTION RMF_GetGasCompPressures
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:), TARGET :: gas_p
+    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_p
     if (rmf_debug) call Chk_GetGasCompPressures(id, gas_p)
     RM_GetGasCompPressures = RMF_GetGasCompPressures(id, gas_p )
     return
@@ -1790,7 +1790,7 @@
     SUBROUTINE Chk_GetGasCompPressures(id, gas_p)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: gas_p
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_p
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -1848,7 +1848,7 @@
     END FUNCTION RMF_GetGasCompPhi
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:), TARGET :: gas_phi
+    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_phi
     if (rmf_debug) call Chk_GetGasCompPhi(id, gas_phi)
     RM_GetGasCompPhi = RMF_GetGasCompPhi(id, gas_phi)
     return
@@ -1857,7 +1857,7 @@
     SUBROUTINE Chk_GetGasCompPhi(id, gas_phi)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: gas_phi
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_phi
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -1913,7 +1913,7 @@
     END FUNCTION RMF_GetGasPhaseVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:), TARGET :: gas_volume
+    real(kind=8), INTENT(out), DIMENSION(:), TARGET :: gas_volume
     if (rmf_debug) call Chk_GetGasPhaseVolume(id, gas_volume)
     RM_GetGasPhaseVolume = RMF_GetGasPhaseVolume(id, gas_volume)
     return
@@ -1922,7 +1922,7 @@
     SUBROUTINE Chk_GetGasPhaseVolume(id, gas_volume)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: gas_volume
+    real(kind=8), INTENT(in), DIMENSION(:) :: gas_volume
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -1946,7 +1946,7 @@
     !> <CODE>
     !> <PRE>
     !> character(100),   dimension(:), allocatable   :: components
-    !> double precision, dimension(:), allocatable   :: gfw
+    !> real(kind=8), dimension(:), allocatable   :: gfw
     !> ncomps = RM_FindComponents(id)
     !> allocate(components(ncomps))
     !> allocate(gfw(ncomps))
@@ -1975,7 +1975,7 @@
     END FUNCTION RMF_GetGfw
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(out) :: gfw
+    real(kind=8), DIMENSION(:), INTENT(out) :: gfw
     if (rmf_debug) call Chk_GetGfw(id, gfw)
     RM_GetGfw = RMF_GetGfw(id, gfw)
     END FUNCTION RM_GetGfw
@@ -1991,7 +1991,7 @@
     END FUNCTION RMF_GetComponentCount
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: gfw
+    real(kind=8), INTENT(in), DIMENSION(:) :: gfw
     INTEGER :: errors
     errors = 0
     rmf_ncomps = RMF_GetComponentCount(id)
@@ -2340,7 +2340,7 @@
     END FUNCTION RMF_GetPorosity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), dimension(:) :: porosity
+    real(kind=8), INTENT(out), dimension(:) :: porosity
     if (rmf_debug) call Chk_GetPorosity(id, porosity)
     RM_GetPorosity = RMF_GetPorosity(id, porosity)
     return
@@ -2381,7 +2381,7 @@
     END FUNCTION RMF_GetPressure
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), dimension(:) :: pressure
+    real(kind=8), INTENT(out), dimension(:) :: pressure
     if (rmf_debug) call Chk_GetPressure(id, pressure)
     RM_GetPressure = RMF_GetPressure(id, pressure)
     return
@@ -2390,7 +2390,7 @@
     SUBROUTINE Chk_GetPressure(id, pressure)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: pressure
+    real(kind=8), INTENT(in), DIMENSION(:) :: pressure
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, pressure, rmf_nxyz, "pressure", "RM_GetPressure")
@@ -2402,7 +2402,7 @@
     SUBROUTINE Chk_GetPorosity(id, porosity)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: porosity
+    real(kind=8), INTENT(in), DIMENSION(:) :: porosity
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, porosity, rmf_nxyz, "porosity", "RM_GetPorosity")
@@ -2460,7 +2460,7 @@
     END FUNCTION RMF_GetSaturation
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: sat_calc
+    real(kind=8), INTENT(out), DIMENSION(:) :: sat_calc
     if (rmf_debug) call Chk_GetSaturation(id, sat_calc)
     RM_GetSaturation = RMF_GetSaturation(id, sat_calc)
     END FUNCTION RM_GetSaturation
@@ -2468,7 +2468,7 @@
     SUBROUTINE Chk_GetSaturation(id, sat)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: sat
+    real(kind=8), INTENT(in), DIMENSION(:) :: sat
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "saturation", "RM_GetSaturation")
@@ -2526,7 +2526,7 @@
     END FUNCTION RMF_GetSelectedOutput
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(out) :: so
+    real(kind=8), DIMENSION(:,:), INTENT(out) :: so
     if (rmf_debug) call Chk_GetSelectedOutput(id, so)
     RM_GetSelectedOutput = RMF_GetSelectedOutput(id, so)
     END FUNCTION RM_GetSelectedOutput
@@ -2534,7 +2534,7 @@
     SUBROUTINE Chk_GetSelectedOutput(id, so)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: so
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: so
     INTEGER :: errors, ncol
     ncol = RM_GetSelectedOutputColumnCount(id)
     errors = 0
@@ -3052,7 +3052,7 @@
     END FUNCTION RMF_GetSolutionVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: vol
+    real(kind=8), INTENT(out), DIMENSION(:) :: vol
     if (rmf_debug) call Chk_GetDensity(id, vol)
     RM_GetSolutionVolume = RMF_GetSolutionVolume(id, vol)
     END FUNCTION RM_GetSolutionVolume
@@ -3060,7 +3060,7 @@
     SUBROUTINE Chk_GetSolutionVolume(id, vol)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: vol
+    real(kind=8), INTENT(in), DIMENSION(:) :: vol
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, vol, rmf_nxyz, "vol", "RM_GetSolutionVolume")
@@ -3130,7 +3130,7 @@
     END FUNCTION RMF_GetSpeciesConcentrations
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: species_conc
+    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_conc
     if (rmf_debug) call Chk_GetSpeciesConcentrations(id, species_conc)
     RM_GetSpeciesConcentrations = RMF_GetSpeciesConcentrations(id, species_conc)
     END FUNCTION RM_GetSpeciesConcentrations
@@ -3138,7 +3138,7 @@
     SUBROUTINE Chk_GetSpeciesConcentrations(id, species_conc)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: species_conc
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_conc
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -3253,7 +3253,7 @@
     END FUNCTION RMF_GetSpeciesD25
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: diffc
+    real(kind=8), INTENT(out), DIMENSION(:) :: diffc
     if (rmf_debug) call Chk_GetSpeciesD25(id, diffc)
     RM_GetSpeciesD25 = RMF_GetSpeciesD25(id, diffc)
     END FUNCTION RM_GetSpeciesD25
@@ -3261,7 +3261,7 @@
     SUBROUTINE Chk_GetSpeciesD25(id, diffc)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: diffc
+    real(kind=8), INTENT(in), DIMENSION(:) :: diffc
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -3327,7 +3327,7 @@
     END FUNCTION RMF_GetSpeciesLog10Gammas
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: species_log10gammas
+    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_log10gammas
     if (rmf_debug) call Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
     RM_GetSpeciesLog10Gammas = RMF_GetSpeciesLog10Gammas(id, species_log10gammas)
     END FUNCTION RM_GetSpeciesLog10Gammas
@@ -3335,7 +3335,7 @@
     SUBROUTINE Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: species_log10gammas
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_log10gammas
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -3401,7 +3401,7 @@
     END FUNCTION RMF_GetSpeciesLog10Molalities
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: species_log10molalities
+    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_log10molalities
     if (rmf_debug) call Chk_GetSpeciesLog10Molalities(id, species_log10molalities)
     RM_GetSpeciesLog10Molalities = RMF_GetSpeciesLog10Molalities(id, species_log10molalities)
     END FUNCTION RM_GetSpeciesLog10Molalities
@@ -3409,7 +3409,7 @@
     SUBROUTINE Chk_GetSpeciesLog10Molalities(id, species_log10molalities)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: species_log10molalities
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_log10molalities
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -3579,7 +3579,7 @@
     END FUNCTION RMF_GetSpeciesZ
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: z
+    real(kind=8), INTENT(out), DIMENSION(:) :: z
     if (rmf_debug) call Chk_GetSpeciesZ(id, z)
     RM_GetSpeciesZ = RMF_GetSpeciesZ(id, z)
     END FUNCTION RM_GetSpeciesZ
@@ -3587,7 +3587,7 @@
     SUBROUTINE Chk_GetSpeciesZ(id, z)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: z
+    real(kind=8), INTENT(in), DIMENSION(:) :: z
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -3861,8 +3861,8 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: temperature
-    DOUBLE PRECISION, ALLOCATABLE, DIMENSION(:) :: a_temperature
+    real(kind=8), INTENT(out), DIMENSION(:) :: temperature
+    real(kind=8), ALLOCATABLE, DIMENSION(:) :: a_temperature
     RM_GetTemperature = RM_BMI_GetValue(id, "Temperature", a_temperature)
     temperature = a_temperature
     END FUNCTION RM_GetTemperature
@@ -3924,7 +3924,7 @@
     !> @par MPI:
     !> Called by root and (or) workers.
 
-    DOUBLE PRECISION FUNCTION RM_GetTime(id)
+    real(kind=8) FUNCTION RM_GetTime(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -3965,7 +3965,7 @@
     !> @par MPI:
     !> Called by root and (or) workers.
 
-    DOUBLE PRECISION FUNCTION RM_GetTimeConversion(id)
+    real(kind=8) FUNCTION RM_GetTimeConversion(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -4005,7 +4005,7 @@
     !> @par MPI:
     !> Called by root and (or) workers.
 
-    DOUBLE PRECISION FUNCTION RM_GetTimeStep(id)
+    real(kind=8) FUNCTION RM_GetTimeStep(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -4218,11 +4218,11 @@
     END FUNCTION RMF_InitialPhreeqc2Concentrations2
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(OUT), DIMENSION(:,:) :: bc_conc
+    real(kind=8), INTENT(OUT), DIMENSION(:,:) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:) , OPTIONAL :: bc2
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
+    real(kind=8), INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
     if (rmf_debug) call Chk_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, bc2, f1)
     if (present(bc2) .and. present(f1)) then
         RM_InitialPhreeqc2Concentrations = RMF_InitialPhreeqc2Concentrations2(id, bc_conc, n_boundary, bc1, bc2, f1)
@@ -4242,11 +4242,11 @@
     END FUNCTION RMF_GetComponentCount
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:,:) :: bc_conc
+    real(kind=8), INTENT(IN), DIMENSION(:,:) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:) , OPTIONAL :: bc2
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
+    real(kind=8), INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
     INTEGER :: errors
     errors = 0
     rmf_ncomps = RMF_GetComponentCount(id)
@@ -4351,7 +4351,7 @@
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in), DIMENSION(:,:) :: ic1
     INTEGER, INTENT(in), DIMENSION(:,:), OPTIONAL :: ic2
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:), OPTIONAL :: f1
+    real(kind=8), INTENT(in), DIMENSION(:,:), OPTIONAL :: f1
     if (rmf_debug) call Chk_InitialPhreeqc2Module(id, ic1, ic2, f1)
     if (present(ic2) .and. present(f1)) then
         RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2Module2(id, ic1, ic2, f1)
@@ -4365,7 +4365,7 @@
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(IN), DIMENSION(:,:) :: ic1
     INTEGER, INTENT(IN), DIMENSION(:,:) , OPTIONAL :: ic2
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:,:) , OPTIONAL :: f1
+    real(kind=8), INTENT(IN), DIMENSION(:,:) , OPTIONAL :: f1
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Integer2D(id, ic1, rmf_nxyz, 7, "ic1", "RM_InitialPhreeqc2Module")
@@ -4451,11 +4451,11 @@
     END FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations2
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(OUT) :: bc_conc
+    real(kind=8), DIMENSION(:,:), INTENT(OUT) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:), OPTIONAL :: bc2
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:), OPTIONAL :: f1
+    real(kind=8), INTENT(IN), DIMENSION(:), OPTIONAL :: f1
     if (rmf_debug) call Chk_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary, bc1, bc2, f1)
     if (present(bc2) .and. present(f1)) then
         RM_InitialPhreeqc2SpeciesConcentrations = &
@@ -4469,11 +4469,11 @@
     SUBROUTINE Chk_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary, bc1, bc2, f1)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:,:) :: bc_conc
+    real(kind=8), INTENT(IN), DIMENSION(:,:) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:) , OPTIONAL :: bc2
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
+    real(kind=8), INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -5088,7 +5088,7 @@
     END FUNCTION RMF_SetConcentrations
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(in) :: c
+    real(kind=8), DIMENSION(:,:), INTENT(in) :: c
     if (rmf_debug) call Chk_SetConcentrations(id, c)
     RM_SetConcentrations = RMF_SetConcentrations(id, c)
     END FUNCTION RM_SetConcentrations
@@ -5104,7 +5104,7 @@
     END FUNCTION RMF_GetComponentCount
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: c
     INTEGER :: errors
     errors = 0
     rmf_ncomps = RMF_GetComponentCount(id)
@@ -5128,7 +5128,7 @@
     !        END FUNCTION RMF_SetConcentrations
     !    END INTERFACE
     !    INTEGER, INTENT(in) :: id
-    !    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: c
+    !    real(kind=8), DIMENSION(:), INTENT(in) :: c
     !    RM_SetConcentrations1D = RMF_SetConcentrations(id, c)
     !END FUNCTION RM_SetConcentrations1D
 #endif
@@ -5228,7 +5228,7 @@
     END FUNCTION RMF_SetDensity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: density
+    real(kind=8), DIMENSION(:), INTENT(in) :: density
     if (rmf_debug) call Chk_SetDensity(id, density)
     RM_SetDensity = RMF_SetDensity(id, density)
     END FUNCTION RM_SetDensity
@@ -5236,7 +5236,7 @@
     SUBROUTINE Chk_SetDensity(id, density)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: density
+    real(kind=8), INTENT(in), DIMENSION(:) :: density
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_SetDensity")
@@ -5439,7 +5439,7 @@
     END FUNCTION RMF_SetGasCompMoles
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(in) :: gas_moles
+    real(kind=8), DIMENSION(:,:), INTENT(in) :: gas_moles
     if (rmf_debug) call Chk_SetGasCompMoles(id, gas_moles)
     RM_SetGasCompMoles = RMF_SetGasCompMoles(id, gas_moles)
     END FUNCTION RM_SetGasCompMoles
@@ -5447,7 +5447,7 @@
     SUBROUTINE Chk_SetGasCompMoles(id, gas_moles)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: gas_moles
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_moles
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -5507,7 +5507,7 @@
     END FUNCTION RMF_SetGasPhaseVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: gas_volume
+    real(kind=8), DIMENSION(:), INTENT(in) :: gas_volume
     if (rmf_debug) call Chk_SetGasPhaseVolume(id, gas_volume)
     RM_SetGasPhaseVolume = RMF_SetGasPhaseVolume(id, gas_volume)
     END FUNCTION RM_SetGasPhaseVolume
@@ -5515,7 +5515,7 @@
     SUBROUTINE Chk_SetGasPhaseVolume(id, gas_volume)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: gas_volume
+    real(kind=8), INTENT(in), DIMENSION(:) :: gas_volume
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -5792,7 +5792,7 @@
     END FUNCTION RMF_SetPorosity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: por
+    real(kind=8), DIMENSION(:), INTENT(in) :: por
     if (rmf_debug) call Chk_SetPorosity(id, por)
     RM_SetPorosity = RMF_SetPorosity(id, por)
     END FUNCTION RM_SetPorosity
@@ -5800,7 +5800,7 @@
     SUBROUTINE Chk_SetPorosity(id, por)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: por
+    real(kind=8), INTENT(in), DIMENSION(:) :: por
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, por, rmf_nxyz, "porosity", "RM_SetPorosity")
@@ -5843,7 +5843,7 @@
     END FUNCTION RMF_SetPressure
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: p
+    real(kind=8), DIMENSION(:), INTENT(in) :: p
     if (rmf_debug) call Chk_SetPressure(id, p)
     RM_SetPressure = RMF_SetPressure(id, p)
     END FUNCTION RM_SetPressure
@@ -5851,7 +5851,7 @@
     SUBROUTINE Chk_SetPressure(id, p)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: p
+    real(kind=8), INTENT(in), DIMENSION(:) :: p
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, p, rmf_nxyz, "pressure", "RM_SetPressure")
@@ -6053,7 +6053,7 @@
     END FUNCTION RMF_SetRebalanceFraction
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in)  :: f
+    real(kind=8), INTENT(in)  :: f
     RM_SetRebalanceFraction = RMF_SetRebalanceFraction(id, f)
     END FUNCTION RM_SetRebalanceFraction
 
@@ -6083,7 +6083,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> double precision, dimension(:), allocatable   :: rv
+    !> real(kind=8), dimension(:), allocatable   :: rv
     !> allocate(rv(nxyz))
     !> rv = 1.0
     !> status = RM_SetRepresentativeVolume(id, rv)
@@ -6106,7 +6106,7 @@
     END FUNCTION RMF_SetRepresentativeVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: rv
+    real(kind=8), DIMENSION(:), INTENT(in) :: rv
     RM_SetRepresentativeVolume = RMF_SetRepresentativeVolume(id, rv)
     END FUNCTION RM_SetRepresentativeVolume
 
@@ -6156,7 +6156,7 @@
     END FUNCTION RMF_SetSaturation
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: sat
+    real(kind=8), DIMENSION(:), INTENT(in) :: sat
     if (rmf_debug) call Chk_SetSaturation(id, sat)
     RM_SetSaturation = RMF_SetSaturation(id, sat)
     END FUNCTION RM_SetSaturation
@@ -6164,7 +6164,7 @@
     SUBROUTINE Chk_SetSaturation(id, sat)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: sat
+    real(kind=8), INTENT(in), DIMENSION(:) :: sat
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "sataturation", "RM_SetSaturation")
@@ -6350,7 +6350,7 @@
     END FUNCTION RMF_SetTemperature
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: t
+    real(kind=8), DIMENSION(:), INTENT(in) :: t
     if (rmf_debug) call Chk_SetTemperature(id, t)
     RM_SetTemperature = RMF_SetTemperature(id, t)
     END FUNCTION RM_SetTemperature
@@ -6358,7 +6358,7 @@
     SUBROUTINE Chk_SetTemperature(id, t)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: t
+    real(kind=8), INTENT(in), DIMENSION(:) :: t
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, t, rmf_nxyz, "temperature", "RM_SetTemperature")
@@ -6398,7 +6398,7 @@
     END FUNCTION RMF_SetTime
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in) :: time
+    real(kind=8), INTENT(in) :: time
     RM_SetTime = RMF_SetTime(id, time)
     END FUNCTION RM_SetTime
 
@@ -6433,7 +6433,7 @@
     END FUNCTION RMF_SetTimeConversion
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in) :: conv_factor
+    real(kind=8), INTENT(in) :: conv_factor
     RM_SetTimeConversion = RMF_SetTimeConversion(id, conv_factor)
     END FUNCTION RM_SetTimeConversion
 
@@ -6469,7 +6469,7 @@
     END FUNCTION RMF_SetTimeStep
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in) :: time_step
+    real(kind=8), INTENT(in) :: time_step
     RM_SetTimeStep = RMF_SetTimeStep(id, time_step)
     END FUNCTION RM_SetTimeStep
 
@@ -6937,7 +6937,7 @@
     END FUNCTION RMF_SpeciesConcentrations2Module
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(in) :: species_conc
+    real(kind=8), DIMENSION(:,:), INTENT(in) :: species_conc
     if (rmf_debug) call Chk_SpeciesConcentrations2Module(id, species_conc)
     RM_SpeciesConcentrations2Module = RMF_SpeciesConcentrations2Module(id, species_conc)
     END FUNCTION RM_SpeciesConcentrations2Module
@@ -6945,7 +6945,7 @@
     SUBROUTINE Chk_SpeciesConcentrations2Module(id, species_conc)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(in) :: species_conc
+    real(kind=8), DIMENSION(:,:), INTENT(in) :: species_conc
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -7181,7 +7181,7 @@
     INTEGER FUNCTION Chk_Double1D(id, t, n1, var, func)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: t
+    real(kind=8), INTENT(in), DIMENSION(:) :: t
     INTEGER, INTENT(in) :: n1
     CHARACTER(len=*), INTENT(in) :: var, func
     CHARACTER(len=200) :: error_string
@@ -7199,7 +7199,7 @@
     INTEGER FUNCTION Chk_Double2D(id, t, n1, n2, var, func)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: t
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: t
     INTEGER, INTENT(in) :: n1, n2
     CHARACTER(len=*), INTENT(in) :: var, func
     CHARACTER(len=200) :: error_string
@@ -7351,7 +7351,7 @@
     !> @par MPI:
     !> Called by root.
 
-    DOUBLE PRECISION FUNCTION RM_BMI_GetCurrentTime(id)
+    real(kind=8) FUNCTION RM_BMI_GetCurrentTime(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -7389,7 +7389,7 @@
     !> @par MPI:
     !> Called by root.
 
-    DOUBLE PRECISION FUNCTION RM_BMI_GetEndTime(id)
+    real(kind=8) FUNCTION RM_BMI_GetEndTime(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -7578,7 +7578,7 @@
     !> @par MPI:
     !> Called by root.
 
-    DOUBLE PRECISION FUNCTION RM_BMI_GetTimeStep(id)
+    real(kind=8) FUNCTION RM_BMI_GetTimeStep(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -7651,28 +7651,28 @@
     !> third argument (@a dest).
     !> @n "ComponentCount", @a dest: integer;
     !> @n "Components", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "Concentrations", @a dest: double precision, allocatable, dimension(:,:);
+    !> @n "Concentrations", @a dest: real(kind=8), allocatable, dimension(:,:);
     !> @n "CurrentSelectedOutputUserNumber", @a dest: integer;
-    !> @n "Density", @a dest: double precision, allocatable, dimension(:);
+    !> @n "Density", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "ErrorString", @a dest: character;
     !> @n "FilePrefix", @a dest: character;
-    !> @n "Gfw", @a dest: double precision, allocatable, dimension(:);
+    !> @n "Gfw", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "GridCellCount", @a dest: integer;
     !> @n "InputVarNames", @a dest: character(len=:), allocatable, dimension(:);
     !> @n "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "Porosity", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Pressure", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Saturation", @a dest: double precision, allocatable, dimension(:);
-    !> @n "SelectedOutput", @a dest: double precision, allocatable, dimension(:,:);
+    !> @n "Porosity", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "Pressure", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "Saturation", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "SelectedOutput", @a dest: real(kind=8), allocatable, dimension(:,:);
     !> @n "SelectedOutputColumnCount", @a dest: integer;
     !> @n "SelectedOutputCount", @a dest: integer;
     !> @n "SelectedOutputHeadings", @a dest: character(len=:), allocatable, dimension(:);
     !> @n "SelectedOutputOn", @a dest: logical;
     !> @n "SelectedOutputRowCount", @a dest: integer;
-    !> @n "SolutionVolume", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Temperature", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Time",	@a dest: double precision;
-    !> @n "TimeStep",	@a dest: double precision.
+    !> @n "SolutionVolume", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "Temperature", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "Time",	@a dest: real(kind=8);
+    !> @n "TimeStep",	@a dest: real(kind=8).
     !>
     !> @see
     !> @ref RM_BMI_GetOutputVarNames,
@@ -7686,7 +7686,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> double precision, allocatable, dimension(:) :: bmi_density
+    !> real(kind=8), allocatable, dimension(:) :: bmi_density
     !> character(len=:), allocatable, dimension(:) :: bmi_comps
     !> status = RM_BMI_GetValue(id, "Density", bmi_density)
     !> status = RM_BMI_GetValue("Components", bmi_comps)
@@ -7816,7 +7816,7 @@
     END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    double precision, INTENT(inout) :: dest
+    real(kind=8), INTENT(inout) :: dest
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
@@ -7847,7 +7847,7 @@
 
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    double precision, allocatable, dimension(:), INTENT(inout) :: dest
+    real(kind=8), allocatable, dimension(:), INTENT(inout) :: dest
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
@@ -7887,7 +7887,7 @@
 
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    double precision, allocatable, INTENT(inout) :: dest(:,:)
+    real(kind=8), allocatable, INTENT(inout) :: dest(:,:)
     character(100) :: vartype
     character(40) :: varname
     integer :: status
@@ -8051,7 +8051,7 @@
     !> <CODE>
     !> <PRE>
     !> integer nbytes, item_size, dim
-    !> double precision, allocatable, dimension(:) :: bmi_temperature
+    !> real(kind=8), allocatable, dimension(:) :: bmi_temperature
     !> nbytes = RM_BMI_GetVarNbytes(id, "Temperature")
     !> item_size = RM_BMI_GetVarItemSize(id, "Temperature");
     !> int dim = nbytes/item_size;
@@ -8103,7 +8103,7 @@
     !> <CODE>
     !> <PRE>
     !> integer nbytes, item_size, dim
-    !>  double precision, allocatable, dimension(:) :: bmi_temperature
+    !>  real(kind=8), allocatable, dimension(:) :: bmi_temperature
     !> nbytes = RM_BMI_GetVarNbytes(id, "Temperature")
     !> item_size = RM_BMI_GetVarItemSize(id, "Temperature");
     !> int dim = nbytes/item_size;
@@ -8386,17 +8386,17 @@
 !> 
 !> Variable names for the second argument (@a var)
 !> and required variable type for the third argument (@a src):
-!> @n "Concentrations", double precision, allocatable, dimension(:,:);
-!> @n "Density", double precision, allocatable, dimension(:);
+!> @n "Concentrations", real(kind=8), allocatable, dimension(:,:);
+!> @n "Density", real(kind=8), allocatable, dimension(:);
 !> @n "FilePrefix", character;
 !> @n "NthSelectedOutput", integer;
-!> @n "Porosity", double precision, allocatable, dimension(:);
-!> @n "Pressure", double precision, allocatable, dimension(:);
-!> @n "Saturation", double precision, allocatable, dimension(:);
+!> @n "Porosity", real(kind=8), allocatable, dimension(:);
+!> @n "Pressure", real(kind=8), allocatable, dimension(:);
+!> @n "Saturation", real(kind=8), allocatable, dimension(:);
 !> @n "SelectedOutputOn", logical;
-!> @n "Temperature", double precision, allocatable, dimension(:);
-!> @n "Time", double precision;
-!> @n "TimeStep", double precision.
+!> @n "Temperature", real(kind=8), allocatable, dimension(:);
+!> @n "Time", real(kind=8);
+!> @n "TimeStep", real(kind=8).
 !> 
 !> @see
 !> @ref RM_BMI_GetInputVarNames,
@@ -8410,7 +8410,7 @@
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> double precision, allocatable, dimension(:) :: tc
+!> real(kind=8), allocatable, dimension(:) :: tc
 !> allocate(tc(nxyz))
 !> tc = 28.0d0
 !> status = RM_BMI_SetValue(id, "Temperature", tc);
@@ -8581,7 +8581,7 @@
     END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    double precision, INTENT(inout) :: src
+    real(kind=8), INTENT(inout) :: src
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
@@ -8609,7 +8609,7 @@
 
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    double precision, INTENT(inout) :: src(:)
+    real(kind=8), INTENT(inout) :: src(:)
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
@@ -8641,7 +8641,7 @@
 
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    double precision, INTENT(inout) :: src(:,:)
+    real(kind=8), INTENT(inout) :: src(:,:)
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)

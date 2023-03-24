@@ -414,7 +414,7 @@ MODULE YAML_interface
 !> <PRE>
 !> integer, allocatable, dimension(:,:) :: ic1
 !> integer, allocatable, dimension(:,:) :: ic2
-!> double precision, allocatable, dimension(:,:) :: f1
+!> real(kind=8), allocatable, dimension(:,:) :: f1
 !> allocate(ic1(nxyz,7), ic2(nxyz,7), f1(nxyz,7))
 !> ic1 = -1
 !> ic2 = -1
@@ -450,7 +450,7 @@ MODULE YAML_interface
     integer, intent(in) :: id
     integer, allocatable, dimension(:,:), intent(in) :: ic1
     integer, allocatable, dimension(:,:), intent(in) :: ic2
-    double precision, allocatable, dimension(:,:), intent(in) :: f1
+    real(kind=8), allocatable, dimension(:,:), intent(in) :: f1
     integer :: l1, l2, l3
     l1 = size(ic1,1)*size(ic1,2)
     l2 = size(ic2,1)*size(ic2,2)
@@ -889,7 +889,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetConcentrations_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, allocatable, dimension(:,:), intent(in) :: c
+    real(kind=8), allocatable, dimension(:,:), intent(in) :: c
     integer :: dim
     dim = size(c,1)*size(c,2)
 	YAMLSetConcentrations = YAMLSetConcentrations_F(id, c(1,1), dim)
@@ -954,7 +954,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> double precision, allocatable, dimension(:)   :: density
+!> real(kind=8), allocatable, dimension(:)   :: density
 !> allocate(density(nxyz))
 !> por = 1.0d0
 !> status = YAMLSetDensity(id, por)
@@ -975,7 +975,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetDensity_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, allocatable, dimension(:), intent(in) :: density
+    real(kind=8), allocatable, dimension(:), intent(in) :: density
 	YAMLSetDensity = YAMLSetDensity_F(id, density(1), size(density))
     END FUNCTION YAMLSetDensity
 !> Inserts data into the YAML document for the PhreeqcRM method SetDumpFileName.
@@ -1144,7 +1144,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> double precision, allocatable, dimension(:,:) :: gas_moles
+!> real(kind=8), allocatable, dimension(:,:) :: gas_moles
 !> allocate(gas_moles(nxyz*ngas))
 !> status = YAMLSetGasCompMoles(id, gas_moles)
 !> </PRE>
@@ -1164,7 +1164,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetGasCompMoles_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, allocatable, dimension(:,:), intent(in) :: gas_moles
+    real(kind=8), allocatable, dimension(:,:), intent(in) :: gas_moles
     integer :: dim
     dim = size(gas_moles,1)*size(gas_moles,2)
 	YAMLSetGasCompMoles = YAMLSetGasCompMoles_F(id, gas_moles(1,1), dim)
@@ -1195,7 +1195,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> double precision, allocatable, dimension(:) :: gas_volume
+!> real(kind=8), allocatable, dimension(:) :: gas_volume
 !> allocate(gas_volume(nxyz))
 !> status = YAMLSetGasPhaseVolume(id, gas_volume)
 !> </PRE>
@@ -1215,7 +1215,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetGasPhaseVolume_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, allocatable, dimension(:), intent(in) :: gas_volume
+    real(kind=8), allocatable, dimension(:), intent(in) :: gas_volume
 	YAMLSetGasPhaseVolume = YAMLSetGasPhaseVolume_F(id, gas_volume(1), size(gas_volume))
     END FUNCTION YAMLSetGasPhaseVolume
 !> Inserts data into the YAML document to define the number of cells in the user's model.
@@ -1363,7 +1363,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> double precision, allocatable, dimension(:) :: por
+!> real(kind=8), allocatable, dimension(:) :: por
 !> allocate(por(nxyz))
 !> por = 0.2d0
 !> status = YAMLSetPorosity(id, por)
@@ -1384,7 +1384,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetPorosity_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, allocatable, dimension(:), intent(in) :: por
+    real(kind=8), allocatable, dimension(:), intent(in) :: por
 	YAMLSetPorosity = YAMLSetPorosity_F(id, por(1), size(por))
     END FUNCTION YAMLSetPorosity
 !> Inserts data into the YAML document for the PhreeqcRM method SetPressure.
@@ -1403,7 +1403,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> double precision, allocatable, dimension(:) :: pressure
+!> real(kind=8), allocatable, dimension(:) :: pressure
 !> allocate(por(nxyz))
 !> pressure = 2.0d0
 !> status = YAMLSetPressure(id, pressure)
@@ -1424,7 +1424,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetPressure_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, allocatable, dimension(:), intent(in) :: p
+    real(kind=8), allocatable, dimension(:), intent(in) :: p
 	YAMLSetPressure = YAMLSetPressure_F(id, p(1), size(p))
     END FUNCTION YAMLSetPressure
 !> Inserts data into the YAML document for the PhreeqcRM method SetPrintChemistryMask.
@@ -1608,7 +1608,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetRebalanceFraction_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, intent(in) :: f
+    real(kind=8), intent(in) :: f
 	YAMLSetRebalanceFraction = YAMLSetRebalanceFraction_F(id, f)
     END FUNCTION YAMLSetRebalanceFraction  
 !> Inserts data into the YAML document for the PhreeqcRM method SetRepresentativeVolume.
@@ -1642,7 +1642,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> double precision, allocatable, dimension(:)   :: rv
+!> real(kind=8), allocatable, dimension(:)   :: rv
 !> allocate(rv(nxyz))
 !> rv = 1.0d0
 !> status = YAMLSetRepresentativeVolume(id, rv)
@@ -1663,7 +1663,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetRepresentativeVolume_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, allocatable, dimension(:), intent(in) :: rv
+    real(kind=8), allocatable, dimension(:), intent(in) :: rv
 	YAMLSetRepresentativeVolume = YAMLSetRepresentativeVolume_F(id, rv(1), size(rv))
     END FUNCTION YAMLSetRepresentativeVolume
 !> Inserts data into the YAML document for the PhreeqcRM method SetSaturation.
@@ -1692,7 +1692,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>   
-!> double precision, allocatable, dimension(:) :: sat 
+!> real(kind=8), allocatable, dimension(:) :: sat 
 !> allocate(sat(nxyz))
 !> sat = 1.0d0
 !> status = YAMLSetSaturation(id, sat)  
@@ -1713,7 +1713,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetSaturation_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, allocatable, dimension(:), intent(in) :: sat
+    real(kind=8), allocatable, dimension(:), intent(in) :: sat
 	YAMLSetSaturation = YAMLSetSaturation_F(id, sat(1), size(sat))
     END FUNCTION YAMLSetSaturation
 !> Inserts data into the YAML document for the PhreeqcRM method SetScreenOn.
@@ -1859,7 +1859,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>    
-!> double precision, allocatable, dimension(:) :: tc
+!> real(kind=8), allocatable, dimension(:) :: tc
 !> allocate(tc(nxyz))
 !> por = 0.2d0
 !> status = YAMLSetTemperature(id, tc)
@@ -1880,7 +1880,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetTemperature_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, allocatable, dimension(:), intent(in) :: tc
+    real(kind=8), allocatable, dimension(:), intent(in) :: tc
 	YAMLSetTemperature = YAMLSetTemperature_F(id, tc(1), size(tc))
     END FUNCTION YAMLSetTemperature
 !> Inserts data into the YAML document for the PhreeqcRM method SetTime.
@@ -1914,7 +1914,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetTime_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, intent(in) :: time
+    real(kind=8), intent(in) :: time
 	YAMLSetTime = YAMLSetTime_F(id, time)
     END FUNCTION YAMLSetTime  
 !> Inserts data into the YAML document for the PhreeqcRM method SetTimeConversion.
@@ -1951,7 +1951,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetTimeConversion_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, intent(in) :: conv
+    real(kind=8), intent(in) :: conv
 	YAMLSetTimeConversion = YAMLSetTimeConversion_F(id, conv)
     END FUNCTION YAMLSetTimeConversion 
 !> Inserts data into the YAML document for the PhreeqcRM method SetTimeStep.
@@ -1988,7 +1988,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetTimeStep_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, intent(in) :: time
+    real(kind=8), intent(in) :: time
 	YAMLSetTimeStep = YAMLSetTimeStep_F(id, time)
     END FUNCTION YAMLSetTimeStep  
 !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsExchange.
@@ -2426,7 +2426,7 @@ MODULE YAML_interface
 		END FUNCTION YAMLSpeciesConcentrations2Module_F
     END INTERFACE
     integer, intent(in) :: id
-    double precision, allocatable, dimension(:,:), intent(in) :: c
+    real(kind=8), allocatable, dimension(:,:), intent(in) :: c
     integer :: dim
     dim = size(c,1)*size(c,2)
 	YAMLSpeciesConcentrations2Module = YAMLSpeciesConcentrations2Module_F(id, c(1,1), dim)

@@ -11,8 +11,8 @@ subroutine SimpleAdvect_f90()  BIND(C, NAME='SimpleAdvect_f90')
     interface
         subroutine simpleadvection_f90(c, bc_conc, ncomps, nxyz)
             implicit none
-            double precision, dimension(:,:), allocatable, intent(inout) :: c 
-            double precision, dimension(:,:), allocatable, intent(in) :: bc_conc
+            real(kind=8), dimension(:,:), allocatable, intent(inout) :: c 
+            real(kind=8), dimension(:,:), allocatable, intent(in) :: bc_conc
             integer, intent(in)                                       :: ncomps, nxyz
         end subroutine simpleadvection_f90
     end interface
@@ -24,7 +24,7 @@ subroutine SimpleAdvect_f90()  BIND(C, NAME='SimpleAdvect_f90')
   integer :: nthreads
   integer :: id
   integer :: status
-  double precision, dimension(:), allocatable   :: por
+  real(kind=8), dimension(:), allocatable   :: por
   integer,          dimension(:), allocatable   :: print_chemistry_mask
   integer                                       :: nchem
   character(100)                                :: string
@@ -33,11 +33,11 @@ subroutine SimpleAdvect_f90()  BIND(C, NAME='SimpleAdvect_f90')
   integer,          dimension(:,:), allocatable :: ic1
   integer                                       :: nbound
   integer,          dimension(:), allocatable   :: bc1
-  double precision, dimension(:,:), allocatable :: bc_conc
-  double precision, dimension(:,:), allocatable :: c
-  double precision                              :: time, time_step
-  double precision, dimension(:), allocatable   :: temperature
-  double precision, dimension(:), allocatable   :: pressure
+  real(kind=8), dimension(:,:), allocatable :: bc_conc
+  real(kind=8), dimension(:,:), allocatable :: c
+  real(kind=8)                              :: time, time_step
+  real(kind=8), dimension(:), allocatable   :: temperature
+  real(kind=8), dimension(:), allocatable   :: pressure
   integer                                       :: isteps, nsteps
   ! --------------------------------------------------------------------------
   ! Create PhreeqcRM
@@ -200,8 +200,8 @@ end subroutine SimpleAdvect_F90
 
 SUBROUTINE simpleadvection_f90(c, bc_conc, ncomps, nxyz)
   implicit none
-  double precision, dimension(:,:), allocatable, intent(inout) :: c 
-  double precision, dimension(:,:), allocatable, intent(in)    :: bc_conc
+  real(kind=8), dimension(:,:), allocatable, intent(inout) :: c 
+  real(kind=8), dimension(:,:), allocatable, intent(in)    :: bc_conc
   integer, intent(in)                                          :: ncomps, nxyz
   integer                                                      :: i, j
   ! Advect

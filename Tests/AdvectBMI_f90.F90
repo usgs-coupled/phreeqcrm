@@ -1,6 +1,6 @@
 #ifdef USE_YAML
     !module mydata
-    !  double precision, dimension(:), pointer :: K_ptr
+    !  real(kind=8), dimension(:), pointer :: K_ptr
     !  integer                                 :: rm_id
     !end module mydata
 
@@ -17,8 +17,8 @@
     interface
         subroutine advectionbmi_f90(c, bc_conc, ncomps, nxyz)
             implicit none
-            double precision, dimension(:,:), allocatable, intent(inout) :: c
-            double precision, dimension(:,:), allocatable, intent(in) :: bc_conc
+            real(kind=8), dimension(:,:), allocatable, intent(inout) :: c
+            real(kind=8), dimension(:,:), allocatable, intent(in) :: bc_conc
             integer, intent(in)                                       :: ncomps, nxyz
         end subroutine advectionbmi_f90
             integer function do_something()
@@ -38,7 +38,7 @@
     end interface
 
     ! Based on PHREEQC Example 11
-    double precision, pointer :: d1_ptr(:)
+    real(kind=8), pointer :: d1_ptr(:)
     character(100) :: yaml_file
     integer :: mpi_myself
     integer :: i, j
@@ -48,9 +48,9 @@
     integer :: id
     integer :: status
     integer :: bytes, nbytes
-    double precision, dimension(:), allocatable, target :: hydraulic_K
-    double precision, dimension(:), allocatable   :: por
-    double precision, dimension(:), allocatable   :: sat
+    real(kind=8), dimension(:), allocatable, target :: hydraulic_K
+    real(kind=8), dimension(:), allocatable   :: por
+    real(kind=8), dimension(:), allocatable   :: sat
     integer                                       :: nchem
     character(len=:), allocatable                 :: prefix
     character(len=:), allocatable                 :: alloc_string
@@ -58,27 +58,27 @@
     character(200)                                :: string1
     integer                                       :: ncomps, ncomps1
     character(len=:), dimension(:), allocatable          :: components
-    double precision, dimension(:), allocatable   :: gfw
+    real(kind=8), dimension(:), allocatable   :: gfw
     integer                                       :: nbound
     integer,          dimension(:), allocatable   :: bc1, bc2
-    double precision, dimension(:), allocatable   :: bc_f1
+    real(kind=8), dimension(:), allocatable   :: bc_f1
     integer,          dimension(:), allocatable   :: module_cells
-    double precision, dimension(:,:), allocatable :: bc_conc
-    double precision, dimension(:,:), allocatable :: c
-    double precision                              :: time, time_step
-    double precision, dimension(:), allocatable   :: density
-    double precision, dimension(:), allocatable   :: sat_calc
-    double precision, dimension(:), allocatable   :: volume
-    double precision, dimension(:), allocatable   :: temperature
-    double precision, dimension(:), allocatable   :: pressure
+    real(kind=8), dimension(:,:), allocatable :: bc_conc
+    real(kind=8), dimension(:,:), allocatable :: c
+    real(kind=8)                              :: time, time_step
+    real(kind=8), dimension(:), allocatable   :: density
+    real(kind=8), dimension(:), allocatable   :: sat_calc
+    real(kind=8), dimension(:), allocatable   :: volume
+    real(kind=8), dimension(:), allocatable   :: temperature
+    real(kind=8), dimension(:), allocatable   :: pressure
     integer                                       :: isteps, nsteps
-    double precision, dimension(:,:), allocatable :: selected_out
+    real(kind=8), dimension(:,:), allocatable :: selected_out
     integer                                       :: col, isel, n_user, rows
     character(len=:), dimension(:), allocatable   :: headings
-    double precision, dimension(:,:), allocatable :: c_well
-    double precision, dimension(:), allocatable   :: tc, p_atm
+    real(kind=8), dimension(:,:), allocatable :: c_well
+    real(kind=8), dimension(:), allocatable   :: tc, p_atm
     integer                                       :: vtype
-    double precision                              :: pH
+    real(kind=8)                              :: pH
     character(100)                                :: svalue
     integer                                       :: iphreeqc_id, iphreeqc_id1
     integer                                       :: dump_on, append
@@ -354,8 +354,8 @@
 
     SUBROUTINE advectionbmi_f90(c, bc_conc, ncomps, nxyz)
     implicit none
-    double precision, dimension(:,:), allocatable, intent(inout) :: c
-    double precision, dimension(:,:), allocatable, intent(in)    :: bc_conc
+    real(kind=8), dimension(:,:), allocatable, intent(inout) :: c
+    real(kind=8), dimension(:,:), allocatable, intent(in)    :: bc_conc
     integer, intent(in)                                          :: ncomps, nxyz
     integer                                                      :: i, j
     ! Advect
@@ -436,24 +436,24 @@ USE, intrinsic :: ISO_C_BINDING
     character(len=:), dimension(:), allocatable          :: inputvars
     character(len=:), dimension(:), allocatable          :: outputvars 
     character(len=:), allocatable                        :: prefix, rm_prefix
-    double precision, dimension(:), allocatable          :: gfw, rm_gfw
-    double precision, dimension(:,:), allocatable        :: c, c_rm
+    real(kind=8), dimension(:), allocatable          :: gfw, rm_gfw
+    real(kind=8), dimension(:,:), allocatable        :: c, c_rm
     integer                                              :: so_count, rm_so_count
     integer                                              :: nuser, rm_nuser
     integer                                              :: col_count, rm_col_count
     integer                                              :: row_count, rm_row_count
     integer                                              :: itemsize
-    double precision, dimension(:,:), allocatable        :: so, rm_so
+    real(kind=8), dimension(:,:), allocatable        :: so, rm_so
     character(LEN=:), dimension(:), allocatable          :: headings, rm_headings
     character(LEN=:), allocatable                        :: heading
-    double precision                                     :: time, rm_time
-    double precision                                     :: time_step, rm_time_step
-    double precision, dimension(:), allocatable          :: density, rm_density
-    double precision, dimension(:), allocatable          :: porosity, rm_porosity
-    double precision, dimension(:), allocatable          :: pressure, rm_pressure
-    double precision, dimension(:), allocatable          :: saturation, rm_saturation
-    double precision, dimension(:), allocatable          :: temperature, rm_temperature
-    double precision, dimension(:), allocatable          :: volume, rm_volume
+    real(kind=8)                                     :: time, rm_time
+    real(kind=8)                                     :: time_step, rm_time_step
+    real(kind=8), dimension(:), allocatable          :: density, rm_density
+    real(kind=8), dimension(:), allocatable          :: porosity, rm_porosity
+    real(kind=8), dimension(:), allocatable          :: pressure, rm_pressure
+    real(kind=8), dimension(:), allocatable          :: saturation, rm_saturation
+    real(kind=8), dimension(:), allocatable          :: temperature, rm_temperature
+    real(kind=8), dimension(:), allocatable          :: volume, rm_volume
     logical :: tf
     character(LEN=:), allocatable :: alloc_string
 

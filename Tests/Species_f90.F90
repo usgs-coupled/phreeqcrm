@@ -11,8 +11,8 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   interface
      subroutine speciesadvection_f90(c, bc_conc, ncomps, nxyz)
        implicit none
-       double precision, dimension(:,:), allocatable :: bc_conc
-       double precision, dimension(:,:), allocatable :: c 
+       real(kind=8), dimension(:,:), allocatable :: bc_conc
+       real(kind=8), dimension(:,:), allocatable :: c 
        integer                                       :: ncomps, nxyz
      end subroutine speciesadvection_f90
   end interface
@@ -25,9 +25,9 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   integer :: nthreads
   integer :: id
   integer :: status
-  double precision, dimension(:), allocatable   :: rv
-  double precision, dimension(:), allocatable   :: por
-  double precision, dimension(:), allocatable   :: sat
+  real(kind=8), dimension(:), allocatable   :: rv
+  real(kind=8), dimension(:), allocatable   :: por
+  real(kind=8), dimension(:), allocatable   :: sat
   integer,          dimension(:), allocatable   :: print_chemistry_mask
   integer,          dimension(:), allocatable   :: grid2chem
   integer                                       :: nchem
@@ -35,34 +35,34 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   character(200)                                :: string1
   integer                                       :: ncomps, ncomps1
   character(100),   dimension(:), allocatable   :: components
-  double precision, dimension(:), allocatable   :: gfw
+  real(kind=8), dimension(:), allocatable   :: gfw
   integer,          dimension(:,:), allocatable :: ic1, ic2
-  double precision, dimension(:,:), allocatable :: f1
+  real(kind=8), dimension(:,:), allocatable :: f1
   integer                                       :: nbound
   integer,          dimension(:), allocatable   :: bc1, bc2
-  double precision, dimension(:), allocatable   :: bc_f1
+  real(kind=8), dimension(:), allocatable   :: bc_f1
   integer,          dimension(:), allocatable   :: module_cells
-  double precision, dimension(:,:), allocatable :: bc_conc
-  double precision, dimension(:,:), allocatable :: c
-  double precision, dimension(:,:), allocatable :: species_c
-  double precision, dimension(:,:), allocatable :: species_log10gammas
-  double precision, dimension(:,:), allocatable :: species_log10molalities
+  real(kind=8), dimension(:,:), allocatable :: bc_conc
+  real(kind=8), dimension(:,:), allocatable :: c
+  real(kind=8), dimension(:,:), allocatable :: species_c
+  real(kind=8), dimension(:,:), allocatable :: species_log10gammas
+  real(kind=8), dimension(:,:), allocatable :: species_log10molalities
   integer                                       :: nspecies
-  double precision, dimension(:), allocatable   :: species_d
-  double precision, dimension(:), allocatable   :: species_z
-  double precision                              :: time, time_step
-  double precision, dimension(:), allocatable   :: density
-  double precision, dimension(:), allocatable   :: volume
-  double precision, dimension(:), allocatable   :: temperature
-  double precision, dimension(:), allocatable   :: pressure
+  real(kind=8), dimension(:), allocatable   :: species_d
+  real(kind=8), dimension(:), allocatable   :: species_z
+  real(kind=8)                              :: time, time_step
+  real(kind=8), dimension(:), allocatable   :: density
+  real(kind=8), dimension(:), allocatable   :: volume
+  real(kind=8), dimension(:), allocatable   :: temperature
+  real(kind=8), dimension(:), allocatable   :: pressure
   integer                                       :: isteps, nsteps
-  double precision, dimension(:,:), allocatable :: selected_out
+  real(kind=8), dimension(:,:), allocatable :: selected_out
   integer                                       :: col, isel, n_user
   character(100)                                :: heading
-  double precision, dimension(:,:), allocatable :: c_well
-  double precision, dimension(:), allocatable   :: tc, p_atm
+  real(kind=8), dimension(:,:), allocatable :: c_well
+  real(kind=8), dimension(:), allocatable   :: tc, p_atm
   integer                                       :: vtype
-  double precision                              :: pH
+  real(kind=8)                              :: pH
   character(100)                                :: svalue
   integer                                       :: iphreeqc_id
   integer                                       :: dump_on, append
@@ -404,8 +404,8 @@ end subroutine species_f90
 
 subroutine speciesadvection_f90(c, bc_conc, ncomps, nxyz)
   implicit none
-  double precision, dimension(:,:), allocatable :: bc_conc
-  double precision, dimension(:,:), allocatable :: c 
+  real(kind=8), dimension(:,:), allocatable :: bc_conc
+  real(kind=8), dimension(:,:), allocatable :: c 
   integer                                       :: ncomps, nxyz
   integer                                       :: i, j
   ! Advect

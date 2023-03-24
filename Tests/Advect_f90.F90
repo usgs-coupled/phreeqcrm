@@ -1,7 +1,7 @@
 
 
 module mydata
-  double precision, dimension(:), pointer :: K_ptr
+  real(kind=8), dimension(:), pointer :: K_ptr
   integer                                 :: rm_id
 end module mydata
     
@@ -17,8 +17,8 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
     interface
         subroutine advection_f90(c, bc_conc, ncomps, nxyz)
             implicit none
-            double precision, dimension(:,:), allocatable, intent(inout) :: c 
-            double precision, dimension(:,:), allocatable, intent(in) :: bc_conc
+            real(kind=8), dimension(:,:), allocatable, intent(inout) :: c 
+            real(kind=8), dimension(:,:), allocatable, intent(in) :: bc_conc
             integer, intent(in)                                       :: ncomps, nxyz
         end subroutine advection_f90
         integer function do_something()
@@ -41,10 +41,10 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   integer :: nthreads
   integer :: id
   integer :: status
-  double precision, dimension(:), allocatable, target :: hydraulic_K
-  double precision, dimension(:), allocatable   :: rv
-  double precision, dimension(:), allocatable   :: por
-  double precision, dimension(:), allocatable   :: sat
+  real(kind=8), dimension(:), allocatable, target :: hydraulic_K
+  real(kind=8), dimension(:), allocatable   :: rv
+  real(kind=8), dimension(:), allocatable   :: por
+  real(kind=8), dimension(:), allocatable   :: sat
   integer,          dimension(:), allocatable   :: print_chemistry_mask
   integer,          dimension(:), allocatable   :: grid2chem
   integer                                       :: nchem
@@ -52,29 +52,29 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   character(200)                                :: string1
   integer                                       :: ncomps, ncomps1
   character(100),   dimension(:), allocatable   :: components
-  double precision, dimension(:), allocatable   :: gfw
+  real(kind=8), dimension(:), allocatable   :: gfw
   integer,          dimension(:,:), allocatable :: ic1, ic2
-  double precision, dimension(:,:), allocatable :: f1
+  real(kind=8), dimension(:,:), allocatable :: f1
   integer                                       :: nbound
   integer,          dimension(:), allocatable   :: bc1, bc2
-  double precision, dimension(:), allocatable   :: bc_f1
+  real(kind=8), dimension(:), allocatable   :: bc_f1
   integer,          dimension(:), allocatable   :: module_cells
-  double precision, dimension(:,:), allocatable :: bc_conc
-  double precision, dimension(:,:), allocatable :: c
-  double precision                              :: time, time_step
-  double precision, dimension(:), allocatable   :: density
-  double precision, dimension(:), allocatable   :: sat_calc
-  double precision, dimension(:), allocatable   :: volume
-  double precision, dimension(:), allocatable   :: temperature
-  double precision, dimension(:), allocatable   :: pressure
+  real(kind=8), dimension(:,:), allocatable :: bc_conc
+  real(kind=8), dimension(:,:), allocatable :: c
+  real(kind=8)                              :: time, time_step
+  real(kind=8), dimension(:), allocatable   :: density
+  real(kind=8), dimension(:), allocatable   :: sat_calc
+  real(kind=8), dimension(:), allocatable   :: volume
+  real(kind=8), dimension(:), allocatable   :: temperature
+  real(kind=8), dimension(:), allocatable   :: pressure
   integer                                       :: isteps, nsteps
-  double precision, dimension(:,:), allocatable :: selected_out
+  real(kind=8), dimension(:,:), allocatable :: selected_out
   integer                                       :: col, isel, n_user
   character(100)                                :: heading
-  double precision, dimension(:,:), allocatable :: c_well
-  double precision, dimension(:), allocatable   :: tc, p_atm
+  real(kind=8), dimension(:,:), allocatable :: c_well
+  real(kind=8), dimension(:), allocatable   :: tc, p_atm
   integer                                       :: vtype
-  double precision                              :: pH
+  real(kind=8)                              :: pH
   character(100)                                :: svalue
   integer                                       :: iphreeqc_id, iphreeqc_id1
   integer                                       :: dump_on, append
@@ -444,8 +444,8 @@ end subroutine Advect_f90
 
 SUBROUTINE advection_f90(c, bc_conc, ncomps, nxyz)
   implicit none
-  double precision, dimension(:,:), allocatable, intent(inout) :: c 
-  double precision, dimension(:,:), allocatable, intent(in)    :: bc_conc
+  real(kind=8), dimension(:,:), allocatable, intent(inout) :: c 
+  real(kind=8), dimension(:,:), allocatable, intent(in)    :: bc_conc
   integer, intent(in)                                          :: ncomps, nxyz
   integer                                                      :: i, j
   ! Advect
