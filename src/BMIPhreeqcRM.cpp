@@ -230,7 +230,7 @@ std::vector<std::string>  BMIPhreeqcRM::GetOutputVarNames()
 }
 std::string BMIPhreeqcRM::GetVarType(const std::string name)
 {
-
+	this->task = BMIPhreeqcRM::BMI_TASKS::Info;
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return "";
 	fn(this);
@@ -284,7 +284,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return;
 	fn(this);
-	int Nbytes = this->GetVarNbytes(name);
+	int Nbytes = this->bmi_variant.GetNbytes();
 	if (this->bmi_variant.GetCType() == "bool")
 	{
 		memcpy(dest, &this->bmi_variant.b_var, Nbytes);
@@ -307,11 +307,11 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 	}
 	if (this->bmi_variant.GetCType() == "std::vector<int>")
 	{
-		memcpy(dest, &this->bmi_variant.IntVector, Nbytes);
+		memcpy(dest, this->bmi_variant.IntVector.data(), Nbytes);
 	}
 	if (this->bmi_variant.GetCType() == "std::vector<std::string>")
 	{
-		int itemsize = this->GetVarItemsize(name);
+		int itemsize = this->bmi_variant.GetItemsize();
 		std::stringstream all;
 		for (size_t i = 0; i < this->bmi_variant.StringVector.size(); i++)
 		{
@@ -391,7 +391,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 	if (fn == NULL) return;
 	// Store the variable in bmi_variant
 	int Nbytes = this->bmi_variant.GetNbytes();
-	int itemsize = this->bmi_variant.GetNbytes();
+	int itemsize = this->bmi_variant.GetItemsize();
 	int dim = Nbytes / itemsize;
 	if (this->bmi_variant.GetCType() == "bool")
 	{

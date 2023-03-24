@@ -7619,7 +7619,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL(KIND=4), INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: status
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "bool") then
@@ -7646,7 +7646,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=:), allocatable, INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, status
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "std::string") then
@@ -7681,7 +7681,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
@@ -7723,7 +7723,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
@@ -7754,7 +7754,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, allocatable, dimension(:), INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
@@ -7794,13 +7794,13 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, allocatable, INTENT(inout) :: dest(:,:)
-    character(20) :: vartype
+    character(100) :: vartype
     character(40) :: varname
     integer :: status
     integer :: dim1, dim2
     logical :: need_alloc
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double,2d") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     varname = Lower(var)
@@ -7846,7 +7846,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
@@ -7877,7 +7877,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, allocatable, INTENT(inout) :: dest(:)
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
@@ -7917,7 +7917,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, allocatable, INTENT(inout) :: dest(:,:)
-    character(20) :: vartype
+    character(100) :: vartype
     character(40) :: varname
     integer :: status
     integer :: dim1, dim2
@@ -8342,7 +8342,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL(kind=4), INTENT(in) :: src
-    CHARACTER(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "bool") then
@@ -8369,7 +8369,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=*), INTENT(in) :: src
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "std::string") then
@@ -8396,13 +8396,15 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: src
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "int") then
         stop "Variable type error."
     endif
+    if (var .eq. "NthSelectedOutput") src = src - 1
     RM_BMI_SetValue_i = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
+    if (var .eq. "NthSelectedOutput") src = src + 1
     return
     END FUNCTION RM_BMI_SetValue_i
 
@@ -8424,7 +8426,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: src(:)
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "std::vector<double>") then
@@ -8455,7 +8457,7 @@
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: src(:,:)
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "std::vector<int>") then
@@ -8486,7 +8488,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, INTENT(inout) :: src
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "double") then
@@ -8514,7 +8516,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, INTENT(inout) :: src(:)
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "std::vector<double>") then
@@ -8546,10 +8548,10 @@
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, INTENT(inout) :: src(:,:)
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std:vector<double>") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)

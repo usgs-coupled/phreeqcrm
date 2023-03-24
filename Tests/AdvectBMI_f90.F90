@@ -484,7 +484,7 @@ USE, intrinsic :: ISO_C_BINDING
     status = assert(time_step .eq. rm_time_step)
     ! InputVarNames
     status = RM_BMI_GetInputVarNames(id, inputvars)
-    status = RM_BMI_GetValue(id, "InputVarNames", inputvars)
+    !status = RM_BMI_GetValue(id, "InputVarNames", inputvars)
     write(*,*) "Input variables (setters)"
     do i = 1, size(inputvars)
         write(*,"(1x, I4, A40)") i, trim(inputvars(i))

@@ -10947,7 +10947,7 @@ PhreeqcRM::SetDensity(const std::vector<double> &t)
 	std::string methodName = "SetDensity";
 	IRM_RESULT result_value = SetGeneric(t, this->density_root, density_worker, METHOD_SETDENSITY, methodName);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
-			}
+}
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
