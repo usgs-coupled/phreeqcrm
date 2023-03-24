@@ -205,7 +205,8 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqcPhast.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqcPhastLib.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqcPhastLib.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_methods.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IrmResult.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PhreeqcRM.cpp

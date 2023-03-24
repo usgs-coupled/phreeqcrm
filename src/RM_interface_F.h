@@ -13,7 +13,7 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
+IRM_DLL_EXPORT int        BMIF_Create(int* nxyz, int* nthreads = NULL);
 IRM_DLL_EXPORT IRM_RESULT RMF_Abort(int *id, int *result, const char * err_str);
 IRM_DLL_EXPORT IRM_RESULT RMF_CloseFiles(int *id);
 IRM_DLL_EXPORT int        RMF_Concentrations2Utility(int *id, double *c, int *n, double *tc, double *p_atm);

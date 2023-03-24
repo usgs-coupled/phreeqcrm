@@ -2,6 +2,7 @@
 #include "mpi.h"
 #endif
 #include "BMI_Var.h"
+#include "BMIPhreeqcRM.h"
 #include "PhreeqcRM.h"
 #include "RM_interface_F.h"
 #include "IPhreeqcPhastLib.h"

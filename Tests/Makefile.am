@@ -102,7 +102,7 @@ test_SOURCES+=\
 	../src/RM_interface.F90\
 	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90\
 	../src/YAML_interface.F90
-	
+
 
 test_LDADD+=$(FCLIBS)
 
