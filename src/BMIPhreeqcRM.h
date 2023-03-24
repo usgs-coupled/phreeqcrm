@@ -1,3 +1,5 @@
+#if !defined(BIMPHREEQCRM_H_INCLUDED)
+#define BMIPHREEQCRM_H_INCLUDED
 #include <map>
 #include "PhreeqcRM.h"
 #include "BMI_Var.h"
@@ -33,9 +35,14 @@ public:
 
     void Clear();
 };
-class BMIPhreeqcRM : /*public bmi::Bmi,*/ public PhreeqcRM
+class IRM_DLL_EXPORT BMIPhreeqcRM : /*public bmi::Bmi,*/ public PhreeqcRM
 {
 public:
+    static void             CleanupBmiModuleInstances(void);
+    static int              CreateBmiModule(int nxyz, MP_TYPE nthreads);
+    static IRM_RESULT       DestroyBmiModule(int n);
+    static BMIPhreeqcRM*    GetInstance(int n);
+
     BMIPhreeqcRM(int nxyz, int nthreads);
     enum class BMI_TASKS {
         Info,
@@ -129,5 +136,9 @@ public:
     typedef std::map<std::string, VarFunction> VarFunction_map;
     VarFunction_map varfn_map;
     VarFunction GetFn(const std::string name);
+private:
+    //friend class RM_interface;
+    static std::map<size_t, BMIPhreeqcRM*> Instances;
+    static size_t InstancesIndex;
 };
-
+#endif //BMIPHREEQCRM_H_INCLUDED

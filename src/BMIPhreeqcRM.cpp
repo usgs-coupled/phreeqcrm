@@ -6,6 +6,11 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+
+#include "Phreeqc.h"
+#include "IPhreeqcPhast.h"
+#include "PhreeqcRM.h"
+
 void ComponentCount_var(BMIPhreeqcRM* brm_ref);
 void Components_var(BMIPhreeqcRM* brm_ref);
 void Concentrations_var(BMIPhreeqcRM* brm_ref);
@@ -29,8 +34,76 @@ void Porosity_var(BMIPhreeqcRM* brm_ref);
 void Pressure_var(BMIPhreeqcRM* brm_ref);
 void SelectedOutputOn_var(BMIPhreeqcRM* brm_ref);
 void Temperature_var(BMIPhreeqcRM* brm_ref);
+std::map<size_t, BMIPhreeqcRM*> BMIPhreeqcRM::Instances;
+size_t BMIPhreeqcRM::InstancesIndex = 0;
 
-
+//// static BMIPhreeqcRM methods
+/* ---------------------------------------------------------------------- */
+void
+BMIPhreeqcRM::CleanupBmiModuleInstances(void)
+/* ---------------------------------------------------------------------- */
+{
+	std::map<size_t, BMIPhreeqcRM*>::iterator it = BMIPhreeqcRM::Instances.begin();
+	std::vector<BMIPhreeqcRM*> bmirm_list;
+	for (; it != BMIPhreeqcRM::Instances.end(); it++)
+	{
+		bmirm_list.push_back(it->second);
+	}
+	for (size_t i = 0; i < bmirm_list.size(); i++)
+	{
+		delete bmirm_list[i];
+	}
+}
+/* ---------------------------------------------------------------------- */
+int
+BMIPhreeqcRM::CreateBmiModule(int nxyz, MP_TYPE nthreads)
+/* ---------------------------------------------------------------------- */
+{
+	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	//_crtBreakAlloc = 5144;
+	int n = IRM_OUTOFMEMORY;
+	try
+	{
+		BMIPhreeqcRM* bmirm_ptr = new BMIPhreeqcRM(nxyz, nthreads);
+		if (bmirm_ptr)
+		{
+			n = (int)bmirm_ptr->GetWorkers()[0]->Get_Index();
+			BMIPhreeqcRM::Instances[n] = bmirm_ptr;
+			return n;
+		}
+	}
+	catch (...)
+	{
+		return IRM_OUTOFMEMORY;
+	}
+	return IRM_OUTOFMEMORY;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+BMIPhreeqcRM::DestroyBmiModule(int id)
+/* ---------------------------------------------------------------------- */
+{
+	IRM_RESULT retval = IRM_BADINSTANCE;
+	std::map<size_t, BMIPhreeqcRM*>::iterator it = BMIPhreeqcRM::Instances.find(size_t(id));
+	if (it != BMIPhreeqcRM::Instances.end())
+	{
+		delete (*it).second;
+		retval = IRM_OK;
+	}
+	return retval;
+}
+/* ---------------------------------------------------------------------- */
+BMIPhreeqcRM*
+BMIPhreeqcRM::GetInstance(int id)
+/* ---------------------------------------------------------------------- */
+{
+	std::map<size_t, BMIPhreeqcRM*>::iterator it = BMIPhreeqcRM::Instances.find(size_t(id));
+	if (it != BMIPhreeqcRM::Instances.end())
+	{
+		return (*it).second;
+	}
+	return 0;
+}
 void BMI_Variant::Clear()
 {
 	bmi_var = BMI_Var("", "", "", false, false, 0, 0);
