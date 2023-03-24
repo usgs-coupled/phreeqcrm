@@ -8,8 +8,6 @@ class BMI_Variant
 {
 public:
     BMI_Var                  bmi_var;
-    //int                      Nbytes;
-    //int                      Itemsize;
     bool                     b_var;
     int                      i_var;
     double                   d_var;
@@ -24,14 +22,22 @@ public:
     void SetName(std::string s) { this->bmi_var.SetName(s); }
     bool GetSet() { return this->bmi_var.GetSet(); }
     void SetSet(bool tf) { this->bmi_var.SetSet(tf); }
-    std::string GetType() { return this->bmi_var.GetType(); }
-    void SetType(std::string s) { this->bmi_var.SetType(s); }
     std::string GetUnits() { return this->bmi_var.GetUnits(); }
     void SetUnits(std::string s) { this->bmi_var.SetUnits(s); }
     int GetNbytes() { return (int)this->bmi_var.GetNbytes(); }
     void SetNbytes(int n) { this->bmi_var.SetNbytes(n); }
     int GetItemsize() { return this->bmi_var.GetItemsize(); }
     void SetItemsize(int n) { this->bmi_var.SetItemsize(n); }
+    std::string GetCType() { return this->bmi_var.GetCType(); }
+    void SetCType(std::string s) { this->bmi_var.SetCType(s); }
+    std::string GetFType() { return this->bmi_var.GetFType(); }
+    void SetFType(std::string s) { this->bmi_var.SetFType(s); }
+    std::string GetPType() { return this->bmi_var.GetPType(); }
+    void SetPType(std::string s) { this->bmi_var.SetPType(s); }
+    void SetTypes(std::string c, std::string f, std::string p)
+    {
+        this->bmi_var.SetTypes(c, f, p);
+    }
 
     void Clear();
 };

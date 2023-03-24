@@ -2,6 +2,7 @@
 #include "mpi.h"
 #endif
 #include "BMI_Var.h"
+#include "BMIPhreeqcRM.h"
 #include "PhreeqcRM.h"
 #include "RM_interface_F.h"
 #include "IPhreeqcPhastLib.h"
@@ -112,7 +113,8 @@ RMF_Create(int *nxyz, int *nthreads)
 	//
 	// Creates reaction module, called by root and MPI workers
 	//
-	return PhreeqcRM::CreateReactionModule(*nxyz, *nthreads);
+	//return PhreeqcRM::CreateReactionModule(*nxyz, *nthreads);
+	return BMIPhreeqcRM::CreateBmiModule(*nxyz, *nthreads);
 }
 #endif
 /* ---------------------------------------------------------------------- */

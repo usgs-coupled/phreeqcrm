@@ -7622,7 +7622,7 @@
     character(20) :: vartype
     integer :: status
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "logical") then
+    if (vartype .ne. "bool") then
         stop "Variable type error."
     endif
     RM_BMI_GetValue_b = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
@@ -7649,7 +7649,7 @@
     character(20) :: vartype
     integer :: bytes, status
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "character") then
+    if (vartype .ne. "std::string") then
         stop "Variable type error."
     endif
     bytes = RM_BMI_GetVarItemsize(id, var)
@@ -7687,7 +7687,7 @@
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "character,1d") then
+    if (vartype .ne. "std::vector<std::string>") then
         stop "Variable type error."
     endif
     itemsize = RM_BMI_GetVarItemsize(id, var)
@@ -7760,7 +7760,7 @@
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double,1d") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     itemsize = RM_BMI_GetVarItemsize(id, var)
@@ -7852,7 +7852,7 @@
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "integer") then
+    if (vartype .ne. "int") then
         stop "Variable type error."
     endif
     RM_BMI_GetValue_i = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
@@ -7883,7 +7883,7 @@
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "integer,1d") then
+    if (vartype .ne. "std::vecor<int>") then
         stop "Variable type error."
     endif
     itemsize = RM_BMI_GetVarItemsize(id, var)
@@ -7923,7 +7923,7 @@
     integer :: dim1, dim2
     logical :: need_alloc
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double,2d") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     varname = Lower(varname)
@@ -8039,8 +8039,8 @@
     END FUNCTION RM_BMI_GetVarNbytes
 
     !> Basic Model Interface method that retrieves the type of a variable that can be set with
-    !> @ref RM_BMI_SetValue or retrieved with @ref RM_BMI_GetValue. Types are "character","double",
-    !> "int", or "logical",
+    !> @ref RM_BMI_SetValue or retrieved with @ref RM_BMI_GetValue. Types are "character",
+    !> "real(kind=8)","integer", or "logical",
     !> followed by the dimension if the variable is a array.
     !> Only variables in the list
     !> provided by @ref RM_BMI_GetInputVarNames can be set.
@@ -8345,7 +8345,7 @@
     CHARACTER(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "logical") then
+    if (vartype .ne. "bool") then
         stop "Variable type error."
     endif
     RM_BMI_SetValue_b = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
@@ -8372,7 +8372,7 @@
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "character") then
+    if (vartype .ne. "std::string") then
         stop "Variable type error."
     endif
     RM_BMI_SetValue_c = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, trim(src)//C_NULL_CHAR)
@@ -8399,7 +8399,7 @@
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "integer") then
+    if (vartype .ne. "int") then
         stop "Variable type error."
     endif
     RM_BMI_SetValue_i = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
@@ -8427,7 +8427,7 @@
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "integer,1d") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
@@ -8458,7 +8458,7 @@
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "integer,2d") then
+    if (vartype .ne. "std::vector<int>") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
@@ -8517,7 +8517,7 @@
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double,1d") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
@@ -8549,7 +8549,7 @@
     character(20) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double,2d") then
+    if (vartype .ne. "std:vector<double>") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)

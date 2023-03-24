@@ -106,7 +106,7 @@ BMIPhreeqcRM::GetInstance(int id)
 }
 void BMI_Variant::Clear()
 {
-	bmi_var = BMI_Var("", "", "", false, false, 0, 0);
+	bmi_var = BMI_Var("", "", false, false, 0, 0);
 	//Nbytes = 0;
 	//Itemsize = 0;
 	b_var = false;
@@ -122,6 +122,8 @@ void BMI_Variant::Clear()
 BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads) :
 PhreeqcRM(nxyz, nthreads) 
 {
+	std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
+	BMIPhreeqcRM::Instances.insert(instance);
 	varfn_map["components"] = &Components_var;
 	varfn_map["componentcount"] = &ComponentCount_var;
 	varfn_map["concentrations"] = &Concentrations_var;
@@ -232,7 +234,7 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return "";
 	fn(this);
-	return this->bmi_variant.GetType();
+	return this->bmi_variant.GetCType();
 }
 std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 {
@@ -283,31 +285,31 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 	if (fn == NULL) return;
 	fn(this);
 	int Nbytes = this->GetVarNbytes(name);
-	if (this->bmi_variant.GetType() == "bool")
+	if (this->bmi_variant.GetCType() == "bool")
 	{
 		memcpy(dest, &this->bmi_variant.b_var, Nbytes);
 	}
-	if (this->bmi_variant.GetType() == "int")
+	if (this->bmi_variant.GetCType() == "int")
 	{
 		memcpy(dest, &this->bmi_variant.i_var, Nbytes);
 	}
-	if (this->bmi_variant.GetType() == "double")
+	if (this->bmi_variant.GetCType() == "double")
 	{
 		memcpy(dest, &this->bmi_variant.d_var, Nbytes);
 	}
-	if (this->bmi_variant.GetType() == "character")
+	if (this->bmi_variant.GetCType() == "std::string")
 	{
 		memcpy(dest, this->bmi_variant.string_var.data(), Nbytes);
 	}
-	if (this->bmi_variant.GetType() == "double,1d")
+	if (this->bmi_variant.GetCType() == "std::vector<double>")
 	{
 		memcpy(dest, this->bmi_variant.DoubleVector.data(), Nbytes);
 	}
-	if (this->bmi_variant.GetType() == "int,1d")
+	if (this->bmi_variant.GetCType() == "std::vector<int>")
 	{
 		memcpy(dest, &this->bmi_variant.IntVector, Nbytes);
 	}
-	if (this->bmi_variant.GetType() == "StringVector")
+	if (this->bmi_variant.GetCType() == "std::vector<std::string>")
 	{
 		int itemsize = this->GetVarItemsize(name);
 		std::stringstream all;
@@ -391,28 +393,28 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 	int Nbytes = this->bmi_variant.GetNbytes();
 	int itemsize = this->bmi_variant.GetNbytes();
 	int dim = Nbytes / itemsize;
-	if (this->bmi_variant.GetType() == "bool")
+	if (this->bmi_variant.GetCType() == "bool")
 	{
 		memcpy(&this->bmi_variant.b_var, src, Nbytes);
 	} 
-	else if (this->bmi_variant.GetType() == "int")
+	else if (this->bmi_variant.GetCType() == "int")
 	{
 		memcpy(&this->bmi_variant.i_var, src, Nbytes);
 	} 
-	else if (this->bmi_variant.GetType() == "double")
+	else if (this->bmi_variant.GetCType() == "double")
 	{
 		memcpy(&this->bmi_variant.d_var, src, Nbytes);
 	} 
-	else if (this->bmi_variant.GetType() == "character")
+	else if (this->bmi_variant.GetCType() == "std::string")
 	{ 
 		this->bmi_variant.string_var = (char*)src;
 	}
-	else if (this->bmi_variant.GetType() == "double,1d")
+	else if (this->bmi_variant.GetCType() == "std::vector<double>")
 	{
 		this->bmi_variant.DoubleVector.resize(dim);
 		memcpy(this->bmi_variant.DoubleVector.data(), src, Nbytes);
 	}
-	else if (this->bmi_variant.GetType() == "int,1d")
+	else if (this->bmi_variant.GetCType() == "std::vector<int>")
 	{
 		this->bmi_variant.IntVector.resize(dim);
 		memcpy(&this->bmi_variant.IntVector, src, Nbytes);
@@ -444,7 +446,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, bool src)
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return;
 	// Store in bmi_variant
-	this->bmi_variant.SetType("bool");
+	this->bmi_variant.SetCType("bool");
 	this->bmi_variant.b_var = src;
 	// Set the variable
 	fn(this);
@@ -462,7 +464,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, double src)
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return;
 	// Store in bmi_variant
-	this->bmi_variant.SetType("double");
+	this->bmi_variant.SetCType("double");
 	this->bmi_variant.d_var = src;
 	// Set the variable
 	fn(this);
@@ -474,7 +476,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, int src)
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return;
 	// Store in bmi_variant
-	this->bmi_variant.SetType("int");
+	this->bmi_variant.SetCType("int");
 	this->bmi_variant.i_var = src;
 	// Set the variable
 	fn(this);
@@ -486,7 +488,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, const std::string src)
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return;
 	// Store in bmi_variant
-	this->bmi_variant.SetType("character");
+	this->bmi_variant.SetCType("std::string");
 	this->bmi_variant.string_var = src;
 	// Set the variable
 	fn(this);
@@ -509,7 +511,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
 	// Store in bmi_variant
 	this->bmi_variant.DoubleVector = src;
 	// Set the variable
-	this->bmi_variant.SetType("double,1d");
+	this->bmi_variant.SetCType("std::vector<double>");
 	this->task = BMIPhreeqcRM::BMI_TASKS::SetVar;
 	fn(this);
 	return;
@@ -520,7 +522,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<int> src)
 	BMIPhreeqcRM::VarFunction fn = GetFn(name);
 	if (fn == NULL) return;
 	// Store in bmi_variant
-	this->bmi_variant.SetType("int,1d");
+	this->bmi_variant.SetCType("std::vector<int>");
 	this->bmi_variant.IntVector = src;
 	// Set the variable
 	fn(this);
@@ -541,7 +543,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src
 	//	return;
 	//}
 	// Store in bmi_variant
-	this->bmi_variant.SetType("string,1d");
+	this->bmi_variant.SetCType("std::vector<std::string>");
 	this->bmi_variant.StringVector = src;
 	// Set the variable
 	fn(this);
@@ -549,7 +551,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src
 }
 BMIPhreeqcRM::VarFunction BMIPhreeqcRM::GetFn(const std::string name)
 {
-	this->bmi_variant.Clear();
+	//this->bmi_variant.Clear();
 	std::string name_lc = name;
 	std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
 	auto it = varfn_map.find(name_lc);
@@ -606,7 +608,8 @@ void Components_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = (int)size;
 	int Nbytes = (int)(size * comps.size());
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("Components", "character,1d", "names", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("Components", "names", false, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -623,7 +626,8 @@ void ComponentCount_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("ComponentCount", "integer", "names", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("ComponentCount", "names", false, true, Nbytes, Itemsize);
+	bv.SetTypes("int", "integer", "int");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -641,7 +645,8 @@ void Concentrations_var(BMIPhreeqcRM* brm_ptr)
 	int Nbytes = (int)sizeof(double) *
 		brm_ptr->GetGridCellCount() * brm_ptr->GetComponentCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("Concentrations", "double,2d", "mol L-1", true, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("Concentrations", "mol L-1", true, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<double>", "real(kind=8),allocatable,dimension(:,:)", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -658,7 +663,8 @@ void Density_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Density", "double,1d", "kg L-1", true, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("Density", "kg L-1", true, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<double>", "real(kind=8),allocatable,dimension(:)", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -675,7 +681,8 @@ void ErrorString_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = (int)brm_ptr->GetErrorString().size();
 	int Nbytes = Itemsize;
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("ErrorString", "character", "error", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("ErrorString", "error", false, true, Nbytes, Itemsize);
+	bv.SetTypes("std::string", "character", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -692,7 +699,8 @@ void FilePrefix_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = brm_ptr->GetFilePrefix().size();
 	int Nbytes = Itemsize;
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("FilePrefix", "character", "name", true, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("FilePrefix", "name", true, true, Nbytes, Itemsize);
+	bv.SetTypes("std::string", "character", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -709,7 +717,8 @@ void Gfw_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetComponentCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Gfw", "double,1d", "g mol-1", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("Gfw", "g mol-1", false, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<double>", "real(kind=8),allocatable,dimension(:)", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -726,7 +735,8 @@ void GridCellCount_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("GridCellCount", "integer", "count", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("GridCellCount", "count", false, true, Nbytes, Itemsize);
+	bv.SetTypes("int", "integer", "int");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -743,7 +753,8 @@ void NthSelectedOutput_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("NthSelectedOutput", "integer", "id", true, false, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("NthSelectedOutput", "id", true, false, Nbytes, Itemsize);
+	bv.SetTypes("int", "integer", "int");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -760,7 +771,8 @@ void Saturation_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Saturation", "double,1d", "unitless", true, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("Saturation", "unitless", true, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<double>", "real(kind=8),allocatable,dimension(:)", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -778,7 +790,8 @@ void SelectedOutput_var(BMIPhreeqcRM* brm_ptr)
 	int Nbytes = Itemsize * brm_ptr->GetSelectedOutputRowCount() * 
 		brm_ptr->GetSelectedOutputColumnCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("SelectedOutput", "double,2d", "user", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("SelectedOutput", "user", false, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<double>", "real(kind=8),allocatable,dimension(:,:)", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -795,7 +808,8 @@ void SelectedOutputColumnCount_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("SelectedOutputColumnCount", "integer", "count", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("SelectedOutputColumnCount", "count", false, true, Nbytes, Itemsize);
+	bv.SetTypes("int", "integer", "int");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -812,7 +826,8 @@ void SelectedOutputCount_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("SelectedOutputCount", "integer", "count", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("SelectedOutputCount", "count", false, true, Nbytes, Itemsize);
+	bv.SetTypes("int", "integer", "int");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -836,7 +851,8 @@ void SelectedOutputHeadings_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = (int)size;
 	int Nbytes = (int)(size * headings.size());
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("SelectedOutputHeadings", "character,1d", "names", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("SelectedOutputHeadings", "names", false, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -853,7 +869,8 @@ void SelectedOutputRowCount_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("SelectedOutputRowCount", "integer", "count", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("SelectedOutputRowCount", "count", false, true, Nbytes, Itemsize);
+	bv.SetTypes("int", "integer", "int");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -870,7 +887,8 @@ void SolutionVolume_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("SolutionVolume", "double,1d", "L", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("SolutionVolume", "L", false, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<double>", "real(kind=8),allocatable,dimension(:)", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -887,7 +905,8 @@ void Time_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize;
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Time", "double", "s", true, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("Time", "s", true, true, Nbytes, Itemsize);
+	bv.SetTypes("double", "real(kind=8)", "float");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -904,7 +923,8 @@ void TimeStep_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize;
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("TimeStep", "double", "s", true, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("TimeStep", "s", true, true, Nbytes, Itemsize);
+	bv.SetTypes("double", "real(kind=8)", "float");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -921,7 +941,8 @@ void CurrentSelectedOutputUserNumber_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("CurrentSelectedOutputUserNumber", "integer", "id", false, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("CurrentSelectedOutputUserNumber", "id", false, true, Nbytes, Itemsize);
+	bv.SetTypes("int", "integer", "int");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -938,7 +959,8 @@ void Porosity_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Porosity", "double,1d", "unitless", true, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("Porosity", "unitless", true, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<double>", "real(kind=8),allocatable,dimension(:)", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -955,7 +977,8 @@ void Pressure_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Pressure", "double,1d", "atm", true, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("Pressure", "atm", true, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<double>", "real(kind=8),allocatable,dimension(:)", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -972,7 +995,8 @@ void SelectedOutputOn_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("SelectedOutputOn", "logical", "flag", true, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("SelectedOutputOn", "flag", true, true, Nbytes, Itemsize);
+	bv.SetTypes("bool", "logical", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
@@ -989,7 +1013,8 @@ void Temperature_var(BMIPhreeqcRM* brm_ptr)
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Temperature", "double,1d", "C", true, true, Nbytes, Itemsize);
+	BMI_Var bv = BMI_Var("Temperature", "C", true, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<double>", "real(kind=8),allocatable,dimension(:)", "");
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
