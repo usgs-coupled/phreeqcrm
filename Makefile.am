@@ -184,7 +184,8 @@ libphreeqcrm_la_SOURCES=\
 	src/YAML_interface_F.cpp\
 	src/YAML_interface_F.h\
 	src/YAMLPhreeqcRM.cpp\
-	src/YAMLPhreeqcRM.h
+	src/YAMLPhreeqcRM.h\
+	src/bmi.hxx
 
 
 include_HEADERS=\

@@ -155,10 +155,13 @@ PhreeqcRM(nxyz, nthreads)
 	this->language = "cpp";
 }
 // Model control functions.
+/*
+already implemented in PhreeqcRM
 void BMIPhreeqcRM::Initialize(std::string config_file)
 {
 	this->InitializeYAML(config_file);
 }
+*/
 void BMIPhreeqcRM::Update()
 {
 	this->RunCells();
