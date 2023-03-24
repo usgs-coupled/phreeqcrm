@@ -19,7 +19,9 @@ void ErrorString_var(BMIPhreeqcRM* brm_ref);
 void FilePrefix_var(BMIPhreeqcRM* brm_ref);
 void Gfw_var(BMIPhreeqcRM* brm_ref);
 void GridCellCount_var(BMIPhreeqcRM* brm_ref);
+void InputVarNames_var(BMIPhreeqcRM* brm_ref);
 void NthSelectedOutput_var(BMIPhreeqcRM* brm_ref);
+void OutputVarNames_var(BMIPhreeqcRM* brm_ref);
 void Saturation_var(BMIPhreeqcRM* brm_ref);
 void SelectedOutput_var(BMIPhreeqcRM* brm_ref);
 void SelectedOutputColumnCount_var(BMIPhreeqcRM* brm_ref);
@@ -132,7 +134,9 @@ PhreeqcRM(nxyz, nthreads)
 	varfn_map["fileprefix"] = &FilePrefix_var;
 	varfn_map["gfw"] = &Gfw_var;
 	varfn_map["gridcellcount"] = &GridCellCount_var;
+	varfn_map["inputvarnames"] = &InputVarNames_var;
 	varfn_map["nthselectedoutput"] = &NthSelectedOutput_var;
+	varfn_map["outputvarnames"] = &OutputVarNames_var;
 	varfn_map["saturation"] = &Saturation_var;
 	varfn_map["selectedoutput"] = &SelectedOutput_var;
 	varfn_map["selectedoutputcolumncount"] = &SelectedOutputColumnCount_var;
@@ -204,6 +208,16 @@ std::vector<std::string> BMIPhreeqcRM::GetInputVarNames()
 	VarFunction_map::iterator it;
 	for (it = varfn_map.begin(); it != varfn_map.end(); it++)
 	{
+		if (it->first == "inputvarnames")
+		{
+			names.push_back("InputVarNames");
+			continue;
+		}
+		if (it->first == "outputvarnames")
+		{
+			names.push_back("OutputVarNames");
+			continue;
+		}
 		this->bmi_variant.SetSet(false);
 		it->second(this);
 		if (this->bmi_variant.GetSet())
@@ -219,6 +233,14 @@ std::vector<std::string>  BMIPhreeqcRM::GetOutputVarNames()
 	std::vector<std::string> names;
 	for (auto it = varfn_map.begin(); it != varfn_map.end(); it++)
 	{
+		if (it->first == "inputvarnames")
+		{
+			continue;
+		}
+		if (it->first == "outputvarnames")
+		{
+			continue;
+		}
 		this->bmi_variant.SetGet(false);
 		it->second(this);
 		if (this->bmi_variant.GetGet())
@@ -748,6 +770,33 @@ void GridCellCount_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	}
 }
+void InputVarNames_var(BMIPhreeqcRM* brm_ptr)
+{
+	BMIPhreeqcRM::BMI_TASKS task_save = brm_ptr->task;
+	std::vector<std::string> names = brm_ptr->GetInputVarNames();
+	brm_ptr->task = task_save;
+	size_t size = 0;
+	for (size_t i = 0; i < names.size(); i++)
+	{
+		if (names[i].size() > size) size = names[i].size();
+	}
+	int Itemsize = (int)size;
+	int Nbytes = (int)(size * names.size());
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("InputVarNames", "names", false, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
+	brm_ptr->bmi_variant.bmi_var = bv;
+	switch (brm_ptr->task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ptr->bmi_variant.StringVector = brm_ptr->GetInputVarNames();
+		brm_ptr->bmi_variant.bmi_var = bv;
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
+	}
+}
 void NthSelectedOutput_var(BMIPhreeqcRM* brm_ptr)
 {
 	int Itemsize = (int)sizeof(int);
@@ -763,6 +812,33 @@ void NthSelectedOutput_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->SetNthSelectedOutput(brm_ptr->bmi_variant.i_var);
+		break;
+	}
+}
+void OutputVarNames_var(BMIPhreeqcRM* brm_ptr)
+{
+	BMIPhreeqcRM::BMI_TASKS task_save = brm_ptr->task;
+	std::vector<std::string> names = brm_ptr->GetOutputVarNames();
+	brm_ptr->task = task_save;
+	size_t size = 0;
+	for (size_t i = 0; i < names.size(); i++)
+	{
+		if (names[i].size() > size) size = names[i].size();
+	}
+	int Itemsize = (int)size;
+	int Nbytes = (int)(size * names.size());
+	//name, type, std::string units, set, get, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("OutputVarNames", "names", false, true, Nbytes, Itemsize);
+	bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
+	brm_ptr->bmi_variant.bmi_var = bv;
+	switch (brm_ptr->task)
+	{
+	case BMIPhreeqcRM::BMI_TASKS::GetVar:
+		brm_ptr->bmi_variant.StringVector = brm_ptr->GetOutputVarNames();
+		brm_ptr->bmi_variant.bmi_var = bv;
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		brm_ptr->bmi_variant.NotImplemented = true;
 		break;
 	}
 }
