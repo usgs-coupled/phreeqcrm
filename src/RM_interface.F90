@@ -7716,7 +7716,7 @@
     character(100) :: vartype
     integer :: status
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "bool") then
+    if (vartype .ne. "logical") then
         stop "Variable type error."
     endif
     RM_BMI_GetValue_b = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
@@ -7743,7 +7743,7 @@
     character(100) :: vartype
     integer :: bytes, status
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::string") then
+    if (vartype .ne. "character") then
         stop "Variable type error."
     endif
     bytes = RM_BMI_GetVarItemsize(id, var)
@@ -7781,7 +7781,7 @@
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<std::string>") then
+    if (vartype .ne. "character(len=:),allocatable,dimension(:)") then
         stop "Variable type error."
     endif
     itemsize = RM_BMI_GetVarItemsize(id, var)
@@ -7823,7 +7823,7 @@
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double") then
+    if (vartype .ne. "real(kind=8)") then
         stop "Variable type error."
     endif
     RM_BMI_GetValue_d = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
@@ -7854,7 +7854,7 @@
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
+    if (vartype .ne. "real(kind=8),allocatable,dimension(:)") then
         stop "Variable type error."
     endif
     itemsize = RM_BMI_GetVarItemsize(id, var)
@@ -7894,7 +7894,7 @@
     integer :: dim1, dim2
     logical :: need_alloc
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
+    if (vartype .ne. "real(kind=8),allocatable,dimension(:,:)") then
         stop "Variable type error."
     endif
     varname = Lower(var)
@@ -7946,7 +7946,7 @@
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "int") then
+    if (vartype .ne. "integer") then
         stop "Variable type error."
     endif
     RM_BMI_GetValue_i = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
@@ -7977,7 +7977,7 @@
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vecor<int>") then
+    if (vartype .ne. "integer,allocatable,dimension(:)") then
         stop "Variable type error."
     endif
     itemsize = RM_BMI_GetVarItemsize(id, var)
@@ -8017,7 +8017,7 @@
     integer :: dim1, dim2
     logical :: need_alloc
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
+    if (vartype .ne. "real(kind=8),allocatable,dimension(:)") then
         stop "Variable type error."
     endif
     varname = Lower(varname)
@@ -8135,7 +8135,7 @@
     !> Basic Model Interface method that retrieves the type of a variable that can be set with
     !> @ref RM_BMI_SetValue or retrieved with @ref RM_BMI_GetValue. Types are "character",
     !> "real(kind=8)","integer", or "logical",
-    !> followed by the dimension if the variable is a array.
+    !> or an allocatable array of these types.
     !> Only variables in the list
     !> provided by @ref RM_BMI_GetInputVarNames can be set.
     !> Only variables in the list
@@ -8439,7 +8439,7 @@
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "bool") then
+    if (vartype .ne. "logical") then
         stop "Variable type error."
     endif
     RM_BMI_SetValue_b = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
@@ -8466,7 +8466,7 @@
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::string") then
+    if (vartype .ne. "character") then
         stop "Variable type error."
     endif
     RM_BMI_SetValue_c = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, trim(src)//C_NULL_CHAR)
@@ -8493,7 +8493,7 @@
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "int") then
+    if (vartype .ne. "integer") then
         stop "Variable type error."
     endif
     if (var .eq. "NthSelectedOutput") src = src - 1
@@ -8523,7 +8523,7 @@
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
+    if (vartype .ne. "integer,allocatable,dimension(:)") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
@@ -8554,7 +8554,7 @@
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<int>") then
+    if (vartype .ne. "integer,allocatable,dimension(:,:)") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
@@ -8585,7 +8585,7 @@
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double") then
+    if (vartype .ne. "real(kind=8)") then
         stop "Variable type error."
     endif
     RM_BMI_SetValue_d = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
@@ -8613,7 +8613,7 @@
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
+    if (vartype .ne. "real(kind=8),allocatable,dimension(:)") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
@@ -8645,7 +8645,7 @@
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
+    if (vartype .ne. "real(kind=8),allocatable,dimension(:,:)") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
@@ -8720,5 +8720,3 @@
     END DO
     END FUNCTION Lower
     END MODULE PhreeqcRM
-
-

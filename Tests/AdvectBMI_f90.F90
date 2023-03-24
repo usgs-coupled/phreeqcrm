@@ -487,26 +487,26 @@ USE, intrinsic :: ISO_C_BINDING
     status = RM_BMI_GetValue(id, "InputVarNames", inputvars)
     write(*,*) "Input variables (setters)"
     do i = 1, size(inputvars)
-        write(*,"(1x, I4, A40)") i, trim(inputvars(i))
+        write(*,"(1x, I4, A60)") i, trim(inputvars(i))
         status = RM_BMI_GetVarUnits(id, inputvars(i), string)
-        write(*,"(5x, A15)") trim(string)
+        write(*,"(5x, A60)") trim(string)
         status = RM_BMI_GetVarType(id, inputvars(i), string)
-        write(*,"(5x, A15)") trim(string)
-        write(*, "(5x, I15)") RM_BMI_GetVarItemsize(id, inputvars(i))
-        write(*, "(5x, I15)") RM_BMI_GetVarNbytes(id, inputvars(i))
+        write(*,"(5x, A60)") trim(string)
+        write(*, "(5x, I60)") RM_BMI_GetVarItemsize(id, inputvars(i))
+        write(*, "(5x, I60)") RM_BMI_GetVarNbytes(id, inputvars(i))
     enddo
     ! OutputVarNames
     status = RM_BMI_GetOutputVarNames(id, outputvars)
     status = RM_BMI_GetValue(id, "OutputVarNames", outputvars)
     write(*,*) "Output variables (getters)"
     do i = 1, size(outputvars)
-        write(*,"(1x, I4, A40)") i, trim(outputvars(i))
+        write(*,"(1x, I4, A60)") i, trim(outputvars(i))
         status = RM_BMI_GetVarUnits(id, outputvars(i), string)
-        write(*,"(5x, A15)") trim(string)
+        write(*,"(5x, A60)") trim(string)
         status = RM_BMI_GetVarType(id, outputvars(i), string)
-        write(*,"(5x, A15)") trim(string)
-        write(*, "(5x, I15)") RM_BMI_GetVarItemsize(id, outputvars(i))
-        write(*, "(5x, I15)") RM_BMI_GetVarNbytes(id, outputvars(i))
+        write(*,"(5x, A60)") trim(string)
+        write(*, "(5x, I60)") RM_BMI_GetVarItemsize(id, outputvars(i))
+        write(*, "(5x, I60)") RM_BMI_GetVarNbytes(id, outputvars(i))
     enddo
 
     ! ComponentCount
