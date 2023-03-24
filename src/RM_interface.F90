@@ -348,6 +348,100 @@
         errors = RM_Abort(id, -3, "Invalid argument(s) in RM_Concentrations2Utility")
     endif
     END SUBROUTINE Chk_Concentrations2Utility
+    !> Creates a reaction module. If the code is compiled with
+    !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
+    !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
+    !> module will use MPI and multiple processes. If neither preprocessor directive is used,
+    !> the reaction module will be serial (unparallelized).
+    !> @param nxyz                   The number of grid cells in the user's model.
+    !> @param nthreads (or @a comm, MPI)       When using OPENMP, the argument (@a nthreads) is the number of worker threads to be used.
+    !> If @a nthreads <= 0, the number of threads is set equal to the number of processors of the computer.
+    !> When using MPI, the argument (@a comm) is the MPI communicator to use within the reaction module.
+    !> @retval Id of the PhreeqcRM instance, negative is failure (See @ref RM_DecodeError).
+    !> @see
+    !> @ref RM_Destroy.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> nxyz = 40
+    !> #ifdef USE_MPI
+    !>   id = RM_Create(nxyz, MPI_COMM_WORLD)
+    !>   call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
+    !>   if (status .ne. MPI_SUCCESS) then
+    !>     stop "Failed to get mpi_myself"
+    !>   endif
+    !>   if (mpi_myself > 0) then
+    !>     status = RM_MpiWorker(id)
+    !>     status = RM_Destroy(id)
+    !>     return
+    !>   endif
+    !> #else
+    !>   nthreads = 3
+    !>   id = RM_Create(nxyz, nthreads)
+    !> #endif
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root and workers.
+
+    !> Creates a reaction module. If the code is compiled with
+    !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
+    !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
+    !> module will use MPI and multiple processes. If neither preprocessor directive is used,
+    !> the reaction module will be serial (unparallelized).
+    !> @param nxyz                   The number of grid cells in the user's model.
+    !> @param nthreads (or @a comm, MPI)       When using OPENMP, the argument (@a nthreads) is the number of worker threads to be used.
+    !> If @a nthreads <= 0, the number of threads is set equal to the number of processors of the computer.
+    !> When using MPI, the argument (@a comm) is the MPI communicator to use within the reaction module.
+    !> @retval Id of the PhreeqcRM instance, negative is failure (See @ref RM_DecodeError).
+    !> @see
+    !> @ref RM_Destroy.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> nxyz = 40
+    !> #ifdef USE_MPI
+    !>   id = RM_Create(nxyz, MPI_COMM_WORLD)
+    !>   call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
+    !>   if (status .ne. MPI_SUCCESS) then
+    !>     stop "Failed to get mpi_myself"
+    !>   endif
+    !>   if (mpi_myself > 0) then
+    !>     status = RM_MpiWorker(id)
+    !>     status = RM_Destroy(id)
+    !>     return
+    !>   endif
+    !> #else
+    !>   nthreads = 3
+    !>   id = RM_Create(nxyz, nthreads)
+    !> #endif
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root and workers.
+
+    INTEGER FUNCTION BMI_Create(nxyz, nthreads)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION BMIF_Create(nxyz, nthreads) &
+        BIND(C, NAME='BMIF_Create')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER(KIND=C_INT), INTENT(in) :: nxyz
+    INTEGER(KIND=C_INT), INTENT(in) :: nthreads
+    END FUNCTION BMIF_Create
+    END INTERFACE
+    INTEGER, INTENT(in) :: nxyz
+    INTEGER, INTENT(in) :: nthreads
+    BMI_Create = BMIF_Create(nxyz, nthreads)
+    rmf_nxyz = nxyz
+    return
+    END FUNCTION BMI_Create    
 
     !> Creates a reaction module. If the code is compiled with
     !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
@@ -7619,10 +7713,10 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL, INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: status, idest
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "logical") then
+    if (vartype .ne. "bool") then
         stop "Variable type error."
     endif
     RM_BMI_GetValue_b = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, idest)
@@ -7648,10 +7742,10 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=:), allocatable, INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, status
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "character") then
+    if (vartype .ne. "std::string") then
         stop "Variable type error."
     endif
     bytes = RM_BMI_GetVarItemsize(id, var)
@@ -7683,13 +7777,13 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "character,1d") then
+    if (vartype .ne. "std::vector<std::string>") then
         stop "Variable type error."
     endif
     itemsize = RM_BMI_GetVarItemsize(id, var)
@@ -7725,7 +7819,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
@@ -7756,13 +7850,13 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, allocatable, dimension(:), INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double,1d") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     itemsize = RM_BMI_GetVarItemsize(id, var)
@@ -7796,13 +7890,13 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, allocatable, INTENT(inout) :: dest(:,:)
-    character(20) :: vartype
+    character(100) :: vartype
     character(40) :: varname
     integer :: status
     integer :: dim1, dim2
     logical :: need_alloc
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double,2d") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     varname = Lower(var)
@@ -7848,13 +7942,13 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: dest
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "integer") then
+    if (vartype .ne. "int") then
         stop "Variable type error."
     endif
     RM_BMI_GetValue_i = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
@@ -7879,13 +7973,13 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, allocatable, INTENT(inout) :: dest(:)
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
     dim2 = 0
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "integer,1d") then
+    if (vartype .ne. "std::vecor<int>") then
         stop "Variable type error."
     endif
     itemsize = RM_BMI_GetVarItemsize(id, var)
@@ -7919,13 +8013,13 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, allocatable, INTENT(inout) :: dest(:,:)
-    character(20) :: vartype
+    character(100) :: vartype
     character(40) :: varname
     integer :: status
     integer :: dim1, dim2
     logical :: need_alloc
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double,2d") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     varname = Lower(varname)
@@ -8041,8 +8135,8 @@
     END FUNCTION RM_BMI_GetVarNbytes
 
     !> Basic Model Interface method that retrieves the type of a variable that can be set with
-    !> @ref RM_BMI_SetValue or retrieved with @ref RM_BMI_GetValue. Types are "character","double",
-    !> "int", or "logical",
+    !> @ref RM_BMI_SetValue or retrieved with @ref RM_BMI_GetValue. Types are "character",
+    !> "real(kind=8)","integer", or "logical",
     !> followed by the dimension if the variable is a array.
     !> Only variables in the list
     !> provided by @ref RM_BMI_GetInputVarNames can be set.
@@ -8344,10 +8438,10 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL(kind=4), INTENT(in) :: src
-    CHARACTER(20) :: vartype
+    CHARACTER(100) :: vartype
     integer :: bytes, nbytes, status, dim, isrc
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "logical") then
+    if (vartype .ne. "bool") then
         stop "Variable type error."
     endif
     if (src) then
@@ -8376,10 +8470,10 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=*), INTENT(in) :: src
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "character") then
+    if (vartype .ne. "std::string") then
         stop "Variable type error."
     endif
     RM_BMI_SetValue_c = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, trim(src)//C_NULL_CHAR)
@@ -8403,13 +8497,15 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: src
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "integer") then
+    if (vartype .ne. "int") then
         stop "Variable type error."
     endif
+    if (var .eq. "NthSelectedOutput") src = src - 1
     RM_BMI_SetValue_i = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
+    if (var .eq. "NthSelectedOutput") src = src + 1
     return
     END FUNCTION RM_BMI_SetValue_i
 
@@ -8431,10 +8527,10 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: src(:)
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "integer,1d") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
@@ -8462,10 +8558,10 @@
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: src(:,:)
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "integer,2d") then
+    if (vartype .ne. "std::vector<int>") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
@@ -8493,7 +8589,7 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, INTENT(inout) :: src
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
     if (vartype .ne. "double") then
@@ -8521,10 +8617,10 @@
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, INTENT(inout) :: src(:)
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double,1d") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
@@ -8553,10 +8649,10 @@
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     double precision, INTENT(inout) :: src(:,:)
-    character(20) :: vartype
+    character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double,2d") then
+    if (vartype .ne. "std::vector<double>") then
         stop "Variable type error."
     endif
     dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)

@@ -49,8 +49,8 @@ one-to-one mapping--all user grid cells are reaction cells (equivalent
 to grid2chem values of 0,1,2,3,...,nxyz-1).
 
 Args:
-	grid2chem (DoubleVector): A vector of integers: Nonnegative is a 
-		reaction-cell number (0 based), negative is an inactive cell. 
+	grid2chem (int list, numpy.ndarray, or tuple): A vector of integers: Nonnegative 
+		is a reaction-cell number (0 based), negative is an inactive cell. 
 Vector 
 		is of size nxyz (number of grid cells)."
 %enddef
@@ -122,7 +122,7 @@ contains the SURFACE definition (index 3) defined by SURFACE 2 in the
 InitialPhreeqc instance.
 
 Args:
-	ic1 (DoubleVector): Vector of solution and reactant 
+	ic1 (int list, numpy.ndarray, or tuple): Vector of solution and reactant 
 		index numbers that refer to definitions in the InitialPhreeqc 
 		instance. Size is 7 times nxyz. The order of definitions is given 
 		above. Negative values are ignored, resulting in no definition of 
@@ -161,19 +161,18 @@ surface compositions have been defined in the InitialPhreeqc instance.
 If the user number in ic2 is negative, no mixing occurs.
 
 Args:
-	ic1 (IntVector): Vector of solution and reactant index numbers that 
-		refer to definitions in the InitialPhreeqc instance. Size is 7 times 
-		nxyz, where nxyz is the number of grid cells in the user's model. 
+	ic1 (int list, numpy.ndarray, or tuple): Vector of solution and reactant index 
+		numbers that refer to definitions in the InitialPhreeqc instance. Size is 
+		7 times nxyz, where nxyz is the number of grid cells in the user's model. 
 		The order of definitions is given above. Negative values are 
 		ignored, resulting in no definition of that entity for that cell.
-	ic2 (IntVector): Vector of solution and reactant index numbers 
-		that refer to definitions in the InitialPhreeqc instance. 
-		Nonnegative values 	of ic2 result in mixing with 
-		the entities defined in ic1. Negative values 
-		result in no mixing. Size is 7 	times nxyz. The order of 
-		definitions is given above.
-	f1 (DoubleVector): Fraction of ic1 that mixes with (1 - f1) of ic2. 
-		Size is 7 times nxyz. The order of definitions is given above."
+	ic2 (int list, numpy.ndarray, or tuple): Vector of solution and reactant index 
+		numbers that refer to definitions in the InitialPhreeqc instance. Nonnegative 
+		values 	of ic2 result in mixing with the entities defined in ic1. Negative 
+		values result in no mixing. Size is 7 	times nxyz. The order of definitions is 
+		given above.
+	f1 (float list, numpy.ndarray, or tuple): Fraction of ic1 that mixes with (1 - f1) 
+		of ic2. Size is 7 times nxyz. The order of definitions is given above."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLInitialPhreeqc2Module YAMLInitialPhreeqc2Module_DOCSTRING
 
@@ -196,8 +195,8 @@ instance to the workers.
 Args:
 	n (int): Number that refers to a solution or MIX and associated 
 		reactants in the InitialPhreeqc instance.
-	cell_numbers (IntVector): A vector of grid-cell numbers (user's 
-		grid-cell numbering system) that will be populated with cell n from 
+	cell_numbers (int list, numpy.ndarray, or tuple): A vector of grid-cell numbers 
+		(user's grid-cell numbering system) that will be populated with cell n from 
 		the InitialPhreeqc instance."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLInitialPhreeqcCell2Module YAMLInitialPhreeqcCell2Module_DOCSTRING
@@ -361,7 +360,7 @@ components. YAMLSetComponentH2O must be called before
 :meth:`YAMLFindComponents`.
 
 Args:
-	tf (Boolean): True (default), excess H, excess O, and water are 
+	tf (Boolean): True, excess H, excess O, and water are 
 		included in the component list; False, total H and O are 
 included in 
 		the component list."
@@ -381,9 +380,9 @@ normally initialized with :meth:`YAMLInitialPhreeqc2Module` or
 :meth:`YAMLInitialPhreeqcCell2Module`.
 
 Args:
-	c (DoubleVector): Vector of component concentrations. Size of vector 
-		is ncomps times nxyz, where ncomps is the number of components as 
-		determined by FindComponents or GetComponentCount and nxyz is the 
+	c (float list, numpy.ndarray, or tuple): Vector of component concentrations. 
+		Size of vector is ncomps times nxyz, where ncomps is the number of components 
+		as determined by FindComponents or GetComponentCount and nxyz is the 
 		number of grid cells in the user's model."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetConcentrations YAMLSetConcentrations_DOCSTRING
@@ -422,8 +421,8 @@ from reaction-cell concentrations to transport concentrations, if
 UseSolutionDensityVolume is set to false.
 
 Args:
-	density (DoubleVector): Vector of densities. Size of vector is nxyz, 
-		where nxyz is the number of grid cells in the user's model."
+	density (float list, numpy.ndarray, or tuple): Vector of densities. Size of 
+		vector is nxyz, where nxyz is the number of grid cells in the user's model."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetDensity YAMLSetDensity_DOCSTRING
 
@@ -473,7 +472,7 @@ any messages written with the method ErrorMessage.
 
 Args:
 	tf (Boolean): True, enable error messages; False, disable error 
-		messages. Default is true."
+		messages."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetErrorOn YAMLSetErrorOn_DOCSTRING
 
@@ -502,12 +501,11 @@ SetGasCompMoles transfers moles of gas components from the vector given
 in the argument list (gas_moles) to each reaction cell.
 
 Args:
-	gas_moles (DoubleVector): Vector of moles of gas components. 
-		Dimension of the vector is set to ngas_comps times nxyz, where, 
-		ngas_comps is the result of GetGasComponentsCount, and nxyz is the 
-		number of user grid cells. If the number of moles is set to a 
-		negative number, the gas component will not be defined for the 
-		GAS_PHASE of the reaction cell."
+	gas_moles (float list, numpy.ndarray, or tuple): Vector of moles of gas 
+		components. Dimension of the vector is set to ngas_comps times nxyz, where, 
+		ngas_comps is the result of GetGasComponentsCount, and nxyz is the number of user
+		 grid cells. If the number of moles is set to a negative number, the gas 
+		component will not be defined for the GAS_PHASE of the reaction cell."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetGasCompMoles YAMLSetGasCompMoles_DOCSTRING
 
@@ -526,8 +524,8 @@ GAS_PHASE in a cell, the gas phase is forced to be a fixed-volume gas
 phase.
 
 Args:
-	gas_volume (DoubleVector): Vector of volumes for each gas phase. 
-		Dimension of the vector is nxyz, where nxyz is the number of user 
+	gas_volume (float list, numpy.ndarray, or tuple): Vector of volumes for each 
+		gas phase. Dimension of the vector is nxyz, where nxyz is the number of user 
 		grid cells. If the volume is set to a negative number for a cell, 
 		the gas-phase volume for that cell is not changed."
 %enddef
@@ -616,7 +614,7 @@ water in a reaction cell is the product of porosity, saturation
 (SetSaturation), and representative volume (SetRepresentativeVolume).
 
 Args:
-	por (DoubleVector): Vector of porosities, unitless. Default is 0.1. 
+	por (float list, numpy.ndarray, or tuple): Vector of porosities, unitless. 
 		Size of vector is nxyz, where nxyz is the number of grid cells in 
 		the user's model."
 %enddef
@@ -634,8 +632,8 @@ are considered only in three of the databases distributed with
 PhreeqcRM: phreeqc.dat, Amm.dat, and pitzer.dat.
 
 Args:
-	p (DoubleVector): Vector of pressures, in atm. Size of vector is 
-		nxyz, where nxyz is the number of grid cells in the user's model."
+	p (float list, numpy.ndarray, or tuple): Vector of pressures, in atm. Size of 
+		vector is nxyz, where nxyz is the number of grid cells in the user's model."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetPressure YAMLSetPressure_DOCSTRING
 
@@ -652,11 +650,10 @@ printing is enabled with SetPrintChemistryOn and the cell_mask value is
 1.
 
 Args:
-	cell_mask (IntVector): Vector of integers. Size of vector is 
-		nxyz, where nxyz is the number of grid cells in the user's 
-		model. A value of 0 will disable printing detailed output 
-		for the cell; a value of 1 will enable printing detailed 
-		output for a cell."
+	cell_mask (int list, numpy.ndarray, or tuple): Vector of integers. Size of 
+		vector is nxyz, where nxyz is the number of grid cells in the user's 
+		model. A value of 0 will disable printing detailed output for the cell; 
+		a value of 1 will enable printing detailed output for a cell."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetPrintChemistryMask YAMLSetPrintChemistryMask_DOCSTRING
 
@@ -713,8 +710,7 @@ method performs better.
 
 Args:
 	tf (Boolean): True, indicates individual cell times are used in 
-rebalancing (default); False, indicates average times are used in 
-rebalancing."
+rebalancing; False, indicates average times are used in rebalancing."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetRebalanceByCell YAMLSetRebalanceByCell_DOCSTRING
 
@@ -767,8 +763,8 @@ should be called before initial conditions are defined for the reaction
 cells.
 
 Args:
-	rv (DoubleVector): Vector of representative volumes, in liters. 
-		Default is 1.0 liter. Size of array is nxyz, where nxyz is the 
+	rv (float list, numpy.ndarray, or tuple): Vector of representative volumes, 
+		in liters. Size of array is nxyz, where nxyz is the 
 		number of grid cells in the user's model."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetRepresentativeVolume YAMLSetRepresentativeVolume_DOCSTRING
@@ -791,7 +787,7 @@ GetSolutionVolume, and GetSaturation can be used to account for these
 changes in the succeeding transport calculation.
 
 Args:
-	sat (DoubleVector): Vector of saturations, unitless. Default 1.0. 
+	sat (float list, numpy.ndarray, or tuple): Vector of saturations, unitless. 
 		Size of vector is nxyz, where nxyz is the number of grid cells in 
 		the user's model."
 %enddef
@@ -809,8 +805,7 @@ to the screen. Messages include information about rebalancing during
 RunCells, and any messages written with ScreenMessage.
 
 Args:
-	tf (Boolean): True, enable screen messages; False, disable screen 
-		messages. Default is true."
+	tf (Boolean): True, enable screen messages; False, disable screen messages."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetScreenOn YAMLSetScreenOn_DOCSTRING
 
@@ -869,8 +864,8 @@ defined by initial conditions (InitialPhreeqc2Module and
 InitialPhreeqcCell2Module).
 
 Args:
-	t  (DoubleVector): Vector of temperatures, in degrees C. Size of 
-		vector is nxyz, where nxyz is the number of grid cells in the user's 
+	t  (float list, numpy.ndarray, or tuple): Vector of temperatures, in degrees C. 
+		Size of vector is nxyz, where nxyz is the number of grid cells in the user's 
 		model."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetTemperature YAMLSetTemperature_DOCSTRING
@@ -1100,8 +1095,7 @@ density as defined by SetDensity. Which option is used is determined by
 UseSolutionDensityVolume.
 
 Args:
-	option (int): Units option for solutions: 1, 2, or 3, default is 1, 
-		mg/L."
+	option (int): Units option for solutions: 1, 2, or 3."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetUnitsSolution YAMLSetUnitsSolution_DOCSTRING
 
@@ -1188,10 +1182,10 @@ concentrations. Usually, accurate concentrations will not be known to
 use YAMLSetSpeciesConcentrations during initialization.
 
 Args:
-	species_conc (DoubleVector): Vector of aqueous species 
-concentrations. Dimension of the array is nspecies times nxyz, 
-where  nspecies is the number of aqueous species, and nxyz is the 
-number of user grid cells. Concentrations are moles per liter."
+	species_conc (float list, numpy.ndarray, or tuple): Vector of aqueous species 
+		concentrations. Dimension of the array is nspecies times nxyz, 
+		where  nspecies is the number of aqueous species, and nxyz is the 
+		number of user grid cells. Concentrations are moles per liter."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSpeciesConcentrations2Module YAMLSpeciesConcentrations2Module_DOCSTRING
 

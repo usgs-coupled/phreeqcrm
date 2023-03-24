@@ -114,7 +114,7 @@
     K_ptr => hydraulic_K
 #ifdef USE_MPI
     ! MPI
-    id = RM_Create(nxyz, MPI_COMM_WORLD)
+    id = BMI_Create(nxyz, MPI_COMM_WORLD)
     rm_id = id
     call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
     if (status .ne. MPI_SUCCESS) then
@@ -129,7 +129,7 @@
 #else
     ! OpenMP
     nthreads = 3
-    id = RM_Create(nxyz, nthreads)
+    id = BMI_Create(nxyz, nthreads)
     rm_id = id
 #endif
     ! Open files

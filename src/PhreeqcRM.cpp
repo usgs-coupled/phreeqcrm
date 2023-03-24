@@ -343,7 +343,6 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 	mpi_worker_callback_fortran = NULL;
 	mpi_worker_callback_c = NULL;
 	mpi_worker_callback_cookie = NULL;
-	BMI_MakeVarMap();
 }
 PhreeqcRM::~PhreeqcRM(void)
 {
@@ -5121,6 +5120,413 @@ PhreeqcRM::HandleErrorsInternal(std::vector< int > &rtn)
 	if (error_count > 0)
 		throw PhreeqcRMStop();
 	return IRM_OK;
+}
+#endif
+#ifdef USE_YAML
+IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
+{
+	YAML::Node yaml = YAML::LoadFile(config);
+	std::string keyword;
+	YAML::Node node;
+	for (YAML::Node::const_iterator it = yaml.begin();it != yaml.end();++it)
+	{
+		keyword = it->first.as<std::string>();
+		YAML::Node node = it->second;
+		if (keyword == "CloseFiles")
+		{
+			this->CloseFiles();
+			continue;
+		}
+		if (keyword == "CreateMapping")
+		{
+			assert(node.IsSequence());
+			std::vector<int> grid2chem = it->second.as<std::vector<int>>();
+			this->CreateMapping(grid2chem);
+			continue;
+		}
+		if (keyword == "DumpModule")
+		{
+			assert(node.IsMap());
+			assert(node.size() == 2);
+			YAML::const_iterator it1 = node.begin();
+			bool dump_on = it1++->second.as<bool>();
+			bool append = it1++->second.as<bool>();
+			this->DumpModule(dump_on, append);
+			continue;
+		}
+		if (keyword == "FindComponents")
+		{
+			this->FindComponents();
+			continue;
+		}
+		if (keyword == "InitialPhreeqc2Module")
+		{
+			if (node.IsSequence())
+			{
+				std::vector< int > ic = node.as< std::vector< int > >();
+				this->InitialPhreeqc2Module(ic);
+				continue;
+			}
+			else if (node.IsMap())
+			{
+				assert(node.IsMap());
+				assert(node.size() == 3);
+				YAML::const_iterator it1 = node.begin();
+				std::vector < int > ic1 = it1++->second.as< std::vector < int > >();
+				std::vector < int > ic2 = it1++->second.as< std::vector < int > >();
+				std::vector < double > f1 = it1->second.as< std::vector < double > >();
+				this->InitialPhreeqc2Module(ic1, ic2, f1);
+				continue;
+			}
+			//throw LetItThrow("YAML argument mismatch InitialPhreeqc2Module");
+			ErrorMessage("YAML argument mismatch InitialPhreeqc2Module");
+			throw PhreeqcRMStop();
+		}
+		if (keyword == "InitialPhreeqcCell2Module")
+		{
+			assert(node.IsMap());
+			assert(node.size() == 2);
+			YAML::const_iterator it1 = node.begin();
+			int n = it1++->second.as<int>();
+			std::vector< int > cell_numbers = it1->second.as< std::vector<int > >();
+			this->InitialPhreeqcCell2Module(n, cell_numbers);
+			continue;
+		}
+		if (keyword == "LoadDatabase")
+		{
+			std::string file = node.as< std::string >();
+			this->LoadDatabase(file);
+			continue;
+		}
+		if (keyword == "OpenFiles")
+		{
+			this->OpenFiles();
+			continue;
+		}
+		if (keyword == "OutputMessage")
+		{
+			assert(node.IsScalar());
+			std::string str = node.as< std::string >();
+			this->OutputMessage(str);
+			continue;
+		}
+		if (keyword == "RunCells")
+		{
+			this->RunCells();
+			continue;
+		}
+		if (keyword == "RunFile")
+		{
+			assert(node.IsMap());
+			assert(node.size() == 4);
+			YAML::const_iterator it1 = node.begin();
+			bool workers = it1++->second.as<bool>();
+			bool initial = it1++->second.as<bool>();
+			bool utility = it1++->second.as<bool>();
+			std::string  file = it1->second.as< std::string >();
+			this->RunFile(workers, initial, utility, file);
+			continue;
+		}
+		if (keyword == "RunString")
+		{
+			assert(node.IsMap());
+			assert(node.size() == 4);
+			YAML::const_iterator it1 = node.begin();
+			bool workers = it1++->second.as<bool>();
+			bool initial = it1++->second.as<bool>();
+			bool utility = it1++->second.as<bool>();
+			std::string  string = it1->second.as<std::string>();
+			this->RunString(workers, initial, utility, string);
+			continue;
+		}
+		if (keyword == "ScreenMessage")
+		{
+			assert(node.IsScalar());
+			std::string str = node.as< std::string >();
+			this->ScreenMessage(str);
+			continue;
+		}
+		if (keyword == "SetComponentH2O")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetComponentH2O(tf);
+			continue;
+		}
+		if (keyword == "SetConcentrations") {
+			assert(node.IsSequence());
+			std::vector< double > c = node.as< std::vector< double > >();
+			this->SetConcentrations(c);
+			continue;
+		}
+		if (keyword == "SetCurrentSelectedOutputUserNumber")
+		{
+			assert(node.IsScalar());
+			int n = node.as< int >();
+			this->SetCurrentSelectedOutputUserNumber(n);
+			continue;
+		}
+		if (keyword == "SetDensity")
+		{
+			assert(node.IsSequence());
+			std::vector< double > den = node.as< std::vector< double > >();
+			this->SetDensity(den);
+			continue;
+		}
+		if (keyword == "SetDumpFileName")
+		{
+			assert(node.IsScalar());
+			std::string str = node.as< std::string >();
+			this->SetDumpFileName(str);
+			continue;
+		}
+		if (keyword == "SetErrorHandlerMode")
+		{
+			assert(node.IsScalar());
+			int mode = node.as< int >();
+			this->SetErrorHandlerMode(mode);
+			continue;
+		}
+		if (keyword == "SetErrorOn") {
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetErrorOn(tf);
+			continue;
+		}
+		if (keyword == "SetFilePrefix")
+		{
+			assert(node.IsScalar());
+			std::string prefix = node.as< std::string >();
+			this->SetFilePrefix(prefix);
+			continue;
+		}
+		if (keyword == "SetGasCompMoles") {
+			assert(node.IsSequence());
+			std::vector<double> mol = node.as< std::vector < double > >();
+			this->SetGasCompMoles(mol);
+			continue;
+		}
+		if (keyword == "SetGasPhaseVolume") {
+			assert(node.IsSequence());
+			std::vector<double> vol = node.as< std::vector < double > >();
+			this->SetGasPhaseVolume(vol);
+			continue;
+		}
+		if (keyword == "SetGridCellCount") {
+			//this->WarningMessage("SetGridCellCount has no effect after the PhreeqcRM instance is created.");
+			continue;
+		}
+		if (keyword == "SetPartitionUZSolids")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetPartitionUZSolids(tf);
+			continue;
+		}
+		if (keyword == "SetPorosity")
+		{
+			assert(node.IsSequence());
+			std::vector<double> por = node.as< std::vector< double > >();
+			this->SetPorosity(por);
+			continue;
+		}
+		if (keyword == "SetPressure")
+		{
+			assert(node.IsSequence());
+			std::vector<double> pressure = node.as< std::vector< double > >();
+			this->SetPressure(pressure);
+			continue;
+		}
+		if (keyword == "SetPrintChemistryMask")
+		{
+			assert(node.IsSequence());
+			std::vector<int> mask = node.as< std::vector< int > >();
+			this->SetPrintChemistryMask(mask);
+			continue;
+		}
+		if (keyword == "SetPrintChemistryOn")
+		{
+			assert(node.IsMap());
+			assert(node.size() == 3);
+			YAML::const_iterator it1 = node.begin();
+			bool workers = it1++->second.as< bool >();
+			bool initial = it1++->second.as< bool >();
+			bool utility = it1->second.as< bool >();
+			this->SetPrintChemistryOn(workers, initial, utility);
+			continue;
+		}
+		if (keyword == "SetRebalanceByCell")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetRebalanceByCell(tf);
+			continue;
+		}
+		if (keyword == "SetRebalanceFraction")
+		{
+			assert(node.IsScalar());
+			double f = node.as<double>();
+			this->SetRebalanceFraction(f);
+			continue;
+		}
+		if (keyword == "SetRepresentativeVolume")
+		{
+			assert(node.IsSequence());
+			std::vector<double> rv = it->second.as< std::vector<double > >();
+			this->SetRepresentativeVolume(rv);
+			continue;
+		}
+		if (keyword == "SetSaturation")
+		{
+			assert(node.IsSequence());
+			std::vector< double > sat = node.as< std::vector< double> >();
+			this->SetSaturation(sat);
+			continue;
+		}
+		if (keyword == "SetScreenOn") {
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetScreenOn(tf);
+			continue;
+		}
+		if (keyword == "SetSelectedOutputOn")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetSelectedOutputOn(tf);
+			continue;
+		}
+		if (keyword == "SetSpeciesSaveOn")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetSpeciesSaveOn(tf);
+			continue;
+		}
+		if (keyword == "SetTemperature")
+		{
+			assert(node.IsSequence());
+			std::vector<double> temp = node.as<std::vector<double>>();
+			this->SetTemperature(temp);
+			continue;
+		}
+		if (keyword == "SetTime")
+		{
+			assert(node.IsScalar());
+			double time = node.as<double>();
+			this->SetTime(time);
+			continue;
+		}
+		if (keyword == "SetTimeConversion")
+		{
+			assert(node.IsScalar());
+			double time_conv = node.as<double>();
+			this->SetTimeConversion(time_conv);
+			continue;
+		}
+		if (keyword == "SetTimeStep")
+		{
+			assert(node.IsScalar());
+			double time_step = node.as<double>();
+			this->SetTimeStep(time_step);
+			continue;
+		}
+		if (keyword == "SetUnitsExchange")
+		{
+			assert(node.IsScalar());
+			int units = node.as<int>();
+			this->SetUnitsExchange(units);
+			continue;
+		}
+		if (keyword == "SetUnitsGasPhase")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsGasPhase(units);
+			continue;
+		}
+		if (keyword == "SetUnitsKinetics")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsKinetics(units);
+			continue;
+		}
+		if (keyword == "SetUnitsPPassemblage")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsPPassemblage(units);
+			continue;
+		}
+		if (keyword == "SetUnitsSolution")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsSolution(units);
+			continue;
+		}
+		if (keyword == "SetUnitsSSassemblage")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsSSassemblage(units);
+			continue;
+		}
+		if (keyword == "SetUnitsSurface")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsSurface(units);
+			continue;
+		}
+		if (keyword == "SpeciesConcentrations2Module")
+		{
+			assert(node.IsSequence());
+			std::vector < double > scond = node.as< std::vector < double > >();
+			this->SpeciesConcentrations2Module(scond);
+			continue;
+		}
+		if (keyword == "StateSave")
+		{
+			assert(node.IsScalar());
+			int n = node.as< int >();
+			this->StateSave(n);
+			continue;
+		}
+		if (keyword == "StateApply")
+		{
+			assert(node.IsScalar());
+			int n = node.as< int >();
+			this->StateApply(n);
+			continue;
+		}
+		if (keyword == "StateDelete")
+		{
+			assert(node.IsScalar());
+			int n = node.as< int >();
+			this->StateDelete(n);
+			continue;
+		}
+		if (keyword == "UseSolutionDensityVolume")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->UseSolutionDensityVolume(tf);
+			continue;
+		}
+		if (keyword == "WarningMessage")
+		{
+			assert(node.IsScalar());
+			std::string str = node.as< std::string >();
+			this->WarningMessage(str);
+			continue;
+		}
+		//throw LetItThrow("YAML keyword not found");
+		ErrorMessage("YAML keyword not found");
+		throw PhreeqcRMStop();
+	}
+	return IRM_RESULT::IRM_OK;
 }
 #endif
 /* ---------------------------------------------------------------------- */
@@ -10541,7 +10947,7 @@ PhreeqcRM::SetDensity(const std::vector<double> &t)
 	std::string methodName = "SetDensity";
 	IRM_RESULT result_value = SetGeneric(t, this->density_root, density_worker, METHOD_SETDENSITY, methodName);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
-			}
+}
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
