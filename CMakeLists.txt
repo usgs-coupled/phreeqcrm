@@ -261,7 +261,7 @@ set(exportPackageDependencies "")
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
   target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
   target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
-  string(APPEND exportPackageDependencies "find_package(yaml-cpp)\n")
+  string(APPEND exportPackageDependencies "find_dependency(yaml-cpp)\n")
 endif()
 
 # check for zlib
