@@ -279,7 +279,7 @@
                 status = bmif_get_value(id, "SelectedOutputRowCount", rows)
                 allocate(selected_out(rows,col))
                 ! Get headings
-                bytes = bmif_get_var_itemsize(id, "SelectedOutputHeadings")
+                status = bmif_get_var_itemsize(id, "SelectedOutputHeadings", bytes)
                 allocate(character(len=bytes) :: headings(col))    
                 status = bmif_get_value(id, "SelectedOutputHeadings", headings)
                 ! Get selected output
@@ -418,7 +418,6 @@
 subroutine BMI_testing(id)
 USE, intrinsic :: ISO_C_BINDING
     USE BMIPhreeqcRM
-    !USE PhreeqcRM
     USE IPhreeqc
     implicit none
     interface
@@ -493,8 +492,10 @@ USE, intrinsic :: ISO_C_BINDING
         write(*,"(5x, A60)") trim(string)
         status = bmif_get_var_type(id, inputvars(i), string)
         write(*,"(5x, A60)") trim(string)
-        write(*, "(5x, I60)") bmif_get_var_itemsize(id, inputvars(i))
-        write(*, "(5x, I60)") bmif_get_var_nbytes(id, inputvars(i))
+        status = bmif_get_var_itemsize(id, inputvars(i), itemsize)
+        write(*, "(5x, I60)") itemsize
+        status = bmif_get_var_nbytes(id, inputvars(i), nbytes)
+        write(*, "(5x, I60)") nbytes
     enddo
     ! OutputVarNames
     status = bmif_get_output_var_names(id, outputvars)
@@ -506,8 +507,10 @@ USE, intrinsic :: ISO_C_BINDING
         write(*,"(5x, A60)") trim(string)
         status = bmif_get_var_type(id, outputvars(i), string)
         write(*,"(5x, A60)") trim(string)
-        write(*, "(5x, I60)") bmif_get_var_itemsize(id, outputvars(i))
-        write(*, "(5x, I60)") bmif_get_var_nbytes(id, outputvars(i))
+        status = bmif_get_var_itemsize(id, outputvars(i), itemsize)
+        write(*, "(5x, I60)") itemsize
+        status = bmif_get_var_nbytes(id, outputvars(i), nbytes)
+        write(*, "(5x, I60)") nbytes
     enddo
 
     ! ComponentCount
@@ -516,8 +519,8 @@ USE, intrinsic :: ISO_C_BINDING
     status = assert(ncomps .eq. rm_ncomps)
     ! Components
     status = bmif_get_value(id, "Components", components)
-    itemsize = bmif_get_var_itemsize(id, "Components")
-    nbytes = bmif_get_var_nbytes(id, "Components")
+    status = bmif_get_var_itemsize(id, "Components", itemsize)
+    status = bmif_get_var_nbytes(id, "Components", nbytes)
     dim = nbytes / itemsize
     status = assert(dim .eq. size(components))
     allocate(character(len=itemsize) :: component)
@@ -555,8 +558,8 @@ USE, intrinsic :: ISO_C_BINDING
 	! GetValue("Density")
     ! RM_GetDensity and bmif_get_value("Density) always return 
     ! the calculated solution density
-    itemsize = bmif_get_var_itemsize(id, "Density")
-    nbytes = bmif_get_var_nbytes(id, "Density")
+    status = bmif_get_var_itemsize(id, "Density", itemsize)
+    status = bmif_get_var_nbytes(id, "Density", nbytes)
     dim = nbytes / itemsize
     allocate(rm_density(dim))
     status = RM_GetDensity(id, rm_density)
@@ -571,8 +574,8 @@ USE, intrinsic :: ISO_C_BINDING
     ! FilePrefix
     string = "NewPrefix"
     status = bmif_set_value(id, "FilePrefix", string)
-    itemsize = bmif_get_var_itemsize(id, "FilePrefix")
-    nbytes = bmif_get_var_nbytes(id, "FilePrefix")
+    status = bmif_get_var_itemsize(id, "FilePrefix", itemsize)
+    status = bmif_get_var_nbytes(id, "FilePrefix", nbytes)
     allocate(character(len=itemsize) :: rm_prefix)
     status = assert(itemsize .eq. nbytes)
     status = RM_GetFilePrefix(id, rm_prefix)
@@ -583,8 +586,8 @@ USE, intrinsic :: ISO_C_BINDING
          
 	! GetValue("Gfw")
     status = bmif_get_value(id, "Gfw", gfw)
-    itemsize = bmif_get_var_itemsize(id, "Gfw")
-    nbytes = bmif_get_var_nbytes(id, "Gfw")
+    status = bmif_get_var_itemsize(id, "Gfw", itemsize)
+    status = bmif_get_var_nbytes(id, "Gfw", nbytes)
     dim = nbytes / itemsize
     allocate(rm_gfw(dim))
 	status = RM_GetGfw(id, rm_gfw);
@@ -601,8 +604,8 @@ USE, intrinsic :: ISO_C_BINDING
     status = assert(nxyz .eq. rm_nxyz)
     
 	! GetValue("Porosity")
-    itemsize = bmif_get_var_itemsize(id, "Porosity")
-    nbytes = bmif_get_var_nbytes(id, "Porosity")
+    status = bmif_get_var_itemsize(id, "Porosity", itemsize)
+    status = bmif_get_var_nbytes(id, "Porosity", nbytes)
     dim = nbytes / itemsize
     allocate(rm_porosity(dim))
     rm_porosity = 0.25
@@ -623,8 +626,8 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
 
 	! GetValue("Pressure")
-    itemsize = bmif_get_var_itemsize(id, "Pressure")
-    nbytes = bmif_get_var_nbytes(id, "Pressure")
+    status = bmif_get_var_itemsize(id, "Pressure", itemsize)
+    status = bmif_get_var_nbytes(id, "Pressure", nbytes)
     dim = nbytes / itemsize
     allocate(rm_pressure(dim))
     rm_pressure = 10.
@@ -646,8 +649,8 @@ USE, intrinsic :: ISO_C_BINDING
 
 	! GetValue("Saturation")
     ! Always returns solution_volume/(rv * porosity) for each cell
-    itemsize = bmif_get_var_itemsize(id, "Saturation")
-    nbytes = bmif_get_var_nbytes(id, "Saturation")
+    status = bmif_get_var_itemsize(id, "Saturation", itemsize)
+    status = bmif_get_var_nbytes(id, "Saturation", nbytes)
     dim = nbytes / itemsize
     allocate(rm_saturation(dim))
     status = bmif_get_value(id, "Saturation", saturation)
@@ -660,8 +663,8 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
     
     ! GetValue("SolutionVolume")
-    itemsize = bmif_get_var_itemsize(id, "SolutionVolume")
-    nbytes = bmif_get_var_nbytes(id, "SolutionVolume")
+    status = bmif_get_var_itemsize(id, "SolutionVolume", itemsize)
+    status = bmif_get_var_nbytes(id, "SolutionVolume", nbytes)
     dim = nbytes / itemsize
     allocate(rm_volume(dim))
     status = bmif_get_value(id, "SolutionVolume", volume)
@@ -674,8 +677,8 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
     
 	! GetValue("Temperature")
-    itemsize = bmif_get_var_itemsize(id, "Temperature")
-    nbytes = bmif_get_var_nbytes(id, "Temperature")
+    status = bmif_get_var_itemsize(id, "Temperature", itemsize)
+    status = bmif_get_var_nbytes(id, "Temperature", nbytes)
     dim = nbytes / itemsize
     allocate(rm_temperature(dim))
     rm_temperature = 11.
@@ -717,8 +720,8 @@ USE, intrinsic :: ISO_C_BINDING
         rm_row_count = RM_GetSelectedOutputRowCount(id)
         status = assert(row_count .eq. rm_row_count)
 
-        nbytes = bmif_get_var_nbytes(id, "SelectedOutput");
-        itemsize = bmif_get_var_itemsize(id, "SelectedOutput");
+        status = bmif_get_var_nbytes(id, "SelectedOutput", nbytes);
+        status = bmif_get_var_itemsize(id, "SelectedOutput", itemsize);
         dim = nbytes / itemsize;
         status = assert(dim .eq. rm_row_count*rm_col_count)
         status = bmif_get_value(id, "SelectedOutput", so)
@@ -733,8 +736,8 @@ USE, intrinsic :: ISO_C_BINDING
             enddo
         enddo
         ! check headings
-        nbytes = bmif_get_var_nbytes(id, "SelectedOutputHeadings")
-        itemsize = bmif_get_var_itemsize(id, "SelectedOutputHeadings")
+        status = bmif_get_var_nbytes(id, "SelectedOutputHeadings", nbytes)
+        status = bmif_get_var_itemsize(id, "SelectedOutputHeadings", itemsize)
         dim = nbytes / itemsize
         status = assert(dim .eq. RM_GetSelectedOutputColumnCount(id))
         status = bmif_get_value(id, "SelectedOutputHeadings", headings)
@@ -745,7 +748,7 @@ USE, intrinsic :: ISO_C_BINDING
                 status = assert(.false.)
             endif
         enddo
-        itemsize = bmif_get_var_itemsize(id, "SelectedOutputHeadings")
+        status = bmif_get_var_itemsize(id, "SelectedOutputHeadings", itemsize)
         allocate(character(len=itemsize) :: heading)
         do j = 1, col_count
             status = RM_GetSelectedOutputHeading(id, j, heading)

@@ -164,7 +164,7 @@
     END INTERFACE
     INTEGER, INTENT(in) :: nxyz
     INTEGER, INTENT(in) :: nthreads
-    bmif_create = success(RM_BMI_Create(nxyz, nthreads))
+    bmif_create = RM_BMI_Create(nxyz, nthreads)
     return
     END FUNCTION bmif_create    
 	
@@ -618,7 +618,266 @@
     return
     END FUNCTION bmif_get_output_var_names
 
-
+	! ====================================================
+	! Variable information
+	! ====================================================
+	
+	integer FUNCTION bmif_get_var_grid(id, var, grid)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+	CHARACTER(len=*), INTENT(in) :: var
+	INTEGER, INTENT(out) :: grid
+	grid = 1
+    bmif_get_var_grid = BMI_SUCCESS
+    END FUNCTION bmif_get_var_grid
+	
+	!> bmif_get_var_type retrieves the type of a variable that can be set with
+    !> @ref bmif_set_value or retrieved with @ref bmif_get_value. Types are "character",
+    !> "real(kind=8)","integer", or "logical",
+    !> or an allocatable array of these types.
+    !> Only variables in the list
+    !> provided by @ref bmif_get_input_var_names can be set.
+    !> Only variables in the list
+    !> provided by @ref bmif_get_output_var_names can be retrieved.
+    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @param var Name of the variable to retrieve total bytes.
+    !> @param vtype Type of the variable.
+    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @see
+    !> @ref bmif_get_input_var_names,
+    !> @ref bmif_get_input_item_count,
+    !> @ref bmif_get_output_var_names,
+    !> @ref bmif_get_output_item_count,
+    !> @ref bmif_get_var_units.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> do i = 1, size(inputvars)
+    !>     write(*,"(1x, I4, A40)") i, trim(inputvars(i))
+    !>     status = bmif_get_var_units(id, inputvars(i), string)
+    !>     write(*,"(5x, A15)") trim(string)
+    !>     status = bmif_get_var_type(id, inputvars(i), string)
+    !>     write(*,"(5x, A15)") trim(string)
+    !>     write(*, "(5x, I15)") bmif_get_var_itemsize(id, inputvars(i))
+    !>     write(*, "(5x, I15)") bmif_get_var_nbytes(id, inputvars(i))
+    !> enddo
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
+    INTEGER FUNCTION bmif_get_var_type(id, var, vtype)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarType(id, var, vtype, l) &
+			BIND(C, NAME='RMF_BMI_GetVarType')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id, l
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		CHARACTER(KIND=C_CHAR), INTENT(inout) :: vtype(*)
+		END FUNCTION RMF_BMI_GetVarType
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    CHARACTER(len=*), INTENT(inout) :: vtype
+    bmif_get_var_type = success(RMF_BMI_GetVarType(id, trim(var)//C_NULL_CHAR, vtype, len(vtype)))
+    return
+    END FUNCTION bmif_get_var_type
+	
+    !> bmif_get_var_units retrieves the units of a
+    !> variable that can be set with
+    !> @ref bmif_set_value or retrieved with @ref bmif_get_value.
+    !> Only variables in the list
+    !> provided by @ref bmif_get_input_var_names can be set.
+    !> Only variables in the list
+    !> provided by @ref bmif_get_output_var_names can be retrieved.
+    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @param var Name of the variable to retrieve total bytes.
+    !> @param units Units of the variable.
+    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @see
+    !> @ref bmif_get_input_var_names,
+    !> @ref bmif_get_input_item_count,
+    !> @ref bmif_get_output_var_names,
+    !> @ref bmif_get_output_item_count,
+    !> @ref bmif_get_var_type.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> do i = 1, size(inputvars)
+    !>     write(*,"(1x, I4, A40)") i, trim(inputvars(i))
+    !>     status = bmif_get_var_units(id, inputvars(i), string)
+    !>     write(*,"(5x, A15)") trim(string)
+    !>     status = bmif_get_var_type(id, inputvars(i), string)
+    !>     write(*,"(5x, A15)") trim(string)
+    !>     write(*, "(5x, I15)") bmif_get_var_itemsize(id, inputvars(i))
+    !>     write(*, "(5x, I15)") bmif_get_var_nbytes(id, inputvars(i))
+    !> enddo
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
+    INTEGER FUNCTION bmif_get_var_units(id, var, units)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarUnits(id, var, units, l) &
+			BIND(C, NAME='RMF_BMI_GetVarUnits')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id, l
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		CHARACTER(KIND=C_CHAR), INTENT(inout) :: units(*)
+		END FUNCTION RMF_BMI_GetVarUnits
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    CHARACTER(len=*), INTENT(inout) :: units
+    bmif_get_var_units = success(RMF_BMI_GetVarUnits(id, trim(var)//C_NULL_CHAR, units, len(units)))
+    return
+    END FUNCTION bmif_get_var_units	
+	
+    !> bmif_get_var_itemsize retrieves the size of an
+    !> individual item that can be set or retrived.
+    !> Sizes may be sizeof(int), sizeof(double),
+    !> or a character length for string variables. Only variables in the list
+    !> provided by @ref bmif_get_input_var_names can be set.
+    !> Only variables in the list
+    !> provided by @ref bmif_get_output_var_names can be retrieved.
+    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @param var Name of the variable to retrieve.
+    !> @retval   Size of one element of the variable.
+    !>
+    !> @see
+    !> @ref bmif_get_input_var_names,
+    !> @ref bmif_get_input_item_count,
+    !> @ref bmif_get_output_var_names,
+    !> @ref bmif_get_output_item_count,
+    !> @ref bmif_get_value,
+    !> @ref bmif_get_var_nbytes,
+    !> @ref bmif_set_value.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> integer nbytes, item_size, dim
+    !> real(kind=8), allocatable, dimension(:) :: bmi_temperature
+    !> nbytes = bmif_get_var_nbytes(id, "Temperature")
+    !> item_size = bmif_get_var_itemsize(id, "Temperature");
+    !> int dim = nbytes/item_size;
+    !> allocate(bmi_temperature(dim))
+    !> bmi_temperature = 25.0
+    !> status = bmif_set_value("Temperature", bmi_temperature);
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
+    INTEGER FUNCTION bmif_get_var_itemsize(id, var, itemsize)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
+			BIND(C, NAME='RMF_BMI_GetVarItemsize')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		END FUNCTION RMF_BMI_GetVarItemsize
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+	INTEGER, INTENT(out) :: itemsize
+    itemsize = RMF_BMI_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
+	bmif_get_var_itemsize = success(bmif_get_var_itemsize)
+    END FUNCTION bmif_get_var_itemsize	
+	
+    !> bmif_get_var_nbytes retrieves the size of an
+    !> individual item that can be set or retrived.
+    !> Sizes may be sizeof(int), sizeof(double),
+    !> or a character length for string variables. Only variables in the list
+    !> provided by @ref bmif_get_input_var_names can be set.
+    !> Only variables in the list
+    !> provided by @ref bmif_get_output_var_names can be retrieved.
+    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @param var Name of the variable to retrieve size.
+    !> @retval Size of one element of the variable.
+    !>
+    !> @see
+    !> @ref bmif_get_input_var_names,
+    !> @ref bmif_get_input_item_count,
+    !> @ref bmif_get_output_var_names,
+    !> @ref bmif_get_output_item_count,
+    !> @ref bmif_get_value,
+    !> @ref bmif_get_var_nbytes,
+    !> @ref bmif_set_value.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> integer nbytes, item_size, dim
+    !>  real(kind=8), allocatable, dimension(:) :: bmi_temperature
+    !> nbytes = bmif_get_var_nbytes(id, "Temperature")
+    !> item_size = bmif_get_var_itemsize(id, "Temperature");
+    !> int dim = nbytes/item_size;
+    !> allocate(bmi_temperature(dim))
+    !>  bmi_temperature = 25.0
+    !> status = bmif_set_value("Temperature", bmi_temperature);
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
+    INTEGER FUNCTION bmif_get_var_nbytes(id, var, nbytes)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
+			BIND(C, NAME='RMF_BMI_GetVarNbytes')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		END FUNCTION RMF_BMI_GetVarNbytes
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+	INTEGER, INTENT(out) :: nbytes
+	nbytes  = RMF_BMI_GetVarNbytes(id, trim(var)//C_NULL_CHAR)
+    bmif_get_var_nbytes = success(nbytes)
+    END FUNCTION bmif_get_var_nbytes	
+	
+	! ====================================================
+	! Time information	
+	! ====================================================
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
     !> Basic Model Interface method that returns the current simulation time, in seconds. (Same as @ref RM_GetTime.)
     !> The reaction module does not change the time value, so the
     !> returned value is equal to the default (0.0) or the last time set by
@@ -928,33 +1187,31 @@
     INTEGER FUNCTION bmif_get_value_char(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+			BIND(C, NAME='RMF_BMI_GetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    CHARACTER(len=:), allocatable, INTENT(inout) :: dest
-    character(100) :: vartype
-    integer :: bytes, status
+    CHARACTER(len=*), INTENT(inout) :: dest
+    character(BMI_MAX_TYPE_NAME) :: vartype
+    integer :: itemsize, status
+    CHARACTER(len=:), allocatable :: temp
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "character") then
         stop "Variable type error."
     endif
-    bytes = bmif_get_var_itemsize(id, var)
-    if (len(var) < bytes) then
-        if (allocated(dest)) then
-            deallocate(dest)
-        endif
-        allocate(character(len=bytes) :: dest)
-    endif
-    bmif_get_value_char = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
+    status = bmif_get_var_itemsize(id, var, itemsize)
+	allocate(character(len=itemsize) :: temp)
+    status = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, temp)
+	dest = temp
+	bmif_get_value_char = success(status)
     return
     END FUNCTION bmif_get_value_char
 
@@ -977,7 +1234,7 @@
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
     character(100) :: vartype
-    integer :: bytes, nbytes, status, dim, itemsize
+    integer :: nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
     dim2 = 0
@@ -985,8 +1242,9 @@
     if (vartype .ne. "character(len=:),allocatable,dimension(:)") then
         stop "Variable type error."
     endif
-    itemsize = bmif_get_var_itemsize(id, var)
-    dim = bmif_get_var_nbytes(id, var) / itemsize
+    status = bmif_get_var_itemsize(id, var, itemsize)
+    status = bmif_get_var_nbytes(id, var, nbytes)
+    dim = nbytes / itemsize
     if (allocated(dest)) then
         dim2 = size(dest)
         if (dim2 > 0) then
@@ -1050,7 +1308,7 @@
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), allocatable, dimension(:), INTENT(inout) :: dest
     character(100) :: vartype
-    integer :: bytes, nbytes, status, dim, itemsize
+    integer :: nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
     dim2 = 0
@@ -1058,8 +1316,9 @@
     if (vartype .ne. "real(kind=8),allocatable,dimension(:)") then
         stop "Variable type error."
     endif
-    itemsize = bmif_get_var_itemsize(id, var)
-    dim = bmif_get_var_nbytes(id, var) / itemsize
+    status = bmif_get_var_itemsize(id, var, itemsize)
+    status = bmif_get_var_nbytes(id, var, nbytes)
+    dim = nbytes / itemsize
     if (allocated(dest)) then
         dim2 = size(dest)
     endif
@@ -1175,7 +1434,7 @@
     CHARACTER(len=*), INTENT(in) :: var
     integer, allocatable, INTENT(inout) :: dest(:)
     character(100) :: vartype
-    integer :: bytes, nbytes, status, dim, itemsize
+    integer :: nbytes, status, dim, itemsize
     integer :: dim1, dim2
     dim1 = 0
     dim2 = 0
@@ -1183,8 +1442,9 @@
     if (vartype .ne. "integer,allocatable,dimension(:)") then
         stop "Variable type error."
     endif
-    itemsize = bmif_get_var_itemsize(id, var)
-    dim = bmif_get_var_nbytes(id, var) / itemsize
+    status = bmif_get_var_itemsize(id, var, itemsize)
+    status = bmif_get_var_nbytes(id, var, nbytes)  
+    dim = nbytes / itemsize
     if (allocated(dest)) then
         dim2 = size(dest)
     endif
@@ -1231,223 +1491,9 @@
     END FUNCTION bmif_get_value_int2
 
 
-    !> Basic Model Interface method that retrieves the size of an
-    !> individual item that can be set or retrived.
-    !> Sizes may be sizeof(int), sizeof(double),
-    !> or a character length for string variables. Only variables in the list
-    !> provided by @ref bmif_get_input_var_names can be set.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_output_var_names can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve.
-    !> @retval   Size of one element of the variable.
-    !>
-    !> @see
-    !> @ref bmif_get_input_var_names,
-    !> @ref bmif_get_input_item_count,
-    !> @ref bmif_get_output_var_names,
-    !> @ref bmif_get_output_item_count,
-    !> @ref bmif_get_value,
-    !> @ref bmif_get_var_nbytes,
-    !> @ref bmif_set_value.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> integer nbytes, item_size, dim
-    !> real(kind=8), allocatable, dimension(:) :: bmi_temperature
-    !> nbytes = bmif_get_var_nbytes(id, "Temperature")
-    !> item_size = bmif_get_var_itemsize(id, "Temperature");
-    !> int dim = nbytes/item_size;
-    !> allocate(bmi_temperature(dim))
-    !> bmi_temperature = 25.0
-    !> status = bmif_set_value("Temperature", bmi_temperature);
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-    INTEGER FUNCTION bmif_get_var_itemsize(id, var)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-        BIND(C, NAME='RMF_BMI_GetVarItemsize')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    END FUNCTION RMF_BMI_GetVarItemsize
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    bmif_get_var_itemsize = RMF_BMI_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
-    END FUNCTION bmif_get_var_itemsize
-    !> Basic Model Interface method that retrieves the size of an
-    !> individual item that can be set or retrived.
-    !> Sizes may be sizeof(int), sizeof(double),
-    !> or a character length for string variables. Only variables in the list
-    !> provided by @ref bmif_get_input_var_names can be set.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_output_var_names can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve size.
-    !> @retval Size of one element of the variable.
-    !>
-    !> @see
-    !> @ref bmif_get_input_var_names,
-    !> @ref bmif_get_input_item_count,
-    !> @ref bmif_get_output_var_names,
-    !> @ref bmif_get_output_item_count,
-    !> @ref bmif_get_value,
-    !> @ref bmif_get_var_nbytes,
-    !> @ref bmif_set_value.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> integer nbytes, item_size, dim
-    !>  real(kind=8), allocatable, dimension(:) :: bmi_temperature
-    !> nbytes = bmif_get_var_nbytes(id, "Temperature")
-    !> item_size = bmif_get_var_itemsize(id, "Temperature");
-    !> int dim = nbytes/item_size;
-    !> allocate(bmi_temperature(dim))
-    !>  bmi_temperature = 25.0
-    !> status = bmif_set_value("Temperature", bmi_temperature);
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-    INTEGER FUNCTION bmif_get_var_nbytes(id, var)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-        BIND(C, NAME='RMF_BMI_GetVarNbytes')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    bmif_get_var_nbytes = RMF_BMI_GetVarNbytes(id, trim(var)//C_NULL_CHAR)
-    END FUNCTION bmif_get_var_nbytes
 
-    !> Basic Model Interface method that retrieves the type of a variable that can be set with
-    !> @ref bmif_set_value or retrieved with @ref bmif_get_value. Types are "character",
-    !> "real(kind=8)","integer", or "logical",
-    !> or an allocatable array of these types.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_input_var_names can be set.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_output_var_names can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve total bytes.
-    !> @param vtype Type of the variable.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @see
-    !> @ref bmif_get_input_var_names,
-    !> @ref bmif_get_input_item_count,
-    !> @ref bmif_get_output_var_names,
-    !> @ref bmif_get_output_item_count,
-    !> @ref bmif_get_var_units.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> do i = 1, size(inputvars)
-    !>     write(*,"(1x, I4, A40)") i, trim(inputvars(i))
-    !>     status = bmif_get_var_units(id, inputvars(i), string)
-    !>     write(*,"(5x, A15)") trim(string)
-    !>     status = bmif_get_var_type(id, inputvars(i), string)
-    !>     write(*,"(5x, A15)") trim(string)
-    !>     write(*, "(5x, I15)") bmif_get_var_itemsize(id, inputvars(i))
-    !>     write(*, "(5x, I15)") bmif_get_var_nbytes(id, inputvars(i))
-    !> enddo
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-
-    INTEGER FUNCTION bmif_get_var_type(id, var, vtype)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarType(id, var, vtype, l) &
-        BIND(C, NAME='RMF_BMI_GetVarType')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id, l
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    CHARACTER(KIND=C_CHAR), INTENT(inout) :: vtype(*)
-    END FUNCTION RMF_BMI_GetVarType
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    CHARACTER(len=*), INTENT(inout) :: vtype
-    bmif_get_var_type = RMF_BMI_GetVarType(id, trim(var)//C_NULL_CHAR, vtype, len(vtype))
-    return
-    END FUNCTION bmif_get_var_type
-    !> Basic Model Interface method that retrieves the units of a
-    !> variable that can be set with
-    !> @ref bmif_set_value or retrieved with @ref bmif_get_value.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_input_var_names can be set.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_output_var_names can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve total bytes.
-    !> @param units Units of the variable.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @see
-    !> @ref bmif_get_input_var_names,
-    !> @ref bmif_get_input_item_count,
-    !> @ref bmif_get_output_var_names,
-    !> @ref bmif_get_output_item_count,
-    !> @ref bmif_get_var_type.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> do i = 1, size(inputvars)
-    !>     write(*,"(1x, I4, A40)") i, trim(inputvars(i))
-    !>     status = bmif_get_var_units(id, inputvars(i), string)
-    !>     write(*,"(5x, A15)") trim(string)
-    !>     status = bmif_get_var_type(id, inputvars(i), string)
-    !>     write(*,"(5x, A15)") trim(string)
-    !>     write(*, "(5x, I15)") bmif_get_var_itemsize(id, inputvars(i))
-    !>     write(*, "(5x, I15)") bmif_get_var_nbytes(id, inputvars(i))
-    !> enddo
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-    INTEGER FUNCTION bmif_get_var_units(id, var, units)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarUnits(id, var, units, l) &
-        BIND(C, NAME='RMF_BMI_GetVarUnits')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id, l
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    CHARACTER(KIND=C_CHAR), INTENT(inout) :: units(*)
-    END FUNCTION RMF_BMI_GetVarUnits
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    CHARACTER(len=*), INTENT(inout) :: units
-    bmif_get_var_units = RMF_BMI_GetVarUnits(id, trim(var)//C_NULL_CHAR, units, len(units))
-    return
-    END FUNCTION bmif_get_var_units
-
-
+	
+	
 
     !> Basic Model Interface method that sets model variables. Only variables in the list
     !> provided by @ref bmif_get_input_var_names can be set. The BMI interface to PhreeqcRM is
@@ -1596,12 +1642,14 @@
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: src(:)
     character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
+    integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "integer,allocatable,dimension(:)") then
         stop "Variable type error."
     endif
-    dim = bmif_get_var_nbytes(id, var) / bmif_get_var_itemsize(id, var)
+    status = bmif_get_var_nbytes(id, var, nbytes)
+    status =  bmif_get_var_itemsize(id, var, itemsize)
+    dim = nbytes / itemsize
     if (dim .ne. size(src)) then
         stop "Variable dimension error"
     endif
@@ -1627,12 +1675,14 @@
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: src(:,:)
     character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
+    integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "integer,allocatable,dimension(:,:)") then
         stop "Variable type error."
     endif
-    dim = bmif_get_var_nbytes(id, var) / bmif_get_var_itemsize(id, var)
+    status = bmif_get_var_nbytes(id, var, nbytes)
+    status = bmif_get_var_itemsize(id, var, itemsize)
+    dim = nbytes / itemsize
     if (dim .ne. size(src,1)*size(src,2)) then
         stop "Variable dimension error"
     endif
@@ -1686,12 +1736,14 @@
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT(inout) :: src(:)
     character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
+    integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "real(kind=8),allocatable,dimension(:)") then
         stop "Variable type error."
     endif
-    dim = bmif_get_var_nbytes(id, var) / bmif_get_var_itemsize(id, var)
+    status = bmif_get_var_nbytes(id, var, nbytes)
+    status = bmif_get_var_itemsize(id, var, itemsize)
+    dim = nbytes / itemsize
     if (dim .ne. size(src)) then
         stop "Variable dimension error"
     endif
@@ -1718,12 +1770,14 @@
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT(inout) :: src(:,:)
     character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
+    integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "real(kind=8),allocatable,dimension(:,:)") then
         stop "Variable type error."
     endif
-    dim = bmif_get_var_nbytes(id, var) / bmif_get_var_itemsize(id, var)
+    status = bmif_get_var_nbytes(id, var, nbytes)
+    status = bmif_get_var_itemsize(id, var, itemsize)
+    dim = nbytes / itemsize
     if (dim .ne. size(src,1)*size(src,2)) then
         stop "Variable dimension error"
     endif
