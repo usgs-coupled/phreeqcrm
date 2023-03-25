@@ -459,11 +459,14 @@ USE, intrinsic :: ISO_C_BINDING
 
     status = bmif_get_component_name(id, string)
     write(*,*) trim(string)
-    write(*,*) bmif_get_current_time(id)
-    write(*,*) bmif_get_end_time(id)
+    time = bmif_get_current_time(id, time)
+    write(*,*) time
+    time = bmif_get_end_time(id, time)
+    write(*,*) time
     status = bmif_get_time_units(id, string)
     write(*,*) string
-    write(*,*) bmif_get_time_step(id)
+    time = bmif_get_time_step(id, time)
+    write(*,*) time
     ! Time
     rm_time = 3600
     status = bmif_set_value(id, "Time", rm_time)
@@ -471,7 +474,7 @@ USE, intrinsic :: ISO_C_BINDING
     status = assert(rm_time .eq. time)
     rm_time = RM_GetTime(id)
     status = assert(time .eq. rm_time)
-    time = bmif_get_current_time(id)
+    status = bmif_get_current_time(id, time)
     status = assert(time .eq. rm_time)
     ! TimeStep
     rm_time_step = 60
@@ -480,7 +483,7 @@ USE, intrinsic :: ISO_C_BINDING
     status = assert(time_step .eq. rm_time_step)
     rm_time_step = RM_GetTimeStep(id)
     status = assert(time_step .eq. rm_time_step)
-    time_step = bmif_get_time_step(id)
+    status = bmif_get_time_step(id, time_step)
     status = assert(time_step .eq. rm_time_step)
     ! InputVarNames
     status = bmif_get_input_var_names(id, inputvars)

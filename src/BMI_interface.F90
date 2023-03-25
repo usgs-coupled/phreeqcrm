@@ -857,28 +857,7 @@
 	! Time information	
 	! ====================================================
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-    !> Basic Model Interface method that returns the current simulation time, in seconds. (Same as @ref RM_GetTime.)
+    !> bmif_get_current_time returns the current simulation time, in seconds. (Same as @ref RM_GetTime.)
     !> The reaction module does not change the time value, so the
     !> returned value is equal to the default (0.0) or the last time set by
     !> @ref bmif_set_value("Time", time) or @ref RM_SetTime.
@@ -902,23 +881,32 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
-    real(kind=8) FUNCTION bmif_get_current_time(id)
+    INTEGER FUNCTION bmif_get_current_time(id, time)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_GetCurrentTime(id) &
-        BIND(C, NAME='RMF_BMI_GetCurrentTime')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_BMI_GetCurrentTime
-    END INTERFACE
+		INTERFACE
+		REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_GetCurrentTime(id) &
+			BIND(C, NAME='RMF_BMI_GetCurrentTime')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_BMI_GetCurrentTime
+		END INTERFACE
     INTEGER, INTENT(in) :: id
-    bmif_get_current_time = RMF_BMI_GetCurrentTime(id)
-    END FUNCTION bmif_get_current_time
-
-    !> Basic Model Interface method that returns @ref bmif_get_current_time plus
+	real(kind=8), intent(inout) :: time
+	time = RMF_BMI_GetCurrentTime(id)
+    bmif_get_current_time = BMI_SUCCESS
+    END FUNCTION bmif_get_current_time	
+	
+    INTEGER FUNCTION bmif_get_start_time(id, start_time)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+	real(kind=8), INTENT(inout) :: start_time
+	bmif_get_start_time = bmif_get_current_time(id, start_time)
+    END FUNCTION bmif_get_start_time
+	
+    !> bmif_get_end_time returns @ref bmif_get_current_time plus
     !> @ref bmif_get_time_step, in seconds.
     !> @param id            The instance @a id returned from @ref RM_Create.
     !> @retval                 The end of the time step, in seconds.
@@ -940,21 +928,131 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
-    real(kind=8) FUNCTION bmif_get_end_time(id)
+    INTEGER FUNCTION bmif_get_end_time(id, end_time)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_GetEndTime(id) &
-        BIND(C, NAME='RMF_BMI_GetEndTime')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_BMI_GetEndTime
-    END INTERFACE
+		INTERFACE
+		REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_GetEndTime(id) &
+			BIND(C, NAME='RMF_BMI_GetEndTime')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_BMI_GetEndTime
+		END INTERFACE
     INTEGER, INTENT(in) :: id
-    bmif_get_end_time = RMF_BMI_GetEndTime(id)
+	real(kind=8), intent(inout) :: end_time
+	end_time = RMF_BMI_GetEndTime(id)
+    bmif_get_end_time = BMI_SUCCESS
     END FUNCTION bmif_get_end_time
+	
+    !> bmif_get_time_units returns the time units of PhreeqcRM.
+    !> All time units are seconds for PhreeqcRM.
+    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @param time_units    The instance @a id returned from @ref RM_Create.
+    !> @retval                 Returns the string "seconds".
+    !> @see
+    !> @ref bmif_get_current_time,
+    !> @ref bmif_get_end_time,
+    !> @ref bmif_get_time_step,
+    !> @ref bmif_set_value,
+    !> @ref RM_GetTime,
+    !> @ref RM_GetTimeStep,
+    !> @ref RM_SetTime,
+    !> @ref RM_SetTimeStep,
+    !> @ref bmif_set_value.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> character(20) time_units
+    !> status = bmif_get_time_units(id, time_units) << ".\n";
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
+    INTEGER FUNCTION bmif_get_time_units(id, time_units)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetTimeUnits(id, time_units, l) &
+			BIND(C, NAME='RMF_BMI_GetTimeUnits')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id, l
+		CHARACTER(KIND=C_CHAR), INTENT(inout) :: time_units(*)
+		END FUNCTION RMF_BMI_GetTimeUnits
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(inout) :: time_units
+    bmif_get_time_units = success(RMF_BMI_GetTimeUnits(id, time_units, len(time_units)))
+    return
+    END FUNCTION bmif_get_time_units	
+	
+
+    !> bmif_get_time_step returns the current simulation time step,
+    !> in seconds. (Same as @ref RM_GetTimeStep.)
+    !> The reaction module does not change the time-step value, so the
+    !> returned value is equal to the last time step set by
+    !> @ref bmif_set_value("TimeStep", time_step) or @ref RM_SetTimeStep.
+    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @retval                 The current simulation time step, in seconds.
+    !> @see
+    !> @ref bmif_get_current_time,
+    !> @ref bmif_get_end_time,
+    !> @ref bmif_set_value,
+    !> @ref RM_GetTime,
+    !> @ref RM_GetTimeStep,
+    !> @ref RM_SetTime,
+    !> @ref RM_SetTimeStep.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> time_step = bmif_get_time_step(id)
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
+    INTEGER FUNCTION bmif_get_time_step(id, time_step)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_GetTimeStep(id) &
+			BIND(C, NAME='RMF_BMI_GetTimeStep')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_BMI_GetTimeStep
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	real(kind=8), intent(inout) :: time_step
+	time_step = RMF_BMI_GetTimeStep(id)
+    bmif_get_time_step = BMI_SUCCESS
+    END FUNCTION bmif_get_time_step	
+		
+	! ====================================================
+	! Getters, by type
+	! ====================================================
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
     
     INTEGER FUNCTION bmif_grid_rank(id, grid, rank)
     USE ISO_C_BINDING
@@ -1004,98 +1102,9 @@
     END FUNCTION bmif_grid_type
 
     
-    real(kind=8) FUNCTION bmif_get_start_time(id)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    bmif_get_start_time = bmif_get_current_time(id)
-    END FUNCTION bmif_get_start_time
 
-    !> Basic Model Interface method that returns the current simulation time step,
-    !> in seconds. (Same as @ref RM_GetTimeStep.)
-    !> The reaction module does not change the time-step value, so the
-    !> returned value is equal to the last time step set by
-    !> @ref bmif_set_value("TimeStep", time_step) or @ref RM_SetTimeStep.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @retval                 The current simulation time step, in seconds.
-    !> @see
-    !> @ref bmif_get_current_time,
-    !> @ref bmif_get_end_time,
-    !> @ref bmif_set_value,
-    !> @ref RM_GetTime,
-    !> @ref RM_GetTimeStep,
-    !> @ref RM_SetTime,
-    !> @ref RM_SetTimeStep.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> time_step = bmif_get_time_step(id)
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
 
-    real(kind=8) FUNCTION bmif_get_time_step(id)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_GetTimeStep(id) &
-        BIND(C, NAME='RMF_BMI_GetTimeStep')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_BMI_GetTimeStep
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    bmif_get_time_step = RMF_BMI_GetTimeStep(id)
-    END FUNCTION bmif_get_time_step
 
-    !> Basic Model Interface method that returns the time units of PhreeqcRM.
-    !> All time units are seconds for PhreeqcRM.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param time_units    The instance @a id returned from @ref RM_Create.
-    !> @retval                 Returns the string "seconds".
-    !> @see
-    !> @ref bmif_get_current_time,
-    !> @ref bmif_get_end_time,
-    !> @ref bmif_get_time_step,
-    !> @ref bmif_set_value,
-    !> @ref RM_GetTime,
-    !> @ref RM_GetTimeStep,
-    !> @ref RM_SetTime,
-    !> @ref RM_SetTimeStep,
-    !> @ref bmif_set_value.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> character(20) time_units
-    !> status = bmif_get_time_units(id, time_units) << ".\n";
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-
-    INTEGER FUNCTION bmif_get_time_units(id, time_units)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetTimeUnits(id, time_units, l) &
-        BIND(C, NAME='RMF_BMI_GetTimeUnits')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id, l
-    CHARACTER(KIND=C_CHAR), INTENT(inout) :: time_units(*)
-    END FUNCTION RMF_BMI_GetTimeUnits
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(inout) :: time_units
-    bmif_get_time_units = RMF_BMI_GetTimeUnits(id, time_units, len(time_units))
-    return
-    END FUNCTION bmif_get_time_units
 
 
     !> Basic Model Interface method that retrieves model variables. Only variables in the list
