@@ -71,7 +71,7 @@
 !> @param config_file         String containing the YAML file name.
 !> @retval Number of grid cells specified in the YAML file; returns
 !> zero if GridCellCount is not defined.
-!> @see @ref RM_BMI_Initialize, @ref RM_Create, and @ref RM_InitializeYAML.
+!> @see @ref bmif_initialize, @ref RM_Create, and @ref RM_InitializeYAML.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -80,7 +80,7 @@
 !>  integer nxyz
 !> 	nxyz = GetGridCellCountYAML("myfile.yaml");
 !> 	status = RM_Create(nxyz, nthreads);
-!> 	status = RM_BMI_initialize("myfile.yaml");
+!> 	status = bmif_initialize("myfile.yaml");
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -770,8 +770,8 @@
     !> to receive the component names. Character length and dimension will be allocated as needed.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_BMI_GetValue,
-    !> @ref RM_BMI_SetValue
+    !> @ref bmif_get_value,
+    !> @ref bmif_set_value
     !> @ref RM_GetComponent,
     !> @ref RM_FindComponents.
     !> @par Fortran Example:
@@ -791,7 +791,7 @@
     !IMPLICIT NONE
     !INTEGER, INTENT(in) :: id
     !CHARACTER(len=:), allocatable, INTENT(out) :: components(:)
-    !RM_GetComponents = RM_BMI_GetValue(id, "Components", components)
+    !RM_GetComponents = bmif_get_value(id, "Components", components)
     !END FUNCTION RM_GetComponents
     
     INTEGER FUNCTION RM_GetComponents(id, dest)
@@ -2549,8 +2549,8 @@
     !> to receive the headings. Character length and dimension will be allocated as needed.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_BMI_GetValue,
-    !> @ref RM_BMI_SetValue,
+    !> @ref bmif_get_value,
+    !> @ref bmif_set_value,
     !> @ref RM_GetCurrentSelectedOutputUserNumber,
     !> @ref RM_GetNthSelectedOutputUserNumber,
     !> @ref RM_GetSelectedOutput,
@@ -3706,8 +3706,8 @@
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !>
     !> @see
-    !> @ref RM_BMI_GetValue,
-    !> @ref RM_BMI_SetValue,
+    !> @ref bmif_get_value,
+    !> @ref bmif_set_value,
     !> @ref RM_SetTemperature.
     !> @par Fortran Example:
     !> @htmlonly
@@ -3727,7 +3727,7 @@
     !INTEGER, INTENT(in) :: id
     !real(kind=8), INTENT(out), DIMENSION(:) :: temperature
     !real(kind=8), ALLOCATABLE, DIMENSION(:) :: a_temperature
-    !RM_GetTemperature = RM_BMI_GetValue(id, "Temperature", a_temperature)
+    !RM_GetTemperature = bmif_get_value(id, "Temperature", a_temperature)
     !temperature = a_temperature
     !END FUNCTION RM_GetTemperature
     

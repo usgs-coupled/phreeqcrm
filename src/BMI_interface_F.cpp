@@ -27,7 +27,7 @@ rmpadfstring(char* dest, const char* src, unsigned int len)
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 int
-BMIF_Create(int* nxyz, int* nthreads)
+RM_BMI_Create(int* nxyz, int* nthreads)
 /* ---------------------------------------------------------------------- */
 {
 	//
@@ -38,7 +38,7 @@ BMIF_Create(int* nxyz, int* nthreads)
 #else
 /* ---------------------------------------------------------------------- */
 int
-BMIF_Create(int* nxyz, int* nthreads)
+RM_BMI_Create(int* nxyz, int* nthreads)
 /* ---------------------------------------------------------------------- */
 {
 	//
@@ -303,6 +303,20 @@ RMF_BMI_Update(int* id)
 	if (bmirm_ptr)
 	{
 		bmirm_ptr->Update();
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_BMI_UpdateUntil(int* id, double* time)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns units of variable var
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(*id);
+	if (bmirm_ptr)
+	{
+		bmirm_ptr->UpdateUntil(*time);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
