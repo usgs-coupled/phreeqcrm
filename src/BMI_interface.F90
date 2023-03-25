@@ -102,12 +102,6 @@
     END INTERFACE bmif_set_value
     
     CONTAINS
-    INTEGER FUNCTION SUCCESS(i)
-    implicit none
-    integer, intent(in) :: i
-    success = BMI_FAILURE
-    if (i .ge.0) success = BMI_SUCCESS
-    END FUNCTION SUCCESS
 	
 	! ====================================================
 	! Initialize, run, finalize (IRF) 
@@ -1035,77 +1029,6 @@
 	! ====================================================
 	! Getters, by type
 	! ====================================================
-	
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-
-    
-    INTEGER FUNCTION bmif_grid_rank(id, grid, rank)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id, grid
-	INTEGER, INTENT(inout) :: rank
-	if (grid .eq. 1) then
-		rank = 1
-		bmif_grid_rank = BMI_SUCCESS
-	else
-		rank = 0
-		bmif_grid_rank = BMI_FAILURE
-	endif
-    END FUNCTION bmif_grid_rank
-
-    INTEGER FUNCTION bmif_grid_size(id, grid, ngrid)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id, grid
-	INTEGER, INTENT(inout) :: ngrid
-	if (grid .eq. 1) then
-		bmif_grid_size = success(bmif_get_value(id, "GridCellCount", ngrid))
-	else
-		ngrid = 0
-		bmif_grid_size = BMI_FAILURE
-	endif
-    END FUNCTION bmif_grid_size
-    
-    INTEGER FUNCTION bmif_grid_type(id, grid, str)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id, grid
-    CHARACTER(len=*), INTENT(inout) :: str
-    INTEGER :: l
-    l = len(str)
-	if (grid .eq. 1) then
-		if (l .ge. 6) then
-			str = "points"
-		else
-			str = "points"(1:l)
-		endif
-		bmif_grid_type = BMI_SUCCESS
-	else
-		str = ""
-		bmif_grid_type = BMI_FAILURE
-	endif
-    END FUNCTION bmif_grid_type
-
-    
-
-
-
-
 
     !> Basic Model Interface method that retrieves model variables. Only variables in the list
     !> provided by @ref bmif_get_output_var_names can be retrieved. The BMI interface to PhreeqcRM is
@@ -1169,16 +1092,16 @@
     INTEGER FUNCTION bmif_get_value_logical(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    LOGICAL(KIND=C_INT), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+			BIND(C, NAME='RMF_BMI_GetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		LOGICAL(KIND=C_INT), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL(KIND=4), INTENT(inout) :: dest
@@ -1228,17 +1151,16 @@
     INTEGER FUNCTION bmif_get_value_char1(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+			BIND(C, NAME='RMF_BMI_GetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
@@ -1272,16 +1194,16 @@
     INTEGER FUNCTION bmif_get_value_double(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+			BIND(C, NAME='RMF_BMI_GetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT(inout) :: dest
@@ -1302,17 +1224,16 @@
     INTEGER FUNCTION bmif_get_value_double1(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+			BIND(C, NAME='RMF_BMI_GetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), allocatable, dimension(:), INTENT(inout) :: dest
@@ -1343,19 +1264,16 @@
     INTEGER FUNCTION bmif_get_value_double2(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-
-    END INTERFACE
-
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+			BIND(C, NAME='RMF_BMI_GetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), allocatable, INTENT(inout) :: dest(:,:)
@@ -1398,16 +1316,16 @@
     INTEGER FUNCTION bmif_get_value_int(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+			BIND(C, NAME='RMF_BMI_GetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		INTEGER(KIND=C_INT), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: dest
@@ -1429,16 +1347,15 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+			BIND(C, NAME='RMF_BMI_GetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		INTEGER(KIND=C_INT), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, allocatable, INTENT(inout) :: dest(:)
@@ -1469,17 +1386,16 @@
     INTEGER FUNCTION bmif_get_value_int2(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+			BIND(C, NAME='RMF_BMI_GetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		INTEGER(KIND=C_INT), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, allocatable, INTENT(inout) :: dest(:,:)
@@ -1499,10 +1415,9 @@
     return
     END FUNCTION bmif_get_value_int2
 
-
-
-	
-	
+	! ====================================================
+	! Setters, by type
+	! ====================================================
 
     !> Basic Model Interface method that sets model variables. Only variables in the list
     !> provided by @ref bmif_get_input_var_names can be set. The BMI interface to PhreeqcRM is
@@ -1553,16 +1468,16 @@
     INTEGER FUNCTION bmif_set_value_b(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    LOGICAL(KIND=C_INT), INTENT(in) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
+			BIND(C, NAME='RMF_BMI_SetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		LOGICAL(KIND=C_INT), INTENT(in) :: src
+		END FUNCTION RMF_BMI_SetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL(kind=4), INTENT(in) :: src
@@ -1580,16 +1495,16 @@
     INTEGER FUNCTION bmif_set_value_c(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
+			BIND(C, NAME='RMF_BMI_SetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: src
+		END FUNCTION RMF_BMI_SetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=*), INTENT(in) :: src
@@ -1607,16 +1522,16 @@
     INTEGER FUNCTION bmif_set_value_int(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
+			BIND(C, NAME='RMF_BMI_SetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		INTEGER(KIND=C_INT), INTENT(inout) :: src
+		END FUNCTION RMF_BMI_SetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: src
@@ -1636,17 +1551,16 @@
     INTEGER FUNCTION bmif_set_value_int1(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
-
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
+			BIND(C, NAME='RMF_BMI_SetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		INTEGER(KIND=C_INT), INTENT(inout) :: src
+		END FUNCTION RMF_BMI_SetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: src(:)
@@ -1670,16 +1584,16 @@
     INTEGER FUNCTION bmif_set_value_int2(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
+			BIND(C, NAME='RMF_BMI_SetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		INTEGER(KIND=C_INT), INTENT(inout) :: src
+		END FUNCTION RMF_BMI_SetValue
+		END INTERFACE
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: src(:,:)
@@ -1703,16 +1617,16 @@
     INTEGER FUNCTION bmif_set_value_double(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
+			BIND(C, NAME='RMF_BMI_SetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		REAL(KIND=C_DOUBLE), INTENT(inout) :: src
+		END FUNCTION RMF_BMI_SetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT(inout) :: src
@@ -1730,17 +1644,16 @@
     INTEGER FUNCTION bmif_set_value_double1(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
-
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
+			BIND(C, NAME='RMF_BMI_SetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		REAL(KIND=C_DOUBLE), INTENT(inout) :: src
+		END FUNCTION RMF_BMI_SetValue
+		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT(inout) :: src(:)
@@ -1764,17 +1677,16 @@
     INTEGER FUNCTION bmif_set_value_double2(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
-
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
+			BIND(C, NAME='RMF_BMI_SetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		REAL(KIND=C_DOUBLE), INTENT(inout) :: src
+		END FUNCTION RMF_BMI_SetValue
+		END INTERFACE
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT(inout) :: src(:,:)
@@ -1793,8 +1705,56 @@
     bmif_set_value_double2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1,1))
     return
     END FUNCTION bmif_set_value_double2
+	
+	! ====================================================
+	! Grid information
+	! ====================================================
+	
+	INTEGER FUNCTION bmif_grid_rank(id, grid, rank)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id, grid
+	INTEGER, INTENT(inout) :: rank
+	if (grid .eq. 1) then
+		rank = 1
+		bmif_grid_rank = BMI_SUCCESS
+	else
+		rank = 0
+		bmif_grid_rank = BMI_FAILURE
+	endif
+    END FUNCTION bmif_grid_rank
 
+    INTEGER FUNCTION bmif_grid_size(id, grid, ngrid)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id, grid
+	INTEGER, INTENT(inout) :: ngrid
+	if (grid .eq. 1) then
+		bmif_grid_size = success(bmif_get_value(id, "GridCellCount", ngrid))
+	else
+		ngrid = 0
+		bmif_grid_size = BMI_FAILURE
+	endif
+    END FUNCTION bmif_grid_size
     
+    INTEGER FUNCTION bmif_grid_type(id, grid, str)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id, grid
+    CHARACTER(len=*), INTENT(inout) :: str
+	if (grid .eq. 1) then
+		str = "points"
+		bmif_grid_type = BMI_SUCCESS
+	else
+		str = ""
+		bmif_grid_type = BMI_FAILURE
+	endif
+    END FUNCTION bmif_grid_type
+	
+	! ====================================================
+	! Utility functions	
+	! ====================================================
+		
     FUNCTION Lower(s1)  RESULT (s2)
     CHARACTER(*)       :: s1
     CHARACTER(LEN(s1)) :: s2
@@ -1808,5 +1768,12 @@
         s2(i:i) = ch
     END DO
     END FUNCTION Lower
+	
+	INTEGER FUNCTION SUCCESS(i)
+    implicit none
+    integer, intent(in) :: i
+    success = BMI_FAILURE
+    if (i .ge. 0) success = BMI_SUCCESS
+    END FUNCTION SUCCESS
     
     END MODULE BMIPhreeqcRM
