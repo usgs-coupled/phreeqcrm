@@ -157,7 +157,9 @@ PhreeqcRM(nxyz, nthreads)
 // Model control functions.
 void BMIPhreeqcRM::Initialize(std::string config_file)
 {
+#ifdef USE_YAML
 	this->InitializeYAML(config_file);
+#endif
 }
 void BMIPhreeqcRM::Update()
 {
@@ -672,6 +674,10 @@ void Components_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void ComponentCount_var(BMIPhreeqcRM* brm_ptr)
@@ -689,6 +695,10 @@ void ComponentCount_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }
@@ -709,6 +719,10 @@ void Concentrations_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		 brm_ptr->SetConcentrations(brm_ptr->bmi_variant.DoubleVector);
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void Density_var(BMIPhreeqcRM* brm_ptr)
@@ -726,6 +740,10 @@ void Density_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->SetDensity(brm_ptr->bmi_variant.DoubleVector);
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }
@@ -745,6 +763,10 @@ void ErrorString_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void FilePrefix_var(BMIPhreeqcRM* brm_ptr)
@@ -762,6 +784,10 @@ void FilePrefix_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->SetFilePrefix(brm_ptr->bmi_variant.string_var);
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }
@@ -781,6 +807,10 @@ void Gfw_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void GridCellCount_var(BMIPhreeqcRM* brm_ptr)
@@ -798,6 +828,10 @@ void GridCellCount_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }
@@ -826,6 +860,10 @@ void InputVarNames_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void NthSelectedOutput_var(BMIPhreeqcRM* brm_ptr)
@@ -843,6 +881,10 @@ void NthSelectedOutput_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->SetNthSelectedOutput(brm_ptr->bmi_variant.i_var);
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }
@@ -871,6 +913,10 @@ void OutputVarNames_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void Saturation_var(BMIPhreeqcRM* brm_ptr)
@@ -888,6 +934,10 @@ void Saturation_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->SetSaturation(brm_ptr->bmi_variant.DoubleVector);
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }
@@ -908,6 +958,10 @@ void SelectedOutput_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void SelectedOutputColumnCount_var(BMIPhreeqcRM* brm_ptr)
@@ -926,6 +980,10 @@ void SelectedOutputColumnCount_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void SelectedOutputCount_var(BMIPhreeqcRM* brm_ptr)
@@ -943,6 +1001,10 @@ void SelectedOutputCount_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }
@@ -969,6 +1031,10 @@ void SelectedOutputHeadings_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void SelectedOutputRowCount_var(BMIPhreeqcRM* brm_ptr)
@@ -986,6 +1052,10 @@ void SelectedOutputRowCount_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }
@@ -1005,6 +1075,10 @@ void SolutionVolume_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void Time_var(BMIPhreeqcRM* brm_ptr)
@@ -1022,6 +1096,10 @@ void Time_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->SetTime(brm_ptr->bmi_variant.d_var);
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }
@@ -1041,6 +1119,10 @@ void TimeStep_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->SetTimeStep(brm_ptr->bmi_variant.d_var);
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void CurrentSelectedOutputUserNumber_var(BMIPhreeqcRM* brm_ptr)
@@ -1058,6 +1140,10 @@ void CurrentSelectedOutputUserNumber_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }
@@ -1077,6 +1163,10 @@ void Porosity_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->SetPorosity(brm_ptr->bmi_variant.DoubleVector);
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void Pressure_var(BMIPhreeqcRM* brm_ptr)
@@ -1094,6 +1184,10 @@ void Pressure_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->SetPressure(brm_ptr->bmi_variant.DoubleVector);
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }
@@ -1113,6 +1207,10 @@ void SelectedOutputOn_var(BMIPhreeqcRM* brm_ptr)
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->SetSelectedOutputOn(brm_ptr->bmi_variant.b_var);
 		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
+		break;
 	}
 }
 void Temperature_var(BMIPhreeqcRM* brm_ptr)
@@ -1130,6 +1228,10 @@ void Temperature_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
 		brm_ptr->SetTemperature(brm_ptr->bmi_variant.DoubleVector);
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::Info:
+		break;
+	case BMIPhreeqcRM::BMI_TASKS::no_op:
 		break;
 	}
 }

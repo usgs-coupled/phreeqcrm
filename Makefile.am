@@ -173,7 +173,8 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqcPhast.h\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.cpp\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.h\
-	src/BMI_methods.cpp\
+  	src/BMIPhreeqcRM.cpp\
+  	src/BMIPhreeqcRM.h\
 	src/BMI_Var.h\
 	src/PhreeqcRM.cpp\
 	src/RM_BMI_interface_F.cpp\
@@ -183,7 +184,8 @@ libphreeqcrm_la_SOURCES=\
 	src/YAML_interface_F.cpp\
 	src/YAML_interface_F.h\
 	src/YAMLPhreeqcRM.cpp\
-	src/YAMLPhreeqcRM.h
+	src/YAMLPhreeqcRM.h\
+	src/bmi.hxx
 
 
 include_HEADERS=\

@@ -61,11 +61,10 @@ AX_PROG_CXX_MPI([test x"$with_mpi" != xno],[use_mpi=yes],[
 ])
 AC_PROG_AWK
 AC_PROG_CPP
+AC_PROG_LN_S
 
-# c++11 is required by Darwin for yaml-cpp
-if test x"$with_yaml_cpp" != xno; then
-  AX_CXX_COMPILE_STDCXX(11, [ext], [mandatory])
-fi
+# c++11 is required
+AX_CXX_COMPILE_STDCXX(11, [ext], [mandatory])
 
 # Check if the fortran test should be included
 AC_MSG_CHECKING([if Fortran test is added])

@@ -52,6 +52,8 @@ CLEANFILES =\
 	AdvectBMI_f90.dmp\
 	AdvectBMI_f90.log.txt\
 	AdvectBMI_f90.yaml\
+	Advectcpp_utility.txt\
+	Advectcpp.dmp\
 	Gas_c_utility.txt\
 	Gas_c.chem.txt\
 	Gas_c.dmp\
@@ -126,15 +128,15 @@ Advect_f90.$(OBJEXT) : Advect_f90.F90 RM_interface.$(OBJEXT) IPhreeqc_interface.
 
 # iphreeqc.mod
 IPhreeqc_interface.F90 : $(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
-	@LN_S@ $<
+	$(LN_S) $< $@
 
 # phreeqcrm.mod
 RM_interface.F90 : $(top_srcdir)/src/RM_interface.F90
-	@LN_S@ $<
+	$(LN_S) $< $@
 
 # yaml_interface.mod
 YAML_interface.F90 : $(top_srcdir)/src/YAML_interface.F90
-	@LN_S@ $<
+	$(LN_S) $< $@
 
 endif
 
