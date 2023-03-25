@@ -207,13 +207,14 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqcPhastLib.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IrmResult.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PhreeqcRM.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PhreeqcRM.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_C.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_C.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_BMI_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_F.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/YAMLPhreeqcRM.cpp
@@ -310,6 +311,8 @@ set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/Var.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqcPhast.h
+  ${PROJECT_SOURCE_DIR}/src/BMI_Var.h
+  ${PROJECT_SOURCE_DIR}/src/BMI_interface_F.h
   ${PROJECT_SOURCE_DIR}/src/IrmResult.h
   ${PROJECT_SOURCE_DIR}/src/PhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/RM_interface_C.h
@@ -318,6 +321,7 @@ set(PhreeqcRM_Headers
 )
 
 set(PhreeqcRM_SRC
+  ${PROJECT_SOURCE_DIR}/src/BMI_interface.F90
   ${PROJECT_SOURCE_DIR}/src/RM_interface.F90
   ${PROJECT_SOURCE_DIR}/src/YAML_interface.F90
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90

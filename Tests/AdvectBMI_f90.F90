@@ -6,10 +6,10 @@
 
     subroutine AdvectBMI_f90()  BIND(C, NAME='AdvectBMI_f90')
     USE, intrinsic :: ISO_C_BINDING
+    USE BMIPhreeqcRM
     USE PhreeqcRM
     USE IPhreeqc
     USE mydata
-    !USE BMI_PhreeqcRM
     implicit none
 #ifdef USE_MPI    
     INCLUDE 'mpif.h'
@@ -35,6 +35,7 @@
             implicit none
             integer, intent(in) :: id
         end subroutine BMI_testing
+
     end interface
 
     ! Based on PHREEQC Example 11

@@ -1,4 +1,4 @@
-#if !defined(BIMPHREEQCRM_H_INCLUDED)
+#if !defined(BMIPHREEQCRM_H_INCLUDED)
 #define BMIPHREEQCRM_H_INCLUDED
 #include <map>
 #include "PhreeqcRM.h"
