@@ -8,7 +8,7 @@
     !> You will need to link to the library to produce the executable for your code.
     !>
     MODULE BMIPhreeqcRM
-    !USE PhreeqcRM
+    USE PhreeqcRM
     IMPLICIT NONE
     PRIVATE :: Lower
     !> INTERFACE-----Basic Model Interface method that retrieves model variables. Only variables in the list
@@ -786,33 +786,33 @@
     REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
     END FUNCTION RMF_BMI_GetValue
 
-    INTEGER(KIND=C_INT) FUNCTION RM_GetGridCellCount(id) &
-        BIND(C, NAME='RM_GetGridCellCount')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RM_GetGridCellCount
-
-    INTEGER(KIND=C_INT) FUNCTION RM_GetSelectedOutputRowCount(id) &
-        BIND(C, NAME='RM_GetSelectedOutputRowCount')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-        END FUNCTION RM_GetSelectedOutputRowCount
+    !INTEGER(KIND=C_INT) FUNCTION RM_GetGridCellCount(id) &
+    !    BIND(C, NAME='RM_GetGridCellCount')
+    !USE ISO_C_BINDING
+    !IMPLICIT NONE
+    !INTEGER(KIND=C_INT), INTENT(in) :: id
+    !END FUNCTION RM_GetGridCellCount
+    !
+    !INTEGER(KIND=C_INT) FUNCTION RM_GetSelectedOutputRowCount(id) &
+    !    BIND(C, NAME='RM_GetSelectedOutputRowCount')
+    !USE ISO_C_BINDING
+    !IMPLICIT NONE
+    !INTEGER(KIND=C_INT), INTENT(in) :: id
+    !    END FUNCTION RM_GetSelectedOutputRowCount
         
-    INTEGER(KIND=C_INT) FUNCTION RM_GetSelectedOutputColumnCount(id) &
-        BIND(C, NAME='RM_GetSelectedOutputColumnCount')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RM_GetSelectedOutputColumnCount
-
-    INTEGER(KIND=C_INT) FUNCTION RM_GetComponentCount(id) &
-        BIND(C, NAME='RM_GetComponentCount')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RM_GetComponentCount
+    !INTEGER(KIND=C_INT) FUNCTION RM_GetSelectedOutputColumnCount(id) &
+    !    BIND(C, NAME='RM_GetSelectedOutputColumnCount')
+    !USE ISO_C_BINDING
+    !IMPLICIT NONE
+    !INTEGER(KIND=C_INT), INTENT(in) :: id
+    !END FUNCTION RM_GetSelectedOutputColumnCount
+    !
+    !INTEGER(KIND=C_INT) FUNCTION RM_GetComponentCount(id) &
+    !    BIND(C, NAME='RM_GetComponentCount')
+    !USE ISO_C_BINDING
+    !IMPLICIT NONE
+    !INTEGER(KIND=C_INT), INTENT(in) :: id
+    !END FUNCTION RM_GetComponentCount
 
     END INTERFACE
 
@@ -1652,4 +1652,5 @@
         s2(i:i) = ch
     END DO
     END FUNCTION Lower
+    
     END MODULE BMIPhreeqcRM
