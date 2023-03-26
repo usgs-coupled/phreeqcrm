@@ -31,6 +31,8 @@ swig_add_library(
   SOURCES ${phreeqcrm_INTERFACE_FULLPATH} ${PhreeqcRM_SOURCES}
 )
 
+target_compile_features(${PYTHON_TARGET_NAME} PUBLIC cxx_std_11)
+
 target_link_libraries(${PYTHON_TARGET_NAME}
   PRIVATE
     Python::Python
@@ -60,14 +62,14 @@ if(NOT CMAKE_DEBUG_POSTFIX)
 endif()
 
 if(IS_MULTI_CONFIG)
-  add_test(NAME SimpleAdvect
+  add_test(NAME SimpleAdvect.py
     COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
     CONFIGURATIONS Release RelWithDebInfo MinSizeRel
   )
-  set_tests_properties(SimpleAdvect PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+  set_tests_properties(SimpleAdvect.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
 else()
   if("${CMAKE_BUILD_TYPE}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
-    add_test(NAME SimpleAdvect
+    add_test(NAME SimpleAdvect.py
       COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
     )
   endif()
@@ -77,21 +79,27 @@ if(WIN32)
   string(REPLACE python.exe python_d.exe Python_d_EXECUTABLE ${Python_EXECUTABLE})
 
   if(IS_MULTI_CONFIG)
-    add_test(NAME SimpleAdvect_d
+    add_test(NAME SimpleAdvect_d.py
       COMMAND ${Python_d_EXECUTABLE} SimpleAdvect.py
       CONFIGURATIONS Debug
     )
-    set_tests_properties(SimpleAdvect_d PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+    set_tests_properties(SimpleAdvect_d.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
   else()
     if("${CMAKE_BUILD_TYPE}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-      add_test(NAME SimpleAdvect_d
+      add_test(NAME SimpleAdvect_d.py
         COMMAND ${Python_d_EXECUTABLE} SimpleAdvect.py
       )
     endif()
   endif()
   if(NOT EXISTS ${Python_d_EXECUTABLE})
-    set_tests_properties(SimpleAdvect_d PROPERTIES DISABLED TRUE)
     message(STATUS "Debug python interpreter not found")
+    if(IS_MULTI_CONFIG)
+      set_tests_properties(SimpleAdvect_d.py PROPERTIES DISABLED TRUE)
+    else()
+      if("${CMAKE_BUILD_TYPE}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+        set_tests_properties(SimpleAdvect_d.py PROPERTIES DISABLED TRUE)
+      endif()
+    endif()
   endif()
 endif()
 
