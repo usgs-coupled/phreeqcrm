@@ -643,13 +643,13 @@ void PhreeqcRM::BMI_GetValue(std::string name, void* dest)
         }
         if (it->first == "selectedoutputon")
         {
-            int flag = (int)this->GetSelectedOutputOn();
-            memcpy(dest, &flag, sizeof(int));
+            int tf = (int)this->GetSelectedOutputOn();
+            memcpy(dest, &tf, sizeof(int));
             return;
         }
         if (it->first == "selectedoutputon")
         {
-            bool tf = this->GetSelectedOutputOn();
+            int tf = (int)this->GetSelectedOutputOn();
             memcpy(dest, &tf, sizeof(bool));
             return;
         }

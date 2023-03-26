@@ -50,6 +50,8 @@ option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" OFF)
 if (PHREEQCRM_BUILD_PYTHON)
   find_package(SWIG REQUIRED)
   # find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
+  # Use Python_ROOT_DIR specify non default python
+  # ie -DPython_ROOT_DIR=C:/Python38-x64
   find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development)
 endif()
 
@@ -255,14 +257,15 @@ if(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
   target_compile_definitions(PhreeqcRM PRIVATE _SCL_SECURE_NO_WARNINGS)
 endif()
 
-# yaml-cpp
-if(yaml-cpp_FOUND)
-  target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
-  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
-endif()
-
 # init exportPackageDependencies
 set(exportPackageDependencies "")
+
+# yaml-cpp
+if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
+  target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
+  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+  string(APPEND exportPackageDependencies "find_dependency(yaml-cpp)\n")
+endif()
 
 # check for zlib
 if(NOT ZLIB_ROOT)
@@ -311,6 +314,7 @@ set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/Var.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqcPhast.h
+  ${PROJECT_SOURCE_DIR}/src/BMIPhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/BMI_Var.h
   ${PROJECT_SOURCE_DIR}/src/BMI_interface_F.h
   ${PROJECT_SOURCE_DIR}/src/IrmResult.h
@@ -446,7 +450,7 @@ if(STANDALONE_BUILD EQUAL 1)
 
   if (PHREEQCRM_BUILD_PYTHON)
     add_subdirectory(src)
-endif()
+  endif()
 endif()
 
 # Turn off Incremental Linking for Debug and RelWithDebInfo
