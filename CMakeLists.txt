@@ -263,6 +263,8 @@ set(exportPackageDependencies "")
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
   target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
   target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+  set(phreeqcrm_requires "yaml-cpp")
+  set(useyaml_define "-DUSE_YAML")
   string(APPEND exportPackageDependencies "find_dependency(yaml-cpp)\n")
 endif()
 
@@ -335,6 +337,7 @@ if(PHREEQCRM_BUILD_MPI)
     ##include_directories(${MPI_Fortran_INCLUDE_PATH})
     target_link_libraries(PhreeqcRM PUBLIC MPI::MPI_Fortran)
   endif()
+  set(usempi_define "-DUSE_MPI")
   string(APPEND exportPackageDependencies "find_dependency(MPI)\n")
 else()
   if(NOT PHREEQCRM_DISABLE_OPENMP)
@@ -348,6 +351,9 @@ else()
     endif()
   endif()
 endif()
+
+# pkg-config
+configure_file(phreeqcrm.cmake.in phreeqcrm.pc @ONLY)
 
 # install
 if(STANDALONE_BUILD EQUAL 1)
@@ -388,6 +394,10 @@ if(STANDALONE_BUILD EQUAL 1)
 
   install(FILES ${PhreeqcRM_SRC}
     DESTINATION src
+  )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/phreeqcrm.pc
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
   )
 else()
   # option(PHREEQCRM_INSTALL_TARGETS "" OFF)
