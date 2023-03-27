@@ -17,6 +17,9 @@ AM_CPPFLAGS=-I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcdir)/src/IPhreeqcPhast/
 
 AM_LDFLAGS=-release 3.0.0
 
+pkgconfigdir = $(datadir)/pkgconfig
+pkgconfig_DATA = phreeqcrm.pc
+
 # libtool libraries to build
 lib_LTLIBRARIES=libphreeqcrm.la
 
