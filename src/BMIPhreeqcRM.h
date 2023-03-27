@@ -7,6 +7,10 @@
 class BMI_Variant
 {
 public:
+    BMI_Variant()
+    {
+        this->Clear();
+    }
     BMI_Var                  bmi_var;
     bool                     b_var;
     int                      i_var;
@@ -16,6 +20,11 @@ public:
     std::vector<double>      DoubleVector;
     std::vector<std::string> StringVector;
     bool                     NotImplemented;
+    double* double_ptr;
+    int* int_ptr;
+    bool* bool_ptr;
+    char* char_ptr;
+    std::vector<const char*> CharVector;
     bool GetGet() { return this->bmi_var.GetGet(); }
     void SetGet(bool tf) { this->bmi_var.SetGet(tf); }
     std::string GetName() { return this->bmi_var.GetName(); }
@@ -38,6 +47,16 @@ public:
     {
         this->bmi_var.SetTypes(c, f, p);
     }
+    bool* GetBoolPtr() { return bool_ptr; }
+    char* GetCharPtr() { return char_ptr; }
+    double* GetDoublePtr() { return double_ptr; }
+    int* GetIntPtr() { return int_ptr; }
+    void SetBoolPtr(bool* ptr) { bool_ptr = ptr; }
+    void SetCharPtr(char* ptr) { char_ptr = ptr; }
+    void SetDoublePtr(double* ptr) { double_ptr = ptr; }
+    void SetIntPtr(int* ptr) { int_ptr = ptr; }
+    std::vector<const char*>& GetCharVector() { return CharVector; }
+    void SetCharVector(std::vector<const char*> cvec) { CharVector = cvec; }
 
     void Clear();
 };
@@ -51,6 +70,9 @@ public:
 
     BMIPhreeqcRM(int nxyz, int nthreads);
     enum class BMI_TASKS {
+        Init,
+        Update,
+        GetPtr,
         Info,
         GetVar,
         SetVar,
@@ -143,10 +165,13 @@ public:
     typedef std::map<std::string, VarFunction> VarFunction_map;
     VarFunction_map varfn_map;
     VarFunction GetFn(const std::string name);
+    std::set<std::string> UpdateMap;
+    std::set<std::string> GetUpdateMap() { return UpdateMap; }
 
 private:
     //friend class RM_interface;
     static std::map<size_t, BMIPhreeqcRM*> Instances;
     static size_t InstancesIndex;
+    void UpdateVariables();
 };
 #endif //BMIPHREEQCRM_H_INCLUDED

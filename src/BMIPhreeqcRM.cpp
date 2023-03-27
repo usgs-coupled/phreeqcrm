@@ -120,6 +120,10 @@ void BMI_Variant::Clear()
 	DoubleVector.clear();
 	StringVector.clear();
 	NotImplemented = false;
+	double* double_ptr = NULL;
+	int* int_ptr = NULL;
+	bool* bool_ptr = NULL;
+	char* char_ptr = NULL;
 }
 // Constructor
 BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads) :
@@ -166,6 +170,19 @@ void BMIPhreeqcRM::Update()
 {
 	this->RunCells();
 	this->SetTime(this->GetTime() + this->GetTimeStep());
+	this->UpdateVariables();
+}
+void BMIPhreeqcRM::UpdateVariables()
+{
+	this->task = BMIPhreeqcRM::BMI_TASKS::Update;
+	for (auto it = UpdateMap.begin(); it != UpdateMap.end(); it++)
+	{
+		auto m_it = varfn_map.find(it->c_str());
+		if (m_it != varfn_map.end())
+		{
+			m_it->second(this);
+		}
+	}
 }
 void BMIPhreeqcRM::UpdateUntil(double time)
 {
@@ -175,6 +192,7 @@ void BMIPhreeqcRM::UpdateUntil(double time)
 		this->SetTimeStep(time_step);
 		this->RunCells();
 		this->SetTime(time);
+		this->UpdateVariables();
 	}
 }
 void BMIPhreeqcRM::Finalize()
@@ -650,11 +668,26 @@ BMIPhreeqcRM::VarFunction BMIPhreeqcRM::GetFn(const std::string name)
 			return NULL;
 		}
 	}
+	if (task == BMIPhreeqcRM::BMI_TASKS::GetPtr)
+	{
+		if (this->bmi_variant.NotImplemented)
+		{
+			std::ostringstream oss;
+			oss << "Cannot get a pointer to variable: " << name;
+			this->ErrorMessage(oss.str());
+			return NULL;
+		}
+	}
 	return it->second;
 }
+//// Start_var
 ////////////////////////////////
 void Components_var(BMIPhreeqcRM* brm_ptr)
 {
+	static bool initialized = false;
+	static std::vector<std::string> Components;
+	static std::vector<const char*> CharVector;
+	//
 	std::vector<std::string> comps = brm_ptr->GetComponents();
 	size_t size = 0;
 	for (size_t i = 0; i < comps.size(); i++)
@@ -669,6 +702,20 @@ void Components_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		if (!initialized)
+		{
+			Components = brm_ptr->GetComponents();
+			initialized = true;
+			for (size_t i = 0; i < Components.size(); i++)
+			{
+				CharVector.push_back(Components[i].c_str());
+			}
+		}
+		brm_ptr->bmi_variant.SetCharVector(CharVector);
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.StringVector = brm_ptr->GetComponents();
 		break;
@@ -683,6 +730,8 @@ void Components_var(BMIPhreeqcRM* brm_ptr)
 }
 void ComponentCount_var(BMIPhreeqcRM* brm_ptr)
 {
+	static int ComponentCount;
+	//
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
@@ -691,6 +740,12 @@ void ComponentCount_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		ComponentCount = brm_ptr->GetComponentCount();
+		brm_ptr->bmi_variant.SetIntPtr(&ComponentCount);
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.i_var = brm_ptr->GetComponentCount();
 		break;
@@ -705,6 +760,17 @@ void ComponentCount_var(BMIPhreeqcRM* brm_ptr)
 }
 void Concentrations_var(BMIPhreeqcRM* brm_ptr)
 {
+	static bool initialized = false;
+	static std::vector<double> Concentrations;
+	//
+	if (brm_ptr->task == BMIPhreeqcRM::BMI_TASKS::Update)
+	{
+		brm_ptr->GetConcentrations(brm_ptr->bmi_variant.DoubleVector);
+		memcpy(Concentrations.data(), 
+			brm_ptr->bmi_variant.DoubleVector.data(), 
+			min(Concentrations.size(), brm_ptr->bmi_variant.DoubleVector.size()));
+		return;
+	}
 	int Itemsize = (int)sizeof(double);
 	int Nbytes = (int)sizeof(double) *
 		brm_ptr->GetGridCellCount() * brm_ptr->GetComponentCount();
@@ -714,11 +780,28 @@ void Concentrations_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		if (!initialized)
+		{
+			brm_ptr->GetConcentrations(Concentrations);
+			initialized = true;
+			brm_ptr->GetUpdateMap().insert("Concentrations");
+		}
+		brm_ptr->bmi_variant.SetDoublePtr(Concentrations.data());
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
-		 brm_ptr->GetConcentrations(brm_ptr->bmi_variant.DoubleVector);
+		brm_ptr->GetConcentrations(brm_ptr->bmi_variant.DoubleVector);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
-		 brm_ptr->SetConcentrations(brm_ptr->bmi_variant.DoubleVector);
+		if (initialized) 
+		{
+			memcpy(Concentrations.data(),
+				brm_ptr->bmi_variant.DoubleVector.data(),
+				min(Concentrations.size(), brm_ptr->bmi_variant.DoubleVector.size()));
+		}
+		brm_ptr->SetConcentrations(brm_ptr->bmi_variant.DoubleVector);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::Info:
 		break;
@@ -728,6 +811,17 @@ void Concentrations_var(BMIPhreeqcRM* brm_ptr)
 }
 void Density_var(BMIPhreeqcRM* brm_ptr)
 {
+	static bool initialized = false;
+	static std::vector<double> Density;
+	//
+	if (brm_ptr->task == BMIPhreeqcRM::BMI_TASKS::Update)
+	{
+		brm_ptr->GetDensity(brm_ptr->bmi_variant.DoubleVector);
+		memcpy(Density.data(),
+			brm_ptr->bmi_variant.DoubleVector.data(), 
+			min(Density.size(), brm_ptr->bmi_variant.DoubleVector.size()));
+		return;
+	}
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
@@ -736,10 +830,22 @@ void Density_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		if (!initialized)
+		{
+			brm_ptr->GetDensity(Density);
+			initialized = true;
+			brm_ptr->GetUpdateMap().insert("Density");
+		}
+		brm_ptr->bmi_variant.SetDoublePtr(Density.data());
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->GetDensity(brm_ptr->bmi_variant.DoubleVector);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		// SetDensity does not affect GetDensity
 		brm_ptr->SetDensity(brm_ptr->bmi_variant.DoubleVector);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::Info:
@@ -750,6 +856,7 @@ void Density_var(BMIPhreeqcRM* brm_ptr)
 }
 void ErrorString_var(BMIPhreeqcRM* brm_ptr)
 {
+
 	int Itemsize = (int)brm_ptr->GetErrorString().size();
 	int Nbytes = Itemsize;
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
@@ -758,6 +865,9 @@ void ErrorString_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.string_var = brm_ptr->GetErrorString();
 		break;
@@ -780,6 +890,9 @@ void FilePrefix_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.string_var = brm_ptr->GetFilePrefix();
 		break;
@@ -794,6 +907,9 @@ void FilePrefix_var(BMIPhreeqcRM* brm_ptr)
 }
 void Gfw_var(BMIPhreeqcRM* brm_ptr)
 {
+	static std::vector<double> Gfw;
+	bool initialized = false;
+	//
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetComponentCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
@@ -802,6 +918,16 @@ void Gfw_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		if (!initialized)
+		{
+			Gfw = brm_ptr->GetGfw();
+			initialized = true;
+		}
+		brm_ptr->bmi_variant.SetDoublePtr(Gfw.data());
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.DoubleVector = brm_ptr->GetGfw();
 		break;
@@ -816,6 +942,8 @@ void Gfw_var(BMIPhreeqcRM* brm_ptr)
 }
 void GridCellCount_var(BMIPhreeqcRM* brm_ptr)
 {
+	static int GridCellCount;
+	//
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
@@ -824,6 +952,12 @@ void GridCellCount_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		GridCellCount = brm_ptr->GetGridCellCount();
+		brm_ptr->bmi_variant.SetIntPtr(&GridCellCount);
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.i_var = brm_ptr->GetGridCellCount();
 		break;
@@ -838,6 +972,10 @@ void GridCellCount_var(BMIPhreeqcRM* brm_ptr)
 }
 void InputVarNames_var(BMIPhreeqcRM* brm_ptr)
 {
+	static bool initialized = false;
+	static std::vector<std::string> InputVarNames;
+	static std::vector<const char*> CharVector;
+	//
 	BMIPhreeqcRM::BMI_TASKS task_save = brm_ptr->task;
 	std::vector<std::string> names = brm_ptr->GetInputVarNames();
 	brm_ptr->task = task_save;
@@ -854,6 +992,20 @@ void InputVarNames_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		if (!initialized)
+		{
+			InputVarNames = brm_ptr->GetInputVarNames();
+			initialized = true;
+			for (size_t i = 0; i < InputVarNames.size(); i++)
+			{
+				CharVector.push_back(InputVarNames[i].c_str());
+			}
+		}
+		brm_ptr->bmi_variant.SetCharVector(CharVector);
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.StringVector = brm_ptr->GetInputVarNames();
 		brm_ptr->bmi_variant.bmi_var = bv;
@@ -877,6 +1029,9 @@ void NthSelectedOutput_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.NotImplemented = true;
 		break;
@@ -891,6 +1046,10 @@ void NthSelectedOutput_var(BMIPhreeqcRM* brm_ptr)
 }
 void OutputVarNames_var(BMIPhreeqcRM* brm_ptr)
 {
+	static bool initialized = false;
+	static std::vector<std::string> OutputVarNames;
+	static std::vector<const char*> CharVector;
+	//
 	BMIPhreeqcRM::BMI_TASKS task_save = brm_ptr->task;
 	std::vector<std::string> names = brm_ptr->GetOutputVarNames();
 	brm_ptr->task = task_save;
@@ -907,6 +1066,20 @@ void OutputVarNames_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		if (!initialized)
+		{
+			OutputVarNames = brm_ptr->GetOutputVarNames();
+			initialized = true;
+			for (size_t i = 0; i < OutputVarNames.size(); i++)
+			{
+				CharVector.push_back(OutputVarNames[i].c_str());
+			}
+		}
+		brm_ptr->bmi_variant.SetCharVector(CharVector);
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.StringVector = brm_ptr->GetOutputVarNames();
 		brm_ptr->bmi_variant.bmi_var = bv;
@@ -922,6 +1095,18 @@ void OutputVarNames_var(BMIPhreeqcRM* brm_ptr)
 }
 void Saturation_var(BMIPhreeqcRM* brm_ptr)
 {
+	static bool initialized = false;
+	static std::vector<double> Saturation;
+	//
+	if (brm_ptr->task == BMIPhreeqcRM::BMI_TASKS::Update)
+	{
+		brm_ptr->GetSaturation(brm_ptr->bmi_variant.DoubleVector);
+		memcpy(Saturation.data(),
+			brm_ptr->bmi_variant.DoubleVector.data(),
+			min(Saturation.size(), brm_ptr->bmi_variant.DoubleVector.size()));
+		return;
+	}
+	//
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
@@ -930,10 +1115,22 @@ void Saturation_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		if (!initialized)
+		{
+			brm_ptr->GetSaturation(Saturation);
+			initialized = true;
+			brm_ptr->GetUpdateMap().insert("Saturation");
+		}
+		brm_ptr->bmi_variant.SetDoublePtr(Saturation.data());
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->GetSaturation(brm_ptr->bmi_variant.DoubleVector);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		// SetSaturation does not affect GetSaturation
 		brm_ptr->SetSaturation(brm_ptr->bmi_variant.DoubleVector);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::Info:
@@ -945,7 +1142,7 @@ void Saturation_var(BMIPhreeqcRM* brm_ptr)
 void SelectedOutput_var(BMIPhreeqcRM* brm_ptr)
 {
 	int Itemsize = (int)sizeof(double);
-	int Nbytes = Itemsize * brm_ptr->GetSelectedOutputRowCount() * 
+	int Nbytes = Itemsize * brm_ptr->GetSelectedOutputRowCount() *
 		brm_ptr->GetSelectedOutputColumnCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize
 	BMI_Var bv = BMI_Var("SelectedOutput", "user", false, true, Nbytes, Itemsize);
@@ -953,6 +1150,9 @@ void SelectedOutput_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->GetSelectedOutput(brm_ptr->bmi_variant.DoubleVector);
 		break;
@@ -967,6 +1167,8 @@ void SelectedOutput_var(BMIPhreeqcRM* brm_ptr)
 }
 void SelectedOutputColumnCount_var(BMIPhreeqcRM* brm_ptr)
 {
+	static int SelectedOutputColumnCount;
+	//
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
@@ -975,6 +1177,9 @@ void SelectedOutputColumnCount_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.i_var = brm_ptr->GetSelectedOutputColumnCount();
 		break;
@@ -997,6 +1202,9 @@ void SelectedOutputCount_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.i_var = brm_ptr->GetSelectedOutputCount();
 		break;
@@ -1026,6 +1234,9 @@ void SelectedOutputHeadings_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->GetSelectedOutputHeadings(brm_ptr->bmi_variant.StringVector);
 		break;
@@ -1048,6 +1259,9 @@ void SelectedOutputRowCount_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.i_var = brm_ptr->GetSelectedOutputRowCount();
 		break;
@@ -1062,6 +1276,18 @@ void SelectedOutputRowCount_var(BMIPhreeqcRM* brm_ptr)
 }
 void SolutionVolume_var(BMIPhreeqcRM* brm_ptr)
 {
+	static bool initialized = false;
+	static std::vector<double> SolutionVolume;
+	//
+	if (brm_ptr->task == BMIPhreeqcRM::BMI_TASKS::Update)
+	{
+		brm_ptr->bmi_variant.DoubleVector = brm_ptr->GetSolutionVolume();
+		memcpy(SolutionVolume.data(),
+			brm_ptr->bmi_variant.DoubleVector.data(),
+			min(SolutionVolume.size(), brm_ptr->bmi_variant.DoubleVector.size()));
+		return;
+	}
+	//
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
@@ -1070,6 +1296,17 @@ void SolutionVolume_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		if (!initialized)
+		{
+			SolutionVolume = brm_ptr->GetSolutionVolume();
+			initialized = true;
+			brm_ptr->GetUpdateMap().insert("SolutionVolume");
+		}
+		brm_ptr->bmi_variant.SetDoublePtr(SolutionVolume.data());
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.DoubleVector = brm_ptr->GetSolutionVolume();
 		break;
@@ -1084,6 +1321,14 @@ void SolutionVolume_var(BMIPhreeqcRM* brm_ptr)
 }
 void Time_var(BMIPhreeqcRM* brm_ptr)
 {
+	static double Time;
+	//
+	if (brm_ptr->task == BMIPhreeqcRM::BMI_TASKS::Update)
+	{
+		Time = brm_ptr->GetTime();
+		return;
+	}
+	//
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize;
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
@@ -1092,10 +1337,18 @@ void Time_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		Time = brm_ptr->GetTime();
+		brm_ptr->bmi_variant.SetDoublePtr(&Time);
+		brm_ptr->GetUpdateMap().insert("Time");
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.d_var = brm_ptr->GetTime();
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		Time = brm_ptr->bmi_variant.d_var;
 		brm_ptr->SetTime(brm_ptr->bmi_variant.d_var);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::Info:
@@ -1106,6 +1359,13 @@ void Time_var(BMIPhreeqcRM* brm_ptr)
 }
 void TimeStep_var(BMIPhreeqcRM* brm_ptr)
 {
+	static double TimeStep;
+	//
+	if (brm_ptr->task == BMIPhreeqcRM::BMI_TASKS::Update)
+	{
+		TimeStep = brm_ptr->GetTimeStep();
+		return;
+	}
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize;
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
@@ -1114,10 +1374,18 @@ void TimeStep_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		TimeStep = brm_ptr->GetTimeStep();
+		brm_ptr->bmi_variant.SetDoublePtr(&TimeStep);
+		brm_ptr->GetUpdateMap().insert("TimeStep");
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.d_var = brm_ptr->GetTimeStep();
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		TimeStep = brm_ptr->bmi_variant.d_var;
 		brm_ptr->SetTimeStep(brm_ptr->bmi_variant.d_var);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::Info:
@@ -1136,6 +1404,9 @@ void CurrentSelectedOutputUserNumber_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+		brm_ptr->bmi_variant.NotImplemented = true;
+		break;
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.i_var = brm_ptr->GetCurrentSelectedOutputUserNumber();
 		break;
@@ -1150,6 +1421,18 @@ void CurrentSelectedOutputUserNumber_var(BMIPhreeqcRM* brm_ptr)
 }
 void Porosity_var(BMIPhreeqcRM* brm_ptr)
 {
+	static bool initialized = false;
+	static std::vector<double> Porosity;
+	// 
+	if (brm_ptr->task == BMIPhreeqcRM::BMI_TASKS::Update)
+	{
+		brm_ptr->bmi_variant.DoubleVector = brm_ptr->GetPorosity();
+		memcpy(Porosity.data(),
+			brm_ptr->bmi_variant.DoubleVector.data(),
+			min(Porosity.size(), brm_ptr->bmi_variant.DoubleVector.size()));
+		return;
+	}
+	//
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
@@ -1158,10 +1441,27 @@ void Porosity_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		if (!initialized)
+		{
+			Porosity = brm_ptr->GetPorosity();
+			initialized = true;
+			brm_ptr->GetUpdateMap().insert("Porosity");
+		}
+		brm_ptr->bmi_variant.SetDoublePtr(Porosity.data());
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.DoubleVector = brm_ptr->GetPorosity();
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		if (initialized)
+		{
+			memcpy(Porosity.data(),
+				brm_ptr->bmi_variant.DoubleVector.data(),
+				min(Porosity.size(), brm_ptr->bmi_variant.DoubleVector.size()));
+		}
 		brm_ptr->SetPorosity(brm_ptr->bmi_variant.DoubleVector);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::Info:
@@ -1172,6 +1472,17 @@ void Porosity_var(BMIPhreeqcRM* brm_ptr)
 }
 void Pressure_var(BMIPhreeqcRM* brm_ptr)
 {
+	static bool initialized = false;
+	static std::vector<double> Pressure;
+	// 
+	if (brm_ptr->task == BMIPhreeqcRM::BMI_TASKS::Update)
+	{
+		brm_ptr->bmi_variant.DoubleVector = brm_ptr->GetPressure();
+		memcpy(Pressure.data(),
+			brm_ptr->bmi_variant.DoubleVector.data(),
+			min(Pressure.size(), brm_ptr->bmi_variant.DoubleVector.size()));
+		return;
+	}
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
@@ -1180,10 +1491,27 @@ void Pressure_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		if (!initialized)
+		{
+			Pressure = brm_ptr->GetPressure();
+			initialized = true;
+			brm_ptr->GetUpdateMap().insert("Pressure");
+		}
+		brm_ptr->bmi_variant.SetDoublePtr(Pressure.data());
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.DoubleVector = brm_ptr->GetPressure();
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		if (initialized)
+		{
+			memcpy(Pressure.data(),
+				brm_ptr->bmi_variant.DoubleVector.data(),
+				min(Pressure.size(), brm_ptr->bmi_variant.DoubleVector.size()));
+		}
 		brm_ptr->SetPressure(brm_ptr->bmi_variant.DoubleVector);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::Info:
@@ -1194,6 +1522,14 @@ void Pressure_var(BMIPhreeqcRM* brm_ptr)
 }
 void SelectedOutputOn_var(BMIPhreeqcRM* brm_ptr)
 {
+	static bool SelectedOutputOn;
+	//
+	//
+	if (brm_ptr->task == BMIPhreeqcRM::BMI_TASKS::Update)
+	{
+		SelectedOutputOn = brm_ptr->GetSelectedOutputOn();
+		return;
+	}
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
 	//name, type, std::string units, set, get, Nbytes, Itemsize
@@ -1202,10 +1538,17 @@ void SelectedOutputOn_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		SelectedOutputOn = brm_ptr->GetSelectedOutputOn();
+		brm_ptr->bmi_variant.SetBoolPtr(&SelectedOutputOn);
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.b_var = brm_ptr->GetSelectedOutputOn();
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		SelectedOutputOn = brm_ptr->bmi_variant.b_var;
 		brm_ptr->SetSelectedOutputOn(brm_ptr->bmi_variant.b_var);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::Info:
@@ -1216,6 +1559,18 @@ void SelectedOutputOn_var(BMIPhreeqcRM* brm_ptr)
 }
 void Temperature_var(BMIPhreeqcRM* brm_ptr)
 {
+	static bool initialized = false;
+	static std::vector<double> Temperature;
+	// 
+	if (brm_ptr->task == BMIPhreeqcRM::BMI_TASKS::Update)
+	{
+		brm_ptr->bmi_variant.DoubleVector = brm_ptr->GetTemperature();
+		memcpy(Temperature.data(),
+			brm_ptr->bmi_variant.DoubleVector.data(),
+			min(Temperature.size(), brm_ptr->bmi_variant.DoubleVector.size()));
+		return;
+	}
+	//
 	int Itemsize = sizeof(double);
 	int Nbytes = Itemsize * brm_ptr->GetGridCellCount();
 	//name, type, std::string units, set, get, Nbytes, Itemsize  
@@ -1224,10 +1579,27 @@ void Temperature_var(BMIPhreeqcRM* brm_ptr)
 	brm_ptr->bmi_variant.bmi_var = bv;
 	switch (brm_ptr->task)
 	{
+	case BMIPhreeqcRM::BMI_TASKS::GetPtr:
+	{
+		if (!initialized)
+		{
+			Temperature = brm_ptr->GetTemperature();
+			initialized = true;
+			brm_ptr->GetUpdateMap().insert("Temperature");
+		}
+		brm_ptr->bmi_variant.SetDoublePtr(Temperature.data());
+		break;
+	}
 	case BMIPhreeqcRM::BMI_TASKS::GetVar:
 		brm_ptr->bmi_variant.DoubleVector = brm_ptr->GetTemperature();
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::SetVar:
+		if (initialized)
+		{
+			memcpy(Temperature.data(),
+				brm_ptr->bmi_variant.DoubleVector.data(),
+				min(Temperature.size(), brm_ptr->bmi_variant.DoubleVector.size()));
+		}
 		brm_ptr->SetTemperature(brm_ptr->bmi_variant.DoubleVector);
 		break;
 	case BMIPhreeqcRM::BMI_TASKS::Info:
@@ -1236,6 +1608,7 @@ void Temperature_var(BMIPhreeqcRM* brm_ptr)
 		break;
 	}
 }
+
 
 //////////////////
 
