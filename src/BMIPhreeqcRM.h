@@ -4,6 +4,10 @@
 #include "PhreeqcRM.h"
 #include "BMI_Var.h"
 #include "bmi.hxx"
+class NotImplemented : public std::logic_error {
+public:
+    NotImplemented() : std::logic_error("Not Implemented") { };
+};
 class BMI_Variant
 {
 public:
@@ -20,10 +24,7 @@ public:
     std::vector<double>      DoubleVector;
     std::vector<std::string> StringVector;
     bool                     NotImplemented;
-    double* double_ptr;
-    int* int_ptr;
-    bool* bool_ptr;
-    char* char_ptr;
+    void* void_ptr;
     std::vector<const char*> CharVector;
     bool GetGet() { return this->bmi_var.GetGet(); }
     void SetGet(bool tf) { this->bmi_var.SetGet(tf); }
@@ -47,14 +48,11 @@ public:
     {
         this->bmi_var.SetTypes(c, f, p);
     }
-    bool* GetBoolPtr() { return bool_ptr; }
-    char* GetCharPtr() { return char_ptr; }
-    double* GetDoublePtr() { return double_ptr; }
-    int* GetIntPtr() { return int_ptr; }
-    void SetBoolPtr(bool* ptr) { bool_ptr = ptr; }
-    void SetCharPtr(char* ptr) { char_ptr = ptr; }
-    void SetDoublePtr(double* ptr) { double_ptr = ptr; }
-    void SetIntPtr(int* ptr) { int_ptr = ptr; }
+    void* GetVoidPtr() { return void_ptr; }
+    void SetVoidPtr(void* ptr) { void_ptr = ptr; }
+    bool GetHasPtr() { return this->bmi_var.GetHasPtr(); }
+    void SetHasPtr(bool tf) { this->bmi_var.SetHasPtr(tf); }
+
     std::vector<const char*>& GetCharVector() { return CharVector; }
     void SetCharVector(std::vector<const char*> cvec) { CharVector = cvec; }
 
@@ -88,24 +86,25 @@ public:
     std::string GetComponentName() {return "BMI PhreeqcRM";};
     int GetInputItemCount();
     int GetOutputItemCount();
+    int GetPointableItemCount();
     std::vector<std::string> GetInputVarNames();
     std::vector<std::string> GetOutputVarNames();
+    std::vector<std::string> GetPointableVarNames();
     // Variable information functions
     // Not applicable
-    //virtual int GetVarGrid(const std::string name) = 0;             
+    int GetVarGrid(const std::string name) {return 1;}
     std::string GetVarType(const std::string name);
     std::string GetVarUnits(const std::string name);
     int GetVarItemsize(const std::string name);
     int GetVarNbytes(const std::string name);
-    // Not implemented
-    //virtual std::string GetVarLocation(const std::string name) = 0; 
+    std::string GetVarLocation(const std::string name) { return "Unknown"; }
 
     // Time functions
     double GetCurrentTime();
     double GetStartTime();
     double GetEndTime();
     std::string GetTimeUnits() { return "seconds"; };
-    //double GetTimeStep();
+    //double GetTimeStep(); // already defined in PhreeqcRM
 
     // Variable getters
     void GetValue(const std::string name, void* dest);
@@ -116,10 +115,11 @@ public:
     void GetValue(const std::string name, std::vector<double>& dest);
     void GetValue(const std::string name, std::vector<int>& dest);
     void GetValue(const std::string name, std::vector<std::string>& dest);
-    // Not implemented
-    //virtual void* GetValuePtr(std::string name) = 0;                  
-    // Not implemented
-    //virtual void GetValueAtIndices(std::string name, void* dest, int* inds, int count) = 0;
+    void* GetValuePtr(std::string name);                  
+    void GetValueAtIndices(std::string name, void* dest, int* inds, int count)
+    {
+        throw NotImplemented();
+    };
     
     // Variable setters
     void SetValue(std::string name, void* src);
@@ -131,32 +131,73 @@ public:
     void SetValue(std::string name, std::vector<double> src);
     void SetValue(std::string name, std::vector<int>  src);
     void SetValue(std::string name, std::vector<std::string>  src);
-    // Not implemented
-    //virtual void SetValueAtIndices(std::string name, int* inds, int count, void* src) = 0;
+    void SetValueAtIndices(std::string name, int* inds, int count, void* src)
+    {
+        throw NotImplemented();
+    };
 
     // Grid information functions
     // Not implemented
     // PhreeqcRM has no grid 
-    //virtual int GetGridRank(const int grid) = 0;
-    //virtual int GetGridSize(const int grid) = 0;
-    //virtual std::string GetGridType(const int grid) = 0;
+    int GetGridRank(const int grid);
+    int GetGridSize(const int grid);
+    std::string GetGridType(const int grid);
 
-    //virtual void GetGridShape(const int grid, int* shape) = 0;
-    //virtual void GetGridSpacing(const int grid, double* spacing) = 0;
-    //virtual void GetGridOrigin(const int grid, double* origin) = 0;
+    void GetGridShape(const int grid, int* shape)
+    {
+        throw NotImplemented();
+    }
+    void GetGridSpacing(const int grid, double* spacing)
+    {
+        throw NotImplemented();
+    }
+    void GetGridOrigin(const int grid, double* origin)
+    {
+        throw NotImplemented();
+    }
 
-    //virtual void GetGridX(const int grid, double* x) = 0;
-    //virtual void GetGridY(const int grid, double* y) = 0;
-    //virtual void GetGridZ(const int grid, double* z) = 0;
+    void GetGridX(const int grid, double* x)
+    {
+        throw NotImplemented();
+    }
+    void GetGridY(const int grid, double* y)
+    {
+        throw NotImplemented();
+    }
+    void GetGridZ(const int grid, double* z)
+    {
+        throw NotImplemented();
+    }
 
-    //virtual int GetGridNodeCount(const int grid) = 0;
-    //virtual int GetGridEdgeCount(const int grid) = 0;
-    //virtual int GetGridFaceCount(const int grid) = 0;
+    int GetGridNodeCount(const int grid)
+    {
+        throw NotImplemented();
+    }
+    int GetGridEdgeCount(const int grid)
+    {
+        throw NotImplemented();
+    }
+    int GetGridFaceCount(const int grid)
+    {
+        throw NotImplemented();
+    }
 
-    //virtual void GetGridEdgeNodes(const int grid, int* edge_nodes) = 0;
-    //virtual void GetGridFaceEdges(const int grid, int* face_edges) = 0;
-    //virtual void GetGridFaceNodes(const int grid, int* face_nodes) = 0;
-    //virtual void GetGridNodesPerFace(const int grid, int* nodes_per_face) = 0;
+    void GetGridEdgeNodes(const int grid, int* edge_nodes)
+    {
+        throw NotImplemented();
+    }
+    void GetGridFaceEdges(const int grid, int* face_edges)
+    {
+        throw NotImplemented();
+    }
+    void GetGridFaceNodes(const int grid, int* face_nodes)
+    {
+        throw NotImplemented();
+    }
+    void GetGridNodesPerFace(const int grid, int* nodes_per_face)
+    {
+        throw NotImplemented();
+    }
     // data
     BMI_TASKS task;
     BMI_Variant bmi_variant;

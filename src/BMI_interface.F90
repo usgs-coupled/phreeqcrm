@@ -1715,7 +1715,7 @@
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id, grid
 	INTEGER, INTENT(inout) :: rank
-	if (grid .eq. 1) then
+	if (grid .eq. 0) then
 		rank = 1
 		bmif_grid_rank = BMI_SUCCESS
 	else
@@ -1729,7 +1729,7 @@
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id, grid
 	INTEGER, INTENT(inout) :: ngrid
-	if (grid .eq. 1) then
+	if (grid .eq. 0) then
 		bmif_grid_size = success(bmif_get_value(id, "GridCellCount", ngrid))
 	else
 		ngrid = 0

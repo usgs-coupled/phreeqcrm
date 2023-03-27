@@ -18,8 +18,10 @@ private:
 	std::string units;
 	bool set;
 	bool get;
+	bool has_ptr;
 	int Nbytes;
 	int Itemsize;
+	int dim;
 	std::string ctype;
 	std::string ftype;
 	std::string ptype;
@@ -29,27 +31,34 @@ public:
 	{
 		this->set = false;
 		this->get = false;
+		this->has_ptr = false;
 		this->Nbytes = 0;
 		this->Itemsize = 0;
+		this->dim = 0;
 	}
 	BMI_Var(std::string name_in, std::string units_in,
-		bool set_in, bool get_in)
+		bool set_in, bool get_in, bool has_ptr_in)
 	{
 		this->name = name_in;
 		this->set = set_in;
 		this->get = get_in;
+		this->has_ptr = has_ptr_in;
 		this->Nbytes = 0;
 		this->Itemsize = 0;
+		this->dim = 0;
 	};
 	BMI_Var(std::string name_in, std::string units_in,
-		bool set_in, bool get_in, int Nbytes_in, int Itemsize_in)
+		bool set_in, bool get_in, bool has_ptr_in, int Nbytes_in, int Itemsize_in)
 	{
 		this->name = name_in;
 		this->units = units_in;
 		this->set = set_in;
 		this->get = get_in;
+		this->has_ptr = has_ptr_in;
 		this->Nbytes = Nbytes_in;
 		this->Itemsize = Itemsize_in;
+		this->dim = 0;
+		if (Itemsize != 0) dim = Nbytes / Itemsize;
 	};
 	std::string GetName() { return this->name; }
 	void SetName(std::string s) { this->name = s; }
@@ -59,6 +68,8 @@ public:
 	void SetSet(bool in_in) { this->set = in_in; }
 	bool GetGet(void) { return this->get; }
 	void SetGet(bool out_in) { this->get = out_in; }
+	bool GetHasPtr(void) { return this->has_ptr; }
+	void SetHasPtr(bool tf) { this->has_ptr = tf; }
 	int GetNbytes(void) { return this->Nbytes; }
 	void SetNbytes(int n) { this->Nbytes = n; }
 	int GetItemsize(void) { return this->Itemsize; }
@@ -73,6 +84,7 @@ public:
 	{
 		this->ctype = c; this->ftype = f; this->ptype = p;
 	}
+	int GetDim() { return dim; }
 
 };
 #endif // BMI_VAR_H_INCLUDED
