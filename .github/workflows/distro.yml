@@ -214,6 +214,10 @@ jobs:
       if: runner.os != 'Windows'
       run: sudo cmake --install build
 
+    - name: Run ldconfig (Linux)
+      if: ${{ runner.os == 'Linux' && matrix.build_shared_libs == 'ON' }}
+      run: sudo ldconfig
+
     - name: Cleanup
       if: runner.os != 'Windows'
       run: rm -rf *
@@ -222,7 +226,12 @@ jobs:
       if: runner.os != 'Windows'
 
     - name: Test CMake pkg-config
-      if: runner.os != 'Windows'
+      if: runner.os == 'Linux'
       working-directory: ${{ github.workspace }}/Tests
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
+      ##run: env CC='cc' CXX='c++ -fopenmp -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
  
+     - name: Test CMake pkg-config
+      if: runner.os == 'macOS'
+      working-directory: ${{ github.workspace }}/Tests
+      run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
