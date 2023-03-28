@@ -109,8 +109,11 @@ public:
     // Variable getters
     void GetValue(const std::string name, void* dest);
     void GetValue(const std::string name, bool& dest);
+    void GetValue(const std::string name, bool* dest);
     void GetValue(const std::string name, double& dest);
+    void GetValue(const std::string name, double* dest);
     void GetValue(const std::string name, int& dest);
+    void GetValue(const std::string name, int* dest);
     void GetValue(const std::string name, std::string& dest);
     void GetValue(const std::string name, std::vector<double>& dest);
     void GetValue(const std::string name, std::vector<int>& dest);
@@ -207,7 +210,7 @@ public:
     VarFunction_map varfn_map;
     VarFunction GetFn(const std::string name);
     std::set<std::string> UpdateMap;
-    std::set<std::string> GetUpdateMap() { return UpdateMap; }
+    std::set<std::string>& GetUpdateMap() { return UpdateMap; }
 
 private:
     //friend class RM_interface;
