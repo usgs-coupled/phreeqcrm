@@ -214,6 +214,13 @@ jobs:
       if: runner.os != 'Windows'
       run: sudo cmake --install build
 
+    - name: Cleanup
+      if: runner.os != 'Windows'
+      run: rm -rf *
+
+    - uses: actions/checkout@v3
+      if: runner.os != 'Windows'
+
     - name: Test CMake pkg-config
       if: runner.os != 'Windows'
       working-directory: ${{ github.workspace }}/Tests
