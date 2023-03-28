@@ -3,14 +3,14 @@ ACLOCAL_AMFLAGS=-I m4
 PHREEQCRM_EXTRA_DIST=\
 	CMakeLists.txt\
 	phreeqcrm.cmake.in\
-	PhreeqcRMConfig.cmake.in
+	PhreeqcRMConfig.cmake.in\
 	src/CMakeLists.txt\
 	src/numpy.i\
 	src/PhreeqcRM.i\
 	src/pyfragments.swg.in\
 	src/swig/CMakeLists.txt\
 	src/swig/python/CMakeLists.txt\
-	src/swig/python/SimpleAdvect.py\
+	src/swig/python/SimpleAdvect.py
 
 EXTRA_DIST=$(PHREEQCRM_EXTRA_DIST)
 
