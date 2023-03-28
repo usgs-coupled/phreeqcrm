@@ -1,4 +1,21 @@
+cmake_minimum_required(VERSION 3.20)
 ### tests
+
+if(_PHREEQCRM_TEST_INSTALL)
+  project(TestInstall
+    LANGUAGES CXX C
+  )
+  option(PHREEQCRM_FORTRAN_TESTING "Build Fortran test" OFF)
+  if(PHREEQCRM_FORTRAN_TESTING)
+    enable_language(Fortran)
+  endif()
+  find_package(PhreeqcRM REQUIRED)  #  sets PhreeqcRM_DIR if found
+  if(yaml-cpp_FOUND)
+    set(PHREEQCRM_WITH_YAML_CPP ON)
+  endif()
+  enable_testing()
+endif()
+
 if(PHREEQCRM_FORTRAN_TESTING)
   project(FortranAdvect Fortran)
 
@@ -7,8 +24,6 @@ if(PHREEQCRM_FORTRAN_TESTING)
 
   # TestRM Fortran source
   target_sources(FortranAdvect PRIVATE
-    ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
-    ../src/RM_interface.F90
     Advect_f90.F90
     AdvectBMI_f90.F90
     Gas_f90.F90
@@ -17,21 +32,46 @@ if(PHREEQCRM_FORTRAN_TESTING)
   )
 
   # place [*.F[90]] files into "Source Files"
-  source_group("Source Files" FILES "../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90")
-  source_group("Source Files" FILES "../src/RM_interface.F90")
   source_group("Source Files" FILES "Advect_f90.F90")
   source_group("Source Files" FILES "AdvectBMI_f90.F90")
   source_group("Source Files" FILES "Gas_f90.F90")
   source_group("Source Files" FILES "SimpleAdvect_f90.F90")
   source_group("Source Files" FILES "Species_f90.F90")
+  
+  if(_PHREEQCRM_TEST_INSTALL)
+    target_sources(FortranAdvect PRIVATE
+      ${PhreeqcRM_DIR}/src/IPhreeqc_interface.F90
+      ${PhreeqcRM_DIR}/src/RM_interface.F90
+    )
+    source_group("Source Files" FILES "${PhreeqcRM_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90")
+    source_group("Source Files" FILES "${PhreeqcRM_DIR}/src/RM_interface.F90")
+  else()
+    target_sources(FortranAdvect PRIVATE
+      ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
+      ../src/RM_interface.F90
+    )
+    source_group("Source Files" FILES "../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90")
+    source_group("Source Files" FILES "../src/RM_interface.F90")
+  endif()
+
 
   if(PHREEQCRM_WITH_YAML_CPP)
     target_sources(FortranAdvect PRIVATE
-      ../src/YAML_interface.F90
       WriteYAMLFile_f90.F90
     )
-    source_group("Source Files" FILES "../src/YAML_interface.F90")
     source_group("Source Files" FILES "WriteYAMLFile_f90.F90")
+
+    if(_PHREEQCRM_TEST_INSTALL)
+      target_sources(FortranAdvect PRIVATE
+        ${PhreeqcRM_DIR}/src/YAML_interface.F90
+      )
+      source_group("Source Files" FILES "${PhreeqcRM_DIR}/src/YAML_interface.F90")
+    else()
+      target_sources(FortranAdvect PRIVATE
+        ../src/YAML_interface.F90
+      )
+      source_group("Source Files" FILES "../src/YAML_interface.F90")
+    endif()
   endif()
 
 
@@ -100,38 +140,56 @@ add_test(TestCompileAndRun TestRM)
 
 set_property(TARGET TestRM APPEND
   PROPERTY ADDITIONAL_CLEAN_FILES
-    $<TARGET_FILE_DIR:TestRM>/AdvectBMI_cpp.chem.txt
-    $<TARGET_FILE_DIR:TestRM>/AdvectBMI_cpp.dmp
-    $<TARGET_FILE_DIR:TestRM>/AdvectBMI_cpp.log.txt
-    $<TARGET_FILE_DIR:TestRM>/AdvectBMI_cpp_utility.txt
-    $<TARGET_FILE_DIR:TestRM>/AdvectBMI_cpp.yaml
-    $<TARGET_FILE_DIR:TestRM>/Advect_c.chem.txt
-    $<TARGET_FILE_DIR:TestRM>/Advect_c.dmp
-    $<TARGET_FILE_DIR:TestRM>/Advect_c.log.txt
-    $<TARGET_FILE_DIR:TestRM>/Advect_cpp.chem.txt
-    $<TARGET_FILE_DIR:TestRM>/Advect_cpp.dmp
-    $<TARGET_FILE_DIR:TestRM>/Advect_cpp.log.txt
-    $<TARGET_FILE_DIR:TestRM>/Advect_cpp_units_utility.txt
-    $<TARGET_FILE_DIR:TestRM>/Advect_cpp_units_worker.chem.txt
-    $<TARGET_FILE_DIR:TestRM>/Advect_cpp_units_worker.log.txt
-    $<TARGET_FILE_DIR:TestRM>/Advect_cpp_utility.txt
-    $<TARGET_FILE_DIR:TestRM>/Advect_c_utility.txt
-    $<TARGET_FILE_DIR:TestRM>/Gas_c.chem.txt
-    $<TARGET_FILE_DIR:TestRM>/Gas_c.log.txt
-    $<TARGET_FILE_DIR:TestRM>/Gas_cpp.chem.txt
-    $<TARGET_FILE_DIR:TestRM>/Gas_cpp.log.txt
-    $<TARGET_FILE_DIR:TestRM>/SimpleAdvect_c.chem.txt
-    $<TARGET_FILE_DIR:TestRM>/SimpleAdvect_c.log.txt
-    $<TARGET_FILE_DIR:TestRM>/SimpleAdvect_cpp.chem.txt
-    $<TARGET_FILE_DIR:TestRM>/SimpleAdvect_cpp.log.txt
-    $<TARGET_FILE_DIR:TestRM>/Species_c.chem.txt
-    $<TARGET_FILE_DIR:TestRM>/Species_c.dmp
-    $<TARGET_FILE_DIR:TestRM>/Species_c.log.txt
-    $<TARGET_FILE_DIR:TestRM>/Species_cpp.chem.txt
-    $<TARGET_FILE_DIR:TestRM>/Species_cpp.dmp
-    $<TARGET_FILE_DIR:TestRM>/Species_cpp.log.txt
-    $<TARGET_FILE_DIR:TestRM>/Species_cpp_utility.txt
-    $<TARGET_FILE_DIR:TestRM>/Species_c_utility.txt
+    Advect_c_utility.txt
+    Advect_c.chem.txt
+    Advect_c.dmp
+    Advect_c.log.txt
+    Advect_cpp_units_utility.txt
+    Advect_cpp_units_worker.chem.txt
+    Advect_cpp_units_worker.log.txt
+    Advect_cpp_utility.txt
+    Advect_cpp.chem.txt
+    Advect_cpp.dmp
+    Advect_cpp.log.txt
+    Advect_f90_utility.txt
+    Advect_f90.chem.txt
+    Advect_f90.dmp
+    Advect_f90.log.txt
+    AdvectBMI_cpp_utility.txt
+    AdvectBMI_cpp.chem.txt
+    AdvectBMI_cpp.dmp
+    AdvectBMI_cpp.log.txt
+    AdvectBMI_cpp.yaml
+    AdvectBMI_f90.chem.txt
+    AdvectBMI_f90.dmp
+    AdvectBMI_f90.log.txt
+    AdvectBMI_f90.yaml
+    Advectcpp_utility.txt
+    Advectcpp.dmp
+    Gas_c.chem.txt
+    Gas_c.log.txt
+    Gas_cpp.chem.txt
+    Gas_cpp.log.txt
+    Gas_f90.chem.txt
+    Gas_f90.log.txt
+    SimpleAdvect_c.chem.txt
+    SimpleAdvect_c.log.txt
+    SimpleAdvect_cpp.chem.txt
+    SimpleAdvect_cpp.log.txt
+    SimpleAdvect_f90.chem.txt
+    SimpleAdvect_f90.log.txt
+    Species_c_utility.txt
+    Species_c.chem.txt
+    Species_c.dmp
+    Species_c.log.txt
+    Species_cpp_utility.txt
+    Species_cpp.chem.txt
+    Species_cpp.dmp
+    Species_cpp.log.txt
+    Species_f90_utility.txt
+    Species_f90.chem.txt
+    Species_f90.dmp
+    Species_f90.log.txt
 )
 
 if(MSVC AND BUILD_SHARED_LIBS)
@@ -158,3 +216,9 @@ if(PHREEQCRM_BUILD_MPI)
            ${MPIEXEC_POSTFLAGS}
            )
 endif()
+
+# get_cmake_property(_variableNames VARIABLES)
+# list (SORT _variableNames)
+# foreach (_variableName ${_variableNames})
+#   message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()

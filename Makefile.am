@@ -26,16 +26,20 @@ lib_LTLIBRARIES=libphreeqcrm.la
 
 # library sources for libphreeqcrm.la
 libphreeqcrm_la_SOURCES=\
+	src/BMI_Var.h\
+	src/bmi.hxx
+	src/BMIPhreeqcRM.cpp\
+	src/BMIPhreeqcRM.h\
 	src/IPhreeqcPhast/IPhreeqc/CSelectedOutput.cpp\
 	src/IPhreeqcPhast/IPhreeqc/CSelectedOutput.hxx\
 	src/IPhreeqcPhast/IPhreeqc/CVar.hxx\
 	src/IPhreeqcPhast/IPhreeqc/Debug.h\
 	src/IPhreeqcPhast/IPhreeqc/ErrorReporter.hxx\
+	src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface_F.cpp\
+	src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface_F.h\
 	src/IPhreeqcPhast/IPhreeqc/IPhreeqc.cpp\
 	src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h\
 	src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp\
-	src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface_F.cpp\
-	src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface_F.h\
 	src/IPhreeqcPhast/IPhreeqc/IPhreeqcCallbacks.h\
 	src/IPhreeqcPhast/IPhreeqc/IPhreeqcLib.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/advection.cpp\
@@ -93,10 +97,10 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/NameDouble.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/NumKeyword.cxx\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/NumKeyword.h\
-	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector.cpp\
-	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector_serial.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector_serial.h\
+	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector.cpp\
+	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/parse.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PBasic.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PBasic.h\
@@ -107,8 +111,8 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords/Keywords.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords/Keywords.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PHRQ_io_output.cpp\
-	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/pitzer.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/pitzer_structures.cpp\
+	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/pitzer.cpp\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PPassemblage.cxx\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PPassemblage.h\
 	src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PPassemblageComp.cxx\
@@ -177,9 +181,6 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqcPhast.h\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.cpp\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.h\
-  	src/BMIPhreeqcRM.cpp\
-  	src/BMIPhreeqcRM.h\
-	src/BMI_Var.h\
 	src/PhreeqcRM.cpp\
 	src/RM_BMI_interface_F.cpp\
 	src/RM_interface_C.cpp\
@@ -189,11 +190,11 @@ libphreeqcrm_la_SOURCES=\
 	src/YAML_interface_F.h\
 	src/YAMLPhreeqcRM.cpp\
 	src/YAMLPhreeqcRM.h\
-	src/bmi.hxx
 
 
 include_HEADERS=\
 	$(top_srcdir)/src/BMI_Var.h\
+	$(top_srcdir)/src/bmi.hxx\
 	$(top_srcdir)/src/BMIPhreeqcRM.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp\
