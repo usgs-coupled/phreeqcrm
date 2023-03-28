@@ -27,7 +27,7 @@ lib_LTLIBRARIES=libphreeqcrm.la
 # library sources for libphreeqcrm.la
 libphreeqcrm_la_SOURCES=\
 	src/BMI_Var.h\
-	src/bmi.hxx
+	src/bmi.hxx\
 	src/BMIPhreeqcRM.cpp\
 	src/BMIPhreeqcRM.h\
 	src/IPhreeqcPhast/IPhreeqc/CSelectedOutput.cpp\
@@ -189,7 +189,7 @@ libphreeqcrm_la_SOURCES=\
 	src/YAML_interface_F.cpp\
 	src/YAML_interface_F.h\
 	src/YAMLPhreeqcRM.cpp\
-	src/YAMLPhreeqcRM.h\
+	src/YAMLPhreeqcRM.h
 
 
 include_HEADERS=\
