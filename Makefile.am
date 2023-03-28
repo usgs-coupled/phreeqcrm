@@ -193,24 +193,26 @@ libphreeqcrm_la_SOURCES=\
 
 
 include_HEADERS=\
+	$(top_srcdir)/src/BMI_Var.h\
+	$(top_srcdir)/src/BMIPhreeqcRM.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqcCallbacks.h\
+	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/Parser.h\
+	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_base.h\
+	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_exports.h\
+	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_io.h\
+	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/phrqtype.h\
+	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/NameDouble.h\
+	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords/Keywords.h\
+	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/StorageBin.h\
+	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/Var.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqcPhast.h\
 	$(top_srcdir)/src/IrmResult.h\
 	$(top_srcdir)/src/PhreeqcRM.h\
 	$(top_srcdir)/src/RM_interface_C.h\
-	$(top_srcdir)/src/YAMLPhreeqcRM.h\
-	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/Parser.h\
-	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_base.h\
-	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_exports.h\
-	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/PHRQ_io.h\
-	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common/phrqtype.h\
-	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/NameDouble.h\
-	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords/Keywords.h\
-	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/StorageBin.h\
-	${top_srcdir}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h
+	$(top_srcdir)/src/YAMLPhreeqcRM.h
 
 FCDEFS=
 if PHREEQCRM_TEST_FORTRAN

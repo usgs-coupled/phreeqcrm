@@ -301,6 +301,8 @@ if(MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
 endif()
 
 set(PhreeqcRM_Headers
+  ${PROJECT_SOURCE_DIR}/src/BMI_Var.h
+  ${PROJECT_SOURCE_DIR}/src/BMIPhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqcCallbacks.h
@@ -318,8 +320,8 @@ set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/IrmResult.h
   ${PROJECT_SOURCE_DIR}/src/PhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/RM_interface_C.h
-  ${PROJECT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/YAML_interface_F.h
+  ${PROJECT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
 )
 
 set(PhreeqcRM_SRC
