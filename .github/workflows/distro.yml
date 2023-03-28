@@ -231,7 +231,7 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
       ##run: env CC='cc' CXX='c++ -fopenmp -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
  
-     - name: Test CMake pkg-config
+    - name: Test CMake pkg-config
       if: runner.os == 'macOS'
       working-directory: ${{ github.workspace }}/Tests
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
