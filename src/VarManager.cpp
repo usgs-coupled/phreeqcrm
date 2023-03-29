@@ -4,10 +4,58 @@
 VarManager::VarManager(PhreeqcRM* rm_ptr_in) 
 {
 	this->VariantMap[VARS::ComponentCount] = 
-		BMIVariant(&VarManager::ComponentCount_var, "ComponentCount");
-	//this->VariantMap[VARS::Porosity] =
-	//	BMIVariant(&VarManager::Porosity_var, "Porosity");
-	//this->VariantMap["ComponentCount"] = BMIVariant(&VarManager::ComponentCount_var);
+		BMIVariant(&VarManager::ComponentCount_Var, "ComponentCount");
+	this->VariantMap[VARS::Components] =
+		BMIVariant(&VarManager::Components_Var, "Components");
+	this->VariantMap[VARS::Concentrations] =
+		BMIVariant(&VarManager::Concentrations_Var, "Concentrations");
+	this->VariantMap[VARS::Density] =
+		BMIVariant(&VarManager::Density_Var, "Density");
+	this->VariantMap[VARS::ErrorString] =
+		BMIVariant(&VarManager::ErrorString_Var, "ErrorString");
+	this->VariantMap[VARS::FilePrefix] =
+		BMIVariant(&VarManager::FilePrefix_Var, "FilePrefix");
+
+#ifdef SKIP
+	this->VariantMap[VARS::Gfw] =
+		BMIVariant(&VarManager::Gfw_Var, "Gfw");
+	this->VariantMap[VARS::GridCellCount] =
+		BMIVariant(&VarManager::GridCellCount_Var, "GridCellCount");
+	this->VariantMap[VARS::InputVarNames] =
+		BMIVariant(&VarManager::InputVarNames_Var, "InputVarNames");
+	this->VariantMap[VARS::NthSelectedOutput] =
+		BMIVariant(&VarManager::NthSelectedOutput_Var, "NthSelectedOutput");
+	this->VariantMap[VARS::OutputVarNames] =
+		BMIVariant(&VarManager::OutputVarNames_Var, "OutputVarNames");
+	this->VariantMap[VARS::Saturation] =
+		BMIVariant(&VarManager::Saturation_Var, "Saturation");
+	this->VariantMap[VARS::SelectedOutput] =
+		BMIVariant(&VarManager::SelectedOutput_Var, "SelectedOutput");
+	this->VariantMap[VARS::SelectedOutputColumnCount] =
+		BMIVariant(&VarManager::SelectedOutputColumnCount_Var, "SelectedOutputColumnCount");
+	this->VariantMap[VARS::SelectedOutputCount] =
+		BMIVariant(&VarManager::SelectedOutputCount_Var, "SelectedOutputCount");
+	this->VariantMap[VARS::SelectedOutputHeadings] =
+		BMIVariant(&VarManager::SelectedOutputHeadings_Var, "SelectedOutputHeadings");
+	this->VariantMap[VARS::SelectedOutputRowCount] =
+		BMIVariant(&VarManager::SelectedOutputRowCount_Var, "SelectedOutputRowCount");
+	this->VariantMap[VARS::SolutionVolume] =
+		BMIVariant(&VarManager::SolutionVolume_Var, "SolutionVolume");
+	this->VariantMap[VARS::Time] =
+		BMIVariant(&VarManager::Time_Var, "Time");
+	this->VariantMap[VARS::TimeStep] =
+		BMIVariant(&VarManager::TimeStep_Var, "TimeStep");
+	this->VariantMap[VARS::CurrentSelectedOutputUserNumber] =
+		BMIVariant(&VarManager::CurrentSelectedOutputUserNumber_Var, "CurrentSelectedOutputUserNumber");
+	this->VariantMap[VARS::Porosity] =
+		BMIVariant(&VarManager::Porosity_Var, "Porosity");
+	this->VariantMap[VARS::Pressure] =
+		BMIVariant(&VarManager::Pressure_Var, "Pressure");
+	this->VariantMap[VARS::SelectedOutputOn] =
+		BMIVariant(&VarManager::SelectedOutputOn_Var, "SelectedOutputOn");
+	this->VariantMap[VARS::Temperature] =
+		BMIVariant(&VarManager::Temperature_Var, "Temperature");
+#endif
 	///!!!VarFunction x = &VarManager::ComponentCount_var;
 	///!!! (this->*x)(rm_ptr); // Remember this !!!///
 	//auto it = VariantMap.begin();
@@ -53,7 +101,7 @@ VarManager::VARS VarManager::GetEnum(const std::string name)
 	return VarManager::VARS::NotFound;
 }
 //// Start_var
-void VarManager::ComponentCount_var()
+void VarManager::ComponentCount_Var()
 {
 	this->SetCurrentVar(VarManager::VARS::ComponentCount);
 	BMIVariant& bv = this->VariantMap[VarManager::VARS::ComponentCount];
@@ -99,215 +147,261 @@ void VarManager::ComponentCount_var()
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
-	this->VarExchange.Copy(bv);
+	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(VarManager::VARS::NotFound);
 }
+void VarManager::Components_Var()
+{
+	this->SetCurrentVar(VarManager::VARS::Components);
+	BMIVariant& bv = this->VariantMap[VarManager::VARS::Components];
+	if (!bv.GetInitialized() || (this->task == VarManager::VAR_TASKS::Init))
+	{
+		std::vector<std::string> comps = rm_ptr->GetComponents();
+		size_t size = 0;
+		for (size_t i = 0; i < comps.size(); i++)
+		{
+			if (comps[i].size() > size) size = comps[i].size();
+		}
+		int Itemsize = (int)size;
+		int Nbytes = (int)(size * comps.size());
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize
+		bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
+		bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
+		const std::vector<std::string>& v = rm_ptr->GetComponents();
+		bv.SetStringVector(v);
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		std::vector<const char*> CharVector;
+		std::vector<std::string>&  Components = bv.GetStringVectorRef();
+		for (size_t i = 0; i < Components.size(); i++)
+		{
+			CharVector.push_back(Components[i].c_str());
+		}
+		bv.SetCharVector(CharVector);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	{
+		const std::vector<std::string>& v = rm_ptr->GetComponents();
+		this->VarExchange.SetStringVector(v);
+		//bv.SetIVar(v);
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		assert(false);
+		break;
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::UpdateState:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::no_op:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+void VarManager::Concentrations_Var()
+{
+	this->SetCurrentVar(VarManager::VARS::Concentrations);
+	BMIVariant& bv = this->VariantMap[VarManager::VARS::Concentrations];
+	if (!bv.GetInitialized())
+	{
 
+		BMIVariant& bv = this->VariantMap[VarManager::VARS::Concentrations];
+		int Itemsize = (int)sizeof(double);
+		int Nbytes = (int)sizeof(double) *
+			rm_ptr->GetGridCellCount() * rm_ptr->GetComponentCount();
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize
+		int option = rm_ptr->GetUnitsSolution();
+		std::string units;
+		switch (option)
+		{
+		case 1:
+			units = "mg/L";
+			break;
+		case 2:
+			units = "mol/L";
+			break;
+		case 3:
+			units = "kg/kgs";
+			break;
+		}
+		bv.SetBasic(units, true, true, true, Nbytes, Itemsize);
+		bv.SetTypes("double", "real(kind=8)", "");
+		rm_ptr->GetConcentrations(bv.GetDoubleVectorRef());
+		rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		rm_ptr->SetConcentrations(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+void VarManager::Density_Var()
+{
+	this->SetCurrentVar(VarManager::VARS::Density);
+	BMIVariant& bv = this->VariantMap[VarManager::VARS::Density];
+	if (!bv.GetInitialized())
+	{
+
+		BMIVariant& bv = this->VariantMap[VarManager::VARS::Density];
+		int Itemsize = sizeof(double);
+		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("kg L-1", true, true, true, Nbytes, Itemsize);
+		bv.SetTypes("double", "real(kind=8)", "");
+		rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
+		rm_ptr->GetDensity(bv.GetDoubleVectorRef());
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		rm_ptr->SetDensity(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+void VarManager::ErrorString_Var()
+{
+	this->SetCurrentVar(VarManager::VARS::ErrorString);
+	BMIVariant& bv = this->VariantMap[VarManager::VARS::ErrorString];
+	if (!bv.GetInitialized())
+	{
+		BMIVariant& bv = this->VariantMap[VarManager::VARS::ErrorString];
+		int Itemsize = (int)rm_ptr->GetErrorString().size();
+		int Nbytes = Itemsize;
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("error", false, true, false, Nbytes, Itemsize);
+		bv.SetTypes("std::string", "character", "");
+		this->VarExchange.GetStringRef() = rm_ptr->GetErrorString(); 
+		bv.GetStringRef() = rm_ptr->GetErrorString();
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		this->VarExchange.GetStringRef() = rm_ptr->GetErrorString();
+		bv.GetStringRef() = rm_ptr->GetErrorString();
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		assert(false);
+		break;
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+void VarManager::FilePrefix_Var()
+{
+	this->SetCurrentVar(VarManager::VARS::FilePrefix);
+	BMIVariant& bv = this->VariantMap[VarManager::VARS::FilePrefix];
+	if (!bv.GetInitialized())
+	{
+		BMIVariant& bv = this->VariantMap[VarManager::VARS::FilePrefix];
+		int Itemsize = (int)rm_ptr->GetFilePrefix().size();
+		int Nbytes = Itemsize;
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("error", true, true, false, Nbytes, Itemsize);
+		bv.SetTypes("std::string", "character", "");
+		this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
+		bv.GetStringRef() = rm_ptr->GetFilePrefix();
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
+		bv.GetStringRef() = rm_ptr->GetFilePrefix();
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		rm_ptr->SetFilePrefix(this->VarExchange.GetStringRef());
+		bv.GetStringRef() = this->VarExchange.GetStringRef();
+		break;
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
 ////////////////////////////////
 
 #ifdef SKIP
-void VarManager::ComponentCount_var()
-{
-	static int ComponentCount;
-	//
-	int Itemsize = (int)sizeof(int);
-	int Nbytes = (int)sizeof(int);
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("ComponentCount", "names", false, true, true, Nbytes, Itemsize);
-	bv.SetTypes("int", "integer", "int");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		ComponentCount = rm_ptr->GetComponentCount();
-		this->SetVoidPtr((void*)&ComponentCount);
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.i_var = rm_ptr->GetComponentCount();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		rm_ptr->bmi_variant.NotImplemented = true;
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
-void VarManager::Components_var(PhreeqcRM* rm_ptr)
-{
-	static bool initialized = false;
-	static std::vector<std::string> Components;
-	static std::vector<const char*> CharVector;
-	//
-	std::vector<std::string> comps = rm_ptr->GetComponents();
-	size_t size = 0;
-	for (size_t i = 0; i < comps.size(); i++)
-	{
-		if (comps[i].size() > size) size = comps[i].size();
-	}
-	int Itemsize = (int)size;
-	int Nbytes = (int)(size * comps.size());
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("Components", "names", false, true, false, Nbytes, Itemsize);
-	bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		if (!initialized)
-		{
-			Components = rm_ptr->GetComponents();
-			initialized = true;
-			for (size_t i = 0; i < Components.size(); i++)
-			{
-				CharVector.push_back(Components[i].c_str());
-			}
-		}
-		rm_ptr->bmi_variant.SetCharVector(CharVector);
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.StringVector = rm_ptr->GetComponents();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		rm_ptr->bmi_variant.NotImplemented = true;
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
 
-void VarManager::Concentrations_var(PhreeqcRM* rm_ptr)
-{
-	static bool initialized = false;
-	static std::vector<double> Concentrations;
-	//
-	if (rm_ptr->task == VarManager::VAR_TASKS::Update)
-	{
-		rm_ptr->GetConcentrations(rm_ptr->bmi_variant.DoubleVector);
-		assert(Concentrations.size() == rm_ptr->bmi_variant.DoubleVector.size());
-		memcpy(Concentrations.data(),
-			rm_ptr->bmi_variant.DoubleVector.data(),
-			Concentrations.size() * sizeof(double));
-		return;
-	}
-	int Itemsize = (int)sizeof(double);
-	int Nbytes = (int)sizeof(double) *
-		rm_ptr->GetGridCellCount() * rm_ptr->GetComponentCount();
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("Concentrations", "mol L-1", true, true, true, Nbytes, Itemsize);
-	bv.SetTypes("double", "real(kind=8)", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		if (!initialized)
-		{
-			rm_ptr->GetConcentrations(Concentrations);
-			initialized = true;
-			rm_ptr->GetUpdateMap().insert("Concentrations");
-		}
-		rm_ptr->bmi_variant.SetVoidPtr((void*)Concentrations.data());
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->GetConcentrations(rm_ptr->bmi_variant.DoubleVector);
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		if (initialized)
-		{
-			assert(Concentrations.size() == rm_ptr->bmi_variant.DoubleVector.size());
-			memcpy(Concentrations.data(),
-				rm_ptr->bmi_variant.DoubleVector.data(),
-				Concentrations.size() * sizeof(double));
-		}
-		rm_ptr->SetConcentrations(rm_ptr->bmi_variant.DoubleVector);
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
-void VarManager::Density_var(PhreeqcRM* rm_ptr)
-{
-	static bool initialized = false;
-	static std::vector<double> Density;
-	//
-	if (rm_ptr->task == VarManager::VAR_TASKS::Update)
-	{
-		rm_ptr->GetDensity(rm_ptr->bmi_variant.DoubleVector);
-		assert(Density.size() == rm_ptr->bmi_variant.DoubleVector.size());
-		memcpy(Density.data(),
-			rm_ptr->bmi_variant.DoubleVector.data(),
-			Density.size() * sizeof(double));
-		return;
-	}
-	int Itemsize = sizeof(double);
-	int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Density", "kg L-1", true, true, true, Nbytes, Itemsize);
-	bv.SetTypes("double", "real(kind=8)", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		if (!initialized)
-		{
-			rm_ptr->GetDensity(Density);
-			initialized = true;
-			rm_ptr->GetUpdateMap().insert("Density");
-		}
-		rm_ptr->bmi_variant.SetVoidPtr((void*)Density.data());
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->GetDensity(rm_ptr->bmi_variant.DoubleVector);
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		// SetDensity does not affect GetDensity
-		rm_ptr->SetDensity(rm_ptr->bmi_variant.DoubleVector);
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
-void VarManager::ErrorString_var(PhreeqcRM* rm_ptr)
-{
-
-	int Itemsize = (int)rm_ptr->GetErrorString().size();
-	int Nbytes = Itemsize;
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("ErrorString", "error", false, true, false, Nbytes, Itemsize);
-	bv.SetTypes("std::string", "character", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-		rm_ptr->bmi_variant.NotImplemented = true;
-		break;
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.string_var = rm_ptr->GetErrorString();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		rm_ptr->bmi_variant.NotImplemented = true;
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
 void VarManager::FilePrefix_var(PhreeqcRM* rm_ptr)
 {
 	int Itemsize = rm_ptr->GetFilePrefix().size();

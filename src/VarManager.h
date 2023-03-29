@@ -20,6 +20,8 @@ public:
 		GetPtr,  
 		GetVar,
 		SetVar,
+		Init,
+		Info,
 		no_op
 	};
 	enum class VARS {
@@ -80,8 +82,31 @@ public:
 	//vv.SetFn(VarFux);
 
 	// Var functions
-	void ComponentCount_var();
-	//void Porosity_var();
+	void ComponentCount_Var();
+	void Components_Var();
+	void Concentrations_Var();
+	void Density_Var();
+	void ErrorString_Var();
+	void FilePrefix_Var();
+	void Gfw_Var();
+	void GridCellCount_Var();
+	void InputVarNames_Var();
+	void NthSelectedOutput_Var();
+	void OutputVarNames_Var();
+	void Saturation_Var();
+	void SelectedOutput_Var();
+	void SelectedOutputColumnCount_Var();
+	void SelectedOutputCount_Var();
+	void SelectedOutputHeadings_Var();
+	void SelectedOutputRowCount_Var();
+	void SolutionVolume_Var();
+	void Time_Var();
+	void TimeStep_Var();
+	void CurrentSelectedOutputUserNumber_Var();
+	void Porosity_Var();
+	void Pressure_Var();
+	void SelectedOutputOn_Var();
+	void Temperature_Var();
 };
 #endif
 

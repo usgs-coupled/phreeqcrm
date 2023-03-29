@@ -110,6 +110,7 @@ public:
 	void SetVoidPtr(void* v) { this->VoidPtr = v; }
 	void SetCharVector(std::vector<const char*> v) { this->CharVector = v; }
 	void SetFn(VarFunction f) { this->fn = f; } // function pointer type
+	void SetStringVector(const std::vector<std::string>& v) { this->StringVector = v; }
 
 	std::string GetName() { return this->name; }
 	std::string GetUnits() { return this->units; }
@@ -129,6 +130,8 @@ public:
 	int* GetIntVectorPtr() { return this->IntVector.data(); }
 	std::vector<double>& GetDoubleVectorRef() { return this->DoubleVector; }
 	std::vector<int>& GetIntVectorRef() { return this->IntVector; }
+	std::vector<std::string>& GetStringVectorRef() { return this->StringVector; }
+	std::string& GetStringRef() { return this->string_var; }
 	int GetDim() { return dim; }
 	void* GetVoidPtr() { return this->VoidPtr; }
 	std::vector<const char*> GetCharVector() { return this->CharVector; }
@@ -136,7 +139,7 @@ public:
 		//((VarFunction*)fn)(rm_ptr);
 		return this->fn; 
 	}
-	void Copy(BMIVariant& bv);
+	void CopyScalars(BMIVariant& bv);
 };
 
 class IRM_DLL_EXPORT BMI_Var
