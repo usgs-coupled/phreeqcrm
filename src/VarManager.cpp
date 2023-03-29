@@ -1,51 +1,141 @@
 #include "VarManager.h"
-VarManager::VarManager(PhreeqcRM* rm_ptr) 
+#include <assert.h>
+#include <algorithm>
+VarManager::VarManager(PhreeqcRM* rm_ptr_in) 
 {
-	this->VariantMap["ComponentCount"] = Variant(&VarManager::ComponentCount_var);
+	this->VariantMap[VARS::ComponentCount] = 
+		BMIVariant(&VarManager::ComponentCount_var, "ComponentCount");
+	//this->VariantMap[VARS::Porosity] =
+	//	BMIVariant(&VarManager::Porosity_var, "Porosity");
+	//this->VariantMap["ComponentCount"] = BMIVariant(&VarManager::ComponentCount_var);
 	///!!!VarFunction x = &VarManager::ComponentCount_var;
 	///!!! (this->*x)(rm_ptr); // Remember this !!!///
-	auto it = VariantMap.begin();
-	VarFunction x = it->second.GetFn();
-	(this->*x)(rm_ptr);
-
+	//auto it = VariantMap.begin();
+	//VarFunction x = it->second.GetFn();
+	//(this->*x)();
+	rm_ptr = rm_ptr_in;
 	this->task = VarManager::VAR_TASKS::no_op;
+	this->CurrentVar = VarManager::VARS::NotFound;
 	//auto it = VarVariantMap.begin();
 	//VarFunction x = it->second.GetFn(rm_ptr);
 	//x(rm_ptr);
+	// Make EnumMap
+	for (auto it = VariantMap.begin(); it != VariantMap.end(); it++)
+	{
+		std::string name_lc = it->second.GetName();
+		std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+		EnumMap[name_lc] = it->first;
+	}
+}
+void VarManager::RM2BMIUpdate(std::string name)
+{
+	if (this->PointerSet.size() == 0) return;
+	VarManager::VARS v_enum = this->GetEnum(name);
+	if (this->GetCurrentVar() != v_enum) return;
+	auto it = this->VariantMap.find(v_enum);
+	if (it != VariantMap.end())
+	{
+		this->task = VarManager::VAR_TASKS::RMUpdate;
+		VarFunction f =  it->second.GetFn(); 
+		(this->*f)();
+	}
+	return;
+}
+VarManager::VARS VarManager::GetEnum(const std::string name)
+{
+	std::string name_lc = name;
+	std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+	auto m_it = EnumMap.find(name_lc);
+	if (m_it != EnumMap.end())
+	{
+		return m_it->second;
+	}
+	return VarManager::VARS::NotFound;
 }
 //// Start_var
+void VarManager::ComponentCount_var()
+{
+	this->SetCurrentVar(VarManager::VARS::ComponentCount);
+	BMIVariant& bv = this->VariantMap[VarManager::VARS::ComponentCount];
+	if (!bv.GetInitialized())
+	{
+		BMIVariant& bv = this->VariantMap[VarManager::VARS::ComponentCount];
+		int Itemsize = (int)sizeof(int);
+		int Nbytes = (int)sizeof(int);
+		//std::string units, set, get, ptr, Nbytes, Itemsize
+		bv.SetBasic("names", false, true, true, Nbytes, Itemsize);
+		bv.SetTypes("int", "integer", "int");
+		bv.SetIVar(rm_ptr->GetComponentCount());
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		int v = rm_ptr->GetComponentCount();
+		bv.SetIVar(v);
+		bv.SetVoidPtr((void*)(bv.GetIVarPtr()));
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	{
+		int v = rm_ptr->GetComponentCount();
+		bv.SetIVar(v);
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		assert(false);
+		break;
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		assert(false);
+		break;
+	}	
+	case VarManager::VAR_TASKS::UpdateState:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::no_op:
+		break;
+	}
+	this->VarExchange.Copy(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+
 ////////////////////////////////
-void VarManager::ComponentCount_var(PhreeqcRM* rm_ptr)
+
+#ifdef SKIP
+void VarManager::ComponentCount_var()
 {
 	static int ComponentCount;
-	////
+	//
 	int Itemsize = (int)sizeof(int);
 	int Nbytes = (int)sizeof(int);
-	////name, std::string units, set, get, ptr, Nbytes, Itemsize
-	//BMI_Var bv = BMI_Var("ComponentCount", "names", false, true, true, Nbytes, Itemsize);
-	//bv.SetTypes("int", "integer", "int");
-	//rm_ptr->bmi_variant.bmi_var = bv;
-	//switch (rm_ptr->task)
-	//{
-	//case VarManager::VAR_TASKS::GetPtr:
-	//{
-	//	ComponentCount = rm_ptr->GetComponentCount();
-	//	this->SetVoidPtr((void*)&ComponentCount);
-	//	break;
-	//}
-	//case VarManager::VAR_TASKS::GetVar:
-	//	rm_ptr->bmi_variant.i_var = rm_ptr->GetComponentCount();
-	//	break;
-	//case VarManager::VAR_TASKS::SetVar:
-	//	rm_ptr->bmi_variant.NotImplemented = true;
-	//	break;
-	//case VarManager::VAR_TASKS::Info:
-	//	break;
-	//case VarManager::VAR_TASKS::no_op:
-	//	break;
-	//}
+	//name, std::string units, set, get, ptr, Nbytes, Itemsize
+	BMI_Var bv = BMI_Var("ComponentCount", "names", false, true, true, Nbytes, Itemsize);
+	bv.SetTypes("int", "integer", "int");
+	rm_ptr->bmi_variant.bmi_var = bv;
+	switch (rm_ptr->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		ComponentCount = rm_ptr->GetComponentCount();
+		this->SetVoidPtr((void*)&ComponentCount);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+		rm_ptr->bmi_variant.i_var = rm_ptr->GetComponentCount();
+		break;
+	case VarManager::VAR_TASKS::SetVar:
+		rm_ptr->bmi_variant.NotImplemented = true;
+		break;
+	case VarManager::VAR_TASKS::Info:
+		break;
+	case VarManager::VAR_TASKS::no_op:
+		break;
+	}
 }
-#ifdef SKIP
 void VarManager::Components_var(PhreeqcRM* rm_ptr)
 {
 	static bool initialized = false;

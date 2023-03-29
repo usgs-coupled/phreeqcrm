@@ -21,7 +21,8 @@ class PHRQ_io;
 #include <set>
 #include <map>
 #include <string>
-
+#include "VarManager.h"
+//class VarManager;
 #if defined(_WINDLL)
 #define IRM_DLL_EXPORT __declspec(dllexport)
 #else
@@ -121,11 +122,40 @@ enum {
 class IRM_DLL_EXPORT PhreeqcRM
 {
 public:
+	enum class RMVARS {
+		ComponentCount,
+		Components,
+		Concentrations,
+		Density,
+		ErrorString,
+		FilePrefix,
+		Gfw,
+		GridCellCount,
+		InputVarNames,
+		NthSelectedOutput,
+		OutputVarNames,
+		Saturation,
+		SelectedOutput,
+		SelectedOutputColumnCount,
+		SelectedOutputCount,
+		SelectedOutputHeadings,
+		SelectedOutputRowCount,
+		SolutionVolume,
+		Time,
+		TimeStep,
+		CurrentSelectedOutputUserNumber,
+		Porosity,
+		Pressure,
+		SelectedOutputOn,
+		Temperature
+	};
 	static void             CleanupReactionModuleInstances(void);
 	static int              CreateReactionModule(int nxyz, MP_TYPE nthreads);
 	static IRM_RESULT       DestroyReactionModule(int n);
 	static PhreeqcRM      * GetInstance(int n);
-
+	class VarManager* var_man;
+	//void UpdateBMI(VarManager::MYVARS, void* v);
+	void UpdateBMI(std::string s);
 /**
 @a GetGridCellCountYAML will read the YAML file and extract the value
 of GridCellCount, which can be used to construct a PhreeqcRM
@@ -5152,6 +5182,9 @@ protected:
 private:
 	//IRM_RESULT                                SetGeneric(std::vector< double > &destination, int newSize, const std::vector< double > &origin, int mpiMethod, const std::string &name, const double newValue = 0.0);
 	IRM_RESULT                                SetGeneric(const std::vector< double > &source, std::vector< double > &destination_root, std::vector< double > &destination_worker, int mpiMethod, const std::string &name);
+public:
+	//class VarManager* var_man;
+	//void UpdateBMI(MYVARS var_enum, void* v);
 protected:
 
 #if defined(_MSC_VER)

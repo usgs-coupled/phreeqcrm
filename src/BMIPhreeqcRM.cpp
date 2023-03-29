@@ -131,7 +131,7 @@ PhreeqcRM(nxyz, nthreads)
 	std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
 	BMIPhreeqcRM::Instances.insert(instance);
 
-	VarManager vm((PhreeqcRM*)this);
+	this->var_man = new VarManager((PhreeqcRM*)this);
 	
 	varfn_map["components"] = &Components_var;
 	varfn_map["componentcount"] = &ComponentCount_var;

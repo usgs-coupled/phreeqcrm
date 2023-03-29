@@ -7,24 +7,23 @@
 #include <string>
 #include <assert.h>
 #include "PhreeqcRM.h"
+//class PhreeqcRM;
 #include "BMI_var.h"
+class VARS;
+
 class IRM_DLL_EXPORT VarManager
 {
 public:
-	std::map<std::string, Variant> VariantMap;
-	std::set<std::string> UpdateSet;
-	VarManager(PhreeqcRM* rm_ptr);
 	enum class VAR_TASKS {
-		Init,
-		Update,
-		GetPtr,
-		Info,
+		RMUpdate,
+		UpdateState,
+		GetPtr,  
 		GetVar,
 		SetVar,
 		no_op
 	};
-	VAR_TASKS task;
-	enum class VARIABLES {
+	enum class VARS {
+		NotFound,
 		ComponentCount,
 		Components,
 		Concentrations,
@@ -51,34 +50,27 @@ public:
 		SelectedOutputOn,
 		Temperature
 	};
-	void ComponentCount_var(PhreeqcRM* rm_ref);
-#ifdef SKIP
-	void Components_var(PhreeqcRM* rm_ref);
-	void Concentrations_var(PhreeqcRM* rm_ref);
-	void Density_var(PhreeqcRM* rm_ref);
-	void ErrorString_var(PhreeqcRM* rm_ref);
-	void FilePrefix_var(PhreeqcRM* rm_ref);
-	void Gfw_var(PhreeqcRM* rm_ref);
-	void GridCellCount_var(PhreeqcRM* rm_ref);
-	void InputVarNames_var(PhreeqcRM* rm_ref);
-	void NthSelectedOutput_var(PhreeqcRM* rm_ref);
-	void OutputVarNames_var(PhreeqcRM* rm_ref);
-	void Saturation_var(PhreeqcRM* rm_ref);
-	void SelectedOutput_var(PhreeqcRM* rm_ref);
-	void SelectedOutputColumnCount_var(PhreeqcRM* rm_ref);
-	void SelectedOutputCount_var(PhreeqcRM* rm_ref);
-	void SelectedOutputHeadings_var(PhreeqcRM* rm_ref);
-	void SelectedOutputRowCount_var(PhreeqcRM* rm_ref);
-	void SolutionVolume_var(PhreeqcRM* rm_ref);
-	void Time_var(PhreeqcRM* rm_ref);
-	void TimeStep_var(PhreeqcRM* rm_ref);
-	void CurrentSelectedOutputUserNumber_var(PhreeqcRM* rm_ref);
-	void Porosity_var(PhreeqcRM* rm_ref);
-	void Pressure_var(PhreeqcRM* rm_ref);
-	void SelectedOutputOn_var(PhreeqcRM* rm_ref);
-	void Temperature_var(PhreeqcRM* rm_ref);
-#endif
-	typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr);
+	// Constructor
+	VarManager(PhreeqcRM* rm_ptr);
+	// Data
+	PhreeqcRM* rm_ptr;
+public:
+	BMIVariant VarExchange;
+	std::set<VARS> PointerSet;
+	VARS CurrentVar;
+	std::map < std::string, VARS> EnumMap;
+	VAR_TASKS task;
+	std::map<VARS, BMIVariant> VariantMap;
+	// Methods
+	VARS GetEnum(std::string name);
+	void RM2BMIUpdate(std::string);
+
+	//std::map<std::string, BMIVariant> VariantMap;
+	VARS GetCurrentVar() { return this->CurrentVar; }
+	void SetCurrentVar(VarManager::VARS v) { this->CurrentVar = v; }
+	// Function pointer definition
+	typedef void (VarManager::* VarFunction)(void);
+	//!typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr);
 	//typedef VarManager* (*NewDogFunction)(void);
 	//typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr); // function pointer type
 	//typedef std::map<std::string, VarFunction> VarFunction_map;
@@ -86,6 +78,10 @@ public:
 	//void test() { VarFunction x = VarManager::Concentrations_var; 
 	//VarVariant vv;
 	//vv.SetFn(VarFux);
+
+	// Var functions
+	void ComponentCount_var();
+	//void Porosity_var();
 };
 #endif
 

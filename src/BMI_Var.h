@@ -14,10 +14,12 @@
 #endif
 class VarManager;
 class PhreeqcRM;
-class IRM_DLL_EXPORT Variant
+class IRM_DLL_EXPORT BMIVariant
 {
-	typedef void (VarManager::*VarFunction)(PhreeqcRM* rm_ptr); // function pointer type
+	//typedef void (VarManager::*VarFunction)(PhreeqcRM* rm_ptr); // function pointer type
+	typedef void (VarManager::* VarFunction)();
 private:
+	bool Initialized;
 	std::string name;
 	std::string type;
 	std::string units;
@@ -43,9 +45,10 @@ private:
 	VarFunction fn;
 public:
 	// methods
-	Variant(VarFunction f);
-	Variant()
+	BMIVariant(VarFunction f, std::string name);
+	BMIVariant()
 	{
+		Initialized = false;
 		HasSetter = false;
 		HasGetter = false;
 		HasPtr = false;
@@ -59,20 +62,23 @@ public:
 		VoidPtr = NULL;
 		fn = NULL;
 	}
-	void SetBasic(std::string name_in, std::string units_in,
-		bool set_in, bool get_in, bool has_ptr_in)
-	{
-		this->name = name_in;
+	void SetBasic(std::string units_in,
+		bool set_in, bool get_in, bool has_ptr_in, int nbytes, int itemsize)
+	{;
+		//d_var = 0.0
+		//this->name = name_in;
 		this->units = units_in;
 		this->HasSetter = set_in;
 		this->HasGetter = get_in;
 		this->HasPtr = has_ptr_in;
+		this->Nbytes = nbytes;
+		this->Itemsize = itemsize;
+		if (itemsize != 0) dim = nbytes / itemsize;
 		//Nbytes = 0;
 		//Itemsize = 0;
 		//dim = 0;
 		//b_var = false;
 		//i_var = 0;
-		//d_var = 0.0;
 		//NotImplemented = false;
 		//VoidPtr = NULL;
 	};
@@ -86,15 +92,16 @@ public:
 	{
 		this->ctype = c; this->ftype = f; this->ptype = p;
 	}
+	void SetInitialized(bool v) { Initialized = v; }
 	void SetBVar(bool v) { b_var = v; }
 	void SetDVar(double v) { d_var = v; }
 	void SetIVar(int v) { i_var = v; }
 	void SetIVar(std::string v) { string_var = v; }
-	void SetDoubleVector(std::vector<double> v) {
+	void SetDoubleVector(const std::vector<double> &v) {
 		assert(v.size() == DoubleVector.size());
 		memcpy(DoubleVector.data(), v.data(), v.size() * sizeof(double));
 	}
-	void SetIntVector(std::vector<int> v) {
+	void SetIntVector(const std::vector<int> &v) {
 		assert(v.size() == IntVector.size());
 		memcpy(DoubleVector.data(), v.data(), v.size() * sizeof(int));
 	}
@@ -109,17 +116,27 @@ public:
 	bool GetHasGetter(void) { return this->HasGetter; }
 	bool GetHasSetter(void) { return this->HasSetter; }
 	bool GetHasPtr(void) { return this->HasPtr; }
+	bool GetInitialized(void) { return this->Initialized; }
+	bool* GetBVarPtr() { return &this->b_var; }
+	double* GetDVarPtr() { return &this->d_var; }
+	int* GetIVarPtr() { return &this->i_var; }
 	int GetNbytes(void) { return this->Nbytes; }
 	int GetItemsize(void) { return this->Itemsize; }
-	std::string GetCType() { return this->ctype; };;
-	std::string GetFType() { return this->ftype; };
-	std::string GetPType() { return this->ptype; };
+	std::string& GetCType() { return this->ctype; };;
+	std::string& GetFType() { return this->ftype; };
+	std::string& GetPType() { return this->ptype; };
+	double* GetDoubleVectorPtr() { return this->DoubleVector.data(); }
+	int* GetIntVectorPtr() { return this->IntVector.data(); }
+	std::vector<double>& GetDoubleVectorRef() { return this->DoubleVector; }
+	std::vector<int>& GetIntVectorRef() { return this->IntVector; }
 	int GetDim() { return dim; }
+	void* GetVoidPtr() { return this->VoidPtr; }
 	std::vector<const char*> GetCharVector() { return this->CharVector; }
 	VarFunction GetFn() { 
 		//((VarFunction*)fn)(rm_ptr);
 		return this->fn; 
 	}
+	void Copy(BMIVariant& bv);
 };
 
 class IRM_DLL_EXPORT BMI_Var

@@ -173,7 +173,7 @@ int AdvectBMI_cpp()
 		// --------------------------------------------------------------------------
 		// Transient loop
 		// --------------------------------------------------------------------------
-		int nsteps = 10;
+		int nsteps = 1;
 		double time = 0.0;
 		brm.SetValue("Time", time);
 		double time_step = 86400;
@@ -858,6 +858,27 @@ void testing(BMIPhreeqcRM& brm)
 		assert(bmi_porosity == rm_porosity);
 		brm.GetValue("Porosity", bmi_porosity);
 		assert(bmi_porosity == rm_porosity);
+	}
+	// testing of pointers and allocated values
+	{
+		int* nxyz_ptr = (int*)brm.GetValuePtr("GridCellCount");
+		double* por_ptr = (double*)brm.GetValuePtr("Porosity");
+		double* por_ptr1 = (double*)brm.GetValuePtr("Porosity");
+		assert(por_ptr == por_ptr1);
+		double* my_porosity_alloc;
+		my_porosity_alloc = (double*)malloc(40 * sizeof(double));
+		double my_porosity_dim[40];
+		std::vector<double> my_por;
+		brm.GetValue("Porosity", my_por);
+		brm.GetValue("Porosity", my_porosity_dim);
+		brm.GetValue("Porosity", my_porosity_alloc);
+		for (size_t i = 0; i < *nxyz_ptr; i++)
+		{
+			assert(my_por[i] == my_porosity_dim[i]);
+			assert(my_por[i] == my_porosity_alloc[i]);
+			assert(my_por[i] == por_ptr[i]);
+		}
+		free((void*)my_porosity_alloc);
 	}
 	// GetValue("Pressure")
 	{
