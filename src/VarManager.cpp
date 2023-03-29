@@ -15,10 +15,9 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::ErrorString_Var, "ErrorString");
 	this->VariantMap[VARS::FilePrefix] =
 		BMIVariant(&VarManager::FilePrefix_Var, "FilePrefix");
-
-#ifdef SKIP
 	this->VariantMap[VARS::Gfw] =
 		BMIVariant(&VarManager::Gfw_Var, "Gfw");
+#ifdef SKIP
 	this->VariantMap[VARS::GridCellCount] =
 		BMIVariant(&VarManager::GridCellCount_Var, "GridCellCount");
 	this->VariantMap[VARS::InputVarNames] =
@@ -111,7 +110,7 @@ void VarManager::ComponentCount_Var()
 		int Itemsize = (int)sizeof(int);
 		int Nbytes = (int)sizeof(int);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
-		bv.SetBasic("names", false, true, true, Nbytes, Itemsize);
+		bv.SetBasic("count", false, true, true, Nbytes, Itemsize);
 		bv.SetTypes("int", "integer", "int");
 		bv.SetIVar(rm_ptr->GetComponentCount());
 		bv.SetInitialized(true);
@@ -123,6 +122,7 @@ void VarManager::ComponentCount_Var()
 		int v = rm_ptr->GetComponentCount();
 		bv.SetIVar(v);
 		bv.SetVoidPtr((void*)(bv.GetIVarPtr()));
+		this->PointerSet.insert(VarManager::VARS::Concentrations);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -249,6 +249,8 @@ void VarManager::Concentrations_Var()
 		rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
+		this->PointerSet.insert(VarManager::VARS::Concentrations);
+		this->UpdateSet.insert(VarManager::VARS::Concentrations);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -276,7 +278,6 @@ void VarManager::Density_Var()
 	BMIVariant& bv = this->VariantMap[VarManager::VARS::Density];
 	if (!bv.GetInitialized())
 	{
-
 		BMIVariant& bv = this->VariantMap[VarManager::VARS::Density];
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
@@ -294,6 +295,8 @@ void VarManager::Density_Var()
 		rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
+		this->PointerSet.insert(VarManager::VARS::Density);
+		this->UpdateSet.insert(VarManager::VARS::Density);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -306,7 +309,8 @@ void VarManager::Density_Var()
 	}
 	case VarManager::VAR_TASKS::SetVar:
 		rm_ptr->SetDensity(this->VarExchange.GetDoubleVectorRef());
-		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// don't update density vector, only get solution densities
+		//bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
@@ -398,100 +402,108 @@ void VarManager::FilePrefix_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(VarManager::VARS::NotFound);
 }
+void VarManager::Gfw_Var()
+{
+	VarManager::VARS VARS_myself = VarManager::VARS::Gfw;
+	this->SetCurrentVar(VarManager::VARS::Gfw);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		//
+		BMIVariant& bv = this->VariantMap[VARS_myself];
+		int Itemsize = sizeof(double);
+		int Nbytes = Itemsize * rm_ptr->GetComponentCount();
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("g mol-1", false, true, true, Nbytes, Itemsize);
+		bv.SetTypes("double", "real(kind=8)", "");
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetGfw();
+		bv.GetDoubleVectorRef() = rm_ptr->GetGfw();
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetGfw();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
+		this->PointerSet.insert(VARS_myself);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetGfw();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		assert(false);
+		break;
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+void VarManager::GridCellCount_Var()
+{
+	VarManager::VARS VARS_myself = VarManager::VARS::GridCellCount;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		BMIVariant& bv = this->VariantMap[VARS_myself];
+		int Itemsize = (int)sizeof(int);
+		int Nbytes = (int)sizeof(int);
+		//std::string units, set, get, ptr, Nbytes, Itemsize
+		bv.SetBasic("count", false, true, true, Nbytes, Itemsize);
+		bv.SetTypes("int", "integer", "int");
+		bv.SetIVar(rm_ptr->GetGridCellCount());
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		int v = rm_ptr->GetGridCellCount();
+		bv.SetIVar(v);
+		bv.SetVoidPtr((void*)(bv.GetIVarPtr()));
+		this->PointerSet.insert(VARS_myself);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	{
+		int v = rm_ptr->GetGridCellCount();
+		bv.SetIVar(v);
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		assert(false);
+		break;
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::UpdateState:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::no_op:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+/// end_
 ////////////////////////////////
 
 #ifdef SKIP
 
-void VarManager::FilePrefix_var(PhreeqcRM* rm_ptr)
-{
-	int Itemsize = rm_ptr->GetFilePrefix().size();
-	int Nbytes = Itemsize;
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("FilePrefix", "name", true, true, false, Nbytes, Itemsize);
-	bv.SetTypes("std::string", "character", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-		rm_ptr->bmi_variant.NotImplemented = true;
-		break;
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.string_var = rm_ptr->GetFilePrefix();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		rm_ptr->SetFilePrefix(rm_ptr->bmi_variant.string_var);
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
-void VarManager::Gfw_var(PhreeqcRM* rm_ptr)
-{
-	static std::vector<double> Gfw;
-	bool initialized = false;
-	//
-	int Itemsize = sizeof(double);
-	int Nbytes = Itemsize * rm_ptr->GetComponentCount();
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Gfw", "g mol-1", false, true, true, Nbytes, Itemsize);
-	bv.SetTypes("double", "real(kind=8)", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		if (!initialized)
-		{
-			Gfw = rm_ptr->GetGfw();
-			initialized = true;
-		}
-		rm_ptr->bmi_variant.SetVoidPtr(Gfw.data());
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.DoubleVector = rm_ptr->GetGfw();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		rm_ptr->bmi_variant.NotImplemented = true;
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
-void VarManager::GridCellCount_var(PhreeqcRM* rm_ptr)
-{
-	static int GridCellCount;
-	//
-	int Itemsize = (int)sizeof(int);
-	int Nbytes = (int)sizeof(int);
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("GridCellCount", "count", false, true, true, Nbytes, Itemsize);
-	bv.SetTypes("int", "integer", "int");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		GridCellCount = rm_ptr->GetGridCellCount();
-		rm_ptr->bmi_variant.SetVoidPtr((void*)&GridCellCount);
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.i_var = rm_ptr->GetGridCellCount();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		rm_ptr->bmi_variant.NotImplemented = true;
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
 void VarManager::InputVarNames_var(PhreeqcRM* rm_ptr)
 {
 	static bool initialized = false;

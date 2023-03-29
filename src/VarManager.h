@@ -59,6 +59,7 @@ public:
 public:
 	BMIVariant VarExchange;
 	std::set<VARS> PointerSet;
+	std::set<VARS> UpdateSet;
 	VARS CurrentVar;
 	std::map < std::string, VARS> EnumMap;
 	VAR_TASKS task;
