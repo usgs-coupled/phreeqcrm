@@ -203,6 +203,10 @@ jobs:
       if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
       run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
+    - name: Print phreeqcrm.pc
+      working-directory: ${{ github.workspace }}/build
+      run:  cat phreeqcrm.pc
+
     - name: Build with CMake
       run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
 
