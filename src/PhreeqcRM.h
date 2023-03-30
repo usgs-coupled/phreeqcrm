@@ -153,9 +153,8 @@ public:
 	static int              CreateReactionModule(int nxyz, MP_TYPE nthreads);
 	static IRM_RESULT       DestroyReactionModule(int n);
 	static PhreeqcRM      * GetInstance(int n);
-	class VarManager* var_man;
-	//void UpdateBMI(VarManager::MYVARS, void* v);
-	void UpdateBMI(std::string s);
+	VarManager* var_man;
+	void UpdateBMI(VarManager::VARS v_enum);
 /**
 @a GetGridCellCountYAML will read the YAML file and extract the value
 of GridCellCount, which can be used to construct a PhreeqcRM

@@ -72,10 +72,10 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		EnumMap[name_lc] = it->first;
 	}
 }
-void VarManager::RM2BMIUpdate(std::string name)
+void VarManager::RM2BMIUpdate(VarManager::VARS v_enum)
 {
 	if (this->PointerSet.size() == 0) return;
-	VarManager::VARS v_enum = this->GetEnum(name);
+	//VarManager::VARS v_enum = this->GetEnum(name);
 	if (this->GetCurrentVar() != v_enum) return;
 	auto it = this->VariantMap.find(v_enum);
 	if (it != VariantMap.end())
@@ -634,6 +634,54 @@ void VarManager::SelectedOutput_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+void VarManager::SelectedOutputColumnCount_Var()
+{
+	VarManager::VARS VARS_myself = VarManager::VARS::SelectedOutputColumnCount;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		BMIVariant& bv = this->VariantMap[VARS_myself];
+		int Itemsize = (int)sizeof(int);
+		int Nbytes = (int)sizeof(int);
+		//std::string units, set, get, ptr, Nbytes, Itemsize
+		bv.SetBasic("count", false, true, false, Nbytes, Itemsize);
+		bv.SetTypes("int", "integer", "int");
+		bv.SetIVar(rm_ptr->GetSelectedOutputColumnCount());
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	{
+		int v = rm_ptr->GetSelectedOutputColumnCount();
+		bv.SetIVar(v);
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		assert(false);
+		break;
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::UpdateState:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);

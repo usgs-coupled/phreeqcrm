@@ -211,6 +211,7 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IrmResult.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PhreeqcRM.cpp

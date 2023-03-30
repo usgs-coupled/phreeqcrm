@@ -6,8 +6,8 @@
 #include <map>
 #include <string>
 #include <assert.h>
-#include "PhreeqcRM.h"
-//class PhreeqcRM;
+//#include "PhreeqcRM.h"
+class PhreeqcRM;
 #include "BMI_var.h"
 class VARS;
 
@@ -66,9 +66,8 @@ public:
 	std::map<VARS, BMIVariant> VariantMap;
 	// Methods
 	VARS GetEnum(std::string name);
-	void RM2BMIUpdate(std::string);
+	void RM2BMIUpdate(VARS v_enum);
 
-	//std::map<std::string, BMIVariant> VariantMap;
 	VARS GetCurrentVar() { return this->CurrentVar; }
 	void SetCurrentVar(VarManager::VARS v) { this->CurrentVar = v; }
 	// Function pointer definition

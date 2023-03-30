@@ -23,7 +23,6 @@
 #include <assert.h>
 #include "System.h"
 #include "BMI_Var.h"
-//#include "VarManager.h"
 #ifdef USE_GZ
 #include <zlib.h>
 #else
@@ -11290,8 +11289,8 @@ PhreeqcRM::SetPorosity(const std::vector<double> &t)
 {
 	this->phreeqcrm_error_string.clear();
 	std::string methodName = "SetPorosity";
-	//this->UpdateBMI( MYVARS::Porosity, (void*)&t);
 	IRM_RESULT result_value = SetGeneric(t, this->porosity_root, porosity_worker, METHOD_SETPOROSITY, methodName);
+	this->UpdateBMI(VarManager::VARS::Porosity);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 
@@ -12327,10 +12326,10 @@ PhreeqcRM::TransferCellsUZ(std::ostringstream &raw_stream, int old, int nnew)
 #endif
 /* ---------------------------------------------------------------------- */
 void
-PhreeqcRM::UpdateBMI(std::string name)
+PhreeqcRM::UpdateBMI(VarManager::VARS v_enum)
 /* ---------------------------------------------------------------------- */
 {
-	this->var_man->RM2BMIUpdate(name);
+	this->var_man->RM2BMIUpdate(v_enum);
 }
 /* ---------------------------------------------------------------------- */
 void
