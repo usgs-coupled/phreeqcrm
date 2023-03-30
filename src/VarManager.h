@@ -91,9 +91,9 @@ public:
 	void FilePrefix_Var();
 	void Gfw_Var();
 	void GridCellCount_Var();
-	void InputVarNames_Var();
+	//void InputVarNames_Var();
 	void NthSelectedOutput_Var();
-	void OutputVarNames_Var();
+	//void OutputVarNames_Var();
 	void Saturation_Var();
 	void SelectedOutput_Var();
 	void SelectedOutputColumnCount_Var();
