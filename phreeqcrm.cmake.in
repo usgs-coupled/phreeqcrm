@@ -7,7 +7,6 @@ Name: PhreeqcRM
 Description: A reaction module for transport simulators based on the geochemical model PHREEQC
 URL: https://github.com/usgs-coupled/phreeqcrm
 Version: @PROJECT_VERSION@
-Requires: @phreeqcrm_requires@
-Libs.private: @LIBS@
-Libs: -L${libdir} -lPhreeqcRM @PKGCONFIG_LIBS@
-Cflags: -I${includedir} @useyaml_define@ @usempi_define@ @PHREEQCRM_OpenMP_C_FLAGS@
+Requires:
+Libs: -L${libdir} -lPhreeqcRM
+Cflags: -I${includedir} @useyaml_define@ @usempi_define@
