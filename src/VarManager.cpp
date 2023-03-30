@@ -41,7 +41,6 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::SolutionVolume_Var, "SolutionVolume");
 	this->VariantMap[VARS::Time] =
 		BMIVariant(&VarManager::Time_Var, "Time");
-#ifdef SKIP
 	this->VariantMap[VARS::TimeStep] =
 		BMIVariant(&VarManager::TimeStep_Var, "TimeStep");
 	this->VariantMap[VARS::CurrentSelectedOutputUserNumber] =
@@ -54,7 +53,6 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::SelectedOutputOn_Var, "SelectedOutputOn");
 	this->VariantMap[VARS::Temperature] =
 		BMIVariant(&VarManager::Temperature_Var, "Temperature");
-#endif
 	///!!!VarFunction x = &VarManager::ComponentCount_var;
 	///!!! (this->*x)(rm_ptr); // Remember this !!!///
 	//auto it = VariantMap.begin();
@@ -102,11 +100,12 @@ VarManager::VARS VarManager::GetEnum(const std::string name)
 //// Start_var
 void VarManager::ComponentCount_Var()
 {
-	this->SetCurrentVar(VarManager::VARS::ComponentCount);
-	BMIVariant& bv = this->VariantMap[VarManager::VARS::ComponentCount];
+	VarManager::VARS VARS_myself = VarManager::VARS::ComponentCount;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VarManager::VARS::ComponentCount];
+		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(int);
 		int Nbytes = (int)sizeof(int);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
@@ -122,7 +121,7 @@ void VarManager::ComponentCount_Var()
 		int v = rm_ptr->GetComponentCount();
 		bv.SetIVar(v);
 		bv.SetVoidPtr((void*)(bv.GetIVarPtr()));
-		this->PointerSet.insert(VarManager::VARS::ComponentCount);
+		this->PointerSet.insert(VARS_myself);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -152,9 +151,10 @@ void VarManager::ComponentCount_Var()
 }
 void VarManager::Components_Var()
 {
-	this->SetCurrentVar(VarManager::VARS::Components);
-	BMIVariant& bv = this->VariantMap[VarManager::VARS::Components];
-	if (!bv.GetInitialized() || (this->task == VarManager::VAR_TASKS::Init))
+	VarManager::VARS VARS_myself = VarManager::VARS::Components;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
 	{
 		std::vector<std::string> comps = rm_ptr->GetComponents();
 		size_t size = 0;
@@ -188,7 +188,6 @@ void VarManager::Components_Var()
 	{
 		const std::vector<std::string>& v = rm_ptr->GetComponents();
 		this->VarExchange.SetStringVector(v);
-		//bv.SetIVar(v);
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
@@ -212,12 +211,13 @@ void VarManager::Components_Var()
 }
 void VarManager::Concentrations_Var()
 {
-	this->SetCurrentVar(VarManager::VARS::Concentrations);
-	BMIVariant& bv = this->VariantMap[VarManager::VARS::Concentrations];
+	VarManager::VARS VARS_myself = VarManager::VARS::Concentrations;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
 
-		BMIVariant& bv = this->VariantMap[VarManager::VARS::Concentrations];
+		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(double);
 		int Nbytes = (int)sizeof(double) *
 			rm_ptr->GetGridCellCount() * rm_ptr->GetComponentCount();
@@ -249,8 +249,8 @@ void VarManager::Concentrations_Var()
 		rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
-		this->PointerSet.insert(VarManager::VARS::Concentrations);
-		this->UpdateSet.insert(VarManager::VARS::Concentrations);
+		this->PointerSet.insert(VARS_myself);
+		this->UpdateSet.insert(VARS_myself);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -321,11 +321,12 @@ void VarManager::Density_Var()
 }
 void VarManager::ErrorString_Var()
 {
-	this->SetCurrentVar(VarManager::VARS::ErrorString);
-	BMIVariant& bv = this->VariantMap[VarManager::VARS::ErrorString];
+	VarManager::VARS VARS_myself = VarManager::VARS::ErrorString;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VarManager::VARS::ErrorString];
+		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)rm_ptr->GetErrorString().size();
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -362,11 +363,12 @@ void VarManager::ErrorString_Var()
 }
 void VarManager::FilePrefix_Var()
 {
-	this->SetCurrentVar(VarManager::VARS::FilePrefix);
-	BMIVariant& bv = this->VariantMap[VarManager::VARS::FilePrefix];
+	VarManager::VARS VARS_myself = VarManager::VARS::FilePrefix;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VarManager::VARS::FilePrefix];
+		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)rm_ptr->GetFilePrefix().size();
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -889,268 +891,296 @@ void VarManager::Time_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(VarManager::VARS::NotFound);
 }
+void VarManager::TimeStep_Var()
+{
+	VarManager::VARS VARS_myself = VarManager::VARS::TimeStep;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		BMIVariant& bv = this->VariantMap[VARS_myself];
+		int Itemsize = sizeof(double);
+		int Nbytes = Itemsize;
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("s", true, true, true, Nbytes, Itemsize);
+		bv.SetTypes("double", "real(kind=8)", "");
+		this->VarExchange.SetDVar(rm_ptr->GetTimeStep());
+		bv.SetDVar(rm_ptr->GetTimeStep());
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		this->VarExchange.SetDVar(rm_ptr->GetTimeStep());
+		bv.SetDVar(rm_ptr->GetTimeStep());
+		bv.SetVoidPtr((void*)(bv.GetDVarPtr()));
+		this->PointerSet.insert(VARS_myself);
+		this->UpdateSet.insert(VARS_myself);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		this->VarExchange.SetDVar(rm_ptr->GetTimeStep());
+		bv.SetDVar(rm_ptr->GetTimeStep());
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		rm_ptr->SetTimeStep(*this->VarExchange.GetDVarPtr());
+		bv.SetDVar(*this->VarExchange.GetDVarPtr());
+		break;
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+void VarManager::CurrentSelectedOutputUserNumber_Var()
+{
+	VarManager::VARS VARS_myself = VarManager::VARS::CurrentSelectedOutputUserNumber;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		BMIVariant& bv = this->VariantMap[VARS_myself];
+		int Itemsize = (int)sizeof(int);
+		int Nbytes = (int)sizeof(int);
+		//std::string units, set, get, ptr, Nbytes, Itemsize
+		bv.SetBasic("id", false, true, false, Nbytes, Itemsize);
+		bv.SetTypes("int", "integer", "int");
+		bv.SetIVar(rm_ptr->GetCurrentSelectedOutputUserNumber());
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	{
+		int v = rm_ptr->GetCurrentSelectedOutputUserNumber();
+		bv.SetIVar(v);
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		assert(false);
+		break;
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::UpdateState:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::no_op:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+void VarManager::Porosity_Var()
+{
+	VarManager::VARS VARS_myself = VarManager::VARS::Porosity;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		BMIVariant& bv = this->VariantMap[VARS_myself];
+		int Itemsize = sizeof(double);
+		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("unitless", true, true, true, Nbytes, Itemsize);
+		bv.SetTypes("double", "real(kind=8)", "");
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPorosity();
+		bv.GetDoubleVectorRef() = rm_ptr->GetPorosity();
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPorosity();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
+		this->PointerSet.insert(VARS_myself);
+		this->UpdateSet.insert(VARS_myself);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPorosity();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		rm_ptr->SetPorosity(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+void VarManager::Pressure_Var()
+{
+	VarManager::VARS VARS_myself = VarManager::VARS::Pressure;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		BMIVariant& bv = this->VariantMap[VARS_myself];
+		int Itemsize = sizeof(double);
+		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("atm", true, true, true, Nbytes, Itemsize);
+		bv.SetTypes("double", "real(kind=8)", "");
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPressure();
+		bv.GetDoubleVectorRef() = rm_ptr->GetPressure();
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPressure();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
+		this->PointerSet.insert(VARS_myself);
+		this->UpdateSet.insert(VARS_myself);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPressure();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		rm_ptr->SetPressure(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+void VarManager::SelectedOutputOn_Var()
+{
+	VarManager::VARS VARS_myself = VarManager::VARS::SelectedOutputOn;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		BMIVariant& bv = this->VariantMap[VARS_myself];
+		int Itemsize = (int)sizeof(bool);
+		int Nbytes = (int)sizeof(bool);
+		//std::string units, set, get, ptr, Nbytes, Itemsize
+		bv.SetBasic("bool", true, true, true, Nbytes, Itemsize);
+		bv.SetTypes("bool", "logical", "");
+		bv.SetBVar(rm_ptr->GetSelectedOutputOn());
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		int v = rm_ptr->GetSelectedOutputOn();
+		bv.SetBVar(v);
+		bv.SetVoidPtr((void*)(bv.GetBVarPtr()));
+		this->PointerSet.insert(VARS_myself);
+		this->UpdateSet.insert(VARS_myself);
+		break;
+	}
+	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::RMUpdate:
+	case VarManager::VAR_TASKS::GetVar:
+	{
+		int v = rm_ptr->GetSelectedOutputOn();
+		bv.SetBVar(v);
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+	{
+		bool v = this->VarExchange.GetBVarPtr();
+		bv.SetBVar(v);
+		rm_ptr->SetSelectedOutputOn(v);
+		break;
+	}
+	case VarManager::VAR_TASKS::no_op:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
+void VarManager::Temperature_Var()
+{
+	VarManager::VARS VARS_myself = VarManager::VARS::Temperature;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		BMIVariant& bv = this->VariantMap[VARS_myself];
+		int Itemsize = sizeof(double);
+		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("C", true, true, true, Nbytes, Itemsize);
+		bv.SetTypes("double", "real(kind=8)", "");
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
+		bv.GetDoubleVectorRef() = rm_ptr->GetTemperature();
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
+		this->PointerSet.insert(VARS_myself);
+		this->UpdateSet.insert(VARS_myself);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		rm_ptr->SetTemperature(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(VarManager::VARS::NotFound);
+}
 /// end_
 ////////////////////////////////
 
 #ifdef SKIP
 
-void VarManager::TimeStep_var(PhreeqcRM* rm_ptr)
-{
-	static double TimeStep;
-	//
-	if (rm_ptr->task == VarManager::VAR_TASKS::Update)
-	{
-		TimeStep = rm_ptr->GetTimeStep();
-		return;
-	}
-	int Itemsize = sizeof(double);
-	int Nbytes = Itemsize;
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("TimeStep", "s", true, true, true, Nbytes, Itemsize);
-	bv.SetTypes("double", "real(kind=8)", "float");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		TimeStep = rm_ptr->GetTimeStep();
-		rm_ptr->bmi_variant.SetVoidPtr((void*)&TimeStep);
-		rm_ptr->GetUpdateMap().insert("TimeStep");
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.d_var = rm_ptr->GetTimeStep();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		TimeStep = rm_ptr->bmi_variant.d_var;
-		rm_ptr->SetTimeStep(rm_ptr->bmi_variant.d_var);
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
-void VarManager::CurrentSelectedOutputUserNumber_var(PhreeqcRM* rm_ptr)
-{
-	int Itemsize = (int)sizeof(int);
-	int Nbytes = (int)sizeof(int);
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("CurrentSelectedOutputUserNumber", "id", false, true, false, Nbytes, Itemsize);
-	bv.SetTypes("int", "integer", "int");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-		rm_ptr->bmi_variant.NotImplemented = true;
-		break;
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.i_var = rm_ptr->GetCurrentSelectedOutputUserNumber();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		rm_ptr->bmi_variant.NotImplemented = true;
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
-void VarManager::Porosity_var(PhreeqcRM* rm_ptr)
-{
-	static bool initialized = false;
-	static std::vector<double> Porosity;
-	// 
-	if (rm_ptr->task == VarManager::VAR_TASKS::Update)
-	{
-		rm_ptr->bmi_variant.DoubleVector = rm_ptr->GetPorosity();
-		assert(Porosity.size() == rm_ptr->bmi_variant.DoubleVector.size());
-		memcpy(Porosity.data(),
-			rm_ptr->bmi_variant.DoubleVector.data(),
-			Porosity.size() * sizeof(double));
-		return;
-	}
-	//
-	int Itemsize = sizeof(double);
-	int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Porosity", "unitless", true, true, true, Nbytes, Itemsize);
-	bv.SetTypes("double", "real(kind=8)", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		if (!initialized)
-		{
-			Porosity = rm_ptr->GetPorosity();
-			initialized = true;
-			rm_ptr->GetUpdateMap().insert("Porosity");
-		}
-		rm_ptr->bmi_variant.SetVoidPtr((void*)Porosity.data());
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.DoubleVector = rm_ptr->GetPorosity();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		if (initialized)
-		{
-			assert(Porosity.size() == rm_ptr->bmi_variant.DoubleVector.size());
-			memcpy(Porosity.data(),
-				rm_ptr->bmi_variant.DoubleVector.data(),
-				Nbytes);
-		}
-		rm_ptr->SetPorosity(rm_ptr->bmi_variant.DoubleVector);
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
-void VarManager::Pressure_var(PhreeqcRM* rm_ptr)
-{
-	static bool initialized = false;
-	static std::vector<double> Pressure;
-	// 
-	if (rm_ptr->task == VarManager::VAR_TASKS::Update)
-	{
-		rm_ptr->bmi_variant.DoubleVector = rm_ptr->GetPressure();
-		assert(Pressure.size() == rm_ptr->bmi_variant.DoubleVector.size());
-		memcpy(Pressure.data(),
-			rm_ptr->bmi_variant.DoubleVector.data(),
-			Pressure.size() * sizeof(double));
-		return;
-	}
-	int Itemsize = sizeof(double);
-	int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Pressure", "atm", true, true, true, Nbytes, Itemsize);
-	bv.SetTypes("double", "real(kind=8)", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		if (!initialized)
-		{
-			Pressure = rm_ptr->GetPressure();
-			initialized = true;
-			rm_ptr->GetUpdateMap().insert("Pressure");
-		}
-		rm_ptr->bmi_variant.SetVoidPtr((void*)Pressure.data());
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.DoubleVector = rm_ptr->GetPressure();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		if (initialized)
-		{
-			assert(Pressure.size() == rm_ptr->bmi_variant.DoubleVector.size());
-			memcpy(Pressure.data(),
-				rm_ptr->bmi_variant.DoubleVector.data(),
-				Pressure.size() * sizeof(double));
-		}
-		rm_ptr->SetPressure(rm_ptr->bmi_variant.DoubleVector);
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
-void VarManager::SelectedOutputOn_var(PhreeqcRM* rm_ptr)
-{
-	static bool SelectedOutputOn;
-	//
-	//
-	if (rm_ptr->task == VarManager::VAR_TASKS::Update)
-	{
-		SelectedOutputOn = rm_ptr->GetSelectedOutputOn();
-		return;
-	}
-	int Itemsize = (int)sizeof(int);
-	int Nbytes = (int)sizeof(int);
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize
-	BMI_Var bv = BMI_Var("SelectedOutputOn", "bool", true, true, true, Nbytes, Itemsize);
-	bv.SetTypes("bool", "logical", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		SelectedOutputOn = rm_ptr->GetSelectedOutputOn();
-		rm_ptr->bmi_variant.SetVoidPtr((void*)&SelectedOutputOn);
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.b_var = rm_ptr->GetSelectedOutputOn();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		SelectedOutputOn = rm_ptr->bmi_variant.b_var;
-		rm_ptr->SetSelectedOutputOn(rm_ptr->bmi_variant.b_var);
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
-void VarManager::Temperature_var(PhreeqcRM* rm_ptr)
-{
-	static bool initialized = false;
-	static std::vector<double> Temperature;
-	// 
-	if (rm_ptr->task == VarManager::VAR_TASKS::Update)
-	{
-		rm_ptr->bmi_variant.DoubleVector = rm_ptr->GetTemperature();
-		assert(Temperature.size() == rm_ptr->bmi_variant.DoubleVector.size());
-		memcpy(Temperature.data(),
-			rm_ptr->bmi_variant.DoubleVector.data(),
-			Temperature.size() * sizeof(double));
-		return;
-	}
-	//
-	int Itemsize = sizeof(double);
-	int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
-	//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-	BMI_Var bv = BMI_Var("Temperature", "C", true, true, true, Nbytes, Itemsize);
-	bv.SetTypes("double", "real(kind=8)", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
-	switch (rm_ptr->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		if (!initialized)
-		{
-			Temperature = rm_ptr->GetTemperature();
-			initialized = true;
-			rm_ptr->GetUpdateMap().insert("Temperature");
-		}
-		rm_ptr->bmi_variant.SetVoidPtr((void*)Temperature.data());
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.DoubleVector = rm_ptr->GetTemperature();
-		break;
-	case VarManager::VAR_TASKS::SetVar:
-		if (initialized)
-		{
-			assert(Temperature.size() == rm_ptr->bmi_variant.DoubleVector.size());
-			memcpy(Temperature.data(),
-				rm_ptr->bmi_variant.DoubleVector.data(),
-				Temperature.size() * sizeof(double));
-		}
-		rm_ptr->SetTemperature(rm_ptr->bmi_variant.DoubleVector);
-		break;
-	case VarManager::VAR_TASKS::Info:
-		break;
-	case VarManager::VAR_TASKS::no_op:
-		break;
-	}
-}
+
 void VarManager::InputVarNames_var(PhreeqcRM* rm_ptr)
 {
 	static bool initialized = false;
