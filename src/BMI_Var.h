@@ -35,10 +35,10 @@ private:
 	bool							b_var;
 	int								i_var;
 	double							d_var;
-	static std::string              string_var;
-	static std::vector<int>         IntVector;
-	static std::vector<double>      DoubleVector;
-	static std::vector<std::string> StringVector;
+	std::string              string_var;
+	std::vector<int>         IntVector;
+	std::vector<double>      DoubleVector;
+	std::vector<std::string> StringVector;
 	bool							NotImplemented;
 	void*							VoidPtr;
 	std::vector<const char*>        CharVector;
