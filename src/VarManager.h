@@ -7,7 +7,7 @@
 #include <string>
 #include <assert.h>
 #include "PhreeqcRM.h"
-//class PhreeqcRM;
+class PhreeqcRM;
 #include "BMI_var.h"
 class VARS;
 

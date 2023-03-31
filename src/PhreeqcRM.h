@@ -5182,8 +5182,7 @@ private:
 	//IRM_RESULT                                SetGeneric(std::vector< double > &destination, int newSize, const std::vector< double > &origin, int mpiMethod, const std::string &name, const double newValue = 0.0);
 	IRM_RESULT                                SetGeneric(const std::vector< double > &source, std::vector< double > &destination_root, std::vector< double > &destination_worker, int mpiMethod, const std::string &name);
 public:
-	//class VarManager* var_man;
-	//void UpdateBMI(MYVARS var_enum, void* v);
+
 protected:
 
 #if defined(_MSC_VER)

@@ -167,8 +167,7 @@ void VarManager::Components_Var()
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
 		bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
-		const std::vector<std::string>& v = rm_ptr->GetComponents();
-		bv.SetStringVector(v);
+		bv.SetStringVector(rm_ptr->GetComponents());
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
