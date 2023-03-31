@@ -214,39 +214,36 @@ jobs:
       working-directory: ${{ github.workspace }}/build
       run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
 
-    - name: Install with CMake
+    - name: Install (Non-Windows)
       if: runner.os != 'Windows'
       run: sudo cmake --install build
+
+    - name: Install (Windows)
+      if: runner.os == 'Windows'
+      run: cmake --install build
 
     - name: Run ldconfig (Linux)
       if: ${{ runner.os == 'Linux' && matrix.build_shared_libs == 'ON' }}
       run: sudo ldconfig
 
-    - name: Cleanup
+    - name: Cleanup (Non-Windows)
+      if: runner.os != 'Windows'
+      run: sudo rm -rf *
+
+    - name: Cleanup (Windows)
       if: runner.os == 'Windows'
-      run: git clean -dfx
+      run: Remove-Item -Recurse -Force *
 
-    # - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-    # - name: Test CMake pkg-config
-    #   if: runner.os == 'Linux'
-    #   working-directory: ${{ github.workspace }}/Tests
-    #   run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
-    #   ##run: env CC='cc' CXX='c++ -fopenmp -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
- 
-    # - name: Test CMake pkg-config
-    #   if: runner.os == 'macOS'
-    #   working-directory: ${{ github.workspace }}/Tests
-    #   run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
-
-    - name: Test CMake install (configure)
+    - name: Test install (configure)
       working-directory: ${{ github.workspace }}/Tests
       run: cmake -B build -S . -D_PHREEQCRM_TEST_INSTALL:BOOL=ON
 
-    - name: Test CMake install (build)
+    - name: Test install (build)
       working-directory: ${{ github.workspace }}/Tests
       run: cmake --build build
 
-    - name: Test CMake install (ctest)
+    - name: Test install (ctest)
       working-directory: ${{ github.workspace }}/Tests/build
       run: ctest
