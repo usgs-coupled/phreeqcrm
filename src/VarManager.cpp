@@ -139,7 +139,7 @@ void VarManager::ComponentCount_Var()
 		assert(false);
 		break;
 	}	
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	{
 		assert(false);
 		break;
@@ -198,7 +198,7 @@ void VarManager::Components_Var()
 		assert(false);
 		break;
 	}
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	{
 		assert(false);
 		break;
@@ -254,7 +254,7 @@ void VarManager::Concentrations_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
@@ -300,7 +300,7 @@ void VarManager::Density_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
@@ -344,7 +344,7 @@ void VarManager::ErrorString_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		this->VarExchange.GetStringRef() = rm_ptr->GetErrorString();
@@ -386,7 +386,7 @@ void VarManager::FilePrefix_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
@@ -433,7 +433,7 @@ void VarManager::Gfw_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetGfw();
@@ -491,7 +491,7 @@ void VarManager::GridCellCount_Var()
 		assert(false);
 		break;
 	}
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	{
 		assert(false);
 		break;
@@ -536,7 +536,7 @@ void VarManager::NthSelectedOutput_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::RMUpdate:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	{
 		assert(false);
 		break;
@@ -579,7 +579,7 @@ void VarManager::Saturation_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
@@ -625,7 +625,7 @@ void VarManager::SelectedOutput_Var()
 		rm_ptr->GetSelectedOutput(bv.GetDoubleVectorRef());
 		break;
 	}
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 		assert(false);
 		break;
@@ -676,7 +676,7 @@ void VarManager::SelectedOutputColumnCount_Var()
 		assert(false);
 		break;
 	}
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	{
 		assert(false);
 		break;
@@ -725,7 +725,7 @@ void VarManager::SelectedOutputCount_Var()
 		assert(false);
 		break;
 	}
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	{
 		assert(false);
 		break;
@@ -787,7 +787,7 @@ void VarManager::SelectedOutputHeadings_Var()
 		assert(false);
 		break;
 	}
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	{
 		assert(false);
 		break;
@@ -835,7 +835,7 @@ void VarManager::SelectedOutputRowCount_Var()
 		assert(false);
 		break;
 	}
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	{
 		assert(false);
 		break;
@@ -875,7 +875,7 @@ void VarManager::SolutionVolume_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetSolutionVolume();
@@ -921,7 +921,7 @@ void VarManager::Time_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		this->VarExchange.SetDVar(rm_ptr->GetTime());
@@ -968,7 +968,7 @@ void VarManager::TimeStep_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		this->VarExchange.SetDVar(rm_ptr->GetTimeStep());
@@ -1023,7 +1023,7 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 		assert(false);
 		break;
 	}
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	{
 		assert(false);
 		break;
@@ -1063,7 +1063,7 @@ void VarManager::Porosity_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPorosity();
@@ -1110,7 +1110,7 @@ void VarManager::Pressure_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPressure();
@@ -1155,7 +1155,7 @@ void VarManager::SelectedOutputOn_Var()
 		this->UpdateSet.insert(VARS_myself);
 		break;
 	}
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	case VarManager::VAR_TASKS::GetVar:
 	{
@@ -1205,7 +1205,7 @@ void VarManager::Temperature_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::UpdateState:
+	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
@@ -1248,7 +1248,7 @@ void VarManager::InputVarNames_var(PhreeqcRM* rm_ptr)
 	//name, std::string units, set, get, ptr, Nbytes, Itemsize
 	BMI_Var bv = BMI_Var("InputVarNames", "names", false, true, false, Nbytes, Itemsize);
 	bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
+	rm_ptr->var_man->VarExchange = bv;
 	switch (rm_ptr->task)
 	{
 	case VarManager::VAR_TASKS::GetPtr:
@@ -1262,15 +1262,15 @@ void VarManager::InputVarNames_var(PhreeqcRM* rm_ptr)
 				CharVector.push_back(InputVarNames[i].c_str());
 			}
 		}
-		rm_ptr->bmi_variant.SetCharVector(CharVector);
+		rm_ptr->var_man->VarExchange.SetCharVector(CharVector);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.StringVector = rm_ptr->GetInputVarNames();
-		rm_ptr->bmi_variant.bmi_var = bv;
+		rm_ptr->var_man->VarExchange.StringVector = rm_ptr->GetInputVarNames();
+		rm_ptr->var_man->VarExchange = bv;
 		break;
 	case VarManager::VAR_TASKS::SetVar:
-		rm_ptr->bmi_variant.NotImplemented = true;
+		rm_ptr->var_man->VarExchange.NotImplemented = true;
 		break;
 	case VarManager::VAR_TASKS::Info:
 		break;
@@ -1297,7 +1297,7 @@ void VarManager::OutputVarNames_var(PhreeqcRM* rm_ptr)
 	//name, std::string units, set, get, ptr, Nbytes, Itemsize
 	BMI_Var bv = BMI_Var("OutputVarNames", "names", false, true, false, Nbytes, Itemsize);
 	bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
-	rm_ptr->bmi_variant.bmi_var = bv;
+	rm_ptr->var_man->VarExchange = bv;
 	switch (rm_ptr->task)
 	{
 	case VarManager::VAR_TASKS::GetPtr:
@@ -1311,15 +1311,15 @@ void VarManager::OutputVarNames_var(PhreeqcRM* rm_ptr)
 				CharVector.push_back(OutputVarNames[i].c_str());
 			}
 		}
-		rm_ptr->bmi_variant.SetCharVector(CharVector);
+		rm_ptr->var_man->VarExchange.SetCharVector(CharVector);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
-		rm_ptr->bmi_variant.StringVector = rm_ptr->GetOutputVarNames();
-		rm_ptr->bmi_variant.bmi_var = bv;
+		rm_ptr->var_man->VarExchange.StringVector = rm_ptr->GetOutputVarNames();
+		rm_ptr->var_man->VarExchange = bv;
 		break;
 	case VarManager::VAR_TASKS::SetVar:
-		rm_ptr->bmi_variant.NotImplemented = true;
+		rm_ptr->var_man->VarExchange.NotImplemented = true;
 		break;
 	case VarManager::VAR_TASKS::Info:
 		break;

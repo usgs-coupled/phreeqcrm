@@ -62,6 +62,7 @@ public:
 		VoidPtr = NULL;
 		fn = NULL;
 	}
+	void Clear();
 	void SetBasic(std::string units_in,
 		bool set_in, bool get_in, bool has_ptr_in, int nbytes, int itemsize)
 	{;
@@ -96,7 +97,7 @@ public:
 	void SetBVar(bool v) { b_var = v; }
 	void SetDVar(double v) { d_var = v; }
 	void SetIVar(int v) { i_var = v; }
-	void SetIVar(std::string v) { string_var = v; }
+	void SetStringVar(std::string v) { string_var = v; }
 	void SetDoubleVector(const std::vector<double> &v) {
 		assert(v.size() == DoubleVector.size());
 		memcpy(DoubleVector.data(), v.data(), v.size() * sizeof(double));
@@ -105,6 +106,9 @@ public:
 		assert(v.size() == IntVector.size());
 		memcpy(DoubleVector.data(), v.data(), v.size() * sizeof(int));
 	}
+	void SetCType(std::string v) { this->ctype = v; }
+	void SetFType(std::string v) { this->ftype = v; }
+	void SetPType(std::string v) { this->ptype = v; }
 	void SetName(std::string s) { this->name = s; }
 	void SetNotImplemented(bool v) { this->NotImplemented = v; }
 	void SetVoidPtr(void* v) { this->VoidPtr = v; }
@@ -119,8 +123,11 @@ public:
 	bool GetHasPtr(void) { return this->HasPtr; }
 	bool GetInitialized(void) { return this->Initialized; }
 	bool* GetBVarPtr() { return &this->b_var; }
+	bool& GetBVarRef() { return this->b_var; }
 	double* GetDVarPtr() { return &this->d_var; }
+	double& GetDVarRef() { return this->d_var; }
 	int* GetIVarPtr() { return &this->i_var; }
+	int& GetIVarRef() { return this->i_var; }
 	int GetNbytes(void) { return this->Nbytes; }
 	int GetItemsize(void) { return this->Itemsize; }
 	std::string& GetCType() { return this->ctype; };;
@@ -139,6 +146,7 @@ public:
 		//((VarFunction*)fn)(rm_ptr);
 		return this->fn; 
 	}
+	bool& GetNotImplementedRef() { return this->NotImplemented; }
 	void CopyScalars(BMIVariant& bv);
 };
 

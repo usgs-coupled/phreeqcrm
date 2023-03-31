@@ -8,56 +8,7 @@ class NotImplemented : public std::logic_error {
 public:
     NotImplemented() : std::logic_error("Not Implemented") { };
 };
-class BMI_Variant
-{
-public:
-    BMI_Variant()
-    {
-        this->Clear();
-    }
-    BMI_Var                  bmi_var;
-    bool                     b_var;
-    int                      i_var;
-    double                   d_var;
-    std::string              string_var;
-    std::vector<int>         IntVector;
-    std::vector<double>      DoubleVector;
-    std::vector<std::string> StringVector;
-    bool                     NotImplemented;
-    void* void_ptr;
-    std::vector<const char*> CharVector;
-    bool GetGet() { return this->bmi_var.GetGet(); }
-    void SetGet(bool tf) { this->bmi_var.SetGet(tf); }
-    std::string GetName() { return this->bmi_var.GetName(); }
-    void SetName(std::string s) { this->bmi_var.SetName(s); }
-    bool GetSet() { return this->bmi_var.GetSet(); }
-    void SetSet(bool tf) { this->bmi_var.SetSet(tf); }
-    std::string GetUnits() { return this->bmi_var.GetUnits(); }
-    void SetUnits(std::string s) { this->bmi_var.SetUnits(s); }
-    int GetNbytes() { return (int)this->bmi_var.GetNbytes(); }
-    void SetNbytes(int n) { this->bmi_var.SetNbytes(n); }
-    int GetItemsize() { return this->bmi_var.GetItemsize(); }
-    void SetItemsize(int n) { this->bmi_var.SetItemsize(n); }
-    std::string GetCType() { return this->bmi_var.GetCType(); }
-    void SetCType(std::string s) { this->bmi_var.SetCType(s); }
-    std::string GetFType() { return this->bmi_var.GetFType(); }
-    void SetFType(std::string s) { this->bmi_var.SetFType(s); }
-    std::string GetPType() { return this->bmi_var.GetPType(); }
-    void SetPType(std::string s) { this->bmi_var.SetPType(s); }
-    void SetTypes(std::string c, std::string f, std::string p)
-    {
-        this->bmi_var.SetTypes(c, f, p);
-    }
-    void* GetVoidPtr() { return void_ptr; }
-    void SetVoidPtr(void* ptr) { void_ptr = ptr; }
-    bool GetHasPtr() { return this->bmi_var.GetHasPtr(); }
-    void SetHasPtr(bool tf) { this->bmi_var.SetHasPtr(tf); }
 
-    std::vector<const char*>& GetCharVector() { return CharVector; }
-    void SetCharVector(std::vector<const char*> cvec) { CharVector = cvec; }
-
-    void Clear();
-};
 class IRM_DLL_EXPORT BMIPhreeqcRM : /*public bmi::Bmi,*/ public PhreeqcRM
 {
 public:
@@ -67,15 +18,6 @@ public:
     static BMIPhreeqcRM*    GetInstance(int n);
 
     BMIPhreeqcRM(int nxyz, int nthreads);
-    enum class BMI_TASKS {
-        Init,
-        Update,
-        GetPtr,
-        Info,
-        GetVar,
-        SetVar,
-        no_op
-    };
     // Model control functions.
     void Initialize(std::string config_file);
     void Update();
@@ -202,8 +144,6 @@ public:
         throw NotImplemented();
     }
     // data
-    BMI_TASKS task;
-    BMI_Variant bmi_variant;
     std::string language;
     typedef void (*VarFunction)(BMIPhreeqcRM* brm_ptr); // function pointer type
     typedef std::map<std::string, VarFunction> VarFunction_map;

@@ -17,7 +17,7 @@ class IRM_DLL_EXPORT VarManager
 public:
 	enum class VAR_TASKS {
 		RMUpdate,
-		UpdateState,
+		Update,
 		GetPtr,  
 		GetVar,
 		SetVar,
