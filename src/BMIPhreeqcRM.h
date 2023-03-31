@@ -145,12 +145,12 @@ public:
     }
     // data
     std::string language;
-    typedef void (*VarFunction)(BMIPhreeqcRM* brm_ptr); // function pointer type
-    typedef std::map<std::string, VarFunction> VarFunction_map;
-    VarFunction_map varfn_map;
-    VarFunction GetFn(const std::string name);
-    std::set<std::string> UpdateMap;
-    std::set<std::string>& GetUpdateMap() { return UpdateMap; }
+   // typedef void (*VarFunction)(BMIPhreeqcRM* brm_ptr); // function pointer type
+   // typedef std::map<std::string, VarFunction> VarFunction_map;
+   // VarFunction_map varfn_map;
+   // VarFunction GetFn(const std::string name);
+   //  std::set<std::string> UpdateMap;
+   // std::set<std::string>& GetUpdateMap() { return UpdateMap; }
 
 private:
     //friend class RM_interface;

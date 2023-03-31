@@ -98,6 +98,75 @@ RMVARS VarManager::GetEnum(const std::string name)
 	}
 	return RMVARS::NotFound;
 }
+VarManager::VarFunction VarManager::GetFn(RMVARS v_enum)
+{
+	auto it = this->GetVariantMap().find(v_enum);
+	if (it != this->GetVariantMap().end())
+	{
+		VarManager::VarFunction f = it->second.GetFn();
+		//VarFunction*(f)();
+		return it->second.GetFn();
+	}
+	return NULL;
+}
+//VarManager::VarFunction VarManager::GetFn(RMVARS v_enum)
+//{
+//	//this->var_man->VarExchange.Clear();
+//	//std::string name_lc = name;
+//	//std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+//	auto it = VariantMap.find(v_enum);
+//	if (it == VariantMap.end())
+//	{
+//		std::ostringstream oss;
+//		oss << "Unknown variable enum: " << (int) v_enum;
+//		rm_ptr->ErrorMessage(oss.str());
+//		return NULL;
+//	}
+//
+//	//VarManager::VAR_TASKS task_save = this->task;
+//	//this->task = VarManager::VAR_TASKS::no_op;
+//	BMIVariant & bv = it->second;
+//	////this->task = task_save;
+//	//if (this->VarExchange.GetNotImplementedRef())
+//	//{
+//	//	std::ostringstream oss;
+//	//	oss << "Not implemented for variable: " << bv.GetName();
+//	//	this->ErrorMessage(oss.str());
+//	//	return NULL;
+//	//}
+//	if (this->task == VarManager::VAR_TASKS::GetVar)
+//	{
+//		if (!this->VarExchange.GetHasGetter())
+//		{
+//			std::ostringstream oss;
+//			oss << "Cannot get variable: " << bv.GetName();
+//			rm_ptr->ErrorMessage(oss.str());
+//			return NULL;
+//		}
+//	}
+//	if (this->task == VarManager::VAR_TASKS::SetVar)
+//	{
+//		if (!this->VarExchange.GetHasSetter())
+//		{
+//			std::ostringstream oss;
+//			oss << "Cannot set variable: " << bv.GetName();
+//			rm_ptr->ErrorMessage(oss.str());
+//			return NULL;
+//		}
+//	}
+//	if (this->task == VarManager::VAR_TASKS::GetPtr)
+//	{
+//		if (!this->VarExchange.GetHasPtr())
+//		{
+//			std::ostringstream oss;
+//			oss << "Cannot get a pointer to variable: " << bv.GetName();
+//			rm_ptr->ErrorMessage(oss.str());
+//			return NULL;
+//		}
+//	}
+//	return it->second;
+//}
+
 //// Start_var
 void VarManager::ComponentCount_Var()
 {

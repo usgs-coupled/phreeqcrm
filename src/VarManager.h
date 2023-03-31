@@ -70,6 +70,7 @@ public:
 	void RM2BMIUpdate(RMVARS v_enum);
 
 	RMVARS GetCurrentVar() { return this->CurrentVar; }
+	std::map<RMVARS, BMIVariant> & GetVariantMap() { return this->VariantMap; }
 	void SetCurrentVar(RMVARS v) { this->CurrentVar = v; }
 	// Function pointer definition
 	typedef void (VarManager::* VarFunction)(void);
@@ -81,7 +82,7 @@ public:
 	//void test() { VarFunction x = VarManager::Concentrations_var; 
 	//VarVariant vv;
 	//vv.SetFn(VarFux);
-
+	VarManager::VarFunction VarManager::GetFn(RMVARS v_enum);
 	// Var functions
 	void ComponentCount_Var();
 	void Components_Var();

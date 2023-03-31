@@ -123,11 +123,12 @@ public:
 	bool GetHasPtr(void) { return this->HasPtr; }
 	bool GetInitialized(void) { return this->Initialized; }
 	bool* GetBVarPtr() { return &this->b_var; }
-	bool& GetBVarRef() { return this->b_var; }
+	bool GetBVar() { return this->b_var; }
 	double* GetDVarPtr() { return &this->d_var; }
-	double& GetDVarRef() { return this->d_var; }
+	double GetDVar() { return this->d_var; }
 	int* GetIVarPtr() { return &this->i_var; }
-	int& GetIVarRef() { return this->i_var; }
+	int GetIVar() { return this->i_var; }
+	std::string GetStringVar() { return this->string_var; }
 	int GetNbytes(void) { return this->Nbytes; }
 	int GetItemsize(void) { return this->Itemsize; }
 	std::string& GetCType() { return this->ctype; };;
