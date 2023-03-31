@@ -1,57 +1,58 @@
 #include "VarManager.h"
+#include "RMVARS.h"
 #include <assert.h>
 #include <algorithm>
 VarManager::VarManager(PhreeqcRM* rm_ptr_in) 
 {
-	this->VariantMap[VARS::ComponentCount] = 
+	this->VariantMap[RMVARS::ComponentCount] = 
 		BMIVariant(&VarManager::ComponentCount_Var, "ComponentCount");
-	this->VariantMap[VARS::Components] =
+	this->VariantMap[RMVARS::Components] =
 		BMIVariant(&VarManager::Components_Var, "Components");
-	this->VariantMap[VARS::Concentrations] =
+	this->VariantMap[RMVARS::Concentrations] =
 		BMIVariant(&VarManager::Concentrations_Var, "Concentrations");
-	this->VariantMap[VARS::Density] =
+	this->VariantMap[RMVARS::Density] =
 		BMIVariant(&VarManager::Density_Var, "Density");
-	this->VariantMap[VARS::ErrorString] =
+	this->VariantMap[RMVARS::ErrorString] =
 		BMIVariant(&VarManager::ErrorString_Var, "ErrorString");
-	this->VariantMap[VARS::FilePrefix] =
+	this->VariantMap[RMVARS::FilePrefix] =
 		BMIVariant(&VarManager::FilePrefix_Var, "FilePrefix");
-	this->VariantMap[VARS::Gfw] =
+	this->VariantMap[RMVARS::Gfw] =
 		BMIVariant(&VarManager::Gfw_Var, "Gfw");
-	this->VariantMap[VARS::GridCellCount] =
+	this->VariantMap[RMVARS::GridCellCount] =
 		BMIVariant(&VarManager::GridCellCount_Var, "GridCellCount");
-	//this->VariantMap[VARS::InputVarNames] =
+	//this->VariantMap[RMVARS::InputVarNames] =
 	//	BMIVariant(&VarManager::InputVarNames_Var, "InputVarNames");
-	this->VariantMap[VARS::NthSelectedOutput] =
+	this->VariantMap[RMVARS::NthSelectedOutput] =
 		BMIVariant(&VarManager::NthSelectedOutput_Var, "NthSelectedOutput");
-	//this->VariantMap[VARS::OutputVarNames] =
+	//this->VariantMap[RMVARS::OutputVarNames] =
 	//	BMIVariant(&VarManager::OutputVarNames_Var, "OutputVarNames");
-	this->VariantMap[VARS::Saturation] =
+	this->VariantMap[RMVARS::Saturation] =
 		BMIVariant(&VarManager::Saturation_Var, "Saturation");
-	this->VariantMap[VARS::SelectedOutput] =
+	this->VariantMap[RMVARS::SelectedOutput] =
 		BMIVariant(&VarManager::SelectedOutput_Var, "SelectedOutput");
-	this->VariantMap[VARS::SelectedOutputColumnCount] =
+	this->VariantMap[RMVARS::SelectedOutputColumnCount] =
 		BMIVariant(&VarManager::SelectedOutputColumnCount_Var, "SelectedOutputColumnCount");
-	this->VariantMap[VARS::SelectedOutputCount] =
+	this->VariantMap[RMVARS::SelectedOutputCount] =
 		BMIVariant(&VarManager::SelectedOutputCount_Var, "SelectedOutputCount");
-	this->VariantMap[VARS::SelectedOutputHeadings] =
+	this->VariantMap[RMVARS::SelectedOutputHeadings] =
 		BMIVariant(&VarManager::SelectedOutputHeadings_Var, "SelectedOutputHeadings");
-	this->VariantMap[VARS::SelectedOutputRowCount] =
+	this->VariantMap[RMVARS::SelectedOutputRowCount] =
 		BMIVariant(&VarManager::SelectedOutputRowCount_Var, "SelectedOutputRowCount");
-	this->VariantMap[VARS::SolutionVolume] =
+	this->VariantMap[RMVARS::SolutionVolume] =
 		BMIVariant(&VarManager::SolutionVolume_Var, "SolutionVolume");
-	this->VariantMap[VARS::Time] =
+	this->VariantMap[RMVARS::Time] =
 		BMIVariant(&VarManager::Time_Var, "Time");
-	this->VariantMap[VARS::TimeStep] =
+	this->VariantMap[RMVARS::TimeStep] =
 		BMIVariant(&VarManager::TimeStep_Var, "TimeStep");
-	this->VariantMap[VARS::CurrentSelectedOutputUserNumber] =
+	this->VariantMap[RMVARS::CurrentSelectedOutputUserNumber] =
 		BMIVariant(&VarManager::CurrentSelectedOutputUserNumber_Var, "CurrentSelectedOutputUserNumber");
-	this->VariantMap[VARS::Porosity] =
+	this->VariantMap[RMVARS::Porosity] =
 		BMIVariant(&VarManager::Porosity_Var, "Porosity");
-	this->VariantMap[VARS::Pressure] =
+	this->VariantMap[RMVARS::Pressure] =
 		BMIVariant(&VarManager::Pressure_Var, "Pressure");
-	this->VariantMap[VARS::SelectedOutputOn] =
+	this->VariantMap[RMVARS::SelectedOutputOn] =
 		BMIVariant(&VarManager::SelectedOutputOn_Var, "SelectedOutputOn");
-	this->VariantMap[VARS::Temperature] =
+	this->VariantMap[RMVARS::Temperature] =
 		BMIVariant(&VarManager::Temperature_Var, "Temperature");
 	///!!!VarFunction x = &VarManager::ComponentCount_var;
 	///!!! (this->*x)(rm_ptr); // Remember this !!!///
@@ -60,7 +61,7 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 	//(this->*x)();
 	rm_ptr = rm_ptr_in;
 	this->task = VarManager::VAR_TASKS::no_op;
-	this->CurrentVar = VarManager::VARS::NotFound;
+	this->CurrentVar = RMVARS::NotFound;
 	//auto it = VarVariantMap.begin();
 	//VarFunction x = it->second.GetFn(rm_ptr);
 	//x(rm_ptr);
@@ -72,10 +73,10 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		EnumMap[name_lc] = it->first;
 	}
 }
-void VarManager::RM2BMIUpdate(VarManager::VARS v_enum)
+void VarManager::RM2BMIUpdate(RMVARS v_enum)
 {
 	if (this->PointerSet.size() == 0) return;
-	//VarManager::VARS v_enum = this->GetEnum(name);
+	//RMVARS v_enum = this->GetEnum(name);
 	if (this->GetCurrentVar() != v_enum) return;
 	auto it = this->VariantMap.find(v_enum);
 	if (it != VariantMap.end())
@@ -86,7 +87,7 @@ void VarManager::RM2BMIUpdate(VarManager::VARS v_enum)
 	}
 	return;
 }
-VarManager::VARS VarManager::GetEnum(const std::string name)
+RMVARS VarManager::GetEnum(const std::string name)
 {
 	std::string name_lc = name;
 	std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
@@ -95,12 +96,12 @@ VarManager::VARS VarManager::GetEnum(const std::string name)
 	{
 		return m_it->second;
 	}
-	return VarManager::VARS::NotFound;
+	return RMVARS::NotFound;
 }
 //// Start_var
 void VarManager::ComponentCount_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::ComponentCount;
+	RMVARS VARS_myself = RMVARS::ComponentCount;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -147,11 +148,11 @@ void VarManager::ComponentCount_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::Components_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::Components;
+	RMVARS VARS_myself = RMVARS::Components;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -206,11 +207,11 @@ void VarManager::Components_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::Concentrations_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::Concentrations;
+	RMVARS VARS_myself = RMVARS::Concentrations;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -269,15 +270,15 @@ void VarManager::Concentrations_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::Density_Var()
 {
-	this->SetCurrentVar(VarManager::VARS::Density);
-	BMIVariant& bv = this->VariantMap[VarManager::VARS::Density];
+	this->SetCurrentVar(RMVARS::Density);
+	BMIVariant& bv = this->VariantMap[RMVARS::Density];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VarManager::VARS::Density];
+		BMIVariant& bv = this->VariantMap[RMVARS::Density];
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -294,8 +295,8 @@ void VarManager::Density_Var()
 		rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
-		this->PointerSet.insert(VarManager::VARS::Density);
-		this->UpdateSet.insert(VarManager::VARS::Density);
+		this->PointerSet.insert(RMVARS::Density);
+		this->UpdateSet.insert(RMVARS::Density);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -316,11 +317,11 @@ void VarManager::Density_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::ErrorString_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::ErrorString;
+	RMVARS VARS_myself = RMVARS::ErrorString;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -358,11 +359,11 @@ void VarManager::ErrorString_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::FilePrefix_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::FilePrefix;
+	RMVARS VARS_myself = RMVARS::FilePrefix;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -401,12 +402,12 @@ void VarManager::FilePrefix_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::Gfw_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::Gfw;
-	this->SetCurrentVar(VarManager::VARS::Gfw);
+	RMVARS VARS_myself = RMVARS::Gfw;
+	this->SetCurrentVar(RMVARS::Gfw);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
@@ -447,11 +448,11 @@ void VarManager::Gfw_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::GridCellCount_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::GridCellCount;
+	RMVARS VARS_myself = RMVARS::GridCellCount;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -499,14 +500,14 @@ void VarManager::GridCellCount_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 //
 //void VarManager::InputVarNames_Var() // Implement in BRMPhreeqcRM TODO???
 //
 void VarManager::NthSelectedOutput_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::NthSelectedOutput;
+	RMVARS VARS_myself = RMVARS::NthSelectedOutput;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -544,14 +545,14 @@ void VarManager::NthSelectedOutput_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 //
 //void VarManager::OutputVarNames_Var() // Implement in BRMPhreeqcRM TODO???
 //
 void VarManager::Saturation_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::Saturation;
+	RMVARS VARS_myself = RMVARS::Saturation;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -594,11 +595,11 @@ void VarManager::Saturation_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::SelectedOutput_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::SelectedOutput;
+	RMVARS VARS_myself = RMVARS::SelectedOutput;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -636,11 +637,11 @@ void VarManager::SelectedOutput_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::SelectedOutputColumnCount_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::SelectedOutputColumnCount;
+	RMVARS VARS_myself = RMVARS::SelectedOutputColumnCount;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -684,11 +685,11 @@ void VarManager::SelectedOutputColumnCount_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::SelectedOutputCount_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::SelectedOutputCount;
+	RMVARS VARS_myself = RMVARS::SelectedOutputCount;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -733,11 +734,11 @@ void VarManager::SelectedOutputCount_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::SelectedOutputHeadings_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::SelectedOutputCount;
+	RMVARS VARS_myself = RMVARS::SelectedOutputCount;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -795,11 +796,11 @@ void VarManager::SelectedOutputHeadings_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::SelectedOutputRowCount_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::SelectedOutputRowCount;
+	RMVARS VARS_myself = RMVARS::SelectedOutputRowCount;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -843,11 +844,11 @@ void VarManager::SelectedOutputRowCount_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::SolutionVolume_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::SolutionVolume;
+	RMVARS VARS_myself = RMVARS::SolutionVolume;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -889,11 +890,11 @@ void VarManager::SolutionVolume_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::Time_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::Time;
+	RMVARS VARS_myself = RMVARS::Time;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -936,11 +937,11 @@ void VarManager::Time_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::TimeStep_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::TimeStep;
+	RMVARS VARS_myself = RMVARS::TimeStep;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -983,11 +984,11 @@ void VarManager::TimeStep_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::CurrentSelectedOutputUserNumber_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::CurrentSelectedOutputUserNumber;
+	RMVARS VARS_myself = RMVARS::CurrentSelectedOutputUserNumber;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -1031,11 +1032,11 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::Porosity_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::Porosity;
+	RMVARS VARS_myself = RMVARS::Porosity;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -1078,11 +1079,11 @@ void VarManager::Porosity_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::Pressure_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::Pressure;
+	RMVARS VARS_myself = RMVARS::Pressure;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -1125,11 +1126,11 @@ void VarManager::Pressure_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::SelectedOutputOn_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::SelectedOutputOn;
+	RMVARS VARS_myself = RMVARS::SelectedOutputOn;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -1173,11 +1174,11 @@ void VarManager::SelectedOutputOn_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 void VarManager::Temperature_Var()
 {
-	VarManager::VARS VARS_myself = VarManager::VARS::Temperature;
+	RMVARS VARS_myself = RMVARS::Temperature;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -1220,7 +1221,7 @@ void VarManager::Temperature_Var()
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(VarManager::VARS::NotFound);
+	this->SetCurrentVar(RMVARS::NotFound);
 }
 /// end_
 ////////////////////////////////

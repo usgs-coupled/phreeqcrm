@@ -22,6 +22,7 @@ class PHRQ_io;
 #include <map>
 #include <string>
 #include "VarManager.h"
+#include "RMVARS.h"
 //class VarManager;
 #if defined(_WINDLL)
 #define IRM_DLL_EXPORT __declspec(dllexport)
@@ -122,39 +123,12 @@ enum {
 class IRM_DLL_EXPORT PhreeqcRM
 {
 public:
-	enum class RMVARS {
-		ComponentCount,
-		Components,
-		Concentrations,
-		Density,
-		ErrorString,
-		FilePrefix,
-		Gfw,
-		GridCellCount,
-		InputVarNames,
-		NthSelectedOutput,
-		OutputVarNames,
-		Saturation,
-		SelectedOutput,
-		SelectedOutputColumnCount,
-		SelectedOutputCount,
-		SelectedOutputHeadings,
-		SelectedOutputRowCount,
-		SolutionVolume,
-		Time,
-		TimeStep,
-		CurrentSelectedOutputUserNumber,
-		Porosity,
-		Pressure,
-		SelectedOutputOn,
-		Temperature
-	};
 	static void             CleanupReactionModuleInstances(void);
 	static int              CreateReactionModule(int nxyz, MP_TYPE nthreads);
 	static IRM_RESULT       DestroyReactionModule(int n);
 	static PhreeqcRM      * GetInstance(int n);
-	VarManager* var_man;
-	void UpdateBMI(VarManager::VARS v_enum);
+	class VarManager* var_man;
+	void UpdateBMI(RMVARS v_enum);
 /**
 @a GetGridCellCountYAML will read the YAML file and extract the value
 of GridCellCount, which can be used to construct a PhreeqcRM

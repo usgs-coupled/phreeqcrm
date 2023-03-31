@@ -12,6 +12,7 @@
 #define CLOCK() clock()/CLOCKS_PER_SEC
 #endif
 #include "PhreeqcRM.h"
+#include "RMVARS.h"
 #include "PHRQ_base.h"
 #include "PHRQ_io.h"
 #include "IPhreeqc.h"
@@ -11290,7 +11291,7 @@ PhreeqcRM::SetPorosity(const std::vector<double> &t)
 	this->phreeqcrm_error_string.clear();
 	std::string methodName = "SetPorosity";
 	IRM_RESULT result_value = SetGeneric(t, this->porosity_root, porosity_worker, METHOD_SETPOROSITY, methodName);
-	this->UpdateBMI(VarManager::VARS::Porosity);
+	this->UpdateBMI(RMVARS::Porosity);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 
@@ -12326,7 +12327,7 @@ PhreeqcRM::TransferCellsUZ(std::ostringstream &raw_stream, int old, int nnew)
 #endif
 /* ---------------------------------------------------------------------- */
 void
-PhreeqcRM::UpdateBMI(VarManager::VARS v_enum)
+PhreeqcRM::UpdateBMI(RMVARS v_enum)
 /* ---------------------------------------------------------------------- */
 {
 	this->var_man->RM2BMIUpdate(v_enum);

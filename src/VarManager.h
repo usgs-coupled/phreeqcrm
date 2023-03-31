@@ -7,9 +7,10 @@
 #include <string>
 #include <assert.h>
 #include "PhreeqcRM.h"
-class PhreeqcRM;
+#include "RMVARS.h"
+//class PhreeqcRM;
 #include "BMI_var.h"
-class VARS;
+
 
 class IRM_DLL_EXPORT VarManager
 {
@@ -24,52 +25,52 @@ public:
 		Info,
 		no_op
 	};
-	enum class VARS {
-		NotFound,
-		ComponentCount,
-		Components,
-		Concentrations,
-		Density,
-		ErrorString,
-		FilePrefix,
-		Gfw,
-		GridCellCount,
-		InputVarNames,
-		NthSelectedOutput,
-		OutputVarNames,
-		Saturation,
-		SelectedOutput,
-		SelectedOutputColumnCount,
-		SelectedOutputCount,
-		SelectedOutputHeadings,
-		SelectedOutputRowCount,
-		SolutionVolume,
-		Time,
-		TimeStep,
-		CurrentSelectedOutputUserNumber,
-		Porosity,
-		Pressure,
-		SelectedOutputOn,
-		Temperature
-	};
+	//enum class RMVARS {
+	//	NotFound,
+	//	ComponentCount,
+	//	Components,
+	//	Concentrations,
+	//	Density,
+	//	ErrorString,
+	//	FilePrefix,
+	//	Gfw,
+	//	GridCellCount,
+	//	InputVarNames,
+	//	NthSelectedOutput,
+	//	OutputVarNames,
+	//	Saturation,
+	//	SelectedOutput,
+	//	SelectedOutputColumnCount,
+	//	SelectedOutputCount,
+	//	SelectedOutputHeadings,
+	//	SelectedOutputRowCount,
+	//	SolutionVolume,
+	//	Time,
+	//	TimeStep,
+	//	CurrentSelectedOutputUserNumber,
+	//	Porosity,
+	//	Pressure,
+	//	SelectedOutputOn,
+	//	Temperature
+	//};
 	// Constructor
 	VarManager(PhreeqcRM* rm_ptr);
 	// Data
 	PhreeqcRM* rm_ptr;
 public:
 	BMIVariant VarExchange;
-	std::set<VARS> PointerSet;
-	std::set<VARS> UpdateSet;
-	VARS CurrentVar;
-	std::map < std::string, VARS> EnumMap;
+	std::set<RMVARS> PointerSet;
+	std::set<RMVARS> UpdateSet;
+	RMVARS CurrentVar;
+	std::map < std::string, RMVARS> EnumMap;
 	VAR_TASKS task;
-	std::map<VARS, BMIVariant> VariantMap;
+	std::map<RMVARS, BMIVariant> VariantMap;
 	// Methods
-	VARS GetEnum(std::string name);
-	void RM2BMIUpdate(VARS v_enum);
+	RMVARS GetEnum(std::string name);
+	void RM2BMIUpdate(RMVARS v_enum);
 
-	VARS GetCurrentVar() { return this->CurrentVar; }
-	void SetCurrentVar(VarManager::VARS v) { this->CurrentVar = v; }
+	RMVARS GetCurrentVar() { return this->CurrentVar; }
+	void SetCurrentVar(RMVARS v) { this->CurrentVar = v; }
 	// Function pointer definition
 	typedef void (VarManager::* VarFunction)(void);
 	//!typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr);
