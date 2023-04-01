@@ -117,7 +117,7 @@ int AdvectBMI_cpp()
 			brm.GetValue("ComponentCount", ncomps);
 			oss << "Number of components for transport:               " << ncomps << "\n";
 			oss << "Partioning of UZ solids:                          " << brm.GetPartitionUZSolids() << "\n";
-			oss << "Error handler mode:                               " << brm.GetErrorHandlerMode() << "\n";
+			oss << "Error handler mode:                               " << brm.GetErrorHandlerMode() << std::endl;
 			brm.OutputMessage(oss.str());
 		}
 		const std::vector<int>& f_map = brm.GetForwardMapping();
@@ -173,7 +173,7 @@ int AdvectBMI_cpp()
 		// --------------------------------------------------------------------------
 		// Transient loop
 		// --------------------------------------------------------------------------
-		int nsteps = 1;
+		int nsteps = 10;
 		double time = 0.0;
 		brm.SetValue("Time", time);
 		double time_step = 86400;
@@ -707,6 +707,11 @@ int bmi_example_selected_output(BMIPhreeqcRM& brm)
 void testing(BMIPhreeqcRM& brm)
 {
 	std::ostringstream oss;
+	int* nxyz_ptr = (int*)brm.GetValuePtr("GridCellCount");
+	int* ncomps_ptr = (int*)brm.GetValuePtr("ComponentCount");
+	double* time_ptr = (double*)brm.GetValuePtr("Time");
+	double* timestep_ptr = (double*)brm.GetValuePtr("TimeStep");
+
 	// ComponentName
 	oss << brm.GetComponentName() << "\n";
 	// Time
@@ -744,9 +749,6 @@ void testing(BMIPhreeqcRM& brm)
 		std::vector<std::string> InputVarNames = brm.GetInputVarNames();
 		int count = brm.GetInputItemCount();
 		assert(InputVarNames.size() == (size_t)count);
-		std::vector<std::string> InputVarNames2;
-		brm.GetValue("InputVarNames", InputVarNames2);
-		//assert(InputVarNames == InputVarNames2);
 		oss << "SetValues variables:\n";
 		for (size_t i = 0; i < count; i++)
 		{
@@ -762,9 +764,6 @@ void testing(BMIPhreeqcRM& brm)
 		std::vector<std::string> OutputVarNames = brm.GetOutputVarNames();
 		int count = brm.GetOutputItemCount();
 		assert(OutputVarNames.size() == (size_t)count);
-		std::vector<std::string> OutputVarNames2;
-		brm.GetValue("OutputVarNames", OutputVarNames2);
-		//assert(OutputVarNames == OutputVarNames2);
 		oss << "GetValues variables:\n";
 		for (size_t i = 0; i < count; i++)
 		{
@@ -776,11 +775,28 @@ void testing(BMIPhreeqcRM& brm)
 		}
 	}
 	brm.OutputMessage(oss.str());
+	// PointableVarNames
+	{
+		std::vector<std::string> PointableVarNames = brm.GetPointableVarNames();
+		int count = brm.GetPointableItemCount();
+		assert(PointableVarNames.size() == (size_t)count);
+		oss << "PointableValues variables:\n";
+		for (size_t i = 0; i < count; i++)
+		{
+			oss << "  " << i << "  " << PointableVarNames[i] << "\n";
+			oss << "     Type:  " << brm.GetVarType(PointableVarNames[i]) << "\n";
+			oss << "     Units: " << brm.GetVarUnits(PointableVarNames[i]) << "\n";
+			oss << "  Itemsize: " << brm.GetVarItemsize(PointableVarNames[i]) << "\n";
+			oss << "    NBytes: " << brm.GetVarNbytes(PointableVarNames[i]) << "\n";
+		}
+	}
+	brm.OutputMessage(oss.str());
 	// GetValue("Components")
 	{
 		int ncomps;
 		brm.GetValue("ComponentCount", ncomps);
-		assert(ncomps == (size_t)brm.GetComponentCount());
+		assert(ncomps == *ncomps_ptr);
+		assert(ncomps == brm.GetComponentCount());
 		std::vector<std::string> bmi_comps;
 		brm.GetValue("Components", bmi_comps);
 		std::vector<std::string> rm_comps;
@@ -791,6 +807,7 @@ void testing(BMIPhreeqcRM& brm)
 	{
 		int ncomps;
 		brm.GetValue("ComponentCount", ncomps);
+		double* concentrations_ptr = (double*)brm.GetValuePtr("Concentrations");
 		int conc_nbytes = brm.GetVarNbytes("Concentrations");
 		int conc_itemsize = brm.GetVarItemsize("Concentrations");
 		int conc_dim = conc_nbytes / conc_itemsize;
@@ -800,16 +817,26 @@ void testing(BMIPhreeqcRM& brm)
 		std::vector<double> rm_conc;
 		brm.GetConcentrations(rm_conc);
 		assert(rm_conc == bmi_conc);
+		for (int i = 0; i < conc_dim; i++)
+		{
+			bmi_conc[i] = concentrations_ptr[i];
+		}
 	}
 	// GetValue("Density")
 	// GetDensity and GetValue("Density) always return 
 	// the calculated solution density
 	{
+		double* density_ptr = (double*)brm.GetValuePtr("Density");
+		int dim = brm.GetVarNbytes("Density") / brm.GetVarItemsize("Density");
 		std::vector<double> rm_density;
 		brm.GetDensity(rm_density);
 		std::vector<double> bmi_density;
 		brm.GetValue("Density", bmi_density);
 		assert(bmi_density == rm_density);
+		for (int i = 0; i < dim; i++)
+		{
+			assert(density_ptr[i] == rm_density[i]);
+		}
 	}
 	// GetValue("ErrorString")
 	{
@@ -830,10 +857,15 @@ void testing(BMIPhreeqcRM& brm)
 	}
 	// GetValue("Gfw")
 	{
+		double* gfw_ptr = (double*)brm.GetValuePtr("Gfw");
 		std::vector<double> bmi_gfw;
 		brm.GetValue("Gfw", bmi_gfw);
 		std::vector<double> rm_gfw = brm.GetGfw();
 		assert(bmi_gfw == rm_gfw);
+		for (int i = 0; i < *ncomps_ptr; i++)
+		{
+			assert(gfw_ptr[i] == rm_gfw[i]);
+		}
 	}
 	// GetValue("GridCellCount")
 	{
@@ -841,6 +873,7 @@ void testing(BMIPhreeqcRM& brm)
 		brm.GetValue("GridCellCount", bmi_ngrid);
 		int rm_ngrid = brm.GetGridCellCount();
 		assert(bmi_ngrid == rm_ngrid);
+		assert(bmi_ngrid == *nxyz_ptr);
 	}
 	// SetValue("NthSelectedOutput") 
 	{
@@ -861,7 +894,6 @@ void testing(BMIPhreeqcRM& brm)
 	}
 	// testing of pointers and allocated values
 	{
-		int* nxyz_ptr = (int*)brm.GetValuePtr("GridCellCount");
 		double* por_ptr = (double*)brm.GetValuePtr("Porosity");
 		double* por_ptr1 = (double*)brm.GetValuePtr("Porosity");
 		assert(por_ptr == por_ptr1);
@@ -877,6 +909,18 @@ void testing(BMIPhreeqcRM& brm)
 			assert(my_por[i] == my_porosity_dim[i]);
 			assert(my_por[i] == my_porosity_alloc[i]);
 			assert(my_por[i] == por_ptr[i]);
+			assert(por_ptr[i] == por_ptr[i]);
+		}
+		my_por.resize(40, 0.4);
+		brm.SetValue("Porosity", my_por);
+		brm.GetValue("Porosity", my_porosity_dim);
+		brm.GetValue("Porosity", my_porosity_alloc);
+		for (size_t i = 0; i < *nxyz_ptr; i++)
+		{
+			assert(my_por[i] == my_porosity_dim[i]);
+			assert(my_por[i] == my_porosity_alloc[i]);
+			assert(my_por[i] == por_ptr[i]);
+			assert(por_ptr[i] == por_ptr[i]);
 		}
 		free((void*)my_porosity_alloc);
 	}
@@ -884,6 +928,9 @@ void testing(BMIPhreeqcRM& brm)
 	{
 		int ngrid;
 		brm.GetValue("GridCellCount", ngrid);
+		int* nxyz_ptr = (int*)brm.GetValuePtr("GridCellCount");
+		assert(*nxyz_ptr == ngrid);
+		double* pressure_ptr = (double*)brm.GetValuePtr("Pressure");
 		std::vector<double> bmi_pressure(ngrid, 1.1);
 		brm.SetValue("Pressure", bmi_pressure);
 		std::vector<double> rm_pressure;
@@ -891,27 +938,50 @@ void testing(BMIPhreeqcRM& brm)
 		assert(bmi_pressure == rm_pressure);
 		brm.GetValue("Pressure", bmi_pressure);
 		assert(bmi_pressure == rm_pressure);
+		for (size_t i = 0; i < *nxyz_ptr; i++)
+		{
+			assert(pressure_ptr[i] == rm_pressure[i]);
+		}
 	}
 	// GetValue("Saturation")
 	// Always returns solution_volume / (rv * porosity) for each cell
 	{
+		double* saturation_ptr = (double*)brm.GetValuePtr("Saturation");
 		std::vector<double> bmi_sat;
 		brm.GetValue("Saturation", bmi_sat);
 		std::vector<double> rm_sat;
 		brm.GetSaturation(rm_sat);
 		assert(bmi_sat == rm_sat);
+		for (int i = 0; i < *nxyz_ptr; i++)
+		{
+			assert(saturation_ptr[i] == bmi_sat[i]);
+		}
+		rm_sat.resize(*nxyz_ptr, 0.8);
+		brm.SetValue("Saturation", rm_sat);
+		brm.GetValue("Saturation", bmi_sat);
+		assert(bmi_sat == rm_sat);
+		for (int i = 0; i < *nxyz_ptr; i++)
+		{
+			assert(saturation_ptr[i] == bmi_sat[i]);
+		}
 	}
 	// GetValue("SolutionVolume")
 	// Always returns solution_volume / (rv * porosity) for each cell
 	{
+		double* solution_volume_ptr = (double*)brm.GetValuePtr("SolutionVolume");
 		std::vector<double> bmi_vol;
 		brm.GetValue("SolutionVolume", bmi_vol);
 		std::vector<double> rm_vol;
 		rm_vol = brm.GetSolutionVolume();
 		assert(bmi_vol == rm_vol);
+		for (int i = 0; i < *nxyz_ptr; i++)
+		{
+			assert(solution_volume_ptr[i] == bmi_vol[i]);
+		}
 	}
 	// GetValue("Temperature")
 	{
+		double* temperature_ptr = (double*)brm.GetValuePtr("Temperature");
 		int ngrid;
 		brm.GetValue("GridCellCount", ngrid);
 		std::vector<double> bmi_temperature(ngrid, 50.);
@@ -921,6 +991,10 @@ void testing(BMIPhreeqcRM& brm)
 		assert(bmi_temperature == rm_temperature);
 		brm.GetValue("Temperature", bmi_temperature);
 		assert(bmi_temperature == rm_temperature);
+		for (int i = 0; i < *nxyz_ptr; i++)
+		{
+			assert(temperature_ptr[i] == bmi_temperature[i]);
+		}
 	}
 	// GetValue("SelectedOutput")
 	{
@@ -993,12 +1067,46 @@ void testing(BMIPhreeqcRM& brm)
 			assert(bmi_headings == rm_headings);
 		}
 	}
+	// GetValue("SelectedOutputOn")
+	{
+		bool* selectedoutput_on_ptr = (bool*)brm.GetValuePtr("SelectedOutputOn");
+		bool bmi_so_on;
+		brm.GetValue("SelectedOutputOn", bmi_so_on);
+		int rm_so_row_count = brm.GetSelectedOutputRowCount();
+		assert(bmi_so_on == *selectedoutput_on_ptr);
+		bmi_so_on = false;
+		brm.SetValue("SelectedOutputOn", bmi_so_on);
+		assert(*selectedoutput_on_ptr == bmi_so_on);
+		bmi_so_on = true;
+		brm.SetValue("SelectedOutputOn", bmi_so_on);
+		assert(*selectedoutput_on_ptr == bmi_so_on);
+	}
 	// GetValue("SelectedOutputRowCount")
 	{
 		int bmi_so_row_count;
 		brm.GetValue("SelectedOutputRowCount", bmi_so_row_count);
 		int rm_so_row_count = brm.GetSelectedOutputRowCount();
 		assert(bmi_so_row_count == rm_so_row_count);
+	}
+	// Time
+	{
+		double time = 1.0;
+		double* time_ptr = (double*)brm.GetValuePtr("Time");
+		brm.SetTime(time);
+		double time1;
+		brm.GetValue("Time", time1);
+		assert(time1 == time);
+		assert(*time_ptr = time);
+	}
+	// TimeStep
+	{
+		double timestep = 1.1;
+		double* timestep_ptr = (double*)brm.GetValuePtr("TimeStep");
+		brm.SetTimeStep(timestep);
+		double timestep1;
+		brm.GetValue("TimeStep", timestep1);
+		assert(timestep1 == timestep);
+		assert(*timestep_ptr = timestep);
 	}
 }
 #endif // YAML

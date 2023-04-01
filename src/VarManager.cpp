@@ -175,7 +175,6 @@ void VarManager::ComponentCount_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(int);
 		int Nbytes = (int)sizeof(int);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
@@ -285,8 +284,6 @@ void VarManager::Concentrations_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(double);
 		int Nbytes = (int)sizeof(double) *
 			rm_ptr->GetGridCellCount() * rm_ptr->GetComponentCount();
@@ -347,7 +344,6 @@ void VarManager::Density_Var()
 	BMIVariant& bv = this->VariantMap[RMVARS::Density];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[RMVARS::Density];
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -395,7 +391,6 @@ void VarManager::ErrorString_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)rm_ptr->GetErrorString().size();
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -437,11 +432,10 @@ void VarManager::FilePrefix_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)rm_ptr->GetFilePrefix().size();
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-		bv.SetBasic("error", true, true, false, Nbytes, Itemsize);
+		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
 		bv.SetTypes("std::string", "character", "");
 		this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
 		bv.GetStringRef() = rm_ptr->GetFilePrefix();
@@ -480,8 +474,6 @@ void VarManager::Gfw_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		//
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetComponentCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -526,7 +518,6 @@ void VarManager::GridCellCount_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(int);
 		int Nbytes = (int)sizeof(int);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
@@ -581,7 +572,6 @@ void VarManager::NthSelectedOutput_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(int);
 		int Nbytes = (int)sizeof(int);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
@@ -626,7 +616,6 @@ void VarManager::Saturation_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -673,7 +662,6 @@ void VarManager::SelectedOutput_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetSelectedOutputRowCount() *
 			rm_ptr->GetSelectedOutputColumnCount();
@@ -715,7 +703,6 @@ void VarManager::SelectedOutputColumnCount_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(int);
 		int Nbytes = (int)sizeof(int);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
@@ -763,8 +750,6 @@ void VarManager::SelectedOutputCount_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(int);
 		int Nbytes = (int)sizeof(int);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
@@ -807,7 +792,7 @@ void VarManager::SelectedOutputCount_Var()
 }
 void VarManager::SelectedOutputHeadings_Var()
 {
-	RMVARS VARS_myself = RMVARS::SelectedOutputCount;
+	RMVARS VARS_myself = RMVARS::SelectedOutputHeadings;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -844,8 +829,8 @@ void VarManager::SelectedOutputHeadings_Var()
 	}
 	case VarManager::VAR_TASKS::GetVar:
 	{
-		const std::vector<std::string>& v = rm_ptr->GetComponents();
-		this->VarExchange.SetStringVector(v);
+		rm_ptr->GetSelectedOutputHeadings(bv.GetStringVectorRef());
+		this->VarExchange.SetStringVector(bv.GetStringVectorRef());
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
@@ -874,7 +859,6 @@ void VarManager::SelectedOutputRowCount_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(int);
 		int Nbytes = (int)sizeof(int);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
@@ -922,7 +906,6 @@ void VarManager::SolutionVolume_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -968,7 +951,6 @@ void VarManager::Time_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -1015,7 +997,6 @@ void VarManager::TimeStep_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -1062,7 +1043,6 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(int);
 		int Nbytes = (int)sizeof(int);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
@@ -1110,7 +1090,6 @@ void VarManager::Porosity_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -1157,7 +1136,6 @@ void VarManager::Pressure_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
@@ -1204,7 +1182,6 @@ void VarManager::SelectedOutputOn_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = (int)sizeof(bool);
 		int Nbytes = (int)sizeof(bool);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
@@ -1228,13 +1205,13 @@ void VarManager::SelectedOutputOn_Var()
 	case VarManager::VAR_TASKS::RMUpdate:
 	case VarManager::VAR_TASKS::GetVar:
 	{
-		int v = rm_ptr->GetSelectedOutputOn();
+		bool v = rm_ptr->GetSelectedOutputOn();
 		bv.SetBVar(v);
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
 	{
-		bool v = this->VarExchange.GetBVarPtr();
+		bool v = this->VarExchange.GetBVar();
 		bv.SetBVar(v);
 		rm_ptr->SetSelectedOutputOn(v);
 		break;
@@ -1252,7 +1229,6 @@ void VarManager::Temperature_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		BMIVariant& bv = this->VariantMap[VARS_myself];
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  

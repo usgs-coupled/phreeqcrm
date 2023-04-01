@@ -32,6 +32,9 @@ void BMIVariant::CopyScalars(BMIVariant& bv)
 	this->VoidPtr = bv.VoidPtr;
 	this->fn = bv.fn;
 	this->NotImplemented = bv.NotImplemented;
+	this->ctype = bv.ctype;
+	this->ftype = bv.ftype;
+	this->ptype = bv.ptype;
 }
 void BMIVariant::Clear()
 {

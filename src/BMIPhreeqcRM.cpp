@@ -137,7 +137,7 @@ int BMIPhreeqcRM::GetInputItemCount()
 {
 	int count = 0;
 	for (auto it = this->var_man->VariantMap.begin();
-		it != this->var_man->VariantMap.begin(); it++)
+		it != this->var_man->VariantMap.end(); it++)
 	{
 		BMIVariant& bv = it->second;
 		if (!bv.GetInitialized())
@@ -157,7 +157,7 @@ int BMIPhreeqcRM::GetOutputItemCount()
 {
 	int count = 0;
 	for (auto it = this->var_man->VariantMap.begin();
-		it != this->var_man->VariantMap.begin(); it++)
+		it != this->var_man->VariantMap.end(); it++)
 	{
 		BMIVariant& bv = it->second;
 		if (!bv.GetInitialized())
@@ -176,7 +176,7 @@ int BMIPhreeqcRM::GetPointableItemCount()
 {
 	int count = 0;
 	for (auto it = this->var_man->VariantMap.begin();
-		it != this->var_man->VariantMap.begin(); it++)
+		it != this->var_man->VariantMap.end(); it++)
 	{
 		BMIVariant& bv = it->second;
 		if (!bv.GetInitialized())
@@ -195,7 +195,7 @@ std::vector<std::string> BMIPhreeqcRM::GetInputVarNames()
 {
 	std::vector <std::string> names;
 	for (auto it = this->var_man->VariantMap.begin();
-		it != this->var_man->VariantMap.begin(); it++)
+		it != this->var_man->VariantMap.end(); it++)
 	{
 		BMIVariant& bv = it->second;
 		if (!bv.GetInitialized())
@@ -214,7 +214,7 @@ std::vector<std::string>  BMIPhreeqcRM::GetOutputVarNames()
 { 
 	std::vector <std::string> names;
 	for (auto it = this->var_man->VariantMap.begin();
-		it != this->var_man->VariantMap.begin(); it++)
+		it != this->var_man->VariantMap.end(); it++)
 	{
 		BMIVariant& bv = it->second;
 		if (!bv.GetInitialized())
@@ -233,7 +233,7 @@ std::vector<std::string> BMIPhreeqcRM::GetPointableVarNames()
 {
 	std::vector <std::string> names;
 	for (auto it = this->var_man->VariantMap.begin();
-		it != this->var_man->VariantMap.begin(); it++)
+		it != this->var_man->VariantMap.end(); it++)
 	{
 		BMIVariant& bv = it->second;
 		if (!bv.GetInitialized())
@@ -579,7 +579,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::string& dest)
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
 		((*this->var_man).*bv.GetFn())();
-		assert(this->var_man->VarExchange.GetCType() == "string");
+		assert(this->var_man->VarExchange.GetCType() == "std::string");
 		dest = this->var_man->VarExchange.GetStringVar();
 		return;
 	}
@@ -654,9 +654,9 @@ void* BMIPhreeqcRM::GetValuePtr(const std::string name)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
 		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
-		if (!bv.GetInitialized())
+		if (bv.GetVoidPtr() == NULL)
 		{
-			this->var_man->task = VarManager::VAR_TASKS::Info;
+			this->var_man->task = VarManager::VAR_TASKS::GetPtr;
 			((*this->var_man).*bv.GetFn())();
 		}
 		return bv.GetVoidPtr();
@@ -856,7 +856,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
 			((*this->var_man).*bv.GetFn())();
 		}	
 		// Check dimension
-		int dim = this->GetVarNbytes(name) / this->GetVarItemsize(name);
+		int dim = bv.GetDim(); 
 		if (dim != src.size())
 		{
 			std::ostringstream oss;
@@ -865,6 +865,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
 			return;
 		}
 		// Store in var_man->VarExchange
+		this->var_man->VarExchange.GetDoubleVectorRef().resize(bv.GetDim());
 		this->var_man->VarExchange.SetDoubleVector(src);
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
@@ -886,7 +887,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<int> src)
 			this->var_man->task = VarManager::VAR_TASKS::Info;
 			((*this->var_man).*bv.GetFn())();
 		}	// Store in var_man->VarExchange
-		this->var_man->VarExchange.SetCType("std::vector<int>");
+		this->var_man->VarExchange.GetIntVectorRef().resize(bv.GetDim());
 		this->var_man->VarExchange.SetIntVector(src);
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
