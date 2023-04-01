@@ -77,7 +77,7 @@ void VarManager::RM2BMIUpdate(RMVARS v_enum)
 {
 	if (this->PointerSet.size() == 0) return;
 	//RMVARS v_enum = this->GetEnum(name);
-	if (this->GetCurrentVar() != v_enum) return;
+	if (this->GetCurrentVar() == v_enum) return;
 	auto it = this->VariantMap.find(v_enum);
 	if (it != VariantMap.end())
 	{

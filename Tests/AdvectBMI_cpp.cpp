@@ -922,6 +922,17 @@ void testing(BMIPhreeqcRM& brm)
 			assert(my_por[i] == por_ptr[i]);
 			assert(por_ptr[i] == por_ptr[i]);
 		}
+		my_por.resize(40, 0.5);
+		brm.SetPorosity(my_por);
+		brm.GetValue("Porosity", my_porosity_dim);
+		brm.GetValue("Porosity", my_porosity_alloc);
+		for (size_t i = 0; i < *nxyz_ptr; i++)
+		{
+			assert(my_por[i] == my_porosity_dim[i]);
+			assert(my_por[i] == my_porosity_alloc[i]);
+			assert(my_por[i] == por_ptr[i]);
+			assert(por_ptr[i] == por_ptr[i]);
+		}
 		free((void*)my_porosity_alloc);
 	}
 	// GetValue("Pressure")
@@ -932,7 +943,7 @@ void testing(BMIPhreeqcRM& brm)
 		assert(*nxyz_ptr == ngrid);
 		double* pressure_ptr = (double*)brm.GetValuePtr("Pressure");
 		std::vector<double> bmi_pressure(ngrid, 1.1);
-		brm.SetValue("Pressure", bmi_pressure);
+		brm.SetPressure(bmi_pressure);
 		std::vector<double> rm_pressure;
 		rm_pressure = brm.GetPressure();
 		assert(bmi_pressure == rm_pressure);
@@ -1102,7 +1113,11 @@ void testing(BMIPhreeqcRM& brm)
 	{
 		double timestep = 1.1;
 		double* timestep_ptr = (double*)brm.GetValuePtr("TimeStep");
+		brm.SetValue("TimeStep", timestep);
+		assert(*timestep_ptr == timestep);
+		timestep = 1.2;
 		brm.SetTimeStep(timestep);
+		assert(*timestep_ptr == timestep);
 		double timestep1;
 		brm.GetValue("TimeStep", timestep1);
 		assert(timestep1 == timestep);
