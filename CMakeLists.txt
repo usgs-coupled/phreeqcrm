@@ -328,7 +328,7 @@ set(PhreeqcRM_Headers
 )
 
 set(PhreeqcRM_SRC
-  ${PROJECT_SOURCE_DIR}/src/BMI_interface.F90 
+  ${PROJECT_SOURCE_DIR}/src/BMI_interface.F90
   ${PROJECT_SOURCE_DIR}/src/RM_interface.F90
   ${PROJECT_SOURCE_DIR}/src/YAML_interface.F90
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90

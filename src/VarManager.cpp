@@ -413,6 +413,7 @@ void VarManager::ErrorString_Var()
 	{
 		this->VarExchange.GetStringRef() = rm_ptr->GetErrorString();
 		bv.GetStringRef() = rm_ptr->GetErrorString();
+		bv.SetItemsize(bv.GetStringRef().size());
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
@@ -430,17 +431,17 @@ void VarManager::FilePrefix_Var()
 	RMVARS VARS_myself = RMVARS::FilePrefix;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
-	if (!bv.GetInitialized())
-	{
+	//if (!bv.GetInitialized())
+	//{
 		int Itemsize = (int)rm_ptr->GetFilePrefix().size();
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
 		bv.SetTypes("std::string", "character", "");
-		this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
+		//this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
 		bv.GetStringRef() = rm_ptr->GetFilePrefix();
-		bv.SetInitialized(true);
-	}
+		//bv.SetInitialized(true);
+	//}
 	switch (this->task)
 	{
 	case VarManager::VAR_TASKS::GetPtr:
@@ -452,14 +453,26 @@ void VarManager::FilePrefix_Var()
 	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
+		//int Itemsize = (int)rm_ptr->GetFilePrefix().size();
+		//int Nbytes = Itemsize;
+		////name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		//bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
+		//bv.SetTypes("std::string", "character", "");
 		this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
 		bv.GetStringRef() = rm_ptr->GetFilePrefix();
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
+	{
+		int Itemsize = (int)this->VarExchange.GetStringRef().size();
+		int Nbytes = Itemsize;
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
+		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
+		//bv.SetTypes("std::string", "character", "");
 		rm_ptr->SetFilePrefix(this->VarExchange.GetStringRef());
 		bv.GetStringRef() = this->VarExchange.GetStringRef();
 		break;
+	}
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
 		break;
@@ -816,21 +829,29 @@ void VarManager::SelectedOutputHeadings_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		std::vector<const char*> CharVector;
-		std::vector<std::string>& Components = bv.GetStringVectorRef();
-		for (size_t i = 0; i < Components.size(); i++)
-		{
-			CharVector.push_back(Components[i].c_str());
-		}
-		bv.SetCharVector(CharVector);
-		this->PointerSet.insert(VARS_myself);
-		this->UpdateSet.insert(VARS_myself);
+		assert(false);
+		//std::vector<const char*> CharVector;
+		//std::vector<std::string>& Components = bv.GetStringVectorRef();
+		//for (size_t i = 0; i < Components.size(); i++)
+		//{
+		//	CharVector.push_back(Components[i].c_str());
+		//}
+		//bv.SetCharVector(CharVector);
+		//this->PointerSet.insert(VARS_myself);
+		//this->UpdateSet.insert(VARS_myself);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
 	{
 		rm_ptr->GetSelectedOutputHeadings(bv.GetStringVectorRef());
 		this->VarExchange.SetStringVector(bv.GetStringVectorRef());
+		std::vector<std::string>& headings = bv.GetStringVectorRef();
+		size_t size = 0;
+		for (size_t i = 0; i < headings.size(); i++)
+		{
+			if (headings[i].size() > size) size = headings[i].size();
+		}
+		bv.SetItemsize(size);
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:

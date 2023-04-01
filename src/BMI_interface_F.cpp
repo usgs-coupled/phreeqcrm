@@ -121,7 +121,93 @@ RMF_BMI_GetOutputItemCount(int* id)
 	}
 	return IRM_BADINSTANCE;
 }
-
+/* ---------------------------------------------------------------------- */
+int
+RMF_BMI_GetPointableItemCount(int* id)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves number of variables that can be retrieved
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(*id);
+	if (bmirm_ptr)
+	{
+		return bmirm_ptr->GetPointableItemCount();
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+int
+RMF_BMI_GetNamesSize(int* id, const char* type, int* dest)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves number of variables that can be retrieved
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(*id);
+	if (bmirm_ptr)
+	{
+		std::vector<std::string> v;
+		std::string stype = type;
+		if (stype == "inputvarnames")
+		{
+			v = bmirm_ptr->GetInputVarNames();
+		}
+		if (stype == "outputvarnames")
+		{
+			v = bmirm_ptr->GetOutputVarNames();
+		}
+		if (stype == "pointablevarnames")
+		{
+			v = bmirm_ptr->GetPointableVarNames();
+		}
+		int size = 0;
+		for (size_t i = 0; i < v.size(); i++)
+		{
+			if (v[i].size() > size) size = v[i].size();
+		}
+		memcpy(dest, &size, sizeof(int));
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+int
+RMF_BMI_GetNames(int* id, const char* type, char* dest)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves number of variables that can be retrieved
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(*id);
+	std::string stype = type;
+	if (bmirm_ptr)
+	{
+		std::vector<std::string> v;
+		if (stype == "inputvarnames")
+		{
+			v = bmirm_ptr->GetInputVarNames();
+		}
+		if (stype == "outputvarnames")
+		{
+			v = bmirm_ptr->GetOutputVarNames();
+		}
+		if (stype == "pointablevarnames")
+		{
+			v = bmirm_ptr->GetPointableVarNames();
+		}
+		int size = 0;
+		for (size_t i = 0; i < v.size(); i++)
+		{
+			if (v[i].size() > size) size = v[i].size();
+		}
+		int itemsize = size;
+		int dim = v.size();
+		int nbytes = dim*size;
+		std::stringstream all;
+		for (size_t i = 0; i < v.size(); i++)
+		{
+			all << std::left << std::setfill(' ') << std::setw(itemsize) << v[i];
+		}
+		memcpy( dest, all.str().data(), all.str().size());
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
 /* ---------------------------------------------------------------------- */
 double
 RMF_BMI_GetTimeStep(int* id)

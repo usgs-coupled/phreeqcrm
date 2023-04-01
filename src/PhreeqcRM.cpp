@@ -272,6 +272,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 		std::cerr << "Reaction module not created." << std::endl;
 		exit(4);
 	}
+	this->var_man = NULL;
 	this->file_prefix = "myrun";
 	this->dump_file_name = file_prefix;
 	this->dump_file_name.append(".dump");
@@ -12337,7 +12338,10 @@ void
 PhreeqcRM::UpdateBMI(RMVARS v_enum)
 /* ---------------------------------------------------------------------- */
 {
-	this->var_man->RM2BMIUpdate(v_enum);
+	if (this->var_man != NULL)
+	{
+		this->var_man->RM2BMIUpdate(v_enum);
+	}
 }
 /* ---------------------------------------------------------------------- */
 void

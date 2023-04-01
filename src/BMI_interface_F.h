@@ -18,7 +18,10 @@ extern "C" {
 	IRM_DLL_EXPORT double     RMF_BMI_GetCurrentTime(int* id);
 	IRM_DLL_EXPORT double     RMF_BMI_GetEndTime(int* id);
 	IRM_DLL_EXPORT int        RMF_BMI_GetInputItemCount(int* id);
+	IRM_DLL_EXPORT int        RMF_BMI_GetNames(int* id, const char* type, char* dest);
+	IRM_DLL_EXPORT int        RMF_BMI_GetNamesSize(int* id, const char* type, int* dest);
 	IRM_DLL_EXPORT int        RMF_BMI_GetOutputItemCount(int* id);
+	IRM_DLL_EXPORT int		  RMF_BMI_GetPointableItemCount(int* id);
 	IRM_DLL_EXPORT double     RMF_BMI_GetTimeStep(int* id);
 	IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetTimeUnits(int* id, char* units, int* l1);
 	IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetValue(int* id, char* name, void* dest);

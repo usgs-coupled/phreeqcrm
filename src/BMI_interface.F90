@@ -544,6 +544,48 @@
 	count = RMF_BMI_GetOutputItemCount(id)
     bmif_get_output_item_count = success(count)
     END FUNCTION bmif_get_output_item_count
+    
+    !> Basic Model Interface method that returns count of variables for which
+    !> pointers can be retrieved with @ref bmif_get_ptr.
+    !> @retval  Count of input variables that can be set with @ref bmif_set_value.
+    !> @param id            The instance @a id returned from @ref RM_Create.
+    !>
+    !> @see
+    !> @ref bmif_get_input_var_names,
+    !> @ref bmif_get_var_itemsize,
+    !> @ref bmif_get_var_nbytes,
+    !> @ref bmif_get_var_type,
+    !> @ref bmif_get_var_units,
+    !> @ref bmif_set_value.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> integer inputvarcount
+    !> inputvarcount = bmif_get_input_item_count(id);
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
+    !>
+    INTEGER FUNCTION bmif_get_pointable_item_count(id, count)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetPointableItemCount(id) &
+			BIND(C, NAME='RMF_BMI_GetPointableItemCount')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		END FUNCTION RMF_BMI_GetPointableItemCount
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	INTEGER, INTENT(inout) :: count
+	INTEGER :: status
+	count = RMF_BMI_GetPointableItemCount(id)
+    bmif_get_pointable_item_count = success(count)
+    END FUNCTION bmif_get_pointable_item_count
 
     !> Basic Model Interface method that returns a list of the variable names that can be set
     !> with @ref bmif_set_value.
@@ -570,12 +612,41 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION bmif_get_input_var_names(id, var_names)
+    INTEGER FUNCTION bmif_get_input_var_names(id, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
+        INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetNames(id, type, dest) &
+			BIND(C, NAME='RMF_BMI_GetNames')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: type
+		CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetNames
+		END INTERFACE
+        INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetNamesSize(id, type, dest) &
+			BIND(C, NAME='RMF_BMI_GetNamesSize')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: type
+		INTEGER(KIND=C_INT), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetNamesSize
+		END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, INTENT(inout) :: var_names(:)
-    bmif_get_input_var_names = success(bmif_get_value(id, "inputvarnames", var_names))
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    character(100) :: vartype
+    integer :: nbytes, status, dim, itemsize
+	vartype = "inputvarnames"
+	status = RMF_BMI_GetNamesSize(id, trim(vartype)//C_NULL_CHAR, itemsize)
+	status = bmif_get_input_item_count(id, dim)
+    nbytes = dim * itemsize
+    dim = nbytes / itemsize
+    if(allocated(dest)) deallocate(dest)
+    allocate(character(len=itemsize) :: dest(dim))
+    bmif_get_input_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, dest(1))
     return
     END FUNCTION bmif_get_input_var_names
 
@@ -603,16 +674,104 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION bmif_get_output_var_names(id, var_names)
+    INTEGER FUNCTION bmif_get_output_var_names(id, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
+        INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetNames(id, type, dest) &
+			BIND(C, NAME='RMF_BMI_GetNames')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: type
+		CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetNames
+		END INTERFACE
+        INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetNamesSize(id, type, dest) &
+			BIND(C, NAME='RMF_BMI_GetNamesSize')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: type
+		INTEGER(KIND=C_INT), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetNamesSize
+		END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable,  INTENT(inout) :: var_names(:)
-    bmif_get_output_var_names = success(bmif_get_value(id, "outputvarnames", var_names))
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    character(100) :: vartype
+    integer :: nbytes, status, dim, itemsize
+	vartype = "outputvarnames"
+	status = RMF_BMI_GetNamesSize(id, trim(vartype)//C_NULL_CHAR, itemsize)
+	status = bmif_get_output_item_count(id, dim)
+    nbytes = dim * itemsize
+    if(allocated(dest)) deallocate(dest)
+    allocate(character(len=itemsize) :: dest(dim))
+    bmif_get_output_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, dest(1))
     return
     END FUNCTION bmif_get_output_var_names
 
-	! ====================================================
+    !> bmif_get_pointable_var_names returns a list of the variable names that can be
+    !> retrieved with @ref bmif_get_value.
+    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @param var_names     Deferred length, allocatable, 1D character vector.
+    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+    !>
+    !> @see
+    !> @ref bmif_get_pointable_item_count,
+    !> @ref bmif_get_value,
+    !> @ref bmif_get_var_itemsize,
+    !> @ref bmif_get_var_nbytes,
+    !> @ref bmif_get_var_type,
+    !> @ref bmif_get_var_units.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> character(len=:), allocatable, dimension(:) :: var_names
+    !> var_names = bmif_get_output_var_names(id);
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
+    INTEGER FUNCTION bmif_get_pointable_var_names(id, dest)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+        INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetNames(id, type, dest) &
+			BIND(C, NAME='RMF_BMI_GetNames')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: type
+		CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetNames
+		END INTERFACE
+        INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetNamesSize(id, type, dest) &
+			BIND(C, NAME='RMF_BMI_GetNamesSize')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: type
+		INTEGER(KIND=C_INT), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetNamesSize
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    character(100) :: vartype
+    integer :: nbytes, status, dim, itemsize
+	vartype = "pointablevarnames"
+	status = RMF_BMI_GetNamesSize(id, trim(vartype)//C_NULL_CHAR, itemsize)
+	status = bmif_get_pointable_item_count(id, dim)
+    nbytes = dim * itemsize
+    dim = nbytes / itemsize
+    if(allocated(dest)) deallocate(dest)
+    allocate(character(len=itemsize) :: dest(dim))
+    bmif_get_pointable_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, dest(1))
+    return
+    END FUNCTION bmif_get_pointable_var_names	! ====================================================
 	! Variable information
 	! ====================================================
 	
@@ -1142,10 +1301,47 @@
     status = bmif_get_var_itemsize(id, var, itemsize)
 	allocate(character(len=itemsize) :: temp)
     status = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, temp)
-	dest = temp
+    if (len(dest) .gt. 0) then
+        dest = temp
+    else
+        status = RM_ErrorMessage(id, "Variable length is zero")   
+        status = -1
+    endif
 	bmif_get_value_char = success(status)
     return
     END FUNCTION bmif_get_value_char
+    
+    !> \overload
+    INTEGER FUNCTION bmif_get_value_char_alloc(id, var, dest)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
+			BIND(C, NAME='RMF_BMI_GetValue')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
+		END FUNCTION RMF_BMI_GetValue
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    CHARACTER(len=:), allocatable, INTENT(inout) :: dest
+    character(BMI_MAX_TYPE_NAME) :: vartype
+    integer :: itemsize, status
+    CHARACTER(len=:), allocatable :: temp
+    status = bmif_get_var_type(id, var, vartype)
+    if (vartype .ne. "character") then
+        stop "Variable type error."
+    endif
+    status = bmif_get_var_itemsize(id, var, itemsize)
+	allocate(character(len=itemsize) :: temp)
+    status = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, temp)
+    dest = temp
+	bmif_get_value_char_alloc = success(status)
+    return
+    END FUNCTION bmif_get_value_char_alloc
 
     !> \overload
     INTEGER FUNCTION bmif_get_value_char1(id, var, dest)
@@ -1243,7 +1439,7 @@
     dim1 = 0
     dim2 = 0
     status = bmif_get_var_type(id, var, vartype)
-    if (vartype .ne. "real(kind=8),allocatable,dimension(:)") then
+    if (vartype .ne. "real(kind=8)") then
         stop "Variable type error."
     endif
     status = bmif_get_var_itemsize(id, var, itemsize)
@@ -1283,7 +1479,7 @@
     integer :: dim1, dim2
     logical :: need_alloc
     status = bmif_get_var_type(id, var, vartype)
-    if (vartype .ne. "real(kind=8),allocatable,dimension(:,:)") then
+    if (vartype .ne. "real(kind=8)") then
         stop "Variable type error."
     endif
     varname = Lower(var)
@@ -1405,7 +1601,7 @@
     integer :: dim1, dim2
     logical :: need_alloc
     status = bmif_get_var_type(id, var, vartype)
-    if (vartype .ne. "real(kind=8),allocatable,dimension(:)") then
+    if (vartype .ne. "real(kind=8)") then
         stop "Variable type error."
     endif
     varname = Lower(varname)
@@ -1660,7 +1856,7 @@
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
-    if (vartype .ne. "real(kind=8),allocatable,dimension(:)") then
+    if (vartype .ne. "real(kind=8)") then
         stop "Variable type error."
     endif
     status = bmif_get_var_nbytes(id, var, nbytes)
@@ -1693,7 +1889,7 @@
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
-    if (vartype .ne. "real(kind=8),allocatable,dimension(:,:)") then
+    if (vartype .ne. "real(kind=8)") then
         stop "Variable type error."
     endif
     status = bmif_get_var_nbytes(id, var, nbytes)

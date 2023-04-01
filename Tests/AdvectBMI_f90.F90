@@ -54,6 +54,7 @@
     real(kind=8), dimension(:), allocatable   :: sat
     integer                                       :: nchem
     character(len=:), allocatable                 :: prefix
+    character(len=2) :: shortprefix
     character(len=:), allocatable                 :: alloc_string
     character(100)                                :: string
     character(200)                                :: string1
@@ -154,6 +155,11 @@
     status = RM_OutputMessage(id, string1)
     write(string1, "(A,I10)") "MPI task number:                                  ", RM_GetMpiMyself(id)
     status = RM_OutputMessage(id, string1)
+    status = bmif_get_var_nbytes(id, "FilePrefix", n)
+    if (len(prefix) < n) then
+        if(allocated(prefix)) deallocate(prefix)
+        allocate(character(len=n) :: prefix)
+    endif
     status = bmif_get_value(id, "FilePrefix", prefix)
     write(string1, "(A,A)") "File prefix:                                        ", prefix
     status = RM_OutputMessage(id, trim(string1))
@@ -435,7 +441,8 @@ USE, intrinsic :: ISO_C_BINDING
     character(len=:), allocatable                        :: component
     character(len=:), dimension(:), allocatable          :: inputvars
     character(len=:), dimension(:), allocatable          :: outputvars 
-    character(len=:), allocatable                        :: prefix, rm_prefix
+    character(len=:), dimension(:), allocatable          :: pointablevars 
+    character(len=:), allocatable                        :: prefix, rm_prefix 
     real(kind=8), dimension(:), allocatable          :: gfw, rm_gfw
     real(kind=8), dimension(:,:), allocatable        :: c, c_rm
     integer                                              :: so_count, rm_so_count
@@ -487,7 +494,6 @@ USE, intrinsic :: ISO_C_BINDING
     status = assert(time_step .eq. rm_time_step)
     ! InputVarNames
     status = bmif_get_input_var_names(id, inputvars)
-    status = bmif_get_value(id, "InputVarNames", inputvars)
     write(*,*) "Input variables (setters)"
     do i = 1, size(inputvars)
         write(*,"(1x, I4, A60)") i, trim(inputvars(i))
@@ -502,7 +508,6 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
     ! OutputVarNames
     status = bmif_get_output_var_names(id, outputvars)
-    status = bmif_get_value(id, "OutputVarNames", outputvars)
     write(*,*) "Output variables (getters)"
     do i = 1, size(outputvars)
         write(*,"(1x, I4, A60)") i, trim(outputvars(i))
@@ -515,7 +520,12 @@ USE, intrinsic :: ISO_C_BINDING
         status = bmif_get_var_nbytes(id, outputvars(i), nbytes)
         write(*, "(5x, I60)") nbytes
     enddo
-
+    ! PointableVarNames
+    status = bmif_get_pointable_var_names(id, pointablevars)
+    write(*,*) "Pointable variables (GetValuePtr)"
+    do i = 1, size(outputvars)
+        write(*,"(1x, I4, A60)") i, trim(pointablevars(i))
+    enddo
     ! ComponentCount
     status = bmif_get_value(id, "ComponentCount", ncomps)
     rm_ncomps = RM_GetComponentCount(id)

@@ -384,10 +384,23 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 			memcpy(dest, this->var_man->VarExchange.GetDVarPtr(), Nbytes);
 			return;
 		}
-		//if (this->var_man->VarExchange.GetCType() == "std::string" && dim == 1)
-		//{
-		//	memcpy(dest, this->var_man->VarExchange.GetStringRef().data(), Nbytes);
-		//}
+		if (this->var_man->VarExchange.GetCType() == "std::vector<std::string>")
+		{
+			int itemsize = this->GetVarItemsize(name);
+			int nbytes = this->GetVarNbytes(name);
+			std::stringstream all;
+			for (size_t i = 0; i < this->var_man->VarExchange.GetStringVectorRef().size(); i++)
+			{
+				all << std::left << std::setfill(' ') << std::setw(itemsize) << this->var_man->VarExchange.GetStringVectorRef()[i];
+			}
+			memcpy( dest, all.str().data(), all.str().size());
+			return;
+		}
+		if (this->var_man->VarExchange.GetCType() == "std::string" && dim == 1)
+		{
+			memcpy(dest, this->var_man->VarExchange.GetStringRef().data(), Nbytes);
+			return;
+		}
 		if (this->var_man->VarExchange.GetCType() == "double" && dim > 1)
 		{
 			memcpy(dest, this->var_man->VarExchange.GetDoubleVectorPtr(), Nbytes);
@@ -677,31 +690,31 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 			((*this->var_man).*bv.GetFn())();
 		}
 		// Store the variable in var_man->VarExchange
-		int Nbytes = this->var_man->VarExchange.GetNbytes();
-		int itemsize = this->var_man->VarExchange.GetItemsize();
+		int Nbytes = bv.GetNbytes();
+		int itemsize = bv.GetItemsize();
 		int dim = Nbytes / itemsize;
-		if (this->var_man->VarExchange.GetCType() == "bool" && dim == 1)
+		if (bv.GetCType() == "bool" && dim == 1)
 		{
 			memcpy(this->var_man->VarExchange.GetBVarPtr(), src, Nbytes);
 		}
-		else if (this->var_man->VarExchange.GetCType() == "int" && dim == 1)
+		else if (bv.GetCType() == "int" && dim == 1)
 		{
 			memcpy(this->var_man->VarExchange.GetIVarPtr(), src, Nbytes);
 		}
-		else if (this->var_man->VarExchange.GetCType() == "double" && dim == 1)
+		else if (bv.GetCType() == "double" && dim == 1)
 		{
 			memcpy(this->var_man->VarExchange.GetDVarPtr(), src, Nbytes);
 		}
-		else if (this->var_man->VarExchange.GetCType() == "std::string")
+		else if (bv.GetCType() == "std::string")
 		{
 			this->var_man->VarExchange.GetStringRef() = (char*)src;
 		}
-		else if (this->var_man->VarExchange.GetCType() == "double" && dim > 1)
+		else if (bv.GetCType() == "double" && dim > 1)
 		{
 			this->var_man->VarExchange.GetDoubleVectorRef().resize(dim);
 			memcpy(this->var_man->VarExchange.GetDoubleVectorPtr(), src, Nbytes);
 		}
-		else if (this->var_man->VarExchange.GetCType() == "int" && dim > 1)
+		else if (bv.GetCType() == "int" && dim > 1)
 		{
 			this->var_man->VarExchange.GetIntVectorRef().resize(dim);
 			memcpy(this->var_man->VarExchange.GetIntVectorPtr(), src, Nbytes);
@@ -728,6 +741,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
 		((*this->var_man).*bv.GetFn())();
+		return;
 	}
 	assert(false);
 	return;

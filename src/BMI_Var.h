@@ -93,6 +93,7 @@ public:
 	{
 		this->ctype = c; this->ftype = f; this->ptype = p;
 	}
+	void SetItemsize(int v) { this->Itemsize = v; }
 	void SetInitialized(bool v) { Initialized = v; }
 	void SetBVar(bool v) { b_var = v; }
 	void SetDVar(double v) { d_var = v; }
