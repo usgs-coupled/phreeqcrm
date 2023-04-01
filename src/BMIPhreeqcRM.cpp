@@ -113,7 +113,9 @@ void BMIPhreeqcRM::UpdateVariables()
 	for (auto it = this->var_man->UpdateSet.begin(); it != UpdateSet.end(); it++)
 	{
 		VarManager::VarFunction fn = this->var_man->GetFn(*it);
-		VarManager::VarFunction* (fn)();
+		//		((*this).*f)(); 
+		// ((*this->var_man).*fn)();
+		((*this->var_man).*fn)();
 	}
 }
 void BMIPhreeqcRM::UpdateUntil(double time)
@@ -141,7 +143,8 @@ int BMIPhreeqcRM::GetInputItemCount()
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			//((*this->var_man).*bv.GetFn())();
+			((*this->var_man).*bv.GetFn())();
 		}
 		if (bv.GetHasSetter())
 		{
@@ -160,7 +163,7 @@ int BMIPhreeqcRM::GetOutputItemCount()
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}	
 		if (bv.GetHasGetter())
 		{
@@ -179,7 +182,7 @@ int BMIPhreeqcRM::GetPointableItemCount()
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		if (bv.GetHasPtr())
 		{
@@ -198,7 +201,7 @@ std::vector<std::string> BMIPhreeqcRM::GetInputVarNames()
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		if (bv.GetHasSetter()) 
 		{
@@ -217,7 +220,7 @@ std::vector<std::string>  BMIPhreeqcRM::GetOutputVarNames()
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		if (bv.GetHasGetter())
 		{
@@ -236,7 +239,7 @@ std::vector<std::string> BMIPhreeqcRM::GetPointableVarNames()
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		if (it->first == RMVARS::InputVarNames)
 		{
@@ -263,7 +266,7 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		if (this->language == "cpp")
 		{
@@ -291,7 +294,7 @@ std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		return bv.GetUnits();
 	}
@@ -309,7 +312,7 @@ int BMIPhreeqcRM::GetVarItemsize(const std::string name)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		return bv.GetItemsize();
 	}
@@ -327,7 +330,7 @@ int BMIPhreeqcRM::GetVarNbytes(const std::string name)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		return bv.GetNbytes();
 	}
@@ -360,10 +363,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		int Nbytes = this->var_man->VarExchange.GetNbytes();
 		int dim = this->var_man->VarExchange.GetDim();
 		if (this->var_man->VarExchange.GetCType() == "bool" && dim == 1)
@@ -412,10 +415,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, bool& dest)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		assert(this->var_man->VarExchange.GetCType() == "bool");
 		dest = this->var_man->VarExchange.GetBVar();
 		return;
@@ -433,10 +436,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, bool* dest)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		assert(this->var_man->VarExchange.GetCType() == "bool");
 		int dim = this->var_man->VarExchange.GetDim();
 		int nbytes = this->var_man->VarExchange.GetNbytes();
@@ -462,10 +465,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, double& dest)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		assert(this->var_man->VarExchange.GetCType() == "double");
 		dest = this->var_man->VarExchange.GetDVar();
 		return;
@@ -483,10 +486,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		assert(this->var_man->VarExchange.GetCType() == "double");
 		int dim = this->var_man->VarExchange.GetDim();
 		int nbytes = this->var_man->VarExchange.GetNbytes();
@@ -517,10 +520,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, int& dest)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		dest = this->var_man->VarExchange.GetIVar();
 		return;
 	}
@@ -537,10 +540,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, int* dest)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		assert(this->var_man->VarExchange.GetCType() == "int");
 		int dim = this->var_man->VarExchange.GetDim();
 		int nbytes = this->var_man->VarExchange.GetNbytes();
@@ -572,10 +575,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::string& dest)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		assert(this->var_man->VarExchange.GetCType() == "string");
 		dest = this->var_man->VarExchange.GetStringVar();
 		return;
@@ -593,10 +596,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		assert(this->var_man->VarExchange.GetCType() == "double");
 		dest = this->var_man->VarExchange.GetDoubleVectorRef();
 		return;
@@ -614,10 +617,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<int>& dest)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		dest = this->var_man->VarExchange.GetIntVectorRef();
 		return;
 	}
@@ -634,10 +637,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<std::string>& de
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		dest = this->var_man->VarExchange.GetStringVectorRef();
 		return;
 	}
@@ -654,7 +657,7 @@ void* BMIPhreeqcRM::GetValuePtr(const std::string name)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		return bv.GetVoidPtr();
 	}
@@ -671,7 +674,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		// Store the variable in var_man->VarExchange
 		int Nbytes = this->var_man->VarExchange.GetNbytes();
@@ -722,10 +725,11 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 			this->ErrorMessage(oss.str(), true);
 			throw PhreeqcRMStop();
 		}
+		// Set the variable
+		this->var_man->task = VarManager::VAR_TASKS::SetVar;
+		((*this->var_man).*bv.GetFn())();
 	}
-	// Set the variable
-	this->var_man->task = VarManager::VAR_TASKS::SetVar;
-	VarManager::VarFunction* (fn)();
+	assert(false);
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, bool src)
@@ -738,14 +742,14 @@ void BMIPhreeqcRM::SetValue(const std::string name, bool src)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		// Store in var_man->VarExchange
 		this->var_man->VarExchange.SetCType("bool");
 		this->var_man->VarExchange.SetBVar(src);
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		return;
 	}
 	assert(false);
@@ -761,13 +765,13 @@ void BMIPhreeqcRM::SetValue(const std::string name, char* src)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		// Store in var_man->VarExchange
 		this->var_man->VarExchange.SetStringVar(src);
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		return;
 	}
 	assert(false);
@@ -783,13 +787,13 @@ void BMIPhreeqcRM::SetValue(const std::string name, double src)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		// Store in var_man->VarExchange
 		this->var_man->VarExchange.SetDVar(src);
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		return;
 	}
 	assert(false);
@@ -805,13 +809,13 @@ void BMIPhreeqcRM::SetValue(const std::string name, int src)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		// Store in var_man->VarExchange
 		this->var_man->VarExchange.SetIVar(src);
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		return;
 	}
 	assert(false);
@@ -827,13 +831,13 @@ void BMIPhreeqcRM::SetValue(const std::string name, const std::string src)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		// Store in var_man->VarExchange
 		this->var_man->VarExchange.SetStringVar(src);
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		return;
 	}
 	assert(false);
@@ -849,7 +853,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}	
 		// Check dimension
 		int dim = this->GetVarNbytes(name) / this->GetVarItemsize(name);
@@ -864,7 +868,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
 		this->var_man->VarExchange.SetDoubleVector(src);
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		return;
 	}
 	assert(false);
@@ -880,16 +884,16 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<int> src)
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}	// Store in var_man->VarExchange
 		this->var_man->VarExchange.SetCType("std::vector<int>");
 		this->var_man->VarExchange.SetIntVector(src);
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		return;
 	}
 	assert(false);
@@ -905,13 +909,13 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
-			VarManager::VarFunction* (fn)();
+			((*this->var_man).*bv.GetFn())();
 		}
 		this->var_man->VarExchange.SetCType("std::vector<std::string>");
 		this->var_man->VarExchange.SetStringVector(src);
 		// Set the variable
 		this->var_man->task = VarManager::VAR_TASKS::SetVar;
-		VarManager::VarFunction* (fn)();
+		((*this->var_man).*bv.GetFn())();
 		return;
 	}
 	assert(false);

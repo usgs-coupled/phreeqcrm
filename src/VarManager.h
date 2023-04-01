@@ -69,11 +69,16 @@ public:
 	RMVARS GetEnum(std::string name);
 	void RM2BMIUpdate(RMVARS v_enum);
 
+
 	RMVARS GetCurrentVar() { return this->CurrentVar; }
 	std::map<RMVARS, BMIVariant> & GetVariantMap() { return this->VariantMap; }
 	void SetCurrentVar(RMVARS v) { this->CurrentVar = v; }
 	// Function pointer definition
 	typedef void (VarManager::* VarFunction)(void);
+	void ExecFn(RMVARS v_enum) {
+		VarFunction f = this->GetFn(v_enum);
+		((*this).*f)();
+	}
 	//!typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr);
 	//typedef VarManager* (*NewDogFunction)(void);
 	//typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr); // function pointer type
