@@ -313,7 +313,7 @@
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: config_file
-    bmif_initialize = success(RMF_BMI_Initialize(id, trim(config_file//C_NULL_CHAR)))
+    bmif_initialize = success(RMF_BMI_Initialize(id, trim(config_file)//C_NULL_CHAR))
     return
     END FUNCTION bmif_initialize
 #endif
@@ -2078,7 +2078,7 @@
     ! Functions not implemented
 	! ====================================================
 
-    INCLUDE "BMI_not_implemented.F90"
+    INCLUDE "BMI_not_implemented.inc"
 	
 	! ====================================================
 	! Utility functions	

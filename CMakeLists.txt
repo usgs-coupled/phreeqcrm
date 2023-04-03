@@ -56,16 +56,22 @@ if (PHREEQCRM_BUILD_PYTHON)
 endif()
 
 set(PhreeqcRM_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/CSelectedOutput.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/CSelectedOutput.hxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/CVar.hxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/Debug.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/ErrorReporter.hxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface_F.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface_F.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface_F.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface_F.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqcCallbacks.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqcLib.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/advection.cpp
@@ -123,10 +129,10 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/NameDouble.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/NumKeyword.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/NumKeyword.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector_serial.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector_serial.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/nvector.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/parse.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PBasic.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PBasic.h
@@ -137,8 +143,8 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords/Keywords.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords/Keywords.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PHRQ_io_output.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/pitzer.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/pitzer_structures.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/pitzer.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PPassemblage.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PPassemblage.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PPassemblageComp.cxx
@@ -207,12 +213,6 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqcPhast.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqcPhastLib.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqcPhastLib.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IrmResult.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PhreeqcRM.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PhreeqcRM.h
@@ -220,12 +220,13 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_C.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_F.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/RMVARS.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/VarManager.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/VarManager.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/YAMLPhreeqcRM.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/YAML_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/YAML_interface_F.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/YAMLPhreeqcRM.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
 )
 
 # setup include directories
@@ -303,6 +304,9 @@ if(MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
 endif()
 
 set(PhreeqcRM_Headers
+  ${PROJECT_SOURCE_DIR}/src/BMI_interface_F.h
+  ${PROJECT_SOURCE_DIR}/src/BMI_Var.h
+  ${PROJECT_SOURCE_DIR}/src/BMIPhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqcCallbacks.h
@@ -317,22 +321,21 @@ set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/Var.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqcPhast.h
-  ${PROJECT_SOURCE_DIR}/src/BMIPhreeqcRM.h
-  ${PROJECT_SOURCE_DIR}/src/BMI_Var.h
-  ${PROJECT_SOURCE_DIR}/src/BMI_interface_F.h
   ${PROJECT_SOURCE_DIR}/src/IrmResult.h
   ${PROJECT_SOURCE_DIR}/src/PhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/RM_interface_C.h
-  ${PROJECT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
+  ${PROJECT_SOURCE_DIR}/src/RMVARS.h
+  ${PROJECT_SOURCE_DIR}/src/VarManager.h
   ${PROJECT_SOURCE_DIR}/src/YAML_interface_F.h
+  ${PROJECT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
 )
 
 set(PhreeqcRM_SRC
   ${PROJECT_SOURCE_DIR}/src/BMI_interface.F90
-  ${PROJECT_SOURCE_DIR}/src/BMI_not_implemented.F90
+  ${PROJECT_SOURCE_DIR}/src/BMI_not_implemented.inc
+  ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
   ${PROJECT_SOURCE_DIR}/src/RM_interface.F90
   ${PROJECT_SOURCE_DIR}/src/YAML_interface.F90
-  ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
 )
 
 if(PHREEQCRM_BUILD_MPI)

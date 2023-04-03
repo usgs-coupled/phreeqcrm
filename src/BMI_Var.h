@@ -4,7 +4,8 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <assert.h>
+#include <cassert>
+#include <cstring>
 //#include "VarManager.h"
 
 #if defined(_WINDLL)

@@ -87,7 +87,7 @@ public:
 	//void test() { VarFunction x = VarManager::Concentrations_var; 
 	//VarVariant vv;
 	//vv.SetFn(VarFux);
-	VarManager::VarFunction GetFn(RMVARS v_enum);
+	VarFunction GetFn(RMVARS v_enum);
 	// Var functions
 	void ComponentCount_Var();
 	void Components_Var();
