@@ -528,7 +528,7 @@ USE, intrinsic :: ISO_C_BINDING
     ! PointableVarNames
     status = bmif_get_pointable_var_names(id, pointablevars)
     write(*,*) "Pointable variables (GetValuePtr)"
-    do i = 1, size(outputvars)
+    do i = 1, size(pointablevars)
         write(*,"(1x, I4, A60)") i, trim(pointablevars(i))
     enddo
     ! ComponentCount

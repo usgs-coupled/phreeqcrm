@@ -2078,7 +2078,7 @@
     ! Functions not implemented
 	! ====================================================
 
-    INCLUDE "BMI_interface_not_implemented.F90"
+    INCLUDE "BMI_not_implemented.F90"
 	
 	! ====================================================
 	! Utility functions	
