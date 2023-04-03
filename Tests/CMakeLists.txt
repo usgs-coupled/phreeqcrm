@@ -8,7 +8,6 @@ if(PHREEQCRM_FORTRAN_TESTING)
   # TestRM Fortran source
   target_sources(FortranAdvect PRIVATE
     ../src/BMI_interface.F90
-    ../src/BMI_not_implemented.F90
     ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
     ../src/RM_interface.F90
     Advect_f90.F90
@@ -20,7 +19,7 @@ if(PHREEQCRM_FORTRAN_TESTING)
 
   # place [*.F[90]] files into "Source Files"
   source_group("Source Files" FILES "../src/BMI_interface.F90")
-  source_group("Source Files" FILES "../src/BMI_not_implemented.F90")
+  source_group("Source Files" FILES "../src/BMI_not_implemented.inc")
   source_group("Source Files" FILES "../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90")
   source_group("Source Files" FILES "../src/RM_interface.F90")
   source_group("Source Files" FILES "Advect_f90.F90")

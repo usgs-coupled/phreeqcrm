@@ -194,6 +194,7 @@ libphreeqcrm_la_SOURCES=\
 
 
 include_HEADERS=\
+	$(top_srcdir)/src/BMI_Var.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqcCallbacks.h\
@@ -229,7 +230,7 @@ dist_source_DATA=$(SRC)
 
 SRC=\
 	src/BMI_interface.F90\
-	src/BMI_not_implemented.F90\
+	src/BMI_not_implemented.inc\
 	src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90\
 	src/RM_interface.F90\
 	src/YAML_interface.F90

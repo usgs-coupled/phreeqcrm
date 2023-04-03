@@ -212,6 +212,16 @@ void VarManager::ComponentCount_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
+	{
+		// @todo assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Init:
+	{
+		assert(false);
+		break;
+	}
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -267,6 +277,16 @@ void VarManager::Components_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Info:
+	{
+		// @todo assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Init:
 	{
 		assert(false);
 		break;
@@ -333,6 +353,7 @@ void VarManager::Concentrations_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -379,6 +400,7 @@ void VarManager::Density_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -421,6 +443,7 @@ void VarManager::ErrorString_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -475,6 +498,7 @@ void VarManager::FilePrefix_Var()
 	}
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -519,6 +543,7 @@ void VarManager::Gfw_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:	
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -569,6 +594,16 @@ void VarManager::GridCellCount_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
+	{
+		// @todo assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Init:
+	{
+		assert(false);
+		break;
+	}
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -609,6 +644,16 @@ void VarManager::NthSelectedOutput_Var()
 	}
 	case VarManager::VAR_TASKS::RMUpdate:
 	case VarManager::VAR_TASKS::Update:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Info:
+	{
+		// @todo assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Init:
 	{
 		assert(false);
 		break;
@@ -663,6 +708,7 @@ void VarManager::Saturation_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -704,6 +750,7 @@ void VarManager::SelectedOutput_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -746,6 +793,16 @@ void VarManager::SelectedOutputColumnCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Info:
+	{
+		// @todo assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Init:
 	{
 		assert(false);
 		break;
@@ -793,6 +850,16 @@ void VarManager::SelectedOutputCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Info:
+	{
+		// @todo assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Init:
 	{
 		assert(false);
 		break;
@@ -867,6 +934,16 @@ void VarManager::SelectedOutputHeadings_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
+	{
+		// @todo assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Init:
+	{
+		assert(false);
+		break;
+	}
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -914,6 +991,8 @@ void VarManager::SelectedOutputRowCount_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -960,6 +1039,7 @@ void VarManager::SolutionVolume_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -1006,6 +1086,7 @@ void VarManager::Time_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -1052,6 +1133,7 @@ void VarManager::TimeStep_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -1094,6 +1176,16 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Info:
+	{
+		// @todo assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::Init:
 	{
 		assert(false);
 		break;
@@ -1145,6 +1237,7 @@ void VarManager::Porosity_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:	
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -1191,6 +1284,7 @@ void VarManager::Pressure_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
@@ -1237,6 +1331,8 @@ void VarManager::SelectedOutputOn_Var()
 		rm_ptr->SetSelectedOutputOn(v);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -1284,6 +1380,7 @@ void VarManager::Temperature_Var()
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::Init:
 		break;
 	}
 	this->VarExchange.CopyScalars(bv);
