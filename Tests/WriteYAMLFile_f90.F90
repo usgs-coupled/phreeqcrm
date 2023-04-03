@@ -7,18 +7,18 @@
     integer :: status, i
     integer :: nxyz
     character(len=100) :: input, YAML_filename
-    double precision :: time_conversion
+    real(kind=8) :: time_conversion
     logical :: workers, initial_phreeqc, utility
-    double precision :: time, time_step
-    double precision, allocatable, dimension(:)   :: density
-    double precision, allocatable, dimension(:)   :: rv
-    double precision, allocatable, dimension(:)   :: por
-    double precision, allocatable, dimension(:)   :: sat
+    real(kind=8) :: time, time_step
+    real(kind=8), allocatable, dimension(:)   :: density
+    real(kind=8), allocatable, dimension(:)   :: rv
+    real(kind=8), allocatable, dimension(:)   :: por
+    real(kind=8), allocatable, dimension(:)   :: sat
     integer,          allocatable, dimension(:)   :: print_chemistry_mask
     integer,          allocatable, dimension(:)   :: grid2chem
     integer,          allocatable, dimension(:,:) :: ic1
     integer,          allocatable, dimension(:,:) :: ic2
-    double precision, allocatable, dimension(:,:) :: f1
+    real(kind=8), allocatable, dimension(:,:) :: f1
     integer,          allocatable, dimension(:)   :: module_cells
     ! Create YAMLPhreeqcRM document
     id = CreateYAMLPhreeqcRM()   

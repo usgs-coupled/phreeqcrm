@@ -12,6 +12,7 @@
 #define CLOCK() clock()/CLOCKS_PER_SEC
 #endif
 #include "PhreeqcRM.h"
+#include "RMVARS.h"
 #include "PHRQ_base.h"
 #include "PHRQ_io.h"
 #include "IPhreeqc.h"
@@ -271,6 +272,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 		std::cerr << "Reaction module not created." << std::endl;
 		exit(4);
 	}
+	this->var_man = NULL;
 	this->file_prefix = "myrun";
 	this->dump_file_name = file_prefix;
 	this->dump_file_name.append(".dump");
@@ -4440,6 +4442,7 @@ PhreeqcRM::GetSelectedOutputHeadings(std::vector<std::string>& headings)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
+	headings.clear();
 	try
 	{
 		int ncol = this->GetSelectedOutputColumnCount();
@@ -11290,6 +11293,7 @@ PhreeqcRM::SetPorosity(const std::vector<double> &t)
 	this->phreeqcrm_error_string.clear();
 	std::string methodName = "SetPorosity";
 	IRM_RESULT result_value = SetGeneric(t, this->porosity_root, porosity_worker, METHOD_SETPOROSITY, methodName);
+	this->UpdateBMI(RMVARS::Porosity);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 
@@ -11355,6 +11359,7 @@ PhreeqcRM::SetPressure(const std::vector<double> &t)
 	{
 		return_value = IRM_FAIL;
 	}
+	this->UpdateBMI(RMVARS::Pressure);
 	return this->ReturnHandler(return_value, "PhreeqcRM::SetPressure");
 }
 /* ---------------------------------------------------------------------- */
@@ -11490,6 +11495,7 @@ PhreeqcRM::SetSaturation(const std::vector<double> &t)
 	this->phreeqcrm_error_string.clear();
 	std::string methodName = "SetSaturation";
 	IRM_RESULT result_value = SetGeneric(t, this->saturation_root, saturation_worker, METHOD_SETSATURATION, methodName);
+	this->UpdateBMI(RMVARS::Saturation);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 /* ---------------------------------------------------------------------- */
@@ -11532,6 +11538,7 @@ PhreeqcRM::SetSelectedOutputOn(bool t)
 	this->selected_output_on = (temp_tf == 0) ? false : true;
 	//MPI_Bcast(&this->selected_output_on, 1, MPI_LOGICAL, 0, phreeqcrm_comm);
 #endif
+	this->UpdateBMI(RMVARS::SelectedOutputOn);
 	return IRM_OK;
 }
 
@@ -11617,6 +11624,7 @@ PhreeqcRM::SetTemperature(const std::vector<double> &t)
 	{
 		return_value = IRM_FAIL;
 	}
+	this->UpdateBMI(RMVARS::Temperature);
 	return this->ReturnHandler(return_value, "PhreeqcRM::SetTemperature");
 }
 /* ---------------------------------------------------------------------- */
@@ -11640,6 +11648,7 @@ PhreeqcRM::SetTime(double t)
 #ifdef USE_MPI
 	MPI_Bcast(&this->time, 1, MPI_DOUBLE, 0, phreeqcrm_comm);
 #endif
+	this->UpdateBMI(RMVARS::Time);
 	return IRM_OK;
 }
 
@@ -11688,6 +11697,7 @@ PhreeqcRM::SetTimeStep(double t)
 #ifdef USE_MPI
 	MPI_Bcast(&this->time_step, 1, MPI_DOUBLE, 0, phreeqcrm_comm);
 #endif
+	this->UpdateBMI(RMVARS::TimeStep);
 	return IRM_OK;
 }
 /* ---------------------------------------------------------------------- */
@@ -12323,6 +12333,16 @@ PhreeqcRM::TransferCellsUZ(std::ostringstream &raw_stream, int old, int nnew)
 }
 
 #endif
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::UpdateBMI(RMVARS v_enum)
+/* ---------------------------------------------------------------------- */
+{
+	if (this->var_man != NULL)
+	{
+		this->var_man->RM2BMIUpdate(v_enum);
+	}
+}
 /* ---------------------------------------------------------------------- */
 void
 PhreeqcRM::UseSolutionDensityVolume(bool tf)

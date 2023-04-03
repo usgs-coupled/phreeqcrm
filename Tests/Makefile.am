@@ -113,7 +113,7 @@ mostlyclean-local: clean-modules
 clean-modules:
 	-test -z $(FC_MODEXT) || $(RM) *.$(FC_MODEXT)
 
-AdvectBMI_f90.$(OBJEXT) : AdvectBMI_f90.F90 RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT)
+AdvectBMI_f90.$(OBJEXT) : AdvectBMI_f90.F90 RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT) BMI_interface.$(OBJEXT)
 
 Gas_f90.$(OBJEXT) : Gas_f90.F90 ../src/RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT)
 
@@ -122,6 +122,13 @@ SimpleAdvect_f90.$(OBJEXT) : SimpleAdvect_f90.F90 RM_interface.$(OBJEXT) IPhreeq
 Species_f90.$(OBJEXT) : Species_f90.F90 RM_interface.$(OBJEXT)
 
 WriteYAMLFile_f90.$(OBJEXT) : RM_interface.$(OBJEXT) YAML_interface.$(OBJEXT)
+
+# bmiphreeqcrm.mod
+BMI_interface.F90 : $(top_srcdir)/src/BMI_interface.F90
+	$(LN_S) $< $@
+
+BMI_not_implemented.F90 : $(top_srcdir)/src/BMI_not_implemented.F90
+	$(LN_S) $< $@
 
 # mydata.mod
 Advect_f90.$(OBJEXT) : Advect_f90.F90 RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT)

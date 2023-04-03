@@ -861,7 +861,7 @@ RMF_GetGridCellCount(int * id)
 #ifdef USE_YAML
 /* ---------------------------------------------------------------------- */
 int
-RMF_GetGridCellCountYAML(char* config_file)
+RMF_GetGridCellCountYAML(const char* config_file)
 /* ---------------------------------------------------------------------- */
 {
 	// Returns the number of grid cells extracted from YAML file
@@ -1273,6 +1273,32 @@ RMF_GetStartCell(int *id, int *sc)
 		const std::vector <int> & l = Reaction_module_ptr->GetStartCell();
 		memcpy(sc, &l.front(), l.size() * sizeof(int));
 		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_GetTemperature(int* id, double* temperature)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves porosity for all grid nodes in sat
+	// size of sat must be the number of grid nodes
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		IRM_RESULT return_value = IRM_OK;
+		std::vector <double> temperature_vector;
+		temperature_vector = Reaction_module_ptr->GetTemperature();
+		if ((int)temperature_vector.size() == Reaction_module_ptr->GetGridCellCount())
+		{
+			memcpy(temperature, &temperature_vector.front(), (size_t)(Reaction_module_ptr->GetGridCellCount() * sizeof(double)));
+		}
+		else
+		{
+			temperature_vector.resize(Reaction_module_ptr->GetGridCellCount(), INACTIVE_CELL_VALUE);
+			return_value = IRM_FAIL;
+		}
+		return return_value;
 	}
 	return IRM_BADINSTANCE;
 }

@@ -57,90 +57,8 @@
     PRIVATE :: Chk_Integer1D
     PRIVATE :: Chk_Integer2D
     PRIVATE :: RMF_debug
-!    PRIVATE :: RMF_BMI_GetVarItemsize
-!    PRIVATE :: RMF_BMI_GetVarNbytes
-    PRIVATE :: Lower
 
-    !> INTERFACE-----Basic Model Interface method that retrieves model variables. Only variables in the list
-    !> provided by @ref RM_BMI_GetOutputVarNames can be retrieved. The BMI interface to PhreeqcRM is
-    !> only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the RM_BMI_
-    !> prefix) provide a complete interface.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve.
-    !> @param dest Variable in which to place results.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
-    !>
-    !> Variable names for the second argument (@a name) and variable type of the
-    !> third argument (@a dest).
-    !> @n "ComponentCount", @a dest: integer;
-    !> @n "Components", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "Concentrations", @a dest: double precision, allocatable, dimension(:,:);
-    !> @n "CurrentSelectedOutputUserNumber", @a dest: integer;
-    !> @n "Density", @a dest: double precision, allocatable, dimension(:);
-    !> @n "ErrorString", @a dest: character;
-    !> @n "FilePrefix", @a dest: character;
-    !> @n "Gfw", @a dest: double precision, allocatable, dimension(:);
-    !> @n "GridCellCount", @a dest: integer;
-    !> @n "InputVarNames", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "Porosity", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Pressure", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Saturation", @a dest: double precision, allocatable, dimension(:);
-    !> @n "SelectedOutput", @a dest: double precision, allocatable, dimension(:,:);
-    !> @n "SelectedOutputColumnCount", @a dest: integer;
-    !> @n "SelectedOutputCount", @a dest: integer;
-    !> @n "SelectedOutputHeadings", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "SelectedOutputOn", @a dest: logical;
-    !> @n "SelectedOutputRowCount", @a dest: integer;
-    !> @n "SolutionVolume", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Temperature", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Time",	@a dest: double precision;
-    !> @n "TimeStep",	@a dest: double precision.
-    !>
-    !> @see
-    !> @ref RM_BMI_GetOutputVarNames,
-    !> @ref RM_BMI_GetOutputItemCount,
-    !> @ref RM_BMI_GetVarItemsize,
-    !> @ref RM_BMI_GetVarNbytes,
-    !> @ref RM_BMI_GetVarType,
-    !> @ref RM_BMI_GetVarUnits,
-    !> @ref RM_BMI_SetValue.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> double precision, allocatable, dimension(:) :: bmi_density
-    !> character(len=:), allocatable, dimension(:) :: bmi_comps
-    !> status = RM_BMI_GetValue(id, "Density", bmi_density)
-    !> status = RM_BMI_GetValue("Components", bmi_comps)
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-    INTERFACE RM_BMI_GetValue
-        module procedure RM_BMI_GetValue_b
-        module procedure RM_BMI_GetValue_c
-        module procedure RM_BMI_GetValue_c1
-        module procedure RM_BMI_GetValue_d
-        module procedure RM_BMI_GetValue_d1
-        module procedure RM_BMI_GetValue_d2
-        module procedure RM_BMI_GetValue_i
-        module procedure RM_BMI_GetValue_i1
-        module procedure RM_BMI_GetValue_i2
-    END INTERFACE RM_BMI_GetValue
-
-    INTERFACE RM_BMI_SetValue
-        module procedure RM_BMI_SetValue_b
-        module procedure RM_BMI_SetValue_c
-        module procedure RM_BMI_SetValue_d
-        module procedure RM_BMI_SetValue_d1
-        module procedure RM_BMI_SetValue_d2
-        module procedure RM_BMI_SetValue_i
-        module procedure RM_BMI_SetValue_i1
-        module procedure RM_BMI_SetValue_i2
-    END INTERFACE RM_BMI_SetValue
     CONTAINS
 #ifdef USE_YAML    
 !> @a GetGridCellCountYAML will read a YAML file and extract the value
@@ -153,7 +71,7 @@
 !> @param config_file         String containing the YAML file name.
 !> @retval Number of grid cells specified in the YAML file; returns
 !> zero if GridCellCount is not defined.
-!> @see @ref RM_BMI_Initialize, @ref RM_Create, and @ref RM_InitializeYAML.
+!> @see @ref bmif_initialize, @ref RM_Create, and @ref RM_InitializeYAML.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -162,7 +80,7 @@
 !>  integer nxyz
 !> 	nxyz = GetGridCellCountYAML("myfile.yaml");
 !> 	status = RM_Create(nxyz, nthreads);
-!> 	status = RM_BMI_initialize("myfile.yaml");
+!> 	status = bmif_initialize("myfile.yaml");
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -316,9 +234,9 @@
     END FUNCTION RMF_Concentrations2Utility
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: c
     INTEGER, INTENT(in) :: n
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: tc, p_atm
+    real(kind=8), INTENT(in), DIMENSION(:) :: tc, p_atm
     if (rmf_debug) CALL ChK_Concentrations2Utility(id, c, n, tc, p_atm)
     RM_Concentrations2Utility = RMF_Concentrations2Utility(id, c, n, tc, p_atm)
     return
@@ -335,9 +253,9 @@
     END FUNCTION RMF_GetComponentCount
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: c
     INTEGER, INTENT(in) :: n
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: tc, p_atm
+    real(kind=8), INTENT(in), DIMENSION(:) :: tc, p_atm
     INTEGER :: errors
     errors = 0
     rmf_ncomps = RMF_GetComponentCount(id)
@@ -348,101 +266,7 @@
         errors = RM_Abort(id, -3, "Invalid argument(s) in RM_Concentrations2Utility")
     endif
     END SUBROUTINE Chk_Concentrations2Utility
-    !> Creates a reaction module. If the code is compiled with
-    !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
-    !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
-    !> module will use MPI and multiple processes. If neither preprocessor directive is used,
-    !> the reaction module will be serial (unparallelized).
-    !> @param nxyz                   The number of grid cells in the user's model.
-    !> @param nthreads (or @a comm, MPI)       When using OPENMP, the argument (@a nthreads) is the number of worker threads to be used.
-    !> If @a nthreads <= 0, the number of threads is set equal to the number of processors of the computer.
-    !> When using MPI, the argument (@a comm) is the MPI communicator to use within the reaction module.
-    !> @retval Id of the PhreeqcRM instance, negative is failure (See @ref RM_DecodeError).
-    !> @see
-    !> @ref RM_Destroy.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> nxyz = 40
-    !> #ifdef USE_MPI
-    !>   id = RM_Create(nxyz, MPI_COMM_WORLD)
-    !>   call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
-    !>   if (status .ne. MPI_SUCCESS) then
-    !>     stop "Failed to get mpi_myself"
-    !>   endif
-    !>   if (mpi_myself > 0) then
-    !>     status = RM_MpiWorker(id)
-    !>     status = RM_Destroy(id)
-    !>     return
-    !>   endif
-    !> #else
-    !>   nthreads = 3
-    !>   id = RM_Create(nxyz, nthreads)
-    !> #endif
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root and workers.
-
-    !> Creates a reaction module. If the code is compiled with
-    !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
-    !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
-    !> module will use MPI and multiple processes. If neither preprocessor directive is used,
-    !> the reaction module will be serial (unparallelized).
-    !> @param nxyz                   The number of grid cells in the user's model.
-    !> @param nthreads (or @a comm, MPI)       When using OPENMP, the argument (@a nthreads) is the number of worker threads to be used.
-    !> If @a nthreads <= 0, the number of threads is set equal to the number of processors of the computer.
-    !> When using MPI, the argument (@a comm) is the MPI communicator to use within the reaction module.
-    !> @retval Id of the PhreeqcRM instance, negative is failure (See @ref RM_DecodeError).
-    !> @see
-    !> @ref RM_Destroy.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> nxyz = 40
-    !> #ifdef USE_MPI
-    !>   id = RM_Create(nxyz, MPI_COMM_WORLD)
-    !>   call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
-    !>   if (status .ne. MPI_SUCCESS) then
-    !>     stop "Failed to get mpi_myself"
-    !>   endif
-    !>   if (mpi_myself > 0) then
-    !>     status = RM_MpiWorker(id)
-    !>     status = RM_Destroy(id)
-    !>     return
-    !>   endif
-    !> #else
-    !>   nthreads = 3
-    !>   id = RM_Create(nxyz, nthreads)
-    !> #endif
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root and workers.
-
-    INTEGER FUNCTION BMI_Create(nxyz, nthreads)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION BMIF_Create(nxyz, nthreads) &
-        BIND(C, NAME='BMIF_Create')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: nxyz
-    INTEGER(KIND=C_INT), INTENT(in) :: nthreads
-    END FUNCTION BMIF_Create
-    END INTERFACE
-    INTEGER, INTENT(in) :: nxyz
-    INTEGER, INTENT(in) :: nthreads
-    BMI_Create = BMIF_Create(nxyz, nthreads)
-    rmf_nxyz = nxyz
-    return
-    END FUNCTION BMI_Create    
-
+    
     !> Creates a reaction module. If the code is compiled with
     !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
     !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
@@ -946,8 +770,8 @@
     !> to receive the component names. Character length and dimension will be allocated as needed.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_BMI_GetValue,
-    !> @ref RM_BMI_SetValue
+    !> @ref bmif_get_value,
+    !> @ref bmif_set_value
     !> @ref RM_GetComponent,
     !> @ref RM_FindComponents.
     !> @par Fortran Example:
@@ -962,12 +786,36 @@
     !> @par MPI:
     !> Called by root.
 
-    INTEGER FUNCTION RM_GetComponents(id, components)
+    !INTEGER FUNCTION RM_GetComponents(id, components)
+    !USE ISO_C_BINDING
+    !IMPLICIT NONE
+    !INTEGER, INTENT(in) :: id
+    !CHARACTER(len=:), allocatable, INTENT(out) :: components(:)
+    !RM_GetComponents = bmif_get_value(id, "Components", components)
+    !END FUNCTION RM_GetComponents
+    
+    INTEGER FUNCTION RM_GetComponents(id, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, INTENT(out) :: components(:)
-    RM_GetComponents = RM_BMI_GetValue(id, "Components", components)
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    character(1024) :: comp
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetComponentCount(id)
+	itemsize = 0
+	do i = 1, dim
+		status = RM_GetComponent(id, i, comp)
+		l = len(trim(comp))
+		if (l > itemsize) itemsize = l
+	enddo
+    if(allocated(dest)) deallocate(dest)
+    allocate(character(len=itemsize) :: dest(dim))
+	do i = 1, dim
+		status = RM_GetComponent(id, i, comp)
+		dest(i) = trim(comp)
+    enddo
+    RM_GetComponents = status
+    return 
     END FUNCTION RM_GetComponents
 
     !> Returns the number of components in the reaction-module component list.
@@ -1064,7 +912,7 @@
     END FUNCTION RMF_GetConcentrations
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: c
+    real(kind=8), INTENT(out), DIMENSION(:,:) :: c
     if (rmf_debug) call Chk_GetConcentrations(id, c)
     RM_GetConcentrations = RMF_GetConcentrations(id, c)
     return
@@ -1081,7 +929,7 @@
     END FUNCTION RMF_GetComponentCount
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: c
     INTEGER :: errors
     errors = 0
     rmf_ncomps = RMF_GetComponentCount(id)
@@ -1175,7 +1023,7 @@
     END FUNCTION RMF_GetDensity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), dimension(:) :: density
+    real(kind=8), INTENT(out), dimension(:) :: density
     if (rmf_debug) call Chk_GetDensity(id, density)
     RM_GetDensity = RMF_GetDensity(id, density)
     return
@@ -1184,7 +1032,7 @@
     SUBROUTINE Chk_GetDensity(id, density)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: density
+    real(kind=8), INTENT(in), DIMENSION(:) :: density
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_GetDensity")
@@ -1715,7 +1563,7 @@
     END FUNCTION RMF_GetGasCompMoles
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:), TARGET :: gas_moles
+    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_moles
     if (rmf_debug) call Chk_GetGasCompMoles(id, gas_moles)
     RM_GetGasCompMoles = RMF_GetGasCompMoles(id, gas_moles)
     return
@@ -1724,7 +1572,7 @@
     SUBROUTINE Chk_GetGasCompMoles(id, gas_moles)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: gas_moles
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_moles
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -1781,7 +1629,7 @@
     END FUNCTION RMF_GetGasCompPressures
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:), TARGET :: gas_p
+    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_p
     if (rmf_debug) call Chk_GetGasCompPressures(id, gas_p)
     RM_GetGasCompPressures = RMF_GetGasCompPressures(id, gas_p )
     return
@@ -1790,7 +1638,7 @@
     SUBROUTINE Chk_GetGasCompPressures(id, gas_p)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: gas_p
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_p
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -1848,7 +1696,7 @@
     END FUNCTION RMF_GetGasCompPhi
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:), TARGET :: gas_phi
+    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_phi
     if (rmf_debug) call Chk_GetGasCompPhi(id, gas_phi)
     RM_GetGasCompPhi = RMF_GetGasCompPhi(id, gas_phi)
     return
@@ -1857,7 +1705,7 @@
     SUBROUTINE Chk_GetGasCompPhi(id, gas_phi)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: gas_phi
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_phi
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -1913,7 +1761,7 @@
     END FUNCTION RMF_GetGasPhaseVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:), TARGET :: gas_volume
+    real(kind=8), INTENT(out), DIMENSION(:), TARGET :: gas_volume
     if (rmf_debug) call Chk_GetGasPhaseVolume(id, gas_volume)
     RM_GetGasPhaseVolume = RMF_GetGasPhaseVolume(id, gas_volume)
     return
@@ -1922,7 +1770,7 @@
     SUBROUTINE Chk_GetGasPhaseVolume(id, gas_volume)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: gas_volume
+    real(kind=8), INTENT(in), DIMENSION(:) :: gas_volume
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -1946,7 +1794,7 @@
     !> <CODE>
     !> <PRE>
     !> character(100),   dimension(:), allocatable   :: components
-    !> double precision, dimension(:), allocatable   :: gfw
+    !> real(kind=8), dimension(:), allocatable   :: gfw
     !> ncomps = RM_FindComponents(id)
     !> allocate(components(ncomps))
     !> allocate(gfw(ncomps))
@@ -1975,7 +1823,7 @@
     END FUNCTION RMF_GetGfw
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(out) :: gfw
+    real(kind=8), DIMENSION(:), INTENT(out) :: gfw
     if (rmf_debug) call Chk_GetGfw(id, gfw)
     RM_GetGfw = RMF_GetGfw(id, gfw)
     END FUNCTION RM_GetGfw
@@ -1991,7 +1839,7 @@
     END FUNCTION RMF_GetComponentCount
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: gfw
+    real(kind=8), INTENT(in), DIMENSION(:) :: gfw
     INTEGER :: errors
     errors = 0
     rmf_ncomps = RMF_GetComponentCount(id)
@@ -2340,7 +2188,7 @@
     END FUNCTION RMF_GetPorosity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), dimension(:) :: porosity
+    real(kind=8), INTENT(out), dimension(:) :: porosity
     if (rmf_debug) call Chk_GetPorosity(id, porosity)
     RM_GetPorosity = RMF_GetPorosity(id, porosity)
     return
@@ -2381,7 +2229,7 @@
     END FUNCTION RMF_GetPressure
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), dimension(:) :: pressure
+    real(kind=8), INTENT(out), dimension(:) :: pressure
     if (rmf_debug) call Chk_GetPressure(id, pressure)
     RM_GetPressure = RMF_GetPressure(id, pressure)
     return
@@ -2390,7 +2238,7 @@
     SUBROUTINE Chk_GetPressure(id, pressure)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: pressure
+    real(kind=8), INTENT(in), DIMENSION(:) :: pressure
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, pressure, rmf_nxyz, "pressure", "RM_GetPressure")
@@ -2402,7 +2250,7 @@
     SUBROUTINE Chk_GetPorosity(id, porosity)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: porosity
+    real(kind=8), INTENT(in), DIMENSION(:) :: porosity
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, porosity, rmf_nxyz, "porosity", "RM_GetPorosity")
@@ -2460,7 +2308,7 @@
     END FUNCTION RMF_GetSaturation
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: sat_calc
+    real(kind=8), INTENT(out), DIMENSION(:) :: sat_calc
     if (rmf_debug) call Chk_GetSaturation(id, sat_calc)
     RM_GetSaturation = RMF_GetSaturation(id, sat_calc)
     END FUNCTION RM_GetSaturation
@@ -2468,7 +2316,7 @@
     SUBROUTINE Chk_GetSaturation(id, sat)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: sat
+    real(kind=8), INTENT(in), DIMENSION(:) :: sat
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "saturation", "RM_GetSaturation")
@@ -2526,7 +2374,7 @@
     END FUNCTION RMF_GetSelectedOutput
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(out) :: so
+    real(kind=8), DIMENSION(:,:), INTENT(out) :: so
     if (rmf_debug) call Chk_GetSelectedOutput(id, so)
     RM_GetSelectedOutput = RMF_GetSelectedOutput(id, so)
     END FUNCTION RM_GetSelectedOutput
@@ -2534,7 +2382,7 @@
     SUBROUTINE Chk_GetSelectedOutput(id, so)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: so
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: so
     INTEGER :: errors, ncol
     ncol = RM_GetSelectedOutputColumnCount(id)
     errors = 0
@@ -2701,8 +2549,8 @@
     !> to receive the headings. Character length and dimension will be allocated as needed.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_BMI_GetValue,
-    !> @ref RM_BMI_SetValue,
+    !> @ref bmif_get_value,
+    !> @ref bmif_set_value,
     !> @ref RM_GetCurrentSelectedOutputUserNumber,
     !> @ref RM_GetNthSelectedOutputUserNumber,
     !> @ref RM_GetSelectedOutput,
@@ -2728,12 +2576,28 @@
     !> @par MPI:
     !> Called by root.
 
-    INTEGER FUNCTION RM_GetSelectedOutputHeadings(id, headings)
+	INTEGER FUNCTION RM_GetSelectedOutputHeadings(id, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, INTENT(out) :: headings(:)
-    RM_GetSelectedOutputHeadings = RM_BMI_GetValue(id, "SelectedOutputHeadings", headings)
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    character(1024) :: head
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSelectedOutputColumnCount(id)
+	itemsize = 0
+	do i = 1, dim
+		status = RM_GetSelectedOutputHeading(id, i, head)
+		l = len(trim(head))
+		if (l > itemsize) itemsize = l
+	enddo
+    if(allocated(dest)) deallocate(dest)
+    allocate(character(len=itemsize) :: dest(dim))
+	do i = 1, dim
+		status = RM_GetSelectedOutputHeading(id, i, head)
+		dest(i) = trim(head)
+    enddo	
+    RM_GetSelectedOutputHeadings = status
+    return
     END FUNCTION RM_GetSelectedOutputHeadings
 
     !> Returns the number of rows in the current selected-output definition. However, the method
@@ -3052,7 +2916,7 @@
     END FUNCTION RMF_GetSolutionVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: vol
+    real(kind=8), INTENT(out), DIMENSION(:) :: vol
     if (rmf_debug) call Chk_GetDensity(id, vol)
     RM_GetSolutionVolume = RMF_GetSolutionVolume(id, vol)
     END FUNCTION RM_GetSolutionVolume
@@ -3060,7 +2924,7 @@
     SUBROUTINE Chk_GetSolutionVolume(id, vol)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: vol
+    real(kind=8), INTENT(in), DIMENSION(:) :: vol
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, vol, rmf_nxyz, "vol", "RM_GetSolutionVolume")
@@ -3130,7 +2994,7 @@
     END FUNCTION RMF_GetSpeciesConcentrations
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: species_conc
+    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_conc
     if (rmf_debug) call Chk_GetSpeciesConcentrations(id, species_conc)
     RM_GetSpeciesConcentrations = RMF_GetSpeciesConcentrations(id, species_conc)
     END FUNCTION RM_GetSpeciesConcentrations
@@ -3138,7 +3002,7 @@
     SUBROUTINE Chk_GetSpeciesConcentrations(id, species_conc)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: species_conc
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_conc
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -3253,7 +3117,7 @@
     END FUNCTION RMF_GetSpeciesD25
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: diffc
+    real(kind=8), INTENT(out), DIMENSION(:) :: diffc
     if (rmf_debug) call Chk_GetSpeciesD25(id, diffc)
     RM_GetSpeciesD25 = RMF_GetSpeciesD25(id, diffc)
     END FUNCTION RM_GetSpeciesD25
@@ -3261,7 +3125,7 @@
     SUBROUTINE Chk_GetSpeciesD25(id, diffc)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: diffc
+    real(kind=8), INTENT(in), DIMENSION(:) :: diffc
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -3327,7 +3191,7 @@
     END FUNCTION RMF_GetSpeciesLog10Gammas
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: species_log10gammas
+    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_log10gammas
     if (rmf_debug) call Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
     RM_GetSpeciesLog10Gammas = RMF_GetSpeciesLog10Gammas(id, species_log10gammas)
     END FUNCTION RM_GetSpeciesLog10Gammas
@@ -3335,7 +3199,7 @@
     SUBROUTINE Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: species_log10gammas
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_log10gammas
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -3401,7 +3265,7 @@
     END FUNCTION RMF_GetSpeciesLog10Molalities
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:,:) :: species_log10molalities
+    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_log10molalities
     if (rmf_debug) call Chk_GetSpeciesLog10Molalities(id, species_log10molalities)
     RM_GetSpeciesLog10Molalities = RMF_GetSpeciesLog10Molalities(id, species_log10molalities)
     END FUNCTION RM_GetSpeciesLog10Molalities
@@ -3409,7 +3273,7 @@
     SUBROUTINE Chk_GetSpeciesLog10Molalities(id, species_log10molalities)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: species_log10molalities
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_log10molalities
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -3579,7 +3443,7 @@
     END FUNCTION RMF_GetSpeciesZ
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: z
+    real(kind=8), INTENT(out), DIMENSION(:) :: z
     if (rmf_debug) call Chk_GetSpeciesZ(id, z)
     RM_GetSpeciesZ = RMF_GetSpeciesZ(id, z)
     END FUNCTION RM_GetSpeciesZ
@@ -3587,7 +3451,7 @@
     SUBROUTINE Chk_GetSpeciesZ(id, z)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: z
+    real(kind=8), INTENT(in), DIMENSION(:) :: z
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -3842,8 +3706,8 @@
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !>
     !> @see
-    !> @ref RM_BMI_GetValue,
-    !> @ref RM_BMI_SetValue,
+    !> @ref bmif_get_value,
+    !> @ref bmif_set_value,
     !> @ref RM_SetTemperature.
     !> @par Fortran Example:
     !> @htmlonly
@@ -3857,14 +3721,32 @@
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
+    !INTEGER FUNCTION RM_GetTemperature(id, temperature)
+    !USE ISO_C_BINDING
+    !IMPLICIT NONE
+    !INTEGER, INTENT(in) :: id
+    !real(kind=8), INTENT(out), DIMENSION(:) :: temperature
+    !real(kind=8), ALLOCATABLE, DIMENSION(:) :: a_temperature
+    !RM_GetTemperature = bmif_get_value(id, "Temperature", a_temperature)
+    !temperature = a_temperature
+    !END FUNCTION RM_GetTemperature
+    
     INTEGER FUNCTION RM_GetTemperature(id, temperature)
     USE ISO_C_BINDING
     IMPLICIT NONE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION RMF_GetTemperature(id, temperature) &
+        BIND(C, NAME='RMF_GetTemperature')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER(KIND=C_INT), INTENT(in) :: id
+    REAL(KIND=C_DOUBLE), INTENT(out) :: temperature(*)
+    END FUNCTION RMF_GetTemperature
+    END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(out), DIMENSION(:) :: temperature
-    DOUBLE PRECISION, ALLOCATABLE, DIMENSION(:) :: a_temperature
-    RM_GetTemperature = RM_BMI_GetValue(id, "Temperature", a_temperature)
-    temperature = a_temperature
+    real(kind=8), INTENT(out), dimension(:) :: temperature
+    RM_GetTemperature = RMF_GetTemperature(id, temperature)
+    return
     END FUNCTION RM_GetTemperature
 
     !> Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
@@ -3924,7 +3806,7 @@
     !> @par MPI:
     !> Called by root and (or) workers.
 
-    DOUBLE PRECISION FUNCTION RM_GetTime(id)
+    real(kind=8) FUNCTION RM_GetTime(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -3965,7 +3847,7 @@
     !> @par MPI:
     !> Called by root and (or) workers.
 
-    DOUBLE PRECISION FUNCTION RM_GetTimeConversion(id)
+    real(kind=8) FUNCTION RM_GetTimeConversion(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -4005,7 +3887,7 @@
     !> @par MPI:
     !> Called by root and (or) workers.
 
-    DOUBLE PRECISION FUNCTION RM_GetTimeStep(id)
+    real(kind=8) FUNCTION RM_GetTimeStep(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -4218,11 +4100,11 @@
     END FUNCTION RMF_InitialPhreeqc2Concentrations2
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(OUT), DIMENSION(:,:) :: bc_conc
+    real(kind=8), INTENT(OUT), DIMENSION(:,:) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:) , OPTIONAL :: bc2
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
+    real(kind=8), INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
     if (rmf_debug) call Chk_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, bc2, f1)
     if (present(bc2) .and. present(f1)) then
         RM_InitialPhreeqc2Concentrations = RMF_InitialPhreeqc2Concentrations2(id, bc_conc, n_boundary, bc1, bc2, f1)
@@ -4242,11 +4124,11 @@
     END FUNCTION RMF_GetComponentCount
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:,:) :: bc_conc
+    real(kind=8), INTENT(IN), DIMENSION(:,:) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:) , OPTIONAL :: bc2
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
+    real(kind=8), INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
     INTEGER :: errors
     errors = 0
     rmf_ncomps = RMF_GetComponentCount(id)
@@ -4351,7 +4233,7 @@
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in), DIMENSION(:,:) :: ic1
     INTEGER, INTENT(in), DIMENSION(:,:), OPTIONAL :: ic2
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:), OPTIONAL :: f1
+    real(kind=8), INTENT(in), DIMENSION(:,:), OPTIONAL :: f1
     if (rmf_debug) call Chk_InitialPhreeqc2Module(id, ic1, ic2, f1)
     if (present(ic2) .and. present(f1)) then
         RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2Module2(id, ic1, ic2, f1)
@@ -4365,7 +4247,7 @@
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(IN), DIMENSION(:,:) :: ic1
     INTEGER, INTENT(IN), DIMENSION(:,:) , OPTIONAL :: ic2
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:,:) , OPTIONAL :: f1
+    real(kind=8), INTENT(IN), DIMENSION(:,:) , OPTIONAL :: f1
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Integer2D(id, ic1, rmf_nxyz, 7, "ic1", "RM_InitialPhreeqc2Module")
@@ -4451,11 +4333,11 @@
     END FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations2
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(OUT) :: bc_conc
+    real(kind=8), DIMENSION(:,:), INTENT(OUT) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:), OPTIONAL :: bc2
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:), OPTIONAL :: f1
+    real(kind=8), INTENT(IN), DIMENSION(:), OPTIONAL :: f1
     if (rmf_debug) call Chk_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary, bc1, bc2, f1)
     if (present(bc2) .and. present(f1)) then
         RM_InitialPhreeqc2SpeciesConcentrations = &
@@ -4469,11 +4351,11 @@
     SUBROUTINE Chk_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary, bc1, bc2, f1)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:,:) :: bc_conc
+    real(kind=8), INTENT(IN), DIMENSION(:,:) :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:) , OPTIONAL :: bc2
-    DOUBLE PRECISION, INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
+    real(kind=8), INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -5088,7 +4970,7 @@
     END FUNCTION RMF_SetConcentrations
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(in) :: c
+    real(kind=8), DIMENSION(:,:), INTENT(in) :: c
     if (rmf_debug) call Chk_SetConcentrations(id, c)
     RM_SetConcentrations = RMF_SetConcentrations(id, c)
     END FUNCTION RM_SetConcentrations
@@ -5104,7 +4986,7 @@
     END FUNCTION RMF_GetComponentCount
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: c
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: c
     INTEGER :: errors
     errors = 0
     rmf_ncomps = RMF_GetComponentCount(id)
@@ -5128,7 +5010,7 @@
     !        END FUNCTION RMF_SetConcentrations
     !    END INTERFACE
     !    INTEGER, INTENT(in) :: id
-    !    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: c
+    !    real(kind=8), DIMENSION(:), INTENT(in) :: c
     !    RM_SetConcentrations1D = RMF_SetConcentrations(id, c)
     !END FUNCTION RM_SetConcentrations1D
 #endif
@@ -5228,7 +5110,7 @@
     END FUNCTION RMF_SetDensity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: density
+    real(kind=8), DIMENSION(:), INTENT(in) :: density
     if (rmf_debug) call Chk_SetDensity(id, density)
     RM_SetDensity = RMF_SetDensity(id, density)
     END FUNCTION RM_SetDensity
@@ -5236,7 +5118,7 @@
     SUBROUTINE Chk_SetDensity(id, density)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: density
+    real(kind=8), INTENT(in), DIMENSION(:) :: density
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_SetDensity")
@@ -5439,7 +5321,7 @@
     END FUNCTION RMF_SetGasCompMoles
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(in) :: gas_moles
+    real(kind=8), DIMENSION(:,:), INTENT(in) :: gas_moles
     if (rmf_debug) call Chk_SetGasCompMoles(id, gas_moles)
     RM_SetGasCompMoles = RMF_SetGasCompMoles(id, gas_moles)
     END FUNCTION RM_SetGasCompMoles
@@ -5447,7 +5329,7 @@
     SUBROUTINE Chk_SetGasCompMoles(id, gas_moles)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: gas_moles
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_moles
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -5507,7 +5389,7 @@
     END FUNCTION RMF_SetGasPhaseVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: gas_volume
+    real(kind=8), DIMENSION(:), INTENT(in) :: gas_volume
     if (rmf_debug) call Chk_SetGasPhaseVolume(id, gas_volume)
     RM_SetGasPhaseVolume = RMF_SetGasPhaseVolume(id, gas_volume)
     END FUNCTION RM_SetGasPhaseVolume
@@ -5515,7 +5397,7 @@
     SUBROUTINE Chk_SetGasPhaseVolume(id, gas_volume)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: gas_volume
+    real(kind=8), INTENT(in), DIMENSION(:) :: gas_volume
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
@@ -5792,7 +5674,7 @@
     END FUNCTION RMF_SetPorosity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: por
+    real(kind=8), DIMENSION(:), INTENT(in) :: por
     if (rmf_debug) call Chk_SetPorosity(id, por)
     RM_SetPorosity = RMF_SetPorosity(id, por)
     END FUNCTION RM_SetPorosity
@@ -5800,7 +5682,7 @@
     SUBROUTINE Chk_SetPorosity(id, por)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: por
+    real(kind=8), INTENT(in), DIMENSION(:) :: por
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, por, rmf_nxyz, "porosity", "RM_SetPorosity")
@@ -5843,7 +5725,7 @@
     END FUNCTION RMF_SetPressure
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: p
+    real(kind=8), DIMENSION(:), INTENT(in) :: p
     if (rmf_debug) call Chk_SetPressure(id, p)
     RM_SetPressure = RMF_SetPressure(id, p)
     END FUNCTION RM_SetPressure
@@ -5851,7 +5733,7 @@
     SUBROUTINE Chk_SetPressure(id, p)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: p
+    real(kind=8), INTENT(in), DIMENSION(:) :: p
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, p, rmf_nxyz, "pressure", "RM_SetPressure")
@@ -6053,7 +5935,7 @@
     END FUNCTION RMF_SetRebalanceFraction
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in)  :: f
+    real(kind=8), INTENT(in)  :: f
     RM_SetRebalanceFraction = RMF_SetRebalanceFraction(id, f)
     END FUNCTION RM_SetRebalanceFraction
 
@@ -6083,7 +5965,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> double precision, dimension(:), allocatable   :: rv
+    !> real(kind=8), dimension(:), allocatable   :: rv
     !> allocate(rv(nxyz))
     !> rv = 1.0
     !> status = RM_SetRepresentativeVolume(id, rv)
@@ -6106,7 +5988,7 @@
     END FUNCTION RMF_SetRepresentativeVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: rv
+    real(kind=8), DIMENSION(:), INTENT(in) :: rv
     RM_SetRepresentativeVolume = RMF_SetRepresentativeVolume(id, rv)
     END FUNCTION RM_SetRepresentativeVolume
 
@@ -6156,7 +6038,7 @@
     END FUNCTION RMF_SetSaturation
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: sat
+    real(kind=8), DIMENSION(:), INTENT(in) :: sat
     if (rmf_debug) call Chk_SetSaturation(id, sat)
     RM_SetSaturation = RMF_SetSaturation(id, sat)
     END FUNCTION RM_SetSaturation
@@ -6164,7 +6046,7 @@
     SUBROUTINE Chk_SetSaturation(id, sat)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: sat
+    real(kind=8), INTENT(in), DIMENSION(:) :: sat
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "sataturation", "RM_SetSaturation")
@@ -6350,7 +6232,7 @@
     END FUNCTION RMF_SetTemperature
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:), INTENT(in) :: t
+    real(kind=8), DIMENSION(:), INTENT(in) :: t
     if (rmf_debug) call Chk_SetTemperature(id, t)
     RM_SetTemperature = RMF_SetTemperature(id, t)
     END FUNCTION RM_SetTemperature
@@ -6358,7 +6240,7 @@
     SUBROUTINE Chk_SetTemperature(id, t)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: t
+    real(kind=8), INTENT(in), DIMENSION(:) :: t
     INTEGER :: errors
     errors = 0
     errors = errors + Chk_Double1D(id, t, rmf_nxyz, "temperature", "RM_SetTemperature")
@@ -6398,7 +6280,7 @@
     END FUNCTION RMF_SetTime
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in) :: time
+    real(kind=8), INTENT(in) :: time
     RM_SetTime = RMF_SetTime(id, time)
     END FUNCTION RM_SetTime
 
@@ -6433,7 +6315,7 @@
     END FUNCTION RMF_SetTimeConversion
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in) :: conv_factor
+    real(kind=8), INTENT(in) :: conv_factor
     RM_SetTimeConversion = RMF_SetTimeConversion(id, conv_factor)
     END FUNCTION RM_SetTimeConversion
 
@@ -6469,7 +6351,7 @@
     END FUNCTION RMF_SetTimeStep
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in) :: time_step
+    real(kind=8), INTENT(in) :: time_step
     RM_SetTimeStep = RMF_SetTimeStep(id, time_step)
     END FUNCTION RM_SetTimeStep
 
@@ -6937,7 +6819,7 @@
     END FUNCTION RMF_SpeciesConcentrations2Module
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(in) :: species_conc
+    real(kind=8), DIMENSION(:,:), INTENT(in) :: species_conc
     if (rmf_debug) call Chk_SpeciesConcentrations2Module(id, species_conc)
     RM_SpeciesConcentrations2Module = RMF_SpeciesConcentrations2Module(id, species_conc)
     END FUNCTION RM_SpeciesConcentrations2Module
@@ -6945,7 +6827,7 @@
     SUBROUTINE Chk_SpeciesConcentrations2Module(id, species_conc)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(in) :: species_conc
+    real(kind=8), DIMENSION(:,:), INTENT(in) :: species_conc
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
@@ -7181,7 +7063,7 @@
     INTEGER FUNCTION Chk_Double1D(id, t, n1, var, func)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:) :: t
+    real(kind=8), INTENT(in), DIMENSION(:) :: t
     INTEGER, INTENT(in) :: n1
     CHARACTER(len=*), INTENT(in) :: var, func
     CHARACTER(len=200) :: error_string
@@ -7199,7 +7081,7 @@
     INTEGER FUNCTION Chk_Double2D(id, t, n1, n2, var, func)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    DOUBLE PRECISION, INTENT(in), DIMENSION(:,:) :: t
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: t
     INTEGER, INTENT(in) :: n1, n2
     CHARACTER(len=*), INTENT(in) :: var, func
     CHARACTER(len=200) :: error_string
@@ -7263,1469 +7145,5 @@
     Chk_Integer2D = errors
     END FUNCTION Chk_Integer2D
 
-    !INCLUDE 'RM_BMI_interface.F90'
-    
-    !> Destroys a reaction module, same as @ref RM_Destroy.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @see
-    !> @ref RM_Create.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> status = RM_BMI_Finalize(id)
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root and workers.
-    
-    INTEGER FUNCTION RM_BMI_Finalize(id)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    RM_BMI_Finalize = RM_Destroy(id)
-    return
-    END FUNCTION RM_BMI_Finalize
-
-    !> Basic Model Interface method that returns the component name--PhreeqcRM. The BMI interface to PhreeqcRM is
-    !> only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
-    !> prefix) provide a complete interface, and it is expected that the native methods will be used in preference to the BMI_
-    !> methods.
-    !>
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param component_name is filled with "PhreeqcRM", the name of the component.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> status = RM_BMI_GetComponentName(id, component_name)
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-    INTEGER FUNCTION RM_BMI_GetComponentName(id, component_name)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetComponentName(id, component_name, l) &
-        BIND(C, NAME='RMF_BMI_GetComponentName')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id, l
-    CHARACTER(KIND=C_CHAR), INTENT(inout) :: component_name(*)
-    END FUNCTION RMF_BMI_GetComponentName
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(inout) :: component_name
-    RM_BMI_GetComponentName = RMF_BMI_GetComponentName(id, component_name, len(component_name))
-    return
-    END FUNCTION RM_BMI_GetComponentName
-
-
-    !> Basic Model Interface method that returns the current simulation time, in seconds. (Same as @ref RM_GetTime.)
-    !> The reaction module does not change the time value, so the
-    !> returned value is equal to the default (0.0) or the last time set by
-    !> @ref RM_BMI_SetValue("Time", time) or @ref RM_SetTime.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @retval                 The current simulation time, in seconds.
-    !> @see
-    !> @ref RM_BMI_GetEndTime,
-    !> @ref RM_BMI_GetTimeStep,
-    !> @ref RM_BMI_SetValue,
-    !> @ref RM_GetTime,
-    !> @ref RM_GetTimeStep,
-    !> @ref RM_SetTime,
-    !> @ref RM_SetTimeStep.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> time = RM_BMI_GetCurrentTime(id)
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-
-    DOUBLE PRECISION FUNCTION RM_BMI_GetCurrentTime(id)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_GetCurrentTime(id) &
-        BIND(C, NAME='RMF_BMI_GetCurrentTime')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_BMI_GetCurrentTime
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    RM_BMI_GetCurrentTime = RMF_BMI_GetCurrentTime(id)
-    END FUNCTION RM_BMI_GetCurrentTime
-
-    !> Basic Model Interface method that returns @ref RM_BMI_GetCurrentTime plus
-    !> @ref RM_BMI_GetTimeStep, in seconds.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @retval                 The end of the time step, in seconds.
-    !> @see
-    !> @ref RM_BMI_GetCurrentTime,
-    !> @ref RM_BMI_GetTimeStep,
-    !> @ref RM_BMI_SetValue,
-    !> @ref RM_GetTime,
-    !> @ref RM_GetTimeStep,
-    !> @ref RM_SetTime,
-    !> @ref RM_SetTimeStep.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> time = RM_BMI_GetEndTime(id)
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-
-    DOUBLE PRECISION FUNCTION RM_BMI_GetEndTime(id)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_GetEndTime(id) &
-        BIND(C, NAME='RMF_BMI_GetEndTime')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_BMI_GetEndTime
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    RM_BMI_GetEndTime = RMF_BMI_GetEndTime(id)
-    END FUNCTION RM_BMI_GetEndTime
-
-    !> Basic Model Interface method that returns count of input variables that
-    !> can be set with @ref RM_BMI_SetValue.
-    !> @retval  Count of input variables that can be set with @ref RM_BMI_SetValue.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !>
-    !> @see
-    !> @ref RM_BMI_GetInputVarNames,
-    !> @ref RM_BMI_GetVarItemsize,
-    !> @ref RM_BMI_GetVarNbytes,
-    !> @ref RM_BMI_GetVarType,
-    !> @ref RM_BMI_GetVarUnits,
-    !> @ref RM_BMI_SetValue.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> integer inputvarcount
-    !> inputvarcount = RM_BMI_GetInputItemCount(id);
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-    !>
-    INTEGER FUNCTION RM_BMI_GetInputItemCount(id)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetInputItemCount(id) &
-        BIND(C, NAME='RMF_BMI_GetInputItemCount')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_BMI_GetInputItemCount
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    RM_BMI_GetInputItemCount = RMF_BMI_GetInputItemCount(id)
-    END FUNCTION RM_BMI_GetInputItemCount
-
-    !> Basic Model Interface method that returns a list of the variable names that can be set
-    !> with @ref RM_BMI_SetValue.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var_names     Deferred length, allocatable, 1D character vector.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
-    !>
-    !> @see
-    !> @ref RM_BMI_GetInputItemCount,
-    !> @ref RM_BMI_GetValue,
-    !> @ref RM_BMI_GetVarItemsize,
-    !> @ref RM_BMI_GetVarNbytes,
-    !> @ref RM_BMI_GetVarType,
-    !> @ref RM_BMI_GetVarUnits,
-    !> @ref RM_BMI_SetValue.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> character(len=:), dimension(:), allocatable          :: inputvars
-    !> status = RM_BMI_GetInputVarNames(id, inputvars)
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-
-    INTEGER FUNCTION RM_BMI_GetInputVarNames(id, var_names)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, INTENT(inout) :: var_names(:)
-    RM_BMI_GetInputVarNames = RM_BMI_GetValue(id, "inputvarnames", var_names)
-    return
-    END FUNCTION RM_BMI_GetInputVarNames
-
-    !> Basic Model Interface method that returns count of output variables that can be
-    !> retrieved with @ref RM_BMI_GetValue.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @retval  Count of output variables that can be retrieved with @ref RM_BMI_GetValue.
-    !>
-    !> @see
-    !> @ref RM_BMI_GetOutputVarNames,
-    !> @ref RM_BMI_GetValue,
-    !> @ref RM_BMI_GetVarItemsize,
-    !> @ref RM_BMI_GetVarNbytes,
-    !> @ref RM_BMI_GetVarType,
-    !> @ref RM_BMI_GetVarUnits.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> integer outputvarcount
-    !> outputvarcount = RM_BMI_GetOutputItemCount(id);
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-
-
-    INTEGER FUNCTION RM_BMI_GetOutputItemCount(id)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetOutputItemCount(id) &
-        BIND(C, NAME='RMF_BMI_GetOutputItemCount')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_BMI_GetOutputItemCount
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    RM_BMI_GetOutputItemCount = RMF_BMI_GetOutputItemCount(id)
-    END FUNCTION RM_BMI_GetOutputItemCount
-
-    !> Basic Model Interface method that returns a list of the variable names that can be
-    !> retrieved with @ref RM_BMI_GetValue.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var_names     Deferred length, allocatable, 1D character vector.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
-    !>
-    !> @see
-    !> @ref RM_BMI_GetOutputItemCount,
-    !> @ref RM_BMI_GetValue,
-    !> @ref RM_BMI_GetVarItemsize,
-    !> @ref RM_BMI_GetVarNbytes,
-    !> @ref RM_BMI_GetVarType,
-    !> @ref RM_BMI_GetVarUnits.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> character(len=:), allocatable, dimension(:) :: var_names
-    !> var_names = RM_BMI_GetOutputVarNames(id);
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-
-    INTEGER FUNCTION RM_BMI_GetOutputVarNames(id, var_names)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable,  INTENT(inout) :: var_names(:)
-    RM_BMI_GetOutputVarNames = RM_BMI_GetValue(id, "outputvarnames", var_names)
-    return
-    END FUNCTION RM_BMI_GetOutputVarNames
-
-    !> Basic Model Interface method that returns the current simulation time step,
-    !> in seconds. (Same as @ref RM_GetTimeStep.)
-    !> The reaction module does not change the time-step value, so the
-    !> returned value is equal to the last time step set by
-    !> @ref RM_BMI_SetValue("TimeStep", time_step) or @ref RM_SetTimeStep.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @retval                 The current simulation time step, in seconds.
-    !> @see
-    !> @ref RM_BMI_GetCurrentTime,
-    !> @ref RM_BMI_GetEndTime,
-    !> @ref RM_BMI_SetValue,
-    !> @ref RM_GetTime,
-    !> @ref RM_GetTimeStep,
-    !> @ref RM_SetTime,
-    !> @ref RM_SetTimeStep.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> time_step = RM_BMI_GetTimeStep(id)
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-
-    DOUBLE PRECISION FUNCTION RM_BMI_GetTimeStep(id)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_GetTimeStep(id) &
-        BIND(C, NAME='RMF_BMI_GetTimeStep')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_BMI_GetTimeStep
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    RM_BMI_GetTimeStep = RMF_BMI_GetTimeStep(id)
-    END FUNCTION RM_BMI_GetTimeStep
-
-    !> Basic Model Interface method that returns the time units of PhreeqcRM.
-    !> All time units are seconds for PhreeqcRM.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param time_units    The instance @a id returned from @ref RM_Create.
-    !> @retval                 Returns the string "seconds".
-    !> @see
-    !> @ref RM_BMI_GetCurrentTime,
-    !> @ref RM_BMI_GetEndTime,
-    !> @ref RM_BMI_GetTimeStep,
-    !> @ref RM_BMI_SetValue,
-    !> @ref RM_GetTime,
-    !> @ref RM_GetTimeStep,
-    !> @ref RM_SetTime,
-    !> @ref RM_SetTimeStep,
-    !> @ref RM_BMI_SetValue.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> character(20) time_units
-    !> status = RM_BMI_GetTimeUnits(id, time_units) << ".\n";
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-
-    INTEGER FUNCTION RM_BMI_GetTimeUnits(id, time_units)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetTimeUnits(id, time_units, l) &
-        BIND(C, NAME='RMF_BMI_GetTimeUnits')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id, l
-    CHARACTER(KIND=C_CHAR), INTENT(inout) :: time_units(*)
-    END FUNCTION RMF_BMI_GetTimeUnits
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(inout) :: time_units
-    RM_BMI_GetTimeUnits = RMF_BMI_GetTimeUnits(id, time_units, len(time_units))
-    return
-    END FUNCTION RM_BMI_GetTimeUnits
-
-    !> Basic Model Interface method that retrieves model variables. Only variables in the list
-    !> provided by @ref RM_BMI_GetOutputVarNames can be retrieved. The BMI interface to PhreeqcRM is
-    !> only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the RM_BMI_
-    !> prefix) provide a complete interface.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve.
-    !> @param dest Variable in which to place results.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
-    !>
-    !> Variable names for the second argument (@a name) and variable type of the
-    !> third argument (@a dest).
-    !> @n "ComponentCount", @a dest: integer;
-    !> @n "Components", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "Concentrations", @a dest: double precision, allocatable, dimension(:,:);
-    !> @n "CurrentSelectedOutputUserNumber", @a dest: integer;
-    !> @n "Density", @a dest: double precision, allocatable, dimension(:);
-    !> @n "ErrorString", @a dest: character;
-    !> @n "FilePrefix", @a dest: character;
-    !> @n "Gfw", @a dest: double precision, allocatable, dimension(:);
-    !> @n "GridCellCount", @a dest: integer;
-    !> @n "InputVarNames", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "Porosity", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Pressure", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Saturation", @a dest: double precision, allocatable, dimension(:);
-    !> @n "SelectedOutput", @a dest: double precision, allocatable, dimension(:,:);
-    !> @n "SelectedOutputColumnCount", @a dest: integer;
-    !> @n "SelectedOutputCount", @a dest: integer;
-    !> @n "SelectedOutputHeadings", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "SelectedOutputOn", @a dest: logical;
-    !> @n "SelectedOutputRowCount", @a dest: integer;
-    !> @n "SolutionVolume", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Temperature", @a dest: double precision, allocatable, dimension(:);
-    !> @n "Time",	@a dest: double precision;
-    !> @n "TimeStep",	@a dest: double precision.
-    !>
-    !> @see
-    !> @ref RM_BMI_GetOutputVarNames,
-    !> @ref RM_BMI_GetOutputItemCount,
-    !> @ref RM_BMI_GetVarItemsize,
-    !> @ref RM_BMI_GetVarNbytes,
-    !> @ref RM_BMI_GetVarType,
-    !> @ref RM_BMI_GetVarUnits,
-    !> @ref RM_BMI_SetValue.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> double precision, allocatable, dimension(:) :: bmi_density
-    !> character(len=:), allocatable, dimension(:) :: bmi_comps
-    !> status = RM_BMI_GetValue(id, "Density", bmi_density)
-    !> status = RM_BMI_GetValue("Components", bmi_comps)
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_GetValue_b(id, var, dest)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, idest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: idest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    LOGICAL, INTENT(inout) :: dest
-    character(100) :: vartype
-    integer :: status, idest
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "bool") then
-        stop "Variable type error."
-    endif
-    RM_BMI_GetValue_b = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, idest)
-    dest = .true.
-    if (idest .eq. 0) dest = .false.
-    return
-    END FUNCTION RM_BMI_GetValue_b
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_GetValue_c(id, var, dest)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    CHARACTER(len=:), allocatable, INTENT(inout) :: dest
-    character(100) :: vartype
-    integer :: bytes, status
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::string") then
-        stop "Variable type error."
-    endif
-    bytes = RM_BMI_GetVarItemsize(id, var)
-    if (len(var) < bytes) then
-        if (allocated(dest)) then
-            deallocate(dest)
-        endif
-        allocate(character(len=bytes) :: dest)
-    endif
-    RM_BMI_GetValue_c = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
-    return
-    END FUNCTION RM_BMI_GetValue_c
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_GetValue_c1(id, var, dest)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim, itemsize
-    integer :: dim1, dim2
-    dim1 = 0
-    dim2 = 0
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<std::string>") then
-        stop "Variable type error."
-    endif
-    itemsize = RM_BMI_GetVarItemsize(id, var)
-    dim = RM_BMI_GetVarNBytes(id, var) / itemsize
-    if (allocated(dest)) then
-        dim2 = size(dest)
-        if (dim2 > 0) then
-            dim1 = len(dest(1))
-        endif
-    endif
-    if (dim1 .ne. itemsize .or. dim2 .ne. dim) then
-        if(allocated(dest)) deallocate(dest)
-        allocate(character(len=itemsize) :: dest(dim))
-    endif
-    RM_BMI_GetValue_c1 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1))
-    return
-    END FUNCTION RM_BMI_GetValue_c1
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_GetValue_d(id, var, dest)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    double precision, INTENT(inout) :: dest
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim, itemsize
-    integer :: dim1, dim2
-    dim1 = 0
-    dim2 = 0
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double") then
-        stop "Variable type error."
-    endif
-    RM_BMI_GetValue_d = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
-    return
-    END FUNCTION RM_BMI_GetValue_d
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_GetValue_d1(id, var, dest)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    double precision, allocatable, dimension(:), INTENT(inout) :: dest
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim, itemsize
-    integer :: dim1, dim2
-    dim1 = 0
-    dim2 = 0
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
-        stop "Variable type error."
-    endif
-    itemsize = RM_BMI_GetVarItemsize(id, var)
-    dim = RM_BMI_GetVarNBytes(id, var) / itemsize
-    if (allocated(dest)) then
-        dim2 = size(dest)
-    endif
-    if (dim2 .ne. dim) then
-        if(allocated(dest)) deallocate(dest)
-        allocate(dest(dim))
-    endif
-    RM_BMI_GetValue_d1 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1))
-    return
-    END FUNCTION RM_BMI_GetValue_d1
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_GetValue_d2(id, var, dest)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    double precision, allocatable, INTENT(inout) :: dest(:,:)
-    character(100) :: vartype
-    character(40) :: varname
-    integer :: status
-    integer :: dim1, dim2
-    logical :: need_alloc
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
-        stop "Variable type error."
-    endif
-    varname = Lower(var)
-    need_alloc = .true.
-    if (varname .eq. "concentrations") then
-        dim1 = RM_GetGridCellCount(id)
-        dim2 = RM_GetComponentCount(id)
-    else if (varname .eq. "selectedoutput") then
-        dim1 = RM_GetSelectedOutputRowCount(id)
-        dim2 = RM_GetSelectedOutputColumnCount(id)
-    else
-        stop "Unknown 2d variable"
-    endif
-    if (allocated(dest)) then
-        if ((size(dest,1) .eq. dim1) .and. &
-            (size(dest,2) .eq. dim2)) then
-            need_alloc = .false.
-        else
-            deallocate(dest)
-        endif
-    endif
-    if (need_alloc) then
-        allocate(dest(dim1, dim2))
-    endif
-    RM_BMI_GetValue_d2 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
-    return
-    END FUNCTION RM_BMI_GetValue_d2
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_GetValue_i(id, var, dest)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: dest
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim, itemsize
-    integer :: dim1, dim2
-    dim1 = 0
-    dim2 = 0
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "int") then
-        stop "Variable type error."
-    endif
-    RM_BMI_GetValue_i = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
-    return
-    END FUNCTION RM_BMI_GetValue_i
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_GetValue_i1(id, var, dest)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    integer, allocatable, INTENT(inout) :: dest(:)
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim, itemsize
-    integer :: dim1, dim2
-    dim1 = 0
-    dim2 = 0
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vecor<int>") then
-        stop "Variable type error."
-    endif
-    itemsize = RM_BMI_GetVarItemsize(id, var)
-    dim = RM_BMI_GetVarNBytes(id, var) / itemsize
-    if (allocated(dest)) then
-        dim2 = size(dest)
-    endif
-    if (dim2 .ne. dim) then
-        if(allocated(dest)) deallocate(dest)
-        allocate(dest(dim))
-    endif
-    RM_BMI_GetValue_i1 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1))
-    return
-    END FUNCTION RM_BMI_GetValue_i1
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_GetValue_i2(id, var, dest)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValue(id, var, dest) &
-        BIND(C, NAME='RMF_BMI_GetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: dest
-    END FUNCTION RMF_BMI_GetValue
-    END INTERFACE
-
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    integer, allocatable, INTENT(inout) :: dest(:,:)
-    character(100) :: vartype
-    character(40) :: varname
-    integer :: status
-    integer :: dim1, dim2
-    logical :: need_alloc
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
-        stop "Variable type error."
-    endif
-    varname = Lower(varname)
-    need_alloc = .true.
-    stop "Unknown 2d variable"
-    RM_BMI_GetValue_i2 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
-    return
-    END FUNCTION RM_BMI_GetValue_i2
-
-    !> Basic Model Interface method that retrieves the size of an
-    !> individual item that can be set or retrived.
-    !> Sizes may be sizeof(int), sizeof(double),
-    !> or a character length for string variables. Only variables in the list
-    !> provided by @ref RM_BMI_GetInputVarNames can be set.
-    !> Only variables in the list
-    !> provided by @ref RM_BMI_GetOutputVarNames can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve.
-    !> @retval   Size of one element of the variable.
-    !>
-    !> @see
-    !> @ref RM_BMI_GetInputVarNames,
-    !> @ref RM_BMI_GetInputItemCount,
-    !> @ref RM_BMI_GetOutputVarNames,
-    !> @ref RM_BMI_GetOutputItemCount,
-    !> @ref RM_BMI_GetValue,
-    !> @ref RM_BMI_GetVarNbytes,
-    !> @ref RM_BMI_SetValue.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> integer nbytes, item_size, dim
-    !> double precision, allocatable, dimension(:) :: bmi_temperature
-    !> nbytes = RM_BMI_GetVarNbytes(id, "Temperature")
-    !> item_size = RM_BMI_GetVarItemSize(id, "Temperature");
-    !> int dim = nbytes/item_size;
-    !> allocate(bmi_temperature(dim))
-    !> bmi_temperature = 25.0
-    !> status = RM_BMI_SetValue("Temperature", bmi_temperature);
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-    INTEGER FUNCTION RM_BMI_GetVarItemsize(id, var)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarItemsize(id, var) &
-            BIND(C, NAME='RMF_BMI_GetVarItemsize')
-        USE ISO_C_BINDING
-        IMPLICIT NONE
-        INTEGER(KIND=C_INT), INTENT(in) :: id
-        CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_BMI_GetVarItemsize
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    RM_BMI_GetVarItemsize = RMF_BMI_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
-    END FUNCTION RM_BMI_GetVarItemsize
-    !> Basic Model Interface method that retrieves the size of an
-    !> individual item that can be set or retrived.
-    !> Sizes may be sizeof(int), sizeof(double),
-    !> or a character length for string variables. Only variables in the list
-    !> provided by @ref RM_BMI_GetInputVarNames can be set.
-    !> Only variables in the list
-    !> provided by @ref RM_BMI_GetOutputVarNames can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve size.
-    !> @retval Size of one element of the variable.
-    !>
-    !> @see
-    !> @ref RM_BMI_GetInputVarNames,
-    !> @ref RM_BMI_GetInputItemCount,
-    !> @ref RM_BMI_GetOutputVarNames,
-    !> @ref RM_BMI_GetOutputItemCount,
-    !> @ref RM_BMI_GetValue,
-    !> @ref RM_BMI_GetVarNbytes,
-    !> @ref RM_BMI_SetValue.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> integer nbytes, item_size, dim
-    !>  double precision, allocatable, dimension(:) :: bmi_temperature
-    !> nbytes = RM_BMI_GetVarNbytes(id, "Temperature")
-    !> item_size = RM_BMI_GetVarItemSize(id, "Temperature");
-    !> int dim = nbytes/item_size;
-    !> allocate(bmi_temperature(dim))
-    !>  bmi_temperature = 25.0
-    !> status = RM_BMI_SetValue("Temperature", bmi_temperature);
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-    INTEGER FUNCTION RM_BMI_GetVarNbytes(id, var)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-	INTERFACE 
-		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarNbytes(id, var) &
-			BIND(C, NAME='RMF_BMI_GetVarNbytes')
-		USE ISO_C_BINDING
-		IMPLICIT NONE
-		INTEGER(KIND=C_INT), INTENT(in) :: id
-		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		END FUNCTION RMF_BMI_GetVarNbytes
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    RM_BMI_GetVarNbytes = RMF_BMI_GetVarNbytes(id, trim(var)//C_NULL_CHAR)
-    END FUNCTION RM_BMI_GetVarNbytes
-
-    !> Basic Model Interface method that retrieves the type of a variable that can be set with
-    !> @ref RM_BMI_SetValue or retrieved with @ref RM_BMI_GetValue. Types are "character",
-    !> "real(kind=8)","integer", or "logical",
-    !> followed by the dimension if the variable is a array.
-    !> Only variables in the list
-    !> provided by @ref RM_BMI_GetInputVarNames can be set.
-    !> Only variables in the list
-    !> provided by @ref RM_BMI_GetOutputVarNames can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve total bytes.
-    !> @param vtype Type of the variable.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @see
-    !> @ref RM_BMI_GetInputVarNames,
-    !> @ref RM_BMI_GetInputItemCount,
-    !> @ref RM_BMI_GetOutputVarNames,
-    !> @ref RM_BMI_GetOutputItemCount,
-    !> @ref RM_BMI_GetVarUnits.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> do i = 1, size(inputvars)
-    !>     write(*,"(1x, I4, A40)") i, trim(inputvars(i))
-    !>     status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
-    !>     write(*,"(5x, A15)") trim(string)
-    !>     status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
-    !>     write(*,"(5x, A15)") trim(string)
-    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
-    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
-    !> enddo
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-
-    INTEGER FUNCTION RM_BMI_GetVarType(id, var, vtype)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarType(id, var, vtype, l) &
-        BIND(C, NAME='RMF_BMI_GetVarType')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id, l
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    CHARACTER(KIND=C_CHAR), INTENT(inout) :: vtype(*)
-    END FUNCTION RMF_BMI_GetVarType
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    CHARACTER(len=*), INTENT(inout) :: vtype
-    RM_BMI_GetVarType = RMF_BMI_GetVarType(id, trim(var)//C_NULL_CHAR, vtype, len(vtype))
-    return
-    END FUNCTION RM_BMI_GetVarType
-    !> Basic Model Interface method that retrieves the units of a
-    !> variable that can be set with
-    !> @ref RM_BMI_SetValue or retrieved with @ref RM_BMI_GetValue.
-    !> Only variables in the list
-    !> provided by @ref RM_BMI_GetInputVarNames can be set.
-    !> Only variables in the list
-    !> provided by @ref RM_BMI_GetOutputVarNames can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve total bytes.
-    !> @param units Units of the variable.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @see
-    !> @ref RM_BMI_GetInputVarNames,
-    !> @ref RM_BMI_GetInputItemCount,
-    !> @ref RM_BMI_GetOutputVarNames,
-    !> @ref RM_BMI_GetOutputItemCount,
-    !> @ref RM_BMI_GetVarType.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> do i = 1, size(inputvars)
-    !>     write(*,"(1x, I4, A40)") i, trim(inputvars(i))
-    !>     status = RM_RM_BMI_GetVarUnits(id, inputvars(i), string)
-    !>     write(*,"(5x, A15)") trim(string)
-    !>     status = RM_RM_BMI_GetVarType(id, inputvars(i), string)
-    !>     write(*,"(5x, A15)") trim(string)
-    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarItemsize(id, inputvars(i))
-    !>     write(*, "(5x, I15)") RM_RM_BMI_GetVarNbytes(id, inputvars(i))
-    !> enddo
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root.
-    INTEGER FUNCTION RM_BMI_GetVarUnits(id, var, units)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetVarUnits(id, var, units, l) &
-        BIND(C, NAME='RMF_BMI_GetVarUnits')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id, l
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    CHARACTER(KIND=C_CHAR), INTENT(inout) :: units(*)
-    END FUNCTION RMF_BMI_GetVarUnits
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    CHARACTER(len=*), INTENT(inout) :: units
-    RM_BMI_GetVarUnits = RMF_BMI_GetVarUnits(id, trim(var)//C_NULL_CHAR, units, len(units))
-    return
-    END FUNCTION RM_BMI_GetVarUnits
-    
-	!> A YAML file can be used to initialize an instance of PhreeqcRM. Same as
-	!> @ref RM_InitializeYAML.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param config_file         String containing the YAML file name.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @par
-    !> The file contains a YAML map of PhreeqcRM methods
-    !> and the arguments corresponding to the methods.
-    !> Note that the PhreeqcRM methods do not have the "RM_" prefix
-    !> and the id argument is not included.
-    !> For example,
-    !> @par
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> LoadDatabase: phreeqc.dat
-    !> RunFile:
-    !> workers: true
-    !> initial_phreeqc: true
-    !> utility: true
-    !> chemistry_name: advect.pqi
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par
-    !> @ref RM_BMI_Initialize will read the YAML file and execute the specified methods with
-    !> the specified arguments. Using YAML
-    !> terminology, the argument(s) for a method may be a scalar, a sequence, or a map,
-    !> depending if the argument is
-    !> a single item, a single vector, or there are multiple arguments.
-    !> In the case of a map, the name associated
-    !> with each argument (for example "chemistry_name" above) is arbitrary.
-    !> The names of the map keys for map
-    !> arguments are not used in parsing the YAML file; only the order of
-    !> the arguments is important.
-    !> @par
-    !> The following list gives the PhreeqcRM methods that can be specified in a YAML file
-    !> and the arguments that are required. The arguments are described with C++ formats, which
-    !> are sufficient to identify which arguments are YAML scalars (single bool/logical,
-    !> int, double, string/character argument),
-    !> sequences (single vector argument), or maps (multiple arguments).
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> @n CloseFiles(void);
-    !> @n CreateMapping(std::vector< int >& grid2chem);
-    !> @n DumpModule();
-    !> @n FindComponents();
-    !> @n InitialPhreeqc2Module(std::vector< int > initial_conditions1);
-    !> @n InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
-    !> @n InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
-    !> @n LoadDatabase(std::string database);
-    !> @n OpenFiles(void);
-    !> @n OutputMessage(std::string str);
-    !> @n RunCells(void);
-    !> @n RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
-    !> @n RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
-    !> @n ScreenMessage(std::string str);
-    !> @n SetComponentH2O(bool tf);
-    !> @n SetConcentrations(std::vector< double > c);
-    !> @n SetCurrentSelectedOutputUserNumber(int n_user);
-    !> @n SetDensity(std::vector< double > density);
-    !> @n SetDumpFileName(std::string dump_name);
-    !> @n SetErrorHandlerMode(int mode);
-    !> @n SetErrorOn(bool tf);
-    !> @n SetFilePrefix(std::string prefix);
-    !> @n SetGasCompMoles(std::vector< double > gas_moles);
-    !> @n SetGasPhaseVolume(std::vector< double > gas_volume);
-    !> @n SetPartitionUZSolids(bool tf);
-    !> @n SetPorosity(std::vector< double > por);
-    !> @n SetPressure(std::vector< double > p);
-    !> @n SetPrintChemistryMask(std::vector< int > cell_mask);
-    !> @n SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
-    !> @n SetRebalanceByCell(bool tf);
-    !> @n SetRebalanceFraction(double f);
-    !> @n SetRepresentativeVolume(std::vector< double > rv);
-    !> @n SetSaturation(std::vector< double > sat);
-    !> @n SetScreenOn(bool tf);
-    !> @n SetSelectedOutputOn(bool tf);
-    !> @n SetSpeciesSaveOn(bool save_on);
-    !> @n SetTemperature(std::vector< double > t);
-    !> @n SetTime(double time);
-    !> @n SetTimeConversion(double conv_factor);
-    !> @n SetTimeStep(double time_step);
-    !> @n SetUnitsExchange(int option);
-    !> @n SetUnitsGasPhase(int option);
-    !> @n SetUnitsKinetics(int option);
-    !> @n SetUnitsPPassemblage(int option);
-    !> @n SetUnitsSolution(int option);
-    !> @n SetUnitsSSassemblage(int option);
-    !> @n SetUnitsSurface(int option);
-    !> @n SpeciesConcentrations2Module(std::vector< double > species_conc);
-    !> @n StateSave(int istate);
-    !> @n StateApply(int istate);
-    !> @n StateDelete(int istate);
-    !> @n UseSolutionDensityVolume(bool tf);
-    !> @n WarningMessage(std::string warnstr);
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !>
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> id = RM_Create(nxyz, MPI_COMM_WORLD)
-    !> status = RM_InitializeYAML(id, "myfile.yaml")
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-#if defined(USE_YAML)
-    INTEGER FUNCTION RM_BMI_Initialize(id, config_file)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_Initialize(id, config_file) &
-        BIND(C, NAME='RMF_BMI_Initialize')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: config_file(*)
-    END FUNCTION RMF_BMI_Initialize
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: config_file
-    RM_BMI_Initialize = RMF_BMI_Initialize(id, trim(config_file)//C_NULL_CHAR)
-    return
-    END FUNCTION RM_BMI_Initialize
-#endif
-!> Basic Model Interface method that sets model variables. Only variables in the list
-!> provided by @ref RM_BMI_GetInputVarNames can be set. The BMI interface to PhreeqcRM is
-!> only partial, and provides only the most basic functions. The native PhreeqcRM methods 
-!> (those without the the RM_BMI_
-!> prefix) provide a complete interface.
-!> @param id     The instance id returned from @ref RM_Create.
-!> @param var    String defining variable to set.
-!> @param src    Data to use to set the variable in PhreeqcRM. 
-!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
-!> 
-!> Variable names for the second argument (@a var)
-!> and required variable type for the third argument (@a src):
-!> @n "Concentrations", double precision, allocatable, dimension(:,:);
-!> @n "Density", double precision, allocatable, dimension(:);
-!> @n "FilePrefix", character;
-!> @n "NthSelectedOutput", integer;
-!> @n "Porosity", double precision, allocatable, dimension(:);
-!> @n "Pressure", double precision, allocatable, dimension(:);
-!> @n "Saturation", double precision, allocatable, dimension(:);
-!> @n "SelectedOutputOn", logical;
-!> @n "Temperature", double precision, allocatable, dimension(:);
-!> @n "Time", double precision;
-!> @n "TimeStep", double precision.
-!> 
-!> @see
-!> @ref RM_BMI_GetInputVarNames,
-!> @ref RM_BMI_GetInputItemCount,,
-!> @ref RM_BMI_GetValue,
-!> @ref RM_BMI_GetVarItemsize,
-!> @ref RM_BMI_GetVarNbytes,
-!> @ref RM_BMI_GetVarType,
-!> @ref RM_BMI_GetVarUnits.
-!> @par Fortran Example:
-!> @htmlonly
-!> <CODE>
-!> <PRE>
-!> double precision, allocatable, dimension(:) :: tc
-!> allocate(tc(nxyz))
-!> tc = 28.0d0
-!> status = RM_BMI_SetValue(id, "Temperature", tc);
-!> </PRE>
-!> </CODE>
-!> @endhtmlonly
-!> @par MPI:
-!> Called by root, workers must be in the loop of @ref MpiWorker.
-    !> \overload
-    INTEGER FUNCTION RM_BMI_SetValue_b(id, var, src)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, isrc) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER, INTENT(in) :: isrc
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    LOGICAL(kind=4), INTENT(in) :: src
-    CHARACTER(100) :: vartype
-    integer :: bytes, nbytes, status, dim, isrc
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "bool") then
-        stop "Variable type error."
-    endif
-    if (src) then
-        isrc = 1
-    else
-        isrc = 0
-    end if
-    RM_BMI_SetValue_b = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, isrc)
-    return
-    END FUNCTION RM_BMI_SetValue_b
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_SetValue_c(id, var, src)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    CHARACTER(len=*), INTENT(in) :: src
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::string") then
-        stop "Variable type error."
-    endif
-    RM_BMI_SetValue_c = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, trim(src)//C_NULL_CHAR)
-    return
-    END FUNCTION RM_BMI_SetValue_c
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_SetValue_i(id, var, src)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: src
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "int") then
-        stop "Variable type error."
-    endif
-    if (var .eq. "NthSelectedOutput") src = src - 1
-    RM_BMI_SetValue_i = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
-    if (var .eq. "NthSelectedOutput") src = src + 1
-    return
-    END FUNCTION RM_BMI_SetValue_i
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_SetValue_i1(id, var, src)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
-
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: src(:)
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
-        stop "Variable type error."
-    endif
-    dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
-    if (dim .ne. size(src)) then
-        stop "Variable dimension error"
-    endif
-    RM_BMI_SetValue_i1 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1))
-    return
-    END FUNCTION RM_BMI_SetValue_i1
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_SetValue_i2(id, var, src)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    INTEGER(KIND=C_INT), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
-    integer, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: src(:,:)
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<int>") then
-        stop "Variable type error."
-    endif
-    dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
-    if (dim .ne. size(src,1)*size(src,2)) then
-        stop "Variable dimension error"
-    endif
-    RM_BMI_SetValue_i2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1,1))
-    return
-    END FUNCTION RM_BMI_SetValue_i2
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_SetValue_d(id, var, src)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    double precision, INTENT(inout) :: src
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "double") then
-        stop "Variable type error."
-    endif
-    RM_BMI_SetValue_d = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
-    return
-    END FUNCTION RM_BMI_SetValue_d
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_SetValue_d1(id, var, src)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
-
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    double precision, INTENT(inout) :: src(:)
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
-        stop "Variable type error."
-    endif
-    dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
-    if (dim .ne. size(src)) then
-        stop "Variable dimension error"
-    endif
-    RM_BMI_SetValue_d1 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1))
-    return
-    END FUNCTION RM_BMI_SetValue_d1
-
-    !> \overload
-    INTEGER FUNCTION RM_BMI_SetValue_d2(id, var, src)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_SetValue(id, var, src) &
-        BIND(C, NAME='RMF_BMI_SetValue')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-    REAL(KIND=C_DOUBLE), INTENT(inout) :: src
-    END FUNCTION RMF_BMI_SetValue
-    END INTERFACE
-
-    integer, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    double precision, INTENT(inout) :: src(:,:)
-    character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
-    status = RM_BMI_GetVarType(id, var, vartype)
-    if (vartype .ne. "std::vector<double>") then
-        stop "Variable type error."
-    endif
-    dim = RM_BMI_GetVarNBytes(id, var) / RM_BMI_GetVarItemsize(id, var)
-    if (dim .ne. size(src,1)*size(src,2)) then
-        stop "Variable dimension error"
-    endif
-    RM_BMI_SetValue_d2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1,1))
-    return
-    END FUNCTION RM_BMI_SetValue_d2
-	!> Runs a reaction step for all of the cells in the reaction module.
-	!> Same as @ref RM_RunCells.
-    !> Normally, tranport concentrations are transferred to the reaction cells 
-	!> (@ref RM_BMI_SetValue "Concentrations" before
-    !> reaction calculations are run. The length of time over which kinetic 
-	!> reactions are integrated is set
-    !> by @ref RM_BMI_SetValue "TimeStep". Other properties that may need to be updated 
-	!> as a result of the transport
-    !> calculations include porosity (@ref RM_BMI_SetValue "Porosity"), 
-	!> pressure (@ref RM_BMI_SetValue "Pressure"),
-	!> saturation (@ref RM_BMI_SetValue "Saturation"),
-    !> temperature (@ref RM_BMI_SetValue "Temperature").
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval IRM_BMI_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @see
-    !> @ref RM_BMI_SetValue.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> status = RM_BMI_SetValue(id, "Porosity", por)                ! If pore volume changes
-    !> status = RM_BMI_SetValue(id, "Saturation", sat)              ! If saturation changes
-    !> status = RM_BMI_SetValue(id, "Temperature", temperature)     ! If temperature changes
-    !> status = RM_BMI_SetValue(id, "Pressure", pressure)           ! If pressure changes
-    !> status = RM_BMI_SetValue(id, "Concentrations", c)            ! Transported concentrations
-    !> status = RM_BMI_SetValue(id, "TimeStep", time_step)          ! Time step for kinetic reactions
-    !> status = RM_BMI_Update(id)
-    !> status = RM_BMI_GetValue(id, "Concentrations", c)            ! Concentrations after reaction
-    !> status = RM_BMI_GetValue(id, "Density", density)             ! Density after reaction
-    !> status = RM_BMI_GetValue(id, "SolutionVolume", volume)       ! Solution volume after reaction
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-    INTEGER FUNCTION RM_BMI_Update(id)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_Update(id) &
-        BIND(C, NAME='RMF_BMI_Update')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_BMI_Update
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    RM_BMI_Update = RMF_BMI_Update(id)
-    return
-    END FUNCTION RM_BMI_Update
-
-    FUNCTION Lower(s1)  RESULT (s2)
-    CHARACTER(*)       :: s1
-    CHARACTER(LEN(s1)) :: s2
-    CHARACTER          :: ch
-    INTEGER,PARAMETER  :: DUC = ICHAR('A') - ICHAR('a')
-    INTEGER            :: i
-
-    DO i = 1,LEN(s1)
-        ch = s1(i:i)
-        IF (ch >= 'A'.AND.ch <= 'Z') ch = CHAR(ICHAR(ch)-DUC)
-        s2(i:i) = ch
-    END DO
-    END FUNCTION Lower
     END MODULE PhreeqcRM
-
 
