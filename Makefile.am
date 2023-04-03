@@ -26,6 +26,9 @@ lib_LTLIBRARIES=libphreeqcrm.la
 
 # library sources for libphreeqcrm.la
 libphreeqcrm_la_SOURCES=\
+	src/BMI_interface_F.cpp\
+	src/BMI_interface_F.h\
+	src/BMI_Var.cpp\
 	src/BMI_Var.h\
 	src/bmi.hxx\
 	src/BMIPhreeqcRM.cpp\
@@ -182,10 +185,12 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.cpp\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.h\
 	src/PhreeqcRM.cpp\
-	src/RM_BMI_interface_F.cpp\
 	src/RM_interface_C.cpp\
 	src/RM_interface_F.cpp\
 	src/RM_interface_F.h\
+	src/RMVARS.h\
+	src/VarManager.cpp\
+	src/VarManager.h\
 	src/YAML_interface_F.cpp\
 	src/YAML_interface_F.h\
 	src/YAMLPhreeqcRM.cpp\
@@ -213,6 +218,8 @@ include_HEADERS=\
 	$(top_srcdir)/src/IrmResult.h\
 	$(top_srcdir)/src/PhreeqcRM.h\
 	$(top_srcdir)/src/RM_interface_C.h\
+	$(top_srcdir)/src/RMVARS.h\
+	$(top_srcdir)/src/VarManager.h\
 	$(top_srcdir)/src/YAMLPhreeqcRM.h
 
 FCDEFS=
@@ -228,9 +235,12 @@ sourcedir=$(docdir)/src
 dist_source_DATA=$(SRC)
 
 SRC=\
+	src/BMI_interface.F90\
+	src/BMI_not_implemented.inc\
 	src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90\
 	src/RM_interface.F90\
 	src/YAML_interface.F90
+
 
 # We must override the default PPFCCOMPILE since ifort can't
 # handle the FC_FUNC define correctly so $(DEFS) is replaced

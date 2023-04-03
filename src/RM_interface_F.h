@@ -13,7 +13,6 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
-IRM_DLL_EXPORT int        BMIF_Create(int* nxyz, int* nthreads = NULL);
 IRM_DLL_EXPORT IRM_RESULT RMF_Abort(int *id, int *result, const char * err_str);
 IRM_DLL_EXPORT IRM_RESULT RMF_CloseFiles(int *id);
 IRM_DLL_EXPORT int        RMF_Concentrations2Utility(int *id, double *c, int *n, double *tc, double *p_atm);
@@ -85,6 +84,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesName(int *id, int *i, char * name, int *
 IRM_DLL_EXPORT int        RMF_GetSpeciesSaveOn(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesZ(int *id, double *z);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetStartCell(int *id, int *sc);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetTemperature(int* id, double* temperature);
 IRM_DLL_EXPORT int        RMF_GetThreadCount(int *id);
 IRM_DLL_EXPORT double     RMF_GetTime(int *id);
 IRM_DLL_EXPORT double     RMF_GetTimeConversion(int *id);
@@ -177,21 +177,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_StateApply(int* id, int* istate);
 IRM_DLL_EXPORT IRM_RESULT RMF_StateDelete(int* id, int* istate);
 IRM_DLL_EXPORT IRM_RESULT RMF_UseSolutionDensityVolume(int *id, int *tf);
 IRM_DLL_EXPORT IRM_RESULT RMF_WarningMessage(int *id, const char *warn_str);
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetComponentName(int* id, char* chem_name, int* l1);
-IRM_DLL_EXPORT double     RMF_BMI_GetCurrentTime(int* id);
-IRM_DLL_EXPORT double     RMF_BMI_GetEndTime(int* id);
-IRM_DLL_EXPORT int        RMF_BMI_GetInputItemCount(int* id);
-IRM_DLL_EXPORT int        RMF_BMI_GetOutputItemCount(int* id);
-IRM_DLL_EXPORT double     RMF_BMI_GetTimeStep(int* id);
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetTimeUnits(int* id, char* units, int* l1);
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetValue(int* id, char* name, void* dest);
-IRM_DLL_EXPORT int        RMF_BMI_GetVarItemsize(int* id, char* name);
-IRM_DLL_EXPORT int        RMF_BMI_GetVarNbytes(int* id, char* name);
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetVarType(int* id, char* name, char* vtype, int* l1);
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetVarUnits(int* id, char* name, char* units, int* l1);
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_Initialize(int* id, char* config_file);
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_SetValue(int* id, char* name, void* src);
-IRM_DLL_EXPORT IRM_RESULT RMF_BMI_Update(int* id);
+
 #if defined(__cplusplus)
 }
 #endif

@@ -10,9 +10,9 @@ subroutine Gas_f90()  BIND(C, NAME='Gas_f90')
 interface
     subroutine PrintCells(gas_comps, gas_moles, gas_p, gas_phi, str)
       character(*), dimension(:), allocatable, intent(in) :: gas_comps
-      double precision, dimension(:,:), allocatable, intent(in) :: gas_moles
-      double precision, dimension(:,:), allocatable, intent(in) :: gas_p
-      double precision, dimension(:,:), allocatable, intent(in) :: gas_phi
+      real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_moles
+      real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_p
+      real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_phi
       character(*), intent(in) :: str
     end subroutine PrintCells
 end interface
@@ -27,14 +27,14 @@ end interface
   integer :: status
   integer                                       :: ncomps
   integer                                       :: ngas
-  double precision, dimension(:), allocatable   :: por
-  double precision, dimension(:), allocatable   :: sat
+  real(kind=8), dimension(:), allocatable   :: por
+  real(kind=8), dimension(:), allocatable   :: sat
   character(100),   dimension(:), allocatable   :: gas_comps
   character(100),   dimension(:), allocatable   :: components
   integer,          dimension(:,:), allocatable :: ic1, ic2
-  double precision, dimension(:,:), allocatable :: f1
-  double precision, dimension(:,:), allocatable :: gas_moles, gas_p, gas_phi
-  double precision, dimension(:), allocatable   :: gas_volume
+  real(kind=8), dimension(:,:), allocatable :: f1
+  real(kind=8), dimension(:,:), allocatable :: gas_moles, gas_p, gas_phi
+  real(kind=8), dimension(:), allocatable   :: gas_volume
   !character(LEN=1), dimension(:), allocatable   :: errstr
 #ifdef FORTRAN_2003
   character(LEN=:), allocatable                 :: errstr
@@ -198,9 +198,9 @@ end subroutine gas_f90
 subroutine PrintCells(gas_comps, gas_moles, gas_p, gas_phi, str)
   implicit none
   character(*), dimension(:), allocatable, intent(in) :: gas_comps
-  double precision, dimension(:,:), allocatable, intent(in) :: gas_moles
-  double precision, dimension(:,:), allocatable, intent(in) :: gas_p
-  double precision, dimension(:,:), allocatable, intent(in) :: gas_phi
+  real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_moles
+  real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_p
+  real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_phi
   integer :: n
   character(*), intent(in) :: str
   integer :: i,j

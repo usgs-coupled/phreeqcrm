@@ -12,7 +12,7 @@ public:
 	{
 		::VarInit(this);
 	}
-	~CVar(void) throw()
+	~CVar(void) //throw()
 	{
 		Clear();
 	}

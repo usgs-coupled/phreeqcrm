@@ -688,7 +688,7 @@ INTEGER FUNCTION GetSelectedOutputValue(id, row, col, vtype, dvalue, svalue, sle
     END INTERFACE
     INTEGER, INTENT(in) :: id, row, col
     INTEGER, INTENT(out) :: vtype
-    DOUBLE PRECISION, INTENT(out) :: dvalue
+    real(kind=8), INTENT(out) :: dvalue
     CHARACTER(len=*), INTENT(out) :: svalue
     INTEGER, INTENT(out), OPTIONAL :: slength
     INTEGER :: sz, sz_fortran
@@ -898,9 +898,9 @@ INTEGER FUNCTION SetBasicFortranCallback(id, fcn)
             IMPLICIT NONE
             INTEGER, INTENT(in) :: id
             INTERFACE
-                DOUBLE PRECISION FUNCTION fcn(x1, x2, str, l)
+                real(kind=8) FUNCTION fcn(x1, x2, str, l)
                     INTEGER, INTENT(in)   :: l
-                    DOUBLE PRECISION, INTENT(in) :: x1, x2
+                    real(kind=8), INTENT(in) :: x1, x2
                     CHARACTER, INTENT(in) :: str(*)
                 END FUNCTION fcn
            END INTERFACE
@@ -908,9 +908,9 @@ INTEGER FUNCTION SetBasicFortranCallback(id, fcn)
     END INTERFACE
     INTEGER, INTENT(in) :: id     
     INTERFACE
-        DOUBLE PRECISION FUNCTION fcn(x1, x2, str, l) 
+        real(kind=8) FUNCTION fcn(x1, x2, str, l) 
             INTEGER, INTENT(in)          :: l
-            DOUBLE PRECISION, INTENT(in) :: x1, x2
+            real(kind=8), INTENT(in) :: x1, x2
             CHARACTER, INTENT(in) :: str(*)
         END FUNCTION fcn
     END INTERFACE
