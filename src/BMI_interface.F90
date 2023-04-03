@@ -20,6 +20,8 @@
 
     integer, parameter :: BMI_FAILURE = 1
     integer, parameter :: BMI_SUCCESS = 0
+    
+      
     !> INTERFACE-----Basic Model Interface method that retrieves model variables. Only variables in the list
     !> provided by @ref bmif_get_output_var_names can be retrieved. The BMI interface to PhreeqcRM is
     !> only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the RM_BMI_
@@ -85,10 +87,17 @@
         module procedure bmif_get_value_double
         module procedure bmif_get_value_double1
         module procedure bmif_get_value_double2
+        module procedure bmif_get_value_float ! not implemented
         module procedure bmif_get_value_int
         module procedure bmif_get_value_int1
         module procedure bmif_get_value_int2
     END INTERFACE bmif_get_value
+    
+	INTERFACE get_value_at_indices
+		module procedure get_value_at_indices_double ! not implemented
+		module procedure get_value_at_indices_float  ! not implemented
+		module procedure get_value_at_indices_int    ! not implemented
+    END INTERFACE get_value_at_indices
 
     INTERFACE bmif_set_value
         module procedure bmif_set_value_b
@@ -96,17 +105,23 @@
         module procedure bmif_set_value_double
         module procedure bmif_set_value_double1
         module procedure bmif_set_value_double2
+        module procedure bmif_set_value_float ! not implemented
         module procedure bmif_set_value_int
         module procedure bmif_set_value_int1
         module procedure bmif_set_value_int2
     END INTERFACE bmif_set_value
     
+	INTERFACE set_value_at_indices
+		module procedure set_value_at_indices_double ! not implemented
+		module procedure set_value_at_indices_float  ! not implemented
+		module procedure set_value_at_indices_int    ! not implemented
+    END INTERFACE set_value_at_indices
     
     INTERFACE bmif_get_value_ptr
         module procedure bmif_get_value_ptr_logical
-        !module procedure bmif_get_value_ptr_character
         module procedure bmif_get_value_ptr_double
         module procedure bmif_get_value_ptr_double1
+        module procedure bmif_get_value_ptr_float ! not implemented
         module procedure bmif_get_value_ptr_integer
     END INTERFACE bmif_get_value_ptr
     
@@ -2058,6 +2073,12 @@
 		bmif_grid_type = BMI_FAILURE
 	endif
     END FUNCTION bmif_grid_type
+    
+	! ====================================================
+    ! Functions not implemented
+	! ====================================================
+
+    INCLUDE "BMI_interface_not_implemented.F90"
 	
 	! ====================================================
 	! Utility functions	
