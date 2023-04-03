@@ -265,6 +265,28 @@ RMF_BMI_GetValue(int* id, char* var, void* dest)
 	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_BMI_GetValuePtr(int* id, char* var, void*& dest)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns value(s) for var
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(*id);
+	if (bmirm_ptr)
+	{
+		if (var != NULL)
+		{
+			std::string str_var = var;
+			size_t end = str_var.find_last_not_of(' ');
+			str_var = (end == std::string::npos) ? "" : str_var.substr(0, end + 1);
+			std::string type = bmirm_ptr->GetVarType(var);
+			dest = bmirm_ptr->GetValuePtr(str_var);
+			return IRM_OK;
+		}
+		return IRM_INVALIDARG;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
 int
 RMF_BMI_GetVarItemsize(int* id, char* var)
 /* ---------------------------------------------------------------------- */

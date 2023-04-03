@@ -463,6 +463,10 @@ USE, intrinsic :: ISO_C_BINDING
     real(kind=8), dimension(:), allocatable          :: volume, rm_volume
     logical :: tf
     character(LEN=:), allocatable :: alloc_string
+    real(kind=8), pointer :: real_ptr
+    real(kind=c_double), pointer :: real_dim_ptr(:)
+    integer, pointer :: integer_ptr
+    logical, pointer :: logical_ptr
 
     status = bmif_get_component_name(id, string)
     write(*,*) trim(string)
@@ -480,6 +484,7 @@ USE, intrinsic :: ISO_C_BINDING
     status = bmif_get_value(id, "Time", time)
     status = assert(rm_time .eq. time)
     rm_time = RM_GetTime(id)
+    status = bmif_get_value_ptr(id, "Time", real_ptr)
     status = assert(time .eq. rm_time)
     status = bmif_get_current_time(id, time)
     status = assert(time .eq. rm_time)
@@ -617,6 +622,7 @@ USE, intrinsic :: ISO_C_BINDING
     status = assert(nxyz .eq. rm_nxyz)
     
 	! GetValue("Porosity")
+    status = bmif_get_value_ptr(id, "Porosity", real_dim_ptr)
     status = bmif_get_var_itemsize(id, "Porosity", itemsize)
     status = bmif_get_var_nbytes(id, "Porosity", nbytes)
     dim = nbytes / itemsize
@@ -625,10 +631,8 @@ USE, intrinsic :: ISO_C_BINDING
     status = bmif_set_value(id, "Porosity", rm_porosity)
     status = bmif_get_value(id, "Porosity", porosity)
     do i = 1, nxyz
-        if (porosity(i) .ne. rm_porosity(i)) then
-            status = assert(.false.)
-            exit
-        endif
+        status = assert(porosity(i) .eq. rm_porosity(i)) 
+        status = assert(porosity(i) .eq. real_dim_ptr(i)) 
     enddo
 	status = RM_GetPorosity(id, rm_porosity);
         do i = 1, nxyz

@@ -101,6 +101,15 @@
         module procedure bmif_set_value_int2
     END INTERFACE bmif_set_value
     
+    
+    INTERFACE bmif_get_value_ptr
+        module procedure bmif_get_value_ptr_logical
+        !module procedure bmif_get_value_ptr_character
+        module procedure bmif_get_value_ptr_double
+        module procedure bmif_get_value_ptr_double1
+        module procedure bmif_get_value_ptr_integer
+    END INTERFACE bmif_get_value_ptr
+    
     CONTAINS
 	
 	! ====================================================
@@ -1610,6 +1619,109 @@
     bmif_get_value_int2 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
     return
     END FUNCTION bmif_get_value_int2
+    
+    !> \overload
+    INTEGER FUNCTION bmif_get_value_ptr_double(id, var, dest)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValuePtr(id, var, src) &
+			BIND(C, NAME='RMF_BMI_GetValuePtr')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		type (c_ptr), INTENT(inout) :: src
+		END FUNCTION RMF_BMI_GetValuePtr
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    real(kind=c_double), pointer, INTENT(inout) :: dest
+	type (c_ptr) :: src
+    integer :: status
+    status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
+    call C_F_POINTER(src, dest)
+    bmif_get_value_ptr_double = success(status)
+    return 
+    END FUNCTION bmif_get_value_ptr_double
+    
+        !> \overload
+    INTEGER FUNCTION bmif_get_value_ptr_double1(id, var, dest)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValuePtr(id, var, src) &
+			BIND(C, NAME='RMF_BMI_GetValuePtr')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		type (c_ptr), INTENT(inout) :: src
+		END FUNCTION RMF_BMI_GetValuePtr
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    real(kind=c_double), pointer, INTENT(inout) :: dest(:)
+	type (c_ptr) :: src
+	integer nbytes, itemsize, dim, status
+	status = bmif_get_var_nbytes(id, var, nbytes)
+	status = bmif_get_var_itemsize(id, var, itemsize)
+	dim = nbytes/itemsize
+    status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
+    call c_f_pointer(src, dest, [dim]);
+    bmif_get_value_ptr_double1 = success(status)
+    return 
+    END FUNCTION bmif_get_value_ptr_double1
+    
+	!> \overload
+    INTEGER FUNCTION bmif_get_value_ptr_integer(id, var, dest)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValuePtr(id, var, src) &
+			BIND(C, NAME='RMF_BMI_GetValuePtr')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		type (c_ptr), INTENT(inout) :: src
+		END FUNCTION RMF_BMI_GetValuePtr
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    integer, pointer, INTENT(inout) :: dest
+	type (c_ptr) :: src
+	integer status
+    status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
+    call c_f_pointer(src, dest)
+    bmif_get_value_ptr_integer = success(status)
+    return 
+    END FUNCTION bmif_get_value_ptr_integer
+	
+	!> \overload
+    INTEGER FUNCTION bmif_get_value_ptr_logical(id, var, dest)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetValuePtr(id, var, src) &
+			BIND(C, NAME='RMF_BMI_GetValuePtr')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		type (c_ptr), INTENT(inout) :: src
+		END FUNCTION RMF_BMI_GetValuePtr
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    logical, pointer, INTENT(inout) :: dest
+	type (c_ptr) :: src
+	integer status
+    status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
+	call c_f_pointer(src, dest)
+    bmif_get_value_ptr_logical = success(status)
+    return 
+    END FUNCTION bmif_get_value_ptr_logical    
 
 	! ====================================================
 	! Setters, by type

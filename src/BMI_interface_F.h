@@ -25,6 +25,7 @@ extern "C" {
 	IRM_DLL_EXPORT double     RMF_BMI_GetTimeStep(int* id);
 	IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetTimeUnits(int* id, char* units, int* l1);
 	IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetValue(int* id, char* name, void* dest);
+	IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetValuePtr(int* id, char* var, void*& dest);
 	IRM_DLL_EXPORT int        RMF_BMI_GetVarItemsize(int* id, char* name);
 	IRM_DLL_EXPORT int        RMF_BMI_GetVarNbytes(int* id, char* name);
 	IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetVarType(int* id, char* name, char* vtype, int* l1);
