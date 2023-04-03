@@ -9,7 +9,7 @@
 #include "PhreeqcRM.h"
 #include "RMVARS.h"
 //class PhreeqcRM;
-#include "BMI_var.h"
+#include "BMI_Var.h"
 
 
 class IRM_DLL_EXPORT VarManager
@@ -21,7 +21,7 @@ public:
 		GetPtr,  
 		GetVar,
 		SetVar,
-		Init,
+		//Init,
 		Info,
 		no_op
 	};
@@ -87,7 +87,7 @@ public:
 	//void test() { VarFunction x = VarManager::Concentrations_var; 
 	//VarVariant vv;
 	//vv.SetFn(VarFux);
-	VarManager::VarFunction VarManager::GetFn(RMVARS v_enum);
+	VarManager::VarFunction GetFn(RMVARS v_enum);
 	// Var functions
 	void ComponentCount_Var();
 	void Components_Var();

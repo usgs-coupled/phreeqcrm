@@ -196,8 +196,6 @@ RMF_BMI_GetNames(int* id, const char* type, char* dest)
 			if (v[i].size() > size) size = v[i].size();
 		}
 		int itemsize = size;
-		int dim = v.size();
-		int nbytes = dim*size;
 		std::stringstream all;
 		for (size_t i = 0; i < v.size(); i++)
 		{

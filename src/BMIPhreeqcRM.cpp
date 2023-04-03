@@ -262,7 +262,7 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -290,7 +290,7 @@ std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -308,7 +308,7 @@ int BMIPhreeqcRM::GetVarItemsize(const std::string name)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -326,7 +326,7 @@ int BMIPhreeqcRM::GetVarNbytes(const std::string name)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -359,7 +359,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -387,7 +387,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 		if (this->var_man->VarExchange.GetCType() == "std::vector<std::string>")
 		{
 			int itemsize = this->GetVarItemsize(name);
-			int nbytes = this->GetVarNbytes(name);
+			//int nbytes = this->GetVarNbytes(name);
 			std::stringstream all;
 			for (size_t i = 0; i < this->var_man->VarExchange.GetStringVectorRef().size(); i++)
 			{
@@ -424,7 +424,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, bool& dest)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -445,7 +445,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, bool* dest)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -474,7 +474,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, double& dest)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -495,7 +495,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -529,7 +529,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, int& dest)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -549,7 +549,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, int* dest)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -584,7 +584,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::string& dest)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -605,7 +605,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -626,7 +626,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<int>& dest)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -646,7 +646,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<std::string>& de
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -666,7 +666,7 @@ void* BMIPhreeqcRM::GetValuePtr(const std::string name)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (bv.GetVoidPtr() == NULL)
 		{
 			this->var_man->task = VarManager::VAR_TASKS::GetPtr;
@@ -683,7 +683,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -752,7 +752,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, bool src)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -775,7 +775,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, char* src)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -797,7 +797,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, double src)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -819,7 +819,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, int src)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -841,7 +841,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, const std::string src)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -863,7 +863,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -895,7 +895,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<int> src)
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;
@@ -920,7 +920,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
+		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (!bv.GetInitialized())
 		{
 			this->var_man->task = VarManager::VAR_TASKS::Info;

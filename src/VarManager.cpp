@@ -103,7 +103,7 @@ VarManager::VarFunction VarManager::GetFn(RMVARS v_enum)
 	auto it = this->GetVariantMap().find(v_enum);
 	if (it != this->GetVariantMap().end())
 	{
-		VarManager::VarFunction f = it->second.GetFn();
+		//VarManager::VarFunction f = it->second.GetFn();
 		//VarFunction*(f)();
 		return it->second.GetFn();
 	}
@@ -212,6 +212,7 @@ void VarManager::ComponentCount_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -271,6 +272,7 @@ void VarManager::Components_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -569,6 +571,7 @@ void VarManager::GridCellCount_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -613,6 +616,7 @@ void VarManager::NthSelectedOutput_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -750,6 +754,7 @@ void VarManager::SelectedOutputColumnCount_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -797,6 +802,7 @@ void VarManager::SelectedOutputCount_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -867,6 +873,7 @@ void VarManager::SelectedOutputHeadings_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -914,6 +921,7 @@ void VarManager::SelectedOutputRowCount_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -1098,6 +1106,7 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 		assert(false);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
@@ -1237,6 +1246,7 @@ void VarManager::SelectedOutputOn_Var()
 		rm_ptr->SetSelectedOutputOn(v);
 		break;
 	}
+	case VarManager::VAR_TASKS::Info:
 	case VarManager::VAR_TASKS::no_op:
 		break;
 	}
