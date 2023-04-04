@@ -95,16 +95,16 @@ DEFS+=-DTEST_FORTRAN
 FCDEFS+=-DTEST_FORTRAN
 
 test_SOURCES+=\
-	AdvectBMI_f90.F90\
+	../src/BMI_interface.F90\
+	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90\
+	../src/RM_interface.F90\
+	../src/YAML_interface.F90\
 	Advect_f90.F90\
+	AdvectBMI_f90.F90\
 	Gas_f90.F90\
 	SimpleAdvect_f90.F90\
 	Species_f90.F90\
-	WriteYAMLFile_f90.F90\
-	../src/RM_interface.F90\
-	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90\
-	../src/YAML_interface.F90
-
+	WriteYAMLFile_f90.F90
 
 test_LDADD+=$(FCLIBS)
 
@@ -113,37 +113,30 @@ mostlyclean-local: clean-modules
 clean-modules:
 	-test -z $(FC_MODEXT) || $(RM) *.$(FC_MODEXT)
 
-AdvectBMI_f90.$(OBJEXT) : AdvectBMI_f90.F90 RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT) BMI_interface.$(OBJEXT)
-
-Gas_f90.$(OBJEXT) : Gas_f90.F90 ../src/RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT)
-
-SimpleAdvect_f90.$(OBJEXT) : SimpleAdvect_f90.F90 RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT) Advect_f90.$(OBJEXT)
-
-Species_f90.$(OBJEXT) : Species_f90.F90 RM_interface.$(OBJEXT)
-
-WriteYAMLFile_f90.$(OBJEXT) : RM_interface.$(OBJEXT) YAML_interface.$(OBJEXT)
-
-# bmiphreeqcrm.mod
-BMI_interface.F90 : $(top_srcdir)/src/BMI_interface.F90
-	$(LN_S) $< $@
-
-BMI_not_implemented.F90 : $(top_srcdir)/src/BMI_not_implemented.F90
-	$(LN_S) $< $@
+AdvectBMI_f90.$(OBJEXT) : AdvectBMI_f90.F90 Advect_f90.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT) ../src/BMI_interface.$(OBJEXT)
 
 # mydata.mod
-Advect_f90.$(OBJEXT) : Advect_f90.F90 RM_interface.$(OBJEXT) IPhreeqc_interface.$(OBJEXT)
+Advect_f90.$(OBJEXT) : Advect_f90.F90 ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT) ../src/RM_interface.$(OBJEXT)
 
-# iphreeqc.mod
-IPhreeqc_interface.F90 : $(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
-	$(LN_S) $< $@
+Gas_f90.$(OBJEXT) : Gas_f90.F90 Advect_f90.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT) ../src/RM_interface.$(OBJEXT)
 
-# phreeqcrm.mod
-RM_interface.F90 : $(top_srcdir)/src/RM_interface.F90
-	$(LN_S) $< $@
+SimpleAdvect_f90.$(OBJEXT) : SimpleAdvect_f90.F90 Advect_f90.$(OBJEXT) ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT) ../src/RM_interface.$(OBJEXT)
 
-# yaml_interface.mod
-YAML_interface.F90 : $(top_srcdir)/src/YAML_interface.F90
-	$(LN_S) $< $@
+Species_f90.$(OBJEXT) : Species_f90.F90 ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT) ../src/RM_interface.$(OBJEXT)
+
+# BMIPhreeqcRM.mod
+../src/BMI_interface.$(OBJEXT) : ../src/BMI_interface.F90 ../src/RM_interface.$(OBJEXT)
+
+# IPhreeqc.mod
+../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT) : ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
+
+# PhreeqcRM.mod
+../src/RM_interface.$(OBJEXT) : ../src/RM_interface.F90
+
+# YAML_interface.mod
+../src/YAML_interface.$(OBJEXT) : ../src/YAML_interface.F90
+
+WriteYAMLFile_f90.$(OBJEXT) : WriteYAMLFile_f90.F90 ../src/YAML_interface.$(OBJEXT)
 
 endif
 
