@@ -242,7 +242,12 @@ jobs:
       working-directory: ${{ github.workspace }}/Tests
       run: cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON
 
-    - name: Test install (build) (Non-Windows)
+    - name: Test install (configure) (Windows)
+      if: runner.os == 'Windows'
+      working-directory: ${{ github.workspace }}/Tests
+      run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON
+
+    - name: Test install (build)
       if: runner.os != 'Windows'
       working-directory: ${{ github.workspace }}/Tests
       run: cmake --build build --config ${{ env.BUILD_TYPE }}
@@ -252,17 +257,9 @@ jobs:
       working-directory: ${{ github.workspace }}/Tests/build
       run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
 
-    - name: Test install (configure) (Windows)
-      if: runner.os == 'Windows'
-      working-directory: ${{ github.workspace }}/Tests
-      run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON
-
-    - name: Test install (build) (Windows)
-      if: runner.os == 'Windows'
-      working-directory: ${{ github.workspace }}/Tests
-      run: cmake --build build --config ${{ env.BUILD_TYPE }}
-
     - name: Test install (ctest) (Windows)
       if: runner.os == 'Windows'
       working-directory: ${{ github.workspace }}/Tests/build
-      run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
+      run: |
+        Add-Content $env:GITHUB_PATH "C:\Program Files (x86)\PhreeqcRM\bin"
+        ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
