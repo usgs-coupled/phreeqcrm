@@ -248,7 +248,6 @@ jobs:
       run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON
 
     - name: Test install (build)
-      if: runner.os != 'Windows'
       working-directory: ${{ github.workspace }}/Tests
       run: cmake --build build --config ${{ env.BUILD_TYPE }}
 
