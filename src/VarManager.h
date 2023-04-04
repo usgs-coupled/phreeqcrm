@@ -21,7 +21,7 @@ public:
 		GetPtr,  
 		GetVar,
 		SetVar,
-		Init,
+		//Init,
 		Info,
 		no_op
 	};

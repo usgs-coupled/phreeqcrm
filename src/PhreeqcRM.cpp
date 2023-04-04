@@ -8931,9 +8931,9 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 	}
 
 	// Split up work
-	double f_low, f_high;
-	f_high = 1 + 0.5 / ((double) this->nthreads);
-	f_low = 1;
+	//double f_low, f_high;
+	//f_high = 1 + 0.5 / ((double) this->nthreads);
+	//f_low = 1;
 	int j = 0;
 	for (size_t i = 0; i < (size_t) this->nthreads - 1; i++)
 	{
@@ -8941,7 +8941,6 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 		{
 			start_cell_new[i] = end_cell_new[i - 1] + 1;
 		}
-		double sum_work = 0;
 		double temp_sum_work = 0;
 		bool next = true;
 		while (next)
@@ -8949,7 +8948,7 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 			temp_sum_work += normalized_cell_times[j] / normalized_total_time;
 			if ((temp_sum_work < task_fraction[i]) && ((count_chemistry - (int) j) > (this->nthreads - (int) i)))
 			{
-				sum_work = temp_sum_work;
+				//sum_work = temp_sum_work;
 				j++;
 				next = true;
 			}
