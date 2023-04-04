@@ -50,7 +50,7 @@ option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" OFF)
 if (PHREEQCRM_BUILD_PYTHON)
   find_package(SWIG REQUIRED)
   # find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
-  # Use Python_ROOT_DIR specify non default python
+  # Set Python_ROOT_DIR to specify which python to use
   # ie -DPython_ROOT_DIR=C:/Python38-x64
   find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development)
 endif()
@@ -60,6 +60,7 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/bmi.hxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/CSelectedOutput.cpp
@@ -216,6 +217,7 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IrmResult.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PhreeqcRM.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PhreeqcRM.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_C.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_C.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_F.cpp
@@ -268,6 +270,8 @@ set(exportPackageDependencies "")
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
   target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
   target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+  # set(phreeqcrm_requires "yaml-cpp")
+  set(useyaml_define "-DUSE_YAML")
   string(APPEND exportPackageDependencies "find_dependency(yaml-cpp)\n")
 endif()
 
@@ -306,6 +310,8 @@ endif()
 set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/BMI_interface_F.h
   ${PROJECT_SOURCE_DIR}/src/BMI_Var.h
+  ${PROJECT_SOURCE_DIR}/src/BMI_Var.h
+  ${PROJECT_SOURCE_DIR}/src/bmi.hxx
   ${PROJECT_SOURCE_DIR}/src/BMIPhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp
@@ -347,6 +353,7 @@ if(PHREEQCRM_BUILD_MPI)
     ##include_directories(${MPI_Fortran_INCLUDE_PATH})
     target_link_libraries(PhreeqcRM PUBLIC MPI::MPI_Fortran)
   endif()
+  set(usempi_define "-DUSE_MPI")
   string(APPEND exportPackageDependencies "find_dependency(MPI)\n")
 else()
   if(NOT PHREEQCRM_DISABLE_OPENMP)
@@ -360,6 +367,49 @@ else()
     endif()
   endif()
 endif()
+
+# pkg-config
+# Skip imported link libraries
+#
+# set(PKGCONFIG_LIBS "")
+# set(PKGCONFIG_INCS "")
+# set(PHREEQCRM_OpenMP_C_FLAGS "")
+# if(NOT PHREEQCRM_DISABLE_OPENMP AND OpenMP_FOUND)
+#   set(PHREEQCRM_OpenMP_C_FLAGS ${OpenMP_C_FLAGS})
+# endif()
+# get_target_property(_link_libs PhreeqcRM LINK_LIBRARIES)
+# if (_link_libs)
+#   foreach(_link_lib ${_link_libs})
+#     cmake_print_variables(_link_lib)
+#     get_target_property(_imported ${_link_lib} IMPORTED)
+#     if(_imported)
+#       get_target_property(_incs ${_link_lib} INTERFACE_INCLUDE_DIRECTORIES)
+#       if(_incs)
+#         foreach(_inc ${_incs})
+#           string(APPEND PKGCONFIG_INCS " -I${_inc}")
+#         endforeach()
+#       endif()
+#       get_target_property(_loc ${_link_lib} LOCATION)
+#       if (_loc)
+#         string(APPEND PKGCONFIG_LIBS " ${_loc}")
+#       else()
+#         get_target_property(_libs ${_link_lib} INTERFACE_LINK_LIBRARIES)
+#         if(_libs)
+#           foreach(_lib ${_libs})
+#             string(APPEND PKGCONFIG_LIBS " ${_lib}")
+#           endforeach()
+#         endif()
+#       endif()
+#     endif()
+#   endforeach()
+#   if(PKGCONFIG_INCS)
+#     string(STRIP ${PKGCONFIG_INCS} PKGCONFIG_INCS)
+#   endif()
+#   if(PKGCONFIG_LIBS)
+#     string(STRIP ${PKGCONFIG_LIBS} PKGCONFIG_LIBS)
+#   endif()
+# endif()
+configure_file(phreeqcrm.cmake.in phreeqcrm.pc @ONLY)
 
 # install
 if(STANDALONE_BUILD EQUAL 1)
@@ -399,7 +449,11 @@ if(STANDALONE_BUILD EQUAL 1)
   )
 
   install(FILES ${PhreeqcRM_SRC}
-    DESTINATION src
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PhreeqcRM/src
+  )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/phreeqcrm.pc
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
   )
 else()
   # option(PHREEQCRM_INSTALL_TARGETS "" OFF)

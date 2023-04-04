@@ -24,9 +24,13 @@ AC_ARG_WITH([yaml-cpp],
             [],
             [with_yaml_cpp=no])
 
+useyaml_define=""
+phreeqcrm_requires=""
 AS_IF([test "x$with_yaml_cpp" != xno],
   [PKG_CHECK_MODULES([YAML_CPP], [yaml-cpp],
     [AC_DEFINE([USE_YAML],[1],[Enable yaml-cpp])
+      useyaml_define="-DUSE_YAML"
+      phreeqcrm_requires="yaml-cpp"
       CPPFLAGS="$YAML_CPP_CFLAGS $CPPFLAGS"
       LDFLAGS="$YAML_CPP_LIBS $LDFLAGS"
     ],
@@ -34,6 +38,8 @@ AS_IF([test "x$with_yaml_cpp" != xno],
     ])
   ]
 )
+AC_SUBST(useyaml_define)
+AC_SUBST(phreeqcrm_requires)
 AM_CONDITIONAL([PHREEQCRM_WITH_YAMLCPP], [test x"$with_yaml_cpp" != xno])
 
 # check for --with-mpi
@@ -248,9 +254,11 @@ fi
 AM_CONDITIONAL([BUILD_OPENMP], [test "X$enable_openmp" != "Xno"])
 AM_CONDITIONAL([BUILD_MPI], [test "X$with_mpi" = "Xyes"])
 
+usempi_define=""
 if test "X$with_mpi" != "Xno"; then
   AC_DEFINE([USE_MPI], [], [Set to use MPI])
   PHAST_SUFFIX=mpi
+  usempi_define="-DUSE_MPI"
 else
   if test "X$enable_openmp" != "Xno"; then
     if test "X$ac_cv_prog_cxx_openmp" != "Xunsupported"; then
@@ -258,12 +266,14 @@ else
     fi
   fi
 fi
+AC_SUBST(usempi_define)
 
 AC_CONFIG_FILES([
   Makefile
   database/Makefile
   doc/Makefile
   Doxygen/Makefile
+  phreeqcrm.pc
   Tests/Makefile
   Tests/advect.pqi:Tests/advect.pqi
   Tests/gas.pqi:Tests/gas.pqi

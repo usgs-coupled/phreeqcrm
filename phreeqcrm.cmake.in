@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: PhreeqcRM
+Description: A reaction module for transport simulators based on the geochemical model PHREEQC
+URL: https://github.com/usgs-coupled/phreeqcrm
+Version: @PROJECT_VERSION@
+Requires:
+Libs: -L${libdir} -lPhreeqcRM
+Cflags: -I${includedir} @useyaml_define@ @usempi_define@
