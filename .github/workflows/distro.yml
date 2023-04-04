@@ -260,5 +260,5 @@ jobs:
       if: runner.os == 'Windows'
       working-directory: ${{ github.workspace }}/Tests/build
       run: |
-        Add-Content $env:GITHUB_PATH "C:\Program Files (x86)\PhreeqcRM\bin"
+        $env:PATH="C:\Program Files (x86)\PhreeqcRM\bin;$env:PATH"
         ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
