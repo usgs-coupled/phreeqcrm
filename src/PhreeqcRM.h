@@ -2704,7 +2704,9 @@ Called by root.
 	//const std::vector< double > &               GetTemperature(void) {return this->tempc;}
 	const std::vector< double > &               GetTemperature(void);
 
+#ifdef VISCOSITY
 	IRM_RESULT                                  GetViscosity(std::vector<double>& viscosity_arg);
+#endif
 /**
 Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
 For the OPENMP version, the number of threads is set implicitly or explicitly
