@@ -70,6 +70,7 @@ enum {
 	METHOD_GETSPECIESLOG10GAMMAS,
 	METHOD_GETSPECIESLOG10MOLALITIES,
 	METHOD_GETTEMPERATURE,
+	METHOD_GETVISCOSITY,
 	METHOD_INITIALPHREEQC2MODULE,
 	METHOD_INITIALPHREEQCCELL2MODULE,
 	METHOD_LOADDATABASE,
@@ -2700,6 +2701,8 @@ Called by root.
  */
 	//const std::vector< double > &               GetTemperature(void) {return this->tempc;}
 	const std::vector< double > &               GetTemperature(void);
+
+	IRM_RESULT                                  GetViscosity(std::vector<double>& viscosity_arg);
 /**
 Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
 For the OPENMP version, the number of threads is set implicitly or explicitly
@@ -5196,6 +5199,8 @@ protected:
 	std::vector< double > tempc_worker;		    // nchem on workers temperature Celsius 
 	std::vector< double > density_root;			// nxyz density
 	std::vector< double > density_worker;			// nchem on workers density
+	std::vector< double > viscosity_root;			// nxyz viscosity
+	std::vector< double > viscosity_worker;			// nchem on workers viscosity
 	std::vector< double > solution_volume_root;   // nxyz on root solution volume
 	std::vector< double > solution_volume_worker;	// nchem on workers solution_volume 
 	std::vector< int > print_chem_mask_root;		// nxyz print flags for output file
