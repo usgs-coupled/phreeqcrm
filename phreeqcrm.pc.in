@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: PhreeqcRM
+Description: A reaction module for transport simulators based on the geochemical model PHREEQC 
+URL: https://github.com/usgs-coupled/phreeqcrm
+Version: @VERSION@
+Requires: @phreeqcrm_requires@
+Libs.private: @LIBS@
+Libs: -L${libdir} -lphreeqcrm
+Cflags: -I${includedir} @useyaml_define@ @usempi_define@

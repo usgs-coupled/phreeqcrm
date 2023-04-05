@@ -1,4 +1,7 @@
-LIBDIR =/usr/local/lib
+PKGCONFIG= pkg-config
+CPPFLAGS:= $(shell $(PKGCONFIG) --cflags phreeqcrm)
+LDLIBS:= $(shell $(PKGCONFIG) --libs phreeqcrm)
+
 objects =\
 	AdvectBMI_cpp.o\
 	Advect_c.o\
@@ -32,6 +35,8 @@ cleanfiles =\
 	AdvectBMI_cpp.dmp\
 	AdvectBMI_cpp.log.txt\
 	AdvectBMI_cpp.yaml\
+	Advectcpp_utility.txt\
+	Advectcpp.dmp\
 	Gas_c_utility.txt\
 	Gas_c.chem.txt\
 	Gas_c.dmp\
@@ -58,8 +63,8 @@ cleanfiles =\
 	Utility_cpp.out
 
 
-test : $(objects)
-	$(CXX) -o test $(objects) -L$(LIBDIR) -lphreeqcrm -lyaml-cpp
+pkgconfig_test : $(objects)
+	$(CXX) -o pkgconfig_test $(objects) $(LDLIBS)
 
 clean :
-	rm -f $(objects) $(cleanfiles) test
+	rm -f $(objects) $(cleanfiles) pkgconfig_test

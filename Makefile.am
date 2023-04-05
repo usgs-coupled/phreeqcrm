@@ -2,20 +2,24 @@ ACLOCAL_AMFLAGS=-I m4
 
 PHREEQCRM_EXTRA_DIST=\
 	CMakeLists.txt\
+	phreeqcrm.cmake.in\
+	PhreeqcRMConfig.cmake.in\
 	src/CMakeLists.txt\
-	src/PhreeqcRM.i\
 	src/numpy.i\
+	src/PhreeqcRM.i\
 	src/pyfragments.swg.in\
 	src/swig/CMakeLists.txt\
 	src/swig/python/CMakeLists.txt\
-	src/swig/python/SimpleAdvect.py\
-	PhreeqcRMConfig.cmake.in
+	src/swig/python/SimpleAdvect.py
 
 EXTRA_DIST=$(PHREEQCRM_EXTRA_DIST)
 
 AM_CPPFLAGS=-I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords
 
 AM_LDFLAGS=-release 3.0.0
+
+pkgconfigdir = $(datadir)/pkgconfig
+pkgconfig_DATA = phreeqcrm.pc
 
 # libtool libraries to build
 lib_LTLIBRARIES=libphreeqcrm.la
@@ -195,6 +199,8 @@ libphreeqcrm_la_SOURCES=\
 
 include_HEADERS=\
 	$(top_srcdir)/src/BMI_Var.h\
+	$(top_srcdir)/src/bmi.hxx\
+	$(top_srcdir)/src/BMIPhreeqcRM.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqcCallbacks.h\
