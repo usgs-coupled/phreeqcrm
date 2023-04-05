@@ -129,7 +129,9 @@ public:
 	static IRM_RESULT       DestroyReactionModule(int n);
 	static PhreeqcRM      * GetInstance(int n);
 	class VarManager* var_man;
+private:
 	void UpdateBMI(RMVARS v_enum);
+public:
 /**
 @a GetGridCellCountYAML will read the YAML file and extract the value
 of GridCellCount, which can be used to construct a PhreeqcRM
