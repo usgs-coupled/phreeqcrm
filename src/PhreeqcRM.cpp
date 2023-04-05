@@ -324,6 +324,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 			forward_mapping_root.push_back(i);
 			print_chem_mask_root.push_back(0);
 			density_root.push_back(1.0);
+			viscosity_root.push_back(1.0);
 			porosity_root.push_back(0.1);
 			rv_root.push_back(1.0);
 			pressure_root.push_back(1.0);
@@ -5029,6 +5030,67 @@ PhreeqcRM::GetTemperature(void)
 	return this->tempc_root;
 }
 #endif
+#ifdef VISCOSITY
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetViscosity(std::vector<double>& viscosity_arg)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+#ifdef USE_MPI
+		if (this->mpi_myself == 0)
+		{
+			int method = METHOD_GETVISCOSITY;
+			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+		}
+		std::vector<double> local_viscosity_worker;
+		int size = this->end_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
+		local_viscosity_worker.resize(size, INACTIVE_CELL_VALUE);
+
+		// fill viscosity_root
+		int n = this->mpi_myself;
+		for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
+		{
+			int l = i - this->start_cell[n];
+			local_viscosity_worker[l] = this->workers[0]->Get_solution(i)->Get_viscosity();
+		}
+
+		// Gather to root
+		GatherNchem(local_viscosity_worker, viscosity_arg);
+#else
+		viscosity_arg.resize(this->nxyz, INACTIVE_CELL_VALUE);
+		std::vector<double> dbuffer;
+		for (int n = 0; n < this->nthreads; n++)
+		{
+			for (int i = start_cell[n]; i <= this->end_cell[n]; i++)
+			{
+				cxxSolution* soln_ptr = this->workers[n]->Get_solution(i);
+				if (!soln_ptr)
+				{
+					this->ErrorHandler(IRM_FAIL, "Solution not found for solution volume.");
+				}
+				else
+				{
+					double d = this->workers[n]->Get_solution(i)->Get_viscosity();
+					for (size_t j = 0; j < backward_mapping[i].size(); j++)
+					{
+						int n = backward_mapping[i][j];
+						viscosity_arg[n] = d;
+					}
+				}
+			}
+		}
+#endif
+	}
+	catch (...)
+	{
+		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetViscosity");
+	}
+	return IRM_OK;
+}
+#endif
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -6600,6 +6662,13 @@ PhreeqcRM::MpiWorker()
 				if (debug_worker) std::cerr << "METHOD_GETTEMPERATURE" << std::endl;
 				{
 					this->GetTemperature();
+				}
+				break;
+			case METHOD_GETVISCOSITY:
+				if (debug_worker) std::cerr << "METHOD_GETVISCOSITY" << std::endl;
+				{
+					std::vector<double> dummy;
+					this->GetViscosity(dummy);
 				}
 				break;
 			case METHOD_INITIALPHREEQC2MODULE:
