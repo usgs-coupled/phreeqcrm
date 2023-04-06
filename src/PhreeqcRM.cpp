@@ -10574,6 +10574,7 @@ PhreeqcRM::SetConcentrations(const std::vector<double> &t)
 		this->Concentrations2Solutions(n, c_chem_root);
 #endif
 	}
+	this->UpdateBMI(RMVARS::Concentrations);
 	return this->ReturnHandler(return_value, "PhreeqcRM::SetConcentrations");
 }
 #ifdef ORIG
@@ -11017,6 +11018,7 @@ PhreeqcRM::SetDensity(const std::vector<double> &t)
 	this->phreeqcrm_error_string.clear();
 	std::string methodName = "SetDensity";
 	IRM_RESULT result_value = SetGeneric(t, this->density_root, density_worker, METHOD_SETDENSITY, methodName);
+	this->UpdateBMI(RMVARS::Density);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 

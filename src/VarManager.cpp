@@ -331,6 +331,7 @@ void VarManager::Concentrations_Var()
 	}
 	case VarManager::VAR_TASKS::SetVar:
 		rm_ptr->SetConcentrations(this->VarExchange.GetDoubleVectorRef());
+		rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		break;
 	case VarManager::VAR_TASKS::no_op:
@@ -366,19 +367,35 @@ void VarManager::Density_Var()
 		this->UpdateSet.insert(RMVARS::Density);
 		break;
 	}
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		// Concentrations may change when SetDensity is called
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
+	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
+	{
 		rm_ptr->SetDensity(this->VarExchange.GetDoubleVectorRef());
 		// don't update density vector, only get solution densities
 		//bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations may change when SetDensity is called
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
 		break;
+	}
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
 		break;
@@ -653,18 +670,41 @@ void VarManager::Saturation_Var()
 		this->UpdateSet.insert(VARS_myself);
 		break;
 	}
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		// GetSaturation does not change with SetSaturation
+		// But Concentrations may change
+		//rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
+		//bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations change when Saturation changes
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
+		break;
+	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
+	{
 		rm_ptr->SetSaturation(this->VarExchange.GetDoubleVectorRef());
-		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Saturation is solution volume / (porosity*rv)
+		// GetSaturation does not change with SetSaturation
+		// bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations may change when Saturation changes
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
 		break;
+	}
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
 		break;
@@ -1139,19 +1179,50 @@ void VarManager::Porosity_Var()
 		this->PointerSet.insert(VARS_myself);
 		this->UpdateSet.insert(VARS_myself);
 		break;
+	}	
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPorosity();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations change when Saturation changes
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
+		// Saturation changes with change in porosity
+		std::vector<double> sat;
+		rm_ptr->GetSaturation(sat);
+		RMVARS VARS_sat = RMVARS::Saturation;
+		BMIVariant& bv_sat = this->VariantMap[VARS_sat];
+		bv_sat.SetDoubleVector(sat);
+		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPorosity();
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
+	{
 		rm_ptr->SetPorosity(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations change when Saturation changes
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
+		// Saturation changes with change in porosity
+		std::vector<double> sat;
+		rm_ptr->GetSaturation(sat);
+		RMVARS VARS_sat = RMVARS::Saturation;
+		BMIVariant& bv_sat = this->VariantMap[VARS_sat];
+		bv_sat.SetDoubleVector(sat);
 		break;
+	}
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
 		break;

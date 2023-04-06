@@ -13,6 +13,31 @@
 #include <algorithm>
 #include "yaml-cpp/yaml.h"
 #include "YAMLPhreeqcRM.h"
+
+class Ptrs 
+{
+public:
+	Ptrs() 
+	{
+
+	};
+	BMIPhreeqcRM* brm;
+	int* ComponentCount_ptr;
+	double* Concentrations_ptr;
+	double* Density_ptr;
+	double* Gfw_ptr;
+	int* GridCellCount_ptr;
+	double* Saturation_ptr;
+	double* SolutionVolume_ptr;
+	double* Time_ptr;
+	double* TimeStep_ptr;
+	double* Porosity_ptr;
+	double* Pressure_ptr;
+	bool* SelectedOutputOn_ptr;
+	double* Temperature_ptr;
+};
+
+
 int worker_tasks_cc(int* task_number, void* cookie);
 int do_something(void* cookie);
 
@@ -22,7 +47,9 @@ void bmi_register_basic_callback(void* cookie);
 void advectionbmi_cpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);
 int bmi_example_selected_output(BMIPhreeqcRM& brm);
 double bmi_basic_callback(double x1, double x2, const char* str, void* cookie);
-void testing(BMIPhreeqcRM& brm);
+void testing(BMIPhreeqcRM& brm, Ptrs ptrs);
+void compare_ptrs(struct Ptrs ptrs);
+
 //void GenerateYAML(int nxyz, std::string YAML_filename);
 class my_data
 {
@@ -88,12 +115,27 @@ int AdvectBMI_cpp()
 		BMIPhreeqcRM brm(nxyz, nthreads);
 		some_data.brm_ptr = &brm;
 #endif
-		//brm.SetValue("FilePrefix", "Advectcpp");
-		//brm.OpenFiles();
 		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
 		bmi_register_basic_callback(&some_data);
 		// Use YAML file to initialize
 		brm.Initialize(yaml_file);
+		// set pointers
+		Ptrs ptrs;
+		ptrs.brm = &brm;
+		ptrs.ComponentCount_ptr = (int*)brm.GetValuePtr("ComponentCount");
+		ptrs.Concentrations_ptr = (double*)brm.GetValuePtr("Concentrations");
+		ptrs.Density_ptr = (double*)brm.GetValuePtr("Density");
+		ptrs.Gfw_ptr = (double*)brm.GetValuePtr("Gfw");
+		ptrs.GridCellCount_ptr = (int*)brm.GetValuePtr("GridCellCount");
+		ptrs.Saturation_ptr = (double*)brm.GetValuePtr("Saturation");
+		ptrs.SolutionVolume_ptr = (double*)brm.GetValuePtr("SolutionVolume");
+		ptrs.Time_ptr = (double*)brm.GetValuePtr("Time");
+		ptrs.TimeStep_ptr = (double*)brm.GetValuePtr("TimeStep");
+		ptrs.Porosity_ptr = (double*)brm.GetValuePtr("Porosity");
+		ptrs.Pressure_ptr = (double*)brm.GetValuePtr("Pressure");
+		ptrs.SelectedOutputOn_ptr = (bool*)brm.GetValuePtr("SelectedOutputOn");
+		ptrs.Temperature_ptr = (double*)brm.GetValuePtr("Temperature");
+
 		// Get number of components
 		int ncomps;
 		brm.GetValue("ComponentCount", ncomps);
@@ -189,6 +231,7 @@ int AdvectBMI_cpp()
 				brm.SetScreenOn(true);
 				brm.ScreenMessage(strm.str());
 			}
+			compare_ptrs(ptrs);
 			// Transport calculation here
 			advectionbmi_cpp(c, bc_conc, ncomps, nxyz, nbound);
 			// Transfer data to PhreeqcRM for reactions
@@ -215,8 +258,11 @@ int AdvectBMI_cpp()
 			status = brm.StateSave(1);
 			status = brm.StateApply(1);
 			status = brm.StateDelete(1);
+
+			compare_ptrs(ptrs);
 			//Run chemistry
 			brm.Update();
+			compare_ptrs(ptrs);
 			// Transfer data from PhreeqcRM for transport
 			brm.GetValue("Concentrations", c);
 			brm.GetValue("Density", density);
@@ -281,7 +327,7 @@ int AdvectBMI_cpp()
 				}
 			}
 		}
-		testing(brm); // Tests GetValue
+		testing(brm, ptrs); // Tests GetValue
 		// --------------------------------------------------------------------------
 		// Additional features and finalize
 		// --------------------------------------------------------------------------
@@ -704,13 +750,9 @@ int bmi_example_selected_output(BMIPhreeqcRM& brm)
 
 	return(0);
 }
-void testing(BMIPhreeqcRM& brm)
+void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 {
 	std::ostringstream oss;
-	int* nxyz_ptr = (int*)brm.GetValuePtr("GridCellCount");
-	int* ncomps_ptr = (int*)brm.GetValuePtr("ComponentCount");
-	double* time_ptr = (double*)brm.GetValuePtr("Time");
-	double* timestep_ptr = (double*)brm.GetValuePtr("TimeStep");
 
 	// ComponentName
 	oss << brm.GetComponentName() << "\n";
@@ -725,6 +767,7 @@ void testing(BMIPhreeqcRM& brm)
 		assert(rm_time == bmi_time);
 		bmi_time = brm.GetCurrentTime();
 		assert(rm_time == bmi_time);
+		brm.SetTime(3601.0);
 	}
 	// TimeStep
 	{
@@ -737,7 +780,9 @@ void testing(BMIPhreeqcRM& brm)
 		assert(rm_timestep == bmi_timestep);
 		bmi_timestep = brm.GetTimeStep();
 		assert(rm_timestep == bmi_timestep);
+		brm.SetTime(61.);
 	}
+	compare_ptrs(ptrs);
 	// EndTime
 	oss << "GetEndTime:     " << brm.GetEndTime() << "\n";
 	// TimeUnits
@@ -795,8 +840,6 @@ void testing(BMIPhreeqcRM& brm)
 	{
 		int ncomps;
 		brm.GetValue("ComponentCount", ncomps);
-		assert(ncomps == *ncomps_ptr);
-		assert(ncomps == brm.GetComponentCount());
 		std::vector<std::string> bmi_comps;
 		brm.GetValue("Components", bmi_comps);
 		std::vector<std::string> rm_comps;
@@ -817,11 +860,14 @@ void testing(BMIPhreeqcRM& brm)
 		std::vector<double> rm_conc;
 		brm.GetConcentrations(rm_conc);
 		assert(rm_conc == bmi_conc);
+		compare_ptrs(ptrs);
 		for (int i = 0; i < conc_dim; i++)
 		{
-			bmi_conc[i] = concentrations_ptr[i];
+			bmi_conc[i] = bmi_conc[i] * 1.00001;
 		}
+		brm.SetConcentrations(bmi_conc);
 	}
+	compare_ptrs(ptrs);
 	// GetValue("Density")
 	// GetDensity and GetValue("Density) always return 
 	// the calculated solution density
@@ -836,8 +882,11 @@ void testing(BMIPhreeqcRM& brm)
 		for (int i = 0; i < dim; i++)
 		{
 			assert(density_ptr[i] == rm_density[i]);
+			rm_density[i] *= 1.001;
 		}
+		brm.SetDensity(rm_density);
 	}
+	compare_ptrs(ptrs);
 	// GetValue("ErrorString")
 	{
 		std::string bmi_err;
@@ -862,7 +911,7 @@ void testing(BMIPhreeqcRM& brm)
 		brm.GetValue("Gfw", bmi_gfw);
 		std::vector<double> rm_gfw = brm.GetGfw();
 		assert(bmi_gfw == rm_gfw);
-		for (int i = 0; i < *ncomps_ptr; i++)
+		for (int i = 0; i < *ptrs.ComponentCount_ptr; i++)
 		{
 			assert(gfw_ptr[i] == rm_gfw[i]);
 		}
@@ -873,7 +922,7 @@ void testing(BMIPhreeqcRM& brm)
 		brm.GetValue("GridCellCount", bmi_ngrid);
 		int rm_ngrid = brm.GetGridCellCount();
 		assert(bmi_ngrid == rm_ngrid);
-		assert(bmi_ngrid == *nxyz_ptr);
+		assert(bmi_ngrid == *ptrs.GridCellCount_ptr);
 	}
 	// SetValue("NthSelectedOutput") 
 	{
@@ -892,6 +941,7 @@ void testing(BMIPhreeqcRM& brm)
 		brm.GetValue("Porosity", bmi_porosity);
 		assert(bmi_porosity == rm_porosity);
 	}
+	compare_ptrs(ptrs);
 	// testing of pointers and allocated values
 	{
 		double* por_ptr = (double*)brm.GetValuePtr("Porosity");
@@ -904,7 +954,7 @@ void testing(BMIPhreeqcRM& brm)
 		brm.GetValue("Porosity", my_por);
 		brm.GetValue("Porosity", my_porosity_dim);
 		brm.GetValue("Porosity", my_porosity_alloc);
-		for (size_t i = 0; i < *nxyz_ptr; i++)
+		for (size_t i = 0; i < *ptrs.GridCellCount_ptr; i++)
 		{
 			assert(my_por[i] == my_porosity_dim[i]);
 			assert(my_por[i] == my_porosity_alloc[i]);
@@ -915,7 +965,7 @@ void testing(BMIPhreeqcRM& brm)
 		brm.SetValue("Porosity", my_por);
 		brm.GetValue("Porosity", my_porosity_dim);
 		brm.GetValue("Porosity", my_porosity_alloc);
-		for (size_t i = 0; i < *nxyz_ptr; i++)
+		for (size_t i = 0; i < *ptrs.GridCellCount_ptr; i++)
 		{
 			assert(my_por[i] == my_porosity_dim[i]);
 			assert(my_por[i] == my_porosity_alloc[i]);
@@ -926,13 +976,14 @@ void testing(BMIPhreeqcRM& brm)
 		brm.SetPorosity(my_por);
 		brm.GetValue("Porosity", my_porosity_dim);
 		brm.GetValue("Porosity", my_porosity_alloc);
-		for (size_t i = 0; i < *nxyz_ptr; i++)
+		for (size_t i = 0; i < *ptrs.GridCellCount_ptr; i++)
 		{
 			assert(my_por[i] == my_porosity_dim[i]);
 			assert(my_por[i] == my_porosity_alloc[i]);
 			assert(my_por[i] == por_ptr[i]);
 			assert(por_ptr[i] == por_ptr[i]);
 		}
+		compare_ptrs(ptrs);
 		free((void*)my_porosity_alloc);
 	}
 	// GetValue("Pressure")
@@ -953,6 +1004,7 @@ void testing(BMIPhreeqcRM& brm)
 		{
 			assert(pressure_ptr[i] == rm_pressure[i]);
 		}
+		compare_ptrs(ptrs);
 	}
 	// GetValue("Saturation")
 	// Always returns solution_volume / (rv * porosity) for each cell
@@ -963,18 +1015,20 @@ void testing(BMIPhreeqcRM& brm)
 		std::vector<double> rm_sat;
 		brm.GetSaturation(rm_sat);
 		assert(bmi_sat == rm_sat);
-		for (int i = 0; i < *nxyz_ptr; i++)
+		for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
 		{
 			assert(saturation_ptr[i] == bmi_sat[i]);
 		}
-		rm_sat.resize(*nxyz_ptr, 0.8);
+		rm_sat.resize(*ptrs.GridCellCount_ptr, 0.8);
 		brm.SetValue("Saturation", rm_sat);
 		brm.GetValue("Saturation", bmi_sat);
 		assert(bmi_sat == rm_sat);
-		for (int i = 0; i < *nxyz_ptr; i++)
+		for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
 		{
 			assert(saturation_ptr[i] == bmi_sat[i]);
+			bmi_sat[i] *= 1.01;
 		}
+		compare_ptrs(ptrs);
 	}
 	// GetValue("SolutionVolume")
 	// Always returns solution_volume / (rv * porosity) for each cell
@@ -985,10 +1039,11 @@ void testing(BMIPhreeqcRM& brm)
 		std::vector<double> rm_vol;
 		rm_vol = brm.GetSolutionVolume();
 		assert(bmi_vol == rm_vol);
-		for (int i = 0; i < *nxyz_ptr; i++)
+		for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
 		{
 			assert(solution_volume_ptr[i] == bmi_vol[i]);
 		}
+		compare_ptrs(ptrs);
 	}
 	// GetValue("Temperature")
 	{
@@ -1002,10 +1057,12 @@ void testing(BMIPhreeqcRM& brm)
 		assert(bmi_temperature == rm_temperature);
 		brm.GetValue("Temperature", bmi_temperature);
 		assert(bmi_temperature == rm_temperature);
-		for (int i = 0; i < *nxyz_ptr; i++)
+		for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
 		{
 			assert(temperature_ptr[i] == bmi_temperature[i]);
 		}
+		rm_temperature.resize(*ptrs.GridCellCount_ptr, 22.0);
+		compare_ptrs(ptrs);
 	}
 	// GetValue("SelectedOutput")
 	{
@@ -1091,6 +1148,8 @@ void testing(BMIPhreeqcRM& brm)
 		bmi_so_on = true;
 		brm.SetValue("SelectedOutputOn", bmi_so_on);
 		assert(*selectedoutput_on_ptr == bmi_so_on);
+		brm.SetSelectedOutputOn(false);
+		compare_ptrs(ptrs);
 	}
 	// GetValue("SelectedOutputRowCount")
 	{
@@ -1104,24 +1163,69 @@ void testing(BMIPhreeqcRM& brm)
 		double time = 1.0;
 		double* time_ptr = (double*)brm.GetValuePtr("Time");
 		brm.SetTime(time);
+		compare_ptrs(ptrs);
 		double time1;
 		brm.GetValue("Time", time1);
 		assert(time1 == time);
 		assert(*time_ptr = time);
+		time = 2.0;
+		brm.SetValue("Time", time);
+		compare_ptrs(ptrs);
+
 	}
 	// TimeStep
 	{
 		double timestep = 1.1;
 		double* timestep_ptr = (double*)brm.GetValuePtr("TimeStep");
 		brm.SetValue("TimeStep", timestep);
+		compare_ptrs(ptrs);
 		assert(*timestep_ptr == timestep);
 		timestep = 1.2;
 		brm.SetTimeStep(timestep);
+		compare_ptrs(ptrs);
 		assert(*timestep_ptr == timestep);
 		double timestep1;
 		brm.GetValue("TimeStep", timestep1);
 		assert(timestep1 == timestep);
 		assert(*timestep_ptr = timestep);
 	}
+}
+void compare_ptrs(struct Ptrs ptrs)
+{
+	assert(*ptrs.ComponentCount_ptr == ptrs.brm->GetComponentCount());
+	std::vector<double> gfw = ptrs.brm->GetGfw();
+	for (int i = 0; i < *ptrs.ComponentCount_ptr; i++)
+	{
+		assert(ptrs.Gfw_ptr[i] = gfw[i]);
+	}
+	assert(*ptrs.GridCellCount_ptr == ptrs.brm->GetGridCellCount());
+	std::vector<double> density, saturation, SolutionVolume, 
+		Porosity, Pressure, Temperature;
+	ptrs.brm->GetDensity(density);
+	ptrs.brm->GetSaturation(saturation);
+	SolutionVolume = ptrs.brm->GetSolutionVolume();
+	Porosity = ptrs.brm->GetPorosity();
+	Pressure = ptrs.brm->GetPressure();
+	Temperature = ptrs.brm->GetTemperature();
+
+	for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
+	{
+		assert(ptrs.Density_ptr[i] == density[i]);
+		assert(ptrs.Saturation_ptr[i] == saturation[i]);
+		assert(ptrs.SolutionVolume_ptr[i] == SolutionVolume[i]);
+		assert(ptrs.Porosity_ptr[i] == Porosity[i]);
+		assert(ptrs.Pressure_ptr[i] == Pressure[i]);
+		assert(ptrs.Temperature_ptr[i] == Temperature[i]);
+	}
+	std::vector<double> Concentrations;
+	ptrs.brm->GetConcentrations(Concentrations);
+	int dim = *ptrs.ComponentCount_ptr * *ptrs.GridCellCount_ptr;
+	for (int i = 0; i < dim; i++)
+	{
+		assert(ptrs.Concentrations_ptr[i] == Concentrations[i]);
+	}
+	assert(*ptrs.Time_ptr == ptrs.brm->GetTime());
+	assert(*ptrs.TimeStep_ptr == ptrs.brm->GetTimeStep());
+	assert(*ptrs.SelectedOutputOn_ptr == ptrs.brm->GetSelectedOutputOn());
 }
 #endif // YAML
