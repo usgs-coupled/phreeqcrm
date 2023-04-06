@@ -5588,7 +5588,6 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			continue;
 		}
 		//throw LetItThrow("YAML keyword not found");
-		ErrorMessage(keyword);
 		ErrorMessage("YAML keyword not found");
 		throw PhreeqcRMStop();
 	}

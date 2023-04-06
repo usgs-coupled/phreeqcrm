@@ -857,7 +857,7 @@ public:
     @ref GetValuePtr takes a variable name and returns a 
     reference to a variable. Unlike the buffer returned from @ref GetValue, 
     the reference always points to the current values of the variable, 
-    even if the model�s state has changed.
+    even if the model's state has changed.
     @param name Name of the variable to retrieve.
     @retval Void pointer to data.
     */
