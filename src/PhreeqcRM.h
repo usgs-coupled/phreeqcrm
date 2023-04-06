@@ -132,6 +132,7 @@ public:
 private:
 	void UpdateBMI(RMVARS v_enum);
 public:
+#ifdef USE_YAML
 /**
 @a GetGridCellCountYAML will read the YAML file and extract the value
 of GridCellCount, which can be used to construct a PhreeqcRM
@@ -160,6 +161,7 @@ phreeqc_rm.InitializeYAML(yaml_file);
 Called before PhreeqcRM is created.
 */
 	static int GetGridCellCountYAML(const char* YAML_file);
+#endif // #ifdef USE_YAML
 
 /**
  * @mainpage PhreeqcRM Library Documentation (@PHREEQC_VER@-@REVISION_SVN@)
