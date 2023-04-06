@@ -10,6 +10,7 @@ PHREEQCRM_EXTRA_DIST=\
 	src/pyfragments.swg.in\
 	src/swig/CMakeLists.txt\
 	src/swig/python/CMakeLists.txt\
+	src/swig/python/PhreeqcRM_docstrings.i\
 	src/swig/python/SimpleAdvect.py
 
 EXTRA_DIST=$(PHREEQCRM_EXTRA_DIST)
