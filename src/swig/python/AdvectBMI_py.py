@@ -13,7 +13,7 @@ def AdvectBMI_f90():
 	# --------------------------------------------------------------------------
 	# Create PhreeqcRM
 	# --------------------------------------------------------------------------
-	yaml_file = "AdvectBMI_py.yaml"
+	yaml_file = "AdvectBMI_cpp.yaml"
 	
 	# phreeqc_rm.GetGridCellCountYAML must be called BEFORE
 	# the PhreeqcRM instance is created. The

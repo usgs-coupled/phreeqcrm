@@ -33,6 +33,11 @@ swig_add_library(
 
 target_compile_features(${PYTHON_TARGET_NAME} PUBLIC cxx_std_11)
 
+if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
+  target_compile_definitions(${PYTHON_TARGET_NAME} PUBLIC USE_YAML)
+  target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp)
+endif()
+
 target_link_libraries(${PYTHON_TARGET_NAME}
   PRIVATE
     Python::Python
