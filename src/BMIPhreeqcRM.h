@@ -9,7 +9,7 @@ public:
     NotImplemented() : std::logic_error("Not Implemented") { };
 };
 
-class IRM_DLL_EXPORT BMIPhreeqcRM : /*public bmi::Bmi,*/ public PhreeqcRM
+class IRM_DLL_EXPORT BMIPhreeqcRM : public bmi::Bmi, public PhreeqcRM
 {
 public:
     static void             CleanupBMIModuleInstances(void);
@@ -161,7 +161,7 @@ public:
     @par MPI:
     Called by root, workers must be in the loop of @ref MpiWorker.
      */
-    void Initialize(std::string config_file);
+    void Initialize(std::string config_file) override;
     /**
     @ref Update runs PhreeqcRM for one time step. This method is equivalent to
     @ref RunCells. PhreeqcRM will equilibrate the solutions with all equilibrium 
@@ -197,7 +197,7 @@ public:
     @par MPI:
     Called by root, workers must be in the loop of @ref MpiWorker.
      */
-    void Update();
+    void Update() override;
 
     /**
     @ref UpdateUntil is the same as @ref Update, except the time step is calculated
@@ -233,7 +233,7 @@ public:
     @par MPI:
     Called by root, workers must be in the loop of @ref MpiWorker.    
      */
-    void UpdateUntil(double end_time);
+    void UpdateUntil(double end_time) override;
     /**
     @ref Finalize closes any files open in the BMIPhreeqcRM instance.
     @par C++ Example:
@@ -247,7 +247,7 @@ public:
     @par MPI:
     Called by root, workers must be in the loop of @ref MpiWorker.
     */
-    void Finalize();
+    void Finalize() override;
 
     // Model information functions.
 
@@ -270,7 +270,7 @@ public:
     @par MPI:
     Called by root.
     */
-    std::string GetComponentName() {return "BMI PhreeqcRM";};
+    std::string GetComponentName() override {return "BMI PhreeqcRM";};
 
     /**
     @ref GetInputVarNames returns the count of input variables that can 
@@ -306,7 +306,7 @@ public:
     @par MPI:
     Called by root.
      */
-    int GetInputItemCount();
+    int GetInputItemCount() override;
 
     /**
     @ref GetOutputItemCount returns the count of output variables that can 
@@ -343,7 +343,7 @@ public:
     @par MPI:
     Called by root.
      */
-    int GetOutputItemCount();
+    int GetOutputItemCount() override;
     /**
     @ref GetPointableItemCount returns the count of output variables for which
     pointers can be obtained with @ref GetValuePtr. The pointers point to 
@@ -420,7 +420,7 @@ public:
     @par MPI:
     Called by root.
      */
-    std::vector<std::string> GetInputVarNames();
+    std::vector<std::string> GetInputVarNames() override;
 
     /**
     @ref GetOutputVarNames returns a list of the variable names that can 
@@ -458,7 +458,7 @@ public:
     @par MPI:
     Called by root.
      */
-    std::vector<std::string> GetOutputVarNames();
+    std::vector<std::string> GetOutputVarNames() override;
 
     /**
     @ref GetPointableVarNames returns a list of the names of variables
@@ -508,7 +508,7 @@ public:
     @retval 1 BMIPhreeqcRM cells derive meaning from the user's
     model. 
     */
-    int GetVarGrid(const std::string name) {return 1;}
+    int GetVarGrid(const std::string name) override {return 1;}
 
     /**
     Basic Model Interface method that retrieves the type of a variable that 
@@ -545,7 +545,7 @@ public:
     @par MPI:
     Called by root.
      */
-    std::string GetVarType(const std::string name);
+    std::string GetVarType(const std::string name) override;
     /**
     @ref GetVarUnits retrieves the units of a variable 
     that can be set with @ref SetValue, retrieved with @ref GetValue,
@@ -580,7 +580,7 @@ public:
     @par MPI:
     Called by root.
      */
-    std::string GetVarUnits(const std::string name);
+    std::string GetVarUnits(const std::string name) override;
 
     /**
     @ref GetVarItemsize retrieves size of an individual item that 
@@ -616,7 +616,7 @@ public:
     @par MPI:
     Called by root.
      */
-    int GetVarItemsize(const std::string name);
+    int GetVarItemsize(const std::string name) override;
 
     /**
     @ref GetVarNbytes retrieves the total number of bytes that are 
@@ -652,7 +652,7 @@ public:
     @par MPI :
     Called by root.
      */
-    int GetVarNbytes(const std::string name);
+    int GetVarNbytes(const std::string name) override;
 
     /**
     @ref GetVarLocation has no explicit meaning in BMIPhreeqcRM. All
@@ -660,7 +660,7 @@ public:
     @param name Name of the variable to retrieve total bytes.
     @retval The string "Unknown" is returned. 
     */
-    std::string GetVarLocation(const std::string name) { return "Unknown"; }
+    std::string GetVarLocation(const std::string name) override { return "Unknown"; }
 
     // Time functions
 
@@ -689,14 +689,14 @@ public:
     @par MPI:
     Called by root.
      */
-    double GetCurrentTime();
+    double GetCurrentTime() override;
 
     /**
     @ref GetStartTime returns the current simulation time, in seconds.
     (Same as @ref GetCurrentTime or @ref GetTime.)
     @retval                 The current simulation time, in seconds.
     */
-    double GetStartTime();
+    double GetStartTime() override;
 
     /**
     @ref GetEndTime returns @ref GetCurrentTime plus @ref GetTimeStep, in seconds.
@@ -722,7 +722,7 @@ public:
     @par MPI:
     Called by root.
      */
-    double GetEndTime();
+    double GetEndTime() override;
 
     /**
     @ref GetTimeUnits returns the time units of PhreeqcRM.
@@ -749,8 +749,11 @@ public:
     @par MPI:
     Called by root.
      */
-    std::string GetTimeUnits() { return "seconds"; };
-    //double GetTimeStep(); // already defined in PhreeqcRM
+    std::string GetTimeUnits() override { return "seconds"; };
+    double GetTimeStep() override
+    {
+        return PhreeqcRM::GetTimeStep();
+    };
 
     // Variable getters
     /**
@@ -809,7 +812,7 @@ public:
     @par MPI:
     Called by root, workers must be in the loop of @ref MpiWorker.
     */
-    void GetValue(const std::string name, void* dest);
+    void GetValue(const std::string name, void* dest) override;
     /*!
     * \overload void GetValue(std::string name, bool& dest);
     */
@@ -854,15 +857,15 @@ public:
     @ref GetValuePtr takes a variable name and returns a 
     reference to a variable. Unlike the buffer returned from @ref GetValue, 
     the reference always points to the current values of the variable, 
-    even if the model’s state has changed.
+    even if the model's state has changed.
     @param name Name of the variable to retrieve.
     @retval Void pointer to data.
     */
-    void* GetValuePtr(std::string name);  
+    void* GetValuePtr(std::string name) override;  
     /**
     @ref GetValueAtIndices is not implemented
     */
-    void GetValueAtIndices(std::string name, void* dest, int* inds, int count)
+    void GetValueAtIndices(std::string name, void* dest, int* inds, int count) override
     {
         throw NotImplemented();
     };
@@ -909,7 +912,7 @@ public:
     @par MPI:
     Called by root, workers must be in the loop of @ref MpiWorker.
      */
-    void SetValue(std::string name, void* src);
+    void SetValue(std::string name, void* src) override;
     /*!
     * \overload void SetValue(std::string name, bool src);
     */
@@ -945,7 +948,7 @@ public:
     /**
     @ref SetValueAtIndices is not implemented.
     */
-    void SetValueAtIndices(std::string name, int* inds, int count, void* src)
+    void SetValueAtIndices(std::string name, int* inds, int count, void* src) override
     {
         throw NotImplemented();
     };
@@ -959,7 +962,7 @@ public:
     @retval Rank of 1 is returned for grid 0; 0 for
     all other values of @a grid.
     */
-    int GetGridRank(const int grid);
+    int GetGridRank(const int grid) override;
     /**
     @ref GetGridSize returns the number of cells specified
     at creation of the BMIPhreeqcRM instance. 
@@ -967,7 +970,7 @@ public:
     @retval Same value as GetGridCellCount is returned for grid 0; 
     0 for all other values of @a grid.
     */
-    int GetGridSize(const int grid);
+    int GetGridSize(const int grid) override;
     /**
     @ref GetGridType is considered to be points. No grid
     information is available in BMIPhreeqcRM; all grid 
@@ -977,95 +980,95 @@ public:
     "Undefined grid identifier" is returned for all other 
     values of @a grid.
     */
-    std::string GetGridType(const int grid);
+    std::string GetGridType(const int grid) override;
     /**
     @ref GetGridShape is not implemented.
     */
-    void GetGridShape(const int grid, int* shape)
+    void GetGridShape(const int grid, int* shape) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridSpacing is not implemented.
     */
-    void GetGridSpacing(const int grid, double* spacing)
+    void GetGridSpacing(const int grid, double* spacing) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridOrigin is not implemented.
     */
-    void GetGridOrigin(const int grid, double* origin)
+    void GetGridOrigin(const int grid, double* origin) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridX is not implemented.
     */
-    void GetGridX(const int grid, double* x)
+    void GetGridX(const int grid, double* x) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridY is not implemented.
     */
-    void GetGridY(const int grid, double* y)
+    void GetGridY(const int grid, double* y) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridZ is not implemented.
     */
-    void GetGridZ(const int grid, double* z)
+    void GetGridZ(const int grid, double* z) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridNodeCount is not implemented.
     */
-    int GetGridNodeCount(const int grid)
+    int GetGridNodeCount(const int grid) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridEdgeCount is not implemented.
     */
-    int GetGridEdgeCount(const int grid)
+    int GetGridEdgeCount(const int grid) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridFaceCount is not implemented.
     */
-    int GetGridFaceCount(const int grid)
+    int GetGridFaceCount(const int grid) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridEdgeNodes is not implemented.
     */
-    void GetGridEdgeNodes(const int grid, int* edge_nodes)
+    void GetGridEdgeNodes(const int grid, int* edge_nodes) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridFaceEdges is not implemented.
     */
-    void GetGridFaceEdges(const int grid, int* face_edges)
+    void GetGridFaceEdges(const int grid, int* face_edges) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridFaceNodes is not implemented.
     */
-    void GetGridFaceNodes(const int grid, int* face_nodes)
+    void GetGridFaceNodes(const int grid, int* face_nodes) override
     {
         throw NotImplemented();
     }
     /**
     @ref GetGridNodesPerFace is not implemented.
     */
-    void GetGridNodesPerFace(const int grid, int* nodes_per_face)
+    void GetGridNodesPerFace(const int grid, int* nodes_per_face) override
     {
         throw NotImplemented();
     }
