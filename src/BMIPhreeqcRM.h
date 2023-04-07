@@ -167,7 +167,8 @@ public:
     @a Update runs PhreeqcRM for one time step. This method is equivalent to
     @ref RunCells. PhreeqcRM will equilibrate the solutions with all equilibrium 
     reactants (EQUILIBRIUM_PHASES, EXCHANGE, GAS_PHASE, SOLID_SOLUTIONS, and SURFACE) 
-    and integrate KINETICS reactions for the specified time step (@ref SetTimeStep).
+    and integrate KINETICS reactions for the specified time step 
+    (@ref SetValue "TimeStep" or @ref SetTimeStep).
     @see
     @ref Initialize,
     @ref UpdateUntil.
@@ -202,7 +203,7 @@ public:
 
     /**
     @a UpdateUntil is the same as @ref Update, except the time step is calculated
-    from the argument @end_time. The time step is calculated to be @a end_time minus 
+    from the argument @a end_time. The time step is calculated to be @a end_time minus 
     the current time (@ref GetCurrentTime).
 	@param end_time Time at the end of the time step. 
     @see
@@ -255,9 +256,9 @@ public:
     /**
     @a GetComponentName returns the component name--"BMI PhreeqcRM". 
     BMI PhreeqcRM is a partial interface to PhreeqcRM, and provides 
-    the most commonly used methods to implement chemical reactions in a
+    the methods to implement chemical reactions in a
     multicomponent transport model. All of the native PhreeqcRM methods 
-    (non BMI methods) provide are available, which provides a complete 
+    (non BMI methods) are also available, which provides a complete 
     interface to PhreeqcRM.
     @retval The string "BMI PhreeqcRM".
     @par C++ Example:
@@ -346,11 +347,11 @@ public:
      */
     int GetOutputItemCount() override;
     /**
-    @a GetPointableItemCount returns the count of output variables for which
+    @a GetPointableItemCount returns the count of variables for which
     pointers can be obtained with @ref GetValuePtr. The pointers point to 
     current copies of the variables. Setting a value with one of the pointers
-    will have no effect on the simulation but will corrupt the copy of the variable.
-    @retval  Count of pointers to variables that can be retrieved with 
+    will have no effect on the simulation, but will corrupt the copy of the variable.
+    @retval  Count of pointers to variables that can be accessed with 
     @ref GetValuePtr.
 
     @see
@@ -365,7 +366,7 @@ public:
     <CODE>
     <PRE>
     int count = brm.GetPointableItemCount();
-    std::vector< std::string > OutputVarNames = brm.GetPointableVarNames();
+    std::vector< std::string > PointableVarNames = brm.GetPointableVarNames();
     oss << "GetValuePtr variables:\n";
     for (size_t i = 0; i < count; i++)
     {
@@ -479,7 +480,7 @@ public:
     <CODE>
     <PRE>
     std::vector< std::string > PointableVarNames = brm.GetPointableVarNames();
-    int count = brm.GetOutputItemCount();
+    int count = brm.GetPointableItemCount();
     oss << "GetValuePtr variables:\n";
     for (size_t i = 0; i < count; i++)
     {
@@ -513,9 +514,10 @@ public:
     int GetVarGrid(const std::string name) override {return 1;}
 
     /**
-    @a GetVarType retrieves the type of a variable that 
-    can be set with @ref SetValue or retrieved with @ref GetValue. Types are 
-    "int", "double", "std::string", or "std::vector<std::string>".
+    @a GetVarType retrieves the type of a variable 
+    that can be set with @ref SetValue, retrieved with @ref GetValue,
+    or pointed to by @ref GetValuePtr.
+    Types are "int", "double", "std::string", or "std::vector<std::string>".
 
     @param name Name of the variable to retrieve type.
     @retval Character string of variable type.
@@ -622,10 +624,10 @@ public:
 
     /**
     @a GetVarNbytes retrieves the total number of bytes that are 
-    set for a variable with @ref SetValue or retrieved for a variable with 
-    @ref GetValue.
+    set for a variable with @ref SetValue, retrieved for a variable with 
+    @ref GetValue, or pointed to by @ref GetValuePtr.
     @param name Name of the variable to retrieve total bytes.
-    @retval Total number of bytes set or retrieved for variable.
+    @retval Total number of bytes set, retrieved, or pointed to for variable.
     @see
     @ref GetVarItemsize,
     @ref GetVarType,
@@ -659,7 +661,7 @@ public:
     /**
     @a GetVarLocation has no explicit meaning in BMIPhreeqcRM. All
     grid-related information derives from the user's model.
-    @param name Name of the variable to retrieve total bytes.
+    @param name Name of the variable, but not used.
     @retval The string "Unknown" is returned. 
     */
     std::string GetVarLocation(const std::string name) override { return "Unknown"; }
@@ -682,9 +684,7 @@ public:
     @htmlonly
     <CODE>
     <PRE>
-    std::cout << "Current time: "
-         << GetCurrentTime()
-         << " seconds\n";
+    std::cout << "Current time: " << GetCurrentTime() << " seconds\n";
     </PRE>
     </CODE>
     @endhtmlonly
@@ -696,13 +696,13 @@ public:
     /**
     @a GetStartTime returns the current simulation time, in seconds.
     (Same as @ref GetCurrentTime or @ref GetTime.)
-    @retval                 The current simulation time, in seconds.
+    @retval    The current simulation time, in seconds.
     */
     double GetStartTime() override;
 
     /**
     @a GetEndTime returns @ref GetCurrentTime plus @ref GetTimeStep, in seconds.
-    @retval                 The end of the time step, in seconds.
+    @retval    The end of the time step, in seconds.
     @see
     @ref GetCurrentTime,
     @ref GetTimeStep,
@@ -715,9 +715,7 @@ public:
     @htmlonly
     <CODE>
     <PRE>
-    std::cout << "End of time step "
-         << GetEndTime()
-         << " seconds\n";
+    std::cout << "End of time step " << GetEndTime() << " seconds\n";
     </PRE>
     </CODE>
     @endhtmlonly
@@ -743,8 +741,7 @@ public:
     @htmlonly
     <CODE>
     <PRE>
-    std::cout << "BMIPhreeqcRM time units are "
-         << GetTimeUnits() << ".\n";
+    std::cout << "BMIPhreeqcRM time units are " << GetTimeUnits() << ".\n";
     </PRE>
     </CODE>
     @endhtmlonly
@@ -857,11 +854,26 @@ public:
     void GetValue(const std::string name, std::vector<std::string>& dest);
     /**
     @a GetValuePtr takes a variable name and returns a 
-    reference to a variable. Unlike the buffer returned from @ref GetValue, 
+    pointer to a current copy of the variable values. Unlike the buffer 
+    returned from @ref GetValue, 
     the reference always points to the current values of the variable, 
     even if the model's state has changed.
     @param name Name of the variable to retrieve.
-    @retval Void pointer to data.
+    @retval Void pointer to data. The
+    following list gives the name in the argument and the
+    data type the void pointer should be cast to:
+    @n "ComponentCount": int*;
+    @n "Concentrations": double*;
+    @n "Gfw": double*;
+    @n "GridCellCount": int*;
+    @n "Porosity": double*;
+    @n "Pressure": double*;
+    @n "Saturation": double*;
+    @n "SolutionVolume": double*;
+    @n "Temperature": double*;
+    @n "Time": double*;
+    @n "TimeStep": double*;
+    @n "Viscosity": double*;
     */
     void* GetValuePtr(std::string name) override;  
     /**
@@ -893,7 +905,6 @@ public:
     "Temperature", std::vector<double>, [GridCellCount];
     "Time", double;
     "TimeStep", double;
-
     @see
     @ref GetInputVarNames,
     @ref GetInputItemCount,,

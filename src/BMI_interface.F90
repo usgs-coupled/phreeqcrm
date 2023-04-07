@@ -1644,9 +1644,33 @@
     bmif_get_value_int2 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
     return
     END FUNCTION bmif_get_value_int2
+   
+    !> @a bmif_get_value_ptr retrieves pointers to model variables. Only variables in the list
+    !> provided by @ref bmif_get_pointable_var_names can be pointed to. 
+    !> @param id     The instance @a id returned from @ref RM_Create.
+    !> @param var    Name of the variable to retrieve.
+    !> @param ptr    Pointer to the variable's data.
+    !> @retval       0 is success, 1 is failure.
+
+	!> The following list gives the name in the second argument (@a var) and the
+	!> data type the pointer (@a ptr):
+	!> @n "ComponentCount": integer;
+	!> @n "Concentrations": real(kind=8) (:);
+	!> @n "Gfw": real(kind=8) (:);
+	!> @n "GridCellCount": integer;
+	!> @n "Porosity": real(kind=8) (:);
+	!> @n "Pressure": real(kind=8) (:);
+	!> @n "Saturation": real(kind=8) (:);
+	!> @n "SolutionVolume": real(kind=8) (:);
+	!> @n "Temperature": real(kind=8) (:);
+	!> @n "Time": real(kind=8);
+	!> @n "TimeStep": real(kind=8);
+	!> @n "Viscosity": real(kind=8) (:);
+    !> @par MPI:
+    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.     
     
     !> \overload
-    INTEGER FUNCTION bmif_get_value_ptr_double(id, var, dest)
+    INTEGER FUNCTION bmif_get_value_ptr_double(id, var, ptr)
     USE ISO_C_BINDING
     IMPLICIT NONE
 		INTERFACE
@@ -1661,17 +1685,17 @@
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    real(kind=c_double), pointer, INTENT(inout) :: dest
+    real(kind=c_double), pointer, INTENT(inout) :: ptr
 	type (c_ptr) :: src
     integer :: status
     status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
-    call C_F_POINTER(src, dest)
+    call C_F_POINTER(src, ptr)
     bmif_get_value_ptr_double = success(status)
     return 
     END FUNCTION bmif_get_value_ptr_double
     
-        !> \overload
-    INTEGER FUNCTION bmif_get_value_ptr_double1(id, var, dest)
+    !> \overload
+    INTEGER FUNCTION bmif_get_value_ptr_double1(id, var, ptr)
     USE ISO_C_BINDING
     IMPLICIT NONE
 		INTERFACE
@@ -1686,20 +1710,20 @@
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    real(kind=c_double), pointer, INTENT(inout) :: dest(:)
+    real(kind=c_double), pointer, INTENT(inout) :: ptr(:)
 	type (c_ptr) :: src
 	integer nbytes, itemsize, dim, status
 	status = bmif_get_var_nbytes(id, var, nbytes)
 	status = bmif_get_var_itemsize(id, var, itemsize)
 	dim = nbytes/itemsize
     status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
-    call c_f_pointer(src, dest, [dim]);
+    call c_f_pointer(src, ptr, [dim]);
     bmif_get_value_ptr_double1 = success(status)
     return 
     END FUNCTION bmif_get_value_ptr_double1
     
 	!> \overload
-    INTEGER FUNCTION bmif_get_value_ptr_integer(id, var, dest)
+    INTEGER FUNCTION bmif_get_value_ptr_integer(id, var, ptr)
     USE ISO_C_BINDING
     IMPLICIT NONE
 		INTERFACE
@@ -1714,17 +1738,17 @@
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, pointer, INTENT(inout) :: dest
+    integer, pointer, INTENT(inout) :: ptr
 	type (c_ptr) :: src
 	integer status
     status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
-    call c_f_pointer(src, dest)
+    call c_f_pointer(src, ptr)
     bmif_get_value_ptr_integer = success(status)
     return 
     END FUNCTION bmif_get_value_ptr_integer
 	
 	!> \overload
-    INTEGER FUNCTION bmif_get_value_ptr_logical(id, var, dest)
+    INTEGER FUNCTION bmif_get_value_ptr_logical(id, var, ptr)
     USE ISO_C_BINDING
     IMPLICIT NONE
 		INTERFACE
@@ -1739,11 +1763,11 @@
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    logical, pointer, INTENT(inout) :: dest
+    logical, pointer, INTENT(inout) :: ptr
 	type (c_ptr) :: src
 	integer status
     status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
-	call c_f_pointer(src, dest)
+	call c_f_pointer(src, ptr)
     bmif_get_value_ptr_logical = success(status)
     return 
     END FUNCTION bmif_get_value_ptr_logical    

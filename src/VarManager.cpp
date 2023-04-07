@@ -10,6 +10,8 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::Components_Var, "Components");
 	this->VariantMap[RMVARS::Concentrations] =
 		BMIVariant(&VarManager::Concentrations_Var, "Concentrations");
+	this->VariantMap[RMVARS::CurrentSelectedOutputUserNumber] =
+		BMIVariant(&VarManager::CurrentSelectedOutputUserNumber_Var, "CurrentSelectedOutputUserNumber");
 	this->VariantMap[RMVARS::Density] =
 		BMIVariant(&VarManager::Density_Var, "Density");
 	this->VariantMap[RMVARS::ErrorString] =
@@ -20,12 +22,12 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::Gfw_Var, "Gfw");
 	this->VariantMap[RMVARS::GridCellCount] =
 		BMIVariant(&VarManager::GridCellCount_Var, "GridCellCount");
-	//this->VariantMap[RMVARS::InputVarNames] =
-	//	BMIVariant(&VarManager::InputVarNames_Var, "InputVarNames");
 	this->VariantMap[RMVARS::NthSelectedOutput] =
 		BMIVariant(&VarManager::NthSelectedOutput_Var, "NthSelectedOutput");
-	//this->VariantMap[RMVARS::OutputVarNames] =
-	//	BMIVariant(&VarManager::OutputVarNames_Var, "OutputVarNames");
+	this->VariantMap[RMVARS::Porosity] =
+		BMIVariant(&VarManager::Porosity_Var, "Porosity");
+	this->VariantMap[RMVARS::Pressure] =
+		BMIVariant(&VarManager::Pressure_Var, "Pressure");
 	this->VariantMap[RMVARS::Saturation] =
 		BMIVariant(&VarManager::Saturation_Var, "Saturation");
 	this->VariantMap[RMVARS::SelectedOutput] =
@@ -36,24 +38,18 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::SelectedOutputCount_Var, "SelectedOutputCount");
 	this->VariantMap[RMVARS::SelectedOutputHeadings] =
 		BMIVariant(&VarManager::SelectedOutputHeadings_Var, "SelectedOutputHeadings");
+	this->VariantMap[RMVARS::SelectedOutputOn] =
+		BMIVariant(&VarManager::SelectedOutputOn_Var, "SelectedOutputOn");
 	this->VariantMap[RMVARS::SelectedOutputRowCount] =
 		BMIVariant(&VarManager::SelectedOutputRowCount_Var, "SelectedOutputRowCount");
 	this->VariantMap[RMVARS::SolutionVolume] =
 		BMIVariant(&VarManager::SolutionVolume_Var, "SolutionVolume");
+	this->VariantMap[RMVARS::Temperature] =
+		BMIVariant(&VarManager::Temperature_Var, "Temperature");
 	this->VariantMap[RMVARS::Time] =
 		BMIVariant(&VarManager::Time_Var, "Time");
 	this->VariantMap[RMVARS::TimeStep] =
 		BMIVariant(&VarManager::TimeStep_Var, "TimeStep");
-	this->VariantMap[RMVARS::CurrentSelectedOutputUserNumber] =
-		BMIVariant(&VarManager::CurrentSelectedOutputUserNumber_Var, "CurrentSelectedOutputUserNumber");
-	this->VariantMap[RMVARS::Porosity] =
-		BMIVariant(&VarManager::Porosity_Var, "Porosity");
-	this->VariantMap[RMVARS::Pressure] =
-		BMIVariant(&VarManager::Pressure_Var, "Pressure");
-	this->VariantMap[RMVARS::SelectedOutputOn] =
-		BMIVariant(&VarManager::SelectedOutputOn_Var, "SelectedOutputOn");
-	this->VariantMap[RMVARS::Temperature] =
-		BMIVariant(&VarManager::Temperature_Var, "Temperature");
 	///!!!VarFunction x = &VarManager::ComponentCount_var;
 	///!!! (this->*x)(rm_ptr); // Remember this !!!///
 	//auto it = VariantMap.begin();
