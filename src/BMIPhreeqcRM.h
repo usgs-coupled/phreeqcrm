@@ -43,9 +43,10 @@ public:
     BMIPhreeqcRM(int ngrid, int nthreads);
     // Model control functions.
     /**
-    @ref Initialize is used to initialize a PhreeqcRM instance. This method is equivalent to
-    @ref InitializeYAML. A YAML file used for initialization contains a YAML map of PhreeqcRM 
-    methods and the arguments corresponding to the method. For example,
+    @a Initialize is used to initialize a PhreeqcRM instance. This method is equivalent to
+    @ref InitializeYAML. A YAML file used for initialization contains a 
+    YAML map of PhreeqcRM 
+    methods and the arguments corresponding to each method. For example,
     @htmlonly
     <CODE>
     <PRE>
@@ -59,7 +60,7 @@ public:
     </CODE>
     @endhtmlonly
 
-    @ref Initialize will read the YAML file and execute the specified methods with 
+    @a Initialize will read the YAML file and execute the specified methods with 
     the specified arguments. Using YAML terminology, the argument(s) for a method 
     may be a scalar, a sequence, or a map, depending if the argument is
     a single item, a single vector, or there are multiple arguments. In the case 
@@ -80,9 +81,9 @@ public:
     @n     std::vector< int > initial_conditions2, std::vector< double > fraction1);
     @n InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
     @n LoadDatabase(std::string database);
-    @n OpenFiles(void);
+    @n OpenFiles();
     @n OutputMessage(std::string str);
-    @n RunCells(void);
+    @n RunCells();
     @n RunFile(bool workers, bool initial_phreeqc, 
     @n      bool utility, std::string chemistry_name);
     @n RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
@@ -163,7 +164,7 @@ public:
      */
     void Initialize(std::string config_file) override;
     /**
-    @ref Update runs PhreeqcRM for one time step. This method is equivalent to
+    @a Update runs PhreeqcRM for one time step. This method is equivalent to
     @ref RunCells. PhreeqcRM will equilibrate the solutions with all equilibrium 
     reactants (EQUILIBRIUM_PHASES, EXCHANGE, GAS_PHASE, SOLID_SOLUTIONS, and SURFACE) 
     and integrate KINETICS reactions for the specified time step (@ref SetTimeStep).
@@ -200,7 +201,7 @@ public:
     void Update() override;
 
     /**
-    @ref UpdateUntil is the same as @ref Update, except the time step is calculated
+    @a UpdateUntil is the same as @ref Update, except the time step is calculated
     from the argument @end_time. The time step is calculated to be @a end_time minus 
     the current time (@ref GetCurrentTime).
 	@param end_time Time at the end of the time step. 
@@ -235,7 +236,7 @@ public:
      */
     void UpdateUntil(double end_time) override;
     /**
-    @ref Finalize closes any files open in the BMIPhreeqcRM instance.
+    @a Finalize closes any files open in the BMIPhreeqcRM instance.
     @par C++ Example:
     @htmlonly
     <CODE>
@@ -252,7 +253,7 @@ public:
     // Model information functions.
 
     /**
-    @ref GetComponentName returns the component name--"BMI PhreeqcRM". 
+    @a GetComponentName returns the component name--"BMI PhreeqcRM". 
     BMI PhreeqcRM is a partial interface to PhreeqcRM, and provides 
     the most commonly used methods to implement chemical reactions in a
     multicomponent transport model. All of the native PhreeqcRM methods 
@@ -273,7 +274,7 @@ public:
     std::string GetComponentName() override {return "BMI PhreeqcRM";};
 
     /**
-    @ref GetInputVarNames returns the count of input variables that can 
+    @a GetInputVarNames returns the count of input variables that can 
     be set with @ref SetValue. 
     @retval  Count of input variables that can be set with @ref SetValue.
     @see
@@ -309,7 +310,7 @@ public:
     int GetInputItemCount() override;
 
     /**
-    @ref GetOutputItemCount returns the count of output variables that can 
+    @a GetOutputItemCount returns the count of output variables that can 
     be retrieved with @ref GetValue.
     @retval  Count of output variables that can be retrieved with @ref GetValue.
 
@@ -345,7 +346,7 @@ public:
      */
     int GetOutputItemCount() override;
     /**
-    @ref GetPointableItemCount returns the count of output variables for which
+    @a GetPointableItemCount returns the count of output variables for which
     pointers can be obtained with @ref GetValuePtr. The pointers point to 
     current copies of the variables. Setting a value with one of the pointers
     will have no effect on the simulation but will corrupt the copy of the variable.
@@ -385,7 +386,7 @@ public:
     int GetPointableItemCount();
 
     /**
-    @ref GetInputVarNames returns a list of the variable names that can be 
+    @a GetInputVarNames returns a list of the variable names that can be 
     set with @ref SetValue. 
     @retval  A std::vector of the names of variables that can be set with 
     @ref SetValue.
@@ -423,7 +424,7 @@ public:
     std::vector<std::string> GetInputVarNames() override;
 
     /**
-    @ref GetOutputVarNames returns a list of the variable names that can 
+    @a GetOutputVarNames returns a list of the variable names that can 
     be retrieved with @ref GetValue.
     @retval  A list of the names of variable that can be retrieved with 
     @ref GetValue.
@@ -461,7 +462,7 @@ public:
     std::vector<std::string> GetOutputVarNames() override;
 
     /**
-    @ref GetPointableVarNames returns a list of the names of variables
+    @a GetPointableVarNames returns a list of the names of variables
     for which pointers can be retrieved with @ref GetValuePt.
     @retval  A list of the names of variables for which pointers can
     be retieved with @ref GetValuePtr.
@@ -500,7 +501,7 @@ public:
 
     // Variable information functions
     /**
-    @ref GetVarGrid returns a value of 1, indicating points.
+    @a GetVarGrid returns a value of 1, indicating points.
     BMIPhreeqcRM does not have a grid of its own. The cells
     of BMIPhreeqcRM are associated with the user's model grid,
     and all spatial characterists are assigned by the user's
@@ -512,7 +513,7 @@ public:
     int GetVarGrid(const std::string name) override {return 1;}
 
     /**
-    Basic Model Interface method that retrieves the type of a variable that 
+    @a GetVarType retrieves the type of a variable that 
     can be set with @ref SetValue or retrieved with @ref GetValue. Types are 
     "int", "double", "std::string", or "std::vector<std::string>".
 
@@ -548,7 +549,7 @@ public:
      */
     std::string GetVarType(const std::string name) override;
     /**
-    @ref GetVarUnits retrieves the units of a variable 
+    @a GetVarUnits retrieves the units of a variable 
     that can be set with @ref SetValue, retrieved with @ref GetValue,
     or pointed to by @ref GetValuePtr.
     @param name Name of the variable to retrieve units.
@@ -584,7 +585,7 @@ public:
     std::string GetVarUnits(const std::string name) override;
 
     /**
-    @ref GetVarItemsize retrieves size of an individual item that 
+    @a GetVarItemsize retrieves size of an individual item that 
     can be set or retrived. Sizes may be sizeof(int), sizeof(double),
     or a character length for string variables. 
     @param name Name of the variable to retrieve size.
@@ -620,7 +621,7 @@ public:
     int GetVarItemsize(const std::string name) override;
 
     /**
-    @ref GetVarNbytes retrieves the total number of bytes that are 
+    @a GetVarNbytes retrieves the total number of bytes that are 
     set for a variable with @ref SetValue or retrieved for a variable with 
     @ref GetValue.
     @param name Name of the variable to retrieve total bytes.
@@ -656,7 +657,7 @@ public:
     int GetVarNbytes(const std::string name) override;
 
     /**
-    @ref GetVarLocation has no explicit meaning in BMIPhreeqcRM. All
+    @a GetVarLocation has no explicit meaning in BMIPhreeqcRM. All
     grid-related information derives from the user's model.
     @param name Name of the variable to retrieve total bytes.
     @retval The string "Unknown" is returned. 
@@ -666,7 +667,7 @@ public:
     // Time functions
 
     /**
-    @ref GetCurrentTime returns the current simulation time, in seconds. 
+    @a GetCurrentTime returns the current simulation time, in seconds. 
     (Same as @ref GetTime.) 
     @retval                 The current simulation time, in seconds.
     @see
@@ -693,14 +694,14 @@ public:
     double GetCurrentTime() override;
 
     /**
-    @ref GetStartTime returns the current simulation time, in seconds.
+    @a GetStartTime returns the current simulation time, in seconds.
     (Same as @ref GetCurrentTime or @ref GetTime.)
     @retval                 The current simulation time, in seconds.
     */
     double GetStartTime() override;
 
     /**
-    @ref GetEndTime returns @ref GetCurrentTime plus @ref GetTimeStep, in seconds.
+    @a GetEndTime returns @ref GetCurrentTime plus @ref GetTimeStep, in seconds.
     @retval                 The end of the time step, in seconds.
     @see
     @ref GetCurrentTime,
@@ -726,7 +727,7 @@ public:
     double GetEndTime() override;
 
     /**
-    @ref GetTimeUnits returns the time units of PhreeqcRM.
+    @a GetTimeUnits returns the time units of PhreeqcRM.
     All time units are seconds.
     @retval                 Returns the string "seconds".
     @see
@@ -758,7 +759,7 @@ public:
 
     // Variable getters
     /**
-    @ref GetValue retrieves model variables. Only variables in the list
+    @a GetValue retrieves model variables. Only variables in the list
     provided by @ref GetOutputVarNames can be retrieved. 
 
     @param name Name of the variable to retrieve.
@@ -855,7 +856,7 @@ public:
     */
     void GetValue(const std::string name, std::vector<std::string>& dest);
     /**
-    @ref GetValuePtr takes a variable name and returns a 
+    @a GetValuePtr takes a variable name and returns a 
     reference to a variable. Unlike the buffer returned from @ref GetValue, 
     the reference always points to the current values of the variable, 
     even if the model's state has changed.
@@ -864,7 +865,7 @@ public:
     */
     void* GetValuePtr(std::string name) override;  
     /**
-    @ref GetValueAtIndices is not implemented
+    @a GetValueAtIndices is not implemented
     */
     void GetValueAtIndices(std::string name, void* dest, int* inds, int count) override
     {
@@ -873,7 +874,7 @@ public:
     
     // Variable setters
     /**
-    @ref SetValue sets model variables. Only variables in the list
+    @a SetValue sets model variables. Only variables in the list
     provided by @ref GetInputVarNames can be set. 
     @param name Name of the variable to retrieve.
     @param src Data used to set the variable. The @a src data type
@@ -947,7 +948,7 @@ public:
     */
     void SetValue(std::string name, std::vector<std::string>  src);
     /**
-    @ref SetValueAtIndices is not implemented.
+    @a SetValueAtIndices is not implemented.
     */
     void SetValueAtIndices(std::string name, int* inds, int count, void* src) override
     {
@@ -955,7 +956,7 @@ public:
     };
     // Grid information functions
     /**
-    @ref GetGridRank returns a rank of 1 for grid 0. 
+    @a GetGridRank returns a rank of 1 for grid 0. 
     BMIPhreeqcRM only has a 1D series of
     cells; any grid or spatial information must
     be found in the user's model.
@@ -965,7 +966,7 @@ public:
     */
     int GetGridRank(const int grid) override;
     /**
-    @ref GetGridSize returns the number of cells specified
+    @a GetGridSize returns the number of cells specified
     at creation of the BMIPhreeqcRM instance. 
     @param grid Grid number, only grid 0 is considered.
     @retval Same value as GetGridCellCount is returned for grid 0; 
@@ -973,7 +974,7 @@ public:
     */
     int GetGridSize(const int grid) override;
     /**
-    @ref GetGridType is considered to be points. No grid
+    @a GetGridType is considered to be points. No grid
     information is available in BMIPhreeqcRM; all grid 
     information must be found in the user's model.
     @param grid Grid number, only grid 0 is considered.
@@ -983,91 +984,91 @@ public:
     */
     std::string GetGridType(const int grid) override;
     /**
-    @ref GetGridShape is not implemented.
+    @a GetGridShape is not implemented.
     */
     void GetGridShape(const int grid, int* shape) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridSpacing is not implemented.
+    @a GetGridSpacing is not implemented.
     */
     void GetGridSpacing(const int grid, double* spacing) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridOrigin is not implemented.
+    @a GetGridOrigin is not implemented.
     */
     void GetGridOrigin(const int grid, double* origin) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridX is not implemented.
+    @a GetGridX is not implemented.
     */
     void GetGridX(const int grid, double* x) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridY is not implemented.
+    @a GetGridY is not implemented.
     */
     void GetGridY(const int grid, double* y) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridZ is not implemented.
+    @a GetGridZ is not implemented.
     */
     void GetGridZ(const int grid, double* z) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridNodeCount is not implemented.
+    @a GetGridNodeCount is not implemented.
     */
     int GetGridNodeCount(const int grid) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridEdgeCount is not implemented.
+    @a GetGridEdgeCount is not implemented.
     */
     int GetGridEdgeCount(const int grid) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridFaceCount is not implemented.
+    @a GetGridFaceCount is not implemented.
     */
     int GetGridFaceCount(const int grid) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridEdgeNodes is not implemented.
+    @a GetGridEdgeNodes is not implemented.
     */
     void GetGridEdgeNodes(const int grid, int* edge_nodes) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridFaceEdges is not implemented.
+    @a GetGridFaceEdges is not implemented.
     */
     void GetGridFaceEdges(const int grid, int* face_edges) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridFaceNodes is not implemented.
+    @a GetGridFaceNodes is not implemented.
     */
     void GetGridFaceNodes(const int grid, int* face_nodes) override
     {
         throw NotImplemented();
     }
     /**
-    @ref GetGridNodesPerFace is not implemented.
+    @a GetGridNodesPerFace is not implemented.
     */
     void GetGridNodesPerFace(const int grid, int* nodes_per_face) override
     {
