@@ -2039,7 +2039,26 @@
 	! ====================================================
 	! Grid information
 	! ====================================================
-	
+
+	!> @a bmif_get_grid_rank returns a rank of 1 for grid 0. 
+	!> BMIPhreeqcRM has a 1D series of
+	!> cells; any grid or spatial information must
+	!> be found in the user's model.
+    !> @param id     The instance id returned from @ref bmif_create.
+	!> @param grid   Grid number, only grid 0 is considered.
+	!> @param rank   Rank of 1 is returned for grid 0; 0 for
+	!> all other values of @a grid.	
+    !> @retval       0 is success, 1 is failure.    
+	!> @par Fortran example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> status = bmif_grid_rank(id, grid, rank)
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
 	INTEGER FUNCTION bmif_grid_rank(id, grid, rank)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2053,7 +2072,24 @@
 		bmif_grid_rank = BMI_FAILURE
 	endif
     END FUNCTION bmif_grid_rank
-
+	
+	!> @ref bmif_grid_size returns the number of cells specified
+	!> at creation of the BMIPhreeqcRM instance. 
+	!> @param id    The instance id returned from @ref bmif_create.
+	!> @param grid  Grid number, only grid 0 is considered.
+	!> @param ngrid Same value as @ref bmif_get_grid_cell_count is returned for grid 0; 
+	!> 0 for all other values of @a grid.
+	!> @retval       0 is success, 1 is failure.
+	!> @par Fortran example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> status = bmif_grid_size(id, grid, ngrid)
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
     INTEGER FUNCTION bmif_grid_size(id, grid, ngrid)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2067,6 +2103,25 @@
 	endif
     END FUNCTION bmif_grid_size
     
+	!> @a bmif_grid_type defines the grid to be points. No grid
+	!> information is available in BMIPhreeqcRM; all grid 
+	!> information must be found in the user's model.
+	!> @param id    The instance id returned from @ref bmif_create.
+	!> @param grid  Grid number, only grid 0 is considered.
+	!> @param str   "Points" is returned for grid 0;
+	!> "Undefined grid identifier" is returned for all other 
+	!> values of @a grid.
+	!> @retval      0 is success, 1 is failure.
+	!> @par Fortran example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> status = bmif_grid_type(id, grid, str)
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.	
     INTEGER FUNCTION bmif_grid_type(id, grid, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2080,8 +2135,6 @@
 		bmif_grid_type = BMI_FAILURE
 	endif
     END FUNCTION bmif_grid_type
-
-    !INCLUDE "bottom.inc"
     
 	! ====================================================
     ! Functions not implemented
