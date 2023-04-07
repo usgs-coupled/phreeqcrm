@@ -505,6 +505,7 @@ public:
     of BMIPhreeqcRM are associated with the user's model grid,
     and all spatial characterists are assigned by the user's
     model.
+    @param name Varaiable name. (Return value is the same regardless of @a name.)
     @retval 1 BMIPhreeqcRM cells derive meaning from the user's
     model. 
     */
@@ -550,7 +551,7 @@ public:
     @ref GetVarUnits retrieves the units of a variable 
     that can be set with @ref SetValue, retrieved with @ref GetValue,
     or pointed to by @ref GetValuePtr.
-    @param name Name of the variable to retrieve type.
+    @param name Name of the variable to retrieve units.
     @retval Character string of units for variable.
 
     @see

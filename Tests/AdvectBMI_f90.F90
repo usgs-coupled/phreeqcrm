@@ -50,40 +50,42 @@
     integer :: status
     integer :: bytes, nbytes
     real(kind=8), dimension(:), allocatable, target :: hydraulic_K
-    real(kind=8), dimension(:), allocatable   :: por
-    real(kind=8), dimension(:), allocatable   :: sat
-    integer                                       :: nchem
-    character(len=:), allocatable                 :: prefix
+    real(kind=8), dimension(:), allocatable         :: por
+    real(kind=8), dimension(:), allocatable         :: sat
+    integer                                         :: nchem
+    character(len=:), allocatable                   :: prefix
     character(len=2) :: shortprefix
-    character(len=:), allocatable                 :: alloc_string
-    character(100)                                :: string
-    character(200)                                :: string1
-    integer                                       :: ncomps, ncomps1
-    character(len=:), dimension(:), allocatable          :: components
-    real(kind=8), dimension(:), allocatable   :: gfw
-    integer                                       :: nbound
-    integer,          dimension(:), allocatable   :: bc1, bc2
-    real(kind=8), dimension(:), allocatable   :: bc_f1
-    integer,          dimension(:), allocatable   :: module_cells
-    real(kind=8), dimension(:,:), allocatable :: bc_conc
-    real(kind=8), dimension(:,:), allocatable :: c
-    real(kind=8)                              :: time, time_step
-    real(kind=8), dimension(:), allocatable   :: density
-    real(kind=8), dimension(:), allocatable   :: sat_calc
-    real(kind=8), dimension(:), allocatable   :: volume
-    real(kind=8), dimension(:), allocatable   :: temperature
-    real(kind=8), dimension(:), allocatable   :: pressure
-    integer                                       :: isteps, nsteps
-    real(kind=8), dimension(:,:), allocatable :: selected_out
-    integer                                       :: col, isel, n_user, rows
-    character(len=:), dimension(:), allocatable   :: headings
-    real(kind=8), dimension(:,:), allocatable :: c_well
-    real(kind=8), dimension(:), allocatable   :: tc, p_atm
-    integer                                       :: vtype
-    real(kind=8)                              :: pH
-    character(100)                                :: svalue
-    integer                                       :: iphreeqc_id, iphreeqc_id1
-    integer                                       :: dump_on, append
+    character(len=:), allocatable                   :: alloc_string
+    character(100)                                  :: string
+    character(200)                                  :: string1
+    integer                                         :: ncomps, ncomps1
+    character(len=:), dimension(:), allocatable     :: components
+    real(kind=8), dimension(:), allocatable         :: gfw
+    integer                                         :: nbound
+    integer,          dimension(:), allocatable     :: bc1, bc2
+    real(kind=8), dimension(:), allocatable         :: bc_f1
+    integer,          dimension(:), allocatable     :: module_cells
+    real(kind=8), dimension(:,:), allocatable       :: bc_conc
+    real(kind=8), dimension(:,:), allocatable       :: c
+    real(kind=8), dimension(:), allocatable         :: c1
+    real(kind=8)                                    :: time, time_step
+    real(kind=8), dimension(:), allocatable         :: density
+    real(kind=8), dimension(:), allocatable         :: sat_calc
+    real(kind=8), dimension(:), allocatable         :: volume
+    real(kind=8), dimension(:), allocatable         :: temperature
+    real(kind=8), dimension(:), allocatable         :: pressure
+    integer                                         :: isteps, nsteps
+    real(kind=8), dimension(:,:), allocatable       :: selected_out
+    integer                                         :: col, isel, n_user, rows
+    character(len=:), dimension(:), allocatable     :: headings
+    real(kind=8), dimension(:,:), allocatable       :: c_well
+    real(kind=8), dimension(:), allocatable         :: tc, p_atm
+    integer                                         :: vtype
+    real(kind=8)                                    :: pH
+    character(100)                                  :: svalue
+    integer                                         :: iphreeqc_id, iphreeqc_id1
+    integer                                         :: dump_on, append
+    integer                                         :: dim
     !character(LEN=1), dimension(:), allocatable   :: errstr
 #ifdef FORTRAN_2003
     character(LEN=:), allocatable                 :: errstr
@@ -186,12 +188,16 @@
     ! Get initial temperature
     status = bmif_get_value(id, "SolutionVolume", volume)
     ! Get initial concentrations
+    ! flattened version
+    status = bmif_get_value(id, "Concentrations", c1)
+    c = reshape(c1, (/nxyz, ncomps/))
+    ! non-flattened version
     status = bmif_get_value(id, "Concentrations", c)
     ! Set density, pressure, and temperature (previously allocated)
     allocate(density(nxyz))
-    allocate(pressure(nxyz))
     density = 1.0
     status = bmif_set_value(id, "Density", density)
+    allocate(pressure(nxyz))
     pressure = 2.0
     status = bmif_set_value(id, "Pressure", pressure)  
     temperature = 20.0
