@@ -46,7 +46,6 @@
     logical :: tf
     integer :: nxyz
     integer :: nthreads
-    integer :: id
     integer :: status
     integer :: bytes, nbytes
     real(kind=8), dimension(:), allocatable, target :: hydraulic_K
@@ -86,7 +85,24 @@
     integer                                         :: iphreeqc_id, iphreeqc_id1
     integer                                         :: dump_on, append
     integer                                         :: dim
-    !character(LEN=1), dimension(:), allocatable   :: errstr
+    common /i_ptrs/ id, ComponentCount_ptr, GridCellCount_ptr, SelectedOutputOn_ptr
+    common /r_ptrs/ Concentrations_ptr, Density_ptr, Gfw_ptr, &
+	    Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
+        Porosity_ptr, Pressure_ptr, Temperature_ptr
+    integer :: id
+	integer, pointer :: ComponentCount_ptr
+	integer, pointer :: GridCellCount_ptr
+	logical, pointer :: SelectedOutputOn_ptr
+	real(kind=8), pointer :: Concentrations_ptr(:)
+	real(kind=8), pointer :: Density_ptr(:)
+	real(kind=8), pointer :: Gfw_ptr(:)
+	real(kind=8), pointer :: Saturation_ptr(:)
+	real(kind=8), pointer :: SolutionVolume_ptr(:)
+	real(kind=8), pointer :: Time_ptr
+	real(kind=8), pointer :: TimeStep_ptr
+	real(kind=8), pointer :: Porosity_ptr(:)
+	real(kind=8), pointer :: Pressure_ptr(:)
+	real(kind=8), pointer :: Temperature_ptr(:)
 #ifdef FORTRAN_2003
     character(LEN=:), allocatable                 :: errstr
 #else
@@ -148,8 +164,21 @@
     ! Optional callback for MPI
     status = do_something()   ! only root is calling do_something here
 #endif
+	status = bmif_get_value_ptr(id, "ComponentCount", ComponentCount_ptr)
+	status = bmif_get_value_ptr(id, "GridCellCount", GridCellCount_ptr)
+	status = bmif_get_value_ptr(id, "SelectedOutputOn", SelectedOutputOn_ptr)
+	status = bmif_get_value_ptr(id, "Concentrations", Concentrations_ptr)
+	status = bmif_get_value_ptr(id, "Density", Density_ptr)
+	status = bmif_get_value_ptr(id, "Gfw", Gfw_ptr)
+	status = bmif_get_value_ptr(id, "Saturation", Saturation_ptr)
+	status = bmif_get_value_ptr(id, "SolutionVolume", SolutionVolume_ptr)
+	status = bmif_get_value_ptr(id, "Time", Time_ptr)
+	status = bmif_get_value_ptr(id, "TimeStep", TimeStep_ptr)
+	status = bmif_get_value_ptr(id, "Porosity", Porosity_ptr)
+	status = bmif_get_value_ptr(id, "Pressure", Pressure_ptr)
+	status = bmif_get_value_ptr(id, "Temperature", Temperature_ptr)
+    !
     status = bmif_get_value(id, "ComponentCount", ncomps)
-    
     ! Print some of the reaction module information
     write(string1, "(A,I10)") "Number of threads:                                ", RM_GetThreadCount(id)
     status = RM_OutputMessage(id, string1)
@@ -212,6 +241,7 @@
     bc2 = -1          ! no bc2 solution for mixing
     bc_f1 = 1.0       ! mixing fraction for bc1
     status = RM_InitialPhreeqc2Concentrations(id, bc_conc, nbound, bc1, bc2, bc_f1)
+    call compare_ptrs
     ! --------------------------------------------------------------------------
     ! Transient loop
     ! --------------------------------------------------------------------------
@@ -261,8 +291,10 @@
         status = RM_StateSave(id, 1)
         status = RM_StateApply(id, 1)
         status = RM_StateDelete(id, 1)
+        call compare_ptrs
         ! Run chemistry
         status = bmif_update(id)
+        call compare_ptrs
         ! Get new data calculated by PhreeqcRM for transport
         status = bmif_get_value(id, "Concentrations", c)
         status = bmif_get_value(id, "Density", density)
@@ -791,4 +823,102 @@ endif
 stop "Assert failed"
 end function assert
 
+subroutine compare_ptrs
+USE, intrinsic :: ISO_C_BINDING
+USE BMIPhreeqcRM
+USE IPhreeqc
+implicit none
+    interface
+        integer function assert(tf)
+        logical, intent(in) :: tf
+        end function assert
+    end interface
+    common /i_ptrs/ id, ComponentCount_ptr, GridCellCount_ptr, SelectedOutputOn_ptr
+    common /r_ptrs/ Concentrations_ptr, Density_ptr, Gfw_ptr, &
+	Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
+    Porosity_ptr, Pressure_ptr, Temperature_ptr
+    integer :: id
+	integer, pointer :: ComponentCount_ptr
+	integer, pointer :: GridCellCount_ptr
+	logical, pointer :: SelectedOutputOn_ptr
+	real(kind=8), pointer :: Concentrations_ptr(:)
+	real(kind=8), pointer :: Density_ptr(:)
+	real(kind=8), pointer :: Gfw_ptr(:)
+	real(kind=8), pointer :: Saturation_ptr(:)
+	real(kind=8), pointer :: SolutionVolume_ptr(:)
+	real(kind=8), pointer :: Time_ptr
+	real(kind=8), pointer :: TimeStep_ptr
+	real(kind=8), pointer :: Porosity_ptr(:)
+    real(kind=8), pointer :: Pressure_ptr(:)
+    real(kind=8), pointer :: Temperature_ptr(:)
+
+    integer :: status, i, dim
+    integer :: componentcount, gridcellcount
+    real(kind=8), allocatable, dimension(:) :: gfw, density, saturation, &
+        SolutionVolume, Porosity, Pressure, Temperature, concentrations
+    real(kind=8) :: time, timestep
+    logical :: selectedoutputon, test_logical
+    ! ComponentCount
+    status = bmif_get_value(id, "ComponentCount", componentcount)
+    status = assert(ComponentCount_ptr .eq. componentcount)
+    componentcount = RM_GetComponentCount(id)
+    status = assert(ComponentCount_ptr .eq. componentcount)
+    ! Gfw
+    status = bmif_get_value(id, "Gfw", gfw)
+	do i = 1, ComponentCount_ptr
+		status = assert(Gfw_ptr(i) .eq. gfw(i))
+    enddo
+    status = RM_GetGfw(id, gfw)
+	do i = 1, ComponentCount_ptr
+		status = assert(Gfw_ptr(i) .eq. gfw(i))
+    enddo
+    ! GridCellCount
+    status = bmif_get_value(id, "GridCellCount", gridcellcount)
+	status = assert(GridCellCount_ptr .eq. gridcellcount)
+    ! Density, Saturation, SolutionVolume, Porosity, Pressure, Temperature
+	status = bmif_get_value(id, "Density", density)
+	status = bmif_get_value(id, "saturation", saturation)
+	status = bmif_get_value(id, "solutionvolume", solutionvolume)
+	status = bmif_get_value(id, "Porosity", Porosity)
+	status = bmif_get_value(id, "Pressure", Pressure)
+	status = bmif_get_value(id, "Temperature", Temperature)
+
+	do i = 1, GridCellCount_ptr
+		status = assert(Density_ptr(i) .eq. density(i))
+		status = assert(Saturation_ptr(i) .eq. saturation(i))
+		status = assert(SolutionVolume_ptr(i) .eq. SolutionVolume(i))
+		status = assert(Porosity_ptr(i) .eq. Porosity(i))
+		status = assert(Pressure_ptr(i) .eq. Pressure(i))
+		status = assert(Temperature_ptr(i) .eq. Temperature(i))
+    enddo   
+	status = RM_GetDensity(id, density)
+	status = RM_GetSaturation(id, saturation)
+	status = RM_GetSolutionVolume(id, solutionvolume)
+	status = RM_GetPorosity(id, Porosity)
+	status = RM_GetPressure(id, Pressure)
+	status = RM_GetTemperature(id, Temperature)
+	do i = 1, GridCellCount_ptr
+		status = assert(Density_ptr(i) .eq. density(i))
+		status = assert(Saturation_ptr(i) .eq. saturation(i))
+		status = assert(SolutionVolume_ptr(i) .eq. SolutionVolume(i))
+		status = assert(Porosity_ptr(i) .eq. Porosity(i))
+		status = assert(Pressure_ptr(i) .eq. Pressure(i))
+		status = assert(Temperature_ptr(i) .eq. Temperature(i))
+    enddo   
+    ! Concentrations
+	status = bmif_get_value(id, "Concentrations", Concentrations)
+	dim = ComponentCount_ptr * GridCellCount_ptr
+	do i = 1, dim
+		status = assert(Concentrations_ptr(i) .eq. Concentrations(i))
+    enddo
+    ! Time
+    status = bmif_get_value(id, "Time", time)
+	status = assert(Time_ptr .eq. time)
+    status = bmif_get_value(id, "TimeStep", timestep)
+	status = assert(TimeStep_ptr .eq. timestep)
+    ! SelectedOutputOn
+    status = bmif_get_value(id, "SelectedOutputOn", selectedoutputon)
+    test_logical = SelectedOutputOn_ptr
+	status = assert(test_logical .eqv. selectedoutputon)
+    end subroutine compare_ptrs  
 #endif 

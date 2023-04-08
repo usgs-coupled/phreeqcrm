@@ -19,7 +19,20 @@ class Ptrs
 public:
 	Ptrs() 
 	{
-
+		brm = NULL;
+		ComponentCount_ptr = NULL;
+		Concentrations_ptr = NULL;
+		Density_ptr = NULL;
+		Gfw_ptr = NULL;
+		GridCellCount_ptr = NULL;
+		Saturation_ptr = NULL;
+		SolutionVolume_ptr = NULL;
+		Time_ptr = NULL;
+		TimeStep_ptr = NULL;
+		Porosity_ptr = NULL;
+		Pressure_ptr = NULL;
+		SelectedOutputOn_ptr = NULL;
+		Temperature_ptr = NULL;
 	};
 	BMIPhreeqcRM* brm;
 	int* ComponentCount_ptr;
@@ -1196,7 +1209,7 @@ void compare_ptrs(struct Ptrs ptrs)
 	std::vector<double> gfw = ptrs.brm->GetGfw();
 	for (int i = 0; i < *ptrs.ComponentCount_ptr; i++)
 	{
-		assert(ptrs.Gfw_ptr[i] = gfw[i]);
+		assert(ptrs.Gfw_ptr[i] == gfw[i]);
 	}
 	assert(*ptrs.GridCellCount_ptr == ptrs.brm->GetGridCellCount());
 	std::vector<double> density, saturation, SolutionVolume, 

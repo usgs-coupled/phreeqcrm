@@ -479,7 +479,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = bmif_get_input_item_count(id, count);
+    !> status = bmif_get_input_item_count(id, count)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -521,7 +521,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = bmif_get_output_item_count(id, outputvarcount);
+    !> status = bmif_get_output_item_count(id, outputvarcount)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -563,7 +563,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = bmif_get_pointable_item_count(id, pointablevarcount);
+    !> status = bmif_get_pointable_item_count(id, pointablevarcount)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -669,7 +669,7 @@
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable, dimension(:) :: var_names
-    !> status = bmif_get_output_var_names(id, var_names);
+    !> status = bmif_get_output_var_names(id, var_names)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -730,7 +730,7 @@
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable, dimension(:) :: var_names
-    !> status = bmif_get_pointable_var_names(id, var_names);
+    !> status = bmif_get_pointable_var_names(id, var_names)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -1155,7 +1155,7 @@
     !> <CODE>
     !> <PRE>
     !> character(20) time_units
-    !> status = bmif_get_time_units(id, time_units) << ".\n";
+    !> status = bmif_get_time_units(id, time_units)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -1651,7 +1651,6 @@
     !> @param var    Name of the variable to retrieve.
     !> @param ptr    Pointer to the variable's data.
     !> @retval       0 is success, 1 is failure.
-
 	!> The following list gives the name in the second argument (@a var) and the
 	!> data type the pointer (@a ptr):
 	!> @n "ComponentCount": integer;
@@ -1717,7 +1716,7 @@
 	status = bmif_get_var_itemsize(id, var, itemsize)
 	dim = nbytes/itemsize
     status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
-    call c_f_pointer(src, ptr, [dim]);
+    call c_f_pointer(src, ptr, [dim])
     bmif_get_value_ptr_double1 = success(status)
     return 
     END FUNCTION bmif_get_value_ptr_double1
@@ -1812,7 +1811,7 @@
     !> real(kind=8), allocatable, dimension(:) :: tc
     !> allocate(tc(nxyz))
     !> tc = 28.0d0
-    !> status = bmif_set_value(id, "Temperature", tc);
+    !> status = bmif_set_value(id, "Temperature", tc)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
