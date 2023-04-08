@@ -26,6 +26,9 @@ enum class RMVARS {
 	Pressure,
 	SelectedOutputOn,
 	Temperature,
+#ifdef VISCOSITY
+	Viscosity,
+#endif
 	NotFound
 };
 #endif

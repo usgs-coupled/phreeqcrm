@@ -80,7 +80,7 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
+!#ifdef VISCOSITY
     INTERFACE bmif_get_value
         module procedure bmif_get_value_logical
         module procedure bmif_get_value_char
@@ -1280,7 +1280,8 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
+!#ifdef VISCOSITY
+    
     !> \overload
     INTEGER FUNCTION bmif_get_value_logical(id, var, dest)
     USE ISO_C_BINDING
@@ -1667,7 +1668,7 @@
 	!> @n "Viscosity": real(kind=8) (:);
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.     
-    
+!#ifdef VISCOSITY    
     !> \overload
     INTEGER FUNCTION bmif_get_value_ptr_double(id, var, ptr)
     USE ISO_C_BINDING

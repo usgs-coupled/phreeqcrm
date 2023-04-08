@@ -2707,6 +2707,26 @@ Called by root.
 	const std::vector< double > &               GetTemperature(void);
 
 #ifdef VISCOSITY
+	/**
+	Return a vector reference to the current viscosity as calculated by 
+	the reaction module. Dimension of the vector will be @a nxyz, where 
+	@a nxyz is the number of user grid cells.
+	Values for inactive cells are set to 1e30.
+	Only the following databases distributed with PhreeqcRM have parameters 
+	needed to accurately calculate viscosity: phreeqc.dat, Amm.dat, and pitzer.dat.
+	@retval Vector reference to current viscosities.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	status = phreeqc_rm.RunCells();
+	const std::vector< double > &visc = phreeqc_rm.GetViscosity();
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
 	IRM_RESULT                                  GetViscosity(std::vector<double>& viscosity_arg);
 #endif
 /**

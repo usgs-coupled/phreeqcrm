@@ -50,6 +50,10 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::Time_Var, "Time");
 	this->VariantMap[RMVARS::TimeStep] =
 		BMIVariant(&VarManager::TimeStep_Var, "TimeStep");
+#ifdef VISCOSITY
+	this->VariantMap[RMVARS::Viscosity] =
+		BMIVariant(&VarManager::TimeStep_Var, "Viscosity");
+#endif
 	///!!!VarFunction x = &VarManager::ComponentCount_var;
 	///!!! (this->*x)(rm_ptr); // Remember this !!!///
 	//auto it = VariantMap.begin();
@@ -1366,6 +1370,53 @@ void VarManager::Temperature_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
+#ifdef VISCOSITY
+void VarManager::Viscosity_Var()
+{
+	RMVARS VARS_myself = RMVARS::Viscosity;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		int Itemsize = sizeof(double);
+		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("mPa s", false, true, true, Nbytes, Itemsize);
+		bv.SetTypes("double", "real(kind=8)", "");
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetViscosity();
+		bv.GetDoubleVectorRef() = rm_ptr->GetViscosity();
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetViscosity();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
+		this->PointerSet.insert(VARS_myself);
+		this->UpdateSet.insert(VARS_myself);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::Update:
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetViscosity();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		assert(false);
+		break;
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(RMVARS::NotFound);
+}
+#endif
 /// end_
 ////////////////////////////////
 
