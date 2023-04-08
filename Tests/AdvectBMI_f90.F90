@@ -21,13 +21,13 @@
             real(kind=8), dimension(:,:), allocatable, intent(in) :: bc_conc
             integer, intent(in)                                       :: ncomps, nxyz
         end subroutine advectionbmi_f90
-            integer function do_something()
-        end function do_something
-        integer(kind=C_INT) function worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
+        integer function bmi_do_something()
+        end function bmi_do_something
+        integer(kind=C_INT) function bmi_worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
             USE ISO_C_BINDING
             implicit none
             integer(kind=c_int), intent(in) :: method_number
-        end function worker_tasks_f
+        end function bmi_worker_tasks_f
         SUBROUTINE register_basic_callback_fortran()
             implicit none
         END SUBROUTINE register_basic_callback_fortran
@@ -134,14 +134,14 @@
     K_ptr => hydraulic_K
 #ifdef USE_MPI
     ! MPI
-    id = BMI_Create(nxyz, MPI_COMM_WORLD)
+    id = bmif_create(nxyz, MPI_COMM_WORLD)
     rm_id = id
     call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
     if (status .ne. MPI_SUCCESS) then
         stop "Failed to get mpi_myself"
     endif
     if (mpi_myself > 0) then
-        status = RM_SetMpiWorkerCallback(id, worker_tasks_f)
+        status = RM_SetMpiWorkerCallback(id, bmi_worker_tasks_f)
         status = RM_MpiWorker(id)
         status = RM_Destroy(id)
         return
@@ -162,7 +162,7 @@
     CALL register_basic_callback_fortran()
 #ifdef USE_MPI
     ! Optional callback for MPI
-    status = do_something()   ! only root is calling do_something here
+    status = bmi_do_something()   ! only root is calling bmi_do_something here
 #endif
 	status = bmif_get_value_ptr(id, "ComponentCount", ComponentCount_ptr)
 	status = bmif_get_value_ptr(id, "GridCellCount", GridCellCount_ptr)
@@ -416,12 +416,12 @@
     END SUBROUTINE advectionbmi_f90
 
 #ifdef USE_MPI
-    integer(kind=C_INT) function worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
+    integer(kind=C_INT) function bmi_worker_tasks_f(method_number) BIND(C, NAME='bmi_worker_tasks_f')
     USE ISO_C_BINDING
     implicit none
     interface
-    integer function do_something()
-    end function do_something
+    integer function bmi_do_something()
+    end function bmi_do_something
 
     SUBROUTINE register_basic_callback_fortran()
     implicit none
@@ -430,14 +430,14 @@
     integer(kind=c_int), intent(in) :: method_number
     integer :: status
     if (method_number .eq. 1000) then
-        status = do_something()
+        status = bmi_do_something()
     else if (method_number .eq. 1001) then
         call register_basic_callback_fortran()
     endif
-    worker_tasks_f = 0
-    end function worker_tasks_f
+    bmi_worker_tasks_f = 0
+    end function bmi_worker_tasks_f
 
-    integer function do_something()
+    integer function bmi_do_something()
     implicit none
     INCLUDE 'mpif.h'
     integer status
@@ -455,8 +455,8 @@
     else
         CALL MPI_Send(mpi_myself, 1, MPI_INTEGER, 0, 0, MPI_COMM_WORLD, status)
     endif
-    do_something = 0
-    end function do_something
+    bmi_do_something = 0
+    end function bmi_do_something
 #endif
 
 subroutine BMI_testing(id)

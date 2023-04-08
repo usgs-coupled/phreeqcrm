@@ -812,7 +812,7 @@ PhreeqcRM::CheckSelectedOutput()
 		for ( ; it != this->workers[0]->CSelectedOutputMap.end(); it++)
 		{
 			std::string headings;
-			int length;
+			int length = 0;
 			// Make string with headings
 			int col = (int) it->second.GetColCount();
 			for (int i = 0; i < col; i++)
@@ -6289,7 +6289,7 @@ PhreeqcRM::InitialPhreeqcCell2Module(int cell, const std::vector<int> &cell_numb
 	}
 	// transfer the cell to domain
 #ifdef USE_MPI
-	int n_cells;
+	int n_cells = 0;
 	if (this->mpi_myself == 0)
 	{
 		n_cells = (int) cell_numbers.size();
@@ -6540,7 +6540,7 @@ PhreeqcRM::MpiWorker()
 		try
 		{
 			return_value = IRM_OK;
-			int method;
+			int method = -1;
 			//std::cerr << "Worker waiting..." << std::endl;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 			switch (method)
@@ -6668,7 +6668,9 @@ PhreeqcRM::MpiWorker()
 				if (debug_worker) std::cerr << "METHOD_GETVISCOSITY" << std::endl;
 				{
 					std::vector<double> dummy;
+#ifdef VISCOSITY
 					this->GetViscosity(dummy);
+#endif
 				}
 				break;
 			case METHOD_INITIALPHREEQC2MODULE:

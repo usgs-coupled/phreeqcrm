@@ -51,8 +51,8 @@ public:
 };
 
 
-int worker_tasks_cc(int* task_number, void* cookie);
-int do_something(void* cookie);
+int bmi_worker_tasks_cc(int* task_number, void* cookie);
+int bmi_do_something(void* cookie);
 
 double bmi_basic_callback(double x1, double x2, const char* str, void* cookie);
 void bmi_register_basic_callback(void* cookie);
@@ -107,8 +107,8 @@ int AdvectBMI_cpp()
 
 #ifdef USE_MPI
 		// MPI
-		PhreeqcRM brm(nxyz, MPI_COMM_WORLD);
-		some_data.PhreeqcRM_ptr = &brm;
+		BMIPhreeqcRM brm(nxyz, MPI_COMM_WORLD);
+		some_data.brm_ptr = &brm;
 		MP_TYPE comm = MPI_COMM_WORLD;
 		int mpi_myself;
 		if (MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself) != MPI_SUCCESS)
@@ -117,7 +117,7 @@ int AdvectBMI_cpp()
 		}
 		if (mpi_myself > 0)
 		{
-			brm.SetMpiWorkerCallbackC(worker_tasks_cc);
+			brm.SetMpiWorkerCallbackC(bmi_worker_tasks_cc);
 			brm.SetMpiWorkerCallbackCookie(&some_data);
 			brm.MpiWorker();
 			return EXIT_SUCCESS;
@@ -570,11 +570,11 @@ int bmi_units_tester()
 	return EXIT_SUCCESS;
 }
 #ifdef USE_MPI
-int worker_tasks_cc(int* task_number, void* cookie)
+int bmi_worker_tasks_cc(int* task_number, void* cookie)
 {
 	if (*task_number == 1000)
 	{
-		do_something(cookie);
+		bmi_do_something(cookie);
 	}
 	else if (*task_number == 1001)
 	{
@@ -582,7 +582,7 @@ int worker_tasks_cc(int* task_number, void* cookie)
 	}
 	return 0;
 }
-int do_something(void* cookie)
+int bmi_do_something(void* cookie)
 {
 	int method_number = 1000;
 	my_data* data = (my_data*)cookie;
