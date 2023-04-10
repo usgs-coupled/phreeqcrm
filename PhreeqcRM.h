@@ -21,7 +21,9 @@ class PHRQ_io;
 #include <set>
 #include <map>
 #include <string>
-
+#include "VarManager.h"
+#include "RMVARS.h"
+//class VarManager;
 #if defined(_WINDLL)
 #define IRM_DLL_EXPORT __declspec(dllexport)
 #else
@@ -68,6 +70,7 @@ enum {
 	METHOD_GETSPECIESLOG10GAMMAS,
 	METHOD_GETSPECIESLOG10MOLALITIES,
 	METHOD_GETTEMPERATURE,
+	METHOD_GETVISCOSITY,
 	METHOD_INITIALPHREEQC2MODULE,
 	METHOD_INITIALPHREEQCCELL2MODULE,
 	METHOD_LOADDATABASE,
@@ -111,23 +114,6 @@ enum {
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
 
-int IRM_DLL_EXPORT
-GetGridCellCountYAML(std::string YAML_file);
-
-/**
- * @mainpage PhreeqcRM Library Documentation (@PHREEQC_VER@-@REVISION_SVN@)
- *
- *  @htmlonly
- *  <table>
- *   <tr><td class="indexkey"><a class="el" href="class_phreeqc_r_m.html">PhreeqRM.h</a> </td><td class="indexvalue">C++ Documentation</td></tr>
- *   <tr><td class="indexkey"><a class="el" href="_r_m__interface___c_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">C Documentation </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">Fortran Documentation </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="_irm_result_8h.html">IrmResult.h</a></td><td class="indexvalue">Return codes </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="class_y_a_m_l_phreeqc_r_m.html">YAMLPhreeqcRM.h</a></td><td class="indexvalue">C++ YAML Support </td></tr>
- *  </table>
- *  @endhtmlonly
- */
-
 /**
  * @class PhreeqcRM
  *
@@ -142,6 +128,56 @@ public:
 	static int              CreateReactionModule(int nxyz, MP_TYPE nthreads);
 	static IRM_RESULT       DestroyReactionModule(int n);
 	static PhreeqcRM      * GetInstance(int n);
+	class VarManager* var_man;
+private:
+	void UpdateBMI(RMVARS v_enum);
+public:
+#ifdef USE_YAML
+/**
+@a GetGridCellCountYAML will read the YAML file and extract the value
+of GridCellCount, which can be used to construct a PhreeqcRM
+instance. The constructor for a PhreeqcRM instance requires a 
+value for the number of cells. If a GUI or preprocessor is
+used to write a YAML file to initialize PhreeqcRM, the number
+of cells can be written to the YAML file and extracted with
+this method.
+@param YAML_file         String containing the YAML file name.
+@retval Number of grid cells specified in the YAML file; returns
+zero if GridCellCount is not defined.
+@see @ref InitializeYAML @ref PhreeqcRM.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+int nthreads = 0;
+std::string yaml_file = "myfile.yaml";
+int nxyz = PhreeqcRM::GetGridCellCountYAML(yaml_file);
+PhreeqcRM phreeqc_rm(nxyz, nthreads);
+phreeqc_rm.InitializeYAML(yaml_file);
+</PRE>
+</CODE>
+@endhtmlonly
+@par Sequence:
+Called before PhreeqcRM is created.
+*/
+	static int GetGridCellCountYAML(const char* YAML_file);
+#endif // #ifdef USE_YAML
+
+/**
+ * @mainpage PhreeqcRM Library Documentation (@PHREEQC_VER@-@REVISION_SVN@)
+ *
+ *  @htmlonly
+ *  <table>
+ *   <tr><td class="indexkey"><a class="el" href="classPhreeqcRM.html">PhreeqRM.h</a> </td><td class="indexvalue">C++ Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="RM__interface__C_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">C Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="IrmResult_8h.html">IrmResult.h</a></td><td class="indexvalue">Return codes </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="classYAMLPhreeqcRM.html">YAMLPhreeqcRM.h</a></td><td class="indexvalue">C++ YAML Support </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="namespaceyaml__interface.html">YAML_interface.F90</a></td><td class="indexvalue">Fortran YAML Support </td></tr>
+ *  </table>
+ *  @endhtmlonly
+ */
+
 
 /**
 Constructor for the PhreeqcRM reaction module. If the code is compiled with
@@ -226,7 +262,7 @@ for (int i = 0; i < ncomps; i++)
 {
   c_well[i] = 0.5 * c[0 + nxyz*i] + 0.5 * c[9 + nxyz*i];
 }
-std::vector<double> tc, p_atm;
+std::vector< double > tc, p_atm;
 tc.resize(1, 15.0);
 p_atm.resize(1, 3.0);
 IPhreeqc * util_ptr = phreeqc_rm.Concentrations2Utility(c_well, tc, p_atm);
@@ -247,8 +283,8 @@ iphreeqc_result = util_ptr->GetSelectedOutputValue2(1, 0, &vtype, &pH, svalue, 1
 @par MPI:
 Called only by root.
  */
-	IPhreeqc * Concentrations2Utility(std::vector<double> &c,
-		   std::vector<double> tc, std::vector<double> p_atm);
+	IPhreeqc * Concentrations2Utility(std::vector< double > &c,
+		   std::vector< double > tc, std::vector< double > p_atm);
 /**
 Provides a mapping from grid cells in the user's model to reaction cells for which chemistry needs to be run.
 The mapping is used to eliminate inactive cells and to use symmetry to decrease the number of cells
@@ -268,7 +304,7 @@ negative is an inactive cell. Vector is of size @a nxyz (number of grid cells, @
 <CODE>
 <PRE>
 // For demonstation, two equivalent rows by symmetry
-std::vector<int> grid2chem;
+std::vector< int > grid2chem;
 grid2chem.resize(nxyz, -1);
 for (int i = 0; i < nxyz/2; i++)
 {
@@ -284,7 +320,7 @@ int nchem = phreeqc_rm.GetChemistryCellCount();
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                CreateMapping(std::vector<int> &grid2chem);
+	IRM_RESULT                                CreateMapping(std::vector< int > &grid2chem);
 /**
 If @a result is negative, this method prints an error message corresponding to IRM_RESULT @a result.
 If @a result is non-negative, no action is taken.
@@ -445,7 +481,7 @@ cumulative list of components.
 <CODE>
 <PRE>
 int ncomps = phreeqc_rm.FindComponents();
-const std::vector<std::string> &components = phreeqc_rm.GetComponents();
+const std::vector< std::string > &components = phreeqc_rm.GetComponents();
 const std::vector < double > & gfw = phreeqc_rm.GetGfw();
 for (int i = 0; i < ncomps; i++)
 {
@@ -532,13 +568,13 @@ Called by root.
 	int                                       GetComponentCount(void) const {return (int) this->components.size();}
 /**
 Returns a reference to the reaction-module component list that was generated by calls to @ref FindComponents.
-@retval const std::vector<std::string>&       A vector of strings; each string is a component name.
+@retval const std::vector< std::string >&       A vector of strings; each string is a component name.
 @see                    @ref FindComponents, @ref GetComponentCount
 @par C++ Example:
 @htmlonly
 <CODE>
 <PRE>
-const std::vector<std::string> &components = phreeqc_rm.GetComponents();
+const std::vector< std::string > &components = phreeqc_rm.GetComponents();
 const std::vector < double > & gfw = phreeqc_rm.GetGfw();
 int ncomps = phreeqc_rm.GetComponentCount();
 for (int i = 0; i < ncomps; i++)
@@ -554,7 +590,7 @@ for (int i = 0; i < ncomps; i++)
 @par MPI:
 Called by root and (or) workers.
  */
-const std::vector<std::string> &          GetComponents(void) const {return this->components;}
+const std::vector< std::string > &          GetComponents(void) const {return this->components;}
 	
 /**
 Transfer solution concentrations from each reaction cell
@@ -585,7 +621,7 @@ Values for inactive cells are set to 1e30.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> c;
+std::vector< double > c;
 status = phreeqc_rm.RunCells();
 status = phreeqc_rm.GetConcentrations(c);
 </PRE>
@@ -594,7 +630,7 @@ status = phreeqc_rm.GetConcentrations(c);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                GetConcentrations(std::vector<double> &c);
+	IRM_RESULT                                GetConcentrations(std::vector< double > &c);
 /**
 Returns the user number of the current selected-output definition.
 @ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput specifies which of the
@@ -620,13 +656,13 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 {
 	status = phreeqc_rm.SetCurrentSelectedOutput(isel);
 	int n_user = phreeqc_rm.GetCurrentSelectedOutputUserNumber(isel);
-	std::vector<double> so;
+	std::vector< double > so;
 	int col = phreeqc_rm.GetSelectedOutputColumnCount();
 	status = phreeqc_rm.GetSelectedOutput(so);
 	// Print results
 	for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
 	{
-		std::vector<std::string> headings;
+		std::vector< std::string > headings;
 		headings.resize(col);
 		std::cerr << "     Selected output " << n_user <<": " << "\n";
 		for (int j = 0; j < col; j++)
@@ -662,7 +698,9 @@ Called by root and (or) workers.
  */
 	std::string                               GetDatabaseFileName(void) {return this->database_file_name;}
 /**
-Transfer solution densities from the reaction-module workers to the vector given in the argument list (@a density).
+Transfer solution densities from the reaction-module workers to the vector given 
+in the argument list (@a density). This method always returns the calculated
+densities; @ref SetDensity does not affect the result.
 @param density              Vector to receive the densities. Dimension of the array is set to @a nxyz,
 where @a nxyz is the number of user grid cells (@ref GetGridCellCount).
 Values for inactive cells are set to 1e30.
@@ -677,7 +715,7 @@ to accurately calculate density: phreeqc.dat, Amm.dat, and pitzer.dat.
 <PRE>
 status = phreeqc_rm.RunCells();
 status = phreeqc_rm.GetConcentrations(c);
-std::vector<double> density;
+std::vector< double > density;
 status = phreeqc_rm.GetDensity(density);
 </PRE>
 </CODE>
@@ -685,7 +723,7 @@ status = phreeqc_rm.GetDensity(density);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                GetDensity(std::vector<double> & density);
+	IRM_RESULT                                GetDensity(std::vector< double > & density);
 /**
 Returns a vector of integers that contains the largest reaction-cell number assigned to each worker.
 Each worker is assigned a range of reaction-cell numbers that are run during a call to @ref RunCells.
@@ -729,7 +767,7 @@ the initial-phreeqc module.
 @ref FindComponents must be called before @ref GetEquilibriumPhases.
 This method may be useful when generating selected output definitions related to equilibrium phases.
 
-@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+@retval const std::vector< std::string >&       A vector of strings; each string is a unique
 equilibrium phases name.
 
 @see                    @ref FindComponents,
@@ -740,7 +778,7 @@ equilibrium phases name.
 <PRE>
 oss << "  -equilibrium_phases " << "\n";
 // equilibrium phases
-const std::vector<std::string> &eq_phases = phreeqc_rm.GetEquilibriumPhases();
+const std::vector< std::string > &eq_phases = phreeqc_rm.GetEquilibriumPhases();
 for (size_t i = 0; i < phreeqc_rm.GetEquilibriumPhasesCount(); i++)
 {
 oss << "    " << eq_phases[i] << "\n";
@@ -751,7 +789,7 @@ oss << "    " << eq_phases[i] << "\n";
 @par MPI:
 Called by root.
 */
-const std::vector<std::string> &          GetEquilibriumPhases(void) const { return this->EquilibriumPhasesList; }
+const std::vector< std::string > &          GetEquilibriumPhases(void) const { return this->EquilibriumPhasesList; }
 /**
 Returns the number of equilibrium phases in the initial-phreeqc module.
 @ref FindComponents must be called before @ref GetEquilibriumPhasesCount.
@@ -768,7 +806,7 @@ equilibrium phases.
 <PRE>
 oss << "  -equilibrium_phases " << "\n";
 // equilibrium phases
-const std::vector<std::string> &eq_phases = phreeqc_rm.GetEquilibriumPhases();
+const std::vector< std::string > &eq_phases = phreeqc_rm.GetEquilibriumPhases();
 for (size_t i = 0; i < phreeqc_rm.GetEquilibriumPhasesCount(); i++)
 {
 oss << "    " << eq_phases[i] << "\n";
@@ -831,7 +869,7 @@ The exchange names vector is the same length as the exchange species names vecto
 and provides the corresponding exchange site.
 This method may be useful when generating selected output definitions related to exchangers.
 
-@retval const std::vector<std::string>&       A vector of strings; each string is an
+@retval const std::vector< std::string >&       A vector of strings; each string is an
 exchange name corresponding to the exchange species vector; an exchange name may occur
 multiple times.
 
@@ -842,8 +880,8 @@ multiple times.
 <CODE>
 <PRE>
 // molalities of exchange species
-const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpecies();
-const std::vector<std::string> &ex_names = phreeqc_rm.GetExchangeNames();
+const std::vector< std::string > &ex_species = phreeqc_rm.GetExchangeSpecies();
+const std::vector< std::string > &ex_names = phreeqc_rm.GetExchangeNames();
 for (size_t i = 0; i < phreeqc_rm.GetExchangeSpeciesCount(); i++)
 {
 
@@ -858,7 +896,7 @@ oss << " # " << ex_names[i] << "\n";
 @par MPI:
 Called by root.
 */
-const std::vector<std::string> &          GetExchangeNames(void) const { return this->ExchangeNamesList; }
+const std::vector< std::string > &          GetExchangeNames(void) const { return this->ExchangeNamesList; }
 /**
 Returns a reference to the vector of exchange species names (such as "NaX").
 The list of exchange species (such as "NaX") is derived from the list of components
@@ -867,7 +905,7 @@ that are included in EXCHANGE definitions in the initial-phreeqc module.
 @ref FindComponents must be called before @ref GetExchangeSpecies.
 This method may be useful when generating selected output definitions related to exchangers.
 
-@retval const std::vector<std::string>&       A vector of strings; each string is a
+@retval const std::vector< std::string >&       A vector of strings; each string is a
 unique exchange species name.
 
 @see                    @ref FindComponents,
@@ -877,8 +915,8 @@ unique exchange species name.
 <CODE>
 <PRE>
 // molalities of exchange species
-const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpecies();
-const std::vector<std::string> &ex_names = phreeqc_rm.GetExchangeNames();
+const std::vector< std::string > &ex_species = phreeqc_rm.GetExchangeSpecies();
+const std::vector< std::string > &ex_names = phreeqc_rm.GetExchangeNames();
 for (size_t i = 0; i < phreeqc_rm.GetExchangeSpeciesCount(); i++)
 {
 
@@ -893,7 +931,7 @@ oss << " # " << ex_names[i] << "\n";
 @par MPI:
 Called by root.
 */
-const std::vector<std::string> &          GetExchangeSpecies(void) const { return this->ExchangeSpeciesNamesList; }
+const std::vector< std::string > &          GetExchangeSpecies(void) const { return this->ExchangeSpeciesNamesList; }
 /**
 Returns the number of exchange species in the initial-phreeqc module.
 @ref FindComponents must be called before @ref GetExchangeSpeciesCount.
@@ -909,8 +947,8 @@ This method may be useful when generating selected output definitions related to
 <CODE>
 <PRE>
 // molalities of exchange species
-const std::vector<std::string> &ex_species = phreeqc_rm.GetExchangeSpecies();
-const std::vector<std::string> &ex_names = phreeqc_rm.GetExchangeNames();
+const std::vector< std::string > &ex_species = phreeqc_rm.GetExchangeSpecies();
+const std::vector< std::string > &ex_names = phreeqc_rm.GetExchangeNames();
 for (size_t i = 0; i < phreeqc_rm.GetExchangeSpeciesCount(); i++)
 {
 
@@ -959,7 +997,7 @@ Nonnegative is a reaction-cell number (0 based), negative is an inactive cell.
 @htmlonly
 <CODE>
 <PRE>
-const std::vector<int> &f_map = phreeqc_rm.GetForwardMapping();
+const std::vector< int > &f_map = phreeqc_rm.GetForwardMapping();
 </PRE>
 </CODE>
 @endhtmlonly
@@ -975,7 +1013,7 @@ the initial-phreeqc module.
 @ref FindComponents must be called before @ref GetGasComponents.
 This method may be useful when generating selected output definitions related to gas phases.
 
-@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+@retval const std::vector< std::string >&       A vector of strings; each string is a unique
 gas component name.
 
 @see                    @ref FindComponents,
@@ -986,7 +1024,7 @@ gas component name.
 <PRE>
 oss << "  -gases " << "\n";
 // gas components
-const std::vector<std::string> &gas_phases = phreeqc_rm.GetGasComponents();
+const std::vector< std::string > &gas_phases = phreeqc_rm.GetGasComponents();
 for (size_t i = 0; i < phreeqc_rm.GetGasComponentsCount(); i++)
 {
 oss << "    " << gas_phases[i] << "\n";
@@ -997,7 +1035,7 @@ oss << "    " << gas_phases[i] << "\n";
 @par MPI:
 Called by root.
 */
-const std::vector<std::string> &          GetGasComponents(void) const { return this->GasComponentsList; }
+const std::vector< std::string > &          GetGasComponents(void) const { return this->GasComponentsList; }
 /**
 Returns the number of gas phase components in the initial-phreeqc module.
 @ref FindComponents must be called before @ref GetGasComponentsCount.
@@ -1014,7 +1052,7 @@ gas phases.
 <PRE>
 oss << "  -gases " << "\n";
 // gas components
-const std::vector<std::string> &gas_phases = phreeqc_rm.GetGasComponents();
+const std::vector< std::string > &gas_phases = phreeqc_rm.GetGasComponents();
 for (size_t i = 0; i < phreeqc_rm.GetGasComponentsCount(); i++)
 {
 oss << "    " << gas_phases[i] << "\n";
@@ -1050,7 +1088,7 @@ Values for inactive cells are set to 1e30.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> gas_moles;
+std::vector< double > gas_moles;
 status = phreeqc_rm.RunCells();
 status = phreeqc_rm.GetGasCompMoles(gas_moles);
 </PRE>
@@ -1059,7 +1097,7 @@ status = phreeqc_rm.GetGasCompMoles(gas_moles);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-IRM_RESULT                                GetGasCompMoles(std::vector<double>& gas_moles);
+IRM_RESULT                                GetGasCompMoles(std::vector< double >& gas_moles);
 
 /**
 Transfer pressures of gas components from each reaction cell
@@ -1084,7 +1122,7 @@ Values for inactive cells are set to 1e30.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> gas_pressure;
+std::vector< double > gas_pressure;
 status = phreeqc_rm.RunCells();
 status = phreeqc_rm.GetGasCompPressures(gas_pressure);
 </PRE>
@@ -1093,7 +1131,7 @@ status = phreeqc_rm.GetGasCompPressures(gas_pressure);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-IRM_RESULT                                GetGasCompPressures(std::vector<double>& gas_pressure);
+IRM_RESULT                                GetGasCompPressures(std::vector< double >& gas_pressure);
 
 /**
 Transfer fugacity coefficients (phi) of gas components from each reaction cell
@@ -1119,7 +1157,7 @@ Values for inactive cells are set to 1e30.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> gas_phi;
+std::vector< double > gas_phi;
 status = phreeqc_rm.RunCells();
 status = phreeqc_rm.GetGasCompPhi(gas_phi);
 </PRE>
@@ -1128,7 +1166,7 @@ status = phreeqc_rm.GetGasCompPhi(gas_phi);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-IRM_RESULT                                GetGasCompPhi(std::vector<double>& gas_phi);
+IRM_RESULT                                GetGasCompPhi(std::vector< double >& gas_phi);
 
 /**
 Transfer volume of gas phase from each reaction cell
@@ -1152,7 +1190,7 @@ Values for inactive cells are set to 1e30.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> gas_volume;
+std::vector< double > gas_volume;
 status = phreeqc_rm.RunCells();
 status = phreeqc_rm.GetGasPhaseVolume(gas_volume);
 </PRE>
@@ -1161,19 +1199,19 @@ status = phreeqc_rm.GetGasPhaseVolume(gas_volume);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-IRM_RESULT                                GetGasPhaseVolume(std::vector<double>& gas_volume);
+IRM_RESULT                                GetGasPhaseVolume(std::vector< double >& gas_volume);
 
 /**
 Returns a reference to a vector of doubles that contains the gram-formula weight of
 each component. Called after @ref FindComponents. Order of weights corresponds to the list of components from
 @ref GetComponents.
-@retval const std::vector<double>&       A vector of doubles; each value is a component gram-formula weight, g/mol.
+@retval const std::vector< double >&       A vector of doubles; each value is a component gram-formula weight, g/mol.
 @see                    @ref FindComponents, @ref GetComponents.
 @par C++ Example:
 @htmlonly
 <CODE>
 <PRE>
-const std::vector<std::string> &components = phreeqc_rm.GetComponents();
+const std::vector< std::string > &components = phreeqc_rm.GetComponents();
 const std::vector < double > & gfw = phreeqc_rm.GetGfw();
 int ncomps = phreeqc_rm.GetComponentCount();
 for (int i = 0; i < ncomps; i++)
@@ -1247,7 +1285,7 @@ the reaction model.
 @ref FindComponents must be called before @ref GetKineticReactions.
 This method may be useful when generating selected output definitions related to kinetic reactions.
 
-@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+@retval const std::vector< std::string >&       A vector of strings; each string is a unique
 kinetic reaction name.
 
 @see                    @ref FindComponents,
@@ -1258,7 +1296,7 @@ kinetic reaction name.
 <PRE>
 oss << "  -kinetics " << "\n";
 // kinetic reactions
-const std::vector<std::string> &kin_reactions = phreeqc_rm.GetKineticReactions();
+const std::vector< std::string > &kin_reactions = phreeqc_rm.GetKineticReactions();
 for (size_t i = 0; i < phreeqc_rm.GetKineticReactionsCount(); i++)
 {
 oss << "    " << kin_reactions[i] << "\n";
@@ -1269,7 +1307,7 @@ oss << "    " << kin_reactions[i] << "\n";
 @par MPI:
 Called by root.
 */
-const std::vector<std::string> &          GetKineticReactions(void) const { return this->KineticReactionsList; }
+const std::vector< std::string > &          GetKineticReactions(void) const { return this->KineticReactionsList; }
 /**
 Returns the number of kinetic reactions in the initial-phreeqc module.
 @ref FindComponents must be called before @ref GetKineticReactionsCount.
@@ -1286,7 +1324,7 @@ kinetic reactions.
 <PRE>
 oss << "  -kinetics " << "\n";
 // kinetic reactions
-const std::vector<std::string> &kin_reactions = phreeqc_rm.GetKineticReactions();
+const std::vector< std::string > &kin_reactions = phreeqc_rm.GetKineticReactions();
 for (size_t i = 0; i < phreeqc_rm.GetKineticReactionsCount(); i++)
 {
 oss << "    " << kin_reactions[i] << "\n";
@@ -1383,7 +1421,7 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
   status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
   std::cerr << "Selected output sequence number: " << isel << "\n";
   std::cerr << "Selected output user number:     " << n_user << "\n";
-  std::vector<double> so;
+  std::vector< double > so;
   int col = phreeqc_rm.GetSelectedOutputColumnCount();
   status = phreeqc_rm.GetSelectedOutput(so);
   // Process results here
@@ -1435,22 +1473,42 @@ defined by the last use of @ref SetPoreVolume or the default (0.1 L).
 Pore volume is used with cell volume (@ref SetCellVolume) in calculating porosity.
 Pore volumes may change as a function of pressure, in which case they can be updated
 with @ref SetPoreVolume.
-@retval const std::vector<double>&       A vector reference to the pore volumes.
+@retval const std::vector< double >&       A vector reference to the pore volumes.
 Size of vector is @a nxyz, the number of grid cells in the user's model (@ref GetGridCellCount).
 @see                 @ref GetCellVolume, @ref SetCellVolume, @ref SetPoreVolume.
 @par C++ Example:
 @htmlonly
 <CODE>
 <PRE>
-const std::vector<double> & vol = phreeqc_rm.GetPoreVolume();
+const std::vector< double > & vol = phreeqc_rm.GetPoreVolume();
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root and (or) workers.
  */
-	std::vector<double> &                     GetPoreVolume(void) {return this->pore_volume;}
+	std::vector< double > &                     GetPoreVolume(void) {return this->pore_volume;}
 #endif
+/**
+	Returns the porosity for each cell.
+	By default, the porosity vector is initialized with 0.1, unitless.
+	PhreeqcRM does not change the porosity, so the values that are retrieved are
+	either the default, or the values set by the last call to @ref SetPorosity. 
+	@retval const std::vector< double >&       A vector reference to the porosities in each cell, unitless.
+	Size of vector is @a nxyz, the number of grid cells in the user's model (@ref GetGridCellCount).
+	@see                 @ref SetPorosity, ref SetPressure, @ref GetTemperature, @ref SetTemperature.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	const std::vector< double > & por = phreeqc_rm.GetPorosity();
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	const std::vector< double >& GetPorosity(void);
 /**
 Returns the pressure for each cell.
 By default, the pressure vector is initialized with 1 atm;
@@ -1458,26 +1516,26 @@ if @ref SetPressure has not been called, worker solutions will have pressures as
 input files (@ref RunFile) or input strings (@ref RunString); if @ref SetPressure has been called,
 worker solutions will have the pressures as defined by @ref SetPressure.
 Pressure effects are considered by three PHREEQC databases: phreeqc.dat, Amm.dat, and pitzer.dat.
-@retval const std::vector<double>&       A vector reference to the pressures in each cell, in atm.
+@retval const std::vector< double >&       A vector reference to the pressures in each cell, in atm.
 Size of vector is @a nxyz, the number of grid cells in the user's model (@ref GetGridCellCount).
 @see                 @ref SetPressure, @ref GetTemperature, @ref SetTemperature.
 @par C++ Example:
 @htmlonly
 <CODE>
 <PRE>
-const std::vector<double> & p_atm = phreeqc_rm.GetPressure();
+const std::vector< double > & p_atm = phreeqc_rm.GetPressure();
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root and (or) workers.
  */
-	const std::vector<double> &                     GetPressure(void);
+	const std::vector< double > &                     GetPressure(void);
 /**
 Return a reference to the vector of print flags that enable or disable detailed output for each cell.
 Printing for a cell will occur only when the
 printing is enabled with @ref SetPrintChemistryOn, and the value in the vector for the cell is 1.
-@retval std::vector<int> &      Vector of integers. Size of vector is @a nxyz, where @a nxyz is the number
+@retval std::vector< int > &      Vector of integers. Size of vector is @a nxyz, where @a nxyz is the number
 of grid cells in the user's model (@ref GetGridCellCount). A value of 0 for a cell indicates
 printing is disabled;
 a value of 1 for a cell indicates printing is enabled.
@@ -1486,14 +1544,14 @@ a value of 1 for a cell indicates printing is enabled.
 @htmlonly
 <CODE>
 <PRE>
-const std::vector<int> & print_chemistry_mask1 = phreeqc_rm.GetPrintChemistryMask();
+const std::vector< int > & print_chemistry_mask1 = phreeqc_rm.GetPrintChemistryMask();
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root.
  */
-	const std::vector<int> &                  GetPrintChemistryMask (void) {return this->print_chem_mask_root;}
+	const std::vector< int > &                  GetPrintChemistryMask (void) {return this->print_chem_mask_root;}
 /**
 Returns a vector reference to the current print flags for detailed output for the three sets of IPhreeqc instances:
 the workers, the InitialPhreeqc instance, and the Utility instance. Dimension of the vector is 3.
@@ -1509,13 +1567,13 @@ amount of information printed can be limited by use of options in the PRINT data
 (applied by using @ref RunFile or @ref RunString).
 Printing the detailed output for the workers is generally used only for debugging,
 and PhreeqcRM will run faster when printing detailed output for the workers is disabled (@ref SetPrintChemistryOn).
-@retval const std::vector<bool> & Print flag for the workers, InitialPhreeqc, and Utility IPhreeqc instances, respectively.
+@retval const std::vector< bool > & Print flag for the workers, InitialPhreeqc, and Utility IPhreeqc instances, respectively.
 @see                     @ref SetPrintChemistryOn, @ref SetPrintChemistryMask.
 @par C++ Example:
 @htmlonly
 <CODE>
 <PRE>
-const std::vector<bool> & print_on = phreeqc_rm.GetPrintChemistryOn();
+const std::vector< bool > & print_on = phreeqc_rm.GetPrintChemistryOn();
 </PRE>
 </CODE>
 @endhtmlonly
@@ -1573,7 +1631,9 @@ Called by root.
  */
 	double                                    GetRebalanceFraction(void) const {return this->rebalance_fraction;}
 /**
-Returns a vector of saturations (@a sat) as calculated by the reaction module.
+Returns a vector of saturations (@a sat) as calculated by the reaction module. 
+This method always returns solution_volume/(rv * porosity); the method 
+@ref SetSaturation has no effect on the values returned.
 Reactions will change the volume of solution in a cell.
 The transport code must decide whether to ignore or account for this change in solution volume due to reactions.
 Following reactions, the cell saturation is calculated as solution volume (@ref GetSolutionVolume)
@@ -1594,7 +1654,7 @@ Values for inactive cells are set to 1e30.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> sat;
+std::vector< double > sat;
 status = phreeqc_rm.GetSaturation(sat);
 </PRE>
 </CODE>
@@ -1602,7 +1662,7 @@ status = phreeqc_rm.GetSaturation(sat);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-IRM_RESULT               GetSaturation(std::vector<double> & sat);
+IRM_RESULT               GetSaturation(std::vector< double > & sat);
 /**
 Returns the array of selected-output values for the current selected-output definition.
 @ref SetCurrentSelectedOutputUserNumber
@@ -1631,7 +1691,7 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 {
   int n_user = phreeqc_rm.GetNthSelectedOutputUserNumber(isel);
   status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
-  std::vector<double> so;
+  std::vector< double > so;
   int col = phreeqc_rm.GetSelectedOutputColumnCount();
   status = phreeqc_rm.GetSelectedOutput(so);
   // Process results here
@@ -1642,7 +1702,7 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                GetSelectedOutput(std::vector<double> &so);
+	IRM_RESULT                                GetSelectedOutput(std::vector< double > &so);
 /**
 Returns the number of columns in the current selected-output definition.
 @ref SetCurrentSelectedOutputUserNumber specifies which of the selected-output definitions is used.
@@ -1667,13 +1727,13 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 {
   int n_user = phreeqc_rm.GetNthSelectedOutputUserNumber(isel);
   status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
-  std::vector<double> so;
+  std::vector< double > so;
   int col = phreeqc_rm.GetSelectedOutputColumnCount();
   status = phreeqc_rm.GetSelectedOutput(so);
   // Print results
   for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
   {
-    std::vector<std::string> headings;
+    std::vector< std::string > headings;
     headings.resize(col);
     std::cerr << "     Selected output: " << "\n";
     for (int j = 0; j < col; j++)
@@ -1713,7 +1773,7 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 {
   int n_user = phreeqc_rm.GetNthSelectedOutputUserNumber(isel);
   status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
-  std::vector<double> so;
+  std::vector< double > so;
   int col = phreeqc_rm.GetSelectedOutputColumnCount();
   status = phreeqc_rm.GetSelectedOutput(so);
   // Process results here
@@ -1751,10 +1811,10 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 {
   int n_user = phreeqc_rm.GetNthSelectedOutputUserNumber(isel);
   status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
-  std::vector<double> so;
+  std::vector< double > so;
   int col = phreeqc_rm.GetSelectedOutputColumnCount();
   status = phreeqc_rm.GetSelectedOutput(so);
-  std::vector<std::string> headings;
+  std::vector< std::string > headings;
   headings.resize(col);
   std::cerr << "     Selected output: " << "\n";
   for (int j = 0; j < col; j++)
@@ -1769,7 +1829,53 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 @par MPI:
 Called by root.
  */
-	IRM_RESULT                                GetSelectedOutputHeading(int icol, std::string &heading);
+	IRM_RESULT                  GetSelectedOutputHeading(int icol, std::string &heading);
+	/**
+	Returns a list of the current selected-output headings.
+	The number of headings is determined by @ref GetSelectedOutputColumnCount.
+	@ref SetCurrentSelectedOutputUserNumber or @ref BMI_SetValue("NthSelectedOutput",i) are
+	used to specify which of the selected-output definitions is used.
+	@param headings          A vector of std::strings to receive the headings.
+	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+	@see
+	@ref BMI_GetValue,
+	@ref GetCurrentSelectedOutputUserNumber,
+	@ref GetNthSelectedOutputUserNumber,
+	@ref GetSelectedOutput,
+	@ref GetSelectedOutputColumnCount,
+	@ref GetSelectedOutputCount,
+	@ref GetSelectedOutputHeading,
+	@ref GetSelectedOutputOn,
+	@ref GetSelectedOutputRowCount,
+	@ref SetCurrentSelectedOutputUserNumber,
+	@ref SetNthSelectedOutput,
+	@ref SetSelectedOutputOn.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
+	{
+	  int n_user = phreeqc_rm.GetNthSelectedOutputUserNumber(isel);
+	  status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
+	  std::vector< double > so;
+	  int col = phreeqc_rm.GetSelectedOutputColumnCount();
+	  status = phreeqc_rm.GetSelectedOutput(so);
+	  std::vector< std::string > headings;
+	  status = phreeqc_rm.GetSelectedOutputHeadings(headings);
+	  std::cerr << "     Selected output: " << "\n";
+	  for (int j = 0; j < col; j++)
+	  {
+		std::cerr << "          " << j << " " << headings[j] << "\n";
+	  }
+	}
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root.
+	 */
+	IRM_RESULT                  GetSelectedOutputHeadings(std::vector< std::string >& headings);
 /**
 Returns the current value of the selected-output property.
 A value of true for this property indicates that selected output data will be requested this time step.
@@ -1824,13 +1930,13 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 {
   int n_user = phreeqc_rm.GetNthSelectedOutputUserNumber(isel);
   status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
-  std::vector<double> so;
+  std::vector< double > so;
   int col = phreeqc_rm.GetSelectedOutputColumnCount();
   status = phreeqc_rm.GetSelectedOutput(so);
   // Print results
   for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
   {
-    std::vector<std::string> headings;
+    std::vector< std::string > headings;
     headings.resize(col);
     std::cerr << "     Selected output: " << "\n";
     for (int j = 0; j < col; j++)
@@ -1863,7 +1969,7 @@ could be calculated.
 @htmlonly
 <CODE>
 <PRE>
-const std::vector<std::string> &si = phreeqc_rm.GetSINames();
+const std::vector< std::string > &si = phreeqc_rm.GetSINames();
 for (size_t i = 0; i < phreeqc_rm.GetSICount(); i++)
 {
 oss << "    " << si[i] << "\n";
@@ -1886,7 +1992,7 @@ it may be that one or more components are missing in any specific cell.
 This method may be useful when generating selected output definitions related to
 saturation indices.
 
-@retval const std::vector<std::string>&       A vector of strings; each string is a unique
+@retval const std::vector< std::string >&       A vector of strings; each string is a unique
 phase name.
 
 @see                    @ref FindComponents,
@@ -1897,7 +2003,7 @@ phase name.
 <PRE>
 oss << "  -saturation_indices " << "\n";
 // molalities of aqueous species
-const std::vector<std::string> &si = phreeqc_rm.GetSINames();
+const std::vector< std::string > &si = phreeqc_rm.GetSINames();
 for (size_t i = 0; i < phreeqc_rm.GetSICount(); i++)
 {
 oss << "    " << si[i] << "\n";
@@ -1908,7 +2014,7 @@ oss << "    " << si[i] << "\n";
 @par MPI:
 Called by root.
 */
-const std::vector<std::string> &          GetSINames(void) const { return this->SINamesList; }
+const std::vector< std::string > &          GetSINames(void) const { return this->SINamesList; }
 
 /**
 Returns a reference to the vector of solid solution components.
@@ -1918,7 +2024,7 @@ definitions in the initial-phreeqc module.
 This method may be useful when generating selected output definitions related to
 solid solutions.
 
-@retval const std::vector<std::string>&       A vector of strings; each string is a
+@retval const std::vector< std::string >&       A vector of strings; each string is a
 unique solid solution component.
 
 @see                    @ref FindComponents,
@@ -1929,8 +2035,8 @@ unique solid solution component.
 <PRE>
 oss << "  -solid_solutions " << "\n";
 // solid solutions
-const std::vector<std::string> &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
-const std::vector<std::string> &ss_names = phreeqc_rm.GetSolidSolutionNames();
+const std::vector< std::string > &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
+const std::vector< std::string > &ss_names = phreeqc_rm.GetSolidSolutionNames();
 for (size_t i = 0; i < phreeqc_rm.GetSolidSolutionComponentsCount(); i++)
 {
 
@@ -1945,7 +2051,7 @@ oss << " # " << ss_names[i] << "\n";
 @par MPI:
 Called by root.
 */
-const std::vector<std::string> &          GetSolidSolutionComponents(void) const { return this->SolidSolutionComponentsList; }
+const std::vector< std::string > &          GetSolidSolutionComponents(void) const { return this->SolidSolutionComponentsList; }
 /**
 Returns the number of solid solution components in the initial-phreeqc module.
 @ref FindComponents must be called before @ref GetSolidSolutionComponentsCount.
@@ -1962,8 +2068,8 @@ This method may be useful when generating selected output definitions related to
 <PRE>
 oss << "  -solid_solutions " << "\n";
 // solid solutions
-const std::vector<std::string> &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
-const std::vector<std::string> &ss_names = phreeqc_rm.GetSolidSolutionNames();
+const std::vector< std::string > &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
+const std::vector< std::string > &ss_names = phreeqc_rm.GetSolidSolutionNames();
 for (size_t i = 0; i < phreeqc_rm.GetSolidSolutionComponentsCount(); i++)
 {
 
@@ -1988,7 +2094,7 @@ The solid solution names vector is the same length as the solid solution compone
 and provides the corresponding name of solid solution containing the component.
 This method may be useful when generating selected output definitions related to solid solutions.
 
-@retval const std::vector<std::string>&       A vector of strings; each string is a
+@retval const std::vector< std::string >&       A vector of strings; each string is a
 solid solution name corresponding to the solid solution components vector; a solid solution name may occur
 multiple times.
 
@@ -2000,8 +2106,8 @@ multiple times.
 <PRE>
 oss << "  -solid_solutions " << "\n";
 // solid solutions
-const std::vector<std::string> &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
-const std::vector<std::string> &ss_names = phreeqc_rm.GetSolidSolutionNames();
+const std::vector< std::string > &ss_comps = phreeqc_rm.GetSolidSolutionComponents();
+const std::vector< std::string > &ss_names = phreeqc_rm.GetSolidSolutionNames();
 for (size_t i = 0; i < phreeqc_rm.GetSolidSolutionComponentsCount(); i++)
 {
 
@@ -2016,7 +2122,7 @@ oss << " # " << ss_names[i] << "\n";
 @par MPI:
 Called by root.
 */
-const std::vector<std::string> &          GetSolidSolutionNames(void) const { return this->SolidSolutionNamesList; }
+const std::vector< std::string > &          GetSolidSolutionNames(void) const { return this->SolidSolutionNamesList; }
 
 /**
 Return a vector reference to the current solution volumes as calculated by the reaction module.
@@ -2031,14 +2137,14 @@ needed to accurately calculate solution volume: phreeqc.dat, Amm.dat, and pitzer
 <CODE>
 <PRE>
 status = phreeqc_rm.RunCells();
-const std::vector<double> &volume = phreeqc_rm.GetSolutionVolume();
+const std::vector< double > &volume = phreeqc_rm.GetSolutionVolume();
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	const std::vector<double> &               GetSolutionVolume(void);
+	const std::vector< double > &               GetSolutionVolume(void);
 /**
 Returns a vector reference to aqueous species concentrations (@a species_conc).
 This method is intended for use with multicomponent-diffusion transport calculations,
@@ -2076,7 +2182,7 @@ status = phreeqc_rm.SetSpeciesSaveOn(true);
 int ncomps = phreeqc_rm.FindComponents();
 int npecies = phreeqc_rm.GetSpeciesCount();
 status = phreeqc_rm.RunCells();
-std::vector<double> c;
+std::vector< double > c;
 status = phreeqc_rm.GetSpeciesConcentrations(c);
 </PRE>
 </CODE>
@@ -2084,7 +2190,7 @@ status = phreeqc_rm.GetSpeciesConcentrations(c);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                GetSpeciesConcentrations(std::vector<double> & species_conc);
+	IRM_RESULT                                GetSpeciesConcentrations(std::vector< double > & species_conc);
 /**
 Returns the number of aqueous species used in the reaction module.
 This method is intended for use with multicomponent-diffusion transport calculations,
@@ -2151,7 +2257,7 @@ const std::vector < double > & species_d = phreeqc_rm.GetSpeciesD25();
 @par MPI:
 Called by root and (or) workers.
  */
-	const std::vector<double> &               GetSpeciesD25(void) {return this->species_d_25;}
+	const std::vector< double > &               GetSpeciesD25(void) {return this->species_d_25;}
 /**
 Returns a vector reference to log10 aqueous species activity coefficients (@a species_log10gammas).
 This method is intended for use with multicomponent-diffusion transport calculations,
@@ -2185,7 +2291,7 @@ status = phreeqc_rm.SetSpeciesSaveOn(true);
 int ncomps = phreeqc_rm.FindComponents();
 int npecies = phreeqc_rm.GetSpeciesCount();
 status = phreeqc_rm.RunCells();
-std::vector<double> species_gammas;
+std::vector< double > species_gammas;
 status = phreeqc_rm.GetSpeciesLog10Gammas(species_gammas);
 </PRE>
 </CODE>
@@ -2193,7 +2299,7 @@ status = phreeqc_rm.GetSpeciesLog10Gammas(species_gammas);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                GetSpeciesLog10Gammas(std::vector<double> & species_log10gammas);	
+	IRM_RESULT                                GetSpeciesLog10Gammas(std::vector< double > & species_log10gammas);	
 
 /**
 Returns a vector reference to log10 aqueous species molalities (@a species_log10molalities).
@@ -2227,7 +2333,7 @@ status = phreeqc_rm.SetSpeciesSaveOn(true);
 int ncomps = phreeqc_rm.FindComponents();
 int npecies = phreeqc_rm.GetSpeciesCount();
 status = phreeqc_rm.RunCells();
-std::vector<double> species_molalities;
+std::vector< double > species_molalities;
 status = phreeqc_rm.GetSpeciesLog10Molalities(species_molalities);
 </PRE>
 </CODE>
@@ -2235,7 +2341,7 @@ status = phreeqc_rm.GetSpeciesLog10Molalities(species_molalities);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
-IRM_RESULT                                GetSpeciesLog10Molalities(std::vector<double>& species_log10molalities);	
+IRM_RESULT                                GetSpeciesLog10Molalities(std::vector< double >& species_log10molalities);	
 
 /**
 Returns a vector reference to the names of the aqueous species.
@@ -2263,14 +2369,14 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 status = phreeqc_rm.SetSpeciesSaveOn(true);
 int ncomps = phreeqc_rm.FindComponents();
 int npecies = phreeqc_rm.GetSpeciesCount();
-const std::vector<std::string> &species = phreeqc_rm.GetSpeciesNames();
+const std::vector< std::string > &species = phreeqc_rm.GetSpeciesNames();
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root and (or) workers.
  */
-	const std::vector<std::string> &          GetSpeciesNames(void) {return this->species_names;}
+	const std::vector< std::string > &          GetSpeciesNames(void) {return this->species_names;}
 /**
 Returns the value of the species-save property.
 By default, concentrations of aqueous species are not saved. Setting the species-save property to true allows
@@ -2334,7 +2440,7 @@ where @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
 @htmlonly
 <CODE>
 <PRE>
-const std::vector<std::string> &species = phreeqc_rm.GetSpeciesNames();
+const std::vector< std::string > &species = phreeqc_rm.GetSpeciesNames();
 const std::vector < double > & species_z = phreeqc_rm.GetSpeciesZ();
 const std::vector < double > & species_d = phreeqc_rm.GetSpeciesD25();
 bool species_on = phreeqc_rm.GetSpeciesSaveOn();
@@ -2391,7 +2497,7 @@ const std::vector < double > & species_z = phreeqc_rm.GetSpeciesZ();
 @par MPI:
 Called by root and (or) workers.
  */
-	const std::vector<double> &               GetSpeciesZ(void) {return this->species_z;}
+	const std::vector< double > &               GetSpeciesZ(void) {return this->species_z;}
 /**
 Returns a vector of integers that contains the smallest reaction-cell number assigned to each worker.
 Each worker is assigned a range of reaction-cell numbers that are run during a call to @ref RunCells.
@@ -2435,7 +2541,7 @@ and @ref GetSurfaceNames are the same length.
 @ref FindComponents must be called before @ref GetSurfaceNames.
 This method may be useful when generating selected output definitions related to surfaces.
 
-@retval const std::vector<std::string>&       A vector of strings; each string is a
+@retval const std::vector< std::string >&       A vector of strings; each string is a
 surface name corresponding to the surface species vector;
 a surface name may occur multiple times.
 
@@ -2446,9 +2552,9 @@ a surface name may occur multiple times.
 <CODE>
 <PRE>
 // molalities of surface species
-const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpecies();
-const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
-const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+const std::vector< std::string > &surf_species = phreeqc_rm.GetSurfaceSpecies();
+const std::vector< std::string > &surf_types = phreeqc_rm.GetSurfaceTypes();
+const std::vector< std::string > &surf_names = phreeqc_rm.GetSurfaceNames();
 for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesCount(); i++)
 {
 oss << "    ";
@@ -2464,7 +2570,7 @@ oss << surf_types[i] << "   " << surf_names[i] << "\n";
 @par MPI:
 Called by root.
 */
-const std::vector<std::string> &          GetSurfaceNames(void) const { return this->SurfaceNamesList; }
+const std::vector< std::string > &          GetSurfaceNames(void) const { return this->SurfaceNamesList; }
 
 /**
 Returns a reference to the vector of surface species names (such as "Hfo_wOH").
@@ -2474,7 +2580,7 @@ that are included in SURFACE definitions in the initial-phreeqc module.
 @ref FindComponents must be called before @ref GetSurfaceSpecies.
 This method may be useful when generating selected output definitions related to surfaces.
 
-@retval const std::vector<std::string>&       A vector of strings; each string is a
+@retval const std::vector< std::string >&       A vector of strings; each string is a
 unique surface species name.
 @see                    @ref FindComponents,
 @ref GetSurfaceSpeciesCount, @ref GetSurfaceTypes, @ref GetSurfaceNames.
@@ -2483,9 +2589,9 @@ unique surface species name.
 <CODE>
 <PRE>
 // molalities of surface species
-const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpecies();
-const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
-const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+const std::vector< std::string > &surf_species = phreeqc_rm.GetSurfaceSpecies();
+const std::vector< std::string > &surf_types = phreeqc_rm.GetSurfaceTypes();
+const std::vector< std::string > &surf_names = phreeqc_rm.GetSurfaceNames();
 for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesCount(); i++)
 {
 oss << "    ";
@@ -2501,7 +2607,7 @@ oss << surf_types[i] << "   " << surf_names[i] << "\n";
 @par MPI:
 Called by root.
 */
-const std::vector<std::string> &          GetSurfaceSpecies(void) const { return this->SurfaceSpeciesNamesList; }
+const std::vector< std::string > &          GetSurfaceSpecies(void) const { return this->SurfaceSpeciesNamesList; }
 
 /**
 Returns the number of surface species (such as "Hfo_wOH") in the initial-phreeqc module.
@@ -2517,9 +2623,9 @@ This method may be useful when generating selected output definitions related to
 <CODE>
 <PRE>
 // molalities of surface species
-const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpecies();
-const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
-const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+const std::vector< std::string > &surf_species = phreeqc_rm.GetSurfaceSpecies();
+const std::vector< std::string > &surf_types = phreeqc_rm.GetSurfaceTypes();
+const std::vector< std::string > &surf_names = phreeqc_rm.GetSurfaceNames();
 for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesCount(); i++)
 {
 oss << "    ";
@@ -2546,7 +2652,7 @@ The vectors referenced by @ref GetSurfaceSpecies and
 @ref FindComponents must be called before @ref GetSurfaceTypes.
 This method may be useful when generating selected output definitions related to surfaces.
 
-@retval const std::vector<std::string>&       A vector of strings; each string is a
+@retval const std::vector< std::string >&       A vector of strings; each string is a
 surface site type for the corresponding species in the surface species vector;
 a surface site type may occur multiple times.
 
@@ -2557,9 +2663,9 @@ a surface site type may occur multiple times.
 <CODE>
 <PRE>
 // molalities of surface species
-const std::vector<std::string> &surf_species = phreeqc_rm.GetSurfaceSpecies();
-const std::vector<std::string> &surf_types = phreeqc_rm.GetSurfaceTypes();
-const std::vector<std::string> &surf_names = phreeqc_rm.GetSurfaceNames();
+const std::vector< std::string > &surf_species = phreeqc_rm.GetSurfaceSpecies();
+const std::vector< std::string > &surf_types = phreeqc_rm.GetSurfaceTypes();
+const std::vector< std::string > &surf_names = phreeqc_rm.GetSurfaceNames();
 for (size_t i = 0; i < phreeqc_rm.GetSurfaceSpeciesCount(); i++)
 {
 oss << "    ";
@@ -2575,7 +2681,7 @@ oss << surf_types[i] << "   " << surf_names[i] << "\n";
 @par MPI:
 Called by root.
 */
-const std::vector<std::string> &          GetSurfaceTypes(void) const { return this->SurfaceTypesList; }
+const std::vector< std::string > &          GetSurfaceTypes(void) const { return this->SurfaceTypesList; }
 
 /**
 Vector reference to the current temperatures of the cells.
@@ -2590,15 +2696,19 @@ of grid cells in the user's model (@ref GetGridCellCount).
 @htmlonly
 <CODE>
 <PRE>
-const std::vector<double> &  tempc = phreeqc_rm.GetTemperature();
+const std::vector< double > &  tempc = phreeqc_rm.GetTemperature();
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root.
  */
-	//const std::vector<double> &               GetTemperature(void) {return this->tempc;}
-	const std::vector<double> &               GetTemperature(void);
+	//const std::vector< double > &               GetTemperature(void) {return this->tempc;}
+	const std::vector< double > &               GetTemperature(void);
+
+#ifdef VISCOSITY
+	IRM_RESULT                                  GetViscosity(std::vector<double>& viscosity_arg);
+#endif
 /**
 Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
 For the OPENMP version, the number of threads is set implicitly or explicitly
@@ -2951,7 +3061,10 @@ The names of the map keys for map
 arguments are not used in parsing the YAML file; only the order of 
 the arguments is important.
 
-The PhreeqcRM methods that can be specified in a YAML file include:
+The class YAMLPhreeqcRM can be used to write a YAML file.
+The methods defined in the YAMLPhreeqcRM class include the
+following list; 
+all but SetGridCellCount correspond to PhreeqcRM methods.
 @htmlonly
 <CODE>
 <PRE>
@@ -2979,6 +3092,7 @@ SetErrorOn(bool tf);
 SetFilePrefix(std::string prefix);
 SetGasCompMoles(std::vector< double > gas_moles);
 SetGasPhaseVolume(std::vector< double > gas_volume);
+SetGridCellCount(int nxyz);
 SetPartitionUZSolids(bool tf);
 SetPorosity(std::vector< double > por);
 SetPressure(std::vector< double > p);
@@ -3016,8 +3130,11 @@ WarningMessage(std::string warnstr);
 @htmlonly
 <CODE>
 <PRE>
+		int nthreads = 0;
+		std::string yaml_file = "myfile.yaml";
+		int nxyz = GetGridCellCountYAML(yaml_file);
 		PhreeqcRM phreeqc_rm(nxyz, nthreads);
-		phreeqc_rm.InitializeYAML("myfile.yaml");
+		phreeqc_rm.InitializeYAML(yaml_file);
 </PRE>
 </CODE>
 @endhtmlonly
@@ -3042,8 +3159,8 @@ Size is @a n_boundary.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> bc_conc;
-std::vector<int> bc1;
+std::vector< double > bc_conc;
+std::vector< int > bc1;
 int nbound = 1;
 bc1.resize(nbound, 0);                      // solution 0 from InitialIPhreeqc instance
 status = phreeqc_rm.InitialPhreeqc2Concentrations(bc_conc, bc1);
@@ -3055,7 +3172,7 @@ Called by root.
  */
 	IRM_RESULT                                InitialPhreeqc2Concentrations(
 													std::vector < double > & destination_c,
-													std::vector < int >    & boundary_solution1);
+													const std::vector < int >    & boundary_solution1);
 /**
 Fills a vector (@a destination_c) with concentrations from solutions in the InitialPhreeqc instance.
 The method is used to obtain concentrations for boundary conditions that are mixtures of solutions. If a negative value
@@ -3081,8 +3198,8 @@ Size is @a n_boundary.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> bc_conc, bc_f1;
-std::vector<int> bc1, bc2;
+std::vector< double > bc_conc, bc_f1;
+std::vector< int > bc1, bc2;
 int nbound = 1;
 bc1.resize(nbound, 0);                      // solution 0 from InitialIPhreeqc instance
 bc2.resize(nbound, 1);                      // solution 1 from InitialIPhreeqc instance
@@ -3096,9 +3213,9 @@ Called by root.
  */
 	IRM_RESULT								  InitialPhreeqc2Concentrations(
 													std::vector < double > & destination_c,
-													std::vector < int >    & boundary_solution1,
-													std::vector < int >    & boundary_solution2,
-													std::vector < double > & fraction1);
+													const std::vector < int >    & boundary_solution1,
+													const std::vector < int >    & boundary_solution2,
+													const std::vector < double > & fraction1);
 /**
 Transfer solutions and reactants from the InitialPhreeqc instance to the reaction-module workers.
 @a Initial_conditions1 is used to select initial conditions, including solutions and reactants,
@@ -3120,7 +3237,7 @@ Negative values are ignored, resulting in no definition of that entity for that 
 @htmlonly
 <CODE>
 <PRE>
-std::vector<int> ic1;
+std::vector< int > ic1;
 ic1.resize(nxyz*7, -1);
 for (int i = 0; i < nxyz; i++)
 {
@@ -3139,7 +3256,7 @@ status = phreeqc_rm.InitialPhreeqc2Module(ic1);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT  InitialPhreeqc2Module(std::vector < int >    & initial_conditions1);
+	IRM_RESULT  InitialPhreeqc2Module(const std::vector < int >    & initial_conditions1);
 /**
 Transfer solutions and reactants from the InitialPhreeqc instance to the reaction-module workers, possibly with mixing.
 In its simplest form, @a  initial_conditions1 is used to select initial conditions, including solutions and reactants,
@@ -3180,10 +3297,10 @@ Size is 7 times @a nxyz. The order of definitions is given above.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<int> ic1, ic2;
+std::vector< int > ic1, ic2;
 ic1.resize(nxyz*7, -1);
 ic2.resize(nxyz*7, -1);
-std::vector<double> f1;
+std::vector< double > f1;
 f1.resize(nxyz*7, 1.0);
 for (int i = 0; i < nxyz; i++)
 {
@@ -3203,7 +3320,7 @@ status = phreeqc_rm.InitialPhreeqc2Module(ic1, ic2, f1);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT InitialPhreeqc2Module(
-		std::vector < int >    & initial_conditions1,
+		const std::vector < int >    & initial_conditions1,
 		std::vector < int >    & initial_conditions2,
 		std::vector < double > & fraction1);
 /**
@@ -3224,8 +3341,8 @@ and @a n_boundary is the dimension of @a boundary_solution1.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> bc_conc, bc_f1;
-std::vector<int> bc1, bc2;
+std::vector< double > bc_conc, bc_f1;
+std::vector< int > bc1, bc2;
 int nbound = 1;
 bc1.resize(nbound, 0);                      // solution 0 from Initial IPhreeqc instance
 status = phreeqc_rm.InitialPhreeqc2SpeciesConcentrations(bc_conc, bc1);
@@ -3264,8 +3381,8 @@ Size is same as @a boundary_solution1.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> bc_conc, bc_f1;
-std::vector<int> bc1, bc2;
+std::vector< double > bc_conc, bc_f1;
+std::vector< int > bc1, bc2;
 int nbound = 1;
 bc1.resize(nbound, 0);                      // solution 0 from Initial IPhreeqc instance
 bc2.resize(nbound, -1);                     // no bc2 solution for mixing
@@ -3298,7 +3415,7 @@ will be populated with cell @a n from the InitialPhreeqc instance.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<int> module_cells;
+std::vector< int > module_cells;
 module_cells.push_back(18);
 module_cells.push_back(19);
 status = phreeqc_rm.InitialPhreeqcCell2Module(-1, module_cells);
@@ -3308,7 +3425,7 @@ status = phreeqc_rm.InitialPhreeqcCell2Module(-1, module_cells);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                InitialPhreeqcCell2Module(int n, const std::vector<int> &cell_numbers);
+	IRM_RESULT                                InitialPhreeqcCell2Module(int n, const std::vector< int > &cell_numbers);
 /**
 Load a database for all IPhreeqc instances--workers, InitialPhreeqc, and Utility. All definitions
 of the reaction module are cleared (SOLUTION_SPECIES, PHASES, SOLUTIONs, etc.), and the database is read.
@@ -3649,7 +3766,7 @@ by @ref FindComponents or @ref GetComponentCount and
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> c;
+std::vector< double > c;
 c.resize(nxyz * components.size());
 ...
 AdvectCpp(c, bc_conc, ncomps, nxyz, nbound);
@@ -3668,7 +3785,7 @@ status = phreeqc_rm.RunCells();
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                SetConcentrations(const std::vector<double> &c);
+	IRM_RESULT                                SetConcentrations(const std::vector< double > &c);
 /**
 Select the current selected output by user number. The user may define multiple SELECTED_OUTPUT
 data blocks for the workers. A user number is specified for each data block. The value of
@@ -3697,7 +3814,7 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
   status = phreeqc_rm.SetCurrentSelectedOutputUserNumber(n_user);
   std::cerr << "Selected output sequence number: " << isel << "\n";
   std::cerr << "Selected output user number:     " << n_user << "\n";
-  std::vector<double> so;
+  std::vector< double > so;
   status = phreeqc_rm.GetSelectedOutput(so);
   // Process results here
 }
@@ -3723,7 +3840,7 @@ of grid cells in the user's model (@ref GetGridCellCount).
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> initial_density;
+std::vector< double > initial_density;
 initial_density.resize(nxyz, 1.0);
 phreeqc_rm.SetDensity(initial_density);
 </PRE>
@@ -3732,7 +3849,7 @@ phreeqc_rm.SetDensity(initial_density);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                SetDensity(const std::vector<double> &density);
+	IRM_RESULT                                SetDensity(const std::vector< double > &density);
 /**
 Set the name of the dump file. It is the name used by @ref DumpModule.
 @param dump_name        Name of dump file.
@@ -3838,7 +3955,7 @@ not be defined for the GAS_PHASE of the reaction cell.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> gas_moles;
+std::vector< double > gas_moles;
 gas_moles.resize(nxyz*ngas);
 ...
 status = phreeqc_rm.SetGasCompMoles(gas_moles);
@@ -3849,7 +3966,7 @@ status = phreeqc_rm.RunCells();
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
-IRM_RESULT                                SetGasCompMoles(const std::vector<double>& gas_moles);
+IRM_RESULT                                SetGasCompMoles(const std::vector< double >& gas_moles);
 /**
 Transfer volumes of gas phases from
 the vector given in the argument list (@a gas_volume) to each reaction cell.
@@ -3877,7 +3994,7 @@ not changed.
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> gas_volume;
+std::vector< double > gas_volume;
 gas_volume.resize(nxyz, -1.0);
 ...
 status = phreeqc_rm.SetGasPhaseVolume(gas_volume);
@@ -3888,7 +4005,7 @@ status = phreeqc_rm.RunCells();
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
-IRM_RESULT                                SetGasPhaseVolume(const std::vector<double>& gas_volume);
+IRM_RESULT                                SetGasPhaseVolume(const std::vector< double >& gas_volume);
 
 /**
 MPI and C/C++ only. Defines a callback function that allows additional tasks to be done
@@ -4089,13 +4206,13 @@ for (int isel = 0; isel < phreeqc_rm.GetSelectedOutputCount(); isel++)
 {
 	status = phreeqc_rm.SetCurrentSelectedOutput(isel);
 	int n_user = phreeqc_rm.GetCurrentSelectedOutputUserNumber(isel);
-	std::vector<double> so;
+	std::vector< double > so;
 	int col = phreeqc_rm.GetSelectedOutputColumnCount();
 	status = phreeqc_rm.GetSelectedOutput(so);
 	// Print results
 	for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount()/2; i++)
 	{
-		std::vector<std::string> headings;
+		std::vector< std::string > headings;
 		headings.resize(col);
 		std::cerr << "     Selected output " << n_user <<": " << "\n";
 		for (int j = 0; j < col; j++)
@@ -4161,7 +4278,7 @@ of grid cells in the user's model (@ref GetGridCellCount).
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> por;
+std::vector< double > por;
 por.resize(nxyz, 0.2);
 status = phreeqc_rm.SetPorosity(por);
 </PRE>
@@ -4170,7 +4287,7 @@ status = phreeqc_rm.SetPorosity(por);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                SetPorosity(const std::vector<double> &por);
+	IRM_RESULT                                SetPorosity(const std::vector< double > &por);
 
 /**
 Set the pressure for each reaction cell. Pressure effects are considered only in three of the
@@ -4183,7 +4300,7 @@ where @a nxyz is the number of grid cells in the user's model (@ref GetGridCellC
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> pressure;
+std::vector< double > pressure;
 pressure.resize(nxyz, 2.0);
 phreeqc_rm.SetPressure(pressure);
 </PRE>
@@ -4192,7 +4309,7 @@ phreeqc_rm.SetPressure(pressure);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                SetPressure(const std::vector<double> &p);
+	IRM_RESULT                                SetPressure(const std::vector< double > &p);
 /**
 Enable or disable detailed output for each reaction cell.
 Printing for a reaction cell will occur only when the
@@ -4206,7 +4323,7 @@ disable printing detailed output for the cell; a value of 1 will enable printing
 @htmlonly
 <CODE>
 <PRE>
-std::vector<int> print_chemistry_mask;
+std::vector< int > print_chemistry_mask;
 print_chemistry_mask.resize(nxyz, 0);
 for (int i = 0; i < nxyz/2; i++)
 {
@@ -4219,7 +4336,7 @@ status = phreeqc_rm.SetPrintChemistryMask(print_chemistry_mask);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                SetPrintChemistryMask(std::vector<int> & cell_mask);
+	IRM_RESULT                                SetPrintChemistryMask(const std::vector<int> & cell_mask);
 /**
 Set property that enables or disables printing detailed output from reaction calculations
 to the output file for a set of cells defined by @ref SetPrintChemistryMask.
@@ -4331,7 +4448,7 @@ of grid cells in the user's model (@ref GetGridCellCount).
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> rv;
+std::vector< double > rv;
 rv.resize(nxyz, 2.0);
 status = phreeqc_rm.SetRepresentativeVolume(rv);
 </PRE>
@@ -4340,7 +4457,7 @@ status = phreeqc_rm.SetRepresentativeVolume(rv);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                SetRepresentativeVolume(const std::vector<double> &rv);
+	IRM_RESULT                                SetRepresentativeVolume(const std::vector< double > &rv);
 /**
 Set the saturation of each reaction cell. Saturation is a fraction ranging from 0 to 1.
 The volume of water in a cell is the product of porosity (@ref SetPorosity), saturation (@a SetSaturation),
@@ -4360,7 +4477,7 @@ where @a nxyz is the number of grid cells in the user's model (@ref GetGridCellC
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> sat;
+std::vector< double > sat;
 sat.resize(nxyz, 1.0);
 status = phreeqc_rm.SetSaturation(sat);
 </PRE>
@@ -4369,7 +4486,7 @@ status = phreeqc_rm.SetSaturation(sat);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                SetSaturation(const std::vector<double> &sat);
+	IRM_RESULT                                SetSaturation(const std::vector< double > &sat);
 /**
 Set the property that controls whether messages are written to the screen.
 Messages include information about rebalancing during @ref RunCells, and
@@ -4475,7 +4592,7 @@ of grid cells in the user's model (@ref GetGridCellCount).
 @htmlonly
 <CODE>
 <PRE>
-std::vector<double> temperature;
+std::vector< double > temperature;
 temperature.resize(nxyz, 20.0);
 phreeqc_rm.SetTemperature(temperature);
 </PRE>
@@ -4484,7 +4601,7 @@ phreeqc_rm.SetTemperature(temperature);
 @par MPI:
 Called by root and (or) workers.
  */
-	IRM_RESULT                                SetTemperature(const std::vector<double> &t);
+	IRM_RESULT                                SetTemperature(const std::vector< double > &t);
 /**
 Set current simulation time for the reaction module.
 @param time             Current simulation time, in seconds.
@@ -4843,7 +4960,7 @@ Concentrations are moles per liter.
 status = phreeqc_rm.SetSpeciesSaveOn(true);
 int ncomps = phreeqc_rm.FindComponents();
 int nspecies = phreeqc_rm.GetSpeciesCount();
-std::vector<double> c;
+std::vector< double > c;
 status = phreeqc_rm.GetSpeciesConcentrations(c);
 ...
 SpeciesAdvectCpp(c, bc_conc, nspecies, nxyz, nbound);
@@ -4855,7 +4972,7 @@ status = phreeqc_rm.RunCells();
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-IRM_RESULT								  SpeciesConcentrations2Module(std::vector<double> & species_conc);
+IRM_RESULT								  SpeciesConcentrations2Module(std::vector< double > & species_conc);
 
 /**
 Save the state of the chemistry in all model cells, including SOLUTIONs, 
@@ -4992,938 +5109,6 @@ phreeqc_rm.WarningMessage("Parameter is out of range, using default");
 Called by root and (or) workers; only root writes to the log file.
  */
 	void                                      WarningMessage(const std::string &warnstr);
-// BMI data and methods
-private:
-	std::map<std::string, class BMI_Var> bmi_var_map;
-	std::vector<std::string> bmi_input_vars;
-	std::vector<std::string> bmi_output_vars;
-public:
-
-	//void BMI_Finalize();
-/**
-Basic Model Interface method that returns the component name--PhreeqcRM. The BMI interface to PhreeqcRM is
-only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
-prefix) provide a complete interface, and it is expected that the native methods will be used in preference to the BMI_
-methods.
-
-@retval The string "PhreeqcRM".
-@par C++ Example:
-@htmlonly
-<CODE>
-<PRE>
-std::cout << phreeqc_rm.BMI_GetComponentName();
-</PRE>
-</CODE>
-@endhtmlonly
-@par MPI:
-Called by root.
-*/
-	std::string BMI_GetComponentName() { return "PhreeqcRM"; }
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that returns the current simulation time, in seconds. (Same as @ref GetTime.)
-	The reaction module does not change the time value, so the
-	returned value is equal to the default (0.0) or the last time set by
-	@ref BMI_SetValue("Time", time) or @ref SetTime.
-	@retval                 The current simulation time, in seconds.
-	@see
-	@ref BMI_GetEndTime,
-	@ref BMI_GetTimeStep,
-	@ref BMI_SetValue,
-	@ref GetTime,
-	@ref GetTimeStep,
-	@ref SetTime,
-	@ref SetTimeStep.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	std::cout << "Current time: "
-		 << BMI_GetCurrentTime()
-		 << " seconds\n";
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
-	double BMI_GetCurrentTime() { return this->GetTime(); }
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that returns @ref BMI_GetCurrentTime plus @ref BMI_GetTimeStep, in seconds.
-	@retval                 The end of the time step, in seconds.
-	@see
-	@ref BMI_GetCurrentTime,
-	@ref BMI_GetTimeStep,
-	@ref BMI_SetValue,
-	@ref GetTime,
-	@ref GetTimeStep,
-	@ref SetTime,
-	@ref SetTimeStep.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	std::cout << "End of time step "
-		 << BMI_GetEndTime()
-		 << " seconds\n";
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
-	double BMI_GetEndTime() { return this->GetTime() + this->GetTimeStep(); }
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that returns count of input variables that can be set with @ref BMI_SetValue.
-	@retval  Count of input variables that can be set with @ref BMI_SetValue.
-
-	@see
-	@ref BMI_GetInputVarNames,
-	@ref BMI_GetVarItemsize,
-	@ref BMI_GetVarNbytes,
-	@ref BMI_GetVarType,
-	@ref BMI_GetVarUnits,
-	@ref BMI_SetValue.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			std::vector<std::string> InputVarNames = phreeqc_rm.BMI_GetInputVarNames();
-			int count = phreeqc_rm.BMI_GetInputItemCount();
-			oss << "BMI_SetValue variables:\n";
-			for (size_t i = 0; i < count; i++)
-			{
-				oss << "  " << i << "  " << InputVarNames[i] << "\n";
-				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(InputVarNames[i]) << "\n";
-				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(InputVarNames[i]) << "\n";
-				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) << "\n";
-				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
-				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) /
-											   phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
-			}
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
-	int BMI_GetInputItemCount() { return (int)this->bmi_input_vars.size(); }
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that returns a list of the variable names that can be set with @ref BMI_SetValue.
-	@retval  A list of the variable names that can be set with @ref BMI_SetValue.
-
-	@see
-	@ref BMI_GetInputItemCount,
-	@ref BMI_GetVarItemsize,
-	@ref BMI_GetVarNbytes,
-	@ref BMI_GetVarType,
-	@ref BMI_GetVarUnits,
-	@ref BMI_SetValue.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			std::vector<std::string> InputVarNames = phreeqc_rm.BMI_GetInputVarNames();
-			int count = phreeqc_rm.BMI_GetInputItemCount();
-			oss << "BMI_SetValue variables:\n";
-			for (size_t i = 0; i < count; i++)
-			{
-				oss << "  " << i << "  " << InputVarNames[i] << "\n";
-				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(InputVarNames[i]) << "\n";
-				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(InputVarNames[i]) << "\n";
-				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) << "\n";
-				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
-				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(InputVarNames[i]) /
-											   phreeqc_rm.BMI_GetVarItemsize(InputVarNames[i]) << "\n";
-			}
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
-	std::vector<std::string> BMI_GetInputVarNames() { return this->bmi_input_vars; }
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that returns count of output variables that can be retrieved with @ref BMI_GetValue.
-	@retval  Count of output variables that can be retrieved with @ref BMI_GetValue.
-
-	@see
-	@ref BMI_GetOutputVarNames,
-	@ref BMI_GetValue,
-	@ref BMI_GetVarItemsize,
-	@ref BMI_GetVarNbytes,
-	@ref BMI_GetVarType,
-	@ref BMI_GetVarUnits.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
-			int count = phreeqc_rm.BMI_GetOutputItemCount();
-			oss << "BMI_GetValue variables:\n";
-			for (size_t i = 0; i < count; i++)
-			{
-				oss << "  " << i << "  " << OutputVarNames[i] << "\n";
-				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
-				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
-				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
-				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
-											   phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-			}
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
-	int BMI_GetOutputItemCount() { return (int)this->bmi_output_vars.size(); }
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that returns a list of the variable names that can be retrieved with @ref BMI_GetValue.
-	@retval  A list of the variable names that can be retrieved with @ref BMI_GetValue.
-
-	@see
-	@ref BMI_GetOutputItemCount,
-	@ref BMI_GetValue,
-	@ref BMI_GetVarItemsize,
-	@ref BMI_GetVarNbytes,
-	@ref BMI_GetVarType,
-	@ref BMI_GetVarUnits.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
-			int count = phreeqc_rm.BMI_GetOutputItemCount();
-			oss << "BMI_GetValue variables:\n";
-			for (size_t i = 0; i < count; i++)
-			{
-				oss << "  " << i << "  " << OutputVarNames[i] << "\n";
-				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
-				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
-				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
-				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
-											   phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-			}
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
-	std::vector<std::string> BMI_GetOutputVarNames() { return this->bmi_output_vars; };
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that returns the current simulation time step, in seconds. (Same as @ref GetTimeStep.)
-	The reaction module does not change the time-step value, so the
-	returned value is equal to the last time steo set by
-	@ref BMI_SetValue("TimeStep", time_step) or @ref SetTimeStep.
-	@retval                 The current simulation time step, in seconds.
-	@see
-	@ref BMI_GetCurrentTime,
-	@ref BMI_GetEndTime,
-	@ref BMI_SetValue,
-	@ref GetTime,
-	@ref GetTimeStep,
-	@ref SetTime,
-	@ref SetTimeStep.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	std::cout << "Current time step: "
-		 << BMI_GetTimeStep()
-		 << " seconds\n";
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root..
-	 */
-	double BMI_GetTimeStep() { return this->GetTimeStep(); }
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that returns the time units of PhreeqcRM.
-	All time units are seconds for PhreeqcRM.
-	@retval                 Returns the string "seconds".
-	@see
-	@ref BMI_GetCurrentTime,
-	@ref BMI_GetEndTime,
-	@ref BMI_GetTimeStep,
-	@ref BMI_SetValue,
-	@ref GetTime,
-	@ref GetTimeStep,
-	@ref SetTime,
-	@ref SetTimeStep.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	std::cout << "PhreeqcRM time units are "
-		 << BMI_GetTimeUnits() << ".\n";
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
-	std::string BMI_GetTimeUnits() { return "seconds"; };
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that retrieves model variables. Only variables in the list
-	provided by @ref BMI_GetOutputVarNames can be retrieved. The BMI interface to PhreeqcRM is
-	only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
-	prefix) provide a complete interface, and it is expected that the native methods will be used in preference to the BMI_
-	methods.
-
-	Variable names for the first argument
-	of BMI_GetValue and the equivalent PhreeqcRM method are as follows:
-	"ComponentCount", @ref GetComponentCount;
-	"Components", @ref GetComponents;
-	"Concentrations", @ref GetConcentrations;
-	"CurrentSelectedOutputUserNumber", @ref GetCurrentSelectedOutputUserNumber;
-	"Density", @ref GetDensity;
-	"ErrorString", @ref GetErrorString;
-	"Gfw", @ref GetGfw;
-	"GridCellCount", @ref GetGridCellCount;
-	"Pressure", @ref GetPressure;
-	"Saturation", @ref GetSaturation;
-	"SelectedOutput", @ref GetSelectedOutput;
-	"SelectedOutputColumnCount", @ref GetSelectedOutputColumnCount
-	"SelectedOutputCount", @ref GetSelectedOutputCount;
-	"SelectedOutputHeadings, @ref GetSelectedOutputHeadings;
-	"SelectedOutputRowCount", @ref GetSelectedOutputRowCount;
-	"Temperature", @ref GetTemperature.
-
-	@see
-	@ref BMI_GetOutputVarNames,
-	@ref BMI_GetOutputItemCount,
-	@ref BMI_GetValue,
-	@ref BMI_GetVarItemsize,
-	@ref BMI_GetVarNbytes,
-	@ref BMI_GetVarType,
-	@ref BMI_GetVarUnits.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			int nbytes;
-			phreeqc_rm.BMI_GetVarNbytes("Density", &nbytes);
-			int item_size;
-			phreeqc_rm.BMI_GetVarItemSize("Density", &item_size);
-			int dim = nbytes/item_size;
-			std::vector<double> bmi_density(dim, 0.0);
-			phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
-			// equivalent to:
-			// std::vector<double> rm_density;
-			// phreeqc_rm.GetDensity(rm_density);
-
-			int ncomps;
-			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
-			int nbytes = phreeqc_rm.BMI_GetVarNbytes("Components");
-			std::string all_comps(nbytes, ' ');
-			phreeqc_rm.BMI_GetValue("Components", all_comps.data());
-			int string_size = phreeqc_rm.BMI_GetVarItemsize("Components");
-			std::vector<std::string> bmi_comps;
-			for (size_t i = 0; i < ncomps; i++)
-			{
-				std::string bmi_comp = all_comps.substr((i * string_size), string_size);
-				size_t end = bmi_comp.find_last_not_of(' ');
-				bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
-				bmi_comps.push_back(bmi_comp);
-			}
-			// equivalent to:
-			// std::vector< std::string > components = phreeqc_rm.GetComponents();
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	*/
-	void BMI_GetValue(std::string name, void* dest);
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that retrieves size of an 
-	individual item that can be set or retrived.
-	Sizes may be sizeof(int), sizeof(double), 
-	or a character length for string variables. Only variables in the list
-	provided by @ref BMI_GetInputVarNames can be set. 
-	See @ref BMI_SetValue for the list of input variable names.
-	Only variables in the list
-	provided by @ref BMI_GetOutputVarNames can be retrieved. 
-	See @ref BMI_GetValue for the list of output variable names.
-
-
-	@see
-	@ref BMI_GetInputVarNames,
-	@ref BMI_GetInputItemCount,
-	@ref BMI_GetOutputVarNames,
-	@ref BMI_GetOutputItemCount,
-	@ref BMI_GetValue,
-	@ref BMI_GetVarNbytes,
-	@ref BMI_SetValue.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			int nbytes;
-			phreeqc_rm.BMI_GetVarNbytes("Density", &nbytes);
-			int item_size;
-			phreeqc_rm.BMI_GetVarItemSize("Density", &item_size);
-			int dim = nbytes/item_size;
-			std::vector<double> bmi_density(dim, 0.0);
-			phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
-			// equivalent to:
-			// std::vector<double> rm_density;
-			// phreeqc_rm.GetDensity(rm_density);
-
-			int ncomps;
-			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
-			int nbytes = phreeqc_rm.BMI_GetVarNbytes("Components");
-			std::string all_comps(nbytes, ' ');
-			phreeqc_rm.BMI_GetValue("Components", all_comps.data());
-			int string_size = phreeqc_rm.BMI_GetVarItemsize("Components");
-			std::vector<std::string> bmi_comps;
-			for (size_t i = 0; i < ncomps; i++)
-			{
-				std::string bmi_comp = all_comps.substr((i * string_size), string_size);
-				size_t end = bmi_comp.find_last_not_of(' ');
-				bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
-				bmi_comps.push_back(bmi_comp);
-			}
-			// equivalent to:
-			// std::vector< std::string > components = phreeqc_rm.GetComponents();
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
-	int BMI_GetVarItemsize(std::string name);
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that retrieves the total number of bytes that are set for a variable with
-	@ref BMI_SetValue or retrieved for a variable with @ref BMI_GetValue.
-	Only variables in the list
-	provided by @ref BMI_GetInputVarNames can be set. 
-	See @ref BMI_SetValue for the list of input variable names.
-	Only variables in the list
-	provided by @ref BMI_GetOutputVarNames can be retrieved. 
-	See @ref BMI_GetValue for the list of output variable names.
-
-
-	@see
-	@ref BMI_GetInputVarNames,
-	@ref BMI_GetInputItemCount,
-	@ref BMI_GetOutputVarNames,
-	@ref BMI_GetOutputItemCount,
-	@ref BMI_GetValue,
-	@ref BMI_GetVarItemsize,
-	@ref BMI_SetValue.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			int nbytes;
-			phreeqc_rm.BMI_GetVarNbytes("Density", &nbytes);
-			int item_size;
-			phreeqc_rm.BMI_GetVarItemSize("Density", &item_size);
-			int dim = nbytes/item_size;
-			std::vector<double> bmi_density(dim, 0.0);
-			phreeqc_rm.BMI_GetValue("Density", bmi_density.data());
-			// equivalent to:
-			// std::vector<double> rm_density;
-			// phreeqc_rm.GetDensity(rm_density);
-
-			int ncomps;
-			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
-			int nbytes = phreeqc_rm.BMI_GetVarNbytes("Components");
-			std::string all_comps(nbytes, ' ');
-			phreeqc_rm.BMI_GetValue("Components", all_comps.data());
-			int string_size = phreeqc_rm.BMI_GetVarItemsize("Components");
-			std::vector<std::string> bmi_comps;
-			for (size_t i = 0; i < ncomps; i++)
-			{
-				std::string bmi_comp = all_comps.substr((i * string_size), string_size);
-				size_t end = bmi_comp.find_last_not_of(' ');
-				bmi_comp = (end == std::string::npos) ? "" : bmi_comp.substr(0, end + 1);
-				bmi_comps.push_back(bmi_comp);
-			}
-			// equivalent to:
-			// std::vector< std::string > components = phreeqc_rm.GetComponents();
-		}
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
-	int BMI_GetVarNbytes(std::string name);
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that retrieves the type of a variable that can be set with
-	@ref BMI_SetValue or retrieved with @ref BMI_GetValue. Types are "int", "double", or "string".
-	Only variables in the list
-	provided by @ref BMI_GetInputVarNames can be set. 
-	See @ref BMI_SetValue for the list of input variable names.
-	Only variables in the list
-	provided by @ref BMI_GetOutputVarNames can be retrieved. 
-	See @ref BMI_GetValue for the list of output variable names.
-
-
-	@see
-	@ref BMI_GetInputVarNames,
-	@ref BMI_GetInputItemCount,
-	@ref BMI_GetOutputVarNames,
-	@ref BMI_GetOutputItemCount,
-	@ref BMI_GetVarUnits.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
-			int count = phreeqc_rm.BMI_GetOutputItemCount();
-			oss << "BMI_GetValue variables:\n";
-			for (size_t i = 0; i < count; i++)
-			{
-				oss << "  " << i << "  " << OutputVarNames[i] << "\n";
-				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
-				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
-				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
-				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
-											   phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-			}
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
-	std::string BMI_GetVarType(std::string name);
-
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that retrieves the units of a variable that can be set with
-	@ref BMI_SetValue or retrieved with @ref BMI_GetValue.
-	Only variables in the list
-	provided by @ref BMI_GetInputVarNames can be set. 
-	See @ref BMI_SetValue for the list of input variable names.
-	Only variables in the list
-	provided by @ref BMI_GetOutputVarNames can be retrieved. 
-	See @ref BMI_GetValue for the list of output variable names.
-
-
-	@see
-	@ref BMI_GetInputVarNames,
-	@ref BMI_GetInputItemCount,
-	@ref BMI_GetOutputVarNames,
-	@ref BMI_GetOutputItemCount,
-	@ref BMI_GetVarType.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			std::vector<std::string> OutputVarNames = phreeqc_rm.BMI_GetOutputVarNames();
-			int count = phreeqc_rm.BMI_GetOutputItemCount();
-			oss << "BMI_GetValue variables:\n";
-			for (size_t i = 0; i < count; i++)
-			{
-				oss << "  " << i << "  " << OutputVarNames[i] << "\n";
-				oss << "     Type:        " << phreeqc_rm.BMI_GetVarType(OutputVarNames[i]) << "\n";
-				oss << "     Units:       " << phreeqc_rm.BMI_GetVarUnits(OutputVarNames[i]) << "\n";
-				oss << "     Total bytes: " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) << "\n";
-				oss << "     Item bytes:  " << phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-				oss << "     Dim:         " << phreeqc_rm.BMI_GetVarNbytes(OutputVarNames[i]) /
-											   phreeqc_rm.BMI_GetVarItemsize(OutputVarNames[i]) << "\n";
-			}
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root.
-	 */
-	std::string BMI_GetVarUnits(std::string name);
-
-	//--------------------------
-#ifdef USE_YAML
-	/**
-	Basic Model Interface method that can be used to initialize a PhreeqcRM instance. This method is equivalent to
-	@ref InitializeYAML. A YAML file can be used in initialization. The file contains a YAML map of PhreeqcRM methods
-	and the arguments corresponding to the method. For example,
-	@htmlonly
-	<CODE>
-	<PRE>
-	LoadDatabase: phreeqc.dat
-	RunFile:
-	  workers: true
-	  initial_phreeqc: true
-	  utility: true
-	  chemistry_name: advect.pqi
-	</PRE>
-	</CODE>
-	@endhtmlonly
-
-	BMI_Initialize will read the YAML file and execute the specified methods with the specified arguments. Using YAML
-	terminology, the argument(s) for a method may be a scalar, a sequence, or a map, depending if the argument is
-	a single item, a single vector, or there are multiple arguments. In the case of a map, the name associated
-	with each argument (for example "chemistry_name" above) is arbitrary. The names of the map keys for map
-	arguments are not used in parsing the YAML file; only the order of the arguments is important.
-
-	The PhreeqcRM methods that can be specified in a YAML file include:
-	@htmlonly
-	<CODE>
-	<PRE>
-	CloseFiles(void);
-	CreateMapping(std::vector< int >& grid2chem);
-	DumpModule();
-	FindComponents();
-	InitialPhreeqc2Module(std::vector< int > initial_conditions1);
-	InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
-	InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
-	LoadDatabase(std::string database);
-	OpenFiles(void);
-	OutputMessage(std::string str);
-	RunCells(void);
-	RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
-	RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
-	ScreenMessage(std::string str);
-	SetComponentH2O(bool tf);
-	SetConcentrations(std::vector< double > c);
-	SetCurrentSelectedOutputUserNumber(int n_user);
-	SetDensity(std::vector< double > density);
-	SetDumpFileName(std::string dump_name);
-	SetErrorHandlerMode(int mode);
-	SetErrorOn(bool tf);
-	SetFilePrefix(std::string prefix);
-	SetGasCompMoles(std::vector< double > gas_moles);
-	SetGasPhaseVolume(std::vector< double > gas_volume);
-	SetPartitionUZSolids(bool tf);
-	SetPorosity(std::vector< double > por);
-	SetPressure(std::vector< double > p);
-	SetPrintChemistryMask(std::vector< int > cell_mask);
-	SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
-	SetRebalanceByCell(bool tf);
-	SetRebalanceFraction(double f);
-	SetRepresentativeVolume(std::vector< double > rv);
-	SetSaturation(std::vector< double > sat);
-	SetScreenOn(bool tf);
-	SetSelectedOutputOn(bool tf);
-	SetSpeciesSaveOn(bool save_on);
-	SetTemperature(std::vector< double > t);
-	SetTime(double time);
-	SetTimeConversion(double conv_factor);
-	SetTimeStep(double time_step);
-	SetUnitsExchange(int option);
-	SetUnitsGasPhase(int option);
-	SetUnitsKinetics(int option);
-	SetUnitsPPassemblage(int option);
-	SetUnitsSolution(int option);
-	SetUnitsSSassemblage(int option);
-	SetUnitsSurface(int option);
-	SpeciesConcentrations2Module(std::vector< double > species_conc);
-	StateSave(int istate);
-	StateApply(int istate);
-	StateDelete(int istate);
-	UseSolutionDensityVolume(bool tf);
-	WarningMessage(std::string warnstr);
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@see
-	@ref BMI_Update.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			PhreeqcRM phreeqc_rm(nxyz, nthreads);
-			phreeqc_rm.BMI_Initialize("myfile.yaml");
-			int ncomps;
-			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
-			int ngrid;
-			phreeqc_rm.BMI_GetValue("GridCellCount", ngrid);
-			std::vector<double> c(ngrid*ncomps, 0.0);
-			phreeqc_rm.BMI_GetValue("Concentrations", c.data());
-			phreeqc_rm.BMI_SetValue("TimeStep", 86400);
-			for(double time = 0; time < 864000; time+=86400)
-			{
-				// Take a transport time step here and update the vector c.
-				phreeqc_rm.BMI_SetValue("Time", time);
-				phreeqc_rm.BMI_SetValue("Concentrations", c.data());
-				phreeqc_rm.BMI_Update();
-				phreeqc_rm.BMI_GetValue("Concentrations", c.data());
-			}
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	 */
-	void BMI_Initialize(std::string config_file) { IRM_RESULT status = InitializeYAML(config_file); };
-#endif
-	//--------------------------	
-
-	/**
-	Basic Model Interface method that sets model variables. Only variables in the list
-	provided by @ref BMI_GetInputVarNames can be set. The BMI interface to PhreeqcRM is
-	only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
-	prefix) provide a complete interface, and it is expected that the native methods will be used in preference to the BMI_
-	methods.
-
-	Variable names for the first argument
-	of BMI_SetValue and the equivalent PhreeqcRM method are as follows:
-	"Concentrations", @ref SetConcentrations;
-	"Density", @ref SetDensity;
-	"NthSelectedOutput", @ref SetNthSelectedOutput;
-	"Porosity", @ref SetPorosity;
-	"Pressure", @ref SetPressure;
-	"Saturation", @ref SetSaturation;
-	"SelectedOutputOn", @ref SetSelectedOutputOn;
-	"Temperature", @ref SetTemperature;
-	"Time", @ref SetTime;
-	"TimeStep", @ref SetTimeStep.
-
-	@see
-	@ref BMI_GetInputVarNames,
-	@ref BMI_GetInputItemCount,
-	@ref BMI_GetVarItemsize,
-	@ref BMI_GetVarNbytes,
-	@ref BMI_GetVarType,
-	@ref BMI_GetVarUnits,
-	@ref BMI_SetValue.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			int nbytes;
-			phreeqc_rm.BMI_GetVarNbytes("Temperature", &nbytes);
-			int item_size;
-			phreeqc_rm.BMI_GetVarItemSize("Temperature", &item_size);
-			int dim = nbytes/item_size;
-			std::vector<double> bmi_temperature(dim, 28.0);
-			phreeqc_rm.BMI_SetValue("Temperature", bmi_temperature.data());
-			// equivalent to:
-			// std::vector<double> rm_temperature(dim, 28.0);
-			// phreeqc_rm.SetTemperature(rm_temperature);
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	 */
-	void BMI_SetValue(std::string name, void* src);
-
-	//--------------------------	
-	/**
-	Basic Model Interface method that runs PhreeqcRM for one time step. This method is equivalent to
-	@ref RunCells. PhreeqcRM will equilibrate the solutions with all equilibrium reactants (EQUILIBRIUM_PHASES,
-	EXCHANGE, GAS_PHASE, SOLID_SOLUTIONS, and SURFACE) and
-	integrate KINETICS reactions for the specified time step (@ref SetTimeStep).
-	@see
-	@ref BMI_Initialize.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-			PhreeqcRM phreeqc_rm(nxyz, nthreads);
-			phreeqc_rm.BMI_Initialize("myfile.yaml");
-			int ncomps;
-			phreeqc_rm.BMI_GetValue("ComponentCount", &ncomps);
-			int ngrid;
-			phreeqc_rm.BMI_GetValue("GridCellCount", ngrid);
-			std::vector<double> c(ngrid*ncomps, 0.0);
-			phreeqc_rm.BMI_GetValue("Concentrations", c.data());
-			phreeqc_rm.BMI_SetValue("TimeStep", 86400);
-			for(double time = 0; time < 864000; time+=86400)
-			{
-				// Take a transport time step here and update the vector c.
-				phreeqc_rm.BMI_SetValue("Time", time);
-				phreeqc_rm.BMI_SetValue("Concentrations", c.data());
-				phreeqc_rm.BMI_Update();
-				phreeqc_rm.BMI_GetValue("Concentrations", c.data());
-			}
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	 */
-	void BMI_Update(void) { this->RunCells(); };
-#ifdef NOT_IMPLEMENTED
-	void BMI_UpdateUntil(double time)
-	{
-		//throw LetItThrow("Not implemented");
-		ErrorMessage("Not implemented");
-		throw PhreeqcRMStop();
-	}
-	int BMI_GetVarGrid(std::string name)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	std::string BMI_GetVarLocation(std::string name)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	double BMI_GetStartTime()
-	{
-		//throw LetItThrow("Not implemented");
-		ErrorMessage("Not implemented");
-		throw PhreeqcRMStop();
-	};
-	void* BMI_GetValuePtr(std::string name)
-	{
-		//throw LetItThrow("Not implemented");
-		ErrorMessage("Not implemented");
-		throw PhreeqcRMStop();
-	}
-	void BMI_GetValueAtIndices(std::string name, void* dest, int* inds, int count)
-	{
-		//throw LetItThrow("Not implemented");
-		ErrorMessage("Not implemented");
-		throw PhreeqcRMStop();
-	};
-	void BMI_SetValueAtIndices(std::string name, int* inds, int len, void* src)
-	{
-		//throw LetItThrow("Not implemented");
-		ErrorMessage("Not implemented");
-		throw PhreeqcRMStop();
-	};
-	int BMI_GetGridRank(const int grid)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	int BMI_GetGridSize(const int grid)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	std::string BMI_GetGridType(const int grid)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	void BMI_GetGridShape(const int grid, int* shape)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	void BMI_GetGridSpacing(const int grid, double* spacing)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	void GetGridOrigin(const int grid, double* origin)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	void BMI_GetGridX(const int grid, double* x)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	void BMI_GetGridY(const int grid, double* y)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	void BMI_GetGridZ(const int grid, double* z)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-
-	int BMI_GetGridNodeCount(const int grid)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	int BMI_GetGridEdgeCount(const int grid)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	int BMI_GetGridFaceCount(const int grid)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	void BMI_GetGridEdgeNodes(const int grid, int* edge_nodes)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	void BMI_GetGridFaceEdges(const int grid, int* face_edges)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	void BMI_GetGridFaceNodes(const int grid, int* face_nodes)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-	void BMI_GetGridNodesPerFace(const int grid, int* nodes_per_face)
-	{
-		//throw LetItThrow("Not applicable");
-		ErrorMessage("Not applicable");
-		throw PhreeqcRMStop();
-	};
-#endif
-private:
-	void BMI_MakeVarMap();
-// End BMI data and methods
 public:
 // Utilities
 	static std::string                        Char2TrimString(const char * str, size_t l = 0);
@@ -5935,25 +5120,25 @@ protected:
 	IRM_RESULT                                CellInitialize(
 		                                          int i,
 		                                          int n_user_new,
-		                                          int *initial_conditions1,
-		                                          int *initial_conditions2,
+		                                          const int *initial_conditions1,
+		                                          const int *initial_conditions2,
 		                                          double *fraction1,
 		                                          std::set<std::string> &error_set);
 	IRM_RESULT                                CheckCells();
 	int                                       CheckSelectedOutput();
     //void                                      Collapse2Nchem(double *d_in, double *d_out);
     //void                                      Collapse2Nchem(int *i_in, int *i_out);
-	IPhreeqc *                                Concentrations2UtilityH2O(std::vector<double> &c_in,
-		                                           std::vector<double> &t_in, std::vector<double> &p_in);
-	IPhreeqc *                                Concentrations2UtilityNoH2O(std::vector<double> &c_in,
-		                                           std::vector<double> &t_in, std::vector<double> &p_in);
-	void                                      Concentrations2Solutions(int n, std::vector<double> &c);
-	void                                      Concentrations2SolutionsH2O(int n, std::vector<double> &c);
-	void                                      Concentrations2SolutionsNoH2O(int n, std::vector<double> &c);
-	void                                      cxxSolution2concentration(cxxSolution * cxxsoln_ptr, std::vector<double> & d, double v, double dens);
-	void                                      cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector<double> & d, double v, double dens);
-	void                                      cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector<double> & d, double v, double dens);
-    void                                      GatherNchem(std::vector<double> &source, std::vector<double> &destination);
+	IPhreeqc *                                Concentrations2UtilityH2O(std::vector< double > &c_in,
+		                                           std::vector< double > &t_in, std::vector< double > &p_in);
+	IPhreeqc *                                Concentrations2UtilityNoH2O(std::vector< double > &c_in,
+		                                           std::vector< double > &t_in, std::vector< double > &p_in);
+	void                                      Concentrations2Solutions(int n, std::vector< double > &c);
+	void                                      Concentrations2SolutionsH2O(int n, std::vector< double > &c);
+	void                                      Concentrations2SolutionsNoH2O(int n, std::vector< double > &c);
+	void                                      cxxSolution2concentration(cxxSolution * cxxsoln_ptr, std::vector< double > & d, double v, double dens);
+	void                                      cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector< double > & d, double v, double dens);
+	void                                      cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector< double > & d, double v, double dens);
+    void                                      GatherNchem(std::vector< double > &source, std::vector< double > &destination);
 	cxxStorageBin &                           Get_phreeqc_bin(void) {return *this->phreeqc_bin;}
 	IRM_RESULT                                HandleErrorsInternal(std::vector< int > & r);
 	void                                      PartitionUZ(int n, int iphrq, int ihst, double new_frac);
@@ -5966,8 +5151,8 @@ protected:
 	void                                      Scale_solids(int n, int iphrq, double frac);
 	void                                      ScatterNchem(double *d_array);
 	void                                      ScatterNchem(int *i_array);
-	void                                      ScatterNchem(std::vector<double> &source, std::vector<double> &destination);
-	void                                      ScatterNchem(std::vector<int> &source, std::vector<int> &destination);
+	void                                      ScatterNchem(std::vector< double > &source, std::vector< double > &destination);
+	void                                      ScatterNchem(std::vector< int > &source, std::vector< int > &destination);
 	IRM_RESULT                                SetChemistryFileName(const char * prefix = NULL);
 	IRM_RESULT                                SetDatabaseFileName(const char * db = NULL);
 	void                                      SetEndCells(void);
@@ -5977,8 +5162,10 @@ protected:
 	IRM_RESULT                                TransferCellsUZ(std::ostringstream &raw_stream, int old, int nnew);
 
 private:
-	//IRM_RESULT                                SetGeneric(std::vector<double> &destination, int newSize, const std::vector<double> &origin, int mpiMethod, const std::string &name, const double newValue = 0.0);
-	IRM_RESULT                                SetGeneric(const std::vector<double> &source, std::vector<double> &destination_root, std::vector<double> &destination_worker, int mpiMethod, const std::string &name);
+	//IRM_RESULT                                SetGeneric(std::vector< double > &destination, int newSize, const std::vector< double > &origin, int mpiMethod, const std::string &name, const double newValue = 0.0);
+	IRM_RESULT                                SetGeneric(const std::vector< double > &source, std::vector< double > &destination_root, std::vector< double > &destination_worker, int mpiMethod, const std::string &name);
+public:
+
 protected:
 
 #if defined(_MSC_VER)
@@ -6006,22 +5193,24 @@ protected:
 	double time_conversion;					// time conversion factor, multiply to convert to preferred time unit for output
 	std::vector <double> old_saturation_root;	// saturation fraction from previous step
 	std::vector <double> old_saturation_worker;
-	std::vector<double> saturation_root;	    // nxyz saturation fraction
-	std::vector<double> saturation_worker;	    // nchem on workers saturation fraction
-	std::vector<double> pressure_root;			// nxyz on root current pressure
-	std::vector<double> pressure_worker;		// nchem on workers current pressure
-	std::vector<double> rv_root;		        // nxyz on root representative volume
-	std::vector<double> rv_worker;		        // nchem on workers representative volume
-	std::vector<double> porosity_root;		    // nxyz porosity
-	std::vector<double> porosity_worker;	    // nchem on workers porosity
-	std::vector<double> tempc_root;             // nxyz on root temperature Celsius 
-	std::vector<double> tempc_worker;		    // nchem on workers temperature Celsius 
-	std::vector<double> density_root;			// nxyz density
-	std::vector<double> density_worker;			// nchem on workers density
-	std::vector<double> solution_volume_root;   // nxyz on root solution volume
-	std::vector<double> solution_volume_worker;	// nchem on workers solution_volume 
-	std::vector<int> print_chem_mask_root;		// nxyz print flags for output file
-	std::vector<int> print_chem_mask_worker;	// nchem print flags for output file
+	std::vector< double > saturation_root;	    // nxyz saturation fraction
+	std::vector< double > saturation_worker;	    // nchem on workers saturation fraction
+	std::vector< double > pressure_root;			// nxyz on root current pressure
+	std::vector< double > pressure_worker;		// nchem on workers current pressure
+	std::vector< double > rv_root;		        // nxyz on root representative volume
+	std::vector< double > rv_worker;		        // nchem on workers representative volume
+	std::vector< double > porosity_root;		    // nxyz porosity
+	std::vector< double > porosity_worker;	    // nchem on workers porosity
+	std::vector< double > tempc_root;             // nxyz on root temperature Celsius 
+	std::vector< double > tempc_worker;		    // nchem on workers temperature Celsius 
+	std::vector< double > density_root;			// nxyz density
+	std::vector< double > density_worker;			// nchem on workers density
+	std::vector< double > viscosity_root;			// nxyz viscosity
+	std::vector< double > viscosity_worker;			// nchem on workers viscosity
+	std::vector< double > solution_volume_root;   // nxyz on root solution volume
+	std::vector< double > solution_volume_worker;	// nchem on workers solution_volume 
+	std::vector< int > print_chem_mask_root;		// nxyz print flags for output file
+	std::vector< int > print_chem_mask_worker;	// nchem print flags for output file
 	bool rebalance_by_cell;                 // rebalance method 0 std, 1 by_cell
 	double rebalance_fraction;			    // parameter for rebalancing process load for parallel
 	int units_Solution;                     // 1 mg/L, 2 mol/L, 3 kg/kgs
@@ -6036,7 +5225,7 @@ protected:
 	bool use_solution_density_volume;
 
 	// print flags
-	std::vector<bool> print_chemistry_on;	// print flag for chemistry output file
+	std::vector< bool > print_chemistry_on;	// print flag for chemistry output file
 	bool selected_output_on;				// create selected output
 
 	int error_count;
@@ -6048,8 +5237,8 @@ protected:
 	// threading
 	int nthreads;
 	std::vector<IPhreeqcPhast *> workers;
-	std::vector<int> start_cell;
-	std::vector<int> end_cell;
+	std::vector< int > start_cell;
+	std::vector< int > end_cell;
 	PHRQ_io *phreeqcrm_io;
 	bool delete_phreeqcrm_io;
 
@@ -6068,7 +5257,7 @@ protected:
 	std::vector <double> species_d_25;
 	std::vector <cxxNameDouble> species_stoichiometry;
 	std::map<int, int> s_num2rm_species_num;
-	std::vector<double> standard_task_vector;   // root only
+	std::vector< double > standard_task_vector;   // root only
 
 	// reactant lists
 	std::vector <std::string> ExchangeSpeciesNamesList;

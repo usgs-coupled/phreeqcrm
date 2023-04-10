@@ -12,6 +12,7 @@
 #define CLOCK() clock()/CLOCKS_PER_SEC
 #endif
 #include "PhreeqcRM.h"
+#include "RMVARS.h"
 #include "PHRQ_base.h"
 #include "PHRQ_io.h"
 #include "IPhreeqc.h"
@@ -31,6 +32,9 @@
 #define gzopen fopen
 #define gzprintf fprintf
 //#define ogzstream std::ofstream
+#endif
+#ifdef USE_YAML
+#include "yaml-cpp/yaml.h"
 #endif
 #include "cxxMix.h"
 #include "Solution.h"
@@ -62,7 +66,8 @@ size_t PhreeqcRM::InstancesIndex = 0;
 
 //// static PhreeqcRM methods
 /* ---------------------------------------------------------------------- */
-void PhreeqcRM::CleanupReactionModuleInstances(void)
+void
+PhreeqcRM::CleanupReactionModuleInstances(void)
 /* ---------------------------------------------------------------------- */
 {
 	std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.begin();
@@ -126,7 +131,22 @@ PhreeqcRM::ErrorHandler(int result, const std::string & e_string)
 		throw PhreeqcRMStop();
 	}
 }
-
+#ifdef USE_YAML
+/* ---------------------------------------------------------------------- */
+int
+PhreeqcRM::GetGridCellCountYAML(const char* YAML_file)
+/* ---------------------------------------------------------------------- */
+{
+	YAML::Node yaml = YAML::LoadFile(YAML_file);
+	std::string keyword;
+	YAML::Node node;
+	if (yaml["SetGridCellCount"].IsDefined())
+	{
+		return yaml["SetGridCellCount"].as<int>();
+	}
+	return 0;
+}
+#endif
 /* ---------------------------------------------------------------------- */
 PhreeqcRM*
 PhreeqcRM::GetInstance(int id)
@@ -252,6 +272,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 		std::cerr << "Reaction module not created." << std::endl;
 		exit(4);
 	}
+	this->var_man = NULL;
 	this->file_prefix = "myrun";
 	this->dump_file_name = file_prefix;
 	this->dump_file_name.append(".dump");
@@ -303,6 +324,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 			forward_mapping_root.push_back(i);
 			print_chem_mask_root.push_back(0);
 			density_root.push_back(1.0);
+			viscosity_root.push_back(1.0);
 			porosity_root.push_back(0.1);
 			rv_root.push_back(1.0);
 			pressure_root.push_back(1.0);
@@ -324,7 +346,6 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 	mpi_worker_callback_fortran = NULL;
 	mpi_worker_callback_c = NULL;
 	mpi_worker_callback_cookie = NULL;
-	BMI_MakeVarMap();
 }
 PhreeqcRM::~PhreeqcRM(void)
 {
@@ -350,8 +371,8 @@ IRM_RESULT
 PhreeqcRM::CellInitialize(
 					int ixyz,
 					int n_user_new,
-					int *initial_conditions1,
-					int *initial_conditions2,
+					const int *initial_conditions1,
+					const int *initial_conditions2,
 					double *fraction1,
 					std::set<std::string> &error_set)
 /* ---------------------------------------------------------------------- */
@@ -3360,10 +3381,9 @@ PhreeqcRM::GetCurrentSelectedOutputUserNumber(void)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
-	int return_value = IRM_INVALIDARG;
 	try
 	{
-		return_value = this->workers[0]->GetCurrentSelectedOutputUserNumber();
+		return this->workers[0]->GetCurrentSelectedOutputUserNumber();
 	}
 	catch (...)
 	{
@@ -4055,6 +4075,14 @@ PhreeqcRM::GetNthSelectedOutputUserNumber(int i)
 	this->ReturnHandler(PhreeqcRM::Int2IrmResult(return_value, true), "PhreeqcRM::GetNthSelectedOutputUserNumber");
 	return return_value;
 }
+
+/* ---------------------------------------------------------------------- */
+const std::vector<double>&
+PhreeqcRM::GetPorosity(void)
+/* ---------------------------------------------------------------------- */
+{
+	return this->porosity_root;
+}
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 const std::vector<double> &
@@ -4408,6 +4436,36 @@ PhreeqcRM::GetSelectedOutputHeading(int icol, std::string &heading)
 	{
 	}
 	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetSelectedOutputHeading");
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSelectedOutputHeadings(std::vector<std::string>& headings)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	headings.clear();
+	try
+	{
+		int ncol = this->GetSelectedOutputColumnCount();
+		if (ncol >= 0) 
+		{
+			for (size_t i = 0; i < ncol; i++)
+			{
+				std::string heading;
+				this->GetSelectedOutputHeading(i, heading);
+				headings.push_back(heading);
+			}
+			return IRM_OK;
+		}
+		else
+		{
+			this->ErrorHandler(IRM_INVALIDARG, "Selected output not found.");
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetSelectedOutputHeadings");
 }
 /* ---------------------------------------------------------------------- */
 int
@@ -4972,6 +5030,67 @@ PhreeqcRM::GetTemperature(void)
 	return this->tempc_root;
 }
 #endif
+#ifdef VISCOSITY
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetViscosity(std::vector<double>& viscosity_arg)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+#ifdef USE_MPI
+		if (this->mpi_myself == 0)
+		{
+			int method = METHOD_GETVISCOSITY;
+			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+		}
+		std::vector<double> local_viscosity_worker;
+		int size = this->end_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
+		local_viscosity_worker.resize(size, INACTIVE_CELL_VALUE);
+
+		// fill viscosity_root
+		int n = this->mpi_myself;
+		for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
+		{
+			int l = i - this->start_cell[n];
+			local_viscosity_worker[l] = this->workers[0]->Get_solution(i)->Get_viscosity();
+		}
+
+		// Gather to root
+		GatherNchem(local_viscosity_worker, viscosity_arg);
+#else
+		viscosity_arg.resize(this->nxyz, INACTIVE_CELL_VALUE);
+		std::vector<double> dbuffer;
+		for (int n = 0; n < this->nthreads; n++)
+		{
+			for (int i = start_cell[n]; i <= this->end_cell[n]; i++)
+			{
+				cxxSolution* soln_ptr = this->workers[n]->Get_solution(i);
+				if (!soln_ptr)
+				{
+					this->ErrorHandler(IRM_FAIL, "Solution not found for solution volume.");
+				}
+				else
+				{
+					double d = this->workers[n]->Get_solution(i)->Get_viscosity();
+					for (size_t j = 0; j < backward_mapping[i].size(); j++)
+					{
+						int n = backward_mapping[i][j];
+						viscosity_arg[n] = d;
+					}
+				}
+			}
+		}
+#endif
+	}
+	catch (...)
+	{
+		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetViscosity");
+	}
+	return IRM_OK;
+}
+#endif
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -5068,10 +5187,417 @@ PhreeqcRM::HandleErrorsInternal(std::vector< int > &rtn)
 	return IRM_OK;
 }
 #endif
+#ifdef USE_YAML
+IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
+{
+	YAML::Node yaml = YAML::LoadFile(config);
+	std::string keyword;
+	YAML::Node node;
+	for (YAML::Node::const_iterator it = yaml.begin();it != yaml.end();++it)
+	{
+		keyword = it->first.as<std::string>();
+		YAML::Node node = it->second;
+		if (keyword == "CloseFiles")
+		{
+			this->CloseFiles();
+			continue;
+		}
+		if (keyword == "CreateMapping")
+		{
+			assert(node.IsSequence());
+			std::vector<int> grid2chem = it->second.as<std::vector<int>>();
+			this->CreateMapping(grid2chem);
+			continue;
+		}
+		if (keyword == "DumpModule")
+		{
+			assert(node.IsMap());
+			assert(node.size() == 2);
+			YAML::const_iterator it1 = node.begin();
+			bool dump_on = it1++->second.as<bool>();
+			bool append = it1++->second.as<bool>();
+			this->DumpModule(dump_on, append);
+			continue;
+		}
+		if (keyword == "FindComponents")
+		{
+			this->FindComponents();
+			continue;
+		}
+		if (keyword == "InitialPhreeqc2Module")
+		{
+			if (node.IsSequence())
+			{
+				std::vector< int > ic = node.as< std::vector< int > >();
+				this->InitialPhreeqc2Module(ic);
+				continue;
+			}
+			else if (node.IsMap())
+			{
+				assert(node.IsMap());
+				assert(node.size() == 3);
+				YAML::const_iterator it1 = node.begin();
+				std::vector < int > ic1 = it1++->second.as< std::vector < int > >();
+				std::vector < int > ic2 = it1++->second.as< std::vector < int > >();
+				std::vector < double > f1 = it1->second.as< std::vector < double > >();
+				this->InitialPhreeqc2Module(ic1, ic2, f1);
+				continue;
+			}
+			//throw LetItThrow("YAML argument mismatch InitialPhreeqc2Module");
+			ErrorMessage("YAML argument mismatch InitialPhreeqc2Module");
+			throw PhreeqcRMStop();
+		}
+		if (keyword == "InitialPhreeqcCell2Module")
+		{
+			assert(node.IsMap());
+			assert(node.size() == 2);
+			YAML::const_iterator it1 = node.begin();
+			int n = it1++->second.as<int>();
+			std::vector< int > cell_numbers = it1->second.as< std::vector<int > >();
+			this->InitialPhreeqcCell2Module(n, cell_numbers);
+			continue;
+		}
+		if (keyword == "LoadDatabase")
+		{
+			std::string file = node.as< std::string >();
+			this->LoadDatabase(file);
+			continue;
+		}
+		if (keyword == "OpenFiles")
+		{
+			this->OpenFiles();
+			continue;
+		}
+		if (keyword == "OutputMessage")
+		{
+			assert(node.IsScalar());
+			std::string str = node.as< std::string >();
+			this->OutputMessage(str);
+			continue;
+		}
+		if (keyword == "RunCells")
+		{
+			this->RunCells();
+			continue;
+		}
+		if (keyword == "RunFile")
+		{
+			assert(node.IsMap());
+			assert(node.size() == 4);
+			YAML::const_iterator it1 = node.begin();
+			bool workers = it1++->second.as<bool>();
+			bool initial = it1++->second.as<bool>();
+			bool utility = it1++->second.as<bool>();
+			std::string  file = it1->second.as< std::string >();
+			this->RunFile(workers, initial, utility, file);
+			continue;
+		}
+		if (keyword == "RunString")
+		{
+			assert(node.IsMap());
+			assert(node.size() == 4);
+			YAML::const_iterator it1 = node.begin();
+			bool workers = it1++->second.as<bool>();
+			bool initial = it1++->second.as<bool>();
+			bool utility = it1++->second.as<bool>();
+			std::string  string = it1->second.as<std::string>();
+			this->RunString(workers, initial, utility, string);
+			continue;
+		}
+		if (keyword == "ScreenMessage")
+		{
+			assert(node.IsScalar());
+			std::string str = node.as< std::string >();
+			this->ScreenMessage(str);
+			continue;
+		}
+		if (keyword == "SetComponentH2O")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetComponentH2O(tf);
+			continue;
+		}
+		if (keyword == "SetConcentrations") {
+			assert(node.IsSequence());
+			std::vector< double > c = node.as< std::vector< double > >();
+			this->SetConcentrations(c);
+			continue;
+		}
+		if (keyword == "SetCurrentSelectedOutputUserNumber")
+		{
+			assert(node.IsScalar());
+			int n = node.as< int >();
+			this->SetCurrentSelectedOutputUserNumber(n);
+			continue;
+		}
+		if (keyword == "SetDensity")
+		{
+			assert(node.IsSequence());
+			std::vector< double > den = node.as< std::vector< double > >();
+			this->SetDensity(den);
+			continue;
+		}
+		if (keyword == "SetDumpFileName")
+		{
+			assert(node.IsScalar());
+			std::string str = node.as< std::string >();
+			this->SetDumpFileName(str);
+			continue;
+		}
+		if (keyword == "SetErrorHandlerMode")
+		{
+			assert(node.IsScalar());
+			int mode = node.as< int >();
+			this->SetErrorHandlerMode(mode);
+			continue;
+		}
+		if (keyword == "SetErrorOn") {
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetErrorOn(tf);
+			continue;
+		}
+		if (keyword == "SetFilePrefix")
+		{
+			assert(node.IsScalar());
+			std::string prefix = node.as< std::string >();
+			this->SetFilePrefix(prefix);
+			continue;
+		}
+		if (keyword == "SetGasCompMoles") {
+			assert(node.IsSequence());
+			std::vector<double> mol = node.as< std::vector < double > >();
+			this->SetGasCompMoles(mol);
+			continue;
+		}
+		if (keyword == "SetGasPhaseVolume") {
+			assert(node.IsSequence());
+			std::vector<double> vol = node.as< std::vector < double > >();
+			this->SetGasPhaseVolume(vol);
+			continue;
+		}
+		if (keyword == "SetGridCellCount") {
+			//this->WarningMessage("SetGridCellCount has no effect after the PhreeqcRM instance is created.");
+			continue;
+		}
+		if (keyword == "SetPartitionUZSolids")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetPartitionUZSolids(tf);
+			continue;
+		}
+		if (keyword == "SetPorosity")
+		{
+			assert(node.IsSequence());
+			std::vector<double> por = node.as< std::vector< double > >();
+			this->SetPorosity(por);
+			continue;
+		}
+		if (keyword == "SetPressure")
+		{
+			assert(node.IsSequence());
+			std::vector<double> pressure = node.as< std::vector< double > >();
+			this->SetPressure(pressure);
+			continue;
+		}
+		if (keyword == "SetPrintChemistryMask")
+		{
+			assert(node.IsSequence());
+			std::vector<int> mask = node.as< std::vector< int > >();
+			this->SetPrintChemistryMask(mask);
+			continue;
+		}
+		if (keyword == "SetPrintChemistryOn")
+		{
+			assert(node.IsMap());
+			assert(node.size() == 3);
+			YAML::const_iterator it1 = node.begin();
+			bool workers = it1++->second.as< bool >();
+			bool initial = it1++->second.as< bool >();
+			bool utility = it1->second.as< bool >();
+			this->SetPrintChemistryOn(workers, initial, utility);
+			continue;
+		}
+		if (keyword == "SetRebalanceByCell")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetRebalanceByCell(tf);
+			continue;
+		}
+		if (keyword == "SetRebalanceFraction")
+		{
+			assert(node.IsScalar());
+			double f = node.as<double>();
+			this->SetRebalanceFraction(f);
+			continue;
+		}
+		if (keyword == "SetRepresentativeVolume")
+		{
+			assert(node.IsSequence());
+			std::vector<double> rv = it->second.as< std::vector<double > >();
+			this->SetRepresentativeVolume(rv);
+			continue;
+		}
+		if (keyword == "SetSaturation")
+		{
+			assert(node.IsSequence());
+			std::vector< double > sat = node.as< std::vector< double> >();
+			this->SetSaturation(sat);
+			continue;
+		}
+		if (keyword == "SetScreenOn") {
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetScreenOn(tf);
+			continue;
+		}
+		if (keyword == "SetSelectedOutputOn")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetSelectedOutputOn(tf);
+			continue;
+		}
+		if (keyword == "SetSpeciesSaveOn")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->SetSpeciesSaveOn(tf);
+			continue;
+		}
+		if (keyword == "SetTemperature")
+		{
+			assert(node.IsSequence());
+			std::vector<double> temp = node.as<std::vector<double>>();
+			this->SetTemperature(temp);
+			continue;
+		}
+		if (keyword == "SetTime")
+		{
+			assert(node.IsScalar());
+			double time = node.as<double>();
+			this->SetTime(time);
+			continue;
+		}
+		if (keyword == "SetTimeConversion")
+		{
+			assert(node.IsScalar());
+			double time_conv = node.as<double>();
+			this->SetTimeConversion(time_conv);
+			continue;
+		}
+		if (keyword == "SetTimeStep")
+		{
+			assert(node.IsScalar());
+			double time_step = node.as<double>();
+			this->SetTimeStep(time_step);
+			continue;
+		}
+		if (keyword == "SetUnitsExchange")
+		{
+			assert(node.IsScalar());
+			int units = node.as<int>();
+			this->SetUnitsExchange(units);
+			continue;
+		}
+		if (keyword == "SetUnitsGasPhase")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsGasPhase(units);
+			continue;
+		}
+		if (keyword == "SetUnitsKinetics")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsKinetics(units);
+			continue;
+		}
+		if (keyword == "SetUnitsPPassemblage")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsPPassemblage(units);
+			continue;
+		}
+		if (keyword == "SetUnitsSolution")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsSolution(units);
+			continue;
+		}
+		if (keyword == "SetUnitsSSassemblage")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsSSassemblage(units);
+			continue;
+		}
+		if (keyword == "SetUnitsSurface")
+		{
+			assert(node.IsScalar());
+			int units = node.as< int >();
+			this->SetUnitsSurface(units);
+			continue;
+		}
+		if (keyword == "SpeciesConcentrations2Module")
+		{
+			assert(node.IsSequence());
+			std::vector < double > scond = node.as< std::vector < double > >();
+			this->SpeciesConcentrations2Module(scond);
+			continue;
+		}
+		if (keyword == "StateSave")
+		{
+			assert(node.IsScalar());
+			int n = node.as< int >();
+			this->StateSave(n);
+			continue;
+		}
+		if (keyword == "StateApply")
+		{
+			assert(node.IsScalar());
+			int n = node.as< int >();
+			this->StateApply(n);
+			continue;
+		}
+		if (keyword == "StateDelete")
+		{
+			assert(node.IsScalar());
+			int n = node.as< int >();
+			this->StateDelete(n);
+			continue;
+		}
+		if (keyword == "UseSolutionDensityVolume")
+		{
+			assert(node.IsScalar());
+			bool tf = node.as< bool >();
+			this->UseSolutionDensityVolume(tf);
+			continue;
+		}
+		if (keyword == "WarningMessage")
+		{
+			assert(node.IsScalar());
+			std::string str = node.as< std::string >();
+			this->WarningMessage(str);
+			continue;
+		}
+		//throw LetItThrow("YAML keyword not found");
+		ErrorMessage("YAML keyword not found");
+		throw PhreeqcRMStop();
+	}
+	return IRM_RESULT::IRM_OK;
+}
+#endif
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
-					std::vector < int > & boundary_solution1)
+					const std::vector < int > & boundary_solution1)
 {
 	this->phreeqcrm_error_string.clear();
 	std::vector< int > dummy;
@@ -5081,9 +5607,9 @@ PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
-					std::vector < int > & boundary_solution1,
-					std::vector < int > & boundary_solution2,
-					std::vector < double > & fraction1)
+					const std::vector < int > & boundary_solution1,
+					const std::vector < int > & boundary_solution2,
+					const std::vector < double > & fraction1)
 /* ---------------------------------------------------------------------- */
 {
 /*
@@ -5194,7 +5720,7 @@ PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Module(
-					std::vector < int >    & initial_conditions1_in)
+					const std::vector < int >    & initial_conditions1_in)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -5210,7 +5736,7 @@ PhreeqcRM::InitialPhreeqc2Module(
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Module(
-					std::vector < int >    & initial_conditions1,
+					const std::vector < int >    & initial_conditions1,
 					std::vector < int >    & initial_conditions2,
 					std::vector < double > & fraction1)
 /* ---------------------------------------------------------------------- */
@@ -6136,6 +6662,13 @@ PhreeqcRM::MpiWorker()
 				if (debug_worker) std::cerr << "METHOD_GETTEMPERATURE" << std::endl;
 				{
 					this->GetTemperature();
+				}
+				break;
+			case METHOD_GETVISCOSITY:
+				if (debug_worker) std::cerr << "METHOD_GETVISCOSITY" << std::endl;
+				{
+					std::vector<double> dummy;
+					this->GetViscosity(dummy);
 				}
 				break;
 			case METHOD_INITIALPHREEQC2MODULE:
@@ -8467,9 +9000,9 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 	}
 
 	// Split up work
-	double f_low, f_high;
-	f_high = 1 + 0.5 / ((double) this->nthreads);
-	f_low = 1;
+	//double f_low, f_high;
+	//f_high = 1 + 0.5 / ((double) this->nthreads);
+	//f_low = 1;
 	int j = 0;
 	for (size_t i = 0; i < (size_t) this->nthreads - 1; i++)
 	{
@@ -8477,7 +9010,6 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 		{
 			start_cell_new[i] = end_cell_new[i - 1] + 1;
 		}
-		double sum_work = 0;
 		double temp_sum_work = 0;
 		bool next = true;
 		while (next)
@@ -8485,7 +9017,7 @@ PhreeqcRM::RebalanceLoadPerCell(void)
 			temp_sum_work += normalized_cell_times[j] / normalized_total_time;
 			if ((temp_sum_work < task_fraction[i]) && ((count_chemistry - (int) j) > (this->nthreads - (int) i)))
 			{
-				sum_work = temp_sum_work;
+				//sum_work = temp_sum_work;
 				j++;
 				next = true;
 			}
@@ -10486,7 +11018,7 @@ PhreeqcRM::SetDensity(const std::vector<double> &t)
 	std::string methodName = "SetDensity";
 	IRM_RESULT result_value = SetGeneric(t, this->density_root, density_worker, METHOD_SETDENSITY, methodName);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
-			}
+}
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -10829,6 +11361,7 @@ PhreeqcRM::SetPorosity(const std::vector<double> &t)
 	this->phreeqcrm_error_string.clear();
 	std::string methodName = "SetPorosity";
 	IRM_RESULT result_value = SetGeneric(t, this->porosity_root, porosity_worker, METHOD_SETPOROSITY, methodName);
+	this->UpdateBMI(RMVARS::Porosity);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 
@@ -10894,6 +11427,7 @@ PhreeqcRM::SetPressure(const std::vector<double> &t)
 	{
 		return_value = IRM_FAIL;
 	}
+	this->UpdateBMI(RMVARS::Pressure);
 	return this->ReturnHandler(return_value, "PhreeqcRM::SetPressure");
 }
 /* ---------------------------------------------------------------------- */
@@ -10934,7 +11468,7 @@ PhreeqcRM::SetPrintChemistryOn(bool worker, bool ip, bool utility)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::SetPrintChemistryMask(std::vector<int> & m)
+PhreeqcRM::SetPrintChemistryMask(const std::vector<int> & m)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -11029,6 +11563,7 @@ PhreeqcRM::SetSaturation(const std::vector<double> &t)
 	this->phreeqcrm_error_string.clear();
 	std::string methodName = "SetSaturation";
 	IRM_RESULT result_value = SetGeneric(t, this->saturation_root, saturation_worker, METHOD_SETSATURATION, methodName);
+	this->UpdateBMI(RMVARS::Saturation);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 /* ---------------------------------------------------------------------- */
@@ -11071,6 +11606,7 @@ PhreeqcRM::SetSelectedOutputOn(bool t)
 	this->selected_output_on = (temp_tf == 0) ? false : true;
 	//MPI_Bcast(&this->selected_output_on, 1, MPI_LOGICAL, 0, phreeqcrm_comm);
 #endif
+	this->UpdateBMI(RMVARS::SelectedOutputOn);
 	return IRM_OK;
 }
 
@@ -11156,6 +11692,7 @@ PhreeqcRM::SetTemperature(const std::vector<double> &t)
 	{
 		return_value = IRM_FAIL;
 	}
+	this->UpdateBMI(RMVARS::Temperature);
 	return this->ReturnHandler(return_value, "PhreeqcRM::SetTemperature");
 }
 /* ---------------------------------------------------------------------- */
@@ -11179,6 +11716,7 @@ PhreeqcRM::SetTime(double t)
 #ifdef USE_MPI
 	MPI_Bcast(&this->time, 1, MPI_DOUBLE, 0, phreeqcrm_comm);
 #endif
+	this->UpdateBMI(RMVARS::Time);
 	return IRM_OK;
 }
 
@@ -11227,6 +11765,7 @@ PhreeqcRM::SetTimeStep(double t)
 #ifdef USE_MPI
 	MPI_Bcast(&this->time_step, 1, MPI_DOUBLE, 0, phreeqcrm_comm);
 #endif
+	this->UpdateBMI(RMVARS::TimeStep);
 	return IRM_OK;
 }
 /* ---------------------------------------------------------------------- */
@@ -11862,6 +12401,16 @@ PhreeqcRM::TransferCellsUZ(std::ostringstream &raw_stream, int old, int nnew)
 }
 
 #endif
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::UpdateBMI(RMVARS v_enum)
+/* ---------------------------------------------------------------------- */
+{
+	if (this->var_man != NULL)
+	{
+		this->var_man->RM2BMIUpdate(v_enum);
+	}
+}
 /* ---------------------------------------------------------------------- */
 void
 PhreeqcRM::UseSolutionDensityVolume(bool tf)

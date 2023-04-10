@@ -2,10 +2,14 @@
 /*! @file YAMLPhreeqcRM.h
 	@brief YAMLPhreeqcRM C++ Documentation 
 */
+#ifndef INC_YAMLPHREEQCRM_H
+#define INC_YAMLPHREEQCRM_H
 #include <map>
+#include <mutex>
 #include <string>
 #include "yaml-cpp/yaml.h"
-#pragma once
+#include "IrmResult.h"
+//#pragma once
 
 #if defined(_WINDLL)
 #define IRM_DLL_EXPORT __declspec(dllexport)
@@ -18,17 +22,24 @@
  *
  * @brief YAML helper class
  */
-
 class IRM_DLL_EXPORT YAMLPhreeqcRM
 {
 private:
 	YAML::Node YAML_doc;
+	std::map<std::string, int> method_map;
+protected:
+	friend class YAMLPhreeqcRMLib;
+	static std::map<size_t, YAMLPhreeqcRM*> Instances;
+	static std::mutex InstancesLock;
+	static size_t InstancesIndex;
+	size_t Index;
 public:
 
 	/**
 	Constructor
 	*/
 	YAMLPhreeqcRM();
+	~YAMLPhreeqcRM();
 	/**
 	Clears all definitions from the YAML document.
 	@par C++ Example:
@@ -43,7 +54,12 @@ public:
 	</CODE>
 	@endhtmlonly
 	 */
-	void clear();
+	void Clear();	/**
+	 *  Retrieves the id of this object.  Each instance receives an id which is incremented for each instance
+	 *  starting with the value zero.
+	 *  @return                 The id.
+	 */
+	int                      GetId(void)const;
 	/**
 	Returns a constant reference to the YAML document.
 	@par C++ Example:
@@ -149,7 +165,7 @@ yrm.YAMLCloseFiles();
 	</CODE>
 	@endhtmlonly
 	 */
-	void YAMLDumpModule();
+	void YAMLDumpModule(bool dump_on, bool append);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method FindComponents.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -407,8 +423,9 @@ yrm.YAMLCloseFiles();
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
 	@par
-	RunCells runs a reactions for all cells in the reaction module.
-	During initialization, RunCells can be used to equilibrate each solution with all reacts in a cell while
+	RunCells runs reactions for all cells in the reaction module.
+	During initialization, RunCells can be used to equilibrate 
+	each solution with all reactants in a cell while
 	using a time step of zero (@ref YAMLSetTimeStep) to avoid kinetic reactions.
 	Other properties that may need to be initialized before RunCells is invoked
 	include porosity (@ref YAMLSetPorosity),
@@ -537,9 +554,9 @@ yrm.YAMLRunString(true, false, true, input.c_str());
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
 	@par
-	SetConcentrations uses the vector of concentrations (@a c) to set the moles of components in each reaction cell.
-	For YAML initialization, it is unlikely that accurate concentrations are available unless previously calculated
-	concentrations are available.
+	The only way to use this method is to have pre-calculated PHREEQC solution concentrations,
+	which is not common. Concentrations are normally initialized
+	with @ref YAMLInitialPhreeqc2Module or @ref YAMLInitialPhreeqcCell2Module.
 	@param c               Vector of component concentrations. Size of vector is @a ncomps times @a nxyz,
 	where @a ncomps is the number of components as determined
 	by FindComponents or GetComponentCount and
@@ -752,7 +769,8 @@ yrm.YAMLRunString(true, false, true, input.c_str());
 		*/
 	void YAMLSetGasPhaseVolume(std::vector< double > gas_volume);
 	/**
-Inserts data into the YAML document to define the number of cells.
+Inserts data into the YAML document to define the number of cells in the 
+user's model.
 Once the YAML document is written, the number of model cells can be extracted
 with the method GetGridCellCountYAML. GetGridCellCountYAML is NOT a PhreeqcRM 
 method; it is a global method and must be used BEFORE the PhreeqcRM instance
@@ -1165,8 +1183,6 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	</PRE>
 	</CODE>
 	@endhtmlonly
-	@par MPI:
-	Called by root and (or) workers.
 	 */
 	void YAMLSetTemperature(std::vector< double > t);
 	/**
@@ -1542,7 +1558,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	@htmlonly
 	<CODE>
 	<PRE>
-	yrm.YAMLGetSpeciesConcentrations(c);
+	yrm.YAMLSetSpeciesConcentrations(c);
 	</PRE>
 	</CODE>
 	@endhtmlonly
@@ -1681,14 +1697,23 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	@htmlonly
 	<CODE>
 	<PRE>
-	phreeqc_rm.WarningMessage("Need to check these definitions.");
+	yrm.YAMLWarningMessage("Need to check these definitions.");
 	</PRE>
 	</CODE>
 	@endhtmlonly
 	 */
 	void YAMLWarningMessage(std::string warnstr);
 	// data
-private:
-	std::map<std::string, int> method_map;
+
 };
+class YAMLPhreeqcRMLib
+{
+public:
+	//static void CleanupYAMLPhreeqcRMInstances(void);
+	static int CreateYAMLPhreeqcRM(void);
+	static IRM_RESULT DestroyYAMLPhreeqcRM(int n);
+	static YAMLPhreeqcRM* GetInstance(int n);
+};
+
+#endif // INC_YAMLPHREEQCRM_H
 #endif

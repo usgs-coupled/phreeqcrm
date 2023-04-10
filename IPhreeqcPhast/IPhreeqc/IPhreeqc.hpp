@@ -713,7 +713,7 @@ public:
 	 *  Sets a Fortran callback function for Basic programs. The syntax for the Basic command is
 	 *  10 result = CALLBACK(x1, x2, string$)
 	 *  The syntax for the Fortran function is
-	 *  double precision my_callback(x1, x2, string), where x1 and x2 are double precision and string is a character variable.
+	 *  real(kind=8) my_callback(x1, x2, string), where x1 and x2 are real(kind=8) and string is a character variable.
 	 *  @param fcn              The name of a user-defined function.
 	 *  @see                    SetBasicCallback
 	 */

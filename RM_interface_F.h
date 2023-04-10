@@ -13,7 +13,6 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
 IRM_DLL_EXPORT IRM_RESULT RMF_Abort(int *id, int *result, const char * err_str);
 IRM_DLL_EXPORT IRM_RESULT RMF_CloseFiles(int *id);
 IRM_DLL_EXPORT int        RMF_Concentrations2Utility(int *id, double *c, int *n, double *tc, double *p_atm);
@@ -29,8 +28,6 @@ IRM_DLL_EXPORT int        RMF_GetChemistryCellCount(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetComponent(int * id, int * num, char *chem_name, int *l1);
 IRM_DLL_EXPORT int        RMF_GetComponentCount(int * id);
 IRM_DLL_EXPORT int        RMF_GetCurrentSelectedOutputUserNumber(int* id);
-
-
 IRM_DLL_EXPORT int        RMF_GetExchangeSpeciesCount(int * id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetExchangeSpeciesName(int * id, int * num, char *name, int *l1);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetExchangeName(int * id, int * num, char *name, int *l1);
@@ -50,8 +47,6 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetSolidSolutionName(int * id, int * num, char *na
 IRM_DLL_EXPORT int        RMF_GetSICount(int * id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSIName(int * id, int * num, char *name, int *l1);
 
-
-
 IRM_DLL_EXPORT IRM_RESULT RMF_GetConcentrations(int *id, double *c);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetDensity(int *id, double *density);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetEndCell(int *id, int *ec);
@@ -63,11 +58,16 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetGasCompPressures(int* id, double* p);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGasCompPhi(int* id, double* phi);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGasPhaseVolume(int* id, double* v);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetGfw(int *id, double * gfw);
+#ifdef USE_YAML
+IRM_DLL_EXPORT int        RMF_GetGridCellCountYAML(const char* config_file);
+#endif
 IRM_DLL_EXPORT int        RMF_GetGridCellCount(int *id);
 IRM_DLL_EXPORT int        RMF_GetIPhreeqcId(int *id, int *i);
 IRM_DLL_EXPORT int        RMF_GetMpiMyself(int *id);
 IRM_DLL_EXPORT int        RMF_GetMpiTasks(int *id);
 IRM_DLL_EXPORT int        RMF_GetNthSelectedOutputUserNumber(int *id, int *i);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetPorosity(int* id, double* porosity);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetPressure(int* id, double* pressure);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSaturation(int *id, double *sat);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSelectedOutput(int *id, double *so);
 IRM_DLL_EXPORT int        RMF_GetSelectedOutputColumnCount(int *id);
@@ -84,11 +84,14 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesName(int *id, int *i, char * name, int *
 IRM_DLL_EXPORT int        RMF_GetSpeciesSaveOn(int *id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSpeciesZ(int *id, double *z);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetStartCell(int *id, int *sc);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetTemperature(int* id, double* temperature);
 IRM_DLL_EXPORT int        RMF_GetThreadCount(int *id);
 IRM_DLL_EXPORT double     RMF_GetTime(int *id);
 IRM_DLL_EXPORT double     RMF_GetTimeConversion(int *id);
 IRM_DLL_EXPORT double     RMF_GetTimeStep(int *id);
+#ifdef USE_YAML
 IRM_DLL_EXPORT IRM_RESULT RMF_InitializeYAML(int* id, const char* yaml_name);
+#endif
 IRM_DLL_EXPORT IRM_RESULT RMF_InitialPhreeqc2Concentrations(
                 int *id,
                 double *c,
