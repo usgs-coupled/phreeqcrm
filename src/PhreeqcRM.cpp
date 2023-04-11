@@ -165,14 +165,25 @@ PhreeqcRM::GetInstance(int id)
 //
 */
 
-PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io *io)
+PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io *io/*=NULL*/, bool delay_construct/*=false*/)
 	//
 	// constructor
 	//
 : phreeqc_bin(NULL)
 , phreeqcrm_io(io)
 , delete_phreeqcrm_io(false)
+, initializer(nxyz_arg, data_for_parallel_processing, io)
 {
+	if (!delay_construct) this->Construct(this->initializer);
+}
+
+void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
+{
+	///if (this->initializer.initialized) return;
+	int nxyz_arg = i.nxyz_arg;
+	MP_TYPE data_for_parallel_processing = i.data_for_parallel_processing;
+	PHRQ_io *io = i.io;
+
 	this->phreeqc_bin = new cxxStorageBin();
 	if (this->phreeqcrm_io == NULL)
 	{
@@ -346,6 +357,8 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 	mpi_worker_callback_fortran = NULL;
 	mpi_worker_callback_c = NULL;
 	mpi_worker_callback_cookie = NULL;
+
+	//this->initializer.initialized = true;
 }
 PhreeqcRM::~PhreeqcRM(void)
 {

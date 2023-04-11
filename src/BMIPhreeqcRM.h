@@ -40,6 +40,7 @@ public:
     </CODE>
     @endhtmlonly
     */
+    BMIPhreeqcRM();
     BMIPhreeqcRM(int ngrid, int nthreads);
     // Model control functions.
     /**
