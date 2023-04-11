@@ -96,7 +96,10 @@ BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads) :
 PhreeqcRM(nxyz, nthreads, nullptr, true) 
 {
 }
-
+// Destructor
+BMIPhreeqcRM::~BMIPhreeqcRM()
+{
+}
 void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 {
 	this->PhreeqcRM::Construct(i);

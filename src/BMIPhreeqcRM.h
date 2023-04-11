@@ -16,6 +16,8 @@ public:
     static int              CreateBMIModule(int nxyz, MP_TYPE nthreads);
     static IRM_RESULT       DestroyBMIModule(int n);
     static BMIPhreeqcRM*    GetInstance(int n);
+
+    BMIPhreeqcRM();
     /**
     Constructor for the BMIPhreeqcRM subclass of PhreeqcRM. A BMIPhreeqcRM 
     instance has the BMI methods plus all of the PhreeqcRM methods. The 
@@ -40,8 +42,10 @@ public:
     </CODE>
     @endhtmlonly
     */
-    BMIPhreeqcRM();
     BMIPhreeqcRM(int ngrid, int nthreads);
+
+    virtual ~BMIPhreeqcRM();
+
     // Model control functions.
     /**
     @ref Initialize is used to initialize a PhreeqcRM instance. This method is equivalent to
