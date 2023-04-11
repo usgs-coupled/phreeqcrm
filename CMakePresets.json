@@ -9,14 +9,10 @@
     {
       "name": "ninja-static",
       "displayName": "Ninja static",
-      "description": "Default build using Ninja generator",
+      "description": "Default static build using Ninja generator",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/_builds/${presetName}",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": {
-          "type": "PATH",
-          "value": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        },
         "BUILD_SHARED_LIBS": {
           "type": "BOOL",
           "value": "OFF"
@@ -24,19 +20,53 @@
       }
     },
     {
+      "name": "ninja-static-vcpkg",
+      "inherits": "ninja-static",
+      "displayName": "Ninja static using vcpkg",
+      "description": "Default static build using Ninja generator and vcpkg",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": {
+          "type": "PATH",
+          "value": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        }
+      }
+    },
+    {
+      "name": "ninja-static-yaml",
+      "inherits": "ninja-static",
+      "displayName": "Ninja static with YAML support",
+      "description": "Default static build using Ninja generator and with YAML support",
+      "cacheVariables": {
+        "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
       "name": "ninja-shared",
       "displayName": "Ninja shared",
-      "description": "Default build using Ninja generator",
+      "description": "Default shared build using Ninja generator",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/_builds/${presetName}",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "ninja-shared-vcpkg",
+      "inherits": "ninja-shared",
+      "displayName": "Ninja shared using vcpkg",
+      "description": "Default shared build using Ninja generator and vcpkg",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/_builds/${presetName}",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": {
           "type": "PATH",
           "value": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        },
-        "BUILD_SHARED_LIBS": {
-          "type": "BOOL",
-          "value": "ON"
         }
       }
     },
