@@ -89,24 +89,25 @@ BMIPhreeqcRM::GetInstance(int id)
 }
 // Constructor
 BMIPhreeqcRM::BMIPhreeqcRM() :
-PhreeqcRM(10, -1, nullptr, true) 
+PhreeqcRM(PhreeqcRM::default_nxyz, PhreeqcRM::default_data_for_parallel_processing, nullptr, true)
 {
-	std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
-	BMIPhreeqcRM::Instances.insert(instance);
-
-	this->var_man = new VarManager((PhreeqcRM*)this);
-	this->language = "cpp";
 }
-
 BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads) :
 PhreeqcRM(nxyz, nthreads, nullptr, true) 
 {
+}
+
+void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
+{
+	this->PhreeqcRM::Construct(i);
+
 	std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
 	BMIPhreeqcRM::Instances.insert(instance);
 
 	this->var_man = new VarManager((PhreeqcRM*)this);
 	this->language = "cpp";
 }
+
 // Model control functions.
 void BMIPhreeqcRM::Initialize(std::string config_file)
 {

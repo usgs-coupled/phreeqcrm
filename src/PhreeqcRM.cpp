@@ -179,7 +179,6 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 
 void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 {
-	///if (this->initializer.initialized) return;
 	int nxyz_arg = i.nxyz_arg;
 	MP_TYPE data_for_parallel_processing = i.data_for_parallel_processing;
 	PHRQ_io *io = i.io;
@@ -357,8 +356,6 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 	mpi_worker_callback_fortran = NULL;
 	mpi_worker_callback_c = NULL;
 	mpi_worker_callback_cookie = NULL;
-
-	//this->initializer.initialized = true;
 }
 PhreeqcRM::~PhreeqcRM(void)
 {

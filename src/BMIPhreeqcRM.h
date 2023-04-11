@@ -1082,6 +1082,9 @@ public:
    //  std::set<std::string> UpdateMap;
    // std::set<std::string>& GetUpdateMap() { return UpdateMap; }
 
+protected:
+    void Construct(Initializer initializer) override;
+
 private:
     //friend class RM_interface;
     static std::map<size_t, BMIPhreeqcRM*> Instances;

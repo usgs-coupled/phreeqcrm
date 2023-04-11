@@ -5275,21 +5275,21 @@ protected:
 
 protected:
 	static const int default_nxyz = 10;
+	static const int default_data_for_parallel_processing = -1;
 	struct Initializer {
 		int nxyz_arg;
 		MP_TYPE data_for_parallel_processing;
 		PHRQ_io *io;
-		/* bool initialized; */
 
 		Initializer()
-		: nxyz_arg(default_nxyz) , data_for_parallel_processing(-1), io(NULL) /*, initialized(false) */ {}
+		: nxyz_arg(default_nxyz) , data_for_parallel_processing(default_data_for_parallel_processing), io(NULL) {}
 
 		Initializer(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io *io)
-		: nxyz_arg(nxyz_arg) , data_for_parallel_processing(data_for_parallel_processing), io(io) /* , initialized(false) */{}
+		: nxyz_arg(nxyz_arg) , data_for_parallel_processing(data_for_parallel_processing), io(io) {}
 
 	} initializer;
 
-	void Construct(Initializer initializer);
+	virtual void Construct(Initializer initializer);
 
 private:
 	//friend class RM_interface;

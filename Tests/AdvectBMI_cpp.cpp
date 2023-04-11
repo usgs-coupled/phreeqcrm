@@ -84,8 +84,7 @@ int AdvectBMI_cpp()
 		}
 #else
 		// OpenMP
-		int nthreads = 3;
-		BMIPhreeqcRM brm(nxyz, nthreads);
+		BMIPhreeqcRM brm;
 		some_data.brm_ptr = &brm;
 #endif
 		//brm.SetValue("FilePrefix", "Advectcpp");

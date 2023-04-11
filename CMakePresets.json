@@ -90,6 +90,28 @@
       }
     },
     {
+      "name": "vs2019-static-vcpkg",
+      "inherits": "ninja-static",
+      "displayName": "vs2019-static-vcpkg",
+      "description": "Build static library using vs2019 vcpkg and yaml",
+      "generator": "Visual Studio 16 2019",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": {
+          "type": "PATH",
+          "value": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        },
+        "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
       "name": "vs2019-shared",
       "inherits": "ninja-shared",
       "displayName": "vs2019-shared",
@@ -116,6 +138,10 @@
       "configurePreset": "vs2019-static"
     },
     {
+      "name": "vs2019-static-vcpkg",
+      "configurePreset": "vs2019-static-vcpkg"
+    },
+    {
       "name": "vs2019-shared",
       "configurePreset": "vs2019-shared"
     }
@@ -136,6 +162,12 @@
     {
       "name": "vs2019-static",
       "configurePreset": "vs2019-static",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-static-vcpkg",
+      "configurePreset": "vs2019-static-vcpkg",
       "output": {"outputOnFailure": true},
       "execution": {"noTestsAction": "error", "stopOnFailure": true}
     },
