@@ -5030,7 +5030,6 @@ PhreeqcRM::GetTemperature(void)
 	return this->tempc_root;
 }
 #endif
-#ifdef VISCOSITY
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::GetViscosity(std::vector<double>& viscosity_arg)
@@ -5090,7 +5089,6 @@ PhreeqcRM::GetViscosity(std::vector<double>& viscosity_arg)
 	}
 	return IRM_OK;
 }
-#endif
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -6668,9 +6666,7 @@ PhreeqcRM::MpiWorker()
 				if (debug_worker) std::cerr << "METHOD_GETVISCOSITY" << std::endl;
 				{
 					std::vector<double> dummy;
-#ifdef VISCOSITY
 					this->GetViscosity(dummy);
-#endif
 				}
 				break;
 			case METHOD_INITIALPHREEQC2MODULE:

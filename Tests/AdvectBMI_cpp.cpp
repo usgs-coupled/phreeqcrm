@@ -33,6 +33,7 @@ public:
 		Pressure_ptr = NULL;
 		SelectedOutputOn_ptr = NULL;
 		Temperature_ptr = NULL;
+		Viscosity_ptr = NULL;
 	};
 	BMIPhreeqcRM* brm;
 	int* ComponentCount_ptr;
@@ -48,6 +49,7 @@ public:
 	double* Pressure_ptr;
 	bool* SelectedOutputOn_ptr;
 	double* Temperature_ptr;
+	double* Viscosity_ptr;
 };
 
 
@@ -148,6 +150,7 @@ int AdvectBMI_cpp()
 		ptrs.Pressure_ptr = (double*)brm.GetValuePtr("Pressure");
 		ptrs.SelectedOutputOn_ptr = (bool*)brm.GetValuePtr("SelectedOutputOn");
 		ptrs.Temperature_ptr = (double*)brm.GetValuePtr("Temperature");
+		ptrs.Viscosity_ptr = (double*)brm.GetValuePtr("Viscosity");
 
 		// Get number of components
 		int ncomps;
@@ -1077,6 +1080,22 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 		rm_temperature.resize(*ptrs.GridCellCount_ptr, 22.0);
 		compare_ptrs(ptrs);
 	}
+	// GetValue("Viscosity")
+	{
+		double* viscosity_ptr = (double*)brm.GetValuePtr("Viscosity");
+		int ngrid;
+		brm.GetValue("GridCellCount", ngrid);
+		std::vector<double> bmi_viscosity;
+		std::vector<double> rm_viscosity;
+		brm.GetViscosity(rm_viscosity);
+		brm.GetValue("Viscosity", bmi_viscosity);
+		assert(bmi_viscosity == rm_viscosity);
+		for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
+		{
+			assert(viscosity_ptr[i] == bmi_viscosity[i]);
+		}
+		compare_ptrs(ptrs);
+	}
 	// GetValue("SelectedOutput")
 	{
 		int bmi_so_count;
@@ -1213,13 +1232,14 @@ void compare_ptrs(struct Ptrs ptrs)
 	}
 	assert(*ptrs.GridCellCount_ptr == ptrs.brm->GetGridCellCount());
 	std::vector<double> density, saturation, SolutionVolume, 
-		Porosity, Pressure, Temperature;
+		Porosity, Pressure, Temperature, Viscosity;
 	ptrs.brm->GetDensity(density);
 	ptrs.brm->GetSaturation(saturation);
 	SolutionVolume = ptrs.brm->GetSolutionVolume();
 	Porosity = ptrs.brm->GetPorosity();
 	Pressure = ptrs.brm->GetPressure();
 	Temperature = ptrs.brm->GetTemperature();
+	ptrs.brm->GetViscosity(Viscosity);
 
 	for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
 	{
@@ -1229,6 +1249,7 @@ void compare_ptrs(struct Ptrs ptrs)
 		assert(ptrs.Porosity_ptr[i] == Porosity[i]);
 		assert(ptrs.Pressure_ptr[i] == Pressure[i]);
 		assert(ptrs.Temperature_ptr[i] == Temperature[i]);
+		assert(ptrs.Viscosity_ptr[i] == Viscosity[i]);
 	}
 	std::vector<double> Concentrations;
 	ptrs.brm->GetConcentrations(Concentrations);

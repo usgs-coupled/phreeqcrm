@@ -811,7 +811,7 @@ public:
     @par MPI:
     Called by root, workers must be in the loop of @ref MpiWorker.
     */
-//#ifdef VISCOSITY
+//Add NEW_VARIABLE to GetValue Documentation
     void GetValue(const std::string name, void* dest) override;
     /*!
     * \overload void GetValue(std::string name, bool& dest);
@@ -876,7 +876,7 @@ public:
     @n "TimeStep": double*;
     @n "Viscosity": double*;
     */
-    //#ifdef VISCOSITY
+    //Add NEW_VARIABLE to GetValuePtr Documentation
     void* GetValuePtr(std::string name) override;  
     /**
     @a GetValueAtIndices is not implemented

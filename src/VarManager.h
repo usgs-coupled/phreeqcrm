@@ -114,9 +114,7 @@ public:
 	void Pressure_Var();
 	void SelectedOutputOn_Var();
 	void Temperature_Var();
-#ifdef VISCOSITY
 	void Viscosity_Var();
-#endif
 };
 #endif
 
