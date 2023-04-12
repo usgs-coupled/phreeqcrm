@@ -20,6 +20,11 @@ void WriteYAMLFile_cpp(void)
 	int nxyz = 40;
 	// Set GridCellCount
 	yrm.YAMLSetGridCellCount(nxyz);
+
+	int nthreads = 3;
+	// Set ThreadCount
+	yrm.YAMLThreadCount(nthreads);
+
 	// Set some properties
 	yrm.YAMLSetErrorHandlerMode(1);
 	yrm.YAMLSetComponentH2O(false);

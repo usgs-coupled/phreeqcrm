@@ -7,6 +7,10 @@
 #include <iomanip>
 #include <sstream>
 
+#ifdef USE_YAML
+#include "yaml-cpp/yaml.h"
+#endif
+
 #include "Phreeqc.h"
 #include "IPhreeqcPhast.h"
 #include "PhreeqcRM.h"
@@ -84,18 +88,48 @@ BMIPhreeqcRM::GetInstance(int id)
 	return 0;
 }
 // Constructor
-BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads) :
-PhreeqcRM(nxyz, nthreads) 
+BMIPhreeqcRM::BMIPhreeqcRM() :
+PhreeqcRM(PhreeqcRM::default_nxyz, PhreeqcRM::default_data_for_parallel_processing, nullptr, true)
 {
+}
+BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads) :
+PhreeqcRM(nxyz, nthreads, nullptr, true) 
+{
+}
+// Destructor
+BMIPhreeqcRM::~BMIPhreeqcRM()
+{
+}
+void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
+{
+	this->PhreeqcRM::Construct(i);
+
 	std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
 	BMIPhreeqcRM::Instances.insert(instance);
 
 	this->var_man = new VarManager((PhreeqcRM*)this);
 	this->language = "cpp";
 }
+
 // Model control functions.
 void BMIPhreeqcRM::Initialize(std::string config_file)
 {
+#ifdef USE_YAML
+	YAML::Node yaml = YAML::LoadFile(config_file);
+	std::string keyword;
+	YAML::Node node;
+	if (yaml["SetGridCellCount"].IsDefined())
+	{
+		this->initializer.nxyz_arg = yaml["SetGridCellCount"].as<int>();
+	}
+	if (yaml["ThreadCount"].IsDefined())
+	{
+		this->initializer.data_for_parallel_processing = yaml["ThreadCount"].as<int>();
+	}
+#endif
+
+	this->Construct(this->initializer);
+
 #ifdef USE_YAML
 	this->InitializeYAML(config_file);
 #endif

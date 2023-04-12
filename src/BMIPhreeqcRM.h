@@ -16,6 +16,8 @@ public:
     static int              CreateBMIModule(int nxyz, MP_TYPE nthreads);
     static IRM_RESULT       DestroyBMIModule(int n);
     static BMIPhreeqcRM*    GetInstance(int n);
+
+    BMIPhreeqcRM();
     /**
     Constructor for the BMIPhreeqcRM subclass of PhreeqcRM. A BMIPhreeqcRM 
     instance has the BMI methods plus all of the PhreeqcRM methods. The 
@@ -41,6 +43,9 @@ public:
     @endhtmlonly
     */
     BMIPhreeqcRM(int ngrid, int nthreads);
+
+    virtual ~BMIPhreeqcRM();
+
     // Model control functions.
     /**
     @ref Initialize is used to initialize a PhreeqcRM instance. This method is equivalent to
@@ -1080,6 +1085,9 @@ public:
    // VarFunction GetFn(const std::string name);
    //  std::set<std::string> UpdateMap;
    // std::set<std::string>& GetUpdateMap() { return UpdateMap; }
+
+protected:
+    void Construct(Initializer initializer) override;
 
 private:
     //friend class RM_interface;

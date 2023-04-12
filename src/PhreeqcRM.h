@@ -219,7 +219,7 @@ int nxyz = 40;
 @par MPI:
 Called by root and all workers.
  */
-	PhreeqcRM(int nxyz, MP_TYPE thread_count_or_communicator, PHRQ_io * io=NULL);
+	PhreeqcRM(int nxyz, MP_TYPE thread_count_or_communicator, PHRQ_io * io=NULL, bool delay_construct=false);
 	~PhreeqcRM(void);
 /**
 Close the output and log files.
@@ -5272,6 +5272,24 @@ protected:
 	std::vector <std::string> SolidSolutionComponentsList;
 	std::vector <std::string> SolidSolutionNamesList;
 	std::vector <std::string> SINamesList;
+
+protected:
+	static const int default_nxyz = 10;
+	static const int default_data_for_parallel_processing = -1;
+	struct Initializer {
+		int nxyz_arg;
+		MP_TYPE data_for_parallel_processing;
+		PHRQ_io *io;
+
+		Initializer()
+		: nxyz_arg(default_nxyz) , data_for_parallel_processing(default_data_for_parallel_processing), io(NULL) {}
+
+		Initializer(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io *io)
+		: nxyz_arg(nxyz_arg) , data_for_parallel_processing(data_for_parallel_processing), io(io) {}
+
+	} initializer;
+
+	virtual void Construct(Initializer initializer);
 
 private:
 	//friend class RM_interface;

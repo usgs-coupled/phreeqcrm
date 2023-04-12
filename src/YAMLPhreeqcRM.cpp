@@ -340,6 +340,11 @@ void YAMLPhreeqcRM::YAMLStateDelete(int istate)
 	YAML_doc["StateDelete"] = istate;
 	return;
 }
+void YAMLPhreeqcRM::YAMLThreadCount(int nthreads)
+{
+	YAML_doc["ThreadCount"] = nthreads;
+	return;
+}
 void YAMLPhreeqcRM::YAMLUseSolutionDensityVolume(bool tf)  
 {
 	YAML_doc["UseSolutionDensityVolume"] = tf;
