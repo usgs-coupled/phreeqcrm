@@ -5583,6 +5583,9 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			this->StateDelete(n);
 			continue;
 		}
+		if (keyword == "ThreadCount") {
+			continue;
+		}
 		if (keyword == "UseSolutionDensityVolume")
 		{
 			assert(node.IsScalar());
