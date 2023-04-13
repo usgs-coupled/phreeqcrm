@@ -33,10 +33,14 @@ def AdvectBMI_f90():
 	for i in range(nxyz):
 		hydraulic_K[i] = i*2.0
 	nthreads = 3
-	phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, nthreads)
+	##phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, nthreads)
+	bmi = phreeqcrm.BMIPhreeqcRM()
 	# Initialize with YAML file
-	status = phreeqc_rm.InitializeYAML(yaml_file)
-	###phreeqc_rm.BMI_Initialize(yaml_file)
+	# status = phreeqc_rm.InitializeYAML(yaml_file)
+	status = bmi.Initialize(yaml_file)
+	print(f"status={status}")
+	return
+
 
     # Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
     #TODO CALL register_basic_callback_fortran()
