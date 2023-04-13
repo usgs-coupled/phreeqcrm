@@ -16,8 +16,14 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../database/phreeqc.dat phreeqc
 # copy advect.pqi to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../Tests/advect.pqi advect.pqi COPYONLY)
 
-# copy database to build directory for testing
+# copy SimpleAdvect.py to build directory for testing
 configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
+
+# copy yamlphreeqcrm.py to build directory for testing
+configure_file(yamlphreeqcrm.py yamlphreeqcrm.py COPYONLY)
+
+# copy AdvectBMI_py.py to build directory for testing
+configure_file(AdvectBMI_py.py AdvectBMI_py.py COPYONLY)
 
 get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
 
@@ -34,6 +40,7 @@ swig_add_library(
 target_compile_features(${PYTHON_TARGET_NAME} PUBLIC cxx_std_11)
 
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
+  set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES SWIG_FLAGS "-Wall;-DUSE_YAML")
   target_compile_definitions(${PYTHON_TARGET_NAME} PUBLIC USE_YAML)
   target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp)
 endif()

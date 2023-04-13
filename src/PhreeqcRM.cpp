@@ -165,14 +165,24 @@ PhreeqcRM::GetInstance(int id)
 //
 */
 
-PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io *io)
+PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io *io/*=NULL*/, bool delay_construct/*=false*/)
 	//
 	// constructor
 	//
 : phreeqc_bin(NULL)
 , phreeqcrm_io(io)
 , delete_phreeqcrm_io(false)
+, initializer(nxyz_arg, data_for_parallel_processing, io)
 {
+	if (!delay_construct) this->Construct(this->initializer);
+}
+
+void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
+{
+	int nxyz_arg = i.nxyz_arg;
+	MP_TYPE data_for_parallel_processing = i.data_for_parallel_processing;
+	PHRQ_io *io = i.io;
+
 	this->phreeqc_bin = new cxxStorageBin();
 	if (this->phreeqcrm_io == NULL)
 	{
@@ -5569,6 +5579,9 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			assert(node.IsScalar());
 			int n = node.as< int >();
 			this->StateDelete(n);
+			continue;
+		}
+		if (keyword == "ThreadCount") {
 			continue;
 		}
 		if (keyword == "UseSolutionDensityVolume")

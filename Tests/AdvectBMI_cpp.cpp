@@ -126,8 +126,7 @@ int AdvectBMI_cpp()
 		}
 #else
 		// OpenMP
-		int nthreads = 3;
-		BMIPhreeqcRM brm(nxyz, nthreads);
+		BMIPhreeqcRM brm;
 		some_data.brm_ptr = &brm;
 #endif
 		// Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
