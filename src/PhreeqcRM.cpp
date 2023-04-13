@@ -369,7 +369,10 @@ PhreeqcRM::~PhreeqcRM(void)
 	{
 		PhreeqcRM::Instances.erase(it);
 	}
-
+	if (var_man != NULL)
+	{
+		delete var_man;
+	}
 	delete this->phreeqc_bin;
 	if (delete_phreeqcrm_io)
 	{
