@@ -45,6 +45,10 @@ if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
   target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp)
 endif()
 
+if (PHREEQCRM_NO_UTF8_ENCODING)
+  target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE NO_UTF8_ENCODING)
+endif()
+
 target_link_libraries(${PYTHON_TARGET_NAME}
   PRIVATE
     Python::Python
