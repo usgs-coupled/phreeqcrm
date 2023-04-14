@@ -49,7 +49,7 @@ BMIPhreeqcRM::CreateBMIModule(int nxyz, MP_TYPE nthreads)
 		BMIPhreeqcRM* bmirm_ptr = new BMIPhreeqcRM(nxyz, nthreads);
 		if (bmirm_ptr)
 		{
-			n = (int)bmirm_ptr->GetWorkers()[0]->Get_Index();
+			n = (int)bmirm_ptr->Index;
 			BMIPhreeqcRM::Instances[n] = bmirm_ptr;
 			bmirm_ptr->language = "F90";
 			return n;

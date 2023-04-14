@@ -164,6 +164,7 @@ PhreeqcRM::GetInstance(int id)
 // end static PhreeqcRM methods
 //
 */
+std::mutex PhreeqcRM::InstancesLock;
 
 PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io *io/*=NULL*/, bool delay_construct/*=false*/)
 	//
@@ -174,6 +175,12 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 , delete_phreeqcrm_io(false)
 , initializer(nxyz_arg, data_for_parallel_processing, io)
 {
+	InstancesLock.lock();
+	this->Index = PhreeqcRM::InstancesIndex++;
+	std::map<size_t, PhreeqcRM*>::value_type instance(this->Index, this);
+	PhreeqcRM::Instances.insert(instance);
+	InstancesLock.unlock();
+
 	if (!delay_construct) this->Construct(this->initializer);
 }
 
