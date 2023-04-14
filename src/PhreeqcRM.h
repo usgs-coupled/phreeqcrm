@@ -20,6 +20,7 @@ class PHRQ_io;
 #include <list>
 #include <set>
 #include <map>
+#include <mutex>
 #include <string>
 #include "VarManager.h"
 #include "RMVARS.h"
@@ -5311,8 +5312,11 @@ protected:
 
 private:
 	//friend class RM_interface;
+	static std::mutex InstancesLock;
 	static std::map<size_t, PhreeqcRM*> Instances;
 	static size_t InstancesIndex;
+	size_t Index;
+	friend class BMIPhreeqcRM;
 
 #if defined(_MSC_VER)
 /* reset warning C4251 */
