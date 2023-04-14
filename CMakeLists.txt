@@ -55,6 +55,8 @@ if (PHREEQCRM_BUILD_PYTHON)
   find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development)
 endif()
 
+option(PHREEQCRM_NO_UTF8_ENCODING "Build without utf-8 encoding" OFF)
+
 set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.h
@@ -255,6 +257,10 @@ target_compile_features(PhreeqcRM PUBLIC cxx_std_11)
 target_compile_definitions(PhreeqcRM PRIVATE SWIG_SHARED_OBJ)
 target_compile_definitions(PhreeqcRM PRIVATE USE_PHRQ_ALLOC)
 target_compile_definitions(PhreeqcRM PRIVATE IPhreeqc_EXPORTS)
+
+if (PHREEQCRM_NO_UTF8_ENCODING)
+  target_compile_definitions(PhreeqcRM PRIVATE NO_UTF8_ENCODING)
+endif()
 
 # Disable deprecation warnings for standard C and STL functions in VS2005
 # and later
