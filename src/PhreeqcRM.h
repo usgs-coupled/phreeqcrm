@@ -3235,6 +3235,213 @@ Called by root.
 													const std::vector < int >    & boundary_solution1,
 													const std::vector < int >    & boundary_solution2,
 													const std::vector < double > & fraction1);
+	/**
+	Transfer SOLUTIONs from the InitialPhreeqc instance to the reaction-module workers.
+	@a solutions is used to select solutions for each cell of the model.
+	@a solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	user's model (@ref GetGridCellCount). 
+	@param solutions Vector of SOLUTION index numbers that refer to
+	definitions in the InitialPhreeqc instance.
+	Size is @a nxyz. Negative values are ignored, resulting in no definition of a 
+	solution for that cell.
+	(Note that all cells must have a SOLUTION definition, which could be defined by other 
+	calls to @a InitialSolutions2Module, @ref InitialPhreeqc2Module, or 
+	@ref InitialPhreeqcCell2Module.)
+	@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
+	@see               
+	@ref InitialPhreeqc2Module,
+	@ref InitialPhreeqcCell2Module.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::vector< int > solutions;
+	solutions.resize(nxyz, 1);
+	status = phreeqc_rm.InitialSolutions2Module(solutions);
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
+IRM_RESULT  InitialSolutions2Module(const std::vector < int >& solns);
+	/**
+	Transfer EQUILIBRIUM_PHASES definitions from the InitialPhreeqc instance to the reaction-module workers.
+	@a equilibrium_phases is used to select EQUILIBRIUM_PHASES definitions for each cell of the model.
+	@a equilibrium_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
+	user's model (@ref GetGridCellCount).
+	@param equilibrium_phases Vector of EQUILIBRIUM_PHASES index numbers that refer to
+	definitions in the InitialPhreeqc instance.
+	Size is @a nxyz. Negative values are ignored, resulting in no transfer of an EQUILIBRIUM_PHASES
+	definition
+	for that cell. (Note that an EQUILIBRIUM_PHASES definition for a cell could be defined by other 
+	calls to @a InitialEquilibriumPhases2Module, @ref InitialPhreeqc2Module, or 
+	@ref InitialPhreeqcCell2Module.)
+	@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
+	@see
+	@ref InitialPhreeqc2Module,
+	@ref InitialPhreeqcCell2Module.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::vector< int > equilibrium_phases;
+	equilibrium_phases.resize(nxyz, 1);
+	status = phreeqc_rm.InitialEquilibriumPhases2Module(equilibrium_phases);
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
+IRM_RESULT  InitialEquilibriumPhases2Module(const std::vector < int >& equilibrium_phases);
+	/**
+	Transfer EXCHANGE definitions from the InitialPhreeqc instance to the reaction-module workers.
+	@a exchanges is used to select EXCHANGE definitions for each cell of the model.
+	@a exchanges is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
+	user's model (@ref GetGridCellCount).
+	@param exchanges Vector of EXCHANGE index numbers that refer to
+	definitions in the InitialPhreeqc instance.
+	Size is @a nxyz. Negative values are ignored, resulting in no transfer of an EXCHANGE
+	definition for that cell. (Note that an EXCHANGE definition for a cell could be 
+	defined by other 
+	calls to @a InitialExchanges2Module, @ref InitialPhreeqc2Module, or 
+	@ref InitialPhreeqcCell2Module.)
+	@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
+	@see
+	@ref InitialPhreeqc2Module,
+	@ref InitialPhreeqcCell2Module.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::vector< int > exchanges;
+	exchanges.resize(nxyz, 1);
+	status = phreeqc_rm.InitialExchanges2Module(exchanges);
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
+IRM_RESULT  InitialExchanges2Module(const std::vector < int >& exchanges);
+	/**
+	Transfer SURFACE definitions from the InitialPhreeqc instance to the reaction-module workers.
+	@a surfaces is used to select SURFACE definitions for each cell of the model.
+	@a surfaces is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
+	user's model (@ref GetGridCellCount).
+	@param surfaces Vector of SURFACE index numbers that refer to
+	definitions in the InitialPhreeqc instance.
+	Size is @a nxyz. Negative values are ignored, resulting in no transfer of a SURFACE
+	definition for that cell. (Note that a SURFACE definition for a cell could be defined by other 
+	calls to @a InitialSurfaces2Module, @ref InitialPhreeqc2Module, or 
+	@ref InitialPhreeqcCell2Module.)
+	@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
+	@see
+	@ref InitialPhreeqc2Module,
+	@ref InitialPhreeqcCell2Module.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::vector< int > surfaces;
+	surfaces.resize(nxyz, 1);
+	status = phreeqc_rm.InitialSurfaces2Module(surfaces);
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
+IRM_RESULT  InitialSurfaces2Module(const std::vector < int >& surfaces);
+/**
+Transfer GAS_PHASE definitions from the InitialPhreeqc instance to the reaction-module workers.
+@a gas_phases is used to select GAS_PHASE definitions for each cell of the model.
+@a gas_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
+user's model (@ref GetGridCellCount).
+@param gas_phases Vector of GAS_PHASE index numbers that refer to
+definitions in the InitialPhreeqc instance.
+Size is @a nxyz. Negative values are ignored, resulting in no transfer of a GAS_PHASE
+definition for that cell. (Note that a GAS_PHASE definition for a cell could be defined by other
+calls to @a InitialGasPhases2Module, @ref InitialPhreeqc2Module, or
+@ref InitialPhreeqcCell2Module.)
+@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref InitialPhreeqc2Module,
+@ref InitialPhreeqcCell2Module.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector< int > gas_phases;
+gas_phases.resize(nxyz, 1);
+status = phreeqc_rm.InitialGasPhases2Module(gas_phases);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT  InitialGasPhases2Module(const std::vector < int >& gas_phases);
+/**
+Transfer SOLID_SOLUTIONS definitions from the InitialPhreeqc instance to the reaction-module workers.
+@a solid_solutions is used to select SOLID_SOLUTIONS definitions for each cell of the model.
+@a solid_solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
+user's model (@ref GetGridCellCount).
+@param solid_solutions Vector of SOLID_SOLUTIONS index numbers that refer to
+definitions in the InitialPhreeqc instance.
+Size is @a nxyz. Negative values are ignored, resulting in no transfer of a SOLID_SOLUTIONS
+definition for that cell. (Note that a SOLID_SOLUTIONS definition for a cell could be defined by other
+calls to @a InitialSolidSolutions2Module, @ref InitialPhreeqc2Module, or
+@ref InitialPhreeqcCell2Module.)
+@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref InitialPhreeqc2Module,
+@ref InitialPhreeqcCell2Module.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector< int > solid_solutions;
+solid_solutions.resize(nxyz, 1);
+status = phreeqc_rm.InitialSolidSolutions2Module(solid_solutions);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT  InitialSolidSolutions2Module(const std::vector < int >& solid_solutions);
+/**
+Transfer KINETICS definitions from the InitialPhreeqc instance to the reaction-module workers.
+@a kinetics is used to select KINETICS definitions for each cell of the model.
+@a kinetics is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
+user's model (@ref GetGridCellCount).
+@param kinetics Vector of KINETICS index numbers that refer to
+definitions in the InitialPhreeqc instance.
+Size is @a nxyz. Negative values are ignored, resulting in no transfer of a KINETICS
+definition for that cell. (Note that a KINETICS definition for a cell could be defined by other
+calls to @a InitialKinetics2Module, @ref InitialPhreeqc2Module, or
+@ref InitialPhreeqcCell2Module.)
+@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref InitialPhreeqc2Module,
+@ref InitialPhreeqcCell2Module.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector< int > kinetics;
+kinetics.resize(nxyz, 1);
+status = phreeqc_rm.InitialKineticsSolidSolutions2Module(kinetics);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT  InitialKinetics2Module(const std::vector < int >& kinetics);
+
 /**
 Transfer solutions and reactants from the InitialPhreeqc instance to the reaction-module workers.
 @a Initial_conditions1 is used to select initial conditions, including solutions and reactants,

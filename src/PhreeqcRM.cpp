@@ -5737,7 +5737,146 @@ PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::InitialPhreeqc2Concentrations");
 }
-
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialSolutions2Module(const std::vector < int >& solutions)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize(this->nxyz * 7, -1);
+		i_dummy.resize(this->nxyz * 7, -1);
+		d_dummy.resize(this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[i] = solutions[i];       
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialEquilibriumPhases2Module(const std::vector < int >& equilibrium_phases)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[(size_t)this->nxyz + i] = equilibrium_phases[i];
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialExchanges2Module(const std::vector < int >& exchanges)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+				ic[2 * (size_t)this->nxyz + i] = exchanges[i];      
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialSurfaces2Module(const std::vector < int >& surfaces)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[3 * (size_t)this->nxyz + i] = surfaces[i];
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialGasPhases2Module(const std::vector < int >& gas_phases)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[4 * (size_t)this->nxyz + i] = gas_phases[i];
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialSolidSolutions2Module(const std::vector < int >& solid_solutions)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[5 * (size_t)this->nxyz + i] = solid_solutions[i];
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialKinetics2Module(const std::vector < int >& kinetics)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[6 * (size_t)this->nxyz + i] = kinetics[i];
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Module(

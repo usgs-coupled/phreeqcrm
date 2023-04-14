@@ -51,6 +51,7 @@ void YAMLPhreeqcRM::YAMLCloseFiles (void)
 void YAMLPhreeqcRM::YAMLCreateMapping(std::vector< int >& grid2chem)
 {
 	YAML_doc["CreateMapping"] = grid2chem;
+	YAML_doc["CreateMapping"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 };
 void YAMLPhreeqcRM::YAMLDumpModule(bool dump_on, bool append)
@@ -58,7 +59,7 @@ void YAMLPhreeqcRM::YAMLDumpModule(bool dump_on, bool append)
 	YAML::Node node;
 	node["dump_on"] = dump_on;
 	node["append"] = append;
-	YAML_doc["YAMLDumpModule"] = node;
+	YAML_doc["DumpModule"] = node;
 	return;
 }
 void YAMLPhreeqcRM::YAMLFindComponents()
@@ -69,6 +70,7 @@ void YAMLPhreeqcRM::YAMLFindComponents()
 void YAMLPhreeqcRM::YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1) 
 {
 	YAML_doc["InitialPhreeqc2Module"] = initial_conditions1;
+	YAML_doc["InitialPhreeqc2Module"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 };
 
@@ -79,6 +81,7 @@ void YAMLPhreeqcRM::YAMLInitialPhreeqc2Module(std::vector< int > initial_conditi
 	node["ic2"] = initial_conditions2;
 	node["f1"] = fraction1;
 	YAML_doc["InitialPhreeqc2Module"] = node;
+	YAML_doc["InitialPhreeqc2Module"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 };
 
@@ -88,6 +91,7 @@ void YAMLPhreeqcRM::YAMLInitialPhreeqcCell2Module(int n, std::vector< int > cell
 	node["n"] = n;
 	node["cell_numbers"] = cell_numbers;
 	YAML_doc["InitialPhreeqcCell2Module"] = node;
+	YAML_doc["InitialPhreeqcCell2Module"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 
@@ -124,6 +128,7 @@ void YAMLPhreeqcRM::YAMLRunFile(bool workers, bool initial_phreeqc, bool utility
 	node["utility"] = utility;
 	node["chemistry_name"] = chemistry_name;
 	YAML_doc["RunFile"] = node;
+	YAML_doc["RunFile"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLRunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string) 
@@ -134,6 +139,7 @@ void YAMLPhreeqcRM::YAMLRunString(bool workers, bool initial_phreeqc, bool utili
 	node["utility"] = utility;
 	node["input_string"] = input_string;
 	YAML_doc["RunString"] = node;
+	YAML_doc["RunString"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLScreenMessage(std::string str) 
@@ -149,6 +155,7 @@ void YAMLPhreeqcRM::YAMLSetComponentH2O(bool tf)
 void YAMLPhreeqcRM::YAMLSetConcentrations(std::vector< double >& c) 
 {
 	YAML_doc["SetConcentrations"] = c;
+	YAML_doc["SetConcentrations"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetCurrentSelectedOutputUserNumber(int n_user) 
@@ -159,6 +166,7 @@ void YAMLPhreeqcRM::YAMLSetCurrentSelectedOutputUserNumber(int n_user)
 void YAMLPhreeqcRM::YAMLSetDensity(std::vector< double > density) 
 {
 	YAML_doc["SetDensity"] = density;
+	YAML_doc["SetDensity"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetDumpFileName(std::string dump_name) 
@@ -184,11 +192,13 @@ void YAMLPhreeqcRM::YAMLSetFilePrefix(std::string prefix)
 void YAMLPhreeqcRM::YAMLSetGasCompMoles(std::vector< double > gas_moles) 
 {
 	YAML_doc["SetGasCompMoles"] = gas_moles;
+	YAML_doc["SetGasCompMoles"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetGasPhaseVolume(std::vector< double > gas_volume) 
 {
 	YAML_doc["SetGasPhaseVolume"] = gas_volume;
+	YAML_doc["SetGasPhaseVolume"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetGridCellCount(int count)
@@ -198,7 +208,7 @@ void YAMLPhreeqcRM::YAMLSetGridCellCount(int count)
 }
 void YAMLPhreeqcRM::YAMLSetNthSelectedOutput(int n)
 {
-	YAML_doc["SetGasPhaseVolume"] = n;
+	YAML_doc["SetNthSelectedOutput"] = n;
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetPartitionUZSolids(bool tf)  
@@ -209,16 +219,19 @@ void YAMLPhreeqcRM::YAMLSetPartitionUZSolids(bool tf)
 void YAMLPhreeqcRM::YAMLSetPorosity(std::vector< double > por) 
 {
 	YAML_doc["SetPorosity"] = por;
+	YAML_doc["SetPorosity"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetPressure(std::vector< double > p) 
 {
 	YAML_doc["SetPressure"] = p;
+	YAML_doc["SetPressure"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetPrintChemistryMask(std::vector< int > cell_mask) 
 {
 	YAML_doc["SetPrintChemistryMask"] = cell_mask;
+	YAML_doc["SetPrintChemistryMask"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility) 
@@ -228,6 +241,7 @@ void YAMLPhreeqcRM::YAMLSetPrintChemistryOn(bool workers, bool initial_phreeqc, 
 	node["initial_phreeqc"] = initial_phreeqc;
 	node["utility"] = utility;
 	YAML_doc["SetPrintChemistryOn"] = node;
+	YAML_doc["SetPrintChemistryOn"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetRebalanceByCell(bool tf) 
@@ -243,11 +257,13 @@ void YAMLPhreeqcRM::YAMLSetRebalanceFraction(double f)
 void YAMLPhreeqcRM::YAMLSetRepresentativeVolume(std::vector< double > rv) 
 {
 	YAML_doc["SetRepresentativeVolume"] = rv;
+	YAML_doc["SetRepresentativeVolume"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetSaturation(std::vector< double > sat) 
 {
 	YAML_doc["SetSaturation"] = sat;
+	YAML_doc["SetSaturation"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetScreenOn(bool tf) 
@@ -268,6 +284,7 @@ void YAMLPhreeqcRM::YAMLSetSpeciesSaveOn(bool save_on)
 void YAMLPhreeqcRM::YAMLSetTemperature(std::vector< double > t)
 {
 	YAML_doc["SetTemperature"] = t;
+	YAML_doc["SetTemperature"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLSetTime(double time)
@@ -323,6 +340,7 @@ void YAMLPhreeqcRM::YAMLSetUnitsSurface(int option)
 void YAMLPhreeqcRM::YAMLSpeciesConcentrations2Module(std::vector< double > species_conc) 
 {
 	YAML_doc["SpeciesConcentrations2Module"] = species_conc;
+	YAML_doc["SpeciesConcentrations2Module"].SetStyle(YAML::EmitterStyle::Flow);
 	return;
 }
 void YAMLPhreeqcRM::YAMLStateSave(int istate)
