@@ -5294,7 +5294,7 @@ protected:
 
 private:
 	//friend class RM_interface;
-	static std::mutex PhreeqcRM::InstancesLock;
+	static std::mutex InstancesLock;
 	static std::map<size_t, PhreeqcRM*> Instances;
 	static size_t InstancesIndex;
 	size_t Index;
