@@ -4220,15 +4220,15 @@
     END FUNCTION RMF_InitialPhreeqc2Module
     END INTERFACE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Module2(id, ic1, ic2, f1) &
-        BIND(C, NAME='RMF_InitialPhreeqc2Module2')
+    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2ModuleMix(id, ic1, ic2, f1) &
+        BIND(C, NAME='RMF_InitialPhreeqc2ModuleMix')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
     INTEGER(KIND=C_INT), INTENT(in) :: ic2(*)
     REAL(KIND=C_DOUBLE), INTENT(in) :: f1(*)
-    END FUNCTION RMF_InitialPhreeqc2Module2
+    END FUNCTION RMF_InitialPhreeqc2ModuleMix
     END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in), DIMENSION(:,:) :: ic1
@@ -4236,7 +4236,7 @@
     real(kind=8), INTENT(in), DIMENSION(:,:), OPTIONAL :: f1
     if (rmf_debug) call Chk_InitialPhreeqc2Module(id, ic1, ic2, f1)
     if (present(ic2) .and. present(f1)) then
-        RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2Module2(id, ic1, ic2, f1)
+        RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2ModuleMix(id, ic1, ic2, f1)
     else
         RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2Module(id, ic1)
     endif
@@ -4262,6 +4262,328 @@
     endif
     END SUBROUTINE Chk_InitialPhreeqc2Module
 
+	!> Transfer SOLUTION definitions from the InitialPhreeqc instance to the reaction-module workers.
+	!> @a solutions is used to select SOLUTION definitions for each cell of the model.
+	!> @a solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id           The instance @a id returned from @ref RM_Create.
+	!> @param solutions    Vector of SOLUTION index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> SOLUTION definition for that cell.
+	!> (Note that all cells must have a SOLUTION definition, which could be defined by other 
+	!> calls to @a RM_InitialSolutions2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(solutions(nxyz))
+	!> solutions = 1
+	!> status = RM_InitialSolutions2Module(id, solutions);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_InitialSolutions2Module(id, solutions)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialSolutions2Module(id, solutions) &
+			BIND(C, NAME='RMF_InitialSolutions2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: solutions(*)
+		END FUNCTION RMF_InitialSolutions2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: solutions
+    RM_InitialSolutions2Module = RMF_InitialSolutions2Module(id, solutions)
+    END FUNCTION RM_InitialSolutions2Module  
+	
+	!> Transfer EQUILIBRIUM_PHASES definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a equilibrium_phases is used to select EQUILIBRIUM_PHASES definitions for each cell of the model.
+	!> @a equilibrium_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param solutions   Vector of EQUILIBRIUM_PHASES index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of an
+	!> EQUILIBRIUM_PHASES definition for that cell.
+	!> (Note that an EQUILIBRIUM_PHASES definition for a cell could be defined by other 
+	!> calls to @a RM_InitialEquilibriumPhases2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(equilibrium_phases(nxyz))
+	!> equilibrium_phases = 1
+	!> status = RM_InitialEquilibriumPhases2Module(id, equilibrium_phases);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_InitialEquilibriumPhases2Module(id, equilibrium_phases)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialEquilibriumPhases2Module(id, equilibrium_phases) &
+			BIND(C, NAME='RMF_InitialEquilibriumPhases2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: equilibrium_phases(*)
+		END FUNCTION RMF_InitialEquilibriumPhases2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: equilibrium_phases
+    RM_InitialEquilibriumPhases2Module = RMF_InitialEquilibriumPhases2Module(id, equilibrium_phases)
+    END FUNCTION RM_InitialEquilibriumPhases2Module
+
+	!> Transfer EXCHANGE definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a exchanges is used to select EXCHANGE definitions for each cell of the model.
+	!> @a exchanges is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id           The instance @a id returned from @ref RM_Create.
+	!> @param exchanges    Vector of EXCHANGE index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of an 
+	!> EXCHANGE definition for that cell.
+	!> (Note that an EXCHANGE definition for a cell could be defined by other 
+	!> calls to @a RM_InitialExchanges2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(exchanges(nxyz))
+	!> exchanges = 1
+	!> status = RM_InitialExchanges2Module(id, exchanges);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_InitialExchanges2Module(id, exchanges)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialExchanges2Module(id, exchanges) &
+			BIND(C, NAME='RMF_InitialExchanges2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: exchanges(*)
+		END FUNCTION RMF_InitialExchanges2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: exchanges
+    RM_InitialExchanges2Module = RMF_InitialExchanges2Module(id, exchanges)
+    END FUNCTION RM_InitialExchanges2Module
+	
+	!> Transfer SURFACE definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a surfaces is used to select SURFACE definitions for each cell of the model.
+	!> @a surfaces is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param surfaces    Vector of SURFACE index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> SURFACE definition for that cell.
+	!> (Note that an SURFACE definition for a cell could be defined by other 
+	!> calls to @a RM_InitialSurfaces2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(surfaces(nxyz))
+	!> surfaces = 1
+	!> status = RM_InitialSurfaces2Module(id, surfaces);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_InitialSurfaces2Module(id, surfaces)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialSurfaces2Module(id, surfaces) &
+			BIND(C, NAME='RMF_InitialSurfaces2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: surfaces(*)
+		END FUNCTION RMF_InitialSurfaces2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: surfaces
+    RM_InitialSurfaces2Module = RMF_InitialSurfaces2Module(id, surfaces)
+    END FUNCTION RM_InitialSurfaces2Module
+	
+	!> Transfer GAS_PHASE definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a gas_phases is used to select GAS_PHASE definitions for each cell of the model.
+	!> @a gas_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param gas_phases    Vector of GAS_PHASE index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> GAS_PHASE definition for that cell.
+	!> (Note that an GAS_PHASE definition for a cell could be defined by other 
+	!> calls to @a RM_InitialGasPhases2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(gas_phases(nxyz))
+	!> gas_phases = 1
+	!> status = RM_InitialGasPhases2Module(id, gas_phases);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_InitialGasPhases2Module(id, gas_phases)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialGasPhases2Module(id, gas_phases) &
+			BIND(C, NAME='RMF_InitialGasPhases2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: gas_phases(*)
+		END FUNCTION RMF_InitialGasPhases2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: gas_phases
+    RM_InitialGasPhases2Module = RMF_InitialGasPhases2Module(id, gas_phases)
+    END FUNCTION RM_InitialGasPhases2Module
+	
+	!> Transfer SOLID_SOLUTIONS definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a solid_solutions is used to select SOLID_SOLUTIONS definitions for each cell of the model.
+	!> @a solid_solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param solid_solutions    Vector of SOLID_SOLUTIONS index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> SOLID_SOLUTIONS definition for that cell.
+	!> (Note that an SOLID_SOLUTIONS definition for a cell could be defined by other 
+	!> calls to @a RM_InitialSolidSolutions2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(solid_solutions(nxyz))
+	!> solid_solutions = 1
+	!> status = RM_InitialSolidSolutions2Module(id, solid_solutions);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_InitialSolidSolutions2Module(id, solid_solutions)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialSolidSolutions2Module(id, solid_solutions) &
+			BIND(C, NAME='RMF_InitialSolidSolutions2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: solid_solutions(*)
+		END FUNCTION RMF_InitialSolidSolutions2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: solid_solutions
+    RM_InitialSolidSolutions2Module = RMF_InitialSolidSolutions2Module(id, solid_solutions)
+    END FUNCTION RM_InitialSolidSolutions2Module
+	
+	!> Transfer KINETICS definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a kinetics is used to select KINETICS definitions for each cell of the model.
+	!> @a kinetics is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param kinetics    Vector of KINETICS index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> KINETICS definition for that cell.
+	!> (Note that an KINETICS definition for a cell could be defined by other 
+	!> calls to @a RM_InitialKinetics2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(kinetics(nxyz))
+	!> kinetics = 1
+	!> status = RM_InitialKinetics2Module(id, kinetics);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.	
+	INTEGER FUNCTION RM_InitialKinetics2Module(id, kinetics)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialKinetics2Module(id, kinetics) &
+			BIND(C, NAME='RMF_InitialKinetics2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: kinetics(*)
+		END FUNCTION RMF_InitialKinetics2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: kinetics
+    RM_InitialKinetics2Module = RMF_InitialKinetics2Module(id, kinetics)
+    END FUNCTION RM_InitialKinetics2Module  
+    
+    
     !> Fills an array (@a bc_conc) with aqueous species concentrations from solutions in the InitialPhreeqc instance.
     !> This method is intended for use with multicomponent-diffusion transport calculations,
     !> and @ref RM_SetSpeciesSaveOn must be set to @a true.

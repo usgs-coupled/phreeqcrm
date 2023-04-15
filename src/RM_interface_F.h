@@ -104,9 +104,16 @@ IRM_DLL_EXPORT IRM_RESULT RMF_InitialPhreeqc2Concentrations2(
                 int *boundary_solution1,  
                 int *boundary_solution2 = NULL, 
                 double *fraction1 = NULL);
+IRM_DLL_EXPORT  IRM_RESULT RMF_InitialSolutions2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RMF_InitialEquilibriumPhases2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RMF_InitialExchanges2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RMF_InitialSurfaces2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RMF_InitialGasPhases2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RMF_InitialSolidSolutions2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RMF_InitialKinetics2Module(int *id, int* in);
 IRM_DLL_EXPORT IRM_RESULT RMF_InitialPhreeqc2Module(int *id,
                 int *initial_conditions1);		        // 7 x nxyz end-member 1
-IRM_DLL_EXPORT IRM_RESULT RMF_InitialPhreeqc2Module2(int *id,
+IRM_DLL_EXPORT  IRM_RESULT RMF_InitialPhreeqc2ModuleMix(int *id,
                 int *initial_conditions1,		        // 7 x nxyz end-member 1
                 int *initial_conditions2 = NULL,		// 7 x nxyz end-member 2
                 double *fraction1 = NULL);			    // 7 x nxyz fraction of end-member 1

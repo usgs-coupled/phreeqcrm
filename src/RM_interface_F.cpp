@@ -1477,6 +1477,118 @@ RMF_InitialPhreeqc2Concentrations2(
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+RMF_InitialSolutions2Module(int* id, int* in)			
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialSolutions2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialEquilibriumPhases2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialEquilibriumPhases2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialExchanges2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialExchanges2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialSurfaces2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialSurfaces2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialGasPhases2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialGasPhases2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialSolidSolutions2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialSolidSolutions2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialKinetics2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialKinetics2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 RMF_InitialPhreeqc2Module(int *id,
 						  int *initial_conditions1)		// 7 x nxyz end-member 1	
 /* ---------------------------------------------------------------------- */
@@ -1509,7 +1621,7 @@ RMF_InitialPhreeqc2Module(int *id,
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_InitialPhreeqc2Module2(int *id,
+RMF_InitialPhreeqc2ModuleMix(int *id,
 							  int *initial_conditions1,		// 7 x nxyz end-member 1
 							  int *initial_conditions2,		// 7 x nxyz end-member 2
 							  double *fraction1)			// 7 x nxyz fraction of end-member 1

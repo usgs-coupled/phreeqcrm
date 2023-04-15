@@ -632,6 +632,9 @@ status = phreeqc_rm.GetConcentrations(c);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                GetConcentrations(std::vector< double > &c);
+#ifdef GETITHCONCENTRATION
+	IRM_RESULT                                GetIthConcentration(int i, std::vector< double >& c);
+#endif
 /**
 Returns the user number of the current selected-output definition.
 @ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput specifies which of the

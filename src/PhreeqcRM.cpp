@@ -3219,7 +3219,34 @@ PhreeqcRM::GatherNchem(std::vector<double> &source, std::vector<double> &destina
 	delete [] recv_displs;
 #endif
 }
-
+#ifdef GETITHCONCENTRATION
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetIthConcentration(int i, std::vector<double>& c)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+		if (i >= 0 && i < this->GetComponentCount())
+		{
+			std::vector<double> all;
+			this->GetConcentrations(all);
+			int nxyz = this->GetGridCellCount();
+			c.resize(nxyz);
+			for (int j = 0; j < nxyz; j++)
+			{
+				c[j] = all[i * nxyz + j];
+			}
+			return IRM_OK;
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetIthConcentration");
+}
+#endif
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
