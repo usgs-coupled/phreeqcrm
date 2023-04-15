@@ -3094,6 +3094,13 @@ CloseFiles(void);
 CreateMapping(std::vector< int >& grid2chem);
 DumpModule();
 FindComponents();
+InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+InitialExchanges2Module(std::vector< int > exchanges);
+InitialGasPhases2Module(std::vector< int > gas_phases);
+InitialKineticss2Module(std::vector< int > kinetics);
+InitialSolidSolutions2Module(std::vector< int > solid_solutions);
+InitialSolutions2Module(std::vector< int > solutions);
+InitialSurfaces2Module(std::vector< int > surfaces);
 InitialPhreeqc2Module(std::vector< int > initial_conditions1);
 InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
 InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
@@ -3239,7 +3246,7 @@ Called by root.
 													const std::vector < int >    & boundary_solution2,
 													const std::vector < double > & fraction1);
 	/**
-	Transfer SOLUTIONs from the InitialPhreeqc instance to the reaction-module workers.
+	Transfer SOLUTION definitions from the InitialPhreeqc instance to the reaction-module workers.
 	@a solutions is used to select solutions for each cell of the model.
 	@a solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
 	user's model (@ref GetGridCellCount). 

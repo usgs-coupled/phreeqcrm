@@ -81,6 +81,13 @@ public:
     @n CreateMapping(std::vector< int >& grid2chem);
     @n DumpModule();
     @n FindComponents();
+    @n InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+    @n InitialExchanges2Module(std::vector< int > exchanges);
+    @n InitialGasPhases2Module(std::vector< int > gas_phases);
+    @n InitialKineticss2Module(std::vector< int > kinetics);
+    @n InitialSolidSolutions2Module(std::vector< int > solid_solutions);
+    @n InitialSolutions2Module(std::vector< int > solutions);
+    @n InitialSurfaces2Module(std::vector< int > surfaces);
     @n InitialPhreeqc2Module(std::vector< int > initial_conditions1);
     @n InitialPhreeqc2Module(std::vector< int > initial_conditions1, 
     @n     std::vector< int > initial_conditions2, std::vector< double > fraction1);
@@ -100,7 +107,7 @@ public:
     @n SetDumpFileName(std::string dump_name);
     @n SetErrorHandlerMode(int mode);
     @n SetErrorOn(bool tf);
-    SetFilePrefix(std::string prefix);
+    @n SetFilePrefix(std::string prefix);
     @n SetGasCompMoles(std::vector< double > gas_moles);
     @n SetGasPhaseVolume(std::vector< double > gas_volume);
     @n SetPartitionUZSolids(bool tf);

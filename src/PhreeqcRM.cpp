@@ -5269,6 +5269,57 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			this->FindComponents();
 			continue;
 		}
+
+		if (keyword == "InitialSolutions2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialSolutions2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialEquilibriumPhases2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialEquilibriumPhases2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialExchanges2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialExchanges2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialSurfaces2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialSurfaces2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialGasPhases2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialGasPhases2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialSolidSolutions2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialSolidSolutions2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialKinetics2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialKinetics2Module(ic);
+			continue;
+		}
+
 		if (keyword == "InitialPhreeqc2Module")
 		{
 			if (node.IsSequence())

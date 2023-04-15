@@ -3950,6 +3950,13 @@
     !> CreateMapping(std::vector< int >& grid2chem);
     !> DumpModule();
     !> FindComponents();
+	!> InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+	!> InitialExchanges2Module(std::vector< int > exchanges);
+	!> InitialGasPhases2Module(std::vector< int > gas_phases);
+	!> InitialKineticss2Module(std::vector< int > kinetics);
+	!> InitialSolidSolutions2Module(std::vector< int > solid_solutions);
+	!> InitialSolutions2Module(std::vector< int > solutions);
+	!> InitialSurfaces2Module(std::vector< int > surfaces);
     !> InitialPhreeqc2Module(std::vector< int > initial_conditions1);
     !> InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
     !> InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);

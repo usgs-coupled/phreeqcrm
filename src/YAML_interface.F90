@@ -251,8 +251,8 @@ MODULE YAML_interface
 !> Inserts data into the YAML document for the PhreeqcRM method FindComponents.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
-!> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
-!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @param id    The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @retval      Zero indicates success, negative indicates failure.
 !> @par
 !> FindComponents accumulates a list of elements. Elements are those that have been
 !> defined in a solution or any other reactant
@@ -306,6 +306,225 @@ MODULE YAML_interface
     integer, intent(in) :: id
 	YAMLFindComponents = YAMLFindComponents_F(id)
     END FUNCTION YAMLFindComponents    
+    
+!> Inserts data into the YAML document for the PhreeqcRM method InitialSolutions2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id          The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param solutions   Vector of SOLUTION index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval            Zero indicates success, negative indicates failure.
+!> @par
+!> InitialSolutions2Module transfers SOLUTION definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a solutions is a vector of SOLUTION index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialSolutions2Module(id, solutions)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialSolutions2Module_F(id, solutions, dim) &
+			BIND(C, NAME='YAMLInitialSolutions2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: solutions(*)
+		END FUNCTION YAMLInitialSolutions2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: solutions
+	integer :: dim
+	dim = size(solutions)
+	YAMLInitialSolutions2Module = YAMLInitialSolutions2Module_F(id, solutions, dim)
+    END FUNCTION YAMLInitialSolutions2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialEquilibriumPhases2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                   The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param equilibrium_phases   Vector of EQUILIBRIUM_PHASES index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                     Zero indicates success, negative indicates failure.
+!> @par
+!> InitialEquilibriumPhases2Module transfers EQUILIBRIUM_PHASES definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a equilibrium_phases is a vector of EQUILIBRIUM_PHASES index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialEquilibriumPhases2Module(id, equilibrium_phases)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialEquilibriumPhases2Module_F(id, equilibrium_phases, dim) &
+			BIND(C, NAME='YAMLInitialEquilibriumPhases2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: equilibrium_phases(*)
+		END FUNCTION YAMLInitialEquilibriumPhases2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: equilibrium_phases
+	integer :: dim
+	dim = size(equilibrium_phases)
+	YAMLInitialEquilibriumPhases2Module = YAMLInitialEquilibriumPhases2Module_F(id, equilibrium_phases, dim)
+    END FUNCTION YAMLInitialEquilibriumPhases2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialExchanges2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                   The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param exchanges            Vector of EXCHANGE index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                     Zero indicates success, negative indicates failure.
+!> @par
+!> InitialExchanges2Module transfers EXCHANGE definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a exchanges is a vector of EXCHANGE index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialExchanges2Module(id, exchanges)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialExchanges2Module_F(id, exchanges, dim) &
+			BIND(C, NAME='YAMLInitialExchanges2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: exchanges(*)
+		END FUNCTION YAMLInitialExchanges2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: exchanges
+	integer :: dim
+	dim = size(exchanges)
+	YAMLInitialExchanges2Module = YAMLInitialExchanges2Module_F(id, exchanges, dim)
+    END FUNCTION YAMLInitialExchanges2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialSurfaces2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param surfaces            Vector of SURFACE index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                     Zero indicates success, negative indicates failure.
+!> @par
+!> InitialSurfaces2Module transfers SURFACE definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a surfaces is a vector of SURFACE index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialSurfaces2Module(id, surfaces)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialSurfaces2Module_F(id, surfaces, dim) &
+			BIND(C, NAME='YAMLInitialSurfaces2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: surfaces(*)
+		END FUNCTION YAMLInitialSurfaces2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: surfaces
+	integer :: dim
+	dim = size(surfaces)
+	YAMLInitialSurfaces2Module = YAMLInitialSurfaces2Module_F(id, surfaces, dim)
+    END FUNCTION YAMLInitialSurfaces2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialGasPhases2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param gas_phases          Vector of GAS_PHASE index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                    Zero indicates success, negative indicates failure.
+!> @par
+!> InitialGasPhases2Module transfers GAS_PHASE definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a gas_phases is a vector of GAS_PHASE index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialGasPhases2Module(id, gas_phases)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialGasPhases2Module_F(id, gas_phases, dim) &
+			BIND(C, NAME='YAMLInitialGasPhases2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: gas_phases(*)
+		END FUNCTION YAMLInitialGasPhases2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: gas_phases
+	integer :: dim
+	dim = size(gas_phases)
+	YAMLInitialGasPhases2Module = YAMLInitialGasPhases2Module_F(id, gas_phases, dim)
+    END FUNCTION YAMLInitialGasPhases2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialSolidSolutions2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param solid_solutions     Vector of SOLID_SOLUTIONS index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                    Zero indicates success, negative indicates failure.
+!> @par
+!> InitialSolidSolutions2Module transfers SOLID_SOLUTIONS definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a solid_solutions is a vector of SOLID_SOLUTIONS index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialSolidSolutions2Module(id, solid_solutions)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialSolidSolutions2Module_F(id, solid_solutions, dim) &
+			BIND(C, NAME='YAMLInitialSolidSolutions2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: solid_solutions(*)
+		END FUNCTION YAMLInitialSolidSolutions2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: solid_solutions
+	integer :: dim
+	dim = size(solid_solutions)
+	YAMLInitialSolidSolutions2Module = YAMLInitialSolidSolutions2Module_F(id, solid_solutions, dim)
+    END FUNCTION YAMLInitialSolidSolutions2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialKinetics2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param kinetics            Vector of KINETICS index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                    Zero indicates success, negative indicates failure.
+!> @par
+!> InitialKinetics2Module transfers KINETICS definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a kinetics is a vector of KINETICS index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialKinetics2Module(id, kinetics)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialKinetics2Module_F(id, kinetics, dim) &
+			BIND(C, NAME='YAMLInitialKinetics2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id
+        integer(kind=C_INT), intent(in) :: kinetics(*)
+        integer(kind=C_INT), intent(in) :: dim
+		END FUNCTION YAMLInitialKinetics2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+	integer :: dim
+    integer, allocatable, dimension(:), intent(in) :: kinetics
+	dim = size(kinetics)
+	YAMLInitialKinetics2Module = YAMLInitialKinetics2Module_F(id, kinetics, dim)
+    END FUNCTION YAMLInitialKinetics2Module
+    
 !> Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.

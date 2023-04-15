@@ -225,6 +225,13 @@
     !> @n CreateMapping(std::vector< int >& grid2chem);
     !> @n DumpModule();
     !> @n FindComponents();
+	!> @n InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+	!> @n InitialExchanges2Module(std::vector< int > exchanges);
+	!> @n InitialGasPhases2Module(std::vector< int > gas_phases);
+	!> @n InitialKineticss2Module(std::vector< int > kinetics);
+	!> @n InitialSolidSolutions2Module(std::vector< int > solid_solutions);
+	!> @n InitialSolutions2Module(std::vector< int > solutions);
+	!> @n InitialSurfaces2Module(std::vector< int > surfaces);
     !> @n InitialPhreeqc2Module(std::vector< int > initial_conditions1);
     !> @n InitialPhreeqc2Module(std::vector< int > initial_conditions1, 
 	!>    std::vector< int > initial_conditions2, std::vector< double > fraction1);
