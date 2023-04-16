@@ -302,6 +302,16 @@ int Advect_cpp()
 			status = phreeqc_rm.SetTemperature(temperature);  // If temperature changes
 			status = phreeqc_rm.SetPressure(pressure);        // If pressure changes
 			status = phreeqc_rm.SetConcentrations(c);         // Transported concentrations
+			// Test SetIthConcentration
+			//for (size_t i = 0; i < ncomps; i++)
+			//{
+			//	std::vector<double> c_comp(nxyz, 0);
+			//	for (size_t j = 0; j < nxyz; j++)
+			//	{
+			//		c_comp[j] = c[i * nxyz + j];
+			//	}
+			//	phreeqc_rm.SetIthConcentration(i, c_comp);
+			//}
 			status = phreeqc_rm.SetTimeStep(time_step);		  // Time step for kinetic reactions
 			time += time_step;
 			status = phreeqc_rm.SetTime(time);
@@ -319,6 +329,16 @@ int Advect_cpp()
 			status = phreeqc_rm.RunCells();
 			// Transfer data from PhreeqcRM for transport
 			status = phreeqc_rm.GetConcentrations(c);
+			// Test GetIthConcentration
+			//for (size_t i = 0; i < ncomps; i++)
+			//{
+			//	std::vector<double> c_comp;
+			//	phreeqc_rm.GetIthConcentration(i, c_comp);
+			//	for (size_t j = 0; j < nxyz; j++)
+			//	{
+			//		assert(c_comp[j] == c[i * nxyz + j]);
+			//	}
+			//}
 			std::vector<double> density;
 			status = phreeqc_rm.GetDensity(density);
 			const std::vector<double>& volume = phreeqc_rm.GetSolutionVolume();
