@@ -7,11 +7,20 @@
   },
   "configurePresets": [
     {
+      "name": "default",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/_builds/${presetName}"
+    },
+    {
+      "name": "ninja",
+      "hidden": true,
+      "inherits": "default",
+      "generator": "Ninja"
+    },
+    {
       "name": "ninja-static",
-      "displayName": "Ninja static",
-      "description": "Default static build using Ninja generator",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/_builds/${presetName}",
+      "inherits": "ninja",
+      "hidden": true,
       "cacheVariables": {
         "BUILD_SHARED_LIBS": {
           "type": "BOOL",
@@ -20,35 +29,91 @@
       }
     },
     {
-      "name": "ninja-static-vcpkg",
+      "name": "ninja-static-debug",
       "inherits": "ninja-static",
-      "displayName": "Ninja static using vcpkg",
-      "description": "Default static build using Ninja generator and vcpkg",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": {
-          "type": "PATH",
-          "value": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-static-release",
+      "inherits": "ninja-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
         }
       }
     },
     {
       "name": "ninja-static-yaml",
       "inherits": "ninja-static",
-      "displayName": "Ninja static with YAML support",
-      "description": "Default static build using Ninja generator and with YAML support",
+      "hidden": true,
       "cacheVariables": {
         "PHREEQCRM_WITH_YAML_CPP": {
           "type": "BOOL",
           "value": "ON"
         }
       }
+    },  
+    {
+      "name": "ninja-static-yaml-debug",
+      "inherits": "ninja-static-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-static-yaml-release",
+      "inherits": "ninja-static-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "ninja-static-yaml-python",
+      "inherits": "ninja-static-yaml",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_BUILD_PYTHON": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "ninja-static-yaml-python-debug",
+      "inherits": "ninja-static-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-static-yaml-python-release",
+      "inherits": "ninja-static-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
     },
     {
       "name": "ninja-shared",
-      "displayName": "Ninja shared",
-      "description": "Default shared build using Ninja generator",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/_builds/${presetName}",
+      "inherits": "ninja",
+      "hidden": true,
       "cacheVariables": {
         "BUILD_SHARED_LIBS": {
           "type": "BOOL",
@@ -57,12 +122,92 @@
       }
     },
     {
-      "name": "ninja-shared-vcpkg",
+      "name": "ninja-shared-debug",
       "inherits": "ninja-shared",
-      "displayName": "Ninja shared using vcpkg",
-      "description": "Default shared build using Ninja generator and vcpkg",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-shared-release",
+      "inherits": "ninja-shared",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "ninja-shared-yaml",
+      "inherits": "ninja-shared",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },  
+    {
+      "name": "ninja-shared-yaml-debug",
+      "inherits": "ninja-shared-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-shared-yaml-release",
+      "inherits": "ninja-shared-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "ninja-shared-yaml-python",
+      "inherits": "ninja-shared-yaml",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_BUILD_PYTHON": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "ninja-shared-yaml-python-debug",
+      "inherits": "ninja-shared-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-shared-yaml-python-release",
+      "inherits": "ninja-shared-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg",
+      "hidden": true,
+      "inherits": "default",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/_builds/${presetName}",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": {
           "type": "PATH",
@@ -71,29 +216,392 @@
       }
     },
     {
-      "name": "ninja-multi",
-      "inherits": "ninja-static",
-      "displayName": "Ninja Multi-Config",
-      "description": "Default build using Ninja Multi-Config generator",
-      "generator": "Ninja Multi-Config"
+      "name": "ninja-vcpkg-static",
+      "inherits": "ninja-vcpkg",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      }
     },
     {
-      "name": "vs2019-static",
-      "inherits": "ninja-static",
-      "displayName": "vs2019-static",
-      "description": "Build static library using vs2019",
+      "name": "ninja-vcpkg-static-debug",
+      "inherits": "ninja-vcpkg-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-static-release",
+      "inherits": "ninja-vcpkg-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml",
+      "inherits": "ninja-vcpkg-static",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },  
+    {
+      "name": "ninja-vcpkg-static-yaml-debug",
+      "inherits": "ninja-vcpkg-static-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-release",
+      "inherits": "ninja-vcpkg-static-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python",
+      "inherits": "ninja-vcpkg-static-yaml",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_BUILD_PYTHON": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python-debug",
+      "inherits": "ninja-vcpkg-static-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python-release",
+      "inherits": "ninja-vcpkg-static-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-shared",
+      "inherits": "ninja-vcpkg",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-shared-debug",
+      "inherits": "ninja-vcpkg-shared",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-shared-release",
+      "inherits": "ninja-vcpkg-shared",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml",
+      "inherits": "ninja-vcpkg-shared",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },  
+    {
+      "name": "ninja-vcpkg-shared-yaml-debug",
+      "inherits": "ninja-vcpkg-shared-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-release",
+      "inherits": "ninja-vcpkg-shared-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-python",
+      "inherits": "ninja-vcpkg-shared-yaml",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_BUILD_PYTHON": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-python-debug",
+      "inherits": "ninja-vcpkg-shared-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-python-release",
+      "inherits": "ninja-vcpkg-shared-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019",
+      "hidden": true,
+      "inherits": "default",
       "generator": "Visual Studio 16 2019",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
+      }      
+    },
+    {
+      "name": "vs2019-static",
+      "inherits": "vs2019",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
       }
     },
     {
-      "name": "vs2019-static-vcpkg",
-      "inherits": "ninja-static",
-      "displayName": "vs2019-static-vcpkg",
-      "description": "Build static library using vs2019 vcpkg and yaml",
+      "name": "vs2019-static-debug",
+      "inherits": "vs2019-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-static-release",
+      "inherits": "vs2019-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019-static-yaml",
+      "inherits": "vs2019-static",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },  
+    {
+      "name": "vs2019-static-yaml-debug",
+      "inherits": "vs2019-static-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-static-yaml-release",
+      "inherits": "vs2019-static-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019-static-yaml-python",
+      "inherits": "vs2019-static-yaml",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_BUILD_PYTHON": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "vs2019-static-yaml-python-debug",
+      "inherits": "vs2019-static-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-static-yaml-python-release",
+      "inherits": "vs2019-static-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019-shared",
+      "inherits": "vs2019",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "vs2019-shared-debug",
+      "inherits": "vs2019-shared",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-shared-release",
+      "inherits": "vs2019-shared",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019-shared-yaml",
+      "inherits": "vs2019-shared",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },  
+    {
+      "name": "vs2019-shared-yaml-debug",
+      "inherits": "vs2019-shared-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-shared-yaml-release",
+      "inherits": "vs2019-shared-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019-shared-yaml-python",
+      "inherits": "vs2019-shared-yaml",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_BUILD_PYTHON": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "vs2019-shared-yaml-python-debug",
+      "inherits": "vs2019-shared-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-shared-yaml-python-release",
+      "inherits": "vs2019-shared-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg",
+      "hidden": true,
+      "inherits": "default",
       "generator": "Visual Studio 16 2019",
       "condition": {
         "type": "equals",
@@ -104,76 +612,676 @@
         "CMAKE_TOOLCHAIN_FILE": {
           "type": "PATH",
           "value": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        },
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-static",
+      "inherits": "vs2019-vcpkg",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-static-debug",
+      "inherits": "vs2019-vcpkg-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-static-release",
+      "inherits": "vs2019-vcpkg-static",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml",
+      "inherits": "vs2019-vcpkg-static",
+      "hidden": true,
+      "cacheVariables": {
         "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },  
+    {
+      "name": "vs2019-vcpkg-static-yaml-debug",
+      "inherits": "vs2019-vcpkg-static-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml-release",
+      "inherits": "vs2019-vcpkg-static-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml-python",
+      "inherits": "vs2019-vcpkg-static-yaml",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_BUILD_PYTHON": {
           "type": "BOOL",
           "value": "ON"
         }
       }
     },
     {
-      "name": "vs2019-shared",
-      "inherits": "ninja-shared",
-      "displayName": "vs2019-shared",
-      "description": "Build shared library using vs2019",
-      "generator": "Visual Studio 16 2019",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
+      "name": "vs2019-vcpkg-static-yaml-python-debug",
+      "inherits": "vs2019-vcpkg-static-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml-python-release",
+      "inherits": "vs2019-vcpkg-static-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-shared",
+      "inherits": "vs2019-vcpkg",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-shared-debug",
+      "inherits": "vs2019-vcpkg-shared",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-shared-release",
+      "inherits": "vs2019-vcpkg-shared",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml",
+      "inherits": "vs2019-vcpkg-shared",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },  
+    {
+      "name": "vs2019-vcpkg-shared-yaml-debug",
+      "inherits": "vs2019-vcpkg-shared-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-release",
+      "inherits": "vs2019-vcpkg-shared-yaml",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-python",
+      "inherits": "vs2019-vcpkg-shared-yaml",
+      "hidden": true,
+      "cacheVariables": {
+        "PHREEQCRM_BUILD_PYTHON": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-python-debug",
+      "inherits": "vs2019-vcpkg-shared-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-python-release",
+      "inherits": "vs2019-vcpkg-shared-yaml-python",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
       }
     }
   ],
   "buildPresets": [
     {
-      "name": "ninja-static",
-      "configurePreset": "ninja-static"
+      "name": "ninja-static-debug",
+      "configurePreset": "ninja-static-debug"
     },
     {
-      "name": "ninja-shared",
-      "configurePreset": "ninja-shared"
+      "name": "ninja-static-release",
+      "configurePreset": "ninja-static-release"
     },
     {
-      "name": "vs2019-static",
-      "configurePreset": "vs2019-static"
+      "name": "ninja-static-yaml-debug",
+      "configurePreset": "ninja-static-yaml-debug"
     },
     {
-      "name": "vs2019-static-vcpkg",
-      "configurePreset": "vs2019-static-vcpkg"
+      "name": "ninja-static-yaml-release",
+      "configurePreset": "ninja-static-yaml-release"
     },
     {
-      "name": "vs2019-shared",
-      "configurePreset": "vs2019-shared"
+      "name": "ninja-static-yaml-python-debug",
+      "configurePreset": "ninja-static-yaml-python-debug"
+    },
+    {
+      "name": "ninja-static-yaml-python-release",
+      "configurePreset": "ninja-static-yaml-python-release"
+    },
+    {
+      "name": "ninja-shared-debug",
+      "configurePreset": "ninja-shared-debug"
+    },
+    {
+      "name": "ninja-shared-release",
+      "configurePreset": "ninja-shared-release"
+    },
+    {
+      "name": "ninja-shared-yaml-debug",
+      "configurePreset": "ninja-shared-yaml-debug"
+    },
+    {
+      "name": "ninja-shared-yaml-release",
+      "configurePreset": "ninja-shared-yaml-release"
+    },
+    {
+      "name": "ninja-shared-yaml-python-debug",
+      "configurePreset": "ninja-shared-yaml-python-debug"
+    },
+    {
+      "name": "ninja-shared-yaml-python-release",
+      "configurePreset": "ninja-shared-yaml-python-release"
+    },
+    {
+      "name": "ninja-vcpkg-static-debug",
+      "configurePreset": "ninja-vcpkg-static-debug"
+    },
+    {
+      "name": "ninja-vcpkg-static-release",
+      "configurePreset": "ninja-vcpkg-static-release"
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-debug",
+      "configurePreset": "ninja-vcpkg-static-yaml-debug"
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-release",
+      "configurePreset": "ninja-vcpkg-static-yaml-release"
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python-debug",
+      "configurePreset": "ninja-vcpkg-static-yaml-python-debug"
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python-release",
+      "configurePreset": "ninja-vcpkg-static-yaml-python-release"
+    },
+    {
+      "name": "ninja-vcpkg-shared-debug",
+      "configurePreset": "ninja-vcpkg-shared-debug"
+    },
+    {
+      "name": "ninja-vcpkg-shared-release",
+      "configurePreset": "ninja-vcpkg-shared-release"
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-debug",
+      "configurePreset": "ninja-vcpkg-shared-yaml-debug"
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-release",
+      "configurePreset": "ninja-vcpkg-shared-yaml-release"
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-python-debug",
+      "configurePreset": "ninja-vcpkg-shared-yaml-python-debug"
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-python-release",
+      "configurePreset": "ninja-vcpkg-shared-yaml-python-release"
+    },
+    {
+      "name": "vs2019-static-debug",
+      "configurePreset": "vs2019-static-debug"
+    },
+    {
+      "name": "vs2019-static-release",
+      "configurePreset": "vs2019-static-release"
+    },
+    {
+      "name": "vs2019-static-yaml-debug",
+      "configurePreset": "vs2019-static-yaml-debug"
+    },
+    {
+      "name": "vs2019-static-yaml-release",
+      "configurePreset": "vs2019-static-yaml-release"
+    },
+    {
+      "name": "vs2019-static-yaml-python-debug",
+      "configurePreset": "vs2019-static-yaml-python-debug"
+    },
+    {
+      "name": "vs2019-static-yaml-python-release",
+      "configurePreset": "vs2019-static-yaml-python-release"
+    },
+    {
+      "name": "vs2019-shared-debug",
+      "configurePreset": "vs2019-shared-debug"
+    },
+    {
+      "name": "vs2019-shared-release",
+      "configurePreset": "vs2019-shared-release"
+    },
+    {
+      "name": "vs2019-shared-yaml-debug",
+      "configurePreset": "vs2019-shared-yaml-debug"
+    },
+    {
+      "name": "vs2019-shared-yaml-release",
+      "configurePreset": "vs2019-shared-yaml-release"
+    },
+    {
+      "name": "vs2019-shared-yaml-python-debug",
+      "configurePreset": "vs2019-shared-yaml-python-debug"
+    },
+    {
+      "name": "vs2019-shared-yaml-python-release",
+      "configurePreset": "vs2019-shared-yaml-python-release"
+    },
+    {
+      "name": "vs2019-vcpkg-static-debug",
+      "configurePreset": "vs2019-vcpkg-static-debug"
+    },
+    {
+      "name": "vs2019-vcpkg-static-release",
+      "configurePreset": "vs2019-vcpkg-static-release"
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml-debug",
+      "configurePreset": "vs2019-vcpkg-static-yaml-debug"
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml-release",
+      "configurePreset": "vs2019-vcpkg-static-yaml-release"
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml-python-debug",
+      "configurePreset": "vs2019-vcpkg-static-yaml-python-debug"
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml-python-release",
+      "configurePreset": "vs2019-vcpkg-static-yaml-python-release"
+    },
+    {
+      "name": "vs2019-vcpkg-shared-debug",
+      "configurePreset": "vs2019-vcpkg-shared-debug"
+    },
+    {
+      "name": "vs2019-vcpkg-shared-release",
+      "configurePreset": "vs2019-vcpkg-shared-release"
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-debug",
+      "configurePreset": "vs2019-vcpkg-shared-yaml-debug"
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-release",
+      "configurePreset": "vs2019-vcpkg-shared-yaml-release"
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-python-debug",
+      "configurePreset": "vs2019-vcpkg-shared-yaml-python-debug"
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-python-release",
+      "configurePreset": "vs2019-vcpkg-shared-yaml-python-release"
     }
   ],
   "testPresets": [
     {
-      "name": "ninja-static",
-      "configurePreset": "ninja-static",
+      "name": "ninja-static-debug",
+      "configurePreset": "ninja-static-debug",
       "output": {"outputOnFailure": true},
       "execution": {"noTestsAction": "error", "stopOnFailure": true}
     },
     {
-      "name": "ninja-shared",
-      "configurePreset": "ninja-shared",
+      "name": "ninja-static-release",
+      "configurePreset": "ninja-static-release",
       "output": {"outputOnFailure": true},
       "execution": {"noTestsAction": "error", "stopOnFailure": true}
     },
     {
-      "name": "vs2019-static",
-      "configurePreset": "vs2019-static",
+      "name": "ninja-static-yaml-debug",
+      "configurePreset": "ninja-static-yaml-debug",
       "output": {"outputOnFailure": true},
       "execution": {"noTestsAction": "error", "stopOnFailure": true}
     },
     {
-      "name": "vs2019-static-vcpkg",
-      "configurePreset": "vs2019-static-vcpkg",
+      "name": "ninja-static-yaml-release",
+      "configurePreset": "ninja-static-yaml-release",
       "output": {"outputOnFailure": true},
       "execution": {"noTestsAction": "error", "stopOnFailure": true}
     },
     {
-      "name": "vs2019-shared",
-      "configurePreset": "vs2019-shared",
+      "name": "ninja-static-yaml-python-debug",
+      "configurePreset": "ninja-static-yaml-python-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-static-yaml-python-release",
+      "configurePreset": "ninja-static-yaml-python-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-shared-debug",
+      "configurePreset": "ninja-shared-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-shared-release",
+      "configurePreset": "ninja-shared-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-shared-yaml-debug",
+      "configurePreset": "ninja-shared-yaml-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-shared-yaml-release",
+      "configurePreset": "ninja-shared-yaml-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-shared-yaml-python-debug",
+      "configurePreset": "ninja-shared-yaml-python-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-shared-yaml-python-release",
+      "configurePreset": "ninja-shared-yaml-python-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-static-debug",
+      "configurePreset": "ninja-vcpkg-static-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-static-release",
+      "configurePreset": "ninja-vcpkg-static-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-debug",
+      "configurePreset": "ninja-vcpkg-static-yaml-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-release",
+      "configurePreset": "ninja-vcpkg-static-yaml-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python-debug",
+      "configurePreset": "ninja-vcpkg-static-yaml-python-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python-release",
+      "configurePreset": "ninja-vcpkg-static-yaml-python-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-shared-debug",
+      "configurePreset": "ninja-vcpkg-shared-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-shared-release",
+      "configurePreset": "ninja-vcpkg-shared-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-debug",
+      "configurePreset": "ninja-vcpkg-shared-yaml-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-release",
+      "configurePreset": "ninja-vcpkg-shared-yaml-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-python-debug",
+      "configurePreset": "ninja-vcpkg-shared-yaml-python-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-shared-yaml-python-release",
+      "configurePreset": "ninja-vcpkg-shared-yaml-python-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-static-debug",
+      "configurePreset": "vs2019-static-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-static-release",
+      "configurePreset": "vs2019-static-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-static-yaml-debug",
+      "configurePreset": "vs2019-static-yaml-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-static-yaml-release",
+      "configurePreset": "vs2019-static-yaml-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-static-yaml-python-debug",
+      "configurePreset": "vs2019-static-yaml-python-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-static-yaml-python-release",
+      "configurePreset": "vs2019-static-yaml-python-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-shared-debug",
+      "configurePreset": "vs2019-shared-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-shared-release",
+      "configurePreset": "vs2019-shared-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-shared-yaml-debug",
+      "configurePreset": "vs2019-shared-yaml-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-shared-yaml-release",
+      "configurePreset": "vs2019-shared-yaml-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-shared-yaml-python-debug",
+      "configurePreset": "vs2019-shared-yaml-python-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-shared-yaml-python-release",
+      "configurePreset": "vs2019-shared-yaml-python-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-static-debug",
+      "configurePreset": "vs2019-vcpkg-static-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-static-release",
+      "configurePreset": "vs2019-vcpkg-static-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml-debug",
+      "configurePreset": "vs2019-vcpkg-static-yaml-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml-release",
+      "configurePreset": "vs2019-vcpkg-static-yaml-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml-python-debug",
+      "configurePreset": "vs2019-vcpkg-static-yaml-python-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-static-yaml-python-release",
+      "configurePreset": "vs2019-vcpkg-static-yaml-python-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-shared-debug",
+      "configurePreset": "vs2019-vcpkg-shared-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-shared-release",
+      "configurePreset": "vs2019-vcpkg-shared-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-debug",
+      "configurePreset": "vs2019-vcpkg-shared-yaml-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-release",
+      "configurePreset": "vs2019-vcpkg-shared-yaml-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-python-debug",
+      "configurePreset": "vs2019-vcpkg-shared-yaml-python-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-python-release",
+      "configurePreset": "vs2019-vcpkg-shared-yaml-python-release",
       "output": {"outputOnFailure": true},
       "execution": {"noTestsAction": "error", "stopOnFailure": true}
     }
