@@ -198,27 +198,39 @@ int Advect_cpp()
 			phreeqc_rm.OutputMessage(strm.str());
 		}
 		phreeqc_rm.OutputMessage("\n");
-		// Set array of initial conditions
-		std::vector<int> ic1, ic2;
-		ic1.resize(nxyz * 7, -1);
-		ic2.resize(nxyz * 7, -1);
-		std::vector<double> f1;
-		f1.resize(nxyz * 7, 1.0);
-		for (int i = 0; i < nxyz; i++)
-		{
-			ic1[i] = 1;              // Solution 1
-			ic1[nxyz + i] = -1;      // Equilibrium phases none
-			ic1[2 * nxyz + i] = 1;     // Exchange 1
-			ic1[3 * nxyz + i] = -1;    // Surface none
-			ic1[4 * nxyz + i] = -1;    // Gas phase none
-			ic1[5 * nxyz + i] = -1;    // Solid solutions none
-			ic1[6 * nxyz + i] = -1;    // Kinetics none
-		}
-		status = phreeqc_rm.InitialPhreeqc2Module(ic1, ic2, f1);
-		// No mixing is defined, so the following is equivalent
+		//
+		// Four ways to set initial conditions
+		// 
+		// 1. Define mixing 
+		//std::vector<int> ic1, ic2;
+		//ic1.resize(nxyz * 7, -1);
+		//ic2.resize(nxyz * 7, -1);
+		//std::vector<double> f1;
+		//f1.resize(nxyz * 7, 1.0);
+		//for (int i = 0; i < nxyz; i++)
+		//{
+		//	ic1[i] = 1;              // Solution 1
+		//	ic1[nxyz + i] = -1;      // Equilibrium phases none
+		//	ic1[2 * nxyz + i] = 1;     // Exchange 1
+		//	ic1[3 * nxyz + i] = -1;    // Surface none
+		//	ic1[4 * nxyz + i] = -1;    // Gas phase none
+		//	ic1[5 * nxyz + i] = -1;    // Solid solutions none
+		//	ic1[6 * nxyz + i] = -1;    // Kinetics none
+		//}
+		//status = phreeqc_rm.InitialPhreeqc2Module(ic1, ic2, f1);
+
+		// 2. No mixing is defined, so the following is equivalent
 		// status = phreeqc_rm.InitialPhreeqc2Module(ic1);
 
-		// alternative for setting initial conditions
+		// 3. Simplest way to set these initial conditions
+		//
+		{
+			std::vector<int> solutions(nxyz, 1);
+			phreeqc_rm.InitialSolutions2Module(solutions);
+			std::vector<int> exchanges(nxyz, 1);
+			phreeqc_rm.InitialExchanges2Module(exchanges);
+		}
+		// 4. An alternative for setting initial conditions
 		// cell number in first argument (-1 indicates last solution, 40 in this case)
 		// in advect.pqi and any reactants with the same number--
 		// Equilibrium phases, exchange, surface, gas phase, solid solution, and (or) kinetics--
