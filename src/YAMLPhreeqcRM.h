@@ -227,7 +227,7 @@ yrm.YAMLCloseFiles();
 	@param solutions Vector of index numbers that is dimensioned @a nxyz, 
 	where @a nxyz is the number of grid cells in the user's model. 
 	 */
-	void YAMLPhreeqcRM::YAMLInitialSolutions2Module(std::vector< int > solutions);
+	void YAMLInitialSolutions2Module(std::vector< int > solutions);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method InitialEquilibriumPhases2Module.
 	When the YAML document is written to file it can be processed by the method
@@ -240,7 +240,7 @@ yrm.YAMLCloseFiles();
 	@param equilibrium_phases Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
-	void YAMLPhreeqcRM::YAMLInitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+	void YAMLInitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method InitialExchanges2Module.
 	When the YAML document is written to file it can be processed by the method
@@ -253,7 +253,7 @@ yrm.YAMLCloseFiles();
 	@param exchanges Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
-	void YAMLPhreeqcRM::YAMLInitialExchanges2Module(std::vector< int > exchanges);
+	void YAMLInitialExchanges2Module(std::vector< int > exchanges);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method InitialSurfaces2Module.
 	When the YAML document is written to file it can be processed by the method
@@ -266,7 +266,7 @@ yrm.YAMLCloseFiles();
 	@param surfaces Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
-	void YAMLPhreeqcRM::YAMLInitialSurfaces2Module(std::vector< int > surfaces);
+	void YAMLInitialSurfaces2Module(std::vector< int > surfaces);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method InitialGasPhases2Module.
 	When the YAML document is written to file it can be processed by the method
@@ -279,7 +279,7 @@ yrm.YAMLCloseFiles();
 	@param gas_phases Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
-	void YAMLPhreeqcRM::YAMLInitialGasPhases2Module(std::vector< int > gas_phases);
+	void YAMLInitialGasPhases2Module(std::vector< int > gas_phases);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method InitialSolidSolutions2Module.
 	When the YAML document is written to file it can be processed by the method
@@ -292,7 +292,7 @@ yrm.YAMLCloseFiles();
 	@param solid_solutions Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
-	void YAMLPhreeqcRM::YAMLInitialSolidSolutions2Module(std::vector< int > solid_solutions);
+	void YAMLInitialSolidSolutions2Module(std::vector< int > solid_solutions);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method InitialKinetics2Module.
 	When the YAML document is written to file it can be processed by the method
@@ -305,7 +305,7 @@ yrm.YAMLCloseFiles();
 	@param kinetics Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
-	void YAMLPhreeqcRM::YAMLInitialKinetics2Module(std::vector< int > kinetics);
+	void YAMLInitialKinetics2Module(std::vector< int > kinetics);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
