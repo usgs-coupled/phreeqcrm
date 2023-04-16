@@ -660,6 +660,81 @@ RMF_GetConcentrations(int *id, double * c)
 	}
 	return IRM_BADINSTANCE;
 }
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_GetIthConcentration(int* id, int* i, double* c)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves concentrations for one component
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> c_vector;
+		c_vector.resize(Reaction_module_ptr->GetGridCellCount());
+		IRM_RESULT return_value = Reaction_module_ptr->GetIthConcentration(*i, c_vector);
+		if (return_value == IRM_OK)
+		{
+			memcpy(c, &c_vector.front(), c_vector.size() * sizeof(double));
+		}
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_GetIthSpeciesConcentration(int* id, int* i, double* c)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves concentrations for one aqueous species
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> c_vector;
+		c_vector.resize(Reaction_module_ptr->GetGridCellCount());
+		IRM_RESULT return_value = Reaction_module_ptr->GetIthSpeciesConcentration(*i, c_vector);
+		if (return_value == IRM_OK)
+		{
+			memcpy(c, &c_vector.front(), c_vector.size() * sizeof(double));
+		}
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_SetIthConcentration(int* id, int* i, double* c)
+/* ---------------------------------------------------------------------- */
+{
+	// Sets concentrations for one component
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> c_vector;
+		c_vector.resize(Reaction_module_ptr->GetGridCellCount());
+		memcpy(&c_vector.front(), c, c_vector.size() * sizeof(double));
+		IRM_RESULT return_value = Reaction_module_ptr->SetIthConcentration(*i, c_vector);
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_SetIthSpeciesConcentration(int* id, int* i, double* c)
+/* ---------------------------------------------------------------------- */
+{
+	// Sets concentrations for one aqueous species
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> c_vector;
+		c_vector.resize(Reaction_module_ptr->GetGridCellCount());
+		memcpy(&c_vector.front(), c, c_vector.size() * sizeof(double));
+		IRM_RESULT return_value = Reaction_module_ptr->SetIthSpeciesConcentration(*i, c_vector);
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RMF_GetDensity(int *id, double * d)

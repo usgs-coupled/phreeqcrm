@@ -939,6 +939,194 @@
     endif
     END SUBROUTINE Chk_GetConcentrations
 
+
+	!> Transfer the concentration from each cell for one component to the vector given in the 
+	!> argument list (@a c). The concentrations are those resulting from the last call
+	!> to @ref RM_RunCells. Units of concentration for @a c are defined by @ref RM_SetUnitsSolution.
+    !> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the component to retrieve. Indices refer
+	!> to the order produced by @ref RM_GetComponents. The total number of components is given by
+	!> @ref RM_GetComponentCount.
+	!> @param c                Vector to receive the component concentrations.
+	!> Dimension of the vector is set to @a nxyz, where @a nxyz is the number of 
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetComponents, @ref RM_GetComponentCount, 
+	!> @ref RM_GetConcentrations.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> real(kind=8), allocatable, dimension(:) :: c
+	!> status = RM_RunCells(id)
+	!> status = phreeqc_rm.GetIthConcentration(id, 0, c)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_GetIthConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetIthConcentration(id, i, c) &
+			BIND(C, NAME='RMF_GetIthConcentration')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: i
+		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+		END FUNCTION RMF_GetIthConcentration
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    RM_GetIthConcentration = RMF_GetIthConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_GetIthConcentration
+
+	!> Transfer the concentration from each cell for one species to the vector given in the
+	!> argument list (@a c). The concentrations are those resulting from the last call
+	!> to @ref RM_RunCells. Units of concentration for @a c are mol/L.
+	!> To retrieve species concentrations, @ref RM_SetSpeciesSaveOn must be set to @a true.
+	!> This method is for use with multicomponent diffusion calculations.
+	!> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the species to retrieve. Indices refer
+	!> to the order given by @ref RM_GetSpeciesNames. The total number of species is given
+	!> by @ref RM_GetSpeciesCount.
+	!> @param c                Vector to receive the species concentrations.
+	!> Dimension of the vector is set to @a nxyz, where @a nxyz is the number of
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesNames,
+	!> @ref RM_GetSpeciesConcentrations, @ref RM_SetSpeciesSaveOn.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> real(kind=8), allocatable, dimension(:) :: c
+	!> status = RM_RunCells(id)
+	!> status = RM_GetIthSpeciesConcentration(id, 0, c)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_GetIthSpeciesConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetIthSpeciesConcentration(id, i, c) &
+			BIND(C, NAME='RMF_GetIthSpeciesConcentration')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: i
+		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+		END FUNCTION RMF_GetIthSpeciesConcentration
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    RM_GetIthSpeciesConcentration = RMF_GetIthSpeciesConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_GetIthSpeciesConcentration
+	
+
+	!> Transfer the concentrations for one component given by the vector @a c to each reaction cell. 
+	!> Units of concentration for @a c are defined by @ref RM_SetUnitsSolution. It is required that
+	!> @a RM_SetIthConcentration be called for each component in the system before @ref RM_RunCells is called.
+	!> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the component to transfer. Indices refer
+	!> to the order produced by @ref RM_GetComponents. The total number of components is given by
+	!> @ref RM_GetComponentCount.
+	!> @param c                Vector of concentrations to transfer to the reaction cells.
+	!> Dimension of the vector is @a nxyz, where @a nxyz is the number of
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are ignored.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetComponentCount,  @ref RM_GetComponents,
+	!> @ref RM_SetConcentrations.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> status = phreeqc_rm.SetIthConcentration(id, i, c) ! repeat for all components
+	!> ...
+	!> status = phreeqc_rm.RunCells(id)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_SetIthConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_SetIthConcentration(id, i, c) &
+			BIND(C, NAME='RMF_SetIthConcentration')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: i
+		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+		END FUNCTION RMF_SetIthConcentration
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    RM_SetIthConcentration = RMF_SetIthConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_SetIthConcentration
+	
+	!> Transfer the concentrations for one aqueous species given by the vector @a c to each reaction cell.
+	!> Units of concentration for @a c are mol/L. To set species concentrations, @ref RM_SetSpeciesSaveOn 
+	!> must be set to @a true. It is required that
+	!> @a RM_SetIthSpeciesConcentration be called for each aqueous species in the system before 
+	!> @ref RM_RunCells is called. This method is for use with multicomponent diffusion calculations. 
+	!> 
+	!> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the species to transfer. Indices refer
+	!> to the order produced by @ref RM_GetSpeciesNames. The total number of species is given by
+	!> @ref RM_GetSpeciesCount.
+	!> @param c                Vector of concentrations to transfer to the reaction cells.
+	!> Dimension of the vector is @a nxyz, where @a nxyz is the number of
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are ignored.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesNames,
+	!> @ref RM_SetSpeciesConcentrations, @ref RM_SetSpeciesSaveOn.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> status = RM_SetIthSpeciesConcentration(id, i, c) ! repeat for all species
+	!> ...
+	!> status = RM_RunCells(id)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_SetIthSpeciesConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_SetIthSpeciesConcentration(id, i, c) &
+			BIND(C, NAME='RMF_SetIthSpeciesConcentration')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: i
+		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+		END FUNCTION RMF_SetIthSpeciesConcentration
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    RM_SetIthSpeciesConcentration = RMF_SetIthSpeciesConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_SetIthSpeciesConcentration
+
+    
     !> Returns the user number of the current selected-output definition.
     !> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput specifies which of the
     !> selected-output definitions is used.

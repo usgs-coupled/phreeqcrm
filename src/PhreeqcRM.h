@@ -632,9 +632,120 @@ status = phreeqc_rm.GetConcentrations(c);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                GetConcentrations(std::vector< double > &c);
-#ifdef GETITHCONCENTRATION
+	/**
+	Transfer the concentration from each cell for one component to the vector given in the 
+	argument list (@a c). The concentrations are those resulting from the last call
+	to @ref RunCells. Units of concentration for @a c are defined by @ref SetUnitsSolution.
+	@param i                Zero-based index for the component to retrieve. Indices refer
+	to the order produced by @ref GetComponents. The total number of components is given by
+	@ref GetComponentCount.
+	@param c                Vector to receive the component concentrations.
+	Dimension of the vector is set to @a nxyz, where @a nxyz is the number of 
+	user grid cells (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
+	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+	@see                    @ref FindComponents, @ref GetComponents, @ref GetComponentCount, 
+	@ref GetConcentrations.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::vector< double > c;
+	status = phreeqc_rm.RunCells();
+	status = phreeqc_rm.GetIthConcentration(0, c);
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
 	IRM_RESULT                                GetIthConcentration(int i, std::vector< double >& c);
-#endif
+	/**
+	Transfer the concentration from each cell for one species to the vector given in the
+	argument list (@a c). The concentrations are those resulting from the last call
+	to @ref RunCells. Units of concentration for @a c are mol/L.
+	To retrieve species concentrations, @ref SetSpeciesSaveOn must be set to @a true.
+	This method is for use with multicomponent diffusion calculations.
+
+	@param i                Zero-based index for the species to retrieve. Indices refer
+	to the order given by @ref GetSpeciesNames. The total number of species is given
+	by @ref GetSpeciesCount.
+	@param c                Vector to receive the species concentrations.
+	Dimension of the vector is set to @a nxyz, where @a nxyz is the number of
+	user grid cells (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
+	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+	@see                    @ref FindComponents, @ref GetSpeciesCount, @ref GetSpeciesNames,
+	@ref GetSpeciesConcentrations, @ref SetSpeciesSaveOn.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::vector< double > c;
+	status = phreeqc_rm.RunCells();
+	status = phreeqc_rm.GetIthSpeciesConcentration(0, c);
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
+	IRM_RESULT                                GetIthSpeciesConcentration(int i, std::vector< double >& c);
+	/**
+	Transfer the concentrations for one component given by the vector @a c to each reaction cell. 
+	Units of concentration for @a c are defined by @ref SetUnitsSolution. It is required that
+	@a SetIthConcentration be called for each component in the system before @ref RunCells is called.
+	@param i                Zero-based index for the component to transfer. Indices refer
+	to the order produced by @ref GetComponents. The total number of components is given by
+	@ref GetComponentCount.
+	@param c                Vector of concentrations to transfer to the reaction cells.
+	Dimension of the vector is @a nxyz, where @a nxyz is the number of
+	user grid cells (@ref GetGridCellCount). Values for inactive cells are ignored.
+	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+	@see                    @ref FindComponents, @ref GetComponentCount,  @ref GetComponents,
+	@ref SetConcentrations.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	status = phreeqc_rm.SetIthConcentration(i, c); // repeat for all components
+	...
+	status = phreeqc_rm.RunCells();
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
+	IRM_RESULT                                SetIthConcentration(int i, std::vector< double >& c);
+	/**
+	Transfer the concentrations for one aqueous species given by the vector @a c to each reaction cell.
+	Units of concentration for @a c are mol/L. To set species concentrations, @ref SetSpeciesSaveOn 
+	must be set to @a true. It is required that
+	@a SetIthSpeciesConcentration be called for each aqueous species in the system before 
+	@ref RunCells is called. This method is for use with multicomponent diffusion calculations. 
+
+	@param i                Zero-based index for the species to transfer. Indices refer
+	to the order produced by @ref GetSpeciesNames. The total number of species is given by
+	@ref GetSpeciesCount.
+	@param c                Vector of concentrations to transfer to the reaction cells.
+	Dimension of the vector is @a nxyz, where @a nxyz is the number of
+	user grid cells (@ref GetGridCellCount). Values for inactive cells are ignored.
+	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+	@see                    @ref FindComponents, @ref GetSpeciesCount, @ref GetSpeciesNames,
+	@ref SetSpeciesConcentrations, @ref SetSpeciesSaveOn.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	status = phreeqc_rm.SetIthSpeciesConcentration(i, c); // repeat for all species
+	...
+	status = phreeqc_rm.RunCells();
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
+	IRM_RESULT                                SetIthSpeciesConcentration(int i, std::vector< double >& c);
 /**
 Returns the user number of the current selected-output definition.
 @ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput specifies which of the
@@ -5427,6 +5538,12 @@ protected:
 	double time;						    // time from transport, sec
 	double time_step;					    // time step from transport, sec
 	double time_conversion;					// time conversion factor, multiply to convert to preferred time unit for output
+	std::vector <double> CurrentConcentrations;
+	std::vector <double> CurrentSpeciesConcentrations;
+	std::vector <double> IthCurrentConcentrations;
+	std::vector <double> IthCurrentSpeciesConcentrations;
+	std::set<int>        IthConcentrationSet;
+	std::set<int>        IthSpeciesConcentrationSet;
 	std::vector <double> old_saturation_root;	// saturation fraction from previous step
 	std::vector <double> old_saturation_worker;
 	std::vector< double > saturation_root;	    // nxyz saturation fraction

@@ -3219,7 +3219,6 @@ PhreeqcRM::GatherNchem(std::vector<double> &source, std::vector<double> &destina
 	delete [] recv_displs;
 #endif
 }
-#ifdef GETITHCONCENTRATION
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::GetIthConcentration(int i, std::vector<double>& c)
@@ -3230,13 +3229,15 @@ PhreeqcRM::GetIthConcentration(int i, std::vector<double>& c)
 	{
 		if (i >= 0 && i < this->GetComponentCount())
 		{
-			std::vector<double> all;
-			this->GetConcentrations(all);
+			if (this->CurrentConcentrations.size() != this->GetGridCellCount() * this->GetComponentCount())
+			{
+				this->GetConcentrations(this->CurrentConcentrations);
+			}
 			int nxyz = this->GetGridCellCount();
 			c.resize(nxyz);
 			for (int j = 0; j < nxyz; j++)
 			{
-				c[j] = all[i * nxyz + j];
+				c[j] = CurrentConcentrations[i * nxyz + j];
 			}
 			return IRM_OK;
 		}
@@ -3246,7 +3247,96 @@ PhreeqcRM::GetIthConcentration(int i, std::vector<double>& c)
 	}
 	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetIthConcentration");
 }
-#endif
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::SetIthConcentration(int i, std::vector<double>& c)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+		if (i >= 0 && i < this->GetComponentCount())
+		{
+			if (this->IthCurrentConcentrations.size() != this->GetGridCellCount()*this->GetComponentCount())
+			{
+				this->IthCurrentConcentrations.clear();
+				this->IthCurrentConcentrations.resize(this->GetGridCellCount() * this->GetComponentCount(), 0);
+				this->IthConcentrationSet.clear();
+			}
+			int nxyz = this->GetGridCellCount();
+			assert(c.size() == nxyz);
+			for (int j = 0; j < nxyz; j++)
+			{
+				IthCurrentConcentrations[i * nxyz + j] = c[j];
+			}
+			IthConcentrationSet.insert(i);
+			return IRM_OK;
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetIthConcentration");
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetIthSpeciesConcentration(int i, std::vector<double>& c)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+		if (species_save_on && i >= 0 && i < this->GetSpeciesCount())
+		{
+			if (this->CurrentSpeciesConcentrations.size() != this->GetGridCellCount() * this->GetSpeciesCount())
+			{
+				this->GetSpeciesConcentrations(this->CurrentSpeciesConcentrations);
+			}
+			int nxyz = this->GetGridCellCount();
+			c.resize(nxyz);
+			for (int j = 0; j < nxyz; j++)
+			{
+				c[j] = CurrentSpeciesConcentrations[i * nxyz + j];
+			}
+			return IRM_OK;
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetIthSpeciesConcentration");
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::SetIthSpeciesConcentration(int i, std::vector<double>& c)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+		if (i >= 0 && i < this->GetSpeciesCount())
+		{
+			if (this->IthCurrentSpeciesConcentrations.size() != this->GetGridCellCount() * this->GetSpeciesCount())
+			{
+				this->IthCurrentSpeciesConcentrations.clear();
+				this->IthCurrentSpeciesConcentrations.resize(this->GetGridCellCount() * this->GetSpeciesCount(), 0);
+				this->IthSpeciesConcentrationSet.clear();
+			}
+			int nxyz = this->GetGridCellCount();
+			assert(c.size() == nxyz);
+			for (int j = 0; j < nxyz; j++)
+			{
+				IthCurrentSpeciesConcentrations[i * nxyz + j] = c[j];
+			}
+			IthSpeciesConcentrationSet.insert(i);
+			return IRM_OK;
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetIthConcentration");
+}
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -9417,6 +9507,24 @@ PhreeqcRM::RunCells()
 	{
 		int method = METHOD_RUNCELLS;
 		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+		if (IthConcentrationSet.size() > 0)
+		{
+			if (IthConcentrationSet.size() != this->GetComponentCount())
+			{
+				this->ErrorMessage("You must call SetIthConcentration for every component before you call Run_Cells.");
+				throw PhreeqcRMStop();
+			}
+			SetConcentrations(IthCurrentConcentrations);
+		}
+		if (IthSpeciesConcentrationSet.size() > 0)
+		{
+			if (IthSpeciesConcentrationSet.size() != this->GetSpeciesCount())
+			{
+				this->ErrorMessage("You must call SetIthSpeciesConcentration for every species before you call Run_Cells.");
+				throw PhreeqcRMStop();
+			}
+			SpeciesConcentrations2Module(IthCurrentSpeciesConcentrations);
+		}
 	}
 
 	// check that all solutions are defined
@@ -9528,6 +9636,16 @@ PhreeqcRM::RunCells()
 	{
 		return_value = IRM_FAIL;
 	}
+	if (mpi_myself == 0)
+	{
+		GetConcentrations(this->CurrentConcentrations);
+		this->IthConcentrationSet.clear();
+		this->IthSpeciesConcentrationSet.clear();
+		if (this->species_save_on)
+		{
+			GetSpeciesConcentrations(this->CurrentSpeciesConcentrations);
+		}
+	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::RunCells");
 }
 #else
@@ -9545,6 +9663,24 @@ PhreeqcRM::RunCells()
  *   Update solution compositions in sz_bin
  */
 	this->phreeqcrm_error_string.clear();
+	if (IthConcentrationSet.size() > 0)
+	{
+		if (IthConcentrationSet.size() != this->GetComponentCount())
+		{
+			this->ErrorMessage("You must call SetIthConcentration for every component before you call Run_Cells.");
+			throw PhreeqcRMStop();
+		}
+		SetConcentrations(IthCurrentConcentrations);
+	}
+	if (IthSpeciesConcentrationSet.size() > 0)
+	{
+		if (IthSpeciesConcentrationSet.size() != this->GetSpeciesCount())
+		{
+			this->ErrorMessage("You must call SetIthSpeciesConcentration for every species before you call Run_Cells.");
+			throw PhreeqcRMStop();
+		}
+		SpeciesConcentrations2Module(IthCurrentSpeciesConcentrations);
+	}
 	// check that all solutions are defined
 	if (this->need_error_check)
 	{
@@ -9623,6 +9759,13 @@ PhreeqcRM::RunCells()
 	catch (...)
 	{
 		return_value = IRM_FAIL;
+	}
+	GetConcentrations(this->CurrentConcentrations);
+	this->IthConcentrationSet.clear();
+	this->IthSpeciesConcentrationSet.clear();
+	if (this->species_save_on)
+	{
+		GetSpeciesConcentrations(this->CurrentSpeciesConcentrations);
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::RunCells");
 }

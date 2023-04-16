@@ -48,6 +48,12 @@ IRM_DLL_EXPORT int        RMF_GetSICount(int * id);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSIName(int * id, int * num, char *name, int *l1);
 
 IRM_DLL_EXPORT IRM_RESULT RMF_GetConcentrations(int *id, double *c);
+
+IRM_DLL_EXPORT IRM_RESULT RMF_GetIthConcentration(int* id, int* i, double* c);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetIthSpeciesConcentration(int* id, int* i, double* c);
+IRM_DLL_EXPORT IRM_RESULT RMF_SetIthConcentration(int* id, int* i, double* c);
+IRM_DLL_EXPORT IRM_RESULT RMF_SetIthSpeciesConcentration(int* id, int* i, double* c);
+
 IRM_DLL_EXPORT IRM_RESULT RMF_GetDensity(int *id, double *density);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetEndCell(int *id, int *ec);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetErrorString(int *id, char *prefix, int *l);
