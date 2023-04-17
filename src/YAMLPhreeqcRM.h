@@ -1641,7 +1641,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	by summing the molarities of the individual species times the stoichiometric
 	coefficient of the element in each species.
 	Solution compositions in the reaction cells are updated with these component concentrations.
-	Usually, accurate concentrations will not be known to use YAMLSetSpeciesConcentrations during
+	Usually, accurate concentrations will not be known to use YAMLSpeciesConcentrations2Module during
 	initialization.
 
 	@param species_conc     Vector of aqueous species concentrations. Dimension of the array is @a nspecies times @a nxyz,
@@ -1654,7 +1654,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	@htmlonly
 	<CODE>
 	<PRE>
-	yrm.YAMLSetSpeciesConcentrations(c);
+	yrm.YAMLSpeciesConcentrations2Module(c);
 	</PRE>
 	</CODE>
 	@endhtmlonly

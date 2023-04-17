@@ -731,7 +731,7 @@ Called by root, workers must be in the loop of @ref MpiWorker.
 	user grid cells (@ref GetGridCellCount). Values for inactive cells are ignored.
 	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
 	@see                    @ref FindComponents, @ref GetSpeciesCount, @ref GetSpeciesNames,
-	@ref SetSpeciesConcentrations, @ref SetSpeciesSaveOn.
+	@ref SpeciesConcentrations2Module, @ref SetSpeciesSaveOn.
 	@par C++ Example:
 	@htmlonly
 	<CODE>
@@ -1948,12 +1948,11 @@ Called by root.
 	/**
 	Returns a list of the current selected-output headings.
 	The number of headings is determined by @ref GetSelectedOutputColumnCount.
-	@ref SetCurrentSelectedOutputUserNumber or @ref BMI_SetValue("NthSelectedOutput",i) are
+	@ref SetCurrentSelectedOutputUserNumber is
 	used to specify which of the selected-output definitions is used.
 	@param headings          A vector of std::strings to receive the headings.
 	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
 	@see
-	@ref BMI_GetValue,
 	@ref GetCurrentSelectedOutputUserNumber,
 	@ref GetNthSelectedOutputUserNumber,
 	@ref GetSelectedOutput,
@@ -3385,7 +3384,7 @@ Called by root.
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	 */
-IRM_RESULT  InitialSolutions2Module(const std::vector < int >& solns);
+IRM_RESULT  InitialSolutions2Module(const std::vector < int >& solutions);
 	/**
 	Transfer EQUILIBRIUM_PHASES definitions from the InitialPhreeqc instance to the reaction-module workers.
 	@a equilibrium_phases is used to select EQUILIBRIUM_PHASES definitions for each cell of the model.

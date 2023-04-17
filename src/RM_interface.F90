@@ -71,7 +71,7 @@
 !> @param config_file         String containing the YAML file name.
 !> @retval Number of grid cells specified in the YAML file; returns
 !> zero if GridCellCount is not defined.
-!> @see @ref bmif_initialize, @ref RM_Create, and @ref RM_InitializeYAML.
+!> @see @ref RM_Create, and @ref RM_InitializeYAML.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -80,7 +80,7 @@
 !>  integer nxyz
 !> 	nxyz = GetGridCellCountYAML("myfile.yaml");
 !> 	status = RM_Create(nxyz, nthreads);
-!> 	status = bmif_initialize("myfile.yaml");
+!> 	status = RM_InitializeYAML("myfile.yaml");
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -770,8 +770,6 @@
     !> to receive the component names. Character length and dimension will be allocated as needed.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref bmif_get_value,
-    !> @ref bmif_set_value
     !> @ref RM_GetComponent,
     !> @ref RM_FindComponents.
     !> @par Fortran Example:
@@ -785,20 +783,12 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
-    !INTEGER FUNCTION RM_GetComponents(id, components)
-    !USE ISO_C_BINDING
-    !IMPLICIT NONE
-    !INTEGER, INTENT(in) :: id
-    !CHARACTER(len=:), allocatable, INTENT(out) :: components(:)
-    !RM_GetComponents = bmif_get_value(id, "Components", components)
-    !END FUNCTION RM_GetComponents
     
-    INTEGER FUNCTION RM_GetComponents(id, dest)
+    INTEGER FUNCTION RM_GetComponents(id, components)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: components
     character(1024) :: comp
     integer :: dim, itemsize, status, l, i
     dim = RM_GetComponentCount(id)
@@ -808,11 +798,11 @@
 		l = len(trim(comp))
 		if (l > itemsize) itemsize = l
 	enddo
-    if(allocated(dest)) deallocate(dest)
-    allocate(character(len=itemsize) :: dest(dim))
+    if(allocated(components)) deallocate(components)
+    allocate(character(len=itemsize) :: components(dim))
 	do i = 1, dim
 		status = RM_GetComponent(id, i, comp)
-		dest(i) = trim(comp)
+		components(i) = trim(comp)
     enddo
     RM_GetComponents = status
     return 
@@ -992,13 +982,13 @@
 	!> This method is for use with multicomponent diffusion calculations.
 	!> @param id               The instance @a id returned from @ref RM_Create.
 	!> @param i                One-based index for the species to retrieve. Indices refer
-	!> to the order given by @ref RM_GetSpeciesNames. The total number of species is given
+	!> to the order given by @ref RM_GetSpeciesName. The total number of species is given
 	!> by @ref RM_GetSpeciesCount.
 	!> @param c                Vector to receive the species concentrations.
 	!> Dimension of the vector is set to @a nxyz, where @a nxyz is the number of
 	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
 	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-	!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesNames,
+	!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesName,
 	!> @ref RM_GetSpeciesConcentrations, @ref RM_SetSpeciesSaveOn.
 	!> @par Fortran Example:
 	!> @htmlonly
@@ -1086,14 +1076,14 @@
 	!> 
 	!> @param id               The instance @a id returned from @ref RM_Create.
 	!> @param i                One-based index for the species to transfer. Indices refer
-	!> to the order produced by @ref RM_GetSpeciesNames. The total number of species is given by
+	!> to the order produced by @ref RM_GetSpeciesName. The total number of species is given by
 	!> @ref RM_GetSpeciesCount.
 	!> @param c                Vector of concentrations to transfer to the reaction cells.
 	!> Dimension of the vector is @a nxyz, where @a nxyz is the number of
 	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are ignored.
 	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-	!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesNames,
-	!> @ref RM_SetSpeciesConcentrations, @ref RM_SetSpeciesSaveOn.
+	!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesName,
+	!> @ref RM_SpeciesConcentrations2Module, @ref RM_SetSpeciesSaveOn.
 	!> @par Fortran Example:
 	!> @htmlonly
 	!> <CODE>
@@ -2737,8 +2727,6 @@
     !> to receive the headings. Character length and dimension will be allocated as needed.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref bmif_get_value,
-    !> @ref bmif_set_value,
     !> @ref RM_GetCurrentSelectedOutputUserNumber,
     !> @ref RM_GetNthSelectedOutputUserNumber,
     !> @ref RM_GetSelectedOutput,
@@ -2764,11 +2752,11 @@
     !> @par MPI:
     !> Called by root.
 
-	INTEGER FUNCTION RM_GetSelectedOutputHeadings(id, dest)
+	INTEGER FUNCTION RM_GetSelectedOutputHeadings(id, headings)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: headings
     character(1024) :: head
     integer :: dim, itemsize, status, l, i
     dim = RM_GetSelectedOutputColumnCount(id)
@@ -2778,11 +2766,11 @@
 		l = len(trim(head))
 		if (l > itemsize) itemsize = l
 	enddo
-    if(allocated(dest)) deallocate(dest)
-    allocate(character(len=itemsize) :: dest(dim))
+    if(allocated(headings)) deallocate(headings)
+    allocate(character(len=itemsize) :: headings(dim))
 	do i = 1, dim
 		status = RM_GetSelectedOutputHeading(id, i, head)
-		dest(i) = trim(head)
+		headings(i) = trim(head)
     enddo	
     RM_GetSelectedOutputHeadings = status
     return
@@ -3894,8 +3882,6 @@
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !>
     !> @see
-    !> @ref bmif_get_value,
-    !> @ref bmif_set_value,
     !> @ref RM_SetTemperature.
     !> @par Fortran Example:
     !> @htmlonly
@@ -3908,16 +3894,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
-    !INTEGER FUNCTION RM_GetTemperature(id, temperature)
-    !USE ISO_C_BINDING
-    !IMPLICIT NONE
-    !INTEGER, INTENT(in) :: id
-    !real(kind=8), INTENT(out), DIMENSION(:) :: temperature
-    !real(kind=8), ALLOCATABLE, DIMENSION(:) :: a_temperature
-    !RM_GetTemperature = bmif_get_value(id, "Temperature", a_temperature)
-    !temperature = a_temperature
-    !END FUNCTION RM_GetTemperature
     
     INTEGER FUNCTION RM_GetTemperature(id, temperature)
     USE ISO_C_BINDING
@@ -4508,7 +4484,7 @@
 	!> @a equilibrium_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
 	!> user's model (@ref RM_GetGridCellCount).
 	!> @param id          The instance @a id returned from @ref RM_Create.
-	!> @param solutions   Vector of EQUILIBRIUM_PHASES index numbers that refer to
+	!> @param equilibrium_phases   Vector of EQUILIBRIUM_PHASES index numbers that refer to
 	!> definitions in the InitialPhreeqc instance.
 	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of an
 	!> EQUILIBRIUM_PHASES definition for that cell.

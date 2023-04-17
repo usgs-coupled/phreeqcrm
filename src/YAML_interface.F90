@@ -2666,7 +2666,7 @@ MODULE YAML_interface
 !> by summing the molarities of the individual species times the stoichiometric
 !> coefficient of the element in each species.
 !> Solution compositions in the reaction cells are updated with these component concentrations.
-!> Usually, accurate concentrations will not be known to use YAMLSetSpeciesConcentrations during
+!> Usually, accurate concentrations will not be known to use YAMLSpeciesConcentrations2Module during
 !> initialization.
 !> 
 !> @see                    @ref YAMLFindComponents,
@@ -2675,7 +2675,7 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> status = YAMLSetSpeciesConcentrations(id, c)
+!> status = YAMLSpeciesConcentrations2Module(id, c)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
