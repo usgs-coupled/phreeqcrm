@@ -391,60 +391,60 @@ done
 for f in html/*.html; do
   sed -i "s/rm_statedelete/RM_StateDelete/g"  $f
 done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_finalize/RM_BMI_Finalize/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getcomponentname/RM_BMI_GetComponentName/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getcurrenttime/RM_BMI_GetCurrentTime/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getendtime/RM_BMI_GetEndTime/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getinputitemcount/RM_BMI_GetInputItemCount/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getinputvarnames/RM_BMI_GetInputVarNames/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getoutputitemcount/RM_BMI_GetOutputItemCount/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getoutputvarnames/RM_BMI_GetOutputVarNames/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_gettimestep/RM_BMI_GetTimeStep/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_gettimeunits/RM_BMI_GetTimeUnits/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getvalue/RM_BMI_GetValue/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getvaritemsize/RM_BMI_GetVarItemsize/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getvarnbytes/RM_BMI_GetVarNbytes/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getvartype/RM_BMI_GetVarType/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_getvarunits/RM_BMI_GetVarUnits/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_initialize/RM_BMI_Initialize/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_setvalue/RM_BMI_SetValue/g" $f
-done
-for f in html/*.html; do
-  sed -i "s/rm_bmi_update/RM_BMI_Update/g" $f
-done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_finalize/RM_BMI_Finalize/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getcomponentname/RM_BMI_GetComponentName/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getcurrenttime/RM_BMI_GetCurrentTime/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getendtime/RM_BMI_GetEndTime/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getinputitemcount/RM_BMI_GetInputItemCount/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getinputvarnames/RM_BMI_GetInputVarNames/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getoutputitemcount/RM_BMI_GetOutputItemCount/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getoutputvarnames/RM_BMI_GetOutputVarNames/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_gettimestep/RM_BMI_GetTimeStep/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_gettimeunits/RM_BMI_GetTimeUnits/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getvalue/RM_BMI_GetValue/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getvaritemsize/RM_BMI_GetVarItemsize/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getvarnbytes/RM_BMI_GetVarNbytes/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getvartype/RM_BMI_GetVarType/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_getvarunits/RM_BMI_GetVarUnits/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_initialize/RM_BMI_Initialize/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_setvalue/RM_BMI_SetValue/g" $f
+#done
+#for f in html/*.html; do
+#  sed -i "s/rm_bmi_update/RM_BMI_Update/g" $f
+#done
 for f in html/*.html; do
   sed -i "s/rm_getcomponents/RM_GetComponents/g" $f
 done
@@ -491,6 +491,206 @@ for f in html/*.html; do
 done
 for f in html/*.html; do
 	sed -i "s/rm_initialkinetics2module/RM_InitialKinetics2Module/g" $f
+done
+
+
+for f in html/*.html; do
+	sed -i "s/destroyyamlphreeqcrm/DestroyYAMLPhreeqcRM/g"  $f
+done
+for f in html/*.html; do
+	sed -i "s/createyamlphreeqcrm/CreateYAMLPhreeqcRM/g"  $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlclear/YAMLClear/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlclosefiles/YAMLCloseFiles/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlcreatemapping/YAMLCreateMapping/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamldumpmodule/YAMLDumpModule/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlfindcomponents/YAMLFindComponents/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlinitialsolutions2module/YAMLInitialSolutions2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlinitialequilibriumphases2module/YAMLInitialEquilibriumPhases2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlinitialexchanges2module/YAMLInitialExchanges2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlinitialsurfaces2module/YAMLInitialSurfaces2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlinitialgasphases2module/YAMLInitialGasPhases2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlinitialsolidsolutions2module/YAMLInitialSolidSolutions2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlinitialkinetics2module/YAMLInitialKinetics2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlinitialphreeqc2module/YAMLInitialPhreeqc2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlinitialphreeqc2module_mix/YAMLInitialPhreeqc2Module_mix/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlinitialphreeqccell2module/YAMLInitialPhreeqcCell2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlloaddatabase/YAMLLoadDatabase/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamllogmessage/YAMLLogMessage/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlopenfiles/YAMLOpenFiles/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamloutputmessage/YAMLOutputMessage/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlruncells/YAMLRunCells/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlrunfile/YAMLRunFile/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlrunstring/YAMLRunString/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlscreenmessage/YAMLScreenMessage/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetcomponenth2o/YAMLSetComponentH2O/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetconcentrations/YAMLSetConcentrations/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetcurrentselectedoutputusernumber/YAMLSetCurrentSelectedOutputUserNumber/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetdensity/YAMLSetDensity/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetdumpfilename/YAMLSetDumpFileName/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlseterrorhandlermode/YAMLSetErrorHandlerMode/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlseterroron/YAMLSetErrorOn/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetfileprefix/YAMLSetFilePrefix/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetgascompmoles/YAMLSetGasCompMoles/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetgasphasevolume/YAMLSetGasPhaseVolume/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetgridcellcount/YAMLSetGridCellCount/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetnthselectedoutput/YAMLSetNthSelectedOutput/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetpartitionuzsolids/YAMLSetPartitionUZSolids/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetporosity/YAMLSetPorosity/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetpressure/YAMLSetPressure/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetprintchemistrymask/YAMLSetPrintChemistryMask/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetprintchemistryon/YAMLSetPrintChemistryOn/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetrebalancebycell/YAMLSetRebalanceByCell/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetrebalancefraction/YAMLSetRebalanceFraction/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetrepresentativevolume/YAMLSetRepresentativeVolume/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetsaturation/YAMLSetSaturation/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetscreenon/YAMLSetScreenOn/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetselectedoutputon/YAMLSetSelectedOutputOn/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetspeciessaveon/YAMLSetSpeciesSaveOn/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsettemperature/YAMLSetTemperature/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsettime/YAMLSetTime/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsettimeconversion/YAMLSetTimeConversion/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsettimestep/YAMLSetTimeStep/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetunitsexchange/YAMLSetUnitsExchange/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetunitsgasphase/YAMLSetUnitsGasPhase/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetunitskinetics/YAMLSetUnitsKinetics/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetunitsppassemblage/YAMLSetUnitsPPassemblage/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetunitssolution/YAMLSetUnitsSolution/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetunitsssassemblage/YAMLSetUnitsSSassemblage/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsetunitssurface/YAMLSetUnitsSurface/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlspeciesconcentrations2module/YAMLSpeciesConcentrations2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlstatesave/YAMLStateSave/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlstateapply/YAMLStateApply/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlstatedelete/YAMLStateDelete/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlusesolutiondensityvolume/YAMLUseSolutionDensityVolume/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlwarningmessage/YAMLWarningMessage/g" $f
 done
 
 # Rename PhreeqcRM to mixed case 
