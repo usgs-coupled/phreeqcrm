@@ -608,6 +608,51 @@
   @del sed*
 )
 
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_getithconcentration\b/RM_GetIthConcentration/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_getithspeciesconcentration\b/RM_GetIthSpeciesConcentration/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_setithconcentration\b/RM_SetIthConcentration/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_setithspeciesconcentration\b/RM_SetIthSpeciesConcentration/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialsolutions2module\b/RM_InitialSolutions2Module/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialequilibriumphases2module\b/RM_InitialEquilibriumPhases2Module/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialexchanges2module\b/RM_InitialExchanges2Module/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialsurfacesmodule\b/RM_InitialSurfacesModule/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialgasphases2module\b/RM_InitialGasPhases2Module/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialsolidsolutions2module\b/RM_InitialSolidSolutions2Module/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialkinetics2module\b/RM_InitialKinetics2Module/g" %%f
+	@del sed*
+)
+
 @REM Rename PhreeqcRM to mixed case 
 @FOR %%f IN (.\html\*.html) DO @(
   @sed -i "s/\bphreeqcrm\b/PhreeqcRM/g" %%f

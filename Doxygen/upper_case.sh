@@ -457,6 +457,42 @@ done
 for f in html/*.html; do
   sed -i "s/rm_gettemperature/RM_GetTemperature/g" $f
 done
+
+for f in html/*.html; do
+sed -i "s/rm_getithconcentration/RM_GetIthConcentration/g" $f
+	@del sed*
+)
+for f in html/*.html; do
+	sed -i "s/rm_getithspeciesconcentration/RM_GetIthSpeciesConcentration/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/rm_setithconcentration/RM_SetIthConcentration/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/rm_setithspeciesconcentration/RM_SetIthSpeciesConcentration/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/rm_initialsolutions2module/RM_InitialSolutions2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/rm_initialequilibriumphases2module/RM_InitialEquilibriumPhases2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/rm_initialexchanges2module/RM_InitialExchanges2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/rm_initialsurfacesmodule/RM_InitialSurfacesModule/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/rm_initialgasphases2module/RM_InitialGasPhases2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/rm_initialsolidsolutions2module/RM_InitialSolidSolutions2Module/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/rm_initialkinetics2module/RM_InitialKinetics2Module/g" $f
+done
+
 # Rename PhreeqcRM to mixed case 
 for f in html/*.html; do
   sed -i "s/\bphreeqcrm\b/PhreeqcRM/g" $f

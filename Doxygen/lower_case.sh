@@ -281,3 +281,14 @@ sed -i -e "s/RM_GetGridCellCountYAML/rm_getgridcellcountyaml/g" $RM_INTERFACE_F9
 sed -i -e "s/RM_GetSelectedOutputHeadings/rm_getselectedoutputheadings/g" $RM_INTERFACE_F90
 sed -i -e "s/RM_GetTemperature/rm_gettemperature/g" $RM_INTERFACE_F90
 
+sed -i -e "s/RM_GetIthConcentration/rm_getithconcentration/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_GetIthSpeciesConcentration/rm_getithspeciesconcentration/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_SetIthConcentration/rm_setithconcentration/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_SetIthSpeciesConcentration/rm_setithspeciesconcentration/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_InitialSolutions2Module/rm_initialsolutions2module/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_InitialEquilibriumPhases2Module/rm_initialequilibriumphases2module/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_InitialExchanges2Module/rm_initialexchanges2module/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_InitialSurfacesModule/rm_initialsurfacesmodule/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_InitialGasPhases2Module/rm_initialgasphases2module/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_InitialSolidSolutions2Module/rm_initialsolidsolutions2module/g" $RM_INTERFACE_F90
+sed -i -e "s/RM_InitialKinetics2Module/rm_initialkinetics2module/g" $RM_INTERFACE_F90
