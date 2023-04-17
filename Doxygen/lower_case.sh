@@ -344,9 +344,9 @@ sed -i -e "s/YAMLSetScreenOn/yamlsetscreenon/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLSetSelectedOutputOn/yamlsetselectedoutputon/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLSetSpeciesSaveOn/yamlsetspeciessaveon/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLSetTemperature/yamlsettemperature/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetTime/yamlsettime/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLSetTimeConversion/yamlsettimeconversion/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLSetTimeStep/yamlsettimestep/g" $YAML_INTERFACE_F90
+sed -i -e "s/YAMLSetTime/yamlsettime/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLSetUnitsExchange/yamlsetunitsexchange/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLSetUnitsGasPhase/yamlsetunitsgasphase/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLSetUnitsKinetics/yamlsetunitskinetics/g" $YAML_INTERFACE_F90

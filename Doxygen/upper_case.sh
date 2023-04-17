@@ -645,13 +645,13 @@ for f in html/*.html; do
 	sed -i "s/yamlsettemperature/YAMLSetTemperature/g" $f
 done
 for f in html/*.html; do
-	sed -i "s/yamlsettime/YAMLSetTime/g" $f
-done
-for f in html/*.html; do
 	sed -i "s/yamlsettimeconversion/YAMLSetTimeConversion/g" $f
 done
 for f in html/*.html; do
 	sed -i "s/yamlsettimestep/YAMLSetTimeStep/g" $f
+done
+for f in html/*.html; do
+	sed -i "s/yamlsettime/YAMLSetTime/g" $f
 done
 for f in html/*.html; do
 	sed -i "s/yamlsetunitsexchange/YAMLSetUnitsExchange/g" $f

@@ -854,15 +854,15 @@
      @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\byamlsettime\b/YAMLSetTime/g" %%f
-     @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
 @sed -i "s/\byamlsettimeconversion\b/YAMLSetTimeConversion/g" %%f
      @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
 @sed -i "s/\byamlsettimestep\b/YAMLSetTimeStep/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsettime\b/YAMLSetTime/g" %%f
      @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
