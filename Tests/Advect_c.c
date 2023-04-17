@@ -483,6 +483,8 @@ void Advect_c()
 	free(temperature);
 	free(pressure);
 	free(hydraulic_K);
+	free(volume);
+	free(sat_calc);
 }
 void advection_c(double* c, double* bc_conc, int ncomps, int nxyz, int dim)
 {

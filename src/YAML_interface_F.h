@@ -19,6 +19,13 @@ IRM_DLL_EXPORT IRM_RESULT YAMLCloseFiles_F(int* id);
 IRM_DLL_EXPORT IRM_RESULT YAMLCreateMapping_F(int* id, int* grid2chem, int* dim);
 IRM_DLL_EXPORT IRM_RESULT YAMLDumpModule_F(int* id, int* dump_on, int* append);
 IRM_DLL_EXPORT IRM_RESULT YAMLFindComponents_F(int* id);
+IRM_DLL_EXPORT IRM_RESULT YAMLInitialSolutions2Module_F(int* id, int* solutions, int* dim);
+IRM_DLL_EXPORT IRM_RESULT YAMLInitialEquilibriumPhases2Module_F(int* id, int* equilibrium_phases, int* dim);
+IRM_DLL_EXPORT IRM_RESULT YAMLInitialExchanges2Module_F(int* id, int* exchanges, int* dim);
+IRM_DLL_EXPORT IRM_RESULT YAMLInitialSurfaces2Module_F(int* id, int* surfaces, int* dim);
+IRM_DLL_EXPORT IRM_RESULT YAMLInitialGasPhases2Module_F(int* id, int* gas_phases, int* dim);
+IRM_DLL_EXPORT IRM_RESULT YAMLInitialSolidSolutions2Module_F(int* id, int* solid_solutions, int* dim);
+IRM_DLL_EXPORT IRM_RESULT YAMLInitialKinetics2Module_F(int* id, int* kinetics, int* dim);
 IRM_DLL_EXPORT IRM_RESULT YAMLInitialPhreeqc2Module_F(int* id, int* ic1, int* dim);
 IRM_DLL_EXPORT IRM_RESULT YAMLInitialPhreeqc2Module_mix_F(int* id, int* ic1, int* ic2, double* f1, int* dim);
 IRM_DLL_EXPORT IRM_RESULT YAMLInitialPhreeqcCell2Module_F(int* id,

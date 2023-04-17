@@ -91,10 +91,12 @@ BMIPhreeqcRM::GetInstance(int id)
 BMIPhreeqcRM::BMIPhreeqcRM() :
 PhreeqcRM(PhreeqcRM::default_nxyz, PhreeqcRM::default_data_for_parallel_processing, nullptr, true)
 {
+	this->language = "cpp";
 }
 BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads) :
 PhreeqcRM(nxyz, nthreads, nullptr, true) 
 {
+	this->language = "cpp";
 }
 // Destructor
 BMIPhreeqcRM::~BMIPhreeqcRM()
@@ -103,12 +105,11 @@ BMIPhreeqcRM::~BMIPhreeqcRM()
 void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 {
 	this->PhreeqcRM::Construct(i);
-
-	std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
+	//std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
+	std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->Index, this);
 	BMIPhreeqcRM::Instances.insert(instance);
-
 	this->var_man = new VarManager((PhreeqcRM*)this);
-	this->language = "cpp";
+	//this->language = "cpp";
 }
 
 // Model control functions.

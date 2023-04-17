@@ -519,78 +519,78 @@
   @del sed*
 )
 
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_finalize\b/RM_BMI_Finalize/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getcomponentname\b/RM_BMI_GetComponentName/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getcurrenttime\b/RM_BMI_GetCurrentTime/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getendtime\b/RM_BMI_GetEndTime/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getinputitemcount\b/RM_BMI_GetInputItemCount/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getinputvarnames\b/RM_BMI_GetInputVarNames/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getoutputitemcount\b/RM_BMI_GetOutputItemCount/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getoutputvarnames\b/RM_BMI_GetOutputVarNames/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_gettimestep\b/RM_BMI_GetTimeStep/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_gettimeunits\b/RM_BMI_GetTimeUnits/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getvalue\b/RM_BMI_GetValue/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getvaritemsize\b/RM_BMI_GetVarItemsize/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getvarnbytes\b/RM_BMI_GetVarNbytes/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getvartype\b/RM_BMI_GetVarType/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_getvarunits\b/RM_BMI_GetVarUnits/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_initialize\b/RM_BMI_Initialize/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_setvalue\b/RM_BMI_SetValue/g" %%f
-  @del sed*
-)
-@FOR %%f IN (.\html\*.html) DO @(
-@sed -i "s/\brm_bmi_update\b/RM_BMI_Update/g" %%f
-  @del sed*
-)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_finalize\b/RM_BMI_Finalize/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getcomponentname\b/RM_BMI_GetComponentName/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getcurrenttime\b/RM_BMI_GetCurrentTime/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getendtime\b/RM_BMI_GetEndTime/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getinputitemcount\b/RM_BMI_GetInputItemCount/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getinputvarnames\b/RM_BMI_GetInputVarNames/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getoutputitemcount\b/RM_BMI_GetOutputItemCount/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getoutputvarnames\b/RM_BMI_GetOutputVarNames/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_gettimestep\b/RM_BMI_GetTimeStep/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_gettimeunits\b/RM_BMI_GetTimeUnits/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getvalue\b/RM_BMI_GetValue/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getvaritemsize\b/RM_BMI_GetVarItemsize/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getvarnbytes\b/RM_BMI_GetVarNbytes/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getvartype\b/RM_BMI_GetVarType/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_getvarunits\b/RM_BMI_GetVarUnits/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_initialize\b/RM_BMI_Initialize/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_setvalue\b/RM_BMI_SetValue/g" %%f
+#  @del sed*
+#)
+#@FOR %%f IN (.\html\*.html) DO @(
+#@sed -i "s/\brm_bmi_update\b/RM_BMI_Update/g" %%f
+#  @del sed*
+#)
 @FOR %%f IN (.\html\*.html) DO @(
 @sed -i "s/\brm_getcomponents\b/RM_GetComponents/g" %%f
   @del sed*
@@ -607,6 +607,324 @@
 @sed -i "s/\brm_gettemperature\b/RM_GetTemperature/g" %%f
   @del sed*
 )
+
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_getithconcentration\b/RM_GetIthConcentration/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_getithspeciesconcentration\b/RM_GetIthSpeciesConcentration/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_setithconcentration\b/RM_SetIthConcentration/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_setithspeciesconcentration\b/RM_SetIthSpeciesConcentration/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialsolutions2module\b/RM_InitialSolutions2Module/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialequilibriumphases2module\b/RM_InitialEquilibriumPhases2Module/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialexchanges2module\b/RM_InitialExchanges2Module/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialsurfacesmodule\b/RM_InitialSurfacesModule/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialgasphases2module\b/RM_InitialGasPhases2Module/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialsolidsolutions2module\b/RM_InitialSolidSolutions2Module/g" %%f
+	@del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\brm_initialkinetics2module\b/RM_InitialKinetics2Module/g" %%f
+	@del sed*
+)
+
+
+
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\bdestroyyamlphreeqcrm\b/DestroyYAMLPhreeqcRM/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\bcreateyamlphreeqcrm\b/CreateYAMLPhreeqcRM/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\bwriteyamldoc\b/WriteYAMLDoc/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlclear\b/YAMLClear/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlclosefiles\b/YAMLCloseFiles/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlcreatemapping\b/YAMLCreateMapping/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamldumpmodule\b/YAMLDumpModule/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlfindcomponents\b/YAMLFindComponents/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlinitialsolutions2module\b/YAMLInitialSolutions2Module/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlinitialequilibriumphases2module\b/YAMLInitialEquilibriumPhases2Module/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlinitialexchanges2module\b/YAMLInitialExchanges2Module/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlinitialsurfaces2module\b/YAMLInitialSurfaces2Module/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlinitialgasphases2module\b/YAMLInitialGasPhases2Module/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlinitialsolidsolutions2module\b/YAMLInitialSolidSolutions2Module/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlinitialkinetics2module\b/YAMLInitialKinetics2Module/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlinitialphreeqc2module\b/YAMLInitialPhreeqc2Module/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlinitialphreeqc2module_mix\b/YAMLInitialPhreeqc2Module_mix/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlinitialphreeqccell2module\b/YAMLInitialPhreeqcCell2Module/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlloaddatabase\b/YAMLLoadDatabase/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamllogmessage\b/YAMLLogMessage/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlopenfiles\b/YAMLOpenFiles/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamloutputmessage\b/YAMLOutputMessage/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlruncells\b/YAMLRunCells/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlrunfile\b/YAMLRunFile/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlrunstring\b/YAMLRunString/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlscreenmessage\b/YAMLScreenMessage/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetcomponenth2o\b/YAMLSetComponentH2O/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetconcentrations\b/YAMLSetConcentrations/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetcurrentselectedoutputusernumber\b/YAMLSetCurrentSelectedOutputUserNumber/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetdensity\b/YAMLSetDensity/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetdumpfilename\b/YAMLSetDumpFileName/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlseterrorhandlermode\b/YAMLSetErrorHandlerMode/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlseterroron\b/YAMLSetErrorOn/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetfileprefix\b/YAMLSetFilePrefix/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetgascompmoles\b/YAMLSetGasCompMoles/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetgasphasevolume\b/YAMLSetGasPhaseVolume/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetgridcellcount\b/YAMLSetGridCellCount/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetnthselectedoutput\b/YAMLSetNthSelectedOutput/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetpartitionuzsolids\b/YAMLSetPartitionUZSolids/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetporosity\b/YAMLSetPorosity/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetpressure\b/YAMLSetPressure/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetprintchemistrymask\b/YAMLSetPrintChemistryMask/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetprintchemistryon\b/YAMLSetPrintChemistryOn/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetrebalancebycell\b/YAMLSetRebalanceByCell/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetrebalancefraction\b/YAMLSetRebalanceFraction/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetrepresentativevolume\b/YAMLSetRepresentativeVolume/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetsaturation\b/YAMLSetSaturation/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetscreenon\b/YAMLSetScreenOn/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetselectedoutputon\b/YAMLSetSelectedOutputOn/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetspeciessaveon\b/YAMLSetSpeciesSaveOn/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsettemperature\b/YAMLSetTemperature/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsettimeconversion\b/YAMLSetTimeConversion/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsettimestep\b/YAMLSetTimeStep/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsettime\b/YAMLSetTime/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetunitsexchange\b/YAMLSetUnitsExchange/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetunitsgasphase\b/YAMLSetUnitsGasPhase/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetunitskinetics\b/YAMLSetUnitsKinetics/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetunitsppassemblage\b/YAMLSetUnitsPPassemblage/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetunitssolution\b/YAMLSetUnitsSolution/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetunitsssassemblage\b/YAMLSetUnitsSSassemblage/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlsetunitssurface\b/YAMLSetUnitsSurface/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlspeciesconcentrations2module\b/YAMLSpeciesConcentrations2Module/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlstatesave\b/YAMLStateSave/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlstateapply\b/YAMLStateApply/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlstatedelete\b/YAMLStateDelete/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlusesolutiondensityvolume\b/YAMLUseSolutionDensityVolume/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\byamlwarningmessage\b/YAMLWarningMessage/g" %%f
+     @del sed*
+)
+
+
 
 @REM Rename PhreeqcRM to mixed case 
 @FOR %%f IN (.\html\*.html) DO @(

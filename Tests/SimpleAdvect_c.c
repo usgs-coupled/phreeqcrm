@@ -50,17 +50,13 @@ void SimpleAdvect_c()
 #ifdef USE_MPI
 	// MPI
 	comm = MPI_COMM_WORLD;
-	some_data.rm_comm = comm;
 	id = RM_Create(nxyz, comm);
-	some_data.phreeqcrm_id = id;
 	if (MPI_Comm_rank(comm, &mpi_myself) != MPI_SUCCESS)
 	{
 		exit(4);
 	}
 	if (mpi_myself > 0)
 	{
-		status = RM_SetMpiWorkerCallback(id, worker_tasks_c);
-		status = RM_SetMpiWorkerCallbackCookie(id, &some_data);
 		status = RM_MpiWorker(id);
 		status = RM_Destroy(id);
 		return;
