@@ -459,9 +459,8 @@ for f in html/*.html; do
 done
 
 for f in html/*.html; do
-sed -i "s/rm_getithconcentration/RM_GetIthConcentration/g" $f
-	@del sed*
-)
+	sed -i "s/rm_getithconcentration/RM_GetIthConcentration/g" $f
+done
 for f in html/*.html; do
 	sed -i "s/rm_getithspeciesconcentration/RM_GetIthSpeciesConcentration/g" $f
 done
@@ -500,6 +499,10 @@ done
 for f in html/*.html; do
 	sed -i "s/createyamlphreeqcrm/CreateYAMLPhreeqcRM/g"  $f
 done
+for f in html/*.html; do
+	sed -i "s/writeyamldoc/WriteYAMLDoc/g"  $f
+done
+WriteYAMLDoc
 for f in html/*.html; do
 	sed -i "s/yamlclear/YAMLClear/g" $f
 done

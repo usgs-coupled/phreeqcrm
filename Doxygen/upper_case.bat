@@ -653,12 +653,18 @@
 	@del sed*
 )
 
+
+
 @FOR %%f IN (.\html\*.html) DO @(
 @sed -i "s/\bdestroyyamlphreeqcrm\b/DestroyYAMLPhreeqcRM/g" %%f
      @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
 @sed -i "s/\bcreateyamlphreeqcrm\b/CreateYAMLPhreeqcRM/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*.html) DO @(
+@sed -i "s/\bwriteyamldoc\b/WriteYAMLDoc/g" %%f
      @del sed*
 )
 @FOR %%f IN (.\html\*.html) DO @(
