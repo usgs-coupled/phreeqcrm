@@ -376,7 +376,10 @@ PhreeqcRM::~PhreeqcRM(void)
 	{
 		PhreeqcRM::Instances.erase(it);
 	}
-
+	if (var_man != NULL)
+	{
+		delete var_man;
+	}
 	delete this->phreeqc_bin;
 	if (delete_phreeqcrm_io)
 	{
@@ -829,7 +832,7 @@ PhreeqcRM::CheckSelectedOutput()
 		for ( ; it != this->workers[0]->CSelectedOutputMap.end(); it++)
 		{
 			std::string headings;
-			int length;
+			int length = 0;
 			// Make string with headings
 			int col = (int) it->second.GetColCount();
 			for (int i = 0; i < col; i++)
@@ -3216,7 +3219,124 @@ PhreeqcRM::GatherNchem(std::vector<double> &source, std::vector<double> &destina
 	delete [] recv_displs;
 #endif
 }
-
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetIthConcentration(int i, std::vector<double>& c)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+		if (i >= 0 && i < this->GetComponentCount())
+		{
+			if (this->CurrentConcentrations.size() != this->GetGridCellCount() * this->GetComponentCount())
+			{
+				this->GetConcentrations(this->CurrentConcentrations);
+			}
+			int nxyz = this->GetGridCellCount();
+			c.resize(nxyz);
+			for (int j = 0; j < nxyz; j++)
+			{
+				c[j] = CurrentConcentrations[i * nxyz + j];
+			}
+			return IRM_OK;
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetIthConcentration");
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::SetIthConcentration(int i, std::vector<double>& c)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+		if (i >= 0 && i < this->GetComponentCount())
+		{
+			if (this->IthCurrentConcentrations.size() != this->GetGridCellCount()*this->GetComponentCount())
+			{
+				this->IthCurrentConcentrations.clear();
+				this->IthCurrentConcentrations.resize(this->GetGridCellCount() * this->GetComponentCount(), 0);
+				this->IthConcentrationSet.clear();
+			}
+			int nxyz = this->GetGridCellCount();
+			assert(c.size() == nxyz);
+			for (int j = 0; j < nxyz; j++)
+			{
+				IthCurrentConcentrations[i * nxyz + j] = c[j];
+			}
+			IthConcentrationSet.insert(i);
+			return IRM_OK;
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetIthConcentration");
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetIthSpeciesConcentration(int i, std::vector<double>& c)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+		if (species_save_on && i >= 0 && i < this->GetSpeciesCount())
+		{
+			if (this->CurrentSpeciesConcentrations.size() != this->GetGridCellCount() * this->GetSpeciesCount())
+			{
+				this->GetSpeciesConcentrations(this->CurrentSpeciesConcentrations);
+			}
+			int nxyz = this->GetGridCellCount();
+			c.resize(nxyz);
+			for (int j = 0; j < nxyz; j++)
+			{
+				c[j] = CurrentSpeciesConcentrations[i * nxyz + j];
+			}
+			return IRM_OK;
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetIthSpeciesConcentration");
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::SetIthSpeciesConcentration(int i, std::vector<double>& c)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	try
+	{
+		if (i >= 0 && i < this->GetSpeciesCount())
+		{
+			if (this->IthCurrentSpeciesConcentrations.size() != this->GetGridCellCount() * this->GetSpeciesCount())
+			{
+				this->IthCurrentSpeciesConcentrations.clear();
+				this->IthCurrentSpeciesConcentrations.resize(this->GetGridCellCount() * this->GetSpeciesCount(), 0);
+				this->IthSpeciesConcentrationSet.clear();
+			}
+			int nxyz = this->GetGridCellCount();
+			assert(c.size() == nxyz);
+			for (int j = 0; j < nxyz; j++)
+			{
+				IthCurrentSpeciesConcentrations[i * nxyz + j] = c[j];
+			}
+			IthSpeciesConcentrationSet.insert(i);
+			return IRM_OK;
+		}
+	}
+	catch (...)
+	{
+	}
+	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetIthConcentration");
+}
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -5047,7 +5167,6 @@ PhreeqcRM::GetTemperature(void)
 	return this->tempc_root;
 }
 #endif
-#ifdef VISCOSITY
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::GetViscosity(std::vector<double>& viscosity_arg)
@@ -5107,7 +5226,6 @@ PhreeqcRM::GetViscosity(std::vector<double>& viscosity_arg)
 	}
 	return IRM_OK;
 }
-#endif
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -5241,6 +5359,57 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			this->FindComponents();
 			continue;
 		}
+
+		if (keyword == "InitialSolutions2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialSolutions2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialEquilibriumPhases2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialEquilibriumPhases2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialExchanges2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialExchanges2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialSurfaces2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialSurfaces2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialGasPhases2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialGasPhases2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialSolidSolutions2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialSolidSolutions2Module(ic);
+			continue;
+		}
+		if (keyword == "InitialKinetics2Module")
+		{
+			assert(node.IsSequence());
+			std::vector< int > ic = node.as< std::vector< int > >();
+			this->InitialKinetics2Module(ic);
+			continue;
+		}
+
 		if (keyword == "InitialPhreeqc2Module")
 		{
 			if (node.IsSequence())
@@ -5736,7 +5905,146 @@ PhreeqcRM::InitialPhreeqc2Concentrations(std::vector < double > &destination_c,
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::InitialPhreeqc2Concentrations");
 }
-
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialSolutions2Module(const std::vector < int >& solutions)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize(this->nxyz * 7, -1);
+		i_dummy.resize(this->nxyz * 7, -1);
+		d_dummy.resize(this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[i] = solutions[i];       
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialEquilibriumPhases2Module(const std::vector < int >& equilibrium_phases)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[(size_t)this->nxyz + i] = equilibrium_phases[i];
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialExchanges2Module(const std::vector < int >& exchanges)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+				ic[2 * (size_t)this->nxyz + i] = exchanges[i];      
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialSurfaces2Module(const std::vector < int >& surfaces)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[3 * (size_t)this->nxyz + i] = surfaces[i];
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialGasPhases2Module(const std::vector < int >& gas_phases)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[4 * (size_t)this->nxyz + i] = gas_phases[i];
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialSolidSolutions2Module(const std::vector < int >& solid_solutions)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[5 * (size_t)this->nxyz + i] = solid_solutions[i];
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::InitialKinetics2Module(const std::vector < int >& kinetics)
+/* ---------------------------------------------------------------------- */
+{
+	this->phreeqcrm_error_string.clear();
+	std::vector<int> i_dummy, ic;
+	std::vector<double> d_dummy;
+	if (mpi_myself == 0)
+	{
+		ic.resize((size_t)this->nxyz * 7, -1);
+		i_dummy.resize((size_t)this->nxyz * 7, -1);
+		d_dummy.resize((size_t)this->nxyz * 7, 1.0);
+		for (size_t i = 0; i < this->nxyz; i++)
+		{
+			ic[6 * (size_t)this->nxyz + i] = kinetics[i];
+		}
+	}
+	return InitialPhreeqc2Module(ic, i_dummy, d_dummy);
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Module(
@@ -6309,7 +6617,7 @@ PhreeqcRM::InitialPhreeqcCell2Module(int cell, const std::vector<int> &cell_numb
 	}
 	// transfer the cell to domain
 #ifdef USE_MPI
-	int n_cells;
+	int n_cells = 0;
 	if (this->mpi_myself == 0)
 	{
 		n_cells = (int) cell_numbers.size();
@@ -6560,7 +6868,7 @@ PhreeqcRM::MpiWorker()
 		try
 		{
 			return_value = IRM_OK;
-			int method;
+			int method = -1;
 			//std::cerr << "Worker waiting..." << std::endl;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 			switch (method)
@@ -9199,6 +9507,24 @@ PhreeqcRM::RunCells()
 	{
 		int method = METHOD_RUNCELLS;
 		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+		if (IthConcentrationSet.size() > 0)
+		{
+			if (IthConcentrationSet.size() != this->GetComponentCount())
+			{
+				this->ErrorMessage("You must call SetIthConcentration for every component before you call Run_Cells.");
+				throw PhreeqcRMStop();
+			}
+			SetConcentrations(IthCurrentConcentrations);
+		}
+		if (IthSpeciesConcentrationSet.size() > 0)
+		{
+			if (IthSpeciesConcentrationSet.size() != this->GetSpeciesCount())
+			{
+				this->ErrorMessage("You must call SetIthSpeciesConcentration for every species before you call Run_Cells.");
+				throw PhreeqcRMStop();
+			}
+			SpeciesConcentrations2Module(IthCurrentSpeciesConcentrations);
+		}
 	}
 
 	// check that all solutions are defined
@@ -9310,6 +9636,16 @@ PhreeqcRM::RunCells()
 	{
 		return_value = IRM_FAIL;
 	}
+	if (mpi_myself == 0)
+	{
+		GetConcentrations(this->CurrentConcentrations);
+		this->IthConcentrationSet.clear();
+		this->IthSpeciesConcentrationSet.clear();
+		if (this->species_save_on)
+		{
+			GetSpeciesConcentrations(this->CurrentSpeciesConcentrations);
+		}
+	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::RunCells");
 }
 #else
@@ -9327,6 +9663,24 @@ PhreeqcRM::RunCells()
  *   Update solution compositions in sz_bin
  */
 	this->phreeqcrm_error_string.clear();
+	if (IthConcentrationSet.size() > 0)
+	{
+		if (IthConcentrationSet.size() != this->GetComponentCount())
+		{
+			this->ErrorMessage("You must call SetIthConcentration for every component before you call Run_Cells.");
+			throw PhreeqcRMStop();
+		}
+		SetConcentrations(IthCurrentConcentrations);
+	}
+	if (IthSpeciesConcentrationSet.size() > 0)
+	{
+		if (IthSpeciesConcentrationSet.size() != this->GetSpeciesCount())
+		{
+			this->ErrorMessage("You must call SetIthSpeciesConcentration for every species before you call Run_Cells.");
+			throw PhreeqcRMStop();
+		}
+		SpeciesConcentrations2Module(IthCurrentSpeciesConcentrations);
+	}
 	// check that all solutions are defined
 	if (this->need_error_check)
 	{
@@ -9405,6 +9759,13 @@ PhreeqcRM::RunCells()
 	catch (...)
 	{
 		return_value = IRM_FAIL;
+	}
+	GetConcentrations(this->CurrentConcentrations);
+	this->IthConcentrationSet.clear();
+	this->IthSpeciesConcentrationSet.clear();
+	if (this->species_save_on)
+	{
+		GetSpeciesConcentrations(this->CurrentSpeciesConcentrations);
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::RunCells");
 }
@@ -10594,6 +10955,7 @@ PhreeqcRM::SetConcentrations(const std::vector<double> &t)
 		this->Concentrations2Solutions(n, c_chem_root);
 #endif
 	}
+	this->UpdateBMI(RMVARS::Concentrations);
 	return this->ReturnHandler(return_value, "PhreeqcRM::SetConcentrations");
 }
 #ifdef ORIG
@@ -11037,6 +11399,7 @@ PhreeqcRM::SetDensity(const std::vector<double> &t)
 	this->phreeqcrm_error_string.clear();
 	std::string methodName = "SetDensity";
 	IRM_RESULT result_value = SetGeneric(t, this->density_root, density_worker, METHOD_SETDENSITY, methodName);
+	this->UpdateBMI(RMVARS::Density);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 

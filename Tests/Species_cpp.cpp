@@ -225,6 +225,16 @@ int Species_cpp()
 			status = phreeqc_rm.SetTemperature(temperature);         // If temperature changes
 			status = phreeqc_rm.SetPressure(pressure);               // If pressure changes
 			status = phreeqc_rm.SpeciesConcentrations2Module(c);     // Transported concentrations
+			// Test SetIthSpeciesConcentration
+			//for (size_t i = 0; i < nspecies; i++)
+			//{
+			//	std::vector<double> c_spec(nxyz, 0);
+			//	for (size_t j = 0; j < nxyz; j++)
+			//	{
+			//		c_spec[j] = c[i * nxyz + j];
+			//	}
+			//	phreeqc_rm.SetIthSpeciesConcentration(i, c_spec);
+			//}
 			time = time + time_step;
 			status = phreeqc_rm.SetTime(time);
 			// Run cells with transported conditions
@@ -240,6 +250,16 @@ int Species_cpp()
 			status = phreeqc_rm.RunCells();
 			// Transfer data from PhreeqcRM for transport
 			status = phreeqc_rm.GetSpeciesConcentrations(c);
+			// Test GetIthSpeciesConcentration
+			//for (size_t i = 0; i < nspecies; i++)
+			//{
+			//	std::vector<double> c_spec;
+			//	phreeqc_rm.GetIthSpeciesConcentration(i, c_spec);
+			//	for (size_t j = 0; j < nxyz; j++)
+			//	{
+			//		assert(c_spec[j] == c[i * nxyz + j]);
+			//	}
+			//}
 			status = phreeqc_rm.GetSpeciesLog10Gammas(lg);
 			status = phreeqc_rm.GetSpeciesLog10Molalities(lm);
 			phreeqc_rm.GetConcentrations(component_c);

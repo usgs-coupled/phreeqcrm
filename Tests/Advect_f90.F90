@@ -53,7 +53,8 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   integer                                       :: ncomps, ncomps1
   character(100),   dimension(:), allocatable   :: components
   real(kind=8), dimension(:), allocatable   :: gfw
-  integer,          dimension(:,:), allocatable :: ic1, ic2
+  integer,          dimension(:,:), allocatable :: ic1, ic2 
+  integer,          dimension(:),   allocatable :: solutions, exchanges
   real(kind=8), dimension(:,:), allocatable :: f1
   integer                                       :: nbound
   integer,          dimension(:), allocatable   :: bc1, bc2
@@ -238,25 +239,32 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   ! example selected output
   call example_selected_output(id)
   status = RM_OutputMessage(id, " ")
-  ! Set array of initial conditions
-  allocate(ic1(nxyz,7), ic2(nxyz,7), f1(nxyz,7))
-  ic1 = -1
-  ic2 = -1
-  f1 = 1.0
-  do i = 1, nxyz
-     ic1(i,1) = 1       ! Solution 1
-     ic1(i,2) = -1      ! Equilibrium phases none
-     ic1(i,3) = 1       ! Exchange 1
-     ic1(i,4) = -1      ! Surface none
-     ic1(i,5) = -1      ! Gas phase none
-     ic1(i,6) = -1      ! Solid solutions none
-     ic1(i,7) = -1      ! Kinetics none
-  enddo
-  status = RM_InitialPhreeqc2Module(id, ic1, ic2, f1)
-  ! No mixing is defined, so the following is equivalent
+  ! For ways to set initial conditions
+  ! 1. Mixing
+  !allocate(ic1(nxyz,7), ic2(nxyz,7), f1(nxyz,7))
+  !ic1 = -1
+  !ic2 = -1
+  !f1 = 1.0
+  !do i = 1, nxyz
+  !   ic1(i,1) = 1       ! Solution 1
+  !   ic1(i,2) = -1      ! Equilibrium phases none
+  !   ic1(i,3) = 1       ! Exchange 1
+  !   ic1(i,4) = -1      ! Surface none
+  !   ic1(i,5) = -1      ! Gas phase none
+  !   ic1(i,6) = -1      ! Solid solutions none
+  !   ic1(i,7) = -1      ! Kinetics none
+  !enddo
+  !status = RM_InitialPhreeqc2Module(id, ic1, ic2, f1)
+  ! 2. No mixing is defined, so the following is equivalent
   ! status = RM_InitialPhreeqc2Module(id, ic1)
-
-  ! alternative for setting initial conditions
+  ! 3. Simplest for these conditions
+  allocate(solutions(nxyz), exchanges(nxyz))
+  solutions = 1
+  status = RM_InitialSolutions2Module(id, solutions)
+  exchanges = 1
+  status = RM_InitialExchanges2Module(id, exchanges)
+  
+  ! 4. alternative for setting initial conditions
   ! cell number in second argument (-1 indicates last solution, 40 in this case)
   ! in advect.pqi and any reactants with the same number--
   ! Equilibrium phases, exchange, surface, gas phase, solid solution, and (or) kinetics--
@@ -425,9 +433,11 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   deallocate(print_chemistry_mask) 
   deallocate(grid2chem) 
   deallocate(components) 
-  deallocate(ic1) 
-  deallocate(ic2) 
-  deallocate(f1) 
+  !deallocate(ic1) 
+  !deallocate(ic2) 
+  deallocate(solutions)
+  deallocate(exchanges)
+  !deallocate(f1) 
   deallocate(bc1) 
   deallocate(bc2) 
   deallocate(bc_f1) 

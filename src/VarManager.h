@@ -114,6 +114,7 @@ public:
 	void Pressure_Var();
 	void SelectedOutputOn_Var();
 	void Temperature_Var();
+	void Viscosity_Var();
 };
 #endif
 

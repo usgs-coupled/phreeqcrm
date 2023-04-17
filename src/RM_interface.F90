@@ -71,7 +71,7 @@
 !> @param config_file         String containing the YAML file name.
 !> @retval Number of grid cells specified in the YAML file; returns
 !> zero if GridCellCount is not defined.
-!> @see @ref bmif_initialize, @ref RM_Create, and @ref RM_InitializeYAML.
+!> @see @ref RM_Create, and @ref RM_InitializeYAML.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -80,7 +80,7 @@
 !>  integer nxyz
 !> 	nxyz = GetGridCellCountYAML("myfile.yaml");
 !> 	status = RM_Create(nxyz, nthreads);
-!> 	status = bmif_initialize("myfile.yaml");
+!> 	status = RM_InitializeYAML("myfile.yaml");
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -770,8 +770,6 @@
     !> to receive the component names. Character length and dimension will be allocated as needed.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref bmif_get_value,
-    !> @ref bmif_set_value
     !> @ref RM_GetComponent,
     !> @ref RM_FindComponents.
     !> @par Fortran Example:
@@ -785,20 +783,12 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
-    !INTEGER FUNCTION RM_GetComponents(id, components)
-    !USE ISO_C_BINDING
-    !IMPLICIT NONE
-    !INTEGER, INTENT(in) :: id
-    !CHARACTER(len=:), allocatable, INTENT(out) :: components(:)
-    !RM_GetComponents = bmif_get_value(id, "Components", components)
-    !END FUNCTION RM_GetComponents
     
-    INTEGER FUNCTION RM_GetComponents(id, dest)
+    INTEGER FUNCTION RM_GetComponents(id, components)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: components
     character(1024) :: comp
     integer :: dim, itemsize, status, l, i
     dim = RM_GetComponentCount(id)
@@ -808,11 +798,11 @@
 		l = len(trim(comp))
 		if (l > itemsize) itemsize = l
 	enddo
-    if(allocated(dest)) deallocate(dest)
-    allocate(character(len=itemsize) :: dest(dim))
+    if(allocated(components)) deallocate(components)
+    allocate(character(len=itemsize) :: components(dim))
 	do i = 1, dim
 		status = RM_GetComponent(id, i, comp)
-		dest(i) = trim(comp)
+		components(i) = trim(comp)
     enddo
     RM_GetComponents = status
     return 
@@ -938,7 +928,7 @@
         errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetConcentrations")
     endif
     END SUBROUTINE Chk_GetConcentrations
-
+    
     !> Returns the user number of the current selected-output definition.
     !> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput specifies which of the
     !> selected-output definitions is used.
@@ -1931,6 +1921,98 @@
     INTEGER, INTENT(in) :: i
     RM_GetIPhreeqcId = RMF_GetIPhreeqcId(id, i)
     END FUNCTION RM_GetIPhreeqcId
+	
+	!> Transfer the concentration from each cell for one component to the vector given in the 
+	!> argument list (@a c). The concentrations are those resulting from the last call
+	!> to @ref RM_RunCells. Units of concentration for @a c are defined by @ref RM_SetUnitsSolution.
+    !> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the component to retrieve. Indices refer
+	!> to the order produced by @ref RM_GetComponents. The total number of components is given by
+	!> @ref RM_GetComponentCount.
+	!> @param c                Vector to receive the component concentrations.
+	!> Dimension of the vector is set to @a nxyz, where @a nxyz is the number of 
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetComponents, @ref RM_GetComponentCount, 
+	!> @ref RM_GetConcentrations.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> real(kind=8), allocatable, dimension(:) :: c
+	!> status = RM_RunCells(id)
+	!> status = phreeqc_rm.GetIthConcentration(id, 0, c)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_GetIthConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetIthConcentration(id, i, c) &
+			BIND(C, NAME='RMF_GetIthConcentration')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: i
+		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+		END FUNCTION RMF_GetIthConcentration
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    RM_GetIthConcentration = RMF_GetIthConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_GetIthConcentration
+
+	!> Transfer the concentration from each cell for one species to the vector given in the
+	!> argument list (@a c). The concentrations are those resulting from the last call
+	!> to @ref RM_RunCells. Units of concentration for @a c are mol/L.
+	!> To retrieve species concentrations, @ref RM_SetSpeciesSaveOn must be set to @a true.
+	!> This method is for use with multicomponent diffusion calculations.
+	!> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the species to retrieve. Indices refer
+	!> to the order given by @ref RM_GetSpeciesName. The total number of species is given
+	!> by @ref RM_GetSpeciesCount.
+	!> @param c                Vector to receive the species concentrations.
+	!> Dimension of the vector is set to @a nxyz, where @a nxyz is the number of
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesName,
+	!> @ref RM_GetSpeciesConcentrations, @ref RM_SetSpeciesSaveOn.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> real(kind=8), allocatable, dimension(:) :: c
+	!> status = RM_RunCells(id)
+	!> status = RM_GetIthSpeciesConcentration(id, 0, c)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_GetIthSpeciesConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_GetIthSpeciesConcentration(id, i, c) &
+			BIND(C, NAME='RMF_GetIthSpeciesConcentration')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: i
+		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+		END FUNCTION RMF_GetIthSpeciesConcentration
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    RM_GetIthSpeciesConcentration = RMF_GetIthSpeciesConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_GetIthSpeciesConcentration
 
     !> Returns the number of kinetic reactions in the initial-phreeqc module.
     !> @ref RM_FindComponents must be called before @ref RM_GetKineticReactionsCount.
@@ -2549,8 +2631,6 @@
     !> to receive the headings. Character length and dimension will be allocated as needed.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref bmif_get_value,
-    !> @ref bmif_set_value,
     !> @ref RM_GetCurrentSelectedOutputUserNumber,
     !> @ref RM_GetNthSelectedOutputUserNumber,
     !> @ref RM_GetSelectedOutput,
@@ -2576,11 +2656,11 @@
     !> @par MPI:
     !> Called by root.
 
-	INTEGER FUNCTION RM_GetSelectedOutputHeadings(id, dest)
+	INTEGER FUNCTION RM_GetSelectedOutputHeadings(id, headings)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: headings
     character(1024) :: head
     integer :: dim, itemsize, status, l, i
     dim = RM_GetSelectedOutputColumnCount(id)
@@ -2590,11 +2670,11 @@
 		l = len(trim(head))
 		if (l > itemsize) itemsize = l
 	enddo
-    if(allocated(dest)) deallocate(dest)
-    allocate(character(len=itemsize) :: dest(dim))
+    if(allocated(headings)) deallocate(headings)
+    allocate(character(len=itemsize) :: headings(dim))
 	do i = 1, dim
 		status = RM_GetSelectedOutputHeading(id, i, head)
-		dest(i) = trim(head)
+		headings(i) = trim(head)
     enddo	
     RM_GetSelectedOutputHeadings = status
     return
@@ -3706,8 +3786,6 @@
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !>
     !> @see
-    !> @ref bmif_get_value,
-    !> @ref bmif_set_value,
     !> @ref RM_SetTemperature.
     !> @par Fortran Example:
     !> @htmlonly
@@ -3720,16 +3798,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
-    !INTEGER FUNCTION RM_GetTemperature(id, temperature)
-    !USE ISO_C_BINDING
-    !IMPLICIT NONE
-    !INTEGER, INTENT(in) :: id
-    !real(kind=8), INTENT(out), DIMENSION(:) :: temperature
-    !real(kind=8), ALLOCATABLE, DIMENSION(:) :: a_temperature
-    !RM_GetTemperature = bmif_get_value(id, "Temperature", a_temperature)
-    !temperature = a_temperature
-    !END FUNCTION RM_GetTemperature
     
     INTEGER FUNCTION RM_GetTemperature(id, temperature)
     USE ISO_C_BINDING
@@ -3950,6 +4018,13 @@
     !> CreateMapping(std::vector< int >& grid2chem);
     !> DumpModule();
     !> FindComponents();
+	!> InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+	!> InitialExchanges2Module(std::vector< int > exchanges);
+	!> InitialGasPhases2Module(std::vector< int > gas_phases);
+	!> InitialKineticss2Module(std::vector< int > kinetics);
+	!> InitialSolidSolutions2Module(std::vector< int > solid_solutions);
+	!> InitialSolutions2Module(std::vector< int > solutions);
+	!> InitialSurfaces2Module(std::vector< int > surfaces);
     !> InitialPhreeqc2Module(std::vector< int > initial_conditions1);
     !> InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
     !> InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
@@ -4220,15 +4295,15 @@
     END FUNCTION RMF_InitialPhreeqc2Module
     END INTERFACE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Module2(id, ic1, ic2, f1) &
-        BIND(C, NAME='RMF_InitialPhreeqc2Module2')
+    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2ModuleMix(id, ic1, ic2, f1) &
+        BIND(C, NAME='RMF_InitialPhreeqc2ModuleMix')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
     INTEGER(KIND=C_INT), INTENT(in) :: ic2(*)
     REAL(KIND=C_DOUBLE), INTENT(in) :: f1(*)
-    END FUNCTION RMF_InitialPhreeqc2Module2
+    END FUNCTION RMF_InitialPhreeqc2ModuleMix
     END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in), DIMENSION(:,:) :: ic1
@@ -4236,7 +4311,7 @@
     real(kind=8), INTENT(in), DIMENSION(:,:), OPTIONAL :: f1
     if (rmf_debug) call Chk_InitialPhreeqc2Module(id, ic1, ic2, f1)
     if (present(ic2) .and. present(f1)) then
-        RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2Module2(id, ic1, ic2, f1)
+        RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2ModuleMix(id, ic1, ic2, f1)
     else
         RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2Module(id, ic1)
     endif
@@ -4262,6 +4337,328 @@
     endif
     END SUBROUTINE Chk_InitialPhreeqc2Module
 
+	!> Transfer SOLUTION definitions from the InitialPhreeqc instance to the reaction-module workers.
+	!> @a solutions is used to select SOLUTION definitions for each cell of the model.
+	!> @a solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id           The instance @a id returned from @ref RM_Create.
+	!> @param solutions    Vector of SOLUTION index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> SOLUTION definition for that cell.
+	!> (Note that all cells must have a SOLUTION definition, which could be defined by other 
+	!> calls to @a RM_InitialSolutions2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(solutions(nxyz))
+	!> solutions = 1
+	!> status = RM_InitialSolutions2Module(id, solutions);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_InitialSolutions2Module(id, solutions)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialSolutions2Module(id, solutions) &
+			BIND(C, NAME='RMF_InitialSolutions2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: solutions(*)
+		END FUNCTION RMF_InitialSolutions2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: solutions
+    RM_InitialSolutions2Module = RMF_InitialSolutions2Module(id, solutions)
+    END FUNCTION RM_InitialSolutions2Module  
+	
+	!> Transfer EQUILIBRIUM_PHASES definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a equilibrium_phases is used to select EQUILIBRIUM_PHASES definitions for each cell of the model.
+	!> @a equilibrium_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param equilibrium_phases   Vector of EQUILIBRIUM_PHASES index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of an
+	!> EQUILIBRIUM_PHASES definition for that cell.
+	!> (Note that an EQUILIBRIUM_PHASES definition for a cell could be defined by other 
+	!> calls to @a RM_InitialEquilibriumPhases2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(equilibrium_phases(nxyz))
+	!> equilibrium_phases = 1
+	!> status = RM_InitialEquilibriumPhases2Module(id, equilibrium_phases);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_InitialEquilibriumPhases2Module(id, equilibrium_phases)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialEquilibriumPhases2Module(id, equilibrium_phases) &
+			BIND(C, NAME='RMF_InitialEquilibriumPhases2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: equilibrium_phases(*)
+		END FUNCTION RMF_InitialEquilibriumPhases2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: equilibrium_phases
+    RM_InitialEquilibriumPhases2Module = RMF_InitialEquilibriumPhases2Module(id, equilibrium_phases)
+    END FUNCTION RM_InitialEquilibriumPhases2Module
+
+	!> Transfer EXCHANGE definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a exchanges is used to select EXCHANGE definitions for each cell of the model.
+	!> @a exchanges is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id           The instance @a id returned from @ref RM_Create.
+	!> @param exchanges    Vector of EXCHANGE index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of an 
+	!> EXCHANGE definition for that cell.
+	!> (Note that an EXCHANGE definition for a cell could be defined by other 
+	!> calls to @a RM_InitialExchanges2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(exchanges(nxyz))
+	!> exchanges = 1
+	!> status = RM_InitialExchanges2Module(id, exchanges);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_InitialExchanges2Module(id, exchanges)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialExchanges2Module(id, exchanges) &
+			BIND(C, NAME='RMF_InitialExchanges2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: exchanges(*)
+		END FUNCTION RMF_InitialExchanges2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: exchanges
+    RM_InitialExchanges2Module = RMF_InitialExchanges2Module(id, exchanges)
+    END FUNCTION RM_InitialExchanges2Module
+	
+	!> Transfer SURFACE definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a surfaces is used to select SURFACE definitions for each cell of the model.
+	!> @a surfaces is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param surfaces    Vector of SURFACE index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> SURFACE definition for that cell.
+	!> (Note that an SURFACE definition for a cell could be defined by other 
+	!> calls to @a RM_InitialSurfaces2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(surfaces(nxyz))
+	!> surfaces = 1
+	!> status = RM_InitialSurfaces2Module(id, surfaces);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_InitialSurfaces2Module(id, surfaces)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialSurfaces2Module(id, surfaces) &
+			BIND(C, NAME='RMF_InitialSurfaces2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: surfaces(*)
+		END FUNCTION RMF_InitialSurfaces2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: surfaces
+    RM_InitialSurfaces2Module = RMF_InitialSurfaces2Module(id, surfaces)
+    END FUNCTION RM_InitialSurfaces2Module
+	
+	!> Transfer GAS_PHASE definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a gas_phases is used to select GAS_PHASE definitions for each cell of the model.
+	!> @a gas_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param gas_phases    Vector of GAS_PHASE index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> GAS_PHASE definition for that cell.
+	!> (Note that an GAS_PHASE definition for a cell could be defined by other 
+	!> calls to @a RM_InitialGasPhases2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(gas_phases(nxyz))
+	!> gas_phases = 1
+	!> status = RM_InitialGasPhases2Module(id, gas_phases);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_InitialGasPhases2Module(id, gas_phases)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialGasPhases2Module(id, gas_phases) &
+			BIND(C, NAME='RMF_InitialGasPhases2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: gas_phases(*)
+		END FUNCTION RMF_InitialGasPhases2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: gas_phases
+    RM_InitialGasPhases2Module = RMF_InitialGasPhases2Module(id, gas_phases)
+    END FUNCTION RM_InitialGasPhases2Module
+	
+	!> Transfer SOLID_SOLUTIONS definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a solid_solutions is used to select SOLID_SOLUTIONS definitions for each cell of the model.
+	!> @a solid_solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param solid_solutions    Vector of SOLID_SOLUTIONS index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> SOLID_SOLUTIONS definition for that cell.
+	!> (Note that an SOLID_SOLUTIONS definition for a cell could be defined by other 
+	!> calls to @a RM_InitialSolidSolutions2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(solid_solutions(nxyz))
+	!> solid_solutions = 1
+	!> status = RM_InitialSolidSolutions2Module(id, solid_solutions);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_InitialSolidSolutions2Module(id, solid_solutions)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialSolidSolutions2Module(id, solid_solutions) &
+			BIND(C, NAME='RMF_InitialSolidSolutions2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: solid_solutions(*)
+		END FUNCTION RMF_InitialSolidSolutions2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: solid_solutions
+    RM_InitialSolidSolutions2Module = RMF_InitialSolidSolutions2Module(id, solid_solutions)
+    END FUNCTION RM_InitialSolidSolutions2Module
+	
+	!> Transfer KINETICS definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a kinetics is used to select KINETICS definitions for each cell of the model.
+	!> @a kinetics is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param kinetics    Vector of KINETICS index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> KINETICS definition for that cell.
+	!> (Note that an KINETICS definition for a cell could be defined by other 
+	!> calls to @a RM_InitialKinetics2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(kinetics(nxyz))
+	!> kinetics = 1
+	!> status = RM_InitialKinetics2Module(id, kinetics);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.	
+	INTEGER FUNCTION RM_InitialKinetics2Module(id, kinetics)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialKinetics2Module(id, kinetics) &
+			BIND(C, NAME='RMF_InitialKinetics2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: kinetics(*)
+		END FUNCTION RMF_InitialKinetics2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: kinetics
+    RM_InitialKinetics2Module = RMF_InitialKinetics2Module(id, kinetics)
+    END FUNCTION RM_InitialKinetics2Module  
+    
+    
     !> Fills an array (@a bc_conc) with aqueous species concentrations from solutions in the InitialPhreeqc instance.
     !> This method is intended for use with multicomponent-diffusion transport calculations,
     !> and @ref RM_SetSpeciesSaveOn must be set to @a true.
@@ -5406,6 +5803,100 @@
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetGasPhaseVolume")
     endif
     END SUBROUTINE Chk_SetGasPhaseVolume
+
+
+	!> Transfer the concentrations for one component given by the vector @a c to each reaction cell. 
+	!> Units of concentration for @a c are defined by @ref RM_SetUnitsSolution. It is required that
+	!> @a RM_SetIthConcentration be called for each component in the system before @ref RM_RunCells is called.
+	!> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the component to transfer. Indices refer
+	!> to the order produced by @ref RM_GetComponents. The total number of components is given by
+	!> @ref RM_GetComponentCount.
+	!> @param c                Vector of concentrations to transfer to the reaction cells.
+	!> Dimension of the vector is @a nxyz, where @a nxyz is the number of
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are ignored.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetComponentCount,  @ref RM_GetComponents,
+	!> @ref RM_SetConcentrations.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> status = phreeqc_rm.SetIthConcentration(id, i, c) ! repeat for all components
+	!> ...
+	!> status = phreeqc_rm.RunCells(id)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_SetIthConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_SetIthConcentration(id, i, c) &
+			BIND(C, NAME='RMF_SetIthConcentration')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: i
+		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+		END FUNCTION RMF_SetIthConcentration
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    RM_SetIthConcentration = RMF_SetIthConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_SetIthConcentration
+	
+	!> Transfer the concentrations for one aqueous species given by the vector @a c to each reaction cell.
+	!> Units of concentration for @a c are mol/L. To set species concentrations, @ref RM_SetSpeciesSaveOn 
+	!> must be set to @a true. It is required that
+	!> @a RM_SetIthSpeciesConcentration be called for each aqueous species in the system before 
+	!> @ref RM_RunCells is called. This method is for use with multicomponent diffusion calculations. 
+	!> 
+	!> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the species to transfer. Indices refer
+	!> to the order produced by @ref RM_GetSpeciesName. The total number of species is given by
+	!> @ref RM_GetSpeciesCount.
+	!> @param c                Vector of concentrations to transfer to the reaction cells.
+	!> Dimension of the vector is @a nxyz, where @a nxyz is the number of
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are ignored.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesName,
+	!> @ref RM_SpeciesConcentrations2Module, @ref RM_SetSpeciesSaveOn.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> status = RM_SetIthSpeciesConcentration(id, i, c) ! repeat for all species
+	!> ...
+	!> status = RM_RunCells(id)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_SetIthSpeciesConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_SetIthSpeciesConcentration(id, i, c) &
+			BIND(C, NAME='RMF_SetIthSpeciesConcentration')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: i
+		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+		END FUNCTION RMF_SetIthSpeciesConcentration
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    RM_SetIthSpeciesConcentration = RMF_SetIthSpeciesConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_SetIthSpeciesConcentration
 
     !> MPI only. Defines a callback function that allows additional tasks to be done
     !> by the workers. The method @ref RM_MpiWorker contains a loop,

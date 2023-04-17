@@ -27,6 +27,7 @@ class IRM_DLL_EXPORT YAMLPhreeqcRM
 private:
 	YAML::Node YAML_doc;
 	std::map<std::string, int> method_map;
+	YAML::EmitterStyle::value style;
 protected:
 	friend class YAMLPhreeqcRMLib;
 	static std::map<size_t, YAMLPhreeqcRM*> Instances;
@@ -214,6 +215,97 @@ yrm.YAMLCloseFiles();
 	@endhtmlonly
 	 */
 	void YAMLFindComponents();
+	/**
+	Inserts data into the YAML document for the PhreeqcRM method InitialSolutions2Module.
+	When the YAML document is written to file it can be processed by the method 
+	InitializeYAML to initialize a PhreeqcRM instance.
+	@par
+	InitialSolutions2Module transfers SOLUTION definitions from the InitialPhreeqc 
+	instance to the reaction-module workers.
+	@a solutions is a vector of SOLUTION index numbers that refer to
+	definitions in the InitialPhreeqc instance.
+	@param solutions Vector of index numbers that is dimensioned @a nxyz, 
+	where @a nxyz is the number of grid cells in the user's model. 
+	 */
+	void YAMLInitialSolutions2Module(std::vector< int > solutions);
+	/**
+	Inserts data into the YAML document for the PhreeqcRM method InitialEquilibriumPhases2Module.
+	When the YAML document is written to file it can be processed by the method
+	InitializeYAML to initialize a PhreeqcRM instance.
+	@par
+	InitialEquilibriumPhases2Module transfers EQUILIBRIUM_PHASES definitions from the 
+	InitialPhreeqc instance to the reaction-module workers.
+	@a equilibrium_phases is a vector of EQUILIBRIUM_PHASES index numbers that refer to
+	definitions in the InitialPhreeqc instance.
+	@param equilibrium_phases Vector of index numbers that is dimensioned @a nxyz,
+	where @a nxyz is the number of grid cells in the user's model.
+	 */
+	void YAMLInitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+	/**
+	Inserts data into the YAML document for the PhreeqcRM method InitialExchanges2Module.
+	When the YAML document is written to file it can be processed by the method
+	InitializeYAML to initialize a PhreeqcRM instance.
+	@par
+	InitialExchanges2Module transfers EXCHANGE definitions from the
+	InitialPhreeqc instance to the reaction-module workers.
+	@a exchanges is a vector of EXCHANGE index numbers that refer to
+	definitions in the InitialPhreeqc instance.
+	@param exchanges Vector of index numbers that is dimensioned @a nxyz,
+	where @a nxyz is the number of grid cells in the user's model.
+	 */
+	void YAMLInitialExchanges2Module(std::vector< int > exchanges);
+	/**
+	Inserts data into the YAML document for the PhreeqcRM method InitialSurfaces2Module.
+	When the YAML document is written to file it can be processed by the method
+	InitializeYAML to initialize a PhreeqcRM instance.
+	@par
+	InitialSurfaces2Module transfers SURFACE definitions from the
+	InitialPhreeqc instance to the reaction-module workers.
+	@a surfaces is a vector of SURFACE index numbers that refer to
+	definitions in the InitialPhreeqc instance.
+	@param surfaces Vector of index numbers that is dimensioned @a nxyz,
+	where @a nxyz is the number of grid cells in the user's model.
+	 */
+	void YAMLInitialSurfaces2Module(std::vector< int > surfaces);
+	/**
+	Inserts data into the YAML document for the PhreeqcRM method InitialGasPhases2Module.
+	When the YAML document is written to file it can be processed by the method
+	InitializeYAML to initialize a PhreeqcRM instance.
+	@par
+	InitialGasPhases2Module transfers GAS_PHASE definitions from the
+	InitialPhreeqc instance to the reaction-module workers.
+	@a gas_phases is a vector of GAS_PHASE index numbers that refer to
+	definitions in the InitialPhreeqc instance.
+	@param gas_phases Vector of index numbers that is dimensioned @a nxyz,
+	where @a nxyz is the number of grid cells in the user's model.
+	 */
+	void YAMLInitialGasPhases2Module(std::vector< int > gas_phases);
+	/**
+	Inserts data into the YAML document for the PhreeqcRM method InitialSolidSolutions2Module.
+	When the YAML document is written to file it can be processed by the method
+	InitializeYAML to initialize a PhreeqcRM instance.
+	@par
+	InitialSolidSolutions2Module transfers SOLID_SOLUTIONS definitions from the
+	InitialPhreeqc instance to the reaction-module workers.
+	@a solid_solutions is a vector of SOLID_SOLUTIONS index numbers that refer to
+	definitions in the InitialPhreeqc instance.
+	@param solid_solutions Vector of index numbers that is dimensioned @a nxyz,
+	where @a nxyz is the number of grid cells in the user's model.
+	 */
+	void YAMLInitialSolidSolutions2Module(std::vector< int > solid_solutions);
+	/**
+	Inserts data into the YAML document for the PhreeqcRM method InitialKinetics2Module.
+	When the YAML document is written to file it can be processed by the method
+	InitializeYAML to initialize a PhreeqcRM instance.
+	@par
+	InitialKinetics2Module transfers KINETICS definitions from the
+	InitialPhreeqc instance to the reaction-module workers.
+	@a kinetics is a vector of KINETICS index numbers that refer to
+	definitions in the InitialPhreeqc instance.
+	@param kinetics Vector of index numbers that is dimensioned @a nxyz,
+	where @a nxyz is the number of grid cells in the user's model.
+	 */
+	void YAMLInitialKinetics2Module(std::vector< int > kinetics);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -1549,7 +1641,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	by summing the molarities of the individual species times the stoichiometric
 	coefficient of the element in each species.
 	Solution compositions in the reaction cells are updated with these component concentrations.
-	Usually, accurate concentrations will not be known to use YAMLSetSpeciesConcentrations during
+	Usually, accurate concentrations will not be known to use YAMLSpeciesConcentrations2Module during
 	initialization.
 
 	@param species_conc     Vector of aqueous species concentrations. Dimension of the array is @a nspecies times @a nxyz,
@@ -1562,7 +1654,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	@htmlonly
 	<CODE>
 	<PRE>
-	yrm.YAMLSetSpeciesConcentrations(c);
+	yrm.YAMLSpeciesConcentrations2Module(c);
 	</PRE>
 	</CODE>
 	@endhtmlonly

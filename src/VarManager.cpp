@@ -10,6 +10,8 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::Components_Var, "Components");
 	this->VariantMap[RMVARS::Concentrations] =
 		BMIVariant(&VarManager::Concentrations_Var, "Concentrations");
+	this->VariantMap[RMVARS::CurrentSelectedOutputUserNumber] =
+		BMIVariant(&VarManager::CurrentSelectedOutputUserNumber_Var, "CurrentSelectedOutputUserNumber");
 	this->VariantMap[RMVARS::Density] =
 		BMIVariant(&VarManager::Density_Var, "Density");
 	this->VariantMap[RMVARS::ErrorString] =
@@ -20,12 +22,12 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::Gfw_Var, "Gfw");
 	this->VariantMap[RMVARS::GridCellCount] =
 		BMIVariant(&VarManager::GridCellCount_Var, "GridCellCount");
-	//this->VariantMap[RMVARS::InputVarNames] =
-	//	BMIVariant(&VarManager::InputVarNames_Var, "InputVarNames");
 	this->VariantMap[RMVARS::NthSelectedOutput] =
 		BMIVariant(&VarManager::NthSelectedOutput_Var, "NthSelectedOutput");
-	//this->VariantMap[RMVARS::OutputVarNames] =
-	//	BMIVariant(&VarManager::OutputVarNames_Var, "OutputVarNames");
+	this->VariantMap[RMVARS::Porosity] =
+		BMIVariant(&VarManager::Porosity_Var, "Porosity");
+	this->VariantMap[RMVARS::Pressure] =
+		BMIVariant(&VarManager::Pressure_Var, "Pressure");
 	this->VariantMap[RMVARS::Saturation] =
 		BMIVariant(&VarManager::Saturation_Var, "Saturation");
 	this->VariantMap[RMVARS::SelectedOutput] =
@@ -36,24 +38,20 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::SelectedOutputCount_Var, "SelectedOutputCount");
 	this->VariantMap[RMVARS::SelectedOutputHeadings] =
 		BMIVariant(&VarManager::SelectedOutputHeadings_Var, "SelectedOutputHeadings");
+	this->VariantMap[RMVARS::SelectedOutputOn] =
+		BMIVariant(&VarManager::SelectedOutputOn_Var, "SelectedOutputOn");
 	this->VariantMap[RMVARS::SelectedOutputRowCount] =
 		BMIVariant(&VarManager::SelectedOutputRowCount_Var, "SelectedOutputRowCount");
 	this->VariantMap[RMVARS::SolutionVolume] =
 		BMIVariant(&VarManager::SolutionVolume_Var, "SolutionVolume");
+	this->VariantMap[RMVARS::Temperature] =
+		BMIVariant(&VarManager::Temperature_Var, "Temperature");
 	this->VariantMap[RMVARS::Time] =
 		BMIVariant(&VarManager::Time_Var, "Time");
 	this->VariantMap[RMVARS::TimeStep] =
 		BMIVariant(&VarManager::TimeStep_Var, "TimeStep");
-	this->VariantMap[RMVARS::CurrentSelectedOutputUserNumber] =
-		BMIVariant(&VarManager::CurrentSelectedOutputUserNumber_Var, "CurrentSelectedOutputUserNumber");
-	this->VariantMap[RMVARS::Porosity] =
-		BMIVariant(&VarManager::Porosity_Var, "Porosity");
-	this->VariantMap[RMVARS::Pressure] =
-		BMIVariant(&VarManager::Pressure_Var, "Pressure");
-	this->VariantMap[RMVARS::SelectedOutputOn] =
-		BMIVariant(&VarManager::SelectedOutputOn_Var, "SelectedOutputOn");
-	this->VariantMap[RMVARS::Temperature] =
-		BMIVariant(&VarManager::Temperature_Var, "Temperature");
+	this->VariantMap[RMVARS::Viscosity] =
+		BMIVariant(&VarManager::Viscosity_Var, "Viscosity");
 	///!!!VarFunction x = &VarManager::ComponentCount_var;
 	///!!! (this->*x)(rm_ptr); // Remember this !!!///
 	//auto it = VariantMap.begin();
@@ -331,6 +329,7 @@ void VarManager::Concentrations_Var()
 	}
 	case VarManager::VAR_TASKS::SetVar:
 		rm_ptr->SetConcentrations(this->VarExchange.GetDoubleVectorRef());
+		rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		break;
 	case VarManager::VAR_TASKS::no_op:
@@ -366,19 +365,35 @@ void VarManager::Density_Var()
 		this->UpdateSet.insert(RMVARS::Density);
 		break;
 	}
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		// Concentrations may change when SetDensity is called
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
+	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
+	{
 		rm_ptr->SetDensity(this->VarExchange.GetDoubleVectorRef());
 		// don't update density vector, only get solution densities
 		//bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations may change when SetDensity is called
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
 		break;
+	}
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
 		break;
@@ -653,18 +668,41 @@ void VarManager::Saturation_Var()
 		this->UpdateSet.insert(VARS_myself);
 		break;
 	}
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		// GetSaturation does not change with SetSaturation
+		// But Concentrations may change
+		//rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
+		//bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations change when Saturation changes
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
+		break;
+	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
+	{
 		rm_ptr->SetSaturation(this->VarExchange.GetDoubleVectorRef());
-		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Saturation is solution volume / (porosity*rv)
+		// GetSaturation does not change with SetSaturation
+		// bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations may change when Saturation changes
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
 		break;
+	}
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
 		break;
@@ -1139,19 +1177,50 @@ void VarManager::Porosity_Var()
 		this->PointerSet.insert(VARS_myself);
 		this->UpdateSet.insert(VARS_myself);
 		break;
+	}	
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPorosity();
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations change when Saturation changes
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
+		// Saturation changes with change in porosity
+		std::vector<double> sat;
+		rm_ptr->GetSaturation(sat);
+		RMVARS VARS_sat = RMVARS::Saturation;
+		BMIVariant& bv_sat = this->VariantMap[VARS_sat];
+		bv_sat.SetDoubleVector(sat);
+		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
 	{
 		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPorosity();
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
+	{
 		rm_ptr->SetPorosity(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations change when Saturation changes
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
+		// Saturation changes with change in porosity
+		std::vector<double> sat;
+		rm_ptr->GetSaturation(sat);
+		RMVARS VARS_sat = RMVARS::Saturation;
+		BMIVariant& bv_sat = this->VariantMap[VARS_sat];
+		bv_sat.SetDoubleVector(sat);
 		break;
+	}
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
 		break;
@@ -1291,6 +1360,51 @@ void VarManager::Temperature_Var()
 	case VarManager::VAR_TASKS::SetVar:
 		rm_ptr->SetTemperature(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(RMVARS::NotFound);
+}
+void VarManager::Viscosity_Var()
+{
+	RMVARS VARS_myself = RMVARS::Viscosity;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		int Itemsize = sizeof(double);
+		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("mPa s", false, true, true, Nbytes, Itemsize);
+		bv.SetTypes("double", "real(kind=8)", "");
+		rm_ptr->GetViscosity(this->VarExchange.GetDoubleVectorRef());
+		rm_ptr->GetViscosity(bv.GetDoubleVectorRef());
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		rm_ptr->GetViscosity(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
+		this->PointerSet.insert(VARS_myself);
+		this->UpdateSet.insert(VARS_myself);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::Update:
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		rm_ptr->GetViscosity(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+		assert(false);
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:

@@ -52,7 +52,6 @@ subroutine SimpleAdvect_f90()  BIND(C, NAME='SimpleAdvect_f90')
      stop "Failed to get mpi_myself"
   endif
   if (mpi_myself > 0) then
-      status = RM_SetMpiWorkerCallback(id, worker_tasks_f)
       status = RM_MpiWorker(id)
       status = RM_Destroy(id)
       return
