@@ -195,6 +195,8 @@ If @a thread_count_or_communicator is <= 0, the number of threads is set equal t
 If multiprocessor, the MPI communicator to use within the reaction module.
 @param io        Optionally, a PHRQ_io input/output object can be provided to the constructor. By default
 a PHRQ_io object is constructed to handle reading and writing files.
+@param delay_construct Optionally, delay initialization of the PhreeqcRM object until the number of
+grid cells is known.
 @par C++ Example:
 @htmlonly
 <CODE>
