@@ -2,10 +2,10 @@ EXTRA_DIST = CMakeLists.txt
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp  -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords -I$(top_builddir)
 
-TESTS = test
-check_PROGRAMS = test
+TESTS = TestRM TestRMdtor TestBMIdtor
+check_PROGRAMS = TestRM TestRMdtor TestBMIdtor
 
-test_SOURCES =\
+TestRM_SOURCES =\
 	Advect_c.c\
 	AdvectBMI_cpp.cpp\
 	Advect_cpp.cpp\
@@ -18,11 +18,23 @@ test_SOURCES =\
 	Species_cpp.cpp\
 	WriteYAMLFile_cpp.cpp
 
+TestRM_LDADD = $(top_builddir)/libphreeqcrm.la
+TestRM_LINK = $(CXXLINK)
 
-# Ubuntu 22.04.1
-# sudo apt install libyaml-cpp-dev
-test_LDADD = $(top_builddir)/libphreeqcrm.la
-test_LINK = $(CXXLINK)
+# TestBMIdtor
+
+TestBMIdtor_SOURCES = TestBMIdtor.cpp
+
+TestBMIdtor_LDADD = $(top_builddir)/libphreeqcrm.la
+TestBMIdtor_LINK = $(CXXLINK)
+
+# TestRMdtor
+
+TestRMdtor_SOURCES = TestRMdtor.cpp
+
+TestRMdtor_LDADD = $(top_builddir)/libphreeqcrm.la
+TestRMdtor_LINK = $(CXXLINK)
+
 
 CLEANFILES =\
 	Advect_c_utility.txt\
@@ -94,7 +106,7 @@ if PHREEQCRM_TEST_FORTRAN
 DEFS+=-DTEST_FORTRAN
 FCDEFS+=-DTEST_FORTRAN
 
-test_SOURCES+=\
+TestRM_SOURCES+=\
 	../src/BMI_interface.F90\
 	../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90\
 	../src/RM_interface.F90\
@@ -106,7 +118,7 @@ test_SOURCES+=\
 	Species_f90.F90\
 	WriteYAMLFile_f90.F90
 
-test_LDADD+=$(FCLIBS)
+TestRM_LDADD+=$(FCLIBS)
 
 mostlyclean-local: clean-modules
 .PHONY: clean-modules
@@ -145,6 +157,8 @@ endif
 # by $(FCDEFS)
 #
 if PHREEQCRM_WITH_YAMLCPP
+# Ubuntu 22.04.1
+# sudo apt install libyaml-cpp-dev
 FCDEFS+=-DUSE_YAML
 endif
 PPFCCOMPILE = $(FC) $(FCDEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
