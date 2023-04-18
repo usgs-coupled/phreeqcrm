@@ -169,12 +169,14 @@ Called before PhreeqcRM is created.
  *
  *  @htmlonly
  *  <table>
- *   <tr><td class="indexkey"><a class="el" href="classPhreeqcRM.html">PhreeqRM.h</a> </td><td class="indexvalue">C++ Documentation</td></tr>
- *   <tr><td class="indexkey"><a class="el" href="RM__interface__C_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">C Documentation </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="classPhreeqcRM.html">PhreeqRM.h</a> </td><td class="indexvalue">PhreeqcRM C++ Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="classBMIPhreeqcRM.html">BMIPhreeqRM.h</a> </td><td class="indexvalue">BMIPhreeqcRM C++ Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="classYAMLPhreeqcRM.html">YAMLPhreeqcRM.h</a></td><td class="indexvalue">YAML Helper C++ Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">PhreeqcRM Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="BMI__interface_8F90.html">BMI_interface.F90</a></td><td class="indexvalue">BMIPhreeqcRM Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="namespaceyaml__interface.html">YAML_interface.F90</a></td><td class="indexvalue">YAML Helper Fortran Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="RM__interface__C_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">PhreeqcRM C Documentation </td></tr>
  *   <tr><td class="indexkey"><a class="el" href="IrmResult_8h.html">IrmResult.h</a></td><td class="indexvalue">Return codes </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="classYAMLPhreeqcRM.html">YAMLPhreeqcRM.h</a></td><td class="indexvalue">C++ YAML Support </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="namespaceyaml__interface.html">YAML_interface.F90</a></td><td class="indexvalue">Fortran YAML Support </td></tr>
  *  </table>
  *  @endhtmlonly
  */
@@ -5462,7 +5464,7 @@ public:
 	static void                               FileRename(const std::string &temp_name, const std::string &name,
 		                                           const std::string &backup_name);
 	static IRM_RESULT                         Int2IrmResult(int r, bool positive_ok);
-protected:
+private:
 	IRM_RESULT                                CellInitialize(
 		                                          int i,
 		                                          int n_user_new,
@@ -5484,7 +5486,7 @@ protected:
 	void                                      cxxSolution2concentration(cxxSolution * cxxsoln_ptr, std::vector< double > & d, double v, double dens);
 	void                                      cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector< double > & d, double v, double dens);
 	void                                      cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector< double > & d, double v, double dens);
-    void                                      GatherNchem(std::vector< double > &source, std::vector< double > &destination);
+	void                                      GatherNchem(std::vector< double > &source, std::vector< double > &destination);
 	cxxStorageBin &                           Get_phreeqc_bin(void) {return *this->phreeqc_bin;}
 	IRM_RESULT                                HandleErrorsInternal(std::vector< int > & r);
 	void                                      PartitionUZ(int n, int iphrq, int ihst, double new_frac);

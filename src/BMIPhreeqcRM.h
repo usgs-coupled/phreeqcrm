@@ -476,7 +476,7 @@ public:
 
     /**
     @a GetPointableVarNames returns a list of the names of variables
-    for which pointers can be retrieved with @ref GetValuePt.
+    for which pointers can be retrieved with @ref GetValuePtr.
     @retval  A list of the names of variables for which pointers can
     be retieved with @ref GetValuePtr.
 
@@ -644,7 +644,7 @@ public:
     @ref GetVarItemsize,
     @ref GetVarType,
     @ref GetVarUnits.
-    .
+    
     @par C++ Example:
     @htmlonly
         <CODE>
