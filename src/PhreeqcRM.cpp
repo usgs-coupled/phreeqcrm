@@ -170,10 +170,21 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 	//
 	// constructor
 	//
-: phreeqc_bin(NULL)
-, phreeqcrm_io(io)
-, delete_phreeqcrm_io(false)
-, initializer(nxyz_arg, data_for_parallel_processing, io)
+: phreeqc_bin{ nullptr }
+, phreeqcrm_io{ io }
+, delete_phreeqcrm_io{ false }
+, var_man{ nullptr }
+, component_h2o{ true }
+, count_chemistry{ nxyz_arg }
+, mpi_worker_callback_fortran{ nullptr }
+, mpi_worker_callback_c{ nullptr }
+, mpi_worker_callback_cookie{ nullptr }
+, species_save_on{ false }
+// errors
+, error_count{ 0 }
+, error_handler_mode{ 0 }
+, need_error_check{ true }
+, initializer{ nxyz_arg, data_for_parallel_processing, io }
 {
 	InstancesLock.lock();
 	this->Index = PhreeqcRM::InstancesIndex++;
@@ -190,8 +201,9 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 	MP_TYPE data_for_parallel_processing = i.data_for_parallel_processing;
 	PHRQ_io *io = i.io;
 
+	assert(this->phreeqc_bin == nullptr);
 	this->phreeqc_bin = new cxxStorageBin();
-	if (this->phreeqcrm_io == NULL)
+	if (this->phreeqcrm_io == nullptr)
 	{
 		this->phreeqcrm_io = new PHRQ_io();
 		this->delete_phreeqcrm_io = true;
@@ -289,7 +301,6 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 		std::cerr << "Reaction module not created." << std::endl;
 		exit(4);
 	}
-	this->var_man = NULL;
 	this->file_prefix = "myrun";
 	this->dump_file_name = file_prefix;
 	this->dump_file_name.append(".dump");
@@ -316,10 +327,6 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 	this->units_Kinetics = 0;			        // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 	this->use_solution_density_volume = true;   // Use calculated solution density and volume
 
-	// errors
-	this->error_count = 0;
-	this->error_handler_mode = 0;
-	this->need_error_check = true;
 
 	// initialize arrays
 	for (int i = 0; i < this->nxyz; i++)
@@ -358,28 +365,22 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 	ScatterNchem(rv_root, rv_worker);
 	ScatterNchem(saturation_root, saturation_worker);
 #endif
-
-	species_save_on = false;
-	mpi_worker_callback_fortran = NULL;
-	mpi_worker_callback_c = NULL;
-	mpi_worker_callback_cookie = NULL;
 }
 PhreeqcRM::~PhreeqcRM(void)
 {
-	std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.find(this->GetWorkers()[0]->Get_Index());
-
-	for (int i = 0; i < it->second->GetThreadCount() + 2; i++)
+	if (this->GetWorkers().size() > 0)
 	{
-		delete it->second->GetWorkers()[i];
+		std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.find(this->GetWorkers()[0]->Get_Index());
+		for (int i = 0; i < it->second->GetThreadCount() + 2; i++)
+		{
+			delete it->second->GetWorkers()[i];
+		}
+		if (it != PhreeqcRM::Instances.end())
+		{
+			PhreeqcRM::Instances.erase(it);
+		}
 	}
-	if (it != PhreeqcRM::Instances.end())
-	{
-		PhreeqcRM::Instances.erase(it);
-	}
-	if (var_man != NULL)
-	{
-		delete var_man;
-	}
+	delete var_man;
 	delete this->phreeqc_bin;
 	if (delete_phreeqcrm_io)
 	{
