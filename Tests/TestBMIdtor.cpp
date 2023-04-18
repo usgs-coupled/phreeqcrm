@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "BMIPhreeqcRM.h"
 
 int main(void)

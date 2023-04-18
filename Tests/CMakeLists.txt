@@ -148,7 +148,7 @@ endif()
 add_executable(TestRMdtor)
 
 # sources
-target_sources(TestRMdtor PRIVATE TestRMDtor.cpp)
+target_sources(TestRMdtor PRIVATE TestRMdtor.cpp)
 
 # library dependencies
 target_link_libraries(TestRMdtor PhreeqcRM::PhreeqcRM)

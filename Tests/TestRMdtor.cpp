@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "PhreeqcRM.h"
 
 int main(void)
