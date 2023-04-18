@@ -214,7 +214,11 @@ sed -i "s/yamlstatedelete/YAMLStateDelete/g" $(egrep -l yamlstatedelete ./html/*
 sed -i "s/yamlusesolutiondensityvolume/YAMLUseSolutionDensityVolume/g" $(egrep -l yamlusesolutiondensityvolume ./html/*.html)
 sed -i "s/yamlwarningmessage/YAMLWarningMessage/g" $(egrep -l yamlwarningmessage ./html/*.html)
 # Rename PhreeqcRM to mixed case 
-sed -i "s/\bphreeqcrm\b/PhreeqcRM/g" $(egrep -l \bphreeqcrm\b ./html/*.html)h
+#for f in html/*.html; do
+#  sed -i "s/\bphreeqcrm\b/PhreeqcRM/g" $f
+#done
+sed -i "s/phreeqcrm/PhreeqcRM/g" $(egrep -l phreeqcrm ./html/*.html)
+sed -i "s/yaml_interface/YAML_interface/g" $(egrep -l yaml_interface ./html/*.html)
 # Change Titles
 sed -i "s/RM_interface_C.h File Reference/PhreeqcRM C Reference/g" html/RM__interface__C_8h.html
 sed -i "s/PhreeqcRM Class Reference/PhreeqcRM C++ Class Reference/g" html/classPhreeqcRM.html
