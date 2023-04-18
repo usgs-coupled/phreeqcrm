@@ -142,6 +142,36 @@ if(PHREEQCRM_FORTRAN_TESTING)
   target_link_libraries(TestRM FortranAdvect)
 endif()
 
+#-----------------------------------------------------------------------------#
+
+# test PhreeqcRM dtor
+add_executable(TestRMdtor)
+
+# sources
+target_sources(TestRMdtor PRIVATE TestRMdtor.cpp)
+
+# library dependencies
+target_link_libraries(TestRMdtor PhreeqcRM::PhreeqcRM)
+
+add_test(TestRMdtor TestRMdtor)
+
+#-----------------------------------------------------------------------------#
+
+# test BMIPhreeqcRM dtor
+add_executable(TestBMIdtor)
+
+# TestRM C/CXX source
+target_sources(TestBMIdtor PRIVATE
+  TestBMIdtor.cpp
+)
+
+# library dependencies
+target_link_libraries(TestBMIdtor PhreeqcRM::PhreeqcRM)
+
+add_test(TestBMIdtor TestBMIdtor)
+
+#-----------------------------------------------------------------------------#
+
 # test compile and run
 add_test(TestCompileAndRun TestRM)
 
