@@ -33,6 +33,7 @@ public:
     @param nthreads Number of threads for parallelization with OpenMP or
     an MPI communicator if PhreeqcRM is compiled with MPI.
     @retval A BMIPhreeqcRM instance.
+    @par C++ Example:
     @htmlonly
     <CODE>
     <PRE>
@@ -997,7 +998,7 @@ public:
     @a GetGridSize returns the number of cells specified
     at creation of the BMIPhreeqcRM instance. 
     @param grid Grid number, only grid 0 is considered.
-    @retval Same value as GetGridCellCount is returned for grid 0; 
+    @retval Number of cells in the user's modle (same value as GetGridCellCount) is returned for grid 0; 
     0 for all other values of @a grid.
     */
     int GetGridSize(const int grid) override;

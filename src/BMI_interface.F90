@@ -103,7 +103,7 @@
     !> <PRE>
     !> nxyz = 40
     !> nthreads = 3
-    !> id = RM_Create(nxyz, nthreads)
+    !> id = bmif_create(nxyz, nthreads)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -1094,7 +1094,7 @@
 	
     !> @a bmif_get_time_units returns the time units of PhreeqcRM.
     !> All time units are seconds for PhreeqcRM.
-    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @param id            The instance @a id returned from @ref bmif_create.
     !> @param time_units    Returns the string "seconds".
     !> @retval              0 is success, 1 is failure.
     !> @see
@@ -1183,7 +1183,7 @@
 
     !> @a bmif_get_value retrieves model variables. Only variables in the list
     !> provided by @ref bmif_get_output_var_names can be retrieved. 
-    !> @param id     The instance @a id returned from @ref RM_Create.
+    !> @param id     The instance @a id returned from @ref bmif_create.
     !> @param var    Name of the variable to retrieve.
     !> @param dest   Variable in which to place results.
     !> @retval       0 is success, 1 is failure.
@@ -1605,7 +1605,7 @@
    
     !> @a bmif_get_value_ptr retrieves pointers to model variables. Only variables in the list
     !> provided by @ref bmif_get_pointable_var_names can be pointed to. 
-    !> @param id     The instance @a id returned from @ref RM_Create.
+    !> @param id     The instance @a id returned from @ref bmif_create.
     !> @param var    Name of the variable to retrieve.
     !> @param ptr    Pointer to the variable's data.
     !> @retval       0 is success, 1 is failure.

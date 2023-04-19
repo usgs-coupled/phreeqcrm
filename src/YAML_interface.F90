@@ -1,5 +1,17 @@
-#ifdef USE_YAML
-MODULE YAML_interface
+#ifdef USE_YAML 
+    !*MODULE YAMLPhreeqcRM Helper module for building YAML initialization files. 
+    !> @brief Fortran documentation for using YAML to initialize instances 
+	!> of BMIPhreeqcRM and PhreeqcRM.
+    !> @n
+    !> "USE YAMLPhreeqcRM" defines a module that can be used in preprocessors or
+	!> Graphical User Interfaces to store initialization data for BMIPhreeqcRM or
+	!> PhreeqcRM instances. PhreeqcRM methods and data can be stored in a YAML file.
+	!> After an instance of BMIPhreeqcRM or PhreeqcRM has been created, the method
+	!> bmif_initialize or RM_InitializeYAML can be used to run the specified methods
+	!> with the specified data to define properties and initial conditions for 
+	!> the instance.
+    !>    
+MODULE YAMLPhreeqcRM
     contains
 !> Creates a YAMLPhreeqcRM instance with a YAML document that is ready to 
 !> for writing data for initiation of a PhreeqcRM instance.
@@ -2913,6 +2925,6 @@ MODULE YAML_interface
 	YAMLWarningMessage = YAMLWarningMessage_F(id, trim(str)//C_NULL_CHAR)
     END FUNCTION YAMLWarningMessage
     
-END MODULE YAML_interface 
+END MODULE YAMLPhreeqcRM 
  
 #endif
