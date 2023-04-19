@@ -1,7 +1,7 @@
     !*MODULE BMIPhreeqcRM PHREEQC Reaction Module for Transport Codes
     !> @brief Fortran documentation for the geochemical reaction module BMIPhreeqcRM.
-    !> @n
-    !> "USE BMIPhreeqcRM" defines a module with both Basic Model Interface methods and 
+    !> @par ""
+    !> @n "USE BMIPhreeqcRM" defines a module with both Basic Model Interface methods and 
     !> native PhreeqcRM methods for Fortran programs. 
     !> @n For Windows, 
     !> include the files BMI_interface.F90 and RM_interface.F90 in your project.
@@ -26,6 +26,7 @@
     
       
     !> @a bmif_get_value retrieves model variables. 
+    !>
     !> Only variables in the list
     !> provided by @ref bmif_get_output_var_names can be retrieved. 
     INTERFACE bmif_get_value
@@ -46,7 +47,9 @@
 		module procedure get_value_at_indices_float  ! not implemented
 		module procedure get_value_at_indices_int    ! not implemented
     END INTERFACE get_value_at_indices
-    !> @a bmif_set_value sets model variables. Only variables in the list
+    !> @a bmif_set_value sets model variables. 
+    !>
+    !> Only variables in the list
     !> provided by @ref bmif_get_input_var_names can be set. 
    INTERFACE bmif_set_value
         module procedure bmif_set_value_b
@@ -66,7 +69,9 @@
 		module procedure set_value_at_indices_float  ! not implemented
 		module procedure set_value_at_indices_int    ! not implemented
     END INTERFACE set_value_at_indices
-    !> @a bmif_get_value_ptr retrieves pointers to model variables. Only variables in the list
+    !> @a bmif_get_value_ptr retrieves pointers to model variables. 
+    !>
+    !> Only variables in the list
     !> provided by @ref bmif_get_pointable_var_names can be pointed to. 
     INTERFACE bmif_get_value_ptr
         module procedure bmif_get_value_ptr_logical

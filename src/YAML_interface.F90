@@ -2,7 +2,7 @@
     !*MODULE YAMLPhreeqcRM Helper module for building YAML initialization files. 
     !> @brief Fortran documentation for using YAML to initialize instances 
 	!> of BMIPhreeqcRM and PhreeqcRM.
-    !> @n
+    !> @par ""
     !> "USE YAMLPhreeqcRM" defines a module that can be used in preprocessors or
 	!> Graphical User Interfaces to store initialization data for BMIPhreeqcRM or
 	!> PhreeqcRM instances. PhreeqcRM methods and data can be stored in a YAML file.

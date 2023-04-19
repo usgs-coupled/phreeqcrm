@@ -1,5 +1,10 @@
 /*! @file PhreeqcRM.h
-	@brief C++ Documentation 
+*	@brief C++ Documentation for PhreeqcRM
+*
+*   PhreeqcRM is a reaction module for use with multicomponent-transport models.
+*   A reaction cell can be defined for each cell in the user's model that
+*   can simulate PHREEQC EQUILIBRIUM_PHASES, EXCHANGE, GAS_PHASE, KINETICS,
+*   SOLID_SOLUTIONS, and SURFACE reactions.
 */
 #if !defined(PHREEQCRM_H_INCLUDED)
 #define PHREEQCRM_H_INCLUDED
@@ -5522,7 +5527,7 @@ protected:
 /* disable warning C4251: 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2' */
 #pragma warning(disable:4251)
 #endif
-
+/** @cond */
 	bool component_h2o;                      // true: use H2O, excess H, excess O, and charge;
 	                                         // false total H, total O, and charge
 	std::string database_file_name;
@@ -5647,6 +5652,7 @@ protected:
 
 	virtual void Construct(Initializer initializer);
 
+/** @endcond */
 private:
 	//friend class RM_interface;
 	static std::mutex InstancesLock;

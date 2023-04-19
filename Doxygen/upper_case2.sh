@@ -217,6 +217,8 @@ sed -i "s/yamlwarningmessage/YAMLWarningMessage/g" $(egrep -l yamlwarningmessage
 #for f in html/*.html; do
 #  sed -i "s/\bphreeqcrm\b/PhreeqcRM/g" $f
 #done
+
+sed -i "s/yamlphreeqcrm/YAMLPhreeqcRM/g" $(egrep -l yamlphreeqcrm ./html/*)
 sed -i "s/bmiphreeqcrm/BMIPhreeqcRM/g" $(egrep -l bmiphreeqcrm ./html/*)
 sed -i "s/phreeqcrm/PhreeqcRM/g" $(egrep -l phreeqcrm ./html/*)
 sed -i "s/yaml_interface/YAML_interface/g" $(egrep -l yaml_interface ./html/*)
