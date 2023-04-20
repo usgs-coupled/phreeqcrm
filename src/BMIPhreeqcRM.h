@@ -16,7 +16,10 @@ public:
     static int              CreateBMIModule(int nxyz, MP_TYPE nthreads);
     static IRM_RESULT       DestroyBMIModule(int n);
     static BMIPhreeqcRM*    GetInstance(int n);
-
+    /**
+    Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM. 
+    Definition of the number of cells and threads (or MPI communicator) is deferred.
+    */
     BMIPhreeqcRM();
     /**
     Constructor for the BMIPhreeqcRM subclass of PhreeqcRM. A BMIPhreeqcRM 
@@ -30,6 +33,7 @@ public:
     @param nthreads Number of threads for parallelization with OpenMP or
     an MPI communicator if PhreeqcRM is compiled with MPI.
     @retval A BMIPhreeqcRM instance.
+    @par C++ Example:
     @htmlonly
     <CODE>
     <PRE>
@@ -476,7 +480,7 @@ public:
 
     /**
     @a GetPointableVarNames returns a list of the names of variables
-    for which pointers can be retrieved with @ref GetValuePt.
+    for which pointers can be retrieved with @ref GetValuePtr.
     @retval  A list of the names of variables for which pointers can
     be retieved with @ref GetValuePtr.
 
@@ -644,7 +648,7 @@ public:
     @ref GetVarItemsize,
     @ref GetVarType,
     @ref GetVarUnits.
-    .
+    
     @par C++ Example:
     @htmlonly
         <CODE>
@@ -994,7 +998,7 @@ public:
     @a GetGridSize returns the number of cells specified
     at creation of the BMIPhreeqcRM instance. 
     @param grid Grid number, only grid 0 is considered.
-    @retval Same value as GetGridCellCount is returned for grid 0; 
+    @retval Number of cells in the user's modle (same value as GetGridCellCount) is returned for grid 0; 
     0 for all other values of @a grid.
     */
     int GetGridSize(const int grid) override;

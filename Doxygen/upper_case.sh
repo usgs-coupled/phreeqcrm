@@ -502,7 +502,7 @@ done
 for f in html/*.html; do
 	sed -i "s/writeyamldoc/WriteYAMLDoc/g"  $f
 done
-WriteYAMLDoc
+
 for f in html/*.html; do
 	sed -i "s/yamlclear/YAMLClear/g" $f
 done

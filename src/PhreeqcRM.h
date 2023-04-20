@@ -1,5 +1,10 @@
 /*! @file PhreeqcRM.h
-	@brief C++ Documentation 
+*	@brief C++ Documentation for PhreeqcRM
+*
+*   PhreeqcRM is a reaction module for use with multicomponent-transport models.
+*   A reaction cell can be defined for each cell in the user's model that
+*   can simulate PHREEQC EQUILIBRIUM_PHASES, EXCHANGE, GAS_PHASE, KINETICS,
+*   SOLID_SOLUTIONS, and SURFACE reactions.
 */
 #if !defined(PHREEQCRM_H_INCLUDED)
 #define PHREEQCRM_H_INCLUDED
@@ -169,12 +174,14 @@ Called before PhreeqcRM is created.
  *
  *  @htmlonly
  *  <table>
- *   <tr><td class="indexkey"><a class="el" href="classPhreeqcRM.html">PhreeqRM.h</a> </td><td class="indexvalue">C++ Documentation</td></tr>
- *   <tr><td class="indexkey"><a class="el" href="RM__interface__C_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">C Documentation </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="classPhreeqcRM.html">PhreeqRM.h</a> </td><td class="indexvalue">PhreeqcRM C++ Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="classBMIPhreeqcRM.html">BMIPhreeqRM.h</a> </td><td class="indexvalue">BMIPhreeqcRM C++ Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="classYAMLPhreeqcRM.html">YAMLPhreeqcRM.h</a></td><td class="indexvalue">YAML Helper C++ Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">PhreeqcRM Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="BMI__interface_8F90.html">BMI_interface.F90</a></td><td class="indexvalue">BMIPhreeqcRM Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="namespaceyaml__interface.html">YAML_interface.F90</a></td><td class="indexvalue">YAML Helper Fortran Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="RM__interface__C_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">PhreeqcRM C Documentation </td></tr>
  *   <tr><td class="indexkey"><a class="el" href="IrmResult_8h.html">IrmResult.h</a></td><td class="indexvalue">Return codes </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="classYAMLPhreeqcRM.html">YAMLPhreeqcRM.h</a></td><td class="indexvalue">C++ YAML Support </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="namespaceyaml__interface.html">YAML_interface.F90</a></td><td class="indexvalue">Fortran YAML Support </td></tr>
  *  </table>
  *  @endhtmlonly
  */
@@ -193,6 +200,8 @@ If @a thread_count_or_communicator is <= 0, the number of threads is set equal t
 If multiprocessor, the MPI communicator to use within the reaction module.
 @param io        Optionally, a PHRQ_io input/output object can be provided to the constructor. By default
 a PHRQ_io object is constructed to handle reading and writing files.
+@param delay_construct Optionally, delay initialization of the PhreeqcRM object until the number of
+grid cells is known.
 @par C++ Example:
 @htmlonly
 <CODE>
@@ -5462,7 +5471,7 @@ public:
 	static void                               FileRename(const std::string &temp_name, const std::string &name,
 		                                           const std::string &backup_name);
 	static IRM_RESULT                         Int2IrmResult(int r, bool positive_ok);
-protected:
+private:
 	IRM_RESULT                                CellInitialize(
 		                                          int i,
 		                                          int n_user_new,
@@ -5484,7 +5493,7 @@ protected:
 	void                                      cxxSolution2concentration(cxxSolution * cxxsoln_ptr, std::vector< double > & d, double v, double dens);
 	void                                      cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector< double > & d, double v, double dens);
 	void                                      cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector< double > & d, double v, double dens);
-    void                                      GatherNchem(std::vector< double > &source, std::vector< double > &destination);
+	void                                      GatherNchem(std::vector< double > &source, std::vector< double > &destination);
 	cxxStorageBin &                           Get_phreeqc_bin(void) {return *this->phreeqc_bin;}
 	IRM_RESULT                                HandleErrorsInternal(std::vector< int > & r);
 	void                                      PartitionUZ(int n, int iphrq, int ihst, double new_frac);
@@ -5518,7 +5527,7 @@ protected:
 /* disable warning C4251: 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2' */
 #pragma warning(disable:4251)
 #endif
-
+/** @cond */
 	bool component_h2o;                      // true: use H2O, excess H, excess O, and charge;
 	                                         // false total H, total O, and charge
 	std::string database_file_name;
@@ -5643,6 +5652,7 @@ protected:
 
 	virtual void Construct(Initializer initializer);
 
+/** @endcond */
 private:
 	//friend class RM_interface;
 	static std::mutex InstancesLock;

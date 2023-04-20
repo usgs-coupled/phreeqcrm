@@ -1,6 +1,14 @@
 #ifdef USE_YAML
 /*! @file YAMLPhreeqcRM.h
-	@brief YAMLPhreeqcRM C++ Documentation 
+*	@brief YAMLPhreeqcRM C++ Documentation 
+* 
+* YAMLPhreeqcRMan be used in preprocessors or
+* Graphical User Interfaces to store initialization data for BMIPhreeqcRM or
+* PhreeqcRM instances. PhreeqcRM methods and data can be stored in a YAML file.
+* After an instance of BMIPhreeqcRM or PhreeqcRM has been created, the method
+* Initialize or InitializeYAML can be used to run the specified methods
+* with the specified data to define properties and initial conditions for the
+* instance.
 */
 #ifndef INC_YAMLPHREEQCRM_H
 #define INC_YAMLPHREEQCRM_H

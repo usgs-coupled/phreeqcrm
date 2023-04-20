@@ -1,7 +1,7 @@
 #ifdef USE_YAML
     subroutine WriteYAMLFile_f90()  BIND(C, NAME='WriteYAMLFile_f90')
     USE, intrinsic :: ISO_C_BINDING
-    USE YAML_interface
+    USE YAMLPhreeqcRM
     implicit none
     integer :: id
     integer :: status, i
