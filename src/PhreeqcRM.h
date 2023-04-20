@@ -1,5 +1,5 @@
 /*! @file PhreeqcRM.h
-*	@brief C++ Documentation for PhreeqcRM
+*	@brief C++ header file for PhreeqcRM
 *
 *   PhreeqcRM is a reaction module for use with multicomponent-transport models.
 *   A reaction cell can be defined for each cell in the user's model that

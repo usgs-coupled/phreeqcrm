@@ -1,13 +1,28 @@
+/*! @file BMIPhreeqcRM.h
+*	@brief C++ header file for BMIPhreeqcRM
+*/
 #if !defined(BMIPHREEQCRM_H_INCLUDED)
 #define BMIPHREEQCRM_H_INCLUDED
 #include <map>
 #include "PhreeqcRM.h"
 #include "BMI_Var.h"
 #include "bmi.hxx"
+/**
+ * @class NotImplemented
+ *
+ * @brief Throws an exception for Basic Model Interface methods that are
+ * not implemented in BMIPhreeqcRM
+ */
 class NotImplemented : public std::logic_error {
 public:
     NotImplemented() : std::logic_error("Not Implemented") { };
 };
+/**
+ * @class BMIPhreeqcRM
+ *
+ * @brief Basic Model Interface implementation of the 
+ * geochemical reaction module PhreeqcRM
+ */
 
 class IRM_DLL_EXPORT BMIPhreeqcRM : public bmi::Bmi, public PhreeqcRM
 {

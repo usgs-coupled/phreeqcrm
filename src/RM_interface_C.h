@@ -1,5 +1,5 @@
 /*! @file RM_interface_C.h
-	@brief C Documentation of the geochemical reaction module PhreeqcRM.
+	@brief C header file module PhreeqcRM.
 */
 #ifdef USE_MPI
 #include "mpi.h"

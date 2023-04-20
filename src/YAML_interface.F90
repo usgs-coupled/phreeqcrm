@@ -1,4 +1,8 @@
 #ifdef USE_YAML 
+    !> @file YAML_interface.F90
+    !> @brief YAMLPhreeqcRM module definition 
+    !>
+    !
     !*MODULE YAMLPhreeqcRM Helper module for building YAML initialization files. 
     !> @brief Fortran documentation for using YAML to initialize instances 
 	!> of BMIPhreeqcRM and PhreeqcRM.

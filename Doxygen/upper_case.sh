@@ -696,10 +696,22 @@ for f in html/*.html; do
 	sed -i "s/yamlwarningmessage/YAMLWarningMessage/g" $f
 done
 
-# Rename PhreeqcRM to mixed case 
-for f in html/*.html; do
-  sed -i "s/\bphreeqcrm\b/PhreeqcRM/g" $f
+# Rename to mixed case in all files
+for f in html/*; do
+sed -i "s/yamlphreeqcrm/YAMLPhreeqcRM/g" $f
 done
+for f in html/*; do
+sed -i "s/bmiphreeqcrm/BMIPhreeqcRM/g" $f
+done
+for f in html/*; do
+sed -i "s/phreeqcrm/PhreeqcRM/g" $f
+done
+for f in html/*; do
+sed -i "s/yaml_interface/YAML_interface/g" $f
+done
+#for f in html/*.html; do
+#  sed -i "s/\bphreeqcrm\b/PhreeqcRM/g" $f
+#done
 
 # Change Titles
 sed -i "s/PhreeqcRM Module Reference/PhreeqcRM Fortran Module Reference/g" html/namespacephreeqcrm.html

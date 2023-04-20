@@ -1,3 +1,7 @@
+    !> @file BMI_interface.F90
+    !> @brief BMIPhreeqcRM module definition 
+    !>
+    !
     !*MODULE BMIPhreeqcRM PHREEQC Reaction Module for Transport Codes
     !> @brief Fortran documentation for the geochemical reaction module BMIPhreeqcRM.
     !> @par ""
