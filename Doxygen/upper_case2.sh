@@ -148,7 +148,7 @@ sed -i "s/rm_initialkinetics2module/RM_InitialKinetics2Module/g" $(egrep -l rm_i
 sed -i "s/destroyyamlphreeqcrm/DestroyYAMLPhreeqcRM/g"  $(egrep -l destroyyamlphreeqcrm ./html/*.html)
 sed -i "s/createyamlphreeqcrm/CreateYAMLPhreeqcRM/g"  $(egrep -l createyamlphreeqcrm ./html/*.html)
 sed -i "s/writeyamldoc/WriteYAMLDoc/g"  $(egrep -l writeyamldoc ./html/*.html)
-WriteYAMLDoc
+
 sed -i "s/yamlclear/YAMLClear/g" $(egrep -l yamlclear ./html/*.html)
 sed -i "s/yamlclosefiles/YAMLCloseFiles/g" $(egrep -l yamlclosefiles ./html/*.html)
 sed -i "s/yamlcreatemapping/YAMLCreateMapping/g" $(egrep -l yamlcreatemapping ./html/*.html)
