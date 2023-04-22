@@ -38,7 +38,7 @@ class PHRQ_io;
 
 class PHRQ_io;
 class IPhreeqc;
-class BMI_Var;
+//class BMI_Var;
 /**
  * @class PhreeqcRMStop
  *
@@ -5633,6 +5633,8 @@ protected:
 	std::vector <std::string> SolidSolutionComponentsList;
 	std::vector <std::string> SolidSolutionNamesList;
 	std::vector <std::string> SINamesList;
+	std::set <std::string> ElementRedoxSet;
+
 
 protected:
 	static const int default_nxyz = 10;

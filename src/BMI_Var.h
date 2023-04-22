@@ -30,6 +30,7 @@ private:
 	int Nbytes;
 	int Itemsize;
 	int dim;
+	int column;
 	std::string ctype;
 	std::string ftype;
 	std::string ptype;
@@ -47,6 +48,7 @@ private:
 public:
 	// methods
 	BMIVariant(VarFunction f, std::string name);
+	BMIVariant(const std::string& name_in, const std::string& units, bool setter, bool getter, bool ptr, int bytes, int item_size);
 	BMIVariant()
 	{
 		Initialized = false;
@@ -56,6 +58,7 @@ public:
 		Nbytes = 0;
 		Itemsize = 0;
 		dim = 0;
+		column = -1;
 		b_var = false;
 		i_var = 0;
 		d_var = 0.0;
@@ -143,6 +146,8 @@ public:
 	std::vector<std::string>& GetStringVectorRef() { return this->StringVector; }
 	std::string& GetStringRef() { return this->string_var; }
 	int GetDim() { return dim; }
+	int GetColumn() { return column; }
+	void SetColumn(int v) { column = v; }
 	void* GetVoidPtr() { return this->VoidPtr; }
 	std::vector<const char*> GetCharVector() { return this->CharVector; }
 	VarFunction GetFn() { 
@@ -151,8 +156,9 @@ public:
 	}
 	bool& GetNotImplementedRef() { return this->NotImplemented; }
 	void CopyScalars(BMIVariant& bv);
-};
 
+};
+#ifdef SKIP
 class IRM_DLL_EXPORT BMI_Var
 {
 private:
@@ -230,4 +236,5 @@ public:
 	int GetDim() { return dim; }
 
 };
+#endif
 #endif // BMI_VAR_H_INCLUDED

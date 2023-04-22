@@ -2874,6 +2874,23 @@ PhreeqcRM::FindComponents(void)
 				nd.add("Charge", phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->z);
 				species_stoichiometry.push_back(nd);
 			}
+			ElementRedoxSet.clear();
+			for (size_t i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->master.size(); i++)
+			{
+				if (phast_iphreeqc_worker->PhreeqcPtr->master[i]->in != FALSE)
+				{
+					std::string e = phast_iphreeqc_worker->PhreeqcPtr->master[i]->elt->name;
+					if (e != "E")
+					{
+						ElementRedoxSet.insert(e);
+					}
+					e = phast_iphreeqc_worker->PhreeqcPtr->master[i]->elt->primary->elt->name;
+					if (e != "E")
+					{
+						ElementRedoxSet.insert(e);
+					}
+				}
+			}
 			for (int i = 0; i < (int)phast_iphreeqc_worker->PhreeqcPtr->phases.size(); i++)
 			{
 				if (phast_iphreeqc_worker->PhreeqcPtr->phases[i]->in == TRUE)
