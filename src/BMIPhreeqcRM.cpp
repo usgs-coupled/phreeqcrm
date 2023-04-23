@@ -1088,7 +1088,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "aqueous_ph";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH -LA('H+')" << std::endl;
 				line_no += 10;
@@ -1111,7 +1111,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "aqueous_pe";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH -LA('e-')" << std::endl;
 				line_no += 10;
@@ -1134,7 +1134,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "aqueous_alkalinity";
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH ALK" << std::endl;
 				line_no += 10;
@@ -1157,7 +1157,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "aqueous_ionic_strength";
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH MU" << std::endl;
 				line_no += 10;
@@ -1180,7 +1180,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "aqueous_water_mass";
 				BMIVariant bv(name, "kg", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH TOT('water')" << std::endl;
 				line_no += 10;
@@ -1203,7 +1203,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "aqueous_charge_balance";
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH CHARGE_BALANCE / TOT('water')" << std::endl;
 				line_no += 10;
@@ -1226,7 +1226,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "aqueous_percent_error";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH PERCENT_ERROR" << std::endl;
 				line_no += 10;
@@ -1258,7 +1258,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "aqueous_total_molality_" + *item_it;
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH TOT('" << name << "')\n";
 				line_no += 10;
@@ -1291,7 +1291,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "aqueous_species_log_molality_" + *item_it;
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH LM('" << name << "')\n";
 				line_no += 10;
@@ -1324,7 +1324,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "aqueous_species_log_activity_" + *item_it;
 				BMIVariant bv(name, "log -", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH LA('" << name << "')\n";
 				line_no += 10;
@@ -1364,7 +1364,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				}
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH LM('" << name << "')\n";
 				line_no += 10;
@@ -1404,7 +1404,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				}
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH LM('" << name << "')\n";
 				line_no += 10;
@@ -1438,7 +1438,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 					std::string name = "equilibrium_phases_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars.push_back(bv);
+					BMISelectedOutputVars[name] = bv;
 					headings << name << "\t";
 					code << line_no << " PUNCH EQUI('" << name << "')\n";
 					line_no += 10;
@@ -1447,7 +1447,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 					std::string name = "equilibrium_phases_delta_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars.push_back(bv);
+					BMISelectedOutputVars[name] = bv;
 					headings << name << "\t";
 					code << line_no << " PUNCH EQUI_DELTA('" << name << "')\n";
 					line_no += 10;
@@ -1481,7 +1481,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "aqueous_saturation_index_" + *item_it;
 				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH SI('" << name << "')\n";
 				line_no += 10;
@@ -1512,7 +1512,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "gas_phase_volume";
 				BMIVariant bv(name, "L", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH SYS('gas') * GAS_VM\n";
 				line_no += 10;
@@ -1524,7 +1524,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 					std::string name = "gas_phase_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars.push_back(bv);
+					BMISelectedOutputVars[name] = bv;
 					headings << name << "\t";
 					code << line_no << " PUNCH GAS('" << name << "')\n";
 					line_no += 10;
@@ -1533,7 +1533,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 					std::string name = "gas_phase_pressure_" + *item_it;
 					BMIVariant bv(name, "atm", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars.push_back(bv);
+					BMISelectedOutputVars[name] = bv;
 					headings << name << "\t";
 					code << line_no << " PUNCH PR_P('" << name << "')\n";
 					line_no += 10;
@@ -1542,7 +1542,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 					std::string name = "gas_phase_phi_" + *item_it;
 					BMIVariant bv(name, "atm-1", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars.push_back(bv);
+					BMISelectedOutputVars[name] = bv;
 					headings << name << "\t";
 					code << line_no << " PUNCH PR_PHI('" << name << "')\n";
 					line_no += 10;
@@ -1577,7 +1577,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 					std::string name = "kinetic_reaction_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars.push_back(bv);
+					BMISelectedOutputVars[name] = bv;
 					headings << name << "\t";
 					code << line_no << " PUNCH KIN('" << name << "')\n";
 					line_no += 10;
@@ -1586,7 +1586,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 					std::string name = "kinetic_reaction_delta_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars.push_back(bv);
+					BMISelectedOutputVars[name] = bv;
 					headings << name << "\t";
 					code << line_no << " PUNCH KIN_DELTA('" << name << "')\n";
 					line_no += 10;
@@ -1627,7 +1627,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				}
 				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH S_S('" << name << "')\n";
 				line_no += 10;
@@ -1661,7 +1661,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				std::string name = "calculate_value_" + *item_it;
 				BMIVariant bv(name, "unknown", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars.push_back(bv);
+				BMISelectedOutputVars[name] = bv;
 				headings << name << "\t";
 				code << line_no << " PUNCH CALC_VALUE('" << name << "')\n";
 				line_no += 10;

@@ -1126,7 +1126,7 @@ public:
    // VarFunction GetFn(const std::string name);
    //  std::set<std::string> UpdateMap;
    // std::set<std::string>& GetUpdateMap() { return UpdateMap; }
-    std::vector<BMIVariant> BMISelectedOutputVars;
+    std::map<std::string, BMIVariant> BMISelectedOutputVars;
     std::map<std::string, std::string> BMISelecteOutputDefs;
     static std::set<std::string> tokenize(const std::string& s);
 protected:
