@@ -29,6 +29,10 @@ public:
 	VarManager(PhreeqcRM* rm_ptr);
 	// Data
 	PhreeqcRM* rm_ptr;
+	std::map<std::string, BMIVariant> BMISelectedOutputVars;
+	std::map<std::string, std::string> BMISelecteOutputDefs;
+	static std::set<std::string> tokenize(const std::string& s);
+	std::vector<double> so777;
 public:
 	BMIVariant VarExchange;
 	std::set<RMVARS> PointerSet;
@@ -49,7 +53,9 @@ public:
 	void ExecFn(RMVARS v_enum) {
 		VarFunction f = this->GetFn(v_enum);
 		((*this).*f)();
-	}
+	};
+	void BMIGenerateSelectedOutput();
+	int  BMICheckSelectedOutputDef(bool tf_only, std::string& def);
 	//!typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr);
 	//typedef VarManager* (*NewDogFunction)(void);
 	//typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr); // function pointer type

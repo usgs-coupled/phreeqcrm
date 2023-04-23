@@ -207,6 +207,7 @@ int BMIPhreeqcRM::GetOutputItemCount()
 			count++;
 		}
 	}
+	count += (int)this->var_man->BMISelectedOutputVars.size();
 	return count;
 }
 int BMIPhreeqcRM::GetPointableItemCount()
@@ -264,6 +265,11 @@ std::vector<std::string>  BMIPhreeqcRM::GetOutputVarNames()
 			names.push_back(bv.GetName());
 		}
 	}
+	for(auto it = var_man->BMISelectedOutputVars.begin(); 
+		it != var_man->BMISelectedOutputVars.end(); it++)
+	{ 
+		names.push_back(it->second.GetName());
+	}
 	return names;
 }
 std::vector<std::string> BMIPhreeqcRM::GetPointableVarNames()
@@ -318,8 +324,26 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 			return bv.GetPType();
 		}
 	}
+	{
+		auto it = var_man->BMISelectedOutputVars.find(name);
+		if (it != var_man->BMISelectedOutputVars.end())
+		{
+			if (this->language == "cpp")
+			{
+				return it->second.GetCType();
+			}
+			else if (this->language == "F90")
+			{
+				return it->second.GetFType();
+			}
+			else if (this->language == "Py")
+			{
+				return it->second.GetPType();
+			}
+		}
+	}
 	assert(false);
-	return "Unknown language.";
+	return "Failed in GetVarType.";
 }
 std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 {
@@ -335,8 +359,15 @@ std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 		}
 		return bv.GetUnits();
 	}
+	{
+		auto it = var_man->BMISelectedOutputVars.find(name);
+		if (it != var_man->BMISelectedOutputVars.end())
+		{
+			return it->second.GetUnits();
+		}
+	}
 	assert(false);
-	return "";
+	return "Failed in GetVarUnits.";
 }
 
 int BMIPhreeqcRM::GetVarItemsize(const std::string name)
@@ -352,6 +383,13 @@ int BMIPhreeqcRM::GetVarItemsize(const std::string name)
 			((*this->var_man).*bv.GetFn())();
 		}
 		return bv.GetItemsize();
+	}
+	{
+		auto it = var_man->BMISelectedOutputVars.find(name);
+		if (it != var_man->BMISelectedOutputVars.end())
+		{
+			return it->second.GetItemsize();
+		}
 	}
 	assert(false);
 	return 0;
@@ -370,6 +408,13 @@ int BMIPhreeqcRM::GetVarNbytes(const std::string name)
 			((*this->var_man).*bv.GetFn())();
 		}
 		return bv.GetNbytes();
+	}
+	{
+		auto it = var_man->BMISelectedOutputVars.find(name);
+		if (it != var_man->BMISelectedOutputVars.end())
+		{
+			return it->second.GetNbytes();
+		}
 	}
 	assert(false);
 	return 0;
@@ -449,6 +494,24 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 			return;
 		}
 	}
+	{
+		auto it = var_man->BMISelectedOutputVars.find(name);
+		if (it != var_man->BMISelectedOutputVars.end())
+		{
+			if (var_man->so777.size() == 0)
+			{
+				int n_user = GetCurrentSelectedOutputUserNumber();
+				SetCurrentSelectedOutputUserNumber(777777777);
+				this->GetSelectedOutput(var_man->so777);
+				SetCurrentSelectedOutputUserNumber(n_user);
+			}
+			int column = it->second.GetColumn();
+			int nxyz = GetGridCellCount();
+			void* ptr = (void*)&(var_man->so777[column * nxyz]);
+			memcpy(dest, ptr, it->second.GetNbytes());
+			return;
+		}
+	}	
 	std::ostringstream oss;
 	oss << "BMI GetValue void* failed for variable " << name << std::endl;
 	this->ErrorMessage(oss.str(), true);
@@ -553,6 +616,25 @@ void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
 			memcpy(dest, this->var_man->VarExchange.GetDoubleVectorPtr(), nbytes);
 			return;
 		}
+
+	}
+	{
+		auto it = var_man->BMISelectedOutputVars.find(name);
+		if (it != var_man->BMISelectedOutputVars.end())
+		{
+			if (var_man->so777.size() == 0)
+			{
+				int n_user = GetCurrentSelectedOutputUserNumber();
+				SetCurrentSelectedOutputUserNumber(777777777);
+				this->GetSelectedOutput(var_man->so777);
+				SetCurrentSelectedOutputUserNumber(n_user);
+			}
+			int column = it->second.GetColumn();
+			int nxyz = GetGridCellCount();
+			void* ptr = (void*)&(var_man->so777[column * nxyz]);
+			memcpy(dest, ptr, it->second.GetNbytes());
+			return;
+		}
 	}
 	std::ostringstream oss;
 	oss << "BMI GetValue double* failed for variable " << name << std::endl;
@@ -653,6 +735,25 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
 		assert(this->var_man->VarExchange.GetCType() == "double");
 		dest = this->var_man->VarExchange.GetDoubleVectorRef();
 		return;
+	}
+	{
+		auto it = var_man->BMISelectedOutputVars.find(name);
+		if (it != var_man->BMISelectedOutputVars.end())
+		{
+			if (var_man->so777.size() == 0)
+			{
+				int n_user = GetCurrentSelectedOutputUserNumber();
+				SetCurrentSelectedOutputUserNumber(777777777);
+				this->GetSelectedOutput(var_man->so777);
+				SetCurrentSelectedOutputUserNumber(n_user);
+			}
+			int column = it->second.GetColumn();
+			int nxyz = GetGridCellCount();
+			void* ptr = (void*)&(var_man->so777[column * nxyz]);
+			dest.resize(nxyz);
+			memcpy(dest.data(), ptr, it->second.GetNbytes());
+			return;
+		}
 	}
 	assert(false);
 	return;
@@ -1061,668 +1162,4 @@ std::string BMIPhreeqcRM::GetGridType(const int grid)
 
 //////////////////
 
-IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
-{
-	IRM_RESULT return_value = IRM_OK;
-	int line_no = 10;
-	int Itemsize = (int)sizeof(double);
-	int Nbytes = this->GetGridCellCount() * Itemsize;
-	std::ostringstream headings;
-	std::ostringstream code;
-	BMISelectedOutputVars.clear();
-	auto it = BMISelecteOutputDefs.begin();
-	for (; it != BMISelecteOutputDefs.end(); it++)
-	{
-		if (it->first == "output_solution_ph")
-		{
-			switch (BMICheckSelectedOutputDef(true, it->second))
-			{
-			case -1:
-				ErrorMessage("Unknown input for output_solution_ph", true);
-				return_value = IRM_INVALIDARG;
-				continue;
-			case 0:
-				continue;
-			case 1:
-			{
-				std::string name = "solution_ph";
-				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH -LA('H+')" << std::endl;
-				line_no += 10;
-				break;
-			}
-			}
-		}
-		else if (it->first == "output_solution_pe")
-		{
-			switch (BMICheckSelectedOutputDef(true, it->second))
-			{
-			case -1:
-				ErrorMessage("Unknown input for output_solution_pe", true);
-				return_value = IRM_INVALIDARG;
-				continue;
-			case 0:
-				continue;
-			case 1:
-			{
-				std::string name = "solution_pe";
-				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH -LA('e-')" << std::endl;
-				line_no += 10;
-				break;
-			}
-			}
-		}
-		else if (it->first == "output_solution_alkalinity")
-		{
-			switch (BMICheckSelectedOutputDef(true, it->second))
-			{
-			case -1:
-				ErrorMessage("Unknown input for output_solution_alkalinity", true);
-				return_value = IRM_INVALIDARG;
-				continue;
-			case 0:
-				continue;
-			case 1:
-			{
-				std::string name = "solution_alkalinity";
-				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH ALK" << std::endl;
-				line_no += 10;
-				break;
-			}
-			}
-		}
-		else if (it->first == "output_solution_ionic_strength")
-		{
-			switch (BMICheckSelectedOutputDef(true, it->second))
-			{
-			case -1:
-				ErrorMessage("Unknown input for output_solution_ionic_strength", true);
-				return_value = IRM_INVALIDARG;
-				continue;
-			case 0:
-				continue;
-			case 1:
-			{
-				std::string name = "solution_ionic_strength";
-				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH MU" << std::endl;
-				line_no += 10;
-				break;
-			}
-			}
-		}
-		else if (it->first == "output_solution_water_mass")
-		{
-			switch (BMICheckSelectedOutputDef(true, it->second))
-			{
-			case -1:
-				ErrorMessage("Unknown input for output_solution_water_mass", true);
-				return_value = IRM_INVALIDARG;
-				continue;
-			case 0:
-				continue;
-			case 1:
-			{
-				std::string name = "solution_water_mass";
-				BMIVariant bv(name, "kg", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH TOT('water')" << std::endl;
-				line_no += 10;
-				break;
-			}
-			}
-		}
-		else if (it->first == "output_solution_charge_balance")
-		{
-			switch (BMICheckSelectedOutputDef(true, it->second))
-			{
-			case -1:
-				ErrorMessage("Unknown input for output_solution_charge_balance", true);
-				return_value = IRM_INVALIDARG;
-				continue;
-			case 0:
-				continue;
-			case 1:
-			{
-				std::string name = "solution_charge_balance";
-				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH CHARGE_BALANCE / TOT('water')" << std::endl;
-				line_no += 10;
-				break;
-			}
-			}
-		}
-		else if (it->first == "output_solution_percent_error")
-		{
-			switch (BMICheckSelectedOutputDef(true, it->second))
-			{
-			case -1:
-				ErrorMessage("Unknown input for output_solution_percent_error", true);
-				return_value = IRM_INVALIDARG;
-				continue;
-			case 0:
-				continue;
-			case 1:
-			{
-				std::string name = "solution_percent_error";
-				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH PERCENT_ERROR" << std::endl;
-				line_no += 10;
-				break;
-			}
-			}
-		}
-		else if (it->first == "output_solution_total_molalities")
-		{
-			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
-			{
-				case 0:
-					continue;
-				case 1:
-				{
-					item_set = ElementRedoxSet;
-					break;
-				}
-				case 2:
-				{
-					item_set = tokenize(it->second);
-					break;
-				}
-			}
-			auto item_it = item_set.begin();
-			for (; item_it != item_set.end(); item_it++)
-			{
-				std::string name = "solution_total_molality_" + *item_it;
-				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH TOT('" << name << "')\n";
-				line_no += 10;
-			}
-		}
-		else if (it->first == "output_solution_molalities")
-		{
-			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
-			{
-			case 0:
-				continue;
-			case 1:
-			{
-				for (size_t i = 0; i < species_names.size(); i++)
-				{
-					item_set.insert(species_names[i]);
-				}
-				break;
-			}
-			case 2:
-			{
-				item_set = tokenize(it->second);
-				break;
-			}
-			}
-			auto item_it = item_set.begin();
-			for (; item_it != item_set.end(); item_it++)
-			{
-				std::string name = "solution_species_log_molality_" + *item_it;
-				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH LM('" << name << "')\n";
-				line_no += 10;
-			}
-		}
-		else if (it->first == "output_solution_activities")
-		{
-			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
-			{
-			case 0:
-				continue;
-			case 1:
-			{
-				for (size_t i = 0; i < species_names.size(); i++)
-				{
-					item_set.insert(species_names[i]);
-				}
-				break;
-			}
-			case 2:
-			{
-				item_set = tokenize(it->second);
-				break;
-			}
-			}
-			auto item_it = item_set.begin();
-			for (; item_it != item_set.end(); item_it++)
-			{
-				std::string name = "solution_species_log_activity_" + *item_it;
-				BMIVariant bv(name, "log -", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH LA('" << name << "')\n";
-				line_no += 10;
-			}
-		}
-		else if (it->first == "output_exchange_molalities")
-		{
-			std::set<std::string> item_set;
-			std::map<std::string, std::string> item_map;
-			switch (BMICheckSelectedOutputDef(false, it->second))
-			{
-			case 0:
-				continue;
-			case 1:
-			{
-				for (size_t i = 0; i < ExchangeSpeciesNamesList.size(); i++)
-				{
-					item_set.insert(ExchangeSpeciesNamesList[i]);
-					item_map[ExchangeSpeciesNamesList[i]] = ExchangeNamesList[i];
-				}
-				break;
-			}
-			case 2:
-			{
-				item_set = tokenize(it->second);
-				break;
-			}
-			}
-			auto item_it = item_set.begin();
-			for (; item_it != item_set.end(); item_it++)
-			{
-				std::string name = "exchange_species_log_molality_" + *item_it;
-				if (item_map.size() > 0)
-				{
-					std::string xname = item_map[*item_it];
-					name = "exchange_" + xname + "_species_log_molality_" + *item_it;
-				}
-				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH LM('" << name << "')\n";
-				line_no += 10;
-			}
-		}
-		else if (it->first == "output_surface_molalities")
-		{
-			std::set<std::string> item_set;
-			std::map<std::string, std::string> item_map;
-			switch (BMICheckSelectedOutputDef(false, it->second))
-			{
-			case 0:
-				continue;
-			case 1:
-			{
-				for (size_t i = 0; i < SurfaceNamesList.size(); i++)
-				{
-					item_set.insert(SurfaceNamesList[i]);
-					item_map[SurfaceNamesList[i]] = SurfaceTypesList[i];
-				}
-				break;
-			}
-			case 2:
-			{
-				item_set = tokenize(it->second);
-				break;
-			}
-			}
-			auto item_it = item_set.begin();
-			for (; item_it != item_set.end(); item_it++)
-			{
-				std::string name = "surface_species_log_molality_" + *item_it;
-				if (item_map.size() > 0)
-				{
-					std::string type = item_map[*item_it];
-					name = "surface_" + type + "_species_log_molality_" + *item_it;
-				}
-				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH LM('" << name << "')\n";
-				line_no += 10;
-			}
-		}
-		else if (it->first == "output_equilibrium_phases")
-		{
-			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
-			{
-			case 0:
-				continue;
-			case 1:
-			{
-				for (size_t i = 0; i < EquilibriumPhasesList.size(); i++)
-				{
-					item_set.insert(EquilibriumPhasesList[i]);
-				}
-				break;
-			}
-			case 2:
-			{
-				item_set = tokenize(it->second);
-				break;
-			}
-			}
-			auto item_it = item_set.begin();
-			for (; item_it != item_set.end(); item_it++)
-			{
-				{
-					std::string name = "equilibrium_phases_moles_" + *item_it;
-					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH EQUI('" << name << "')\n";
-					line_no += 10;
-				}
-				{
-					std::string name = "equilibrium_phases_delta_moles_" + *item_it;
-					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH EQUI_DELTA('" << name << "')\n";
-					line_no += 10;
-				}
-			}
-		}
-		else if (it->first == "output_saturation_indices")
-		{
-			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
-			{
-			case 0:
-				continue;
-			case 1:
-			{
-				for (size_t i = 0; i < SINamesList.size(); i++)
-				{
-					item_set.insert(SINamesList[i]);
-				}
-				break;
-			}
-			case 2:
-			{
-				item_set = tokenize(it->second);
-				break;
-			}
-			}
-			auto item_it = item_set.begin();
-			for (; item_it != item_set.end(); item_it++)
-			{
-				std::string name = "aqueous_saturation_index_" + *item_it;
-				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH SI('" << name << "')\n";
-				line_no += 10;
-			}
-		}
-		else if (it->first == "output_gases")
-		{
-			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
-			{
-				case 0:
-					continue;
-				case 1:
-				{
-					for (size_t i = 0; i < GasComponentsList.size(); i++)
-					{
-						item_set.insert(GasComponentsList[i]);
-					}
-					break;
-				}
-				case 2:
-				{
-					item_set = tokenize(it->second);
-					break;
-				}
-			}
-			{
-				std::string name = "gas_phase_volume";
-				BMIVariant bv(name, "L", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH SYS('gas') * GAS_VM\n";
-				line_no += 10;
-			}
-			auto item_it = item_set.begin();
-			for (; item_it != item_set.end(); item_it++)
-			{
-				{
-					std::string name = "gas_phase_moles_" + *item_it;
-					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH GAS('" << name << "')\n";
-					line_no += 10;
-				}
-				{
-					std::string name = "gas_phase_pressure_" + *item_it;
-					BMIVariant bv(name, "atm", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH PR_P('" << name << "')\n";
-					line_no += 10;
-				}
-				{
-					std::string name = "gas_phase_phi_" + *item_it;
-					BMIVariant bv(name, "atm-1", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH PR_PHI('" << name << "')\n";
-					line_no += 10;
-				}
-			}
-		}
-		else if (it->first == "output_kinetic_reactants")
-		{
-			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
-			{
-			case 0:
-				continue;
-			case 1:
-			{
-				for (size_t i = 0; i < KineticReactionsList.size(); i++)
-				{
-					item_set.insert(KineticReactionsList[i]);
-				}
-				break;
-			}
-			case 2:
-			{
-				item_set = tokenize(it->second);
-				break;
-			}
-			}
-			auto item_it = item_set.begin();
-			for (; item_it != item_set.end(); item_it++)
-			{
-				{
-					std::string name = "kinetic_reaction_moles_" + *item_it;
-					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH KIN('" << name << "')\n";
-					line_no += 10;
-				}
-				{
-					std::string name = "kinetic_reaction_delta_moles_" + *item_it;
-					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH KIN_DELTA('" << name << "')\n";
-					line_no += 10;
-				}
-			}
-		}
-		else if (it->first == "output_solid_solutions")
-		{
-			std::set<std::string> item_set;
-			std::map<std::string, std::string> item_map;
-			switch (BMICheckSelectedOutputDef(false, it->second))
-			{
-			case 0:
-				continue;
-			case 1:
-			{
-				for (size_t i = 0; i < SolidSolutionComponentsList.size(); i++)
-				{
-					item_set.insert(SolidSolutionComponentsList[i]);
-					item_map[SolidSolutionComponentsList[i]] = SolidSolutionNamesList[i];
-				}
-				break;
-			}
-			case 2:
-			{
-				item_set = tokenize(it->second);
-				break;
-			}
-			}
-			auto item_it = item_set.begin();
-			for (; item_it != item_set.end(); item_it++)
-			{
-				std::string name = "solid_solution_moles_" + *item_it;
-				if (item_map.size() > 0)
-				{
-					std::string xname = item_map[*item_it];
-					name = "solid_solution_" + xname + "_moles_" + *item_it;
-				}
-				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH S_S('" << name << "')\n";
-				line_no += 10;
-			}
-		}
-		else if (it->first == "output_calculate_values")
-		{
-			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
-			{
-			case 0:
-				continue;
-			case 1:
-			{
-				auto it = this->workers[0]->Get_PhreeqcPtr()->GetCalculateValueMap().begin();
-				for (; it != this->workers[0]->Get_PhreeqcPtr()->GetCalculateValueMap().end(); it++)
-				{
-					item_set.insert(it->first);
-				}
-				break;
-			}
-			case 2:
-			{
-				item_set = tokenize(it->second);
-				break;
-			}
-			}
-			auto item_it = item_set.begin();
-			for (; item_it != item_set.end(); item_it++)
-			{
-				std::string name = "calculate_value_" + *item_it;
-				BMIVariant bv(name, "unknown", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH CALC_VALUE('" << name << "')\n";
-				line_no += 10;
-			}
-		}
-		else
-		{
-			std::ostringstream oss;
-			oss << "Unknown output request " << it->first;
-			this->ErrorMessage(oss.str(), true);
-			throw PhreeqcStop();
-		}
-	}
-	std::ostringstream data_block;
-	data_block << "SELECTED_OUTPUT 777777777; USER_PUNCH 777777777;" << std::endl;
-	data_block << headings.str() << std::endl;
-	data_block << code.str() << std::endl;
-	this->RunString(true, false, false, data_block.str());
-	BMISelecteOutputDefs.clear();
-	return return_value;
-}
-int BMIPhreeqcRM::BMICheckSelectedOutputDef(bool tf_only, std::string& def)
-{
-	std::string def_lc = def;
-	std::transform(def_lc.begin(), def_lc.end(), def_lc.begin(),
-		tolower);
-	if (def_lc == "false")
-	{
-		return 0;
-	}
-	if (def_lc == "true")
-	{
-		return 1;
-	}
-	if (tf_only)
-	{
-		return -1;
-	}
-	return 2;
-}
-std::set<std::string> BMIPhreeqcRM::tokenize(const std::string& def_in)
-{
-	std::set<std::string> item_set;
-	std::string def, a_token;
-	def = def_in;
-	for (size_t i = 0; i < def.size(); i++)
-	{
-		// check for c1 and replace
-		if (def[i] == '\t')
-			def[i] = ' ';
-		if (def[i] == ',')
-			def[i] = ' ';
-	}
-	std::stringstream ss(def);
-	while (std::getline(ss, a_token, ' '))
-	{
-		a_token = trim(a_token);
-		if (a_token.size() > 0)
-		{
-			item_set.insert(a_token);
-		}
-	}
-	return item_set;
-}
+

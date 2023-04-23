@@ -1126,9 +1126,6 @@ public:
    // VarFunction GetFn(const std::string name);
    //  std::set<std::string> UpdateMap;
    // std::set<std::string>& GetUpdateMap() { return UpdateMap; }
-    std::map<std::string, BMIVariant> BMISelectedOutputVars;
-    std::map<std::string, std::string> BMISelecteOutputDefs;
-    static std::set<std::string> tokenize(const std::string& s);
 protected:
     void Construct(Initializer initializer) override;
 
@@ -1137,7 +1134,5 @@ private:
     static std::map<size_t, BMIPhreeqcRM*> Instances;
     static size_t InstancesIndex;
     void UpdateVariables();
-    IRM_RESULT BMIGenerateSelectedOutput();
-    int  BMICheckSelectedOutputDef(bool tf_only, std::string& def);
 };
 #endif //BMIPHREEQCRM_H_INCLUDED

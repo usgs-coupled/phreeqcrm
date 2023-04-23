@@ -9663,6 +9663,10 @@ PhreeqcRM::RunCells()
 		{
 			GetSpeciesConcentrations(this->CurrentSpeciesConcentrations);
 		}
+		if (var_man != NULL)
+		{
+			this->var_man->so777.clear();
+		}
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::RunCells");
 }
@@ -9784,6 +9788,10 @@ PhreeqcRM::RunCells()
 	if (this->species_save_on)
 	{
 		GetSpeciesConcentrations(this->CurrentSpeciesConcentrations);
+	}
+	if (var_man != NULL)
+	{
+		this->var_man->so777.clear();
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::RunCells");
 }

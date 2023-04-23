@@ -5662,6 +5662,7 @@ private:
 	static size_t InstancesIndex;
 	size_t Index;
 	friend class BMIPhreeqcRM;
+	friend class VarManager;
 
 #if defined(_MSC_VER)
 /* reset warning C4251 */
