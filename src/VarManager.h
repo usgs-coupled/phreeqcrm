@@ -25,34 +25,6 @@ public:
 		Info,
 		no_op
 	};
-	//enum class RMVARS {
-	//	NotFound,
-	//	ComponentCount,
-	//	Components,
-	//	Concentrations,
-	//	Density,
-	//	ErrorString,
-	//	FilePrefix,
-	//	Gfw,
-	//	GridCellCount,
-	//	InputVarNames,
-	//	NthSelectedOutput,
-	//	OutputVarNames,
-	//	Saturation,
-	//	SelectedOutput,
-	//	SelectedOutputColumnCount,
-	//	SelectedOutputCount,
-	//	SelectedOutputHeadings,
-	//	SelectedOutputRowCount,
-	//	SolutionVolume,
-	//	Time,
-	//	TimeStep,
-	//	CurrentSelectedOutputUserNumber,
-	//	Porosity,
-	//	Pressure,
-	//	SelectedOutputOn,
-	//	Temperature
-	//};
 	// Constructor
 	VarManager(PhreeqcRM* rm_ptr);
 	// Data
@@ -68,7 +40,6 @@ public:
 	// Methods
 	RMVARS GetEnum(std::string name);
 	void RM2BMIUpdate(RMVARS v_enum);
-
 
 	RMVARS GetCurrentVar() { return this->CurrentVar; }
 	std::map<RMVARS, BMIVariant> & GetVariantMap() { return this->VariantMap; }
@@ -97,9 +68,7 @@ public:
 	void FilePrefix_Var();
 	void Gfw_Var();
 	void GridCellCount_Var();
-	//void InputVarNames_Var();
 	void NthSelectedOutput_Var();
-	//void OutputVarNames_Var();
 	void Saturation_Var();
 	void SelectedOutput_Var();
 	void SelectedOutputColumnCount_Var();
