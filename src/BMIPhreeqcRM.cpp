@@ -1073,19 +1073,19 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 	auto it = BMISelecteOutputDefs.begin();
 	for (; it != BMISelecteOutputDefs.end(); it++)
 	{
-		if (it->first == "output_aqueous_ph")
+		if (it->first == "output_solution_ph")
 		{
 			switch (BMICheckSelectedOutputDef(true, it->second))
 			{
 			case -1:
-				ErrorMessage("Unknown input for output_aqueous_ph", true);
+				ErrorMessage("Unknown input for output_solution_ph", true);
 				return_value = IRM_INVALIDARG;
 				continue;
 			case 0:
 				continue;
 			case 1:
 			{
-				std::string name = "aqueous_ph";
+				std::string name = "solution_ph";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
 				BMISelectedOutputVars[name] = bv;
@@ -1096,19 +1096,19 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 			}
 			}
 		}
-		else if (it->first == "output_aqueous_pe")
+		else if (it->first == "output_solution_pe")
 		{
 			switch (BMICheckSelectedOutputDef(true, it->second))
 			{
 			case -1:
-				ErrorMessage("Unknown input for output_aqueous_pe", true);
+				ErrorMessage("Unknown input for output_solution_pe", true);
 				return_value = IRM_INVALIDARG;
 				continue;
 			case 0:
 				continue;
 			case 1:
 			{
-				std::string name = "aqueous_pe";
+				std::string name = "solution_pe";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
 				BMISelectedOutputVars[name] = bv;
@@ -1119,19 +1119,19 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 			}
 			}
 		}
-		else if (it->first == "output_aqueous_alkalinity")
+		else if (it->first == "output_solution_alkalinity")
 		{
 			switch (BMICheckSelectedOutputDef(true, it->second))
 			{
 			case -1:
-				ErrorMessage("Unknown input for output_aqueous_alkalinity", true);
+				ErrorMessage("Unknown input for output_solution_alkalinity", true);
 				return_value = IRM_INVALIDARG;
 				continue;
 			case 0:
 				continue;
 			case 1:
 			{
-				std::string name = "aqueous_alkalinity";
+				std::string name = "solution_alkalinity";
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
 				BMISelectedOutputVars[name] = bv;
@@ -1142,19 +1142,19 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 			}
 			}
 		}
-		else if (it->first == "output_aqueous_ionic_strength")
+		else if (it->first == "output_solution_ionic_strength")
 		{
 			switch (BMICheckSelectedOutputDef(true, it->second))
 			{
 			case -1:
-				ErrorMessage("Unknown input for output_aqueous_ionic_strength", true);
+				ErrorMessage("Unknown input for output_solution_ionic_strength", true);
 				return_value = IRM_INVALIDARG;
 				continue;
 			case 0:
 				continue;
 			case 1:
 			{
-				std::string name = "aqueous_ionic_strength";
+				std::string name = "solution_ionic_strength";
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
 				BMISelectedOutputVars[name] = bv;
@@ -1165,19 +1165,19 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 			}
 			}
 		}
-		else if (it->first == "output_aqueous_water_mass")
+		else if (it->first == "output_solution_water_mass")
 		{
 			switch (BMICheckSelectedOutputDef(true, it->second))
 			{
 			case -1:
-				ErrorMessage("Unknown input for output_aqueous_water_mass", true);
+				ErrorMessage("Unknown input for output_solution_water_mass", true);
 				return_value = IRM_INVALIDARG;
 				continue;
 			case 0:
 				continue;
 			case 1:
 			{
-				std::string name = "aqueous_water_mass";
+				std::string name = "solution_water_mass";
 				BMIVariant bv(name, "kg", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
 				BMISelectedOutputVars[name] = bv;
@@ -1188,19 +1188,19 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 			}
 			}
 		}
-		else if (it->first == "output_aqueous_charge_balance")
+		else if (it->first == "output_solution_charge_balance")
 		{
 			switch (BMICheckSelectedOutputDef(true, it->second))
 			{
 			case -1:
-				ErrorMessage("Unknown input for output_aqueous_charge_balance", true);
+				ErrorMessage("Unknown input for output_solution_charge_balance", true);
 				return_value = IRM_INVALIDARG;
 				continue;
 			case 0:
 				continue;
 			case 1:
 			{
-				std::string name = "aqueous_charge_balance";
+				std::string name = "solution_charge_balance";
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
 				BMISelectedOutputVars[name] = bv;
@@ -1211,19 +1211,19 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 			}
 			}
 		}
-		else if (it->first == "output_aqueous_percent_error")
+		else if (it->first == "output_solution_percent_error")
 		{
 			switch (BMICheckSelectedOutputDef(true, it->second))
 			{
 			case -1:
-				ErrorMessage("Unknown input for output_aqueous_percent_error", true);
+				ErrorMessage("Unknown input for output_solution_percent_error", true);
 				return_value = IRM_INVALIDARG;
 				continue;
 			case 0:
 				continue;
 			case 1:
 			{
-				std::string name = "aqueous_percent_error";
+				std::string name = "solution_percent_error";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
 				BMISelectedOutputVars[name] = bv;
@@ -1234,7 +1234,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 			}
 			}
 		}
-		else if (it->first == "output_aqueous_total_molalities")
+		else if (it->first == "output_solution_total_molalities")
 		{
 			std::set<std::string> item_set;
 			switch (BMICheckSelectedOutputDef(false, it->second))
@@ -1255,7 +1255,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 			auto item_it = item_set.begin();
 			for (; item_it != item_set.end(); item_it++)
 			{
-				std::string name = "aqueous_total_molality_" + *item_it;
+				std::string name = "solution_total_molality_" + *item_it;
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
 				BMISelectedOutputVars[name] = bv;
@@ -1264,7 +1264,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				line_no += 10;
 			}
 		}
-		else if (it->first == "output_aqueous_molalities")
+		else if (it->first == "output_solution_molalities")
 		{
 			std::set<std::string> item_set;
 			switch (BMICheckSelectedOutputDef(false, it->second))
@@ -1288,7 +1288,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 			auto item_it = item_set.begin();
 			for (; item_it != item_set.end(); item_it++)
 			{
-				std::string name = "aqueous_species_log_molality_" + *item_it;
+				std::string name = "solution_species_log_molality_" + *item_it;
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
 				BMISelectedOutputVars[name] = bv;
@@ -1297,7 +1297,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 				line_no += 10;
 			}
 		}
-		else if (it->first == "output_aqueous_activities")
+		else if (it->first == "output_solution_activities")
 		{
 			std::set<std::string> item_set;
 			switch (BMICheckSelectedOutputDef(false, it->second))
@@ -1321,7 +1321,7 @@ IRM_RESULT BMIPhreeqcRM::BMIGenerateSelectedOutput()
 			auto item_it = item_set.begin();
 			for (; item_it != item_set.end(); item_it++)
 			{
-				std::string name = "aqueous_species_log_activity_" + *item_it;
+				std::string name = "solution_species_log_activity_" + *item_it;
 				BMIVariant bv(name, "log -", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)BMISelectedOutputVars.size());
 				BMISelectedOutputVars[name] = bv;
@@ -1726,437 +1726,3 @@ std::set<std::string> BMIPhreeqcRM::tokenize(const std::string& def_in)
 	}
 	return item_set;
 }
-#ifdef SKIP
-/* ---------------------------------------------------------------------- */
-int
-PhreeqcRM::FindComponents(void)
-/* ---------------------------------------------------------------------- */
-{
-	/*
-	 *   Counts components in any defined solution, gas_phase, exchanger,
-	 *   surface, or pure_phase_assemblage
-	 *
-	 *   Returns
-	 *		n_comp, which is total, including H, O, elements, and Charge
-	 *      names, which contains character strings with names of components
-	 */
-	bool clear = false;
-	this->phreeqcrm_error_string.clear();
-	try
-	{
-#ifdef USE_MPI
-		if (this->mpi_myself == 0)
-		{
-			int method = METHOD_FINDCOMPONENTS;
-			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
-		}
-#endif
-		// Always include H, O, Charge
-
-		std::set<std::string> component_set;
-
-		size_t fixed_components = 3;
-		if (this->component_h2o)
-			fixed_components = 4;
-
-		// save old components
-		for (size_t i = fixed_components; i < this->components.size(); i++)
-		{
-			component_set.insert(this->components[i]);
-		}
-
-		// Get other components
-		IPhreeqcPhast* phast_iphreeqc_worker = this->GetWorkers()[this->nthreads];
-		size_t count_components = phast_iphreeqc_worker->GetComponentCount();
-
-		size_t i;
-		for (i = 0; i < count_components; i++)
-		{
-			std::string comp(phast_iphreeqc_worker->GetComponent((int)i));
-			assert(comp != "H");
-			assert(comp != "O");
-			assert(comp != "Charge");
-			assert(comp != "charge");
-
-			component_set.insert(comp);
-		}
-		// clear and refill components in vector
-		this->components.clear();
-
-		// Always include H, O, Charge
-		if (this->component_h2o)
-			this->components.push_back("H2O");
-		this->components.push_back("H");
-		this->components.push_back("O");
-		this->components.push_back("Charge");
-		for (std::set<std::string>::iterator it = component_set.begin(); it != component_set.end(); it++)
-		{
-			this->components.push_back(*it);
-		}
-		// Calculate gfw for components
-		this->gfw.clear();
-		for (i = 0; i < components.size(); i++)
-		{
-			if (components[i] == "Charge")
-			{
-				this->gfw.push_back(1.0);
-			}
-			else
-			{
-				this->gfw.push_back(phast_iphreeqc_worker->Get_gfw(components[i].c_str()));
-			}
-		}
-		// Get list of species
-		if (this->species_save_on)
-		{
-			phast_iphreeqc_worker->PhreeqcPtr->save_species = true;
-		}
-		// Make lists regardless of species_save_on
-		{
-			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
-			{
-				std::ostringstream in;
-				in << "SOLUTION " << next << "\n";
-				for (i = 0; i < components.size(); i++)
-				{
-					if (components[i] == "H") continue;
-					if (components[i] == "O") continue;
-					if (components[i] == "H2O") continue;
-					if (components[i] == "Charge") continue;
-					in << components[i] << " 1e-6\n";
-				}
-				int status = phast_iphreeqc_worker->RunString(in.str().c_str());
-				if (status != 0)
-				{
-					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
-					throw PhreeqcRMStop();
-				}
-			}
-			species_names.clear();
-			species_z.clear();
-			s_num2rm_species_num.clear();
-			species_stoichiometry.clear();
-			for (int i = 0; i < (int)phast_iphreeqc_worker->PhreeqcPtr->s_x.size(); i++)
-			{
-				species_names.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
-				species_z.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->z);
-				species_d_25.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->dw);
-				s_num2rm_species_num[phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->number] = i;
-				cxxNameDouble nd(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->next_elt);
-				nd.add("Charge", phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->z);
-				species_stoichiometry.push_back(nd);
-			}
-			ElementRedoxSet.clear();
-			for (size_t i = 0; i < phast_iphreeqc_worker->PhreeqcPtr->master.size(); i++)
-			{
-				if (phast_iphreeqc_worker->PhreeqcPtr->master[i]->in != FALSE)
-				{
-					std::string e = phast_iphreeqc_worker->PhreeqcPtr->master[i]->elt->name;
-					if (e != "E")
-					{
-						ElementRedoxSet.insert(e);
-					}
-					e = phast_iphreeqc_worker->PhreeqcPtr->master[i]->elt->primary->elt->name;
-					if (e != "E")
-					{
-						ElementRedoxSet.insert(e);
-					}
-				}
-			}
-			for (int i = 0; i < (int)phast_iphreeqc_worker->PhreeqcPtr->phases.size(); i++)
-			{
-				if (phast_iphreeqc_worker->PhreeqcPtr->phases[i]->in == TRUE)
-				{
-					SINamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->phases[i]->name);
-				}
-			}
-			{
-				std::ostringstream in;
-				in << "DELETE; -solution " << next << "\n";
-				int status = phast_iphreeqc_worker->RunString(in.str().c_str());
-				if (status != 0)
-				{
-					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
-					throw PhreeqcRMStop();
-				}
-			}
-		}
-		// Make all lists
-		{
-			// Make set for surfaces
-			std::set<std::string> surface_types_set;
-			std::map<std::string, std::string> surface_names_map;
-			if (!clear)
-			{
-				for (size_t ii = 0; ii < this->SurfaceSpeciesNamesList.size(); ii++)
-				{
-					surface_types_set.insert(this->SurfaceTypesList[ii]);
-					surface_names_map[this->SurfaceTypesList[ii]] = this->SurfaceNamesList[ii];
-				}
-			}
-			// add new surface types 
-			{
-				const std::list<std::string>& surftype = phast_iphreeqc_worker->GetSurfaceTypeList();
-				const std::list<std::string>& surfnames = phast_iphreeqc_worker->GetSurfaceNamesList();
-				{
-					std::list<std::string>::const_iterator surftype_it = surftype.begin();
-					std::list<std::string>::const_iterator surfnames_it = surfnames.begin();
-					for (; surftype_it != surftype.end(); surftype_it++)
-					{
-						surface_types_set.insert(*surftype_it);
-						surface_names_map[*surftype_it] = *surfnames_it++;
-					}
-				}
-			}
-			// make set for exchange
-			std::set<std::string> ex_set;
-			if (!clear)
-			{
-				for (size_t ii = 0; ii < this->ExchangeNamesList.size(); ii++)
-				{
-					ex_set.insert(this->ExchangeNamesList[ii]);
-				}
-			}
-			// add new exchange sites
-			{
-				const std::list<std::string>& ex = phast_iphreeqc_worker->GetExchangeNamesList();
-				{
-					std::list<std::string>::const_iterator ex_it = ex.begin();
-					for (; ex_it != ex.end(); ex_it++)
-					{
-						ex_set.insert(*ex_it);
-					}
-				}
-			}
-			// write solution
-			int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
-			if (ex_set.size() > 0 || surface_types_set.size() > 0)
-			{
-				std::ostringstream in;
-				in << "SOLUTION " << next << "\n";
-				for (i = 0; i < components.size(); i++)
-				{
-					if (components[i] == "H") continue;
-					if (components[i] == "O") continue;
-					if (components[i] == "H2O") continue;
-					if (components[i] == "Charge") continue;
-					in << components[i] << " 1e-6\n";
-				}
-				in << "END\n";
-				int status = phast_iphreeqc_worker->RunString(in.str().c_str());
-				if (status != 0)
-				{
-					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
-					throw PhreeqcRMStop();
-				}
-			}
-			// write surface and save vectors
-			int next_surf = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SURFACE);
-			this->SurfaceSpeciesNamesList.clear();
-			this->SurfaceTypesList.clear();
-			this->SurfaceNamesList.clear();
-			if (surface_types_set.size() > 0)
-			{
-				std::set<std::string>::iterator cit = surface_types_set.begin();
-				for (; cit != surface_types_set.end(); cit++)
-				{
-					std::ostringstream in;
-					in << "SURFACE " << next_surf << "\n";
-					in << "  -eq " << next << "\n";
-					in << "  " << *cit << "  0.001  1   1\n";
-					int status = phast_iphreeqc_worker->RunString(in.str().c_str());
-					if (status != 0)
-					{
-						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
-						throw PhreeqcRMStop();
-					}
-					// fill surface vectors
-					for (int i = 0; i < (int)phast_iphreeqc_worker->PhreeqcPtr->s_x.size(); i++)
-					{
-						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == SURF)
-						{
-							this->SurfaceSpeciesNamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
-							this->SurfaceTypesList.push_back(*cit);
-							this->SurfaceNamesList.push_back(surface_names_map[*cit]);
-						}
-					}
-					{
-						std::ostringstream in1;
-						in1 << "DELETE -surface " << next_surf << "\n";
-						status = phast_iphreeqc_worker->RunString(in1.str().c_str());
-						if (status != 0)
-						{
-							this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
-							throw PhreeqcRMStop();
-						}
-					}
-				}
-			}
-			// Exchange species
-			int next_ex = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_EXCHANGE);
-			this->ExchangeSpeciesNamesList.clear();
-			this->ExchangeNamesList.clear();
-			if (ex_set.size() > 0)
-			{
-				std::set<std::string>::iterator cit = ex_set.begin();
-				for (; cit != ex_set.end(); cit++)
-				{
-					std::ostringstream in;
-					in << "EXCHANGE " << next_ex << "\n";
-					in << "  -eq " << next << "\n";
-					in << "  " << *cit << "  0.001\n";
-					int status = phast_iphreeqc_worker->RunString(in.str().c_str());
-					if (status != 0)
-					{
-						this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
-						throw PhreeqcRMStop();
-					}
-					for (int i = 0; i < (int)phast_iphreeqc_worker->PhreeqcPtr->s_x.size(); i++)
-					{
-						if (phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->type == EX)
-						{
-							this->ExchangeSpeciesNamesList.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
-							this->ExchangeNamesList.push_back(*cit);
-						}
-					}
-					{
-						std::ostringstream in1;
-						in1 << "DELETE -exchange " << next_ex << "\n";
-						status = phast_iphreeqc_worker->RunString(in1.str().c_str());
-						if (status != 0)
-						{
-							this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
-							throw PhreeqcRMStop();
-						}
-					}
-				}
-			}
-			if (ex_set.size() > 0 || surface_types_set.size() > 0)
-			{
-				std::ostringstream in;
-				in << "DELETE; -solution " << next << "\n";
-				int status = phast_iphreeqc_worker->RunString(in.str().c_str());
-				if (status != 0)
-				{
-					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
-					throw PhreeqcRMStop();
-				}
-			}
-			// equilibrium_phases
-			{
-				// Move to set
-				std::set<std::string> eq_set;
-				if (!clear)
-				{
-					for (size_t i = 0; i < this->EquilibriumPhasesList.size(); i++)
-					{
-						eq_set.insert(this->EquilibriumPhasesList[i]);
-					}
-				}
-				// add new equilibrium phases to set
-				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetEquilibriumPhasesList().begin();
-				for (; cit != phast_iphreeqc_worker->GetEquilibriumPhasesList().end(); cit++)
-				{
-					eq_set.insert(*cit);
-				}
-				// move set to vector
-				this->EquilibriumPhasesList.clear();
-				std::set<std::string>::const_iterator eqit = eq_set.begin();
-				for (; eqit != eq_set.end(); eqit++)
-				{
-					this->EquilibriumPhasesList.push_back(*eqit);
-				}
-			}
-			// gas phase components
-			{
-				// Move to set
-				std::set<std::string> g_set;
-				if (!clear)
-				{
-					for (size_t i = 0; i < this->GasComponentsList.size(); i++)
-					{
-						g_set.insert(this->GasComponentsList[i]);
-					}
-				}
-				// add new gas components to set
-				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetGasComponentsList().begin();
-				for (; cit != phast_iphreeqc_worker->GetGasComponentsList().end(); cit++)
-				{
-					g_set.insert(*cit);
-				}
-				// move set to vector
-				this->GasComponentsList.clear();
-				std::set<std::string>::const_iterator git = g_set.begin();
-				for (; git != g_set.end(); git++)
-				{
-					this->GasComponentsList.push_back(*git);
-				}
-			}
-			// Kinetics
-			{
-				// Move to set
-				std::set<std::string> k_set;
-				if (!clear)
-				{
-					for (size_t i = 0; i < this->KineticReactionsList.size(); i++)
-					{
-						k_set.insert(this->KineticReactionsList[i]);
-					}
-				}
-				// add new kinetic reactions to set
-				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetKineticReactionsList().begin();
-				for (; cit != phast_iphreeqc_worker->GetKineticReactionsList().end(); cit++)
-				{
-					k_set.insert(*cit);
-				}
-				// move set to vector
-				this->KineticReactionsList.clear();
-				std::set<std::string>::const_iterator kit = k_set.begin();
-				for (; kit != k_set.end(); kit++)
-				{
-					this->KineticReactionsList.push_back(*kit);
-				}
-			}
-			// Solid solutions
-			{
-				// move existing component names to set and solid solution names to map
-				std::set<std::string> sscomp_set;
-				std::map<std::string, std::string> ssnames_map;
-				if (!clear)
-				{
-					for (size_t i = 0; i < this->SolidSolutionComponentsList.size(); i++)
-					{
-						sscomp_set.insert(this->SolidSolutionComponentsList[i]);
-						ssnames_map[this->SolidSolutionComponentsList[i]] = this->SolidSolutionNamesList[i];
-					}
-				}
-				// add new component names set and solid solution names to map
-				std::list<std::string>::const_iterator cit = phast_iphreeqc_worker->GetSolidSolutionComponentsList().begin();
-				std::list<std::string>::const_iterator nit = phast_iphreeqc_worker->GetSolidSolutionNamesList().begin();
-				for (; cit != phast_iphreeqc_worker->GetSolidSolutionComponentsList().end(); cit++)
-				{
-					if (sscomp_set.find(*cit) == sscomp_set.end())
-					{
-						sscomp_set.insert(*cit);
-						ssnames_map[*cit] = *nit++;
-					}
-				}
-				// Move from set and map to vectors
-				this->SolidSolutionComponentsList.clear();
-				this->SolidSolutionNamesList.clear();
-				std::set<std::string>::const_iterator set_it = sscomp_set.begin();
-				for (; set_it != sscomp_set.end(); set_it++)
-				{
-					this->SolidSolutionComponentsList.push_back(*set_it);
-					this->SolidSolutionNamesList.push_back(ssnames_map[*set_it]);
-				}
-			}
-		}
-	}
-	catch (...)
-	{
-		return this->ReturnHandler(IRM_FAIL, "PhreeqcRM::FindComponents");
-	}
-	return (int)this->components.size();
-}
-#endif
