@@ -29,11 +29,15 @@ public:
 	VarManager(PhreeqcRM* rm_ptr);
 	// Data
 	PhreeqcRM* rm_ptr;
-	std::map<std::string, BMIVariant> BMISelectedOutputVars;
-	std::map<RMVARS, std::string> BMISelecteOutputDefs;
+	std::map<std::string, BMIVariant> AutoOutputVars;
+	//std::map<RMVARS, std::string> BMISelecteOutputDefs;
+	std::map<OUTPUTVARS, std::string> AutoOutputVarsDefs;
 	static std::set<std::string> tokenize(const std::string& s);
 	std::vector<double> BMISelectedOutput;
-	int BMISelectedOutputUserNumber;
+	int BMISelectedOutputUserNumber; 
+	std::map<std::string, OUTPUTVARS> OutputVarsEnumMap;
+	void AddOutputVars(std::string option, std::string def);
+	OUTPUTVARS GetOutputVarsEnum(const std::string name);
 public:
 	BMIVariant VarExchange;
 	std::set<RMVARS> PointerSet;

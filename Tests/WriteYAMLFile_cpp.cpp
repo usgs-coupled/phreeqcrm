@@ -93,6 +93,8 @@ void WriteYAMLFile_cpp(void)
 	initial_phreeqc = false;
 	std::string input = "DELETE; -all";
 	yrm.YAMLRunString(workers, initial_phreeqc, utility, input.c_str());
+	// Define additional output variables
+	yrm.YAMLAddOutputVars("AddOutputVars", "true");
 	// Determine number of components to transport
 	yrm.YAMLFindComponents();
 	// set array of initial conditions

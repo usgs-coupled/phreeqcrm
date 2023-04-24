@@ -42,4 +42,20 @@ enum class RMVARS {
 	Viscosity,
 	NotFound
 };
+enum class OUTPUTVARS {
+	AddOutputVars,
+	SolutionProperties,
+	SolutionTotalMolalities,
+	ExchangeMolalities,
+	SurfaceMolalities,
+	EquilibriumPhases,
+	Gases,
+	KineticReactants,
+	SolidSolutions,
+	CalculateValues,
+	SolutionActivities,
+	SolutionMolalities,
+	SaturationIndices,
+	NotFound
+};
 #endif

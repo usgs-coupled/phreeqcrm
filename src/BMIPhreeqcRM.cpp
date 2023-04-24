@@ -207,7 +207,7 @@ int BMIPhreeqcRM::GetOutputItemCount()
 			count++;
 		}
 	}
-	count += (int)this->var_man->BMISelectedOutputVars.size();
+	count += (int)this->var_man->AutoOutputVars.size();
 	return count;
 }
 int BMIPhreeqcRM::GetPointableItemCount()
@@ -265,8 +265,8 @@ std::vector<std::string>  BMIPhreeqcRM::GetOutputVarNames()
 			names.push_back(bv.GetName());
 		}
 	}
-	for(auto it = var_man->BMISelectedOutputVars.begin(); 
-		it != var_man->BMISelectedOutputVars.end(); it++)
+	for(auto it = var_man->AutoOutputVars.begin();
+		it != var_man->AutoOutputVars.end(); it++)
 	{ 
 		names.push_back(it->second.GetName());
 	}
@@ -325,8 +325,8 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 		}
 	}
 	{
-		auto it = var_man->BMISelectedOutputVars.find(name);
-		if (it != var_man->BMISelectedOutputVars.end())
+		auto it = var_man->AutoOutputVars.find(name);
+		if (it != var_man->AutoOutputVars.end())
 		{
 			if (this->language == "cpp")
 			{
@@ -360,8 +360,8 @@ std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 		return bv.GetUnits();
 	}
 	{
-		auto it = var_man->BMISelectedOutputVars.find(name);
-		if (it != var_man->BMISelectedOutputVars.end())
+		auto it = var_man->AutoOutputVars.find(name);
+		if (it != var_man->AutoOutputVars.end())
 		{
 			return it->second.GetUnits();
 		}
@@ -385,8 +385,8 @@ int BMIPhreeqcRM::GetVarItemsize(const std::string name)
 		return bv.GetItemsize();
 	}
 	{
-		auto it = var_man->BMISelectedOutputVars.find(name);
-		if (it != var_man->BMISelectedOutputVars.end())
+		auto it = var_man->AutoOutputVars.find(name);
+		if (it != var_man->AutoOutputVars.end())
 		{
 			return it->second.GetItemsize();
 		}
@@ -410,8 +410,8 @@ int BMIPhreeqcRM::GetVarNbytes(const std::string name)
 		return bv.GetNbytes();
 	}
 	{
-		auto it = var_man->BMISelectedOutputVars.find(name);
-		if (it != var_man->BMISelectedOutputVars.end())
+		auto it = var_man->AutoOutputVars.find(name);
+		if (it != var_man->AutoOutputVars.end())
 		{
 			return it->second.GetNbytes();
 		}
@@ -495,8 +495,8 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 		}
 	}
 	{
-		auto it = var_man->BMISelectedOutputVars.find(name);
-		if (it != var_man->BMISelectedOutputVars.end())
+		auto it = var_man->AutoOutputVars.find(name);
+		if (it != var_man->AutoOutputVars.end())
 		{
 			if (var_man->BMISelectedOutput.size() == 0)
 			{
@@ -619,8 +619,8 @@ void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
 
 	}
 	{
-		auto it = var_man->BMISelectedOutputVars.find(name);
-		if (it != var_man->BMISelectedOutputVars.end())
+		auto it = var_man->AutoOutputVars.find(name);
+		if (it != var_man->AutoOutputVars.end())
 		{
 			if (var_man->BMISelectedOutput.size() == 0)
 			{
@@ -737,8 +737,8 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
 		return;
 	}
 	{
-		auto it = var_man->BMISelectedOutputVars.find(name);
-		if (it != var_man->BMISelectedOutputVars.end())
+		auto it = var_man->AutoOutputVars.find(name);
+		if (it != var_man->AutoOutputVars.end())
 		{
 			if (var_man->BMISelectedOutput.size() == 0)
 			{

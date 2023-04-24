@@ -99,6 +99,7 @@ public:
 	 */
 	void WriteYAMLDoc(std::string file_name);
 	// methods
+	void YAMLPhreeqcRM::YAMLAddOutputVars(std::string option, std::string def);
 /**
 Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
 When the YAML document is written to file it can be processed by the method InitializeYAML to

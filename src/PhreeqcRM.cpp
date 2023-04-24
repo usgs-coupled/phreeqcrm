@@ -3185,6 +3185,20 @@ PhreeqcRM::FindComponents(void)
 	{
 		return this->ReturnHandler(IRM_FAIL, "PhreeqcRM::FindComponents");
 	}
+#ifdef USE_MPI
+	if (this->mpi_myself == 0)
+	{
+		if (var_man != NULL)
+		{
+			var_man->BMIGenerateSelectedOutput();
+		}
+	}
+#else
+	if (var_man != NULL)
+	{ 
+		var_man->BMIGenerateSelectedOutput();
+	}
+#endif
 	return (int) this->components.size();
 }
 /* ---------------------------------------------------------------------- */
@@ -5350,6 +5364,19 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 	{
 		keyword = it->first.as<std::string>();
 		YAML::Node node = it->second;
+		if (keyword == "AddOutputVars")
+		{
+			if (var_man != NULL)
+			{
+				assert(node.IsMap());
+				assert(node.size() == 2);
+				YAML::const_iterator it1 = node.begin();
+				std::string option = it1++->second.as<std::string>();
+				std::string def = it1++->second.as<std::string>();
+				this->var_man->AddOutputVars(option, def);
+			}
+			continue;
+		}
 		if (keyword == "CloseFiles")
 		{
 			this->CloseFiles();

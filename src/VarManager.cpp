@@ -29,8 +29,8 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 	this->VariantMap[RMVARS::NthSelectedOutput] =
 		BMIVariant(&VarManager::NthSelectedOutput_Var, "NthSelectedOutput");
 
-	this->VariantMap[RMVARS::OutputVarsAddSolutionProperties] =
-		BMIVariant(&VarManager::OutputVarsAddSolutionProperties_Var, "OutputVarsAddSolutionProperties");
+	//this->VariantMap[RMVARS::OutputVarsAddSolutionProperties] =
+	//	BMIVariant(&VarManager::OutputVarsAddSolutionProperties_Var, "OutputVarsAddSolutionProperties");
 	//this->VariantMap[RMVARS::OutputVarsAddSolutionTotalMolalities] =
 	//	BMIVariant(&VarManager::OutputVarsAddSolutionTotalMolalities_var, "OutputVarsAddSolutionTotalMolalities");
 	//this->VariantMap[RMVARS::OutputVarsAddSolutionMolalities] =
@@ -101,6 +101,34 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		std::string name_lc = it->second.GetName();
 		std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
 		EnumMap[name_lc] = it->first;
+	}
+	BMISelectedOutputUserNumber = 777;
+	OutputVarsEnumMap["addoutputvars"] = OUTPUTVARS::AddOutputVars;
+	OutputVarsEnumMap["solutionproperties"] = OUTPUTVARS::SolutionProperties;
+	OutputVarsEnumMap["solutiontotalmolalities"] = OUTPUTVARS::SolutionTotalMolalities;
+	OutputVarsEnumMap["solutionmolalities"] = OUTPUTVARS::SolutionMolalities;
+	OutputVarsEnumMap["solutionactivities"] = OUTPUTVARS::SolutionActivities;
+	OutputVarsEnumMap["exchangemolalities"] = OUTPUTVARS::ExchangeMolalities;
+	OutputVarsEnumMap["surfacemolalities"] = OUTPUTVARS::SurfaceMolalities;
+	OutputVarsEnumMap["equilibriumphases"] = OUTPUTVARS::EquilibriumPhases;
+	OutputVarsEnumMap["saturationindices"] = OUTPUTVARS::SaturationIndices;
+	OutputVarsEnumMap["gases"] = OUTPUTVARS::Gases;
+	OutputVarsEnumMap["kineticreactants"] = OUTPUTVARS::KineticReactants;
+	OutputVarsEnumMap["solidsolutions"] = OUTPUTVARS::SolidSolutions;
+	OutputVarsEnumMap["calculatevalues"] = OUTPUTVARS::CalculateValues;
+	for (auto it = OutputVarsEnumMap.begin(); it != OutputVarsEnumMap.end(); it++)
+	{
+		if (it->second == OUTPUTVARS::AddOutputVars ||
+			it->second == OUTPUTVARS::SolutionMolalities ||
+			it->second == OUTPUTVARS::SolutionActivities ||
+			it->second == OUTPUTVARS::SaturationIndices)
+		{
+			AutoOutputVarsDefs[it->second] = "false";
+		}
+		else
+		{
+			AutoOutputVarsDefs[it->second] = "true";
+		}
 	}
 }
 void VarManager::RM2BMIUpdate(RMVARS v_enum)
@@ -1126,6 +1154,7 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
+#ifdef SKIP
 void VarManager::OutputVarsAddSolutionProperties_Var()
 {
 	RMVARS VARS_myself = RMVARS::OutputVarsAddSolutionProperties;
@@ -1148,7 +1177,7 @@ void VarManager::OutputVarsAddSolutionProperties_Var()
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
 		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
 		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
+		rm_ptr->var_man->AutoOutputVarsDefs[VARS_myself] = this->VarExchange.GetStringRef();
 		bv.GetStringRef() = this->VarExchange.GetStringRef();
 		bv.SetInitialized(true);
 		break;
@@ -1574,6 +1603,7 @@ void VarManager::OutputVarsFinalize_Var()
 		break;
 	}
 }
+#endif
 void VarManager::Porosity_Var()
 {
 	RMVARS VARS_myself = RMVARS::Porosity;
@@ -1842,16 +1872,22 @@ void VarManager::Viscosity_Var()
 
 void VarManager::BMIGenerateSelectedOutput()
 {
+	std::string option = AutoOutputVarsDefs[OUTPUTVARS::AddOutputVars];
+	if(BMICheckSelectedOutputDef(true, option) != 1) return;
 	int line_no = 10;
 	int Itemsize = (int)sizeof(double);
 	int Nbytes = rm_ptr->GetGridCellCount() * Itemsize;
 	std::ostringstream headings;
 	std::ostringstream code;
-	BMISelectedOutputVars.clear();
-	auto it = BMISelecteOutputDefs.begin();
-	for (; it != BMISelecteOutputDefs.end(); it++)
+	//AutoOutputVars.clear();
+	auto it = AutoOutputVarsDefs.begin();
+	for (; it != AutoOutputVarsDefs.end(); it++)
 	{
-		if (it->first == RMVARS::OutputVarsAddSolutionProperties)
+		if (it->first == OUTPUTVARS::AddOutputVars)
+		{
+			continue;
+		}
+		else if (it->first == OUTPUTVARS::SolutionProperties)
 		{
 			switch (BMICheckSelectedOutputDef(true, it->second))
 			{
@@ -1865,76 +1901,70 @@ void VarManager::BMIGenerateSelectedOutput()
 			{
 				std::string name = "solution_ph";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
 				code << line_no << " PUNCH -LA('H+')" << std::endl;
 				line_no += 10;
-				break;
 			}
 			{
 				std::string name = "solution_pe";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
 				code << line_no << " PUNCH -LA('e-')" << std::endl;
 				line_no += 10;
-				break;
 			}
 			{
 				std::string name = "solution_alkalinity";
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
 				code << line_no << " PUNCH ALK" << std::endl;
 				line_no += 10;
-				break;
 			}
 			{
 				std::string name = "solution_ionic_strength";
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
 				code << line_no << " PUNCH MU" << std::endl;
 				line_no += 10;
-				break;
 			}
 			{
 				std::string name = "solution_water_mass";
 				BMIVariant bv(name, "kg", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
 				code << line_no << " PUNCH TOT('water')" << std::endl;
 				line_no += 10;
-				break;
 			}
 			{
 				std::string name = "solution_charge_balance";
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
 				code << line_no << " PUNCH CHARGE_BALANCE / TOT('water')" << std::endl;
 				line_no += 10;
-				break;
 			}
 			{
 				std::string name = "solution_percent_error";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
 				code << line_no << " PUNCH PERCENT_ERROR" << std::endl;
 				line_no += 10;
-				break;
 			}
+			break;
 			}
 		}
-		else if (it->first == RMVARS::OutputVarsAddSolutionTotalMolalities)
+		else if (it->first == OUTPUTVARS::SolutionTotalMolalities)
 		{
 			std::set<std::string> item_set;
 			switch (BMICheckSelectedOutputDef(false, it->second))
@@ -1957,14 +1987,14 @@ void VarManager::BMIGenerateSelectedOutput()
 			{
 				std::string name = "solution_total_molality_" + *item_it;
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH TOT('" << name << "')\n";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
+				code << line_no << " PUNCH TOT('" << *item_it << "')\n";
 				line_no += 10;
 			}
 		}
-		else if (it->first == RMVARS::OutputVarsAddSolutionMolalities)
+		else if (it->first == OUTPUTVARS::SolutionMolalities)
 		{
 			std::set<std::string> item_set;
 			switch (BMICheckSelectedOutputDef(false, it->second))
@@ -1990,14 +2020,14 @@ void VarManager::BMIGenerateSelectedOutput()
 			{
 				std::string name = "solution_species_log_molality_" + *item_it;
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH LM('" << name << "')\n";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
+				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
 			}
 		}
-		else if (it->first == RMVARS::OutputVarsAddSolutionActivities)
+		else if (it->first == OUTPUTVARS::SolutionActivities)
 		{
 			std::set<std::string> item_set;
 			switch (BMICheckSelectedOutputDef(false, it->second))
@@ -2023,16 +2053,17 @@ void VarManager::BMIGenerateSelectedOutput()
 			{
 				std::string name = "solution_species_log_activity_" + *item_it;
 				BMIVariant bv(name, "log -", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH LA('" << name << "')\n";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
+				code << line_no << " PUNCH LA('" << *item_it << "')\n";
 				line_no += 10;
 			}
 		}
-		else if (it->first == RMVARS::OutputVarsAddExchangeMolalities)
+		else if (it->first == OUTPUTVARS::ExchangeMolalities)
 		{
 			std::set<std::string> item_set;
+			std::set<std::string> names_set;
 			std::map<std::string, std::string> item_map;
 			switch (BMICheckSelectedOutputDef(false, it->second))
 			{
@@ -2044,6 +2075,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				{
 					item_set.insert(rm_ptr->ExchangeSpeciesNamesList[i]);
 					item_map[rm_ptr->ExchangeSpeciesNamesList[i]] = rm_ptr->ExchangeNamesList[i];
+					names_set.insert(rm_ptr->ExchangeNamesList[i]);
 				}
 				break;
 			}
@@ -2052,6 +2084,18 @@ void VarManager::BMIGenerateSelectedOutput()
 				item_set = tokenize(it->second);
 				break;
 			}
+			}
+			{
+				for (auto jit = names_set.begin(); jit != names_set.end(); jit++)
+				{
+					std::string name = "exchange_total_molality_" + *jit;
+					BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
+					bv.SetColumn((int)AutoOutputVars.size());
+					AutoOutputVars[name] = bv;
+					headings << name << "\n";
+					code << line_no << " PUNCH TOT('" << *jit << "')\n";
+					line_no += 10;
+				}
 			}
 			auto item_it = item_set.begin();
 			for (; item_it != item_set.end(); item_it++)
@@ -2063,14 +2107,14 @@ void VarManager::BMIGenerateSelectedOutput()
 					name = "exchange_" + xname + "_species_log_molality_" + *item_it;
 				}
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH LM('" << name << "')\n";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
+				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
 			}
 		}
-		else if (it->first == RMVARS::OutputVarsAddSurfaceMolalities)
+		else if (it->first == OUTPUTVARS::SurfaceMolalities)
 		{
 			std::set<std::string> item_set;
 			std::map<std::string, std::string> item_map;
@@ -2103,14 +2147,14 @@ void VarManager::BMIGenerateSelectedOutput()
 					name = "surface_" + type + "_species_log_molality_" + *item_it;
 				}
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH LM('" << name << "')\n";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
+				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
 			}
 		}
-		else if (it->first == RMVARS::OutputVarsAddEquilibriumPhases)
+		else if (it->first == OUTPUTVARS::EquilibriumPhases)
 		{
 			std::set<std::string> item_set;
 			switch (BMICheckSelectedOutputDef(false, it->second))
@@ -2137,24 +2181,24 @@ void VarManager::BMIGenerateSelectedOutput()
 				{
 					std::string name = "equilibrium_phases_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH EQUI('" << name << "')\n";
+					bv.SetColumn((int)AutoOutputVars.size());
+					AutoOutputVars[name] = bv;
+					headings << name << "\n";
+					code << line_no << " PUNCH EQUI('" << *item_it << "')\n";
 					line_no += 10;
 				}
 				{
 					std::string name = "equilibrium_phases_delta_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH EQUI_DELTA('" << name << "')\n";
+					bv.SetColumn((int)AutoOutputVars.size());
+					AutoOutputVars[name] = bv;
+					headings << name << "\n";
+					code << line_no << " PUNCH EQUI_DELTA('" << *item_it << "')\n";
 					line_no += 10;
 				}
 			}
 		}
-		else if (it->first == RMVARS::OutputVarsAddSaturationIndices)
+		else if (it->first == OUTPUTVARS::SaturationIndices)
 		{
 			std::set<std::string> item_set;
 			switch (BMICheckSelectedOutputDef(false, it->second))
@@ -2180,14 +2224,14 @@ void VarManager::BMIGenerateSelectedOutput()
 			{
 				std::string name = "aqueous_saturation_index_" + *item_it;
 				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH SI('" << name << "')\n";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
+				code << line_no << " PUNCH SI('" << *item_it << "')\n";
 				line_no += 10;
 			}
 		}
-		else if (it->first == RMVARS::OutputVarsAddGases)
+		else if (it->first == OUTPUTVARS::Gases)
 		{
 			std::set<std::string> item_set;
 			switch (BMICheckSelectedOutputDef(false, it->second))
@@ -2209,13 +2253,16 @@ void VarManager::BMIGenerateSelectedOutput()
 			}
 			}
 			{
-				std::string name = "gas_phase_volume";
-				BMIVariant bv(name, "L", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH SYS('gas') * GAS_VM\n";
-				line_no += 10;
+				if (item_set.size() > 0)
+				{
+					std::string name = "gas_phase_volume";
+					BMIVariant bv(name, "L", false, true, false, Nbytes, Itemsize);
+					bv.SetColumn((int)AutoOutputVars.size());
+					AutoOutputVars[name] = bv;
+					headings << name << "\n";
+					code << line_no << " PUNCH SYS('gas') * GAS_VM\n";
+					line_no += 10;
+				}
 			}
 			auto item_it = item_set.begin();
 			for (; item_it != item_set.end(); item_it++)
@@ -2223,33 +2270,33 @@ void VarManager::BMIGenerateSelectedOutput()
 				{
 					std::string name = "gas_phase_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH GAS('" << name << "')\n";
+					bv.SetColumn((int)AutoOutputVars.size());
+					AutoOutputVars[name] = bv;
+					headings << name << "\n";
+					code << line_no << " PUNCH GAS('" << *item_it << "')\n";
 					line_no += 10;
 				}
 				{
 					std::string name = "gas_phase_pressure_" + *item_it;
 					BMIVariant bv(name, "atm", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH PR_P('" << name << "')\n";
+					bv.SetColumn((int)AutoOutputVars.size());
+					AutoOutputVars[name] = bv;
+					headings << name << "\n";
+					code << line_no << " PUNCH PR_P('" << *item_it << "')\n";
 					line_no += 10;
 				}
 				{
 					std::string name = "gas_phase_phi_" + *item_it;
 					BMIVariant bv(name, "atm-1", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH PR_PHI('" << name << "')\n";
+					bv.SetColumn((int)AutoOutputVars.size());
+					AutoOutputVars[name] = bv;
+					headings << name << "\n";
+					code << line_no << " PUNCH PR_PHI('" << *item_it << "')\n";
 					line_no += 10;
 				}
 			}
 		}
-		else if (it->first == RMVARS::OutputVarsAddKineticReactants)
+		else if (it->first == OUTPUTVARS::KineticReactants)
 		{
 			std::set<std::string> item_set;
 			switch (BMICheckSelectedOutputDef(false, it->second))
@@ -2276,24 +2323,24 @@ void VarManager::BMIGenerateSelectedOutput()
 				{
 					std::string name = "kinetic_reaction_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH KIN('" << name << "')\n";
+					bv.SetColumn((int)AutoOutputVars.size());
+					AutoOutputVars[name] = bv;
+					headings << name << "\n";
+					code << line_no << " PUNCH KIN('" << *item_it << "')\n";
 					line_no += 10;
 				}
 				{
 					std::string name = "kinetic_reaction_delta_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetColumn((int)BMISelectedOutputVars.size());
-					BMISelectedOutputVars[name] = bv;
-					headings << name << "\t";
-					code << line_no << " PUNCH KIN_DELTA('" << name << "')\n";
+					bv.SetColumn((int)AutoOutputVars.size());
+					AutoOutputVars[name] = bv;
+					headings << name << "\n";
+					code << line_no << " PUNCH KIN_DELTA('" << *item_it << "')\n";
 					line_no += 10;
 				}
 			}
 		}
-		else if (it->first == RMVARS::OutputVarsAddSolidSolutions)
+		else if (it->first == OUTPUTVARS::SolidSolutions)
 		{
 			std::set<std::string> item_set;
 			std::map<std::string, std::string> item_map;
@@ -2326,14 +2373,14 @@ void VarManager::BMIGenerateSelectedOutput()
 					name = "solid_solution_" + xname + "_moles_" + *item_it;
 				}
 				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH S_S('" << name << "')\n";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
+				code << line_no << " PUNCH S_S('" << *item_it << "')\n";
 				line_no += 10;
 			}
 		}
-		else if (it->first == RMVARS::OutputVarsAddCalculateValues)
+		else if (it->first == OUTPUTVARS::CalculateValues)
 		{
 			std::set<std::string> item_set;
 			switch (BMICheckSelectedOutputDef(false, it->second))
@@ -2360,10 +2407,10 @@ void VarManager::BMIGenerateSelectedOutput()
 			{
 				std::string name = "calculate_value_" + *item_it;
 				BMIVariant bv(name, "unknown", false, true, false, Nbytes, Itemsize);
-				bv.SetColumn((int)BMISelectedOutputVars.size());
-				BMISelectedOutputVars[name] = bv;
-				headings << name << "\t";
-				code << line_no << " PUNCH CALC_VALUE('" << name << "')\n";
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << "\n";
+				code << line_no << " PUNCH CALC_VALUE('" << *item_it << "')\n";
 				line_no += 10;
 			}
 		}
@@ -2386,12 +2433,13 @@ void VarManager::BMIGenerateSelectedOutput()
 		this->BMISelectedOutputUserNumber = max + 1;
 		std::ostringstream data_block;
 		data_block << "SELECTED_OUTPUT " << BMISelectedOutputUserNumber << "; USER_PUNCH "
-			<< BMISelectedOutputUserNumber << "; " << std::endl;
+			<< BMISelectedOutputUserNumber << "; -headings " << std::endl;
 		data_block << headings.str() << std::endl;
 		data_block << code.str() << std::endl;
 		rm_ptr->RunString(true, false, false, data_block.str());
+		//std::cerr << data_block.str();
 	}
-	BMISelecteOutputDefs.clear();
+	//BMISelecteOutputDefs.clear();
 	return;
 }
 int VarManager::BMICheckSelectedOutputDef(bool tf_only, std::string& def)
@@ -2437,6 +2485,24 @@ std::set<std::string> VarManager::tokenize(const std::string& def_in)
 	}
 	return item_set;
 }
-
+void VarManager::AddOutputVars(std::string option, std::string def)
+{
+	OUTPUTVARS var = GetOutputVarsEnum(option);
+	if (var != OUTPUTVARS::NotFound)
+	{
+		AutoOutputVarsDefs[var] = def;
+	}
+}
+OUTPUTVARS VarManager::GetOutputVarsEnum(const std::string name)
+{
+	std::string name_lc = name;
+	std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
+	auto m_it = OutputVarsEnumMap.find(name_lc);
+	if (m_it != OutputVarsEnumMap.end())
+	{
+		return m_it->second;
+	}
+	return OUTPUTVARS::NotFound;
+}
 
 //////////////////

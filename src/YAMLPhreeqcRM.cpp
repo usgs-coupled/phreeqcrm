@@ -49,6 +49,14 @@ void YAMLPhreeqcRM::YAMLCloseFiles (void)
 	YAML_doc["CloseFiles"] = "";
 	return;
 };
+void YAMLPhreeqcRM::YAMLAddOutputVars(std::string option, std::string def)
+{
+	YAML::Node node;
+	node["option"] = option;
+	node["def"] = def;
+	YAML_doc["AddOutputVars"] = node;
+	return;
+};
 void YAMLPhreeqcRM::YAMLCreateMapping(std::vector< int >& grid2chem)
 {
 	YAML_doc["CreateMapping"] = grid2chem;
