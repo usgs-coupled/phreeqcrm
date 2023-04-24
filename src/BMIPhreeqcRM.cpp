@@ -498,16 +498,16 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 		auto it = var_man->BMISelectedOutputVars.find(name);
 		if (it != var_man->BMISelectedOutputVars.end())
 		{
-			if (var_man->so777.size() == 0)
+			if (var_man->BMISelectedOutput.size() == 0)
 			{
 				int n_user = GetCurrentSelectedOutputUserNumber();
-				SetCurrentSelectedOutputUserNumber(777777777);
-				this->GetSelectedOutput(var_man->so777);
+				SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
+				this->GetSelectedOutput(var_man->BMISelectedOutput);
 				SetCurrentSelectedOutputUserNumber(n_user);
 			}
 			int column = it->second.GetColumn();
 			int nxyz = GetGridCellCount();
-			void* ptr = (void*)&(var_man->so777[column * nxyz]);
+			void* ptr = (void*)&(var_man->BMISelectedOutput[column * nxyz]);
 			memcpy(dest, ptr, it->second.GetNbytes());
 			return;
 		}
@@ -622,16 +622,16 @@ void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
 		auto it = var_man->BMISelectedOutputVars.find(name);
 		if (it != var_man->BMISelectedOutputVars.end())
 		{
-			if (var_man->so777.size() == 0)
+			if (var_man->BMISelectedOutput.size() == 0)
 			{
 				int n_user = GetCurrentSelectedOutputUserNumber();
-				SetCurrentSelectedOutputUserNumber(777777777);
-				this->GetSelectedOutput(var_man->so777);
+				SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
+				this->GetSelectedOutput(var_man->BMISelectedOutput);
 				SetCurrentSelectedOutputUserNumber(n_user);
 			}
 			int column = it->second.GetColumn();
 			int nxyz = GetGridCellCount();
-			void* ptr = (void*)&(var_man->so777[column * nxyz]);
+			void* ptr = (void*)&(var_man->BMISelectedOutput[column * nxyz]);
 			memcpy(dest, ptr, it->second.GetNbytes());
 			return;
 		}
@@ -740,16 +740,16 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
 		auto it = var_man->BMISelectedOutputVars.find(name);
 		if (it != var_man->BMISelectedOutputVars.end())
 		{
-			if (var_man->so777.size() == 0)
+			if (var_man->BMISelectedOutput.size() == 0)
 			{
 				int n_user = GetCurrentSelectedOutputUserNumber();
-				SetCurrentSelectedOutputUserNumber(777777777);
-				this->GetSelectedOutput(var_man->so777);
+				SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
+				this->GetSelectedOutput(var_man->BMISelectedOutput);
 				SetCurrentSelectedOutputUserNumber(n_user);
 			}
 			int column = it->second.GetColumn();
 			int nxyz = GetGridCellCount();
-			void* ptr = (void*)&(var_man->so777[column * nxyz]);
+			void* ptr = (void*)&(var_man->BMISelectedOutput[column * nxyz]);
 			dest.resize(nxyz);
 			memcpy(dest.data(), ptr, it->second.GetNbytes());
 			return;

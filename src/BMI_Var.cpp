@@ -46,6 +46,7 @@ void BMIVariant::CopyScalars(BMIVariant& bv)
 	this->Nbytes = bv.Nbytes;
 	this->Itemsize = bv.Itemsize;
 	this->dim = bv.dim;
+	this->column = bv.column;
 	this->b_var = bv.b_var;
 	this->i_var = bv.i_var;
 	this->d_var = bv.d_var;

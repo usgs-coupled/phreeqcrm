@@ -9791,7 +9791,7 @@ PhreeqcRM::RunCells()
 	}
 	if (var_man != NULL)
 	{
-		this->var_man->so777.clear();
+		this->var_man->BMISelectedOutput.clear();
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::RunCells");
 }

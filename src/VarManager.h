@@ -30,9 +30,10 @@ public:
 	// Data
 	PhreeqcRM* rm_ptr;
 	std::map<std::string, BMIVariant> BMISelectedOutputVars;
-	std::map<std::string, std::string> BMISelecteOutputDefs;
+	std::map<RMVARS, std::string> BMISelecteOutputDefs;
 	static std::set<std::string> tokenize(const std::string& s);
-	std::vector<double> so777;
+	std::vector<double> BMISelectedOutput;
+	int BMISelectedOutputUserNumber;
 public:
 	BMIVariant VarExchange;
 	std::set<RMVARS> PointerSet;
@@ -75,6 +76,19 @@ public:
 	void Gfw_Var();
 	void GridCellCount_Var();
 	void NthSelectedOutput_Var();
+	void OutputVarsAddSolutionProperties_Var();
+	void OutputVarsAddSolutionTotalMolalities_Var();
+	void OutputVarsAddSolutionMolalities_Var();
+	void OutputVarsAddSolutionActivities_Var();
+	void OutputVarsAddExchangeMolalities_Var();
+	void OutputVarsAddSurfaceMolalities_Var();
+	void OutputVarsAddEquilibriumPhases_Var();
+	void OutputVarsAddSaturationIndices_Var();
+	void OutputVarsAddGases_Var();
+	void OutputVarsAddKineticReactants_Var();
+	void OutputVarsAddSolidSolutions_Var();
+	void OutputVarsAddCalculateValues_Var();
+	void OutputVarsFinalize_Var();
 	void Saturation_Var();
 	void SelectedOutput_Var();
 	void SelectedOutputColumnCount_Var();
