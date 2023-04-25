@@ -119,16 +119,36 @@ void BMIPhreeqcRM::Initialize(std::string config_file)
 {
 #ifdef USE_YAML
 	YAML::Node yaml = YAML::LoadFile(config_file);
-	std::string keyword;
-	YAML::Node node;
-	if (yaml["SetGridCellCount"].IsDefined())
+
+	bool found_nxyz = false;
+	bool found_threads = false;
+
+	for (auto it = yaml.begin(); it != yaml.end(); it++)
 	{
-		this->initializer.nxyz_arg = yaml["SetGridCellCount"].as<int>();
+		YAML::Node node1 = *it;
+		auto it1 = node1.begin();
+		std::string keyword = it1++->second.as<std::string>();
+		if (keyword == "SetGridCellCount")
+		{
+			this->initializer.nxyz_arg = it1++->second.as<int>();
+			found_nxyz = true;
+		}
+		if (keyword == "ThreadCount")
+		{
+			this->initializer.data_for_parallel_processing = it1++->second.as<int>();
+			found_threads = true;
+		}
+		if (found_threads && found_nxyz) break;
 	}
-	if (yaml["ThreadCount"].IsDefined())
-	{
-		this->initializer.data_for_parallel_processing = yaml["ThreadCount"].as<int>();
-	}
+
+	//if (yaml["SetGridCellCount"].IsDefined())
+	//{
+	//	this->initializer.nxyz_arg = yaml["SetGridCellCount"].as<int>();
+	//}
+	//if (yaml["ThreadCount"].IsDefined())
+	//{
+	//	this->initializer.data_for_parallel_processing = yaml["ThreadCount"].as<int>();
+	//}
 #endif
 
 	this->Construct(this->initializer);

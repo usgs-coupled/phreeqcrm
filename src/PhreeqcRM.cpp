@@ -138,11 +138,16 @@ PhreeqcRM::GetGridCellCountYAML(const char* YAML_file)
 /* ---------------------------------------------------------------------- */
 {
 	YAML::Node yaml = YAML::LoadFile(YAML_file);
-	std::string keyword;
-	YAML::Node node;
-	if (yaml["SetGridCellCount"].IsDefined())
+	for (auto it = yaml.begin(); it != yaml.end(); it++)
 	{
-		return yaml["SetGridCellCount"].as<int>();
+		YAML::Node node1 = *it;
+		auto it1 = node1.begin();
+		std::string key = it1++->second.as<std::string>();
+		if (key == "SetGridCellCount")
+		{
+			int nxyz = it1->second.as<int>();
+			return nxyz;
+		}
 	}
 	return 0;
 }
@@ -5358,19 +5363,19 @@ PhreeqcRM::HandleErrorsInternal(std::vector< int > &rtn)
 IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 {
 	YAML::Node yaml = YAML::LoadFile(config);
-	std::string keyword;
-	YAML::Node node;
+	//std::string keyword;
+	//YAML::Node node;
 	for (YAML::Node::const_iterator it = yaml.begin();it != yaml.end();++it)
 	{
-		keyword = it->first.as<std::string>();
-		YAML::Node node = it->second;
+		YAML::Node node = *it;
+		auto it1 = node.begin();
+		assert(node.IsMap());
+		std::string keyword = it1++->second.as<std::string>();
 		if (keyword == "AddOutputVars")
 		{
 			if (var_man != NULL)
 			{
-				assert(node.IsMap());
-				assert(node.size() == 2);
-				YAML::const_iterator it1 = node.begin();
+				assert(node.size() == 3);
 				std::string option = it1++->second.as<std::string>();
 				std::string def = it1++->second.as<std::string>();
 				this->var_man->AddOutputVars(option, def);
@@ -5384,16 +5389,13 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 		}
 		if (keyword == "CreateMapping")
 		{
-			assert(node.IsSequence());
-			std::vector<int> grid2chem = it->second.as<std::vector<int>>();
+			std::vector<int> grid2chem = it1++->second.as<std::vector<int>>();
 			this->CreateMapping(grid2chem);
 			continue;
 		}
 		if (keyword == "DumpModule")
 		{
-			assert(node.IsMap());
-			assert(node.size() == 2);
-			YAML::const_iterator it1 = node.begin();
+			assert(node.size() == 3);
 			bool dump_on = it1++->second.as<bool>();
 			bool append = it1++->second.as<bool>();
 			this->DumpModule(dump_on, append);
@@ -5407,67 +5409,57 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 
 		if (keyword == "InitialSolutions2Module")
 		{
-			assert(node.IsSequence());
-			std::vector< int > ic = node.as< std::vector< int > >();
+			std::vector< int > ic = it1++->second.as< std::vector< int > >();
 			this->InitialSolutions2Module(ic);
 			continue;
 		}
 		if (keyword == "InitialEquilibriumPhases2Module")
 		{
-			assert(node.IsSequence());
-			std::vector< int > ic = node.as< std::vector< int > >();
+			std::vector< int > ic = it1++->second.as< std::vector< int > >();
 			this->InitialEquilibriumPhases2Module(ic);
 			continue;
 		}
 		if (keyword == "InitialExchanges2Module")
 		{
-			assert(node.IsSequence());
-			std::vector< int > ic = node.as< std::vector< int > >();
+			std::vector< int > ic = it1++->second.as< std::vector< int > >();
 			this->InitialExchanges2Module(ic);
 			continue;
 		}
 		if (keyword == "InitialSurfaces2Module")
 		{
-			assert(node.IsSequence());
-			std::vector< int > ic = node.as< std::vector< int > >();
+			std::vector< int > ic = it1++->second.as< std::vector< int > >();
 			this->InitialSurfaces2Module(ic);
 			continue;
 		}
 		if (keyword == "InitialGasPhases2Module")
 		{
-			assert(node.IsSequence());
-			std::vector< int > ic = node.as< std::vector< int > >();
+			std::vector< int > ic = it1++->second.as< std::vector< int > >();
 			this->InitialGasPhases2Module(ic);
 			continue;
 		}
 		if (keyword == "InitialSolidSolutions2Module")
 		{
-			assert(node.IsSequence());
-			std::vector< int > ic = node.as< std::vector< int > >();
+			std::vector< int > ic = it1++->second.as< std::vector< int > >();
 			this->InitialSolidSolutions2Module(ic);
 			continue;
 		}
 		if (keyword == "InitialKinetics2Module")
 		{
-			assert(node.IsSequence());
-			std::vector< int > ic = node.as< std::vector< int > >();
+			std::vector< int > ic = it1++->second.as< std::vector< int > >();
 			this->InitialKinetics2Module(ic);
 			continue;
 		}
 
 		if (keyword == "InitialPhreeqc2Module")
 		{
-			if (node.IsSequence())
+			if (node.size() == 2)
 			{
-				std::vector< int > ic = node.as< std::vector< int > >();
+				std::vector< int > ic = it1++->second.as< std::vector< int > >();
 				this->InitialPhreeqc2Module(ic);
 				continue;
 			}
-			else if (node.IsMap())
+			else if (node.size() == 4)
 			{
-				assert(node.IsMap());
-				assert(node.size() == 3);
-				YAML::const_iterator it1 = node.begin();
 				std::vector < int > ic1 = it1++->second.as< std::vector < int > >();
 				std::vector < int > ic2 = it1++->second.as< std::vector < int > >();
 				std::vector < double > f1 = it1->second.as< std::vector < double > >();
@@ -5480,17 +5472,15 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 		}
 		if (keyword == "InitialPhreeqcCell2Module")
 		{
-			assert(node.IsMap());
-			assert(node.size() == 2);
-			YAML::const_iterator it1 = node.begin();
+			assert(node.size() == 3);
 			int n = it1++->second.as<int>();
-			std::vector< int > cell_numbers = it1->second.as< std::vector<int > >();
+			std::vector< int > cell_numbers = it1++->second.as< std::vector<int > >();
 			this->InitialPhreeqcCell2Module(n, cell_numbers);
 			continue;
 		}
 		if (keyword == "LoadDatabase")
 		{
-			std::string file = node.as< std::string >();
+			std::string file = it1++->second.as< std::string >();
 			this->LoadDatabase(file);
 			continue;
 		}
@@ -5501,8 +5491,7 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 		}
 		if (keyword == "OutputMessage")
 		{
-			assert(node.IsScalar());
-			std::string str = node.as< std::string >();
+			std::string str = it1++->second.as< std::string >();
 			this->OutputMessage(str);
 			continue;
 		}
@@ -5513,294 +5502,257 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 		}
 		if (keyword == "RunFile")
 		{
-			assert(node.IsMap());
-			assert(node.size() == 4);
-			YAML::const_iterator it1 = node.begin();
+			assert(node.size() == 5);
 			bool workers = it1++->second.as<bool>();
 			bool initial = it1++->second.as<bool>();
 			bool utility = it1++->second.as<bool>();
-			std::string  file = it1->second.as< std::string >();
+			std::string  file = it1++->second.as< std::string >();
 			this->RunFile(workers, initial, utility, file);
 			continue;
 		}
 		if (keyword == "RunString")
 		{
-			assert(node.IsMap());
-			assert(node.size() == 4);
-			YAML::const_iterator it1 = node.begin();
+			assert(node.size() == 5);
 			bool workers = it1++->second.as<bool>();
 			bool initial = it1++->second.as<bool>();
 			bool utility = it1++->second.as<bool>();
-			std::string  string = it1->second.as<std::string>();
+			std::string  string = it1++->second.as<std::string>();
 			this->RunString(workers, initial, utility, string);
 			continue;
 		}
 		if (keyword == "ScreenMessage")
 		{
-			assert(node.IsScalar());
-			std::string str = node.as< std::string >();
+			std::string str = it1++->second.as< std::string >();
 			this->ScreenMessage(str);
 			continue;
 		}
 		if (keyword == "SetComponentH2O")
 		{
-			assert(node.IsScalar());
-			bool tf = node.as< bool >();
+			bool tf = it1++->second.as< bool >();
 			this->SetComponentH2O(tf);
 			continue;
 		}
-		if (keyword == "SetConcentrations") {
-			assert(node.IsSequence());
-			std::vector< double > c = node.as< std::vector< double > >();
+		if (keyword == "SetConcentrations") 
+		{
+			std::vector< double > c = it1++->second.as< std::vector< double > >();
 			this->SetConcentrations(c);
 			continue;
 		}
 		if (keyword == "SetCurrentSelectedOutputUserNumber")
 		{
-			assert(node.IsScalar());
-			int n = node.as< int >();
+			int n = it1++->second.as< int >();
 			this->SetCurrentSelectedOutputUserNumber(n);
 			continue;
 		}
 		if (keyword == "SetDensity")
 		{
-			assert(node.IsSequence());
-			std::vector< double > den = node.as< std::vector< double > >();
+			std::vector< double > den = it1++->second.as< std::vector< double > >();
 			this->SetDensity(den);
 			continue;
 		}
 		if (keyword == "SetDumpFileName")
 		{
-			assert(node.IsScalar());
-			std::string str = node.as< std::string >();
+			std::string str = it1++->second.as< std::string >();
 			this->SetDumpFileName(str);
 			continue;
 		}
 		if (keyword == "SetErrorHandlerMode")
 		{
-			assert(node.IsScalar());
-			int mode = node.as< int >();
+			int mode = it1++->second.as< int >();
 			this->SetErrorHandlerMode(mode);
 			continue;
 		}
-		if (keyword == "SetErrorOn") {
-			assert(node.IsScalar());
-			bool tf = node.as< bool >();
+		if (keyword == "SetErrorOn") 
+		{
+			bool tf = it1++->second.as< bool >();
 			this->SetErrorOn(tf);
 			continue;
 		}
 		if (keyword == "SetFilePrefix")
 		{
-			assert(node.IsScalar());
-			std::string prefix = node.as< std::string >();
+			std::string prefix = it1++->second.as< std::string >();
 			this->SetFilePrefix(prefix);
 			continue;
 		}
-		if (keyword == "SetGasCompMoles") {
-			assert(node.IsSequence());
-			std::vector<double> mol = node.as< std::vector < double > >();
+		if (keyword == "SetGasCompMoles") 
+		{
+			std::vector<double> mol = it1++->second.as< std::vector < double > >();
 			this->SetGasCompMoles(mol);
 			continue;
 		}
-		if (keyword == "SetGasPhaseVolume") {
-			assert(node.IsSequence());
-			std::vector<double> vol = node.as< std::vector < double > >();
+		if (keyword == "SetGasPhaseVolume") 
+		{
+			std::vector<double> vol = it1++->second.as< std::vector < double > >();
 			this->SetGasPhaseVolume(vol);
 			continue;
 		}
-		if (keyword == "SetGridCellCount") {
+		if (keyword == "SetGridCellCount") 
+		{
 			//this->WarningMessage("SetGridCellCount has no effect after the PhreeqcRM instance is created.");
 			continue;
 		}
 		if (keyword == "SetPartitionUZSolids")
 		{
-			assert(node.IsScalar());
-			bool tf = node.as< bool >();
+			bool tf = it1++->second.as< bool >();
 			this->SetPartitionUZSolids(tf);
 			continue;
 		}
 		if (keyword == "SetPorosity")
 		{
-			assert(node.IsSequence());
-			std::vector<double> por = node.as< std::vector< double > >();
+			std::vector<double> por = it1++->second.as< std::vector< double > >();
 			this->SetPorosity(por);
 			continue;
 		}
 		if (keyword == "SetPressure")
 		{
-			assert(node.IsSequence());
-			std::vector<double> pressure = node.as< std::vector< double > >();
+			std::vector<double> pressure = it1++->second.as< std::vector< double > >();
 			this->SetPressure(pressure);
 			continue;
 		}
 		if (keyword == "SetPrintChemistryMask")
 		{
-			assert(node.IsSequence());
-			std::vector<int> mask = node.as< std::vector< int > >();
+			std::vector<int> mask = it1++->second.as< std::vector< int > >();
 			this->SetPrintChemistryMask(mask);
 			continue;
 		}
 		if (keyword == "SetPrintChemistryOn")
 		{
-			assert(node.IsMap());
-			assert(node.size() == 3);
-			YAML::const_iterator it1 = node.begin();
+			assert(node.size() == 4);
 			bool workers = it1++->second.as< bool >();
 			bool initial = it1++->second.as< bool >();
-			bool utility = it1->second.as< bool >();
+			bool utility = it1++->second.as< bool >();
 			this->SetPrintChemistryOn(workers, initial, utility);
 			continue;
 		}
 		if (keyword == "SetRebalanceByCell")
 		{
-			assert(node.IsScalar());
-			bool tf = node.as< bool >();
+			bool tf = it1++->second.as< bool >();
 			this->SetRebalanceByCell(tf);
 			continue;
 		}
 		if (keyword == "SetRebalanceFraction")
 		{
-			assert(node.IsScalar());
-			double f = node.as<double>();
+			double f = it1++->second.as<double>();
 			this->SetRebalanceFraction(f);
 			continue;
 		}
 		if (keyword == "SetRepresentativeVolume")
 		{
-			assert(node.IsSequence());
-			std::vector<double> rv = it->second.as< std::vector<double > >();
+			std::vector<double> rv = it1++->second.as< std::vector<double > >();
 			this->SetRepresentativeVolume(rv);
 			continue;
 		}
 		if (keyword == "SetSaturation")
 		{
-			assert(node.IsSequence());
-			std::vector< double > sat = node.as< std::vector< double> >();
+			std::vector< double > sat = it1++->second.as< std::vector< double> >();
 			this->SetSaturation(sat);
 			continue;
 		}
-		if (keyword == "SetScreenOn") {
-			assert(node.IsScalar());
-			bool tf = node.as< bool >();
+		if (keyword == "SetScreenOn") 
+		{
+			bool tf = it1++->second.as< bool >();
 			this->SetScreenOn(tf);
 			continue;
 		}
 		if (keyword == "SetSelectedOutputOn")
 		{
-			assert(node.IsScalar());
-			bool tf = node.as< bool >();
+			bool tf = it1++->second.as< bool >();
 			this->SetSelectedOutputOn(tf);
 			continue;
 		}
 		if (keyword == "SetSpeciesSaveOn")
 		{
-			assert(node.IsScalar());
-			bool tf = node.as< bool >();
+			bool tf = it1++->second.as< bool >();
 			this->SetSpeciesSaveOn(tf);
 			continue;
 		}
 		if (keyword == "SetTemperature")
 		{
-			assert(node.IsSequence());
-			std::vector<double> temp = node.as<std::vector<double>>();
+			std::vector<double> temp = it1++->second.as<std::vector<double>>();
 			this->SetTemperature(temp);
 			continue;
 		}
 		if (keyword == "SetTime")
 		{
-			assert(node.IsScalar());
-			double time = node.as<double>();
+			double time = it1++->second.as<double>();
 			this->SetTime(time);
 			continue;
 		}
 		if (keyword == "SetTimeConversion")
 		{
-			assert(node.IsScalar());
-			double time_conv = node.as<double>();
+			double time_conv = it1++->second.as<double>();
 			this->SetTimeConversion(time_conv);
 			continue;
 		}
 		if (keyword == "SetTimeStep")
 		{
-			assert(node.IsScalar());
-			double time_step = node.as<double>();
+			double time_step = it1++->second.as<double>();
 			this->SetTimeStep(time_step);
 			continue;
 		}
 		if (keyword == "SetUnitsExchange")
 		{
-			assert(node.IsScalar());
-			int units = node.as<int>();
+			int units = it1++->second.as<int>();
 			this->SetUnitsExchange(units);
 			continue;
 		}
 		if (keyword == "SetUnitsGasPhase")
 		{
-			assert(node.IsScalar());
-			int units = node.as< int >();
+			int units = it1++->second.as< int >();
 			this->SetUnitsGasPhase(units);
 			continue;
 		}
 		if (keyword == "SetUnitsKinetics")
 		{
-			assert(node.IsScalar());
-			int units = node.as< int >();
+			int units = it1++->second.as< int >();
 			this->SetUnitsKinetics(units);
 			continue;
 		}
 		if (keyword == "SetUnitsPPassemblage")
 		{
-			assert(node.IsScalar());
-			int units = node.as< int >();
+			int units = it1++->second.as< int >();
 			this->SetUnitsPPassemblage(units);
 			continue;
 		}
 		if (keyword == "SetUnitsSolution")
 		{
-			assert(node.IsScalar());
-			int units = node.as< int >();
+			int units = it1++->second.as< int >();
 			this->SetUnitsSolution(units);
 			continue;
 		}
 		if (keyword == "SetUnitsSSassemblage")
 		{
-			assert(node.IsScalar());
-			int units = node.as< int >();
+			int units = it1++->second.as< int >();
 			this->SetUnitsSSassemblage(units);
 			continue;
 		}
 		if (keyword == "SetUnitsSurface")
 		{
-			assert(node.IsScalar());
-			int units = node.as< int >();
+			int units = it1++->second.as< int >();
 			this->SetUnitsSurface(units);
 			continue;
 		}
 		if (keyword == "SpeciesConcentrations2Module")
 		{
-			assert(node.IsSequence());
-			std::vector < double > scond = node.as< std::vector < double > >();
+			std::vector < double > scond = it1++->second.as< std::vector < double > >();
 			this->SpeciesConcentrations2Module(scond);
 			continue;
 		}
 		if (keyword == "StateSave")
 		{
-			assert(node.IsScalar());
-			int n = node.as< int >();
+			int n = it1++->second.as< int >();
 			this->StateSave(n);
 			continue;
 		}
 		if (keyword == "StateApply")
 		{
-			assert(node.IsScalar());
-			int n = node.as< int >();
+			int n = it1++->second.as< int >();
 			this->StateApply(n);
 			continue;
 		}
 		if (keyword == "StateDelete")
 		{
-			assert(node.IsScalar());
-			int n = node.as< int >();
+			int n = it1++->second.as< int >();
 			this->StateDelete(n);
 			continue;
 		}
@@ -5809,15 +5761,13 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 		}
 		if (keyword == "UseSolutionDensityVolume")
 		{
-			assert(node.IsScalar());
-			bool tf = node.as< bool >();
+			bool tf = it1++->second.as< bool >();
 			this->UseSolutionDensityVolume(tf);
 			continue;
 		}
 		if (keyword == "WarningMessage")
 		{
-			assert(node.IsScalar());
-			std::string str = node.as< std::string >();
+			std::string str = it1++->second.as< std::string >();
 			this->WarningMessage(str);
 			continue;
 		}

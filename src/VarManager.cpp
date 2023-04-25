@@ -1903,7 +1903,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH -LA('H+')" << std::endl;
 				line_no += 10;
 			}
@@ -1912,7 +1912,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH -LA('e-')" << std::endl;
 				line_no += 10;
 			}
@@ -1921,7 +1921,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH ALK" << std::endl;
 				line_no += 10;
 			}
@@ -1930,7 +1930,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH MU" << std::endl;
 				line_no += 10;
 			}
@@ -1939,7 +1939,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "kg", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH TOT('water')" << std::endl;
 				line_no += 10;
 			}
@@ -1948,7 +1948,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH CHARGE_BALANCE / TOT('water')" << std::endl;
 				line_no += 10;
 			}
@@ -1957,7 +1957,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH PERCENT_ERROR" << std::endl;
 				line_no += 10;
 			}
@@ -1989,7 +1989,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH TOT('" << *item_it << "')\n";
 				line_no += 10;
 			}
@@ -2022,7 +2022,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
 			}
@@ -2055,7 +2055,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "log -", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH LA('" << *item_it << "')\n";
 				line_no += 10;
 			}
@@ -2092,7 +2092,7 @@ void VarManager::BMIGenerateSelectedOutput()
 					BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
-					headings << name << "\n";
+					headings << name << " \\ \n";
 					code << line_no << " PUNCH TOT('" << *jit << "')\n";
 					line_no += 10;
 				}
@@ -2109,7 +2109,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
 			}
@@ -2149,7 +2149,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
 			}
@@ -2183,7 +2183,7 @@ void VarManager::BMIGenerateSelectedOutput()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
-					headings << name << "\n";
+					headings << name << " \\ \n";
 					code << line_no << " PUNCH EQUI('" << *item_it << "')\n";
 					line_no += 10;
 				}
@@ -2192,7 +2192,7 @@ void VarManager::BMIGenerateSelectedOutput()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
-					headings << name << "\n";
+					headings << name << " \\ \n";
 					code << line_no << " PUNCH EQUI_DELTA('" << *item_it << "')\n";
 					line_no += 10;
 				}
@@ -2226,7 +2226,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH SI('" << *item_it << "')\n";
 				line_no += 10;
 			}
@@ -2259,7 +2259,7 @@ void VarManager::BMIGenerateSelectedOutput()
 					BMIVariant bv(name, "L", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
-					headings << name << "\n";
+					headings << name << " \\ \n";
 					code << line_no << " PUNCH SYS('gas') * GAS_VM\n";
 					line_no += 10;
 				}
@@ -2272,7 +2272,7 @@ void VarManager::BMIGenerateSelectedOutput()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
-					headings << name << "\n";
+					headings << name << " \\ \n";
 					code << line_no << " PUNCH GAS('" << *item_it << "')\n";
 					line_no += 10;
 				}
@@ -2281,7 +2281,7 @@ void VarManager::BMIGenerateSelectedOutput()
 					BMIVariant bv(name, "atm", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
-					headings << name << "\n";
+					headings << name << " \\ \n";
 					code << line_no << " PUNCH PR_P('" << *item_it << "')\n";
 					line_no += 10;
 				}
@@ -2290,7 +2290,7 @@ void VarManager::BMIGenerateSelectedOutput()
 					BMIVariant bv(name, "atm-1", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
-					headings << name << "\n";
+					headings << name << " \\ \n";
 					code << line_no << " PUNCH PR_PHI('" << *item_it << "')\n";
 					line_no += 10;
 				}
@@ -2325,7 +2325,7 @@ void VarManager::BMIGenerateSelectedOutput()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
-					headings << name << "\n";
+					headings << name << " \\ \n";
 					code << line_no << " PUNCH KIN('" << *item_it << "')\n";
 					line_no += 10;
 				}
@@ -2334,7 +2334,7 @@ void VarManager::BMIGenerateSelectedOutput()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
-					headings << name << "\n";
+					headings << name << " \\ \n";
 					code << line_no << " PUNCH KIN_DELTA('" << *item_it << "')\n";
 					line_no += 10;
 				}
@@ -2375,7 +2375,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH S_S('" << *item_it << "')\n";
 				line_no += 10;
 			}
@@ -2409,7 +2409,7 @@ void VarManager::BMIGenerateSelectedOutput()
 				BMIVariant bv(name, "unknown", false, true, false, Nbytes, Itemsize);
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
-				headings << name << "\n";
+				headings << name << " \\ \n";
 				code << line_no << " PUNCH CALC_VALUE('" << *item_it << "')\n";
 				line_no += 10;
 			}
@@ -2424,7 +2424,7 @@ void VarManager::BMIGenerateSelectedOutput()
 	}
 	if (headings.str().size() > 0)
 	{
-		int max = -1;
+		int max = 2;
 		for (size_t i = 0; i < rm_ptr->GetSelectedOutputCount(); i++)
 		{
 			int n_user = rm_ptr->GetNthSelectedOutputUserNumber((int)i);
@@ -2433,11 +2433,13 @@ void VarManager::BMIGenerateSelectedOutput()
 		this->BMISelectedOutputUserNumber = max + 1;
 		std::ostringstream data_block;
 		data_block << "SELECTED_OUTPUT " << BMISelectedOutputUserNumber << "; USER_PUNCH "
-			<< BMISelectedOutputUserNumber << "; -headings " << std::endl;
-		data_block << headings.str() << std::endl;
+			<< BMISelectedOutputUserNumber << "; -headings \\" << std::endl;
+		data_block << headings.str() << std::endl << std::endl;
+		data_block << "-start" << std::endl;
 		data_block << code.str() << std::endl;
+		data_block << "-end" << std::endl;
 		rm_ptr->RunString(true, false, false, data_block.str());
-		//std::cerr << data_block.str();
+		std::cerr << data_block.str();
 	}
 	//BMISelecteOutputDefs.clear();
 	return;
