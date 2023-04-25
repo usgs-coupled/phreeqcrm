@@ -3201,7 +3201,7 @@ PhreeqcRM::FindComponents(void)
 #else
 	if (var_man != NULL)
 	{ 
-		var_man->BMIGenerateSelectedOutput();
+		var_man->GenerateAutoOutputVars();
 	}
 #endif
 	return (int) this->components.size();

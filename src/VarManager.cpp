@@ -28,34 +28,6 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::NthSelectedOutput_Var, "NthSelectedOutput");
 	this->VariantMap[RMVARS::NthSelectedOutput] =
 		BMIVariant(&VarManager::NthSelectedOutput_Var, "NthSelectedOutput");
-
-	//this->VariantMap[RMVARS::OutputVarsAddSolutionProperties] =
-	//	BMIVariant(&VarManager::OutputVarsAddSolutionProperties_Var, "OutputVarsAddSolutionProperties");
-	//this->VariantMap[RMVARS::OutputVarsAddSolutionTotalMolalities] =
-	//	BMIVariant(&VarManager::OutputVarsAddSolutionTotalMolalities_var, "OutputVarsAddSolutionTotalMolalities");
-	//this->VariantMap[RMVARS::OutputVarsAddSolutionMolalities] =
-	//	BMIVariant(&VarManager::OutputVarsAddSolutionMolalities_var, "OutputVarsAddSolutionMolalities");
-	//this->VariantMap[RMVARS::OutputVarsAddSolutionActivities] =
-	//	BMIVariant(&VarManager::OutputVarsAddSolutionActivities_var, "OutputVarsAddSolutionActivities");
-	//this->VariantMap[RMVARS::OutputVarsAddExchangeMolalities] =
-	//	BMIVariant(&VarManager::OutputVarsAddExchangeMolalities_var, "OutputVarsAddExchangeMolalities");
-	//this->VariantMap[RMVARS::OutputVarsAddSurfaceMolalities] =
-	//	BMIVariant(&VarManager::OutputVarsAddSurfaceMolalities_var, "OutputVarsAddSurfaceMolalities");
-	//this->VariantMap[RMVARS::OutputVarsAddEquilibriumPhases] =
-	//	BMIVariant(&VarManager::OutputVarsAddEquilibriumPhases_var, "OutputVarsAddEquilibriumPhases");
-	//this->VariantMap[RMVARS::OutputVarsAddSaturationIndices] =
-	//	BMIVariant(&VarManager::OutputVarsAddSaturationIndices_var, "OutputVarsAddSaturationIndices");
-	//this->VariantMap[RMVARS::OutputVarsAddGases] =
-	//	BMIVariant(&VarManager::OutputVarsAddGases_var, "OutputVarsAddGases");
-	//this->VariantMap[RMVARS::OutputVarsAddKineticReactants] =
-	//	BMIVariant(&VarManager::OutputVarsAddKineticReactants_var, "OutputVarsAddKineticReactants");
-	//this->VariantMap[RMVARS::OutputVarsAddSolidSolutions] =
-	//	BMIVariant(&VarManager::OutputVarsAddSolidSolutions_var, "OutputVarsAddSolidSolutions");
-	//this->VariantMap[RMVARS::OutputVarsAddCalculateValues] =
-	//	BMIVariant(&VarManager::OutputVarsAddCalculateValues_var, "OutputVarsAddCalculateValues");
-	//this->VariantMap[RMVARS::OutputVarsAddFinalize] =
-	//	BMIVariant(&VarManager::OutputVarsAddFinalize_var, "OutputVarsAddFinalize");
-
 	this->VariantMap[RMVARS::Porosity] =
 		BMIVariant(&VarManager::Porosity_Var, "Porosity");
 	this->VariantMap[RMVARS::Pressure] =
@@ -118,7 +90,7 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 	OutputVarsEnumMap["calculatevalues"] = OUTPUTVARS::CalculateValues;
 	for (auto it = OutputVarsEnumMap.begin(); it != OutputVarsEnumMap.end(); it++)
 	{
-		if (it->second == OUTPUTVARS::AddOutputVars ||
+		if (/*it->second == OUTPUTVARS::AddOutputVars ||*/
 			it->second == OUTPUTVARS::SolutionMolalities ||
 			it->second == OUTPUTVARS::SolutionActivities ||
 			it->second == OUTPUTVARS::SaturationIndices)
@@ -134,7 +106,6 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 void VarManager::RM2BMIUpdate(RMVARS v_enum)
 {
 	if (this->PointerSet.size() == 0) return;
-	//RMVARS v_enum = this->GetEnum(name);
 	if (this->GetCurrentVar() == v_enum) return;
 	auto it = this->VariantMap.find(v_enum);
 	if (it != VariantMap.end())
@@ -473,11 +444,6 @@ void VarManager::FilePrefix_Var()
 	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		//int Itemsize = (int)rm_ptr->GetFilePrefix().size();
-		//int Nbytes = Itemsize;
-		////name, std::string units, set, get, ptr, Nbytes, Itemsize  
-		//bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
-		//bv.SetTypes("std::string", "character", "");
 		this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
 		bv.GetStringRef() = rm_ptr->GetFilePrefix();
 		break;
@@ -596,9 +562,6 @@ void VarManager::GridCellCount_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
-//
-//void VarManager::InputVarNames_Var() // Implement in BRMPhreeqcRM TODO???
-//
 void VarManager::NthSelectedOutput_Var()
 {
 	RMVARS VARS_myself = RMVARS::NthSelectedOutput;
@@ -641,9 +604,6 @@ void VarManager::NthSelectedOutput_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
-//
-//void VarManager::OutputVarNames_Var() // Implement in BRMPhreeqcRM TODO???
-//
 void VarManager::Saturation_Var()
 {
 	RMVARS VARS_myself = RMVARS::Saturation;
@@ -877,15 +837,6 @@ void VarManager::SelectedOutputHeadings_Var()
 	case VarManager::VAR_TASKS::GetPtr:
 	{
 		assert(false);
-		//std::vector<const char*> CharVector;
-		//std::vector<std::string>& Components = bv.GetStringVectorRef();
-		//for (size_t i = 0; i < Components.size(); i++)
-		//{
-		//	CharVector.push_back(Components[i].c_str());
-		//}
-		//bv.SetCharVector(CharVector);
-		//this->PointerSet.insert(VARS_myself);
-		//this->UpdateSet.insert(VARS_myself);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -1154,456 +1105,6 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
-#ifdef SKIP
-void VarManager::OutputVarsAddSolutionProperties_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddSolutionProperties;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->AutoOutputVarsDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsAddSolutionTotalMolalities_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddSolutionTotalMolalities;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsAddSolutionMolalities_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddSolutionMolalities;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsAddSolutionActivities_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddSolutionActivities;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsAddExchangeMolalities_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddExchangeMolalities;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsAddSurfaceMolalities_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddSurfaceMolalities;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsAddEquilibriumPhases_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddEquilibriumPhases;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsAddSaturationIndices_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddSaturationIndices;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsAddGases_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddGases;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsAddKineticReactants_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddKineticReactants;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsAddSolidSolutions_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddSolidSolutions;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsAddCalculateValues_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsAddCalculateValues;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		int Itemsize = (int)this->VarExchange.GetStringRef().size();
-		int Nbytes = Itemsize;
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
-		bv.SetBasic("definition", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
-		rm_ptr->var_man->BMISelecteOutputDefs[VARS_myself] = this->VarExchange.GetStringRef();
-		bv.GetStringRef() = this->VarExchange.GetStringRef();
-		bv.SetInitialized(true);
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-void VarManager::OutputVarsFinalize_Var()
-{
-	RMVARS VARS_myself = RMVARS::OutputVarsFinalize;
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		assert(false);
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-	{
-		this->BMIGenerateSelectedOutput();
-		break;
-	}
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		bv.SetBasic("definition", true, false, false, 2048, 2048);
-		bv.SetTypes("std::string", "character", "");
-		bv.SetInitialized(true);
-		break;
-	}
-}
-#endif
 void VarManager::Porosity_Var()
 {
 	RMVARS VARS_myself = RMVARS::Porosity;
@@ -1870,10 +1371,10 @@ void VarManager::Viscosity_Var()
 /// end_
 ////////////////////////////////
 
-void VarManager::BMIGenerateSelectedOutput()
+void VarManager::GenerateAutoOutputVars()
 {
 	std::string option = AutoOutputVarsDefs[OUTPUTVARS::AddOutputVars];
-	if(BMICheckSelectedOutputDef(true, option) != 1) return;
+	if(ProcessAutoOutputVarDef(true, option) != 1) return;
 	int line_no = 10;
 	int Itemsize = (int)sizeof(double);
 	int Nbytes = rm_ptr->GetGridCellCount() * Itemsize;
@@ -1889,7 +1390,7 @@ void VarManager::BMIGenerateSelectedOutput()
 		}
 		else if (it->first == OUTPUTVARS::SolutionProperties)
 		{
-			switch (BMICheckSelectedOutputDef(true, it->second))
+			switch (ProcessAutoOutputVarDef(true, it->second))
 			{
 			case -1:
 				rm_ptr->ErrorMessage("Unknown input for OutputVarsAddSolutionProperties", true);
@@ -1961,13 +1462,22 @@ void VarManager::BMIGenerateSelectedOutput()
 				code << line_no << " PUNCH PERCENT_ERROR" << std::endl;
 				line_no += 10;
 			}
+			{
+				std::string name = "solution_specific_conductance";
+				BMIVariant bv(name, "uS cm-1", false, true, false, Nbytes, Itemsize);
+				bv.SetColumn((int)AutoOutputVars.size());
+				AutoOutputVars[name] = bv;
+				headings << name << " \\ \n";
+				code << line_no << " PUNCH SC" << std::endl;
+				line_no += 10;
+			}
 			break;
 			}
 		}
 		else if (it->first == OUTPUTVARS::SolutionTotalMolalities)
 		{
 			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
+			switch (ProcessAutoOutputVarDef(false, it->second))
 			{
 			case 0:
 				continue;
@@ -1997,7 +1507,7 @@ void VarManager::BMIGenerateSelectedOutput()
 		else if (it->first == OUTPUTVARS::SolutionMolalities)
 		{
 			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
+			switch (ProcessAutoOutputVarDef(false, it->second))
 			{
 			case 0:
 				continue;
@@ -2030,7 +1540,7 @@ void VarManager::BMIGenerateSelectedOutput()
 		else if (it->first == OUTPUTVARS::SolutionActivities)
 		{
 			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
+			switch (ProcessAutoOutputVarDef(false, it->second))
 			{
 			case 0:
 				continue;
@@ -2065,23 +1575,24 @@ void VarManager::BMIGenerateSelectedOutput()
 			std::set<std::string> item_set;
 			std::set<std::string> names_set;
 			std::map<std::string, std::string> item_map;
-			switch (BMICheckSelectedOutputDef(false, it->second))
+			for (size_t i = 0; i < rm_ptr->ExchangeSpeciesNamesList.size(); i++)
+			{
+				item_set.insert(rm_ptr->ExchangeSpeciesNamesList[i]);
+				item_map[rm_ptr->ExchangeSpeciesNamesList[i]] = rm_ptr->ExchangeNamesList[i];
+				names_set.insert(rm_ptr->ExchangeNamesList[i]);
+			}
+			switch (ProcessAutoOutputVarDef(false, it->second))
 			{
 			case 0:
 				continue;
 			case 1:
 			{
-				for (size_t i = 0; i < rm_ptr->ExchangeSpeciesNamesList.size(); i++)
-				{
-					item_set.insert(rm_ptr->ExchangeSpeciesNamesList[i]);
-					item_map[rm_ptr->ExchangeSpeciesNamesList[i]] = rm_ptr->ExchangeNamesList[i];
-					names_set.insert(rm_ptr->ExchangeNamesList[i]);
-				}
 				break;
 			}
 			case 2:
 			{
 				item_set = tokenize(it->second);
+				item_map.clear();
 				break;
 			}
 			}
@@ -2118,24 +1629,39 @@ void VarManager::BMIGenerateSelectedOutput()
 		{
 			std::set<std::string> item_set;
 			std::map<std::string, std::string> item_map;
-			switch (BMICheckSelectedOutputDef(false, it->second))
+			std::set<std::string> names_set;
+			for (size_t i = 0; i < rm_ptr->SurfaceNamesList.size(); i++)
+			{
+				item_set.insert(rm_ptr->SurfaceNamesList[i]);
+				item_map[rm_ptr->SurfaceNamesList[i]] = rm_ptr->SurfaceTypesList[i];
+				names_set.insert(rm_ptr->SurfaceTypesList[i]);
+			}
+			switch (ProcessAutoOutputVarDef(false, it->second))
 			{
 			case 0:
 				continue;
 			case 1:
 			{
-				for (size_t i = 0; i < rm_ptr->SurfaceNamesList.size(); i++)
-				{
-					item_set.insert(rm_ptr->SurfaceNamesList[i]);
-					item_map[rm_ptr->SurfaceNamesList[i]] = rm_ptr->SurfaceTypesList[i];
-				}
 				break;
 			}
 			case 2:
 			{
 				item_set = tokenize(it->second);
+				item_map.clear();
 				break;
 			}
+			}
+			{
+				for (auto jit = names_set.begin(); jit != names_set.end(); jit++)
+				{
+					std::string name = "surface_total_molality_" + *jit;
+					BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
+					bv.SetColumn((int)AutoOutputVars.size());
+					AutoOutputVars[name] = bv;
+					headings << name << " \\ \n";
+					code << line_no << " PUNCH TOT('" << *jit << "')\n";
+					line_no += 10;
+				}
 			}
 			auto item_it = item_set.begin();
 			for (; item_it != item_set.end(); item_it++)
@@ -2157,7 +1683,7 @@ void VarManager::BMIGenerateSelectedOutput()
 		else if (it->first == OUTPUTVARS::EquilibriumPhases)
 		{
 			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
+			switch (ProcessAutoOutputVarDef(false, it->second))
 			{
 			case 0:
 				continue;
@@ -2201,7 +1727,7 @@ void VarManager::BMIGenerateSelectedOutput()
 		else if (it->first == OUTPUTVARS::SaturationIndices)
 		{
 			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
+			switch (ProcessAutoOutputVarDef(false, it->second))
 			{
 			case 0:
 				continue;
@@ -2234,7 +1760,7 @@ void VarManager::BMIGenerateSelectedOutput()
 		else if (it->first == OUTPUTVARS::Gases)
 		{
 			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
+			switch (ProcessAutoOutputVarDef(false, it->second))
 			{
 			case 0:
 				continue;
@@ -2299,7 +1825,7 @@ void VarManager::BMIGenerateSelectedOutput()
 		else if (it->first == OUTPUTVARS::KineticReactants)
 		{
 			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
+			switch (ProcessAutoOutputVarDef(false, it->second))
 			{
 			case 0:
 				continue;
@@ -2344,7 +1870,7 @@ void VarManager::BMIGenerateSelectedOutput()
 		{
 			std::set<std::string> item_set;
 			std::map<std::string, std::string> item_map;
-			switch (BMICheckSelectedOutputDef(false, it->second))
+			switch (ProcessAutoOutputVarDef(false, it->second))
 			{
 			case 0:
 				continue;
@@ -2383,7 +1909,7 @@ void VarManager::BMIGenerateSelectedOutput()
 		else if (it->first == OUTPUTVARS::CalculateValues)
 		{
 			std::set<std::string> item_set;
-			switch (BMICheckSelectedOutputDef(false, it->second))
+			switch (ProcessAutoOutputVarDef(false, it->second))
 			{
 			case 0:
 				continue;
@@ -2444,7 +1970,7 @@ void VarManager::BMIGenerateSelectedOutput()
 	//BMISelecteOutputDefs.clear();
 	return;
 }
-int VarManager::BMICheckSelectedOutputDef(bool tf_only, std::string& def)
+int VarManager::ProcessAutoOutputVarDef(bool tf_only, std::string& def)
 {
 	std::string def_lc = def;
 	std::transform(def_lc.begin(), def_lc.end(), def_lc.begin(),

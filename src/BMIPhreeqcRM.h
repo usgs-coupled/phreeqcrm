@@ -1126,6 +1126,60 @@ public:
     // VarFunction GetFn(const std::string name);
     //  std::set<std::string> UpdateMap;
     // std::set<std::string>& GetUpdateMap() { return UpdateMap; }
+
+    /**
+    @a AddOutputVars allows selection of sets of variables that can be retieved
+    by the @ref GetValue method. Sets of variables can be included or excluded with
+    multiple calls to this method. All calls must precede the final call to
+    @ref FindComponents. @ref FindComponents generates SELECTED_OUTPUT 333 and
+    USER_PUNCH 333 data blocks that make the variables accessible.
+
+    @param option A string value, among those listed below, that includes or
+    excludes variables from @ref GetOutputVarNames, @ref GetValue, and other
+    BMI methods.
+    @param def A string value that can be "false", "true", or a list of items to be included as
+    accessible variables. A value of "false", excludes all variables of the given type; a 
+    value of "true" includes all variables of the given type for the current system; a list
+    specifies a subset of items of the given type. 
+
+    Values for the the parameter @a option:
+    @n AddOutputVars: False excludes all variables; True causes the settings for each variable group
+    to determine the variables that will be defined. Default True;
+    @n SolutionProperties: False excludes all solution property variables; True includes variables pH, pe,
+    alkalinity, ionic strength, water mass, charge balance, percent error, and specific conductance.
+    Default True.
+    @n SolutionTotalMolalities: False excludes all total element and element redox state variables;
+    True includes all elements and element redox state variables for the system defined for the 
+    calculation; list restricts variables to the specified elements and redox states.
+    Default True.
+    @n ExchangeMolalities: False excludes all variables related to exchange; True includes all 
+    variables related to exchange; list includes variables for the specified exchange species.
+    Default True.
+    @n SurfaceMolalities: False excludes all variables related to surfaces; True includes all 
+    variables related to surfaces; list includes variables for the specified surface species.
+    Default True.
+    @n EquilibriumPhases: False excludes all variables related to equilibrium phases; True includes all 
+    variables related to equilibrium phases; list includes variables for the specified
+    equilibiurm phases. Default True.
+    @n Gases: False excludes all variables related to gases; True includes all 
+    variables related to gases; list includes variables for the specified gas components. Default True.
+    @n KineticReactants: False excludes all variables related to kinetic reactants; True includes all 
+    variables related to kinetic reactants; list includes variables for the specified kinetic 
+    reactants. Default True.
+    @n SolidSolutions: False excludes all variables related to solid solutions; True includes all 
+    variables related to solid solutions; list includes variables for the specified solid solutions
+    components. Default True.
+    @n CalculateValues: False excludes all calculate values; True includes all 
+    calculate values; list includes the specified calculate values. CALCLUATE_VALUES can be
+    used to calculate geochemical quantities not available in the other sets of variables. 
+    Default True.
+    @n SolutionActivities: False excludes all aqueous species; True includes all 
+    aqueous species; list includes only the specified aqueous species. Default False.
+    @n SolutionMolalities: False excludes all aqueous species; True includes all 
+    aqueous species; list includes only the specified aqueous species. Default False.
+    @n SaturationIndices: False excludes all saturation indices; True includes all 
+    saturation indices; list includes only the specified saturation indices. Default False.
+    */
     void AddOutputVars(std::string option, std::string def) {
         this->var_man->AddOutputVars(option, def);
     };

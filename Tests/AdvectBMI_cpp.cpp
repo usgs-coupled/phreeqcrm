@@ -355,8 +355,8 @@ int AdvectBMI_cpp()
 						for (size_t i = 0; i < nxyz / 2; i++)
 						{
 							xoss << std::setw(10) << std::setprecision(5) << std::fixed <<
-								pH[i] << "  " << pow(10.0, CaX2[i]) << 
-								"  " << pow(10.0, KX[i]) << "  " << pow(10.0, NaX[i]) << "\n";
+								pH[i] << "  " << pow(10.0, CaX2[i]) << "  " << 
+								pow(10.0, KX[i]) << "  " << pow(10.0, NaX[i]) << "\n";
 						}
 						std::cerr << xoss.str();
 					}

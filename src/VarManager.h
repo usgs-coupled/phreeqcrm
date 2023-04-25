@@ -30,9 +30,7 @@ public:
 	// Data
 	PhreeqcRM* rm_ptr;
 	std::map<std::string, BMIVariant> AutoOutputVars;
-	//std::map<RMVARS, std::string> BMISelecteOutputDefs;
 	std::map<OUTPUTVARS, std::string> AutoOutputVarsDefs;
-	static std::set<std::string> tokenize(const std::string& s);
 	std::vector<double> BMISelectedOutput;
 	int BMISelectedOutputUserNumber; 
 	std::map<std::string, OUTPUTVARS> OutputVarsEnumMap;
@@ -59,8 +57,9 @@ public:
 		VarFunction f = this->GetFn(v_enum);
 		((*this).*f)();
 	};
-	void BMIGenerateSelectedOutput();
-	int  BMICheckSelectedOutputDef(bool tf_only, std::string& def);
+	void GenerateAutoOutputVars();
+	int  ProcessAutoOutputVarDef(bool tf_only, std::string& def);
+	static std::set<std::string> tokenize(const std::string& s);
 	//!typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr);
 	//typedef VarManager* (*NewDogFunction)(void);
 	//typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr); // function pointer type
