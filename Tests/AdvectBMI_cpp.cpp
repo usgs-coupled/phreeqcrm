@@ -4,6 +4,7 @@
 #endif
 #include <stdlib.h>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -339,10 +340,30 @@ int AdvectBMI_cpp()
 						}
 					}
 					brm.OutputMessage(oss.str());
+
+					{
+						// Use GetValue to extract exchange composition and pH
+						// YAMLAddOutputVars was called in YAML
+						// to select additional OutputVarNames variables
+						std::vector<double> CaX2, KX, NaX, pH;
+						brm.GetValue("solution_ph", pH);
+						brm.GetValue("exchange_X_species_log_molality_CaX2", CaX2);
+						brm.GetValue("exchange_X_species_log_molality_KX", KX);
+						brm.GetValue("exchange_X_species_log_molality_NaX", NaX);
+						std::ostringstream xoss;
+						xoss << "      pH      CaX2     KX       NaX\n";
+						for (size_t i = 0; i < nxyz / 2; i++)
+						{
+							xoss << std::setw(10) << std::setprecision(5) << std::fixed <<
+								pH[i] << "  " << pow(10.0, CaX2[i]) << 
+								"  " << pow(10.0, KX[i]) << "  " << pow(10.0, NaX[i]) << "\n";
+						}
+						std::cerr << xoss.str();
+					}
 				}
 			}
 		}
-		testing(brm, ptrs); // Tests GetValue
+		//testing(brm, ptrs); // Tests GetValue
 		// --------------------------------------------------------------------------
 		// Additional features and finalize
 		// --------------------------------------------------------------------------

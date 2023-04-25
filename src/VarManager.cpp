@@ -102,7 +102,7 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
 		EnumMap[name_lc] = it->first;
 	}
-	BMISelectedOutputUserNumber = 777;
+	BMISelectedOutputUserNumber = 333;
 	OutputVarsEnumMap["addoutputvars"] = OUTPUTVARS::AddOutputVars;
 	OutputVarsEnumMap["solutionproperties"] = OUTPUTVARS::SolutionProperties;
 	OutputVarsEnumMap["solutiontotalmolalities"] = OUTPUTVARS::SolutionTotalMolalities;
@@ -2424,13 +2424,13 @@ void VarManager::BMIGenerateSelectedOutput()
 	}
 	if (headings.str().size() > 0)
 	{
-		int max = 2;
-		for (size_t i = 0; i < rm_ptr->GetSelectedOutputCount(); i++)
-		{
-			int n_user = rm_ptr->GetNthSelectedOutputUserNumber((int)i);
-			if (n_user > max) max = n_user;
-		}
-		this->BMISelectedOutputUserNumber = max + 1;
+		//int max = 2;
+		//for (size_t i = 0; i < rm_ptr->GetSelectedOutputCount(); i++)
+		//{
+		//	int n_user = rm_ptr->GetNthSelectedOutputUserNumber((int)i);
+		//	if (n_user > max) max = n_user;
+		//}
+		//this->BMISelectedOutputUserNumber = max + 1;
 		std::ostringstream data_block;
 		data_block << "SELECTED_OUTPUT " << BMISelectedOutputUserNumber << "; USER_PUNCH "
 			<< BMISelectedOutputUserNumber << "; -headings \\" << std::endl;
