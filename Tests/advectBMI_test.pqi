@@ -5,9 +5,14 @@ SOLUTION 0  CaCl2
         pe               12.5    O2(g)   -0.68
         Ca               0.6
         Cl               1.2
-SOLUTION 1
-Na 1
-Cl 1
+SOLUTION 1  Initial solution for column
+        units            mmol/kgw
+        temp             25.0
+        pH               7.0     charge
+        pe               12.5    O2(g)   -0.68
+        Na               1.0
+        K                0.2
+        N(5)             1.2
 END
 EXCHANGE 1
 NaX 1
@@ -41,7 +46,8 @@ RUN_CELLS
 -time 3e7
 CALCULATE_VALUES
 SAR
-10 SAR = TOT("Na") / SQRT(0.5*[TOT("Ca") + TOT("Mg")])
+10 if [TOT("Ca") + TOT("Mg")] > 0 THEN SAR = TOT("Na") / SQRT(0.5*[TOT("Ca") + TOT("Mg")]) \
+      ELSE SAR = 1e4
 20 SAVE SAR
 USER_PRINT
 10 PRINT "SAR: ", CALC_VALUE("SAR")

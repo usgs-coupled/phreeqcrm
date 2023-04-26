@@ -825,12 +825,19 @@ void VarManager::SelectedOutputHeadings_Var()
 		{
 			if (headings[i].size() > size) size = headings[i].size();
 		}
+		{
+			for (auto it = this->AutoOutputVars.begin(); it != this->AutoOutputVars.end(); it++)
+			{
+				if (it->second.GetName().size() > size) size = it->second.GetName().size();
+			}
+		}
 		int Itemsize = (int)size;
-		int Nbytes = (int)(size * headings.size());
+
+		int Nbytes = (int)(size * headings.size()) + this->AutoOutputVars.size();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
 		bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
-		bv.SetInitialized(true);
+		bv.SetInitialized(false);
 	}
 	switch (this->task)
 	{
@@ -848,6 +855,12 @@ void VarManager::SelectedOutputHeadings_Var()
 		for (size_t i = 0; i < headings.size(); i++)
 		{
 			if (headings[i].size() > size) size = headings[i].size();
+		}
+		{
+			for (auto it = this->AutoOutputVars.begin(); it != this->AutoOutputVars.end(); it++)
+			{
+				if (it->second.GetName().size() > size) size = it->second.GetName().size();
+			}
 		}
 		bv.SetItemsize(size);
 		break;
@@ -885,7 +898,7 @@ void VarManager::SelectedOutputRowCount_Var()
 		bv.SetBasic("count", false, true, false, Nbytes, Itemsize);
 		bv.SetTypes("int", "integer", "int");
 		bv.SetIVar(rm_ptr->GetSelectedOutputRowCount());
-		bv.SetInitialized(true);
+		bv.SetInitialized(false);
 	}
 	switch (this->task)
 	{
@@ -1630,10 +1643,10 @@ void VarManager::GenerateAutoOutputVars()
 			std::set<std::string> item_set;
 			std::map<std::string, std::string> item_map;
 			std::set<std::string> names_set;
-			for (size_t i = 0; i < rm_ptr->SurfaceNamesList.size(); i++)
+			for (size_t i = 0; i < rm_ptr->SurfaceSpeciesNamesList.size(); i++)
 			{
-				item_set.insert(rm_ptr->SurfaceNamesList[i]);
-				item_map[rm_ptr->SurfaceNamesList[i]] = rm_ptr->SurfaceTypesList[i];
+				item_set.insert(rm_ptr->SurfaceSpeciesNamesList[i]);
+				item_map[rm_ptr->SurfaceSpeciesNamesList[i]] = rm_ptr->SurfaceTypesList[i];
 				names_set.insert(rm_ptr->SurfaceTypesList[i]);
 			}
 			switch (ProcessAutoOutputVarDef(false, it->second))

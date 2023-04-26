@@ -29,6 +29,7 @@ if(PHREEQCRM_FORTRAN_TESTING)
     ../src/RM_interface.F90
     Advect_f90.F90
     AdvectBMI_f90.F90
+    AdvectBMI_f90_test.F90
     Gas_f90.F90
     SimpleAdvect_f90.F90
     Species_f90.F90
@@ -41,6 +42,7 @@ if(PHREEQCRM_FORTRAN_TESTING)
   source_group("Source Files" FILES "../src/RM_interface.F90")
   source_group("Source Files" FILES "Advect_f90.F90")
   source_group("Source Files" FILES "AdvectBMI_f90.F90")
+  source_group("Source Files" FILES "AdvectBMI_f90_test.F90")
   source_group("Source Files" FILES "Gas_f90.F90")
   source_group("Source Files" FILES "SimpleAdvect_f90.F90")
   source_group("Source Files" FILES "Species_f90.F90")

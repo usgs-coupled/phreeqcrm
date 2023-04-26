@@ -135,7 +135,7 @@ int AdvectBMI_cpp_test()
 			// OutputVarNames
 			std::vector<std::string> OutputVarNames = brm.GetOutputVarNames();
 			oss << "GetValues variables and units:\n";
-			for (size_t i = 0; i < InputVarNames.size(); i++)
+			for (size_t i = 0; i < OutputVarNames.size(); i++)
 			{
 				oss << "  " << i << "  " << std::setw(50) << OutputVarNames[i] << "   "
 					<< brm.GetVarUnits(OutputVarNames[i]) << "\n";
@@ -143,7 +143,6 @@ int AdvectBMI_cpp_test()
 			oss << std::endl;
 			brm.OutputMessage(oss.str());
 		}
-		return;
 		// Get number of components
 		int ncomps;
 		brm.GetValue("ComponentCount", ncomps);
@@ -260,11 +259,6 @@ int AdvectBMI_cpp_test()
 				brm.LogMessage(strm.str());
 				brm.ScreenMessage(strm.str());
 			}
-			// Demonstration of state
-			status = brm.StateSave(1);
-			status = brm.StateApply(1);
-			status = brm.StateDelete(1);
-
 			compare_ptrs(ptrs);
 			//Run chemistry
 			brm.Update();
@@ -335,18 +329,20 @@ int AdvectBMI_cpp_test()
 						// Use GetValue to extract exchange composition and pH
 						// YAMLAddOutputVars was called in YAML
 						// to select additional OutputVarNames variables
-						std::vector<double> CaX2, KX, NaX, pH;
+						std::vector<double> CaX2, KX, NaX, pH, SAR;
 						brm.GetValue("solution_ph", pH);
 						brm.GetValue("exchange_X_species_log_molality_CaX2", CaX2);
 						brm.GetValue("exchange_X_species_log_molality_KX", KX);
 						brm.GetValue("exchange_X_species_log_molality_NaX", NaX);
+						brm.GetValue("calculate_value_sar", SAR);
 						std::ostringstream xoss;
-						xoss << "      pH      CaX2     KX       NaX\n";
-						for (size_t i = 0; i < nxyz / 2; i++)
+						xoss << "      pH      CaX2     KX       NaX       SAR\n";
+						for (size_t i = 0; i < nxyz; i++)
 						{
 							xoss << std::setw(10) << std::setprecision(5) << std::fixed <<
 								pH[i] << "  " << pow(10.0, CaX2[i]) << "  " << 
-								pow(10.0, KX[i]) << "  " << pow(10.0, NaX[i]) << "\n";
+								pow(10.0, KX[i]) << "  " << pow(10.0, NaX[i]) << 
+								"  " << SAR[i] << "\n";
 						}
 						std::cerr << xoss.str();
 					}
@@ -741,8 +737,8 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 		double* por_ptr1 = (double*)brm.GetValuePtr("Porosity");
 		assert(por_ptr == por_ptr1);
 		double* my_porosity_alloc;
-		my_porosity_alloc = (double*)malloc(40 * sizeof(double));
-		double my_porosity_dim[40];
+		my_porosity_alloc = (double*)malloc(*ptrs.GridCellCount_ptr * sizeof(double));
+		double my_porosity_dim[20];
 		std::vector<double> my_por;
 		brm.GetValue("Porosity", my_por);
 		brm.GetValue("Porosity", my_porosity_dim);
@@ -754,7 +750,7 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 			assert(my_por[i] == por_ptr[i]);
 			assert(por_ptr[i] == por_ptr[i]);
 		}
-		my_por.resize(40, 0.4);
+		my_por.resize(*ptrs.GridCellCount_ptr, 0.4);
 		brm.SetValue("Porosity", my_por);
 		brm.GetValue("Porosity", my_porosity_dim);
 		brm.GetValue("Porosity", my_porosity_alloc);
@@ -765,7 +761,7 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 			assert(my_por[i] == por_ptr[i]);
 			assert(por_ptr[i] == por_ptr[i]);
 		}
-		my_por.resize(40, 0.5);
+		my_por.resize(*ptrs.GridCellCount_ptr, 0.5);
 		brm.SetPorosity(my_por);
 		brm.GetValue("Porosity", my_porosity_dim);
 		brm.GetValue("Porosity", my_porosity_alloc);
