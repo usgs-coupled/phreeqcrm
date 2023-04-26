@@ -91,6 +91,7 @@ project(TestRM CXX)
 
 # Tests/advect.pqi
 configure_file(advect.pqi advect.pqi COPYONLY)
+configure_file(advectBMI_test.pqi advectBMI_test.pqi COPYONLY)
 
 # Tests/phreeqc.dat
 configure_file(phreeqc.dat phreeqc.dat COPYONLY)
@@ -107,6 +108,7 @@ add_executable(TestRM)
 # TestRM C/CXX source
 target_sources(TestRM PRIVATE
   AdvectBMI_cpp.cpp
+  AdvectBMI_cpp_test.cpp
   Advect_c.c
   Advect_cpp.cpp
   Gas_c.c

@@ -1132,7 +1132,9 @@ public:
     by the @ref GetValue method. Sets of variables can be included or excluded with
     multiple calls to this method. All calls must precede the final call to
     @ref FindComponents. @ref FindComponents generates SELECTED_OUTPUT 333 and
-    USER_PUNCH 333 data blocks that make the variables accessible.
+    USER_PUNCH 333 data blocks that make the variables accessible. Variables will
+    only be accessible if the system includes the given reactant; for example, no
+    gas variables will be created if there are no GAS_PHASEs in the model. 
 
     @param option A string value, among those listed below, that includes or
     excludes variables from @ref GetOutputVarNames, @ref GetValue, and other

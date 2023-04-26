@@ -28,6 +28,7 @@ extern void WriteYAMLFile_f90(void);
 extern int SimpleAdvect_cpp();
 extern int Advect_cpp();
 extern int AdvectBMI_cpp();
+extern int AdvectBMI_cpp_test();
 extern int Species_cpp();
 extern int units_tester();
 extern int Gas_cpp();
@@ -68,6 +69,7 @@ int main(int argc, char* argv[])
 //#ifdef USE_YAML
 	WriteYAMLFile_cpp();
 	AdvectBMI_cpp();
+	AdvectBMI_cpp_test();
 //#endif
 //	if (root) std::cerr << "Done AdvectBMI_cpp.==================================" << std::endl;
 //	SimpleAdvect_c();
