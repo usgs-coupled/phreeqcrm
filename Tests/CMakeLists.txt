@@ -123,6 +123,7 @@ target_sources(TestRM PRIVATE
 if(PHREEQCRM_WITH_YAML_CPP)
   target_sources(TestRM PRIVATE
     WriteYAMLFile_cpp.cpp
+    WriteYAMLFile_cpp_test.cpp
   )
 endif()
 
