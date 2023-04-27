@@ -80,6 +80,7 @@ IRM_DLL_EXPORT IRM_RESULT YAMLSpeciesConcentrations2Module_F(int* id, double* sp
 IRM_DLL_EXPORT IRM_RESULT YAMLStateSave_F(int* id, int* istate);
 IRM_DLL_EXPORT IRM_RESULT YAMLStateApply_F(int* id, int* istate);
 IRM_DLL_EXPORT IRM_RESULT YAMLStateDelete_F(int* id, int* istate);
+IRM_DLL_EXPORT IRM_RESULT YAMLThreadCount_F(int* id, int* nthreads);
 IRM_DLL_EXPORT IRM_RESULT YAMLUseSolutionDensityVolume_F(int* id, int* tf);
 IRM_DLL_EXPORT IRM_RESULT YAMLWarningMessage_F(int* id, const char* warnstr);
 

@@ -716,6 +716,16 @@ IRM_RESULT YAMLStateDelete_F(int* id, int* istate)
 	}
 	return IRM_BADINSTANCE;
 }
+IRM_RESULT YAMLThreadCount_F(int* id, int* nthreads)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		yrm_ptr->YAMLThreadCount(*nthreads);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
 IRM_RESULT YAMLUseSolutionDensityVolume_F(int* id, int* itf)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);

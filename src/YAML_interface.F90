@@ -2835,6 +2835,25 @@ MODULE YAMLPhreeqcRM
     integer, intent(in) :: n
 	YAMLStateDelete = YAMLStateDelete_F(id, n)
     END FUNCTION YAMLStateDelete
+    
+    
+    INTEGER FUNCTION YAMLThreadCount(id, n)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLThreadCount_F(id, n) &
+			BIND(C, NAME='YAMLThreadCount_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id
+        integer(kind=C_INT), intent(in) :: n
+		END FUNCTION YAMLThreadCount_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, intent(in) :: n
+	YAMLThreadCount = YAMLThreadCount_F(id, n)
+    END FUNCTION YAMLThreadCount
+    
 !> Inserts data into the YAML document for the PhreeqcRM method UseSolutionDensityVolume.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.

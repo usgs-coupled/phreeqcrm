@@ -1,50 +1,29 @@
 #ifdef USE_YAML
-    !module mydata
-    !  real(kind=8), dimension(:), pointer :: K_ptr
-    !  integer                                 :: rm_id
-    !end module mydata
-
-    subroutine AdvectBMI_f90()  BIND(C, NAME='AdvectBMI_f90')
+    subroutine AdvectBMI_f90_test()  BIND(C, NAME='AdvectBMI_f90_test')
     USE, intrinsic :: ISO_C_BINDING
     USE BMIPhreeqcRM
-    !USE PhreeqcRM
-    USE IPhreeqc
-    USE mydata
     implicit none
 #ifdef USE_MPI    
     INCLUDE 'mpif.h'
 #endif
     interface
-        subroutine advectionbmi_f90(c, bc_conc, ncomps, nxyz)
+        subroutine advectionbmi_f90_test(c, bc_conc, ncomps, nxyz)
             implicit none
             real(kind=8), dimension(:,:), allocatable, intent(inout) :: c
-            real(kind=8), dimension(:,:), allocatable, intent(in) :: bc_conc
-            integer, intent(in)                                       :: ncomps, nxyz
-        end subroutine advectionbmi_f90
-        integer function bmi_do_something()
-        end function bmi_do_something
-        integer(kind=C_INT) function bmi_worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
-            USE ISO_C_BINDING
-            implicit none
-            integer(kind=c_int), intent(in) :: method_number
-        end function bmi_worker_tasks_f
-        SUBROUTINE register_basic_callback_fortran()
-            implicit none
-        END SUBROUTINE register_basic_callback_fortran
+            real(kind=8), dimension(:,:), allocatable, intent(in)    :: bc_conc
+            integer, intent(in)                                      :: ncomps, nxyz
+        end subroutine advectionbmi_f90_test
         subroutine BMI_testing(id)
             implicit none
             integer, intent(in) :: id
         end subroutine BMI_testing
-
     end interface
-
     ! Based on PHREEQC Example 11
     real(kind=8), pointer :: d1_ptr(:)
     character(100) :: yaml_file
     integer :: mpi_myself
     integer :: i, j
     logical :: tf
-    integer :: nxyz
     integer :: nthreads
     integer :: status
     integer :: bytes, nbytes
@@ -57,7 +36,6 @@
     character(len=:), allocatable                   :: alloc_string
     character(100)                                  :: string
     character(200)                                  :: string1
-    integer                                         :: ncomps, ncomps1
     character(len=:), dimension(:), allocatable     :: components
     real(kind=8), dimension(:), allocatable         :: gfw
     integer                                         :: nbound
@@ -85,13 +63,15 @@
     integer                                         :: iphreeqc_id, iphreeqc_id1
     integer                                         :: dump_on, append
     integer                                         :: dim
-    common /i_ptrs/ id, ComponentCount_ptr, GridCellCount_ptr, SelectedOutputOn_ptr
+    character(len=:), dimension(:), allocatable     :: outputvars 
+	real(kind=8), dimension(:), allocatable         :: CaX2, KX, NaX, pH_vector, SAR
+    common /i_ptrs/ id, ncomps, nxyz, SelectedOutputOn_ptr
     common /r_ptrs/ Concentrations_ptr, Density_ptr, Gfw_ptr, &
 	    Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
         Porosity_ptr, Pressure_ptr, Temperature_ptr
     integer :: id
-	integer, pointer :: ComponentCount_ptr
-	integer, pointer :: GridCellCount_ptr
+	integer, pointer :: ncomps
+	integer, pointer :: nxyz
 	logical, pointer :: SelectedOutputOn_ptr
 	real(kind=8), pointer :: Concentrations_ptr(:)
 	real(kind=8), pointer :: Density_ptr(:)
@@ -113,7 +93,7 @@
     ! --------------------------------------------------------------------------
     ! Create PhreeqcRM
     ! --------------------------------------------------------------------------
-    yaml_file = "AdvectBMI_f90.yaml"
+    yaml_file = "AdvectBMI_f90_test.yaml"
     ! RM_GetGridCellCountYAML must be called BEFORE
     ! the PhreeqcRM instance is created. The
     ! return value can be used to create the
@@ -126,16 +106,9 @@
     ! value is zero.
     nxyz = GetGridCellCountYAML(yaml_file)
 
-    ! Bogus conductivity field for Basic callback demonstration
-    allocate(hydraulic_K(nxyz))
-    do i = 1, nxyz
-        hydraulic_K(i) = i * 2.0
-    enddo
-    K_ptr => hydraulic_K
 #ifdef USE_MPI
     ! MPI
     id = bmif_create(nxyz, MPI_COMM_WORLD)
-    rm_id = id
     call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
     if (status .ne. MPI_SUCCESS) then
         stop "Failed to get mpi_myself"
@@ -150,22 +123,19 @@
     ! OpenMP
     nthreads = 3
     id = BMIF_Create(nxyz, nthreads)
-    rm_id = id
 #endif
-    ! Open files
-    !status = bmif_set_value(id, "FilePrefix", "AdvectBMI_f90")
-    !status = RM_OpenFiles(id)
     ! Initialize with YAML file
     status = bmif_initialize(id, yaml_file)
+    ! OutputVarNames
+    status = bmif_get_output_var_names(id, outputvars)
+    write(*,*) "Output variables (getters)"
+    do i = 1, size(outputvars)
+        status = bmif_get_var_units(id, outputvars(i), string)
+        write(*,"(1x, I4, A60, 2x, A15)") i, trim(outputvars(i)), string
+    enddo
 
-    ! Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
-    CALL register_basic_callback_fortran()
-#ifdef USE_MPI
-    ! Optional callback for MPI
-    status = bmi_do_something()   ! only root is calling bmi_do_something here
-#endif
-	status = bmif_get_value_ptr(id, "ComponentCount", ComponentCount_ptr)
-	status = bmif_get_value_ptr(id, "GridCellCount", GridCellCount_ptr)
+	status = bmif_get_value_ptr(id, "ComponentCount", ncomps)
+	status = bmif_get_value_ptr(id, "GridCellCount", nxyz)
 	status = bmif_get_value_ptr(id, "SelectedOutputOn", SelectedOutputOn_ptr)
 	status = bmif_get_value_ptr(id, "Concentrations", Concentrations_ptr)
 	status = bmif_get_value_ptr(id, "Density", Density_ptr)
@@ -176,28 +146,13 @@
 	status = bmif_get_value_ptr(id, "TimeStep", TimeStep_ptr)
 	status = bmif_get_value_ptr(id, "Porosity", Porosity_ptr)
 	status = bmif_get_value_ptr(id, "Pressure", Pressure_ptr)
-	status = bmif_get_value_ptr(id, "Temperature", Temperature_ptr)
-    !
-    status = bmif_get_value(id, "ComponentCount", ncomps)
-    ! Print some of the reaction module information
-    write(string1, "(A,I10)") "Number of threads:                                ", RM_GetThreadCount(id)
-    status = RM_OutputMessage(id, string1)
-    write(string1, "(A,I10)") "Number of MPI processes:                          ", RM_GetMpiTasks(id)
-    status = RM_OutputMessage(id, string1)
-    write(string1, "(A,I10)") "MPI task number:                                  ", RM_GetMpiMyself(id)
-    status = RM_OutputMessage(id, string1)
-    status = bmif_get_var_nbytes(id, "FilePrefix", n)
-    if (len(prefix) < n) then
-        if(allocated(prefix)) deallocate(prefix)
-        allocate(character(len=n) :: prefix)
-    endif
+	status = bmif_get_var_nbytes(id, "FilePrefix", n)
+    allocate(character(len=n) :: prefix)
     status = bmif_get_value(id, "FilePrefix", prefix)
     write(string1, "(A,A)") "File prefix:                                        ", prefix
     status = RM_OutputMessage(id, trim(string1))
     write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", nxyz
     status = RM_OutputMessage(id, trim(string1))
-    !write(string1, "(A,I10)") "Number of chemistry cells in the reaction module: ", nchem
-    !status = RM_OutputMessage(id, trim(string1))
     write(string1, "(A,I10)") "Number of components for transport:               ", ncomps
     status = RM_OutputMessage(id, trim(string1))
     ! Get component information
@@ -261,7 +216,7 @@
         status = RM_LogMessage(id, string)
         status = RM_ScreenMessage(id, string)    
         ! Transport calculation here, changes c
-        call advectionbmi_f90(c, bc_conc, ncomps, nxyz)
+        call advectionbmi_f90_test(c, bc_conc, ncomps, nxyz)
     
         ! print at last time step
         if (isteps == nsteps) then     
@@ -344,36 +299,24 @@
                     enddo
                 enddo
                 deallocate(selected_out)
-            enddo           
+            enddo     
+            			! Use GetValue to extract exchange composition and pH
+			! YAMLAddOutputVars was called in YAML
+			! to select additional OutputVarNames variables
+			status = bmif_get_value(id, "solution_ph", pH_vector)
+			status = bmif_get_value(id, "exchange_X_species_log_molality_CaX2", CaX2)
+			status = bmif_get_value(id, "exchange_X_species_log_molality_KX", KX)
+			status = bmif_get_value(id, "exchange_X_species_log_molality_NaX", NaX)
+			status = bmif_get_value(id, "calculate_value_sar", SAR)
+            write(string1, "(A)") "      pH      CaX2     KX       NaX       SAR"
+            status = RM_OutputMessage(id, string1)
+			do i = 1, nxyz
+                write(string1,"(5f10.5)") pH_vector(i), 10.0d0**CaX2(i), \
+					10.0d0**KX(i), 10.0d0**NaX(i), SAR(i)
+            enddo
         endif
     enddo 
     call BMI_testing(id)
-    ! --------------------------------------------------------------------------
-    ! Additional features and finalize
-    ! --------------------------------------------------------------------------
-    ! Use utility instance of PhreeqcRM to calculate pH of a mixture
-    allocate (c_well(1,ncomps))
-    do i = 1, ncomps
-        c_well(1,i) = 0.5 * c(1,i) + 0.5 * c(10,i)
-    enddo
-    allocate(tc(1), p_atm(1))
-    tc(1) = 15.0
-    p_atm(1) = 3.0
-    iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm)
-    string = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1"
-    ! Alternatively, utility pointer is worker number nthreads + 1
-    iphreeqc_id1 = RM_GetIPhreeqcId(id, RM_GetThreadCount(id) + 1)
-    status = SetOutputFileName(iphreeqc_id, "Advect_f90_utility.txt")
-    status = SetOutputFileOn(iphreeqc_id, .true.)
-    status = RunString(iphreeqc_id, string)
-    if (status .ne. 0) status = RM_Abort(id, status, "IPhreeqc RunString failed")
-    status = SetCurrentSelectedOutputUserNumber(iphreeqc_id, 5)
-    status = GetSelectedOutputValue(iphreeqc_id, 1, 1, vtype, pH, svalue)
-    ! Dump results
-    status = RM_SetDumpFileName(id, "AdvectBMI_f90.dmp")
-    dump_on = 1
-    append = 0
-    status = RM_DumpModule(id, dump_on, append)
     ! Clean up
     status = RM_CloseFiles(id)
     status = RM_MpiWorkerBreak(id)
@@ -390,15 +333,12 @@
     deallocate(c)
     deallocate(density)
     deallocate(temperature)
-    deallocate(c_well)
     deallocate(pressure)
-    deallocate(tc)
-    deallocate(p_atm)
     
     return
-    end subroutine AdvectBMI_f90
+    end subroutine AdvectBMI_f90_test
 
-    SUBROUTINE advectionbmi_f90(c, bc_conc, ncomps, nxyz)
+    SUBROUTINE advectionbmi_f90_test(c, bc_conc, ncomps, nxyz)
     implicit none
     real(kind=8), dimension(:,:), allocatable, intent(inout) :: c
     real(kind=8), dimension(:,:), allocatable, intent(in)    :: bc_conc
@@ -414,7 +354,7 @@
     do j = 1, ncomps
         c(1,j) = bc_conc(1,j)
     enddo
-    END SUBROUTINE advectionbmi_f90
+    END SUBROUTINE advectionbmi_f90_test
 
 #ifdef USE_MPI
     integer(kind=C_INT) function bmi_worker_tasks_f(method_number) BIND(C, NAME='bmi_worker_tasks_f')
@@ -836,13 +776,13 @@ implicit none
         logical, intent(in) :: tf
         end function assert
     end interface
-    common /i_ptrs/ id, ComponentCount_ptr, GridCellCount_ptr, SelectedOutputOn_ptr
+    common /i_ptrs/ id, ncomps, nxyz, SelectedOutputOn_ptr
     common /r_ptrs/ Concentrations_ptr, Density_ptr, Gfw_ptr, &
 	Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
     Porosity_ptr, Pressure_ptr, Temperature_ptr
     integer :: id
-	integer, pointer :: ComponentCount_ptr
-	integer, pointer :: GridCellCount_ptr
+	integer, pointer :: ncomps
+	integer, pointer :: nxyz
 	logical, pointer :: SelectedOutputOn_ptr
 	real(kind=8), pointer :: Concentrations_ptr(:)
 	real(kind=8), pointer :: Density_ptr(:)
@@ -863,21 +803,21 @@ implicit none
     logical :: selectedoutputon, test_logical
     ! ComponentCount
     status = bmif_get_value(id, "ComponentCount", componentcount)
-    status = assert(ComponentCount_ptr .eq. componentcount)
+    status = assert(ncomps .eq. componentcount)
     componentcount = RM_GetComponentCount(id)
-    status = assert(ComponentCount_ptr .eq. componentcount)
+    status = assert(ncomps .eq. componentcount)
     ! Gfw
     status = bmif_get_value(id, "Gfw", gfw)
-	do i = 1, ComponentCount_ptr
+	do i = 1, ncomps
 		status = assert(Gfw_ptr(i) .eq. gfw(i))
     enddo
     status = RM_GetGfw(id, gfw)
-	do i = 1, ComponentCount_ptr
+	do i = 1, ncomps
 		status = assert(Gfw_ptr(i) .eq. gfw(i))
     enddo
     ! GridCellCount
     status = bmif_get_value(id, "GridCellCount", gridcellcount)
-	status = assert(GridCellCount_ptr .eq. gridcellcount)
+	status = assert(nxyz .eq. gridcellcount)
     ! Density, Saturation, SolutionVolume, Porosity, Pressure, Temperature
 	status = bmif_get_value(id, "Density", density)
 	status = bmif_get_value(id, "saturation", saturation)
@@ -886,7 +826,7 @@ implicit none
 	status = bmif_get_value(id, "Pressure", Pressure)
 	status = bmif_get_value(id, "Temperature", Temperature)
 
-	do i = 1, GridCellCount_ptr
+	do i = 1, nxyz
 		status = assert(Density_ptr(i) .eq. density(i))
 		status = assert(Saturation_ptr(i) .eq. saturation(i))
 		status = assert(SolutionVolume_ptr(i) .eq. SolutionVolume(i))
@@ -900,7 +840,7 @@ implicit none
 	status = RM_GetPorosity(id, Porosity)
 	status = RM_GetPressure(id, Pressure)
 	status = RM_GetTemperature(id, Temperature)
-	do i = 1, GridCellCount_ptr
+	do i = 1, nxyz
 		status = assert(Density_ptr(i) .eq. density(i))
 		status = assert(Saturation_ptr(i) .eq. saturation(i))
 		status = assert(SolutionVolume_ptr(i) .eq. SolutionVolume(i))
@@ -910,7 +850,7 @@ implicit none
     enddo   
     ! Concentrations
 	status = bmif_get_value(id, "Concentrations", Concentrations)
-	dim = ComponentCount_ptr * GridCellCount_ptr
+	dim = ncomps * nxyz
 	do i = 1, dim
 		status = assert(Concentrations_ptr(i) .eq. Concentrations(i))
     enddo

@@ -833,7 +833,7 @@ void VarManager::SelectedOutputHeadings_Var()
 		}
 		int Itemsize = (int)size;
 
-		int Nbytes = (int)(size * headings.size()) + this->AutoOutputVars.size();
+		int Nbytes = (int)(size * headings.size());// +this->AutoOutputVars.size();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
 		bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
@@ -1415,6 +1415,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_ph";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1424,6 +1425,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_pe";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1433,6 +1435,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_alkalinity";
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1442,6 +1445,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_ionic_strength";
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1451,6 +1455,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_water_mass";
 				BMIVariant bv(name, "kg", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1460,6 +1465,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_charge_balance";
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1469,6 +1475,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_percent_error";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1478,6 +1485,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_specific_conductance";
 				BMIVariant bv(name, "uS cm-1", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1510,6 +1518,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_total_molality_" + *item_it;
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1543,6 +1552,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_species_log_molality_" + *item_it;
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1576,6 +1586,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_species_log_activity_" + *item_it;
 				BMIVariant bv(name, "log -", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1614,6 +1625,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "exchange_total_molality_" + *jit;
 					BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
+					bv.SetTypes("double", "real(kind=8)", "");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1631,6 +1643,7 @@ void VarManager::GenerateAutoOutputVars()
 					name = "exchange_" + xname + "_species_log_molality_" + *item_it;
 				}
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1669,6 +1682,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "surface_total_molality_" + *jit;
 					BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
+					bv.SetTypes("double", "real(kind=8)", "");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1686,6 +1700,7 @@ void VarManager::GenerateAutoOutputVars()
 					name = "surface_" + type + "_species_log_molality_" + *item_it;
 				}
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1720,6 +1735,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "equilibrium_phases_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
+					bv.SetTypes("double", "real(kind=8)", "");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1729,6 +1745,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "equilibrium_phases_delta_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
+					bv.SetTypes("double", "real(kind=8)", "");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1763,6 +1780,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "aqueous_saturation_index_" + *item_it;
 				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1796,6 +1814,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "gas_phase_volume";
 					BMIVariant bv(name, "L", false, true, false, Nbytes, Itemsize);
+					bv.SetTypes("double", "real(kind=8)", "");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1809,6 +1828,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "gas_phase_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
+					bv.SetTypes("double", "real(kind=8)", "");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1818,6 +1838,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "gas_phase_pressure_" + *item_it;
 					BMIVariant bv(name, "atm", false, true, false, Nbytes, Itemsize);
+					bv.SetTypes("double", "real(kind=8)", "");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1827,6 +1848,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "gas_phase_phi_" + *item_it;
 					BMIVariant bv(name, "atm-1", false, true, false, Nbytes, Itemsize);
+					bv.SetTypes("double", "real(kind=8)", "");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1862,6 +1884,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "kinetic_reaction_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
+					bv.SetTypes("double", "real(kind=8)", "");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1871,6 +1894,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "kinetic_reaction_delta_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
+					bv.SetTypes("double", "real(kind=8)", "");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1912,6 +1936,7 @@ void VarManager::GenerateAutoOutputVars()
 					name = "solid_solution_" + xname + "_moles_" + *item_it;
 				}
 				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1946,6 +1971,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "calculate_value_" + *item_it;
 				BMIVariant bv(name, "unknown", false, true, false, Nbytes, Itemsize);
+				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";

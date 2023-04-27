@@ -67,8 +67,10 @@ if(PHREEQCRM_FORTRAN_TESTING)
   if(PHREEQCRM_WITH_YAML_CPP)
     target_sources(FortranAdvect PRIVATE
       WriteYAMLFile_f90.F90
+      WriteYAMLFile_f90_test.F90
     )
     source_group("Source Files" FILES "WriteYAMLFile_f90.F90")
+    source_group("Source Files" FILES "WriteYAMLFile_f90_test.F90")
 
     if(_PHREEQCRM_TEST_INSTALL)
       target_sources(FortranAdvect PRIVATE
