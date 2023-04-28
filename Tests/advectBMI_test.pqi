@@ -1,3 +1,6 @@
+KNOBS
+-step 10
+-pe   2
 SOLUTION 0  CaCl2
         units            mmol/kgw
         temp             25.0

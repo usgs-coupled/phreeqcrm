@@ -28,6 +28,7 @@ class IRM_DLL_EXPORT BMIPhreeqcRM : public bmi::Bmi, public PhreeqcRM
 {
 public:
     static void             CleanupBMIModuleInstances(void);
+    static int              CreateBMIModule();
     static int              CreateBMIModule(int nxyz, MP_TYPE nthreads);
     static IRM_RESULT       DestroyBMIModule(int n);
     static BMIPhreeqcRM*    GetInstance(int n);

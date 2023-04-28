@@ -2836,7 +2836,24 @@ MODULE YAMLPhreeqcRM
 	YAMLStateDelete = YAMLStateDelete_F(id, n)
     END FUNCTION YAMLStateDelete
     
-    
+!> Inserts data into the YAML document to define the number of threads to use
+!> with PhreeqcRM calculations..
+!> Once the YAML document is written, the number threads to use can be extracted
+!> when bmif_initialize is called. The data for ThreadCount will be ignored 
+!> if the PhreeqcRM instance has already been initialized.
+!> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param n           Number of threads to use for multiprocessing in PhreeqcRM instance. 
+!> A value of zero will cause PhreeqcRM to use the number of logical processors available
+!> on the computer.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = YAMLThreadCount(0)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
     INTEGER FUNCTION YAMLThreadCount(id, n)
     USE ISO_C_BINDING
     IMPLICIT NONE

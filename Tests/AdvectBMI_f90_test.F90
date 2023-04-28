@@ -65,13 +65,14 @@
     integer                                         :: dim
     character(len=:), dimension(:), allocatable     :: outputvars 
 	real(kind=8), dimension(:), allocatable         :: CaX2, KX, NaX, pH_vector, SAR
-    common /i_ptrs/ id, ncomps, nxyz, SelectedOutputOn_ptr
+    common /i_ptrs/ id, ComponentCount_ptr, GridCellCount_ptr, SelectedOutputOn_ptr
     common /r_ptrs/ Concentrations_ptr, Density_ptr, Gfw_ptr, &
 	    Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
         Porosity_ptr, Pressure_ptr, Temperature_ptr
     integer :: id
-	integer, pointer :: ncomps
-	integer, pointer :: nxyz
+	integer, pointer :: ComponentCount_ptr
+	integer, pointer :: GridCellCount_ptr
+    integer :: nxyz, ncomps
 	logical, pointer :: SelectedOutputOn_ptr
 	real(kind=8), pointer :: Concentrations_ptr(:)
 	real(kind=8), pointer :: Density_ptr(:)
@@ -104,7 +105,7 @@
     ! using the YAMLPhreeqcRM class and the method
     ! YAMLSetGridCellCount), the return
     ! value is zero.
-    nxyz = GetGridCellCountYAML(yaml_file)
+    !nxyz = GetGridCellCountYAML(yaml_file)
 
 #ifdef USE_MPI
     ! MPI
@@ -121,11 +122,14 @@
     endif
 #else
     ! OpenMP
-    nthreads = 3
-    id = BMIF_Create(nxyz, nthreads)
+    !nthreads = 3
+    !id = BMIF_Create(nxyz, nthreads)
+    id = bmif_create()
 #endif
     ! Initialize with YAML file
     status = bmif_initialize(id, yaml_file)
+    status = bmif_get_value(id, "GridCellCount", nxyz)
+    status = bmif_get_value(id, "ComponentCount", ncomps)
     ! OutputVarNames
     status = bmif_get_output_var_names(id, outputvars)
     write(*,*) "Output variables (getters)"
@@ -134,8 +138,8 @@
         write(*,"(1x, I4, A60, 2x, A15)") i, trim(outputvars(i)), string
     enddo
 
-	status = bmif_get_value_ptr(id, "ComponentCount", ncomps)
-	status = bmif_get_value_ptr(id, "GridCellCount", nxyz)
+	status = bmif_get_value_ptr(id, "ComponentCount", ComponentCount_ptr)
+	status = bmif_get_value_ptr(id, "GridCellCount", GridCellCount_ptr)
 	status = bmif_get_value_ptr(id, "SelectedOutputOn", SelectedOutputOn_ptr)
 	status = bmif_get_value_ptr(id, "Concentrations", Concentrations_ptr)
 	status = bmif_get_value_ptr(id, "Density", Density_ptr)
@@ -146,14 +150,15 @@
 	status = bmif_get_value_ptr(id, "TimeStep", TimeStep_ptr)
 	status = bmif_get_value_ptr(id, "Porosity", Porosity_ptr)
 	status = bmif_get_value_ptr(id, "Pressure", Pressure_ptr)
+	status = bmif_get_value_ptr(id, "Temperature", Temperature_ptr)
 	status = bmif_get_var_nbytes(id, "FilePrefix", n)
     allocate(character(len=n) :: prefix)
     status = bmif_get_value(id, "FilePrefix", prefix)
     write(string1, "(A,A)") "File prefix:                                        ", prefix
     status = RM_OutputMessage(id, trim(string1))
-    write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", nxyz
+    write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", GridCellCount_ptr
     status = RM_OutputMessage(id, trim(string1))
-    write(string1, "(A,I10)") "Number of components for transport:               ", ncomps
+    write(string1, "(A,I10)") "Number of components for transport:               ", ComponentCount_ptr
     status = RM_OutputMessage(id, trim(string1))
     ! Get component information
     status = bmif_get_value(id, "Components", components)
@@ -698,6 +703,7 @@ USE, intrinsic :: ISO_C_BINDING
     status = bmif_get_value(id, "SelectedOutputCount", so_count);
 	rm_so_count = RM_GetSelectedOutputCount(id);
     status = assert(so_count .eq. rm_so_count)
+ 
     do isel = 1, so_count ! one based
         i = isel
 		status = bmif_set_value(id, "NthSelectedOutput", i)

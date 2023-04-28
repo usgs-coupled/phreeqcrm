@@ -28,6 +28,10 @@
     integer, parameter :: BMI_FAILURE = 1
     integer, parameter :: BMI_SUCCESS = 0
     
+    INTERFACE bmif_create
+		module procedure bmif_create_default 
+		module procedure bmif_create  
+    END INTERFACE bmif_create
       
     !> @a bmif_get_value retrieves model variables. 
     !>
@@ -46,11 +50,11 @@
         module procedure bmif_get_value_int2
     END INTERFACE bmif_get_value
     !> @a get_value_at_indices is not implemented. 
-	INTERFACE get_value_at_indices
-		module procedure get_value_at_indices_double ! not implemented
-		module procedure get_value_at_indices_float  ! not implemented
-		module procedure get_value_at_indices_int    ! not implemented
-    END INTERFACE get_value_at_indices
+	!INTERFACE get_value_at_indices
+	!	module procedure get_value_at_indices_double ! not implemented
+	!	module procedure get_value_at_indices_float  ! not implemented
+	!	module procedure get_value_at_indices_int    ! not implemented
+    !   END INTERFACE get_value_at_indices
     !> @a bmif_set_value sets model variables. 
     !>
     !> Only variables in the list
@@ -90,7 +94,20 @@
 	! ====================================================
 	! Initialize, run, finalize (IRF) 
     ! ====================================================
-	
+    INTEGER FUNCTION bmif_create_default()
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION RM_BMI_Create_default() &
+        BIND(C, NAME='RM_BMI_Create_default')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    END FUNCTION RM_BMI_Create_default
+    END INTERFACE
+    bmif_create_default = RM_BMI_Create_default()
+    return
+    END FUNCTION bmif_create_default 
+    
     !> @a bmif_create creates a reaction module. If the code is compiled with
     !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
     !> If the code is compiled with the preprocessor directive USE_MPI, the reaction

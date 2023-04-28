@@ -40,6 +40,31 @@ BMIPhreeqcRM::CleanupBMIModuleInstances(void)
 }
 /* ---------------------------------------------------------------------- */
 int
+BMIPhreeqcRM::CreateBMIModule()
+/* ---------------------------------------------------------------------- */
+{
+	//_CrtSetDbgbool ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	//_crtBreakAlloc = 5144;
+	int n = IRM_OUTOFMEMORY;
+	try
+	{
+		BMIPhreeqcRM* bmirm_ptr = new BMIPhreeqcRM();
+		if (bmirm_ptr)
+		{
+			n = (int)bmirm_ptr->Index;
+			BMIPhreeqcRM::Instances[n] = bmirm_ptr;
+			bmirm_ptr->language = "F90";
+			return n;
+		}
+	}
+	catch (...)
+	{
+		return IRM_OUTOFMEMORY;
+	}
+	return IRM_OUTOFMEMORY;
+}
+/* ---------------------------------------------------------------------- */
+int
 BMIPhreeqcRM::CreateBMIModule(int nxyz, MP_TYPE nthreads)
 /* ---------------------------------------------------------------------- */
 {

@@ -23,6 +23,7 @@
     nxyz = 40;
 	! Set GridCellCount
 	status = YAMLSetGridCellCount(id, nxyz)
+    status = YAMLThreadCount(id, 4)
 	! Set some properties
 	status = YAMLSetErrorHandlerMode(id, 1)
 	status = YAMLSetComponentH2O(id, .false.)
