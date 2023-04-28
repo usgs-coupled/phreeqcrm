@@ -27,7 +27,17 @@
 
     integer, parameter :: BMI_FAILURE = 1
     integer, parameter :: BMI_SUCCESS = 0
-    
+    !> @a bmif_create creates a BMIPhreeqcRM instance. 
+    !>
+    !> Two constructors are available to create a BMIPhreeqcRM
+	!> instance. The default method, with no arguments, can be
+	!> used if the instance is to be initialized with a YAML file.
+	!> The YAML file must provide the number of cells in the user's 
+	!> model through the YAMLSetGridCellCount method, and, optionally,
+	!> the number of threads with YAMLThreadCount. The other
+	!> constructor requires the number of cells in the user model
+	!> as the first argument, and the number of threads as the
+	!> second argument.  
     INTERFACE bmif_create
 		module procedure bmif_create_default 
 		module procedure bmif_create  
@@ -94,6 +104,12 @@
 	! ====================================================
 	! Initialize, run, finalize (IRF) 
     ! ====================================================
+	!> @a bmif_create creates a BMIPhreeqcRM instance. 
+    !> The default method, with no arguments, can be
+	!> used if the instance is to be initialized with a YAML file.
+	!> The YAML file must provide the number of cells in the user's 
+	!> model through the YAMLSetGridCellCount method, and, optionally,
+	!> the number of threads with YAMLThreadCount. 
     INTEGER FUNCTION bmif_create_default()
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2144,6 +2160,86 @@
 	endif
     END FUNCTION bmif_grid_type
     
+!> @a bmif_add_output_vars allows selection of sets of variables that can be retieved
+!> by the @ref bmif_get_value method. Sets of variables can be included or excluded with
+!> multiple calls to this method. All calls must precede the final call to
+!> the PhreeqcRM method FindComponents. FindComponents generates SELECTED_OUTPUT 333 and
+!> USER_PUNCH 333 data blocks that make the variables accessible. Variables will
+!> only be accessible if the system includes the given reactant; for example, no
+!> gas variables will be created if there are no GAS_PHASEs in the model. 
+!>
+!> @param id    The instance id returned from @ref bmif_create.
+!> @param option A string value, among those listed below, that includes or
+!> excludes variables from @ref GetOutputVarNames, @ref GetValue, and other
+!> BMI methods.
+!> @param def A string value that can be "false", "true", or a list of items to be included as
+!> accessible variables. A value of "false", excludes all variables of the given type; a 
+!> value of "true" includes all variables of the given type for the current system; a list
+!> specifies a subset of items of the given type. 
+!>
+!> Values for the the parameter @a option:
+!> @n AddOutputVars: False excludes all variables; True causes the settings for each variable group
+!> to determine the variables that will be defined. Default True;
+!> @n SolutionProperties: False excludes all solution property variables; True includes variables pH, pe,
+!> alkalinity, ionic strength, water mass, charge balance, percent error, and specific conductance.
+!> Default True.
+!> @n SolutionTotalMolalities: False excludes all total element and element redox state variables;
+!> True includes all elements and element redox state variables for the system defined for the 
+!> calculation; list restricts variables to the specified elements and redox states.
+!> Default True.
+!> @n ExchangeMolalities: False excludes all variables related to exchange; True includes all 
+!> variables related to exchange; list includes variables for the specified exchange species.
+!> Default True.
+!> @n SurfaceMolalities: False excludes all variables related to surfaces; True includes all 
+!> variables related to surfaces; list includes variables for the specified surface species.
+!> Default True.
+!> @n EquilibriumPhases: False excludes all variables related to equilibrium phases; True includes all 
+!> variables related to equilibrium phases; list includes variables for the specified
+!> equilibiurm phases. Default True.
+!> @n Gases: False excludes all variables related to gases; True includes all 
+!> variables related to gases; list includes variables for the specified gas components. Default True.
+!> @n KineticReactants: False excludes all variables related to kinetic reactants; True includes all 
+!> variables related to kinetic reactants; list includes variables for the specified kinetic 
+!> reactants. Default True.
+!> @n SolidSolutions: False excludes all variables related to solid solutions; True includes all 
+!> variables related to solid solutions; list includes variables for the specified solid solutions
+!> components. Default True.
+!> @n CalculateValues: False excludes all calculate values; True includes all 
+!> calculate values; list includes the specified calculate values. CALCLUATE_VALUES can be
+!> used to calculate geochemical quantities not available in the other sets of variables. 
+!> Default True.
+!> @n SolutionActivities: False excludes all aqueous species; True includes all 
+!> aqueous species; list includes only the specified aqueous species. Default False.
+!> @n SolutionMolalities: False excludes all aqueous species; True includes all 
+!> aqueous species; list includes only the specified aqueous species. Default False.
+!> @n SaturationIndices: False excludes all saturation indices; True includes all 
+!> saturation indices; list includes only the specified saturation indices. Default False.
+  !  INTEGER FUNCTION bmif_add_output_vars(id, option, def)
+  !  USE ISO_C_BINDING
+  !  IMPLICIT NONE
+		!INTERFACE
+		!INTEGER(KIND=C_INT) FUNCTION RMF_BMI_AddOutputVars(id, var, src) &
+		!	BIND(C, NAME='RMF_BMI_AddOutputVars')
+		!USE ISO_C_BINDING
+		!IMPLICIT NONE
+		!INTEGER(KIND=C_INT), INTENT(in) :: id
+		!CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		!CHARACTER(KIND=C_CHAR), INTENT(in) :: src
+		!END FUNCTION RMF_BMI_AddOutputVars
+		!END INTERFACE
+  !  INTEGER, INTENT(in) :: id
+  !  CHARACTER(len=*), INTENT(in) :: option
+  !  CHARACTER(len=*), INTENT(in) :: def
+  !  character(100) :: vartype
+  !  integer :: bytes, nbytes, status, dim
+  !  status = bmif_get_var_type(id, option, vartype)
+  !  if (vartype .ne. "character") then
+  !      stop "Variable type error."
+  !  endif
+  !  bmif_add_output_vars = RMF_BMI_AddOutputVars(id, trim(option)//C_NULL_CHAR, trim(def)//C_NULL_CHAR)
+  !  return
+  !  END FUNCTION bmif_add_output_vars	
+	
 	! ====================================================
     ! Functions not implemented
 	! ====================================================

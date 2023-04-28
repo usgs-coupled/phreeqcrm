@@ -106,6 +106,7 @@ MODULE YAMLPhreeqcRM
     character(len=*), intent(in) :: file_name
 	WriteYAMLDoc = WriteYAMLDoc_F(id, trim(file_name)//C_NULL_CHAR)
     END FUNCTION WriteYAMLDoc
+    
 !> Clears all definitions from the YAML document.
 !> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -136,6 +137,81 @@ MODULE YAMLPhreeqcRM
     integer, intent(in) :: id
 	YAMLClear = YAMLClear_F(id)
     END FUNCTION YAMLClear
+!> Inserts data into the YAML document to select sets of output variables.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance. Sets of variables can be included or excluded with
+!> multiple calls to this method. All calls must precede the final call to
+!> @ref YAMLFindComponents. FindComponents generates SELECTED_OUTPUT 333 and
+!> USER_PUNCH 333 data blocks that make the variables accessible. Variables will
+!> only be accessible if the system includes the given reactant; for example, no
+!> gas variables will be created if there are no GAS_PHASEs in the model. 
+!> @param id        The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param option    A string value, among those listed below, that selects sets of variables 
+!> that can be retieved by the bmif_get_value method. 
+!> @param def A string value that can be "false", "true", or a list of items to be included as
+!> accessible variables. A value of "false", excludes all variables of the given type; a 
+!> value of "true" includes all variables of the given type for the current system; a list
+!> specifies a subset of items of the given type. 
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!>
+!> Values for the the parameter @a option:
+!> @n AddOutputVars: False excludes all variables; True causes the settings for each variable group
+!> to determine the variables that will be defined. Default True;
+!> @n SolutionProperties: False excludes all solution property variables; True includes variables pH, pe,
+!> alkalinity, ionic strength, water mass, charge balance, percent error, and specific conductance.
+!> Default True.
+!> @n SolutionTotalMolalities: False excludes all total element and element redox state variables;
+!> True includes all elements and element redox state variables for the system defined for the 
+!> calculation; list restricts variables to the specified elements and redox states.
+!> Default True.
+!> @n ExchangeMolalities: False excludes all variables related to exchange; True includes all 
+!> variables related to exchange; list includes variables for the specified exchange species.
+!> Default True.
+!> @n SurfaceMolalities: False excludes all variables related to surfaces; True includes all 
+!> variables related to surfaces; list includes variables for the specified surface species.
+!> Default True.
+!> @n EquilibriumPhases: False excludes all variables related to equilibrium phases; True includes all 
+!> variables related to equilibrium phases; list includes variables for the specified
+!> equilibiurm phases. Default True.
+!> @n Gases: False excludes all variables related to gases; True includes all 
+!> variables related to gases; list includes variables for the specified gas components. Default True.
+!> @n KineticReactants: False excludes all variables related to kinetic reactants; True includes all 
+!> variables related to kinetic reactants; list includes variables for the specified kinetic 
+!> reactants. Default True.
+!> @n SolidSolutions: False excludes all variables related to solid solutions; True includes all 
+!> variables related to solid solutions; list includes variables for the specified solid solutions
+!> components. Default True.
+!> @n CalculateValues: False excludes all calculate values; True includes all 
+!> calculate values; list includes the specified calculate values. CALCLUATE_VALUES can be
+!> used to calculate geochemical quantities not available in the other sets of variables. 
+!> Default True.
+!> @n SolutionActivities: False excludes all aqueous species; True includes all 
+!> aqueous species; list includes only the specified aqueous species. Default False.
+!> @n SolutionMolalities: False excludes all aqueous species; True includes all 
+!> aqueous species; list includes only the specified aqueous species. Default False.
+!> @n SaturationIndices: False excludes all saturation indices; True includes all 
+!> saturation indices; list includes only the specified saturation indices. Default False.
+    INTEGER FUNCTION YAMLAddOutputVars(id, option, def)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLAddOutputVars_F(id, var, src) &
+			BIND(C, NAME='YAMLAddOutputVars_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: src
+		END FUNCTION YAMLAddOutputVars_F
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: option
+    CHARACTER(len=*), INTENT(in) :: def
+    character(100) :: vartype
+    integer :: bytes, nbytes, status, dim
+    YAMLAddOutputVars = YAMLAddOutputVars_F(id, trim(option)//C_NULL_CHAR, trim(def)//C_NULL_CHAR)
+    return
+    END FUNCTION YAMLAddOutputVars  
 !> Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.

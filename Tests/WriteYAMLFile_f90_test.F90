@@ -91,6 +91,20 @@
 	initial_phreeqc = .false.
 	input = "DELETE; -all"
 	status = YAMLRunString(id, workers, initial_phreeqc, utility, input)
+    
+	status = YAMLAddOutputVars(id, "AddOutputVars", "true")
+	status = YAMLAddOutputVars(id, "SolutionProperties", "true")
+	status = YAMLAddOutputVars(id, "SolutionTotalMolalities", "true")
+	status = YAMLAddOutputVars(id, "ExchangeMolalities", "true")
+	status = YAMLAddOutputVars(id, "SurfaceMolalities", "true")
+	status = YAMLAddOutputVars(id, "EquilibriumPhases", "true")
+	status = YAMLAddOutputVars(id, "Gases", "true")
+	status = YAMLAddOutputVars(id, "KineticReactants", "true")
+	status = YAMLAddOutputVars(id, "SolidSolutions", "true")
+	status = YAMLAddOutputVars(id, "CalculateValues", "true")
+	status = YAMLAddOutputVars(id, "SolutionActivities", "false")
+	status = YAMLAddOutputVars(id, "SolutionMolalities", "false")
+	status = YAMLAddOutputVars(id, "SaturationIndices", "false")
 	! Determine number of components to transport
 	status = YAMLFindComponents(id)
 	! set array of initial conditions

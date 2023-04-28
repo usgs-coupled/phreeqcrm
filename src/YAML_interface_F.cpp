@@ -13,6 +13,18 @@ int DestroyYAMLPhreeqcRM_F(int* id)
 {
 	return YAMLPhreeqcRMLib::DestroyYAMLPhreeqcRM(*id);
 }
+IRM_RESULT        YAMLAddOutputVars_F(int* id, char* option_in, char* def_in)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		std::string option = option_in;
+		std::string def = def_in;
+		yrm_ptr->YAMLAddOutputVars(option, def);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
 IRM_RESULT YAMLClear_F(int* id)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
