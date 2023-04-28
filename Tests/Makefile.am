@@ -55,6 +55,9 @@ CLEANFILES =\
 	Advect_f90.chem.txt\
 	Advect_f90.dmp\
 	Advect_f90.log.txt\
+	AdvectBMI_cpp_test.chem.txt\
+	AdvectBMI_cpp_test.log.txt\
+	AdvectBMI_cpp_test.yaml\
 	AdvectBMI_cpp_units_utility.txt\
 	AdvectBMI_cpp_units_worker.txt\
 	AdvectBMI_cpp_utility.txt\
