@@ -8,6 +8,7 @@ check_PROGRAMS = TestRM TestRMdtor TestBMIdtor
 TestRM_SOURCES =\
 	Advect_c.c\
 	AdvectBMI_cpp.cpp\
+	AdvectBMI_cpp_test.cpp\
 	Advect_cpp.cpp\
 	Gas_c.c\
 	Gas_cpp.cpp\
@@ -16,7 +17,8 @@ TestRM_SOURCES =\
 	SimpleAdvect_cpp.cpp\
 	Species_c.c\
 	Species_cpp.cpp\
-	WriteYAMLFile_cpp.cpp
+	WriteYAMLFile_cpp.cpp\
+	WriteYAMLFile_cpp_test.cpp
 
 TestRM_LDADD = $(top_builddir)/libphreeqcrm.la
 TestRM_LINK = $(CXXLINK)
