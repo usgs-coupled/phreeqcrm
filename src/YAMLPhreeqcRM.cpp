@@ -44,12 +44,12 @@ void YAMLPhreeqcRM::WriteYAMLDoc(std::string file_name)
 	ofs << this->GetYAMLDoc();
 	ofs.close();
 }
-void YAMLPhreeqcRM::YAMLAddOutputVars(std::string option, std::string def)
+void YAMLPhreeqcRM::YAMLAddOutputVars(std::string option, std::string definition)
 {
 	YAML::Node node;
 	node["key"] = "AddOutputVars";
 	node["option"] = option;
-	node["def"] = def;
+	node["definition"] = definition;
 	YAML_doc.push_back(node);
 	return;
 };
