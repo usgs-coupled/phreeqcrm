@@ -53,142 +53,339 @@ class YAMLPhreeqcRM(object):
         file = open(file_name, "w")
         yaml.dump(self.yaml_doc, file, sort_keys=False)
         file.close()
+    def YAMLAddOutputVars(option, definition):
+        node = dict()
+        node["key"] = "AddOutputVars"
+        node["definition"] = "definition"
+        self.yaml_doc.push_back(node)
     def YAMLCloseFiles(self, void):
-        self.yaml_doc["CloseFiles"] = ""
+        node = dict()
+        node["key"] = "CloseFiles"
+        self.yaml_doc.push_back(node)
     def YAMLCreateMapping(self, g2c):
-        self.yaml_doc["CreateMapping"] = g2c
+        node = dict()
+        node["key"] = "CreateMapping"
+        node["CreateMapping"] = g2c
+        self.yaml_doc.push_back(node)
     def YAMLDumpModule(self, dump_on, append):
         node = dict()
+        node["key"] = "DumpModule"
         node["dump_on"] = dump_on
         node["append"] = append
-        self.yaml_doc["DumpModule"] = node
+        self.yaml_doc.push_back(node)
     def YAMLFindComponents(self):
-        self.yaml_doc["FindComponents"] = ""
+        node = dict()
+        node["key"] = "FindComponents"
+        self.yaml_doc.push_back(node)
+    def YAMLInitialSolutions2Module(self, solutions):
+        node = dict()
+        node["key"] = "InitialSolutions2Module"
+        node["solutions"] = solutions
+        self.yaml_doc.push_back(node)
+    def YAMLInitialEquilibriumPhases2Module(self, equilibrium_phases):
+        node = dict()
+        node["key"] = "InitialEquilibriumPhases2Module"
+        node["equilibrium_phases"] = equilibrium_phases
+        self.yaml_doc.push_back(node)
+    def YAMLInitialExchanges2Module(self, exchanges):
+        node = dict()
+        node["key"] = "InitialExchanges2Module"
+        node["exchanges"] = exchanges
+        self.yaml_doc.push_back(node)
+    def YAMLInitialSurfaces2Module(self, surfaces):
+        node = dict()
+        node["key"] = "InitialSurfaces2Module"
+        node["surfaces"] = surfaces
+        self.yaml_doc.push_back(node)
+    def YAMLInitialGasPhases2Module(self, gas_phases):
+        node = dict()
+        node["key"] = "InitialGasPhases2Module"
+        node["gas_phases"] = gas_phases
+        self.yaml_doc.push_back(node)
+    def YAMLInitialSolidSolutions2Module(self, solid_solutions):
+        node = dict()
+        node["key"] = "InitialSolidSolutions2Module"
+        node["solid_solutions"] = solid_solutions
+        self.yaml_doc.push_back(node)
+    def YAMLInitialKinetics2Module(self, kinetics):
+        node = dict()
+        node["key"] = "InitialKinetics2Module"
+        node["kinetics"] = kinetics
+        self.yaml_doc.push_back(node)
     def YAMLInitialPhreeqc2Module(self, initial_conditions1):
-        self.yaml_doc["InitialPhreeqc2Module"] = 1
+        node = dict()
+        node["key"] = "InitialPhreeqc2Module"
+        node["ic"] = initial_conditions1
+        self.yaml_doc.push_back(node)
     def YAMLInitialPhreeqc2Module_mix(self, ic1,  ic2,  f1):
         node = dict()
+        node["key"] = "YAMLInitialPhreeqc2Module_mix"
         node["ic1"] = ic1
         node["ic2"] = ic2
         node["f1"] = f1
-        self.yaml_doc["InitialPhreeqc2Module_mix"] = node
+        self.yaml_doc.push_back(node)
     def YAMLInitialPhreeqcCell2Module(self, n,  cell_numbers):
         node = dict()
+        node["key"] = "InitialPhreeqcCell2Module"
         node["n"] = n
         node["cell_numbers"] = cell_numbers
-        self.yaml_doc["InitialPhreeqcCell2Module"] = node
+        self.yaml_doc.push_back(node)
     def YAMLLoadDatabase(self, database):
-        self.yaml_doc["LoadDatabase"] = database
+        node = dict()
+        node["key"] = "LoadDatabase"
+        node["database"] = database
+        self.yaml_doc.push_back(node)
     def YAMLLogMessage(self, str):
-        self.yaml_doc["LogMessage"] = str
+        node = dict()
+        node["key"] = "LogMessage"
+        node["str"] = str
+        self.yaml_doc.push_back(node)
     def YAMLOpenFiles(self):
-        self.yaml_doc["OpenFiles"] = ""
+        node = dict()
+        node["key"] = "OpenFiles"
+        self.yaml_doc.push_back(node)
     def YAMLOutputMessage(self, str):
-        self.yaml_doc["OutputMessage"] = str
+        node = dict()
+        node["key"] = "OutputMessage"
+        node["str"] = str
+        self.yaml_doc.push_back(node)
     def YAMLRunCells(self):
-        self.yaml_doc["RunCells"] = ""
+        node = dict()
+        node["key"] = "RunCells"
+        self.yaml_doc.push_back(node)
     def YAMLRunFile(self, workers, initial_phreeqc, utility, chemistry_name):
         node = dict()
+        node["key"] = "RunFile"
         node["workers"] = workers
         node["initial_phreeqc"] = initial_phreeqc
         node["utility"] = utility
         node["chemistry_name"] = chemistry_name
-        self.yaml_doc["RunFile"] = node
+        self.yaml_doc.push_back(node)
     def YAMLRunString(self, workers, initial_phreeqc, utility, input_string):
         node = dict()
+        node["key"] = "RunString"
         node["workers"] = workers
         node["initial_phreeqc"] = initial_phreeqc
         node["utility"] = utility
         node["input_string"] = input_string
-        self.yaml_doc["RunString"] = node
+        self.yaml_doc.push_back(node)
     def YAMLScreenMessage(self, str):
-        self.yaml_doc["ScreenMessage"] = str
+        node = dict()
+        node["key"] = "ScreenMessage"
+        node["str"] = str
+        self.yaml_doc.push_back(node)
     def YAMLSetComponentH2O(self, tf):
-        self.yaml_doc["SetComponentH2O"] = tf
+        node = dict()
+        node["key"] = "SetComponentH2O"
+        node["tf"] = tf
+        self.yaml_doc.push_back(node)
     def YAMLSetConcentrations(self, c):
-        self.yaml_doc["SetConcentrations"] = c
+        node = dict()
+        node["key"] = "SetConcentrations"
+        node["c"] = c
+        self.yaml_doc.push_back(node)
     def YAMLSetCurrentSelectedOutputUserNumber(self, n_user):
-        self.yaml_doc["SetCurrentSelectedOutputUserNumber"] = n_user
+        node = dict()
+        node["key"] = "SetCurrentSelectedOutputUserNumber"
+        node["n_user"] = n_user
+        self.yaml_doc.push_back(node)
     def YAMLSetDensity(self, density):
-        self.yaml_doc["SetDensity"] = density
+        node = dict()
+        node["key"] = "SetDensity"
+        node["density"] = density
+        self.yaml_doc.push_back(node)
     def YAMLSetDumpFileName(self, dump_name):
-        self.yaml_doc["SetDumpFileName"] = dump_name
+        node = dict()
+        node["key"] = "SetDumpFileName"
+        node["dump_name"] = dump_name
+        self.yaml_doc.push_back(node)
     def YAMLSetErrorHandlerMode(self, mode):
-        self.yaml_doc["SetErrorHandlerMode"] = mode
+        node = dict()
+        node["key"] = "SetErrorHandlerMode"
+        node["mode"] = mode
+        self.yaml_doc.push_back(node)
     def YAMLSetErrorOn(self, tf):
-        self.yaml_doc["SetErrorOn"] = tf
+        node = dict()
+        node["key"] = "SetErrorOn"
+        node["tf"] = tf
+        self.yaml_doc.push_back(node)
     def YAMLSetFilePrefix(self, prefix):
-        self.yaml_doc["SetFilePrefix"] = prefix
+        node = dict()
+        node["key"] = "SetFilePrefix"
+        node["prefix"] = prefix
+        self.yaml_doc.push_back(node)
     def YAMLSetGasCompMoles(self,  gas_moles):
-        self.yaml_doc["SetGasCompMoles"] = gas_moles
+        node = dict()
+        node["key"] = "SetGasCompMoles"
+        node["gas_moles"] = gas_moles
+        self.yaml_doc.push_back(node)
     def YAMLSetGasPhaseVolume(self,  gas_volume):
-        self.yaml_doc["SetGasPhaseVolume"] = gas_volume
+        node = dict()
+        node["key"] = "SetGasPhaseVolume"
+        node["gas_volume"] = gas_volume
+        self.yaml_doc.push_back(node)
     def YAMLSetGridCellCount(self, n):
-        self.yaml_doc["SetGridCellCount"] = n
+        node = dict()
+        node["key"] = "SetGridCellCount"
+        node["n"] = n
+        self.yaml_doc.push_back(node)
     def YAMLSetNthSelectedOutput(self, n):
-        self.yaml_doc["SetNthSelectedOutput"] = n
+        node = dict()
+        node["key"] = "SetNthSelectedOutput"
+        node["n"] = n
+        self.yaml_doc.push_back(node)
     def YAMLSetPartitionUZSolids(self, tf):
-        self.yaml_doc["SetPartitionUZSolids"] = tf
+        node = dict()
+        node["key"] = "SetPartitionUZSolids"
+        node["tf"] = tf
+        self.yaml_doc.push_back(node)
     def YAMLSetPorosity(self,  por):
-        self.yaml_doc["SetPorosity"] = por
+        node = dict()
+        node["key"] = "SetPorosity"
+        node["por"] = por
+        self.yaml_doc.push_back(node)
     def YAMLSetPressure(self,  p):
-        self.yaml_doc["SetPressure"] = p
-    def YAMLSetPrintChemistryMask(self,  cell_mask):
-        self.yaml_doc["SetPrintChemistryMask"] = cell_mask
+        node = dict()
+        node["key"] = "SetPressure"
+        node["p"] = p
+        self.yaml_doc.push_back(node)
+    def YAMLSetPrintChemistryMask(self, cell_mask):
+        node = dict()
+        node["key"] = "SetPrintChemistryMask"
+        node["cell_mask"] = cell_mask
+        self.yaml_doc.push_back(node)
     def YAMLSetPrintChemistryOn(self, workers, initial_phreeqc, utility):
         node = dict()
+        node["key"] = "SetPrintChemistryOn"
         node["workers"] = workers
         node["initial_phreeqc"] = initial_phreeqc
         node["utility"] = utility
-        self.yaml_doc["SetPrintChemistryOn"] = node
+        self.yaml_doc.push_back(node)
     def YAMLSetRebalanceByCell(self, tf):
-        self.yaml_doc["SetRebalanceByCell"] = tf
+        node = dict()
+        node["key"] = "SetRebalanceByCell"
+        node["tf"] = tf
+        self.yaml_doc.push_back(node)
     def YAMLSetRebalanceFraction(self, f):
-        self.yaml_doc["SetRebalanceFraction"] = f
+        node = dict()
+        node["key"] = "SetRebalanceFraction"
+        node["f"] = f
+        self.yaml_doc.push_back(node)
     def YAMLSetRepresentativeVolume(self,  rv):
-        self.yaml_doc["SetRepresentativeVolume"] = rv
+        node = dict()
+        node["key"] = "SetRepresentativeVolume"
+        node["rv"] = rv
+        self.yaml_doc.push_back(node)
     def YAMLSetSaturation(self,  sat):
-        self.yaml_doc["SetSaturation"] = sat
+        node = dict()
+        node["key"] = "SetSaturation"
+        node["sat"] = sat
+        self.yaml_doc.push_back(node)
     def YAMLSetScreenOn(self, tf):
-        self.yaml_doc["SetScreenOn"] = tf
+        node = dict()
+        node["key"] = "SetScreenOn"
+        node["tf"] = tf
+        self.yaml_doc.push_back(node)
     def YAMLSetSelectedOutputOn(self, tf):
-        self.yaml_doc["SetSelectedOutputOn"] = tf
+        node = dict()
+        node["key"] = "SetSelectedOutputOn"
+        node["tf"] = tf
+        self.yaml_doc.push_back(node)
     def YAMLSetSpeciesSaveOn(self, save_on):
-        self.yaml_doc["SetSpeciesSaveOn"] = save_on
+        node = dict()
+        node["key"] = "SetSpeciesSaveOn"
+        node["save_on"] = save_on
+        self.yaml_doc.push_back(node)
     def YAMLSetTemperature(self,  t):
-        self.yaml_doc["SetTemperature"] = t
+        node = dict()
+        node["key"] = "SetTemperature"
+        node["t"] = t
+        self.yaml_doc.push_back(node)
     def YAMLSetTime(self, time):
-        self.yaml_doc["SetTime"] = time
+        node = dict()
+        node["key"] = "SetTime"
+        node["time"] = time
+        self.yaml_doc.push_back(node)
     def YAMLSetTimeConversion(self, conv_factor):
-        self.yaml_doc["SetTimeConversion"] = conv_factor
+        node = dict()
+        node["key"] = "SetTimeConversion"
+        node["conv_factor"] = conv_factor
+        self.yaml_doc.push_back(node)
     def YAMLSetTimeStep(self, time_step):
-        self.yaml_doc["SetTimeStep"] = time_step
+        node = dict()
+        node["key"] = "SetTimeStep"
+        node["time_step"] = time_step
+        self.yaml_doc.push_back(node)
     def YAMLSetUnitsExchange(self, option):
-        self.yaml_doc["SetUnitsExchange"] = option
+        node = dict()
+        node["key"] = "SetUnitsExchange"
+        node["option"] = option
+        self.yaml_doc.push_back(node)
     def YAMLSetUnitsGasPhase(self, option):
-        self.yaml_doc["SetUnitsGasPhase"] = option
+        node = dict()
+        node["key"] = "SetUnitsGasPhase"
+        node["option"] = option
+        self.yaml_doc.push_back(node)
     def YAMLSetUnitsKinetics(self, option):
-        self.yaml_doc["SetUnitsKinetics"] = option
+        node = dict()
+        node["key"] = "SetUnitsKinetics"
+        node["option"] = option
+        self.yaml_doc.push_back(node)
     def YAMLSetUnitsPPassemblage(self, option):
-        self.yaml_doc["SetUnitsPPassemblage"] = option
+        node = dict()
+        node["key"] = "SetUnitsPPassemblage"
+        node["option"] = option
+        self.yaml_doc.push_back(node)
     def YAMLSetUnitsSolution(self, option):
-        self.yaml_doc["SetUnitsSolution"] = option
+        node = dict()
+        node["key"] = "SetUnitsSolution"
+        node["option"] = option
+        self.yaml_doc.push_back(node)
     def YAMLSetUnitsSSassemblage(self, option):
-        self.yaml_doc["SetUnitsSSassemblage"] = option
+        node = dict()
+        node["key"] = "SetUnitsSSassemblage"
+        node["option"] = option
+        self.yaml_doc.push_back(node)
     def YAMLSetUnitsSurface(self, option):
-        self.yaml_doc["SetUnitsSurface"] = option
+        node = dict()
+        node["key"] = "SetUnitsSurface"
+        node["option"] = option
+        self.yaml_doc.push_back(node)
     def YAMLSpeciesConcentrations2Module(self,  species_conc):
-        self.yaml_doc["SpeciesConcentrations2Module"] = species_conc
+        node = dict()
+        node["key"] = "SpeciesConcentrations2Module"
+        node["species_conc"] = species_conc
+        self.yaml_doc.push_back(node)
     def YAMLStateSave(self, istate):
-        self.yaml_doc["StateSave"] = istate
+        node = dict()
+        node["key"] = "StateSave"
+        node["istate"] = istate
+        self.yaml_doc.push_back(node)
     def YAMLStateApply(self, istate):
-        self.yaml_doc["StateApply"] = istate
+        node = dict()
+        node["key"] = "StateApply"
+        node["istate"] = istate
+        self.yaml_doc.push_back(node)
     def YAMLStateDelete(self, istate):
-        self.yaml_doc["StateDelete"] = istate
+        node = dict()
+        node["key"] = "StateDelete"
+        node["istate"] = istate
+        self.yaml_doc.push_back(node)
+    def YAMLThreadCount(self, nthreads):
+        node = dict()
+        node["key"] = "ThreadCount"
+        node["nthreads"] = nthreads
+        self.yaml_doc.push_back(node)
     def YAMLUseSolutionDensityVolume(self, tf):
-        self.yaml_doc["UseSolutionDensityVolume"] = tf
-    def YAMLWarningMessage(self, warnstr):
-        self.yaml_doc["WarningMessage"] = warnstr
+        node = dict()
+        node["key"] = "UseSolutionDensityVolume"
+        node["tf"] = tf
+        self.yaml_doc.push_back(node)
+    def YAMLWarningMessage(self, str):
+        node = dict()
+        node["key"] = "WarningMessage"
+        node["str"] = str
+        self.yaml_doc.push_back(node)
 
 
 #nxyz = 40
