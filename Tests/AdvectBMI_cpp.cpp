@@ -2,7 +2,9 @@
 #if defined(USE_MPI)
 #include <mpi.h>
 #endif
-#include <stdlib.h>
+//#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -341,8 +343,8 @@ int AdvectBMI_cpp()
 						for (size_t i = 0; i < nxyz / 2; i++)
 						{
 							xoss << std::setw(10) << std::setprecision(5) << std::fixed <<
-								pH[i] << "  " << pow(10.0, CaX2[i]) << "  " << 
-								pow(10.0, KX[i]) << "  " << pow(10.0, NaX[i]) << "\n";
+								pH[i] << "  " << std::pow(10.0, CaX2[i]) << "  " << 
+								std::pow(10.0, KX[i]) << "  " << std::pow(10.0, NaX[i]) << "\n";
 						}
 						brm.OutputMessage(xoss.str()); 
 					}
