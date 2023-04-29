@@ -13,6 +13,18 @@ int DestroyYAMLPhreeqcRM_F(int* id)
 {
 	return YAMLPhreeqcRMLib::DestroyYAMLPhreeqcRM(*id);
 }
+IRM_RESULT        YAMLAddOutputVars_F(int* id, char* option_in, char* def_in)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		std::string option = option_in;
+		std::string def = def_in;
+		yrm_ptr->YAMLAddOutputVars(option, def);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
 IRM_RESULT YAMLClear_F(int* id)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
@@ -712,6 +724,16 @@ IRM_RESULT YAMLStateDelete_F(int* id, int* istate)
 	if (yrm_ptr != NULL)
 	{
 		yrm_ptr->YAMLStateDelete(*istate);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+IRM_RESULT YAMLThreadCount_F(int* id, int* nthreads)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		yrm_ptr->YAMLThreadCount(*nthreads);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;

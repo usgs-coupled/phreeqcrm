@@ -15,6 +15,7 @@ IRM_DLL_EXPORT int CreateYAMLPhreeqcRM_F(void);
 IRM_DLL_EXPORT int DestroyYAMLPhreeqcRM_F(int* id);
 IRM_DLL_EXPORT IRM_RESULT YAMLClear_F(int* id);
 IRM_DLL_EXPORT IRM_RESULT WriteYAMLDoc_F(int* id, const char* file_name);
+IRM_DLL_EXPORT IRM_RESULT YAMLAddOutputVars_F(int* id, char* option_in, char* def_in);
 IRM_DLL_EXPORT IRM_RESULT YAMLCloseFiles_F(int* id);
 IRM_DLL_EXPORT IRM_RESULT YAMLCreateMapping_F(int* id, int* grid2chem, int* dim);
 IRM_DLL_EXPORT IRM_RESULT YAMLDumpModule_F(int* id, int* dump_on, int* append);
@@ -80,6 +81,7 @@ IRM_DLL_EXPORT IRM_RESULT YAMLSpeciesConcentrations2Module_F(int* id, double* sp
 IRM_DLL_EXPORT IRM_RESULT YAMLStateSave_F(int* id, int* istate);
 IRM_DLL_EXPORT IRM_RESULT YAMLStateApply_F(int* id, int* istate);
 IRM_DLL_EXPORT IRM_RESULT YAMLStateDelete_F(int* id, int* istate);
+IRM_DLL_EXPORT IRM_RESULT YAMLThreadCount_F(int* id, int* nthreads);
 IRM_DLL_EXPORT IRM_RESULT YAMLUseSolutionDensityVolume_F(int* id, int* tf);
 IRM_DLL_EXPORT IRM_RESULT YAMLWarningMessage_F(int* id, const char* warnstr);
 

@@ -1,8 +1,8 @@
 #ifdef USE_YAML
 /*! @file YAMLPhreeqcRM.h
-*	@brief YAMLPhreeqcRM C++ Documentation 
+*	@brief C++ header file for YAMLPhreeqcRM
 * 
-* YAMLPhreeqcRMan be used in preprocessors or
+* YAMLPhreeqcRM can be used in preprocessors or
 * Graphical User Interfaces to store initialization data for BMIPhreeqcRM or
 * PhreeqcRM instances. PhreeqcRM methods and data can be stored in a YAML file.
 * After an instance of BMIPhreeqcRM or PhreeqcRM has been created, the method
@@ -99,6 +99,7 @@ public:
 	 */
 	void WriteYAMLDoc(std::string file_name);
 	// methods
+	void YAMLAddOutputVars(std::string option, std::string def);
 /**
 Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
 When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -1810,6 +1811,12 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	// data
 
 };
+#include "bmi.hxx"
+/**
+ * @class YAMLPhreeqcRMLib
+ *
+ * @brief Class to implement multiple instances of YAMLPhreeqcRM
+ */
 class YAMLPhreeqcRMLib
 {
 public:

@@ -25,38 +25,17 @@ public:
 		Info,
 		no_op
 	};
-	//enum class RMVARS {
-	//	NotFound,
-	//	ComponentCount,
-	//	Components,
-	//	Concentrations,
-	//	Density,
-	//	ErrorString,
-	//	FilePrefix,
-	//	Gfw,
-	//	GridCellCount,
-	//	InputVarNames,
-	//	NthSelectedOutput,
-	//	OutputVarNames,
-	//	Saturation,
-	//	SelectedOutput,
-	//	SelectedOutputColumnCount,
-	//	SelectedOutputCount,
-	//	SelectedOutputHeadings,
-	//	SelectedOutputRowCount,
-	//	SolutionVolume,
-	//	Time,
-	//	TimeStep,
-	//	CurrentSelectedOutputUserNumber,
-	//	Porosity,
-	//	Pressure,
-	//	SelectedOutputOn,
-	//	Temperature
-	//};
 	// Constructor
 	VarManager(PhreeqcRM* rm_ptr);
 	// Data
 	PhreeqcRM* rm_ptr;
+	std::map<std::string, BMIVariant> AutoOutputVars;
+	std::map<OUTPUTVARS, std::string> AutoOutputVarsDefs;
+	std::vector<double> BMISelectedOutput;
+	int BMISelectedOutputUserNumber; 
+	std::map<std::string, OUTPUTVARS> OutputVarsEnumMap;
+	void AddOutputVars(std::string option, std::string def);
+	OUTPUTVARS GetOutputVarsEnum(const std::string name);
 public:
 	BMIVariant VarExchange;
 	std::set<RMVARS> PointerSet;
@@ -69,7 +48,6 @@ public:
 	RMVARS GetEnum(std::string name);
 	void RM2BMIUpdate(RMVARS v_enum);
 
-
 	RMVARS GetCurrentVar() { return this->CurrentVar; }
 	std::map<RMVARS, BMIVariant> & GetVariantMap() { return this->VariantMap; }
 	void SetCurrentVar(RMVARS v) { this->CurrentVar = v; }
@@ -78,7 +56,10 @@ public:
 	void ExecFn(RMVARS v_enum) {
 		VarFunction f = this->GetFn(v_enum);
 		((*this).*f)();
-	}
+	};
+	void GenerateAutoOutputVars();
+	int  ProcessAutoOutputVarDef(bool tf_only, std::string& def);
+	static std::set<std::string> tokenize(const std::string& s);
 	//!typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr);
 	//typedef VarManager* (*NewDogFunction)(void);
 	//typedef void (VarManager::* VarFunction)(PhreeqcRM* rm_ptr); // function pointer type
@@ -97,9 +78,7 @@ public:
 	void FilePrefix_Var();
 	void Gfw_Var();
 	void GridCellCount_Var();
-	//void InputVarNames_Var();
 	void NthSelectedOutput_Var();
-	//void OutputVarNames_Var();
 	void Saturation_Var();
 	void SelectedOutput_Var();
 	void SelectedOutputColumnCount_Var();

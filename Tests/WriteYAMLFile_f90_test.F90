@@ -1,5 +1,5 @@
 #ifdef USE_YAML
-    subroutine WriteYAMLFile_f90()  BIND(C, NAME='WriteYAMLFile_f90')
+    subroutine WriteYAMLFile_f90_test()  BIND(C, NAME='WriteYAMLFile_f90_test')
     USE, intrinsic :: ISO_C_BINDING
     USE YAMLPhreeqcRM
     implicit none
@@ -16,17 +16,14 @@
     real(kind=8), allocatable, dimension(:)   :: sat
     integer,          allocatable, dimension(:)   :: print_chemistry_mask
     integer,          allocatable, dimension(:)   :: grid2chem
-    integer,          allocatable, dimension(:,:) :: ic1
-    integer,          allocatable, dimension(:,:) :: ic2
-    real(kind=8), allocatable, dimension(:,:) :: f1
-    integer,          allocatable, dimension(:)   :: module_cells
+    integer,          allocatable, dimension(:)   :: ic
     ! Create YAMLPhreeqcRM document
     id = CreateYAMLPhreeqcRM()   
     ! Number of cells
     nxyz = 40;
 	! Set GridCellCount
 	status = YAMLSetGridCellCount(id, nxyz)
-	status = YAMLThreadCount(id, 3)
+    status = YAMLThreadCount(id, 4)
 	! Set some properties
 	status = YAMLSetErrorHandlerMode(id, 1)
 	status = YAMLSetComponentH2O(id, .false.)
@@ -34,7 +31,7 @@
 	status = YAMLSetRebalanceByCell(id, .true.)
 	status = YAMLUseSolutionDensityVolume(id, .false.)
 	status = YAMLSetPartitionUZSolids(id, .false.)
-    status = YAMLSetFilePrefix(id, "AdvectBMI_f90")
+    status = YAMLSetFilePrefix(id, "AdvectBMI_f90_test")
     status = YAMLOpenFiles(id)
     ! Set concentration units
 	status = YAMLSetUnitsSolution(id, 2)           ! 1, mg/L; 2, mol/L; 3, kg/kgs
@@ -89,40 +86,37 @@
 	workers = .true.             ! Worker instances do the reaction calculations for transport
 	initial_phreeqc = .true.     ! InitialPhreeqc instance accumulates initial and boundary conditions
 	utility = .true.             ! Utility instance is available for processing
-	status = YAMLRunFile(id, workers, initial_phreeqc, utility, "advect.pqi")
+	status = YAMLRunFile(id, workers, initial_phreeqc, utility, "advectBMI_test.pqi")
 	! Clear contents of workers and utility
 	initial_phreeqc = .false.
 	input = "DELETE; -all"
 	status = YAMLRunString(id, workers, initial_phreeqc, utility, input)
+    
+	status = YAMLAddOutputVars(id, "AddOutputVars", "true")
+	status = YAMLAddOutputVars(id, "SolutionProperties", "true")
+	status = YAMLAddOutputVars(id, "SolutionTotalMolalities", "true")
+	status = YAMLAddOutputVars(id, "ExchangeMolalities", "true")
+	status = YAMLAddOutputVars(id, "SurfaceMolalities", "true")
+	status = YAMLAddOutputVars(id, "EquilibriumPhases", "true")
+	status = YAMLAddOutputVars(id, "Gases", "true")
+	status = YAMLAddOutputVars(id, "KineticReactants", "true")
+	status = YAMLAddOutputVars(id, "SolidSolutions", "true")
+	status = YAMLAddOutputVars(id, "CalculateValues", "true")
+	status = YAMLAddOutputVars(id, "SolutionActivities", "false")
+	status = YAMLAddOutputVars(id, "SolutionMolalities", "false")
+	status = YAMLAddOutputVars(id, "SaturationIndices", "false")
 	! Determine number of components to transport
 	status = YAMLFindComponents(id)
 	! set array of initial conditions
-    allocate(ic1(nxyz,7), ic2(nxyz,7), f1(nxyz,7))
-    ic1 = -1
-    ic2 = -1
-    f1 = 1.0d0
-	do i = 1, nxyz
-		ic1(i,1) = 1     ! Solution 1
-		ic1(i,2) = -1    ! Equilibrium phases none
-		ic1(i,3) = 1     ! Exchange 1
-		ic1(i,4) = -1    ! Surface none
-		ic1(i,5) = -1    ! Gas phase none
-		ic1(i,6) = -1    ! Solid solutions none
-		ic1(i,7) = -1    ! Kinetics none
-	enddo
-	status = YAMLInitialPhreeqc2Module_mix(id, ic1, ic2, f1)    
-	! No mixing is defined, so the following is equivalent
-	!status = YAMLInitialPhreeqc2Module(id, id, ic1)
-
-	! alternative for setting initial conditions
-	! cell number in first argument (id, -1 indicates last solution, 40 in this case)
-	! in advect.pqi and any reactants with the same number--
-	! Equilibrium phases, exchange, surface, gas phase, solid solution, and (id, or) kinetics--
-	! will be written to cells 18 and 19 (id, 0 based)
-    allocate(module_cells(2))
-	module_cells(1) = 18
-	module_cells(2) = 19
-	status = YAMLInitialPhreeqcCell2Module(id, -1, module_cells)
+    allocate(ic(nxyz))
+    ic = 1
+    status = YAMLInitialSolutions2Module(id, ic)
+    status = YAMLInitialEquilibriumPhases2Module(id, ic)
+    status = YAMLInitialExchanges2Module(id, ic)
+    status = YAMLInitialGasPhases2Module(id, ic)
+    status = YAMLInitialKinetics2Module(id, ic)
+    status = YAMLInitialSolidSolutions2Module(id, ic)
+    status = YAMLInitialSurfaces2Module(id, ic)
 	! Initial equilibration of cells
 	time_step = 0.0d0  ! no kinetics
 	status = YAMLSetTimeStep(id, time_step)
@@ -133,10 +127,10 @@
 	status = YAMLSetTimeStep(id, time_step)    
 
 	! Write YAML file
-    YAML_filename = "AdvectBMI_f90.yaml"
+    YAML_filename = "AdvectBMI_f90_test.yaml"
 	status = WriteYAMLDoc(id, YAML_filename)
 	status = YAMLClear(id)  
     status = DestroyYAMLPhreeqcRM(id)
     status = 0
-    end subroutine WriteYAMLFile_f90
+    end subroutine WriteYAMLFile_f90_test
 #endif     

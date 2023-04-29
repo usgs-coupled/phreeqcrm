@@ -11,6 +11,19 @@ enum class RMVARS {
 	GridCellCount,
 	InputVarNames,
 	NthSelectedOutput,
+	OutputVarsAddSolutionProperties,
+	OutputVarsAddSolutionTotalMolalities,
+	OutputVarsAddSolutionMolalities,
+	OutputVarsAddSolutionActivities,
+	OutputVarsAddExchangeMolalities,
+	OutputVarsAddSurfaceMolalities,
+	OutputVarsAddEquilibriumPhases,
+	OutputVarsAddSaturationIndices,
+	OutputVarsAddGases,
+	OutputVarsAddKineticReactants,
+	OutputVarsAddSolidSolutions,
+	OutputVarsAddCalculateValues,
+	OutputVarsFinalize,
 	OutputVarNames,
 	Saturation,
 	SelectedOutput,
@@ -27,6 +40,22 @@ enum class RMVARS {
 	SelectedOutputOn,
 	Temperature,
 	Viscosity,
+	NotFound
+};
+enum class OUTPUTVARS {
+	AddOutputVars,
+	SolutionProperties,
+	SolutionTotalMolalities,
+	ExchangeMolalities,
+	SurfaceMolalities,
+	EquilibriumPhases,
+	Gases,
+	KineticReactants,
+	SolidSolutions,
+	CalculateValues,
+	SolutionActivities,
+	SolutionMolalities,
+	SaturationIndices,
 	NotFound
 };
 #endif

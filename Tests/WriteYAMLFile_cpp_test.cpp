@@ -14,10 +14,10 @@
 #include "yaml-cpp/yaml.h"
 #include "YAMLPhreeqcRM.h"
 
-void WriteYAMLFile_cpp(void)
+void WriteYAMLFile_cpp_test(void)
 {
 	YAMLPhreeqcRM yrm;
-	int nxyz = 40;
+	int nxyz = 20;
 	// Set GridCellCount
 	yrm.YAMLSetGridCellCount(nxyz);
 
@@ -33,7 +33,7 @@ void WriteYAMLFile_cpp(void)
 	yrm.YAMLUseSolutionDensityVolume(false);
 	yrm.YAMLSetPartitionUZSolids(false);
 	// Open files
-	yrm.YAMLSetFilePrefix("AdvectBMI_cpp");
+	yrm.YAMLSetFilePrefix("AdvectBMI_cpp_test");
 	yrm.YAMLOpenFiles();
 
 	// Set concentration units
@@ -61,71 +61,47 @@ void WriteYAMLFile_cpp(void)
 	std::vector<double> sat(nxyz, 1.0);
 	yrm.YAMLSetSaturation(sat);
 	// Set cells to print chemistry when print chemistry is turned on
-	std::vector<int> print_chemistry_mask(nxyz, 0);
-	for (int i = 0; i < nxyz / 2; i++)
-	{
-		print_chemistry_mask[i] = 1;
-	}
+	std::vector<int> print_chemistry_mask(nxyz, 1);
 	yrm.YAMLSetPrintChemistryMask(print_chemistry_mask);
-
-	// Demonstation of mapping, two equivalent rows by symmetry
-	std::vector<int> grid2chem;
-	grid2chem.resize(nxyz, -1);
-	for (int i = 0; i < nxyz / 2; i++)
-	{
-		grid2chem[i] = i;
-		grid2chem[i + nxyz / 2] = i;
-	}
-	yrm.YAMLCreateMapping(grid2chem);
 
 	// Set printing of chemistry file
 	yrm.YAMLSetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
 	// Load database
 	yrm.YAMLLoadDatabase("phreeqc.dat");
-
-	// Run file to define solutions and reactants for initial conditions, selected output
-	bool workers = true;             // Worker instances do the reaction calculations for transport
-	bool initial_phreeqc = true;     // InitialPhreeqc instance accumulates initial and boundary conditions
-	bool utility = true;             // Utility instance is available for processing
-	yrm.YAMLRunFile(workers, initial_phreeqc, utility, "advect.pqi");
+	yrm.YAMLRunFile(true, true, true, "advectBMI_test.pqi");
 
 	// Clear contents of workers and utility
-	initial_phreeqc = false;
 	std::string input = "DELETE; -all";
-	yrm.YAMLRunString(workers, initial_phreeqc, utility, input.c_str());
+	yrm.YAMLRunString(true, false, true, input.c_str());
 	// Define additional output variables
-	yrm.YAMLAddOutputVars("AddOutputVars", "true");
+	//yrm.YAMLAddOutputVars("AddOutputVars", "true"); // default
+	// AddOutputVars 
+	// SolutionProperties 
+	// SolutionTotalMolalities 
+	// ExchangeMolalities 
+	// SurfaceMolalities 
+	// EquilibriumPhases 
+	// Gases 
+	// KineticReactants 
+	// SolidSolutions
+	// CalculateValues 
+	// SolutionActivities 
+	// SolutionMolalities 
+	// SaturationIndices 
+
 	// Determine number of components to transport
 	yrm.YAMLFindComponents();
-	// set array of initial conditions
-	std::vector<int> ic1, ic2;
-	ic1.resize(nxyz * 7, -1);
-	ic2.resize(nxyz * 7, -1);
-	std::vector<double> f1;
-	f1.resize(nxyz * 7, 1.0);
-	for (int i = 0; i < nxyz; i++)
-	{
-		ic1[i] = 1;              // Solution 1
-		ic1[nxyz + i] = -1;      // Equilibrium phases none
-		ic1[2 * nxyz + i] = 1;     // Exchange 1
-		ic1[3 * nxyz + i] = -1;    // Surface none
-		ic1[4 * nxyz + i] = -1;    // Gas phase none
-		ic1[5 * nxyz + i] = -1;    // Solid solutions none
-		ic1[6 * nxyz + i] = -1;    // Kinetics none
-	}
-	yrm.YAMLInitialPhreeqc2Module(ic1, ic2, f1);
-	// No mixing is defined, so the following is equivalent
-	//yrm.YAMLInitialPhreeqc2Module(ic1);
 
-	// alternative for setting initial conditions
-	// cell number in first argument (-1 indicates last solution, 40 in this case)
-	// in advect.pqi and any reactants with the same number--
-	// Equilibrium phases, exchange, surface, gas phase, solid solution, and (or) kinetics--
-	// will be written to cells 18 and 19 (0 based)
-	std::vector<int> module_cells;
-	module_cells.push_back(18);
-	module_cells.push_back(19);
-	yrm.YAMLInitialPhreeqcCell2Module(-1, module_cells);
+	// set arrays of initial conditions
+	std::vector<int> ic(nxyz, 1);
+	yrm.YAMLInitialSolutions2Module(ic);
+	yrm.YAMLInitialEquilibriumPhases2Module(ic);
+	yrm.YAMLInitialExchanges2Module(ic);
+	yrm.YAMLInitialGasPhases2Module(ic);
+	yrm.YAMLInitialKinetics2Module(ic);
+	yrm.YAMLInitialSolidSolutions2Module(ic);
+	yrm.YAMLInitialSurfaces2Module(ic);
+
 	// Initial equilibration of cells
 	double time_step = 0.0;  // no kinetics
 	yrm.YAMLSetTimeStep(time_step);
@@ -135,7 +111,7 @@ void WriteYAMLFile_cpp(void)
 	yrm.YAMLSetTimeStep(86400);
 
 	// Write YAML file
-	std::string YAML_filename = "AdvectBMI_cpp.yaml";
+	std::string YAML_filename = "AdvectBMI_cpp_test.yaml";
 	yrm.WriteYAMLDoc(YAML_filename);
 	yrm.Clear();
 };

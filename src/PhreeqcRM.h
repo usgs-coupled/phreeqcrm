@@ -1,5 +1,5 @@
 /*! @file PhreeqcRM.h
-*	@brief C++ Documentation for PhreeqcRM
+*	@brief C++ header file for PhreeqcRM
 *
 *   PhreeqcRM is a reaction module for use with multicomponent-transport models.
 *   A reaction cell can be defined for each cell in the user's model that
@@ -38,7 +38,7 @@ class PHRQ_io;
 
 class PHRQ_io;
 class IPhreeqc;
-class BMI_Var;
+//class BMI_Var;
 /**
  * @class PhreeqcRMStop
  *
@@ -5633,6 +5633,8 @@ protected:
 	std::vector <std::string> SolidSolutionComponentsList;
 	std::vector <std::string> SolidSolutionNamesList;
 	std::vector <std::string> SINamesList;
+	std::set <std::string> ElementRedoxSet;
+
 
 protected:
 	static const int default_nxyz = 10;
@@ -5660,6 +5662,7 @@ private:
 	static size_t InstancesIndex;
 	size_t Index;
 	friend class BMIPhreeqcRM;
+	friend class VarManager;
 
 #if defined(_MSC_VER)
 /* reset warning C4251 */

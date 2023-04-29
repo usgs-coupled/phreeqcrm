@@ -1,7 +1,11 @@
+    !> @file RM_interface.F90
+    !> @brief PhreeqcRM module definition 
+    !>
+    !
     !*MODULE PhreeqcRM PHREEQC Reaction Module for Transport Codes
     !> @brief Fortran Documentation for the geochemical reaction module PhreeqcRM.
     !> @par ""
-    !> "USE PhreeqcRM" is included in Fortran source code to define the PhreeqcRM functions.
+    !> @n "USE PhreeqcRM" is included in Fortran source code to define the PhreeqcRM functions.
     !> For Windows, define the module by including the file RM_interface.F90 in your project.
     !> For Linux, configure, compile, and install the PhreeqcRM library and module file.
     !> You will need installed include directory (-I) added to the project) to reference the module file.
