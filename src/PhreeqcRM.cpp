@@ -5775,6 +5775,18 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 		ErrorMessage("YAML keyword not found");
 		throw PhreeqcRMStop();
 	}
+	// Initialize BMI variables
+	if (this->var_man != NULL)
+	{
+		var_man->task = VarManager::VAR_TASKS::Info;
+		for (auto it = this->var_man->VariantMap.begin();
+			it != this->var_man->VariantMap.end(); it++)
+		{
+			BMIVariant& bv = it->second;
+			bv.SetInitialized(false);
+			((*this->var_man).*bv.GetFn())();
+		}
+	}
 	return IRM_RESULT::IRM_OK;
 }
 #endif
