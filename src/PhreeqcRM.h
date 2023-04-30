@@ -27,9 +27,7 @@ class PHRQ_io;
 #include <map>
 #include <mutex>
 #include <string>
-#include "VarManager.h"
 #include "RMVARS.h"
-//class VarManager;
 #if defined(_WINDLL)
 #define IRM_DLL_EXPORT __declspec(dllexport)
 #else
@@ -134,9 +132,8 @@ public:
 	static int              CreateReactionModule(int nxyz, MP_TYPE nthreads);
 	static IRM_RESULT       DestroyReactionModule(int n);
 	static PhreeqcRM      * GetInstance(int n);
-	class VarManager* var_man;
 private:
-	void UpdateBMI(RMVARS v_enum);
+	virtual void UpdateBMI(RMVARS v_enum);
 public:
 #ifdef USE_YAML
 /**
