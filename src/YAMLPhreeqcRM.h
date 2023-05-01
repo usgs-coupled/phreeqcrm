@@ -99,23 +99,87 @@ public:
 	 */
 	void WriteYAMLDoc(std::string file_name);
 	// methods
+	/**
+	@a AddOutputVars allows selection of sets of variables that can be retieved
+	by the @ref GetValue method.Sets of variables can be included or excluded with
+	multiple calls to this method. All calls must precede the final call to
+	@ref FindComponents. @ref FindComponents generates SELECTED_OUTPUT 333 and
+	USER_PUNCH 333 data blocks that make the variables accessible. Variables will
+	only be accessible if the system includes the given reactant; for example, no
+	gas variables will be created if there are no GAS_PHASEs in the model.
+
+	@param option A string value, among those listed below, that includes or
+	excludes variables from @ref GetOutputVarNames, @ref GetValue, and other
+	BMI methods.
+	@param def A string value that can be "false", "true", or a list of items to be included as
+	accessible variables.A value of "false", excludes all variables of the given type; a
+	value of "true" includes all variables of the given type for the current system; a list
+	specifies a subset of items of the given type.
+
+	Values for the the parameter @a option :
+	@n AddOutputVars : False excludes all variables; True causes the settings for each variable group
+	to determine the variables that will be defined.Default True;
+	@n SolutionProperties : False excludes all solution property variables; True includes variables pH, pe,
+	alkalinity, ionic strength, water mass, charge balance, percent error, and specific conductance.
+	Default True.
+	@n SolutionTotalMolalities : False excludes all total element and element redox state variables;
+	True includes all elements and element redox state variables for the system defined for the
+	calculation; list restricts variables to the specified elements and redox states.
+	Default True.
+	@n ExchangeMolalities : False excludes all variables related to exchange; True includes all
+	variables related to exchange; list includes variables for the specified exchange species.
+	Default True.
+	@n SurfaceMolalities : False excludes all variables related to surfaces; True includes all
+	variables related to surfaces; list includes variables for the specified surface species.
+	Default True.
+	@n EquilibriumPhases : False excludes all variables related to equilibrium phases; True includes all
+	variables related to equilibrium phases; list includes variables for the specified
+	equilibiurm phases.Default True.
+	@n Gases : False excludes all variables related to gases; True includes all
+	variables related to gases; list includes variables for the specified gas components.Default True.
+	@n KineticReactants : False excludes all variables related to kinetic reactants; True includes all
+	variables related to kinetic reactants; list includes variables for the specified kinetic
+	reactants.Default True.
+	@n SolidSolutions : False excludes all variables related to solid solutions; True includes all
+	variables related to solid solutions; list includes variables for the specified solid solutions
+	components.Default True.
+	@n CalculateValues : False excludes all calculate values; True includes all
+	calculate values; list includes the specified calculate values.CALCLUATE_VALUES can be
+	used to calculate geochemical quantities not available in the other sets of variables.
+	Default True.
+	@n SolutionActivities : False excludes all aqueous species; True includes all
+	aqueous species; list includes only the specified aqueous species.Default False.
+	@n SolutionMolalities : False excludes all aqueous species; True includes all
+	aqueous species; list includes only the specified aqueous species.Default False.
+	@n SaturationIndices : False excludes all saturation indices; True includes all
+	saturation indices; list includes only the specified saturation indices. Default False.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	YAMLPhreeqcRM yrm;
+	yrm.YAMLAddOutputVars("SaturationIndices", "true");
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	*/
 	void YAMLAddOutputVars(std::string option, std::string def);
-/**
-Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
-When the YAML document is written to file it can be processed by the method InitializeYAML to
-initialize a PhreeqcRM instance.
-@par
-CloseFiles closes the output and log files.
-@par C++ Example:
-@htmlonly
-<CODE>
-<PRE>
-YAMLPhreeqcRM yrm;
-yrm.YAMLCloseFiles();
-</PRE>
-</CODE>
-@endhtmlonly
- */
+	/**
+	Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
+	When the YAML document is written to file it can be processed by the method InitializeYAML to
+	initialize a PhreeqcRM instance.
+	@par
+	CloseFiles closes the output and log files.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	YAMLPhreeqcRM yrm;
+	yrm.YAMLCloseFiles();
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	 */
 	void YAMLCloseFiles(void);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method CreateMapping.
@@ -177,7 +241,13 @@ yrm.YAMLCloseFiles();
 	 */
 	void YAMLDumpModule(bool dump_on, bool append);
 	/**
-	* TODO
+	Inserts data into the YAML document for the method ThreadCount.
+	When the YAML document is written to file it can be processed by the method InitializeYAML to
+	initialize a PhreeqcRM instance.
+
+	ThreadCount provides the number of threads to use in OpenMP multiprocessing when used
+	to initialize a BMIPhreeqcRM instance, provided the BMIPhreeqcRM instance was created
+	with the default constructor--the constructor with no arguments.
 	*/
 	void YAMLThreadCount(int nthreads);
 	/**
@@ -377,7 +447,7 @@ yrm.YAMLCloseFiles();
 	@a initials_conditions2 contains numbers for a second entity that mixes with the entity defined in @a initial_conditions1.
 	@a Fraction1 contains the mixing fraction for @a initial_conditions1,
 	whereas (1 - @a fraction1) is the mixing fraction for @a initial_conditions2.
-	The definitions initial_solution1[3*nxyz + 99] = 2, initial_solution2[3*nxyz + 99] = 3,
+	The definitions initial_conditions1[3*nxyz + 99] = 2, initial_conditions2[3*nxyz + 99] = 3,
 	fraction1[3*nxyz + 99] = 0.25 indicates that
 	cell 99 (0 based) contains a mixture of 0.25 SURFACE 2 and 0.75 SURFACE 3,
 	where the surface compositions have been defined in the InitialPhreeqc instance.
@@ -577,32 +647,32 @@ yrm.YAMLCloseFiles();
 	 */
 	void YAMLRunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
 	/**
-Inserts data into the YAML document for the PhreeqcRM method RunString.
-When the YAML document is written to file it can be processed by the method InitializeYAML to
-initialize a PhreeqcRM instance.
-@par
-RunString runs a PHREEQC input string. The first three arguments determine which
-IPhreeqc instances will run
-the string--the workers, the InitialPhreeqc instance, and (or) the Utility instance. Input
-strings that modify the thermodynamic database should be run by all three sets of instances.
-Strings with SELECTED_OUTPUT definitions that will be used during the time-stepping loop need to
-be run by the workers. Strings that contain initial conditions or boundary conditions should
-be run by the InitialPhreeqc instance.
-@param workers          @a True, the workers will run the string; @a False, the workers will not run the string.
-@param initial_phreeqc  @a True, the InitialPhreeqc instance will run the string; @a False, the InitialPhreeqc will not run the string.
-@param utility          @a True, the Utility instance will run the string; @a False, the Utility instance will not run the string.
-@param input_string     String containing PHREEQC input.
-@see                    @ref YAMLRunFile.
-@par C++ Example:
-@htmlonly
-<CODE>
-<PRE>
-std::string input = "DELETE; -all";
-yrm.YAMLRunString(true, false, true, input.c_str());
-</PRE>
-</CODE>
-@endhtmlonly
- */
+	Inserts data into the YAML document for the PhreeqcRM method RunString.
+	When the YAML document is written to file it can be processed by the method InitializeYAML to
+	initialize a PhreeqcRM instance.
+	@par
+	RunString runs a PHREEQC input string. The first three arguments determine which
+	IPhreeqc instances will run
+	the string--the workers, the InitialPhreeqc instance, and (or) the Utility instance. Input
+	strings that modify the thermodynamic database should be run by all three sets of instances.
+	Strings with SELECTED_OUTPUT definitions that will be used during the time-stepping loop need to
+	be run by the workers. Strings that contain initial conditions or boundary conditions should
+	be run by the InitialPhreeqc instance.
+	@param workers          @a True, the workers will run the string; @a False, the workers will not run the string.
+	@param initial_phreeqc  @a True, the InitialPhreeqc instance will run the string; @a False, the InitialPhreeqc will not run the string.
+	@param utility          @a True, the Utility instance will run the string; @a False, the Utility instance will not run the string.
+	@param input_string     String containing PHREEQC input.
+	@see                    @ref YAMLRunFile.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	std::string input = "DELETE; -all";
+	yrm.YAMLRunString(true, false, true, input.c_str());
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	 */
 	void YAMLRunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method ScreenMessage.
@@ -709,9 +779,9 @@ yrm.YAMLRunString(true, false, true, input.c_str());
 	@par
 	SetDensity sets the density for each reaction cell. These density values are used
 	when converting from transported mass-fraction concentrations (@ref YAMLSetUnitsSolution) to
-	produce per liter concentrations during a call to SetConcentrations.
-	They are also used when converting from reaction-cell concentrations to transport concentrations,
-	if UseSolutionDensityVolume is set to @a false.
+	produce per liter concentrations during a call to SetConcentrations and when converting from 
+	reaction-cell concentrations to transport concentrations, if UseSolutionDensityVolume is set to 
+	@a false.
 	@param density          Vector of densities. Size of vector is @a nxyz, where @a nxyz is the number
 	of grid cells in the user's model.
 	@see
@@ -874,27 +944,27 @@ yrm.YAMLRunString(true, false, true, input.c_str());
 		*/
 	void YAMLSetGasPhaseVolume(std::vector< double > gas_volume);
 	/**
-Inserts data into the YAML document to define the number of cells in the 
-user's model.
-Once the YAML document is written, the number of model cells can be extracted
-with the method GetGridCellCountYAML. GetGridCellCountYAML is NOT a PhreeqcRM 
-method; it is a global method and must be used BEFORE the PhreeqcRM instance
-is created. SetGridCellCount will be ignored once the PhreeqcRM instance exists.
-@param n           Number of cells for the PhreeqcRM instance. The number of cells
-can be used in the creation of the PhreeqcRM instance. The PhreeqcRM constructor
-takes two arguments. GetGridCellCountYAML
-provides the value for the first argument. If the YAML file does not contain the
-node "SetGridCellCount:", GetGridCellCountYAML will return zero.
-@par C++ Example:
-@htmlonly
-<CODE>
-<PRE>
+	Inserts data into the YAML document to define the number of cells in the 
+	user's model.
+	Once the YAML document is written, the number of model cells can be extracted
+	with the method GetGridCellCountYAML. GetGridCellCountYAML is NOT a PhreeqcRM 
+	method; it is a global method and must be used BEFORE the PhreeqcRM instance
+	is created. SetGridCellCount will be ignored once the PhreeqcRM instance exists.
+	@param n           Number of cells for the PhreeqcRM instance. The number of cells
+	can be used in the creation of the PhreeqcRM instance. The PhreeqcRM constructor
+	takes two arguments. GetGridCellCountYAML
+	provides the value for the first argument. If the YAML file does not contain the
+	node "SetGridCellCount:", GetGridCellCountYAML will return zero.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
 	int nxyz = 40;
 	yrm.YAMLSetGridCellCount(nxyz);
-</PRE>
-</CODE>
-@endhtmlonly
-*/
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	*/
 	void YAMLSetGridCellCount(int n);
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method SetNthSelectedOutput.
@@ -1314,9 +1384,8 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
 	@par
-	SetTimeConversion
-	Set a factor to convert from seconds to user time units. Factor times seconds produces user time units
-	that is used in some PhreeqcRM printing.
+	SetTimeConversion sets a factor to convert from seconds to user time units. Factor times seconds 
+	produces user time units, which are used in some PhreeqcRM printing.
 
 	@param conv_factor      Factor to convert seconds to user time units.
 	@see                    @ref YAMLSetTime, @ref YAMLSetTimeStep.
@@ -1372,7 +1441,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	If a single EXCHANGE definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of exchangers will be the same regardless of porosity.
-	For option 1, the number of moles of exchangers will be vary directly with porosity and inversely with rock volume.
+	For option 1, the number of moles of exchangers will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of exchangers will vary directly with rock volume and inversely with porosity.
 
 	@param option           Units option for exchangers: 0, 1, or 2.
@@ -1407,7 +1476,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	If a single GAS_PHASE definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of a gas component will be the same regardless of porosity.
-	For option 1, the number of moles of a gas component will be vary directly with porosity and inversely with rock volume.
+	For option 1, the number of moles of a gas component will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of a gas component will vary directly with rock volume and inversely with porosity.
 
 	@param option           Units option for gas phases: 0, 1, or 2.
@@ -1444,7 +1513,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	If a single KINETICS definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of kinetic reactants will be the same regardless of porosity.
-	For option 1, the number of moles of kinetic reactants will be vary directly with porosity and inversely with rock volume.
+	For option 1, the number of moles of kinetic reactants will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of kinetic reactants will vary directly with rock volume and inversely with porosity.
 	@par
 	Note that the volume of water in a cell in the reaction module is equal to the product of
@@ -1493,7 +1562,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	If a single EQUILIBRIUM_PHASES definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of a mineral will be the same regardless of porosity.
-	For option 1, the number of moles of a mineral will be vary directly with porosity and inversely with rock volume.
+	For option 1, the number of moles of a mineral will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of a mineral will vary directly with rock volume and inversely with porosity.
 
 	@param option           Units option for equilibrium phases: 0, 1, or 2.
@@ -1578,12 +1647,12 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	Options are
 	0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (SetRepresentativeVolume);
 	1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (SetPorosity); or
-	2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@ P)*RV.
+	2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
 	@par
 	If a single SOLID_SOLUTION definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of a solid-solution component will be the same regardless of porosity.
-	For option 1, the number of moles of a solid-solution component will be vary directly with porosity and inversely with rock volume.
+	For option 1, the number of moles of a solid-solution component will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of a solid-solution component will vary directly with rock volume and inversely with porosity.
 
 	@param option           Units option for solid solutions: 0, 1, or 2.
@@ -1618,7 +1687,7 @@ node "SetGridCellCount:", GetGridCellCountYAML will return zero.
 	If a single SURFACE definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of surface sites will be the same regardless of porosity.
-	For option 1, the number of moles of surface sites will be vary directly with porosity and inversely with rock volume.
+	For option 1, the number of moles of surface sites will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of surface sites will vary directly with rock volume and inversely with porosity.
 	@par
 	@param option           Units option for surfaces: 0, 1, or 2.
