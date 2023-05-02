@@ -362,7 +362,7 @@ class YAMLPhreeqcRM(object):
         of initial_conditions2.
         """
         node = dict()
-        node["key"] = "YAMLInitialPhreeqc2Module_mix"
+        node["key"] = "InitialPhreeqc2Module_mix"
         node["ic1"] = ic1
         node["ic2"] = ic2
         node["f1"] = f1

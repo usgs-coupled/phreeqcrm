@@ -5470,6 +5470,20 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			ErrorMessage("YAML argument mismatch InitialPhreeqc2Module");
 			throw PhreeqcRMStop();
 		}
+		if (keyword == "InitialPhreeqc2Module_mix")
+		{
+			if (node.size() == 4)
+			{
+				std::vector < int > ic1 = it1++->second.as< std::vector < int > >();
+				std::vector < int > ic2 = it1++->second.as< std::vector < int > >();
+				std::vector < double > f1 = it1->second.as< std::vector < double > >();
+				this->InitialPhreeqc2Module(ic1, ic2, f1);
+				continue;
+			}
+			//throw LetItThrow("YAML argument mismatch InitialPhreeqc2Module");
+			ErrorMessage("YAML argument mismatch InitialPhreeqc2Module_mix");
+			throw PhreeqcRMStop();
+		}
 		if (keyword == "InitialPhreeqcCell2Module")
 		{
 			assert(node.size() == 3);
@@ -5772,7 +5786,9 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			continue;
 		}
 		//throw LetItThrow("YAML keyword not found");
-		ErrorMessage("YAML keyword not found");
+		std::ostringstream oss;
+		oss << "YAML keyword not found: " << keyword << std::endl;
+		ErrorMessage(oss.str());
 		throw PhreeqcRMStop();
 	}
 	// Initialize BMI variables
