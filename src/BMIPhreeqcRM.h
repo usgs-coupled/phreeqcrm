@@ -31,15 +31,15 @@ public:
     static int              CreateBMIModule();
     static int              CreateBMIModule(int nxyz, MP_TYPE nthreads);
     static IRM_RESULT       DestroyBMIModule(int n);
-    static BMIPhreeqcRM*    GetInstance(int n);
+    static BMIPhreeqcRM* GetInstance(int n);
     /**
-    Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM. 
+    Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM.
     Definition of the number of cells and threads (or MPI communicator) is deferred.
     */
     BMIPhreeqcRM();
     /**
-    Constructor for the BMIPhreeqcRM subclass of PhreeqcRM. A BMIPhreeqcRM 
-    instance has the BMI methods plus all of the PhreeqcRM methods. The 
+    Constructor for the BMIPhreeqcRM subclass of PhreeqcRM. A BMIPhreeqcRM
+    instance has the BMI methods plus all of the PhreeqcRM methods. The
     constructor requires two arguments: the number of cells in the user's
     model, and either (a) the number of threads for OpenMP parallelization, or
     (b) an MPI communicator.
@@ -69,8 +69,8 @@ public:
     // Model control functions.
     /**
     @a Initialize is used to initialize a PhreeqcRM instance. This method is equivalent to
-    @ref InitializeYAML. A YAML file used for initialization contains a 
-    YAML map of PhreeqcRM 
+    @ref InitializeYAML. A YAML file used for initialization contains a
+    YAML map of PhreeqcRM
     methods and the arguments corresponding to each method. For example,
     @htmlonly
     <CODE>
@@ -85,12 +85,12 @@ public:
     </CODE>
     @endhtmlonly
 
-    @a Initialize will read the YAML file and execute the specified methods with 
-    the specified arguments. Using YAML terminology, the argument(s) for a method 
+    @a Initialize will read the YAML file and execute the specified methods with
+    the specified arguments. Using YAML terminology, the argument(s) for a method
     may be a scalar, a sequence, or a map, depending if the argument is
-    a single item, a single vector, or there are multiple arguments. In the case 
-    of a map, the name associated with each argument (for example "chemistry_name" 
-    above) is arbitrary. The names of the map keys for map arguments are not used 
+    a single item, a single vector, or there are multiple arguments. In the case
+    of a map, the name associated with each argument (for example "chemistry_name"
+    above) is arbitrary. The names of the map keys for map arguments are not used
     in parsing the YAML file; only the order of the arguments is important.
 
     The PhreeqcRM methods that can be specified in a YAML file include:
@@ -109,14 +109,14 @@ public:
     @n InitialSolutions2Module(std::vector< int > solutions);
     @n InitialSurfaces2Module(std::vector< int > surfaces);
     @n InitialPhreeqc2Module(std::vector< int > initial_conditions1);
-    @n InitialPhreeqc2Module(std::vector< int > initial_conditions1, 
+    @n InitialPhreeqc2Module(std::vector< int > initial_conditions1,
     @n     std::vector< int > initial_conditions2, std::vector< double > fraction1);
     @n InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
     @n LoadDatabase(std::string database);
     @n OpenFiles();
     @n OutputMessage(std::string str);
     @n RunCells();
-    @n RunFile(bool workers, bool initial_phreeqc, 
+    @n RunFile(bool workers, bool initial_phreeqc,
     @n      bool utility, std::string chemistry_name);
     @n RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
     @n ScreenMessage(std::string str);
@@ -197,9 +197,9 @@ public:
     void Initialize(std::string config_file) override;
     /**
     @a Update runs PhreeqcRM for one time step. This method is equivalent to
-    @ref RunCells. PhreeqcRM will equilibrate the solutions with all equilibrium 
-    reactants (EQUILIBRIUM_PHASES, EXCHANGE, GAS_PHASE, SOLID_SOLUTIONS, and SURFACE) 
-    and integrate KINETICS reactions for the specified time step 
+    @ref RunCells. PhreeqcRM will equilibrate the solutions with all equilibrium
+    reactants (EQUILIBRIUM_PHASES, EXCHANGE, GAS_PHASE, SOLID_SOLUTIONS, and SURFACE)
+    and integrate KINETICS reactions for the specified time step
     (@ref SetValue "TimeStep" or @ref SetTimeStep).
     @see
     @ref Initialize,
@@ -235,9 +235,9 @@ public:
 
     /**
     @a UpdateUntil is the same as @ref Update, except the time step is calculated
-    from the argument @a end_time. The time step is calculated to be @a end_time minus 
+    from the argument @a end_time. The time step is calculated to be @a end_time minus
     the current time (@ref GetCurrentTime).
-	@param end_time Time at the end of the time step. 
+    @param end_time Time at the end of the time step.
     @see
     @ref Initialize,
     @ref Update.
@@ -265,7 +265,7 @@ public:
     </CODE>
     @endhtmlonly
     @par MPI:
-    Called by root, workers must be in the loop of @ref MpiWorker.    
+    Called by root, workers must be in the loop of @ref MpiWorker.
      */
     void UpdateUntil(double end_time) override;
     /**
@@ -286,11 +286,11 @@ public:
     // Model information functions.
 
     /**
-    @a GetComponentName returns the component name--"BMI PhreeqcRM". 
-    BMI PhreeqcRM is a partial interface to PhreeqcRM, and provides 
+    @a GetComponentName returns the component name--"BMI PhreeqcRM".
+    BMI PhreeqcRM is a partial interface to PhreeqcRM, and provides
     the methods to implement chemical reactions in a
-    multicomponent transport model. All of the native PhreeqcRM methods 
-    (non BMI methods) are also available, which provides a complete 
+    multicomponent transport model. All of the native PhreeqcRM methods
+    (non BMI methods) are also available, which provides a complete
     interface to PhreeqcRM.
     @retval The string "BMI PhreeqcRM".
     @par C++ Example:
@@ -304,11 +304,11 @@ public:
     @par MPI:
     Called by root.
     */
-    std::string GetComponentName() override {return "BMI PhreeqcRM";};
+    std::string GetComponentName() override { return "BMI PhreeqcRM"; };
 
     /**
-    @a GetInputVarNames returns the count of input variables that can 
-    be set with @ref SetValue. 
+    @a GetInputVarNames returns the count of input variables that can
+    be set with @ref SetValue.
     @retval  Count of input variables that can be set with @ref SetValue.
     @see
     @ref GetInputVarNames,
@@ -343,7 +343,7 @@ public:
     int GetInputItemCount() override;
 
     /**
-    @a GetOutputItemCount returns the count of output variables that can 
+    @a GetOutputItemCount returns the count of output variables that can
     be retrieved with @ref GetValue.
     @retval  Count of output variables that can be retrieved with @ref GetValue.
 
@@ -380,10 +380,10 @@ public:
     int GetOutputItemCount() override;
     /**
     @a GetPointableItemCount returns the count of variables for which
-    pointers can be obtained with @ref GetValuePtr. The pointers point to 
+    pointers can be obtained with @ref GetValuePtr. The pointers point to
     current copies of the variables. Setting a value with one of the pointers
     will have no effect on the simulation, but will corrupt the copy of the variable.
-    @retval  Count of pointers to variables that can be accessed with 
+    @retval  Count of pointers to variables that can be accessed with
     @ref GetValuePtr.
 
     @see
@@ -419,9 +419,9 @@ public:
     int GetPointableItemCount();
 
     /**
-    @a GetInputVarNames returns a list of the variable names that can be 
-    set with @ref SetValue. 
-    @retval  A std::vector of the names of variables that can be set with 
+    @a GetInputVarNames returns a list of the variable names that can be
+    set with @ref SetValue.
+    @retval  A std::vector of the names of variables that can be set with
     @ref SetValue.
 
     @see
@@ -457,9 +457,9 @@ public:
     std::vector<std::string> GetInputVarNames() override;
 
     /**
-    @a GetOutputVarNames returns a list of the variable names that can 
+    @a GetOutputVarNames returns a list of the variable names that can
     be retrieved with @ref GetValue.
-    @retval  A list of the names of variable that can be retrieved with 
+    @retval  A list of the names of variable that can be retrieved with
     @ref GetValue.
 
     @see
@@ -541,12 +541,12 @@ public:
     model.
     @param name Varaiable name. (Return value is the same regardless of @a name.)
     @retval 1 BMIPhreeqcRM cells derive meaning from the user's
-    model. 
+    model.
     */
-    int GetVarGrid(const std::string name) override {return 1;}
+    int GetVarGrid(const std::string name) override { return 1; }
 
     /**
-    @a GetVarType retrieves the type of a variable 
+    @a GetVarType retrieves the type of a variable
     that can be set with @ref SetValue, retrieved with @ref GetValue,
     or pointed to by @ref GetValuePtr.
     Types are "int", "double", "std::string", or "std::vector<std::string>".
@@ -583,7 +583,7 @@ public:
      */
     std::string GetVarType(const std::string name) override;
     /**
-    @a GetVarUnits retrieves the units of a variable 
+    @a GetVarUnits retrieves the units of a variable
     that can be set with @ref SetValue, retrieved with @ref GetValue,
     or pointed to by @ref GetValuePtr.
     @param name Name of the variable to retrieve units.
@@ -619,9 +619,9 @@ public:
     std::string GetVarUnits(const std::string name) override;
 
     /**
-    @a GetVarItemsize retrieves size of an individual item that 
+    @a GetVarItemsize retrieves size of an individual item that
     can be set or retrived. Sizes may be sizeof(int), sizeof(double),
-    or a character length for string variables. 
+    or a character length for string variables.
     @param name Name of the variable to retrieve size.
     @retval Size of one element of the variable.
 
@@ -655,8 +655,8 @@ public:
     int GetVarItemsize(const std::string name) override;
 
     /**
-    @a GetVarNbytes retrieves the total number of bytes that are 
-    set for a variable with @ref SetValue, retrieved for a variable with 
+    @a GetVarNbytes retrieves the total number of bytes that are
+    set for a variable with @ref SetValue, retrieved for a variable with
     @ref GetValue, or pointed to by @ref GetValuePtr.
     @param name Name of the variable to retrieve total bytes.
     @retval Total number of bytes set, retrieved, or pointed to for variable.
@@ -664,7 +664,7 @@ public:
     @ref GetVarItemsize,
     @ref GetVarType,
     @ref GetVarUnits.
-    
+
     @par C++ Example:
     @htmlonly
         <CODE>
@@ -694,15 +694,15 @@ public:
     @a GetVarLocation has no explicit meaning in BMIPhreeqcRM. All
     grid-related information derives from the user's model.
     @param name Name of the variable, but not used.
-    @retval The string "Unknown" is returned. 
+    @retval The string "Unknown" is returned.
     */
     std::string GetVarLocation(const std::string name) override { return "Unknown"; }
 
     // Time functions
 
     /**
-    @a GetCurrentTime returns the current simulation time, in seconds. 
-    (Same as @ref GetTime.) 
+    @a GetCurrentTime returns the current simulation time, in seconds.
+    (Same as @ref GetTime.)
     @retval                 The current simulation time, in seconds.
     @see
     @ref GetEndTime,
@@ -789,12 +789,12 @@ public:
     // Variable getters
     /**
     @a GetValue retrieves model variables. Only variables in the list
-    provided by @ref GetOutputVarNames can be retrieved. 
+    provided by @ref GetOutputVarNames can be retrieved.
 
     @param name Name of the variable to retrieve.
     @param dest Variable in which to place results. The @a dest variable
     can be of different types depending on the variable retrieved. The
-    following list gives the name in the first argument and the 
+    following list gives the name in the first argument and the
     corresponding data type of the @a dest argument:
 
     @n "ComponentCount", @a dest: int;
@@ -843,48 +843,48 @@ public:
     @par MPI:
     Called by root, workers must be in the loop of @ref MpiWorker.
     */
-//Add NEW_VARIABLE to GetValue Documentation
+    //Add NEW_VARIABLE to GetValue Documentation
     void GetValue(const std::string name, void* dest) override;
     /*!
-    * \overload void GetValue(std::string name, bool& dest);
+    * \overload void GetValue(std::string name, bool& OUTPUT);
     */
-    void GetValue(const std::string name, bool& dest);
+    void GetValue(const std::string name, bool& OUTPUT);
     /*!
-    * \overload void GetValue(std::string name, bool* dest);
+    * \overload void GetValue(std::string name, bool* OUTPUT);
     */
-    void GetValue(const std::string name, bool* dest);
+    void GetValue(const std::string name, bool* OUTPUT);
     /*!
-    * \overload void GetValue(std::string name, double& dest);
+    * \overload void GetValue(std::string name, double& OUTPUT);
     */
-    void GetValue(const std::string name, double& dest);
+    void GetValue(const std::string name, double& OUTPUT);
     /*!
-    * \overload void GetValue(std::string name, double* dest);
+    * \overload void GetValue(std::string name, double* OUTPUT);
     */
-    void GetValue(const std::string name, double* dest);
+    void GetValue(const std::string name, double* OUTPUT);
     /*!
-    * \overload void GetValue(std::string name, int& dest);
+    * \overload void GetValue(std::string name, int& OUTPUT);
     */
-    void GetValue(const std::string name, int& dest);
+    void GetValue(const std::string name, int& OUTPUT);
     /*!
-    * \overload void GetValue(std::string name, int* dest);
+    * \overload void GetValue(std::string name, int* OUTPUT);
     */
-    void GetValue(const std::string name, int* dest);
+    void GetValue(const std::string name, int* OUTPUT);
     /*!
-    * \overload void GetValue(std::string name, std::string& dest);
+    * \overload void GetValue(std::string name, std::string& OUTPUT);
     */
-    void GetValue(const std::string name, std::string& dest);
+    void GetValue(const std::string name, std::string& OUTPUT);
     /*!
-    * \overload void GetValue(std::string name, std::vector<double>& dest);
+    * \overload void GetValue(std::string name, std::vector<double>& OUTPUT);
     */
-    void GetValue(const std::string name, std::vector<double>& dest);
+    void GetValue(const std::string name, std::vector<double>& OUTPUT);
     /*!
-    * \overload void GetValue(std::string name, std::vector<int>& dest);
+    * \overload void GetValue(std::string name, std::vector<int>& OUTPUT);
     */
-    void GetValue(const std::string name, std::vector<int>& dest);
+    void GetValue(const std::string name, std::vector<int>& OUTPUT);
     /*!
-    * \overload void GetValue(std::string name, std::vector<int>& dest);
+    * \overload void GetValue(std::string name, std::vector<int>& OUTPUT);
     */
-    void GetValue(const std::string name, std::vector<std::string>& dest);
+    void GetValue(const std::string name, std::vector<std::string>& OUTPUT);
     /**
     @a GetValuePtr takes a variable name and returns a 
     pointer to a current copy of the variable values. Unlike the buffer 
@@ -959,39 +959,39 @@ public:
     @par MPI:
     Called by root, workers must be in the loop of @ref MpiWorker.
      */
-    void SetValue(std::string name, void* src) override;
+    void SetValue(const std::string name, void* src) override;
     /*!
-    * \overload void SetValue(std::string name, bool src);
+    * \overload void SetValue(const std::string name, bool src);
     */
-    void SetValue(std::string name, bool src);
+    void SetValue(const std::string name, bool src);
     /*!
-    * \overload void SetValue(std::string name, char* src);
+    * \overload void SetValue(const std::string name, char* src);
     */
-    void SetValue(std::string name, char* src);
+    void SetValue(const std::string name, char* src);
     /*!
-    * \overload void SetValue(std::string name, double src);
+    * \overload void SetValue(const std::string name, double src);
     */
-    void SetValue(std::string name, double src);
+    void SetValue(const std::string name, double src);
     /*!
-    * \overload void SetValue(std::string name, int src);
+    * \overload void SetValue(const std::string name, int src);
     */
-    void SetValue(std::string name, int src);
+    void SetValue(const std::string name, int src);
     /*!
-    * \overload void SetValue(std::string name, std::string src);
+    * \overload void SetValue(const std::string name, std::string src);
     */
-    void SetValue(std::string name, std::string src);
+    void SetValue(const std::string name, const std::string src);
     /*!
-    * \overload void SetValue(std::string name, std::vector<double> src);
+    * \overload void SetValue(const std::string name, std::vector<double> src);
     */
-    void SetValue(std::string name, std::vector<double> src);
+    void SetValue(const std::string name, std::vector<double> src);
     /*!
-    * \overload void SetValue(std::string name, std::vector<int>  src);
+    * \overload void SetValue(const std::string name, std::vector<int>  src);
     */
-    void SetValue(std::string name, std::vector<int>  src);
+    void SetValue(const std::string name, std::vector<int>  src);
     /*!
-    * \overload void SetValue(std::string name, std::vector<std::string>  src);
+    * \overload void SetValue(const std::string name, std::vector<std::string>  src);
     */
-    void SetValue(std::string name, std::vector<std::string>  src);
+    void SetValue(const std::string name, std::vector<std::string>  src);
     /**
     @a SetValueAtIndices is not implemented.
     */

@@ -2004,7 +2004,7 @@ void VarManager::GenerateAutoOutputVars()
 		data_block << code.str() << std::endl;
 		data_block << "-end" << std::endl;
 		rm_ptr->RunString(true, false, false, data_block.str());
-		std::cerr << data_block.str();
+		//std::cerr << data_block.str();
 	}
 	//BMISelecteOutputDefs.clear();
 	return;

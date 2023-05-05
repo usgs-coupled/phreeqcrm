@@ -6,7 +6,7 @@ import numpy as np
     #  integer                                 :: rm_id
     #end module mydata
 
-def AdvectBMI_f90():
+def AdvectBMI_py():
 
 	# Based on PHREEQC Example 11
 
@@ -26,21 +26,17 @@ def AdvectBMI_f90():
 	# YAMLSetGridCellCount), the return
 	# value is zero.
 	###nxyz = GetGridCellCountYAML(yaml_file)
-	nxyz = 40
+	#nxyz = 40
 	# Bogus conductivity field for Basic callback demonstration
 	#hydraulic_K = [i*2.0 for i in range(nxyz)] 
-	hydraulic_K = [0.0] * nxyz
-	for i in range(nxyz):
-		hydraulic_K[i] = i*2.0
-	nthreads = 3
+	#nthreads = 3
 	##phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, nthreads)
 	bmi = phreeqcrm.BMIPhreeqcRM()
 	# Initialize with YAML file
 	# status = phreeqc_rm.InitializeYAML(yaml_file)
 	status = bmi.Initialize(yaml_file)
-	print(f"status={status}")
-	return
-
+	#print(f"status={status}")
+	#return
 
     # Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
     #TODO CALL register_basic_callback_fortran()
@@ -48,8 +44,21 @@ def AdvectBMI_f90():
     # Optional callback for MPI
     #TODO status = do_something()   # only root is calling do_something here
 #endif
-
-	phreeqc_rm.BMI_GetValue("ComponentCount", ncomps)
+	#nxyz = 0
+	c_int_vect = phreeqcrm.IntVector(10, 0)
+	bmi.GetValue("GridCellCount", c_int_vect)
+	nxyz = c_int_vect[0]
+	print("Okay")
+	print(f"nxyz={nxyz}")
+	return
+	bmi.GetValue("ComponentCount", ncomps)
+	hydraulic_K = [0.0] * nxyz
+	for i in range(nxyz):
+		hydraulic_K[i] = i*2.0
+	ncomps = 0
+	bmi.GetValue("ComponentCount", ncomps)
+	print("Okay")
+	return
 	# Print some of the reaction module information
 	print("Number of threads:                                ", phreeqc_rm.GetThreadCount())
 	phreeqc_rm.OutputMessage(string1)
@@ -200,7 +209,7 @@ def advectionbmi_py(c, bc_conc, ncomps, nxyz):
 
 
 if __name__ == '__main__':
-    AdvectBMI_f90()
+    AdvectBMI_py()
 
 
 #endif # USE_YAML
