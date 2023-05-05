@@ -83,16 +83,21 @@ def GetValue(self, var):
 		if dim==1:
 			return self.GetValue_double(var)
 		if dim>1:
-			return self.GetValue_double_vector(var)
+			v = self.GetValue_double_vector(var)
+			return list(v)
 	if type=="int":
 		if dim==1:
 			return self.GetValue_int(var)
 		if dim>1:
-			return self.GetValue_int_vector(var)
+			v = self.GetValue_int_vector(var)
+			return list(v)
 	if type=="std::string":
 		return self.GetValue_string(var)
 	if type=="std::vector<std::string>":
-		return self.GetValue_string_vector(var)
+		v = self.GetValue_string_vector(var)
+		return list(v)
+	if type=="bool":
+		return self.GetValue_bool(var)
 def SetValue(self, var, value):
 	Nbytes = self.GetVarNbytes(var)
 	Itemsize = self.GetVarItemsize(var)
