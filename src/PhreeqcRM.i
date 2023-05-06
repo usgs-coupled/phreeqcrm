@@ -120,9 +120,5 @@ def SetValue(self, var, value):
 		self.SetValue_string_vector(var, value)	
 %} 
 };
-//%pythoncode 
-//%{ 
-//def foo(self): 
-//	self.GetVarNbytes("Time")
-//%}
+
 

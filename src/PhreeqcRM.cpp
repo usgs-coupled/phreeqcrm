@@ -3602,7 +3602,9 @@ PhreeqcRM::GetDensity(std::vector<double> & density_arg)
 				cxxSolution * soln_ptr = this->workers[n]->Get_solution(i);
 				if (!soln_ptr)
 				{
-					this->ErrorHandler(IRM_FAIL, "Solution not found for solution volume.");
+					std::ostringstream oss;
+					oss << "Solution not found for density." << "  thread: " << n << "  solution " << i;
+					this->ErrorHandler(IRM_FAIL, oss.str());
 				}
 				else
 				{
@@ -4375,7 +4377,7 @@ PhreeqcRM::GetSaturation(std::vector<double> & sat_arg)
 				cxxSolution * soln_ptr = this->workers[n]->Get_solution(i);
 				if (!soln_ptr)
 				{
-					this->ErrorHandler(IRM_FAIL, "Solution not found for solution volume.");
+					this->ErrorHandler(IRM_FAIL, "Solution not found for saturation.");
 				}
 				else
 				{
@@ -5242,7 +5244,7 @@ PhreeqcRM::GetViscosity(std::vector<double>& viscosity_arg)
 				cxxSolution* soln_ptr = this->workers[n]->Get_solution(i);
 				if (!soln_ptr)
 				{
-					this->ErrorHandler(IRM_FAIL, "Solution not found for solution volume.");
+					this->ErrorHandler(IRM_FAIL, "Solution not found for viscosity.");
 				}
 				else
 				{

@@ -31,7 +31,7 @@ def AdvectBMI_py():
 	#hydraulic_K = [i*2.0 for i in range(nxyz)] 
 	#nthreads = 3
 	
-	bmi = phreeqcrm.BMIPhreeqcRM()
+	bmi = phreeqcrm.BMIPhreeqcRM(40, 3)
 	# Initialize with YAML file
 	status = bmi.Initialize(yaml_file)
 
@@ -190,7 +190,307 @@ def AdvectBMI_py():
 					print(f"     Selected output: ")
 					for j in range(col):
 						print(f"{j}, {headings[j]}, {selected_out[j * nxyz + i]}")
-
+	#x=GetGridCellCountYAML("AdvectBMI_py.yaml") #not defined
+	x=phreeqcrm.BMIPhreeqcRM()
+	print(f"BMIPhreeqcRM {x}")
+	#---------
+	out = bmi.InitialPhreeqc2Concentrations(bc1)
+	status = out[0]
+	bc_conc = list(out[1])
+	tc = [30.0]
+	p_atm = [1.5]
+	bc_double_vect = phreeqcrm.DoubleVector(len(bc_conc))
+	for i in range(len(bc_conc)):
+		bc_double_vect[i] = bc_conc[i]
+	x=bmi.Concentrations2Utility(bc_double_vect, tc, p_atm)
+	print(f"Concentrations2Utility {x}")
+	#---------
+	grid2chem = phreeqcrm.IntVector(nxyz, -1)
+	for i in range(nxyz//2):
+		grid2chem[i] = i
+	x=bmi.CreateMapping(grid2chem)
+	print(f"CreateMapping {x}")
+	#---------
+	bmi.DecodeError(-2)
+	#---------
+	x=bmi.DumpModule(True)
+	print(f"DumpModule {x}")
+	#---------
+	bmi.ErrorHandler(0, "string")
+	#---------
+	#bmi.SetErrorOn(False)
+	bmi.ErrorMessage("my error") 
+	#---------
+	x=bmi.FindComponents()
+	print(f"FindComponents {x}")
+	#---------
+	x=bmi.GetBackwardMapping()
+	print(type(x))
+	print("what is it?")
+	#---------
+	x=bmi.GetChemistryCellCount()
+	print(f"GridCellCount {x}")
+	#---------
+	x=bmi.GetComponentCount()
+	print(f"GetComponentCount {x}")
+	#---------
+	x=bmi.GetComponents()
+	print(f"GetComponents {x}")
+	#---------
+	c = phreeqcrm.DoubleVector(nxyz*ncomps, 0)
+	x=bmi.GetConcentrations(c)
+	print(f"GetConcentrations {x}, {c[0]}.")
+	#---------
+	x=bmi.GetCurrentSelectedOutputUserNumber()
+	print(f"GetCurrentSelectedOutputUserNumber {x}")
+	#---------
+	x=bmi.GetDatabaseFileName()
+	print(f"GetDatabaseFileName {x}")
+	#---------
+	d = phreeqcrm.DoubleVector(nxyz, 0)
+	x=bmi.GetDensity(d)
+	print(f"GetDensity {x}, {d[0]}") 
+	#---------
+	x=bmi.GetEndCell()
+	print(f"GetEndCell, FAILS WITH THREADS {x}")
+	#---------
+	x=bmi.GetEquilibriumPhases()
+	print(f"GetEquilibriumPhases {x}")
+	#---------
+	x=bmi.GetEquilibriumPhasesCount()
+	print(f"GetEquilibriumPhasesCount {x}")
+	#---------
+	x=bmi.GetErrorHandlerMode()
+	print(f"GetErrorHandlerMode {x}")
+	#---------
+	x=bmi.GetErrorString()
+	print(f"GetErrorString {x}")
+	#---------
+	x=bmi.GetExchangeNames()
+	print(f"GetExchangeNames {x}")
+	#---------
+	x=bmi.GetExchangeSpecies()
+	print(f"GetExchangeSpecies {x}")
+	#---------
+	x=bmi.GetExchangeSpeciesCount()
+	print(f"GetExchangeSpeciesCount {x}")
+	#---------
+	x=bmi.GetFilePrefix()
+	print(f"GetFilePrefix {x}")
+	#---------
+	x=bmi.GetForwardMapping()
+	print(f"GetForwardMapping {x}")
+	#---------
+	x=bmi.GetGasComponents()
+	print(f"GetGasComponents {x}")
+	#---------
+	x=bmi.GetGasComponentsCount()
+	print(f"GetGasComponentsCount {x}")
+	#---------
+	v = phreeqcrm.DoubleVector()
+	x=bmi.GetGasCompMoles(v)
+	print(f"GetGasCompMoles {x}")
+	#---------
+	x=bmi.GetGasCompPressures(v)
+	print(f"GetGasCompPressures {x}")
+	#---------
+	x=bmi.GetGasCompPhi(v)
+	print(f"GetGasCompPhi {x}")
+	#---------
+	x=bmi.GetGasPhaseVolume(v)
+	print(f"GetGasPhaseVolume {x}")
+	#---------
+	x=bmi.GetGfw()
+	print(f"GetGfw {x}")
+	#---------
+	x=bmi.GetGridCellCount()
+	print(f"GetGridCellCount {x}")
+	#---------
+	x=bmi.GetIPhreeqcPointer(0)
+	print(f"GetIPhreeqcPointer {x}")
+	#---------
+	x=bmi.GetKineticReactions()
+	print(f"GetKineticReactions {x}")
+	#---------
+	x=bmi.GetKineticReactionsCount()
+	print(f"GetKineticReactionsCount {x}")
+	#---------
+	x=bmi.GetMpiMyself()
+	print(f"GetMpiMyself {x}")
+	#---------
+	x=bmi.GetMpiTasks()
+	print(f"GetMpiTasks {x}")
+	#---------
+	x=bmi.GetNthSelectedOutputUserNumber(0)
+	print(f"GetNthSelectedOutputUserNumber {x}")
+	#---------
+	x=bmi.GetPartitionUZSolids()
+	print(f"GetPartitionUZSolids {x}")
+	#---------
+	x=bmi.GetSolutionVolume()
+	print(f"PoreVolume? GetSolutionVolume {x[0]}")
+	#---------
+	x=bmi.GetPorosity()
+	print(f"GetPorosity {x[0]}")
+	#---------
+	x=bmi.GetPressure()
+	print(f"GetPressure {x[0]}")
+	#---------
+	x=bmi.GetPrintChemistryMask()
+	print(f"GetPrintChemistryMask {x[0]}")
+	#---------
+	x=bmi.GetPrintChemistryOn()
+	print(type(x))
+	print(f"What is it? GetPrintChemistryOn {x}")
+	#---------
+	x=bmi.GetRebalanceByCell()
+	print(f"GetRebalanceByCell {x}")
+	#---------
+	x=bmi.GetRebalanceFraction()
+	print(f"GetRebalanceFraction {x}")
+	#---------
+	x=bmi.GetSaturation(v)
+	print(f"GetSaturation {x}, {v[0]}")
+	#---------
+	x=bmi.GetSelectedOutput(v)
+	print(f"GetSelectedOutput {x}, {v[0]}")
+	#---------
+	x=bmi.GetSelectedOutputColumnCount()
+	print(f"GetSelectedOutputColumnCount {x}")
+	#---------
+	x=bmi.GetSelectedOutputCount()
+	print(f"Duplicate? GetSelectedOutputCount {x}") 
+	#---------
+	v = phreeqcrm.StringVector()
+	x=bmi.GetSelectedOutputHeadings(v)
+	print(f"GetSelectedOutputHeadings {x}, {v[0]}")
+	#---------
+	x=bmi.GetSelectedOutputOn()
+	print(f"GetSelectedOutputOn {x}")
+	#---------
+	x=bmi.GetSelectedOutputRowCount()
+	print(f"GetSelectedOutputRowCount {x}")
+	#---------
+	x=bmi.GetSICount()
+	print(f"GetSICount {x}")
+	#---------
+	x=bmi.GetSINames()
+	print(f"GetSINames {x[0]}")
+	#---------
+	x=bmi.GetSolidSolutionComponents()
+	print(f"GetSolidSolutionComponents {x}")
+	#---------
+	return
+	x=bmi.GetSolidSolutionComponentsCount()
+	x=bmi.GetSolidSolutionNames()
+	x=bmi.GetSolutionVolume()
+	x=bmi.GetSpeciesConcentrations()
+	x=bmi.GetSpeciesCount()
+	x=bmi.GetSpeciesD25()
+	x=bmi.GetSpeciesLog10Gammas()
+	x=bmi.GetSpeciesLog10Molalities()
+	x=bmi.GetSpeciesNames()
+	x=bmi.GetSpeciesSaveOn()
+	x=bmi.GetSpeciesStoichiometry()
+	x=bmi.GetSpeciesZ()
+	x=bmi.GetStartCell()
+	x=bmi.GetSurfaceNames()
+	x=bmi.GetSurfaceSpecies()
+	x=bmi.GetSurfaceSpeciesCount()
+	x=bmi.GetSurfaceTypes()
+	x=bmi.GetTemperature()
+	x=bmi.GetThreadCount()
+	x=bmi.GetTime()
+	x=bmi.GetTimeConversion()
+	x=bmi.GetTimeStep()
+	x=bmi.GetUnitsExchange()
+	x=bmi.GetUnitsGasPhase()
+	x=bmi.GetUnitsKinetics()
+	x=bmi.GetUnitsPPassemblage()
+	x=bmi.GetUnitsSolution()
+	x=bmi.GetUnitsSSassemblage()
+	x=bmi.GetUnitsSurface()
+	x=bmi.GetWorkers()
+	x=bmi.InitializeYAML()
+	x=bmi.InitialPhreeqc2Concentrations()
+	x=bmi.InitialPhreeqc2Concentrations_mix()
+	x=bmi.InitialPhreeqc2Module()
+	x=bmi.InitialPhreeqc2Module_mix()
+	x=bmi.InitialPhreeqc2SpeciesConcentrations()
+	x=bmi.InitialPhreeqc2SpeciesConcentrations_mix()
+	x=bmi.InitialPhreeqcCell2Module()
+	x=bmi.LoadDatabase()
+	x=bmi.LogMessage()
+	x=bmi.MpiAbort()
+	x=bmi.MpiWorker()
+	x=bmi.MpiWorkerBreak()
+	x=bmi.OpenFiles()
+	x=bmi.OutputMessage()
+	x=bmi.RunCells()
+	x=bmi.ReturnHandler()
+	x=bmi.RunFile()
+	x=bmi.RunString()
+	x=bmi.ScreenMessage()
+	x=bmi.SetComponentH2O()
+	x=bmi.SetConcentrations()
+	x=bmi.SetCurrentSelectedOutputUserNumber()
+	x=bmi.SetDensity()
+	x=bmi.SetDumpFileName()
+	x=bmi.SetErrorHandlerMode()
+	x=bmi.SetErrorOn()
+	x=bmi.SetFilePrefix()
+	x=bmi.SetGasCompMoles()
+	x=bmi.SetGasPhaseVolume()
+	x=bmi.SetMpiWorkerCallbackC()
+	x=bmi.SetMpiWorkerCallbackCookie()
+	x=bmi.SetNthSelectedOutput()
+	x=bmi.SetPartitionUZSolids()
+	x=bmi.SetPorosity()
+	x=bmi.SetPressure()
+	x=bmi.SetPrintChemistryMask()
+	x=bmi.SetPrintChemistryOn()
+	x=bmi.SetRebalanceByCell()
+	x=bmi.SetRebalanceFraction()
+	x=bmi.SetRepresentativeVolume()
+	x=bmi.SetSaturation()
+	x=bmi.SetScreenOn()
+	x=bmi.SetSelectedOutputOn()
+	x=bmi.SetSpeciesSaveOn()
+	x=bmi.SetTemperature()
+	x=bmi.SetTime()
+	x=bmi.SetTimeConversion()
+	x=bmi.SetTimeStep()
+	x=bmi.SetUnitsExchange()
+	x=bmi.SetUnitsGasPhase()
+	x=bmi.SetUnitsKinetics()
+	x=bmi.SetUnitsPPassemblage()
+	x=bmi.SetUnitsSolution()
+	x=bmi.SetUnitsSSassemblage()
+	x=bmi.SetUnitsSurface()
+	x=bmi.SpeciesConcentrations2Module()
+	x=bmi.StateSave()
+	x=bmi.StateApply()
+	x=bmi.StateDelete()
+	x=bmi.UseSolutionDensityVolume()
+	x=bmi.WarningMessage()
+	x=bmi.GetComponentName()
+	x=bmi.GetCurrentTime()
+	x=bmi.GetEndTime()
+	x=bmi.GetInputItemCount()
+	x=bmi.GetInputVarNames()
+	x=bmi.GetOutputItemCount()
+	x=bmi.GetOutputVarNames()
+	x=bmi.GetTimeStep()
+	x=bmi.GetTimeUnits()
+	x=bmi.GetValue()
+	x=bmi.GetVarItemsize()
+	x=bmi.GetVarNbytes()
+	x=bmi.GetVarType()
+	x=bmi.GetVarUnits()
+	x=bmi.Initialize()
+	x=bmi.SetValue()
+	x=bmi.Update()
+	x=bmi.CloseFiles()
 	# Clean up
 	bmi.Finalize()
 
