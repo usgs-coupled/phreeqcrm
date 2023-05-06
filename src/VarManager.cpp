@@ -1778,8 +1778,8 @@ void VarManager::GenerateAutoOutputVars()
 			auto item_it = item_set.begin();
 			for (; item_it != item_set.end(); item_it++)
 			{
-				std::string name = "aqueous_saturation_index_" + *item_it;
-				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
+				std::string name = "solution_saturation_index_" + *item_it;
+				BMIVariant bv(name, "unitless", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;

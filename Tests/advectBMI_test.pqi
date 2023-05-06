@@ -34,6 +34,7 @@ SOLID_SOLUTIONS 1
         -comp Anhydrite 0.2
         -comp Barite 0.001
 GAS_PHASE 1
+-fixed_volume
 CO2(g) 0.3
 Ntg(g) 0.7
 END
