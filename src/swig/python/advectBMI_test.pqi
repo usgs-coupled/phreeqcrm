@@ -1,0 +1,59 @@
+KNOBS
+-step 10
+-pe   2
+SOLUTION 0  CaCl2
+        units            mmol/kgw
+        temp             25.0
+        pH               7.0     charge
+        pe               12.5    O2(g)   -0.68
+        Ca               0.6
+        Cl               1.2
+SOLUTION 1  Initial solution for column
+        units            mmol/kgw
+        temp             25.0
+        pH               7.0     charge
+        pe               12.5    O2(g)   -0.68
+        Na               1.0
+        K                0.2
+        N(5)             1.2
+END
+EXCHANGE 1
+NaX 1
+END
+EQUILIBRIUM_PHASES 1
+Calcite 0 1
+Dolomite 0 1
+Goethite 0 0.5
+END
+SURFACE 1
+    Hfo_wOH Goethite        equilibrium_phase 0.1    600
+    Hfo_sOH Goethite        equilibrium_phase 0.01
+END
+SOLID_SOLUTIONS 1
+    Sulfate
+        -comp Anhydrite 0.2
+        -comp Barite 0.001
+GAS_PHASE 1
+-fixed_volume
+CO2(g) 0.3
+Ntg(g) 0.7
+END
+KINETICS 1
+K-feldspar
+  -m0 2.18            # 10% Kspar, 0.1 mm cubes
+  -m  2.18            # Moles per L pore space
+  -parms 6.41  0.1    # m^2/mol Kspar, fraction adjusts lab rate to field rate
+#  -time 1.5 year in 40
+END
+CALCULATE_VALUES
+SAR
+10 if [TOT("Ca") + TOT("Mg")] > 0 THEN SAR = TOT("Na") / SQRT(0.5*[TOT("Ca") + TOT("Mg")]) \
+      ELSE SAR = 1e4
+20 SAVE SAR
+USER_PRINT
+10 PRINT "SAR: ", CALC_VALUE("SAR")
+END
+RUN_CELLS
+-cells 1
+-time 0
+END
