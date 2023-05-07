@@ -102,6 +102,7 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 			AutoOutputVarsDefs[it->second] = "true";
 		}
 	}
+	NeedInitialRun = false;
 }
 void VarManager::RM2BMIUpdate(RMVARS v_enum)
 {
