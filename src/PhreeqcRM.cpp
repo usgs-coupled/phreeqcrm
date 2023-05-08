@@ -3220,13 +3220,13 @@ PhreeqcRM::FindComponents(void)
 	{ 
 		var_man->GenerateAutoOutputVars();
 		this->SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
-		if (var_man->NeedInitialRun)
-		{
-			bool current = this->phreeqcrm_io->Get_screen_on();
-			this->SetScreenOn(false);
-			this->RunCells();
-			this->SetScreenOn(current);
-		}
+		//if (var_man->NeedInitialRun)
+		//{
+		//	bool current = this->phreeqcrm_io->Get_screen_on();
+		//	this->SetScreenOn(false);
+		//	this->RunCells();
+		//	this->SetScreenOn(current);
+		//}
 		// Initialize BMI variables
 		var_man->task = VarManager::VAR_TASKS::Info;
 		for (auto it = this->var_man->VariantMap.begin();
@@ -5398,7 +5398,6 @@ PhreeqcRM::HandleErrorsInternal(std::vector< int > &rtn)
 #ifdef USE_YAML
 IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 {
-	std::cerr << "HERE I AM";
 	YAML::Node yaml = YAML::LoadFile(config);
 	//std::string keyword;
 	//YAML::Node node;
@@ -6827,7 +6826,7 @@ PhreeqcRM::Int2IrmResult(int i, bool positive_ok)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::LoadDatabase(const std::string &database)
+PhreeqcRM::LoadDatabase(const std::string& database)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -6881,13 +6880,16 @@ PhreeqcRM::LoadDatabase(const std::string &database)
 	{
 		this->workers[i]->PhreeqcPtr->save_species = this->species_save_on;
 	}
-	this->RunString(false, true, false, "SOLUTION 1");
-	std::vector<int> init(nxyz, 1);
-	this->InitialSolutions2Module(init);
-	var_man->NeedInitialRun = true;
-	this->FindComponents();
-	var_man->NeedInitialRun = false;
-	//this->RunString(false, true, false, "DELETE; -all");
+	//if (var_man != NULL)
+	//{
+	//	this->RunString(false, true, false, "SOLUTION 1");
+	//	std::vector<int> init(nxyz, 1);
+	//	this->InitialSolutions2Module(init);
+	//	var_man->NeedInitialRun = true;
+	//	this->FindComponents();
+	//	var_man->NeedInitialRun = false;
+	//	//this->RunString(false, true, false, "DELETE; -all");
+	//}
 	return this->ReturnHandler(return_value, "PhreeqcRM::LoadDatabase");
 }
 /* ---------------------------------------------------------------------- */
