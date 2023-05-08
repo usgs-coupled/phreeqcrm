@@ -5398,6 +5398,7 @@ PhreeqcRM::HandleErrorsInternal(std::vector< int > &rtn)
 #ifdef USE_YAML
 IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 {
+	std::cerr << "HERE I AM";
 	YAML::Node yaml = YAML::LoadFile(config);
 	//std::string keyword;
 	//YAML::Node node;

@@ -1,4 +1,5 @@
 import phreeqcrm
+import yamlphreeqcrm
 import numpy as np
 #ifdef USE_YAML
     #module mydata
@@ -9,7 +10,14 @@ import numpy as np
 def testbmi_py():
 
 	#x=GetGridCellCountYAML("AdvectBMI_test_py.yaml") #not defined
-	
+	yrm = yamlphreeqcrm.YAMLPhreeqcRM()
+	yrm.YAMLSetGridCellCount(40)
+	yrm.YAMLThreadCount(3)
+	YAML_filename = "testbmi_py.yaml"
+	yrm.WriteYAMLDoc(YAML_filename);
+	#
+	# Use all BMIPhreeqcRM methods roughly in order of use
+	#
 	bmi=phreeqcrm.BMIPhreeqcRM()
 	print(f"BMIPhreeqcRM {bmi}")
 	#---------
@@ -19,36 +27,37 @@ def testbmi_py():
 	nxyz = bmi.GetValue("GridCellCount")
 	print(f"GetValue('GridCellCount') {nxyz}")
 	#---------
-	##x=bmi.LoadDatabase("phreeqc.dat")
+	nxyz = bmi.GetGridCellCount()
+	print(f"GetValue('GetGridCellCount') {nxyz}")
+	#---------
+	x=bmi.GetThreadCount()
+	print(f"Wrong: GetThreadCount {x}")
+	#---------
+	grid2chem = phreeqcrm.IntVector(nxyz, -1)
+	for i in range(nxyz//2):
+		grid2chem[i] = i
+	x=bmi.CreateMapping(grid2chem)
+	print(f"CreateMapping {x}")
+	#--------- LoadDatabase removes definitions in instance	
+	x=bmi.LoadDatabase("phreeqc.dat")
 	print(f"LoadDatabase")
+	#
+	# Set properties
+	#
+	x=bmi.SetComponentH2O(False)
+	print(f"SetComponentH2O {x}")
 	#---------
 	x=bmi.SetSpeciesSaveOn(True)
 	print(f"SetSpeciesSaveOn {x}")	
 	#---------
-	x=bmi.SetPrintChemistryOn(False,True,False)
-	print(f"SetPrintChemistryOn {x}")
-	#---------
-	x = bmi.RunFile(True, True, True, "advectBMI_test.pqi")
-	print(f"RunFile {x}")	
-	#---------
-	x=bmi.SetComponentH2O(False)
-	print(f"SetComponentH2O {x}")
-	#---------
-	x=bmi.SetCurrentSelectedOutputUserNumber(1)
-	print(f"SetCurrentSelectedOutputUserNumber {x}")
-	#---------
-	v = phreeqcrm.DoubleVector(nxyz, 1.0)
-	x=bmi.SetDensity(v)
-	print(f"SetDensity {x}")
-	#---------
-	x=bmi.SetDumpFileName("AdvectBMI_test_py.dump")
-	print(f"SetDumpFileName {x}")
+	x=bmi.SetErrorOn(True)
+	print(f"SetErrorOn {x}")
 	#---------
 	x=bmi.SetErrorHandlerMode(1)
 	print(f"SetErrorHandlerMode {x}")
 	#---------
-	x=bmi.SetErrorOn(True)
-	print(f"SetErrorOn {x}")
+	x=bmi.SetDumpFileName("AdvectBMI_test_py.dump")
+	print(f"SetDumpFileName {x}")
 	#---------
 	x=bmi.SetFilePrefix("AdvectBMI_test_py")
 	print(f"SetFilePrefix {x}")
@@ -70,16 +79,6 @@ def testbmi_py():
 	#---------
 	x=bmi.SetSelectedOutputOn(True)
 	print(f"SetSelectedOutputOn {x}")
-	#---------
-	x=bmi.SetTime(0.0)
-	print(f"SetTime {x}")	
-	#---------
-	time_conversion = 1.0 / 86400.0
-	bmi.SetTimeConversion(time_conversion)
-	print(f"SetTimeConversion {x}")
-	#---------
-	x=bmi.SetTimeStep(0.0)
-	print(f"SetTimeStep {x}")	
 	#---------
 	x=bmi.SetUnitsExchange(1)
 	print(f"SetUnitsExchange {x}")
@@ -105,27 +104,126 @@ def testbmi_py():
 	x=bmi.UseSolutionDensityVolume(False)
 	print(f"UseSolutionDensityVolume {x}")
 	#---------
-	x=bmi.SetSpeciesSaveOn(True)
-	print(f"SetSpeciesSaveOn {x}")	
+	x=bmi.SetTimeConversion(1.0/86400.0)
+	print(f"SetTimeConversion {x}")
 	#---------
-	x=bmi.AddOutputVars("SolutionActivities", "True")
-	x=bmi.AddOutputVars("SolutionMolalities", "True")
-	x=bmi.AddOutputVars("SaturationIndices", "True")
+	v = phreeqcrm.DoubleVector(nxyz, 1.0)
+	x=bmi.SetRepresentativeVolume(v)
+	print(f"SetRepresentativeVolume {x}")
+	#---------Chemistry cells may be fewer than GridCellCount
+	nchem=bmi.GetChemistryCellCount()
+	print(f"GridCellCount {nchem}")
+	#
+	# Begin initialization
+	#
+	v = phreeqcrm.IntVector(nxyz, 1)
+	x=bmi.SetPrintChemistryMask(v)
+	print(f"SetPrintChemistryMask {x}")
+	#---------
+	x=bmi.SetPrintChemistryOn(True,True,True)
+	print(f"SetPrintChemistryOn {x}")
+	#---------
+	x = bmi.RunFile(True, True, True, "advectBMI_test.pqi")
+	print(f"RunFile {x}")	
+	#---------
+	#x=bmi.AddOutputVars("SolutionActivities", "True")
+	#x=bmi.AddOutputVars("SolutionMolalities", "True")
+	#x=bmi.AddOutputVars("SaturationIndices", "True")
 	x=bmi.AddOutputVars("SolutionActivities", "H+ Ca+2 Na+")
 	x=bmi.AddOutputVars("SolutionMolalities", "OH- Cl-")
 	x=bmi.AddOutputVars("SaturationIndices", "Calcite Dolomite")
 	print(f"AddOutputVars {x}")		
 	#---------
-	x = bmi.FindComponents()
-	print(f"FindComponents {x}")
+	ncomps = bmi.FindComponents()
+	print(f"FindComponents {ncomps}")
 	#---------
-	ncomps = bmi.GetValue("ComponentCount")
-	print(f"GetValue('ComponentCount') {ncomps}")
+	ncomps=bmi.GetComponentCount()
+	print(f"GetComponentCount {ncomps}")
 	#---------
+	ncomps=bmi.GetValue("ComponentCount")
+	print(f"bmi.GetValue('ComponentCount') {ncomps}")
+	#---------
+	x=bmi.GetComponents()
+	print(f"GetComponents {x}")
+	#---------
+	x=bmi.GetSpeciesCount()
+	print(f"GetSpeciesCount {x}")
+	#---------
+	x=bmi.GetSpeciesD25()
+	print(f"GetSpeciesD25 {x[0]}")
+	#---------
+	x=bmi.GetSpeciesNames()
+	print(f"GetSpeciesNames {x[0]}")
+	#---------
+	x=bmi.GetSpeciesStoichiometry()
+	print(f"What is it? GetSpeciesStoichiometry {x}")
+	print(type(x))
+	#---------
+	x=bmi.GetSpeciesZ()
+	print(f"GetSpeciesZ {x[0]}")
+	# Reactant lists
+	x=bmi.GetEquilibriumPhases()
+	print(f"GetEquilibriumPhases {x}")
+	#---------
+	x=bmi.GetEquilibriumPhasesCount()
+	print(f"GetEquilibriumPhasesCount {x}")
+	#---------
+	x=bmi.GetExchangeNames()
+	print(f"GetExchangeNames {x}")
+	#---------
+	x=bmi.GetExchangeSpecies()
+	print(f"GetExchangeSpecies {x}")
+	#---------
+	x=bmi.GetExchangeSpeciesCount()
+	print(f"GetExchangeSpeciesCount {x}")
+	#---------
+	x=bmi.GetGasComponents()
+	print(f"GetGasComponents {x}")
+	#---------
+	x=bmi.GetGasComponentsCount()
+	print(f"GetGasComponentsCount {x}")
+	#---------
+	x=bmi.GetKineticReactions()
+	print(f"GetKineticReactions {x}")
+	#---------
+	x=bmi.GetKineticReactionsCount()
+	print(f"GetKineticReactionsCount {x}")
+	#---------
+	x=bmi.GetSICount()
+	print(f"GetSICount {x}")
+	#---------
+	x=bmi.GetSINames()
+	print(f"GetSINames {x[0]}")
+	#---------
+	x=bmi.GetSolidSolutionComponents()
+	print(f"GetSolidSolutionComponents {x}")
+	#---------
+	x=bmi.GetSolidSolutionComponentsCount()
+	print(f"GetSolidSolutionComponentsCount {x}")
+	#---------
+	x=bmi.GetSolidSolutionNames()
+	print(f"GetSolidSolutionNames {x}")
+	#---------
+	x=bmi.GetSurfaceNames()
+	print(f"GetSurfaceNames {x[0]}")
+	#---------
+	x=bmi.GetSurfaceSpecies()
+	print(f"GetSurfaceSpecies {x[0]}")
+	#---------
+	x=bmi.GetSurfaceSpeciesCount()
+	print(f"GetSurfaceSpeciesCount {x}")
+	#---------
+	x=bmi.GetSurfaceTypes()
+	print(f"GetSurfaceTypes {x[0]}")
+	#
+	# Remove any reactants in workers 
+	#
 	input = "DELETE; -all"
-	bmi.RunString(True, False, True, input)
+	bmi.RunString(True, False, False, input)
 	print(f"RunString {x}")
-	#---------
+	# 
+	# Transfer initial conditions
+	#
 	v = phreeqcrm.IntVector(nxyz, 1)
 	x=bmi.InitialEquilibriumPhases2Module(v)
 	print(f"InitialEquilibriumPhases2Module {x}")
@@ -164,9 +262,57 @@ def testbmi_py():
 	cells = [18, 19]
 	x=bmi.InitialPhreeqcCell2Module(1, cells)
 	print(f"InitialPhreeqcCell2Module {x}")
+	#----------
+	v1 = phreeqcrm.IntVector(1,-1)
+	f1 = phreeqcrm.DoubleVector(1,1.0)
+	x=bmi.InitialPhreeqc2SpeciesConcentrations(v,v1,f1)
+	status = x[0]
+	species_c = x[1]
+	print(f"InitialPhreeqc2SpeciesConcentrations_mix {status}, {species_c[0]}")
+	#
+	# Boundary conditions
+	# 
+	bc1 = phreeqcrm.IntVector(1,1)
+	out = bmi.InitialPhreeqc2Concentrations(bc1)
+	status = out[0]
+	print(type(out[1]))
+	bc_conc = list(out[1])
+	#--------
+	v = phreeqcrm.IntVector(1,1)
+	x=bmi.InitialPhreeqc2SpeciesConcentrations(v)
+	status = x[0]
+	species_c = x[1]
+	print(f"InitialPhreeqc2SpeciesConcentrations {status}, {species_c[0]}")
+	#
+	# Get/Set methods for time steping
+	#
+	x=bmi.SetTime(0.0)
+	print(f"SetTime {x}")	
 	#---------
-	ngas = bmi.GetGasComponentsCount()
-	print(f"GetGasComponentsCount {x}")
+	x=bmi.SetTimeStep(0.0)
+	print(f"SetTimeStep {x}")	
+	#---------
+	c = phreeqcrm.DoubleVector()
+	x=bmi.GetConcentrations(c)
+	print(f"GetConcentrations {x}, {c[0]}.")
+	#---------
+	x=bmi.SetConcentrations(c)
+	print(f"SetConcentrations {x}")
+	#---------
+	c = bmi.GetValue("Concentrations")
+	print(type(c))
+	print(f"GetValue('Concentrations') {c[0]}")
+	#---------
+	bmi.SetValue("Concentrations", c)
+	print(f"SetValue('Concentrations')")
+	#---------
+	d = phreeqcrm.DoubleVector(nxyz, 0)
+	x=bmi.GetDensity(d)
+	print(f"GetDensity {x}, {d[0]}") 
+	#---------
+	v = phreeqcrm.DoubleVector(nxyz, 1.0)
+	x=bmi.SetDensity(v)
+	print(f"SetDensity {x}")
 	#---------
 	v = phreeqcrm.DoubleVector()
 	x = bmi.GetGasCompMoles(v)
@@ -175,120 +321,99 @@ def testbmi_py():
 	x=bmi.SetGasCompMoles(v)
 	print(f"SetGasCompMoles {x}")
 	#---------
+	x=bmi.GetGasCompPhi(v)
+	print(f"GetGasCompPhi {x}, {v[0]}")
+	#---------
+	x=bmi.GetGasCompPressures(v)
+	print(f"GetGasCompPressures {x}, {v[0]}")
+	#---------
+	x=bmi.GetGasPhaseVolume(v)
+	print(f"GetGasPhaseVolume {x}, {v[0]}")
+	#---------
 	v = phreeqcrm.DoubleVector(nxyz, 1.0)
 	x=bmi.SetGasPhaseVolume(v)
 	print(f"SetGasPhaseVolume {x}")
-	#---------
-	#TODO x=bmi.SetMpiWorkerCallbackC()
-	#TODO x=bmi.SetMpiWorkerCallbackCookie()
-	x=bmi.SetNthSelectedOutput(0)
-	print(f"SetNthSelectedOutput {x}")
 	#---------
 	v = phreeqcrm.DoubleVector(nxyz, 0.21)
 	x=bmi.SetPorosity(v)
 	print(f"SetPorosity {x}")
 	#---------
+	x=bmi.GetPressure()
+	print(f"GetPressure {x[0]}")
+	#---------
 	v = phreeqcrm.DoubleVector(nxyz, 3.0)
 	x=bmi.SetPressure(v)
 	print(f"SetPressure {x}")
 	#---------
-	v = phreeqcrm.IntVector(nxyz, 1)
-	x=bmi.SetPrintChemistryMask(v)
-	print(f"SetPrintChemistryMask {x}")
-	#---------
-	v = phreeqcrm.DoubleVector(nxyz, 1.0)
-	x=bmi.SetRepresentativeVolume(v)
-	print(f"SetRepresentativeVolume {x}")
-	#---------
 	x=bmi.SetSaturation(v)
 	print(f"SetSaturation {x}")
+	#---------
+	x=bmi.GetSolutionVolume()
+	print(f"GetSolutionVolume {x[0]}")
+	#---------
+	v = phreeqcrm.DoubleVector()
+	x=bmi.GetSpeciesConcentrations(v)
+	print(f"GetSpeciesConcentrations {v[0]}")
+	#---------
+	x=bmi.SpeciesConcentrations2Module(v)
+	print(f"SpeciesConcentrations2Module {x}")
+	#---------
+	x=bmi.GetSpeciesLog10Gammas(v)
+	print(f"GetSpeciesLog10Gammas {x}, {v[0]}")
+	#---------
+	x=bmi.GetSpeciesLog10Molalities(v)
+	print(f"GetSpeciesLog10Molalities {x}, {v[0]}")
 	#---------
 	v = phreeqcrm.DoubleVector(nxyz, 26.0)
 	x=bmi.SetTemperature(v)	
 	print(f"SetTemperature {x}")
-	#---------
-	v = phreeqcrm.IntVector(1,1)
-	x=bmi.InitialPhreeqc2SpeciesConcentrations(v)
-	status = x[0]
-	species_c = x[1]
-	print(f"InitialPhreeqc2SpeciesConcentrations {status}, {species_c[0]}")
-	#---------
-	v1 = phreeqcrm.IntVector(1,-1)
-	f1 = phreeqcrm.DoubleVector(1,1.0)
-	x=bmi.InitialPhreeqc2SpeciesConcentrations(v,v1,f1)
-	status = x[0]
-	species_c = x[1]
-	print(f"InitialPhreeqc2SpeciesConcentrations_mix {status}, {species_c[0]}")
-	#---------
-	bc1 = phreeqcrm.IntVector(1,1)
-	out = bmi.InitialPhreeqc2Concentrations(bc1)
-	status = out[0]
-	print(type(out[1]))
-	bc_conc = list(out[1])
-	tc = [30.0]
-	p_atm = [1.5]
-	bc_double_vect = phreeqcrm.DoubleVector(len(bc_conc))
-	for i in range(len(bc_conc)):
-		bc_double_vect[i] = bc_conc[i]
-	x=bmi.Concentrations2Utility(bc_double_vect, tc, p_atm)
-	print(f"Concentrations2Utility {x}")
-	#---------
-	grid2chem = phreeqcrm.IntVector(nxyz, -1)
-	for i in range(nxyz//2):
-		grid2chem[i] = i
-	x=bmi.CreateMapping(grid2chem)
-	print(f"CreateMapping {x}")
-	#---------
-	bmi.DecodeError(-2)	         # void function
-	print(f"DecodeError {x}")
-	#---------
-	x=bmi.DumpModule(True)
-	print(f"DumpModule {x}")
-	#---------
-	bmi.ErrorHandler(0, "string") # void function
-	print(f"OK, just a test: ErrorHandler {x}")
-	#---------
-	bmi.ErrorMessage("my error")  # void function
-	print(f"OK, just a test: ErrorMessage {x}")
-	#---------
-	bmi.Update()      # void function
+	#
+	# Take a time step
+	#
+	bmi.Update()    # void method
 	print(f"Update")
 	#---------
+	x=bmi.RunCells()	
+	print(f"RunCells {x}")
+	#
+	# Selected output
+	#
+	x=bmi.GetCurrentSelectedOutputUserNumber()
+	print(f"GetCurrentSelectedOutputUserNumber {x}")
+	#---------
+	x=bmi.SetCurrentSelectedOutputUserNumber(1)
+	print(f"SetCurrentSelectedOutputUserNumber {x}")
+	#---------
+	x=bmi.GetNthSelectedOutputUserNumber(0)
+	print(f"GetNthSelectedOutputUserNumber {x}")
+	#---------
+	x=bmi.SetNthSelectedOutput(0)
+	print(f"SetNthSelectedOutput {x}")
+	#---------
+	x=bmi.GetSelectedOutput(v)
+	print(f"GetSelectedOutput {x}, {v[0]}")
+	#---------
+	x=bmi.GetSelectedOutputColumnCount()
+	print(f"GetSelectedOutputColumnCount {x}")
+	#---------
+	v = phreeqcrm.StringVector()
+	x=bmi.GetSelectedOutputHeadings(v)
+	print(f"GetSelectedOutputHeadings {x}, {v[87]}")
+	#---------
+	x=bmi.GetSelectedOutputRowCount()
+	print(f"GetSelectedOutputRowCount {x}")
+	#
+	# Getters
+	#
 	x=bmi.GetBackwardMapping()
 	print(type(x))
 	print("GetBackwardMapping what is it?")
 	#---------
-	x=bmi.GetChemistryCellCount()
-	print(f"GridCellCount {x}")
-	#---------
-	x=bmi.GetComponentCount()
-	print(f"GetComponentCount {x}")
-	#---------
-	x=bmi.GetComponents()
-	print(f"GetComponents {x}")
-	#---------
-	c = phreeqcrm.DoubleVector()
-	x=bmi.GetConcentrations(c)
-	print(f"GetConcentrations {x}, {c[0]}.")
-	#---------
-	x=bmi.GetCurrentSelectedOutputUserNumber()
-	print(f"GetCurrentSelectedOutputUserNumber {x}")
-	#---------
 	x=bmi.GetDatabaseFileName()
 	print(f"GetDatabaseFileName {x}")
 	#---------
-	d = phreeqcrm.DoubleVector(nxyz, 0)
-	x=bmi.GetDensity(d)
-	print(f"GetDensity {x}, {d[0]}") 
-	#---------
 	x=bmi.GetEndCell()
 	print(f"GetEndCell, FAILS WITH THREADS {x}")
-	#---------
-	x=bmi.GetEquilibriumPhases()
-	print(f"GetEquilibriumPhases {x}")
-	#---------
-	x=bmi.GetEquilibriumPhasesCount()
-	print(f"GetEquilibriumPhasesCount {x}")
 	#---------
 	x=bmi.GetErrorHandlerMode()
 	print(f"GetErrorHandlerMode {x}")
@@ -296,54 +421,17 @@ def testbmi_py():
 	x=bmi.GetErrorString()
 	print(f"GetErrorString {x}")
 	#---------
-	x=bmi.GetExchangeNames()
-	print(f"GetExchangeNames {x}")
-	#---------
-	x=bmi.GetExchangeSpecies()
-	print(f"GetExchangeSpecies {x}")
-	#---------
-	x=bmi.GetExchangeSpeciesCount()
-	print(f"GetExchangeSpeciesCount {x}")
-	#---------
 	x=bmi.GetFilePrefix()
 	print(f"GetFilePrefix {x}")
 	#---------
 	x=bmi.GetForwardMapping()
 	print(f"GetForwardMapping {x[0]}")
 	#---------
-	x=bmi.GetGasComponents()
-	print(f"GetGasComponents {x}")
-	#---------
-	x=bmi.GetGasComponentsCount()
-	print(f"GetGasComponentsCount {x}")
-	#---------
-	v = phreeqcrm.DoubleVector()
-	x=bmi.GetGasCompMoles(v)
-	print(f"GetGasCompMoles {x}, {v[0]}")
-	#---------
-	x=bmi.GetGasCompPressures(v)
-	print(f"GetGasCompPressures {x}, {v[0]}")
-	#---------
-	x=bmi.GetGasCompPhi(v)
-	print(f"GetGasCompPhi {x}, {v[0]}")
-	#---------
-	x=bmi.GetGasPhaseVolume(v)
-	print(f"GetGasPhaseVolume {x}, {v[0]}")
-	#---------
 	x=bmi.GetGfw()
 	print(f"GetGfw {x[0]}")
 	#---------
-	x=bmi.GetGridCellCount()
-	print(f"GetGridCellCount {x}")
-	#---------
 	x=bmi.GetIPhreeqcPointer(0)
 	print(f"GetIPhreeqcPointer {x}")
-	#---------
-	x=bmi.GetKineticReactions()
-	print(f"GetKineticReactions {x}")
-	#---------
-	x=bmi.GetKineticReactionsCount()
-	print(f"GetKineticReactionsCount {x}")
 	#---------
 	x=bmi.GetMpiMyself()
 	print(f"GetMpiMyself {x}")
@@ -351,17 +439,11 @@ def testbmi_py():
 	x=bmi.GetMpiTasks()
 	print(f"GetMpiTasks {x}")
 	#---------
-	x=bmi.GetNthSelectedOutputUserNumber(0)
-	print(f"GetNthSelectedOutputUserNumber {x}")
-	#---------
 	x=bmi.GetPartitionUZSolids()
 	print(f"GetPartitionUZSolids {x}")
 	#---------
 	x=bmi.GetPorosity()
 	print(f"GetPorosity {x[0]}")
-	#---------
-	x=bmi.GetPressure()
-	print(f"GetPressure {x[0]}")
 	#---------
 	x=bmi.GetPrintChemistryMask()
 	print(f"GetPrintChemistryMask {x[0]}")
@@ -376,92 +458,21 @@ def testbmi_py():
 	x=bmi.GetRebalanceFraction()
 	print(f"GetRebalanceFraction {x}")
 	#---------
+	v = phreeqcrm.DoubleVector()
 	x=bmi.GetSaturation(v)
 	print(f"GetSaturation {x}, {v[0]}")
-	#---------
-	x=bmi.GetSelectedOutput(v)
-	print(f"GetSelectedOutput {x}, {v[0]}")
-	#---------
-	x=bmi.GetSelectedOutputColumnCount()
-	print(f"GetSelectedOutputColumnCount {x}")
-	#---------
-	v = phreeqcrm.StringVector()
-	x=bmi.GetSelectedOutputHeadings(v)
-	print(f"GetSelectedOutputHeadings {x}, {v[87]}")
 	#---------
 	x=bmi.GetSelectedOutputOn()
 	print(f"GetSelectedOutputOn {x}")
 	#---------
-	x=bmi.GetSelectedOutputRowCount()
-	print(f"GetSelectedOutputRowCount {x}")
-	#---------
-	x=bmi.GetSICount()
-	print(f"GetSICount {x}")
-	#---------
-	x=bmi.GetSINames()
-	print(f"GetSINames {x[0]}")
-	#---------
-	x=bmi.GetSolidSolutionComponents()
-	print(f"GetSolidSolutionComponents {x}")
-	#---------
-	x=bmi.GetSolidSolutionComponentsCount()
-	print(f"GetSolidSolutionComponentsCount {x}")
-	#---------
-	x=bmi.GetSolidSolutionNames()
-	print(f"GetSolidSolutionNames {x}")
-	#---------
-	x=bmi.GetSolutionVolume()
-	print(f"GetSolutionVolume {x[0]}")
-	#---------
-	v = phreeqcrm.DoubleVector()
-	x=bmi.GetSpeciesConcentrations(v)
-	print(f"GetSpeciesConcentrations {v[0]}")
-	#---------
-	x=bmi.GetSpeciesCount()
-	print(f"GetSpeciesCount {x}")
-	#---------
-	x=bmi.GetSpeciesD25()
-	print(f"GetSpeciesD25 {x[0]}")
-	#---------
-	x=bmi.GetSpeciesLog10Gammas(v)
-	print(f"GetSpeciesLog10Gammas {x}, {v[0]}")
-	#---------
-	x=bmi.GetSpeciesLog10Molalities(v)
-	print(f"GetSpeciesLog10Molalities {x}, {v[0]}")
-	#---------
-	x=bmi.GetSpeciesNames()
-	print(f"GetSpeciesNames {x[0]}")
-	#---------
 	x=bmi.GetSpeciesSaveOn()
 	print(f"GetSpeciesSaveOn {x}")
-	#---------
-	x=bmi.GetSpeciesStoichiometry()
-	print(f"What is it? GetSpeciesStoichiometry {x}")
-	print(type(x))
-	#---------
-	x=bmi.GetSpeciesZ()
-	print(f"GetSpeciesZ {x[0]}")
 	#---------
 	x=bmi.GetStartCell()
 	print(f"GetStartCell, FAILS WITH THREADS {x}")
 	#---------
-	x=bmi.GetSurfaceNames()
-	print(f"GetSurfaceNames {x[0]}")
-	#---------
-	x=bmi.GetSurfaceSpecies()
-	print(f"GetSurfaceSpecies {x[0]}")
-	#---------
-	x=bmi.GetSurfaceSpeciesCount()
-	print(f"GetSurfaceSpeciesCount {x}")
-	#---------
-	x=bmi.GetSurfaceTypes()
-	print(f"GetSurfaceTypes {x[0]}")
-	#---------
 	x=bmi.GetTemperature()
 	print(f"GetTemperature {x[0]}")
-	#---------
-	x=bmi.GetThreadCount()
-	print(f"Wrong: GetThreadCount {x}")
 	#---------
 	x=bmi.GetTime()
 	print(f"GetTime {x}")
@@ -495,29 +506,42 @@ def testbmi_py():
 	#---------
 	x=bmi.GetWorkers()
 	print(f"What is it? GetWorkers {x}")
+	#
+	# Utilities
+	#
+	bc1 = phreeqcrm.IntVector(1,1)
+	out = bmi.InitialPhreeqc2Concentrations(bc1)
+	status = out[0]
+	print(type(out[1]))
+	bc_conc = list(out[1])
+	tc = [30.0]
+	p_atm = [1.5]
+	bc_double_vect = phreeqcrm.DoubleVector(len(bc_conc))
+	for i in range(len(bc_conc)):
+		bc_double_vect[i] = bc_conc[i]
+	x=bmi.Concentrations2Utility(bc_double_vect, tc, p_atm)
+	print(f"Concentrations2Utility {x}")
+	#---------
+	bmi.DecodeError(-2)	         # void function
+	print(f"DecodeError {x}")
+	#---------
+	x=bmi.DumpModule(True)
+	print(f"DumpModule {x}")
+	#---------	
+	bmi.ErrorHandler(0, "string") # void function
+	print(f"OK, just a test: ErrorHandler {x}")
+	#---------
+	bmi.ErrorMessage("my error")  # void function
+	print(f"OK, just a test: ErrorMessage {x}")
 	#---------
 	bmi.LogMessage("Log message")  # void method
 	print(f"LogMessage")
-	#---------
-	#TODO x=bmi.MpiAbort()
-	#TODO x=bmi.MpiWorker()
-	#TODO x=bmi.MpiWorkerBreak()
+	#---------	
 	bmi.OutputMessage("Output message")  # void method
 	print(f"OutputMessage")
 	#---------
-	#Should be private: x=bmi.ReturnHandler()
 	bmi.ScreenMessage("Screen message\n")  # void method
 	print(f"ScreenMessage")
-	#---------
-	v = bmi.GetValue("Concentrations")
-	print(type(v))
-	x=bmi.SetConcentrations(v)
-	print(f"SetConcentrations {x}")
-	#---------
-	v = phreeqcrm.DoubleVector()
-	x=bmi.GetSpeciesConcentrations(v)
-	x=bmi.SpeciesConcentrations2Module(v)
-	print(f"SpeciesConcentrations2Module {x}")
 	#---------
 	x=bmi.StateSave(1)
 	print(f"StateSave {x}")
@@ -530,8 +554,9 @@ def testbmi_py():
 	#---------
 	bmi.WarningMessage("Warning message")  # void method
 	print(f"WarningMessage")
-	#---------
+	#
 	# BMI methods, some have been used above
+	#
 	x=bmi.GetComponentName()
 	print(f"GetComponentName {x}")
 	#---------
@@ -576,13 +601,13 @@ def testbmi_py():
 	#---------
 	#x=bmi.Initialize("AdvectBMI_test_py.yaml")
 	# See above
-	bmi.SetValue("Time", 1.0)    # void method
-	print(f"SetValue")
-	#---------
 	bmi.Update()    # void method
 	print(f"Update")
 	#---------
-	x=bmi.CloseFiles()
+	bmi.SetValue("Time", 1.0)    # void method
+	print(f"SetValue")
+	#---------
+	x=bmi.CloseFiles()  # not a BMI method
 	print(f"CloseFiles {x}")
 	#---------
 	bmi.Finalize()    # void method
@@ -590,6 +615,13 @@ def testbmi_py():
 	#---------
 	print("Success.")
 	return
+
+	#Should be private: x=bmi.ReturnHandler()
+	#TODO x=bmi.SetMpiWorkerCallbackC()
+	#TODO x=bmi.SetMpiWorkerCallbackCookie()
+	#TODO x=bmi.MpiAbort()
+	#TODO x=bmi.MpiWorker()
+	#TODO x=bmi.MpiWorkerBreak()
 
 if __name__ == '__main__':
 	testbmi_py()
