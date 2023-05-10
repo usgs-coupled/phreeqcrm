@@ -34,6 +34,7 @@ extern int AdvectBMI_cpp_test();
 extern int Species_cpp();
 extern int units_tester();
 extern int Gas_cpp();
+extern void testbmi_cpp();
 extern void WriteYAMLFile_cpp();
 extern void WriteYAMLFile_cpp_test();
 
@@ -72,8 +73,12 @@ int main(int argc, char* argv[])
 #ifdef USE_YAML
 	WriteYAMLFile_cpp();
 	AdvectBMI_cpp();
+	if (root) std::cerr << "Done AdvectBMI_cpp.==================================" << std::endl;
 	WriteYAMLFile_cpp_test();
 	AdvectBMI_cpp_test();
+	if (root) std::cerr << "Done AdvectBMI_cpp_test.==================================" << std::endl;
+	testbmi_cpp();
+	if (root) std::cerr << "Done testbmi_cpp.==================================" << std::endl;
 #endif
 	if (root) std::cerr << "Done AdvectBMI_cpp.==================================" << std::endl;
 	SimpleAdvect_c();
@@ -94,12 +99,13 @@ int main(int argc, char* argv[])
 	Advect_f90();
 	if (root) std::cerr << "Done Advect_f90.==================================" << std::endl;
 #ifdef USE_YAML
-	WriteYAMLFile_f90();
+    WriteYAMLFile_f90();
 	AdvectBMI_f90();
+	if (root) std::cerr << "Done AdvectBMI_f90.==================================" << std::endl;
 	WriteYAMLFile_f90_test();
 	AdvectBMI_f90_test();
+	if (root) std::cerr << "Done AdvectBMI_f90_test.==================================" << std::endl;
 #endif
-	if (root) std::cerr << "Done AdvectBMI_f90.==================================" << std::endl;
 	Species_f90();
 	if (root) std::cerr << "Done Species_f90.====================================" << std::endl;
 	Gas_f90();

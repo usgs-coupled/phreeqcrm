@@ -3195,13 +3195,47 @@ PhreeqcRM::FindComponents(void)
 	{
 		if (var_man != NULL)
 		{
-			var_man->BMIGenerateSelectedOutput();
+			var_man->GenerateAutoOutputVars();
+			this->SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
+			if (var_man->NeedInitialRun)
+			{
+				bool current = this->phreeqcrm_io->Get_screen_on();
+				this->SetScreenOn(false);
+				this->RunCells();
+				this->SetScreenOn(current);
+			}
+			// Initialize BMI variables
+			var_man->task = VarManager::VAR_TASKS::Info;
+			for (auto it = this->var_man->VariantMap.begin();
+				it != this->var_man->VariantMap.end(); it++)
+			{
+				BMIVariant& bv = it->second;
+				bv.SetInitialized(false);
+				((*this->var_man).*bv.GetFn())();
+			}
 		}
 	}
 #else
 	if (var_man != NULL)
 	{ 
 		var_man->GenerateAutoOutputVars();
+		this->SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
+		//if (var_man->NeedInitialRun)
+		//{
+		//	bool current = this->phreeqcrm_io->Get_screen_on();
+		//	this->SetScreenOn(false);
+		//	this->RunCells();
+		//	this->SetScreenOn(current);
+		//}
+		// Initialize BMI variables
+		var_man->task = VarManager::VAR_TASKS::Info;
+		for (auto it = this->var_man->VariantMap.begin();
+			it != this->var_man->VariantMap.end(); it++)
+		{
+			BMIVariant& bv = it->second;
+			bv.SetInitialized(false);
+			((*this->var_man).*bv.GetFn())();
+		}
 	}
 #endif
 	return (int) this->components.size();
@@ -3602,7 +3636,9 @@ PhreeqcRM::GetDensity(std::vector<double> & density_arg)
 				cxxSolution * soln_ptr = this->workers[n]->Get_solution(i);
 				if (!soln_ptr)
 				{
-					this->ErrorHandler(IRM_FAIL, "Solution not found for solution volume.");
+					std::ostringstream oss;
+					oss << "Solution not found for density." << "  thread: " << n << "  solution " << i;
+					this->ErrorHandler(IRM_FAIL, oss.str());
 				}
 				else
 				{
@@ -4375,7 +4411,7 @@ PhreeqcRM::GetSaturation(std::vector<double> & sat_arg)
 				cxxSolution * soln_ptr = this->workers[n]->Get_solution(i);
 				if (!soln_ptr)
 				{
-					this->ErrorHandler(IRM_FAIL, "Solution not found for solution volume.");
+					this->ErrorHandler(IRM_FAIL, "Solution not found for saturation.");
 				}
 				else
 				{
@@ -5242,7 +5278,7 @@ PhreeqcRM::GetViscosity(std::vector<double>& viscosity_arg)
 				cxxSolution* soln_ptr = this->workers[n]->Get_solution(i);
 				if (!soln_ptr)
 				{
-					this->ErrorHandler(IRM_FAIL, "Solution not found for solution volume.");
+					this->ErrorHandler(IRM_FAIL, "Solution not found for viscosity.");
 				}
 				else
 				{
@@ -5468,6 +5504,20 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			}
 			//throw LetItThrow("YAML argument mismatch InitialPhreeqc2Module");
 			ErrorMessage("YAML argument mismatch InitialPhreeqc2Module");
+			throw PhreeqcRMStop();
+		}
+		if (keyword == "InitialPhreeqc2Module_mix")
+		{
+			if (node.size() == 4)
+			{
+				std::vector < int > ic1 = it1++->second.as< std::vector < int > >();
+				std::vector < int > ic2 = it1++->second.as< std::vector < int > >();
+				std::vector < double > f1 = it1->second.as< std::vector < double > >();
+				this->InitialPhreeqc2Module(ic1, ic2, f1);
+				continue;
+			}
+			//throw LetItThrow("YAML argument mismatch InitialPhreeqc2Module");
+			ErrorMessage("YAML argument mismatch InitialPhreeqc2Module_mix");
 			throw PhreeqcRMStop();
 		}
 		if (keyword == "InitialPhreeqcCell2Module")
@@ -5772,20 +5822,10 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			continue;
 		}
 		//throw LetItThrow("YAML keyword not found");
-		ErrorMessage("YAML keyword not found");
+		std::ostringstream oss;
+		oss << "YAML keyword not found: " << keyword << std::endl;
+		ErrorMessage(oss.str());
 		throw PhreeqcRMStop();
-	}
-	// Initialize BMI variables
-	if (this->var_man != NULL)
-	{
-		var_man->task = VarManager::VAR_TASKS::Info;
-		for (auto it = this->var_man->VariantMap.begin();
-			it != this->var_man->VariantMap.end(); it++)
-		{
-			BMIVariant& bv = it->second;
-			bv.SetInitialized(false);
-			((*this->var_man).*bv.GetFn())();
-		}
 	}
 	return IRM_RESULT::IRM_OK;
 }
@@ -6786,7 +6826,7 @@ PhreeqcRM::Int2IrmResult(int i, bool positive_ok)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::LoadDatabase(const std::string &database)
+PhreeqcRM::LoadDatabase(const std::string& database)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -6840,7 +6880,16 @@ PhreeqcRM::LoadDatabase(const std::string &database)
 	{
 		this->workers[i]->PhreeqcPtr->save_species = this->species_save_on;
 	}
-
+	//if (var_man != NULL)
+	//{
+	//	this->RunString(false, true, false, "SOLUTION 1");
+	//	std::vector<int> init(nxyz, 1);
+	//	this->InitialSolutions2Module(init);
+	//	var_man->NeedInitialRun = true;
+	//	this->FindComponents();
+	//	var_man->NeedInitialRun = false;
+	//	//this->RunString(false, true, false, "DELETE; -all");
+	//}
 	return this->ReturnHandler(return_value, "PhreeqcRM::LoadDatabase");
 }
 /* ---------------------------------------------------------------------- */

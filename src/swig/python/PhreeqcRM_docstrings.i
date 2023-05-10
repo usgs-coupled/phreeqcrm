@@ -706,19 +706,19 @@ Returns:
 %feature("docstring") PhreeqcRM::GetPartitionUZSolids GetPartitionUZSolids_DOCSTRING
 
 
-%define GetPoreVolume_DOCSTRING
-"Returns the current set of pore volumes as defined by the last use of 
-:meth:`SetPoreVolume` or the default (0.1 L). Pore volume is used with cell 
-volume (:meth:`SetCellVolume`) in calculating porosity. Pore volumes may change 
-as a function of pressure, in which case they can be updated with 
-:meth:`SetPoreVolume`.
-
-Returns:
-	const DoubleVector: A vector reference to the pore volumes.
-		Size of vector is nxyz, the number of grid cells in the user model 
-		(:meth:`GetGridCellCount`)."
-%enddef
-%feature("docstring") PhreeqcRM::GetPoreVolume GetPoreVolume_DOCSTRING
+//%define GetPoreVolume_DOCSTRING
+//"Returns the current set of pore volumes as defined by the last use of 
+//:meth:`SetPoreVolume` or the default (0.1 L). Pore volume is used with cell 
+//volume (:meth:`SetCellVolume`) in calculating porosity. Pore volumes may change 
+//as a function of pressure, in which case they can be updated with 
+//:meth:`SetPoreVolume`.
+//
+//Returns:
+//	const DoubleVector: A vector reference to the pore volumes.
+//		Size of vector is nxyz, the number of grid cells in the user model 
+//		(:meth:`GetGridCellCount`)."
+//%enddef
+//%feature("docstring") PhreeqcRM::GetPoreVolume GetPoreVolume_DOCSTRING
 
 
 %define GetPorosity_DOCSTRING
@@ -887,16 +887,16 @@ Returns:
 %feature("docstring") PhreeqcRM::GetSelectedOutputColumnCount GetSelectedOutputColumnCount_DOCSTRING
 
 
-%define GetSelectedOutputCount_DOCSTRING
-"Returns the number of selected-output definitions. 
-:meth:`SetCurrentSelectedOutputUserNumber` specifies which of the 
-selected-output definitions is used.
-
-Returns:
-	int: Number of selected-output definitions, negative is failure 
-		(See :meth:`DecodeError`)."
-%enddef
-%feature("docstring") PhreeqcRM::GetSelectedOutputCount GetSelectedOutputCount_DOCSTRING
+//%define GetSelectedOutputCount_DOCSTRING
+//"Returns the number of selected-output definitions. 
+//:meth:`SetCurrentSelectedOutputUserNumber` specifies which of the 
+//selected-output definitions is used.
+//
+//Returns:
+//	int: Number of selected-output definitions, negative is failure 
+//		(See :meth:`DecodeError`)."
+//%enddef
+//%feature("docstring") PhreeqcRM::GetSelectedOutputCount GetSelectedOutputCount_DOCSTRING
 
 
 %define GetSelectedOutputHeading_DOCSTRING

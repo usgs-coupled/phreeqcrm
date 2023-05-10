@@ -45,9 +45,6 @@ K-feldspar
   -parms 6.41  0.1    # m^2/mol Kspar, fraction adjusts lab rate to field rate
 #  -time 1.5 year in 40
 END
-RUN_CELLS
--cells 1
--time 3e7
 CALCULATE_VALUES
 SAR
 10 if [TOT("Ca") + TOT("Mg")] > 0 THEN SAR = TOT("Na") / SQRT(0.5*[TOT("Ca") + TOT("Mg")]) \
@@ -55,4 +52,8 @@ SAR
 20 SAVE SAR
 USER_PRINT
 10 PRINT "SAR: ", CALC_VALUE("SAR")
+END
+RUN_CELLS
+-cells 1
+-time 0
 END

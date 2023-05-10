@@ -261,7 +261,7 @@
                 ! Get selected output
                 status = bmif_get_value(id, "SelectedOutput", selected_out)
                 ! Print results
-                do i = 1, rows/2
+                do i = rows/2, rows/2
                     write(*,*) "Cell number ", i
                     write(*,*) "     Density: ", density(i)
                     write(*,*) "     Volume:  ", volume(i)

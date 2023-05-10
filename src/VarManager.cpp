@@ -102,6 +102,7 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 			AutoOutputVarsDefs[it->second] = "true";
 		}
 	}
+	NeedInitialRun = false;
 }
 void VarManager::RM2BMIUpdate(RMVARS v_enum)
 {
@@ -278,8 +279,10 @@ void VarManager::Concentrations_Var()
 		}
 		bv.SetBasic(units, true, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "");
-		rm_ptr->GetConcentrations(bv.GetDoubleVectorRef());
-		rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
+		//rm_ptr->GetConcentrations(bv.GetDoubleVectorRef());
+		//rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
+		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount() * rm_ptr->GetComponentCount());
+		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount() * rm_ptr->GetComponentCount());
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
@@ -324,8 +327,10 @@ void VarManager::Density_Var()
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("kg L-1", true, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "");
-		rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
-		rm_ptr->GetDensity(bv.GetDoubleVectorRef());
+		//rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
+		//rm_ptr->GetDensity(bv.GetDoubleVectorRef());
+		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
+		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
@@ -616,8 +621,10 @@ void VarManager::Saturation_Var()
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("unitless", true, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "");
-		rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
-		rm_ptr->GetSaturation(bv.GetDoubleVectorRef());
+		//rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
+		//rm_ptr->GetSaturation(bv.GetDoubleVectorRef());
+		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
+		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
@@ -680,12 +687,25 @@ void VarManager::SelectedOutput_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		int Itemsize = (int)sizeof(double);
-		int Nbytes = Itemsize * rm_ptr->GetSelectedOutputRowCount() *
-			rm_ptr->GetSelectedOutputColumnCount();
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-		bv.SetBasic("user specified", false, true, false, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		if (rm_ptr->GetSelectedOutputCount() > 0)
+		{
+			int Itemsize = (int)sizeof(double);
+			int Nbytes = Itemsize * rm_ptr->GetSelectedOutputRowCount() *
+				rm_ptr->GetSelectedOutputColumnCount();
+			//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+			bv.SetBasic("user specified", false, true, false, Nbytes, Itemsize);
+			bv.SetTypes("double", "real(kind=8)", "");
+		}
+		else
+		{
+			int Itemsize = (int)sizeof(double);
+			//int Nbytes = Itemsize * rm_ptr->GetSelectedOutputRowCount() *
+			//	rm_ptr->GetSelectedOutputColumnCount();
+			int Nbytes = Itemsize;
+			//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+			bv.SetBasic("user specified", false, true, false, Nbytes, Itemsize);
+			bv.SetTypes("double", "real(kind=8)", "");
+		}
 	}
 	switch (this->task)
 	{
@@ -726,7 +746,8 @@ void VarManager::SelectedOutputColumnCount_Var()
 		//std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("count", false, true, false, Nbytes, Itemsize);
 		bv.SetTypes("int", "integer", "int");
-		bv.SetIVar(rm_ptr->GetSelectedOutputColumnCount());
+		//bv.SetIVar(rm_ptr->GetSelectedOutputColumnCount());
+		bv.SetIVar(-1);
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
@@ -817,26 +838,34 @@ void VarManager::SelectedOutputHeadings_Var()
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
-		rm_ptr->GetSelectedOutputHeadings(bv.GetStringVectorRef());
-		this->VarExchange.GetStringVectorRef() = bv.GetStringVectorRef();
-		std::vector<std::string> headings = bv.GetStringVectorRef();
-		size_t size = 0;
-		for (size_t i = 0; i < headings.size(); i++)
+		if (rm_ptr->GetSelectedOutputCount() > 0)
 		{
-			if (headings[i].size() > size) size = headings[i].size();
-		}
-		{
-			for (auto it = this->AutoOutputVars.begin(); it != this->AutoOutputVars.end(); it++)
+			rm_ptr->GetSelectedOutputHeadings(bv.GetStringVectorRef());
+			this->VarExchange.GetStringVectorRef() = bv.GetStringVectorRef();
+			std::vector<std::string> headings = bv.GetStringVectorRef();
+			size_t size = 0;
+			for (size_t i = 0; i < headings.size(); i++)
 			{
-				if (it->second.GetName().size() > size) size = it->second.GetName().size();
+				if (headings[i].size() > size) size = headings[i].size();
 			}
-		}
-		int Itemsize = (int)size;
+			{
+				for (auto it = this->AutoOutputVars.begin(); it != this->AutoOutputVars.end(); it++)
+				{
+					if (it->second.GetName().size() > size) size = it->second.GetName().size();
+				}
+			}
+			int Itemsize = (int)size;
 
-		int Nbytes = (int)(size * headings.size());// +this->AutoOutputVars.size();
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize
-		bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-		bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
+			int Nbytes = (int)(size * headings.size());// +this->AutoOutputVars.size();
+			//name, std::string units, set, get, ptr, Nbytes, Itemsize
+			bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
+			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
+		}
+		else
+		{
+			int Itemsize = 0;
+			int Nbytes = 0;
+		}
 		bv.SetInitialized(false);
 	}
 	switch (this->task)
@@ -897,7 +926,8 @@ void VarManager::SelectedOutputRowCount_Var()
 		//std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("count", false, true, false, Nbytes, Itemsize);
 		bv.SetTypes("int", "integer", "int");
-		bv.SetIVar(rm_ptr->GetSelectedOutputRowCount());
+		//bv.SetIVar(rm_ptr->GetSelectedOutputRowCount());
+		bv.SetIVar(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(false);
 	}
 	switch (this->task)
@@ -945,8 +975,10 @@ void VarManager::SolutionVolume_Var()
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("L", false, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "");
-		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetSolutionVolume();
-		bv.GetDoubleVectorRef() = rm_ptr->GetSolutionVolume();
+		//this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetSolutionVolume();
+		//bv.GetDoubleVectorRef() = rm_ptr->GetSolutionVolume();
+		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
+		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
@@ -1082,7 +1114,8 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 		//std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("id", false, true, false, Nbytes, Itemsize);
 		bv.SetTypes("int", "integer", "int");
-		bv.SetIVar(rm_ptr->GetCurrentSelectedOutputUserNumber());
+		//bv.SetIVar(rm_ptr->GetCurrentSelectedOutputUserNumber());
+		bv.SetIVar(-1);
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
@@ -1130,8 +1163,10 @@ void VarManager::Porosity_Var()
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("unitless", true, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "");
-		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPorosity();
-		bv.GetDoubleVectorRef() = rm_ptr->GetPorosity();
+		//this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPorosity();
+		//bv.GetDoubleVectorRef() = rm_ptr->GetPorosity();
+		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
+		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
@@ -1207,8 +1242,10 @@ void VarManager::Pressure_Var()
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("atm", true, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "");
-		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPressure();
-		bv.GetDoubleVectorRef() = rm_ptr->GetPressure();
+		//this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPressure();
+		//bv.GetDoubleVectorRef() = rm_ptr->GetPressure();
+		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
+		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
@@ -1302,8 +1339,10 @@ void VarManager::Temperature_Var()
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("C", true, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "");
-		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
-		bv.GetDoubleVectorRef() = rm_ptr->GetTemperature();
+		//this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
+		//bv.GetDoubleVectorRef() = rm_ptr->GetTemperature();
+		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
+		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
@@ -1348,8 +1387,10 @@ void VarManager::Viscosity_Var()
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("mPa s", false, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "");
-		rm_ptr->GetViscosity(this->VarExchange.GetDoubleVectorRef());
-		rm_ptr->GetViscosity(bv.GetDoubleVectorRef());
+		//rm_ptr->GetViscosity(this->VarExchange.GetDoubleVectorRef());
+		//rm_ptr->GetViscosity(bv.GetDoubleVectorRef());
+		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
+		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
@@ -1778,8 +1819,8 @@ void VarManager::GenerateAutoOutputVars()
 			auto item_it = item_set.begin();
 			for (; item_it != item_set.end(); item_it++)
 			{
-				std::string name = "aqueous_saturation_index_" + *item_it;
-				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
+				std::string name = "solution_saturation_index_" + *item_it;
+				BMIVariant bv(name, "unitless", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
@@ -2004,7 +2045,7 @@ void VarManager::GenerateAutoOutputVars()
 		data_block << code.str() << std::endl;
 		data_block << "-end" << std::endl;
 		rm_ptr->RunString(true, false, false, data_block.str());
-		std::cerr << data_block.str();
+		//std::cerr << data_block.str();
 	}
 	//BMISelecteOutputDefs.clear();
 	return;

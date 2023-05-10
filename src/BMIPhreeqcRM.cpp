@@ -1119,63 +1119,6 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src
 	assert(false);
 	return;
 }
-//BMIPhreeqcRM::VarFunction BMIPhreeqcRM::GetFn(const std::string name)
-//{
-//	this->var_man->VarExchange.Clear();
-//	std::string name_lc = name;
-//	std::transform(name_lc.begin(), name_lc.end(), name_lc.begin(), tolower);
-//	auto it = varfn_map.find(name_lc);
-//	if (it == varfn_map.end())
-//	{
-//		std::ostringstream oss;
-//		oss << "Unknown variable: " << name;
-//		this->ErrorMessage(oss.str());
-//		return NULL;
-//	}
-//
-//	VarManager::VAR_TASKS task_save = this->var_man->task;
-//	this->var_man->task = VarManager::VAR_TASKS::Info;
-//	it->second(this);
-//	this->var_man->task = task_save;
-//	if (this->var_man->VarExchange.GetNotImplementedRef())
-//	{
-//		std::ostringstream oss;
-//		oss << "Not implemented for variable: " << name;
-//		this->ErrorMessage(oss.str());
-//		return NULL;
-//	}
-//	if (this->var_man->task == VarManager::VAR_TASKS::GetVar)
-//	{
-//		if (!this->var_man->VarExchange.GetHasGetter() || this->var_man->VarExchange.GetNotImplementedRef())
-//		{
-//			std::ostringstream oss;
-//			oss << "Cannot get variable: " << name;
-//			this->ErrorMessage(oss.str());
-//			return NULL;
-//		}
-//	}
-//	if (this->var_man->task == VarManager::VAR_TASKS::SetVar)
-//	{
-//		if (!this->var_man->VarExchange.GetHasSetter() || this->var_man->VarExchange.GetNotImplementedRef())
-//		{
-//			std::ostringstream oss;
-//			oss << "Cannot set variable: " << name;
-//			this->ErrorMessage(oss.str());
-//			return NULL;
-//		}
-//	}
-//	if (this->var_man->task == VarManager::VAR_TASKS::GetPtr)
-//	{
-//		if (this->var_man->VarExchange.GetNotImplementedRef())
-//		{
-//			std::ostringstream oss;
-//			oss << "Cannot get a pointer to variable: " << name;
-//			this->ErrorMessage(oss.str());
-//			return NULL;
-//		}
-//	}
-//	return it->second;
-//}
 
 int BMIPhreeqcRM::GetGridRank(const int grid)
 {

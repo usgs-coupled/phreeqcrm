@@ -44,6 +44,7 @@ public:
 	std::map < std::string, RMVARS> EnumMap;
 	VAR_TASKS task;
 	std::map<RMVARS, BMIVariant> VariantMap;
+	bool NeedInitialRun;
 	// Methods
 	RMVARS GetEnum(std::string name);
 	void RM2BMIUpdate(RMVARS v_enum);

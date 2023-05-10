@@ -290,7 +290,7 @@
                 ! Get selected output
                 status = bmif_get_value(id, "SelectedOutput", selected_out)
                 ! Print results
-                do i = 1, rows/2
+                do i = rows/2, rows/2
                     write(*,*) "Cell number ", i
                     write(*,*) "     Density: ", density(i)
                     write(*,*) "     Volume:  ", volume(i)
@@ -486,28 +486,28 @@ USE, intrinsic :: ISO_C_BINDING
     write(*,*) "Input variables (setters)"
     do i = 1, size(inputvars)
         write(*,"(1x, I4, A60)") i, trim(inputvars(i))
-        status = bmif_get_var_units(id, inputvars(i), string)
-        write(*,"(5x, A60)") trim(string)
-        status = bmif_get_var_type(id, inputvars(i), string)
-        write(*,"(5x, A60)") trim(string)
-        status = bmif_get_var_itemsize(id, inputvars(i), itemsize)
-        write(*, "(5x, I60)") itemsize
-        status = bmif_get_var_nbytes(id, inputvars(i), nbytes)
-        write(*, "(5x, I60)") nbytes
+        !status = bmif_get_var_units(id, inputvars(i), string)
+        !write(*,"(5x, A60)") trim(string)
+        !status = bmif_get_var_type(id, inputvars(i), string)
+        !write(*,"(5x, A60)") trim(string)
+        !status = bmif_get_var_itemsize(id, inputvars(i), itemsize)
+        !write(*, "(5x, I60)") itemsize
+        !status = bmif_get_var_nbytes(id, inputvars(i), nbytes)
+        !write(*, "(5x, I60)") nbytes
     enddo
     ! OutputVarNames
     status = bmif_get_output_var_names(id, outputvars)
     write(*,*) "Output variables (getters)"
     do i = 1, size(outputvars)
         write(*,"(1x, I4, A60)") i, trim(outputvars(i))
-        status = bmif_get_var_units(id, outputvars(i), string)
-        write(*,"(5x, A60)") trim(string)
-        status = bmif_get_var_type(id, outputvars(i), string)
-        write(*,"(5x, A60)") trim(string)
-        status = bmif_get_var_itemsize(id, outputvars(i), itemsize)
-        write(*, "(5x, I60)") itemsize
-        status = bmif_get_var_nbytes(id, outputvars(i), nbytes)
-        write(*, "(5x, I60)") nbytes
+        !status = bmif_get_var_units(id, outputvars(i), string)
+        !write(*,"(5x, A60)") trim(string)
+        !status = bmif_get_var_type(id, outputvars(i), string)
+        !write(*,"(5x, A60)") trim(string)
+        !status = bmif_get_var_itemsize(id, outputvars(i), itemsize)
+        !write(*, "(5x, I60)") itemsize
+        !status = bmif_get_var_nbytes(id, outputvars(i), nbytes)
+        !write(*, "(5x, I60)") nbytes
     enddo
     ! PointableVarNames
     status = bmif_get_pointable_var_names(id, pointablevars)
