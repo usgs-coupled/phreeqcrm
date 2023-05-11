@@ -3408,6 +3408,21 @@ PhreeqcRM::SetIthSpeciesConcentration(int i, std::vector<double>& c)
 	}
 	return this->ReturnHandler(IRM_INVALIDARG, "PhreeqcRM::GetIthConcentration");
 }
+
+void PhreeqcRM::GetBackwardMappingSWIG(std::vector<int>& nback_output, std::vector<int>& cellnumbers_output)
+{
+	nback_output.clear();
+	cellnumbers_output.clear();
+	std::vector <std::vector<int> > back = this->GetBackwardMapping();
+	for (size_t i = 0; i < back.size(); i++)
+	{
+		nback_output.push_back((int)back[i].size());
+		for (size_t j = 0; j < back[i].size(); j++)
+		{
+			cellnumbers_output.push_back(back[i][j]);
+		}
+	}
+}
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -5158,8 +5173,8 @@ PhreeqcRM::GetSpeciesLog10Molalities(std::vector<double>& species_log10molalitie
 	}
 	return IRM_OK;
 }
-IRM_RESULT 
-PhreeqcRM::GetSpeciesStoichiometrySerialized(std::vector<std::string>& species, std::vector<int>& nelt_in_species, \
+void 
+PhreeqcRM::GetSpeciesStoichiometrySWIG(std::vector<std::string>& species, std::vector<int>& nelt_in_species, \
 	std::vector<std::string>& elts, std::vector<double>& coef)
 {
 	std::vector<class cxxNameDouble> stoichiometry = this->GetSpeciesStoichiometry();

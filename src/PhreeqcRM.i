@@ -23,6 +23,7 @@ import_array();
 
 %include "std_string.i"
 %include "std_vector.i"
+%template(BoolVector)   std::vector<bool>;
 %template(DoubleVector) std::vector<double>;
 %template(IntVector)    std::vector<int>;
 %template(StringVector) std::vector<std::string>;
@@ -42,20 +43,43 @@ import_array();
 %include "IrmResult.h"
 
 // Ignore methods
+%ignore PhreeqcRM::GetIPhreeqcPointer(int i);
 %ignore PhreeqcRM::GetSpeciesStoichiometry(void);
+%ignore PhreeqcRM::GetWorkers();
 // Switch argument to output variable
 %apply std::vector < double > &OUTPUT { std::vector < double > &destination_c };
+%apply std::vector<std::string> &OUTPUT { std::vector<std::string> &species_output, std::vector<std::string> &elts_output };
+%apply std::vector<int> &OUTPUT { std::vector<int> &nelt_output }; 
+%apply std::vector<double> &OUTPUT { std::vector<double> &coef_output };
+%apply std::vector<int>& OUTPUT { std::vector<int>& nback_output, std::vector<int>& cellnumbers_output}
+// Rename method to avoid tuple
+%rename(InitialPhreeqc2ConcentrationsSWIG) InitialPhreeqc2Concentrations(
+													std::vector < double > & destination_c,
+													const std::vector < int >    & boundary_solution1);
+%rename(InitialPhreeqc2ConcentrationsSWIG_mix) InitialPhreeqc2Concentrations(
+													std::vector < double > & destination_c,
+													const std::vector < int >    & boundary_solution1,
+													const std::vector < int >    & boundary_solution2,
+													const std::vector < double > & fraction1);
+%rename(InitialPhreeqc2SpeciesConcentrationsSWIG) InitialPhreeqc2SpeciesConcentrations(
+													std::vector < double > & destination_c,
+													std::vector < int >    & boundary_solution1);
+%rename(InitialPhreeqc2SpeciesConcentrationsSWIG_mix) InitialPhreeqc2SpeciesConcentrations(
+													std::vector < double > & destination_c,
+													std::vector < int >    & boundary_solution1,
+													std::vector < int >    & boundary_solution2,
+													std::vector < double > & fraction1);
+
 %include "PhreeqcRM.h"
 
 %extend PhreeqcRM { %pythoncode 
 %{ 
-import phreeqcrm
 def GetSpeciesStoichiometry(self):
-	species = phreeqcrm.StringVector 
-	nelt_in_species = phreeqcrm.IntVector 
-	elts = phreeqcrm.StringVector 
-	coefs = phreeqcrm.IntVector 
-	self.GetSpeciesStoichiometrySerialized(species, nelt_in_species, elts, coefs)
+	v = self.GetSpeciesStoichiometrySWIG()
+	species = v[0]
+	nelt_in_species = v[1]
+	elts = v[2]
+	coefs = v[3]
 	all_stoich = dict()
 	j_tot = 0
 	for i in range(len(species)):
@@ -63,8 +87,35 @@ def GetSpeciesStoichiometry(self):
 		s_stoich = dict()
 		for j in range(n):
 			s_stoich[elts[j_tot]] = coefs[j_tot]
+			j_tot += 1
 		all_stoich[species[i]] = s_stoich
-	return all_stoich			
+	return all_stoich	
+def GetBackwardMapping(self):
+	v = self.GetBackwardMappingSWIG()
+	count = v[0]
+	allcells = v[1]
+	backward_mapping = dict()
+	j_tot = 0
+	for i in range(len(count)):
+		n = count[i]
+		back = []
+		for j in range(n):
+			back.append(allcells[j_tot]);
+			j_tot += 1
+		backward_mapping[i] = back
+	return backward_mapping	
+def InitialPhreeqc2Concentrations(self, bc1):
+	v = self.InitialPhreeqc2ConcentrationsSWIG(bc1)
+	return list(v[1])	
+def InitialPhreeqc2Concentrations_mix(self, bc1, bc2, f1):
+	v = self.InitialPhreeqc2ConcentrationsSWIG_mix(bc1,bc2,f1)
+	return list(v[1])
+def InitialPhreeqc2SpeciesConcentrations(self, bc1):
+	v = self.InitialPhreeqc2SpeciesConcentrationsSWIG(bc1)
+	return list(v[1])	
+def InitialPhreeqc2SpeciesConcentrations_mix(self, bc1, bc2, f1):
+	v = self.InitialPhreeqc2SpeciesConcentrationsSWIG_mix(bc1,bc2,f1)
+	return list(v[1])
 %} 
 }
 
@@ -75,6 +126,7 @@ def GetSpeciesStoichiometry(self):
 %ignore BMIPhreeqcRM::GetValue(std::string const,bool *);
 %ignore BMIPhreeqcRM::GetValue(std::string const,double *);
 %ignore BMIPhreeqcRM::GetValue(std::string const,int *);
+%ignore BMIPhreeqcRM::GetValuePtr(std::string);
 %ignore BMIPhreeqcRM::SetValue(std::string,std::vector< int,std::allocator< int > >);
 %ignore BMIPhreeqcRM::SetValue(std::string,std::vector< std::string,std::allocator< std::string > >);
 // Rename overloaded methods
@@ -143,6 +195,9 @@ def SetValue(self, var, value):
 		self.GetValue_string(var, value)
 	if type=="std::vector<std::string>":
 		self.SetValue_string_vector(var, value)	
+def GetValuePtr(self):
+	return "Not Implemented."
+
 %} 
 };
 

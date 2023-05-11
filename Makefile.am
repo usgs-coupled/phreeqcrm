@@ -10,13 +10,11 @@ PHREEQCRM_EXTRA_DIST=\
 	src/pyfragments.swg.in\
 	src/swig/CMakeLists.txt\
 	src/swig/python/AdvectBMI_py.py\
-	src/swig/python/AdvectBMI_test_py.py\
-	src/swig/python/advectBMI_test.pqi\
+	src/swig/python/TestAllMethods_py.py\
 	src/swig/python/CMakeLists.txt\
 	src/swig/python/PhreeqcRM_docstrings.i\
 	src/swig/python/SimpleAdvect.py\
 	src/swig/python/WriteYAMLFile_py.py\
-	src/swig/python/WriteYAMLFile_test_py.py\
 	src/swig/python/yamlphreeqcrm.py
 
 EXTRA_DIST=$(PHREEQCRM_EXTRA_DIST)

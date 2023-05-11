@@ -533,6 +533,7 @@ if (option == "HYDRAULIC_K")
 Called by root or workers.
  */
 	const std::vector < std::vector <int> > & GetBackwardMapping(void) {return this->backward_mapping;}
+	void GetBackwardMappingSWIG(std::vector<int>& nback_output, std::vector<int>& cellnumbers_output);
 /**
 Returns the number of reaction cells in the reaction module. The number of reaction cells is defined by
 the set of non-negative integers in the mapping from grid cells (@ref CreateMapping), or, by default,
@@ -2589,8 +2590,8 @@ Called by root and (or) workers.
  */
 
 	const std::vector<cxxNameDouble> &        GetSpeciesStoichiometry(void) {return this->species_stoichiometry;}
-	IRM_RESULT GetSpeciesStoichiometrySerialized(std::vector<std::string> &species, std::vector<int> &nelt_in_species, \
-		std::vector<std::string> &elts, std::vector<double> &coef);
+	void GetSpeciesStoichiometrySWIG(std::vector<std::string> &species_output, std::vector<int> &nelt_output, \
+		std::vector<std::string> &elts_output, std::vector<double> &coef_output);
 /**
 Returns a vector reference to the charge on each aqueous species.
 This method is intended for use with multicomponent-diffusion transport calculations,
