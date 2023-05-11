@@ -2589,6 +2589,8 @@ Called by root and (or) workers.
  */
 
 	const std::vector<cxxNameDouble> &        GetSpeciesStoichiometry(void) {return this->species_stoichiometry;}
+	IRM_RESULT GetSpeciesStoichiometrySerialized(std::vector<std::string> &species, std::vector<int> &nelt_in_species, \
+		std::vector<std::string> &elts, std::vector<double> &coef);
 /**
 Returns a vector reference to the charge on each aqueous species.
 This method is intended for use with multicomponent-diffusion transport calculations,

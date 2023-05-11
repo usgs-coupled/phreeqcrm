@@ -26,7 +26,7 @@ configure_file(yamlphreeqcrm.py yamlphreeqcrm.py COPYONLY)
 # copy AdvectBMI_py.py to build directory for testing
 configure_file(AdvectBMI_py.py AdvectBMI_py.py COPYONLY)
 configure_file(WriteYAMLFile_py.py WriteYAMLFile_py.py COPYONLY)
-configure_file(Test_all_methods_py.py Test_all_methods_py.py COPYONLY)
+configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
 
 get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
 

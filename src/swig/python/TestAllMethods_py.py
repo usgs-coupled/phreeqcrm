@@ -55,10 +55,10 @@ def testbmi_py():
 	x=bmi.SetErrorHandlerMode(1)
 	print(f"SetErrorHandlerMode {x}")
 	#---------
-	x=bmi.SetDumpFileName("Test_all_methods_py.dump")
+	x=bmi.SetDumpFileName("TestAllMethods_py.dump")
 	print(f"SetDumpFileName {x}")
 	#---------
-	x=bmi.SetFilePrefix("Test_all_methods_py")
+	x=bmi.SetFilePrefix("TestAllMethods_py")
 	print(f"SetFilePrefix {x}")
 	#---------
 	x=bmi.OpenFiles()
@@ -412,7 +412,7 @@ def testbmi_py():
 	print(f"GetDatabaseFileName {x}")
 	#---------
 	x=bmi.GetEndCell()
-	print(f"GetEndCell, FAILS WITH THREADS {x}")
+	print(f"GetEndCell {x}")
 	#---------
 	x=bmi.GetErrorHandlerMode()
 	print(f"GetErrorHandlerMode {x}")

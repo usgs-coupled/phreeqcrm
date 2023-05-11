@@ -5158,6 +5158,24 @@ PhreeqcRM::GetSpeciesLog10Molalities(std::vector<double>& species_log10molalitie
 	}
 	return IRM_OK;
 }
+IRM_RESULT 
+PhreeqcRM::GetSpeciesStoichiometrySerialized(std::vector<std::string>& species, std::vector<int>& nelt_in_species, \
+	std::vector<std::string>& elts, std::vector<double>& coef)
+{
+	std::vector<class cxxNameDouble> stoichiometry = this->GetSpeciesStoichiometry();
+	species = this->GetSpeciesNames();
+	for (size_t i = 0; i < species.size(); i++)
+	{
+		cxxNameDouble s_stoich = stoichiometry[i];
+		nelt_in_species.push_back((int)s_stoich.size());
+		cxxNameDouble::iterator it = s_stoich.begin();
+		for (; it != s_stoich.end(); it++)
+		{
+			elts.push_back(it->first);
+			coef.push_back(it->second);
+		}
+	}
+}
 #endif
 
 #ifdef USE_MPI

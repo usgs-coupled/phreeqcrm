@@ -41,9 +41,34 @@ import_array();
 %include "BMI_Var.h"
 %include "IrmResult.h"
 
+// Ignore methods
+%ignore PhreeqcRM::GetSpeciesStoichiometry(void);
 // Switch argument to output variable
 %apply std::vector < double > &OUTPUT { std::vector < double > &destination_c };
 %include "PhreeqcRM.h"
+
+%extend PhreeqcRM { %pythoncode 
+%{ 
+import phreeqcrm
+def GetSpeciesStoichiometry(self):
+	species = phreeqcrm.StringVector 
+	nelt_in_species = phreeqcrm.IntVector 
+	elts = phreeqcrm.StringVector 
+	coefs = phreeqcrm.IntVector 
+	self.GetSpeciesStoichiometrySerialized(species, nelt_in_species, elts, coefs)
+	all_stoich = dict()
+	j_tot = 0
+	for i in range(len(species)):
+		n = nelt_in_species[i]
+		s_stoich = dict()
+		for j in range(n):
+			s_stoich[elts[j_tot]] = coefs[j_tot]
+		all_stoich[species[i]] = s_stoich
+	return all_stoich			
+%} 
+}
+
+
 #include "bmi.hxx"
 
 // Ignore methods
