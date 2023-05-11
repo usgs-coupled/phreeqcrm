@@ -69,6 +69,9 @@ CLEANFILES =\
 	AdvectBMI_f90.dmp\
 	AdvectBMI_f90.log.txt\
 	AdvectBMI_f90.yaml\
+	AdvectBMI_test_py.chem.txt\
+	AdvectBMI_test_py.dump\
+	AdvectBMI_test_py.log.txt\
 	Advectcpp_utility.txt\
 	Advectcpp.dmp\
 	Gas_c_utility.txt\
@@ -99,6 +102,7 @@ CLEANFILES =\
 	Species_f90.chem.txt\
 	Species_f90.dmp\
 	Species_f90.log.txt\
+	testbmi_cpp.yaml\
 	Units_Worker.chem.txt\
 	Units_Worker.log.txt\
 	Utility_c.txt\
