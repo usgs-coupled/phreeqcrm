@@ -68,7 +68,7 @@ void WriteYAMLFile_cpp_test(void)
 	yrm.YAMLSetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
 	// Load database
 	yrm.YAMLLoadDatabase("phreeqc.dat");
-	yrm.YAMLRunFile(true, true, true, "advectBMI_test.pqi");
+	yrm.YAMLRunFile(true, true, true, "all_reactants.pqi");
 
 	// Clear contents of workers and utility
 	std::string input = "DELETE; -all";

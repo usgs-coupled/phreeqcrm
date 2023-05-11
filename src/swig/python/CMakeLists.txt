@@ -15,6 +15,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../database/phreeqc.dat phreeqc
 
 # copy advect.pqi to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../Tests/advect.pqi advect.pqi COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../Tests/all_reactants.pqi all_reactants.pqi COPYONLY)
 
 # copy SimpleAdvect.py to build directory for testing
 configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
@@ -25,8 +26,7 @@ configure_file(yamlphreeqcrm.py yamlphreeqcrm.py COPYONLY)
 # copy AdvectBMI_py.py to build directory for testing
 configure_file(AdvectBMI_py.py AdvectBMI_py.py COPYONLY)
 configure_file(WriteYAMLFile_py.py WriteYAMLFile_py.py COPYONLY)
-configure_file(AdvectBMI_test_py.py AdvectBMI_test_py.py COPYONLY)
-configure_file(WriteYAMLFile_test_py.py WriteYAMLFile_test_py.py COPYONLY)
+configure_file(Test_all_methods_py.py Test_all_methods_py.py COPYONLY)
 
 get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
 

@@ -95,7 +95,7 @@ project(TestRM CXX)
 
 # Tests/advect.pqi
 configure_file(advect.pqi advect.pqi COPYONLY)
-configure_file(advectBMI_test.pqi advectBMI_test.pqi COPYONLY)
+configure_file(all_reactants.pqi all_reactants.pqi COPYONLY)
 
 # Tests/phreeqc.dat
 configure_file(phreeqc.dat phreeqc.dat COPYONLY)
@@ -122,6 +122,7 @@ target_sources(TestRM PRIVATE
   SimpleAdvect_cpp.cpp
   Species_c.c
   Species_cpp.cpp
+  TestAllMethods_cpp.cpp
 )
 
 if(PHREEQCRM_WITH_YAML_CPP)

@@ -9,7 +9,6 @@ import numpy as np
 
 def testbmi_py():
 
-	#x=GetGridCellCountYAML("AdvectBMI_test_py.yaml") #not defined
 	yrm = yamlphreeqcrm.YAMLPhreeqcRM()
 	yrm.YAMLSetGridCellCount(40)
 	yrm.YAMLThreadCount(3)
@@ -21,7 +20,7 @@ def testbmi_py():
 	bmi=phreeqcrm.BMIPhreeqcRM()
 	print(f"BMIPhreeqcRM {bmi}")
 	#---------
-	bmi.Initialize("AdvectBMI_test_py.yaml")   # void function
+	bmi.Initialize(YAML_filename)   # void function
 	print(f"Initialize")
 	#---------
 	nxyz = bmi.GetValue("GridCellCount")
@@ -31,7 +30,7 @@ def testbmi_py():
 	print(f"GetValue('GetGridCellCount') {nxyz}")
 	#---------
 	x=bmi.GetThreadCount()
-	print(f"Wrong: GetThreadCount {x}")
+	print(f"GetThreadCount {x}")
 	#---------
 	grid2chem = phreeqcrm.IntVector(nxyz, -1)
 	for i in range(nxyz//2):
@@ -56,10 +55,10 @@ def testbmi_py():
 	x=bmi.SetErrorHandlerMode(1)
 	print(f"SetErrorHandlerMode {x}")
 	#---------
-	x=bmi.SetDumpFileName("AdvectBMI_test_py.dump")
+	x=bmi.SetDumpFileName("Test_all_methods_py.dump")
 	print(f"SetDumpFileName {x}")
 	#---------
-	x=bmi.SetFilePrefix("AdvectBMI_test_py")
+	x=bmi.SetFilePrefix("Test_all_methods_py")
 	print(f"SetFilePrefix {x}")
 	#---------
 	x=bmi.OpenFiles()
@@ -123,7 +122,7 @@ def testbmi_py():
 	x=bmi.SetPrintChemistryOn(True,True,True)
 	print(f"SetPrintChemistryOn {x}")
 	#---------
-	x = bmi.RunFile(True, True, True, "advectBMI_test.pqi")
+	x = bmi.RunFile(True, True, True, "all_reactants.pqi")
 	print(f"RunFile {x}")	
 	#---------
 	#x=bmi.AddOutputVars("SolutionActivities", "True")
@@ -469,7 +468,7 @@ def testbmi_py():
 	print(f"GetSpeciesSaveOn {x}")
 	#---------
 	x=bmi.GetStartCell()
-	print(f"GetStartCell, FAILS WITH THREADS {x}")
+	print(f"GetStartCell {x}")
 	#---------
 	x=bmi.GetTemperature()
 	print(f"GetTemperature {x[0]}")
@@ -599,7 +598,7 @@ def testbmi_py():
 	x=bmi.GetVarUnits("solution_saturation_index_Calcite")
 	print(f"GetVarUnits {x}")
 	#---------
-	#x=bmi.Initialize("AdvectBMI_test_py.yaml")
+	#x=bmi.Initialize("file")
 	# See above
 	bmi.Update()    # void method
 	print(f"Update")
