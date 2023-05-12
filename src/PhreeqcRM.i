@@ -1,5 +1,9 @@
 // %module(directors="1") phreeqcrm
 %module phreeqcrm
+%pythoncode 
+%{ 
+import numpy as np
+%}
 %include "typemaps.i"
 %include <std_vector.i>
 %{
@@ -14,7 +18,7 @@
 %ignore BMIVariant;
 %ignore bmi::Bmi;
 
-#if 0
+#if 1
 %include "numpy.i"
 %init %{
 import_array();
@@ -47,21 +51,35 @@ import_array();
 %ignore PhreeqcRM::GetSpeciesStoichiometry(void);
 %ignore PhreeqcRM::GetWorkers();
 // Switch argument to output variable
-%apply std::vector < double > &OUTPUT { std::vector < double > &destination_c };
-%apply std::vector<std::string> &OUTPUT { std::vector<std::string> &species_output, std::vector<std::string> &elts_output };
-%apply std::vector<int> &OUTPUT { std::vector<int> &nelt_output }; 
-%apply std::vector<double> &OUTPUT { std::vector<double> &coef_output };
-%apply std::vector<int>& OUTPUT { std::vector<int>& nback_output, std::vector<int>& cellnumbers_output}
+%apply std::vector < double >     &OUTPUT { std::vector < double > &destination_c };
+%apply std::vector<std::string>   &OUTPUT { std::vector<std::string> &species_output, std::vector<std::string> &elts_output };
+%apply std::vector<int>           &OUTPUT { std::vector<int> &nelt_output }; 
+%apply std::vector<double>        &OUTPUT { std::vector<double> &coef_output };
+%apply std::vector<int>           &OUTPUT { std::vector<int>& nback_output, std::vector<int> &cellnumbers_output};
+
+%apply std::vector< double >      &OUTPUT { std::vector< double > &c_output };
+%apply std::vector< double >      &OUTPUT { std::vector< double > &d_output };
+%apply std::vector< double >      &OUTPUT { std::vector< double > &gas_moles_output };
+%apply std::vector< double >      &OUTPUT { std::vector< double > &gas_phi };
+%apply std::vector< double >      &OUTPUT { std::vector< double > &gas_pressure };
+%apply std::vector< double >      &OUTPUT { std::vector< double > &gas_volume_output };
+%apply std::vector< double >      &OUTPUT { std::vector< double > &species_conc };
+%apply std::vector< double >      &OUTPUT { std::vector< double > &species_log10gammas };
+%apply std::vector< double >      &OUTPUT { std::vector< double > &species_log10molalities };
+%apply std::vector< double >      &OUTPUT { std::vector< double > &s_output };
+%apply std::vector< std::string > &OUTPUT { std::vector< std::string > &headings };
+%apply std::vector< double >      &OUTPUT { std::vector< double > &sat_output };
+
 // Rename method to avoid tuple
-%rename(InitialPhreeqc2ConcentrationsSWIG) InitialPhreeqc2Concentrations(
+%rename(InitialPhreeqc2ConcentrationsSWIG)          InitialPhreeqc2Concentrations(
 													std::vector < double > & destination_c,
 													const std::vector < int >    & boundary_solution1);
-%rename(InitialPhreeqc2ConcentrationsSWIG_mix) InitialPhreeqc2Concentrations(
+%rename(InitialPhreeqc2ConcentrationsSWIG_mix)      InitialPhreeqc2Concentrations(
 													std::vector < double > & destination_c,
 													const std::vector < int >    & boundary_solution1,
 													const std::vector < int >    & boundary_solution2,
 													const std::vector < double > & fraction1);
-%rename(InitialPhreeqc2SpeciesConcentrationsSWIG) InitialPhreeqc2SpeciesConcentrations(
+%rename(InitialPhreeqc2SpeciesConcentrationsSWIG)   InitialPhreeqc2SpeciesConcentrations(
 													std::vector < double > & destination_c,
 													std::vector < int >    & boundary_solution1);
 %rename(InitialPhreeqc2SpeciesConcentrationsSWIG_mix) InitialPhreeqc2SpeciesConcentrations(
@@ -69,6 +87,18 @@ import_array();
 													std::vector < int >    & boundary_solution1,
 													std::vector < int >    & boundary_solution2,
 													std::vector < double > & fraction1);
+%rename(GetConcentrationsSWIG)                      GetConcentrations(std::vector< double > &c_output);
+%rename(GetDensitySWIG)                             GetDensity(std::vector< double > & d_output);
+%rename(GetGasCompMolesSWIG)                        GetGasCompMoles(std::vector< double >& gas_moles);
+%rename(GetGasCompPhiSWIG)                          GetGasCompPhi(std::vector< double >& gas_phi);
+%rename(GetGasCompPressuresSWIG)                    GetGasCompPressures(std::vector< double >& gas_pressure);
+%rename(GetGasPhaseVolumeSWIG)                      GetGasPhaseVolume(std::vector< double >& gas_volume);
+%rename(SpeciesConcentrations2ModuleSWIG)           SpeciesConcentrations2Module(std::vector< double > & species_conc);
+%rename(GetSpeciesLog10GammasSWIG)                  GetSpeciesLog10Gammas(std::vector< double > & species_log10gammas);
+%rename(GetSpeciesLog10MolalitiesSWIG)              GetSpeciesLog10Molalities(std::vector< double >& species_log10molalities);
+%rename(GetSelectedOutputSWIG)                      GetSelectedOutput(std::vector< double > &s_output);
+%rename(GetSelectedOutputHeadingsSWIG)              GetSelectedOutputHeadings(std::vector< std::string >& headings);
+%rename(GetSaturationSWIG)                          GetSaturation(std::vector< double > & sat_output);
 
 %include "PhreeqcRM.h"
 
@@ -105,17 +135,37 @@ def GetBackwardMapping(self):
 		backward_mapping[i] = back
 	return backward_mapping	
 def InitialPhreeqc2Concentrations(self, bc1):
-	v = self.InitialPhreeqc2ConcentrationsSWIG(bc1)
-	return list(v[1])	
+	return np.array(self.InitialPhreeqc2ConcentrationsSWIG(bc1)[1])
 def InitialPhreeqc2Concentrations_mix(self, bc1, bc2, f1):
-	v = self.InitialPhreeqc2ConcentrationsSWIG_mix(bc1,bc2,f1)
-	return list(v[1])
+	return np.array(self.InitialPhreeqc2ConcentrationsSWIG_mix(bc1,bc2,f1)[1])
 def InitialPhreeqc2SpeciesConcentrations(self, bc1):
-	v = self.InitialPhreeqc2SpeciesConcentrationsSWIG(bc1)
-	return list(v[1])	
+	return np.array(self.InitialPhreeqc2SpeciesConcentrationsSWIG(bc1)[1])
 def InitialPhreeqc2SpeciesConcentrations_mix(self, bc1, bc2, f1):
-	v = self.InitialPhreeqc2SpeciesConcentrationsSWIG_mix(bc1,bc2,f1)
-	return list(v[1])
+	return np.array(self.InitialPhreeqc2SpeciesConcentrationsSWIG_mix(bc1,bc2,f1)[1])
+def GetConcentrations(self):
+	return np.array(self.GetConcentrationsSWIG()[1])
+def GetDensity(self): 
+	return np.array(self.GetDensitySWIG()[1])       
+def GetGasCompMoles(self):                 
+	return np.array(self.GetGasCompMolesSWIG()[1])             
+def GetGasCompPhi(self):                
+	return np.array(self.GetGasCompPhiSWIG()[1])  
+def GetGasCompPressures(self):      
+	return np.array(self.GetGasCompPressuresSWIG()[1])           
+def GetGasPhaseVolume(self):           
+	return np.array(self.GetGasPhaseVolumeSWIG()[1])       
+def SpeciesConcentrations2Module(self):           
+	return np.array(self.SpeciesConcentrations2ModuleSWIG()[1]) 
+def GetSpeciesLog10Gammas(self):   
+	return np.array(self.GetSpeciesLog10GammasSWIG()[1])     
+def GetSpeciesLog10Molalities(self):        
+	return np.array(self.GetSpeciesLog10MolalitiesSWIG()[1]) 
+def GetSelectedOutput(self):    
+	return np.array(self.GetSelectedOutputSWIG()[1])     
+def GetSelectedOutputHeadings(self):             
+	return np.array(self.GetSelectedOutputHeadingsSWIG()[1])     
+def GetSaturation(self):      
+	return np.array(self.GetSaturationSWIG()[1]) 
 %} 
 }
 
@@ -160,19 +210,16 @@ def GetValue(self, var):
 		if dim==1:
 			return self.GetValue_double(var)
 		if dim>1:
-			v = self.GetValue_double_vector(var)
-			return list(v)
+			return np.array(self.GetValue_double_vector(var))
 	if type=="int":
 		if dim==1:
 			return self.GetValue_int(var)
 		if dim>1:
-			v = self.GetValue_int_vector(var)
-			return list(v)
+			return np.array(GetValue_int_vector(var))
 	if type=="std::string":
 		return self.GetValue_string(var)
 	if type=="std::vector<std::string>":
-		v = self.GetValue_string_vector(var)
-		return list(v)
+		return np.array(self.GetValue_string_vector(var))
 	if type=="bool":
 		return self.GetValue_bool(var)
 def SetValue(self, var, value):

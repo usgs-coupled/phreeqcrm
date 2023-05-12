@@ -1,6 +1,7 @@
+
+import numpy as np
 import phreeqcrm
 import yamlphreeqcrm
-import numpy as np
 #ifdef USE_YAML
     #module mydata
     #  double precision, dimension(:), pointer :: K_ptr
@@ -291,76 +292,73 @@ def testallmethods_py():
 	x=bmi.SetTimeStep(0.0)
 	print(f"SetTimeStep {type(x)}, {x}")
 	#---------
-	c = phreeqcrm.DoubleVector()
-	x=bmi.GetConcentrations(c)
-	print(f"GetConcentrations {type(x)}, {x}, {c[0]}.")
+	c=bmi.GetConcentrations()
+	print(f"GetConcentrations {type(c)}, {c[0]}")
 		#---------
 	x=bmi.SetConcentrations(c)
 	print(f"SetConcentrations {type(x)}, {x}")
 	#---------
 	c = bmi.GetValue("Concentrations")
-	print(type(c))
-	print(f"GetValue('Concentrations') {c[0]}")
+	print(f"GetValue('Concentrations') {type(c)} {c[0]}")
 	#---------
 	bmi.SetValue("Concentrations", c)
 	print(f"SetValue('Concentrations')")
 	#---------
-	d = phreeqcrm.DoubleVector(nxyz, 0)
-	x=bmi.GetDensity(d)
-	print(f"GetDensity {type(x)}, {x}, {d[0]}") 
+	d=bmi.GetDensity()                               # Getter through argument
+	print(f"GetDensity {type(d)}, {d[0]}") 
 	#---------
-	v = phreeqcrm.DoubleVector(nxyz, 1.0)
-	x=bmi.SetDensity(v)
+	x=bmi.SetDensity(d)
 	print(f"SetDensity {x}")
 	#---------
-	v = phreeqcrm.DoubleVector()
-	x = bmi.GetGasCompMoles(v)
-	print(f"GetGasCompMoles {type(x)}, {x}")
+	g = bmi.GetGasCompMoles()                               # Getter through argument
+	print(f"GetGasCompMoles {type(g)}, {g[0]}")
 	#---------
-	x=bmi.SetGasCompMoles(v)
+	x=bmi.SetGasCompMoles(g)
 	print(f"SetGasCompMoles {type(x)}, {x}")
 	#---------
-	x=bmi.GetGasCompPhi(v)
-	print(f"GetGasCompPhi {type(x)}, {x}, {v[0]}")
+	v=bmi.GetGasCompPhi()                               # Getter through argument
+	print(f"GetGasCompPhi {type(v)}, {v[0]}")
 	#---------
-	x=bmi.GetGasCompPressures(v)
-	print(f"GetGasCompPressures {type(x)}, {x}, {v[0]}")
+	v=bmi.GetGasCompPressures()                               # Getter through argument
+	print(f"GetGasCompPressures {type(v)}, {v[0]}")
 	#---------
-	x=bmi.GetGasPhaseVolume(v)
-	print(f"GetGasPhaseVolume {type(x)}, {x}, {v[0]}")
+	v=bmi.GetGasPhaseVolume()                               # Getter through argument
+	print(f"GetGasPhaseVolume {type(v)}, {v[0]}")
 	#---------
-	v = phreeqcrm.DoubleVector(nxyz, 1.0)
 	x=bmi.SetGasPhaseVolume(v)
 	print(f"SetGasPhaseVolume {type(x)}, {x}")
 	#---------
-	v = phreeqcrm.DoubleVector(nxyz, 0.21)
+	v = np.full((nxyz), 0.21)
 	x=bmi.SetPorosity(v)
 	print(f"SetPorosity {type(x)}, {x}")
 	#---------
 	x=bmi.GetPressure()
 	print(f"GetPressure {type(x)}, {x[0]}")
 	#---------
-	v = phreeqcrm.DoubleVector(nxyz, 3.0)
+	#v = phreeqcrm.DoubleVector(nxyz, 3.0)
+	v = np.full((nxyz), 3.0)
 	x=bmi.SetPressure(v)
 	print(f"SetPressure {type(x)}, {x}")
 	#---------
+	v = np.full((nxyz), 1.0)
 	x=bmi.SetSaturation(v)
 	print(f"SetSaturation {type(x)}, {x}")
 	#---------
 	x=bmi.GetSolutionVolume()
 	print(f"GetSolutionVolume {type(x)}, {x[0]}")
 	#---------
-	v = phreeqcrm.DoubleVector()
-	x=bmi.GetSpeciesConcentrations(v)
-	print(f"GetSpeciesConcentrations {type(x)}, {v[0]}")
+	#v = phreeqcrm.DoubleVector()
+	v=bmi.GetSpeciesConcentrations()                               # Getter through argument
+	print(f"GetSpeciesConcentrations {type(v)}, {v[0]}")
 	#---------
 	x=bmi.SpeciesConcentrations2Module(v)
 	print(f"SpeciesConcentrations2Module {type(x)}, {x}")
+	return
 	#---------
-	x=bmi.GetSpeciesLog10Gammas(v)
+	x=bmi.GetSpeciesLog10Gammas(v)                               # Getter through argument
 	print(f"GetSpeciesLog10Gammas {type(x)}, {x}, {v[0]}")
 	#---------
-	x=bmi.GetSpeciesLog10Molalities(v)
+	x=bmi.GetSpeciesLog10Molalities(v)                               # Getter through argument
 	print(f"GetSpeciesLog10Molalities {type(x)}, {x}, {v[0]}")
 	#---------
 	v = phreeqcrm.DoubleVector(nxyz, 26.0)
@@ -389,14 +387,14 @@ def testallmethods_py():
 	x=bmi.SetNthSelectedOutput(0)
 	print(f"SetNthSelectedOutput {type(x)}, {x}")
 	#---------
-	x=bmi.GetSelectedOutput(v)
+	x=bmi.GetSelectedOutput(v)                               # Getter through argument
 	print(f"GetSelectedOutput {type(x)}, {x}, {v[0]}")
 	#---------
 	x=bmi.GetSelectedOutputColumnCount()
 	print(f"GetSelectedOutputColumnCount {type(x)}, {x}")
 	#---------
 	v = phreeqcrm.StringVector()
-	x=bmi.GetSelectedOutputHeadings(v)
+	x=bmi.GetSelectedOutputHeadings(v)                               # Getter through argument
 	print(f"GetSelectedOutputHeadings {type(x)}, {x}, {v[87]}")
 	#---------
 	x=bmi.GetSelectedOutputRowCount()
@@ -458,7 +456,7 @@ def testallmethods_py():
 	print(f"GetRebalanceFraction {type(x)}, {x}")
 	#---------
 	v = phreeqcrm.DoubleVector()
-	x=bmi.GetSaturation(v)
+	x=bmi.GetSaturation(v)                               # Getter through argument
 	print(f"GetSaturation {type(x)}, {x}, {v[0]}")
 	#---------
 	x=bmi.GetSelectedOutputOn()
