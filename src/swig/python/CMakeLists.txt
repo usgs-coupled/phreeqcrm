@@ -30,8 +30,20 @@ configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
 
 get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
 
-set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES SWIG_FLAGS "-Wall")
+set(CMAKE_SWIG_FLAGS "-Wall" )
 set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES CPLUSPLUS ON)
+
+if(NOT PHREEQCRM_DISABLE_OPENMP)
+  if(OPENMP_FOUND)
+    list(APPEND CMAKE_SWIG_FLAGS "-DUSE_OPENMP")
+  endif()
+endif()
+
+if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
+  list(APPEND CMAKE_SWIG_FLAGS "-DUSE_YAML")
+endif()
+
+# CMAKE_SWIG_FLAGS must be fully set before swig_add_library is called
 
 swig_add_library(
   ${PYTHON_TARGET_NAME}
@@ -42,8 +54,14 @@ swig_add_library(
 
 target_compile_features(${PYTHON_TARGET_NAME} PUBLIC cxx_std_11)
 
+if(NOT PHREEQCRM_DISABLE_OPENMP)
+  if(OPENMP_FOUND)
+    target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE USE_OPENMP)
+    target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC OpenMP::OpenMP_CXX)
+  endif()
+endif()
+
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
-  set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES SWIG_FLAGS "-Wall;-DUSE_YAML")
   target_compile_definitions(${PYTHON_TARGET_NAME} PUBLIC USE_YAML)
   target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp)
 endif()

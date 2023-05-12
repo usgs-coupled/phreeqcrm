@@ -102,6 +102,8 @@ coefficients at 25 C, and their charge."
 %feature("docstring") YAMLPhreeqcRM::YAMLFindComponents YAMLFindComponents_DOCSTRING
 
 
+#if 0
+@todo
 %define YAMLInitialPhreeqc2Module_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
 InitialPhreeqc2Module. When the YAML document is written to file it can 
@@ -129,7 +131,7 @@ Args:
 		that entity for that cell."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLInitialPhreeqc2Module YAMLInitialPhreeqc2Module_DOCSTRING
-
+#endif
 
 %define YAMLInitialPhreeqc2Module_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
@@ -467,7 +469,7 @@ processed by the method InitializeYAML to initialize a PhreeqcRM
 instance.
 
 SetErrorOn sets the property that controls whether error messages are 
-generated and displayed. Messages include PHREEQC "ERROR" messages, and 
+generated and displayed. Messages include PHREEQC \"ERROR\" messages, and 
 any messages written with the method ErrorMessage.
 
 Args:
@@ -545,7 +547,7 @@ Args:
 		cells can be used in the creation of the PhreeqcRM instance. The 
 		PhreeqcRM constructor takes two arguments. GetGridCellCountYAML 
 		provides the value for the first argument. If the YAML file does not 
-		contain the node "SetGridCellCount:", GetGridCellCountYAML will 
+		contain the node \"SetGridCellCount:\", GetGridCellCountYAML will 
 		return zero."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetGridCellCount YAMLSetGridCellCount_DOCSTRING
