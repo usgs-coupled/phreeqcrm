@@ -1248,7 +1248,8 @@ PhreeqcRM::Concentrations2SolutionsNoH2O(int n, std::vector<double> &c)
 }
 /* ---------------------------------------------------------------------- */
 IPhreeqc *
-PhreeqcRM::Concentrations2Utility(std::vector<double> &c, std::vector<double> tc, std::vector<double> p_atm)
+PhreeqcRM::Concentrations2Utility(const std::vector<double> &c, 
+	const std::vector<double> &tc, const std::vector<double> &p_atm)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -1260,9 +1261,11 @@ PhreeqcRM::Concentrations2Utility(std::vector<double> &c, std::vector<double> tc
 }
 /* ---------------------------------------------------------------------- */
 IPhreeqc *
-PhreeqcRM::Concentrations2UtilityH2O(std::vector<double> &c, std::vector<double> &tc, std::vector<double> &p_atm)
+PhreeqcRM::Concentrations2UtilityH2O(const std::vector<double> &c_in, 
+	const std::vector<double> &tc, const std::vector<double> &p_atm)
 /* ---------------------------------------------------------------------- */
 {
+	std::vector<double> c = c_in;
 	size_t ncomps = this->components.size();
 	size_t nsolns = c.size() / ncomps;
 	size_t nutil= this->nthreads + 1;
@@ -1334,9 +1337,11 @@ PhreeqcRM::Concentrations2UtilityH2O(std::vector<double> &c, std::vector<double>
 
 /* ---------------------------------------------------------------------- */
 IPhreeqc *
-PhreeqcRM::Concentrations2UtilityNoH2O(std::vector<double> &c, std::vector<double> &tc, std::vector<double> &p_atm)
+PhreeqcRM::Concentrations2UtilityNoH2O(const std::vector<double> &c_in,
+	const std::vector<double> &tc, const std::vector<double> &p_atm)
 /* ---------------------------------------------------------------------- */
 {
+	std::vector<double> c = c_in;
 	size_t ncomps = this->components.size();
 	size_t nsolns = c.size() / ncomps;
 	size_t nutil= this->nthreads + 1;
@@ -1626,7 +1631,7 @@ PhreeqcRM::CreateMapping(std::vector<int> &grid2chem)
 #endif
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::CreateMapping(std::vector<int> &grid2chem)
+PhreeqcRM::CreateMapping(const std::vector<int> &grid2chem)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -6145,8 +6150,8 @@ PhreeqcRM::InitialPhreeqc2Module(
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2Module(
 					const std::vector < int >    & initial_conditions1,
-					std::vector < int >    & initial_conditions2,
-					std::vector < double > & fraction1)
+					const std::vector < int >    & initial_conditions2,
+					const std::vector < double > & fraction1_in)
 /* ---------------------------------------------------------------------- */
 {
 	/*
@@ -6172,6 +6177,7 @@ PhreeqcRM::InitialPhreeqc2Module(
 	IRM_RESULT return_value = IRM_OK;
 	try
 	{
+		std::vector<double> fraction1 = fraction1_in;
 		if (mpi_myself == 0)
 		{
 			if ((int) initial_conditions1.size() != (7 * this->nxyz))
@@ -6341,7 +6347,7 @@ PhreeqcRM::InitialPhreeqc2Module(
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2SpeciesConcentrations(std::vector < double > &destination_c,
-					std::vector < int > & boundary_solution1)
+					const std::vector < int > & boundary_solution1)
 {
 	this->phreeqcrm_error_string.clear();
 	std::vector< int > dummy;
@@ -6352,9 +6358,9 @@ PhreeqcRM::InitialPhreeqc2SpeciesConcentrations(std::vector < double > &destinat
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::InitialPhreeqc2SpeciesConcentrations(std::vector < double > &destination_c,
-					std::vector < int > & boundary_solution1,
-					std::vector < int > & boundary_solution2,
-					std::vector < double > & fraction1)
+					const std::vector < int > & boundary_solution1,
+					const std::vector < int > & boundary_solution2,
+					const std::vector < double > & fraction1)
 /* ---------------------------------------------------------------------- */
 {
 /*
@@ -12467,7 +12473,7 @@ PhreeqcRM::SetUnitsSurface(int u)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::SpeciesConcentrations2Module(std::vector<double> & species_conc)
+PhreeqcRM::SpeciesConcentrations2Module(const std::vector<double> & species_conc)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
