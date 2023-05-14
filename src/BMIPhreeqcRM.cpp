@@ -952,7 +952,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, bool src)
 	assert(false);
 	return;
 }
-void BMIPhreeqcRM::SetValue(const std::string name, char* src)
+void BMIPhreeqcRM::SetValue(const std::string name, const char* src)
 {
 	RMVARS v_enum = this->var_man->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
