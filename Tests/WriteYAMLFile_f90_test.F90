@@ -86,7 +86,7 @@
 	workers = .true.             ! Worker instances do the reaction calculations for transport
 	initial_phreeqc = .true.     ! InitialPhreeqc instance accumulates initial and boundary conditions
 	utility = .true.             ! Utility instance is available for processing
-	status = YAMLRunFile(id, workers, initial_phreeqc, utility, "advectBMI_test.pqi")
+	status = YAMLRunFile(id, workers, initial_phreeqc, utility, "all_reactants.pqi")
 	! Clear contents of workers and utility
 	initial_phreeqc = .false.
 	input = "DELETE; -all"

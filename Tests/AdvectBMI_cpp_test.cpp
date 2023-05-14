@@ -213,8 +213,11 @@ int AdvectBMI_cpp_test()
 		std::vector<double> bc_conc, bc_f1;
 		std::vector<int> bc1, bc2;
 		int nbound = 1;
+		bc1.clear();
 		bc1.resize(nbound, 0);                      // solution 0 from Initial IPhreeqc instance
+		bc2.clear();
 		bc2.resize(nbound, -1);                     // no bc2 solution for mixing
+		bc_f1.clear();
 		bc_f1.resize(nbound, 1.0);                  // mixing fraction for bc1
 		status = brm.InitialPhreeqc2Concentrations(bc_conc, bc1, bc2, bc_f1);
 		// --------------------------------------------------------------------------
@@ -434,16 +437,13 @@ int bmi_units_tester()
 		status = brm.SetUnitsSSassemblage(1);  // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 		status = brm.SetUnitsKinetics(1);      // 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 		// Set representative volume
-		std::vector<double> rv;
-		rv.resize(nxyz, 1.0);
+		std::vector<double> rv(nxyz, 1.0);
 		status = brm.SetRepresentativeVolume(rv);
 		// Set current porosity
-		std::vector<double> por;
-		por.resize(nxyz, 0.2);
+		std::vector<double> por(nxyz, 0.2);
 		status = brm.SetPorosity(por);
 		// Set saturation
-		std::vector<double> sat;
-		sat.resize(nxyz, 1.0);
+		std::vector<double> sat(nxyz, 1.0);
 		status = brm.SetSaturation(sat);
 		// Set printing of chemistry file
 		status = brm.SetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
@@ -486,8 +486,7 @@ int bmi_units_tester()
 		{
 			brm.OpenFiles();
 		}
-		std::vector < int > print_mask;
-		print_mask.resize(3, 1);
+		std::vector < int > print_mask(nxyz, 1);
 		brm.SetPrintChemistryMask(print_mask);
 		brm.SetPrintChemistryOn(true, true, true);
 		status = brm.RunCells();
@@ -750,6 +749,7 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 			assert(my_por[i] == por_ptr[i]);
 			assert(por_ptr[i] == por_ptr[i]);
 		}
+		my_por.clear();
 		my_por.resize(*ptrs.GridCellCount_ptr, 0.4);
 		brm.SetValue("Porosity", my_por);
 		brm.GetValue("Porosity", my_porosity_dim);
@@ -761,6 +761,7 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 			assert(my_por[i] == por_ptr[i]);
 			assert(por_ptr[i] == por_ptr[i]);
 		}
+		my_por.clear();
 		my_por.resize(*ptrs.GridCellCount_ptr, 0.5);
 		brm.SetPorosity(my_por);
 		brm.GetValue("Porosity", my_porosity_dim);
@@ -808,6 +809,7 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 		{
 			assert(saturation_ptr[i] == bmi_sat[i]);
 		}
+		rm_sat.clear();
 		rm_sat.resize(*ptrs.GridCellCount_ptr, 0.8);
 		brm.SetValue("Saturation", rm_sat);
 		brm.GetValue("Saturation", bmi_sat);
@@ -850,6 +852,7 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 		{
 			assert(temperature_ptr[i] == bmi_temperature[i]);
 		}
+		rm_temperature.clear();
 		rm_temperature.resize(*ptrs.GridCellCount_ptr, 22.0);
 		compare_ptrs(ptrs);
 	}

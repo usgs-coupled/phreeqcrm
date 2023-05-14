@@ -40,6 +40,8 @@ void TestAllMethods_cpp()
 	std::cerr << "GetValue('GridCellCount')\n";
 	//-------
 	nxyz = bmi.GetGridCellCount();
+	bmi.GetValue("GridCellCount", nxyz);
+	int *i_ptr = (int*)bmi.GetValuePtr("GridCellCount");
 	std::cerr << "GetGridCellCount \n";
 	//-------
 	int n = bmi.GetThreadCount();
@@ -75,6 +77,7 @@ void TestAllMethods_cpp()
 	std::cerr << "SetDumpFileName \n";
 	//-------
 	status = bmi.SetFilePrefix("TestAllMethods_cpp");
+	bmi.SetValue("FilePrefix", "TestAllMethods_cpp");
 	std::cerr << "SetFilePrefix \n";
 	//-------
 	status = bmi.OpenFiles();
@@ -93,6 +96,7 @@ void TestAllMethods_cpp()
 	std::cerr << "SetScreenOn \n";
 	//-------
 	status = bmi.SetSelectedOutputOn(true);
+	bmi.SetValue("SelectedOutputOn", true);
 	std::cerr << "SetSelectedOutputOn \n";
 	//-------
 	status = bmi.SetUnitsExchange(1);
@@ -130,12 +134,17 @@ void TestAllMethods_cpp()
 	//-------Chemistry cells may be fewer than GridCellCount
 	int nchem = bmi.GetChemistryCellCount();
 	std::cerr << "GetChemistryCellCount \n";
-	//
-	// Begin initialization
-	//
+	//-------
+	std::vector<int> vi(nxyz, 1);
+	status = bmi.SetPrintChemistryMask(vi);
+	std::cerr << "SetPrintChemistryMask \n";
+	//-------
 	status = bmi.SetPrintChemistryOn(false, true, false);
 	std::cerr << "SetPrintChemistryOn \n";
-	//-------
+	//
+	// Define reactants available for initial 
+	// and boundary conditions in this file
+	//
 	status = bmi.RunFile(true, true, true, "all_reactants.pqi");
 	std::cerr << "RunFile \n";
 	//-------
@@ -149,14 +158,23 @@ void TestAllMethods_cpp()
 	//-------
 	int ncomps = bmi.FindComponents();
 	std::cerr << "FindComponents \n";
+	//
+	// Methods up to this point are useful 
+	// in a YAML initialization file
+	// 
+	// Lists of reactants found by FindComponents follow
+	// 
 	// Component names
 	ncomps = bmi.GetComponentCount();
+	bmi.GetValue("ComponentCount", ncomps);
+	i_ptr = (int*) bmi.GetValuePtr("ComponentCount");
 	std::cerr << "GetComponentCount \n";
 	//-------
 	bmi.GetValue("ComponentCount", ncomps);
 	std::cerr << "GetValue('ComponentCount')" << ncomps << "\n";
 	//-------
 	std::vector<std::string> str_vector = bmi.GetComponents();
+	bmi.GetValue("Components", str_vector);
 	std::cerr << "GetComponents \n";
 	// Species info
 	n = bmi.GetSpeciesCount();
@@ -191,6 +209,11 @@ void TestAllMethods_cpp()
 	//-------
 	n = bmi.GetGasComponentsCount();
 	std::cerr << "GetGasComponentsCount \n";
+	//-------
+	v = bmi.GetGfw();
+	bmi.GetValue("Gfw", v);
+	double *d_ptr = (double*)bmi.GetValuePtr("Gfw");
+	std::cerr << "GetGfw ";
 	//-------
 	str_vector = bmi.GetKineticReactions();
 	std::cerr << "GetKineticReactions \n";
@@ -232,9 +255,10 @@ void TestAllMethods_cpp()
 	std::cerr << "RunString \n";
 	//-------
 	// 
-	// Transfer initial conditions
+	// Transfer initial conditions to model
 	//
-	std::vector<int> vi(nxyz, 1);
+	vi.clear();
+	vi.resize(nxyz, 1);
 	status = bmi.InitialEquilibriumPhases2Module(vi);
 	std::cerr << "InitialEquilibriumPhases2Module \n";
 	//-------
@@ -277,24 +301,51 @@ void TestAllMethods_cpp()
 	//
 	// Boundary conditions
 	// 
+	vi.clear();
+	vi.resize(1, 1);
 	std::vector<double> bc;
+	status = bmi.InitialPhreeqc2Concentrations(bc, vi);
+	//-------
+	std::vector<int> vi1(1, 1);
+	std::vector<int> vi2(1, -1);
+	f1.clear();
+	f1.resize(1, 1.0);
+	status = bmi.InitialPhreeqc2Concentrations(bc, vi1, vi2, f1);
+
+	vi.clear();
 	vi.resize(1, 1);
 	status = bmi.InitialPhreeqc2SpeciesConcentrations(bc, vi);
 	std::cerr << "InitialPhreeqc2SpeciesConcentrations \n";
 	//-------
 	std::vector<double> bc_species;
-	std::vector<int> vi1(1, 1);
-	std::vector<int> vi2(1, -1);
+	vi1.clear();
+	vi1.resize(1, 1);
+	vi2.clear();
+	vi2.resize(1, -1);
+	f1.clear();
 	f1.resize(1, 1.0);
 	status = bmi.InitialPhreeqc2SpeciesConcentrations(bc_species, vi1, vi2, f1);
 	std::cerr << "InitialPhreeqc2SpeciesConcentrations mix \n";
 	//
 	// Get/Set methods for time steping
 	//
+	double d = bmi.GetTime();
+	bmi.GetValue("Time", d);
+	d = bmi.GetCurrentTime();
+	d_ptr = (double*)bmi.GetValuePtr("Time");
+	std::cerr << "GetTime \n";
+	//-------
 	status = bmi.SetTime(0.0);
+	bmi.SetValue("Time", 0.0);
 	std::cerr << "SetTime \n";
 	//-------
+	d = bmi.GetTimeStep();
+	bmi.GetValue("TimeStep", v);
+	d_ptr = (double*)bmi.GetValuePtr("TimeStep");
+	std::cerr << "GetTimeStep \n";
+	//-------
 	status = bmi.SetTimeStep(0.0);
+	bmi.SetValue("TimeStep", 0.0);
 	std::cerr << "SetTimeStep \n";
 	//-------
 	status = bmi.GetGasCompMoles(v);
@@ -302,26 +353,30 @@ void TestAllMethods_cpp()
 	//-------
 	status = bmi.SetGasCompMoles(v);
 	std::cerr << "SetGasCompMoles \n";
-	//-------
-	vi.resize(nxyz, 1);
-	status = bmi.SetPrintChemistryMask(vi);
-	std::cerr << "SetPrintChemistryMask \n";
 	//
 	// Get/Set methods for time stepping
 	// 
 	std::vector<double> c;
 	status = bmi.GetConcentrations(c);
+	bmi.GetValue("Concentrations", c);
+	d_ptr = (double*)bmi.GetValuePtr("Concentrations");
 	std::cerr << "GetConcentrations \n";
 	//-------
 	status = bmi.SetConcentrations(c);
+	bmi.SetValue("Concentrations", c);
 	std::cerr << "SetConcentrations \n";
 	//-------
+	v.clear();
 	v.resize(nxyz, 0);
 	status = bmi.GetDensity(v);
+	bmi.GetValue("Density", v);
+	d_ptr = (double*)bmi.GetValuePtr("Density");
 	std::cerr << "GetDensity \n";
 	//-------
+	v.clear();
 	v.resize(nxyz, 1.1);
 	status = bmi.SetDensity(v);
+	bmi.SetValue("Density", v);
 	std::cerr << "SetDensity \n";
 	//-------
 	status = bmi.GetGasCompMoles(v);
@@ -330,32 +385,56 @@ void TestAllMethods_cpp()
 	status = bmi.SetGasCompMoles(v);
 	std::cerr << "GetGasCompMoles \n";
 	//-------
+	status = bmi.GetGasCompPhi(v);
+	std::cerr << "GetGasCompPhi \n";
+	//-------
 	status = bmi.GetGasCompPressures(v);
 	std::cerr << "GetGasCompPressures \n";
 	//-------
 	status = bmi.GetGasPhaseVolume(v);
 	std::cerr << "GetGasPhaseVolume \n";
 	//-------
+	v.clear();
 	v.resize(nxyz, 1.0);
 	status = bmi.SetGasPhaseVolume(v);
 	std::cerr << "SetGasPhaseVolume \n";
 	//-------
+	v = bmi.GetPorosity();
+	bmi.GetValue("Porosity", v);
+	d_ptr = (double*)bmi.GetValuePtr("Porosity");
+	std::cerr << "GetPorosity \n";
+	//-------
+	v.clear();
 	v.resize(nxyz, 0.21);
 	status = bmi.SetPorosity(v);
+	bmi.SetValue("Porosity", v);
 	std::cerr << "SetPorosity \n";
 	//-------
 	v = bmi.GetPressure();
+	bmi.GetValue("Pressure", v);
+	d_ptr = (double*)bmi.GetValuePtr("Pressure");
 	std::cerr << "GetPressure \n";
 	//-------
+	v.clear();
 	v.resize(nxyz, 3.0);
 	status = bmi.SetPressure(v);
+	bmi.SetValue("Pressure", v);
 	std::cerr << "SetPressure \n";
 	//-------
+	status = bmi.GetSaturation(v);
+	bmi.GetValue("Saturation", v);
+	d_ptr = (double*)bmi.GetValuePtr("Saturation");
+	std::cerr << "GetSaturation \n";
+	//-------
+	v.clear();
 	v.resize(nxyz, 1.0);
 	status = bmi.SetSaturation(v);
+	bmi.SetValue("Saturation", v);
 	std::cerr << "SetSaturation \n";
 	//-------
 	v = bmi.GetSolutionVolume();
+	bmi.GetValue("SolutionVolume", v);
+	d_ptr = (double*)bmi.GetValuePtr("SolutionVolume");
 	std::cerr << "GetSolutionVolume \n";
 	//-------
 	status = bmi.GetSpeciesConcentrations(v);
@@ -370,9 +449,21 @@ void TestAllMethods_cpp()
 	status = bmi.GetSpeciesLog10Molalities(v);
 	std::cerr << "GetSpeciesLog10Molalities \n";
 	//-------
+	v = bmi.GetTemperature();
+	bmi.GetValue("Temperature", v);
+	d_ptr = (double*)bmi.GetValuePtr("Temperature");
+	std::cerr << "GetTemperature \n";
+	//-------
+	v.clear();
 	v.resize(nxyz, 26.0);
 	status = bmi.SetTemperature(v);
+	bmi.SetValue("Temperature", v);
 	std::cerr << "SetTemperature \n";
+	//-------
+	status = bmi.GetViscosity(v);
+	bmi.GetValue("Viscosity", v);
+	d_ptr = (double*)bmi.GetValuePtr("Viscosity");	
+	std::cerr << "GetViscosity \n";
 	//
 	// Take a time step
 	//
@@ -385,9 +476,11 @@ void TestAllMethods_cpp()
 	// Selected output
 	//
 	status = bmi.SetNthSelectedOutput(0);
+	bmi.SetValue("NthSelectedOutput", 0);
 	std::cerr << "SetNthSelectedOutput \n";
 	//-------
 	int n_user = bmi.GetCurrentSelectedOutputUserNumber();
+	bmi.GetValue("CurrentSelectedOutputUserNumber", n_user);
 	std::cerr << "GetCurrentSelectedOutputUserNumber \n";
 	//-------
 	status = bmi.SetCurrentSelectedOutputUserNumber(333);
@@ -397,12 +490,28 @@ void TestAllMethods_cpp()
 	std::cerr << "GetNthSelectedOutputUserNumber \n";
 	//-------
 	status = bmi.GetSelectedOutput(v);
+	bmi.GetValue("SelectedOutput", v);
 	std::cerr << "GetSelectedOutput \n";
 	//-------
 	n = bmi.GetSelectedOutputColumnCount();
+	bmi.GetValue("SelectedOutputColumnCount", n);
 	std::cerr << "GetSelectedOutputColumnCount \n";
 	//-------
-	n = bmi.GetSelectedOutputRowCount();
+	n = bmi.GetSelectedOutputCount();
+	bmi.GetValue("SelectedOutputCount", n);
+	std::cerr << "GetSelectedOutputCount \n";
+	//-------
+	status = bmi.GetSelectedOutputHeadings(str_vector);
+	bmi.GetValue("SelectedOutputHeadings", str_vector);
+	std::cerr << "GetSelectedOutputHeadings \n";
+	//-------
+	bool b = bmi.GetSelectedOutputOn();
+	bmi.GetValue("SelectedOutputOn", b);
+	bool *b_ptr = (bool*)bmi.GetValuePtr("SelectedOutputOn");
+	std::cerr << "GetSelectedOutputOn \n";
+	//-------
+	n = bmi.GetSelectedOutputRowCount(); 
+	bmi.GetValue("SelectedOutputRowCount", n);
 	std::cerr << "GetSelectedOutputRowCount \n";
 	//
 	// Getters
@@ -420,19 +529,15 @@ void TestAllMethods_cpp()
 	std::cerr << "GetErrorHandlerMode \n";
 	//-------
 	std::string str = bmi.GetErrorString();
+	bmi.GetValue("ErrorString", str);
 	std::cerr << "GetErrorString \n";
 	//-------
 	str = bmi.GetFilePrefix();
+	bmi.GetValue("FilePrefix", str);
 	std::cerr << "GetFilePrefix \n";
 	//-------
 	vi = bmi.GetForwardMapping();
 	std::cerr << "GetForwardMapping \n";
-	//-------
-	status = bmi.GetGasCompPhi(v);
-	std::cerr << "GetGasCompPhi \n";
-	//-------
-	v = bmi.GetGfw();
-	std::cerr << "GetGfw ";
 	//-------
 	IPhreeqc* ipq = bmi.GetIPhreeqcPointer(0);
 	std::cerr << "GetIPhreeqcPointer \n";
@@ -443,11 +548,8 @@ void TestAllMethods_cpp()
 	n = bmi.GetMpiTasks();
 	std::cerr << "GetMpiTasks \n";
 	//-------
-	bool b = bmi.GetPartitionUZSolids();
+	b = bmi.GetPartitionUZSolids();
 	std::cerr << "GetPartitionUZSolids \n";
-	//-------
-	v = bmi.GetPorosity();
-	std::cerr << "GetPorosity \n";
 	//-------
 	vi = bmi.GetPrintChemistryMask();
 	std::cerr << "GetPrintChemistryMask \n";
@@ -458,17 +560,8 @@ void TestAllMethods_cpp()
 	b = bmi.GetRebalanceByCell();
 	std::cerr << "GetRebalanceByCell \n";
 	//-------
-	double d = bmi.GetRebalanceFraction();
+	d = bmi.GetRebalanceFraction();
 	std::cerr << "GetRebalanceFraction \n";
-	//-------
-	status = bmi.GetSaturation(v);
-	std::cerr << "GetSaturation \n";
-	//-------
-	status = bmi.GetSelectedOutputHeadings(str_vector);
-	std::cerr << "GetSelectedOutputHeadings \n";
-	//-------
-	b = bmi.GetSelectedOutputOn();
-	std::cerr << "GetSelectedOutputOn \n";
 	//-------
 	b = bmi.GetSpeciesSaveOn();
 	std::cerr << "GetSpeciesSaveOn \n";
@@ -479,17 +572,8 @@ void TestAllMethods_cpp()
 	vi = bmi.GetStartCell();
 	std::cerr << "GetStartCell \n";
 	//-------
-	v = bmi.GetTemperature();
-	std::cerr << "GetTemperature \n";
-	//-------
-	d = bmi.GetTime();
-	std::cerr << "GetTime \n";
-	//-------
 	d = bmi.GetTimeConversion();
 	std::cerr << "GetTimeConversion \n";
-	//-------
-	d = bmi.GetTimeStep();
-	std::cerr << "GetTimeStep \n";
 	//-------
 	n = bmi.GetUnitsExchange();
 	std::cerr << "GetUnitsExchange \n";
@@ -505,6 +589,7 @@ void TestAllMethods_cpp()
 	//-------
 	n = bmi.GetUnitsSolution();
 	std::cerr << "GetUnitsSolution \n";
+	//-------
 	n = bmi.GetUnitsSSassemblage();
 	std::cerr << "GetUnitsSSassemblage \n";
 	//-------
@@ -516,6 +601,7 @@ void TestAllMethods_cpp()
 	//
 	// Utilities
 	//
+	vi.clear();
 	vi.resize(1, 1);
 	status = bmi.InitialPhreeqc2Concentrations(bc, vi);
 	std::vector<double> tc(1, 30.0);
@@ -555,8 +641,9 @@ void TestAllMethods_cpp()
 	//-------
 	bmi.WarningMessage("Warning message");  // void method
 	std::cerr << "WarningMessage \n";
-	//-------
+	//
 	// BMI Methods
+	//
 	str = bmi.GetComponentName();
 	std::cerr << "GetComponentName \n";
 	//-------
@@ -598,7 +685,8 @@ void TestAllMethods_cpp()
 	//-------
 	str = bmi.GetVarUnits("solution_saturation_index_Calcite");
 	std::cerr << "GetVarUnits \n";
-	//status = bmi.Initialize(YAML_filename);
+	//-------
+	//bmi.Initialize(YAML_filename);
 	// See above
 	bmi.SetValue("Time", 1.0);    // void method
 	std::cerr << "SetValue";

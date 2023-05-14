@@ -141,8 +141,8 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!
 	! Begin initialization
 	!
-	status =RM_SetPrintChemistryOn(.false., .true., .false.)
-	write(*,*) "SetPrintChemistryOn "
+	status =RM_SetPrintChemistryOn(id, .false., .true., .false.)
+	write(*,*) "RM_SetPrintChemistryOn "
 	!-------
 	status =RM_RunFile(.true., .true., .true., "all_reactants.pqi")
 	write(*,*) "RunFile "
