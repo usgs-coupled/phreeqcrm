@@ -44,7 +44,7 @@ void TestAllMethods_cpp()
 	//-------
 	int n = bmi.GetThreadCount();
 	std::cerr << "GetThreadCount " << n << "\n";
-	//------- LoadDatabase removes definitions in instance	//-------
+	//-------
 	// Inactive cells or symmetry
 	std::vector<int> grid2chem(nxyz, -1);
 	for (size_t i = 0; i < nxyz / 2; i++)
@@ -53,12 +53,12 @@ void TestAllMethods_cpp()
 	}
 	status = bmi.CreateMapping(grid2chem);
 	std::cerr << "CreateMapping \n";
+	//-------
 	bmi.LoadDatabase("phreeqc.dat");
 	std::cerr << "LoadDatabase\n";
 	//
 	// Set properties
 	// 
-	//-------
 	status = bmi.SetComponentH2O(false);
 	std::cerr << "SetComponentH2O \n";
 	//-------
@@ -95,7 +95,7 @@ void TestAllMethods_cpp()
 	status = bmi.SetSelectedOutputOn(true);
 	std::cerr << "SetSelectedOutputOn \n";
 	//-------
-	std::cerr << "SetSelectedOutputOn \n";	status = bmi.SetUnitsExchange(1);
+	status = bmi.SetUnitsExchange(1);
 	std::cerr << "SetUnitsExchange \n";
 	//-------
 	status = bmi.SetUnitsGasPhase(1);
