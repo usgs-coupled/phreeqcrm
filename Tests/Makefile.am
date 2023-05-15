@@ -103,6 +103,10 @@ CLEANFILES =\
 	Species_f90.chem.txt\
 	Species_f90.dmp\
 	Species_f90.log.txt\
+	TestAllMethods_cpp.chem.txt\
+	TestAllMethods_cpp.dump\
+	TestAllMethods_cpp.log.txt\
+	TestAllMethods_cpp.yaml\
 	testbmi_cpp.yaml\
 	Units_Worker.chem.txt\
 	Units_Worker.log.txt\

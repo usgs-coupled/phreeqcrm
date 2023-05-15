@@ -967,7 +967,7 @@ public:
     /*!
     * \overload void SetValue(const std::string name, char* src);
     */
-    void SetValue(const std::string name, char* src);
+    void SetValue(const std::string name, const char* src);
     /*!
     * \overload void SetValue(const std::string name, double src);
     */
@@ -1193,6 +1193,8 @@ private:
     //friend class RM_interface;
     static std::map<size_t, BMIPhreeqcRM*> Instances;
     static size_t InstancesIndex;
+    VarManager* var_man;
+    void UpdateBMI(RMVARS v_enum) override;
     void UpdateVariables();
 };
 #endif //BMIPHREEQCRM_H_INCLUDED

@@ -115,13 +115,15 @@ BMIPhreeqcRM::GetInstance(int id)
 	return 0;
 }
 // Constructor
-BMIPhreeqcRM::BMIPhreeqcRM() :
-PhreeqcRM(PhreeqcRM::default_nxyz, PhreeqcRM::default_data_for_parallel_processing, nullptr, true)
+BMIPhreeqcRM::BMIPhreeqcRM()
+: PhreeqcRM(PhreeqcRM::default_nxyz, PhreeqcRM::default_data_for_parallel_processing, nullptr, true)
+, var_man{ nullptr }
 {
 	this->language = "cpp";
 }
-BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads) :
-PhreeqcRM(nxyz, nthreads, nullptr, true) 
+BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads)
+: PhreeqcRM(nxyz, nthreads, nullptr, true) 
+, var_man{ nullptr }
 {
 	this->language = "cpp";
 }
@@ -187,6 +189,11 @@ void BMIPhreeqcRM::Update()
 	this->RunCells();
 	this->SetTime(this->GetTime() + this->GetTimeStep());
 	this->UpdateVariables();
+}
+void BMIPhreeqcRM::UpdateBMI(RMVARS v_enum)
+{
+	assert(this->var_man);
+	this->var_man->RM2BMIUpdate(v_enum);
 }
 void BMIPhreeqcRM::UpdateVariables()
 {
@@ -952,7 +959,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, bool src)
 	assert(false);
 	return;
 }
-void BMIPhreeqcRM::SetValue(const std::string name, char* src)
+void BMIPhreeqcRM::SetValue(const std::string name, const char* src)
 {
 	RMVARS v_enum = this->var_man->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
