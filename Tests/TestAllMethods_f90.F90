@@ -10,16 +10,16 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 #endif
 
   ! Based on PHREEQC Example 11
-  integer :: mpi_myself
+  integer                      :: mpi_myself
   integer                      :: i, j
   integer                      :: id, nxyz, nthreads, nchem, ncomps, status
   integer                      :: nbound, isteps, nsteps
-  character(100)               :: string
+  character(100)               :: string, yaml_filename
   character(len:), allocatable :: StringVector(:)
   real(kin=8), allocatable     :: IntVector(:)
   integer, allocatable         :: DoubleVector(:), f1(:), temperature(:)
   integer, allocatable         :: ic1(:,:), ic2(:,:), bc_conc(:,:), c(:,:)
-  integer, allocatable         :: bc1(:)
+  integer, allocatable         :: bc1(:), cells(:), v1(:), v2(:)
   real(kind=8)                 :: time, time_step, t
   ! --------------------------------------------------------------------------
   ! Create PhreeqcRM
@@ -30,384 +30,468 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
     nxyz = 40
     status = YAMLSetGridCellCount(id, nxyz)
     status = YAMLThreadCount(id, 3)
-	string = "TestAllMethods_cpp.yaml"
-	string = WriteYAMLDoc(id, string)
+	yaml_filename = "TestAllMethods_f90.yaml"
+	status = WriteYAMLDoc(id, string)
 	status = YAMLClear(id)
     status = DestroyYAMLPhreeqcRM(id)
 	!
 	! Use all BMIPhreeqcRM methods roughly in order of use
 	!
-	!
-	id = RM_create()
-	write(*,*) "RM_create"
+	id = bmif_create()
+	write(*,*) "bmif_create"
 	!-------
-	status = RM_Initialize(id, string)
-	write(*,*) "RM_Initialize"
+	status = bmif_initialize(id, yaml_filename)
+	write(*,*) "bmif_initialize"
 	!-------
-	status = bmif_getvalue(id, "GridCellCount", nxyz)
-	write(*,*) "bmif_getvalue('GridCellCount')"
-	!-------
-	nxyz = RM_GetGridCellCount(id)
-	write(*,*) "RM_GetGridCellCount "
+	status = bmif_get_value(id, "GridCellCount", nxyz)
+	nxyz = RM_GetGridCellCount();
+	write(*,*) "GetGridCellCount"
 	!-------
 	int n = RM_GetThreadCount(id)
-	write(*,*) "RM_GetThreadCount " << n << ""
+	write(*,*) "GetThreadCount " << n << ""
+	!-------
 	! Inactive cells or symmetry
-    deallocate(IntVector)
 	allocate(IntVector(nxyz, -1)
 	do i = 1, nxyz / 2 
         IntVector(i) = i
     enddo
 	status = RM_CreateMapping(id, IntVector)
-	write(*,*) "RM_CreateMapping "
+	write(*,*) "CreateMapping "
 	!-------
 	status = RM_LoadDatabase(id, "phreeqc.dat")
-	write(*,*) "RM_LoadDatabase"
+	write(*,*) "LoadDatabase"
 	!
 	! Set properties
 	!
 	!-------
 	status = RM_SetComponentH2O(id, .false.)
-	write(*,*) "RM_SetComponentH2O "
+	write(*,*) "SetComponentH2O "
 	!-------
 	status = RM_SetSpeciesSaveOn(id, .true.)
-	write(*,*) "RM_SetSpeciesSaveOn "
+	write(*,*) "SetSpeciesSaveOn "
 	!-------
-	status =RM_SetErrorOn(id, .true.)
-	write(*,*) "RM_SetErrorOn "
+	status = RM_SetErrorOn(id, .true.)
+	write(*,*) "SetErrorOn "
 	!-------
-	status =RM_SetErrorHandlerMode(id, 1)
-	write(*,*) "RM_SetErrorHandlerMode "
+	status = RM_SetErrorHandlerMode(id, 1)
+	write(*,*) "SetErrorHandlerMode "
 	!-------
-	status =RM_SetDumpFileName(id, "TestAllMethods_cpp.dump")
-	write(*,*) "RM_SetDumpFileName "
+	status = RM_SetDumpFileName(id, "TestAllMethods_py.dump")
+	write(*,*) "SetDumpFileName "
 	!-------
-	status =RM_SetFilePrefix(id, "TestAllMethods_cpp")
-	write(*,*) "RM_SetFilePrefix "
+	status = bmif_set_value(id, TestAllMethods_py)
+	status = RM_SetFilePrefix(id, "TestAllMethods_py")
+	write(*,*) "SetFilePrefix "
 	!-------
 	status =RM_OpenFiles(id)
-	write(*,*) "RM_OpenFiles "
+	write(*,*) "OpenFiles "
 	!-------
 	status =RM_SetPartitionUZSolids(id, .false.)
-	write(*,*) "RM_SetPartitionUZSolids "
+	write(*,*) "SetPartitionUZSolids "
 	!-------
 	status =RM_SetRebalanceByCell(id, .true.)
-	write(*,*) "RM_SetRebalanceByCell "
+	write(*,*) "SetRebalanceByCell "
 	!-------
 	status =RM_SetRebalanceFraction(id, 0.5)
-	write(*,*) "RM_SetRebalanceFraction "
+	write(*,*) "SetRebalanceFraction "
 	!-------
 	status =RM_SetScreenOn(id, .true.)
-	write(*,*) "RM_SetScreenOn "
+	write(*,*) "SetScreenOn "
 	!-------
-	status =RM_SetSelectedOutputOn(id, .true.)
-	write(*,*) "RM_SetSelectedOutputOn "
+	status = RM_SetSelectedOutputOn(id, .true.)
+	status = bmif_set_value(id, "SelectedOutputOn", .true.)
+	write(*,*) "SetSelectedOutputOn "
 	!-------
 	status = RM_SetUnitsExchange(id, 1)
-	write(*,*) "RM_SetUnitsExchange "
+	write(*,*) "SetUnitsExchange "
 	!-------
 	status =RM_SetUnitsGasPhase(id, 1)
-	write(*,*) "RM_SetUnitsGasPhase "
+	write(*,*) "SetUnitsGasPhase "
 	!-------
 	status =RM_SetUnitsKinetics(id, 1)
-	write(*,*) "RM_SetUnitsKinetics "
+	write(*,*) "SetUnitsKinetics "
 	!-------
 	status =RM_SetUnitsPPassemblage(id, 1)
-	write(*,*) "RM_SetUnitsPPassemblage "
+	write(*,*) "SetUnitsPPassemblage "
 	!-------
 	status =RM_SetUnitsSolution(id, 2)
-	write(*,*) "RM_SetUnitsSolution "
+	write(*,*) "SetUnitsSolution "
 	!-------
 	status =RM_SetUnitsSSassemblage(id, 1)
-	write(*,*) "RM_SetUnitsSSassemblage "
+	write(*,*) "SetUnitsSSassemblage "
 	!-------
 	status =RM_SetUnitsSurface(id, 1)
-	write(*,*) "RM_SetUnitsSurface "
+	write(*,*) "SetUnitsSurface "
 	!-------
 	status = RM_UseSolutionDensityVolume(id, .false.)
-	write(*,*) "RM_UseSolutionDensityVolume "
+	write(*,*) "UseSolutionDensityVolume "
 	!-------
 	t = 1.0 / 86400.0
 	status = RM_SetTimeConversion(id, t)
-	write(*,*) "RM_SetTimeConversion "
+	write(*,*) "SetTimeConversion "
 	!-------
 	allocate(DoubleVector(nxyz, 1.0))
 	status = RM_SetRepresentativeVolume(id, DoubleVector)
-	write(*,*) "RM_SetRepresentativeVolume "
+	write(*,*) "SetRepresentativeVolume "
 
 	!-------Chemistry cells may be fewer than GridCellCount
-	nchem = RM_GetChemistryCellCount(id)
-	write(*,*) "RM_GetChemistryCellCount "
-	!
-	! Begin initialization
-	!
+	deallocate(IntVector)
+	allocate(IntVector(nxyz))
+	IntVector = 1
+	status =RM_SetPrintChemistryMask(id, vi)
+	write(*,*) "SetPrintChemistryMask "
+	!-------
 	status =RM_SetPrintChemistryOn(id, .false., .true., .false.)
 	write(*,*) "RM_SetPrintChemistryOn "
-	!-------
-	status =RM_RunFile(.true., .true., .true., "all_reactants.pqi")
+	!
+	! Define reactants available for initial 
+	! and boundary conditions in this file
+	!
+	status =RM_RunFile(id, .true., .true., .true., "all_reactants.pqi")
 	write(*,*) "RunFile "
 	!-------
-	!status = RM_AddOutputVars("SolutionActivities", ".true.")
-	!status = RM_AddOutputVars("SolutionMolalities", ".true.")
-	!status = RM_AddOutputVars("SaturationIndices", ".true.")
-	status = RM_AddOutputVars("SolutionActivities", "H+ Ca+2 Na+")
-	status = RM_AddOutputVars("SolutionMolalities", "OH- Cl-")
-	status = RM_AddOutputVars("SaturationIndices", "Calcite Dolomite")
+	!status = RM_AddOutputVars(id, "SolutionActivities", ".true.")
+	!status = RM_AddOutputVars(id, "SolutionMolalities", ".true.")
+	!status = RM_AddOutputVars(id, "SaturationIndices", ".true.")
+	status = RM_AddOutputVars(id, "SolutionActivities", "H+ Ca+2 Na+")
+	status = RM_AddOutputVars(id, "SolutionMolalities", "OH- Cl-")
+	status = RM_AddOutputVars(id, "SaturationIndices", "Calcite Dolomite")
 	write(*,*) "AddOutputVars "
 	!-------
-	int ncomps = status = RM_FindComponents()
+	int ncomps = RM_FindComponents(id)
 	write(*,*) "FindComponents "
-	! Component names
-	ncomps = status = RM_GetComponentCount()
-	write(*,*) "GetComponentCount "
+	!
+	! Methods up to this point are useful 
+	! in a YAML initialization file
+	! 
+	! Lists of reactants found by FindComponents follow
+	! 
+	nchem = RM_GetChemistryCellCount(id)
+	write(*,*) "GetChemistryCellCount "
 	!-------
-	status = RM_GetValue("ComponentCount", ncomps)
-	write(*,*) "GetValue('ComponentCount')" << ncomps << ""
+	ncomps = status = RM_GetComponentCount(id)
+	status = bmif_get_value(id, "ComponentCount", ncomps)
+	i_ptr = bmi.get_value_ptr(id, "ComponentCount");
+	write(*,*) "GetComponentCount)" 
 	!-------
-	std::vector<std::string> str_vector = status = RM_GetComponents()
-	write(*,*) "GetComponents "
+	status = RM_GetComponents(id, StringVector)
+	status = bmif_get_value(id, "Components", StringVector)
+	write(*,*) "GetComponents)" 
 	! Species info
-	n = status = RM_GetSpeciesCount()
+	status = RM_GetSpeciesCount(id, n)
 	write(*,*) "GetSpeciesCount "
 	!-------
-	str_vector = status = RM_GetSpeciesNames()
-	write(*,*) "GetSpeciesNames "
+	status = RM_GetSpeciesName(id, 1, string)
+	write(*,*) "GetSpeciesName "
 	!-------
-	v = status = RM_GetSpeciesD25()
+	status = RM_GetSpeciesD25(id, DoubleVector)
 	write(*,*) "GetSpeciesD25 "
 	!-------
-	v = status = RM_GetSpeciesZ()
+	status = RM_GetSpeciesZ(id, DoubleVector)
 	write(*,*) "GetSpeciesZ "
 	! Reactant lists
-	std::vector<std::string> equiuilibrium_phases = status = RM_GetEquilibriumPhases()
-	write(*,*) "GetEquilibriumPhases "
+	status = RM_GetEquilibriumPhasesName(id, 1, string)
+	write(*,*) "GetEquilibriumPhasesName "
 	!-------
-	n = status = RM_GetEquilibriumPhasesCount()
+	n = RM_GetEquilibriumPhasesCount(id)
 	write(*,*) "GetEquilibriumPhasesCount "
 	!-------
-	str_vector = status = RM_GetExchangeNames()
-	write(*,*) "GetExchangeNames "
+	status = RM_GetExchangeName(id, 1, string)
+	write(*,*) "GetExchangeName "
 	!-------
-	str_vector = status = RM_GetExchangeSpecies()
-	write(*,*) "GetExchangeSpecies "
+	status = RM_GetExchangeSpeciesName(id, 1, string)
+	write(*,*) "GetExchangeSpeciesName "
 	!-------
-	n = status = RM_GetExchangeSpeciesCount()
+	n = RM_GetExchangeSpeciesCount(id)
 	write(*,*) "GetExchangeSpeciesCount "
 	!-------
-	str_vector = status = RM_GetGasComponents()
-	write(*,*) "GetGasComponents "
+	status = RM_GetGasComponentsName(id, 1, string)
+	write(*,*) "GetGasComponentsName "
 	!-------
-	n = status = RM_GetGasComponentsCount()
+	n = RM_GetGasComponentsCount(id)
 	write(*,*) "GetGasComponentsCount "
 	!-------
-	str_vector = status = RM_GetKineticReactions()
-	write(*,*) "GetKineticReactions "
+	status = RM_GetGfw(id, DoubleVector)
+	status = bmif_get_value(id, DoubleVector)
+	d_ptr = bmif_get_value_ptr(id, "Gfw", DoubleVector);
+	write(*,*) "GetGfw "
 	!-------
-	n = status = RM_GetKineticReactionsCount()
+	n = RM_GetKineticReactionsCount(id)
 	write(*,*) "GetKineticReactionsCount "
 	!-------
-	n = status = RM_GetSICount()
+	status = RM_GetKineticReactionsName(id, 1, string)
+	write(*,*) "GetKineticReactionsName "
+	!-------
+	n = RM_GetSICount(id)
 	write(*,*) "GetSICount "
 	!-------
-	str_vector = status = RM_GetSINames()
-	write(*,*) "GetSINames "
+	str_vector = status = RM_GetSIName(d, 1, string)
+	write(*,*) "GetSIName "
 	!-------
-	str_vector = status = RM_GetSolidSolutionComponents()
-	write(*,*) "GetSolidSolutionComponents "
-	!-------
-	n = status = RM_GetSolidSolutionComponentsCount()
+	n = RM_GetSolidSolutionComponentsCount(id)
 	write(*,*) "GetSolidSolutionComponentsCount "
 	!-------
-	str_vector = status = RM_GetSolidSolutionNames()
-	write(*,*) "GetSolidSolutionNames "
+	status = RM_GetSolidSolutionComponentsName(id, 1, string)
+	write(*,*) "GetSolidSolutionComponentsName "
 	!-------
-	str_vector = status = RM_GetSurfaceNames()
-	write(*,*) "GetSurfaceNames "
+	status = RM_GetSolidSolutionName(id, 1, string)
+	write(*,*) "GetSolidSolutionName "
 	!-------
-	str_vector = status = RM_GetSurfaceSpecies()
-	write(*,*) "GetSurfaceSpecies "
+	status = RM_GetSurfaceName(id, 1, string)
+	write(*,*) "GetSurfaceName "
 	!-------
-	n = status = RM_GetSurfaceSpeciesCount()
+	n = RM_GetSurfaceSpeciesCount(id)
 	write(*,*) "GetSurfaceSpeciesCount "
 	!-------
-	str_vector = status = RM_GetSurfaceTypes()
-	write(*,*) "GetSurfaceTypes "
+	status = RM_GetSurfaceSpeciesName(id, 1, string)
+	write(*,*) "GetSurfaceSpeciesName "
+	!-------
+	status = RM_GetSurfaceType(id, 1, string)
+	write(*,*) "GetSurfaceType "
 	!
-	! Remove any reactants in workers
+	! Remove any reactants in workers 
+	! before populating cells with reactants
 	!
 	std::string input = "DELETE -all"
-	status = RM_RunString(.true., .false., .false., input)
+	status = RM_RunString(id, .true., .false., .false., input)
 	write(*,*) "RunString "
 	!-------
 	!
 	! Transfer initial conditions
 	!
-	std::vector<int> vi(nxyz, 1)
-	status =RM_InitialEquilibriumPhases2Module(vi)
+	deallocate(IntVector)
+	allocate(IntVector(nxyz)
+	IntVector = 1
+	status = RM_InitialEquilibriumPhases2Module(id, IntVector)
 	write(*,*) "InitialEquilibriumPhases2Module "
 	!-------
-	status =RM_InitialExchanges2Module(vi)
+	status =RM_InitialExchanges2Module(id, IntVector)
 	write(*,*) "InitialExchanges2Module "
 	!-------
-	status =RM_InitialGasPhases2Module(vi)
+	status =RM_InitialGasPhases2Module(id, IntVector)
 	write(*,*) "InitialGasPhases2Module "
 	!-------
-	status =RM_InitialKinetics2Module(vi)
+	status =RM_InitialKinetics2Module(id, IntVector)
 	write(*,*) "InitialKinetics2Module "
 	!-------
-	status =RM_InitialSolutions2Module(vi)
+	status =RM_InitialSolutions2Module(id, IntVector)
 	write(*,*) "InitialSolutions2Module "
 	!-------
-	status =RM_InitialSolidSolutions2Module(vi)
+	status =RM_InitialSolidSolutions2Module(id, IntVector)
 	write(*,*) "InitialSolidSolutions2Module "
 	!-------
-	status =RM_InitialSurfaces2Module(vi)
+	status = RM_InitialSurfaces2Module(id, IntVector)
 	write(*,*) "InitialSurfaces2Module "
 	!-------
 	! Alternative A.to the previous seven methods
-	std::vector<int> ic(nxyz * 7, 1)
-	status =RM_InitialPhreeqc2Module(ic)
+	deallocate(IntVector)
+	allocate(IntVector(nxyz * 7))
+	IntVector = 1
+	status = RM_InitialPhreeqc2Module(id, IntVector)
 	write(*,*) "InitialPhreeqc2Module "
 	!-------
 	! Alternative B.to the previous seven methods, possible mixing
-	std::vector<int> v1(nxyz * 7, 1)
-	std::vector<int> v2(nxyz * 7, -1)
-	std::vector<double> f1(nxyz * 7, 1.0)
-	status =RM_InitialPhreeqc2Module(v1, v2, f1)
+	allocate(v1(nxyz * 7)
+	v1 = 1
+	allocate(v2(nxyz * 7)
+	v2 = -1
+	deallocate(f1)
+	allocate(f1(nxyz*7))
+	f1 = 1.0
+	status = RM_InitialPhreeqc2Module(ic, v1, v2, f1)
 	write(*,*) "InitialPhreeqc2Modul mix "
 	!-------
 	! Alternative C.to the previous seven methods, initialize cells 18 and 19
-	std::vector<int> cells(2)
-	cells(0) = 18
-	cells(1) = 19
-	status =RM_InitialPhreeqcCell2Module(1, cells)
+	allocate(cells(2))
+	cells(1) = 18
+	cells(2) = 19
+	status = RM_InitialPhreeqcCell2Module(id, 1, cells, size(cells))
 	write(*,*) "InitialPhreeqcCell2Module "
 	!
 	! Boundary conditions
 	!
-	std::vector<double> bc
-	vi.resize(1, 1)
-	status =RM_InitialPhreeqc2SpeciesConcentrations(bc, vi)
-	write(*,*) "InitialPhreeqc2SpeciesConcentrations "
+	deallocate(v1)
+	allocate(v1(1))
+	v1 = 1
+	deallocate(v2)
+	allocate(v2(1))
+	v2 = -1
+	deallocate(f1)
+	allocate(f1(1))
+	f1 = 1
+	status = RM_InitialPhreeqc2Concentrations(id, bc, size(v1), v1, v2, f1)
+	write(*,*) "InitialPhreeqc2Concentrations mix "
 	!-------
-	std::vector<double> bc_species
-	std::vector<int> vi1(1, 1)
-	std::vector<int> vi2(1, -1)
-	f1.resize(1, 1.0)
-	status =RM_InitialPhreeqc2SpeciesConcentrations(bc_species, vi1, vi2, f1)
+	deallocate(v1)
+	allocate(v1(1))
+	v1 = 1
+	deallocate(v2)
+	allocate(v2(1))
+	v2 = -1
+	deallocate(f1)
+	allocate(f1(1))
+	f1 = 1
+	status = RM_InitialPhreeqc2SpeciesConcentrations(id, bc_species, size(v1), v1, v2, f1)
 	write(*,*) "InitialPhreeqc2SpeciesConcentrations mix "
 	!
 	! Get/Set methods for time steping
 	!
-	status =RM_SetTime(0.0)
+	d = status = RM_GetTime(id)
+	status = bmif_get_value(id, "Time", d)
+	d = bmif_get_current_time(id)
+	d = bmif_get_start_time();
+	d_ptr = bmif_get_value_ptr(id, "Time")
+	write(*,*) "GetTime "
+	!-------
+	status = RM_SetTime(id, 0.0)
+	status = bmif_set_value(id, "Time", 0.0)
 	write(*,*) "SetTime "
 	!-------
-	status =RM_SetTimeStep(0.0)
+	d = status = RM_GetTimeStep()
+	status = bmif_get_value(id, "TimeStep", d)
+	d_ptr = bmif_get_value_ptr(id, "TimeStep")
+	write(*,*) "GetTimeStep "
+	!-------
+	status = RM_SetTimeStep(id, 0.0)
+	status = bmif_set_value(id, "TimeStep", 0.0)
 	write(*,*) "SetTimeStep "
 	!-------
-	status =RM_GetGasCompMoles(v)
+	status =RM_GetGasCompMoles(id, v)
 	write(*,*) "GetGasCompMoles "
 	!-------
-	status =RM_SetGasCompMoles(v)
+	status =RM_SetGasCompMoles(id, v)
 	write(*,*) "SetGasCompMoles "
 	!-------
-	vi.resize(nxyz, 1)
-	status =RM_SetPrintChemistryMask(vi)
-	write(*,*) "SetPrintChemistryMask "
-	!
-	! Get/Set methods for time stepping
-	!
-	std::vector<double> c
-	status =RM_GetConcentrations(c)
+	status =RM_GetConcentrations(id, c)
+	status = bmif_get_value(id, "Concentrations", c)
+	d_ptr = bmif_get_value_ptr(id, "Concentrations")
 	write(*,*) "GetConcentrations "
 	!-------
-	status =RM_SetConcentrations(c)
+	status =RM_SetConcentrations(id, c)
+	status = bmif_set_value(id, "Concentrations", c)
 	write(*,*) "SetConcentrations "
 	!-------
-	v.resize(nxyz, 0)
-	status =RM_GetDensity(v)
+	status = RM_GetDensity(id, v)
+	status = bmif_get_value(id, "Density", v)
+	d_ptr = bmif_get_value_ptr(id, "Density")
 	write(*,*) "GetDensity "
 	!-------
-	v.resize(nxyz, 1.1)
-	status =RM_SetDensity(v)
+	status = RM_SetDensity(id, v)
+	status = bmif_set_value(id, "Density", v)
 	write(*,*) "SetDensity "
 	!-------
-	status =RM_GetGasCompMoles(v)
+	status = RM_GetGasCompMoles(v)
 	write(*,*) "GetGasCompMoles "
 	!-------
-	status =RM_SetGasCompMoles(v)
-	write(*,*) "GetGasCompMoles "
+	status = RM_SetGasCompMoles(v)
+	write(*,*) "SetGasCompMoles "
 	!-------
-	status =RM_GetGasCompPressures(v)
+	status = RM_GetGasCompPhi(v)
+	write(*,*) "GetGasCompPhi "
+	!-------
+	status = RM_GetGasCompPressures(v)
 	write(*,*) "GetGasCompPressures "
 	!-------
-	status =RM_GetGasPhaseVolume(v)
+	status = RM_GetGasPhaseVolume(v)
 	write(*,*) "GetGasPhaseVolume "
 	!-------
-	v.resize(nxyz, 1.0)
 	status =RM_SetGasPhaseVolume(v)
 	write(*,*) "SetGasPhaseVolume "
 	!-------
-	v.resize(nxyz, 0.21)
-	status =RM_SetPorosity(v)
+	status = RM_GetIthConcentration(id, 1, v);
+	std::cerr << "GetIthConcentration \n";
+	//-------
+	status = RM_GetIthSpeciesConcentration(id, 1, v);
+	std::cerr << "GetIthSpeciesConcentration \n";
+	//-------
+	status = RM_GetPorosity(id, v)
+	status = bmif_get_value(id, "Porosity", v)
+	d_ptr = bmif_get_value_ptr(id, "Porosity")
+	write(*,*) "GetPorosity "
+	!-------
+	status =RM_SetPorosity(id, v)
+	status = bmif_set_value(id, "Porosity", v)
 	write(*,*) "SetPorosity "
 	!-------
-	v = status = RM_GetPressure()
+	status = RM_GetPressure(id, v)
+	status = bmif_get_value(id, "Pressure", v)
+	d_ptr = bmif_get_value_ptr(id, "Pressure")
 	write(*,*) "GetPressure "
 	!-------
-	v.resize(nxyz, 3.0)
-	status =RM_SetPressure(v)
+	status = RM_SetPressure(id, v)
+	status = bmif_set_value(id, "Pressure", v)
 	write(*,*) "SetPressure "
 	!-------
-	v.resize(nxyz, 1.0)
-	status =RM_SetSaturation(v)
+	status = RM_GetSaturation(id, v)
+	status = bmif_get_value(id, "Saturation", v)
+	d_ptr = bmif_get_value_ptr(id, "Saturation")
+	write(*,*) "GetSaturation "
+	!-------
+	status = RM_SetSaturation(id, v)
+	status = bmif_set_value(id, "Saturation", v)
 	write(*,*) "SetSaturation "
 	!-------
-	v = status = RM_GetSolutionVolume()
+	status = RM_GetSolutionVolume(id, v)
+	status = bmif_get_value(id, "SolutionVolume", v)
+	d_ptr = bmif_get_value_ptr(id, "SolutionVolume")
 	write(*,*) "GetSolutionVolume "
 	!-------
-	status =RM_GetSpeciesConcentrations(v)
+	status = RM_GetSpeciesConcentrations(id, v)
 	write(*,*) "GetSpeciesConcentrations "
 	!-------
-	status =RM_SpeciesConcentrations2Module(v)
+	status = RM_SpeciesConcentrations2Module(id, v)
 	write(*,*) "SpeciesConcentrations2Module "
 	!-------
-	status =RM_GetSpeciesLog10Gammas(v)
+	status = RM_GetSpeciesLog10Gammas(id, v)
 	write(*,*) "GetSpeciesLog10Gammas "
 	!-------
-	status =RM_GetSpeciesLog10Molalities(v)
+	status = RM_GetSpeciesLog10Molalities(id, v)
 	write(*,*) "GetSpeciesLog10Molalities "
 	!-------
-	v.resize(nxyz, 26.0)
-	status =RM_SetTemperature(v)
+	status = RM_GetTemperature(id, v)
+	status = bmif_get_value(id, "Temperature", v)
+	d_ptr = bmif_get_value_ptr(id, "Temperature", v)
+	write(*,*) "GetTemperature "
+	!-------
+	status = RM_SetTemperature(id, v)
+	status = bmif_set_value(id, "Temperature", v)
 	write(*,*) "SetTemperature "
+	!-------
+	status = RM_GetViscosity(id, v);
+	status = bmif_get_value(id, "Viscosity", v);
+	d_ptr = bmif_get_value_ptr(id, "Viscosity");	
+	std::cerr << "GetViscosity \n";
 	!
 	! Take a time step
 	!
-	status = RM_Update()      ! void function
+	status = bmif_update(id)
 	write(*,*) "Update"
 	!-------
-	status =RM_RunCells()
+	status =RM_RunCells(id)
 	write(*,*) "RunCells"
 	!
 	! Selected output
 	!
-	status =RM_SetNthSelectedOutput(0)
+	status = RM_SetNthSelectedOutput(id, 1)
+	status = bmif_set_value(id, "NthSelectedOutput", 1)
 	write(*,*) "SetNthSelectedOutput "
 	!-------
-	int n_user = status = RM_GetCurrentSelectedOutputUserNumber()
+	n_user = RM_GetCurrentSelectedOutputUserNumber()
+	status = bmif_get_value(id, "CurrentSelectedOutputUserNumber", n_user)
 	write(*,*) "GetCurrentSelectedOutputUserNumber "
 	!-------
-	status =RM_SetCurrentSelectedOutputUserNumber(333)
+	status = RM_SetCurrentSelectedOutputUserNumber(id, 333)
 	write(*,*) "SetCurrentSelectedOutputUserNumber "
 	!-------
-	n = status = RM_GetNthSelectedOutputUserNumber(0)
+	n = RM_GetNthSelectedOutputUserNumber(id, 1)
 	write(*,*) "GetNthSelectedOutputUserNumber "
 	!-------
-	status =RM_GetSelectedOutput(v)
+	status = RM_GetSelectedOutput(id, v)
+	status = bmif_get_value(id, "SelectedOutput", v)
 	write(*,*) "GetSelectedOutput "
 	!-------
-	n = status = RM_GetSelectedOutputColumnCount()
+	n = RM_GetSelectedOutputColumnCount()
+	status = bmif_get_value(id, "SelectedOutputColumnCount", n)
 	write(*,*) "GetSelectedOutputColumnCount "
 	!-------
 	n = status = RM_GetSelectedOutputRowCount()
@@ -439,9 +523,6 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status =RM_GetGasCompPhi(v)
 	write(*,*) "GetGasCompPhi "
 	!-------
-	v = status = RM_GetGfw()
-	write(*,*) "GetGfw "
-	!-------
 	IPhreeqc* ipq = status = RM_GetIPhreeqcPointer(0)
 	write(*,*) "GetIPhreeqcPointer "
 	!-------
@@ -454,9 +535,6 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	bool b = status = RM_GetPartitionUZSolids()
 	write(*,*) "GetPartitionUZSolids "
 	!-------
-	v = status = RM_GetPorosity()
-	write(*,*) "GetPorosity "
-	!-------
 	vi = status = RM_GetPrintChemistryMask()
 	write(*,*) "GetPrintChemistryMask "
 	!-------
@@ -468,9 +546,6 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!-------
 	double d = status = RM_GetRebalanceFraction()
 	write(*,*) "GetRebalanceFraction "
-	!-------
-	status =RM_GetSaturation(v)
-	write(*,*) "GetSaturation "
 	!-------
 	status =RM_GetSelectedOutputHeadings(str_vector)
 	write(*,*) "GetSelectedOutputHeadings "
@@ -487,17 +562,8 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	vi = status = RM_GetStartCell()
 	write(*,*) "GetStartCell "
 	!-------
-	v = status = RM_GetTemperature()
-	write(*,*) "GetTemperature "
-	!-------
-	d = status = RM_GetTime()
-	write(*,*) "GetTime "
-	!-------
 	d = status = RM_GetTimeConversion()
 	write(*,*) "GetTimeConversion "
-	!-------
-	d = status = RM_GetTimeStep()
-	write(*,*) "GetTimeStep "
 	!-------
 	n = status = RM_GetUnitsExchange()
 	write(*,*) "GetUnitsExchange "
@@ -524,8 +590,10 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!
 	! Utilities
 	!
-	vi.resize(1, 1)
-	status =RM_InitialPhreeqc2Concentrations(bc, vi)
+	deallocate(IntVector)
+	allocate(IntVector(1))
+	IntVector = 1
+	status =RM_InitialPhreeqc2Concentrations(bc, IntVector)
 	std::vector<double> tc(1, 30.0)
 	std::vector<double> p_atm(1, 1.5)
 	IPhreeqc* utility_ptr = status = RM_Concentrations2Utility(bc, tc, p_atm)
@@ -606,7 +674,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!-------
 	str = status = RM_GetVarUnits("solution_saturation_index_Calcite")
 	write(*,*) "GetVarUnits "
-	!status =RM_Initialize(YAML_filename)
+	!status = bmif_nitialize(YAML_filename)
 	! See above
 	status = RM_SetValue("Time", 1.0)    ! void method
 	write(*,*) "SetValue"

@@ -37,12 +37,9 @@ void TestAllMethods_cpp()
 	std::cerr << "Initialize\n";
 	//-------
 	bmi.GetValue("GridCellCount", nxyz);
-	std::cerr << "GetValue('GridCellCount')\n";
-	//-------
 	nxyz = bmi.GetGridCellCount();
-	bmi.GetValue("GridCellCount", nxyz);
 	int *i_ptr = (int*)bmi.GetValuePtr("GridCellCount");
-	std::cerr << "GetGridCellCount \n";
+	std::cerr << "GetValue('GridCellCount') \n";
 	//-------
 	int n = bmi.GetThreadCount();
 	std::cerr << "GetThreadCount " << n << "\n";
@@ -132,9 +129,6 @@ void TestAllMethods_cpp()
 	std::cerr << "SetRepresentativeVolume \n";
 
 	//-------Chemistry cells may be fewer than GridCellCount
-	int nchem = bmi.GetChemistryCellCount();
-	std::cerr << "GetChemistryCellCount \n";
-	//-------
 	std::vector<int> vi(nxyz, 1);
 	status = bmi.SetPrintChemistryMask(vi);
 	std::cerr << "SetPrintChemistryMask \n";
@@ -164,14 +158,13 @@ void TestAllMethods_cpp()
 	// 
 	// Lists of reactants found by FindComponents follow
 	// 
-	// Component names
+	int nchem = bmi.GetChemistryCellCount();
+	std::cerr << "GetChemistryCellCount \n";
+	//-------
 	ncomps = bmi.GetComponentCount();
 	bmi.GetValue("ComponentCount", ncomps);
 	i_ptr = (int*) bmi.GetValuePtr("ComponentCount");
 	std::cerr << "GetComponentCount \n";
-	//-------
-	bmi.GetValue("ComponentCount", ncomps);
-	std::cerr << "GetValue('ComponentCount')" << ncomps << "\n";
 	//-------
 	std::vector<std::string> str_vector = bmi.GetComponents();
 	bmi.GetValue("Components", str_vector);
@@ -249,6 +242,7 @@ void TestAllMethods_cpp()
 	std::cerr << "GetSurfaceTypes \n";
 	//
 	// Remove any reactants in workers 
+	// before populating cells with reactants
 	//
 	std::string input = "DELETE; -all";
 	bmi.RunString(true, false, false, input);
@@ -311,7 +305,7 @@ void TestAllMethods_cpp()
 	f1.clear();
 	f1.resize(1, 1.0);
 	status = bmi.InitialPhreeqc2Concentrations(bc, vi1, vi2, f1);
-
+	//-------
 	vi.clear();
 	vi.resize(1, 1);
 	status = bmi.InitialPhreeqc2SpeciesConcentrations(bc, vi);
@@ -332,6 +326,7 @@ void TestAllMethods_cpp()
 	double d = bmi.GetTime();
 	bmi.GetValue("Time", d);
 	d = bmi.GetCurrentTime();
+    d = bmi.GetStartTime();
 	d_ptr = (double*)bmi.GetValuePtr("Time");
 	std::cerr << "GetTime \n";
 	//-------
@@ -353,9 +348,7 @@ void TestAllMethods_cpp()
 	//-------
 	status = bmi.SetGasCompMoles(v);
 	std::cerr << "SetGasCompMoles \n";
-	//
-	// Get/Set methods for time stepping
-	// 
+	//-------
 	std::vector<double> c;
 	status = bmi.GetConcentrations(c);
 	bmi.GetValue("Concentrations", c);
@@ -366,15 +359,11 @@ void TestAllMethods_cpp()
 	bmi.SetValue("Concentrations", c);
 	std::cerr << "SetConcentrations \n";
 	//-------
-	v.clear();
-	v.resize(nxyz, 0);
 	status = bmi.GetDensity(v);
 	bmi.GetValue("Density", v);
 	d_ptr = (double*)bmi.GetValuePtr("Density");
 	std::cerr << "GetDensity \n";
 	//-------
-	v.clear();
-	v.resize(nxyz, 1.1);
 	status = bmi.SetDensity(v);
 	bmi.SetValue("Density", v);
 	std::cerr << "SetDensity \n";
@@ -383,7 +372,7 @@ void TestAllMethods_cpp()
 	std::cerr << "GetGasCompMoles \n";
 	//-------
 	status = bmi.SetGasCompMoles(v);
-	std::cerr << "GetGasCompMoles \n";
+	std::cerr << "SetGasCompMoles \n";
 	//-------
 	status = bmi.GetGasCompPhi(v);
 	std::cerr << "GetGasCompPhi \n";
@@ -394,18 +383,20 @@ void TestAllMethods_cpp()
 	status = bmi.GetGasPhaseVolume(v);
 	std::cerr << "GetGasPhaseVolume \n";
 	//-------
-	v.clear();
-	v.resize(nxyz, 1.0);
 	status = bmi.SetGasPhaseVolume(v);
 	std::cerr << "SetGasPhaseVolume \n";
+	//-------
+	status = GetIthConcentration(0, v);
+	std::cerr << "GetIthConcentration \n";
+	//-------
+	status = GetIthSpeciesConcentration(0, v);
+	std::cerr << "GetIthSpeciesConcentration \n";
 	//-------
 	v = bmi.GetPorosity();
 	bmi.GetValue("Porosity", v);
 	d_ptr = (double*)bmi.GetValuePtr("Porosity");
 	std::cerr << "GetPorosity \n";
 	//-------
-	v.clear();
-	v.resize(nxyz, 0.21);
 	status = bmi.SetPorosity(v);
 	bmi.SetValue("Porosity", v);
 	std::cerr << "SetPorosity \n";
@@ -415,8 +406,6 @@ void TestAllMethods_cpp()
 	d_ptr = (double*)bmi.GetValuePtr("Pressure");
 	std::cerr << "GetPressure \n";
 	//-------
-	v.clear();
-	v.resize(nxyz, 3.0);
 	status = bmi.SetPressure(v);
 	bmi.SetValue("Pressure", v);
 	std::cerr << "SetPressure \n";
@@ -426,8 +415,6 @@ void TestAllMethods_cpp()
 	d_ptr = (double*)bmi.GetValuePtr("Saturation");
 	std::cerr << "GetSaturation \n";
 	//-------
-	v.clear();
-	v.resize(nxyz, 1.0);
 	status = bmi.SetSaturation(v);
 	bmi.SetValue("Saturation", v);
 	std::cerr << "SetSaturation \n";
@@ -454,8 +441,6 @@ void TestAllMethods_cpp()
 	d_ptr = (double*)bmi.GetValuePtr("Temperature");
 	std::cerr << "GetTemperature \n";
 	//-------
-	v.clear();
-	v.resize(nxyz, 26.0);
 	status = bmi.SetTemperature(v);
 	bmi.SetValue("Temperature", v);
 	std::cerr << "SetTemperature \n";
@@ -472,6 +457,9 @@ void TestAllMethods_cpp()
 	//-------
 	status = bmi.RunCells();
 	std::cerr << "RunCells\n";
+	//-------
+	bmi.UpdateUntil(86400.0);      // void function
+	std::cerr << "UpdateUntil\n";
 	//
 	// Selected output
 	//
@@ -653,6 +641,15 @@ void TestAllMethods_cpp()
 	d = bmi.GetEndTime();
 	std::cerr << "GetEndTime \n";
 	//-------
+    n = bmi.GetGridRank(0);
+	std::cerr << "GetGridRank \n";
+	//-------
+    n = bmi.GetGridSize(0);
+	std::cerr << "GetGridSize \n";
+	//-------
+    std::string gtype = bmi.GetGridType(0);
+	std::cerr << "GetGridType \n";
+	//-------
 	n = bmi.GetInputItemCount();
 	std::cerr << "GetInputItemCount \n";
 	//-------
@@ -694,6 +691,9 @@ void TestAllMethods_cpp()
 	bmi.Update();    // void method
 	std::cerr << "Update";
 	//-------	
+ 	bmi.UpdateUntil(864000.0);      // void function
+	std::cerr << "UpdateUntil\n";
+	//-------	
 	status = bmi.CloseFiles(); // not a BMI method, but needs to be last
 	std::cerr << "CloseFiles \n";
 	bmi.Finalize();    // void method
@@ -708,3 +708,34 @@ void TestAllMethods_cpp()
 	return;
 }
 #endif // YAML
+#ifdef SKIP
+    BMIPhreeqcRM();
+    BMIPhreeqcRM(int ngrid, int nthreads);
+    void Initialize(std::string config_file) override;
+    void Update() override;
+    void UpdateUntil(double end_time) override;
+    void Finalize() override;
+    std::string GetComponentName() override { return "BMI PhreeqcRM"; };
+    int GetInputItemCount() override;
+    int GetOutputItemCount() override;
+    int GetPointableItemCount();
+    std::vector<std::string> GetInputVarNames() override;
+    std::vector<std::string> GetOutputVarNames() override;
+    std::vector<std::string> GetPointableVarNames();
+    int GetVarGrid(const std::string name) override { return 1; }
+    std::string GetVarType(const std::string name) override;
+    std::string GetVarUnits(const std::string name) override;
+    int GetVarItemsize(const std::string name) override;
+    int GetVarNbytes(const std::string name) override;
+    std::string GetVarLocation(const std::string name) override { return "Unknow    double GetCurrentTime() override;
+    double GetStartTime() override;
+    double GetEndTime() override;
+    std::string GetTimeUnits() override { return "seconds"; };
+    double GetTimeStep();
+    void GetValue(const std::string name, void* dest) override;
+    void* GetValuePtr(std::string name) override;
+    int GetGridRank(const int grid) override;
+    int GetGridSize(const int grid) override;
+    std::string GetGridType(const int grid) override;
+    void AddOutputVars(std::string option, std::string def)
+#endif
