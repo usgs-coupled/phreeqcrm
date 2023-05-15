@@ -133,6 +133,9 @@ public:
 	static IRM_RESULT       DestroyReactionModule(int n);
 	static PhreeqcRM      * GetInstance(int n);
 private:
+	virtual void AddOutputVars(std::string option, std::string def);
+	virtual void ClearBMISelectedOutput();
+	virtual void GenerateAutoOutputVars();
 	virtual void UpdateBMI(RMVARS v_enum);
 public:
 #ifdef USE_YAML

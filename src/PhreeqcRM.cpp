@@ -178,7 +178,6 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 : phreeqc_bin{ nullptr }
 , phreeqcrm_io{ io }
 , delete_phreeqcrm_io{ false }
-, var_man{ nullptr }
 , component_h2o{ true }
 , count_chemistry{ nxyz_arg }
 , mpi_worker_callback_fortran{ nullptr }
@@ -385,12 +384,18 @@ PhreeqcRM::~PhreeqcRM(void)
 			PhreeqcRM::Instances.erase(it);
 		}
 	}
-	delete var_man;
 	delete this->phreeqc_bin;
 	if (delete_phreeqcrm_io)
 	{
 		delete this->phreeqcrm_io;
 	}
+}
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::AddOutputVars(std::string option, std::string def)
+/* ---------------------------------------------------------------------- */
+{
+	// no-op
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -992,6 +997,13 @@ PhreeqcRM::CheckSelectedOutput()
 	}
 #endif
 	return return_value;
+}
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::ClearBMISelectedOutput()
+/* ---------------------------------------------------------------------- */
+{
+	// no-op
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -3195,54 +3207,7 @@ PhreeqcRM::FindComponents(void)
 	{
 		return this->ReturnHandler(IRM_FAIL, "PhreeqcRM::FindComponents");
 	}
-#ifdef USE_MPI
-	if (this->mpi_myself == 0)
-	{
-		if (var_man != NULL)
-		{
-			var_man->GenerateAutoOutputVars();
-			this->SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
-			if (var_man->NeedInitialRun)
-			{
-				bool current = this->phreeqcrm_io->Get_screen_on();
-				this->SetScreenOn(false);
-				this->RunCells();
-				this->SetScreenOn(current);
-			}
-			// Initialize BMI variables
-			var_man->task = VarManager::VAR_TASKS::Info;
-			for (auto it = this->var_man->VariantMap.begin();
-				it != this->var_man->VariantMap.end(); it++)
-			{
-				BMIVariant& bv = it->second;
-				bv.SetInitialized(false);
-				((*this->var_man).*bv.GetFn())();
-			}
-		}
-	}
-#else
-	if (var_man != NULL)
-	{ 
-		var_man->GenerateAutoOutputVars();
-		this->SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
-		//if (var_man->NeedInitialRun)
-		//{
-		//	bool current = this->phreeqcrm_io->Get_screen_on();
-		//	this->SetScreenOn(false);
-		//	this->RunCells();
-		//	this->SetScreenOn(current);
-		//}
-		// Initialize BMI variables
-		var_man->task = VarManager::VAR_TASKS::Info;
-		for (auto it = this->var_man->VariantMap.begin();
-			it != this->var_man->VariantMap.end(); it++)
-		{
-			BMIVariant& bv = it->second;
-			bv.SetInitialized(false);
-			((*this->var_man).*bv.GetFn())();
-		}
-	}
-#endif
+	this->GenerateAutoOutputVars();
 	return (int) this->components.size();
 }
 /* ---------------------------------------------------------------------- */
@@ -3294,6 +3259,13 @@ PhreeqcRM::GatherNchem(std::vector<double> &source, std::vector<double> &destina
 	delete [] recv_counts;
 	delete [] recv_displs;
 #endif
+}
+/* ---------------------------------------------------------------------- */
+void 
+PhreeqcRM::GenerateAutoOutputVars()
+/* ---------------------------------------------------------------------- */
+{
+	// no-op
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -5447,13 +5419,10 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 		std::string keyword = it1++->second.as<std::string>();
 		if (keyword == "AddOutputVars")
 		{
-			if (var_man != NULL)
-			{
-				assert(node.size() == 3);
-				std::string option = it1++->second.as<std::string>();
-				std::string def = it1++->second.as<std::string>();
-				this->var_man->AddOutputVars(option, def);
-			}
+			assert(node.size() == 3);
+			std::string option = it1++->second.as<std::string>();
+			std::string def = it1++->second.as<std::string>();
+			this->AddOutputVars(option, def);
 			continue;
 		}
 		if (keyword == "CloseFiles")
@@ -9866,10 +9835,7 @@ PhreeqcRM::RunCells()
 	{
 		GetSpeciesConcentrations(this->CurrentSpeciesConcentrations);
 	}
-	if (var_man != NULL)
-	{
-		this->var_man->BMISelectedOutput.clear();
-	}
+	this->ClearBMISelectedOutput();
 	return this->ReturnHandler(return_value, "PhreeqcRM::RunCells");
 }
 #endif
@@ -12892,10 +12858,7 @@ void
 PhreeqcRM::UpdateBMI(RMVARS v_enum)
 /* ---------------------------------------------------------------------- */
 {
-	if (this->var_man != NULL)
-	{
-		this->var_man->RM2BMIUpdate(v_enum);
-	}
+	// no-op
 }
 /* ---------------------------------------------------------------------- */
 void

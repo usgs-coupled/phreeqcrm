@@ -7,6 +7,7 @@
 #include "PhreeqcRM.h"
 #include "BMI_Var.h"
 #include "bmi.hxx"
+#include "VarManager.h"
 /**
  * @class NotImplemented
  *
@@ -1174,9 +1175,7 @@ public:
     @n SaturationIndices: False excludes all saturation indices; True includes all
     saturation indices; list includes only the specified saturation indices. Default False.
     */
-    void AddOutputVars(std::string option, std::string def) {
-        this->var_man->AddOutputVars(option, def);
-    };
+    void AddOutputVars(std::string option, std::string def) override;
     // data
     std::string language;
     // typedef void (*VarFunction)(BMIPhreeqcRM* brm_ptr); // function pointer type
@@ -1194,6 +1193,9 @@ private:
     static std::map<size_t, BMIPhreeqcRM*> Instances;
     static size_t InstancesIndex;
     VarManager* var_man;
+
+    void ClearBMISelectedOutput() override;
+    void GenerateAutoOutputVars() override;
     void UpdateBMI(RMVARS v_enum) override;
     void UpdateVariables();
 };

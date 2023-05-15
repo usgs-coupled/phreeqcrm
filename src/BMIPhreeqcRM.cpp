@@ -131,6 +131,16 @@ BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads)
 BMIPhreeqcRM::~BMIPhreeqcRM()
 {
 }
+void BMIPhreeqcRM::AddOutputVars(std::string option, std::string def)
+{
+	assert(this->var_man);
+	this->var_man->AddOutputVars(option, def);
+}
+void BMIPhreeqcRM::ClearBMISelectedOutput(void)
+{
+	assert(this->var_man);
+	this->var_man->BMISelectedOutput.clear();
+}
 void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 {
 	this->PhreeqcRM::Construct(i);
@@ -221,6 +231,57 @@ void BMIPhreeqcRM::UpdateUntil(double time)
 void BMIPhreeqcRM::Finalize()
 {
 	this->CloseFiles();
+}
+void BMIPhreeqcRM::GenerateAutoOutputVars()
+{
+#ifdef USE_MPI
+	if (this->mpi_myself == 0)
+	{
+		if (var_man != nullptr)
+		{
+			var_man->GenerateAutoOutputVars();
+			this->SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
+			if (var_man->NeedInitialRun)
+			{
+				bool current = this->phreeqcrm_io->Get_screen_on();
+				this->SetScreenOn(false);
+				this->RunCells();
+				this->SetScreenOn(current);
+			}
+			// Initialize BMI variables
+			var_man->task = VarManager::VAR_TASKS::Info;
+			for (auto it = this->var_man->VariantMap.begin();
+				it != this->var_man->VariantMap.end(); it++)
+			{
+				BMIVariant& bv = it->second;
+				bv.SetInitialized(false);
+				((*this->var_man).*bv.GetFn())();
+			}
+		}
+	}
+#else
+	if (var_man != nullptr)
+	{ 
+		var_man->GenerateAutoOutputVars();
+		this->SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
+		//if (var_man->NeedInitialRun)
+		//{
+		//	bool current = this->phreeqcrm_io->Get_screen_on();
+		//	this->SetScreenOn(false);
+		//	this->RunCells();
+		//	this->SetScreenOn(current);
+		//}
+		// Initialize BMI variables
+		var_man->task = VarManager::VAR_TASKS::Info;
+		for (auto it = this->var_man->VariantMap.begin();
+			it != this->var_man->VariantMap.end(); it++)
+		{
+			BMIVariant& bv = it->second;
+			bv.SetInitialized(false);
+			((*this->var_man).*bv.GetFn())();
+		}
+	}
+#endif
 }
 int BMIPhreeqcRM::GetInputItemCount()
 {
