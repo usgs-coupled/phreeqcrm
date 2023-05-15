@@ -386,10 +386,10 @@ void TestAllMethods_cpp()
 	status = bmi.SetGasPhaseVolume(v);
 	std::cerr << "SetGasPhaseVolume \n";
 	//-------
-	status = GetIthConcentration(0, v);
+	status = bmi.GetIthConcentration(0, v);
 	std::cerr << "GetIthConcentration \n";
 	//-------
-	status = GetIthSpeciesConcentration(0, v);
+	status = bmi.GetIthSpeciesConcentration(0, v);
 	std::cerr << "GetIthSpeciesConcentration \n";
 	//-------
 	v = bmi.GetPorosity();

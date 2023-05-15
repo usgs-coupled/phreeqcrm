@@ -81,6 +81,8 @@ import_array();
 													const std::vector < int >    & boundary_solution1,
 													const std::vector < int >    & boundary_solution2,
 													const std::vector < double > & fraction1);
+%rename(InitialPhreeqc2ModuleSWIG)                  InitialPhreeqc2Module(
+													const std::vector < int > & initial_conditions1);
 %rename(InitialPhreeqc2ModuleSWIG_mix)              InitialPhreeqc2Module(
 													const std::vector < int > & initial_conditions1,
 													const std::vector < int > & initial_conditions2,	
@@ -158,17 +160,9 @@ def InitialPhreeqc2Concentrations(self, bc1):
 	print(f"In subroutine: {type(bc1)}, {bc1}")
 	x = self.InitialPhreeqc2ConcentrationsSWIG(bc1)
 	return np.array(self.InitialPhreeqc2ConcentrationsSWIG(bc1)[1])
+def InitialPhreeqc2Module(self, ic1):
+	return self.InitialPhreeqc2ModuleSWIG(ic1)
 def InitialPhreeqc2Module_mix(self, ic1, ic2, f1):
-	#l_ic1 = list(ic1)
-	#l_ic2 = list(ic2)
-	#l_f1 = list(f1)
-	#v_ic1 = phreeqcrm.IntVector(len(ic1), 1)
-	#v_ic2 = phreeqcrm.IntVector(len(ic1), -1)
-	#v_f1 = phreeqcrm.DoubleVector(len(ic1), 1.0)
-	#for i in range(len(ic1)):
-		#v_ic1[i] = ic1[i]
-		#v_ic2[i] = ic2v[i]
-		#v_f1[i]  = f1[i]
 	return self.InitialPhreeqc2ModuleSWIG_mix(ic1,ic2,f1)
 def InitialPhreeqc2Concentrations_mix(self, bc1, bc2, f1):
 	return np.array(self.InitialPhreeqc2ConcentrationsSWIG_mix(bc1,bc2,f1)[1])

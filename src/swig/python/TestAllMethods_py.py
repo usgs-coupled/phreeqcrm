@@ -254,7 +254,7 @@ def testallmethods_py():
 	v1 = phreeqcrm.IntVector(nxyz*7, 1)
 	v2 = phreeqcrm.IntVector(nxyz*7, -1)
 	f1 = phreeqcrm.DoubleVector(nxyz*7, 1.0)
-	x=bmi.InitialPhreeqc2Module(v1, v2, f1)
+	x=bmi.InitialPhreeqc2Module_mix(v1, v2, f1)
 	print(f"InitialPhreeqc2Module_mix {type(x)}, {x}")
 	#---------
 	# Alternative C. to the previous seven methods
@@ -353,13 +353,12 @@ def testallmethods_py():
 	#---------
 	x=bmi.SpeciesConcentrations2Module(v)
 	print(f"SpeciesConcentrations2Module {type(x)}, {x}")
-	return
 	#---------
-	x=bmi.GetSpeciesLog10Gammas(v)                               # Getter through argument
-	print(f"GetSpeciesLog10Gammas {type(x)}, {x}, {v[0]}")
+	v=bmi.GetSpeciesLog10Gammas()                               # Getter through argument
+	print(f"GetSpeciesLog10Gammas {type(v)}, {v[0]}")
 	#---------
-	x=bmi.GetSpeciesLog10Molalities(v)                               # Getter through argument
-	print(f"GetSpeciesLog10Molalities {type(x)}, {x}, {v[0]}")
+	v=bmi.GetSpeciesLog10Molalities()                               # Getter through argument
+	print(f"GetSpeciesLog10Molalities {type(v)}, {v[0]}")
 	#---------
 	v = phreeqcrm.DoubleVector(nxyz, 26.0)
 	x=bmi.SetTemperature(v)	
@@ -387,15 +386,14 @@ def testallmethods_py():
 	x=bmi.SetNthSelectedOutput(0)
 	print(f"SetNthSelectedOutput {type(x)}, {x}")
 	#---------
-	x=bmi.GetSelectedOutput(v)                               # Getter through argument
-	print(f"GetSelectedOutput {type(x)}, {x}, {v[0]}")
+	v=bmi.GetSelectedOutput()                               # Getter through argument
+	print(f"GetSelectedOutput {type(v)}, {v[0]}")
 	#---------
 	x=bmi.GetSelectedOutputColumnCount()
 	print(f"GetSelectedOutputColumnCount {type(x)}, {x}")
 	#---------
-	v = phreeqcrm.StringVector()
-	x=bmi.GetSelectedOutputHeadings(v)                               # Getter through argument
-	print(f"GetSelectedOutputHeadings {type(x)}, {x}, {v[87]}")
+	v=bmi.GetSelectedOutputHeadings()                               # Getter through argument
+	print(f"GetSelectedOutputHeadings {type(v)}, {v[87]}")
 	#---------
 	x=bmi.GetSelectedOutputRowCount()
 	print(f"GetSelectedOutputRowCount {type(x)}, {x}")
@@ -456,8 +454,8 @@ def testallmethods_py():
 	print(f"GetRebalanceFraction {type(x)}, {x}")
 	#---------
 	v = phreeqcrm.DoubleVector()
-	x=bmi.GetSaturation(v)                               # Getter through argument
-	print(f"GetSaturation {type(x)}, {x}, {v[0]}")
+	v=bmi.GetSaturation()                               # Getter through argument
+	print(f"GetSaturation {type(v)}, {v[0]}")
 	#---------
 	x=bmi.GetSelectedOutputOn()
 	print(f"GetSelectedOutputOn {type(x)}, {x}")
