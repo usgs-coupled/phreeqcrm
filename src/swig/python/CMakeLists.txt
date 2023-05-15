@@ -73,7 +73,7 @@ endif()
 target_link_libraries(${PYTHON_TARGET_NAME}
   PRIVATE
     Python::Python
-    # Python::NumPy
+    Python::NumPy
 )
 
 get_target_property(PhreeqcRM_INC PhreeqcRM INCLUDE_DIRECTORIES)
