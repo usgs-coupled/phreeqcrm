@@ -15,6 +15,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../database/phreeqc.dat phreeqc
 
 # copy advect.pqi to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../Tests/advect.pqi advect.pqi COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../Tests/all_reactants.pqi all_reactants.pqi COPYONLY)
 
 # copy SimpleAdvect.py to build directory for testing
 configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
@@ -24,10 +25,8 @@ configure_file(yamlphreeqcrm.py yamlphreeqcrm.py COPYONLY)
 
 # copy AdvectBMI_py.py to build directory for testing
 configure_file(AdvectBMI_py.py AdvectBMI_py.py COPYONLY)
-configure_file(AdvectBMI_test_py.py AdvectBMI_test_py.py COPYONLY)
-configure_file(advectBMI_test.pqi advectBMI_test.pqi COPYONLY)
 configure_file(WriteYAMLFile_py.py WriteYAMLFile_py.py COPYONLY)
-configure_file(WriteYAMLFile_test_py.py WriteYAMLFile_test_py.py COPYONLY)
+configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
 
 get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
 
@@ -74,7 +73,7 @@ endif()
 target_link_libraries(${PYTHON_TARGET_NAME}
   PRIVATE
     Python::Python
-    # Python::NumPy
+    Python::NumPy
 )
 
 get_target_property(PhreeqcRM_INC PhreeqcRM INCLUDE_DIRECTORIES)

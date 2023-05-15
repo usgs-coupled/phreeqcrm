@@ -276,7 +276,7 @@ AC_CONFIG_FILES([
   phreeqcrm.pc
   Tests/Makefile
   Tests/advect.pqi:Tests/advect.pqi
-  Tests/advectBMI_test.pqi:Tests/advectBMI_test.pqi
+  Tests/all_reactants.pqi:Tests/all_reactants.pqi
   Tests/gas.pqi:Tests/gas.pqi
   Tests/phreeqc.dat:Tests/phreeqc.dat
   Tests/units.pqi:Tests/units.pqi

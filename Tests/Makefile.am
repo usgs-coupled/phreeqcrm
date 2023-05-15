@@ -17,6 +17,7 @@ TestRM_SOURCES =\
 	SimpleAdvect_cpp.cpp\
 	Species_c.c\
 	Species_cpp.cpp\
+	TestAllMethods_cpp.cpp\
 	WriteYAMLFile_cpp.cpp\
 	WriteYAMLFile_cpp_test.cpp
 
@@ -102,6 +103,10 @@ CLEANFILES =\
 	Species_f90.chem.txt\
 	Species_f90.dmp\
 	Species_f90.log.txt\
+	TestAllMethods_cpp.chem.txt\
+	TestAllMethods_cpp.dump\
+	TestAllMethods_cpp.log.txt\
+	TestAllMethods_cpp.yaml\
 	testbmi_cpp.yaml\
 	Units_Worker.chem.txt\
 	Units_Worker.log.txt\

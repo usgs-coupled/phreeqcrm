@@ -115,19 +115,31 @@ BMIPhreeqcRM::GetInstance(int id)
 	return 0;
 }
 // Constructor
-BMIPhreeqcRM::BMIPhreeqcRM() :
-PhreeqcRM(PhreeqcRM::default_nxyz, PhreeqcRM::default_data_for_parallel_processing, nullptr, true)
+BMIPhreeqcRM::BMIPhreeqcRM()
+: PhreeqcRM(PhreeqcRM::default_nxyz, PhreeqcRM::default_data_for_parallel_processing, nullptr, true)
+, var_man{ nullptr }
 {
 	this->language = "cpp";
 }
-BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads) :
-PhreeqcRM(nxyz, nthreads, nullptr, true) 
+BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads)
+: PhreeqcRM(nxyz, nthreads, nullptr, true) 
+, var_man{ nullptr }
 {
 	this->language = "cpp";
 }
 // Destructor
 BMIPhreeqcRM::~BMIPhreeqcRM()
 {
+}
+void BMIPhreeqcRM::AddOutputVars(std::string option, std::string def)
+{
+	assert(this->var_man);
+	this->var_man->AddOutputVars(option, def);
+}
+void BMIPhreeqcRM::ClearBMISelectedOutput(void)
+{
+	assert(this->var_man);
+	this->var_man->BMISelectedOutput.clear();
 }
 void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 {
@@ -188,6 +200,11 @@ void BMIPhreeqcRM::Update()
 	this->SetTime(this->GetTime() + this->GetTimeStep());
 	this->UpdateVariables();
 }
+void BMIPhreeqcRM::UpdateBMI(RMVARS v_enum)
+{
+	assert(this->var_man);
+	this->var_man->RM2BMIUpdate(v_enum);
+}
 void BMIPhreeqcRM::UpdateVariables()
 {
 	this->var_man->task = VarManager::VAR_TASKS::Update;
@@ -214,6 +231,57 @@ void BMIPhreeqcRM::UpdateUntil(double time)
 void BMIPhreeqcRM::Finalize()
 {
 	this->CloseFiles();
+}
+void BMIPhreeqcRM::GenerateAutoOutputVars()
+{
+#ifdef USE_MPI
+	if (this->mpi_myself == 0)
+	{
+		if (var_man != nullptr)
+		{
+			var_man->GenerateAutoOutputVars();
+			this->SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
+			if (var_man->NeedInitialRun)
+			{
+				bool current = this->phreeqcrm_io->Get_screen_on();
+				this->SetScreenOn(false);
+				this->RunCells();
+				this->SetScreenOn(current);
+			}
+			// Initialize BMI variables
+			var_man->task = VarManager::VAR_TASKS::Info;
+			for (auto it = this->var_man->VariantMap.begin();
+				it != this->var_man->VariantMap.end(); it++)
+			{
+				BMIVariant& bv = it->second;
+				bv.SetInitialized(false);
+				((*this->var_man).*bv.GetFn())();
+			}
+		}
+	}
+#else
+	if (var_man != nullptr)
+	{ 
+		var_man->GenerateAutoOutputVars();
+		this->SetCurrentSelectedOutputUserNumber(var_man->BMISelectedOutputUserNumber);
+		//if (var_man->NeedInitialRun)
+		//{
+		//	bool current = this->phreeqcrm_io->Get_screen_on();
+		//	this->SetScreenOn(false);
+		//	this->RunCells();
+		//	this->SetScreenOn(current);
+		//}
+		// Initialize BMI variables
+		var_man->task = VarManager::VAR_TASKS::Info;
+		for (auto it = this->var_man->VariantMap.begin();
+			it != this->var_man->VariantMap.end(); it++)
+		{
+			BMIVariant& bv = it->second;
+			bv.SetInitialized(false);
+			((*this->var_man).*bv.GetFn())();
+		}
+	}
+#endif
 }
 int BMIPhreeqcRM::GetInputItemCount()
 {
@@ -952,7 +1020,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, bool src)
 	assert(false);
 	return;
 }
-void BMIPhreeqcRM::SetValue(const std::string name, char* src)
+void BMIPhreeqcRM::SetValue(const std::string name, const char* src)
 {
 	RMVARS v_enum = this->var_man->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
