@@ -15,7 +15,7 @@ on:
 
 env:
   NAME: PhreeqcRM
-  BUILD_TYPE: Release
+  BUILD_TYPE: Debug
 
 jobs:
 
@@ -151,6 +151,7 @@ jobs:
         os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
         build_shared_libs: [OFF, ON]
         phreeqcrm_with_yaml_cpp: [OFF, ON]
+        # BUILD_TYPE: [Debug, Release]
 
     runs-on: ${{ matrix.os }}
 
@@ -198,7 +199,7 @@ jobs:
     - name: Extract tarball
       run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
 
-    - name: Configure with CMake (Not Windows)
+    - name: Configure with CMake (Non-Windows)
       if: runner.os != 'Windows'
       run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
