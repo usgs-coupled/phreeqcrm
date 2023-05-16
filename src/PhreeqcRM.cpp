@@ -23,7 +23,7 @@
 #include "StorageBin.h"
 #include <assert.h>
 #include "System.h"
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 #ifdef USE_GZ
 #include <zlib.h>
 #else

@@ -1,5 +1,5 @@
 #include "BMIPhreeqcRM.h"
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 #include "bmi.hxx"
 #include <string>
 #include <ostream>

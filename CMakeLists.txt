@@ -60,8 +60,8 @@ option(PHREEQCRM_NO_UTF8_ENCODING "Build without utf-8 encoding" OFF)
 set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_Var.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIVariant.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIVariant.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/bmi.hxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.h
@@ -315,8 +315,8 @@ endif()
 
 set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/BMI_interface_F.h
-  ${PROJECT_SOURCE_DIR}/src/BMI_Var.h
-  ${PROJECT_SOURCE_DIR}/src/BMI_Var.h
+  ${PROJECT_SOURCE_DIR}/src/BMIVariant.h
+  ${PROJECT_SOURCE_DIR}/src/BMIVariant.h
   ${PROJECT_SOURCE_DIR}/src/bmi.hxx
   ${PROJECT_SOURCE_DIR}/src/BMIPhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h

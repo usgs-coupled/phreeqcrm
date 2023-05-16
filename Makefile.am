@@ -34,8 +34,8 @@ lib_LTLIBRARIES=libphreeqcrm.la
 libphreeqcrm_la_SOURCES=\
 	src/BMI_interface_F.cpp\
 	src/BMI_interface_F.h\
-	src/BMI_Var.cpp\
-	src/BMI_Var.h\
+	src/BMIVariant.cpp\
+	src/BMIVariant.h\
 	src/bmi.hxx\
 	src/BMIPhreeqcRM.cpp\
 	src/BMIPhreeqcRM.h\
@@ -204,7 +204,7 @@ libphreeqcrm_la_SOURCES=\
 
 
 include_HEADERS=\
-	$(top_srcdir)/src/BMI_Var.h\
+	$(top_srcdir)/src/BMIVariant.h\
 	$(top_srcdir)/src/bmi.hxx\
 	$(top_srcdir)/src/BMIPhreeqcRM.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h\

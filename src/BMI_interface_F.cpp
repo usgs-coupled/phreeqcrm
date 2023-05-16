@@ -1,14 +1,14 @@
 #ifdef USE_MPI
 #include "mpi.h"
 #endif
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 #include "BMIPhreeqcRM.h"
 //#include "RM_interface_F.h"
 #include "BMI_interface_F.h"
 #include "IPhreeqcPhastLib.h"
 #include "Phreeqc.h"
 #include "PHRQ_io.h"
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 #include <string>
 #include <map>
 #include <sstream>

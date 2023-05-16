@@ -5,7 +5,7 @@
 #define BMIPHREEQCRM_H_INCLUDED
 #include <map>
 #include "PhreeqcRM.h"
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 #include "bmi.hxx"
 #include "VarManager.h"
 /**
