@@ -9,7 +9,7 @@
 #include "PhreeqcRM.h"
 #include "RMVARS.h"
 //class PhreeqcRM;
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 
 
 class IRM_DLL_EXPORT VarManager

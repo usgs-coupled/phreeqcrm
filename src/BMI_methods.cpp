@@ -10,7 +10,7 @@
 #include "PhreeqcRM.h"
 #include "IPhreeqc.h"
 #include "IPhreeqcPhast.h"
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 #ifdef USE_YAML
 #include "yaml-cpp/yaml.h"
 #endif

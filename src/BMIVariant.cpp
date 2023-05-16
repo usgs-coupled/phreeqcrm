@@ -1,4 +1,4 @@
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 BMIVariant::BMIVariant(VarFunction f, std::string name_in)
 {
 	Initialized = false;
