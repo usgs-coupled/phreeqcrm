@@ -24,7 +24,6 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
   ! --------------------------------------------------------------------------
   ! Create PhreeqcRM
   ! --------------------------------------------------------------------------
-#ifdef SKIP
     ! Write YAML file
     id = CreateYAMLPhreeqcRM()
     nxyz = 40
@@ -356,12 +355,6 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = bmif_set_value(id, "TimeStep", 0.0)
 	write(*,*) "SetTimeStep "
 	!-------
-	status =RM_GetGasCompMoles(id, v)
-	write(*,*) "GetGasCompMoles "
-	!-------
-	status =RM_SetGasCompMoles(id, v)
-	write(*,*) "SetGasCompMoles "
-	!-------
 	status =RM_GetConcentrations(id, c)
 	status = bmif_get_value(id, "Concentrations", c)
 	d_ptr = bmif_get_value_ptr(id, "Concentrations")
@@ -380,22 +373,22 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = bmif_set_value(id, "Density", v)
 	write(*,*) "SetDensity "
 	!-------
-	status = RM_GetGasCompMoles(v)
+	status = RM_GetGasCompMoles(id, v)
 	write(*,*) "GetGasCompMoles "
 	!-------
-	status = RM_SetGasCompMoles(v)
+	status = RM_SetGasCompMoles(id, v)
 	write(*,*) "SetGasCompMoles "
 	!-------
-	status = RM_GetGasCompPhi(v)
+	status = RM_GetGasCompPhi(id, v)
 	write(*,*) "GetGasCompPhi "
 	!-------
-	status = RM_GetGasCompPressures(v)
+	status = RM_GetGasCompPressures(id, v)
 	write(*,*) "GetGasCompPressures "
 	!-------
-	status = RM_GetGasPhaseVolume(v)
+	status = RM_GetGasPhaseVolume(id, v)
 	write(*,*) "GetGasPhaseVolume "
 	!-------
-	status =RM_SetGasPhaseVolume(v)
+	status =RM_SetGasPhaseVolume(id, v)
 	write(*,*) "SetGasPhaseVolume "
 	!-------
 	status = RM_GetIthConcentration(id, 1, v);
@@ -469,6 +462,9 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!-------
 	status =RM_RunCells(id)
 	write(*,*) "RunCells"
+	!-------
+	status = bmif_update_until(id, 86400.)
+	write(*,*) "UpdateUntil"
 	!
 	! Selected output
 	!
@@ -476,12 +472,9 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = bmif_set_value(id, "NthSelectedOutput", 1)
 	write(*,*) "SetNthSelectedOutput "
 	!-------
-	n_user = RM_GetCurrentSelectedOutputUserNumber()
+	n_user = RM_GetCurrentSelectedOutputUserNumber(id)
 	status = bmif_get_value(id, "CurrentSelectedOutputUserNumber", n_user)
 	write(*,*) "GetCurrentSelectedOutputUserNumber "
-	!-------
-	status = RM_SetCurrentSelectedOutputUserNumber(id, 333)
-	write(*,*) "SetCurrentSelectedOutputUserNumber "
 	!-------
 	n = RM_GetNthSelectedOutputUserNumber(id, 1)
 	write(*,*) "GetNthSelectedOutputUserNumber "
@@ -490,19 +483,37 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = bmif_get_value(id, "SelectedOutput", v)
 	write(*,*) "GetSelectedOutput "
 	!-------
-	n = RM_GetSelectedOutputColumnCount()
+	n = RM_GetSelectedOutputColumnCount(id)
 	status = bmif_get_value(id, "SelectedOutputColumnCount", n)
 	write(*,*) "GetSelectedOutputColumnCount "
 	!-------
-	n = status = RM_GetSelectedOutputRowCount()
+	n = RM_GetSelectedOutputCount(id)
+	status = bmif_get_value(id, "SelectedOutputCount", n)
+	write(*,*) "GetSelectedOutputCount "
+	!-------
+	status = RM_GetSelectedOutputHeadings(id, str_vector)
+	status = bmif_get_value(id, "SelectedOutputHeadings", str_vector)
+	write(*,*) "GetSelectedOutputHeadings "
+	!-------
+	b = RM_GetSelectedOutputOn(id)
+	status = bmif_get_value(id, "SelectedOutputOn", b)
+	b_ptr = bmif_get_value_ptr(id, "SelectedOutputOn");	
+	write(*,*) "GetSelectedOutputOn "
+	!-------
+	n = RM_GetSelectedOutputRowCount(id)
+	status = bmif_get_value(id, "SelectedOutputOn", n)
 	write(*,*) "GetSelectedOutputRowCount "
+	!-------
+	status = RM_SetCurrentSelectedOutputUserNumber(id, 333)
+	write(*,*) "SetCurrentSelectedOutputUserNumber "
 	!
 	! Getters
 	!
-	std::vector< std::vector<int> > back_map = status = RM_GetBackwardMapping()
+#ifdef SKIP
+	status = RM_GetBackwardMapping(id, 1, IntVector, n)
 	write(*,*) "GetBackwardMapping "
 	!-------
-	std::string db_name = status = RM_GetDatabaseFileName()
+	status = RM_GetDatabaseFileName(id, string)
 	write(*,*) "GetDatabaseFileName "
 	!-------
 	vi = status = RM_GetEndCell()
@@ -546,12 +557,6 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!-------
 	double d = status = RM_GetRebalanceFraction()
 	write(*,*) "GetRebalanceFraction "
-	!-------
-	status =RM_GetSelectedOutputHeadings(str_vector)
-	write(*,*) "GetSelectedOutputHeadings "
-	!-------
-	b = status = RM_GetSelectedOutputOn()
-	write(*,*) "GetSelectedOutputOn "
 	!-------
 	b = status = RM_GetSpeciesSaveOn()
 	write(*,*) "GetSpeciesSaveOn "

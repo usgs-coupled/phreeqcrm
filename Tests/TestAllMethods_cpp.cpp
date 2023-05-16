@@ -343,12 +343,6 @@ void TestAllMethods_cpp()
 	bmi.SetValue("TimeStep", 0.0);
 	std::cerr << "SetTimeStep \n";
 	//-------
-	status = bmi.GetGasCompMoles(v);
-	std::cerr << "GetGasCompMoles \n";
-	//-------
-	status = bmi.SetGasCompMoles(v);
-	std::cerr << "SetGasCompMoles \n";
-	//-------
 	std::vector<double> c;
 	status = bmi.GetConcentrations(c);
 	bmi.GetValue("Concentrations", c);
@@ -471,9 +465,6 @@ void TestAllMethods_cpp()
 	bmi.GetValue("CurrentSelectedOutputUserNumber", n_user);
 	std::cerr << "GetCurrentSelectedOutputUserNumber \n";
 	//-------
-	status = bmi.SetCurrentSelectedOutputUserNumber(333);
-	std::cerr << "SetCurrentSelectedOutputUserNumber \n";
-	//-------
 	n = bmi.GetNthSelectedOutputUserNumber(0);
 	std::cerr << "GetNthSelectedOutputUserNumber \n";
 	//-------
@@ -501,6 +492,10 @@ void TestAllMethods_cpp()
 	n = bmi.GetSelectedOutputRowCount(); 
 	bmi.GetValue("SelectedOutputRowCount", n);
 	std::cerr << "GetSelectedOutputRowCount \n";
+	//-------
+	status = bmi.SetCurrentSelectedOutputUserNumber(333);
+	std::cerr << "SetCurrentSelectedOutputUserNumber \n";
+	//-------
 	//
 	// Getters
 	// 
