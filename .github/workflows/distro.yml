@@ -143,14 +143,14 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
-    name: cmake
+    #name: cmake
+    name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }} 
     needs: [init, distcheck]
     strategy:
       fail-fast: false
       matrix:
         os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
-        # build_shared_libs: [OFF, ON]
-        build_shared_libs: ['BUILD_SHARED_LIBS:BOOL=OFF', 'BUILD_SHARED_LIBS:BOOL=ON']
+        build_shared_libs: [OFF, ON]
         phreeqcrm_with_yaml_cpp: [OFF, ON]
         # BUILD_TYPE: [Debug, Release]
 
@@ -202,15 +202,15 @@ jobs:
 
     - name: Configure with CMake (Non-Windows)
       if: runner.os != 'Windows'
-      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
+      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
     - name: Configure with CMake (Windows)
       if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
-      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
+      run: cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
     - name: Configure with CMake (Windows)
       if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
+      run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
     - name: Print phreeqcrm.pc
       working-directory: ${{ github.workspace }}/build
