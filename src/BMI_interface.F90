@@ -1882,21 +1882,22 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		INTEGER(KIND=C_INT), INTENT(inout) :: src
+		INTEGER(KIND=C_INT), INTENT(in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: src
+    integer, INTENT( in) :: src
+    integer :: src_copy
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "integer") then
         stop "Variable type error."
     endif
-    if (var .eq. "NthSelectedOutput") src = src - 1
-    bmif_set_value_int = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
-    if (var .eq. "NthSelectedOutput") src = src + 1
+    src_copy = src
+    if (var .eq. "NthSelectedOutput") src_copy = src - 1
+    bmif_set_value_int = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src_copy)
     return
     END FUNCTION bmif_set_value_int
 
@@ -1911,12 +1912,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		INTEGER(KIND=C_INT), INTENT(inout) :: src
+		INTEGER(KIND=C_INT), INTENT( in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: src(:)
+    integer, INTENT( in) :: src(:)
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
@@ -1944,12 +1945,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		INTEGER(KIND=C_INT), INTENT(inout) :: src
+		INTEGER(KIND=C_INT), INTENT(in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: src(:,:)
+    integer, INTENT( in) :: src(:,:)
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
@@ -1977,12 +1978,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		REAL(KIND=C_DOUBLE), INTENT(inout) :: src
+		REAL(KIND=C_DOUBLE), INTENT( in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    real(kind=8), INTENT(inout) :: src
+    real(kind=8), INTENT( in) :: src
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = bmif_get_var_type(id, var, vartype)
@@ -2004,12 +2005,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		REAL(KIND=C_DOUBLE), INTENT(inout) :: src
+		REAL(KIND=C_DOUBLE), INTENT( in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    real(kind=8), INTENT(inout) :: src(:)
+    real(kind=8), INTENT( in) :: src(:)
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
@@ -2037,12 +2038,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		REAL(KIND=C_DOUBLE), INTENT(inout) :: src
+		REAL(KIND=C_DOUBLE), INTENT( in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    real(kind=8), INTENT(inout) :: src(:,:)
+    real(kind=8), INTENT( in) :: src(:,:)
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
@@ -2214,31 +2215,25 @@
 !> aqueous species; list includes only the specified aqueous species. Default False.
 !> @n SaturationIndices: False excludes all saturation indices; True includes all 
 !> saturation indices; list includes only the specified saturation indices. Default False.
-  !  INTEGER FUNCTION bmif_add_output_vars(id, option, def)
-  !  USE ISO_C_BINDING
-  !  IMPLICIT NONE
-		!INTERFACE
-		!INTEGER(KIND=C_INT) FUNCTION RMF_BMI_AddOutputVars(id, var, src) &
-		!	BIND(C, NAME='RMF_BMI_AddOutputVars')
-		!USE ISO_C_BINDING
-		!IMPLICIT NONE
-		!INTEGER(KIND=C_INT), INTENT(in) :: id
-		!CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		!CHARACTER(KIND=C_CHAR), INTENT(in) :: src
-		!END FUNCTION RMF_BMI_AddOutputVars
-		!END INTERFACE
-  !  INTEGER, INTENT(in) :: id
-  !  CHARACTER(len=*), INTENT(in) :: option
-  !  CHARACTER(len=*), INTENT(in) :: def
-  !  character(100) :: vartype
-  !  integer :: bytes, nbytes, status, dim
-  !  status = bmif_get_var_type(id, option, vartype)
-  !  if (vartype .ne. "character") then
-  !      stop "Variable type error."
-  !  endif
-  !  bmif_add_output_vars = RMF_BMI_AddOutputVars(id, trim(option)//C_NULL_CHAR, trim(def)//C_NULL_CHAR)
-  !  return
-  !  END FUNCTION bmif_add_output_vars	
+    INTEGER FUNCTION bmif_add_output_vars(id, option, def)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_AddOutputVars(id, var, src) &
+			BIND(C, NAME='RMF_BMI_AddOutputVars')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: src
+		END FUNCTION RMF_BMI_AddOutputVars
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: option
+    CHARACTER(len=*), INTENT(in) :: def
+    bmif_add_output_vars = RMF_BMI_AddOutputVars(id, trim(option)//C_NULL_CHAR, trim(def)//C_NULL_CHAR)
+    return
+    END FUNCTION bmif_add_output_vars	
 	
 	! ====================================================
     ! Functions not implemented

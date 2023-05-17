@@ -1012,10 +1012,13 @@ PhreeqcRM::CloseFiles(void)
 {
 	this->phreeqcrm_error_string.clear();
 	// open echo and log file, prefix.log.txt
-	this->phreeqcrm_io->log_close();
+	if (phreeqcrm_io != NULL)
+	{
+		this->phreeqcrm_io->log_close();
 
-	// output_file is prefix.chem.txt
-	this->phreeqcrm_io->output_close();
+		// output_file is prefix.chem.txt
+		this->phreeqcrm_io->output_close();
+	}
 
 	return IRM_OK;
 }

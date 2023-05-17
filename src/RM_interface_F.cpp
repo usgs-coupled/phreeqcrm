@@ -1432,6 +1432,32 @@ double RMF_GetTimeStep(int * id)
 	}
 	return (double) IRM_BADINSTANCE;
 }
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_GetViscosity(int* id, double* viscosity)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves viscosity for all grid nodes in sat
+	// size of sat must be the number of grid nodes
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		IRM_RESULT return_value = IRM_OK;
+		std::vector <double> viscosity_vector;
+		Reaction_module_ptr->GetViscosity(viscosity_vector);
+		if ((int)viscosity_vector.size() == Reaction_module_ptr->GetGridCellCount())
+		{
+			memcpy(viscosity, &viscosity_vector.front(), (size_t)(Reaction_module_ptr->GetGridCellCount() * sizeof(double)));
+		}
+		else
+		{
+			viscosity_vector.resize(Reaction_module_ptr->GetGridCellCount(), INACTIVE_CELL_VALUE);
+			return_value = IRM_FAIL;
+		}
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
 #ifdef USE_YAML
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
