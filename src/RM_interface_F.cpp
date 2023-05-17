@@ -1444,7 +1444,7 @@ RMF_GetViscosity(int* id, double* viscosity)
 	{
 		IRM_RESULT return_value = IRM_OK;
 		std::vector <double> viscosity_vector;
-		Reaction_module_ptr->GetViscosity(viscosity_vector);
+		viscosity_vector = Reaction_module_ptr->GetViscosity();
 		if ((int)viscosity_vector.size() == Reaction_module_ptr->GetGridCellCount())
 		{
 			memcpy(viscosity, &viscosity_vector.front(), (size_t)(Reaction_module_ptr->GetGridCellCount() * sizeof(double)));

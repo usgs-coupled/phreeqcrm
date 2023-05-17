@@ -446,7 +446,7 @@ void TestAllMethods_cpp()
 	bmi.SetValue("Temperature", v);
 	std::cerr << "SetTemperature \n";
 	//-------
-	status = bmi.GetViscosity(v);
+	v = bmi.GetViscosity();
 	bmi.GetValue("Viscosity", v);
 	d_ptr = (double*)bmi.GetValuePtr("Viscosity");	
 	std::cerr << "GetViscosity \n";

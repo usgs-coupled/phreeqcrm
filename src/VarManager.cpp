@@ -1397,7 +1397,7 @@ void VarManager::Viscosity_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		rm_ptr->GetViscosity(this->VarExchange.GetDoubleVectorRef());
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetViscosity();
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
 		this->PointerSet.insert(VARS_myself);
@@ -1408,7 +1408,7 @@ void VarManager::Viscosity_Var()
 	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		rm_ptr->GetViscosity(this->VarExchange.GetDoubleVectorRef());
+		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetViscosity();
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		break;
 	}

@@ -104,9 +104,12 @@ import_array();
 %rename(GetGasCompPressuresSWIG)                    GetGasCompPressures(std::vector< double >& gas_pressure);
 %rename(GetGasPhaseVolumeSWIG)                      GetGasPhaseVolume(std::vector< double >& gas_volume);
 %rename(GetGfwSWIG)                                 GetGfw();
+%rename(GetIthConcentrationSWIG)                    GetIthConcentration(int i, std::vector< double >& c_output);  
+%rename(GetIthSpeciesConcentrationSWIG)             GetIthSpeciesConcentration(int i, std::vector< double >& c_output);
 %rename(GetPorositySWIG)                            GetPorosity();
 %rename(GetPressureSWIG)                            GetPressure();
 %rename(GetPrintChemistryMaskSWIG)                  GetPrintChemistryMask();
+%rename(GetPrintChemistryOn_bool_vector)            GetPrintChemistryOn();
 %rename(GetSaturationSWIG)                          GetSaturation(std::vector< double > & sat_output);
 %rename(GetSelectedOutputSWIG)                      GetSelectedOutput(std::vector< double > &s_output);
 %rename(GetSelectedOutputHeadingsSWIG)              GetSelectedOutputHeadings(std::vector< std::string >& headings);
@@ -119,7 +122,15 @@ import_array();
 %rename(GetSolutionVolumeSWIG)                      GetSolutionVolume();
 %rename(GetStartCellSWIG)                           GetStartCell();
 %rename(GetTemperatureSWIG)                         GetTemperature();
-%rename(GetPrintChemistryOn_bool_vector)            GetPrintChemistryOn();
+%rename(GetViscositySWIG)                           GetViscosity();
+
+// Ignore methods
+%ignore BMIPhreeqcRM::GetValue(std::string const,bool *);
+%ignore BMIPhreeqcRM::GetValue(std::string const,double *);
+%ignore BMIPhreeqcRM::GetValue(std::string const,int *);
+%ignore BMIPhreeqcRM::GetValuePtr(std::string);
+%ignore BMIPhreeqcRM::SetValue(std::string,std::vector< int,std::allocator< int > >);
+%ignore BMIPhreeqcRM::SetValue(std::string,std::vector< std::string,std::allocator< std::string > >);
 
 
 %include "PhreeqcRM.h"
@@ -161,6 +172,10 @@ def InitialPhreeqc2Concentrations(self, bc1):
 	x = self.InitialPhreeqc2ConcentrationsSWIG(bc1)
 	return np.array(self.InitialPhreeqc2ConcentrationsSWIG(bc1)[1])
 def InitialPhreeqc2Module(self, ic1):
+	#print(f"xxx {type(ic1)}")
+	#v = phreeqcrm.IntVector(len(ic1))
+	#for i in range(len(ic1)):
+	#	v[i] = ic1[i]
 	return self.InitialPhreeqc2ModuleSWIG(ic1)
 def InitialPhreeqc2Module_mix(self, ic1, ic2, f1):
 	return self.InitialPhreeqc2ModuleSWIG_mix(ic1,ic2,f1)
@@ -187,13 +202,21 @@ def GetGasCompPressures(self):
 def GetGasPhaseVolume(self):           
 	return np.array(self.GetGasPhaseVolumeSWIG()[1])    
 def GetGfw(self):
-	return np.array(self.GetGfwSWIG())    
+	return np.array(self.GetGfwSWIG())  
+def GetIthConcentration(self, n):
+	return np.array(self.GetIthConcentrationSWIG(n)[1])   
+def GetIthSpeciesConcentration(self, n):
+	return np.array(self.GetIthSpeciesConcentrationSWIG(n)[1])  
+def GetPrintChemistryOn(self):
+	return np.array(self.GetPrintChemistryOn_bool_vector())  
 def GetPorosity(self):
 	return np.array(self.GetPorositySWIG())
 def GetPressure(self):
 	return np.array(self.GetPressureSWIG())
 def GetPrintChemistryMask(self):
 	return np.array(self.GetPrintChemistryMaskSWIG())
+def GetPrintChemistryOn(self):
+	return np.array(self.GetPrintChemistryOn_bool_vector())
 def GetSaturation(self):      
 	return np.array(self.GetSaturationSWIG()[1])   
 def GetSelectedOutput(self):    
@@ -216,8 +239,8 @@ def GetStartCell(self):
 	return np.array(self.GetStartCellSWIG())
 def GetTemperature(self):
 	return np.array(self.GetTemperatureSWIG())
-def GetPrintChemistryOn(self):
-	return np.array(self.GetPrintChemistryOn_bool_vector())
+def GetViscosity(self):
+	return np.array(self.GetViscositySWIG())
 
 %} 
 }
@@ -256,7 +279,9 @@ def GetPrintChemistryOn(self):
 def GetValue(self, var): 
 	Nbytes = self.GetVarNbytes(var)
 	Itemsize = self.GetVarItemsize(var)
-	dim = Nbytes / Itemsize
+	dim = 0
+	if Itemsize != 0:
+		dim = Nbytes / Itemsize
 	type = self.GetVarType(var)
 	#print(f"Type={type}")
 	if type=="double":
@@ -292,7 +317,7 @@ def SetValue(self, var, value):
 		if dim>1:
 			self.SetValue_int_vector(var)
 	if type=="std::string":
-		self.GetValue_string(var, value)
+		self.SetValue_string(var, value)
 	if type=="std::vector<std::string>":
 		self.SetValue_string_vector(var, value)	
 def GetValuePtr(self):

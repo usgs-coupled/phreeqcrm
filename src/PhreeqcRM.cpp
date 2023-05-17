@@ -5254,8 +5254,8 @@ PhreeqcRM::GetTemperature(void)
 }
 #endif
 /* ---------------------------------------------------------------------- */
-IRM_RESULT
-PhreeqcRM::GetViscosity(std::vector<double>& viscosity_arg)
+const std::vector<double>&
+PhreeqcRM::GetViscosity(void)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -5264,43 +5264,32 @@ PhreeqcRM::GetViscosity(std::vector<double>& viscosity_arg)
 #ifdef USE_MPI
 		if (this->mpi_myself == 0)
 		{
-			int method = METHOD_GETVISCOSITY;
+			int method = METHOD_GETSOLUTIONVOLUME;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		}
-		std::vector<double> local_viscosity_worker;
 		int size = this->end_cell[this->mpi_myself] - this->start_cell[this->mpi_myself] + 1;
-		local_viscosity_worker.resize(size, INACTIVE_CELL_VALUE);
+		this->viscosity_worker.resize(size, INACTIVE_CELL_VALUE);
 
-		// fill viscosity_root
+		// fill viscosity
 		int n = this->mpi_myself;
 		for (int i = this->start_cell[n]; i <= this->end_cell[n]; i++)
 		{
-			int l = i - this->start_cell[n];
-			local_viscosity_worker[l] = this->workers[0]->Get_solution(i)->Get_viscosity();
+			this->viscosity_worker[i - this->start_cell[n]] = this->workers[0]->Get_solution(i)->Get_viscosity();;
 		}
-
 		// Gather to root
-		GatherNchem(local_viscosity_worker, viscosity_arg);
+		GatherNchem(this->viscosity_worker, this->viscosity_root);
 #else
-		viscosity_arg.resize(this->nxyz, INACTIVE_CELL_VALUE);
+		this->viscosity_root.resize(this->nxyz, INACTIVE_CELL_VALUE);
 		std::vector<double> dbuffer;
 		for (int n = 0; n < this->nthreads; n++)
 		{
 			for (int i = start_cell[n]; i <= this->end_cell[n]; i++)
 			{
-				cxxSolution* soln_ptr = this->workers[n]->Get_solution(i);
-				if (!soln_ptr)
+				double d = this->workers[n]->Get_solution(i)->Get_viscosity();
+				for (size_t j = 0; j < backward_mapping[i].size(); j++)
 				{
-					this->ErrorHandler(IRM_FAIL, "Solution not found for viscosity.");
-				}
-				else
-				{
-					double d = this->workers[n]->Get_solution(i)->Get_viscosity();
-					for (size_t j = 0; j < backward_mapping[i].size(); j++)
-					{
-						int n = backward_mapping[i][j];
-						viscosity_arg[n] = d;
-					}
+					int n = backward_mapping[i][j];
+					this->viscosity_root[n] = d;
 				}
 			}
 		}
@@ -5309,9 +5298,12 @@ PhreeqcRM::GetViscosity(std::vector<double>& viscosity_arg)
 	catch (...)
 	{
 		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetViscosity");
+		this->viscosity_root.clear();
+		this->viscosity_worker.clear();
 	}
-	return IRM_OK;
+	return this->viscosity_root;
 }
+
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 IRM_RESULT

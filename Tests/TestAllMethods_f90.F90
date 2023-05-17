@@ -494,7 +494,10 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	n = RM_GetNthSelectedOutputUserNumber(id, 1)
 	write(*,*) "GetNthSelectedOutputUserNumber "
 	!-------
-	status = bmif_get_value(id, "SelectedOutput", DoubleVector2)
+	status = bmif_get_value(id, "SelectedOutput", DoubleVector)
+    if(allocated(DoubleVector2)) deallocate(DoubleVector2)
+    n = RM_GetSelectedOutputColumnCount(id)
+    allocate(DoubleVector2(nxyz, n))
 	status = RM_GetSelectedOutput(id, DoubleVector2)
 	write(*,*) "GetSelectedOutput "
 	!-------
@@ -534,7 +537,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	write(*,*) "GetEndCell"
 	!-------
 	!n = RM_GetErrorHandlerMode()
-	write(*,*) "GetErrorHandlerMode "
+	!write(*,*) "GetErrorHandlerMode "
 	!-------
 	status = RM_GetErrorString(id, string)
 	status = bmif_get_value(id, "ErrorString", string)

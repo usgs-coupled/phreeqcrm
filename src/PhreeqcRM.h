@@ -644,12 +644,12 @@ Called by root, workers must be in the loop of @ref MpiWorker.
 	IRM_RESULT                                GetConcentrations(std::vector< double > &c_output);
 	/**
 	Transfer the concentration from each cell for one component to the vector given in the 
-	argument list (@a c). The concentrations are those resulting from the last call
-	to @ref RunCells. Units of concentration for @a c are defined by @ref SetUnitsSolution.
+	argument list (@a c_output). The concentrations are those resulting from the last call
+	to @ref RunCells. Units of concentration for @a c_output are defined by @ref SetUnitsSolution.
 	@param i                Zero-based index for the component to retrieve. Indices refer
 	to the order produced by @ref GetComponents. The total number of components is given by
 	@ref GetComponentCount.
-	@param c                Vector to receive the component concentrations.
+	@param c_output                Vector to receive the component concentrations.
 	Dimension of the vector is set to @a nxyz, where @a nxyz is the number of 
 	user grid cells (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
 	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
@@ -668,18 +668,18 @@ Called by root, workers must be in the loop of @ref MpiWorker.
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	 */
-	IRM_RESULT                                GetIthConcentration(int i, std::vector< double >& c);
+	IRM_RESULT                                GetIthConcentration(int i, std::vector< double >& c_output);
 	/**
 	Transfer the concentration from each cell for one species to the vector given in the
-	argument list (@a c). The concentrations are those resulting from the last call
-	to @ref RunCells. Units of concentration for @a c are mol/L.
+	argument list (@a c_output). The concentrations are those resulting from the last call
+	to @ref RunCells. Units of concentration for @a c_output are mol/L.
 	To retrieve species concentrations, @ref SetSpeciesSaveOn must be set to @a true.
 	This method is for use with multicomponent diffusion calculations.
 
 	@param i                Zero-based index for the species to retrieve. Indices refer
 	to the order given by @ref GetSpeciesNames. The total number of species is given
 	by @ref GetSpeciesCount.
-	@param c                Vector to receive the species concentrations.
+	@param c_output                Vector to receive the species concentrations.
 	Dimension of the vector is set to @a nxyz, where @a nxyz is the number of
 	user grid cells (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
 	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
@@ -698,7 +698,7 @@ Called by root, workers must be in the loop of @ref MpiWorker.
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	 */
-	IRM_RESULT                                GetIthSpeciesConcentration(int i, std::vector< double >& c);
+	IRM_RESULT                                GetIthSpeciesConcentration(int i, std::vector< double >& c_output);
 	/**
 	Transfer the concentrations for one component given by the vector @a c to each reaction cell. 
 	Units of concentration for @a c are defined by @ref SetUnitsSolution. It is required that
@@ -2836,10 +2836,9 @@ Called by root.
 	Return a vector reference to the current viscosity as calculated by 
 	the reaction module. Dimension of the vector will be @a nxyz, where 
 	@a nxyz is the number of user grid cells.
-	Values for inactive cells are set to 1e30.
 	Only the following databases distributed with PhreeqcRM have parameters 
 	needed to accurately calculate viscosity: phreeqc.dat, Amm.dat, and pitzer.dat.
-	@retval Vector reference to current viscosities.
+	@retval Vector reference to current viscosities, in mPa s.
 	@par C++ Example:
 	@htmlonly
 	<CODE>
@@ -2852,7 +2851,7 @@ Called by root.
 	@par MPI:
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	 */
-	IRM_RESULT                                  GetViscosity(std::vector<double>& viscosity_arg);
+	const std::vector<double>& GetViscosity();
 /**
 Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
 For the OPENMP version, the number of threads is set implicitly or explicitly

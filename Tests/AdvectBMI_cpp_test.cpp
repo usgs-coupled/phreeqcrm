@@ -863,7 +863,7 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 		brm.GetValue("GridCellCount", ngrid);
 		std::vector<double> bmi_viscosity;
 		std::vector<double> rm_viscosity;
-		brm.GetViscosity(rm_viscosity);
+		rm_viscosity = brm.GetViscosity();
 		brm.GetValue("Viscosity", bmi_viscosity);
 		assert(bmi_viscosity == rm_viscosity);
 		for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
@@ -1015,7 +1015,7 @@ void compare_ptrs(struct Ptrs ptrs)
 	Porosity = ptrs.brm->GetPorosity();
 	Pressure = ptrs.brm->GetPressure();
 	Temperature = ptrs.brm->GetTemperature();
-	ptrs.brm->GetViscosity(Viscosity);
+	Viscosity = ptrs.brm->GetViscosity();
 
 	for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
 	{
