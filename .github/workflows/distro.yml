@@ -150,7 +150,7 @@ jobs:
       matrix:
         os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
         # build_shared_libs: [OFF, ON]
-        build_shared_libs: [BUILD_SHARED_LIBS:BOOL=OFF, BUILD_SHARED_LIBS:BOOL=ON]
+        build_shared_libs: ['BUILD_SHARED_LIBS:BOOL=OFF', 'BUILD_SHARED_LIBS:BOOL=ON']
         phreeqcrm_with_yaml_cpp: [OFF, ON]
         # BUILD_TYPE: [Debug, Release]
 
