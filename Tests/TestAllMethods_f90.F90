@@ -200,6 +200,8 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = RM_GetSpeciesName(id, 1, string)
 	write(*,*) "GetSpeciesName "
 	!-------
+    if(allocated(DoubleVector)) deallocate(DoubleVector)
+    allocate(DoubleVector(nxyz*nspecies))
 	status = RM_GetSpeciesD25(id, DoubleVector)
 	write(*,*) "GetSpeciesD25 "
 	!-------
