@@ -142,9 +142,16 @@ void TestAllMethods_cpp()
 	status = bmi.RunFile(true, true, true, "all_reactants.pqi");
 	std::cerr << "RunFile \n";
 	//-------
-	//bmi.AddOutputVars("SolutionActivities", "true");
-	//bmi.AddOutputVars("SolutionMolalities", "true");
-	//bmi.AddOutputVars("SaturationIndices", "true");
+	bmi.AddOutputVars("AddOutputVars", "True");
+	bmi.AddOutputVars("SolutionProperties", "True");
+	bmi.AddOutputVars("SolutionTotalMolalities", "True");
+	bmi.AddOutputVars("ExchangeMolalities", "True");
+	bmi.AddOutputVars("SurfaceMolalities", "True");
+	bmi.AddOutputVars("EquilibriumPhases", "True");
+	bmi.AddOutputVars("Gases", "True");
+	bmi.AddOutputVars("KineticReactants", "True");
+	bmi.AddOutputVars("SolidSolutions", "True");
+	bmi.AddOutputVars("CalculateValues", "True");
 	bmi.AddOutputVars("SolutionActivities", "H+ Ca+2 Na+");
 	bmi.AddOutputVars("SolutionMolalities", "OH- Cl-");
 	bmi.AddOutputVars("SaturationIndices", "Calcite Dolomite");
@@ -343,12 +350,6 @@ void TestAllMethods_cpp()
 	bmi.SetValue("TimeStep", 0.0);
 	std::cerr << "SetTimeStep \n";
 	//-------
-	status = bmi.GetGasCompMoles(v);
-	std::cerr << "GetGasCompMoles \n";
-	//-------
-	status = bmi.SetGasCompMoles(v);
-	std::cerr << "SetGasCompMoles \n";
-	//-------
 	std::vector<double> c;
 	status = bmi.GetConcentrations(c);
 	bmi.GetValue("Concentrations", c);
@@ -445,7 +446,7 @@ void TestAllMethods_cpp()
 	bmi.SetValue("Temperature", v);
 	std::cerr << "SetTemperature \n";
 	//-------
-	status = bmi.GetViscosity(v);
+	v = bmi.GetViscosity();
 	bmi.GetValue("Viscosity", v);
 	d_ptr = (double*)bmi.GetValuePtr("Viscosity");	
 	std::cerr << "GetViscosity \n";
@@ -470,9 +471,6 @@ void TestAllMethods_cpp()
 	int n_user = bmi.GetCurrentSelectedOutputUserNumber();
 	bmi.GetValue("CurrentSelectedOutputUserNumber", n_user);
 	std::cerr << "GetCurrentSelectedOutputUserNumber \n";
-	//-------
-	status = bmi.SetCurrentSelectedOutputUserNumber(333);
-	std::cerr << "SetCurrentSelectedOutputUserNumber \n";
 	//-------
 	n = bmi.GetNthSelectedOutputUserNumber(0);
 	std::cerr << "GetNthSelectedOutputUserNumber \n";
@@ -501,6 +499,10 @@ void TestAllMethods_cpp()
 	n = bmi.GetSelectedOutputRowCount(); 
 	bmi.GetValue("SelectedOutputRowCount", n);
 	std::cerr << "GetSelectedOutputRowCount \n";
+	//-------
+	status = bmi.SetCurrentSelectedOutputUserNumber(333);
+	std::cerr << "SetCurrentSelectedOutputUserNumber \n";
+	//-------
 	//
 	// Getters
 	// 
@@ -589,6 +591,14 @@ void TestAllMethods_cpp()
 	//
 	// Utilities
 	//
+	BMIPhreeqcRM *bmi2 = new BMIPhreeqcRM(10, 1); // Make another instance
+	std::cerr << "Make a new instance with new. \n";
+	//-------
+	status = bmi.CloseFiles(); 
+	std::cerr << "CloseFiles \n";
+	//-------
+	delete bmi2; // delete new instance
+	//-------
 	vi.clear();
 	vi.resize(1, 1);
 	status = bmi.InitialPhreeqc2Concentrations(bc, vi);
@@ -694,8 +704,6 @@ void TestAllMethods_cpp()
  	bmi.UpdateUntil(864000.0);      // void function
 	std::cerr << "UpdateUntil\n";
 	//-------	
-	status = bmi.CloseFiles(); // not a BMI method, but needs to be last
-	std::cerr << "CloseFiles \n";
 	bmi.Finalize();    // void method
 	std::cerr << "Finalize \n";
 	//Should be private: status = bmi.ReturnHandler();
@@ -708,34 +716,3 @@ void TestAllMethods_cpp()
 	return;
 }
 #endif // YAML
-#ifdef SKIP
-    BMIPhreeqcRM();
-    BMIPhreeqcRM(int ngrid, int nthreads);
-    void Initialize(std::string config_file) override;
-    void Update() override;
-    void UpdateUntil(double end_time) override;
-    void Finalize() override;
-    std::string GetComponentName() override { return "BMI PhreeqcRM"; };
-    int GetInputItemCount() override;
-    int GetOutputItemCount() override;
-    int GetPointableItemCount();
-    std::vector<std::string> GetInputVarNames() override;
-    std::vector<std::string> GetOutputVarNames() override;
-    std::vector<std::string> GetPointableVarNames();
-    int GetVarGrid(const std::string name) override { return 1; }
-    std::string GetVarType(const std::string name) override;
-    std::string GetVarUnits(const std::string name) override;
-    int GetVarItemsize(const std::string name) override;
-    int GetVarNbytes(const std::string name) override;
-    std::string GetVarLocation(const std::string name) override { return "Unknow    double GetCurrentTime() override;
-    double GetStartTime() override;
-    double GetEndTime() override;
-    std::string GetTimeUnits() override { return "seconds"; };
-    double GetTimeStep();
-    void GetValue(const std::string name, void* dest) override;
-    void* GetValuePtr(std::string name) override;
-    int GetGridRank(const int grid) override;
-    int GetGridSize(const int grid) override;
-    std::string GetGridType(const int grid) override;
-    void AddOutputVars(std::string option, std::string def)
-#endif

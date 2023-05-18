@@ -33,6 +33,7 @@ if(PHREEQCRM_FORTRAN_TESTING)
     Gas_f90.F90
     SimpleAdvect_f90.F90
     Species_f90.F90
+    TestAllMethods_f90.F90
   )
 
   # place [*.F[90]] files into "Source Files"
@@ -46,6 +47,7 @@ if(PHREEQCRM_FORTRAN_TESTING)
   source_group("Source Files" FILES "Gas_f90.F90")
   source_group("Source Files" FILES "SimpleAdvect_f90.F90")
   source_group("Source Files" FILES "Species_f90.F90")
+  source_group("Source Files" FILES "TestAllMethods_f90.F90")
   
   if(_PHREEQCRM_TEST_INSTALL)
     target_sources(FortranAdvect PRIVATE
@@ -235,6 +237,9 @@ set_property(TARGET TestRM APPEND
     Species_f90.chem.txt
     Species_f90.dmp
     Species_f90.log.txt
+    TestAllMethods_f90.chem.txt
+    TestAllMethods_f90.dmp
+    TestAllMethods_f90.log.txt
 )
 
 if(MSVC AND BUILD_SHARED_LIBS)

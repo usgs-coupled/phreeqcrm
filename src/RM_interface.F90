@@ -3973,6 +3973,43 @@
     INTEGER, INTENT(in) :: id
     RM_GetTimeStep = RMF_GetTimeStep(id)
     END FUNCTION RM_GetTimeStep
+    
+    !> Transfer current viscosities to the array given in the argument list (@a viscosity).
+    !>
+    !> @param id                   The instance @a id returned from @ref RM_Create.
+    !> @param viscosity            Array to receive the viscosities. Dimension of the array is @a nxyz,
+    !> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+    !> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
+    !>
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> allocate(viscosity(nxyz))
+    !> status = RM_GetViscosity(id, viscosity)
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
+
+    INTEGER FUNCTION RM_GetViscosity(id, viscosity)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION RMF_GetViscosity(id, viscosity) &
+        BIND(C, NAME='RMF_GetViscosity')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER(KIND=C_INT), INTENT(in) :: id
+    REAL(KIND=C_DOUBLE), INTENT(out) :: viscosity(*)
+    END FUNCTION RMF_GetViscosity
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    real(kind=8), INTENT(out), dimension(:) :: viscosity
+    RM_GetViscosity = RMF_GetViscosity(id, viscosity)
+    return
+    END FUNCTION RM_GetViscosity
 #ifdef USE_YAML
     !> A YAML file can be used to initialize an instance of PhreeqcRM.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -4290,24 +4327,24 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Module(id, ic1) &
-        BIND(C, NAME='RMF_InitialPhreeqc2Module')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
-    END FUNCTION RMF_InitialPhreeqc2Module
+        INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Module(id, ic1) &
+            BIND(C, NAME='RMF_InitialPhreeqc2Module')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
+        END FUNCTION RMF_InitialPhreeqc2Module
     END INTERFACE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2ModuleMix(id, ic1, ic2, f1) &
-        BIND(C, NAME='RMF_InitialPhreeqc2ModuleMix')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
-    INTEGER(KIND=C_INT), INTENT(in) :: ic2(*)
-    REAL(KIND=C_DOUBLE), INTENT(in) :: f1(*)
-    END FUNCTION RMF_InitialPhreeqc2ModuleMix
+        INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2ModuleMix(id, ic1, ic2, f1) &
+            BIND(C, NAME='RMF_InitialPhreeqc2ModuleMix')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
+        INTEGER(KIND=C_INT), INTENT(in) :: ic2(*)
+        REAL(KIND=C_DOUBLE), INTENT(in) :: f1(*)
+        END FUNCTION RMF_InitialPhreeqc2ModuleMix
     END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in), DIMENSION(:,:) :: ic1

@@ -591,6 +591,11 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 			memcpy( dest, all.str().data(), all.str().size());
 			return;
 		}
+		if (this->var_man->VarExchange.GetCType() == "std::string" && dim == 0)
+		{
+			memcpy(dest, this->var_man->VarExchange.GetStringRef().data(), Nbytes);
+			return;
+		}
 		if (this->var_man->VarExchange.GetCType() == "std::string" && dim == 1)
 		{
 			memcpy(dest, this->var_man->VarExchange.GetStringRef().data(), Nbytes);

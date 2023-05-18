@@ -15,7 +15,7 @@ on:
 
 env:
   NAME: PhreeqcRM
-  BUILD_TYPE: Debug
+  BUILD_TYPE: Release
 
 jobs:
 
