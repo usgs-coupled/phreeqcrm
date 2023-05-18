@@ -683,7 +683,7 @@ def testallmethods_py():
 	print(f"SetValue")
 	#---------
 	bmi.Finalize()    # void method
-	print(f"Finalize {x}")
+	print(f"Finalize ")
 	#---------
 	print("Success.")
 	return
