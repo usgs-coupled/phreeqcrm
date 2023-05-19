@@ -124,7 +124,7 @@ public:
     @n SetComponentH2O(bool tf);
     @n SetConcentrations(std::vector< double > c);
     @n SetCurrentSelectedOutputUserNumber(int n_user);
-    @n SetDensity(std::vector< double > density);
+    @n SetDensityUser(std::vector< double > density);
     @n SetDumpFileName(std::string dump_name);
     @n SetErrorHandlerMode(int mode);
     @n SetErrorOn(bool tf);
@@ -802,7 +802,7 @@ public:
     @n "Components", @a dest: std::vector< std::string >;
     @n "Concentrations", @a dest: std::vector< double >;
     @n "CurrentSelectedOutputUserNumber", @a dest: int;
-    @n "Density", @a dest: std::vector< double >;
+    @n "DensityCalculated", @a dest: std::vector< double >;
     @n "ErrorString", @a dest: std::string;
     @n "FilePrefix", @a dest: std::string;
     @n "Gfw", @a dest: std::vector< double >;
@@ -835,7 +835,7 @@ public:
     <CODE>
     <PRE>
         std::vector< double > density;
-        phreeqc_rm.GetValue("Density", density);
+        phreeqc_rm.GetValue("DensityCalculated", density);
         std::vector< std::string > comps;
         phreeqc_rm.GetValue("Components", comps);
     </PRE>
@@ -930,7 +930,7 @@ public:
     corresponding data type and size of the @a src argument:
 
     "Concentrations", std::vector<double>, [GridCellCount*ComponentCount];
-    "Density", std::vector<double>, [GridCellCount];
+    "DensityUser", std::vector<double>, [GridCellCount];
     "FilePrefix", std::string;
     "NthSelectedOutput", int;
     "Porosity", std::vector<double>, [GridCellCount];

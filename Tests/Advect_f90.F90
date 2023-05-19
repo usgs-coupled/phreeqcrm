@@ -304,7 +304,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   density = 1.0
   pressure = 2.0
   temperature = 20.0
-  status = RM_SetDensity(id, density)
+  status = RM_SetDensityUser(id, density)
   status = RM_SetTemperature(id, temperature)
   status = RM_SetPressure(id, pressure)
   time_step = 86400.0
@@ -350,7 +350,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
      status = RM_RunCells(id)  
      ! Transfer data from PhreeqcRM for transport
      status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
-     status = RM_GetDensity(id, density)             ! Density after reaction
+     status = RM_GetDensityCalculated(id, density)   ! Density after reaction
      status = RM_GetSolutionVolume(id, volume)       ! Solution volume after reaction
      status = RM_GetSaturation(id, sat_calc)         ! Saturation after reaction
      ! Print results at last time step
@@ -378,8 +378,8 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
            ! Print results
            do i = 1, RM_GetSelectedOutputRowCount(id)/2
               write(*,*) "Cell number ", i
-              write(*,*) "     Density: ", density(i)
-              write(*,*) "     Volume:  ", volume(i)
+              write(*,*) "     Calculated Density: ", density(i)
+              write(*,*) "     Volume:             ", volume(i)
               write(*,*) "     Components: "
               do j = 1, ncomps
                  write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ",trim(components(j)), ": ", c(i,j)

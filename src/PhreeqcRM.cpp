@@ -3595,7 +3595,7 @@ PhreeqcRM::GetCurrentSelectedOutputUserNumber(void)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::GetDensity(std::vector<double> & density_arg)
+PhreeqcRM::GetDensityCalculated(std::vector<double> & density_arg)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -3604,7 +3604,7 @@ PhreeqcRM::GetDensity(std::vector<double> & density_arg)
 #ifdef USE_MPI
 		if (this->mpi_myself == 0)
 		{
-			int method = METHOD_GETDENSITY;
+			int method = METHOD_GETDENSITYCALCULATED;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		}
 		std::vector<double> local_density_worker;
@@ -3650,7 +3650,7 @@ PhreeqcRM::GetDensity(std::vector<double> & density_arg)
 	}
 	catch (...)
 	{
-		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetDensity");
+		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetDensityCalculated");
 	}
 	return IRM_OK;
 }
@@ -5596,10 +5596,10 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			this->SetCurrentSelectedOutputUserNumber(n);
 			continue;
 		}
-		if (keyword == "SetDensity")
+		if (keyword == "SetDensityUser")
 		{
 			std::vector< double > den = it1++->second.as< std::vector< double > >();
-			this->SetDensity(den);
+			this->SetDensityUser(den);
 			continue;
 		}
 		if (keyword == "SetDumpFileName")
@@ -6957,11 +6957,11 @@ PhreeqcRM::MpiWorker()
 					return_value = this->GetConcentrations(dummy);
 				}
 				break;
-			case METHOD_GETDENSITY:
-				if (debug_worker) std::cerr << "METHOD_GETDENSITY" << std::endl;
+			case METHOD_GETDENSITYCALCULATED:
+				if (debug_worker) std::cerr << "METHOD_GETDENSITYCALCULATED" << std::endl;
 				{
 					std::vector<double> dummy;
-					this->GetDensity(dummy);
+					this->GetDensityCalculated(dummy);
 				}
 				break;
 			case METHOD_GETERRORSTRING:
@@ -7118,11 +7118,11 @@ PhreeqcRM::MpiWorker()
 					this->SetConcentrations(dummy);
 				}
 				break;
-			case METHOD_SETDENSITY:
-				if (debug_worker) std::cerr << "METHOD_SETDENSITY" << std::endl;
+			case METHOD_SETDENSITYUSER:
+				if (debug_worker) std::cerr << "METHOD_SETDENSITYUSER" << std::endl;
 				{
 					std::vector<double> dummy;
-					this->SetDensity(dummy);
+					this->SetDensityUser(dummy);
 				}
 				break;
 			case METHOD_SETERRORHANDLERMODE:
@@ -11457,13 +11457,13 @@ PhreeqcRM::SetDatabaseFileName(const char * db)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::SetDensity(const std::vector<double> &t)
+PhreeqcRM::SetDensityUser(const std::vector<double> &t)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
-	std::string methodName = "SetDensity";
-	IRM_RESULT result_value = SetGeneric(t, this->density_root, density_worker, METHOD_SETDENSITY, methodName);
-	this->UpdateBMI(RMVARS::Density);
+	std::string methodName = "SetDensityUser";
+	IRM_RESULT result_value = SetGeneric(t, this->density_root, density_worker, METHOD_SETDENSITYUSER, methodName);
+	this->UpdateBMI(RMVARS::DensityCalculated);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 

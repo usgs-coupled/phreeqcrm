@@ -271,11 +271,11 @@ int Advect_cpp()
 		// --------------------------------------------------------------------------
 
 		int nsteps = 10;
-		std::vector<double> initial_density, temperature, pressure;
-		initial_density.resize(nxyz, 1.0);
+		std::vector<double> density, temperature, pressure;
+		density.resize(nxyz, 1.0);
 		temperature.resize(nxyz, 20.0);
 		pressure.resize(nxyz, 2.0);
-		phreeqc_rm.SetDensity(initial_density);
+		phreeqc_rm.SetDensityUser(density);
 		phreeqc_rm.SetTemperature(temperature);
 		phreeqc_rm.SetPressure(pressure);
 		time_step = 86400.;
@@ -339,8 +339,7 @@ int Advect_cpp()
 			//		assert(c_comp[j] == c[i * nxyz + j]);
 			//	}
 			//}
-			std::vector<double> density;
-			status = phreeqc_rm.GetDensity(density);
+			status = phreeqc_rm.GetDensityCalculated(density);
 			const std::vector<double>& volume = phreeqc_rm.GetSolutionVolume();
 			// Print results at last time step
 			if (print_chemistry_on != 0)
@@ -373,7 +372,7 @@ int Advect_cpp()
 					for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount() / 2; i++)
 					{
 						std::cerr << "Cell number " << i << "\n";
-						std::cerr << "     Density: " << density[i] << "\n";
+						std::cerr << "     Calculated Density: " << density[i] << "\n";
 						std::cerr << "     Volume:  " << volume[i] << "\n";
 						std::cerr << "     Components: " << "\n";
 						for (int j = 0; j < ncomps; j++)

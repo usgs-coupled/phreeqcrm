@@ -53,7 +53,7 @@ void WriteYAMLFile_cpp(void)
 	yrm.YAMLSetRepresentativeVolume(rv);
 	// Set density
 	std::vector<double> density(nxyz, 1.0);
-	yrm.YAMLSetDensity(density);
+	yrm.YAMLSetDensityUser(density);
 	// Set initial porosity
 	std::vector<double> por(nxyz, 0.2);
 	yrm.YAMLSetPorosity(por);

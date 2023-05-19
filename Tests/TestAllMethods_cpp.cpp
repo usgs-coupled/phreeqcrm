@@ -360,14 +360,14 @@ void TestAllMethods_cpp()
 	bmi.SetValue("Concentrations", c);
 	std::cerr << "SetConcentrations \n";
 	//-------
-	status = bmi.GetDensity(v);
-	bmi.GetValue("Density", v);
-	d_ptr = (double*)bmi.GetValuePtr("Density");
-	std::cerr << "GetDensity \n";
+	status = bmi.GetDensityCalculated(v);
+	bmi.GetValue("DensityCalculated", v);
+	d_ptr = (double*)bmi.GetValuePtr("DensityCalculated");
+	std::cerr << "GetDensityCalculated \n";
 	//-------
-	status = bmi.SetDensity(v);
-	bmi.SetValue("Density", v);
-	std::cerr << "SetDensity \n";
+	status = bmi.SetDensityUser(v);
+	bmi.SetValue("DensityUser", v);
+	std::cerr << "SetDensityUser \n";
 	//-------
 	status = bmi.GetGasCompMoles(v);
 	std::cerr << "GetGasCompMoles \n";

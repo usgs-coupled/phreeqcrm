@@ -197,7 +197,7 @@ int Species_cpp()
 		initial_density.resize(nxyz, 1.0);
 		temperature.resize(nxyz, 20.0);
 		pressure.resize(nxyz, 2.0);
-		phreeqc_rm.SetDensity(initial_density);
+		phreeqc_rm.SetDensityUser(initial_density);
 		phreeqc_rm.SetTemperature(temperature);
 		phreeqc_rm.SetPressure(pressure);
 		time_step = 86400.;
@@ -264,7 +264,7 @@ int Species_cpp()
 			status = phreeqc_rm.GetSpeciesLog10Molalities(lm);
 			phreeqc_rm.GetConcentrations(component_c);
 			std::vector<double> density;
-			status = phreeqc_rm.GetDensity(density);
+			status = phreeqc_rm.GetDensityCalculated(density);
 			const std::vector<double>& volume = phreeqc_rm.GetSolutionVolume();
 			// Print results at last time step
 			if (print_chemistry_on != 0)
@@ -285,8 +285,8 @@ int Species_cpp()
 					for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount() / 2; i++)
 					{
 						std::cerr << "Cell number " << i << "\n";
-						std::cerr << "     Density: " << density[i] << "\n";
-						std::cerr << "     Volume:  " << volume[i] << "\n";
+						std::cerr << "     Calculated density: " << density[i] << "\n";
+						std::cerr << "     Volume:             " << volume[i] << "\n";
 						std::cerr << "     Components: " << "\n";
 						for (int j = 0; j < ncomps; j++)
 						{

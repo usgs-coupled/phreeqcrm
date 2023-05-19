@@ -326,7 +326,7 @@ void Advect_c()
 		pressure[i] = 2.0;
 		temperature[i] = 20.0;
 	}
-	status = RM_SetDensity(id, density);
+	status = RM_SetDensityUser(id, density);
 	status = RM_SetPressure(id, pressure);
 	status = RM_SetTemperature(id, temperature);
 	time_step = 86400;
@@ -375,7 +375,7 @@ void Advect_c()
 		status = RM_RunCells(id);
 		// Transfer data from PhreeqcRM for transport
 		status = RM_GetConcentrations(id, c);          // Concentrations after reaction 
-		status = RM_GetDensity(id, density);           // Density after reaction
+		status = RM_GetDensityCalculated(id, density);           // Density after reaction
 		status = RM_GetSolutionVolume(id, volume);     // Solution volume after reaction
 		status = RM_GetSaturation(id, sat_calc);       // Saturation after reaction
 		// Print results at last time step
@@ -611,7 +611,7 @@ int example_selected_output(int id)
 	nlines = nlines + RM_GetSICount(id);
 	input = (char*)malloc((size_t)(nlines * 40));
 
-	strncpy(input, "", 40);
+	strncpy(input, "\0", 40);
 	strcat(input, "SELECTED_OUTPUT 2\n");
 	// totals
 	strcat(input, "  -totals\n");

@@ -262,7 +262,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   density = 1.0
   pressure = 2.0
   temperature = 20.0
-  status = RM_SetDensity(id, density)
+  status = RM_SetDensityUser(id, density)
   status = RM_SetTemperature(id, temperature)
   status = RM_SetPressure(id, pressure)
   time_step = 86400
@@ -307,7 +307,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
      status = RM_GetSpeciesConcentrations(id, species_c)          ! Species concentrations after reaction
      status = RM_GetSpeciesLog10Gammas(id, species_log10gammas)   ! Species log10 activity coefficient after reaction
      status = RM_GetSpeciesLog10Molalities(id, species_log10molalities)   ! Species log10 activity coefficient after reaction
-     status = RM_GetDensity(id, density)             ! Density after reaction
+     status = RM_GetDensityCalculated(id, density)             ! Density after reaction
      status = RM_GetSolutionVolume(id, volume)       ! Solution volume after reaction
      ! Print results at last time step
      if (isteps == nsteps) then
@@ -324,8 +324,8 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
            ! Print results
            do i = 1, RM_GetSelectedOutputRowCount(id)/2
               write(*,*) "Cell number ", i
-              write(*,*) "     Density: ", density(i)
-              write(*,*) "     Volume: ", volume(i)
+              write(*,*) "     Calculated density: ", density(i)
+              write(*,*) "     Volume:             ", volume(i)
               write(*,*) "     Components: "
               do j = 1, ncomps
                  write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ",trim(components(j)), ": ", c(i,j)

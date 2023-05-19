@@ -24,7 +24,7 @@ public:
 		brm = NULL;
 		ComponentCount_ptr = NULL;
 		Concentrations_ptr = NULL;
-		Density_ptr = NULL;
+		DensityCalculated_ptr = NULL;
 		Gfw_ptr = NULL;
 		GridCellCount_ptr = NULL;
 		Saturation_ptr = NULL;
@@ -40,7 +40,7 @@ public:
 	BMIPhreeqcRM* brm;
 	int* ComponentCount_ptr;
 	double* Concentrations_ptr;
-	double* Density_ptr;
+	double* DensityCalculated_ptr;
 	double* Gfw_ptr;
 	int* GridCellCount_ptr;
 	double* Saturation_ptr;
@@ -110,7 +110,7 @@ int AdvectBMI_cpp_test()
 		ptrs.brm = &brm;
 		ptrs.ComponentCount_ptr = (int*)brm.GetValuePtr("ComponentCount");
 		ptrs.Concentrations_ptr = (double*)brm.GetValuePtr("Concentrations");
-		ptrs.Density_ptr = (double*)brm.GetValuePtr("Density");
+		ptrs.DensityCalculated_ptr = (double*)brm.GetValuePtr("DensityCalculated");
 		ptrs.Gfw_ptr = (double*)brm.GetValuePtr("Gfw");
 		ptrs.GridCellCount_ptr = (int*)brm.GetValuePtr("GridCellCount");
 		ptrs.Saturation_ptr = (double*)brm.GetValuePtr("Saturation");
@@ -204,7 +204,7 @@ int AdvectBMI_cpp_test()
 		std::vector<double> density(nxyz, 1.0);
 		std::vector<double> temperature(nxyz, 20.0);
 		std::vector<double> pressure(nxyz, 2.0);
-		brm.SetValue("Density", density);
+		brm.SetValue("DensityUser", density);
 		brm.SetValue("Temperature", temperature);
 		brm.SetValue("Pressure", pressure);
 		// --------------------------------------------------------------------------
@@ -268,7 +268,7 @@ int AdvectBMI_cpp_test()
 			compare_ptrs(ptrs);
 			// Transfer data from PhreeqcRM for transport
 			brm.GetValue("Concentrations", c);
-			brm.GetValue("Density", density);
+			brm.GetValue("DensityCalculated", density);
 			brm.GetValue("SolutionVolume", volume);
 			// Print results at last time step
 			if (print_chemistry_on != 0)
@@ -656,23 +656,23 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 		brm.SetConcentrations(bmi_conc);
 	}
 	compare_ptrs(ptrs);
-	// GetValue("Density")
-	// GetDensity and GetValue("Density) always return 
+	// GetValue("DensityCalculated")
+	// GetDensityCalculated and GetValue("Density) always return 
 	// the calculated solution density
 	{
-		double* density_ptr = (double*)brm.GetValuePtr("Density");
-		int dim = brm.GetVarNbytes("Density") / brm.GetVarItemsize("Density");
-		std::vector<double> rm_density;
-		brm.GetDensity(rm_density);
-		std::vector<double> bmi_density;
-		brm.GetValue("Density", bmi_density);
+		double* density_calculated_ptr = (double*)brm.GetValuePtr("DensityCalculated");
+		int dim = brm.GetVarNbytes("DensityCalculated") / brm.GetVarItemsize("DensityCalculated");
+		std::vector<double> rm_density_calculated;
+		brm.GetDensityCalculated(rm_density_calculated);
+		std::vector<double> bmi_density_calculated;
+		brm.GetValue("DensityCalculated", bmi_density_calculated);
 		assert(bmi_density == rm_density);
 		for (int i = 0; i < dim; i++)
 		{
-			assert(density_ptr[i] == rm_density[i]);
-			rm_density[i] *= 1.001;
+			assert(density_calculated_ptr[i] == rm_density_calculated[i]);
+			rm_density_calculated[i] *= 1.001;
 		}
-		brm.SetDensity(rm_density);
+		brm.SetDensityUser(rm_density_calculated);
 	}
 	compare_ptrs(ptrs);
 	// GetValue("ErrorString")
@@ -1009,7 +1009,7 @@ void compare_ptrs(struct Ptrs ptrs)
 	assert(*ptrs.GridCellCount_ptr == ptrs.brm->GetGridCellCount());
 	std::vector<double> density, saturation, SolutionVolume, 
 		Porosity, Pressure, Temperature, Viscosity;
-	ptrs.brm->GetDensity(density);
+	ptrs.brm->GetDensityCalculated(density);
 	ptrs.brm->GetSaturation(saturation);
 	SolutionVolume = ptrs.brm->GetSolutionVolume();
 	Porosity = ptrs.brm->GetPorosity();

@@ -474,7 +474,7 @@ that are used in converting to transport concentrations: (1) the volume and mass
 calculated by PHREEQC, or
 (2) the volume of solution is the product of saturation (@ref RM_SetSaturation),
 porosity (@ref RM_SetPorosity), and representative volume (@ref RM_SetRepresentativeVolume),
-and the mass of solution is volume times density as defined by @ref RM_SetDensity.
+and the mass of solution is volume times density as defined by @ref RM_SetDensityUser.
 @ref RM_UseSolutionDensityVolume determines which option is used.
 For option 1, the databases that have partial molar volume definitions needed
 to accurately calculate solution volume are
@@ -491,7 +491,7 @@ Values for inactive cells are set to 1e30.
 @ref RM_GetComponentCount, 
 @ref RM_GetSaturation,
 @ref RM_SetConcentrations, 
-@ref RM_SetDensity, 
+@ref RM_SetDensityUser, 
 @ref RM_SetRepresentativeVolume, 
 @ref RM_SetSaturation,
 @ref RM_SetUnitsSolution, 
@@ -551,7 +551,7 @@ IRM_DLL_EXPORT int RM_GetCurrentSelectedOutputUserNumber(int id);
 /**
 Transfer solution densities from the reaction cells to the array given in the argument list (@a density).
 Densities are those calculated by the reaction module. This method always 
-returns the calculated densities; @ref RM_SetDensity does not affect the result.
+returns the calculated densities; @ref RM_SetDensityUser does not affect the result.
 Only the following databases distributed with PhreeqcRM have molar volume information needed to accurately calculate density:
 phreeqc.dat, Amm.dat, and pitzer.dat.
 
@@ -566,14 +566,14 @@ where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount). Value
 <PRE>
 density = (double *) malloc((size_t) (nxyz * sizeof(double)));
 status = RM_RunCells(id);
-status = RM_GetDensity(id, density);
+status = RM_GetDensityCalculated(id, density);
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
-IRM_DLL_EXPORT IRM_RESULT RM_GetDensity(int id, double *density);
+IRM_DLL_EXPORT IRM_RESULT RM_GetDensityCalculated(int id, double *density);
 
 
 /**
@@ -2385,7 +2385,7 @@ ScreenMessage(std::string str);
 SetComponentH2O(bool tf);
 SetConcentrations(std::vector< double > c);
 SetCurrentSelectedOutputUserNumber(int n_user);
-SetDensity(std::vector< double > density);
+SetDensityUser(std::vector< double > density);
 SetDumpFileName(std::string dump_name);
 SetErrorHandlerMode(int mode);
 SetErrorOn(bool tf);
@@ -2878,7 +2878,7 @@ status = RM_SetConcentrations(id, c);          // Transported concentrations
 status = RM_SetTimeStep(id, time_step);        // Time step for kinetic reactions
 status = RM_RunCells(id);
 status = RM_GetConcentrations(id, c);          // Concentrations after reaction
-status = RM_GetDensity(id, density);           // Density after reaction
+status = RM_GetDensityCalculated(id, density);           // Density after reaction
 status = RM_GetSolutionVolume(id, volume);     // Solution volume after reaction
 </PRE>
 </CODE>
@@ -3004,7 +3004,7 @@ The volume of water in a cell is the product of porosity (@ref RM_SetPorosity), 
 and reference volume (@ref RM_SetRepresentativeVolume).
 The moles of each component are determined by the volume of water and per liter concentrations.
 If concentration units (@ref RM_SetUnitsSolution) are mass fraction, the
-density (as specified by @ref RM_SetDensity) is used to convert from mass fraction to per mass per liter.
+density (as specified by @ref RM_SetDensityUser) is used to convert from mass fraction to per mass per liter.
 
 @param id               The instance @a id returned from @ref RM_Create.
 @param c                Array of component concentrations. Size of array is equivalent to
@@ -3013,7 +3013,7 @@ of grid cells in the user's model (@ref RM_GetGridCellCount), and @a ncomps is t
 by @ref RM_FindComponents or @ref RM_GetComponentCount.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see                    
-@ref RM_SetDensity, 
+@ref RM_SetDensityUser, 
 @ref RM_SetPorosity, 
 @ref RM_SetRepresentativeVolume,
 @ref RM_SetSaturation, 
@@ -3035,7 +3035,7 @@ status = RM_SetTimeStep(id, time_step);        // Time step for kinetic reaction
 status = RM_SetTime(id, time);                 // Current time
 status = RM_RunCells(id);
 status = RM_GetConcentrations(id, c);          // Concentrations after reaction
-status = RM_GetDensity(id, density);           // Density after reaction
+status = RM_GetDensityCalculated(id, density);           // Density after reaction
 status = RM_GetSolutionVolume(id, volume);     // Solution volume after reaction
 </PRE>
 </CODE>
@@ -3109,14 +3109,14 @@ for (i = 0; i < nxyz; i++)
 {
 	density[i] = 1.0;
 }
-status = RM_SetDensity(id, density);
+status = RM_SetDensityUser(id, density);
 </PRE>
 </CODE>
 @endhtmlonly
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
-IRM_DLL_EXPORT IRM_RESULT RM_SetDensity(int id, double *density);
+IRM_DLL_EXPORT IRM_RESULT RM_SetDensityUser(int id, double *density);
 /**
 Set the name of the dump file. It is the name used by @ref RM_DumpModule.
 @param id               The instance @a id returned from @ref RM_Create.
@@ -3751,7 +3751,7 @@ The volume of water in a cell is the product of porosity (@ref RM_SetPorosity), 
 and representative volume (@ref RM_SetRepresentativeVolume). As a result of a reaction calculation,
 solution properties (density and volume) will change;
 the databases phreeqc.dat, Amm.dat, and pitzer.dat have the molar volume data to calculate these changes.
-The methods @ref RM_GetDensity, @ref RM_GetSolutionVolume, and @ref RM_GetSaturation
+The methods @ref RM_GetDensityCalculated, @ref RM_GetSolutionVolume, and @ref RM_GetSaturation
 can be used to account for these changes in the succeeding transport calculation.
 @a RM_SetRepresentativeVolume should be called before initial conditions are defined for the reaction cells.
 
@@ -3760,7 +3760,7 @@ can be used to account for these changes in the succeeding transport calculation
 of grid cells in the user's model (@ref RM_GetGridCellCount).
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see                    
-@ref RM_GetDensity, 
+@ref RM_GetDensityCalculated, 
 @ref RM_GetSaturation, 
 @ref RM_GetSolutionVolume,
 @ref RM_SetPorosity, 
@@ -4149,7 +4149,7 @@ of element in the representative volume of a reaction cell, mol/L is
 multiplied by the solution volume.
 To convert from mass fraction to moles
 of element in the representative volume of a reaction cell, kg/kgs is converted to mol/kgs, multiplied by density
-(@ref RM_SetDensity) and
+(@ref RM_SetDensityUser) and
 multiplied by the solution volume.
 
 To convert from moles
@@ -4165,14 +4165,14 @@ Two options are available for the volume and mass of solution
 that are used in converting to transport concentrations: (1) the volume and mass of solution are
 calculated by PHREEQC, or (2) the volume of solution is the product of porosity (@ref RM_SetPorosity),
 saturation (@ref RM_SetSaturation), and representative volume (@ref RM_SetRepresentativeVolume),
-and the mass of solution is volume times density as defined by @ref RM_SetDensity.
+and the mass of solution is volume times density as defined by @ref RM_SetDensityUser.
 Which option is used is determined by @ref RM_UseSolutionDensityVolume.
 
 @param id               The instance @a id returned from @ref RM_Create.
 @param option           Units option for solutions: 1, 2, or 3, default is 1, mg/L.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see                    
-@ref RM_SetDensity, 
+@ref RM_SetDensityUser, 
 @ref RM_SetPorosity, 
 @ref RM_SetRepresentativeVolume, 
 @ref RM_SetSaturation,
@@ -4404,7 +4404,7 @@ Determines the volume and density to use when converting from the reaction-modul
 to transport concentrations (@ref RM_GetConcentrations).
 Two options are available to convert concentration units:
 (1) the density and solution volume calculated by PHREEQC are used, or
-(2) the specified density (@ref RM_SetDensity)
+(2) the specified density (@ref RM_SetDensityUser)
 and solution volume are defined by the product of
 saturation (@ref RM_SetSaturation), porosity (@ref RM_SetPorosity),
 and representative volume (@ref RM_SetRepresentativeVolume).
@@ -4419,12 +4419,12 @@ Density is only used when converting to transport units of mass fraction.
 @param id               The instance @a id returned from @ref RM_Create.
 @param tf               @a True indicates that the solution density and volume as
 calculated by PHREEQC will be used to calculate concentrations.
-@a False indicates that the solution density set by @ref RM_SetDensity and the volume determined by the
+@a False indicates that the solution density set by @ref RM_SetDensityUser and the volume determined by the
 product of  @ref RM_SetSaturation, @ref RM_SetPorosity, and @ref RM_SetRepresentativeVolume,
 will be used to calculate concentrations retrieved by @ref RM_GetConcentrations.
 @see                    
 @ref RM_GetConcentrations, 
-@ref RM_SetDensity,
+@ref RM_SetDensityUser,
 @ref RM_SetPorosity, 
 @ref RM_SetRepresentativeVolume, 
 @ref RM_SetSaturation.

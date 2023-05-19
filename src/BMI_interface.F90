@@ -238,7 +238,7 @@
     !> @n SetComponentH2O(bool tf);
     !> @n SetConcentrations(std::vector< double > c);
     !> @n SetCurrentSelectedOutputUserNumber(int n_user);
-    !> @n SetDensity(std::vector< double > density);
+    !> @n SetDensityUser(std::vector< double > density);
     !> @n SetDumpFileName(std::string dump_name);
     !> @n SetErrorHandlerMode(int mode);
     !> @n SetErrorOn(bool tf);
@@ -338,7 +338,7 @@
     !> status = bmif_set_value(id, "TimeStep", time_step)          ! Time step for kinetic reactions
     !> status = bmif_update(id)
     !> status = bmif_get_value(id, "Concentrations", c)            ! Concentrations after reaction
-    !> status = bmif_get_value(id, "Density", density)             ! Density after reaction
+    !> status = bmif_get_value(id, "DensityCalculated", density)   ! Density after reaction
     !> status = bmif_get_value(id, "SolutionVolume", volume)       ! Solution volume after reaction
     !> </PRE>
     !> </CODE>
@@ -1236,7 +1236,7 @@
     !> @n "Components", @a dest: character(len=:), allocatable, dimension(:);
     !> @n "Concentrations", @a dest: real(kind=8), allocatable, dimension(:,:);
     !> @n "CurrentSelectedOutputUserNumber", @a dest: integer;
-    !> @n "Density", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "DensityCalculated", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "ErrorString", @a dest: character;
     !> @n "FilePrefix", @a dest: character;
     !> @n "Gfw", @a dest: real(kind=8), allocatable, dimension(:);
@@ -1272,7 +1272,7 @@
     !> <PRE>
     !> real(kind=8), allocatable, dimension(:) :: bmi_density
     !> character(len=:), allocatable, dimension(:) :: bmi_comps
-    !> status = bmif_get_value(id, "Density", bmi_density)
+    !> status = bmif_get_value(id, "DensityCalculated", bmi_density)
     !> status = bmif_get_value(id, "Components", bmi_comps)
     !> </PRE>
     !> </CODE>
@@ -1785,7 +1785,7 @@
     !> Variable names for the second argument (@a var)
     !> and required variable type for the third argument (@a src):
     !> @n "Concentrations", real(kind=8), allocatable, dimension(:,:);
-    !> @n "Density", real(kind=8), allocatable, dimension(:);
+    !> @n "DensityUser", real(kind=8), allocatable, dimension(:);
     !> @n "FilePrefix", character;
     !> @n "NthSelectedOutput", integer;
     !> @n "Porosity", real(kind=8), allocatable, dimension(:);

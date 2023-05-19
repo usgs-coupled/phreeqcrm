@@ -338,14 +338,14 @@ IRM_RESULT YAMLSetCurrentSelectedOutputUserNumber_F(int* id, int* n_user)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetDensity_F(int* id, double* density, int* dim)
+IRM_RESULT YAMLSetDensityUser_F(int* id, double* density, int* dim)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
 		std::vector<double> density_v(*dim, 0.0);
 		memcpy(density_v.data(), density, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetDensity(density_v);
+		yrm_ptr->YAMLSetDensityUser(density_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;

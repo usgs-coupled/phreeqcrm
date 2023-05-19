@@ -375,14 +375,14 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = bmif_set_value(id, "Concentrations", DoubleVector)
 	write(*,*) "SetConcentrations "
 	!-------
-	status = bmif_get_value(id, "Density", DoubleVector)
-	status = RM_GetDensity(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "Density", d_ptr)
-	write(*,*) "GetDensity "
+	status = bmif_get_value(id, "DensityCalculated", DoubleVector)
+	status = RM_GetDensityCalculated(id, DoubleVector)
+	status = bmif_get_value_ptr(id, "DensityCalculated", d_ptr)
+	write(*,*) "GetDensityCalculated "
 	!-------
-	status = RM_SetDensity(id, DoubleVector)
-	status = bmif_set_value(id, "Density", DoubleVector)
-	write(*,*) "SetDensity "
+	status = RM_SetDensityUser(id, DoubleVector)
+	status = bmif_set_value(id, "DensityUser", DoubleVector)
+	write(*,*) "SetDensityUser "
 	!-------
     deallocate(DoubleVector2)
     allocate(DoubleVector2(nxyz, ngas))

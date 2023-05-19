@@ -44,7 +44,7 @@ IRM_DLL_EXPORT IRM_RESULT YAMLScreenMessage_F(int* id, const char* str);
 IRM_DLL_EXPORT IRM_RESULT YAMLSetComponentH2O_F(int* id, int* tf);
 IRM_DLL_EXPORT IRM_RESULT YAMLSetConcentrations_F(int* id, double* c, int* dim);
 IRM_DLL_EXPORT IRM_RESULT YAMLSetCurrentSelectedOutputUserNumber_F(int* id, int* n_user);
-IRM_DLL_EXPORT IRM_RESULT YAMLSetDensity_F(int* id, double* density, int* dim);
+IRM_DLL_EXPORT IRM_RESULT YAMLSetDensityUser_F(int* id, double* density, int* dim);
 IRM_DLL_EXPORT IRM_RESULT YAMLSetDumpFileName_F(int* id, const char* dump_name);
 IRM_DLL_EXPORT IRM_RESULT YAMLSetErrorHandlerMode_F(int* id, int* mode);
 IRM_DLL_EXPORT IRM_RESULT YAMLSetErrorOn_F(int* id, int* tf);

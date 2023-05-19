@@ -639,7 +639,7 @@ int RM_GetCurrentSelectedOutputUserNumber(int id)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_GetDensity(int id, double * d)
+RM_GetDensityCalculated(int id, double * d)
 /* ---------------------------------------------------------------------- */
 {
 	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
@@ -649,7 +649,7 @@ RM_GetDensity(int id, double * d)
 		{
 			IRM_RESULT return_value = IRM_OK;
 			std::vector <double> density_vector;
-			Reaction_module_ptr->GetDensity(density_vector);
+			Reaction_module_ptr->GetDensityCalculated(density_vector);
 			if ((int) density_vector.size() == Reaction_module_ptr->GetGridCellCount())
 			{
 				memcpy(d, &density_vector.front(), (size_t) (Reaction_module_ptr->GetGridCellCount()*sizeof(double)));
@@ -1657,7 +1657,7 @@ RM_SetCurrentSelectedOutputUserNumber(int id, int i)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_SetDensity(int id, double *t)
+RM_SetDensityUser(int id, double *t)
 /* ---------------------------------------------------------------------- */
 {
 	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
@@ -1668,7 +1668,7 @@ RM_SetDensity(int id, double *t)
 			std::vector<double> d_vector;
 			d_vector.resize(Reaction_module_ptr->GetGridCellCount());
 			memcpy(&d_vector.front(), t, d_vector.size() * sizeof(double));
-			return Reaction_module_ptr->SetDensity(d_vector);
+			return Reaction_module_ptr->SetDensityUser(d_vector);
 		}
 		return IRM_INVALIDARG;
 	}

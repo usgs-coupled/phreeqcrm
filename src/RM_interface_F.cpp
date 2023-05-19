@@ -737,7 +737,7 @@ RMF_SetIthSpeciesConcentration(int* id, int* i, double* c)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_GetDensity(int *id, double * d)
+RMF_GetDensityCalculated(int *id, double * d)
 /* ---------------------------------------------------------------------- */
 {
 	// Retrieves density for all grid nodes in d
@@ -747,7 +747,7 @@ RMF_GetDensity(int *id, double * d)
 	{
 		IRM_RESULT return_value = IRM_OK;
 		std::vector <double> density_vector;
-		Reaction_module_ptr->GetDensity(density_vector);
+		Reaction_module_ptr->GetDensityCalculated(density_vector);
 		if ((int) density_vector.size() == Reaction_module_ptr->GetGridCellCount())
 		{
 			memcpy(d, &density_vector.front(), (size_t) (Reaction_module_ptr->GetGridCellCount()*sizeof(double)));
@@ -2096,7 +2096,7 @@ RMF_SetCurrentSelectedOutputUserNumber(int * id, int * i)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_SetDensity(int *id, double *t)
+RMF_SetDensityUser(int *id, double *t)
 /* ---------------------------------------------------------------------- */
 {
 	// Sets the density that may be used to convert concentrations from
@@ -2108,7 +2108,7 @@ RMF_SetDensity(int *id, double *t)
 			std::vector<double> d_vector;
 			d_vector.resize(Reaction_module_ptr->GetGridCellCount());
 			memcpy(&d_vector.front(), t, d_vector.size() * sizeof(double));
-			return Reaction_module_ptr->SetDensity(d_vector);
+			return Reaction_module_ptr->SetDensityUser(d_vector);
 	}
 	return IRM_BADINSTANCE;
 }

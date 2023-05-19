@@ -58,7 +58,7 @@
     integer                                         :: dim
 	real(kind=8), dimension(:), allocatable         :: CaX2, KX, NaX, pH_vector
     common /i_ptrs/ id, ComponentCount_ptr, GridCellCount_ptr, SelectedOutputOn_ptr
-    common /r_ptrs/ Concentrations_ptr, Density_ptr, Gfw_ptr, &
+    common /r_ptrs/ Concentrations_ptr, Density_calculated_ptr, Gfw_ptr, &
 	    Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
         Porosity_ptr, Pressure_ptr, Temperature_ptr
     integer :: id
@@ -66,7 +66,7 @@
 	integer, pointer :: GridCellCount_ptr
 	logical, pointer :: SelectedOutputOn_ptr
 	real(kind=8), pointer :: Concentrations_ptr(:)
-	real(kind=8), pointer :: Density_ptr(:)
+	real(kind=8), pointer :: Density_calculated_ptr(:)
 	real(kind=8), pointer :: Gfw_ptr(:)
 	real(kind=8), pointer :: Saturation_ptr(:)
 	real(kind=8), pointer :: SolutionVolume_ptr(:)
@@ -112,7 +112,7 @@
 	status = bmif_get_value_ptr(id, "GridCellCount", GridCellCount_ptr)
 	status = bmif_get_value_ptr(id, "SelectedOutputOn", SelectedOutputOn_ptr)
 	status = bmif_get_value_ptr(id, "Concentrations", Concentrations_ptr)
-	status = bmif_get_value_ptr(id, "Density", Density_ptr)
+	status = bmif_get_value_ptr(id, "DensityCalculated", Density_calculated_ptr)
 	status = bmif_get_value_ptr(id, "Gfw", Gfw_ptr)
 	status = bmif_get_value_ptr(id, "Saturation", Saturation_ptr)
 	status = bmif_get_value_ptr(id, "SolutionVolume", SolutionVolume_ptr)
@@ -157,7 +157,7 @@
     ! Set density, pressure, and temperature (previously allocated)
     allocate(density(nxyz))
     density = 1.0
-    status = bmif_set_value(id, "Density", density)
+    status = bmif_set_value(id, "DensityUser", density)
     allocate(pressure(nxyz))
     pressure = 2.0
     status = bmif_set_value(id, "Pressure", pressure)  
@@ -228,7 +228,7 @@
         call compare_ptrs
         ! Get new data calculated by PhreeqcRM for transport
         status = bmif_get_value(id, "Concentrations", c)
-        status = bmif_get_value(id, "Density", density)
+        status = bmif_get_value(id, "DensityCalculated", density)
         status = bmif_get_value(id, "SolutionVolume", volume)   
        ! Print results at last time step
         if (isteps == nsteps) then
@@ -263,8 +263,8 @@
                 ! Print results
                 do i = rows/2, rows/2
                     write(*,*) "Cell number ", i
-                    write(*,*) "     Density: ", density(i)
-                    write(*,*) "     Volume:  ", volume(i)
+                    write(*,*) "     Calculated Density: ", density(i)
+                    write(*,*) "     Volume:             ", volume(i)
                     write(*,*) "     Components: "
                     do j = 1, ncomps
                         write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ",trim(components(j)), ": ", c(i,j)

@@ -54,7 +54,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetIthSpeciesConcentration(int* id, int* i, double
 IRM_DLL_EXPORT IRM_RESULT RMF_SetIthConcentration(int* id, int* i, double* c);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetIthSpeciesConcentration(int* id, int* i, double* c);
 
-IRM_DLL_EXPORT IRM_RESULT RMF_GetDensity(int *id, double *density);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetDensityCalculated(int *id, double *density);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetEndCell(int *id, int *ec);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetErrorString(int *id, char *prefix, int *l);
 IRM_DLL_EXPORT int        RMF_GetErrorStringLength(int *id);
@@ -153,7 +153,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_ScreenMessage(int *id, const char *str);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetComponentH2O(int *id, int *tf);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetConcentrations(int *id, double *t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetCurrentSelectedOutputUserNumber(int *id, int *i);
-IRM_DLL_EXPORT IRM_RESULT RMF_SetDensity(int *id, double *t);
+IRM_DLL_EXPORT IRM_RESULT RMF_SetDensityUser(int *id, double *t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetDumpFileName(int *id, const char *dump_name);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetErrorHandlerMode(int *id, int *mode);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetErrorOn(int* id, int* t);

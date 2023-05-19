@@ -292,7 +292,7 @@ void Species_c()
 		pressure[i] = 2.0;
 		temperature[i] = 20.0;
 	}
-	status = RM_SetDensity(id, density);
+	status = RM_SetDensityUser(id, density);
 	status = RM_SetPressure(id, pressure);
 	status = RM_SetTemperature(id, temperature);
 	time_step = 86400;
@@ -339,7 +339,7 @@ void Species_c()
 		status = RM_GetSpeciesConcentrations(id, species_c);
 		status = RM_GetSpeciesLog10Gammas(id, species_log10gammas);
 		status = RM_GetSpeciesLog10Molalities(id, species_log10molalities);
-		status = RM_GetDensity(id, density);
+		status = RM_GetDensityCalculated(id, density);
 		status = RM_GetSolutionVolume(id, volume);
 		// Print results at last time step
 		if (isteps == nsteps - 1)

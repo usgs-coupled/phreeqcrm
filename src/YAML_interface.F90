@@ -1197,7 +1197,7 @@ MODULE YAMLPhreeqcRM
 !> The only way to use this method is to have pre-calculated PHREEQC solution concentrations,
 !> which is not common. Concentrations are normally initialized
 !> with @ref YAMLInitialPhreeqc2Module or @ref YAMLInitialPhreeqcCell2Module.
-!> @see                    @ref YAMLSetDensity, @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume,
+!> @see                    @ref YAMLSetDensityUser, @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume,
 !> @ref YAMLSetSaturation, @ref YAMLSetUnitsSolution.
 !> @par C++ Example:
 !> @htmlonly
@@ -1265,7 +1265,7 @@ MODULE YAMLPhreeqcRM
     integer, intent(in) :: n_user
 	YAMLSetCurrentSelectedOutputUserNumber = YAMLSetCurrentSelectedOutputUserNumber_F(id, n_user)
     END FUNCTION YAMLSetCurrentSelectedOutputUserNumber    
-!> Inserts data into the YAML document for the PhreeqcRM method SetDensity.
+!> Inserts data into the YAML document for the PhreeqcRM method SetDensityUser.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> 
@@ -1274,7 +1274,7 @@ MODULE YAMLPhreeqcRM
 !> of grid cells in the user's model.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
 !> @par
-!> SetDensity sets the density for each reaction cell. These density values are used
+!> SetDensityUser sets the density for each reaction cell. These density values are used
 !> when converting from transported mass-fraction concentrations (@ref YAMLSetUnitsSolution) to
 !> produce per liter concentrations during a call to SetConcentrations.
 !> They are also used when converting from reaction-cell concentrations to transport concentrations,
@@ -1289,27 +1289,27 @@ MODULE YAMLPhreeqcRM
 !> real(kind=8), allocatable, dimension(:)   :: density
 !> allocate(density(nxyz))
 !> por = 1.0d0
-!> status = YAMLSetDensity(id, por)
+!> status = YAMLSetDensityUser(id, por)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly    
-    INTEGER FUNCTION YAMLSetDensity(id, density)
+    INTEGER FUNCTION YAMLSetDensityUser(id, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetDensity_F(id, density, dim) &
-			BIND(C, NAME='YAMLSetDensity_F')
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetDensityUser_F(id, density, dim) &
+			BIND(C, NAME='YAMLSetDensityUser_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
         real(kind=C_DOUBLE), intent(in) :: density
         integer(kind=C_INT), intent(in) :: dim
-		END FUNCTION YAMLSetDensity_F
+		END FUNCTION YAMLSetDensityUser_F
     END INTERFACE
     integer, intent(in) :: id
     real(kind=8), allocatable, dimension(:), intent(in) :: density
-	YAMLSetDensity = YAMLSetDensity_F(id, density(1), size(density))
-    END FUNCTION YAMLSetDensity
+	YAMLSetDensityUser = YAMLSetDensityUser_F(id, density(1), size(density))
+    END FUNCTION YAMLSetDensityUser
 !> Inserts data into the YAML document for the PhreeqcRM method SetDumpFileName.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
@@ -2029,7 +2029,7 @@ MODULE YAMLPhreeqcRM
 !> and representative volume (SetRepresentativeVolume). As a result of a reaction calculation,
 !> solution properties (density and volume) will change;
 !> the databases phreeqc.dat, Amm.dat, and pitzer.dat have the molar 
-!> volume data to calculate these changes. The methods GetDensity,
+!> volume data to calculate these changes. The methods GetDensityCalculated,
 !> GetSolutionVolume, and GetSaturation can be used to account
 !> for these changes in the succeeding transport calculation.
 !> 
@@ -2586,7 +2586,7 @@ MODULE YAMLPhreeqcRM
 !> multiplied by the solution volume.
 !> To convert from mass fraction to moles
 !> of element in the representative volume of a reaction cell, kg/kgs is converted to mol/kgs, multiplied by density
-!> (SetDensity) and
+!> (SetDensityUser) and
 !> multiplied by the solution volume.
 !> @par
 !> To convert from moles
@@ -2602,10 +2602,10 @@ MODULE YAMLPhreeqcRM
 !> that are used in converting to transport concentrations: (1) the volume and mass of solution are
 !> calculated by PHREEQC, or (2) the volume of solution is the product of porosity (SetPorosity),
 !> saturation (SetSaturation), and representative volume (SetRepresentativeVolume),
-!> and the mass of solution is volume times density as defined by SetDensity.
+!> and the mass of solution is volume times density as defined by SetDensityUser.
 !> Which option is used is determined by UseSolutionDensityVolume.
 !> 
-!> @see                    @ref YAMLSetDensity, @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume,
+!> @see                    @ref YAMLSetDensityUser, @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume,
 !> @ref YAMLSetSaturation,
 !> @ref YAMLUseSolutionDensityVolume.
 !> 
@@ -2953,7 +2953,7 @@ MODULE YAMLPhreeqcRM
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param tf          @a True indicates that the solution density and volume as
 !> calculated by PHREEQC will be used to calculate concentrations.
-!> @a False indicates that the solution density set by SetDensity and the volume determined by the
+!> @a False indicates that the solution density set by SetDensityUser and the volume determined by the
 !> product of  SetSaturation, SetPorosity, and SetRepresentativeVolume,
 !> will be used to calculate concentrations retrieved by GetConcentrations.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -2963,7 +2963,7 @@ MODULE YAMLPhreeqcRM
 !> to transport concentrations (GetConcentrations).
 !> Two options are available to convert concentration units:
 !> (1) the density and solution volume calculated by PHREEQC are used, or
-!> (2) the specified density (SetDensity)
+!> (2) the specified density (SetDensityUser)
 !> and solution volume are determined by the product of
 !> saturation (SetSaturation), porosity (SetPorosity),
 !> and representative volume (SetRepresentativeVolume).
@@ -2975,7 +2975,7 @@ MODULE YAMLPhreeqcRM
 !> needed to accurately calculate density and solution volume: phreeqc.dat, Amm.dat, and pitzer.dat.
 !> Density is only used when converting to or from transport units of mass fraction.
 !> 
-!> @see                    @ref YAMLSetDensity,
+!> @see                    @ref YAMLSetDensityUser,
 !> @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturation.
 !> @par Fortran Example:
 !> @htmlonly

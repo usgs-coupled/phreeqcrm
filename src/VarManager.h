@@ -74,7 +74,8 @@ public:
 	void ComponentCount_Var();
 	void Components_Var();
 	void Concentrations_Var();
-	void Density_Var();
+	void DensityCalculated_Var();
+	void DensityUser_Var();
 	void ErrorString_Var();
 	void FilePrefix_Var();
 	void Gfw_Var();

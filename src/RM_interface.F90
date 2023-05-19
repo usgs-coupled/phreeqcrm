@@ -24,7 +24,7 @@
     PRIVATE :: ChK_Concentrations2Utility
     PRIVATE :: Chk_CreateMapping
     PRIVATE :: Chk_GetConcentrations
-    PRIVATE :: Chk_GetDensity
+    PRIVATE :: Chk_GetDensityCalculated
     PRIVATE :: Chk_GetEndCell
     PRIVATE :: Chk_GetGasCompMoles
     PRIVATE :: Chk_GetGasCompPressures
@@ -51,7 +51,7 @@
     PRIVATE :: Chk_InitialPhreeqcCell2Module
     PRIVATE :: Chk_InitialPhreeqc2SpeciesConcentrations
     PRIVATE :: Chk_SetConcentrations
-    PRIVATE :: Chk_SetDensity
+    PRIVATE :: Chk_SetDensityUser
     PRIVATE :: Chk_SetPrintChemistryMask
     PRIVATE :: Chk_SetSaturation
     PRIVATE :: Chk_SetTemperature
@@ -858,7 +858,7 @@
     !> calculated by PHREEQC, or
     !> (2) the volume of solution is the product of saturation (@ref RM_SetSaturation),
     !> porosity (@ref RM_SetPorosity), and representative volume (@ref RM_SetRepresentativeVolume),
-    !> and the mass of solution is volume times density as defined by @ref RM_SetDensity.
+    !> and the mass of solution is volume times density as defined by @ref RM_SetDensityUser.
     !> @ref RM_UseSolutionDensityVolume determines which option is used.
     !> For option 1, the databases that have partial molar volume definitions needed
     !> to accurately calculate solution volume are
@@ -875,7 +875,7 @@
     !> @ref RM_GetComponentCount,
     !> @ref RM_GetSaturation,
     !> @ref RM_SetConcentrations,
-    !> @ref RM_SetDensity,
+    !> @ref RM_SetDensityUser,
     !> @ref RM_SetRepresentativeVolume,
     !> @ref RM_SetSaturation,
     !> @ref RM_SetUnitsSolution,
@@ -982,7 +982,7 @@
     END FUNCTION RM_GetCurrentSelectedOutputUserNumber
     !> Transfer solution densities from the reaction cells to the array given in the argument list (@a density).
     !> Densities are those calculated by the reaction module. This method always 
-    !> returns the calculated densities; @ref RM_SetDensity does not affect the result.
+    !> returns the calculated densities; @ref RM_SetDensityUser does not affect the result.
     !> Only the following databases distributed with PhreeqcRM have molar volume information needed to accurately calculate density:
     !> phreeqc.dat, Amm.dat, and pitzer.dat.
     !>
@@ -997,43 +997,43 @@
     !> <PRE>
     !> allocate(density(nxyz))
     !> status = RM_RunCells(id)
-    !> status = RM_GetDensity(id, density)
+    !> status = RM_GetDensityCalculated(id, density)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-    INTEGER FUNCTION RM_GetDensity(id, density)
+    INTEGER FUNCTION RM_GetDensityCalculated(id, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_GetDensity(id, density) &
-        BIND(C, NAME='RMF_GetDensity')
+    INTEGER(KIND=C_INT) FUNCTION RMF_GetDensityCalculated(id, density) &
+        BIND(C, NAME='RMF_GetDensityCalculated')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     REAL(KIND=C_DOUBLE), INTENT(out) :: density(*)
-    END FUNCTION RMF_GetDensity
+    END FUNCTION RMF_GetDensityCalculated
     END INTERFACE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(out), dimension(:) :: density
-    if (rmf_debug) call Chk_GetDensity(id, density)
-    RM_GetDensity = RMF_GetDensity(id, density)
+    if (rmf_debug) call Chk_GetDensityCalculated(id, density)
+    RM_GetDensityCalculated = RMF_GetDensityCalculated(id, density)
     return
-    END FUNCTION RM_GetDensity
+    END FUNCTION RM_GetDensityCalculated
 
-    SUBROUTINE Chk_GetDensity(id, density)
+    SUBROUTINE Chk_GetDensityCalculated(id, density)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(in), DIMENSION(:) :: density
     INTEGER :: errors
     errors = 0
-    errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_GetDensity")
+    errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_GetDensityCalculated")
     if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetDensity")
+        errors = RM_Abort(id, -3, "Invalid argument in RM_GetDensityCalculated")
     endif
-    END SUBROUTINE Chk_GetDensity
+    END SUBROUTINE Chk_GetDensityCalculated
 
     !> Returns an array with the ending cell numbers from the range of cell numbers assigned to each worker.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -3001,7 +3001,7 @@
     END INTERFACE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(out), DIMENSION(:) :: vol
-    if (rmf_debug) call Chk_GetDensity(id, vol)
+    if (rmf_debug) call Chk_GetDensityCalculated(id, vol)
     RM_GetSolutionVolume = RMF_GetSolutionVolume(id, vol)
     END FUNCTION RM_GetSolutionVolume
 
@@ -4079,7 +4079,7 @@
     !> SetComponentH2O(bool tf);
     !> SetConcentrations(std::vector< double > c);
     !> SetCurrentSelectedOutputUserNumber(int n_user);
-    !> SetDensity(std::vector< double > density);
+    !> SetDensityUser(std::vector< double > density);
     !> SetDumpFileName(std::string dump_name);
     !> SetErrorHandlerMode(int mode);
     !> SetErrorOn(bool tf);
@@ -5154,7 +5154,7 @@
     !> status = RM_SetTimeStep(id, time_step)          ! Time step for kinetic reactions
     !> status = RM_RunCells(id)
     !> status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
-    !> status = RM_GetDensity(id, density)             ! Density after reaction
+    !> status = RM_GetDensityCalculated(id, density)             ! Density after reaction
     !> status = RM_GetSolutionVolume(id, volume)       ! Solution volume after reaction
     !> </PRE>
     !> </CODE>
@@ -5357,7 +5357,7 @@
     !> and reference volume (@ref RM_SetRepresentativeVolume).
     !> The moles of each component are determined by the volume of water and per liter concentrations.
     !> If concentration units (@ref RM_SetUnitsSolution) are mass fraction, the
-    !> density (as specified by @ref RM_SetDensity) is used to convert from mass fraction to per mass per liter.
+    !> density (as specified by @ref RM_SetDensityUser) is used to convert from mass fraction to per mass per liter.
     !>
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param c                Array of component concentrations. Size of array is (@a nxyz, @a ncomps), where @a nxyz is the number
@@ -5365,7 +5365,7 @@
     !> by @ref RM_FindComponents or @ref RM_GetComponentCount.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_SetDensity,
+    !> @ref RM_SetDensityUser,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
     !> @ref RM_SetSaturation,
@@ -5387,7 +5387,7 @@
     !> status = RM_SetTime(id, time)                  ! Current time
     !> status = RM_RunCells(id)
     !> status = RM_GetConcentrations(id, c)           ! Concentrations after reaction
-    !> status = RM_GetDensity(id, density)            ! Density after reaction
+    !> status = RM_GetDensityCalculated(id, density)            ! Density after reaction
     !> status = RM_GetSolutionVolume(id, volume)      ! Solution volume after reaction
     !> </PRE>
     !> </CODE>
@@ -5528,42 +5528,42 @@
     !> <PRE>
     !> allocate(density(nxyz))
     !> density = 1.0
-    !> status = RM_SetDensity(id, density)
+    !> status = RM_SetDensityUser(id, density)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-    INTEGER FUNCTION RM_SetDensity(id, density)
+    INTEGER FUNCTION RM_SetDensityUser(id, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_SetDensity(id, density) &
-        BIND(C, NAME='RMF_SetDensity')
+    INTEGER(KIND=C_INT) FUNCTION RMF_SetDensityUser(id, density) &
+        BIND(C, NAME='RMF_SetDensityUser')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     REAL(KIND=C_DOUBLE), INTENT(in) :: density(*)
-    END FUNCTION RMF_SetDensity
+    END FUNCTION RMF_SetDensityUser
     END INTERFACE
     INTEGER, INTENT(in) :: id
     real(kind=8), DIMENSION(:), INTENT(in) :: density
-    if (rmf_debug) call Chk_SetDensity(id, density)
-    RM_SetDensity = RMF_SetDensity(id, density)
-    END FUNCTION RM_SetDensity
+    if (rmf_debug) call Chk_SetDensityUser(id, density)
+    RM_SetDensityUser = RMF_SetDensityUser(id, density)
+    END FUNCTION RM_SetDensityUser
 
-    SUBROUTINE Chk_SetDensity(id, density)
+    SUBROUTINE Chk_SetDensityUser(id, density)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(in), DIMENSION(:) :: density
     INTEGER :: errors
     errors = 0
-    errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_SetDensity")
+    errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_SetDensityUser")
     if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_SetDensity")
+        errors = RM_Abort(id, -3, "Invalid argument in RM_SetDensityUser")
     endif
-    END SUBROUTINE Chk_SetDensity
+    END SUBROUTINE Chk_SetDensityUser
 
     !> Set the name of the dump file. It is the name used by @ref RM_DumpModule.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -6529,7 +6529,7 @@
     !> and representative volume (@ref RM_SetRepresentativeVolume). As a result of a reaction calculation,
     !> solution properties (density and volume) will change;
     !> the databases phreeqc.dat, Amm.dat, and pitzer.dat have the molar volume data to calculate these changes.
-    !> The methods @ref RM_GetDensity, @ref RM_GetSolutionVolume, and @ref RM_GetSaturation
+    !> The methods @ref RM_GetDensityCalculated, @ref RM_GetSolutionVolume, and @ref RM_GetSaturation
     !> can be used to account for these changes in the succeeding transport calculation.
     !> @a RM_SetRepresentativeVolume should be called before initial conditions are defined for the reaction cells.
     !>
@@ -6538,7 +6538,7 @@
     !> of grid cells in the user's model (@ref RM_GetGridCellCount).
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_GetDensity,
+    !> @ref RM_GetDensityCalculated,
     !> @ref RM_GetSaturation,
     !> @ref RM_GetSolutionVolume,
     !> @ref RM_SetPorosity,
@@ -7129,7 +7129,7 @@
     !> multiplied by the solution volume.
     !> To convert from mass fraction to moles
     !> of element in the representative volume of a reaction cell, kg/kgs is converted to mol/kgs, multiplied by density
-    !> (@ref RM_SetDensity) and
+    !> (@ref RM_SetDensityUser) and
     !> multiplied by the solution volume.
     !>
     !> To convert from moles
@@ -7145,14 +7145,14 @@
     !> that are used in converting to transport concentrations: (1) the volume and mass of solution are
     !> calculated by PHREEQC, or (2) the volume of solution is the product of porosity (@ref RM_SetPorosity),
     !> saturation (@ref RM_SetSaturation), and representative volume (@ref RM_SetRepresentativeVolume),
-    !> and the mass of solution is volume times density as defined by @ref RM_SetDensity.
+    !> and the mass of solution is volume times density as defined by @ref RM_SetDensityUser.
     !> Which option is used is determined by @ref RM_UseSolutionDensityVolume.
     !>
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param option           Units option for solutions: 1, 2, or 3, default is 1, mg/L.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_SetDensity,
+    !> @ref RM_SetDensityUser,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
     !> @ref RM_SetSaturation,
@@ -7502,7 +7502,7 @@
     !> to transport concentrations (@ref RM_GetConcentrations).
     !> Two options are available to convert concentration units:
     !> (1) the density and solution volume calculated by PHREEQC are used, or
-    !> (2) the specified density (@ref RM_SetDensity)
+    !> (2) the specified density (@ref RM_SetDensityUser)
     !> and solution volume are defined by the product of
     !> saturation (@ref RM_SetSaturation), porosity (@ref RM_SetPorosity),
     !> and representative volume (@ref RM_SetRepresentativeVolume).
@@ -7517,12 +7517,12 @@
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param tf               @a True indicates that the solution density and volume as
     !> calculated by PHREEQC will be used to calculate concentrations.
-    !> @a False indicates that the solution density set by @ref RM_SetDensity and the volume determined by the
+    !> @a False indicates that the solution density set by @ref RM_SetDensityUser and the volume determined by the
     !> product of  @ref RM_SetSaturation, @ref RM_SetPorosity, and @ref RM_SetRepresentativeVolume,
     !> will be used to calculate concentrations retrieved by @ref RM_GetConcentrations.
     !> @see
     !> @ref RM_GetConcentrations,
-    !> @ref RM_SetDensity,
+    !> @ref RM_SetDensityUser,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
     !> @ref RM_SetSaturation.
