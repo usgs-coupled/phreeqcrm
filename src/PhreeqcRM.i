@@ -364,6 +364,19 @@ def SetPrintChemistryMask(self, cell_mask):
 		return self.SetPrintChemistryMaskSWIG(cell_maskv)
 	return self.SetPrintChemistryMaskSWIG(cell_mask)
 
+def GetVector(v):
+	if isinstance(v, np.ndarray) or isinstance(v, tuple) or isinstance(v, set) or isinstance(v, list):
+		vv = phreeqcrm.v()
+		for i in range(len(v)):
+			vv.push_back(v[i].item())
+		return vv
+	elif isinstance(v, IntVector):
+		return v
+	else:
+		print(f"What is it {type(v)}?")
+	return 
+	
+
 %} 
 }
 

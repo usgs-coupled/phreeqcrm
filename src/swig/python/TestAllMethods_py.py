@@ -29,9 +29,6 @@ def testallmethods_py():
 	#int *i_ptr = (int*)bmi.GetValuePtr("GridCellCount")  # pointer
 	print(f"GetValue('GridCellCount') {type(nxyz)}, {nxyz}")
 	#---------
-	nxyz = bmi.GetGridCellCount()
-	print(f"GetValue('GetGridCellCount') {type(nxyz)}, {nxyz}")
-	#---------
 	x=bmi.GetThreadCount()
 	print(f"GetThreadCount {type(x)}, {x}")
 	#---------
@@ -41,7 +38,7 @@ def testallmethods_py():
 		grid2chem[i] = i
 	x=bmi.CreateMapping(grid2chem)
 	print(f"CreateMapping {type(x)}, {x}")
-	#--------- LoadDatabase removes definitions in instance	
+	#--------- 
 	x=bmi.LoadDatabase("phreeqc.dat")
 	print(f"LoadDatabase {type(x)}, {x}")
 	#
@@ -156,12 +153,9 @@ def testallmethods_py():
 	print(f"GridCellCount {type(nchem)}, {nchem}")
 	#---------
 	ncomps=bmi.GetComponentCount()
-	print(f"GetComponentCount {type(ncomps)}, {ncomps}")
-	#---------
-	ncomps=bmi.GetValue("ComponentCount")
 	ncomps = bmi.GetValue("ComponentCount")
 	#i_ptr = (int*) bmi.GetValuePtr("ComponentCount")   # Pointer
-	print(f"bmi.GetValue('ComponentCount') {type(ncomps)}, {ncomps}")
+	print(f"GetComponentCount {type(ncomps)}, {ncomps}")
 	#---------
 	x=bmi.GetComponents()	
 	x = bmi.GetValue("Components")
@@ -332,8 +326,8 @@ def testallmethods_py():
 	#---------
 	x=bmi.GetTimeStep()
 	x= bmi.GetValue("TimeStep")
-	print(f"GetTimeStep {type(x)}, {x}")
 	#d_ptr = (double*)bmi.GetValuePtr("TimeStep")
+	print(f"GetTimeStep {type(x)}, {x}")
 	#---------
 	x=bmi.SetTimeStep(0.0)
 	bmi.SetValue("TimeStep", 0.0)
@@ -353,7 +347,6 @@ def testallmethods_py():
 	#d_ptr = (double*)bmi.GetValuePtr("Density")
 	print(f"GetDensity {type(d)}, {d[0]}") 
 	#---------
-	bmi.SetValue("Density",d)
 	x=bmi.SetDensity(d)
 	bmi.SetValue("Density",d)
 	print(f"SetDensity {type(x)}, {x}")
@@ -393,6 +386,7 @@ def testallmethods_py():
 	#---------
 	x=bmi.GetPressure()
 	x = bmi.GetValue("Pressure")
+	#d_ptr = (double*)bmi.GetValuePtr("Pressure");
 	print(f"GetPressure {type(x)}, {x[0]}")
 	#---------
 	bmi.SetValue("Pressure", x)
@@ -401,6 +395,7 @@ def testallmethods_py():
 	#---------
 	x=bmi.GetValue("Saturation")
 	x=bmi.GetSaturation() 
+	#d_ptr = (double*)bmi.GetValuePtr("Saturation");
 	print(f"GetSaturation {type(x)}, {x[0]}")
 	#---------
 	bmi.SetValue("Saturation", x)
@@ -409,6 +404,7 @@ def testallmethods_py():
 	#---------
 	x=bmi.GetValue("SolutionVolume")
 	x=bmi.GetSolutionVolume()
+	#d_ptr = (double*)bmi.GetValuePtr("SolutionVolume");
 	print(f"GetSolutionVolume {type(x)}, {x[0]}")
 	#---------
 	x=bmi.GetSpeciesConcentrations()           
@@ -424,10 +420,12 @@ def testallmethods_py():
 	print(f"GetSpeciesLog10Molalities {type(v)}, {v[0]}")
 	#---------
 	x=bmi.GetTemperature()
+	x=bmi.GetValue("Temperature")
 	print(f"GetTemperature {type(x)}, {x[0]}")
 	#---------
 	bmi.SetValue("Temperature", x)
 	x=bmi.SetTemperature(x)	
+	#d_ptr = (double*)bmi.GetValuePtr("Temperature");
 	print(f"SetTemperature {type(x)}, {x}")
 	#-------
 	x = bmi.GetViscosity()
@@ -490,7 +488,6 @@ def testallmethods_py():
 	# Getters
 	#
 	x=bmi.GetBackwardMapping()
-	print(type(x))
 	print(f"GetBackwardMapping {type(x)}, {x[5]}")
 	#---------
 	x=bmi.GetDatabaseFileName()
@@ -573,11 +570,11 @@ def testallmethods_py():
 	# Utilities
 	#
 	bmi2=phreeqcrm.BMIPhreeqcRM()
-	x=bmi2.CloseFiles()  # not a BMI method
+	x=bmi2.CloseFiles()  
 	print(f"CloseFiles {type(x)}, {x}")
 	#---------
 	bmi2.Finalize()
-
+	#---------
 	ic1 = np.full((1), 1)
 	x = bmi.InitialPhreeqc2Concentrations(ic1)
 	tc = np.full((1), 30.0)
@@ -673,14 +670,15 @@ def testallmethods_py():
 	#---------
 	#x=bmi.Initialize("file")
 	# See above
+	#-------	
+	bmi.SetValue("Time", 1.0) 
+	print(f"SetValue")
+	#---------
 	bmi.Update()    # void method
 	print(f"Update")
 	#-------	
 	bmi.UpdateUntil(864000.0)
 	print(f"UpdateUntil")
-	#---------
-	bmi.SetValue("Time", 1.0)    # void method
-	print(f"SetValue")
 	#---------
 	bmi.Finalize()    # void method
 	print(f"Finalize ")
