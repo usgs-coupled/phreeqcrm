@@ -350,8 +350,7 @@ void VarManager::DensityCalculated_Var()
 		// Concentrations may change when SetDensityUser is called
 		std::vector<double> c;
 		rm_ptr->GetConcentrations(c);
-		RMVARS VARS_c = RMVARS::Concentrations;
-		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		BMIVariant& bv_c = this->VariantMap[RMVARS::Concentrations];
 		bv_c.SetDoubleVector(c);
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -404,18 +403,18 @@ void VarManager::DensityUser_Var()
 	}
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		// Concentrations may change when SetDensityUser is called
-		std::vector<double> c;
-		rm_ptr->GetConcentrations(c);
-		RMVARS VARS_c = RMVARS::Concentrations;
-		BMIVariant& bv_c = this->VariantMap[VARS_c];
-		bv_c.SetDoubleVector(c);
+		//// Concentrations may change when SetDensityUser is called
+		//std::vector<double> c;
+		//rm_ptr->GetConcentrations(c);
+		//BMIVariant& bv_c = this->VariantMap[RMVARS::Concentrations];
+		//bv_c.SetDoubleVector(c);
 	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
 	{
 		//rm_ptr->GetDensityUser(this->VarExchange.GetDoubleVectorRef());
 		//bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		assert(false);
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
