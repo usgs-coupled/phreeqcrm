@@ -179,76 +179,43 @@ def GetBackwardMapping(self):
 		backward_mapping[i] = back
 	return backward_mapping	
 def InitialPhreeqc2Concentrations(self, bc1):
-	if isinstance(bc1, np.ndarray):
-		bc1v = phreeqcrm.IntVector()
-		for i in range(len(bc1)):
-			bc1v.push_back(bc1[i].item())
-		return np.array(self.InitialPhreeqc2ConcentrationsSWIG(bc1v)[1])
+	if not isinstance(bc1, phreeqcrm.IntVector):
+		bc1 = self.GetIntVector(bc1)
 	return np.array(self.InitialPhreeqc2ConcentrationsSWIG(bc1)[1])
 def InitialPhreeqc2Module(self, ic1):
-	if isinstance(ic1, np.ndarray):
-		ic1v = phreeqcrm.IntVector()
-		for i in range(len(ic1)):
-			ic1v.push_back(ic1[i].item())
-		return self.InitialPhreeqc2ModuleSWIG(ic1v)
+	if not isinstance(ic1, phreeqcrm.IntVector):
+		ic1 = self.GetIntVector(ic1)
 	return self.InitialPhreeqc2ModuleSWIG(ic1)
 def InitialPhreeqc2Module_mix(self, ic1, ic2, f1):
-	if isinstance(ic1, np.ndarray):
-		temp = ic1
-		ic1 = phreeqcrm.IntVector()
-		for i in range(len(temp)):
-			ic1.push_back(temp[i].item())
-	if isinstance(ic2, np.ndarray):
-		temp = ic2
-		ic2 = phreeqcrm.IntVector()
-		for i in range(len(temp)):
-			ic2.push_back(temp[i].item())
+	if not isinstance(ic1, phreeqcrm.IntVector):
+		ic1 = self.GetIntVector(ic1)
+	if not isinstance(ic2, phreeqcrm.IntVector):
+		ic2 = self.GetIntVector(ic2)
 	return self.InitialPhreeqc2ModuleSWIG_mix(ic1,ic2,f1)
 def InitialPhreeqc2Concentrations_mix(self, bc1, bc2, f1):
-	if isinstance(bc1, np.ndarray):
-		temp = bc1
-		bc1 = phreeqcrm.IntVector()
-		for i in range(len(temp)):
-			bc1.push_back(temp[i].item())
-	if isinstance(bc2, np.ndarray):
-		temp = bc2
-		bc2 = phreeqcrm.IntVector()
-		for i in range(len(temp)):
-			bc2.push_back(temp[i].item())
+	if not isinstance(bc1, phreeqcrm.IntVector):
+		bc1 = self.GetIntVector(bc1)
+	if not isinstance(bc2, phreeqcrm.IntVector):
+		bc2 = self.GetIntVector(bc2)
 	return np.array(self.InitialPhreeqc2ConcentrationsSWIG_mix(bc1,bc2,f1)[1])
 def InitialPhreeqc2SpeciesConcentrations(self, bc1):
-	if isinstance(bc1, np.ndarray):
-		bc1v = phreeqcrm.IntVector()
-		for i in range(len(bc1)):
-			bc1v.push_back(bc1[i].item())
-		return np.array(self.InitialPhreeqc2SpeciesConcentrationsSWIG(bc1v)[1])
+	if not isinstance(bc1, phreeqcrm.IntVector):
+		bc1 = self.GetIntVector(bc1)
 	return np.array(self.InitialPhreeqc2SpeciesConcentrationsSWIG(bc1)[1])
 def InitialPhreeqc2SpeciesConcentrations_mix(self, bc1, bc2, f1):
-	if isinstance(bc1, np.ndarray):
-		temp = bc1
-		bc1 = phreeqcrm.IntVector()
-		for i in range(len(temp)):
-			bc1.push_back(temp[i].item())
-	if isinstance(bc2, np.ndarray):
-		temp = bc2
-		bc2 = phreeqcrm.IntVector()
-		for i in range(len(temp)):
-			bc2.push_back(temp[i].item())
+	if not isinstance(bc1, phreeqcrm.IntVector):
+		bc1 = self.GetIntVector(bc1)
+	if not isinstance(bc2, phreeqcrm.IntVector):
+		bc2 = self.GetIntVector(bc2)
 	return np.array(self.InitialPhreeqc2SpeciesConcentrationsSWIG_mix(bc1,bc2,f1)[1])
-def InitialPhreeqcCell2Module(self, n, cell_numbers):
-	if isinstance(cell_numbers, np.ndarray):
-		cell_numbersv = phreeqcrm.IntVector()
-		for i in range(len(cell_numbers)):
-			cell_numbersv.push_back(cell_numbers[i].item())
-		return self.InitialPhreeqcCell2ModuleSWIG(n, cell_numbersv)
-	return self.InitialPhreeqcCell2ModuleSWIG(n, cell_numbers)
-def CreateMapping(self, grid2chem):
-	if isinstance(grid2chem, np.ndarray):
-		grid2chemv = phreeqcrm.IntVector()
-		for i in range(len(grid2chem)):
-			grid2chemv.push_back(grid2chem[i].item())
-		return self.CreateMappingSWIG(grid2chemv)
-	return self.CreateMappingSWIG(grid2chem)
+def InitialPhreeqcCell2Module(self, n, v):
+	if not isinstance(v, phreeqcrm.IntVector):
+		v = self.GetIntVector(v)
+	return self.InitialPhreeqcCell2ModuleSWIG(n, v)
+def CreateMapping(self, v):
+	if not isinstance(v, phreeqcrm.IntVector):
+		v = self.GetIntVector(v)
+	return self.CreateMappingSWIG(v)
 def GetConcentrations(self):
 	return np.array(self.GetConcentrationsSWIG()[1])
 def GetDensity(self): 
@@ -306,76 +273,49 @@ def GetTemperature(self):
 def GetViscosity(self):
 	return np.array(self.GetViscositySWIG())
 def InitialEquilibriumPhases2Module(self, v):
-	if isinstance(v, np.ndarray):
-		vv = phreeqcrm.IntVector()
-		for i in range(len(v)):
-			vv.push_back(v[i].item())
-		return self.InitialEquilibriumPhases2ModuleSWIG(vv)
+	if not isinstance(v, phreeqcrm.IntVector):
+		v = self.GetIntVector(v)
 	return self.InitialEquilibriumPhases2ModuleSWIG(v)
 def InitialExchanges2Module(self, v):
-	if isinstance(v, np.ndarray):
-		vv = phreeqcrm.IntVector()
-		for i in range(len(v)):
-			vv.push_back(v[i].item())
-		return self.InitialExchanges2ModuleSWIG(vv)
+	if not isinstance(v, phreeqcrm.IntVector):
+		v = self.GetIntVector(v)
 	return self.InitialExchanges2ModuleSWIG(v)
 def InitialGasPhases2Module(self, v):
-	if isinstance(v, np.ndarray):
-		vv = phreeqcrm.IntVector()
-		for i in range(len(v)):
-			vv.push_back(v[i].item())
-		return self.InitialGasPhases2ModuleSWIG(vv)
+	if not isinstance(v, phreeqcrm.IntVector):
+		v = self.GetIntVector(v)
 	return self.InitialGasPhases2ModuleSWIG(v)
 def InitialKinetics2Module(self, v):
-	if isinstance(v, np.ndarray):
-		vv = phreeqcrm.IntVector()
-		for i in range(len(v)):
-			vv.push_back(v[i].item())
-		return self.InitialKinetics2ModuleSWIG(vv)
+	if not isinstance(v, phreeqcrm.IntVector):
+		v = self.GetIntVector(v)
 	return self.InitialKinetics2ModuleSWIG(v)
 def InitialSolutions2Module(self, v):
-	if isinstance(v, np.ndarray):
-		vv = phreeqcrm.IntVector()
-		for i in range(len(v)):
-			vv.push_back(v[i].item())
-		return self.InitialSolutions2ModuleSWIG(vv)
+	if not isinstance(v, phreeqcrm.IntVector):
+		v = self.GetIntVector(v)
 	return self.InitialSolutions2ModuleSWIG(v)
 def InitialSolidSolutions2Module(self, v):
-	if isinstance(v, np.ndarray):
-		vv = phreeqcrm.IntVector()
-		for i in range(len(v)):
-			vv.push_back(v[i].item())
-		return self.InitialSolidSolutions2ModuleSWIG(vv)
+	if not isinstance(v, phreeqcrm.IntVector):
+		v = self.GetIntVector(v)
 	return self.InitialSolidSolutions2ModuleSWIG(v)
 def InitialSurfaces2Module(self, v):
-	if isinstance(v, np.ndarray):
-		vv = phreeqcrm.IntVector()
-		for i in range(len(v)):
-			vv.push_back(v[i].item())
-		return self.InitialSurfaces2ModuleSWIG(vv)
+	if not isinstance(v, phreeqcrm.IntVector):
+		v = self.GetIntVector(v)
 	return self.InitialSurfaces2ModuleSWIG(v)
-
-
 def SetPrintChemistryMask(self, cell_mask):
-	if isinstance(cell_mask, np.ndarray):
-		cell_maskv = phreeqcrm.IntVector()
-		for i in range(len(cell_mask)):
-			cell_maskv.push_back(cell_mask[i].item())
-		return self.SetPrintChemistryMaskSWIG(cell_maskv)
+	if not isinstance(cell_mask, phreeqcrm.IntVector):
+		cell_mask = self.GetIntVector(cell_mask)
 	return self.SetPrintChemistryMaskSWIG(cell_mask)
-
-def GetVector(v):
-	if isinstance(v, np.ndarray) or isinstance(v, tuple) or isinstance(v, set) or isinstance(v, list):
-		vv = phreeqcrm.v()
+def GetIntVector(self, v):
+	if isinstance(v, np.ndarray) and isinstance(v[0].item(), int):
+		vv = phreeqcrm.IntVector()
 		for i in range(len(v)):
 			vv.push_back(v[i].item())
 		return vv
-	elif isinstance(v, IntVector):
-		return v
-	else:
-		print(f"What is it {type(v)}?")
-	return 
-	
+	if (isinstance(v, tuple) or isinstance(v, list)) and isinstance(v[0], int):
+		vv = phreeqcrm.IntVector()
+		for i in range(len(v)):
+			vv.push_back(v[i])
+		return vv
+	return v
 
 %} 
 }
