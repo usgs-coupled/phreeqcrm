@@ -140,7 +140,7 @@ int AdvectBMI_cpp()
 		ptrs.DensityCalculated_ptr = (double*)brm.GetValuePtr("DensityCalculated");
 		ptrs.Gfw_ptr = (double*)brm.GetValuePtr("Gfw");
 		ptrs.GridCellCount_ptr = (int*)brm.GetValuePtr("GridCellCount");
-		ptrs.Saturation_ptr = (double*)brm.GetValuePtr("Saturation");
+		ptrs.Saturation_ptr = (double*)brm.GetValuePtr("SaturationCalculated");
 		ptrs.SolutionVolume_ptr = (double*)brm.GetValuePtr("SolutionVolume");
 		ptrs.Time_ptr = (double*)brm.GetValuePtr("Time");
 		ptrs.TimeStep_ptr = (double*)brm.GetValuePtr("TimeStep");
@@ -192,7 +192,7 @@ int AdvectBMI_cpp()
 		// Get initial saturation
 		IRM_RESULT status;
 		std::vector<double> sat;
-		brm.GetValue("Saturation", sat);
+		brm.GetValue("SaturationCalculated", sat);
 
 		//Get initial porosity
 		std::vector<double> por;
@@ -250,7 +250,7 @@ int AdvectBMI_cpp()
 			status = brm.SetPrintChemistryOn(print_chemistry_on, false, false); // workers, initial_phreeqc, utility
 			brm.SetValue("Concentrations", c);        // Transported concentrations
 			brm.SetValue("Porosity", por);            // If pororosity changes due to compressibility
-			brm.SetValue("Saturation", sat);          // If saturation changes
+			brm.SetValue("SaturationUser", sat);          // If saturation changes
 			brm.SetValue("Temperature", temperature); // If temperature changes
 			brm.SetValue("Pressure", pressure);       // If pressure changes 
 			brm.SetValue("TimeStep", time_step);      // Time step for kinetic reactions

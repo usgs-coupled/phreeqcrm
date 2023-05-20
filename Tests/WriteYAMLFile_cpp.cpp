@@ -59,7 +59,7 @@ void WriteYAMLFile_cpp(void)
 	yrm.YAMLSetPorosity(por);
 	// Set initial saturation
 	std::vector<double> sat(nxyz, 1.0);
-	yrm.YAMLSetSaturation(sat);
+	yrm.YAMLSetSaturationUser(sat);
 	// Set cells to print chemistry when print chemistry is turned on
 	std::vector<int> print_chemistry_mask(nxyz, 0);
 	for (int i = 0; i < nxyz / 2; i++)

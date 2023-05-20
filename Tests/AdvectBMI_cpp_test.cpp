@@ -113,7 +113,7 @@ int AdvectBMI_cpp_test()
 		ptrs.DensityCalculated_ptr = (double*)brm.GetValuePtr("DensityCalculated");
 		ptrs.Gfw_ptr = (double*)brm.GetValuePtr("Gfw");
 		ptrs.GridCellCount_ptr = (int*)brm.GetValuePtr("GridCellCount");
-		ptrs.Saturation_ptr = (double*)brm.GetValuePtr("Saturation");
+		ptrs.Saturation_ptr = (double*)brm.GetValuePtr("SaturationCalculated");
 		ptrs.SolutionVolume_ptr = (double*)brm.GetValuePtr("SolutionVolume");
 		ptrs.Time_ptr = (double*)brm.GetValuePtr("Time");
 		ptrs.TimeStep_ptr = (double*)brm.GetValuePtr("TimeStep");
@@ -189,7 +189,7 @@ int AdvectBMI_cpp_test()
 		// Get initial saturation
 		IRM_RESULT status;
 		std::vector<double> sat;
-		brm.GetValue("Saturation", sat);
+		brm.GetValue("SaturationCalculated", sat);
 		//Get initial porosity
 		std::vector<double> por;
 		brm.GetValue("Porosity", por);
@@ -249,7 +249,7 @@ int AdvectBMI_cpp_test()
 			status = brm.SetPrintChemistryOn(print_chemistry_on, false, false); // workers, initial_phreeqc, utility
 			brm.SetValue("Concentrations", c);        // Transported concentrations
 			brm.SetValue("Porosity", por);            // If pororosity changes due to compressibility
-			brm.SetValue("Saturation", sat);          // If saturation changes
+			brm.SetValue("SaturationUser", sat);          // If saturation changes
 			brm.SetValue("Temperature", temperature); // If temperature changes
 			brm.SetValue("Pressure", pressure);       // If pressure changes 
 			brm.SetValue("TimeStep", time_step);      // Time step for kinetic reactions
@@ -444,7 +444,7 @@ int bmi_units_tester()
 		status = brm.SetPorosity(por);
 		// Set saturation
 		std::vector<double> sat(nxyz, 1.0);
-		status = brm.SetSaturation(sat);
+		status = brm.SetSaturationUser(sat);
 		// Set printing of chemistry file
 		status = brm.SetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
 
@@ -666,7 +666,7 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 		brm.GetDensityCalculated(rm_density_calculated);
 		std::vector<double> bmi_density_calculated;
 		brm.GetValue("DensityCalculated", bmi_density_calculated);
-		assert(bmi_density == rm_density);
+		assert(bmi_density_calculated == rm_density_calculated);
 		for (int i = 0; i < dim; i++)
 		{
 			assert(density_calculated_ptr[i] == rm_density_calculated[i]);
@@ -796,14 +796,14 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 		}
 		compare_ptrs(ptrs);
 	}
-	// GetValue("Saturation")
+	// GetValue("SaturationCalculated")
 	// Always returns solution_volume / (rv * porosity) for each cell
 	{
-		double* saturation_ptr = (double*)brm.GetValuePtr("Saturation");
+		double* saturation_ptr = (double*)brm.GetValuePtr("SaturationCalculated");
 		std::vector<double> bmi_sat;
-		brm.GetValue("Saturation", bmi_sat);
+		brm.GetValue("SaturationCalculated", bmi_sat);
 		std::vector<double> rm_sat;
-		brm.GetSaturation(rm_sat);
+		brm.GetSaturationCalculated(rm_sat);
 		assert(bmi_sat == rm_sat);
 		for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
 		{
@@ -811,8 +811,8 @@ void testing(BMIPhreeqcRM& brm, Ptrs ptrs)
 		}
 		rm_sat.clear();
 		rm_sat.resize(*ptrs.GridCellCount_ptr, 0.8);
-		brm.SetValue("Saturation", rm_sat);
-		brm.GetValue("Saturation", bmi_sat);
+		brm.SetValue("SaturationUser", rm_sat);
+		brm.GetValue("SaturationCalculated", bmi_sat);
 		//assert(bmi_sat == rm_sat);
 		for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
 		{
@@ -1010,7 +1010,7 @@ void compare_ptrs(struct Ptrs ptrs)
 	std::vector<double> density, saturation, SolutionVolume, 
 		Porosity, Pressure, Temperature, Viscosity;
 	ptrs.brm->GetDensityCalculated(density);
-	ptrs.brm->GetSaturation(saturation);
+	ptrs.brm->GetSaturationCalculated(saturation);
 	SolutionVolume = ptrs.brm->GetSolutionVolume();
 	Porosity = ptrs.brm->GetPorosity();
 	Pressure = ptrs.brm->GetPressure();
@@ -1019,7 +1019,7 @@ void compare_ptrs(struct Ptrs ptrs)
 
 	for (int i = 0; i < *ptrs.GridCellCount_ptr; i++)
 	{
-		assert(ptrs.Density_ptr[i] == density[i]);
+		assert(ptrs.DensityCalculated_ptr[i] == density[i]);
 		assert(ptrs.Saturation_ptr[i] == saturation[i]);
 		assert(ptrs.SolutionVolume_ptr[i] == SolutionVolume[i]);
 		assert(ptrs.Porosity_ptr[i] == Porosity[i]);

@@ -81,7 +81,8 @@ public:
 	void Gfw_Var();
 	void GridCellCount_Var();
 	void NthSelectedOutput_Var();
-	void Saturation_Var();
+	void SaturationCalculated_Var();
+	void SaturationUser_Var();
 	void SelectedOutput_Var();
 	void SelectedOutputColumnCount_Var();
 	void SelectedOutputCount_Var();

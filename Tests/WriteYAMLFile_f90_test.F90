@@ -61,7 +61,7 @@
 	! Set initial saturation
     allocate(sat(nxyz))
     sat = 1.0d0
-	status = YAMLSetSaturation(id, sat)   
+	status = YAMLSetSaturationUser(id, sat)   
 	! Set cells to print chemistry when print chemistry is turned on
     allocate(print_chemistry_mask(nxyz))
     print_chemistry_mask = 0

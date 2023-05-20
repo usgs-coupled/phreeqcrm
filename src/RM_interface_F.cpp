@@ -1068,7 +1068,7 @@ RMF_GetPressure(int* id, double* pressure)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_GetSaturation(int *id, double * sat)
+RMF_GetSaturationCalculated(int *id, double * sat)
 /* ---------------------------------------------------------------------- */
 {
 	// Retrieves saturation for all grid nodes in sat
@@ -1078,7 +1078,7 @@ RMF_GetSaturation(int *id, double * sat)
 	{
 		IRM_RESULT return_value = IRM_OK;
 		std::vector <double> sat_vector;
-		Reaction_module_ptr->GetSaturation(sat_vector);
+		Reaction_module_ptr->GetSaturationCalculated(sat_vector);
 		if ((int) sat_vector.size() == Reaction_module_ptr->GetGridCellCount())
 		{
 			memcpy(sat, &sat_vector.front(), (size_t) (Reaction_module_ptr->GetGridCellCount()*sizeof(double)));
@@ -2375,7 +2375,7 @@ RMF_SetRepresentativeVolume(int *id, double *t)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_SetSaturation(int *id, double *t)
+RMF_SetSaturationUser(int *id, double *t)
 /* ---------------------------------------------------------------------- */
 {
 	// Sets the current saturation for each cell
@@ -2386,7 +2386,7 @@ RMF_SetSaturation(int *id, double *t)
 		std::vector<double> s_vector;
 		s_vector.resize(Reaction_module_ptr->GetGridCellCount());
 		memcpy(&s_vector.front(), t, s_vector.size() * sizeof(double));
-		return Reaction_module_ptr->SetSaturation(s_vector);
+		return Reaction_module_ptr->SetSaturationUser(s_vector);
 	}
 	return IRM_BADINSTANCE;
 }

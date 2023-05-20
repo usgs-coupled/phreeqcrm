@@ -904,7 +904,7 @@ RM_GetNthSelectedOutputUserNumber(int id, int i)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_GetSaturation(int id, double * sat)
+RM_GetSaturationCalculated(int id, double * sat)
 /* ---------------------------------------------------------------------- */
 {
 	// Retrieves saturation for all grid nodes in sat
@@ -914,7 +914,7 @@ RM_GetSaturation(int id, double * sat)
 	{
 		IRM_RESULT return_value = IRM_OK;
 		std::vector <double> sat_vector;
-		Reaction_module_ptr->GetSaturation(sat_vector);
+		Reaction_module_ptr->GetSaturationCalculated(sat_vector);
 		if ((int) sat_vector.size() == Reaction_module_ptr->GetGridCellCount())
 		{
 			memcpy(sat, &sat_vector.front(), (size_t) (Reaction_module_ptr->GetGridCellCount()*sizeof(double)));
@@ -1935,7 +1935,7 @@ RM_SetRepresentativeVolume(int id, double *t)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT 
-RM_SetSaturation(int id, double *t)
+RM_SetSaturationUser(int id, double *t)
 /* ---------------------------------------------------------------------- */
 {
 	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
@@ -1946,7 +1946,7 @@ RM_SetSaturation(int id, double *t)
 			std::vector<double> s_vector;
 			s_vector.resize(Reaction_module_ptr->GetGridCellCount());
 			memcpy(&s_vector.front(), t, s_vector.size() * sizeof(double));
-			return Reaction_module_ptr->SetSaturation(s_vector);
+			return Reaction_module_ptr->SetSaturationUser(s_vector);
 		}
 		return IRM_INVALIDARG;
 	}

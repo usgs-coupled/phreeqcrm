@@ -342,14 +342,14 @@ def testallmethods_py():
 	bmi.SetValue("Concentrations", c)
 	print(f"SetConcentrations {type(x)}, {x}")
 	#---------
-	d=bmi.GetDensity()
-	d=bmi.GetValue("Density")
-	#d_ptr = (double*)bmi.GetValuePtr("Density")
-	print(f"GetDensity {type(d)}, {d[0]}") 
+	d=bmi.GetDensityCalculated()
+	d=bmi.GetValue("DensityCalculated")
+	#d_ptr = (double*)bmi.GetValuePtr("DensityCalculated")
+	print(f"GetDensityCalculated {type(d)}, {d[0]}") 
 	#---------
-	x=bmi.SetDensity(d)
-	bmi.SetValue("Density",d)
-	print(f"SetDensity {type(x)}, {x}")
+	x=bmi.SetDensityUser(d)
+	bmi.SetValue("DensityUser",d)
+	print(f"SetDensityUser {type(x)}, {x}")
 	#---------
 	g = bmi.GetGasCompMoles() 
 	print(f"GetGasCompMoles {type(g)}, {g[0]}")
@@ -393,14 +393,14 @@ def testallmethods_py():
 	x=bmi.SetPressure(x)
 	print(f"SetPressure {type(x)}, {x}")
 	#---------
-	x=bmi.GetValue("Saturation")
-	x=bmi.GetSaturation() 
-	#d_ptr = (double*)bmi.GetValuePtr("Saturation");
-	print(f"GetSaturation {type(x)}, {x[0]}")
+	x=bmi.GetValue("SaturationCalculated")
+	x=bmi.GetSaturationCalculated() 
+	#d_ptr = (double*)bmi.GetValuePtr("SaturationCalculated");
+	print(f"GetSaturationCalculated {type(x)}, {x[0]}")
 	#---------
-	bmi.SetValue("Saturation", x)
-	x=bmi.SetSaturation(x)
-	print(f"SetSaturation {type(x)}, {x}")
+	bmi.SetValue("SaturationUser", x)
+	x=bmi.SetSaturationUser(x)
+	print(f"SetSaturationUser {type(x)}, {x}")
 	#---------
 	x=bmi.GetValue("SolutionVolume")
 	x=bmi.GetSolutionVolume()

@@ -973,11 +973,11 @@ MODULE YAMLPhreeqcRM
 !> using a time step of zero (@ref YAMLSetTimeStep) to avoid kinetic reactions.
 !> Other properties that may need to be initialized before RunCells is invoked
 !> include porosity (@ref YAMLSetPorosity),
-!> saturation (@ref YAMLSetSaturation),
+!> saturation (@ref YAMLSetSaturationUser),
 !> temperature (@ref YAMLSetTemperature), and pressure (@ref YAMLSetPressure).
 !> 
 !> @see                    @ref YAMLSetPorosity,
-!> @ref YAMLSetPressure, @ref YAMLSetSaturation, @ref YAMLSetTemperature, @ref YAMLSetTimeStep.
+!> @ref YAMLSetPressure, @ref YAMLSetSaturationUser, @ref YAMLSetTemperature, @ref YAMLSetTimeStep.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1198,7 +1198,7 @@ MODULE YAMLPhreeqcRM
 !> which is not common. Concentrations are normally initialized
 !> with @ref YAMLInitialPhreeqc2Module or @ref YAMLInitialPhreeqcCell2Module.
 !> @see                    @ref YAMLSetDensityUser, @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume,
-!> @ref YAMLSetSaturation, @ref YAMLSetUnitsSolution.
+!> @ref YAMLSetSaturationUser, @ref YAMLSetUnitsSolution.
 !> @par C++ Example:
 !> @htmlonly
 !> <CODE>
@@ -1694,10 +1694,10 @@ MODULE YAMLPhreeqcRM
 !> @par
 !> SetPorosity sets the porosity for each reaction cell.
 !> The volume of water in a reaction cell is the product of porosity, saturation
-!> (SetSaturation), and representative volume (SetRepresentativeVolume).
+!> (SetSaturationUser), and representative volume (SetRepresentativeVolume).
 !> Size of vector is @a nxyz, where @a nxyz is the number
 !> of grid cells in the user's model.
-!> @see                    @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturation.
+!> @see                    @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturationUser.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1973,7 +1973,7 @@ MODULE YAMLPhreeqcRM
 !> sets the representative volume of each reaction cell.
 !> By default the representative volume of each reaction cell is 1 liter.
 !> The volume of water in a reaction cell is determined by the product of the representative volume,
-!> the porosity (SetPorosity), and the saturation (SetSaturation).
+!> the porosity (SetPorosity), and the saturation (SetSaturationUser).
 !> The numerical method of PHREEQC is more robust if the water volume for a reaction cell is
 !> within a couple orders of magnitude of 1.0.
 !> Small water volumes caused by small porosities and (or) small saturations 
@@ -1986,7 +1986,7 @@ MODULE YAMLPhreeqcRM
 !> @a SetRepresentativeVolume should be called before initial conditions 
 !> are defined for the reaction cells.
 !> 
-!> @see                    @ref YAMLSetPorosity, @ref YAMLSetSaturation.
+!> @see                    @ref YAMLSetPorosity, @ref YAMLSetSaturationUser.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2015,7 +2015,7 @@ MODULE YAMLPhreeqcRM
     real(kind=8), allocatable, dimension(:), intent(in) :: rv
 	YAMLSetRepresentativeVolume = YAMLSetRepresentativeVolume_F(id, rv(1), size(rv))
     END FUNCTION YAMLSetRepresentativeVolume
-!> Inserts data into the YAML document for the PhreeqcRM method SetSaturation.
+!> Inserts data into the YAML document for the PhreeqcRM method SetSaturationUser.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
@@ -2023,14 +2023,14 @@ MODULE YAMLPhreeqcRM
 !> where @a nxyz is the number of grid cells in the user's model.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
 !> @par
-!> SetSaturation
+!> SetSaturationUser
 !> sets the saturation of each reaction cell. Saturation is a fraction ranging from 0 to 1.
-!> The volume of water in a cell is the product of porosity (SetPorosity), saturation (SetSaturation),
+!> The volume of water in a cell is the product of porosity (SetPorosity), saturation (SetSaturationUser),
 !> and representative volume (SetRepresentativeVolume). As a result of a reaction calculation,
 !> solution properties (density and volume) will change;
 !> the databases phreeqc.dat, Amm.dat, and pitzer.dat have the molar 
 !> volume data to calculate these changes. The methods GetDensityCalculated,
-!> GetSolutionVolume, and GetSaturation can be used to account
+!> GetSolutionVolume, and GetSaturationCalculated can be used to account
 !> for these changes in the succeeding transport calculation.
 !> 
 !> @see
@@ -2042,27 +2042,27 @@ MODULE YAMLPhreeqcRM
 !> real(kind=8), allocatable, dimension(:) :: sat 
 !> allocate(sat(nxyz))
 !> sat = 1.0d0
-!> status = YAMLSetSaturation(id, sat)  
+!> status = YAMLSetSaturationUser(id, sat)  
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetSaturation(id, sat)
+    INTEGER FUNCTION YAMLSetSaturationUser(id, sat)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetSaturation_F(id, sat, dim) &
-			BIND(C, NAME='YAMLSetSaturation_F')
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetSaturationUser_F(id, sat, dim) &
+			BIND(C, NAME='YAMLSetSaturationUser_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
         real(kind=C_DOUBLE), intent(in) :: sat
         integer(kind=C_INT), intent(in) :: dim
-		END FUNCTION YAMLSetSaturation_F
+		END FUNCTION YAMLSetSaturationUser_F
     END INTERFACE
     integer, intent(in) :: id
     real(kind=8), allocatable, dimension(:), intent(in) :: sat
-	YAMLSetSaturation = YAMLSetSaturation_F(id, sat(1), size(sat))
-    END FUNCTION YAMLSetSaturation
+	YAMLSetSaturationUser = YAMLSetSaturationUser_F(id, sat(1), size(sat))
+    END FUNCTION YAMLSetSaturationUser
 !> Inserts data into the YAML document for the PhreeqcRM method SetScreenOn.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
@@ -2474,7 +2474,7 @@ MODULE YAMLPhreeqcRM
 !> For option 2, the number of moles of kinetic reactants will vary directly with rock volume and inversely with porosity.
 !> @par
 !> Note that the volume of water in a cell in the reaction module is equal to the product of
-!> porosity (SetPorosity), the saturation (SetSaturation), and representative volume (SetRepresentativeVolume),
+!> porosity (SetPorosity), the saturation (SetSaturationUser), and representative volume (SetRepresentativeVolume),
 !> which is usually less than 1 liter. It is important to write the RATES
 !> definitions for homogeneous (aqueous) kinetic reactions to account for the current volume of
 !> water, often by calculating the rate of reaction per liter of water and multiplying by the volume
@@ -2487,7 +2487,7 @@ MODULE YAMLPhreeqcRM
 !> reactant (Basic function M) in RATES to obtain the surface area.
 !> 
 !> @see                    @ref YAMLInitialPhreeqc2Module, @ref YAMLInitialPhreeqcCell2Module,
-!> @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturation.
+!> @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturationUser.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -2579,7 +2579,7 @@ MODULE YAMLPhreeqcRM
 !> To convert from mg/L to moles
 !> of element in the representative volume of a reaction cell, mg/L is converted to mol/L and
 !> multiplied by the solution volume,
-!> which is the product of porosity (SetPorosity), saturation (SetSaturation),
+!> which is the product of porosity (SetPorosity), saturation (SetSaturationUser),
 !> and representative volume (SetRepresentativeVolume).
 !> To convert from mol/L to moles
 !> of element in the representative volume of a reaction cell, mol/L is
@@ -2601,12 +2601,12 @@ MODULE YAMLPhreeqcRM
 !> Two options are available for the volume and mass of solution
 !> that are used in converting to transport concentrations: (1) the volume and mass of solution are
 !> calculated by PHREEQC, or (2) the volume of solution is the product of porosity (SetPorosity),
-!> saturation (SetSaturation), and representative volume (SetRepresentativeVolume),
+!> saturation (SetSaturationUser), and representative volume (SetRepresentativeVolume),
 !> and the mass of solution is volume times density as defined by SetDensityUser.
 !> Which option is used is determined by UseSolutionDensityVolume.
 !> 
 !> @see                    @ref YAMLSetDensityUser, @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume,
-!> @ref YAMLSetSaturation,
+!> @ref YAMLSetSaturationUser,
 !> @ref YAMLUseSolutionDensityVolume.
 !> 
 !> @par Fortran Example:
@@ -2954,7 +2954,7 @@ MODULE YAMLPhreeqcRM
 !> @param tf          @a True indicates that the solution density and volume as
 !> calculated by PHREEQC will be used to calculate concentrations.
 !> @a False indicates that the solution density set by SetDensityUser and the volume determined by the
-!> product of  SetSaturation, SetPorosity, and SetRepresentativeVolume,
+!> product of  SetSaturationUser, SetPorosity, and SetRepresentativeVolume,
 !> will be used to calculate concentrations retrieved by GetConcentrations.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
 !> @par
@@ -2965,7 +2965,7 @@ MODULE YAMLPhreeqcRM
 !> (1) the density and solution volume calculated by PHREEQC are used, or
 !> (2) the specified density (SetDensityUser)
 !> and solution volume are determined by the product of
-!> saturation (SetSaturation), porosity (SetPorosity),
+!> saturation (SetSaturationUser), porosity (SetPorosity),
 !> and representative volume (SetRepresentativeVolume).
 !> Transport models that consider density-dependent flow will probably use the
 !> PHREEQC-calculated density and solution volume (default),
@@ -2976,7 +2976,7 @@ MODULE YAMLPhreeqcRM
 !> Density is only used when converting to or from transport units of mass fraction.
 !> 
 !> @see                    @ref YAMLSetDensityUser,
-!> @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturation.
+!> @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturationUser.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>

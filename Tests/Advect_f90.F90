@@ -154,7 +154,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   ! Set initial saturation
   allocate(sat(nxyz))
   sat = 1.0
-  status = RM_SetSaturation(id, sat)
+  status = RM_SetSaturationUser(id, sat)
   ! Set cells to print chemistry when print chemistry is turned on
   allocate(print_chemistry_mask(nxyz))
   do i = 1, nxyz/2
@@ -331,7 +331,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
      endif
      ! Transfer data to PhreeqcRM for reactions
      status = RM_SetPorosity(id, por)                ! If pore volume changes 
-     status = RM_SetSaturation(id, sat)              ! If saturation changes
+     status = RM_SetSaturationUser(id, sat)              ! If saturation changes
      status = RM_SetTemperature(id, temperature)     ! If temperature changes
      status = RM_SetPressure(id, pressure)           ! If pressure changes
      status = RM_SetConcentrations(id, c)            ! Transported concentrations
@@ -352,7 +352,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
      status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
      status = RM_GetDensityCalculated(id, density)   ! Density after reaction
      status = RM_GetSolutionVolume(id, volume)       ! Solution volume after reaction
-     status = RM_GetSaturation(id, sat_calc)         ! Saturation after reaction
+     status = RM_GetSaturationCalculated(id, sat_calc)         ! Saturation after reaction
      ! Print results at last time step
      if (isteps == nsteps) then
 		write(*,*) "Current distribution of cells for workers"

@@ -114,7 +114,7 @@
 	status = bmif_get_value_ptr(id, "Concentrations", Concentrations_ptr)
 	status = bmif_get_value_ptr(id, "DensityCalculated", Density_calculated_ptr)
 	status = bmif_get_value_ptr(id, "Gfw", Gfw_ptr)
-	status = bmif_get_value_ptr(id, "Saturation", Saturation_ptr)
+	status = bmif_get_value_ptr(id, "SaturationCalculated", Saturation_ptr)
 	status = bmif_get_value_ptr(id, "SolutionVolume", SolutionVolume_ptr)
 	status = bmif_get_value_ptr(id, "Time", Time_ptr)
 	status = bmif_get_value_ptr(id, "TimeStep", TimeStep_ptr)
@@ -143,7 +143,7 @@
     ! Get initial temperatures
     status = bmif_get_value(id, "Temperature", temperature)
     ! Get initial temperature
-    status = bmif_get_value(id, "Saturation", sat)
+    status = bmif_get_value(id, "SaturationCalculated", sat)
     ! Get initial porosity
     status = bmif_get_value(id, "Porosity", por)
     ! Get initial temperature
@@ -206,7 +206,7 @@
         status = bmif_set_value(id, "Concentrations", c)  ! Transported concentrations
         ! Optionally, if values changed during transport
         status = bmif_set_value(id, "Porosity", por)              
-        status = bmif_set_value(id, "Saturation", sat)            
+        status = bmif_set_value(id, "SaturationUser", sat)            
         status = bmif_set_value(id, "Temperature", temperature) 
         status = bmif_set_value(id, "Pressure", pressure)          
         status = bmif_set_value(id, "TimeStep", time_step) 

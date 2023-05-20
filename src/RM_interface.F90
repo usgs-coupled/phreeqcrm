@@ -38,7 +38,7 @@
     PRIVATE :: Chk_SetPressure
     PRIVATE :: Chk_GetPorosity
     PRIVATE :: Chk_GetPressure
-    PRIVATE :: Chk_GetSaturation
+    PRIVATE :: Chk_GetSaturationCalculated
     PRIVATE :: Chk_GetSelectedOutput
     PRIVATE :: Chk_GetSolutionVolume
     PRIVATE :: Chk_GetSpeciesConcentrations
@@ -53,7 +53,7 @@
     PRIVATE :: Chk_SetConcentrations
     PRIVATE :: Chk_SetDensityUser
     PRIVATE :: Chk_SetPrintChemistryMask
-    PRIVATE :: Chk_SetSaturation
+    PRIVATE :: Chk_SetSaturationUser
     PRIVATE :: Chk_SetTemperature
     PRIVATE :: Chk_SpeciesConcentrations2Module
     PRIVATE :: Chk_Double1D
@@ -856,7 +856,7 @@
     !> Two options are available for the volume and mass of solution
     !> that are used in converting to transport concentrations: (1) the volume and mass of solution are
     !> calculated by PHREEQC, or
-    !> (2) the volume of solution is the product of saturation (@ref RM_SetSaturation),
+    !> (2) the volume of solution is the product of saturation (@ref RM_SetSaturationUser),
     !> porosity (@ref RM_SetPorosity), and representative volume (@ref RM_SetRepresentativeVolume),
     !> and the mass of solution is volume times density as defined by @ref RM_SetDensityUser.
     !> @ref RM_UseSolutionDensityVolume determines which option is used.
@@ -873,11 +873,11 @@
     !> @see
     !> @ref RM_FindComponents,
     !> @ref RM_GetComponentCount,
-    !> @ref RM_GetSaturation,
+    !> @ref RM_GetSaturationCalculated,
     !> @ref RM_SetConcentrations,
     !> @ref RM_SetDensityUser,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation,
+    !> @ref RM_SetSaturationUser,
     !> @ref RM_SetUnitsSolution,
     !> @ref RM_UseSolutionDensityVolume.
     !> @par Fortran Example:
@@ -2348,12 +2348,14 @@
     !> Returns a vector of saturations (@a sat_calc) as calculated by the reaction module.
     !> Reactions will change the volume of solution in a cell.
     !> This method always returns solution_volume/(rv * porosity); the method 
-    !> @ref RM_SetSaturation has no effect on the values returned.    
-    !> The transport code must decide whether to ignore or account for this change in solution volume due to reactions.
-    !> Following reactions, the cell saturation is calculated as solution volume (@ref RM_GetSolutionVolume)
-    !> divided by the product of representative volume (@ref RM_SetRepresentativeVolume) and the porosity (@ref RM_SetPorosity).
-    !> The cell saturation returned by @a RM_GetSaturation may be less than or greater than the saturation set by the transport code
-    !> (@ref RM_SetSaturation), and may be greater than or less than 1.0, even in fully saturated simulations.
+    !> @ref RM_SetSaturationUser has no effect on the values returned.    
+    !> The transport code must decide whether to ignore or account for this change in solution  
+    !> volume due to reactions. Following reactions, the cell saturation is calculated as 
+    !> solution volume (@ref RM_GetSolutionVolume) divided by the product of representative 
+    !> volume (@ref RM_SetRepresentativeVolume) and the porosity (@ref RM_SetPorosity).
+    !> The cell saturation returned by @a RM_GetSaturationCalculated may be less than or 
+    !> greater than the saturation set by the transport code (@ref RM_SetSaturationUserUser), 
+    !> and may be greater than or less than 1.0, even in fully saturated simulations.
     !> Only the following databases distributed with PhreeqcRM have molar volume information needed
     !> to accurately calculate solution volume and saturation: phreeqc.dat, Amm.dat, and pitzer.dat.
     !>
@@ -2367,49 +2369,49 @@
     !> @ref RM_GetSolutionVolume,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation.
+    !> @ref RM_SetSaturationUser.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> allocate(sat_calc(nxyz))
     !> status = RM_RunCells(id)
-    !> status = RM_GetSaturation(id, sat_calc)
+    !> status = RM_GetSaturationCalculated(id, sat_calc)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-    INTEGER FUNCTION RM_GetSaturation(id, sat_calc)
+    INTEGER FUNCTION RM_GetSaturationCalculated(id, sat_calc)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_GetSaturation(id, sat_calc) &
-        BIND(C, NAME='RMF_GetSaturation')
+    INTEGER(KIND=C_INT) FUNCTION RMF_GetSaturationCalculated(id, sat_calc) &
+        BIND(C, NAME='RMF_GetSaturationCalculated')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     REAL(KIND=C_DOUBLE), INTENT(out) :: sat_calc(*)
-    END FUNCTION RMF_GetSaturation
+    END FUNCTION RMF_GetSaturationCalculated
     END INTERFACE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(out), DIMENSION(:) :: sat_calc
-    if (rmf_debug) call Chk_GetSaturation(id, sat_calc)
-    RM_GetSaturation = RMF_GetSaturation(id, sat_calc)
-    END FUNCTION RM_GetSaturation
+    if (rmf_debug) call Chk_GetSaturationCalculated(id, sat_calc)
+    RM_GetSaturationCalculated = RMF_GetSaturationCalculated(id, sat_calc)
+    END FUNCTION RM_GetSaturationCalculated
 
-    SUBROUTINE Chk_GetSaturation(id, sat)
+    SUBROUTINE Chk_GetSaturationCalculated(id, sat)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(in), DIMENSION(:) :: sat
     INTEGER :: errors
     errors = 0
-    errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "saturation", "RM_GetSaturation")
+    errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "saturation", "RM_GetSaturationCalculated")
     if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSaturation")
+        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSaturationCalculated")
     endif
-    END SUBROUTINE Chk_GetSaturation
+    END SUBROUTINE Chk_GetSaturationCalculated
 
     !> Populates an array with values from the current selected-output definition. @ref RM_SetCurrentSelectedOutputUserNumber
     !> determines which of the selected-output definitions is used to populate the array.
@@ -2972,7 +2974,7 @@
     !> where @a nxyz is the number of user grid cells. Values for inactive cells are set to 1e30.
     !> @retval IRM_RESULT         0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_GetSaturation.
+    !> @ref RM_GetSaturationCalculated.
     !>
     !> @par Fortran Example:
     !> @htmlonly
@@ -4094,7 +4096,7 @@
     !> SetRebalanceByCell(bool tf);
     !> SetRebalanceFraction(double f);
     !> SetRepresentativeVolume(std::vector< double > rv);
-    !> SetSaturation(std::vector< double > sat);
+    !> SetSaturationUser(std::vector< double > sat);
     !> SetScreenOn(bool tf);
     !> SetSelectedOutputOn(bool tf);
     !> SetSpeciesSaveOn(bool save_on);
@@ -5131,7 +5133,7 @@
     !> Normally, tranport concentrations are transferred to the reaction cells (@ref RM_SetConcentrations) before
     !> reaction calculations are run. The length of time over which kinetic reactions are integrated is set
     !> by @ref RM_SetTimeStep. Other properties that may need to be updated as a result of the transport
-    !> calculations include porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturation),
+    !> calculations include porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturationUser),
     !> temperature (@ref RM_SetTemperature), and pressure (@ref RM_SetPressure).
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -5139,7 +5141,7 @@
     !> @ref RM_SetConcentrations,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetPressure,
-    !> @ref RM_SetSaturation,
+    !> @ref RM_SetSaturationUser,
     !> @ref RM_SetTemperature,
     !> @ref RM_SetTimeStep.
     !> @par Fortran Example:
@@ -5147,14 +5149,14 @@
     !> <CODE>
     !> <PRE>
     !> status = RM_SetPorosity(id, por)                ! If pore volume changes
-    !> status = RM_SetSaturation(id, sat)              ! If saturation changes
+    !> status = RM_SetSaturationUser(id, sat)          ! If saturation changes
     !> status = RM_SetTemperature(id, temperature)     ! If temperature changes
     !> status = RM_SetPressure(id, pressure)           ! If pressure changes
     !> status = RM_SetConcentrations(id, c)            ! Transported concentrations
     !> status = RM_SetTimeStep(id, time_step)          ! Time step for kinetic reactions
     !> status = RM_RunCells(id)
     !> status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
-    !> status = RM_GetDensityCalculated(id, density)             ! Density after reaction
+    !> status = RM_GetDensityCalculated(id, density)   ! Density after reaction
     !> status = RM_GetSolutionVolume(id, volume)       ! Solution volume after reaction
     !> </PRE>
     !> </CODE>
@@ -5353,7 +5355,7 @@
     END FUNCTION RM_SetComponentH2O
 
     !> Use the vector of concentrations (@a c) to set the moles of components in each reaction cell.
-    !> The volume of water in a cell is the product of porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturation),
+    !> The volume of water in a cell is the product of porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturationUser),
     !> and reference volume (@ref RM_SetRepresentativeVolume).
     !> The moles of each component are determined by the volume of water and per liter concentrations.
     !> If concentration units (@ref RM_SetUnitsSolution) are mass fraction, the
@@ -5368,7 +5370,7 @@
     !> @ref RM_SetDensityUser,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation,
+    !> @ref RM_SetSaturationUser,
     !> @ref RM_SetUnitsSolution.
     !>
     !> @par Fortran Example:
@@ -5379,7 +5381,7 @@
     !> ...
     !> call advect_f90(c, bc_conc, ncomps, nxyz)
     !> status = RM_SetPorosity(id, por)               ! If porosity changes
-    !> status = RM_SetSaturation(id, sat)             ! If saturation changes
+    !> status = RM_SetSaturationUser(id, sat)         ! If saturation changes
     !> status = RM_SetTemperature(id, temperature))   ! If temperature changes
     !> status = RM_SetPressure(id, pressure)          ! If pressure changes
     !> status = RM_SetConcentrations(id, c)           ! Transported concentrations
@@ -5387,7 +5389,7 @@
     !> status = RM_SetTime(id, time)                  ! Current time
     !> status = RM_RunCells(id)
     !> status = RM_GetConcentrations(id, c)           ! Concentrations after reaction
-    !> status = RM_GetDensityCalculated(id, density)            ! Density after reaction
+    !> status = RM_GetDensityCalculated(id, density)  ! Density after reaction
     !> status = RM_GetSolutionVolume(id, volume)      ! Solution volume after reaction
     !> </PRE>
     !> </CODE>
@@ -6171,15 +6173,15 @@
 
     !> Set the porosity for each reaction cell.
     !> The volume of water in a reaction cell is the product of the porosity, the saturation
-    !> (@ref RM_SetSaturation), and the representative volume (@ref RM_SetRepresentativeVolume).
+    !> (@ref RM_SetSaturationUser), and the representative volume (@ref RM_SetRepresentativeVolume).
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param por              Array of porosities, unitless. Default is 0.1. Size of array is @a nxyz, where @a nxyz is the number
     !> of grid cells in the user's model (@ref RM_GetGridCellCount).
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_GetSaturation,
+    !> @ref RM_GetSaturationCalculated,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation.
+    !> @ref RM_SetSaturationUser.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -6474,7 +6476,7 @@
     !> Set the representative volume of each reaction cell.
     !> By default the representative volume of each reaction cell is 1 liter.
     !> The volume of water in a reaction cell is determined by the procuct of the representative volume,
-    !> the porosity (@ref RM_SetPorosity), and the saturation (@ref RM_SetSaturation).
+    !> the porosity (@ref RM_SetPorosity), and the saturation (@ref RM_SetSaturationUser).
     !> The numerical method of PHREEQC is more robust if the water volume for a reaction cell is
     !> within a couple orders of magnitude of 1.0.
     !> Small water volumes caused by small porosities and (or) small saturations (and (or) small representative volumes)
@@ -6491,7 +6493,7 @@
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_SetPorosity,
-    !> @ref RM_SetSaturation.
+    !> @ref RM_SetSaturationUser.
     !>
     !> @par Fortran Example:
     !> @htmlonly
@@ -6525,11 +6527,11 @@
     END FUNCTION RM_SetRepresentativeVolume
 
     !> Set the saturation of each reaction cell. Saturation is a fraction ranging from 0 to 1.
-    !> The volume of water in a cell is the product of porosity (@ref RM_SetPorosity), saturation (@a RM_SetSaturation),
+    !> The volume of water in a cell is the product of porosity (@ref RM_SetPorosity), saturation (@a RM_SetSaturationUser),
     !> and representative volume (@ref RM_SetRepresentativeVolume). As a result of a reaction calculation,
     !> solution properties (density and volume) will change;
     !> the databases phreeqc.dat, Amm.dat, and pitzer.dat have the molar volume data to calculate these changes.
-    !> The methods @ref RM_GetDensityCalculated, @ref RM_GetSolutionVolume, and @ref RM_GetSaturation
+    !> The methods @ref RM_GetDensityCalculated, @ref RM_GetSolutionVolume, and @ref RM_GetSaturationCalculated
     !> can be used to account for these changes in the succeeding transport calculation.
     !> @a RM_SetRepresentativeVolume should be called before initial conditions are defined for the reaction cells.
     !>
@@ -6539,7 +6541,7 @@
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_GetDensityCalculated,
-    !> @ref RM_GetSaturation,
+    !> @ref RM_GetSaturationCalculated,
     !> @ref RM_GetSolutionVolume,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume.
@@ -6550,42 +6552,42 @@
     !> <PRE>
     !> allocate(sat(nxyz))
     !> sat = 1.0
-    !> status = RM_SetSaturation(id, sat)
+    !> status = RM_SetSaturationUser(id, sat)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-    INTEGER FUNCTION RM_SetSaturation(id, sat)
+    INTEGER FUNCTION RM_SetSaturationUser(id, sat)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_SetSaturation(id, sat) &
-        BIND(C, NAME='RMF_SetSaturation')
+    INTEGER(KIND=C_INT) FUNCTION RMF_SetSaturationUser(id, sat) &
+        BIND(C, NAME='RMF_SetSaturationUser')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     REAL(KIND=C_DOUBLE), INTENT(in) :: sat(*)
-    END FUNCTION RMF_SetSaturation
+    END FUNCTION RMF_SetSaturationUser
     END INTERFACE
     INTEGER, INTENT(in) :: id
     real(kind=8), DIMENSION(:), INTENT(in) :: sat
-    if (rmf_debug) call Chk_SetSaturation(id, sat)
-    RM_SetSaturation = RMF_SetSaturation(id, sat)
-    END FUNCTION RM_SetSaturation
+    if (rmf_debug) call Chk_SetSaturationUser(id, sat)
+    RM_SetSaturationUser = RMF_SetSaturationUser(id, sat)
+    END FUNCTION RM_SetSaturationUser
 
-    SUBROUTINE Chk_SetSaturation(id, sat)
+    SUBROUTINE Chk_SetSaturationUser(id, sat)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(in), DIMENSION(:) :: sat
     INTEGER :: errors
     errors = 0
-    errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "sataturation", "RM_SetSaturation")
+    errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "sataturation", "RM_SetSaturationUser")
     if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_SetSaturation")
+        errors = RM_Abort(id, -3, "Invalid argument in RM_SetSaturationUser")
     endif
-    END SUBROUTINE Chk_SetSaturation
+    END SUBROUTINE Chk_SetSaturationUser
 
     !> Set the property that controls whether messages are written to the screen.
     !> Messages include information about rebalancing during @ref RM_RunCells, and
@@ -7011,7 +7013,7 @@
     !> For option 2, the number of moles of kinetic reactants will vary directly with rock volume and inversely with porosity.
     !>
     !> Note that the volume of water in a cell in the reaction module is equal to the product of
-    !> porosity (@ref RM_SetPorosity), the saturation (@ref RM_SetSaturation), and representative volume (@ref
+    !> porosity (@ref RM_SetPorosity), the saturation (@ref RM_SetSaturationUser), and representative volume (@ref
     !> RM_SetRepresentativeVolume), which is usually less than 1 liter. It is important to write the RATES
     !> definitions for homogeneous (aqueous) kinetic reactions to account for the current volume of
     !> water, often by calculating the rate of reaction per liter of water and multiplying by the volume
@@ -7031,7 +7033,7 @@
     !> @ref RM_InitialPhreeqcCell2Module,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation.
+    !> @ref RM_SetSaturationUser.
     !>
     !> @par Fortran Example:
     !> @htmlonly
@@ -7122,7 +7124,7 @@
     !> To convert from mg/L to moles
     !> of element in the representative volume of a reaction cell, mg/L is converted to mol/L and
     !> multiplied by the solution volume,
-    !> which is the product of porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturation),
+    !> which is the product of porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturationUser),
     !> and representative volume (@ref RM_SetRepresentativeVolume).
     !> To convert from mol/L to moles
     !> of element in the representative volume of a reaction cell, mol/L is
@@ -7144,7 +7146,7 @@
     !> Two options are available for the volume and mass of solution
     !> that are used in converting to transport concentrations: (1) the volume and mass of solution are
     !> calculated by PHREEQC, or (2) the volume of solution is the product of porosity (@ref RM_SetPorosity),
-    !> saturation (@ref RM_SetSaturation), and representative volume (@ref RM_SetRepresentativeVolume),
+    !> saturation (@ref RM_SetSaturationUser), and representative volume (@ref RM_SetRepresentativeVolume),
     !> and the mass of solution is volume times density as defined by @ref RM_SetDensityUser.
     !> Which option is used is determined by @ref RM_UseSolutionDensityVolume.
     !>
@@ -7155,7 +7157,7 @@
     !> @ref RM_SetDensityUser,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation,
+    !> @ref RM_SetSaturationUser,
     !> @ref RM_UseSolutionDensityVolume.
     !>
     !> @par Fortran Example:
@@ -7504,7 +7506,7 @@
     !> (1) the density and solution volume calculated by PHREEQC are used, or
     !> (2) the specified density (@ref RM_SetDensityUser)
     !> and solution volume are defined by the product of
-    !> saturation (@ref RM_SetSaturation), porosity (@ref RM_SetPorosity),
+    !> saturation (@ref RM_SetSaturationUser), porosity (@ref RM_SetPorosity),
     !> and representative volume (@ref RM_SetRepresentativeVolume).
     !> Transport models that consider density-dependent flow will probably use the
     !> PHREEQC-calculated density and solution volume (default),
@@ -7518,14 +7520,14 @@
     !> @param tf               @a True indicates that the solution density and volume as
     !> calculated by PHREEQC will be used to calculate concentrations.
     !> @a False indicates that the solution density set by @ref RM_SetDensityUser and the volume determined by the
-    !> product of  @ref RM_SetSaturation, @ref RM_SetPorosity, and @ref RM_SetRepresentativeVolume,
+    !> product of  @ref RM_SetSaturationUser, @ref RM_SetPorosity, and @ref RM_SetRepresentativeVolume,
     !> will be used to calculate concentrations retrieved by @ref RM_GetConcentrations.
     !> @see
     !> @ref RM_GetConcentrations,
     !> @ref RM_SetDensityUser,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation.
+    !> @ref RM_SetSaturationUser.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>

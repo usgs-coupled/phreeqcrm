@@ -430,14 +430,14 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = RM_SetPressure(id, DoubleVector)
 	write(*,*) "SetPressure "
 	!-------
-	status = bmif_get_value(id, "Saturation", DoubleVector)
-	status = RM_GetSaturation(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "Saturation", d_ptr)
-	write(*,*) "GetSaturation "
+	status = bmif_get_value(id, "SaturationCalculated", DoubleVector)
+	status = RM_GetSaturationCalculated(id, DoubleVector)
+	status = bmif_get_value_ptr(id, "SaturationCalculated", d_ptr)
+	write(*,*) "GetSaturationCalculated "
 	!-------
-	status = RM_SetSaturation(id, DoubleVector)
-	status = bmif_set_value(id, "Saturation", DoubleVector)
-	write(*,*) "SetSaturation "
+	status = RM_SetSaturationUser(id, DoubleVector)
+	status = bmif_set_value(id, "SaturationUser", DoubleVector)
+	write(*,*) "SetSaturationUser "
 	!-------
 	status = bmif_get_value(id, "SolutionVolume", DoubleVector)
 	status = RM_GetSolutionVolume(id, DoubleVector)

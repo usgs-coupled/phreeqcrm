@@ -423,10 +423,10 @@ void YAMLPhreeqcRM::YAMLSetRepresentativeVolume(std::vector< double > rv)
 	YAML_doc.push_back(node);
 	return;
 }
-void YAMLPhreeqcRM::YAMLSetSaturation(std::vector< double > sat) 
+void YAMLPhreeqcRM::YAMLSetSaturationUser(std::vector< double > sat)
 {
 	YAML::Node node;
-	node["key"] = "SetSaturation";
+	node["key"] = "SetSaturationUser";
 	node["sat"] = sat;
 	node.SetStyle(this->style);
 	YAML_doc.push_back(node);

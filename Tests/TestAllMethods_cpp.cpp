@@ -411,14 +411,14 @@ void TestAllMethods_cpp()
 	bmi.SetValue("Pressure", v);
 	std::cerr << "SetPressure \n";
 	//-------
-	status = bmi.GetSaturation(v);
-	bmi.GetValue("Saturation", v);
-	d_ptr = (double*)bmi.GetValuePtr("Saturation");
-	std::cerr << "GetSaturation \n";
+	status = bmi.GetSaturationCalculated(v);
+	bmi.GetValue("SaturationCalculated", v);
+	d_ptr = (double*)bmi.GetValuePtr("SaturationCalculated");
+	std::cerr << "GetSaturationCalculated \n";
 	//-------
-	status = bmi.SetSaturation(v);
-	bmi.SetValue("Saturation", v);
-	std::cerr << "SetSaturation \n";
+	status = bmi.SetSaturationUser(v);
+	bmi.SetValue("SaturationUser", v);
+	std::cerr << "SetSaturationUser \n";
 	//-------
 	v = bmi.GetSolutionVolume();
 	bmi.GetValue("SolutionVolume", v);

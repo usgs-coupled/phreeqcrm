@@ -81,7 +81,7 @@ end interface
   ! Set initial saturation
   allocate(sat(nxyz))
   sat = 0.5
-  status = RM_SetSaturation(id, sat)
+  status = RM_SetSaturationUser(id, sat)
 
   ! --------------------------------------------------------------------------
   ! Set initial conditions

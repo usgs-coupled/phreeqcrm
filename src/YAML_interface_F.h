@@ -62,7 +62,7 @@ IRM_DLL_EXPORT IRM_RESULT YAMLSetPrintChemistryOn_F(int* id, int* workers, int* 
 IRM_DLL_EXPORT IRM_RESULT YAMLSetRebalanceByCell_F(int* id, int* tf);
 IRM_DLL_EXPORT IRM_RESULT YAMLSetRebalanceFraction_F(int* id, double* f);
 IRM_DLL_EXPORT IRM_RESULT YAMLSetRepresentativeVolume_F(int* id, double* rv, int* dim);
-IRM_DLL_EXPORT IRM_RESULT YAMLSetSaturation_F(int* id, double* sat, int* dim);
+IRM_DLL_EXPORT IRM_RESULT YAMLSetSaturationUser_F(int* id, double* sat, int* dim);
 IRM_DLL_EXPORT IRM_RESULT YAMLSetScreenOn_F(int* id, int* tf);
 IRM_DLL_EXPORT IRM_RESULT YAMLSetSelectedOutputOn_F(int* id, int* tf);
 IRM_DLL_EXPORT IRM_RESULT YAMLSetSpeciesSaveOn_F(int* id, int* save_on);

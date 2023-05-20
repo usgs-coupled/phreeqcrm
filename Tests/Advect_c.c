@@ -154,7 +154,7 @@ void Advect_c()
 	// Set initial saturation
 	sat = (double*)malloc((size_t)(nxyz * sizeof(double)));
 	for (i = 0; i < nxyz; i++) sat[i] = 1.0;
-	status = RM_SetSaturation(id, sat);
+	status = RM_SetSaturationUser(id, sat);
 	// Set cells to print chemistry when print chemistry is turned on
 	print_chemistry_mask = (int*)malloc((size_t)(nxyz * sizeof(int)));
 	for (i = 0; i < nxyz / 2; i++)
@@ -346,7 +346,7 @@ void Advect_c()
 		advection_c(c, bc_conc, ncomps, nxyz, nbound);
 		// Transfer data to PhreeqcRM for reactions
 		status = RM_SetPorosity(id, por);              // If porosity changes 
-		status = RM_SetSaturation(id, sat);            // If saturation changes
+		status = RM_SetSaturationUser(id, sat);            // If saturation changes
 		status = RM_SetTemperature(id, temperature);   // If temperature changes
 		status = RM_SetPressure(id, pressure);         // If pressure changes
 		status = RM_SetConcentrations(id, c);          // Transported concentrations
@@ -377,7 +377,7 @@ void Advect_c()
 		status = RM_GetConcentrations(id, c);          // Concentrations after reaction 
 		status = RM_GetDensityCalculated(id, density);           // Density after reaction
 		status = RM_GetSolutionVolume(id, volume);     // Solution volume after reaction
-		status = RM_GetSaturation(id, sat_calc);       // Saturation after reaction
+		status = RM_GetSaturationCalculated(id, sat_calc);       // Saturation after reaction
 		// Print results at last time step
 		if (isteps == nsteps - 1)
 		{

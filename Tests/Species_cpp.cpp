@@ -72,7 +72,7 @@ int Species_cpp()
 		// Set initial saturation
 		std::vector<double> sat;
 		sat.resize(nxyz, 1.0);
-		status = phreeqc_rm.SetSaturation(sat);
+		status = phreeqc_rm.SetSaturationUser(sat);
 		// Set cells to print chemistry when print chemistry is turned on
 		std::vector<int> print_chemistry_mask;
 		print_chemistry_mask.resize(nxyz, 0);
@@ -221,7 +221,7 @@ int Species_cpp()
 			status = phreeqc_rm.SetSelectedOutputOn(print_selected_output_on);
 			status = phreeqc_rm.SetPrintChemistryOn(print_chemistry_on, false, false); // workers, initial_phreeqc, utility
 			status = phreeqc_rm.SetPorosity(por);                    // If porosity changes due to compressibility
-			status = phreeqc_rm.SetSaturation(sat);                  // If saturation changes
+			status = phreeqc_rm.SetSaturationUser(sat);                  // If saturation changes
 			status = phreeqc_rm.SetTemperature(temperature);         // If temperature changes
 			status = phreeqc_rm.SetPressure(pressure);               // If pressure changes
 			status = phreeqc_rm.SpeciesConcentrations2Module(c);     // Transported concentrations

@@ -139,7 +139,7 @@ public:
     @n SetRebalanceByCell(bool tf);
     @n SetRebalanceFraction(double f);
     @n SetRepresentativeVolume(std::vector< double > rv);
-    @n SetSaturation(std::vector< double > sat);
+    @n SetSaturationUser(std::vector< double > sat);
     @n SetScreenOn(bool tf);
     @n SetSelectedOutputOn(bool tf);
     @n SetSpeciesSaveOn(bool save_on);
@@ -809,7 +809,7 @@ public:
     @n "GridCellCount", @a dest: int;
     @n "Porosity", @a dest: std::vector< double >;
     @n "Pressure", @a dest: std::vector< double >;
-    @n "Saturation", @a dest: std::vector< double >;
+    @n "SaturationCalculated", @a dest: std::vector< double >;
     @n "SelectedOutput", @a dest: std::vector< double >;
     @n "SelectedOutputColumnCount", @a dest: int;
     @n "SelectedOutputCount", @a dest: int;
@@ -902,7 +902,7 @@ public:
     @n "GridCellCount": int*;
     @n "Porosity": double*;
     @n "Pressure": double*;
-    @n "Saturation": double*;
+    @n "SaturationCalculated": double*;
     @n "SolutionVolume": double*;
     @n "Temperature": double*;
     @n "Time": double*;
@@ -935,7 +935,7 @@ public:
     "NthSelectedOutput", int;
     "Porosity", std::vector<double>, [GridCellCount];
     "Pressure", std::vector<double>, [GridCellCount];
-    "Saturation", std::vector<double>, [GridCellCount];
+    "SaturationUser", std::vector<double>, [GridCellCount];
     "SelectedOutputOn", bool;
     "Temperature", std::vector<double>, [GridCellCount];
     "Time", double;

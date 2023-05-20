@@ -4369,7 +4369,7 @@ PhreeqcRM::GetPressure(void)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::GetSaturation(std::vector<double> & sat_arg)
+PhreeqcRM::GetSaturationCalculated(std::vector<double> & sat_arg)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -4378,7 +4378,7 @@ PhreeqcRM::GetSaturation(std::vector<double> & sat_arg)
 #ifdef USE_MPI
 		if (this->mpi_myself == 0)
 		{
-			int method = METHOD_GETSATURATION;
+			int method = METHOD_GETSATURATIONCALCULATED;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		}
 		std::vector<double> local_saturation_worker;
@@ -4423,7 +4423,7 @@ PhreeqcRM::GetSaturation(std::vector<double> & sat_arg)
 	}
 	catch (...)
 	{
-		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetSaturation");
+		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetSaturationCalculated");
 		sat_arg.clear();
 	}
 	return IRM_OK;
@@ -5694,10 +5694,10 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			this->SetRepresentativeVolume(rv);
 			continue;
 		}
-		if (keyword == "SetSaturation")
+		if (keyword == "SetSaturationUser")
 		{
 			std::vector< double > sat = it1++->second.as< std::vector< double> >();
-			this->SetSaturation(sat);
+			this->SetSaturationUser(sat);
 			continue;
 		}
 		if (keyword == "SetScreenOn") 
@@ -7004,11 +7004,11 @@ PhreeqcRM::MpiWorker()
 					this->GetPressure();
 				}
 				break;
-			case METHOD_GETSATURATION:
-				if (debug_worker) std::cerr << "METHOD_GETSATURATION" << std::endl;
+			case METHOD_GETSATURATIONCALCULATED:
+				if (debug_worker) std::cerr << "METHOD_GETSATURATIONCALCULATED" << std::endl;
 				{
 					std::vector<double> dummy;
-					this->GetSaturation(dummy);
+					this->GetSaturationCalculated(dummy);
 				}
 				break;
 			case METHOD_GETSELECTEDOUTPUT:
@@ -7209,11 +7209,11 @@ PhreeqcRM::MpiWorker()
 					this->SetRepresentativeVolume(dummy);
 				}
 				break;
-			case METHOD_SETSATURATION:
-				if (debug_worker) std::cerr << "METHOD_SETSATURATION" << std::endl;
+			case METHOD_SETSATURATIONUSER:
+				if (debug_worker) std::cerr << "METHOD_SETSATURATIONUSER" << std::endl;
 				{
 					std::vector<double> dummy;
-					this->SetSaturation(dummy);
+					this->SetSaturationUser(dummy);
 				}
 				break;
 			case METHOD_SETSELECTEDOUTPUTON:
@@ -12004,13 +12004,13 @@ PhreeqcRM::SetRepresentativeVolume(const std::vector<double> &t)
 }
 
 IRM_RESULT
-PhreeqcRM::SetSaturation(const std::vector<double> &t)
+PhreeqcRM::SetSaturationUser(const std::vector<double> &t)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
-	std::string methodName = "SetSaturation";
-	IRM_RESULT result_value = SetGeneric(t, this->saturation_root, saturation_worker, METHOD_SETSATURATION, methodName);
-	this->UpdateBMI(RMVARS::Saturation);
+	std::string methodName = "SetSaturationUser";
+	IRM_RESULT result_value = SetGeneric(t, this->saturation_root, saturation_worker, METHOD_SETSATURATIONUSER, methodName);
+	this->UpdateBMI(RMVARS::SaturationUser);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 /* ---------------------------------------------------------------------- */

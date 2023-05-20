@@ -118,7 +118,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   ! Set initial saturation
   allocate(sat(nxyz))
   sat = 1.0
-  status = RM_SetSaturation(id, sat)
+  status = RM_SetSaturationUser(id, sat)
   ! Set cells to print chemistry when print chemistry is turned on
   allocate(print_chemistry_mask(nxyz))
   do i = 1, nxyz/2
@@ -289,7 +289,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
      endif
      ! Transfer data to PhreeqcRM for reactions
      status = RM_SetPorosity(id, por)                ! If porosity changes 
-     status = RM_SetSaturation(id, sat)              ! If saturation changes
+     status = RM_SetSaturationUser(id, sat)              ! If saturation changes
      status = RM_SetTemperature(id, temperature)     ! If temperature changes
      status = RM_SetPressure(id, pressure)           ! If pressure changes
      status = RM_SpeciesConcentrations2Module(id, species_c)          ! Transported concentrations

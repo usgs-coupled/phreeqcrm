@@ -119,7 +119,7 @@ void Species_c()
 	// Set initial saturation
 	sat = (double*)malloc((size_t)(nxyz * sizeof(double)));
 	for (i = 0; i < nxyz; i++) sat[i] = 1.0;
-	status = RM_SetSaturation(id, sat);
+	status = RM_SetSaturationUser(id, sat);
 	// Set cells to print chemistry when print chemistry is turned on
 	print_chemistry_mask = (int*)malloc((size_t)(nxyz * sizeof(int)));
 	for (i = 0; i < nxyz / 2; i++)
@@ -322,7 +322,7 @@ void Species_c()
 		}
 		// Transfer data to PhreeqcRM for reactions
 		status = RM_SetPorosity(id, por);              // If porosity changes 
-		status = RM_SetSaturation(id, sat);            // If saturation changes
+		status = RM_SetSaturationUser(id, sat);            // If saturation changes
 		status = RM_SetTemperature(id, temperature);   // If temperature changes
 		status = RM_SetPressure(id, pressure);         // If pressure changes
 		status = RM_SpeciesConcentrations2Module(id, species_c);          // Transported concentrations

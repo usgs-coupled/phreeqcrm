@@ -75,7 +75,7 @@ void Gas_c()
 	// Set initial saturation
 	sat = (double*)malloc((size_t)(nxyz * sizeof(double)));
 	for (i = 0; i < nxyz; i++) sat[i] = 0.5;
-	status = RM_SetSaturation(id, sat);
+	status = RM_SetSaturationUser(id, sat);
 
 	// Set printing of chemistry file
 	status = RM_SetPrintChemistryOn(id, 0, 1, 0); // workers, initial_phreeqc, utility

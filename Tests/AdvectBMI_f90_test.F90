@@ -144,7 +144,7 @@
 	status = bmif_get_value_ptr(id, "Concentrations", Concentrations_ptr)
 	status = bmif_get_value_ptr(id, "DensityCalculated", Density_calculated_ptr)
 	status = bmif_get_value_ptr(id, "Gfw", Gfw_ptr)
-	status = bmif_get_value_ptr(id, "Saturation", Saturation_ptr)
+	status = bmif_get_value_ptr(id, "SaturationCalculated", Saturation_ptr)
 	status = bmif_get_value_ptr(id, "SolutionVolume", SolutionVolume_ptr)
 	status = bmif_get_value_ptr(id, "Time", Time_ptr)
 	status = bmif_get_value_ptr(id, "TimeStep", TimeStep_ptr)
@@ -171,7 +171,7 @@
     ! Get initial temperatures
     status = bmif_get_value(id, "Temperature", temperature)
     ! Get initial temperature
-    status = bmif_get_value(id, "Saturation", sat)
+    status = bmif_get_value(id, "SaturationCalculated", sat)
     ! Get initial porosity
     status = bmif_get_value(id, "Porosity", por)
     ! Get initial temperature
@@ -235,7 +235,7 @@
         status = bmif_set_value(id, "Concentrations", c)  ! Transported concentrations
         ! Optionally, if values changed during transport
         status = bmif_set_value(id, "Porosity", por)              
-        status = bmif_set_value(id, "Saturation", sat)            
+        status = bmif_set_value(id, "SaturationUser", sat)            
         status = bmif_set_value(id, "Temperature", temperature) 
         status = bmif_set_value(id, "Pressure", pressure)          
         status = bmif_set_value(id, "TimeStep", time_step) 
@@ -648,14 +648,14 @@ USE, intrinsic :: ISO_C_BINDING
         endif
     enddo
 
-	! GetValue("Saturation")
+	! GetValue("SaturationCalculated")
     ! Always returns solution_volume/(rv * porosity) for each cell
-    status = bmif_get_var_itemsize(id, "Saturation", itemsize)
-    status = bmif_get_var_nbytes(id, "Saturation", nbytes)
+    status = bmif_get_var_itemsize(id, "SaturationCalculated", itemsize)
+    status = bmif_get_var_nbytes(id, "SaturationCalculated", nbytes)
     dim = nbytes / itemsize
     allocate(rm_saturation(dim))
-    status = bmif_get_value(id, "Saturation", saturation)
-	status = RM_GetSaturation(id, rm_saturation);
+    status = bmif_get_value(id, "SaturationCalculated", saturation)
+	status = RM_GetSaturationCalculated(id, rm_saturation);
     do i = 1, nxyz
         if (saturation(i) .ne. rm_saturation(i)) then
             status = assert(.false.)
@@ -826,7 +826,7 @@ implicit none
 	status = assert(nxyz .eq. gridcellcount)
     ! Density, Saturation, SolutionVolume, Porosity, Pressure, Temperature
 	status = bmif_get_value(id, "DensityCalculated", density_calculated)
-	status = bmif_get_value(id, "saturation", saturation)
+	status = bmif_get_value(id, "SaturationCalculated", saturation)
 	status = bmif_get_value(id, "solutionvolume", solutionvolume)
 	status = bmif_get_value(id, "Porosity", Porosity)
 	status = bmif_get_value(id, "Pressure", Pressure)
@@ -841,7 +841,7 @@ implicit none
 		status = assert(Temperature_ptr(i) .eq. Temperature(i))
     enddo   
 	status = RM_GetDensityCalculated(id, density_calculated)
-	status = RM_GetSaturation(id, saturation)
+	status = RM_GetSaturationCalculated(id, saturation)
 	status = RM_GetSolutionVolume(id, solutionvolume)
 	status = RM_GetPorosity(id, Porosity)
 	status = RM_GetPressure(id, Pressure)
