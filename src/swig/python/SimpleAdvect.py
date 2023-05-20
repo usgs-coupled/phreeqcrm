@@ -60,11 +60,13 @@ def SimpleAdvect():
     status = phreeqc_rm.SetTimeConversion(time_conversion)
 
     # Set initial porosity
-    por = [0.2] * nxyz
+    #por = [0.2] * nxyz
+    por = np.full((nxyz), 0.2)
     status = phreeqc_rm.SetPorosity(por)
 
     # Set cells to print chemistry when print chemistry is turned on
-    print_chemistry_mask = [1] * nxyz
+    #print_chemistry_mask = [1] * nxyz
+    print_chemistry_mask = np.full((nxyz), 1)
     status = phreeqc_rm.SetPrintChemistryMask(print_chemistry_mask)
     nchem = phreeqc_rm.GetChemistryCellCount()
 
@@ -129,9 +131,10 @@ def SimpleAdvect():
     # --------------------------------------------------------------------------
 
     # for now use std::vector<double> wrapper for [inout] arrays
-    bc_conc_dbl_vect = phreeqcrm.DoubleVector()
+    #bc_conc_dbl_vect = phreeqcrm.DoubleVector()
     nbound = 1
-    bc1 = [0] * nbound                            # solution 0 from Initial IPhreeqc instance
+    #bc1 = [0] * nbound                            # solution 0 from Initial IPhreeqc instance
+    bc1 = np.full((1), 0)
     #status = phreeqc_rm.InitialPhreeqc2Concentrations(bc_conc_dbl_vect, bc1)
     bc_conc_dbl_vect = phreeqc_rm.InitialPhreeqc2Concentrations(bc1)
 

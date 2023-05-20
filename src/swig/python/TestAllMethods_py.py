@@ -29,19 +29,16 @@ def testallmethods_py():
 	#int *i_ptr = (int*)bmi.GetValuePtr("GridCellCount")  # pointer
 	print(f"GetValue('GridCellCount') {type(nxyz)}, {nxyz}")
 	#---------
-	nxyz = bmi.GetGridCellCount()
-	print(f"GetValue('GetGridCellCount') {type(nxyz)}, {nxyz}")
-	#---------
 	x=bmi.GetThreadCount()
 	print(f"GetThreadCount {type(x)}, {x}")
 	#---------
 	# Inactive cells or symmetry
-	grid2chem = phreeqcrm.IntVector(nxyz, -1)
+	grid2chem = np.full((nxyz), -1)
 	for i in range(nxyz//2):
 		grid2chem[i] = i
 	x=bmi.CreateMapping(grid2chem)
 	print(f"CreateMapping {type(x)}, {x}")
-	#--------- LoadDatabase removes definitions in instance	
+	#--------- 
 	x=bmi.LoadDatabase("phreeqc.dat")
 	print(f"LoadDatabase {type(x)}, {x}")
 	#
@@ -112,11 +109,11 @@ def testallmethods_py():
 	x=bmi.SetTimeConversion(1.0/86400.0)
 	print(f"SetTimeConversion {type(x)}, {x}")
 	#---------
-	v = phreeqcrm.DoubleVector(nxyz, 1.0)
+	v = np.full((nxyz), 1.0)
 	x=bmi.SetRepresentativeVolume(v)
 	print(f"SetRepresentativeVolume {type(x)}, {x}")
 	#---------
-	v = phreeqcrm.IntVector(nxyz, 1)
+	v = np.full((nxyz), 1)
 	x=bmi.SetPrintChemistryMask(v)
 	print(f"SetPrintChemistryMask {type(x)}, {x}")
 	#---------
@@ -156,12 +153,9 @@ def testallmethods_py():
 	print(f"GridCellCount {type(nchem)}, {nchem}")
 	#---------
 	ncomps=bmi.GetComponentCount()
-	print(f"GetComponentCount {type(ncomps)}, {ncomps}")
-	#---------
-	ncomps=bmi.GetValue("ComponentCount")
 	ncomps = bmi.GetValue("ComponentCount")
 	#i_ptr = (int*) bmi.GetValuePtr("ComponentCount")   # Pointer
-	print(f"bmi.GetValue('ComponentCount') {type(ncomps)}, {ncomps}")
+	print(f"GetComponentCount {type(ncomps)}, {ncomps}")
 	#---------
 	x=bmi.GetComponents()	
 	x = bmi.GetValue("Components")
@@ -249,72 +243,71 @@ def testallmethods_py():
 	# 
 	# Transfer initial conditions
 	#
-	v = phreeqcrm.IntVector(nxyz, 1)
-	#v = np.full((nxyz), 1)                       #numpy fails
+	v = np.full((nxyz), 1)
 	x=bmi.InitialEquilibriumPhases2Module(v)
 	print(f"InitialEquilibriumPhases2Module {type(x)}, {x}")
 	#---------
+	v = np.full((nxyz), 1)
 	x=bmi.InitialExchanges2Module(v)
 	print(f"InitialExchanges2Module {type(x)}, {x}")
 	#---------
+	v = np.full((nxyz), 1)
 	x=bmi.InitialGasPhases2Module(v)
 	print(f"InitialGasPhases2Module {type(x)}, {x}")
 	#---------
+	v = np.full((nxyz), 1)
 	x=bmi.InitialKinetics2Module(v)
 	print(f"InitialKinetics2Module {type(x)}, {x}")
 	#---------
+	v = np.full((nxyz), 1)
 	x=bmi.InitialSolutions2Module(v)
 	print(f"InitialSolutions2Module {type(x)}, {x}")
 	#---------
+	v = np.full((nxyz), 1)
 	x=bmi.InitialSolidSolutions2Module(v)
 	print(f"InitialSolidSolutions2Module {type(x)}, {x}")
 	#---------
+	v = np.full((nxyz), 1)
 	x=bmi.InitialSurfaces2Module(v)	
 	print(f"InitialSurfaces2Module {type(x)}, {x}")
 	#---------
 	# Alternative A. to the previous seven methods
-	v = phreeqcrm.IntVector(nxyz*7, 1)
-	#v = np.full((nxyz*7), 1)                       #numpy fails
+	v = np.full((nxyz*7), 1)
 	x=bmi.InitialPhreeqc2Module(v)
 	print(f"InitialPhreeqc2Module {type(x)}, {x}")
 	#---------
 	# Alternative B. to the previous seven methods
-	v1 = phreeqcrm.IntVector(nxyz*7, 1)
-	v2 = phreeqcrm.IntVector(nxyz*7, -1)
-	#f1 = phreeqcrm.DoubleVector(nxyz*7, 1.0)
-	#v1 = np.full((nxyz*7), 1)                        #numpy fails
-	#v2 = np.full((nxyz*7), -1)                       #numpy fails
+	v1 = np.full((nxyz*7), 1)
+	v2 = np.full((nxyz*7), -1)
 	f1 = np.full((nxyz*7), 1.0)
 	x=bmi.InitialPhreeqc2Module_mix(v1, v2, f1)
 	print(f"InitialPhreeqc2Module_mix {type(x)}, {x}")
 	#---------
 	# Alternative C. to the previous seven methods
-	cells = [18, 19]
-	#cells = np.full((2), 18)                       #numpy fails
-	#cells[1] = 19                       #numpy fails
+	cells = np.full((2), 18)
+	cells[1] = 19
 	x=bmi.InitialPhreeqcCell2Module(1, cells)
 	print(f"InitialPhreeqcCell2Module {type(x)}, {x}")
 	#
 	# Boundary conditions
 	# 
-	bc1 = phreeqcrm.IntVector(1,1)
-	#bc1 = np.full((1), 1)
+	bc1 = np.full((1), 1)
 	bc_conc = bmi.InitialPhreeqc2Concentrations(bc1)
 	print(f"InitialPhreeqc2Concentrations {type(bc_conc)}, {bc_conc[0]}")
 	#--------
-	bc1 = phreeqcrm.IntVector(1,1)
-	bc2 = phreeqcrm.IntVector(1,-1)
-	f1 = phreeqcrm.DoubleVector(1,1.0)
+	bc1 = np.full((1), 1)
+	bc2 = np.full((1), -1)
+	f1 = np.full((1), 1.0)
 	bc_conc = bmi.InitialPhreeqc2Concentrations_mix(bc1, bc2, f1)
 	print(f"InitialPhreeqc2Concentrations_mix {type(bc_conc)}, {bc_conc[0]}")
 	#--------
-	v = phreeqcrm.IntVector(1,1)
+	v = np.full((1), 1)
 	species_c=bmi.InitialPhreeqc2SpeciesConcentrations(v)
 	print(f"InitialPhreeqc2SpeciesConcentrations {type(species_c)}, {species_c[0]}")
 	#----------
-	v1 = phreeqcrm.IntVector(1,1)
-	v2 = phreeqcrm.IntVector(1,-1)
-	f1 = phreeqcrm.DoubleVector(1,1.0)
+	v1 = np.full((1), 1)
+	v2 = np.full((1), -1)
+	f1 = np.full((1), 1.0)
 	species_c=bmi.InitialPhreeqc2SpeciesConcentrations_mix(v1,v2,f1)
 	print(f"InitialPhreeqc2SpeciesConcentrations_mix {type(species_c)}, {species_c[0]}")
 	#
@@ -333,8 +326,8 @@ def testallmethods_py():
 	#---------
 	x=bmi.GetTimeStep()
 	x= bmi.GetValue("TimeStep")
-	print(f"GetTimeStep {type(x)}, {x}")
 	#d_ptr = (double*)bmi.GetValuePtr("TimeStep")
+	print(f"GetTimeStep {type(x)}, {x}")
 	#---------
 	x=bmi.SetTimeStep(0.0)
 	bmi.SetValue("TimeStep", 0.0)
@@ -354,7 +347,6 @@ def testallmethods_py():
 	#d_ptr = (double*)bmi.GetValuePtr("Density")
 	print(f"GetDensity {type(d)}, {d[0]}") 
 	#---------
-	bmi.SetValue("Density",d)
 	x=bmi.SetDensity(d)
 	bmi.SetValue("Density",d)
 	print(f"SetDensity {type(x)}, {x}")
@@ -394,15 +386,16 @@ def testallmethods_py():
 	#---------
 	x=bmi.GetPressure()
 	x = bmi.GetValue("Pressure")
+	#d_ptr = (double*)bmi.GetValuePtr("Pressure");
 	print(f"GetPressure {type(x)}, {x[0]}")
 	#---------
 	bmi.SetValue("Pressure", x)
 	x=bmi.SetPressure(x)
 	print(f"SetPressure {type(x)}, {x}")
 	#---------
-	#v = phreeqcrm.DoubleVector()
 	x=bmi.GetValue("Saturation")
 	x=bmi.GetSaturation() 
+	#d_ptr = (double*)bmi.GetValuePtr("Saturation");
 	print(f"GetSaturation {type(x)}, {x[0]}")
 	#---------
 	bmi.SetValue("Saturation", x)
@@ -411,6 +404,7 @@ def testallmethods_py():
 	#---------
 	x=bmi.GetValue("SolutionVolume")
 	x=bmi.GetSolutionVolume()
+	#d_ptr = (double*)bmi.GetValuePtr("SolutionVolume");
 	print(f"GetSolutionVolume {type(x)}, {x[0]}")
 	#---------
 	x=bmi.GetSpeciesConcentrations()           
@@ -426,10 +420,12 @@ def testallmethods_py():
 	print(f"GetSpeciesLog10Molalities {type(v)}, {v[0]}")
 	#---------
 	x=bmi.GetTemperature()
+	x=bmi.GetValue("Temperature")
 	print(f"GetTemperature {type(x)}, {x[0]}")
 	#---------
 	bmi.SetValue("Temperature", x)
 	x=bmi.SetTemperature(x)	
+	#d_ptr = (double*)bmi.GetValuePtr("Temperature");
 	print(f"SetTemperature {type(x)}, {x}")
 	#-------
 	x = bmi.GetViscosity()
@@ -492,7 +488,6 @@ def testallmethods_py():
 	# Getters
 	#
 	x=bmi.GetBackwardMapping()
-	print(type(x))
 	print(f"GetBackwardMapping {type(x)}, {x[5]}")
 	#---------
 	x=bmi.GetDatabaseFileName()
@@ -575,22 +570,15 @@ def testallmethods_py():
 	# Utilities
 	#
 	bmi2=phreeqcrm.BMIPhreeqcRM()
-	x=bmi2.CloseFiles()  # not a BMI method
+	x=bmi2.CloseFiles()  
 	print(f"CloseFiles {type(x)}, {x}")
 	#---------
 	bmi2.Finalize()
-
-	ic1 = phreeqcrm.IntVector(1,1)
-	#out = bmi.InitialPhreeqc2Concentrations(bc1)
-	#status = out[0]
-	#print(type(out[1]))
-	#bc_conc = list(out[1])
+	#---------
+	ic1 = np.full((1), 1)
 	x = bmi.InitialPhreeqc2Concentrations(ic1)
-	tc = [30.0]
-	p_atm = [1.5]
-	#bc_double_vect = phreeqcrm.DoubleVector(len(bc_conc))
-	#for i in range(len(bc_conc)):
-	#	bc_double_vect[i] = bc_conc[i]
+	tc = np.full((1), 30.0)
+	p_atm = np.full((1), 1.5)
 	x=bmi.Concentrations2Utility(x, tc, p_atm)
 	print(f"Concentrations2Utility {type(x)}, {x}")
 	#---------
@@ -682,17 +670,18 @@ def testallmethods_py():
 	#---------
 	#x=bmi.Initialize("file")
 	# See above
+	#-------	
+	bmi.SetValue("Time", 1.0) 
+	print(f"SetValue")
+	#---------
 	bmi.Update()    # void method
 	print(f"Update")
 	#-------	
 	bmi.UpdateUntil(864000.0)
 	print(f"UpdateUntil")
 	#---------
-	bmi.SetValue("Time", 1.0)    # void method
-	print(f"SetValue")
-	#---------
 	bmi.Finalize()    # void method
-	print(f"Finalize {x}")
+	print(f"Finalize ")
 	#---------
 	print("Success.")
 	return
