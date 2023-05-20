@@ -135,7 +135,7 @@
     ! Get component information
     status = bmif_get_value(id, "Components", components)
     status = bmif_get_value(id, "Gfw", gfw)
-    do i = 1, GridCellCount_ptr
+    do i = 1, ComponentCount_ptr
         write(string,"(A10, F15.4)") trim(components(i)), gfw(i)
         status = RM_OutputMessage(id, string)
     enddo

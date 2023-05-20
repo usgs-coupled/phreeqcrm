@@ -42,15 +42,16 @@ Initial solution 0.	CaCl2
 
                                        pH  =   6.995      Charge balance
                                        pe  =  13.632      Equilibrium with O2(g)
-      Specific Conductance (µS/cm,  25°C)  = 155
-                          Density (g/cm³)  =   0.99710
+     Specific Conductance (ÂµS/cm,  25Â°C)  = 152
+                         Density (g/cmÂ³)  =   0.99710
                                Volume (L)  =   1.00298
+                        Viscosity (mPa s)  =   0.89067
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.800e-03
                        Mass of water (kg)  =   1.000e+00
-                 Total alkalinity (eq/kg)  =   6.950e-20
-                         Temperature (°C)  =  25.00
-                  Electrical balance (eq)  =   4.519e-18
+                 Total alkalinity (eq/kg)  =   2.687e-21
+                        Temperature (Â°C)  =  25.00
+                  Electrical balance (eq)  =   4.260e-18
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   4
                                   Total H  = 1.110124e+02
@@ -59,16 +60,17 @@ Initial solution 0.	CaCl2
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   H+              1.058e-07   1.012e-07    -6.976    -6.995    -0.019      0.00
-   OH-             1.049e-07   1.000e-07    -6.979    -7.000    -0.021     -4.10
+   H+              1.057e-07   1.012e-07    -6.976    -6.995    -0.019      0.00
+   OH-             1.049e-07   1.001e-07    -6.979    -7.000    -0.021     -4.10
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.07
 Ca            6.000e-04
    Ca+2            6.000e-04   4.983e-04    -3.222    -3.302    -0.081    -18.10
-   CaOH+           8.569e-10   8.174e-10    -9.067    -9.088    -0.020     (0)  
+   CaOH+           8.570e-10   8.175e-10    -9.067    -9.087    -0.020     (0)  
 Cl            1.200e-03
    Cl-             1.200e-03   1.144e-03    -2.921    -2.941    -0.021     18.08
+   HCl             3.981e-11   3.988e-11   -10.400   -10.399     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -44.404   -44.404     0.000     28.61
 O(0)          5.351e-04
@@ -99,14 +101,15 @@ Initial solution 1.	Initial solution for column
 
                                        pH  =   6.997      Charge balance
                                        pe  =  13.630      Equilibrium with O2(g)
-      Specific Conductance (µS/cm,  25°C)  = 146
-                          Density (g/cm³)  =   0.99711
+     Specific Conductance (ÂµS/cm,  25Â°C)  = 145
+                         Density (g/cmÂ³)  =   0.99711
                                Volume (L)  =   1.00301
+                        Viscosity (mPa s)  =   0.89020
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.000e+00
                  Total alkalinity (eq/kg)  =  -9.247e-19
-                         Temperature (°C)  =  25.00
+                        Temperature (Â°C)  =  25.00
                   Electrical balance (eq)  =  -9.243e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   3 (7 overall)
@@ -116,7 +119,7 @@ Initial solution 1.	Initial solution for column
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
    H+              1.045e-07   1.007e-07    -6.981    -6.997    -0.016      0.00
    OH-             1.045e-07   1.005e-07    -6.981    -6.998    -0.017     -4.10
@@ -196,15 +199,13 @@ Reading input data for simulation 4.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.806 Seconds.
+End of Run after 0.734 Seconds.
 -------------------------------
 
-Number of threads:                                         3
-Number of MPI processes:                                   1
-MPI task number:                                           0
 File prefix:                                        AdvectBMI_f90
 Number of grid cells in the user's model:                 40
-Number of components for transport:                        8
+Number of components for transport:                        9
+       H2O        18.0160
          H         1.0080
          O        16.0000
     Charge         1.0000
@@ -263,16 +264,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.079      Charge balance
                                        pe  =  13.969      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 138
-                          Density (g/cm³)  =   0.99831
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 136
+                         Density (g/cmÂ³)  =   0.99831
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00227
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.800e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   1.157e-19
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -3.136e-21
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =   1.051e-18
+                  Electrical balance (eq)  =   8.144e-19
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   2
                                   Total H  = 2.213642e+01
@@ -281,23 +283,24 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   H+              8.715e-08   8.341e-08    -7.060    -7.079    -0.019      0.00
-   OH-             8.611e-08   8.215e-08    -7.065    -7.085    -0.020     -4.31
+   H+              8.713e-08   8.339e-08    -7.060    -7.079    -0.019      0.00
+   OH-             8.613e-08   8.216e-08    -7.065    -7.085    -0.020     -4.31
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Ca            6.000e-04
    Ca+2            6.000e-04   4.991e-04    -3.222    -3.302    -0.080    -18.16
-   CaOH+           1.041e-09   9.931e-10    -8.983    -9.003    -0.020     (0)  
+   CaOH+           1.041e-09   9.933e-10    -8.983    -9.003    -0.020     (0)  
 Cl            1.200e-03
    Cl-             1.200e-03   1.145e-03    -2.921    -2.941    -0.020     17.92
+   HCl             3.389e-11   3.395e-11   -10.470   -10.469     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -45.225   -45.225     0.000     28.61
 K             2.946e-13
    K+              2.946e-13   2.811e-13   -12.531   -12.551    -0.020      8.85
 Na            2.522e-19
    Na+             2.522e-19   2.407e-19   -18.598   -18.618    -0.020     -1.74
-   NaOH            1.976e-36   1.977e-36   -35.704   -35.704     0.000     (0)  
+   NaOH            1.977e-36   1.978e-36   -35.704   -35.704     0.000     (0)  
 O(0)          5.351e-04
    O2              2.675e-04   2.676e-04    -3.573    -3.572     0.000     29.98
 
@@ -323,7 +326,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.835 Seconds.
+End of Run after 1.586 Seconds.
 -------------------------------
 
 Time:                   10
@@ -375,16 +378,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.079      Charge balance
                                        pe  =  13.969      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 138
-                          Density (g/cm³)  =   0.99831
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 136
+                         Density (g/cmÂ³)  =   0.99831
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00227
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.800e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   3.051e-19
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -1.718e-19
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =   7.408e-19
+                  Electrical balance (eq)  =   5.593e-19
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   5
                                   Total H  = 2.213642e+01
@@ -393,23 +397,24 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   H+              8.715e-08   8.341e-08    -7.060    -7.079    -0.019      0.00
-   OH-             8.611e-08   8.215e-08    -7.065    -7.085    -0.020     -4.31
+   H+              8.713e-08   8.339e-08    -7.060    -7.079    -0.019      0.00
+   OH-             8.613e-08   8.216e-08    -7.065    -7.085    -0.020     -4.31
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Ca            6.000e-04
    Ca+2            6.000e-04   4.991e-04    -3.222    -3.302    -0.080    -18.16
-   CaOH+           1.041e-09   9.931e-10    -8.983    -9.003    -0.020     (0)  
+   CaOH+           1.041e-09   9.933e-10    -8.983    -9.003    -0.020     (0)  
 Cl            1.200e-03
    Cl-             1.200e-03   1.145e-03    -2.921    -2.941    -0.020     17.92
+   HCl             3.389e-11   3.395e-11   -10.470   -10.469     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -45.225   -45.225     0.000     28.61
 K             6.516e-11
    K+              6.516e-11   6.217e-11   -10.186   -10.206    -0.020      8.85
 Na            4.254e-16
    Na+             4.254e-16   4.061e-16   -15.371   -15.391    -0.020     -1.74
-   NaOH            3.334e-33   3.335e-33   -32.477   -32.477     0.000     (0)  
+   NaOH            3.334e-33   3.336e-33   -32.477   -32.477     0.000     (0)  
 O(0)          5.351e-04
    O2              2.675e-04   2.676e-04    -3.573    -3.572     0.000     29.98
 
@@ -435,7 +440,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.835 Seconds.
+End of Run after 1.596 Seconds.
 -------------------------------
 
 Time:                   10
@@ -487,16 +492,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.079      Charge balance
                                        pe  =  13.969      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 138
-                          Density (g/cm³)  =   0.99831
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 136
+                         Density (g/cmÂ³)  =   0.99831
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00227
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.800e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.928e-19
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -5.074e-19
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =   1.087e-18
+                  Electrical balance (eq)  =   1.354e-18
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   6
                                   Total H  = 2.213642e+01
@@ -505,23 +511,24 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   H+              8.715e-08   8.341e-08    -7.060    -7.079    -0.019      0.00
-   OH-             8.611e-08   8.215e-08    -7.065    -7.085    -0.020     -4.31
+   H+              8.713e-08   8.339e-08    -7.060    -7.079    -0.019      0.00
+   OH-             8.613e-08   8.216e-08    -7.065    -7.085    -0.020     -4.31
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Ca            6.000e-04
    Ca+2            6.000e-04   4.991e-04    -3.222    -3.302    -0.080    -18.16
-   CaOH+           1.041e-09   9.931e-10    -8.983    -9.003    -0.020     (0)  
+   CaOH+           1.041e-09   9.933e-10    -8.983    -9.003    -0.020     (0)  
 Cl            1.200e-03
    Cl-             1.200e-03   1.145e-03    -2.921    -2.941    -0.020     17.92
+   HCl             3.389e-11   3.395e-11   -10.470   -10.469     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -45.225   -45.225     0.000     28.61
 K             8.524e-09
    K+              8.524e-09   8.133e-09    -8.069    -8.090    -0.020      8.85
 Na            5.285e-13
    Na+             5.285e-13   5.045e-13   -12.277   -12.297    -0.020     -1.74
-   NaOH            4.142e-30   4.144e-30   -29.383   -29.383     0.000     (0)  
+   NaOH            4.143e-30   4.145e-30   -29.383   -29.383     0.000     (0)  
 O(0)          5.351e-04
    O2              2.675e-04   2.676e-04    -3.573    -3.572     0.000     29.98
 
@@ -547,7 +554,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.836 Seconds.
+End of Run after 1.602 Seconds.
 -------------------------------
 
 Time:                   10
@@ -599,16 +606,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.079      Charge balance
                                        pe  =  13.969      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 138
-                          Density (g/cm³)  =   0.99831
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 137
+                         Density (g/cmÂ³)  =   0.99831
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00227
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.800e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -2.019e-19
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -8.678e-20
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =   6.299e-18
+                  Electrical balance (eq)  =   6.101e-18
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   6
                                   Total H  = 2.213642e+01
@@ -617,23 +625,24 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   H+              8.715e-08   8.341e-08    -7.060    -7.079    -0.019      0.00
-   OH-             8.611e-08   8.215e-08    -7.065    -7.085    -0.020     -4.31
+   H+              8.713e-08   8.339e-08    -7.060    -7.079    -0.019      0.00
+   OH-             8.613e-08   8.216e-08    -7.065    -7.085    -0.020     -4.31
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Ca            5.996e-04
    Ca+2            5.996e-04   4.987e-04    -3.222    -3.302    -0.080    -18.16
-   CaOH+           1.040e-09   9.923e-10    -8.983    -9.003    -0.020     (0)  
+   CaOH+           1.040e-09   9.925e-10    -8.983    -9.003    -0.020     (0)  
 Cl            1.200e-03
    Cl-             1.200e-03   1.145e-03    -2.921    -2.941    -0.020     17.92
+   HCl             3.389e-11   3.395e-11   -10.470   -10.469     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -45.225   -45.225     0.000     28.61
 K             8.972e-07
    K+              8.972e-07   8.560e-07    -6.047    -6.068    -0.020      8.85
 Na            6.201e-10
    Na+             6.201e-10   5.920e-10    -9.208    -9.228    -0.020     -1.74
-   NaOH            4.860e-27   4.862e-27   -26.313   -26.313     0.000     (0)  
+   NaOH            4.861e-27   4.863e-27   -26.313   -26.313     0.000     (0)  
 O(0)          5.351e-04
    O2              2.675e-04   2.676e-04    -3.573    -3.572     0.000     29.98
 
@@ -659,7 +668,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.836 Seconds.
+End of Run after 1.611 Seconds.
 -------------------------------
 
 Time:                   10
@@ -711,16 +720,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.079      Charge balance
                                        pe  =  13.969      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 139
-                          Density (g/cm³)  =   0.99831
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 138
+                         Density (g/cmÂ³)  =   0.99831
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00221
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.758e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   2.447e-19
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -1.006e-19
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =   2.790e-16
+                  Electrical balance (eq)  =   2.788e-16
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =   7
                                   Total H  = 2.213642e+01
@@ -729,23 +739,24 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   H+              8.707e-08   8.337e-08    -7.060    -7.079    -0.019      0.00
-   OH-             8.610e-08   8.218e-08    -7.065    -7.085    -0.020     -4.31
+   H+              8.706e-08   8.335e-08    -7.060    -7.079    -0.019      0.00
+   OH-             8.612e-08   8.220e-08    -7.065    -7.085    -0.020     -4.31
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Ca            5.583e-04
    Ca+2            5.583e-04   4.654e-04    -3.253    -3.332    -0.079    -18.16
-   CaOH+           9.702e-10   9.264e-10    -9.013    -9.033    -0.020     (0)  
+   CaOH+           9.704e-10   9.265e-10    -9.013    -9.033    -0.020     (0)  
 Cl            1.200e-03
    Cl-             1.200e-03   1.146e-03    -2.921    -2.941    -0.020     17.92
+   HCl             3.390e-11   3.396e-11   -10.470   -10.469     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -45.225   -45.225     0.000     28.61
 K             8.262e-05
    K+              8.262e-05   7.886e-05    -4.083    -4.103    -0.020      8.85
 Na            6.987e-07
    Na+             6.987e-07   6.674e-07    -6.156    -6.176    -0.020     -1.74
-   NaOH            5.481e-24   5.484e-24   -23.261   -23.261     0.000     (0)  
+   NaOH            5.482e-24   5.485e-24   -23.261   -23.261     0.000     (0)  
 O(0)          5.351e-04
    O2              2.675e-04   2.676e-04    -3.573    -3.572     0.000     29.98
 
@@ -771,7 +782,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.836 Seconds.
+End of Run after 1.617 Seconds.
 -------------------------------
 
 Time:                   10
@@ -822,15 +833,16 @@ X                2.200e-04 mol
 ----------------------------Description of solution----------------------------
 
                                        pH  =   7.082      Charge balance
-                                       pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 152
-                          Density (g/cm³)  =   0.99831
+                                       pe  =  13.966      Adjusted to redox equilibrium
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 154
+                         Density (g/cmÂ³)  =   0.99831
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00173
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.211e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   1.542e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =   1.085e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
                   Electrical balance (eq)  =   9.176e-14
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
@@ -841,23 +853,24 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   H+              8.598e-08   8.288e-08    -7.066    -7.082    -0.016      0.00
-   OH-             8.596e-08   8.267e-08    -7.066    -7.083    -0.017     -4.32
+   OH-             8.598e-08   8.269e-08    -7.066    -7.083    -0.017     -4.32
+   H+              8.596e-08   8.286e-08    -7.066    -7.082    -0.016      0.00
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Ca            1.065e-05
    Ca+2            1.065e-05   9.140e-06    -4.973    -5.039    -0.066    -18.19
-   CaOH+           1.902e-11   1.830e-11   -10.721   -10.738    -0.017     (0)  
+   CaOH+           1.903e-11   1.831e-11   -10.721   -10.737    -0.017     (0)  
 Cl            1.200e-03
    Cl-             1.200e-03   1.154e-03    -2.921    -2.938    -0.017     17.91
+   HCl             3.397e-11   3.401e-11   -10.469   -10.468     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -45.225   -45.225     0.000     28.61
 K             1.063e-03
    K+              1.063e-03   1.023e-03    -2.973    -2.990    -0.017      8.84
 Na            1.154e-04
    Na+             1.154e-04   1.110e-04    -3.938    -3.955    -0.017     -1.75
-   NaOH            9.175e-22   9.178e-22   -21.037   -21.037     0.000     (0)  
+   NaOH            9.177e-22   9.179e-22   -21.037   -21.037     0.000     (0)  
 O(0)          5.351e-04
    O2              2.675e-04   2.676e-04    -3.573    -3.573     0.000     29.98
 
@@ -883,7 +896,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.835 Seconds.
+End of Run after 1.585 Seconds.
 -------------------------------
 
 Time:                   10
@@ -934,17 +947,18 @@ X                2.200e-04 mol
 ----------------------------Description of solution----------------------------
 
                                        pH  =   7.082      Charge balance
-                                       pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 142
-                          Density (g/cm³)  =   0.99830
+                                       pe  =  13.966      Adjusted to redox equilibrium
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 144
+                         Density (g/cmÂ³)  =   0.99830
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00179
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   3.336e-19
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =   2.411e-19
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -7.013e-16
+                  Electrical balance (eq)  =  -7.024e-16
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   6
                                   Total H  = 2.213642e+01
@@ -953,23 +967,24 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
-   OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
+   OH-             8.597e-08   8.270e-08    -7.066    -7.082    -0.017     -4.32
+   H+              8.594e-08   8.285e-08    -7.066    -7.082    -0.016      0.00
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Ca            1.499e-10
    Ca+2            1.499e-10   1.287e-10    -9.824    -9.890    -0.066    -18.19
-   CaOH+           2.679e-16   2.577e-16   -15.572   -15.589    -0.017     (0)  
+   CaOH+           2.679e-16   2.578e-16   -15.572   -15.589    -0.017     (0)  
 Cl            1.200e-03
    Cl-             1.200e-03   1.154e-03    -2.921    -2.938    -0.017     17.91
+   HCl             3.397e-11   3.401e-11   -10.469   -10.468     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -45.225   -45.225     0.000     28.61
 K             5.727e-04
    K+              5.727e-04   5.509e-04    -3.242    -3.259    -0.017      8.84
 Na            6.273e-04
    Na+             6.273e-04   6.037e-04    -3.203    -3.219    -0.017     -1.75
-   NaOH            4.989e-21   4.991e-21   -20.302   -20.302     0.000     (0)  
+   NaOH            4.990e-21   4.992e-21   -20.302   -20.302     0.000     (0)  
 O(0)          5.351e-04
    O2              2.675e-04   2.676e-04    -3.573    -3.573     0.000     29.98
 
@@ -995,7 +1010,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.835 Seconds.
+End of Run after 1.594 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1046,15 +1061,16 @@ X                2.200e-04 mol
 ----------------------------Description of solution----------------------------
 
                                        pH  =   7.082      Charge balance
-                                       pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 136
-                          Density (g/cm³)  =   0.99830
+                                       pe  =  13.966      Adjusted to redox equilibrium
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 137
+                         Density (g/cmÂ³)  =   0.99830
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00183
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   3.137e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =   4.111e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
                   Electrical balance (eq)  =   7.519e-13
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
@@ -1065,23 +1081,24 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
-   H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
+   OH-             8.597e-08   8.270e-08    -7.066    -7.082    -0.017     -4.32
+   H+              8.594e-08   8.285e-08    -7.066    -7.082    -0.016      0.00
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Ca            8.889e-17
    Ca+2            8.889e-17   7.634e-17   -16.051   -16.117    -0.066    -18.19
    CaOH+           1.589e-22   1.529e-22   -21.799   -21.816    -0.017     (0)  
 Cl            1.200e-03
    Cl-             1.200e-03   1.154e-03    -2.921    -2.938    -0.017     17.91
+   HCl             3.397e-11   3.401e-11   -10.469   -10.468     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -45.225   -45.225     0.000     28.61
 K             2.409e-04
    K+              2.409e-04   2.318e-04    -3.618    -3.635    -0.017      8.84
 Na            9.591e-04
    Na+             9.591e-04   9.230e-04    -3.018    -3.035    -0.017     -1.75
-   NaOH            7.628e-21   7.630e-21   -20.118   -20.117     0.000     (0)  
+   NaOH            7.629e-21   7.632e-21   -20.118   -20.117     0.000     (0)  
 O(0)          5.351e-04
    O2              2.675e-04   2.676e-04    -3.573    -3.573     0.000     29.98
 
@@ -1107,7 +1124,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.836 Seconds.
+End of Run after 1.602 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1158,15 +1175,16 @@ X                2.200e-04 mol
 ----------------------------Description of solution----------------------------
 
                                        pH  =   7.082      Charge balance
-                                       pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 135
-                          Density (g/cm³)  =   0.99830
+                                       pe  =  13.966      Adjusted to redox equilibrium
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 136
+                         Density (g/cmÂ³)  =   0.99830
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00184
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =   2.785e-19
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =   3.107e-19
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
                   Electrical balance (eq)  =   1.445e-13
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
@@ -1177,23 +1195,24 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
-   H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
+   OH-             8.597e-08   8.270e-08    -7.066    -7.082    -0.017     -4.32
+   H+              8.594e-08   8.285e-08    -7.066    -7.082    -0.016      0.00
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Ca            1.785e-23
    Ca+2            1.785e-23   1.533e-23   -22.748   -22.815    -0.066    -18.19
-   CaOH+           3.190e-29   3.070e-29   -28.496   -28.513    -0.017     (0)  
+   CaOH+           3.191e-29   3.070e-29   -28.496   -28.513    -0.017     (0)  
 Cl            1.200e-03
    Cl-             1.200e-03   1.154e-03    -2.921    -2.938    -0.017     17.91
+   HCl             3.397e-11   3.401e-11   -10.469   -10.468     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -45.225   -45.225     0.000     28.61
 K             1.995e-04
    K+              1.995e-04   1.919e-04    -3.700    -3.717    -0.017      8.84
 Na            1.000e-03
    Na+             1.000e-03   9.629e-04    -3.000    -3.016    -0.017     -1.75
-   NaOH            7.957e-21   7.959e-21   -20.099   -20.099     0.000     (0)  
+   NaOH            7.959e-21   7.961e-21   -20.099   -20.099     0.000     (0)  
 O(0)          5.351e-04
    O2              2.675e-04   2.676e-04    -3.573    -3.573     0.000     29.98
 
@@ -1219,7 +1238,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.836 Seconds.
+End of Run after 1.611 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1268,17 +1287,18 @@ X                2.200e-04 mol
 ----------------------------Description of solution----------------------------
 
                                        pH  =   7.082      Charge balance
-                                       pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 135
-                          Density (g/cm³)  =   0.99830
+                                       pe  =  13.966      Adjusted to redox equilibrium
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 136
+                         Density (g/cmÂ³)  =   0.99830
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00184
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -5.725e-21
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =   6.330e-20
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -1.575e-17
+                  Electrical balance (eq)  =  -1.626e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213642e+01
@@ -1287,20 +1307,21 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
-   OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
+   OH-             8.597e-08   8.270e-08    -7.066    -7.082    -0.017     -4.32
+   H+              8.594e-08   8.285e-08    -7.066    -7.082    -0.016      0.00
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.05
 Cl            1.200e-03
    Cl-             1.200e-03   1.154e-03    -2.921    -2.938    -0.017     17.91
+   HCl             3.397e-11   3.401e-11   -10.469   -10.468     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -45.225   -45.225     0.000     28.61
 K             1.970e-04
    K+              1.970e-04   1.895e-04    -3.706    -3.722    -0.017      8.84
 Na            1.003e-03
    Na+             1.003e-03   9.653e-04    -2.999    -3.015    -0.017     -1.75
-   NaOH            7.977e-21   7.980e-21   -20.098   -20.098     0.000     (0)  
+   NaOH            7.979e-21   7.981e-21   -20.098   -20.098     0.000     (0)  
 O(0)          5.351e-04
    O2              2.675e-04   2.676e-04    -3.573    -3.573     0.000     29.98
 
@@ -1326,7 +1347,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.837 Seconds.
+End of Run after 1.618 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1377,16 +1398,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.082      Charge balance
                                        pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 130
-                          Density (g/cm³)  =   0.99832
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 131
+                         Density (g/cmÂ³)  =   0.99832
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00175
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -3.398e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -3.942e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.800e-17
+                  Electrical balance (eq)  =  -6.789e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -1395,7 +1417,7 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
    H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
@@ -1441,7 +1463,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.835 Seconds.
+End of Run after 1.582 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1492,16 +1514,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.082      Charge balance
                                        pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 130
-                          Density (g/cm³)  =   0.99832
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 131
+                         Density (g/cmÂ³)  =   0.99832
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00175
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -3.398e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -3.942e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.800e-17
+                  Electrical balance (eq)  =  -6.789e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -1510,7 +1533,7 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
    H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
@@ -1555,9 +1578,9 @@ End of simulation.
 Reading input data for simulation 2.
 ------------------------------------
 
--------------------------------
-End of Run after 1.835 Seconds.
--------------------------------
+------------------------------
+End of Run after 1.59 Seconds.
+------------------------------
 
 Time:                   10
 Chemistry cell:         12
@@ -1607,16 +1630,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.082      Charge balance
                                        pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 130
-                          Density (g/cm³)  =   0.99832
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 131
+                         Density (g/cmÂ³)  =   0.99832
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00175
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -3.398e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -3.942e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.800e-17
+                  Electrical balance (eq)  =  -6.789e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -1625,7 +1649,7 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
    H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
@@ -1671,7 +1695,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.836 Seconds.
+End of Run after 1.596 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1722,16 +1746,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.082      Charge balance
                                        pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 130
-                          Density (g/cm³)  =   0.99832
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 131
+                         Density (g/cmÂ³)  =   0.99832
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00175
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -3.398e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -3.942e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.800e-17
+                  Electrical balance (eq)  =  -6.789e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -1740,7 +1765,7 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
    H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
@@ -1786,7 +1811,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.836 Seconds.
+End of Run after 1.606 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1837,16 +1862,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.082      Charge balance
                                        pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 130
-                          Density (g/cm³)  =   0.99832
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 131
+                         Density (g/cmÂ³)  =   0.99832
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00175
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -3.398e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -3.942e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.800e-17
+                  Electrical balance (eq)  =  -6.789e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -1855,7 +1881,7 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
    H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
@@ -1901,7 +1927,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.836 Seconds.
+End of Run after 1.612 Seconds.
 -------------------------------
 
 Time:                   10
@@ -1952,16 +1978,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.082      Charge balance
                                        pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 130
-                          Density (g/cm³)  =   0.99832
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 131
+                         Density (g/cmÂ³)  =   0.99832
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00175
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -3.398e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -3.942e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.800e-17
+                  Electrical balance (eq)  =  -6.789e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -1970,7 +1997,7 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
    H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
@@ -2016,7 +2043,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.837 Seconds.
+End of Run after 1.618 Seconds.
 -------------------------------
 
 Time:                   10
@@ -2067,16 +2094,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.082      Charge balance
                                        pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 130
-                          Density (g/cm³)  =   0.99832
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 131
+                         Density (g/cmÂ³)  =   0.99832
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00175
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -3.398e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -3.942e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.800e-17
+                  Electrical balance (eq)  =  -6.789e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -2085,7 +2113,7 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
    H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
@@ -2131,7 +2159,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.838 Seconds.
+End of Run after 1.623 Seconds.
 -------------------------------
 
 Time:                   10
@@ -2182,16 +2210,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.082      Charge balance
                                        pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 130
-                          Density (g/cm³)  =   0.99832
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 131
+                         Density (g/cmÂ³)  =   0.99832
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00175
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -3.398e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -3.942e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.800e-17
+                  Electrical balance (eq)  =  -6.789e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -2200,7 +2229,7 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
    H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
@@ -2246,7 +2275,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.838 Seconds.
+End of Run after 1.628 Seconds.
 -------------------------------
 
 Time:                   10
@@ -2297,16 +2326,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.082      Charge balance
                                        pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 130
-                          Density (g/cm³)  =   0.99832
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 131
+                         Density (g/cmÂ³)  =   0.99832
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00175
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -3.398e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -3.942e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.800e-17
+                  Electrical balance (eq)  =  -6.789e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -2315,7 +2345,7 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
    H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
@@ -2361,7 +2391,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.839 Seconds.
+End of Run after 1.634 Seconds.
 -------------------------------
 
 Time:                   10
@@ -2412,16 +2442,17 @@ X                2.200e-04 mol
 
                                        pH  =   7.082      Charge balance
                                        pe  =  13.967      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  20°C)  = 130
-                          Density (g/cm³)  =   0.99832
+     Specific Conductance (ÂµS/cm,  20Â°C)  = 131
+                         Density (g/cmÂ³)  =   0.99832
                                Volume (L)  =   0.19976
+                        Viscosity (mPa s)  =   1.00175
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.200e-03
                        Mass of water (kg)  =   1.994e-01
-                 Total alkalinity (eq/kg)  =  -3.398e-18
-                         Temperature (°C)  =  20.00
+                 Total alkalinity (eq/kg)  =  -3.942e-18
+                        Temperature (Â°C)  =  20.00
                            Pressure (atm)  =  2.00
-                  Electrical balance (eq)  =  -6.800e-17
+                  Electrical balance (eq)  =  -6.789e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =   2
                                   Total H  = 2.213587e+01
@@ -2430,7 +2461,7 @@ X                2.200e-04 mol
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
    H+              8.595e-08   8.287e-08    -7.066    -7.082    -0.016      0.00
    OH-             8.595e-08   8.268e-08    -7.066    -7.083    -0.017     -4.32
@@ -2476,6 +2507,7 @@ Reading input data for simulation 2.
 ------------------------------------
 
 -------------------------------
-End of Run after 1.839 Seconds.
+End of Run after 1.639 Seconds.
 -------------------------------
 
+      pH      CaX2     KX       NaX

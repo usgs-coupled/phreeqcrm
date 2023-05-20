@@ -1,284 +1,309 @@
-SetGridCellCount: 40
-SetErrorHandlerMode: 1
-SetComponentH2O: false
-SetRebalanceFraction: 0.5
-SetRebalanceByCell: true
-UseSolutionDensityVolume: false
-SetPartitionUZSolids: false
-SetFilePrefix: AdvectBMI_f90
-OpenFiles: ""
-SetUnitsSolution: 2
-SetUnitsPPassemblage: 1
-SetUnitsExchange: 1
-SetUnitsSurface: 1
-SetUnitsGasPhase: 1
-SetUnitsSSassemblage: 1
-SetUnitsKinetics: 1
-SetTimeConversion: 1.1574074074074073e-05
-SetRepresentativeVolume:
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-SetDensity:
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-SetPorosity:
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-  - 0.20000000000000001
-SetSaturation:
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-SetPrintChemistryMask:
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-CreateMapping:
-  - 0
-  - 1
-  - 2
-  - 3
-  - 4
-  - 5
-  - 6
-  - 7
-  - 8
-  - 9
-  - 10
-  - 11
-  - 12
-  - 13
-  - 14
-  - 15
-  - 16
-  - 17
-  - 18
-  - 19
-  - 0
-  - 1
-  - 2
-  - 3
-  - 4
-  - 5
-  - 6
-  - 7
-  - 8
-  - 9
-  - 10
-  - 11
-  - 12
-  - 13
-  - 14
-  - 15
-  - 16
-  - 17
-  - 18
-  - 19
-SetPrintChemistryOn:
+- key: SetGridCellCount
+  count: 40
+- key: ThreadCount
+  nthreads: 3
+- key: SetErrorHandlerMode
+  mode: 1
+- key: SetComponentH2O
+  tf: true
+- key: SetRebalanceFraction
+  f: 0.5
+- key: SetRebalanceByCell
+  tf: true
+- key: UseSolutionDensityVolume
+  tf: false
+- key: SetPartitionUZSolids
+  tf: false
+- key: SetFilePrefix
+  prefix: AdvectBMI_f90
+- key: OpenFiles
+- key: SetUnitsSolution
+  option: 2
+- key: SetUnitsPPassemblage
+  option: 1
+- key: SetUnitsExchange
+  option: 1
+- key: SetUnitsSurface
+  option: 1
+- key: SetUnitsGasPhase
+  option: 1
+- key: SetUnitsSSassemblage
+  option: 1
+- key: SetUnitsKinetics
+  option: 1
+- key: SetTimeConversion
+  conv_factor: 1.1574074074074073e-05
+- key: SetRepresentativeVolume
+  rv:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+- key: SetDensityUser
+  density:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+- key: SetPorosity
+  por:
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+    - 0.20000000000000001
+- key: SetSaturationUser
+  sat:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+- key: SetPrintChemistryMask
+  cell_mask:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+- key: CreateMapping
+  grid2chem:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+- key: SetPrintChemistryOn
   workers: false
   initial_phreeqc: true
   utility: false
-LoadDatabase: phreeqc.dat
-RunFile:
+- key: LoadDatabase
+  database: phreeqc.dat
+- key: RunFile
   workers: true
   initial_phreeqc: true
   utility: true
   chemistry_name: advect.pqi
-RunString:
+- key: RunString
   workers: true
   initial_phreeqc: false
   utility: true
   input_string: DELETE; -all
-FindComponents: ""
-InitialPhreeqc2Module:
-  ic1:
+- key: FindComponents
+- key: InitialPhreeqc2Module
+  initial_conditions1:
     - 1
     - 1
     - 1
@@ -559,7 +584,7 @@ InitialPhreeqc2Module:
     - -1
     - -1
     - -1
-  ic2:
+  initial_conditions2:
     - -1
     - -1
     - -1
@@ -840,7 +865,7 @@ InitialPhreeqc2Module:
     - -1
     - -1
     - -1
-  f1:
+  fraction1:
     - 1
     - 1
     - 1
@@ -1121,11 +1146,15 @@ InitialPhreeqc2Module:
     - 1
     - 1
     - 1
-InitialPhreeqcCell2Module:
+- key: InitialPhreeqcCell2Module
   n: -1
   cell_numbers:
     - 18
     - 19
-SetTimeStep: 86400
-SetTime: 0
-RunCells: ""
+- key: SetTimeStep
+  time_step: 0
+- key: SetTime
+  time: 0
+- key: RunCells
+- key: SetTimeStep
+  time_step: 86400

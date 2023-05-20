@@ -31,16 +31,17 @@ Using solution 1.
 
                                        pH  =   7.169      Charge balance
                                        pe  =  14.315      Adjusted to redox equilibrium
-      Specific Conductance (µS/cm,  15°C)  = 120
-                          Density (g/cm³)  =   0.99925
+     Specific Conductance (ÂµS/cm,  15Â°C)  = 121
+                         Density (g/cmÂ³)  =   0.99925
                                Volume (L)  =   0.99905
+                        Viscosity (mPa s)  =   1.13793
                         Activity of water  =   1.000
                  Ionic strength (mol/kgw)  =   1.500e-03
                        Mass of water (kg)  =   9.982e-01
-                 Total alkalinity (eq/kg)  =   4.891e-19
-                         Temperature (°C)  =  15.00
+                 Total alkalinity (eq/kg)  =  -9.111e-20
+                        Temperature (Â°C)  =  15.00
                            Pressure (atm)  =  3.00
-                  Electrical balance (eq)  =  -4.257e-17
+                  Electrical balance (eq)  =  -4.280e-17
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =  -0.00
                                Iterations  =  12
                                   Total H  = 1.108154e+02
@@ -49,23 +50,24 @@ Using solution 1.
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cmÂ³/mol
 
-   H+              7.060e-08   6.782e-08    -7.151    -7.169    -0.017      0.00
-   OH-             6.995e-08   6.702e-08    -7.155    -7.174    -0.019     -4.60
+   H+              7.058e-08   6.780e-08    -7.151    -7.169    -0.017      0.00
+   OH-             6.996e-08   6.703e-08    -7.155    -7.174    -0.019     -4.60
    H2O             5.551e+01   1.000e+00     1.744    -0.000     0.000     18.03
 Ca            3.000e-04
    Ca+2            3.000e-04   2.537e-04    -3.523    -3.596    -0.073    -18.26
-   CaOH+           6.477e-10   6.207e-10    -9.189    -9.207    -0.018     (0)  
+   CaOH+           6.478e-10   6.209e-10    -9.189    -9.207    -0.018     (0)  
 Cl            1.200e-03
    Cl-             1.200e-03   1.150e-03    -2.921    -2.939    -0.019     17.68
+   HCl             2.858e-11   2.862e-11   -10.544   -10.543     0.001     (0)  
 H(0)          0.000e+00
    H2              0.000e+00   0.000e+00   -46.074   -46.074     0.000     28.62
 K             9.849e-05
    K+              9.849e-05   9.436e-05    -4.007    -4.025    -0.019      8.65
 Na            5.015e-04
    Na+             5.015e-04   4.808e-04    -3.300    -3.318    -0.018     -2.08
-   NaOH            3.219e-21   3.220e-21   -20.492   -20.492     0.000     (0)  
+   NaOH            3.220e-21   3.221e-21   -20.492   -20.492     0.000     (0)  
 O(0)          5.351e-04
    O2              2.675e-04   2.676e-04    -3.573    -3.572     0.000     29.50
 
@@ -90,7 +92,7 @@ End of simulation.
 Reading input data for simulation 2.
 ------------------------------------
 
--------------------------------
-End of Run after 2.011 Seconds.
--------------------------------
+--------------------------------
+End of Run after 27.116 Seconds.
+--------------------------------
 
