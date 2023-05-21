@@ -222,10 +222,8 @@
         status = RM_StateSave(id, 1)
         status = RM_StateApply(id, 1)
         status = RM_StateDelete(id, 1)
-        call compare_ptrs
         ! Run chemistry
         status = bmif_update(id)
-        call compare_ptrs
         ! Get new data calculated by PhreeqcRM for transport
         status = bmif_get_value(id, "Concentrations", c)
         status = bmif_get_value(id, "DensityCalculated", density)

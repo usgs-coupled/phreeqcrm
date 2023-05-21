@@ -2836,6 +2836,8 @@ Called by root.
  */
 	//const std::vector< double > &               GetTemperature(void) {return this->tempc;}
 	const std::vector< double > &               GetTemperature(void);
+	int PhreeqcRM::GetVarItemsize(const std::string name);
+	int PhreeqcRM::GetVarNbytes(const std::string name);
 
 	/**
 	Return a vector reference to the current viscosity as calculated by 
@@ -5643,7 +5645,7 @@ protected:
 	std::vector <std::string> SolidSolutionNamesList;
 	std::vector <std::string> SINamesList;
 	std::set <std::string> ElementRedoxSet;
-
+	class VarManager *phreeqcrm_var_man;
 
 protected:
 	static const int default_nxyz = 10;

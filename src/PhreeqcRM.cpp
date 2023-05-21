@@ -24,6 +24,7 @@
 #include <assert.h>
 #include "System.h"
 #include "BMIVariant.h"
+#include "VarManager.h"
 #ifdef USE_GZ
 #include <zlib.h>
 #else
@@ -213,7 +214,7 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 		this->delete_phreeqcrm_io = true;
 	}
 	this->phreeqcrm_io->Set_error_ostream(&std::cerr);
-
+	this->phreeqcrm_var_man = new VarManager(this);
 	// second argument is threads for OPENMP or COMM for MPI
 #if !defined(USE_MPI)
 	int thread_count = 1;
@@ -5253,6 +5254,38 @@ PhreeqcRM::GetTemperature(void)
 	return this->tempc_root;
 }
 #endif
+int PhreeqcRM::GetVarItemsize(const std::string name)
+{
+	RMVARS v_enum = this->phreeqcrm_var_man->GetEnum(name);
+	if (v_enum != RMVARS::NotFound)
+	{
+		BMIVariant& bv = this->phreeqcrm_var_man->VariantMap[v_enum];
+		if (!bv.GetInitialized())
+		{
+			this->phreeqcrm_var_man->task = VarManager::VAR_TASKS::Info;
+			((*this->phreeqcrm_var_man).*bv.GetFn())();
+		}
+		return bv.GetItemsize();
+	}
+	assert(false);
+	return 0;
+}
+int PhreeqcRM::GetVarNbytes(const std::string name)
+{
+	RMVARS v_enum = this->phreeqcrm_var_man->GetEnum(name);
+	if (v_enum != RMVARS::NotFound)
+	{
+		BMIVariant& bv = this->phreeqcrm_var_man->VariantMap[v_enum];
+		if (!bv.GetInitialized())
+		{
+			this->phreeqcrm_var_man->task = VarManager::VAR_TASKS::Info;
+			((*this->phreeqcrm_var_man).*bv.GetFn())();
+		}
+		return bv.GetNbytes();
+	}
+	assert(false);
+	return 0;
+}
 /* ---------------------------------------------------------------------- */
 const std::vector<double>&
 PhreeqcRM::GetViscosity(void)

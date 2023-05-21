@@ -94,7 +94,9 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetTemperature(int* id, double* temperature);
 IRM_DLL_EXPORT int        RMF_GetThreadCount(int *id);
 IRM_DLL_EXPORT double     RMF_GetTime(int *id);
 IRM_DLL_EXPORT double     RMF_GetTimeConversion(int *id);
-IRM_DLL_EXPORT double     RMF_GetTimeStep(int *id); 
+IRM_DLL_EXPORT double     RMF_GetTimeStep(int *id);
+IRM_DLL_EXPORT int        RMF_GetVarItemsize(int* id, const char* str);
+IRM_DLL_EXPORT int        RMF_GetVarNbytes(int* id, const char* str);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetViscosity(int* id, double* viscosity);
 #ifdef USE_YAML
 IRM_DLL_EXPORT IRM_RESULT RMF_InitializeYAML(int* id, const char* yaml_name);

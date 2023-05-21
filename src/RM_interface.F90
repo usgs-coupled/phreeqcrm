@@ -752,7 +752,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: comp_name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: comp_name(*)
     END FUNCTION RMF_GetComponent
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -902,6 +902,8 @@
     END INTERFACE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(inout), allocatable :: c(:,:)
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_ncomps = RM_GetComponentCount(id)
     rmf_errors = allocate_double_2d(c, rmf_nxyz, rmf_ncomps)
     RM_GetConcentrations = RMF_GetConcentrations(id, c)
     return
@@ -992,6 +994,7 @@
     END INTERFACE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(inout), dimension(:), allocatable  :: density
+    rmf_nxyz = RM_GetGridCellCount(id)
     rmf_errors = allocate_double_1d(density, rmf_nxyz)
     RM_GetDensityCalculated = RMF_GetDensityCalculated(id, density)
     return
@@ -1034,6 +1037,7 @@
     END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(inout), DIMENSION(:), allocatable :: ec
+    rmf_threads = RM_GetThreadCount(id)
     rmf_errors = allocate_integer_1d(ec, rmf_threads)
     RM_GetEndCell = RMF_GetEndCell(id, ec)
     RETURN
@@ -1114,7 +1118,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetEquilibriumPhasesName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -1159,11 +1163,11 @@
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     INTEGER(KIND=C_INT), INTENT(in) :: l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: errstr(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: errstr(*)
     END FUNCTION RMF_GetErrorString
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(out) :: errstr
+    CHARACTER(len=*), INTENT(inout) :: errstr
     RM_GetErrorString = RMF_GetErrorString(id, errstr, len(errstr))
     END FUNCTION RM_GetErrorString
 
@@ -1242,7 +1246,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetExchangeName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -1325,7 +1329,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetExchangeSpeciesName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -1365,7 +1369,7 @@
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     INTEGER(KIND=C_INT), INTENT(in) :: l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: prefix(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: prefix(*)
     END FUNCTION RMF_GetFilePrefix
     END INTERFACE
     INTEGER, INTENT(in) :: id
@@ -1450,7 +1454,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetGasComponentsName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -1502,11 +1506,13 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: gas_moles(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: gas_moles(*)
     END FUNCTION RMF_GetGasCompMoles
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable, TARGET :: gas_moles    
+    real(kind=8), INTENT(inout), DIMENSION(:,:), allocatable, TARGET :: gas_moles    
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_ngas = RM_GetGasComponentsCount(id)
     rmf_errors = allocate_double_2d(gas_moles, rmf_nxyz, rmf_ngas)
     RM_GetGasCompMoles = RMF_GetGasCompMoles(id, gas_moles)
     return
@@ -1568,11 +1574,13 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: gas_p(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: gas_p(*)
     END FUNCTION RMF_GetGasCompPressures
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable, TARGET :: gas_p
+    real(kind=8), INTENT(inout), DIMENSION(:,:), allocatable, TARGET :: gas_p
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_ngas = RM_GetGasComponentsCount(id)
     rmf_errors = allocate_double_2d(gas_p, rmf_nxyz, rmf_ngas)
     RM_GetGasCompPressures = RMF_GetGasCompPressures(id, gas_p )
     return
@@ -1622,11 +1630,13 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: gas_phi(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: gas_phi(*)
     END FUNCTION RMF_GetGasCompPhi
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable, TARGET :: gas_phi
+    real(kind=8), INTENT(inout), DIMENSION(:,:), allocatable, TARGET :: gas_phi
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_ngas = RM_GetGasComponentsCount(id)
     rmf_errors = allocate_double_2d (gas_phi, rmf_nxyz, rmf_ngas)
     RM_GetGasCompPhi = RMF_GetGasCompPhi(id, gas_phi)
     return
@@ -1674,11 +1684,12 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: gas_volume(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: gas_volume(*)
     END FUNCTION RMF_GetGasPhaseVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:), allocatable, TARGET :: gas_volume
+    real(kind=8), INTENT(inout), DIMENSION(:), allocatable, TARGET :: gas_volume
+    rmf_nxyz = RM_GetGridCellCount(id)
     rmf_errors = allocate_double_1d (gas_volume, rmf_nxyz)
     RM_GetGasPhaseVolume = RMF_GetGasPhaseVolume(id, gas_volume)
     return
@@ -1723,11 +1734,12 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(inout):: gfw(:)
+    REAL(KIND=C_DOUBLE), INTENT(inout):: gfw(*)
     END FUNCTION RMF_GetGfw
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), DIMENSION(:), INTENT(out), allocatable  :: gfw
+    real(kind=8), DIMENSION(:), INTENT(inout), allocatable  :: gfw
+    rmf_ncomps = RM_GetComponentCount(id)
     rmf_errors = allocate_double_1d(gfw, rmf_ncomps)
     RM_GetGfw = RMF_GetGfw(id, gfw)
     END FUNCTION RM_GetGfw
@@ -1850,12 +1862,13 @@
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     INTEGER(KIND=C_INT), INTENT(in) :: i
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: c(*)
     END FUNCTION RMF_GetIthConcentration
     END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: i
-    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: c
+    real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: c
+    rmf_nxyz = RM_GetGridCellCount(id)
     rmf_errors = allocate_double_1d(c, rmf_nxyz)
     RM_GetIthConcentration = RMF_GetIthConcentration(id, i - 1, c)
     return
@@ -1898,12 +1911,13 @@
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     INTEGER(KIND=C_INT), INTENT(in) :: i
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: c(*)
     END FUNCTION RMF_GetIthSpeciesConcentration
     END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in) :: i
-    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: c
+    real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: c
+    rmf_nxyz = RM_GetGridCellCount(id)
     rmf_errors = allocate_double_1d(c, rmf_nxyz)
     RM_GetIthSpeciesConcentration = RMF_GetIthSpeciesConcentration(id, i - 1, c)
     return
@@ -1984,7 +1998,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetKineticReactionsName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -2161,11 +2175,12 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: porosity(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: porosity(*)
     END FUNCTION RMF_GetPorosity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:), allocatable :: porosity
+    real(kind=8), INTENT(inout), dimension(:), allocatable :: porosity
+    rmf_nxyz = RM_GetGridCellCount(id)
     rmf_errors = allocate_double_1d(porosity, rmf_nxyz)
     RM_GetPorosity = RMF_GetPorosity(id, porosity)
     return
@@ -2202,11 +2217,12 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: pressure(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: pressure(*)
     END FUNCTION RMF_GetPressure
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:), allocatable :: pressure
+    real(kind=8), INTENT(inout), dimension(:), allocatable :: pressure
+    rmf_nxyz = RM_GetGridCellCount(id)
     rmf_errors = allocate_double_1d(pressure, rmf_nxyz)
     RM_GetPressure = RMF_GetPressure(id, pressure)
     return
@@ -2259,11 +2275,12 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: sat_calc(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: sat_calc(*)
     END FUNCTION RMF_GetSaturationCalculated
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: sat_calc
+    real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: sat_calc
+    rmf_nxyz = RM_GetGridCellCount(id)
     rmf_errors = allocate_double_1d(sat_calc, rmf_nxyz)
     RM_GetSaturationCalculated = RMF_GetSaturationCalculated(id, sat_calc)
     END FUNCTION RM_GetSaturationCalculated
@@ -2313,13 +2330,14 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: so(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: so(*)
     END FUNCTION RMF_GetSelectedOutput
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), DIMENSION(:,:), INTENT(out), allocatable :: so
+    real(kind=8), DIMENSION(:,:), INTENT(inout), allocatable :: so
     INTEGER :: ncol
     ncol = RM_GetSelectedOutputColumnCount(id)
+    rmf_nxyz = RM_GetGridCellCount(id)
     rmf_errors = allocate_double_2d(so, rmf_nxyz, ncol)
     RM_GetSelectedOutput = RMF_GetSelectedOutput(id, so)
     END FUNCTION RM_GetSelectedOutput
@@ -2465,11 +2483,11 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, icol, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: heading(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: heading(*)
     END FUNCTION RMF_GetSelectedOutputHeading
     END INTERFACE
     INTEGER, INTENT(in) :: id, icol
-    CHARACTER(len=*), INTENT(out) :: heading
+    CHARACTER(len=*), INTENT(inout) :: heading
     RM_GetSelectedOutputHeading = RMF_GetSelectedOutputHeading(id, icol, heading, len(heading))
     END FUNCTION RM_GetSelectedOutputHeading
     
@@ -2514,17 +2532,17 @@
     character(1024) :: head
     integer :: dim, itemsize, status, l, i
     dim = RM_GetSelectedOutputColumnCount(id)
-	itemsize = 0
-	do i = 1, dim
-		status = RM_GetSelectedOutputHeading(id, i, head)
-		l = len(trim(head))
-		if (l > itemsize) itemsize = l
-	enddo
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSelectedOutputHeading(id, i, head)
+        l = len(trim(head))
+        if (l > itemsize) itemsize = l
+    enddo
     if(allocated(headings)) deallocate(headings)
     allocate(character(len=itemsize) :: headings(dim))
-	do i = 1, dim
-		status = RM_GetSelectedOutputHeading(id, i, head)
-		headings(i) = trim(head)
+    do i = 1, dim
+        status = RM_GetSelectedOutputHeading(id, i, head)
+        headings(i) = trim(head)
     enddo	
     RM_GetSelectedOutputHeadings = status
     return
@@ -2664,7 +2682,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetSIName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -2749,7 +2767,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSolidSolutionComponentsName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -2797,7 +2815,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSolidSolutionName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -2842,11 +2860,12 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: vol(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: vol(*)
     END FUNCTION RMF_GetSolutionVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: vol
+    real(kind=8), intent(inout), DIMENSION(:), allocatable :: vol
+    rmf_nxyz = RM_GetGridCellCount(id)
     rmf_errors = allocate_double_1d(vol, rmf_nxyz)
     RM_GetSolutionVolume = RMF_GetSolutionVolume(id, vol)
     END FUNCTION RM_GetSolutionVolume
@@ -2908,11 +2927,13 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: species_conc(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: species_conc(*)
     END FUNCTION RMF_GetSpeciesConcentrations
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable :: species_conc
+    real(kind=8), intent(inout), DIMENSION(:,:), allocatable :: species_conc
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_nspecies = RM_GetSpeciesCount(id)
     rmf_errors = allocate_double_2d(species_conc, rmf_nxyz, rmf_nspecies)
     RM_GetSpeciesConcentrations = RMF_GetSpeciesConcentrations(id, species_conc)
     END FUNCTION RM_GetSpeciesConcentrations
@@ -3018,12 +3039,13 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: diffc(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: diffc(*)
     END FUNCTION RMF_GetSpeciesD25
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: diffc
-    rmf_errors = allocate_double_1d(diffc, rmf_nxyz)
+    real(kind=8), intent(inout), DIMENSION(:), allocatable :: diffc
+    rmf_nspecies = RM_GetSpeciesCount(id)
+    rmf_errors = allocate_double_1d(diffc, rmf_nspecies)
     RM_GetSpeciesD25 = RMF_GetSpeciesD25(id, diffc)
     END FUNCTION RM_GetSpeciesD25
 
@@ -3079,11 +3101,13 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: species_log10gammas(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: species_log10gammas(*)
     END FUNCTION RMF_GetSpeciesLog10Gammas
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable :: species_log10gammas
+    real(kind=8), intent(inout), DIMENSION(:,:), allocatable :: species_log10gammas
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_nspecies = RM_GetSpeciesCount(id)
     rmf_errors = allocate_double_2d(species_log10gammas, rmf_nxyz, rmf_nspecies)
     RM_GetSpeciesLog10Gammas = RMF_GetSpeciesLog10Gammas(id, species_log10gammas)
     END FUNCTION RM_GetSpeciesLog10Gammas
@@ -3139,11 +3163,13 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: species_log10molalities(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: species_log10molalities(*)
     END FUNCTION RMF_GetSpeciesLog10Molalities
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable :: species_log10molalities
+    real(kind=8), intent(inout), DIMENSION(:,:), allocatable :: species_log10molalities
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_nspecies = RM_GetSpeciesCount(id)
     rmf_errors = allocate_double_2d(species_log10molalities, rmf_nxyz, rmf_nspecies)
     RM_GetSpeciesLog10Molalities = RMF_GetSpeciesLog10Molalities(id, species_log10molalities)
     END FUNCTION RM_GetSpeciesLog10Molalities
@@ -3199,11 +3225,11 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, i, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSpeciesName
     END INTERFACE
     INTEGER, INTENT(in) :: id, i
-    CHARACTER(len=*), INTENT(out) :: name
+    CHARACTER(len=*), intent(inout) :: name
     RM_GetSpeciesName = RMF_GetSpeciesName(id, i, name, len(name))
     END FUNCTION RM_GetSpeciesName
 
@@ -3303,12 +3329,13 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: z(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: z(*)
     END FUNCTION RMF_GetSpeciesZ
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: z
-    rmf_errors = allocate_double_1d(z, rmf_nxyz)
+    real(kind=8), intent(inout), DIMENSION(:), allocatable :: z
+    rmf_nspecies = RM_GetSpeciesCount(id)
+    rmf_errors = allocate_double_1d(z, rmf_nspecies)
     RM_GetSpeciesZ = RMF_GetSpeciesZ(id, z)
     END FUNCTION RM_GetSpeciesZ
 
@@ -3345,12 +3372,13 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    INTEGER(KIND=C_INT), INTENT(out):: sc(*)
+    INTEGER(KIND=C_INT), intent(inout):: sc(*)
     END FUNCTION RMF_GetStartCell
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    INTEGER, INTENT(out), DIMENSION(:), allocatable :: sc
-    rmf_errors = allocate_integer_1d(sc, rmf_nxyz)
+    INTEGER, intent(inout), DIMENSION(:), allocatable :: sc
+    rmf_threads = RM_GetThreadCount(id)
+    rmf_errors = allocate_integer_1d(sc, rmf_threads)
     RM_GetStartCell = RMF_GetStartCell(id, sc)
     RETURN
     END FUNCTION RM_GetStartCell
@@ -3392,7 +3420,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSurfaceName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -3477,7 +3505,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSurfaceSpeciesName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -3523,7 +3551,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSurfaceType
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -3567,11 +3595,12 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: temperature(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: temperature(*)
     END FUNCTION RMF_GetTemperature
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:), allocatable :: temperature
+    real(kind=8), intent(inout), dimension(:), allocatable :: temperature
+    rmf_nxyz = RM_GetGridCellCount(id)
     rmf_errors = allocate_double_1d(temperature, rmf_nxyz)
     RM_GetTemperature = RMF_GetTemperature(id, temperature)
     return
@@ -3729,6 +3758,42 @@
     INTEGER, INTENT(in) :: id
     RM_GetTimeStep = RMF_GetTimeStep(id)
     END FUNCTION RM_GetTimeStep
+
+    INTEGER FUNCTION RM_GetVarItemsize(id, var)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetVarItemsize(id, var) &
+            BIND(C, NAME='RMF_GetVarItemsize')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+        END FUNCTION RMF_GetVarItemsize
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    RM_GetVarItemsize = RMF_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
+    return
+    END FUNCTION RM_GetVarItemsize
+
+    INTEGER FUNCTION RM_GetVarNbytes(id, var)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_GetVarNbytes(id, var) &
+            BIND(C, NAME='RMF_GetVarNbytes')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+        END FUNCTION RMF_GetVarNbytes
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: var
+    RM_GetVarNbytes = RMF_GetVarNbytes(id, trim(var)//C_NULL_CHAR)
+    return
+    END FUNCTION RM_GetVarNbytes
     
     !> Transfer current viscosities to the array given in the argument list (@a viscosity).
     !>
@@ -3758,11 +3823,12 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: viscosity(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: viscosity(*)
     END FUNCTION RMF_GetViscosity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:), allocatable :: viscosity
+    real(kind=8), intent(inout), dimension(:), allocatable :: viscosity
+    rmf_nxyz = RM_GetGridCellCount(id)
     rmf_errors = allocate_double_1d(viscosity, rmf_nxyz)
     RM_GetViscosity = RMF_GetViscosity(id, viscosity)
     return
@@ -3958,7 +4024,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
     INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
     END FUNCTION RMF_InitialPhreeqc2Concentrations
     INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Concentrations2(id, bc_conc, n_boundary, bc1, bc2, f1) &
@@ -3966,18 +4032,20 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
     INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
     INTEGER(KIND=C_INT), INTENT(IN) :: bc2(*)
     REAL(KIND=C_DOUBLE), INTENT(IN) :: f1(*)
     END FUNCTION RMF_InitialPhreeqc2Concentrations2
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(OUT), DIMENSION(:,:) :: bc_conc
+    real(kind=8), INTENT(INOUT), DIMENSION(:,:), allocatable :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:) , OPTIONAL :: bc2
     real(kind=8), INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
+    rmf_ncomps = RM_GetComponentCount(id)
+    rmf_errors = allocate_double_2d(bc_conc, n_boundary, rmf_ncomps)
     if (rmf_debug) call Chk_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, bc2, f1)
     if (present(bc2) .and. present(f1)) then
         RM_InitialPhreeqc2Concentrations = RMF_InitialPhreeqc2Concentrations2(id, bc_conc, n_boundary, bc1, bc2, f1)
@@ -4513,7 +4581,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
     INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
     END FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations
     INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations2(id, bc_conc, n_boundary, bc1, bc2, f1) &
@@ -4521,18 +4589,20 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
     INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
     INTEGER(KIND=C_INT), INTENT(IN) :: bc2(*)
     REAL(KIND=C_DOUBLE), INTENT(IN) :: f1(*)
     END FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations2
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), DIMENSION(:,:), INTENT(OUT) :: bc_conc
+    real(kind=8), DIMENSION(:,:), intent(inout), allocatable :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:), OPTIONAL :: bc2
     real(kind=8), INTENT(IN), DIMENSION(:), OPTIONAL :: f1
+    rmf_nspecies = RM_GetSpeciesCount(id)
+    rmf_errors = allocate_double_2d(bc_conc, n_boundary, rmf_nspecies)
     if (rmf_debug) call Chk_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary, bc1, bc2, f1)
     if (present(bc2) .and. present(f1)) then
         RM_InitialPhreeqc2SpeciesConcentrations = &
@@ -5638,12 +5708,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		INTEGER(KIND=C_INT), INTENT(in) :: i
-		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+		REAL(KIND=C_DOUBLE), INTENT(in)  :: c(*)
 		END FUNCTION RMF_SetIthConcentration
 		END INTERFACE
     INTEGER, INTENT(in) :: id
 	INTEGER, INTENT(in) :: i
-    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    real(kind=8), INTENT(in), DIMENSION(:) :: c
     RM_SetIthConcentration = RMF_SetIthConcentration(id, i - 1, c)
     return
     END FUNCTION RM_SetIthConcentration
@@ -5686,12 +5756,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		INTEGER(KIND=C_INT), INTENT(in) :: i
-		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+		REAL(KIND=C_DOUBLE), INTENT(in)  :: c(*)
 		END FUNCTION RMF_SetIthSpeciesConcentration
 		END INTERFACE
     INTEGER, INTENT(in) :: id
 	INTEGER, INTENT(in) :: i
-    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    real(kind=8), INTENT(in), DIMENSION(:) :: c
     RM_SetIthSpeciesConcentration = RMF_SetIthSpeciesConcentration(id, i - 1, c)
     return
     END FUNCTION RM_SetIthSpeciesConcentration
