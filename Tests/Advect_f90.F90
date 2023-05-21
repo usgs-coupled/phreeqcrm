@@ -560,7 +560,8 @@ REAL(kind=C_DOUBLE) FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, n
     INTEGER(kind=C_INT),    INTENT(in), value :: l
     character(100) fstr
 
-    INTEGER :: list(4), i
+    INTEGER, dimension(:), allocatable :: list
+    integer :: i
     INTEGER :: size=4, rm_cell_number
     
     do i = 1, l

@@ -21,37 +21,22 @@
 #endif     
     INTEGER, PRIVATE  :: rmf_nxyz=-1
     INTEGER, PRIVATE  :: rmf_ncomps=-1
+    INTEGER, PRIVATE  :: rmf_nspecies=-1
+    INTEGER, PRIVATE  :: rmf_ngas=-1
+    INTEGER, PRIVATE  :: rmf_errors=0
+    INTEGER, PRIVATE  :: rmf_threads=0
     PRIVATE :: ChK_Concentrations2Utility
     PRIVATE :: Chk_CreateMapping
-    PRIVATE :: Chk_GetConcentrations
-    PRIVATE :: Chk_GetDensityCalculated
-    PRIVATE :: Chk_GetEndCell
-    PRIVATE :: Chk_GetGasCompMoles
-    PRIVATE :: Chk_GetGasCompPressures
-    PRIVATE :: Chk_GetGasCompPhi
-    PRIVATE :: Chk_GetGasPhaseVolume
-    PRIVATE :: Chk_SetGasCompMoles
-    PRIVATE :: Chk_SetGasPhaseVolume
-    PRIVATE :: Chk_GetSpeciesLog10Molalities
-    PRIVATE :: Chk_GetGfw
-    PRIVATE :: Chk_SetPorosity
-    PRIVATE :: Chk_SetPressure
-    PRIVATE :: Chk_GetPorosity
-    PRIVATE :: Chk_GetPressure
-    PRIVATE :: Chk_GetSaturationCalculated
-    PRIVATE :: Chk_GetSelectedOutput
-    PRIVATE :: Chk_GetSolutionVolume
-    PRIVATE :: Chk_GetSpeciesConcentrations
-    PRIVATE :: Chk_GetSpeciesD25
-    PRIVATE :: Chk_GetSpeciesLog10Gammas
-    PRIVATE :: Chk_GetSpeciesZ
-    PRIVATE :: Chk_GetStartCell
     PRIVATE :: Chk_InitialPhreeqc2Concentrations
     PRIVATE :: Chk_InitialPhreeqc2Module
     PRIVATE :: Chk_InitialPhreeqcCell2Module
     PRIVATE :: Chk_InitialPhreeqc2SpeciesConcentrations
     PRIVATE :: Chk_SetConcentrations
     PRIVATE :: Chk_SetDensityUser
+    PRIVATE :: Chk_SetGasCompMoles
+    PRIVATE :: Chk_SetGasPhaseVolume
+    PRIVATE :: Chk_SetPorosity
+    PRIVATE :: Chk_SetPressure
     PRIVATE :: Chk_SetPrintChemistryMask
     PRIVATE :: Chk_SetSaturationUser
     PRIVATE :: Chk_SetTemperature
@@ -625,16 +610,20 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_FindComponents(id) &
-        BIND(C, NAME='RMF_FindComponents')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_FindComponents
+        INTEGER(KIND=C_INT) FUNCTION RMF_FindComponents(id) &
+            BIND(C, NAME='RMF_FindComponents')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_FindComponents
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    RM_FindComponents = RMF_FindComponents(id)
-    rmf_ncomps = RM_FindComponents
+    rmf_ncomps = RMF_FindComponents(id)
+    RM_FindComponents = rmf_ncomps
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_threads = RM_GetThreadCount(id)
+    rmf_ngas = RM_GetGasComponentsCount(id)
+    rmf_nspecies = RM_GetSpeciesCount(id)
     return
     END FUNCTION RM_FindComponents
 
@@ -677,14 +666,20 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in)    :: id, n
-    INTEGER(KIND=C_INT), INTENT(in)    :: list(*)
+    INTEGER(KIND=C_INT), INTENT(inout) :: list(*)
     INTEGER(KIND=C_INT), INTENT(inout) :: size
     END FUNCTION RMF_GetBackwardMapping
     END INTERFACE
     INTEGER, INTENT(in)    :: id, n
-    INTEGER, INTENT(in)    :: list(*)
+    INTEGER, INTENT(inout), allocatable :: list(:)
     INTEGER, INTENT(inout) :: size
-    RM_GetBackwardMapping = RMF_GetBackwardMapping(id, n, list, size)
+    integer  :: my_list(50), i
+    RM_GetBackwardMapping = RMF_GetBackwardMapping(id, n, my_list, size)
+    if(allocated(list)) deallocate(list)
+    allocate(list(size))
+    do i = 1, size
+        list(i) = my_list(i)
+    enddo
     return
     END FUNCTION RM_GetBackwardMapping
 
@@ -796,12 +791,12 @@
     character(1024) :: comp
     integer :: dim, itemsize, status, l, i
     dim = RM_GetComponentCount(id)
-	itemsize = 0
-	do i = 1, dim
-		status = RM_GetComponent(id, i, comp)
-		l = len(trim(comp))
-		if (l > itemsize) itemsize = l
-	enddo
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetComponent(id, i, comp)
+        l = len(trim(comp))
+        if (l > itemsize) itemsize = l
+    enddo
     if(allocated(components)) deallocate(components)
     allocate(character(len=itemsize) :: components(dim))
 	do i = 1, dim
@@ -902,36 +897,15 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: c(*)
     END FUNCTION RMF_GetConcentrations
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:) :: c
-    if (rmf_debug) call Chk_GetConcentrations(id, c)
+    real(kind=8), INTENT(inout), allocatable :: c(:,:)
+    rmf_errors = allocate_double_2d(c, rmf_nxyz, rmf_ncomps)
     RM_GetConcentrations = RMF_GetConcentrations(id, c)
     return
     END FUNCTION RM_GetConcentrations
-
-    SUBROUTINE Chk_GetConcentrations(id, c)
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
-        BIND(C, NAME='RMF_GetComponentCount')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_GetComponentCount
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: c
-    INTEGER :: errors
-    errors = 0
-    rmf_ncomps = RMF_GetComponentCount(id)
-    errors = errors + Chk_Double2D(id, c, rmf_nxyz, rmf_ncomps, "concentration", "RM_GetConcentrations")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetConcentrations")
-    endif
-    END SUBROUTINE Chk_GetConcentrations
     
     !> Returns the user number of the current selected-output definition.
     !> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput specifies which of the
@@ -1013,27 +987,15 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: density(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: density(*)
     END FUNCTION RMF_GetDensityCalculated
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:) :: density
-    if (rmf_debug) call Chk_GetDensityCalculated(id, density)
+    real(kind=8), INTENT(inout), dimension(:), allocatable  :: density
+    rmf_errors = allocate_double_1d(density, rmf_nxyz)
     RM_GetDensityCalculated = RMF_GetDensityCalculated(id, density)
     return
     END FUNCTION RM_GetDensityCalculated
-
-    SUBROUTINE Chk_GetDensityCalculated(id, density)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: density
-    INTEGER :: errors
-    errors = 0
-    errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_GetDensityCalculated")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetDensityCalculated")
-    endif
-    END SUBROUTINE Chk_GetDensityCalculated
 
     !> Returns an array with the ending cell numbers from the range of cell numbers assigned to each worker.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -1067,28 +1029,15 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    INTEGER(KIND=C_INT), INTENT(out):: ec(*)
+    INTEGER(KIND=C_INT), INTENT(inout) :: ec(*)
     END FUNCTION RMF_GetEndCell
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    INTEGER, INTENT(out), DIMENSION(:) :: ec
-    if (rmf_debug) call Chk_GetEndCell(id, ec)
+    INTEGER, INTENT(inout), DIMENSION(:), allocatable :: ec
+    rmf_errors = allocate_integer_1d(ec, rmf_threads)
     RM_GetEndCell = RMF_GetEndCell(id, ec)
     RETURN
     END FUNCTION RM_GetEndCell
-
-    SUBROUTINE Chk_GetEndCell(id, ec)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    INTEGER, INTENT(in), DIMENSION(:) :: ec
-    INTEGER :: errors, n
-    errors = 0
-    n = RM_GetMpiTasks(id) * RM_GetThreadCount(id)
-    errors = errors + Chk_Integer1D(id, ec, n, "EndCell", "RM_GetEndCell")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetEndCell")
-    endif
-    END SUBROUTINE Chk_GetEndCell
 
     !> Returns the number of equilibrium phases in the initial-phreeqc module.
     !> @ref RM_FindComponents must be called before @ref RM_GetEquilibriumPhasesCount.
@@ -1557,8 +1506,8 @@
     END FUNCTION RMF_GetGasCompMoles
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_moles
-    if (rmf_debug) call Chk_GetGasCompMoles(id, gas_moles)
+    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable, TARGET :: gas_moles    
+    rmf_errors = allocate_double_2d(gas_moles, rmf_nxyz, rmf_ngas)
     RM_GetGasCompMoles = RMF_GetGasCompMoles(id, gas_moles)
     return
     END FUNCTION RM_GetGasCompMoles
@@ -1623,24 +1572,11 @@
     END FUNCTION RMF_GetGasCompPressures
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_p
-    if (rmf_debug) call Chk_GetGasCompPressures(id, gas_p)
+    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable, TARGET :: gas_p
+    rmf_errors = allocate_double_2d(gas_p, rmf_nxyz, rmf_ngas)
     RM_GetGasCompPressures = RMF_GetGasCompPressures(id, gas_p )
     return
     END FUNCTION RM_GetGasCompPressures
-
-    SUBROUTINE Chk_GetGasCompPressures(id, gas_p)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_p
-    INTEGER :: errors, rmf_ngas_comps
-    errors = 0
-    rmf_ngas_comps = RM_GetGasComponentsCount(id)
-    errors = errors + Chk_Double2D(id, gas_p, rmf_nxyz, rmf_ngas_comps, "gas_pressure", "RM_GetGasCompPressures")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasCompPressures")
-    endif
-    END SUBROUTINE Chk_GetGasCompPressures
 
     !> Transfer fugacity coefficients (phi) of gas components from each reaction cell
     !> to the array given in the argument list (@a gas_phi). Fugacity of a gas component
@@ -1690,24 +1626,11 @@
     END FUNCTION RMF_GetGasCompPhi
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_phi
-    if (rmf_debug) call Chk_GetGasCompPhi(id, gas_phi)
+    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable, TARGET :: gas_phi
+    rmf_errors = allocate_double_2d (gas_phi, rmf_nxyz, rmf_ngas)
     RM_GetGasCompPhi = RMF_GetGasCompPhi(id, gas_phi)
     return
     END FUNCTION RM_GetGasCompPhi
-
-    SUBROUTINE Chk_GetGasCompPhi(id, gas_phi)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_phi
-    INTEGER :: errors, rmf_ngas_comps
-    errors = 0
-    rmf_ngas_comps = RM_GetGasComponentsCount(id)
-    errors = errors + Chk_Double2D(id, gas_phi, rmf_nxyz, rmf_ngas_comps, "gas_phi", "RM_GetGasCompPhi")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasCompPhi")
-    endif
-    END SUBROUTINE Chk_GetGasCompPhi
 
     !> Transfer volume of gas from each reaction cell
     !> to the vector given in the argument list (@a gas_volume).
@@ -1755,24 +1678,11 @@
     END FUNCTION RMF_GetGasPhaseVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:), TARGET :: gas_volume
-    if (rmf_debug) call Chk_GetGasPhaseVolume(id, gas_volume)
+    real(kind=8), INTENT(out), DIMENSION(:), allocatable, TARGET :: gas_volume
+    rmf_errors = allocate_double_1d (gas_volume, rmf_nxyz)
     RM_GetGasPhaseVolume = RMF_GetGasPhaseVolume(id, gas_volume)
     return
     END FUNCTION RM_GetGasPhaseVolume
-
-    SUBROUTINE Chk_GetGasPhaseVolume(id, gas_volume)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: gas_volume
-    INTEGER :: errors, rmf_ngas_comps
-    errors = 0
-    rmf_ngas_comps = RM_GetGasComponentsCount(id)
-    errors = errors + Chk_Double1D(id, gas_volume, rmf_nxyz, "gas_volume", "RM_GetGasPhaseVolume")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasPhaseVolume")
-    endif
-    END SUBROUTINE Chk_GetGasPhaseVolume
 
     !> Returns the gram formula weights (g/mol) for the components in the reaction-module component list.
     !> @param id               The instance id returned from @ref RM_Create.
@@ -1813,35 +1723,14 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: gfw(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout):: gfw(:)
     END FUNCTION RMF_GetGfw
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), DIMENSION(:), INTENT(out) :: gfw
-    if (rmf_debug) call Chk_GetGfw(id, gfw)
+    real(kind=8), DIMENSION(:), INTENT(out), allocatable  :: gfw
+    rmf_errors = allocate_double_1d(gfw, rmf_ncomps)
     RM_GetGfw = RMF_GetGfw(id, gfw)
     END FUNCTION RM_GetGfw
-
-    SUBROUTINE Chk_GetGfw(id, gfw)
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
-        BIND(C, NAME='RMF_GetComponentCount')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_GetComponentCount
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: gfw
-    INTEGER :: errors
-    errors = 0
-    rmf_ncomps = RMF_GetComponentCount(id)
-    errors = errors + Chk_Double1D(id, gfw, rmf_ncomps, "gfw", "RM_GetGfw")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetGfw")
-    endif
-    END SUBROUTINE Chk_GetGfw
 
     !> Returns the number of grid cells in the user's model, which is defined in the call to @ref RM_Create.
     !> The mapping from grid cells to reaction cells is defined by @ref RM_CreateMapping.
@@ -1954,19 +1843,20 @@
     INTEGER FUNCTION RM_GetIthConcentration(id, i, c)
     USE ISO_C_BINDING
     IMPLICIT NONE
-		INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION RMF_GetIthConcentration(id, i, c) &
-			BIND(C, NAME='RMF_GetIthConcentration')
-		USE ISO_C_BINDING
-		IMPLICIT NONE
-		INTEGER(KIND=C_INT), INTENT(in) :: id
-		INTEGER(KIND=C_INT), INTENT(in) :: i
-		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
-		END FUNCTION RMF_GetIthConcentration
-		END INTERFACE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION RMF_GetIthConcentration(id, i, c) &
+        BIND(C, NAME='RMF_GetIthConcentration')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER(KIND=C_INT), INTENT(in) :: id
+    INTEGER(KIND=C_INT), INTENT(in) :: i
+    REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+    END FUNCTION RMF_GetIthConcentration
+    END INTERFACE
     INTEGER, INTENT(in) :: id
-	INTEGER, INTENT(in) :: i
-    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: c
+    rmf_errors = allocate_double_1d(c, rmf_nxyz)
     RM_GetIthConcentration = RMF_GetIthConcentration(id, i - 1, c)
     return
     END FUNCTION RM_GetIthConcentration
@@ -2001,19 +1891,20 @@
     INTEGER FUNCTION RM_GetIthSpeciesConcentration(id, i, c)
     USE ISO_C_BINDING
     IMPLICIT NONE
-		INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION RMF_GetIthSpeciesConcentration(id, i, c) &
-			BIND(C, NAME='RMF_GetIthSpeciesConcentration')
-		USE ISO_C_BINDING
-		IMPLICIT NONE
-		INTEGER(KIND=C_INT), INTENT(in) :: id
-		INTEGER(KIND=C_INT), INTENT(in) :: i
-		REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
-		END FUNCTION RMF_GetIthSpeciesConcentration
-		END INTERFACE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION RMF_GetIthSpeciesConcentration(id, i, c) &
+        BIND(C, NAME='RMF_GetIthSpeciesConcentration')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER(KIND=C_INT), INTENT(in) :: id
+    INTEGER(KIND=C_INT), INTENT(in) :: i
+    REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+    END FUNCTION RMF_GetIthSpeciesConcentration
+    END INTERFACE
     INTEGER, INTENT(in) :: id
-	INTEGER, INTENT(in) :: i
-    real(kind=8), INTENT(out), DIMENSION(:) :: c
+    INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: c
+    rmf_errors = allocate_double_1d(c, rmf_nxyz)
     RM_GetIthSpeciesConcentration = RMF_GetIthSpeciesConcentration(id, i - 1, c)
     return
     END FUNCTION RM_GetIthSpeciesConcentration
@@ -2274,8 +2165,8 @@
     END FUNCTION RMF_GetPorosity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:) :: porosity
-    if (rmf_debug) call Chk_GetPorosity(id, porosity)
+    real(kind=8), INTENT(out), dimension(:), allocatable :: porosity
+    rmf_errors = allocate_double_1d(porosity, rmf_nxyz)
     RM_GetPorosity = RMF_GetPorosity(id, porosity)
     return
     END FUNCTION RM_GetPorosity
@@ -2315,35 +2206,11 @@
     END FUNCTION RMF_GetPressure
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:) :: pressure
-    if (rmf_debug) call Chk_GetPressure(id, pressure)
+    real(kind=8), INTENT(out), dimension(:), allocatable :: pressure
+    rmf_errors = allocate_double_1d(pressure, rmf_nxyz)
     RM_GetPressure = RMF_GetPressure(id, pressure)
     return
     END FUNCTION RM_GetPressure
-
-    SUBROUTINE Chk_GetPressure(id, pressure)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: pressure
-    INTEGER :: errors
-    errors = 0
-    errors = errors + Chk_Double1D(id, pressure, rmf_nxyz, "pressure", "RM_GetPressure")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetPressure")
-    endif
-    END SUBROUTINE Chk_GetPressure
-
-    SUBROUTINE Chk_GetPorosity(id, porosity)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: porosity
-    INTEGER :: errors
-    errors = 0
-    errors = errors + Chk_Double1D(id, porosity, rmf_nxyz, "porosity", "RM_GetPorosity")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetPorosity")
-    endif
-    END SUBROUTINE Chk_GetPorosity
 
     !> Returns a vector of saturations (@a sat_calc) as calculated by the reaction module.
     !> Reactions will change the volume of solution in a cell.
@@ -2396,22 +2263,10 @@
     END FUNCTION RMF_GetSaturationCalculated
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:) :: sat_calc
-    if (rmf_debug) call Chk_GetSaturationCalculated(id, sat_calc)
+    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: sat_calc
+    rmf_errors = allocate_double_1d(sat_calc, rmf_nxyz)
     RM_GetSaturationCalculated = RMF_GetSaturationCalculated(id, sat_calc)
     END FUNCTION RM_GetSaturationCalculated
-
-    SUBROUTINE Chk_GetSaturationCalculated(id, sat)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: sat
-    INTEGER :: errors
-    errors = 0
-    errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "saturation", "RM_GetSaturationCalculated")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSaturationCalculated")
-    endif
-    END SUBROUTINE Chk_GetSaturationCalculated
 
     !> Populates an array with values from the current selected-output definition. @ref RM_SetCurrentSelectedOutputUserNumber
     !> determines which of the selected-output definitions is used to populate the array.
@@ -2462,23 +2317,12 @@
     END FUNCTION RMF_GetSelectedOutput
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), DIMENSION(:,:), INTENT(out) :: so
-    if (rmf_debug) call Chk_GetSelectedOutput(id, so)
+    real(kind=8), DIMENSION(:,:), INTENT(out), allocatable :: so
+    INTEGER :: ncol
+    ncol = RM_GetSelectedOutputColumnCount(id)
+    rmf_errors = allocate_double_2d(so, rmf_nxyz, ncol)
     RM_GetSelectedOutput = RMF_GetSelectedOutput(id, so)
     END FUNCTION RM_GetSelectedOutput
-
-    SUBROUTINE Chk_GetSelectedOutput(id, so)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: so
-    INTEGER :: errors, ncol
-    ncol = RM_GetSelectedOutputColumnCount(id)
-    errors = 0
-    errors = errors + Chk_Double2D(id, so, rmf_nxyz, ncol, "selected output", "RM_GetSelectedOutput")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSelectedOutput")
-    endif
-    END SUBROUTINE Chk_GetSelectedOutput
 
     !> Returns the number of columns in the current selected-output definition. @ref RM_SetCurrentSelectedOutputUserNumber
     !> determines which of the selected-output definitions is used.
@@ -3002,22 +2846,10 @@
     END FUNCTION RMF_GetSolutionVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:) :: vol
-    if (rmf_debug) call Chk_GetDensityCalculated(id, vol)
+    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: vol
+    rmf_errors = allocate_double_1d(vol, rmf_nxyz)
     RM_GetSolutionVolume = RMF_GetSolutionVolume(id, vol)
     END FUNCTION RM_GetSolutionVolume
-
-    SUBROUTINE Chk_GetSolutionVolume(id, vol)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: vol
-    INTEGER :: errors
-    errors = 0
-    errors = errors + Chk_Double1D(id, vol, rmf_nxyz, "vol", "RM_GetSolutionVolume")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSolutionVolume")
-    endif
-    END SUBROUTINE Chk_GetSolutionVolume
 
     !> Transfer concentrations of aqueous species to the array argument (@a species_conc)
     !> This method is intended for use with multicomponent-diffusion transport calculations,
@@ -3080,23 +2912,10 @@
     END FUNCTION RMF_GetSpeciesConcentrations
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_conc
-    if (rmf_debug) call Chk_GetSpeciesConcentrations(id, species_conc)
+    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable :: species_conc
+    rmf_errors = allocate_double_2d(species_conc, rmf_nxyz, rmf_nspecies)
     RM_GetSpeciesConcentrations = RMF_GetSpeciesConcentrations(id, species_conc)
     END FUNCTION RM_GetSpeciesConcentrations
-
-    SUBROUTINE Chk_GetSpeciesConcentrations(id, species_conc)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_conc
-    INTEGER :: errors, nspecies
-    nspecies = RM_GetSpeciesCount(id)
-    errors = 0
-    errors = errors + Chk_Double2D(id, species_conc, rmf_nxyz, nspecies, "species concentration", "RM_GetSpeciesConcentrations")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesConcentrations")
-    endif
-    END SUBROUTINE Chk_GetSpeciesConcentrations
 
     !> The number of aqueous species used in the reaction module.
     !> This method is intended for use with multicomponent-diffusion transport calculations,
@@ -3203,23 +3022,10 @@
     END FUNCTION RMF_GetSpeciesD25
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:) :: diffc
-    if (rmf_debug) call Chk_GetSpeciesD25(id, diffc)
+    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: diffc
+    rmf_errors = allocate_double_1d(diffc, rmf_nxyz)
     RM_GetSpeciesD25 = RMF_GetSpeciesD25(id, diffc)
     END FUNCTION RM_GetSpeciesD25
-
-    SUBROUTINE Chk_GetSpeciesD25(id, diffc)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: diffc
-    INTEGER :: errors, nspecies
-    nspecies = RM_GetSpeciesCount(id)
-    errors = 0
-    errors = errors + Chk_Double1D(id, diffc, nspecies, "diffusion coefficient", "RM_GetSpeciesD25")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesD25")
-    endif
-    END SUBROUTINE Chk_GetSpeciesD25
 
     !> Transfer log10 aqueous-species activity coefficients to the array argument (@a species_log10gammas)
     !> This method is intended for use with multicomponent-diffusion transport calculations,
@@ -3277,24 +3083,10 @@
     END FUNCTION RMF_GetSpeciesLog10Gammas
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_log10gammas
-    if (rmf_debug) call Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
+    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable :: species_log10gammas
+    rmf_errors = allocate_double_2d(species_log10gammas, rmf_nxyz, rmf_nspecies)
     RM_GetSpeciesLog10Gammas = RMF_GetSpeciesLog10Gammas(id, species_log10gammas)
     END FUNCTION RM_GetSpeciesLog10Gammas
-
-    SUBROUTINE Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_log10gammas
-    INTEGER :: errors, nspecies
-    nspecies = RM_GetSpeciesCount(id)
-    errors = 0
-    errors = errors + Chk_Double2D(id, species_log10gammas, rmf_nxyz, nspecies, "species gammas", &
-        "RM_GetSpeciesLog10Gammas")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesLog10Gammas")
-    endif
-    END SUBROUTINE Chk_GetSpeciesLog10Gammas
 
     !> Transfer log10 aqueous-species log10 molalities to the array argument (@a species_log10molalities)
     !> To use this method @ref RM_SetSpeciesSaveOn must be set to @a true.
@@ -3351,24 +3143,10 @@
     END FUNCTION RMF_GetSpeciesLog10Molalities
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_log10molalities
-    if (rmf_debug) call Chk_GetSpeciesLog10Molalities(id, species_log10molalities)
+    real(kind=8), INTENT(out), DIMENSION(:,:), allocatable :: species_log10molalities
+    rmf_errors = allocate_double_2d(species_log10molalities, rmf_nxyz, rmf_nspecies)
     RM_GetSpeciesLog10Molalities = RMF_GetSpeciesLog10Molalities(id, species_log10molalities)
     END FUNCTION RM_GetSpeciesLog10Molalities
-
-    SUBROUTINE Chk_GetSpeciesLog10Molalities(id, species_log10molalities)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_log10molalities
-    INTEGER :: errors, nspecies
-    nspecies = RM_GetSpeciesCount(id)
-    errors = 0
-    errors = errors + Chk_Double2D(id, species_log10molalities, rmf_nxyz, nspecies, "species molalities", &
-        "RM_GetSpeciesLog10Molalities")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesLog10Molalities")
-    endif
-    END SUBROUTINE Chk_GetSpeciesLog10Molalities
 
     !> Transfers the name of the @a ith aqueous species to the character argument (@a name).
     !> This method is intended for use with multicomponent-diffusion transport calculations,
@@ -3529,23 +3307,11 @@
     END FUNCTION RMF_GetSpeciesZ
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:) :: z
-    if (rmf_debug) call Chk_GetSpeciesZ(id, z)
+    real(kind=8), INTENT(out), DIMENSION(:), allocatable :: z
+    rmf_errors = allocate_double_1d(z, rmf_nxyz)
     RM_GetSpeciesZ = RMF_GetSpeciesZ(id, z)
     END FUNCTION RM_GetSpeciesZ
 
-    SUBROUTINE Chk_GetSpeciesZ(id, z)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: z
-    INTEGER :: errors, nspecies
-    nspecies = RM_GetSpeciesCount(id)
-    errors = 0
-    errors = errors + Chk_Double1D(id, z, nspecies, "species charge", "RM_GetSpeciesZ")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesZ")
-    endif
-    END SUBROUTINE Chk_GetSpeciesZ
 
     !> Returns an array with the starting cell numbers from the range of cell numbers assigned to each worker.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -3583,24 +3349,11 @@
     END FUNCTION RMF_GetStartCell
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    INTEGER, INTENT(out), DIMENSION(:) :: sc
-    if (rmf_debug) call Chk_GetStartCell(id, sc)
+    INTEGER, INTENT(out), DIMENSION(:), allocatable :: sc
+    rmf_errors = allocate_integer_1d(sc, rmf_nxyz)
     RM_GetStartCell = RMF_GetStartCell(id, sc)
     RETURN
     END FUNCTION RM_GetStartCell
-
-    SUBROUTINE Chk_GetStartCell(id, sc)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    INTEGER, INTENT(in), DIMENSION(:) :: sc
-    INTEGER :: errors, n
-    errors = 0
-    n = RM_GetMpiTasks(id) * RM_GetThreadCount(id)
-    errors = errors + Chk_Integer1D(id, sc, n, "StartCell", "RM_GetStartCell")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RMF_GetStartCell")
-    endif
-    END SUBROUTINE Chk_GetStartCell
 
     !> Retrieves the surface name (such as "Hfo") that corresponds with
     !> the surface species name.
@@ -3818,7 +3571,8 @@
     END FUNCTION RMF_GetTemperature
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:) :: temperature
+    real(kind=8), INTENT(out), dimension(:), allocatable :: temperature
+    rmf_errors = allocate_double_1d(temperature, rmf_nxyz)
     RM_GetTemperature = RMF_GetTemperature(id, temperature)
     return
     END FUNCTION RM_GetTemperature
@@ -4008,7 +3762,8 @@
     END FUNCTION RMF_GetViscosity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:) :: viscosity
+    real(kind=8), INTENT(out), dimension(:), allocatable :: viscosity
+    rmf_errors = allocate_double_1d(viscosity, rmf_nxyz)
     RM_GetViscosity = RMF_GetViscosity(id, viscosity)
     return
     END FUNCTION RM_GetViscosity
@@ -7612,6 +7367,20 @@
     Chk_Double1D = errors
     END FUNCTION Chk_Double1D
 
+    INTEGER FUNCTION allocate_double_1d(t, n1)
+    IMPLICIT NONE
+    real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: t
+    INTEGER, INTENT(in) :: n1
+    INTEGER :: errors, t1
+    t1 = size(t,1)
+    errors = 0
+    if (t1 .ne. n1)  then
+        if (allocated(t)) deallocate(t)
+        allocate(t(n1))    
+    endif
+    allocate_double_1d = errors
+    END FUNCTION allocate_double_1d
+
     INTEGER FUNCTION Chk_Double2D(id, t, n1, n2, var, func)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
@@ -7636,6 +7405,21 @@
     Chk_Double2D = errors
     END FUNCTION Chk_Double2D
 
+    INTEGER FUNCTION allocate_double_2d(t, n1, n2)
+    IMPLICIT NONE
+    real(kind=8), INTENT(inout), allocatable :: t(:,:)
+    INTEGER, INTENT(in) :: n1, n2
+    INTEGER :: errors, t1, t2
+    t1 = size(t,1)
+    t2 = size(t,2)
+    errors = 0
+    if ((t2 .ne. n2) .or. (t1 .lt. n1))  then
+        if (allocated(t)) deallocate(t)
+        allocate(t(n1, n2))
+    endif
+    allocate_double_2d = errors
+    END FUNCTION allocate_double_2d
+
     INTEGER FUNCTION Chk_Integer1D(id, t, n1, var, func)
     IMPLICIT NONE
     INTEGER RMF_ErrorMessage
@@ -7654,6 +7438,20 @@
     endif
     Chk_Integer1D = errors
     END FUNCTION Chk_Integer1D
+
+    INTEGER FUNCTION allocate_integer_1d(t, n1)
+    IMPLICIT NONE
+    INTEGER, INTENT(inout), DIMENSION(:), allocatable :: t
+    INTEGER, INTENT(in) :: n1
+    INTEGER :: errors, t1
+    t1 = size(t,1)
+    errors = 0
+    if (t1 .ne. n1)  then
+        if (allocated(t)) deallocate(t)
+        allocate(t(n1))
+    endif
+    allocate_integer_1d = errors
+    END FUNCTION allocate_integer_1d
 
     INTEGER FUNCTION Chk_Integer2D(id, t, n1, n2, var, func)
     IMPLICIT NONE
