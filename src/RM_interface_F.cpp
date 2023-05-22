@@ -1432,30 +1432,30 @@ double RMF_GetTimeStep(int * id)
 	}
 	return (double) IRM_BADINSTANCE;
 }
-/* ---------------------------------------------------------------------- */
-int RMF_GetVarItemsize(int* id, const char *str)
-/* ---------------------------------------------------------------------- */
-{
-	// Retrieves current time step, in seconds
-	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
-	if (Reaction_module_ptr)
-	{
-		return Reaction_module_ptr->GetVarItemsize(str);
-	}
-	return (double)IRM_BADINSTANCE;
-}
-/* ---------------------------------------------------------------------- */
-int RMF_GetVarNbytes(int* id, const char* str)
-/* ---------------------------------------------------------------------- */
-{
-	// Retrieves current time step, in seconds
-	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
-	if (Reaction_module_ptr)
-	{
-		return Reaction_module_ptr->GetVarNbytes(str);
-	}
-	return (double)IRM_BADINSTANCE;
-}
+///* ---------------------------------------------------------------------- */
+//int RMF_GetVarItemsize(int* id, const char *str)
+///* ---------------------------------------------------------------------- */
+//{
+//	// Retrieves current time step, in seconds
+//	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+//	if (Reaction_module_ptr)
+//	{
+//		return Reaction_module_ptr->GetVarItemsize(str);
+//	}
+//	return (double)IRM_BADINSTANCE;
+//}
+///* ---------------------------------------------------------------------- */
+//int RMF_GetVarNbytes(int* id, const char* str)
+///* ---------------------------------------------------------------------- */
+//{
+//	// Retrieves current time step, in seconds
+//	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+//	if (Reaction_module_ptr)
+//	{
+//		return Reaction_module_ptr->GetVarNbytes(str);
+//	}
+//	return (double)IRM_BADINSTANCE;
+//}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RMF_GetViscosity(int* id, double* viscosity)

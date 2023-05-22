@@ -4022,41 +4022,41 @@
     RM_GetTimeStep = RMF_GetTimeStep(id)
     END FUNCTION RM_GetTimeStep
 
-    INTEGER FUNCTION RM_GetVarItemsize(id, var)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_GetVarItemsize(id, var) &
-            BIND(C, NAME='RMF_GetVarItemsize')
-        USE ISO_C_BINDING
-        IMPLICIT NONE
-        INTEGER(KIND=C_INT), INTENT(in) :: id
-        CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_GetVarItemsize
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    RM_GetVarItemsize = RMF_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
-    return
-    END FUNCTION RM_GetVarItemsize
+    ! INTEGER FUNCTION RM_GetVarItemsize(id, var)
+    ! USE ISO_C_BINDING
+    ! IMPLICIT NONE
+    ! INTERFACE
+    !     INTEGER(KIND=C_INT) FUNCTION RMF_GetVarItemsize(id, var) &
+    !         BIND(C, NAME='RMF_GetVarItemsize')
+    !     USE ISO_C_BINDING
+    !     IMPLICIT NONE
+    !     INTEGER(KIND=C_INT), INTENT(in) :: id
+    !     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+    !     END FUNCTION RMF_GetVarItemsize
+    ! END INTERFACE
+    ! INTEGER, INTENT(in) :: id
+    ! CHARACTER(len=*), INTENT(in) :: var
+    ! RM_GetVarItemsize = RMF_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
+    ! return
+    ! END FUNCTION RM_GetVarItemsize
 
-    INTEGER FUNCTION RM_GetVarNbytes(id, var)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_GetVarNbytes(id, var) &
-            BIND(C, NAME='RMF_GetVarNbytes')
-        USE ISO_C_BINDING
-        IMPLICIT NONE
-        INTEGER(KIND=C_INT), INTENT(in) :: id
-        CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        END FUNCTION RMF_GetVarNbytes
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(in) :: var
-    RM_GetVarNbytes = RMF_GetVarNbytes(id, trim(var)//C_NULL_CHAR)
-    return
-    END FUNCTION RM_GetVarNbytes
+    ! INTEGER FUNCTION RM_GetVarNbytes(id, var)
+    ! USE ISO_C_BINDING
+    ! IMPLICIT NONE
+    ! INTERFACE
+    !     INTEGER(KIND=C_INT) FUNCTION RMF_GetVarNbytes(id, var) &
+    !         BIND(C, NAME='RMF_GetVarNbytes')
+    !     USE ISO_C_BINDING
+    !     IMPLICIT NONE
+    !     INTEGER(KIND=C_INT), INTENT(in) :: id
+    !     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+    !     END FUNCTION RMF_GetVarNbytes
+    ! END INTERFACE
+    ! INTEGER, INTENT(in) :: id
+    ! CHARACTER(len=*), INTENT(in) :: var
+    ! RM_GetVarNbytes = RMF_GetVarNbytes(id, trim(var)//C_NULL_CHAR)
+    ! return
+    ! END FUNCTION RM_GetVarNbytes
     
     !> Transfer current viscosities to the array given in the argument list (@a viscosity).
     !>
