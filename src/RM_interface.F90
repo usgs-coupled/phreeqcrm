@@ -45,6 +45,18 @@
     PRIVATE :: Chk_Double2D
     PRIVATE :: Chk_Integer1D
     PRIVATE :: Chk_Integer2D
+    PRIVATE :: RM_GetComponent
+    PRIVATE :: RM_GetEquilibriumPhasesName
+    PRIVATE :: RM_GetExchangeName
+    PRIVATE :: RM_GetExchangeSpeciesName
+    PRIVATE :: RM_GetGasComponentsName
+    PRIVATE :: RM_GetKineticReactionsName
+    PRIVATE :: RM_GetSIName
+    PRIVATE :: RM_GetSolidSolutionComponentsName
+    PRIVATE :: RM_GetSolidSolutionName
+    PRIVATE :: RM_GetSurfaceName
+    PRIVATE :: RM_GetSurfaceSpeciesName
+    PRIVATE :: RM_GetSurfaceType
     PRIVATE :: RMF_debug
 
 
@@ -673,7 +685,7 @@
     INTEGER, INTENT(in)    :: id, n
     INTEGER, INTENT(inout), allocatable :: list(:)
     INTEGER, INTENT(inout) :: size
-    integer  :: my_list(50), i
+    integer  :: my_list(100), i
     RM_GetBackwardMapping = RMF_GetBackwardMapping(id, n, my_list, size)
     if(allocated(list)) deallocate(list)
     allocate(list(size))
@@ -1108,6 +1120,29 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
+    INTEGER FUNCTION RM_GetEquilibriumPhasesNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetEquilibriumPhasesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetEquilibriumPhasesName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetEquilibriumPhasesName(id, i, names(i))
+    enddo
+    RM_GetEquilibriumPhasesNames = status
+    return 
+    END FUNCTION RM_GetEquilibriumPhasesNames
+
 
     INTEGER FUNCTION RM_GetEquilibriumPhasesName(id, num, name)
     USE ISO_C_BINDING
@@ -1236,6 +1271,29 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
+    INTEGER FUNCTION RM_GetExchangeNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetExchangeSpeciesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetExchangeName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetExchangeName(id, i, names(i))
+    enddo
+    RM_GetExchangeNames = status
+    return 
+    END FUNCTION RM_GetExchangeNames
+
 
     INTEGER FUNCTION RM_GetExchangeName(id, num, name)
     USE ISO_C_BINDING
@@ -1319,6 +1377,28 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
+    INTEGER FUNCTION RM_GetExchangeSpeciesNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetExchangeSpeciesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetExchangeSpeciesName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetExchangeSpeciesName(id, i, names(i))
+    enddo
+    RM_GetExchangeSpeciesNames = status
+    return 
+    END FUNCTION RM_GetExchangeSpeciesNames
 
     INTEGER FUNCTION RM_GetExchangeSpeciesName(id, num, name)
     USE ISO_C_BINDING
@@ -1444,6 +1524,28 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
+    INTEGER FUNCTION RM_GetGasComponentsNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetGasComponentsCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetGasComponentsName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetGasComponentsName(id, i, names(i))
+    enddo
+    RM_GetGasComponentsNames = status
+    return 
+    END FUNCTION RM_GetGasComponentsNames
 
     INTEGER FUNCTION RM_GetGasComponentsName(id, num, name)
     USE ISO_C_BINDING
@@ -1988,6 +2090,29 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
+
+    INTEGER FUNCTION RM_GetKineticReactionsNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetKineticReactionsCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetKineticReactionsName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetKineticReactionsName(id, i, names(i))
+    enddo
+    RM_GetKineticReactionsNames = status
+    return 
+    END FUNCTION RM_GetKineticReactionsNames
 
     INTEGER FUNCTION RM_GetKineticReactionsName(id, num, name)
     USE ISO_C_BINDING
@@ -2673,6 +2798,29 @@
     !> @par MPI:
     !> Called by root.
 
+    INTEGER FUNCTION RM_GetSINames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSICount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSIName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetSIName(id, i, names(i))
+    enddo
+    RM_GetSINames = status
+    return 
+    END FUNCTION RM_GetSINames
+
     INTEGER FUNCTION RM_GetSIName(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2758,6 +2906,29 @@
     !> @par MPI:
     !> Called by root.
 
+    INTEGER FUNCTION RM_GetSolidSolutionComponentsNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSolidSolutionComponentsCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSolidSolutionComponentsName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+    do i = 1, dim
+        status = RM_GetSolidSolutionComponentsName(id, i, names(i))
+    enddo
+    RM_GetSolidSolutionComponentsNames = status
+    return 
+    END FUNCTION RM_GetSolidSolutionComponentsNames
+
     INTEGER FUNCTION RM_GetSolidSolutionComponentsName(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2805,6 +2976,29 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
+
+    INTEGER FUNCTION RM_GetSolidSolutionNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSolidSolutionComponentsCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSolidSolutionName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+    do i = 1, dim
+        status = RM_GetSolidSolutionName(id, i, names(i))
+    enddo
+    RM_GetSolidSolutionNames = status
+    return 
+    END FUNCTION RM_GetSolidSolutionNames
 
     INTEGER FUNCTION RM_GetSolidSolutionName(id, num, name)
     USE ISO_C_BINDING
@@ -3411,6 +3605,29 @@
     !> @par MPI:
     !> Called by root.
 
+    INTEGER FUNCTION RM_GetSurfaceNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSurfaceSpeciesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSurfaceName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+    do i = 1, dim
+        status = RM_GetSurfaceName(id, i, names(i))
+    enddo
+    RM_GetSurfaceNames = status
+    return 
+    END FUNCTION RM_GetSurfaceNames
+    
     INTEGER FUNCTION RM_GetSurfaceName(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -3496,6 +3713,29 @@
     !> @par MPI:
     !> Called by root.
 
+    INTEGER FUNCTION RM_GetSurfaceSpeciesNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSurfaceSpeciesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSurfaceSpeciesName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+    do i = 1, dim
+        status = RM_GetSurfaceSpeciesName(id, i, names(i))
+    enddo
+    RM_GetSurfaceSpeciesNames = status
+    return 
+    END FUNCTION RM_GetSurfaceSpeciesNames
+
     INTEGER FUNCTION RM_GetSurfaceSpeciesName(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -3541,6 +3781,29 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
+
+    INTEGER FUNCTION RM_GetSurfaceTypes(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSurfaceSpeciesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSurfaceType(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+    do i = 1, dim
+        status = RM_GetSurfaceType(id, i, names(i))
+    enddo
+    RM_GetSurfaceTypes = status
+    return 
+    END FUNCTION RM_GetSurfaceTypes
 
     INTEGER FUNCTION RM_GetSurfaceType(id, num, name)
     USE ISO_C_BINDING
@@ -4019,24 +4282,24 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1) &
-        BIND(C, NAME='RMF_InitialPhreeqc2Concentrations')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
-    INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
-    END FUNCTION RMF_InitialPhreeqc2Concentrations
-    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Concentrations2(id, bc_conc, n_boundary, bc1, bc2, f1) &
-        BIND(C, NAME='RMF_InitialPhreeqc2Concentrations2')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
-    INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
-    INTEGER(KIND=C_INT), INTENT(IN) :: bc2(*)
-    REAL(KIND=C_DOUBLE), INTENT(IN) :: f1(*)
-    END FUNCTION RMF_InitialPhreeqc2Concentrations2
+        INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1) &
+            BIND(C, NAME='RMF_InitialPhreeqc2Concentrations')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
+        INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
+        END FUNCTION RMF_InitialPhreeqc2Concentrations
+        INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Concentrations2(id, bc_conc, n_boundary, bc1, bc2, f1) &
+            BIND(C, NAME='RMF_InitialPhreeqc2Concentrations2')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
+        INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
+        INTEGER(KIND=C_INT), INTENT(IN) :: bc2(*)
+        REAL(KIND=C_DOUBLE), INTENT(IN) :: f1(*)
+        END FUNCTION RMF_InitialPhreeqc2Concentrations2
     END INTERFACE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(INOUT), DIMENSION(:,:), allocatable :: bc_conc
@@ -4477,48 +4740,48 @@
     INTEGER, INTENT(in), DIMENSION(:) :: solid_solutions
     RM_InitialSolidSolutions2Module = RMF_InitialSolidSolutions2Module(id, solid_solutions)
     END FUNCTION RM_InitialSolidSolutions2Module
-	
-	!> Transfer KINETICS definitions from the InitialPhreeqc instance to the 
-	!> reaction-module workers.
-	!> @a kinetics is used to select KINETICS definitions for each cell of the model.
-	!> @a kinetics is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
-	!> user's model (@ref RM_GetGridCellCount).
-	!> @param id          The instance @a id returned from @ref RM_Create.
-	!> @param kinetics    Vector of KINETICS index numbers that refer to
-	!> definitions in the InitialPhreeqc instance.
-	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
-	!> KINETICS definition for that cell.
-	!> (Note that an KINETICS definition for a cell could be defined by other 
-	!> calls to @a RM_InitialKinetics2Module, @ref RM_InitialPhreeqc2Module, or 
-	!> @ref RM_InitialPhreeqcCell2Module.)
-	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
-	!> @see               
-	!> @ref RM_InitialPhreeqc2Module,
-	!> @ref RM_InitialPhreeqcCell2Module.
-	!> @par Fortran Example:
-	!> @htmlonly
-	!> <CODE>
-	!> <PRE>
-	!> dimension(kinetics(nxyz))
-	!> kinetics = 1
-	!> status = RM_InitialKinetics2Module(id, kinetics);
-	!> </PRE>
-	!> </CODE>
-	!> @endhtmlonly
-	!> @par MPI:
-	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.	
-	INTEGER FUNCTION RM_InitialKinetics2Module(id, kinetics)
+
+    !> Transfer KINETICS definitions from the InitialPhreeqc instance to the 
+    !> reaction-module workers.
+    !> @a kinetics is used to select KINETICS definitions for each cell of the model.
+    !> @a kinetics is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+    !> user's model (@ref RM_GetGridCellCount).
+    !> @param id          The instance @a id returned from @ref RM_Create.
+    !> @param kinetics    Vector of KINETICS index numbers that refer to
+    !> definitions in the InitialPhreeqc instance.
+    !> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+    !> KINETICS definition for that cell.
+    !> (Note that an KINETICS definition for a cell could be defined by other 
+    !> calls to @a RM_InitialKinetics2Module, @ref RM_InitialPhreeqc2Module, or 
+    !> @ref RM_InitialPhreeqcCell2Module.)
+    !> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @see               
+    !> @ref RM_InitialPhreeqc2Module,
+    !> @ref RM_InitialPhreeqcCell2Module.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> dimension(kinetics(nxyz))
+    !> kinetics = 1
+    !> status = RM_InitialKinetics2Module(id, kinetics);
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_InitialKinetics2Module(id, kinetics)
     USE ISO_C_BINDING
     IMPLICIT NONE
-		INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION RMF_InitialKinetics2Module(id, kinetics) &
-			BIND(C, NAME='RMF_InitialKinetics2Module')
-		USE ISO_C_BINDING
-		IMPLICIT NONE
-		INTEGER(KIND=C_INT), INTENT(in) :: id
-		INTEGER(KIND=C_INT), INTENT(in) :: kinetics(*)
-		END FUNCTION RMF_InitialKinetics2Module
-		END INTERFACE
+        INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_InitialKinetics2Module(id, kinetics) &
+            BIND(C, NAME='RMF_InitialKinetics2Module')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        INTEGER(KIND=C_INT), INTENT(in) :: kinetics(*)
+        END FUNCTION RMF_InitialKinetics2Module
+        END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in), DIMENSION(:) :: kinetics
     RM_InitialKinetics2Module = RMF_InitialKinetics2Module(id, kinetics)

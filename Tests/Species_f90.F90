@@ -34,7 +34,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   character(100)                                :: string
   character(200)                                :: string1
   integer                                       :: ncomps, ncomps1
-  character(100),   dimension(:), allocatable   :: components
+  character(len=:),   dimension(:), allocatable :: components
   real(kind=8), dimension(:), allocatable   :: gfw
   integer,          dimension(:,:), allocatable :: ic1, ic2
   real(kind=8), dimension(:,:), allocatable :: f1
@@ -173,14 +173,15 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   write(string1, "(A,I10)") "Number of components for transport:               ", RM_GetComponentCount(id)
   status = RM_OutputMessage(id, trim(string1))
   ! Get component information
-  allocate(components(ncomps))
-  allocate(gfw(ncomps))
+  !allocate(components(ncomps))
+  !allocate(gfw(ncomps))
   status = RM_GetGfw(id, gfw)
-  do i = 1, ncomps
-     status = RM_GetComponent(id, i, components(i))
-     write(string,"(A10, F15.4)") components(i), gfw(i)
-     status = RM_OutputMessage(id, string)
-  enddo
+  status = RM_GetComponents(id, components)
+  !do i = 1, ncomps
+  !   status = RM_GetComponent(id, i, components(i))
+  !   write(string,"(A10, F15.4)") components(i), gfw(i)
+  !   status = RM_OutputMessage(id, string)
+  !enddo
   status = RM_OutputMessage(id, " ")
   ! Determine species information
   nspecies = RM_GetSpeciesCount(id) 

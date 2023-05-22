@@ -525,12 +525,12 @@ USE, intrinsic :: ISO_C_BINDING
     status = bmif_get_var_nbytes(id, "Components", nbytes)
     dim = nbytes / itemsize
     status = assert(dim .eq. size(components))
-    allocate(character(len=itemsize) :: component)
-    do i = 1, dim
-        j = i
-        status = RM_GetComponent(id, j, component)
-        status = assert(component .eq. components(i))
-    enddo
+    !allocate(character(len=itemsize) :: component)
+    !do i = 1, dim
+    !    j = i
+    !    status = RM_GetComponent(id, j, component)
+    !    status = assert(component .eq. components(i))
+    !enddo
     status = RM_GetComponents(id, rm_components)
     do i = 1, dim
         status = assert(components(i) .eq. rm_components(i))

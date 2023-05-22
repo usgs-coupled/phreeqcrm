@@ -208,23 +208,31 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = RM_GetSpeciesZ(id, DoubleVector)
 	write(*,*) "GetSpeciesZ "
 	! Reactant lists
-	status = RM_GetEquilibriumPhasesName(id, 1, string)
-	write(*,*) "GetEquilibriumPhasesName "
+	!status = RM_GetEquilibriumPhasesName(id, 1, string)
+    !write(*,*) "GetEquilibriumPhasesName "
+	status = RM_GetEquilibriumPhasesNames(id, StringVector)
+    write(*,*) "GetEquilibriumPhasesNames "
 	!-------
 	n = RM_GetEquilibriumPhasesCount(id)
 	write(*,*) "GetEquilibriumPhasesCount "
 	!-------
-	status = RM_GetExchangeName(id, 1, string)
-	write(*,*) "GetExchangeName "
+	!status = RM_GetExchangeName(id, 1, string)
+	!write(*,*) "GetExchangeName "
+	status = RM_GetExchangeNames(id, StringVector)
+	write(*,*) "GetExchangeNames "
 	!-------
-	status = RM_GetExchangeSpeciesName(id, 1, string)
-	write(*,*) "GetExchangeSpeciesName "
+	!status = RM_GetExchangeSpeciesName(id, 1, string)
+	!write(*,*) "GetExchangeSpeciesName "
+	status = RM_GetExchangeSpeciesNames(id, StringVector)
+	write(*,*) "GetExchangeSpeciesNames "
 	!-------
 	n = RM_GetExchangeSpeciesCount(id)
 	write(*,*) "GetExchangeSpeciesCount "
 	!-------
-	status = RM_GetGasComponentsName(id, 1, string)
-	write(*,*) "GetGasComponentsName "
+	!status = RM_GetGasComponentsName(id, 1, string)
+	!write(*,*) "GetGasComponentsName "
+	status = RM_GetGasComponentsNames(id, StringVector)
+	write(*,*) "GetGasComponentsNames "
 	!-------
 	ngas = RM_GetGasComponentsCount(id)
 	write(*,*) "GetGasComponentsCount "
@@ -237,35 +245,49 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	n = RM_GetKineticReactionsCount(id)
 	write(*,*) "GetKineticReactionsCount "
 	!-------
-	status = RM_GetKineticReactionsName(id, 1, string)
-	write(*,*) "GetKineticReactionsName "
+	!status = RM_GetKineticReactionsName(id, 1, string)
+	!write(*,*) "GetKineticReactionsName "
+	status = RM_GetKineticReactionsNames(id, StringVector)
+	write(*,*) "GetKineticReactionsNames "
 	!-------
 	n = RM_GetSICount(id)
 	write(*,*) "GetSICount "
 	!-------
-	status = RM_GetSIName(id, 1, string)
-	write(*,*) "GetSIName "
+	!status = RM_GetSIName(id, 1, string)
+	!write(*,*) "GetSIName "
+	status = RM_GetSINames(id, StringVector)
+	write(*,*) "GetSINames "
 	!-------
 	n = RM_GetSolidSolutionComponentsCount(id)
 	write(*,*) "GetSolidSolutionComponentsCount "
 	!-------
-	status = RM_GetSolidSolutionComponentsName(id, 1, string)
-	write(*,*) "GetSolidSolutionComponentsName "
+	!status = RM_GetSolidSolutionComponentsName(id, 1, string)
+	!write(*,*) "GetSolidSolutionComponentsName "
+	status = RM_GetSolidSolutionComponentsNames(id, StringVector)
+	write(*,*) "GetSolidSolutionComponentsNames "
 	!-------
-	status = RM_GetSolidSolutionName(id, 1, string)
-	write(*,*) "GetSolidSolutionName "
+	!status = RM_GetSolidSolutionName(id, 1, string)
+	!write(*,*) "GetSolidSolutionName "
+	status = RM_GetSolidSolutionNames(id, StringVector)
+	write(*,*) "GetSolidSolutionNames "
 	!-------
-	status = RM_GetSurfaceName(id, 1, string)
-	write(*,*) "GetSurfaceName "
+	!status = RM_GetSurfaceName(id, 1, string)
+	!write(*,*) "GetSurfaceName "
+	status = RM_GetSurfaceNames(id, StringVector)
+	write(*,*) "GetSurfaceNames "
 	!-------
 	n = RM_GetSurfaceSpeciesCount(id)
 	write(*,*) "GetSurfaceSpeciesCount "
 	!-------
-	status = RM_GetSurfaceSpeciesName(id, 1, string)
-	write(*,*) "GetSurfaceSpeciesName "
+	!status = RM_GetSurfaceSpeciesName(id, 1, string)
+	!write(*,*) "GetSurfaceSpeciesName "
+	status = RM_GetSurfaceSpeciesNames(id, StringVector)
+	write(*,*) "GetSurfaceSpeciesNames "
 	!-------
-	status = RM_GetSurfaceType(id, 1, string)
-	write(*,*) "GetSurfaceType "
+	!status = RM_GetSurfaceType(id, 1, string)
+	!write(*,*) "GetSurfaceType "
+	status = RM_GetSurfaceTypes(id, StringVector)
+	write(*,*) "GetSurfaceTypes "
 	!
 	! Remove any reactants in workers 
 	! before populating cells with reactants
