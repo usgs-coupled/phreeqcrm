@@ -72,7 +72,7 @@ int Species_cpp()
 		// Set initial saturation
 		std::vector<double> sat;
 		sat.resize(nxyz, 1.0);
-		status = phreeqc_rm.SetSaturation(sat);
+		status = phreeqc_rm.SetSaturationUser(sat);
 		// Set cells to print chemistry when print chemistry is turned on
 		std::vector<int> print_chemistry_mask;
 		print_chemistry_mask.resize(nxyz, 0);
@@ -197,7 +197,7 @@ int Species_cpp()
 		initial_density.resize(nxyz, 1.0);
 		temperature.resize(nxyz, 20.0);
 		pressure.resize(nxyz, 2.0);
-		phreeqc_rm.SetDensity(initial_density);
+		phreeqc_rm.SetDensityUser(initial_density);
 		phreeqc_rm.SetTemperature(temperature);
 		phreeqc_rm.SetPressure(pressure);
 		time_step = 86400.;
@@ -221,7 +221,7 @@ int Species_cpp()
 			status = phreeqc_rm.SetSelectedOutputOn(print_selected_output_on);
 			status = phreeqc_rm.SetPrintChemistryOn(print_chemistry_on, false, false); // workers, initial_phreeqc, utility
 			status = phreeqc_rm.SetPorosity(por);                    // If porosity changes due to compressibility
-			status = phreeqc_rm.SetSaturation(sat);                  // If saturation changes
+			status = phreeqc_rm.SetSaturationUser(sat);                  // If saturation changes
 			status = phreeqc_rm.SetTemperature(temperature);         // If temperature changes
 			status = phreeqc_rm.SetPressure(pressure);               // If pressure changes
 			status = phreeqc_rm.SpeciesConcentrations2Module(c);     // Transported concentrations
@@ -264,7 +264,7 @@ int Species_cpp()
 			status = phreeqc_rm.GetSpeciesLog10Molalities(lm);
 			phreeqc_rm.GetConcentrations(component_c);
 			std::vector<double> density;
-			status = phreeqc_rm.GetDensity(density);
+			status = phreeqc_rm.GetDensityCalculated(density);
 			const std::vector<double>& volume = phreeqc_rm.GetSolutionVolume();
 			// Print results at last time step
 			if (print_chemistry_on != 0)
@@ -285,8 +285,8 @@ int Species_cpp()
 					for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount() / 2; i++)
 					{
 						std::cerr << "Cell number " << i << "\n";
-						std::cerr << "     Density: " << density[i] << "\n";
-						std::cerr << "     Volume:  " << volume[i] << "\n";
+						std::cerr << "     Calculated density: " << density[i] << "\n";
+						std::cerr << "     Volume:             " << volume[i] << "\n";
 						std::cerr << "     Components: " << "\n";
 						for (int j = 0; j < ncomps; j++)
 						{

@@ -74,13 +74,15 @@ public:
 	void ComponentCount_Var();
 	void Components_Var();
 	void Concentrations_Var();
-	void Density_Var();
+	void DensityCalculated_Var();
+	void DensityUser_Var();
 	void ErrorString_Var();
 	void FilePrefix_Var();
 	void Gfw_Var();
 	void GridCellCount_Var();
 	void NthSelectedOutput_Var();
-	void Saturation_Var();
+	void SaturationCalculated_Var();
+	void SaturationUser_Var();
 	void SelectedOutput_Var();
 	void SelectedOutputColumnCount_Var();
 	void SelectedOutputCount_Var();

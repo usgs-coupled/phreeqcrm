@@ -238,7 +238,7 @@
     !> @n SetComponentH2O(bool tf);
     !> @n SetConcentrations(std::vector< double > c);
     !> @n SetCurrentSelectedOutputUserNumber(int n_user);
-    !> @n SetDensity(std::vector< double > density);
+    !> @n SetDensityUser(std::vector< double > density);
     !> @n SetDumpFileName(std::string dump_name);
     !> @n SetErrorHandlerMode(int mode);
     !> @n SetErrorOn(bool tf);
@@ -253,7 +253,7 @@
     !> @n SetRebalanceByCell(bool tf);
     !> @n SetRebalanceFraction(double f);
     !> @n SetRepresentativeVolume(std::vector< double > rv);
-    !> @n SetSaturation(std::vector< double > sat);
+    !> @n SetSaturationUser(std::vector< double > sat);
     !> @n SetScreenOn(bool tf);
     !> @n SetSelectedOutputOn(bool tf);
     !> @n SetSpeciesSaveOn(bool save_on);
@@ -321,7 +321,7 @@
     !> as a result of the transport
     !> calculations include porosity (@ref bmif_set_value "Porosity"),
     !> pressure (@ref bmif_set_value "Pressure"),
-    !> saturation (@ref bmif_set_value "Saturation"),
+    !> saturation (@ref bmif_set_value "SaturationUser"),
     !> temperature (@ref bmif_set_value "Temperature").
     !> @see
 	!> @ref bmif_get_value,
@@ -331,14 +331,14 @@
     !> <CODE>
     !> <PRE>
     !> status = bmif_set_value(id, "Porosity", por)                ! If pore volume changes
-    !> status = bmif_set_value(id, "Saturation", sat)              ! If saturation changes
+    !> status = bmif_set_value(id, "SaturationUser", sat)              ! If saturation changes
     !> status = bmif_set_value(id, "Temperature", temperature)     ! If temperature changes
     !> status = bmif_set_value(id, "Pressure", pressure)           ! If pressure changes
     !> status = bmif_set_value(id, "Concentrations", c)            ! Transported concentrations
     !> status = bmif_set_value(id, "TimeStep", time_step)          ! Time step for kinetic reactions
     !> status = bmif_update(id)
     !> status = bmif_get_value(id, "Concentrations", c)            ! Concentrations after reaction
-    !> status = bmif_get_value(id, "Density", density)             ! Density after reaction
+    !> status = bmif_get_value(id, "DensityCalculated", density)   ! Density after reaction
     !> status = bmif_get_value(id, "SolutionVolume", volume)       ! Solution volume after reaction
     !> </PRE>
     !> </CODE>
@@ -1236,7 +1236,7 @@
     !> @n "Components", @a dest: character(len=:), allocatable, dimension(:);
     !> @n "Concentrations", @a dest: real(kind=8), allocatable, dimension(:,:);
     !> @n "CurrentSelectedOutputUserNumber", @a dest: integer;
-    !> @n "Density", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "DensityCalculated", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "ErrorString", @a dest: character;
     !> @n "FilePrefix", @a dest: character;
     !> @n "Gfw", @a dest: real(kind=8), allocatable, dimension(:);
@@ -1245,7 +1245,7 @@
     !> @n "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
     !> @n "Porosity", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "Pressure", @a dest: real(kind=8), allocatable, dimension(:);
-    !> @n "Saturation", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "SaturationCalculated", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "SelectedOutput", @a dest: real(kind=8), allocatable, dimension(:,:);
     !> @n "SelectedOutputColumnCount", @a dest: integer;
     !> @n "SelectedOutputCount", @a dest: integer;
@@ -1272,7 +1272,7 @@
     !> <PRE>
     !> real(kind=8), allocatable, dimension(:) :: bmi_density
     !> character(len=:), allocatable, dimension(:) :: bmi_comps
-    !> status = bmif_get_value(id, "Density", bmi_density)
+    !> status = bmif_get_value(id, "DensityCalculated", bmi_density)
     !> status = bmif_get_value(id, "Components", bmi_comps)
     !> </PRE>
     !> </CODE>
@@ -1655,11 +1655,12 @@
 	!> data type the pointer (@a ptr):
 	!> @n "ComponentCount": integer;
 	!> @n "Concentrations": real(kind=8) (:);
+	!> @n "DensityCalculated": real(kind=8) (:);
 	!> @n "Gfw": real(kind=8) (:);
 	!> @n "GridCellCount": integer;
 	!> @n "Porosity": real(kind=8) (:);
 	!> @n "Pressure": real(kind=8) (:);
-	!> @n "Saturation": real(kind=8) (:);
+	!> @n "SaturationCalculated": real(kind=8) (:);
 	!> @n "SolutionVolume": real(kind=8) (:);
 	!> @n "Temperature": real(kind=8) (:);
 	!> @n "Time": real(kind=8);
@@ -1785,12 +1786,12 @@
     !> Variable names for the second argument (@a var)
     !> and required variable type for the third argument (@a src):
     !> @n "Concentrations", real(kind=8), allocatable, dimension(:,:);
-    !> @n "Density", real(kind=8), allocatable, dimension(:);
+    !> @n "DensityUser", real(kind=8), allocatable, dimension(:);
     !> @n "FilePrefix", character;
     !> @n "NthSelectedOutput", integer;
     !> @n "Porosity", real(kind=8), allocatable, dimension(:);
     !> @n "Pressure", real(kind=8), allocatable, dimension(:);
-    !> @n "Saturation", real(kind=8), allocatable, dimension(:);
+    !> @n "SaturationUser", real(kind=8), allocatable, dimension(:);
     !> @n "SelectedOutputOn", logical;
     !> @n "Temperature", real(kind=8), allocatable, dimension(:);
     !> @n "Time", real(kind=8);

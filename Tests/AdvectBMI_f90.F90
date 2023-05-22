@@ -58,7 +58,7 @@
     integer                                         :: dim
 	real(kind=8), dimension(:), allocatable         :: CaX2, KX, NaX, pH_vector
     common /i_ptrs/ id, ComponentCount_ptr, GridCellCount_ptr, SelectedOutputOn_ptr
-    common /r_ptrs/ Concentrations_ptr, Density_ptr, Gfw_ptr, &
+    common /r_ptrs/ Concentrations_ptr, Density_calculated_ptr, Gfw_ptr, &
 	    Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
         Porosity_ptr, Pressure_ptr, Temperature_ptr
     integer :: id
@@ -66,7 +66,7 @@
 	integer, pointer :: GridCellCount_ptr
 	logical, pointer :: SelectedOutputOn_ptr
 	real(kind=8), pointer :: Concentrations_ptr(:)
-	real(kind=8), pointer :: Density_ptr(:)
+	real(kind=8), pointer :: Density_calculated_ptr(:)
 	real(kind=8), pointer :: Gfw_ptr(:)
 	real(kind=8), pointer :: Saturation_ptr(:)
 	real(kind=8), pointer :: SolutionVolume_ptr(:)
@@ -112,9 +112,9 @@
 	status = bmif_get_value_ptr(id, "GridCellCount", GridCellCount_ptr)
 	status = bmif_get_value_ptr(id, "SelectedOutputOn", SelectedOutputOn_ptr)
 	status = bmif_get_value_ptr(id, "Concentrations", Concentrations_ptr)
-	status = bmif_get_value_ptr(id, "Density", Density_ptr)
+	status = bmif_get_value_ptr(id, "DensityCalculated", Density_calculated_ptr)
 	status = bmif_get_value_ptr(id, "Gfw", Gfw_ptr)
-	status = bmif_get_value_ptr(id, "Saturation", Saturation_ptr)
+	status = bmif_get_value_ptr(id, "SaturationCalculated", Saturation_ptr)
 	status = bmif_get_value_ptr(id, "SolutionVolume", SolutionVolume_ptr)
 	status = bmif_get_value_ptr(id, "Time", Time_ptr)
 	status = bmif_get_value_ptr(id, "TimeStep", TimeStep_ptr)
@@ -135,7 +135,7 @@
     ! Get component information
     status = bmif_get_value(id, "Components", components)
     status = bmif_get_value(id, "Gfw", gfw)
-    do i = 1, GridCellCount_ptr
+    do i = 1, ComponentCount_ptr
         write(string,"(A10, F15.4)") trim(components(i)), gfw(i)
         status = RM_OutputMessage(id, string)
     enddo
@@ -143,7 +143,7 @@
     ! Get initial temperatures
     status = bmif_get_value(id, "Temperature", temperature)
     ! Get initial temperature
-    status = bmif_get_value(id, "Saturation", sat)
+    status = bmif_get_value(id, "SaturationCalculated", sat)
     ! Get initial porosity
     status = bmif_get_value(id, "Porosity", por)
     ! Get initial temperature
@@ -157,7 +157,7 @@
     ! Set density, pressure, and temperature (previously allocated)
     allocate(density(nxyz))
     density = 1.0
-    status = bmif_set_value(id, "Density", density)
+    status = bmif_set_value(id, "DensityUser", density)
     allocate(pressure(nxyz))
     pressure = 2.0
     status = bmif_set_value(id, "Pressure", pressure)  
@@ -206,7 +206,7 @@
         status = bmif_set_value(id, "Concentrations", c)  ! Transported concentrations
         ! Optionally, if values changed during transport
         status = bmif_set_value(id, "Porosity", por)              
-        status = bmif_set_value(id, "Saturation", sat)            
+        status = bmif_set_value(id, "SaturationUser", sat)            
         status = bmif_set_value(id, "Temperature", temperature) 
         status = bmif_set_value(id, "Pressure", pressure)          
         status = bmif_set_value(id, "TimeStep", time_step) 
@@ -222,13 +222,11 @@
         status = RM_StateSave(id, 1)
         status = RM_StateApply(id, 1)
         status = RM_StateDelete(id, 1)
-        call compare_ptrs
         ! Run chemistry
         status = bmif_update(id)
-        call compare_ptrs
         ! Get new data calculated by PhreeqcRM for transport
         status = bmif_get_value(id, "Concentrations", c)
-        status = bmif_get_value(id, "Density", density)
+        status = bmif_get_value(id, "DensityCalculated", density)
         status = bmif_get_value(id, "SolutionVolume", volume)   
        ! Print results at last time step
         if (isteps == nsteps) then
@@ -263,8 +261,8 @@
                 ! Print results
                 do i = rows/2, rows/2
                     write(*,*) "Cell number ", i
-                    write(*,*) "     Density: ", density(i)
-                    write(*,*) "     Volume:  ", volume(i)
+                    write(*,*) "     Calculated Density: ", density(i)
+                    write(*,*) "     Volume:             ", volume(i)
                     write(*,*) "     Components: "
                     do j = 1, ncomps
                         write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ",trim(components(j)), ": ", c(i,j)

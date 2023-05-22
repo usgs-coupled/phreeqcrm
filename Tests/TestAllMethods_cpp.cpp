@@ -360,14 +360,14 @@ void TestAllMethods_cpp()
 	bmi.SetValue("Concentrations", c);
 	std::cerr << "SetConcentrations \n";
 	//-------
-	status = bmi.GetDensity(v);
-	bmi.GetValue("Density", v);
-	d_ptr = (double*)bmi.GetValuePtr("Density");
-	std::cerr << "GetDensity \n";
+	status = bmi.GetDensityCalculated(v);
+	bmi.GetValue("DensityCalculated", v);
+	d_ptr = (double*)bmi.GetValuePtr("DensityCalculated");
+	std::cerr << "GetDensityCalculated \n";
 	//-------
-	status = bmi.SetDensity(v);
-	bmi.SetValue("Density", v);
-	std::cerr << "SetDensity \n";
+	status = bmi.SetDensityUser(v);
+	bmi.SetValue("DensityUser", v);
+	std::cerr << "SetDensityUser \n";
 	//-------
 	status = bmi.GetGasCompMoles(v);
 	std::cerr << "GetGasCompMoles \n";
@@ -411,14 +411,14 @@ void TestAllMethods_cpp()
 	bmi.SetValue("Pressure", v);
 	std::cerr << "SetPressure \n";
 	//-------
-	status = bmi.GetSaturation(v);
-	bmi.GetValue("Saturation", v);
-	d_ptr = (double*)bmi.GetValuePtr("Saturation");
-	std::cerr << "GetSaturation \n";
+	status = bmi.GetSaturationCalculated(v);
+	bmi.GetValue("SaturationCalculated", v);
+	d_ptr = (double*)bmi.GetValuePtr("SaturationCalculated");
+	std::cerr << "GetSaturationCalculated \n";
 	//-------
-	status = bmi.SetSaturation(v);
-	bmi.SetValue("Saturation", v);
-	std::cerr << "SetSaturation \n";
+	status = bmi.SetSaturationUser(v);
+	bmi.SetValue("SaturationUser", v);
+	std::cerr << "SetSaturationUser \n";
 	//-------
 	v = bmi.GetSolutionVolume();
 	bmi.GetValue("SolutionVolume", v);

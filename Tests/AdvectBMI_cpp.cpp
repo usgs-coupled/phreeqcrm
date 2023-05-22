@@ -25,7 +25,7 @@ public:
 		brm = NULL;
 		ComponentCount_ptr = NULL;
 		Concentrations_ptr = NULL;
-		Density_ptr = NULL;
+		DensityCalculated_ptr = NULL;
 		Gfw_ptr = NULL;
 		GridCellCount_ptr = NULL;
 		Saturation_ptr = NULL;
@@ -41,7 +41,7 @@ public:
 	BMIPhreeqcRM* brm;
 	int* ComponentCount_ptr;
 	double* Concentrations_ptr;
-	double* Density_ptr;
+	double* DensityCalculated_ptr;
 	double* Gfw_ptr;
 	int* GridCellCount_ptr;
 	double* Saturation_ptr;
@@ -137,10 +137,10 @@ int AdvectBMI_cpp()
 		ptrs.brm = &brm;
 		ptrs.ComponentCount_ptr = (int*)brm.GetValuePtr("ComponentCount");
 		ptrs.Concentrations_ptr = (double*)brm.GetValuePtr("Concentrations");
-		ptrs.Density_ptr = (double*)brm.GetValuePtr("Density");
+		ptrs.DensityCalculated_ptr = (double*)brm.GetValuePtr("DensityCalculated");
 		ptrs.Gfw_ptr = (double*)brm.GetValuePtr("Gfw");
 		ptrs.GridCellCount_ptr = (int*)brm.GetValuePtr("GridCellCount");
-		ptrs.Saturation_ptr = (double*)brm.GetValuePtr("Saturation");
+		ptrs.Saturation_ptr = (double*)brm.GetValuePtr("SaturationCalculated");
 		ptrs.SolutionVolume_ptr = (double*)brm.GetValuePtr("SolutionVolume");
 		ptrs.Time_ptr = (double*)brm.GetValuePtr("Time");
 		ptrs.TimeStep_ptr = (double*)brm.GetValuePtr("TimeStep");
@@ -192,7 +192,7 @@ int AdvectBMI_cpp()
 		// Get initial saturation
 		IRM_RESULT status;
 		std::vector<double> sat;
-		brm.GetValue("Saturation", sat);
+		brm.GetValue("SaturationCalculated", sat);
 
 		//Get initial porosity
 		std::vector<double> por;
@@ -210,7 +210,7 @@ int AdvectBMI_cpp()
 		std::vector<double> density(nxyz, 1.0);
 		std::vector<double> temperature(nxyz, 20.0);
 		std::vector<double> pressure(nxyz, 2.0);
-		brm.SetValue("Density", density);
+		brm.SetValue("DensityUser", density);
 		brm.SetValue("Temperature", temperature);
 		brm.SetValue("Pressure", pressure);
 		// --------------------------------------------------------------------------
@@ -250,7 +250,7 @@ int AdvectBMI_cpp()
 			status = brm.SetPrintChemistryOn(print_chemistry_on, false, false); // workers, initial_phreeqc, utility
 			brm.SetValue("Concentrations", c);        // Transported concentrations
 			brm.SetValue("Porosity", por);            // If pororosity changes due to compressibility
-			brm.SetValue("Saturation", sat);          // If saturation changes
+			brm.SetValue("SaturationUser", sat);          // If saturation changes
 			brm.SetValue("Temperature", temperature); // If temperature changes
 			brm.SetValue("Pressure", pressure);       // If pressure changes 
 			brm.SetValue("TimeStep", time_step);      // Time step for kinetic reactions
@@ -268,7 +268,7 @@ int AdvectBMI_cpp()
 			brm.Update();
 			// Transfer data from PhreeqcRM for transport
 			brm.GetValue("Concentrations", c);
-			brm.GetValue("Density", density);
+			brm.GetValue("DensityCalculated", density);
 			brm.GetValue("SolutionVolume", volume);
 			// Print results at last time step
 			if (print_chemistry_on != 0)
@@ -314,8 +314,8 @@ int AdvectBMI_cpp()
 					for (int i = 0; i < bmi_row_count / 2; i++)
 					{
 						oss << "Cell number " << i << "\n";
-						oss << "     Density: " << density[i] << "\n";
-						oss << "     Volume:  " << volume[i] << "\n";
+						oss << "     Calculated Density: " << density[i] << "\n";
+						oss << "     Calculated Volume:  " << volume[i] << "\n";
 						oss << "     Components: " << "\n";
 						for (int j = 0; j < ncomps; j++)
 						{

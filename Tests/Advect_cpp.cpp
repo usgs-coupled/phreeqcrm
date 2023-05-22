@@ -106,7 +106,7 @@ int Advect_cpp()
 		// Set initial saturation
 		std::vector<double> sat;
 		sat.resize(nxyz, 1.0);
-		status = phreeqc_rm.SetSaturation(sat);
+		status = phreeqc_rm.SetSaturationUser(sat);
 		// Set cells to print chemistry when print chemistry is turned on
 		std::vector<int> print_chemistry_mask;
 		print_chemistry_mask.resize(nxyz, 0);
@@ -243,7 +243,7 @@ int Advect_cpp()
 		const std::vector<double>& tempc = phreeqc_rm.GetTemperature();
 		// get current saturation
 		std::vector<double> current_sat;
-		status = phreeqc_rm.GetSaturation(current_sat);
+		status = phreeqc_rm.GetSaturationCalculated(current_sat);
 		// Initial equilibration of cells
 		double time = 0.0;
 		double time_step = 0.0;
@@ -271,11 +271,11 @@ int Advect_cpp()
 		// --------------------------------------------------------------------------
 
 		int nsteps = 10;
-		std::vector<double> initial_density, temperature, pressure;
-		initial_density.resize(nxyz, 1.0);
+		std::vector<double> density, temperature, pressure;
+		density.resize(nxyz, 1.0);
 		temperature.resize(nxyz, 20.0);
 		pressure.resize(nxyz, 2.0);
-		phreeqc_rm.SetDensity(initial_density);
+		phreeqc_rm.SetDensityUser(density);
 		phreeqc_rm.SetTemperature(temperature);
 		phreeqc_rm.SetPressure(pressure);
 		time_step = 86400.;
@@ -298,7 +298,7 @@ int Advect_cpp()
 			status = phreeqc_rm.SetSelectedOutputOn(print_selected_output_on);
 			status = phreeqc_rm.SetPrintChemistryOn(print_chemistry_on, false, false); // workers, initial_phreeqc, utility
 			status = phreeqc_rm.SetPorosity(por);             // If pororosity changes due to compressibility
-			status = phreeqc_rm.SetSaturation(sat);           // If saturation changes
+			status = phreeqc_rm.SetSaturationUser(sat);           // If saturation changes
 			status = phreeqc_rm.SetTemperature(temperature);  // If temperature changes
 			status = phreeqc_rm.SetPressure(pressure);        // If pressure changes
 			status = phreeqc_rm.SetConcentrations(c);         // Transported concentrations
@@ -339,8 +339,7 @@ int Advect_cpp()
 			//		assert(c_comp[j] == c[i * nxyz + j]);
 			//	}
 			//}
-			std::vector<double> density;
-			status = phreeqc_rm.GetDensity(density);
+			status = phreeqc_rm.GetDensityCalculated(density);
 			const std::vector<double>& volume = phreeqc_rm.GetSolutionVolume();
 			// Print results at last time step
 			if (print_chemistry_on != 0)
@@ -373,7 +372,7 @@ int Advect_cpp()
 					for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount() / 2; i++)
 					{
 						std::cerr << "Cell number " << i << "\n";
-						std::cerr << "     Density: " << density[i] << "\n";
+						std::cerr << "     Calculated Density: " << density[i] << "\n";
 						std::cerr << "     Volume:  " << volume[i] << "\n";
 						std::cerr << "     Components: " << "\n";
 						for (int j = 0; j < ncomps; j++)
@@ -528,7 +527,7 @@ int units_tester()
 		// Set saturation
 		std::vector<double> sat;
 		sat.resize(nxyz, 1.0);
-		status = phreeqc_rm.SetSaturation(sat);
+		status = phreeqc_rm.SetSaturationUser(sat);
 		// Set printing of chemistry file
 		status = phreeqc_rm.SetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility
 

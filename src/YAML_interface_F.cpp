@@ -338,14 +338,14 @@ IRM_RESULT YAMLSetCurrentSelectedOutputUserNumber_F(int* id, int* n_user)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetDensity_F(int* id, double* density, int* dim)
+IRM_RESULT YAMLSetDensityUser_F(int* id, double* density, int* dim)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
 		std::vector<double> density_v(*dim, 0.0);
 		memcpy(density_v.data(), density, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetDensity(density_v);
+		yrm_ptr->YAMLSetDensityUser(density_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -529,14 +529,14 @@ IRM_RESULT YAMLSetRepresentativeVolume_F(int* id, double* rv, int* dim)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetSaturation_F(int* id, double* sat, int* dim)
+IRM_RESULT YAMLSetSaturationUser_F(int* id, double* sat, int* dim)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
 		std::vector<double> sat_v(*dim, 0.0);
 		memcpy(sat_v.data(), sat, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetSaturation(sat_v);
+		yrm_ptr->YAMLSetSaturationUser(sat_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;

@@ -14,8 +14,10 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::Concentrations_Var, "Concentrations");
 	this->VariantMap[RMVARS::CurrentSelectedOutputUserNumber] =
 		BMIVariant(&VarManager::CurrentSelectedOutputUserNumber_Var, "CurrentSelectedOutputUserNumber");
-	this->VariantMap[RMVARS::Density] =
-		BMIVariant(&VarManager::Density_Var, "Density");
+	this->VariantMap[RMVARS::DensityCalculated] =
+		BMIVariant(&VarManager::DensityCalculated_Var, "DensityCalculated");
+	this->VariantMap[RMVARS::DensityUser] =
+		BMIVariant(&VarManager::DensityUser_Var, "DensityUser");
 	this->VariantMap[RMVARS::ErrorString] =
 		BMIVariant(&VarManager::ErrorString_Var, "ErrorString");
 	this->VariantMap[RMVARS::FilePrefix] =
@@ -32,8 +34,10 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::Porosity_Var, "Porosity");
 	this->VariantMap[RMVARS::Pressure] =
 		BMIVariant(&VarManager::Pressure_Var, "Pressure");
-	this->VariantMap[RMVARS::Saturation] =
-		BMIVariant(&VarManager::Saturation_Var, "Saturation");
+	this->VariantMap[RMVARS::SaturationCalculated] =
+		BMIVariant(&VarManager::SaturationCalculated_Var, "SaturationCalculated");
+	this->VariantMap[RMVARS::SaturationUser] =
+		BMIVariant(&VarManager::SaturationUser_Var, "SaturationUser");
 	this->VariantMap[RMVARS::SelectedOutput] =
 		BMIVariant(&VarManager::SelectedOutput_Var, "SelectedOutput");
 	this->VariantMap[RMVARS::SelectedOutputColumnCount] =
@@ -316,19 +320,18 @@ void VarManager::Concentrations_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
-void VarManager::Density_Var()
+void VarManager::DensityCalculated_Var()
 {
-	this->SetCurrentVar(RMVARS::Density);
-	BMIVariant& bv = this->VariantMap[RMVARS::Density];
+	RMVARS VARS_myself = RMVARS::DensityCalculated;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
 	{
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-		bv.SetBasic("kg L-1", true, true, true, Nbytes, Itemsize);
+		bv.SetBasic("kg L-1", false, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "");
-		//rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
-		//rm_ptr->GetDensity(bv.GetDoubleVectorRef());
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
@@ -337,39 +340,95 @@ void VarManager::Density_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
+		rm_ptr->GetDensityCalculated(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
-		this->PointerSet.insert(RMVARS::Density);
-		this->UpdateSet.insert(RMVARS::Density);
+		this->PointerSet.insert(RMVARS::DensityCalculated);
+		this->UpdateSet.insert(RMVARS::DensityCalculated);
 		break;
 	}
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		// Concentrations may change when SetDensity is called
+		// Concentrations may change when SetDensityUser is called
 		std::vector<double> c;
 		rm_ptr->GetConcentrations(c);
-		RMVARS VARS_c = RMVARS::Concentrations;
-		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		BMIVariant& bv_c = this->VariantMap[RMVARS::Concentrations];
 		bv_c.SetDoubleVector(c);
 	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
 	{
-		rm_ptr->GetDensity(this->VarExchange.GetDoubleVectorRef());
+		rm_ptr->GetDensityCalculated(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
 	{
-		rm_ptr->SetDensity(this->VarExchange.GetDoubleVectorRef());
-		// don't update density vector, only get solution densities
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(RMVARS::NotFound);
+}
+void VarManager::DensityUser_Var()
+{
+
+	RMVARS VARS_myself = RMVARS::DensityUser;
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		int Itemsize = sizeof(double);
+		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("kg L-1", true, false, false, Nbytes, Itemsize);
+		bv.SetTypes("double", "real(kind=8)", "");
+		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
+		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		//rm_ptr->GetDensityUser(this->VarExchange.GetDoubleVectorRef());
 		//bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
-		// Concentrations may change when SetDensity is called
+		//bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
+		//this->PointerSet.insert(RMVARS::DensityUser);
+		//this->UpdateSet.insert(RMVARS::DensityUser);
+		//break;
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
+		//// Concentrations may change when SetDensityUser is called
+		//std::vector<double> c;
+		//rm_ptr->GetConcentrations(c);
+		//BMIVariant& bv_c = this->VariantMap[RMVARS::Concentrations];
+		//bv_c.SetDoubleVector(c);
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::Update:
+	{
+		//rm_ptr->GetDensityUser(this->VarExchange.GetDoubleVectorRef());
+		//bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+	{
+		// update density vector
+		rm_ptr->SetDensityUser(this->VarExchange.GetDoubleVectorRef());
+		//rm_ptr->GetDensityUser(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations may change when SetDensityUser is called
 		std::vector<double> c;
 		rm_ptr->GetConcentrations(c);
-		RMVARS VARS_c = RMVARS::Concentrations;
-		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		BMIVariant& bv_c = this->VariantMap[RMVARS::Concentrations];
 		bv_c.SetDoubleVector(c);
 		break;
 	}
@@ -609,9 +668,9 @@ void VarManager::NthSelectedOutput_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
-void VarManager::Saturation_Var()
+void VarManager::SaturationCalculated_Var()
 {
-	RMVARS VARS_myself = RMVARS::Saturation;
+	RMVARS VARS_myself = RMVARS::SaturationCalculated;
 	this->SetCurrentVar(VARS_myself);
 	BMIVariant& bv = this->VariantMap[VARS_myself];
 	if (!bv.GetInitialized())
@@ -619,10 +678,8 @@ void VarManager::Saturation_Var()
 		int Itemsize = sizeof(double);
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-		bv.SetBasic("unitless", true, true, true, Nbytes, Itemsize);
+		bv.SetBasic("unitless", false, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "");
-		//rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
-		//rm_ptr->GetSaturation(bv.GetDoubleVectorRef());
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
@@ -631,7 +688,7 @@ void VarManager::Saturation_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
+		rm_ptr->GetSaturationCalculated(this->VarExchange.GetDoubleVectorRef());
 		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
 		this->PointerSet.insert(VARS_myself);
@@ -640,10 +697,63 @@ void VarManager::Saturation_Var()
 	}
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		// GetSaturation does not change with SetSaturation
-		// But Concentrations may change
-		//rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
-		//bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		// Concentrations change when Saturation changes
+		std::vector<double> c;
+		rm_ptr->GetConcentrations(c);
+		RMVARS VARS_c = RMVARS::Concentrations;
+		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		bv_c.SetDoubleVector(c);
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::Update:
+	{
+		rm_ptr->GetSaturationCalculated(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::no_op:
+	case VarManager::VAR_TASKS::Info:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(RMVARS::NotFound);
+}
+void VarManager::SaturationUser_Var()
+{
+	RMVARS VARS_myself = RMVARS::SaturationUser;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		int Itemsize = sizeof(double);
+		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
+		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
+		bv.SetBasic("unitless", true, false, false, Nbytes, Itemsize);
+		bv.SetTypes("double", "real(kind=8)", "");
+		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
+		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::GetVar:
+	case VarManager::VAR_TASKS::Update:
+	{
+		assert(false);
+		break;
+	}
+	case VarManager::VAR_TASKS::RMUpdate:
+	{
 		// Concentrations change when Saturation changes
 		std::vector<double> c;
 		rm_ptr->GetConcentrations(c);
@@ -652,24 +762,14 @@ void VarManager::Saturation_Var()
 		bv_c.SetDoubleVector(c);
 		break;
 	}
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	{
-		rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
-		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
-		break;
-	}
 	case VarManager::VAR_TASKS::SetVar:
 	{
-		rm_ptr->SetSaturation(this->VarExchange.GetDoubleVectorRef());
-		// Saturation is solution volume / (porosity*rv)
-		// GetSaturation does not change with SetSaturation
-		// bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
+		rm_ptr->SetSaturationUser(this->VarExchange.GetDoubleVectorRef());
+		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
 		// Concentrations may change when Saturation changes
 		std::vector<double> c;
 		rm_ptr->GetConcentrations(c);
-		RMVARS VARS_c = RMVARS::Concentrations;
-		BMIVariant& bv_c = this->VariantMap[VARS_c];
+		BMIVariant& bv_c = this->VariantMap[RMVARS::Concentrations];
 		bv_c.SetDoubleVector(c);
 		break;
 	}
@@ -1192,9 +1292,8 @@ void VarManager::Porosity_Var()
 		bv_c.SetDoubleVector(c);
 		// Saturation changes with change in porosity
 		std::vector<double> sat;
-		rm_ptr->GetSaturation(sat);
-		RMVARS VARS_sat = RMVARS::Saturation;
-		BMIVariant& bv_sat = this->VariantMap[VARS_sat];
+		rm_ptr->GetSaturationCalculated(sat);
+		BMIVariant& bv_sat = this->VariantMap[RMVARS::SaturationCalculated];
 		bv_sat.SetDoubleVector(sat);
 		break;
 	}
@@ -1217,9 +1316,8 @@ void VarManager::Porosity_Var()
 		bv_c.SetDoubleVector(c);
 		// Saturation changes with change in porosity
 		std::vector<double> sat;
-		rm_ptr->GetSaturation(sat);
-		RMVARS VARS_sat = RMVARS::Saturation;
-		BMIVariant& bv_sat = this->VariantMap[VARS_sat];
+		rm_ptr->GetSaturationCalculated(sat);
+		BMIVariant& bv_sat = this->VariantMap[RMVARS::SaturationCalculated];
 		bv_sat.SetDoubleVector(sat);
 		break;
 	}

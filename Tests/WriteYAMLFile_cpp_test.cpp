@@ -53,13 +53,13 @@ void WriteYAMLFile_cpp_test(void)
 	yrm.YAMLSetRepresentativeVolume(rv);
 	// Set density
 	std::vector<double> density(nxyz, 1.0);
-	yrm.YAMLSetDensity(density);
+	yrm.YAMLSetDensityUser(density);
 	// Set initial porosity
 	std::vector<double> por(nxyz, 0.2);
 	yrm.YAMLSetPorosity(por);
 	// Set initial saturation
 	std::vector<double> sat(nxyz, 1.0);
-	yrm.YAMLSetSaturation(sat);
+	yrm.YAMLSetSaturationUser(sat);
 	// Set cells to print chemistry when print chemistry is turned on
 	std::vector<int> print_chemistry_mask(nxyz, 1);
 	yrm.YAMLSetPrintChemistryMask(print_chemistry_mask);

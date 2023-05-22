@@ -1,11 +1,11 @@
 - key: SetGridCellCount
   count: 40
 - key: ThreadCount
-  nthreads: 3
+  nthreads: 4
 - key: SetErrorHandlerMode
   mode: 1
 - key: SetComponentH2O
-  tf: false
+  tf: true
 - key: SetRebalanceFraction
   f: 0.5
 - key: SetRebalanceByCell
@@ -15,7 +15,7 @@
 - key: SetPartitionUZSolids
   tf: false
 - key: SetFilePrefix
-  prefix: AdvectBMI_cpp
+  prefix: AdvectBMI_f90_test
 - key: OpenFiles
 - key: SetUnitsSolution
   option: 2
@@ -295,7 +295,7 @@
   workers: true
   initial_phreeqc: true
   utility: true
-  chemistry_name: advect.pqi
+  chemistry_name: all_reactants.pqi
 - key: RunString
   workers: true
   initial_phreeqc: false
@@ -304,9 +304,45 @@
 - key: AddOutputVars
   option: AddOutputVars
   definition: true
+- key: AddOutputVars
+  option: SolutionProperties
+  definition: true
+- key: AddOutputVars
+  option: SolutionTotalMolalities
+  definition: true
+- key: AddOutputVars
+  option: ExchangeMolalities
+  definition: true
+- key: AddOutputVars
+  option: SurfaceMolalities
+  definition: true
+- key: AddOutputVars
+  option: EquilibriumPhases
+  definition: true
+- key: AddOutputVars
+  option: Gases
+  definition: true
+- key: AddOutputVars
+  option: KineticReactants
+  definition: true
+- key: AddOutputVars
+  option: SolidSolutions
+  definition: true
+- key: AddOutputVars
+  option: CalculateValues
+  definition: true
+- key: AddOutputVars
+  option: SolutionActivities
+  definition: false
+- key: AddOutputVars
+  option: SolutionMolalities
+  definition: false
+- key: AddOutputVars
+  option: SaturationIndices
+  definition: false
 - key: FindComponents
-- key: InitialPhreeqc2Module
-  initial_conditions1:
+- key: InitialSolutions2Module
+  solutions:
     - 1
     - 1
     - 1
@@ -347,46 +383,8 @@
     - 1
     - 1
     - 1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
+- key: InitialEquilibriumPhases2Module
+  equilibrium_phases:
     - 1
     - 1
     - 1
@@ -427,448 +425,8 @@
     - 1
     - 1
     - 1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-  initial_conditions2:
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-    - -1
-  fraction1:
+- key: InitialExchanges2Module
+  exchanges:
     - 1
     - 1
     - 1
@@ -909,6 +467,8 @@
     - 1
     - 1
     - 1
+- key: InitialGasPhases2Module
+  gas_phases:
     - 1
     - 1
     - 1
@@ -949,6 +509,8 @@
     - 1
     - 1
     - 1
+- key: InitialKinetics2Module
+  kinetics:
     - 1
     - 1
     - 1
@@ -989,6 +551,8 @@
     - 1
     - 1
     - 1
+- key: InitialSolidSolutions2Module
+  solid_solutions:
     - 1
     - 1
     - 1
@@ -1029,6 +593,8 @@
     - 1
     - 1
     - 1
+- key: InitialSurfaces2Module
+  surfaces:
     - 1
     - 1
     - 1
@@ -1069,91 +635,6 @@
     - 1
     - 1
     - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-- key: InitialPhreeqcCell2Module
-  n: -1
-  cell_numbers:
-    - 18
-    - 19
 - key: SetTimeStep
   time_step: 0
 - key: SetTime

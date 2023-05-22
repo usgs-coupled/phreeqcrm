@@ -34,7 +34,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   character(100)                                :: string
   character(200)                                :: string1
   integer                                       :: ncomps, ncomps1
-  character(100),   dimension(:), allocatable   :: components
+  character(len=:),   dimension(:), allocatable :: components
   real(kind=8), dimension(:), allocatable   :: gfw
   integer,          dimension(:,:), allocatable :: ic1, ic2
   real(kind=8), dimension(:,:), allocatable :: f1
@@ -118,7 +118,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   ! Set initial saturation
   allocate(sat(nxyz))
   sat = 1.0
-  status = RM_SetSaturation(id, sat)
+  status = RM_SetSaturationUser(id, sat)
   ! Set cells to print chemistry when print chemistry is turned on
   allocate(print_chemistry_mask(nxyz))
   do i = 1, nxyz/2
@@ -173,14 +173,15 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   write(string1, "(A,I10)") "Number of components for transport:               ", RM_GetComponentCount(id)
   status = RM_OutputMessage(id, trim(string1))
   ! Get component information
-  allocate(components(ncomps))
-  allocate(gfw(ncomps))
+  !allocate(components(ncomps))
+  !allocate(gfw(ncomps))
   status = RM_GetGfw(id, gfw)
-  do i = 1, ncomps
-     status = RM_GetComponent(id, i, components(i))
-     write(string,"(A10, F15.4)") components(i), gfw(i)
-     status = RM_OutputMessage(id, string)
-  enddo
+  status = RM_GetComponents(id, components)
+  !do i = 1, ncomps
+  !   status = RM_GetComponent(id, i, components(i))
+  !   write(string,"(A10, F15.4)") components(i), gfw(i)
+  !   status = RM_OutputMessage(id, string)
+  !enddo
   status = RM_OutputMessage(id, " ")
   ! Determine species information
   nspecies = RM_GetSpeciesCount(id) 
@@ -262,7 +263,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   density = 1.0
   pressure = 2.0
   temperature = 20.0
-  status = RM_SetDensity(id, density)
+  status = RM_SetDensityUser(id, density)
   status = RM_SetTemperature(id, temperature)
   status = RM_SetPressure(id, pressure)
   time_step = 86400
@@ -289,7 +290,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
      endif
      ! Transfer data to PhreeqcRM for reactions
      status = RM_SetPorosity(id, por)                ! If porosity changes 
-     status = RM_SetSaturation(id, sat)              ! If saturation changes
+     status = RM_SetSaturationUser(id, sat)              ! If saturation changes
      status = RM_SetTemperature(id, temperature)     ! If temperature changes
      status = RM_SetPressure(id, pressure)           ! If pressure changes
      status = RM_SpeciesConcentrations2Module(id, species_c)          ! Transported concentrations
@@ -307,7 +308,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
      status = RM_GetSpeciesConcentrations(id, species_c)          ! Species concentrations after reaction
      status = RM_GetSpeciesLog10Gammas(id, species_log10gammas)   ! Species log10 activity coefficient after reaction
      status = RM_GetSpeciesLog10Molalities(id, species_log10molalities)   ! Species log10 activity coefficient after reaction
-     status = RM_GetDensity(id, density)             ! Density after reaction
+     status = RM_GetDensityCalculated(id, density)             ! Density after reaction
      status = RM_GetSolutionVolume(id, volume)       ! Solution volume after reaction
      ! Print results at last time step
      if (isteps == nsteps) then
@@ -324,8 +325,8 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
            ! Print results
            do i = 1, RM_GetSelectedOutputRowCount(id)/2
               write(*,*) "Cell number ", i
-              write(*,*) "     Density: ", density(i)
-              write(*,*) "     Volume: ", volume(i)
+              write(*,*) "     Calculated density: ", density(i)
+              write(*,*) "     Volume:             ", volume(i)
               write(*,*) "     Components: "
               do j = 1, ncomps
                  write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ",trim(components(j)), ": ", c(i,j)

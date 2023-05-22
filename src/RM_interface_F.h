@@ -54,7 +54,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetIthSpeciesConcentration(int* id, int* i, double
 IRM_DLL_EXPORT IRM_RESULT RMF_SetIthConcentration(int* id, int* i, double* c);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetIthSpeciesConcentration(int* id, int* i, double* c);
 
-IRM_DLL_EXPORT IRM_RESULT RMF_GetDensity(int *id, double *density);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetDensityCalculated(int *id, double *density);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetEndCell(int *id, int *ec);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetErrorString(int *id, char *prefix, int *l);
 IRM_DLL_EXPORT int        RMF_GetErrorStringLength(int *id);
@@ -74,7 +74,7 @@ IRM_DLL_EXPORT int        RMF_GetMpiTasks(int *id);
 IRM_DLL_EXPORT int        RMF_GetNthSelectedOutputUserNumber(int *id, int *i);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetPorosity(int* id, double* porosity);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetPressure(int* id, double* pressure);
-IRM_DLL_EXPORT IRM_RESULT RMF_GetSaturation(int *id, double *sat);
+IRM_DLL_EXPORT IRM_RESULT RMF_GetSaturationCalculated(int *id, double *sat);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetSelectedOutput(int *id, double *so);
 IRM_DLL_EXPORT int        RMF_GetSelectedOutputColumnCount(int *id);
 IRM_DLL_EXPORT int        RMF_GetSelectedOutputCount(int *id);
@@ -94,7 +94,9 @@ IRM_DLL_EXPORT IRM_RESULT RMF_GetTemperature(int* id, double* temperature);
 IRM_DLL_EXPORT int        RMF_GetThreadCount(int *id);
 IRM_DLL_EXPORT double     RMF_GetTime(int *id);
 IRM_DLL_EXPORT double     RMF_GetTimeConversion(int *id);
-IRM_DLL_EXPORT double     RMF_GetTimeStep(int *id); 
+IRM_DLL_EXPORT double     RMF_GetTimeStep(int *id);
+//IRM_DLL_EXPORT int        RMF_GetVarItemsize(int* id, const char* str);
+//IRM_DLL_EXPORT int        RMF_GetVarNbytes(int* id, const char* str);
 IRM_DLL_EXPORT IRM_RESULT RMF_GetViscosity(int* id, double* viscosity);
 #ifdef USE_YAML
 IRM_DLL_EXPORT IRM_RESULT RMF_InitializeYAML(int* id, const char* yaml_name);
@@ -153,7 +155,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_ScreenMessage(int *id, const char *str);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetComponentH2O(int *id, int *tf);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetConcentrations(int *id, double *t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetCurrentSelectedOutputUserNumber(int *id, int *i);
-IRM_DLL_EXPORT IRM_RESULT RMF_SetDensity(int *id, double *t);
+IRM_DLL_EXPORT IRM_RESULT RMF_SetDensityUser(int *id, double *t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetDumpFileName(int *id, const char *dump_name);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetErrorHandlerMode(int *id, int *mode);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetErrorOn(int* id, int* t);
@@ -170,7 +172,7 @@ IRM_DLL_EXPORT IRM_RESULT RMF_SetPrintChemistryOn(int *id, int *worker, int *ip,
 IRM_DLL_EXPORT IRM_RESULT RMF_SetRebalanceByCell(int *id, int *method);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetRebalanceFraction(int *id, double *f);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetRepresentativeVolume(int *id, double *t);
-IRM_DLL_EXPORT IRM_RESULT RMF_SetSaturation(int *id, double *t);
+IRM_DLL_EXPORT IRM_RESULT RMF_SetSaturationUser(int *id, double *t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetScreenOn(int *id, int *t);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetSelectedOutputOn(int *id, int *selected_output);
 IRM_DLL_EXPORT IRM_RESULT RMF_SetSpeciesSaveOn(int *id, int *save_on);

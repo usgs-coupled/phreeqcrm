@@ -24,6 +24,7 @@
 #include <assert.h>
 #include "System.h"
 #include "BMIVariant.h"
+#include "VarManager.h"
 #ifdef USE_GZ
 #include <zlib.h>
 #else
@@ -213,7 +214,7 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 		this->delete_phreeqcrm_io = true;
 	}
 	this->phreeqcrm_io->Set_error_ostream(&std::cerr);
-
+	//this->phreeqcrm_var_man = new VarManager(this);
 	// second argument is threads for OPENMP or COMM for MPI
 #if !defined(USE_MPI)
 	int thread_count = 1;
@@ -3595,7 +3596,7 @@ PhreeqcRM::GetCurrentSelectedOutputUserNumber(void)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::GetDensity(std::vector<double> & density_arg)
+PhreeqcRM::GetDensityCalculated(std::vector<double> & density_arg)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -3604,7 +3605,7 @@ PhreeqcRM::GetDensity(std::vector<double> & density_arg)
 #ifdef USE_MPI
 		if (this->mpi_myself == 0)
 		{
-			int method = METHOD_GETDENSITY;
+			int method = METHOD_GETDENSITYCALCULATED;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		}
 		std::vector<double> local_density_worker;
@@ -3650,7 +3651,7 @@ PhreeqcRM::GetDensity(std::vector<double> & density_arg)
 	}
 	catch (...)
 	{
-		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetDensity");
+		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetDensityCalculated");
 	}
 	return IRM_OK;
 }
@@ -4369,7 +4370,7 @@ PhreeqcRM::GetPressure(void)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::GetSaturation(std::vector<double> & sat_arg)
+PhreeqcRM::GetSaturationCalculated(std::vector<double> & sat_arg)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
@@ -4378,7 +4379,7 @@ PhreeqcRM::GetSaturation(std::vector<double> & sat_arg)
 #ifdef USE_MPI
 		if (this->mpi_myself == 0)
 		{
-			int method = METHOD_GETSATURATION;
+			int method = METHOD_GETSATURATIONCALCULATED;
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		}
 		std::vector<double> local_saturation_worker;
@@ -4423,7 +4424,7 @@ PhreeqcRM::GetSaturation(std::vector<double> & sat_arg)
 	}
 	catch (...)
 	{
-		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetSaturation");
+		this->ReturnHandler(IRM_FAIL, "PhreeqcRM::GetSaturationCalculated");
 		sat_arg.clear();
 	}
 	return IRM_OK;
@@ -5253,6 +5254,38 @@ PhreeqcRM::GetTemperature(void)
 	return this->tempc_root;
 }
 #endif
+//int PhreeqcRM::GetVarItemsize(const std::string name)
+//{
+//	RMVARS v_enum = this->phreeqcrm_var_man->GetEnum(name);
+//	if (v_enum != RMVARS::NotFound)
+//	{
+//		BMIVariant& bv = this->phreeqcrm_var_man->VariantMap[v_enum];
+//		if (!bv.GetInitialized())
+//		{
+//			this->phreeqcrm_var_man->task = VarManager::VAR_TASKS::Info;
+//			((*this->phreeqcrm_var_man).*bv.GetFn())();
+//		}
+//		return bv.GetItemsize();
+//	}
+//	assert(false);
+//	return 0;
+//}
+//int PhreeqcRM::GetVarNbytes(const std::string name)
+//{
+//	RMVARS v_enum = this->phreeqcrm_var_man->GetEnum(name);
+//	if (v_enum != RMVARS::NotFound)
+//	{
+//		BMIVariant& bv = this->phreeqcrm_var_man->VariantMap[v_enum];
+//		if (!bv.GetInitialized())
+//		{
+//			this->phreeqcrm_var_man->task = VarManager::VAR_TASKS::Info;
+//			((*this->phreeqcrm_var_man).*bv.GetFn())();
+//		}
+//		return bv.GetNbytes();
+//	}
+//	assert(false);
+//	return 0;
+//}
 /* ---------------------------------------------------------------------- */
 const std::vector<double>&
 PhreeqcRM::GetViscosity(void)
@@ -5596,10 +5629,10 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			this->SetCurrentSelectedOutputUserNumber(n);
 			continue;
 		}
-		if (keyword == "SetDensity")
+		if (keyword == "SetDensityUser")
 		{
 			std::vector< double > den = it1++->second.as< std::vector< double > >();
-			this->SetDensity(den);
+			this->SetDensityUser(den);
 			continue;
 		}
 		if (keyword == "SetDumpFileName")
@@ -5694,10 +5727,10 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			this->SetRepresentativeVolume(rv);
 			continue;
 		}
-		if (keyword == "SetSaturation")
+		if (keyword == "SetSaturationUser")
 		{
 			std::vector< double > sat = it1++->second.as< std::vector< double> >();
-			this->SetSaturation(sat);
+			this->SetSaturationUser(sat);
 			continue;
 		}
 		if (keyword == "SetScreenOn") 
@@ -6957,11 +6990,11 @@ PhreeqcRM::MpiWorker()
 					return_value = this->GetConcentrations(dummy);
 				}
 				break;
-			case METHOD_GETDENSITY:
-				if (debug_worker) std::cerr << "METHOD_GETDENSITY" << std::endl;
+			case METHOD_GETDENSITYCALCULATED:
+				if (debug_worker) std::cerr << "METHOD_GETDENSITYCALCULATED" << std::endl;
 				{
 					std::vector<double> dummy;
-					this->GetDensity(dummy);
+					this->GetDensityCalculated(dummy);
 				}
 				break;
 			case METHOD_GETERRORSTRING:
@@ -7004,11 +7037,11 @@ PhreeqcRM::MpiWorker()
 					this->GetPressure();
 				}
 				break;
-			case METHOD_GETSATURATION:
-				if (debug_worker) std::cerr << "METHOD_GETSATURATION" << std::endl;
+			case METHOD_GETSATURATIONCALCULATED:
+				if (debug_worker) std::cerr << "METHOD_GETSATURATIONCALCULATED" << std::endl;
 				{
 					std::vector<double> dummy;
-					this->GetSaturation(dummy);
+					this->GetSaturationCalculated(dummy);
 				}
 				break;
 			case METHOD_GETSELECTEDOUTPUT:
@@ -7118,11 +7151,11 @@ PhreeqcRM::MpiWorker()
 					this->SetConcentrations(dummy);
 				}
 				break;
-			case METHOD_SETDENSITY:
-				if (debug_worker) std::cerr << "METHOD_SETDENSITY" << std::endl;
+			case METHOD_SETDENSITYUSER:
+				if (debug_worker) std::cerr << "METHOD_SETDENSITYUSER" << std::endl;
 				{
 					std::vector<double> dummy;
-					this->SetDensity(dummy);
+					this->SetDensityUser(dummy);
 				}
 				break;
 			case METHOD_SETERRORHANDLERMODE:
@@ -7209,11 +7242,11 @@ PhreeqcRM::MpiWorker()
 					this->SetRepresentativeVolume(dummy);
 				}
 				break;
-			case METHOD_SETSATURATION:
-				if (debug_worker) std::cerr << "METHOD_SETSATURATION" << std::endl;
+			case METHOD_SETSATURATIONUSER:
+				if (debug_worker) std::cerr << "METHOD_SETSATURATIONUSER" << std::endl;
 				{
 					std::vector<double> dummy;
-					this->SetSaturation(dummy);
+					this->SetSaturationUser(dummy);
 				}
 				break;
 			case METHOD_SETSELECTEDOUTPUTON:
@@ -11457,13 +11490,13 @@ PhreeqcRM::SetDatabaseFileName(const char * db)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::SetDensity(const std::vector<double> &t)
+PhreeqcRM::SetDensityUser(const std::vector<double> &t)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
-	std::string methodName = "SetDensity";
-	IRM_RESULT result_value = SetGeneric(t, this->density_root, density_worker, METHOD_SETDENSITY, methodName);
-	this->UpdateBMI(RMVARS::Density);
+	std::string methodName = "SetDensityUser";
+	IRM_RESULT result_value = SetGeneric(t, this->density_root, density_worker, METHOD_SETDENSITYUSER, methodName);
+	this->UpdateBMI(RMVARS::DensityCalculated);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 
@@ -12004,13 +12037,13 @@ PhreeqcRM::SetRepresentativeVolume(const std::vector<double> &t)
 }
 
 IRM_RESULT
-PhreeqcRM::SetSaturation(const std::vector<double> &t)
+PhreeqcRM::SetSaturationUser(const std::vector<double> &t)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
-	std::string methodName = "SetSaturation";
-	IRM_RESULT result_value = SetGeneric(t, this->saturation_root, saturation_worker, METHOD_SETSATURATION, methodName);
-	this->UpdateBMI(RMVARS::Saturation);
+	std::string methodName = "SetSaturationUser";
+	IRM_RESULT result_value = SetGeneric(t, this->saturation_root, saturation_worker, METHOD_SETSATURATIONUSER, methodName);
+	this->UpdateBMI(RMVARS::SaturationUser);
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 /* ---------------------------------------------------------------------- */

@@ -66,7 +66,7 @@
     character(len=:), dimension(:), allocatable     :: outputvars 
 	real(kind=8), dimension(:), allocatable         :: CaX2, KX, NaX, pH_vector, SAR
     common /i_ptrs/ id, ComponentCount_ptr, GridCellCount_ptr, SelectedOutputOn_ptr
-    common /r_ptrs/ Concentrations_ptr, Density_ptr, Gfw_ptr, &
+    common /r_ptrs/ Concentrations_ptr, Density_calculated_ptr, Gfw_ptr, &
 	    Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
         Porosity_ptr, Pressure_ptr, Temperature_ptr
     integer :: id
@@ -75,7 +75,7 @@
     integer :: nxyz, ncomps
 	logical, pointer :: SelectedOutputOn_ptr
 	real(kind=8), pointer :: Concentrations_ptr(:)
-	real(kind=8), pointer :: Density_ptr(:)
+	real(kind=8), pointer :: Density_calculated_ptr(:)
 	real(kind=8), pointer :: Gfw_ptr(:)
 	real(kind=8), pointer :: Saturation_ptr(:)
 	real(kind=8), pointer :: SolutionVolume_ptr(:)
@@ -142,9 +142,9 @@
 	status = bmif_get_value_ptr(id, "GridCellCount", GridCellCount_ptr)
 	status = bmif_get_value_ptr(id, "SelectedOutputOn", SelectedOutputOn_ptr)
 	status = bmif_get_value_ptr(id, "Concentrations", Concentrations_ptr)
-	status = bmif_get_value_ptr(id, "Density", Density_ptr)
+	status = bmif_get_value_ptr(id, "DensityCalculated", Density_calculated_ptr)
 	status = bmif_get_value_ptr(id, "Gfw", Gfw_ptr)
-	status = bmif_get_value_ptr(id, "Saturation", Saturation_ptr)
+	status = bmif_get_value_ptr(id, "SaturationCalculated", Saturation_ptr)
 	status = bmif_get_value_ptr(id, "SolutionVolume", SolutionVolume_ptr)
 	status = bmif_get_value_ptr(id, "Time", Time_ptr)
 	status = bmif_get_value_ptr(id, "TimeStep", TimeStep_ptr)
@@ -171,7 +171,7 @@
     ! Get initial temperatures
     status = bmif_get_value(id, "Temperature", temperature)
     ! Get initial temperature
-    status = bmif_get_value(id, "Saturation", sat)
+    status = bmif_get_value(id, "SaturationCalculated", sat)
     ! Get initial porosity
     status = bmif_get_value(id, "Porosity", por)
     ! Get initial temperature
@@ -185,7 +185,7 @@
     ! Set density, pressure, and temperature (previously allocated)
     allocate(density(nxyz))
     density = 1.0
-    status = bmif_set_value(id, "Density", density)
+    status = bmif_set_value(id, "DensityUser", density)
     allocate(pressure(nxyz))
     pressure = 2.0
     status = bmif_set_value(id, "Pressure", pressure)  
@@ -235,7 +235,7 @@
         status = bmif_set_value(id, "Concentrations", c)  ! Transported concentrations
         ! Optionally, if values changed during transport
         status = bmif_set_value(id, "Porosity", por)              
-        status = bmif_set_value(id, "Saturation", sat)            
+        status = bmif_set_value(id, "SaturationUser", sat)            
         status = bmif_set_value(id, "Temperature", temperature) 
         status = bmif_set_value(id, "Pressure", pressure)          
         status = bmif_set_value(id, "TimeStep", time_step) 
@@ -257,7 +257,7 @@
         call compare_ptrs
         ! Get new data calculated by PhreeqcRM for transport
         status = bmif_get_value(id, "Concentrations", c)
-        status = bmif_get_value(id, "Density", density)
+        status = bmif_get_value(id, "DensityCalculated", density)
         status = bmif_get_value(id, "SolutionVolume", volume)   
        ! Print results at last time step
         if (isteps == nsteps) then
@@ -292,8 +292,8 @@
                 ! Print results
                 do i = rows/2, rows/2
                     write(*,*) "Cell number ", i
-                    write(*,*) "     Density: ", density(i)
-                    write(*,*) "     Volume:  ", volume(i)
+                    write(*,*) "     Calculated Density: ", density(i)
+                    write(*,*) "     Volume:             ", volume(i)
                     write(*,*) "     Components: "
                     do j = 1, ncomps
                         write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ",trim(components(j)), ": ", c(i,j)
@@ -439,7 +439,7 @@ USE, intrinsic :: ISO_C_BINDING
     character(LEN=:), allocatable                        :: heading
     real(kind=8)                                     :: time, rm_time
     real(kind=8)                                     :: time_step, rm_time_step
-    real(kind=8), dimension(:), allocatable          :: density, rm_density
+    real(kind=8), dimension(:), allocatable          :: density_calculated, rm_density_calculated
     real(kind=8), dimension(:), allocatable          :: porosity, rm_porosity
     real(kind=8), dimension(:), allocatable          :: pressure, rm_pressure
     real(kind=8), dimension(:), allocatable          :: saturation, rm_saturation
@@ -525,12 +525,12 @@ USE, intrinsic :: ISO_C_BINDING
     status = bmif_get_var_nbytes(id, "Components", nbytes)
     dim = nbytes / itemsize
     status = assert(dim .eq. size(components))
-    allocate(character(len=itemsize) :: component)
-    do i = 1, dim
-        j = i
-        status = RM_GetComponent(id, j, component)
-        status = assert(component .eq. components(i))
-    enddo
+    !allocate(character(len=itemsize) :: component)
+    !do i = 1, dim
+    !    j = i
+    !    status = RM_GetComponent(id, j, component)
+    !    status = assert(component .eq. components(i))
+    !enddo
     status = RM_GetComponents(id, rm_components)
     do i = 1, dim
         status = assert(components(i) .eq. rm_components(i))
@@ -557,17 +557,17 @@ USE, intrinsic :: ISO_C_BINDING
         enddo
     enddo
    
-	! GetValue("Density")
-    ! RM_GetDensity and bmif_get_value("Density) always return 
+	! GetValue("DensityCalculated")
+    ! RM_GetDensityCalculated and bmif_get_value("DensityCalculated) always return 
     ! the calculated solution density
-    status = bmif_get_var_itemsize(id, "Density", itemsize)
-    status = bmif_get_var_nbytes(id, "Density", nbytes)
+    status = bmif_get_var_itemsize(id, "DensityCalculated", itemsize)
+    status = bmif_get_var_nbytes(id, "DensityCalculated", nbytes)
     dim = nbytes / itemsize
-    allocate(rm_density(dim))
-    status = RM_GetDensity(id, rm_density)
-    status = bmif_get_value(id, "Density", density)
+    allocate(rm_density_calculated(dim))
+    status = RM_GetDensityCalculated(id, rm_density_calculated)
+    status = bmif_get_value(id, "DensityCalculated", density_calculated)
     do i = 1, nxyz
-        if (density(i) .ne. rm_density(i)) then
+        if (density_calculated(i) .ne. rm_density_calculated(i)) then
             status = assert(.false.)
             exit
         endif
@@ -648,14 +648,14 @@ USE, intrinsic :: ISO_C_BINDING
         endif
     enddo
 
-	! GetValue("Saturation")
+	! GetValue("SaturationCalculated")
     ! Always returns solution_volume/(rv * porosity) for each cell
-    status = bmif_get_var_itemsize(id, "Saturation", itemsize)
-    status = bmif_get_var_nbytes(id, "Saturation", nbytes)
+    status = bmif_get_var_itemsize(id, "SaturationCalculated", itemsize)
+    status = bmif_get_var_nbytes(id, "SaturationCalculated", nbytes)
     dim = nbytes / itemsize
     allocate(rm_saturation(dim))
-    status = bmif_get_value(id, "Saturation", saturation)
-	status = RM_GetSaturation(id, rm_saturation);
+    status = bmif_get_value(id, "SaturationCalculated", saturation)
+	status = RM_GetSaturationCalculated(id, rm_saturation);
     do i = 1, nxyz
         if (saturation(i) .ne. rm_saturation(i)) then
             status = assert(.false.)
@@ -783,7 +783,7 @@ implicit none
         end function assert
     end interface
     common /i_ptrs/ id, ncomps, nxyz, SelectedOutputOn_ptr
-    common /r_ptrs/ Concentrations_ptr, Density_ptr, Gfw_ptr, &
+    common /r_ptrs/ Concentrations_ptr, Density_calculated_ptr, Gfw_ptr, &
 	Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
     Porosity_ptr, Pressure_ptr, Temperature_ptr
     integer :: id
@@ -791,7 +791,7 @@ implicit none
 	integer, pointer :: nxyz
 	logical, pointer :: SelectedOutputOn_ptr
 	real(kind=8), pointer :: Concentrations_ptr(:)
-	real(kind=8), pointer :: Density_ptr(:)
+	real(kind=8), pointer :: Density_calculated_ptr(:)
 	real(kind=8), pointer :: Gfw_ptr(:)
 	real(kind=8), pointer :: Saturation_ptr(:)
 	real(kind=8), pointer :: SolutionVolume_ptr(:)
@@ -803,7 +803,7 @@ implicit none
 
     integer :: status, i, dim
     integer :: componentcount, gridcellcount
-    real(kind=8), allocatable, dimension(:) :: gfw, density, saturation, &
+    real(kind=8), allocatable, dimension(:) :: gfw, density_calculated, saturation, &
         SolutionVolume, Porosity, Pressure, Temperature, concentrations
     real(kind=8) :: time, timestep
     logical :: selectedoutputon, test_logical
@@ -825,29 +825,29 @@ implicit none
     status = bmif_get_value(id, "GridCellCount", gridcellcount)
 	status = assert(nxyz .eq. gridcellcount)
     ! Density, Saturation, SolutionVolume, Porosity, Pressure, Temperature
-	status = bmif_get_value(id, "Density", density)
-	status = bmif_get_value(id, "saturation", saturation)
+	status = bmif_get_value(id, "DensityCalculated", density_calculated)
+	status = bmif_get_value(id, "SaturationCalculated", saturation)
 	status = bmif_get_value(id, "solutionvolume", solutionvolume)
 	status = bmif_get_value(id, "Porosity", Porosity)
 	status = bmif_get_value(id, "Pressure", Pressure)
 	status = bmif_get_value(id, "Temperature", Temperature)
 
 	do i = 1, nxyz
-		status = assert(Density_ptr(i) .eq. density(i))
+		status = assert(Density_calculated_ptr(i) .eq. density_calculated(i))
 		status = assert(Saturation_ptr(i) .eq. saturation(i))
 		status = assert(SolutionVolume_ptr(i) .eq. SolutionVolume(i))
 		status = assert(Porosity_ptr(i) .eq. Porosity(i))
 		status = assert(Pressure_ptr(i) .eq. Pressure(i))
 		status = assert(Temperature_ptr(i) .eq. Temperature(i))
     enddo   
-	status = RM_GetDensity(id, density)
-	status = RM_GetSaturation(id, saturation)
+	status = RM_GetDensityCalculated(id, density_calculated)
+	status = RM_GetSaturationCalculated(id, saturation)
 	status = RM_GetSolutionVolume(id, solutionvolume)
 	status = RM_GetPorosity(id, Porosity)
 	status = RM_GetPressure(id, Pressure)
 	status = RM_GetTemperature(id, Temperature)
 	do i = 1, nxyz
-		status = assert(Density_ptr(i) .eq. density(i))
+		status = assert(Density_calculated_ptr(i) .eq. density_calculated(i))
 		status = assert(Saturation_ptr(i) .eq. saturation(i))
 		status = assert(SolutionVolume_ptr(i) .eq. SolutionVolume(i))
 		status = assert(Porosity_ptr(i) .eq. Porosity(i))

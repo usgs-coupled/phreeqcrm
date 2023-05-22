@@ -56,7 +56,7 @@ int Gas_cpp()
 		// Set initial saturation
 		std::vector<double> sat;
 		sat.resize(nxyz, 0.5);
-		status = phreeqc_rm.SetSaturation(sat);
+		status = phreeqc_rm.SetSaturationUser(sat);
 
 		// Set printing of chemistry file
 		status = phreeqc_rm.SetPrintChemistryOn(false, true, false); // workers, initial_phreeqc, utility

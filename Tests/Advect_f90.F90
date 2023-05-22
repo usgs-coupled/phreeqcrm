@@ -51,7 +51,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   character(100)                                :: string
   character(200)                                :: string1
   integer                                       :: ncomps, ncomps1
-  character(100),   dimension(:), allocatable   :: components
+  character(len=:),   dimension(:), allocatable :: components
   real(kind=8), dimension(:), allocatable   :: gfw
   integer,          dimension(:,:), allocatable :: ic1, ic2 
   integer,          dimension(:),   allocatable :: solutions, exchanges
@@ -154,7 +154,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   ! Set initial saturation
   allocate(sat(nxyz))
   sat = 1.0
-  status = RM_SetSaturation(id, sat)
+  status = RM_SetSaturationUser(id, sat)
   ! Set cells to print chemistry when print chemistry is turned on
   allocate(print_chemistry_mask(nxyz))
   do i = 1, nxyz/2
@@ -228,11 +228,12 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   write(string1, "(A,I10)") "Number of components for transport:               ", RM_GetComponentCount(id)
   status = RM_OutputMessage(id, trim(string1))
   ! Get component information
-  allocate(components(ncomps))
-  allocate(gfw(ncomps))
+  !allocate(components(ncomps))
+  !allocate(gfw(ncomps))
   status = RM_GetGfw(id, gfw)
+  status = RM_GetComponents(id, components)
   do i = 1, ncomps
-     status = RM_GetComponent(id, i, components(i))
+     !status = RM_GetComponent(id, i, components(i))
      write(string,"(A10, F15.4)") components(i), gfw(i)
      status = RM_OutputMessage(id, string)
   enddo
@@ -304,7 +305,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   density = 1.0
   pressure = 2.0
   temperature = 20.0
-  status = RM_SetDensity(id, density)
+  status = RM_SetDensityUser(id, density)
   status = RM_SetTemperature(id, temperature)
   status = RM_SetPressure(id, pressure)
   time_step = 86400.0
@@ -331,7 +332,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
      endif
      ! Transfer data to PhreeqcRM for reactions
      status = RM_SetPorosity(id, por)                ! If pore volume changes 
-     status = RM_SetSaturation(id, sat)              ! If saturation changes
+     status = RM_SetSaturationUser(id, sat)              ! If saturation changes
      status = RM_SetTemperature(id, temperature)     ! If temperature changes
      status = RM_SetPressure(id, pressure)           ! If pressure changes
      status = RM_SetConcentrations(id, c)            ! Transported concentrations
@@ -350,9 +351,9 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
      status = RM_RunCells(id)  
      ! Transfer data from PhreeqcRM for transport
      status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
-     status = RM_GetDensity(id, density)             ! Density after reaction
+     status = RM_GetDensityCalculated(id, density)   ! Density after reaction
      status = RM_GetSolutionVolume(id, volume)       ! Solution volume after reaction
-     status = RM_GetSaturation(id, sat_calc)         ! Saturation after reaction
+     status = RM_GetSaturationCalculated(id, sat_calc)         ! Saturation after reaction
      ! Print results at last time step
      if (isteps == nsteps) then
 		write(*,*) "Current distribution of cells for workers"
@@ -378,8 +379,8 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
            ! Print results
            do i = 1, RM_GetSelectedOutputRowCount(id)/2
               write(*,*) "Cell number ", i
-              write(*,*) "     Density: ", density(i)
-              write(*,*) "     Volume:  ", volume(i)
+              write(*,*) "     Calculated Density: ", density(i)
+              write(*,*) "     Volume:             ", volume(i)
               write(*,*) "     Components: "
               do j = 1, ncomps
                  write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ",trim(components(j)), ": ", c(i,j)
@@ -560,7 +561,8 @@ REAL(kind=C_DOUBLE) FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, n
     INTEGER(kind=C_INT),    INTENT(in), value :: l
     character(100) fstr
 
-    INTEGER :: list(4), i
+    INTEGER, dimension(:), allocatable :: list
+    integer :: i
     INTEGER :: size=4, rm_cell_number
     
     do i = 1, l
@@ -582,6 +584,7 @@ subroutine example_selected_output(id)
     USE PhreeqcRM
     implicit none
     integer, intent(in) :: id
+    character(len=:), dimension(:), allocatable :: names, names1, names2
     character*20 :: line, line1, line2
     character(len=:), allocatable :: input
     integer i, nlines, status
@@ -601,14 +604,16 @@ subroutine example_selected_output(id)
     input = "SELECTED_OUTPUT 2" // new_line(c)
     ! totals
     input = input // "  -totals" // new_line(c)
+    status = RM_GetComponents(id, names)
     do i = 1, RM_GetComponentCount(id)
-        status = RM_GetComponent(id, i, line)
-        if (trim(line) .ne. "H" .and. &
-            trim(line) .ne. "O" .and. &
-            trim(line) .ne. "charge" .and. &
-            trim(line) .ne. "Charge" .and. &
-            trim(line) .ne. "H2O" ) then
-            input = trim(input) // "    " // trim(line) // new_line(c)
+        !status = RM_GetComponent(id, i, line)
+        if (trim(names(i)) .ne. "H" .and. &
+            trim(names(i)) .ne. "O" .and. &
+            trim(names(i)) .ne. "charge" .and. &
+            trim(names(i)) .ne. "Charge" .and. &
+            trim(names(i)) .ne. "H2O" ) then
+            !input = trim(input) // "    " // trim(line) // new_line(c)
+            input = trim(input) // "    " // trim(names(i)) // new_line(c)
          endif 
     enddo
     ! aqueous species
@@ -618,48 +623,66 @@ subroutine example_selected_output(id)
         input = trim(input) // "    " // line // new_line(c)
     enddo 
     ! exchange species
+    status = RM_GetExchangeNames(id, names)
+    status = RM_GetExchangeSpeciesNames(id, names1)
     do i = 1, RM_GetExchangeSpeciesCount(id)
-        status = RM_GetExchangeSpeciesName(id, i, line)
-        status = RM_GetExchangeName(id, i, line1)
-        input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+        !status = RM_GetExchangeSpeciesName(id, i, line)
+        !status = RM_GetExchangeName(id, i, line1)
+        !input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+        input = trim(input) // "    " // names1(i) // " # " // names(i) // new_line(c)
     enddo  
     ! surface species species
+    status = RM_GetSurfaceSpeciesNames(id, names)
+    status = RM_GetSurfaceTypes(id, names1)
+    status = RM_GetSurfaceNames(id, names2)
     do i = 1, RM_GetSurfaceSpeciesCount(id)
-        status = RM_GetSurfaceSpeciesName(id, i, line)
-        status = RM_GetSurfaceType(id, i, line1)
-        status = RM_GetSurfaceName(id, i, line2)
-        input = trim(input) // "    " // line // " # " // line1  // line2 // new_line(c)
+        !status = RM_GetSurfaceSpeciesName(id, i, line)
+        !status = RM_GetSurfaceType(id, i, line1)
+        !status = RM_GetSurfaceName(id, i, line2)
+        !input = trim(input) // "    " // line // " # " // line1  // line2 // new_line(c)
+        input = trim(input) // "    " // names(i) // " # " // names1(i)  // names2(i) // new_line(c)
     enddo   
     ! equilibrium phases
     input = trim(input) // "  -equilibrium_phases " // new_line(c)
+    status = RM_GetEquilibriumPhasesNames(id, names)
     do i = 1, RM_GetEquilibriumPhasesCount(id)
-        status = RM_GetEquilibriumPhasesName(id, i, line)
-        input = trim(input) // "    " // line // new_line(c)
+        !status = RM_GetEquilibriumPhasesName(id, i, line)
+        !input = trim(input) // "    " // line // new_line(c)
+        input = trim(input) // "    " // names(i) // new_line(c)
     enddo
     ! gas components
     input = trim(input) // "  -gas " // new_line(c)
+    status = RM_GetGasComponentsNames(id, names)
     do i = 1, RM_GetGasComponentsCount(id)
-        status = RM_GetGasComponentsName(id, i, line)
-        input = trim(input) // "    " // line // new_line(c)
+        !status = RM_GetGasComponentsName(id, i, line)
+        !input = trim(input) // "    " // line // new_line(c)
+        input = trim(input) // "    " // names(i) // new_line(c)
     enddo
     ! kinetic reactions
     input = trim(input) // "  -kinetics " // new_line(c)
+    status = RM_GetKineticReactionsNames(id, names)
     do i = 1, RM_GetKineticReactionsCount(id)
-        status = RM_GetKineticReactionsName(id, i, line)
-        input = trim(input) // "    " // line // new_line(c)
+        !status = RM_GetKineticReactionsName(id, i, line)
+        !input = trim(input) // "    " // line // new_line(c)
+        input = trim(input) // "    " // names(i) // new_line(c)
     enddo
     ! solid solution components
     input = trim(input) // "  -solid_solutions " // new_line(c)
+    status = RM_GetSolidSolutionComponentsNames(id, names)
+    status = RM_GetSolidSolutionNames(id, names1)
     do i = 1, RM_GetSolidSolutionComponentsCount(id)
-        status = RM_GetSolidSolutionComponentsName(id, i, line)
-        status = RM_GetSolidSolutionName(id, i, line1)
-        input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+        !status = RM_GetSolidSolutionComponentsName(id, i, line)
+        !status = RM_GetSolidSolutionName(id, i, line1)
+        !input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+        input = trim(input) // "    " // names(i) // " # " // names1(i) // new_line(c)
     enddo
     ! saturation indices
     input = trim(input) // "  -si "// new_line(c)
+    status = RM_GetSINames(id, names)
     do i = 1, RM_GetSICount(id)
-        status = RM_GetSIName(id, i, line)
-        input = trim(input) // "    " // line // new_line(c)
+        !status = RM_GetSIName(id, i, line)
+        !input = trim(input) // "    " // line // new_line(c)
+        input = trim(input) // "    " // names(i) // new_line(c)
     enddo    
     
     ! generate selected output with the following line

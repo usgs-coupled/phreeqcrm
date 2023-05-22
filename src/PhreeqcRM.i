@@ -99,7 +99,7 @@ import_array();
 		                                            const std::vector< int > &cell_numbers);
 %rename(CreateMappingSWIG)                          CreateMapping(const std::vector< int > &grid2chem);
 %rename(GetConcentrationsSWIG)                      GetConcentrations(std::vector< double > &c_output);
-%rename(GetDensitySWIG)                             GetDensity(std::vector< double > & d_output);
+%rename(GetDensityCalculatedSWIG)                   GetDensityCalculated(std::vector< double > & d_output);
 %rename(GetEndCellSWIG)                             GetEndCell();
 %rename(GetForwardMappingSWIG)                      GetForwardMapping();
 %rename(GetGasCompMolesSWIG)                        GetGasCompMoles(std::vector< double >& gas_moles);
@@ -113,7 +113,7 @@ import_array();
 %rename(GetPressureSWIG)                            GetPressure();
 %rename(GetPrintChemistryMaskSWIG)                  GetPrintChemistryMask();
 %rename(GetPrintChemistryOn_bool_vector)            GetPrintChemistryOn();
-%rename(GetSaturationSWIG)                          GetSaturation(std::vector< double > & sat_output);
+%rename(GetSaturationCalculatedSWIG)                GetSaturationCalculated(std::vector< double > & sat_output);
 %rename(GetSelectedOutputSWIG)                      GetSelectedOutput(std::vector< double > &s_output);
 %rename(GetSelectedOutputHeadingsSWIG)              GetSelectedOutputHeadings(std::vector< std::string >& headings);
 %rename(GetSpeciesConcentrationsSWIG)               GetSpeciesConcentrations(std::vector< double > &species_conc_output);
@@ -218,8 +218,8 @@ def CreateMapping(self, v):
 	return self.CreateMappingSWIG(v)
 def GetConcentrations(self):
 	return np.array(self.GetConcentrationsSWIG()[1])
-def GetDensity(self): 
-	return np.array(self.GetDensitySWIG()[1])     
+def GetDensityCalculated(self): 
+	return np.array(self.GetDensityCalculatedSWIG()[1])     
 def GetEndCell(self):
 	return np.array(self.GetEndCellSWIG())    
 def GetForwardMapping(self):
@@ -248,8 +248,8 @@ def GetPrintChemistryMask(self):
 	return np.array(self.GetPrintChemistryMaskSWIG())
 def GetPrintChemistryOn(self):
 	return np.array(self.GetPrintChemistryOn_bool_vector())
-def GetSaturation(self):      
-	return np.array(self.GetSaturationSWIG()[1])   
+def GetSaturationCalculated(self):      
+	return np.array(self.GetSaturationCalculatedSWIG()[1])   
 def GetSelectedOutput(self):    
 	return np.array(self.GetSelectedOutputSWIG()[1])     
 def GetSelectedOutputHeadings(self):             

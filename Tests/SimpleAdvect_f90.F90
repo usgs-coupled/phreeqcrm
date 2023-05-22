@@ -29,7 +29,7 @@ subroutine SimpleAdvect_f90()  BIND(C, NAME='SimpleAdvect_f90')
   integer                                       :: nchem
   character(100)                                :: string
   integer                                       :: ncomps
-  character(100),   dimension(:), allocatable   :: components
+  character(len=:), dimension(:), allocatable   :: components
   integer,          dimension(:,:), allocatable :: ic1
   integer                                       :: nbound
   integer,          dimension(:), allocatable   :: bc1
@@ -101,9 +101,10 @@ subroutine SimpleAdvect_f90()  BIND(C, NAME='SimpleAdvect_f90')
   ! Determine number of components to transport
   ncomps = RM_FindComponents(id)
   ! Get component information
-  allocate(components(ncomps))
+  !allocate(components(ncomps))
+  status = RM_GetComponents(id, components)
   do i = 1, ncomps
-     status = RM_GetComponent(id, i, components(i))
+     !status = RM_GetComponent(id, i, components(i))
      write(string,"(A10, F15.4)") components(i)
      status = RM_OutputMessage(id, string)
   enddo

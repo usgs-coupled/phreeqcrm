@@ -208,23 +208,31 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = RM_GetSpeciesZ(id, DoubleVector)
 	write(*,*) "GetSpeciesZ "
 	! Reactant lists
-	status = RM_GetEquilibriumPhasesName(id, 1, string)
-	write(*,*) "GetEquilibriumPhasesName "
+	!status = RM_GetEquilibriumPhasesName(id, 1, string)
+    !write(*,*) "GetEquilibriumPhasesName "
+	status = RM_GetEquilibriumPhasesNames(id, StringVector)
+    write(*,*) "GetEquilibriumPhasesNames "
 	!-------
 	n = RM_GetEquilibriumPhasesCount(id)
 	write(*,*) "GetEquilibriumPhasesCount "
 	!-------
-	status = RM_GetExchangeName(id, 1, string)
-	write(*,*) "GetExchangeName "
+	!status = RM_GetExchangeName(id, 1, string)
+	!write(*,*) "GetExchangeName "
+	status = RM_GetExchangeNames(id, StringVector)
+	write(*,*) "GetExchangeNames "
 	!-------
-	status = RM_GetExchangeSpeciesName(id, 1, string)
-	write(*,*) "GetExchangeSpeciesName "
+	!status = RM_GetExchangeSpeciesName(id, 1, string)
+	!write(*,*) "GetExchangeSpeciesName "
+	status = RM_GetExchangeSpeciesNames(id, StringVector)
+	write(*,*) "GetExchangeSpeciesNames "
 	!-------
 	n = RM_GetExchangeSpeciesCount(id)
 	write(*,*) "GetExchangeSpeciesCount "
 	!-------
-	status = RM_GetGasComponentsName(id, 1, string)
-	write(*,*) "GetGasComponentsName "
+	!status = RM_GetGasComponentsName(id, 1, string)
+	!write(*,*) "GetGasComponentsName "
+	status = RM_GetGasComponentsNames(id, StringVector)
+	write(*,*) "GetGasComponentsNames "
 	!-------
 	ngas = RM_GetGasComponentsCount(id)
 	write(*,*) "GetGasComponentsCount "
@@ -237,35 +245,49 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	n = RM_GetKineticReactionsCount(id)
 	write(*,*) "GetKineticReactionsCount "
 	!-------
-	status = RM_GetKineticReactionsName(id, 1, string)
-	write(*,*) "GetKineticReactionsName "
+	!status = RM_GetKineticReactionsName(id, 1, string)
+	!write(*,*) "GetKineticReactionsName "
+	status = RM_GetKineticReactionsNames(id, StringVector)
+	write(*,*) "GetKineticReactionsNames "
 	!-------
 	n = RM_GetSICount(id)
 	write(*,*) "GetSICount "
 	!-------
-	status = RM_GetSIName(id, 1, string)
-	write(*,*) "GetSIName "
+	!status = RM_GetSIName(id, 1, string)
+	!write(*,*) "GetSIName "
+	status = RM_GetSINames(id, StringVector)
+	write(*,*) "GetSINames "
 	!-------
 	n = RM_GetSolidSolutionComponentsCount(id)
 	write(*,*) "GetSolidSolutionComponentsCount "
 	!-------
-	status = RM_GetSolidSolutionComponentsName(id, 1, string)
-	write(*,*) "GetSolidSolutionComponentsName "
+	!status = RM_GetSolidSolutionComponentsName(id, 1, string)
+	!write(*,*) "GetSolidSolutionComponentsName "
+	status = RM_GetSolidSolutionComponentsNames(id, StringVector)
+	write(*,*) "GetSolidSolutionComponentsNames "
 	!-------
-	status = RM_GetSolidSolutionName(id, 1, string)
-	write(*,*) "GetSolidSolutionName "
+	!status = RM_GetSolidSolutionName(id, 1, string)
+	!write(*,*) "GetSolidSolutionName "
+	status = RM_GetSolidSolutionNames(id, StringVector)
+	write(*,*) "GetSolidSolutionNames "
 	!-------
-	status = RM_GetSurfaceName(id, 1, string)
-	write(*,*) "GetSurfaceName "
+	!status = RM_GetSurfaceName(id, 1, string)
+	!write(*,*) "GetSurfaceName "
+	status = RM_GetSurfaceNames(id, StringVector)
+	write(*,*) "GetSurfaceNames "
 	!-------
 	n = RM_GetSurfaceSpeciesCount(id)
 	write(*,*) "GetSurfaceSpeciesCount "
 	!-------
-	status = RM_GetSurfaceSpeciesName(id, 1, string)
-	write(*,*) "GetSurfaceSpeciesName "
+	!status = RM_GetSurfaceSpeciesName(id, 1, string)
+	!write(*,*) "GetSurfaceSpeciesName "
+	status = RM_GetSurfaceSpeciesNames(id, StringVector)
+	write(*,*) "GetSurfaceSpeciesNames "
 	!-------
-	status = RM_GetSurfaceType(id, 1, string)
-	write(*,*) "GetSurfaceType "
+	!status = RM_GetSurfaceType(id, 1, string)
+	!write(*,*) "GetSurfaceType "
+	status = RM_GetSurfaceTypes(id, StringVector)
+	write(*,*) "GetSurfaceTypes "
 	!
 	! Remove any reactants in workers 
 	! before populating cells with reactants
@@ -375,14 +397,14 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = bmif_set_value(id, "Concentrations", DoubleVector)
 	write(*,*) "SetConcentrations "
 	!-------
-	status = bmif_get_value(id, "Density", DoubleVector)
-	status = RM_GetDensity(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "Density", d_ptr)
-	write(*,*) "GetDensity "
+	status = bmif_get_value(id, "DensityCalculated", DoubleVector)
+	status = RM_GetDensityCalculated(id, DoubleVector)
+	status = bmif_get_value_ptr(id, "DensityCalculated", d_ptr)
+	write(*,*) "GetDensityCalculated "
 	!-------
-	status = RM_SetDensity(id, DoubleVector)
-	status = bmif_set_value(id, "Density", DoubleVector)
-	write(*,*) "SetDensity "
+	status = RM_SetDensityUser(id, DoubleVector)
+	status = bmif_set_value(id, "DensityUser", DoubleVector)
+	write(*,*) "SetDensityUser "
 	!-------
     deallocate(DoubleVector2)
     allocate(DoubleVector2(nxyz, ngas))
@@ -430,14 +452,14 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = RM_SetPressure(id, DoubleVector)
 	write(*,*) "SetPressure "
 	!-------
-	status = bmif_get_value(id, "Saturation", DoubleVector)
-	status = RM_GetSaturation(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "Saturation", d_ptr)
-	write(*,*) "GetSaturation "
+	status = bmif_get_value(id, "SaturationCalculated", DoubleVector)
+	status = RM_GetSaturationCalculated(id, DoubleVector)
+	status = bmif_get_value_ptr(id, "SaturationCalculated", d_ptr)
+	write(*,*) "GetSaturationCalculated "
 	!-------
-	status = RM_SetSaturation(id, DoubleVector)
-	status = bmif_set_value(id, "Saturation", DoubleVector)
-	write(*,*) "SetSaturation "
+	status = RM_SetSaturationUser(id, DoubleVector)
+	status = bmif_set_value(id, "SaturationUser", DoubleVector)
+	write(*,*) "SetSaturationUser "
 	!-------
 	status = bmif_get_value(id, "SolutionVolume", DoubleVector)
 	status = RM_GetSolutionVolume(id, DoubleVector)

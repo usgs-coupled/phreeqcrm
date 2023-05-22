@@ -9,7 +9,7 @@ subroutine Gas_f90()  BIND(C, NAME='Gas_f90')
 #endif
 interface
     subroutine PrintCells(gas_comps, gas_moles, gas_p, gas_phi, str)
-      character(*), dimension(:), allocatable, intent(in) :: gas_comps
+      character(len=:), dimension(:), allocatable, intent(in) :: gas_comps
       real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_moles
       real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_p
       real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_phi
@@ -27,10 +27,10 @@ end interface
   integer :: status
   integer                                       :: ncomps
   integer                                       :: ngas
-  real(kind=8), dimension(:), allocatable   :: por
-  real(kind=8), dimension(:), allocatable   :: sat
-  character(100),   dimension(:), allocatable   :: gas_comps
-  character(100),   dimension(:), allocatable   :: components
+  real(kind=8),     dimension(:), allocatable   :: por
+  real(kind=8),     dimension(:), allocatable   :: sat
+  character(len=:), dimension(:), allocatable   :: gas_comps
+  character(len=:), dimension(:), allocatable   :: components
   integer,          dimension(:,:), allocatable :: ic1, ic2
   real(kind=8), dimension(:,:), allocatable :: f1
   real(kind=8), dimension(:,:), allocatable :: gas_moles, gas_p, gas_phi
@@ -81,7 +81,7 @@ end interface
   ! Set initial saturation
   allocate(sat(nxyz))
   sat = 0.5
-  status = RM_SetSaturation(id, sat)
+  status = RM_SetSaturationUser(id, sat)
 
   ! --------------------------------------------------------------------------
   ! Set initial conditions
@@ -105,14 +105,16 @@ end interface
   ngas = RM_GetGasComponentsCount(id)
 
   ! Determine number of components and gas components
-  allocate(gas_comps(ngas))
-  do i = 1, ngas
-      status = RM_GetGasComponentsName(id, i, gas_comps(i))
-  enddo
-  allocate(components(ncomps))
-  do i = 1, ncomps
-      status = RM_GetComponent(id, i, components(i))
-  enddo
+  !allocate(gas_comps(ngas))
+  status = RM_GetGasComponentsNames(id, gas_comps)
+  !do i = 1, ngas
+  !    status = RM_GetGasComponentsName(id, i, gas_comps(i))
+  !enddo
+  status = RM_GetComponents(id, components)
+  !allocate(components(ncomps))
+  !do i = 1, ncomps
+  !    status = RM_GetComponent(id, i, components(i))
+  !enddo
 
   ! Set array of initial conditions
   allocate(ic1(nxyz,7), ic2(nxyz,7), f1(nxyz,7))
@@ -197,7 +199,7 @@ end subroutine gas_f90
    
 subroutine PrintCells(gas_comps, gas_moles, gas_p, gas_phi, str)
   implicit none
-  character(*), dimension(:), allocatable, intent(in) :: gas_comps
+  character(len=:), dimension(:), allocatable, intent(in) :: gas_comps
   real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_moles
   real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_p
   real(kind=8), dimension(:,:), allocatable, intent(in) :: gas_phi
