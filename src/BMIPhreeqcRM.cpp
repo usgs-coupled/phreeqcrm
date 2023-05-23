@@ -120,12 +120,20 @@ BMIPhreeqcRM::BMIPhreeqcRM()
 , var_man{ nullptr }
 {
 	this->language = "cpp";
+#if defined(WITH_PYBIND11)
+	this->_initialized = false;
+	this->language = "Py";
+#endif
 }
 BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads)
 : PhreeqcRM(nxyz, nthreads, nullptr, true) 
 , var_man{ nullptr }
 {
 	this->language = "cpp";
+#if defined(WITH_PYBIND11)
+	this->_initialized = false;
+	this->language = "Py";
+#endif
 }
 // Destructor
 BMIPhreeqcRM::~BMIPhreeqcRM()
@@ -149,12 +157,19 @@ void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 	BMIPhreeqcRM::Instances.insert(instance);
 	this->var_man = new VarManager((PhreeqcRM*)this);
 	//this->language = "cpp";
+#if defined(WITH_PYBIND11)
+	this->_initialized = true;
+#endif
 }
 
 // Model control functions.
 void BMIPhreeqcRM::Initialize(std::string config_file)
 {
 #ifdef USE_YAML
+#if defined(WITH_PYBIND11)
+	if (config_file.size() != 0)
+	{
+#endif
 	YAML::Node yaml = YAML::LoadFile(config_file);
 
 	bool found_nxyz = false;
@@ -186,12 +201,22 @@ void BMIPhreeqcRM::Initialize(std::string config_file)
 	//{
 	//	this->initializer.data_for_parallel_processing = yaml["ThreadCount"].as<int>();
 	//}
+#if defined(WITH_PYBIND11)
+	}
+#endif
 #endif
 
 	this->Construct(this->initializer);
 
 #ifdef USE_YAML
+#if defined(WITH_PYBIND11)
+	if (config_file.size() != 0)
+	{
+#endif
 	this->InitializeYAML(config_file);
+#if defined(WITH_PYBIND11)
+	}
+#endif
 #endif
 }
 void BMIPhreeqcRM::Update()
@@ -231,6 +256,11 @@ void BMIPhreeqcRM::UpdateUntil(double time)
 void BMIPhreeqcRM::Finalize()
 {
 	this->CloseFiles();
+#if defined(WITH_PYBIND11)
+	delete this->var_man;
+	this->var_man = nullptr;
+	this->_initialized = false;
+#endif
 }
 void BMIPhreeqcRM::GenerateAutoOutputVars()
 {
