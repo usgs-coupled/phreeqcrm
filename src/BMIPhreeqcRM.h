@@ -4,6 +4,21 @@
 #if !defined(BMIPHREEQCRM_H_INCLUDED)
 #define BMIPHREEQCRM_H_INCLUDED
 #include <map>
+
+#if defined(WITH_PYBIND11)
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+#include <pybind11/stl_bind.h>
+
+namespace py = pybind11;
+
+class NotIntialized : public std::runtime_error {
+public:
+    NotIntialized() : std::runtime_error("must call initialize first") { };
+};
+#endif
+
 #include "PhreeqcRM.h"
 #include "BMIVariant.h"
 #include "bmi.hxx"
@@ -544,7 +559,12 @@ public:
     @retval 1 BMIPhreeqcRM cells derive meaning from the user's
     model.
     */
+#if defined(WITH_PYBIND11)
+    // see https://bmi-spec.readthedocs.io/en/latest/#get-var-grid
+    int GetVarGrid(const std::string name) override { return 0; }
+#else
     int GetVarGrid(const std::string name) override { return 1; }
+#endif
 
     /**
     @a GetVarType retrieves the type of a variable
@@ -1184,6 +1204,25 @@ public:
     // VarFunction GetFn(const std::string name);
     //  std::set<std::string> UpdateMap;
     // std::set<std::string>& GetUpdateMap() { return UpdateMap; }
+
+#if defined(WITH_PYBIND11)
+
+    py::array BMIPhreeqcRM::get_value(std::string name, py::array arr);
+
+    //py::array get_value_test(std::string arg, py::array dest/* = py::none()*/);
+    //py::array BMIPhreeqcRM::get_value_test(std::string name, py::array_t<double> dest = py::none());
+    py::array get_value_ptr(std::string name);
+
+    void set_value(std::string name, py::array src);
+
+    py::array get_value_at_indices(std::string name, py::array dest, py::array indices);
+
+    void set_value_at_indices(std::string name, py::array indices, py::array src);
+
+    py::sequence process_sequence(py::sequence seq);
+
+    bool _initialized;   // { var_man != nullptr }
+#endif
 
 protected:
     void Construct(Initializer initializer) override;

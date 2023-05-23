@@ -16,6 +16,9 @@ BMIVariant::BMIVariant(VarFunction f, std::string name_in)
 	NotImplemented = false;
 	VoidPtr = NULL;
 	fn = f;
+#if defined(WITH_PYBIND11)
+	hasPyArr = false;
+#endif
 }
 BMIVariant::BMIVariant(const std::string& name_in, const std::string& units_in, bool setter, bool getter, bool ptr, int bytes, int item_size)
 {
