@@ -213,7 +213,8 @@ void VarManager::Components_Var()
 		int Nbytes = (int)(size * comps.size());
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-		bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
+		bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", 
+			"numpy.ndarray");
 		bv.SetStringVector(rm_ptr->GetComponents());
 		bv.SetInitialized(true);
 	}
@@ -282,7 +283,7 @@ void VarManager::Concentrations_Var()
 			break;
 		}
 		bv.SetBasic(units, true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		//rm_ptr->GetConcentrations(bv.GetDoubleVectorRef());
 		//rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount() * rm_ptr->GetComponentCount());
@@ -331,7 +332,7 @@ void VarManager::DensityCalculated_Var()
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("kg L-1", false, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
@@ -385,7 +386,7 @@ void VarManager::DensityUser_Var()
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("kg L-1", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
@@ -450,7 +451,7 @@ void VarManager::ErrorString_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("error", false, true, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
+		bv.SetTypes("std::string", "character", "str");
 		this->VarExchange.GetStringRef() = rm_ptr->GetErrorString(); 
 		bv.GetStringRef() = rm_ptr->GetErrorString();
 		bv.SetInitialized(true);
@@ -492,7 +493,7 @@ void VarManager::FilePrefix_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
+		bv.SetTypes("std::string", "character", "str");
 		//this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
 		bv.GetStringRef() = rm_ptr->GetFilePrefix();
 		//bv.SetInitialized(true);
@@ -518,7 +519,7 @@ void VarManager::FilePrefix_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
 		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
-		//bv.SetTypes("std::string", "character", "");
+		//bv.SetTypes("std::string", "character", "str");
 		rm_ptr->SetFilePrefix(this->VarExchange.GetStringRef());
 		bv.GetStringRef() = this->VarExchange.GetStringRef();
 		break;
@@ -541,7 +542,7 @@ void VarManager::Gfw_Var()
 		int Nbytes = Itemsize * rm_ptr->GetComponentCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("g mol-1", false, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetGfw();
 		bv.GetDoubleVectorRef() = rm_ptr->GetGfw();
 		bv.SetInitialized(true);
@@ -679,7 +680,7 @@ void VarManager::SaturationCalculated_Var()
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("unitless", false, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
@@ -734,7 +735,7 @@ void VarManager::SaturationUser_Var()
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("unitless", true, false, false, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
@@ -794,7 +795,7 @@ void VarManager::SelectedOutput_Var()
 				rm_ptr->GetSelectedOutputColumnCount();
 			//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 			bv.SetBasic("user specified", false, true, false, Nbytes, Itemsize);
-			bv.SetTypes("double", "real(kind=8)", "");
+			bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		}
 		else
 		{
@@ -804,7 +805,7 @@ void VarManager::SelectedOutput_Var()
 			int Nbytes = Itemsize;
 			//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 			bv.SetBasic("user specified", false, true, false, Nbytes, Itemsize);
-			bv.SetTypes("double", "real(kind=8)", "");
+			bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		}
 	}
 	switch (this->task)
@@ -959,7 +960,8 @@ void VarManager::SelectedOutputHeadings_Var()
 			int Nbytes = (int)(size * headings.size());// +this->AutoOutputVars.size();
 			//name, std::string units, set, get, ptr, Nbytes, Itemsize
 			bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
+			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)",
+				"numpy.ndarray");
 		}
 		else
 		{
@@ -1074,7 +1076,7 @@ void VarManager::SolutionVolume_Var()
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("L", false, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		//this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetSolutionVolume();
 		//bv.GetDoubleVectorRef() = rm_ptr->GetSolutionVolume();
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
@@ -1121,7 +1123,7 @@ void VarManager::Time_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("s", true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "float");
 		this->VarExchange.SetDVar(rm_ptr->GetTime());
 		bv.SetDVar(rm_ptr->GetTime());
 		bv.SetInitialized(true);
@@ -1167,7 +1169,7 @@ void VarManager::TimeStep_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("s", true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "float");
 		this->VarExchange.SetDVar(rm_ptr->GetTimeStep());
 		bv.SetDVar(rm_ptr->GetTimeStep());
 		bv.SetInitialized(true);
@@ -1262,7 +1264,7 @@ void VarManager::Porosity_Var()
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("unitless", true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		//this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPorosity();
 		//bv.GetDoubleVectorRef() = rm_ptr->GetPorosity();
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
@@ -1339,7 +1341,7 @@ void VarManager::Pressure_Var()
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("atm", true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		//this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetPressure();
 		//bv.GetDoubleVectorRef() = rm_ptr->GetPressure();
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
@@ -1387,7 +1389,7 @@ void VarManager::SelectedOutputOn_Var()
 		int Nbytes = (int)sizeof(bool);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("bool", true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("bool", "logical", "");
+		bv.SetTypes("bool", "logical", "bool");
 		bv.SetBVar(rm_ptr->GetSelectedOutputOn());
 		bv.SetInitialized(true);
 	}
@@ -1436,7 +1438,7 @@ void VarManager::Temperature_Var()
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("C", true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		//this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
 		//bv.GetDoubleVectorRef() = rm_ptr->GetTemperature();
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
@@ -1484,7 +1486,7 @@ void VarManager::Viscosity_Var()
 		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("mPa s", false, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "");
+		bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 		//rm_ptr->GetViscosity(this->VarExchange.GetDoubleVectorRef());
 		//rm_ptr->GetViscosity(bv.GetDoubleVectorRef());
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
@@ -1554,7 +1556,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_ph";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1564,7 +1566,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_pe";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1574,7 +1576,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_alkalinity";
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1584,7 +1586,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_ionic_strength";
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1594,7 +1596,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_water_mass";
 				BMIVariant bv(name, "kg", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1604,7 +1606,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_charge_balance";
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1614,7 +1616,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_percent_error";
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1624,7 +1626,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_specific_conductance";
 				BMIVariant bv(name, "uS cm-1", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1657,7 +1659,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_total_molality_" + *item_it;
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1691,7 +1693,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_species_log_molality_" + *item_it;
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1725,7 +1727,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_species_log_activity_" + *item_it;
 				BMIVariant bv(name, "log -", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1764,7 +1766,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "exchange_total_molality_" + *jit;
 					BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
-					bv.SetTypes("double", "real(kind=8)", "");
+					bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1782,7 +1784,7 @@ void VarManager::GenerateAutoOutputVars()
 					name = "exchange_" + xname + "_species_log_molality_" + *item_it;
 				}
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1821,7 +1823,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "surface_total_molality_" + *jit;
 					BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
-					bv.SetTypes("double", "real(kind=8)", "");
+					bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1839,7 +1841,7 @@ void VarManager::GenerateAutoOutputVars()
 					name = "surface_" + type + "_species_log_molality_" + *item_it;
 				}
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1874,7 +1876,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "equilibrium_phases_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetTypes("double", "real(kind=8)", "");
+					bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1884,7 +1886,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "equilibrium_phases_delta_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetTypes("double", "real(kind=8)", "");
+					bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1919,7 +1921,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "solution_saturation_index_" + *item_it;
 				BMIVariant bv(name, "unitless", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -1953,7 +1955,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "gas_phase_volume";
 					BMIVariant bv(name, "L", false, true, false, Nbytes, Itemsize);
-					bv.SetTypes("double", "real(kind=8)", "");
+					bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1967,7 +1969,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "gas_phase_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetTypes("double", "real(kind=8)", "");
+					bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1977,7 +1979,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "gas_phase_pressure_" + *item_it;
 					BMIVariant bv(name, "atm", false, true, false, Nbytes, Itemsize);
-					bv.SetTypes("double", "real(kind=8)", "");
+					bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -1987,7 +1989,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "gas_phase_phi_" + *item_it;
 					BMIVariant bv(name, "atm-1", false, true, false, Nbytes, Itemsize);
-					bv.SetTypes("double", "real(kind=8)", "");
+					bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -2023,7 +2025,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "kinetic_reaction_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetTypes("double", "real(kind=8)", "");
+					bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -2033,7 +2035,7 @@ void VarManager::GenerateAutoOutputVars()
 				{
 					std::string name = "kinetic_reaction_delta_moles_" + *item_it;
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-					bv.SetTypes("double", "real(kind=8)", "");
+					bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 					bv.SetColumn((int)AutoOutputVars.size());
 					AutoOutputVars[name] = bv;
 					headings << name << " \\ \n";
@@ -2075,7 +2077,7 @@ void VarManager::GenerateAutoOutputVars()
 					name = "solid_solution_" + xname + "_moles_" + *item_it;
 				}
 				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
@@ -2110,7 +2112,7 @@ void VarManager::GenerateAutoOutputVars()
 			{
 				std::string name = "calculate_value_" + *item_it;
 				BMIVariant bv(name, "unknown", false, true, false, Nbytes, Itemsize);
-				bv.SetTypes("double", "real(kind=8)", "");
+				bv.SetTypes("double", "real(kind=8)", "numpy.ndarray");
 				bv.SetColumn((int)AutoOutputVars.size());
 				AutoOutputVars[name] = bv;
 				headings << name << " \\ \n";
