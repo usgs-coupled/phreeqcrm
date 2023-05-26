@@ -33,6 +33,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   integer                                       :: nchem
   character(100)                                :: string
   character(200)                                :: string1
+  character(len=:), allocatable                 :: alloc_string
   integer                                       :: ncomps, ncomps1
   character(len=:),   dimension(:), allocatable :: components
   real(kind=8), dimension(:), allocatable   :: gfw
@@ -57,8 +58,8 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   real(kind=8), dimension(:), allocatable   :: pressure
   integer                                       :: isteps, nsteps
   real(kind=8), dimension(:,:), allocatable :: selected_out
-  integer                                       :: col, isel, n_user
-  character(100)                                :: heading
+  integer                                   :: col, isel, n_user
+  character(len=:), allocatable             :: headings(:)
   real(kind=8), dimension(:,:), allocatable :: c_well
   real(kind=8), dimension(:), allocatable   :: tc, p_atm
   integer                                       :: vtype
@@ -163,8 +164,8 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   status = RM_OutputMessage(id, string1)
   write(string1, "(A,I10)") "MPI task number:                                  ", RM_GetMpiMyself(id)
   status = RM_OutputMessage(id, string1)
-  status = RM_GetFilePrefix(id, string)
-  write(string1, "(A,A)") "File prefix:                                      ", string
+  status = RM_GetFilePrefix(id, alloc_string)
+  write(string1, "(A,A)") "File prefix:                                        ", alloc_string
   status = RM_OutputMessage(id, trim(string1))
   write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", RM_GetGridCellCount(id)
   status = RM_OutputMessage(id, trim(string1))
@@ -338,9 +339,9 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
 				    species_log10gammas(i,j), species_log10molalities(i,j)
               enddo              
               write(*,*) "     Selected output: "
-              do j = 1, col
-                 status = RM_GetSelectedOutputHeading(id, j, heading)    
-                 write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ", trim(heading),": ", selected_out(i,j)
+              status = RM_GetSelectedOutputHeadings(id, headings) 
+              do j = 1, col   
+                 write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ", trim(headings(j)),": ", selected_out(i,j)
               enddo
            enddo
            deallocate(selected_out)

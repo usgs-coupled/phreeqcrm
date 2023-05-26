@@ -47,10 +47,12 @@
     PRIVATE :: Chk_Integer2D
     PRIVATE :: RM_GetComponent
     PRIVATE :: RM_GetEquilibriumPhasesName
+    PRIVATE :: RM_GetErrorStringLength
     PRIVATE :: RM_GetExchangeName
     PRIVATE :: RM_GetExchangeSpeciesName
     PRIVATE :: RM_GetGasComponentsName
     PRIVATE :: RM_GetKineticReactionsName
+    PRIVATE :: RM_GetSelectedOutputHeading
     PRIVATE :: RM_GetSIName
     PRIVATE :: RM_GetSolidSolutionComponentsName
     PRIVATE :: RM_GetSolidSolutionName
@@ -64,11 +66,10 @@
 #ifdef USE_YAML    
 !> @a GetGridCellCountYAML will read a YAML file and extract the value
 !> of GridCellCount, which can be used to construct a PhreeqcRM
-!> instance. @ref RM_Create requires a 
-!> value for the number of cells. If a GUI or preprocessor is
-!> used to write a YAML file to initialize PhreeqcRM, the number
-!> of cells can be written to the YAML file and extracted with
-!> this method.
+!> instance. @ref RM_Create requires a value for the number of cells. 
+!> If a GUI or preprocessor is used to write a YAML file to initialize
+!>  PhreeqcRM, the number of cells can be written to the YAML file
+!>  and extracted with this method.
 !> @param config_file         String containing the YAML file name.
 !> @retval Number of grid cells specified in the YAML file; returns
 !> zero if GridCellCount is not defined.
@@ -104,15 +105,17 @@
     END FUNCTION GetGridCellCountYAML    
 #endif    
     !> Abort the program.
-    !> @a irm_result will be interpreted as
-    !> an IRM_RESULT value and decoded; @a err_str will be printed; and the reaction module
-    !> will be destroyed. If using MPI, an MPI_Abort message will be sent before the reaction
-    !> module is destroyed. If the @a id is an invalid instance, RM_Abort will return a value of
-    !> IRM_BADINSTANCE, otherwise the program will exit with a return code of 4.
+    !> @a irm_result will be interpreted as an IRM_RESULT value and decoded; 
+    !> @a err_str will be printed; and the reaction module will be destroyed.
+    !> If using MPI, an MPI_Abort message will be sent before the reaction
+    !> module is destroyed. If the @a id is an invalid instance, RM_Abort will 
+    !> return a value ofIRM_BADINSTANCE, otherwise the program will exit with a 
+    !> return code of 4.
     !> @param id            The instance id returned from @ref RM_Create.
-    !> @param irm_result        Integer treated as an IRM_RESULT return code.
+    !> @param irm_result    Integer treated as an IRM_RESULT return code.
     !> @param err_str       String to be printed as an error message.
-    !> @retval IRM_RESULT   Program will exit before returning unless @a id is an invalid reaction module id.
+    !> @retval IRM_RESULT   Program will exit before returning unless @a id is an 
+    !> invalid reaction module id.
     !> @see
     !> @ref RM_Destroy,
     !> @ref RM_ErrorMessage.
@@ -120,10 +123,9 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm)
     !> string = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1"
-    !> status = RunString(iphreeqc_id, string)
-    !> if (status .ne. 0) status = RM_Abort(id, status, "IPhreeqc RunString failed")
+    !> status = RunString(id, string)
+    !> if (status .lt. 0) status = RM_Abort(id, status, "RunString failed")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -183,20 +185,24 @@
     RETURN
     END FUNCTION RM_CloseFiles
 
-    !> @a N sets of component concentrations are converted to SOLUTIONs numbered 1-@a n in the Utility IPhreeqc.
-    !> The solutions can be reacted and manipulated with the methods of IPhreeqc. If solution concentration units
-    !> (@ref RM_SetUnitsSolution) are per liter, one liter of solution is created in the Utility instance; if solution
-    !> concentration units are mass fraction, one kilogram of solution is created in the Utility instance.
-    !> The motivation for this
-    !> method is the mixing of solutions in wells, where it may be necessary to calculate solution properties
-    !> (pH for example) or react the mixture to form scale minerals. The code fragments below make a mixture of
+    !> @a N sets of component concentrations are converted to SOLUTIONs numbered 
+    !> 1-@a n in the Utility IPhreeqc. The solutions can be reacted and manipulated 
+    !> with the methods of IPhreeqc. If solution concentration units (@ref RM_SetUnitsSolution) 
+    !> are per liter, one liter of solution is created in the Utility instance; if solution
+    !> concentration units are mass fraction, one kilogram of solution is created in the Utility 
+    !> instance. The motivation for this method is the mixing of solutions in wells, where 
+    !> it may be necessary to calculate solution properties (pH for example)
+    !> or react the mixture to form scale minerals. The code fragments below make a mixture of
     !> concentrations and then calculate the pH of the mixture.
     !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param c             Array of concentrations to be made SOLUTIONs in Utility IPhreeqc, array size is
-    !> (@a n, @a ncomps) where @a ncomps is the number of components (@ref RM_GetComponentCount).
+    !> @param c             Array of concentrations to be made SOLUTIONs in Utility IPhreeqc, 
+    !> array size is (@a n, @a ncomps) where @a ncomps is the number of components 
+    !> (@ref RM_GetComponentCount).
     !> @param n             The number of sets of concentrations.
-    !> @param tc            Array of temperatures to apply to the SOLUTIONs, in degree C. Array of size @a n.
-    !> @param p_atm         Array of pressures to apply to the SOLUTIONs, in atm. Array of size n.
+    !> @param tc            Array of temperatures to apply to the SOLUTIONs, in degree C. 
+    !> Array of size @a n.
+    !> @param p_atm         Array of pressures to apply to the SOLUTIONs, in atm. 
+    !> Array of size n.
     !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
     !> @par Fortran Example:
     !> @htmlonly
@@ -268,15 +274,16 @@
     endif
     END SUBROUTINE Chk_Concentrations2Utility
     
-    !> Creates a reaction module. If the code is compiled with
-    !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
-    !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
-    !> module will use MPI and multiple processes. If neither preprocessor directive is used,
-    !> the reaction module will be serial (unparallelized).
-    !> @param nxyz                   The number of grid cells in the user's model.
-    !> @param nthreads (or @a comm, MPI)       When using OPENMP, the argument (@a nthreads) is the number of worker threads to be used.
-    !> If @a nthreads <= 0, the number of threads is set equal to the number of processors of the computer.
-    !> When using MPI, the argument (@a comm) is the MPI communicator to use within the reaction module.
+    !> Creates a reaction module. If the code is compiled with the preprocessor directive 
+    !> USE_OPENMP, the reaction module is multithreaded. If the code is compiled with the 
+    !> preprocessor directive USE_MPI, the reaction module will use MPI and multiple processes. 
+    !> If neither preprocessor directive is used, the reaction module will be serial 
+    !> (unparallelized).
+    !> @param nxyz                           The number of grid cells in the user's model.
+    !> @param nthreads (or @a comm, MPI)     When using OPENMP, the argument (@a nthreads) is 
+    !> the number of worker threads to be used. If @a nthreads <= 0, the number of threads 
+    !> is set equal to the number of processors of the computer. When using MPI, the argument 
+    !> (@a comm) is the MPI communicator to use within the reaction module.
     !> @retval Id of the PhreeqcRM instance, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_Destroy.
@@ -327,13 +334,14 @@
     END FUNCTION RM_Create
 
     !> Provides a mapping from grid cells in the user's model to reaction cells in PhreeqcRM.
-    !> The mapping is used to eliminate inactive cells and to use symmetry to decrease the number of cells for which chemistry must be run.
-    !> The array @a grid2chem of size @a nxyz (the number of grid cells, @ref RM_GetGridCellCount)
-    !> must contain the set of all integers 0 <= @a i < @a count_chemistry,
-    !> where @a count_chemistry is a number less than or equal to @a nxyz.
-    !> Inactive cells are assigned a negative integer.
-    !> The mapping may be many-to-one to account for symmetry.
-    !> Default is a one-to-one mapping--all user grid cells are reaction cells (equivalent to @a grid2chem values of 0,1,2,3,...,@a nxyz-1).
+    !> The mapping is used to eliminate inactive cells and to use symmetry to decrease the 
+    !> number of cells for which chemistry must be run. The array @a grid2chem of size 
+    !> @a nxyz (the number of grid cells, @ref RM_GetGridCellCount) must contain the set of 
+    !> all integers 0 <= @a i < @a count_chemistry, where @a count_chemistry is a number less 
+    !> than or equal to @a nxyz. Inactive cells are assigned a negative integer.
+    !> The mapping may be many-to-one to account for symmetry. Default is a one-to-one 
+    !> mapping--all user grid cells are reaction cells (equivalent to @a grid2chem values 
+    !> of 0,1,2,3,...,@a nxyz-1).
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param grid2chem        An array of integers: Nonnegative is a reaction cell number (0 based), negative is an inactive cell. Array of size @a nxyz (number of grid cells).
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -385,7 +393,8 @@
     endif
     END SUBROUTINE Chk_CreateMapping
 
-    !> If @a e is negative, this method prints an error message corresponding to IRM_RESULT @a e. If @a e is non-negative, no action is taken.
+    !> If @a e is negative, this method prints an error message corresponding to IRM_RESULT @a e. 
+    !> If @a e is non-negative, no action is taken.
     !> @param id                   The instance @a id returned from @ref RM_Create.
     !> @param e                    An IRM_RESULT value returned by one of the reaction-module methods.
     !> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
@@ -437,7 +446,7 @@
     END FUNCTION RM_DecodeError
 
     !> Destroys a reaction module.
-    !> @param id               The instance @a id returned from @ref RM_Create.
+    !> @param id            The instance @a id returned from @ref RM_Create.
     !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_Create.
@@ -468,7 +477,8 @@
     return
     END FUNCTION RM_Destroy
 
-    !> Writes the contents of all workers to file in _RAW formats, including SOLUTIONs and all reactants.
+    !> Writes the contents of all workers to file in _RAW formats, including SOLUTIONs and 
+    !> all reactants.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param dump_on          Signal for writing the dump file: 1 true, 0 false.
     !> @param append           Signal to append to the contents of the dump file: 1 true, 0 false.
@@ -519,7 +529,6 @@
     !> @ref RM_OutputMessage,
     !> @ref RM_ScreenMessage,
     !> @ref RM_WarningMessage.
-    !>
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -549,22 +558,25 @@
     return
     END FUNCTION RM_ErrorMessage
 
-    !> Returns the number of items in the list of all elements in the InitialPhreeqc instance.
-    !> Elements are those that have been defined in a solution or any other reactant (EQUILIBRIUM_PHASE, KINETICS, and others).
-    !> The method can be called multiple times and the list that is created is cummulative.
-    !> The list is the set of components that needs to be transported.
-    !> By default the list
-    !> includes water, excess H and excess O (the H and O not contained in water);
-    !> alternatively, the list may be set to contain total H and total O (@ref RM_SetComponentH2O),
+    !> Returns the number of items in the list of all elements in the InitialPhreeqc 
+    !> instance. Elements are those that have been defined in a solution or any other 
+    !> reactant (EQUILIBRIUM_PHASE, KINETICS, and others). The method can be called 
+    !> multiple times and the list that is created is cummulative. The list is the set 
+    !> of components that needs to be transported. By default the list includes water, 
+    !> excess H and excess O (the H and O not contained in water); alternatively, the 
+    !> list may be set to contain total H and total O (@ref RM_SetComponentH2O),
     !> which requires transport results to be accurate to eight or nine significant digits.
-    !> If multicomponent diffusion (MCD) is to be modeled, there is a capability to retrieve aqueous species concentrations
-    !> (@ref RM_GetSpeciesConcentrations) and to set new solution concentrations after MCD by using individual species concentrations
-    !> (@ref RM_SpeciesConcentrations2Module). To use these methods the save-species property needs to be turned on (@ref RM_SetSpeciesSaveOn).
-    !> If the save-species property is on, RM_FindComponents will generate
-    !> a list of aqueous species (@ref RM_GetSpeciesCount, @ref RM_GetSpeciesName), their diffusion coefficients at 25 C (@ref RM_GetSpeciesD25),
-    !> their charge (@ref RM_GetSpeciesZ).
+    !> If multicomponent diffusion (MCD) is to be modeled, there is a capability to retrieve 
+    !> aqueous species concentrations (@ref RM_GetSpeciesConcentrations) and to set new 
+    !> solution concentrations after MCD by using individual species concentrations
+    !> (@ref RM_SpeciesConcentrations2Module). To use these methods the save-species 
+    !> property needs to be turned on (@ref RM_SetSpeciesSaveOn). If the save-species 
+    !> property is on, RM_FindComponents will generate a list of aqueous species 
+    !> (@ref RM_GetSpeciesCount, @ref RM_GetSpeciesName), their diffusion coefficients 
+    !> at 25 C (@ref RM_GetSpeciesD25), their charge (@ref RM_GetSpeciesZ).
     !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @retval              Number of components currently in the list, or IRM_RESULT error code (see @ref RM_DecodeError).
+    !> @retval              Number of components currently in the list, or IRM_RESULT error 
+    !> code (see @ref RM_DecodeError).
     !> @see
     !> @ref RM_GetComponent,
     !> @ref RM_GetSpeciesConcentrations,
@@ -584,33 +596,31 @@
     !> In addition, a list of phases is generated for which saturation indices may be calculated from the
     !> cumulative list of components.
     !> @see also
-    !> @ref RM_GetEquilibriumPhasesName,
+    !> @ref RM_GetEquilibriumPhasesNames,
     !> @ref RM_GetEquilibriumPhasesCount,
-    !> @ref RM_GetExchangeName,
-    !> @ref RM_GetExchangeSpeciesName,
+    !> @ref RM_GetExchangeNames,
+    !> @ref RM_GetExchangeSpeciesNames,
     !> @ref RM_GetExchangeSpeciesCount,
-    !> @ref RM_GetGasComponentsName,
+    !> @ref RM_GetGasComponentsNames,
     !> @ref RM_GetGasComponentsCount,
-    !> @ref RM_GetKineticReactionsName,
+    !> @ref RM_GetKineticReactionsNames,
     !> @ref RM_GetKineticReactionsCount,
     !> @ref RM_GetSICount,
-    !> @ref RM_GetSIName,
-    !> @ref RM_GetSolidSolutionComponentsName,
+    !> @ref RM_GetSINames,
+    !> @ref RM_GetSolidSolutionComponentsNames,
     !> @ref RM_GetSolidSolutionComponentsCount,
-    !> @ref RM_GetSolidSolutionName,
-    !> @ref RM_GetSurfaceName,
-    !> @ref RM_GetSurfaceSpeciesName,
+    !> @ref RM_GetSolidSolutionNames,
+    !> @ref RM_GetSurfaceNames,
+    !> @ref RM_GetSurfaceSpeciesNames,
     !> @ref RM_GetSurfaceSpeciesCount,
-    !> @ref RM_GetSurfaceType.
+    !> @ref RM_GetSurfaceTypes.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> ! Get list of components
+    !> character(len=:), allocatable :: components(:)
     !> ncomps = RM_FindComponents(id)
-    !> allocate(components(ncomps))
-    !> do i = 1, ncomps
-    !>   status = RM_GetComponent(id, i, components(i))
+    !> status = RM_GetComponents(id, components)
     !> enddo
     !> </PRE>
     !> </CODE>
@@ -639,26 +649,24 @@
     return
     END FUNCTION RM_FindComponents
 
-    !> Fills an array with the cell numbers in the user's numbering sytstem that map to a cell in the
-    !> PhreeqcRM numbering system. The mapping is defined by @ref RM_CreateMapping.
-
+    !> Fills an array with the cell numbers in the user's numbering sytstem that map 
+    !> to a cell in the PhreeqcRM numbering system. The mapping is defined by
+    !> @ref RM_CreateMapping.
     !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param n             A cell number in the PhreeqcRM numbering system (0 <= n < @ref RM_GetChemistryCellCount).
-    !> @param list          Array to store the user cell numbers mapped to PhreeqcRM cell @a n.
-    !> @param size          Input, the allocated size of @a list; it is an error if the array is too small.
-    !>                      Output, the number of cells mapped to cell @a n.
+    !> @param n             A cell number in the PhreeqcRM numbering system (0 <= n < 
+    !> @ref RM_GetChemistryCellCount).
+    !> @param list          Allocatable array to store the user cell numbers mapped to 
+    !> PhreeqcRM cell @a n.
     !> @retval              IRM_RESULT error code (see @ref RM_DecodeError).
-    !>
     !> @see
     !> @ref RM_CreateMapping,
     !> @ref RM_GetChemistryCellCount,
     !> @ref RM_GetGridCellCount.
-    !>
     !> @par C Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, size) .eq. 0) then
+    !> if (RM_GetBackwardMapping(rm_id, rm_cell_number, list) .eq. 0) then
     !>   if (fstr(1:l) .eq. "HYDRAULIC_K") then
     !>     my_basic_fortran_callback = K_ptr(list(1)+1)
     !>   endif
@@ -669,7 +677,7 @@
     !> @par MPI:
     !> Called by root and (or) workers.
 
-    INTEGER FUNCTION RM_GetBackwardMapping(id, n, list, size)
+    INTEGER FUNCTION RM_GetBackwardMapping(id, n, list)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -684,8 +692,9 @@
     END INTERFACE
     INTEGER, INTENT(in)    :: id, n
     INTEGER, INTENT(inout), allocatable :: list(:)
-    INTEGER, INTENT(inout) :: size
-    integer  :: my_list(100), i
+    INTEGER :: size
+    integer  :: my_list(1000), i
+    size = 1000
     RM_GetBackwardMapping = RMF_GetBackwardMapping(id, n, my_list, size)
     if(allocated(list)) deallocate(list)
     allocate(list(size))
@@ -695,11 +704,13 @@
     return
     END FUNCTION RM_GetBackwardMapping
 
-    !> Returns the number of chemistry cells in the reaction module. The number of chemistry cells is defined by
-    !> the set of non-negative integers in the mapping from user grid cells (@ref RM_CreateMapping).
-    !> The number of chemistry cells is less than or equal to the number of cells in the user's model.
+    !> Returns the number of chemistry cells in the reaction module. The number of chemistry 
+    !> cells is defined by the set of non-negative integers in the mapping from user grid 
+    !> cells (@ref RM_CreateMapping). The number of chemistry cells is less than or equal to 
+    !> the number of cells in the user's model.
     !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @retval              Number of chemistry cells, or IRM_RESULT error code (see @ref RM_DecodeError).
+    !> @retval              Number of chemistry cells, or IRM_RESULT error code 
+    !> (see @ref RM_DecodeError).
     !> @see
     !> @ref RM_CreateMapping,
     !> @ref RM_GetGridCellCount.
@@ -731,7 +742,8 @@
     return
     END FUNCTION RM_GetChemistryCellCount
 
-    !> Retrieves an item from the reaction-module component list that was generated by calls to @ref RM_FindComponents.
+    !> PRIVATE. Retrieves an item from the reaction-module component list that was generated by calls 
+    !> to @ref RM_FindComponents.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param num              The number of the component to be retrieved. Fortran, 1 based.
     !> @param comp_name        The string value associated with component @a num.
@@ -777,17 +789,15 @@
     !> The list contains all components (elements) found in solutions and reactants in the
     !> InitialPhreeqc instance by call(s) to @ref RM_FindComponents.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param components          A deferred length, allocatable, 1D character variable.
-    !> to receive the component names. Character length and dimension will be allocated as needed.
+    !> @param components       Allocatable, 1D character variable to receive the component names. 
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_GetComponent,
     !> @ref RM_FindComponents.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> character(len=:), allocatable, dimension(:) :: components
+    !> character(len=:), allocatable :: components(:)
     !> status = RM_GetComponents(id, components)
     !> </PRE>
     !> </CODE>
@@ -819,7 +829,7 @@
     return 
     END FUNCTION RM_GetComponents
 
-    !> Returns the number of components in the reaction-module component list.
+    !> PRIVATE Returns the number of components in the reaction-module component list.
     !> The component list is generated by calls to @ref RM_FindComponents.
     !> The return value from the last call to @ref RM_FindComponents is equal to the return value from RM_GetComponentCount.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -853,33 +863,30 @@
     RM_GetComponentCount = RMF_GetComponentCount(id)
     END FUNCTION RM_GetComponentCount
 
-    !> Transfer solution concentrations from each reaction cell
-    !> to the concentration array given in the argument list (@a c).
-    !> Units of concentration for @a c are defined by @ref RM_SetUnitsSolution.
-    !> For concentration units of per liter,
-    !> the solution volume is used to calculate the concentrations for @a c.
-    !> For mass fraction concentration units,
-    !> the solution mass is used to calculate concentrations for @a c.
-    !> Two options are available for the volume and mass of solution
-    !> that are used in converting to transport concentrations: (1) the volume and mass of solution are
-    !> calculated by PHREEQC, or
+    !> Transfer solution concentrations from each reaction cell to the concentration array 
+    !> given in the argument list (@a c). Units of concentration for @a c are defined by 
+    !> @ref RM_SetUnitsSolution. For concentration units of per liter, the solution volume 
+    !> is used to calculate the concentrations for @a c. For mass fraction concentration units,
+    !> the solution mass is used to calculate concentrations for @a c. Two options are 
+    !> available for the volume and mass of solution that are used in converting to transport 
+    !> concentrations: (1) the volume and mass of solution are calculated by PHREEQC, or
     !> (2) the volume of solution is the product of saturation (@ref RM_SetSaturationUser),
-    !> porosity (@ref RM_SetPorosity), and representative volume (@ref RM_SetRepresentativeVolume),
+    !> porosity (@ref RM_SetPorosity), and representative volume (@ref RM_SetRepresentativeVolume), 
     !> and the mass of solution is volume times density as defined by @ref RM_SetDensityUser.
-    !> @ref RM_UseSolutionDensityVolume determines which option is used.
-    !> For option 1, the databases that have partial molar volume definitions needed
-    !> to accurately calculate solution volume are
-    !> phreeqc.dat, Amm.dat, and pitzer.dat.
-    !>
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param c                Array to receive the concentrations. Dimension of the array is (@a nxyz, @a ncomps),
-    !> where @a nxyz is the number of user grid cells and @a ncomps is the result of @ref RM_FindComponents or @ref RM_GetComponentCount.
+    !> @ref RM_UseSolutionDensityVolume determines which option is used. For option 1, the 
+    !> databases that have partial molar volume definitions needed to calculate 
+    !> solution volume accurately are phreeqc.dat, Amm.dat, and pitzer.dat.
+    !> @param id        The instance @a id returned from @ref RM_Create.
+    !> @param c         Array to receive the concentrations. Dimension of the array will be  
+    !> set to (@a nxyz, @a ncomps), where @a nxyz is the number of user grid cells and 
+    !> @a ncomps is the result of @ref RM_FindComponents or @ref RM_GetComponentCount.
     !> Values for inactive cells are set to 1e30.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !>
     !> @see
     !> @ref RM_FindComponents,
     !> @ref RM_GetComponentCount,
+    !> @ref RM_GetDensityCalculated,
     !> @ref RM_GetSaturationCalculated,
     !> @ref RM_SetConcentrations,
     !> @ref RM_SetDensityUser,
@@ -891,7 +898,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> allocate(c(nxyz, ncomps))
+    !> real(kind=8), allocatable :: c(:,:)
     !> status = RM_RunCells(id)
     !> status = RM_GetConcentrations(id, c)
     !> </PRE>
@@ -922,16 +929,16 @@
     END FUNCTION RM_GetConcentrations
     
     !> Returns the user number of the current selected-output definition.
-    !> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput specifies which of the
-    !> selected-output definitions is used.
-    !> @retval                 User number of the the current selected-output definition,
+    !> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput 
+    !> specifies which of the selected-output definitions is used.
+    !> @retval          User number of the the current selected-output definition,
     !> negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_GetNthSelectedOutputUserNumber,
     !> @ref RM_GetSelectedOutput,
     !> @ref RM_GetSelectedOutputColumnCount,
     !> @ref RM_GetSelectedOutputCount,
-    !> @ref RM_GetSelectedOutputHeading,
+    !> @ref RM_GetSelectedOutputHeadings,
     !> @ref RM_GetSelectedOutputRowCount,
     !> @ref RM_SetCurrentSelectedOutputUserNumber,
     !> @ref RM_SetNthSelectedOutput,
@@ -949,11 +956,11 @@
     !>   ! Process results here
     !>   deallocate(selected_out)
     !> enddo
-    !> 	</PRE>
-    !> 	</CODE>
-    !> 	@endhtmlonly
-    !> 	@par MPI:
-    !> 	Called by root.
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
     INTEGER FUNCTION RM_GetCurrentSelectedOutputUserNumber(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -968,22 +975,24 @@
     INTEGER, INTENT(in) :: id
     RM_GetCurrentSelectedOutputUserNumber = RMF_GetCurrentSelectedOutputUserNumber(id)
     END FUNCTION RM_GetCurrentSelectedOutputUserNumber
-    !> Transfer solution densities from the reaction cells to the array given in the argument list (@a density).
-    !> Densities are those calculated by the reaction module. This method always 
-    !> returns the calculated densities; @ref RM_SetDensityUser does not affect the result.
-    !> Only the following databases distributed with PhreeqcRM have molar volume information needed to accurately calculate density:
-    !> phreeqc.dat, Amm.dat, and pitzer.dat.
-    !>
-    !> @param id                   The instance @a id returned from @ref RM_Create.
-    !> @param density              Array to receive the densities. Dimension of the array is @a nxyz,
-    !> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
-    !> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
+
+    !> Transfer solution densities from the reaction cells to the array given in the 
+    !> argument list (@a density). Densities are those calculated by the reaction module. 
+    !> This method always  returns the calculated densities; @ref RM_SetDensityUser does 
+    !> not affect the result. Only the following databases distributed with PhreeqcRM 
+    !> have molar volume information needed to accurately calculate density: phreeqc.dat, 
+    !> Amm.dat, and pitzer.dat.
+    !> @param id              The instance @a id returned from @ref RM_Create.
+    !> @param density         Allocatable array to receive the densities. Dimension 
+    !> of the array is set to @a nxyz, where @a nxyz is the number of user grid cells 
+    !> (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+    !> @retval IRM_RESULT     0 is success, negative is failure (See @ref RM_DecodeError).
     !>
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> allocate(density(nxyz))
+    !> real(kind=8), allocatable :: density(:)
     !> status = RM_RunCells(id)
     !> status = RM_GetDensityCalculated(id, density)
     !> </PRE>
@@ -991,7 +1000,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
     INTEGER FUNCTION RM_GetDensityCalculated(id, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1012,11 +1020,12 @@
     return
     END FUNCTION RM_GetDensityCalculated
 
-    !> Returns an array with the ending cell numbers from the range of cell numbers assigned to each worker.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param ec               Array to receive the ending cell numbers. Dimension of the array is
-    !>                         the number of threads (OpenMP) or the number of processes (MPI).
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+    !> Returns an array with the ending cell numbers from the range of cell numbers 
+    !> assigned to each worker.
+    !> @param id           The instance @a id returned from @ref RM_Create.
+    !> @param ec           Array to receive the ending cell numbers. Dimension of the array is
+    !> the number of threads (OpenMP) or the number of processes (MPI).
+    !> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_Create,
     !> @ref RM_GetMpiTasks,
@@ -1026,15 +1035,13 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> n = RM_GetThreadCount(id) * RM_GetMpiTasks(id)
-    !> allocate(ec(n))
+    !> integer, allocatable :: ec(:)
     !> status = RM_GetEndCell(id, ec)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-
     INTEGER FUNCTION RM_GetEndCell(id, ec)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1059,26 +1066,25 @@
     !> @ref RM_FindComponents must be called before @ref RM_GetEquilibriumPhasesCount.
     !> This method may be useful when generating selected output definitions related to
     !> equilibrium phases.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 The number of equilibrium phases in the initial-phreeqc module.
+    !> @param id          The instance @a id returned from @ref RM_Create.
+    !> @retval            The number of equilibrium phases in the initial-phreeqc module.
     !> @see
     !> @ref RM_FindComponents,
-    !> @ref RM_GetEquilibriumPhasesName.
+    !> @ref RM_GetEquilibriumPhasesNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> input = trim(input) // "  -equilibrium_phases " // new_line(c)
+    !> character(len=:), allocatable :: names(:)
+    !> status = RM_GetEquilibriumPhasesNames(id, names)
     !> do i = 1, RM_GetEquilibriumPhasesCount(id)
-    !>   status = RM_GetEquilibriumPhasesName(id, i, line)
-    !>   input = trim(input) // "    " // line // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetEquilibriumPhasesCount(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1094,14 +1100,13 @@
     RM_GetEquilibriumPhasesCount = RMF_GetEquilibriumPhasesCount(id)
     END FUNCTION RM_GetEquilibriumPhasesCount
 
-    !> Retrieves an item from the equilibrium phase list.
+    !> Retrieve a list of equilibrium phase names.
     !> The list includes all phases included in any EQUILIBRIUM_PHASES definitions in
-    !> the initial-phreeqc module.
-    !> @ref RM_FindComponents must be called before @ref RM_GetEquilibriumPhasesName.
-    !> This method may be useful when generating selected output definitions related to equilibrium phases.
+    !> the initial-phreeqc module. @ref RM_FindComponents must be called before 
+    !> @ref RM_GetEquilibriumPhasesNames. This method may be useful when generating 
+    !> selected output definitions related to equilibrium phases.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param num              The number of the equilibrium phase name to be retrieved. Fortran, 1 based.
-    !> @param name             The equilibrium phase name at number @a num.
+    !> @param names            Array of equilibrium phase names.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
@@ -1110,10 +1115,9 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> input = trim(input) // "  -equilibrium_phases " // new_line(c)
+    !> status = RM_GetEquilibriumPhasesNames(id, names)
     !> do i = 1, RM_GetEquilibriumPhasesCount(id)
-    !>   status = RM_GetEquilibriumPhasesName(id, i, line)
-    !>   input = trim(input) // "    " // line // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
@@ -1161,33 +1165,28 @@
     RM_GetEquilibriumPhasesName = RMF_GetEquilibriumPhasesName(id, num, name, len(name))
     return
     END FUNCTION RM_GetEquilibriumPhasesName
-    !> Returns a string containing error messages related to the last call to a PhreeqcRM method to
-    !> the character argument (@a errstr).
-    !>
+
+    !> Returns a string containing error messages related to the last call to a PhreeqcRM 
+    !> method to the character argument (@a errstr).
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param errstr           The error string related to the last call to a PhreeqcRM method.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !>
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: errstr
-    !> integer l
-    !> if (status .ne. 0) then
-    !>   l = RM_GetErrorStringLength(id)
-    !>   allocate (character(len=l) :: errstr)
+    !> if (status .lt. 0) then
     !>   status = RM_GetErrorString(id, errstr)
     !>   write(*,"(A)") errstr
-    !>   deallocate(errstr)
     !>   status = RM_Destroy(id)
     !>   stop
-    !> endif </PRE>
+    !> endif 
+    !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
     INTEGER FUNCTION RM_GetErrorString(id, errstr)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1202,11 +1201,16 @@
     END FUNCTION RMF_GetErrorString
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(inout) :: errstr
+    CHARACTER(len=:), allocatable, INTENT(inout) :: errstr
+    integer :: l
+    l = RM_GetErrorStringLength(id)
+    if(allocated(errstr)) deallocate(errstr)
+    allocate(character(len=l+1) :: errstr)
     RM_GetErrorString = RMF_GetErrorString(id, errstr, len(errstr))
     END FUNCTION RM_GetErrorString
 
-    !> Returns the length of the string that contains error messages related to the last call to a PhreeqcRM method.
+    !> PRIVATE: Returns the length of the string that contains error messages 
+    !> related to the last call to a PhreeqcRM method.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @retval int             Length of the error message string.
     !> @par Fortran Example:
@@ -1229,7 +1233,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
     INTEGER FUNCTION RM_GetErrorStringLength(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1245,26 +1248,25 @@
     RM_GetErrorStringLength = RMF_GetErrorStringLength(id)
     END FUNCTION RM_GetErrorStringLength
 
-    !> Retrieves an item from the exchange name list.
-    !> @ref RM_FindComponents must be called before @ref RM_GetExchangeName.
-    !> The exchange names vector is the same length as the exchange species names vector
+    !> Retrieves a list of exchange names.
+    !> @ref RM_FindComponents must be called before @ref RM_GetExchangeNames.
+    !> The exchange names array is the same length as the exchange species names array
     !> and provides the corresponding exchange site (for example, X corresponing to NaX).
     !> This method may be useful when generating selected output definitions related to exchangers.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param num              The number of the exchange name to be retrieved. Fortran, 1 based.
-    !> @param name             The exchange name associated with exchange species @a num.
+    !> @param names            Allocatable array of  exchange names.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
-    !> @ref RM_GetExchangeSpeciesCount, @ref RM_GetExchangeSpeciesName.
+    !> @ref RM_GetExchangeSpeciesCount, @ref RM_GetExchangeSpeciesNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
+    !> character(len=:), allocatable :: names(:)
+    !> status = RM_GetExchangeSpeciesNames(id, names)
     !> do i = 1, RM_GetExchangeSpeciesCount(id)
-    !>   status = RM_GetExchangeSpeciesName(id, i, line)
-    !>   status = RM_GetExchangeName(id, i, line1)
-    !>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
@@ -1294,7 +1296,6 @@
     return 
     END FUNCTION RM_GetExchangeNames
 
-
     INTEGER FUNCTION RM_GetExchangeName(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1314,27 +1315,26 @@
     END FUNCTION RM_GetExchangeName
     !> Returns the number of exchange species in the initial-phreeqc module.
     !> @ref RM_FindComponents must be called before @ref RM_GetExchangeSpeciesCount.
-    !> This method may be useful when generating selected output definitions related to exchangers.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 The number of exchange species in the initial-phreeqc module.
+    !> This method may be useful when generating selected output definitions related 
+    !> to exchangers.
+    !> @param id          The instance @a id returned from @ref RM_Create.
+    !> @retval            The number of exchange species found by call(s) to FindComponents.
     !> @see
-    !> @ref RM_FindComponents,
-    !> @ref RM_GetExchangeSpeciesName, @ref RM_GetExchangeName.
+    !> @ref RM_FindComponents, @ref RM_GetExchangeSpeciesNames, @ref RM_GetExchangeNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
+    !> character(len=:), allocatable :: names
+    !> status = RM_GetExchangeSpeciesNames(id, names)
     !> do i = 1, RM_GetExchangeSpeciesCount(id)
-    !>   status = RM_GetExchangeSpeciesName(id, i, line)
-    !>   status = RM_GetExchangeName(id, i, line1)
-    !>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetExchangeSpeciesCount(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1350,27 +1350,26 @@
     RM_GetExchangeSpeciesCount = RMF_GetExchangeSpeciesCount(id)
     END FUNCTION RM_GetExchangeSpeciesCount
 
-    !> Retrieves an item from the exchange species list.
+    !> Retrieves a list of exchange species names.
     !> The list of exchange species (such as "NaX") is derived from the list of components
     !> (@ref RM_FindComponents) and the list of all exchange names (such as "X")
-    !> that are included in EXCHANGE definitions in the initial-phreeqc module.
-    !> @ref RM_FindComponents must be called before @ref RM_GetExchangeSpeciesName.
-    !> This method may be useful when generating selected output definitions related to exchangers.
+    !> that are found by call(s) to FindComponents. @ref RM_FindComponents must be called 
+    !> before @ref RM_GetExchangeSpeciesNames. This method may be useful when generating 
+    !> selected output definitions related to exchangers.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param num              The number of the exchange species to be retrieved. Fortran, 1 based.
-    !> @param name             The exchange species name at number @a num.
+    !> @param names            Allocatable array of exchange species names.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
-    !> @ref RM_GetExchangeSpeciesCount, @ref RM_GetExchangeName.
+    !> @ref RM_GetExchangeSpeciesCount, @ref RM_GetExchangeNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
+    !> character(len=:), allocatable :: names
+    !> status = RM_GetExchangeSpeciesNames(id, names)
     !> do i = 1, RM_GetExchangeSpeciesCount(id)
-    !>   status = RM_GetExchangeSpeciesName(id, i, line)
-    !>   status = RM_GetExchangeName(id, i, line1)
-    !>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
@@ -1420,7 +1419,7 @@
 
     !> Returns the reaction-module file prefix to the character argument (@a prefix).
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param prefix           Character string where the prefix is written.
+    !> @param prefix           Allocatable character string where the prefix is written.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_SetFilePrefix.
@@ -1428,17 +1427,13 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> character(100) :: string
-    !> character(200) :: string1
-    !> status = RM_GetFilePrefix(id, string)
-    !> string1 = "File prefix: "//string
-    !> status = RM_OutputMessage(id, string1)
+    !> character(len=:), allocatable :: prefix
+    !> status = RM_GetFilePrefix(id, prefix)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-
     INTEGER FUNCTION RM_GetFilePrefix(id, prefix)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1453,36 +1448,39 @@
     END FUNCTION RMF_GetFilePrefix
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(inout) :: prefix
+    CHARACTER(len=:), allocatable, INTENT(inout) :: prefix
+    character(10) test_prefix
     integer l
-    l = len(prefix)
+    l = 10
+    RM_GetFilePrefix = RMF_GetFilePrefix(id, test_prefix, l)
+    if (allocated(prefix)) deallocate(prefix)
+    allocate(character(len=l) :: prefix)
     RM_GetFilePrefix = RMF_GetFilePrefix(id, prefix, l)
     END FUNCTION RM_GetFilePrefix
 
-    !> Returns the number of gas phase components in the initial-phreeqc module.
+    !> Returns the number of gas phase components found by call(s) to FindComponents.
     !> @ref RM_FindComponents must be called before @ref RM_GetGasComponentsCount.
     !> This method may be useful when generating selected output definitions related to
     !> gas phases.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 The number of gas phase components in the initial-phreeqc module.
+    !> @param id          The instance @a id returned from @ref RM_Create.
+    !> @retval            The number of gas phase components in the initial-phreeqc module.
     !> @see
     !> @ref RM_FindComponents,
-    !> @ref RM_GetGasComponentsName.
+    !> @ref RM_GetGasComponentsNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> input = trim(input) // "  -gas " // new_line(c)
+    !> character(len=:), allocatable :: names(:)
+    !> status = RM_GetGasComponentsNames(id, names)
     !> do i = 1, RM_GetGasComponentsCount(id)
-    !>   status = RM_GetGasComponentsName(id, i, line)
-    !>   input = trim(input) // "    " // line // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetGasComponentsCount(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1498,14 +1496,13 @@
     RM_GetGasComponentsCount = RMF_GetGasComponentsCount(id)
     END FUNCTION RM_GetGasComponentsCount
 
-    !> Retrieves an item from the gas components list.
-    !> The list includes all gas components included in any GAS_PHASE definitions in
-    !> the initial-phreeqc module.
-    !> @ref RM_FindComponents must be called before @ref RM_GetGasComponentsName.
-    !> This method may be useful when generating selected output definitions related to gas phases.
+    !> Retrieves a list of the gas component names.
+    !> The list includes all gas components found by calls to FindComponents.
+    !> @ref RM_FindComponents must be called before @ref RM_GetGasComponentsNames.
+    !> This method may be useful when generating selected output definitions related 
+    !> to gas phases.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param num              The number of the gas component name to be retrieved. Fortran, 1 based.
-    !> @param name             The gas component name at number @a num.
+    !> @param names            Allocatable array of gas component names.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
@@ -1514,10 +1511,10 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> input = trim(input) // "  -gas " // new_line(c)
+    !> character(len=:), allocatable :: names(:)
+    !> status = RM_GetGasComponentsNames(id, names)
     !> do i = 1, RM_GetGasComponentsCount(id)
-    !>   status = RM_GetGasComponentsName(id, i, line)
-    !>   input = trim(input) // "    " // line // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
@@ -1569,12 +1566,11 @@
     !> to the array given in the argument list (@a gas_moles).
     !>
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param gas_moles        Array to receive the moles of gas components for each cell.
-    !> Dimension of the array is (@a nxyz, @a ngas_comps),
+    !> @param gas_moles        Allocatable array to receive the moles of gas components 
+    !> for each cell. Dimension of the array is set to (@a nxyz, @a ngas_comps),
     !> where @a nxyz is the number of user grid cells and @a ngas_comps is the result
     !> of @ref RM_GetGasComponentsCount. If a gas component is not defined for a cell,
     !> the number of moles is set to -1. Values for inactive cells are set to 1e30.
-    !>
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !>
     !> @see
@@ -1589,8 +1585,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> ngas_comps = RM_GetGasComponentsCount(id)
-    !> allocate(gas_moles(nxyz, ngas_comps))
+    !> real(kind=8), allocatable :: gas_moles(:,:)
     !> status = RM_RunCells(id)
     !> status = RM_GetGasCompMoles(id, gas_moles)
     !> </PRE>
@@ -1598,7 +1593,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
     INTEGER FUNCTION RM_GetGasCompMoles(id, gas_moles)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1635,16 +1629,13 @@
 
     !> Transfer pressures of gas components from each reaction cell
     !> to the array given in the argument list (@a gas_p).
-    !>
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param gas_p        Array to receive the moles of gas components for each cell.
-    !> Dimension of the array is (@a nxyz, @a ngas_comps),
+    !> @param id             The instance @a id returned from @ref RM_Create.
+    !> @param gas_p          Allocatable array to receive the moles of gas components for 
+    !> each cell. Dimension of the array is set to (@a nxyz, @a ngas_comps),
     !> where @a nxyz is the number of user grid cells and @a ngas_comps is the result
     !> of @ref RM_GetGasComponentsCount. If a gas component is not defined for a cell,
     !> the pressure is set to -1. Values for inactive cells are set to 1e30.
-    !> Values for inactive cells are set to 1e30.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !>
+    !> @retval IRM_RESULT     0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
     !> @ref RM_GetGasComponentsCount,
@@ -1657,8 +1648,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> ngas_comps = RM_GetGasComponentsCount(id)
-    !> allocate(gas_p(nxyz, ngas_comps))
+    !> real(kind=8), allocatable :: gas_p(:,:)
     !> status = RM_RunCells(id)
     !> status = RM_GetGasCompPressures(id, gas_p)
     !> </PRE>
@@ -1666,7 +1656,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
     INTEGER FUNCTION RM_GetGasCompPressures(id, gas_p)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1691,16 +1680,13 @@
     !> Transfer fugacity coefficients (phi) of gas components from each reaction cell
     !> to the array given in the argument list (@a gas_phi). Fugacity of a gas component
     !> is equal to the pressure of the component times the fugacity coefficient.
-    !>
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param gas_phi        Array to receive the fugacity coefficients
-    !> of gas components for each cell.
-    !> Dimension of the array is (@a nxyz, @a ngas_comps),
+    !> @param id             The instance @a id returned from @ref RM_Create.
+    !> @param gas_phi        Allocatable array to receive the fugacity coefficients
+    !> of gas components for each cell. Dimension of the array is set to (@a nxyz, @a ngas_comps),
     !> where @a nxyz is the number of user grid cells and @a ngas_comps is the result
     !> of @ref RM_GetGasComponentsCount. If a gas component is not defined for a cell,
     !> the fugacity coefficient is set to -1. Values for inactive cells are set to 1e30.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !>
+    !> @retval IRM_RESULT     0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
     !> @ref RM_GetGasComponentsCount,
@@ -1713,8 +1699,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> ngas_comps = RM_GetGasComponentsCount(id)
-    !> allocate(gas_phi(nxyz, ngas_comps))
+    !> real(kind=8), allocatable :: gas_phi(:,:)
     !> status = RM_RunCells(id)
     !> status = RM_GetGasCompPhi(id, gas_phi)
     !> </PRE>
@@ -1722,7 +1707,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
     INTEGER FUNCTION RM_GetGasCompPhi(id, gas_phi)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1745,16 +1729,13 @@
     END FUNCTION RM_GetGasCompPhi
 
     !> Transfer volume of gas from each reaction cell
-    !> to the vector given in the argument list (@a gas_volume).
-    !>
+    !> to the array given in the argument list (@a gas_volume).
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param gas_volume        Array to receive the gas phase volumes.
-    !> Dimension of the array must be @a nxyz,
-    !> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
-    !> If a gas phase is not defined for a cell, the volume is set to -1.
-    !> Values for inactive cells are set to 1e30.
+    !> @param gas_volume       Array to receive the gas phase volumes.
+    !> Dimension of the array is set to @a nxyz, where @a nxyz is the number of user 
+    !> grid cells (@ref RM_GetGridCellCount). If a gas phase is not defined for a cell, 
+    !> the volume is set to -1. Values for inactive cells are set to 1e30.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !>
     !> @see
     !> @ref RM_FindComponents,
     !> @ref RM_GetGasComponentsCount,
@@ -1767,8 +1748,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> ngas_comps = RM_GetGasComponentsCount(id)
-    !> allocate(gas_volume(nxyz, ngas_comps))
+    !> real(kind=8), allocatable :: gas_volume(:)
     !> status = RM_RunCells(id)
     !> status = RM_GetGasPhaseVolume(id, gas_volume)
     !> </PRE>
@@ -1776,7 +1756,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
     INTEGER FUNCTION RM_GetGasPhaseVolume(id, gas_volume)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1797,10 +1776,12 @@
     return
     END FUNCTION RM_GetGasPhaseVolume
 
-    !> Returns the gram formula weights (g/mol) for the components in the reaction-module component list.
+    !> Returns the gram formula weights (g/mol) for the components in the reaction-module 
+    !> component list.
     !> @param id               The instance id returned from @ref RM_Create.
-    !> @param gfw              Array to receive the gram formula weights. Dimension of the array is @a ncomps,
-    !> where @a ncomps is the number of components in the component list.
+    !> @param gfw              Array to receive the gram formula weights. Dimension of the 
+    !> array is set to @a ncomps, where @a ncomps is the number of components in the 
+    !> component list.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
@@ -1810,14 +1791,12 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> character(100),   dimension(:), allocatable   :: components
-    !> real(kind=8), dimension(:), allocatable   :: gfw
+    !> character(len=:), allocatable :: components(:)
+    !> real(kind=8), allocatable   :: gfw(:)
     !> ncomps = RM_FindComponents(id)
-    !> allocate(components(ncomps))
-    !> allocate(gfw(ncomps))
     !> status = RM_GetGfw(id, gfw)
+    !> status = RM_GetComponents(id, components)
     !> do i = 1, ncomps
-    !>   status = RM_GetComponent(id, i, components(i))
     !>   write(string,"(A10, F15.4)") components(i), gfw(i)
     !>   status = RM_OutputMessage(id, string)
     !> enddo
@@ -1826,7 +1805,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetGfw(id, gfw)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1846,15 +1824,15 @@
     RM_GetGfw = RMF_GetGfw(id, gfw)
     END FUNCTION RM_GetGfw
 
-    !> Returns the number of grid cells in the user's model, which is defined in the call to @ref RM_Create.
-    !> The mapping from grid cells to reaction cells is defined by @ref RM_CreateMapping.
-    !> The number of reaction cells may be less than the number of grid cells if
-    !> there are inactive regions or symmetry in the model definition.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 Number of grid cells in the user's model, negative is failure (See @ref RM_DecodeError).
+    !> Returns the number of grid cells in the user's model, which is defined in 
+    !> the creation or initialization of the PhreeqcRM instance.
+    !> @param id          The instance @a id returned from @ref RM_Create.
+    !> @retval            Number of grid cells in the user's model, negative is failure 
+    !> (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_Create,
-    !> @ref RM_CreateMapping.
+    !> @ref RM_CreateMapping,
+    !> @ref RM_InitializeYAML.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -1884,18 +1862,18 @@
 
     !> Returns an IPhreeqc id for the @a ith IPhreeqc instance in the reaction module.
     !> For the threaded version, there are @a nthreads + 2 IPhreeqc instances, where
-    !> @a nthreads is defined in the constructor (@ref RM_Create).
+    !> @a nthreads is defined in the constructor (@ref RM_Create) or initialization.
     !> The number of threads can be determined by @ref RM_GetThreadCount.
     !> The first @a nthreads (0 based) instances will be the workers, the
-    !> next (@a nthreads) is the InitialPhreeqc instance, and the next (@a nthreads + 1) is the Utility instance.
-    !> Getting the IPhreeqc pointer for one of these instances allows the user to use any of the IPhreeqc methods
-    !> on that instance.
+    !> next (@a nthreads) is the InitialPhreeqc instance, and the next (@a nthreads + 1) 
+    !> is the Utility instance. Getting the IPhreeqc pointer for one of these instances 
+    !> allows the user to use any of the IPhreeqc methods on that instance.
     !> For MPI, each process has exactly three IPhreeqc instances, one worker (number 0),
     !> one InitialPhreeqc instance (number 1), and one Utility instance (number 2).
-    !>
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param i                The number of the IPhreeqc instance to be retrieved (0 based).
-    !> @retval                 IPhreeqc id for the @a ith IPhreeqc instance, negative is failure (See @ref RM_DecodeError).
+    !> @param id        The instance @a id returned from @ref RM_Create.
+    !> @param i         The number of the IPhreeqc instance to be retrieved (0 based).
+    !> @retval          IPhreeqc id for the @a ith IPhreeqc instance, negative is failure 
+    !> (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_Create,
     !> @ref RM_GetThreadCount.
@@ -1911,7 +1889,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-
     INTEGER FUNCTION RM_GetIPhreeqcId(id, i)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1929,18 +1906,18 @@
     RM_GetIPhreeqcId = RMF_GetIPhreeqcId(id, i)
     END FUNCTION RM_GetIPhreeqcId
 	
-	!> Transfer the concentration from each cell for one component to the vector given in the 
+	!> Transfer the concentration from each cell for one component to the array given in the 
 	!> argument list (@a c). The concentrations are those resulting from the last call
 	!> to @ref RM_RunCells. Units of concentration for @a c are defined by @ref RM_SetUnitsSolution.
     !> @param id               The instance @a id returned from @ref RM_Create.
 	!> @param i                One-based index for the component to retrieve. Indices refer
 	!> to the order produced by @ref RM_GetComponents. The total number of components is given by
 	!> @ref RM_GetComponentCount.
-	!> @param c                Vector to receive the component concentrations.
-	!> Dimension of the vector is set to @a nxyz, where @a nxyz is the number of 
+	!> @param c                Allocatable array to receive the component concentrations.
+	!> Dimension of the array is set to @a nxyz, where @a nxyz is the number of 
 	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
 	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-	!> @see                    @ref RM_FindComponents, @ref RM_GetComponents, @ref RM_GetComponentCount, 
+	!> @see    @ref RM_FindComponents, @ref RM_GetComponents, @ref RM_GetComponentCount, 
 	!> @ref RM_GetConcentrations.
 	!> @par Fortran Example:
 	!> @htmlonly
@@ -1948,7 +1925,7 @@
 	!> <PRE>
 	!> real(kind=8), allocatable, dimension(:) :: c
 	!> status = RM_RunCells(id)
-	!> status = phreeqc_rm.GetIthConcentration(id, 0, c)
+	!> status = phreeqc_rm.GetIthConcentration(id, 1, c)
 	!> </PRE>
 	!> </CODE>
 	!> @endhtmlonly
@@ -1976,20 +1953,20 @@
     return
     END FUNCTION RM_GetIthConcentration
 
-	!> Transfer the concentration from each cell for one species to the vector given in the
+	!> Transfer the concentrations for one species from each cell to the array given in the
 	!> argument list (@a c). The concentrations are those resulting from the last call
 	!> to @ref RM_RunCells. Units of concentration for @a c are mol/L.
 	!> To retrieve species concentrations, @ref RM_SetSpeciesSaveOn must be set to @a true.
 	!> This method is for use with multicomponent diffusion calculations.
 	!> @param id               The instance @a id returned from @ref RM_Create.
 	!> @param i                One-based index for the species to retrieve. Indices refer
-	!> to the order given by @ref RM_GetSpeciesName. The total number of species is given
+	!> to the order given by @ref RM_GetSpeciesNames. The total number of species is given
 	!> by @ref RM_GetSpeciesCount.
-	!> @param c                Vector to receive the species concentrations.
-	!> Dimension of the vector is set to @a nxyz, where @a nxyz is the number of
+	!> @param c                Allocatable array to receive the species concentrations.
+	!> Dimension of the array is set to @a nxyz, where @a nxyz is the number of
 	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
 	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-	!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesName,
+	!> @see         @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesName,
 	!> @ref RM_GetSpeciesConcentrations, @ref RM_SetSpeciesSaveOn.
 	!> @par Fortran Example:
 	!> @htmlonly
@@ -1997,7 +1974,7 @@
 	!> <PRE>
 	!> real(kind=8), allocatable, dimension(:) :: c
 	!> status = RM_RunCells(id)
-	!> status = RM_GetIthSpeciesConcentration(id, 0, c)
+	!> status = RM_GetIthSpeciesConcentration(id, 1, c)
 	!> </PRE>
 	!> </CODE>
 	!> @endhtmlonly
@@ -2025,30 +2002,29 @@
     return
     END FUNCTION RM_GetIthSpeciesConcentration
 
-    !> Returns the number of kinetic reactions in the initial-phreeqc module.
+    !> Returns the number of kinetic reactions found by call(s) to @ref FindComponents.
     !> @ref RM_FindComponents must be called before @ref RM_GetKineticReactionsCount.
     !> This method may be useful when generating selected output definitions related to
     !> kinetic reactions.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 The number of kinetic reactions in the initial-phreeqc module.
+    !> @param id          The instance @a id returned from @ref RM_Create.
+    !> @retval            The number of kinetic reactions in the initial-phreeqc module.
     !> @see
     !> @ref RM_FindComponents,
-    !> @ref RM_GetKineticReactionsName.
+    !> @ref RM_GetKineticReactionsNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> input = trim(input) // "  -kinetics " // new_line(c)
+    !> character(len=:), allocatable :: names(:)
+    !> status = RM_GetKineticReactionsNames(id, names)
     !> do i = 1, RM_GetKineticReactionsCount(id)
-    !>   status = RM_GetKineticReactionsName(id, i, line)
-    !>   input = trim(input) // "    " // line // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetKineticReactionsCount(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2064,14 +2040,13 @@
     RM_GetKineticReactionsCount = RMF_GetGetKineticReactionsCount(id)
     END FUNCTION RM_GetKineticReactionsCount
 
-    !> Retrieves an item from the kinetic reactions list.
-    !> The list includes all kinetic reactions included in any KINETICS definitions in
-    !> the initial-phreeqc module.
-    !> @ref RM_FindComponents must be called before @ref RM_GetKineticReactionsName.
-    !> This method may be useful when generating selected output definitions related to kinetic reactions.
+    !> Retrieves a list of kinetic reaction names.
+    !> The list includes all kinetic reactions found by call(s) to @ref FindComponents.
+    !> @ref RM_FindComponents must be called before @ref RM_GetKineticReactionsNames.
+    !> This method may be useful when generating selected output definitions related to 
+    !> kinetic reactions.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param num              The number of the kinetic reaction name to be retrieved. Fortran, 1 based.
-    !> @param name             The kinetic reaction name at number @a num.
+    !> @param names            Allocatable array for kinetic reaction names
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
@@ -2080,17 +2055,16 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> input = trim(input) // "  -kinetics " // new_line(c)
+    !> character(len=:), allocatable :: names(:)
+    !> status = RM_GetKineticReactionsNames(id, names)
     !> do i = 1, RM_GetKineticReactionsCount(id)
-    !>   status = RM_GetKineticReactionsName(id, i, line)
-    !>   input = trim(input) // "    " // line // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetKineticReactionsNames(id, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2140,7 +2114,8 @@
     !> number of reaction-module processes is defined by the communicator used in
     !> constructing the reaction modules (@ref RM_Create).
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 The MPI task number for a process, negative is failure (See @ref RM_DecodeError).
+    !> @retval                 The MPI task number for a process, negative is failure 
+    !> (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_GetMpiTasks.
     !> @par Fortran Example:
@@ -2173,12 +2148,12 @@
     !> Returns the number of MPI processes (tasks) assigned to the reaction module.
     !> For the OPENMP version, the number of tasks is always
     !> one (although there may be multiple threads, @ref RM_GetThreadCount),
-    !> and the task number returned by @ref RM_GetMpiMyself is zero. For the MPI version, the number of
-    !> tasks and computer hosts are determined at run time by the mpiexec command. An MPI communicator
-    !> is used in constructing reaction modules for MPI. The communicator may define a subset of the
-    !> total number of MPI processes.
+    !> and the task number returned by @ref RM_GetMpiMyself is zero. For the MPI version, 
+    !> the number of tasks and computer hosts are determined at run time by the mpiexec 
+    !> command. An MPI communicator is used in constructing reaction modules for MPI. 
+    !> The communicator may define a subset of the total number of MPI processes. 
     !> The root task number is zero, and all workers have a task number greater than zero.
-    !> @param id               The instance @a id returned from @ref RM_Create.
+    !> @param id             The instance @a id returned from @ref RM_Create.
     !> @retval                 The number of MPI  processes assigned to the reaction module,
     !> negative is failure (See @ref RM_DecodeError).
     !> @see
@@ -2196,7 +2171,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-
     INTEGER FUNCTION RM_GetMpiTasks(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2221,15 +2195,16 @@
     !> in sequence. @ref RM_SetCurrentSelectedOutputUserNumber is then used to select
     !> that user number for selected-output processing.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param n                The sequence number of the selected-output definition for which the user number will be returned.
-    !> Fortran, 1 based.
-    !> @retval                 The user number of the @a nth selected-output definition, negative is failure (See @ref RM_DecodeError).
+    !> @param n                The sequence number of the selected-output definition for 
+    !> which the user number will be returned. Fortran, 1 based.
+    !> @retval                 The user number of the @a nth selected-output definition, 
+    !> negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_GetCurrentSelectedOutputUserNumber,
     !> @ref RM_GetSelectedOutput,
     !> @ref RM_GetSelectedOutputColumnCount,
     !> @ref RM_GetSelectedOutputCount,
-    !> @ref RM_GetSelectedOutputHeading,
+    !> @ref RM_GetSelectedOutputHeadings,
     !> @ref RM_GetSelectedOutputRowCount,
     !> @ref RM_SetCurrentSelectedOutputUserNumber,
     !> @ref RM_SetNthSelectedOutput,
@@ -2254,7 +2229,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetNthSelectedOutputUserNumber(id, n)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2273,24 +2247,22 @@
     !> Transfer current porosities to the array given in the argument list (@a porosity).
     !> Porosity is not changed by PhreeqcRM; the values are either the default values
     !> or the values set by the last call to @ref RM_SetPorosity.
-    !>
-    !> @param id                   The instance @a id returned from @ref RM_Create.
-    !> @param porosity              Array to receive the porosities. Dimension of the array is @a nxyz,
-    !> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+    !> @param id                The instance @a id returned from @ref RM_Create.
+    !> @param porosity           Array to receive the porosities. Dimension of the array 
+    !> is set to @a nxyz, where @a nxyz is the number of user grid cells  
+    !> (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
     !> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
-    !>
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> allocate(porosity(nxyz))
+    !> real(kind=8), allocatable :: porosity(:)
     !> status = RM_GetPorosity(id, porosity)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetPorosity(id, porosity)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2315,24 +2287,22 @@
     !> Pressure is not usually calculated by PhreeqcRM; the values are either the default values
     !> or the values set by the last call to @ref RM_SetPressure. Pressures can be calculated
     !> by PhreeqcRM if a fixed-volume GAS_PHASE is used.
-    !>
-    !> @param id                   The instance @a id returned from @ref RM_Create.
-    !> @param pressure              Array to receive the porosities. Dimension of the array is @a nxyz,
-    !> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+    !> @param id              The instance @a id returned from @ref RM_Create.
+    !> @param pressure        Array to receive the porosities. Dimension of the array is set 
+    !> to @a nxyz, where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount). 
+    !> Values for inactive cells are set to 1e30.
     !> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
-    !>
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> allocate(pressure(nxyz))
+    !> real(kind=8), allocatable :: pressure(:)
     !> status = RM_GetPressure(id, pressure)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetPressure(id, pressure)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2353,26 +2323,24 @@
     return
     END FUNCTION RM_GetPressure
 
-    !> Returns a vector of saturations (@a sat_calc) as calculated by the reaction module.
-    !> Reactions will change the volume of solution in a cell.
-    !> This method always returns solution_volume/(rv * porosity); the method 
-    !> @ref RM_SetSaturationUser has no effect on the values returned.    
-    !> The transport code must decide whether to ignore or account for this change in solution  
-    !> volume due to reactions. Following reactions, the cell saturation is calculated as 
-    !> solution volume (@ref RM_GetSolutionVolume) divided by the product of representative 
-    !> volume (@ref RM_SetRepresentativeVolume) and the porosity (@ref RM_SetPorosity).
-    !> The cell saturation returned by @a RM_GetSaturationCalculated may be less than or 
-    !> greater than the saturation set by the transport code (@ref RM_SetSaturationUserUser), 
-    !> and may be greater than or less than 1.0, even in fully saturated simulations.
-    !> Only the following databases distributed with PhreeqcRM have molar volume information needed
-    !> to accurately calculate solution volume and saturation: phreeqc.dat, Amm.dat, and pitzer.dat.
-    !>
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param sat_calc              Vector to receive the saturations. Dimension of the array is set to @a nxyz,
-    !> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
+    !> Returns an array of saturations (@a sat_calc) as calculated by the reaction module.
+    !> Reactions will change the volume of solution in a cell. This method always returns 
+    !> solution_volume/(rv * porosity); the method  @ref RM_SetSaturationUser has no effect 
+    !> on the values returned. The transport code must decide whether to ignore or account 
+    !> for this change in solution volume due to reactions. Following reactions, the cell 
+    !> saturation is calculated as solution volume (@ref RM_GetSolutionVolume) divided by 
+    !> the product of representative volume (@ref RM_SetRepresentativeVolume) and the porosity 
+    !> (@ref RM_SetPorosity). The cell saturation returned by @a RM_GetSaturationCalculated 
+    !> may be less than or greater than the saturation set by the transport code 
+    !> (@ref RM_SetSaturationUserUser), and may be greater than or less than 1.0, even in 
+    !> fully saturated simulations. Only the following databases distributed with PhreeqcRM
+    !> have molar volume information needed to accurately calculate solution volume and 
+    !> saturation: phreeqc.dat, Amm.dat, and pitzer.dat.
+    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @param sat_calc      Array to receive the saturations. Dimension of the array is set to 
+    !> @a nxyz, where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
     !> Values for inactive cells are set to 1e30.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !>
     !> @see
     !> @ref RM_GetSolutionVolume,
     !> @ref RM_SetPorosity,
@@ -2382,7 +2350,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> allocate(sat_calc(nxyz))
+    !> real(kind=8), allocatable :: sat_calc(:)
     !> status = RM_RunCells(id)
     !> status = RM_GetSaturationCalculated(id, sat_calc)
     !> </PRE>
@@ -2390,7 +2358,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
     INTEGER FUNCTION RM_GetSaturationCalculated(id, sat_calc)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2410,19 +2377,21 @@
     RM_GetSaturationCalculated = RMF_GetSaturationCalculated(id, sat_calc)
     END FUNCTION RM_GetSaturationCalculated
 
-    !> Populates an array with values from the current selected-output definition. @ref RM_SetCurrentSelectedOutputUserNumber
-    !> determines which of the selected-output definitions is used to populate the array.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param so               An array to contain the selected-output values. Size of the array is (@a nxyz, @a col),
-    !> where @a nxyz is the number of grid cells in the user's model (@ref RM_GetGridCellCount), and @a col is the number of
-    !> columns in the selected-output definition (@ref RM_GetSelectedOutputColumnCount).
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+    !> Populates an array with values from the current selected-output definition. 
+    !> @ref RM_SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput determines 
+    !> which of the selected-output definitions is used to populate the array.
+    !> @param id           The instance @a id returned from @ref RM_Create.
+    !> @param so           An array to contain the selected-output values. Size of the array 
+    !> is set to (@a nxyz, @a col), where @a nxyz is the number of grid cells in the user's 
+    !> model (@ref RM_GetGridCellCount), and @a col is the number of columns in the 
+    !> selected-output definition (@ref RM_GetSelectedOutputColumnCount).
+    !> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_GetCurrentSelectedOutputUserNumber,
     !> @ref RM_GetNthSelectedOutputUserNumber,
     !> @ref RM_GetSelectedOutputColumnCount,
     !> @ref RM_GetSelectedOutputCount,
-    !> @ref RM_GetSelectedOutputHeading,
+    !> @ref RM_GetSelectedOutputHeadings,
     !> @ref RM_GetSelectedOutputRowCount,
     !> @ref RM_SetCurrentSelectedOutputUserNumber,
     !> @ref RM_SetNthSelectedOutput,
@@ -2431,21 +2400,27 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
+    !> character(len=:), allocatable :: headings
+    !> real(kind=8), allocatable :: selected_out
     !> do isel = 1, RM_GetSelectedOutputCount(id)
     !>   n_user = RM_GetNthSelectedOutputUserNumber(id, isel)
     !>   status = RM_SetCurrentSelectedOutputUserNumber(id, n_user)
-    !>   col = RM_GetSelectedOutputColumnCount(id)
-    !>   allocate(selected_out(nxyz,col))
     !>   status = RM_GetSelectedOutput(id, selected_out)
-    !>   ! Process results here
-    !>   deallocate(selected_out)
+    !>   status = RM_GetSelectedOutputHeadings(id, headings)
+    !>   ! Print results
+    !>   do i = 1, RM_GetSelectedOutputRowCount(id)
+    !>     write(*,*) "Cell number ", i
+    !>     write(*,*) "     Selected output: "
+    !>     do j = 1, RM_GetSelectedOutputColumnCount(id)
+    !>       write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ", trim(headings(j)),": ", selected_out(i,j)
+    !>     enddo
+    !>   enddo
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
     INTEGER FUNCTION RM_GetSelectedOutput(id, so)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2467,16 +2442,18 @@
     RM_GetSelectedOutput = RMF_GetSelectedOutput(id, so)
     END FUNCTION RM_GetSelectedOutput
 
-    !> Returns the number of columns in the current selected-output definition. @ref RM_SetCurrentSelectedOutputUserNumber
+    !> Returns the number of columns in the current selected-output definition. 
+    !> @ref RM_SetCurrentSelectedOutputUserNumber or @rem SetNthSelectedOutput
     !> determines which of the selected-output definitions is used.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 Number of columns in the current selected-output definition, negative is failure (See @ref RM_DecodeError).
+    !> @retval                 Number of columns in the current selected-output 
+    !> definition, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_GetCurrentSelectedOutputUserNumber,
     !> @ref RM_GetNthSelectedOutputUserNumber,
     !> @ref RM_GetSelectedOutput,
     !> @ref RM_GetSelectedOutputCount,
-    !> @ref RM_GetSelectedOutputHeading,
+    !> @ref RM_GetSelectedOutputHeadings,
     !> @ref RM_GetSelectedOutputRowCount,
     !> @ref RM_SetCurrentSelectedOutputUserNumber,
     !> @ref RM_SetNthSelectedOutput,
@@ -2485,21 +2462,18 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
+    !> real(kind=8), allocatable :: selected_out(:,:)
     !> do isel = 1, RM_GetSelectedOutputCount(id)
     !>   n_user = RM_GetNthSelectedOutputUserNumber(id, isel)
     !>   status = RM_SetCurrentSelectedOutputUserNumber(id, n_user)
-    !>   col = RM_GetSelectedOutputColumnCount(id)
-    !>   allocate(selected_out(nxyz,col))
     !>   status = RM_GetSelectedOutput(id, selected_out)
     !>   ! Process results here
-    !>   deallocate(selected_out)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetSelectedOutputColumnCount(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2515,16 +2489,18 @@
     RM_GetSelectedOutputColumnCount = RMF_GetSelectedOutputColumnCount(id)
     END FUNCTION RM_GetSelectedOutputColumnCount
 
-    !> Returns the number of selected-output definitions. @ref RM_SetCurrentSelectedOutputUserNumber
+    !> Returns the number of selected-output definitions. 
+    !> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput
     !> determines which of the selected-output definitions is used.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 Number of selected-output definitions, negative is failure (See @ref RM_DecodeError).
+    !> @retval                 Number of selected-output definitions, negative is failure 
+    !> (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_GetCurrentSelectedOutputUserNumber,
     !> @ref RM_GetNthSelectedOutputUserNumber,
     !> @ref RM_GetSelectedOutput,
     !> @ref RM_GetSelectedOutputColumnCount,
-    !> @ref RM_GetSelectedOutputHeading,
+    !> @ref RM_GetSelectedOutputHeadings,
     !> @ref RM_GetSelectedOutputRowCount,
     !> @ref RM_SetCurrentSelectedOutputUserNumber,
     !> @ref RM_SetNthSelectedOutput,
@@ -2533,21 +2509,18 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
+    !> real(kind=8), allocatable :: selected_out(:,:)
     !> do isel = 1, RM_GetSelectedOutputCount(id)
     !>   n_user = RM_GetNthSelectedOutputUserNumber(id, isel)
     !>   status = RM_SetCurrentSelectedOutputUserNumber(id, n_user)
-    !>   col = RM_GetSelectedOutputColumnCount(id)
-    !>   allocate(selected_out(nxyz,col))
     !>   status = RM_GetSelectedOutput(id, selected_out)
     !>   ! Process results here
-    !>   deallocate(selected_out)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetSelectedOutputCount(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2563,9 +2536,10 @@
     RM_GetSelectedOutputCount = RMF_GetSelectedOutputCount(id)
     END FUNCTION RM_GetSelectedOutputCount
 
-    !> Returns a selected output heading. The number of headings is determined by @ref RM_GetSelectedOutputColumnCount.
-    !> @ref RM_SetCurrentSelectedOutputUserNumber
-    !> determines which of the selected-output definitions is used.
+    !> PRIVATE Returns a selected output heading. The number of headings is determined by 
+    !> @ref RM_GetSelectedOutputColumnCount. @ref RM_SetCurrentSelectedOutputUserNumber
+    !> or @ref RM_SetNthSelectedOutput determines which of the selected-output definitions 
+    !> is used.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param icol             The sequence number of the heading to be retrieved. Fortran, 1 based.
     !> @param heading          A string buffer to receive the heading.
@@ -2598,7 +2572,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetSelectedOutputHeading(id, icol, heading)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2616,11 +2589,11 @@
     RM_GetSelectedOutputHeading = RMF_GetSelectedOutputHeading(id, icol, heading, len(heading))
     END FUNCTION RM_GetSelectedOutputHeading
     
-        !> Returns the selected-output headings for the current selected-output file.
+    !> Returns the selected-output headings for the current selected-output file.
     !> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput
-    !> determine which of the selected-output definitions is used.
+    !> determines which of the selected-output definitions is used.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param headings          A deferred length, allocatable, 1D character variable.
+    !> @param headings         Allocatable, 1D character variable.
     !> to receive the headings. Character length and dimension will be allocated as needed.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
@@ -2629,7 +2602,6 @@
     !> @ref RM_GetSelectedOutput,
     !> @ref RM_GetSelectedOutputColumnCount,
     !> @ref RM_GetSelectedOutputCount,
-    !> @ref RM_GetSelectedOutputHeading,
     !> @ref RM_GetSelectedOutputRowCount,
     !> @ref RM_SetCurrentSelectedOutputUserNumber,
     !> @ref RM_SetNthSelectedOutput,
@@ -2638,7 +2610,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> character(len=:), allocatable, dimension(:) :: headings
+    !> character(len=:), allocatable, :: headings(:)
     !> do isel = 1, RM_GetSelectedOutputCount(id)
     !>   status = RM_SetNthSelectedOutput(id, isel)
     !>   status = RM_GetSelectedOutputHeadings(id, headings)
@@ -2648,8 +2620,7 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
-	INTEGER FUNCTION RM_GetSelectedOutputHeadings(id, headings)
+    INTEGER FUNCTION RM_GetSelectedOutputHeadings(id, headings)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
@@ -2677,14 +2648,15 @@
     !> is included only for convenience; the number of rows is always equal to the number of
     !> grid cells in the user's model, and is equal to @ref RM_GetGridCellCount.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 Number of rows in the current selected-output definition, negative is failure (See @ref RM_DecodeError).
+    !> @retval                 Number of rows in the current selected-output definition, 
+    !> negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_GetCurrentSelectedOutputUserNumber,
     !> @ref RM_GetNthSelectedOutputUserNumber,
     !> @ref RM_GetSelectedOutput,
     !> @ref RM_GetSelectedOutputColumnCount,
     !> @ref RM_GetSelectedOutputCount,
-    !> @ref RM_GetSelectedOutputHeading,
+    !> @ref RM_GetSelectedOutputHeadings,
     !> @ref RM_SetCurrentSelectedOutputUserNumber,
     !> @ref RM_SetNthSelectedOutput,
     !> @ref RM_SetSelectedOutputOn.
@@ -2692,22 +2664,21 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
+    !> character(len=:), allocatable :: headings
+    !> real(kind=8), allocatable :: selected_out
     !> do isel = 1, RM_GetSelectedOutputCount(id)
     !>   n_user = RM_GetNthSelectedOutputUserNumber(id, isel)
     !>   status = RM_SetCurrentSelectedOutputUserNumber(id, n_user)
-    !>   col = RM_GetSelectedOutputColumnCount(id)
-    !>   allocate(selected_out(nxyz,col))
     !>   status = RM_GetSelectedOutput(id, selected_out)
+    !>   status = RM_GetSelectedOutputHeadings(id, headings)
     !>   ! Print results
     !>   do i = 1, RM_GetSelectedOutputRowCount(id)
     !>     write(*,*) "Cell number ", i
     !>     write(*,*) "     Selected output: "
-    !>     do j = 1, col
-    !>       status = RM_GetSelectedOutputHeading(id, j, heading)
-    !>       write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ", trim(heading),": ", selected_out(i,j)
+    !>     do j = 1, RM_GetSelectedOutputColumnCount(id)
+    !>       write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ", trim(headings(j)),": ", selected_out(i,j)
     !>     enddo
     !>   enddo
-    !>   deallocate(selected_out)
     !> enddo
     !> </PRE>
     !> </CODE>
@@ -2729,31 +2700,32 @@
     INTEGER, INTENT(in) :: id
     RM_GetSelectedOutputRowCount = RMF_GetSelectedOutputRowCount(id)
     END FUNCTION RM_GetSelectedOutputRowCount
-    !> Returns the number of phases in the initial-phreeqc module for which saturation indices can be calculated.
+
+    !> Returns the number of phases in the found by @ref FindComponents for which saturation 
+    !> indices can be calculated.
     !> @ref RM_FindComponents must be called before @ref RM_GetSICount.
     !> This method may be useful when generating selected output definitions related to
     !> saturation indices.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 The number of phases in the initial-phreeqc module for which saturation indices
-    !> could be calculated.
+    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @retval              The number of phases in the initial-phreeqc module for which 
+    !> saturation indices can be calculated.
     !> @see
     !> @ref RM_FindComponents,
-    !> @ref RM_GetSIName.
+    !> @ref RM_GetSINames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> input = trim(input) // "  -si "// new_line(c)
+    !> character(len=:), allocatable :: names(:)
+    !> status = RM_GetSINames(id, names)
     !> do i = 1, RM_GetSICount(id)
-    !>   status = RM_GetSIName(id, i, line)
-    !>   input = trim(input) // "    " // line // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetSICount(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2769,16 +2741,15 @@
     RM_GetSICount = RMF_GetSICount(id)
     END FUNCTION RM_GetSICount
 
-    !> Retrieves an item from the list of all phases for which saturation indices can be calculated.
+    !> Retrieves a list of all phases for which saturation indices can be calculated.
     !> The list includes all phases that contain only elements included in the components in
-    !> the initial-phreeqc module.
-    !> The list assumes that all components are present to be able to calculate the entire list of SIs;
-    !> it may be that one or more components are missing in any specific cell.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSIName.
-    !> This method may be useful when generating selected output definitions related to saturation indices.
+    !> the initial-phreeqc module. The list assumes that all components are present to be 
+    !> able to calculate the entire list of SIs; it may be that one or more components are 
+    !> missing in any specific cell. @ref RM_FindComponents must be called before 
+    !> @ref RM_GetSINames. This method may be useful when generating selected output 
+    !> definitions related to saturation indices.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param num              The number of the saturation-index-phase name to be retrieved. Fortran, 1 based.
-    !> @param name             The saturation-index-phase name at number @a num.
+    !> @param name             Allocatable array for saturation-index-phase names.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
@@ -2787,17 +2758,16 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> input = trim(input) // "  -si "// new_line(c)
+    !> character(len=:), allocatable :: names(:)
+    !> status = RM_GetSINames(id, names)
     !> do i = 1, RM_GetSICount(id)
-    !>   status = RM_GetSIName(id, i, line)
-    !>   input = trim(input) // "    " // line // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetSINames(id, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2841,28 +2811,27 @@
 
     !> Returns the number of solid solution components in the initial-phreeqc module.
     !> @ref RM_FindComponents must be called before @ref RM_GetSolidSolutionComponentsCount.
-    !> This method may be useful when generating selected output definitions related to solid solutions.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval                 The number of solid solution components in the initial-phreeqc module.
+    !> This method may be useful when generating selected output definitions related to 
+    !> solid solutions.
+    !> @param id       The instance @a id returned from @ref RM_Create.
+    !> @retval         The number of solid solution components in the initial-phreeqc module.
     !> @see
-    !> @ref RM_FindComponents,
-    !> @ref RM_GetSolidSolutionComponentsName, @ref RM_GetSolidSolutionName.
+    !> @ref RM_FindComponents, @ref RM_GetSolidSolutionComponentsNames,
+    !> @ref RM_GetSolidSolutionNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> input = trim(input) // "  -solid_solutions " // new_line(c)
+    !> character(len=:), allocatable :: names(:)
+    !> status = RM_GetSolidSolutionComponentsNames(id, names)
     !> do i = 1, RM_GetSolidSolutionComponentsCount(id)
-    !>   status = RM_GetSolidSolutionComponentsName(id, i, line)
-    !>   status = RM_GetSolidSolutionName(id, i, line1)
-    !>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetSolidSolutionComponentsCount(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2878,34 +2847,31 @@
     RM_GetSolidSolutionComponentsCount = RMF_GetSolidSolutionComponentsCount(id)
     END FUNCTION RM_GetSolidSolutionComponentsCount
 
-    !> Retrieves an item from the solid solution components list.
-    !> The list includes all solid solution components included in any SOLID_SOLUTIONS definitions in
-    !> the initial-phreeqc module.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSolidSolutionComponentsName.
-    !> This method may be useful when generating selected output definitions related to solid solutions.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param num              The number of the solid solution components name to be retrieved. Fortran, 1 based.
-    !> @param name             The solid solution compnent name at number @a num.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+    !> Retrieves a list of the solid solution component names.
+    !> The list includes all solid solution components found by call(s) to 
+    !> @ref FindComponents. @ref RM_FindComponents must be called before 
+    !> @ref RM_GetSolidSolutionComponentsNames. This method may be useful when 
+    !> generating selected output definitions related to solid solutions.
+    !> @param id          The instance @a id returned from @ref RM_Create.
+    !> @param names       Allocatable array for the solid solution compnent names
+    !> @retval IRM_RESULT 0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_FindComponents,
-    !> @ref RM_GetSolidSolutionComponentsCount, @ref RM_GetSolidSolutionName.
+    !> @ref RM_FindComponents, @ref RM_GetSolidSolutionComponentsCount, 
+    !> @ref RM_GetSolidSolutionNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> input = trim(input) // "  -solid_solutions " // new_line(c)
+    !> character(len=:), allocatable :: names(:)
+    !> status = RM_GetSolidSolutionComponentsNames(id, names)
     !> do i = 1, RM_GetSolidSolutionComponentsCount(id)
-    !>   status = RM_GetSolidSolutionComponentsName(id, i, line)
-    !>   status = RM_GetSolidSolutionName(id, i, line1)
-    !>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+    !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetSolidSolutionComponentsNames(id, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2947,36 +2913,34 @@
     return
     END FUNCTION RM_GetSolidSolutionComponentsName
 
-    !> Retrieves an item from the solid solution names list.
-    !> The list includes solid solution names included in SOLID_SOLUTIONS definitions in
-    !> the initial-phreeqc module.
-    !> The solid solution names vector is the same length as the solid solution components vector
-    !> and provides the corresponding name of solid solution containing the component.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSolidSolutionName.
-    !> This method may be useful when generating selected output definitions related to solid solutions.
+    !> Retrieves a list of solid solution names.
+    !> The list includes solid solution names found by call(s) to @ref FindComponents.
+    !> The solid solution names array is the same length as the solid solution components 
+    !> array and provides the corresponding name of solid solution containing the component.
+    !> @ref RM_FindComponents must be called before @ref RM_GetSolidSolutionNames.
+    !> This method may be useful when generating selected output definitions related to 
+    !> solid solutions.
     !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param num              The number of the solid solution name to be retrieved. Fortran, 1 based.
-    !> @param name             The solid solution name at number @a num.
+    !> @param name             Allocatable array for the solid solution names.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_FindComponents,
-    !> @ref RM_GetSolidSolutionComponentsCount, @ref RM_GetSolidSolutionComponentsName.
+    !> @ref RM_FindComponents, @ref RM_GetSolidSolutionComponentsCount, 
+    !> @ref RM_GetSolidSolutionComponentsNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> input = trim(input) // "  -solid_solutions " // new_line(c)
+    !> character(len=:), allocatable :: names(:), ss_names(:)
+    !> status = RM_GetSolidSolutionComponentsNames(id, names)
+    !> status = RM_GetSolidSolutionNames(id, names)
     !> do i = 1, RM_GetSolidSolutionComponentsCount(id)
-    !>   status = RM_GetSolidSolutionComponentsName(id, i, line)
-    !>   status = RM_GetSolidSolutionName(id, i, line1)
-    !>   input = trim(input) // "    " // line // " # " // line1 // new_line(c)
+    !>   write(*,*) names(i), ss_names(i)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
     INTEGER FUNCTION RM_GetSolidSolutionNames(id, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -3018,25 +2982,23 @@
     return
     END FUNCTION RM_GetSolidSolutionName
 
-
-    !> Transfer solution volumes from the reaction cells to the array given in the argument list (@a vol).
-    !> Solution volumes are those calculated by the reaction module.
-    !> Only the following databases distributed with PhreeqcRM have molar volume information
-    !> needed to accurately calculate solution volume:
-    !> phreeqc.dat, Amm.dat, and pitzer.dat.
-    !>
-    !> @param id                   The instance @a id returned from @ref RM_Create.
-    !> @param vol                  Array to receive the solution volumes. Dimension of the array is (@a nxyz),
-    !> where @a nxyz is the number of user grid cells. Values for inactive cells are set to 1e30.
-    !> @retval IRM_RESULT         0 is success, negative is failure (See @ref RM_DecodeError).
+    !> Transfer solution volumes from the reaction cells to the array given in the 
+    !> argument list (@a vol).
+    !> Solution volumes are those calculated by the reaction module. Only the following 
+    !> databases distributed with PhreeqcRM have molar volume information needed to 
+    !< accurately calculate solution volume: phreeqc.dat, Amm.dat, and pitzer.dat.
+    !> @param id             The instance @a id returned from @ref RM_Create.
+    !> @param vol            Allocatable array to receive the solution volumes. 
+    !> Dimension of the array is set to (@a nxyz), where @a nxyz is the number of user 
+    !> grid cells. Values for inactive cells are set to 1e30.
+    !> @retval IRM_RESULT    0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_GetSaturationCalculated.
-    !>
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> allocate(volume(nxyz))
+    !> real(kind=8), allocatable :: volume(:)allocate(volume)
     !> status = RM_RunCells(id)
     !> status = RM_GetSolutionVolume(id, volume)
     !> </PRE>
@@ -3044,7 +3006,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
     INTEGER FUNCTION RM_GetSolutionVolume(id, vol)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -3580,7 +3541,7 @@
     !> Retrieves the surface name (such as "Hfo") that corresponds with
     !> the surface species name.
     !> The lists of surface species names and surface names are the same length.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceName.
+    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceNames.
     !> This method may be useful when generating selected output definitions related to surfaces.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param num              The number of the surface name to be retrieved. Fortran, 1 based.
@@ -3588,15 +3549,15 @@
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
-    !> @ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceSpeciesName, @ref RM_GetSurfaceType.
+    !> @ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceSpeciesNames, @ref RM_GetSurfaceTypes.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> do i = 1, RM_GetSurfaceSpeciesCount(id)
-    !>   status = RM_GetSurfaceSpeciesName(id, i, line)
-    !>   status = RM_GetSurfaceType(id, i, line1)
-    !>   status = RM_GetSurfaceName(id, i, line2)
+    !>   status = RM_GetSurfaceSpeciesNames(id, i, line)
+    !>   status = RM_GetSurfaceTypes(id, i, line1)
+    !>   status = RM_GetSurfaceNames(id, i, line2)
     !>   input = trim(input) // "    " // line // " # " // line1  // line2 // new_line(c)
     !> enddo
     !> </PRE>
@@ -3652,15 +3613,15 @@
     !> @retval                 The number of surface species in the initial-phreeqc module.
     !> @see
     !> @ref RM_FindComponents,
-    !> @ref RM_GetSurfaceSpeciesName, @ref RM_GetSurfaceType, @ref RM_GetSurfaceName.
+    !> @ref RM_GetSurfaceSpeciesNames, @ref RM_GetSurfaceTypes, @ref RM_GetSurfaceNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> do i = 1, RM_GetSurfaceSpeciesCount(id)
-    !>   status = RM_GetSurfaceSpeciesName(id, i, line)
-    !>   status = RM_GetSurfaceType(id, i, line1)
-    !>   status = RM_GetSurfaceName(id, i, line2)
+    !>   status = RM_GetSurfaceSpeciesNames(id, i, line)
+    !>   status = RM_GetSurfaceTypes(id, i, line1)
+    !>   status = RM_GetSurfaceNames(id, i, line2)
     !>   input = trim(input) // "    " // line // " # " // line1  // line2 // new_line(c)
     !> enddo
     !> </PRE>
@@ -3688,7 +3649,7 @@
     !> The list of surface species (for example, "Hfo_wOH") is derived from the list of components
     !> (@ref RM_FindComponents) and the list of all surface types (such as "Hfo_w")
     !> that are included in SURFACE definitions in the initial-phreeqc module.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesName.
+    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesNames.
     !> This method may be useful when generating selected output definitions related to surfaces.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param num              The number of the surface type to be retrieved. Fortran, 1 based.
@@ -3696,15 +3657,15 @@
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
-    !> @ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceType, @ref RM_GetSurfaceName.
+    !> @ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceTypes, @ref RM_GetSurfaceNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> do i = 1, RM_GetSurfaceSpeciesCount(id)
-    !>   status = RM_GetSurfaceSpeciesName(id, i, line)
-    !>   status = RM_GetSurfaceType(id, i, line1)
-    !>   status = RM_GetSurfaceName(id, i, line2)
+    !>   status = RM_GetSurfaceSpeciesNames(id, i, line)
+    !>   status = RM_GetSurfaceTypes(id, i, line1)
+    !>   status = RM_GetSurfaceNames(id, i, line2)
     !>   input = trim(input) // "    " // line // " # " // line1  // line2 // new_line(c)
     !> enddo
     !> </PRE>
@@ -3757,7 +3718,7 @@
     !> Retrieves the surface site type (such as "Hfo_w") that corresponds with
     !> the surface species name.
     !> The lists of surface species names and surface species types are the same length.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceType.
+    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceTypes.
     !> This method may be useful when generating selected output definitions related to surfaces.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param num              The number of the surface type to be retrieved. Fortran, 1 based.
@@ -3765,15 +3726,15 @@
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_FindComponents,
-    !> @ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceSpeciesName, @ref RM_GetSurfaceName.
+    !> @ref RM_GetSurfaceSpeciesCount, @ref RM_GetSurfaceSpeciesNames, @ref RM_GetSurfaceNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> do i = 1, RM_GetSurfaceSpeciesCount(id)
-    !>   status = RM_GetSurfaceSpeciesName(id, i, line)
-    !>   status = RM_GetSurfaceType(id, i, line1)
-    !>   status = RM_GetSurfaceName(id, i, line2)
+    !>   status = RM_GetSurfaceSpeciesNames(id, i, line)
+    !>   status = RM_GetSurfaceTypes(id, i, line1)
+    !>   status = RM_GetSurfaceNames(id, i, line2)
     !>   input = trim(input) // "    " // line // " # " // line1  // line2 // new_line(c)
     !> enddo
     !> </PRE>
@@ -5556,7 +5517,7 @@
     !> @ref RM_GetSelectedOutput,
     !> @ref RM_GetSelectedOutputColumnCount,
     !> @ref RM_GetSelectedOutputCount,
-    !> @ref RM_GetSelectedOutputHeading,
+    !> @ref RM_GetSelectedOutputHeadings,
     !> @ref RM_GetSelectedOutputRowCount,
     !> @ref RM_SetNthSelectedOutput,
     !> @ref RM_SetSelectedOutputOn.
@@ -6167,7 +6128,7 @@
     !> @ref RM_GetSelectedOutput,
     !> @ref RM_GetSelectedOutputColumnCount,
     !> @ref RM_GetSelectedOutputCount,
-    !> @ref RM_GetSelectedOutputHeading,
+    !> @ref RM_GetSelectedOutputHeadings,
     !> @ref RM_GetSelectedOutputRowCount,
     !> @ref RM_SetCurrentSelectedOutputUserNumber,
     !> @ref RM_SetSelectedOutputOn.
@@ -6730,7 +6691,7 @@
     !> @ref RM_GetSelectedOutput,
     !> @ref RM_GetSelectedOutputColumnCount,
     !> @ref RM_GetSelectedOutputCount,
-    !> @ref RM_GetSelectedOutputHeading,
+    !> @ref RM_GetSelectedOutputHeadings,
     !> @ref RM_GetSelectedOutputRowCount,
     !> @ref RM_SetCurrentSelectedOutputUserNumber,
     !> @ref RM_SetNthSelectedOutput.

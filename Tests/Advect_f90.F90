@@ -50,6 +50,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   integer                                       :: nchem
   character(100)                                :: string
   character(200)                                :: string1
+  character(len=:), allocatable                 :: alloc_string
   integer                                       :: ncomps, ncomps1
   character(len=:),   dimension(:), allocatable :: components
   real(kind=8), dimension(:), allocatable   :: gfw
@@ -68,10 +69,10 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   real(kind=8), dimension(:), allocatable   :: volume
   real(kind=8), dimension(:), allocatable   :: temperature
   real(kind=8), dimension(:), allocatable   :: pressure
-  integer                                       :: isteps, nsteps
+  integer                                   :: isteps, nsteps
   real(kind=8), dimension(:,:), allocatable :: selected_out
-  integer                                       :: col, isel, n_user
-  character(100)                                :: heading
+  integer                                   :: col, isel, n_user
+  character(len=:), allocatable             :: headings(:)
   real(kind=8), dimension(:,:), allocatable :: c_well
   real(kind=8), dimension(:), allocatable   :: tc, p_atm
   integer                                       :: vtype
@@ -79,12 +80,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   character(100)                                :: svalue
   integer                                       :: iphreeqc_id, iphreeqc_id1
   integer                                       :: dump_on, append
-  !character(LEN=1), dimension(:), allocatable   :: errstr
-#ifdef FORTRAN_2003
   character(LEN=:), allocatable                 :: errstr
-#else
-  character(LEN=10000)                          :: errstr
-#endif
   integer                                       :: l, n
   integer, dimension(:), allocatable            :: sc, ec
   ! --------------------------------------------------------------------------
@@ -186,10 +182,6 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   
   ! Demonstration of error handling if ErrorHandlerMode is 0
   if (status .ne. 0) then
-     l = RM_GetErrorStringLength(id)
-#ifdef FORTRAN_2003
-     allocate (character(len=l) :: errstr)
-#endif
      write(*,*) "Start of error string: "
      status = RM_GetErrorString(id, errstr)
      write(*,"(A)") trim(errstr)
@@ -218,7 +210,7 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
   status = RM_OutputMessage(id, string1)
   write(string1, "(A,I10)") "MPI task number:                                  ", RM_GetMpiMyself(id)
   status = RM_OutputMessage(id, string1)
-  status = RM_GetFilePrefix(id, string)
+  status = RM_GetFilePrefix(id, alloc_string)
   write(string1, "(A,A)") "File prefix:                                      ", string
   status = RM_OutputMessage(id, trim(string1))
   write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", RM_GetGridCellCount(id)
@@ -386,9 +378,9 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
                  write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ",trim(components(j)), ": ", c(i,j)
               enddo
               write(*,*) "     Selected output: "
-              do j = 1, col
-                 status = RM_GetSelectedOutputHeading(id, j, heading)    
-                 write(*,'(10x,i3,A2,A20,A2,1pe15.4)') j, " ", trim(heading),": ", selected_out(i,j)
+              status = RM_GetSelectedOutputHeadings(id, headings)   
+              do j = 1, col 
+                 write(*,'(10x,i3,A2,A20,A2,1pe15.4)') j, " ", trim(headings(j)),": ", selected_out(i,j)
               enddo
            enddo
            deallocate(selected_out)
@@ -571,7 +563,7 @@ REAL(kind=C_DOUBLE) FUNCTION my_basic_fortran_callback(x1, x2, str, l) BIND(C, n
 	rm_cell_number = DINT(x1)
     my_basic_fortran_callback = -999.9
 	if (rm_cell_number .ge. 0 .and. rm_cell_number < RM_GetChemistryCellCount(rm_id)) then
-		if (RM_GetBackwardMapping(rm_id, rm_cell_number, list, size) .eq. 0) then
+		if (RM_GetBackwardMapping(rm_id, rm_cell_number, list) .eq. 0) then
 			if (fstr(1:l) .eq. "HYDRAULIC_K") then
 				my_basic_fortran_callback = K_ptr(list(1)+1)
             endif

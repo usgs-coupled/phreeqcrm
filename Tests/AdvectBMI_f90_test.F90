@@ -739,24 +739,10 @@ USE, intrinsic :: ISO_C_BINDING
             enddo
         enddo
         ! check headings
-        status = bmif_get_var_nbytes(id, "SelectedOutputHeadings", nbytes)
-        status = bmif_get_var_itemsize(id, "SelectedOutputHeadings", itemsize)
-        dim = nbytes / itemsize
-        status = assert(dim .eq. RM_GetSelectedOutputColumnCount(id))
         status = bmif_get_value(id, "SelectedOutputHeadings", headings)
-        !allocate(character(len=itemsize) :: rm_headings(dim))
         status = RM_GetSelectedOutputHeadings(id, rm_headings)
         do j = 1, col_count
             if (headings(j) .ne. rm_headings(j)) then
-                status = assert(.false.)
-            endif
-        enddo
-        status = bmif_get_var_itemsize(id, "SelectedOutputHeadings", itemsize)
-        if(allocated(heading)) deallocate(heading)
-        allocate(character(len=itemsize) :: heading)
-        do j = 1, col_count
-            status = RM_GetSelectedOutputHeading(id, j, heading)
-            if (heading .ne. rm_headings(j)) then
                 status = assert(.false.)
             endif
         enddo
