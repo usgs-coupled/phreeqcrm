@@ -1,7 +1,11 @@
+    !> @file RM_interface.F90
+    !> @brief PhreeqcRM module definition 
+    !>
+    !
     !*MODULE PhreeqcRM PHREEQC Reaction Module for Transport Codes
     !> @brief Fortran Documentation for the geochemical reaction module PhreeqcRM.
     !> @par ""
-    !> "USE PhreeqcRM" is included in Fortran source code to define the PhreeqcRM functions.
+    !> @n "USE PhreeqcRM" is included in Fortran source code to define the PhreeqcRM functions.
     !> For Windows, define the module by including the file RM_interface.F90 in your project.
     !> For Linux, configure, compile, and install the PhreeqcRM library and module file.
     !> You will need installed include directory (-I) added to the project) to reference the module file.
@@ -17,45 +21,42 @@
 #endif     
     INTEGER, PRIVATE  :: rmf_nxyz=-1
     INTEGER, PRIVATE  :: rmf_ncomps=-1
+    INTEGER, PRIVATE  :: rmf_nspecies=-1
+    INTEGER, PRIVATE  :: rmf_ngas=-1
+    INTEGER, PRIVATE  :: rmf_errors=0
+    INTEGER, PRIVATE  :: rmf_threads=0
     PRIVATE :: ChK_Concentrations2Utility
     PRIVATE :: Chk_CreateMapping
-    PRIVATE :: Chk_GetConcentrations
-    PRIVATE :: Chk_GetDensity
-    PRIVATE :: Chk_GetEndCell
-    PRIVATE :: Chk_GetGasCompMoles
-    PRIVATE :: Chk_GetGasCompPressures
-    PRIVATE :: Chk_GetGasCompPhi
-    PRIVATE :: Chk_GetGasPhaseVolume
-    PRIVATE :: Chk_SetGasCompMoles
-    PRIVATE :: Chk_SetGasPhaseVolume
-    PRIVATE :: Chk_GetSpeciesLog10Molalities
-    PRIVATE :: Chk_GetGfw
-    PRIVATE :: Chk_SetPorosity
-    PRIVATE :: Chk_SetPressure
-    PRIVATE :: Chk_GetPorosity
-    PRIVATE :: Chk_GetPressure
-    PRIVATE :: Chk_GetSaturation
-    PRIVATE :: Chk_GetSelectedOutput
-    PRIVATE :: Chk_GetSolutionVolume
-    PRIVATE :: Chk_GetSpeciesConcentrations
-    PRIVATE :: Chk_GetSpeciesD25
-    PRIVATE :: Chk_GetSpeciesLog10Gammas
-    PRIVATE :: Chk_GetSpeciesZ
-    PRIVATE :: Chk_GetStartCell
     PRIVATE :: Chk_InitialPhreeqc2Concentrations
     PRIVATE :: Chk_InitialPhreeqc2Module
     PRIVATE :: Chk_InitialPhreeqcCell2Module
     PRIVATE :: Chk_InitialPhreeqc2SpeciesConcentrations
     PRIVATE :: Chk_SetConcentrations
-    PRIVATE :: Chk_SetDensity
+    PRIVATE :: Chk_SetDensityUser
+    PRIVATE :: Chk_SetGasCompMoles
+    PRIVATE :: Chk_SetGasPhaseVolume
+    PRIVATE :: Chk_SetPorosity
+    PRIVATE :: Chk_SetPressure
     PRIVATE :: Chk_SetPrintChemistryMask
-    PRIVATE :: Chk_SetSaturation
+    PRIVATE :: Chk_SetSaturationUser
     PRIVATE :: Chk_SetTemperature
     PRIVATE :: Chk_SpeciesConcentrations2Module
     PRIVATE :: Chk_Double1D
     PRIVATE :: Chk_Double2D
     PRIVATE :: Chk_Integer1D
     PRIVATE :: Chk_Integer2D
+    PRIVATE :: RM_GetComponent
+    PRIVATE :: RM_GetEquilibriumPhasesName
+    PRIVATE :: RM_GetExchangeName
+    PRIVATE :: RM_GetExchangeSpeciesName
+    PRIVATE :: RM_GetGasComponentsName
+    PRIVATE :: RM_GetKineticReactionsName
+    PRIVATE :: RM_GetSIName
+    PRIVATE :: RM_GetSolidSolutionComponentsName
+    PRIVATE :: RM_GetSolidSolutionName
+    PRIVATE :: RM_GetSurfaceName
+    PRIVATE :: RM_GetSurfaceSpeciesName
+    PRIVATE :: RM_GetSurfaceType
     PRIVATE :: RMF_debug
 
 
@@ -71,7 +72,7 @@
 !> @param config_file         String containing the YAML file name.
 !> @retval Number of grid cells specified in the YAML file; returns
 !> zero if GridCellCount is not defined.
-!> @see @ref bmif_initialize, @ref RM_Create, and @ref RM_InitializeYAML.
+!> @see @ref RM_Create, and @ref RM_InitializeYAML.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -80,7 +81,7 @@
 !>  integer nxyz
 !> 	nxyz = GetGridCellCountYAML("myfile.yaml");
 !> 	status = RM_Create(nxyz, nthreads);
-!> 	status = bmif_initialize("myfile.yaml");
+!> 	status = RM_InitializeYAML("myfile.yaml");
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -621,16 +622,20 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_FindComponents(id) &
-        BIND(C, NAME='RMF_FindComponents')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_FindComponents
+        INTEGER(KIND=C_INT) FUNCTION RMF_FindComponents(id) &
+            BIND(C, NAME='RMF_FindComponents')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        END FUNCTION RMF_FindComponents
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    RM_FindComponents = RMF_FindComponents(id)
-    rmf_ncomps = RM_FindComponents
+    rmf_ncomps = RMF_FindComponents(id)
+    RM_FindComponents = rmf_ncomps
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_threads = RM_GetThreadCount(id)
+    rmf_ngas = RM_GetGasComponentsCount(id)
+    rmf_nspecies = RM_GetSpeciesCount(id)
     return
     END FUNCTION RM_FindComponents
 
@@ -673,14 +678,20 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in)    :: id, n
-    INTEGER(KIND=C_INT), INTENT(in)    :: list(*)
+    INTEGER(KIND=C_INT), INTENT(inout) :: list(*)
     INTEGER(KIND=C_INT), INTENT(inout) :: size
     END FUNCTION RMF_GetBackwardMapping
     END INTERFACE
     INTEGER, INTENT(in)    :: id, n
-    INTEGER, INTENT(in)    :: list(*)
+    INTEGER, INTENT(inout), allocatable :: list(:)
     INTEGER, INTENT(inout) :: size
-    RM_GetBackwardMapping = RMF_GetBackwardMapping(id, n, list, size)
+    integer  :: my_list(100), i
+    RM_GetBackwardMapping = RMF_GetBackwardMapping(id, n, my_list, size)
+    if(allocated(list)) deallocate(list)
+    allocate(list(size))
+    do i = 1, size
+        list(i) = my_list(i)
+    enddo
     return
     END FUNCTION RM_GetBackwardMapping
 
@@ -753,7 +764,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: comp_name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: comp_name(*)
     END FUNCTION RMF_GetComponent
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -770,8 +781,6 @@
     !> to receive the component names. Character length and dimension will be allocated as needed.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref bmif_get_value,
-    !> @ref bmif_set_value
     !> @ref RM_GetComponent,
     !> @ref RM_FindComponents.
     !> @par Fortran Example:
@@ -785,34 +794,26 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-
-    !INTEGER FUNCTION RM_GetComponents(id, components)
-    !USE ISO_C_BINDING
-    !IMPLICIT NONE
-    !INTEGER, INTENT(in) :: id
-    !CHARACTER(len=:), allocatable, INTENT(out) :: components(:)
-    !RM_GetComponents = bmif_get_value(id, "Components", components)
-    !END FUNCTION RM_GetComponents
     
-    INTEGER FUNCTION RM_GetComponents(id, dest)
+    INTEGER FUNCTION RM_GetComponents(id, components)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: components
     character(1024) :: comp
     integer :: dim, itemsize, status, l, i
     dim = RM_GetComponentCount(id)
-	itemsize = 0
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetComponent(id, i, comp)
+        l = len(trim(comp))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(components)) deallocate(components)
+    allocate(character(len=itemsize) :: components(dim))
 	do i = 1, dim
 		status = RM_GetComponent(id, i, comp)
-		l = len(trim(comp))
-		if (l > itemsize) itemsize = l
-	enddo
-    if(allocated(dest)) deallocate(dest)
-    allocate(character(len=itemsize) :: dest(dim))
-	do i = 1, dim
-		status = RM_GetComponent(id, i, comp)
-		dest(i) = trim(comp)
+		components(i) = trim(comp)
     enddo
     RM_GetComponents = status
     return 
@@ -862,9 +863,9 @@
     !> Two options are available for the volume and mass of solution
     !> that are used in converting to transport concentrations: (1) the volume and mass of solution are
     !> calculated by PHREEQC, or
-    !> (2) the volume of solution is the product of saturation (@ref RM_SetSaturation),
+    !> (2) the volume of solution is the product of saturation (@ref RM_SetSaturationUser),
     !> porosity (@ref RM_SetPorosity), and representative volume (@ref RM_SetRepresentativeVolume),
-    !> and the mass of solution is volume times density as defined by @ref RM_SetDensity.
+    !> and the mass of solution is volume times density as defined by @ref RM_SetDensityUser.
     !> @ref RM_UseSolutionDensityVolume determines which option is used.
     !> For option 1, the databases that have partial molar volume definitions needed
     !> to accurately calculate solution volume are
@@ -879,11 +880,11 @@
     !> @see
     !> @ref RM_FindComponents,
     !> @ref RM_GetComponentCount,
-    !> @ref RM_GetSaturation,
+    !> @ref RM_GetSaturationCalculated,
     !> @ref RM_SetConcentrations,
-    !> @ref RM_SetDensity,
+    !> @ref RM_SetDensityUser,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation,
+    !> @ref RM_SetSaturationUser,
     !> @ref RM_SetUnitsSolution,
     !> @ref RM_UseSolutionDensityVolume.
     !> @par Fortran Example:
@@ -908,37 +909,18 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: c(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: c(*)
     END FUNCTION RMF_GetConcentrations
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:) :: c
-    if (rmf_debug) call Chk_GetConcentrations(id, c)
+    real(kind=8), INTENT(inout), allocatable :: c(:,:)
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_ncomps = RM_GetComponentCount(id)
+    rmf_errors = allocate_double_2d(c, rmf_nxyz, rmf_ncomps)
     RM_GetConcentrations = RMF_GetConcentrations(id, c)
     return
     END FUNCTION RM_GetConcentrations
-
-    SUBROUTINE Chk_GetConcentrations(id, c)
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
-        BIND(C, NAME='RMF_GetComponentCount')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_GetComponentCount
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: c
-    INTEGER :: errors
-    errors = 0
-    rmf_ncomps = RMF_GetComponentCount(id)
-    errors = errors + Chk_Double2D(id, c, rmf_nxyz, rmf_ncomps, "concentration", "RM_GetConcentrations")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetConcentrations")
-    endif
-    END SUBROUTINE Chk_GetConcentrations
-
+    
     !> Returns the user number of the current selected-output definition.
     !> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput specifies which of the
     !> selected-output definitions is used.
@@ -988,7 +970,7 @@
     END FUNCTION RM_GetCurrentSelectedOutputUserNumber
     !> Transfer solution densities from the reaction cells to the array given in the argument list (@a density).
     !> Densities are those calculated by the reaction module. This method always 
-    !> returns the calculated densities; @ref RM_SetDensity does not affect the result.
+    !> returns the calculated densities; @ref RM_SetDensityUser does not affect the result.
     !> Only the following databases distributed with PhreeqcRM have molar volume information needed to accurately calculate density:
     !> phreeqc.dat, Amm.dat, and pitzer.dat.
     !>
@@ -1003,43 +985,32 @@
     !> <PRE>
     !> allocate(density(nxyz))
     !> status = RM_RunCells(id)
-    !> status = RM_GetDensity(id, density)
+    !> status = RM_GetDensityCalculated(id, density)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-    INTEGER FUNCTION RM_GetDensity(id, density)
+    INTEGER FUNCTION RM_GetDensityCalculated(id, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_GetDensity(id, density) &
-        BIND(C, NAME='RMF_GetDensity')
+    INTEGER(KIND=C_INT) FUNCTION RMF_GetDensityCalculated(id, density) &
+        BIND(C, NAME='RMF_GetDensityCalculated')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: density(*)
-    END FUNCTION RMF_GetDensity
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: density(*)
+    END FUNCTION RMF_GetDensityCalculated
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:) :: density
-    if (rmf_debug) call Chk_GetDensity(id, density)
-    RM_GetDensity = RMF_GetDensity(id, density)
+    real(kind=8), INTENT(inout), dimension(:), allocatable  :: density
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_errors = allocate_double_1d(density, rmf_nxyz)
+    RM_GetDensityCalculated = RMF_GetDensityCalculated(id, density)
     return
-    END FUNCTION RM_GetDensity
-
-    SUBROUTINE Chk_GetDensity(id, density)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: density
-    INTEGER :: errors
-    errors = 0
-    errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_GetDensity")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetDensity")
-    endif
-    END SUBROUTINE Chk_GetDensity
+    END FUNCTION RM_GetDensityCalculated
 
     !> Returns an array with the ending cell numbers from the range of cell numbers assigned to each worker.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -1073,28 +1044,16 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    INTEGER(KIND=C_INT), INTENT(out):: ec(*)
+    INTEGER(KIND=C_INT), INTENT(inout) :: ec(*)
     END FUNCTION RMF_GetEndCell
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    INTEGER, INTENT(out), DIMENSION(:) :: ec
-    if (rmf_debug) call Chk_GetEndCell(id, ec)
+    INTEGER, INTENT(inout), DIMENSION(:), allocatable :: ec
+    rmf_threads = RM_GetThreadCount(id)
+    rmf_errors = allocate_integer_1d(ec, rmf_threads)
     RM_GetEndCell = RMF_GetEndCell(id, ec)
     RETURN
     END FUNCTION RM_GetEndCell
-
-    SUBROUTINE Chk_GetEndCell(id, ec)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    INTEGER, INTENT(in), DIMENSION(:) :: ec
-    INTEGER :: errors, n
-    errors = 0
-    n = RM_GetMpiTasks(id) * RM_GetThreadCount(id)
-    errors = errors + Chk_Integer1D(id, ec, n, "EndCell", "RM_GetEndCell")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetEndCell")
-    endif
-    END SUBROUTINE Chk_GetEndCell
 
     !> Returns the number of equilibrium phases in the initial-phreeqc module.
     !> @ref RM_FindComponents must be called before @ref RM_GetEquilibriumPhasesCount.
@@ -1161,6 +1120,29 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
+    INTEGER FUNCTION RM_GetEquilibriumPhasesNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetEquilibriumPhasesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetEquilibriumPhasesName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetEquilibriumPhasesName(id, i, names(i))
+    enddo
+    RM_GetEquilibriumPhasesNames = status
+    return 
+    END FUNCTION RM_GetEquilibriumPhasesNames
+
 
     INTEGER FUNCTION RM_GetEquilibriumPhasesName(id, num, name)
     USE ISO_C_BINDING
@@ -1171,7 +1153,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetEquilibriumPhasesName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -1216,11 +1198,11 @@
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     INTEGER(KIND=C_INT), INTENT(in) :: l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: errstr(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: errstr(*)
     END FUNCTION RMF_GetErrorString
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=*), INTENT(out) :: errstr
+    CHARACTER(len=*), INTENT(inout) :: errstr
     RM_GetErrorString = RMF_GetErrorString(id, errstr, len(errstr))
     END FUNCTION RM_GetErrorString
 
@@ -1289,6 +1271,29 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
+    INTEGER FUNCTION RM_GetExchangeNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetExchangeSpeciesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetExchangeName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetExchangeName(id, i, names(i))
+    enddo
+    RM_GetExchangeNames = status
+    return 
+    END FUNCTION RM_GetExchangeNames
+
 
     INTEGER FUNCTION RM_GetExchangeName(id, num, name)
     USE ISO_C_BINDING
@@ -1299,7 +1304,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetExchangeName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -1372,6 +1377,28 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
+    INTEGER FUNCTION RM_GetExchangeSpeciesNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetExchangeSpeciesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetExchangeSpeciesName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetExchangeSpeciesName(id, i, names(i))
+    enddo
+    RM_GetExchangeSpeciesNames = status
+    return 
+    END FUNCTION RM_GetExchangeSpeciesNames
 
     INTEGER FUNCTION RM_GetExchangeSpeciesName(id, num, name)
     USE ISO_C_BINDING
@@ -1382,7 +1409,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetExchangeSpeciesName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -1422,7 +1449,7 @@
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     INTEGER(KIND=C_INT), INTENT(in) :: l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: prefix(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: prefix(*)
     END FUNCTION RMF_GetFilePrefix
     END INTERFACE
     INTEGER, INTENT(in) :: id
@@ -1497,6 +1524,28 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
+    INTEGER FUNCTION RM_GetGasComponentsNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetGasComponentsCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetGasComponentsName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetGasComponentsName(id, i, names(i))
+    enddo
+    RM_GetGasComponentsNames = status
+    return 
+    END FUNCTION RM_GetGasComponentsNames
 
     INTEGER FUNCTION RM_GetGasComponentsName(id, num, name)
     USE ISO_C_BINDING
@@ -1507,7 +1556,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetGasComponentsName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -1559,12 +1608,14 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: gas_moles(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: gas_moles(*)
     END FUNCTION RMF_GetGasCompMoles
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_moles
-    if (rmf_debug) call Chk_GetGasCompMoles(id, gas_moles)
+    real(kind=8), INTENT(inout), DIMENSION(:,:), allocatable, TARGET :: gas_moles    
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_ngas = RM_GetGasComponentsCount(id)
+    rmf_errors = allocate_double_2d(gas_moles, rmf_nxyz, rmf_ngas)
     RM_GetGasCompMoles = RMF_GetGasCompMoles(id, gas_moles)
     return
     END FUNCTION RM_GetGasCompMoles
@@ -1625,28 +1676,17 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: gas_p(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: gas_p(*)
     END FUNCTION RMF_GetGasCompPressures
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_p
-    if (rmf_debug) call Chk_GetGasCompPressures(id, gas_p)
+    real(kind=8), INTENT(inout), DIMENSION(:,:), allocatable, TARGET :: gas_p
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_ngas = RM_GetGasComponentsCount(id)
+    rmf_errors = allocate_double_2d(gas_p, rmf_nxyz, rmf_ngas)
     RM_GetGasCompPressures = RMF_GetGasCompPressures(id, gas_p )
     return
     END FUNCTION RM_GetGasCompPressures
-
-    SUBROUTINE Chk_GetGasCompPressures(id, gas_p)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_p
-    INTEGER :: errors, rmf_ngas_comps
-    errors = 0
-    rmf_ngas_comps = RM_GetGasComponentsCount(id)
-    errors = errors + Chk_Double2D(id, gas_p, rmf_nxyz, rmf_ngas_comps, "gas_pressure", "RM_GetGasCompPressures")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasCompPressures")
-    endif
-    END SUBROUTINE Chk_GetGasCompPressures
 
     !> Transfer fugacity coefficients (phi) of gas components from each reaction cell
     !> to the array given in the argument list (@a gas_phi). Fugacity of a gas component
@@ -1692,28 +1732,17 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: gas_phi(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: gas_phi(*)
     END FUNCTION RMF_GetGasCompPhi
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:), TARGET :: gas_phi
-    if (rmf_debug) call Chk_GetGasCompPhi(id, gas_phi)
+    real(kind=8), INTENT(inout), DIMENSION(:,:), allocatable, TARGET :: gas_phi
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_ngas = RM_GetGasComponentsCount(id)
+    rmf_errors = allocate_double_2d (gas_phi, rmf_nxyz, rmf_ngas)
     RM_GetGasCompPhi = RMF_GetGasCompPhi(id, gas_phi)
     return
     END FUNCTION RM_GetGasCompPhi
-
-    SUBROUTINE Chk_GetGasCompPhi(id, gas_phi)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: gas_phi
-    INTEGER :: errors, rmf_ngas_comps
-    errors = 0
-    rmf_ngas_comps = RM_GetGasComponentsCount(id)
-    errors = errors + Chk_Double2D(id, gas_phi, rmf_nxyz, rmf_ngas_comps, "gas_phi", "RM_GetGasCompPhi")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasCompPhi")
-    endif
-    END SUBROUTINE Chk_GetGasCompPhi
 
     !> Transfer volume of gas from each reaction cell
     !> to the vector given in the argument list (@a gas_volume).
@@ -1757,28 +1786,16 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out)  :: gas_volume(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: gas_volume(*)
     END FUNCTION RMF_GetGasPhaseVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:), TARGET :: gas_volume
-    if (rmf_debug) call Chk_GetGasPhaseVolume(id, gas_volume)
+    real(kind=8), INTENT(inout), DIMENSION(:), allocatable, TARGET :: gas_volume
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_errors = allocate_double_1d (gas_volume, rmf_nxyz)
     RM_GetGasPhaseVolume = RMF_GetGasPhaseVolume(id, gas_volume)
     return
     END FUNCTION RM_GetGasPhaseVolume
-
-    SUBROUTINE Chk_GetGasPhaseVolume(id, gas_volume)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: gas_volume
-    INTEGER :: errors, rmf_ngas_comps
-    errors = 0
-    rmf_ngas_comps = RM_GetGasComponentsCount(id)
-    errors = errors + Chk_Double1D(id, gas_volume, rmf_nxyz, "gas_volume", "RM_GetGasPhaseVolume")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasPhaseVolume")
-    endif
-    END SUBROUTINE Chk_GetGasPhaseVolume
 
     !> Returns the gram formula weights (g/mol) for the components in the reaction-module component list.
     !> @param id               The instance id returned from @ref RM_Create.
@@ -1819,35 +1836,15 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: gfw(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout):: gfw(*)
     END FUNCTION RMF_GetGfw
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), DIMENSION(:), INTENT(out) :: gfw
-    if (rmf_debug) call Chk_GetGfw(id, gfw)
+    real(kind=8), DIMENSION(:), INTENT(inout), allocatable  :: gfw
+    rmf_ncomps = RM_GetComponentCount(id)
+    rmf_errors = allocate_double_1d(gfw, rmf_ncomps)
     RM_GetGfw = RMF_GetGfw(id, gfw)
     END FUNCTION RM_GetGfw
-
-    SUBROUTINE Chk_GetGfw(id, gfw)
-    IMPLICIT NONE
-    INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_GetComponentCount(id) &
-        BIND(C, NAME='RMF_GetComponentCount')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_GetComponentCount
-    END INTERFACE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: gfw
-    INTEGER :: errors
-    errors = 0
-    rmf_ncomps = RMF_GetComponentCount(id)
-    errors = errors + Chk_Double1D(id, gfw, rmf_ncomps, "gfw", "RM_GetGfw")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetGfw")
-    endif
-    END SUBROUTINE Chk_GetGfw
 
     !> Returns the number of grid cells in the user's model, which is defined in the call to @ref RM_Create.
     !> The mapping from grid cells to reaction cells is defined by @ref RM_CreateMapping.
@@ -1931,6 +1928,102 @@
     INTEGER, INTENT(in) :: i
     RM_GetIPhreeqcId = RMF_GetIPhreeqcId(id, i)
     END FUNCTION RM_GetIPhreeqcId
+	
+	!> Transfer the concentration from each cell for one component to the vector given in the 
+	!> argument list (@a c). The concentrations are those resulting from the last call
+	!> to @ref RM_RunCells. Units of concentration for @a c are defined by @ref RM_SetUnitsSolution.
+    !> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the component to retrieve. Indices refer
+	!> to the order produced by @ref RM_GetComponents. The total number of components is given by
+	!> @ref RM_GetComponentCount.
+	!> @param c                Vector to receive the component concentrations.
+	!> Dimension of the vector is set to @a nxyz, where @a nxyz is the number of 
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetComponents, @ref RM_GetComponentCount, 
+	!> @ref RM_GetConcentrations.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> real(kind=8), allocatable, dimension(:) :: c
+	!> status = RM_RunCells(id)
+	!> status = phreeqc_rm.GetIthConcentration(id, 0, c)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_GetIthConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION RMF_GetIthConcentration(id, i, c) &
+        BIND(C, NAME='RMF_GetIthConcentration')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER(KIND=C_INT), INTENT(in) :: id
+    INTEGER(KIND=C_INT), INTENT(in) :: i
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: c(*)
+    END FUNCTION RMF_GetIthConcentration
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: c
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_errors = allocate_double_1d(c, rmf_nxyz)
+    RM_GetIthConcentration = RMF_GetIthConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_GetIthConcentration
+
+	!> Transfer the concentration from each cell for one species to the vector given in the
+	!> argument list (@a c). The concentrations are those resulting from the last call
+	!> to @ref RM_RunCells. Units of concentration for @a c are mol/L.
+	!> To retrieve species concentrations, @ref RM_SetSpeciesSaveOn must be set to @a true.
+	!> This method is for use with multicomponent diffusion calculations.
+	!> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the species to retrieve. Indices refer
+	!> to the order given by @ref RM_GetSpeciesName. The total number of species is given
+	!> by @ref RM_GetSpeciesCount.
+	!> @param c                Vector to receive the species concentrations.
+	!> Dimension of the vector is set to @a nxyz, where @a nxyz is the number of
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesName,
+	!> @ref RM_GetSpeciesConcentrations, @ref RM_SetSpeciesSaveOn.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> real(kind=8), allocatable, dimension(:) :: c
+	!> status = RM_RunCells(id)
+	!> status = RM_GetIthSpeciesConcentration(id, 0, c)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_GetIthSpeciesConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION RMF_GetIthSpeciesConcentration(id, i, c) &
+        BIND(C, NAME='RMF_GetIthSpeciesConcentration')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER(KIND=C_INT), INTENT(in) :: id
+    INTEGER(KIND=C_INT), INTENT(in) :: i
+    REAL(KIND=C_DOUBLE), INTENT(inout)  :: c(*)
+    END FUNCTION RMF_GetIthSpeciesConcentration
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: c
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_errors = allocate_double_1d(c, rmf_nxyz)
+    RM_GetIthSpeciesConcentration = RMF_GetIthSpeciesConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_GetIthSpeciesConcentration
 
     !> Returns the number of kinetic reactions in the initial-phreeqc module.
     !> @ref RM_FindComponents must be called before @ref RM_GetKineticReactionsCount.
@@ -1998,6 +2091,29 @@
     !> @par MPI:
     !> Called by root.
 
+    INTEGER FUNCTION RM_GetKineticReactionsNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetKineticReactionsCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetKineticReactionsName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetKineticReactionsName(id, i, names(i))
+    enddo
+    RM_GetKineticReactionsNames = status
+    return 
+    END FUNCTION RM_GetKineticReactionsNames
+
     INTEGER FUNCTION RM_GetKineticReactionsName(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2007,7 +2123,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetKineticReactionsName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -2184,12 +2300,13 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: porosity(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: porosity(*)
     END FUNCTION RMF_GetPorosity
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:) :: porosity
-    if (rmf_debug) call Chk_GetPorosity(id, porosity)
+    real(kind=8), INTENT(inout), dimension(:), allocatable :: porosity
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_errors = allocate_double_1d(porosity, rmf_nxyz)
     RM_GetPorosity = RMF_GetPorosity(id, porosity)
     return
     END FUNCTION RM_GetPorosity
@@ -2225,49 +2342,28 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: pressure(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: pressure(*)
     END FUNCTION RMF_GetPressure
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:) :: pressure
-    if (rmf_debug) call Chk_GetPressure(id, pressure)
+    real(kind=8), INTENT(inout), dimension(:), allocatable :: pressure
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_errors = allocate_double_1d(pressure, rmf_nxyz)
     RM_GetPressure = RMF_GetPressure(id, pressure)
     return
     END FUNCTION RM_GetPressure
 
-    SUBROUTINE Chk_GetPressure(id, pressure)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: pressure
-    INTEGER :: errors
-    errors = 0
-    errors = errors + Chk_Double1D(id, pressure, rmf_nxyz, "pressure", "RM_GetPressure")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetPressure")
-    endif
-    END SUBROUTINE Chk_GetPressure
-
-    SUBROUTINE Chk_GetPorosity(id, porosity)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: porosity
-    INTEGER :: errors
-    errors = 0
-    errors = errors + Chk_Double1D(id, porosity, rmf_nxyz, "porosity", "RM_GetPorosity")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetPorosity")
-    endif
-    END SUBROUTINE Chk_GetPorosity
-
     !> Returns a vector of saturations (@a sat_calc) as calculated by the reaction module.
     !> Reactions will change the volume of solution in a cell.
     !> This method always returns solution_volume/(rv * porosity); the method 
-    !> @ref RM_SetSaturation has no effect on the values returned.    
-    !> The transport code must decide whether to ignore or account for this change in solution volume due to reactions.
-    !> Following reactions, the cell saturation is calculated as solution volume (@ref RM_GetSolutionVolume)
-    !> divided by the product of representative volume (@ref RM_SetRepresentativeVolume) and the porosity (@ref RM_SetPorosity).
-    !> The cell saturation returned by @a RM_GetSaturation may be less than or greater than the saturation set by the transport code
-    !> (@ref RM_SetSaturation), and may be greater than or less than 1.0, even in fully saturated simulations.
+    !> @ref RM_SetSaturationUser has no effect on the values returned.    
+    !> The transport code must decide whether to ignore or account for this change in solution  
+    !> volume due to reactions. Following reactions, the cell saturation is calculated as 
+    !> solution volume (@ref RM_GetSolutionVolume) divided by the product of representative 
+    !> volume (@ref RM_SetRepresentativeVolume) and the porosity (@ref RM_SetPorosity).
+    !> The cell saturation returned by @a RM_GetSaturationCalculated may be less than or 
+    !> greater than the saturation set by the transport code (@ref RM_SetSaturationUserUser), 
+    !> and may be greater than or less than 1.0, even in fully saturated simulations.
     !> Only the following databases distributed with PhreeqcRM have molar volume information needed
     !> to accurately calculate solution volume and saturation: phreeqc.dat, Amm.dat, and pitzer.dat.
     !>
@@ -2281,49 +2377,38 @@
     !> @ref RM_GetSolutionVolume,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation.
+    !> @ref RM_SetSaturationUser.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> allocate(sat_calc(nxyz))
     !> status = RM_RunCells(id)
-    !> status = RM_GetSaturation(id, sat_calc)
+    !> status = RM_GetSaturationCalculated(id, sat_calc)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-    INTEGER FUNCTION RM_GetSaturation(id, sat_calc)
+    INTEGER FUNCTION RM_GetSaturationCalculated(id, sat_calc)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_GetSaturation(id, sat_calc) &
-        BIND(C, NAME='RMF_GetSaturation')
+    INTEGER(KIND=C_INT) FUNCTION RMF_GetSaturationCalculated(id, sat_calc) &
+        BIND(C, NAME='RMF_GetSaturationCalculated')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: sat_calc(*)
-    END FUNCTION RMF_GetSaturation
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: sat_calc(*)
+    END FUNCTION RMF_GetSaturationCalculated
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:) :: sat_calc
-    if (rmf_debug) call Chk_GetSaturation(id, sat_calc)
-    RM_GetSaturation = RMF_GetSaturation(id, sat_calc)
-    END FUNCTION RM_GetSaturation
-
-    SUBROUTINE Chk_GetSaturation(id, sat)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: sat
-    INTEGER :: errors
-    errors = 0
-    errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "saturation", "RM_GetSaturation")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSaturation")
-    endif
-    END SUBROUTINE Chk_GetSaturation
+    real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: sat_calc
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_errors = allocate_double_1d(sat_calc, rmf_nxyz)
+    RM_GetSaturationCalculated = RMF_GetSaturationCalculated(id, sat_calc)
+    END FUNCTION RM_GetSaturationCalculated
 
     !> Populates an array with values from the current selected-output definition. @ref RM_SetCurrentSelectedOutputUserNumber
     !> determines which of the selected-output definitions is used to populate the array.
@@ -2370,27 +2455,17 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: so(*)
+    REAL(KIND=C_DOUBLE), INTENT(inout) :: so(*)
     END FUNCTION RMF_GetSelectedOutput
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), DIMENSION(:,:), INTENT(out) :: so
-    if (rmf_debug) call Chk_GetSelectedOutput(id, so)
+    real(kind=8), DIMENSION(:,:), INTENT(inout), allocatable :: so
+    INTEGER :: ncol
+    ncol = RM_GetSelectedOutputColumnCount(id)
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_errors = allocate_double_2d(so, rmf_nxyz, ncol)
     RM_GetSelectedOutput = RMF_GetSelectedOutput(id, so)
     END FUNCTION RM_GetSelectedOutput
-
-    SUBROUTINE Chk_GetSelectedOutput(id, so)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: so
-    INTEGER :: errors, ncol
-    ncol = RM_GetSelectedOutputColumnCount(id)
-    errors = 0
-    errors = errors + Chk_Double2D(id, so, rmf_nxyz, ncol, "selected output", "RM_GetSelectedOutput")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSelectedOutput")
-    endif
-    END SUBROUTINE Chk_GetSelectedOutput
 
     !> Returns the number of columns in the current selected-output definition. @ref RM_SetCurrentSelectedOutputUserNumber
     !> determines which of the selected-output definitions is used.
@@ -2533,11 +2608,11 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, icol, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: heading(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: heading(*)
     END FUNCTION RMF_GetSelectedOutputHeading
     END INTERFACE
     INTEGER, INTENT(in) :: id, icol
-    CHARACTER(len=*), INTENT(out) :: heading
+    CHARACTER(len=*), INTENT(inout) :: heading
     RM_GetSelectedOutputHeading = RMF_GetSelectedOutputHeading(id, icol, heading, len(heading))
     END FUNCTION RM_GetSelectedOutputHeading
     
@@ -2549,8 +2624,6 @@
     !> to receive the headings. Character length and dimension will be allocated as needed.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref bmif_get_value,
-    !> @ref bmif_set_value,
     !> @ref RM_GetCurrentSelectedOutputUserNumber,
     !> @ref RM_GetNthSelectedOutputUserNumber,
     !> @ref RM_GetSelectedOutput,
@@ -2576,25 +2649,25 @@
     !> @par MPI:
     !> Called by root.
 
-	INTEGER FUNCTION RM_GetSelectedOutputHeadings(id, dest)
+	INTEGER FUNCTION RM_GetSelectedOutputHeadings(id, headings)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: headings
     character(1024) :: head
     integer :: dim, itemsize, status, l, i
     dim = RM_GetSelectedOutputColumnCount(id)
-	itemsize = 0
-	do i = 1, dim
-		status = RM_GetSelectedOutputHeading(id, i, head)
-		l = len(trim(head))
-		if (l > itemsize) itemsize = l
-	enddo
-    if(allocated(dest)) deallocate(dest)
-    allocate(character(len=itemsize) :: dest(dim))
-	do i = 1, dim
-		status = RM_GetSelectedOutputHeading(id, i, head)
-		dest(i) = trim(head)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSelectedOutputHeading(id, i, head)
+        l = len(trim(head))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(headings)) deallocate(headings)
+    allocate(character(len=itemsize) :: headings(dim))
+    do i = 1, dim
+        status = RM_GetSelectedOutputHeading(id, i, head)
+        headings(i) = trim(head)
     enddo	
     RM_GetSelectedOutputHeadings = status
     return
@@ -2725,6 +2798,29 @@
     !> @par MPI:
     !> Called by root.
 
+    INTEGER FUNCTION RM_GetSINames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSICount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSIName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+	do i = 1, dim
+		status = RM_GetSIName(id, i, names(i))
+    enddo
+    RM_GetSINames = status
+    return 
+    END FUNCTION RM_GetSINames
+
     INTEGER FUNCTION RM_GetSIName(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2734,7 +2830,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
     END FUNCTION RMF_GetSIName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -2810,6 +2906,29 @@
     !> @par MPI:
     !> Called by root.
 
+    INTEGER FUNCTION RM_GetSolidSolutionComponentsNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSolidSolutionComponentsCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSolidSolutionComponentsName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+    do i = 1, dim
+        status = RM_GetSolidSolutionComponentsName(id, i, names(i))
+    enddo
+    RM_GetSolidSolutionComponentsNames = status
+    return 
+    END FUNCTION RM_GetSolidSolutionComponentsNames
+
     INTEGER FUNCTION RM_GetSolidSolutionComponentsName(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2819,7 +2938,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSolidSolutionComponentsName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -2858,6 +2977,29 @@
     !> @par MPI:
     !> Called by root.
 
+    INTEGER FUNCTION RM_GetSolidSolutionNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSolidSolutionComponentsCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSolidSolutionName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+    do i = 1, dim
+        status = RM_GetSolidSolutionName(id, i, names(i))
+    enddo
+    RM_GetSolidSolutionNames = status
+    return 
+    END FUNCTION RM_GetSolidSolutionNames
+
     INTEGER FUNCTION RM_GetSolidSolutionName(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2867,7 +3009,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSolidSolutionName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -2888,7 +3030,7 @@
     !> where @a nxyz is the number of user grid cells. Values for inactive cells are set to 1e30.
     !> @retval IRM_RESULT         0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_GetSaturation.
+    !> @ref RM_GetSaturationCalculated.
     !>
     !> @par Fortran Example:
     !> @htmlonly
@@ -2912,26 +3054,15 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: vol(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: vol(*)
     END FUNCTION RMF_GetSolutionVolume
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:) :: vol
-    if (rmf_debug) call Chk_GetDensity(id, vol)
+    real(kind=8), intent(inout), DIMENSION(:), allocatable :: vol
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_errors = allocate_double_1d(vol, rmf_nxyz)
     RM_GetSolutionVolume = RMF_GetSolutionVolume(id, vol)
     END FUNCTION RM_GetSolutionVolume
-
-    SUBROUTINE Chk_GetSolutionVolume(id, vol)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: vol
-    INTEGER :: errors
-    errors = 0
-    errors = errors + Chk_Double1D(id, vol, rmf_nxyz, "vol", "RM_GetSolutionVolume")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSolutionVolume")
-    endif
-    END SUBROUTINE Chk_GetSolutionVolume
 
     !> Transfer concentrations of aqueous species to the array argument (@a species_conc)
     !> This method is intended for use with multicomponent-diffusion transport calculations,
@@ -2990,27 +3121,16 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: species_conc(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: species_conc(*)
     END FUNCTION RMF_GetSpeciesConcentrations
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_conc
-    if (rmf_debug) call Chk_GetSpeciesConcentrations(id, species_conc)
+    real(kind=8), intent(inout), DIMENSION(:,:), allocatable :: species_conc
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_nspecies = RM_GetSpeciesCount(id)
+    rmf_errors = allocate_double_2d(species_conc, rmf_nxyz, rmf_nspecies)
     RM_GetSpeciesConcentrations = RMF_GetSpeciesConcentrations(id, species_conc)
     END FUNCTION RM_GetSpeciesConcentrations
-
-    SUBROUTINE Chk_GetSpeciesConcentrations(id, species_conc)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_conc
-    INTEGER :: errors, nspecies
-    nspecies = RM_GetSpeciesCount(id)
-    errors = 0
-    errors = errors + Chk_Double2D(id, species_conc, rmf_nxyz, nspecies, "species concentration", "RM_GetSpeciesConcentrations")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesConcentrations")
-    endif
-    END SUBROUTINE Chk_GetSpeciesConcentrations
 
     !> The number of aqueous species used in the reaction module.
     !> This method is intended for use with multicomponent-diffusion transport calculations,
@@ -3113,27 +3233,15 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: diffc(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: diffc(*)
     END FUNCTION RMF_GetSpeciesD25
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:) :: diffc
-    if (rmf_debug) call Chk_GetSpeciesD25(id, diffc)
+    real(kind=8), intent(inout), DIMENSION(:), allocatable :: diffc
+    rmf_nspecies = RM_GetSpeciesCount(id)
+    rmf_errors = allocate_double_1d(diffc, rmf_nspecies)
     RM_GetSpeciesD25 = RMF_GetSpeciesD25(id, diffc)
     END FUNCTION RM_GetSpeciesD25
-
-    SUBROUTINE Chk_GetSpeciesD25(id, diffc)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: diffc
-    INTEGER :: errors, nspecies
-    nspecies = RM_GetSpeciesCount(id)
-    errors = 0
-    errors = errors + Chk_Double1D(id, diffc, nspecies, "diffusion coefficient", "RM_GetSpeciesD25")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesD25")
-    endif
-    END SUBROUTINE Chk_GetSpeciesD25
 
     !> Transfer log10 aqueous-species activity coefficients to the array argument (@a species_log10gammas)
     !> This method is intended for use with multicomponent-diffusion transport calculations,
@@ -3187,28 +3295,16 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: species_log10gammas(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: species_log10gammas(*)
     END FUNCTION RMF_GetSpeciesLog10Gammas
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_log10gammas
-    if (rmf_debug) call Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
+    real(kind=8), intent(inout), DIMENSION(:,:), allocatable :: species_log10gammas
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_nspecies = RM_GetSpeciesCount(id)
+    rmf_errors = allocate_double_2d(species_log10gammas, rmf_nxyz, rmf_nspecies)
     RM_GetSpeciesLog10Gammas = RMF_GetSpeciesLog10Gammas(id, species_log10gammas)
     END FUNCTION RM_GetSpeciesLog10Gammas
-
-    SUBROUTINE Chk_GetSpeciesLog10Gammas(id, species_log10gammas)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_log10gammas
-    INTEGER :: errors, nspecies
-    nspecies = RM_GetSpeciesCount(id)
-    errors = 0
-    errors = errors + Chk_Double2D(id, species_log10gammas, rmf_nxyz, nspecies, "species gammas", &
-        "RM_GetSpeciesLog10Gammas")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesLog10Gammas")
-    endif
-    END SUBROUTINE Chk_GetSpeciesLog10Gammas
 
     !> Transfer log10 aqueous-species log10 molalities to the array argument (@a species_log10molalities)
     !> To use this method @ref RM_SetSpeciesSaveOn must be set to @a true.
@@ -3261,28 +3357,16 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: species_log10molalities(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: species_log10molalities(*)
     END FUNCTION RMF_GetSpeciesLog10Molalities
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:,:) :: species_log10molalities
-    if (rmf_debug) call Chk_GetSpeciesLog10Molalities(id, species_log10molalities)
+    real(kind=8), intent(inout), DIMENSION(:,:), allocatable :: species_log10molalities
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_nspecies = RM_GetSpeciesCount(id)
+    rmf_errors = allocate_double_2d(species_log10molalities, rmf_nxyz, rmf_nspecies)
     RM_GetSpeciesLog10Molalities = RMF_GetSpeciesLog10Molalities(id, species_log10molalities)
     END FUNCTION RM_GetSpeciesLog10Molalities
-
-    SUBROUTINE Chk_GetSpeciesLog10Molalities(id, species_log10molalities)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:,:) :: species_log10molalities
-    INTEGER :: errors, nspecies
-    nspecies = RM_GetSpeciesCount(id)
-    errors = 0
-    errors = errors + Chk_Double2D(id, species_log10molalities, rmf_nxyz, nspecies, "species molalities", &
-        "RM_GetSpeciesLog10Molalities")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesLog10Molalities")
-    endif
-    END SUBROUTINE Chk_GetSpeciesLog10Molalities
 
     !> Transfers the name of the @a ith aqueous species to the character argument (@a name).
     !> This method is intended for use with multicomponent-diffusion transport calculations,
@@ -3335,11 +3419,11 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, i, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSpeciesName
     END INTERFACE
     INTEGER, INTENT(in) :: id, i
-    CHARACTER(len=*), INTENT(out) :: name
+    CHARACTER(len=*), intent(inout) :: name
     RM_GetSpeciesName = RMF_GetSpeciesName(id, i, name, len(name))
     END FUNCTION RM_GetSpeciesName
 
@@ -3439,27 +3523,16 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: z(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: z(*)
     END FUNCTION RMF_GetSpeciesZ
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), DIMENSION(:) :: z
-    if (rmf_debug) call Chk_GetSpeciesZ(id, z)
+    real(kind=8), intent(inout), DIMENSION(:), allocatable :: z
+    rmf_nspecies = RM_GetSpeciesCount(id)
+    rmf_errors = allocate_double_1d(z, rmf_nspecies)
     RM_GetSpeciesZ = RMF_GetSpeciesZ(id, z)
     END FUNCTION RM_GetSpeciesZ
 
-    SUBROUTINE Chk_GetSpeciesZ(id, z)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in), DIMENSION(:) :: z
-    INTEGER :: errors, nspecies
-    nspecies = RM_GetSpeciesCount(id)
-    errors = 0
-    errors = errors + Chk_Double1D(id, z, nspecies, "species charge", "RM_GetSpeciesZ")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_GetSpeciesZ")
-    endif
-    END SUBROUTINE Chk_GetSpeciesZ
 
     !> Returns an array with the starting cell numbers from the range of cell numbers assigned to each worker.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -3493,28 +3566,16 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    INTEGER(KIND=C_INT), INTENT(out):: sc(*)
+    INTEGER(KIND=C_INT), intent(inout):: sc(*)
     END FUNCTION RMF_GetStartCell
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    INTEGER, INTENT(out), DIMENSION(:) :: sc
-    if (rmf_debug) call Chk_GetStartCell(id, sc)
+    INTEGER, intent(inout), DIMENSION(:), allocatable :: sc
+    rmf_threads = RM_GetThreadCount(id)
+    rmf_errors = allocate_integer_1d(sc, rmf_threads)
     RM_GetStartCell = RMF_GetStartCell(id, sc)
     RETURN
     END FUNCTION RM_GetStartCell
-
-    SUBROUTINE Chk_GetStartCell(id, sc)
-    IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
-    INTEGER, INTENT(in), DIMENSION(:) :: sc
-    INTEGER :: errors, n
-    errors = 0
-    n = RM_GetMpiTasks(id) * RM_GetThreadCount(id)
-    errors = errors + Chk_Integer1D(id, sc, n, "StartCell", "RM_GetStartCell")
-    if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RMF_GetStartCell")
-    endif
-    END SUBROUTINE Chk_GetStartCell
 
     !> Retrieves the surface name (such as "Hfo") that corresponds with
     !> the surface species name.
@@ -3544,6 +3605,29 @@
     !> @par MPI:
     !> Called by root.
 
+    INTEGER FUNCTION RM_GetSurfaceNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSurfaceSpeciesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSurfaceName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+    do i = 1, dim
+        status = RM_GetSurfaceName(id, i, names(i))
+    enddo
+    RM_GetSurfaceNames = status
+    return 
+    END FUNCTION RM_GetSurfaceNames
+    
     INTEGER FUNCTION RM_GetSurfaceName(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -3553,7 +3637,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSurfaceName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -3629,6 +3713,29 @@
     !> @par MPI:
     !> Called by root.
 
+    INTEGER FUNCTION RM_GetSurfaceSpeciesNames(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSurfaceSpeciesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSurfaceSpeciesName(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+    do i = 1, dim
+        status = RM_GetSurfaceSpeciesName(id, i, names(i))
+    enddo
+    RM_GetSurfaceSpeciesNames = status
+    return 
+    END FUNCTION RM_GetSurfaceSpeciesNames
+
     INTEGER FUNCTION RM_GetSurfaceSpeciesName(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -3638,7 +3745,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSurfaceSpeciesName
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -3675,6 +3782,29 @@
     !> @par MPI:
     !> Called by root.
 
+    INTEGER FUNCTION RM_GetSurfaceTypes(id, names)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
+    character(2048) :: name
+    integer :: dim, itemsize, status, l, i
+    dim = RM_GetSurfaceSpeciesCount(id)
+    itemsize = 0
+    do i = 1, dim
+        status = RM_GetSurfaceType(id, i, name)
+        l = len(trim(name))
+        if (l > itemsize) itemsize = l
+    enddo
+    if(allocated(names)) deallocate(names)
+    allocate(character(len=itemsize) :: names(dim))
+    do i = 1, dim
+        status = RM_GetSurfaceType(id, i, names(i))
+    enddo
+    RM_GetSurfaceTypes = status
+    return 
+    END FUNCTION RM_GetSurfaceTypes
+
     INTEGER FUNCTION RM_GetSurfaceType(id, num, name)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -3684,7 +3814,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id, num, l
-    CHARACTER(KIND=C_CHAR), INTENT(out) :: name(*)
+    CHARACTER(KIND=C_CHAR), intent(inout) :: name(*)
     END FUNCTION RMF_GetSurfaceType
     END INTERFACE
     INTEGER, INTENT(in) :: id, num
@@ -3706,8 +3836,6 @@
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !>
     !> @see
-    !> @ref bmif_get_value,
-    !> @ref bmif_set_value,
     !> @ref RM_SetTemperature.
     !> @par Fortran Example:
     !> @htmlonly
@@ -3720,16 +3848,6 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
-    !INTEGER FUNCTION RM_GetTemperature(id, temperature)
-    !USE ISO_C_BINDING
-    !IMPLICIT NONE
-    !INTEGER, INTENT(in) :: id
-    !real(kind=8), INTENT(out), DIMENSION(:) :: temperature
-    !real(kind=8), ALLOCATABLE, DIMENSION(:) :: a_temperature
-    !RM_GetTemperature = bmif_get_value(id, "Temperature", a_temperature)
-    !temperature = a_temperature
-    !END FUNCTION RM_GetTemperature
     
     INTEGER FUNCTION RM_GetTemperature(id, temperature)
     USE ISO_C_BINDING
@@ -3740,11 +3858,13 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(out) :: temperature(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: temperature(*)
     END FUNCTION RMF_GetTemperature
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(out), dimension(:) :: temperature
+    real(kind=8), intent(inout), dimension(:), allocatable :: temperature
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_errors = allocate_double_1d(temperature, rmf_nxyz)
     RM_GetTemperature = RMF_GetTemperature(id, temperature)
     return
     END FUNCTION RM_GetTemperature
@@ -3901,6 +4021,81 @@
     INTEGER, INTENT(in) :: id
     RM_GetTimeStep = RMF_GetTimeStep(id)
     END FUNCTION RM_GetTimeStep
+
+    ! INTEGER FUNCTION RM_GetVarItemsize(id, var)
+    ! USE ISO_C_BINDING
+    ! IMPLICIT NONE
+    ! INTERFACE
+    !     INTEGER(KIND=C_INT) FUNCTION RMF_GetVarItemsize(id, var) &
+    !         BIND(C, NAME='RMF_GetVarItemsize')
+    !     USE ISO_C_BINDING
+    !     IMPLICIT NONE
+    !     INTEGER(KIND=C_INT), INTENT(in) :: id
+    !     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+    !     END FUNCTION RMF_GetVarItemsize
+    ! END INTERFACE
+    ! INTEGER, INTENT(in) :: id
+    ! CHARACTER(len=*), INTENT(in) :: var
+    ! RM_GetVarItemsize = RMF_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
+    ! return
+    ! END FUNCTION RM_GetVarItemsize
+
+    ! INTEGER FUNCTION RM_GetVarNbytes(id, var)
+    ! USE ISO_C_BINDING
+    ! IMPLICIT NONE
+    ! INTERFACE
+    !     INTEGER(KIND=C_INT) FUNCTION RMF_GetVarNbytes(id, var) &
+    !         BIND(C, NAME='RMF_GetVarNbytes')
+    !     USE ISO_C_BINDING
+    !     IMPLICIT NONE
+    !     INTEGER(KIND=C_INT), INTENT(in) :: id
+    !     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+    !     END FUNCTION RMF_GetVarNbytes
+    ! END INTERFACE
+    ! INTEGER, INTENT(in) :: id
+    ! CHARACTER(len=*), INTENT(in) :: var
+    ! RM_GetVarNbytes = RMF_GetVarNbytes(id, trim(var)//C_NULL_CHAR)
+    ! return
+    ! END FUNCTION RM_GetVarNbytes
+    
+    !> Transfer current viscosities to the array given in the argument list (@a viscosity).
+    !>
+    !> @param id                   The instance @a id returned from @ref RM_Create.
+    !> @param viscosity            Array to receive the viscosities. Dimension of the array is @a nxyz,
+    !> where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+    !> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
+    !>
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> allocate(viscosity(nxyz))
+    !> status = RM_GetViscosity(id, viscosity)
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
+
+    INTEGER FUNCTION RM_GetViscosity(id, viscosity)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION RMF_GetViscosity(id, viscosity) &
+        BIND(C, NAME='RMF_GetViscosity')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER(KIND=C_INT), INTENT(in) :: id
+    REAL(KIND=C_DOUBLE), intent(inout) :: viscosity(*)
+    END FUNCTION RMF_GetViscosity
+    END INTERFACE
+    INTEGER, INTENT(in) :: id
+    real(kind=8), intent(inout), dimension(:), allocatable :: viscosity
+    rmf_nxyz = RM_GetGridCellCount(id)
+    rmf_errors = allocate_double_1d(viscosity, rmf_nxyz)
+    RM_GetViscosity = RMF_GetViscosity(id, viscosity)
+    return
+    END FUNCTION RM_GetViscosity
 #ifdef USE_YAML
     !> A YAML file can be used to initialize an instance of PhreeqcRM.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -3950,6 +4145,13 @@
     !> CreateMapping(std::vector< int >& grid2chem);
     !> DumpModule();
     !> FindComponents();
+	!> InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+	!> InitialExchanges2Module(std::vector< int > exchanges);
+	!> InitialGasPhases2Module(std::vector< int > gas_phases);
+	!> InitialKineticss2Module(std::vector< int > kinetics);
+	!> InitialSolidSolutions2Module(std::vector< int > solid_solutions);
+	!> InitialSolutions2Module(std::vector< int > solutions);
+	!> InitialSurfaces2Module(std::vector< int > surfaces);
     !> InitialPhreeqc2Module(std::vector< int > initial_conditions1);
     !> InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
     !> InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
@@ -3963,7 +4165,7 @@
     !> SetComponentH2O(bool tf);
     !> SetConcentrations(std::vector< double > c);
     !> SetCurrentSelectedOutputUserNumber(int n_user);
-    !> SetDensity(std::vector< double > density);
+    !> SetDensityUser(std::vector< double > density);
     !> SetDumpFileName(std::string dump_name);
     !> SetErrorHandlerMode(int mode);
     !> SetErrorOn(bool tf);
@@ -3978,7 +4180,7 @@
     !> SetRebalanceByCell(bool tf);
     !> SetRebalanceFraction(double f);
     !> SetRepresentativeVolume(std::vector< double > rv);
-    !> SetSaturation(std::vector< double > sat);
+    !> SetSaturationUser(std::vector< double > sat);
     !> SetScreenOn(bool tf);
     !> SetSelectedOutputOn(bool tf);
     !> SetSpeciesSaveOn(bool save_on);
@@ -4080,31 +4282,33 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1) &
-        BIND(C, NAME='RMF_InitialPhreeqc2Concentrations')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
-    INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
-    END FUNCTION RMF_InitialPhreeqc2Concentrations
-    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Concentrations2(id, bc_conc, n_boundary, bc1, bc2, f1) &
-        BIND(C, NAME='RMF_InitialPhreeqc2Concentrations2')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
-    INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
-    INTEGER(KIND=C_INT), INTENT(IN) :: bc2(*)
-    REAL(KIND=C_DOUBLE), INTENT(IN) :: f1(*)
-    END FUNCTION RMF_InitialPhreeqc2Concentrations2
+        INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1) &
+            BIND(C, NAME='RMF_InitialPhreeqc2Concentrations')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
+        INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
+        END FUNCTION RMF_InitialPhreeqc2Concentrations
+        INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Concentrations2(id, bc_conc, n_boundary, bc1, bc2, f1) &
+            BIND(C, NAME='RMF_InitialPhreeqc2Concentrations2')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
+        INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
+        INTEGER(KIND=C_INT), INTENT(IN) :: bc2(*)
+        REAL(KIND=C_DOUBLE), INTENT(IN) :: f1(*)
+        END FUNCTION RMF_InitialPhreeqc2Concentrations2
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(OUT), DIMENSION(:,:) :: bc_conc
+    real(kind=8), INTENT(INOUT), DIMENSION(:,:), allocatable :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:) , OPTIONAL :: bc2
     real(kind=8), INTENT(IN), DIMENSION(:) , OPTIONAL :: f1
+    rmf_ncomps = RM_GetComponentCount(id)
+    rmf_errors = allocate_double_2d(bc_conc, n_boundary, rmf_ncomps)
     if (rmf_debug) call Chk_InitialPhreeqc2Concentrations(id, bc_conc, n_boundary, bc1, bc2, f1)
     if (present(bc2) .and. present(f1)) then
         RM_InitialPhreeqc2Concentrations = RMF_InitialPhreeqc2Concentrations2(id, bc_conc, n_boundary, bc1, bc2, f1)
@@ -4211,24 +4415,24 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Module(id, ic1) &
-        BIND(C, NAME='RMF_InitialPhreeqc2Module')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
-    END FUNCTION RMF_InitialPhreeqc2Module
+        INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Module(id, ic1) &
+            BIND(C, NAME='RMF_InitialPhreeqc2Module')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
+        END FUNCTION RMF_InitialPhreeqc2Module
     END INTERFACE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2Module2(id, ic1, ic2, f1) &
-        BIND(C, NAME='RMF_InitialPhreeqc2Module2')
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    INTEGER(KIND=C_INT), INTENT(in) :: id
-    INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
-    INTEGER(KIND=C_INT), INTENT(in) :: ic2(*)
-    REAL(KIND=C_DOUBLE), INTENT(in) :: f1(*)
-    END FUNCTION RMF_InitialPhreeqc2Module2
+        INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2ModuleMix(id, ic1, ic2, f1) &
+            BIND(C, NAME='RMF_InitialPhreeqc2ModuleMix')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        INTEGER(KIND=C_INT), INTENT(in) :: ic1(*)
+        INTEGER(KIND=C_INT), INTENT(in) :: ic2(*)
+        REAL(KIND=C_DOUBLE), INTENT(in) :: f1(*)
+        END FUNCTION RMF_InitialPhreeqc2ModuleMix
     END INTERFACE
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in), DIMENSION(:,:) :: ic1
@@ -4236,7 +4440,7 @@
     real(kind=8), INTENT(in), DIMENSION(:,:), OPTIONAL :: f1
     if (rmf_debug) call Chk_InitialPhreeqc2Module(id, ic1, ic2, f1)
     if (present(ic2) .and. present(f1)) then
-        RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2Module2(id, ic1, ic2, f1)
+        RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2ModuleMix(id, ic1, ic2, f1)
     else
         RM_InitialPhreeqc2Module = RMF_InitialPhreeqc2Module(id, ic1)
     endif
@@ -4262,6 +4466,328 @@
     endif
     END SUBROUTINE Chk_InitialPhreeqc2Module
 
+	!> Transfer SOLUTION definitions from the InitialPhreeqc instance to the reaction-module workers.
+	!> @a solutions is used to select SOLUTION definitions for each cell of the model.
+	!> @a solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id           The instance @a id returned from @ref RM_Create.
+	!> @param solutions    Vector of SOLUTION index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> SOLUTION definition for that cell.
+	!> (Note that all cells must have a SOLUTION definition, which could be defined by other 
+	!> calls to @a RM_InitialSolutions2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(solutions(nxyz))
+	!> solutions = 1
+	!> status = RM_InitialSolutions2Module(id, solutions);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_InitialSolutions2Module(id, solutions)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialSolutions2Module(id, solutions) &
+			BIND(C, NAME='RMF_InitialSolutions2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: solutions(*)
+		END FUNCTION RMF_InitialSolutions2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: solutions
+    RM_InitialSolutions2Module = RMF_InitialSolutions2Module(id, solutions)
+    END FUNCTION RM_InitialSolutions2Module  
+	
+	!> Transfer EQUILIBRIUM_PHASES definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a equilibrium_phases is used to select EQUILIBRIUM_PHASES definitions for each cell of the model.
+	!> @a equilibrium_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param equilibrium_phases   Vector of EQUILIBRIUM_PHASES index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of an
+	!> EQUILIBRIUM_PHASES definition for that cell.
+	!> (Note that an EQUILIBRIUM_PHASES definition for a cell could be defined by other 
+	!> calls to @a RM_InitialEquilibriumPhases2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(equilibrium_phases(nxyz))
+	!> equilibrium_phases = 1
+	!> status = RM_InitialEquilibriumPhases2Module(id, equilibrium_phases);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_InitialEquilibriumPhases2Module(id, equilibrium_phases)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialEquilibriumPhases2Module(id, equilibrium_phases) &
+			BIND(C, NAME='RMF_InitialEquilibriumPhases2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: equilibrium_phases(*)
+		END FUNCTION RMF_InitialEquilibriumPhases2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: equilibrium_phases
+    RM_InitialEquilibriumPhases2Module = RMF_InitialEquilibriumPhases2Module(id, equilibrium_phases)
+    END FUNCTION RM_InitialEquilibriumPhases2Module
+
+	!> Transfer EXCHANGE definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a exchanges is used to select EXCHANGE definitions for each cell of the model.
+	!> @a exchanges is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id           The instance @a id returned from @ref RM_Create.
+	!> @param exchanges    Vector of EXCHANGE index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of an 
+	!> EXCHANGE definition for that cell.
+	!> (Note that an EXCHANGE definition for a cell could be defined by other 
+	!> calls to @a RM_InitialExchanges2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(exchanges(nxyz))
+	!> exchanges = 1
+	!> status = RM_InitialExchanges2Module(id, exchanges);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_InitialExchanges2Module(id, exchanges)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialExchanges2Module(id, exchanges) &
+			BIND(C, NAME='RMF_InitialExchanges2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: exchanges(*)
+		END FUNCTION RMF_InitialExchanges2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: exchanges
+    RM_InitialExchanges2Module = RMF_InitialExchanges2Module(id, exchanges)
+    END FUNCTION RM_InitialExchanges2Module
+	
+	!> Transfer SURFACE definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a surfaces is used to select SURFACE definitions for each cell of the model.
+	!> @a surfaces is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param surfaces    Vector of SURFACE index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> SURFACE definition for that cell.
+	!> (Note that an SURFACE definition for a cell could be defined by other 
+	!> calls to @a RM_InitialSurfaces2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(surfaces(nxyz))
+	!> surfaces = 1
+	!> status = RM_InitialSurfaces2Module(id, surfaces);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_InitialSurfaces2Module(id, surfaces)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialSurfaces2Module(id, surfaces) &
+			BIND(C, NAME='RMF_InitialSurfaces2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: surfaces(*)
+		END FUNCTION RMF_InitialSurfaces2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: surfaces
+    RM_InitialSurfaces2Module = RMF_InitialSurfaces2Module(id, surfaces)
+    END FUNCTION RM_InitialSurfaces2Module
+	
+	!> Transfer GAS_PHASE definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a gas_phases is used to select GAS_PHASE definitions for each cell of the model.
+	!> @a gas_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param gas_phases    Vector of GAS_PHASE index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> GAS_PHASE definition for that cell.
+	!> (Note that an GAS_PHASE definition for a cell could be defined by other 
+	!> calls to @a RM_InitialGasPhases2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(gas_phases(nxyz))
+	!> gas_phases = 1
+	!> status = RM_InitialGasPhases2Module(id, gas_phases);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_InitialGasPhases2Module(id, gas_phases)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialGasPhases2Module(id, gas_phases) &
+			BIND(C, NAME='RMF_InitialGasPhases2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: gas_phases(*)
+		END FUNCTION RMF_InitialGasPhases2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: gas_phases
+    RM_InitialGasPhases2Module = RMF_InitialGasPhases2Module(id, gas_phases)
+    END FUNCTION RM_InitialGasPhases2Module
+	
+	!> Transfer SOLID_SOLUTIONS definitions from the InitialPhreeqc instance to the 
+	!> reaction-module workers.
+	!> @a solid_solutions is used to select SOLID_SOLUTIONS definitions for each cell of the model.
+	!> @a solid_solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+	!> user's model (@ref RM_GetGridCellCount).
+	!> @param id          The instance @a id returned from @ref RM_Create.
+	!> @param solid_solutions    Vector of SOLID_SOLUTIONS index numbers that refer to
+	!> definitions in the InitialPhreeqc instance.
+	!> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+	!> SOLID_SOLUTIONS definition for that cell.
+	!> (Note that an SOLID_SOLUTIONS definition for a cell could be defined by other 
+	!> calls to @a RM_InitialSolidSolutions2Module, @ref RM_InitialPhreeqc2Module, or 
+	!> @ref RM_InitialPhreeqcCell2Module.)
+	!> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see               
+	!> @ref RM_InitialPhreeqc2Module,
+	!> @ref RM_InitialPhreeqcCell2Module.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> dimension(solid_solutions(nxyz))
+	!> solid_solutions = 1
+	!> status = RM_InitialSolidSolutions2Module(id, solid_solutions);
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_InitialSolidSolutions2Module(id, solid_solutions)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_InitialSolidSolutions2Module(id, solid_solutions) &
+			BIND(C, NAME='RMF_InitialSolidSolutions2Module')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: solid_solutions(*)
+		END FUNCTION RMF_InitialSolidSolutions2Module
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: solid_solutions
+    RM_InitialSolidSolutions2Module = RMF_InitialSolidSolutions2Module(id, solid_solutions)
+    END FUNCTION RM_InitialSolidSolutions2Module
+
+    !> Transfer KINETICS definitions from the InitialPhreeqc instance to the 
+    !> reaction-module workers.
+    !> @a kinetics is used to select KINETICS definitions for each cell of the model.
+    !> @a kinetics is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
+    !> user's model (@ref RM_GetGridCellCount).
+    !> @param id          The instance @a id returned from @ref RM_Create.
+    !> @param kinetics    Vector of KINETICS index numbers that refer to
+    !> definitions in the InitialPhreeqc instance.
+    !> Size is @a nxyz. Negative values are ignored, resulting in no transfer of a 
+    !> KINETICS definition for that cell.
+    !> (Note that an KINETICS definition for a cell could be defined by other 
+    !> calls to @a RM_InitialKinetics2Module, @ref RM_InitialPhreeqc2Module, or 
+    !> @ref RM_InitialPhreeqcCell2Module.)
+    !> @retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @see               
+    !> @ref RM_InitialPhreeqc2Module,
+    !> @ref RM_InitialPhreeqcCell2Module.
+    !> @par Fortran Example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> dimension(kinetics(nxyz))
+    !> kinetics = 1
+    !> status = RM_InitialKinetics2Module(id, kinetics);
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_InitialKinetics2Module(id, kinetics)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+        INTERFACE
+        INTEGER(KIND=C_INT) FUNCTION RMF_InitialKinetics2Module(id, kinetics) &
+            BIND(C, NAME='RMF_InitialKinetics2Module')
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTEGER(KIND=C_INT), INTENT(in) :: id
+        INTEGER(KIND=C_INT), INTENT(in) :: kinetics(*)
+        END FUNCTION RMF_InitialKinetics2Module
+        END INTERFACE
+    INTEGER, INTENT(in) :: id
+    INTEGER, INTENT(in), DIMENSION(:) :: kinetics
+    RM_InitialKinetics2Module = RMF_InitialKinetics2Module(id, kinetics)
+    END FUNCTION RM_InitialKinetics2Module  
+    
+    
     !> Fills an array (@a bc_conc) with aqueous species concentrations from solutions in the InitialPhreeqc instance.
     !> This method is intended for use with multicomponent-diffusion transport calculations,
     !> and @ref RM_SetSpeciesSaveOn must be set to @a true.
@@ -4318,7 +4844,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
     INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
     END FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations
     INTEGER(KIND=C_INT) FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations2(id, bc_conc, n_boundary, bc1, bc2, f1) &
@@ -4326,18 +4852,20 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    REAL(KIND=C_DOUBLE), INTENT(OUT) :: bc_conc(*)
+    REAL(KIND=C_DOUBLE), intent(inout) :: bc_conc(*)
     INTEGER(KIND=C_INT), INTENT(IN) :: n_boundary, bc1(*)
     INTEGER(KIND=C_INT), INTENT(IN) :: bc2(*)
     REAL(KIND=C_DOUBLE), INTENT(IN) :: f1(*)
     END FUNCTION RMF_InitialPhreeqc2SpeciesConcentrations2
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), DIMENSION(:,:), INTENT(OUT) :: bc_conc
+    real(kind=8), DIMENSION(:,:), intent(inout), allocatable :: bc_conc
     INTEGER, INTENT(IN) :: n_boundary
     INTEGER, INTENT(IN), DIMENSION(:) :: bc1
     INTEGER, INTENT(IN), DIMENSION(:), OPTIONAL :: bc2
     real(kind=8), INTENT(IN), DIMENSION(:), OPTIONAL :: f1
+    rmf_nspecies = RM_GetSpeciesCount(id)
+    rmf_errors = allocate_double_2d(bc_conc, n_boundary, rmf_nspecies)
     if (rmf_debug) call Chk_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, n_boundary, bc1, bc2, f1)
     if (present(bc2) .and. present(f1)) then
         RM_InitialPhreeqc2SpeciesConcentrations = &
@@ -4693,7 +5221,7 @@
     !> Normally, tranport concentrations are transferred to the reaction cells (@ref RM_SetConcentrations) before
     !> reaction calculations are run. The length of time over which kinetic reactions are integrated is set
     !> by @ref RM_SetTimeStep. Other properties that may need to be updated as a result of the transport
-    !> calculations include porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturation),
+    !> calculations include porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturationUser),
     !> temperature (@ref RM_SetTemperature), and pressure (@ref RM_SetPressure).
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -4701,7 +5229,7 @@
     !> @ref RM_SetConcentrations,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetPressure,
-    !> @ref RM_SetSaturation,
+    !> @ref RM_SetSaturationUser,
     !> @ref RM_SetTemperature,
     !> @ref RM_SetTimeStep.
     !> @par Fortran Example:
@@ -4709,14 +5237,14 @@
     !> <CODE>
     !> <PRE>
     !> status = RM_SetPorosity(id, por)                ! If pore volume changes
-    !> status = RM_SetSaturation(id, sat)              ! If saturation changes
+    !> status = RM_SetSaturationUser(id, sat)          ! If saturation changes
     !> status = RM_SetTemperature(id, temperature)     ! If temperature changes
     !> status = RM_SetPressure(id, pressure)           ! If pressure changes
     !> status = RM_SetConcentrations(id, c)            ! Transported concentrations
     !> status = RM_SetTimeStep(id, time_step)          ! Time step for kinetic reactions
     !> status = RM_RunCells(id)
     !> status = RM_GetConcentrations(id, c)            ! Concentrations after reaction
-    !> status = RM_GetDensity(id, density)             ! Density after reaction
+    !> status = RM_GetDensityCalculated(id, density)   ! Density after reaction
     !> status = RM_GetSolutionVolume(id, volume)       ! Solution volume after reaction
     !> </PRE>
     !> </CODE>
@@ -4915,11 +5443,11 @@
     END FUNCTION RM_SetComponentH2O
 
     !> Use the vector of concentrations (@a c) to set the moles of components in each reaction cell.
-    !> The volume of water in a cell is the product of porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturation),
+    !> The volume of water in a cell is the product of porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturationUser),
     !> and reference volume (@ref RM_SetRepresentativeVolume).
     !> The moles of each component are determined by the volume of water and per liter concentrations.
     !> If concentration units (@ref RM_SetUnitsSolution) are mass fraction, the
-    !> density (as specified by @ref RM_SetDensity) is used to convert from mass fraction to per mass per liter.
+    !> density (as specified by @ref RM_SetDensityUser) is used to convert from mass fraction to per mass per liter.
     !>
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param c                Array of component concentrations. Size of array is (@a nxyz, @a ncomps), where @a nxyz is the number
@@ -4927,10 +5455,10 @@
     !> by @ref RM_FindComponents or @ref RM_GetComponentCount.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_SetDensity,
+    !> @ref RM_SetDensityUser,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation,
+    !> @ref RM_SetSaturationUser,
     !> @ref RM_SetUnitsSolution.
     !>
     !> @par Fortran Example:
@@ -4941,7 +5469,7 @@
     !> ...
     !> call advect_f90(c, bc_conc, ncomps, nxyz)
     !> status = RM_SetPorosity(id, por)               ! If porosity changes
-    !> status = RM_SetSaturation(id, sat)             ! If saturation changes
+    !> status = RM_SetSaturationUser(id, sat)         ! If saturation changes
     !> status = RM_SetTemperature(id, temperature))   ! If temperature changes
     !> status = RM_SetPressure(id, pressure)          ! If pressure changes
     !> status = RM_SetConcentrations(id, c)           ! Transported concentrations
@@ -4949,7 +5477,7 @@
     !> status = RM_SetTime(id, time)                  ! Current time
     !> status = RM_RunCells(id)
     !> status = RM_GetConcentrations(id, c)           ! Concentrations after reaction
-    !> status = RM_GetDensity(id, density)            ! Density after reaction
+    !> status = RM_GetDensityCalculated(id, density)  ! Density after reaction
     !> status = RM_GetSolutionVolume(id, volume)      ! Solution volume after reaction
     !> </PRE>
     !> </CODE>
@@ -5090,42 +5618,42 @@
     !> <PRE>
     !> allocate(density(nxyz))
     !> density = 1.0
-    !> status = RM_SetDensity(id, density)
+    !> status = RM_SetDensityUser(id, density)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-    INTEGER FUNCTION RM_SetDensity(id, density)
+    INTEGER FUNCTION RM_SetDensityUser(id, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_SetDensity(id, density) &
-        BIND(C, NAME='RMF_SetDensity')
+    INTEGER(KIND=C_INT) FUNCTION RMF_SetDensityUser(id, density) &
+        BIND(C, NAME='RMF_SetDensityUser')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     REAL(KIND=C_DOUBLE), INTENT(in) :: density(*)
-    END FUNCTION RMF_SetDensity
+    END FUNCTION RMF_SetDensityUser
     END INTERFACE
     INTEGER, INTENT(in) :: id
     real(kind=8), DIMENSION(:), INTENT(in) :: density
-    if (rmf_debug) call Chk_SetDensity(id, density)
-    RM_SetDensity = RMF_SetDensity(id, density)
-    END FUNCTION RM_SetDensity
+    if (rmf_debug) call Chk_SetDensityUser(id, density)
+    RM_SetDensityUser = RMF_SetDensityUser(id, density)
+    END FUNCTION RM_SetDensityUser
 
-    SUBROUTINE Chk_SetDensity(id, density)
+    SUBROUTINE Chk_SetDensityUser(id, density)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(in), DIMENSION(:) :: density
     INTEGER :: errors
     errors = 0
-    errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_SetDensity")
+    errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_SetDensityUser")
     if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_SetDensity")
+        errors = RM_Abort(id, -3, "Invalid argument in RM_SetDensityUser")
     endif
-    END SUBROUTINE Chk_SetDensity
+    END SUBROUTINE Chk_SetDensityUser
 
     !> Set the name of the dump file. It is the name used by @ref RM_DumpModule.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -5407,6 +5935,100 @@
     endif
     END SUBROUTINE Chk_SetGasPhaseVolume
 
+
+	!> Transfer the concentrations for one component given by the vector @a c to each reaction cell. 
+	!> Units of concentration for @a c are defined by @ref RM_SetUnitsSolution. It is required that
+	!> @a RM_SetIthConcentration be called for each component in the system before @ref RM_RunCells is called.
+	!> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the component to transfer. Indices refer
+	!> to the order produced by @ref RM_GetComponents. The total number of components is given by
+	!> @ref RM_GetComponentCount.
+	!> @param c                Vector of concentrations to transfer to the reaction cells.
+	!> Dimension of the vector is @a nxyz, where @a nxyz is the number of
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are ignored.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetComponentCount,  @ref RM_GetComponents,
+	!> @ref RM_SetConcentrations.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> status = phreeqc_rm.SetIthConcentration(id, i, c) ! repeat for all components
+	!> ...
+	!> status = phreeqc_rm.RunCells(id)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+    INTEGER FUNCTION RM_SetIthConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_SetIthConcentration(id, i, c) &
+			BIND(C, NAME='RMF_SetIthConcentration')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: i
+		REAL(KIND=C_DOUBLE), INTENT(in)  :: c(*)
+		END FUNCTION RMF_SetIthConcentration
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(in), DIMENSION(:) :: c
+    RM_SetIthConcentration = RMF_SetIthConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_SetIthConcentration
+	
+	!> Transfer the concentrations for one aqueous species given by the vector @a c to each reaction cell.
+	!> Units of concentration for @a c are mol/L. To set species concentrations, @ref RM_SetSpeciesSaveOn 
+	!> must be set to @a true. It is required that
+	!> @a RM_SetIthSpeciesConcentration be called for each aqueous species in the system before 
+	!> @ref RM_RunCells is called. This method is for use with multicomponent diffusion calculations. 
+	!> 
+	!> @param id               The instance @a id returned from @ref RM_Create.
+	!> @param i                One-based index for the species to transfer. Indices refer
+	!> to the order produced by @ref RM_GetSpeciesName. The total number of species is given by
+	!> @ref RM_GetSpeciesCount.
+	!> @param c                Vector of concentrations to transfer to the reaction cells.
+	!> Dimension of the vector is @a nxyz, where @a nxyz is the number of
+	!> user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are ignored.
+	!> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+	!> @see                    @ref RM_FindComponents, @ref RM_GetSpeciesCount, @ref RM_GetSpeciesName,
+	!> @ref RM_SpeciesConcentrations2Module, @ref RM_SetSpeciesSaveOn.
+	!> @par Fortran Example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> status = RM_SetIthSpeciesConcentration(id, i, c) ! repeat for all species
+	!> ...
+	!> status = RM_RunCells(id)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+	INTEGER FUNCTION RM_SetIthSpeciesConcentration(id, i, c)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_SetIthSpeciesConcentration(id, i, c) &
+			BIND(C, NAME='RMF_SetIthSpeciesConcentration')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		INTEGER(KIND=C_INT), INTENT(in) :: i
+		REAL(KIND=C_DOUBLE), INTENT(in)  :: c(*)
+		END FUNCTION RMF_SetIthSpeciesConcentration
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+	INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(in), DIMENSION(:) :: c
+    RM_SetIthSpeciesConcentration = RMF_SetIthSpeciesConcentration(id, i - 1, c)
+    return
+    END FUNCTION RM_SetIthSpeciesConcentration
+
     !> MPI only. Defines a callback function that allows additional tasks to be done
     !> by the workers. The method @ref RM_MpiWorker contains a loop,
     !> where the workers receive a message (an integer),
@@ -5639,15 +6261,15 @@
 
     !> Set the porosity for each reaction cell.
     !> The volume of water in a reaction cell is the product of the porosity, the saturation
-    !> (@ref RM_SetSaturation), and the representative volume (@ref RM_SetRepresentativeVolume).
+    !> (@ref RM_SetSaturationUser), and the representative volume (@ref RM_SetRepresentativeVolume).
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param por              Array of porosities, unitless. Default is 0.1. Size of array is @a nxyz, where @a nxyz is the number
     !> of grid cells in the user's model (@ref RM_GetGridCellCount).
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_GetSaturation,
+    !> @ref RM_GetSaturationCalculated,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation.
+    !> @ref RM_SetSaturationUser.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -5942,7 +6564,7 @@
     !> Set the representative volume of each reaction cell.
     !> By default the representative volume of each reaction cell is 1 liter.
     !> The volume of water in a reaction cell is determined by the procuct of the representative volume,
-    !> the porosity (@ref RM_SetPorosity), and the saturation (@ref RM_SetSaturation).
+    !> the porosity (@ref RM_SetPorosity), and the saturation (@ref RM_SetSaturationUser).
     !> The numerical method of PHREEQC is more robust if the water volume for a reaction cell is
     !> within a couple orders of magnitude of 1.0.
     !> Small water volumes caused by small porosities and (or) small saturations (and (or) small representative volumes)
@@ -5959,7 +6581,7 @@
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_SetPorosity,
-    !> @ref RM_SetSaturation.
+    !> @ref RM_SetSaturationUser.
     !>
     !> @par Fortran Example:
     !> @htmlonly
@@ -5993,11 +6615,11 @@
     END FUNCTION RM_SetRepresentativeVolume
 
     !> Set the saturation of each reaction cell. Saturation is a fraction ranging from 0 to 1.
-    !> The volume of water in a cell is the product of porosity (@ref RM_SetPorosity), saturation (@a RM_SetSaturation),
+    !> The volume of water in a cell is the product of porosity (@ref RM_SetPorosity), saturation (@a RM_SetSaturationUser),
     !> and representative volume (@ref RM_SetRepresentativeVolume). As a result of a reaction calculation,
     !> solution properties (density and volume) will change;
     !> the databases phreeqc.dat, Amm.dat, and pitzer.dat have the molar volume data to calculate these changes.
-    !> The methods @ref RM_GetDensity, @ref RM_GetSolutionVolume, and @ref RM_GetSaturation
+    !> The methods @ref RM_GetDensityCalculated, @ref RM_GetSolutionVolume, and @ref RM_GetSaturationCalculated
     !> can be used to account for these changes in the succeeding transport calculation.
     !> @a RM_SetRepresentativeVolume should be called before initial conditions are defined for the reaction cells.
     !>
@@ -6006,8 +6628,8 @@
     !> of grid cells in the user's model (@ref RM_GetGridCellCount).
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_GetDensity,
-    !> @ref RM_GetSaturation,
+    !> @ref RM_GetDensityCalculated,
+    !> @ref RM_GetSaturationCalculated,
     !> @ref RM_GetSolutionVolume,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume.
@@ -6018,42 +6640,42 @@
     !> <PRE>
     !> allocate(sat(nxyz))
     !> sat = 1.0
-    !> status = RM_SetSaturation(id, sat)
+    !> status = RM_SetSaturationUser(id, sat)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-    INTEGER FUNCTION RM_SetSaturation(id, sat)
+    INTEGER FUNCTION RM_SetSaturationUser(id, sat)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_SetSaturation(id, sat) &
-        BIND(C, NAME='RMF_SetSaturation')
+    INTEGER(KIND=C_INT) FUNCTION RMF_SetSaturationUser(id, sat) &
+        BIND(C, NAME='RMF_SetSaturationUser')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
     REAL(KIND=C_DOUBLE), INTENT(in) :: sat(*)
-    END FUNCTION RMF_SetSaturation
+    END FUNCTION RMF_SetSaturationUser
     END INTERFACE
     INTEGER, INTENT(in) :: id
     real(kind=8), DIMENSION(:), INTENT(in) :: sat
-    if (rmf_debug) call Chk_SetSaturation(id, sat)
-    RM_SetSaturation = RMF_SetSaturation(id, sat)
-    END FUNCTION RM_SetSaturation
+    if (rmf_debug) call Chk_SetSaturationUser(id, sat)
+    RM_SetSaturationUser = RMF_SetSaturationUser(id, sat)
+    END FUNCTION RM_SetSaturationUser
 
-    SUBROUTINE Chk_SetSaturation(id, sat)
+    SUBROUTINE Chk_SetSaturationUser(id, sat)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
     real(kind=8), INTENT(in), DIMENSION(:) :: sat
     INTEGER :: errors
     errors = 0
-    errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "sataturation", "RM_SetSaturation")
+    errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "sataturation", "RM_SetSaturationUser")
     if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument in RM_SetSaturation")
+        errors = RM_Abort(id, -3, "Invalid argument in RM_SetSaturationUser")
     endif
-    END SUBROUTINE Chk_SetSaturation
+    END SUBROUTINE Chk_SetSaturationUser
 
     !> Set the property that controls whether messages are written to the screen.
     !> Messages include information about rebalancing during @ref RM_RunCells, and
@@ -6479,7 +7101,7 @@
     !> For option 2, the number of moles of kinetic reactants will vary directly with rock volume and inversely with porosity.
     !>
     !> Note that the volume of water in a cell in the reaction module is equal to the product of
-    !> porosity (@ref RM_SetPorosity), the saturation (@ref RM_SetSaturation), and representative volume (@ref
+    !> porosity (@ref RM_SetPorosity), the saturation (@ref RM_SetSaturationUser), and representative volume (@ref
     !> RM_SetRepresentativeVolume), which is usually less than 1 liter. It is important to write the RATES
     !> definitions for homogeneous (aqueous) kinetic reactions to account for the current volume of
     !> water, often by calculating the rate of reaction per liter of water and multiplying by the volume
@@ -6499,7 +7121,7 @@
     !> @ref RM_InitialPhreeqcCell2Module,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation.
+    !> @ref RM_SetSaturationUser.
     !>
     !> @par Fortran Example:
     !> @htmlonly
@@ -6590,14 +7212,14 @@
     !> To convert from mg/L to moles
     !> of element in the representative volume of a reaction cell, mg/L is converted to mol/L and
     !> multiplied by the solution volume,
-    !> which is the product of porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturation),
+    !> which is the product of porosity (@ref RM_SetPorosity), saturation (@ref RM_SetSaturationUser),
     !> and representative volume (@ref RM_SetRepresentativeVolume).
     !> To convert from mol/L to moles
     !> of element in the representative volume of a reaction cell, mol/L is
     !> multiplied by the solution volume.
     !> To convert from mass fraction to moles
     !> of element in the representative volume of a reaction cell, kg/kgs is converted to mol/kgs, multiplied by density
-    !> (@ref RM_SetDensity) and
+    !> (@ref RM_SetDensityUser) and
     !> multiplied by the solution volume.
     !>
     !> To convert from moles
@@ -6612,18 +7234,18 @@
     !> Two options are available for the volume and mass of solution
     !> that are used in converting to transport concentrations: (1) the volume and mass of solution are
     !> calculated by PHREEQC, or (2) the volume of solution is the product of porosity (@ref RM_SetPorosity),
-    !> saturation (@ref RM_SetSaturation), and representative volume (@ref RM_SetRepresentativeVolume),
-    !> and the mass of solution is volume times density as defined by @ref RM_SetDensity.
+    !> saturation (@ref RM_SetSaturationUser), and representative volume (@ref RM_SetRepresentativeVolume),
+    !> and the mass of solution is volume times density as defined by @ref RM_SetDensityUser.
     !> Which option is used is determined by @ref RM_UseSolutionDensityVolume.
     !>
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param option           Units option for solutions: 1, 2, or 3, default is 1, mg/L.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
-    !> @ref RM_SetDensity,
+    !> @ref RM_SetDensityUser,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation,
+    !> @ref RM_SetSaturationUser,
     !> @ref RM_UseSolutionDensityVolume.
     !>
     !> @par Fortran Example:
@@ -6970,9 +7592,9 @@
     !> to transport concentrations (@ref RM_GetConcentrations).
     !> Two options are available to convert concentration units:
     !> (1) the density and solution volume calculated by PHREEQC are used, or
-    !> (2) the specified density (@ref RM_SetDensity)
+    !> (2) the specified density (@ref RM_SetDensityUser)
     !> and solution volume are defined by the product of
-    !> saturation (@ref RM_SetSaturation), porosity (@ref RM_SetPorosity),
+    !> saturation (@ref RM_SetSaturationUser), porosity (@ref RM_SetPorosity),
     !> and representative volume (@ref RM_SetRepresentativeVolume).
     !> Transport models that consider density-dependent flow will probably use the
     !> PHREEQC-calculated density and solution volume (default),
@@ -6985,15 +7607,15 @@
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param tf               @a True indicates that the solution density and volume as
     !> calculated by PHREEQC will be used to calculate concentrations.
-    !> @a False indicates that the solution density set by @ref RM_SetDensity and the volume determined by the
-    !> product of  @ref RM_SetSaturation, @ref RM_SetPorosity, and @ref RM_SetRepresentativeVolume,
+    !> @a False indicates that the solution density set by @ref RM_SetDensityUser and the volume determined by the
+    !> product of  @ref RM_SetSaturationUser, @ref RM_SetPorosity, and @ref RM_SetRepresentativeVolume,
     !> will be used to calculate concentrations retrieved by @ref RM_GetConcentrations.
     !> @see
     !> @ref RM_GetConcentrations,
-    !> @ref RM_SetDensity,
+    !> @ref RM_SetDensityUser,
     !> @ref RM_SetPorosity,
     !> @ref RM_SetRepresentativeVolume,
-    !> @ref RM_SetSaturation.
+    !> @ref RM_SetSaturationUser.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -7078,6 +7700,20 @@
     Chk_Double1D = errors
     END FUNCTION Chk_Double1D
 
+    INTEGER FUNCTION allocate_double_1d(t, n1)
+    IMPLICIT NONE
+    real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: t
+    INTEGER, INTENT(in) :: n1
+    INTEGER :: errors, t1
+    t1 = size(t,1)
+    errors = 0
+    if (t1 .ne. n1)  then
+        if (allocated(t)) deallocate(t)
+        allocate(t(n1))    
+    endif
+    allocate_double_1d = errors
+    END FUNCTION allocate_double_1d
+
     INTEGER FUNCTION Chk_Double2D(id, t, n1, n2, var, func)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
@@ -7102,6 +7738,21 @@
     Chk_Double2D = errors
     END FUNCTION Chk_Double2D
 
+    INTEGER FUNCTION allocate_double_2d(t, n1, n2)
+    IMPLICIT NONE
+    real(kind=8), INTENT(inout), allocatable :: t(:,:)
+    INTEGER, INTENT(in) :: n1, n2
+    INTEGER :: errors, t1, t2
+    t1 = size(t,1)
+    t2 = size(t,2)
+    errors = 0
+    if ((t2 .ne. n2) .or. (t1 .lt. n1))  then
+        if (allocated(t)) deallocate(t)
+        allocate(t(n1, n2))
+    endif
+    allocate_double_2d = errors
+    END FUNCTION allocate_double_2d
+
     INTEGER FUNCTION Chk_Integer1D(id, t, n1, var, func)
     IMPLICIT NONE
     INTEGER RMF_ErrorMessage
@@ -7120,6 +7771,20 @@
     endif
     Chk_Integer1D = errors
     END FUNCTION Chk_Integer1D
+
+    INTEGER FUNCTION allocate_integer_1d(t, n1)
+    IMPLICIT NONE
+    INTEGER, INTENT(inout), DIMENSION(:), allocatable :: t
+    INTEGER, INTENT(in) :: n1
+    INTEGER :: errors, t1
+    t1 = size(t,1)
+    errors = 0
+    if (t1 .ne. n1)  then
+        if (allocated(t)) deallocate(t)
+        allocate(t(n1))
+    endif
+    allocate_integer_1d = errors
+    END FUNCTION allocate_integer_1d
 
     INTEGER FUNCTION Chk_Integer2D(id, t, n1, n2, var, func)
     IMPLICIT NONE

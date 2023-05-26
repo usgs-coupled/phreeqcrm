@@ -1,14 +1,14 @@
 #ifdef USE_MPI
 #include "mpi.h"
 #endif
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 #include "BMIPhreeqcRM.h"
 //#include "RM_interface_F.h"
 #include "BMI_interface_F.h"
 #include "IPhreeqcPhastLib.h"
 #include "Phreeqc.h"
 #include "PHRQ_io.h"
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 #include <string>
 #include <map>
 #include <sstream>
@@ -38,6 +38,16 @@ RM_BMI_Create(int* nxyz, int* nthreads)
 #else
 /* ---------------------------------------------------------------------- */
 int
+RM_BMI_Create_default()
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	return BMIPhreeqcRM::CreateBMIModule();
+}
+/* ---------------------------------------------------------------------- */
+int
 RM_BMI_Create(int* nxyz, int* nthreads)
 /* ---------------------------------------------------------------------- */
 {
@@ -47,6 +57,19 @@ RM_BMI_Create(int* nxyz, int* nthreads)
 	return BMIPhreeqcRM::CreateBMIModule(*nxyz, *nthreads);
 }
 #endif
+
+IRM_RESULT        RMF_BMI_AddOutputVars(int* id, char* option_in, char* def_in)
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(*id);
+	if (bmirm_ptr)
+	{
+		std::string option = option_in;
+		std::string def = def_in;
+		bmirm_ptr->AddOutputVars(option, def);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RMF_BMI_GetComponentName(int* id, char* chem_name, int* l1)

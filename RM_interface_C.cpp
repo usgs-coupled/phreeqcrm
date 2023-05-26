@@ -1,7 +1,7 @@
 #ifdef USE_MPI
 #include "mpi.h"
 #endif
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 #include "PhreeqcRM.h"
 #include "RM_interface_C.h"
 #include "IPhreeqcPhastLib.h"
@@ -639,7 +639,7 @@ int RM_GetCurrentSelectedOutputUserNumber(int id)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_GetDensity(int id, double * d)
+RM_GetDensityCalculated(int id, double * d)
 /* ---------------------------------------------------------------------- */
 {
 	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
@@ -649,7 +649,7 @@ RM_GetDensity(int id, double * d)
 		{
 			IRM_RESULT return_value = IRM_OK;
 			std::vector <double> density_vector;
-			Reaction_module_ptr->GetDensity(density_vector);
+			Reaction_module_ptr->GetDensityCalculated(density_vector);
 			if ((int) density_vector.size() == Reaction_module_ptr->GetGridCellCount())
 			{
 				memcpy(d, &density_vector.front(), (size_t) (Reaction_module_ptr->GetGridCellCount()*sizeof(double)));
@@ -904,7 +904,7 @@ RM_GetNthSelectedOutputUserNumber(int id, int i)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_GetSaturation(int id, double * sat)
+RM_GetSaturationCalculated(int id, double * sat)
 /* ---------------------------------------------------------------------- */
 {
 	// Retrieves saturation for all grid nodes in sat
@@ -914,7 +914,7 @@ RM_GetSaturation(int id, double * sat)
 	{
 		IRM_RESULT return_value = IRM_OK;
 		std::vector <double> sat_vector;
-		Reaction_module_ptr->GetSaturation(sat_vector);
+		Reaction_module_ptr->GetSaturationCalculated(sat_vector);
 		if ((int) sat_vector.size() == Reaction_module_ptr->GetGridCellCount())
 		{
 			memcpy(sat, &sat_vector.front(), (size_t) (Reaction_module_ptr->GetGridCellCount()*sizeof(double)));
@@ -1657,7 +1657,7 @@ RM_SetCurrentSelectedOutputUserNumber(int id, int i)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_SetDensity(int id, double *t)
+RM_SetDensityUser(int id, double *t)
 /* ---------------------------------------------------------------------- */
 {
 	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
@@ -1668,7 +1668,7 @@ RM_SetDensity(int id, double *t)
 			std::vector<double> d_vector;
 			d_vector.resize(Reaction_module_ptr->GetGridCellCount());
 			memcpy(&d_vector.front(), t, d_vector.size() * sizeof(double));
-			return Reaction_module_ptr->SetDensity(d_vector);
+			return Reaction_module_ptr->SetDensityUser(d_vector);
 		}
 		return IRM_INVALIDARG;
 	}
@@ -1935,7 +1935,7 @@ RM_SetRepresentativeVolume(int id, double *t)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT 
-RM_SetSaturation(int id, double *t)
+RM_SetSaturationUser(int id, double *t)
 /* ---------------------------------------------------------------------- */
 {
 	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(id);
@@ -1946,7 +1946,7 @@ RM_SetSaturation(int id, double *t)
 			std::vector<double> s_vector;
 			s_vector.resize(Reaction_module_ptr->GetGridCellCount());
 			memcpy(&s_vector.front(), t, s_vector.size() * sizeof(double));
-			return Reaction_module_ptr->SetSaturation(s_vector);
+			return Reaction_module_ptr->SetSaturationUser(s_vector);
 		}
 		return IRM_INVALIDARG;
 	}

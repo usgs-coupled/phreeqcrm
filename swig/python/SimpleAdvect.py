@@ -1,6 +1,6 @@
 import phreeqcrm
 import sys
-# import numpy as np
+import numpy as np
 
 """
     Functions that accept a constant vector reference
@@ -60,11 +60,13 @@ def SimpleAdvect():
     status = phreeqc_rm.SetTimeConversion(time_conversion)
 
     # Set initial porosity
-    por = [0.2] * nxyz
+    #por = [0.2] * nxyz
+    por = np.full((nxyz), 0.2)
     status = phreeqc_rm.SetPorosity(por)
 
     # Set cells to print chemistry when print chemistry is turned on
-    print_chemistry_mask = [1] * nxyz
+    #print_chemistry_mask = [1] * nxyz
+    print_chemistry_mask = np.full((nxyz), 1)
     status = phreeqc_rm.SetPrintChemistryMask(print_chemistry_mask)
     nchem = phreeqc_rm.GetChemistryCellCount()
 
@@ -101,6 +103,7 @@ def SimpleAdvect():
         ic1 = np.full((nxyz * 7,), -1)
     else:
         ic1 = [-1] * nxyz * 7
+    ic1 = [-1] * nxyz * 7     # Need to fix with numpy
     for i in range(nxyz):
         ic1[i]            =  1  # Solution 1
         ic1[nxyz + i]     = -1  # Equilibrium phases none
@@ -119,18 +122,21 @@ def SimpleAdvect():
     status = phreeqc_rm.RunCells()
 
     # for now use std::vector<double> wrapper for [inout] arrays
-    c_dbl_vect = phreeqcrm.DoubleVector(nxyz * len(components), 0.0)
-    status = phreeqc_rm.GetConcentrations(c_dbl_vect)
+    #c_dbl_vect = phreeqcrm.DoubleVector(nxyz * len(components), 0.0)
+    #status = phreeqc_rm.GetConcentrations(c_dbl_vect)
+    c_dbl_vect = phreeqc_rm.GetConcentrations()
 
     # --------------------------------------------------------------------------
     # Set boundary condition
     # --------------------------------------------------------------------------
 
     # for now use std::vector<double> wrapper for [inout] arrays
-    bc_conc_dbl_vect = phreeqcrm.DoubleVector()
+    #bc_conc_dbl_vect = phreeqcrm.DoubleVector()
     nbound = 1
-    bc1 = [0] * nbound                            # solution 0 from Initial IPhreeqc instance
-    status = phreeqc_rm.InitialPhreeqc2Concentrations(bc_conc_dbl_vect, bc1)
+    #bc1 = [0] * nbound                            # solution 0 from Initial IPhreeqc instance
+    bc1 = np.full((1), 0)
+    #status = phreeqc_rm.InitialPhreeqc2Concentrations(bc_conc_dbl_vect, bc1)
+    bc_conc_dbl_vect = phreeqc_rm.InitialPhreeqc2Concentrations(bc1)
 
     # --------------------------------------------------------------------------
     # Transient loop
@@ -172,7 +178,8 @@ def SimpleAdvect():
         status = phreeqc_rm.RunCells()
 
         # Transfer data from PhreeqcRM for transport
-        status = phreeqc_rm.GetConcentrations(c_dbl_vect)
+        #status = phreeqc_rm.GetConcentrations(c_dbl_vect)
+        c_dbl_vect = phreeqc_rm.GetConcentrations()
         
     # Clean up
     status = phreeqc_rm.CloseFiles()

@@ -1,5 +1,21 @@
-#ifdef USE_YAML
-MODULE YAML_interface
+#ifdef USE_YAML 
+    !> @file YAML_interface.F90
+    !> @brief YAMLPhreeqcRM module definition 
+    !>
+    !
+    !*MODULE YAMLPhreeqcRM Helper module for building YAML initialization files. 
+    !> @brief Fortran documentation for using YAML to initialize instances 
+	!> of BMIPhreeqcRM and PhreeqcRM.
+    !> @par ""
+    !> "USE YAMLPhreeqcRM" defines a module that can be used in preprocessors or
+	!> Graphical User Interfaces to store initialization data for BMIPhreeqcRM or
+	!> PhreeqcRM instances. PhreeqcRM methods and data can be stored in a YAML file.
+	!> After an instance of BMIPhreeqcRM or PhreeqcRM has been created, the method
+	!> bmif_initialize or RM_InitializeYAML can be used to run the specified methods
+	!> with the specified data to define properties and initial conditions for 
+	!> the instance.
+    !>    
+MODULE YAMLPhreeqcRM
     contains
 !> Creates a YAMLPhreeqcRM instance with a YAML document that is ready to 
 !> for writing data for initiation of a PhreeqcRM instance.
@@ -90,6 +106,7 @@ MODULE YAML_interface
     character(len=*), intent(in) :: file_name
 	WriteYAMLDoc = WriteYAMLDoc_F(id, trim(file_name)//C_NULL_CHAR)
     END FUNCTION WriteYAMLDoc
+    
 !> Clears all definitions from the YAML document.
 !> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -120,6 +137,81 @@ MODULE YAML_interface
     integer, intent(in) :: id
 	YAMLClear = YAMLClear_F(id)
     END FUNCTION YAMLClear
+!> Inserts data into the YAML document to select sets of output variables.
+!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> initialize a PhreeqcRM instance. Sets of variables can be included or excluded with
+!> multiple calls to this method. All calls must precede the final call to
+!> @ref YAMLFindComponents. FindComponents generates SELECTED_OUTPUT 333 and
+!> USER_PUNCH 333 data blocks that make the variables accessible. Variables will
+!> only be accessible if the system includes the given reactant; for example, no
+!> gas variables will be created if there are no GAS_PHASEs in the model. 
+!> @param id        The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param option    A string value, among those listed below, that selects sets of variables 
+!> that can be retieved by the bmif_get_value method. 
+!> @param def A string value that can be "false", "true", or a list of items to be included as
+!> accessible variables. A value of "false", excludes all variables of the given type; a 
+!> value of "true" includes all variables of the given type for the current system; a list
+!> specifies a subset of items of the given type. 
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!>
+!> Values for the the parameter @a option:
+!> @n AddOutputVars: False excludes all variables; True causes the settings for each variable group
+!> to determine the variables that will be defined. Default True;
+!> @n SolutionProperties: False excludes all solution property variables; True includes variables pH, pe,
+!> alkalinity, ionic strength, water mass, charge balance, percent error, and specific conductance.
+!> Default True.
+!> @n SolutionTotalMolalities: False excludes all total element and element redox state variables;
+!> True includes all elements and element redox state variables for the system defined for the 
+!> calculation; list restricts variables to the specified elements and redox states.
+!> Default True.
+!> @n ExchangeMolalities: False excludes all variables related to exchange; True includes all 
+!> variables related to exchange; list includes variables for the specified exchange species.
+!> Default True.
+!> @n SurfaceMolalities: False excludes all variables related to surfaces; True includes all 
+!> variables related to surfaces; list includes variables for the specified surface species.
+!> Default True.
+!> @n EquilibriumPhases: False excludes all variables related to equilibrium phases; True includes all 
+!> variables related to equilibrium phases; list includes variables for the specified
+!> equilibiurm phases. Default True.
+!> @n Gases: False excludes all variables related to gases; True includes all 
+!> variables related to gases; list includes variables for the specified gas components. Default True.
+!> @n KineticReactants: False excludes all variables related to kinetic reactants; True includes all 
+!> variables related to kinetic reactants; list includes variables for the specified kinetic 
+!> reactants. Default True.
+!> @n SolidSolutions: False excludes all variables related to solid solutions; True includes all 
+!> variables related to solid solutions; list includes variables for the specified solid solutions
+!> components. Default True.
+!> @n CalculateValues: False excludes all calculate values; True includes all 
+!> calculate values; list includes the specified calculate values. CALCLUATE_VALUES can be
+!> used to calculate geochemical quantities not available in the other sets of variables. 
+!> Default True.
+!> @n SolutionActivities: False excludes all aqueous species; True includes all 
+!> aqueous species; list includes only the specified aqueous species. Default False.
+!> @n SolutionMolalities: False excludes all aqueous species; True includes all 
+!> aqueous species; list includes only the specified aqueous species. Default False.
+!> @n SaturationIndices: False excludes all saturation indices; True includes all 
+!> saturation indices; list includes only the specified saturation indices. Default False.
+    INTEGER FUNCTION YAMLAddOutputVars(id, option, def)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLAddOutputVars_F(id, var, src) &
+			BIND(C, NAME='YAMLAddOutputVars_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: src
+		END FUNCTION YAMLAddOutputVars_F
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: option
+    CHARACTER(len=*), INTENT(in) :: def
+    character(100) :: vartype
+    integer :: bytes, nbytes, status, dim
+    YAMLAddOutputVars = YAMLAddOutputVars_F(id, trim(option)//C_NULL_CHAR, trim(def)//C_NULL_CHAR)
+    return
+    END FUNCTION YAMLAddOutputVars  
 !> Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
@@ -168,8 +260,6 @@ MODULE YAML_interface
 !> The mapping may be many-to-one to account for symmetry.
 !> Default is a one-to-one mapping--all user grid cells are reaction cells
 !> (equivalent to @a grid2chem values of 0,1,2,3,...,nxyz-1).
-!> @param grid2chem        A vector of integers: Nonnegative is a reaction-cell number (0 based),
-!> negative is an inactive cell. Vector is of size @a nxyz (number of grid cells).
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -251,8 +341,8 @@ MODULE YAML_interface
 !> Inserts data into the YAML document for the PhreeqcRM method FindComponents.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
-!> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
-!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @param id    The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @retval      Zero indicates success, negative indicates failure.
 !> @par
 !> FindComponents accumulates a list of elements. Elements are those that have been
 !> defined in a solution or any other reactant
@@ -306,6 +396,225 @@ MODULE YAML_interface
     integer, intent(in) :: id
 	YAMLFindComponents = YAMLFindComponents_F(id)
     END FUNCTION YAMLFindComponents    
+    
+!> Inserts data into the YAML document for the PhreeqcRM method InitialSolutions2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id          The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param solutions   Vector of SOLUTION index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval            Zero indicates success, negative indicates failure.
+!> @par
+!> InitialSolutions2Module transfers SOLUTION definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a solutions is a vector of SOLUTION index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialSolutions2Module(id, solutions)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialSolutions2Module_F(id, solutions, dim) &
+			BIND(C, NAME='YAMLInitialSolutions2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: solutions(*)
+		END FUNCTION YAMLInitialSolutions2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: solutions
+	integer :: dim
+	dim = size(solutions)
+	YAMLInitialSolutions2Module = YAMLInitialSolutions2Module_F(id, solutions, dim)
+    END FUNCTION YAMLInitialSolutions2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialEquilibriumPhases2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                   The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param equilibrium_phases   Vector of EQUILIBRIUM_PHASES index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                     Zero indicates success, negative indicates failure.
+!> @par
+!> InitialEquilibriumPhases2Module transfers EQUILIBRIUM_PHASES definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a equilibrium_phases is a vector of EQUILIBRIUM_PHASES index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialEquilibriumPhases2Module(id, equilibrium_phases)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialEquilibriumPhases2Module_F(id, equilibrium_phases, dim) &
+			BIND(C, NAME='YAMLInitialEquilibriumPhases2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: equilibrium_phases(*)
+		END FUNCTION YAMLInitialEquilibriumPhases2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: equilibrium_phases
+	integer :: dim
+	dim = size(equilibrium_phases)
+	YAMLInitialEquilibriumPhases2Module = YAMLInitialEquilibriumPhases2Module_F(id, equilibrium_phases, dim)
+    END FUNCTION YAMLInitialEquilibriumPhases2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialExchanges2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                   The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param exchanges            Vector of EXCHANGE index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                     Zero indicates success, negative indicates failure.
+!> @par
+!> InitialExchanges2Module transfers EXCHANGE definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a exchanges is a vector of EXCHANGE index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialExchanges2Module(id, exchanges)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialExchanges2Module_F(id, exchanges, dim) &
+			BIND(C, NAME='YAMLInitialExchanges2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: exchanges(*)
+		END FUNCTION YAMLInitialExchanges2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: exchanges
+	integer :: dim
+	dim = size(exchanges)
+	YAMLInitialExchanges2Module = YAMLInitialExchanges2Module_F(id, exchanges, dim)
+    END FUNCTION YAMLInitialExchanges2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialSurfaces2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param surfaces            Vector of SURFACE index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                     Zero indicates success, negative indicates failure.
+!> @par
+!> InitialSurfaces2Module transfers SURFACE definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a surfaces is a vector of SURFACE index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialSurfaces2Module(id, surfaces)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialSurfaces2Module_F(id, surfaces, dim) &
+			BIND(C, NAME='YAMLInitialSurfaces2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: surfaces(*)
+		END FUNCTION YAMLInitialSurfaces2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: surfaces
+	integer :: dim
+	dim = size(surfaces)
+	YAMLInitialSurfaces2Module = YAMLInitialSurfaces2Module_F(id, surfaces, dim)
+    END FUNCTION YAMLInitialSurfaces2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialGasPhases2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param gas_phases          Vector of GAS_PHASE index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                    Zero indicates success, negative indicates failure.
+!> @par
+!> InitialGasPhases2Module transfers GAS_PHASE definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a gas_phases is a vector of GAS_PHASE index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialGasPhases2Module(id, gas_phases)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialGasPhases2Module_F(id, gas_phases, dim) &
+			BIND(C, NAME='YAMLInitialGasPhases2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: gas_phases(*)
+		END FUNCTION YAMLInitialGasPhases2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: gas_phases
+	integer :: dim
+	dim = size(gas_phases)
+	YAMLInitialGasPhases2Module = YAMLInitialGasPhases2Module_F(id, gas_phases, dim)
+    END FUNCTION YAMLInitialGasPhases2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialSolidSolutions2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param solid_solutions     Vector of SOLID_SOLUTIONS index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                    Zero indicates success, negative indicates failure.
+!> @par
+!> InitialSolidSolutions2Module transfers SOLID_SOLUTIONS definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a solid_solutions is a vector of SOLID_SOLUTIONS index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialSolidSolutions2Module(id, solid_solutions)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialSolidSolutions2Module_F(id, solid_solutions, dim) &
+			BIND(C, NAME='YAMLInitialSolidSolutions2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id, dim
+        integer(kind=C_INT), intent(in) :: solid_solutions(*)
+		END FUNCTION YAMLInitialSolidSolutions2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, allocatable, dimension(:), intent(in) :: solid_solutions
+	integer :: dim
+	dim = size(solid_solutions)
+	YAMLInitialSolidSolutions2Module = YAMLInitialSolidSolutions2Module_F(id, solid_solutions, dim)
+    END FUNCTION YAMLInitialSolidSolutions2Module
+	
+!> Inserts data into the YAML document for the PhreeqcRM method InitialKinetics2Module.
+!> When the YAML document is written to file it can be processed by the method 
+!> InitializeYAML to initialize a PhreeqcRM instance.
+!> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param kinetics            Vector of KINETICS index numbers that is dimensioned @a nxyz, 
+!> where @a nxyz is the number of grid cells in the user's model. 
+!> @retval                    Zero indicates success, negative indicates failure.
+!> @par
+!> InitialKinetics2Module transfers KINETICS definitions from the InitialPhreeqc 
+!> instance to the reaction-module workers.
+!> @a kinetics is a vector of KINETICS index numbers that refer to
+!> definitions in the InitialPhreeqc instance.
+    INTEGER FUNCTION YAMLInitialKinetics2Module(id, kinetics)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLInitialKinetics2Module_F(id, kinetics, dim) &
+			BIND(C, NAME='YAMLInitialKinetics2Module_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id
+        integer(kind=C_INT), intent(in) :: kinetics(*)
+        integer(kind=C_INT), intent(in) :: dim
+		END FUNCTION YAMLInitialKinetics2Module_F
+    END INTERFACE
+    integer, intent(in) :: id
+	integer :: dim
+    integer, allocatable, dimension(:), intent(in) :: kinetics
+	dim = size(kinetics)
+	YAMLInitialKinetics2Module = YAMLInitialKinetics2Module_F(id, kinetics, dim)
+    END FUNCTION YAMLInitialKinetics2Module
+    
 !> Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
@@ -485,7 +794,7 @@ MODULE YAML_interface
 !> definition is copied from the InitialPhreeqc instance to the workers.
 !> 
 !> @see                      @ref YAMLInitialPhreeqc2Module,
-!> @ref @ref YAMLInitialPhreeqc2Module_mix.
+!> @ref YAMLInitialPhreeqc2Module_mix.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -664,11 +973,11 @@ MODULE YAML_interface
 !> using a time step of zero (@ref YAMLSetTimeStep) to avoid kinetic reactions.
 !> Other properties that may need to be initialized before RunCells is invoked
 !> include porosity (@ref YAMLSetPorosity),
-!> saturation (@ref YAMLSetSaturation),
+!> saturation (@ref YAMLSetSaturationUser),
 !> temperature (@ref YAMLSetTemperature), and pressure (@ref YAMLSetPressure).
 !> 
 !> @see                    @ref YAMLSetPorosity,
-!> @ref YAMLSetPressure, @ref YAMLSetSaturation, @ref YAMLSetTemperature, @ref YAMLSetTimeStep.
+!> @ref YAMLSetPressure, @ref YAMLSetSaturationUser, @ref YAMLSetTemperature, @ref YAMLSetTimeStep.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -699,7 +1008,7 @@ MODULE YAML_interface
 !> @param workers          @a True, the workers will run the file; @a False, the workers will not run the file.
 !> @param initial_phreeqc  @a True, the InitialPhreeqc instance will run the file; @a False, the InitialPhreeqc will not run the file.
 !> @param utility          @a True, the Utility instance will run the file; @a False, the Utility instance will not run the file.
-!> @param chemistry_name   Name of the file to run.
+!> @param file_name        Name of the file to run.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
 !> @par
 !> RunFile runs a PHREEQC input file. The first three arguments determine which IPhreeqc instances will run
@@ -888,8 +1197,8 @@ MODULE YAML_interface
 !> The only way to use this method is to have pre-calculated PHREEQC solution concentrations,
 !> which is not common. Concentrations are normally initialized
 !> with @ref YAMLInitialPhreeqc2Module or @ref YAMLInitialPhreeqcCell2Module.
-!> @see                    @ref YAMLSetDensity, @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume,
-!> @ref YAMLSetSaturation, @ref YAMLSetUnitsSolution.
+!> @see                    @ref YAMLSetDensityUser, @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume,
+!> @ref YAMLSetSaturationUser, @ref YAMLSetUnitsSolution.
 !> @par C++ Example:
 !> @htmlonly
 !> <CODE>
@@ -940,7 +1249,7 @@ MODULE YAML_interface
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly    
-    INTEGER FUNCTION YAMLSetCurrentSelectedOutputUserNumber(id, n)
+    INTEGER FUNCTION YAMLSetCurrentSelectedOutputUserNumber(id, n_user)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -953,10 +1262,10 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetCurrentSelectedOutputUserNumber_F
     END INTERFACE
     integer, intent(in) :: id
-    integer, intent(in) :: n
-	YAMLSetCurrentSelectedOutputUserNumber = YAMLSetCurrentSelectedOutputUserNumber_F(id, n)
+    integer, intent(in) :: n_user
+	YAMLSetCurrentSelectedOutputUserNumber = YAMLSetCurrentSelectedOutputUserNumber_F(id, n_user)
     END FUNCTION YAMLSetCurrentSelectedOutputUserNumber    
-!> Inserts data into the YAML document for the PhreeqcRM method SetDensity.
+!> Inserts data into the YAML document for the PhreeqcRM method SetDensityUser.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> 
@@ -965,7 +1274,7 @@ MODULE YAML_interface
 !> of grid cells in the user's model.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
 !> @par
-!> SetDensity sets the density for each reaction cell. These density values are used
+!> SetDensityUser sets the density for each reaction cell. These density values are used
 !> when converting from transported mass-fraction concentrations (@ref YAMLSetUnitsSolution) to
 !> produce per liter concentrations during a call to SetConcentrations.
 !> They are also used when converting from reaction-cell concentrations to transport concentrations,
@@ -980,32 +1289,32 @@ MODULE YAML_interface
 !> real(kind=8), allocatable, dimension(:)   :: density
 !> allocate(density(nxyz))
 !> por = 1.0d0
-!> status = YAMLSetDensity(id, por)
+!> status = YAMLSetDensityUser(id, por)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly    
-    INTEGER FUNCTION YAMLSetDensity(id, density)
+    INTEGER FUNCTION YAMLSetDensityUser(id, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetDensity_F(id, density, dim) &
-			BIND(C, NAME='YAMLSetDensity_F')
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetDensityUser_F(id, density, dim) &
+			BIND(C, NAME='YAMLSetDensityUser_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
         real(kind=C_DOUBLE), intent(in) :: density
         integer(kind=C_INT), intent(in) :: dim
-		END FUNCTION YAMLSetDensity_F
+		END FUNCTION YAMLSetDensityUser_F
     END INTERFACE
     integer, intent(in) :: id
     real(kind=8), allocatable, dimension(:), intent(in) :: density
-	YAMLSetDensity = YAMLSetDensity_F(id, density(1), size(density))
-    END FUNCTION YAMLSetDensity
+	YAMLSetDensityUser = YAMLSetDensityUser_F(id, density(1), size(density))
+    END FUNCTION YAMLSetDensityUser
 !> Inserts data into the YAML document for the PhreeqcRM method SetDumpFileName.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
-!> @param dump_name        Name of dump file.
+!> @param file_name        Name of dump file.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
 !> @par
 !> SetDumpFileName	sets the name of the dump file. It is the name used by the method DumpModule.
@@ -1057,7 +1366,7 @@ MODULE YAML_interface
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetErrorHandlerMode(id, n)
+    INTEGER FUNCTION YAMLSetErrorHandlerMode(id, mode)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1070,8 +1379,8 @@ MODULE YAML_interface
 		END FUNCTION YAMLSetErrorHandlerMode_F
     END INTERFACE
     integer, intent(in) :: id
-    integer, intent(in) :: n
-	YAMLSetErrorHandlerMode = YAMLSetErrorHandlerMode_F(id, n)
+    integer, intent(in) :: mode
+	YAMLSetErrorHandlerMode = YAMLSetErrorHandlerMode_F(id, mode)
     END FUNCTION YAMLSetErrorHandlerMode  
 !> Inserts data into the YAML document for the PhreeqcRM method SetErrorOn.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -1249,6 +1558,7 @@ MODULE YAML_interface
 !> with the method GetGridCellCountYAML. GetGridCellCountYAML is NOT a PhreeqcRM 
 !> method; it is a global method and must be used BEFORE the PhreeqcRM instance
 !> is created. SetGridCellCount will be ignored once the PhreeqcRM instance exists.
+!> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param n           Number of cells for the PhreeqcRM instance. The number of cells
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
 !> can be used in the creation of the PhreeqcRM instance. The PhreeqcRM constructor
@@ -1384,10 +1694,10 @@ MODULE YAML_interface
 !> @par
 !> SetPorosity sets the porosity for each reaction cell.
 !> The volume of water in a reaction cell is the product of porosity, saturation
-!> (SetSaturation), and representative volume (SetRepresentativeVolume).
+!> (SetSaturationUser), and representative volume (SetRepresentativeVolume).
 !> Size of vector is @a nxyz, where @a nxyz is the number
 !> of grid cells in the user's model.
-!> @see                    @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturation.
+!> @see                    @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturationUser.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1460,14 +1770,14 @@ MODULE YAML_interface
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
-!> @param cell_mask        Vector of integers. Size of vector is @a nxyz, where @a nxyz is the number
+!> @param mask        Vector of integers. Size of vector is @a nxyz, where @a nxyz is the number
 !> of grid cells in the user's model. A value of 0 will
 !> disable printing detailed output for the cell; a value of 1 will enable printing detailed output for a cell.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
 !> @par
 !> SetPrintChemistryMask enables or disables detailed output for each reaction cell.
 !> Printing for a reaction cell will occur only when the
-!> printing is enabled with SetPrintChemistryOn and the @a cell_mask value is 1.
+!> printing is enabled with SetPrintChemistryOn and the @a mask value is 1.
 !> @see                    @ref YAMLSetPrintChemistryOn.
 !> @par Fortran Example:
 !> @htmlonly
@@ -1663,7 +1973,7 @@ MODULE YAML_interface
 !> sets the representative volume of each reaction cell.
 !> By default the representative volume of each reaction cell is 1 liter.
 !> The volume of water in a reaction cell is determined by the product of the representative volume,
-!> the porosity (SetPorosity), and the saturation (SetSaturation).
+!> the porosity (SetPorosity), and the saturation (SetSaturationUser).
 !> The numerical method of PHREEQC is more robust if the water volume for a reaction cell is
 !> within a couple orders of magnitude of 1.0.
 !> Small water volumes caused by small porosities and (or) small saturations 
@@ -1676,7 +1986,7 @@ MODULE YAML_interface
 !> @a SetRepresentativeVolume should be called before initial conditions 
 !> are defined for the reaction cells.
 !> 
-!> @see                    @ref YAMLSetPorosity, @ref YAMLSetSaturation.
+!> @see                    @ref YAMLSetPorosity, @ref YAMLSetSaturationUser.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -1705,7 +2015,7 @@ MODULE YAML_interface
     real(kind=8), allocatable, dimension(:), intent(in) :: rv
 	YAMLSetRepresentativeVolume = YAMLSetRepresentativeVolume_F(id, rv(1), size(rv))
     END FUNCTION YAMLSetRepresentativeVolume
-!> Inserts data into the YAML document for the PhreeqcRM method SetSaturation.
+!> Inserts data into the YAML document for the PhreeqcRM method SetSaturationUser.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
@@ -1713,18 +2023,16 @@ MODULE YAML_interface
 !> where @a nxyz is the number of grid cells in the user's model.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
 !> @par
-!> SetSaturation
+!> SetSaturationUser
 !> sets the saturation of each reaction cell. Saturation is a fraction ranging from 0 to 1.
-!> The volume of water in a cell is the product of porosity (SetPorosity), saturation (SetSaturation),
+!> The volume of water in a cell is the product of porosity (SetPorosity), saturation (SetSaturationUser),
 !> and representative volume (SetRepresentativeVolume). As a result of a reaction calculation,
 !> solution properties (density and volume) will change;
 !> the databases phreeqc.dat, Amm.dat, and pitzer.dat have the molar 
-!> volume data to calculate these changes. The methods GetDensity,
-!> GetSolutionVolume, and GetSaturation can be used to account
+!> volume data to calculate these changes. The methods GetDensityCalculated,
+!> GetSolutionVolume, and GetSaturationCalculated can be used to account
 !> for these changes in the succeeding transport calculation.
 !> 
-!> @param sat              Vector of saturations, unitless. Default 1.0. Size of vector is @a nxyz,
-!> where @a nxyz is the number of grid cells in the user's model.
 !> @see
 !> @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume.
 !> @par Fortran Example:
@@ -1734,27 +2042,27 @@ MODULE YAML_interface
 !> real(kind=8), allocatable, dimension(:) :: sat 
 !> allocate(sat(nxyz))
 !> sat = 1.0d0
-!> status = YAMLSetSaturation(id, sat)  
+!> status = YAMLSetSaturationUser(id, sat)  
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetSaturation(id, sat)
+    INTEGER FUNCTION YAMLSetSaturationUser(id, sat)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetSaturation_F(id, sat, dim) &
-			BIND(C, NAME='YAMLSetSaturation_F')
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetSaturationUser_F(id, sat, dim) &
+			BIND(C, NAME='YAMLSetSaturationUser_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
         real(kind=C_DOUBLE), intent(in) :: sat
         integer(kind=C_INT), intent(in) :: dim
-		END FUNCTION YAMLSetSaturation_F
+		END FUNCTION YAMLSetSaturationUser_F
     END INTERFACE
     integer, intent(in) :: id
     real(kind=8), allocatable, dimension(:), intent(in) :: sat
-	YAMLSetSaturation = YAMLSetSaturation_F(id, sat(1), size(sat))
-    END FUNCTION YAMLSetSaturation
+	YAMLSetSaturationUser = YAMLSetSaturationUser_F(id, sat(1), size(sat))
+    END FUNCTION YAMLSetSaturationUser
 !> Inserts data into the YAML document for the PhreeqcRM method SetScreenOn.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
@@ -1868,23 +2176,23 @@ MODULE YAML_interface
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetSpeciesSaveOn(id, tf)
+    INTEGER FUNCTION YAMLSetSpeciesSaveOn(id, save_on)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetSpeciesSaveOn_F(id, itf) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetSpeciesSaveOn_F(id, save_on) &
 			BIND(C, NAME='YAMLSetSpeciesSaveOn_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        integer(kind=C_INT), intent(in) :: itf
+        integer(kind=C_INT), intent(in) :: save_on
 		END FUNCTION YAMLSetSpeciesSaveOn_F
     END INTERFACE
     integer, intent(in) :: id
-    logical(kind=4), intent(in) :: tf
+    logical(kind=4), intent(in) :: save_on
 	integer :: itf
 	itf = 0
-	if (tf) itf = 1
+	if (save_on) itf = 1
 	YAMLSetSpeciesSaveOn = YAMLSetSpeciesSaveOn_F(id, itf)
     END FUNCTION YAMLSetSpeciesSaveOn 
 !> Inserts data into the YAML document for the PhreeqcRM method SetTemperature.
@@ -1981,26 +2289,26 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> time_conversion = 1.0d0 / 86400.d0
-!> status = YAMLSetTimeConversion(id, time_conversion)
+!> conv_factor = 1.0d0 / 86400.d0
+!> status = YAMLSetTimeConversion(id, conv_factor)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetTimeConversion(id, conv)
+    INTEGER FUNCTION YAMLSetTimeConversion(id, conv_factor)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetTimeConversion_F(id, conv) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetTimeConversion_F(id, conv_factor) &
 			BIND(C, NAME='YAMLSetTimeConversion_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        real(kind=C_DOUBLE), intent(in) :: conv
+        real(kind=C_DOUBLE), intent(in) :: conv_factor
 		END FUNCTION YAMLSetTimeConversion_F
     END INTERFACE
     integer, intent(in) :: id
-    real(kind=8), intent(in) :: conv
-	YAMLSetTimeConversion = YAMLSetTimeConversion_F(id, conv)
+    real(kind=8), intent(in) :: conv_factor
+	YAMLSetTimeConversion = YAMLSetTimeConversion_F(id, conv_factor)
     END FUNCTION YAMLSetTimeConversion 
 !> Inserts data into the YAML document for the PhreeqcRM method SetTimeStep.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -2023,21 +2331,21 @@ MODULE YAML_interface
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetTimeStep(id, time)
+    INTEGER FUNCTION YAMLSetTimeStep(id, time_step)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-		INTEGER(KIND=C_INT) FUNCTION YAMLSetTimeStep_F(id, time) &
+		INTEGER(KIND=C_INT) FUNCTION YAMLSetTimeStep_F(id, time_step) &
 			BIND(C, NAME='YAMLSetTimeStep_F')
 		USE ISO_C_BINDING
 		IMPLICIT NONE
         integer(kind=C_INT), intent(in) :: id
-        real(kind=C_DOUBLE), intent(in) :: time
+        real(kind=C_DOUBLE), intent(in) :: time_step
 		END FUNCTION YAMLSetTimeStep_F
     END INTERFACE
     integer, intent(in) :: id
-    real(kind=8), intent(in) :: time
-	YAMLSetTimeStep = YAMLSetTimeStep_F(id, time)
+    real(kind=8), intent(in) :: time_step
+	YAMLSetTimeStep = YAMLSetTimeStep_F(id, time_step)
     END FUNCTION YAMLSetTimeStep  
 !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsExchange.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -2166,7 +2474,7 @@ MODULE YAML_interface
 !> For option 2, the number of moles of kinetic reactants will vary directly with rock volume and inversely with porosity.
 !> @par
 !> Note that the volume of water in a cell in the reaction module is equal to the product of
-!> porosity (SetPorosity), the saturation (SetSaturation), and representative volume (SetRepresentativeVolume),
+!> porosity (SetPorosity), the saturation (SetSaturationUser), and representative volume (SetRepresentativeVolume),
 !> which is usually less than 1 liter. It is important to write the RATES
 !> definitions for homogeneous (aqueous) kinetic reactions to account for the current volume of
 !> water, often by calculating the rate of reaction per liter of water and multiplying by the volume
@@ -2179,7 +2487,7 @@ MODULE YAML_interface
 !> reactant (Basic function M) in RATES to obtain the surface area.
 !> 
 !> @see                    @ref YAMLInitialPhreeqc2Module, @ref YAMLInitialPhreeqcCell2Module,
-!> @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturation.
+!> @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturationUser.
 !> 
 !> @par Fortran Example:
 !> @htmlonly
@@ -2271,14 +2579,14 @@ MODULE YAML_interface
 !> To convert from mg/L to moles
 !> of element in the representative volume of a reaction cell, mg/L is converted to mol/L and
 !> multiplied by the solution volume,
-!> which is the product of porosity (SetPorosity), saturation (SetSaturation),
+!> which is the product of porosity (SetPorosity), saturation (SetSaturationUser),
 !> and representative volume (SetRepresentativeVolume).
 !> To convert from mol/L to moles
 !> of element in the representative volume of a reaction cell, mol/L is
 !> multiplied by the solution volume.
 !> To convert from mass fraction to moles
 !> of element in the representative volume of a reaction cell, kg/kgs is converted to mol/kgs, multiplied by density
-!> (SetDensity) and
+!> (SetDensityUser) and
 !> multiplied by the solution volume.
 !> @par
 !> To convert from moles
@@ -2293,12 +2601,12 @@ MODULE YAML_interface
 !> Two options are available for the volume and mass of solution
 !> that are used in converting to transport concentrations: (1) the volume and mass of solution are
 !> calculated by PHREEQC, or (2) the volume of solution is the product of porosity (SetPorosity),
-!> saturation (SetSaturation), and representative volume (SetRepresentativeVolume),
-!> and the mass of solution is volume times density as defined by SetDensity.
+!> saturation (SetSaturationUser), and representative volume (SetRepresentativeVolume),
+!> and the mass of solution is volume times density as defined by SetDensityUser.
 !> Which option is used is determined by UseSolutionDensityVolume.
 !> 
-!> @see                    @ref YAMLSetDensity, @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume,
-!> @ref YAMLSetSaturation,
+!> @see                    @ref YAMLSetDensityUser, @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume,
+!> @ref YAMLSetSaturationUser,
 !> @ref YAMLUseSolutionDensityVolume.
 !> 
 !> @par Fortran Example:
@@ -2447,7 +2755,7 @@ MODULE YAML_interface
 !> by summing the molarities of the individual species times the stoichiometric
 !> coefficient of the element in each species.
 !> Solution compositions in the reaction cells are updated with these component concentrations.
-!> Usually, accurate concentrations will not be known to use YAMLSetSpeciesConcentrations during
+!> Usually, accurate concentrations will not be known to use YAMLSpeciesConcentrations2Module during
 !> initialization.
 !> 
 !> @see                    @ref YAMLFindComponents,
@@ -2456,11 +2764,11 @@ MODULE YAML_interface
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> status = YAMLSetSpeciesConcentrations(id, c)
+!> status = YAMLSpeciesConcentrations2Module(id, c)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
-    INTEGER FUNCTION YAMLSpeciesConcentrations2Module(id, c)
+    INTEGER FUNCTION YAMLSpeciesConcentrations2Module(id, species_conc)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2474,10 +2782,10 @@ MODULE YAML_interface
 		END FUNCTION YAMLSpeciesConcentrations2Module_F
     END INTERFACE
     integer, intent(in) :: id
-    real(kind=8), allocatable, dimension(:,:), intent(in) :: c
+    real(kind=8), allocatable, dimension(:,:), intent(in) :: species_conc
     integer :: dim
-    dim = size(c,1)*size(c,2)
-	YAMLSpeciesConcentrations2Module = YAMLSpeciesConcentrations2Module_F(id, c(1,1), dim)
+    dim = size(species_conc,1)*size(species_conc,2)
+	YAMLSpeciesConcentrations2Module = YAMLSpeciesConcentrations2Module_F(id, species_conc(1,1), dim)
     END FUNCTION YAMLSpeciesConcentrations2Module   
 !> Inserts data into the YAML document for the PhreeqcRM method StateSave.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
@@ -2603,14 +2911,50 @@ MODULE YAML_interface
     integer, intent(in) :: n
 	YAMLStateDelete = YAMLStateDelete_F(id, n)
     END FUNCTION YAMLStateDelete
+    
+!> Inserts data into the YAML document to define the number of threads to use
+!> with PhreeqcRM calculations..
+!> Once the YAML document is written, the number threads to use can be extracted
+!> when bmif_initialize is called. The data for ThreadCount will be ignored 
+!> if the PhreeqcRM instance has already been initialized.
+!> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
+!> @param n           Number of threads to use for multiprocessing in PhreeqcRM instance. 
+!> A value of zero will cause PhreeqcRM to use the number of logical processors available
+!> on the computer.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = YAMLThreadCount(0)
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
+    INTEGER FUNCTION YAMLThreadCount(id, n)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION YAMLThreadCount_F(id, n) &
+			BIND(C, NAME='YAMLThreadCount_F')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+        integer(kind=C_INT), intent(in) :: id
+        integer(kind=C_INT), intent(in) :: n
+		END FUNCTION YAMLThreadCount_F
+    END INTERFACE
+    integer, intent(in) :: id
+    integer, intent(in) :: n
+	YAMLThreadCount = YAMLThreadCount_F(id, n)
+    END FUNCTION YAMLThreadCount
+    
 !> Inserts data into the YAML document for the PhreeqcRM method UseSolutionDensityVolume.
 !> When the YAML document is written to file it can be processed by the method InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param tf          @a True indicates that the solution density and volume as
 !> calculated by PHREEQC will be used to calculate concentrations.
-!> @a False indicates that the solution density set by SetDensity and the volume determined by the
-!> product of  SetSaturation, SetPorosity, and SetRepresentativeVolume,
+!> @a False indicates that the solution density set by SetDensityUser and the volume determined by the
+!> product of  SetSaturationUser, SetPorosity, and SetRepresentativeVolume,
 !> will be used to calculate concentrations retrieved by GetConcentrations.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
 !> @par
@@ -2619,9 +2963,9 @@ MODULE YAML_interface
 !> to transport concentrations (GetConcentrations).
 !> Two options are available to convert concentration units:
 !> (1) the density and solution volume calculated by PHREEQC are used, or
-!> (2) the specified density (SetDensity)
+!> (2) the specified density (SetDensityUser)
 !> and solution volume are determined by the product of
-!> saturation (SetSaturation), porosity (SetPorosity),
+!> saturation (SetSaturationUser), porosity (SetPorosity),
 !> and representative volume (SetRepresentativeVolume).
 !> Transport models that consider density-dependent flow will probably use the
 !> PHREEQC-calculated density and solution volume (default),
@@ -2631,8 +2975,8 @@ MODULE YAML_interface
 !> needed to accurately calculate density and solution volume: phreeqc.dat, Amm.dat, and pitzer.dat.
 !> Density is only used when converting to or from transport units of mass fraction.
 !> 
-!> @see                    @ref YAMLSetDensity,
-!> @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturation.
+!> @see                    @ref YAMLSetDensityUser,
+!> @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturationUser.
 !> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
@@ -2697,6 +3041,6 @@ MODULE YAML_interface
 	YAMLWarningMessage = YAMLWarningMessage_F(id, trim(str)//C_NULL_CHAR)
     END FUNCTION YAMLWarningMessage
     
-END MODULE YAML_interface 
+END MODULE YAMLPhreeqcRM 
  
 #endif

@@ -13,7 +13,9 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
+	IRM_DLL_EXPORT IRM_RESULT RMF_BMI_AddOutputVars(int* id, char* option, char* def);
 	IRM_DLL_EXPORT int        RM_BMI_Create(int* nxyz, int* nthreads = NULL);
+	IRM_DLL_EXPORT int        RM_BMI_Create_default();
 	IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetComponentName(int* id, char* chem_name, int* l1);
 	IRM_DLL_EXPORT double     RMF_BMI_GetCurrentTime(int* id);
 	IRM_DLL_EXPORT double     RMF_BMI_GetEndTime(int* id);

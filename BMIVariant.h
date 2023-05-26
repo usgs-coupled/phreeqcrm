@@ -6,6 +6,13 @@
 #include <vector>
 #include <cassert>
 #include <cstring>
+
+#if defined(WITH_PYBIND11)
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+namespace py = pybind11;
+#endif
+
 //#include "VarManager.h"
 
 #if defined(_WINDLL)
@@ -30,6 +37,7 @@ private:
 	int Nbytes;
 	int Itemsize;
 	int dim;
+	int column;
 	std::string ctype;
 	std::string ftype;
 	std::string ptype;
@@ -44,9 +52,14 @@ private:
 	void*							VoidPtr;
 	std::vector<const char*>        CharVector;
 	VarFunction fn;
+#if defined(WITH_PYBIND11)
+	bool hasPyArr;
+	py::array pyArr;
+#endif
 public:
 	// methods
 	BMIVariant(VarFunction f, std::string name);
+	BMIVariant(const std::string& name_in, const std::string& units, bool setter, bool getter, bool ptr, int bytes, int item_size);
 	BMIVariant()
 	{
 		Initialized = false;
@@ -56,12 +69,16 @@ public:
 		Nbytes = 0;
 		Itemsize = 0;
 		dim = 0;
+		column = -1;
 		b_var = false;
 		i_var = 0;
 		d_var = 0.0;
 		NotImplemented = false;
 		VoidPtr = NULL;
 		fn = NULL;
+#if defined(WITH_PYBIND11)
+		hasPyArr = false;
+#endif
 	}
 	void Clear();
 	void SetBasic(std::string units_in,
@@ -143,6 +160,8 @@ public:
 	std::vector<std::string>& GetStringVectorRef() { return this->StringVector; }
 	std::string& GetStringRef() { return this->string_var; }
 	int GetDim() { return dim; }
+	int GetColumn() { return column; }
+	void SetColumn(int v) { column = v; }
 	void* GetVoidPtr() { return this->VoidPtr; }
 	std::vector<const char*> GetCharVector() { return this->CharVector; }
 	VarFunction GetFn() { 
@@ -151,83 +170,24 @@ public:
 	}
 	bool& GetNotImplementedRef() { return this->NotImplemented; }
 	void CopyScalars(BMIVariant& bv);
-};
 
-class IRM_DLL_EXPORT BMI_Var
-{
-private:
-	std::string name;
-	std::string type;
-	std::string units;
-	bool set;
-	bool get;
-	bool has_ptr;
-	int Nbytes;
-	int Itemsize;
-	int dim;
-	std::string ctype;
-	std::string ftype;
-	std::string ptype;
-public:
-	// methods
-	BMI_Var()
+#if defined(WITH_PYBIND11)
+	bool HasPyArray()
 	{
-		this->set = false;
-		this->get = false;
-		this->has_ptr = false;
-		this->Nbytes = 0;
-		this->Itemsize = 0;
-		this->dim = 0;
+		return hasPyArr;
 	}
-	BMI_Var(std::string name_in, std::string units_in,
-		bool set_in, bool get_in, bool has_ptr_in)
+	py::array GetPyArray()
 	{
-		this->name = name_in;
-		this->set = set_in;
-		this->get = get_in;
-		this->has_ptr = has_ptr_in;
-		this->Nbytes = 0;
-		this->Itemsize = 0;
-		this->dim = 0;
-	};
-	BMI_Var(std::string name_in, std::string units_in,
-		bool set_in, bool get_in, bool has_ptr_in, int Nbytes_in, int Itemsize_in)
-	{
-		this->name = name_in;
-		this->units = units_in;
-		this->set = set_in;
-		this->get = get_in;
-		this->has_ptr = has_ptr_in;
-		this->Nbytes = Nbytes_in;
-		this->Itemsize = Itemsize_in;
-		this->dim = 0;
-		if (Itemsize != 0) dim = Nbytes / Itemsize;
-	};
-	std::string GetName() { return this->name; }
-	void SetName(std::string s) { this->name = s; }
-	std::string GetUnits() { return this->units; }
-	void SetUnits(std::string units_in) { this->units = units_in; }
-	bool GetSet(void) { return this->set; }
-	void SetSet(bool in_in) { this->set = in_in; }
-	bool GetGet(void) { return this->get; }
-	void SetGet(bool out_in) { this->get = out_in; }
-	bool GetHasPtr(void) { return this->has_ptr; }
-	void SetHasPtr(bool tf) { this->has_ptr = tf; }
-	int GetNbytes(void) { return this->Nbytes; }
-	void SetNbytes(int n) { this->Nbytes = n; }
-	int GetItemsize(void) { return this->Itemsize; }
-	void SetItemsize(int n) { this->Itemsize = n; }
-	std::string GetCType() { return this->ctype; };
-	void SetCType(std::string s) { this->ctype = s; };
-	std::string GetFType() { return this->ftype; };
-	void SetFType(std::string s) { this->ftype = s; };
-	std::string GetPType() { return this->ptype; };
-	void SetPType(std::string s) { this->ptype = s; };
-	void SetTypes(std::string c, std::string f, std::string p)
-	{
-		this->ctype = c; this->ftype = f; this->ptype = p;
+		assert(hasPyArr);
+		return pyArr;
 	}
-	int GetDim() { return dim; }
-
+	py::array SetPyArray(py::array arr)
+	{
+		assert(!hasPyArr);
+		pyArr = arr;
+		hasPyArr = true;
+		return pyArr;
+	}
+#endif
 };
 #endif // BMI_VAR_H_INCLUDED

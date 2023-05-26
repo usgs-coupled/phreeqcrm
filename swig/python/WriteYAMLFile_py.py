@@ -8,6 +8,8 @@ def WriteYAMLFile_py():
 	nxyz = 40;
 	# Set GridCellCount
 	yrm.YAMLSetGridCellCount(nxyz)
+	# Set ThreadCount
+	yrm.YAMLThreadCount(3)
 	# Set some properties
 	yrm.YAMLSetErrorHandlerMode(1)
 	yrm.YAMLSetComponentH2O(False)
@@ -66,6 +68,7 @@ def WriteYAMLFile_py():
 	initial_phreeqc = False
 	input = "DELETE; -all"
 	yrm.YAMLRunString(workers, initial_phreeqc, utility, input)
+	yrm.YAMLAddOutputVars("AddOutputVars", "true")
 	# Determine number of components to transport
 	yrm.YAMLFindComponents()
 	# set array of initial conditions

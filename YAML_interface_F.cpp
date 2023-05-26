@@ -13,6 +13,18 @@ int DestroyYAMLPhreeqcRM_F(int* id)
 {
 	return YAMLPhreeqcRMLib::DestroyYAMLPhreeqcRM(*id);
 }
+IRM_RESULT        YAMLAddOutputVars_F(int* id, char* option_in, char* def_in)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		std::string option = option_in;
+		std::string def = def_in;
+		yrm_ptr->YAMLAddOutputVars(option, def);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
 IRM_RESULT YAMLClear_F(int* id)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
@@ -74,6 +86,90 @@ IRM_RESULT YAMLFindComponents_F(int* id)
 	if (yrm_ptr != NULL)
 	{
 		yrm_ptr->YAMLFindComponents();
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+};
+IRM_RESULT YAMLInitialSolutions2Module_F(int* id, int* ic1, int* dim)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		std::vector<int> ic1_v(*dim, -1);
+		memcpy(ic1_v.data(), ic1, (*dim) * sizeof(int));
+		yrm_ptr->YAMLInitialSolutions2Module(ic1_v);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+};
+IRM_RESULT YAMLInitialEquilibriumPhases2Module_F(int* id, int* ic1, int* dim)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		std::vector<int> ic1_v(*dim, -1);
+		memcpy(ic1_v.data(), ic1, (*dim) * sizeof(int));
+		yrm_ptr->YAMLInitialEquilibriumPhases2Module(ic1_v);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+};
+IRM_RESULT YAMLInitialExchanges2Module_F(int* id, int* ic1, int* dim)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		std::vector<int> ic1_v(*dim, -1);
+		memcpy(ic1_v.data(), ic1, (*dim) * sizeof(int));
+		yrm_ptr->YAMLInitialExchanges2Module(ic1_v);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+};
+IRM_RESULT YAMLInitialSurfaces2Module_F(int* id, int* ic1, int* dim)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		std::vector<int> ic1_v(*dim, -1);
+		memcpy(ic1_v.data(), ic1, (*dim) * sizeof(int));
+		yrm_ptr->YAMLInitialSurfaces2Module(ic1_v);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+};
+IRM_RESULT YAMLInitialGasPhases2Module_F(int* id, int* ic1, int* dim)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		std::vector<int> ic1_v(*dim, -1);
+		memcpy(ic1_v.data(), ic1, (*dim) * sizeof(int));
+		yrm_ptr->YAMLInitialGasPhases2Module(ic1_v);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+};
+IRM_RESULT YAMLInitialSolidSolutions2Module_F(int* id, int* ic1, int* dim)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		std::vector<int> ic1_v(*dim, -1);
+		memcpy(ic1_v.data(), ic1, (*dim) * sizeof(int));
+		yrm_ptr->YAMLInitialSolidSolutions2Module(ic1_v);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+};
+IRM_RESULT YAMLInitialKinetics2Module_F(int* id, int* ic1, int* dim)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		std::vector<int> ic1_v(*dim, -1);
+		memcpy(ic1_v.data(), ic1, (*dim) * sizeof(int));
+		yrm_ptr->YAMLInitialKinetics2Module(ic1_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -242,14 +338,14 @@ IRM_RESULT YAMLSetCurrentSelectedOutputUserNumber_F(int* id, int* n_user)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetDensity_F(int* id, double* density, int* dim)
+IRM_RESULT YAMLSetDensityUser_F(int* id, double* density, int* dim)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
 		std::vector<double> density_v(*dim, 0.0);
 		memcpy(density_v.data(), density, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetDensity(density_v);
+		yrm_ptr->YAMLSetDensityUser(density_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -433,14 +529,14 @@ IRM_RESULT YAMLSetRepresentativeVolume_F(int* id, double* rv, int* dim)
 	}
 	return IRM_BADINSTANCE;
 }
-IRM_RESULT YAMLSetSaturation_F(int* id, double* sat, int* dim)
+IRM_RESULT YAMLSetSaturationUser_F(int* id, double* sat, int* dim)
 {
 	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
 	if (yrm_ptr != NULL)
 	{
 		std::vector<double> sat_v(*dim, 0.0);
 		memcpy(sat_v.data(), sat, (*dim) * sizeof(double));
-		yrm_ptr->YAMLSetSaturation(sat_v);
+		yrm_ptr->YAMLSetSaturationUser(sat_v);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;
@@ -628,6 +724,16 @@ IRM_RESULT YAMLStateDelete_F(int* id, int* istate)
 	if (yrm_ptr != NULL)
 	{
 		yrm_ptr->YAMLStateDelete(*istate);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+IRM_RESULT YAMLThreadCount_F(int* id, int* nthreads)
+{
+	YAMLPhreeqcRM* yrm_ptr = YAMLPhreeqcRMLib::GetInstance(*id);
+	if (yrm_ptr != NULL)
+	{
+		yrm_ptr->YAMLThreadCount(*nthreads);
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;

@@ -1,7 +1,7 @@
 #ifdef USE_MPI
 #include "mpi.h"
 #endif
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 #include "BMIPhreeqcRM.h"
 #include "PhreeqcRM.h"
 #include "RM_interface_F.h"
@@ -660,9 +660,84 @@ RMF_GetConcentrations(int *id, double * c)
 	}
 	return IRM_BADINSTANCE;
 }
+
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_GetDensity(int *id, double * d)
+RMF_GetIthConcentration(int* id, int* i, double* c)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves concentrations for one component
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> c_vector;
+		c_vector.resize(Reaction_module_ptr->GetGridCellCount());
+		IRM_RESULT return_value = Reaction_module_ptr->GetIthConcentration(*i, c_vector);
+		if (return_value == IRM_OK)
+		{
+			memcpy(c, &c_vector.front(), c_vector.size() * sizeof(double));
+		}
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_GetIthSpeciesConcentration(int* id, int* i, double* c)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves concentrations for one aqueous species
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> c_vector;
+		c_vector.resize(Reaction_module_ptr->GetGridCellCount());
+		IRM_RESULT return_value = Reaction_module_ptr->GetIthSpeciesConcentration(*i, c_vector);
+		if (return_value == IRM_OK)
+		{
+			memcpy(c, &c_vector.front(), c_vector.size() * sizeof(double));
+		}
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_SetIthConcentration(int* id, int* i, double* c)
+/* ---------------------------------------------------------------------- */
+{
+	// Sets concentrations for one component
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> c_vector;
+		c_vector.resize(Reaction_module_ptr->GetGridCellCount());
+		memcpy(&c_vector.front(), c, c_vector.size() * sizeof(double));
+		IRM_RESULT return_value = Reaction_module_ptr->SetIthConcentration(*i, c_vector);
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_SetIthSpeciesConcentration(int* id, int* i, double* c)
+/* ---------------------------------------------------------------------- */
+{
+	// Sets concentrations for one aqueous species
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<double> c_vector;
+		c_vector.resize(Reaction_module_ptr->GetGridCellCount());
+		memcpy(&c_vector.front(), c, c_vector.size() * sizeof(double));
+		IRM_RESULT return_value = Reaction_module_ptr->SetIthSpeciesConcentration(*i, c_vector);
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_GetDensityCalculated(int *id, double * d)
 /* ---------------------------------------------------------------------- */
 {
 	// Retrieves density for all grid nodes in d
@@ -672,7 +747,7 @@ RMF_GetDensity(int *id, double * d)
 	{
 		IRM_RESULT return_value = IRM_OK;
 		std::vector <double> density_vector;
-		Reaction_module_ptr->GetDensity(density_vector);
+		Reaction_module_ptr->GetDensityCalculated(density_vector);
 		if ((int) density_vector.size() == Reaction_module_ptr->GetGridCellCount())
 		{
 			memcpy(d, &density_vector.front(), (size_t) (Reaction_module_ptr->GetGridCellCount()*sizeof(double)));
@@ -993,7 +1068,7 @@ RMF_GetPressure(int* id, double* pressure)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_GetSaturation(int *id, double * sat)
+RMF_GetSaturationCalculated(int *id, double * sat)
 /* ---------------------------------------------------------------------- */
 {
 	// Retrieves saturation for all grid nodes in sat
@@ -1003,7 +1078,7 @@ RMF_GetSaturation(int *id, double * sat)
 	{
 		IRM_RESULT return_value = IRM_OK;
 		std::vector <double> sat_vector;
-		Reaction_module_ptr->GetSaturation(sat_vector);
+		Reaction_module_ptr->GetSaturationCalculated(sat_vector);
 		if ((int) sat_vector.size() == Reaction_module_ptr->GetGridCellCount())
 		{
 			memcpy(sat, &sat_vector.front(), (size_t) (Reaction_module_ptr->GetGridCellCount()*sizeof(double)));
@@ -1357,6 +1432,56 @@ double RMF_GetTimeStep(int * id)
 	}
 	return (double) IRM_BADINSTANCE;
 }
+///* ---------------------------------------------------------------------- */
+//int RMF_GetVarItemsize(int* id, const char *str)
+///* ---------------------------------------------------------------------- */
+//{
+//	// Retrieves current time step, in seconds
+//	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+//	if (Reaction_module_ptr)
+//	{
+//		return Reaction_module_ptr->GetVarItemsize(str);
+//	}
+//	return (double)IRM_BADINSTANCE;
+//}
+///* ---------------------------------------------------------------------- */
+//int RMF_GetVarNbytes(int* id, const char* str)
+///* ---------------------------------------------------------------------- */
+//{
+//	// Retrieves current time step, in seconds
+//	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+//	if (Reaction_module_ptr)
+//	{
+//		return Reaction_module_ptr->GetVarNbytes(str);
+//	}
+//	return (double)IRM_BADINSTANCE;
+//}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_GetViscosity(int* id, double* viscosity)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves viscosity for all grid nodes in sat
+	// size of sat must be the number of grid nodes
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		IRM_RESULT return_value = IRM_OK;
+		std::vector <double> viscosity_vector;
+		viscosity_vector = Reaction_module_ptr->GetViscosity();
+		if ((int)viscosity_vector.size() == Reaction_module_ptr->GetGridCellCount())
+		{
+			memcpy(viscosity, &viscosity_vector.front(), (size_t)(Reaction_module_ptr->GetGridCellCount() * sizeof(double)));
+		}
+		else
+		{
+			viscosity_vector.resize(Reaction_module_ptr->GetGridCellCount(), INACTIVE_CELL_VALUE);
+			return_value = IRM_FAIL;
+		}
+		return return_value;
+	}
+	return IRM_BADINSTANCE;
+}
 #ifdef USE_YAML
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -1477,6 +1602,118 @@ RMF_InitialPhreeqc2Concentrations2(
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+RMF_InitialSolutions2Module(int* id, int* in)			
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialSolutions2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialEquilibriumPhases2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialEquilibriumPhases2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialExchanges2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialExchanges2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialSurfaces2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialSurfaces2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialGasPhases2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialGasPhases2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialSolidSolutions2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialSolidSolutions2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RMF_InitialKinetics2Module(int* id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	PhreeqcRM* Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
+	if (Reaction_module_ptr)
+	{
+		std::vector<int> in_vector;
+		int nxyz = Reaction_module_ptr->GetGridCellCount();
+		in_vector.resize(nxyz);
+		memcpy(&in_vector.front(), in, (size_t)nxyz * sizeof(int));
+		return Reaction_module_ptr->InitialKinetics2Module(in_vector);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 RMF_InitialPhreeqc2Module(int *id,
 						  int *initial_conditions1)		// 7 x nxyz end-member 1	
 /* ---------------------------------------------------------------------- */
@@ -1509,7 +1746,7 @@ RMF_InitialPhreeqc2Module(int *id,
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_InitialPhreeqc2Module2(int *id,
+RMF_InitialPhreeqc2ModuleMix(int *id,
 							  int *initial_conditions1,		// 7 x nxyz end-member 1
 							  int *initial_conditions2,		// 7 x nxyz end-member 2
 							  double *fraction1)			// 7 x nxyz fraction of end-member 1
@@ -1883,7 +2120,7 @@ RMF_SetCurrentSelectedOutputUserNumber(int * id, int * i)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_SetDensity(int *id, double *t)
+RMF_SetDensityUser(int *id, double *t)
 /* ---------------------------------------------------------------------- */
 {
 	// Sets the density that may be used to convert concentrations from
@@ -1895,7 +2132,7 @@ RMF_SetDensity(int *id, double *t)
 			std::vector<double> d_vector;
 			d_vector.resize(Reaction_module_ptr->GetGridCellCount());
 			memcpy(&d_vector.front(), t, d_vector.size() * sizeof(double));
-			return Reaction_module_ptr->SetDensity(d_vector);
+			return Reaction_module_ptr->SetDensityUser(d_vector);
 	}
 	return IRM_BADINSTANCE;
 }
@@ -2162,7 +2399,7 @@ RMF_SetRepresentativeVolume(int *id, double *t)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RMF_SetSaturation(int *id, double *t)
+RMF_SetSaturationUser(int *id, double *t)
 /* ---------------------------------------------------------------------- */
 {
 	// Sets the current saturation for each cell
@@ -2173,7 +2410,7 @@ RMF_SetSaturation(int *id, double *t)
 		std::vector<double> s_vector;
 		s_vector.resize(Reaction_module_ptr->GetGridCellCount());
 		memcpy(&s_vector.front(), t, s_vector.size() * sizeof(double));
-		return Reaction_module_ptr->SetSaturation(s_vector);
+		return Reaction_module_ptr->SetSaturationUser(s_vector);
 	}
 	return IRM_BADINSTANCE;
 }

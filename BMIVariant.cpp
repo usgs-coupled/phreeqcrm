@@ -1,4 +1,4 @@
-#include "BMI_Var.h"
+#include "BMIVariant.h"
 BMIVariant::BMIVariant(VarFunction f, std::string name_in)
 {
 	Initialized = false;
@@ -9,12 +9,36 @@ BMIVariant::BMIVariant(VarFunction f, std::string name_in)
 	Nbytes = 0;
 	Itemsize = 0;
 	dim = 0;
+	this->column = -1;
 	b_var = false;
 	i_var = 0;
 	d_var = 0.0;
 	NotImplemented = false;
 	VoidPtr = NULL;
 	fn = f;
+#if defined(WITH_PYBIND11)
+	hasPyArr = false;
+#endif
+}
+BMIVariant::BMIVariant(const std::string& name_in, const std::string& units_in, bool setter, bool getter, bool ptr, int bytes, int item_size)
+{
+	Initialized = false;
+	this->name = name_in;
+	this->units = units_in;
+	HasSetter = setter;
+	HasGetter = getter;
+	HasPtr = ptr;
+	Nbytes = bytes;
+	Itemsize = item_size;
+	dim = 0;
+	if (item_size > 0) dim = Nbytes / Itemsize;
+	this->column = -1;
+	b_var = false;
+	i_var = 0;
+	d_var = 0.0;
+	NotImplemented = false;
+	VoidPtr = NULL;
+	fn = NULL;
 }
 void BMIVariant::CopyScalars(BMIVariant& bv)
 {
@@ -25,6 +49,7 @@ void BMIVariant::CopyScalars(BMIVariant& bv)
 	this->Nbytes = bv.Nbytes;
 	this->Itemsize = bv.Itemsize;
 	this->dim = bv.dim;
+	this->column = bv.column;
 	this->b_var = bv.b_var;
 	this->i_var = bv.i_var;
 	this->d_var = bv.d_var;

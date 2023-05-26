@@ -1,10 +1,17 @@
+    !> @file BMI_interface.F90
+    !> @brief BMIPhreeqcRM module definition 
+    !>
+    !
     !*MODULE BMIPhreeqcRM PHREEQC Reaction Module for Transport Codes
-    !> @brief Fortran Documentation for the geochemical reaction module PhreeqcRM.
+    !> @brief Fortran documentation for the geochemical reaction module BMIPhreeqcRM.
     !> @par ""
-    !> "USE PhreeqcRM" is included in Fortran source code to define the PhreeqcRM functions.
-    !> For Windows, define the module by including the file RM_interface.F90 in your project.
-    !> For Linux, configure, compile, and install the PhreeqcRM library and module file.
-    !> You will need installed include directory (-I) added to the project) to reference the module file.
+    !> @n "USE BMIPhreeqcRM" defines a module with both Basic Model Interface methods and 
+    !> native PhreeqcRM methods for Fortran programs. 
+    !> @n For Windows, 
+    !> include the files BMI_interface.F90 and RM_interface.F90 in your project.
+    !> @n For Linux, configure, compile, and install the PhreeqcRM library and module file.
+    !> You will need installed include directory (-I) added to the project) to 
+    !> reference the module file.
     !> You will need to link to the library to produce the executable for your code.
     !>
     MODULE BMIPhreeqcRM
@@ -20,66 +27,26 @@
 
     integer, parameter :: BMI_FAILURE = 1
     integer, parameter :: BMI_SUCCESS = 0
-    
+    !> @a bmif_create creates a BMIPhreeqcRM instance. 
+    !>
+    !> Two constructors are available to create a BMIPhreeqcRM
+	!> instance. The default method, with no arguments, can be
+	!> used if the instance is to be initialized with a YAML file.
+	!> The YAML file must provide the number of cells in the user's 
+	!> model through the YAMLSetGridCellCount method, and, optionally,
+	!> the number of threads with YAMLThreadCount. The other
+	!> constructor requires the number of cells in the user model
+	!> as the first argument, and the number of threads as the
+	!> second argument.  
+    INTERFACE bmif_create
+		module procedure bmif_create_default 
+		module procedure bmif_create  
+    END INTERFACE bmif_create
       
-    !> INTERFACE-----Basic Model Interface method that retrieves model variables. Only variables in the list
-    !> provided by @ref bmif_get_output_var_names can be retrieved. The BMI interface to PhreeqcRM is
-    !> only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the RM_BMI_
-    !> prefix) provide a complete interface.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve.
-    !> @param dest Variable in which to place results.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @a bmif_get_value retrieves model variables. 
     !>
-    !> Variable names for the second argument (@a name) and variable type of the
-    !> third argument (@a dest).
-    !> @n "ComponentCount", @a dest: integer;
-    !> @n "Components", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "Concentrations", @a dest: real(kind=8), allocatable, dimension(:,:);
-    !> @n "CurrentSelectedOutputUserNumber", @a dest: integer;
-    !> @n "Density", @a dest: real(kind=8), allocatable, dimension(:);
-    !> @n "ErrorString", @a dest: character;
-    !> @n "FilePrefix", @a dest: character;
-    !> @n "Gfw", @a dest: real(kind=8), allocatable, dimension(:);
-    !> @n "GridCellCount", @a dest: integer;
-    !> @n "InputVarNames", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "Porosity", @a dest: real(kind=8), allocatable, dimension(:);
-    !> @n "Pressure", @a dest: real(kind=8), allocatable, dimension(:);
-    !> @n "Saturation", @a dest: real(kind=8), allocatable, dimension(:);
-    !> @n "SelectedOutput", @a dest: real(kind=8), allocatable, dimension(:,:);
-    !> @n "SelectedOutputColumnCount", @a dest: integer;
-    !> @n "SelectedOutputCount", @a dest: integer;
-    !> @n "SelectedOutputHeadings", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "SelectedOutputOn", @a dest: logical;
-    !> @n "SelectedOutputRowCount", @a dest: integer;
-    !> @n "SolutionVolume", @a dest: real(kind=8), allocatable, dimension(:);
-    !> @n "Temperature", @a dest: real(kind=8), allocatable, dimension(:);
-    !> @n "Time",	@a dest: real(kind=8);
-    !> @n "TimeStep",	@a dest: real(kind=8).
-    !>
-    !> @see
-    !> @ref bmif_get_output_var_names,
-    !> @ref bmif_get_output_item_count,
-    !> @ref bmif_get_var_itemsize,
-    !> @ref bmif_get_var_nbytes,
-    !> @ref bmif_get_var_type,
-    !> @ref bmif_get_var_units,
-    !> @ref bmif_set_value.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> real(kind=8), allocatable, dimension(:) :: bmi_density
-    !> character(len=:), allocatable, dimension(:) :: bmi_comps
-    !> status = bmif_get_value(id, "Density", bmi_density)
-    !> status = bmif_get_value("Components", bmi_comps)
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
+    !> Only variables in the list
+    !> provided by @ref bmif_get_output_var_names can be retrieved. 
     INTERFACE bmif_get_value
         module procedure bmif_get_value_logical
         module procedure bmif_get_value_char
@@ -92,14 +59,17 @@
         module procedure bmif_get_value_int1
         module procedure bmif_get_value_int2
     END INTERFACE bmif_get_value
-    
-	INTERFACE get_value_at_indices
-		module procedure get_value_at_indices_double ! not implemented
-		module procedure get_value_at_indices_float  ! not implemented
-		module procedure get_value_at_indices_int    ! not implemented
-    END INTERFACE get_value_at_indices
-
-    INTERFACE bmif_set_value
+    !> @a get_value_at_indices is not implemented. 
+	!INTERFACE get_value_at_indices
+	!	module procedure get_value_at_indices_double ! not implemented
+	!	module procedure get_value_at_indices_float  ! not implemented
+	!	module procedure get_value_at_indices_int    ! not implemented
+    !   END INTERFACE get_value_at_indices
+    !> @a bmif_set_value sets model variables. 
+    !>
+    !> Only variables in the list
+    !> provided by @ref bmif_get_input_var_names can be set. 
+   INTERFACE bmif_set_value
         module procedure bmif_set_value_b
         module procedure bmif_set_value_c
         module procedure bmif_set_value_double
@@ -111,12 +81,16 @@
         module procedure bmif_set_value_int2
     END INTERFACE bmif_set_value
     
+    !> @a set_value_at_indices is not implemented. 
 	INTERFACE set_value_at_indices
 		module procedure set_value_at_indices_double ! not implemented
 		module procedure set_value_at_indices_float  ! not implemented
 		module procedure set_value_at_indices_int    ! not implemented
     END INTERFACE set_value_at_indices
-    
+    !> @a bmif_get_value_ptr retrieves pointers to model variables. 
+    !>
+    !> Only variables in the list
+    !> provided by @ref bmif_get_pointable_var_names can be pointed to. 
     INTERFACE bmif_get_value_ptr
         module procedure bmif_get_value_ptr_logical
         module procedure bmif_get_value_ptr_double
@@ -130,39 +104,48 @@
 	! ====================================================
 	! Initialize, run, finalize (IRF) 
     ! ====================================================
-	
-    !> bmif_create creates a reaction module. If the code is compiled with
+	!> @a bmif_create creates a BMIPhreeqcRM instance. 
+    !> The default method, with no arguments, can be
+	!> used if the instance is to be initialized with a YAML file.
+	!> The YAML file must provide the number of cells in the user's 
+	!> model through the YAMLSetGridCellCount method, and, optionally,
+	!> the number of threads with YAMLThreadCount. 
+    INTEGER FUNCTION bmif_create_default()
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTERFACE
+    INTEGER(KIND=C_INT) FUNCTION RM_BMI_Create_default() &
+        BIND(C, NAME='RM_BMI_Create_default')
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    END FUNCTION RM_BMI_Create_default
+    END INTERFACE
+    bmif_create_default = RM_BMI_Create_default()
+    return
+    END FUNCTION bmif_create_default 
+    
+    !> @a bmif_create creates a reaction module. If the code is compiled with
     !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
     !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
     !> module will use MPI and multiple processes. If neither preprocessor directive is used,
     !> the reaction module will be serial (unparallelized).
-    !> @param nxyz                   The number of grid cells in the user's model.
-    !> @param nthreads (or @a comm, MPI)       When using OPENMP, the argument (@a nthreads) is the number of worker threads to be used.
-    !> If @a nthreads <= 0, the number of threads is set equal to the number of processors of the computer.
-    !> When using MPI, the argument (@a comm) is the MPI communicator to use within the reaction module.
-    !> @retval Id of the PhreeqcRM instance, negative is failure (See @ref RM_DecodeError).
+    !> @param nxyz                         The number of grid cells in the user's model.
+    !> @param nthreads (or @a comm, MPI)   When using OPENMP, the argument (@a nthreads) 
+	!> is the number of worker threads to be used.
+    !> If @a nthreads <= 0, the number of threads is set equal to the number of 
+	!> processors of the computer.
+    !> When using MPI, the argument (@a comm) is the MPI communicator to use within 
+	!> the reaction module.
+    !> @retval Id of the BMIPhreeqcRM instance, negative is failure.
     !> @see
-    !> @ref RM_Destroy.
-    !> @par Fortran Example:
+    !> @ref bmif_finalize.
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> nxyz = 40
-    !> #ifdef USE_MPI
-    !>   id = RM_Create(nxyz, MPI_COMM_WORLD)
-    !>   call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
-    !>   if (status .ne. MPI_SUCCESS) then
-    !>     stop "Failed to get mpi_myself"
-    !>   endif
-    !>   if (mpi_myself > 0) then
-    !>     status = RM_MpiWorker(id)
-    !>     status = RM_Destroy(id)
-    !>     return
-    !>   endif
-    !> #else
-    !>   nthreads = 3
-    !>   id = RM_Create(nxyz, nthreads)
-    !> #endif
+    !> nthreads = 3
+    !> id = bmif_create(nxyz, nthreads)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -186,11 +169,11 @@
     return
     END FUNCTION bmif_create    
 	
-    !> bmif_initialize uses a YAML file to initialize an instance of BMIPhreeqcRM. Same as
+    !> @a bmif_initialize uses a YAML file to initialize an instance of BMIPhreeqcRM. Same as
     !> @ref RM_InitializeYAML.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @param config_file         String containing the YAML file name.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @param id            The instance @a id returned from @ref bmif_create.
+    !> @param config_file   String containing the YAML file name.
+    !> @retval              0 is success, 1 is failure.
     !> @par
     !> The file contains a YAML map of PhreeqcRM methods
     !> and the arguments corresponding to the methods.
@@ -230,24 +213,32 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> @n CloseFiles(void);
+    !> @n CloseFiles();
     !> @n CreateMapping(std::vector< int >& grid2chem);
     !> @n DumpModule();
     !> @n FindComponents();
+	!> @n InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+	!> @n InitialExchanges2Module(std::vector< int > exchanges);
+	!> @n InitialGasPhases2Module(std::vector< int > gas_phases);
+	!> @n InitialKineticss2Module(std::vector< int > kinetics);
+	!> @n InitialSolidSolutions2Module(std::vector< int > solid_solutions);
+	!> @n InitialSolutions2Module(std::vector< int > solutions);
+	!> @n InitialSurfaces2Module(std::vector< int > surfaces);
     !> @n InitialPhreeqc2Module(std::vector< int > initial_conditions1);
-    !> @n InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
+    !> @n InitialPhreeqc2Module(std::vector< int > initial_conditions1, 
+	!>    std::vector< int > initial_conditions2, std::vector< double > fraction1);
     !> @n InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
     !> @n LoadDatabase(std::string database);
-    !> @n OpenFiles(void);
+    !> @n OpenFiles();
     !> @n OutputMessage(std::string str);
-    !> @n RunCells(void);
+    !> @n RunCells();
     !> @n RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
     !> @n RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
     !> @n ScreenMessage(std::string str);
     !> @n SetComponentH2O(bool tf);
     !> @n SetConcentrations(std::vector< double > c);
     !> @n SetCurrentSelectedOutputUserNumber(int n_user);
-    !> @n SetDensity(std::vector< double > density);
+    !> @n SetDensityUser(std::vector< double > density);
     !> @n SetDumpFileName(std::string dump_name);
     !> @n SetErrorHandlerMode(int mode);
     !> @n SetErrorOn(bool tf);
@@ -262,7 +253,7 @@
     !> @n SetRebalanceByCell(bool tf);
     !> @n SetRebalanceFraction(double f);
     !> @n SetRepresentativeVolume(std::vector< double > rv);
-    !> @n SetSaturation(std::vector< double > sat);
+    !> @n SetSaturationUser(std::vector< double > sat);
     !> @n SetScreenOn(bool tf);
     !> @n SetSelectedOutputOn(bool tf);
     !> @n SetSpeciesSaveOn(bool save_on);
@@ -287,12 +278,12 @@
     !> </CODE>
     !> @endhtmlonly
     !>
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> id = RM_Create(nxyz, MPI_COMM_WORLD)
-    !> status = RM_InitializeYAML(id, "myfile.yaml")
+    !> id = bmif_create(nxyz, nthreads)
+    !> status = bmif_initializeYAML(id, "myfile.yaml")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -318,9 +309,11 @@
     END FUNCTION bmif_initialize
 #endif
 
-    !> bmif_update runs a reaction step for all of the cells in the reaction module.
+    !> @a bmif_update runs a reaction step for all of the cells in the reaction module.
     !> Same as @ref RM_RunCells.
-    !> Normally, tranport concentrations are transferred to the reaction cells
+    !> @param id   The instance @a id returned from @ref bmif_create.
+    !> @retval     0 is success, 1 is failure.
+    !> Tranport concentrations are transferred to the reaction cells
     !> (@ref bmif_set_value "Concentrations" before
     !> reaction calculations are run. The length of time over which kinetic
     !> reactions are integrated is set
@@ -328,25 +321,24 @@
     !> as a result of the transport
     !> calculations include porosity (@ref bmif_set_value "Porosity"),
     !> pressure (@ref bmif_set_value "Pressure"),
-    !> saturation (@ref bmif_set_value "Saturation"),
+    !> saturation (@ref bmif_set_value "SaturationUser"),
     !> temperature (@ref bmif_set_value "Temperature").
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval IRM_BMI_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
     !> @see
+	!> @ref bmif_get_value,
     !> @ref bmif_set_value.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> status = bmif_set_value(id, "Porosity", por)                ! If pore volume changes
-    !> status = bmif_set_value(id, "Saturation", sat)              ! If saturation changes
+    !> status = bmif_set_value(id, "SaturationUser", sat)              ! If saturation changes
     !> status = bmif_set_value(id, "Temperature", temperature)     ! If temperature changes
     !> status = bmif_set_value(id, "Pressure", pressure)           ! If pressure changes
     !> status = bmif_set_value(id, "Concentrations", c)            ! Transported concentrations
     !> status = bmif_set_value(id, "TimeStep", time_step)          ! Time step for kinetic reactions
     !> status = bmif_update(id)
     !> status = bmif_get_value(id, "Concentrations", c)            ! Concentrations after reaction
-    !> status = bmif_get_value(id, "Density", density)             ! Density after reaction
+    !> status = bmif_get_value(id, "DensityCalculated", density)   ! Density after reaction
     !> status = bmif_get_value(id, "SolutionVolume", volume)       ! Solution volume after reaction
     !> </PRE>
     !> </CODE>
@@ -369,42 +361,29 @@
     return
     END FUNCTION bmif_update
      
-    !> bmif_update TODOxxxxxxxxxxxxxxxRuns a reaction step for all of the cells in the reaction module.
-    !> Same as @ref RM_RunCells.
-    !> Normally, tranport concentrations are transferred to the reaction cells
-    !> (@ref bmif_set_value "Concentrations" before
-    !> reaction calculations are run. The length of time over which kinetic
-    !> reactions are integrated is set
-    !> by @ref bmif_set_value "TimeStep". Other properties that may need to be updated
-    !> as a result of the transport
-    !> calculations include porosity (@ref bmif_set_value "Porosity"),
-    !> pressure (@ref bmif_set_value "Pressure"),
-    !> saturation (@ref bmif_set_value "Saturation"),
-    !> temperature (@ref bmif_set_value "Temperature").
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval IRM_BMI_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @see
-    !> @ref bmif_set_value.
-    !> @par Fortran Example:
-    !> @htmlonly
-    !> <CODE>
-    !> <PRE>
-    !> status = bmif_set_value(id, "Porosity", por)                ! If pore volume changes
-    !> status = bmif_set_value(id, "Saturation", sat)              ! If saturation changes
-    !> status = bmif_set_value(id, "Temperature", temperature)     ! If temperature changes
-    !> status = bmif_set_value(id, "Pressure", pressure)           ! If pressure changes
-    !> status = bmif_set_value(id, "Concentrations", c)            ! Transported concentrations
-    !> status = bmif_set_value(id, "TimeStep", time_step)          ! Time step for kinetic reactions
-    !> status = bmif_update(id)
-    !> status = bmif_get_value(id, "Concentrations", c)            ! Concentrations after reaction
-    !> status = bmif_get_value(id, "Density", density)             ! Density after reaction
-    !> status = bmif_get_value(id, "SolutionVolume", volume)       ! Solution volume after reaction
-    !> </PRE>
-    !> </CODE>
-    !> @endhtmlonly
-    !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-    INTEGER FUNCTION bmif_update_until(id, time)
+    !> @a bmif_update_until is the same as @ref bmif_update, except the time step is calculated
+	!> from the argument @a end_time. The time step is calculated to be @a end_time minus 
+	!> the current time (@ref bmif_get_current_time).
+    !> @param id       The instance @a id returned from @ref bmif_create.
+	!> @param end_time Time at the end of the time step. 
+	!> @see
+	!> @ref bmif_initialize,
+	!> @ref bmif_update.
+	!> @par Fortran example:
+	!> @htmlonly
+	!> <CODE>
+	!> <PRE>
+	!> status = bmif_set_value(id, "Time", time)
+	!> status = bmif_set_value(id, "Concentrations", c)
+	!> status = bmif_update_until(time + 86400.0)
+	!> status = bmif_get_value("Concentrations", c)
+	!> </PRE>
+	!> </CODE>
+	!> @endhtmlonly
+	!> @par MPI:
+	!> Called by root, workers must be in the loop of @ref RM_MpiWorker.    
+
+    INTEGER FUNCTION bmif_update_until(id, end_time)
     USE ISO_C_BINDING
     IMPLICIT NONE
 		INTERFACE
@@ -417,17 +396,17 @@
 		END FUNCTION RMF_BMI_UpdateUntil
 		END INTERFACE
     INTEGER, INTENT(in) :: id
-    real(kind=8), INTENT(in) :: time
-    bmif_update_until = success(RMF_BMI_UpdateUntil(id, time))
+    real(kind=8), INTENT(in) :: end_time
+    bmif_update_until = success(RMF_BMI_UpdateUntil(id, end_time))
     return
     END FUNCTION bmif_update_until
 	
-    !> bmif_finalize destroys a reaction module, same as @ref RM_Destroy.
-    !> @param id               The instance @a id returned from @ref RM_Create.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @a bmif_finalize destroys a reaction module, same as @ref RM_Destroy.
+    !> @param id  The instance @a id returned from @ref bmif_create.
+    !> @retval    0 is success, 1 is failure.
     !> @see
-    !> @ref RM_Create.
-    !> @par Fortran Example:
+    !> @ref bmif_create.
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -452,20 +431,17 @@
     bmif_finalize = success(RM_Destroy(id))
     return
     END FUNCTION bmif_finalize
-	
+    
 	! ====================================================
 	! Exchange items
 	! ====================================================
 	
-    !> bmif_get_component_name returns the component name--BMIPhreeqcRM. The BMI interface to PhreeqcRM is
-    !> only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the BMI_
-    !> prefix) provide a complete interface, and it is expected that the native methods will be used in preference to the BMI_
-    !> methods.
+    !> @a bmif_get_component_name returns the component name--BMIPhreeqcRM. 
     !>
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param component_name is filled with "PhreeqcRM", the name of the component.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @par Fortran Example:
+    !> @param id             The instance @a id returned from @ref bmif_create.
+    !> @param component_name Filled with "BMIPhreeqcRM", the name of the component.
+    !> @retval               0 is success, 1 is failure.
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -485,12 +461,12 @@
     return
     END FUNCTION bmif_get_component_name
 
-
-    !> Basic Model Interface method that returns count of input variables that
+    !> @a bmif_get_input_item_count returns count of variables that
     !> can be set with @ref bmif_set_value.
-    !> @retval  Count of input variables that can be set with @ref bmif_set_value.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !>
+    !> @param id     The instance @a id returned from @ref bmif_create.
+    !> @param count  Number of input variables that can be set with @ref bmif_set_value.
+    !> @retval       0 is success, 1 is failure.
+	!> 
     !> @see
     !> @ref bmif_get_input_var_names,
     !> @ref bmif_get_var_itemsize,
@@ -498,12 +474,11 @@
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units,
     !> @ref bmif_set_value.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> integer inputvarcount
-    !> inputvarcount = bmif_get_input_item_count(id);
+    !> status = bmif_get_input_item_count(id, count)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -528,10 +503,11 @@
     bmif_get_input_item_count = success(count)
     END FUNCTION bmif_get_input_item_count
 	
-    !> bmif_get_output_item_count returns count of output variables that can be
+    !> @a bmif_get_output_item_count returns count of output variables that can be
     !> retrieved with @ref bmif_get_value.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @retval  Count of output variables that can be retrieved with @ref bmif_get_value.
+    !> @param id     The instance @a id returned from @ref bmif_create.
+    !> @param count  Number of output variables that can be retrieved with @ref bmif_get_value.
+    !> @retval       0 is success, 1 is failure.
     !>
     !> @see
     !> @ref bmif_get_output_var_names,
@@ -540,12 +516,11 @@
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> integer outputvarcount
-    !> outputvarcount = bmif_get_output_item_count(id);
+    !> status = bmif_get_output_item_count(id, outputvarcount)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -569,10 +544,12 @@
     bmif_get_output_item_count = success(count)
     END FUNCTION bmif_get_output_item_count
     
-    !> Basic Model Interface method that returns count of variables for which
-    !> pointers can be retrieved with @ref bmif_get_ptr.
-    !> @retval  Count of input variables that can be set with @ref bmif_set_value.
-    !> @param id            The instance @a id returned from @ref RM_Create.
+    !> @a bmif_get_pointable_item_count returns count of variables for which
+    !> pointers can be retrieved with @ref bmif_get_value_ptr.
+    !> @param id     The instance @a id returned from @ref bmif_create.
+    !> @param count  Number of variables for which pointers can be retrieved with 
+	!> @ref bmif_get_value_ptr.
+    !> @retval       0 is success, 1 is failure.
     !>
     !> @see
     !> @ref bmif_get_input_var_names,
@@ -581,12 +558,11 @@
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units,
     !> @ref bmif_set_value.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> integer inputvarcount
-    !> inputvarcount = bmif_get_input_item_count(id);
+    !> status = bmif_get_pointable_item_count(id, pointablevarcount)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -613,9 +589,9 @@
 
     !> Basic Model Interface method that returns a list of the variable names that can be set
     !> with @ref bmif_set_value.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var_names     Deferred length, allocatable, 1D character vector.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @param id          The instance @a id returned from @ref bmif_create.
+    !> @param var_names   Character array of variable names.
+    !> @retval            0 is success, 1 is failure.
     !>
     !> @see
     !> @ref bmif_get_input_item_count,
@@ -625,18 +601,18 @@
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units,
     !> @ref bmif_set_value.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> character(len=:), dimension(:), allocatable          :: inputvars
+    !> character(len=:), dimension(:), allocatable :: inputvars
     !> status = bmif_get_input_var_names(id, inputvars)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION bmif_get_input_var_names(id, dest)
+    INTEGER FUNCTION bmif_get_input_var_names(id, var_names)
     USE ISO_C_BINDING
     IMPLICIT NONE
         INTERFACE
@@ -660,7 +636,7 @@
 		END FUNCTION RMF_BMI_GetNamesSize
 		END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: var_names
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
 	vartype = "inputvarnames"
@@ -668,17 +644,17 @@
 	status = bmif_get_input_item_count(id, dim)
     nbytes = dim * itemsize
     dim = nbytes / itemsize
-    if(allocated(dest)) deallocate(dest)
-    allocate(character(len=itemsize) :: dest(dim))
-    bmif_get_input_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, dest(1))
+    if(allocated(var_names)) deallocate(var_names)
+    allocate(character(len=itemsize) :: var_names(dim))
+    bmif_get_input_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, var_names(1))
     return
     END FUNCTION bmif_get_input_var_names
 
-    !> bmif_get_output_var_names returns a list of the variable names that can be
+    !> @a bmif_get_output_var_names returns a list of the variable names that can be
     !> retrieved with @ref bmif_get_value.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var_names     Deferred length, allocatable, 1D character vector.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @param id          The instance @a id returned from @ref bmif_create.
+    !> @param var_names   Character array of variable names.
+    !> @retval            0 is success, 1 is failure.
     !>
     !> @see
     !> @ref bmif_get_output_item_count,
@@ -687,18 +663,18 @@
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable, dimension(:) :: var_names
-    !> var_names = bmif_get_output_var_names(id);
+    !> status = bmif_get_output_var_names(id, var_names)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION bmif_get_output_var_names(id, dest)
+    INTEGER FUNCTION bmif_get_output_var_names(id, var_names)
     USE ISO_C_BINDING
     IMPLICIT NONE
         INTERFACE
@@ -722,24 +698,24 @@
 		END FUNCTION RMF_BMI_GetNamesSize
 		END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: var_names
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
 	vartype = "outputvarnames"
 	status = RMF_BMI_GetNamesSize(id, trim(vartype)//C_NULL_CHAR, itemsize)
 	status = bmif_get_output_item_count(id, dim)
     nbytes = dim * itemsize
-    if(allocated(dest)) deallocate(dest)
-    allocate(character(len=itemsize) :: dest(dim))
-    bmif_get_output_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, dest(1))
+    if(allocated(var_names)) deallocate(var_names)
+    allocate(character(len=itemsize) :: var_names(dim))
+    bmif_get_output_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, var_names(1))
     return
     END FUNCTION bmif_get_output_var_names
 
-    !> bmif_get_pointable_var_names returns a list of the variable names that can be
-    !> retrieved with @ref bmif_get_value.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var_names     Deferred length, allocatable, 1D character vector.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @a bmif_get_pointable_var_names returns a list of the variable names for which a pointer can be
+    !> retrieved with @ref bmif_get_value_ptr.
+    !> @param id          The instance @a id returned from @ref bmif_create.
+    !> @param var_names   Character array of variable names.
+    !> @retval            0 is success, 1 is failure.
     !>
     !> @see
     !> @ref bmif_get_pointable_item_count,
@@ -748,18 +724,18 @@
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable, dimension(:) :: var_names
-    !> var_names = bmif_get_output_var_names(id);
+    !> status = bmif_get_pointable_var_names(id, var_names)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION bmif_get_pointable_var_names(id, dest)
+    INTEGER FUNCTION bmif_get_pointable_var_names(id, var_names)
     USE ISO_C_BINDING
     IMPLICIT NONE
         INTERFACE
@@ -783,7 +759,7 @@
 		END FUNCTION RMF_BMI_GetNamesSize
 		END INTERFACE
     INTEGER, INTENT(in) :: id
-    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
+    CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: var_names
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
 	vartype = "pointablevarnames"
@@ -791,14 +767,25 @@
 	status = bmif_get_pointable_item_count(id, dim)
     nbytes = dim * itemsize
     dim = nbytes / itemsize
-    if(allocated(dest)) deallocate(dest)
-    allocate(character(len=itemsize) :: dest(dim))
-    bmif_get_pointable_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, dest(1))
+    if(allocated(var_names)) deallocate(var_names)
+    allocate(character(len=itemsize) :: var_names(dim))
+    bmif_get_pointable_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, var_names(1))
     return
-    END FUNCTION bmif_get_pointable_var_names	! ====================================================
+    END FUNCTION bmif_get_pointable_var_names	
+	
+	! ====================================================
 	! Variable information
 	! ====================================================
 	
+	!> @a bmif_get_var_grid returns a value of 1, indicating points.
+	!> BMIPhreeqcRM does not have a grid of its own. The cells
+	!> of BMIPhreeqcRM are associated with the user's model grid,
+	!> and all spatial characterists are assigned by the user's
+	!> model.
+	!> @param id    The instance @a id returned from @ref bmif_create.
+	!> @param var   Varaiable name. (Return value is the same regardless of @a name.)
+	!> @param grid  1 (points). BMIPhreeqcRM cells derive meaning from the user's model. 	
+    !> @retval      0 is success, 1 is failure.
 	integer FUNCTION bmif_get_var_grid(id, var, grid)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -809,25 +796,29 @@
     bmif_get_var_grid = BMI_SUCCESS
     END FUNCTION bmif_get_var_grid
 	
-	!> bmif_get_var_type retrieves the type of a variable that can be set with
-    !> @ref bmif_set_value or retrieved with @ref bmif_get_value. Types are "character",
-    !> "real(kind=8)","integer", or "logical",
+	!> @a bmif_get_var_type retrieves the type of a variable that can be set with
+    !> @ref bmif_set_value, retrieved with @ref bmif_get_value, or pointed to with
+	!> @ref bmif_get_value_ptr.
+	!> Types are "character", "real(kind=8)", "integer", or "logical",
     !> or an allocatable array of these types.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_input_var_names can be set.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_output_var_names can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve total bytes.
+    !> @param id    The instance @a id returned from @ref bmif_create.
+    !> @param var   Name of the variable to retrieve the type.
     !> @param vtype Type of the variable.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @retval      0 is success, 1 is failure.
     !> @see
     !> @ref bmif_get_input_var_names,
     !> @ref bmif_get_input_item_count,
     !> @ref bmif_get_output_var_names,
     !> @ref bmif_get_output_item_count,
-    !> @ref bmif_get_var_units.
-    !> @par Fortran Example:
+    !> @ref bmif_get_pointable_var_names,
+    !> @ref bmif_get_pointable_item_count,
+    !> @ref bmif_get_value,
+    !> @ref bmif_get_value_ptr,
+    !> @ref bmif_get_var_itemsize,
+    !> @ref bmif_get_var_nbytes,
+    !> @ref bmif_get_var_units,
+    !> @ref bmif_set_value.
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -837,8 +828,10 @@
     !>     write(*,"(5x, A15)") trim(string)
     !>     status = bmif_get_var_type(id, inputvars(i), string)
     !>     write(*,"(5x, A15)") trim(string)
-    !>     write(*, "(5x, I15)") bmif_get_var_itemsize(id, inputvars(i))
-    !>     write(*, "(5x, I15)") bmif_get_var_nbytes(id, inputvars(i))
+	!>	   status = bmif_get_var_itemsize(id, inputvars(i), itemsize)
+    !>     write(*, "(5x, I15)") itemsize
+	!>	   status = bmif_get_var_nbytes(id, inputvars(i), nbytes)
+    !>     write(*, "(5x, I15)") nbytes
     !> enddo
     !> </PRE>
     !> </CODE>
@@ -865,24 +858,28 @@
     return
     END FUNCTION bmif_get_var_type
 	
-    !> bmif_get_var_units retrieves the units of a
+    !> @a bmif_get_var_units retrieves the units of a
     !> variable that can be set with
-    !> @ref bmif_set_value or retrieved with @ref bmif_get_value.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_input_var_names can be set.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_output_var_names can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve total bytes.
-    !> @param units Units of the variable.
-    !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @ref bmif_set_value, retrieved with @ref bmif_get_value, or pointed to with
+	!> @ref bmif_get_value_ptr.
+    !> @param id      The instance @a id returned from @ref bmif_create.
+    !> @param var     Name of the variable to retrieve units.
+    !> @param units   Units of the variable.
+    !> @retval        0 is success, 1 is failure.
     !> @see
     !> @ref bmif_get_input_var_names,
     !> @ref bmif_get_input_item_count,
     !> @ref bmif_get_output_var_names,
     !> @ref bmif_get_output_item_count,
-    !> @ref bmif_get_var_type.
-    !> @par Fortran Example:
+    !> @ref bmif_get_pointable_var_names,
+    !> @ref bmif_get_pointable_item_count,
+    !> @ref bmif_get_value,
+    !> @ref bmif_get_value_ptr,
+    !> @ref bmif_get_var_itemsize,
+    !> @ref bmif_get_var_nbytes,
+    !> @ref bmif_get_var_type,
+    !> @ref bmif_set_value.
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -892,8 +889,10 @@
     !>     write(*,"(5x, A15)") trim(string)
     !>     status = bmif_get_var_type(id, inputvars(i), string)
     !>     write(*,"(5x, A15)") trim(string)
-    !>     write(*, "(5x, I15)") bmif_get_var_itemsize(id, inputvars(i))
-    !>     write(*, "(5x, I15)") bmif_get_var_nbytes(id, inputvars(i))
+	!>	   status = bmif_get_var_itemsize(id, inputvars(i), itemsize)
+    !>     write(*, "(5x, I15)") itemsize
+	!>	   status = bmif_get_var_nbytes(id, inputvars(i), nbytes)
+    !>     write(*, "(5x, I15)") nbytes
     !> enddo
     !> </PRE>
     !> </CODE>
@@ -920,37 +919,42 @@
     return
     END FUNCTION bmif_get_var_units	
 	
-    !> bmif_get_var_itemsize retrieves the size of an
-    !> individual item that can be set or retrived.
-    !> Sizes may be sizeof(int), sizeof(double),
-    !> or a character length for string variables. Only variables in the list
-    !> provided by @ref bmif_get_input_var_names can be set.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_output_var_names can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve.
-    !> @retval   Size of one element of the variable.
+    !> @a bmif_get_var_itemsize retrieves the size, in bytes, of a
+    !> variable that can be set with
+    !> @ref bmif_set_value, retrieved with @ref bmif_get_value, or pointed to with
+	!> @ref bmif_get_value_ptr.
+    !> Sizes may be the size of an integer, real(kind=8), 
+    !> or a character length for string variables.
+    !> @param id         The instance @a id returned from @ref bmif_create.
+    !> @param var        Name of the variable to retrieve the item size.
+    !> @param itemsize   Size, in bytes, of one element of the variable.
+    !> @retval           0 is success, 1 is failure.
     !>
     !> @see
     !> @ref bmif_get_input_var_names,
     !> @ref bmif_get_input_item_count,
     !> @ref bmif_get_output_var_names,
     !> @ref bmif_get_output_item_count,
+    !> @ref bmif_get_pointable_var_names,
+    !> @ref bmif_get_pointable_item_count,
     !> @ref bmif_get_value,
+    !> @ref bmif_get_value_ptr,
     !> @ref bmif_get_var_nbytes,
+    !> @ref bmif_get_var_type,
+    !> @ref bmif_get_var_units,
     !> @ref bmif_set_value.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> integer nbytes, item_size, dim
     !> real(kind=8), allocatable, dimension(:) :: bmi_temperature
-    !> nbytes = bmif_get_var_nbytes(id, "Temperature")
-    !> item_size = bmif_get_var_itemsize(id, "Temperature");
-    !> int dim = nbytes/item_size;
+    !> status = bmif_get_var_nbytes(id, "Temperature", nbytes)
+    !> status = bmif_get_var_itemsize(id, "Temperature", item_size)
+    !> dim    = nbytes/item_size
     !> allocate(bmi_temperature(dim))
     !> bmi_temperature = 25.0
-    !> status = bmif_set_value("Temperature", bmi_temperature);
+    !> status = bmif_set_value("Temperature", bmi_temperature)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -975,37 +979,41 @@
 	bmif_get_var_itemsize = success(bmif_get_var_itemsize)
     END FUNCTION bmif_get_var_itemsize	
 	
-    !> bmif_get_var_nbytes retrieves the size of an
-    !> individual item that can be set or retrived.
-    !> Sizes may be sizeof(int), sizeof(double),
-    !> or a character length for string variables. Only variables in the list
-    !> provided by @ref bmif_get_input_var_names can be set.
-    !> Only variables in the list
-    !> provided by @ref bmif_get_output_var_names can be retrieved.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve size.
-    !> @retval Size of one element of the variable.
+    !> @a bmif_get_var_nbytes retrieves the total number of bytes needed for a 
+    !> variable that can be set with
+    !> @ref bmif_set_value, retrieved with @ref bmif_get_value, or pointed to with
+	!> @ref bmif_get_value_ptr.
+    !> @param id      The instance @a id returned from @ref bmif_create.
+    !> @param var     Name of the variable to retrieve the number of bytes needed to
+	!> retrieve or store the variable.
+    !> @param nbytes  Total number of bytes needed for the variable.
+    !> @retval        0 is success, 1 is failure.
     !>
     !> @see
     !> @ref bmif_get_input_var_names,
     !> @ref bmif_get_input_item_count,
     !> @ref bmif_get_output_var_names,
     !> @ref bmif_get_output_item_count,
+    !> @ref bmif_get_pointable_var_names,
+    !> @ref bmif_get_pointable_item_count,
     !> @ref bmif_get_value,
-    !> @ref bmif_get_var_nbytes,
+    !> @ref bmif_get_value_ptr,
+    !> @ref bmif_get_var_itemsize,
+    !> @ref bmif_get_var_type,
+    !> @ref bmif_get_var_units,
     !> @ref bmif_set_value.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> integer nbytes, item_size, dim
-    !>  real(kind=8), allocatable, dimension(:) :: bmi_temperature
-    !> nbytes = bmif_get_var_nbytes(id, "Temperature")
-    !> item_size = bmif_get_var_itemsize(id, "Temperature");
-    !> int dim = nbytes/item_size;
+    !> real(kind=8), allocatable, dimension(:) :: bmi_temperature
+    !> status = bmif_get_var_nbytes(id, "Temperature", nbytes)
+    !> status = bmif_get_var_itemsize(id, "Temperature", item_size)
+    !> dim    = nbytes/item_size
     !> allocate(bmi_temperature(dim))
-    !>  bmi_temperature = 25.0
-    !> status = bmif_set_value("Temperature", bmi_temperature);
+    !> bmi_temperature = 25.0
+    !> status = bmif_set_value("Temperature", bmi_temperature)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -1034,12 +1042,10 @@
 	! Time information	
 	! ====================================================
 	
-    !> bmif_get_current_time returns the current simulation time, in seconds. (Same as @ref RM_GetTime.)
-    !> The reaction module does not change the time value, so the
-    !> returned value is equal to the default (0.0) or the last time set by
-    !> @ref bmif_set_value("Time", time) or @ref RM_SetTime.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @retval                 The current simulation time, in seconds.
+    !> @a bmif_get_current_time returns the current simulation time, in seconds. (Same as @ref RM_GetTime.)
+    !> @param id      The instance @a id returned from @ref bmif_create.
+    !> @param time    The current simulation time, in seconds.
+    !> @retval        0 is success, 1 is failure.
     !> @see
     !> @ref bmif_get_end_time,
     !> @ref bmif_get_time_step,
@@ -1048,11 +1054,11 @@
     !> @ref RM_GetTimeStep,
     !> @ref RM_SetTime,
     !> @ref RM_SetTimeStep.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> time = bmif_get_current_time(id)
+    !> status = bmif_get_current_time(id, time)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -1075,6 +1081,11 @@
     bmif_get_current_time = BMI_SUCCESS
     END FUNCTION bmif_get_current_time	
 	
+	!> @a bmif_get_start_time returns the current simulation time, in seconds. 
+	!> (Same as @ref bmif_get_current_time and @ref RM_GetTime.)
+    !> @param id          The instance @a id returned from @ref bmif_create.
+    !> @param start_time  The current simulation time, in seconds.
+    !> @retval        0 is success, 1 is failure.
     INTEGER FUNCTION bmif_get_start_time(id, start_time)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -1083,10 +1094,11 @@
 	bmif_get_start_time = bmif_get_current_time(id, start_time)
     END FUNCTION bmif_get_start_time
 	
-    !> bmif_get_end_time returns @ref bmif_get_current_time plus
+    !> @a bmif_get_end_time returns @ref bmif_get_current_time plus
     !> @ref bmif_get_time_step, in seconds.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @retval                 The end of the time step, in seconds.
+    !> @param id        The instance @a id returned from @ref bmif_create.
+    !> @param end_time  The end of the time step, in seconds.
+    !> @retval          0 is success, 1 is failure.
     !> @see
     !> @ref bmif_get_current_time,
     !> @ref bmif_get_time_step,
@@ -1095,11 +1107,11 @@
     !> @ref RM_GetTimeStep,
     !> @ref RM_SetTime,
     !> @ref RM_SetTimeStep.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> time = bmif_get_end_time(id)
+    !> status = bmif_get_end_time(id, end_time)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -1122,11 +1134,11 @@
     bmif_get_end_time = BMI_SUCCESS
     END FUNCTION bmif_get_end_time
 	
-    !> bmif_get_time_units returns the time units of PhreeqcRM.
+    !> @a bmif_get_time_units returns the time units of PhreeqcRM.
     !> All time units are seconds for PhreeqcRM.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param time_units    The instance @a id returned from @ref RM_Create.
-    !> @retval                 Returns the string "seconds".
+    !> @param id            The instance @a id returned from @ref bmif_create.
+    !> @param time_units    Returns the string "seconds".
+    !> @retval              0 is success, 1 is failure.
     !> @see
     !> @ref bmif_get_current_time,
     !> @ref bmif_get_end_time,
@@ -1137,12 +1149,12 @@
     !> @ref RM_SetTime,
     !> @ref RM_SetTimeStep,
     !> @ref bmif_set_value.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(20) time_units
-    !> status = bmif_get_time_units(id, time_units) << ".\n";
+    !> status = bmif_get_time_units(id, time_units)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -1167,13 +1179,11 @@
     END FUNCTION bmif_get_time_units	
 	
 
-    !> bmif_get_time_step returns the current simulation time step,
+    !> @a bmif_get_time_step returns the current simulation time step,
     !> in seconds. (Same as @ref RM_GetTimeStep.)
-    !> The reaction module does not change the time-step value, so the
-    !> returned value is equal to the last time step set by
-    !> @ref bmif_set_value("TimeStep", time_step) or @ref RM_SetTimeStep.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @retval                 The current simulation time step, in seconds.
+    !> @param id            The instance @a id returned from @ref bmif_create.
+    !> @param time_step     The current simulation time step, in seconds.
+    !> @retval              0 is success, 1 is failure.
     !> @see
     !> @ref bmif_get_current_time,
     !> @ref bmif_get_end_time,
@@ -1182,11 +1192,11 @@
     !> @ref RM_GetTimeStep,
     !> @ref RM_SetTime,
     !> @ref RM_SetTimeStep.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> time_step = bmif_get_time_step(id)
+    !> status = bmif_get_time_step(id, time_step)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -1213,14 +1223,12 @@
 	! Getters, by type
 	! ====================================================
 
-    !> Basic Model Interface method that retrieves model variables. Only variables in the list
-    !> provided by @ref bmif_get_output_var_names can be retrieved. The BMI interface to PhreeqcRM is
-    !> only partial, and provides only the most basic functions. The native PhreeqcRM methods (those without the the RM_BMI_
-    !> prefix) provide a complete interface.
-    !> @param id            The instance @a id returned from @ref RM_Create.
-    !> @param var Name of the variable to retrieve.
-    !> @param dest Variable in which to place results.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @a bmif_get_value retrieves model variables. Only variables in the list
+    !> provided by @ref bmif_get_output_var_names can be retrieved. 
+    !> @param id     The instance @a id returned from @ref bmif_create.
+    !> @param var    Name of the variable to retrieve.
+    !> @param dest   Variable in which to place results.
+    !> @retval       0 is success, 1 is failure.
     !>
     !> Variable names for the second argument (@a name) and variable type of the
     !> third argument (@a dest).
@@ -1228,7 +1236,7 @@
     !> @n "Components", @a dest: character(len=:), allocatable, dimension(:);
     !> @n "Concentrations", @a dest: real(kind=8), allocatable, dimension(:,:);
     !> @n "CurrentSelectedOutputUserNumber", @a dest: integer;
-    !> @n "Density", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "DensityCalculated", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "ErrorString", @a dest: character;
     !> @n "FilePrefix", @a dest: character;
     !> @n "Gfw", @a dest: real(kind=8), allocatable, dimension(:);
@@ -1237,7 +1245,7 @@
     !> @n "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
     !> @n "Porosity", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "Pressure", @a dest: real(kind=8), allocatable, dimension(:);
-    !> @n "Saturation", @a dest: real(kind=8), allocatable, dimension(:);
+    !> @n "SaturationCalculated", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "SelectedOutput", @a dest: real(kind=8), allocatable, dimension(:,:);
     !> @n "SelectedOutputColumnCount", @a dest: integer;
     !> @n "SelectedOutputCount", @a dest: integer;
@@ -1247,7 +1255,8 @@
     !> @n "SolutionVolume", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "Temperature", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "Time",	@a dest: real(kind=8);
-    !> @n "TimeStep",	@a dest: real(kind=8).
+    !> @n "TimeStep",	@a dest: real(kind=8);
+    !> @n "Viscosity", @a dest: real(kind=8), allocatable, dimension(:).
     !>
     !> @see
     !> @ref bmif_get_output_var_names,
@@ -1257,20 +1266,21 @@
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units,
     !> @ref bmif_set_value.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable, dimension(:) :: bmi_density
     !> character(len=:), allocatable, dimension(:) :: bmi_comps
-    !> status = bmif_get_value(id, "Density", bmi_density)
-    !> status = bmif_get_value("Components", bmi_comps)
+    !> status = bmif_get_value(id, "DensityCalculated", bmi_density)
+    !> status = bmif_get_value(id, "Components", bmi_comps)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-
+!Add NEW_VARIABLE to bmif_get_value Documentation
+    
     !> \overload
     INTEGER FUNCTION bmif_get_value_logical(id, var, dest)
     USE ISO_C_BINDING
@@ -1634,9 +1644,33 @@
     bmif_get_value_int2 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
     return
     END FUNCTION bmif_get_value_int2
-    
+   
+    !> @a bmif_get_value_ptr retrieves pointers to model variables. Only variables in the list
+    !> provided by @ref bmif_get_pointable_var_names can be pointed to. 
+    !> @param id     The instance @a id returned from @ref bmif_create.
+    !> @param var    Name of the variable to retrieve.
+    !> @param ptr    Pointer to the variable's data.
+    !> @retval       0 is success, 1 is failure.
+	!> The following list gives the name in the second argument (@a var) and the
+	!> data type the pointer (@a ptr):
+	!> @n "ComponentCount": integer;
+	!> @n "Concentrations": real(kind=8) (:);
+	!> @n "DensityCalculated": real(kind=8) (:);
+	!> @n "Gfw": real(kind=8) (:);
+	!> @n "GridCellCount": integer;
+	!> @n "Porosity": real(kind=8) (:);
+	!> @n "Pressure": real(kind=8) (:);
+	!> @n "SaturationCalculated": real(kind=8) (:);
+	!> @n "SolutionVolume": real(kind=8) (:);
+	!> @n "Temperature": real(kind=8) (:);
+	!> @n "Time": real(kind=8);
+	!> @n "TimeStep": real(kind=8);
+	!> @n "Viscosity": real(kind=8) (:);
+    !> @par MPI:
+    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.     
+!Add NEW_VARIABLE to bmif_get_value_ptr Documentation  
     !> \overload
-    INTEGER FUNCTION bmif_get_value_ptr_double(id, var, dest)
+    INTEGER FUNCTION bmif_get_value_ptr_double(id, var, ptr)
     USE ISO_C_BINDING
     IMPLICIT NONE
 		INTERFACE
@@ -1651,17 +1685,17 @@
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    real(kind=c_double), pointer, INTENT(inout) :: dest
+    real(kind=c_double), pointer, INTENT(inout) :: ptr
 	type (c_ptr) :: src
     integer :: status
     status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
-    call C_F_POINTER(src, dest)
+    call C_F_POINTER(src, ptr)
     bmif_get_value_ptr_double = success(status)
     return 
     END FUNCTION bmif_get_value_ptr_double
     
-        !> \overload
-    INTEGER FUNCTION bmif_get_value_ptr_double1(id, var, dest)
+    !> \overload
+    INTEGER FUNCTION bmif_get_value_ptr_double1(id, var, ptr)
     USE ISO_C_BINDING
     IMPLICIT NONE
 		INTERFACE
@@ -1676,20 +1710,20 @@
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    real(kind=c_double), pointer, INTENT(inout) :: dest(:)
+    real(kind=c_double), pointer, INTENT(inout) :: ptr(:)
 	type (c_ptr) :: src
 	integer nbytes, itemsize, dim, status
 	status = bmif_get_var_nbytes(id, var, nbytes)
 	status = bmif_get_var_itemsize(id, var, itemsize)
 	dim = nbytes/itemsize
     status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
-    call c_f_pointer(src, dest, [dim]);
+    call c_f_pointer(src, ptr, [dim])
     bmif_get_value_ptr_double1 = success(status)
     return 
     END FUNCTION bmif_get_value_ptr_double1
     
 	!> \overload
-    INTEGER FUNCTION bmif_get_value_ptr_integer(id, var, dest)
+    INTEGER FUNCTION bmif_get_value_ptr_integer(id, var, ptr)
     USE ISO_C_BINDING
     IMPLICIT NONE
 		INTERFACE
@@ -1704,17 +1738,17 @@
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, pointer, INTENT(inout) :: dest
+    integer, pointer, INTENT(inout) :: ptr
 	type (c_ptr) :: src
 	integer status
     status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
-    call c_f_pointer(src, dest)
+    call c_f_pointer(src, ptr)
     bmif_get_value_ptr_integer = success(status)
     return 
     END FUNCTION bmif_get_value_ptr_integer
 	
 	!> \overload
-    INTEGER FUNCTION bmif_get_value_ptr_logical(id, var, dest)
+    INTEGER FUNCTION bmif_get_value_ptr_logical(id, var, ptr)
     USE ISO_C_BINDING
     IMPLICIT NONE
 		INTERFACE
@@ -1729,11 +1763,11 @@
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    logical, pointer, INTENT(inout) :: dest
+    logical, pointer, INTENT(inout) :: ptr
 	type (c_ptr) :: src
 	integer status
     status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
-	call c_f_pointer(src, dest)
+	call c_f_pointer(src, ptr)
     bmif_get_value_ptr_logical = success(status)
     return 
     END FUNCTION bmif_get_value_ptr_logical    
@@ -1742,25 +1776,22 @@
 	! Setters, by type
 	! ====================================================
 
-    !> Basic Model Interface method that sets model variables. Only variables in the list
-    !> provided by @ref bmif_get_input_var_names can be set. The BMI interface to PhreeqcRM is
-    !> only partial, and provides only the most basic functions. The native PhreeqcRM methods
-    !> (those without the the RM_BMI_
-    !> prefix) provide a complete interface.
-    !> @param id     The instance id returned from @ref RM_Create.
-    !> @param var    String defining variable to set.
-    !> @param src    Data to use to set the variable in PhreeqcRM.
-    !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+    !> @a bmif_set_value sets model variables. Only variables in the list
+    !> provided by @ref bmif_get_input_var_names can be set. 
+    !> @param id     The instance id returned from @ref bmif_create.
+    !> @param var    Name of variable to set.
+    !> @param src    Data to use to set the variable.
+    !> @retval       0 is success, 1 is failure.
     !>
     !> Variable names for the second argument (@a var)
     !> and required variable type for the third argument (@a src):
     !> @n "Concentrations", real(kind=8), allocatable, dimension(:,:);
-    !> @n "Density", real(kind=8), allocatable, dimension(:);
+    !> @n "DensityUser", real(kind=8), allocatable, dimension(:);
     !> @n "FilePrefix", character;
     !> @n "NthSelectedOutput", integer;
     !> @n "Porosity", real(kind=8), allocatable, dimension(:);
     !> @n "Pressure", real(kind=8), allocatable, dimension(:);
-    !> @n "Saturation", real(kind=8), allocatable, dimension(:);
+    !> @n "SaturationUser", real(kind=8), allocatable, dimension(:);
     !> @n "SelectedOutputOn", logical;
     !> @n "Temperature", real(kind=8), allocatable, dimension(:);
     !> @n "Time", real(kind=8);
@@ -1774,19 +1805,19 @@
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units.
-    !> @par Fortran Example:
+    !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable, dimension(:) :: tc
     !> allocate(tc(nxyz))
     !> tc = 28.0d0
-    !> status = bmif_set_value(id, "Temperature", tc);
+    !> status = bmif_set_value(id, "Temperature", tc)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
     !> \overload
     INTEGER FUNCTION bmif_set_value_b(id, var, src)
     USE ISO_C_BINDING
@@ -1852,21 +1883,22 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		INTEGER(KIND=C_INT), INTENT(inout) :: src
+		INTEGER(KIND=C_INT), INTENT(in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: src
+    integer, INTENT( in) :: src
+    integer :: src_copy
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "integer") then
         stop "Variable type error."
     endif
-    if (var .eq. "NthSelectedOutput") src = src - 1
-    bmif_set_value_int = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
-    if (var .eq. "NthSelectedOutput") src = src + 1
+    src_copy = src
+    if (var .eq. "NthSelectedOutput") src_copy = src - 1
+    bmif_set_value_int = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src_copy)
     return
     END FUNCTION bmif_set_value_int
 
@@ -1881,12 +1913,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		INTEGER(KIND=C_INT), INTENT(inout) :: src
+		INTEGER(KIND=C_INT), INTENT( in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: src(:)
+    integer, INTENT( in) :: src(:)
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
@@ -1914,12 +1946,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		INTEGER(KIND=C_INT), INTENT(inout) :: src
+		INTEGER(KIND=C_INT), INTENT(in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    integer, INTENT(inout) :: src(:,:)
+    integer, INTENT( in) :: src(:,:)
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
@@ -1947,12 +1979,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		REAL(KIND=C_DOUBLE), INTENT(inout) :: src
+		REAL(KIND=C_DOUBLE), INTENT( in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    real(kind=8), INTENT(inout) :: src
+    real(kind=8), INTENT( in) :: src
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
     status = bmif_get_var_type(id, var, vartype)
@@ -1974,12 +2006,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		REAL(KIND=C_DOUBLE), INTENT(inout) :: src
+		REAL(KIND=C_DOUBLE), INTENT( in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    real(kind=8), INTENT(inout) :: src(:)
+    real(kind=8), INTENT( in) :: src(:)
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
@@ -2007,12 +2039,12 @@
 		IMPLICIT NONE
 		INTEGER(KIND=C_INT), INTENT(in) :: id
 		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-		REAL(KIND=C_DOUBLE), INTENT(inout) :: src
+		REAL(KIND=C_DOUBLE), INTENT( in) :: src
 		END FUNCTION RMF_BMI_SetValue
 		END INTERFACE
     integer, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    real(kind=8), INTENT(inout) :: src(:,:)
+    real(kind=8), INTENT( in) :: src(:,:)
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     status = bmif_get_var_type(id, var, vartype)
@@ -2032,7 +2064,26 @@
 	! ====================================================
 	! Grid information
 	! ====================================================
-	
+
+	!> @a bmif_get_grid_rank returns a rank of 1 for grid 0. 
+	!> BMIPhreeqcRM has a 1D series of
+	!> cells; any grid or spatial information must
+	!> be found in the user's model.
+    !> @param id     The instance id returned from @ref bmif_create.
+	!> @param grid   Grid number, only grid 0 is considered.
+	!> @param rank   Rank of 1 is returned for grid 0; 0 for
+	!> all other values of @a grid.	
+    !> @retval       0 is success, 1 is failure.    
+	!> @par Fortran example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> status = bmif_grid_rank(id, grid, rank)
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
 	INTEGER FUNCTION bmif_grid_rank(id, grid, rank)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2046,7 +2097,25 @@
 		bmif_grid_rank = BMI_FAILURE
 	endif
     END FUNCTION bmif_grid_rank
-
+	
+	!> @ref bmif_grid_size returns the number of cells specified
+	!> at creation of the BMIPhreeqcRM instance. 
+	!> @param id    The instance id returned from @ref bmif_create.
+	!> @param grid  Grid number, only grid 0 is considered.
+	!> @param ngrid Same value as @ref RM_GetGridCellCount 
+    !> or @ref bmif_get_value "GridCellCount" is returned for grid 0; 
+	!> 0 for all other values of @a grid.
+	!> @retval       0 is success, 1 is failure.
+	!> @par Fortran example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> status = bmif_grid_size(id, grid, ngrid)
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.
     INTEGER FUNCTION bmif_grid_size(id, grid, ngrid)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2060,6 +2129,25 @@
 	endif
     END FUNCTION bmif_grid_size
     
+	!> @a bmif_grid_type defines the grid to be points. No grid
+	!> information is available in BMIPhreeqcRM; all grid 
+	!> information must be found in the user's model.
+	!> @param id    The instance id returned from @ref bmif_create.
+	!> @param grid  Grid number, only grid 0 is considered.
+	!> @param str   "Points" is returned for grid 0;
+	!> "Undefined grid identifier" is returned for all other 
+	!> values of @a grid.
+	!> @retval      0 is success, 1 is failure.
+	!> @par Fortran example:
+    !> @htmlonly
+    !> <CODE>
+    !> <PRE>
+    !> status = bmif_grid_type(id, grid, str)
+    !> </PRE>
+    !> </CODE>
+    !> @endhtmlonly
+    !> @par MPI:
+    !> Called by root.	
     INTEGER FUNCTION bmif_grid_type(id, grid, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2074,6 +2162,80 @@
 	endif
     END FUNCTION bmif_grid_type
     
+!> @a bmif_add_output_vars allows selection of sets of variables that can be retieved
+!> by the @ref bmif_get_value method. Sets of variables can be included or excluded with
+!> multiple calls to this method. All calls must precede the final call to
+!> the PhreeqcRM method FindComponents. FindComponents generates SELECTED_OUTPUT 333 and
+!> USER_PUNCH 333 data blocks that make the variables accessible. Variables will
+!> only be accessible if the system includes the given reactant; for example, no
+!> gas variables will be created if there are no GAS_PHASEs in the model. 
+!>
+!> @param id    The instance id returned from @ref bmif_create.
+!> @param option A string value, among those listed below, that includes or
+!> excludes variables from @ref GetOutputVarNames, @ref GetValue, and other
+!> BMI methods.
+!> @param def A string value that can be "false", "true", or a list of items to be included as
+!> accessible variables. A value of "false", excludes all variables of the given type; a 
+!> value of "true" includes all variables of the given type for the current system; a list
+!> specifies a subset of items of the given type. 
+!>
+!> Values for the the parameter @a option:
+!> @n AddOutputVars: False excludes all variables; True causes the settings for each variable group
+!> to determine the variables that will be defined. Default True;
+!> @n SolutionProperties: False excludes all solution property variables; True includes variables pH, pe,
+!> alkalinity, ionic strength, water mass, charge balance, percent error, and specific conductance.
+!> Default True.
+!> @n SolutionTotalMolalities: False excludes all total element and element redox state variables;
+!> True includes all elements and element redox state variables for the system defined for the 
+!> calculation; list restricts variables to the specified elements and redox states.
+!> Default True.
+!> @n ExchangeMolalities: False excludes all variables related to exchange; True includes all 
+!> variables related to exchange; list includes variables for the specified exchange species.
+!> Default True.
+!> @n SurfaceMolalities: False excludes all variables related to surfaces; True includes all 
+!> variables related to surfaces; list includes variables for the specified surface species.
+!> Default True.
+!> @n EquilibriumPhases: False excludes all variables related to equilibrium phases; True includes all 
+!> variables related to equilibrium phases; list includes variables for the specified
+!> equilibiurm phases. Default True.
+!> @n Gases: False excludes all variables related to gases; True includes all 
+!> variables related to gases; list includes variables for the specified gas components. Default True.
+!> @n KineticReactants: False excludes all variables related to kinetic reactants; True includes all 
+!> variables related to kinetic reactants; list includes variables for the specified kinetic 
+!> reactants. Default True.
+!> @n SolidSolutions: False excludes all variables related to solid solutions; True includes all 
+!> variables related to solid solutions; list includes variables for the specified solid solutions
+!> components. Default True.
+!> @n CalculateValues: False excludes all calculate values; True includes all 
+!> calculate values; list includes the specified calculate values. CALCLUATE_VALUES can be
+!> used to calculate geochemical quantities not available in the other sets of variables. 
+!> Default True.
+!> @n SolutionActivities: False excludes all aqueous species; True includes all 
+!> aqueous species; list includes only the specified aqueous species. Default False.
+!> @n SolutionMolalities: False excludes all aqueous species; True includes all 
+!> aqueous species; list includes only the specified aqueous species. Default False.
+!> @n SaturationIndices: False excludes all saturation indices; True includes all 
+!> saturation indices; list includes only the specified saturation indices. Default False.
+    INTEGER FUNCTION bmif_add_output_vars(id, option, def)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+		INTERFACE
+		INTEGER(KIND=C_INT) FUNCTION RMF_BMI_AddOutputVars(id, var, src) &
+			BIND(C, NAME='RMF_BMI_AddOutputVars')
+		USE ISO_C_BINDING
+		IMPLICIT NONE
+		INTEGER(KIND=C_INT), INTENT(in) :: id
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
+		CHARACTER(KIND=C_CHAR), INTENT(in) :: src
+		END FUNCTION RMF_BMI_AddOutputVars
+		END INTERFACE
+    INTEGER, INTENT(in) :: id
+    CHARACTER(len=*), INTENT(in) :: option
+    CHARACTER(len=*), INTENT(in) :: def
+    bmif_add_output_vars = RMF_BMI_AddOutputVars(id, trim(option)//C_NULL_CHAR, trim(def)//C_NULL_CHAR)
+    return
+    END FUNCTION bmif_add_output_vars	
+	
 	! ====================================================
     ! Functions not implemented
 	! ====================================================
