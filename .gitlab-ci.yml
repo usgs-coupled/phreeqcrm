@@ -109,8 +109,10 @@ trigger-downstream:
   script:
     - echo triggering phast3
     - curl -X POST -F token=${PHAST3_TRIGGER} -F ref=master https://code.chs.usgs.gov/api/v4/projects/${PHAST3_ID}/trigger/pipeline
+    - sleep 360
     - echo triggering vs2drt-src
     - curl -X POST -F token=${VS2DRT_SRC_TRIGGER} -F ref=master https://code.chs.usgs.gov/api/v4/projects/${VS2DRT_SRC_ID}/trigger/pipeline
+    - sleep 120
 
   ## Upstream Projects
   ## phreeqcrm-src     https://code.chs.usgs.gov/coupled/subtrees/phreeqcrm-src
