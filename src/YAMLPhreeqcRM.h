@@ -101,15 +101,15 @@ public:
 	// methods
 	/**
 	@a AddOutputVars allows selection of sets of variables that can be retieved
-	by the @ref GetValue method.Sets of variables can be included or excluded with
+	by the GetValue method.Sets of variables can be included or excluded with
 	multiple calls to this method. All calls must precede the final call to
-	@ref FindComponents. @ref FindComponents generates SELECTED_OUTPUT 333 and
+	FindComponents. FindComponents generates SELECTED_OUTPUT 333 and
 	USER_PUNCH 333 data blocks that make the variables accessible. Variables will
 	only be accessible if the system includes the given reactant; for example, no
 	gas variables will be created if there are no GAS_PHASEs in the model.
 
 	@param option A string value, among those listed below, that includes or
-	excludes variables from @ref GetOutputVarNames, @ref GetValue, and other
+	excludes variables from GetOutputVarNames, GetValue, and other
 	BMI methods.
 	@param def A string value that can be "false", "true", or a list of items to be included as
 	accessible variables.A value of "false", excludes all variables of the given type; a

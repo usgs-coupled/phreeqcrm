@@ -966,7 +966,7 @@ public:
     */
     void SetValue(const std::string name, bool src);
     /*!
-    * \overload void SetValue(const std::string name, char* src);
+    * \overload void SetValue(const std::string name, const char* src);
     */
     void SetValue(const std::string name, const char* src);
     /*!
