@@ -610,9 +610,9 @@ subroutine example_selected_output(id)
     enddo
     ! aqueous species
     input = trim(input) // "  -molalities" // new_line(c)
+    status = RM_GetSpeciesNames(id, names)
     do i = 1, RM_GetSpeciesCount(id)
-        status = RM_GetSpeciesName(id, i, line)
-        input = trim(input) // "    " // line // new_line(c)
+        input = trim(input) // "    " // names(i) // new_line(c)
     enddo 
     ! exchange species
     status = RM_GetExchangeNames(id, names)

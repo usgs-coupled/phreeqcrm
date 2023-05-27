@@ -197,8 +197,8 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	nspecies = RM_GetSpeciesCount(id)
 	write(*,*) "GetSpeciesCount "
 	!-------
-	status = RM_GetSpeciesName(id, 1, string)
-	write(*,*) "GetSpeciesName "
+	status = RM_GetSpeciesNames(id, StringVector)
+	write(*,*) "GetSpeciesNames "
 	!-------
     if(allocated(DoubleVector)) deallocate(DoubleVector)
     allocate(DoubleVector(nxyz*nspecies))

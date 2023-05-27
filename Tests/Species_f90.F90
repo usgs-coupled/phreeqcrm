@@ -35,7 +35,7 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   character(200)                                :: string1
   character(len=:), allocatable                 :: alloc_string
   integer                                       :: ncomps, ncomps1
-  character(len=:),   dimension(:), allocatable :: components
+  character(len=:),   dimension(:), allocatable :: components, names
   real(kind=8), dimension(:), allocatable   :: gfw
   integer,          dimension(:,:), allocatable :: ic1, ic2
   real(kind=8), dimension(:,:), allocatable :: f1
@@ -189,9 +189,9 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
   allocate(species_z(nspecies), species_d(nspecies))
   status = RM_GetSpeciesZ(id, species_z) 
   status = RM_GetSpeciesD25(id, species_d) 
+  status = RM_GetSpeciesNames(id, names) 
   do i = 1, nspecies
-     status = RM_GetSpeciesName(id, i, string) 
-     write(string1,"(A12)") trim(string)
+     write(string1,"(A12)") trim(names(i))
      status = RM_OutputMessage(id, string1) 
      write(string1,"(A12,F10.1)")  "    Charge: ", species_z(i)
      status = RM_OutputMessage(id, string1) 
@@ -333,9 +333,9 @@ subroutine Species_f90()  BIND(C, NAME='Species_f90')
                  write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ",trim(components(j)), ": ", c(i,j)
               enddo
               write(*,*) "     Species: "
+              status = RM_GetSpeciesNames(id, names) 
               do j = 1, nspecies
-                 status = RM_GetSpeciesName(id, j, string) 
-                 write(*,'(10x,i2,A2,A10,A2,1pe10.2,f10.4,1pe10.2)') j, " ",trim(string), ": ", species_c(i,j), &
+                 write(*,'(10x,i2,A2,A10,A2,1pe10.2,f10.4,1pe10.2)') j, " ",trim(names(j)), ": ", species_c(i,j), &
 				    species_log10gammas(i,j), species_log10molalities(i,j)
               enddo              
               write(*,*) "     Selected output: "
