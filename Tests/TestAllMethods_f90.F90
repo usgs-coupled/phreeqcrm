@@ -47,7 +47,13 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!
 	! Use all BMIPhreeqcRM methods roughly in order of use
 	!
+#ifdef USE_MPI
+  ! MPI
+	nxyz = 40
+	id = RM_Create(nxyz, MPI_COMM_WORLD)
+#else
 	id = bmif_create()
+#endif    
 	write(*,*) "bmif_create"
 	!-------
 	status = bmif_initialize(id, yaml_filename)

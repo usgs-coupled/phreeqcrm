@@ -13,6 +13,16 @@
             real(kind=8), dimension(:,:), allocatable, intent(in)    :: bc_conc
             integer, intent(in)                                      :: ncomps, nxyz
         end subroutine advectionbmi_f90_test
+        integer function do_something()
+        end function do_something
+        integer(kind=C_INT) function bmi_worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
+            USE ISO_C_BINDING
+            implicit none
+            integer(kind=c_int), intent(in) :: method_number
+        end function bmi_worker_tasks_f
+        SUBROUTINE register_basic_callback_fortran()
+            implicit none
+        END SUBROUTINE register_basic_callback_fortran
         subroutine BMI_testing(id)
             implicit none
             integer, intent(in) :: id
@@ -109,6 +119,7 @@
 
 #ifdef USE_MPI
     ! MPI
+    nxyz = 40
     id = bmif_create(nxyz, MPI_COMM_WORLD)
     call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
     if (status .ne. MPI_SUCCESS) then

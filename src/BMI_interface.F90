@@ -38,10 +38,12 @@
     !> constructor requires the number of cells in the user model
     !> as the first argument, and the number of threads as the
     !> second argument.  
+#ifndef USE_MPI
     INTERFACE bmif_create
 		module procedure bmif_create_default 
 		module procedure bmif_create  
     END INTERFACE bmif_create
+#endif
 
     !> @a bmif_get_value retrieves model variables. 
     !>
@@ -100,7 +102,7 @@
     END INTERFACE bmif_get_value_ptr
     
     CONTAINS
-
+#ifndef USE_MPI
     ! ====================================================
     ! Initialize, run, finalize (IRF) 
     ! ====================================================
@@ -123,7 +125,7 @@
     bmif_create_default = RM_BMI_Create_default()
     return
     END FUNCTION bmif_create_default 
-    
+#endif    
     !> @a bmif_create creates a reaction module. If the code is compiled with
     !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
     !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
