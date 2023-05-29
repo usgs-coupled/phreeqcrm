@@ -125,7 +125,8 @@ BMIPhreeqcRM::BMIPhreeqcRM()
 	this->language = "Py";
 #endif
 }
-BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads)
+#ifndef USE_MPI
+BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads)
 : PhreeqcRM(nxyz, nthreads, nullptr, true) 
 , var_man{ nullptr }
 {
@@ -135,6 +136,20 @@ BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads)
 	this->language = "Py";
 #endif
 }
+#else
+BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads)
+	: PhreeqcRM(nxyz, nthreads, nullptr, true)
+	, var_man{ nullptr }
+{
+	this->language = "cpp";
+	this->Construct(this->initializer);
+#if defined(WITH_PYBIND11)
+	this->_initialized = false;
+	this->language = "Py";
+#endif
+
+}
+#endif
 // Destructor
 BMIPhreeqcRM::~BMIPhreeqcRM()
 {
@@ -165,6 +180,7 @@ void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 // Model control functions.
 void BMIPhreeqcRM::Initialize(std::string config_file)
 {
+#ifndef USE_MPI
 #ifdef USE_YAML
 #if defined(WITH_PYBIND11)
 	if (config_file.size() != 0)
@@ -207,7 +223,7 @@ void BMIPhreeqcRM::Initialize(std::string config_file)
 #endif
 
 	this->Construct(this->initializer);
-
+#endif // !USE_MPI
 #ifdef USE_YAML
 #if defined(WITH_PYBIND11)
 	if (config_file.size() != 0)
@@ -255,6 +271,7 @@ void BMIPhreeqcRM::UpdateUntil(double time)
 }
 void BMIPhreeqcRM::Finalize()
 {
+	this->MpiWorkerBreak();
 	this->CloseFiles();
 #if defined(WITH_PYBIND11)
 	delete this->var_man;
