@@ -1,64 +1,87 @@
 import os
-import phreeqcrm as rm
+##import phreeqcrm as rm
 import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_array_less
 import pytest
+
+from phreeqcrm import bmi_phreeqcrm
 
 def test_main():
     # for debugging
     print(f"PYTHONPATH={os.getenv('PYTHONPATH')}")
 
-    bmi = rm.bmi_phreeqcrm()
-    assert(not bmi._initialized)
+def test_dtor():
+    model = bmi_phreeqcrm()
+    del model
 
-    #
-    # test methods that don't require initialize call (no dependency on VarManager)
-    #
+def test_initialized():
+    model = bmi_phreeqcrm()
+    assert(not model._initialized)
 
-    bmi.finalize()
-    assert(not bmi._initialized)
+def test_finalize_not_initialized():
+    model = bmi_phreeqcrm()
 
-    component_name = bmi.get_component_name()
-    assert(component_name == "BMI PhreeqcRM")
+    model.finalize()
+    assert(not model._initialized)
+
+def test_get_components_is_tuple():
+    model = bmi_phreeqcrm()
 
     # may want to make this throw to be consistent
-    components = bmi.get_components()
+    components = model.get_components()
     assert(isinstance(components, tuple))
     assert(len(components) == 0)
 
-    #
-    # test methods that require initialize call (depends on VarManager)
-    #
-
+def test_get_grid_size_raises_uninitialized():
+    model = bmi_phreeqcrm()
     with pytest.raises(RuntimeError, match="must call initialize first"):
-        bmi.get_grid_size(0)
+        model.get_grid_size(0)
 
+def test_get_input_var_names_raises_uninitialized():
+    model = bmi_phreeqcrm()
     with pytest.raises(RuntimeError, match="must call initialize first"):
-        bmi.get_input_var_names()
+        model.get_input_var_names()
 
+def test_get_output_var_names_raises_uninitialized():
+    model = bmi_phreeqcrm()
     with pytest.raises(RuntimeError, match="must call initialize first"):
-        bmi.get_output_var_names()
+        model.get_output_var_names()
 
+def test_get_value_ptr_raises_uninitialized():
+    model = bmi_phreeqcrm()
     with pytest.raises(RuntimeError, match="must call initialize first"):
-        bmi.get_value_ptr("Temperature")
+        model.get_value_ptr("Temperature")
 
+def test_update_raises_uninitialized():
+    model = bmi_phreeqcrm()
     with pytest.raises(RuntimeError, match="must call initialize first"):
-        bmi.update()
+        model.update()
 
+def test_update_until_raises_uninitialized():
+    model = bmi_phreeqcrm()
     with pytest.raises(RuntimeError, match="must call initialize first"):
-        bmi.update_until(1.0)
+        model.update_until(1.0)
 
-    #
-    # initialize
-    #
+def test_initialize_AdvectBMI():
+    model = bmi_phreeqcrm()
 
-    bmi.initialize("AdvectBMI_py.yaml")
-    assert(bmi._initialized)
+    assert(not model._initialized)
+    model.initialize("AdvectBMI_py.yaml")
+    assert(model._initialized)
 
-    nxyz = bmi.get_grid_size(0)
+def test_get_grid_size_AdvectBMI():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    nxyz = model.get_grid_size(0)
     assert(nxyz == 40)
 
-    temperature = bmi.get_value_ptr("Temperature")
+def test_get_value_ptr_is_ndarray():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+    nxyz = model.get_grid_size(0)
+
+    temperature = model.get_value_ptr("Temperature")
     assert(isinstance(temperature, np.ndarray))
     assert(len(temperature) == nxyz)
     assert(temperature[0] == pytest.approx(25.))
@@ -66,9 +89,19 @@ def test_main():
     assert(temperature[nxyz - 2] == pytest.approx(25.))
     assert(temperature[nxyz - 2] == pytest.approx(25.))
 
+def test_get_temperature_ptr_is_writeable():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+    nxyz = model.get_grid_size(0)
+
     # test WRITEABLE
+    temperature = model.get_value_ptr("Temperature")
+    assert(temperature.flags.writeable)
+
+    # write
     temperature[0] = 0.0
-    temperature = bmi.get_value_ptr("Temperature")
+
+    temperature = model.get_value_ptr("Temperature")
     assert(isinstance(temperature, np.ndarray))
     assert(len(temperature) == nxyz)
     assert(temperature[0] == pytest.approx(0.0))
@@ -76,32 +109,12 @@ def test_main():
     assert(temperature[nxyz - 2] == pytest.approx(25.))
     assert(temperature[nxyz - 1] == pytest.approx(25.))
 
-    # test set value as numpy.array
-    temperature = np.full((nxyz,), 20.0)
-    bmi.set_value("Temperature", temperature)
-
-
-    temperature = bmi.get_value_ptr("Temperature")
-    assert(isinstance(temperature, np.ndarray))
-    assert(len(temperature) == nxyz)
-    assert(temperature[0] == pytest.approx(20.))
-    assert(temperature[1] == pytest.approx(20.))
-    assert(temperature[nxyz - 2] == pytest.approx(20.))
-    assert(temperature[nxyz - 1] == pytest.approx(20.))
-
-    # test WRITEABLE
-    temperature[0] = 1.1
-    temperature = bmi.get_value_ptr("Temperature")
-    assert(isinstance(temperature, np.ndarray))
-    assert(len(temperature) == nxyz)
-    assert(temperature[0] == pytest.approx(1.1))
-    assert(temperature[1] == pytest.approx(20.))
-    assert(temperature[nxyz - 2] == pytest.approx(20.))
-    assert(temperature[nxyz - 1] == pytest.approx(20.))
-
+def test_get_ComponentCount_ptr_is_readonly():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
 
     # make sure get_value_ptr can be called before get_input_var_names
-    component_count = bmi.get_value_ptr("ComponentCount")
+    component_count = model.get_value_ptr("ComponentCount")
     assert(isinstance(component_count, np.ndarray))
     assert(len(component_count) == 1)
     assert(component_count.size == 1)
@@ -113,22 +126,35 @@ def test_main():
         component_count[0] = 25
     assert(component_count[0] == 8)
 
-    input_vars = bmi.get_input_var_names()
+def test_get_input_var_names_is_tuple():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    input_vars = model.get_input_var_names()
     assert(isinstance(input_vars, tuple))
     assert(isinstance(input_vars[0], str))
 
-    output_vars = bmi.get_output_var_names()
+def test_get_output_var_names_is_tuple():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    output_vars = model.get_output_var_names()
     assert(isinstance(output_vars, tuple))
     assert(isinstance(output_vars[0], str))
 
-    # components = bmi.get_components()
-    # assert(len(components) == 8)
+def test_get_components_is_tuple():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
 
-    # saturation_user = bmi.get_value_ptr("SaturationUser")
-    # assert(isinstance(saturation_user, np.ndarray))
-    # assert(len(saturation_user) == nxyz)
+    components = model.get_components()
+    assert(isinstance(components, tuple))
+    assert(len(components) == 8)
 
-    components = bmi.get_value_ptr("Components")
+def test_get_Components_ptr_is_ndarray():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    components = model.get_value_ptr("Components")
     assert(isinstance(components, np.ndarray))
     assert(components.dtype == '<U6')
     assert(len(components) == 8)
@@ -137,19 +163,35 @@ def test_main():
     assert(components[0] == 'H')
     assert(components[1] == 'O')
 
+def test_get_Components_ptr_is_readonly():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    components = model.get_value_ptr("Components")
+
     # make sure Components is readonly
     with pytest.raises(ValueError, match="assignment destination is read-only"):
         components[0] = 'XX'
     assert(components[0] == 'H')
     assert(components[1] == 'O')
 
-    porosity = bmi.get_value_ptr("Porosity")
+def test_get_Porosity_ptr():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+    nxyz = model.get_grid_size(0)
+
+    porosity = model.get_value_ptr("Porosity")
     assert(isinstance(porosity, np.ndarray))
     assert(len(porosity) == nxyz)
     assert(porosity.size == nxyz)
     assert(porosity.dtype == 'float64')
 
-    solution_volume = bmi.get_value_ptr("SolutionVolume")
+def test_get_SolutionVolume_ptr():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+    nxyz = model.get_grid_size(0)
+
+    solution_volume = model.get_value_ptr("SolutionVolume")
     assert(isinstance(solution_volume, np.ndarray))
     assert(len(solution_volume) == nxyz)
     assert(solution_volume.size == nxyz)
@@ -157,89 +199,90 @@ def test_main():
     assert(solution_volume[0] == pytest.approx(0.2))
     assert(solution_volume[1] == pytest.approx(0.2))
 
-    concentrations = bmi.get_value_ptr("Concentrations")
+def test_get_Concentrations_ptr():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+    nxyz = model.get_grid_size(0)
+
+    components = model.get_value_ptr("Components")
+
+    concentrations = model.get_value_ptr("Concentrations")
     assert(isinstance(concentrations, np.ndarray))
     assert(len(concentrations) == nxyz * len(components))
     assert(concentrations.size == nxyz * len(components))
     assert(concentrations.dtype == 'float64')
 
-    # density_list = [1.0] * nxyz
-    # bmi.set_value("Density", density_list)
+    # # density_list = [1.0] * nxyz
+    # # bmi.set_value("Density", density_list)
 
-    # density_tuple = tuple([1.0] * nxyz)
-    # bmi.set_value("Density", density_tuple)
+    # # density_tuple = tuple([1.0] * nxyz)
+    # # bmi.set_value("Density", density_tuple)
 
-    # density_ndarray = np.full((nxyz,), 1.0)
-    # bmi.set_value("Density", density_ndarray)
+    # # density_ndarray = np.full((nxyz,), 1.0)
+    # # bmi.set_value("Density", density_ndarray)
 
+    # '''
+    # # Set properties
+    # status = phreeqc_rm.SetComponentH2O(False)
+    # phreeqc_rm.UseSolutionDensityVolume(False)
 
+    # # Open files
+    # status = phreeqc_rm.SetFilePrefix("SimpleAdvect_py")
+    # phreeqc_rm.OpenFiles()
 
-    '''
-    # Set properties
-    status = phreeqc_rm.SetComponentH2O(False)
-    phreeqc_rm.UseSolutionDensityVolume(False)
+    # # Set concentration units
+    # status = phreeqc_rm.SetUnitsSolution(2)           # 1, mg/L; 2, mol/L; 3, kg/kgs
+    # status = phreeqc_rm.SetUnitsExchange(1)           # 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 
-    # Open files
-    status = phreeqc_rm.SetFilePrefix("SimpleAdvect_py")
-    phreeqc_rm.OpenFiles()
+    # # Set conversion from seconds to user units (days)
+    # time_conversion = 1.0 / 86400
+    # status = phreeqc_rm.SetTimeConversion(time_conversion)
 
-    # Set concentration units
-    status = phreeqc_rm.SetUnitsSolution(2)           # 1, mg/L; 2, mol/L; 3, kg/kgs
-    status = phreeqc_rm.SetUnitsExchange(1)           # 0, mol/L cell; 1, mol/L water; 2 mol/L rock
+    # # Set initial porosity
+    # por = [0.2] * nxyz
+    # status = phreeqc_rm.SetPorosity(por)
 
-    # Set conversion from seconds to user units (days)
-    time_conversion = 1.0 / 86400
-    status = phreeqc_rm.SetTimeConversion(time_conversion)
+    # ################################################################################################
+    # # BMI
+    # ################################################################################################
 
-    # Set initial porosity
-    por = [0.2] * nxyz
-    status = phreeqc_rm.SetPorosity(por)
+    # # Set properties
+    # bmi.set_value("ComponentH2O", False)                    # YAML "SetComponentH2O"
+    # bmi.set_value("UseSolutionDensityVolume", False)        # YAML "UseSolutionDensityVolume"
 
-    ################################################################################################
-    # BMI
-    ################################################################################################
+    # # Open files
+    # bmi.set_value("FilePrefix", "SimpleAdvect_py")          # YAML "SetFilePrefix"
+    # ????
 
-    # Set properties
-    bmi.set_value("ComponentH2O", False)                    # YAML "SetComponentH2O"
-    bmi.set_value("UseSolutionDensityVolume", False)        # YAML "UseSolutionDensityVolume"
+    # # Set concentration units
+    # bmi.set_value("UnitsSolution", 2)                       # YAML "SetUnitsSolution"              # 1, mg/L; 2, mol/L; 3, kg/kgs
+    # bmi.set_value("UnitsExchange", 1)                       # YAML "SetUnitsExchange"              # 0, mol/L cell; 1, mol/L water; 2 mol/L rock
 
-    # Open files
-    bmi.set_value("FilePrefix", "SimpleAdvect_py")          # YAML "SetFilePrefix"
-    ????
+    # # Set conversion from seconds to user units (days)
+    # time_conversion = 1.0 / 86400
+    # ???status = phreeqc_rm.SetTimeConversion(time_conversion)
 
-    # Set concentration units
-    bmi.set_value("UnitsSolution", 2)                       # YAML "SetUnitsSolution"              # 1, mg/L; 2, mol/L; 3, kg/kgs
-    bmi.set_value("UnitsExchange", 1)                       # YAML "SetUnitsExchange"              # 0, mol/L cell; 1, mol/L water; 2 mol/L rock
+    # # Set initial porosity
+    # por = [0.2] * nxyz
+    # status = phreeqc_rm.SetPorosity(por)
+    # por = np.full((nxyz,), 0.2)
+    # bmi.set_value("Porosity", por)
 
-    # Set conversion from seconds to user units (days)
-    time_conversion = 1.0 / 86400
-    ???status = phreeqc_rm.SetTimeConversion(time_conversion)
+    # '''
 
-    # Set initial porosity
-    por = [0.2] * nxyz
-    status = phreeqc_rm.SetPorosity(por)
-    por = np.full((nxyz,), 0.2)
-    bmi.set_value("Porosity", por)
+    # # Set properties
+    # # c_h2o = np.full((1,), False)
+    # # bmi.set_value("ComponentH2O", c_h2o)                    # YAML "SetComponentH2O"
 
-    '''
+    # # use_sol_dens_vol = np.full((1,), False)
+    # # bmi.set_value("UseSolutionDensityVolume", use_sol_dens_vol)        # YAML "UseSolutionDensityVolume"
 
-    # Set properties
-    # c_h2o = np.full((1,), False)
-    # bmi.set_value("ComponentH2O", c_h2o)                    # YAML "SetComponentH2O"
+    # file_prefix = np.full((1,), "prefix")
+    # bmi.set_value("FilePrefix", file_prefix)
 
-    # use_sol_dens_vol = np.full((1,), False)
-    # bmi.set_value("UseSolutionDensityVolume", use_sol_dens_vol)        # YAML "UseSolutionDensityVolume"
+    # # file_prefix = np.full((nxyz,), "nxyz_prefix")
+    # # with pytest.raises(RuntimeError, match="dimension error in set_value: FilePrefix"):
+    # #     bmi.set_value("FilePrefix", file_prefix)
 
-    file_prefix = np.full((1,), "prefix")
-    bmi.set_value("FilePrefix", file_prefix)
-
-    # file_prefix = np.full((nxyz,), "nxyz_prefix")
-    # with pytest.raises(RuntimeError, match="dimension error in set_value: FilePrefix"):
-    #     bmi.set_value("FilePrefix", file_prefix)
-
-    # use_sol_dens_vol = np.full((1,), False)
-    # bmi.set_value("UseSolutionDensityVolume", use_sol_dens_vol)        # YAML "UseSolutionDensityVolume"
-
-
-    bmi.finalize()
-    assert(not bmi._initialized)
+    # # use_sol_dens_vol = np.full((1,), False)
+    # # bmi.set_value("UseSolutionDensityVolume", use_sol_dens_vol)        # YAML "UseSolutionDensityVolume"

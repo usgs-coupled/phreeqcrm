@@ -189,7 +189,7 @@ set(PhreeqcRM_SOURCES
 
 add_subdirectory(pybind11)
 
-pybind11_add_module(${PYTHON_TARGET_NAME} pybind.cpp ${PhreeqcRM_SOURCES})
+pybind11_add_module(${PYTHON_TARGET_NAME} pybind.cxx docstrings.h ${PhreeqcRM_SOURCES})
 ##pybind11_add_module(${PYTHON_TARGET_NAME} pybind.cpp)
 ##pybind11_add_module(cmake_example pybind.cpp)
 

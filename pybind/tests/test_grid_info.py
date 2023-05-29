@@ -13,11 +13,9 @@ def test_grid_var_names():
     model.initialize()
 
     names = model.get_input_var_names()
-    #assert names == ('Concentrations', 'Density', 'FilePrefix', 'NthSelectedOutput', 'Saturation', 'Time', 'TimeStep', 'Porosity', 'Pressure', 'SelectedOutputOn', 'Temperature')
     assert names == ('Concentrations', 'DensityUser', 'FilePrefix', 'NthSelectedOutput', 'SaturationUser', 'Time', 'TimeStep', 'Porosity', 'Pressure', 'SelectedOutputOn', 'Temperature')
 
     names = model.get_output_var_names()
-    #assert names == ('ComponentCount', 'Components', 'Concentrations', 'Density', 'ErrorString', 'FilePrefix', 'Gfw', 'GridCellCount', 'SaturationUser', 'SelectedOutput', 'SelectedOutputColumnCount', 'SelectedOutputCount', 'SelectedOutputRowCount', 'SolutionVolume', 'Time', 'TimeStep', 'CurrentSelectedOutputUserNumber', 'Porosity', 'Pressure', 'SelectedOutputOn', 'Temperature', 'Viscosity')
     assert names == ('ComponentCount', 'Components', 'Concentrations', 'DensityCalculated', 'ErrorString', 'FilePrefix', 'Gfw', 'GridCellCount', 'SaturationCalculated', 'SelectedOutput', 'SelectedOutputColumnCount', 'SelectedOutputCount', 'SelectedOutputRowCount', 'SolutionVolume', 'Time', 'TimeStep', 'CurrentSelectedOutputUserNumber', 'Porosity', 'Pressure', 'SelectedOutputOn', 'Temperature', 'Viscosity')
 
 def test_grid_var_item_count():
