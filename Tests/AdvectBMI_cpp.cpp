@@ -84,14 +84,12 @@ int AdvectBMI_cpp()
 #ifdef USE_MPI
 		// MPI
 		BMIPhreeqcRM brm(nxyz, MPI_COMM_WORLD);
-		std::cerr << "AdvectBMI_cpp after brm " << std::endl;
 		MP_TYPE comm = MPI_COMM_WORLD;
 		int mpi_myself;
 		if (MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself) != MPI_SUCCESS)
 		{
 			exit(4);
 		}
-		std::cerr << "AdvectBMI_cpp after mpi_myself " <<  mpi_myself << std::endl;
 		if (mpi_myself > 0)
 		{
 			brm.MpiWorker();

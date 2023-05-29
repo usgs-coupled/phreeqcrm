@@ -50,7 +50,12 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 #ifdef USE_MPI
   ! MPI
 	nxyz = 40
-	id = RM_Create(nxyz, MPI_COMM_WORLD)
+	id = bmif_create(nxyz, MPI_COMM_WORLD)
+    if (RM_GetMpiMyself(id) > 0) then
+        status = RM_MpiWorker(id)
+        status = bmif_finalize(id)
+        return
+    endif
 #else
 	id = bmif_create()
 #endif    
@@ -59,8 +64,8 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = bmif_initialize(id, yaml_filename)
 	write(*,*) "bmif_initialize"
 	!-------
-	status = bmif_get_value(id, "GridCellCount", nxyz)
 	nxyz = RM_GetGridCellCount(id);
+	status = bmif_get_value(id, "GridCellCount", nxyz)
 	write(*,*) "GetGridCellCount"
 	!-------
 	n = RM_GetThreadCount(id)
@@ -642,10 +647,12 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!
 	! Utilities
 	!
+#ifndef USE_MPI    
 	id1 = bmif_create(10, 1)  ! make another bmiphreeqcrm
 	status = RM_CloseFiles(id1) 
 	status = bmif_finalize(id1)   ! destroy the new bmiphreeqcrm
 	write(*,*) "CloseFiles "
+#endif    
 	!-------
 	deallocate(IntVector)
 	allocate(IntVector(1))
@@ -757,6 +764,9 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = bmif_update_until(id, 864000.0d0) 
 	write(*,*) "bmif_update"
 	!-------
+#ifdef USE_MPI
+	status = RM_MpiWorkerBreak(id)
+#endif    
 	status = bmif_finalize(id)    ! void method
 	write(*,*) "bmif_finalize "
 

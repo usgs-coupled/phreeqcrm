@@ -30,8 +30,17 @@ void TestAllMethods_cpp()
 	// Use all BMIPhreeqcRM methods roughly in order of use
 	// 
 	//
+#ifndef USE_MPI
 	BMIPhreeqcRM bmi;
 	std::cerr << "BMIPhreeqcRM\n";
+#else
+	BMIPhreeqcRM bmi(nxyz, MPI_COMM_WORLD);
+	if (bmi.GetMpiMyself() > 0)
+	{
+		bmi.MpiWorker();
+		return;
+	}
+#endif
 	//-------
 	bmi.Initialize(YAML_filename);   // void function
 	std::cerr << "Initialize\n";
@@ -591,13 +600,16 @@ void TestAllMethods_cpp()
 	//
 	// Utilities
 	//
-	BMIPhreeqcRM *bmi2 = new BMIPhreeqcRM(10, 1); // Make another instance
+#ifndef USE_MPI
+	BMIPhreeqcRM *bmi2 = new BMIPhreeqcRM(10, 2); // Make another instance
 	std::cerr << "Make a new instance with new. \n";
 	//-------
-	status = bmi.CloseFiles(); 
+	status = bmi2->CloseFiles(); 
 	std::cerr << "CloseFiles \n";
 	//-------
+	bmi2->Finalize();
 	delete bmi2; // delete new instance
+#endif
 	//-------
 	vi.clear();
 	vi.resize(1, 1);
@@ -696,10 +708,10 @@ void TestAllMethods_cpp()
 	//bmi.Initialize(YAML_filename);
 	// See above
 	bmi.SetValue("Time", 1.0);    // void method
-	std::cerr << "SetValue";
+	std::cerr << "SetValue\n";
 	//-------
 	bmi.Update();    // void method
-	std::cerr << "Update";
+	std::cerr << "Update\n";
 	//-------	
  	bmi.UpdateUntil(864000.0);      // void function
 	std::cerr << "UpdateUntil\n";

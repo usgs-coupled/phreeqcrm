@@ -12674,10 +12674,6 @@ IRM_RESULT PhreeqcRM::StateSave(int istate)
 }
 IRM_RESULT PhreeqcRM::StateApply(int istate) 
 {
-	if (workers[0]->state_map.find(istate) == workers[0]->state_map.end())
-	{
-		return IRM_INVALIDARG;
-	}
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
@@ -12686,6 +12682,10 @@ IRM_RESULT PhreeqcRM::StateApply(int istate)
 	}
 	MPI_Bcast(&istate, 1, MPI_INT, 0, phreeqcrm_comm);
 #endif
+	if (workers[0]->state_map.find(istate) == workers[0]->state_map.end())
+	{
+		return IRM_INVALIDARG;
+	}
 	this->start_cell = workers[0]->state_map[istate].start_cell;
 	this->end_cell = workers[0]->state_map[istate].end_cell;
 #ifdef USE_OPENMP
@@ -12715,10 +12715,6 @@ IRM_RESULT PhreeqcRM::StateApply(int istate)
 }
 IRM_RESULT PhreeqcRM::StateDelete(int istate) 
 {
-	if (workers[0]->state_map.find(istate) == workers[0]->state_map.end())
-	{
-		return IRM_INVALIDARG;
-	}
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
@@ -12727,7 +12723,10 @@ IRM_RESULT PhreeqcRM::StateDelete(int istate)
 	}
 	MPI_Bcast(&istate, 1, MPI_INT, 0, phreeqcrm_comm);
 #endif
-
+	if (workers[0]->state_map.find(istate) == workers[0]->state_map.end())
+	{
+		return IRM_INVALIDARG;
+	}
 #ifdef USE_OPENMP
 	omp_set_num_threads(this->nthreads);
 #pragma omp parallel

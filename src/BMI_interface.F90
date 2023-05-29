@@ -422,15 +422,19 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RM_Destroy(id) &
-        BIND(C, NAME='RM_Destroy')
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_Destroy(id) &
+        BIND(C, NAME='RMF_BMI_Destroy')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RM_Destroy
+    END FUNCTION RMF_BMI_Destroy
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    bmif_finalize = success(RM_Destroy(id))
+    INTEGER :: status
+#ifdef USE_MPI
+    !status = RM_MpiWorkerBreak(id)
+#endif    
+    bmif_finalize = success(RMF_BMI_Destroy(id))
     return
     END FUNCTION bmif_finalize
     
@@ -1304,6 +1308,7 @@
     integer :: status
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "logical") then
+        write(*,*) vartype, " logical"
         stop "Variable type error."
     endif
     bmif_get_value_logical = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
@@ -1332,6 +1337,7 @@
     CHARACTER(len=:), allocatable :: temp
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "character") then
+        write(*,*) vartype, " character"
         stop "Variable type error."
     endif
     status = bmif_get_var_itemsize(id, var, itemsize)
@@ -1369,6 +1375,7 @@
     CHARACTER(len=:), allocatable :: temp
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "character") then
+        write(*,*) vartype, " character"
         stop "Variable type error."
     endif
     status = bmif_get_var_itemsize(id, var, itemsize)
@@ -1403,6 +1410,7 @@
     dim2 = 0
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "character(len=:),allocatable,dimension(:)") then
+        write(*,*) vartype, " character(len=:),allocatable,dimension(:)"
         stop "Variable type error."
     endif
     status = bmif_get_var_itemsize(id, var, itemsize)
@@ -1446,6 +1454,7 @@
     dim2 = 0
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "real(kind=8)") then
+        write(*,*) vartype, " real(kind=8"
         stop "Variable type error."
     endif
     bmif_get_value_double = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
@@ -1476,6 +1485,7 @@
     dim2 = 0
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "real(kind=8)") then
+        write(*,*) vartype, " real(kind=8 1d"
         stop "Variable type error."
     endif
     status = bmif_get_var_itemsize(id, var, itemsize)
@@ -1516,6 +1526,7 @@
     logical :: need_alloc
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "real(kind=8)") then
+        write(*,*) vartype, " real(kind=8 2d"
         stop "Variable type error."
     endif
     varname = Lower(var)
@@ -1568,6 +1579,7 @@
     dim2 = 0
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "integer") then
+        write(*,*) vartype, " integer"
         stop "Variable type error."
     endif
     bmif_get_value_int = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
@@ -1598,6 +1610,7 @@
     dim2 = 0
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "integer,allocatable,dimension(:)") then
+        write(*,*) vartype, " integer 1d"
         stop "Variable type error."
     endif
     status = bmif_get_var_itemsize(id, var, itemsize)
@@ -1637,7 +1650,8 @@
     integer :: dim1, dim2
     logical :: need_alloc
     status = bmif_get_var_type(id, var, vartype)
-    if (vartype .ne. "real(kind=8)") then
+    if (vartype .ne. "integer") then
+        write(*,*) vartype, " integer 2d"
         stop "Variable type error."
     endif
     varname = Lower(varname)
