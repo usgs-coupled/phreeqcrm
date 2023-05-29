@@ -271,7 +271,9 @@ void BMIPhreeqcRM::UpdateUntil(double time)
 }
 void BMIPhreeqcRM::Finalize()
 {
+#ifdef USE_MPI
 	this->MpiWorkerBreak();
+#endif
 	this->CloseFiles();
 #if defined(WITH_PYBIND11)
 	delete this->var_man;
