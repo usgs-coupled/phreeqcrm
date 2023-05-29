@@ -20,7 +20,7 @@ sed -i -e "s/RM_GetComponentCount/rm_getcomponentcount/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetComponent/rm_getcomponent/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetConcentrations/rm_getconcentrations/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetCurrentSelectedOutputUserNumber/rm_getcurrentselectedoutputusernumber/g" %RM_INTERFACE_F90%
-sed -i -e "s/RM_GetDensity/rm_getdensity/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetDensityCalculated/rm_getdensitycalculated/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetEndCell/rm_getendcell/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetErrorString/rm_geterrorstring/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetErrorStringLength/rm_geterrorstringlength/g" %RM_INTERFACE_F90%
@@ -37,7 +37,7 @@ sed -i -e "s/RM_GetMpiTasks/rm_getmpitasks/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetNthSelectedOutputUserNumber/rm_getnthselectedoutputusernumber/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetPorosity/rm_getporosity/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetPressure/rm_getpressure/g" %RM_INTERFACE_F90%
-sed -i -e "s/RM_GetSaturation/rm_getsaturation/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetSaturationCalculated/rm_getsaturationcalculated/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSelectedOutputColumnCount/rm_getselectedoutputcolumncount/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSelectedOutputCount/rm_getselectedoutputcount/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSelectedOutputHeading/rm_getselectedoutputheading/g" %RM_INTERFACE_F90%
@@ -74,7 +74,7 @@ sed -i -e "s/RM_ScreenMessage/rm_screenmessage/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetComponentH2O/rm_setcomponenth2o/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetConcentrations/rm_setconcentrations/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetCurrentSelectedOutputUserNumber/rm_setcurrentselectedoutputusernumber/g" %RM_INTERFACE_F90%
-sed -i -e "s/RM_SetDensity/rm_setdensity/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_SetDensityUser/rm_setdensityuser/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetDumpFileName/rm_setdumpfilename/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetErrorHandlerMode/rm_seterrorhandlermode/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetErrorOn/rm_seterroron/g" %RM_INTERFACE_F90%
@@ -91,7 +91,7 @@ sed -i -e "s/RM_SetPressure/rm_setpressure/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetRebalanceFraction/rm_setrebalancefraction/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetRebalanceByCell/rm_setrebalancebycell/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetRepresentativeVolume/rm_setrepresentativevolume/g" %RM_INTERFACE_F90%
-sed -i -e "s/RM_SetSaturation/rm_setsaturation/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_SetSaturationUser/rm_setsaturationuser/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetScreenOn/rm_setscreenon/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetSelectedOutputOn/rm_setselectedoutputon/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetSpeciesSaveOn/rm_setspeciessaveon/g" %RM_INTERFACE_F90%
@@ -154,6 +154,7 @@ sed -i -e "s/RM_GetComponents/rm_getcomponents/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetGridCellCountYAML/rm_getgridcellcountyaml/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetSelectedOutputHeadings/rm_getselectedoutputheadings/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetTemperature/rm_gettemperature/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_GetViscosity/rm_getviscosity/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetIthConcentration/rm_getithconcentration/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_GetIthSpeciesConcentration/rm_getithspeciesconcentration/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_SetIthConcentration/rm_setithconcentration/g" %RM_INTERFACE_F90%
@@ -161,7 +162,7 @@ sed -i -e "s/RM_SetIthSpeciesConcentration/rm_setithspeciesconcentration/g" %RM_
 sed -i -e "s/RM_InitialSolutions2Module/rm_initialsolutions2module/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_InitialEquilibriumPhases2Module/rm_initialequilibriumphases2module/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_InitialExchanges2Module/rm_initialexchanges2module/g" %RM_INTERFACE_F90%
-sed -i -e "s/RM_InitialSurfacesModule/rm_initialsurfacesmodule/g" %RM_INTERFACE_F90%
+sed -i -e "s/RM_InitialSurfaces2Module/rm_initialsurfaces2module/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_InitialGasPhases2Module/rm_initialgasphases2module/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_InitialSolidSolutions2Module/rm_initialsolidsolutions2module/g" %RM_INTERFACE_F90%
 sed -i -e "s/RM_InitialKinetics2Module/rm_initialkinetics2module/g" %RM_INTERFACE_F90%
@@ -195,7 +196,7 @@ sed -i -e "s/YAMLScreenMessage/yamlscreenmessage/g" %YAML_INTERFACE_F90%
 sed -i -e "s/YAMLSetComponentH2O/yamlsetcomponenth2o/g" %YAML_INTERFACE_F90%
 sed -i -e "s/YAMLSetConcentrations/yamlsetconcentrations/g" %YAML_INTERFACE_F90%
 sed -i -e "s/YAMLSetCurrentSelectedOutputUserNumber/yamlsetcurrentselectedoutputusernumber/g" %YAML_INTERFACE_F90%
-sed -i -e "s/YAMLSetDensity/yamlsetdensity/g" %YAML_INTERFACE_F90%
+sed -i -e "s/YAMLSetDensityUser/yamlsetdensityuser/g" %YAML_INTERFACE_F90%
 sed -i -e "s/YAMLSetDumpFileName/yamlsetdumpfilename/g" %YAML_INTERFACE_F90%
 sed -i -e "s/YAMLSetErrorHandlerMode/yamlseterrorhandlermode/g" %YAML_INTERFACE_F90%
 sed -i -e "s/YAMLSetErrorOn/yamlseterroron/g" %YAML_INTERFACE_F90%
@@ -212,7 +213,7 @@ sed -i -e "s/YAMLSetPrintChemistryOn/yamlsetprintchemistryon/g" %YAML_INTERFACE_
 sed -i -e "s/YAMLSetRebalanceByCell/yamlsetrebalancebycell/g" %YAML_INTERFACE_F90%
 sed -i -e "s/YAMLSetRebalanceFraction/yamlsetrebalancefraction/g" %YAML_INTERFACE_F90%
 sed -i -e "s/YAMLSetRepresentativeVolume/yamlsetrepresentativevolume/g" %YAML_INTERFACE_F90%
-sed -i -e "s/YAMLSetSaturation/yamlsetsaturation/g" %YAML_INTERFACE_F90%
+sed -i -e "s/YAMLSetSaturationUser/yamlsetsaturationuser/g" %YAML_INTERFACE_F90%
 sed -i -e "s/YAMLSetScreenOn/yamlsetscreenon/g" %YAML_INTERFACE_F90%
 sed -i -e "s/YAMLSetSelectedOutputOn/yamlsetselectedoutputon/g" %YAML_INTERFACE_F90%
 sed -i -e "s/YAMLSetSpeciesSaveOn/yamlsetspeciessaveon/g" %YAML_INTERFACE_F90%

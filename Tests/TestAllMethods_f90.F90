@@ -17,7 +17,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
   integer                      :: ngas
   integer                      :: nbound, isteps, nsteps, n_user, status
   character(100)               :: string, yaml_filename
-  character(len=:), allocatable :: StringVector(:)
+  character(len=:), allocatable :: StringVector(:), AllocString
   integer, allocatable         :: IntVector(:), IntVector2(:,:)
   real(kind=8), allocatable    :: p_atm(:), tc(:)
   real(kind=8), allocatable    :: DoubleVector(:), f1(:), DoubleVector2(:,:), f2(:,:)
@@ -47,7 +47,13 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!
 	! Use all BMIPhreeqcRM methods roughly in order of use
 	!
+#ifdef USE_MPI
+  ! MPI
+	nxyz = 40
+	id = RM_Create(nxyz, MPI_COMM_WORLD)
+#else
 	id = bmif_create()
+#endif    
 	write(*,*) "bmif_create"
 	!-------
 	status = bmif_initialize(id, yaml_filename)
@@ -197,8 +203,8 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	nspecies = RM_GetSpeciesCount(id)
 	write(*,*) "GetSpeciesCount "
 	!-------
-	status = RM_GetSpeciesName(id, 1, string)
-	write(*,*) "GetSpeciesName "
+	status = RM_GetSpeciesNames(id, StringVector)
+	write(*,*) "GetSpeciesNames "
 	!-------
     if(allocated(DoubleVector)) deallocate(DoubleVector)
     allocate(DoubleVector(nxyz*nspecies))
@@ -551,7 +557,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!
 	! Getters
 	!
-	status = RM_GetBackwardMapping(id, 1, IntVector, n)
+	status = RM_GetBackwardMapping(id, 1, IntVector)
 	write(*,*) "GetBackwardMapping "
 	!-------
 	!status = RM_GetDatabaseFileName(id, string)
@@ -563,12 +569,12 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!n = RM_GetErrorHandlerMode()
 	!write(*,*) "GetErrorHandlerMode "
 	!-------
-	status = RM_GetErrorString(id, string)
-	status = bmif_get_value(id, "ErrorString", string)
+	status = RM_GetErrorString(id, AllocString)
+	status = bmif_get_value(id, "ErrorString", AllocString)
 	write(*,*) "GetErrorString "
 	!-------
-	status = RM_GetFilePrefix(id, string)
-	status = bmif_get_value(id, "FilePrefix", string)
+	status = RM_GetFilePrefix(id, AllocString)
+	status = bmif_get_value(id, "FilePrefix", AllocString)
 	write(*,*) "GetFilePrefix "
 	!-------
 	!status = RM_GetForwardMapping()  ! not implemented

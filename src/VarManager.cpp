@@ -292,7 +292,7 @@ void VarManager::Concentrations_Var()
 			break;
 		}
 		bv.SetBasic(units, true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "float64");
+		bv.SetTypes("double", "real(kind=8)", "float64"); 
 		//rm_ptr->GetConcentrations(bv.GetDoubleVectorRef());
 		//rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount() * rm_ptr->GetComponentCount());
@@ -460,7 +460,7 @@ void VarManager::ErrorString_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("error", false, true, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
+		bv.SetTypes("std::string", "character", "str");
 		this->VarExchange.GetStringRef() = rm_ptr->GetErrorString(); 
 		bv.GetStringRef() = rm_ptr->GetErrorString();
 		bv.SetInitialized(true);
@@ -502,7 +502,7 @@ void VarManager::FilePrefix_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
+		bv.SetTypes("std::string", "character", "str");
 		//this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
 		bv.GetStringRef() = rm_ptr->GetFilePrefix();
 		//bv.SetInitialized(true);
@@ -528,7 +528,7 @@ void VarManager::FilePrefix_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
 		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
-		//bv.SetTypes("std::string", "character", "");
+		//bv.SetTypes("std::string", "character", "str");
 		rm_ptr->SetFilePrefix(this->VarExchange.GetStringRef());
 		bv.GetStringRef() = this->VarExchange.GetStringRef();
 		break;
@@ -690,8 +690,6 @@ void VarManager::SaturationCalculated_Var()
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("unitless", false, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "float64");
-		//rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
-		//rm_ptr->GetSaturation(bv.GetDoubleVectorRef());
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
@@ -971,7 +969,13 @@ void VarManager::SelectedOutputHeadings_Var()
 			int Nbytes = (int)(size * headings.size());// +this->AutoOutputVars.size();
 			//name, std::string units, set, get, ptr, Nbytes, Itemsize
 			bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
+#if defined(WITH_PYBIND11)
+			std::ostringstream oss;
+			oss << "<U" << size;
+			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", oss.str());
+#else
+			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "str");
+#endif
 		}
 		else
 		{
@@ -1399,7 +1403,7 @@ void VarManager::SelectedOutputOn_Var()
 		int Nbytes = (int)sizeof(bool);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("bool", true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("bool", "logical", "");
+		bv.SetTypes("bool", "logical", "bool");
 		bv.SetBVar(rm_ptr->GetSelectedOutputOn());
 		bv.SetInitialized(true);
 	}

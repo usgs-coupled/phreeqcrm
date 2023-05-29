@@ -79,11 +79,11 @@ int AdvectBMI_cpp_test()
 		// value is zero.
 		//int nxyz = BMIPhreeqcRM::GetGridCellCountYAML(yaml_file.c_str());
 		//int nxyz = 40;
-
+		int nxyz;
 #ifdef USE_MPI
 		// MPI
+		nxyz = PhreeqcRM::GetGridCellCountYAML(yaml_file.c_str());
 		BMIPhreeqcRM brm(nxyz, MPI_COMM_WORLD);
-		some_data.brm_ptr = &brm;
 		MP_TYPE comm = MPI_COMM_WORLD;
 		int mpi_myself;
 		if (MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself) != MPI_SUCCESS)
@@ -92,8 +92,6 @@ int AdvectBMI_cpp_test()
 		}
 		if (mpi_myself > 0)
 		{
-			brm.SetMpiWorkerCallbackC(bmi_worker_tasks_cc);
-			brm.SetMpiWorkerCallbackCookie(&some_data);
 			brm.MpiWorker();
 			return EXIT_SUCCESS;
 		}
@@ -103,7 +101,6 @@ int AdvectBMI_cpp_test()
 #endif
 		// Use YAML file to initialize
 		brm.Initialize(yaml_file);
-		int nxyz;
 		brm.GetValue("GridCellCount", nxyz);
 		// set pointers
 		Ptrs ptrs;

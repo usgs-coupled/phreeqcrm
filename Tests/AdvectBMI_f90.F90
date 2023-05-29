@@ -94,7 +94,6 @@
         stop "Failed to get mpi_myself"
     endif
     if (mpi_myself > 0) then
-        status = RM_SetMpiWorkerCallback(id, bmi_worker_tasks_f)
         status = RM_MpiWorker(id)
         status = RM_Destroy(id)
         return

@@ -84,7 +84,6 @@ int AdvectBMI_cpp()
 #ifdef USE_MPI
 		// MPI
 		BMIPhreeqcRM brm(nxyz, MPI_COMM_WORLD);
-		some_data.brm_ptr = &brm;
 		MP_TYPE comm = MPI_COMM_WORLD;
 		int mpi_myself;
 		if (MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself) != MPI_SUCCESS)
@@ -93,11 +92,9 @@ int AdvectBMI_cpp()
 		}
 		if (mpi_myself > 0)
 		{
-			brm.SetMpiWorkerCallbackC(bmi_worker_tasks_cc);
-			brm.SetMpiWorkerCallbackCookie(&some_data);
 			brm.MpiWorker();
 			return EXIT_SUCCESS;
-		}
+		};
 #else
 		// OpenMP
 		BMIPhreeqcRM brm;

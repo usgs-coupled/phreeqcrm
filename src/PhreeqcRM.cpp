@@ -1647,13 +1647,14 @@ PhreeqcRM::CreateMapping(std::vector<int> &grid2chem)
 #endif
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::CreateMapping(const std::vector<int> &grid2chem)
+PhreeqcRM::CreateMapping(const std::vector<int> &grid2chem_in)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
 	IRM_RESULT return_value = IRM_OK;
 	try
 	{
+		std::vector<int> grid2chem = grid2chem_in;
 		if (mpi_myself == 0)
 		{
 			if ((int) grid2chem.size() != this->nxyz)
@@ -7087,8 +7088,7 @@ PhreeqcRM::MpiWorker()
 			case METHOD_GETVISCOSITY:
 				if (debug_worker) std::cerr << "METHOD_GETVISCOSITY" << std::endl;
 				{
-					std::vector<double> dummy;
-					this->GetViscosity(dummy);
+					this->GetViscosity();
 				}
 				break;
 			case METHOD_INITIALPHREEQC2MODULE:
@@ -9737,10 +9737,7 @@ PhreeqcRM::RunCells()
 		{
 			GetSpeciesConcentrations(this->CurrentSpeciesConcentrations);
 		}
-		if (var_man != NULL)
-		{
-			this->var_man->so777.clear();
-		}
+		this->ClearBMISelectedOutput();
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::RunCells");
 }
@@ -12467,10 +12464,11 @@ PhreeqcRM::SetUnitsSurface(int u)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::SpeciesConcentrations2Module(const std::vector<double> & species_conc)
+PhreeqcRM::SpeciesConcentrations2Module(const std::vector<double> & species_conc_in)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
+	std::vector<double> species_conc = species_conc_in;
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{

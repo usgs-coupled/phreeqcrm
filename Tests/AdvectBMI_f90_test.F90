@@ -13,6 +13,16 @@
             real(kind=8), dimension(:,:), allocatable, intent(in)    :: bc_conc
             integer, intent(in)                                      :: ncomps, nxyz
         end subroutine advectionbmi_f90_test
+        integer function do_something()
+        end function do_something
+        integer(kind=C_INT) function bmi_worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
+            USE ISO_C_BINDING
+            implicit none
+            integer(kind=c_int), intent(in) :: method_number
+        end function bmi_worker_tasks_f
+        SUBROUTINE register_basic_callback_fortran()
+            implicit none
+        END SUBROUTINE register_basic_callback_fortran
         subroutine BMI_testing(id)
             implicit none
             integer, intent(in) :: id
@@ -109,6 +119,7 @@
 
 #ifdef USE_MPI
     ! MPI
+    nxyz = 40
     id = bmif_create(nxyz, MPI_COMM_WORLD)
     call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
     if (status .ne. MPI_SUCCESS) then
@@ -739,24 +750,10 @@ USE, intrinsic :: ISO_C_BINDING
             enddo
         enddo
         ! check headings
-        status = bmif_get_var_nbytes(id, "SelectedOutputHeadings", nbytes)
-        status = bmif_get_var_itemsize(id, "SelectedOutputHeadings", itemsize)
-        dim = nbytes / itemsize
-        status = assert(dim .eq. RM_GetSelectedOutputColumnCount(id))
         status = bmif_get_value(id, "SelectedOutputHeadings", headings)
-        !allocate(character(len=itemsize) :: rm_headings(dim))
         status = RM_GetSelectedOutputHeadings(id, rm_headings)
         do j = 1, col_count
             if (headings(j) .ne. rm_headings(j)) then
-                status = assert(.false.)
-            endif
-        enddo
-        status = bmif_get_var_itemsize(id, "SelectedOutputHeadings", itemsize)
-        if(allocated(heading)) deallocate(heading)
-        allocate(character(len=itemsize) :: heading)
-        do j = 1, col_count
-            status = RM_GetSelectedOutputHeading(id, j, heading)
-            if (heading .ne. rm_headings(j)) then
                 status = assert(.false.)
             endif
         enddo
