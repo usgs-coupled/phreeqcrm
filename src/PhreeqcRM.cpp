@@ -9597,8 +9597,6 @@ PhreeqcRM::RunCells()
 	this->phreeqcrm_error_string.clear();
 	if (mpi_myself == 0)
 	{
-		int method = METHOD_RUNCELLS;
-		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		if (IthConcentrationSet.size() > 0)
 		{
 			if (IthConcentrationSet.size() != this->GetComponentCount())
@@ -9618,7 +9616,11 @@ PhreeqcRM::RunCells()
 			SpeciesConcentrations2Module(IthCurrentSpeciesConcentrations);
 		}
 	}
-
+	if (mpi_myself == 0)
+	{
+		int method = METHOD_RUNCELLS;
+		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+	}
 	// check that all solutions are defined
 	if (this->need_error_check)
 	{

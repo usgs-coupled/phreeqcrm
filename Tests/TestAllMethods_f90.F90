@@ -439,11 +439,21 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status =RM_SetGasPhaseVolume(id, DoubleVector)
 	write(*,*) "SetGasPhaseVolume "
 	!-------
-	status = RM_GetIthConcentration(id, 1, DoubleVector);
-	write(*,*)  "GetIthConcentration ";
+    do i = 1, RM_GetComponentCount(id)
+		status = RM_GetIthConcentration(id, i, DoubleVector);
+		write(*,*)  "GetIthConcentration ";
+		!-------
+		status = RM_SetIthConcentration(id, i, DoubleVector);
+		write(*,*)  "SetIthConcentration ";
+    enddo
 	!-------
-	status = RM_GetIthSpeciesConcentration(id, 1, DoubleVector);
-	write(*,*) "GetIthSpeciesConcentration ";
+    do i = 1, RM_GetSpeciesCount(id)
+		status = RM_GetIthSpeciesConcentration(id, i, DoubleVector);
+		!-------
+		status = RM_SetIthSpeciesConcentration(id, i, DoubleVector);
+    enddo
+    write(*,*) "GetIthSpeciesConcentration ";
+    write(*,*) "SetIthSpeciesConcentration ";
 	!-------
 	status = bmif_get_value(id, "Porosity", DoubleVector)
 	status = RM_GetPorosity(id, DoubleVector)

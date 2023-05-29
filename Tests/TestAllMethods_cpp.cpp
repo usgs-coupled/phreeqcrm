@@ -396,11 +396,23 @@ void TestAllMethods_cpp()
 	status = bmi.SetGasPhaseVolume(v);
 	std::cerr << "SetGasPhaseVolume \n";
 	//-------
-	status = bmi.GetIthConcentration(0, v);
+	for (size_t i = 0; i < bmi.GetComponentCount(); i++)
+	{
+		status = bmi.GetIthConcentration(i, v);
+		//-------
+		status = bmi.SetIthConcentration(i, v);
+	}
 	std::cerr << "GetIthConcentration \n";
+	std::cerr << "SetIthConcentration \n";
 	//-------
-	status = bmi.GetIthSpeciesConcentration(0, v);
-	std::cerr << "GetIthSpeciesConcentration \n";
+	for (int i = 0; i < bmi.GetSpeciesCount(); i++)
+	{
+		status = bmi.GetIthSpeciesConcentration(i, v);
+		std::cerr << "GetIthSpeciesConcentration \n";
+		//-------
+		status = bmi.SetIthSpeciesConcentration(i, v);
+		std::cerr << "SetIthSpeciesConcentration \n";
+	}
 	//-------
 	v = bmi.GetPorosity();
 	bmi.GetValue("Porosity", v);
