@@ -36,13 +36,13 @@ def WriteYAMLFile_py():
 	yrm.YAMLSetRepresentativeVolume(rv)
 	# Set initial density
 	density = [1.0] * nxyz
-	yrm.YAMLSetDensity(density)
+	yrm.YAMLSetDensityUser(density)
     # Set initial porosity
 	por = [0.2] * nxyz
 	yrm.YAMLSetPorosity(por)
 	# Set initial saturation
 	sat = [1] * nxyz
-	yrm.YAMLSetSaturation(sat)   
+	yrm.YAMLSetSaturationUser(sat)   
 	# Set cells to print chemistry when print chemistry is turned on
 	print_chemistry_mask = [0] * nxyz
 	for i in range(nxyz // 2):
