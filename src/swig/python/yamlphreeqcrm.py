@@ -447,7 +447,7 @@ class YAMLPhreeqcRM(object):
         During initialization, RunCells can be used to equilibrate each solution with all reactants 
         in a cell while using a time step of zero (@ref YAMLSetTimeStep) to avoid kinetic reactions.
         Other properties that may need to be initialized before RunCells is invoked
-        include porosity (YAMLSetPorosity), saturation (YAMLSetSaturation),
+        include porosity (YAMLSetPorosity), saturation (YAMLSetSaturationUser),
         temperature (YAMLSetTemperature), and pressure (YAMLSetPressure).
         """
         node = dict()
@@ -570,12 +570,12 @@ class YAMLPhreeqcRM(object):
         node["key"] = "SetCurrentSelectedOutputUserNumber"
         node["n_user"] = n_user
         self.yaml_doc.append(node)
-    def YAMLSetDensity(self, density):
+    def YAMLSetDensityUser(self, density):
         """
-        Inserts data into the YAML document for the PhreeqcRM method SetDensity.
+        Inserts data into the YAML document for the PhreeqcRM method SetDensityUser.
 
         When the YAML document is written to file it can be processed by the method InitializeYAML to
-        initialize a PhreeqcRM instance. SetDensity sets the density for each reaction cell. These 
+        initialize a PhreeqcRM instance. SetDensityUser sets the density for each reaction cell. These 
         density values are used when converting from transported mass-fraction concentrations 
         (YAMLSetUnitsSolution) to produce per liter concentrations during a call to SetConcentrations
         when converting from reaction-cell concentrations to transport concentrations,
@@ -584,7 +584,7 @@ class YAMLPhreeqcRM(object):
         of grid cells in the user's model.
         """
         node = dict()
-        node["key"] = "SetDensity"
+        node["key"] = "SetDensityUser"
         node["density"] = density
         self.yaml_doc.append(node)
     def YAMLSetDumpFileName(self, dump_name):
@@ -738,7 +738,7 @@ class YAMLPhreeqcRM(object):
         When the YAML document is written to file it can be processed by the method InitializeYAML to
         initialize a PhreeqcRM instance. SetPorosity sets the porosity for each reaction cell.
         The volume of water in a reaction cell is the product of porosity, saturation
-        (SetSaturation), and representative volume (SetRepresentativeVolume).
+        (SetSaturationUser), and representative volume (SetRepresentativeVolume).
         @param por Vector of porosities, unitless. Default is 0.1. Size of vector is nxyz, where 
         nxyz is the number of grid cells in the user's model.
         """
@@ -855,7 +855,7 @@ class YAMLPhreeqcRM(object):
         initialize a PhreeqcRM instance. SetRepresentativeVolume sets the representative volume of 
         each reaction cell. By default the representative volume of each reaction cell is 1 liter.
         The volume of water in a reaction cell is determined by the product of the representative 
-        volume, the porosity (SetPorosity), and the saturation (SetSaturation). The numerical method 
+        volume, the porosity (SetPorosity), and the saturation (SetSaturationUser). The numerical method 
         of PHREEQC is more robust if the water volume for a reaction cell is within a couple orders 
         of magnitude of 1.0. Small water volumes caused by small porosities and (or) small saturations 
         (and (or) small representative volumes) may cause non-convergence of the numerical method.
@@ -871,14 +871,14 @@ class YAMLPhreeqcRM(object):
         node["key"] = "SetRepresentativeVolume"
         node["rv"] = rv
         self.yaml_doc.append(node)
-    def YAMLSetSaturation(self,  sat):
+    def YAMLSetSaturationUser(self,  sat):
         """
-        Inserts data into the YAML document for the PhreeqcRM method SetSaturation.
+        Inserts data into the YAML document for the PhreeqcRM method SetSaturationUser.
 
         When the YAML document is written to file it can be processed by the method InitializeYAML to
-        initialize a PhreeqcRM instance. SetSaturation sets the saturation of each reaction cell. 
+        initialize a PhreeqcRM instance. SetSaturationUser sets the saturation of each reaction cell. 
         Saturation is a fraction ranging from 0 to 1. The volume of water in a cell is the product 
-        of porosity (SetPorosity), saturation (SetSaturation), and representative volume 
+        of porosity (SetPorosity), saturation (SetSaturationUser), and representative volume 
         (SetRepresentativeVolume). As a result of a reaction calculation, solution properties (density 
         and volume) will change; the databases phreeqc.dat, Amm.dat, and pitzer.dat have the molar 
         volume data to calculate these changes. The methods GetDensity, GetSolutionVolume, and 
@@ -887,7 +887,7 @@ class YAMLPhreeqcRM(object):
         where nxyz is the number of grid cells in the user's model.
         """
         node = dict()
-        node["key"] = "SetSaturation"
+        node["key"] = "SetSaturationUser"
         node["sat"] = sat
         self.yaml_doc.append(node)
     def YAMLSetScreenOn(self, tf):
@@ -1062,7 +1062,7 @@ class YAMLPhreeqcRM(object):
         porosity.
 
         Note that the volume of water in a cell in the reaction module is equal to the product of
-        porosity (SetPorosity), the saturation (SetSaturation), and representative volume 
+        porosity (SetPorosity), the saturation (SetSaturationUser), and representative volume 
         (SetRepresentativeVolume), which is usually less than 1 liter. It is important to write the RATES
         definitions for homogeneous (aqueous) kinetic reactions to account for the current volume of
         water, often by calculating the rate of reaction per liter of water and multiplying by the volume
@@ -1115,10 +1115,10 @@ class YAMLPhreeqcRM(object):
         solutions by the number of moles of each element in the solution. To convert from mg/L to moles
         of element in the representative volume of a reaction cell, mg/L is converted to mol/L and
         multiplied by the solution volume, which is the product of porosity (SetPorosity), saturation 
-        (SetSaturation), and representative volume (SetRepresentativeVolume). To convert from mol/L 
+        (SetSaturationUser), and representative volume (SetRepresentativeVolume). To convert from mol/L 
         to moles of element in the representative volume of a reaction cell, mol/L is multiplied by the 
         solution volume. To convert from mass fraction to moles of element in the representative volume 
-        of a reaction cell, kg/kgs is converted to mol/kgs, multiplied by density (SetDensity) and
+        of a reaction cell, kg/kgs is converted to mol/kgs, multiplied by density (SetDensityUser) and
         multiplied by the solution volume.
 
         To convert from moles of element in the representative volume of a reaction cell to mg/L, the 
@@ -1131,8 +1131,8 @@ class YAMLPhreeqcRM(object):
         Two options are available for the volume and mass of solution that are used in converting 
         to transport concentrations: (1) the volume and mass of solution are calculated by PHREEQC, 
         or (2) the volume of solution is the product of porosity (SetPorosity), saturation 
-        (SetSaturation), and representative volume (SetRepresentativeVolume), and the mass of solution 
-        is volume times density as defined by SetDensity. Which option is used is determined by 
+        (SetSaturationUser), and representative volume (SetRepresentativeVolume), and the mass of solution 
+        is volume times density as defined by SetDensityUser. Which option is used is determined by 
         UseSolutionDensityVolume.
 
         @param option Units option for solutions: 1, 2, or 3, default is 1, mg/L.
@@ -1288,8 +1288,8 @@ class YAMLPhreeqcRM(object):
         initialize a PhreeqcRM instance. UseSolutionDensityVolume determines the volume and density 
         to use when converting from the reaction-cell concentrations to transport concentrations 
         (GetConcentrations). Two options are available to convert concentration units: (1) the density 
-        and solution volume calculated by PHREEQC are used, or (2) the specified density (SetDensity)
-        and solution volume are determined by the product of saturation (SetSaturation), porosity 
+        and solution volume calculated by PHREEQC are used, or (2) the specified density (SetDensityUser)
+        and solution volume are determined by the product of saturation (SetSaturationUser), porosity 
         (SetPorosity), and representative volume (SetRepresentativeVolume). Transport models that 
         consider density-dependent flow will probably use the PHREEQC-calculated density and solution 
         volume (default), whereas transport models that assume constant-density flow will probably use
@@ -1299,8 +1299,8 @@ class YAMLPhreeqcRM(object):
         transport units of mass fraction.
 
         @param tf True indicates that the solution density and volume as calculated by PHREEQC will 
-        be used to calculate concentrations. False indicates that the solution density set by SetDensity 
-        and the volume determined by the product of  SetSaturation, SetPorosity, and 
+        be used to calculate concentrations. False indicates that the solution density set by SetDensityUser 
+        and the volume determined by the product of  SetSaturationUser, SetPorosity, and 
         SetRepresentativeVolume, will be used to calculate concentrations retrieved by GetConcentrations.
         """
         node = dict()
