@@ -286,3 +286,20 @@ def test_get_Concentrations_ptr():
 
     # # use_sol_dens_vol = np.full((1,), False)
     # # bmi.set_value("UseSolutionDensityVolume", use_sol_dens_vol)        # YAML "UseSolutionDensityVolume"
+
+def test_get_value_ndarray_str():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    components = model.get_value_ptr("Components")
+    comps = np.empty_like(components)
+
+    comps = model.get_value("Components", comps)
+    assert(comps[0] == 'H')
+    assert(comps[1] == 'O')
+    assert(comps[2] == 'Charge')
+    assert(comps[3] == 'Ca')
+    assert(comps[4] == 'Cl')
+    assert(comps[5] == 'K')
+    assert(comps[6] == 'N')
+    assert(comps[7] == 'Na')

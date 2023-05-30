@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.testing import assert_array_almost_equal, assert_array_less
+from numpy.testing import assert_array_almost_equal, assert_array_less, assert_array_equal
 
 from phreeqcrm import bmi_phreeqcrm
 
@@ -22,6 +22,19 @@ def test_get_value_copy():
     assert z0 is not z1
     assert_array_almost_equal(z0, z1)
 
+def test_get_value_copy_str():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    components = model.get_value_ptr("Components")
+    dest0 = np.empty_like(components)
+    dest1 = np.empty_like(components)
+
+    z0 = model.get_value("Components", dest0)
+    z1 = model.get_value("Components", dest1)
+
+    assert z0 is not z1
+    assert_array_equal(z0, z1)
 
 def test_get_value_pointer():
     model = bmi_phreeqcrm()
