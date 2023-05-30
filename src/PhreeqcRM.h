@@ -533,8 +533,10 @@ if (option == "HYDRAULIC_K")
 Called by root or workers.
  */
 	const std::vector < std::vector <int> > & GetBackwardMapping(void) {return this->backward_mapping;}
+	/** @cond */
 	void GetBackwardMappingSWIG(std::vector<int>& nback_output, std::vector<int>& cellnumbers_output);
-/**
+	/** @endcond */
+	/**
 Returns the number of reaction cells in the reaction module. The number of reaction cells is defined by
 the set of non-negative integers in the mapping from grid cells (@ref CreateMapping), or, by default,
 the number of grid cells (@ref GetGridCellCount).
@@ -2538,7 +2540,11 @@ Called by root and (or) workers.
  */
 
 	const std::vector<cxxNameDouble> &        GetSpeciesStoichiometry(void) {return this->species_stoichiometry;}
-/**
+	/** @cond */
+	void                                      GetSpeciesStoichiometrySWIG(std::vector<std::string>& species_output,
+		std::vector<int>& nelt_output, std::vector<std::string>& elts_output, std::vector<double>& coef_output);
+	/** @endcond */
+	/**
 Returns a vector reference to the charge on each aqueous species.
 This method is intended for use with multicomponent-diffusion transport calculations,
 and @ref SetSpeciesSaveOn must be set to @a true.
@@ -5507,8 +5513,6 @@ private:
 	void                                      cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector< double > & d, double v, double dens);
 	void                                      GatherNchem(std::vector< double > &source, std::vector< double > &destination);
 	cxxStorageBin &                           Get_phreeqc_bin(void) {return *this->phreeqc_bin;}
-	void                                      GetSpeciesStoichiometrySWIG(std::vector<std::string>& species_output, 
-		std::vector<int>& nelt_output, std::vector<std::string>& elts_output, std::vector<double>& coef_output);
 	IRM_RESULT                                HandleErrorsInternal(std::vector< int > & r);
 	void                                      PartitionUZ(int n, int iphrq, int ihst, double new_frac);
 	void                                      RebalanceLoad(void);

@@ -134,6 +134,8 @@ import_array();
 %rename(InitialSolidSolutions2ModuleSWIG)           InitialSolidSolutions2Module(const std::vector < int >& solid_solutions);
 %rename(InitialSurfaces2ModuleSWIG)                 InitialSurfaces2Module(const std::vector < int >& surfaces);
 %rename(SetPrintChemistryMaskSWIG)                  SetPrintChemistryMask(const std::vector<int> & cell_mask);
+%rename(SetIthConcentrationSWIG)                    SetIthConcentration(int i, std::vector< double >& c); 
+%rename(SetIthSpeciesConcentrationSWIG)             SetIthSpeciesConcentration(int i, std::vector< double >& c);
 
 // Ignore methods
 %ignore BMIPhreeqcRM::GetValue(std::string const,bool *);
@@ -300,6 +302,14 @@ def InitialSurfaces2Module(self, v):
 	if not isinstance(v, phreeqcrm.IntVector):
 		v = self.GetIntVector(v)
 	return self.InitialSurfaces2ModuleSWIG(v)
+def SetIthConcentration(self, i, c):
+	if not isinstance(c, phreeqcrm.DoubleVector):
+		c = self.GetDoubleVector(c)
+	return self.SetPrintChemistryMaskSWIG(i, c)
+def SetIthSpeciesConcentration(self, i, c):
+	if not isinstance(c, phreeqcrm.DoubleVector):
+		c = self.GetDoubleVector(c)
+	return self.SetPrintChemistryMaskSWIG(i, c)
 def SetPrintChemistryMask(self, cell_mask):
 	if not isinstance(cell_mask, phreeqcrm.IntVector):
 		cell_mask = self.GetIntVector(cell_mask)
@@ -312,6 +322,18 @@ def GetIntVector(self, v):
 		return vv
 	if (isinstance(v, tuple) or isinstance(v, list)) and isinstance(v[0], int):
 		vv = phreeqcrm.IntVector()
+		for i in range(len(v)):
+			vv.push_back(v[i])
+		return vv
+	return v
+def GetDoubleVector(self, v):
+	if isinstance(v, np.ndarray) and isinstance(v[0].item(), float):
+		vv = phreeqcrm.DoubleVector()
+		for i in range(len(v)):
+			vv.push_back(v[i].item())
+		return vv
+	if (isinstance(v, tuple) or isinstance(v, list)) and isinstance(v[0], float):
+		vv = phreeqcrm.DoubleVector()
 		for i in range(len(v)):
 			vv.push_back(v[i])
 		return vv
