@@ -305,11 +305,11 @@ def InitialSurfaces2Module(self, v):
 def SetIthConcentration(self, i, c):
 	if not isinstance(c, phreeqcrm.DoubleVector):
 		c = self.GetDoubleVector(c)
-	return self.SetPrintChemistryMaskSWIG(i, c)
+	return self.SetIthConcentrationSWIG(i, c)
 def SetIthSpeciesConcentration(self, i, c):
 	if not isinstance(c, phreeqcrm.DoubleVector):
 		c = self.GetDoubleVector(c)
-	return self.SetPrintChemistryMaskSWIG(i, c)
+	return self.SetIthSpeciesConcentrationSWIG(i, c)
 def SetPrintChemistryMask(self, cell_mask):
 	if not isinstance(cell_mask, phreeqcrm.IntVector):
 		cell_mask = self.GetIntVector(cell_mask)
