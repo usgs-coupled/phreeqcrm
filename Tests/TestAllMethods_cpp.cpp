@@ -408,11 +408,11 @@ void TestAllMethods_cpp()
 	for (int i = 0; i < bmi.GetSpeciesCount(); i++)
 	{
 		status = bmi.GetIthSpeciesConcentration(i, v);
-		std::cerr << "GetIthSpeciesConcentration \n";
 		//-------
 		status = bmi.SetIthSpeciesConcentration(i, v);
-		std::cerr << "SetIthSpeciesConcentration \n";
 	}
+	std::cerr << "GetIthSpeciesConcentration \n";
+	std::cerr << "SetIthSpeciesConcentration \n";
 	//-------
 	v = bmi.GetPorosity();
 	bmi.GetValue("Porosity", v);
@@ -728,12 +728,11 @@ void TestAllMethods_cpp()
  	bmi.UpdateUntil(864000.0);      // void function
 	std::cerr << "UpdateUntil\n";
 	//-------	
+	bmi.MpiWorkerBreak();
 	bmi.Finalize();    // void method
 	std::cerr << "Finalize \n";
 	//Should be private: status = bmi.ReturnHandler();
 	//TODO status = bmi.MpiAbort();
-	//TODO status = bmi.MpiWorker();
-	//TODO status = bmi.MpiWorkerBreak();
 	//TODO status = bmi.SetMpiWorkerCallbackC();
 	//TODO status = bmi.SetMpiWorkerCallbackCookie();
 	std::cerr << "Success.\n";

@@ -64,7 +64,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = bmif_initialize(id, yaml_filename)
 	write(*,*) "bmif_initialize"
 	!-------
-	nxyz = RM_GetGridCellCount(id);
+	nxyz = RM_GetGridCellCount(id)
 	status = bmif_get_value(id, "GridCellCount", nxyz)
 	write(*,*) "GetGridCellCount"
 	!-------
@@ -198,7 +198,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!-------
 	ncomps = RM_GetComponentCount(id)
 	status = bmif_get_value(id, "ComponentCount", ncomps)
-	status = bmif_get_value_ptr(id, "ComponentCount", i_ptr);
+	status = bmif_get_value_ptr(id, "ComponentCount", i_ptr)
 	write(*,*) "GetComponentCount)" 
 	!-------
 	status = bmif_get_value(id, "Components", StringVector)
@@ -250,7 +250,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!-------
 	status = bmif_get_value(id, "Gfw", DoubleVector)
 	status = RM_GetGfw(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "Gfw", d_ptr);
+	status = bmif_get_value_ptr(id, "Gfw", d_ptr)
 	write(*,*) "GetGfw "
 	!-------
 	n = RM_GetKineticReactionsCount(id)
@@ -381,7 +381,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	d = RM_GetTime(id)
 	status = bmif_get_value(id, "Time", d)
 	status = bmif_get_current_time(id, d)
-	status = bmif_get_start_time(id, d);
+	status = bmif_get_start_time(id, d)
 	status = bmif_get_value_ptr(id, "Time", d_ptr)
 	write(*,*) "GetTime "
 	!-------
@@ -440,20 +440,20 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	write(*,*) "SetGasPhaseVolume "
 	!-------
     do i = 1, RM_GetComponentCount(id)
-		status = RM_GetIthConcentration(id, i, DoubleVector);
-		write(*,*)  "GetIthConcentration ";
+		status = RM_GetIthConcentration(id, i, DoubleVector)
 		!-------
-		status = RM_SetIthConcentration(id, i, DoubleVector);
-		write(*,*)  "SetIthConcentration ";
+		status = RM_SetIthConcentration(id, i, DoubleVector)
     enddo
+	write(*,*)  "GetIthConcentration "
+	write(*,*)  "SetIthConcentration "
 	!-------
     do i = 1, RM_GetSpeciesCount(id)
-		status = RM_GetIthSpeciesConcentration(id, i, DoubleVector);
+		status = RM_GetIthSpeciesConcentration(id, i, DoubleVector)
 		!-------
-		status = RM_SetIthSpeciesConcentration(id, i, DoubleVector);
+		status = RM_SetIthSpeciesConcentration(id, i, DoubleVector)
     enddo
-    write(*,*) "GetIthSpeciesConcentration ";
-    write(*,*) "SetIthSpeciesConcentration ";
+    write(*,*) "GetIthSpeciesConcentration "
+    write(*,*) "SetIthSpeciesConcentration "
 	!-------
 	status = bmif_get_value(id, "Porosity", DoubleVector)
 	status = RM_GetPorosity(id, DoubleVector)
@@ -510,10 +510,10 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = bmif_set_value(id, "Temperature", DoubleVector)
 	write(*,*) "SetTemperature "
 	!-------
-	status = bmif_get_value(id, "Viscosity", DoubleVector);
-	status = RM_GetViscosity(id, DoubleVector);
-	status = bmif_get_value_ptr(id, "Viscosity", d_ptr);	
-	write(*,*) "GetViscosity ";
+	status = bmif_get_value(id, "Viscosity", DoubleVector)
+	status = RM_GetViscosity(id, DoubleVector)
+	status = bmif_get_value_ptr(id, "Viscosity", d_ptr)	
+	write(*,*) "GetViscosity "
 	!
 	! Take a time step
 	!
@@ -560,7 +560,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!-------
 	!b = RM_GetSelectedOutputOn(id)
 	status = bmif_get_value(id, "SelectedOutputOn", l)
-	status = bmif_get_value_ptr(id, "SelectedOutputOn", b_ptr);	
+	status = bmif_get_value_ptr(id, "SelectedOutputOn", b_ptr)	
 	write(*,*) "GetSelectedOutputOn "
 	!-------
 	n = RM_GetSelectedOutputRowCount(id)

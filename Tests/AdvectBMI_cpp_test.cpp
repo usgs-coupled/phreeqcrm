@@ -351,6 +351,7 @@ int AdvectBMI_cpp_test()
 		}
 		testing(brm, ptrs); // Tests GetValue
 		// Clean up
+		brm.MpiWorkerBreak();
 		brm.Finalize();
 	}
 	catch (PhreeqcRMStop)

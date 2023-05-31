@@ -93,6 +93,7 @@ int AdvectBMI_cpp()
 		if (mpi_myself > 0)
 		{
 			brm.MpiWorker();
+			brm.Finalize();
 			return EXIT_SUCCESS;
 		};
 #else
@@ -101,7 +102,6 @@ int AdvectBMI_cpp()
 		// Use YAML file to initialize
 #endif
 		brm.Initialize(yaml_file);
-		std::cerr << "AdvectBMI_cpp after Initialize " << std::endl;
 		// InputVarNames
 		{
 			std::ostringstream oss;
@@ -350,7 +350,7 @@ int AdvectBMI_cpp()
 			}
 		}
 		// Clean up
-		//status = brm.MpiWorkerBreak();
+		status = brm.MpiWorkerBreak();
 		brm.Finalize();
 	}
 	catch (PhreeqcRMStop)

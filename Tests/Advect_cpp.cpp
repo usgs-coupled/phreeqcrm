@@ -369,7 +369,8 @@ int Advect_cpp()
 					int col = phreeqc_rm.GetSelectedOutputColumnCount();
 					status = phreeqc_rm.GetSelectedOutput(so);
 					// Print results
-					for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount() / 2; i++)
+					//for (int i = 0; i < phreeqc_rm.GetSelectedOutputRowCount() / 2; i++)
+					for (int i = 0; i < 1; i++)
 					{
 						std::cerr << "Cell number " << i << "\n";
 						std::cerr << "     Calculated Density: " << density[i] << "\n";

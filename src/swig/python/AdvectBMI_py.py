@@ -77,7 +77,7 @@ def AdvectBMI_py():
 	# Get initial temperatures
 	temperature = bmi.GetValue("Temperature")
 	# Get initial temperature
-	sat = bmi.GetValue("Saturation")
+	sat = bmi.GetValue("SaturationCalculated")
 	# Get initial porosity
 	por = bmi.GetValue("Porosity")
 	# Get initial temperature
@@ -89,7 +89,7 @@ def AdvectBMI_py():
 	#	c_dbl_vect[i] = c[i]
 	# Set density, pressure, and temperature (previously allocated)
 	density = [1.0] * nxyz
-	bmi.SetValue("Density", density)
+	bmi.SetValue("DensityUser", density)
 	pressure = [2.0] * nxyz
 	bmi.SetValue("Pressure", pressure)  
 	temperature = [20.0] * nxyz
@@ -104,9 +104,8 @@ def AdvectBMI_py():
 	#bc_conc = phreeqcrm.DoubleVector()
 	#phreeqc_rm.InitialPhreeqc2Concentrations(bc_conc, nbound, bc1, bc2, bc_f1)
 	#bc_conc = bmi.InitialPhreeqc2Concentrations(bc1, bc2, bc_f1)
-	out = bmi.InitialPhreeqc2Concentrations(bc1)
-	status = out[0]
-	bc_conc = list(out[1])
+	status = bmi.InitialPhreeqc2Concentrations(bc1)
+	bc_conc = list(status)
 	
 	#for i in range(nxyz*ncomps):
 	#	c_dbl_vect[i] = c[i]
@@ -138,7 +137,7 @@ def AdvectBMI_py():
 		bmi.SetValue("Concentrations", c)   # Transported concentrations
 		# Optionally, if values changed during transport
 		bmi.SetValue("Porosity", por)              
-		bmi.SetValue("Saturation", sat)            
+		bmi.SetValue("SaturationUser", sat)            
 		bmi.SetValue("Temperature", temperature) 
 		bmi.SetValue("Pressure", pressure)          
 		bmi.SetValue("TimeStep", time_step) 
@@ -149,7 +148,7 @@ def AdvectBMI_py():
 
 		# Get new data calculated by PhreeqcRM for transport
 		c = bmi.GetValue("Concentrations")
-		density = bmi.GetValue("Density")
+		density = bmi.GetValue("DensityCalculated")
 		volume = bmi.GetValue("SolutionVolume")   
 		# Print results at last time step
 		if (step == (nsteps - 1)):

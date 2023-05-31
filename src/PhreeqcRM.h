@@ -56,6 +56,7 @@ public:
 */
 #include "IrmResult.h"
 enum {
+	METHOD_CONSTRUCT,
 	METHOD_CREATEMAPPING,
 	METHOD_DUMPMODULE,
 	METHOD_FINDCOMPONENTS,
@@ -5602,7 +5603,7 @@ protected:
 	std::vector <int> forward_mapping_root;				    // mapping from nxyz cells to count_chem chemistry cells
 	std::vector <std::vector <int> > backward_mapping;	    // mapping from count_chem chemistry cells to nxyz cells
 	bool use_solution_density_volume;
-
+	bool worker_waiting;
 	// print flags
 	std::vector< bool > print_chemistry_on;	// print flag for chemistry output file
 	bool selected_output_on;				// create selected output
