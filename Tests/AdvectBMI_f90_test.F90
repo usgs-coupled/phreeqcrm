@@ -128,7 +128,6 @@
     if (mpi_myself > 0) then
         status = RM_SetMpiWorkerCallback(id, bmi_worker_tasks_f)
         status = RM_MpiWorker(id)
-        status = RM_Destroy(id)
         return
     endif
 #else
@@ -316,7 +315,7 @@
                 enddo
                 deallocate(selected_out)
             enddo     
-            			! Use GetValue to extract exchange composition and pH
+            ! Use GetValue to extract exchange composition and pH
 			! YAMLAddOutputVars was called in YAML
 			! to select additional OutputVarNames variables
 			status = bmif_get_value(id, "solution_ph", pH_vector)
@@ -334,8 +333,9 @@
     enddo 
     call BMI_testing(id)
     ! Clean up
-    status = RM_CloseFiles(id)
+#ifdef USE_MPI    
     status = RM_MpiWorkerBreak(id)
+#endif    
     status = bmif_finalize(id)
     ! Deallocate
     deallocate(por)

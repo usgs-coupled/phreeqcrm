@@ -63,7 +63,6 @@ int main(int argc, char* argv[])
 	mpi_tasks = 1;
 	mpi_myself = 0;
 #endif
-	std::cerr << mpi_myself << std::endl;
 	bool root = (mpi_myself == 0);
 	units_tester();
 	if (root) std::cerr << "Done units_tester.===================================" << std::endl;
@@ -81,7 +80,6 @@ int main(int argc, char* argv[])
 	TestAllMethods_cpp();
 	if (root) std::cerr << "Done TestAllMethods_cpp.==================================" << std::endl;
 #endif
-	if (root) std::cerr << "Done AdvectBMI_cpp.==================================" << std::endl;
 	SimpleAdvect_c();
 	if (root) std::cerr << "Done SimpleAdvect_c.====================================" << std::endl;
 	Advect_c();

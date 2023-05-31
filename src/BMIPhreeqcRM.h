@@ -78,7 +78,7 @@ public:
     </CODE>
     @endhtmlonly
     */
-    BMIPhreeqcRM(int ngrid, int nthreads);
+    BMIPhreeqcRM(int ngrid, MP_TYPE nthreads);
 
     virtual ~BMIPhreeqcRM();
 

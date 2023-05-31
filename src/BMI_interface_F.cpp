@@ -57,7 +57,15 @@ RM_BMI_Create(int* nxyz, int* nthreads)
 	return BMIPhreeqcRM::CreateBMIModule(*nxyz, *nthreads);
 }
 #endif
-
+int
+RMF_BMI_Destroy(int* id)
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	return BMIPhreeqcRM::DestroyBMIModule(*id);
+}
 IRM_RESULT        RMF_BMI_AddOutputVars(int* id, char* option_in, char* def_in)
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(*id);

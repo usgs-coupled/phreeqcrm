@@ -369,7 +369,8 @@ subroutine Advect_f90()  BIND(C, NAME='Advect_f90')
            allocate(selected_out(nxyz,col))
            status = RM_GetSelectedOutput(id, selected_out)
            ! Print results
-           do i = 1, RM_GetSelectedOutputRowCount(id)/2
+           !do i = 1, RM_GetSelectedOutputRowCount(id)/2
+           do i = 1, 1
               write(*,*) "Cell number ", i
               write(*,*) "     Calculated Density: ", density(i)
               write(*,*) "     Volume:             ", volume(i)

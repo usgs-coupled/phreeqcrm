@@ -125,7 +125,7 @@ BMIPhreeqcRM::BMIPhreeqcRM()
 	this->language = "Py";
 #endif
 }
-BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads)
+BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads)
 : PhreeqcRM(nxyz, nthreads, nullptr, true) 
 , var_man{ nullptr }
 {
@@ -193,21 +193,12 @@ void BMIPhreeqcRM::Initialize(std::string config_file)
 		if (found_threads && found_nxyz) break;
 	}
 
-	//if (yaml["SetGridCellCount"].IsDefined())
-	//{
-	//	this->initializer.nxyz_arg = yaml["SetGridCellCount"].as<int>();
-	//}
-	//if (yaml["ThreadCount"].IsDefined())
-	//{
-	//	this->initializer.data_for_parallel_processing = yaml["ThreadCount"].as<int>();
-	//}
 #if defined(WITH_PYBIND11)
 	}
 #endif
 #endif
 
 	this->Construct(this->initializer);
-
 #ifdef USE_YAML
 #if defined(WITH_PYBIND11)
 	if (config_file.size() != 0)
@@ -255,6 +246,9 @@ void BMIPhreeqcRM::UpdateUntil(double time)
 }
 void BMIPhreeqcRM::Finalize()
 {
+#ifdef USE_MPI
+//	this->MpiWorkerBreak();
+#endif
 	this->CloseFiles();
 #if defined(WITH_PYBIND11)
 	delete this->var_man;
