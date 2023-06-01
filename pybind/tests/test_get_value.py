@@ -22,6 +22,36 @@ def test_get_value_copy():
     assert z0 is not z1
     assert_array_almost_equal(z0, z1)
 
+def test_get_value_copy_int_scalar():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    dest0 = np.empty((1,), dtype=int)
+    dest1 = np.empty((1,), dtype=int)
+
+    z0 = model.get_value("ComponentCount", dest0)
+    z1 = model.get_value("ComponentCount", dest1)
+
+    assert z0 is not z1
+    assert z0 is dest0
+    assert z1 is dest1
+    assert_array_equal(z0, z1)
+
+def test_get_value_copy_float_scalar():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    dest0 = np.empty((1,), dtype=float)
+    dest1 = np.empty((1,), dtype=float)
+
+    z0 = model.get_value("Time", dest0)
+    z1 = model.get_value("Time", dest1)
+
+    assert z0 is not z1
+    assert z0 is dest0
+    assert z1 is dest1
+    assert_array_almost_equal(z0, z1)
+
 def test_get_value_copy_str():
     model = bmi_phreeqcrm()
     model.initialize("AdvectBMI_py.yaml")

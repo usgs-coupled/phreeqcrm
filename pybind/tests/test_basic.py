@@ -4,7 +4,7 @@ import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_array_less
 import pytest
 
-from phreeqcrm import bmi_phreeqcrm
+from phreeqcrm import bmi_phreeqcrm, IRM_RESULT
 
 def test_main():
     # for debugging
@@ -303,3 +303,92 @@ def test_get_value_ndarray_str():
     assert(comps[5] == 'K')
     assert(comps[6] == 'N')
     assert(comps[7] == 'Na')
+
+def test_SetComponentH2O():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    status = model.SetComponentH2O(True)
+    assert(status == IRM_RESULT.IRM_OK)
+
+def test_get_value_FilePrefix():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    # FilePrefix doesn't support get_value_ptr
+    expected = "AdvectBMI_py"
+    spaces = " " * len(expected)
+    fileprefix = np.array([spaces])
+    fileprefix = model.get_value("FilePrefix", fileprefix)
+
+    assert(len(fileprefix[0]) == 12)
+    assert(fileprefix[0] == expected)
+
+def test_get_value_FilePrefix_fail():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    # FilePrefix doesn't support get_value_ptr
+    spaces = " " * 4
+    fileprefix = np.array([spaces])
+
+    with pytest.raises(RuntimeError, match="buffer too small"):
+        fileprefix = model.get_value("FilePrefix", fileprefix)
+
+def test_get_value_FilePrefix_big_buffer():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    # FilePrefix doesn't support get_value_ptr
+    expected = "AdvectBMI_py"
+    spaces = " " * 80
+    ##f = np.empty((1,), 80, dtype=char)
+    fileprefix = np.array([spaces])
+    fileprefix = model.get_value("FilePrefix", fileprefix)
+
+    assert(fileprefix[0] == expected)
+
+
+def test_get_value_ComponentCount():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    # ComponentCount supports get_value_ptr @todo
+    ##component_count = np.full((1,), 0)
+    component_count = np.empty((1,), dtype=int)
+    component_count = model.get_value("ComponentCount", component_count)
+
+    assert(component_count[0] == 8)
+
+def test_get_value_ptr_ComponentCount():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    # ComponentCount supports get_value_ptr @todo
+    ##component_count = np.full((1,), 0)
+    component_count = np.empty((1,), dtype=int)
+    component_count = model.get_value_ptr("ComponentCount")
+
+    assert(component_count[0] == 8)
+
+def test_get_value_ptr_failure():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    # "Components" is currently excluded
+    should_raise = ("CurrentSelectedOutputUserNumber", "DensityUser", "ErrorString", "FilePrefix", "NthSelectedOutput", "SaturationUser", "SelectedOutput", "SelectedOutputColumnCount", "SelectedOutputCount", "SelectedOutputHeadings", "SelectedOutputRowCount")
+
+    for item in should_raise:
+        print(f"testing {item}")
+        with pytest.raises(RuntimeError, match="This variable does not support get_value_ptr"):
+            arr = model.get_value_ptr(item)
+
+def test_get_value_Time():
+    model = bmi_phreeqcrm()
+    model.initialize("AdvectBMI_py.yaml")
+
+    # Time supports get_value_ptr @todo
+    time = np.empty((1,), dtype=float)
+    time = model.get_value("Time", time)
+
+    assert(time[0] == 0.0)
