@@ -405,7 +405,8 @@ void Advect_c()
 				selected_out = (double*)malloc((size_t)(col * nxyz * sizeof(double)));
 				status = RM_GetSelectedOutput(id, selected_out);
 				// Print results
-				for (i = 0; i < RM_GetSelectedOutputRowCount(id) / 2; i++)
+				//for (i = 0; i < RM_GetSelectedOutputRowCount(id) / 2; i++)
+				for (i = 0; i < 1; i++)
 				{
 					fprintf(stderr, "Cell number %d\n", i);
 					fprintf(stderr, "     Density: %f\n", density[i]);

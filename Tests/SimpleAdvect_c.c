@@ -50,6 +50,7 @@ void SimpleAdvect_c()
 #ifdef USE_MPI
 	// MPI
 	comm = MPI_COMM_WORLD;
+	fprintf(stderr, "SimpleAdvect_c begin ");
 	id = RM_Create(nxyz, comm);
 	if (MPI_Comm_rank(comm, &mpi_myself) != MPI_SUCCESS)
 	{

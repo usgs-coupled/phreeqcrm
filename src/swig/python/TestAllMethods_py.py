@@ -369,11 +369,21 @@ def testallmethods_py():
 	x=bmi.SetGasPhaseVolume(v)
 	print(f"SetGasPhaseVolume {type(x)}, {x}")
 	#---------
-	x = bmi.GetIthConcentration(0)
-	print(f"GetIthConcentration {type(x)}, {x[0]}")
+	for i in range(bmi.GetComponentCount()):
+		v = bmi.GetIthConcentration(i)
+		print(f"{type(v)}")
+		#-------
+		x = bmi.SetIthConcentration(i, v)
+	print(f"GetIthConcentration ")
+	print(f"SetIthConcentration ")
 	#-------
-	x = bmi.GetIthSpeciesConcentration(0)
-	print(f"GetIthSpeciesConcentration {type(x)}, {x[0]}")
+	for i in range(bmi.GetSpeciesCount()):
+		v = bmi.GetIthSpeciesConcentration(i)
+		print(f"{type(v)}")
+		#-------
+		x = bmi.SetIthSpeciesConcentration(i, v)
+	print(f"GetIthSpeciesConcentration ")
+	print(f"SetIthSpeciesConcentration ")
 	#-------
 	x=bmi.GetPorosity()
 	x = bmi.GetValue("Porosity")

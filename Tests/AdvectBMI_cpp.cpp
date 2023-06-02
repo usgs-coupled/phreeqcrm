@@ -93,13 +93,14 @@ int AdvectBMI_cpp()
 		if (mpi_myself > 0)
 		{
 			brm.MpiWorker();
+			brm.Finalize();
 			return EXIT_SUCCESS;
 		};
 #else
 		// OpenMP
 		BMIPhreeqcRM brm;
-#endif
 		// Use YAML file to initialize
+#endif
 		brm.Initialize(yaml_file);
 		// InputVarNames
 		{
@@ -349,6 +350,7 @@ int AdvectBMI_cpp()
 			}
 		}
 		// Clean up
+		status = brm.MpiWorkerBreak();
 		brm.Finalize();
 	}
 	catch (PhreeqcRMStop)
@@ -369,6 +371,7 @@ int AdvectBMI_cpp()
 #endif
 		return IRM_FAIL;
 	}
+
 	return EXIT_SUCCESS;
 }
 

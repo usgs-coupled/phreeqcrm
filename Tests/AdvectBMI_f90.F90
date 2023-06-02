@@ -88,6 +88,7 @@
     yaml_file = "AdvectBMI_f90.yaml"
 #ifdef USE_MPI
     ! MPI
+    nxyz = GetGridCellCountYAML(yaml_file)
     id = bmif_create(nxyz, MPI_COMM_WORLD)
     call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
     if (status .ne. MPI_SUCCESS) then
@@ -95,7 +96,7 @@
     endif
     if (mpi_myself > 0) then
         status = RM_MpiWorker(id)
-        status = RM_Destroy(id)
+        status = bmif_finalize(id)
         return
     endif
 #else
@@ -289,7 +290,7 @@
         endif
     enddo 
     ! Clean up
-    status = RM_CloseFiles(id)
+    !status = RM_CloseFiles(id)
     status = RM_MpiWorkerBreak(id)
     status = bmif_finalize(id)
     ! Deallocate
