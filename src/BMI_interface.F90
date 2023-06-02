@@ -291,7 +291,7 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
-#if defined(USE_YAML)
+#ifdef USE_YAML
     INTEGER FUNCTION bmif_initialize(id, config_file)
     USE ISO_C_BINDING
     IMPLICIT NONE

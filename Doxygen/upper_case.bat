@@ -673,6 +673,10 @@
      @del sed*
 )
 @FOR %%f IN (.\html\*) DO @(
+@sed -i "s/\byamladdoutputvars\b/YAMLAddOutputVars/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*) DO @(
 @sed -i "s/\byamlclear\b/YAMLClear/g" %%f
      @del sed*
 )
@@ -918,6 +922,10 @@
 )
 @FOR %%f IN (.\html\*) DO @(
 @sed -i "s/\byamlstatedelete\b/YAMLStateDelete/g" %%f
+     @del sed*
+)
+@FOR %%f IN (.\html\*) DO @(
+@sed -i "s/\byamlthreadcount\b/YAMLThreadCount/g" %%f
      @del sed*
 )
 @FOR %%f IN (.\html\*) DO @(

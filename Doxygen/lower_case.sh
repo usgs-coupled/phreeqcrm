@@ -169,6 +169,7 @@ sed -i -e "s/RM_InitialKinetics2Module/rm_initialkinetics2module/g" $RM_INTERFAC
 sed -i -e "s/DestroyYAMLPhreeqcRM/destroyyamlphreeqcrm/g" $YAML_INTERFACE_F90
 sed -i -e "s/CreateYAMLPhreeqcRM/createyamlphreeqcrm/g" $YAML_INTERFACE_F90
 sed -i -e "s/WriteYAMLDoc/writeyamldoc/g" $YAML_INTERFACE_F90
+sed -i -e "s/YAMLAddOutputVars/yamladdoutputvars/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLClear/yamlclear/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLCloseFiles/yamlclosefiles/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLCreateMapping/yamlcreatemapping/g" $YAML_INTERFACE_F90
@@ -231,5 +232,6 @@ sed -i -e "s/YAMLSpeciesConcentrations2Module/yamlspeciesconcentrations2module/g
 sed -i -e "s/YAMLStateSave/yamlstatesave/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLStateApply/yamlstateapply/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLStateDelete/yamlstatedelete/g" $YAML_INTERFACE_F90
+sed -i -e "s/YAMLThreadCount/yamlthreadcount/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLUseSolutionDensityVolume/yamlusesolutiondensityvolume/g" $YAML_INTERFACE_F90
 sed -i -e "s/YAMLWarningMessage/yamlwarningmessage/g" $YAML_INTERFACE_F90
