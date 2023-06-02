@@ -119,6 +119,134 @@ enum {
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
 
+#define INIT_STATIC_INDEXER(T) \
+    std::mutex StaticIndexer<T>::_InstancesLock; \
+    std::map<size_t, T*> StaticIndexer<T>::_Instances; \
+    size_t StaticIndexer<T>::_InstancesIndex = 0
+
+template<typename T>
+class StaticIndexer
+{
+public:
+	StaticIndexer(T* self)
+	{
+		const std::lock_guard<std::mutex> lock(_InstancesLock);
+		this->_Index = _InstancesIndex++;
+		_Instances[this->_Index] = self;
+	}
+
+	~StaticIndexer()
+	{
+		const std::lock_guard<std::mutex> lock(_InstancesLock);
+		auto search = _Instances.find(this->_Index);
+		assert(search != _Instances.end());
+		if (search != _Instances.end())
+		{
+			_Instances.erase(search);
+		}
+	}
+
+	static T* GetInstance(int id)
+	{
+		const std::lock_guard<std::mutex> lock(_InstancesLock);
+		auto search = _Instances.find(size_t(id));
+		if (search != _Instances.end())
+		{
+			return search->second;
+		}
+		return nullptr;
+	}
+
+	template<typename Derived>
+	static Derived* GetInstance(int id)
+	{
+		const std::lock_guard<std::mutex> lock(_InstancesLock);
+		auto search = _Instances.find(size_t(id));
+		if (search != _Instances.end())
+		{
+			if (Derived* derived = dynamic_cast<Derived*>(search->second))
+			{
+				return derived;
+			}
+		}
+		return nullptr;
+	}
+
+	static IRM_RESULT Destroy(int id)
+	{
+		auto search = _Instances.find(size_t(id));
+		if (search != _Instances.end())
+		{
+			assert(dynamic_cast<T*>(search->second));
+			delete search->second;
+			return IRM_OK;
+		}
+		return IRM_BADINSTANCE;
+	}
+
+	template<typename Derived>
+	static IRM_RESULT Destroy(int id)
+	{
+		auto search = _Instances.find(size_t(id));
+		if (search != _Instances.end())
+		{
+			assert(dynamic_cast<T*>(search->second));
+			if (Derived* derived = dynamic_cast<Derived*>(search->second))
+			{
+				delete derived;
+				return IRM_OK;
+			}
+		}
+		return IRM_BADINSTANCE;
+	}
+
+	static void DestroyAll()
+	{
+		std::list<T*> items;
+		for (auto pair : _Instances)
+		{
+			assert(dynamic_cast<T*>(pair.second));
+			items.push_back(pair.second);
+		}
+		for (auto item : items)
+		{
+			delete item;
+		}
+	}
+
+	template<typename Derived>
+	static void DestroyAll()
+	{
+		const std::lock_guard<std::mutex> lock(_InstancesLock);
+		std::list<Derived*> derived_items;
+		for (auto pair : _Instances)
+		{
+			assert(dynamic_cast<T*>(pair.second));
+			if (Derived* derived = dynamic_cast<Derived*>(pair.second))
+			{
+				derived_items.push_back(derived);
+			}
+		}
+		for (auto item : derived_items)
+		{
+			delete item;
+		}
+	}
+
+	int GetIndex()
+	{
+		return (int)this->_Index;
+	}
+
+private:
+	size_t _Index;
+
+	static std::mutex           _InstancesLock;
+	static std::map<size_t, T*> _Instances;
+	static size_t               _InstancesIndex;
+};
+
+
 /**
  * @class PhreeqcRM
  *
@@ -126,13 +254,12 @@ enum {
  */
 
 
-class IRM_DLL_EXPORT PhreeqcRM
+class IRM_DLL_EXPORT PhreeqcRM : public StaticIndexer<PhreeqcRM>
 {
 public:
 	static void             CleanupReactionModuleInstances(void);
 	static int              CreateReactionModule(int nxyz, MP_TYPE nthreads);
 	static IRM_RESULT       DestroyReactionModule(int n);
-	static PhreeqcRM      * GetInstance(int n);
 private:
 	virtual void AddOutputVars(std::string option, std::string def);
 	virtual void ClearBMISelectedOutput();
@@ -5655,7 +5782,6 @@ protected:
 	std::vector <std::string> SolidSolutionNamesList;
 	std::vector <std::string> SINamesList;
 	std::set <std::string> ElementRedoxSet;
-	//class VarManager *phreeqcrm_var_man;
 
 protected:
 	static const int default_nxyz = 10;
@@ -5678,10 +5804,6 @@ protected:
 /** @endcond */
 private:
 	//friend class RM_interface;
-	static std::mutex InstancesLock;
-	static std::map<size_t, PhreeqcRM*> Instances;
-	static size_t InstancesIndex;
-	size_t Index;
 	friend class BMIPhreeqcRM;
 	friend class VarManager;
 

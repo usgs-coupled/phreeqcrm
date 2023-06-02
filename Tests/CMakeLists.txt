@@ -183,7 +183,7 @@ add_test(TestBMIdtor TestBMIdtor)
 #-----------------------------------------------------------------------------#
 
 # test compile and run
-add_test(TestCompileAndRun TestRM)
+add_test(TestRM TestRM)
 
 set_property(TARGET TestRM APPEND
   PROPERTY ADDITIONAL_CLEAN_FILES

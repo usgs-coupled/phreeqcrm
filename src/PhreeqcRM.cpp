@@ -62,8 +62,10 @@
 
 #include "Phreeqc.h"
 #include "IPhreeqcPhast.h"
-std::map<size_t, PhreeqcRM*> PhreeqcRM::Instances;
-size_t PhreeqcRM::InstancesIndex = 0;
+
+// static members
+INIT_STATIC_INDEXER(PhreeqcRM);
+
 
 //// static PhreeqcRM methods
 /* ---------------------------------------------------------------------- */
@@ -71,16 +73,7 @@ void
 PhreeqcRM::CleanupReactionModuleInstances(void)
 /* ---------------------------------------------------------------------- */
 {
-	std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.begin();
-	std::vector<PhreeqcRM*> rm_list;
-	for ( ; it != PhreeqcRM::Instances.end(); it++)
-	{
-		rm_list.push_back(it->second);
-	}
-	for (size_t i = 0; i < rm_list.size(); i++)
-	{
-		delete rm_list[i];
-	}
+	PhreeqcRM::DestroyAll();
 }
 /* ---------------------------------------------------------------------- */
 int
@@ -95,9 +88,10 @@ PhreeqcRM::CreateReactionModule(int nxyz, MP_TYPE nthreads)
 		PhreeqcRM * Reaction_module_ptr = new PhreeqcRM(nxyz, nthreads);
 		if (Reaction_module_ptr)
 		{
-			n = (int) Reaction_module_ptr->GetWorkers()[0]->Get_Index();
-			PhreeqcRM::Instances[n] = Reaction_module_ptr;
-			return n;
+			// n = (int) Reaction_module_ptr->GetWorkers()[0]->Get_Index();
+			// PhreeqcRM::Instances[n] = Reaction_module_ptr;
+			// return n;
+			return Reaction_module_ptr->GetIndex();
 		}
 	}
 	catch(...)
@@ -111,14 +105,7 @@ IRM_RESULT
 PhreeqcRM::DestroyReactionModule(int id)
 /* ---------------------------------------------------------------------- */
 {
-	IRM_RESULT retval = IRM_BADINSTANCE;
-	std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.find(size_t(id));
-	if (it != PhreeqcRM::Instances.end())
-	{
-		delete (*it).second;
-		retval = IRM_OK;
-	}
-	return retval;
+	return PhreeqcRM::Destroy(id);
 }
 /* ---------------------------------------------------------------------- */
 void
@@ -153,30 +140,18 @@ PhreeqcRM::GetGridCellCountYAML(const char* YAML_file)
 	return 0;
 }
 #endif
-/* ---------------------------------------------------------------------- */
-PhreeqcRM*
-PhreeqcRM::GetInstance(int id)
-/* ---------------------------------------------------------------------- */
-{
-	std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.find(size_t(id));
-	if (it != PhreeqcRM::Instances.end())
-	{
-		return (*it).second;
-	}
-	return 0;
-}
 /*
 //
 // end static PhreeqcRM methods
 //
 */
-std::mutex PhreeqcRM::InstancesLock;
 
 PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io *io/*=NULL*/, bool delay_construct/*=false*/)
 	//
 	// constructor
 	//
-: phreeqc_bin{ nullptr }
+: StaticIndexer{ this }
+, phreeqc_bin{ nullptr }
 , phreeqcrm_io{ io }
 , delete_phreeqcrm_io{ false }
 , component_h2o{ true }
@@ -191,11 +166,6 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 , need_error_check{ true }
 , initializer{ nxyz_arg, data_for_parallel_processing, io }
 {
-	InstancesLock.lock();
-	this->Index = PhreeqcRM::InstancesIndex++;
-	std::map<size_t, PhreeqcRM*>::value_type instance(this->Index, this);
-	PhreeqcRM::Instances.insert(instance);
-	InstancesLock.unlock();
 #ifdef USE_MPI
 	phreeqcrm_comm = data_for_parallel_processing;
 	if (MPI_Comm_size(phreeqcrm_comm, &this->mpi_tasks) != MPI_SUCCESS)
@@ -335,8 +305,8 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 	}
 	if (this->GetWorkers()[0])
 	{
-		std::map<size_t, PhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
-		PhreeqcRM::Instances.insert(instance);
+		//std::map<size_t, PhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
+		//PhreeqcRM::Instances.insert(instance);
 	}
 	else
 	{
@@ -413,13 +383,6 @@ PhreeqcRM::~PhreeqcRM(void)
 	for (auto worker : this->GetWorkers())
 	{
 		delete worker;
-	}
-
-	std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.find(this->Index);
-	assert(it != PhreeqcRM::Instances.end());
-	if (it != PhreeqcRM::Instances.end())
-	{
-		PhreeqcRM::Instances.erase(it);
 	}
 
 	delete this->phreeqc_bin;
