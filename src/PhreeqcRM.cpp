@@ -63,8 +63,6 @@
 #include "Phreeqc.h"
 #include "IPhreeqcPhast.h"
 
-// static members
-INIT_STATIC_INDEXER(PhreeqcRM);
 
 
 //// static PhreeqcRM methods

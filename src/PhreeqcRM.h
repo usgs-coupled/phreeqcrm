@@ -119,10 +119,6 @@ enum {
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
 
-#define INIT_STATIC_INDEXER(T) \
-    std::mutex StaticIndexer<T>::_InstancesLock; \
-    std::map<size_t, T*> StaticIndexer<T>::_Instances; \
-    size_t StaticIndexer<T>::_InstancesIndex = 0
 
 template<typename T>
 class StaticIndexer
@@ -245,6 +241,18 @@ private:
 	static std::map<size_t, T*> _Instances;
 	static size_t               _InstancesIndex;
 };
+
+// static members of StaticIndexer
+
+template<typename T>
+std::mutex StaticIndexer<T>::_InstancesLock;
+
+template<typename T>
+std::map<size_t, T*> StaticIndexer<T>::_Instances;
+
+template<typename T>
+size_t StaticIndexer<T>::_InstancesIndex = 0;
+
 
 
 /**
