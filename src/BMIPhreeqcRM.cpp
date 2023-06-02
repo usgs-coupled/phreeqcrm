@@ -18,32 +18,20 @@
 #include "PhreeqcRM.h"
 #include "VarManager.h"
 
-std::map<size_t, BMIPhreeqcRM*> BMIPhreeqcRM::Instances;
-size_t BMIPhreeqcRM::InstancesIndex = 0;
-
 //// static BMIPhreeqcRM methods
 /* ---------------------------------------------------------------------- */
 void
 BMIPhreeqcRM::CleanupBMIModuleInstances(void)
 /* ---------------------------------------------------------------------- */
 {
-	std::map<size_t, BMIPhreeqcRM*>::iterator it = BMIPhreeqcRM::Instances.begin();
-	std::vector<BMIPhreeqcRM*> bmirm_list;
-	for (; it != BMIPhreeqcRM::Instances.end(); it++)
-	{
-		bmirm_list.push_back(it->second);
-	}
-	for (size_t i = 0; i < bmirm_list.size(); i++)
-	{
-		delete bmirm_list[i];
-	}
+	PhreeqcRM::DestroyAll<BMIPhreeqcRM>();
 }
 /* ---------------------------------------------------------------------- */
 int
 BMIPhreeqcRM::CreateBMIModule()
 /* ---------------------------------------------------------------------- */
 {
-	//_CrtSetDbgbool ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	//_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	//_crtBreakAlloc = 5144;
 	int n = IRM_OUTOFMEMORY;
 	try
@@ -51,10 +39,8 @@ BMIPhreeqcRM::CreateBMIModule()
 		BMIPhreeqcRM* bmirm_ptr = new BMIPhreeqcRM();
 		if (bmirm_ptr)
 		{
-			n = (int)bmirm_ptr->Index;
-			BMIPhreeqcRM::Instances[n] = bmirm_ptr;
 			bmirm_ptr->language = "F90";
-			return n;
+			return bmirm_ptr->GetIndex();
 		}
 	}
 	catch (...)
@@ -68,7 +54,7 @@ int
 BMIPhreeqcRM::CreateBMIModule(int nxyz, MP_TYPE nthreads)
 /* ---------------------------------------------------------------------- */
 {
-	//_CrtSetDbgbool ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	//_crtBreakAlloc = 5144;
 	int n = IRM_OUTOFMEMORY;
 	try
@@ -76,10 +62,8 @@ BMIPhreeqcRM::CreateBMIModule(int nxyz, MP_TYPE nthreads)
 		BMIPhreeqcRM* bmirm_ptr = new BMIPhreeqcRM(nxyz, nthreads);
 		if (bmirm_ptr)
 		{
-			n = (int)bmirm_ptr->Index;
-			BMIPhreeqcRM::Instances[n] = bmirm_ptr;
 			bmirm_ptr->language = "F90";
-			return n;
+			return bmirm_ptr->GetIndex();
 		}
 	}
 	catch (...)
@@ -93,26 +77,14 @@ IRM_RESULT
 BMIPhreeqcRM::DestroyBMIModule(int id)
 /* ---------------------------------------------------------------------- */
 {
-	IRM_RESULT retval = IRM_BADINSTANCE;
-	std::map<size_t, BMIPhreeqcRM*>::iterator it = BMIPhreeqcRM::Instances.find(size_t(id));
-	if (it != BMIPhreeqcRM::Instances.end())
-	{
-		delete (*it).second;
-		retval = IRM_OK;
-	}
-	return retval;
+	return PhreeqcRM::Destroy<BMIPhreeqcRM>(id);
 }
 /* ---------------------------------------------------------------------- */
 BMIPhreeqcRM*
 BMIPhreeqcRM::GetInstance(int id)
 /* ---------------------------------------------------------------------- */
 {
-	std::map<size_t, BMIPhreeqcRM*>::iterator it = BMIPhreeqcRM::Instances.find(size_t(id));
-	if (it != BMIPhreeqcRM::Instances.end())
-	{
-		return (*it).second;
-	}
-	return 0;
+	return PhreeqcRM::GetInstance<BMIPhreeqcRM>(id);
 }
 // Constructor
 BMIPhreeqcRM::BMIPhreeqcRM()
@@ -152,11 +124,7 @@ void BMIPhreeqcRM::ClearBMISelectedOutput(void)
 void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 {
 	this->PhreeqcRM::Construct(i);
-	//std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
-	std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->Index, this);
-	BMIPhreeqcRM::Instances.insert(instance);
 	this->var_man = new VarManager((PhreeqcRM*)this);
-	//this->language = "cpp";
 #if defined(WITH_PYBIND11)
 	this->_initialized = true;
 #endif
