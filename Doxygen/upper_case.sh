@@ -504,7 +504,9 @@ done
 for f in html/*; do
 	sed -i "s/writeyamldoc/WriteYAMLDoc/g"  $f
 done
-
+for f in html/*; do
+	sed -i "s/yamladdoutputvars/YAMLAddOutputVars/g" $f
+done
 for f in html/*; do
 	sed -i "s/yamlclear/YAMLClear/g" $f
 done
@@ -690,6 +692,9 @@ for f in html/*; do
 done
 for f in html/*; do
 	sed -i "s/yamlstatedelete/YAMLStateDelete/g" $f
+done
+for f in html/*; do
+	sed -i "s/yamlthreadcount/YAMLThreadCount/g" $f
 done
 for f in html/*; do
 	sed -i "s/yamlusesolutiondensityvolume/YAMLUseSolutionDensityVolume/g" $f
