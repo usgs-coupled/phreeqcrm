@@ -1229,8 +1229,6 @@ protected:
 
 private:
     //friend class RM_interface;
-    static std::map<size_t, BMIPhreeqcRM*> Instances;
-    static size_t InstancesIndex;
     VarManager* var_man;
 
     void ClearBMISelectedOutput() override;
