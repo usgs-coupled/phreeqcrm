@@ -561,7 +561,9 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 			bool tf = *this->var_man->VarExchange.GetBVarPtr();
 			int tf_int = 1;
 			if (!tf) tf_int = 0;
-			memcpy(dest, &tf, sizeof(int));
+			bool tf1 = this->var_man->VarExchange.GetBVar();
+			assert(tf == tf1);		
+			memcpy(dest, &tf_int, sizeof(int));
 			return;
 		}
 		if (this->var_man->VarExchange.GetCType() == "int" && dim == 1)

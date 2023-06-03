@@ -1423,6 +1423,7 @@ void VarManager::SelectedOutputOn_Var()
 	case VarManager::VAR_TASKS::GetVar:
 	{
 		bool v = rm_ptr->GetSelectedOutputOn();
+		this->VarExchange.SetBVar(v);
 		bv.SetBVar(v);
 		break;
 	}
