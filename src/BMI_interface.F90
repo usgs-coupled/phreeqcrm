@@ -1298,20 +1298,22 @@
         IMPLICIT NONE
         INTEGER(KIND=C_INT), INTENT(in) :: id
         CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        LOGICAL(KIND=C_INT), INTENT(inout) :: dest
+        INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    LOGICAL(KIND=4), INTENT(inout) :: dest
+    LOGICAL, INTENT(inout) :: dest
     character(100) :: vartype
-    integer :: status
+    integer :: status, dest_int
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "logical") then
         write(*,*) vartype, " logical"
         stop "Variable type error."
     endif
-    bmif_get_value_logical = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
+    bmif_get_value_logical = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest_int)
+    dest = .true.
+    if (dest_int .eq. 0) dest = .false.
     return
     END FUNCTION bmif_get_value_logical
 
@@ -1845,19 +1847,21 @@
         IMPLICIT NONE
         INTEGER(KIND=C_INT), INTENT(in) :: id
         CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
-        LOGICAL(KIND=C_INT), INTENT(in) :: src
+        INTEGER(KIND=C_INT), INTENT(in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    LOGICAL(kind=4), INTENT(in) :: src
+    LOGICAL, INTENT(in) :: src
     character(100) :: vartype
-    integer :: bytes, nbytes, status, dim
+    integer :: bytes, nbytes, status, dim, src_int
     status = bmif_get_var_type(id, var, vartype)
     if (vartype .ne. "logical") then
         stop "Variable type error."
     endif
-    bmif_set_value_b = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
+    src_int = 1
+    if(.not. src) src_int = 0
+    bmif_set_value_b = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src_int)
     return
     END FUNCTION bmif_set_value_b
 
