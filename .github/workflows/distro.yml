@@ -253,12 +253,12 @@ jobs:
     - name: Test install (configure) (Non-Windows)
       if: runner.os != 'Windows'
       working-directory: ${{ github.workspace }}/Tests
-      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON
+      run: cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
 
     - name: Test install (configure) (Windows)
       if: runner.os == 'Windows'
       working-directory: ${{ github.workspace }}/Tests
-      run: cmake --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON
+      run: cmake -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
 
     - name: Test install (build)
       working-directory: ${{ github.workspace }}/Tests
