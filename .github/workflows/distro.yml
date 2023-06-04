@@ -164,24 +164,31 @@ jobs:
       with:
         name: tarball
 
-    - name: Install ninja yaml-cpp valgrind (Linux)
-      if: runner.os == 'Linux'
-      #run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
-      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
-
-    - name: Install ninja yaml-cpp (macOS)
-      if: runner.os == 'macOS'
-      run: brew install ninja yaml-cpp
-
-    - name: Install yaml-cpp (Windows)
-      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: vcpkg install yaml-cpp:x64-windows
+    - name: Install GNU Fortran (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      uses: awvwgk/setup-fortran@main
+      with:
+        compiler: gcc
+        version: 12
 
     - name: Install oneAPI Fortran (Windows)
       if: ${{ runner.os == 'Windows' }}
       uses: i-RIC/install-intelfortran-action@v1
       with:
-        cache: true      
+        cache: true
+
+    - name: Install ninja yaml-cpp valgrind (Linux)
+      if: ${{ runner.os == 'Linux' }}
+      #run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
+      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+
+    - name: Install ninja yaml-cpp (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      run: brew install ninja yaml-cpp
+
+    - name: Install yaml-cpp (Windows)
+      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: vcpkg install yaml-cpp:x64-windows
 
     # - name: Set up Python ${{ matrix.python-version }}
     - name: Set up Python 3.8
