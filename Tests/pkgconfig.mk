@@ -4,6 +4,7 @@ LDLIBS:= $(shell $(PKGCONFIG) --libs phreeqcrm)
 
 objects =\
 	AdvectBMI_cpp.o\
+	AdvectBMI_cpp_test.o\
 	Advect_c.o\
 	Advect_cpp.o\
 	Gas_c.o\
@@ -13,7 +14,9 @@ objects =\
 	SimpleAdvect_cpp.o\
 	Species_c.o\
 	Species_cpp.o\
-	WriteYAMLFile_cpp.o
+	TestAllMethods_cpp.o\
+	WriteYAMLFile_cpp.o\
+	WriteYAMLFile_cpp_test.o
 
 cleanfiles =\
 	Advect_c_utility.txt\
