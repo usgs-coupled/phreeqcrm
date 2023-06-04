@@ -28,8 +28,6 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::GridCellCount_Var, "GridCellCount");
 	this->VariantMap[RMVARS::NthSelectedOutput] =
 		BMIVariant(&VarManager::NthSelectedOutput_Var, "NthSelectedOutput");
-	this->VariantMap[RMVARS::NthSelectedOutput] =
-		BMIVariant(&VarManager::NthSelectedOutput_Var, "NthSelectedOutput");
 	this->VariantMap[RMVARS::Porosity] =
 		BMIVariant(&VarManager::Porosity_Var, "Porosity");
 	this->VariantMap[RMVARS::Pressure] =
@@ -410,6 +408,9 @@ void VarManager::DensityUser_Var()
 		//this->PointerSet.insert(RMVARS::DensityUser);
 		//this->UpdateSet.insert(RMVARS::DensityUser);
 		//break;
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value_ptr.");
+#endif
 		assert(false);
 		break;
 	}
@@ -460,7 +461,13 @@ void VarManager::ErrorString_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("error", false, true, false, Nbytes, Itemsize);
+#if defined(WITH_PYBIND11)
+		std::ostringstream oss;
+		oss << "<U" << Itemsize;		// need null counted?
+		bv.SetTypes("std::string", "character(len=:),allocatable,dimension(:)", oss.str());
+#else
 		bv.SetTypes("std::string", "character", "str");
+#endif
 		this->VarExchange.GetStringRef() = rm_ptr->GetErrorString(); 
 		bv.GetStringRef() = rm_ptr->GetErrorString();
 		bv.SetInitialized(true);
@@ -469,6 +476,9 @@ void VarManager::ErrorString_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value_ptr.");
+#endif
 		assert(false);
 		break;
 	}
@@ -502,7 +512,13 @@ void VarManager::FilePrefix_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
+#if defined(WITH_PYBIND11)
+		std::ostringstream oss;
+		oss << "<U" << Itemsize;		// need null counted?
+		bv.SetTypes("std::string", "character(len=:),allocatable,dimension(:)", oss.str());
+#else
 		bv.SetTypes("std::string", "character", "str");
+#endif
 		//this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
 		bv.GetStringRef() = rm_ptr->GetFilePrefix();
 		//bv.SetInitialized(true);
@@ -511,6 +527,9 @@ void VarManager::FilePrefix_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value_ptr.");
+#endif
 		assert(false);
 		break;
 	}
@@ -654,8 +673,18 @@ void VarManager::NthSelectedOutput_Var()
 	switch (this->task)
 	{
 	case VarManager::VAR_TASKS::GetPtr:
+	{
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value_ptr.");
+#endif
+		assert(false);
+		break;
+	}
 	case VarManager::VAR_TASKS::GetVar:
 	{
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value.");
+#endif
 		assert(false);
 		break;
 	}
@@ -753,6 +782,9 @@ void VarManager::SaturationUser_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value_ptr.");
+#endif
 		assert(false);
 		break;
 	}
@@ -821,6 +853,9 @@ void VarManager::SelectedOutput_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value_ptr.");
+#endif
 		assert(false);
 		break;
 	}
@@ -864,6 +899,9 @@ void VarManager::SelectedOutputColumnCount_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value_ptr.");
+#endif
 		assert(false);
 		break;
 	}
@@ -912,6 +950,9 @@ void VarManager::SelectedOutputCount_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value_ptr.");
+#endif
 		assert(false);
 		break;
 	}
@@ -988,6 +1029,9 @@ void VarManager::SelectedOutputHeadings_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value_ptr.");
+#endif
 		assert(false);
 		break;
 	}
@@ -1050,6 +1094,9 @@ void VarManager::SelectedOutputRowCount_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value_ptr.");
+#endif
 		assert(false);
 		break;
 	}
@@ -1238,6 +1285,9 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
+#if defined(WITH_PYBIND11)
+		throw std::runtime_error("This variable does not support get_value_ptr.");
+#endif
 		assert(false);
 		break;
 	}
@@ -1440,7 +1490,6 @@ void VarManager::SelectedOutputOn_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
-
 void VarManager::Temperature_Var()
 {
 	RMVARS VARS_myself = RMVARS::Temperature;
@@ -1489,57 +1538,6 @@ void VarManager::Temperature_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
-#if defined(WITH_PYBIND11)
-void VarManager::Temperature_as_strings_Var()
-{
-	RMVARS VARS_myself = RMVARS::Temperature_as_strings;
-	this->SetCurrentVar(VARS_myself);
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-	if (!bv.GetInitialized())
-	{
-		int Itemsize = sizeof(double);
-		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-		bv.SetBasic("C", true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "float64");
-		//this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
-		//bv.GetDoubleVectorRef() = rm_ptr->GetTemperature();
-		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
-		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
-		bv.SetInitialized(true);
-	}
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
-		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
-		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
-		this->PointerSet.insert(VARS_myself);
-		this->UpdateSet.insert(VARS_myself);
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
-		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-		rm_ptr->SetTemperature(this->VarExchange.GetDoubleVectorRef());
-		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
-		break;
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		break;
-	}
-	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(RMVARS::NotFound);
-}
-#endif
-
 void VarManager::Viscosity_Var()
 {
 	RMVARS VARS_myself = RMVARS::Viscosity;

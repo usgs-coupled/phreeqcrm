@@ -30,12 +30,14 @@ py::array BMIPhreeqcRM::get_value(std::string name, py::array dest)
     if (v_enum == RMVARS::NotFound) throw std::runtime_error("Unknown variable name");
 
     BMIVariant& bv = this->var_man->VariantMap[v_enum];
-    ///if (!bv.GetHasPtr()) throw std::runtime_error("This variable does not support get_value_ptr.");   // this throws on "ComponentCount"
 
     assert(this->language == "Py");
 
-    // this call is REQUIRED for the BMIVariant::GetVoidPtr() to be valid
-    this->GetValuePtr(name);
+    if (bv.GetHasPtr())
+    {
+        // this call is REQUIRED for the BMIVariant::GetVoidPtr() to be valid
+        this->GetValuePtr(name);
+    }
 
     assert(this->GetVarType(name) == bv.GetPType());
 
@@ -43,6 +45,64 @@ py::array BMIPhreeqcRM::get_value(std::string name, py::array dest)
     py::ssize_t dst_ndim = dest.ndim();
     py::dtype dst_dt = dest.dtype();
     std::string dst_dt_str = std::string(dst_dt.str());
+
+    // check for scalars
+    int dim = bv.GetDim();
+    if (!bv.GetHasPtr() && dim == 1)
+    {
+        // scalar
+        py::array a;
+        if (bv.GetPType() == "float64")
+        {
+            assert(bv.GetItemsize() == sizeof(double));
+            assert(bv.GetNbytes() == sizeof(double));
+
+            void* dst_ptr = dest.mutable_data();
+            const void* src_ptr = bv.GetDVarPtr();
+            assert(src_ptr);
+
+            std::memcpy(dst_ptr, src_ptr, bv.GetNbytes());
+
+            return dest;
+        }
+        else if (bv.GetPType() == "int32")
+        {
+            assert(bv.GetItemsize() == sizeof(int));
+            assert(bv.GetNbytes() == sizeof(int));
+
+            void* dst_ptr = dest.mutable_data();
+            const void* src_ptr = bv.GetIVarPtr();
+            assert(src_ptr);
+
+            std::memcpy(dst_ptr, src_ptr, bv.GetNbytes());
+
+            return dest;
+        }
+        else if (bv.GetPType().rfind("<U", 0) == 0)
+        {
+            // This is a hack to convert the string to unicode
+            std::vector<std::string> strings;
+            strings.push_back(bv.GetStringVar());
+            py::array src = py::cast(strings);
+
+            ssize_t nsrc = src.request().itemsize;
+            ssize_t ndst = dest.request().itemsize;
+
+            if (src.request().itemsize > dest.request().itemsize)
+            {
+                throw std::runtime_error("buffer too small");
+            }
+
+            std::memset(dest.mutable_data(), 0, dest.request().itemsize);
+            std::memcpy(dest.mutable_data(), src.request().ptr, src.request().itemsize);
+
+            return dest;
+        }
+        else
+        {
+            assert(false);
+        }
+    }
 
     // src array
     auto src = get_value_ptr(name);
@@ -166,12 +226,19 @@ py::array BMIPhreeqcRM::get_value_ptr(std::string name)
         return bv.GetPyArray();
     }
 
-    ///if (!bv.GetHasPtr()) throw std::runtime_error("This variable does not support get_value_ptr.");   // this throws on "ComponentCount"
+    // this call is REQUIRED for the BMIVariant::GetVoidPtr() to be valid
+    // and BMIVariant::GetHasPtr()
+    void* ptr = this->GetValuePtr(name);
+
+    if (!bv.GetHasPtr() && !(bv.GetPType().rfind("<U", 0) == 0))
+    {
+        throw std::runtime_error("This variable does not support get_value_ptr.");
+    }
 
     assert(this->language == "Py");
 
-    // this call is REQUIRED for the BMIVariant::GetVoidPtr() to be valid
-    void* ptr = this->GetValuePtr(name);
+    //// this call is REQUIRED for the BMIVariant::GetVoidPtr() to be valid
+    //void* ptr = this->GetValuePtr(name);
 
     assert(this->GetVarType(name) == bv.GetPType());
 
@@ -866,6 +933,7 @@ PYBIND11_MODULE(phreeqcrm, m) {
         // Extras
         //
 
+
         .def("get_components",
             [](BMIPhreeqcRM& self) {
                 // initialization not necessary
@@ -876,6 +944,43 @@ PYBIND11_MODULE(phreeqcrm, m) {
             get_components_docstring.c_str()
         )
 
+        // int GetGridCellCount(void)
+        // def GetGridCellCount(self: phreeqcrm.bmi_phreeqcrm) -> int:
+        .def("GetGridCellCount",
+            &BMIPhreeqcRM::GetGridCellCount
+        )
+
+        // int GetMpiMyself(void) const
+        // def GetMpiMyself(self: phreeqcrm.bmi_phreeqcrm) -> int:
+        .def("GetMpiMyself",
+            &BMIPhreeqcRM::GetMpiMyself
+        )
+
+        // int GetThreadCount(void)
+        // def GetThreadCount(self: phreeqcrm.bmi_phreeqcrm) -> int:
+        .def("GetThreadCount",
+            &BMIPhreeqcRM::GetThreadCount
+        )
+
+
+        // IRM_RESULT SetComponentH2O(bool tf);
+        // SetComponentH2O(self: phreeqcrm.bmi_phreeqcrm, arg0: bool) -> IRM_RESULT
+        .def("SetComponentH2O",
+            &BMIPhreeqcRM::SetComponentH2O,
+            py::arg("tf")
+            )
+
         .def_readonly("_initialized", &BMIPhreeqcRM::_initialized)
         ;
+
+        py::enum_<IRM_RESULT>(m, "IRM_RESULT")
+            .value("IRM_OK",          IRM_OK)
+            .value("IRM_OUTOFMEMORY", IRM_OUTOFMEMORY)
+            .value("IRM_BADVARTYPE",  IRM_BADVARTYPE)
+            .value("IRM_INVALIDARG",  IRM_INVALIDARG)
+            .value("IRM_INVALIDROW",  IRM_INVALIDROW)
+            .value("IRM_INVALIDCOL",  IRM_INVALIDCOL)
+            .value("IRM_BADINSTANCE", IRM_BADINSTANCE)
+            .value("IRM_FAIL",        IRM_FAIL)
+            .export_values();
 }
