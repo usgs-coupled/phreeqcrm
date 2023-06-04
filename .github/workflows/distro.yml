@@ -93,6 +93,13 @@ jobs:
       with:
         name: tarball
 
+    - name: Install GNU Fortran (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      uses: awvwgk/setup-fortran@main
+      with:
+        compiler: gcc
+        version: 12
+
     - name: Install ninja yaml-cpp valgrind (Linux)
       if: runner.os == 'Linux'
       run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
