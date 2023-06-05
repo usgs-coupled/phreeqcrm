@@ -558,7 +558,12 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 		int dim = this->var_man->VarExchange.GetDim();
 		if (this->var_man->VarExchange.GetCType() == "bool" && dim == 1)
 		{
-			memcpy(dest, this->var_man->VarExchange.GetBVarPtr(), Nbytes);
+			bool tf = *this->var_man->VarExchange.GetBVarPtr();
+			int tf_int = 1;
+			if (!tf) tf_int = 0;
+			bool tf1 = this->var_man->VarExchange.GetBVar();
+			assert(tf == tf1);		
+			memcpy(dest, &tf_int, sizeof(int));
 			return;
 		}
 		if (this->var_man->VarExchange.GetCType() == "int" && dim == 1)
@@ -943,7 +948,10 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 		int dim = Nbytes / itemsize;
 		if (bv.GetCType() == "bool" && dim == 1)
 		{
-			memcpy(this->var_man->VarExchange.GetBVarPtr(), src, Nbytes);
+			int src_int = *(int*)src;
+			bool tf = true;
+			if (src_int == 0) tf = false;
+			memcpy(this->var_man->VarExchange.GetBVarPtr(), &tf, Nbytes);
 		}
 		else if (bv.GetCType() == "int" && dim == 1)
 		{

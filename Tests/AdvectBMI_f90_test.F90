@@ -75,7 +75,7 @@
     integer                                         :: dim
     character(len=:), dimension(:), allocatable     :: outputvars 
 	real(kind=8), dimension(:), allocatable         :: CaX2, KX, NaX, pH_vector, SAR
-    common /i_ptrs/ id, ComponentCount_ptr, GridCellCount_ptr, SelectedOutputOn_ptr
+    common /i_ptrs/ ComponentCount_ptr, GridCellCount_ptr, SelectedOutputOn_ptr, id
     common /r_ptrs/ Concentrations_ptr, Density_calculated_ptr, Gfw_ptr, &
 	    Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
         Porosity_ptr, Pressure_ptr, Temperature_ptr
@@ -779,7 +779,7 @@ implicit none
         logical, intent(in) :: tf
         end function assert
     end interface
-    common /i_ptrs/ id, ncomps, nxyz, SelectedOutputOn_ptr
+    common /i_ptrs/ ncomps, nxyz, SelectedOutputOn_ptr, id
     common /r_ptrs/ Concentrations_ptr, Density_calculated_ptr, Gfw_ptr, &
 	Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
     Porosity_ptr, Pressure_ptr, Temperature_ptr
