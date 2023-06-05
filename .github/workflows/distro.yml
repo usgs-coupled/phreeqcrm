@@ -93,12 +93,17 @@ jobs:
       with:
         name: tarball
 
-    - name: Install GNU Fortran (macOS)
-      if: ${{ runner.os == 'macOS' }}
-      uses: awvwgk/setup-fortran@main
-      with:
-        compiler: gcc
-        version: 12
+    # - name: Install GNU Fortran (macOS)
+    #   if: ${{ runner.os == 'macOS' }}
+    #   uses: awvwgk/setup-fortran@main
+    #   with:
+    #     compiler: gcc
+    #     version: 12
+
+    - name: Verify gfortran
+      run: |
+        which gfortran
+        gfortran --version
 
     - name: Install ninja yaml-cpp valgrind (Linux)
       if: runner.os == 'Linux'
@@ -120,7 +125,11 @@ jobs:
 
     - name: Build with autotools
       working-directory: ${{ github.workspace }}/build
-      run: make -j2
+      run: make -j4
+
+    - name: Make check
+      working-directory: ${{ github.workspace }}/build
+      run: make check -j4
 
     - name: Install with autotools
       working-directory: ${{ github.workspace }}/build
