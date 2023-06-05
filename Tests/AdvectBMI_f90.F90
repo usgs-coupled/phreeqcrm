@@ -57,10 +57,6 @@
     integer                                         :: dump_on, append
     integer                                         :: dim
 	real(kind=8), dimension(:), allocatable         :: CaX2, KX, NaX, pH_vector
-    common /i_ptrs/ id, ComponentCount_ptr, GridCellCount_ptr, SelectedOutputOn_ptr
-    common /r_ptrs/ Concentrations_ptr, Density_calculated_ptr, Gfw_ptr, &
-	    Saturation_ptr, SolutionVolume_ptr, Time_ptr, TimeStep_ptr, &
-        Porosity_ptr, Pressure_ptr, Temperature_ptr
     integer :: id
 	integer, pointer :: ComponentCount_ptr
 	integer, pointer :: GridCellCount_ptr

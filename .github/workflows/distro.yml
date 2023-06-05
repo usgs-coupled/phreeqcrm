@@ -150,7 +150,7 @@ jobs:
 
   cmake:
     #name: cmake
-    name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }} 
+    name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }}
     needs: [init, distcheck]
     strategy:
       fail-fast: false

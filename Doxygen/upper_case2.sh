@@ -148,6 +148,7 @@ sed -i "s/rm_initialkinetics2module/RM_InitialKinetics2Module/g" $(egrep -l rm_i
 sed -i "s/destroyyamlphreeqcrm/DestroyYAMLPhreeqcRM/g"  $(egrep -l destroyyamlphreeqcrm ./html/*)
 sed -i "s/createyamlphreeqcrm/CreateYAMLPhreeqcRM/g"  $(egrep -l createyamlphreeqcrm ./html/*)
 sed -i "s/writeyamldoc/WriteYAMLDoc/g"  $(egrep -l writeyamldoc ./html/*)
+sed -i "s/yamladdoutputvars/YAMLAddOutputVars/g" $(egrep -l yamlclear ./html/*)
 sed -i "s/yamlclear/YAMLClear/g" $(egrep -l yamlclear ./html/*)
 sed -i "s/yamlclosefiles/YAMLCloseFiles/g" $(egrep -l yamlclosefiles ./html/*)
 sed -i "s/yamlcreatemapping/YAMLCreateMapping/g" $(egrep -l yamlcreatemapping ./html/*)
@@ -210,6 +211,7 @@ sed -i "s/yamlspeciesconcentrations2module/YAMLSpeciesConcentrations2Module/g" $
 sed -i "s/yamlstatesave/YAMLStateSave/g" $(egrep -l yamlstatesave ./html/*)
 sed -i "s/yamlstateapply/YAMLStateApply/g" $(egrep -l yamlstateapply ./html/*)
 sed -i "s/yamlstatedelete/YAMLStateDelete/g" $(egrep -l yamlstatedelete ./html/*)
+sed -i "s/yamlthreadcount/YAMLThreadCount/g" $(egrep -l yamlthreadcount ./html/*)
 sed -i "s/yamlusesolutiondensityvolume/YAMLUseSolutionDensityVolume/g" $(egrep -l yamlusesolutiondensityvolume ./html/*)
 sed -i "s/yamlwarningmessage/YAMLWarningMessage/g" $(egrep -l yamlwarningmessage ./html/*)
 # Rename PhreeqcRM to mixed case 
