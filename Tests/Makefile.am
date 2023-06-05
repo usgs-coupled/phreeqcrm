@@ -110,6 +110,10 @@ CLEANFILES =\
 	TestAllMethods_cpp.dump\
 	TestAllMethods_cpp.log.txt\
 	TestAllMethods_cpp.yaml\
+	TestAllMethods_f90.yaml\
+	TestAllMethods_py.chem.txt\
+	TestAllMethods_py.dump\
+	TestAllMethods_py.log.txt\
 	testbmi_cpp.yaml\
 	Units_Worker.chem.txt\
 	Units_Worker.log.txt\
