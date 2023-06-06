@@ -269,6 +269,12 @@ if(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
   target_compile_definitions(PhreeqcRM PRIVATE _SCL_SECURE_NO_WARNINGS)
 endif()
 
+if (WIN32 AND BUILD_SHARED_LIBS)
+  # Required to build IMPLIB
+  # (Seems to be automatically set when using Visual Studio as the generator)
+  target_compile_definitions(PhreeqcRM PRIVATE _WINDLL)
+endif()
+
 # init exportPackageDependencies
 set(exportPackageDependencies "")
 
