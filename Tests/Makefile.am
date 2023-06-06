@@ -66,6 +66,9 @@ CLEANFILES =\
 	AdvectBMI_cpp.dmp\
 	AdvectBMI_cpp.log.txt\
 	AdvectBMI_cpp.yaml\
+	AdvectBMI_f90_test.chem.txt\
+	AdvectBMI_f90_test.log.txt\
+	AdvectBMI_f90_test.yaml\
 	AdvectBMI_f90.chem.txt\
 	AdvectBMI_f90.dmp\
 	AdvectBMI_f90.log.txt\
@@ -107,6 +110,10 @@ CLEANFILES =\
 	TestAllMethods_cpp.dump\
 	TestAllMethods_cpp.log.txt\
 	TestAllMethods_cpp.yaml\
+	TestAllMethods_f90.yaml\
+	TestAllMethods_py.chem.txt\
+	TestAllMethods_py.dump\
+	TestAllMethods_py.log.txt\
 	testbmi_cpp.yaml\
 	Units_Worker.chem.txt\
 	Units_Worker.log.txt\
@@ -127,10 +134,13 @@ TestRM_SOURCES+=\
 	../src/YAML_interface.F90\
 	Advect_f90.F90\
 	AdvectBMI_f90.F90\
+	AdvectBMI_f90_test.F90\
 	Gas_f90.F90\
 	SimpleAdvect_f90.F90\
 	Species_f90.F90\
-	WriteYAMLFile_f90.F90
+	TestAllMethods_f90.F90\
+	WriteYAMLFile_f90.F90\
+	WriteYAMLFile_f90_test.F90
 
 TestRM_LDADD+=$(FCLIBS)
 
@@ -153,6 +163,8 @@ Species_f90.$(OBJEXT) : Species_f90.F90 ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_i
 # BMIPhreeqcRM.mod
 ../src/BMI_interface.$(OBJEXT) : ../src/BMI_interface.F90 ../src/RM_interface.$(OBJEXT)
 
+AdvectBMI_f90_test.$(OBJEXT) : AdvectBMI_f90_test.F90 ../src/BMI_interface.$(OBJEXT)
+
 # IPhreeqc.mod
 ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.$(OBJEXT) : ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90
 
@@ -162,7 +174,11 @@ Species_f90.$(OBJEXT) : Species_f90.F90 ../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_i
 # YAML_interface.mod
 ../src/YAML_interface.$(OBJEXT) : ../src/YAML_interface.F90
 
+TestAllMethods_f90.$(OBJEXT) : TestAllMethods_f90.F90 ../src/YAML_interface.$(OBJEXT) ../src/BMI_interface.$(OBJEXT)
+
 WriteYAMLFile_f90.$(OBJEXT) : WriteYAMLFile_f90.F90 ../src/YAML_interface.$(OBJEXT)
+
+WriteYAMLFile_f90_test.$(OBJEXT) : WriteYAMLFile_f90_test.F90 ../src/YAML_interface.$(OBJEXT)
 
 endif
 
