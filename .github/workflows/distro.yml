@@ -50,6 +50,9 @@ jobs:
     - name: install yaml-cpp
       run: sudo apt-get -y install libyaml-cpp-dev
 
+    - name: install ninja
+      run: sudo apt-get -y install ninja-build
+
     - name: install valgrind
       run: sudo snap install valgrind --classic
 
