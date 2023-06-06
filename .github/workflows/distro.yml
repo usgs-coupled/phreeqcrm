@@ -53,6 +53,9 @@ jobs:
     - name: install ninja
       run: sudo apt-get -y install ninja-build
 
+    - name: install libc6-dbg
+      run: sudo apt-get -y install libc6-dbg
+
     - name: install valgrind
       run: sudo snap install valgrind --classic
 
