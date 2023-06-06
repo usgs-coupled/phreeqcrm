@@ -33,7 +33,7 @@ def AdvectBMI_py():
 	
 	bmi = phreeqcrm.BMIPhreeqcRM(40, 3)
 	# Initialize with YAML file
-	status = bmi.Initialize(yaml_file)
+	status = bmi.initialize(yaml_file)
 
     # Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
     #TODO CALL register_basic_callback_fortran()
@@ -42,12 +42,12 @@ def AdvectBMI_py():
     #TODO status = do_something()   # only root is calling do_something here
 #endif
 	#nxyz = 0
-	components = bmi.GetValue("Components")
-	ncomps = bmi.GetValue("ComponentCount")
-	nxyz = bmi.GetValue("GridCellCount")
+	components = bmi.get_value("Components")
+	ncomps = bmi.get_value("ComponentCount")
+	nxyz = bmi.get_value("GridCellCount")
 	nxyz1 = bmi.GetGridCellCount()
 	print(f"nxyz1={nxyz1}")
-	time = bmi.GetValue("Time")
+	time = bmi.get_value("Time")
 	print(f"time={time}")
 
 	hydraulic_K = [0.0] * nxyz
@@ -60,7 +60,7 @@ def AdvectBMI_py():
 	print(string1)
 	string1 = f"MPI task number:                                  {bmi.GetMpiMyself()}"
 	print(string1)
-	string1 = f"File prefix:                                      {bmi.GetValue('FilePrefix')}"
+	string1 = f"File prefix:                                      {bmi.get_value('FilePrefix')}"
 	print(string1)
 	string1 = f"Number of grid cells in the user's model:         {nxyz}"
 	print(string1)
@@ -70,30 +70,30 @@ def AdvectBMI_py():
 	string1 = f"Number of components for transport:               {ncomps}"
 	print(string1)
 	# Get component information)
-	gfw = bmi.GetValue("Gfw")
+	gfw = bmi.get_value("Gfw")
 	for i in range(ncomps):
 		print(f"{components[i].rjust(10,' ')}  {gfw[i]}")
 	print()
 	# Get initial temperatures
-	temperature = bmi.GetValue("Temperature")
+	temperature = bmi.get_value("Temperature")
 	# Get initial temperature
-	sat = bmi.GetValue("SaturationCalculated")
+	sat = bmi.get_value("SaturationCalculated")
 	# Get initial porosity
-	por = bmi.GetValue("Porosity")
+	por = bmi.get_value("Porosity")
 	# Get initial temperature
-	volume = bmi.GetValue("SolutionVolume")
+	volume = bmi.get_value("SolutionVolume")
 	# Get initial concentrations
-	c = bmi.GetValue("Concentrations")
+	c = bmi.get_value("Concentrations")
 	#c_dbl_vect = phreeqcrm.DoubleVector(nxyz * len(components), 0.0)
 	#for i in range(nxyz):
 	#	c_dbl_vect[i] = c[i]
 	# Set density, pressure, and temperature (previously allocated)
 	density = [1.0] * nxyz
-	bmi.SetValue("DensityUser", density)
+	bmi.set_value("DensityUser", density)
 	pressure = [2.0] * nxyz
-	bmi.SetValue("Pressure", pressure)  
+	bmi.set_value("Pressure", pressure)  
 	temperature = [20.0] * nxyz
-	bmi.SetValue("Temperature", temperature)  
+	bmi.set_value("Temperature", temperature)  
     # --------------------------------------------------------------------------
     # Set boundary condition
     # --------------------------------------------------------------------------
@@ -114,9 +114,9 @@ def AdvectBMI_py():
     # --------------------------------------------------------------------------
 	nsteps = 10
 	time = 0.0
-	bmi.SetValue("Time", time)
+	bmi.set_value("Time", time)
 	time_step = 86400.0
-	bmi.SetValue("TimeStep", time_step)  
+	bmi.set_value("TimeStep", time_step)  
 	bmi.SetScreenOn(True)	
 	for step in range(nsteps):
 		print(f"Beginning transport calculation {time*bmi.GetTimeConversion()} days")
@@ -129,27 +129,27 @@ def AdvectBMI_py():
 			print_chemistry_on = True
 		else:
 			print_chemistry_on = False
-		bmi.SetValue("SelectedOutputOn", print_chemistry_on)
+		bmi.set_value("SelectedOutputOn", print_chemistry_on)
 		bmi.SetPrintChemistryOn(print_chemistry_on, False, False)  # workers, initial_phreeqc, utility
 		time += time_step
-		status = bmi.SetTime(time)
+		bmi.set_value("Time", time)
 		# Transfer data to PhreeqcRM after transport      
-		bmi.SetValue("Concentrations", c)   # Transported concentrations
+		bmi.set_value("Concentrations", c)   # Transported concentrations
 		# Optionally, if values changed during transport
-		bmi.SetValue("Porosity", por)              
-		bmi.SetValue("SaturationUser", sat)            
-		bmi.SetValue("Temperature", temperature) 
-		bmi.SetValue("Pressure", pressure)          
-		bmi.SetValue("TimeStep", time_step) 
+		bmi.set_value("Porosity", por)              
+		bmi.set_value("SaturationUser", sat)            
+		bmi.set_value("Temperature", temperature) 
+		bmi.set_value("Pressure", pressure)          
+		bmi.set_value("TimeStep", time_step) 
 		
 		# Run cells with transported conditions
 		print(f"Beginning reaction calculation  {time*bmi.GetTimeConversion()} days")
-		bmi.Update()
+		bmi.update()
 
 		# Get new data calculated by PhreeqcRM for transport
-		c = bmi.GetValue("Concentrations")
-		density = bmi.GetValue("DensityCalculated")
-		volume = bmi.GetValue("SolutionVolume")   
+		c = bmi.get_value("Concentrations")
+		density = bmi.get_value("DensityCalculated")
+		volume = bmi.get_value("SolutionVolume")   
 		# Print results at last time step
 		if (step == (nsteps - 1)):
 			#print("Current distribution of cells for workers")
@@ -163,21 +163,21 @@ def AdvectBMI_py():
 			#	print(i,"           ", sc(i),"                 ",ec(i))
 			
 			# Loop through possible multiple selected output definitions
-			n = bmi.GetValue("SelectedOutputCount")
+			n = bmi.get_value("SelectedOutputCount")
 			for isel in range(n): 
 				i = isel
-				bmi.SetValue("NthSelectedOutput", i)
-				n_user = bmi.GetValue("CurrentSelectedOutputUserNumber")
+				bmi.set_value("NthSelectedOutput", i)
+				n_user = bmi.get_value("CurrentSelectedOutputUserNumber")
 				print(f"Selected output sequence number: {isel}")
 				print(f"Selected output user number:     {n_user}")
 				# Get 2D array of selected output values
-				col = bmi.GetValue("SelectedOutputColumnCount")
-				rows = bmi.GetValue("SelectedOutputRowCount")
+				col = bmi.get_value("SelectedOutputColumnCount")
+				rows = bmi.get_value("SelectedOutputRowCount")
 				#selected_out = phreeqc_rm.DoubleVector()
 				# Get headings
-				headings = bmi.GetValue("SelectedOutputHeadings")
+				headings = bmi.get_value("SelectedOutputHeadings")
 				# Get selected output
-				selected_out = bmi.GetValue("SelectedOutput")
+				selected_out = bmi.get_value("SelectedOutput")
 				# Print results
 				for i in range(rows//2):
 					print("Cell number ", i)
@@ -190,8 +190,9 @@ def AdvectBMI_py():
 					for j in range(col):
 						print(f"{j}, {headings[j]}, {selected_out[j * nxyz + i]}")
 	# Clean up
-	bmi.Finalize()						
-
+	bmi.finalize()						
+	print("Done.")
+	
 def advectionbmi_py(c, bc_conc, ncomps, nxyz, dim):
     # Advect
     for i in range(nxyz - 1, 0, -1):

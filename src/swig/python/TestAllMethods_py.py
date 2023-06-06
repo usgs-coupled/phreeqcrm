@@ -1,8 +1,8 @@
 
 import numpy as np
 import phreeqcrm
-import yamlphreeqcrm
 #ifdef USE_YAML
+import yamlphreeqcrm
     #module mydata
     #  double precision, dimension(:), pointer :: K_ptr
     #  integer                                 :: rm_id
@@ -21,11 +21,11 @@ def testallmethods_py():
 	bmi=phreeqcrm.BMIPhreeqcRM()
 	print(f"BMIPhreeqcRM {bmi}")
 	#---------
-	bmi.Initialize(YAML_filename)   # void function
+	bmi.initialize(YAML_filename)   # void function
 	print(f"Initialize")
 	#---------
 	nxyz = bmi.GetGridCellCount()
-	nxyz = bmi.GetValue("GridCellCount")
+	nxyz = bmi.get_value("GridCellCount")
 	#int *i_ptr = (int*)bmi.GetValuePtr("GridCellCount")  # pointer
 	print(f"GetValue('GridCellCount') {type(nxyz)}, {nxyz}")
 	#---------
@@ -79,7 +79,7 @@ def testallmethods_py():
 	print(f"SetScreenOn {type(x)}, {x}")
 	#---------
 	x=bmi.SetSelectedOutputOn(True)
-	bmi.SetValue("SelectedOutputOn", True)
+	bmi.set_value("SelectedOutputOn", True)
 	print(f"SetSelectedOutputOn {type(x)}, {x}")
 	#---------
 	x=bmi.SetUnitsExchange(1)
@@ -126,20 +126,20 @@ def testallmethods_py():
 	x = bmi.RunFile(True, True, True, "all_reactants.pqi")
 	print(f"RunFile {type(x)}, {x}")	
 	#---------
-	x=bmi.AddOutputVars("AddOutputVars", "True")
-	x=bmi.AddOutputVars("SolutionProperties", "True")
-	x=bmi.AddOutputVars("SolutionTotalMolalities", "True")
-	x=bmi.AddOutputVars("ExchangeMolalities", "True")
-	x=bmi.AddOutputVars("SurfaceMolalities", "True")
-	x=bmi.AddOutputVars("EquilibriumPhases", "True")
-	x=bmi.AddOutputVars("Gases", "True")
-	x=bmi.AddOutputVars("KineticReactants", "True")
-	x=bmi.AddOutputVars("SolidSolutions", "True")
-	x=bmi.AddOutputVars("CalculateValues", "True")
-	x=bmi.AddOutputVars("SolutionActivities", "H+ Ca+2 Na+")
-	x=bmi.AddOutputVars("SolutionMolalities", "OH- Cl-")
-	x=bmi.AddOutputVars("SaturationIndices", "Calcite Dolomite")
-	print(f"AddOutputVars {type(x)}, {x}")		
+	x=bmi.add_output_vars("AddOutputVars", "True")
+	x=bmi.add_output_vars("SolutionProperties", "True")
+	x=bmi.add_output_vars("SolutionTotalMolalities", "True")
+	x=bmi.add_output_vars("ExchangeMolalities", "True")
+	x=bmi.add_output_vars("SurfaceMolalities", "True")
+	x=bmi.add_output_vars("EquilibriumPhases", "True")
+	x=bmi.add_output_vars("Gases", "True")
+	x=bmi.add_output_vars("KineticReactants", "True")
+	x=bmi.add_output_vars("SolidSolutions", "True")
+	x=bmi.add_output_vars("CalculateValues", "True")
+	x=bmi.add_output_vars("SolutionActivities", "H+ Ca+2 Na+")
+	x=bmi.add_output_vars("SolutionMolalities", "OH- Cl-")
+	x=bmi.add_output_vars("SaturationIndices", "Calcite Dolomite")
+	print(f"add_output_vars {type(x)}, {x}")		
 	#---------
 	ncomps = bmi.FindComponents()
 	print(f"FindComponents {type(ncomps)}, {ncomps}")
@@ -153,12 +153,12 @@ def testallmethods_py():
 	print(f"GridCellCount {type(nchem)}, {nchem}")
 	#---------
 	ncomps=bmi.GetComponentCount()
-	ncomps = bmi.GetValue("ComponentCount")
+	ncomps = bmi.get_value("ComponentCount")
 	#i_ptr = (int*) bmi.GetValuePtr("ComponentCount")   # Pointer
 	print(f"GetComponentCount {type(ncomps)}, {ncomps}")
 	#---------
 	x=bmi.GetComponents()	
-	x = bmi.GetValue("Components")
+	x = bmi.get_value("Components")
 	print(f"GetComponents {type(x)}, {x}")
 	# Species info
 	x=bmi.GetSpeciesCount()
@@ -198,7 +198,7 @@ def testallmethods_py():
 	print(f"GetGasComponentsCount {type(x)}, {x}")
 	#---------
 	x=bmi.GetGfw()
-	x=bmi.GetValue("gfw")
+	x=bmi.get_value("gfw")
 	#double *d_ptr = (double*)bmi.GetValuePtr("Gfw")  # Pointer
 	print(f"GetGfw {type(x)}, {x[0]}")
 	#---------
@@ -315,40 +315,40 @@ def testallmethods_py():
 	#
 	x=bmi.GetTime()
 	print(f"GetTime {type(x)}, {x}")
-	d = bmi.GetCurrentTime()
-	d = bmi.GetStartTime()
+	d = bmi.get_current_time()
+	d = bmi.get_start_time()
 	#d_ptr = bmi.GetValuePtr("Time")
 	print(f"GetTime {type(x)}, {x}")
 	#---------
 	x=bmi.SetTime(0.0)
-	bmi.SetValue("Time", 0.0)
+	bmi.set_value("Time", 0.0)
 	print(f"SetTime {type(x)}, {x}")
 	#---------
 	x=bmi.GetTimeStep()
-	x= bmi.GetValue("TimeStep")
+	x= bmi.get_value("TimeStep")
 	#d_ptr = (double*)bmi.GetValuePtr("TimeStep")
 	print(f"GetTimeStep {type(x)}, {x}")
 	#---------
 	x=bmi.SetTimeStep(0.0)
-	bmi.SetValue("TimeStep", 0.0)
+	bmi.set_value("TimeStep", 0.0)
 	print(f"SetTimeStep {type(x)}, {x}")
 	#---------
 	c=bmi.GetConcentrations()
-	c = bmi.GetValue("Concentrations")
+	c = bmi.get_value("Concentrations")
 	#d_ptr = (double*)bmi.GetValuePtr("Concentrations")
 	print(f"GetConcentrations {type(c)}, {c[0]}")
 	#---------
 	x=bmi.SetConcentrations(c)
-	bmi.SetValue("Concentrations", c)
+	bmi.set_value("Concentrations", c)
 	print(f"SetConcentrations {type(x)}, {x}")
 	#---------
 	d=bmi.GetDensityCalculated()
-	d=bmi.GetValue("DensityCalculated")
+	d=bmi.get_value("DensityCalculated")
 	#d_ptr = (double*)bmi.GetValuePtr("DensityCalculated")
 	print(f"GetDensityCalculated {type(d)}, {d[0]}") 
 	#---------
 	x=bmi.SetDensityUser(d)
-	bmi.SetValue("DensityUser",d)
+	bmi.set_value("DensityUser",d)
 	print(f"SetDensityUser {type(x)}, {x}")
 	#---------
 	g = bmi.GetGasCompMoles() 
@@ -371,7 +371,6 @@ def testallmethods_py():
 	#---------
 	for i in range(bmi.GetComponentCount()):
 		v = bmi.GetIthConcentration(i)
-		print(f"{type(v)}")
 		#-------
 		x = bmi.SetIthConcentration(i, v)
 	print(f"GetIthConcentration ")
@@ -379,40 +378,39 @@ def testallmethods_py():
 	#-------
 	for i in range(bmi.GetSpeciesCount()):
 		v = bmi.GetIthSpeciesConcentration(i)
-		print(f"{type(v)}")
 		#-------
 		x = bmi.SetIthSpeciesConcentration(i, v)
 	print(f"GetIthSpeciesConcentration ")
 	print(f"SetIthSpeciesConcentration ")
 	#-------
 	x=bmi.GetPorosity()
-	x = bmi.GetValue("Porosity")
+	x = bmi.get_value("Porosity")
 	#d_ptr = (double*)bmi.GetValuePtr("Porosity")
 	print(f"GetPorosity {type(x)}, {x[0]}")
 	#---------
-	bmi.SetValue("Porosity", x)
+	bmi.set_value("Porosity", x)
 	x=bmi.SetPorosity(x)
 	print(f"SetPorosity {type(x)}, {x}")
 	#---------
 	x=bmi.GetPressure()
-	x = bmi.GetValue("Pressure")
+	x = bmi.get_value("Pressure")
 	#d_ptr = (double*)bmi.GetValuePtr("Pressure");
 	print(f"GetPressure {type(x)}, {x[0]}")
 	#---------
-	bmi.SetValue("Pressure", x)
+	bmi.set_value("Pressure", x)
 	x=bmi.SetPressure(x)
 	print(f"SetPressure {type(x)}, {x}")
 	#---------
-	x=bmi.GetValue("SaturationCalculated")
+	x=bmi.get_value("SaturationCalculated")
 	x=bmi.GetSaturationCalculated() 
 	#d_ptr = (double*)bmi.GetValuePtr("SaturationCalculated");
 	print(f"GetSaturationCalculated {type(x)}, {x[0]}")
 	#---------
-	bmi.SetValue("SaturationUser", x)
+	bmi.set_value("SaturationUser", x)
 	x=bmi.SetSaturationUser(x)
 	print(f"SetSaturationUser {type(x)}, {x}")
 	#---------
-	x=bmi.GetValue("SolutionVolume")
+	x=bmi.get_value("SolutionVolume")
 	x=bmi.GetSolutionVolume()
 	#d_ptr = (double*)bmi.GetValuePtr("SolutionVolume");
 	print(f"GetSolutionVolume {type(x)}, {x[0]}")
@@ -430,66 +428,66 @@ def testallmethods_py():
 	print(f"GetSpeciesLog10Molalities {type(v)}, {v[0]}")
 	#---------
 	x=bmi.GetTemperature()
-	x=bmi.GetValue("Temperature")
+	x=bmi.get_value("Temperature")
 	print(f"GetTemperature {type(x)}, {x[0]}")
 	#---------
-	bmi.SetValue("Temperature", x)
+	bmi.set_value("Temperature", x)
 	x=bmi.SetTemperature(x)	
 	#d_ptr = (double*)bmi.GetValuePtr("Temperature");
 	print(f"SetTemperature {type(x)}, {x}")
 	#-------
 	x = bmi.GetViscosity()
-	x=bmi.GetValue("Viscosity")
+	x=bmi.get_value("Viscosity")
 	#d_ptr = (double*)bmi.GetValuePtr("Viscosity")
 	print(f"GetViscosity  {type(x)}, {x[0]}")
 	#
 	# Take a time step
 	#
-	bmi.Update()    # void method
+	bmi.update()    # void method
 	print(f"Update")
 	#---------
 	x=bmi.RunCells()	
 	print(f"RunCells {x}")
 	#-------
-	bmi.UpdateUntil(86400.0) 
+	bmi.update_until(86400.0) 
 	print(f"UpdateUntil ")
 	#
 	# Selected output
 	#
 	x=bmi.SetNthSelectedOutput(0)
-	bmi.SetValue("NthSelectedOutput", 0)
+	bmi.set_value("NthSelectedOutput", 0)
 	print(f"SetNthSelectedOutput {type(x)}, {x}")
 	#---------
 	x=bmi.GetCurrentSelectedOutputUserNumber()
-	x=bmi.GetValue("CurrentSelectedOutputUserNumber")
+	x=bmi.get_value("CurrentSelectedOutputUserNumber")
 	print(f"GetCurrentSelectedOutputUserNumber {type(x)}, {x}")
 	#---------
 	x=bmi.GetNthSelectedOutputUserNumber(0)
 	print(f"GetNthSelectedOutputUserNumber {type(x)}, {x}")
 	#---------
 	v=bmi.GetSelectedOutput()
-	v=bmi.GetValue("SelectedOutput")
+	v=bmi.get_value("SelectedOutput")
 	print(f"GetSelectedOutput {type(v)}, {v[0]}")
 	#---------
 	x=bmi.GetSelectedOutputColumnCount()
-	x=bmi.GetValue("SelectedOutputColumnCount")
+	x=bmi.get_value("SelectedOutputColumnCount")
 	print(f"GetSelectedOutputColumnCount {type(x)}, {x}")
 	#---------
 	x = bmi.GetSelectedOutputCount()
-	x =bmi.GetValue("SelectedOutputCount")
+	x =bmi.get_value("SelectedOutputCount")
 	print(f"GetSelectedOutputCount {type(x)}, {x}")
 	#---------
 	v=bmi.GetSelectedOutputHeadings()
-	v=bmi.GetValue("SelectedOutputHeadings")
+	v=bmi.get_value("SelectedOutputHeadings")
 	print(f"GetSelectedOutputHeadings {type(v)}, {v[87]}")
 	#---------
 	x=bmi.GetSelectedOutputOn()
-	x=bmi.GetValue("SelectedOutputOn")
+	x=bmi.get_value("SelectedOutputOn")
 	#bool *b_ptr = (bool*)bmi.GetValuePtr("SelectedOutputOn")
 	print(f"GetSelectedOutputOn {type(x)}, {x}")
 	#---------
 	x=bmi.GetSelectedOutputRowCount()
-	x=bmi.GetValue("SelectedOutputRowCount")
+	x=bmi.get_value("SelectedOutputRowCount")
 	print(f"GetSelectedOutputRowCount {type(x)}, {x}")
 	#---------
 	x=bmi.SetCurrentSelectedOutputUserNumber(333)
@@ -510,11 +508,11 @@ def testallmethods_py():
 	print(f"GetErrorHandlerMode {type(x)}, {x}")
 	#---------
 	x=bmi.GetErrorString()
-	x=bmi.GetValue("ErrorString")
+	x=bmi.get_value("ErrorString")
 	print(f"GetErrorString {type(x)}, {x}")
 	#---------
 	x=bmi.GetFilePrefix()
-	x=bmi.GetValue("FilePrefix")
+	x=bmi.get_value("FilePrefix")
 	print(f"GetFilePrefix {type(x)}, {x}")
 	#---------
 	x=bmi.GetForwardMapping()
@@ -583,7 +581,7 @@ def testallmethods_py():
 	x=bmi2.CloseFiles()  
 	print(f"CloseFiles {type(x)}, {x}")
 	#---------
-	bmi2.Finalize()
+	bmi2.finalize()
 	#---------
 	ic1 = np.full((1), 1)
 	x = bmi.InitialPhreeqc2Concentrations(ic1)
@@ -592,25 +590,25 @@ def testallmethods_py():
 	x=bmi.Concentrations2Utility(x, tc, p_atm)
 	print(f"Concentrations2Utility {type(x)}, {x}")
 	#---------
-	bmi.DecodeError(-2)	         # void function
+	bmi.DecodeError(-2)	    
 	print(f"DecodeError {x}")
 	#---------
 	x=bmi.DumpModule(True)
 	print(f"DumpModule {type(x)}, {x}")
 	#---------	
-	bmi.ErrorHandler(0, "string") # void function
+	bmi.ErrorHandler(0, "string") 
 	print(f"OK, just a test: ErrorHandler {type(x)}, {x}")
 	#---------
-	bmi.ErrorMessage("my error")  # void function
+	bmi.ErrorMessage("my error")  
 	print(f"OK, just a test: ErrorMessage {type(x)}, {x}")
 	#---------
-	bmi.LogMessage("Log message")  # void method
+	bmi.LogMessage("Log message")  
 	print(f"LogMessage")
 	#---------	
-	bmi.OutputMessage("Output message")  # void method
+	bmi.OutputMessage("Output message")  
 	print(f"OutputMessage")
 	#---------
-	bmi.ScreenMessage("Screen message\n")  # void method
+	bmi.ScreenMessage("Screen message\n")  
 	print(f"ScreenMessage")
 	#---------
 	x=bmi.StateSave(1)
@@ -622,76 +620,87 @@ def testallmethods_py():
 	x=bmi.StateDelete(1)
 	print(f"StateDelete {type(x)}, {x}")
 	#---------
-	bmi.WarningMessage("Warning message")  # void method
+	bmi.WarningMessage("Warning message")  
 	print(f"WarningMessage")
 	#
 	# BMI methods, some have been used above
 	#
-	x=bmi.GetComponentName()
-	print(f"GetComponentName {type(x)}, {x}")
+	#x=bmi.add_output_vars("AddOutputVars", "True")
+	#(see above)
+	print(f"add_output_vars {type(x)}, {x}")
+	x=bmi.get_component_name()
 	#---------
-	x=bmi.GetCurrentTime()
-	print(f"GetCurrentTime {type(x)}, {x}")
+	print(f"get_component_name {type(x)}, {x}")
 	#---------
-	x=bmi.GetEndTime()
-	print(f"GetEndTime {type(x)}, {x}")
+	x=bmi.get_current_time()
+	print(f"get_current_time {type(x)}, {x}")
 	#---------
-	x = bmi.GetGridRank(0)
-	print(f"GetGridRank {type(x)}, {x}")
+	x=bmi.get_end_time()
+	print(f"get_end_time {type(x)}, {x}")
+	#---------
+	x = bmi.get_grid_rank(0)
+	print(f"get_grid_rank {type(x)}, {x}")
 	#-------
-	n = bmi.GetGridSize(0)
-	print(f"GetGridSize {type(x)}, {x}")
+	n = bmi.get_grid_size(0)
+	print(f"get_grid_size {type(x)}, {x}")
 	#-------
-	x = bmi.GetGridType(0)
-	print(f"GetGridType {type(x)}, {x}")
+	x = bmi.get_grid_type(0)
+	print(f"get_grid_type {type(x)}, {x}")
 	#-------
-	x=bmi.GetInputItemCount()
-	print(f"GetInputItemCount {type(x)}, {x}")
+	x=bmi.get_input_item_count()
+	print(f"get_input_item_count {type(x)}, {x}")
 	#---------
-	x=bmi.GetInputVarNames()
-	print(f"GetInputVarNames {type(x)}, {x[0]}")
+	x=bmi.get_input_var_names()
+	print(f"get_input_var_names {type(x)}, {x[0]}")
 	#---------
-	x=bmi.GetOutputItemCount()
-	print(f"GetOutputItemCount {type(x)}, {x}")
+	x=bmi.get_output_item_count()
+	print(f"get_output_item_count {type(x)}, {x}")
 	#---------
-	x=bmi.GetOutputVarNames()
-	print(f"GetOutputVarNames {type(x)}, {x[0]}")
+	x=bmi.get_output_var_names()
+	print(f"get_output_var_names {type(x)}, {x[0]}")
 	#---------
-	x=bmi.GetTimeStep()
-	print(f"GetTimeStep {type(x)}, {x}")
+	x=bmi.get_pointable_item_count()
+	print(f"get_pointable_item_count {type(x)}, {x}")
 	#---------
-	x=bmi.GetTimeUnits()
-	print(f"GetTimeUnits {type(x)}, {x}")
+	x=bmi.get_pointable_var_names()
+	print(f"get_pointable_var_names {type(x)}, {x[0]}")
 	#---------
-	x=bmi.GetValue("solution_saturation_index_Calcite")
-	print(f"GetValue {type(x)}, {x[0]}")
+	x=bmi.get_time_step()
+	print(f"get_time_step {type(x)}, {x}")
 	#---------
-	x=bmi.GetVarItemsize("solution_saturation_index_Calcite")
-	print(f"GetVarItemsize {type(x)}, {x}")
+	x=bmi.get_time_units()
+	print(f"get_time_units {type(x)}, {x}")
 	#---------
-	x=bmi.GetVarNbytes("solution_saturation_index_Calcite")
-	print(f"GetVarNbytes {type(x)}, {x}")
+	x=bmi.get_value("solution_saturation_index_Calcite")
+	print(f"get_value {type(x)}, {x[0]}")
 	#---------
-	x=bmi.GetVarType("solution_saturation_index_Calcite")
-	print(f"GetVarType {type(x)}, {x}")
+	x=bmi.get_var_itemsize("solution_saturation_index_Calcite")
+	print(f"get_var_itemsize {type(x)}, {x}")
 	#---------
-	x=bmi.GetVarUnits("solution_saturation_index_Calcite")
-	print(f"GetVarUnits {type(x)}, {x}")
+	x=bmi.get_var_nbytes("solution_saturation_index_Calcite")
+	print(f"get_var_nbytes {type(x)}, {x}")
 	#---------
-	#x=bmi.Initialize("file")
-	# See above
+	x=bmi.get_var_type("solution_saturation_index_Calcite")
+	print(f"get_var_type {type(x)}, {x}")
+	#---------
+	x=bmi.get_var_units("solution_saturation_index_Calcite")
+	print(f"get_var_units {type(x)}, {x}")
+	#---------
+	#x=bmi.initialize("file")
+	# (See above)
+	print(f"initialize")
 	#-------	
-	bmi.SetValue("Time", 1.0) 
-	print(f"SetValue")
+	bmi.set_value("Time", 1.0) 
+	print(f"set_value")
 	#---------
-	bmi.Update()    # void method
-	print(f"Update")
+	bmi.update()    
+	print(f"update")
 	#-------	
-	bmi.UpdateUntil(864000.0)
+	bmi.update_until(864000.0)
 	print(f"UpdateUntil")
 	#---------
-	bmi.Finalize()    # void method
-	print(f"Finalize ")
+	bmi.finalize()    
+	print(f"finalize ")
 	#---------
 	print("Success.")
 	return

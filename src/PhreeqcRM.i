@@ -368,18 +368,62 @@ def GetDoubleVector(self, v):
 %rename(SetValue_int_vector) SetValue(const std::string name, std::vector<int> src);
 %rename(SetValue_int) SetValue(const std::string name, int src);
 %rename(SetValue_bool) SetValue(const std::string name, bool src);
+
+%rename(add_output_vars)             AddOutputVars(std::string option, std::string def);
+%rename(initialize)                  Initialize(std::string config_file);
+%rename(update)                      Update();
+%rename(update_until)                UpdateUntil(double end_time);
+%rename(finalize)                    Finalize();
+%rename(get_component_name)          GetComponentName();
+%rename(get_input_item_count)        GetInputItemCount();
+%rename(get_output_item_count)       GetOutputItemCount();
+%rename(get_pointable_item_count)    GetPointableItemCount();
+%rename(get_input_var_names)         GetInputVarNames();
+%rename(get_output_var_names)        GetOutputVarNames();
+%rename(get_pointable_var_names)     GetPointableVarNames();
+%rename(get_var_grid)                GetVarGrid(const std::string name);
+%rename(get_var_type)                GetVarType(const std::string name);
+%rename(get_var_units)               GetVarUnits(const std::string name);
+%rename(get_var_itemsize)            GetVarItemsize(const std::string name);
+%rename(get_var_nbytes)              GetVarNbytes(const std::string name);
+%rename(get_var_location)            GetVarLocation(const std::string name);
+%rename(get_current_time)            GetCurrentTime();
+%rename(get_start_time)              GetStartTime();
+%rename(get_end_time)                GetEndTime();
+%rename(get_time_units)              GetTimeUnits();
+%rename(get_time_step)               GetTimeStep();
+%rename(get_value_ptr)               GetValuePtr(std::string name);
+%rename(get_value_at_indices)        GetValueAtIndices(std::string name, void* dest, int* inds, int count);
+%rename(set_value_at_indices)        SetValueAtIndices(std::string name, int* inds, int count, void* src);
+%rename(get_grid_rank)               GetGridRank(const int grid);
+%rename(get_grid_size)               GetGridSize(const int grid);
+%rename(get_grid_type)               GetGridType(const int grid);
+%rename(get_grid_shape)              GetGridShape(const int grid, int* shape);
+%rename(get_grid_spacing)            GetGridSpacing(const int grid, double* spacing);
+%rename(get_grid_origin)             GetGridOrigin(const int grid, double* origin);
+%rename(get_grid_x)                  GetGridX(const int grid, double* x);
+%rename(get_grid_y)                  GetGridY(const int grid, double* y);
+%rename(get_grid_z)                  GetGridZ(const int grid, double* z);
+%rename(get_grid_node_count)         GetGridNodeCount(const int grid);
+%rename(get_grid_edge_count)         GetGridEdgeCount(const int grid);
+%rename(get_grid_face_count)         GetGridFaceCount(const int grid);
+%rename(get_grid_edge_nodes)         GetGridEdgeNodes(const int grid, int* edge_nodes);
+%rename(get_grid_face_edges)         GetGridFaceEdges(const int grid, int* face_edges);
+%rename(get_grid_face_nodes)         GetGridFaceNodes(const int grid, int* face_nodes);
+%rename(get_grid_nodes_per_face)     GetGridNodesPerFace(const int grid, int* nodes_per_face);
+
 %include "BMIPhreeqcRM.h"
 
 // Write new python method GetValue with one argument
 %extend BMIPhreeqcRM { %pythoncode 
 %{ 
-def GetValue(self, var): 
-	Nbytes = self.GetVarNbytes(var)
-	Itemsize = self.GetVarItemsize(var)
+def get_value(self, var): 
+	Nbytes = self.get_var_nbytes(var)
+	Itemsize = self.get_var_itemsize(var)
 	dim = 0
 	if Itemsize != 0:
 		dim = Nbytes / Itemsize
-	type = self.GetVarType(var)
+	type = self.get_var_type(var)
 	#print(f"Type={type}")
 	if type=="double":
 		if dim==1:
@@ -397,11 +441,11 @@ def GetValue(self, var):
 		return np.array(self.GetValue_string_vector(var))
 	if type=="bool":
 		return self.GetValue_bool(var)
-def SetValue(self, var, value):
-	Nbytes = self.GetVarNbytes(var)
-	Itemsize = self.GetVarItemsize(var)
+def set_value(self, var, value):
+	Nbytes = self.get_var_nbytes(var)
+	Itemsize = self.get_var_itemsize(var)
 	dim = Nbytes / Itemsize
-	type = self.GetVarType(var)
+	type = self.get_var_type(var)
 	#print(f"Type={type}")
 	if type=="double":
 		if dim==1:
@@ -417,8 +461,8 @@ def SetValue(self, var, value):
 		self.SetValue_string(var, value)
 	if type=="std::vector<std::string>":
 		self.SetValue_string_vector(var, value)	
-def GetValuePtr(self):
-	return "Not Implemented."
+# def get_value_ptr(self):
+# 	return "Not Implemented."
 %} 
 };
 

@@ -923,6 +923,7 @@ public:
     @n "Porosity": double*;
     @n "Pressure": double*;
     @n "SaturationCalculated": double*;
+    @n "SelectedOutputOn": bool*;
     @n "SolutionVolume": double*;
     @n "Temperature": double*;
     @n "Time": double*;

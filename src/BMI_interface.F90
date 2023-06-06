@@ -1679,6 +1679,7 @@
     !> @n "Porosity": real(kind=8) (:);
     !> @n "Pressure": real(kind=8) (:);
     !> @n "SaturationCalculated": real(kind=8) (:);
+    !> @n "SelectedOutputOn": logical(kind=1);
     !> @n "SolutionVolume": real(kind=8) (:);
     !> @n "Temperature": real(kind=8) (:);
     !> @n "Time": real(kind=8);
@@ -1781,7 +1782,7 @@
         END INTERFACE
     INTEGER, INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
-    logical, pointer, INTENT(inout) :: ptr
+    logical(kind=1), pointer, INTENT(inout) :: ptr
     type (c_ptr) :: src
     integer status
     status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
