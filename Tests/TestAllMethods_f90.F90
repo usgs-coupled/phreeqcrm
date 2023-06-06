@@ -30,7 +30,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
   real(kind=8)                 :: time, time_step, t
   real(kind=8), pointer        :: d_ptr
   integer, pointer             :: i_ptr
-  logical, pointer             :: b_ptr
+  logical(kind=1), pointer     :: b_ptr
   logical                      :: l
   ! --------------------------------------------------------------------------
   ! Create PhreeqcRM

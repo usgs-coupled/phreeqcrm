@@ -83,7 +83,7 @@
 	integer, pointer :: ComponentCount_ptr
 	integer, pointer :: GridCellCount_ptr
     integer :: nxyz, ncomps
-	logical, pointer :: SelectedOutputOn_ptr
+	logical(kind=1), pointer :: SelectedOutputOn_ptr
 	real(kind=8), pointer :: Concentrations_ptr(:)
 	real(kind=8), pointer :: Density_calculated_ptr(:)
 	real(kind=8), pointer :: Gfw_ptr(:)
@@ -786,7 +786,7 @@ implicit none
     integer :: id
 	integer, pointer :: ncomps
 	integer, pointer :: nxyz
-	logical, pointer :: SelectedOutputOn_ptr
+	logical(kind=1), pointer :: SelectedOutputOn_ptr
 	real(kind=8), pointer :: Concentrations_ptr(:)
 	real(kind=8), pointer :: Density_calculated_ptr(:)
 	real(kind=8), pointer :: Gfw_ptr(:)
