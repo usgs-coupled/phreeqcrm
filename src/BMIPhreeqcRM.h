@@ -559,12 +559,7 @@ public:
     @retval 1 BMIPhreeqcRM cells derive meaning from the user's
     model.
     */
-#if defined(WITH_PYBIND11)
-    // see https://bmi-spec.readthedocs.io/en/latest/#get-var-grid
     int GetVarGrid(const std::string name) override { return 0; }
-#else
-    int GetVarGrid(const std::string name) override { return 1; }
-#endif
 
     /**
     @a GetVarType retrieves the type of a variable
