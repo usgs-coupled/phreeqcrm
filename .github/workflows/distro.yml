@@ -39,13 +39,10 @@ jobs:
 
 
   valgrind:
-    name: CMemCheck (Linux)
+    name: valgrind
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-
-    - name: doxygen
-      run: sudo apt-get -y install doxygen graphviz && cd Doxygen && make
 
     - name: update apt-get
       run: sudo apt-get -y update
@@ -57,7 +54,7 @@ jobs:
       run: sudo snap install valgrind --classic
 
     - name: ctest -S cmemcheck.cmake
-      run: ctest -S cmemcheck.cmake -V --output-on-failure -j 2        
+      run: ctest -S cmemcheck.cmake -VV --output-on-failure -j 2        
 
   distcheck:
     name: make distcheck
