@@ -37,6 +37,23 @@ jobs:
           echo DATE=$(date "+%x")                                                                                   >> $GITHUB_OUTPUT
           echo DATE_RFC_3339=$(date --rfc-3339=date)                                                                >> $GITHUB_OUTPUT
 
+
+  valgrind:
+    name: CMemCheck (Linux)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: doxygen
+      run: sudo apt-get -y install doxygen graphviz && cd Doxygen && make
+
+    - name: install yaml-cpp
+      run: sudo apt-get -y install libyaml-cpp-dev
+
+    - name: CMemCheck (Linux)
+      run: ctest -S cmemcheck.cmake -V --output-on-failure -j 2
+        
+
   distcheck:
     name: make distcheck
     needs: init
