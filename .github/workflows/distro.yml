@@ -118,12 +118,12 @@ jobs:
       with:
         name: tarball
 
-    # - name: Install GNU Fortran (macOS)
-    #   if: ${{ runner.os == 'macOS' }}
-    #   uses: awvwgk/setup-fortran@main
-    #   with:
-    #     compiler: gcc
-    #     version: 12
+    - name: Install GNU Fortran (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      uses: awvwgk/setup-fortran@main
+      with:
+        compiler: gcc
+        version: 12
 
     - name: Verify gfortran
       run: |
