@@ -766,7 +766,8 @@ if(tf) then
     assert = 0
     return
 endif
-stop "Assert failed"
+write(*,*) "Assert failed"
+call exit(-1)
 end function assert
 
 subroutine compare_ptrs
