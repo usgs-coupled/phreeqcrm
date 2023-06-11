@@ -311,7 +311,7 @@ Returns:
 		where, ncomps is the result of :meth:` FindComponents` or
 		:meth:`GetComponentCount`, and nxyz is the number of user
 		grid cells (:meth:`GetGridCellCount`). Values for inactive
-		cells are set to 1e30.
+		cells are set to 1e30."
 %enddef
 %feature("docstring") PhreeqcRM::GetConcentrations GetConcentrations_DOCSTRING
 
@@ -354,7 +354,7 @@ Returns:
 		module. Only the following databases distributed with
 		PhreeqcRM have molar volume information needed to
 		accurately calculate density: phreeqc.dat, Amm.dat, and
-		pitzer.dat.
+		pitzer.dat."
 %enddef
 %feature("docstring") PhreeqcRM::GetDensityCalculated GetDensityCalculated_DOCSTRING
 
@@ -682,7 +682,7 @@ Returns:
 %feature("docstring") PhreeqcRM::GetIthConcentration GetIthConcentration_DOCSTRING
 
 
-%define GetIthConcentration_DOCSTRING
+%define GetIthSpeciesConcentration_DOCSTRING
 "Returns an array of concentrations for the Ith aqueous species. 
 
 Called after :meth:`FindComponents`. Order of species
@@ -694,7 +694,7 @@ Returns:
 	numpy.ndarray (float): Concentration for each model cell 
 		of the Ith species."
 %enddef
-%feature("docstring") PhreeqcRM::GetIthConcentration GetIthConcentration_DOCSTRING
+%feature("docstring") PhreeqcRM::GetIthSpeciesConcentration GetIthSpeciesConcentration_DOCSTRING
 
 
 %define GetKineticReactions_DOCSTRING
@@ -1804,7 +1804,7 @@ Returns:
 	IRM_RESULT: 0 is success, negative is failure (See
 		:meth:`DecodeError`)."
 %enddef
-%feature("docstring") PhreeqcRM::InitialGasPhases2Module InitialGasPhases2Module2Module_DOCSTRING
+%feature("docstring") PhreeqcRM::InitialGasPhases2Module InitialGasPhases2Module_DOCSTRING
 
 
 %define InitializeYAML_DOCSTRING
@@ -2224,7 +2224,7 @@ Returns:
 %feature("docstring") PhreeqcRM::InitialSolidSolutions2Module InitialSolidSolutions2Module_DOCSTRING
 
 
-%define InitialSolutions2Module2Module_DOCSTRING
+%define InitialSolutions2Module_DOCSTRING
 "Transfer solution definitions from the InitialPhreeqc
 instance to the reaction-module workers.
 
@@ -2741,21 +2741,21 @@ Returns:
 // %feature("docstring") PhreeqcRM::SetMpiWorkerCallbackCookie SetMpiWorkerCallbackCookie_DOCSTRING
 
 
-// %define SetNthSelectedOutput_DOCSTRING
-// "Specify the current selected output by sequence number. The user may define 
-// multiple SELECTED_OUTPUT data blocks for the workers. A user number is 
-// specified for each data block, and the blocks are stored in user-number order. 
-// The value of the argument n selects the sequence number of the SELECTED_OUTPUT 
-// definition that will be used for selected-output operations.
+%define SetNthSelectedOutput_DOCSTRING
+"Specify the current selected output by sequence number. The user may define 
+multiple SELECTED_OUTPUT data blocks for the workers. A user number is 
+specified for each data block, and the blocks are stored in user-number order. 
+The value of the argument n selects the sequence number of the SELECTED_OUTPUT 
+definition that will be used for selected-output operations.
 
-// Args:
-// 	n (int): Sequence number of the SELECTED_OUTPUT data block that is to be 
-// 		used.
+Args:
+	n (int): Sequence number of the SELECTED_OUTPUT data block that is to be 
+		used.
 
-// Returns:
-// 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
-// %enddef
-// %feature("docstring") PhreeqcRM::SetNthSelectedOutput SetNthSelectedOutput_DOCSTRING
+Returns:
+	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
+%enddef
+%feature("docstring") PhreeqcRM::SetNthSelectedOutput SetNthSelectedOutput_DOCSTRING
 
 
 %define SetPartitionUZSolids_DOCSTRING
@@ -2902,8 +2902,9 @@ similar, but limited testing indicates the default method
 performs better.
 
 Args:
-	tf (Boolean): True, indicates individual cell times are used in rebalancing 
-(default); False, indicates average times are used in rebalancing.
+	tf (Boolean): True, indicates individual cell times are
+		used in rebalancing (default); False, indicates average
+		times are used in rebalancing.
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
@@ -2912,16 +2913,21 @@ Returns:
 
 
 %define SetRebalanceFraction_DOCSTRING
-"Sets the fraction of cells that are transferred among threads or processes 
-when rebalancing. PhreeqcRM attempts to rebalance the load of each thread or 
-process such that each thread or process takes the same amount of time to run 
-its part of a :meth:`RunCells` calculation. The rebalancing transfers cell 
-calculations among threads or processes to try to achieve an optimum balance. 
-SetRebalanceFraction adjusts the calculated optimum number of cell transfers by 
-a fraction from 0 to 1.0 to determine the actual number of cell transfers. A 
-value of zero eliminates load rebalancing. A value less than 1.0 is suggested 
-to slow the approach to the optimum cell distribution and avoid possible 
-oscillations when too many cells are transferred at one iteration, requiring 
+"Sets the fraction of cells that are transferred among
+threads or processes when rebalancing. 
+
+PhreeqcRM attempts to rebalance the load of each thread or
+process such that each thread or process takes the same
+amount of time to run its part of a :meth:`RunCells`
+calculation. The rebalancing transfers cell calculations
+among threads or processes to try to achieve an optimum
+balance. SetRebalanceFraction adjusts the calculated
+optimum number of cell transfers by a fraction from 0 to
+1.0 to determine the actual number of cell transfers. A
+value of zero eliminates load rebalancing. A value less
+than 1.0 is suggested to slow the approach to the optimum
+cell distribution and avoid possible oscillations when too
+many cells are transferred at one iteration, requiring
 reverse transfers at the next iteration. Default is 0.5.
 
 Args:
@@ -2934,23 +2940,28 @@ Returns:
 
 
 %define SetRepresentativeVolume_DOCSTRING
-"Set the representative volume of each reaction cell. By default the 
-representative volume of each reaction cell is 1 liter. The volume of water in 
-a reaction cell is determined by the product of the representative volume, the 
-porosity (:meth:`SetPorosity`), and the saturation (:meth:`SetSaturationUser`). The 
-numerical method of PHREEQC is more robust if the water volume for a reaction 
-cell is within a couple orders of magnitude of 1.0. Small water volumes caused 
-by small porosities and (or) small saturations (and (or) small representative 
-volumes) may cause non-convergence of the numerical method. In these cases, a 
-larger representative volume may help. Note that increasing the representative 
-volume also increases the number of moles of the reactants in the reaction cell 
-(minerals, surfaces, exchangers, and others), which are defined as moles per 
-representative volume.
+"Set the representative volume of each reaction cell. 
+
+By default the representative volume of each reaction cell
+is 1 liter. The volume of water in a reaction cell is
+determined by the product of the representative volume, the
+porosity (:meth:`SetPorosity`), and the saturation
+(:meth:`SetSaturationUser`). The numerical method of
+PHREEQC is more robust if the water volume for a reaction
+cell is within a couple orders of magnitude of 1.0. Small
+water volumes caused by small porosities and (or) small
+saturations (and (or) small representative volumes) may
+cause non-convergence of the numerical method. In these
+cases, a larger representative volume may help. Note that
+increasing the representative volume also increases the
+number of moles of the reactants in the reaction cell
+(minerals, surfaces, exchangers, and others).
 
 Args:
-	rv (float list, numpy.ndarray, or tuple): Representative volumes, in liters.
-		Default is 1.0 liter. Size of array is nxyz, where nxyz is the number of 
-		grid cells in the user model (:meth:`GetGridCellCount`).
+	rv (float list, numpy.ndarray, or tuple): Representative
+		volumes, in liters. Default is 1.0 liter. Size of array is
+		nxyz, where nxyz is the number of grid cells in the user
+		model (:meth:`GetGridCellCount`).
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."
@@ -2959,21 +2970,27 @@ Returns:
 
 
 %define SetSaturationUser_DOCSTRING
-"Set the saturation of each reaction cell. Saturation is a fraction ranging 
-from 0 to 1. The volume of water in a cell is the product of porosity 
-(:meth:`SetPorosity`), saturation (SetSaturationUser), and representative volume 
-(:meth:`SetRepresentativeVolume`). As a result of a reaction calculation, 
-solution properties (density and volume) will change; the databases 
-phreeqc.dat, Amm.dat, and pitzer.dat have the molar volume data to calculate 
-these changes. The methods :meth:`GetDensity`, :meth:`GetSolutionVolume`, and 
-:meth:`GetSaturation` can be used to account for these changes in the 
-succeeding transport calculation. SetRepresentativeVolume should be called 
-before initial conditions are defined for the reaction cells.
+"Set the saturation of each reaction cell. 
+
+Saturation is a fraction ranging from 0 to 1. The volume of
+water in a cell is the product of porosity
+(:meth:`SetPorosity`), saturation (SetSaturationUser), and
+representative volume (:meth:`SetRepresentativeVolume`). As
+a result of a reaction calculation, solution properties
+(density and volume) will change; the databases
+phreeqc.dat, Amm.dat, and pitzer.dat have the molar volume
+data to calculate these changes. The methods
+:meth:`GetDensityCalculated`, :meth:`GetSolutionVolume`,
+and :meth:`GetSaturationCalculated` can be used to account
+for these changes in the succeeding transport calculation.
+SetRepresentativeVolume should be called before initial
+conditions are defined for the reaction cells.
 
 Args:
-	sat (float list, numpy.ndarray, or tuple): Saturations, unitless. Default 
-		1.0. Size of vector is nxyz, where nxyz is the number of grid cells in the 
-		user model (:meth:`GetGridCellCount`).
+	sat (float list, numpy.ndarray, or tuple): Saturations,
+		unitless. Default 1.0. Size of vector is nxyz, where nxyz
+		is the number of grid cells in the user model
+		(:meth:`GetGridCellCount`).
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See :meth:`DecodeError`)."

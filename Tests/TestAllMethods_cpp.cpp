@@ -43,6 +43,7 @@ void TestAllMethods_cpp()
 #endif
 	//-------
 	bmi.Initialize(YAML_filename);   // void function
+	bmi.InitializeYAML(YAML_filename);
 	std::cerr << "Initialize\n";
 	//-------
 	bmi.GetValue("GridCellCount", nxyz);

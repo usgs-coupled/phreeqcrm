@@ -49,7 +49,11 @@ import_array();
 
 // Ignore methods
 %ignore PhreeqcRM::GetIPhreeqcPointer(int i);
+%ignore PhreeqcRM::GetSelectedOutputHeading(int icol, std::string &heading);
 %ignore PhreeqcRM::GetWorkers();
+%ignore PhreeqcRM::MpiAbort();
+%ignore PhreeqcRM::SetMpiWorkerCallbackC(int (*fcn)(int *method, void * cookie));
+%ignore PhreeqcRM::SetMpiWorkerCallbackCookie(void * cookie);
 // Switch argument to output variable
 %apply std::vector < double >     &OUTPUT { std::vector < double > &destination_c };
 %apply std::vector<std::string>   &OUTPUT { std::vector<std::string> &species_output, std::vector<std::string> &elts_output };
