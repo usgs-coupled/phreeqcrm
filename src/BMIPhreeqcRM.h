@@ -91,12 +91,13 @@ public:
     @htmlonly
     <CODE>
     <PRE>
-    LoadDatabase: phreeqc.dat
-    RunFile:
-      workers: true
-      initial_phreeqc: true
-      utility: true
-      chemistry_name: advect.pqi
+- key: LoadDatabase
+  database: phreeqc.dat
+- key: RunFile
+  workers: true
+  initial_phreeqc: true
+  utility: true
+  chemistry_name: advect.pqi
     </PRE>
     </CODE>
     @endhtmlonly
@@ -913,6 +914,7 @@ public:
     data type the void pointer should be cast to:
     @n "ComponentCount": int*;
     @n "Concentrations": double*;
+    @n "DensityCalculated": double*;
     @n "Gfw": double*;
     @n "GridCellCount": int*;
     @n "Porosity": double*;
