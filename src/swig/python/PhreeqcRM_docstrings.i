@@ -183,7 +183,6 @@ Args:
 
 
 %define ErrorMessage_DOCSTRING
-
 "Send an error message to the screen, the output file, and
 the log file.
 
@@ -399,7 +398,6 @@ Returns:
 %feature("docstring") PhreeqcRM::GetEquilibriumPhases GetEquilibriumPhases_DOCSTRING
 
 %define GetEquilibriumPhasesCount_DOCSTRING
-
 "Returns the number of equilibrium phases found by
 :meth:`FindComonents`.
 	
@@ -524,7 +522,6 @@ Returns:
 
 
 %define GetGasComponents_DOCSTRING
-
 "Returns a tuple of the names of all gas components found by 
 :meth:`FindComponents`. 
 
@@ -541,7 +538,6 @@ Returns:
 
 
 %define GetGasComponentsCount_DOCSTRING
-
 "Returns the number of gas phase components found by 
 :meth:`FindComponents`. 
 
@@ -3388,7 +3384,6 @@ Returns:
 
 
 %define SpeciesConcentrations2Module_DOCSTRING
-
 "Set solution concentrations in the reaction module based on
 the array of aqueous species concentrations
 (species_conc). 
@@ -3623,7 +3618,7 @@ SaturationIndices: False excludes all saturation indices;
 
 
 %define finalize_DOCSTRING
-""
+"Finalize closes any files open in the BMIPhreeqcRM instance."
 %enddef
 %feature("docstring") PhreeqcRM::finalize finalize_DOCSTRING
 
@@ -3666,19 +3661,48 @@ Returns:
 %feature("docstring") PhreeqcRM::get_end_time get_end_time_DOCSTRING
 
 %define get_grid_rank_DOCSTRING
-""
+"Returns a rank of 1 for grid 0. 
+
+BMIPhreeqcRM only has a 1D series of
+cells; any grid or spatial information must
+be found in the user's model.
+
+Args:
+	grid (int): Grid number, only grid 0 is considered.
+Returns:
+	(int) Rank of 1 is returned for grid 0; 0 for all other values of 
+		grid."
 %enddef
 %feature("docstring") PhreeqcRM::get_grid_rank get_grid_rank_DOCSTRING
 
 
 %define get_grid_size_DOCSTRING
-""
+"Returns the number of cells specified
+at initialization of the BMIPhreeqcRM instance. 
+
+Args:
+	grid (int): Grid number, only grid 0 is considered.
+
+Returns:
+	(int) Number of cells in the user's modle (same value as
+		:meth:`GetGridCellCount` is returned for grid 0; 0 for all other
+		values of grid."
 %enddef
 %feature("docstring") PhreeqcRM::get_grid_size get_grid_size_DOCSTRING
 
 
 %define get_grid_type_DOCSTRING
-""
+"Grid type is points. 
+
+No grid information is available in BMIPhreeqcRM; all grid
+information must be found in the user's model. 
+
+Args:
+	grid (int): Grid number, only grid 0 is considered. 
+	
+Returns:
+	(str) 'Points' is returned for grid 0; 'Undefined grid
+		identifier' is returned for all other values of @a grid."
 %enddef
 %feature("docstring") PhreeqcRM::get_grid_type get_grid_type_DOCSTRING
 
@@ -3873,7 +3897,6 @@ Returns:
 
 
 %define get_var_nbytes_DOCSTRING
-
 "Basic Model Interface method that retrieves the total
 number of bytes that are set or retrieved.
 
@@ -3939,7 +3962,7 @@ For example,
   utility: true
   chemistry_name: advect.pqi
 
-initialize will read the YAML file and execute the
+:meth:`initialize` will read the YAML file and execute the
 specified methods with the specified arguments. Using YAML
 terminology, the argument(s) for a method may be a scalar,
 a sequence, or a map, depending if the argument is a single
@@ -4056,6 +4079,13 @@ pointer variables will be updated."
 %feature("docstring") PhreeqcRM::update update_DOCSTRING
 
 %define update_until_DOCSTRING
-""
+"Runs chemistry for a time step calculated
+as end_time minus the current time.
+
+Current time is found with :meth:`get_current_time`.
+
+Args:
+	end_time (float): Time at the end of the simulation
+		period."
 %enddef
 %feature("docstring") PhreeqcRM::update_until update_until_DOCSTRING
