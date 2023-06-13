@@ -54,6 +54,9 @@ swig_add_library(
 
 target_compile_features(${PYTHON_TARGET_NAME} PUBLIC cxx_std_11)
 
+# Turn off Incremental Linking for Debug and RelWithDebInfo
+target_link_options(${PYTHON_TARGET_NAME} PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+
 if(NOT PHREEQCRM_DISABLE_OPENMP)
   if(OPENMP_FOUND)
     target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE USE_OPENMP)
