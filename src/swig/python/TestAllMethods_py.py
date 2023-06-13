@@ -22,6 +22,7 @@ def testallmethods_py():
 	print(f"BMIPhreeqcRM {bmi}")
 	#---------
 	bmi.initialize(YAML_filename)   # void function
+	bmi.InitializeYAML(YAML_filename)
 	print(f"Initialize")
 	#---------
 	nxyz = bmi.GetGridCellCount()

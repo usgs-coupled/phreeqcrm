@@ -186,12 +186,13 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> LoadDatabase: phreeqc.dat
-    !> RunFile:
+    !>  key: LoadDatabase
+    !>   database: phreeqc.dat
+    !> - key: RunFile
     !> workers: true
     !> initial_phreeqc: true
-    !> utility: true
-    !> chemistry_name: advect.pqi
+    !>   utility: true
+    !>  chemistry_name: advect.pqi
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly

@@ -62,6 +62,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	write(*,*) "bmif_create"
 	!-------
 	status = bmif_initialize(id, yaml_filename)
+	status = RM_InitializeYAML(id, yaml_filename)
 	write(*,*) "bmif_initialize"
 	!-------
 	nxyz = RM_GetGridCellCount(id)
