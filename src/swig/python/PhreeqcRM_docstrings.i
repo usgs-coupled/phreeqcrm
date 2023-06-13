@@ -3543,10 +3543,10 @@ Args:
 		get_output_var_names, get_value, get_var_itemsize, and
 		other BMI methods.
 
-	def (str): A string value that can be "false", "true", or a
+	def (str): A string value that can be 'false', 'true', or a
 		list of items to be included as accessible variables. A
-		value of "false", excludes all variables of the given type;
-		a value of "true" includes all variables of the given type
+		value of 'false', excludes all variables of the given type;
+		a value of 'true' includes all variables of the given type
 		for the current system; a list specifies a subset of items
 		of the given type.
 
@@ -3610,7 +3610,7 @@ Values for the the parameter option include:
 	True includes all aqueous species; list includes only the
 	specified aqueous species. Default False.
 
-SaturationIndices: False excludes all saturation indices;
+'SaturationIndices': False excludes all saturation indices;
 	True includes all saturation indices; list includes only
 	the specified saturation indices. Default False."
 %enddef
@@ -3835,10 +3835,10 @@ second argument (dest).
 'SolutionVolume', dest : DoubleVector;
 'Temperature', dest : DoubleVector;
 'Time', dest : double;
-'TimeStep', dest: double."
+'TimeStep', dest: double.
 
 Additional output variables can be defined through the 
-method :meth:`add_output_vars`.
+method :meth:`add_output_vars`."
 %enddef
 %feature("docstring") PhreeqcRM::get_value get_value_DOCSTRING
 
