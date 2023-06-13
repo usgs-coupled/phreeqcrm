@@ -118,17 +118,17 @@ jobs:
       with:
         name: tarball
 
-    - name: Install GNU Fortran (macOS)
-      if: ${{ runner.os == 'macOS' }}
-      uses: awvwgk/setup-fortran@main
-      with:
-        compiler: gcc
-        version: 12
+    # - name: Install GNU Fortran (macOS)
+    #   if: ${{ runner.os == 'macOS' }}
+    #   uses: awvwgk/setup-fortran@main
+    #   with:
+    #     compiler: gcc
+    #     version: 12
 
-    - name: Verify gfortran
-      run: |
-        which gfortran
-        gfortran --version
+    # - name: Verify gfortran
+    #   run: |
+    #     which gfortran
+    #     gfortran --version
 
     - name: Install ninja yaml-cpp valgrind (Linux)
       if: runner.os == 'Linux'
@@ -136,7 +136,12 @@ jobs:
 
     - name: Install ninja yaml-cpp (macOS)
       if: runner.os == 'macOS'
-      run: brew install ninja yaml-cpp
+      run: brew install gcc ninja yaml-cpp
+
+    - name: Verify gfortran
+      run: |
+        which gfortran
+        gfortran --version
 
     - name: Extract tarball
       run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
