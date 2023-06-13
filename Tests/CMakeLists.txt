@@ -138,7 +138,9 @@ if(PHREEQCRM_FORTRAN_TESTING)
 endif()
 
 # Turn off Incremental Linking for Debug and RelWithDebInfo
-target_link_options(TestRM PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+if(MSVC)
+  target_link_options(TestRM PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+endif()
 
 # library dependencies
 target_link_libraries(TestRM PhreeqcRM::PhreeqcRM)
@@ -163,7 +165,9 @@ add_executable(TestRMdtor)
 target_sources(TestRMdtor PRIVATE TestRMdtor.cpp)
 
 # Turn off Incremental Linking for Debug and RelWithDebInfo
-target_link_options(TestRMdtor PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+if(MSVC)
+  target_link_options(TestRMdtor PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+endif()
 
 # library dependencies
 target_link_libraries(TestRMdtor PhreeqcRM::PhreeqcRM)
@@ -181,7 +185,9 @@ target_sources(TestBMIdtor PRIVATE
 )
 
 # Turn off Incremental Linking for Debug and RelWithDebInfo
-target_link_options(TestBMIdtor PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+if(MSVC)
+  target_link_options(TestBMIdtor PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+endif()
 
 # library dependencies
 target_link_libraries(TestBMIdtor PhreeqcRM::PhreeqcRM)

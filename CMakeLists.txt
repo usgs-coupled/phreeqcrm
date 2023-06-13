@@ -520,13 +520,15 @@ if(STANDALONE_BUILD EQUAL 1)
   add_subdirectory(Doxygen)
   add_subdirectory(Tests)
 
-  if (PHREEQCRM_BUILD_PYTHON)
+  if(PHREEQCRM_BUILD_PYTHON)
     add_subdirectory(src)
   endif()
 endif()
 
 # Turn off Incremental Linking for Debug and RelWithDebInfo
-target_link_options(PhreeqcRM PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+if(MSVC)
+  target_link_options(PhreeqcRM PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+endif()
 
 # get_cmake_property(_variableNames VARIABLES)
 # list (SORT _variableNames)

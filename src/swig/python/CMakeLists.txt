@@ -55,7 +55,9 @@ swig_add_library(
 target_compile_features(${PYTHON_TARGET_NAME} PUBLIC cxx_std_11)
 
 # Turn off Incremental Linking for Debug and RelWithDebInfo
-target_link_options(${PYTHON_TARGET_NAME} PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+if(MSVC)
+  target_link_options(${PYTHON_TARGET_NAME} PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+endif()
 
 if(NOT PHREEQCRM_DISABLE_OPENMP)
   if(OPENMP_FOUND)
@@ -108,7 +110,13 @@ if(IS_MULTI_CONFIG)
   )
   set_tests_properties(SimpleAdvect.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
 else()
-  if("${CMAKE_BUILD_TYPE}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+  if(WIN32)
+    if("${CMAKE_BUILD_TYPE}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+      add_test(NAME SimpleAdvect.py
+        COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
+      )
+    endif()
+  else()
     add_test(NAME SimpleAdvect.py
       COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
     )

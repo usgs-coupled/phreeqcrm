@@ -156,6 +156,11 @@ jobs:
       working-directory: ${{ github.workspace }}/build
       run: make check -j4
 
+    - name: cat Tests/test-suite.log
+      if: ${{ always() }}
+      working-directory: ${{ github.workspace }}/build
+      run: cat Tests/test-suite.log
+
     - name: Install with autotools
       working-directory: ${{ github.workspace }}/build
       run: sudo make install
