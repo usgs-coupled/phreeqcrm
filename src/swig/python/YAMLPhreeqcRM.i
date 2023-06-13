@@ -117,7 +117,7 @@ SaturationIndices: False excludes all saturation indices;
 method CloseFiles.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. CloseFiles closes the output and log
 files."
 %enddef
@@ -129,7 +129,7 @@ files."
 method CreateMapping. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. CreateMapping provides a mapping from
 grid cells in the user's model to reaction cells for which
 chemistry needs to be run. The mapping is used to eliminate
@@ -158,7 +158,7 @@ Args:
 method DumpModule.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. DumpModule writes the contents of all
 workers to file in _RAW formats (see appendix of PHREEQC
 version 3 manual), including SOLUTIONs and all reactants.
@@ -208,7 +208,7 @@ C, and their charge."
 method InitialEquilibriumPhases2Module.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. InitialEquilibriumPhases2Module
 transfers EQUILIBRIUM_PHASES definitions from the
 InitialPhreeqc instance to the reaction-module workers. 
@@ -229,7 +229,7 @@ Args:
 method InitialExchanges2Module.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. InitialExchanges2Module transfers
 EXCHANGE definitions from the InitialPhreeqc instance to
 the reaction-module workers. exchanges is aa array of
@@ -249,7 +249,7 @@ Args:
 method InitialGasPhases2Module.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. InitialGasPhases2Module transfers
 GAS_PHASE definitions from the InitialPhreeqc instance to
 the reaction-module workers. gas_phases is an array of
@@ -265,12 +265,11 @@ Args:
 
 
 %define YAMLInitialKinetics2Module_DOCSTRING
-
 " Inserts data into the YAML document for the PhreeqcRM
 method InitialKinetics2Module.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. InitialKinetics2Module transfers
 KINETICS definitions from the InitialPhreeqc instance to
 the reaction-module workers. kinetics is an array of
@@ -286,12 +285,11 @@ Args:
 
 
 %define YAMLInitialPhreeqc2Module_DOCSTRING
-
 "Inserts data into the YAML document for the PhreeqcRM method 
 InitialPhreeqc2Module. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance.InitialPhreeqc2Module transfers
 solutions and reactants from the InitialPhreeqc instance to
 the reaction-module workers. ic1 is used to select initial
@@ -323,7 +321,7 @@ Args:
 InitialPhreeqc2Module with mixing parameters. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. InitialPhreeqc2Module transfers
 solutions and reactants from the InitialPhreeqc instance to
 the reaction-module workers, possibly with mixing. In its
@@ -373,12 +371,11 @@ Args:
 
 
 %define YAMLInitialPhreeqcCell2Module_DOCSTRING
-
 "Inserts data into the YAML document for the PhreeqcRM
 method InitialPhreeqcCell2Module.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. InitialPhreeqcCell2Module uses a cell
 numbered n in the InitialPhreeqc instance to populate a
 series of transport cells. All reactants with the number n
@@ -406,7 +403,7 @@ Args:
 method InitialSolidSolutions2Module.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. InitialSolidSolutions2Module transfers
 SOLID_SOLUTIONS definitions from the InitialPhreeqc
 instance to the reaction-module workers. solid_solutions
@@ -422,12 +419,11 @@ Args:
 
 
 %define YAMLInitialSolutions2Module_DOCSTRING
-
 " Inserts data into the YAML document for the PhreeqcRM
 method InitialSolutions2Module.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. InitialSolutions2Module transfers
 SOLUTION definitions from the InitialPhreeqc instance to
 the reaction-module workers. solutions is an array of
@@ -447,7 +443,7 @@ Args:
 method InitialSurfaces2Module.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. InitialSurfaces2Module transfers
 SURFACE definitions from the InitialPhreeqc instance to the
 reaction-module workers. surfaces is an array of SURFACE
@@ -467,7 +463,7 @@ Args:
 LoadDatabase. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. LoadDatabase loads a database for all
 IPhreeqc instances--workers, InitialPhreeqc, and Utility.
 All definitions of the reaction module are cleared
@@ -485,7 +481,7 @@ Args:
 LogMessage. 
 
 When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
+processed by the BMI method 'initialize' to initialize a PhreeqcRM 
 instance. LogMessage prints a message to the log file.
 
 Args:
@@ -499,7 +495,7 @@ Args:
 method OpenFiles.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. OpenFiles opens the output and log
 files. Files are named prefix.chem.txt and prefix.log.txt
 based on the prefix defined by :meth:`YAMLSetFilePrefix`."
@@ -512,7 +508,7 @@ based on the prefix defined by :meth:`YAMLSetFilePrefix`."
 method OutputMessage.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. OutputMessage prints a message to the
 output file.
 
@@ -527,7 +523,7 @@ Args:
 method RunCells.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. RunCells runs reactions for all cells
 in the reaction module. During initialization, RunCells can
 be used to equilibrate each solution with all reactants in
@@ -547,7 +543,7 @@ saturation (:meth:`YAMLSetSaturationUser`), temperature
 method RunFile.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. RunFile runs a PHREEQC input file. The
 first three arguments determine which IPhreeqc instances
 will run the file--the workers, the InitialPhreeqc
@@ -572,12 +568,11 @@ Args:
 
 
 %define YAMLRunString_DOCSTRING
-
 "Inserts data into the YAML document for the PhreeqcRM
 method RunString.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. RunString runs a PHREEQC input string.
 The first three arguments determine which IPhreeqc
 instances will run the string--the workers, the
@@ -608,7 +603,7 @@ Args:
 ScreenMessage. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. ScreenMessage prints a message to the
 screen.
 
@@ -623,7 +618,7 @@ Args:
 SetComponentH2O. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. SetComponentH2O selects whether to
 include H2O in the component list. The concentrations of H
 and O must be known accurately (8 to 10 significant digits)
@@ -650,7 +645,7 @@ Args:
 SetConcentrations. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. The only way to use this method is to
 have pre-calculated PHREEQC solution concentrations, which
 is not common. Concentrations are normally initialized with
@@ -672,7 +667,7 @@ Args:
 SetCurrentSelectedOutputUserNumber. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. SetCurrentSelectedOutputUserNumber
 selects the current selected output by user number. The
 user may define multiple SELECTED_OUTPUT data blocks for
@@ -693,7 +688,7 @@ Args:
 SetDensityUser. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. SetDensityUser sets the density for
 each reaction cell. These density values are used when
 converting from transported mass-fraction concentrations
@@ -716,7 +711,7 @@ Args:
 SetDumpFileName. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. SetDumpFileName sets the name of the
 dump file. It is the name used by the method DumpModule.
 
@@ -731,7 +726,7 @@ Args:
 SetErrorHandlerMode. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. SetErrorHandlerMode sets the action to
 be taken when the reaction module encounters an error.
 Options are 0, return to calling program with an error
@@ -750,7 +745,7 @@ Args:
 SetErrorOn. 
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. SetErrorOn sets the property that
 controls whether error messages are generated and
 displayed. Messages include PHREEQC 'ERROR' messages, and
@@ -765,205 +760,237 @@ Args:
 
 %define YAMLSetFilePrefix_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetFilePrefix. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetFilePrefix. 
 
-SetFilePrefix sets the prefix for the output (prefix.chem.txt) and log 
-(prefix.log.txt) files. These files are opened by the method OpenFiles.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetFilePrefix sets the prefix for the
+output (prefix.chem.txt) and log (prefix.log.txt) files.
+These files are opened by the method OpenFiles.
+
 Args:
-	prefix (string): Prefix used when opening the output and log files."
+	prefix (str): Prefix used when opening the output 
+		and log files."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetFilePrefix YAMLSetFilePrefix_DOCSTRING
 
 
 %define YAMLSetGasCompMoles_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetGasCompMoles. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetGasCompMoles. 
 
-SetGasCompMoles transfers moles of gas components from the vector given 
-in the argument list (gas_moles) to each reaction cell.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetGasCompMoles transfers moles of gas
+components from the array given in the argument list
+(gas_moles) to each reaction cell.
 
 Args:
-	gas_moles (float list, numpy.ndarray, or tuple): Vector of moles of gas 
-		components. Dimension of the vector is set to ngas_comps times nxyz, where, 
-		ngas_comps is the result of GetGasComponentsCount, and nxyz is the number of user
-		 grid cells. If the number of moles is set to a negative number, the gas 
-		component will not be defined for the GAS_PHASE of the reaction cell."
+	gas_moles (float list, numpy.ndarray, or tuple): Array of
+		moles of gas components. Dimension of the array is set to
+		ngas_comps times nxyz, where, ngas_comps is the result of
+		GetGasComponentsCount, and nxyz is the number of user grid
+		cells. If the number of moles is set to a negative number,
+		the gas component will not be defined for the GAS_PHASE of
+		the reaction cell."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetGasCompMoles YAMLSetGasCompMoles_DOCSTRING
 
 
 %define YAMLSetGasPhaseVolume_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetGasPhaseVolume. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetGasPhaseVolume. 
 
-SetGasPhaseVolume transfers volumes of gas phases from the vector given 
-in the argument list (gas_volume) to each reaction cell. The gas-phase 
-volume affects the gas-component pressures calculated for fixed-volume 
-gas phases. If a gas-phase volume is defined with this methood for a 
-GAS_PHASE in a cell, the gas phase is forced to be a fixed-volume gas 
-phase.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetGasPhaseVolume transfers volumes of
+gas phases from the array given in the argument list
+(gas_volume) to each reaction cell. The gas-phase volume
+affects the gas-component pressures calculated for
+fixed-volume gas phases. If a gas-phase volume is defined
+with this methood for a GAS_PHASE in a cell, the gas phase
+is forced to be a fixed-volume gas phase.
 
 Args:
-	gas_volume (float list, numpy.ndarray, or tuple): Vector of volumes for each 
-		gas phase. Dimension of the vector is nxyz, where nxyz is the number of user 
-		grid cells. If the volume is set to a negative number for a cell, 
-		the gas-phase volume for that cell is not changed."
+	gas_volume (float list, numpy.ndarray, or tuple): Array of
+		volumes for each gas phase. Dimension of the array is
+		nxyz, where nxyz is the number of user grid cells. If the
+		volume is set to a negative number for a cell, the
+		gas-phase volume for that cell is not changed."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetGasPhaseVolume YAMLSetGasPhaseVolume_DOCSTRING
 
 
 %define YAMLSetGridCellCount_DOCSTRING
 "Inserts data into the YAML document to define the number of cells in 
-the user's model. Once the YAML document is written, the number of model 
-cells can be extracted with the method GetGridCellCountYAML. 
-GetGridCellCountYAML is NOT a PhreeqcRM method; it is a global method 
-and must be used BEFORE the PhreeqcRM instance is created. 
-SetGridCellCount will be ignored once the PhreeqcRM instance exists.
+the user's model. 
+
+Once the YAML document is written, the number of model
+cells can be extracted with the method
+GetGridCellCountYAML. GetGridCellCountYAML is NOT a
+PhreeqcRM method; it is a global method and must be used
+BEFORE the BMIPhreeqcRM instance is created
+[phreeqcrm.BMIPhreeqcRM(grid_cell_count, threads)].
+SetGridCellCount will be ignored once the BMIPhreeqcRM
+instance exists. Alternatively, the BMIPhreeqcRM instance
+can be created without arguments [phreeqcrm.BMIPhreeqcRM()]
+and initialized with a YAML file that specifies the grid
+cell count with :meth:`YAMLSetGridCellCount`.
 
 Args:
-	n (int): Number of cells for the PhreeqcRM instance. The number of 
-		cells can be used in the creation of the PhreeqcRM instance. The 
-		PhreeqcRM constructor takes two arguments. GetGridCellCountYAML 
-		provides the value for the first argument. If the YAML file does not 
-		contain the node \"SetGridCellCount:\", GetGridCellCountYAML will 
-		return zero."
+	n (int): Number of cells for the PhreeqcRM instance. The
+		number of cells can be used in the creation of the
+		PhreeqcRM instance. The PhreeqcRM constructor takes two
+		arguments. GetGridCellCountYAML provides the value for the
+		first argument. If the YAML file does not contain the node
+		'SetGridCellCount:', GetGridCellCountYAML will return
+		zero."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetGridCellCount YAMLSetGridCellCount_DOCSTRING
 
 
 %define YAMLSetNthSelectedOutput_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetNthSelectedOutput. When the YAML document is written to file it can 
-be processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetNthSelectedOutput. 
 
-SetNthSelectedOutput specifies the current selected output by sequence 
-number. The user may define multiple SELECTED_OUTPUT data blocks for the 
-workers. A user number is specified for each data block, and the blocks 
-are stored in user-number order. The value of the argument n selects the 
-sequence number of the SELECTED_OUTPUT definition that will be used for 
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetNthSelectedOutput specifies the
+current selected output by sequence number. The user may
+define multiple SELECTED_OUTPUT data blocks for the
+workers. A user number is specified for each data block,
+and the blocks are stored in user-number order. The value
+of the argument n selects the sequence number of the
+SELECTED_OUTPUT definition that will be used for
 selected-output operations.
 
 Args:
-	n (int): Sequence number of the SELECTED_OUTPUT data block that is 
-		to be used."
+	n (int): Sequence number of the SELECTED_OUTPUT data block
+		that is to be used."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetNthSelectedOutput YAMLSetNthSelectedOutput_DOCSTRING
 
 
 %define YAMLSetPartitionUZSolids_DOCSTRING
-"Inserts data into the YAML document for the PhreeqcRM method 
-SetPartitionUZSolids. When the YAML document is written to file it can 
-be processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+"Inserts data into the YAML document for the PhreeqcRM
+method SetPartitionUZSolids.
 
-SetPartitionUZSolids sets the property for partitioning solids between 
-the saturated and unsaturated parts of a partially saturated cell.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetPartitionUZSolids sets the property
+for partitioning solids between the saturated and
+unsaturated parts of a partially saturated cell.
 
-The option is intended to be used by saturated-only flow codes that 
-allow a variable water table. The value has meaning only when 
-saturations less than 1.0 are encountered. The partially saturated cells 
-may have a small water-to-rock ratio that causes reactions to proceed 
-differently relative to fully saturated cells. By setting  
-SetPartitionUZSolids to true, the amounts of solids and gases are 
-partioned according to the saturation. If a cell has a saturation of 
-0.5, then the water interacts with only half of the solids and gases; 
-the other half is unreactive until the water table rises. As the 
-saturation in a cell varies, solids and gases are transferred between 
-the saturated and unsaturated (unreactive) reservoirs of the cell. 
-Unsaturated-zone flow and transport codes will probably use the default 
-(false), which assumes all gases and solids are reactive regardless of 
-saturation.
+The option is intended to be used by saturated-only flow
+codes that allow a variable water table. The value has
+meaning only when saturations less than 1.0 are
+encountered. The partially saturated cells may have a small
+water-to-rock ratio that causes reactions to proceed
+differently relative to fully saturated cells. By setting
+SetPartitionUZSolids to true, the amounts of solids and
+gases are partioned according to the saturation. If a cell
+has a saturation of 0.5, then the water interacts with only
+half of the solids and gases; the other half is unreactive
+until the water table rises. As the saturation in a cell
+varies, solids and gases are transferred between the
+saturated and unsaturated (unreactive) reservoirs of the
+cell. Unsaturated-zone flow and transport codes will
+probably use the default (false), which assumes all gases
+and solids are reactive regardless of saturation.
 
 Args:
-	tf (Boolean): True, the fraction of solids and gases available for 
-		reaction is equal to the saturation; False (default), all solids and 
-		gases are reactive regardless of saturation."
+	tf (Boolean): True, the fraction of solids and gases
+		available for reaction is equal to the saturation; False
+		(default), all solids and gases are reactive regardless of
+		saturation."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetPartitionUZSolids YAMLSetPartitionUZSolids_DOCSTRING
 
 
 %define YAMLSetPorosity_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetPorosity. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetPorosity. 
 
-SetPorosity sets the porosity for each reaction cell. The volume of 
-water in a reaction cell is the product of porosity, saturation 
-(SetSaturationUser), and representative volume (SetRepresentativeVolume).
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetPorosity sets the porosity for each
+reaction cell. The volume of water in a reaction cell is
+the product of porosity, saturation (SetSaturationUser),
+and representative volume (SetRepresentativeVolume).
 
 Args:
-	por (float list, numpy.ndarray, or tuple): Vector of porosities, unitless. 
-		Size of vector is nxyz, where nxyz is the number of grid cells in 
-		the user's model."
+	por (float list, numpy.ndarray, or tuple): Array of
+		porosities, unitless. Size of array is nxyz, where nxyz 
+		is the number of grid cells in the user's model."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetPorosity YAMLSetPorosity_DOCSTRING
 
 
 %define YAMLSetPressure_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetPressure. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetPressure. 
 
-SetPressure sets the pressure for each reaction cell. Pressure effects 
-are considered only in three of the databases distributed with 
-PhreeqcRM: phreeqc.dat, Amm.dat, and pitzer.dat.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetPressure sets the pressure for each
+reaction cell. Pressure effects are considered only in
+three of the databases distributed with PhreeqcRM:
+phreeqc.dat, Amm.dat, and pitzer.dat.
 
 Args:
-	p (float list, numpy.ndarray, or tuple): Vector of pressures, in atm. Size of 
-		vector is nxyz, where nxyz is the number of grid cells in the user's model."
+	p (float list, numpy.ndarray, or tuple): Array of
+		pressures, in atm. Size of array is nxyz, where nxyz is
+		the number of grid cells in the user's model."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetPressure YAMLSetPressure_DOCSTRING
 
 
 %define YAMLSetPrintChemistryMask_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetPrintChemistryMask. When the YAML document is written to file it can 
-be processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetPrintChemistryMask. 
 
-SetPrintChemistryMask enables or disables detailed output for each 
-reaction cell. Printing for a reaction cell will occur only when the 
-printing is enabled with SetPrintChemistryOn and the cell_mask value is 
-1.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetPrintChemistryMask enables or
+disables detailed output for each reaction cell. Printing
+for a reaction cell will occur only when the printing is
+enabled with SetPrintChemistryOn and the cell_mask 
+value is 1.
 
 Args:
-	cell_mask (int list, numpy.ndarray, or tuple): Vector of integers. Size of 
-		vector is nxyz, where nxyz is the number of grid cells in the user's 
-		model. A value of 0 will disable printing detailed output for the cell; 
-		a value of 1 will enable printing detailed output for a cell."
+	cell_mask (int list, numpy.ndarray, or tuple): Array of
+	integers. Size of array is nxyz, where nxyz is the number
+		of grid cells in the user's model. A value of 0 will
+		disable printing detailed output for the cell; a value 
+		of 1 will enable printing detailed output for a cell."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetPrintChemistryMask YAMLSetPrintChemistryMask_DOCSTRING
 
 
 %define YAMLSetPrintChemistryOn_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetPrintChemistryOn. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetPrintChemistryOn. 
 
-SetPrintChemistryOn sets the property that enables or disables printing 
-detailed output from reaction calculations to the output file for a set 
-of cells defined by SetPrintChemistryMask. The detailed output prints 
-all of the output typical of a PHREEQC reaction calculation, which 
-includes solution descriptions and the compositions of all other 
-reactants. The output can be several hundred lines per cell, which can 
-lead to a very large output file (prefix.chem.txt opened by the method 
-OpenFiles). For the worker instances, the output can be limited to a set 
-of cells (method SetPrintChemistryMask) and, in general, the amount of 
-information printed can be limited by use of options in the PRINT data 
-block of PHREEQC (applied by using methods RunFile or RunString). 
-Printing the detailed output for the workers is generally used only for 
-debugging, and PhreeqcRM will run significantly faster when printing 
-detailed output for the workers is disabled.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetPrintChemistryOn sets the property
+that enables or disables printing detailed output from
+reaction calculations to the output file for a set of cells
+defined by SetPrintChemistryMask. The detailed output
+prints all of the output typical of a PHREEQC reaction
+calculation, which includes solution descriptions and the
+compositions of all other reactants. The output can be
+several hundred lines per cell, which can lead to a very
+large output file (prefix.chem.txt opened by the method
+OpenFiles). For the worker instances, the output can be
+limited to a set of cells (method SetPrintChemistryMask)
+and, in general, the amount of information printed can be
+limited by use of options in the PRINT data block of
+PHREEQC (applied by using methods RunFile or RunString).
+Printing the detailed output for the workers is generally
+used only for debugging, and PhreeqcRM will run
+significantly faster when printing detailed output for the
+workers is disabled.
 
 Args:
 	workers (Boolean): True, enable detailed printing in the worker 
@@ -981,44 +1008,50 @@ Args:
 
 %define YAMLSetRebalanceByCell_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetRebalanceByCell. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetRebalanceByCell. 
 
-SetRebalanceByCell sets the load-balancing algorithm. PhreeqcRM attempts 
-to rebalance the load of each thread or process such that each thread or 
-process takes the same amount of time to run its part of a RunCells 
-calculation. Two algorithms are available; one uses individual times for 
-each cell and accounts for cells that were not run because saturation 
-was zero (default), and the other assigns an average time to all cells. 
-The methods are similar, but limited testing indicates the default 
-method performs better.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetRebalanceByCell sets the
+load-balancing algorithm. PhreeqcRM attempts to rebalance
+the load of each thread or process such that each thread or
+process takes the same amount of time to run its part of a
+RunCells calculation. Two algorithms are available; one
+uses individual times for each cell and accounts for cells
+that were not run because saturation was zero (default),
+and the other assigns an average time to all cells. The
+methods are similar, but limited testing indicates the
+default method performs better.
 
 Args:
-	tf (Boolean): True, indicates individual cell times are used in 
-rebalancing; False, indicates average times are used in rebalancing."
+	tf (Boolean): True, indicates individual cell times are
+		used in rebalancing; False, indicates average times are
+		used in rebalancing."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetRebalanceByCell YAMLSetRebalanceByCell_DOCSTRING
 
 
 %define YAMLSetRebalanceFraction_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetRebalanceFraction. When the YAML document is written to file it can 
-be processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetRebalanceFraction. 
 
-SetRebalanceFraction sets the fraction of cells that are transferred 
-among threads or processes when rebalancing. PhreeqcRM attempts to 
-rebalance the load of each thread or process such that each thread or 
-process takes the same amount of time to run its part of a RunCells 
-calculation. The rebalancing transfers cell calculations among threads 
-or processes to try to achieve an optimum balance. SetRebalanceFraction 
-adjusts the calculated optimum number of cell transfers by a fraction 
-from 0 to 1.0 to determine the actual number of cell transfers. A value 
-of zero eliminates load rebalancing. A value less than 1.0 is suggested 
-to slow the approach to the optimum cell distribution and avoid possible 
-oscillations when too many cells are transferred at one iteration, 
-requiring reverse transfers at the next iteration. Default is 0.5.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetRebalanceFraction sets the fraction
+of cells that are transferred among threads or processes
+when rebalancing. PhreeqcRM attempts to rebalance the load
+of each thread or process such that each thread or process
+takes the same amount of time to run its part of a RunCells
+calculation. The rebalancing transfers cell calculations
+among threads or processes to try to achieve an optimum
+balance. SetRebalanceFraction adjusts the calculated
+optimum number of cell transfers by a fraction from 0 to
+1.0 to determine the actual number of cell transfers. A
+value of zero eliminates load rebalancing. A value less
+than 1.0 is suggested to slow the approach to the optimum
+cell distribution and avoid possible oscillations when too
+many cells are transferred at one iteration, requiring
+reverse transfers at the next iteration. Default is 0.5.
 
 Args:
 	f (float): Fraction from 0.0 to 1.0."
@@ -1028,141 +1061,156 @@ Args:
 
 %define YAMLSetRepresentativeVolume_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetRepresentativeVolume. When the YAML document is written to file it 
-can be processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetRepresentativeVolume. 
 
-SetRepresentativeVolume sets the representative volume of each reaction 
-cell. By default the representative volume of each reaction cell is 1 
-liter. The volume of water in a reaction cell is determined by the 
-product of the representative volume, the porosity (SetPorosity), and 
-the saturation (SetSaturationUser). The numerical method of PHREEQC is more 
-robust if the water volume for a reaction cell is within a couple orders 
-of magnitude of 1.0. Small water volumes caused by small porosities and 
-(or) small saturations (and (or) small representative volumes) may cause 
-non-convergence of the numerical method. In these cases, a larger 
-representative volume may help. Note that increasing the representative 
-volume also increases the number of moles of the reactants in the 
-reaction cell (minerals, surfaces, exchangers, and others), which are 
-defined as moles per representative volume. SetRepresentativeVolume 
-should be called before initial conditions are defined for the reaction 
-cells.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetRepresentativeVolume sets the
+representative volume of each reaction cell. By default the
+representative volume of each reaction cell is 1 liter. The
+volume of water in a reaction cell is determined by the
+product of the representative volume, the porosity
+(SetPorosity), and the saturation (SetSaturationUser). The
+numerical method of PHREEQC is more robust if the water
+volume for a reaction cell is within a couple orders of
+magnitude of 1.0. Small water volumes caused by small
+porosities and (or) small saturations (and (or) small
+representative volumes) may cause non-convergence of the
+numerical method. In these cases, a larger representative
+volume may help. Note that increasing the representative
+volume also increases the number of moles of the reactants
+in the reaction cell (minerals, surfaces, exchangers, and
+others), which are defined as moles per representative
+volume. SetRepresentativeVolume should be called before
+initial conditions are defined for the reaction cells.
 
 Args:
-	rv (float list, numpy.ndarray, or tuple): Vector of representative volumes, 
-		in liters. Size of array is nxyz, where nxyz is the 
-		number of grid cells in the user's model."
+	rv (float list, numpy.ndarray, or tuple): Array of
+		representative volumes, in liters. Size of array is 
+		nxyz, 		where nxyz is the number of grid cells 
+		in the user's model."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetRepresentativeVolume YAMLSetRepresentativeVolume_DOCSTRING
 
 
 %define YAMLSetSaturationUser_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetSaturationUser. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetSaturationUser. 
 
-SetSaturationUser sets the saturation of each reaction cell. Saturation is a 
-fraction ranging from 0 to 1. The volume of water in a cell is the 
-product of porosity (SetPorosity), saturation (SetSaturationUser), and 
-representative volume (SetRepresentativeVolume). As a result of a 
-reaction calculation, solution properties (density and volume) will 
-change; the databases phreeqc.dat, Amm.dat, and pitzer.dat have the 
-molar volume data to calculate these changes. The methods GetDensity, 
-GetSolutionVolume, and GetSaturation can be used to account for these 
-changes in the succeeding transport calculation.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetSaturationUser sets the saturation
+of each reaction cell. Saturation is a fraction ranging
+from 0 to 1. The volume of water in a cell is the product
+of porosity (SetPorosity), saturation (SetSaturationUser),
+and representative volume (SetRepresentativeVolume). As a
+result of a reaction calculation, solution properties
+(density and volume) will change; the databases
+phreeqc.dat, Amm.dat, and pitzer.dat have the molar volume
+data to calculate these changes. The methods GetDensity,
+GetSolutionVolume, and GetSaturation can be used to account
+for these changes in the succeeding transport calculation.
 
 Args:
-	sat (float list, numpy.ndarray, or tuple): Vector of saturations, unitless. 
-		Size of vector is nxyz, where nxyz is the number of grid cells in 
-		the user's model."
+	sat (float list, numpy.ndarray, or tuple): Array of
+		saturations, unitless. Size of array is nxyz, where nxyz is
+		the number of grid cells in the user's model."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetSaturationUser YAMLSetSaturationUser_DOCSTRING
 
 
 %define YAMLSetScreenOn_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetScreenOn. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetScreenOn. 
 
-SetScreenOn sets the property that controls whether messages are written 
-to the screen. Messages include information about rebalancing during 
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetScreenOn sets the property that
+controls whether messages are written to the screen.
+Messages include information about rebalancing during
 RunCells, and any messages written with ScreenMessage.
 
 Args:
-	tf (Boolean): True, enable screen messages; False, disable screen messages."
+	tf (Boolean): True, enable screen messages; False, 
+		disable screen messages."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetScreenOn YAMLSetScreenOn_DOCSTRING
 
 
 %define YAMLSetSelectedOutputOn_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetSelectedOutputOn. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetSelectedOutputOn. 
 
-SetSelectedOutputOn sets the property that controls whether 
-selected-output results are available to be retrieved with 
-GetSelectedOutput. True indicates that selected-output results will be 
-accumulated during RunCells and can be retrieved with GetSelectedOutput; 
-False indicates that selected-output results will not be accumulated 
-during RunCells.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetSelectedOutputOn sets the property
+that controls whether selected-output results are available
+to be retrieved with GetSelectedOutput. True indicates that
+selected-output results will be accumulated during RunCells
+and can be retrieved with GetSelectedOutput; False
+indicates that selected-output results will not be
+accumulated during RunCells.
 
 Args:
-	tf (Boolean): True, enable selected output; False, disable selected 
-		output."
+	tf (Boolean): True, enable selected output; False, disable 
+		selected output."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetSelectedOutputOn YAMLSetSelectedOutputOn_DOCSTRING
 
 
 %define YAMLSetSpeciesSaveOn_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetSpeciesSaveOn. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetSpeciesSaveOn. 
 
-SetSpeciesSaveOn sets the value of the species-save property. This 
-method enables or disables use of PhreeqcRM with 
-multicomponent-diffusion transport calculations. By default, 
-concentrations of aqueous species are not saved. Setting the 
-species-save property to true allows aqueous species concentrations to 
-be retrieved with GetSpeciesConcentrations, and solution compositions to 
-be set with SpeciesConcentrations2Module. SetSpeciesSaveOn must be 
-called before calls to FindComponents.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetSpeciesSaveOn sets the value of the
+species-save property. This method enables or disables use
+of PhreeqcRM with multicomponent-diffusion transport
+calculations. By default, concentrations of aqueous species
+are not saved. Setting the species-save property to true
+allows aqueous species concentrations to be retrieved with
+GetSpeciesConcentrations, and solution compositions to be
+set with SpeciesConcentrations2Module. SetSpeciesSaveOn
+must be called before calls to FindComponents.
 
 Args:
-	save_on (Boolean): True indicates species concentrations are saved; 
-		False indicates species concentrations are not saved."
+	save_on (Boolean): True indicates species concentrations 
+		are saved; False indicates species concentrations 
+		are not saved."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetSpeciesSaveOn YAMLSetSpeciesSaveOn_DOCSTRING
 
 
 %define YAMLSetTemperature_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetTemperature. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetTemperature. 
 
-SetTemperature sets the temperature for each reaction cell. If 
-SetTemperature is not called, worker solutions will have temperatures as 
-defined by initial conditions (InitialPhreeqc2Module and 
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetTemperature sets the temperature for
+each reaction cell. If SetTemperature is not called, worker
+solutions will have temperatures as defined by initial
+conditions (InitialPhreeqc2Module and
 InitialPhreeqcCell2Module).
 
 Args:
-	t  (float list, numpy.ndarray, or tuple): Vector of temperatures, in degrees C. 
-		Size of vector is nxyz, where nxyz is the number of grid cells in the user's 
+	t (float list, numpy.ndarray, or tuple): Array of 
+		temperatures, in degrees C. Size of array is nxyz, 
+		where nxyz is the number of grid cells in the user's 
 		model."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetTemperature YAMLSetTemperature_DOCSTRING
 
 
 %define YAMLSetTime_DOCSTRING
-"Inserts data into the YAML document for the PhreeqcRM method SetTime. 
-When the YAML document is written to file it can be processed by the 
-method InitializeYAML to initialize a PhreeqcRM instance.
+"Inserts data into the YAML document for the PhreeqcRM 
+method SetTime. 
 
-SetTime sets current simulation time for the reaction module.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetTime sets current simulation time
+for the reaction module.
 
 Args:
 	time (float): Current simulation time, in seconds."
@@ -1172,28 +1220,31 @@ Args:
 
 %define YAMLSetTimeConversion_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetTimeConversion. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetTimeConversion. 
 
-SetTimeConversion Set a factor to convert from seconds to user time 
-units. Factor times seconds produces user time units that is used in 
-some PhreeqcRM printing.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetTimeConversion Set a factor to
+convert from seconds to user time units. Factor times
+seconds produces user time units that is used in some
+PhreeqcRM printing.
 
 Args:
-	conv_factor (float): Factor to convert seconds to user time units."
+	conv_factor (float): Factor to convert seconds to 
+		user time units."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSetTimeConversion YAMLSetTimeConversion_DOCSTRING
 
 
 %define YAMLSetTimeStep_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetTimeStep. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetTimeStep. 
 
-SetTimeStep sets current time step for the reaction module. This is the 
-length of time over which kinetic reactions are integrated.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetTimeStep sets current time step for
+the reaction module. This is the length of time over which
+kinetic reactions are integrated.
 
 Args:
 	time_step (float): Time step, in seconds."
@@ -1203,27 +1254,30 @@ Args:
 
 %define YAMLSetUnitsExchange_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetUnitsExchange. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetUnitsExchange. 
 
-SetUnitsExchange sets input units for exchangers. In PHREEQC input, 
-exchangers are defined by moles of exchange sites (Mp). 
-SetUnitsExchange specifies how the number of moles of exchange sites in 
-a reaction cell (Mc) is calculated from the input value (Mp).
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetUnitsExchange sets input units for
+exchangers. In PHREEQC input, exchangers are defined by
+moles of exchange sites (Mp). SetUnitsExchange specifies
+how the number of moles of exchange sites in a reaction
+cell (Mc) is calculated from the input value (Mp).
 
-Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV, where RV is 
-the representative volume (SetRepresentativeVolume); 1, Mp is mol/L of 
-water in the RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2, 
-Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
+Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV,
+where RV is the representative volume
+(SetRepresentativeVolume); 1, Mp is mol/L of water in the
+RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2,
+Mp is mol/L of rock in the RV, Mc = Mp*(1-P)*RV.
 
-If a single EXCHANGE definition is used for cells with different 
-initial porosity, the three options scale quite differently. For option 
-0, the number of moles of exchangers will be the same regardless of 
-porosity. For option 1, the number of moles of exchangers will be vary 
-directly with porosity and inversely with rock volume. For option 2, 
-the number of moles of exchangers will vary directly with rock volume 
-and inversely with porosity.
+If a single EXCHANGE definition is used for cells with
+different initial porosity, the three options scale quite
+differently. For option 0, the number of moles of
+exchangers will be the same regardless of porosity. For
+option 1, the number of moles of exchangers will be vary
+directly with porosity and inversely with rock volume. For
+option 2, the number of moles of exchangers will vary
+directly with rock volume and inversely with porosity.
 
 Args:
 	option (int): Units option for exchangers: 0, 1, or 2."
@@ -1233,27 +1287,30 @@ Args:
 
 %define YAMLSetUnitsGasPhase_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetUnitsGasPhase. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetUnitsGasPhase. 
 
-SetUnitsGasPhase sets input units for gas phases. In PHREEQC input, gas 
-phases are defined by moles of component gases (Mp). SetUnitsGasPhase 
-specifies how the number of moles of component gases in a reaction cell 
-(Mc) is calculated from the input value (Mp).
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetUnitsGasPhase sets input units for
+gas phases. In PHREEQC input, gas phases are defined by
+moles of component gases (Mp). SetUnitsGasPhase specifies
+how the number of moles of component gases in a reaction
+cell (Mc) is calculated from the input value (Mp).
 
-Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV, where RV is the 
-representative volume (SetRepresentativeVolume); 1, Mp is mol/L of 
-water in the RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2, 
-Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
+Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV,
+where RV is the representative volume
+(SetRepresentativeVolume); 1, Mp is mol/L of water in the
+RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2,
+Mp is mol/L of rock in the RV, Mc = Mp*(1-P)*RV.
 
-If a single GAS_PHASE definition is used for cells with different 
-initial porosity, the three options scale quite differently. For option 
-0, the number of moles of a gas component will be the same regardless 
-of porosity. For option 1, the number of moles of a gas component will 
-be vary directly with porosity and inversely with rock volume. For 
-option 2, the number of moles of a gas component will vary directly 
-with rock volume and inversely with porosity.
+If a single GAS_PHASE definition is used for cells with
+different initial porosity, the three options scale quite
+differently. For option 0, the number of moles of a gas
+component will be the same regardless of porosity. For
+option 1, the number of moles of a gas component will be
+vary directly with porosity and inversely with rock volume.
+For option 2, the number of moles of a gas component will
+vary directly with rock volume and inversely with porosity.
 
 Args:
 	option (int): Units option for gas phases: 0, 1, or 2."
@@ -1263,46 +1320,52 @@ Args:
 
 %define YAMLSetUnitsKinetics_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetUnitsKinetics. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetUnitsKinetics. 
 
-SetUnitsKinetics sets input units for kinetic reactants.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetUnitsKinetics sets input units for
+kinetic reactants.
 
-In PHREEQC input, kinetics are defined by moles of kinetic reactants 
-(Mp). SetUnitsKinetics specifies how the number of moles of kinetic 
-reactants in a reaction cell (Mc) is calculated from the input value 
-(Mp).
+In PHREEQC input, kinetics are defined by moles of kinetic
+reactants (Mp). SetUnitsKinetics specifies how the number
+of moles of kinetic reactants in a reaction cell (Mc) is
+calculated from the input value (Mp).
 
-Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV, where RV is the 
-representative volume (SetRepresentativeVolume); 1, Mp is mol/L of 
-water in the RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2, 
-Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
+Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV,
+where RV is the representative volume
+(SetRepresentativeVolume); 1, Mp is mol/L of water in the
+RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2,
+Mp is mol/L of rock in the RV, Mc = Mp*(1-P)*RV.
 
-If a single KINETICS definition is used for cells with different 
-initial porosity, the three options scale quite differently. For option 
-0, the number of moles of kinetic reactants will be the same regardless 
-of porosity. For option 1, the number of moles of kinetic reactants 
-will be vary directly with porosity and inversely with rock volume. For 
-option 2, the number of moles of kinetic reactants will vary directly 
-with rock volume and inversely with porosity.
+If a single KINETICS definition is used for cells with
+different initial porosity, the three options scale quite
+differently. For option 0, the number of moles of kinetic
+reactants will be the same regardless of porosity. For
+option 1, the number of moles of kinetic reactants will be
+vary directly with porosity and inversely with rock volume.
+For option 2, the number of moles of kinetic reactants will
+vary directly with rock volume and inversely with porosity.
 
-Note that the volume of water in a cell in the reaction module is equal 
-to the product of porosity (SetPorosity), the saturation 
-(SetSaturationUser), and representative volume (SetRepresentativeVolume), 
-which is usually less than 1 liter. It is important to write the RATES 
-definitions for homogeneous (aqueous) kinetic reactions to account for 
-the current volume of water, often by calculating the rate of reaction 
-per liter of water and multiplying by the volume of water (Basic 
-function SOLN_VOL).
+Note that the volume of water in a cell in the reaction
+module is equal to the product of porosity (SetPorosity),
+the saturation (SetSaturationUser), and representative
+volume (SetRepresentativeVolume), which is usually less
+than 1 liter. It is important to write the RATES
+definitions for homogeneous (aqueous) kinetic reactions to
+account for the current volume of water, often by
+calculating the rate of reaction per liter of water and
+multiplying by the volume of water (Basic function
+SOLN_VOL).
 
-Rates that depend on surface area of solids, are not dependent on the 
-volume of water. However, it is important to get the correct surface 
-area for the kinetic reaction. To scale the surface area with the 
-number of moles, the specific area (m^2 per mole of reactant) can be 
-defined as a parameter (KINETICS; -parm), which is multiplied by the 
-number of moles of reactant (Basic function M) in RATES to obtain the 
-surface area.
+Rates that depend on surface area of solids, are not
+dependent on the volume of water. However, it is important
+to get the correct surface area for the kinetic reaction.
+To scale the surface area with the number of moles, the
+specific area (m^2 per mole of reactant) can be defined as
+a parameter (KINETICS; -parm), which is multiplied by the
+number of moles of reactant (Basic function M) in RATES to
+obtain the surface area.
 
 Args:
 	option (int): Units option for kinetic reactants: 0, 1, or 2."
@@ -1312,28 +1375,31 @@ Args:
 
 %define YAMLSetUnitsPPassemblage_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetUnitsPPassemblage. When the YAML document is written to file it can 
-be processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetUnitsPPassemblage. 
 
-SetUnitsPPassemblage sets input units for pure phase assemblages 
-(equilibrium phases). In PHREEQC input, equilibrium phases are defined 
-by moles of each phase (Mp). SetUnitsPPassemblage specifies how the 
-number of moles of phases in a reaction cell (Mc) is calculated from 
-the input value (Mp).
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetUnitsPPassemblage sets input units
+for pure phase assemblages (equilibrium phases). In PHREEQC
+input, equilibrium phases are defined by moles of each
+phase (Mp). SetUnitsPPassemblage specifies how the number
+of moles of phases in a reaction cell (Mc) is calculated
+from the input value (Mp).
 
-Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV, where RV is the 
-representative volume (SetRepresentativeVolume); 1, Mp is mol/L of 
-water in the RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2, 
-Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
+Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV,
+where RV is the representative volume
+(SetRepresentativeVolume); 1, Mp is mol/L of water in the
+RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2,
+Mp is mol/L of rock in the RV, Mc = Mp*(1-P)*RV.
 
-If a single EQUILIBRIUM_PHASES definition is used for cells with 
-different initial porosity, the three options scale quite differently. 
-For option 0, the number of moles of a mineral will be the same 
-regardless of porosity. For option 1, the number of moles of a mineral 
-will be vary directly with porosity and inversely with rock volume. For 
-option 2, the number of moles of a mineral will vary directly with rock 
-volume and inversely with porosity.
+If a single EQUILIBRIUM_PHASES definition is used for cells
+with different initial porosity, the three options scale
+quite differently. For option 0, the number of moles of a
+mineral will be the same regardless of porosity. For option
+1, the number of moles of a mineral will be vary directly
+with porosity and inversely with rock volume. For option 2,
+the number of moles of a mineral will vary directly with
+rock volume and inversely with porosity.
 
 Args:
 	option (int): Units option for equilibrium phases: 0, 1, or 2."
@@ -1343,41 +1409,46 @@ Args:
 
 %define YAMLSetUnitsSolution_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetUnitsSolution. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetUnitsSolution. 
 
-SetUnitsSolution sets solution concentration units used by the 
-transport model. Options are 1, mg/L; 2 mol/L; or 3, mass fraction, 
-kg/kgs. PHREEQC defines solutions by the number of moles of each 
-element in the solution.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetUnitsSolution sets solution
+concentration units used by the transport model. Options
+are 1, mg/L; 2 mol/L; or 3, mass fraction, kg/kgs. PHREEQC
+defines solutions by the number of moles of each element in
+the solution.
 
-To convert from mg/L to moles of element in the representative volume 
-of a reaction cell, mg/L is converted to mol/L and multiplied by the 
-solution volume, which is the product of porosity (SetPorosity), 
-saturation (SetSaturationUser), and representative volume 
-(SetRepresentativeVolume). To convert from mol/L to moles of element in 
-the representative volume of a reaction cell, mol/L is multiplied by 
-the solution volume. To convert from mass fraction to moles of element 
-in the representative volume of a reaction cell, kg/kgs is converted to 
-mol/kgs, multiplied by density (SetDensityUser) and multiplied by the 
-solution volume.
+To convert from mg/L to moles of element in the
+representative volume of a reaction cell, mg/L is converted
+to mol/L and multiplied by the solution volume, which is
+the product of porosity (SetPorosity), saturation
+(SetSaturationUser), and representative volume
+(SetRepresentativeVolume). To convert from mol/L to moles
+of element in the representative volume of a reaction cell,
+mol/L is multiplied by the solution volume. To convert from
+mass fraction to moles of element in the representative
+volume of a reaction cell, kg/kgs is converted to mol/kgs,
+multiplied by density (SetDensityUser) and multiplied by
+the solution volume.
 
-To convert from moles
-of element in the representative volume of a reaction cell to mg/L, the 
-number of moles of an element is divided by the
-solution volume resulting in mol/L, and then converted to mg/L.
-To convert from moles of element in a cell to mol/L,  the number of 
-moles of an element is divided by the solution volume resulting in 
-mol/L. To convert from moles of element in a cell to mass fraction, the 
-number of moles of an element is converted to kg and divided by the 
-total mass of the solution. Two options are available for the volume 
-and mass of solution that are used in converting to transport 
-concentrations: (1) the volume and mass of solution are calculated by 
-PHREEQC, or (2) the volume of solution is the product of porosity 
-(SetPorosity), saturation (SetSaturationUser), and representative volume 
-(SetRepresentativeVolume), and the mass of solution is volume times 
-density as defined by SetDensityUser. Which option is used is determined by 
+To convert from moles of element in the representative
+volume of a reaction cell to mg/L, the number of moles of
+an element is divided by the solution volume resulting in
+mol/L, and then converted to mg/L. To convert from moles of
+element in a cell to mol/L, the number of moles of an
+element is divided by the solution volume resulting in
+mol/L. To convert from moles of element in a cell to mass
+fraction, the number of moles of an element is converted to
+kg and divided by the total mass of the solution. Two
+options are available for the volume and mass of solution
+that are used in converting to transport concentrations:
+(1) the volume and mass of solution are calculated by
+PHREEQC, or (2) the volume of solution is the product of
+porosity (SetPorosity), saturation (SetSaturationUser), and
+representative volume (SetRepresentativeVolume), and the
+mass of solution is volume times density as defined by
+SetDensityUser. Which option is used is determined by
 UseSolutionDensityVolume.
 
 Args:
@@ -1388,29 +1459,32 @@ Args:
 
 %define YAMLSetUnitsSSassemblage_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetUnitsSSassemblage. When the YAML document is written to file it can 
-be processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetUnitsSSassemblage. 
 
-SetUnitsSSassemblage sets input units for solid-solution assemblages. 
-In PHREEQC, solid solutions are defined by moles of each component 
-(Mp). SetUnitsSSassemblage specifies how the number of moles of 
-solid-solution components in a reaction cell (Mc) is calculated from 
-the input value (Mp).
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetUnitsSSassemblage sets input units
+for solid-solution assemblages. In PHREEQC, solid solutions
+are defined by moles of each component (Mp).
+SetUnitsSSassemblage specifies how the number of moles of
+solid-solution components in a reaction cell (Mc) is
+calculated from the input value (Mp).
 
-Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV, where RV is the 
-representative volume (SetRepresentativeVolume); 1, Mp is mol/L of 
-water in the RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2, 
-Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
+Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV,
+where RV is the representative volume
+(SetRepresentativeVolume); 1, Mp is mol/L of water in the
+RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2,
+Mp is mol/L of rock in the RV, Mc = Mp*(1-P)*RV.
 
-If a single SOLID_SOLUTION definition is used for cells with different 
-initial porosity, the three options scale quite differently. For option 
-0, the number of moles of a solid-solution component will be the same 
-regardless of porosity. For option 1, the number of moles of a 
-solid-solution component will be vary directly with porosity and 
-inversely with rock volume. For option 2, the number of moles of a 
-solid-solution component will vary directly with rock volume and 
-inversely with porosity.
+If a single SOLID_SOLUTION definition is used for cells
+with different initial porosity, the three options scale
+quite differently. For option 0, the number of moles of a
+solid-solution component will be the same regardless of
+porosity. For option 1, the number of moles of a
+solid-solution component will be vary directly with
+porosity and inversely with rock volume. For option 2, the
+number of moles of a solid-solution component will vary
+directly with rock volume and inversely with porosity.
 
 Args:
 	option (int): Units option for solid solutions: 0, 1, or 2."
@@ -1420,27 +1494,30 @@ Args:
 
 %define YAMLSetUnitsSurface_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SetUnitsSurface. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+SetUnitsSurface. 
 
-SetUnitsSurface sets input units for surfaces. In PHREEQC input, 
-surfaces are defined by moles of surface sites (Mp). SetUnitsSurface 
-specifies how the number of moles of surface sites in a reaction cell 
-(Mc) is calculated from the input value (Mp).
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SetUnitsSurface sets input units for
+surfaces. In PHREEQC input, surfaces are defined by moles
+of surface sites (Mp). SetUnitsSurface specifies how the
+number of moles of surface sites in a reaction cell (Mc) is
+calculated from the input value (Mp).
 
-Options are 0, Mp is mol/L of RV (default),    Mc = Mp*RV, where RV is 
-the representative volume (SetRepresentativeVolume); 1, Mp is mol/L of 
-water in the RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2, 
-Mp is mol/L of rock in the RV,  Mc = Mp*(1-P)*RV.
+Options are 0, Mp is mol/L of RV (default), Mc = Mp*RV,
+where RV is the representative volume
+(SetRepresentativeVolume); 1, Mp is mol/L of water in the
+RV, Mc = Mp*P*RV, where P is porosity (SetPorosity); or 2,
+Mp is mol/L of rock in the RV, Mc = Mp*(1-P)*RV.
 
-If a single SURFACE definition is used for cells with different initial 
-porosity, the three options scale quite differently. For option 0, the 
-number of moles of surface sites will be the same regardless of 
-porosity. For option 1, the number of moles of surface sites will be 
-vary directly with porosity and inversely with rock volume. For option 
-2, the number of moles of surface sites will vary directly with rock 
-volume and inversely with porosity.
+If a single SURFACE definition is used for cells with
+different initial porosity, the three options scale quite
+differently. For option 0, the number of moles of surface
+sites will be the same regardless of porosity. For option
+1, the number of moles of surface sites will be vary
+directly with porosity and inversely with rock volume. For
+option 2, the number of moles of surface sites will vary
+directly with rock volume and inversely with porosity.
 
 Args:
 	option (int): Units option for surfaces: 0, 1, or 2."
@@ -1450,48 +1527,55 @@ Args:
 
 %define YAMLSpeciesConcentrations2Module_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-SpeciesConcentrations2Module. When the YAML document is written to file 
-it can be processed by the method InitializeYAML to initialize a 
-PhreeqcRM instance.
+SpeciesConcentrations2Module. 
 
-SpeciesConcentrations2Module sets solution concentrations in the 
-reaction cells based on the vector of aqueous species concentrations 
-(species_conc). This method is intended for use with 
-multicomponent-diffusion transport calculations, and SetSpeciesSaveOn 
-must be set to true. The list of aqueous species is determined by 
-FindComponents and includes all aqueous species that can be made from 
-the set of components. The method determines the total concentration of 
-a component by summing the molarities of the individual species times 
-the stoichiometric coefficient of the element in each species. Solution 
-compositions in the reaction cells are updated with these component 
-concentrations. Usually, accurate concentrations will not be known to 
-use YAMLSetSpeciesConcentrations during initialization.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. SpeciesConcentrations2Module sets
+solution concentrations in the reaction cells based on the
+array of aqueous species concentrations (species_conc).
+This method is intended for use with
+multicomponent-diffusion transport calculations, and
+SetSpeciesSaveOn must be set to true. The list of aqueous
+species is determined by FindComponents and includes all
+aqueous species that can be made from the set of
+components. The method determines the total concentration
+of a component by summing the molarities of the individual
+species times the stoichiometric coefficient of the element
+in each species. Solution compositions in the reaction
+cells are updated with these component concentrations.
+Usually, accurate concentrations will not be known to use
+YAMLSetSpeciesConcentrations during initialization.
 
 Args:
-	species_conc (float list, numpy.ndarray, or tuple): Vector of aqueous species 
-		concentrations. Dimension of the array is nspecies times nxyz, 
-		where  nspecies is the number of aqueous species, and nxyz is the 
-		number of user grid cells. Concentrations are moles per liter."
+	species_conc (float list, numpy.ndarray, or tuple): Array
+		of aqueous species concentrations. Dimension of the array
+		is nspecies times nxyz, where nspecies is the number of
+		aqueous species, and nxyz is the number of user grid cells.
+		Concentrations are moles per liter."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLSpeciesConcentrations2Module YAMLSpeciesConcentrations2Module_DOCSTRING
 
 
 %define YAMLStateSave_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-StateSave. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+StateSave. 
 
-StateSave saves the state of the chemistry in all model cells, 
-including SOLUTIONs, EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, 
-KINETICS, SOLID_SOLUTIONs, and SURFACEs. Although not generally used, 
-MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs will be 
-saved for each cell, if they have been defined in the worker IPhreeqc 
-instances. The distribution of cells among the workers and the 
-chemistry of fully or partially unsaturated cells are also saved. The 
-state is saved in memory; use DumpModule to save the state to file. 
-PhreeqcRM can be reset to this state by using StateApply. A state is 
-identified by an integer, and multiple states can be saved.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. StateSave saves the state of the
+chemistry in all model cells, including SOLUTIONs,
+EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS,
+SOLID_SOLUTIONs, and SURFACEs. Although not generally used,
+MIXes, REACTIONs, REACTION_PRESSUREs, and
+REACTION_TEMPERATUREs will be saved for each cell, if they
+have been defined in the worker IPhreeqc instances. The
+distribution of cells among the workers and the chemistry
+of fully or partially unsaturated cells are also saved. The
+state is saved in memory; use DumpModule to save the state
+to file. PhreeqcRM can be reset to this state by using
+StateApply. A state is identified by an integer, and
+multiple states can be saved.
 
 Args:
 	istate (int): Integer identifying the state that is saved."
@@ -1501,44 +1585,52 @@ Args:
 
 %define YAMLStateApply_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-StateApply. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+StateApply. 
 
-StateApply resets the state of the module to a state previously saved 
-with StateSave. The chemistry of all model cells are reset, including 
-SOLUTIONs, EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, 
-SOLID_SOLUTIONs, and SURFACEs. MIXes, REACTIONs, REACTION_PRESSUREs, 
-and REACTION_TEMPERATUREs will be reset for each cell, if they were 
-defined in the worker IPhreeqc instances at the time the state was 
-saved. The distribution of cells among the workers and the chemistry of 
-fully or partially unsaturated cells are also reset to the saved state. 
-The state to be applied is identified by an integer.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. StateApply resets the state of the
+module to a state previously saved with StateSave. The
+chemistry of all model cells are reset, including
+SOLUTIONs, EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs,
+KINETICS, SOLID_SOLUTIONs, and SURFACEs. MIXes, REACTIONs,
+REACTION_PRESSUREs, and REACTION_TEMPERATUREs will be reset
+for each cell, if they were defined in the worker IPhreeqc
+instances at the time the state was saved. The distribution
+of cells among the workers and the chemistry of fully or
+partially unsaturated cells are also reset to the saved
+state. The state to be applied is identified by an integer.
 
 Args:
-	istate (int): Integer identifying the state that is to be applied."
+	istate (int): Integer identifying the state that is 
+		to be applied."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLStateApply YAMLStateApply_DOCSTRING
 
 
-%define YAMLStateDelete_DOCSTRING "Inserts data into the YAML document 
-for the PhreeqcRM method StateDelete. When the YAML document is written 
-to file it can be processed by the method InitializeYAML to initialize 
-a PhreeqcRM instance.
+%define YAMLStateDelete_DOCSTRING 
 
-StateDelete deletes a state previously saved with StateSave.
+"Inserts data into the YAML document for the PhreeqcRM
+method StateDelete.
+
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. StateDelete deletes a state previously
+saved with StateSave.
 
 Args:
-	istate (int): Integer identifying the state that is to be deleted."
+	istate (int): Integer identifying the state that is to 
+		be deleted."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLStateDelete YAMLStateDelete_DOCSTRING
 
 
 %define YAMLThreadCount_DOCSTRING
-"Inserts data into the YAML document for the method ThreadCount.
+"Inserts data into the YAML document for the 
+method ThreadCount.
 
 When the YAML document is written to file it can be
-processed by the method InitializeYAML to initialize a
+processed by the BMI method 'initialize' to initialize a
 PhreeqcRM instance. ThreadCount provides the number of
 threads to use in OpenMP multiprocessing when used to
 initialize a BMIPhreeqcRM instance, provided the
@@ -1554,33 +1646,38 @@ Args:
 
 %define YAMLUseSolutionDensityVolume_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-UseSolutionDensityVolume. When the YAML document is written to file it 
-can be processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+UseSolutionDensityVolume. 
 
-UseSolutionDensityVolume determines the volume and density to use when 
-converting from the reaction-cell concentrations to transport 
-concentrations (GetConcentrations). Two options are available to 
-convert concentration units: (1) the density and solution volume 
-calculated by PHREEQC are used, or (2) the specified density 
-(SetDensityUser) and solution volume are determined by the product of 
-saturation (SetSaturationUser), porosity (SetPorosity), and representative 
-volume (SetRepresentativeVolume). Transport models that consider 
-density-dependent flow will probably use the PHREEQC-calculated density 
-and solution volume (default), whereas transport models that assume 
-constant-density flow will probably use specified values of density and 
-solution volume. Only the following databases distributed with 
-PhreeqcRM have molar-volume information needed to accurately calculate 
-density and solution volume: phreeqc.dat, Amm.dat, and pitzer.dat. 
-Density is only used when converting to or from transport units of mass 
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. UseSolutionDensityVolume determines the
+volume and density to use when converting from the
+reaction-cell concentrations to transport concentrations
+(GetConcentrations). Two options are available to convert
+concentration units: (1) the density and solution volume
+calculated by PHREEQC are used, or (2) the specified
+density (SetDensityUser) and solution volume are determined
+by the product of saturation (SetSaturationUser), porosity
+(SetPorosity), and representative volume
+(SetRepresentativeVolume). Transport models that consider
+density-dependent flow will probably use the
+PHREEQC-calculated density and solution volume (default),
+whereas transport models that assume constant-density flow
+will probably use specified values of density and solution
+volume. Only the following databases distributed with
+PhreeqcRM have molar-volume information needed to
+accurately calculate density and solution volume:
+phreeqc.dat, Amm.dat, and pitzer.dat. Density is only used
+when converting to or from transport units of mass
 fraction.
 
 Args:
-	tf (Boolean): True indicates that the solution density and volume 
-		as calculated by PHREEQC will be used to calculate concentrations. 
-		False indicates that the solution density set by SetDensityUser and the 
-		volume determined by the product of  SetSaturationUser, SetPorosity, 
-		and SetRepresentativeVolume, will be used to calculate 
+	tf (Boolean): True indicates that the solution density and
+		volume as calculated by PHREEQC will be used to calculate
+		concentrations. False indicates that the solution density
+		set by SetDensityUser and the volume determined by the
+		product of SetSaturationUser, SetPorosity, and
+		SetRepresentativeVolume, will be used to calculate
 		concentrations retrieved by GetConcentrations."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLUseSolutionDensityVolume YAMLUseSolutionDensityVolume_DOCSTRING
@@ -1588,14 +1685,14 @@ Args:
 
 %define YAMLWarningMessage_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
-WarningMessage. When the YAML document is written to file it can be 
-processed by the method InitializeYAML to initialize a PhreeqcRM 
-instance.
+WarningMessage. 
 
-WarningMessage prints a warning message to the screen and the log file.
+When the YAML document is written to file it can be
+processed by the BMI method 'initialize' to initialize a
+PhreeqcRM instance. WarningMessage prints a warning message
+to the screen and the log file.
 
 Args:
 	warnstr (string): String to be printed."
 %enddef
 %feature("docstring") YAMLPhreeqcRM::YAMLWarningMessage YAMLWarningMessage_DOCSTRING
-
