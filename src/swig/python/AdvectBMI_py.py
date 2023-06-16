@@ -31,7 +31,7 @@ def AdvectBMI_py():
 	#hydraulic_K = [i*2.0 for i in range(nxyz)] 
 	#nthreads = 3
 	
-	bmi = phreeqcrm.BMIPhreeqcRM(40, 3)
+	bmi = phreeqcrm.BMIPhreeqcRM()
 	# Initialize with YAML file
 	status = bmi.initialize(yaml_file)
 

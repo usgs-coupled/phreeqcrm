@@ -24,7 +24,22 @@ void
 BMIPhreeqcRM::CleanupBMIModuleInstances(void)
 /* ---------------------------------------------------------------------- */
 {
-	PhreeqcRM::DestroyAll<BMIPhreeqcRM>();
+	// This is necessary until template methods are fixed in StaticIndexer<>
+	// see TestBMIdtor built as a dll on windows
+	// ie PhreeqcRM::GetInstance<BMIPhreeqcRM>(idx) causes missing symbol
+	const std::lock_guard<std::mutex> lock(PhreeqcRM::_InstancesLock);
+	std::list<BMIPhreeqcRM*> derived_items;
+	for (auto pair : PhreeqcRM::StaticIndexer::_Instances)
+	{
+		if (BMIPhreeqcRM* derived = dynamic_cast<BMIPhreeqcRM*>(pair.second))
+		{
+			derived_items.push_back(derived);
+		}
+	}
+	for (auto item : derived_items)
+	{
+		delete item;
+	}
 }
 /* ---------------------------------------------------------------------- */
 int
@@ -77,14 +92,20 @@ IRM_RESULT
 BMIPhreeqcRM::DestroyBMIModule(int id)
 /* ---------------------------------------------------------------------- */
 {
-	return PhreeqcRM::Destroy<BMIPhreeqcRM>(id);
+	//return PhreeqcRM::Destroy<BMIPhreeqcRM>(id);
+	if (BMIPhreeqcRM::GetInstance(id))
+	{
+		return PhreeqcRM::Destroy(id);
+	}
+	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
 BMIPhreeqcRM*
 BMIPhreeqcRM::GetInstance(int id)
 /* ---------------------------------------------------------------------- */
 {
-	return PhreeqcRM::GetInstance<BMIPhreeqcRM>(id);
+	//return PhreeqcRM::GetInstance<BMIPhreeqcRM>(id);
+	return dynamic_cast<BMIPhreeqcRM*>(PhreeqcRM::GetInstance(id));
 }
 // Constructor
 BMIPhreeqcRM::BMIPhreeqcRM()
@@ -134,48 +155,40 @@ void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 void BMIPhreeqcRM::Initialize(std::string config_file)
 {
 #ifdef USE_YAML
-#if defined(WITH_PYBIND11)
 	if (config_file.size() != 0)
 	{
-#endif
-	YAML::Node yaml = YAML::LoadFile(config_file);
+		YAML::Node yaml = YAML::LoadFile(config_file);
 
-	bool found_nxyz = false;
-	bool found_threads = false;
+		bool found_nxyz = false;
+		bool found_threads = false;
 
-	for (auto it = yaml.begin(); it != yaml.end(); it++)
-	{
-		YAML::Node node1 = *it;
-		auto it1 = node1.begin();
-		std::string keyword = it1++->second.as<std::string>();
-		if (keyword == "SetGridCellCount")
+		for (auto it = yaml.begin(); it != yaml.end(); it++)
 		{
-			this->initializer.nxyz_arg = it1++->second.as<int>();
-			found_nxyz = true;
+			YAML::Node node1 = *it;
+			auto it1 = node1.begin();
+			std::string keyword = it1++->second.as<std::string>();
+			if (keyword == "SetGridCellCount")
+			{
+				this->initializer.nxyz_arg = it1++->second.as<int>();
+				found_nxyz = true;
+			}
+			if (keyword == "ThreadCount")
+			{
+				this->initializer.data_for_parallel_processing = it1++->second.as<int>();
+				found_threads = true;
+			}
+			if (found_threads && found_nxyz) break;
 		}
-		if (keyword == "ThreadCount")
-		{
-			this->initializer.data_for_parallel_processing = it1++->second.as<int>();
-			found_threads = true;
-		}
-		if (found_threads && found_nxyz) break;
 	}
-
-#if defined(WITH_PYBIND11)
-	}
-#endif
 #endif
 
 	this->Construct(this->initializer);
+
 #ifdef USE_YAML
-#if defined(WITH_PYBIND11)
 	if (config_file.size() != 0)
 	{
-#endif
-	this->InitializeYAML(config_file);
-#if defined(WITH_PYBIND11)
+		this->InitializeYAML(config_file);
 	}
-#endif
 #endif
 }
 void BMIPhreeqcRM::Update()

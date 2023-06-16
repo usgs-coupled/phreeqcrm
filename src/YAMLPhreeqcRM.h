@@ -19,11 +19,7 @@
 #include "IrmResult.h"
 //#pragma once
 
-#if defined(_WINDLL)
-#define IRM_DLL_EXPORT __declspec(dllexport)
-#else
-#define IRM_DLL_EXPORT
-#endif
+#include "irm_dll_export.h"
 
 /**
  * @class YAMLPhreeqcRM

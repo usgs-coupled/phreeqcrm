@@ -28,9 +28,10 @@ class PHRQ_io;
 #include <mutex>
 #include <string>
 #include "RMVARS.h"
-#if defined(_WINDLL)
-#define IRM_DLL_EXPORT __declspec(dllexport)
-#else
+
+#include "irm_dll_export.h"
+
+#if SWIG
 #define IRM_DLL_EXPORT
 #endif
 
@@ -126,27 +127,27 @@ class StaticIndexer
 public:
 	StaticIndexer(T* self)
 	{
-		const std::lock_guard<std::mutex> lock(_InstancesLock);
-		this->_Index = _InstancesIndex++;
-		_Instances[this->_Index] = self;
+		const std::lock_guard<std::mutex> lock(StaticIndexer<T>::_InstancesLock);
+		this->_Index = StaticIndexer<T>::_InstancesIndex++;
+		StaticIndexer<T>::_Instances[this->_Index] = self;
 	}
 
 	~StaticIndexer()
 	{
-		const std::lock_guard<std::mutex> lock(_InstancesLock);
-		auto search = _Instances.find(this->_Index);
-		assert(search != _Instances.end());
-		if (search != _Instances.end())
+		const std::lock_guard<std::mutex> lock(StaticIndexer<T>::_InstancesLock);
+		auto search = StaticIndexer<T>::_Instances.find(this->_Index);
+		assert(search != StaticIndexer<T>::_Instances.end());
+		if (search != StaticIndexer<T>::_Instances.end())
 		{
-			_Instances.erase(search);
+			StaticIndexer<T>::_Instances.erase(search);
 		}
 	}
 
 	static T* GetInstance(int id)
 	{
 		const std::lock_guard<std::mutex> lock(_InstancesLock);
-		auto search = _Instances.find(size_t(id));
-		if (search != _Instances.end())
+		auto search = StaticIndexer<T>::_Instances.find(size_t(id));
+		if (search != StaticIndexer<T>::_Instances.end())
 		{
 			return search->second;
 		}
@@ -157,8 +158,8 @@ public:
 	static Derived* GetInstance(int id)
 	{
 		const std::lock_guard<std::mutex> lock(_InstancesLock);
-		auto search = _Instances.find(size_t(id));
-		if (search != _Instances.end())
+		auto search = StaticIndexer<T>::_Instances.find(size_t(id));
+		if (search != StaticIndexer<T>::_Instances.end())
 		{
 			if (Derived* derived = dynamic_cast<Derived*>(search->second))
 			{
@@ -170,8 +171,8 @@ public:
 
 	static IRM_RESULT Destroy(int id)
 	{
-		auto search = _Instances.find(size_t(id));
-		if (search != _Instances.end())
+		auto search = StaticIndexer<T>::_Instances.find(size_t(id));
+		if (search != StaticIndexer<T>::_Instances.end())
 		{
 			assert(dynamic_cast<T*>(search->second));
 			delete search->second;
@@ -180,26 +181,26 @@ public:
 		return IRM_BADINSTANCE;
 	}
 
-	template<typename Derived>
-	static IRM_RESULT Destroy(int id)
-	{
-		auto search = _Instances.find(size_t(id));
-		if (search != _Instances.end())
-		{
-			assert(dynamic_cast<T*>(search->second));
-			if (Derived* derived = dynamic_cast<Derived*>(search->second))
-			{
-				delete derived;
-				return IRM_OK;
-			}
-		}
-		return IRM_BADINSTANCE;
-	}
+	//template<typename Derived>
+	//static IRM_RESULT Destroy(int id)
+	//{
+	//	auto search = StaticIndexer<T>::_Instances.find(size_t(id));
+	//	if (search != StaticIndexer<T>::_Instances.end())
+	//	{
+	//		assert(dynamic_cast<T*>(search->second));
+	//		if (Derived* derived = dynamic_cast<Derived*>(search->second))
+	//		{
+	//			delete derived;
+	//			return IRM_OK;
+	//		}
+	//	}
+	//	return IRM_BADINSTANCE;
+	//}
 
 	static void DestroyAll()
 	{
 		std::list<T*> items;
-		for (auto pair : _Instances)
+		for (auto pair : StaticIndexer<T>::_Instances)
 		{
 			assert(dynamic_cast<T*>(pair.second));
 			items.push_back(pair.second);
@@ -210,31 +211,31 @@ public:
 		}
 	}
 
-	template<typename Derived>
-	static void DestroyAll()
-	{
-		const std::lock_guard<std::mutex> lock(_InstancesLock);
-		std::list<Derived*> derived_items;
-		for (auto pair : _Instances)
-		{
-			assert(dynamic_cast<T*>(pair.second));
-			if (Derived* derived = dynamic_cast<Derived*>(pair.second))
-			{
-				derived_items.push_back(derived);
-			}
-		}
-		for (auto item : derived_items)
-		{
-			delete item;
-		}
-	}
+	//template<typename Derived>
+	//static void DestroyAll()
+	//{
+	//	const std::lock_guard<std::mutex> lock(_InstancesLock);
+	//	std::list<Derived*> derived_items;
+	//	for (auto pair : StaticIndexer<T>::_Instances)
+	//	{
+	//		assert(dynamic_cast<T*>(pair.second));
+	//		if (Derived* derived = dynamic_cast<Derived*>(pair.second))
+	//		{
+	//			derived_items.push_back(derived);
+	//		}
+	//	}
+	//	for (auto item : derived_items)
+	//	{
+	//		delete item;
+	//	}
+	//}
 
 	int GetIndex()
 	{
 		return (int)this->_Index;
 	}
 
-private:
+protected:
 	size_t _Index;
 
 	static std::mutex           _InstancesLock;

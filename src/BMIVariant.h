@@ -13,13 +13,8 @@
 namespace py = pybind11;
 #endif
 
-//#include "VarManager.h"
+#include "irm_dll_export.h"
 
-#if defined(_WINDLL)
-#define IRM_DLL_EXPORT __declspec(dllexport)
-#else
-#define IRM_DLL_EXPORT
-#endif
 class VarManager;
 class PhreeqcRM;
 class IRM_DLL_EXPORT BMIVariant

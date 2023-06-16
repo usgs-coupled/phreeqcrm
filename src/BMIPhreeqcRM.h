@@ -47,7 +47,7 @@ public:
     static int              CreateBMIModule();
     static int              CreateBMIModule(int nxyz, MP_TYPE nthreads);
     static IRM_RESULT       DestroyBMIModule(int n);
-    static BMIPhreeqcRM* GetInstance(int n);
+    static BMIPhreeqcRM*    GetInstance(int n);
     /**
     Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM.
     Definition of the number of cells and threads (or MPI communicator) is deferred.

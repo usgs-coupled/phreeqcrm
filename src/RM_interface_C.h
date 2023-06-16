@@ -8,11 +8,7 @@
 #ifndef RM_INTERFACE_C_H
 #define RM_INTERFACE_C_H
 
-#if defined(_WINDLL)
-#define IRM_DLL_EXPORT __declspec(dllexport)
-#else
-#define IRM_DLL_EXPORT
-#endif
+#include "irm_dll_export.h"
 
 #if defined(__cplusplus)
 extern "C" {
