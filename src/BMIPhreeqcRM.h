@@ -80,7 +80,7 @@ public:
     */
     BMIPhreeqcRM(int ngrid, MP_TYPE nthreads);
 
-    virtual ~BMIPhreeqcRM();
+    ~BMIPhreeqcRM() override;
 
     // Model control functions.
     /**

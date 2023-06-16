@@ -367,7 +367,7 @@ int nxyz = 40;
 Called by root and all workers.
  */
 	PhreeqcRM(int nxyz, MP_TYPE thread_count_or_communicator, PHRQ_io * io=NULL, bool delay_construct=false);
-	~PhreeqcRM(void);
+	virtual ~PhreeqcRM(void);
 /**
 Close the output and log files.
 @retval IRM_RESULT   0 is success, negative is failure (See @ref DecodeError).
