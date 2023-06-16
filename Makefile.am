@@ -23,6 +23,7 @@ EXTRA_DIST=$(PHREEQCRM_EXTRA_DIST)
 AM_CPPFLAGS=-I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords
 
 AM_LDFLAGS=-release 3.0.0
+# AM_LDFLAGS= -no-undefined -release 3.0.0
 
 pkgconfigdir = $(datadir)/pkgconfig
 pkgconfig_DATA = phreeqcrm.pc
