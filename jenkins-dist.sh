@@ -164,7 +164,7 @@ for vsn_file in $SED_FILES
 do
   sed \
    -e "s/^  VERSION \(\([0]\|[1-9]\d*\)\.\([0]\|[1-9]\d*\.\)\([0]\|[1-9]\d*\).*\)/  VERSION $VERSION/g" \
-   -e "s/AC_INIT(.*)/AC_INIT([$NAME], [$VERSION-$REVISION], [dlpark@usgs.gov])/g" \
+   -e "s/AC_INIT(.*)/AC_INIT([$NAME], [$VERSION-$REVISION], [charlton@usgs.gov])/g" \
    -e "s/AM_LDFLAGS=-release.*/AM_LDFLAGS=-release $ver_major.$ver_minor.$ver_patch/g" \
    -e "/#define *VER_MAJOR/s/[0-9]\+/$ver_major/" \
    -e "/#define *VER_MINOR/s/[0-9]\+/$ver_minor/" \

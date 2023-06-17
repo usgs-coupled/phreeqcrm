@@ -1,4 +1,9 @@
 // %module(directors="1") phreeqcrm
+// %begin %{
+// #ifdef _MSC_VER
+// #define SWIG_PYTHON_INTERPRETER_NO_DEBUG
+// #endif
+// %}
 %module phreeqcrm
 %pythoncode 
 %{ 
@@ -14,6 +19,9 @@ import phreeqcrm
 #include "PhreeqcRM.h"
 #include "bmi.hxx"
 #include "BMIPhreeqcRM.h"
+#if defined(USE_YAML)
+#include "yaml-cpp/yaml.h"
+#endif
 %}
 #%fragment("NumPy_Fragments"); 
 %ignore BMIVariant;
@@ -149,6 +157,7 @@ import_array();
 %ignore BMIPhreeqcRM::SetValue(std::string,std::vector< int,std::allocator< int > >);
 %ignore BMIPhreeqcRM::SetValue(std::string,std::vector< std::string,std::allocator< std::string > >);
 
+%ignore PhreeqcRM::Initializer;
 
 %include "PhreeqcRM.h"
 
@@ -415,6 +424,19 @@ def GetDoubleVector(self, v):
 %rename(get_grid_face_edges)         GetGridFaceEdges(const int grid, int* face_edges);
 %rename(get_grid_face_nodes)         GetGridFaceNodes(const int grid, int* face_nodes);
 %rename(get_grid_nodes_per_face)     GetGridNodesPerFace(const int grid, int* nodes_per_face);
+
+#if defined(USE_YAML)
+#if defined(SWIGPYTHON)
+%exception Initialize {
+  try {
+    $action
+  } catch (YAML::BadFile &e) {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+    SWIG_fail;
+  }
+}
+#endif
+#endif
 
 %include "BMIPhreeqcRM.h"
 

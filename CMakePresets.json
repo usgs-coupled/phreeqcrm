@@ -521,6 +521,16 @@
       }
     },
     {
+      "name": "vs2019-vcpkg-static-yaml-python-310",
+      "inherits": "vs2019-vcpkg-static-yaml-python",
+      "cacheVariables": {
+        "Python_ROOT_DIR": {
+          "type": "PATH",
+          "value": "C:/Python310-x64"
+        }
+      }
+    },
+    {
       "name": "vs2019-vcpkg-shared",
       "hidden": true,
       "inherits": "vs2019-vcpkg",
@@ -540,7 +550,7 @@
           "value": "ON"
         }
       }
-    },  
+    },
     {
       "name": "vs2019-vcpkg-shared-yaml-python",
       "inherits": "vs2019-vcpkg-shared-yaml",
@@ -548,6 +558,16 @@
         "PHREEQCRM_BUILD_PYTHON": {
           "type": "BOOL",
           "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-python-310",
+      "inherits": "vs2019-vcpkg-shared-yaml-python",
+      "cacheVariables": {
+        "Python_ROOT_DIR": {
+          "type": "PATH",
+          "value": "C:/Python310-x64"
         }
       }
     }
@@ -686,6 +706,10 @@
       "configurePreset": "vs2019-vcpkg-static-yaml-python"
     },
     {
+      "name": "vs2019-vcpkg-static-yaml-python-310",
+      "configurePreset": "vs2019-vcpkg-static-yaml-python-310"
+    },
+    {
       "name": "vs2019-vcpkg-shared",
       "configurePreset": "vs2019-vcpkg-shared"
     },
@@ -696,7 +720,11 @@
     {
       "name": "vs2019-vcpkg-shared-yaml-python",
       "configurePreset": "vs2019-vcpkg-shared-yaml-python"
-    }
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-python-310",
+      "configurePreset": "vs2019-vcpkg-shared-yaml-python-310"
+    }    
   ],
   "testPresets": [
     {
@@ -844,8 +872,20 @@
       "execution": {"noTestsAction": "error", "stopOnFailure": true}
     },
     {
+      "name": "vs2019-vcpkg-static-yaml-python-310",
+      "configurePreset": "vs2019-vcpkg-static-yaml-python-310",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
       "name": "vs2019-vcpkg-shared-yaml-python",
       "configurePreset": "vs2019-vcpkg-shared-yaml-python",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "vs2019-vcpkg-shared-yaml-python-310",
+      "configurePreset": "vs2019-vcpkg-shared-yaml-python-310",
       "output": {"outputOnFailure": true},
       "execution": {"noTestsAction": "error", "stopOnFailure": true}
     }

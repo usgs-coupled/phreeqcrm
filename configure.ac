@@ -109,7 +109,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
-LT_INIT
+LT_INIT([win32-dll])
 
 
 # Checks for libraries.
@@ -269,6 +269,7 @@ fi
 AC_SUBST(usempi_define)
 
 AC_CONFIG_FILES([
+  irm_dll_export.h
   Makefile
   database/Makefile
   doc/Makefile

@@ -20,12 +20,12 @@ if(WIN32 AND NOT CMAKE_INSTALL_DOCDIR)
   set(CMAKE_INSTALL_DOCDIR "doc")
 endif()
 
+include(GNUInstallDirs)
+
 option(PHREEQCRM_FORTRAN_TESTING "Build Fortran test" OFF)
 if(PHREEQCRM_FORTRAN_TESTING)
   enable_language(Fortran)
 endif()
-
-include(GNUInstallDirs)
 
 option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
 if(PHREEQCRM_WITH_YAML_CPP)
@@ -52,7 +52,6 @@ if (PHREEQCRM_BUILD_PYTHON)
   find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
   # Set Python_ROOT_DIR to specify which python to use
   # ie -DPython_ROOT_DIR=C:/Python38-x64
-  # find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development)
 endif()
 
 option(PHREEQCRM_NO_UTF8_ENCODING "Build without utf-8 encoding" OFF)
@@ -233,23 +232,28 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
 )
 
-# setup include directories
-include_directories("${PROJECT_SOURCE_DIR}/src")
-include_directories("${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast")
-include_directories("${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc")
-include_directories("${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp")
-include_directories("${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common")
-include_directories("${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords")
-
 # dll/shared objects
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
-set(LIB_TYPE STATIC)
-if(BUILD_SHARED_LIBS)
-  set(LIB_TYPE SHARED)
-endif()
 
-add_library(PhreeqcRM ${LIB_TYPE} ${PhreeqcRM_SOURCES})
+add_library(PhreeqcRM ${PhreeqcRM_SOURCES})
 add_library(PhreeqcRM::PhreeqcRM ALIAS PhreeqcRM)
+
+target_include_directories(PhreeqcRM
+  PUBLIC
+    $<BUILD_INTERFACE:${PhreeqcRM_BINARY_DIR}>
+    $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src>
+    $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src/IPhreeqcPhast>
+    $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc>
+    $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp>
+    $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common>
+    $<BUILD_INTERFACE:${PhreeqcRM_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+# generate "${PhreeqcRM_BINARY_DIR}/irm_dll_export.h"
+# based on how the PhreeqcRM library is built (BUILD_SHARED_LIBS)
+include(GenerateExportHeader)
+generate_export_header(PhreeqcRM BASE_NAME IRM_DLL)
 
 # c++11
 target_compile_features(PhreeqcRM PUBLIC cxx_std_11)
@@ -273,6 +277,8 @@ endif()
 if (WIN32 AND BUILD_SHARED_LIBS)
   # Required to build IMPLIB
   # (Seems to be automatically set when using Visual Studio as the generator)
+  # This is only necessary to export iphreeqc methods
+  # iphreeqc should be updated to use generate_export_header
   target_compile_definitions(PhreeqcRM PRIVATE _WINDLL)
 endif()
 
@@ -321,6 +327,7 @@ if(MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
 endif()
 
 set(PhreeqcRM_Headers
+  ${PhreeqcRM_BINARY_DIR}/irm_dll_export.h
   ${PROJECT_SOURCE_DIR}/src/BMI_interface_F.h
   ${PROJECT_SOURCE_DIR}/src/BMIVariant.h
   ${PROJECT_SOURCE_DIR}/src/BMIVariant.h
