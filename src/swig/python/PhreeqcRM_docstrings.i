@@ -3522,7 +3522,7 @@ Args:
 %feature("docstring") PhreeqcRM::WarningMessage WarningMessage_DOCSTRING
 
 
-%define BMIPhreeqcRM_DOCSTRING
+%define BMIPhreeqcRM_v_DOCSTRING
 "Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM.
 
 Definition of the number of cells and threads (or MPI communicator) 
@@ -3531,10 +3531,10 @@ is deferred to the method :meth:`initialize`.
 Returns:
 	 A BMIPhreeqcRM instance."
 %enddef
-%feature("docstring") PhreeqcRM::BMIPhreeqcRM BMIPhreeqcRM_DOCSTRING
+%feature("docstring") PhreeqcRM::BMIPhreeqcRM BMIPhreeqcRM_v_DOCSTRING
 
 
-%define BMIPhreeqcRM_DOCSTRING
+%define BMIPhreeqcRM_ii_DOCSTRING
 "Constructor for the BMIPhreeqcRM subclass of PhreeqcRM. 
 
 A BMIPhreeqcRM instance has the BMI methods plus all of the
@@ -3554,7 +3554,7 @@ Args:
 Returns:
 	 A BMIPhreeqcRM instance."
 %enddef
-%feature("docstring") PhreeqcRM::BMIPhreeqcRM BMIPhreeqcRM_DOCSTRING
+// %feature("docstring") PhreeqcRM::BMIPhreeqcRM BMIPhreeqcRM_ii_DOCSTRING
 
 %define add_output_vars_DOCSTRING
 "Method that defines additional output variables that can be

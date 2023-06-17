@@ -38,10 +38,10 @@ Args:
 		get_output_var_names, get_value, get_var_itemsize, and
 		other BMI methods.
 
-	def (str): A string value that can be "false", "true", or a
+	def (str): A string value that can be 'false', 'true', or a
 		list of items to be included as accessible variables. A
-		value of "false", excludes all variables of the given type;
-		a value of "true" includes all variables of the given type
+		value of 'false', excludes all variables of the given type;
+		a value of 'true' includes all variables of the given type
 		for the current system; a list specifies a subset of items
 		of the given type.
 
@@ -93,7 +93,7 @@ Values for the the parameter option include:
 
 'CalculateValues': False excludes all calculate values;
 	True includes all calculate values; list includes the
-	specified calculate values. CALCLUATE_VALUES can be used to
+	specified calculate values. CALCULATE_VALUES can be used to
 	calculate geochemical quantities not available in the other
 	sets of variables. Default True.
 
@@ -105,7 +105,7 @@ Values for the the parameter option include:
 	True includes all aqueous species; list includes only the
 	specified aqueous species. Default False.
 
-SaturationIndices: False excludes all saturation indices;
+'SaturationIndices': False excludes all saturation indices;
 	True includes all saturation indices; list includes only
 	the specified saturation indices. Default False."
 %enddef
@@ -284,7 +284,7 @@ Args:
 %feature("docstring") YAMLPhreeqcRM::YAMLInitialKinetics2Module YAMLInitialKinetics2Module_DOCSTRING
 
 
-%define YAMLInitialPhreeqc2Module_DOCSTRING
+%define YAMLInitialPhreeqc2Module_ai_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
 InitialPhreeqc2Module. 
 
@@ -313,10 +313,10 @@ Args:
 		resulting in no definition of that entity for that cell."
 		
 %enddef
-%feature("docstring") YAMLPhreeqcRM::YAMLInitialPhreeqc2Module YAMLInitialPhreeqc2Module_DOCSTRING
+%feature("docstring") YAMLPhreeqcRM::YAMLInitialPhreeqc2Module YAMLInitialPhreeqc2Module_ai_DOCSTRING
 
 
-%define YAMLInitialPhreeqc2Module_DOCSTRING
+%define YAMLInitialPhreeqc2Module_iif_DOCSTRING
 "Inserts data into the YAML document for the PhreeqcRM method 
 InitialPhreeqc2Module with mixing parameters. 
 
@@ -367,7 +367,7 @@ Args:
 		that mixes with (1 - f1) of ic2. Size is 7 times nxyz. The
 		order of definitions is given above."
 %enddef
-%feature("docstring") YAMLPhreeqcRM::YAMLInitialPhreeqc2Module YAMLInitialPhreeqc2Module_DOCSTRING
+%feature("docstring") YAMLPhreeqcRM::YAMLInitialPhreeqc2Module YAMLInitialPhreeqc2Module_iif_DOCSTRING
 
 
 %define YAMLInitialPhreeqcCell2Module_DOCSTRING
