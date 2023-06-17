@@ -165,6 +165,7 @@ else()
         PROPERTIES 
           ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
           DEPENDS "WriteYAMLFile_py.py"
+          DISABLED $<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>
       )
     endif()
   else()
