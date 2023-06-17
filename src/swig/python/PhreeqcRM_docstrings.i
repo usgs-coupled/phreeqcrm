@@ -3522,6 +3522,40 @@ Args:
 %feature("docstring") PhreeqcRM::WarningMessage WarningMessage_DOCSTRING
 
 
+%define BMIPhreeqcRM_v_DOCSTRING
+"Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM.
+
+Definition of the number of cells and threads (or MPI communicator) 
+is deferred to the method :meth:`initialize`.
+
+Returns:
+	 A BMIPhreeqcRM instance."
+%enddef
+%feature("docstring") PhreeqcRM::BMIPhreeqcRM BMIPhreeqcRM_v_DOCSTRING
+
+
+%define BMIPhreeqcRM_ii_DOCSTRING
+"Constructor for the BMIPhreeqcRM subclass of PhreeqcRM. 
+
+A BMIPhreeqcRM instance has the BMI methods plus all of the
+PhreeqcRM methods. The constructor requires two arguments:
+the number of cells in the user's model, and either (a) the
+number of threads for OpenMP parallelization, or (b) an MPI
+communicator.
+
+Args:
+	ngrid (int): Number of cells in the user's model. 
+	nthreads (int): Number of threads for parallelization with
+		OpenMP or an MPI communicator if PhreeqcRM is compiled with
+		MPI. For OpenMP, a value of zero causes the program to set
+		nthreads to the number of logical processors of the
+		computer.
+		
+Returns:
+	 A BMIPhreeqcRM instance."
+%enddef
+// %feature("docstring") PhreeqcRM::BMIPhreeqcRM BMIPhreeqcRM_ii_DOCSTRING
+
 %define add_output_vars_DOCSTRING
 "Method that defines additional output variables that can be
 retrieved by the BMI method :meth:`get_value`. 

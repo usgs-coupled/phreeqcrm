@@ -59,11 +59,11 @@ public:
     constructor requires two arguments: the number of cells in the user's
     model, and either (a) the number of threads for OpenMP parallelization, or
     (b) an MPI communicator.
-    @param ngrid Number of cells in the user's model. A value of zero causes
-    the program to set nthreads to the number of logical processors of the
-    computer.
+    @param ngrid Number of cells in the user's model. 
     @param nthreads Number of threads for parallelization with OpenMP or
-    an MPI communicator if PhreeqcRM is compiled with MPI.
+    an MPI communicator if PhreeqcRM is compiled with MPI. With OpenMP,
+    a value of zero causes the program to set nthreads to the number 
+    of logical processors of the computer.
     @retval A BMIPhreeqcRM instance.
     @par C++ Example:
     @htmlonly
