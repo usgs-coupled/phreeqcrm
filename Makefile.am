@@ -205,6 +205,7 @@ libphreeqcrm_la_SOURCES=\
 
 
 include_HEADERS=\
+	$(top_builddir)/irm_dll_export.h\
 	$(top_srcdir)/src/BMIVariant.h\
 	$(top_srcdir)/src/bmi.hxx\
 	$(top_srcdir)/src/BMIPhreeqcRM.h\
