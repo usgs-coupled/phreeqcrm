@@ -244,6 +244,9 @@ public:
 	ThreadCount provides the number of threads to use in OpenMP multiprocessing when used
 	to initialize a BMIPhreeqcRM instance, provided the BMIPhreeqcRM instance was created
 	with the default constructor--the constructor with no arguments.
+	
+	@param nthreads Number of threads to use in
+	parallelnprocessing with OpenMP.
 	*/
 	void YAMLThreadCount(int nthreads);
 	/**
