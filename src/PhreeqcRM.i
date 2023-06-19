@@ -42,6 +42,7 @@ import_array();
 %template(StringVector) std::vector<std::string>;
 
 #if defined(SWIGPYTHON)
+%include "swig/python/BMIPhreeqcRM_docstrings.swg"
 %include "swig/python/PhreeqcRM_docstrings.swg"
 #if defined(USE_YAML)
 %include "swig/python/YAMLPhreeqcRM.swg"
@@ -150,6 +151,7 @@ import_array();
 %rename(SetIthSpeciesConcentrationSWIG)             SetIthSpeciesConcentration(int i, std::vector< double >& c);
 
 // Ignore methods
+%ignore BMIPhreeqcRM::BMIPhreeqcRM(int,int);  // @todo
 %ignore BMIPhreeqcRM::GetValue(std::string const,bool *);
 %ignore BMIPhreeqcRM::GetValue(std::string const,double *);
 %ignore BMIPhreeqcRM::GetValue(std::string const,int *);
