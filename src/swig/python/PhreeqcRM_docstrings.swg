@@ -3522,6 +3522,11 @@ Args:
 %feature("docstring") PhreeqcRM::WarningMessage WarningMessage_DOCSTRING
 
 
+
+///////////////////////////////////////////////////////////////////////////////
+
+
+
 %define BMIPhreeqcRM_v_DOCSTRING
 "Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM.
 
@@ -3531,30 +3536,31 @@ is deferred to the method :meth:`initialize`.
 Returns:
 	 A BMIPhreeqcRM instance."
 %enddef
-%feature("docstring") PhreeqcRM::BMIPhreeqcRM BMIPhreeqcRM_v_DOCSTRING
+//%feature("docstring", BMIPhreeqcRM_v_DOCSTRING) BMIPhreeqcRM::BMIPhreeqcRM();
+%feature("docstring") BMIPhreeqcRM::BMIPhreeqcRM() BMIPhreeqcRM_v_DOCSTRING
 
 
-%define BMIPhreeqcRM_ii_DOCSTRING
-"Constructor for the BMIPhreeqcRM subclass of PhreeqcRM. 
+// %define BMIPhreeqcRM_ii_DOCSTRING
+// "Constructor for the BMIPhreeqcRM subclass of PhreeqcRM. 
 
-A BMIPhreeqcRM instance has the BMI methods plus all of the
-PhreeqcRM methods. The constructor requires two arguments:
-the number of cells in the user's model, and either (a) the
-number of threads for OpenMP parallelization, or (b) an MPI
-communicator.
+// A BMIPhreeqcRM instance has the BMI methods plus all of the
+// PhreeqcRM methods. The constructor requires two arguments:
+// the number of cells in the user's model, and either (a) the
+// number of threads for OpenMP parallelization, or (b) an MPI
+// communicator.
 
-Args:
-	ngrid (int): Number of cells in the user's model. 
-	nthreads (int): Number of threads for parallelization with
-		OpenMP or an MPI communicator if PhreeqcRM is compiled with
-		MPI. For OpenMP, a value of zero causes the program to set
-		nthreads to the number of logical processors of the
-		computer.
+// Args:
+// 	ngrid (int): Number of cells in the user's model. 
+// 	nthreads (int): Number of threads for parallelization with
+// 		OpenMP or an MPI communicator if PhreeqcRM is compiled with
+// 		MPI. For OpenMP, a value of zero causes the program to set
+// 		nthreads to the number of logical processors of the
+// 		computer.
 		
-Returns:
-	 A BMIPhreeqcRM instance."
-%enddef
-// %feature("docstring") PhreeqcRM::BMIPhreeqcRM BMIPhreeqcRM_ii_DOCSTRING
+// Returns:
+// 	 A BMIPhreeqcRM instance."
+// %enddef
+// %feature("docstring", BMIPhreeqcRM_ii_DOCSTRING) BMIPhreeqcRM::BMIPhreeqcRM(int, MP_TYPE);
 
 %define add_output_vars_DOCSTRING
 "Method that defines additional output variables that can be
@@ -3648,13 +3654,13 @@ Values for the the parameter option include:
 	True includes all saturation indices; list includes only
 	the specified saturation indices. Default False."
 %enddef
-%feature("docstring") PhreeqcRM::add_output_vars add_output_vars_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::AddOutputVars add_output_vars_DOCSTRING
 
 
 %define finalize_DOCSTRING
 "Finalize closes any files open in the BMIPhreeqcRM instance."
 %enddef
-%feature("docstring") PhreeqcRM::finalize finalize_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::Finalize finalize_DOCSTRING
 
 
 %define get_component_name_DOCSTRING
@@ -3669,7 +3675,7 @@ provide additional methods to complete the interface.
 Returns:
 	str: The string 'PhreeqcRM'."
 %enddef
-%feature("docstring") PhreeqcRM::get_component_name get_component_name_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetComponentName get_component_name_DOCSTRING
 
 
 %define get_current_time_DOCSTRING
@@ -3682,7 +3688,7 @@ simulation time. The current time can be set by the methods
 Returns:
 	float: The current simulation time, in seconds."
 %enddef
-%feature("docstring") PhreeqcRM::get_current_time get_current_time_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetCurrentTime get_current_time_DOCSTRING
 
 
 %define get_end_time_DOCSTRING
@@ -3692,7 +3698,7 @@ Returns:
 Returns:
 	float: The end of the time step, in seconds."
 %enddef
-%feature("docstring") PhreeqcRM::get_end_time get_end_time_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetEndTime get_end_time_DOCSTRING
 
 %define get_grid_rank_DOCSTRING
 "Returns a rank of 1 for grid 0. 
@@ -3707,7 +3713,7 @@ Returns:
 	(int) Rank of 1 is returned for grid 0; 0 for all other values of 
 		grid."
 %enddef
-%feature("docstring") PhreeqcRM::get_grid_rank get_grid_rank_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetGridRank get_grid_rank_DOCSTRING
 
 
 %define get_grid_size_DOCSTRING
@@ -3722,7 +3728,7 @@ Returns:
 		:meth:`GetGridCellCount` is returned for grid 0; 0 for all other
 		values of grid."
 %enddef
-%feature("docstring") PhreeqcRM::get_grid_size get_grid_size_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetGridSize get_grid_size_DOCSTRING
 
 
 %define get_grid_type_DOCSTRING
@@ -3738,7 +3744,7 @@ Returns:
 	(str) 'Points' is returned for grid 0; 'Undefined grid
 		identifier' is returned for all other values of @a grid."
 %enddef
-%feature("docstring") PhreeqcRM::get_grid_type get_grid_type_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetGridType get_grid_type_DOCSTRING
 
 
 %define get_input_item_count_DOCSTRING
@@ -3749,7 +3755,7 @@ Returns:
 	int: Count of input variables that can be set with
 		:meth:`set_value`."
 %enddef
-%feature("docstring") PhreeqcRM::get_input_item_count get_input_item_count_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetInputItemCount get_input_item_count_DOCSTRING
 
 
 %define get_input_var_names_DOCSTRING
@@ -3760,7 +3766,7 @@ Returns:
 	tuple (str): A list of the variable names that can be set with 
 		:meth:`set_value`."
 %enddef
-%feature("docstring") PhreeqcRM::get_input_var_names get_input_var_names_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetInputVarNames get_input_var_names_DOCSTRING
 
 
 %define get_output_item_count_DOCSTRING
@@ -3771,7 +3777,7 @@ Returns:
 	int: Count of output variables that can be retrieved with 
 		:meth:`get_value`."
 %enddef
-%feature("docstring") PhreeqcRM::get_output_item_count get_output_item_count_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetOutputItemCount get_output_item_count_DOCSTRING
 
 
 %define get_output_var_names_DOCSTRING
@@ -3783,7 +3789,7 @@ Returns:
 	tuple (str): A list of the variable names that can be retrieved with
 		:meth:`get_value`."
 %enddef
-%feature("docstring") PhreeqcRM::get_output_var_names get_output_var_names_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetOutputVarNames get_output_var_names_DOCSTRING
 
 
 %define get_pointable_item_count_DOCSTRING
@@ -3794,7 +3800,7 @@ Returns:
 	int: Count of output variables that can be referenced with 
 		:meth:`get_value_ptr`."
 %enddef
-%feature("docstring") PhreeqcRM::get_pointable_item_count get_pointable_item_count_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetPointableItemCount get_pointable_item_count_DOCSTRING
 
 
 %define get_pointable_var_names_DOCSTRING
@@ -3806,7 +3812,7 @@ Returns:
 	tuple (str): A list of the variable names that can be
 		referenced with :meth:`get_value_ptr`."
 %enddef
-%feature("docstring") PhreeqcRM::get_pointable_var_names get_pointable_var_names_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetPointableVarNames get_pointable_var_names_DOCSTRING
 
 
 %define get_time_step_DOCSTRING
@@ -3819,7 +3825,7 @@ or :meth:`SetTimeStep`.
 Returns:
 	float: The current simulation time step, in seconds."
 %enddef
-%feature("docstring") PhreeqcRM::get_time_step get_time_step_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetTimeStep get_time_step_DOCSTRING
 
 
 %define get_time_units_DOCSTRING
@@ -3831,7 +3837,7 @@ All time units are seconds for PhreeqcRM.
 Returns:
 	string: Returns the string 'seconds'."
 %enddef
-%feature("docstring") PhreeqcRM::get_time_units get_time_units_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetTimeUnits get_time_units_DOCSTRING
 
 
 %define get_value_DOCSTRING
@@ -3874,7 +3880,7 @@ second argument (dest).
 Additional output variables can be defined through the 
 method :meth:`add_output_vars`."
 %enddef
-%feature("docstring") PhreeqcRM::get_value get_value_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::get_value get_value_DOCSTRING
 
 
 %define get_value_ptr_DOCSTRING
@@ -3908,7 +3914,7 @@ pointers can be obtained:
 'TimeStep'
 'Viscosity'"
 %enddef
-%feature("docstring") PhreeqcRM::get_value_ptr get_value_ptr_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::get_value_ptr get_value_ptr_DOCSTRING
 
 
 %define get_var_itemsize_DOCSTRING
@@ -3927,7 +3933,7 @@ Args:
 Returns:
 	int: Size of one element of variable."
 %enddef
-%feature("docstring") PhreeqcRM::get_var_itemsize get_var_itemsize_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetVarItemsize get_var_itemsize_DOCSTRING
 
 
 %define get_var_nbytes_DOCSTRING
@@ -3946,7 +3952,7 @@ Args:
 Returns:
 	int: Total number of bytes set or retrieved for variable."
 %enddef
-%feature("docstring") PhreeqcRM::get_var_nbytes get_var_nbytes_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetVarNbytes get_var_nbytes_DOCSTRING
 
 
 %define get_var_type_DOCSTRING
@@ -3961,7 +3967,7 @@ Args:
 Returns:
 	str: Character string of variable type."
 %enddef
-%feature("docstring") PhreeqcRM::get_var_type get_var_type_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetVarType get_var_type_DOCSTRING
 
 
 %define get_var_units_DOCSTRING
@@ -3974,7 +3980,7 @@ Args:
 Returns:
 	str: Character string of units for variable."
 %enddef
-%feature("docstring") PhreeqcRM::get_var_units get_var_units_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::GetVarUnits get_var_units_DOCSTRING
 
 
 %define initialize_DOCSTRING
@@ -4070,7 +4076,7 @@ Args:
 	config_file (str): File with YAML definitions for PhreeqcRM 
 		initialization."
 %enddef
-%feature("docstring") PhreeqcRM::initialize initialize_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::Initialize initialize_DOCSTRING
 
 
 %define set_value_DOCSTRING
@@ -4097,7 +4103,7 @@ equivalent PhreeqcRM method are as follows:
 'Time'
 'TimeStep'"
 %enddef
-%feature("docstring") PhreeqcRM::set_value set_value_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::set_value set_value_DOCSTRING
 
 
 %define update_DOCSTRING
@@ -4110,7 +4116,7 @@ KINETICS reactions for the specified time step
 (:meth:`SetTimeStep`). The time will be updated, and all
 pointer variables will be updated."
 %enddef
-%feature("docstring") PhreeqcRM::update update_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::Update update_DOCSTRING
 
 %define update_until_DOCSTRING
 "Runs chemistry for a time step calculated
@@ -4122,4 +4128,4 @@ Args:
 	end_time (float): Time at the end of the simulation
 		period."
 %enddef
-%feature("docstring") PhreeqcRM::update_until update_until_DOCSTRING
+%feature("docstring") BMIPhreeqcRM::UpdateUntil update_until_DOCSTRING
