@@ -2,7 +2,7 @@ set(PYTHON_TARGET_NAME phreeqcrmpy)
 
 set(phreeqcrm_INTERFACE PhreeqcRM.i)
 
-set(phreeqcrm_INTERFACE_FULLPATH ${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_INTERFACE})
+set(phreeqcrm_INTERFACE_FULLPATH ${CMAKE_CURRENT_SOURCE_DIR}/../${phreeqcrm_INTERFACE})
 
 # copy PhreeqcRM.i in order to not have pyfragments.swg be automatically included
 # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_INTERFACE} ${phreeqcrm_INTERFACE} COPYONLY)
@@ -11,11 +11,11 @@ set(phreeqcrm_INTERFACE_FULLPATH ${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_I
 # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../pyfragments.swg.in pyfragments.swg COPYONLY)
 
 # copy database to build directory for testing
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../database/phreeqc.dat phreeqc.dat COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../database/phreeqc.dat phreeqc.dat COPYONLY)
 
 # copy advect.pqi to build directory for testing
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../Tests/advect.pqi advect.pqi COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../Tests/all_reactants.pqi all_reactants.pqi COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/advect.pqi advect.pqi COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/all_reactants.pqi all_reactants.pqi COPYONLY)
 
 # copy SimpleAdvect.py to build directory for testing
 configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
