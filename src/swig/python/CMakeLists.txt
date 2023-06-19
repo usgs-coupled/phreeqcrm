@@ -35,8 +35,8 @@ set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES CPLUSPLUS
 
 # if any of these files change force swig to be re-run
 set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY DEPENDS
-  ${CMAKE_CURRENT_SOURCE_DIR}/PhreeqcRM_docstrings.i
-  ${CMAKE_CURRENT_SOURCE_DIR}/YAMLPhreeqcRM.i
+  ${CMAKE_CURRENT_SOURCE_DIR}/PhreeqcRM_docstrings.swg
+  ${CMAKE_CURRENT_SOURCE_DIR}/YAMLPhreeqcRM.swg
 )
 
 if(NOT PHREEQCRM_DISABLE_OPENMP)

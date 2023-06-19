@@ -42,9 +42,9 @@ import_array();
 %template(StringVector) std::vector<std::string>;
 
 #if defined(SWIGPYTHON)
-%include "swig/python/PhreeqcRM_docstrings.i"
+%include "swig/python/PhreeqcRM_docstrings.swg"
 #if defined(USE_YAML)
-%include "swig/python/YAMLPhreeqcRM.i"
+%include "swig/python/YAMLPhreeqcRM.swg"
 #endif
 #endif
 
