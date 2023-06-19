@@ -30,7 +30,7 @@ configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
 
 get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
 
-set(CMAKE_SWIG_FLAGS "-Wall" )
+set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_OPTIONS "-w401")
 set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES CPLUSPLUS ON)
 
 # if any of these files change force swig to be re-run
@@ -41,12 +41,12 @@ set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY DEPENDS
 
 if(NOT PHREEQCRM_DISABLE_OPENMP)
   if(OPENMP_FOUND)
-    list(APPEND CMAKE_SWIG_FLAGS "-DUSE_OPENMP")
+    set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_OPENMP)
   endif()
 endif()
 
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
-  list(APPEND CMAKE_SWIG_FLAGS "-DUSE_YAML")
+  set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_YAML)
 endif()
 
 # CMAKE_SWIG_FLAGS must be fully set before swig_add_library is called
