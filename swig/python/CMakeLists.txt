@@ -2,7 +2,7 @@ set(PYTHON_TARGET_NAME phreeqcrmpy)
 
 set(phreeqcrm_INTERFACE PhreeqcRM.i)
 
-set(phreeqcrm_INTERFACE_FULLPATH ${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_INTERFACE})
+set(phreeqcrm_INTERFACE_FULLPATH ${CMAKE_CURRENT_SOURCE_DIR}/../${phreeqcrm_INTERFACE})
 
 # copy PhreeqcRM.i in order to not have pyfragments.swg be automatically included
 # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_INTERFACE} ${phreeqcrm_INTERFACE} COPYONLY)
@@ -11,11 +11,11 @@ set(phreeqcrm_INTERFACE_FULLPATH ${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_I
 # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../pyfragments.swg.in pyfragments.swg COPYONLY)
 
 # copy database to build directory for testing
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../database/phreeqc.dat phreeqc.dat COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../database/phreeqc.dat phreeqc.dat COPYONLY)
 
 # copy advect.pqi to build directory for testing
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../Tests/advect.pqi advect.pqi COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../../Tests/all_reactants.pqi all_reactants.pqi COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/advect.pqi advect.pqi COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/all_reactants.pqi all_reactants.pqi COPYONLY)
 
 # copy SimpleAdvect.py to build directory for testing
 configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
@@ -30,23 +30,24 @@ configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
 
 get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
 
-set(CMAKE_SWIG_FLAGS "-Wall" )
+set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_OPTIONS "-w401")
 set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES CPLUSPLUS ON)
 
 # if any of these files change force swig to be re-run
 set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY DEPENDS
-  ${CMAKE_CURRENT_SOURCE_DIR}/PhreeqcRM_docstrings.i
-  ${CMAKE_CURRENT_SOURCE_DIR}/YAMLPhreeqcRM.i
+  ${CMAKE_CURRENT_SOURCE_DIR}/BMIPhreeqcRM_docstrings.swg
+  ${CMAKE_CURRENT_SOURCE_DIR}/PhreeqcRM_docstrings.swg
+  ${CMAKE_CURRENT_SOURCE_DIR}/YAMLPhreeqcRM.swg
 )
 
 if(NOT PHREEQCRM_DISABLE_OPENMP)
   if(OPENMP_FOUND)
-    list(APPEND CMAKE_SWIG_FLAGS "-DUSE_OPENMP")
+    set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_OPENMP)
   endif()
 endif()
 
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
-  list(APPEND CMAKE_SWIG_FLAGS "-DUSE_YAML")
+  set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_YAML)
 endif()
 
 # CMAKE_SWIG_FLAGS must be fully set before swig_add_library is called

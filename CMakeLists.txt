@@ -528,7 +528,7 @@ if(STANDALONE_BUILD EQUAL 1)
   add_subdirectory(Tests)
 
   if(PHREEQCRM_BUILD_PYTHON)
-    add_subdirectory(src)
+    add_subdirectory(swig)
   endif()
 endif()
 
