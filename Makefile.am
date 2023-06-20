@@ -4,19 +4,19 @@ PHREEQCRM_EXTRA_DIST=\
 	CMakeLists.txt\
 	phreeqcrm.cmake.in\
 	PhreeqcRMConfig.cmake.in\
-	src/CMakeLists.txt\
-	src/numpy.i\
-	src/PhreeqcRM.i\
-	src/pyfragments.swg.in\
-	src/swig/CMakeLists.txt\
-	src/swig/python/AdvectBMI_py.py\
-	src/swig/python/CMakeLists.txt\
-	src/swig/python/PhreeqcRM_docstrings.i\
-	src/swig/python/SimpleAdvect.py\
-	src/swig/python/TestAllMethods_py.py\
-	src/swig/python/WriteYAMLFile_py.py\
-	src/swig/python/YAMLPhreeqcRM.i\
-	src/swig/python/yamlphreeqcrm.py
+    swig/CMakeLists.txt\
+    swig/numpy.i\
+    swig/PhreeqcRM.i\
+    swig/pyfragments.swg.in\
+    swig/python/AdvectBMI_py.py\
+    swig/python/BMIPhreeqcRM_docstrings.swg\
+    swig/python/CMakeLists.txt\
+    swig/python/PhreeqcRM_docstrings.swg\
+    swig/python/SimpleAdvect.py\
+    swig/python/TestAllMethods_py.py\
+    swig/python/WriteYAMLFile_py.py\
+    swig/python/yamlphreeqcrm.py\
+    swig/python/YAMLPhreeqcRM.swg
 
 EXTRA_DIST=$(PHREEQCRM_EXTRA_DIST)
 
