@@ -130,7 +130,7 @@ endif()
 if(IS_MULTI_CONFIG)
   if(WIN32)
     # On windows need to use python_d and have numpy compiled as Debug
-    # so we disable Debug configuration
+    # so we disable the Debug configuration
 
     # SimpleAdvect.py test
     add_test(NAME SimpleAdvect.py
@@ -186,10 +186,10 @@ if(IS_MULTI_CONFIG)
     )
   endif()
   set_tests_properties(AdvectBMI_py.py
-  PROPERTIES 
-    ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-    DEPENDS "WriteYAMLFile_py.py"
-    DISABLED $<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>
+    PROPERTIES
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+      DEPENDS "WriteYAMLFile_py.py"
+      DISABLED $<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>
   )
 else()
   if(WIN32)
@@ -239,6 +239,14 @@ else()
         ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
         DEPENDS "WriteYAMLFile_py.py"
         DISABLED $<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>
+    )
+
+    # Pytest
+    add_test(NAME run_pytest
+      COMMAND ${Python_EXECUTABLE} -m pytest
+    )
+    set_tests_properties(run_pytest
+      PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
     )
   endif()
 endif()
