@@ -9,6 +9,7 @@ set(phreeqcrm_INTERFACE_FULLPATH ${CMAKE_CURRENT_SOURCE_DIR}/../${phreeqcrm_INTE
 
 # @todo
 # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../pyfragments.swg.in pyfragments.swg COPYONLY)
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../pyfragments.swg.in pyfragments.swg COPYONLY)
 
 # copy database to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../database/phreeqc.dat phreeqc.dat COPYONLY)
@@ -28,6 +29,9 @@ configure_file(AdvectBMI_py.py AdvectBMI_py.py COPYONLY)
 configure_file(WriteYAMLFile_py.py WriteYAMLFile_py.py COPYONLY)
 configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
 
+# copy pytest files to build directory for testing
+configure_file(test_get_value.py test_get_value.py COPYONLY)
+
 get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
 
 set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_OPTIONS "-w401")
@@ -37,7 +41,10 @@ set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES CPLUSPLUS
 set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/BMIPhreeqcRM_docstrings.swg
   ${CMAKE_CURRENT_SOURCE_DIR}/PhreeqcRM_docstrings.swg
-  ${CMAKE_CURRENT_SOURCE_DIR}/YAMLPhreeqcRM.swg
+  ${PhreeqcRM_SOURCE_DIR}/src/BMIVariant.h
+  ${PhreeqcRM_SOURCE_DIR}/src/IrmResult.h
+  ${PhreeqcRM_SOURCE_DIR}/src/PhreeqcRM.h
+  ${PhreeqcRM_SOURCE_DIR}/src/BMIPhreeqcRM.h
 )
 
 if(NOT PHREEQCRM_DISABLE_OPENMP)
@@ -48,6 +55,9 @@ endif()
 
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
   set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_YAML)
+  set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/YAMLPhreeqcRM.swg
+  )
 endif()
 
 # CMAKE_SWIG_FLAGS must be fully set before swig_add_library is called
@@ -118,30 +128,68 @@ if(NOT CMAKE_DEBUG_POSTFIX)
 endif()
 
 if(IS_MULTI_CONFIG)
-  # SimpleAdvect.py test
-  add_test(NAME SimpleAdvect.py
-    COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
-    CONFIGURATIONS Release RelWithDebInfo MinSizeRel
-  )
-  set_tests_properties(SimpleAdvect.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+  if(WIN32)
+    # On windows need to use python_d and have numpy compiled as Debug
+    # so we disable Debug configuration
 
-  # WriteYAMLFile_py.py test
-  add_test(NAME WriteYAMLFile_py.py
-    COMMAND ${Python_EXECUTABLE} WriteYAMLFile_py.py
-    CONFIGURATIONS Release RelWithDebInfo MinSizeRel
-  )
-  set_tests_properties(WriteYAMLFile_py.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+    # SimpleAdvect.py test
+    add_test(NAME SimpleAdvect.py
+      COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
+      CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+    )
+    set_tests_properties(SimpleAdvect.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
 
-  # AdvectBMI_py.py test
-  add_test(NAME AdvectBMI_py.py
-    COMMAND ${Python_EXECUTABLE} AdvectBMI_py.py
-    CONFIGURATIONS Release RelWithDebInfo MinSizeRel
-  )
+    # WriteYAMLFile_py.py test
+    add_test(NAME WriteYAMLFile_py.py
+      COMMAND ${Python_EXECUTABLE} WriteYAMLFile_py.py
+      CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+    )
+    set_tests_properties(WriteYAMLFile_py.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+
+    # AdvectBMI_py.py test
+    add_test(NAME AdvectBMI_py.py
+      COMMAND ${Python_EXECUTABLE} AdvectBMI_py.py
+      CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+    )
+    set_tests_properties(AdvectBMI_py.py
+      PROPERTIES 
+        ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+        DEPENDS "WriteYAMLFile_py.py"
+        DISABLED $<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>
+    )
+
+    # Pytest
+    add_test(NAME run_pytest
+      COMMAND ${Python_EXECUTABLE} -m pytest
+      CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+    )  
+    set_tests_properties(run_pytest
+      PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+    )
+  
+  else()
+    # SimpleAdvect.py test
+    add_test(NAME SimpleAdvect.py
+      COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
+    )
+    set_tests_properties(SimpleAdvect.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+
+    # WriteYAMLFile_py.py test
+    add_test(NAME WriteYAMLFile_py.py
+      COMMAND ${Python_EXECUTABLE} WriteYAMLFile_py.py
+    )
+    set_tests_properties(WriteYAMLFile_py.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+
+    # AdvectBMI_py.py test
+    add_test(NAME AdvectBMI_py.py
+      COMMAND ${Python_EXECUTABLE} AdvectBMI_py.py
+    )
+  endif()
   set_tests_properties(AdvectBMI_py.py
-    PROPERTIES 
-      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-      DEPENDS "WriteYAMLFile_py.py"
-      DISABLED $<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>
+  PROPERTIES 
+    ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+    DEPENDS "WriteYAMLFile_py.py"
+    DISABLED $<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>
   )
 else()
   if(WIN32)

@@ -155,7 +155,7 @@ import_array();
 %ignore BMIPhreeqcRM::GetValue(std::string const,bool *);
 %ignore BMIPhreeqcRM::GetValue(std::string const,double *);
 %ignore BMIPhreeqcRM::GetValue(std::string const,int *);
-%ignore BMIPhreeqcRM::GetValuePtr(std::string);
+///%ignore BMIPhreeqcRM::GetValuePtr(std::string);
 %ignore BMIPhreeqcRM::SetValue(std::string,std::vector< int,std::allocator< int > >);
 %ignore BMIPhreeqcRM::SetValue(std::string,std::vector< std::string,std::allocator< std::string > >);
 
@@ -364,7 +364,7 @@ def GetDoubleVector(self, v):
 %ignore BMIPhreeqcRM::GetValue(std::string const,bool *);
 %ignore BMIPhreeqcRM::GetValue(std::string const,double *);
 %ignore BMIPhreeqcRM::GetValue(std::string const,int *);
-%ignore BMIPhreeqcRM::GetValuePtr(std::string);
+//%ignore BMIPhreeqcRM::GetValuePtr(std::string);
 %ignore BMIPhreeqcRM::SetValue(std::string,std::vector< int,std::allocator< int > >);
 %ignore BMIPhreeqcRM::SetValue(std::string,std::vector< std::string,std::allocator< std::string > >);
 // Rename overloaded methods
@@ -385,7 +385,7 @@ def GetDoubleVector(self, v):
 %rename(SetValue_bool) SetValue(const std::string name, bool src);
 
 %rename(add_output_vars)             AddOutputVars(std::string option, std::string def);
-%rename(initialize)                  Initialize(std::string config_file);
+%rename(initialize)                  Initialize(std::string config_file="");
 %rename(update)                      Update();
 %rename(update_until)                UpdateUntil(double end_time);
 %rename(finalize)                    Finalize();
@@ -407,7 +407,7 @@ def GetDoubleVector(self, v):
 %rename(get_end_time)                GetEndTime();
 %rename(get_time_units)              GetTimeUnits();
 %rename(get_time_step)               GetTimeStep();
-%rename(get_value_ptr)               GetValuePtr(std::string name);
+//%rename(get_value_ptr)               GetValuePtr(std::string name);
 %rename(get_value_at_indices)        GetValueAtIndices(std::string name, void* dest, int* inds, int count);
 %rename(set_value_at_indices)        SetValueAtIndices(std::string name, int* inds, int count, void* src);
 %rename(get_grid_rank)               GetGridRank(const int grid);
@@ -440,11 +440,130 @@ def GetDoubleVector(self, v):
 #endif
 #endif
 
+%apply (std::string var, double** ARGOUTVIEW_ARRAY1, int *DIM1) {(std::string var, double** vec, int* n)}
+%apply (double** ARGOUTVIEW_ARRAY1, int *DIM1) {(double** vec, int* n)}
+
+%apply (std::string var, int** ARGOUTVIEW_ARRAY1, int *DIM1) {(std::string var, int** vec, int* n)}
+%apply (int** ARGOUTVIEW_ARRAY1, int *DIM1) {(int** vec, int* n)}
+
+// //{{
+// %typemap(in, numinputs=0) (DATA_TYPE** ARGOUTVIEW_ARRAY1, DIM_TYPE* DIM1) {
+//     // Check if the input argument is None
+//     if ($input == Py_None) {
+//         $1 = nullptr;
+//         $2 = nullptr;
+//     } else {
+//         // Ensure the input object is a NumPy ndarray
+//         if (PyArray_Check($input)) {
+//             // Get the dimensions and data pointer from the ndarray
+//             npy_intp* dims = PyArray_DIMS((PyArrayObject*)$input);
+
+//             // Assign the data pointer and dimensions to the output arguments
+//             $1 = static_cast<DATA_TYPE**>(PyArray_DATA((PyArrayObject*)$input));
+//             $2 = dims;
+//         } else {
+//             PyErr_SetString(PyExc_TypeError, "Expected an ndarray or None");
+//             return NULL;
+//         }
+//     }
+// }
+
+// %typemap(argout) (DATA_TYPE** ARGOUTVIEW_ARRAY1, DIM_TYPE* DIM1) {
+//     // Check if the input argument is None
+//     if ($input == Py_None) {
+//         // Create a NumPy ndarray with the desired shape and dtype
+//         npy_intp dims[] = {0};
+//         PyObject* ndarray = PyArray_SimpleNewFromData(1, dims, NPY_OBJECT, nullptr);
+
+//         // Assign the ndarray to the output argument
+//         $result = ndarray;
+//     } else {
+//         // Create a new NumPy ndarray that wraps the output array without copying data
+//         npy_intp dims[] = {$2[0]};
+//         PyObject* ndarray = PyArray_SimpleNewFromData(1, dims, NPY_OBJECT, *$1);
+
+//         // Disable deallocation of the output array by NumPy
+//         PyArray_CLEARFLAGS((PyArrayObject*)ndarray, NPY_ARRAY_OWNDATA);
+
+//         // Assign the ndarray to the output argument
+//         $result = ndarray;
+//     }
+// }
+// //}}
+
 %include "../src/BMIPhreeqcRM.h"
+
+%inline %{
+void BMIPhreeqcRM::get_value_ptr_double(std::string var, double **vec, int* n) {
+	*n = 0;
+	*vec = nullptr;
+	RMVARS v_enum = this->var_man->GetEnum(var);
+	if (v_enum != RMVARS::NotFound)
+	{
+		BMIVariant& bv = this->var_man->VariantMap[v_enum];
+		if (bv.GetVoidPtr() == NULL)
+		{
+			this->var_man->task = VarManager::VAR_TASKS::GetPtr;
+			((*this->var_man).*bv.GetFn())();
+		}
+		*n = bv.GetDim();
+		*vec = (double*)bv.GetVoidPtr();
+	}
+}
+void BMIPhreeqcRM::get_value_ptr_int(std::string var, int **vec, int* n) {
+	*n = 0;
+	*vec = nullptr;
+	RMVARS v_enum = this->var_man->GetEnum(var);
+	if (v_enum != RMVARS::NotFound)
+	{
+		BMIVariant& bv = this->var_man->VariantMap[v_enum];
+		if (bv.GetVoidPtr() == NULL)
+		{
+			this->var_man->task = VarManager::VAR_TASKS::GetPtr;
+			((*this->var_man).*bv.GetFn())();
+		}
+		*n = bv.GetDim();
+		*vec = (int*)bv.GetVoidPtr();
+	}
+}
+
+std::vector<std::string>& BMIPhreeqcRM::get_value_ptr_vector_strings(std::string var)
+{
+    static std::vector<std::string> err = { "BAD Variable Name" };
+    RMVARS v_enum = this->var_man->GetEnum(var);
+    if (v_enum != RMVARS::NotFound)
+    {
+        BMIVariant& bv = this->var_man->VariantMap[v_enum];
+        return bv.GetStringVectorRef();
+    }
+    return err;
+}
+%}
+
 
 // Write new python method GetValue with one argument
 %extend BMIPhreeqcRM { %pythoncode 
 %{ 
+def get_value_ptr(self, var): 
+	Nbytes = self.get_var_nbytes(var)
+	Itemsize = self.get_var_itemsize(var)
+	dim = 0
+	if Itemsize != 0:
+		dim = Nbytes / Itemsize
+	type = self.get_var_type(var)
+	#print(f"Type={type}")
+	if type=="double":
+		if dim>1:
+			return self.get_value_ptr_double(var)
+	if type=="int":
+		if dim>1:
+			return self.get_value_ptr_int(var)
+	if type=="std::vector<std::string>":
+		ary = np.array(self.get_value_ptr_vector_strings(var))
+		ary.flags.writeable = False
+		return ary
+	return None
+
 def get_value(self, var): 
 	Nbytes = self.get_var_nbytes(var)
 	Itemsize = self.get_var_itemsize(var)
@@ -489,9 +608,7 @@ def set_value(self, var, value):
 		self.SetValue_string(var, value)
 	if type=="std::vector<std::string>":
 		self.SetValue_string_vector(var, value)	
-# def get_value_ptr(self):
-# 	return "Not Implemented."
+##def get_value_ptr(self, var):
+##	return self.GetValuePtr(var)
 %} 
 };
-
-
