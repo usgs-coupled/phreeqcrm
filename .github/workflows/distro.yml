@@ -20,6 +20,7 @@ jobs:
         Get-Command python
         Write-Output "DATE=$env:DATE" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         Write-Output "REL=$env:REL" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        Write-Output "VER_STRING=$env:VER-$env:REL" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: test rel
       run: |
@@ -81,9 +82,6 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    env:
-      VER_STRING: ${{ env.VER }}-${{ env.REL }}
-
     steps:
 
     - uses: actions/download-artifact@v3
@@ -120,17 +118,8 @@ jobs:
     - name: Extract tarball
       run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
 
-    - name: Configure with CMake (Non-Windows)
-      if: runner.os != 'Windows'
+    - name: Configure with CMake
       run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
-
-    - name: Configure with CMake (Windows)
-      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
-      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
-
-    - name: Configure with CMake (Windows)
-      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: cmake -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
 
     - name: Build with CMake
       run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
