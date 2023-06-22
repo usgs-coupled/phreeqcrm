@@ -25,6 +25,7 @@ include(GNUInstallDirs)
 # iphreeqc defs
 ADD_DEFINITIONS(-DSWIG_SHARED_OBJ)
 ADD_DEFINITIONS(-DUSE_PHRQ_ALLOC)
+ADD_DEFINITIONS(-DIPhreeqc_EXPORTS)
 
 # Disable deprecation warnings for standard C and STL functions in VS2005
 # and later
