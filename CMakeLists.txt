@@ -34,6 +34,14 @@ IF(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
   ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)
 ENDIF(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400) 
 
+if (WIN32 AND BUILD_SHARED_LIBS)
+  # Required to build IMPLIB
+  # (Seems to be automatically set when using Visual Studio as the generator)
+  # This is only necessary to export iphreeqc methods
+  # iphreeqc should be updated to use generate_export_header
+  ADD_DEFINITIONS(-D_WINDLL)
+endif()
+
 # check for zlib
 if(NOT ZLIB_ROOT)
   if(EXISTS $ENV{ZLIB_ROOT})
