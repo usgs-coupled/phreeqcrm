@@ -8,28 +8,12 @@ env:
   DATE: 6/22/2023
   REL: 15968-hotfix
   BUILD_TYPE: Release
+  VER_STRING: 3.7.3-15968-hotfix
 
 jobs:
 
-  init:
-    name: setup env
-    runs-on: windows-latest
-    steps:
-    - name: rel
-      run: |
-        Get-Command python
-        Write-Output "DATE=$env:DATE" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        Write-Output "REL=$env:REL" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        Write-Output "VER_STRING=$env:VER-$env:REL" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-    - name: test rel
-      run: |
-        Get-Command python
-
-
   distcheck:
     name: make distcheck
-    needs: init
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -73,7 +57,7 @@ jobs:
 
   cmake:
     name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }}
-    needs: [init, distcheck]
+    needs: [distcheck]
     strategy:
       fail-fast: false
       matrix:
