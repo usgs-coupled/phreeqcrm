@@ -4,9 +4,9 @@ on: [push]
 
 env:
   NAME: PhreeqcRM
-  VER: 3.7.1
-  DATE: 5/29/2021
-  REL: 15000
+  VER: 3.7.3
+  DATE: 6/22/2023
+  REL: 15968-hotfix
   BUILD_TYPE: Release
 
 jobs:
@@ -18,8 +18,8 @@ jobs:
     - name: rel
       run: |
         Get-Command python
-        Write-Output "DATE=8/29/2021" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        Write-Output "REL=15001" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        Write-Output "DATE=$env:DATE" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        Write-Output "REL=$env:REL" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: test rel
       run: |
@@ -50,42 +50,91 @@ jobs:
       working-directory: ${{github.workspace}}/_build
       run: ../configure --prefix=$(pwd)/INSTALL
 
-    - name: make
+    - name: make distcheck
       shell: bash
       working-directory: ${{github.workspace}}/_build
-      run: make -j2 distcheck
+      run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test" make -j2 distcheck
+
+    - name: make dist-zip
+      shell: bash
+      working-directory: ${{github.workspace}}/_build
+      run: make dist-zip
 
     - uses: actions/upload-artifact@v2
       with:
         name: tarball
         path: ${{github.workspace}}/_build/*.tar.gz
 
-  cmake-ubuntu:
-    name: cmake ubuntu
-    needs: distcheck
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: tarball
-      
-      - name: printenv
-        run: printenv
-      
-      - name: dir
-        run: pwd && find .
+    - uses: actions/upload-artifact@v2
+      with:
+        name: tarball
+        path: ${{github.workspace}}/_build/*.zip
 
-  cmake-windows:
-    name: cmake windows
-    needs: distcheck
-    runs-on: windows-latest
+  cmake:
+    name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }}
+    needs: [init, distcheck]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        build_shared_libs: [OFF, ON]
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      VER_STRING: ${{ env.VER }}-${{ env.REL }}
+
     steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: tarball
-      
-      - name: printenv
-        run: Get-ChildItem 'env:'
-      
-      - name: dir
-        run: Get-ChildItem
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: tarball
+
+    - name: Install GNU Fortran (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      uses: awvwgk/setup-fortran@main
+      with:
+        compiler: gcc
+        version: 12
+
+    - name: Install oneAPI Fortran (Windows)
+      if: ${{ runner.os == 'Windows' }}
+      uses: i-RIC/install-intelfortran-action@v1
+      with:
+        cache: true
+
+    - name: Install ninja yaml-cpp valgrind (Linux)
+      if: ${{ runner.os == 'Linux' }}
+      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+
+    - name: Install ninja yaml-cpp (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      run: brew install ninja yaml-cpp
+
+    - name: Set up Visual Studio shell (Windows)
+      if: runner.os == 'Windows'
+      uses: egor-tensin/vs-shell@v2
+      with:
+        arch: x64
+
+    - name: Extract tarball
+      run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
+
+    - name: Configure with CMake (Non-Windows)
+      if: runner.os != 'Windows'
+      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
+
+    - name: Configure with CMake (Windows)
+      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
+      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
+
+    - name: Configure with CMake (Windows)
+      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: cmake -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
+
+    - name: Build with CMake
+      run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
+
+    - name: Test with CMake
+      working-directory: ${{ github.workspace }}/build
+      run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
