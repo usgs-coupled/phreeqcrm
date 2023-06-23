@@ -1,9 +1,9 @@
 // %module(directors="1") phreeqcrm
-// %begin %{
-// #ifdef _MSC_VER
-// #define SWIG_PYTHON_INTERPRETER_NO_DEBUG
-// #endif
-// %}
+%begin %{
+#ifdef _MSC_VER
+#define SWIG_PYTHON_INTERPRETER_NO_DEBUG
+#endif
+%}
 %module phreeqcrm
 %pythoncode 
 %{ 

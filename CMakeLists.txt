@@ -47,7 +47,7 @@ if(PHREEQCRM_BUILD_MPI)
 endif()
 
 option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" OFF)
-if (PHREEQCRM_BUILD_PYTHON)
+if(PHREEQCRM_BUILD_PYTHON)
   find_package(SWIG REQUIRED)
   find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
   # Set Python_ROOT_DIR to specify which python to use

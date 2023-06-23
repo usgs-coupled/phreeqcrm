@@ -309,6 +309,37 @@
       }
     },
     {
+      "name": "ninja-vcpkg-static-yaml-python-310",
+      "inherits": "ninja-vcpkg-static-yaml-python",
+      "hidden": true,
+      "cacheVariables": {
+        "Python_ROOT_DIR": {
+          "type": "PATH",
+          "value": "C:/Python310-x64"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python-310-debug",
+      "inherits": "ninja-vcpkg-static-yaml-python-310",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        }
+      }
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python-310-release",
+      "inherits": "ninja-vcpkg-static-yaml-python-310",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    },
+    {
       "name": "ninja-vcpkg-shared",
       "inherits": "ninja-vcpkg",
       "hidden": true,
@@ -431,7 +462,17 @@
           "value": "ON"
         }
       }
-    },  
+    },
+    {
+      "name": "vs2019-static-python",
+      "inherits": "vs2019-static",
+      "cacheVariables": {
+        "PHREEQCRM_BUILD_PYTHON": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
     {
       "name": "vs2019-static-yaml-python",
       "inherits": "vs2019-static-yaml",
@@ -646,6 +687,14 @@
       "configurePreset": "ninja-vcpkg-static-yaml-python-release"
     },
     {
+      "name": "ninja-vcpkg-static-yaml-python-310-debug",
+      "configurePreset": "ninja-vcpkg-static-yaml-python-310-debug"
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python-310-release",
+      "configurePreset": "ninja-vcpkg-static-yaml-python-310-release"
+    },
+    {
       "name": "ninja-vcpkg-shared-debug",
       "configurePreset": "ninja-vcpkg-shared-debug"
     },
@@ -832,6 +881,18 @@
     {
       "name": "ninja-vcpkg-static-yaml-python-release",
       "configurePreset": "ninja-vcpkg-static-yaml-python-release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python-310-debug",
+      "configurePreset": "ninja-vcpkg-static-yaml-python-310-debug",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "ninja-vcpkg-static-yaml-python-310-release",
+      "configurePreset": "ninja-vcpkg-static-yaml-python-310-release",
       "output": {"outputOnFailure": true},
       "execution": {"noTestsAction": "error", "stopOnFailure": true}
     },

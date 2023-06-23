@@ -95,15 +95,44 @@ if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
   target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp)
 endif()
 
-if (PHREEQCRM_NO_UTF8_ENCODING)
+if(PHREEQCRM_NO_UTF8_ENCODING)
   target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE NO_UTF8_ENCODING)
 endif()
 
-target_link_libraries(${PYTHON_TARGET_NAME}
-  PRIVATE
-    Python::Python
-    Python::NumPy
-)
+if(WIN32 AND Python_LIBRARY_DEBUG)
+  # Since we're using SWIG_PYTHON_INTERPRETER_NO_DEBUG in PhreeqcRM.i we only
+  # link against the Release version of the Python library
+  #
+  # Attempting to run python tests with phreeqcrmpy Debug build on windows yields:
+  #   Fatal Python error: _PyInterpreterState_GET: the function must be called with the GIL held, but the GIL is released (the current Python thread state is NULL)
+  message(STATUS "Force ${PYTHON_TARGET_NAME} to link against the Release version of the Python library on Windows")
+
+  # Python include directory
+  target_include_directories(${PYTHON_TARGET_NAME}
+    PRIVATE
+      ${Python_INCLUDE_DIRS}
+  )
+
+  # Numpy include directory
+  get_target_property(NumPy_INC_DIRS Python::NumPy INTERFACE_INCLUDE_DIRECTORIES)
+  target_include_directories(${PYTHON_TARGET_NAME}
+    PRIVATE
+      ${NumPy_INC_DIRS}
+  )
+
+  # Python link library
+  target_link_libraries(${PYTHON_TARGET_NAME}
+    PRIVATE
+      ${Python_LIBRARY_RELEASE}
+  )
+else()
+  target_link_libraries(${PYTHON_TARGET_NAME}
+    PRIVATE
+      Python::Module
+      Python::NumPy
+  )
+endif()
+
 
 get_target_property(PhreeqcRM_INC PhreeqcRM INCLUDE_DIRECTORIES)
 target_include_directories(${PYTHON_TARGET_NAME}
@@ -113,201 +142,55 @@ target_include_directories(${PYTHON_TARGET_NAME}
 
 get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 
-if(NOT CMAKE_DEBUG_POSTFIX)
-  # SWIG BUG -- PyInit__phreeqcrmpy is misnamed when either of these properties is used:
-  # set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES DEBUG_POSTFIX "_d")
-  # set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES OUTPUT_NAME_DEBUG "${PYTHON_TARGET_NAME}_d")
-  if(WIN32)
-    # copy _phreeqcrmpy.pyd to _phreeqcrmpy_d.pyd
-    add_custom_command(TARGET ${PYTHON_TARGET_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:${PYTHON_TARGET_NAME}>
-        $<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>/_$<TARGET_FILE_BASE_NAME:${PYTHON_TARGET_NAME}>$<$<CONFIG:Debug>:_d>$<TARGET_FILE_SUFFIX:${PYTHON_TARGET_NAME}>
-    )
-  endif()
-endif()
-
-if(IS_MULTI_CONFIG)
-  if(WIN32)
-    # On windows need to use python_d and have numpy compiled as Debug
-    # so we disable the Debug configuration
-
-    # SimpleAdvect.py test
-    add_test(NAME SimpleAdvect.py
-      COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
-      CONFIGURATIONS Release RelWithDebInfo MinSizeRel
-    )
-    set_tests_properties(SimpleAdvect.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-
-    # WriteYAMLFile_py.py test
-    add_test(NAME WriteYAMLFile_py.py
-      COMMAND ${Python_EXECUTABLE} WriteYAMLFile_py.py
-      CONFIGURATIONS Release RelWithDebInfo MinSizeRel
-    )
-    set_tests_properties(WriteYAMLFile_py.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-
-    # AdvectBMI_py.py test
-    add_test(NAME AdvectBMI_py.py
-      COMMAND ${Python_EXECUTABLE} AdvectBMI_py.py
-      CONFIGURATIONS Release RelWithDebInfo MinSizeRel
-    )
-    set_tests_properties(AdvectBMI_py.py
-      PROPERTIES 
-        ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-        DEPENDS "WriteYAMLFile_py.py"
-        DISABLED $<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>
-    )
-
-    # Pytest
-    add_test(NAME run_pytest
-      COMMAND ${Python_EXECUTABLE} -m pytest
-      CONFIGURATIONS Release RelWithDebInfo MinSizeRel
-    )  
-    set_tests_properties(run_pytest
-      PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-    )
-  
-  else()
-    # SimpleAdvect.py test
-    add_test(NAME SimpleAdvect.py
-      COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
-    )
-    set_tests_properties(SimpleAdvect.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-
-    # WriteYAMLFile_py.py test
-    add_test(NAME WriteYAMLFile_py.py
-      COMMAND ${Python_EXECUTABLE} WriteYAMLFile_py.py
-    )
-    set_tests_properties(WriteYAMLFile_py.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-
-    # AdvectBMI_py.py test
-    add_test(NAME AdvectBMI_py.py
-      COMMAND ${Python_EXECUTABLE} AdvectBMI_py.py
-    )
-  endif()
-  set_tests_properties(AdvectBMI_py.py
-    PROPERTIES
-      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-      DEPENDS "WriteYAMLFile_py.py"
-      DISABLED $<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>
-  )
-else()
-  if(WIN32)
-    if(NOT "${CMAKE_BUILD_TYPE}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-      # SimpleAdvect.py test
-      add_test(NAME SimpleAdvect.py
-        COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
-      )
-      set_tests_properties(SimpleAdvect.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-
-      # WriteYAMLFile_py.py test
-      add_test(NAME WriteYAMLFile_py.py
-        COMMAND ${Python_EXECUTABLE} WriteYAMLFile_py.py
-      )
-      set_tests_properties(WriteYAMLFile_py.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-
-      # AdvectBMI_py.py test
-      add_test(NAME AdvectBMI_py.py
-        COMMAND ${Python_EXECUTABLE} AdvectBMI_py.py
-      )
-      set_tests_properties(AdvectBMI_py.py
-        PROPERTIES 
-          ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-          DEPENDS "WriteYAMLFile_py.py"
-          DISABLED $<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>
-      )
-    endif()
-  else()
-    # SimpleAdvect.py test
-    add_test(NAME SimpleAdvect.py
-      COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
-    )
-    set_tests_properties(SimpleAdvect.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-
-    # WriteYAMLFile_py.py test
-    add_test(NAME WriteYAMLFile_py.py
-      COMMAND ${Python_EXECUTABLE} WriteYAMLFile_py.py
-    )
-    set_tests_properties(WriteYAMLFile_py.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-
-    # AdvectBMI_py.py test
-    add_test(NAME AdvectBMI_py.py
-      COMMAND ${Python_EXECUTABLE} AdvectBMI_py.py
-    )
-    set_tests_properties(AdvectBMI_py.py
-      PROPERTIES 
-        ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-        DEPENDS "WriteYAMLFile_py.py"
-        DISABLED $<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>
-    )
-
-    # Pytest
-    add_test(NAME run_pytest
-      COMMAND ${Python_EXECUTABLE} -m pytest
-    )
-    set_tests_properties(run_pytest
-      PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-    )
-  endif()
-endif()
-
-
-# else()
+# if(NOT CMAKE_DEBUG_POSTFIX)
+#   # SWIG BUG -- PyInit__phreeqcrmpy is misnamed when either of these properties is used:
+#   # set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES DEBUG_POSTFIX "_d")
+#   # set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES OUTPUT_NAME_DEBUG "${PYTHON_TARGET_NAME}_d")
 #   if(WIN32)
-#     if("${CMAKE_BUILD_TYPE}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
-#       add_test(NAME SimpleAdvect.py
-#         COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
-#       )
-#       set_tests_properties(SimpleAdvect.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-
-#       # WriteYAMLFile_py.py test
-#       add_test(NAME WriteYAMLFile_py.py
-#         COMMAND ${Python_EXECUTABLE} WriteYAMLFile_py.py
-#       )
-#       set_tests_properties(WriteYAMLFile_py.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-
-#       # AdvectBMI_py.py test
-#       add_test(NAME AdvectBMI_py.py
-#         COMMAND ${Python_EXECUTABLE} AdvectBMI_py.py
-#       )
-#       set_tests_properties(AdvectBMI_py.py
-#         PROPERTIES 
-#           ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-#           DEPENDS "WriteYAMLFile_py.py"
-#       )
-#     endif()
-#   else()
-
-#   endif()
-# endif()
-
-# if(WIN32)
-#   string(REPLACE python.exe python_d.exe Python_d_EXECUTABLE ${Python_EXECUTABLE})
-
-#   if(IS_MULTI_CONFIG)
-#     add_test(NAME SimpleAdvect_d.py
-#       COMMAND ${Python_d_EXECUTABLE} SimpleAdvect.py
-#       CONFIGURATIONS Debug
+#     # copy _phreeqcrmpy.pyd to _phreeqcrmpy_d.pyd
+#     add_custom_command(TARGET ${PYTHON_TARGET_NAME} POST_BUILD
+#       COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         $<TARGET_FILE:${PYTHON_TARGET_NAME}>
+#         $<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>/_$<TARGET_FILE_BASE_NAME:${PYTHON_TARGET_NAME}>$<$<CONFIG:Debug>:_d>$<TARGET_FILE_SUFFIX:${PYTHON_TARGET_NAME}>
 #     )
-#     set_tests_properties(SimpleAdvect_d.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-#   else()
-#     if("${CMAKE_BUILD_TYPE}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-#       add_test(NAME SimpleAdvect_d.py
-#         COMMAND ${Python_d_EXECUTABLE} SimpleAdvect.py
-#       )
-#     endif()
-#   endif()
-#   if(NOT EXISTS ${Python_d_EXECUTABLE})
-#     message(STATUS "Debug python interpreter not found")
-#     if(IS_MULTI_CONFIG)
-#       set_tests_properties(SimpleAdvect_d.py PROPERTIES DISABLED TRUE)
-#     else()
-#       if("${CMAKE_BUILD_TYPE}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-#         set_tests_properties(SimpleAdvect_d.py PROPERTIES DISABLED TRUE)
-#       endif()
-#     endif()
 #   endif()
 # endif()
+
+# SimpleAdvect.py test
+add_test(NAME SimpleAdvect.py
+  COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
+)
+set_tests_properties(SimpleAdvect.py
+  PROPERTIES
+    ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+)
+
+# WriteYAMLFile_py.py test
+add_test(NAME WriteYAMLFile_py.py
+  COMMAND ${Python_EXECUTABLE} WriteYAMLFile_py.py
+)
+set_tests_properties(WriteYAMLFile_py.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+
+# AdvectBMI_py.py test
+add_test(NAME AdvectBMI_py.py
+  COMMAND ${Python_EXECUTABLE} AdvectBMI_py.py
+)
+set_tests_properties(AdvectBMI_py.py
+  PROPERTIES 
+    ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+    DEPENDS "WriteYAMLFile_py.py"
+    # AdvectBMI_py.py requires PHREEQCRM_WITH_YAML_CPP=ON
+    DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
+)
+
+# Pytest
+add_test(NAME run_pytest
+  COMMAND ${Python_EXECUTABLE} -m pytest
+)
+set_tests_properties(run_pytest
+  PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+)
+
 
 if(MSVC)
   # setup python Debugging
@@ -322,12 +205,66 @@ if(MSVC)
   # Get the directory of the input file
   get_filename_component(dir_name ${Python_EXECUTABLE} DIRECTORY)
 
-  set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND "${dir_name}/${base_name}$<$<CONFIG:Debug>:_d>${ext}")
+  # set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND "${dir_name}/${base_name}$<$<CONFIG:Debug>:_d>${ext}")
+  set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND ${Python_EXECUTABLE})
   set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
   set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "SimpleAdvect.py")
 endif()
 
+
+# # Get all propreties that cmake supports
+# if(NOT CMAKE_PROPERTY_LIST)
+#     execute_process(COMMAND cmake --help-property-list OUTPUT_VARIABLE CMAKE_PROPERTY_LIST)
+    
+#     # Convert command output into a CMake list
+#     string(REGEX REPLACE ";" "\\\\;" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+#     string(REGEX REPLACE "\n" ";" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+#     list(REMOVE_DUPLICATES CMAKE_PROPERTY_LIST)
+# endif()
+    
+# function(print_properties)
+#     message("CMAKE_PROPERTY_LIST = ${CMAKE_PROPERTY_LIST}")
+# endfunction()
+    
+# function(print_target_properties target)
+#     if(NOT TARGET ${target})
+#       message(STATUS "There is no target named '${target}'")
+#       return()
+#     endif()
+
+#     foreach(property ${CMAKE_PROPERTY_LIST})
+#         string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" property ${property})
+
+#         # Fix https://stackoverflow.com/questions/32197663/how-can-i-remove-the-the-location-property-may-not-be-read-from-target-error-i
+#         if(property STREQUAL "LOCATION" OR property MATCHES "^LOCATION_" OR property MATCHES "_LOCATION$")
+#             continue()
+#         endif()
+
+#         get_property(was_set TARGET ${target} PROPERTY ${property} SET)
+#         if(was_set)
+#             get_target_property(value ${target} ${property})
+#             message("${target} ${property} = ${value}")
+#         endif()
+#     endforeach()
+# endfunction()
+
+
 # include(CMakePrintHelpers)
+# cmake_print_variables(is_yaml_not_set)
 # cmake_print_variables(Python_EXECUTABLE)
 # cmake_print_variables(Python_d_EXECUTABLE)
 # cmake_print_variables(IS_MULTI_CONFIG)
+# cmake_print_variables(Python_Development_FOUND)
+
+# cmake_print_variables(NumPy_INCLUDE_DIRS)
+
+# cmake_print_variables(Python_INCLUDE_DIRS)
+# cmake_print_variables(Python_LIBRARIES)
+# cmake_print_variables(Python_LIBRARY_RELEASE)
+# cmake_print_variables(Python_LIBRARY_DEBUG)
+
+# print_target_properties(Python::Python)
+# print_target_properties(Python::NumPy)
+# print_target_properties(Python::Module)
+
+# cmake_print_variables(Python::Python)
