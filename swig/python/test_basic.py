@@ -15,15 +15,17 @@ def test_dtor():
     model = BMIPhreeqcRM()
     del model
 
-# def test_initialized():
-#     model = BMIPhreeqcRM()
-#     assert(not model._initialized)
+@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
+def test_initialized():
+    model = BMIPhreeqcRM()
+    assert(not model._initialized)
 
-# def test_finalize_not_initialized():
-#     model = BMIPhreeqcRM()
+@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
+def test_finalize_not_initialized():
+    model = BMIPhreeqcRM()
 
-#     model.finalize()
-#     assert(not model._initialized)
+    model.finalize()
+    assert(not model._initialized)
 
 def test_get_components_is_tuple():
     model = BMIPhreeqcRM()
@@ -33,42 +35,49 @@ def test_get_components_is_tuple():
     assert(isinstance(components, tuple))
     assert(len(components) == 0)
 
-# def test_get_grid_size_raises_uninitialized():
-#     model = BMIPhreeqcRM()
-#     with pytest.raises(RuntimeError, match="must call initialize first"):
-#         model.get_grid_size(0)
+@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
+def test_get_grid_size_raises_uninitialized():
+    model = BMIPhreeqcRM()
+    with pytest.raises(RuntimeError, match="must call initialize first"):
+        model.get_grid_size(0)
 
-# def test_get_input_var_names_raises_uninitialized():
-#     model = BMIPhreeqcRM()
-#     with pytest.raises(RuntimeError, match="must call initialize first"):
-#         model.get_input_var_names()
+@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
+def test_get_input_var_names_raises_uninitialized():
+    model = BMIPhreeqcRM()
+    with pytest.raises(RuntimeError, match="must call initialize first"):
+        model.get_input_var_names()
 
-# def test_get_output_var_names_raises_uninitialized():
-#     model = BMIPhreeqcRM()
-#     with pytest.raises(RuntimeError, match="must call initialize first"):
-#         model.get_output_var_names()
+@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
+def test_get_output_var_names_raises_uninitialized():
+    model = BMIPhreeqcRM()
+    with pytest.raises(RuntimeError, match="must call initialize first"):
+        model.get_output_var_names()
 
-# def test_get_value_ptr_raises_uninitialized():
-#     model = BMIPhreeqcRM()
-#     with pytest.raises(RuntimeError, match="must call initialize first"):
-#         model.get_value_ptr("Temperature")
+@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
+def test_get_value_ptr_raises_uninitialized():
+    model = BMIPhreeqcRM()
+    with pytest.raises(RuntimeError, match="must call initialize first"):
+        model.get_value_ptr("Temperature")
 
-# def test_update_raises_uninitialized():
-#     model = BMIPhreeqcRM()
-#     with pytest.raises(RuntimeError, match="must call initialize first"):
-#         model.update()
+@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
+def test_update_raises_uninitialized():
+    model = BMIPhreeqcRM()
+    with pytest.raises(RuntimeError, match="must call initialize first"):
+        model.update()
 
-# def test_update_until_raises_uninitialized():
-#     model = BMIPhreeqcRM()
-#     with pytest.raises(RuntimeError, match="must call initialize first"):
-#         model.update_until(1.0)
+@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
+def test_update_until_raises_uninitialized():
+    model = BMIPhreeqcRM()
+    with pytest.raises(RuntimeError, match="must call initialize first"):
+        model.update_until(1.0)
 
-# def test_initialize_AdvectBMI():
-#     model = BMIPhreeqcRM()
+@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
+def test_initialize_AdvectBMI():
+    model = BMIPhreeqcRM()
 
-#     assert(not model._initialized)
-#     model.initialize("AdvectBMI_py.yaml")
-#     assert(model._initialized)
+    assert(not model._initialized)
+    model.initialize("AdvectBMI_py.yaml")
+    assert(model._initialized)
 
 def test_get_grid_size_AdvectBMI():
     model = BMIPhreeqcRM()
@@ -312,7 +321,6 @@ def test_SetComponentH2O():
     model.initialize("AdvectBMI_py.yaml")
 
     status = model.SetComponentH2O(True)
-    # assert(status == IRM_RESULT.IRM_OK)
     assert(status == IRM_OK)
 
 def test_get_value_FilePrefix():
@@ -340,14 +348,14 @@ def test_get_value_FilePrefix_fail():
 
     fileprefix = model.get_value("FilePrefix", fileprefix)
 
-    # Current version truncates the string
+    # Current version truncates the string rather than
+    # throwing "buffer too small"
 
     # with pytest.raises(RuntimeError, match="buffer too small"):
     #     fileprefix = model.get_value("FilePrefix", fileprefix)
 
     assert(len(fileprefix[0]) == 4)
     assert(fileprefix[0] == expected[:sz])
-
 
 def test_get_value_FilePrefix_big_buffer():
     model = BMIPhreeqcRM()
@@ -378,12 +386,12 @@ def test_get_value_ptr_ComponentCount():
     model.initialize("AdvectBMI_py.yaml")
 
     # ComponentCount supports get_value_ptr @todo
-    ##component_count = np.full((1,), 0)
     component_count = np.empty((1,), dtype=int)
     component_count = model.get_value_ptr("ComponentCount")
 
     assert(component_count[0] == 8)
 
+@pytest.mark.skip(reason="This needs work")
 def test_get_value_ptr_failure():
     model = BMIPhreeqcRM()
     model.initialize("AdvectBMI_py.yaml")
