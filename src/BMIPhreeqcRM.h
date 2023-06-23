@@ -211,7 +211,7 @@ public:
     @par MPI:
     Called by root, workers must be in the loop of @ref MpiWorker.
      */
-    void Initialize(std::string config_file) override;
+    void Initialize(std::string config_file = "") override;
     /**
     @a Update runs PhreeqcRM for one time step. This method is equivalent to
     @ref RunCells. PhreeqcRM will equilibrate the solutions with all equilibrium
@@ -1220,6 +1220,12 @@ public:
     py::sequence process_sequence(py::sequence seq);
 
     bool _initialized;   // { var_man != nullptr }
+#endif
+
+#if defined(SWIG) || defined(phreeqcrmpy_EXPORTS)
+    void get_value_ptr_double(std::string var, double** vec, int* n);
+    void get_value_ptr_int(std::string var, int** vec, int* n);
+    std::vector<std::string>& get_value_ptr_vector_strings(std::string var);
 #endif
 
 protected:
