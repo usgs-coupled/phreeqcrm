@@ -408,8 +408,8 @@ def GetDoubleVector(self, v):
 %rename(get_time_units)              GetTimeUnits();
 %rename(get_time_step)               GetTimeStep();
 //%rename(get_value_ptr)               GetValuePtr(std::string name);
-%rename(get_value_at_indices)        GetValueAtIndices(std::string name, void* dest, int* inds, int count);
-%rename(set_value_at_indices)        SetValueAtIndices(std::string name, int* inds, int count, void* src);
+//%rename(get_value_at_indices)        GetValueAtIndices(std::string name, void* dest, int* inds, int count);
+//%rename(set_value_at_indices)        SetValueAtIndices(std::string name, int* inds, int count, void* src);
 %rename(get_grid_rank)               GetGridRank(const int grid);
 %rename(get_grid_size)               GetGridSize(const int grid);
 %rename(get_grid_type)               GetGridType(const int grid);
@@ -544,50 +544,114 @@ std::vector<std::string>& BMIPhreeqcRM::get_value_ptr_vector_strings(std::string
 // Write new python method GetValue with one argument
 %extend BMIPhreeqcRM { %pythoncode 
 %{ 
-def get_value_ptr(self, var): 
-	Nbytes = self.get_var_nbytes(var)
-	Itemsize = self.get_var_itemsize(var)
+def get_value_ptr(self, var_name): 
+	Nbytes = self.get_var_nbytes(var_name)
+	Itemsize = self.get_var_itemsize(var_name)
 	dim = 0
 	if Itemsize != 0:
 		dim = Nbytes / Itemsize
-	type = self.get_var_type(var)
+	type = self.get_var_type(var_name)
 	#print(f"Type={type}")
 	if type=="double":
 		if dim>1:
-			return self.get_value_ptr_double(var)
+			return self.get_value_ptr_double(var_name)
+		if dim==1:
+			return self.get_value_ptr_double(var_name)
 	if type=="int":
 		if dim>1:
-			return self.get_value_ptr_int(var)
+			arry = self.get_value_ptr_int(var_name)
+		if dim==1:
+			arry = self.get_value_ptr_int(var_name)
+		if var_name.lower() == "componentcount":   #  @todo use dict?
+			arry.flags.writeable = False
+		return arry
 	if type=="std::vector<std::string>":
-		ary = np.array(self.get_value_ptr_vector_strings(var))
+		ary = np.array(self.get_value_ptr_vector_strings(var_name))
 		ary.flags.writeable = False
 		return ary
 	return None
 
-def get_value(self, var): 
-	Nbytes = self.get_var_nbytes(var)
-	Itemsize = self.get_var_itemsize(var)
+def get_value(self, var_name, dest): 
+	Nbytes = self.get_var_nbytes(var_name)
+	Itemsize = self.get_var_itemsize(var_name)
 	dim = 0
 	if Itemsize != 0:
 		dim = Nbytes / Itemsize
-	type = self.get_var_type(var)
+	type = self.get_var_type(var_name)
 	#print(f"Type={type}")
 	if type=="double":
-		if dim==1:
-			return self.GetValue_double(var)
-		if dim>1:
-			return np.array(self.GetValue_double_vector(var))
+		if dim>=1:
+			dest[:] = self.get_value_ptr(var_name).flatten()
 	if type=="int":
-		if dim==1:
-			return self.GetValue_int(var)
-		if dim>1:
-			return np.array(self.GetValue_int_vector(var))
+		if dim>=1:
+			dest[:] = self.get_value_ptr(var_name).flatten()
 	if type=="std::string":
-		return self.GetValue_string(var)
+		dest[:] = np.array([self.GetValue_string(var_name)]).flatten()
 	if type=="std::vector<std::string>":
-		return np.array(self.GetValue_string_vector(var))
+		dest[:] = np.array(self.GetValue_string_vector(var_name)).flatten()
 	if type=="bool":
-		return self.GetValue_bool(var)
+		dest[:] = np.array([self.GetValue_bool(var_name)]).flatten()
+	return dest
+
+def get_value_at_indices(self, var_name, dest, indices):
+	"""Get values at particular indices.
+
+	Parameters
+	----------
+	var_name : str
+		Name of variable as CSDMS Standard Name.
+	dest : ndarray
+		A numpy array into which to place the values.
+	indices : array_like
+		Array of indices.
+
+	Returns
+	-------
+	array_like
+		Values at indices.
+	"""
+	dest[:] = self.get_value_ptr(var_name).take(indices)
+	return dest
+
+def set_value_at_indices(self, name, inds, src):
+	"""Set model values at particular indices.
+
+	Parameters
+	----------
+	var_name : str
+		Name of variable as CSDMS Standard Name.
+	src : array_like
+		Array of new values.
+	indices : array_like
+		Array of indices.
+	"""
+	val = self.get_value_ptr(name)
+	val.flat[inds] = src
+
+## // def get_value(self, var): 
+## // 	Nbytes = self.get_var_nbytes(var)
+## // 	Itemsize = self.get_var_itemsize(var)
+## // 	dim = 0
+## // 	if Itemsize != 0:
+## // 		dim = Nbytes / Itemsize
+## // 	type = self.get_var_type(var)
+## // 	#print(f"Type={type}")
+## // 	if type=="double":
+## // 		if dim==1:
+## // 			return self.GetValue_double(var)
+## // 		if dim>1:
+## // 			return np.array(self.GetValue_double_vector(var))
+## // 	if type=="int":
+## // 		if dim==1:
+## // 			return self.GetValue_int(var)
+## // 		if dim>1:
+## // 			return np.array(self.GetValue_int_vector(var))
+## // 	if type=="std::string":
+## // 		return self.GetValue_string(var)
+## // 	if type=="std::vector<std::string>":
+## // 		return np.array(self.GetValue_string_vector(var))
+## // 	if type=="bool":
+## // 		return self.GetValue_bool(var)
 def set_value(self, var, value):
 	Nbytes = self.get_var_nbytes(var)
 	Itemsize = self.get_var_itemsize(var)
