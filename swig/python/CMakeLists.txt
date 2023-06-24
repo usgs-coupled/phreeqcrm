@@ -181,7 +181,7 @@ set_tests_properties(AdvectBMI_py.py
     ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
     DEPENDS "WriteYAMLFile_py.py"
     # AdvectBMI_py.py requires PHREEQCRM_WITH_YAML_CPP=ON
-    DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
+    # DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
 )
 
 # Pytest
@@ -190,6 +190,8 @@ add_test(NAME run_pytest
 )
 set_tests_properties(run_pytest
   PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+    # Some Pytest tests require PHREEQCRM_WITH_YAML_CPP=ON
+    # DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
 )
 
 

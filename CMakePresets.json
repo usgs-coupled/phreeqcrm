@@ -464,16 +464,6 @@
       }
     },
     {
-      "name": "vs2019-static-python",
-      "inherits": "vs2019-static",
-      "cacheVariables": {
-        "PHREEQCRM_BUILD_PYTHON": {
-          "type": "BOOL",
-          "value": "ON"
-        }
-      }
-    },
-    {
       "name": "vs2019-static-yaml-python",
       "inherits": "vs2019-static-yaml",
       "cacheVariables": {
