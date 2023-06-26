@@ -15,6 +15,8 @@ PHREEQCRM_EXTRA_DIST=\
 	swig/python/SimpleAdvect.py\
 	swig/python/test_basic.py\
 	swig/python/test_get_value.py\
+	swig/python/test_irf.py\
+	swig/python/test_set_value.py\
 	swig/python/TestAllMethods_py.py\
 	swig/python/WriteYAMLFile_py.py\
 	swig/python/yamlphreeqcrm.py\

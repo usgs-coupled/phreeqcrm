@@ -32,6 +32,8 @@ configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
 # copy pytest files to build directory for testing
 configure_file(test_basic.py test_basic.py COPYONLY)
 configure_file(test_get_value.py test_get_value.py COPYONLY)
+configure_file(test_irf.py test_irf.py COPYONLY)
+configure_file(test_set_value.py test_set_value.py COPYONLY)
 
 get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
 
