@@ -81,7 +81,7 @@ def test_get_value_pointer():
     # this will throw if solutions aren't set for each cell (ie in initialize())
     for _ in range(10):
         model.update()
-    ## assert z0 is model.get_value_ptr("Porosity") # @todo (Might be able to fix this by caching the arrays)
+    assert z0 is model.get_value_ptr("Porosity")
 
 def test_get_value_pointer2():
     model = BMIPhreeqcRM()
@@ -124,10 +124,31 @@ def test_value_size():
     z = model.get_value_ptr("Temperature")
     assert model.get_grid_size(0) == z.size
 
-
 def test_value_nbytes():
     model = BMIPhreeqcRM()
     model.initialize("AdvectBMI_py.yaml")
 
     z = model.get_value_ptr("Temperature")
     assert model.get_var_nbytes("Temperature") == z.nbytes
+
+def test_all_pointable():
+    model = BMIPhreeqcRM()
+    model.initialize("AdvectBMI_py.yaml")
+
+    vars = model.get_pointable_var_names()
+    assert(isinstance(vars, tuple))
+
+    for var in vars:
+        print(var)
+        z0 = model.get_value_ptr(var)
+        assert z0 is not None
+
+        assert(str(z0.dtype) == model.get_var_type(var))
+
+        dest1 = np.empty_like(z0)
+        z1 = model.get_value(var, dest1)
+
+        assert z0 is not z1
+        assert_array_almost_equal(z0.flatten(), z1)
+
+        assert z0 is model.get_value_ptr(var)

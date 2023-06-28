@@ -44,18 +44,16 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::SelectedOutputCount_Var, "SelectedOutputCount");
 	this->VariantMap[RMVARS::SelectedOutputHeadings] =
 		BMIVariant(&VarManager::SelectedOutputHeadings_Var, "SelectedOutputHeadings");
+#if !defined(phreeqcrmpy_EXPORTS) && !defined(WITH_PYBIND11) // @todo
 	this->VariantMap[RMVARS::SelectedOutputOn] =
 		BMIVariant(&VarManager::SelectedOutputOn_Var, "SelectedOutputOn");
+#endif
 	this->VariantMap[RMVARS::SelectedOutputRowCount] =
 		BMIVariant(&VarManager::SelectedOutputRowCount_Var, "SelectedOutputRowCount");
 	this->VariantMap[RMVARS::SolutionVolume] =
 		BMIVariant(&VarManager::SolutionVolume_Var, "SolutionVolume");
 	this->VariantMap[RMVARS::Temperature] =
 		BMIVariant(&VarManager::Temperature_Var, "Temperature");
-#if defined(WITH_PYBIND11)
-	//this->VariantMap[RMVARS::Temperature_as_strings] =
-	//	BMIVariant(&VarManager::Temperature_as_strings_Var, "Temperature_as_strings");
-#endif
 	this->VariantMap[RMVARS::Time] =
 		BMIVariant(&VarManager::Time_Var, "Time");
 	this->VariantMap[RMVARS::TimeStep] =
@@ -215,7 +213,7 @@ void VarManager::Components_Var()
 		int Nbytes = (int)(size * comps.size());
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-#if defined(WITH_PYBIND11)
+#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
 		std::ostringstream oss;
 		oss << "<U" << size;
 		bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -461,7 +459,7 @@ void VarManager::ErrorString_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("error", false, true, false, Nbytes, Itemsize);
-#if defined(WITH_PYBIND11)
+#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
 		std::ostringstream oss;
 		oss << "<U" << Itemsize;		// need null counted?
 		bv.SetTypes("std::string", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -512,7 +510,7 @@ void VarManager::FilePrefix_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
-#if defined(WITH_PYBIND11)
+#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
 		std::ostringstream oss;
 		oss << "<U" << Itemsize;		// need null counted?
 		bv.SetTypes("std::string", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -1010,7 +1008,7 @@ void VarManager::SelectedOutputHeadings_Var()
 			int Nbytes = (int)(size * headings.size());// +this->AutoOutputVars.size();
 			//name, std::string units, set, get, ptr, Nbytes, Itemsize
 			bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-#if defined(WITH_PYBIND11)
+#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
 			std::ostringstream oss;
 			oss << "<U" << size;
 			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", oss.str());

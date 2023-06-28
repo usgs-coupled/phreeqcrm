@@ -117,6 +117,9 @@ BMIPhreeqcRM::BMIPhreeqcRM()
 	this->_initialized = false;
 	this->language = "Py";
 #endif
+#if defined(phreeqcrmpy_EXPORTS)
+	this->language = "Py";
+#endif
 }
 BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads)
 : PhreeqcRM(nxyz, nthreads, nullptr, true) 
@@ -125,6 +128,9 @@ BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads)
 	this->language = "cpp";
 #if defined(WITH_PYBIND11)
 	this->_initialized = false;
+	this->language = "Py";
+#endif
+#if defined(phreeqcrmpy_EXPORTS)
 	this->language = "Py";
 #endif
 }
@@ -148,6 +154,9 @@ void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 	this->var_man = new VarManager((PhreeqcRM*)this);
 #if defined(WITH_PYBIND11)
 	this->_initialized = true;
+#endif
+#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
+	phreeqcrm_io->Set_screen_on(false);
 #endif
 }
 
@@ -417,6 +426,35 @@ std::vector<std::string> BMIPhreeqcRM::GetPointableVarNames()
 	}
 	return names;
 }
+
+std::vector<std::string> BMIPhreeqcRM::GetReadOnlyVarNames()
+{
+	std::vector <std::string> names;
+	for (auto it = this->var_man->VariantMap.begin();
+		it != this->var_man->VariantMap.end(); it++)
+	{
+		BMIVariant& bv = it->second;
+		if (!bv.GetInitialized())
+		{
+			this->var_man->task = VarManager::VAR_TASKS::Info;
+			((*this->var_man).*bv.GetFn())();
+		}
+		if (it->first == RMVARS::InputVarNames)
+		{
+			continue;
+		}
+		if (it->first == RMVARS::OutputVarNames)
+		{
+			continue;
+		}
+		if (!bv.GetHasSetter())
+		{
+			names.push_back(bv.GetName());
+		}
+	}
+	return names;
+}
+
 std::string BMIPhreeqcRM::GetVarType(const std::string name)
 {
 	RMVARS v_enum = this->var_man->GetEnum(name);

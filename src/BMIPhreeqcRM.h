@@ -549,6 +549,11 @@ public:
      */
     std::vector<std::string> GetPointableVarNames();
 
+    /**
+    @todo
+    */
+    std::vector<std::string> GetReadOnlyVarNames();
+
     // Variable information functions
     /**
     @a GetVarGrid returns a value of 1, indicating points.
