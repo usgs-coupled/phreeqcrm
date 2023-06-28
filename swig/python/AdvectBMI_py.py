@@ -42,6 +42,30 @@ def AdvectBMI_py():
     #TODO status = do_something()   # only root is calling do_something here
 #endif
 	#nxyz = 0
+
+	dest_scalar = np.empty((1,), dtype=int)
+	nxyz = bmi.get_value("GridCellCount", dest_scalar)[0]
+	print(nxyz)
+
+	ncomps = bmi.get_value("ComponentCount", dest_scalar)[0]
+	print(ncomps)
+
+	nbytes = bmi.get_var_nbytes("Components")
+	print(nbytes)
+
+	x = bmi.GetComponents()
+	print(f"GetComponents {type(x)}, {x}")
+	xarr = np.array(bmi.GetComponents())
+	print(f"GetComponents {type(xarr)}, {xarr}")
+    # assert model.get_var_nbytes("Temperature") == z.nbytes	
+	print(f"GetComponents nbytes {xarr.nbytes}")
+
+	# dest_comps = np.empty(())
+	# components = bmi.get_value("Components")
+
+
+	##assert(False)
+	return
 	components = bmi.get_value("Components")
 	ncomps = bmi.get_value("ComponentCount")
 	nxyz = bmi.get_value("GridCellCount")

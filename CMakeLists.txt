@@ -48,6 +48,9 @@ endif()
 
 option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" OFF)
 if(PHREEQCRM_BUILD_PYTHON)
+  if(NOT PHREEQCRM_WITH_YAML_CPP)
+    message(FATAL_ERROR "Building python wrapper requires PHREEQCRM_WITH_YAML_CPP.")
+  endif()
   find_package(SWIG REQUIRED)
   find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
   # Set Python_ROOT_DIR to specify which python to use
