@@ -26,16 +26,19 @@ def testallmethods_py():
 	print(f"Initialize")
 	#---------
 	nxyz = bmi.GetGridCellCount()
-	nxyz = bmi.get_value("GridCellCount")
-	#int *i_ptr = (int*)bmi.GetValuePtr("GridCellCount")  # pointer
-	print(f"GetValue('GridCellCount') {type(nxyz)}, {nxyz}")
+	dest = np.empty((1,), dtype=int)
+	nxyz = bmi.get_value("GridCellCount", dest)
+	dest_ptr = bmi.get_value_ptr("GridCellCount")
+	print(f"get_value('GridCellCount', dest) {type(dest)}, {dest}")
+	print(f"get_value('GridCellCount') {type(nxyz)}, {nxyz}")
+	print(f"get_value_ptr('GridCellCount') {type(dest_ptr)}, {dest_ptr}")
 	#---------
 	x=bmi.GetThreadCount()
 	print(f"GetThreadCount {type(x)}, {x}")
 	#---------
 	# Inactive cells or symmetry
 	grid2chem = np.full((nxyz), -1)
-	for i in range(nxyz//2):
+	for i in range(nxyz[0]//2):
 		grid2chem[i] = i
 	x=bmi.CreateMapping(grid2chem)
 	print(f"CreateMapping {type(x)}, {x}")
@@ -61,8 +64,9 @@ def testallmethods_py():
 	print(f"SetDumpFileName {type(x)}, {x}")
 	#---------
 	x=bmi.SetFilePrefix("TestAllMethods_py")
-	bmi.SetValue("FilePrefix", "TestAllMethods_py")
 	print(f"SetFilePrefix {type(x)}, {x}")
+	bmi.set_value("FilePrefix", "TestAllMethods_py")
+	print(f"set_value('FilePrefix')")
 	#---------
 	x=bmi.OpenFiles()
 	print(f"OpenFiles {type(x)}, {x}")
@@ -80,8 +84,9 @@ def testallmethods_py():
 	print(f"SetScreenOn {type(x)}, {x}")
 	#---------
 	x=bmi.SetSelectedOutputOn(True)
-	bmi.set_value("SelectedOutputOn", True)
 	print(f"SetSelectedOutputOn {type(x)}, {x}")
+	bmi.set_value("SelectedOutputOn", True)
+	print(f"set_value('SelectedOutputOn')")
 	#---------
 	x=bmi.SetUnitsExchange(1)
 	print(f"SetUnitsExchange {type(x)}, {x}")
@@ -151,16 +156,27 @@ def testallmethods_py():
 	# Lists of reactants found by FindComponents follow
 	# 
 	nchem=bmi.GetChemistryCellCount()
-	print(f"GridCellCount {type(nchem)}, {nchem}")
+	print(f"GetChemistryCellCount {type(nchem)}, {nchem}")
 	#---------
 	ncomps=bmi.GetComponentCount()
-	ncomps = bmi.get_value("ComponentCount")
-	#i_ptr = (int*) bmi.GetValuePtr("ComponentCount")   # Pointer
 	print(f"GetComponentCount {type(ncomps)}, {ncomps}")
+	dest = np.empty((1,), dtype=int)
+	ncomps = bmi.get_value("ComponentCount", dest)
+	print(f"get_value('ComponentCount', dest) {type(dest)}, {dest}")
+	print(f"get_value('ComponentCount') {type(ncomps)}, {ncomps}")
+	dest_ptr = bmi.get_value_ptr("ComponentCount")
+	print(f"get_value_ptr('ComponentCount') {type(dest_ptr)}, {dest_ptr}")
 	#---------
 	x=bmi.GetComponents()	
-	x = bmi.get_value("Components")
 	print(f"GetComponents {type(x)}, {x}")
+	itemsize = bmi.get_var_itemsize("Components")
+	nbytes = bmi.get_var_nbytes("Components")
+	dim = nbytes // itemsize
+	s = " " * itemsize
+	dest = np.full(dim, s)
+	x = bmi.get_value("Components", dest)
+	print(f"get_value('Components', dest) {type(dest)}, {dest}")
+	print(f"get_value('Components') {type(x)}, {x}")
 	# Species info
 	x=bmi.GetSpeciesCount()
 	print(f"GetSpeciesCount {type(x)}, {x}")
@@ -199,9 +215,12 @@ def testallmethods_py():
 	print(f"GetGasComponentsCount {type(x)}, {x}")
 	#---------
 	x=bmi.GetGfw()
-	x=bmi.get_value("gfw")
-	#double *d_ptr = (double*)bmi.GetValuePtr("Gfw")  # Pointer
 	print(f"GetGfw {type(x)}, {x[0]}")
+	dest = np.empty(ncomps[0], dtype=float)
+	x=bmi.get_value("gfw", dest)
+	print(f"get_value('gfw') {type(x)}, {x[0]}")
+	x = bmi.get_value_ptr("Gfw")  
+	print(f"get_value_ptr('Gfw') {type(x)}, {x[0]}")
 	#---------
 	x=bmi.GetKineticReactions()
 	print(f"GetKineticReactions {type(x)}, {x}")
@@ -316,28 +335,39 @@ def testallmethods_py():
 	#
 	x=bmi.GetTime()
 	print(f"GetTime {type(x)}, {x}")
-	d = bmi.get_current_time()
-	d = bmi.get_start_time()
-	#d_ptr = bmi.GetValuePtr("Time")
-	print(f"GetTime {type(x)}, {x}")
+	x = bmi.get_current_time()
+	print(f"get_current_time {type(x)}, {x}")
+	x = bmi.get_start_time()
+	print(f"get_start_time {type(x)}, {x}")
+	x_ptr = bmi.get_value_ptr("Time")
+	print(f"get_value_ptr {type(x_ptr)}, {x_ptr}")
 	#---------
-	x=bmi.SetTime(0.0)
-	bmi.set_value("Time", 0.0)
-	print(f"SetTime {type(x)}, {x}")
+	x=bmi.SetTime(0.001)
+	print(f"SetTime {type(x)}, {x}, {x_ptr}")
+	bmi.set_value("Time", 0.002)
+	print(f"set_value('Time'), {x_ptr}")
 	#---------
 	x=bmi.GetTimeStep()
-	x= bmi.get_value("TimeStep")
-	#d_ptr = (double*)bmi.GetValuePtr("TimeStep")
 	print(f"GetTimeStep {type(x)}, {x}")
+	dest = np.empty(1, dtype=float)
+	x= bmi.get_value("TimeStep", dest)
+	print(f"get_value('TimeStep') {type(x)}, {x}")
+	d_ptr = bmi.get_value_ptr("TimeStep")
+	print(f"get_value_ptr {type(d_ptr)}, {d_ptr}")
 	#---------
-	x=bmi.SetTimeStep(0.0)
+	x=bmi.SetTimeStep(0.001)
+	print(f"SetTimeStep {type(x)}, {x}, {d_ptr[0]}")
 	bmi.set_value("TimeStep", 0.0)
-	print(f"SetTimeStep {type(x)}, {x}")
+	print(f"set_value('TimeStep') {d_ptr[0]}")
 	#---------
 	c=bmi.GetConcentrations()
-	c = bmi.get_value("Concentrations")
-	#d_ptr = (double*)bmi.GetValuePtr("Concentrations")
 	print(f"GetConcentrations {type(c)}, {c[0]}")
+	dest = np.empty(nxyz[0]*ncomps[0])
+	c = bmi.get_value("Concentrations", dest)
+	print(f"get_value('Concentrations') {type(c)}, {c[0]}")
+	d_ptr = bmi.get_value_ptr("Concentrations")
+	print(f"get_value_ptr('Concentrations') {type(d_ptr)}, {d_ptr[0]}")
+	return
 	#---------
 	x=bmi.SetConcentrations(c)
 	bmi.set_value("Concentrations", c)
