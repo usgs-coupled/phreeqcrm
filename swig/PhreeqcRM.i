@@ -1,10 +1,23 @@
 // %module(directors="1") phreeqcrm
+%module phreeqcrm
+
 %begin %{
 #ifdef _MSC_VER
 #define SWIG_PYTHON_INTERPRETER_NO_DEBUG
 #endif
 %}
-%module phreeqcrm
+
+%header %{
+#if defined(SWIGPYTHON)
+// This is reqd to use pyfragments.swg from numpy
+// it fixes these type of errors:
+// PhreeqcRMPYTHON_wrap.cxx: error C2065: 'Integer': undeclared identifier
+// PhreeqcRMPYTHON_wrap.cxx: error C3861: 'PyArray_IsScalar': identifier not found
+// see https://numpy.org/doc/stable/reference/swig.interface-file.html#numpy-array-scalars-and-swig
+#include <numpy/arrayobject.h>
+#endif
+%}
+
 %pythoncode 
 %{ 
 import numpy as np
@@ -26,7 +39,7 @@ import phreeqcrm
 %ignore BMIVariant;
 %ignore bmi::Bmi;
 
-#if 1
+#if defined(SWIGPYTHON)
 %include "numpy.i"
 %init %{
 import_array();
@@ -627,9 +640,9 @@ def set_value(self, var_name, value):
             self.SetValue_double_vector(var_name, value)
     if vtype=="int32":
         if dim==1:
-            self.SetValue_int(var_name, int(value[0]))
+            self.SetValue_int(var_name, value[0])
         if dim>1:
-            # this still needs work
+            # this needs testing
             self.SetValue_int_vector(var_name, value)
     if vtype.startswith("<U"):
         if dim==1:

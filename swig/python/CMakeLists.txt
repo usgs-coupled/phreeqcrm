@@ -4,11 +4,9 @@ set(phreeqcrm_INTERFACE PhreeqcRM.i)
 
 set(phreeqcrm_INTERFACE_FULLPATH ${CMAKE_CURRENT_SOURCE_DIR}/../${phreeqcrm_INTERFACE})
 
-# copy PhreeqcRM.i in order to not have pyfragments.swg be automatically included
-# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_INTERFACE} ${phreeqcrm_INTERFACE} COPYONLY)
-
-# @todo
-# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../pyfragments.swg.in pyfragments.swg COPYONLY)
+# This fixes the numpy integer swig incompatibility bug
+# see https://numpy.org/doc/stable/reference/swig.interface-file.html#numpy-array-scalars-and-swig
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../pyfragments.swg.in pyfragments.swg COPYONLY)
 
 # copy database to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../database/phreeqc.dat phreeqc.dat COPYONLY)

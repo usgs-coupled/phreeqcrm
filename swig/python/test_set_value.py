@@ -18,7 +18,6 @@ def test_set_value():
     assert new_z is not z1
     assert_array_almost_equal(new_z, z1)
 
-
 def test_set_value_at_indices():
     model = BMIPhreeqcRM()
     model.initialize("AdvectBMI_py.yaml")
@@ -44,3 +43,14 @@ def test_set_value_SelectedOutputOn():
     assert new_z is z0
     assert new_z is not z1
     assert new_z == z1
+
+def test_numpy_integers_compatibility():
+    # if this fails it probably has something
+    # to do with the numpy file pyfragments.swg
+    # not being integrated into PhreeqcRM.i
+
+    model = BMIPhreeqcRM()
+    model.initialize("AdvectBMI_py.yaml")
+
+    z1 = np.full(1, 0, dtype=int)
+    n = model.GetNthSelectedOutputUserNumber(z1[0])
