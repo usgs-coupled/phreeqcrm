@@ -23,7 +23,6 @@ import phreeqcrm
 #include "yaml-cpp/yaml.h"
 #endif
 %}
-#%fragment("NumPy_Fragments"); 
 %ignore BMIVariant;
 %ignore bmi::Bmi;
 
@@ -32,6 +31,7 @@ import phreeqcrm
 %init %{
 import_array();
 %}
+%fragment("NumPy_Fragments");
 #endif
 
 %include "std_string.i"
@@ -441,63 +441,60 @@ def GetDoubleVector(self, v):
 #endif
 #endif
 
-%apply (std::string var, double** ARGOUTVIEW_ARRAY1, int *DIM1) {(std::string var, double** vec, int* n)}
-%apply (double** ARGOUTVIEW_ARRAY1, int *DIM1) {(double** vec, int* n)}
-
-%apply (std::string var, int** ARGOUTVIEW_ARRAY1, int *DIM1) {(std::string var, int** vec, int* n)}
-%apply (int** ARGOUTVIEW_ARRAY1, int *DIM1) {(int** vec, int* n)}
+// %numpy_typemaps(int,    NPY_INT32  , int)
 
 %feature("pythonprepend") BMIPhreeqcRM::BMIPhreeqcRM() %{
-	self._values = {}
-	self._pointables = {}
-	self._readonlys = {}
+    self._values = {}
+    self._pointables = {}
+    self._readonlys = {}
 %}
 
 %feature("pythonappend") BMIPhreeqcRM::Initialize(std::string config_file="") %{
-	self._pointables = {var.lower() for var in self.get_pointable_var_names()}
-	self._readonlys = {var.lower() for var in self.get_readonly_var_names()}
+    self._pointables = {var.lower() for var in self.get_pointable_var_names()}
+    self._readonlys = {var.lower() for var in self.get_readonly_var_names()}
 %}
 
 %feature("pythonappend") BMIPhreeqcRM::Finalize() %{
-	self._values = {}
-	self._pointables = {}
-	self._readonlys = {}
+    self._values = {}
+    self._pointables = {}
+    self._readonlys = {}
 %}
 
 %include "../src/BMIPhreeqcRM.h"
 
 %inline %{
-void BMIPhreeqcRM::get_value_ptr_double(std::string var, double **vec, int* n) {
-	*n = 0;
-	*vec = nullptr;
-	RMVARS v_enum = this->var_man->GetEnum(var);
-	if (v_enum != RMVARS::NotFound)
-	{
-		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		if (bv.GetVoidPtr() == NULL)
-		{
-			this->var_man->task = VarManager::VAR_TASKS::GetPtr;
-			((*this->var_man).*bv.GetFn())();
-		}
-		*n = bv.GetDim();
-		*vec = (double*)bv.GetVoidPtr();
-	}
+void BMIPhreeqcRM::get_value_ptr_double(std::string var, double **ARGOUTVIEW_ARRAY1, int* DIM1) {
+    *DIM1 = 0;
+    *ARGOUTVIEW_ARRAY1 = nullptr;
+    RMVARS v_enum = this->var_man->GetEnum(var);
+    if (v_enum != RMVARS::NotFound)
+    {
+        BMIVariant& bv = this->var_man->VariantMap[v_enum];
+        if (bv.GetVoidPtr() == nullptr)
+        {
+            this->var_man->task = VarManager::VAR_TASKS::GetPtr;
+            ((*this->var_man).*bv.GetFn())();
+        }
+        *DIM1 = bv.GetDim();
+        *ARGOUTVIEW_ARRAY1 = (double*)bv.GetVoidPtr();
+    }
 }
-void BMIPhreeqcRM::get_value_ptr_int(std::string var, int **vec, int* n) {
-	*n = 0;
-	*vec = nullptr;
-	RMVARS v_enum = this->var_man->GetEnum(var);
-	if (v_enum != RMVARS::NotFound)
-	{
-		BMIVariant& bv = this->var_man->VariantMap[v_enum];
-		if (bv.GetVoidPtr() == NULL)
-		{
-			this->var_man->task = VarManager::VAR_TASKS::GetPtr;
-			((*this->var_man).*bv.GetFn())();
-		}
-		*n = bv.GetDim();
-		*vec = (int*)bv.GetVoidPtr();
-	}
+
+void BMIPhreeqcRM::get_value_ptr_int(std::string var, int** ARGOUTVIEW_ARRAY1, int *DIM1) {
+    *DIM1 = 0;
+    *ARGOUTVIEW_ARRAY1 = nullptr;
+    RMVARS v_enum = this->var_man->GetEnum(var);
+    if (v_enum != RMVARS::NotFound)
+    {
+        BMIVariant& bv = this->var_man->VariantMap[v_enum];
+        if (bv.GetVoidPtr() == nullptr)
+        {
+            this->var_man->task = VarManager::VAR_TASKS::GetPtr;
+            ((*this->var_man).*bv.GetFn())();
+        }
+        *DIM1 = bv.GetDim();
+        *ARGOUTVIEW_ARRAY1 = (int*)bv.GetVoidPtr();
+    }
 }
 
 std::vector<std::string>& BMIPhreeqcRM::get_value_ptr_vector_strings(std::string var)
@@ -518,125 +515,126 @@ std::vector<std::string>& BMIPhreeqcRM::get_value_ptr_vector_strings(std::string
 %extend BMIPhreeqcRM { %pythoncode 
 %{ 
 def get_value_ptr(self, var_name):
-	var_name_lower = var_name.lower()
-	if var_name_lower in self._values:
-		return self._values[var_name_lower]
+    var_name_lower = var_name.lower()
+    if var_name_lower in self._values:
+        return self._values[var_name_lower]
 
-	Nbytes = self.get_var_nbytes(var_name_lower)
-	Itemsize = self.get_var_itemsize(var_name_lower)
-	dim = 0
-	if Itemsize != 0:
-		dim = Nbytes / Itemsize
-	type = self.get_var_type(var_name_lower)
+    Nbytes = self.get_var_nbytes(var_name_lower)
+    Itemsize = self.get_var_itemsize(var_name_lower)
+    dim = 0
+    if Itemsize != 0:
+        dim = Nbytes / Itemsize
+    vtype = self.get_var_type(var_name_lower)
 
-	if type=="float64":
-		if dim>=1:
-			arry = self.get_value_ptr_double(var_name_lower)
-			self._values[var_name_lower] = arry
-			if var_name_lower in self._readonlys:
-				arry.flags.writeable = False
-			return arry
-	if type=="int32":
-		if dim>=1:
-			arry = self.get_value_ptr_int(var_name_lower)
-			self._values[var_name_lower] = arry
-			if var_name_lower in self._readonlys:
-				arry.flags.writeable = False
-			return arry
-	if type.startswith("<U"):
-		arry = np.array(self.get_value_ptr_vector_strings(var_name_lower))
-		self._values[var_name_lower] = arry
-		# strings are always readonly
-		arry.flags.writeable = False
-		return arry
-	return None
+    if vtype=="float64":
+        if dim>=1:
+            arry = self.get_value_ptr_double(var_name_lower)
+            self._values[var_name_lower] = arry
+            if var_name_lower in self._readonlys:
+                arry.flags.writeable = False
+            return arry
+    if vtype=="int32":
+        if dim>=1:
+            arry = self.get_value_ptr_int(var_name_lower)
+            self._values[var_name_lower] = arry
+            if var_name_lower in self._readonlys:
+                arry.flags.writeable = False
+            return arry
+    if vtype.startswith("<U"):
+        arry = np.array(self.get_value_ptr_vector_strings(var_name_lower))
+        self._values[var_name_lower] = arry
+        # strings are always readonly
+        arry.flags.writeable = False
+        return arry
+    return None
 
 def get_value(self, var_name, dest):
-	var_name_lower = var_name.lower()
-	if var_name_lower in self._pointables:
-		dest[:] = self.get_value_ptr(var_name_lower).flatten()
-		return dest
+    var_name_lower = var_name.lower()
+    if var_name_lower in self._pointables:
+        dest[:] = self.get_value_ptr(var_name_lower).flatten()
+        return dest
 
-	Nbytes = self.get_var_nbytes(var_name_lower)
-	Itemsize = self.get_var_itemsize(var_name_lower)
-	dim = 0
-	if Itemsize != 0:
-		dim = Nbytes / Itemsize
-	type = self.get_var_type(var_name_lower)
+    Nbytes = self.get_var_nbytes(var_name_lower)
+    Itemsize = self.get_var_itemsize(var_name_lower)
+    dim = 0
+    if Itemsize != 0:
+        dim = Nbytes / Itemsize
+    vtype = self.get_var_type(var_name_lower)
 
-	if type=="float64":
-		if dim==1:
-			dest[:] = np.array(self.GetValue_double(var_name_lower)).flatten()
-		if dim>1:
-			dest[:] = np.array(self.GetValue_double_vector(var_name_lower)).flatten()
-	if type=="int32":
-		if dim==1:
-			dest[:] = np.array(self.GetValue_int(var_name_lower)).flatten()
-		if dim>1:
-			dest[:] = np.array(self.GetValue_int_vector(var_name_lower)).flatten()
-	if type.startswith("<U"):
-		if dim==1:
-			dest[:] = np.array([self.GetValue_string(var_name_lower)]).flatten()
-		if dim>1:
-			dest[:] = np.array(self.GetValue_string_vector(var_name_lower)).flatten()
-	if type=="bool":
-		dest[:] = np.array([self.GetValue_bool(var_name_lower)]).flatten()
-	return dest
+    if vtype=="float64":
+        if dim==1:
+            dest[:] = np.array(self.GetValue_double(var_name_lower)).flatten()
+        if dim>1:
+            dest[:] = np.array(self.GetValue_double_vector(var_name_lower)).flatten()
+    if vtype=="int32":
+        if dim==1:
+            dest[:] = np.array(self.GetValue_int(var_name_lower)).flatten()
+        if dim>1:
+            dest[:] = np.array(self.GetValue_int_vector(var_name_lower)).flatten()
+    if vtype.startswith("<U"):
+        if dim==1:
+            dest[:] = np.array([self.GetValue_string(var_name_lower)]).flatten()
+        if dim>1:
+            dest[:] = np.array(self.GetValue_string_vector(var_name_lower)).flatten()
+    if vtype=="bool":
+        dest[:] = np.array([self.GetValue_bool(var_name_lower)]).flatten()
+    return dest
 
 def get_value_at_indices(self, var_name, dest, indices):
-	"""Get values at particular indices.
+    """Get values at particular indices.
 
-	Parameters
-	----------
-	var_name : str
-		Name of variable as CSDMS Standard Name.
-	dest : ndarray
-		A numpy array into which to place the values.
-	indices : array_like
-		Array of indices.
+    Parameters
+    ----------
+    var_name : str
+        Name of variable as CSDMS Standard Name.
+    dest : ndarray
+        A numpy array into which to place the values.
+    indices : array_like
+        Array of indices.
 
-	Returns
-	-------
-	array_like
-		Values at indices.
-	"""
-	dest[:] = self.get_value_ptr(var_name).take(indices)
-	return dest
+    Returns
+    -------
+    array_like
+        Values at indices.
+    """
+    dest[:] = self.get_value_ptr(var_name).take(indices)
+    return dest
 
 def set_value_at_indices(self, var_name, inds, src):
-	"""Set model values at particular indices.
+    """Set model values at particular indices.
 
-	Parameters
-	----------
-	var_name : str
-		Name of variable as CSDMS Standard Name.
-	src : array_like
-		Array of new values.
-	indices : array_like
-		Array of indices.
-	"""
-	val = self.get_value_ptr(var_name)
-	val.flat[inds] = src
+    Parameters
+    ----------
+    var_name : str
+        Name of variable as CSDMS Standard Name.
+    src : array_like
+        Array of new values.
+    indices : array_like
+        Array of indices.
+    """
+    val = self.get_value_ptr(var_name)
+    val.flat[inds] = src
 
 def set_value(self, var_name, value):
-	Nbytes = self.get_var_nbytes(var_name)
-	Itemsize = self.get_var_itemsize(var_name)
-	dim = Nbytes / Itemsize
-	type = self.get_var_type(var_name)
-	if type=="float64":
-		if dim==1:
-			self.SetValue_double(var_name, value)
-		if dim>1:
-			self.SetValue_double_vector(var_name, value)
-	if type=="int32":
-		if dim==1:
-			self.SetValue_int(var_name, value)
-		if dim>1:
-			self.SetValue_int_vector(var_name)
-	if type.startswith("<U"):
-		if dim==1:
-			self.SetValue_string(var_name, value)
-		if dim>1:
-			self.SetValue_string_vector(var_name)
+    Nbytes = self.get_var_nbytes(var_name)
+    Itemsize = self.get_var_itemsize(var_name)
+    dim = Nbytes / Itemsize
+    vtype = self.get_var_type(var_name)
+    if vtype=="float64":
+        if dim==1:
+            self.SetValue_double(var_name, value[0])
+        if dim>1:
+            self.SetValue_double_vector(var_name, value)
+    if vtype=="int32":
+        if dim==1:
+            self.SetValue_int(var_name, int(value[0]))
+        if dim>1:
+            # this still needs work
+            self.SetValue_int_vector(var_name, value)
+    if vtype.startswith("<U"):
+        if dim==1:
+            self.SetValue_string(var_name, value[0])
+        if dim>1:
+            self.SetValue_string_vector(var_name, value)
 %}
 };

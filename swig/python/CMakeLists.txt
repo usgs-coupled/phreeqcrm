@@ -8,7 +8,6 @@ set(phreeqcrm_INTERFACE_FULLPATH ${CMAKE_CURRENT_SOURCE_DIR}/../${phreeqcrm_INTE
 # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../${phreeqcrm_INTERFACE} ${phreeqcrm_INTERFACE} COPYONLY)
 
 # @todo
-# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../pyfragments.swg.in pyfragments.swg COPYONLY)
 # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../pyfragments.swg.in pyfragments.swg COPYONLY)
 
 # copy database to build directory for testing
@@ -80,6 +79,9 @@ target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE IRM_DLL_STATIC_DEFINE)
 target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE SWIG_SHARED_OBJ)
 target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE USE_PHRQ_ALLOC)
 target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE IPhreeqc_EXPORTS)
+
+# numpy defs
+target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
 
 # Turn off Incremental Linking for Debug and RelWithDebInfo
 if(MSVC)
