@@ -26,11 +26,11 @@ def testallmethods_py():
 	print(f"Initialize")
 	#---------
 	nxyz = bmi.GetGridCellCount()
+	print(f"GetGridCellCount {type(nxyz)}, {nxyz}")
 	dest = np.empty((1,), dtype=int)
 	nxyz = bmi.get_value("GridCellCount", dest)
+	print(f"get_value('GridCellCount') {type(nxyz)}, {nxyz[0]}")
 	dest_ptr = bmi.get_value_ptr("GridCellCount")
-	print(f"get_value('GridCellCount', dest) {type(dest)}, {dest}")
-	print(f"get_value('GridCellCount') {type(nxyz)}, {nxyz}")
 	print(f"get_value_ptr('GridCellCount') {type(dest_ptr)}, {dest_ptr}")
 	#---------
 	x=bmi.GetThreadCount()
@@ -162,7 +162,6 @@ def testallmethods_py():
 	print(f"GetComponentCount {type(ncomps)}, {ncomps}")
 	dest = np.empty((1,), dtype=int)
 	ncomps = bmi.get_value("ComponentCount", dest)
-	print(f"get_value('ComponentCount', dest) {type(dest)}, {dest}")
 	print(f"get_value('ComponentCount') {type(ncomps)}, {ncomps}")
 	dest_ptr = bmi.get_value_ptr("ComponentCount")
 	print(f"get_value_ptr('ComponentCount') {type(dest_ptr)}, {dest_ptr}")
@@ -367,20 +366,24 @@ def testallmethods_py():
 	print(f"get_value('Concentrations') {type(c)}, {c[0]}")
 	d_ptr = bmi.get_value_ptr("Concentrations")
 	print(f"get_value_ptr('Concentrations') {type(d_ptr)}, {d_ptr[0]}")
-	return
 	#---------
 	x=bmi.SetConcentrations(c)
 	bmi.set_value("Concentrations", c)
 	print(f"SetConcentrations {type(x)}, {x}")
 	#---------
 	d=bmi.GetDensityCalculated()
-	d=bmi.get_value("DensityCalculated")
-	#d_ptr = (double*)bmi.GetValuePtr("DensityCalculated")
 	print(f"GetDensityCalculated {type(d)}, {d[0]}") 
+	dest = np.empty(nxyz[0])
+	d=bmi.get_value("DensityCalculated", dest)
+	print(f"get_value('DensityCalculated') {type(d)}, {d[0]}") 
+	d_ptr = bmi.get_value_ptr("DensityCalculated")
+	print(f"get_value_ptr('DensityCalculated') {type(d_ptr)}, {d_ptr[0]}") 
 	#---------
 	x=bmi.SetDensityUser(d)
-	bmi.set_value("DensityUser",d)
 	print(f"SetDensityUser {type(x)}, {x}")
+	d = np.full(nxyz[0], 1.0011)
+	bmi.set_value("DensityUser", d)
+	print(f"set_value('DensityUser') {type(d)}, {d[0]}")
 	#---------
 	g = bmi.GetGasCompMoles() 
 	print(f"GetGasCompMoles {type(g)}, {g[0]}")
@@ -415,36 +418,54 @@ def testallmethods_py():
 	print(f"SetIthSpeciesConcentration ")
 	#-------
 	x=bmi.GetPorosity()
-	x = bmi.get_value("Porosity")
-	#d_ptr = (double*)bmi.GetValuePtr("Porosity")
 	print(f"GetPorosity {type(x)}, {x[0]}")
+	dest = np.empty(nxyz[0])
+	x = bmi.get_value("Porosity", dest)
+	print(f"get_value('Porosity') {type(x)}, {x[0]}")
+	d_ptr = bmi.get_value_ptr("Porosity")
+	print(f"get_value_ptr('Porosity') {type(d_ptr)}, {d_ptr[0]}")
 	#---------
-	bmi.set_value("Porosity", x)
+	x = np.full(nxyz[0], 1.001)
 	x=bmi.SetPorosity(x)
-	print(f"SetPorosity {type(x)}, {x}")
+	print(f"SetPorosity {type(x)}, {x}, {d_ptr[0]}")
+	x = np.full(nxyz[0], 1.002)
+	bmi.set_value("Porosity", x)
+	print(f"set_value('Porosity') {type(d_ptr)}, {d_ptr[0]}")
 	#---------
 	x=bmi.GetPressure()
-	x = bmi.get_value("Pressure")
-	#d_ptr = (double*)bmi.GetValuePtr("Pressure");
 	print(f"GetPressure {type(x)}, {x[0]}")
+	dest = np.empty(nxyz[0])
+	x = bmi.get_value("Pressure", dest)
+	print(f"get_value('Pressure' {type(x)}, {x[0]}")
+	d_ptr = bmi.get_value_ptr("Pressure");
+	print(f"get_value_ptr('Pressure') {type(d_ptr)}, {d_ptr[0]}")
 	#---------
-	bmi.set_value("Pressure", x)
 	x=bmi.SetPressure(x)
 	print(f"SetPressure {type(x)}, {x}")
+	x = np.full(nxyz[0], 2.2)
+	bmi.set_value("Pressure", x)
+	print(f"set_value('Pressure') {type(d_ptr)}, {d_ptr[0]}")
 	#---------
-	x=bmi.get_value("SaturationCalculated")
 	x=bmi.GetSaturationCalculated() 
-	#d_ptr = (double*)bmi.GetValuePtr("SaturationCalculated");
 	print(f"GetSaturationCalculated {type(x)}, {x[0]}")
+	dest = np.empty(nxyz[0])
+	x=bmi.get_value("SaturationCalculated", dest)
+	print(f"get_value('SaturationCalculated') {type(x)}, {x[0]}")
+	d_ptr = bmi.get_value_ptr("SaturationCalculated");
+	print(f"get_value_ptr('SaturationCalculated') {type(d_ptr)}, {d_ptr[0]}")
 	#---------
-	bmi.set_value("SaturationUser", x)
-	x=bmi.SetSaturationUser(x)
+	x=bmi.SetSaturationUser(d_ptr)
 	print(f"SetSaturationUser {type(x)}, {x}")
+	bmi.set_value("SaturationUser", d_ptr)
+	print(f"set_value('SaturationUser') {type(d_ptr)}, {d_ptr[0]}")
 	#---------
-	x=bmi.get_value("SolutionVolume")
 	x=bmi.GetSolutionVolume()
-	#d_ptr = (double*)bmi.GetValuePtr("SolutionVolume");
 	print(f"GetSolutionVolume {type(x)}, {x[0]}")
+	dest = np.empty(nxyz[0], dtype=float)
+	x=bmi.get_value("SolutionVolume", dest)
+	print(f"get_value('SolutionVolume') {type(x)}, {x[0]}")
+	d_ptr = bmi.get_value_ptr("SolutionVolume")
+	print(f"get_value_ptr('SolutionVolume') {type(d_ptr)}, {d_ptr[0]}")
 	#---------
 	x=bmi.GetSpeciesConcentrations()           
 	print(f"GetSpeciesConcentrations {type(x)}, {x[0]}")
@@ -459,29 +480,38 @@ def testallmethods_py():
 	print(f"GetSpeciesLog10Molalities {type(v)}, {v[0]}")
 	#---------
 	x=bmi.GetTemperature()
-	x=bmi.get_value("Temperature")
 	print(f"GetTemperature {type(x)}, {x[0]}")
+	dest = np.empty(nxyz[0], dtype=float)
+	x=bmi.get_value("Temperature", dest)
+	print(f"get_value('Temperature') {type(x)}, {x[0]}")
+	d_ptr = bmi.get_value_ptr("Temperature")
+	print(f"get_value_ptr('Temperature') {type(d_ptr)}, {d_ptr[0]}")
 	#---------
-	bmi.set_value("Temperature", x)
-	x=bmi.SetTemperature(x)	
-	#d_ptr = (double*)bmi.GetValuePtr("Temperature");
-	print(f"SetTemperature {type(x)}, {x}")
+	d = np.full(nxyz[0], 26.0)
+	x=bmi.SetTemperature(d)	
+	print(f"SetTemperature {type(x)}, {x}, {d_ptr[0]}")	
+	d = np.full(nxyz[0], 27.0)
+	bmi.set_value("Temperature", d)
+	print(f"SetTemperature {type(d)}, {d[0]}, {d_ptr[0]}")	
 	#-------
 	x = bmi.GetViscosity()
-	x=bmi.get_value("Viscosity")
-	#d_ptr = (double*)bmi.GetValuePtr("Viscosity")
 	print(f"GetViscosity  {type(x)}, {x[0]}")
+	dest = np.empty(nxyz[0], dtype=float)
+	x=bmi.get_value("Viscosity", dest)
+	print(f"get_value('Viscosity')  {type(x)}, {x[0]}")
+	d_ptr = bmi.get_value_ptr("Viscosity")
+	print(f"get_value_ptr('Viscosity')  {type(d_ptr)}, {d_ptr[0]}")
 	#
 	# Take a time step
 	#
 	bmi.update()    # void method
-	print(f"Update")
+	print(f"update")
 	#---------
 	x=bmi.RunCells()	
 	print(f"RunCells {x}")
 	#-------
 	bmi.update_until(86400.0) 
-	print(f"UpdateUntil ")
+	print(f"update_until ")
 	#
 	# Selected output
 	#
@@ -490,15 +520,22 @@ def testallmethods_py():
 	print(f"SetNthSelectedOutput {type(x)}, {x}")
 	#---------
 	x=bmi.GetCurrentSelectedOutputUserNumber()
-	x=bmi.get_value("CurrentSelectedOutputUserNumber")
 	print(f"GetCurrentSelectedOutputUserNumber {type(x)}, {x}")
+	dest = np.empty(1, dtype=int)
+	#x=bmi.get_value("CurrentSelectedOutputUserNumber", dest)
+	print(f"get_value('CurrentSelectedOutputUserNumber') {type(x)}, {x}")
 	#---------
 	x=bmi.GetNthSelectedOutputUserNumber(0)
 	print(f"GetNthSelectedOutputUserNumber {type(x)}, {x}")
 	#---------
 	v=bmi.GetSelectedOutput()
-	v=bmi.get_value("SelectedOutput")
 	print(f"GetSelectedOutput {type(v)}, {v[0]}")
+	n = np.empty(1, dtype=int)
+	x = bmi.get_value("SelectedOutputColumnCount", n)
+	dest = np.empty(n[0]*nxyz[0])
+	v=bmi.get_value("SelectedOutput", dest)
+	print(f"get_value('SelectedOutput') {type(v)}, {v[0]}")
+	return
 	#---------
 	x=bmi.GetSelectedOutputColumnCount()
 	x=bmi.get_value("SelectedOutputColumnCount")
