@@ -52,10 +52,6 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::SolutionVolume_Var, "SolutionVolume");
 	this->VariantMap[RMVARS::Temperature] =
 		BMIVariant(&VarManager::Temperature_Var, "Temperature");
-#if defined(WITH_PYBIND11)
-	//this->VariantMap[RMVARS::Temperature_as_strings] =
-	//	BMIVariant(&VarManager::Temperature_as_strings_Var, "Temperature_as_strings");
-#endif
 	this->VariantMap[RMVARS::Time] =
 		BMIVariant(&VarManager::Time_Var, "Time");
 	this->VariantMap[RMVARS::TimeStep] =
@@ -215,7 +211,7 @@ void VarManager::Components_Var()
 		int Nbytes = (int)(size * comps.size());
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-#if defined(WITH_PYBIND11)
+#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
 		std::ostringstream oss;
 		oss << "<U" << size;
 		bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -461,7 +457,7 @@ void VarManager::ErrorString_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("error", false, true, false, Nbytes, Itemsize);
-#if defined(WITH_PYBIND11)
+#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
 		std::ostringstream oss;
 		oss << "<U" << Itemsize;		// need null counted?
 		bv.SetTypes("std::string", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -512,7 +508,7 @@ void VarManager::FilePrefix_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
-#if defined(WITH_PYBIND11)
+#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
 		std::ostringstream oss;
 		oss << "<U" << Itemsize;		// need null counted?
 		bv.SetTypes("std::string", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -1010,7 +1006,7 @@ void VarManager::SelectedOutputHeadings_Var()
 			int Nbytes = (int)(size * headings.size());// +this->AutoOutputVars.size();
 			//name, std::string units, set, get, ptr, Nbytes, Itemsize
 			bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-#if defined(WITH_PYBIND11)
+#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
 			std::ostringstream oss;
 			oss << "<U" << size;
 			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -1442,6 +1438,57 @@ void VarManager::Pressure_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
+#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
+void VarManager::SelectedOutputOn_Var()
+{
+	RMVARS VARS_myself = RMVARS::SelectedOutputOn;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		int Itemsize = (int)sizeof(int);
+		int Nbytes = (int)sizeof(int);
+		//std::string units, set, get, ptr, Nbytes, Itemsize
+		bv.SetBasic("int", true, true, true, Nbytes, Itemsize);
+		bv.SetTypes("int", "integer", "int32");
+		bv.SetIVar(rm_ptr->GetSelectedOutputOn() ? 1 : 0 );
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		int v = rm_ptr->GetSelectedOutputOn() ? 1 : 0;
+		bv.SetIVar(v);
+		bv.SetVoidPtr((void*)(bv.GetIVarPtr()));
+		this->PointerSet.insert(VARS_myself);
+		this->UpdateSet.insert(VARS_myself);
+		break;
+	}
+	case VarManager::VAR_TASKS::Update:
+	case VarManager::VAR_TASKS::RMUpdate:
+	case VarManager::VAR_TASKS::GetVar:
+	{
+		int v = rm_ptr->GetSelectedOutputOn() ? 1 : 0;
+		this->VarExchange.SetIVar(v);
+		bv.SetIVar(v);
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+	{
+		int v = this->VarExchange.GetIVar();
+		bv.SetIVar(v);
+		rm_ptr->SetSelectedOutputOn(v != 0);
+		break;
+	}
+	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::no_op:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(RMVARS::NotFound);
+}
+#else
 void VarManager::SelectedOutputOn_Var()
 {
 	RMVARS VARS_myself = RMVARS::SelectedOutputOn;
@@ -1491,6 +1538,7 @@ void VarManager::SelectedOutputOn_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
+#endif
 void VarManager::Temperature_Var()
 {
 	RMVARS VARS_myself = RMVARS::Temperature;
