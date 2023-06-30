@@ -96,9 +96,6 @@ public:
 	void Pressure_Var();
 	void SelectedOutputOn_Var();
 	void Temperature_Var();
-#if defined(WITH_PYBIND11)
-	void Temperature_as_strings_Var();
-#endif
 	void Viscosity_Var();
 };
 #endif

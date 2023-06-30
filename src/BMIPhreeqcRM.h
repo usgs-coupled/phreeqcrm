@@ -549,6 +549,11 @@ public:
      */
     std::vector<std::string> GetPointableVarNames();
 
+    /**
+    @todo
+    */
+    std::vector<std::string> GetReadOnlyVarNames();
+
     // Variable information functions
     /**
     @a GetVarGrid returns a value of 1, indicating points.
@@ -1223,8 +1228,8 @@ public:
 #endif
 
 #if defined(SWIG) || defined(phreeqcrmpy_EXPORTS)
-    void get_value_ptr_double(std::string var, double** vec, int* n);
-    void get_value_ptr_int(std::string var, int** vec, int* n);
+    void get_value_ptr_double(std::string var, double** ARGOUTVIEW_ARRAY1, int* DIM1);
+    void get_value_ptr_int(std::string var, int** ARGOUTVIEW_ARRAY1, int* DIM1);
     std::vector<std::string>& get_value_ptr_vector_strings(std::string var);
 #endif
 
