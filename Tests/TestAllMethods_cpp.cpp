@@ -728,6 +728,73 @@ void TestAllMethods_cpp()
 	//-------	
  	bmi.UpdateUntil(864000.0);      // void function
 	std::cerr << "UpdateUntil\n";
+
+	std::cerr << "AddOutputVars\n";
+	str_vector = bmi.GetOutputVarNames();
+	for (size_t i = 0; i < str_vector.size(); i++)
+	{
+		int	itemsize = bmi.GetVarItemsize(str_vector[i]);
+		int	nbytes = bmi.GetVarNbytes(str_vector[i]);
+		std::string	vtype = bmi.GetVarType(str_vector[i]);
+		if (itemsize == 0) itemsize++;
+		if (nbytes == 0) nbytes++;
+		int dim = nbytes / itemsize;
+		if (vtype == "double")
+		{
+			if (dim == 1)
+			{
+				double dest;
+				bmi.GetValue(str_vector[i], dest);
+				std::cerr << "     " << str_vector[i] << "  " << dest << std::endl;
+			}
+			else
+			{
+				std::vector<double> dest;
+				bmi.GetValue(str_vector[i], dest);
+				std::cerr << "     " << str_vector[i] << "  " << dest[0] << std::endl;
+			}
+		}
+		else if (vtype == "int")
+		{
+			if (dim == 1)
+			{
+				int dest;
+				bmi.GetValue(str_vector[i], dest);
+				std::cerr << "     " << str_vector[i] << "  " << dest << std::endl;
+			}
+			else
+			{
+				std::vector<int> dest;
+				bmi.GetValue(str_vector[i], dest);
+				std::cerr << "     " << str_vector[i] << "  " << dest[0] << std::endl;
+			}
+		} else if (vtype == "bool")
+		{
+			if (dim == 1)
+			{
+				bool dest;
+				bmi.GetValue(str_vector[i], dest);
+				std::cerr << "     " << str_vector[i] << "  " << dest << std::endl;
+			}
+		}
+		else if (vtype == "std::string")
+		{
+			if (dim == 1)
+			{
+				std::string dest;
+				bmi.GetValue(str_vector[i], dest);
+				std::cerr << "     " << str_vector[i] << "  " << dest << std::endl;
+			}
+			else
+			{
+				std::vector<std::string> dest;
+				bmi.GetValue(str_vector[i], dest);
+				std::cerr << "     " << str_vector[i] << "  " << dest[0] << std::endl;
+			}
+		}
+	}
+
+
 	//-------	
 	bmi.MpiWorkerBreak();
 	bmi.Finalize();    // void method

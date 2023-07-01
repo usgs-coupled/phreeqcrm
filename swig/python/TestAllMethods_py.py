@@ -65,7 +65,8 @@ def testallmethods_py():
 	#---------
 	x=bmi.SetFilePrefix("TestAllMethods_py")
 	print(f"SetFilePrefix {type(x)}, {x}")
-	bmi.set_value("FilePrefix", "TestAllMethods_py")
+	dest = np.full(1, "TestAllMethods_py")
+	bmi.set_value("FilePrefix", dest)
 	print(f"set_value('FilePrefix')")
 	#---------
 	x=bmi.OpenFiles()
@@ -85,8 +86,9 @@ def testallmethods_py():
 	#---------
 	x=bmi.SetSelectedOutputOn(True)
 	print(f"SetSelectedOutputOn {type(x)}, {x}")
-	bmi.set_value("SelectedOutputOn", True)
-	print(f"set_value('SelectedOutputOn')")
+	src = np.full(1,1)
+	bmi.set_value("SelectedOutputOn", src)
+	print(f"set_value('SelectedOutputOn') {src[0]}")
 	#---------
 	x=bmi.SetUnitsExchange(1)
 	print(f"SetUnitsExchange {type(x)}, {x}")
@@ -343,8 +345,9 @@ def testallmethods_py():
 	#---------
 	x=bmi.SetTime(0.001)
 	print(f"SetTime {type(x)}, {x}, {x_ptr}")
-	bmi.set_value("Time", 0.002)
-	print(f"set_value('Time'), {x_ptr}")
+	src = np.full(1, 0.002)
+	bmi.set_value("Time", src)
+	print(f"set_value('Time'), {x_ptr[0]}")
 	#---------
 	x=bmi.GetTimeStep()
 	print(f"GetTimeStep {type(x)}, {x}")
@@ -356,24 +359,26 @@ def testallmethods_py():
 	#---------
 	x=bmi.SetTimeStep(0.001)
 	print(f"SetTimeStep {type(x)}, {x}, {d_ptr[0]}")
-	bmi.set_value("TimeStep", 0.0)
+	src = np.full(1, 0.0)
+	bmi.set_value("TimeStep", src)
 	print(f"set_value('TimeStep') {d_ptr[0]}")
 	#---------
 	c=bmi.GetConcentrations()
 	print(f"GetConcentrations {type(c)}, {c[0]}")
-	dest = np.empty(nxyz[0]*ncomps[0])
+	dest = np.empty(nxyz[0]*ncomps[0], dtype=float)
 	c = bmi.get_value("Concentrations", dest)
 	print(f"get_value('Concentrations') {type(c)}, {c[0]}")
 	d_ptr = bmi.get_value_ptr("Concentrations")
 	print(f"get_value_ptr('Concentrations') {type(d_ptr)}, {d_ptr[0]}")
 	#---------
 	x=bmi.SetConcentrations(c)
-	bmi.set_value("Concentrations", c)
 	print(f"SetConcentrations {type(x)}, {x}")
+	bmi.set_value("Concentrations", c)
+	print(f"set_value('Concentrations') {type(c)}, {c[0]}")
 	#---------
 	d=bmi.GetDensityCalculated()
 	print(f"GetDensityCalculated {type(d)}, {d[0]}") 
-	dest = np.empty(nxyz[0])
+	dest = np.empty(nxyz[0], dtype=float)
 	d=bmi.get_value("DensityCalculated", dest)
 	print(f"get_value('DensityCalculated') {type(d)}, {d[0]}") 
 	d_ptr = bmi.get_value_ptr("DensityCalculated")
@@ -419,7 +424,7 @@ def testallmethods_py():
 	#-------
 	x=bmi.GetPorosity()
 	print(f"GetPorosity {type(x)}, {x[0]}")
-	dest = np.empty(nxyz[0])
+	dest = np.empty(nxyz[0], dtype=float)
 	x = bmi.get_value("Porosity", dest)
 	print(f"get_value('Porosity') {type(x)}, {x[0]}")
 	d_ptr = bmi.get_value_ptr("Porosity")
@@ -434,7 +439,7 @@ def testallmethods_py():
 	#---------
 	x=bmi.GetPressure()
 	print(f"GetPressure {type(x)}, {x[0]}")
-	dest = np.empty(nxyz[0])
+	dest = np.empty(nxyz[0], dtype=float)
 	x = bmi.get_value("Pressure", dest)
 	print(f"get_value('Pressure' {type(x)}, {x[0]}")
 	d_ptr = bmi.get_value_ptr("Pressure");
@@ -448,7 +453,7 @@ def testallmethods_py():
 	#---------
 	x=bmi.GetSaturationCalculated() 
 	print(f"GetSaturationCalculated {type(x)}, {x[0]}")
-	dest = np.empty(nxyz[0])
+	dest = np.empty(nxyz[0], dtype=float)
 	x=bmi.get_value("SaturationCalculated", dest)
 	print(f"get_value('SaturationCalculated') {type(x)}, {x[0]}")
 	d_ptr = bmi.get_value_ptr("SaturationCalculated");
@@ -516,14 +521,16 @@ def testallmethods_py():
 	# Selected output
 	#
 	x=bmi.SetNthSelectedOutput(0)
-	bmi.set_value("NthSelectedOutput", 0)
 	print(f"SetNthSelectedOutput {type(x)}, {x}")
+	src = np.full(1, 0)
+	bmi.set_value("NthSelectedOutput", src)
+	print(f"set_value('NthSelectedOutput') {type(src)}, {src[0]}")
 	#---------
 	x=bmi.GetCurrentSelectedOutputUserNumber()
 	print(f"GetCurrentSelectedOutputUserNumber {type(x)}, {x}")
 	dest = np.empty(1, dtype=int)
-	#x=bmi.get_value("CurrentSelectedOutputUserNumber", dest)
-	print(f"get_value('CurrentSelectedOutputUserNumber') {type(x)}, {x}")
+	x=bmi.get_value("CurrentSelectedOutputUserNumber", dest)
+	print(f"get_value('CurrentSelectedOutputUserNumber') {type(x)}, {x[0]}")
 	#---------
 	x=bmi.GetNthSelectedOutputUserNumber(0)
 	print(f"GetNthSelectedOutputUserNumber {type(x)}, {x}")
@@ -532,31 +539,45 @@ def testallmethods_py():
 	print(f"GetSelectedOutput {type(v)}, {v[0]}")
 	n = np.empty(1, dtype=int)
 	x = bmi.get_value("SelectedOutputColumnCount", n)
-	dest = np.empty(n[0]*nxyz[0])
+	dest = np.empty(n[0]*nxyz[0], dtype=float)
 	v=bmi.get_value("SelectedOutput", dest)
 	print(f"get_value('SelectedOutput') {type(v)}, {v[0]}")
-	return
 	#---------
 	x=bmi.GetSelectedOutputColumnCount()
-	x=bmi.get_value("SelectedOutputColumnCount")
 	print(f"GetSelectedOutputColumnCount {type(x)}, {x}")
+	dest = np.empty(1, dtype=int)
+	x = bmi.get_value("SelectedOutputColumnCount", dest)
+	print(f"get_value('SelectedOutputColumnCount') {type(x)}, {x[0]}")
 	#---------
 	x = bmi.GetSelectedOutputCount()
-	x =bmi.get_value("SelectedOutputCount")
 	print(f"GetSelectedOutputCount {type(x)}, {x}")
+	dest = np.empty(1, dtype=int)
+	x =bmi.get_value("SelectedOutputCount", dest)
+	print(f"get_value('SelectedOutputCount') {type(x)}, {x[0]}")
 	#---------
 	v=bmi.GetSelectedOutputHeadings()
-	v=bmi.get_value("SelectedOutputHeadings")
-	print(f"GetSelectedOutputHeadings {type(v)}, {v[87]}")
+	print(f"GetSelectedOutputHeadings {type(v)}, {v[87]}, {len(v)}")
+	itemsize = bmi.get_var_itemsize("SelectedOutputHeadings")
+	s = " " * itemsize
+	dest = np.empty(1, dtype=int)
+	n = bmi.get_value('SelectedOutputColumnCount', dest)
+	dest = np.full(n[0], s)
+	v=bmi.get_value("SelectedOutputHeadings", dest)
+	print(f"get_value('SelectedOutputHeadings') {type(v)}, {v[87]}")
 	#---------
 	x=bmi.GetSelectedOutputOn()
-	x=bmi.get_value("SelectedOutputOn")
-	#bool *b_ptr = (bool*)bmi.GetValuePtr("SelectedOutputOn")
 	print(f"GetSelectedOutputOn {type(x)}, {x}")
+	dest = np.empty(1, dtype=int)
+	x=bmi.get_value("SelectedOutputOn", dest)
+	print(f"get_value('SelectedOutputOn') {type(x)}, {x[0]}")
+	d_ptr = bmi.get_value_ptr("SelectedOutputOn")
+	print(f"get_value_ptr('SelectedOutputOn') {type(d_ptr)}, {d_ptr[0]}")
 	#---------
 	x=bmi.GetSelectedOutputRowCount()
-	x=bmi.get_value("SelectedOutputRowCount")
 	print(f"GetSelectedOutputRowCount {type(x)}, {x}")
+	dest = np.empty(1, dtype=int)
+	x=bmi.get_value("SelectedOutputRowCount", dest)
+	print(f"get_value('SelectedOutputRowCount') {type(x)}, {x[0]}")
 	#---------
 	x=bmi.SetCurrentSelectedOutputUserNumber(333)
 	print(f"SetCurrentSelectedOutputUserNumber {type(x)}, {x}")
@@ -576,12 +597,20 @@ def testallmethods_py():
 	print(f"GetErrorHandlerMode {type(x)}, {x}")
 	#---------
 	x=bmi.GetErrorString()
-	x=bmi.get_value("ErrorString")
 	print(f"GetErrorString {type(x)}, {x}")
+	itemsize = bmi.get_var_nbytes("ErrorString")
+	s = " " * (itemsize + 1)
+	dest = np.full(1,s)
+	x=bmi.get_value("ErrorString", dest)
+	print(f"get_value('ErrorString') {type(x)}, '{x[0]}'")
 	#---------
 	x=bmi.GetFilePrefix()
-	x=bmi.get_value("FilePrefix")
 	print(f"GetFilePrefix {type(x)}, {x}")
+	n = bmi.get_var_itemsize("FilePrefix")
+	s = " " * n
+	dest = np.full(1, s)
+	x=bmi.get_value("FilePrefix", dest)
+	print(f"GetFilePrefix {type(x)}, {x[0]}")
 	#---------
 	x=bmi.GetForwardMapping()
 	print(f"GetForwardMapping {type(x)}, {x[0]}")
@@ -739,7 +768,8 @@ def testallmethods_py():
 	x=bmi.get_time_units()
 	print(f"get_time_units {type(x)}, {x}")
 	#---------
-	x=bmi.get_value("solution_saturation_index_Calcite")
+	dest = np.empty(nxyz[0], dtype=float)
+	x=bmi.get_value("solution_saturation_index_Calcite", dest)
 	print(f"get_value {type(x)}, {x[0]}")
 	#---------
 	x=bmi.get_var_itemsize("solution_saturation_index_Calcite")
@@ -754,18 +784,43 @@ def testallmethods_py():
 	x=bmi.get_var_units("solution_saturation_index_Calcite")
 	print(f"get_var_units {type(x)}, {x}")
 	#---------
+	print(f"AddOutputVars")
+	v = bmi.get_output_var_names()
+	for i in range(len(v)):
+		itemsize = bmi.get_var_itemsize(v[i])
+		nbytes = bmi.get_var_nbytes(v[i])
+		vtype = bmi.get_var_type(v[i])
+		if itemsize == 0:
+			itemsize = 1
+		if nbytes == 0:
+			nbytes = 1
+		dim = nbytes // itemsize
+		if (vtype == "float64"):
+			dest  = np.empty(dim, dtype=float)
+			x = bmi.get_value(v[i], dest)
+			print(f"     {v[i]}, {dest[0]}")
+		if (vtype == "int32"):
+			dest = np.empty(dim, dtype=int)
+			x = bmi.get_value(v[i], dest)
+			print(f"     {v[i]}, {dest[0]}")
+		if vtype.startswith("<U"):
+			s = " " * itemsize
+			dest = np.full(dim, s)
+			x = bmi.get_value(v[i], dest)
+			print(f"     {v[i]}, {dest[0]}")
 	#x=bmi.initialize("file")
 	# (See above)
 	print(f"initialize")
 	#-------	
-	bmi.set_value("Time", 1.0) 
+	src = np.full(1, 1.0)
+	bmi.set_value("Time", src) 
 	print(f"set_value")
 	#---------
 	bmi.update()    
 	print(f"update")
 	#-------	
 	bmi.update_until(864000.0)
-	print(f"UpdateUntil")
+	print(f"update_until")
 	#---------
 	bmi.finalize()    
 	print(f"finalize ")
