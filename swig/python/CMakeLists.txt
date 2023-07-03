@@ -186,6 +186,16 @@ set_tests_properties(AdvectBMI_py.py
     # DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
 )
 
+# TestAllMethods_py.py test
+add_test(NAME TestAllMethods_py.py
+  COMMAND ${Python_EXECUTABLE} TestAllMethods_py.py
+)
+set_tests_properties(TestAllMethods_py.py
+  PROPERTIES 
+    ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+)
+
+
 # Pytest
 add_test(NAME run_pytest
   COMMAND ${Python_EXECUTABLE} -m pytest
