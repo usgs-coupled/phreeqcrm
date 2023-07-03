@@ -16,8 +16,8 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
   integer                      :: id, id1, nxyz, nthreads, nchem, ncomps, nspecies
   integer                      :: ngas
   integer                      :: nbound, isteps, nsteps, n_user, status
-  character(100)               :: string, yaml_filename
-  character(len=:), allocatable :: StringVector(:), AllocString
+  character(100)               :: string, yaml_filename, vtype
+  character(len=:), allocatable :: Names(:), StringVector(:), AllocString
   integer, allocatable         :: IntVector(:), IntVector2(:,:)
   real(kind=8), allocatable    :: p_atm(:), tc(:)
   real(kind=8), allocatable    :: DoubleVector(:), f1(:), DoubleVector2(:,:), f2(:,:)
@@ -32,6 +32,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
   integer, pointer             :: i_ptr
   logical(kind=1), pointer     :: b_ptr
   logical                      :: l
+  integer                      :: itemsize, nbytes, dim
   ! --------------------------------------------------------------------------
   ! Create PhreeqcRM
   ! --------------------------------------------------------------------------
@@ -773,8 +774,51 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	write(*,*) "bmif_update"
 	!-------
 	status = bmif_update_until(id, 864000.0d0) 
-	write(*,*) "bmif_update"
+	write(*,*) "bmif_update_until"
 	!-------
+    
+	write(*,*) "AddOutputVars"
+	status = bmif_get_output_var_names(id, Names)
+	do i = 1, size(StringVector)
+		status = bmif_get_var_itemsize(id, Names(i), itemsize)
+		status = bmif_get_var_nbytes(id, Names(i), nbytes)
+		status = bmif_get_var_type(id, Names(i), string)
+		if (itemsize .eq. 0) itemsize=1
+		if (nbytes .eq. 0) nbytes=1
+		dim = nbytes / itemsize
+		status = bmif_get_var_type(id, Names(i), vtype)
+		if (vtype .eq. "real(kind=8)") then
+			if (dim .eq. 1) then
+				status = bmif_get_value(id, Names(i), d)
+                write(*,*) "     ", Names(i), "  ", d
+			else
+				status = bmif_get_value(id, Names(i), DoubleVector)
+                write(*,*) "     ", Names(i), "  ", DoubleVector(1)
+			endif
+		else if (vtype .eq. "integer") then
+			if (dim .eq. 1) then
+				status = bmif_get_value(id, Names(i), j)
+                write(*,*) "     ", Names(i), "  ", j
+			else
+				status = bmif_get_value(id, Names(i), IntVector)
+                write(*,*) "     ", Names(i), "  ", IntVector(1)
+			endif
+		else if (vtype .eq. "logical") then
+			if (dim == 1) then
+				status = bmif_get_value(id, Names(i), l)
+                write(*,*) "     ", Names(i), "  ", l
+			endif
+		else if (vtype(1:9) .eq. "character") then
+			if (dim == 1) then
+				status = bmif_get_value(id, Names(i), string)
+                write(*,*) "     ", Names(i), "  ", trim(string)
+			else
+				status = bmif_get_value(id, Names(i), StringVector)
+                write(*,*) "     ", Names(i), "  ", trim(StringVector(1))
+			endif
+		endif
+	enddo    
+ 
 #ifdef USE_MPI
 	status = RM_MpiWorkerBreak(id)
 #endif    

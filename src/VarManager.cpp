@@ -1003,7 +1003,7 @@ void VarManager::SelectedOutputHeadings_Var()
 			}
 			int Itemsize = (int)size;
 
-			int Nbytes = (int)(size * headings.size());// +this->AutoOutputVars.size();
+			int Nbytes = (int)(size * headings.size());
 			//name, std::string units, set, get, ptr, Nbytes, Itemsize
 			bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
 #if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
@@ -1670,7 +1670,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH -LA('H+')" << std::endl;
 				line_no += 10;
@@ -1680,7 +1683,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH -LA('e-')" << std::endl;
 				line_no += 10;
@@ -1690,7 +1696,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH ALK" << std::endl;
 				line_no += 10;
@@ -1700,7 +1709,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH MU" << std::endl;
 				line_no += 10;
@@ -1710,7 +1722,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "kg", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH TOT('water')" << std::endl;
 				line_no += 10;
@@ -1720,7 +1735,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH CHARGE_BALANCE / TOT('water')" << std::endl;
 				line_no += 10;
@@ -1730,7 +1748,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH PERCENT_ERROR" << std::endl;
 				line_no += 10;
@@ -1740,7 +1761,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "uS cm-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH SC" << std::endl;
 				line_no += 10;
@@ -1773,7 +1797,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH TOT('" << *item_it << "')\n";
 				line_no += 10;
@@ -1807,7 +1834,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
@@ -1841,7 +1871,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "log -", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH LA('" << *item_it << "')\n";
 				line_no += 10;
@@ -1880,7 +1913,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH TOT('" << *jit << "')\n";
 					line_no += 10;
@@ -1898,7 +1934,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
@@ -1937,7 +1976,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH TOT('" << *jit << "')\n";
 					line_no += 10;
@@ -1955,7 +1997,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
@@ -1990,7 +2035,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH EQUI('" << *item_it << "')\n";
 					line_no += 10;
@@ -2000,7 +2048,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH EQUI_DELTA('" << *item_it << "')\n";
 					line_no += 10;
@@ -2035,7 +2086,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "unitless", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH SI('" << *item_it << "')\n";
 				line_no += 10;
@@ -2069,7 +2123,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "L", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH SYS('gas') * GAS_VM\n";
 					line_no += 10;
@@ -2083,7 +2140,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH GAS('" << *item_it << "')\n";
 					line_no += 10;
@@ -2093,7 +2153,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "atm", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH PR_P('" << *item_it << "')\n";
 					line_no += 10;
@@ -2103,7 +2166,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "atm-1", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH PR_PHI('" << *item_it << "')\n";
 					line_no += 10;
@@ -2139,7 +2205,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH KIN('" << *item_it << "')\n";
 					line_no += 10;
@@ -2149,7 +2218,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH KIN_DELTA('" << *item_it << "')\n";
 					line_no += 10;
@@ -2191,7 +2263,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH S_S('" << *item_it << "')\n";
 				line_no += 10;
@@ -2226,7 +2301,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "unknown", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH CALC_VALUE('" << *item_it << "')\n";
 				line_no += 10;
@@ -2260,6 +2338,11 @@ void VarManager::GenerateAutoOutputVars()
 		//std::cerr << data_block.str();
 	}
 	//BMISelecteOutputDefs.clear();
+	//auto auto_it = AutoOutputVars.begin();
+	//for (; auto_it != AutoOutputVars.end(); auto_it++)
+	//{
+	//	std::cerr << auto_it->first << "   " << auto_it->second.GetName() << std::endl;
+	//}
 	return;
 }
 int VarManager::ProcessAutoOutputVarDef(bool tf_only, std::string& def)
