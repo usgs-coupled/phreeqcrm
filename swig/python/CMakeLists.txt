@@ -1,4 +1,4 @@
-set(PYTHON_TARGET_NAME phreeqcrmpy)
+set(PYTHON_TARGET_NAME swig-python)
 
 set(phreeqcrm_INTERFACE PhreeqcRM.i)
 
@@ -75,6 +75,8 @@ else()
   set_property(TARGET ${PYTHON_TARGET_NAME}
                PROPERTY SUFFIX ".${Python_SOABI}${CMAKE_SHARED_MODULE_SUFFIX}")
 endif()
+
+set_property(TARGET ${PYTHON_TARGET_NAME} PROPERTY OUTPUT_NAME "phreeqcrm")
 
 target_compile_features(${PYTHON_TARGET_NAME} PUBLIC cxx_std_11)
 

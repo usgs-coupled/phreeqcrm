@@ -211,7 +211,7 @@ void VarManager::Components_Var()
 		int Nbytes = (int)(size * comps.size());
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
 		std::ostringstream oss;
 		oss << "<U" << size;
 		bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -457,7 +457,7 @@ void VarManager::ErrorString_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("error", false, true, false, Nbytes, Itemsize);
-#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
 		std::ostringstream oss;
 		oss << "<U" << Itemsize;		// need null counted?
 		bv.SetTypes("std::string", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -508,7 +508,7 @@ void VarManager::FilePrefix_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
-#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
 		std::ostringstream oss;
 		oss << "<U" << Itemsize;		// need null counted?
 		bv.SetTypes("std::string", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -1006,7 +1006,7 @@ void VarManager::SelectedOutputHeadings_Var()
 			int Nbytes = (int)(size * headings.size());
 			//name, std::string units, set, get, ptr, Nbytes, Itemsize
 			bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
 			std::ostringstream oss;
 			oss << "<U" << size;
 			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -1438,7 +1438,7 @@ void VarManager::Pressure_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
-#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
 void VarManager::SelectedOutputOn_Var()
 {
 	RMVARS VARS_myself = RMVARS::SelectedOutputOn;
