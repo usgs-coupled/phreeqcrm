@@ -69,6 +69,13 @@ swig_add_library(
   SOURCES ${phreeqcrm_INTERFACE_FULLPATH} ${PhreeqcRM_SOURCES}
 )
 
+if(WIN32)
+  set_property(TARGET ${PYTHON_TARGET_NAME} PROPERTY SUFFIX ".${Python_SOABI}.pyd")
+else()
+  set_property(TARGET ${PYTHON_TARGET_NAME}
+               PROPERTY SUFFIX ".${Python_SOABI}${CMAKE_SHARED_MODULE_SUFFIX}")
+endif()
+
 target_compile_features(${PYTHON_TARGET_NAME} PUBLIC cxx_std_11)
 
 target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE IRM_DLL_STATIC_DEFINE)
