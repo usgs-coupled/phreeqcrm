@@ -117,7 +117,7 @@ BMIPhreeqcRM::BMIPhreeqcRM()
 	this->_initialized = false;
 	this->language = "Py";
 #endif
-#if defined(phreeqcrmpy_EXPORTS)
+#if defined(swig_python_EXPORTS)
 	this->language = "Py";
 #endif
 }
@@ -130,7 +130,7 @@ BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads)
 	this->_initialized = false;
 	this->language = "Py";
 #endif
-#if defined(phreeqcrmpy_EXPORTS)
+#if defined(swig_python_EXPORTS)
 	this->language = "Py";
 #endif
 }
@@ -155,7 +155,7 @@ void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 #if defined(WITH_PYBIND11)
 	this->_initialized = true;
 #endif
-#if defined(phreeqcrmpy_EXPORTS) || defined(WITH_PYBIND11)
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
 	phreeqcrm_io->Set_screen_on(false);
 #endif
 }
