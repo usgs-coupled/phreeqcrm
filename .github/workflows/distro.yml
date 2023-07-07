@@ -44,7 +44,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        submodules: true
+        submodules: recursive
 
     - name: update apt-get
       run: sudo apt-get -y update
@@ -71,7 +71,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        submodules: true
+        submodules: recursive
 
     - name: autoreconf
       run: autoreconf -fvi
@@ -186,7 +186,7 @@ jobs:
 
     - uses: actions/checkout@v3
       with:
-        submodules: true
+        submodules: recursive
 
     - name: Test autotools install
       working-directory: ${{ github.workspace }}/Tests
@@ -322,7 +322,7 @@ jobs:
 
     - uses: actions/checkout@v3
       with:
-        submodules: true
+        submodules: recursive
 
     - name: Test install (configure) (Non-Windows)
       if: runner.os != 'Windows'
