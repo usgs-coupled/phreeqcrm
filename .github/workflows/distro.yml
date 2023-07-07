@@ -43,6 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: true
 
     - name: update apt-get
       run: sudo apt-get -y update
@@ -68,6 +70,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: true
 
     - name: autoreconf
       run: autoreconf -fvi
@@ -181,6 +185,8 @@ jobs:
       run: rm -rf *
 
     - uses: actions/checkout@v3
+      with:
+        submodules: true
 
     - name: Test autotools install
       working-directory: ${{ github.workspace }}/Tests
@@ -315,6 +321,8 @@ jobs:
       run: Remove-Item -Recurse -Force *
 
     - uses: actions/checkout@v3
+      with:
+        submodules: true
 
     - name: Test install (configure) (Non-Windows)
       if: runner.os != 'Windows'
