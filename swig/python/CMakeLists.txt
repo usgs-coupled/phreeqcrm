@@ -32,7 +32,8 @@ configure_file(test_get_value.py test_get_value.py COPYONLY)
 configure_file(test_irf.py test_irf.py COPYONLY)
 configure_file(test_set_value.py test_set_value.py COPYONLY)
 
-get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
+##get_target_property(PhreeqcRM_SOURCES PhreeqcRM SOURCES)
+
 
 set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_OPTIONS "-w401")
 set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES CPLUSPLUS ON)
@@ -102,9 +103,14 @@ if(NOT PHREEQCRM_DISABLE_OPENMP)
   endif()
 endif()
 
-if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
+if(DEFINED SKBUILD)
   target_compile_definitions(${PYTHON_TARGET_NAME} PUBLIC USE_YAML)
   target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp)
+else()
+  if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
+    target_compile_definitions(${PYTHON_TARGET_NAME} PUBLIC USE_YAML)
+    target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp)
+  endif()
 endif()
 
 if(PHREEQCRM_NO_UTF8_ENCODING)
@@ -146,11 +152,23 @@ else()
 endif()
 
 
+# if(DEFINED SKBUILD)
+#   target_include_directories(${PYTHON_TARGET_NAME}
+#     PUBLIC
+#       ${CMAKE_CURRENT_SOURCE_DIR}/../../src
+#       ${CMAKE_CURRENT_SOURCE_DIR}/../../src/IPhreeqcPhast
+#       ${CMAKE_CURRENT_SOURCE_DIR}/../../src/IPhreeqcPhast/IPhreeqc
+#       ${CMAKE_CURRENT_SOURCE_DIR}/../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp
+#       ${CMAKE_CURRENT_SOURCE_DIR}/../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common
+#       ${CMAKE_CURRENT_SOURCE_DIR}/../../src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords
+#   )
+# else()
 get_target_property(PhreeqcRM_INC PhreeqcRM INCLUDE_DIRECTORIES)
 target_include_directories(${PYTHON_TARGET_NAME}
   PUBLIC
     ${PhreeqcRM_INC}
 )
+# endif()
 
 get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 
@@ -235,6 +253,15 @@ if(MSVC)
   set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "SimpleAdvect.py")
 endif()
 
+if(DEFINED SKBUILD)
+  #install(TARGETS ${PYTHON_TARGET_NAME} DESTINATION ${SKBUILD_PROJECT_NAME})
+  install(TARGETS ${PYTHON_TARGET_NAME} DESTINATION ${SKBUILD_PROJECT_NAME})
+
+  get_target_property(support_files ${PYTHON_TARGET_NAME} SWIG_SUPPORT_FILES)
+  ##message("support_files=${support_files}")
+  install(FILES ${support_files} DESTINATION ${SKBUILD_PROJECT_NAME})
+  install(FILES yamlphreeqcrm.py DESTINATION ${SKBUILD_PROJECT_NAME})
+endif()
 
 # # Get all propreties that cmake supports
 # if(NOT CMAKE_PROPERTY_LIST)
