@@ -274,7 +274,6 @@ AC_CONFIG_FILES([
   database/Makefile
   doc/Makefile
   Doxygen/Makefile
-  extern/Makefile
   phreeqcrm.pc
   Tests/Makefile
   Tests/advect.pqi:Tests/advect.pqi
