@@ -550,7 +550,7 @@ if(STANDALONE_BUILD EQUAL 1)
   endif()
 
   if(PHREEQCRM_WITH_YAML_CPP)
-    add_subdirectory(extern/yaml-cpp)
+    add_subdirectory(ext/yaml-cpp)
   endif()
   if(PHREEQCRM_BUILD_PYTHON)
     add_subdirectory(swig)
