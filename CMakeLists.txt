@@ -1,11 +1,14 @@
 # CMAKE_MSVC_RUNTIME_LIBRARY requires 3.15
-cmake_minimum_required(VERSION 3.20)
+#cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.24)
 
 project(
   PhreeqcRM
   VERSION 3.7.0
   LANGUAGES CXX C
 )
+
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 # check if this is the root project
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -27,8 +30,22 @@ if(PHREEQCRM_FORTRAN_TESTING)
   enable_language(Fortran)
 endif()
 
-option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
+option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" ON)
 if(PHREEQCRM_WITH_YAML_CPP)
+  include(FetchContent)
+  FetchContent_Declare(
+    yaml-cpp
+    GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+    # GIT_TAG        0579ae3d976091d7d664aa9d2527e0d0cff25763  # release 0.7.0
+    GIT_TAG        b8882652fcbeba4c00dec019a39da91e702e474e  # master 2023-06-28
+    OVERRIDE_FIND_PACKAGE
+  )
+  
+  set(YAML_BUILD_SHARED_LIBS OFF)
+  set(YAML_CPP_BUILD_TESTS OFF)
+  set(YAML_CPP_BUILD_TOOLS OFF)
+  set(YAML_CPP_INSTALL ON)
+  set(YAML_CPP_BUILD_CONTRIB ON)
   find_package(yaml-cpp REQUIRED)
 endif()
 
@@ -291,7 +308,7 @@ set(exportPackageDependencies "")
 # yaml-cpp
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
   target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
-  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp::yaml-cpp)
   # set(phreeqcrm_requires "yaml-cpp")
   set(useyaml_define "-DUSE_YAML")
   string(APPEND exportPackageDependencies "find_dependency(yaml-cpp)\n")
