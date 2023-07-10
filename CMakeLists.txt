@@ -350,7 +350,6 @@ set(PhreeqcRM_Headers
   ${PhreeqcRM_BINARY_DIR}/irm_dll_export.h
   ${PROJECT_SOURCE_DIR}/src/BMI_interface_F.h
   ${PROJECT_SOURCE_DIR}/src/BMIVariant.h
-  ${PROJECT_SOURCE_DIR}/src/BMIVariant.h
   ${PROJECT_SOURCE_DIR}/src/bmi.hxx
   ${PROJECT_SOURCE_DIR}/src/BMIPhreeqcRM.h
   ${PROJECT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h
