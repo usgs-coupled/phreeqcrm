@@ -501,7 +501,7 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 			}
 		}
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetVarType.");
 	return "Failed in GetVarType.";
 }
 std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
@@ -528,7 +528,7 @@ std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 			return it->second.GetUnits();
 		}
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetVarUnits.");
 	return "Failed in GetVarUnits.";
 }
 
@@ -556,7 +556,7 @@ int BMIPhreeqcRM::GetVarItemsize(const std::string name)
 			return it->second.GetItemsize();
 		}
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetVarItemsize.");
 	return 0;
 }
 
@@ -584,7 +584,7 @@ int BMIPhreeqcRM::GetVarNbytes(const std::string name)
 			return it->second.GetNbytes();
 		}
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetVarNbytes.");
 	return 0;
 }
 double BMIPhreeqcRM::GetCurrentTime()
@@ -696,7 +696,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 	std::ostringstream oss;
 	oss << "BMI GetValue void* failed for variable " << name << std::endl;
 	this->ErrorMessage(oss.str(), true);
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, bool& dest)
@@ -717,7 +717,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, bool& dest)
 		dest = this->var_man->VarExchange.GetBVar();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, bool* dest)
@@ -746,7 +746,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, bool* dest)
 	std::ostringstream oss;
 	oss << "BMI GetValue bool* failed for variable " << name << std::endl;
 	this->ErrorMessage(oss.str(), true);
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, double& dest)
@@ -767,7 +767,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, double& dest)
 		dest = this->var_man->VarExchange.GetDVar();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
@@ -823,7 +823,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
 	std::ostringstream oss;
 	oss << "BMI GetValue double* failed for variable " << name << std::endl;
 	this->ErrorMessage(oss.str(), true);
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, int& dest)
@@ -843,7 +843,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, int& dest)
 		dest = this->var_man->VarExchange.GetIVar();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, int* dest)
@@ -878,7 +878,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, int* dest)
 		this->ErrorMessage(oss.str(), true);
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::string& dest)
@@ -899,7 +899,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::string& dest)
 		dest = this->var_man->VarExchange.GetStringVar();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
@@ -942,7 +942,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
 			return;
 		}
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::vector<int>& dest)
@@ -962,7 +962,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<int>& dest)
 		dest = this->var_man->VarExchange.GetIntVectorRef();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::vector<std::string>& dest)
@@ -982,7 +982,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<std::string>& de
 		dest = this->var_man->VarExchange.GetStringVectorRef();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void* BMIPhreeqcRM::GetValuePtr(const std::string name)
@@ -999,7 +999,7 @@ void* BMIPhreeqcRM::GetValuePtr(const std::string name)
 		}
 		return bv.GetVoidPtr();
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValuePtr.");
 	return NULL;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, void* src)
@@ -1071,7 +1071,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, bool src)
@@ -1094,7 +1094,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, bool src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, const char* src)
@@ -1116,7 +1116,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, const char* src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, double src)
@@ -1138,7 +1138,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, double src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, int src)
@@ -1160,7 +1160,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, int src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, const std::string src)
@@ -1182,7 +1182,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, const std::string src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
@@ -1214,7 +1214,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, std::vector<int> src)
@@ -1239,7 +1239,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<int> src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src)
@@ -1261,7 +1261,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 
