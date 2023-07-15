@@ -835,12 +835,16 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	return
 
   ! Deallocate
+  deallocate(IntVector, IntVector2)
+  deallocate(DoubleVector, DoubleVector2)
+  deallocate(StringVector, AllocString)
   deallocate(IntVector)
-  deallocate(DoubleVector)
+  deallocate(Names)
   deallocate(v1, v2, f1)
   deallocate(ic1, ic2)
-  deallocate(cells)
-  deallocate(bc1)
+  deallocate(u1, u2, ic)
+  deallocate(cells, v1, v2)
+  deallocate(bc1, c, bc_species, bc2)
   deallocate(tc)
   deallocate(p_atm)
   return
