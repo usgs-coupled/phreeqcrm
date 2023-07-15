@@ -37,7 +37,6 @@ jobs:
           echo DATE=$(date "+%x")                                                                                   >> $GITHUB_OUTPUT
           echo DATE_RFC_3339=$(date --rfc-3339=date)                                                                >> $GITHUB_OUTPUT
 
-
   valgrind:
     name: valgrind
     runs-on: ubuntu-latest
@@ -64,141 +63,141 @@ jobs:
     - name: ctest -S cmemcheck.cmake
       run: ctest -S cmemcheck.cmake -VV --output-on-failure -j 2
 
-  # distcheck:
-  #   name: make distcheck
-  #   needs: init
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #     with:
-  #       submodules: recursive
+  distcheck:
+    name: make distcheck
+    needs: init
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
 
-  #   - name: autoreconf
-  #     run: autoreconf -fvi
+    - name: autoreconf
+      run: autoreconf -fvi
 
-  #   - name: versioning
-  #     run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
+    - name: versioning
+      run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
 
-  #   - name: doxygen
-  #     run: sudo apt-get -y install doxygen graphviz && cd Doxygen && make
+    - name: doxygen
+      run: sudo apt-get -y install doxygen graphviz && cd Doxygen && make
 
-  #   - name: install yaml-cpp
-  #     run: sudo apt-get -y install libyaml-cpp-dev
+    - name: install yaml-cpp
+      run: sudo apt-get -y install libyaml-cpp-dev
 
-  #   - name: mkdir
-  #     run: mkdir ${{github.workspace}}/_build
+    - name: mkdir
+      run: mkdir ${{github.workspace}}/_build
 
-  #   - name: configure
-  #     shell: bash
-  #     working-directory: ${{github.workspace}}/_build
-  #     run: ../configure --prefix=$(pwd)/INSTALL
+    - name: configure
+      shell: bash
+      working-directory: ${{github.workspace}}/_build
+      run: ../configure --prefix=$(pwd)/INSTALL
 
-  #   - name: make
-  #     shell: bash
-  #     working-directory: ${{github.workspace}}/_build
-  #     run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test --with-yaml-cpp" make -j2 distcheck
+    - name: make
+      shell: bash
+      working-directory: ${{github.workspace}}/_build
+      run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test --with-yaml-cpp" make -j2 distcheck
 
-  #   - uses: actions/upload-artifact@v3
-  #     with:
-  #       name: tarball
-  #       path: ${{github.workspace}}/_build/*.tar.gz
+    - uses: actions/upload-artifact@v3
+      with:
+        name: tarball
+        path: ${{github.workspace}}/_build/*.tar.gz
 
-  # autotools:
-  #   name: autotools
-  #   needs: [init, distcheck]
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: [macos-latest, ubuntu-latest]
+  autotools:
+    name: autotools
+    needs: [init, distcheck]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
 
-  #   runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
 
-  #   env:
-  #     VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
+    env:
+      VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
 
-  #   steps:
+    steps:
 
-  #   - uses: actions/download-artifact@v3
-  #     with:
-  #       name: tarball
+    - uses: actions/download-artifact@v3
+      with:
+        name: tarball
 
-  #   # - name: Install GNU Fortran (macOS)
-  #   #   if: ${{ runner.os == 'macOS' }}
-  #   #   uses: awvwgk/setup-fortran@main
-  #   #   with:
-  #   #     compiler: gcc
-  #   #     version: 12
+    # - name: Install GNU Fortran (macOS)
+    #   if: ${{ runner.os == 'macOS' }}
+    #   uses: awvwgk/setup-fortran@main
+    #   with:
+    #     compiler: gcc
+    #     version: 12
 
-  #   # - name: Verify gfortran
-  #   #   run: |
-  #   #     which gfortran
-  #   #     gfortran --version
+    # - name: Verify gfortran
+    #   run: |
+    #     which gfortran
+    #     gfortran --version
 
-  #   - name: Install ninja yaml-cpp valgrind (Linux)
-  #     if: runner.os == 'Linux'
-  #     run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+    - name: Install ninja yaml-cpp valgrind (Linux)
+      if: runner.os == 'Linux'
+      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
-  #   - name: Install gcc(gfortran) ninja yaml-cpp (macOS)
-  #     if: runner.os == 'macOS'
-  #     run: |
-  #       brew reinstall gcc
-  #       brew install ninja yaml-cpp
+    - name: Install gcc(gfortran) ninja yaml-cpp (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew reinstall gcc
+        brew install ninja yaml-cpp
 
-  #   - name: Verify gfortran
-  #     run: |
-  #       which gfortran
-  #       gfortran --version
+    - name: Verify gfortran
+      run: |
+        which gfortran
+        gfortran --version
 
-  #   - name: Extract tarball
-  #     run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
+    - name: Extract tarball
+      run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
 
-  #   - name: mkdir build
-  #     run: mkdir ${{ github.workspace }}/build
+    - name: mkdir build
+      run: mkdir ${{ github.workspace }}/build
 
-  #   - name: Configure with autotools
-  #     working-directory: ${{ github.workspace }}/build
-  #     run: ../phreeqcrm-${{ env.VER_STRING }}/configure --enable-fortran-test --with-yaml-cpp
+    - name: Configure with autotools
+      working-directory: ${{ github.workspace }}/build
+      run: ../phreeqcrm-${{ env.VER_STRING }}/configure --enable-fortran-test --with-yaml-cpp
 
-  #   - name: Build with autotools
-  #     working-directory: ${{ github.workspace }}/build
-  #     run: make -j4
+    - name: Build with autotools
+      working-directory: ${{ github.workspace }}/build
+      run: make -j4
 
-  #   - name: Make check
-  #     working-directory: ${{ github.workspace }}/build
-  #     run: make check -j4
+    - name: Make check
+      working-directory: ${{ github.workspace }}/build
+      run: make check -j4
 
-  #   - name: cat Tests/test-suite.log
-  #     if: ${{ always() }}
-  #     working-directory: ${{ github.workspace }}/build
-  #     run: cat Tests/test-suite.log
+    - name: cat Tests/test-suite.log
+      if: ${{ always() }}
+      working-directory: ${{ github.workspace }}/build
+      run: cat Tests/test-suite.log
 
-  #   - name: Install with autotools
-  #     working-directory: ${{ github.workspace }}/build
-  #     run: sudo make install
+    - name: Install with autotools
+      working-directory: ${{ github.workspace }}/build
+      run: sudo make install
 
-  #   - name: Run ldconfig (Linux)
-  #     if: runner.os == 'Linux'
-  #     working-directory: ${{ github.workspace }}/build
-  #     run: sudo ldconfig
+    - name: Run ldconfig (Linux)
+      if: runner.os == 'Linux'
+      working-directory: ${{ github.workspace }}/build
+      run: sudo ldconfig
 
-  #   - name: Cleanup
-  #     run: rm -rf *
+    - name: Cleanup
+      run: rm -rf *
 
-  #   - uses: actions/checkout@v3
-  #     with:
-  #       submodules: recursive
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
 
-  #   - name: Test autotools install
-  #     working-directory: ${{ github.workspace }}/Tests
-  #     run: env CC='cc' CXX='c++ -std=c++11' make -f autotools.mk autotools_test && ./autotools_test
+    - name: Test autotools install
+      working-directory: ${{ github.workspace }}/Tests
+      run: env CC='cc' CXX='c++ -std=c++11' make -f autotools.mk autotools_test && ./autotools_test
 
-  #   - name: Clean autotools test
-  #     working-directory: ${{ github.workspace }}/Tests
-  #     run: make -f autotools.mk clean
+    - name: Clean autotools test
+      working-directory: ${{ github.workspace }}/Tests
+      run: make -f autotools.mk clean
 
-  #   - name: Test CMake pkg-config
-  #     working-directory: ${{ github.workspace }}/Tests
-  #     run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
+    - name: Test CMake pkg-config
+      working-directory: ${{ github.workspace }}/Tests
+      run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
     #name: cmake
@@ -301,11 +300,11 @@ jobs:
 
     - name: Configure with CMake
       if: ${{ matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
-      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
+      run: cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
 
     - name: Configure with CMake
       if: ${{ matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON -DPHREEQCRM_BUILD_PYTHON:BOOL=ON 
+      run: cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON -DPHREEQCRM_BUILD_PYTHON:BOOL=ON 
 
     - name: Print phreeqcrm.pc
       working-directory: ${{ github.workspace }}/build
