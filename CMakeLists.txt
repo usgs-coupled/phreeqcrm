@@ -1,11 +1,14 @@
 # CMAKE_MSVC_RUNTIME_LIBRARY requires 3.15
 cmake_minimum_required(VERSION 3.20)
+##cmake_minimum_required(VERSION 3.24)
 
 project(
   PhreeqcRM
   VERSION 3.7.0
   LANGUAGES CXX C
 )
+
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 # check if this is the root project
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -27,9 +30,15 @@ if(PHREEQCRM_FORTRAN_TESTING)
   enable_language(Fortran)
 endif()
 
-option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
+option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" ON)
 if(PHREEQCRM_WITH_YAML_CPP)
-  find_package(yaml-cpp REQUIRED)
+  set(YAML_BUILD_SHARED_LIBS OFF)
+  set(YAML_CPP_BUILD_TESTS OFF)
+  set(YAML_CPP_BUILD_TOOLS OFF)
+  set(YAML_CPP_INSTALL ON)
+  set(YAML_CPP_BUILD_CONTRIB ON)
+  add_subdirectory(yaml-cpp)
+  set(yaml-cpp_FOUND TRUE)
 endif()
 
 option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" OFF)
@@ -291,7 +300,7 @@ set(exportPackageDependencies "")
 # yaml-cpp
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
   target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
-  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp::yaml-cpp)
   # set(phreeqcrm_requires "yaml-cpp")
   set(useyaml_define "-DUSE_YAML")
   string(APPEND exportPackageDependencies "find_dependency(yaml-cpp)\n")
@@ -332,7 +341,6 @@ endif()
 set(PhreeqcRM_Headers
   ${PhreeqcRM_BINARY_DIR}/irm_dll_export.h
   ${PROJECT_SOURCE_DIR}/src/BMI_interface_F.h
-  ${PROJECT_SOURCE_DIR}/src/BMIVariant.h
   ${PROJECT_SOURCE_DIR}/src/BMIVariant.h
   ${PROJECT_SOURCE_DIR}/src/bmi.hxx
   ${PROJECT_SOURCE_DIR}/src/BMIPhreeqcRM.h
