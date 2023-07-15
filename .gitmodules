@@ -2,3 +2,7 @@
 	path = pybind/pybind11
 	url = https://github.com/pybind/pybind11.git
 	branch = stable
+[submodule "extern/yaml-cpp"]
+	path = ext/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git
+	branch = master

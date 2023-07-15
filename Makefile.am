@@ -24,6 +24,134 @@ PHREEQCRM_EXTRA_DIST=\
 
 EXTRA_DIST=$(PHREEQCRM_EXTRA_DIST)
 
+YAML_CPP_EXTRA_DIST=\
+	ext/yaml-cpp\
+	ext/yaml-cpp/.clang-format\
+	ext/yaml-cpp/.codedocs\
+	ext/yaml-cpp/.github\
+	ext/yaml-cpp/.github/workflows\
+	ext/yaml-cpp/.github/workflows/build.yml\
+	ext/yaml-cpp/.gitignore\
+	ext/yaml-cpp/BUILD.bazel\
+	ext/yaml-cpp/CMakeLists.txt\
+	ext/yaml-cpp/cmake_uninstall.cmake.in\
+	ext/yaml-cpp/CONTRIBUTING.md\
+	ext/yaml-cpp/docs\
+	ext/yaml-cpp/docs/Breaking-Changes.md\
+	ext/yaml-cpp/docs/How-To-Emit-YAML.md\
+	ext/yaml-cpp/docs/How-To-Parse-A-Document-(Old-API).md\
+	ext/yaml-cpp/docs/index.md\
+	ext/yaml-cpp/docs/Strings.md\
+	ext/yaml-cpp/docs/Tutorial.md\
+	ext/yaml-cpp/docs/_config.yml\
+	ext/yaml-cpp/include\
+	ext/yaml-cpp/include/yaml-cpp\
+	ext/yaml-cpp/include/yaml-cpp/anchor.h\
+	ext/yaml-cpp/include/yaml-cpp/binary.h\
+	ext/yaml-cpp/include/yaml-cpp/contrib\
+	ext/yaml-cpp/include/yaml-cpp/contrib/anchordict.h\
+	ext/yaml-cpp/include/yaml-cpp/contrib/graphbuilder.h\
+	ext/yaml-cpp/include/yaml-cpp/depthguard.h\
+	ext/yaml-cpp/include/yaml-cpp/dll.h\
+	ext/yaml-cpp/include/yaml-cpp/emitfromevents.h\
+	ext/yaml-cpp/include/yaml-cpp/emitter.h\
+	ext/yaml-cpp/include/yaml-cpp/emitterdef.h\
+	ext/yaml-cpp/include/yaml-cpp/emittermanip.h\
+	ext/yaml-cpp/include/yaml-cpp/emitterstyle.h\
+	ext/yaml-cpp/include/yaml-cpp/eventhandler.h\
+	ext/yaml-cpp/include/yaml-cpp/exceptions.h\
+	ext/yaml-cpp/include/yaml-cpp/mark.h\
+	ext/yaml-cpp/include/yaml-cpp/node\
+	ext/yaml-cpp/include/yaml-cpp/node/convert.h\
+	ext/yaml-cpp/include/yaml-cpp/node/detail\
+	ext/yaml-cpp/include/yaml-cpp/node/detail/impl.h\
+	ext/yaml-cpp/include/yaml-cpp/node/detail/iterator.h\
+	ext/yaml-cpp/include/yaml-cpp/node/detail/iterator_fwd.h\
+	ext/yaml-cpp/include/yaml-cpp/node/detail/memory.h\
+	ext/yaml-cpp/include/yaml-cpp/node/detail/node.h\
+	ext/yaml-cpp/include/yaml-cpp/node/detail/node_data.h\
+	ext/yaml-cpp/include/yaml-cpp/node/detail/node_iterator.h\
+	ext/yaml-cpp/include/yaml-cpp/node/detail/node_ref.h\
+	ext/yaml-cpp/include/yaml-cpp/node/emit.h\
+	ext/yaml-cpp/include/yaml-cpp/node/impl.h\
+	ext/yaml-cpp/include/yaml-cpp/node/iterator.h\
+	ext/yaml-cpp/include/yaml-cpp/node/node.h\
+	ext/yaml-cpp/include/yaml-cpp/node/parse.h\
+	ext/yaml-cpp/include/yaml-cpp/node/ptr.h\
+	ext/yaml-cpp/include/yaml-cpp/node/type.h\
+	ext/yaml-cpp/include/yaml-cpp/noexcept.h\
+	ext/yaml-cpp/include/yaml-cpp/null.h\
+	ext/yaml-cpp/include/yaml-cpp/ostream_wrapper.h\
+	ext/yaml-cpp/include/yaml-cpp/parser.h\
+	ext/yaml-cpp/include/yaml-cpp/stlemitter.h\
+	ext/yaml-cpp/include/yaml-cpp/traits.h\
+	ext/yaml-cpp/include/yaml-cpp/yaml.h\
+	ext/yaml-cpp/install.txt\
+	ext/yaml-cpp/LICENSE\
+	ext/yaml-cpp/README.md\
+	ext/yaml-cpp/src\
+	ext/yaml-cpp/src/binary.cpp\
+	ext/yaml-cpp/src/collectionstack.h\
+	ext/yaml-cpp/src/contrib\
+	ext/yaml-cpp/src/contrib/graphbuilder.cpp\
+	ext/yaml-cpp/src/contrib/graphbuilderadapter.cpp\
+	ext/yaml-cpp/src/contrib/graphbuilderadapter.h\
+	ext/yaml-cpp/src/contrib/yaml-cpp.natvis\
+	ext/yaml-cpp/src/contrib/yaml-cpp.natvis.md\
+	ext/yaml-cpp/src/convert.cpp\
+	ext/yaml-cpp/src/depthguard.cpp\
+	ext/yaml-cpp/src/directives.cpp\
+	ext/yaml-cpp/src/directives.h\
+	ext/yaml-cpp/src/emit.cpp\
+	ext/yaml-cpp/src/emitfromevents.cpp\
+	ext/yaml-cpp/src/emitter.cpp\
+	ext/yaml-cpp/src/emitterstate.cpp\
+	ext/yaml-cpp/src/emitterstate.h\
+	ext/yaml-cpp/src/emitterutils.cpp\
+	ext/yaml-cpp/src/emitterutils.h\
+	ext/yaml-cpp/src/exceptions.cpp\
+	ext/yaml-cpp/src/exp.cpp\
+	ext/yaml-cpp/src/exp.h\
+	ext/yaml-cpp/src/indentation.h\
+	ext/yaml-cpp/src/memory.cpp\
+	ext/yaml-cpp/src/node.cpp\
+	ext/yaml-cpp/src/nodebuilder.cpp\
+	ext/yaml-cpp/src/nodebuilder.h\
+	ext/yaml-cpp/src/nodeevents.cpp\
+	ext/yaml-cpp/src/nodeevents.h\
+	ext/yaml-cpp/src/node_data.cpp\
+	ext/yaml-cpp/src/null.cpp\
+	ext/yaml-cpp/src/ostream_wrapper.cpp\
+	ext/yaml-cpp/src/parse.cpp\
+	ext/yaml-cpp/src/parser.cpp\
+	ext/yaml-cpp/src/ptr_vector.h\
+	ext/yaml-cpp/src/regeximpl.h\
+	ext/yaml-cpp/src/regex_yaml.cpp\
+	ext/yaml-cpp/src/regex_yaml.h\
+	ext/yaml-cpp/src/scanner.cpp\
+	ext/yaml-cpp/src/scanner.h\
+	ext/yaml-cpp/src/scanscalar.cpp\
+	ext/yaml-cpp/src/scanscalar.h\
+	ext/yaml-cpp/src/scantag.cpp\
+	ext/yaml-cpp/src/scantag.h\
+	ext/yaml-cpp/src/scantoken.cpp\
+	ext/yaml-cpp/src/setting.h\
+	ext/yaml-cpp/src/simplekey.cpp\
+	ext/yaml-cpp/src/singledocparser.cpp\
+	ext/yaml-cpp/src/singledocparser.h\
+	ext/yaml-cpp/src/stream.cpp\
+	ext/yaml-cpp/src/stream.h\
+	ext/yaml-cpp/src/streamcharsource.h\
+	ext/yaml-cpp/src/stringsource.h\
+	ext/yaml-cpp/src/tag.cpp\
+	ext/yaml-cpp/src/tag.h\
+	ext/yaml-cpp/src/token.h\
+	ext/yaml-cpp/WORKSPACE\
+	ext/yaml-cpp/yaml-cpp-config.cmake.in\
+	ext/yaml-cpp/yaml-cpp.pc.in
+
+EXTRA_DIST+=$(YAML_CPP_EXTRA_DIST)
+
 AM_CPPFLAGS=-I$(top_srcdir)/src/IPhreeqcPhast -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/common -I$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/PhreeqcKeywords
 
 AM_LDFLAGS=-release 3.0.0
@@ -206,7 +334,6 @@ libphreeqcrm_la_SOURCES=\
 	src/YAML_interface_F.h\
 	src/YAMLPhreeqcRM.cpp\
 	src/YAMLPhreeqcRM.h
-
 
 include_HEADERS=\
 	$(top_builddir)/irm_dll_export.h\

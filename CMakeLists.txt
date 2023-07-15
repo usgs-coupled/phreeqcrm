@@ -28,9 +28,12 @@ if(PHREEQCRM_FORTRAN_TESTING)
 endif()
 
 option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
-if(PHREEQCRM_WITH_YAML_CPP)
-  find_package(yaml-cpp REQUIRED)
+if(DEFINED SKBUILD)
+  set(PHREEQCRM_WITH_YAML_CPP ON)
 endif()
+##if(PHREEQCRM_WITH_YAML_CPP)
+##  find_package(yaml-cpp REQUIRED)
+##endif()
 
 option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" OFF)
 if(NOT PHREEQCRM_DISABLE_OPENMP)
@@ -47,7 +50,12 @@ if(PHREEQCRM_BUILD_MPI)
 endif()
 
 option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" OFF)
+if(DEFINED SKBUILD)
+  set(PHREEQCRM_BUILD_PYTHON ON)
+endif()
+#if(PHREEQCRM_BUILD_PYTHON OR DEFINED SKBUILD)
 if(PHREEQCRM_BUILD_PYTHON)
+  ##if(NOT PHREEQCRM_WITH_YAML_CPP AND NOT DEFINED SKBUILD)
   if(NOT PHREEQCRM_WITH_YAML_CPP)
     message(FATAL_ERROR "Building python wrapper requires PHREEQCRM_WITH_YAML_CPP.")
   endif()
@@ -235,6 +243,15 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
 )
 
+# if(DEFINED SKBUILD)
+#   # SKBUILD is set by scikit-build-core
+#   message(STATUS "SKBUILD IS defined")
+#   add_subdirectory(swig)
+#   return()
+# endif()
+
+# message(STATUS "SKBUILD is NOT defined")
+
 # dll/shared objects
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 
@@ -289,12 +306,9 @@ endif()
 set(exportPackageDependencies "")
 
 # yaml-cpp
-if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
+if(PHREEQCRM_WITH_YAML_CPP)
   target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
   target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
-  # set(phreeqcrm_requires "yaml-cpp")
-  set(useyaml_define "-DUSE_YAML")
-  string(APPEND exportPackageDependencies "find_dependency(yaml-cpp)\n")
 endif()
 
 # check for zlib
@@ -435,7 +449,7 @@ endif()
 configure_file(phreeqcrm.cmake.in phreeqcrm.pc @ONLY)
 
 # install
-if(STANDALONE_BUILD EQUAL 1)
+if(STANDALONE_BUILD EQUAL 1 AND NOT DEFINED SKBUILD)
 
   include(CMakePackageConfigHelpers)
 
@@ -525,11 +539,20 @@ if(STANDALONE_BUILD EQUAL 1)
   enable_testing()
 
   # subdirs
-  add_subdirectory(database)
-  add_subdirectory(doc)
-  add_subdirectory(Doxygen)
-  add_subdirectory(Tests)
+  if(NOT DEFINED SKBUILD)
+    add_subdirectory(database)
+    add_subdirectory(doc)
+    add_subdirectory(Doxygen)
+    add_subdirectory(Tests)
+  endif()
 
+  if(PHREEQCRM_WITH_YAML_CPP)
+    set(YAML_BUILD_SHARED_LIBS OFF)
+    set(YAML_CPP_BUILD_TESTS OFF)
+    set(YAML_CPP_BUILD_TOOLS OFF)
+    set(YAML_CPP_INSTALL OFF)
+    add_subdirectory(ext/yaml-cpp)
+  endif()
   if(PHREEQCRM_BUILD_PYTHON)
     add_subdirectory(swig)
   endif()
@@ -538,6 +561,14 @@ endif()
 # Turn off Incremental Linking for Debug and RelWithDebInfo
 if(MSVC)
   target_link_options(PhreeqcRM PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
+endif()
+
+if(DEFINED SKBUILD)
+  message(STATUS "SKBUILD IS defined")
+  #set_target_properties(PhreeqcRM TestRM TestBMIdtor TestRMdtor PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+  set_target_properties(PhreeqcRM PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+else()
+  message(STATUS "SKBUILD is NOT defined")
 endif()
 
 # get_cmake_property(_variableNames VARIABLES)
