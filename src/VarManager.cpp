@@ -175,16 +175,16 @@ void VarManager::ComponentCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}	
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -241,16 +241,16 @@ void VarManager::Components_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -368,7 +368,7 @@ void VarManager::DensityCalculated_Var()
 	}
 	case VarManager::VAR_TASKS::SetVar:
 	{
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::no_op:
@@ -404,10 +404,7 @@ void VarManager::DensityUser_Var()
 		//this->PointerSet.insert(RMVARS::DensityUser);
 		//this->UpdateSet.insert(RMVARS::DensityUser);
 		//break;
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value_ptr.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValuePtr not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::RMUpdate:
@@ -417,13 +414,14 @@ void VarManager::DensityUser_Var()
 		//rm_ptr->GetConcentrations(c);
 		//BMIVariant& bv_c = this->VariantMap[RMVARS::Concentrations];
 		//bv_c.SetDoubleVector(c);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
 	{
 		//rm_ptr->GetDensityUser(this->VarExchange.GetDoubleVectorRef());
 		//bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
-		assert(false);
+		throw std::runtime_error("GetValue not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
@@ -472,10 +470,7 @@ void VarManager::ErrorString_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value_ptr.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValuePtr not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -488,7 +483,7 @@ void VarManager::ErrorString_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
@@ -523,10 +518,7 @@ void VarManager::FilePrefix_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value_ptr.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValuePtr not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -590,7 +582,7 @@ void VarManager::Gfw_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
@@ -632,16 +624,16 @@ void VarManager::GridCellCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -670,18 +662,12 @@ void VarManager::NthSelectedOutput_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value_ptr.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValuePtr not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
 	{
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValue not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
@@ -693,7 +679,7 @@ void VarManager::NthSelectedOutput_Var()
 	case VarManager::VAR_TASKS::RMUpdate:
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -748,7 +734,7 @@ void VarManager::SaturationCalculated_Var()
 	}
 	case VarManager::VAR_TASKS::SetVar:
 	{
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::no_op:
@@ -778,16 +764,13 @@ void VarManager::SaturationUser_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value_ptr.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValuePtr not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("GetValue not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::RMUpdate:
@@ -849,10 +832,7 @@ void VarManager::SelectedOutput_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value_ptr.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValuePtr not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -863,10 +843,10 @@ void VarManager::SelectedOutput_Var()
 	}
 	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
@@ -895,10 +875,7 @@ void VarManager::SelectedOutputColumnCount_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value_ptr.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValuePtr not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -908,16 +885,16 @@ void VarManager::SelectedOutputColumnCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -946,10 +923,7 @@ void VarManager::SelectedOutputCount_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value_ptr.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValuePtr not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -959,16 +933,16 @@ void VarManager::SelectedOutputCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -1025,10 +999,7 @@ void VarManager::SelectedOutputHeadings_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value_ptr.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValuePtr not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -1051,16 +1022,16 @@ void VarManager::SelectedOutputHeadings_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -1090,10 +1061,7 @@ void VarManager::SelectedOutputRowCount_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value_ptr.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValuePtr not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -1103,16 +1071,16 @@ void VarManager::SelectedOutputRowCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -1160,7 +1128,7 @@ void VarManager::SolutionVolume_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
@@ -1281,10 +1249,7 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-#if defined(WITH_PYBIND11)
-		throw std::runtime_error("This variable does not support get_value_ptr.");
-#endif
-		assert(false);
+		throw std::runtime_error("GetValuePtr not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -1294,16 +1259,16 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -1625,7 +1590,7 @@ void VarManager::Viscosity_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error("SetValue not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
