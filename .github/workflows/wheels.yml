@@ -41,6 +41,9 @@ jobs:
       - name: Test yaml-cpp
         run: ctest --test-dir yaml-cpp-build
 
+      - name: find
+        run: find ..
+
       - name: printenv
         env:
           yaml_cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
