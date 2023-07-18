@@ -32,16 +32,27 @@ jobs:
       - name: Install ninja
         run: sudo apt-get -y install ninja-build
 
+      - name: Cache yaml-cpp
+        id: cache-yaml-cpp
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/yaml-cpp-install
+          key: ${{ runner.os }}-yaml-cpp-0.7.0
+
       - name: Configure yaml-cpp
+        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
         run: cmake -G "Ninja Multi-Config" -B yaml-cpp-build -S yaml-cpp-source -DYAML_CPP_BUILD_TOOLS:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=$(pwd)/yaml-cpp-install -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 
       - name: Build yaml-cpp
+        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
         run: cmake --build yaml-cpp-build --config Release
 
       - name: Test yaml-cpp
+        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
         run: ctest --test-dir yaml-cpp-build
 
       - name: Install yaml-cpp
+        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
         run: cmake --install yaml-cpp-build
 
       - name: Build package
@@ -52,4 +63,11 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          path: phreeqcrm-source/dist/*
+          name: wheels
+          path: phreeqcrm-source/dist/*.whl
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: source
+          path: phreeqcrm-source/dist/*.tar.gz
+
