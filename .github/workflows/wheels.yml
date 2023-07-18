@@ -1,4 +1,4 @@
-name: CD
+name: cd
 
 on:
   pull_request:
@@ -16,7 +16,7 @@ env:
   FORCE_COLOR: 3
 
 jobs:
-  dist:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -44,9 +44,10 @@ jobs:
       - name: printenv
         run: printenv
 
-    #   - name: Build package
-    #     run: pipx run build
+      - name: Build package
+        working-directory: phreeqcrm-source
+        run: pipx run build
 
-    #   - uses: actions/upload-artifact@v3
-    #     with:
-    #       path: dist/*
+      - uses: actions/upload-artifact@v3
+        with:
+          path: dist/*
