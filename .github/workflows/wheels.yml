@@ -45,6 +45,8 @@ jobs:
         run: printenv
 
       - name: Build package
+        env:
+          yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
         working-directory: phreeqcrm-source
         run: pipx run build
 
