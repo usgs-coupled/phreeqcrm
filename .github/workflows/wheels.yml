@@ -1,6 +1,12 @@
 name: CD
 
 on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
   workflow_dispatch:
   release:
     types:
@@ -22,6 +28,23 @@ jobs:
 
       - name: List up two
         run: ls -al ../..
+
+      - uses: actions/checkout@v3
+        with:
+            repository: jbeder/yaml-cpp
+            ref: yaml-cpp-0.7.0
+
+      - name: List
+        run: ls -al
+
+      - name: List up one
+        run: ls -al ..
+
+      - name: List up two
+        run: ls -al ../..
+
+      - name: printenv
+        run: printenv
 
     #   - name: Build package
     #     run: pipx run build
