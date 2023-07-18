@@ -1,0 +1,31 @@
+name: CD
+
+on:
+  workflow_dispatch:
+  release:
+    types:
+      - published
+
+env:
+  FORCE_COLOR: 3
+
+jobs:
+  dist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: List up one
+        run: ls -al ..
+
+      - name: List up two
+        run: ls -al ../..
+
+    #   - name: Build package
+    #     run: pipx run build
+
+    #   - uses: actions/upload-artifact@v3
+    #     with:
+    #       path: dist/*
