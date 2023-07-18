@@ -42,10 +42,24 @@ jobs:
         run: ctest --test-dir yaml-cpp-build
 
       - name: printenv
+        env:
+          yaml_cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
+          yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
         run: printenv
+
+      - name: list
+        env:
+          yaml_cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
+        run: ls -al $yaml_cpp_DIR
+
+      - name: list
+        env:
+          yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
+        run: ls -al $yaml-cpp_DIR
 
       - name: Build package
         env:
+          yaml_cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
           yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
         working-directory: phreeqcrm-source
         run: pipx run build

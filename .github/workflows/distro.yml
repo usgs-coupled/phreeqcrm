@@ -12,6 +12,7 @@ on:
     paths-ignore:
       - 'CMakePresets.json'
       - 'build-all-presets.sh'
+      - '.github/workflows/distro.yml'
 
 env:
   NAME: PhreeqcRM
