@@ -38,13 +38,19 @@ jobs:
             ref: yaml-cpp-0.7.0
             path: yaml-cpp-source
 
-      - name: Install ninja
+      - name: Install ninja (Linux)
         if: ${{ runner.os == 'Linux' }}
         run: sudo apt-get -y install ninja-build
 
-      - name: Install ninja
+      - name: Install ninja (macOS)
         if: ${{ runner.os == 'macOS' }}
         run: brew install ninja
+
+      - name: Set up Visual Studio shell (Windows)
+        if: runner.os == 'Windows'
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
 
       - name: Cache yaml-cpp
         id: cache-yaml-cpp
