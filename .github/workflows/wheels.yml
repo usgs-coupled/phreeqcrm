@@ -33,6 +33,7 @@ jobs:
         with:
             repository: jbeder/yaml-cpp
             ref: yaml-cpp-0.7.0
+            path: ..
 
       - name: List
         run: ls -al
