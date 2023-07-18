@@ -21,31 +21,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          path: phreeqcrm-src
-
-      - name: List
-        run: ls -al
-
-      - name: List up one
-        run: ls -al ..
-
-      - name: List up two
-        run: ls -al ../..
+          path: phreeqcrm-source
 
       - uses: actions/checkout@v3
         with:
             repository: jbeder/yaml-cpp
             ref: yaml-cpp-0.7.0
-            path: yaml-cpp-src
+            path: yaml-cpp-source
 
-      - name: List
-        run: ls -al
+      - name: Configure yaml-cpp
+        run: cmake -G Ninja -B yaml-cpp-build -S yaml-cpp-source -DCMAKE_BUILD_TYPE=Release -DYAML_CPP_BUILD_TOOLS:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=$(pwd)/yaml-cpp-install
 
-      - name: List up one
-        run: ls -al ..
+      - name: Build yaml-cpp
+        run: cmake --build yaml-cpp-build
 
-      - name: List up two
-        run: ls -al ../..
+      - name: Test yaml-cpp
+        run: ctest --test-dir yaml-cpp-build
 
       - name: printenv
         run: printenv
