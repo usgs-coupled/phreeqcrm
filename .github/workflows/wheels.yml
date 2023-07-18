@@ -44,19 +44,6 @@ jobs:
       - name: Install yaml-cpp
         run: cmake --install yaml-cpp-build
 
-      - name: find
-        run: find ..
-
-      - name: printenv
-        env:
-          yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
-        run: printenv
-
-      - name: list
-        env:
-          yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
-        run: ls -al $yaml-cpp_DIR
-
       - name: Build package
         env:
           yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
