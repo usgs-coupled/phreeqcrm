@@ -29,11 +29,14 @@ jobs:
             ref: yaml-cpp-0.7.0
             path: yaml-cpp-source
 
+      - name: Install ninja
+        run: sudo apt-get -y install ninja-build
+
       - name: Configure yaml-cpp
-        run: cmake -G Ninja -B yaml-cpp-build -S yaml-cpp-source -DCMAKE_BUILD_TYPE=Release -DYAML_CPP_BUILD_TOOLS:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=$(pwd)/yaml-cpp-install
+        run: cmake -G "Ninja Multi-Config" -B yaml-cpp-build -S yaml-cpp-source -DYAML_CPP_BUILD_TOOLS:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=$(pwd)/yaml-cpp-install
 
       - name: Build yaml-cpp
-        run: cmake --build yaml-cpp-build
+        run: cmake --build yaml-cpp-build --config Release
 
       - name: Test yaml-cpp
         run: ctest --test-dir yaml-cpp-build
