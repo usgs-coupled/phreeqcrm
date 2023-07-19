@@ -57,7 +57,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/yaml-cpp-install
-          key: ${{ runner.os }}-yaml-cpp-0.7.0
+          key: ${{ matrix.os }}-yaml-cpp-0.7.0
 
       - name: Configure yaml-cpp
         if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
