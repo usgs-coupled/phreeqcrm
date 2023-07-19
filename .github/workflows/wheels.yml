@@ -15,6 +15,7 @@ on:
 env:
   FORCE_COLOR: 3
   YAML_CPP_REF: b8882652fcbeba4c00dec019a39da91e702e474e
+  USE_LIB_CMAKE_YAML_CPP: ${{ true }}
 
 jobs:
   build:
@@ -87,9 +88,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install pipx
 
-      - name: Build package
+      - name: Build package (using share/cmake/yaml-cpp)
+        if: ${{ !env.USE_LIB_CMAKE_YAML_CPP }}
         env:
           yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
+        working-directory: phreeqcrm-source
+        run: pipx run build
+
+      - name: Build package (using lib/cmake/yaml-cpp)
+        if: ${{ env.USE_LIB_CMAKE_YAML_CPP }}
+        env:
+          yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/lib/cmake/yaml-cpp
         working-directory: phreeqcrm-source
         run: pipx run build
 
