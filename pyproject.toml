@@ -1,0 +1,15 @@
+[build-system]
+requires = ["scikit-build-core", "swig", "numpy"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "phreeqcrm"
+version = "0.0.1"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "PyYAML"
+]
+
+[tool.scikit-build]
+cmake.verbose = true

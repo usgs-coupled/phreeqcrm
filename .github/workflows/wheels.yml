@@ -1,0 +1,104 @@
+name: cd
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+  release:
+    types:
+      - published
+
+env:
+  FORCE_COLOR: 3
+
+jobs:
+  build:
+    name: ${{ matrix.os }} (python ${{ matrix.python-version }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: phreeqcrm-source
+
+      - uses: actions/checkout@v3
+        with:
+            repository: jbeder/yaml-cpp
+            ref: yaml-cpp-0.7.0
+            path: yaml-cpp-source
+
+      - name: Install ninja (Linux)
+        if: ${{ runner.os == 'Linux' }}
+        run: sudo apt-get -y install ninja-build
+
+      - name: Install ninja (macOS)
+        if: ${{ runner.os == 'macOS' }}
+        run: brew install ninja
+
+      - name: Set up Visual Studio shell (Windows)
+        if: runner.os == 'Windows'
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
+
+      - name: Cache yaml-cpp
+        id: cache-yaml-cpp
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/yaml-cpp-install
+          key: ${{ runner.os }}-yaml-cpp-0.7.0
+
+      - name: Configure yaml-cpp
+        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
+        run: cmake -G "Ninja Multi-Config" -B yaml-cpp-build -S yaml-cpp-source -DYAML_CPP_BUILD_TOOLS:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=$(pwd)/yaml-cpp-install -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+
+      - name: Build yaml-cpp
+        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
+        run: cmake --build yaml-cpp-build --config Release
+
+      - name: Test yaml-cpp
+        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
+        run: ctest --test-dir yaml-cpp-build
+
+      - name: Install yaml-cpp
+        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
+        run: cmake --install yaml-cpp-build
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Python ${{ matrix.python-version }} dependencies
+        run: |
+          python --version
+          python -m pip install --upgrade pip
+          pip install pipx
+
+      - name: Build package
+        env:
+          yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
+        working-directory: phreeqcrm-source
+        run: pipx run build
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: wheels
+          path: phreeqcrm-source/dist/*.whl
+
+      - uses: actions/upload-artifact@v3
+        if: ${{ matrix.python-version == '3.10' && matrix.os == 'ubuntu-22.04' }}
+        with:
+          name: source
+          path: phreeqcrm-source/dist/*.tar.gz

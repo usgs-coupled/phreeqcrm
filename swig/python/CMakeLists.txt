@@ -235,6 +235,18 @@ if(MSVC)
   set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "SimpleAdvect.py")
 endif()
 
+if(DEFINED SKBUILD)
+  # install _phreeqcrm.${Python_SOABI}${CMAKE_SHARED_MODULE_SUFFIX}
+  # ie _phreeqcrm.cp38-win_amd64.pyd
+  install(TARGETS ${PYTHON_TARGET_NAME} DESTINATION ${SKBUILD_PROJECT_NAME})
+
+  # install phreeqcrm.py
+  get_target_property(support_files ${PYTHON_TARGET_NAME} SWIG_SUPPORT_FILES)
+  install(FILES ${support_files} DESTINATION ${SKBUILD_PROJECT_NAME})
+
+  # install yamlphreeqcrm.py
+  install(FILES yamlphreeqcrm.py DESTINATION ${SKBUILD_PROJECT_NAME})
+endif()
 
 # # Get all propreties that cmake supports
 # if(NOT CMAKE_PROPERTY_LIST)
