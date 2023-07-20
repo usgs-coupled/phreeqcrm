@@ -104,7 +104,20 @@ endif()
 
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
   target_compile_definitions(${PYTHON_TARGET_NAME} PUBLIC USE_YAML)
-  target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp::yaml-cpp)
+  if(TARGET yaml-cpp::yaml-cpp)
+    # The CD scikit_build_core build uses the latest (as of 2023-07-19) commit
+    # b8882652fcbeba4c00dec019a39da91e702e474e of yaml-cpp which uses the
+    # yaml-cpp:: namespace
+    target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp::yaml-cpp)
+  else()
+    # yaml-cpp <= 0.7.0 doesn't use a namespace
+    # as of 2023-07-19:
+    #   macos        brew    0.7.0
+    #   windows      vcpkg   0.7.0#1
+    #   ubuntu-20.04 apt-get 0.6
+    #   ubuntu-22.04 apt-get 0.7
+    target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp)
+  endif()
 endif()
 
 if(PHREEQCRM_NO_UTF8_ENCODING)
