@@ -300,10 +300,15 @@ set(exportPackageDependencies "")
 # yaml-cpp
 if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
   target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
-  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+  if(TARGET yaml-cpp::yaml-cpp)
+    target_link_libraries(PhreeqcRM PUBLIC yaml-cpp::yaml-cpp)
+    string(APPEND exportPackageDependencies "find_dependency(yaml-cpp::yaml-cpp)\n")
+  else()
+    target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+    string(APPEND exportPackageDependencies "find_dependency(yaml-cpp)\n")
+  endif()
   # set(phreeqcrm_requires "yaml-cpp")
   set(useyaml_define "-DUSE_YAML")
-  string(APPEND exportPackageDependencies "find_dependency(yaml-cpp)\n")
 endif()
 
 # check for zlib
