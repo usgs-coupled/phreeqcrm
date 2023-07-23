@@ -36,7 +36,7 @@ def test_finalize_no_throw():
 #    def get_component_name(self) -> str:
 def test_get_component_name_no_throw():
     model = BMIPhreeqcRM()
-    component_name =model.get_component_name()
+    component_name = model.get_component_name()
 
 #    def get_current_time(self) -> float:
 def test_get_current_time_no_throw():
