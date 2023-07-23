@@ -1,11 +1,12 @@
 import os
-##import phreeqcrm as rm
 import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_array_less
 import pytest
 
-##from phreeqcrm import BMIPhreeqcRM, IRM_RESULT
-from phreeqcrm import BMIPhreeqcRM, IRM_OK
+from phreeqcrm import BMIPhreeqcRM, IRM_OK, State
+
+ERROR_GET_VALUE_PTR_NOT_SUPPORTED = "get_value_ptr not supported for this variable."
+ERROR_SET_VALUE_NOT_SUPPORTED     = "set_value not supported for this variable."
 
 def test_main():
     # for debugging
@@ -15,17 +16,16 @@ def test_dtor():
     model = BMIPhreeqcRM()
     del model
 
-@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
 def test_initialized():
     model = BMIPhreeqcRM()
-    assert(not model._initialized)
+    assert model._state == State.UNINITIALIZED
 
-@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
 def test_finalize_not_initialized():
     model = BMIPhreeqcRM()
 
+    assert model._state == State.UNINITIALIZED
     model.finalize()
-    assert(not model._initialized)
+    assert model._state == State.UNINITIALIZED
 
 def test_get_components_is_tuple():
     model = BMIPhreeqcRM()
@@ -34,50 +34,6 @@ def test_get_components_is_tuple():
     components = model.GetComponents()
     assert(isinstance(components, tuple))
     assert(len(components) == 0)
-
-@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
-def test_get_grid_size_raises_uninitialized():
-    model = BMIPhreeqcRM()
-    with pytest.raises(RuntimeError, match="must call initialize first"):
-        model.get_grid_size(0)
-
-@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
-def test_get_input_var_names_raises_uninitialized():
-    model = BMIPhreeqcRM()
-    with pytest.raises(RuntimeError, match="must call initialize first"):
-        model.get_input_var_names()
-
-@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
-def test_get_output_var_names_raises_uninitialized():
-    model = BMIPhreeqcRM()
-    with pytest.raises(RuntimeError, match="must call initialize first"):
-        model.get_output_var_names()
-
-@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
-def test_get_value_ptr_raises_uninitialized():
-    model = BMIPhreeqcRM()
-    with pytest.raises(RuntimeError, match="must call initialize first"):
-        model.get_value_ptr("Temperature")
-
-@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
-def test_update_raises_uninitialized():
-    model = BMIPhreeqcRM()
-    with pytest.raises(RuntimeError, match="must call initialize first"):
-        model.update()
-
-@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
-def test_update_until_raises_uninitialized():
-    model = BMIPhreeqcRM()
-    with pytest.raises(RuntimeError, match="must call initialize first"):
-        model.update_until(1.0)
-
-@pytest.mark.skip(reason="Is this needed?  Might be able to use %exception to implement?")
-def test_initialize_AdvectBMI():
-    model = BMIPhreeqcRM()
-
-    assert(not model._initialized)
-    model.initialize("AdvectBMI_py.yaml")
-    assert(model._initialized)
 
 def test_get_grid_size_AdvectBMI():
     model = BMIPhreeqcRM()
@@ -391,7 +347,6 @@ def test_get_value_ptr_ComponentCount():
 
     assert(component_count[0] == 8)
 
-@pytest.mark.skip(reason="This needs work")
 def test_get_value_ptr_failure():
     model = BMIPhreeqcRM()
     model.initialize("AdvectBMI_py.yaml")
@@ -401,8 +356,31 @@ def test_get_value_ptr_failure():
 
     for item in should_raise:
         print(f"testing {item}")
-        with pytest.raises(RuntimeError, match="This variable does not support get_value_ptr"):
+        with pytest.raises(RuntimeError, match=ERROR_GET_VALUE_PTR_NOT_SUPPORTED):
             arr = model.get_value_ptr(item)
+
+def test_read_only_vars():
+    model = BMIPhreeqcRM()
+    model.initialize("AdvectBMI_py.yaml")
+
+    # "Components" is currently excluded
+    readonly_list = model.get_readonly_var_names()
+
+    for item in readonly_list:
+        print(f"testing {item}")
+
+        itemsize = model.get_var_itemsize(item)
+        nbytes = model.get_var_nbytes(item)
+        if item == 'ErrorString':
+            assert itemsize == 0
+            assert nbytes == 0
+            continue
+        dim = nbytes // itemsize
+        vtype = model.get_var_type(item)
+        dest = np.empty(dim, dtype=vtype)
+
+        with pytest.raises(RuntimeError, match=ERROR_SET_VALUE_NOT_SUPPORTED):
+            model.set_value(item, dest)
 
 def test_get_value_Time():
     model = BMIPhreeqcRM()

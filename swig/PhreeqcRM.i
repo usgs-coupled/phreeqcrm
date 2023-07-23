@@ -22,6 +22,12 @@
 %{ 
 import numpy as np
 import phreeqcrm
+from enum import Enum, unique
+
+@unique
+class State(Enum):
+    UNINITIALIZED = 1
+    INITIALIZED = 2
 %}
 %include "typemaps.i"
 %include <std_vector.i>
@@ -443,6 +449,7 @@ def GetDoubleVector(self, v):
 
 #if defined(USE_YAML)
 #if defined(SWIGPYTHON)
+
 %exception Initialize {
   try {
     $action
@@ -451,12 +458,177 @@ def GetDoubleVector(self, v):
     SWIG_fail;
   }
 }
+
+%exception Initialize {
+  try {
+    $action
+  } catch (std::runtime_error &e) {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridEdgeCount {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridEdgeNodes {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridFaceCount {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridFaceEdges {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridFaceNodes {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridNodeCount {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridNodesPerFace {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridOrigin {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+// Should this be implemented? @todo
+%exception GetGridShape {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridSpacing {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridX {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridY {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception GetGridZ {
+  try {
+    $action
+  } catch (NotImplemented &e) {
+    PyErr_SetString(PyExc_NotImplementedError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception get_value_ptr_int {
+  try {
+    $action
+  } catch (std::runtime_error &e) {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception get_value_ptr_double {
+  try {
+    $action
+  } catch (std::runtime_error &e) {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception get_value_ptr_vector_strings {
+  try {
+    $action
+  } catch (std::runtime_error &e) {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+    SWIG_fail;
+  }
+}
+
+%exception SetValue {
+  try {
+    $action
+  } catch (std::runtime_error &e) {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+    SWIG_fail;
+  }
+}
+
 #endif
 #endif
 
 // %numpy_typemaps(int,    NPY_INT32  , int)
 
 %feature("pythonprepend") BMIPhreeqcRM::BMIPhreeqcRM() %{
+    self._state = State.UNINITIALIZED
     self._values = {}
     self._pointables = {}
     self._readonlys = {}
@@ -465,12 +637,71 @@ def GetDoubleVector(self, v):
 %feature("pythonappend") BMIPhreeqcRM::Initialize(std::string config_file="") %{
     self._pointables = {var.lower() for var in self.get_pointable_var_names()}
     self._readonlys = {var.lower() for var in self.get_readonly_var_names()}
+    self._state = State.INITIALIZED
 %}
 
 %feature("pythonappend") BMIPhreeqcRM::Finalize() %{
+    self._state = State.UNINITIALIZED
     self._values = {}
     self._pointables = {}
     self._readonlys = {}
+%}
+
+// initialize checks
+
+%feature("pythonprepend") BMIPhreeqcRM::GetGridSize(const int grid) %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+
+%feature("pythonprepend") BMIPhreeqcRM::GetInputItemCount() %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+
+%feature("pythonprepend") BMIPhreeqcRM::GetInputVarNames() %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+
+%feature("pythonprepend") BMIPhreeqcRM::GetOutputItemCount() %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+
+%feature("pythonprepend") BMIPhreeqcRM::GetOutputVarNames() %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+
+%feature("pythonprepend") BMIPhreeqcRM::GetVarItemsize(const std::string name) %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+
+%feature("pythonprepend") BMIPhreeqcRM::GetVarNbytes(const std::string name) %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+
+%feature("pythonprepend") BMIPhreeqcRM::GetVarType(const std::string name) %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+
+%feature("pythonprepend") BMIPhreeqcRM::GetVarUnits(const std::string name) %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+
+%feature("pythonprepend") BMIPhreeqcRM::Update() %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+
+%feature("pythonprepend") BMIPhreeqcRM::UpdateUntil(double end_time) %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
 %}
 
 %include "../src/BMIPhreeqcRM.h"
@@ -517,6 +748,11 @@ std::vector<std::string>& BMIPhreeqcRM::get_value_ptr_vector_strings(std::string
     if (v_enum != RMVARS::NotFound)
     {
         BMIVariant& bv = this->var_man->VariantMap[v_enum];
+        if (bv.GetVoidPtr() == nullptr)
+        {
+            this->var_man->task = VarManager::VAR_TASKS::GetPtr;
+            ((*this->var_man).*bv.GetFn())();
+        }
         return bv.GetStringVectorRef();
     }
     return err;
@@ -528,6 +764,10 @@ std::vector<std::string>& BMIPhreeqcRM::get_value_ptr_vector_strings(std::string
 %extend BMIPhreeqcRM { %pythoncode 
 %{ 
 def get_value_ptr(self, var_name):
+
+    if self._state != State.INITIALIZED:
+      raise RuntimeError("must call initialize first")
+
     var_name_lower = var_name.lower()
     if var_name_lower in self._values:
         return self._values[var_name_lower]
@@ -562,6 +802,10 @@ def get_value_ptr(self, var_name):
     return None
 
 def get_value(self, var_name, dest):
+
+    if self._state != State.INITIALIZED:
+      raise RuntimeError("must call initialize first")
+
     var_name_lower = var_name.lower()
     if var_name_lower in self._pointables:
         dest[:] = self.get_value_ptr(var_name_lower).flatten()
@@ -610,6 +854,9 @@ def get_value_at_indices(self, var_name, dest, indices):
     array_like
         Values at indices.
     """
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+
     dest[:] = self.get_value_ptr(var_name).take(indices)
     return dest
 
@@ -625,10 +872,18 @@ def set_value_at_indices(self, var_name, inds, src):
     indices : array_like
         Array of indices.
     """
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+
     val = self.get_value_ptr(var_name)
     val.flat[inds] = src
 
 def set_value(self, var_name, value):
+    '''@todo
+    '''
+    if self._state != State.INITIALIZED:
+      raise RuntimeError("must call initialize first")
+
     Nbytes = self.get_var_nbytes(var_name)
     Itemsize = self.get_var_itemsize(var_name)
     dim = Nbytes / Itemsize
