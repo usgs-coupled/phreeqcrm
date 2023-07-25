@@ -9,5 +9,9 @@ from .phreeqcrm import (
     IRM_INVALIDCOL,
     IRM_INVALIDROW,
     IRM_OK,
-    IRM_OUTOFMEMORY
+    IRM_OUTOFMEMORY,
+    BoolVector,
+    DoubleVector,
+    IntVector,
+    StringVector
 )
