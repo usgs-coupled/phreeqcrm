@@ -8,9 +8,9 @@ version = "0.0.5"
 description = "A reaction module for transport simulators based on the geochemical model PHREEQC."
 readme = "README.md"
 requires-python = ">=3.8"
-license = "CC0-1.0"
 classifiers = [
   "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
