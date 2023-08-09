@@ -264,11 +264,23 @@ if(MSVC AND BUILD_SHARED_LIBS)
 endif()
 
 if(MSVC AND PHREEQCRM_WITH_YAML_CPP)
-  if(NOT yaml-cpp_STATIC)
-    # copy yaml-cpp dll
-    add_custom_command(TARGET TestRM POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:yaml-cpp> $<TARGET_FILE_DIR:TestRM>
-    )
+  if(TARGET yaml-cpp::yaml-cpp)
+    get_target_property(yaml-cpp-type yaml-cpp::yaml-cpp TYPE)
+  else()
+    get_target_property(yaml-cpp-type yaml-cpp TYPE)
+  endif()
+  if(yaml-cpp-type STREQUAL SHARED_LIBRARY)
+    if(TARGET yaml-cpp::yaml-cpp)
+      # copy yaml-cpp dll
+      add_custom_command(TARGET TestRM POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:yaml-cpp::yaml-cpp> $<TARGET_FILE_DIR:TestRM>
+      )
+    else()
+      # copy yaml-cpp dll
+      add_custom_command(TARGET TestRM POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:yaml-cpp> $<TARGET_FILE_DIR:TestRM>
+      )
+    endif()
   endif()
 endif()
 
