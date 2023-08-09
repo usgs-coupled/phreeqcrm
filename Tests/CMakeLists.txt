@@ -261,7 +261,10 @@ if(MSVC AND BUILD_SHARED_LIBS)
   add_custom_command(TARGET TestRM POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PhreeqcRM> $<TARGET_FILE_DIR:TestRM>
   )
-  if(PHREEQCRM_WITH_YAML_CPP)
+endif()
+
+if(MSVC AND PHREEQCRM_WITH_YAML_CPP)
+  if(NOT yaml-cpp_STATIC)
     # copy yaml-cpp dll
     add_custom_command(TARGET TestRM POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:yaml-cpp> $<TARGET_FILE_DIR:TestRM>
