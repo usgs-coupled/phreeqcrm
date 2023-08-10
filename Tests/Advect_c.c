@@ -472,6 +472,7 @@ void Advect_c()
 		free(components[i]);
 	}
 	free(components);
+	free(c_well);
 	free(ic1);
 	free(ic2);
 	free(f1);
@@ -481,11 +482,17 @@ void Advect_c()
 	free(bc_conc);
 	free(c);
 	free(density);
+	free(gfw);
 	free(temperature);
 	free(pressure);
 	free(hydraulic_K);
 	free(volume);
 	free(sat_calc);
+	free(module_cells);
+	free(sc);
+	free(ec);
+	free(tc);
+	free(p_atm);
 }
 void advection_c(double* c, double* bc_conc, int ncomps, int nxyz, int dim)
 {
@@ -619,11 +626,11 @@ int example_selected_output(int id)
 	for (i = 0; i < RM_GetComponentCount(id); i++)
 	{
 		status = RM_GetComponent(id, i, line1, 100);
-		if (strcmp(line, "H") != 0 &&
-			strcmp(line, "O") != 0 &&
-			strcmp(line, "charge") != 0 &&
-			strcmp(line, "Charge") != 0 &&
-			strcmp(line, "H2O") != 0)
+		if (strcmp(line1, "H") != 0 &&
+			strcmp(line1, "O") != 0 &&
+			strcmp(line1, "charge") != 0 &&
+			strcmp(line1, "Charge") != 0 &&
+			strcmp(line1, "H2O") != 0)
 		{
 			strcat(input, "    ");
 			strcat(input, line1);
@@ -705,6 +712,8 @@ int example_selected_output(int id)
 
 	/*print selected output data block with the following line*/
 	//fprintf(stdout, "%s", input);
+
+	free(input);
 
 	return(0);
 }

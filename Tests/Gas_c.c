@@ -198,6 +198,9 @@ void Gas_c()
 		free(gas_comps[i]);
 	}
 	free(gas_comps);
+	free(gas_p);
+	free(gas_phi);
+	free(gas_volume);
 	free(ic1);
 	free(ic2);
 	free(f1);
