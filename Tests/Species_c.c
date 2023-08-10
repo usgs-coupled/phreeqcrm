@@ -429,6 +429,7 @@ void Species_c()
 		free(components[i]);
 	}
 	free(components);
+	free(c_well);
 	free(ic1);
 	free(ic2);
 	free(f1);
@@ -437,11 +438,19 @@ void Species_c()
 	free(bc_f1);
 	free(bc_conc);
 	free(c);
+	free(gfw);
+	free(species_d);
 	free(species_c);
 	free(species_log10gammas);
+	free(species_log10molalities);
+	free(species_z);
 	free(density);
 	free(temperature);
 	free(pressure);
+	free(volume);
+	free(module_cells);
+	free(tc);
+	free(p_atm);
 }
 void speciesadvection_c(double* c, double* bc_conc, int ncomps, int nxyz, int dim)
 {

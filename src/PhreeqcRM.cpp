@@ -378,6 +378,8 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 }
 PhreeqcRM::~PhreeqcRM(void)
 {
+	this->CloseFiles();
+
 	for (auto worker : this->GetWorkers())
 	{
 		delete worker;
@@ -7436,6 +7438,9 @@ PhreeqcRM::OpenFiles(void)
 	{
 		if (this->mpi_myself == 0)
 		{
+			// avoid memory leaks if already open
+			this->CloseFiles();
+
 			// open echo and log file, prefix.log.txt
 			std::string ln = this->file_prefix;
 			ln.append(".log.txt");

@@ -137,6 +137,7 @@ BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads)
 // Destructor
 BMIPhreeqcRM::~BMIPhreeqcRM()
 {
+	delete(this->var_man);
 }
 void BMIPhreeqcRM::AddOutputVars(std::string option, std::string def)
 {

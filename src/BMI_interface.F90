@@ -983,7 +983,7 @@
     CHARACTER(len=*), INTENT(in) :: var
     INTEGER, INTENT(out) :: itemsize
     itemsize = RMF_BMI_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
-    bmif_get_var_itemsize = success(bmif_get_var_itemsize)
+    bmif_get_var_itemsize = success(itemsize)
     END FUNCTION bmif_get_var_itemsize
 
     !> @a bmif_get_var_nbytes retrieves the total number of bytes needed for a 
