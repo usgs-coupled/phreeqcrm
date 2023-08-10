@@ -7,6 +7,60 @@
   },
   "configurePresets": [
     {
+      "name": "cmemcheck",
+      "inherits": "ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        },
+        "PHREEQCRM_DISABLE_OPENMP": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "cmemcheck-no-omp",
+      "inherits": "ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Debug"
+        },
+        "PHREEQCRM_DISABLE_OPENMP": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
       "name": "default",
       "hidden": true,
       "binaryDir": "${sourceDir}/_builds/${presetName}"
@@ -58,7 +112,7 @@
           "value": "ON"
         }
       }
-    },  
+    },
     {
       "name": "ninja-static-yaml-debug",
       "inherits": "ninja-static-yaml",
@@ -605,6 +659,14 @@
   ],
   "buildPresets": [
     {
+      "name": "cmemcheck",
+      "configurePreset": "cmemcheck"
+    },
+    {
+      "name": "cmemcheck-no-omp",
+      "configurePreset": "cmemcheck-no-omp"
+    },
+    {
       "name": "ninja-static-debug",
       "configurePreset": "ninja-static-debug"
     },
@@ -766,6 +828,18 @@
     }    
   ],
   "testPresets": [
+    {
+      "name": "cmemcheck",
+      "configurePreset": "cmemcheck",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "cmemcheck-no-omp",
+      "configurePreset": "cmemcheck-no-omp",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
     {
       "name": "ninja-static-debug",
       "configurePreset": "ninja-static-debug",

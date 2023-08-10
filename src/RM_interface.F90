@@ -7647,14 +7647,17 @@
     IMPLICIT NONE
     real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: t
     INTEGER, INTENT(in) :: n1
-    INTEGER :: errors, t1
-    t1 = size(t,1)
-    errors = 0
-    if (t1 .ne. n1)  then
-        if (allocated(t)) deallocate(t)
-        allocate(t(n1))    
+    INTEGER :: t1
+    if (allocated(t)) then
+        t1 = size(t,1)
+        if (t1 .ne. n1) then
+            deallocate(t)
+            allocate(t(n1))
+        endif
+    else
+        allocate(t(n1))
     endif
-    allocate_double_1d = errors
+    allocate_double_1d = 0
     END FUNCTION allocate_double_1d
 
     INTEGER FUNCTION Chk_Double2D(id, t, n1, n2, var, func)
