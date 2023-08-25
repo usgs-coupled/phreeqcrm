@@ -1,4 +1,4 @@
-#ifdef USE_YAML 
+#if defined(USE_YAML) 
     !> @file YAML_interface.F90
     !> @brief YAMLPhreeqcRM module definition 
     !>

@@ -39,6 +39,9 @@ BMIVariant::BMIVariant(const std::string& name_in, const std::string& units_in, 
 	NotImplemented = false;
 	VoidPtr = NULL;
 	fn = NULL;
+#if defined(WITH_PYBIND11)
+	hasPyArr = false;
+#endif
 }
 void BMIVariant::CopyScalars(BMIVariant& bv)
 {
@@ -88,4 +91,7 @@ void BMIVariant::Clear()
 	VoidPtr = NULL;
 	fn = NULL;
 	CharVector.clear();
+#if defined(WITH_PYBIND11)
+	hasPyArr = false;
+#endif
 }

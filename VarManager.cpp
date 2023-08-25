@@ -4,6 +4,15 @@
 #include "RMVARS.h"
 #include <assert.h>
 #include <algorithm>
+
+#if defined(swig_python_EXPORTS)
+const char* ERROR_GET_VALUE_PTR_NOT_SUPPORTED = "get_value_ptr not supported for this variable.";
+const char* ERROR_SET_VALUE_NOT_SUPPORTED     = "set_value not supported for this variable.";
+#else
+const char* ERROR_GET_VALUE_PTR_NOT_SUPPORTED = "GetValuePtr not supported for this variable.";
+const char* ERROR_SET_VALUE_NOT_SUPPORTED     = "SetValue not supported for this variable.";
+#endif
+
 VarManager::VarManager(PhreeqcRM* rm_ptr_in) 
 {
 	this->VariantMap[RMVARS::ComponentCount] = 
@@ -26,8 +35,6 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::Gfw_Var, "Gfw");
 	this->VariantMap[RMVARS::GridCellCount] =
 		BMIVariant(&VarManager::GridCellCount_Var, "GridCellCount");
-	this->VariantMap[RMVARS::NthSelectedOutput] =
-		BMIVariant(&VarManager::NthSelectedOutput_Var, "NthSelectedOutput");
 	this->VariantMap[RMVARS::NthSelectedOutput] =
 		BMIVariant(&VarManager::NthSelectedOutput_Var, "NthSelectedOutput");
 	this->VariantMap[RMVARS::Porosity] =
@@ -54,10 +61,6 @@ VarManager::VarManager(PhreeqcRM* rm_ptr_in)
 		BMIVariant(&VarManager::SolutionVolume_Var, "SolutionVolume");
 	this->VariantMap[RMVARS::Temperature] =
 		BMIVariant(&VarManager::Temperature_Var, "Temperature");
-#if defined(WITH_PYBIND11)
-	//this->VariantMap[RMVARS::Temperature_as_strings] =
-	//	BMIVariant(&VarManager::Temperature_as_strings_Var, "Temperature_as_strings");
-#endif
 	this->VariantMap[RMVARS::Time] =
 		BMIVariant(&VarManager::Time_Var, "Time");
 	this->VariantMap[RMVARS::TimeStep] =
@@ -181,16 +184,16 @@ void VarManager::ComponentCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}	
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -217,7 +220,7 @@ void VarManager::Components_Var()
 		int Nbytes = (int)(size * comps.size());
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-#if defined(WITH_PYBIND11)
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
 		std::ostringstream oss;
 		oss << "<U" << size;
 		bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", oss.str());
@@ -247,16 +250,16 @@ void VarManager::Components_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -292,7 +295,7 @@ void VarManager::Concentrations_Var()
 			break;
 		}
 		bv.SetBasic(units, true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "float64");
+		bv.SetTypes("double", "real(kind=8)", "float64"); 
 		//rm_ptr->GetConcentrations(bv.GetDoubleVectorRef());
 		//rm_ptr->GetConcentrations(this->VarExchange.GetDoubleVectorRef());
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount() * rm_ptr->GetComponentCount());
@@ -374,7 +377,7 @@ void VarManager::DensityCalculated_Var()
 	}
 	case VarManager::VAR_TASKS::SetVar:
 	{
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	}
 	case VarManager::VAR_TASKS::no_op:
@@ -410,7 +413,7 @@ void VarManager::DensityUser_Var()
 		//this->PointerSet.insert(RMVARS::DensityUser);
 		//this->UpdateSet.insert(RMVARS::DensityUser);
 		//break;
-		assert(false);
+		throw std::runtime_error(ERROR_GET_VALUE_PTR_NOT_SUPPORTED);		
 		break;
 	}
 	case VarManager::VAR_TASKS::RMUpdate:
@@ -420,13 +423,14 @@ void VarManager::DensityUser_Var()
 		//rm_ptr->GetConcentrations(c);
 		//BMIVariant& bv_c = this->VariantMap[RMVARS::Concentrations];
 		//bv_c.SetDoubleVector(c);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
 	{
 		//rm_ptr->GetDensityUser(this->VarExchange.GetDoubleVectorRef());
 		//bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
-		assert(false);
+		throw std::runtime_error("GetValue not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
@@ -460,7 +464,13 @@ void VarManager::ErrorString_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("error", false, true, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
+		std::ostringstream oss;
+		oss << "<U" << Itemsize;		// need null counted?
+		bv.SetTypes("std::string", "character(len=:),allocatable,dimension(:)", oss.str());
+#else
+		bv.SetTypes("std::string", "character", "str");
+#endif
 		this->VarExchange.GetStringRef() = rm_ptr->GetErrorString(); 
 		bv.GetStringRef() = rm_ptr->GetErrorString();
 		bv.SetInitialized(true);
@@ -469,7 +479,7 @@ void VarManager::ErrorString_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		assert(false);
+		throw std::runtime_error(ERROR_GET_VALUE_PTR_NOT_SUPPORTED);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -482,7 +492,7 @@ void VarManager::ErrorString_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
@@ -502,7 +512,13 @@ void VarManager::FilePrefix_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
-		bv.SetTypes("std::string", "character", "");
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
+		std::ostringstream oss;
+		oss << "<U" << Itemsize;		// need null counted?
+		bv.SetTypes("std::string", "character(len=:),allocatable,dimension(:)", oss.str());
+#else
+		bv.SetTypes("std::string", "character", "str");
+#endif
 		//this->VarExchange.GetStringRef() = rm_ptr->GetFilePrefix();
 		bv.GetStringRef() = rm_ptr->GetFilePrefix();
 		//bv.SetInitialized(true);
@@ -511,7 +527,7 @@ void VarManager::FilePrefix_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		assert(false);
+		throw std::runtime_error(ERROR_GET_VALUE_PTR_NOT_SUPPORTED);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -528,7 +544,7 @@ void VarManager::FilePrefix_Var()
 		int Nbytes = Itemsize;
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize 
 		bv.SetBasic("prefix", true, true, false, Nbytes, Itemsize);
-		//bv.SetTypes("std::string", "character", "");
+		//bv.SetTypes("std::string", "character", "str");
 		rm_ptr->SetFilePrefix(this->VarExchange.GetStringRef());
 		bv.GetStringRef() = this->VarExchange.GetStringRef();
 		break;
@@ -575,7 +591,7 @@ void VarManager::Gfw_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
@@ -617,16 +633,16 @@ void VarManager::GridCellCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -654,9 +670,13 @@ void VarManager::NthSelectedOutput_Var()
 	switch (this->task)
 	{
 	case VarManager::VAR_TASKS::GetPtr:
+	{
+		throw std::runtime_error(ERROR_GET_VALUE_PTR_NOT_SUPPORTED);
+		break;
+	}
 	case VarManager::VAR_TASKS::GetVar:
 	{
-		assert(false);
+		throw std::runtime_error("GetValue not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
@@ -668,7 +688,7 @@ void VarManager::NthSelectedOutput_Var()
 	case VarManager::VAR_TASKS::RMUpdate:
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -690,8 +710,6 @@ void VarManager::SaturationCalculated_Var()
 		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
 		bv.SetBasic("unitless", false, true, true, Nbytes, Itemsize);
 		bv.SetTypes("double", "real(kind=8)", "float64");
-		//rm_ptr->GetSaturation(this->VarExchange.GetDoubleVectorRef());
-		//rm_ptr->GetSaturation(bv.GetDoubleVectorRef());
 		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
 		bv.SetInitialized(true);
@@ -725,7 +743,7 @@ void VarManager::SaturationCalculated_Var()
 	}
 	case VarManager::VAR_TASKS::SetVar:
 	{
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	}
 	case VarManager::VAR_TASKS::no_op:
@@ -755,13 +773,13 @@ void VarManager::SaturationUser_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		assert(false);
+		throw std::runtime_error(ERROR_GET_VALUE_PTR_NOT_SUPPORTED);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("GetValue not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::RMUpdate:
@@ -823,7 +841,7 @@ void VarManager::SelectedOutput_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		assert(false);
+		throw std::runtime_error(ERROR_GET_VALUE_PTR_NOT_SUPPORTED);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -834,10 +852,10 @@ void VarManager::SelectedOutput_Var()
 	}
 	case VarManager::VAR_TASKS::Update:
 	case VarManager::VAR_TASKS::RMUpdate:
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
@@ -866,7 +884,7 @@ void VarManager::SelectedOutputColumnCount_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		assert(false);
+		throw std::runtime_error(ERROR_GET_VALUE_PTR_NOT_SUPPORTED);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -876,16 +894,16 @@ void VarManager::SelectedOutputColumnCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -914,7 +932,7 @@ void VarManager::SelectedOutputCount_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		assert(false);
+		throw std::runtime_error(ERROR_GET_VALUE_PTR_NOT_SUPPORTED);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -924,16 +942,16 @@ void VarManager::SelectedOutputCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -968,10 +986,16 @@ void VarManager::SelectedOutputHeadings_Var()
 			}
 			int Itemsize = (int)size;
 
-			int Nbytes = (int)(size * headings.size());// +this->AutoOutputVars.size();
+			int Nbytes = (int)(size * headings.size());
 			//name, std::string units, set, get, ptr, Nbytes, Itemsize
 			bv.SetBasic("names", false, true, false, Nbytes, Itemsize);
-			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "");
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
+			std::ostringstream oss;
+			oss << "<U" << size;
+			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", oss.str());
+#else
+			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "str");
+#endif
 		}
 		else
 		{
@@ -984,7 +1008,7 @@ void VarManager::SelectedOutputHeadings_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		assert(false);
+		throw std::runtime_error(ERROR_GET_VALUE_PTR_NOT_SUPPORTED);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -1007,16 +1031,16 @@ void VarManager::SelectedOutputHeadings_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -1046,7 +1070,7 @@ void VarManager::SelectedOutputRowCount_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		assert(false);
+		throw std::runtime_error(ERROR_GET_VALUE_PTR_NOT_SUPPORTED);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -1056,16 +1080,16 @@ void VarManager::SelectedOutputRowCount_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -1113,7 +1137,7 @@ void VarManager::SolutionVolume_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
@@ -1234,7 +1258,7 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 	{
 	case VarManager::VAR_TASKS::GetPtr:
 	{
-		assert(false);
+		throw std::runtime_error(ERROR_GET_VALUE_PTR_NOT_SUPPORTED);
 		break;
 	}
 	case VarManager::VAR_TASKS::GetVar:
@@ -1244,16 +1268,16 @@ void VarManager::CurrentSelectedOutputUserNumber_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::RMUpdate:
 	{
-		assert(false);
+		throw std::runtime_error("RMUpdate not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Update:
 	{
-		assert(false);
+		throw std::runtime_error("Update not supported for this variable.");
 		break;
 	}
 	case VarManager::VAR_TASKS::Info:
@@ -1388,6 +1412,57 @@ void VarManager::Pressure_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
+void VarManager::SelectedOutputOn_Var()
+{
+	RMVARS VARS_myself = RMVARS::SelectedOutputOn;
+	this->SetCurrentVar(VARS_myself);
+	BMIVariant& bv = this->VariantMap[VARS_myself];
+	if (!bv.GetInitialized())
+	{
+		int Itemsize = (int)sizeof(int);
+		int Nbytes = (int)sizeof(int);
+		//std::string units, set, get, ptr, Nbytes, Itemsize
+		bv.SetBasic("int", true, true, true, Nbytes, Itemsize);
+		bv.SetTypes("int", "integer", "int32");
+		bv.SetIVar(rm_ptr->GetSelectedOutputOn() ? 1 : 0 );
+		bv.SetInitialized(true);
+	}
+	switch (this->task)
+	{
+	case VarManager::VAR_TASKS::GetPtr:
+	{
+		int v = rm_ptr->GetSelectedOutputOn() ? 1 : 0;
+		bv.SetIVar(v);
+		bv.SetVoidPtr((void*)(bv.GetIVarPtr()));
+		this->PointerSet.insert(VARS_myself);
+		this->UpdateSet.insert(VARS_myself);
+		break;
+	}
+	case VarManager::VAR_TASKS::Update:
+	case VarManager::VAR_TASKS::RMUpdate:
+	case VarManager::VAR_TASKS::GetVar:
+	{
+		int v = rm_ptr->GetSelectedOutputOn() ? 1 : 0;
+		this->VarExchange.SetIVar(v);
+		bv.SetIVar(v);
+		break;
+	}
+	case VarManager::VAR_TASKS::SetVar:
+	{
+		int v = this->VarExchange.GetIVar();
+		bv.SetIVar(v);
+		rm_ptr->SetSelectedOutputOn(v != 0);
+		break;
+	}
+	case VarManager::VAR_TASKS::Info:
+	case VarManager::VAR_TASKS::no_op:
+		break;
+	}
+	this->VarExchange.CopyScalars(bv);
+	this->SetCurrentVar(RMVARS::NotFound);
+}
+#else
 void VarManager::SelectedOutputOn_Var()
 {
 	RMVARS VARS_myself = RMVARS::SelectedOutputOn;
@@ -1399,7 +1474,7 @@ void VarManager::SelectedOutputOn_Var()
 		int Nbytes = (int)sizeof(bool);
 		//std::string units, set, get, ptr, Nbytes, Itemsize
 		bv.SetBasic("bool", true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("bool", "logical", "");
+		bv.SetTypes("bool", "logical", "bool");
 		bv.SetBVar(rm_ptr->GetSelectedOutputOn());
 		bv.SetInitialized(true);
 	}
@@ -1419,6 +1494,7 @@ void VarManager::SelectedOutputOn_Var()
 	case VarManager::VAR_TASKS::GetVar:
 	{
 		bool v = rm_ptr->GetSelectedOutputOn();
+		this->VarExchange.SetBVar(v);
 		bv.SetBVar(v);
 		break;
 	}
@@ -1436,7 +1512,7 @@ void VarManager::SelectedOutputOn_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
-
+#endif
 void VarManager::Temperature_Var()
 {
 	RMVARS VARS_myself = RMVARS::Temperature;
@@ -1485,57 +1561,6 @@ void VarManager::Temperature_Var()
 	this->VarExchange.CopyScalars(bv);
 	this->SetCurrentVar(RMVARS::NotFound);
 }
-#if defined(WITH_PYBIND11)
-void VarManager::Temperature_as_strings_Var()
-{
-	RMVARS VARS_myself = RMVARS::Temperature_as_strings;
-	this->SetCurrentVar(VARS_myself);
-	BMIVariant& bv = this->VariantMap[VARS_myself];
-	if (!bv.GetInitialized())
-	{
-		int Itemsize = sizeof(double);
-		int Nbytes = Itemsize * rm_ptr->GetGridCellCount();
-		//name, std::string units, set, get, ptr, Nbytes, Itemsize  
-		bv.SetBasic("C", true, true, true, Nbytes, Itemsize);
-		bv.SetTypes("double", "real(kind=8)", "float64");
-		//this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
-		//bv.GetDoubleVectorRef() = rm_ptr->GetTemperature();
-		this->VarExchange.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
-		bv.GetDoubleVectorRef().resize(rm_ptr->GetGridCellCount());
-		bv.SetInitialized(true);
-	}
-	switch (this->task)
-	{
-	case VarManager::VAR_TASKS::GetPtr:
-	{
-		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
-		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
-		bv.SetVoidPtr((void*)(bv.GetDoubleVectorPtr()));
-		this->PointerSet.insert(VARS_myself);
-		this->UpdateSet.insert(VARS_myself);
-		break;
-	}
-	case VarManager::VAR_TASKS::GetVar:
-	case VarManager::VAR_TASKS::Update:
-	case VarManager::VAR_TASKS::RMUpdate:
-	{
-		this->VarExchange.GetDoubleVectorRef() = rm_ptr->GetTemperature();
-		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
-		break;
-	}
-	case VarManager::VAR_TASKS::SetVar:
-		rm_ptr->SetTemperature(this->VarExchange.GetDoubleVectorRef());
-		bv.SetDoubleVector(this->VarExchange.GetDoubleVectorRef());
-		break;
-	case VarManager::VAR_TASKS::no_op:
-	case VarManager::VAR_TASKS::Info:
-		break;
-	}
-	this->VarExchange.CopyScalars(bv);
-	this->SetCurrentVar(RMVARS::NotFound);
-}
-#endif
-
 void VarManager::Viscosity_Var()
 {
 	RMVARS VARS_myself = RMVARS::Viscosity;
@@ -1574,7 +1599,7 @@ void VarManager::Viscosity_Var()
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
-		assert(false);
+		throw std::runtime_error(ERROR_SET_VALUE_NOT_SUPPORTED);
 		break;
 	case VarManager::VAR_TASKS::no_op:
 	case VarManager::VAR_TASKS::Info:
@@ -1619,7 +1644,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH -LA('H+')" << std::endl;
 				line_no += 10;
@@ -1629,7 +1657,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH -LA('e-')" << std::endl;
 				line_no += 10;
@@ -1639,7 +1670,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH ALK" << std::endl;
 				line_no += 10;
@@ -1649,7 +1683,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH MU" << std::endl;
 				line_no += 10;
@@ -1659,7 +1696,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "kg", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH TOT('water')" << std::endl;
 				line_no += 10;
@@ -1669,7 +1709,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "eq kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH CHARGE_BALANCE / TOT('water')" << std::endl;
 				line_no += 10;
@@ -1679,7 +1722,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "-", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH PERCENT_ERROR" << std::endl;
 				line_no += 10;
@@ -1689,7 +1735,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "uS cm-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH SC" << std::endl;
 				line_no += 10;
@@ -1722,7 +1771,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH TOT('" << *item_it << "')\n";
 				line_no += 10;
@@ -1756,7 +1808,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
@@ -1790,7 +1845,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "log -", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH LA('" << *item_it << "')\n";
 				line_no += 10;
@@ -1829,7 +1887,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH TOT('" << *jit << "')\n";
 					line_no += 10;
@@ -1847,7 +1908,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
@@ -1886,7 +1950,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol kgw-1", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH TOT('" << *jit << "')\n";
 					line_no += 10;
@@ -1904,7 +1971,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "log mol kgw-1", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH LM('" << *item_it << "')\n";
 				line_no += 10;
@@ -1939,7 +2009,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH EQUI('" << *item_it << "')\n";
 					line_no += 10;
@@ -1949,7 +2022,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH EQUI_DELTA('" << *item_it << "')\n";
 					line_no += 10;
@@ -1984,7 +2060,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "unitless", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH SI('" << *item_it << "')\n";
 				line_no += 10;
@@ -2018,7 +2097,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "L", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH SYS('gas') * GAS_VM\n";
 					line_no += 10;
@@ -2032,7 +2114,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH GAS('" << *item_it << "')\n";
 					line_no += 10;
@@ -2042,7 +2127,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "atm", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH PR_P('" << *item_it << "')\n";
 					line_no += 10;
@@ -2052,7 +2140,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "atm-1", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH PR_PHI('" << *item_it << "')\n";
 					line_no += 10;
@@ -2088,7 +2179,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH KIN('" << *item_it << "')\n";
 					line_no += 10;
@@ -2098,7 +2192,10 @@ void VarManager::GenerateAutoOutputVars()
 					BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 					bv.SetTypes("double", "real(kind=8)", "float64");
 					bv.SetColumn((int)AutoOutputVars.size());
-					AutoOutputVars[name] = bv;
+					std::string name_lc = name;
+					std::transform(name_lc.begin(), name_lc.end(),
+						name_lc.begin(), tolower);
+					AutoOutputVars[name_lc] = bv;
 					headings << name << " \\ \n";
 					code << line_no << " PUNCH KIN_DELTA('" << *item_it << "')\n";
 					line_no += 10;
@@ -2140,7 +2237,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "mol", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH S_S('" << *item_it << "')\n";
 				line_no += 10;
@@ -2175,7 +2275,10 @@ void VarManager::GenerateAutoOutputVars()
 				BMIVariant bv(name, "unknown", false, true, false, Nbytes, Itemsize);
 				bv.SetTypes("double", "real(kind=8)", "float64");
 				bv.SetColumn((int)AutoOutputVars.size());
-				AutoOutputVars[name] = bv;
+				std::string name_lc = name;
+				std::transform(name_lc.begin(), name_lc.end(),
+					name_lc.begin(), tolower);
+				AutoOutputVars[name_lc] = bv;
 				headings << name << " \\ \n";
 				code << line_no << " PUNCH CALC_VALUE('" << *item_it << "')\n";
 				line_no += 10;
@@ -2209,6 +2312,11 @@ void VarManager::GenerateAutoOutputVars()
 		//std::cerr << data_block.str();
 	}
 	//BMISelecteOutputDefs.clear();
+	//auto auto_it = AutoOutputVars.begin();
+	//for (; auto_it != AutoOutputVars.end(); auto_it++)
+	//{
+	//	std::cerr << auto_it->first << "   " << auto_it->second.GetName() << std::endl;
+	//}
 	return;
 }
 int VarManager::ProcessAutoOutputVarDef(bool tf_only, std::string& def)

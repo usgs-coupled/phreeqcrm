@@ -41,9 +41,6 @@ enum class RMVARS {
 	Pressure,
 	SelectedOutputOn,
 	Temperature,
-#if defined(WITH_PYBIND11)
-	Temperature_as_strings,
-#endif
 	Viscosity,
 	NotFound
 };

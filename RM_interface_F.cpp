@@ -813,7 +813,9 @@ RMF_GetFilePrefix(int * id, char *prefix, int *l)
 	PhreeqcRM * Reaction_module_ptr = PhreeqcRM::GetInstance(*id);
 	if (Reaction_module_ptr)
 	{
-		rmpadfstring(prefix, Reaction_module_ptr->GetFilePrefix().c_str(), (unsigned int) *l);
+		std::string str = Reaction_module_ptr->GetFilePrefix();
+		rmpadfstring(prefix, str.c_str(), (unsigned int) *l);
+		*l = (int)str.size();
 		return IRM_OK;
 	}
 	return IRM_BADINSTANCE;

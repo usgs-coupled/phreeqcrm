@@ -47,7 +47,7 @@ public:
     static int              CreateBMIModule();
     static int              CreateBMIModule(int nxyz, MP_TYPE nthreads);
     static IRM_RESULT       DestroyBMIModule(int n);
-    static BMIPhreeqcRM* GetInstance(int n);
+    static BMIPhreeqcRM*    GetInstance(int n);
     /**
     Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM.
     Definition of the number of cells and threads (or MPI communicator) is deferred.
@@ -59,11 +59,11 @@ public:
     constructor requires two arguments: the number of cells in the user's
     model, and either (a) the number of threads for OpenMP parallelization, or
     (b) an MPI communicator.
-    @param ngrid Number of cells in the user's model. A value of zero causes
-    the program to set nthreads to the number of logical processors of the
-    computer.
+    @param ngrid Number of cells in the user's model. 
     @param nthreads Number of threads for parallelization with OpenMP or
-    an MPI communicator if PhreeqcRM is compiled with MPI.
+    an MPI communicator if PhreeqcRM is compiled with MPI. With OpenMP,
+    a value of zero causes the program to set nthreads to the number 
+    of logical processors of the computer.
     @retval A BMIPhreeqcRM instance.
     @par C++ Example:
     @htmlonly
@@ -78,9 +78,9 @@ public:
     </CODE>
     @endhtmlonly
     */
-    BMIPhreeqcRM(int ngrid, int nthreads);
+    BMIPhreeqcRM(int ngrid, MP_TYPE nthreads);
 
-    virtual ~BMIPhreeqcRM();
+    ~BMIPhreeqcRM() override;
 
     // Model control functions.
     /**
@@ -91,12 +91,13 @@ public:
     @htmlonly
     <CODE>
     <PRE>
-    LoadDatabase: phreeqc.dat
-    RunFile:
-      workers: true
-      initial_phreeqc: true
-      utility: true
-      chemistry_name: advect.pqi
+- key: LoadDatabase
+  database: phreeqc.dat
+- key: RunFile
+  workers: true
+  initial_phreeqc: true
+  utility: true
+  chemistry_name: advect.pqi
     </PRE>
     </CODE>
     @endhtmlonly
@@ -210,7 +211,7 @@ public:
     @par MPI:
     Called by root, workers must be in the loop of @ref MpiWorker.
      */
-    void Initialize(std::string config_file) override;
+    void Initialize(std::string config_file = "") override;
     /**
     @a Update runs PhreeqcRM for one time step. This method is equivalent to
     @ref RunCells. PhreeqcRM will equilibrate the solutions with all equilibrium
@@ -548,6 +549,11 @@ public:
      */
     std::vector<std::string> GetPointableVarNames();
 
+    /**
+    @todo
+    */
+    std::vector<std::string> GetReadOnlyVarNames();
+
     // Variable information functions
     /**
     @a GetVarGrid returns a value of 1, indicating points.
@@ -559,12 +565,7 @@ public:
     @retval 1 BMIPhreeqcRM cells derive meaning from the user's
     model.
     */
-#if defined(WITH_PYBIND11)
-    // see https://bmi-spec.readthedocs.io/en/latest/#get-var-grid
     int GetVarGrid(const std::string name) override { return 0; }
-#else
-    int GetVarGrid(const std::string name) override { return 1; }
-#endif
 
     /**
     @a GetVarType retrieves the type of a variable
@@ -918,11 +919,13 @@ public:
     data type the void pointer should be cast to:
     @n "ComponentCount": int*;
     @n "Concentrations": double*;
+    @n "DensityCalculated": double*;
     @n "Gfw": double*;
     @n "GridCellCount": int*;
     @n "Porosity": double*;
     @n "Pressure": double*;
     @n "SaturationCalculated": double*;
+    @n "SelectedOutputOn": bool*;
     @n "SolutionVolume": double*;
     @n "Temperature": double*;
     @n "Time": double*;
@@ -986,7 +989,7 @@ public:
     */
     void SetValue(const std::string name, bool src);
     /*!
-    * \overload void SetValue(const std::string name, char* src);
+    * \overload void SetValue(const std::string name, const char* src);
     */
     void SetValue(const std::string name, const char* src);
     /*!
@@ -1224,13 +1227,17 @@ public:
     bool _initialized;   // { var_man != nullptr }
 #endif
 
+#if defined(SWIG) || defined(swig_python_EXPORTS)
+    void get_value_ptr_double(std::string var, double** ARGOUTVIEW_ARRAY1, int* DIM1);
+    void get_value_ptr_int(std::string var, int** ARGOUTVIEW_ARRAY1, int* DIM1);
+    std::vector<std::string>& get_value_ptr_vector_strings(std::string var);
+#endif
+
 protected:
     void Construct(Initializer initializer) override;
 
 private:
     //friend class RM_interface;
-    static std::map<size_t, BMIPhreeqcRM*> Instances;
-    static size_t InstancesIndex;
     VarManager* var_man;
 
     void ClearBMISelectedOutput() override;

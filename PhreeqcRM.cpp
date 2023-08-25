@@ -62,8 +62,8 @@
 
 #include "Phreeqc.h"
 #include "IPhreeqcPhast.h"
-std::map<size_t, PhreeqcRM*> PhreeqcRM::Instances;
-size_t PhreeqcRM::InstancesIndex = 0;
+
+
 
 //// static PhreeqcRM methods
 /* ---------------------------------------------------------------------- */
@@ -71,16 +71,7 @@ void
 PhreeqcRM::CleanupReactionModuleInstances(void)
 /* ---------------------------------------------------------------------- */
 {
-	std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.begin();
-	std::vector<PhreeqcRM*> rm_list;
-	for ( ; it != PhreeqcRM::Instances.end(); it++)
-	{
-		rm_list.push_back(it->second);
-	}
-	for (size_t i = 0; i < rm_list.size(); i++)
-	{
-		delete rm_list[i];
-	}
+	PhreeqcRM::DestroyAll();
 }
 /* ---------------------------------------------------------------------- */
 int
@@ -95,9 +86,10 @@ PhreeqcRM::CreateReactionModule(int nxyz, MP_TYPE nthreads)
 		PhreeqcRM * Reaction_module_ptr = new PhreeqcRM(nxyz, nthreads);
 		if (Reaction_module_ptr)
 		{
-			n = (int) Reaction_module_ptr->GetWorkers()[0]->Get_Index();
-			PhreeqcRM::Instances[n] = Reaction_module_ptr;
-			return n;
+			// n = (int) Reaction_module_ptr->GetWorkers()[0]->Get_Index();
+			// PhreeqcRM::Instances[n] = Reaction_module_ptr;
+			// return n;
+			return Reaction_module_ptr->GetIndex();
 		}
 	}
 	catch(...)
@@ -111,14 +103,7 @@ IRM_RESULT
 PhreeqcRM::DestroyReactionModule(int id)
 /* ---------------------------------------------------------------------- */
 {
-	IRM_RESULT retval = IRM_BADINSTANCE;
-	std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.find(size_t(id));
-	if (it != PhreeqcRM::Instances.end())
-	{
-		delete (*it).second;
-		retval = IRM_OK;
-	}
-	return retval;
+	return PhreeqcRM::Destroy(id);
 }
 /* ---------------------------------------------------------------------- */
 void
@@ -153,30 +138,18 @@ PhreeqcRM::GetGridCellCountYAML(const char* YAML_file)
 	return 0;
 }
 #endif
-/* ---------------------------------------------------------------------- */
-PhreeqcRM*
-PhreeqcRM::GetInstance(int id)
-/* ---------------------------------------------------------------------- */
-{
-	std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.find(size_t(id));
-	if (it != PhreeqcRM::Instances.end())
-	{
-		return (*it).second;
-	}
-	return 0;
-}
 /*
 //
 // end static PhreeqcRM methods
 //
 */
-std::mutex PhreeqcRM::InstancesLock;
 
 PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io *io/*=NULL*/, bool delay_construct/*=false*/)
 	//
 	// constructor
 	//
-: phreeqc_bin{ nullptr }
+: StaticIndexer{ this }
+, phreeqc_bin{ nullptr }
 , phreeqcrm_io{ io }
 , delete_phreeqcrm_io{ false }
 , component_h2o{ true }
@@ -191,13 +164,34 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 , need_error_check{ true }
 , initializer{ nxyz_arg, data_for_parallel_processing, io }
 {
-	InstancesLock.lock();
-	this->Index = PhreeqcRM::InstancesIndex++;
-	std::map<size_t, PhreeqcRM*>::value_type instance(this->Index, this);
-	PhreeqcRM::Instances.insert(instance);
-	InstancesLock.unlock();
+#ifdef USE_MPI
+	phreeqcrm_comm = data_for_parallel_processing;
+	if (MPI_Comm_size(phreeqcrm_comm, &this->mpi_tasks) != MPI_SUCCESS)
+	{
+		this->ErrorMessage("MPI communicator not defined", 1);
+	}
 
-	if (!delay_construct) this->Construct(this->initializer);
+	if (MPI_Comm_rank(phreeqcrm_comm, &this->mpi_myself) != MPI_SUCCESS)
+	{
+		this->ErrorMessage("MPI communicator not defined", 1);
+	}
+#endif
+	if (!delay_construct)
+	{
+#ifdef USE_MPI
+		if (mpi_myself == 0)
+		{
+			this->Construct(this->initializer);
+			MpiWorkerBreak();
+		}
+		else
+		{
+			MpiWorker();
+		}
+#else
+		this->Construct(this->initializer);
+#endif
+	}
 }
 
 void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
@@ -205,7 +199,17 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 	int nxyz_arg = i.nxyz_arg;
 	MP_TYPE data_for_parallel_processing = i.data_for_parallel_processing;
 	PHRQ_io *io = i.io;
-
+#ifdef USE_MPI
+	if (mpi_myself == 0)
+	{
+		if (this->mpi_myself == 0)
+		{
+			int method = METHOD_CONSTRUCT;
+			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+		}
+	}
+	MPI_Bcast(&nxyz_arg, 1, MPI_INT, 0, phreeqcrm_comm);
+#endif
 	assert(this->phreeqc_bin == nullptr);
 	this->phreeqc_bin = new cxxStorageBin();
 	if (this->phreeqcrm_io == nullptr)
@@ -233,19 +237,17 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 #endif
 #endif
 	// Determine mpi_myself
-	this->mpi_myself = 0;
-	this->mpi_tasks = 1;
 #ifdef USE_MPI
-	phreeqcrm_comm = data_for_parallel_processing;
-	if (MPI_Comm_size(phreeqcrm_comm, &this->mpi_tasks) != MPI_SUCCESS)
-	{
-		this->ErrorMessage("MPI communicator not defined", 1);
-	}
+	//phreeqcrm_comm = data_for_parallel_processing;
+	//if (MPI_Comm_size(phreeqcrm_comm, &this->mpi_tasks) != MPI_SUCCESS)
+	//{
+	//	this->ErrorMessage("MPI communicator not defined", 1);
+	//}
 
-	if (MPI_Comm_rank(phreeqcrm_comm, &this->mpi_myself) != MPI_SUCCESS)
-	{
-		this->ErrorMessage("MPI communicator not defined", 1);
-	}
+	//if (MPI_Comm_rank(phreeqcrm_comm, &this->mpi_myself) != MPI_SUCCESS)
+	//{
+	//	this->ErrorMessage("MPI communicator not defined", 1);
+	//}
 	double standard_task = this->TimeStandardTask();
 	standard_task_vector.resize(this->mpi_tasks, 0.0);
 	MPI_Gather(&standard_task, 1, MPI_DOUBLE, &standard_task_vector.front(), 1, MPI_DOUBLE, 0, phreeqcrm_comm);
@@ -258,7 +260,10 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 			//std::cerr << "Root list of standard tasks " << i << " " << standard_task_vector[i] << std::endl;
 		}
 	}
-#endif
+#else
+	this->mpi_myself = 0;
+	this->mpi_tasks = 1;
+#endif	
 	if (mpi_myself == 0)
 	{
 		this->nxyz = nxyz_arg;
@@ -298,8 +303,8 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 	}
 	if (this->GetWorkers()[0])
 	{
-		std::map<size_t, PhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
-		PhreeqcRM::Instances.insert(instance);
+		//std::map<size_t, PhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
+		//PhreeqcRM::Instances.insert(instance);
 	}
 	else
 	{
@@ -373,18 +378,13 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 }
 PhreeqcRM::~PhreeqcRM(void)
 {
-	if (this->GetWorkers().size() > 0)
+	this->CloseFiles();
+
+	for (auto worker : this->GetWorkers())
 	{
-		std::map<size_t, PhreeqcRM*>::iterator it = PhreeqcRM::Instances.find(this->GetWorkers()[0]->Get_Index());
-		for (int i = 0; i < it->second->GetThreadCount() + 2; i++)
-		{
-			delete it->second->GetWorkers()[i];
-		}
-		if (it != PhreeqcRM::Instances.end())
-		{
-			PhreeqcRM::Instances.erase(it);
-		}
+		delete worker;
 	}
+
 	delete this->phreeqc_bin;
 	if (delete_phreeqcrm_io)
 	{
@@ -1647,13 +1647,14 @@ PhreeqcRM::CreateMapping(std::vector<int> &grid2chem)
 #endif
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::CreateMapping(const std::vector<int> &grid2chem)
+PhreeqcRM::CreateMapping(const std::vector<int> &grid2chem_in)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
 	IRM_RESULT return_value = IRM_OK;
 	try
 	{
+		std::vector<int> grid2chem = grid2chem_in;
 		if (mpi_myself == 0)
 		{
 			if ((int) grid2chem.size() != this->nxyz)
@@ -6953,6 +6954,7 @@ PhreeqcRM::MpiWorker()
 	// Called by all workers
 	IRM_RESULT return_value = IRM_OK;
 #ifdef USE_MPI
+	this->worker_waiting = true;
 	bool debug_worker = false;
 	bool loop_break = false;
 	while (!loop_break)
@@ -6965,6 +6967,12 @@ PhreeqcRM::MpiWorker()
 			MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 			switch (method)
 			{
+			case METHOD_CONSTRUCT:
+				if (debug_worker) std::cerr << "METHOD_CONSTRUCT" << std::endl;
+				{
+					this->Construct(this->initializer);
+				}
+				break;
 			case METHOD_CREATEMAPPING:
 				if (debug_worker) std::cerr << "METHOD_CREATEMAPPING" << std::endl;
 				{
@@ -7087,8 +7095,7 @@ PhreeqcRM::MpiWorker()
 			case METHOD_GETVISCOSITY:
 				if (debug_worker) std::cerr << "METHOD_GETVISCOSITY" << std::endl;
 				{
-					std::vector<double> dummy;
-					this->GetViscosity(dummy);
+					this->GetViscosity();
 				}
 				break;
 			case METHOD_INITIALPHREEQC2MODULE:
@@ -7431,6 +7438,9 @@ PhreeqcRM::OpenFiles(void)
 	{
 		if (this->mpi_myself == 0)
 		{
+			// avoid memory leaks if already open
+			this->CloseFiles();
+
 			// open echo and log file, prefix.log.txt
 			std::string ln = this->file_prefix;
 			ln.append(".log.txt");
@@ -9597,8 +9607,6 @@ PhreeqcRM::RunCells()
 	this->phreeqcrm_error_string.clear();
 	if (mpi_myself == 0)
 	{
-		int method = METHOD_RUNCELLS;
-		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
 		if (IthConcentrationSet.size() > 0)
 		{
 			if (IthConcentrationSet.size() != this->GetComponentCount())
@@ -9618,7 +9626,11 @@ PhreeqcRM::RunCells()
 			SpeciesConcentrations2Module(IthCurrentSpeciesConcentrations);
 		}
 	}
-
+	if (mpi_myself == 0)
+	{
+		int method = METHOD_RUNCELLS;
+		MPI_Bcast(&method, 1, MPI_INT, 0, phreeqcrm_comm);
+	}
 	// check that all solutions are defined
 	if (this->need_error_check)
 	{
@@ -9737,10 +9749,7 @@ PhreeqcRM::RunCells()
 		{
 			GetSpeciesConcentrations(this->CurrentSpeciesConcentrations);
 		}
-		if (var_man != NULL)
-		{
-			this->var_man->so777.clear();
-		}
+		this->ClearBMISelectedOutput();
 	}
 	return this->ReturnHandler(return_value, "PhreeqcRM::RunCells");
 }
@@ -12467,10 +12476,11 @@ PhreeqcRM::SetUnitsSurface(int u)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-PhreeqcRM::SpeciesConcentrations2Module(const std::vector<double> & species_conc)
+PhreeqcRM::SpeciesConcentrations2Module(const std::vector<double> & species_conc_in)
 /* ---------------------------------------------------------------------- */
 {
 	this->phreeqcrm_error_string.clear();
+	std::vector<double> species_conc = species_conc_in;
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
@@ -12676,10 +12686,6 @@ IRM_RESULT PhreeqcRM::StateSave(int istate)
 }
 IRM_RESULT PhreeqcRM::StateApply(int istate) 
 {
-	if (workers[0]->state_map.find(istate) == workers[0]->state_map.end())
-	{
-		return IRM_INVALIDARG;
-	}
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
@@ -12688,6 +12694,10 @@ IRM_RESULT PhreeqcRM::StateApply(int istate)
 	}
 	MPI_Bcast(&istate, 1, MPI_INT, 0, phreeqcrm_comm);
 #endif
+	if (workers[0]->state_map.find(istate) == workers[0]->state_map.end())
+	{
+		return IRM_INVALIDARG;
+	}
 	this->start_cell = workers[0]->state_map[istate].start_cell;
 	this->end_cell = workers[0]->state_map[istate].end_cell;
 #ifdef USE_OPENMP
@@ -12717,10 +12727,6 @@ IRM_RESULT PhreeqcRM::StateApply(int istate)
 }
 IRM_RESULT PhreeqcRM::StateDelete(int istate) 
 {
-	if (workers[0]->state_map.find(istate) == workers[0]->state_map.end())
-	{
-		return IRM_INVALIDARG;
-	}
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
 	{
@@ -12729,7 +12735,10 @@ IRM_RESULT PhreeqcRM::StateDelete(int istate)
 	}
 	MPI_Bcast(&istate, 1, MPI_INT, 0, phreeqcrm_comm);
 #endif
-
+	if (workers[0]->state_map.find(istate) == workers[0]->state_map.end())
+	{
+		return IRM_INVALIDARG;
+	}
 #ifdef USE_OPENMP
 	omp_set_num_threads(this->nthreads);
 #pragma omp parallel

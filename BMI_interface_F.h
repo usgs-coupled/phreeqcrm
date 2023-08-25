@@ -4,18 +4,15 @@
 #if !defined(BMI_INTERFACE_F_H_INCLUDED)
 #define BMI_INTERFACE_F_H_INCLUDED
 #include "IrmResult.h"
-#if defined(_WINDLL)
-#define IRM_DLL_EXPORT __declspec(dllexport)
-#else
-#define IRM_DLL_EXPORT
-#endif
+#include "irm_dll_export.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 	IRM_DLL_EXPORT IRM_RESULT RMF_BMI_AddOutputVars(int* id, char* option, char* def);
-	IRM_DLL_EXPORT int        RM_BMI_Create(int* nxyz, int* nthreads = NULL);
+	IRM_DLL_EXPORT int        RM_BMI_Create(int* nxyz, int* nthreads = nullptr);
 	IRM_DLL_EXPORT int        RM_BMI_Create_default();
+	IRM_DLL_EXPORT int		  RMF_BMI_Destroy(int* id);
 	IRM_DLL_EXPORT IRM_RESULT RMF_BMI_GetComponentName(int* id, char* chem_name, int* l1);
 	IRM_DLL_EXPORT double     RMF_BMI_GetCurrentTime(int* id);
 	IRM_DLL_EXPORT double     RMF_BMI_GetEndTime(int* id);

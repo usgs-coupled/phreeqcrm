@@ -28,9 +28,10 @@ class PHRQ_io;
 #include <mutex>
 #include <string>
 #include "RMVARS.h"
-#if defined(_WINDLL)
-#define IRM_DLL_EXPORT __declspec(dllexport)
-#else
+
+#include "irm_dll_export.h"
+
+#if SWIG
 #define IRM_DLL_EXPORT
 #endif
 
@@ -56,6 +57,7 @@ public:
 */
 #include "IrmResult.h"
 enum {
+	METHOD_CONSTRUCT,
 	METHOD_CREATEMAPPING,
 	METHOD_DUMPMODULE,
 	METHOD_FINDCOMPONENTS,
@@ -118,6 +120,142 @@ enum {
 	METHOD_USESOLUTIONDENSITYVOLUME
 } /* MPI_METHOD */;
 
+
+template<typename T>
+class StaticIndexer
+{
+public:
+	StaticIndexer(T* self)
+	{
+		const std::lock_guard<std::mutex> lock(StaticIndexer<T>::_InstancesLock);
+		this->_Index = StaticIndexer<T>::_InstancesIndex++;
+		StaticIndexer<T>::_Instances[this->_Index] = self;
+	}
+
+	~StaticIndexer()
+	{
+		const std::lock_guard<std::mutex> lock(StaticIndexer<T>::_InstancesLock);
+		auto search = StaticIndexer<T>::_Instances.find(this->_Index);
+		assert(search != StaticIndexer<T>::_Instances.end());
+		if (search != StaticIndexer<T>::_Instances.end())
+		{
+			StaticIndexer<T>::_Instances.erase(search);
+		}
+	}
+
+	static T* GetInstance(int id)
+	{
+		const std::lock_guard<std::mutex> lock(_InstancesLock);
+		auto search = StaticIndexer<T>::_Instances.find(size_t(id));
+		if (search != StaticIndexer<T>::_Instances.end())
+		{
+			return search->second;
+		}
+		return nullptr;
+	}
+
+	template<typename Derived>
+	static Derived* GetInstance(int id)
+	{
+		const std::lock_guard<std::mutex> lock(_InstancesLock);
+		auto search = StaticIndexer<T>::_Instances.find(size_t(id));
+		if (search != StaticIndexer<T>::_Instances.end())
+		{
+			if (Derived* derived = dynamic_cast<Derived*>(search->second))
+			{
+				return derived;
+			}
+		}
+		return nullptr;
+	}
+
+	static IRM_RESULT Destroy(int id)
+	{
+		auto search = StaticIndexer<T>::_Instances.find(size_t(id));
+		if (search != StaticIndexer<T>::_Instances.end())
+		{
+			assert(dynamic_cast<T*>(search->second));
+			delete search->second;
+			return IRM_OK;
+		}
+		return IRM_BADINSTANCE;
+	}
+
+	//template<typename Derived>
+	//static IRM_RESULT Destroy(int id)
+	//{
+	//	auto search = StaticIndexer<T>::_Instances.find(size_t(id));
+	//	if (search != StaticIndexer<T>::_Instances.end())
+	//	{
+	//		assert(dynamic_cast<T*>(search->second));
+	//		if (Derived* derived = dynamic_cast<Derived*>(search->second))
+	//		{
+	//			delete derived;
+	//			return IRM_OK;
+	//		}
+	//	}
+	//	return IRM_BADINSTANCE;
+	//}
+
+	static void DestroyAll()
+	{
+		std::list<T*> items;
+		for (auto pair : StaticIndexer<T>::_Instances)
+		{
+			assert(dynamic_cast<T*>(pair.second));
+			items.push_back(pair.second);
+		}
+		for (auto item : items)
+		{
+			delete item;
+		}
+	}
+
+	//template<typename Derived>
+	//static void DestroyAll()
+	//{
+	//	const std::lock_guard<std::mutex> lock(_InstancesLock);
+	//	std::list<Derived*> derived_items;
+	//	for (auto pair : StaticIndexer<T>::_Instances)
+	//	{
+	//		assert(dynamic_cast<T*>(pair.second));
+	//		if (Derived* derived = dynamic_cast<Derived*>(pair.second))
+	//		{
+	//			derived_items.push_back(derived);
+	//		}
+	//	}
+	//	for (auto item : derived_items)
+	//	{
+	//		delete item;
+	//	}
+	//}
+
+	int GetIndex()
+	{
+		return (int)this->_Index;
+	}
+
+protected:
+	size_t _Index;
+
+	static std::mutex           _InstancesLock;
+	static std::map<size_t, T*> _Instances;
+	static size_t               _InstancesIndex;
+};
+
+// static members of StaticIndexer
+
+template<typename T>
+std::mutex StaticIndexer<T>::_InstancesLock;
+
+template<typename T>
+std::map<size_t, T*> StaticIndexer<T>::_Instances;
+
+template<typename T>
+size_t StaticIndexer<T>::_InstancesIndex = 0;
+
+
+
 /**
  * @class PhreeqcRM
  *
@@ -125,13 +263,12 @@ enum {
  */
 
 
-class IRM_DLL_EXPORT PhreeqcRM
+class IRM_DLL_EXPORT PhreeqcRM : public StaticIndexer<PhreeqcRM>
 {
 public:
 	static void             CleanupReactionModuleInstances(void);
 	static int              CreateReactionModule(int nxyz, MP_TYPE nthreads);
 	static IRM_RESULT       DestroyReactionModule(int n);
-	static PhreeqcRM      * GetInstance(int n);
 private:
 	virtual void AddOutputVars(std::string option, std::string def);
 	virtual void ClearBMISelectedOutput();
@@ -230,7 +367,7 @@ int nxyz = 40;
 Called by root and all workers.
  */
 	PhreeqcRM(int nxyz, MP_TYPE thread_count_or_communicator, PHRQ_io * io=NULL, bool delay_construct=false);
-	~PhreeqcRM(void);
+	virtual ~PhreeqcRM(void);
 /**
 Close the output and log files.
 @retval IRM_RESULT   0 is success, negative is failure (See @ref DecodeError).
@@ -533,8 +670,10 @@ if (option == "HYDRAULIC_K")
 Called by root or workers.
  */
 	const std::vector < std::vector <int> > & GetBackwardMapping(void) {return this->backward_mapping;}
+	/** @cond */
 	void GetBackwardMappingSWIG(std::vector<int>& nback_output, std::vector<int>& cellnumbers_output);
-/**
+	/** @endcond */
+	/**
 Returns the number of reaction cells in the reaction module. The number of reaction cells is defined by
 the set of non-negative integers in the mapping from grid cells (@ref CreateMapping), or, by default,
 the number of grid cells (@ref GetGridCellCount).
@@ -644,120 +783,6 @@ status = phreeqc_rm.GetConcentrations(c);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                GetConcentrations(std::vector< double > &c_output);
-	/**
-	Transfer the concentration from each cell for one component to the vector given in the 
-	argument list (@a c_output). The concentrations are those resulting from the last call
-	to @ref RunCells. Units of concentration for @a c_output are defined by @ref SetUnitsSolution.
-	@param i                Zero-based index for the component to retrieve. Indices refer
-	to the order produced by @ref GetComponents. The total number of components is given by
-	@ref GetComponentCount.
-	@param c_output                Vector to receive the component concentrations.
-	Dimension of the vector is set to @a nxyz, where @a nxyz is the number of 
-	user grid cells (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
-	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-	@see                    @ref FindComponents, @ref GetComponents, @ref GetComponentCount, 
-	@ref GetConcentrations.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	std::vector< double > c;
-	status = phreeqc_rm.RunCells();
-	status = phreeqc_rm.GetIthConcentration(0, c);
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	 */
-	IRM_RESULT                                GetIthConcentration(int i, std::vector< double >& c_output);
-	/**
-	Transfer the concentration from each cell for one species to the vector given in the
-	argument list (@a c_output). The concentrations are those resulting from the last call
-	to @ref RunCells. Units of concentration for @a c_output are mol/L.
-	To retrieve species concentrations, @ref SetSpeciesSaveOn must be set to @a true.
-	This method is for use with multicomponent diffusion calculations.
-
-	@param i                Zero-based index for the species to retrieve. Indices refer
-	to the order given by @ref GetSpeciesNames. The total number of species is given
-	by @ref GetSpeciesCount.
-	@param c_output                Vector to receive the species concentrations.
-	Dimension of the vector is set to @a nxyz, where @a nxyz is the number of
-	user grid cells (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
-	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-	@see                    @ref FindComponents, @ref GetSpeciesCount, @ref GetSpeciesNames,
-	@ref GetSpeciesConcentrations, @ref SetSpeciesSaveOn.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	std::vector< double > c;
-	status = phreeqc_rm.RunCells();
-	status = phreeqc_rm.GetIthSpeciesConcentration(0, c);
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	 */
-	IRM_RESULT                                GetIthSpeciesConcentration(int i, std::vector< double >& c_output);
-	/**
-	Transfer the concentrations for one component given by the vector @a c to each reaction cell. 
-	Units of concentration for @a c are defined by @ref SetUnitsSolution. It is required that
-	@a SetIthConcentration be called for each component in the system before @ref RunCells is called.
-	@param i                Zero-based index for the component to transfer. Indices refer
-	to the order produced by @ref GetComponents. The total number of components is given by
-	@ref GetComponentCount.
-	@param c                Vector of concentrations to transfer to the reaction cells.
-	Dimension of the vector is @a nxyz, where @a nxyz is the number of
-	user grid cells (@ref GetGridCellCount). Values for inactive cells are ignored.
-	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-	@see                    @ref FindComponents, @ref GetComponentCount,  @ref GetComponents,
-	@ref SetConcentrations.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	status = phreeqc_rm.SetIthConcentration(i, c); // repeat for all components
-	...
-	status = phreeqc_rm.RunCells();
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	 */
-	IRM_RESULT                                SetIthConcentration(int i, std::vector< double >& c);
-	/**
-	Transfer the concentrations for one aqueous species given by the vector @a c to each reaction cell.
-	Units of concentration for @a c are mol/L. To set species concentrations, @ref SetSpeciesSaveOn 
-	must be set to @a true. It is required that
-	@a SetIthSpeciesConcentration be called for each aqueous species in the system before 
-	@ref RunCells is called. This method is for use with multicomponent diffusion calculations. 
-
-	@param i                Zero-based index for the species to transfer. Indices refer
-	to the order produced by @ref GetSpeciesNames. The total number of species is given by
-	@ref GetSpeciesCount.
-	@param c                Vector of concentrations to transfer to the reaction cells.
-	Dimension of the vector is @a nxyz, where @a nxyz is the number of
-	user grid cells (@ref GetGridCellCount). Values for inactive cells are ignored.
-	@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-	@see                    @ref FindComponents, @ref GetSpeciesCount, @ref GetSpeciesNames,
-	@ref SpeciesConcentrations2Module, @ref SetSpeciesSaveOn.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	status = phreeqc_rm.SetIthSpeciesConcentration(i, c); // repeat for all species
-	...
-	status = phreeqc_rm.RunCells();
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	 */
-	IRM_RESULT                                SetIthSpeciesConcentration(int i, std::vector< double >& c);
 /**
 Returns the user number of the current selected-output definition.
 @ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput specifies which of the
@@ -1227,40 +1252,6 @@ Called by root, workers must be in the loop of @ref MpiWorker.
 IRM_RESULT                                GetGasCompMoles(std::vector< double >& gas_moles_output);
 
 /**
-Transfer pressures of gas components from each reaction cell
-to the vector given in the argument list (@a gas_pressure).
-
-@param  gas_pressure               Vector to receive the pressures of gas components.
-Dimension of the vector is set to @a ngas_comps times @a nxyz,
-where, @a ngas_comps is the result of @ref GetGasComponentsCount,
-and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
-If a gas component is not defined for a cell, the pressure is set to -1.
-Values for inactive cells are set to 1e30.
-@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
-@see                    
-@ref FindComponents, 
-@ref GetGasComponentsCount, 
-@ref GetGasCompMoles,
-@ref GetGasCompPhi,
-@ref GetGasPhaseVolume,
-@ref SetGasCompMoles,
-@ref SetGasPhaseVolume.
-@par C++ Example:
-@htmlonly
-<CODE>
-<PRE>
-std::vector< double > gas_pressure;
-status = phreeqc_rm.RunCells();
-status = phreeqc_rm.GetGasCompPressures(gas_pressure);
-</PRE>
-</CODE>
-@endhtmlonly
-@par MPI:
-Called by root, workers must be in the loop of @ref MpiWorker.
- */
-IRM_RESULT                                GetGasCompPressures(std::vector< double >& gas_pressure);
-
-/**
 Transfer fugacity coefficients (phi) of gas components from each reaction cell
 to the vector given in the argument list (@a gas_phi). Fugacity is
 equal to the gas component pressure times the fugacity coefficient.
@@ -1294,6 +1285,40 @@ status = phreeqc_rm.GetGasCompPhi(gas_phi);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 IRM_RESULT                                GetGasCompPhi(std::vector< double >& gas_phi);
+
+/**
+Transfer pressures of gas components from each reaction cell
+to the vector given in the argument list (@a gas_pressure).
+
+@param  gas_pressure               Vector to receive the pressures of gas components.
+Dimension of the vector is set to @a ngas_comps times @a nxyz,
+where, @a ngas_comps is the result of @ref GetGasComponentsCount,
+and @a nxyz is the number of user grid cells (@ref GetGridCellCount).
+If a gas component is not defined for a cell, the pressure is set to -1.
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    
+@ref FindComponents, 
+@ref GetGasComponentsCount, 
+@ref GetGasCompMoles,
+@ref GetGasCompPhi,
+@ref GetGasPhaseVolume,
+@ref SetGasCompMoles,
+@ref SetGasPhaseVolume.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector< double > gas_pressure;
+status = phreeqc_rm.RunCells();
+status = phreeqc_rm.GetGasCompPressures(gas_pressure);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                GetGasCompPressures(std::vector< double >& gas_pressure);
 
 /**
 Transfer volume of gas phase from each reaction cell
@@ -1404,6 +1429,63 @@ IPhreeqc * util_ptr = phreeqc_rm.GetIPhreeqcPointer(phreeqc_rm.GetThreadCount() 
 Called by root and (or) workers.
  */
 IPhreeqc *                                GetIPhreeqcPointer(int i);
+/**
+Transfer the concentration from each cell for one component to the vector given in the
+argument list (@a c_output). The concentrations are those resulting from the last call
+to @ref RunCells. Units of concentration for @a c_output are defined by @ref SetUnitsSolution.
+@param i                Zero-based index for the component to retrieve. Indices refer
+to the order produced by @ref GetComponents. The total number of components is given by
+@ref GetComponentCount.
+@param c_output                Vector to receive the component concentrations.
+Dimension of the vector is set to @a nxyz, where @a nxyz is the number of
+user grid cells (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref FindComponents, @ref GetComponents, @ref GetComponentCount,
+@ref GetConcentrations.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector< double > c;
+status = phreeqc_rm.RunCells();
+status = phreeqc_rm.GetIthConcentration(0, c);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                GetIthConcentration(int i, std::vector< double >& c_output);
+/**
+Transfer the concentration from each cell for one species to the vector given in the
+argument list (@a c_output). The concentrations are those resulting from the last call
+to @ref RunCells. Units of concentration for @a c_output are mol/L.
+To retrieve species concentrations, @ref SetSpeciesSaveOn must be set to @a true.
+This method is for use with multicomponent diffusion calculations.
+
+@param i                Zero-based index for the species to retrieve. Indices refer
+to the order given by @ref GetSpeciesNames. The total number of species is given
+by @ref GetSpeciesCount.
+@param c_output                Vector to receive the species concentrations.
+Dimension of the vector is set to @a nxyz, where @a nxyz is the number of
+user grid cells (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref FindComponents, @ref GetSpeciesCount, @ref GetSpeciesNames,
+@ref GetSpeciesConcentrations, @ref SetSpeciesSaveOn.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector< double > c;
+status = phreeqc_rm.RunCells();
+status = phreeqc_rm.GetIthSpeciesConcentration(0, c);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                GetIthSpeciesConcentration(int i, std::vector< double >& c_output);
 
 /**
 Returns a reference to the vector of all kinetic reactions in the initial-phreeqc module.
@@ -2595,9 +2677,11 @@ Called by root and (or) workers.
  */
 
 	const std::vector<cxxNameDouble> &        GetSpeciesStoichiometry(void) {return this->species_stoichiometry;}
-	void GetSpeciesStoichiometrySWIG(std::vector<std::string> &species_output, std::vector<int> &nelt_output, \
-		std::vector<std::string> &elts_output, std::vector<double> &coef_output);
-/**
+	/** @cond */
+	void                                      GetSpeciesStoichiometrySWIG(std::vector<std::string>& species_output,
+		std::vector<int>& nelt_output, std::vector<std::string>& elts_output, std::vector<double>& coef_output);
+	/** @endcond */
+	/**
 Returns a vector reference to the charge on each aqueous species.
 This method is intended for use with multicomponent-diffusion transport calculations,
 and @ref SetSpeciesSaveOn must be set to @a true.
@@ -2839,26 +2923,6 @@ Called by root.
 	//int PhreeqcRM::GetVarItemsize(const std::string name);
 	//int PhreeqcRM::GetVarNbytes(const std::string name);
 
-	/**
-	Return a vector reference to the current viscosity as calculated by 
-	the reaction module. Dimension of the vector will be @a nxyz, where 
-	@a nxyz is the number of user grid cells.
-	Only the following databases distributed with PhreeqcRM have parameters 
-	needed to accurately calculate viscosity: phreeqc.dat, Amm.dat, and pitzer.dat.
-	@retval Vector reference to current viscosities, in mPa s.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	status = phreeqc_rm.RunCells();
-	const std::vector< double > &visc = phreeqc_rm.GetViscosity();
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	 */
-	const std::vector<double>& GetViscosity();
 /**
 Returns the number of threads, which is equal to the number of workers used to run in parallel with OPENMP.
 For the OPENMP version, the number of threads is set implicitly or explicitly
@@ -3157,7 +3221,29 @@ int units_surface = phreeqc_rm.GetUnitsSurface();
 Called by root and (or) workers.
  */
 	int                                       GetUnitsSurface(void) {return this->units_Surface;}
-/**
+	/**
+	Return a vector reference to the current viscosity as calculated by
+	the reaction module. Dimension of the vector will be @a nxyz, where
+	@a nxyz is the number of user grid cells.
+	Only the following databases distributed with PhreeqcRM have parameters
+	needed to accurately calculate viscosity: phreeqc.dat, Amm.dat, and pitzer.dat.
+	@retval Vector reference to current viscosities, in mPa s.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	status = phreeqc_rm.RunCells();
+	const std::vector< double > &visc = phreeqc_rm.GetViscosity();
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root, workers must be in the loop of @ref MpiWorker.
+	 */
+	const std::vector<double>& GetViscosity();
+
+	
+	/**
 Returns a reference to the vector of IPhreeqcPhast instances. IPhreeqcPhast
 inherits from IPhreeqc, and the vector can be interpreted as a vector of pointers to the worker,
 InitialPhreeqc, and Utility IPhreeqc instances. For OPENMP, there are @a nthreads
@@ -3191,12 +3277,13 @@ and the arguments corresponding to the methods. For example,
 @htmlonly
 <CODE>
 <PRE>
-LoadDatabase: phreeqc.dat
-RunFile:
-	workers: true
-	initial_phreeqc: true
-	utility: true
-	chemistry_name: advect.pqi
+- key: LoadDatabase
+  database: phreeqc.dat
+- key: RunFile
+  workers: true
+  initial_phreeqc: true
+  utility: true
+  chemistry_name: advect.pqi
 </PRE>
 </CODE>
 @endhtmlonly
@@ -3374,36 +3461,6 @@ Called by root.
 													const std::vector < int >    & boundary_solution2,
 													const std::vector < double > & fraction1);
 	/**
-	Transfer SOLUTION definitions from the InitialPhreeqc instance to the reaction-module workers.
-	@a solutions is used to select solutions for each cell of the model.
-	@a solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
-	user's model (@ref GetGridCellCount). 
-	@param solutions Vector of SOLUTION index numbers that refer to
-	definitions in the InitialPhreeqc instance.
-	Size is @a nxyz. Negative values are ignored, resulting in no definition of a 
-	solution for that cell.
-	(Note that all cells must have a SOLUTION definition, which could be defined by other 
-	calls to @a InitialSolutions2Module, @ref InitialPhreeqc2Module, or 
-	@ref InitialPhreeqcCell2Module.)
-	@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
-	@see               
-	@ref InitialPhreeqc2Module,
-	@ref InitialPhreeqcCell2Module.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	std::vector< int > solutions;
-	solutions.resize(nxyz, 1);
-	status = phreeqc_rm.InitialSolutions2Module(solutions);
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	 */
-IRM_RESULT  InitialSolutions2Module(const std::vector < int >& solutions);
-	/**
 	Transfer EQUILIBRIUM_PHASES definitions from the InitialPhreeqc instance to the reaction-module workers.
 	@a equilibrium_phases is used to select EQUILIBRIUM_PHASES definitions for each cell of the model.
 	@a equilibrium_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
@@ -3463,35 +3520,6 @@ IRM_RESULT  InitialEquilibriumPhases2Module(const std::vector < int >& equilibri
 	Called by root, workers must be in the loop of @ref MpiWorker.
 	 */
 IRM_RESULT  InitialExchanges2Module(const std::vector < int >& exchanges);
-	/**
-	Transfer SURFACE definitions from the InitialPhreeqc instance to the reaction-module workers.
-	@a surfaces is used to select SURFACE definitions for each cell of the model.
-	@a surfaces is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
-	user's model (@ref GetGridCellCount).
-	@param surfaces Vector of SURFACE index numbers that refer to
-	definitions in the InitialPhreeqc instance.
-	Size is @a nxyz. Negative values are ignored, resulting in no transfer of a SURFACE
-	definition for that cell. (Note that a SURFACE definition for a cell could be defined by other 
-	calls to @a InitialSurfaces2Module, @ref InitialPhreeqc2Module, or 
-	@ref InitialPhreeqcCell2Module.)
-	@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
-	@see
-	@ref InitialPhreeqc2Module,
-	@ref InitialPhreeqcCell2Module.
-	@par C++ Example:
-	@htmlonly
-	<CODE>
-	<PRE>
-	std::vector< int > surfaces;
-	surfaces.resize(nxyz, 1);
-	status = phreeqc_rm.InitialSurfaces2Module(surfaces);
-	</PRE>
-	</CODE>
-	@endhtmlonly
-	@par MPI:
-	Called by root, workers must be in the loop of @ref MpiWorker.
-	 */
-IRM_RESULT  InitialSurfaces2Module(const std::vector < int >& surfaces);
 /**
 Transfer GAS_PHASE definitions from the InitialPhreeqc instance to the reaction-module workers.
 @a gas_phases is used to select GAS_PHASE definitions for each cell of the model.
@@ -3522,35 +3550,6 @@ Called by root, workers must be in the loop of @ref MpiWorker.
  */
 IRM_RESULT  InitialGasPhases2Module(const std::vector < int >& gas_phases);
 /**
-Transfer SOLID_SOLUTIONS definitions from the InitialPhreeqc instance to the reaction-module workers.
-@a solid_solutions is used to select SOLID_SOLUTIONS definitions for each cell of the model.
-@a solid_solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
-user's model (@ref GetGridCellCount).
-@param solid_solutions Vector of SOLID_SOLUTIONS index numbers that refer to
-definitions in the InitialPhreeqc instance.
-Size is @a nxyz. Negative values are ignored, resulting in no transfer of a SOLID_SOLUTIONS
-definition for that cell. (Note that a SOLID_SOLUTIONS definition for a cell could be defined by other
-calls to @a InitialSolidSolutions2Module, @ref InitialPhreeqc2Module, or
-@ref InitialPhreeqcCell2Module.)
-@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
-@see
-@ref InitialPhreeqc2Module,
-@ref InitialPhreeqcCell2Module.
-@par C++ Example:
-@htmlonly
-<CODE>
-<PRE>
-std::vector< int > solid_solutions;
-solid_solutions.resize(nxyz, 1);
-status = phreeqc_rm.InitialSolidSolutions2Module(solid_solutions);
-</PRE>
-</CODE>
-@endhtmlonly
-@par MPI:
-Called by root, workers must be in the loop of @ref MpiWorker.
- */
-IRM_RESULT  InitialSolidSolutions2Module(const std::vector < int >& solid_solutions);
-/**
 Transfer KINETICS definitions from the InitialPhreeqc instance to the reaction-module workers.
 @a kinetics is used to select KINETICS definitions for each cell of the model.
 @a kinetics is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
@@ -3579,7 +3578,6 @@ status = phreeqc_rm.InitialKineticsSolidSolutions2Module(kinetics);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 IRM_RESULT  InitialKinetics2Module(const std::vector < int >& kinetics);
-
 /**
 Transfer solutions and reactants from the InitialPhreeqc instance to the reaction-module workers.
 @a Initial_conditions1 is used to select initial conditions, including solutions and reactants,
@@ -3620,7 +3618,7 @@ status = phreeqc_rm.InitialPhreeqc2Module(ic1);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT  InitialPhreeqc2Module(const std::vector < int > & initial_conditions1);
+IRM_RESULT  InitialPhreeqc2Module(const std::vector < int >& initial_conditions1);
 /**
 Transfer solutions and reactants from the InitialPhreeqc instance to the reaction-module workers, possibly with mixing.
 In its simplest form, @a  initial_conditions1 is used to select initial conditions, including solutions and reactants,
@@ -3683,10 +3681,10 @@ status = phreeqc_rm.InitialPhreeqc2Module(ic1, ic2, f1);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT InitialPhreeqc2Module(
-		const std::vector < int >    & initial_conditions1,
-		const std::vector < int >    & initial_conditions2,
-		const std::vector < double > & fraction1);
+IRM_RESULT InitialPhreeqc2Module(
+	const std::vector < int >& initial_conditions1,
+	const std::vector < int >& initial_conditions2,
+	const std::vector < double >& fraction1);
 /**
 Fills a vector @a destination_c with aqueous species concentrations from solutions in the InitialPhreeqc instance.
 This method is intended for use with multicomponent-diffusion transport calculations,
@@ -3716,8 +3714,8 @@ status = phreeqc_rm.InitialPhreeqc2SpeciesConcentrations(bc_conc, bc1);
 @par MPI:
 Called by root.
  */
-IRM_RESULT InitialPhreeqc2SpeciesConcentrations(std::vector < double > &destination_c,	
-	const std::vector < int > &boundary_solution1);
+IRM_RESULT InitialPhreeqc2SpeciesConcentrations(std::vector < double >& destination_c,
+	const std::vector < int >& boundary_solution1);
 /**
 Fills a vector @a destination_c with aqueous species concentrations from solutions in the InitialPhreeqc instance.
 This method is intended for use with multicomponent-diffusion transport calculations,
@@ -3757,10 +3755,10 @@ status = phreeqc_rm.InitialPhreeqc2SpeciesConcentrations(bc_conc, bc1, bc2, bc_f
 @par MPI:
 Called by root.
  */
-IRM_RESULT InitialPhreeqc2SpeciesConcentrations(std::vector < double > &destination_c, 
-	const std::vector < int > &boundary_solution1, 
-	const std::vector < int > &boundary_solution2, 
-	const std::vector < double > &fraction1);
+IRM_RESULT InitialPhreeqc2SpeciesConcentrations(std::vector < double >& destination_c,
+	const std::vector < int >& boundary_solution1,
+	const std::vector < int >& boundary_solution2,
+	const std::vector < double >& fraction1);
 /**
 A cell numbered @a n in the InitialPhreeqc instance is selected to populate a series of transport cells.
 All reactants with the number @a n are transferred along with the solution.
@@ -3787,8 +3785,98 @@ status = phreeqc_rm.InitialPhreeqcCell2Module(-1, module_cells);
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                InitialPhreeqcCell2Module(int n, 
-		const std::vector< int > &cell_numbers);
+IRM_RESULT                                InitialPhreeqcCell2Module(int n,
+	const std::vector< int >& cell_numbers);
+
+/**
+Transfer SOLID_SOLUTIONS definitions from the InitialPhreeqc instance to the reaction-module workers.
+@a solid_solutions is used to select SOLID_SOLUTIONS definitions for each cell of the model.
+@a solid_solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
+user's model (@ref GetGridCellCount).
+@param solid_solutions Vector of SOLID_SOLUTIONS index numbers that refer to
+definitions in the InitialPhreeqc instance.
+Size is @a nxyz. Negative values are ignored, resulting in no transfer of a SOLID_SOLUTIONS
+definition for that cell. (Note that a SOLID_SOLUTIONS definition for a cell could be defined by other
+calls to @a InitialSolidSolutions2Module, @ref InitialPhreeqc2Module, or
+@ref InitialPhreeqcCell2Module.)
+@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref InitialPhreeqc2Module,
+@ref InitialPhreeqcCell2Module.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector< int > solid_solutions;
+solid_solutions.resize(nxyz, 1);
+status = phreeqc_rm.InitialSolidSolutions2Module(solid_solutions);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT  InitialSolidSolutions2Module(const std::vector < int >& solid_solutions);
+/**
+Transfer SOLUTION definitions from the InitialPhreeqc instance to the reaction-module workers.
+@a solutions is used to select solutions for each cell of the model.
+@a solutions is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
+user's model (@ref GetGridCellCount).
+@param solutions Vector of SOLUTION index numbers that refer to
+definitions in the InitialPhreeqc instance.
+Size is @a nxyz. Negative values are ignored, resulting in no definition of a
+solution for that cell.
+(Note that all cells must have a SOLUTION definition, which could be defined by other
+calls to @a InitialSolutions2Module, @ref InitialPhreeqc2Module, or
+@ref InitialPhreeqcCell2Module.)
+@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref InitialPhreeqc2Module,
+@ref InitialPhreeqcCell2Module.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector< int > solutions;
+solutions.resize(nxyz, 1);
+status = phreeqc_rm.InitialSolutions2Module(solutions);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT  InitialSolutions2Module(const std::vector < int >& solutions);
+/**
+Transfer SURFACE definitions from the InitialPhreeqc instance to the reaction-module workers.
+@a surfaces is used to select SURFACE definitions for each cell of the model.
+@a surfaces is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
+user's model (@ref GetGridCellCount).
+@param surfaces Vector of SURFACE index numbers that refer to
+definitions in the InitialPhreeqc instance.
+Size is @a nxyz. Negative values are ignored, resulting in no transfer of a SURFACE
+definition for that cell. (Note that a SURFACE definition for a cell could be defined by other
+calls to @a InitialSurfaces2Module, @ref InitialPhreeqc2Module, or
+@ref InitialPhreeqcCell2Module.)
+@retval IRM_RESULT          0 is success, negative is failure (See @ref DecodeError).
+@see
+@ref InitialPhreeqc2Module,
+@ref InitialPhreeqcCell2Module.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+std::vector< int > surfaces;
+surfaces.resize(nxyz, 1);
+status = phreeqc_rm.InitialSurfaces2Module(surfaces);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT  InitialSurfaces2Module(const std::vector < int >& surfaces);
+
 /**
 Load a database for all IPhreeqc instances--workers, InitialPhreeqc, and Utility. All definitions
 of the reaction module are cleared (SOLUTION_SPECIES, PHASES, SOLUTIONs, etc.), and the database is read.
@@ -3953,7 +4041,30 @@ phreeqc_rm.OutputMessage(oss.str());
 Called by root.
  */
 	void                                      OutputMessage(const std::string &str);
-/**
+	/**
+	Process an IRM_RESULT return code. If the return code is nonnegative, no action is taken. If the return code is negative,
+	the return code is decoded and printed as an error message along with the second argument (std::string). On an error,
+	the method will return the same return code, throw an exception, or exit the program depending on the setting for
+	@ref SetErrorHandlerMode.
+	@param result          Return code to be processed.
+	@param e_string        Error message to be printed in case of an error.
+	@retval IRM_RESULT     The first argument to the method is returned.
+	@see                    @ref SetErrorHandlerMode.
+	@par C++ Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	status = phreeqc_rm.ReturnHandler(irm_result, "Previous method failed.");
+	</PRE>
+	</CODE>
+	@endhtmlonly
+	@par MPI:
+	Called by root or workers.
+	 */
+	IRM_RESULT                                ReturnHandler(IRM_RESULT result, const std::string& e_string);
+
+	
+	/**
 Runs a reaction step for all reaction cells in the reaction module.
 Normally, tranport concentrations are transferred to the reaction cells (@ref SetConcentrations) before
 reaction calculations are run. The length of time over which kinetic reactions are integrated is set
@@ -3986,27 +4097,6 @@ status = phreeqc_rm.RunCells();
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                RunCells(void);
-/**
-Process an IRM_RESULT return code. If the return code is nonnegative, no action is taken. If the return code is negative,
-the return code is decoded and printed as an error message along with the second argument (std::string). On an error,
-the method will return the same return code, throw an exception, or exit the program depending on the setting for
-@ref SetErrorHandlerMode.
-@param result          Return code to be processed.
-@param e_string        Error message to be printed in case of an error.
-@retval IRM_RESULT     The first argument to the method is returned.
-@see                    @ref SetErrorHandlerMode.
-@par C++ Example:
-@htmlonly
-<CODE>
-<PRE>
-status = phreeqc_rm.ReturnHandler(irm_result, "Previous method failed.");
-</PRE>
-</CODE>
-@endhtmlonly
-@par MPI:
-Called by root or workers.
- */
-	IRM_RESULT                                ReturnHandler(IRM_RESULT result, const std::string &e_string);
 /**
 Run a PHREEQC input file. The first three arguments determine which IPhreeqc instances will run
 the file--the workers, the InitialPhreeqc instance, and (or) the Utility instance. Input
@@ -4369,6 +4459,63 @@ status = phreeqc_rm.RunCells();
 Called by root, workers must be in the loop of @ref MpiWorker.
 	*/
 IRM_RESULT                                SetGasPhaseVolume(const std::vector< double >& gas_volume);
+/**
+Transfer the concentrations for one component given by the vector @a c to each reaction cell.
+Units of concentration for @a c are defined by @ref SetUnitsSolution. It is required that
+@a SetIthConcentration be called for each component in the system before @ref RunCells is called.
+@param i                Zero-based index for the component to transfer. Indices refer
+to the order produced by @ref GetComponents. The total number of components is given by
+@ref GetComponentCount.
+@param c                Vector of concentrations to transfer to the reaction cells.
+Dimension of the vector is @a nxyz, where @a nxyz is the number of
+user grid cells (@ref GetGridCellCount). Values for inactive cells are ignored.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref FindComponents, @ref GetComponentCount,  @ref GetComponents,
+@ref SetConcentrations.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.SetIthConcentration(i, c); // repeat for all components
+...
+status = phreeqc_rm.RunCells();
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                SetIthConcentration(int i, std::vector< double >& c);
+/**
+Transfer the concentrations for one aqueous species given by the vector @a c to each reaction cell.
+Units of concentration for @a c are mol/L. To set species concentrations, @ref SetSpeciesSaveOn
+must be set to @a true. It is required that
+@a SetIthSpeciesConcentration be called for each aqueous species in the system before
+@ref RunCells is called. This method is for use with multicomponent diffusion calculations.
+
+@param i                Zero-based index for the species to transfer. Indices refer
+to the order produced by @ref GetSpeciesNames. The total number of species is given by
+@ref GetSpeciesCount.
+@param c                Vector of concentrations to transfer to the reaction cells.
+Dimension of the vector is @a nxyz, where @a nxyz is the number of
+user grid cells (@ref GetGridCellCount). Values for inactive cells are ignored.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref DecodeError).
+@see                    @ref FindComponents, @ref GetSpeciesCount, @ref GetSpeciesNames,
+@ref SpeciesConcentrations2Module, @ref SetSpeciesSaveOn.
+@par C++ Example:
+@htmlonly
+<CODE>
+<PRE>
+status = phreeqc_rm.SetIthSpeciesConcentration(i, c); // repeat for all species
+...
+status = phreeqc_rm.RunCells();
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref MpiWorker.
+ */
+IRM_RESULT                                SetIthSpeciesConcentration(int i, std::vector< double >& c);
 
 /**
 MPI and C/C++ only. Defines a callback function that allows additional tasks to be done
@@ -5593,7 +5740,7 @@ protected:
 	std::vector <int> forward_mapping_root;				    // mapping from nxyz cells to count_chem chemistry cells
 	std::vector <std::vector <int> > backward_mapping;	    // mapping from count_chem chemistry cells to nxyz cells
 	bool use_solution_density_volume;
-
+	bool worker_waiting;
 	// print flags
 	std::vector< bool > print_chemistry_on;	// print flag for chemistry output file
 	bool selected_output_on;				// create selected output
@@ -5645,7 +5792,6 @@ protected:
 	std::vector <std::string> SolidSolutionNamesList;
 	std::vector <std::string> SINamesList;
 	std::set <std::string> ElementRedoxSet;
-	//class VarManager *phreeqcrm_var_man;
 
 protected:
 	static const int default_nxyz = 10;
@@ -5668,10 +5814,6 @@ protected:
 /** @endcond */
 private:
 	//friend class RM_interface;
-	static std::mutex InstancesLock;
-	static std::map<size_t, PhreeqcRM*> Instances;
-	static size_t InstancesIndex;
-	size_t Index;
 	friend class BMIPhreeqcRM;
 	friend class VarManager;
 

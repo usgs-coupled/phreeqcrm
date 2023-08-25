@@ -18,24 +18,27 @@
 #include "PhreeqcRM.h"
 #include "VarManager.h"
 
-std::map<size_t, BMIPhreeqcRM*> BMIPhreeqcRM::Instances;
-size_t BMIPhreeqcRM::InstancesIndex = 0;
-
 //// static BMIPhreeqcRM methods
 /* ---------------------------------------------------------------------- */
 void
 BMIPhreeqcRM::CleanupBMIModuleInstances(void)
 /* ---------------------------------------------------------------------- */
 {
-	std::map<size_t, BMIPhreeqcRM*>::iterator it = BMIPhreeqcRM::Instances.begin();
-	std::vector<BMIPhreeqcRM*> bmirm_list;
-	for (; it != BMIPhreeqcRM::Instances.end(); it++)
+	// This is necessary until template methods are fixed in StaticIndexer<>
+	// see TestBMIdtor built as a dll on windows
+	// ie PhreeqcRM::GetInstance<BMIPhreeqcRM>(idx) causes missing symbol
+	const std::lock_guard<std::mutex> lock(PhreeqcRM::_InstancesLock);
+	std::list<BMIPhreeqcRM*> derived_items;
+	for (auto pair : PhreeqcRM::StaticIndexer::_Instances)
 	{
-		bmirm_list.push_back(it->second);
+		if (BMIPhreeqcRM* derived = dynamic_cast<BMIPhreeqcRM*>(pair.second))
+		{
+			derived_items.push_back(derived);
+		}
 	}
-	for (size_t i = 0; i < bmirm_list.size(); i++)
+	for (auto item : derived_items)
 	{
-		delete bmirm_list[i];
+		delete item;
 	}
 }
 /* ---------------------------------------------------------------------- */
@@ -43,7 +46,7 @@ int
 BMIPhreeqcRM::CreateBMIModule()
 /* ---------------------------------------------------------------------- */
 {
-	//_CrtSetDbgbool ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	//_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	//_crtBreakAlloc = 5144;
 	int n = IRM_OUTOFMEMORY;
 	try
@@ -51,10 +54,8 @@ BMIPhreeqcRM::CreateBMIModule()
 		BMIPhreeqcRM* bmirm_ptr = new BMIPhreeqcRM();
 		if (bmirm_ptr)
 		{
-			n = (int)bmirm_ptr->Index;
-			BMIPhreeqcRM::Instances[n] = bmirm_ptr;
 			bmirm_ptr->language = "F90";
-			return n;
+			return bmirm_ptr->GetIndex();
 		}
 	}
 	catch (...)
@@ -68,7 +69,7 @@ int
 BMIPhreeqcRM::CreateBMIModule(int nxyz, MP_TYPE nthreads)
 /* ---------------------------------------------------------------------- */
 {
-	//_CrtSetDbgbool ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	//_crtBreakAlloc = 5144;
 	int n = IRM_OUTOFMEMORY;
 	try
@@ -76,10 +77,8 @@ BMIPhreeqcRM::CreateBMIModule(int nxyz, MP_TYPE nthreads)
 		BMIPhreeqcRM* bmirm_ptr = new BMIPhreeqcRM(nxyz, nthreads);
 		if (bmirm_ptr)
 		{
-			n = (int)bmirm_ptr->Index;
-			BMIPhreeqcRM::Instances[n] = bmirm_ptr;
 			bmirm_ptr->language = "F90";
-			return n;
+			return bmirm_ptr->GetIndex();
 		}
 	}
 	catch (...)
@@ -93,26 +92,20 @@ IRM_RESULT
 BMIPhreeqcRM::DestroyBMIModule(int id)
 /* ---------------------------------------------------------------------- */
 {
-	IRM_RESULT retval = IRM_BADINSTANCE;
-	std::map<size_t, BMIPhreeqcRM*>::iterator it = BMIPhreeqcRM::Instances.find(size_t(id));
-	if (it != BMIPhreeqcRM::Instances.end())
+	//return PhreeqcRM::Destroy<BMIPhreeqcRM>(id);
+	if (BMIPhreeqcRM::GetInstance(id))
 	{
-		delete (*it).second;
-		retval = IRM_OK;
+		return PhreeqcRM::Destroy(id);
 	}
-	return retval;
+	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
 BMIPhreeqcRM*
 BMIPhreeqcRM::GetInstance(int id)
 /* ---------------------------------------------------------------------- */
 {
-	std::map<size_t, BMIPhreeqcRM*>::iterator it = BMIPhreeqcRM::Instances.find(size_t(id));
-	if (it != BMIPhreeqcRM::Instances.end())
-	{
-		return (*it).second;
-	}
-	return 0;
+	//return PhreeqcRM::GetInstance<BMIPhreeqcRM>(id);
+	return dynamic_cast<BMIPhreeqcRM*>(PhreeqcRM::GetInstance(id));
 }
 // Constructor
 BMIPhreeqcRM::BMIPhreeqcRM()
@@ -124,8 +117,11 @@ BMIPhreeqcRM::BMIPhreeqcRM()
 	this->_initialized = false;
 	this->language = "Py";
 #endif
+#if defined(swig_python_EXPORTS)
+	this->language = "Py";
+#endif
 }
-BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads)
+BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads)
 : PhreeqcRM(nxyz, nthreads, nullptr, true) 
 , var_man{ nullptr }
 {
@@ -134,10 +130,14 @@ BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, int nthreads)
 	this->_initialized = false;
 	this->language = "Py";
 #endif
+#if defined(swig_python_EXPORTS)
+	this->language = "Py";
+#endif
 }
 // Destructor
 BMIPhreeqcRM::~BMIPhreeqcRM()
 {
+	delete(this->var_man);
 }
 void BMIPhreeqcRM::AddOutputVars(std::string option, std::string def)
 {
@@ -152,13 +152,12 @@ void BMIPhreeqcRM::ClearBMISelectedOutput(void)
 void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 {
 	this->PhreeqcRM::Construct(i);
-	//std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->GetWorkers()[0]->Get_Index(), this);
-	std::map<size_t, BMIPhreeqcRM*>::value_type instance(this->Index, this);
-	BMIPhreeqcRM::Instances.insert(instance);
 	this->var_man = new VarManager((PhreeqcRM*)this);
-	//this->language = "cpp";
 #if defined(WITH_PYBIND11)
 	this->_initialized = true;
+#endif
+#if defined(swig_python_EXPORTS) || defined(WITH_PYBIND11)
+	phreeqcrm_io->Set_screen_on(false);
 #endif
 }
 
@@ -166,57 +165,40 @@ void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 void BMIPhreeqcRM::Initialize(std::string config_file)
 {
 #ifdef USE_YAML
-#if defined(WITH_PYBIND11)
 	if (config_file.size() != 0)
 	{
-#endif
-	YAML::Node yaml = YAML::LoadFile(config_file);
+		YAML::Node yaml = YAML::LoadFile(config_file);
 
-	bool found_nxyz = false;
-	bool found_threads = false;
+		bool found_nxyz = false;
+		bool found_threads = false;
 
-	for (auto it = yaml.begin(); it != yaml.end(); it++)
-	{
-		YAML::Node node1 = *it;
-		auto it1 = node1.begin();
-		std::string keyword = it1++->second.as<std::string>();
-		if (keyword == "SetGridCellCount")
+		for (auto it = yaml.begin(); it != yaml.end(); it++)
 		{
-			this->initializer.nxyz_arg = it1++->second.as<int>();
-			found_nxyz = true;
+			YAML::Node node1 = *it;
+			auto it1 = node1.begin();
+			std::string keyword = it1++->second.as<std::string>();
+			if (keyword == "SetGridCellCount")
+			{
+				this->initializer.nxyz_arg = it1++->second.as<int>();
+				found_nxyz = true;
+			}
+			if (keyword == "ThreadCount")
+			{
+				this->initializer.data_for_parallel_processing = it1++->second.as<int>();
+				found_threads = true;
+			}
+			if (found_threads && found_nxyz) break;
 		}
-		if (keyword == "ThreadCount")
-		{
-			this->initializer.data_for_parallel_processing = it1++->second.as<int>();
-			found_threads = true;
-		}
-		if (found_threads && found_nxyz) break;
 	}
-
-	//if (yaml["SetGridCellCount"].IsDefined())
-	//{
-	//	this->initializer.nxyz_arg = yaml["SetGridCellCount"].as<int>();
-	//}
-	//if (yaml["ThreadCount"].IsDefined())
-	//{
-	//	this->initializer.data_for_parallel_processing = yaml["ThreadCount"].as<int>();
-	//}
-#if defined(WITH_PYBIND11)
-	}
-#endif
 #endif
 
 	this->Construct(this->initializer);
 
 #ifdef USE_YAML
-#if defined(WITH_PYBIND11)
 	if (config_file.size() != 0)
 	{
-#endif
-	this->InitializeYAML(config_file);
-#if defined(WITH_PYBIND11)
+		this->InitializeYAML(config_file);
 	}
-#endif
 #endif
 }
 void BMIPhreeqcRM::Update()
@@ -255,6 +237,9 @@ void BMIPhreeqcRM::UpdateUntil(double time)
 }
 void BMIPhreeqcRM::Finalize()
 {
+#ifdef USE_MPI
+//	this->MpiWorkerBreak();
+#endif
 	this->CloseFiles();
 #if defined(WITH_PYBIND11)
 	delete this->var_man;
@@ -442,6 +427,35 @@ std::vector<std::string> BMIPhreeqcRM::GetPointableVarNames()
 	}
 	return names;
 }
+
+std::vector<std::string> BMIPhreeqcRM::GetReadOnlyVarNames()
+{
+	std::vector <std::string> names;
+	for (auto it = this->var_man->VariantMap.begin();
+		it != this->var_man->VariantMap.end(); it++)
+	{
+		BMIVariant& bv = it->second;
+		if (!bv.GetInitialized())
+		{
+			this->var_man->task = VarManager::VAR_TASKS::Info;
+			((*this->var_man).*bv.GetFn())();
+		}
+		if (it->first == RMVARS::InputVarNames)
+		{
+			continue;
+		}
+		if (it->first == RMVARS::OutputVarNames)
+		{
+			continue;
+		}
+		if (!bv.GetHasSetter())
+		{
+			names.push_back(bv.GetName());
+		}
+	}
+	return names;
+}
+
 std::string BMIPhreeqcRM::GetVarType(const std::string name)
 {
 	RMVARS v_enum = this->var_man->GetEnum(name);
@@ -468,7 +482,10 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 		}
 	}
 	{
-		auto it = var_man->AutoOutputVars.find(name);
+		std::string name_lc = name;
+		std::transform(name_lc.begin(), name_lc.end(),
+			name_lc.begin(), tolower);
+		auto it = var_man->AutoOutputVars.find(name_lc);
 		if (it != var_man->AutoOutputVars.end())
 		{
 			if (this->language == "cpp")
@@ -485,7 +502,7 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 			}
 		}
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetVarType.");
 	return "Failed in GetVarType.";
 }
 std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
@@ -503,13 +520,16 @@ std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 		return bv.GetUnits();
 	}
 	{
-		auto it = var_man->AutoOutputVars.find(name);
+		std::string name_lc = name;
+		std::transform(name_lc.begin(), name_lc.end(),
+			name_lc.begin(), tolower);
+		auto it = var_man->AutoOutputVars.find(name_lc);
 		if (it != var_man->AutoOutputVars.end())
 		{
 			return it->second.GetUnits();
 		}
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetVarUnits.");
 	return "Failed in GetVarUnits.";
 }
 
@@ -528,13 +548,16 @@ int BMIPhreeqcRM::GetVarItemsize(const std::string name)
 		return bv.GetItemsize();
 	}
 	{
-		auto it = var_man->AutoOutputVars.find(name);
+		std::string name_lc = name;
+		std::transform(name_lc.begin(), name_lc.end(),
+			name_lc.begin(), tolower);
+		auto it = var_man->AutoOutputVars.find(name_lc);
 		if (it != var_man->AutoOutputVars.end())
 		{
 			return it->second.GetItemsize();
 		}
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetVarItemsize.");
 	return 0;
 }
 
@@ -553,13 +576,16 @@ int BMIPhreeqcRM::GetVarNbytes(const std::string name)
 		return bv.GetNbytes();
 	}
 	{
-		auto it = var_man->AutoOutputVars.find(name);
+		std::string name_lc = name;
+		std::transform(name_lc.begin(), name_lc.end(),
+			name_lc.begin(), tolower);
+		auto it = var_man->AutoOutputVars.find(name_lc);
 		if (it != var_man->AutoOutputVars.end())
 		{
 			return it->second.GetNbytes();
 		}
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetVarNbytes.");
 	return 0;
 }
 double BMIPhreeqcRM::GetCurrentTime()
@@ -596,7 +622,12 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 		int dim = this->var_man->VarExchange.GetDim();
 		if (this->var_man->VarExchange.GetCType() == "bool" && dim == 1)
 		{
-			memcpy(dest, this->var_man->VarExchange.GetBVarPtr(), Nbytes);
+			bool tf = *this->var_man->VarExchange.GetBVarPtr();
+			int tf_int = 1;
+			if (!tf) tf_int = 0;
+			bool tf1 = this->var_man->VarExchange.GetBVar();
+			assert(tf == tf1);		
+			memcpy(dest, &tf_int, sizeof(int));
 			return;
 		}
 		if (this->var_man->VarExchange.GetCType() == "int" && dim == 1)
@@ -643,7 +674,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 		}
 	}
 	{
-		auto it = var_man->AutoOutputVars.find(name);
+		std::string name_lc = name;
+		std::transform(name_lc.begin(), name_lc.end(),
+			name_lc.begin(), tolower);
+		auto it = var_man->AutoOutputVars.find(name_lc);
 		if (it != var_man->AutoOutputVars.end())
 		{
 			if (var_man->BMISelectedOutput.size() == 0)
@@ -663,7 +697,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 	std::ostringstream oss;
 	oss << "BMI GetValue void* failed for variable " << name << std::endl;
 	this->ErrorMessage(oss.str(), true);
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, bool& dest)
@@ -684,7 +718,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, bool& dest)
 		dest = this->var_man->VarExchange.GetBVar();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, bool* dest)
@@ -713,7 +747,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, bool* dest)
 	std::ostringstream oss;
 	oss << "BMI GetValue bool* failed for variable " << name << std::endl;
 	this->ErrorMessage(oss.str(), true);
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, double& dest)
@@ -734,7 +768,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, double& dest)
 		dest = this->var_man->VarExchange.GetDVar();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
@@ -767,7 +801,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
 
 	}
 	{
-		auto it = var_man->AutoOutputVars.find(name);
+		std::string name_lc = name;
+		std::transform(name_lc.begin(), name_lc.end(),
+			name_lc.begin(), tolower);
+		auto it = var_man->AutoOutputVars.find(name_lc);
 		if (it != var_man->AutoOutputVars.end())
 		{
 			if (var_man->BMISelectedOutput.size() == 0)
@@ -787,7 +824,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
 	std::ostringstream oss;
 	oss << "BMI GetValue double* failed for variable " << name << std::endl;
 	this->ErrorMessage(oss.str(), true);
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, int& dest)
@@ -807,7 +844,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, int& dest)
 		dest = this->var_man->VarExchange.GetIVar();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, int* dest)
@@ -842,7 +879,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, int* dest)
 		this->ErrorMessage(oss.str(), true);
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::string& dest)
@@ -863,7 +900,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::string& dest)
 		dest = this->var_man->VarExchange.GetStringVar();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
@@ -885,7 +922,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
 		return;
 	}
 	{
-		auto it = var_man->AutoOutputVars.find(name);
+		std::string name_lc = name;
+		std::transform(name_lc.begin(), name_lc.end(),
+			name_lc.begin(), tolower);
+		auto it = var_man->AutoOutputVars.find(name_lc);
 		if (it != var_man->AutoOutputVars.end())
 		{
 			if (var_man->BMISelectedOutput.size() == 0)
@@ -903,7 +943,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
 			return;
 		}
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::vector<int>& dest)
@@ -923,7 +963,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<int>& dest)
 		dest = this->var_man->VarExchange.GetIntVectorRef();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::vector<std::string>& dest)
@@ -943,7 +983,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<std::string>& de
 		dest = this->var_man->VarExchange.GetStringVectorRef();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValue.");
 	return;
 }
 void* BMIPhreeqcRM::GetValuePtr(const std::string name)
@@ -960,7 +1000,7 @@ void* BMIPhreeqcRM::GetValuePtr(const std::string name)
 		}
 		return bv.GetVoidPtr();
 	}
-	assert(false);
+	throw std::runtime_error("Failed in GetValuePtr.");
 	return NULL;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, void* src)
@@ -981,7 +1021,10 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 		int dim = Nbytes / itemsize;
 		if (bv.GetCType() == "bool" && dim == 1)
 		{
-			memcpy(this->var_man->VarExchange.GetBVarPtr(), src, Nbytes);
+			int src_int = *(int*)src;
+			bool tf = true;
+			if (src_int == 0) tf = false;
+			memcpy(this->var_man->VarExchange.GetBVarPtr(), &tf, Nbytes);
 		}
 		else if (bv.GetCType() == "int" && dim == 1)
 		{
@@ -1029,7 +1072,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, bool src)
@@ -1052,7 +1095,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, bool src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, const char* src)
@@ -1074,7 +1117,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, const char* src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, double src)
@@ -1096,7 +1139,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, double src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, int src)
@@ -1118,7 +1161,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, int src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, const std::string src)
@@ -1140,7 +1183,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, const std::string src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
@@ -1172,7 +1215,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, std::vector<int> src)
@@ -1197,7 +1240,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<int> src)
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src)
@@ -1219,7 +1262,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src
 		((*this->var_man).*bv.GetFn())();
 		return;
 	}
-	assert(false);
+	throw std::runtime_error("Failed in SetValue.");
 	return;
 }
 

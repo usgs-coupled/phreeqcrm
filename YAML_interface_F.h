@@ -1,11 +1,8 @@
 #ifdef USE_YAML
 #ifndef INC_YAML_interface_F_H
 #define INC_YAML_interface_F_H
-#if defined(_WINDLL)
-#define IRM_DLL_EXPORT __declspec(dllexport)
-#else
-#define IRM_DLL_EXPORT
-#endif
+
+#include "irm_dll_export.h"
 
 #if defined(__cplusplus)
 extern "C" {
