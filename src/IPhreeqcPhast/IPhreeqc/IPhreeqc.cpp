@@ -1103,17 +1103,8 @@ void IPhreeqc::UnLoadDatabase(void)
 		delete (*itt).second;
 	}
 	this->SelectedOutputMap.clear();
-
-	std::map< int, std::string >::iterator mit = this->SelectedOutputStringMap.begin();
-	for (; mit != this->SelectedOutputStringMap.begin(); ++mit)
-	{
-		(*mit).second.clear();
-	}
-	std::map< int, std::vector< std::string > >::iterator it = this->SelectedOutputLinesMap.begin();
-	for (; it != this->SelectedOutputLinesMap.begin(); ++it)
-	{
-		(*it).second.clear();
-	}
+	this->SelectedOutputStringMap.clear();
+	this->SelectedOutputLinesMap.clear();
 
 
 	// clear dump string
@@ -1165,6 +1156,7 @@ void IPhreeqc::check_database(const char* sz_routine)
 	}
 	this->SelectedOutputMap.clear();
 	this->SelectedOutputStringMap.clear();
+	this->SelectedOutputLinesMap.clear();
 
 	// release
 	this->LogString.clear();
@@ -1172,16 +1164,6 @@ void IPhreeqc::check_database(const char* sz_routine)
 	this->OutputString.clear();
 	this->OutputLines.clear();
 
-	std::map< int, std::string >::iterator mit = SelectedOutputStringMap.begin();
-	for (; mit != SelectedOutputStringMap.begin(); ++mit)
-	{
-		(*mit).second.clear();
-	}
-	std::map< int, std::vector< std::string > >::iterator lit = this->SelectedOutputLinesMap.begin();
-	for (; lit != this->SelectedOutputLinesMap.begin(); ++lit)
-	{
-		(*lit).second.clear();
-	}
 
 	if (!this->DatabaseLoaded)
 	{
@@ -1245,6 +1227,18 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 		this->PhreeqcPtr->dup_print(token, TRUE);
 		if (this->PhreeqcPtr->read_input() == EOF)
 			break;
+		
+		if (this->PhreeqcPtr->simulation == 1)
+		{
+			// force headings for selected output (on every call to do_run)
+			// might want to split tidy_punch to avoid duplicate searches like master_bsearch
+			std::map< int, SelectedOutput >::iterator pit = this->PhreeqcPtr->SelectedOutput_map.begin();
+			for (; pit != this->PhreeqcPtr->SelectedOutput_map.end(); ++pit)
+			{
+				(*pit).second.Set_new_def(true);
+				this->PhreeqcPtr->keycount[Keywords::KEY_SELECTED_OUTPUT] = 1;
+			}
+		}
 
 		// bool bWarning = false;
 		std::map< int, SelectedOutput >::iterator mit = this->PhreeqcPtr->SelectedOutput_map.begin();
