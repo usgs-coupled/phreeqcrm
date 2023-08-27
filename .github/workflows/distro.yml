@@ -136,11 +136,11 @@ jobs:
       if: runner.os == 'Linux'
       run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
-    - name: Install gcc(gfortran) ninja yaml-cpp (macOS)
+    - name: Install gcc(gfortran) ninja yaml-cpp@0.7.0 (macOS)
       if: runner.os == 'macOS'
       run: |
         brew reinstall gcc
-        brew install ninja yaml-cpp
+        brew install ninja yaml-cpp@0.7.0
 
     - name: Verify gfortran
       run: |
@@ -239,7 +239,7 @@ jobs:
 
     - name: Install ninja yaml-cpp (macOS)
       if: ${{ runner.os == 'macOS' }}
-      run: brew install ninja yaml-cpp
+      run: brew install ninja yaml-cpp@0.7.0
 
     - name: Install yaml-cpp (Windows)
       if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
