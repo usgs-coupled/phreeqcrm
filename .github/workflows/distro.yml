@@ -62,7 +62,7 @@ jobs:
       run: sudo snap install valgrind --classic
 
     - name: ctest -S cmemcheck.cmake
-      run: ctest -S cmemcheck.cmake -VV --output-on-failure -j 2        
+      run: ctest -S cmemcheck.cmake -VV --output-on-failure -j 2
 
   distcheck:
     name: make distcheck
@@ -136,11 +136,12 @@ jobs:
       if: runner.os == 'Linux'
       run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
-    - name: Install gcc(gfortran) ninja yaml-cpp@0.7.0 (macOS)
+    - name: Install gcc(gfortran) ninja yaml-cpp (macOS)
       if: runner.os == 'macOS'
       run: |
         brew reinstall gcc
-        brew install ninja yaml-cpp@0.7.0
+        brew install ninja yaml-cpp
+        ls -alR /usr/local/Cellar/
 
     - name: Verify gfortran
       run: |
@@ -239,7 +240,9 @@ jobs:
 
     - name: Install ninja yaml-cpp (macOS)
       if: ${{ runner.os == 'macOS' }}
-      run: brew install ninja yaml-cpp@0.7.0
+      run: |
+        brew install ninja yaml-cpp
+        ls -alR /usr/local/Cellar/
 
     - name: Install yaml-cpp (Windows)
       if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
