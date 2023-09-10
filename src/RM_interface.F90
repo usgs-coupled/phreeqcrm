@@ -1025,6 +1025,15 @@
     RM_GetDensityCalculated = RMF_GetDensityCalculated(id, density)
     return
     END FUNCTION RM_GetDensityCalculated
+    
+    INTEGER FUNCTION RM_GetDensity(id, density)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    real(kind=8), INTENT(inout), dimension(:), allocatable  :: density
+    RM_GetDensity = RM_GetDensityCalculated(id, density)
+    return
+    END FUNCTION RM_GetDensity
 
     !> Returns an array with the ending cell numbers from the range of cell numbers 
     !> assigned to each worker.
@@ -2384,6 +2393,14 @@
     rmf_errors = allocate_double_1d(sat_calc, rmf_nxyz)
     RM_GetSaturationCalculated = RMF_GetSaturationCalculated(id, sat_calc)
     END FUNCTION RM_GetSaturationCalculated
+    
+    INTEGER FUNCTION RM_GetSaturation(id, sat_calc)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: sat_calc
+    RM_GetSaturation = RM_GetSaturationCalculated(id, sat_calc)
+    END FUNCTION RM_GetSaturation
 
     !> Populates an array with values from the current selected-output definition. 
     !> @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput determines 
@@ -5630,7 +5647,15 @@
     if (rmf_debug) call Chk_SetDensityUser(id, density)
     RM_SetDensityUser = RMF_SetDensityUser(id, density)
     END FUNCTION RM_SetDensityUser
-
+    
+    INTEGER FUNCTION RM_SetDensity(id, density)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    real(kind=8), DIMENSION(:), INTENT(in) :: density
+    RM_SetDensity = RM_SetDensityUser(id, density)
+    END FUNCTION RM_SetDensity
+    
     SUBROUTINE Chk_SetDensityUser(id, density)
     IMPLICIT NONE
     INTEGER, INTENT(in) :: id
@@ -6623,6 +6648,14 @@
     if (rmf_debug) call Chk_SetSaturationUser(id, sat)
     RM_SetSaturationUser = RMF_SetSaturationUser(id, sat)
     END FUNCTION RM_SetSaturationUser
+    
+    INTEGER FUNCTION RM_SetSaturation(id, sat)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    INTEGER, INTENT(in) :: id
+    real(kind=8), DIMENSION(:), INTENT(in) :: sat
+    RM_SetSaturation = RM_SetSaturationUser(id, sat)
+    END FUNCTION RM_SetSaturation
 
     SUBROUTINE Chk_SetSaturationUser(id, sat)
     IMPLICIT NONE
