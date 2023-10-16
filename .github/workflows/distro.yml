@@ -135,7 +135,9 @@ jobs:
 
     - name: Install ninja yaml-cpp valgrind (Linux)
       if: runner.os == 'Linux'
-      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
     - name: Install gcc(gfortran) ninja yaml-cpp (macOS)
       if: runner.os == 'macOS'
@@ -420,24 +422,39 @@ jobs:
       with:
         arch: x64
 
+    #{
+    - name: Setup mpi
+      uses: mpi4py/setup-mpi@v1
+
+    - name: CMake version
+      run: |
+        Get-Command cmake
+        cmake --version
+
+    - name: Locate CMake
+      shell: cmd
+      run: |
+        where cmake
+    #}
+
     - name: Extract tarball
       run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
 
     - name: Configure with CMake (Non-Windows)
       if: ${{ runner.os != 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
-      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
+      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_MPI:BOOL=ON
 
     - name: Configure with CMake (Non-Windows)
       if: ${{ runner.os != 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
+      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_MPI:BOOL=ON
 
     - name: Configure with CMake (Windows)
       if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
-      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
+      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_MPI:BOOL=ON -DMPI_GUESS_LIBRARY_NAME=MSMPI
 
     - name: Configure with CMake (Windows)
       if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: cmake -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
+      run: cmake -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_MPI:BOOL=ON -DMPI_GUESS_LIBRARY_NAME=MSMPI
 
     - name: Print phreeqcrm.pc
       working-directory: ${{ github.workspace }}/build
