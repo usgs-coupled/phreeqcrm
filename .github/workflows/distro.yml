@@ -365,12 +365,14 @@ jobs:
         os: [windows-2019]
         build_shared_libs: [ON]
         phreeqcrm_with_yaml_cpp: [OFF]
-        mpi: ['mpich', 'openmpi', 'intelmpi']
+        mpi: ['mpich', 'ompi', 'impi', 'msmpi']  # see https://github.com/mpi4py/setup-mpi/blob/master/setup-mpi.sh
         # BUILD_TYPE: [Debug, Release]
         exclude:
           - os: windows-2019
             mpi: 'mpich'
-
+          - os: windows-2019
+            mpi: 'ompi'
+    
     runs-on: ${{ matrix.os }}
 
     env:
