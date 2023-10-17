@@ -141,7 +141,7 @@ jobs:
     - name: Install ninja yaml-cpp valgrind (Linux)
       if: runner.os == 'Linux'
       run: |
-        sudo apt-get update
+        sudo apt-get -y update
         sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
     - name: Install gcc(gfortran) ninja yaml-cpp (macOS)
@@ -245,7 +245,9 @@ jobs:
     - name: Install ninja yaml-cpp valgrind (Linux)
       if: ${{ runner.os == 'Linux' }}
       #run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
-      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+      run: |
+        sudo apt-get -y update
+        sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
     - name: Install ninja yaml-cpp (macOS)
       if: ${{ runner.os == 'macOS' }}
@@ -402,7 +404,9 @@ jobs:
     - name: Install ninja yaml-cpp valgrind (Linux)
       if: ${{ runner.os == 'Linux' }}
       #run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
-      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+      run: |
+        sudo apt-get -y update
+        sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
     - name: Install ninja yaml-cpp (macOS)
       if: ${{ runner.os == 'macOS' }}
