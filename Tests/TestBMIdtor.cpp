@@ -10,9 +10,12 @@
 int main(int argc, char* argv[])
 {
 #if defined(USE_MPI)
-    MPI_Init(&argc, &argv);
+    if (MPI_Init(&argc, &argv) != MPI_SUCCESS)
+    {
+        return EXIT_FAILURE;
+    }
 #endif
-    BMIPhreeqcRM* bmi = new BMIPhreeqcRM;
+    BMIPhreeqcRM* bmi = new BMIPhreeqcRM();
     int idx = bmi->GetIndex();
     assert(bmi == PhreeqcRM::GetInstance(idx));
     // assert(bmi == PhreeqcRM::GetInstance<BMIPhreeqcRM>(idx));
@@ -21,5 +24,11 @@ int main(int argc, char* argv[])
     assert(nullptr == PhreeqcRM::GetInstance(idx));
     // assert(nullptr == PhreeqcRM::GetInstance<BMIPhreeqcRM>(idx));
     assert(nullptr == BMIPhreeqcRM::GetInstance(idx));
+#if defined(USE_MPI)
+    if (MPI_Finalize() != MPI_SUCCESS)
+    {
+        return EXIT_FAILURE;
+    }
+#endif
     return EXIT_SUCCESS;
 }
