@@ -446,11 +446,10 @@ jobs:
         mpi: ${{ matrix.mpi }}
 
     - name: CMake version
-      run: |
-        Get-Command cmake
-        cmake --version
+      run: cmake --version
 
     - name: Locate CMake
+      if: runner.os == 'Windows'
       shell: cmd
       run: |
         where cmake
