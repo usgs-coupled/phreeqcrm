@@ -361,7 +361,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-11, ubuntu-20.04, windows-2019]
+        os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
         build_shared_libs: [ON]
         phreeqcrm_with_yaml_cpp: [OFF]
         mpi: ['mpich', 'ompi', 'impi', 'msmpi']  # see https://github.com/mpi4py/setup-mpi/blob/master/setup-mpi.sh
@@ -371,13 +371,23 @@ jobs:
             mpi: 'impi'
           - os: macos-11
             mpi: 'msmpi'
+          - os: macos-12
+            mpi: 'impi'
+          - os: macos-12
+            mpi: 'msmpi'
           - os: ubuntu-20.04
             mpi: 'msmpi'
+          - os: ubuntu-22.04
+            mpi: 'msmpi'
           - os: windows-2019
-            mpi: 'mpich'
+            mpi: 'mpich'            
           - os: windows-2019
             mpi: 'ompi'
-    timeout-minutes: 15
+          - os: windows-2022
+            mpi: 'mpich'            
+          - os: windows-2022
+            mpi: 'ompi'
+    timeout-minutes: 20
 
     runs-on: ${{ matrix.os }}
 
