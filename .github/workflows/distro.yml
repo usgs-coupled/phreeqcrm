@@ -206,8 +206,6 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
-    if: false
-    #name: cmake
     name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }}
     needs: [init, distcheck]
     strategy:
@@ -359,24 +357,28 @@ jobs:
         ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
 
   cmake-mpi:
-    name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }}
+    name: ${{ matrix.os }} mpi=${{ matrix.mpi }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }}
     needs: [init, distcheck]
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, windows-2019]
+        os: [macos-11, ubuntu-20.04, windows-2019]
         build_shared_libs: [ON]
         phreeqcrm_with_yaml_cpp: [OFF]
         mpi: ['mpich', 'ompi', 'impi', 'msmpi']  # see https://github.com/mpi4py/setup-mpi/blob/master/setup-mpi.sh
         # BUILD_TYPE: [Debug, Release]
         exclude:
+          - os: macos-11
+            mpi: 'impi'
+          - os: macos-11
+            mpi: 'msmpi'
+          - os: ubuntu-20.04
+            mpi: 'msmpi'
           - os: windows-2019
             mpi: 'mpich'
           - os: windows-2019
             mpi: 'ompi'
-          - os: ubuntu-20.04
-            mpi: 'msmpi'
-    
+
     runs-on: ${{ matrix.os }}
 
     env:
@@ -439,7 +441,6 @@ jobs:
       with:
         arch: x64
 
-    #{
     - name: Setup mpi
       uses: mpi4py/setup-mpi@v1
       with:
@@ -453,7 +454,6 @@ jobs:
       shell: cmd
       run: |
         where cmake
-    #}
 
     - name: Extract tarball
       run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
