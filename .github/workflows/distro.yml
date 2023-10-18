@@ -41,7 +41,6 @@ jobs:
 
 
   valgrind:
-    if: false
     name: valgrind
     runs-on: ubuntu-latest
     steps:
@@ -378,6 +377,7 @@ jobs:
             mpi: 'mpich'
           - os: windows-2019
             mpi: 'ompi'
+    timeout-minutes: 15
 
     runs-on: ${{ matrix.os }}
 
