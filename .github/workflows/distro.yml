@@ -408,6 +408,22 @@ jobs:
       if: ${{ runner.os == 'Windows' }}
       run: 'Get-ChildItem env:'
 
+    - name: test env (Non-Windows)
+      if: ${{ runner.os != 'Windows' }}
+      run: |
+        echo ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
+        echo ${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
+        ls ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
+        ls ${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
+
+    - name: test env (Windows)
+      if: ${{ runner.os == 'Windows' }}
+      run: |
+        echo ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
+        echo ${env:VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
+        ls ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
+        ls ${env:VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
+    
     - name: fail
       run: exit 1
 
