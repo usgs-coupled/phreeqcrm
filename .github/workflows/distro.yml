@@ -400,6 +400,10 @@ jobs:
 
     steps:
 
+    - name: init VCPKG_INSTALLATION_ROOT
+      shell: bash
+      run: echo "VCPKG_INSTALLATION_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+
     - name: printenv
       if: ${{ runner.os != 'Windows' }}
       run: printenv
