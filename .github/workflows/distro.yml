@@ -400,36 +400,12 @@ jobs:
 
     steps:
 
+    # Note: This allows ${{ env.VCPKG_INSTALLATION_ROOT }} to be used in the remaining steps
+    # Although its already set in the environment it can't be accessed using this syntax until
+    # it is stored in the $GITHUB_ENV file
     - name: init VCPKG_INSTALLATION_ROOT
       shell: bash
       run: echo "VCPKG_INSTALLATION_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
-
-    - name: printenv
-      if: ${{ runner.os != 'Windows' }}
-      run: printenv
-
-    - name: printenv
-      if: ${{ runner.os == 'Windows' }}
-      run: 'Get-ChildItem env:'
-
-    - name: test env (Non-Windows)
-      if: ${{ runner.os != 'Windows' }}
-      run: |
-        echo ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
-        echo ${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
-        ls ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
-        ls ${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
-
-    - name: test env (Windows)
-      if: ${{ runner.os == 'Windows' }}
-      run: |
-        echo ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
-        echo ${env:VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
-        ls ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
-        ls ${env:VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
-    
-    - name: fail
-      run: exit 1
 
     - uses: actions/download-artifact@v3
       with:
@@ -488,6 +464,8 @@ jobs:
     #     python -m pip install pytest
     #     # @todo if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+    # Note: this makes the entire environment available using ${{ env.VARIABLE }} syntax
+    # see above
     - name: Set up Visual Studio shell (Windows)
       if: runner.os == 'Windows'
       uses: egor-tensin/vs-shell@v2
