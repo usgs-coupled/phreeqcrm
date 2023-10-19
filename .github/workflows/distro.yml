@@ -363,7 +363,7 @@ jobs:
       matrix:
         os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
         build_shared_libs: [ON]
-        phreeqcrm_with_yaml_cpp: [OFF]
+        phreeqcrm_with_yaml_cpp: [ON]
         mpi: ['mpich', 'ompi', 'impi', 'msmpi']  # see https://github.com/mpi4py/setup-mpi/blob/master/setup-mpi.sh
         # BUILD_TYPE: [Debug, Release]
         exclude:
