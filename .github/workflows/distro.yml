@@ -402,7 +402,7 @@ jobs:
 
     - name: printenv
       if: ${{ runner.os == 'Windows' }}
-      run: Get-ChildItem env:
+      run: 'Get-ChildItem env:'
 
     - name: fail
       run: exit 1
