@@ -396,6 +396,17 @@ jobs:
 
     steps:
 
+    - name: printenv
+      if: ${{ runner.os != 'Windows' }}
+      run: printenv
+
+    - name: printenv
+      if: ${{ runner.os == 'Windows' }}
+      run: Get-ChildItem env:
+
+    - name: fail
+      run: exit 1
+
     - uses: actions/download-artifact@v3
       with:
         name: tarball
