@@ -184,7 +184,9 @@ void BMIPhreeqcRM::Initialize(std::string config_file)
 			}
 			if (keyword == "ThreadCount")
 			{
+#if !defined(USE_MPI)
 				this->initializer.data_for_parallel_processing = it1++->second.as<int>();
+#endif
 				found_threads = true;
 			}
 			if (found_threads && found_nxyz) break;

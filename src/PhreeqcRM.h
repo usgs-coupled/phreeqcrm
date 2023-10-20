@@ -5799,12 +5799,7 @@ protected:
 
 protected:
 	static const int default_nxyz = 10;
-#if defined(USE_MPI)
-	// constexpr specifier since C++11
-	static constexpr MP_TYPE default_data_for_parallel_processing = MPI_COMM_WORLD;
-#else
-	static const MP_TYPE default_data_for_parallel_processing = -1;
-#endif
+	static const MP_TYPE default_data_for_parallel_processing;
 	struct Initializer {
 		int nxyz_arg;
 		MP_TYPE data_for_parallel_processing;
