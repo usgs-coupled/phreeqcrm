@@ -363,6 +363,7 @@ int AdvectBMI_cpp_test()
 #endif
 		return IRM_FAIL;
 	}
+#if 0
 	catch (...)
 	{
 		std::string e_string = "AdvectBMI_cpp_test failed with an unhandled exception.";
@@ -372,6 +373,7 @@ int AdvectBMI_cpp_test()
 #endif
 		return IRM_FAIL;
 	}
+#endif
 	return EXIT_SUCCESS;
 }
 void
@@ -524,6 +526,7 @@ int bmi_units_tester()
 #endif
 		return IRM_FAIL;
 	}
+#if 0
 	catch (...)
 	{
 		std::string e_string = "Units tester failed with an unhandled exception.";
@@ -533,6 +536,7 @@ int bmi_units_tester()
 #endif
 		return IRM_FAIL;
 	}
+#endif
 	return EXIT_SUCCESS;
 }
 

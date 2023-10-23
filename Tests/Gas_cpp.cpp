@@ -159,6 +159,7 @@ int Gas_cpp()
 #endif
 		return IRM_FAIL;
 	}
+#if 0
 	catch (...)
 	{
 		std::string e_string = "Gas_cpp failed with an unhandled exception.";
@@ -168,6 +169,7 @@ int Gas_cpp()
 #endif
 		return IRM_FAIL;
 	}
+#endif
 	return EXIT_SUCCESS;
 }
 /* ---------------------------------------------------------------------- */

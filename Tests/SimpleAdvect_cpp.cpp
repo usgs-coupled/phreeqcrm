@@ -172,6 +172,7 @@ int SimpleAdvect_cpp()
 #endif
 		return IRM_FAIL;
 	}
+#if 0
 	catch (...)
 	{
 		std::string e_string = "SimpleAdvect_cpp failed with an unhandled exception.";
@@ -181,6 +182,7 @@ int SimpleAdvect_cpp()
 #endif
 		return IRM_FAIL;
 	}
+#endif
 	return EXIT_SUCCESS;
 }
 void

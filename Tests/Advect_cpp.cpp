@@ -446,6 +446,7 @@ int Advect_cpp()
 #endif
 		return IRM_FAIL;
 	}
+#if 0
 	catch (...)
 	{
 		std::string e_string = "Advect_cpp failed with an unhandled exception.";
@@ -455,6 +456,7 @@ int Advect_cpp()
 #endif
 		return IRM_FAIL;
 	}
+#endif
 	return EXIT_SUCCESS;
 }
 void
@@ -611,6 +613,7 @@ int units_tester()
 #endif
 		return IRM_FAIL;
 	}
+#if 0
 	catch (...)
 	{
 		std::string e_string = "units_tester failed with an unhandled exception.";
@@ -620,6 +623,7 @@ int units_tester()
 #endif
 		return IRM_FAIL;
 	}
+#endif
 	return EXIT_SUCCESS;
 }
 #ifdef USE_MPI

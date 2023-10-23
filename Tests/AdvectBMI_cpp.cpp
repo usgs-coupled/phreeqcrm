@@ -362,6 +362,7 @@ int AdvectBMI_cpp()
 #endif
 		return IRM_FAIL;
 	}
+#if 0
 	catch (...)
 	{
 		std::string e_string = "AdvectBMI_cpp failed with an unhandled exception.";
@@ -371,6 +372,7 @@ int AdvectBMI_cpp()
 #endif
 		return IRM_FAIL;
 	}
+#endif
 
 	return EXIT_SUCCESS;
 }
