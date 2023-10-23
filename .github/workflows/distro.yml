@@ -90,15 +90,10 @@ jobs:
       working-directory: ${{github.workspace}}/_build
       run: ../configure --prefix=$(pwd)/INSTALL
 
-    # - name: make
-    #   shell: bash
-    #   working-directory: ${{github.workspace}}/_build
-    #   run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test --with-yaml-cpp" make -j2 distcheck
-
-    - name: make (SKIP CHECK TO SPEED THINGS UP)
+    - name: make
       shell: bash
       working-directory: ${{github.workspace}}/_build
-      run: make dist
+      run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test --with-yaml-cpp" make -j2 distcheck
 
     - uses: actions/upload-artifact@v3
       with:
