@@ -13,7 +13,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
   ! Based on PHREEQC Example 11
   integer                      :: mpi_myself
   integer                      :: i, j, n
-  integer                      :: id, id1, nxyz, nthreads, nchem, ncomps, nspecies
+  integer                      :: id, yid, id1, nxyz, nthreads, nchem, ncomps, nspecies
   integer                      :: ngas
   integer                      :: nbound, isteps, nsteps, n_user, status
   character(100)               :: string, yaml_filename, vtype
@@ -36,30 +36,32 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
   ! --------------------------------------------------------------------------
   ! Create PhreeqcRM
   ! --------------------------------------------------------------------------
-    ! Write YAML file
-    id = CreateYAMLPhreeqcRM()
     nxyz = 40
-    status = YAMLSetGridCellCount(id, nxyz)
-    status = YAMLThreadCount(id, 3)
-	yaml_filename = "TestAllMethods_f90.yaml"
-	status = WriteYAMLDoc(id, yaml_filename)
-	status = YAMLClear(id)
-    status = DestroyYAMLPhreeqcRM(id)
-	!
-	! Use all BMIPhreeqcRM methods roughly in order of use
-	!
 #ifdef USE_MPI
-  ! MPI
-	nxyz = 40
-	id = bmif_create(nxyz, MPI_COMM_WORLD)
-    if (RM_GetMpiMyself(id) > 0) then
+    ! MPI
+    call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
+    if (status .ne. MPI_SUCCESS) then
+        stop "Failed to get mpi_myself"
+    endif  
+    id = bmif_create(nxyz, MPI_COMM_WORLD)
+    if (mpi_myself > 0) then
         status = RM_MpiWorker(id)
         status = bmif_finalize(id)
         return
     endif
 #else
-	id = bmif_create()
-#endif    
+    ! OpenMP
+    id = bmif_create()
+#endif
+    ! Write YAML file
+    yid = CreateYAMLPhreeqcRM()
+    status = YAMLSetGridCellCount(yid, nxyz)
+    status = YAMLThreadCount(yid, 3)
+	yaml_filename = "TestAllMethods_f90.yaml"
+	status = WriteYAMLDoc(yid, yaml_filename)
+	status = YAMLClear(yid)
+    status = DestroyYAMLPhreeqcRM(yid)  
+  
 	write(*,*) "bmif_create"
 	!-------
 	status = bmif_initialize(id, yaml_filename)

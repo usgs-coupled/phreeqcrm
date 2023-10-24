@@ -21,14 +21,9 @@ void TestAllMethods_cpp()
 	YAMLPhreeqcRM yrm;
 	IRM_RESULT status;
 	int nxyz = 40;
-	// Set GridCellCount
-	yrm.YAMLSetGridCellCount(nxyz);
-	yrm.YAMLThreadCount(3);
-	std::string YAML_filename = "TestAllMethods_cpp.yaml";
-	yrm.WriteYAMLDoc(YAML_filename);
+
 #ifdef USE_MPI
 	// MPI
-	nxyz = PhreeqcRM::GetGridCellCountYAML(YAML_filename.c_str());
 	BMIPhreeqcRM bmi(nxyz, MPI_COMM_WORLD);
 	MP_TYPE comm = MPI_COMM_WORLD;
 	int mpi_myself;
@@ -46,6 +41,12 @@ void TestAllMethods_cpp()
 	// OpenMP
 	BMIPhreeqcRM bmi;
 #endif
+	// Set GridCellCount
+	yrm.YAMLSetGridCellCount(nxyz);
+	yrm.YAMLThreadCount(3);
+	std::string YAML_filename = "TestAllMethods_cpp.yaml";
+	yrm.WriteYAMLDoc(YAML_filename);
+
 	// Use YAML file to initialize
 	bmi.Initialize(YAML_filename);   // void function
 	bmi.InitializeYAML(YAML_filename);

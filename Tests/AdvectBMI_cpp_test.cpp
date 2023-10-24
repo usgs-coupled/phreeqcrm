@@ -79,23 +79,26 @@ int AdvectBMI_cpp_test()
 		// value is zero.
 		//int nxyz = BMIPhreeqcRM::GetGridCellCountYAML(yaml_file.c_str());
 		//int nxyz = 40;
-		int nxyz;
+		int nxyz = 0;
 #ifdef USE_MPI
 		// MPI
-		nxyz = PhreeqcRM::GetGridCellCountYAML(yaml_file.c_str());
-		BMIPhreeqcRM brm(nxyz, MPI_COMM_WORLD);
-		MP_TYPE comm = MPI_COMM_WORLD;
 		int mpi_myself;
 		if (MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself) != MPI_SUCCESS)
 		{
 			exit(4);
 		}
+		if (mpi_myself == 0)
+		{
+			nxyz = BMIPhreeqcRM::GetGridCellCountYAML(yaml_file.c_str());
+		}
+		MPI_Bcast(&nxyz, 1, MPI_INT, 0, MPI_COMM_WORLD);
+		BMIPhreeqcRM brm(nxyz, MPI_COMM_WORLD);
 		if (mpi_myself > 0)
 		{
 			brm.MpiWorker();
 			brm.Finalize();
 			return EXIT_SUCCESS;
-		}
+		};
 #else
 		// OpenMP
 		BMIPhreeqcRM brm;
@@ -366,7 +369,7 @@ int AdvectBMI_cpp_test()
 	}
 	catch (...)
 	{
-		std::string e_string = "Advection_bmi_cpp failed with an unhandled exception.";
+		std::string e_string = "Advection_bmi_cpp_test failed with an unhandled exception.";
 		std::cerr << e_string << std::endl;
 #ifdef USE_MPI
 		MPI_Abort(MPI_COMM_WORLD, 1);
