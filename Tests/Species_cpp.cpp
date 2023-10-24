@@ -359,12 +359,14 @@ int Species_cpp()
 		std::cerr << e_string << std::endl;
 		return IRM_FAIL;
 	}
+#if 0
 	catch (...)
 	{
 		std::string e_string = "Species_cpp failed with an unhandled exception.";
 		std::cerr << e_string << std::endl;
 		return IRM_FAIL;
 	}
+#endif
 	return EXIT_SUCCESS;
 }
 void

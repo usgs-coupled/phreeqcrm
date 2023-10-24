@@ -356,22 +356,24 @@ int AdvectBMI_cpp_test()
 	}
 	catch (PhreeqcRMStop)
 	{
-		std::string e_string = "Advection_cpp failed with an error in PhreeqcRM.";
+		std::string e_string = "AdvectBMI_cpp_test failed with an error in PhreeqcRM.";
 		std::cerr << e_string << std::endl;
 #ifdef USE_MPI
 		MPI_Abort(MPI_COMM_WORLD, 1);
 #endif
 		return IRM_FAIL;
 	}
+#if 0
 	catch (...)
 	{
-		std::string e_string = "Advection_bmi_cpp failed with an unhandled exception.";
+		std::string e_string = "AdvectBMI_cpp_test failed with an unhandled exception.";
 		std::cerr << e_string << std::endl;
 #ifdef USE_MPI
 		MPI_Abort(MPI_COMM_WORLD, 1);
 #endif
 		return IRM_FAIL;
 	}
+#endif
 	return EXIT_SUCCESS;
 }
 void
@@ -524,6 +526,7 @@ int bmi_units_tester()
 #endif
 		return IRM_FAIL;
 	}
+#if 0
 	catch (...)
 	{
 		std::string e_string = "Units tester failed with an unhandled exception.";
@@ -533,6 +536,7 @@ int bmi_units_tester()
 #endif
 		return IRM_FAIL;
 	}
+#endif
 	return EXIT_SUCCESS;
 }
 

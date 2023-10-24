@@ -333,10 +333,10 @@ if(NOT CMAKE_DEBUG_POSTFIX)
   set_target_properties(PhreeqcRM PROPERTIES DEBUG_POSTFIX "d")
 endif()
 
-# At least with MSMPI PhreeqcRM.dll requires MPI_CXX_LIBRARIES to link
-if(MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_BUILD_MPI)
-  target_link_libraries(PhreeqcRM ${MPI_CXX_LIBRARIES})
-endif()
+# # At least with MSMPI PhreeqcRM.dll requires MPI_CXX_LIBRARIES to link
+# if(MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_BUILD_MPI)
+#   target_link_libraries(PhreeqcRM ${MPI_CXX_LIBRARIES})
+# endif()
 
 if(MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
   target_link_libraries(PhreeqcRM ${ZLIB_LIBRARIES})

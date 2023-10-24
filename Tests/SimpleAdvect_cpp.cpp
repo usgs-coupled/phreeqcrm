@@ -165,22 +165,24 @@ int SimpleAdvect_cpp()
 	}
 	catch (PhreeqcRMStop)
 	{
-		std::string e_string = "SimpleAdvection_cpp failed with an error in PhreeqcRM.";
+		std::string e_string = "SimpleAdvect_cpp failed with an error in PhreeqcRM.";
 		std::cerr << e_string << std::endl;
 #ifdef USE_MPI
 		MPI_Abort(MPI_COMM_WORLD, 1);
 #endif
 		return IRM_FAIL;
 	}
+#if 0
 	catch (...)
 	{
-		std::string e_string = "SimpleAdvection_cpp failed with an unhandled exception.";
+		std::string e_string = "SimpleAdvect_cpp failed with an unhandled exception.";
 		std::cerr << e_string << std::endl;
 #ifdef USE_MPI
 		MPI_Abort(MPI_COMM_WORLD, 1);
 #endif
 		return IRM_FAIL;
 	}
+#endif
 	return EXIT_SUCCESS;
 }
 void
