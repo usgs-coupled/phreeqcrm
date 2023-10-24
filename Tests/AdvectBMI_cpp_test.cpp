@@ -93,6 +93,7 @@ int AdvectBMI_cpp_test()
 		if (mpi_myself > 0)
 		{
 			brm.MpiWorker();
+			brm.Finalize();
 			return EXIT_SUCCESS;
 		}
 #else
@@ -403,7 +404,7 @@ int bmi_units_tester()
 		int nxyz = 3;
 #ifdef USE_MPI
 		// MPI
-		PhreeqcRM brm(nxyz, MPI_COMM_WORLD);
+		BMIPhreeqcRM brm(nxyz, MPI_COMM_WORLD);
 		int mpi_myself;
 		if (MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself) != MPI_SUCCESS)
 		{
@@ -412,12 +413,13 @@ int bmi_units_tester()
 		if (mpi_myself > 0)
 		{
 			brm.MpiWorker();
+			brm.Finalize();
 			return EXIT_SUCCESS;
 		}
 #else
 		// OpenMP
 		int nthreads = 3;
-		PhreeqcRM brm(nxyz, nthreads);
+		BMIPhreeqcRM brm(nxyz, nthreads);
 #endif
 		IRM_RESULT status;
 		// Set properties
@@ -516,6 +518,7 @@ int bmi_units_tester()
 		util_ptr->SetOutputFileOn(true);
 		iphreeqc_result = util_ptr->RunString(input.c_str());
 		status = brm.MpiWorkerBreak();
+		brm.Finalize();
 	}
 	catch (PhreeqcRMStop)
 	{

@@ -72,15 +72,14 @@ int main(int argc, char* argv[])
 	if (root) std::cerr << "Done Advect_cpp.==================================" << std::endl;
 #ifdef USE_YAML
 	if (root) WriteYAMLFile_cpp();
+	if (root) std::cerr << "Done WriteYAMLFile_cpp.==================================" << std::endl;
 	AdvectBMI_cpp();
 	if (root) std::cerr << "Done AdvectBMI_cpp.==================================" << std::endl;
-	WriteYAMLFile_cpp_test();
+	if (root) WriteYAMLFile_cpp_test();
 	AdvectBMI_cpp_test();
 	if (root) std::cerr << "Done AdvectBMI_cpp_test.==================================" << std::endl;
-#if !(defined(USE_MPI) || defined(USE_OPENMP))
 	TestAllMethods_cpp();
 	if (root) std::cerr << "Done TestAllMethods_cpp.==================================" << std::endl;
-#endif
 #endif
 	SimpleAdvect_c();
 	if (root) std::cerr << "Done SimpleAdvect_c.====================================" << std::endl;
@@ -100,16 +99,14 @@ int main(int argc, char* argv[])
 	Advect_f90();
 	if (root) std::cerr << "Done Advect_f90.==================================" << std::endl;
 #ifdef USE_YAML
-    WriteYAMLFile_f90();
+    if (root) WriteYAMLFile_f90();
 	AdvectBMI_f90();
 	if (root) std::cerr << "Done AdvectBMI_f90.==================================" << std::endl;
-	WriteYAMLFile_f90_test();
+	if (root) WriteYAMLFile_f90_test();
 	AdvectBMI_f90_test();
 	if (root) std::cerr << "Done AdvectBMI_f90_test.==================================" << std::endl;
-#if !(defined(USE_MPI) || defined(USE_OPENMP))
 	TestAllMethods_f90();
 	if (root) std::cerr << "Done TestAllMethods_f90.==================================" << std::endl;
-#endif
 #endif
 	Species_f90();
 	if (root) std::cerr << "Done Species_f90.====================================" << std::endl;
