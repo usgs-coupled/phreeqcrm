@@ -419,7 +419,7 @@ int bmi_units_tester()
 #else
 		// OpenMP
 		int nthreads = 3;
-		PhreeqcRM brm(nxyz, nthreads);
+		BMIPhreeqcRM brm(nxyz, nthreads);
 #endif
 		IRM_RESULT status;
 		// Set properties
