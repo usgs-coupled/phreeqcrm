@@ -68,3 +68,6 @@ swig/python/ex11-advect/ex11-advect.yaml
 swig/python/ex11-advect/ex11-advect.chem.txt
 swig/python/ex11-advect/ex11-advect.log.txt
 swig/python/ex11-advect/.ipynb_checkpoints/
+
+# default build directory when using vscode
+build/

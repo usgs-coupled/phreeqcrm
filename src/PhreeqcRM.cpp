@@ -63,6 +63,11 @@
 #include "Phreeqc.h"
 #include "IPhreeqcPhast.h"
 
+#if defined(USE_MPI)
+	const MP_TYPE PhreeqcRM::default_data_for_parallel_processing = MPI_COMM_WORLD;
+#else
+	const MP_TYPE PhreeqcRM::default_data_for_parallel_processing = -1;
+#endif
 
 
 //// static PhreeqcRM methods

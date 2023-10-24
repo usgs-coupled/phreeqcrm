@@ -8,8 +8,8 @@ on:
       - 'build-all-presets.sh'
       - '.github/workflows/wheels.yml'
   push:
-    branches:
-      - master
+    # branches:
+    #   - master
     paths-ignore:
       - 'CMakePresets.json'
       - 'build-all-presets.sh'
@@ -38,7 +38,6 @@ jobs:
           echo REL=$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/rel.py | python3) >> $GITHUB_OUTPUT
           echo DATE=$(date "+%x")                                                                                   >> $GITHUB_OUTPUT
           echo DATE_RFC_3339=$(date --rfc-3339=date)                                                                >> $GITHUB_OUTPUT
-
 
   valgrind:
     name: valgrind
@@ -134,7 +133,9 @@ jobs:
 
     - name: Install ninja yaml-cpp valgrind (Linux)
       if: runner.os == 'Linux'
-      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+      run: |
+        sudo apt-get -y update
+        sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
     - name: Install gcc(gfortran) ninja yaml-cpp (macOS)
       if: runner.os == 'macOS'
@@ -198,7 +199,6 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
-    #name: cmake
     name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }}
     needs: [init, distcheck]
     strategy:
@@ -215,6 +215,13 @@ jobs:
       VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
 
     steps:
+
+    # Note: This allows ${{ env.VCPKG_INSTALLATION_ROOT }} to be used in the remaining steps
+    # Although its already set in the environment it can't be accessed using the env context
+    # until it is stored in the $GITHUB_ENV file
+    - name: init VCPKG_INSTALLATION_ROOT
+      shell: bash
+      run: echo "VCPKG_INSTALLATION_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
 
     - uses: actions/download-artifact@v3
       with:
@@ -233,16 +240,26 @@ jobs:
       with:
         cache: true
 
-    - name: Install ninja yaml-cpp valgrind (Linux)
+    - name: Install ninja valgrind (Linux)
       if: ${{ runner.os == 'Linux' }}
       #run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
-      run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
+      run: |
+        sudo apt-get -y update
+        sudo apt-get install -y ninja-build valgrind
 
-    - name: Install ninja yaml-cpp (macOS)
+    - name: Install ninja (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja yaml-cpp
+        brew install ninja
         ls -alR /usr/local/Cellar/
+
+    - name: Install yaml-cpp (Linux)
+      if: ${{ runner.os == 'Linux' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: vcpkg install yaml-cpp:x64-linux
+
+    - name: Install yaml-cpp (macOS)
+      if: ${{ runner.os == 'macOS' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: vcpkg install yaml-cpp:x64-osx
 
     - name: Install yaml-cpp (Windows)
       if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
@@ -272,21 +289,13 @@ jobs:
     - name: Extract tarball
       run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
 
-    - name: Configure with CMake (Non-Windows)
-      if: ${{ runner.os != 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
-      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
+    - name: Configure with CMake
+      if: ${{ matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
+      run: cmake -L -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
 
-    - name: Configure with CMake (Non-Windows)
-      if: ${{ runner.os != 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON -DPHREEQCRM_BUILD_PYTHON:BOOL=ON 
-
-    - name: Configure with CMake (Windows)
-      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
-      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
-
-    - name: Configure with CMake (Windows)
-      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: cmake -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
+    - name: Configure with CMake (using vcpkg toolchain)
+      if: ${{ matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: cmake -L -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON -DPHREEQCRM_BUILD_PYTHON:BOOL=ON
 
     - name: Print phreeqcrm.pc
       working-directory: ${{ github.workspace }}/build
@@ -322,14 +331,14 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Test install (configure) (Non-Windows)
-      if: runner.os != 'Windows'
+      if: ${{ matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
       working-directory: ${{ github.workspace }}/Tests
-      run: cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
+      run: cmake -L -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
 
-    - name: Test install (configure) (Windows)
-      if: runner.os == 'Windows'
+    - name: Test install (configure) (using vcpkg toolchain)
+      if: ${{ matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
       working-directory: ${{ github.workspace }}/Tests
-      run: cmake -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
+      run: cmake -L -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
 
     - name: Test install (build)
       working-directory: ${{ github.workspace }}/Tests
@@ -346,3 +355,200 @@ jobs:
       run: |
         $env:PATH="${{ env.VCPKG_INSTALLATION_ROOT }}\packages\yaml-cpp_x64-windows\bin;C:\Program Files (x86)\PhreeqcRM\bin;$env:PATH"
         ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
+
+  cmake-mpi:
+    name: ${{ matrix.os }} mpi=${{ matrix.mpi }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }}
+    needs: [init, distcheck]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        build_shared_libs: [ON]
+        phreeqcrm_with_yaml_cpp: [ON]
+        mpi: ['mpich', 'ompi', 'impi', 'msmpi']  # see https://github.com/mpi4py/setup-mpi/blob/master/setup-mpi.sh
+        # BUILD_TYPE: [Debug, Release]
+        exclude:
+          - os: macos-11
+            mpi: 'impi'
+          - os: macos-11
+            mpi: 'msmpi'
+          - os: macos-12
+            mpi: 'impi'
+          - os: macos-12
+            mpi: 'msmpi'
+          - os: ubuntu-20.04
+            mpi: 'msmpi'
+          - os: ubuntu-22.04
+            mpi: 'msmpi'
+          - os: windows-2019
+            mpi: 'mpich'            
+          - os: windows-2019
+            mpi: 'ompi'
+          - os: windows-2022
+            mpi: 'mpich'            
+          - os: windows-2022
+            mpi: 'ompi'
+    timeout-minutes: 20
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
+
+    steps:
+
+    # Note: This allows ${{ env.VCPKG_INSTALLATION_ROOT }} to be used in the remaining steps
+    # Although its already set in the environment it can't be accessed using the env context
+    # until it is stored in the $GITHUB_ENV file
+    - name: init VCPKG_INSTALLATION_ROOT
+      shell: bash
+      run: echo "VCPKG_INSTALLATION_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: tarball
+
+    - name: Install GNU Fortran (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      uses: awvwgk/setup-fortran@main
+      with:
+        compiler: gcc
+        version: 12
+
+    # - name: Install oneAPI Fortran (Windows)
+    #   if: ${{ runner.os == 'Windows' }}
+    #   uses: i-RIC/install-intelfortran-action@v1
+    #   with:
+    #     cache: true
+
+    - name: Install ninja (Linux)
+      if: ${{ runner.os == 'Linux' }}
+      #run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
+      run: |
+        sudo apt-get -y update
+        sudo apt-get install -y ninja-build
+
+    - name: Install ninja (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        brew install ninja
+        ls -alR /usr/local/Cellar/
+
+    - name: Install yaml-cpp (Linux)
+      if: ${{ runner.os == 'Linux' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: vcpkg install yaml-cpp:x64-linux
+
+    - name: Install yaml-cpp (macOS)
+      if: ${{ runner.os == 'macOS' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: vcpkg install yaml-cpp:x64-osx
+
+    - name: Install yaml-cpp (Windows)
+      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: vcpkg install yaml-cpp:x64-windows
+
+    # # - name: Set up Python ${{ matrix.python-version }}
+    # - name: Set up Python 3.8
+    #   uses: actions/setup-python@v4
+    #   with:
+    #     # python-version: ${{ matrix.python-version }}
+    #     python-version: 3.8
+
+    # - name: Install dependencies
+    #   run: |
+    #     python -m pip install --upgrade pip
+    #     python -m pip install numpy
+    #     python -m pip install PyYAML
+    #     python -m pip install pytest
+    #     # @todo if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    # Note: this makes the entire environment available using ${{ env.VARIABLE }} syntax
+    # see above
+    - name: Set up Visual Studio shell (Windows)
+      if: runner.os == 'Windows'
+      uses: egor-tensin/vs-shell@v2
+      with:
+        arch: x64
+
+    - name: Setup mpi
+      uses: mpi4py/setup-mpi@v1
+      with:
+        mpi: ${{ matrix.mpi }}
+
+    - name: CMake version
+      run: cmake --version
+
+    - name: Locate CMake
+      if: runner.os == 'Windows'
+      shell: cmd
+      run: |
+        where cmake
+
+    - name: Extract tarball
+      run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
+
+    - name: Configure with CMake
+      if: ${{ matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
+      run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_MPI:BOOL=ON
+
+    - name: Configure with CMake (using vcpkg toolchain)
+      if: ${{ matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: cmake -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_MPI:BOOL=ON
+
+    - name: Print phreeqcrm.pc
+      working-directory: ${{ github.workspace }}/build
+      run:  cat phreeqcrm.pc
+
+    - name: Build with CMake
+      run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
+
+    - name: Test with CMake
+      working-directory: ${{ github.workspace }}/build
+      run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
+
+    - name: Install (Non-Windows)
+      if: runner.os != 'Windows'
+      run: sudo cmake --install build
+
+    - name: Install (Windows)
+      if: runner.os == 'Windows'
+      run: cmake --install build
+
+    # - name: Run ldconfig (Linux)
+    #   if: ${{ runner.os == 'Linux' && matrix.build_shared_libs == 'ON' }}
+    #   run: sudo ldconfig
+
+    # - name: Cleanup (Non-Windows)
+    #   if: runner.os != 'Windows'
+    #   run: sudo rm -rf *
+
+    # - name: Cleanup (Windows)
+    #   if: runner.os == 'Windows'
+    #   run: Remove-Item -Recurse -Force *
+
+    # - uses: actions/checkout@v3
+
+    # - name: Test install (configure) (Non-Windows)
+    #   if: runner.os != 'Windows'
+    #   working-directory: ${{ github.workspace }}/Tests
+    #   run: cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON
+
+    # - name: Test install (configure) (Windows)
+    #   if: runner.os == 'Windows'
+    #   working-directory: ${{ github.workspace }}/Tests
+    #   run: cmake -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D_PHREEQCRM_TEST_INSTALL:BOOL=ON
+
+    # - name: Test install (build)
+    #   working-directory: ${{ github.workspace }}/Tests
+    #   run: cmake --build build --config ${{ env.BUILD_TYPE }}
+
+    # - name: Test install (ctest) (Non-Windows)
+    #   if: runner.os != 'Windows'
+    #   working-directory: ${{ github.workspace }}/Tests/build
+    #   run: ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
+
+    # - name: Test install (ctest) (Windows)
+    #   if: runner.os == 'Windows'
+    #   working-directory: ${{ github.workspace }}/Tests/build
+    #   run: |
+    #     $env:PATH="${{ env.VCPKG_INSTALLATION_ROOT }}\packages\yaml-cpp_x64-windows\bin;C:\Program Files (x86)\PhreeqcRM\bin;$env:PATH"
+    #     ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
