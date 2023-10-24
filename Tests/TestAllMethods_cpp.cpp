@@ -28,6 +28,7 @@ void TestAllMethods_cpp()
 	yrm.WriteYAMLDoc(YAML_filename);
 #ifdef USE_MPI
 	// MPI
+	MPI_Barrier(MPI_COMM_WORLD);
 	nxyz = PhreeqcRM::GetGridCellCountYAML(YAML_filename.c_str());
 	BMIPhreeqcRM bmi(nxyz, MPI_COMM_WORLD);
 	MP_TYPE comm = MPI_COMM_WORLD;
@@ -43,7 +44,10 @@ void TestAllMethods_cpp()
 		return;
 	}
 #else
-	// OpenMP
+	// OpenMP or serial
+#if defined(USE_OPENMP)
+	#pragma omp barrier
+#endif
 	BMIPhreeqcRM bmi;
 #endif
 	// Use YAML file to initialize
