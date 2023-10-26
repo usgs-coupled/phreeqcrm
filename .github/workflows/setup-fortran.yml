@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-12, windows-2022]
+        os: [ubuntu-22.04, macos-12, windows-2019, windows-2022]
         toolchain:
           - {compiler: gcc, version: 9}
           - {compiler: gcc, version: 13}
@@ -25,6 +25,8 @@ jobs:
             toolchain: {compiler: intel}
           - os: macos-12
             toolchain: {compiler: gcc, version: 9}
+          - os: windows-2019
+            toolchain: {compiler: gcc}
           - os: windows-2022
             toolchain: {compiler: gcc}
 
