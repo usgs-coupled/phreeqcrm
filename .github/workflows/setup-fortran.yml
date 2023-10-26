@@ -5,6 +5,10 @@ on:
     branches:
       - setup-fortran
 
+env:
+  NAME: PhreeqcRM
+  BUILD_TYPE: Release
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -17,6 +21,8 @@ jobs:
           - {compiler: gcc, version: 13}
           - {compiler: intel, version: '2023.2'}
           - {compiler: intel-classic, version: '2021.10'}
+        phreeqcrm_with_yaml_cpp: [OFF, ON]
+        build_shared_libs: [ON]
         include:
           - os: macos-12
             toolchain: {compiler: gcc, version: 10}
@@ -66,3 +72,39 @@ jobs:
       - run: cmake --build setup-fortran/openmp/build
 
       - run: ctest --output-on-failure --test-dir setup-fortran/openmp/build
+
+      #############################################################################################################
+
+      # Note: This allows ${{ env.VCPKG_INSTALLATION_ROOT }} to be used in the remaining steps
+      # Although its already set in the environment it can't be accessed using the env context
+      # until it is stored in the $GITHUB_ENV file
+      - name: init VCPKG_INSTALLATION_ROOT
+        shell: bash
+        run: echo "VCPKG_INSTALLATION_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+
+      - name: Install yaml-cpp (Linux)
+        if: ${{ runner.os == 'Linux' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+        run: vcpkg install yaml-cpp:x64-linux
+  
+      - name: Install yaml-cpp (macOS)
+        if: ${{ runner.os == 'macOS' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+        run: vcpkg install yaml-cpp:x64-osx
+  
+      - name: Install yaml-cpp (Windows)
+        if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+        run: vcpkg install yaml-cpp:x64-windows
+  
+      - name: Set up Visual Studio shell (Windows)
+        if: runner.os == 'Windows'
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
+
+      - name: Configure with CMake (using vcpkg toolchain)
+        run: cmake -L -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_FORTRAN_TESTING:BOOL=ON
+
+      - name: Print phreeqcrm.pc
+        run:  cat build/phreeqcrm.pc
+  
+      - name: Build with CMake
+        run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}        
