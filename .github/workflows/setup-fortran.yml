@@ -13,7 +13,8 @@ jobs:
       matrix:
         os: [ubuntu-22.04, macos-12, windows-2022]
         toolchain:
-          - {compiler: gcc, version: 11}
+          - {compiler: gcc, version: 9}
+          - {compiler: gcc, version: 13}
           - {compiler: intel, version: '2023.2'}
           - {compiler: intel-classic, version: '2021.10'}
         exclude:
