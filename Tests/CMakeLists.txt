@@ -289,7 +289,7 @@ endif()
 # message (STATUS "exe_location = ${exe_location}")
 if(PHREEQCRM_BUILD_MPI)
   add_test(NAME TestMPI
-           COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
+           COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
            ${MPIEXEC_PREFLAGS}
            $<TARGET_FILE:TestRM>
            ${MPIEXEC_POSTFLAGS}
