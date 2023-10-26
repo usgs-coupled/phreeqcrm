@@ -29,6 +29,13 @@ jobs:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
 
-      - run: ${{ env.FC }} --version
+      - run: ${{ env.FC }} /QV
+        if: ${{ contains( ${{ matrix.compiler }}, intel) }}
         env:
           FC: ${{ steps.setup-fortran.outputs.fc }}
+
+      - run: ${{ env.FC }} --version
+        if: ${{ !contains( ${{ matrix.compiler }}, intel) }}
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+  
