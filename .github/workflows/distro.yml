@@ -11,16 +11,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-22.04, macos-12, windows-2022]
         toolchain:
           - {compiler: gcc, version: 11}
+          - {compiler: intel, version: '2023.2'}
           - {compiler: intel-classic, version: '2021.10'}
-        include:
-          - os: ubuntu-latest
-            toolchain: {compiler: intel, version: '2023.2'}
         exclude:
-          - os: windows-latest
-            toolchain: {compiler: intel-classic, version: '2021.10'}
+          - os: macos-12
+            toolchain: {compiler: intel}
+          - os: windows-2022
+            toolchain: {compiler: gcc}
 
     steps:
       - uses: fortran-lang/setup-fortran@v1.3
