@@ -30,12 +30,12 @@ jobs:
           version: ${{ matrix.toolchain.version }}
 
       - run: ${{ env.FC }} /QV
-        if: ${{ contains(matrix.toolchain.compiler, 'intel') }}
+        if: ${{ contains(matrix.toolchain.compiler, 'intel') && runner.os == 'Windows' }}
         env:
           FC: ${{ steps.setup-fortran.outputs.fc }}
 
       - run: ${{ env.FC }} --version
-        if: ${{ !contains(matrix.toolchain.compiler, 'intel') }}
+        if: ${{ !(contains(matrix.toolchain.compiler, 'intel') && runner.os == 'Windows') }}
         env:
           FC: ${{ steps.setup-fortran.outputs.fc }}
   
