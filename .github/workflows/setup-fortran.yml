@@ -38,4 +38,19 @@ jobs:
         if: ${{ !(contains(matrix.toolchain.compiler, 'intel') && runner.os == 'Windows') }}
         env:
           FC: ${{ steps.setup-fortran.outputs.fc }}
-  
+
+      - uses: ashutoshvarma/setup-ninja@master
+
+      - uses: actions/checkout@v3
+
+      - run: cmake -B setup-fortran/build -S setup-fortran -G Ninja -DCMAKE_BUILD_TYPE:STRING=Release
+
+      - run: cmake --build setup-fortran/build
+
+      - run: ctest --output-on-failure --test-dir setup-fortran/build
+
+      - run: cmake -B setup-fortran/openmp/build -S setup-fortran/openmp -G Ninja -DCMAKE_BUILD_TYPE:STRING=Release
+
+      - run: cmake --build setup-fortran/openmp/build
+
+      - run: ctest --output-on-failure --test-dir setup-fortran/openmp/build
