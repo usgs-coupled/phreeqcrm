@@ -25,18 +25,20 @@ void TestAllMethods_cpp()
 	yrm.YAMLSetGridCellCount(nxyz);
 	yrm.YAMLThreadCount(3);
 	std::string YAML_filename = "TestAllMethods_cpp.yaml";
-	yrm.WriteYAMLDoc(YAML_filename);
 #ifdef USE_MPI
 	// MPI
-	MPI_Barrier(MPI_COMM_WORLD);
-	nxyz = PhreeqcRM::GetGridCellCountYAML(YAML_filename.c_str());
-	BMIPhreeqcRM bmi(nxyz, MPI_COMM_WORLD);
-	MP_TYPE comm = MPI_COMM_WORLD;
 	int mpi_myself;
 	if (MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself) != MPI_SUCCESS)
 	{
 		exit(4);
 	}
+	if (mpi_myself == 0) yrm.WriteYAMLDoc(YAML_filename);
+	if (MPI_Barrier(MPI_COMM_WORLD) != MPI_SUCCESS)  //  make sure yaml is finished being written
+	{
+		exit(3);
+	}
+	nxyz = PhreeqcRM::GetGridCellCountYAML(YAML_filename.c_str());
+	BMIPhreeqcRM bmi(nxyz, MPI_COMM_WORLD);
 	if (mpi_myself > 0)
 	{
 		bmi.MpiWorker();
@@ -45,9 +47,7 @@ void TestAllMethods_cpp()
 	}
 #else
 	// OpenMP or serial
-#if defined(USE_OPENMP)
-	#pragma omp barrier
-#endif
+	yrm.WriteYAMLDoc(YAML_filename);
 	BMIPhreeqcRM bmi;
 #endif
 	// Use YAML file to initialize

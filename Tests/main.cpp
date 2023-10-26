@@ -72,11 +72,8 @@ int main(int argc, char* argv[])
 	if (root) std::cerr << "Done Advect_cpp.=====================================" << std::endl;
 #ifdef USE_YAML
 	if (root) WriteYAMLFile_cpp();
-#if defined(USE_OPENMP)
-	#pragma omp barrier
-#endif
 #if defined(USE_MPI)
-	MPI_Barrier(MPI_COMM_WORLD);
+	if (MPI_Barrier(MPI_COMM_WORLD) != MPI_SUCCESS) exit(3); //  make sure yaml is finished being written
 #endif
 	if (root) std::cerr << "Done WriteYAMLFile_cpp.==============================" << std::endl;
 	AdvectBMI_cpp();
@@ -106,11 +103,8 @@ int main(int argc, char* argv[])
 	if (root) std::cerr << "Done Advect_f90.=====================================" << std::endl;
 #ifdef USE_YAML
     if (root) WriteYAMLFile_f90();
-#if defined(USE_OPENMP)
-	#pragma omp barrier
-#endif
 #if defined(USE_MPI)
-	MPI_Barrier(MPI_COMM_WORLD);
+	if (MPI_Barrier(MPI_COMM_WORLD) != MPI_SUCCESS) exit(3); //  make sure yaml is finished being written
 #endif
 	if (root) std::cerr << "Done WriteYAMLFile_f90.==============================" << std::endl;
 	AdvectBMI_f90();
