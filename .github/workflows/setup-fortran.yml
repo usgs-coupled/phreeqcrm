@@ -112,3 +112,80 @@ jobs:
       - run: ctest --output-on-failure --test-dir build
 
       - run: cat build/phreeqcrm.pc
+
+      #############################################################################################################
+
+  mpi:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, macos-12, windows-2019, windows-2022]
+        toolchain:
+          - {compiler: gcc, version: 9}
+          - {compiler: gcc, version: 13}
+          - {compiler: intel, version: '2023.2'}
+          - {compiler: intel-classic, version: '2021.10'}
+        build_shared_libs: [ON]
+        build_type: [Release]
+        mpi: ['mpich', 'ompi', 'impi', 'msmpi']  # see https://github.com/mpi4py/setup-mpi/blob/master/setup-mpi.sh
+        phreeqcrm_build_mpi: [ON]
+        phreeqcrm_fortran_testing: [ON]
+        phreeqcrm_with_yaml_cpp: [ON]
+        include:
+          - os: macos-12
+            toolchain: {compiler: gcc, version: 10}
+        exclude:
+          - os: macos-12
+            toolchain: {compiler: intel}
+          - os: macos-12
+            toolchain: {compiler: gcc, version: 9}
+          - os: windows-2019
+            toolchain: {compiler: gcc}
+          - os: windows-2022
+            toolchain: {compiler: gcc}
+          # mpi
+          - os: macos-12
+            mpi: 'impi'
+          - os: macos-12
+            mpi: 'msmpi'
+          - os: ubuntu-22.04
+            mpi: 'msmpi'
+          - os: windows-2019
+            mpi: 'mpich'            
+          - os: windows-2019
+            mpi: 'ompi'
+          - os: windows-2022
+            mpi: 'mpich'            
+          - os: windows-2022
+            mpi: 'ompi'
+
+    steps:
+      - uses: fortran-lang/setup-fortran@v1.3
+        id: setup-fortran
+        with:
+          compiler: ${{ matrix.toolchain.compiler }}
+          version: ${{ matrix.toolchain.version }}
+
+      - name: Setup mpi
+        uses: mpi4py/setup-mpi@v1
+        with:
+          mpi: ${{ matrix.mpi }}
+
+      - run: >
+          cmake -G Ninja
+          -B ${{ github.workspace }}/build-mpi
+          -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DPHREEQCRM_BUILD_MPI:BOOL=${{ matrix.phreeqcrm_build_mpi }}
+          -DPHREEQCRM_FORTRAN_TESTING:BOOL=${{ matrix.phreeqcrm_fortran_testing }}
+          -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
+          -S ${{ github.workspace }}
+          --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
+          -L
+
+      - run: cmake --build build-mpi
+
+      - run: ctest --output-on-failure --test-dir build-mpi
+
+      - run: cat build-mpi/phreeqcrm.pc
