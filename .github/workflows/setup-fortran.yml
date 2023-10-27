@@ -172,7 +172,33 @@ jobs:
         with:
           mpi: ${{ matrix.mpi }}
 
+      - run: sudo apt-get -y update && sudo apt-get install -y ninja-build
+        if: ${{ runner.os == 'Linux' }}
+
+      - run: brew install ninja
+        if: ${{ runner.os == 'macOS' }}  
+
       - uses: actions/checkout@v3
+
+      # Note: This allows ${{ env.VCPKG_INSTALLATION_ROOT }} to be used in the remaining steps
+      # Although its already set in the environment it can't be accessed using the env context
+      # until it is stored in the $GITHUB_ENV file
+      - run: echo "VCPKG_INSTALLATION_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+        shell: bash
+
+      - run: vcpkg install yaml-cpp:x64-linux
+        if: ${{ runner.os == 'Linux' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+  
+      - run: vcpkg install yaml-cpp:x64-osx
+        if: ${{ runner.os == 'macOS' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+  
+      - run: vcpkg install yaml-cpp:x64-windows
+        if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+  
+      - uses: egor-tensin/vs-shell@v2
+        if: runner.os == 'Windows'
+        with:
+          arch: x64
 
       - run: >
           cmake -G Ninja
