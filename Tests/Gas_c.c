@@ -220,7 +220,8 @@ void PrintCells(char** gcomps, double* gas_moles,
 	{
 		fprintf(stderr, "Cell: %i\n", j);
 		fprintf(stderr, "               Moles         P         Phi\n");
-		for (int i = 0; i < 3; i++) // component
+		int i;
+		for (i = 0; i < 3; i++) // component
 		{
 			int k = i * nxyz + j;
 			fprintf(stderr, "%8s  %10.4f  %10.4f  %10.4f\n",
