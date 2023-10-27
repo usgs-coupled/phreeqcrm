@@ -172,6 +172,8 @@ jobs:
         with:
           mpi: ${{ matrix.mpi }}
 
+      - uses: actions/checkout@v3
+
       - run: >
           cmake -G Ninja
           -B ${{ github.workspace }}/build-mpi
@@ -184,8 +186,8 @@ jobs:
           --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
           -L
 
-      - run: cmake --build build-mpi
+      - run: cmake --build ${{ github.workspace }}/build-mpi
 
-      - run: ctest --output-on-failure --test-dir build-mpi
+      - run: ctest --output-on-failure --test-dir ${{ github.workspace }}/build-mpi
 
-      - run: cat build-mpi/phreeqcrm.pc
+      - run: cat ${{ github.workspace }}/build-mpi/phreeqcrm.pc
