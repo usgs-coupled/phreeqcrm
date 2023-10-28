@@ -23,7 +23,7 @@ jobs:
         build_shared_libs: [ON]
         build_type: [Release]        
         phreeqcrm_fortran_testing: [ON]
-        phreeqcrm_with_yaml_cpp: [ON]
+        phreeqcrm_with_yaml_cpp: [OFF]
         include:
           - os: macos-12
             toolchain: {compiler: gcc, version: 10}
@@ -106,6 +106,19 @@ jobs:
           -S ${{ github.workspace }}
           --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
           -L
+        if: ${{ matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+
+      - run: >
+          cmake -G Ninja
+          -B ${{ github.workspace }}/build
+          -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DPHREEQCRM_FORTRAN_TESTING:BOOL=${{ matrix.phreeqcrm_fortran_testing }}
+          -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
+          -S ${{ github.workspace }}
+          -L
+        if: ${{ matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
+
 
       - run: cmake --build build
 
@@ -131,7 +144,7 @@ jobs:
         mpi: ['mpich', 'ompi', 'impi', 'msmpi']  # see https://github.com/mpi4py/setup-mpi/blob/master/setup-mpi.sh
         phreeqcrm_build_mpi: [ON]
         phreeqcrm_fortran_testing: [ON]
-        phreeqcrm_with_yaml_cpp: [ON]
+        phreeqcrm_with_yaml_cpp: [OFF]
         include:
           - os: macos-12
             toolchain: {compiler: gcc, version: 10}
@@ -211,6 +224,20 @@ jobs:
           -S ${{ github.workspace }}
           --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
           -L
+        if: ${{ matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+
+      - run: >
+          cmake -G Ninja
+          -B ${{ github.workspace }}/build-mpi
+          -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DPHREEQCRM_BUILD_MPI:BOOL=${{ matrix.phreeqcrm_build_mpi }}
+          -DPHREEQCRM_FORTRAN_TESTING:BOOL=${{ matrix.phreeqcrm_fortran_testing }}
+          -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }}
+          -S ${{ github.workspace }}
+          -L
+        if: ${{ matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
+
 
       - run: cmake --build ${{ github.workspace }}/build-mpi
 
