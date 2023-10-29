@@ -185,6 +185,12 @@ jobs:
         with:
           mpi: ${{ matrix.mpi }}
 
+      - name: Override CC/CXX compilers
+        run: |
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV        
+        if: ${{ runner.os == 'Linux' }}
+
       - run: sudo apt-get -y update && sudo apt-get install -y ninja-build
         if: ${{ runner.os == 'Linux' }}
 
