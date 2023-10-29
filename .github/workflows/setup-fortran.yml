@@ -187,9 +187,9 @@ jobs:
 
       - name: Show mpi compilers
         run: |
-          mpicc.mpich -show
-          mpicxx.mpich -show
-          mpifort.mpich -show
+          mpicc -show
+          mpicxx -show
+          mpifort -show
         if: ${{ matrix.mpi == 'mpich' }}  
 
       - name: Override CC/CXX compilers
