@@ -89,7 +89,13 @@ if(PHREEQCRM_FORTRAN_TESTING)
 
   # The next line sets defines/includes/libraries
   # for compiling and linking the FortranAdvect library
-  target_link_libraries(FortranAdvect PhreeqcRM::PhreeqcRM)
+  target_link_libraries(FortranAdvect PRIVATE PhreeqcRM::PhreeqcRM)
+  if(PHREEQCRM_BUILD_MPI)
+    # INTERFACE_COMPILE_OPTIONS isn't transitive (when PRIVATE)
+    # otherwise Fortran BMI compile options would show up in the
+    # C/CXX compile options of any target that links to FortranAdvect
+    target_link_libraries(FortranAdvect PRIVATE MPI::MPI_Fortran)
+  endif()
 endif()
 
 project(TestRM CXX)
