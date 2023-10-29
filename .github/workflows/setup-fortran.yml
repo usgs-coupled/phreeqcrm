@@ -185,6 +185,13 @@ jobs:
         with:
           mpi: ${{ matrix.mpi }}
 
+      - name: Show mpi compilers
+        run: |
+          mpicc.mpich -show
+          mpicxx.mpich -show
+          mpifort.mpich -show
+        if: ${{ matrix.mpi == 'mpich' }}  
+
       - name: Override CC/CXX compilers
         run: |
           echo "CC=gcc" >> $GITHUB_ENV
