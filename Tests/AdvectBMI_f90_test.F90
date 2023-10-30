@@ -119,21 +119,22 @@
 
 #ifdef USE_MPI
     ! MPI
-    nxyz = 40
-    id = bmif_create(nxyz, MPI_COMM_WORLD)
     call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
     if (status .ne. MPI_SUCCESS) then
         stop "Failed to get mpi_myself"
     endif
+    if (mpi_myself == 0) then
+        nxyz = GetGridCellCountYAML(yaml_file)
+    endif
+    CALL MPI_Bcast(nxyz, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, status)
+    id = bmif_create(nxyz, MPI_COMM_WORLD)
     if (mpi_myself > 0) then
-        status = RM_SetMpiWorkerCallback(id, bmi_worker_tasks_f)
         status = RM_MpiWorker(id)
+        status = bmif_finalize(id)
         return
     endif
 #else
     ! OpenMP
-    !nthreads = 3
-    !id = BMIF_Create(nxyz, nthreads)
     id = bmif_create()
 #endif
     ! Initialize with YAML file
