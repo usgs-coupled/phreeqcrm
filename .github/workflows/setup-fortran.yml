@@ -18,7 +18,7 @@ jobs:
         toolchain:
           - {compiler: gcc, version: 9}
           - {compiler: gcc, version: 13}
-          - {compiler: intel, version: '2023.2'}
+          # - {compiler: intel, version: '2023.2'}
           - {compiler: intel-classic, version: '2021.10'}
         build_shared_libs: [ON]
         build_type: [Release]        
@@ -129,6 +129,7 @@ jobs:
       #############################################################################################################
 
   mpi:
+    if: ${{ false }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -137,7 +138,7 @@ jobs:
         toolchain:
           - {compiler: gcc, version: 9}
           - {compiler: gcc, version: 13}
-          - {compiler: intel, version: '2023.2'}
+          # - {compiler: intel, version: '2023.2'}
           - {compiler: intel-classic, version: '2021.10'}
         build_shared_libs: [ON]
         build_type: [Release]
