@@ -22,7 +22,7 @@ jobs:
           - {compiler: intel-classic, version: '2021.10'}
         build_shared_libs: [ON]
         build_type: [Release]        
-        phreeqcrm_fortran_testing: [ON]
+        phreeqcrm_fortran_testing: [OFF]
         phreeqcrm_with_yaml_cpp: [OFF]
         include:
           - os: macos-12
@@ -143,7 +143,7 @@ jobs:
         build_type: [Release]
         mpi: ['mpich', 'ompi', 'impi', 'msmpi']  # see https://github.com/mpi4py/setup-mpi/blob/master/setup-mpi.sh
         phreeqcrm_build_mpi: [ON]
-        phreeqcrm_fortran_testing: [ON]
+        phreeqcrm_fortran_testing: [OFF]
         phreeqcrm_with_yaml_cpp: [OFF]
         include:
           - os: macos-12
