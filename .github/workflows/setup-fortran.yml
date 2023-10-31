@@ -3,6 +3,7 @@ name: setup-fortran
 on:
   push:
     branches:
+      - master
       - setup-fortran
 
 env:
