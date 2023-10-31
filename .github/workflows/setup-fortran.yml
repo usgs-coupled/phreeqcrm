@@ -44,6 +44,12 @@ jobs:
             toolchain: {compiler: gcc}
           - os: windows-2022
             toolchain: {compiler: gcc}
+          - os: windows-2022
+            toolchain: {compiler: intel, version: '2022.1'}
+          - os: windows-2022
+            toolchain: {compiler: intel-classic, version: '2021.6'}
+          - os: windows-2022
+            toolchain: {compiler: intel-classic, version: '2021.7'}
 
     steps:
       - uses: fortran-lang/setup-fortran@v1.3
