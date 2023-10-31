@@ -16,17 +16,25 @@ jobs:
       matrix:
         os: [ubuntu-22.04, macos-12, windows-2019, windows-2022]
         toolchain:
-          - {compiler: gcc, version: 9}
-          - {compiler: gcc, version: 13}
-          # - {compiler: intel, version: '2023.2'}
+          # - {compiler: gcc, version: 9}
+          # - {compiler: gcc, version: 13}
+          - {compiler: intel, version: '2022.1'}
+          - {compiler: intel, version: '2022.2'}
+          - {compiler: intel, version: '2023.0'}
+          - {compiler: intel, version: '2023.1'}
+          - {compiler: intel, version: '2023.2'}
+          - {compiler: intel-classic, version: '2021.6'}
+          - {compiler: intel-classic, version: '2021.7'}
+          - {compiler: intel-classic, version: '2021.8'}
+          - {compiler: intel-classic, version: '2021.9'}
           - {compiler: intel-classic, version: '2021.10'}
         build_shared_libs: [ON]
         build_type: [Release]        
         phreeqcrm_fortran_testing: [OFF]
         phreeqcrm_with_yaml_cpp: [OFF]
-        include:
-          - os: macos-12
-            toolchain: {compiler: gcc, version: 10}
+        # include:
+        #   - os: macos-12
+        #     toolchain: {compiler: gcc, version: 10}
         exclude:
           - os: macos-12
             toolchain: {compiler: intel}
