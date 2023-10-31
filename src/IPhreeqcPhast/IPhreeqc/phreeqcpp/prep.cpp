@@ -5404,10 +5404,6 @@ calc_vm(LDBLE tc, LDBLE pa)
 	return OK;
 }
 
-#if defined(__INTEL_LLVM_COMPILER)
-#pragma optimize( "", off )
-#endif
-
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
 k_temp(LDBLE tc, LDBLE pa) /* pa - pressure in atm */
@@ -5417,7 +5413,9 @@ k_temp(LDBLE tc, LDBLE pa) /* pa - pressure in atm */
  *  Calculates log k's for all species and pure_phases
  */
 
-	if (tc == current_tc && pa == current_pa && ((fabs(mu_x - current_mu) < 1e-3 * mu_x) || !mu_terms_in_logk))
+	// if (tc == current_tc && pa == current_pa && ((fabs(mu_x - current_mu) < 1e-3 * mu_x) || !mu_terms_in_logk))
+	// 	return OK;
+	if (tc != current_tc || pa != current_pa || !((fabs(mu_x - current_mu) < 1e-3 * mu_x) || !mu_terms_in_logk))
 		return OK;
 
 	int i;
@@ -5481,10 +5479,6 @@ k_temp(LDBLE tc, LDBLE pa) /* pa - pressure in atm */
 
 	return (OK);
 }
-
-#if defined(__INTEL_LLVM_COMPILER)
-#pragma optimize( "", on )
-#endif
 
 /* ---------------------------------------------------------------------- */
 LDBLE Phreeqc::

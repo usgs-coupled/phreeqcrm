@@ -29,7 +29,7 @@ jobs:
           - {compiler: intel-classic, version: '2021.9'}
           - {compiler: intel-classic, version: '2021.10'}
         build_shared_libs: [ON]
-        build_type: [Debug]        
+        build_type: [Release]        
         phreeqcrm_fortran_testing: [OFF]
         phreeqcrm_with_yaml_cpp: [OFF]
         # include:
