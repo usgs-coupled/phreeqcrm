@@ -386,10 +386,6 @@ if(PHREEQCRM_BUILD_MPI)
   # fortran interface files
   target_compile_definitions(PhreeqcRM PUBLIC USE_MPI)
   target_link_libraries(PhreeqcRM PUBLIC MPI::MPI_CXX)
-  if(PHREEQCRM_FORTRAN_TESTING)
-    ##include_directories(${MPI_Fortran_INCLUDE_PATH})
-    target_link_libraries(PhreeqcRM PUBLIC MPI::MPI_Fortran)
-  endif()
   set(usempi_define "-DUSE_MPI")
   string(APPEND exportPackageDependencies "find_dependency(MPI)\n")
 else()
@@ -486,6 +482,7 @@ if(STANDALONE_BUILD EQUAL 1 AND NOT DEFINED SKBUILD)
   )
 
   install(FILES ${PhreeqcRM_SRC}
+    # @todo consider installing into INCLUDE directory
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PhreeqcRM/src
   )
 

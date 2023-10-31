@@ -148,7 +148,7 @@ void Gas_c()
 	PrintCells(gas_comps, gas_moles, gas_p, gas_phi, nxyz, "Initial conditions");
 
 	// multiply by 2
-	for (int i = 0; i < nxyz * RM_GetGasComponentsCount(id); i++)
+	for (i = 0; i < nxyz * RM_GetGasComponentsCount(id); i++)
 	{
 		gas_moles[i] *= 2.0;
 	}
@@ -178,7 +178,7 @@ void Gas_c()
 	status = RM_SetGasCompMoles(id, gas_moles);
 	// Set volume for cell 1 and convert to fixed pressure gas phase
 	gas_volume = (double*)malloc((size_t)(nxyz * sizeof(double)));
-	for (int i = 0; i < nxyz; i++) gas_volume[i] = -1.0;
+	for (i = 0; i < nxyz; i++) gas_volume[i] = -1.0;
 	gas_volume[1] = 12.25;
 	status = RM_SetGasPhaseVolume(id, gas_volume);
 	status = RM_RunCells(id);
@@ -215,11 +215,13 @@ void PrintCells(char** gcomps, double* gas_moles,
 {
 	fprintf(stderr, "\n%s\n", str);
 	// print cells 0,1,2
-	for (int j = 0; j < 3; j++) // cell
+	int j;
+	for (j = 0; j < 3; j++) // cell
 	{
 		fprintf(stderr, "Cell: %i\n", j);
 		fprintf(stderr, "               Moles         P         Phi\n");
-		for (int i = 0; i < 3; i++) // component
+		int i;
+		for (i = 0; i < 3; i++) // component
 		{
 			int k = i * nxyz + j;
 			fprintf(stderr, "%8s  %10.4f  %10.4f  %10.4f\n",

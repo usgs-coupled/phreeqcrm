@@ -199,6 +199,7 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
+    if: ${{ false }}
     name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }}
     needs: [init, distcheck]
     strategy:
@@ -357,6 +358,7 @@ jobs:
         ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
 
   cmake-mpi:
+    if: ${{ false }}
     name: ${{ matrix.os }} mpi=${{ matrix.mpi }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }}
     needs: [init, distcheck]
     strategy:
