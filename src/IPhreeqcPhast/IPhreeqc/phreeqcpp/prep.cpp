@@ -5404,6 +5404,10 @@ calc_vm(LDBLE tc, LDBLE pa)
 	return OK;
 }
 
+#if defined(__INTEL_LLVM_COMPILER)
+#pragma optimize( "", off )
+#endif
+
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
 k_temp(LDBLE tc, LDBLE pa) /* pa - pressure in atm */
@@ -5477,6 +5481,10 @@ k_temp(LDBLE tc, LDBLE pa) /* pa - pressure in atm */
 
 	return (OK);
 }
+
+#if defined(__INTEL_LLVM_COMPILER)
+#pragma optimize( "", on )
+#endif
 
 /* ---------------------------------------------------------------------- */
 LDBLE Phreeqc::
