@@ -32,12 +32,15 @@ void TestAllMethods_cpp()
 	{
 		exit(4);
 	}
-	if (mpi_myself == 0) yrm.WriteYAMLDoc(YAML_filename);
+	if (mpi_myself == 0)
+	{
+		yrm.WriteYAMLDoc(YAML_filename);
+		assert(PhreeqcRM::GetGridCellCountYAML(YAML_filename.c_str()) == nxyz);
+	}
 	if (MPI_Barrier(MPI_COMM_WORLD) != MPI_SUCCESS)  //  make sure yaml is finished being written
 	{
 		exit(4);
 	}
-	assert(PhreeqcRM::GetGridCellCountYAML(YAML_filename.c_str()) == nxyz);
 	BMIPhreeqcRM bmi(nxyz, MPI_COMM_WORLD);
 	if (mpi_myself > 0)
 	{
