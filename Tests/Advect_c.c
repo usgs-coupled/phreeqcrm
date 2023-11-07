@@ -209,7 +209,7 @@ void Advect_c()
 	// Argument 3 refers to the Utility instance
 	status = RM_RunFile(id, 1, 1, 1, "advect.pqi");
 	// Clear contents of workers and utility
-	strcpy(str, "DELETE; -all");
+	strcpy_s(str, strlen(str), "DELETE; -all");
 	status = RM_RunString(id, 1, 0, 1, str);	// workers, initial_phreeqc, utility 
 	// Determine number of components to transport
 	ncomps = RM_FindComponents(id);
@@ -443,7 +443,7 @@ void Advect_c()
 	tc[0] = 15.0;
 	p_atm[0] = 3.0;
 	iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
-	strcpy(str, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
+	strcpy_s(str, strlen(str), "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
 	// Alternatively, utility pointer is worker number nthreads + 1 
 	iphreeqc_id1 = RM_GetIPhreeqcId(id, RM_GetThreadCount(id) + 1);
 	SetOutputFileName(iphreeqc_id, "Advect_c_utility.txt");
@@ -619,10 +619,10 @@ int example_selected_output(int id)
 	nlines = nlines + RM_GetSICount(id);
 	input = (char*)malloc((size_t)(nlines * 40));
 
-	strncpy(input, "\0", 40);
-	strcat(input, "SELECTED_OUTPUT 2\n");
+	strcpy_s(input, strlen(input), "\0");
+	strcat_s(input, strlen(input), "SELECTED_OUTPUT 2\n");
 	// totals
-	strcat(input, "  -totals\n");
+	strcat_s(input, strlen(input), "  -totals\n");
 	for (i = 0; i < RM_GetComponentCount(id); i++)
 	{
 		status = RM_GetComponent(id, i, line1, 100);
@@ -632,29 +632,29 @@ int example_selected_output(int id)
 			strcmp(line1, "Charge") != 0 &&
 			strcmp(line1, "H2O") != 0)
 		{
-			strcat(input, "    ");
-			strcat(input, line1);
-			strcat(input, "\n");
+			strcat_s(input, strlen(input), "    ");
+			strcat_s(input, strlen(input), line1);
+			strcat_s(input, strlen(input), "\n");
 		}
 	}
 
-	strcat(input, "  -molalities \n");
+	strcat_s(input, strlen(input), "  -molalities \n");
 	// molalities of aqueous species 
 	for (i = 0; i < RM_GetSpeciesCount(id); i++)
 	{
 		status = RM_GetSpeciesName(id, i, line1, 100);
-		strcat(input, "    ");
-		strcat(input, line1);
-		strcat(input, "\n");
+		strcat_s(input, strlen(input), "    ");
+		strcat_s(input, strlen(input), line1);
+		strcat_s(input, strlen(input), "\n");
 	}
 	// molalities of exchange species
 	for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
 	{
-		strcpy(line, "");
+		strcpy_s(line, strlen(line), "");
 		status = RM_GetExchangeSpeciesName(id, i, line1, 100);
 		status = RM_GetExchangeName(id, i, line2, 100);
 		snprintf(line, sizeof(line), "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
-		strcat(input, line);
+		strcat_s(input, strlen(input), line);
 	}
 	// molalities of surface species
 	for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
@@ -663,48 +663,48 @@ int example_selected_output(int id)
 		status = RM_GetSurfaceType(id, i, line2, 100);
 		status = RM_GetSurfaceName(id, i, line3, 100);
 		snprintf(line, sizeof(line), "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
-		strcat(input, line);
+		strcat_s(input, strlen(input), line);
 	}
-	strcat(input, "  -equilibrium_phases\n");
+	strcat_s(input, strlen(input), "  -equilibrium_phases\n");
 	// equilibrium phases 
 	for (i = 0; i < RM_GetEquilibriumPhasesCount(id); i++)
 	{
 		status = RM_GetEquilibriumPhasesName(id, i, line1, 100);
 		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
-		strcat(input, line);
+		strcat_s(input, strlen(input), line);
 	}
-	strcat(input, "  -gases\n");
+	strcat_s(input, strlen(input), "  -gases\n");
 	// gas components
 	for (i = 0; i < RM_GetGasComponentsCount(id); i++)
 	{
 		status = RM_GetGasComponentsName(id, i, line1, 100);
 		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
-		strcat(input, line);
+		strcat_s(input, strlen(input), line);
 	}
-	strcat(input, "  -kinetics\n");
+	strcat_s(input, strlen(input), "  -kinetics\n");
 	// kinetic reactions 
 	for (i = 0; i < RM_GetKineticReactionsCount(id); i++)
 	{
 		status = RM_GetKineticReactionsName(id, i, line1, 100);
 		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
-		strcat(input, line);
+		strcat_s(input, strlen(input), line);
 	}
-	strcat(input, "  -solid_solutions\n");
+	strcat_s(input, strlen(input), "  -solid_solutions\n");
 	// solid solutions
 	for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
 	{
 		status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
 		status = RM_GetSolidSolutionName(id, i, line2, 100);
 		snprintf(line, sizeof(line), "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
-		strcat(input, line);
+		strcat_s(input, strlen(input), line);
 	}
-	strcat(input, "  -saturation_indices\n");
+	strcat_s(input, strlen(input), "  -saturation_indices\n");
 	// molalities of aqueous species 
 	for (i = 0; i < RM_GetSICount(id); i++)
 	{
 		status = RM_GetSIName(id, i, line1, 100);
 		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
-		strcat(input, line);
+		strcat_s(input, strlen(input), line);
 	}
 
 	/*generate selected output with the following line*/

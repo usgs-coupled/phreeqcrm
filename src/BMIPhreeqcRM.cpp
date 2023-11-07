@@ -48,7 +48,6 @@ BMIPhreeqcRM::CreateBMIModule()
 {
 	//_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	//_crtBreakAlloc = 5144;
-	int n = IRM_OUTOFMEMORY;
 	try
 	{
 		BMIPhreeqcRM* bmirm_ptr = new BMIPhreeqcRM();
@@ -71,7 +70,6 @@ BMIPhreeqcRM::CreateBMIModule(int nxyz, MP_TYPE nthreads)
 {
 	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	//_crtBreakAlloc = 5144;
-	int n = IRM_OUTOFMEMORY;
 	try
 	{
 		BMIPhreeqcRM* bmirm_ptr = new BMIPhreeqcRM(nxyz, nthreads);
