@@ -4,6 +4,7 @@
 #include <istream>
 #include <fstream>
 #include "phqalloc.h"
+#include <cstring>
 
 #if defined(PHREEQCI_GUI)
 #ifdef _DEBUG
