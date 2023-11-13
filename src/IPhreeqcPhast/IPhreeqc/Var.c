@@ -74,7 +74,7 @@ char* VarAllocString(const char* pSrc)
 	char* psz;
 	if (!pSrc) return NULL;
 	psz = (char*) malloc(strlen(pSrc) + 1);
-	strcpy(psz, pSrc);
+	if(psz != NULL) strcpy(psz, pSrc);
 	return psz;
 }
 

@@ -209,7 +209,7 @@ void Advect_c()
 	// Argument 3 refers to the Utility instance
 	status = RM_RunFile(id, 1, 1, 1, "advect.pqi");
 	// Clear contents of workers and utility
-	strcpy_s(str, strlen(str), "DELETE; -all");
+	strcpy_s(str, 100, "DELETE; -all");
 	status = RM_RunString(id, 1, 0, 1, str);	// workers, initial_phreeqc, utility 
 	// Determine number of components to transport
 	ncomps = RM_FindComponents(id);
@@ -443,7 +443,7 @@ void Advect_c()
 	tc[0] = 15.0;
 	p_atm[0] = 3.0;
 	iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
-	strcpy_s(str, strlen(str), "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
+	strcpy_s(str, 100, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
 	// Alternatively, utility pointer is worker number nthreads + 1 
 	iphreeqc_id1 = RM_GetIPhreeqcId(id, RM_GetThreadCount(id) + 1);
 	SetOutputFileName(iphreeqc_id, "Advect_c_utility.txt");
@@ -559,8 +559,8 @@ void register_basic_callback(void* cookie)
 	int i, j, rm_id;
 #ifdef USE_MPI
 	int mpi_tasks, mpi_myself;
-#endif
 	int	method_number = 1001;
+#endif
 	data = (struct my_data*)cookie;
 
 #ifdef USE_MPI
@@ -606,8 +606,10 @@ int example_selected_output(int id)
 {
 	int nlines, i, status;
 	char* input;
+	size_t MAX_LINE = 400;
 	char line[400], line1[100], line2[100], line3[100];
 	nlines = 50;
+	size_t MAX_BUFFER = nlines * 40;
 	nlines = nlines + RM_GetComponentCount(id);
 	nlines = nlines + RM_GetSpeciesCount(id);
 	nlines = nlines + RM_GetExchangeSpeciesCount(id);
@@ -617,12 +619,12 @@ int example_selected_output(int id)
 	nlines = nlines + RM_GetKineticReactionsCount(id);
 	nlines = nlines + RM_GetSolidSolutionComponentsCount(id);
 	nlines = nlines + RM_GetSICount(id);
-	input = (char*)malloc((size_t)(nlines * 40));
+	input = (char*)malloc(MAX_BUFFER);
 
-	strcpy_s(input, strlen(input), "\0");
-	strcat_s(input, strlen(input), "SELECTED_OUTPUT 2\n");
+	strcpy_s(input, MAX_BUFFER, "\0");
+	strcat_s(input, MAX_BUFFER, "SELECTED_OUTPUT 2\n");
 	// totals
-	strcat_s(input, strlen(input), "  -totals\n");
+	strcat_s(input, MAX_BUFFER, "  -totals\n");
 	for (i = 0; i < RM_GetComponentCount(id); i++)
 	{
 		status = RM_GetComponent(id, i, line1, 100);
@@ -632,29 +634,29 @@ int example_selected_output(int id)
 			strcmp(line1, "Charge") != 0 &&
 			strcmp(line1, "H2O") != 0)
 		{
-			strcat_s(input, strlen(input), "    ");
-			strcat_s(input, strlen(input), line1);
-			strcat_s(input, strlen(input), "\n");
+			strcat_s(input, MAX_BUFFER, "    ");
+			strcat_s(input, MAX_BUFFER, line1);
+			strcat_s(input, MAX_BUFFER, "\n");
 		}
 	}
 
-	strcat_s(input, strlen(input), "  -molalities \n");
+	strcat_s(input, MAX_BUFFER, "  -molalities \n");
 	// molalities of aqueous species 
 	for (i = 0; i < RM_GetSpeciesCount(id); i++)
 	{
 		status = RM_GetSpeciesName(id, i, line1, 100);
-		strcat_s(input, strlen(input), "    ");
-		strcat_s(input, strlen(input), line1);
-		strcat_s(input, strlen(input), "\n");
+		strcat_s(input, MAX_BUFFER, "    ");
+		strcat_s(input, MAX_BUFFER, line1);
+		strcat_s(input, MAX_BUFFER, "\n");
 	}
 	// molalities of exchange species
 	for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
 	{
-		strcpy_s(line, strlen(line), "");
+		strcpy_s(line, 400, "");
 		status = RM_GetExchangeSpeciesName(id, i, line1, 100);
 		status = RM_GetExchangeName(id, i, line2, 100);
-		snprintf(line, sizeof(line), "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
-		strcat_s(input, strlen(input), line);
+		snprintf(line, MAX_LINE, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+		strcat_s(input, MAX_BUFFER, line);
 	}
 	// molalities of surface species
 	for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
@@ -662,49 +664,49 @@ int example_selected_output(int id)
 		status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
 		status = RM_GetSurfaceType(id, i, line2, 100);
 		status = RM_GetSurfaceName(id, i, line3, 100);
-		snprintf(line, sizeof(line), "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
-		strcat_s(input, strlen(input), line);
+		snprintf(line, MAX_LINE, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+		strcat_s(input, MAX_BUFFER, line);
 	}
-	strcat_s(input, strlen(input), "  -equilibrium_phases\n");
+	strcat_s(input, MAX_BUFFER, "  -equilibrium_phases\n");
 	// equilibrium phases 
 	for (i = 0; i < RM_GetEquilibriumPhasesCount(id); i++)
 	{
 		status = RM_GetEquilibriumPhasesName(id, i, line1, 100);
-		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
-		strcat_s(input, strlen(input), line);
+		snprintf(line, MAX_LINE, "%4s%20s\n", "    ", line1);
+		strcat_s(input, MAX_BUFFER, line);
 	}
-	strcat_s(input, strlen(input), "  -gases\n");
+	strcat_s(input, MAX_BUFFER, "  -gases\n");
 	// gas components
 	for (i = 0; i < RM_GetGasComponentsCount(id); i++)
 	{
 		status = RM_GetGasComponentsName(id, i, line1, 100);
-		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
+		snprintf(line, MAX_LINE, "%4s%20s\n", "    ", line1);
 		strcat_s(input, strlen(input), line);
 	}
-	strcat_s(input, strlen(input), "  -kinetics\n");
+	strcat_s(input, MAX_BUFFER, "  -kinetics\n");
 	// kinetic reactions 
 	for (i = 0; i < RM_GetKineticReactionsCount(id); i++)
 	{
 		status = RM_GetKineticReactionsName(id, i, line1, 100);
-		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
-		strcat_s(input, strlen(input), line);
+		snprintf(line, MAX_LINE, "%4s%20s\n", "    ", line1);
+		strcat_s(input, MAX_BUFFER, line);
 	}
-	strcat_s(input, strlen(input), "  -solid_solutions\n");
+	strcat_s(input, MAX_BUFFER, "  -solid_solutions\n");
 	// solid solutions
 	for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
 	{
 		status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
 		status = RM_GetSolidSolutionName(id, i, line2, 100);
-		snprintf(line, sizeof(line), "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
-		strcat_s(input, strlen(input), line);
+		snprintf(line, MAX_LINE, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+		strcat_s(input, MAX_BUFFER, line);
 	}
-	strcat_s(input, strlen(input), "  -saturation_indices\n");
+	strcat_s(input, MAX_BUFFER, "  -saturation_indices\n");
 	// molalities of aqueous species 
 	for (i = 0; i < RM_GetSICount(id); i++)
 	{
 		status = RM_GetSIName(id, i, line1, 100);
-		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
-		strcat_s(input, strlen(input), line);
+		snprintf(line, MAX_LINE, "%4s%20s\n", "    ", line1);
+		strcat_s(input, MAX_BUFFER, line);
 	}
 
 	/*generate selected output with the following line*/

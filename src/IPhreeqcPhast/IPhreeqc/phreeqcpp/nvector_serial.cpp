@@ -173,7 +173,7 @@ M_EnvInit_Serial(integertype vec_length)
 	me->ops->nvprint = N_VPrint_Serial;
 
 	/* Attach ID tag */
-	strcpy(me->tag, ID_TAG_S);
+	strcpy_s(me->tag, 8, ID_TAG_S);
 
 	return (me);
 

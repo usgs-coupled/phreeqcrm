@@ -15,7 +15,7 @@ void SimpleAdvect_c()
 	// Based on PHREEQC Example 11
 
 	int mpi_myself = 0;
-	int i, j;
+	int i;
 	int nxyz;
 #ifndef USE_MPI
 	int nthreads;
@@ -103,7 +103,7 @@ void SimpleAdvect_c()
 	// Argument 3 refers to the Utility instance
 	status = RM_RunFile(id, 1, 1, 1, "advect.pqi");
 	// Clear contents of workers and utility
-	strcpy_s(str, strlen(str), "DELETE; -all");
+	strcpy_s(str, 100, "DELETE; -all");
 	status = RM_RunString(id, 1, 0, 1, str);	// workers, initial_phreeqc, utility 
 	// Determine number of components to transport
 	ncomps = RM_FindComponents(id);

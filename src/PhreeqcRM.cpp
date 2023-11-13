@@ -873,7 +873,7 @@ PhreeqcRM::CheckSelectedOutput()
 			char *headings_bcast = new char[length + 1];
 			if (this->mpi_myself == 0)
 			{
-				strcpy_s(headings_bcast, strlen(headings_bcast), headings.c_str());
+				strcpy(headings_bcast, headings.c_str());
 			}
 
 			MPI_Bcast(headings_bcast, length + 1, MPI_CHAR, 0, phreeqcrm_comm);

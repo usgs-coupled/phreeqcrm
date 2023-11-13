@@ -133,7 +133,7 @@ parse_eq(char* eqn, std::vector<class elt_list>& new_elt_list, int association)
 	 *   Get elements in species or mineral formula
 	 */
 	count_elts = 0;
-	strcpy(token, trxn.token[0].name);
+	strcpy_s(token, MAX_LENGTH, trxn.token[0].name);
 	replace("(s)", "", token);
 	replace("(S)", "", token);
 	replace("(g)", "", token);

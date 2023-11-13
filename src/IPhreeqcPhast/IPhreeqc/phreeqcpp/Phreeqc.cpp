@@ -173,7 +173,7 @@ size_t Phreeqc::list_components(std::list<std::string> &list_c)
 	{
 		if (it->first == "Charge") continue;
 		char string[MAX_LENGTH];
-		strcpy(string, it->first.c_str());
+		strcpy_s(string, MAX_LENGTH, it->first.c_str());
 		class master *master_ptr = master_bsearch_primary(string);
 		if (master_ptr == NULL) continue;
 		if (master_ptr->type != AQ) continue;

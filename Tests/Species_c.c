@@ -156,7 +156,7 @@ void Species_c()
 	// Argument 3 refers to the Utility instance
 	status = RM_RunFile(id, 1, 1, 1, "advect.pqi");
 	// Clear contents of workers and utility
-	strcpy_s(str, strlen(str), "DELETE; -all");
+	strcpy_s(str, 100, "DELETE; -all");
 	status = RM_RunString(id, 1, 0, 1, str);	// workers, initial_phreeqc, utility 
 	// Make list of components
 	ncomps = RM_FindComponents(id);
@@ -402,7 +402,7 @@ void Species_c()
 	tc[0] = 15.0;
 	p_atm[0] = 3.0;
 	iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
-	strcpy_s(str, strlen(str), "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
+	strcpy_s(str, 100, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
 	SetOutputFileName(iphreeqc_id, "Species_c_utility.txt");
 	SetOutputFileOn(iphreeqc_id, 1);
 	status = RunString(iphreeqc_id, str);
