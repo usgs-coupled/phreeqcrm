@@ -321,7 +321,7 @@ print_diffuse_layer(cxxSurfaceCharge *charge_ptr)
 			add_elt_list(s_x[j]->next_elt, moles_surface);
 		}
 		/*
-			strcpy_s(token, MAX_LENGTH, s_h2o->name);
+			Utilities::strcpy_safe(token, MAX_LENGTH, s_h2o->name);
 			ptr = &(token[0]);
 			get_elts_in_species (&ptr, mass_water_surface / gfw_water);
 			*/
@@ -427,9 +427,9 @@ print_eh(void)
 /*
  *   Print result
  */
-			strcpy_s(token, MAX_LENGTH, master[i]->elt->name);
-			strcat_s(token, MAX_LENGTH, "/");
-			strcat_s(token, MAX_LENGTH, master[k]->elt->name);
+			Utilities::strcpy_safe(token, MAX_LENGTH, master[i]->elt->name);
+			Utilities::strcat_safe(token, MAX_LENGTH, "/");
+			Utilities::strcat_safe(token, MAX_LENGTH, master[k]->elt->name);
 			output_msg(sformatf("\t%-15s%12.4f%12.4f\n", token,
 					   (double) pe, (double) eh));
 		}
@@ -2904,34 +2904,34 @@ punch_identifiers(void)
 		switch (state)
 		{
 		case 0:
-			 strcpy_s(token, MAX_LENGTH, "init");
+			 Utilities::strcpy_safe(token, MAX_LENGTH, "init");
 			break;
 		case 1:
-			 strcpy_s(token, MAX_LENGTH, "i_soln");
+			 Utilities::strcpy_safe(token, MAX_LENGTH, "i_soln");
 			break;
 		case 2:
-			 strcpy_s(token, MAX_LENGTH, "i_exch");
+			 Utilities::strcpy_safe(token, MAX_LENGTH, "i_exch");
 			break;
 		case 3:
-			 strcpy_s(token, MAX_LENGTH, "i_surf");
+			 Utilities::strcpy_safe(token, MAX_LENGTH, "i_surf");
 			break;
 		case 4:
-			 strcpy_s(token, MAX_LENGTH, "i_gas");
+			 Utilities::strcpy_safe(token, MAX_LENGTH, "i_gas");
 			break;
 		case 5:
-			 strcpy_s(token, MAX_LENGTH, "react");
+			 Utilities::strcpy_safe(token, MAX_LENGTH, "react");
 			break;
 		case 6:
-			 strcpy_s(token, MAX_LENGTH, "inverse");
+			 Utilities::strcpy_safe(token, MAX_LENGTH, "inverse");
 			break;
 		case 7:
-			 strcpy_s(token, MAX_LENGTH, "advect");
+			 Utilities::strcpy_safe(token, MAX_LENGTH, "advect");
 			break;
 		case 8:
-			 strcpy_s(token, MAX_LENGTH, "transp");
+			 Utilities::strcpy_safe(token, MAX_LENGTH, "transp");
 			break;
 		default:
-			 strcpy_s(token, MAX_LENGTH, "unknown");
+			 Utilities::strcpy_safe(token, MAX_LENGTH, "unknown");
 			break;
 		}
 		fpunchf(PHAST_NULL("state"), sformat, token);

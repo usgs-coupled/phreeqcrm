@@ -819,7 +819,7 @@ replace_solids_gases(void)
 				/* try phase name without (g) or  (s) */
 				if (phase_ptr == NULL)
 				{
-					strcpy_s(token, MAX_LENGTH, token_ptr->name);
+					Utilities::strcpy_safe(token, MAX_LENGTH, token_ptr->name);
 					replace("(g)", "", token);
 					replace("(s)", "", token);
 					replace("(G)", "", token);
@@ -2013,8 +2013,8 @@ tidy_punch(void)
 					" %s.", pair_ref.first.c_str());
 				warning_msg(error_string);
 			}
-			// strcpy_s(token, MAX_LENGTH, "m_");
-			//strcat_s(token, punch.molalities[i].name);
+			// Utilities::strcpy_safe(token, MAX_LENGTH, "m_");
+			//Utilities::strcat_safe(token, punch.molalities[i].name);
 			//fpunchf_heading(sformatf("%*s\t", l, token));
 			//if (punch.molalities[i].s == NULL)
 			//{
@@ -2039,8 +2039,8 @@ tidy_punch(void)
 					" %s.", pair_ref.first.c_str());
 				warning_msg(error_string);
 			}
-			// strcpy_s(token, MAX_LENGTH, "la_");
-			//strcat_s(token, punch.activities[i].name);
+			// Utilities::strcpy_safe(token, MAX_LENGTH, "la_");
+			//Utilities::strcat_safe(token, punch.activities[i].name);
 			//fpunchf_heading(sformatf("%*s\t", l, token));
 			//if (punch.activities[i].s == NULL)
 			//{
@@ -2066,8 +2066,8 @@ tidy_punch(void)
 					" %s.", pair_ref.first.c_str());
 				warning_msg(error_string);
 			}
-			// strcpy_s(token, MAX_LENGTH, "d_");
-			//strcat_s(token, punch.pure_phases[i].name);
+			// Utilities::strcpy_safe(token, MAX_LENGTH, "d_");
+			//Utilities::strcat_safe(token, punch.pure_phases[i].name);
 			//fpunchf_heading(sformatf("%*s\t", l, punch.pure_phases[i].name));
 			//fpunchf_heading(sformatf("%*s\t", l, token));
 			//if (punch.pure_phases[i].phase == NULL)
@@ -2093,8 +2093,8 @@ tidy_punch(void)
 					" %s.", pair_ref.first.c_str());
 				warning_msg(error_string);
 			}
-			// strcpy_s(token, MAX_LENGTH, "si_");
-			//strcat_s(token, punch.si[i].name);
+			// Utilities::strcpy_safe(token, MAX_LENGTH, "si_");
+			//Utilities::strcat_safe(token, punch.si[i].name);
 			//fpunchf_heading(sformatf("%*s\t", l, token));
 			//if (punch.si[i].phase == NULL)
 			//{
@@ -2126,8 +2126,8 @@ tidy_punch(void)
 					" %s.", pair_ref.first.c_str());
 				warning_msg(error_string);
 			}
-			// strcpy_s(token, MAX_LENGTH, "g_");
-			//strcat_s(token, punch.gases[i].name);
+			// Utilities::strcpy_safe(token, MAX_LENGTH, "g_");
+			//Utilities::strcat_safe(token, punch.gases[i].name);
 			//fpunchf_heading(sformatf("%*s\t", l, token));
 			//if (punch.gases[i].phase == NULL)
 			//{
@@ -2149,11 +2149,11 @@ tidy_punch(void)
 			name = "dk_";
 			name.append(pair_ref.first);
 			fpunchf_heading(sformatf("%*s\t", l, name.c_str()));
-			// strcpy_s(token, MAX_LENGTH, "k_");
-			//strcat_s(token, punch.kinetics[i].name);
+			// Utilities::strcpy_safe(token, MAX_LENGTH, "k_");
+			//Utilities::strcat_safe(token, punch.kinetics[i].name);
 			//fpunchf_heading(sformatf("%*s\t", l, token));
-			// strcpy_s(token, MAX_LENGTH, "dk_");
-			//strcat_s(token, punch.kinetics[i].name);
+			// Utilities::strcpy_safe(token, MAX_LENGTH, "dk_");
+			//Utilities::strcat_safe(token, punch.kinetics[i].name);
 			//fpunchf_heading(sformatf("%*s\t", l, token));
 		}
 
@@ -2166,8 +2166,8 @@ tidy_punch(void)
 			std::string name = "s_";
 			name.append(pair_ref.first);
 			fpunchf_heading(sformatf("%*s\t", l, name.c_str()));
-			// strcpy_s(token, MAX_LENGTH, "s_");
-			//strcat_s(token, punch.s_s[i].name);
+			// Utilities::strcpy_safe(token, MAX_LENGTH, "s_");
+			//Utilities::strcat_safe(token, punch.s_s[i].name);
 			//fpunchf_heading(sformatf("%*s\t", l, token));
 		}
 
@@ -2196,8 +2196,8 @@ tidy_punch(void)
 			//		punch.isotopes[i].name, punch.isotopes[i].name);
 			//	warning_msg(error_string);
 			//}
-			// strcpy_s(token, MAX_LENGTH, "I_");
-			//strcat_s(token, punch.isotopes[i].name);
+			// Utilities::strcpy_safe(token, MAX_LENGTH, "I_");
+			//Utilities::strcat_safe(token, punch.isotopes[i].name);
 			//fpunchf_heading(sformatf("%*s\t", l, token));
 		}
 
@@ -2227,8 +2227,8 @@ tidy_punch(void)
 			//		punch.calculate_values[i].name);
 			//	warning_msg(error_string);
 			//}
-			// strcpy_s(token, MAX_LENGTH, "V_");
-			//strcat_s(token, punch.calculate_values[i].name);
+			// Utilities::strcpy_safe(token, MAX_LENGTH, "V_");
+			//Utilities::strcat_safe(token, punch.calculate_values[i].name);
 			//fpunchf_heading(sformatf("%*s\t", l, token));
 		}
 

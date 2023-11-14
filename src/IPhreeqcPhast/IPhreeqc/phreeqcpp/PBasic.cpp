@@ -550,7 +550,7 @@ numtostr(char * Result, LDBLE n)
     l_s[i] = '\0';
  * p2c: basic.p, line 248:
  * Note: Modification of string length may translate incorrectly [146] *
-     strcpy_s(Result, MAX_LENGTH, strltrim(l_s));
+     Utilities::strcpy_safe(Result, MAX_LENGTH, strltrim(l_s));
 	 return Result;
   } */
 }
@@ -1747,16 +1747,16 @@ void PBasic::
 	snerr(const char * l_s)
 {
 	char str[MAX_LENGTH] = {0};
-	strcpy_s(str, MAX_LENGTH, "Syntax_error ");
+	Utilities::strcpy_safe(str, MAX_LENGTH, "Syntax_error ");
 	if (phreeqci_gui)
 	{
 		_ASSERTE(nIDErrPrompt == 0);
 		nIDErrPrompt = IDS_ERR_SYNTAX;
 	}
-	strcat_s(str, MAX_LENGTH, l_s);
-	strcat_s(str, MAX_LENGTH, " in line: ");
+	Utilities::strcat_safe(str, MAX_LENGTH, l_s);
+	Utilities::strcat_safe(str, MAX_LENGTH, " in line: ");
 	if (strcmp(inbuf, "run"))
-		strcat_s(str, MAX_LENGTH, inbuf);
+		Utilities::strcat_safe(str, MAX_LENGTH, inbuf);
 	errormsg(str);
 }
 
@@ -1764,16 +1764,16 @@ void PBasic::
 	tmerr(const char * l_s)
 {
 	char str[MAX_LENGTH] = {0};
-	strcpy_s(str, MAX_LENGTH, "Type mismatch error");
+	Utilities::strcpy_safe(str, MAX_LENGTH, "Type mismatch error");
 	if (phreeqci_gui)
 	{
 		_ASSERTE(nIDErrPrompt == 0);
 		nIDErrPrompt = IDS_ERR_MISMATCH;
 	}
-	strcat_s(str, MAX_LENGTH, l_s);
-	strcat_s(str, MAX_LENGTH, " in line: ");
+	Utilities::strcat_safe(str, MAX_LENGTH, l_s);
+	Utilities::strcat_safe(str, MAX_LENGTH, " in line: ");
 	if (strcmp(inbuf, "run"))
-		strcat_s(str, MAX_LENGTH, inbuf);
+		Utilities::strcat_safe(str, MAX_LENGTH, inbuf);
 	errormsg(str);
 }
 
@@ -1902,8 +1902,8 @@ require(int k, struct LOC_exec *LINK)
 		if (item == command_tokens.end())
 			snerr(": missing unknown command");
 		else {
-			strcpy_s(str, MAX_LENGTH, ": missing ");
-			strcat_s(str, MAX_LENGTH, item->first.c_str());
+			Utilities::strcpy_safe(str, MAX_LENGTH, ": missing ");
+			Utilities::strcat_safe(str, MAX_LENGTH, item->first.c_str());
 			snerr(str);
 		}
 #if !defined(R_SO)
@@ -2546,7 +2546,7 @@ factor(struct LOC_exec * LINK)
 		size_t l = elt_name.size();
 		l = l < 256 ? 256 : l + 1;
 		char* token = (char*)PhreeqcPtr->PHRQ_malloc(l * sizeof(char));
-		 strcpy_s(token, l, elt_name.c_str());
+		 Utilities::strcpy_safe(token, l, elt_name.c_str());
 		*elt_varrec->UU.U1.sval = token;
 	}
 	break;
@@ -6242,9 +6242,9 @@ exec(void)
 							_ASSERTE(nIDErrPrompt == 0);
 							nIDErrPrompt = IDS_ERR_ILLEGAL;
 						}
-						strcat_s(STR1, MAX_LENGTH, "Illegal command in line: ");
+						Utilities::strcat_safe(STR1, MAX_LENGTH, "Illegal command in line: ");
 						if (strcmp(inbuf, "run"))
-							strcat_s(STR1, MAX_LENGTH, inbuf);
+							Utilities::strcat_safe(STR1, MAX_LENGTH, inbuf);
 						errormsg(STR1);
 						break;
 					}
@@ -6394,7 +6394,7 @@ cmdplot_xy(struct LOC_exec *LINK)
 		n[i] = expr(LINK);
 		if (n[i].stringval)
 		{
-			strcpy_s(STR[i], MAX_LENGTH, n[i].UU.sval);
+			Utilities::strcpy_safe(STR[i], MAX_LENGTH, n[i].UU.sval);
 			PhreeqcPtr->PHRQ_free(n[i].UU.sval);
 		}
 		else

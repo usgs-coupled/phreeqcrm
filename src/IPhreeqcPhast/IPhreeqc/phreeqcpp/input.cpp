@@ -127,7 +127,7 @@ get_line(void)
 		if (line == NULL)
 			malloc_error();
 	}
-	strcpy_s(line, max_line, phrq_io->Get_m_line().c_str());
-	strcpy_s(line_save, max_line, phrq_io->Get_m_line_save().c_str());
+	Utilities::strcpy_safe(line, max_line, phrq_io->Get_m_line().c_str());
+	Utilities::strcpy_safe(line_save, max_line, phrq_io->Get_m_line_save().c_str());
 	return j;
 }

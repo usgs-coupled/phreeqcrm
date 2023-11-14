@@ -10,6 +10,8 @@
 
 void simpleadvection_c(double* c, double* bc_conc, int ncomps, int nxyz, int dim);
 
+size_t strcat_safe(char* dest, size_t max, const char* src);
+size_t strcpy_safe(char* dest, size_t max, const char* src);
 void SimpleAdvect_c()
 {
 	// Based on PHREEQC Example 11
@@ -103,15 +105,17 @@ void SimpleAdvect_c()
 	// Argument 3 refers to the Utility instance
 	status = RM_RunFile(id, 1, 1, 1, "advect.pqi");
 	// Clear contents of workers and utility
-	strcpy_s(str, 100, "DELETE; -all");
+	strcpy_safe(str, 100, "DELETE; -all");
 	status = RM_RunString(id, 1, 0, 1, str);	// workers, initial_phreeqc, utility 
 	// Determine number of components to transport
 	ncomps = RM_FindComponents(id);
 	// Get component information
 	components = (char**)malloc((size_t)(ncomps * sizeof(char*)));
+	if (components == NULL) exit(4);
 	for (i = 0; i < ncomps; i++)
 	{
 		components[i] = (char*)malloc((size_t)(100 * sizeof(char*)));
+		if (components[i] == NULL) exit(4);
 		status = RM_GetComponent(id, i, components[i], 100);
 		snprintf(str, sizeof(str), "%10s\n", components[i]);
 		status = RM_OutputMessage(id, str);
@@ -121,6 +125,7 @@ void SimpleAdvect_c()
 	ic1 = (int*)malloc((size_t)(7 * nxyz * sizeof(int)));
 	ic2 = (int*)malloc((size_t)(7 * nxyz * sizeof(int)));
 	f1 = (double*)malloc((size_t)(7 * nxyz * sizeof(double)));
+	if (ic1 == NULL || ic2 == NULL || f1 == NULL) exit(4);
 	for (i = 0; i < nxyz; i++)
 	{
 		ic1[i] = 1;       // Solution 1
@@ -162,6 +167,7 @@ void SimpleAdvect_c()
 	bc2 = (int*)malloc((size_t)(nbound * sizeof(int)));
 	bc_f1 = (double*)malloc((size_t)(nbound * sizeof(double)));
 	bc_conc = (double*)malloc((size_t)(ncomps * nbound * sizeof(double)));
+	if (bc1 == NULL || bc2 == NULL || bc_f1 == NULL || bc_conc == NULL) exit(4);
 	for (i = 0; i < nbound; i++)
 	{
 		bc1[i] = 0;       // Solution 0 from Initial IPhreeqc instance
@@ -175,6 +181,7 @@ void SimpleAdvect_c()
 	nsteps = 10;
 	pressure = (double*)malloc((size_t)(nxyz * sizeof(double)));
 	temperature = (double*)malloc((size_t)(nxyz * sizeof(double)));
+	if (temperature == NULL || pressure == NULL) exit(4);
 	for (i = 0; i < nxyz; i++)
 	{
 		pressure[i] = 2.0;

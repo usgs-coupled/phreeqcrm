@@ -233,7 +233,7 @@ compute_gfw(const char *string, LDBLE * gfw)
 
 	count_elts = 0;
 	paren_count = 0;
-	strcpy_s(token, MAX_LENGTH, string);
+	Utilities::strcpy_safe(token, MAX_LENGTH, string);
 	cptr = token;
 	if (get_elts_in_species(&cptr, 1.0) == ERROR)
 	{
@@ -654,7 +654,7 @@ print_centered(const char *string)
 	for (i = 0; i < l1; i++)
 		token[i] = '-';
 	token[i] = '\0';
-	strcat_s(token, MAX_LENGTH, string);
+	Utilities::strcat_safe(token, MAX_LENGTH, string);
 	for (i = 0; i < l2; i++)
 		token[i + l1 + l] = '-';
 	token[79] = '\0';

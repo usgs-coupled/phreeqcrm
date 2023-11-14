@@ -54,10 +54,10 @@ inverse_models(void)
  */
 			if (inverse[n].pat != NULL)
 			{
-				strcpy_s(string, MAX_LENGTH, inverse[n].pat);
+				Utilities::strcat_safe(string, MAX_LENGTH, inverse[n].pat);
 				if (replace(".pat", ".pat", string) != TRUE)
 				{
-					strcat_s(string, strlen(string), ".pat");
+					Utilities::strcat_safe(string, strlen(string), ".pat");
 				}
 				netpath_file = fopen(string, "w");
 				if (netpath_file == NULL)
@@ -4174,11 +4174,11 @@ print_total_multi(FILE * l_netpath_file, cxxSolution *solution_ptr,
 	LDBLE sum;
 	int i, found;
 
-	strcpy_s(elts[0], MAX_LENGTH, elt0);
-	strcpy_s(elts[1], MAX_LENGTH, elt1);
-	strcpy_s(elts[2], MAX_LENGTH, elt2);
-	strcpy_s(elts[3], MAX_LENGTH, elt3);
-	strcpy_s(elts[4], MAX_LENGTH, elt4);
+	Utilities::strcat_safe(elts[0], MAX_LENGTH, elt0);
+	Utilities::strcat_safe(elts[1], MAX_LENGTH, elt1);
+	Utilities::strcat_safe(elts[2], MAX_LENGTH, elt2);
+	Utilities::strcat_safe(elts[3], MAX_LENGTH, elt3);
+	Utilities::strcat_safe(elts[4], MAX_LENGTH, elt4);
 
 
 	sum = 0;
