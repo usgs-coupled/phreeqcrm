@@ -876,6 +876,7 @@ status = phreeqc_rm.GetDensityCalculated(density);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                GetDensityCalculated(std::vector< double > & d_output);
+	IRM_RESULT                                GetDensity(std::vector< double >& d_output);
 /**
 Returns a vector of integers that contains the largest reaction-cell number assigned to each worker.
 Each worker is assigned a range of reaction-cell numbers that are run during a call to @ref RunCells.
@@ -1875,6 +1876,7 @@ status = phreeqc_rm.GetSaturationCalculated(sat);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 IRM_RESULT               GetSaturationCalculated(std::vector< double > & sat_output);
+IRM_RESULT               GetSaturation(std::vector< double >& sat_output);
 /**
 Returns the array of selected-output values for the current selected-output definition.
 @ref SetCurrentSelectedOutputUserNumber
@@ -4303,6 +4305,7 @@ phreeqc_rm.SetDensityUser(initial_density);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                SetDensityUser(const std::vector< double > &density);
+	IRM_RESULT                                SetDensity(const std::vector< double >& density);
 /**
 Set the name of the dump file. It is the name used by @ref DumpModule.
 @param dump_name        Name of dump file.
@@ -4999,6 +5002,7 @@ status = phreeqc_rm.SetSaturationUser(sat);
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
 	IRM_RESULT                                SetSaturationUser(const std::vector< double > &sat);
+	IRM_RESULT                                SetSaturation(const std::vector< double >& sat);
 /**
 Set the property that controls whether messages are written to the screen.
 Messages include information about rebalancing during @ref RunCells, and
@@ -5795,7 +5799,7 @@ protected:
 
 protected:
 	static const int default_nxyz = 10;
-	static const int default_data_for_parallel_processing = -1;
+	static const MP_TYPE default_data_for_parallel_processing;
 	struct Initializer {
 		int nxyz_arg;
 		MP_TYPE data_for_parallel_processing;

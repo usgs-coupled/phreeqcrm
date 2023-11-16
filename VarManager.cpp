@@ -997,11 +997,11 @@ void VarManager::SelectedOutputHeadings_Var()
 			bv.SetTypes("std::vector<std::string>", "character(len=:),allocatable,dimension(:)", "str");
 #endif
 		}
-		else
-		{
-			int Itemsize = 0;
-			int Nbytes = 0;
-		}
+		//else
+		//{
+		//	int Itemsize = 0;
+		//	int Nbytes = 0;
+		//}
 		bv.SetInitialized(false);
 	}
 	switch (this->task)

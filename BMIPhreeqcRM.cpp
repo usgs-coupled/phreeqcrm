@@ -48,7 +48,6 @@ BMIPhreeqcRM::CreateBMIModule()
 {
 	//_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	//_crtBreakAlloc = 5144;
-	int n = IRM_OUTOFMEMORY;
 	try
 	{
 		BMIPhreeqcRM* bmirm_ptr = new BMIPhreeqcRM();
@@ -71,7 +70,6 @@ BMIPhreeqcRM::CreateBMIModule(int nxyz, MP_TYPE nthreads)
 {
 	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	//_crtBreakAlloc = 5144;
-	int n = IRM_OUTOFMEMORY;
 	try
 	{
 		BMIPhreeqcRM* bmirm_ptr = new BMIPhreeqcRM(nxyz, nthreads);
@@ -184,7 +182,9 @@ void BMIPhreeqcRM::Initialize(std::string config_file)
 			}
 			if (keyword == "ThreadCount")
 			{
+#if !defined(USE_MPI)
 				this->initializer.data_for_parallel_processing = it1++->second.as<int>();
+#endif
 				found_threads = true;
 			}
 			if (found_threads && found_nxyz) break;
@@ -625,8 +625,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 			bool tf = *this->var_man->VarExchange.GetBVarPtr();
 			int tf_int = 1;
 			if (!tf) tf_int = 0;
-			bool tf1 = this->var_man->VarExchange.GetBVar();
-			assert(tf == tf1);		
+			assert(tf == this->var_man->VarExchange.GetBVar());
 			memcpy(dest, &tf_int, sizeof(int));
 			return;
 		}

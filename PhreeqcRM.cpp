@@ -63,6 +63,11 @@
 #include "Phreeqc.h"
 #include "IPhreeqcPhast.h"
 
+#if defined(USE_MPI)
+	const MP_TYPE PhreeqcRM::default_data_for_parallel_processing = MPI_COMM_WORLD;
+#else
+	const MP_TYPE PhreeqcRM::default_data_for_parallel_processing = -1;
+#endif
 
 
 //// static PhreeqcRM methods
@@ -80,15 +85,11 @@ PhreeqcRM::CreateReactionModule(int nxyz, MP_TYPE nthreads)
 {
 	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	//_crtBreakAlloc = 5144;
-	int n = IRM_OUTOFMEMORY;
 	try
 	{
 		PhreeqcRM * Reaction_module_ptr = new PhreeqcRM(nxyz, nthreads);
 		if (Reaction_module_ptr)
 		{
-			// n = (int) Reaction_module_ptr->GetWorkers()[0]->Get_Index();
-			// PhreeqcRM::Instances[n] = Reaction_module_ptr;
-			// return n;
 			return Reaction_module_ptr->GetIndex();
 		}
 	}
@@ -149,19 +150,19 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 	// constructor
 	//
 : StaticIndexer{ this }
+, component_h2o{ true }
 , phreeqc_bin{ nullptr }
+, count_chemistry{ nxyz_arg }
+, worker_waiting{ false }
+, error_count{ 0 }
+, error_handler_mode{ 0 }
+, need_error_check{ true }
 , phreeqcrm_io{ io }
 , delete_phreeqcrm_io{ false }
-, component_h2o{ true }
-, count_chemistry{ nxyz_arg }
 , mpi_worker_callback_fortran{ nullptr }
 , mpi_worker_callback_c{ nullptr }
 , mpi_worker_callback_cookie{ nullptr }
 , species_save_on{ false }
-// errors
-, error_count{ 0 }
-, error_handler_mode{ 0 }
-, need_error_check{ true }
 , initializer{ nxyz_arg, data_for_parallel_processing, io }
 {
 #ifdef USE_MPI
@@ -198,7 +199,7 @@ void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
 {
 	int nxyz_arg = i.nxyz_arg;
 	MP_TYPE data_for_parallel_processing = i.data_for_parallel_processing;
-	PHRQ_io *io = i.io;
+	//PHRQ_io *io = i.io;
 #ifdef USE_MPI
 	if (mpi_myself == 0)
 	{
@@ -3597,6 +3598,14 @@ PhreeqcRM::GetCurrentSelectedOutputUserNumber(void)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+PhreeqcRM::GetDensity(std::vector<double>& density_arg)
+/* ---------------------------------------------------------------------- */
+{
+	// For backward compatibility
+	return GetDensityCalculated(density_arg);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 PhreeqcRM::GetDensityCalculated(std::vector<double> & density_arg)
 /* ---------------------------------------------------------------------- */
 {
@@ -4369,6 +4378,14 @@ PhreeqcRM::GetPressure(void)
 }
 #endif
 
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::GetSaturation(std::vector<double>& sat_arg)
+/* ---------------------------------------------------------------------- */
+{
+	// For backward compatibility
+	return GetSaturationCalculated(sat_arg);
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::GetSaturationCalculated(std::vector<double> & sat_arg)
@@ -11499,6 +11516,14 @@ PhreeqcRM::SetDatabaseFileName(const char * db)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
+PhreeqcRM::SetDensity(const std::vector<double>& t)
+/* ---------------------------------------------------------------------- */
+{
+	// For backward compatibility
+	return SetDensityUser(t);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
 PhreeqcRM::SetDensityUser(const std::vector<double> &t)
 /* ---------------------------------------------------------------------- */
 {
@@ -12045,6 +12070,16 @@ PhreeqcRM::SetRepresentativeVolume(const std::vector<double> &t)
 	return this->ReturnHandler(result_value, "PhreeqcRM::" + methodName);
 }
 
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+PhreeqcRM::SetSaturation(const std::vector<double>& t)
+/* ---------------------------------------------------------------------- */
+{
+	// For backward compatibility
+	return SetSaturationUser(t);
+}
+
+/* ---------------------------------------------------------------------- */
 IRM_RESULT
 PhreeqcRM::SetSaturationUser(const std::vector<double> &t)
 /* ---------------------------------------------------------------------- */
