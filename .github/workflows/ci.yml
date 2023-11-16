@@ -14,6 +14,7 @@ on:
       - 'CMakePresets.json'
       - 'build-all-presets.sh'
       - '.github/workflows/wheels.yml'
+  workflow_dispatch:
 
 env:
   NAME: PhreeqcRM
