@@ -680,8 +680,8 @@ void register_basic_callback(void* cookie)
 	my_data* data;
 #ifdef USE_MPI
 	int mpi_tasks, mpi_myself;
-#endif
 	int	method_number = 1001;
+#endif
 	data = (my_data*)cookie;
 
 #ifdef USE_MPI

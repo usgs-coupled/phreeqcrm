@@ -13,7 +13,8 @@ int do_something(void* cookie);
 void register_basic_callback(void* cookie);
 double my_basic_callback(double x1, double x2, const char* str, void* cookie);
 int example_selected_output(int id);
-
+size_t strcat_safe(char* dest, size_t max, const char* src);
+size_t strcpy_safe(char* dest, size_t max, const char* src);
 struct my_data
 {
 #ifdef USE_MPI
@@ -209,7 +210,7 @@ void Advect_c()
 	// Argument 3 refers to the Utility instance
 	status = RM_RunFile(id, 1, 1, 1, "advect.pqi");
 	// Clear contents of workers and utility
-	strcpy(str, "DELETE; -all");
+	strcpy_safe(str, 100, "DELETE; -all");
 	status = RM_RunString(id, 1, 0, 1, str);	// workers, initial_phreeqc, utility 
 	// Determine number of components to transport
 	ncomps = RM_FindComponents(id);
@@ -247,6 +248,7 @@ void Advect_c()
 	ic1 = (int*)malloc((size_t)(7 * nxyz * sizeof(int)));
 	ic2 = (int*)malloc((size_t)(7 * nxyz * sizeof(int)));
 	f1 = (double*)malloc((size_t)(7 * nxyz * sizeof(double)));
+	if (ic1 == NULL || ic2 == NULL || f1 == NULL) exit(4);
 	for (i = 0; i < nxyz; i++)
 	{
 		ic1[i] = 1;       // Solution 1
@@ -281,6 +283,7 @@ void Advect_c()
 	// Equilibrium phases, exchange, surface, gas phase, solid solution, and (or) kinetics--
 	// will be written to cells 18 and 19 (0 based)
 	module_cells = (int*)malloc((size_t)(2 * sizeof(int)));
+	if (module_cells == NULL) exit(4);
 	module_cells[0] = 18;
 	module_cells[1] = 19;
 	status = RM_InitialPhreeqcCell2Module(id, -1, module_cells, 2);
@@ -302,6 +305,7 @@ void Advect_c()
 	bc2 = (int*)malloc((size_t)(nbound * sizeof(int)));
 	bc_f1 = (double*)malloc((size_t)(nbound * sizeof(double)));
 	bc_conc = (double*)malloc((size_t)(ncomps * nbound * sizeof(double)));
+	if (bc1 == NULL || bc2 == NULL || bc_f1 == NULL || bc_conc == NULL) exit(4);
 	for (i = 0; i < nbound; i++)
 	{
 		bc1[i] = 0;       // Solution 0 from Initial IPhreeqc instance
@@ -320,6 +324,8 @@ void Advect_c()
 	pressure = (double*)malloc((size_t)(nxyz * sizeof(double)));
 	temperature = (double*)malloc((size_t)(nxyz * sizeof(double)));
 	sat_calc = (double*)malloc((size_t)(nxyz * sizeof(double)));
+
+	if (density == NULL || volume == NULL || pressure == NULL || temperature == NULL || sat_calc == NULL) exit(4);
 	for (i = 0; i < nxyz; i++)
 	{
 		density[i] = 1.0;
@@ -434,16 +440,18 @@ void Advect_c()
 
 	// Use utility instance of PhreeqcRM to calculate pH of a mixture
 	c_well = (double*)malloc((size_t)((size_t)(1 * ncomps * sizeof(double))));
+	if (c_well == NULL) exit(4);
 	for (i = 0; i < ncomps; i++)
 	{
 		c_well[i] = 0.5 * c[0 + nxyz * i] + 0.5 * c[9 + nxyz * i];
 	}
 	tc = (double*)malloc((size_t)(2 * sizeof(double)));
 	p_atm = (double*)malloc((size_t)(2 * sizeof(double)));
+	if (tc == NULL || p_atm == NULL) exit(4);
 	tc[0] = 15.0;
 	p_atm[0] = 3.0;
 	iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
-	strcpy(str, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
+	strcpy_safe(str, 100, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
 	// Alternatively, utility pointer is worker number nthreads + 1 
 	iphreeqc_id1 = RM_GetIPhreeqcId(id, RM_GetThreadCount(id) + 1);
 	SetOutputFileName(iphreeqc_id, "Advect_c_utility.txt");
@@ -559,8 +567,8 @@ void register_basic_callback(void* cookie)
 	int i, j, rm_id;
 #ifdef USE_MPI
 	int mpi_tasks, mpi_myself;
-#endif
 	int	method_number = 1001;
+#endif
 	data = (struct my_data*)cookie;
 
 #ifdef USE_MPI
@@ -606,8 +614,10 @@ int example_selected_output(int id)
 {
 	int nlines, i, status;
 	char* input;
+	size_t MAX_LINE = 400;
 	char line[400], line1[100], line2[100], line3[100];
 	nlines = 50;
+	size_t MAX_BUFFER = nlines * 40;
 	nlines = nlines + RM_GetComponentCount(id);
 	nlines = nlines + RM_GetSpeciesCount(id);
 	nlines = nlines + RM_GetExchangeSpeciesCount(id);
@@ -617,12 +627,12 @@ int example_selected_output(int id)
 	nlines = nlines + RM_GetKineticReactionsCount(id);
 	nlines = nlines + RM_GetSolidSolutionComponentsCount(id);
 	nlines = nlines + RM_GetSICount(id);
-	input = (char*)malloc((size_t)(nlines * 40));
+	input = (char*)malloc(MAX_BUFFER);
 
-	strncpy(input, "\0", 40);
-	strcat(input, "SELECTED_OUTPUT 2\n");
+	strcpy_safe(input, MAX_BUFFER, "\0");
+	strcat_safe(input, MAX_BUFFER, "SELECTED_OUTPUT 2\n");
 	// totals
-	strcat(input, "  -totals\n");
+	strcat_safe(input, MAX_BUFFER, "  -totals\n");
 	for (i = 0; i < RM_GetComponentCount(id); i++)
 	{
 		status = RM_GetComponent(id, i, line1, 100);
@@ -632,29 +642,29 @@ int example_selected_output(int id)
 			strcmp(line1, "Charge") != 0 &&
 			strcmp(line1, "H2O") != 0)
 		{
-			strcat(input, "    ");
-			strcat(input, line1);
-			strcat(input, "\n");
+			strcat_safe(input, MAX_BUFFER, "    ");
+			strcat_safe(input, MAX_BUFFER, line1);
+			strcat_safe(input, MAX_BUFFER, "\n");
 		}
 	}
 
-	strcat(input, "  -molalities \n");
+	strcat_safe(input, MAX_BUFFER, "  -molalities \n");
 	// molalities of aqueous species 
 	for (i = 0; i < RM_GetSpeciesCount(id); i++)
 	{
 		status = RM_GetSpeciesName(id, i, line1, 100);
-		strcat(input, "    ");
-		strcat(input, line1);
-		strcat(input, "\n");
+		strcat_safe(input, MAX_BUFFER, "    ");
+		strcat_safe(input, MAX_BUFFER, line1);
+		strcat_safe(input, MAX_BUFFER, "\n");
 	}
 	// molalities of exchange species
 	for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
 	{
-		strcpy(line, "");
+		strcpy_safe(line, 400, "");
 		status = RM_GetExchangeSpeciesName(id, i, line1, 100);
 		status = RM_GetExchangeName(id, i, line2, 100);
-		snprintf(line, sizeof(line), "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
-		strcat(input, line);
+		snprintf(line, MAX_LINE, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+		strcat_safe(input, MAX_BUFFER, line);
 	}
 	// molalities of surface species
 	for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
@@ -662,49 +672,49 @@ int example_selected_output(int id)
 		status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
 		status = RM_GetSurfaceType(id, i, line2, 100);
 		status = RM_GetSurfaceName(id, i, line3, 100);
-		snprintf(line, sizeof(line), "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
-		strcat(input, line);
+		snprintf(line, MAX_LINE, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+		strcat_safe(input, MAX_BUFFER, line);
 	}
-	strcat(input, "  -equilibrium_phases\n");
+	strcat_safe(input, MAX_BUFFER, "  -equilibrium_phases\n");
 	// equilibrium phases 
 	for (i = 0; i < RM_GetEquilibriumPhasesCount(id); i++)
 	{
 		status = RM_GetEquilibriumPhasesName(id, i, line1, 100);
-		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
-		strcat(input, line);
+		snprintf(line, MAX_LINE, "%4s%20s\n", "    ", line1);
+		strcat_safe(input, MAX_BUFFER, line);
 	}
-	strcat(input, "  -gases\n");
+	strcat_safe(input, MAX_BUFFER, "  -gases\n");
 	// gas components
 	for (i = 0; i < RM_GetGasComponentsCount(id); i++)
 	{
 		status = RM_GetGasComponentsName(id, i, line1, 100);
-		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
-		strcat(input, line);
+		snprintf(line, MAX_LINE, "%4s%20s\n", "    ", line1);
+		strcat_safe(input, strlen(input), line);
 	}
-	strcat(input, "  -kinetics\n");
+	strcat_safe(input, MAX_BUFFER, "  -kinetics\n");
 	// kinetic reactions 
 	for (i = 0; i < RM_GetKineticReactionsCount(id); i++)
 	{
 		status = RM_GetKineticReactionsName(id, i, line1, 100);
-		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
-		strcat(input, line);
+		snprintf(line, MAX_LINE, "%4s%20s\n", "    ", line1);
+		strcat_safe(input, MAX_BUFFER, line);
 	}
-	strcat(input, "  -solid_solutions\n");
+	strcat_safe(input, MAX_BUFFER, "  -solid_solutions\n");
 	// solid solutions
 	for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
 	{
 		status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
 		status = RM_GetSolidSolutionName(id, i, line2, 100);
-		snprintf(line, sizeof(line), "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
-		strcat(input, line);
+		snprintf(line, MAX_LINE, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+		strcat_safe(input, MAX_BUFFER, line);
 	}
-	strcat(input, "  -saturation_indices\n");
+	strcat_safe(input, MAX_BUFFER, "  -saturation_indices\n");
 	// molalities of aqueous species 
 	for (i = 0; i < RM_GetSICount(id); i++)
 	{
 		status = RM_GetSIName(id, i, line1, 100);
-		snprintf(line, sizeof(line), "%4s%20s\n", "    ", line1);
-		strcat(input, line);
+		snprintf(line, MAX_LINE, "%4s%20s\n", "    ", line1);
+		strcat_safe(input, MAX_BUFFER, line);
 	}
 
 	/*generate selected output with the following line*/
@@ -716,4 +726,41 @@ int example_selected_output(int id)
 	free(input);
 
 	return(0);
+}
+size_t 
+strcpy_safe(char* dest, size_t max, const char* src)
+{
+	size_t lsrc = 0;
+	if (dest == NULL || src == NULL)
+	{
+		fprintf(stderr, "NULL pointer in strcpy_safe.\n");
+		exit(4);
+	}
+	lsrc = strlen(src);
+	if (lsrc + 1 > max)
+	{
+		fprintf(stderr, "Buffer overrun in strcpy_safe.\n");
+		exit(4);
+	}
+	memcpy(dest, src, (lsrc + 1) * sizeof(char));
+	return lsrc;
+}
+size_t strcat_safe(char* dest, size_t max, const char* src)
+{
+	size_t ldest = 0, lsrc = 0;
+	if (dest == NULL || src == NULL)
+	{
+		fprintf(stderr, "nullptr in strcat_safe.\n");
+		exit(4);
+	}
+	lsrc = strlen(src);
+	ldest = strlen(dest);
+	if (ldest + lsrc + 1 > max)
+	{
+		fprintf(stderr, "Buffer overrun in strcat_safe.\n");
+		exit(4);
+	}
+	memcpy(&dest[ldest], src, (lsrc + 1) * sizeof(char));
+
+	return ldest + lsrc;
 }

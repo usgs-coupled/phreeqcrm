@@ -10,7 +10,8 @@
 
 
 void speciesadvection_c(double* c, double* bc_conc, int ncomps, int nxyz, int dim);
-
+size_t strcat_safe(char* dest, size_t max, const char* src);
+size_t strcpy_safe(char* dest, size_t max, const char* src);
 void Species_c()
 {
 	// Based on PHREEQC Example 11, transporting species rather than components
@@ -156,7 +157,7 @@ void Species_c()
 	// Argument 3 refers to the Utility instance
 	status = RM_RunFile(id, 1, 1, 1, "advect.pqi");
 	// Clear contents of workers and utility
-	strcpy(str, "DELETE; -all");
+	strcpy_safe(str, 100, "DELETE; -all");
 	status = RM_RunString(id, 1, 0, 1, str);	// workers, initial_phreeqc, utility 
 	// Make list of components
 	ncomps = RM_FindComponents(id);
@@ -208,6 +209,7 @@ void Species_c()
 	ic1 = (int*)malloc((size_t)(7 * nxyz * sizeof(int)));
 	ic2 = (int*)malloc((size_t)(7 * nxyz * sizeof(int)));
 	f1 = (double*)malloc((size_t)(7 * nxyz * sizeof(double)));
+	if (ic1 == NULL || ic2 == NULL || f1 == NULL) exit(4);
 	for (i = 0; i < nxyz; i++)
 	{
 		ic1[i] = 1;       // Solution 1
@@ -242,6 +244,7 @@ void Species_c()
 	// Equilibrium phases, exchange, surface, gas phase, solid solution, and (or) kinetics--
 	// will be written to cells 18 and 19 (0 based)
 	module_cells = (int*)malloc((size_t)(2 * sizeof(int)));
+	if (module_cells == NULL) exit(4);
 	module_cells[0] = 18;
 	module_cells[1] = 19;
 	status = RM_InitialPhreeqcCell2Module(id, -1, module_cells, 2);
@@ -269,6 +272,7 @@ void Species_c()
 	bc2 = (int*)malloc((size_t)(nbound * sizeof(int)));
 	bc_f1 = (double*)malloc((size_t)(nbound * sizeof(double)));
 	bc_conc = (double*)malloc((size_t)(nspecies * nbound * sizeof(double)));
+	if (bc1 == NULL || bc2 == NULL || bc_f1 == NULL || bc_conc == NULL) exit(4);
 	for (i = 0; i < nbound; i++)
 	{
 		bc1[i] = 0;       // Solution 0 from Initial IPhreeqc instance
@@ -286,6 +290,7 @@ void Species_c()
 	volume = (double*)malloc((size_t)(nxyz * sizeof(double)));
 	pressure = (double*)malloc((size_t)(nxyz * sizeof(double)));
 	temperature = (double*)malloc((size_t)(nxyz * sizeof(double)));
+	if (density == NULL || volume == NULL || pressure == NULL || temperature == NULL) exit(4);
 	for (i = 0; i < nxyz; i++)
 	{
 		density[i] = 1.0;
@@ -399,10 +404,11 @@ void Species_c()
 	}
 	tc = (double*)malloc((size_t)(1 * sizeof(double)));
 	p_atm = (double*)malloc((size_t)(1 * sizeof(double)));
+	if (tc == NULL || p_atm == NULL) exit(4);
 	tc[0] = 15.0;
 	p_atm[0] = 3.0;
 	iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
-	strcpy(str, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
+	strcpy_safe(str, 100, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
 	SetOutputFileName(iphreeqc_id, "Species_c_utility.txt");
 	SetOutputFileOn(iphreeqc_id, 1);
 	status = RunString(iphreeqc_id, str);

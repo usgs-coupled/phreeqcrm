@@ -31,7 +31,7 @@ IRM_BADINSTANCE, otherwise the program will exit with a return code of 4.
 <CODE>
 <PRE>
 iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
-strcpy(str, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
+Utilities::strcpy_safe(str, MAX_LENGTH, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
 status = RunString(iphreeqc_id, str);
 if (status != 0) status = RM_Abort(id, status, "IPhreeqc RunString failed");
 </PRE>
@@ -89,7 +89,7 @@ p_atm = (double *) malloc((size_t) (1 * sizeof(double)));
 tc[0] = 15.0;
 p_atm[0] = 3.0;
 iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
-strcpy(str, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
+Utilities::strcpy_safe(str, MAX_LENGTH, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
 status = RunString(iphreeqc_id, str);
 status = SetCurrentSelectedOutputUserNumber(iphreeqc_id, 5);
 status = GetSelectedOutputValue2(iphreeqc_id, 1, 0, &vtype, &pH, svalue, 100);
@@ -611,12 +611,12 @@ equilibrium phases.
 @htmlonly
 <CODE>
 <PRE>
-strcat(input, "  -equilibrium_phases\n");
+Utilities::strcat_safe(input, MAX_LENGTH, "  -equilibrium_phases\n");
 for (i = 0; i < RM_GetEquilibriumPhasesCount(id); i++)
 {
 status = RM_GetEquilibriumPhasesName(id, i, line1, 100);
 sprintf(line, "%4s%20s\n", "    ", line1);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -643,12 +643,12 @@ This method may be useful when generating selected output definitions related to
 @htmlonly
 <CODE>
 <PRE>
-strcat(input, "  -equilibrium_phases\n");
+Utilities::strcat_safe(input, MAX_LENGTH, "  -equilibrium_phases\n");
 for (i = 0; i < RM_GetEquilibriumPhasesCount(id); i++)
 {
 status = RM_GetEquilibriumPhasesName(id, i, line1, 100);
 sprintf(line, "%4s%20s\n", "    ", line1);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -732,11 +732,11 @@ This method may be useful when generating selected output definitions related to
 <PRE>
 for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
 {
-strcpy(line, "");
+Utilities::strcpy_safe(line, MAX_LENGTH, "");
 status = RM_GetExchangeSpeciesName(id, i, line1, 100);
 status = RM_GetExchangeName(id, i, line2, 100);
 sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -760,11 +760,11 @@ This method may be useful when generating selected output definitions related to
 <PRE>
 for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
 {
-strcpy(line, "");
+Utilities::strcpy_safe(line, MAX_LENGTH), "");
 status = RM_GetExchangeSpeciesName(id, i, line1, 100);
 status = RM_GetExchangeName(id, i, line2, 100);
 sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -794,11 +794,11 @@ This method may be useful when generating selected output definitions related to
 <PRE>
 for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
 {
-strcpy(line, "");
+Utilities::strcpy_safe(line, MAX_LENGTH, "");
 status = RM_GetExchangeSpeciesName(id, i, line1, 100);
 status = RM_GetExchangeName(id, i, line2, 100);
 sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -821,9 +821,9 @@ Returns the reaction-module file prefix to the character argument (@a prefix).
 <PRE>
 char str[100], str1[200];
 status = RM_GetFilePrefix(id, str, 100);
-strcpy(str1, "File prefix: ");
-strcat(str1, str);
-strcat(str1, "\n");
+Utilities::strcpy_safe(str1, MAX_LENGTH, "File prefix: ");
+Utilities::strcat_safe(str1, MAX_LENGTH, str);
+Utilities::strcat_safe(str1, MAX_LENGTH, "\n");
 status = RM_OutputMessage(id, str1);
 </PRE>
 </CODE>
@@ -846,12 +846,12 @@ gas phases.
 @htmlonly
 <CODE>
 <PRE>
-strcat(input, "  -gases\n");
+Utilities::strcat_safe(input, MAX_LENGTH, "  -gases\n");
 for (i = 0; i < RM_GetGasComponentsCount(id); i++)
 {
 status = RM_GetGasComponentsName(id, i, line1, 100);
 sprintf(line, "%4s%20s\n", "    ", line1);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -878,12 +878,12 @@ This method may be useful when generating selected output definitions related to
 @htmlonly
 <CODE>
 <PRE>
-strcat(input, "  -gases\n");
+Utilities::strcat_safe(input, MAX_LENGTH, "  -gases\n");
 for (i = 0; i < RM_GetGasComponentsCount(id); i++)
 {
 status = RM_GetGasComponentsName(id, i, line1, 100);
 sprintf(line, "%4s%20s\n", "    ", line1);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -1143,12 +1143,12 @@ kinetic reactions.
 @htmlonly
 <CODE>
 <PRE>
-strcat(input, "  -kinetics\n");
+Utilities::strcat_safe(input, MAX_LENGTH, "  -kinetics\n");
 for (i = 0; i < RM_GetKineticReactionsCount(id); i++)
 {
 status = RM_GetKineticReactionsName(id, i, line1, 100);
 sprintf(line, "%4s%20s\n", "    ", line1);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -1175,12 +1175,12 @@ This method may be useful when generating selected output definitions related to
 @htmlonly
 <CODE>
 <PRE>
-strcat(input, "  -kinetics\n");
+Utilities::strcat_safe(input, MAX_LENGTH, "  -kinetics\n");
 for (i = 0; i < RM_GetKineticReactionsCount(id); i++)
 {
 status = RM_GetKineticReactionsName(id, i, line1, 100);
 sprintf(line, "%4s%20s\n", "    ", line1);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -1547,12 +1547,12 @@ could be calculated.
 @htmlonly
 <CODE>
 <PRE>
-strcat(input, "  -saturation_indices\n");
+Utilities::strcat_safe(input, MAX_LENGTH, "  -saturation_indices\n");
 for (i = 0; i < RM_GetSICount(id); i++)
 {
 status = RM_GetSIName(id, i, line1, 100);
 sprintf(line, "%4s%20s\n", "    ", line1);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -1581,12 +1581,12 @@ This method may be useful when generating selected output definitions related to
 @htmlonly
 <CODE>
 <PRE>
-strcat(input, "  -saturation_indices\n");
+Utilities::strcat_safe(input, MAX_LENGTH, "  -saturation_indices\n");
 for (i = 0; i < RM_GetSICount(id); i++)
 {
 status = RM_GetSIName(id, i, line1, 100);
 sprintf(line, "%4s%20s\n", "    ", line1);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -1609,13 +1609,13 @@ IRM_DLL_EXPORT IRM_RESULT RM_GetSIName(int id, int num, char *name, int l1);
  @htmlonly
  <CODE>
  <PRE>
- strcat(input, "  -solid_solutions\n");
+ Utilities::strcat_safe(input, MAX_LENGTH, "  -solid_solutions\n");
  for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
  {
  status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
  status = RM_GetSolidSolutionName(id, i, line2, 100);
  sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
- strcat(input, line);
+ Utilities::strcat_safe(input, MAX_LENGTH, line);
  }
  </PRE>
  </CODE>
@@ -1642,13 +1642,13 @@ This method may be useful when generating selected output definitions related to
 @htmlonly
 <CODE>
 <PRE>
-strcat(input, "  -solid_solutions\n");
+Utilities::strcat_safe(input, MAX_LENGTH, "  -solid_solutions\n");
 for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
 {
 status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
 status = RM_GetSolidSolutionName(id, i, line2, 100);
 sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -1677,13 +1677,13 @@ This method may be useful when generating selected output definitions related to
 @htmlonly
 <CODE>
 <PRE>
-strcat(input, "  -solid_solutions\n");
+Utilities::strcat_safe(input, MAX_LENGTH, "  -solid_solutions\n");
 for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
 {
 status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
 status = RM_GetSolidSolutionName(id, i, line2, 100);
 sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -2116,7 +2116,7 @@ status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
 status = RM_GetSurfaceType(id, i, line2, 100);
 status = RM_GetSurfaceName(id, i, line3, 100);
 sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -2144,7 +2144,7 @@ status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
 status = RM_GetSurfaceType(id, i, line2, 100);
 status = RM_GetSurfaceName(id, i, line3, 100);
 sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -2178,7 +2178,7 @@ status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
 status = RM_GetSurfaceType(id, i, line2, 100);
 status = RM_GetSurfaceName(id, i, line3, 100);
 sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -2211,7 +2211,7 @@ status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
 status = RM_GetSurfaceType(id, i, line2, 100);
 status = RM_GetSurfaceName(id, i, line3, 100);
 sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
-strcat(input, line);
+Utilities::strcat_safe(input, MAX_LENGTH, line);
 }
 </PRE>
 </CODE>
@@ -2932,7 +2932,7 @@ be run by the InitialPhreeqc instance.
 @htmlonly
 <CODE>
 <PRE>
-strcpy(str, "DELETE; -all");
+Utilities::strcpy_safe(str, MAX_LENGTH, "DELETE; -all");
 status = RM_RunString(id, 1, 0, 1, str);	// workers, initial_phreeqc, utility
 </PRE>
 </CODE>

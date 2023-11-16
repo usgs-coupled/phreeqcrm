@@ -34,7 +34,6 @@ void Gas_c()
 	double* gas_volume;
 	double* por;
 	double* sat;
-	char* errstr = NULL;
 
 	// --------------------------------------------------------------------------
 	// Create PhreeqcRM
