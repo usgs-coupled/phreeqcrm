@@ -72,11 +72,11 @@ option(PHREEQCRM_NO_UTF8_ENCODING "Build without utf-8 encoding" OFF)
 set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIVariant.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIVariant.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/bmi.hxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIPhreeqcRM.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIVariant.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMIVariant.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/CSelectedOutput.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/CSelectedOutput.hxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IPhreeqcPhast/IPhreeqc/CVar.hxx
@@ -231,7 +231,6 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/IrmResult.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PhreeqcRM.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PhreeqcRM.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BMI_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_C.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_C.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RM_interface_F.cpp
