@@ -71,3 +71,9 @@ swig/python/ex11-advect/.ipynb_checkpoints/
 
 # default build directory when using vscode
 build/
+
+# Old CMakePresets build directories
+builds/
+
+# CMakePresets build directories
+out/build/

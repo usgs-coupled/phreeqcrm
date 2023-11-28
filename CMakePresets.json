@@ -7,6 +7,56 @@
   },
   "configurePresets": [
     {
+      "name": "phreeqcrm_devel",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "CMAKE_INSTALL_PREFIX": {
+          "type": "PATH",
+          "value": "$env{CONDA_PREFIX}/Library"
+        },
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "RelWithDebInfo"
+        },
+        "PHREEQCRM_BUILD_MPI": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "PHREEQCRM_BUILD_PYTHON": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "PHREEQCRM_DISABLE_OPENMP": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "PHREEQCRM_FORTRAN_TESTING": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "PHREEQCRM_NO_UTF8_ENCODING": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "PHREEQCRM_STATIC_RUNTIME": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "PHREEQCRM_USE_ZLIB": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "PHREEQCRM_WITH_YAML_CPP": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
       "name": "cmemcheck",
       "inherits": "ninja",
       "condition": {
@@ -63,7 +113,7 @@
     {
       "name": "default",
       "hidden": true,
-      "binaryDir": "${sourceDir}/_builds/${presetName}"
+      "binaryDir": "${sourceDir}/out/build/${presetName}"
     },
     {
       "name": "ninja",
@@ -659,6 +709,11 @@
   ],
   "buildPresets": [
     {
+      "name": "phreeqcrm_devel",
+      "configuration": "RelWithDebInfo",
+      "configurePreset": "phreeqcrm_devel"
+    },
+    {
       "name": "cmemcheck",
       "configurePreset": "cmemcheck"
     },
@@ -828,6 +883,13 @@
     }    
   ],
   "testPresets": [
+    {
+      "name": "phreeqcrm_devel",
+      "configuration": "RelWithDebInfo",
+      "configurePreset": "phreeqcrm_devel",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
     {
       "name": "cmemcheck",
       "configurePreset": "cmemcheck",
