@@ -506,6 +506,11 @@ status = RM_GetConcentrations(id, c);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetConcentrations(int id, double *c);
+IRM_DLL_EXPORT IRM_RESULT RM_GetIthConcentration(int* id, int* i, double* c);
+IRM_DLL_EXPORT IRM_RESULT RM_GetIthSpeciesConcentration(int* id, int* i, double* c);
+IRM_DLL_EXPORT IRM_RESULT RM_SetIthConcentration(int* id, int* i, double* c);
+IRM_DLL_EXPORT IRM_RESULT RM_SetIthSpeciesConcentration(int* id, int* i, double* c);
+
 /**
 Returns the user number of the current selected-output definition.
 @ref RM_SetCurrentSelectedOutputUserNumber or @ref RM_SetNthSelectedOutput specifies which of the
@@ -1095,6 +1100,10 @@ status = RM_OutputMessage(id, str1);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT int        RM_GetGridCellCount(int id);
+
+#ifdef USE_YAML
+IRM_DLL_EXPORT int        RM_GetGridCellCountYAML(const char* config_file);
+#endif
 /**
 Returns an IPhreeqc id for the @a ith IPhreeqc instance in the reaction module.
 
@@ -1289,6 +1298,8 @@ for (isel = 0; isel < RM_GetSelectedOutputCount(id); isel++)
 Called by root.
  */
 IRM_DLL_EXPORT int        RM_GetNthSelectedOutputUserNumber(int id, int n);
+IRM_DLL_EXPORT IRM_RESULT RM_GetPorosity(int* id, double* porosity);
+IRM_DLL_EXPORT IRM_RESULT RM_GetPressure(int* id, double* pressure);
 
 /**
 Returns a vector of saturations (@a sat) as calculated by the reaction module.
@@ -2092,6 +2103,8 @@ status = RM_GetStartCell(id, sc);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetStartCell(int id, int *sc);
+
+IRM_DLL_EXPORT IRM_RESULT RM_GetTemperature(int* id, double* temperature);
 /**
 Retrieves the surface name (such as "Hfo") that corresponds with
 the surface species name.
@@ -2321,6 +2334,7 @@ status = RM_LogMessage(id, str);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT double     RM_GetTimeStep(int id);
+IRM_DLL_EXPORT IRM_RESULT RM_GetViscosity(int* id, double* viscosity);
 #ifdef USE_YAML
 /**
 A YAML file can be used to initialize an instance of PhreeqcRM.
@@ -2495,6 +2509,14 @@ IRM_DLL_EXPORT IRM_RESULT RM_InitialPhreeqc2Concentrations(
                 int *boundary_solution1,
                 int *boundary_solution2,
                 double *fraction1);
+
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolutions2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialEquilibriumPhases2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialExchanges2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialSurfaces2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialGasPhases2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolidSolutions2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialKinetics2Module(int* id, int* in);
 /**
 Transfer solutions and reactants from the InitialPhreeqc instance to the reaction-module workers, possibly with mixing.
 In its simplest form, @a initial_conditions1 is used to select initial conditions, including solutions and reactants,
@@ -3115,6 +3137,8 @@ status = RM_SetDensityUser(id, density);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SetDensityUser(int id, double *density);
+IRM_DLL_EXPORT IRM_RESULT RM_SetDensity(int id, double* density);
+
 /**
 Set the name of the dump file. It is the name used by @ref RM_DumpModule.
 @param id               The instance @a id returned from @ref RM_Create.
@@ -3780,6 +3804,7 @@ status = RM_SetSaturationUser(id, sat);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SetSaturationUser(int id, double *sat);
+IRM_DLL_EXPORT IRM_RESULT RM_SetSaturation(int id, double* sat);
 /**
 Set the property that controls whether messages are written to the screen.
 Messages include information about rebalancing during @ref RM_RunCells, and
