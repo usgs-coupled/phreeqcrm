@@ -8,15 +8,12 @@
   "configurePresets": [
     {
       "name": "phreeqcrm_devel",
+      "hidden": true,
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "BUILD_SHARED_LIBS": {
           "type": "BOOL",
           "value": "ON"
-        },
-        "CMAKE_INSTALL_PREFIX": {
-          "type": "PATH",
-          "value": "$env{CONDA_PREFIX}/Library"
         },
         "CMAKE_BUILD_TYPE": {
           "type": "STRING",
@@ -42,10 +39,6 @@
           "type": "BOOL",
           "value": "OFF"
         },
-        "PHREEQCRM_STATIC_RUNTIME": {
-          "type": "BOOL",
-          "value": "OFF"
-        },
         "PHREEQCRM_USE_ZLIB": {
           "type": "BOOL",
           "value": "ON"
@@ -54,6 +47,55 @@
           "type": "BOOL",
           "value": "ON"
         }
+      }
+    },
+    {
+      "name": "phreeqcrm_devel_darwin",
+      "inherits": "phreeqcrm_devel",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": {
+          "type": "PATH",
+          "value": "$env{CONDA_PREFIX}"
+        }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "phreeqcrm_devel_linux",
+      "inherits": "phreeqcrm_devel",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": {
+          "type": "PATH",
+          "value": "$env{CONDA_PREFIX}"
+        }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "phreeqcrm_devel_windows",
+      "inherits": "phreeqcrm_devel",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": {
+          "type": "PATH",
+          "value": "$env{CONDA_PREFIX}/Library"
+        },
+        "PHREEQCRM_STATIC_RUNTIME": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
       }
     },
     {
@@ -709,9 +751,34 @@
   ],
   "buildPresets": [
     {
-      "name": "phreeqcrm_devel",
+      "name": "phreeqcrm_devel_darwin",
       "configuration": "RelWithDebInfo",
-      "configurePreset": "phreeqcrm_devel"
+      "configurePreset": "phreeqcrm_devel_darwin",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "phreeqcrm_devel_linux",
+      "configuration": "RelWithDebInfo",
+      "configurePreset": "phreeqcrm_devel_linux",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "phreeqcrm_devel_windows",
+      "configuration": "RelWithDebInfo",
+      "configurePreset": "phreeqcrm_devel_windows",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
     },
     {
       "name": "cmemcheck",
@@ -884,11 +951,40 @@
   ],
   "testPresets": [
     {
-      "name": "phreeqcrm_devel",
+      "name": "phreeqcrm_devel_darwin",
       "configuration": "RelWithDebInfo",
-      "configurePreset": "phreeqcrm_devel",
+      "configurePreset": "phreeqcrm_devel_darwin",
       "output": {"outputOnFailure": true},
-      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+      "execution": {"noTestsAction": "error", "stopOnFailure": true},
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "phreeqcrm_devel_linux",
+      "configuration": "RelWithDebInfo",
+      "configurePreset": "phreeqcrm_devel_linux",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true},
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "phreeqcrm_devel_windows",
+      "configuration": "RelWithDebInfo",
+      "configurePreset": "phreeqcrm_devel_windows",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true},
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
     },
     {
       "name": "cmemcheck",
