@@ -57,6 +57,7 @@ RM_BMI_Create(int* nxyz, int* nthreads)
 	return BMIPhreeqcRM::CreateBMIModule(*nxyz, *nthreads);
 }
 #endif
+/* ---------------------------------------------------------------------- */
 int
 RMF_BMI_Destroy(int* id)
 /* ---------------------------------------------------------------------- */

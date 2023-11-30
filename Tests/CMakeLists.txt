@@ -129,6 +129,7 @@ target_sources(TestRM PRIVATE
   SimpleAdvect_cpp.cpp
   Species_c.c
   Species_cpp.cpp
+  TestAllMethods_c.c
   TestAllMethods_cpp.cpp
 )
 
