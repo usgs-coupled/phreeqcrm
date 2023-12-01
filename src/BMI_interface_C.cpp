@@ -23,41 +23,41 @@
 //	while (sofar++ < len)
 //		*dest++ = ' ';
 //}
-//#ifdef USE_MPI
-///* ---------------------------------------------------------------------- */
-//int
-//RM_BMI_Create(int* nxyz, int* nthreads)
-///* ---------------------------------------------------------------------- */
-//{
-//	//
-//	// Creates reaction module, called by root and MPI workers
-//	//
-//	return BMIPhreeqcRM::CreateBMIModule(*nxyz, MPI_Comm_f2c(*nthreads));
-//}
-//#else
-///* ---------------------------------------------------------------------- */
-//int
-//RM_BMI_Create_default()
-///* ---------------------------------------------------------------------- */
-//{
-//	//
-//	// Creates reaction module, called by root and MPI workers
-//	//
-//	return BMIPhreeqcRM::CreateBMIModule();
-//}
-///* ---------------------------------------------------------------------- */
-//int
-//RM_BMI_Create(int* nxyz, int* nthreads)
-///* ---------------------------------------------------------------------- */
-//{
-//	//
-//	// Creates reaction module, called by root and MPI workers
-//	//
-//	return BMIPhreeqcRM::CreateBMIModule(*nxyz, *nthreads);
-//}
-//#endif
+#ifdef USE_MPI
+/* ---------------------------------------------------------------------- */
 int
-RM_BMI_Destroy(int id)
+BMI_Create(int* nxyz, int* nthreads)
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	return BMIPhreeqcRM::CreateBMIModule(*nxyz, MPI_Comm_f2c(*nthreads));
+}
+#else
+/* ---------------------------------------------------------------------- */
+int
+BMI_Create_default()
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	return BMIPhreeqcRM::CreateBMIModule();
+}
+/* ---------------------------------------------------------------------- */
+int
+BMI_Create(int* nxyz, int* nthreads)
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	return BMIPhreeqcRM::CreateBMIModule(*nxyz, *nthreads);
+}
+#endif
+int
+BMI_Destroy(int id)
 /* ---------------------------------------------------------------------- */
 {
 	//
@@ -66,27 +66,27 @@ RM_BMI_Destroy(int id)
 	return BMIPhreeqcRM::DestroyBMIModule(id);
 }
 IRM_RESULT        
-RM_BMI_AddOutputVars(int id, char* option_in, char* def_in)
+BMI_AddOutputVars(int id, char* option_in, char* def_in)
 {
 	return RMF_BMI_AddOutputVars(&id, option_in, def_in);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetComponentName(int id, char* chem_name, int l1)
+BMI_GetComponentName(int id, char* chem_name, int l1)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetComponentName(&id, chem_name, &l1);
 }
 /* ---------------------------------------------------------------------- */
 double
-RM_BMI_GetCurrentTime(int id)
+BMI_GetCurrentTime(int id)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetCurrentTime(&id);
 }
 /* ---------------------------------------------------------------------- */
 double
-RM_BMI_GetEndTime(int id)
+BMI_GetEndTime(int id)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetCurrentTime(&id);
@@ -94,14 +94,14 @@ RM_BMI_GetEndTime(int id)
 
 /* ---------------------------------------------------------------------- */
 int        
-RM_BMI_GetInputItemCount(int id)
+BMI_GetInputItemCount(int id)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetInputItemCount(&id);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetInputVarName(int id, char* name, int i)
+BMI_GetInputVarName(int id, char* name, int i)
 /* ---------------------------------------------------------------------- */
 {
 	// Returns ith output variable name
@@ -121,7 +121,7 @@ RM_BMI_GetInputVarName(int id, char* name, int i)
 }
 /* ---------------------------------------------------------------------- */
 int
-RM_BMI_GetInputVarNamesSize(int id)
+BMI_GetInputVarNamesSize(int id)
 /* ---------------------------------------------------------------------- */
 {
 	IRM_RESULT status;
@@ -135,14 +135,14 @@ RM_BMI_GetInputVarNamesSize(int id)
 
 /* ---------------------------------------------------------------------- */
 int
-RM_BMI_GetOutputItemCount(int id)
+BMI_GetOutputItemCount(int id)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetOutputItemCount(&id);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetOutputVarName(int id, char* name, int i)
+BMI_GetOutputVarName(int id, char* name, int i)
 /* ---------------------------------------------------------------------- */
 {
 	// Returns ith output variable name
@@ -162,7 +162,7 @@ RM_BMI_GetOutputVarName(int id, char* name, int i)
 }
 /* ---------------------------------------------------------------------- */
 int        
-RM_BMI_GetOutputVarNamesSize(int id)
+BMI_GetOutputVarNamesSize(int id)
 /* ---------------------------------------------------------------------- */
 {
 	IRM_RESULT status;
@@ -176,14 +176,14 @@ RM_BMI_GetOutputVarNamesSize(int id)
 
 /* ---------------------------------------------------------------------- */
 int
-RM_BMI_GetPointableItemCount(int id)
+BMI_GetPointableItemCount(int id)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetPointableItemCount(&id);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetPointableVarName(int id, char* name, int i)
+BMI_GetPointableVarName(int id, char* name, int i)
 /* ---------------------------------------------------------------------- */
 {
 	// Returns ith output variable name
@@ -203,7 +203,7 @@ RM_BMI_GetPointableVarName(int id, char* name, int i)
 }
 /* ---------------------------------------------------------------------- */
 int
-RM_BMI_GetPointableVarNamesSize(int id)
+BMI_GetPointableVarNamesSize(int id)
 /* ---------------------------------------------------------------------- */
 {
 	IRM_RESULT status;
@@ -218,14 +218,14 @@ RM_BMI_GetPointableVarNamesSize(int id)
 
 /* ---------------------------------------------------------------------- */
 double
-RM_BMI_GetTimeStep(int id)
+BMI_GetTimeStep(int id)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetTimeStep(&id);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetTimeUnits(int id, char* units, int* l1)
+BMI_GetTimeUnits(int id, char* units, int* l1)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetTimeUnits(&id, units, l1);
@@ -233,7 +233,7 @@ RM_BMI_GetTimeUnits(int id, char* units, int* l1)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetValue_char(int id, char* var, char* dest)
+BMI_GetValueChar(int id, char* var, char* dest)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -247,7 +247,7 @@ RM_BMI_GetValue_char(int id, char* var, char* dest)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetValue_double(int id, char* var, double* dest)
+BMI_GetValueDouble(int id, char* var, double* dest)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -261,7 +261,7 @@ RM_BMI_GetValue_double(int id, char* var, double* dest)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetValue_int(int id, char* var, int* dest)
+BMI_GetValueInt(int id, char* var, int* dest)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -277,7 +277,7 @@ RM_BMI_GetValue_int(int id, char* var, int* dest)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetValuePtr_char(int id, char* var, char** dest)
+BMI_GetValuePtrChar(int id, char* var, char** dest)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -292,7 +292,7 @@ RM_BMI_GetValuePtr_char(int id, char* var, char** dest)
 //}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetValuePtr_double(int id, char* var, double** dest)
+BMI_GetValuePtrDouble(int id, char* var, double** dest)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -306,7 +306,7 @@ RM_BMI_GetValuePtr_double(int id, char* var, double** dest)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetValuePtr_int(int id, char* var, int** dest)
+BMI_GetValuePtrInt(int id, char* var, int** dest)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -321,28 +321,28 @@ RM_BMI_GetValuePtr_int(int id, char* var, int** dest)
 
 /* ---------------------------------------------------------------------- */
 int
-RM_BMI_GetVarItemsize(int id, char* var)
+BMI_GetVarItemsize(int id, char* var)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetVarItemsize(&id, var);
 }
 /* ---------------------------------------------------------------------- */
 int
-RM_BMI_GetVarNbytes(int id, char* var)
+BMI_GetVarNbytes(int id, char* var)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetVarNbytes(&id, var);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetVarType(int id, char* var, char* vtype, int l1)
+BMI_GetVarType(int id, char* var, char* vtype, int l1)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetVarType(&id, var, vtype, &l1);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_GetVarUnits(int id, char* var, char* units, int l1)
+BMI_GetVarUnits(int id, char* var, char* units, int l1)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_GetVarUnits(&id, var, units, &l1);
@@ -350,7 +350,7 @@ RM_BMI_GetVarUnits(int id, char* var, char* units, int l1)
 #ifdef USE_YAML
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_Initialize(int id, char* config_file)
+BMI_Initialize(int id, char* config_file)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_Initialize(&id, config_file);
@@ -360,7 +360,7 @@ RM_BMI_Initialize(int id, char* config_file)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_SetValue_char(int id, char* var, char* src)
+BMI_SetValueChar(int id, char* var, char* src)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -374,7 +374,7 @@ RM_BMI_SetValue_char(int id, char* var, char* src)
 }
 ///* ---------------------------------------------------------------------- */
 //IRM_RESULT
-//RM_BMI_SetValue(int id, char* var, double src)
+//BMI_SetValue(int id, char* var, double src)
 ///* ---------------------------------------------------------------------- */
 //{
 //	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -388,7 +388,7 @@ RM_BMI_SetValue_char(int id, char* var, char* src)
 //}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_SetValue_double(int id, char* var, double* src)
+BMI_SetValueDouble(int id, char* var, double* src)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -402,7 +402,7 @@ RM_BMI_SetValue_double(int id, char* var, double* src)
 }
 ///* ---------------------------------------------------------------------- */
 //IRM_RESULT
-//RM_BMI_SetValue(int id, char* var, int src)
+//BMI_SetValue(int id, char* var, int src)
 ///* ---------------------------------------------------------------------- */
 //{
 //	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -416,7 +416,7 @@ RM_BMI_SetValue_double(int id, char* var, double* src)
 //}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_SetValue_int(int id, char* var, int* src)
+BMI_SetValueInt(int id, char* var, int* src)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -431,14 +431,14 @@ RM_BMI_SetValue_int(int id, char* var, int* src)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_Update(int id)
+BMI_Update(int id)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_Update(&id);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_BMI_UpdateUntil(int id, double time)
+BMI_UpdateUntil(int id, double time)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_BMI_UpdateUntil(&id, &time);
