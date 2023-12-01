@@ -124,6 +124,12 @@ int
 PhreeqcRM::GetGridCellCountYAML(const char* YAML_file)
 /* ---------------------------------------------------------------------- */
 {
+	std::ifstream file(YAML_file);
+	if (!file.is_open()) {
+		std::cerr << "YAML file not found: " << YAML_file << std::endl;
+		return -1;
+	}
+	file.close();
 	YAML::Node yaml = YAML::LoadFile(YAML_file);
 	for (auto it = yaml.begin(); it != yaml.end(); it++)
 	{

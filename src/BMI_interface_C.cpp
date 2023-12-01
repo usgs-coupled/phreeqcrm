@@ -3,6 +3,7 @@
 #endif
 #include "BMIVariant.h"
 #include "BMIPhreeqcRM.h"
+#include "BMI_interface_C.h"
 #include "BMI_interface_F.h"
 #include "IPhreeqcPhastLib.h"
 #include "Phreeqc.h"
@@ -47,13 +48,13 @@ BMI_Create_default()
 }
 /* ---------------------------------------------------------------------- */
 int
-BMI_Create(int* nxyz, int* nthreads)
+BMI_Create(int nxyz, int nthreads)
 /* ---------------------------------------------------------------------- */
 {
 	//
 	// Creates reaction module, called by root and MPI workers
 	//
-	return BMIPhreeqcRM::CreateBMIModule(*nxyz, *nthreads);
+	return BMIPhreeqcRM::CreateBMIModule(nxyz, nthreads);
 }
 #endif
 int
@@ -273,51 +274,60 @@ BMI_GetValueInt(int id, char* var, int* dest)
 	}
 	return IRM_BADINSTANCE;
 }
-
-
 /* ---------------------------------------------------------------------- */
-IRM_RESULT
-BMI_GetValuePtrChar(int id, char* var, char** dest)
+void*
+BMI_GetValuePtr(int id, char* var)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
 	if (bmirm_ptr)
 	{
 		std::string name = var;
-		bmirm_ptr->GetValue(name, dest);
-		return IRM_OK;
+		return bmirm_ptr->GetValuePtr(name);
 	}
-	return IRM_BADINSTANCE;
+	return NULL;
 }
+
+///* ---------------------------------------------------------------------- */
+//IRM_RESULT
+//BMI_GetValuePtrChar(int id, char* var, char** dest)
+///* ---------------------------------------------------------------------- */
+//{
+//	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+//	if (bmirm_ptr)
+//	{
+//		std::string name = var;
+//		*dest = (char*)bmirm_ptr->GetValuePtr(name);
+//		return IRM_OK;
+//	}
+//	return IRM_BADINSTANCE;
 //}
-/* ---------------------------------------------------------------------- */
-IRM_RESULT
-BMI_GetValuePtrDouble(int id, char* var, double** dest)
-/* ---------------------------------------------------------------------- */
-{
-	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
-	if (bmirm_ptr)
-	{
-		std::string name = var;
-		bmirm_ptr->GetValue(name, dest);
-		return IRM_OK;
-	}
-	return IRM_BADINSTANCE;
-}
-/* ---------------------------------------------------------------------- */
-IRM_RESULT
-BMI_GetValuePtrInt(int id, char* var, int** dest)
-/* ---------------------------------------------------------------------- */
-{
-	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
-	if (bmirm_ptr)
-	{
-		std::string name = var;
-		bmirm_ptr->GetValue(name, dest);
-		return IRM_OK;
-	}
-	return IRM_BADINSTANCE;
-}
+///* ---------------------------------------------------------------------- */
+//double*
+//BMI_GetValuePtrDouble(int id, char* var)
+///* ---------------------------------------------------------------------- */
+//{
+//	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+//	if (bmirm_ptr)
+//	{
+//		std::string name = var;
+//		return (double*)bmirm_ptr->GetValuePtr(name);
+//	}
+//	return NULL;
+//}
+///* ---------------------------------------------------------------------- */
+//int*
+//BMI_GetValuePtrInt(int id, char* var)
+///* ---------------------------------------------------------------------- */
+//{
+//	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+//	if (bmirm_ptr)
+//	{
+//		std::string name = var;
+//		return (int*)bmirm_ptr->GetValuePtr(name);
+//	}
+//	return NULL;
+//}
 
 /* ---------------------------------------------------------------------- */
 int

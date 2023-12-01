@@ -1325,7 +1325,7 @@ RM_InitializeYAML(int id, const char* yamlname)
 		if (yamlname != NULL)
 		{
 			std::string name = PhreeqcRM::Char2TrimString(yamlname);
-			return Reaction_module_ptr->LoadDatabase(name.c_str());
+			return Reaction_module_ptr->InitializeYAML(name.c_str());
 		}
 		return IRM_INVALIDARG;
 	}

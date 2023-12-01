@@ -1,0 +1,4 @@
+- key: SetGridCellCount
+  count: 40
+- key: ThreadCount
+  nthreads: 3

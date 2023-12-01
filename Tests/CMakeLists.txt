@@ -107,6 +107,9 @@ configure_file(all_reactants.pqi all_reactants.pqi COPYONLY)
 # Tests/phreeqc.dat
 configure_file(phreeqc.dat phreeqc.dat COPYONLY)
 
+# Tests/TestAllMethods_c.yaml
+configure_file(TestAllMethods_c.yaml TestAllMethods_c.yaml COPYONLY)
+
 # Tests/units.pqi
 configure_file(units.pqi units.pqi COPYONLY)
 

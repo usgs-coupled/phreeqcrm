@@ -1,4 +1,4 @@
-///*! @file BMI_interface_F.h
+///*! @file BMI_interface_C.h
 //	@brief C/Fortran Documentation
 //*/
 #if !defined(BMI_INTERFACE_C_H_INCLUDED)
@@ -34,9 +34,11 @@ extern "C" {
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueDouble(int id, char* var, double* dest);
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueChar(int id, char* var, char* dest);
 	// GetValuePtr
-	IRM_DLL_EXPORT IRM_RESULT BMI_GetValuePtrInt(int id, char* var, int** dest);
-	IRM_DLL_EXPORT IRM_RESULT BMI_GetValuePtrDouble(int id, char* var, double** dest);
-	IRM_DLL_EXPORT IRM_RESULT BMI_GetValuePtrChar(int id, char* var, char** dest);
+	//IRM_DLL_EXPORT IRM_RESULT BMI_GetValuePtrInt(int id, char* var, int** dest);
+	//IRM_DLL_EXPORT IRM_RESULT BMI_GetValuePtrDouble(int id, char* var, double** dest);
+	//IRM_DLL_EXPORT IRM_RESULT BMI_GetValuePtrChar(int id, char* var, char** dest);
+	IRM_DLL_EXPORT void* BMI_GetValuePtr(int id, char* var);
+
 	
 	IRM_DLL_EXPORT int        BMI_GetVarItemsize(int id, char* name);
 	IRM_DLL_EXPORT int        BMI_GetVarNbytes(int id, char* name);

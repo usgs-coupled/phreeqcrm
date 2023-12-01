@@ -17,13 +17,13 @@ void TestAllMethods_c()
 	IRM_RESULT status;
 	int nxyz = 40;
 	int nthreads = 3;
-	int id;
-	int* i_ptr;
+	int id = -1;
+	int* i_ptr = NULL;
 	// Set GridCellCount
 	//yrm.YAMLSetGridCellCount(nxyz);
 	//yrm.YAMLThreadCount(3);
-	char YAML_filename[MAX_LENGTH];
-	strcpy_safe(YAML_filename, "TestAllMethods_cpp.yaml", MAX_LENGTH);
+	char YAML_filename[MAX_LENGTH] = "";
+	strcpy_safe(YAML_filename, MAX_LENGTH, "TestAllMethods_c.yaml");
 
 #ifdef USE_MPI
 	// MPI
@@ -42,23 +42,23 @@ void TestAllMethods_c()
 	}
 #else
 	// OpenMP or serial
+	nxyz = RM_GetGridCellCountYAML(YAML_filename);
 	id = BMI_Create(nxyz, nthreads);
 #endif
 	// Use YAML file to initialize
-	//BMI_Initialize(id, YAML_filename);   // void function
-	//BMI_InitializeYAML(id, YAML_filename);
-	//fprintf(stderr, "Initialize\n");
+	BMI_Initialize(id, YAML_filename);   // void function
+	RM_InitializeYAML(id, YAML_filename);
+	fprintf(stderr, "Initialize\n");
+
 	//
 	// Use all BMIPhreeqcRM methods roughly in order of use
 	// 
-
-	//-------
 	status = BMI_GetValueInt(id, "GridCellCount", &nxyz);
+	nxyz = RM_GetGridCellCount(id);
+	i_ptr = BMI_GetValuePtr(id, "GridCellCount");
+	fprintf(stderr, "GetValue('GridCellCount') %d %d %d\n", nxyz, *i_ptr, status);
 
 #ifdef SKIP
-	nxyz = RM_GetGridCellCount(id);
-	status = BMI_GetValuePtr_int(id, "GridCellCount", &i_ptr);
-	fprintf(stderr, "GetValue('GridCellCount') \n");
 	//-------
 	int n = BMI_GetThreadCount();
 	fprintf(stderr, "GetThreadCount " << n << "\n";
