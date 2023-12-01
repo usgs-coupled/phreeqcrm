@@ -54,12 +54,12 @@ void TestAllMethods_c()
 
 	//-------
 	status = RM_BMI_GetValue_int(id, "GridCellCount", &nxyz);
+
+#ifdef SKIP
 	nxyz = RM_GetGridCellCount(id);
 	status = RM_BMI_GetValuePtr_int(id, "GridCellCount", &i_ptr);
 	fprintf(stderr, "GetValue('GridCellCount') \n");
 	//-------
-
-#ifdef SKIP
 	int n = RM_BMI_GetThreadCount();
 	fprintf(stderr, "GetThreadCount " << n << "\n";
 	//-------

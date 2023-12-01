@@ -17,6 +17,7 @@ TestRM_SOURCES =\
 	SimpleAdvect_cpp.cpp\
 	Species_c.c\
 	Species_cpp.cpp\
+	TestAllMethods_c.c\
 	TestAllMethods_cpp.cpp\
 	WriteYAMLFile_cpp.cpp\
 	WriteYAMLFile_cpp_test.cpp

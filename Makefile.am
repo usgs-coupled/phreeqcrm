@@ -196,6 +196,8 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqcPhast.h\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.cpp\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.h\
+	src/BMI_interface_C.cpp\
+	src/BMI_interface_C.h\
 	src/PhreeqcRM.cpp\
 	src/RM_interface_C.cpp\
 	src/RM_interface_F.cpp\
@@ -228,6 +230,7 @@ include_HEADERS=\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/Var.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqcPhast.h\
+	$(top_srcdir)/src/BMI_interface_C.h\
 	$(top_srcdir)/src/IrmResult.h\
 	$(top_srcdir)/src/PhreeqcRM.h\
 	$(top_srcdir)/src/RM_interface_C.h\
