@@ -370,7 +370,7 @@ BMI_Initialize(int id, char* config_file)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-BMI_SetValueChar(int id, char* var, char* src)
+BMI_SetValueChar(int id, char* var, const char* src)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -382,23 +382,9 @@ BMI_SetValueChar(int id, char* var, char* src)
 	}
 	return IRM_BADINSTANCE;
 }
-///* ---------------------------------------------------------------------- */
-//IRM_RESULT
-//BMI_SetValue(int id, char* var, double src)
-///* ---------------------------------------------------------------------- */
-//{
-//	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
-//	if (bmirm_ptr)
-//	{
-//		std::string name = var;
-//		bmirm_ptr->SetValue(name, src);
-//		return IRM_OK;
-//	}
-//	return IRM_BADINSTANCE;
-//}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-BMI_SetValueDouble(int id, char* var, double* src)
+BMI_SetValueDouble(int id, char* var, double src)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -410,23 +396,9 @@ BMI_SetValueDouble(int id, char* var, double* src)
 	}
 	return IRM_BADINSTANCE;
 }
-///* ---------------------------------------------------------------------- */
-//IRM_RESULT
-//BMI_SetValue(int id, char* var, int src)
-///* ---------------------------------------------------------------------- */
-//{
-//	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
-//	if (bmirm_ptr)
-//	{
-//		std::string name = var;
-//		bmirm_ptr->SetValue(name, src);
-//		return IRM_OK;
-//	}
-//	return IRM_BADINSTANCE;
-//}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-BMI_SetValueInt(int id, char* var, int* src)
+BMI_SetValueDoubleArray(int id, char* var, double* src)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
@@ -438,7 +410,34 @@ BMI_SetValueInt(int id, char* var, int* src)
 	}
 	return IRM_BADINSTANCE;
 }
-
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+BMI_SetValueInt(int id, char* var, int src)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = var;
+		bmirm_ptr->SetValue(name, src);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+BMI_SetValueIntArray(int id, char* var, int* src)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = var;
+		bmirm_ptr->SetValue(name, src);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 BMI_Update(int id)

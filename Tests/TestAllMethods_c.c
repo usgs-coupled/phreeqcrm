@@ -19,9 +19,14 @@ void TestAllMethods_c()
 	int nthreads = 3;
 	int id = -1;
 	int* i_ptr = NULL;
+	int* grid2chem = NULL;
+	double* v = NULL;
+	int* vi = NULL;
+	int i = 0, nchem = 0;
 	// Set GridCellCount
 	//yrm.YAMLSetGridCellCount(nxyz);
 	//yrm.YAMLThreadCount(3);
+	char string[MAX_LENGTH] = "", string1[MAX_LENGTH] = "";
 	char YAML_filename[MAX_LENGTH] = "";
 	strcpy_safe(YAML_filename, MAX_LENGTH, "TestAllMethods_c.yaml");
 
@@ -58,176 +63,205 @@ void TestAllMethods_c()
 	i_ptr = BMI_GetValuePtr(id, "GridCellCount");
 	fprintf(stderr, "GetValue('GridCellCount') %d %d %d\n", nxyz, *i_ptr, status);
 
-#ifdef SKIP
 	//-------
-	int n = BMI_GetThreadCount();
-	fprintf(stderr, "GetThreadCount " << n << "\n";
+	int n = RM_GetThreadCount(id);
+	fprintf(stderr, "GetThreadCount %d \n", n);
 	//-------
 	// Inactive cells or symmetry
-	std::vector<int> grid2chem(nxyz, -1);
-	for (size_t i = 0; i < nxyz / 2; i++)
+
+	grid2chem = (int*)malloc(nxyz * sizeof(int));
+	for (int i = 0; i < nxyz; i++)
 	{
 		grid2chem[i] = i;
 	}
-	status = BMI_CreateMapping(grid2chem);
-	fprintf(stderr, "CreateMapping \n";
+	status = RM_CreateMapping(id, grid2chem);
+	fprintf(stderr, "CreateMapping %d\n", status);
 	//-------
-	BMI_LoadDatabase("phreeqc.dat");
-	fprintf(stderr, "LoadDatabase\n";
+	status = RM_LoadDatabase(id, "phreeqc.dat");
+	fprintf(stderr, "LoadDatabase %d\n", status);
 	//
 	// Set properties
 	// 
-	status = BMI_SetComponentH2O(false);
-	fprintf(stderr, "SetComponentH2O \n";
+	status = RM_SetComponentH2O(id, 0);
+	fprintf(stderr, "SetComponentH2O %d\n", status);
 	//-------
-	BMI_SetSpeciesSaveOn(true);
-	fprintf(stderr, "SetSpeciesSaveOn \n";
+	RM_SetSpeciesSaveOn(id, 1);
+	fprintf(stderr, "SetSpeciesSaveOn %d\n", status);
 	//-------
-	status = BMI_SetErrorOn(true);
-	fprintf(stderr, "SetErrorOn \n";
+	status = RM_SetErrorOn(id, 1);
+	fprintf(stderr, "SetErrorOn %d\n", status);
 	//-------
-	status = BMI_SetErrorHandlerMode(1);
-	fprintf(stderr, "SetErrorHandlerMode \n";
+	status = RM_SetErrorHandlerMode(id, 1);
+	fprintf(stderr, "SetErrorHandlerMode %d\n", status);
 	//-------
-	status = BMI_SetDumpFileName("TestAllMethods_cpp.dump");
-	fprintf(stderr, "SetDumpFileName \n";
+	status = RM_SetDumpFileName(id, "TestAllMethods_cpp.dump");
+	fprintf(stderr, "SetDumpFileName %d\n", status);
 	//-------
-	status = BMI_SetFilePrefix("TestAllMethods_cpp");
-	BMI_SetValue("FilePrefix", "TestAllMethods_cpp");
-	fprintf(stderr, "SetFilePrefix \n";
+	status = RM_SetFilePrefix(id, "TestAllMethods_c");
+	BMI_SetValueChar(id, "FilePrefix", "TestAllMethods_c");
+	BMI_GetValueChar(id, "FilePrefix", string);
+	fprintf(stderr, "SetFilePrefix %s\n", string);
 	//-------
-	status = BMI_OpenFiles();
-	fprintf(stderr, "OpenFiles \n";
+	status = RM_OpenFiles(id);
+	fprintf(stderr, "OpenFiles %d\n", status);
 	//-------
-	status = BMI_SetPartitionUZSolids(false);
-	fprintf(stderr, "SetPartitionUZSolids \n";
+	status = RM_SetPartitionUZSolids(id, 0);
+	fprintf(stderr, "SetPartitionUZSolids %d\n", status);
 	//-------
-	status = BMI_SetRebalanceByCell(true);
-	fprintf(stderr, "SetRebalanceByCell \n";
+	status = RM_SetRebalanceByCell(id, 1);
+	fprintf(stderr, "SetRebalanceByCell %d\n", status);
 	//-------
-	status = BMI_SetRebalanceFraction(0.5);
-	fprintf(stderr, "SetRebalanceFraction \n";
+	status = RM_SetRebalanceFraction(id, 0.5);
+	fprintf(stderr, "SetRebalanceFraction %d\n", status);
 	//-------
-	status = BMI_SetScreenOn(true);
-	fprintf(stderr, "SetScreenOn \n";
+	status = RM_SetScreenOn(id, 1);
+	fprintf(stderr, "SetScreenOn %d\n", status);
 	//-------
-	status = BMI_SetSelectedOutputOn(true);
-	BMI_SetValue("SelectedOutputOn", true);
-	fprintf(stderr, "SetSelectedOutputOn \n";
+	status = RM_SetSelectedOutputOn(id, 1);
+	BMI_SetValueInt(id, "SelectedOutputOn", 1);
+	fprintf(stderr, "SetSelectedOutputOn %d\n", status);
 	//-------
-	status = BMI_SetUnitsExchange(1);
-	fprintf(stderr, "SetUnitsExchange \n";
+	status = RM_SetUnitsExchange(id, 1);
+	fprintf(stderr, "SetUnitsExchange %d\n", status);
 	//-------
-	status = BMI_SetUnitsGasPhase(1);
-	fprintf(stderr, "SetUnitsGasPhase \n";
+	status = RM_SetUnitsGasPhase(id, 1);
+	fprintf(stderr, "SetUnitsGasPhase %d\n", status);
 	//-------
-	status = BMI_SetUnitsKinetics(1);
-	fprintf(stderr, "SetUnitsKinetics \n";
+	status = RM_SetUnitsKinetics(id, 1);
+	fprintf(stderr, "SetUnitsKinetics %d\n", status);
 	//-------
-	status = BMI_SetUnitsPPassemblage(1);
-	fprintf(stderr, "SetUnitsPPassemblage \n";
+	status = RM_SetUnitsPPassemblage(id, 1);
+	fprintf(stderr, "SetUnitsPPassemblage %d\n", status);
 	//-------
-	status = BMI_SetUnitsSolution(2);
-	fprintf(stderr, "SetUnitsSolution \n";
+	status = RM_SetUnitsSolution(id, 2);
+	fprintf(stderr, "SetUnitsSolution %d\n", status);
 	//-------
-	status = BMI_SetUnitsSSassemblage(1);
-	fprintf(stderr, "SetUnitsSSassemblage \n";
+	status = RM_SetUnitsSSassemblage(id, 1);
+	fprintf(stderr, "SetUnitsSSassemblage %d\n", status);
 	//-------
-	status = BMI_SetUnitsSurface(1);
-	fprintf(stderr, "SetUnitsSurface \n";
+	status = RM_SetUnitsSurface(id, 1);
+	fprintf(stderr, "SetUnitsSurface %d\n", status);
 	//-------
-	BMI_UseSolutionDensityVolume(false);
-	fprintf(stderr, "UseSolutionDensityVolume \n";
+	status = RM_UseSolutionDensityVolume(id, 0);
+	fprintf(stderr, "UseSolutionDensityVolume %d\n", status);
 	//-------
 	double time_conversion = 1.0 / 86400.0;
-	BMI_SetTimeConversion(time_conversion);
-	fprintf(stderr, "SetTimeConversion \n";
+	status = RM_SetTimeConversion(id, time_conversion);
+	fprintf(stderr, "SetTimeConversion %d\n", status);
 	//-------
-	std::vector<double> v(nxyz, 1.0);
-	status = BMI_SetRepresentativeVolume(v);
-	fprintf(stderr, "SetRepresentativeVolume \n";
+	if (v != NULL) free(v);
+	v = (double*)malloc(nxyz * sizeof(double));
+	for (int i = 0; i < nxyz; i++) v[i] = 1.0;
+	status = RM_SetRepresentativeVolume(id, v);
+	fprintf(stderr, "SetRepresentativeVolume %d\n", status);
 
 	//-------Chemistry cells may be fewer than GridCellCount
-	std::vector<int> vi(nxyz, 1);
-	status = BMI_SetPrintChemistryMask(vi);
-	fprintf(stderr, "SetPrintChemistryMask \n";
+	if (vi != NULL) free(vi);
+	vi = (int*)malloc(nxyz * sizeof(int));
+	for (int i = 0; i < nxyz; i++) v[i] = 1;
+	status = RM_SetPrintChemistryMask(id, vi);
+	fprintf(stderr, "SetPrintChemistryMask %d\n", status);
 	//-------
-	status = BMI_SetPrintChemistryOn(false, true, false);
-	fprintf(stderr, "SetPrintChemistryOn \n";
+	status = RM_SetPrintChemistryOn(id, 0, 1, 0);
+	fprintf(stderr, "SetPrintChemistryOn %d\n", status);
 	//
 	// Define reactants available for initial 
 	// and boundary conditions in this file
 	//
-	status = BMI_RunFile(true, true, true, "all_reactants.pqi");
-	fprintf(stderr, "RunFile \n";
+	status = RM_RunFile(id, 1, 1, 1, "all_reactants.pqi");
+	fprintf(stderr, "RunFile %d\n", status);
 	//-------
-	BMI_AddOutputVars("AddOutputVars", "True");
-	BMI_AddOutputVars("SolutionProperties", "True");
-	BMI_AddOutputVars("SolutionTotalMolalities", "True");
-	BMI_AddOutputVars("ExchangeMolalities", "True");
-	BMI_AddOutputVars("SurfaceMolalities", "True");
-	BMI_AddOutputVars("EquilibriumPhases", "True");
-	BMI_AddOutputVars("Gases", "True");
-	BMI_AddOutputVars("KineticReactants", "True");
-	BMI_AddOutputVars("SolidSolutions", "True");
-	BMI_AddOutputVars("CalculateValues", "True");
-	BMI_AddOutputVars("SolutionActivities", "H+ Ca+2 Na+");
-	BMI_AddOutputVars("SolutionMolalities", "OH- Cl-");
-	BMI_AddOutputVars("SaturationIndices", "Calcite Dolomite");
-	fprintf(stderr, "AddOutputVars \n";
+	status = BMI_AddOutputVars(id, "AddOutputVars", "True");
+	status = BMI_AddOutputVars(id, "SolutionProperties", "True");
+	status = BMI_AddOutputVars(id, "SolutionTotalMolalities", "True");
+	status = BMI_AddOutputVars(id, "ExchangeMolalities", "True");
+	status = BMI_AddOutputVars(id, "SurfaceMolalities", "True");
+	status = BMI_AddOutputVars(id, "EquilibriumPhases", "True");
+	status = BMI_AddOutputVars(id, "Gases", "True");
+	status = BMI_AddOutputVars(id, "KineticReactants", "True");
+	status = BMI_AddOutputVars(id, "SolidSolutions", "True");
+	status = BMI_AddOutputVars(id, "CalculateValues", "True");
+	status = BMI_AddOutputVars(id, "SolutionActivities", "H+ Ca+2 Na+");
+	status = BMI_AddOutputVars(id, "SolutionMolalities", "OH- Cl-");
+	status = BMI_AddOutputVars(id, "SaturationIndices", "Calcite Dolomite");
+	fprintf(stderr, "AddOutputVars %d\n", status);
 	//-------
-	int ncomps = BMI_FindComponents();
-	fprintf(stderr, "FindComponents \n";
+	int ncomps = RM_FindComponents(id);
+	fprintf(stderr, "FindComponents %d\n", status);
 	//
 	// Methods up to this point are useful 
 	// in a YAML initialization file
 	// 
 	// Lists of reactants found by FindComponents follow
 	// 
-	int nchem = BMI_GetChemistryCellCount();
-	fprintf(stderr, "GetChemistryCellCount \n";
+	nchem = RM_GetChemistryCellCount(id);
+	fprintf(stderr, "GetChemistryCellCount %d\n", nchem);
 	//-------
-	ncomps = BMI_GetComponentCount();
-	BMI_GetValue("ComponentCount", ncomps);
-	i_ptr = (int*) BMI_GetValuePtr("ComponentCount");
-	fprintf(stderr, "GetComponentCount \n";
+	ncomps = RM_GetComponentCount(id);
+	status = BMI_GetValueInt(id, "ComponentCount", &ncomps);
+	i_ptr = (int*) BMI_GetValuePtr(id, "ComponentCount");
+	fprintf(stderr, "GetComponentCount %d %d\n", ncomps, *i_ptr);
 	//-------
-	std::vector<std::string> str_vector = BMI_GetComponents();
-	BMI_GetValue("Components", str_vector);
-	fprintf(stderr, "GetComponents \n";
+	for (i = 0; i < ncomps; i++)
+	{
+		status = RM_GetComponent(id, i, string, MAX_LENGTH);
+		fprintf(stderr, "     %s\n", string);
+	}
+	//??????  BMI_GetValue("Components", str_vector);    //?????
+	fprintf(stderr, "GetComponent %d\n", status);
 	// Species info
-	n = BMI_GetSpeciesCount();
-	fprintf(stderr, "GetSpeciesCount \n";
+	n = RM_GetSpeciesCount(id);
+	fprintf(stderr, "GetSpeciesCount %d\n", n);
 	//-------
-	str_vector = BMI_GetSpeciesNames();
-	fprintf(stderr, "GetSpeciesNames \n";
+	for (i = 0; i < n; i++)
+	{
+		status = RM_GetSpeciesName(id, i, string, MAX_LENGTH);
+		fprintf(stderr, "     %s\n", string);
+	}
+	fprintf(stderr, "GetSpeciesName %d\n", status);
 	//-------
-	v = BMI_GetSpeciesD25();
-	fprintf(stderr, "GetSpeciesD25 \n";
+	status = RM_GetSpeciesD25(id, v);
+	fprintf(stderr, "GetSpeciesD25 %d\n", status);
 	//-------
-	v = BMI_GetSpeciesZ();
-	fprintf(stderr, "GetSpeciesZ \n";
+	status = RM_GetSpeciesZ(id, v);
+	fprintf(stderr, "GetSpeciesZ %d\n", status);
 	// Reactant lists
-	std::vector<std::string> equiuilibrium_phases = BMI_GetEquilibriumPhases();
-	fprintf(stderr, "GetEquilibriumPhases \n";
 	//-------
-	n = BMI_GetEquilibriumPhasesCount();
-	fprintf(stderr, "GetEquilibriumPhasesCount \n";
+	n = RM_GetEquilibriumPhasesCount(id);
+	fprintf(stderr, "GetEquilibriumPhasesCount %d\n", n);
 	//-------
-	str_vector = BMI_GetExchangeNames();
-	fprintf(stderr, "GetExchangeNames \n";
+	for (i = 0; i < n; i++)
+	{
+		status = RM_GetEquilibriumPhasesName(id, i, string, MAX_LENGTH);
+		fprintf(stderr, "     %s\n", string);
+	}
+	fprintf(stderr, "GetEquilibriumPhases %d\n", status);
 	//-------
-	str_vector = BMI_GetExchangeSpecies();
-	fprintf(stderr, "GetExchangeSpecies \n";
+	n = RM_GetExchangeSpeciesCount(id);
+	fprintf(stderr, "GetExchangeSpeciesCount %d\n", n);
 	//-------
-	n = BMI_GetExchangeSpeciesCount();
-	fprintf(stderr, "GetExchangeSpeciesCount \n";
+	for (i = 0; i < n; i++)
+	{
+		status = RM_GetExchangeSpeciesName(id, i, string, MAX_LENGTH);
+		status = RM_GetExchangeName(id, i, string1, MAX_LENGTH);
+		fprintf(stderr, "     %20s %20s\n", string, string1);
+	}
+	fprintf(stderr, "GetExchangeSpeciesName \n");
+	fprintf(stderr, "GetExchangeName \n");
 	//-------
-	str_vector = BMI_GetGasComponents();
-	fprintf(stderr, "GetGasComponents \n";
+	n = RM_GetGasComponentsCount(id);
+	fprintf(stderr, "GetGasComponentsCount %d\n", n);
 	//-------
-	n = BMI_GetGasComponentsCount();
-	fprintf(stderr, "GetGasComponentsCount \n";
+	for (i = 0; i < n; i++)
+	{
+		status = RM_GetGasComponentsName(id, i, string, MAX_LENGTH);
+		fprintf(stderr, "     %s\n", string);
+	}
+	fprintf(stderr, "GetGasComponents %d\n", status);
+
+	fprintf(stderr, "Done.\n"); //==================================================================
+	return;
+#ifdef SKIP
 	//-------
 	v = BMI_GetGfw();
 	BMI_GetValue("Gfw", v);
@@ -812,7 +846,7 @@ void TestAllMethods_c()
 	//TODO status = BMI_MpiAbort();
 	//TODO status = BMI_SetMpiWorkerCallbackC();
 	//TODO status = BMI_SetMpiWorkerCallbackCookie();
-#endif
 	fprintf(stderr, "Success.\n");
 	return;
+#endif
 }

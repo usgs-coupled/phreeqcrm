@@ -46,11 +46,11 @@ extern "C" {
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetVarUnits(int id, char* name, char* units, int l1);
 	IRM_DLL_EXPORT IRM_RESULT BMI_Initialize(int id, char* config_file);
 	// SetValue
-	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueChar(int id, char* name, char* src);
-	//IRM_DLL_EXPORT IRM_RESULT BMI_SetValue(int id, char* name, double src);
-	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueDouble(int id, char* name, double* src);
-	//IRM_DLL_EXPORT IRM_RESULT BMI_SetValue(int id, char* name, int src);
-	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueInt(int id, char* name, int* src);
+	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueChar(int id, char* name, const char* src);
+	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueDouble(int id, char* name, double src);
+	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueDoubleArray(int id, char* name, double* src);
+	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueInt(int id, char* name, int src);
+	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueIntArray(int id, char* name, int* src);
 
 	IRM_DLL_EXPORT IRM_RESULT BMI_Update(int id);
 	IRM_DLL_EXPORT IRM_RESULT BMI_UpdateUntil(int id, double time);
