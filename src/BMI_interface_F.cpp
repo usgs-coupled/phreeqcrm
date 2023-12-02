@@ -240,6 +240,19 @@ RMF_BMI_GetNames(int* id, const char* type, char* dest)
 }
 /* ---------------------------------------------------------------------- */
 double
+RMF_BMI_GetStartTime(int* id)
+/* ---------------------------------------------------------------------- */
+{
+	// Retrieves current time step, in seconds
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(*id);
+	if (bmirm_ptr)
+	{
+		return bmirm_ptr->GetStartTime();
+	}
+	return -1.0;
+}
+/* ---------------------------------------------------------------------- */
+double
 RMF_BMI_GetTimeStep(int* id)
 /* ---------------------------------------------------------------------- */
 {
@@ -249,7 +262,7 @@ RMF_BMI_GetTimeStep(int* id)
 	{
 		return bmirm_ptr->GetTimeStep();
 	}
-	return IRM_BADINSTANCE;
+	return -1.0;
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT

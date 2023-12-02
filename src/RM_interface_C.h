@@ -506,10 +506,10 @@ status = RM_GetConcentrations(id, c);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetConcentrations(int id, double *c);
-IRM_DLL_EXPORT IRM_RESULT RM_GetIthConcentration(int* id, int* i, double* c);
-IRM_DLL_EXPORT IRM_RESULT RM_GetIthSpeciesConcentration(int* id, int* i, double* c);
-IRM_DLL_EXPORT IRM_RESULT RM_SetIthConcentration(int* id, int* i, double* c);
-IRM_DLL_EXPORT IRM_RESULT RM_SetIthSpeciesConcentration(int* id, int* i, double* c);
+IRM_DLL_EXPORT IRM_RESULT RM_GetIthConcentration(int id, int i, double* c);
+IRM_DLL_EXPORT IRM_RESULT RM_GetIthSpeciesConcentration(int id, int i, double* c);
+IRM_DLL_EXPORT IRM_RESULT RM_SetIthConcentration(int id, int i, double* c);
+IRM_DLL_EXPORT IRM_RESULT RM_SetIthSpeciesConcentration(int id, int i, double* c);
 
 /**
 Returns the user number of the current selected-output definition.
@@ -1298,8 +1298,8 @@ for (isel = 0; isel < RM_GetSelectedOutputCount(id); isel++)
 Called by root.
  */
 IRM_DLL_EXPORT int        RM_GetNthSelectedOutputUserNumber(int id, int n);
-IRM_DLL_EXPORT IRM_RESULT RM_GetPorosity(int* id, double* porosity);
-IRM_DLL_EXPORT IRM_RESULT RM_GetPressure(int* id, double* pressure);
+IRM_DLL_EXPORT IRM_RESULT RM_GetPorosity(int id, double* porosity);
+IRM_DLL_EXPORT IRM_RESULT RM_GetPressure(int id, double* pressure);
 
 /**
 Returns a vector of saturations (@a sat) as calculated by the reaction module.
@@ -2104,7 +2104,7 @@ Called by root and (or) workers.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetStartCell(int id, int *sc);
 
-IRM_DLL_EXPORT IRM_RESULT RM_GetTemperature(int* id, double* temperature);
+IRM_DLL_EXPORT IRM_RESULT RM_GetTemperature(int id, double* temperature);
 /**
 Retrieves the surface name (such as "Hfo") that corresponds with
 the surface species name.
@@ -2334,7 +2334,7 @@ status = RM_LogMessage(id, str);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT double     RM_GetTimeStep(int id);
-IRM_DLL_EXPORT IRM_RESULT RM_GetViscosity(int* id, double* viscosity);
+IRM_DLL_EXPORT IRM_RESULT RM_GetViscosity(int id, double* viscosity);
 #ifdef USE_YAML
 /**
 A YAML file can be used to initialize an instance of PhreeqcRM.
@@ -2510,13 +2510,13 @@ IRM_DLL_EXPORT IRM_RESULT RM_InitialPhreeqc2Concentrations(
                 int *boundary_solution2,
                 double *fraction1);
 
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolutions2Module(int* id, int* in);
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialEquilibriumPhases2Module(int* id, int* in);
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialExchanges2Module(int* id, int* in);
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialSurfaces2Module(int* id, int* in);
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialGasPhases2Module(int* id, int* in);
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolidSolutions2Module(int* id, int* in);
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialKinetics2Module(int* id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolutions2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialEquilibriumPhases2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialExchanges2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialSurfaces2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialGasPhases2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolidSolutions2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialKinetics2Module(int id, int* in);
 /**
 Transfer solutions and reactants from the InitialPhreeqc instance to the reaction-module workers, possibly with mixing.
 In its simplest form, @a initial_conditions1 is used to select initial conditions, including solutions and reactants,

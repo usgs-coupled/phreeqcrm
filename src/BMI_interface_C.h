@@ -27,6 +27,7 @@ extern "C" {
 	IRM_DLL_EXPORT int		  BMI_GetPointableItemCount(int id);
 	IRM_DLL_EXPORT int        BMI_GetPointableVarNamesSize(int id);
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetPointableVarName(int id, char* name, int i);
+	IRM_DLL_EXPORT double     BMI_GetStartTime(int id);
 	IRM_DLL_EXPORT double     BMI_GetTimeStep(int id);
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetTimeUnits(int id, char* units, int* l1);
 	// GetValue

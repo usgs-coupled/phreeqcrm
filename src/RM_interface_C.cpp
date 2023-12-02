@@ -524,10 +524,10 @@ RM_GetSolidSolutionComponentsCount(int  id)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_GetTemperature(int* id, double* temperature)
+RM_GetTemperature(int id, double* temperature)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_GetTemperature(id, temperature);
+	return RMF_GetTemperature(&id, temperature);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -634,21 +634,21 @@ RM_GetConcentrations(int id, double * c)
 	return IRM_BADINSTANCE;
 }
 
-IRM_RESULT RM_GetIthConcentration(int* id, int* i, double* c)
+IRM_RESULT RM_GetIthConcentration(int id, int i, double* c)
 {
-	return RMF_GetIthConcentration(id, i, c);
+	return RMF_GetIthConcentration(&id, &i, c);
 }
-IRM_RESULT RM_GetIthSpeciesConcentration(int* id, int* i, double* c)
+IRM_RESULT RM_GetIthSpeciesConcentration(int id, int i, double* c)
 {
-	return RMF_GetIthSpeciesConcentration(id, i, c);
+	return RMF_GetIthSpeciesConcentration(&id, &i, c);
 }
-IRM_RESULT RM_SetIthConcentration(int* id, int* i, double* c)
+IRM_RESULT RM_SetIthConcentration(int id, int i, double* c)
 {
-	return RMF_SetIthConcentration(id, i, c);
+	return RMF_SetIthConcentration(&id, &i, c);
 }
-IRM_RESULT RM_SetIthSpeciesConcentration(int* id, int* i, double* c)
+IRM_RESULT RM_SetIthSpeciesConcentration(int id, int i, double* c)
 {
-	return RMF_SetIthSpeciesConcentration(id, i, c);
+	return RMF_SetIthSpeciesConcentration(&id, &i, c);
 }
 /* ---------------------------------------------------------------------- */
 int RM_GetCurrentSelectedOutputUserNumber(int id)
@@ -939,17 +939,17 @@ RM_GetNthSelectedOutputUserNumber(int id, int i)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_GetPorosity(int* id, double* porosity)
+RM_GetPorosity(int id, double* porosity)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_GetPorosity(id, porosity);
+	return RMF_GetPorosity(&id, porosity);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_GetPressure(int* id, double* pressure)
+RM_GetPressure(int id, double* pressure)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_GetPressure(id, pressure);
+	return RMF_GetPressure(&id, pressure);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -1261,10 +1261,10 @@ RM_GetStartCell(int id, int *sc)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-RM_GetViscosity(int* id, double* viscosity)
+RM_GetViscosity(int id, double* viscosity)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_GetViscosity(id, viscosity);
+	return RMF_GetViscosity(&id, viscosity);
 }
 /* ---------------------------------------------------------------------- */
 int 
@@ -1391,46 +1391,46 @@ RM_InitialPhreeqc2Concentrations(
 	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
-IRM_RESULT RM_InitialSolutions2Module(int* id, int* in)
+IRM_RESULT RM_InitialSolutions2Module(int id, int* in)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_InitialSolutions2Module(id, in);
+	return RMF_InitialSolutions2Module(&id, in);
 }
 /* ---------------------------------------------------------------------- */
-IRM_RESULT RM_InitialEquilibriumPhases2Module(int* id, int* in)
+IRM_RESULT RM_InitialEquilibriumPhases2Module(int id, int* in)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_InitialEquilibriumPhases2Module(id, in);
+	return RMF_InitialEquilibriumPhases2Module(&id, in);
 }
 /* ---------------------------------------------------------------------- */
-IRM_RESULT RM_InitialExchanges2Module(int* id, int* in)
+IRM_RESULT RM_InitialExchanges2Module(int id, int* in)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_InitialExchanges2Module(id, in);
+	return RMF_InitialExchanges2Module(&id, in);
 }
 /* ---------------------------------------------------------------------- */
-IRM_RESULT RM_InitialSurfaces2Module(int* id, int* in)
+IRM_RESULT RM_InitialSurfaces2Module(int id, int* in)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_InitialSurfaces2Module(id, in);
+	return RMF_InitialSurfaces2Module(&id, in);
 }
 /* ---------------------------------------------------------------------- */
-IRM_RESULT RM_InitialGasPhases2Module(int* id, int* in)
+IRM_RESULT RM_InitialGasPhases2Module(int id, int* in)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_InitialGasPhases2Module(id, in);
+	return RMF_InitialGasPhases2Module(&id, in);
 }
 /* ---------------------------------------------------------------------- */
-IRM_RESULT RM_InitialSolidSolutions2Module(int* id, int* in)
+IRM_RESULT RM_InitialSolidSolutions2Module(int id, int* in)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_InitialSolidSolutions2Module(id, in);
+	return RMF_InitialSolidSolutions2Module(&id, in);
 }
 /* ---------------------------------------------------------------------- */
-IRM_RESULT RM_InitialKinetics2Module(int* id, int* in)
+IRM_RESULT RM_InitialKinetics2Module(int id, int* in)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_InitialKinetics2Module(id, in);
+	return RMF_InitialKinetics2Module(&id, in);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
