@@ -26,17 +26,18 @@ void TestAllMethods_c()
 	int* grid2chem = NULL;
 	double* d_ptr = NULL;
 	double* bc = NULL;
+	double* bc_spec = NULL;
 	double* v_nxyz = NULL;
 	double* f1 = NULL;
 	double d = 0.0;
 	double* c = NULL;
-	double* c_spec = NULL;
+	double* v_spec = NULL;
+	double* v_spec_nxyz = NULL;
+	double* v_gas = NULL;
 	int* vi = NULL;
-	int i = 0, nchem = 0, nspec = 0, ncomps = 0;
+	int i = 0, nchem = 0, nspec = 0, ncomps = 0, ngas = 0;
 	char string[MAX_LENGTH] = "", string1[MAX_LENGTH] = "", string2[MAX_LENGTH] = "";
-	char YAML_filename[MAX_LENGTH] = "";
-
-	strcpy_safe(YAML_filename, MAX_LENGTH, "TestAllMethods_c.yaml");
+	char YAML_filename[MAX_LENGTH] = "TestAllMethods_c.yaml";
 
 #ifdef USE_MPI
 	// MPI
@@ -164,7 +165,6 @@ void TestAllMethods_c()
 	fprintf(stderr, "SetRepresentativeVolume %d\n", status);
 
 	//-------Chemistry cells may be fewer than GridCellCount
-	if (vi != NULL) free(vi);
 	vi = (int*)malloc(nxyz * sizeof(int));
 	for (int i = 0; i < nxyz; i++) v_nxyz[i] = 1;
 	status = RM_SetPrintChemistryMask(id, vi);
@@ -229,10 +229,11 @@ void TestAllMethods_c()
 	}
 	fprintf(stderr, "GetSpeciesName %d\n", status);
 	//-------
-	status = RM_GetSpeciesD25(id, v_nxyz);
+	v_spec = (double*)malloc((size_t)nspec * sizeof(double));
+	status = RM_GetSpeciesD25(id, v_spec);
 	fprintf(stderr, "GetSpeciesD25 %d\n", status);
 	//-------
-	status = RM_GetSpeciesZ(id, v_nxyz);
+	status = RM_GetSpeciesZ(id, v_spec);
 	fprintf(stderr, "GetSpeciesZ %d\n", status);
 	// Reactant lists
 	//-------
@@ -260,6 +261,7 @@ void TestAllMethods_c()
 	//-------
 	n = RM_GetGasComponentsCount(id);
 	fprintf(stderr, "GetGasComponentsCount %d\n", n);
+	ngas = n;
 	//-------
 	for (i = 0; i < n; i++)
 	{
@@ -378,17 +380,16 @@ void TestAllMethods_c()
 	//
 	// Boundary conditions
 	// 
-	bc1 = (int*)malloc(1 * sizeof(int));
-	bc2 = (int*)malloc(1 * sizeof(int));
+	bc1 = (int*)malloc(2*sizeof(int));
+	bc2 = (int*)malloc(2*sizeof(int));
 	bc1[0] = 1;
 	bc2[0] = -1;
 	f1[0] = 1.0;
-	bc = (double*)malloc(1 * ncomps * sizeof(double));
+	bc = (double*)malloc(1 * (size_t)ncomps * sizeof(double));
 	status = RM_InitialPhreeqc2Concentrations(id, bc, 1, bc1, bc2, f1);
 	//-------
-	if (bc != NULL) free(bc);
-	bc = (double*)malloc(1 * nspec * sizeof(int));
-	status = RM_InitialPhreeqc2SpeciesConcentrations(id, bc, 1, bc1, bc2, f1);
+	bc_spec = (double*)malloc(1 * (size_t)nspec * sizeof(double));
+	status = RM_InitialPhreeqc2SpeciesConcentrations(id, bc_spec, 1, bc1, bc2, f1);
 	fprintf(stderr, "InitialPhreeqc2SpeciesConcentrations %d\n", status);
 	//
 	// Get/Set methods for time steping
@@ -413,7 +414,7 @@ void TestAllMethods_c()
 	status = BMI_SetValueDouble(id, "TimeStep", 0.0);
 	fprintf(stderr, "SetTimeStep %d\n", status);
 	//-------
-	c = (double*)malloc(ncomps * nxyz * sizeof(double));
+	c = (double*)malloc((size_t)ncomps * (size_t)nxyz * sizeof(double));
 	status = RM_GetConcentrations(id, c);
 	status = BMI_GetValueDouble(id, "Concentrations", c);
 	d_ptr = (double*)BMI_GetValuePtr(id, "Concentrations");
@@ -432,16 +433,18 @@ void TestAllMethods_c()
 	status = BMI_SetValueDoubleArray(id,"DensityUser", v_nxyz);
 	fprintf(stderr, "SetDensityUser %d\n", status);
 	//-------
-	status = RM_GetGasCompMoles(id, v_nxyz);
-	fprintf(stderr, "GetGasCompMoles %f\n", v_nxyz[0]);
+	v_gas = (double*)malloc((size_t)ngas * (size_t)nxyz * sizeof(double));
+	status = RM_GetGasCompMoles(id, v_gas);
+	fprintf(stderr, "GetGasCompMoles %f\n", v_gas[0]);
 	//-------
-	status = RM_SetGasCompMoles(id, v_nxyz);
+
+	status = RM_SetGasCompMoles(id, v_gas);
 	fprintf(stderr, "SetGasCompMoles %d\n", status);
 	//-------
-	status = RM_GetGasCompPhi(id, v_nxyz);
+	status = RM_GetGasCompPhi(id, v_gas);
 	fprintf(stderr, "GetGasCompPhi %f\n", v_nxyz[0]);
 	//-------
-	status = RM_GetGasCompPressures(id, v_nxyz);
+	status = RM_GetGasCompPressures(id, v_gas);
 	fprintf(stderr, "GetGasCompPressures %f\n", v_nxyz[0]);
 	//-------
 	status = RM_GetGasPhaseVolume(id, v_nxyz);
@@ -500,47 +503,47 @@ void TestAllMethods_c()
 	d_ptr = (double*)BMI_GetValuePtr(id, "SolutionVolume");
 	fprintf(stderr, "GetSolutionVolume %f\n", d_ptr[0]);
 	//-------
-	c_spec = (double*)malloc(nspec * nxyz * sizeof(double));
-	status = RM_GetSpeciesConcentrations(id, c_spec);
-	fprintf(stderr, "GetSpeciesConcentrations %f\n", c_spec[0]);
+	v_spec_nxyz = (double*)malloc((size_t)nxyz * (size_t)nspec * sizeof(double));
+	status = RM_GetSpeciesConcentrations(id, v_spec_nxyz);
+	fprintf(stderr, "GetSpeciesConcentrations %f\n", v_spec_nxyz[0]);
 	//-------
-	status = RM_SpeciesConcentrations2Module(id, c_spec);
+	status = RM_SpeciesConcentrations2Module(id, v_spec_nxyz);
 	fprintf(stderr, "SpeciesConcentrations2Module %d\n", status);
 	//-------
-	status = RM_GetSpeciesLog10Gammas(id, v_nxyz);
-	fprintf(stderr, "GetSpeciesLog10Gammas %f\n", v_nxyz[0]);
+	status = RM_GetSpeciesLog10Gammas(id, v_spec_nxyz);
+	fprintf(stderr, "GetSpeciesLog10Gammas %f\n", v_spec_nxyz[0]);
 	//-------
-	status = RM_GetSpeciesLog10Molalities(id, v_nxyz);
-	fprintf(stderr, "GetSpeciesLog10Molalities %f\n", v_nxyz[0]);
+	status = RM_GetSpeciesLog10Molalities(id, v_spec_nxyz);
+	fprintf(stderr, "GetSpeciesLog10Molalities %f\n", v_spec_nxyz[0]);
 	//-------
+	status = RM_GetTemperature(id, v_nxyz);
+	status = BMI_GetValueDouble(id, "Temperature", v_nxyz);
+	d_ptr = (double*)BMI_GetValuePtr(id, "Temperature");
+	fprintf(stderr, "GetTemperature %f\n", d_ptr[0]);
+	//-------
+	status = RM_SetTemperature(id, v_nxyz);
+	status = BMI_SetValueDoubleArray(id, "Temperature", v_nxyz);
+	fprintf(stderr, "SetTemperature %d\n", status);
+	//-------
+	status = RM_GetViscosity(id, v_nxyz);
+	status = BMI_GetValueDouble(id, "Viscosity", v_nxyz);
+	d_ptr = (double*)BMI_GetValuePtr(id, "Viscosity");	
+	fprintf(stderr, "GetViscosity %f\n", d_ptr[0]);
+	//
+	// Take a time step
+	//
+	status = BMI_Update(id);      // void function
+	fprintf(stderr, "Update %d\n", status);
+	//-------
+	status = RM_RunCells(id);
+	fprintf(stderr, "RunCells %d\n", status);
+	//-------
+	status = BMI_UpdateUntil(id, 86400.0);      // void function
+	fprintf(stderr, "UpdateUntil %d\n", status);
 
 	fprintf(stderr, "Done.\n"); //==========================================================================================================
 	return;
 #ifdef SKIP
-	v_nxyz = BMI_GetTemperature();
-	BMI_GetValue("Temperature", v_nxyz);
-	d_ptr = (double*)BMI_GetValuePtr("Temperature");
-	fprintf(stderr, "GetTemperature \n";
-	//-------
-	status = BMI_SetTemperature(v_nxyz);
-	BMI_SetValue("Temperature", v_nxyz);
-	fprintf(stderr, "SetTemperature \n";
-	//-------
-	v_nxyz = BMI_GetViscosity();
-	BMI_GetValue("Viscosity", v_nxyz);
-	d_ptr = (double*)BMI_GetValuePtr("Viscosity");	
-	fprintf(stderr, "GetViscosity \n";
-	//
-	// Take a time step
-	//
-	BMI_Update();      // void function
-	fprintf(stderr, "Update\n";
-	//-------
-	status = BMI_RunCells();
-	fprintf(stderr, "RunCells\n";
-	//-------
-	BMI_UpdateUntil(86400.0);      // void function
-	fprintf(stderr, "UpdateUntil\n";
 	//
 	// Selected output
 	//
