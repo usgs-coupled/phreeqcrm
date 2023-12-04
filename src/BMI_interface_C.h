@@ -12,10 +12,14 @@ extern "C" {
 	IRM_DLL_EXPORT IRM_RESULT BMI_AddOutputVars(int id, char* option, char* def);
 	IRM_DLL_EXPORT int        BMI_Create(int nxyz, int nthreads);
 	//IRM_DLL_EXPORT int        BMI_Create_default();
-	IRM_DLL_EXPORT int		  BMI_Destroy(int id);
+	IRM_DLL_EXPORT IRM_RESULT BMI_Destroy(int id);
+	IRM_DLL_EXPORT IRM_RESULT BMI_Finalize(int id);
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetComponentName(int id, char* chem_name, int l1);
 	IRM_DLL_EXPORT double     BMI_GetCurrentTime(int id);
 	IRM_DLL_EXPORT double     BMI_GetEndTime(int id);
+	IRM_DLL_EXPORT int        BMI_GetGridRank(int id, int n);
+	IRM_DLL_EXPORT int        BMI_GetGridSize(int id, int n);
+	IRM_DLL_EXPORT IRM_RESULT BMI_GetGridType(int id, int n, char* string, int l);
 	IRM_DLL_EXPORT int        BMI_GetInputItemCount(int id);
 	IRM_DLL_EXPORT int        BMI_GetInputVarNamesSize(int id);
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetInputVarName(int id, char* name, int i);
@@ -29,7 +33,7 @@ extern "C" {
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetPointableVarName(int id, char* name, int i);
 	IRM_DLL_EXPORT double     BMI_GetStartTime(int id);
 	IRM_DLL_EXPORT double     BMI_GetTimeStep(int id);
-	IRM_DLL_EXPORT IRM_RESULT BMI_GetTimeUnits(int id, char* units, int* l1);
+	IRM_DLL_EXPORT IRM_RESULT BMI_GetTimeUnits(int id, char* units, int l1);
 	// GetValue
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueInt(int id, char* var, int* dest);
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueDouble(int id, char* var, double* dest);

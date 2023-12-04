@@ -480,6 +480,10 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 		{
 			return bv.GetPType();
 		}
+		else if (this->language == "C")
+		{
+			return bv.GetClangType();
+		}
 	}
 	{
 		std::string name_lc = name;
@@ -499,6 +503,10 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 			else if (this->language == "Py")
 			{
 				return it->second.GetPType();
+			}
+			else if (this->language == "C")
+			{
+				return it->second.GetClangType();
 			}
 		}
 	}

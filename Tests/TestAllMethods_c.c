@@ -17,7 +17,7 @@ void TestAllMethods_c()
 	IRM_RESULT status;
 	int nxyz = 40;
 	int nthreads = 3;
-	int id = -1;
+	int id = -1, id1 = -1;
 	int* i_ptr = NULL;
 	int* ic1 = NULL;
 	int* ic2 = NULL;
@@ -29,13 +29,15 @@ void TestAllMethods_c()
 	double* bc_spec = NULL;
 	double* v_nxyz = NULL;
 	double* f1 = NULL;
-	double d = 0.0;
+	double d = 0.0, tc = 0.0, p_atm = 0.0;
 	double* c = NULL;
 	double* v_spec = NULL;
 	double* v_spec_nxyz = NULL;
 	double* v_gas = NULL;
 	int* vi = NULL;
-	int i = 0, nchem = 0, nspec = 0, ncomps = 0, ngas = 0;
+	int i = 0, nchem = 0, nspec = 0, ncomps = 0, ngas = 0, n_user = -1;
+	int nrow = -1;
+	double* so = NULL;
 	char string[MAX_LENGTH] = "", string1[MAX_LENGTH] = "", string2[MAX_LENGTH] = "";
 	char YAML_filename[MAX_LENGTH] = "TestAllMethods_c.yaml";
 
@@ -207,7 +209,7 @@ void TestAllMethods_c()
 	//-------
 	ncomps = RM_GetComponentCount(id);
 	status = BMI_GetValueInt(id, "ComponentCount", &ncomps);
-	i_ptr = (int*) BMI_GetValuePtr(id, "ComponentCount");
+	i_ptr = (int*)BMI_GetValuePtr(id, "ComponentCount");
 	fprintf(stderr, "GetComponentCount %d %d\n", ncomps, *i_ptr);
 	//-------
 	for (i = 0; i < ncomps; i++)
@@ -360,9 +362,9 @@ void TestAllMethods_c()
 	fprintf(stderr, "InitialSurfaces2Module %d\n", status);
 	//-------
 	// Alternative A.to the previous seven methods
-	ic1 = (int*)malloc(nxyz * 7 * sizeof(double));
-	ic2 = (int*)malloc(nxyz * 7 * sizeof(double));
-	f1 = (double*)malloc(nxyz * 7 * sizeof(double));
+	ic1 = (int*)malloc((size_t)nxyz * 7 * sizeof(double));
+	ic2 = (int*)malloc((size_t)nxyz * 7 * sizeof(double));
+	f1 = (double*)malloc((size_t)nxyz * 7 * sizeof(double));
 	for (i = 0; i < 7 * nxyz;i++)
 	{
 		ic1[i] = 1;
@@ -380,8 +382,8 @@ void TestAllMethods_c()
 	//
 	// Boundary conditions
 	// 
-	bc1 = (int*)malloc(2*sizeof(int));
-	bc2 = (int*)malloc(2*sizeof(int));
+	bc1 = (int*)malloc(2 * sizeof(int));
+	bc2 = (int*)malloc(2 * sizeof(int));
 	bc1[0] = 1;
 	bc2[0] = -1;
 	f1[0] = 1.0;
@@ -397,7 +399,7 @@ void TestAllMethods_c()
 	d = RM_GetTime(id);
 	status = BMI_GetValueDouble(id, "Time", &d);
 	d = BMI_GetCurrentTime(id);
-    d = BMI_GetStartTime(id);
+	d = BMI_GetStartTime(id);
 	d_ptr = (double*)BMI_GetValuePtr(id, "Time");
 	fprintf(stderr, "GetTime %f\n", *d_ptr);
 	//-------
@@ -430,7 +432,7 @@ void TestAllMethods_c()
 	fprintf(stderr, "GetDensityCalculated %f\n", d_ptr[0]);
 	//-------
 	status = RM_SetDensityUser(id, v_nxyz);
-	status = BMI_SetValueDoubleArray(id,"DensityUser", v_nxyz);
+	status = BMI_SetValueDoubleArray(id, "DensityUser", v_nxyz);
 	fprintf(stderr, "SetDensityUser %d\n", status);
 	//-------
 	v_gas = (double*)malloc((size_t)ngas * (size_t)nxyz * sizeof(double));
@@ -527,7 +529,7 @@ void TestAllMethods_c()
 	//-------
 	status = RM_GetViscosity(id, v_nxyz);
 	status = BMI_GetValueDouble(id, "Viscosity", v_nxyz);
-	d_ptr = (double*)BMI_GetValuePtr(id, "Viscosity");	
+	d_ptr = (double*)BMI_GetValuePtr(id, "Viscosity");
 	fprintf(stderr, "GetViscosity %f\n", d_ptr[0]);
 	//
 	// Take a time step
@@ -540,331 +542,301 @@ void TestAllMethods_c()
 	//-------
 	status = BMI_UpdateUntil(id, 86400.0);      // void function
 	fprintf(stderr, "UpdateUntil %d\n", status);
-
-	fprintf(stderr, "Done.\n"); //==========================================================================================================
-	return;
-#ifdef SKIP
 	//
 	// Selected output
 	//
-	status = BMI_SetNthSelectedOutput(0);
-	BMI_SetValue("NthSelectedOutput", 0);
-	fprintf(stderr, "SetNthSelectedOutput \n";
+	status = RM_SetNthSelectedOutput(id, 0);
+	status = BMI_SetValueInt(id, "NthSelectedOutput", 0);
+	fprintf(stderr, "SetNthSelectedOutput %d\n", status);
 	//-------
-	int n_user = BMI_GetCurrentSelectedOutputUserNumber();
-	BMI_GetValue("CurrentSelectedOutputUserNumber", n_user);
-	fprintf(stderr, "GetCurrentSelectedOutputUserNumber \n";
+	n_user = RM_GetCurrentSelectedOutputUserNumber(id);
+	status = BMI_GetValueInt(id, "CurrentSelectedOutputUserNumber", &n_user);
+	fprintf(stderr, "GetCurrentSelectedOutputUserNumber %d\n", n_user);
 	//-------
-	n = BMI_GetNthSelectedOutputUserNumber(0);
-	fprintf(stderr, "GetNthSelectedOutputUserNumber \n";
+	n = RM_GetNthSelectedOutputUserNumber(id, 0);
+	fprintf(stderr, "GetNthSelectedOutputUserNumber %d\n", n);
 	//-------
-	status = BMI_GetSelectedOutput(v_nxyz);
-	BMI_GetValue("SelectedOutput", v_nxyz);
-	fprintf(stderr, "GetSelectedOutput \n";
+	n = RM_GetSelectedOutputColumnCount(id);
+	so = (double*)malloc((size_t)n * (size_t)nxyz * sizeof(double));
+	status = RM_GetSelectedOutput(id, so);
+	status = BMI_GetValueDouble(id, "SelectedOutput", so);
+	fprintf(stderr, "GetSelectedOutput %f\n", so[0]);
 	//-------
-	n = BMI_GetSelectedOutputColumnCount();
-	BMI_GetValue("SelectedOutputColumnCount", n);
-	fprintf(stderr, "GetSelectedOutputColumnCount \n";
+	n = RM_GetSelectedOutputColumnCount(id);
+	status = BMI_GetValueInt(id, "SelectedOutputColumnCount", &n);
+	fprintf(stderr, "GetSelectedOutputColumnCount %d\n", n);
 	//-------
-	n = BMI_GetSelectedOutputCount();
-	BMI_GetValue("SelectedOutputCount", n);
-	fprintf(stderr, "GetSelectedOutputCount \n";
+	n = RM_GetSelectedOutputCount(id);
+	status = BMI_GetValueInt(id, "SelectedOutputCount", &n);
+	fprintf(stderr, "GetSelectedOutputCount %d\n", n);
 	//-------
-	status = BMI_GetSelectedOutputHeadings(str_vector);
-	BMI_GetValue("SelectedOutputHeadings", str_vector);
-	fprintf(stderr, "GetSelectedOutputHeadings \n";
+	n = RM_GetSelectedOutputColumnCount(id);
+	for (i = 0; i < n; i++)
+	{
+		status = RM_GetSelectedOutputHeading(id, i, string, MAX_LENGTH);
+		//fprintf(stderr, "     %s\n", string);
+	}
+	fprintf(stderr, "GetSelectedOutputHeading %d \n", status);
 	//-------
-	bool b = BMI_GetSelectedOutputOn();
-	BMI_GetValue("SelectedOutputOn", b);
-	bool *b_ptr = (bool*)BMI_GetValuePtr("SelectedOutputOn");
-	fprintf(stderr, "GetSelectedOutputOn \n";
+	//i = RM_GetSelectedOutputOn(id);
+	status = BMI_GetValueInt(id, "SelectedOutputOn", &i);
+	i_ptr = (int*)BMI_GetValuePtr(id, "SelectedOutputOn");
+	fprintf(stderr, "GetSelectedOutputOn %d\n", i_ptr[0]);
 	//-------
-	n = BMI_GetSelectedOutputRowCount(); 
-	BMI_GetValue("SelectedOutputRowCount", n);
-	fprintf(stderr, "GetSelectedOutputRowCount \n";
+	n = RM_GetSelectedOutputRowCount(id);
+	status = BMI_GetValueInt(id, "SelectedOutputRowCount", &n);
+	fprintf(stderr, "GetSelectedOutputRowCount %d\n", n);
 	//-------
-	status = BMI_SetCurrentSelectedOutputUserNumber(333);
-	fprintf(stderr, "SetCurrentSelectedOutputUserNumber \n";
+	status = RM_SetCurrentSelectedOutputUserNumber(id, 333);
+	fprintf(stderr, "SetCurrentSelectedOutputUserNumber %d\n", status);
 	//-------
 	//
 	// Getters
 	// 
-	std::vector< std::vector<int> > back_map = BMI_GetBackwardMapping();
-	fprintf(stderr, "GetBackwardMapping \n";
+	for (i = 0; i < nchem; i++)
+	{
+		n = nxyz;
+		status = RM_GetBackwardMapping(id, i, vi, &n);
+	}
+	fprintf(stderr, "GetBackwardMapping %d\n", status);
 	//-------
-	std::string db_name = BMI_GetDatabaseFileName();
-	fprintf(stderr, "GetDatabaseFileName \n";
+	// Not implemented
+	//status = RM_GetDatabaseFileName(id, string);
+	//fprintf(stderr, "GetDatabaseFileName %s\n", string);
 	//-------
-	vi = BMI_GetEndCell();
-	fprintf(stderr, "GetEndCell\n";
+	status = RM_GetEndCell(id, vi);
+	fprintf(stderr, "GetEndCell %d\n", vi[0]);
 	//-------
-	n = BMI_GetErrorHandlerMode();
-	fprintf(stderr, "GetErrorHandlerMode \n";
+	// Not implemented
+	//status = RM_GetErrorHandlerMode(id, &n);
+	//fprintf(stderr, "GetErrorHandlerMode %d\n", n);
 	//-------
-	std::string str = BMI_GetErrorString();
-	BMI_GetValue("ErrorString", str);
-	fprintf(stderr, "GetErrorString \n";
+	status = RM_GetErrorString(id, string, MAX_LENGTH);
+	status = BMI_GetValueChar(id, "ErrorString", string);
+	fprintf(stderr, "GetErrorString %d\n", status);
 	//-------
-	str = BMI_GetFilePrefix();
-	BMI_GetValue("FilePrefix", str);
-	fprintf(stderr, "GetFilePrefix \n";
+	status = RM_GetFilePrefix(id, string, MAX_LENGTH);
+	status = BMI_GetValueChar(id, "FilePrefix", string);
+	fprintf(stderr, "GetFilePrefix %s\n", string);
 	//-------
-	vi = BMI_GetForwardMapping();
-	fprintf(stderr, "GetForwardMapping \n";
+	// Not implemented
+	//status = RM_GetForwardMapping(id, vi);
+	//fprintf(stderr, "GetForwardMapping %d\n", vi[0]);
 	//-------
-	IPhreeqc* ipq = BMI_GetIPhreeqcPointer(0);
-	fprintf(stderr, "GetIPhreeqcPointer \n";
+	n = RM_GetIPhreeqcId(id, 0);
+	fprintf(stderr, "GetIPhreeqcPointer %d\n", n);
 	//-------
-	n = BMI_GetMpiMyself();
-	fprintf(stderr, "GetMpiMyself \n";
+	n = RM_GetMpiMyself(id);
+	fprintf(stderr, "GetMpiMyself %d\n", n);
 	//-------
-	n = BMI_GetMpiTasks();
-	fprintf(stderr, "GetMpiTasks \n";
+	n = RM_GetMpiTasks(id);
+	fprintf(stderr, "GetMpiTasks %d\n", n);
 	//-------
-	b = BMI_GetPartitionUZSolids();
-	fprintf(stderr, "GetPartitionUZSolids \n";
+	// Not implemented
+	//n = RM_GetPartitionUZSolids(id);
+	//fprintf(stderr, "GetPartitionUZSolids %d\n", n);
 	//-------
-	vi = BMI_GetPrintChemistryMask();
-	fprintf(stderr, "GetPrintChemistryMask \n";
+	// Not implemented
+	//status = RM_GetPrintChemistryMask(id, vi);
+	//fprintf(stderr, "GetPrintChemistryMask %d\n", vi[0]);
 	//-------
-	std::vector<bool> vb = BMI_GetPrintChemistryOn();
-	fprintf(stderr, "GetPrintChemistryOn \n";
+	// Not implemented
+	//n = RM_GetPrintChemistryOn(id);
+	//fprintf(stderr, "GetPrintChemistryOn %d\n", n);
 	//-------
-	b = BMI_GetRebalanceByCell();
-	fprintf(stderr, "GetRebalanceByCell \n";
+	// Not implemented
+	//n = RM_GetRebalanceByCell(id);
+	//fprintf(stderr, "GetRebalanceByCell %d\n", n);
 	//-------
-	d = BMI_GetRebalanceFraction();
-	fprintf(stderr, "GetRebalanceFraction \n";
+	// Not implemented
+	//d = RM_GetRebalanceFraction(id);
+	//fprintf(stderr, "GetRebalanceFraction %f\n", d);
 	//-------
-	b = BMI_GetSpeciesSaveOn();
-	fprintf(stderr, "GetSpeciesSaveOn \n";
+	// Not implemented
+	//n = RM_GetSpeciesSaveOn();
+	//fprintf(stderr, "GetSpeciesSaveOn %d\n", n);
 	//-------
-	std::vector< cxxNameDouble > s = BMI_GetSpeciesStoichiometry();
-	fprintf(stderr, "GetSpeciesStoichiometry \n";
+	// Not implemented
+	//RM_GetSpeciesStoichiometry();
+	//fprintf(stderr, "GetSpeciesStoichiometry \n");
 	//-------
-	vi = BMI_GetStartCell();
-	fprintf(stderr, "GetStartCell \n";
+	status = RM_GetStartCell(id, vi);
+	fprintf(stderr, "GetStartCell %d\n", vi[0]);
 	//-------
-	d = BMI_GetTimeConversion();
-	fprintf(stderr, "GetTimeConversion \n";
+	d = RM_GetTimeConversion(id);
+	fprintf(stderr, "GetTimeConversion %f\n", d);
 	//-------
-	n = BMI_GetUnitsExchange();
-	fprintf(stderr, "GetUnitsExchange \n";
+	// Not implemented
+	//n = RM_GetUnitsExchange(id);
+	//fprintf(stderr, "GetUnitsExchange %d\n", n);
 	//-------
-	n = BMI_GetUnitsGasPhase();
-	fprintf(stderr, "GetUnitsGasPhase \n";
+	// Not implemented
+	//n = RM_GetUnitsGasPhase(id);
+	//fprintf(stderr, "GetUnitsGasPhase %d\n", n);
 	//-------
-	n = BMI_GetUnitsKinetics();
-	fprintf(stderr, "GetUnitsKinetics \n";
+	//// Not implemented
+	//n = RM_GetUnitsKinetics(id);
+	//fprintf(stderr, "GetUnitsKinetics %d\n", n);
 	//-------
-	n = BMI_GetUnitsPPassemblage();
-	fprintf(stderr, "GetUnitsPPassemblage \n";
+	// Not implemented
+	//n = RM_GetUnitsPPassemblage(id);
+	//fprintf(stderr, "GetUnitsPPassemblage %d\n", n);
 	//-------
-	n = BMI_GetUnitsSolution();
-	fprintf(stderr, "GetUnitsSolution \n";
+	// Not implemented
+	//n = RM_GetUnitsSolution(id);
+	//fprintf(stderr, "GetUnitsSolution %d\n", n);
 	//-------
-	n = BMI_GetUnitsSSassemblage();
-	fprintf(stderr, "GetUnitsSSassemblage \n";
+	// Not implemented
+	//n = RM_GetUnitsSSassemblage(id);
+	//fprintf(stderr, "GetUnitsSSassemblage %d\n", n);
 	//-------
-	n = BMI_GetUnitsSurface();
-	fprintf(stderr, "GetUnitsSurface \n";
+	// Not implemented
+	//n = RM_GetUnitsSurface(id);
+	//fprintf(stderr, "GetUnitsSurface %d\n", n);
 	//-------
-	std::vector<IPhreeqcPhast *> w = BMI_GetWorkers();
-	fprintf(stderr, "GetWorkers \n";
+	// Not implemented
+	//std::vector<IPhreeqcPhast *> w = BMI_GetWorkers();
+	//fprintf(stderr, "GetWorkers \n";
 	//
 	// Utilities
 	//
 #ifndef USE_MPI
-	BMIPhreeqcRM *bmi2 = new BMIPhreeqcRM(10, 2); // Make another instance
-	fprintf(stderr, "Make a new instance with new. \n";
+	// Make another instance
+	id1 = BMI_Create(10, 1);
+	fprintf(stderr, "Make a new instance. %d\n", id1);
 	//-------
-	status = bmi2->CloseFiles(); 
-	fprintf(stderr, "CloseFiles \n";
+	status = RM_CloseFiles(id1); 
+	fprintf(stderr, "CloseFiles %d\n", status);
 	//-------
-	bmi2->Finalize();
-	delete bmi2; // delete new instance
+	status = BMI_Finalize(id1);
 #endif
 	//-------
-	vi.clear();
-	vi.resize(1, 1);
-	status = BMI_InitialPhreeqc2Concentrations(bc, vi);
-	std::vector<double> tc(1, 30.0);
-	std::vector<double> p_atm(1, 1.5);
-	IPhreeqc* utility_ptr = BMI_Concentrations2Utility(bc, tc, p_atm);
-	fprintf(stderr, "Concentrations2Utility \n";
+	vi[0] = 1;
+	status = RM_InitialPhreeqc2Concentrations(id, bc, 1, bc1, bc2, f1);
+	tc = 30;
+	p_atm = 1.5;
+	n = RM_Concentrations2Utility(id, bc, 1, &tc, &p_atm);
+	fprintf(stderr, "Concentrations2Utility %d\n", n);
 	//-------
-	BMI_DecodeError(-2);	         // void function
-	fprintf(stderr, "DecodeError \n";
+	status = RM_DecodeError(id, -2);	         // void function
+	fprintf(stderr, "DecodeError %d\n", status);
 	//-------
-	status = BMI_DumpModule(true);
-	fprintf(stderr, "DumpModule \n";
+	status = RM_DumpModule(id, 1, 0);
+	fprintf(stderr, "DumpModule %d\n", status);
 	//-------
-	BMI_ErrorHandler(0, "string"); // void function
-	fprintf(stderr, "OK, just a test: ErrorHandler \n";
+	// Not implemented
+	//status = RM_ErrorHandler(id, 0, "string"); // void function
+	//fprintf(stderr, "OK, just a test: ErrorHandler \n");
 	//-------
-	BMI_ErrorMessage("my error");  // void function
-	fprintf(stderr, "OK, just a test: ErrorMessage \n";
+	status = RM_ErrorMessage(id, "My error message");  
+	fprintf(stderr, "OK, just a test: ErrorMessage %d\n", status);
 	//-------
-	BMI_LogMessage("Log message");  // void method
-	fprintf(stderr, "LogMessage \n";
+	status = RM_LogMessage(id, "My Log message"); 
+	fprintf(stderr, "LogMessage  %d\n", status);
 	//-------
-	BMI_OutputMessage("Output message");  // void method
-	fprintf(stderr, "OutputMessage \n";
+	status = RM_OutputMessage(id, "My Output message");  // void method
+	fprintf(stderr, "OutputMessage  %d\n", status);
 	//-------
-	BMI_ScreenMessage("Screen message\n");  // void method
-	fprintf(stderr, "ScreenMessage \n";
+	status = RM_ScreenMessage(id, "My Screen message\n");  // void method
+	fprintf(stderr, "ScreenMessage  %d\n", status);
 	//-------
-	status = BMI_StateSave(1);
-	fprintf(stderr, "StateSave \n";
+	status = RM_WarningMessage(id, "My warning message");  // void method
+	fprintf(stderr, "WarningMessage %d\n", status);
 	//-------
-	status = BMI_StateApply(1);
-	fprintf(stderr, "StateApply \n";
+	status = RM_StateSave(id, 1);
+	fprintf(stderr, "StateSave %d\n", status);
 	//-------
-	status = BMI_StateDelete(1);
-	fprintf(stderr, "StateDelete \n";
+	status = RM_StateApply(id, 1);
+	fprintf(stderr, "StateApply %d\n", status);
 	//-------
-	BMI_WarningMessage("Warning message");  // void method
-	fprintf(stderr, "WarningMessage \n";
+	status = RM_StateDelete(id, 1);
+	fprintf(stderr, "StateDelete %d\n", status);
 	//
 	// BMI Methods
 	//
-	str = BMI_GetComponentName();
-	fprintf(stderr, "GetComponentName \n";
+	status = BMI_GetComponentName(id, string, MAX_LENGTH);
+	fprintf(stderr, "GetComponentName %s\n", string);
 	//-------
-	d = BMI_GetCurrentTime();
-	fprintf(stderr, "GetCurrentTime \n";
+	d = BMI_GetCurrentTime(id);
+	fprintf(stderr, "GetCurrentTime %f\n", d);
 	//-------
-	d = BMI_GetEndTime();
-	fprintf(stderr, "GetEndTime \n";
+	d = BMI_GetEndTime(id);
+	fprintf(stderr, "GetEndTime %f\n", d);
 	//-------
-    n = BMI_GetGridRank(0);
-	fprintf(stderr, "GetGridRank \n";
+    n = BMI_GetGridRank(id, 0);
+	fprintf(stderr, "GetGridRank %d\n", n);
 	//-------
-    n = BMI_GetGridSize(0);
-	fprintf(stderr, "GetGridSize \n";
+    n = BMI_GetGridSize(id, 0);
+	fprintf(stderr, "GetGridSize %d\n", n);
 	//-------
-    std::string gtype = BMI_GetGridType(0);
-	fprintf(stderr, "GetGridType \n";
+    status = BMI_GetGridType(id, 0, string, MAX_LENGTH);
+	fprintf(stderr, "GetGridType %s\n", string);
 	//-------
-	n = BMI_GetInputItemCount();
-	fprintf(stderr, "GetInputItemCount \n";
+	n = BMI_GetInputItemCount(id);
+	fprintf(stderr, "GetInputItemCount %d\n", n);
 	//-------
-	str_vector = BMI_GetInputVarNames();
-	fprintf(stderr, "GetInputVarNames \n";
+	for (i = 0; i < n; i++)
+	{
+		status = BMI_GetInputVarName(id, string, i);
+		//fprintf(stderr, "BMI_GetInputVarName %s\n", string);
+	}
+	fprintf(stderr, "GetInputVarNames %d\n", status);
 	//-------
-	n = BMI_GetOutputItemCount();
-	fprintf(stderr, "GetOutputItemCount \n";
+	n = BMI_GetOutputItemCount(id);
+	fprintf(stderr, "GetOutputItemCount %d\n", n);
 	//-------
-	str_vector = BMI_GetOutputVarNames();
-	fprintf(stderr, "GetOutputVarNames \n";
+	for (i = 0; i < n; i++)
+	{
+		status = BMI_GetOutputVarName(id, string, i);
+		//fprintf(stderr, "BMI_GetOutputVarName %s\n", string);
+	}
+	fprintf(stderr, "GetOutputVarNames %d\n", n);
 	//-------
-	d = BMI_GetTimeStep();
-	fprintf(stderr, "GetTimeStep \n";
+	d = BMI_GetTimeStep(id);
+	fprintf(stderr, "GetTimeStep %f\n", d);
 	//-------
-	str = BMI_GetTimeUnits();
-	fprintf(stderr, "GetTimeUnits \n";
+	status = BMI_GetTimeUnits(id, string, MAX_LENGTH);
+	fprintf(stderr, "GetTimeUnits %s\n", string);
 	//-------
-	BMI_GetValue("solution_saturation_index_Calcite", v_nxyz);
-	fprintf(stderr, "GetValue \n";
+	status = BMI_GetValueDouble(id, "solution_saturation_index_Calcite", v_nxyz);
+	fprintf(stderr, "GetValue solution_saturation_index_Calcite %f\n", v_nxyz[0]);
 	//-------
-	n = BMI_GetVarItemsize("solution_saturation_index_Calcite");
-	fprintf(stderr, "GetVarItemsize \n";
+	n = BMI_GetVarItemsize(id, "solution_saturation_index_Calcite");
+	fprintf(stderr, "GetVarItemsize %d\n", n);
 	//-------
-	n = BMI_GetVarNbytes("solution_saturation_index_Calcite");
-	fprintf(stderr, "GetVarNbytes \n";
+	n = BMI_GetVarNbytes(id, "solution_saturation_index_Calcite");
+	fprintf(stderr, "GetVarNbytes %d\n", n);
 	//-------
-	str = BMI_GetVarType("solution_saturation_index_Calcite");
-	fprintf(stderr, "GetVarType \n";
+	status = BMI_GetVarType(id, "solution_saturation_index_Calcite", string, MAX_LENGTH);
+	fprintf(stderr, "GetVarType %s\n", string);
 	//-------
-	str = BMI_GetVarUnits("solution_saturation_index_Calcite");
-	fprintf(stderr, "GetVarUnits \n";
+	status = BMI_GetVarUnits(id, "solution_saturation_index_Calcite", string, MAX_LENGTH);
+	fprintf(stderr, "GetVarUnits %s\n", string);
 	//-------
 	//BMI_Initialize(YAML_filename);
 	// See above
-	BMI_SetValue("Time", 1.0);    // void method
-	fprintf(stderr, "SetValue\n";
+	status = BMI_SetValueDouble(id, "Time", 1.0);    // void method
+	fprintf(stderr, "SetValue %d\n", status);
 	//-------
-	BMI_Update();    // void method
-	fprintf(stderr, "Update\n";
+	status = BMI_Update(id);    
+	fprintf(stderr, "Update %d\n", status);
 	//-------	
- 	BMI_UpdateUntil(864000.0);      // void function
-	fprintf(stderr, "UpdateUntil\n";
+ 	status = BMI_UpdateUntil(id, 864000.0);      
+	fprintf(stderr, "UpdateUntil %d\n", status);
 
-	fprintf(stderr, "AddOutputVars\n";
-	str_vector = BMI_GetOutputVarNames();
-	for (size_t i = 0; i < str_vector.size(); i++)
-	{
-		int	itemsize = BMI_GetVarItemsize(str_vector[i]);
-		int	nbytes = BMI_GetVarNbytes(str_vector[i]);
-		std::string	vtype = BMI_GetVarType(str_vector[i]);
-		if (itemsize == 0) itemsize++;
-		if (nbytes == 0) nbytes++;
-		int dim = nbytes / itemsize;
-		if (vtype == "double")
-		{
-			if (dim == 1)
-			{
-				double dest;
-				BMI_GetValue(str_vector[i], dest);
-				fprintf(stderr, "     " << str_vector[i] << "  " << dest << std::endl;
-			}
-			else
-			{
-				std::vector<double> dest;
-				BMI_GetValue(str_vector[i], dest);
-				fprintf(stderr, "     " << str_vector[i] << "  " << dest[0] << std::endl;
-			}
-		}
-		else if (vtype == "int")
-		{
-			if (dim == 1)
-			{
-				int dest;
-				BMI_GetValue(str_vector[i], dest);
-				fprintf(stderr, "     " << str_vector[i] << "  " << dest << std::endl;
-			}
-			else
-			{
-				std::vector<int> dest;
-				BMI_GetValue(str_vector[i], dest);
-				fprintf(stderr, "     " << str_vector[i] << "  " << dest[0] << std::endl;
-			}
-		} else if (vtype == "bool")
-		{
-			if (dim == 1)
-			{
-				bool dest;
-				BMI_GetValue(str_vector[i], dest);
-				fprintf(stderr, "     " << str_vector[i] << "  " << dest << std::endl;
-			}
-		}
-		else if (vtype == "std::string")
-		{
-			if (dim == 1)
-			{
-				std::string dest;
-				BMI_GetValue(str_vector[i], dest);
-				fprintf(stderr, "     " << str_vector[i] << "  " << dest << std::endl;
-			}
-			else
-			{
-				std::vector<std::string> dest;
-				BMI_GetValue(str_vector[i], dest);
-				fprintf(stderr, "     " << str_vector[i] << "  " << dest[0] << std::endl;
-			}
-		}
-	}
-
-
+	status = BMI_GetVarType(id, "SelectedOutputOn", string, MAX_LENGTH);
+	fprintf(stderr, "SelectedOutputOn type: %s\n", string);
 	//-------	
-	BMI_MpiWorkerBreak();
-	BMI_Finalize();    // void method
-	fprintf(stderr, "Finalize \n";
+#ifdef USE_MPI
+	status = RM_MpiWorkerBreak(id);
+	fprintf(stderr, "RM_MpiWorkerBreak %d\n", status);
+#endif
+	status = BMI_Finalize(id);    // void method
+	fprintf(stderr, "Finalize %d\n", status);
 	//Should be private: status = BMI_ReturnHandler();
 	//TODO status = BMI_MpiAbort();
 	//TODO status = BMI_SetMpiWorkerCallbackC();
 	//TODO status = BMI_SetMpiWorkerCallbackCookie();
 	fprintf(stderr, "Success.\n");
 	return;
-#endif
 }

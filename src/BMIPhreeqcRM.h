@@ -1199,6 +1199,8 @@ public:
     saturation indices; list includes only the specified saturation indices. Default False.
     */
     void AddOutputVars(std::string option, std::string def) override;
+
+    IRM_RESULT SetLanguage(const char* string) { this->language = string; return IRM_OK; };
     // data
     std::string language;
     // typedef void (*VarFunction)(BMIPhreeqcRM* brm_ptr); // function pointer type

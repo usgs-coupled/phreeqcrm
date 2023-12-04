@@ -63,6 +63,7 @@ void BMIVariant::CopyScalars(BMIVariant& bv)
 	this->ctype = bv.ctype;
 	this->ftype = bv.ftype;
 	this->ptype = bv.ptype;
+	this->clangtype = bv.clangtype;
 }
 void BMIVariant::Clear()
 {

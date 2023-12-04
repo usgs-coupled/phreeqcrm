@@ -209,7 +209,7 @@
     !> Array of size @a n.
     !> @param p_atm         Array of pressures to apply to the SOLUTIONs, in atm. 
     !> Array of size n.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @retval   id number of the utility IPhreeqc instance. 
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>

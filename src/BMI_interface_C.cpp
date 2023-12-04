@@ -24,6 +24,29 @@
 //	while (sofar++ < len)
 //		*dest++ = ' ';
 //}
+static IRM_RESULT
+rmpadfstring(char* dest, const char* src, int len)
+{
+	size_t sofar;
+	std::string str = src;
+	if (len == 0) 
+	{
+		return IRM_INVALIDARG;
+	}
+	size_t l = (size_t)len - 1;
+	if (str.size() < l)
+	{
+		memcpy(dest, (void*)str.c_str(), str.size());
+		dest[str.size()] = '\0';
+		return IRM_OK;
+	}
+	else
+	{
+		memcpy(dest, (void*)str.front(), l);
+		dest[l] = '\0';
+		return IRM_INVALIDARG;
+	}
+}
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 int
@@ -33,7 +56,17 @@ BMI_Create(int* nxyz, int* nthreads)
 	//
 	// Creates reaction module, called by root and MPI workers
 	//
-	return BMIPhreeqcRM::CreateBMIModule(*nxyz, MPI_Comm_f2c(*nthreads));
+	int id = BMIPhreeqcRM::CreateBMIModule(*nxyz, MPI_Comm_f2c(*nthreads));
+	// Returns ith output variable name
+	if (id >= 0)
+	{
+		BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+		if (bmirm_ptr)
+		{
+			IRM_RESULT status = bmirm_ptr->SetLanguage("C");
+		}
+	}
+	return id;
 }
 #else
 /* ---------------------------------------------------------------------- */
@@ -44,7 +77,16 @@ BMI_Create_default()
 	//
 	// Creates reaction module, called by root and MPI workers
 	//
-	return BMIPhreeqcRM::CreateBMIModule();
+	int id = BMIPhreeqcRM::CreateBMIModule();
+	if (id >= 0)
+	{
+		BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+		if (bmirm_ptr)
+		{
+			IRM_RESULT status = bmirm_ptr->SetLanguage("C");
+		}
+	}
+	return id;
 }
 /* ---------------------------------------------------------------------- */
 int
@@ -54,10 +96,19 @@ BMI_Create(int nxyz, int nthreads)
 	//
 	// Creates reaction module, called by root and MPI workers
 	//
-	return BMIPhreeqcRM::CreateBMIModule(nxyz, nthreads);
+	int id = BMIPhreeqcRM::CreateBMIModule(nxyz, nthreads);
+	if (id >= 0)
+	{
+		BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+		if (bmirm_ptr)
+		{
+			IRM_RESULT status = bmirm_ptr->SetLanguage("C");
+		}
+	}
+	return id;
 }
 #endif
-int
+IRM_RESULT
 BMI_Destroy(int id)
 /* ---------------------------------------------------------------------- */
 {
@@ -65,6 +116,12 @@ BMI_Destroy(int id)
 	// Creates reaction module, called by root and MPI workers
 	//
 	return BMIPhreeqcRM::DestroyBMIModule(id);
+}
+IRM_RESULT
+BMI_Finalize(int id)
+/* ---------------------------------------------------------------------- */
+{
+	return BMI_Destroy(id);
 }
 IRM_RESULT        
 BMI_AddOutputVars(int id, char* option_in, char* def_in)
@@ -76,7 +133,14 @@ IRM_RESULT
 BMI_GetComponentName(int id, char* chem_name, int l1)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_BMI_GetComponentName(&id, chem_name, &l1);
+	// Returns ith output variable name
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string str = bmirm_ptr->GetComponentName();
+		return rmpadfstring(chem_name, str.c_str(), l1);
+	}
+	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
 double
@@ -92,7 +156,46 @@ BMI_GetEndTime(int id)
 {
 	return RMF_BMI_GetCurrentTime(&id);
 }
-
+/* ---------------------------------------------------------------------- */
+int 
+BMI_GetGridRank(int id, int n)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns ith output variable name
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		return bmirm_ptr->GetGridRank(n);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+int
+BMI_GetGridSize(int id, int n)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns ith output variable name
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		return bmirm_ptr->GetGridSize(n);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+BMI_GetGridType(int id, int n, char* string, int l)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns ith output variable name
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string str = bmirm_ptr->GetGridType(n);
+		return rmpadfstring(string, str.c_str(), l);
+	}
+	return IRM_BADINSTANCE;
+}
 /* ---------------------------------------------------------------------- */
 int        
 BMI_GetInputItemCount(int id)
@@ -232,10 +335,16 @@ BMI_GetTimeStep(int id)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-BMI_GetTimeUnits(int id, char* units, int* l1)
+BMI_GetTimeUnits(int id, char* units, int l1)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_BMI_GetTimeUnits(&id, units, l1);
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = bmirm_ptr->GetTimeUnits();
+		return	rmpadfstring(units, name.c_str(), l1);
+	}
+	return IRM_BADINSTANCE;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -354,14 +463,26 @@ IRM_RESULT
 BMI_GetVarType(int id, char* var, char* vtype, int l1)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_BMI_GetVarType(&id, var, vtype, &l1);
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = bmirm_ptr->GetVarType(var);
+		return	rmpadfstring(vtype, name.c_str(), l1);
+	}
+	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 BMI_GetVarUnits(int id, char* var, char* units, int l1)
 /* ---------------------------------------------------------------------- */
 {
-	return RMF_BMI_GetVarUnits(&id, var, units, &l1);
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = bmirm_ptr->GetVarUnits(var);
+		return	rmpadfstring(units, name.c_str(), l1);
+	}
+	return IRM_BADINSTANCE;
 }
 #ifdef USE_YAML
 /* ---------------------------------------------------------------------- */
