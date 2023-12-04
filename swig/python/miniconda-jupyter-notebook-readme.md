@@ -18,17 +18,12 @@ Install miniconda (https://docs.conda.io/en/latest/miniconda.html)
 
 #### Create phreeqcrm environment:
 ```
-conda create --name phreeqcrm python=3.11 --yes
+conda create --name phreeqcrm python --yes
 ```
 
 #### Activate phreeqcrm environment
 ```
 conda activate phreeqcrm
-```
-
-#### Install prerequisites (this will become unnecessary when on https://pypi.org)
-```
-conda install numpy PyYAML --yes
 ```
 
 #### Install matplotlib (optional but recommended)
@@ -38,7 +33,7 @@ conda install matplotlib --yes
 
 #### Install phreeqcrm
 ```
-pip install -i https://test.pypi.org/simple/ phreeqcrm
+conda install -c conda-forge phreeqcrm --yes
 ```
 
 #### Install Jupyter Notebook
@@ -63,6 +58,21 @@ jupyter notebook
 Kernel -> Restart Kernel and Run All Cells... -> Restart
 ```
 
+#### To close and shutdown notebook
+```
+File -> Close and Shut Down Notebook -> Ok
+```
+
+### Shutdown jupyter
+```
+File -> Shut Down -> Shut Down
+```
+
+## To remove phreeqcrm environment
+```
+conda remove --name phreeqcrm --all
+```
+
 ## Uninstall miniconda
 (see https://stackoverflow.com/questions/29596350/how-to-uninstall-mini-conda-python)
 
@@ -84,5 +94,6 @@ anaconda-clean --yes
 ```
 
 #### Uninstall Miniconda
-
-Open Control Panel -> Programs -> Uninstall a program and select 'miniconda``
+```
+Open Control Panel -> Programs -> Uninstall a program and select 'miniconda'
+```
