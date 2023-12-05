@@ -86,9 +86,9 @@
 !> <PRE>
 !> integer nthreads = 0
 !> integer nxyz
-!> nxyz = GetGridCellCountYAML("myfile.yaml");
-!> status = RM_Create(nxyz, nthreads);
-!> status = RM_InitializeYAML("myfile.yaml");
+!> nxyz = GetGridCellCountYAML("myfile.yaml")
+!> status = RM_Create(nxyz, nthreads)
+!> status = RM_InitializeYAML("myfile.yaml")
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly

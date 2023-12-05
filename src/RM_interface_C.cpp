@@ -661,6 +661,14 @@ int RM_GetCurrentSelectedOutputUserNumber(int id)
 	}
 	return IRM_BADINSTANCE;
 }
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetDensity(int id, double* d)
+/* ---------------------------------------------------------------------- */
+{
+	return RM_GetDensityCalculated(id, d);
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RM_GetDensityCalculated(int id, double * d)
@@ -950,6 +958,13 @@ RM_GetPressure(int id, double* pressure)
 /* ---------------------------------------------------------------------- */
 {
 	return RMF_GetPressure(&id, pressure);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSaturation(int id, double* sat)
+/* ---------------------------------------------------------------------- */
+{
+	return RM_GetSaturationCalculated(id, sat);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT

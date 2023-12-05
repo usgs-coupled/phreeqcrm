@@ -569,7 +569,74 @@ status = RM_GetIthSpeciesConcentration(id, 0, c);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
 */
 IRM_DLL_EXPORT IRM_RESULT RM_GetIthSpeciesConcentration(int id, int i, double* c);
+/**
+Transfer the concentrations for one component given by the vector @a c
+to each reaction cell.
+Units of concentration for @a c are defined by @ref RM_SetUnitsSolution.
+It is required that  @a RM_SetIthConcentration be called for each component
+in the system before @ref RM_RunCells is called.
+@param id               The instance @a id returned from @ref RM_Create.
+@param i                Zero-based index for the component to transfer.
+Indices refer to the order produced by @ref RM_GetComponents. The total number
+of components is given by @ref RM_GetComponentCount.
+@param c                Array of concentrations to transfer to the reaction cells.
+Dimension of the vector is @a nxyz, where @a nxyz is the number of
+user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are ignored.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetComponentCount,
+@ref RM_GetComponents,
+@ref RM_SetConcentrations.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+status = RM_SetIthConcentration(id, i, c); ! repeat for all components
+...
+status = phreeqc_rm.RunCells(id);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT IRM_RESULT RM_SetIthConcentration(int id, int i, double* c);
+/**
+Transfer the concentrations for one aqueous species given by the vector
+@a c to each reaction cell.
+Units of concentration for @a c are mol/L. To set species concentrations,
+@ref RM_SetSpeciesSaveOn must be set to @a true. It is required that
+@a RM_SetIthSpeciesConcentration be called for each aqueous species in the
+system before @ref RM_RunCells is called. This method is for use with
+multicomponent diffusion calculations.
+@param id               The instance @a id returned from @ref RM_Create.
+@param i                Zero-based index for the species to transfer. Indices
+refer to the order produced by @ref RM_GetSpeciesNames. The total number of
+species is given by @ref RM_GetSpeciesCount.
+@param c                Array of concentrations to transfer to the reaction cells.
+Dimension of the array is @a nxyz, where @a nxyz is the number of user grid
+cells (@ref RM_GetGridCellCount). Values for inactive cells are ignored.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_FindComponents,
+@ref RM_GetSpeciesCount,
+@ref RM_GetSpeciesNames,
+@ref RM_SpeciesConcentrations2Module,
+@ref RM_SetSpeciesSaveOn.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+status = RM_SetIthSpeciesConcentration(id, i, c); ! repeat for all species
+...
+status = RM_RunCells(id);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT IRM_RESULT RM_SetIthSpeciesConcentration(int id, int i, double* c);
 
 /**
@@ -636,6 +703,10 @@ status = RM_GetDensityCalculated(id, density);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetDensityCalculated(int id, double *density);
+/**
+Deprecated equivalent of RM_GetDensityCalculated.
+*/
+IRM_DLL_EXPORT IRM_RESULT RM_GetDensity(int id, double* density);
 
 
 /**
@@ -1163,6 +1234,32 @@ Called by root and (or) workers.
 IRM_DLL_EXPORT int        RM_GetGridCellCount(int id);
 
 #ifdef USE_YAML
+/**
+@a GetGridCellCountYAML will read a YAML file and extract the value
+of GridCellCount, which can be used to construct a PhreeqcRM
+instance. @ref RM_Create requires a value for the number of cells.
+If a GUI or preprocessor is used to write a YAML file to initialize
+PhreeqcRM, the number of cells can be written to the YAML file
+and extracted with this method.
+@param config_file         String containing the YAML file name.
+@retval Number of grid cells specified in the YAML file; returns
+zero if GridCellCount is not defined.
+@see @ref RM_Create, and @ref RM_InitializeYAML.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+int nthreads = 0;
+int nxyz;
+nxyz = RM_GetGridCellCountYAML("myfile.yaml");
+status = RM_Create(nxyz, nthreads);
+status = RM_InitializeYAML("myfile.yaml");
+</PRE>
+</CODE>
+@endhtmlonly
+@par Sequence:
+Called before RM_Create.
+*/
 IRM_DLL_EXPORT int        RM_GetGridCellCountYAML(const char* config_file);
 #endif
 /**
@@ -1359,7 +1456,50 @@ for (isel = 0; isel < RM_GetSelectedOutputCount(id); isel++)
 Called by root.
  */
 IRM_DLL_EXPORT int        RM_GetNthSelectedOutputUserNumber(int id, int n);
+/**
+Transfer current porosities to the array given in the argument list (@a porosity).
+Porosity is not changed by PhreeqcRM; the values are either the default values
+or the values set by the last call to @ref RM_SetPorosity.
+@param id                The instance @a id returned from @ref RM_Create.
+@param porosity           Array to receive the porosities. Dimension of the array
+must be @a nxyz, where @a nxyz is the number of user grid cells
+(@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+@retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+porosity = (double*)malloc(nxyz*sizeof(double));
+status = RM_GetPorosity(id, porosity);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
 IRM_DLL_EXPORT IRM_RESULT RM_GetPorosity(int id, double* porosity);
+/**
+Transfer current pressures to the array given in the argument list (@a pressure).
+Pressure is not usually calculated by PhreeqcRM; the values are either the default values
+or the values set by the last call to @ref RM_SetPressure. Pressures can be calculated
+by PhreeqcRM if a fixed-volume GAS_PHASE is used.
+@param id              The instance @a id returned from @ref RM_Create.
+@param pressure        Array to receive the porosities. Dimension of the array must be
+@a nxyz, where @a nxyz is the number of user grid cells (@ref RM_GetGridCellCount).
+Values for inactive cells are set to 1e30.
+@retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+pressure = (double*)malloc(nxyz*sizeof(double));
+status = RM_GetPressure(id, pressure);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
 IRM_DLL_EXPORT IRM_RESULT RM_GetPressure(int id, double* pressure);
 
 /**
@@ -1402,6 +1542,10 @@ status = RM_GetSaturationCalculated(id, sat_calc);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT               RM_GetSaturationCalculated(int id, double *sat_calc);
+/**
+Deprecated equivalent of RM_GetSaturationCalculated.
+*/
+IRM_DLL_EXPORT IRM_RESULT               RM_GetSaturation(int id, double* sat_calc);
 
 /**
 Populates an array with values from the current selected-output definition. @ref RM_SetCurrentSelectedOutputUserNumber
@@ -2164,7 +2308,31 @@ status = RM_GetStartCell(id, sc);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetStartCell(int id, int *sc);
-
+/**
+Returns an array of temperatures (@a temperature) from the reaction module.
+Reactions do not change the temperature, so the temperatures are either the
+temperatures at initialization, or the values set with the last call to
+@ref RM_SetTemperature.
+@param id               The instance @a id returned from @ref RM_Create.
+@param temperature      Allocatable array to receive the temperatures.
+Dimension of the array must be @a nxyz, where @a nxyz is the number of
+user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are
+set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_SetTemperature.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+temperature = (double*)malloc(nxyz*sizeof(double));
+status = RM_GetTemperature(id, temperature);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT IRM_RESULT RM_GetTemperature(int id, double* temperature);
 /**
 Retrieves the surface name (such as "Hfo") that corresponds with
@@ -2395,6 +2563,25 @@ status = RM_LogMessage(id, str);
 Called by root and (or) workers.
  */
 IRM_DLL_EXPORT double     RM_GetTimeStep(int id);
+/**
+Transfer current viscosities to the array given in the argument list (@a viscosity).
+@param id                   The instance @a id returned from @ref RM_Create.
+@param viscosity            Allocated array to receive the viscosities. Dimension of
+the array must be @a nxyz, where @a nxyz is the number of user grid cells
+(@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+@retval IRM_RESULT          0 is success, negative is failure (See @ref RM_DecodeError).
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+viscosity = (double*)malloc(nxyz*sizeof(double));
+status = RM_GetViscosity(id, viscosity);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root.
+*/
 IRM_DLL_EXPORT IRM_RESULT RM_GetViscosity(int id, double* viscosity);
 #ifdef USE_YAML
 /**
@@ -2570,13 +2757,264 @@ IRM_DLL_EXPORT IRM_RESULT RM_InitialPhreeqc2Concentrations(
                 int *boundary_solution1,
                 int *boundary_solution2,
                 double *fraction1);
-
+/**
+Transfer SOLUTION definitions from the InitialPhreeqc instance to the reaction-
+module workers.
+@a solutions is used to select SOLUTION definitions for each
+cell of the model. @a solutions is dimensioned @a nxyz, where @a nxyz is the
+number of grid cells in the  user's model (@ref RM_GetGridCellCount).
+@param id           The instance @a id returned from @ref RM_Create.
+@param solutions    Array of SOLUTION index numbers that refer to
+definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values
+are ignored, resulting in no transfer of a SOLUTION definition for that cell.
+(Note that all cells must have a SOLUTION definition, which could be defined
+by other calls to @a RM_InitialSolutions2Module, @ref RM_InitialPhreeqc2Module,
+or @ref RM_InitialPhreeqcCell2Module.)
+@retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_InitialEquilibriumPhases2Module,
+@ref RM_InitialExchanges2Module,
+@ref RM_InitialGasPhases2Module,
+@ref RM_InitialKinetics2Module,
+@ref RM_InitialSolidSolutions2Module,
+@ref RM_InitialSurfaces2Module,
+@ref RM_InitialPhreeqc2Module,
+@ref RM_InitialPhreeqcCell2Module.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+solutions = (double*)malloc(nxyz*sizeof(double));
+for (i=0; i < nxyz; i++) solutions[i] = 1;
+status = RM_InitialSolutions2Module(id, solutions);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolutions2Module(int id, int* in);
+/**
+Transfer EQUILIBRIUM_PHASES definitions from the InitialPhreeqc instance to the
+reaction-module workers.
+@a equilibrium_phases is used to select EQUILIBRIUM_PHASES definitions for each
+cell of the model. @a equilibrium_phases is dimensioned @a nxyz, where @a nxyz is
+the number of grid cells in the  user's model (@ref RM_GetGridCellCount).
+@param id                 The instance @a id returned from @ref RM_Create.
+@param equilibrium_phases Array of EQUILIBRIUM_PHASES index numbers that refer to
+definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values are
+ignored, resulting in no transfer of an EQUILIBRIUM_PHASES definition for that cell.
+(Note that an EQUILIBRIUM_PHASES definition for a cell could be defined by other
+calls to @a RM_InitialEquilibriumPhases2Module, @ref RM_InitialPhreeqc2Module, or
+@ref RM_InitialPhreeqcCell2Module.)
+@retval IRM_RESULT    0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_InitialSolutions2Module,
+@ref RM_InitialExchanges2Module,
+@ref RM_InitialGasPhases2Module,
+@ref RM_InitialKinetics2Module,
+@ref RM_InitialSolidSolutions2Module,
+@ref RM_InitialSurfaces2Module,
+@ref RM_InitialPhreeqc2Module,
+@ref RM_InitialPhreeqcCell2Module.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+equilibrium_phases = (double*)malloc(nxyz*sizeof(double));
+for (i=0; i < nxyz; i++) equilibrium_phases[i] = 1;
+status = RM_InitialEquilibriumPhases2Module(id, equilibrium_phases);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT  IRM_RESULT RM_InitialEquilibriumPhases2Module(int id, int* in);
+/**
+Transfer EXCHANGE definitions from the InitialPhreeqc instance to the
+reaction-module workers.
+@a exchanges is used to select EXCHANGE definitions for each cell of the model.
+@a exchanges is dimensioned @a nxyz, where @a nxyz is the number of grid cells
+in the user's model (@ref RM_GetGridCellCount).
+@param id           The instance @a id returned from @ref RM_Create.
+@param exchanges    Vector of EXCHANGE index numbers that refer to
+definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values
+are ignored, resulting in no transfer of an EXCHANGE definition for that cell.
+(Note that an EXCHANGE definition for a cell could be defined by other
+calls to @a RM_InitialExchanges2Module, @ref RM_InitialPhreeqc2Module, or
+@ref RM_InitialPhreeqcCell2Module.)
+@retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_InitialSolutions2Module,
+@ref RM_InitialEquilibriumPhases2Module,
+@ref RM_InitialGasPhases2Module,
+@ref RM_InitialKinetics2Module,
+@ref RM_InitialSolidSolutions2Module,
+@ref RM_InitialSurfaces2Module,
+@ref RM_InitialPhreeqc2Module,
+@ref RM_InitialPhreeqcCell2Module.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+exchanges = (double*)malloc(nxyz*sizeof(double));
+for (i=0; i < nxyz; i++) exchanges[i] = 1;
+status = RM_InitialExchanges2Module(id, exchanges);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT  IRM_RESULT RM_InitialExchanges2Module(int id, int* in);
+/**
+Transfer SURFACE definitions from the InitialPhreeqc instance to the
+reaction-module workers.
+@a surfaces is used to select SURFACE definitions for each cell of the model.
+@a surfaces is dimensioned @a nxyz, where @a nxyz is the number of grid cells
+in the user's model (@ref RM_GetGridCellCount).
+@param id          The instance @a id returned from @ref RM_Create.
+@param surfaces    Array of SURFACE index numbers that refer to
+definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values
+are ignored, resulting in no transfer of a SURFACE definition for that cell.
+(Note that an SURFACE definition for a cell could be defined by other
+calls to @a RM_InitialSurfaces2Module, @ref RM_InitialPhreeqc2Module, or
+@ref RM_InitialPhreeqcCell2Module.)
+@retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_InitialSolutions2Module,
+@ref RM_InitialEquilibriumPhases2Module,
+@ref RM_InitialExchanges2Module,
+@ref RM_InitialGasPhases2Module,
+@ref RM_InitialKinetics2Module,
+@ref RM_InitialSolidSolutions2Module,
+@ref RM_InitialPhreeqc2Module,
+@ref RM_InitialPhreeqcCell2Module.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+surfaces = (double*)malloc(nxyz*sizeof(double));
+for (i=0; i < nxyz; i++) surfaces[i] = 1;
+status = RM_InitialSurfaces2Module(id, surfaces);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT  IRM_RESULT RM_InitialSurfaces2Module(int id, int* in);
+/**
+Transfer GAS_PHASE definitions from the InitialPhreeqc instance to the
+reaction-module workers.
+@a gas_phases is used to select GAS_PHASE definitions for each cell of the model.
+@a gas_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells
+in the user's model (@ref RM_GetGridCellCount).
+@param id           The instance @a id returned from @ref RM_Create.
+@param gas_phases   Vector of GAS_PHASE index numbers that refer to
+definitions in the InitialPhreeqc instance.Size is @a nxyz. Negative values are
+ignored, resulting in no transfer of a GAS_PHASE definition for that cell.
+(Note that an GAS_PHASE definition for a cell could be defined by other
+calls to @a RM_InitialGasPhases2Module, @ref RM_InitialPhreeqc2Module, or
+@ref RM_InitialPhreeqcCell2Module.)
+@retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_InitialSolutions2Module,
+@ref RM_InitialEquilibriumPhases2Module,
+@ref RM_InitialExchanges2Module,
+@ref RM_InitialKinetics2Module,
+@ref RM_InitialSolidSolutions2Module,
+@ref RM_InitialSurfaces2Module,
+@ref RM_InitialPhreeqc2Module,
+@ref RM_InitialPhreeqcCell2Module.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+gas_phases = (double*)malloc(nxyz*sizeof(double));
+for (i=0; i < nxyz; i++) gas_phases[i] = 1;
+status = RM_InitialGasPhases2Module(id, gas_phases);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT  IRM_RESULT RM_InitialGasPhases2Module(int id, int* in);
+/**
+Transfer SOLID_SOLUTIONS definitions from the InitialPhreeqc instance to the
+reaction-module workers.
+@a solid_solutions is used to select SOLID_SOLUTIONS definitions for each cell
+of the model. @a solid_solutions is dimensioned @a nxyz, where @a nxyz is the
+number of grid cells in the user's model (@ref RM_GetGridCellCount).
+@param id              The instance @a id returned from @ref RM_Create.
+@param solid_solutions Array of SOLID_SOLUTIONS index numbers that refer to
+definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values
+are ignored, resulting in no transfer of a SOLID_SOLUTIONS definition for that cell.
+(Note that an SOLID_SOLUTIONS definition for a cell could be defined by other
+calls to @a RM_InitialSolidSolutions2Module, @ref RM_InitialPhreeqc2Module, or
+@ref RM_InitialPhreeqcCell2Module.)
+@retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_InitialSolutions2Module,
+@ref RM_InitialEquilibriumPhases2Module,
+@ref RM_InitialExchanges2Module,
+@ref RM_InitialGasPhases2Module,
+@ref RM_InitialKinetics2Module,
+@ref RM_InitialSurfaces2Module,
+@ref RM_InitialPhreeqc2Module,
+@ref RM_InitialPhreeqcCell2Module.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+solid_solutions = (double*)malloc(nxyz*sizeof(double));
+for (i=0; i < nxyz; i++) solid_solutions[i] = 1;
+status = RM_InitialSolidSolutions2Module(id, solid_solutions);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolidSolutions2Module(int id, int* in);
+/**
+Transfer KINETICS definitions from the InitialPhreeqc instance to the
+reaction-module workers.
+@a kinetics is used to select KINETICS definitions for each cell of the model.
+@a kinetics is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the
+user's model (@ref RM_GetGridCellCount).
+@param id          The instance @a id returned from @ref RM_Create.
+@param kinetics    Array of KINETICS index numbers that refer to
+definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values are
+ignored, resulting in no transfer of a KINETICS definition for that cell.
+(Note that an KINETICS definition for a cell could be defined by other
+calls to @a RM_InitialKinetics2Module, @ref RM_InitialPhreeqc2Module, or
+@ref RM_InitialPhreeqcCell2Module.)
+@retval IRM_RESULT  0 is success, negative is failure (See @ref RM_DecodeError).
+@see
+@ref RM_InitialSolutions2Module,
+@ref RM_InitialEquilibriumPhases2Module,
+@ref RM_InitialExchanges2Module,
+@ref RM_InitialGasPhases2Module,
+@ref RM_InitialSolidSolutions2Module,
+@ref RM_InitialSurfaces2Module,
+@ref RM_InitialPhreeqc2Module,
+@ref RM_InitialPhreeqcCell2Module.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+kinetics = (double*)malloc(nxyz*sizeof(double));
+for (i=0; i < nxyz; i++) kinetics[i] = 1;
+status = RM_InitialKinetics2Module(id, kinetics);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT  IRM_RESULT RM_InitialKinetics2Module(int id, int* in);
 /**
 Transfer solutions and reactants from the InitialPhreeqc instance to the reaction-module workers, possibly with mixing.
@@ -3198,6 +3636,9 @@ status = RM_SetDensityUser(id, density);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SetDensityUser(int id, double *density);
+/**
+Deprecated equivalent of RM_SetDensityUser.
+*/
 IRM_DLL_EXPORT IRM_RESULT RM_SetDensity(int id, double* density);
 
 /**
@@ -3865,6 +4306,9 @@ status = RM_SetSaturationUser(id, sat);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_SetSaturationUser(int id, double *sat);
+/**
+Deprecated equivalent of RM_SetSaturationUser.
+*/
 IRM_DLL_EXPORT IRM_RESULT RM_SetSaturation(int id, double* sat);
 /**
 Set the property that controls whether messages are written to the screen.
