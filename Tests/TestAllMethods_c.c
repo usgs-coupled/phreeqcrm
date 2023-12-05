@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "RM_interface_C.h"
 #include "BMI_interface_C.h"
+#include "YAML_interface_C.h"
 #include "IPhreeqc.h"
 //#include "yaml-cpp/yaml.h"
 //#include "YAMLPhreeqcRM.h"
@@ -36,15 +37,30 @@ void TestAllMethods_c()
 	double* v_gas = NULL;
 	int* vi = NULL;
 	int i = 0, nchem = 0, nspec = 0, ncomps = 0, ngas = 0, n_user = -1;
+	int yid;
 	int nrow = -1;
 	double* so = NULL;
 	char string[MAX_LENGTH] = "", string1[MAX_LENGTH] = "", string2[MAX_LENGTH] = "";
 	char YAML_filename[MAX_LENGTH] = "TestAllMethods_c.yaml";
 
+	yid = CreateYAMLPhreeqcRM();
+	// Set GridCellCount
+	status = YAMLSetGridCellCount(yid, nxyz);
+	status = YAMLThreadCount(yid, 3);
+
 #ifdef USE_MPI
 	// MPI
 	int mpi_myself;
 	if (MPI_Comm_rank(MPI_COMM_WORLD, &mpi_myself) != MPI_SUCCESS)
+	{
+		exit(4);
+	}
+	if (mpi_myself == 0)
+	{
+		status = WriteYAMLDoc(yid, YAML_filename);
+		assert(RM_GetGridCellCountYAML(YAML_filename) == nxyz);
+	}
+	if (MPI_Barrier(MPI_COMM_WORLD) != MPI_SUCCESS)  //  make sure yaml is finished being written
 	{
 		exit(4);
 	}
@@ -58,9 +74,11 @@ void TestAllMethods_c()
 	}
 #else
 	// OpenMP or serial
+	status = WriteYAMLDoc(yid, YAML_filename);
 	nxyz = RM_GetGridCellCountYAML(YAML_filename);
 	id = BMI_Create(nxyz, nthreads);
 #endif
+
 	// Use YAML file to initialize
 	BMI_Initialize(id, YAML_filename);   // void function
 	RM_InitializeYAML(id, YAML_filename);

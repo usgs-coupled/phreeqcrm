@@ -241,6 +241,8 @@ set(PhreeqcRM_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/RMVARS.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/VarManager.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/VarManager.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/YAML_interface_C.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/YAML_interface_C.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/YAML_interface_F.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/YAML_interface_F.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/YAMLPhreeqcRM.cpp
@@ -372,6 +374,7 @@ set(PhreeqcRM_Headers
   ${PROJECT_SOURCE_DIR}/src/RM_interface_C.h
   ${PROJECT_SOURCE_DIR}/src/RMVARS.h
   ${PROJECT_SOURCE_DIR}/src/VarManager.h
+  ${PROJECT_SOURCE_DIR}/src/YAML_interface_C.h
   ${PROJECT_SOURCE_DIR}/src/YAML_interface_F.h
   ${PROJECT_SOURCE_DIR}/src/YAMLPhreeqcRM.h
 )
