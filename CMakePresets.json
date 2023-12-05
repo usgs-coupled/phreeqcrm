@@ -7,7 +7,7 @@
   },
   "configurePresets": [
     {
-      "name": "phreeqcrm_devel",
+      "name": "phreeqcrm_dev",
       "hidden": true,
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
@@ -50,8 +50,8 @@
       }
     },
     {
-      "name": "phreeqcrm_devel_darwin",
-      "inherits": "phreeqcrm_devel",
+      "name": "phreeqcrm_dev_darwin",
+      "inherits": "phreeqcrm_dev",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": {
           "type": "PATH",
@@ -65,8 +65,8 @@
       }
     },
     {
-      "name": "phreeqcrm_devel_linux",
-      "inherits": "phreeqcrm_devel",
+      "name": "phreeqcrm_dev_linux",
+      "inherits": "phreeqcrm_dev",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": {
           "type": "PATH",
@@ -80,8 +80,8 @@
       }
     },
     {
-      "name": "phreeqcrm_devel_windows",
-      "inherits": "phreeqcrm_devel",
+      "name": "phreeqcrm_dev_windows",
+      "inherits": "phreeqcrm_dev",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": {
           "type": "PATH",
@@ -751,9 +751,9 @@
   ],
   "buildPresets": [
     {
-      "name": "phreeqcrm_devel_darwin",
+      "name": "phreeqcrm_dev_darwin",
       "configuration": "RelWithDebInfo",
-      "configurePreset": "phreeqcrm_devel_darwin",
+      "configurePreset": "phreeqcrm_dev_darwin",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -761,9 +761,9 @@
       }
     },
     {
-      "name": "phreeqcrm_devel_linux",
+      "name": "phreeqcrm_dev_linux",
       "configuration": "RelWithDebInfo",
-      "configurePreset": "phreeqcrm_devel_linux",
+      "configurePreset": "phreeqcrm_dev_linux",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -771,9 +771,9 @@
       }
     },
     {
-      "name": "phreeqcrm_devel_windows",
+      "name": "phreeqcrm_dev_windows",
       "configuration": "RelWithDebInfo",
-      "configurePreset": "phreeqcrm_devel_windows",
+      "configurePreset": "phreeqcrm_dev_windows",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -951,9 +951,9 @@
   ],
   "testPresets": [
     {
-      "name": "phreeqcrm_devel_darwin",
+      "name": "phreeqcrm_dev_darwin",
       "configuration": "RelWithDebInfo",
-      "configurePreset": "phreeqcrm_devel_darwin",
+      "configurePreset": "phreeqcrm_dev_darwin",
       "output": {"outputOnFailure": true},
       "execution": {"noTestsAction": "error", "stopOnFailure": true},
       "condition": {
@@ -963,9 +963,9 @@
       }
     },
     {
-      "name": "phreeqcrm_devel_linux",
+      "name": "phreeqcrm_dev_linux",
       "configuration": "RelWithDebInfo",
-      "configurePreset": "phreeqcrm_devel_linux",
+      "configurePreset": "phreeqcrm_dev_linux",
       "output": {"outputOnFailure": true},
       "execution": {"noTestsAction": "error", "stopOnFailure": true},
       "condition": {
@@ -975,9 +975,9 @@
       }
     },
     {
-      "name": "phreeqcrm_devel_windows",
+      "name": "phreeqcrm_dev_windows",
       "configuration": "RelWithDebInfo",
-      "configurePreset": "phreeqcrm_devel_windows",
+      "configurePreset": "phreeqcrm_dev_windows",
       "output": {"outputOnFailure": true},
       "execution": {"noTestsAction": "error", "stopOnFailure": true},
       "condition": {

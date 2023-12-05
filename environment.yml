@@ -1,4 +1,4 @@
-name: phreeqcrm_devel
+name: phreeqcrm_dev
 channels:
   - defaults
 dependencies:
