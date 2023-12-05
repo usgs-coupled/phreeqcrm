@@ -506,7 +506,68 @@ status = RM_GetConcentrations(id, c);
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
  */
 IRM_DLL_EXPORT IRM_RESULT RM_GetConcentrations(int id, double *c);
+/**
+Transfer the concentration from each cell for one component to the array given in the
+argument list (@a c). The concentrations are those resulting from the last call
+to @ref RM_RunCells. Units of concentration for @a c are defined by @ref RM_SetUnitsSolution.
+@param id               The instance @a id returned from @ref RM_Create.
+@param i                Zero-based index for the component to retrieve. Indices refer
+to the order produced by @ref RM_GetComponents. The total number of components is given by
+@ref RM_GetComponentCount.
+@param c                Allocated array to receive the component concentrations.
+Dimension of the array must be at least @a nxyz, where @a nxyz is the number of
+user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see    @ref RM_FindComponents,
+@ref RM_GetComponents,
+@ref RM_GetComponentCount,
+@ref RM_GetConcentrations.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+c = (double*)malloc(nxyz * sizeof(double));
+status = RM_RunCells(id);
+status = RM_GetIthConcentration(id, 0, c)
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT IRM_RESULT RM_GetIthConcentration(int id, int i, double* c);
+/**
+Transfer the concentrations for one species from each cell to the array given in the
+argument list (@a c). The concentrations are those resulting from the last call
+to @ref RM_RunCells. Units of concentration for @a c are mol/L.
+To retrieve species concentrations, @ref RM_SetSpeciesSaveOn must be set to 1.
+This method is for use with multicomponent diffusion calculations.
+@param id               The instance @a id returned from @ref RM_Create.
+@param i                Zero-based index for the species to retrieve. Indices refer
+to the order given by @ref RM_GetSpeciesNames. The total number of species is given
+by @ref RM_GetSpeciesCount.
+@param c                Allocated array to receive the species concentrations.
+Dimension of the array must be at least @a nxyz, where @a nxyz is the number of
+user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
+@retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
+@see         @ref RM_FindComponents,
+@ref RM_GetSpeciesCount,
+@ref RM_GetSpeciesNames,
+@ref RM_GetSpeciesConcentrations,
+@ref RM_SetSpeciesSaveOn.
+@par C Example:
+@htmlonly
+<CODE>
+<PRE>
+c = (double*)malloc(nxyz*sizeof(double));
+status = RM_RunCells(id);
+status = RM_GetIthSpeciesConcentration(id, 0, c);
+</PRE>
+</CODE>
+@endhtmlonly
+@par MPI:
+Called by root, workers must be in the loop of @ref RM_MpiWorker.
+*/
 IRM_DLL_EXPORT IRM_RESULT RM_GetIthSpeciesConcentration(int id, int i, double* c);
 IRM_DLL_EXPORT IRM_RESULT RM_SetIthConcentration(int id, int i, double* c);
 IRM_DLL_EXPORT IRM_RESULT RM_SetIthSpeciesConcentration(int id, int i, double* c);
