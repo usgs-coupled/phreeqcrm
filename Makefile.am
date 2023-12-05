@@ -38,15 +38,15 @@ lib_LTLIBRARIES=libphreeqcrm.la
 
 # library sources for libphreeqcrm.la
 libphreeqcrm_la_SOURCES=\
-  	src/BMI_interface_C.cpp\
-  	src/BMI_interface_C.h\
+	src/BMI_interface_C.cpp\
+	src/BMI_interface_C.h\
 	src/BMI_interface_F.cpp\
 	src/BMI_interface_F.h\
-	src/BMIVariant.cpp\
-	src/BMIVariant.h\
 	src/bmi.hxx\
 	src/BMIPhreeqcRM.cpp\
 	src/BMIPhreeqcRM.h\
+	src/BMIVariant.cpp\
+	src/BMIVariant.h\
 	src/IPhreeqcPhast/IPhreeqc/CSelectedOutput.cpp\
 	src/IPhreeqcPhast/IPhreeqc/CSelectedOutput.hxx\
 	src/IPhreeqcPhast/IPhreeqc/CVar.hxx\
@@ -198,8 +198,6 @@ libphreeqcrm_la_SOURCES=\
 	src/IPhreeqcPhast/IPhreeqcPhast.h\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.cpp\
 	src/IPhreeqcPhast/IPhreeqcPhastLib.h\
-	src/BMI_interface_C.cpp\
-	src/BMI_interface_C.h\
 	src/PhreeqcRM.cpp\
 	src/RM_interface_C.cpp\
 	src/RM_interface_F.cpp\
@@ -207,8 +205,8 @@ libphreeqcrm_la_SOURCES=\
 	src/RMVARS.h\
 	src/VarManager.cpp\
 	src/VarManager.h\
-  	src/YAML_interface_C.cpp\
-  	src/YAML_interface_C.h\
+	src/YAML_interface_C.cpp\
+	src/YAML_interface_C.h\
 	src/YAML_interface_F.cpp\
 	src/YAML_interface_F.h\
 	src/YAMLPhreeqcRM.cpp\
@@ -217,9 +215,11 @@ libphreeqcrm_la_SOURCES=\
 
 include_HEADERS=\
 	$(top_builddir)/irm_dll_export.h\
-	$(top_srcdir)/src/BMIVariant.h\
+	$(top_srcdir)/src/BMI_interface_C.h\
+	$(top_srcdir)/src/BMI_interface_F.h\
 	$(top_srcdir)/src/bmi.hxx\
 	$(top_srcdir)/src/BMIPhreeqcRM.h\
+	$(top_srcdir)/src/BMIVariant.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqc.hpp\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/IPhreeqcCallbacks.h\
@@ -234,15 +234,13 @@ include_HEADERS=\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/phreeqcpp/System.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqc/Var.h\
 	$(top_srcdir)/src/IPhreeqcPhast/IPhreeqcPhast.h\
-	$(top_srcdir)/src/BMI_interface_C.h\
-	${top_srcdir}/src/BMI_interface_F.h\
 	$(top_srcdir)/src/IrmResult.h\
 	$(top_srcdir)/src/PhreeqcRM.h\
 	$(top_srcdir)/src/RM_interface_C.h\
 	$(top_srcdir)/src/RMVARS.h\
 	$(top_srcdir)/src/VarManager.h\
-	${top_srcdir}/src/YAML_interface_C.h\
-  	${top_srcdir}/src/YAML_interface_F.h\
+	$(top_srcdir)/src/YAML_interface_C.h\
+	$(top_srcdir)/src/YAML_interface_F.h\
 	$(top_srcdir)/src/YAMLPhreeqcRM.h
 
 FCDEFS=
