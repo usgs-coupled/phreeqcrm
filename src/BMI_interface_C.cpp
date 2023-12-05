@@ -42,7 +42,7 @@ rmpadfstring(char* dest, const char* src, int len)
 	}
 	else
 	{
-		memcpy(dest, (void*)str.front(), l);
+		memcpy(dest, (void*)str.c_str(), l);
 		dest[l] = '\0';
 		return IRM_INVALIDARG;
 	}

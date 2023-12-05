@@ -107,10 +107,16 @@ CLEANFILES =\
 	Species_f90.chem.txt\
 	Species_f90.dmp\
 	Species_f90.log.txt\
+	TestAllMethods_c.chem.txt\
+	TestAllMethods_c.log.txt\
+	TestAllMethods_c.yaml\
 	TestAllMethods_cpp.chem.txt\
 	TestAllMethods_cpp.dump\
 	TestAllMethods_cpp.log.txt\
 	TestAllMethods_cpp.yaml\
+	TestAllMethods_f90.chem.txt\
+	TestAllMethods_f90.dmp\
+	TestAllMethods_f90.log.txt\
 	TestAllMethods_f90.yaml\
 	TestAllMethods_py.chem.txt\
 	TestAllMethods_py.dump\
