@@ -1,3 +1,4 @@
+#ifdef USE_YAML
 #if defined(USE_MPI)
 #include <mpi.h>
 #endif
@@ -858,3 +859,4 @@ void TestAllMethods_c()
 	fprintf(stderr, "Success.\n");
 	return;
 }
+#endif // YAML
