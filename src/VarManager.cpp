@@ -1476,6 +1476,8 @@ void VarManager::SelectedOutputOn_Var()
 		bv.SetBasic("bool", true, true, true, Nbytes, Itemsize);
 		bv.SetTypes("bool", "logical", "bool", "int");
 		bv.SetBVar(rm_ptr->GetSelectedOutputOn());
+		int i_c = bv.GetBVar() ? 1 : 0;
+		bv.SetIVar(i_c);
 		bv.SetInitialized(true);
 	}
 	switch (this->task)
@@ -1484,7 +1486,17 @@ void VarManager::SelectedOutputOn_Var()
 	{
 		int v = rm_ptr->GetSelectedOutputOn();
 		bv.SetBVar(v);
-		bv.SetVoidPtr((void*)(bv.GetBVarPtr()));
+		int i_c = v ? 1 : 0;
+		this->VarExchange.SetIVar(i_c);
+		bv.SetIVar(i_c);
+		if (this->language == "C")
+		{
+			bv.SetVoidPtr((void*)(bv.GetIVarPtr()));
+		}
+		else
+		{
+			bv.SetVoidPtr((void*)(bv.GetBVarPtr()));
+		}
 		this->PointerSet.insert(VARS_myself);
 		this->UpdateSet.insert(VARS_myself);
 		break;
@@ -1496,12 +1508,18 @@ void VarManager::SelectedOutputOn_Var()
 		bool v = rm_ptr->GetSelectedOutputOn();
 		this->VarExchange.SetBVar(v);
 		bv.SetBVar(v);
+		int i_c = v ? 1 : 0;
+		this->VarExchange.SetIVar(i_c);
+		bv.SetIVar(i_c);
 		break;
 	}
 	case VarManager::VAR_TASKS::SetVar:
 	{
 		bool v = this->VarExchange.GetBVar();
 		bv.SetBVar(v);
+		int i_c = v ? 1 : 0;
+		this->VarExchange.SetIVar(i_c);
+		bv.SetIVar(i_c);
 		rm_ptr->SetSelectedOutputOn(v);
 		break;
 	}

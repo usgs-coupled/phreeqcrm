@@ -998,6 +998,7 @@ void* BMIPhreeqcRM::GetValuePtr(const std::string name)
 	RMVARS v_enum = this->var_man->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
+		this->var_man->SetLanguage(this->language);
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
 		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (bv.GetVoidPtr() == NULL)
