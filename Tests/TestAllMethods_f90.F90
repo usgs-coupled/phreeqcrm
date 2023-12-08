@@ -747,6 +747,12 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = bmif_get_output_var_names(id, StringVector)
 	write(*,*) "bmif_get_output_var_names "
 	!-------
+	status = bmif_get_pointable_item_count(id, n)
+	write(*,*) "bmif_get_pointable_item_count "
+	!-------
+	status = bmif_get_pointable_var_names(id, StringVector)
+	write(*,*) "bmif_get_pointable_var_names "
+	!-------
 	status = bmif_get_time_step(id, d)
 	write(*,*) "bmif_get_time_step "
 	!-------

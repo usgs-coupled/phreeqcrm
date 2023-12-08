@@ -70,7 +70,8 @@ method is the mixing of solutions in wells, where it may be necessary to calcula
 (pH for example) or react the mixture to form scale minerals. The code fragments below make a mixture of
 concentrations and then calculate the pH of the mixture.
 @param id            The instance @a id returned from @ref RM_Create.
-@param c             Array of concentrations to be made SOLUTIONs in Utility IPhreeqc. Array storage is equivalent to Fortran (n,ncomps).
+@param c             Array of concentrations to be made SOLUTIONs in Utility IPhreeqc. Array storage is 
+n * ncomps.
 @param n             The number of sets of concentrations.
 @param tc            Array of temperatures to apply to the SOLUTIONs, in degree C. Array of size @a n.
 @param p_atm         Array of pressures to apply to the SOLUTIONs, in atm. Array of size n.
@@ -477,7 +478,7 @@ to accurately calculate solution volume are
 phreeqc.dat, Amm.dat, and pitzer.dat.
 
 @param id               The instance @a id returned from @ref RM_Create.
-@param c                Array to receive the concentrations. Dimension of the array is equivalent to Fortran (@a nxyz, @a ncomps),
+@param c                Array to receive the concentrations. Dimension of the array is @a nxyz * @a ncomps,
 where @a nxyz is the number of user grid cells and @a ncomps is the result of @ref RM_FindComponents or @ref RM_GetComponentCount.
 Values for inactive cells are set to 1e30.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -769,7 +770,7 @@ the initial-phreeqc module.
 @ref RM_FindComponents must be called before @ref RM_GetEquilibriumPhasesName.
 This method may be useful when generating selected output definitions related to equilibrium phases.
 @param id               The instance @a id returned from @ref RM_Create.
-@param num              The number of the equilibrium phase name to be retrieved. Fortran, 1 based.
+@param num              The number of the equilibrium phase name to be retrieved. (0 basedindex.)
 @param name             The equilibrium phase name at number @a num.
 @param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -856,7 +857,7 @@ The exchange names vector is the same length as the exchange species names vecto
 and provides the corresponding exchange site (for example, X corresponing to NaX).
 This method may be useful when generating selected output definitions related to exchangers.
 @param id               The instance @a id returned from @ref RM_Create.
-@param num              The number of the exchange name to be retrieved. Fortran, 1 based.
+@param num              The number of the exchange name to be retrieved. (0 based index.)
 @param name             The exchange name associated with exchange species @a num.
 @param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -918,7 +919,7 @@ that are included in EXCHANGE definitions in the initial-phreeqc module.
 @ref RM_FindComponents must be called before @ref RM_GetExchangeSpeciesName.
 This method may be useful when generating selected output definitions related to exchangers.
 @param id               The instance @a id returned from @ref RM_Create.
-@param num              The number of the exchange species to be retrieved. Fortran, 1 based.
+@param num              The number of the exchange species to be retrieved. (0 based index.)
 @param name             The exchange species name at number @a num.
 @param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -1004,7 +1005,7 @@ the initial-phreeqc module.
 @ref RM_FindComponents must be called before @ref RM_GetGasComponentsName.
 This method may be useful when generating selected output definitions related to gas phases.
 @param id               The instance @a id returned from @ref RM_Create.
-@param num              The number of the gas component name to be retrieved. Fortran, 1 based.
+@param num              The number of the gas component name to be retrieved. (0 based index.)
 @param name             The gas component name at number @a num.
 @param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -1331,7 +1332,7 @@ the initial-phreeqc module.
 @ref RM_FindComponents must be called before @ref RM_GetKineticReactionsName.
 This method may be useful when generating selected output definitions related to kinetic reactions.
 @param id               The instance @a id returned from @ref RM_Create.
-@param num              The number of the kinetic reaction name to be retrieved. Fortran, 1 based.
+@param num              The number of the kinetic reaction name to be retrieved. (0 based index.)
 @param name             The kinetic reaction name at number @a num.
 @param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -1551,7 +1552,7 @@ IRM_DLL_EXPORT IRM_RESULT               RM_GetSaturation(int id, double* sat_cal
 Populates an array with values from the current selected-output definition. @ref RM_SetCurrentSelectedOutputUserNumber
 determines which of the selected-output definitions is used to populate the array.
 @param id               The instance @a id returned from @ref RM_Create.
-@param so               An array to contain the selected-output values. Size of the array is equivalent to Fortran (@a nxyz, @a col),
+@param so               An array to contain the selected-output values. Size of the array is @a nxyz x @a col,
 where @a nxyz is the number of grid cells in the user's model (@ref RM_GetGridCellCount), and @a col is the number of
 columns in the selected-output definition (@ref RM_GetSelectedOutputColumnCount).
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -1786,7 +1787,7 @@ it may be that one or more components are missing in any specific cell.
 @ref RM_FindComponents must be called before @ref RM_GetSIName.
 This method may be useful when generating selected output definitions related to saturation indices.
 @param id               The instance @a id returned from @ref RM_Create.
-@param num              The number of the saturation-index-phase name to be retrieved. Fortran, 1 based.
+@param num              The number of the saturation-index-phase name to be retrieved. (0 based index.)
 @param name             The saturation-index-phase name at number @a num.
 @param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -1847,7 +1848,7 @@ the initial-phreeqc module.
 @ref RM_FindComponents must be called before @ref RM_GetSolidSolutionComponentsName.
 This method may be useful when generating selected output definitions related to solid solutions.
 @param id               The instance @a id returned from @ref RM_Create.
-@param num              The number of the solid solution components name to be retrieved. Fortran, 1 based.
+@param num              The number of the solid solution components name to be retrieved. (0 based index.)
 @param name             The solid solution compnent name at number @a num.
 @param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -1882,7 +1883,7 @@ and provides the corresponding name of solid solution containing the component.
 @ref RM_FindComponents must be called before @ref RM_GetSolidSolutionName.
 This method may be useful when generating selected output definitions related to solid solutions.
 @param id               The instance @a id returned from @ref RM_Create.
-@param num              The number of the solid solution name to be retrieved. Fortran, 1 based.
+@param num              The number of the solid solution name to be retrieved. (0 based index.)
 @param name             The solid solution name at number @a num.
 @param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -2341,7 +2342,7 @@ The lists of surface species names and surface names are the same length.
 @ref RM_FindComponents must be called before @ref RM_GetSurfaceName.
 This method may be useful when generating selected output definitions related to surfaces.
 @param id               The instance @a id returned from @ref RM_Create.
-@param num              The number of the surface name to be retrieved. Fortran, 1 based.
+@param num              The number of the surface name to be retrieved. (0 based index.)
 @param name             The surface name associated with surface species @a num.
 @param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -2403,7 +2404,7 @@ that are included in SURFACE definitions in the initial-phreeqc module.
 @ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesName.
 This method may be useful when generating selected output definitions related to surfaces.
 @param id               The instance @a id returned from @ref RM_Create.
-@param num              The number of the surface type to be retrieved. Fortran, 1 based.
+@param num              The number of the surface type to be retrieved. (0 based index.)
 @param name             The surface species name at number @a num.
 @param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -2436,7 +2437,7 @@ The lists of surface species names and surface species types are the same length
 @ref RM_FindComponents must be called before @ref RM_GetSurfaceType.
 This method may be useful when generating selected output definitions related to surfaces.
 @param id               The instance @a id returned from @ref RM_Create.
-@param num              The number of the surface type to be retrieved. Fortran, 1 based.
+@param num              The number of the surface type to be retrieved. (0 based index.)
 @param name             The surface type associated with surface species @a num.
 @param l1               The length of the maximum number of characters for @a name.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
@@ -2685,7 +2686,7 @@ WarningMessage(std::string warnstr);
 </CODE>
 @endhtmlonly
 !>
-@par Fortran Example:
+@par C Example:
 @htmlonly
 <CODE>
 <PRE>
@@ -2713,7 +2714,7 @@ no mixing is used; concentrations are derived from @a boundary_solution1 only.
 
 @param id                  The instance @a id returned from @ref RM_Create.
 @param c                   Array of concentrations extracted from the InitialPhreeqc instance.
-The dimension of @a c is equivalent to Fortran allocation (@a n_boundary, @a ncomp),
+The dimension of @a c is e@a n_boundary * @a ncomp,
 where @a ncomp is the number of components returned from @ref RM_FindComponents or @ref RM_GetComponentCount.
 @param n_boundary          The number of boundary condition solutions that need to be filled.
 @param boundary_solution1  Array of solution index numbers that refer to solutions in the InitialPhreeqc instance.
@@ -3116,7 +3117,7 @@ no mixing is used; concentrations are derived from @a boundary_solution1 only.
 
 @param id                  The instance @a id returned from @ref RM_Create.
 @param species_c           Array of aqueous concentrations extracted from the InitialPhreeqc instance.
-The dimension of @a species_c is equivalent to Fortran allocation (@a n_boundary, @a nspecies),
+The dimension of @a species_c is @a n_boundary * @a nspecies,
 where @a nspecies is the number of aqueous species returned from @ref RM_GetSpeciesCount.
 @param n_boundary          The number of boundary condition solutions that need to be filled.
 @param boundary_solution1  Array of solution index numbers that refer to solutions in the InitialPhreeqc instance.
@@ -3526,8 +3527,8 @@ If concentration units (@ref RM_SetUnitsSolution) are mass fraction, the
 density (as specified by @ref RM_SetDensityUser) is used to convert from mass fraction to per mass per liter.
 
 @param id               The instance @a id returned from @ref RM_Create.
-@param c                Array of component concentrations. Size of array is equivalent to
-Fortran (@a nxyz, @a ncomps), where @a nxyz is the number
+@param c                Array of component concentrations. Size of array is @a nxyz * @a ncomps,
+where @a nxyz is the number
 of grid cells in the user's model (@ref RM_GetGridCellCount), and @a ncomps is the number of components as determined
 by @ref RM_FindComponents or @ref RM_GetComponentCount.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).

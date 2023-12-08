@@ -129,7 +129,7 @@ void TestAllMethods_c()
 	//-------
 	status = RM_SetFilePrefix(id, "TestAllMethods_c");
 	BMI_SetValueChar(id, "FilePrefix", "TestAllMethods_c");
-	BMI_GetValueChar(id, "FilePrefix", string);
+	BMI_GetValueChar(id, "FilePrefix", string, MAX_LENGTH);
 	fprintf(stderr, "SetFilePrefix %s\n", string);
 	//-------
 	status = RM_OpenFiles(id);
@@ -631,11 +631,11 @@ void TestAllMethods_c()
 	//fprintf(stderr, "GetErrorHandlerMode %d\n", n);
 	//-------
 	status = RM_GetErrorString(id, string, MAX_LENGTH);
-	status = BMI_GetValueChar(id, "ErrorString", string);
+	status = BMI_GetValueChar(id, "ErrorString", string, MAX_LENGTH);
 	fprintf(stderr, "GetErrorString %d\n", status);
 	//-------
 	status = RM_GetFilePrefix(id, string, MAX_LENGTH);
-	status = BMI_GetValueChar(id, "FilePrefix", string);
+	status = BMI_GetValueChar(id, "FilePrefix", string, MAX_LENGTH);
 	fprintf(stderr, "GetFilePrefix %s\n", string);
 	//-------
 	// Not implemented
@@ -796,7 +796,7 @@ void TestAllMethods_c()
 	//-------
 	for (i = 0; i < n; i++)
 	{
-		status = BMI_GetInputVarName(id, string, i);
+		status = BMI_GetInputVarName(id, i, string, MAX_LENGTH);
 		//fprintf(stderr, "BMI_GetInputVarName %s\n", string);
 	}
 	fprintf(stderr, "GetInputVarNames %d\n", status);
@@ -806,10 +806,20 @@ void TestAllMethods_c()
 	//-------
 	for (i = 0; i < n; i++)
 	{
-		status = BMI_GetOutputVarName(id, string, i);
+		status = BMI_GetOutputVarName(id, i, string, MAX_LENGTH);
 		//fprintf(stderr, "BMI_GetOutputVarName %s\n", string);
 	}
 	fprintf(stderr, "GetOutputVarNames %d\n", n);
+	//-------
+	n = BMI_GetPointableItemCount(id);
+	fprintf(stderr, "BMI_GetPointableItemCount %d\n", n);
+	//-------
+	for (i = 0; i < n; i++)
+	{
+		status = BMI_GetPointableVarName(id, i, string, MAX_LENGTH);
+		//fprintf(stderr, "BMI_GetPointableVarName %s\n", string);
+	}
+	fprintf(stderr, "GetPointableVarName %d\n", n);
 	//-------
 	d = BMI_GetTimeStep(id);
 	fprintf(stderr, "GetTimeStep %f\n", d);

@@ -1070,12 +1070,12 @@ MODULE YAMLPhreeqcRM
 !> be run by the workers. Strings that contain initial conditions or boundary conditions should
 !> be run by the InitialPhreeqc instance.
 !> @see                    @ref YAMLRunFile.
-!> @par C++ Example:
+!> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
 !> <PRE>
 !> input = "DELETE; -all"
-!> status = YAMLRunString(id, .true., .true., .true., "advect.pqi")
+!> status = YAMLRunString(id, .true., .true., .true., input)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -1199,7 +1199,7 @@ MODULE YAMLPhreeqcRM
 !> with @ref YAMLInitialPhreeqc2Module or @ref YAMLInitialPhreeqcCell2Module.
 !> @see                    @ref YAMLSetDensityUser, @ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume,
 !> @ref YAMLSetSaturationUser, @ref YAMLSetUnitsSolution.
-!> @par C++ Example:
+!> @par Fortran Example:
 !> @htmlonly
 !> <CODE>
 !> <PRE>
@@ -1288,8 +1288,8 @@ MODULE YAMLPhreeqcRM
 !> <PRE>
 !> real(kind=8), allocatable, dimension(:)   :: density
 !> allocate(density(nxyz))
-!> por = 1.0d0
-!> status = YAMLSetDensityUser(id, por)
+!> density = 1.0d0
+!> status = YAMLSetDensityUser(id, density)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly    

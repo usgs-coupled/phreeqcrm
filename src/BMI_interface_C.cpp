@@ -205,7 +205,7 @@ BMI_GetInputItemCount(int id)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-BMI_GetInputVarName(int id, char* name, int i)
+BMI_GetInputVarName(int id, int i, char* name, int l)
 /* ---------------------------------------------------------------------- */
 {
 	// Returns ith output variable name
@@ -213,16 +213,11 @@ BMI_GetInputVarName(int id, char* name, int i)
 	if (bmirm_ptr)
 	{
 		std::vector<std::string> names = bmirm_ptr->GetInputVarNames();
-		if ((size_t)i < names.size())
-		{
-			memcpy(name, names[i].c_str(), names[i].size());
-			name[names[i].size()] = '\0';
-			return IRM_OK;
-		}
-		return IRM_INVALIDARG;
+		return  rmpadfstring(name, names[i].c_str(), l);
 	}
 	return IRM_BADINSTANCE;
 }
+#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 int
 BMI_GetInputVarNamesSize(int id)
@@ -235,7 +230,7 @@ BMI_GetInputVarNamesSize(int id)
 	if (status != IRM_OK) l = -1;
 	return l;
 }
-
+#endif
 
 /* ---------------------------------------------------------------------- */
 int
@@ -246,7 +241,7 @@ BMI_GetOutputItemCount(int id)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-BMI_GetOutputVarName(int id, char* name, int i)
+BMI_GetOutputVarName(int id, int i, char* name, int l)
 /* ---------------------------------------------------------------------- */
 {
 	// Returns ith output variable name
@@ -254,16 +249,11 @@ BMI_GetOutputVarName(int id, char* name, int i)
 	if (bmirm_ptr)
 	{
 		std::vector<std::string> names = bmirm_ptr->GetOutputVarNames();
-		if ((size_t)i < names.size())
-		{
-			memcpy(name, names[i].c_str(), names[i].size());
-			name[names[i].size()] = '\0';
-			return IRM_OK;
-		}
-		return IRM_INVALIDARG;
+		return  rmpadfstring(name, names[i].c_str(), l);
 	}
 	return IRM_BADINSTANCE;
 }
+#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 int        
 BMI_GetOutputVarNamesSize(int id)
@@ -276,7 +266,7 @@ BMI_GetOutputVarNamesSize(int id)
 	if (status != IRM_OK) l = -1;
 	return l;
 }
-
+#endif
 
 /* ---------------------------------------------------------------------- */
 int
@@ -287,7 +277,7 @@ BMI_GetPointableItemCount(int id)
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-BMI_GetPointableVarName(int id, char* name, int i)
+BMI_GetPointableVarName(int id, int i, char* name, int l)
 /* ---------------------------------------------------------------------- */
 {
 	// Returns ith output variable name
@@ -295,16 +285,11 @@ BMI_GetPointableVarName(int id, char* name, int i)
 	if (bmirm_ptr)
 	{
 		std::vector<std::string> names = bmirm_ptr->GetPointableVarNames();
-		if ((size_t)i < names.size())
-		{
-			memcpy(name, names[i].c_str(), names[i].size());
-			name[names[i].size()] = '\0';
-			return IRM_OK;
-		}
-		return IRM_INVALIDARG;
+		return  rmpadfstring(name, names[i].c_str(), l);
 	}
 	return IRM_BADINSTANCE;
 }
+#ifdef SKIP
 /* ---------------------------------------------------------------------- */
 int
 BMI_GetPointableVarNamesSize(int id)
@@ -317,7 +302,7 @@ BMI_GetPointableVarNamesSize(int id)
 	if (status != IRM_OK) l = -1;
 	return l;
 }
-
+#endif
 /* ---------------------------------------------------------------------- */
 double
 BMI_GetStartTime(int id)
@@ -349,15 +334,18 @@ BMI_GetTimeUnits(int id, char* units, int l1)
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
-BMI_GetValueChar(int id, char* var, char* dest)
+BMI_GetValueChar(int id, char* var, char* dest, int l)
 /* ---------------------------------------------------------------------- */
 {
 	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
 	if (bmirm_ptr)
 	{
 		std::string name = var;
-		bmirm_ptr->GetValue(name, dest);
-		return IRM_OK;
+		std::string value;
+		bmirm_ptr->GetValue(name, value);
+		IRM_RESULT return_value = rmpadfstring(dest, value.c_str(), l);
+		//bmirm_ptr->GetValue(name, dest);
+		return return_value;
 	}
 	return IRM_BADINSTANCE;
 }

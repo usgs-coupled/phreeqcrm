@@ -21,23 +21,23 @@ extern "C" {
 	IRM_DLL_EXPORT int        BMI_GetGridSize(int id, int n);
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetGridType(int id, int n, char* string, int l);
 	IRM_DLL_EXPORT int        BMI_GetInputItemCount(int id);
-	IRM_DLL_EXPORT int        BMI_GetInputVarNamesSize(int id);
-	IRM_DLL_EXPORT IRM_RESULT BMI_GetInputVarName(int id, char* name, int i);
+	//IRM_DLL_EXPORT int        BMI_GetInputVarNamesSize(int id);
+	IRM_DLL_EXPORT IRM_RESULT BMI_GetInputVarName(int id, int i, char* name, int l);
 	//IRM_DLL_EXPORT int        BMI_GetNames(int id, const char* type, char* dest);
 	//IRM_DLL_EXPORT int        BMI_GetNamesSize(int id, const char* type, int* dest);
 	IRM_DLL_EXPORT int        BMI_GetOutputItemCount(int id);
-	IRM_DLL_EXPORT int        BMI_GetOutputVarNamesSize(int id);
-	IRM_DLL_EXPORT IRM_RESULT BMI_GetOutputVarName(int id, char* name, int i);
+	//IRM_DLL_EXPORT int        BMI_GetOutputVarNamesSize(int id);
+	IRM_DLL_EXPORT IRM_RESULT BMI_GetOutputVarName(int id, int i, char* name, int l);
 	IRM_DLL_EXPORT int		  BMI_GetPointableItemCount(int id);
-	IRM_DLL_EXPORT int        BMI_GetPointableVarNamesSize(int id);
-	IRM_DLL_EXPORT IRM_RESULT BMI_GetPointableVarName(int id, char* name, int i);
+	//IRM_DLL_EXPORT int        BMI_GetPointableVarNamesSize(int id);
+	IRM_DLL_EXPORT IRM_RESULT BMI_GetPointableVarName(int id, int i, char* name, int l);
 	IRM_DLL_EXPORT double     BMI_GetStartTime(int id);
 	IRM_DLL_EXPORT double     BMI_GetTimeStep(int id);
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetTimeUnits(int id, char* units, int l1);
 	// GetValue
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueInt(int id, char* var, int* dest);
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueDouble(int id, char* var, double* dest);
-	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueChar(int id, char* var, char* dest);
+	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueChar(int id, char* var, char* dest, int l);
 	// GetValuePtr
 	//IRM_DLL_EXPORT IRM_RESULT BMI_GetValuePtrInt(int id, char* var, int** dest);
 	//IRM_DLL_EXPORT IRM_RESULT BMI_GetValuePtrDouble(int id, char* var, double** dest);

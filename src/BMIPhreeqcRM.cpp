@@ -868,7 +868,14 @@ void BMIPhreeqcRM::GetValue(const std::string name, int* dest)
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
 		((*this->var_man).*bv.GetFn())();
-		assert(this->var_man->VarExchange.GetCType() == "int");
+		if (this->language == "C")
+		{
+			assert(this->var_man->VarExchange.GetClangType() == "int");
+		}
+		else
+		{
+			assert(this->var_man->VarExchange.GetCType() == "int");
+		}
 		int dim = this->var_man->VarExchange.GetDim();
 		int nbytes = this->var_man->VarExchange.GetNbytes();
 		if (dim == 1)
