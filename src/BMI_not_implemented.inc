@@ -15,7 +15,7 @@
     INTEGER FUNCTION bmif_get_value_float(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=4), INTENT(inout) :: dest
     bmif_get_value_float = BMI_FAILURE
@@ -26,7 +26,7 @@
     INTEGER FUNCTION bmif_get_value_ptr_float(id, var, dest)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=4), pointer, INTENT(inout) :: dest
     bmif_get_value_ptr_float = BMI_FAILURE

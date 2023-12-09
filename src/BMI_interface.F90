@@ -93,19 +93,27 @@
     !>
     !> Only variables in the list
     !> provided by @ref bmif_get_pointable_var_names can be pointed to. 
-    INTERFACE bmif_get_value_ptr
-        module procedure bmif_get_value_ptr_logical
-        module procedure bmif_get_value_ptr_double
-        module procedure bmif_get_value_ptr_double1
-        module procedure bmif_get_value_ptr_float ! not implemented
-        module procedure bmif_get_value_ptr_integer
-    END INTERFACE bmif_get_value_ptr
+    !INTERFACE bmif_get_value_ptr
+    !    module procedure bmif_get_value_ptr_logical
+    !    module procedure bmif_get_value_ptr_double
+    !    module procedure bmif_get_value_ptr_double1
+    !    module procedure bmif_get_value_ptr_float ! not implemented
+    !    module procedure bmif_get_value_ptr_integer
+    !END INTERFACE bmif_get_value_ptr
     
     public bmi
     type :: bmi
-        integer :: bmiphreeqcrm_id = -1
+        INTEGER :: bmiphreeqcrm_id = -1
     contains
-        procedure :: bmif_initialize => bmif_initialize, bmif_initialize_nxyz, bmif_initialize_default ! procedure declaration
+        procedure :: bmif_initialize_yaml, bmif_initialize_nxyz, bmif_initialize_default 
+        generic :: bmif_initialize => bmif_initialize_yaml, bmif_initialize_nxyz, bmif_initialize_default ! procedure declaration
+
+        procedure :: bmif_get_value_ptr_logical, bmif_get_value_ptr_integer, &
+             bmif_get_value_ptr_double, bmif_get_value_ptr_double1, bmif_get_value_ptr_float
+        generic :: bmif_get_value_ptr => bmif_get_value_ptr_logical, bmif_get_value_ptr_integer, &
+             bmif_get_value_ptr_double, bmif_get_value_ptr_double1, bmif_get_value_ptr_float
+    
+    
     end type         
     CONTAINS
 #ifndef USE_MPI
@@ -299,7 +307,7 @@
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 #ifdef USE_YAML
-    INTEGER FUNCTION bmif_initialize(id, config_file)
+    INTEGER FUNCTION bmif_initialize_yaml(id, config_file)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -311,12 +319,11 @@
     CHARACTER(KIND=C_CHAR), INTENT(in) :: config_file(*)
     END FUNCTION RMF_BMI_Initialize
     END INTERFACE
-    !class(bmi), intent(inout) :: id
     class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: config_file
-    bmif_initialize = success(RMF_BMI_Initialize(id%bmiphreeqcrm_id, trim(config_file)//C_NULL_CHAR))
+    bmif_initialize_yaml = success(RMF_BMI_Initialize(id%bmiphreeqcrm_id, trim(config_file)//C_NULL_CHAR))
     return
-    END FUNCTION bmif_initialize
+    END FUNCTION bmif_initialize_yaml
 #endif
 
     INTEGER FUNCTION bmif_initialize_nxyz(id, nxyz, nthreads)
@@ -391,7 +398,7 @@
     END FUNCTION RMF_BMI_Update
     END INTERFACE
     class(bmi), intent(inout) :: id
-    bmif_update = success(RMF_BMI_Update(id))
+    bmif_update = success(RMF_BMI_Update(id%bmiphreeqcrm_id))
     return
     END FUNCTION bmif_update
      
@@ -429,9 +436,9 @@
     real(kind=C_DOUBLE), INTENT(in) :: time
     END FUNCTION RMF_BMI_UpdateUntil
     END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     real(kind=8), INTENT(in) :: end_time
-    bmif_update_until = success(RMF_BMI_UpdateUntil(id, end_time))
+    bmif_update_until = success(RMF_BMI_UpdateUntil(id%bmiphreeqcrm_id, end_time))
     return
     END FUNCTION bmif_update_until
 
@@ -461,12 +468,12 @@
     INTEGER(KIND=C_INT), INTENT(in) :: id
     END FUNCTION RMF_BMI_Destroy
     END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     INTEGER :: status
 #ifdef USE_MPI
     !status = RM_MpiWorkerBreak(id)
 #endif    
-    bmif_finalize = success(RMF_BMI_Destroy(id))
+    bmif_finalize = success(RMF_BMI_Destroy(id%bmiphreeqcrm_id))
     return
     END FUNCTION bmif_finalize
     
@@ -492,7 +499,7 @@
     INTEGER FUNCTION bmif_get_component_name(id, component_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(inout) :: component_name
     component_name = "BMI_PhreeqcRM"
     bmif_get_component_name = BMI_SUCCESS
@@ -534,10 +541,10 @@
     INTEGER(KIND=C_INT), INTENT(in) :: id
     END FUNCTION RMF_BMI_GetInputItemCount
     END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     INTEGER, INTENT(inout) :: count
     INTEGER :: status
-    count = RMF_BMI_GetInputItemCount(id)
+    count = RMF_BMI_GetInputItemCount(id%bmiphreeqcrm_id)
     bmif_get_input_item_count = success(count)
     END FUNCTION bmif_get_input_item_count
 
@@ -575,10 +582,10 @@
     INTEGER(KIND=C_INT), INTENT(in) :: id
     END FUNCTION RMF_BMI_GetOutputItemCount
     END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     INTEGER, INTENT(inout) :: count
     INTEGER :: status
-    count = RMF_BMI_GetOutputItemCount(id)
+    count = RMF_BMI_GetOutputItemCount(id%bmiphreeqcrm_id)
     bmif_get_output_item_count = success(count)
     END FUNCTION bmif_get_output_item_count
     
@@ -618,10 +625,10 @@
         INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_BMI_GetPointableItemCount
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     INTEGER, INTENT(inout) :: count
     INTEGER :: status
-    count = RMF_BMI_GetPointableItemCount(id)
+    count = RMF_BMI_GetPointableItemCount(id%bmiphreeqcrm_id)
     bmif_get_pointable_item_count = success(count)
     END FUNCTION bmif_get_pointable_item_count
 
@@ -673,18 +680,18 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetNamesSize
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: var_names
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     vartype = "inputvarnames"
-    status = RMF_BMI_GetNamesSize(id, trim(vartype)//C_NULL_CHAR, itemsize)
+    status = RMF_BMI_GetNamesSize(id%bmiphreeqcrm_id, trim(vartype)//C_NULL_CHAR, itemsize)
     status = bmif_get_input_item_count(id, dim)
     nbytes = dim * itemsize
     dim = nbytes / itemsize
     if(allocated(var_names)) deallocate(var_names)
     allocate(character(len=itemsize) :: var_names(dim))
-    bmif_get_input_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, var_names(1))
+    bmif_get_input_var_names = RMF_BMI_GetNames(id%bmiphreeqcrm_id, trim(vartype)//C_NULL_CHAR, var_names(1))
     return
     END FUNCTION bmif_get_input_var_names
 
@@ -735,17 +742,17 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetNamesSize
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: var_names
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     vartype = "outputvarnames"
-    status = RMF_BMI_GetNamesSize(id, trim(vartype)//C_NULL_CHAR, itemsize)
+    status = RMF_BMI_GetNamesSize(id%bmiphreeqcrm_id, trim(vartype)//C_NULL_CHAR, itemsize)
     status = bmif_get_output_item_count(id, dim)
     nbytes = dim * itemsize
     if(allocated(var_names)) deallocate(var_names)
     allocate(character(len=itemsize) :: var_names(dim))
-    bmif_get_output_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, var_names(1))
+    bmif_get_output_var_names = RMF_BMI_GetNames(id%bmiphreeqcrm_id, trim(vartype)//C_NULL_CHAR, var_names(1))
     return
     END FUNCTION bmif_get_output_var_names
 
@@ -796,18 +803,18 @@
     INTEGER(KIND=C_INT), INTENT(inout) :: dest
     END FUNCTION RMF_BMI_GetNamesSize
     END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: var_names
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
     vartype = "pointablevarnames"
-    status = RMF_BMI_GetNamesSize(id, trim(vartype)//C_NULL_CHAR, itemsize)
+    status = RMF_BMI_GetNamesSize(id%bmiphreeqcrm_id, trim(vartype)//C_NULL_CHAR, itemsize)
     status = bmif_get_pointable_item_count(id, dim)
     nbytes = dim * itemsize
     dim = nbytes / itemsize
     if(allocated(var_names)) deallocate(var_names)
     allocate(character(len=itemsize) :: var_names(dim))
-    bmif_get_pointable_var_names = RMF_BMI_GetNames(id, trim(vartype)//C_NULL_CHAR, var_names(1))
+    bmif_get_pointable_var_names = RMF_BMI_GetNames(id%bmiphreeqcrm_id, trim(vartype)//C_NULL_CHAR, var_names(1))
     return
     END FUNCTION bmif_get_pointable_var_names
 
@@ -827,7 +834,7 @@
     integer FUNCTION bmif_get_var_grid(id, var, grid)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     INTEGER, INTENT(out) :: grid
     grid = 1
@@ -889,10 +896,10 @@
     CHARACTER(KIND=C_CHAR), INTENT(inout) :: vtype(*)
     END FUNCTION RMF_BMI_GetVarType
     END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=*), INTENT(inout) :: vtype
-    bmif_get_var_type = success(RMF_BMI_GetVarType(id, trim(var)//C_NULL_CHAR, vtype, len(vtype)))
+    bmif_get_var_type = success(RMF_BMI_GetVarType(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, vtype, len(vtype)))
     return
     END FUNCTION bmif_get_var_type
     
@@ -950,10 +957,10 @@
     CHARACTER(KIND=C_CHAR), INTENT(inout) :: units(*)
     END FUNCTION RMF_BMI_GetVarUnits
     END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=*), INTENT(inout) :: units
-    bmif_get_var_units = success(RMF_BMI_GetVarUnits(id, trim(var)//C_NULL_CHAR, units, len(units)))
+    bmif_get_var_units = success(RMF_BMI_GetVarUnits(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, units, len(units)))
     return
     END FUNCTION bmif_get_var_units
 
@@ -1010,10 +1017,10 @@
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
     END FUNCTION RMF_BMI_GetVarItemsize
     END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     INTEGER, INTENT(out) :: itemsize
-    itemsize = RMF_BMI_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
+    itemsize = RMF_BMI_GetVarItemsize(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR)
     bmif_get_var_itemsize = success(itemsize)
     END FUNCTION bmif_get_var_itemsize
 
@@ -1069,10 +1076,10 @@
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
     END FUNCTION RMF_BMI_GetVarNbytes
     END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     INTEGER, INTENT(out) :: nbytes
-    nbytes  = RMF_BMI_GetVarNbytes(id, trim(var)//C_NULL_CHAR)
+    nbytes  = RMF_BMI_GetVarNbytes(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR)
     bmif_get_var_nbytes = success(nbytes)
     END FUNCTION bmif_get_var_nbytes
 
@@ -1113,9 +1120,9 @@
     INTEGER(KIND=C_INT), INTENT(in) :: id
     END FUNCTION RMF_BMI_GetCurrentTime
     END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     real(kind=8), intent(inout) :: time
-    time = RMF_BMI_GetCurrentTime(id)
+    time = RMF_BMI_GetCurrentTime(id%bmiphreeqcrm_id)
     bmif_get_current_time = BMI_SUCCESS
     END FUNCTION bmif_get_current_time
 
@@ -1127,7 +1134,7 @@
     INTEGER FUNCTION bmif_get_start_time(id, start_time)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     real(kind=8), INTENT(inout) :: start_time
     bmif_get_start_time = bmif_get_current_time(id, start_time)
     END FUNCTION bmif_get_start_time
@@ -1166,9 +1173,9 @@
         INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_BMI_GetEndTime
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     real(kind=8), intent(inout) :: end_time
-    end_time = RMF_BMI_GetEndTime(id)
+    end_time = RMF_BMI_GetEndTime(id%bmiphreeqcrm_id)
     bmif_get_end_time = BMI_SUCCESS
     END FUNCTION bmif_get_end_time
 
@@ -1210,9 +1217,9 @@
         CHARACTER(KIND=C_CHAR), INTENT(inout) :: time_units(*)
         END FUNCTION RMF_BMI_GetTimeUnits
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(inout) :: time_units
-    bmif_get_time_units = success(RMF_BMI_GetTimeUnits(id, time_units, len(time_units)))
+    bmif_get_time_units = success(RMF_BMI_GetTimeUnits(id%bmiphreeqcrm_id, time_units, len(time_units)))
     return
     END FUNCTION bmif_get_time_units
 
@@ -1251,9 +1258,9 @@
         INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_BMI_GetTimeStep
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     real(kind=8), intent(inout) :: time_step
-    time_step = RMF_BMI_GetTimeStep(id)
+    time_step = RMF_BMI_GetTimeStep(id%bmiphreeqcrm_id)
     bmif_get_time_step = BMI_SUCCESS
     END FUNCTION bmif_get_time_step
         
@@ -1333,7 +1340,7 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL, INTENT(inout) :: dest
     character(100) :: vartype
@@ -1343,7 +1350,7 @@
         write(*,*) vartype, " logical"
         stop "Variable type error."
     endif
-    bmif_get_value_logical = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest_int)
+    bmif_get_value_logical = RMF_BMI_GetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, dest_int)
     dest = .true.
     if (dest_int .eq. 0) dest = .false.
     return
@@ -1363,7 +1370,7 @@
         CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=*), INTENT(inout) :: dest
     character(BMI_MAX_TYPE_NAME) :: vartype
@@ -1376,11 +1383,11 @@
     endif
     status = bmif_get_var_itemsize(id, var, itemsize)
     allocate(character(len=itemsize) :: temp)
-    status = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, temp)
+    status = RMF_BMI_GetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, temp)
     if (len(dest) .gt. 0) then
         dest = temp
     else
-        status = RM_ErrorMessage(id, "Variable length is zero")   
+        status = RM_ErrorMessage(id%bmiphreeqcrm_id, "Variable length is zero")   
         status = -1
     endif
     bmif_get_value_char = success(status)
@@ -1401,7 +1408,7 @@
         CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=:), allocatable, INTENT(inout) :: dest
     character(BMI_MAX_TYPE_NAME) :: vartype
@@ -1414,7 +1421,7 @@
     endif
     status = bmif_get_var_itemsize(id, var, itemsize)
     allocate(character(len=itemsize) :: temp)
-    status = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, temp)
+    status = RMF_BMI_GetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, temp)
     dest = temp
     bmif_get_value_char_alloc = success(status)
     return
@@ -1434,7 +1441,7 @@
         CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
     character(100) :: vartype
@@ -1460,7 +1467,7 @@
         if(allocated(dest)) deallocate(dest)
         allocate(character(len=itemsize) :: dest(dim))
     endif
-    bmif_get_value_char1 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1))
+    bmif_get_value_char1 = RMF_BMI_GetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, dest(1))
     return
     END FUNCTION bmif_get_value_char1
 
@@ -1478,7 +1485,7 @@
         REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT(inout) :: dest
     character(100) :: vartype
@@ -1491,7 +1498,7 @@
         write(*,*) vartype, " real(kind=8"
         stop "Variable type error."
     endif
-    bmif_get_value_double = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
+    bmif_get_value_double = RMF_BMI_GetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, dest)
     return
     END FUNCTION bmif_get_value_double
 
@@ -1509,7 +1516,7 @@
         REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), allocatable, dimension(:), INTENT(inout) :: dest
     character(100) :: vartype
@@ -1532,7 +1539,7 @@
         if(allocated(dest)) deallocate(dest)
         allocate(dest(dim))
     endif
-    bmif_get_value_double1 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1))
+    bmif_get_value_double1 = RMF_BMI_GetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, dest(1))
     return
     END FUNCTION bmif_get_value_double1
 
@@ -1550,7 +1557,7 @@
         REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), allocatable, INTENT(inout) :: dest(:,:)
     character(100) :: vartype
@@ -1566,11 +1573,11 @@
     varname = Lower(var)
     need_alloc = .true.
     if (varname .eq. "concentrations") then
-        dim1 = RM_GetGridCellCount(id)
-        dim2 = RM_GetComponentCount(id)
+        dim1 = RM_GetGridCellCount(id%bmiphreeqcrm_id)
+        dim2 = RM_GetComponentCount(id%bmiphreeqcrm_id)
     else if (varname .eq. "selectedoutput") then
-        dim1 = RM_GetSelectedOutputRowCount(id)
-        dim2 = RM_GetSelectedOutputColumnCount(id)
+        dim1 = RM_GetSelectedOutputRowCount(id%bmiphreeqcrm_id)
+        dim2 = RM_GetSelectedOutputColumnCount(id%bmiphreeqcrm_id)
     else
         stop "Unknown 2d variable"
     endif
@@ -1585,7 +1592,7 @@
     if (need_alloc) then
         allocate(dest(dim1, dim2))
     endif
-    bmif_get_value_double2 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
+    bmif_get_value_double2 = RMF_BMI_GetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, dest(1,1))
     return
     END FUNCTION bmif_get_value_double2
 
@@ -1603,7 +1610,7 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: dest
     character(100) :: vartype
@@ -1616,7 +1623,7 @@
         write(*,*) vartype, " integer"
         stop "Variable type error."
     endif
-    bmif_get_value_int = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest)
+    bmif_get_value_int = RMF_BMI_GetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, dest)
     return
     END FUNCTION bmif_get_value_int
 
@@ -1634,7 +1641,7 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, allocatable, INTENT(inout) :: dest(:)
     character(100) :: vartype
@@ -1657,7 +1664,7 @@
         if(allocated(dest)) deallocate(dest)
         allocate(dest(dim))
     endif
-    bmif_get_value_int1 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1))
+    bmif_get_value_int1 = RMF_BMI_GetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, dest(1))
     return
     END FUNCTION bmif_get_value_int1
 
@@ -1675,7 +1682,7 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, allocatable, INTENT(inout) :: dest(:,:)
     character(100) :: vartype
@@ -1691,7 +1698,7 @@
     varname = Lower(varname)
     need_alloc = .true.
     stop "Unknown 2d variable"
-    bmif_get_value_int2 = RMF_BMI_GetValue(id, trim(var)//C_NULL_CHAR, dest(1,1))
+    bmif_get_value_int2 = RMF_BMI_GetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, dest(1,1))
     return
     END FUNCTION bmif_get_value_int2
    
@@ -1734,12 +1741,12 @@
         type (c_ptr), INTENT(inout) :: src
         END FUNCTION RMF_BMI_GetValuePtr
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=c_double), pointer, INTENT(inout) :: ptr
     type (c_ptr) :: src
     integer :: status
-    status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
+    status = RMF_BMI_GetValuePtr(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, src)
     call C_F_POINTER(src, ptr)
     bmif_get_value_ptr_double = success(status)
     return 
@@ -1759,7 +1766,7 @@
         type (c_ptr), INTENT(inout) :: src
         END FUNCTION RMF_BMI_GetValuePtr
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=c_double), pointer, INTENT(inout) :: ptr(:)
     type (c_ptr) :: src
@@ -1767,7 +1774,7 @@
     status = bmif_get_var_nbytes(id, var, nbytes)
     status = bmif_get_var_itemsize(id, var, itemsize)
     dim = nbytes/itemsize
-    status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
+    status = RMF_BMI_GetValuePtr(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, src)
     call c_f_pointer(src, ptr, [dim])
     bmif_get_value_ptr_double1 = success(status)
     return 
@@ -1787,12 +1794,12 @@
         type (c_ptr), INTENT(inout) :: src
         END FUNCTION RMF_BMI_GetValuePtr
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, pointer, INTENT(inout) :: ptr
     type (c_ptr) :: src
     integer status
-    status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
+    status = RMF_BMI_GetValuePtr(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, src)
     call c_f_pointer(src, ptr)
     bmif_get_value_ptr_integer = success(status)
     return 
@@ -1812,12 +1819,12 @@
         type (c_ptr), INTENT(inout) :: src
         END FUNCTION RMF_BMI_GetValuePtr
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     logical(kind=1), pointer, INTENT(inout) :: ptr
     type (c_ptr) :: src
     integer status
-    status = RMF_BMI_GetValuePtr(id, trim(var)//C_NULL_CHAR, src)
+    status = RMF_BMI_GetValuePtr(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, src)
     call c_f_pointer(src, ptr)
     bmif_get_value_ptr_logical = success(status)
     return 
@@ -1883,7 +1890,7 @@
         INTEGER(KIND=C_INT), INTENT(in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL, INTENT(in) :: src
     character(100) :: vartype
@@ -1894,7 +1901,7 @@
     endif
     src_int = 1
     if(.not. src) src_int = 0
-    bmif_set_value_b = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src_int)
+    bmif_set_value_b = RMF_BMI_SetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, src_int)
     return
     END FUNCTION bmif_set_value_b
 
@@ -1912,7 +1919,7 @@
         CHARACTER(KIND=C_CHAR), INTENT(in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=*), INTENT(in) :: src
     character(100) :: vartype
@@ -1921,7 +1928,7 @@
     if (vartype .ne. "character") then
         stop "Variable type error."
     endif
-    bmif_set_value_c = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, trim(src)//C_NULL_CHAR)
+    bmif_set_value_c = RMF_BMI_SetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, trim(src)//C_NULL_CHAR)
     return
     END FUNCTION bmif_set_value_c
 
@@ -1939,7 +1946,7 @@
         INTEGER(KIND=C_INT), INTENT(in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT( in) :: src
     integer :: src_copy
@@ -1951,7 +1958,7 @@
     endif
     src_copy = src
     if (var .eq. "NthSelectedOutput") src_copy = src - 1
-    bmif_set_value_int = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src_copy)
+    bmif_set_value_int = RMF_BMI_SetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, src_copy)
     return
     END FUNCTION bmif_set_value_int
 
@@ -1969,7 +1976,7 @@
         INTEGER(KIND=C_INT), INTENT( in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT( in) :: src(:)
     character(100) :: vartype
@@ -1984,7 +1991,7 @@
     if (dim .ne. size(src)) then
         stop "Variable dimension error"
     endif
-    bmif_set_value_int1 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1))
+    bmif_set_value_int1 = RMF_BMI_SetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, src(1))
     return
     END FUNCTION bmif_set_value_int1
 
@@ -2002,7 +2009,7 @@
         INTEGER(KIND=C_INT), INTENT(in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT( in) :: src(:,:)
     character(100) :: vartype
@@ -2017,7 +2024,7 @@
     if (dim .ne. size(src,1)*size(src,2)) then
         stop "Variable dimension error"
     endif
-    bmif_set_value_int2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1,1))
+    bmif_set_value_int2 = RMF_BMI_SetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, src(1,1))
     return
     END FUNCTION bmif_set_value_int2
 
@@ -2035,7 +2042,7 @@
         REAL(KIND=C_DOUBLE), INTENT( in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT( in) :: src
     character(100) :: vartype
@@ -2044,7 +2051,7 @@
     if (vartype .ne. "real(kind=8)") then
         stop "Variable type error."
     endif
-    bmif_set_value_double = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src)
+    bmif_set_value_double = RMF_BMI_SetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, src)
     return
     END FUNCTION bmif_set_value_double
 
@@ -2062,7 +2069,7 @@
         REAL(KIND=C_DOUBLE), INTENT( in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT( in) :: src(:)
     character(100) :: vartype
@@ -2077,7 +2084,7 @@
     if (dim .ne. size(src)) then
         stop "Variable dimension error"
     endif
-    bmif_set_value_double1 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1))
+    bmif_set_value_double1 = RMF_BMI_SetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, src(1))
     return
     END FUNCTION bmif_set_value_double1
 
@@ -2095,7 +2102,7 @@
         REAL(KIND=C_DOUBLE), INTENT( in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT( in) :: src(:,:)
     character(100) :: vartype
@@ -2110,7 +2117,7 @@
     if (dim .ne. size(src,1)*size(src,2)) then
         stop "Variable dimension error"
     endif
-    bmif_set_value_double2 = RMF_BMI_SetValue(id, trim(var)//C_NULL_CHAR, src(1,1))
+    bmif_set_value_double2 = RMF_BMI_SetValue(id%bmiphreeqcrm_id, trim(var)//C_NULL_CHAR, src(1,1))
     return
     END FUNCTION bmif_set_value_double2
 
@@ -2140,7 +2147,8 @@
     INTEGER FUNCTION bmif_grid_rank(id, grid, rank)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    class(bmi), intent(inout) :: id, grid
+    class(bmi), intent(in) :: id
+    integer, intent(in) :: grid
     INTEGER, INTENT(inout) :: rank
     if (grid .eq. 0) then
         rank = 1
@@ -2172,7 +2180,8 @@
     INTEGER FUNCTION bmif_grid_size(id, grid, ngrid)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    class(bmi), intent(inout) :: id, grid
+    class(bmi), intent(in) :: id
+    integer, intent(in) :: grid
     INTEGER, INTENT(inout) :: ngrid
     if (grid .eq. 0) then
         bmif_grid_size = success(bmif_get_value(id, "GridCellCount", ngrid))
@@ -2204,7 +2213,8 @@
     INTEGER FUNCTION bmif_grid_type(id, grid, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    class(bmi), intent(inout) :: id, grid
+    class(bmi), intent(in) :: id
+    integer, intent(in) :: grid
     CHARACTER(len=*), INTENT(inout) :: str
     if (grid .eq. 1) then
         str = "points"
@@ -2282,10 +2292,10 @@
         CHARACTER(KIND=C_CHAR), INTENT(in) :: src
         END FUNCTION RMF_BMI_AddOutputVars
         END INTERFACE
-    class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: option
     CHARACTER(len=*), INTENT(in) :: def
-    bmif_add_output_vars = RMF_BMI_AddOutputVars(id, trim(option)//C_NULL_CHAR, trim(def)//C_NULL_CHAR)
+    bmif_add_output_vars = RMF_BMI_AddOutputVars(id%bmiphreeqcrm_id, trim(option)//C_NULL_CHAR, trim(def)//C_NULL_CHAR)
     return
     END FUNCTION bmif_add_output_vars
 
