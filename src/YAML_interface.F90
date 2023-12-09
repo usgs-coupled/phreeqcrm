@@ -1560,7 +1560,9 @@ MODULE YAMLPhreeqcRM
 !> is created. SetGridCellCount will be ignored once the PhreeqcRM instance exists.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param n           Number of cells for the PhreeqcRM instance. The number of cells
-!> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
+!> @retval IRM_RESULT   Zero indicates success, negative indicates failure
+!> @par
+!> YAMLSetGridCellCount   
 !> can be used in the creation of the PhreeqcRM instance. The PhreeqcRM constructor
 !> takes two arguments. GetGridCellCountYAML
 !> provides the value for the first argument. If the YAML file does not contain the
