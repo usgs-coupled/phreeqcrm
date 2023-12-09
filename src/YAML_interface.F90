@@ -2329,7 +2329,7 @@ MODULE YAMLPhreeqcRM
 !> <CODE>
 !> <PRE>
 !> time_step = 86400.d0
-!> status = YAMLSetTimeStep(time_step)
+!> status = YAMLSetTimeStep(id, time_step)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -2915,7 +2915,7 @@ MODULE YAMLPhreeqcRM
     END FUNCTION YAMLStateDelete
     
 !> Inserts data into the YAML document to define the number of threads to use
-!> with PhreeqcRM calculations..
+!> with PhreeqcRM calculations.
 !> Once the YAML document is written, the number threads to use can be extracted
 !> when bmif_initialize is called. The data for ThreadCount will be ignored 
 !> if the PhreeqcRM instance has already been initialized.
@@ -2928,7 +2928,7 @@ MODULE YAMLPhreeqcRM
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> status = YAMLThreadCount(0)
+!> status = YAMLThreadCount(id, 0)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
