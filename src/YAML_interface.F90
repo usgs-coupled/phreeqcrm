@@ -138,7 +138,7 @@ MODULE YAMLPhreeqcRM
 	YAMLClear = YAMLClear_F(id)
     END FUNCTION YAMLClear
 !> Inserts data into the YAML document to select sets of output variables.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance. Sets of variables can be included or excluded with
 !> multiple calls to this method. All calls must precede the final call to
 !> @ref YAMLFindComponents. FindComponents generates SELECTED_OUTPUT 333 and
@@ -213,7 +213,7 @@ MODULE YAMLPhreeqcRM
     return
     END FUNCTION YAMLAddOutputVars  
 !> Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -242,7 +242,7 @@ MODULE YAMLPhreeqcRM
 	YAMLCloseFiles = YAMLCloseFiles_F(id)
     END FUNCTION YAMLCloseFiles
 !> Inserts data into the YAML document for the PhreeqcRM method CreateMapping.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param grid2chem     Integer array of mapping from user's model grid to cells
@@ -295,7 +295,7 @@ MODULE YAMLPhreeqcRM
 	YAMLCreateMapping = YAMLCreateMapping_F(id, grid2chem(1), size(grid2chem))
     END FUNCTION YAMLCreateMapping
 !> Inserts data into the YAML document for the PhreeqcRM method DumpModule.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param dump_on          Signal for writing the dump file, true or false.
@@ -339,7 +339,7 @@ MODULE YAMLPhreeqcRM
 	YAMLDumpModule = YAMLDumpModule_F(id, idump_on, iappend)
     END FUNCTION YAMLDumpModule
 !> Inserts data into the YAML document for the PhreeqcRM method FindComponents.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id    The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @retval      Zero indicates success, negative indicates failure.
@@ -399,7 +399,7 @@ MODULE YAMLPhreeqcRM
     
 !> Inserts data into the YAML document for the PhreeqcRM method InitialSolutions2Module.
 !> When the YAML document is written to file it can be processed by the method 
-!> InitializeYAML to initialize a PhreeqcRM instance.
+!> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
 !> @param id          The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param solutions   Vector of SOLUTION index numbers that is dimensioned @a nxyz, 
 !> where @a nxyz is the number of grid cells in the user's model. 
@@ -430,7 +430,7 @@ MODULE YAMLPhreeqcRM
 	
 !> Inserts data into the YAML document for the PhreeqcRM method InitialEquilibriumPhases2Module.
 !> When the YAML document is written to file it can be processed by the method 
-!> InitializeYAML to initialize a PhreeqcRM instance.
+!> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
 !> @param id                   The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param equilibrium_phases   Vector of EQUILIBRIUM_PHASES index numbers that is dimensioned @a nxyz, 
 !> where @a nxyz is the number of grid cells in the user's model. 
@@ -461,7 +461,7 @@ MODULE YAMLPhreeqcRM
 	
 !> Inserts data into the YAML document for the PhreeqcRM method InitialExchanges2Module.
 !> When the YAML document is written to file it can be processed by the method 
-!> InitializeYAML to initialize a PhreeqcRM instance.
+!> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
 !> @param id                   The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param exchanges            Vector of EXCHANGE index numbers that is dimensioned @a nxyz, 
 !> where @a nxyz is the number of grid cells in the user's model. 
@@ -492,7 +492,7 @@ MODULE YAMLPhreeqcRM
 	
 !> Inserts data into the YAML document for the PhreeqcRM method InitialSurfaces2Module.
 !> When the YAML document is written to file it can be processed by the method 
-!> InitializeYAML to initialize a PhreeqcRM instance.
+!> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
 !> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param surfaces            Vector of SURFACE index numbers that is dimensioned @a nxyz, 
 !> where @a nxyz is the number of grid cells in the user's model. 
@@ -523,7 +523,7 @@ MODULE YAMLPhreeqcRM
 	
 !> Inserts data into the YAML document for the PhreeqcRM method InitialGasPhases2Module.
 !> When the YAML document is written to file it can be processed by the method 
-!> InitializeYAML to initialize a PhreeqcRM instance.
+!> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
 !> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param gas_phases          Vector of GAS_PHASE index numbers that is dimensioned @a nxyz, 
 !> where @a nxyz is the number of grid cells in the user's model. 
@@ -554,7 +554,7 @@ MODULE YAMLPhreeqcRM
 	
 !> Inserts data into the YAML document for the PhreeqcRM method InitialSolidSolutions2Module.
 !> When the YAML document is written to file it can be processed by the method 
-!> InitializeYAML to initialize a PhreeqcRM instance.
+!> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
 !> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param solid_solutions     Vector of SOLID_SOLUTIONS index numbers that is dimensioned @a nxyz, 
 !> where @a nxyz is the number of grid cells in the user's model. 
@@ -585,7 +585,7 @@ MODULE YAMLPhreeqcRM
 	
 !> Inserts data into the YAML document for the PhreeqcRM method InitialKinetics2Module.
 !> When the YAML document is written to file it can be processed by the method 
-!> InitializeYAML to initialize a PhreeqcRM instance.
+!> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
 !> @param id                  The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param kinetics            Vector of KINETICS index numbers that is dimensioned @a nxyz, 
 !> where @a nxyz is the number of grid cells in the user's model. 
@@ -616,7 +616,7 @@ MODULE YAMLPhreeqcRM
     END FUNCTION YAMLInitialKinetics2Module
     
 !> Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id   The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param ic1  Vector of solution and reactant index numbers that refer to
@@ -679,7 +679,7 @@ MODULE YAMLPhreeqcRM
 	YAMLInitialPhreeqc2Module = YAMLInitialPhreeqc2Module_F(id, ic1(1,1), l)
     END FUNCTION YAMLInitialPhreeqc2Module  
 !> Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param ic1    Vector of solution and reactant index numbers that refer to
@@ -775,7 +775,7 @@ MODULE YAMLPhreeqcRM
 	YAMLInitialPhreeqc2Module_mix = YAMLInitialPhreeqc2Module_mix_F(id, ic1(1,1), ic2(1,1), f1(1,1), l1)
     END FUNCTION YAMLInitialPhreeqc2Module_mix  
 !> Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqcCell2Module.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param n                  Number that refers to a solution or MIX and associated 
@@ -829,7 +829,7 @@ MODULE YAMLPhreeqcRM
 	YAMLInitialPhreeqcCell2Module = YAMLInitialPhreeqcCell2Module_F(id, n, cell_numbers(1), l)
     END FUNCTION YAMLInitialPhreeqcCell2Module    
 !> Inserts data into the YAML document for the PhreeqcRM method LoadDatabase.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param file_name         String containing the database name.
@@ -863,7 +863,7 @@ MODULE YAMLPhreeqcRM
 	YAMLLoadDatabase = YAMLLoadDatabase_F(id, trim(file_name)//C_NULL_CHAR)
     END FUNCTION YAMLLoadDatabase
 !> Inserts data into the YAML document for the PhreeqcRM method LogMessage.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param str              String to be printed.
@@ -896,7 +896,7 @@ MODULE YAMLPhreeqcRM
 	YAMLLogMessage = YAMLLogMessage_F(id, trim(str)//C_NULL_CHAR)
     END FUNCTION YAMLLogMessage
 !> Inserts data into the YAML document for the PhreeqcRM method OpenFiles.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -929,7 +929,7 @@ MODULE YAMLPhreeqcRM
 	YAMLOpenFiles = YAMLOpenFiles_F(id)
     END FUNCTION YAMLOpenFiles   
 !> Inserts data into the YAML document for the PhreeqcRM method OutputMessage.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param str              String to be printed.
@@ -962,7 +962,7 @@ MODULE YAMLPhreeqcRM
 	YAMLOutputMessage = YAMLOutputMessage_F(id, trim(str)//C_NULL_CHAR)
     END FUNCTION YAMLOutputMessage
 !> Inserts data into the YAML document for the PhreeqcRM method RunCells.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -1002,7 +1002,7 @@ MODULE YAMLPhreeqcRM
 	YAMLRunCells = YAMLRunCells_F(id)
     END FUNCTION YAMLRunCells       
 !> Inserts data into the YAML document for the PhreeqcRM method RunFile.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param workers          @a True, the workers will run the file; @a False, the workers will not run the file.
@@ -1053,7 +1053,7 @@ MODULE YAMLPhreeqcRM
 	YAMLRunFile = YAMLRunFile_F(id, iworkers, iinitial_phreeqc, iutility, trim(file_name)//C_NULL_CHAR)
     END FUNCTION YAMLRunFile   
 !> Inserts data into the YAML document for the PhreeqcRM method RunString.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance. 
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param workers          @a True, the workers will run the string; @a False, the workers will not run the string.
@@ -1105,7 +1105,7 @@ MODULE YAMLPhreeqcRM
 	YAMLRunString = YAMLRunString_F(id, iworkers, iinitial_phreeqc, iutility, trim(input_string)//C_NULL_CHAR)
     END FUNCTION YAMLRunString 
 !> Inserts data into the YAML document for the PhreeqcRM method ScreenMessage.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param str              String to be printed.
@@ -1139,7 +1139,7 @@ MODULE YAMLPhreeqcRM
 	YAMLScreenMessage = YAMLScreenMessage_F(id, trim(str)//C_NULL_CHAR)
     END FUNCTION YAMLScreenMessage
 !> Inserts data into the YAML document for the PhreeqcRM method SetComponentH2O.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param tf               @a True (default), excess H, excess O, and water are included in the component list;
@@ -1185,7 +1185,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetComponentH2O = YAMLSetComponentH2O_F(id, itf)
     END FUNCTION YAMLSetComponentH2O
 !> Inserts data into the YAML document for the PhreeqcRM method SetConcentrations.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param c               Vector of component concentrations. Size of vector is @a ncomps times @a nxyz,
@@ -1227,7 +1227,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetConcentrations = YAMLSetConcentrations_F(id, c(1,1), dim)
     END FUNCTION YAMLSetConcentrations   
 !> Inserts data into the YAML document for the PhreeqcRM method SetCurrentSelectedOutputUserNumber.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param n_user           User number of the SELECTED_OUTPUT data block that is to be used.
@@ -1266,7 +1266,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetCurrentSelectedOutputUserNumber = YAMLSetCurrentSelectedOutputUserNumber_F(id, n_user)
     END FUNCTION YAMLSetCurrentSelectedOutputUserNumber    
 !> Inserts data into the YAML document for the PhreeqcRM method SetDensityUser.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> 
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
@@ -1311,7 +1311,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetDensityUser = YAMLSetDensityUser_F(id, density(1), size(density))
     END FUNCTION YAMLSetDensityUser
 !> Inserts data into the YAML document for the PhreeqcRM method SetDumpFileName.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param file_name        Name of dump file.
@@ -1348,7 +1348,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetDumpFileName = YAMLSetDumpFileName_F(id, trim(file_name)//C_NULL_CHAR)
     END FUNCTION YAMLSetDumpFileName
 !> Inserts data into the YAML document for the PhreeqcRM method SetErrorHandlerMode.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param mode             Error handling mode: 0, 1, or 2.
@@ -1383,7 +1383,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetErrorHandlerMode = YAMLSetErrorHandlerMode_F(id, mode)
     END FUNCTION YAMLSetErrorHandlerMode  
 !> Inserts data into the YAML document for the PhreeqcRM method SetErrorOn.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param tf  @a True, enable error messages; @a False, disable error messages. Default is true.
@@ -1422,7 +1422,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetErrorOn = YAMLSetErrorOn_F(id, itf)
     END FUNCTION YAMLSetErrorOn   
 !> Inserts data into the YAML document for the PhreeqcRM method SetFilePrefix.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param prefix           Prefix used when opening the output and log files.
@@ -1457,7 +1457,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetFilePrefix = YAMLSetFilePrefix_F(id, trim(prefix)//C_NULL_CHAR)
     END FUNCTION YAMLSetFilePrefix
 !> Inserts data into the YAML document for the PhreeqcRM method SetGasCompMoles.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param  gas_moles               Vector of moles of gas components.
@@ -1505,7 +1505,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetGasCompMoles = YAMLSetGasCompMoles_F(id, gas_moles(1,1), dim)
     END FUNCTION YAMLSetGasCompMoles   
 !> Inserts data into the YAML document for the PhreeqcRM method SetGasPhaseVolume.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param  gas_volume               Vector of volumes for each gas phase.
@@ -1594,7 +1594,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetGridCellCount = YAMLSetGridCellCount_F(id, n)
     END FUNCTION YAMLSetGridCellCount  
 !> Inserts data into the YAML document for the PhreeqcRM method SetNthSelectedOutput.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param n           Sequence number of the SELECTED_OUTPUT data block that is to be used.
@@ -1634,7 +1634,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetNthSelectedOutput = YAMLSetNthSelectedOutput_F(id, n)
     END FUNCTION YAMLSetNthSelectedOutput  
 !> Inserts data into the YAML document for the PhreeqcRM method SetPartitionUZSolids.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param tf       @a True, the fraction of solids and gases available for
@@ -1688,7 +1688,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetPartitionUZSolids = YAMLSetPartitionUZSolids_F(id, itf)
     END FUNCTION YAMLSetPartitionUZSolids       
 !> Inserts data into the YAML document for the PhreeqcRM method SetPorosity.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param por              Vector of porosities, unitless. Default is 0.1.
@@ -1729,7 +1729,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetPorosity = YAMLSetPorosity_F(id, por(1), size(por))
     END FUNCTION YAMLSetPorosity
 !> Inserts data into the YAML document for the PhreeqcRM method SetPressure.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param p                Vector of pressures, in atm. Size of vector is @a nxyz,
@@ -1769,7 +1769,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetPressure = YAMLSetPressure_F(id, p(1), size(p))
     END FUNCTION YAMLSetPressure
 !> Inserts data into the YAML document for the PhreeqcRM method SetPrintChemistryMask.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param mask        Vector of integers. Size of vector is @a nxyz, where @a nxyz is the number
@@ -1813,7 +1813,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetPrintChemistryMask = YAMLSetPrintChemistryMask_F(id, mask(1), size(mask))
     END FUNCTION YAMLSetPrintChemistryMask  
 !> Inserts data into the YAML document for the PhreeqcRM method SetPrintChemistryOn.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param workers          @a True, enable detailed printing in the worker instances;
@@ -1872,7 +1872,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetPrintChemistryOn = YAMLSetPrintChemistryOn_F(id, iworkers, iinitial_phreeqc, iutility)
     END FUNCTION YAMLSetPrintChemistryOn
 !> Inserts data into the YAML document for the PhreeqcRM method SetRebalanceByCell.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param tf           @a True, indicates individual cell times are used in rebalancing (default);
@@ -1917,7 +1917,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetRebalanceByCell = YAMLSetRebalanceByCell_F(id, itf)
     END FUNCTION YAMLSetRebalanceByCell  
 !> Inserts data into the YAML document for the PhreeqcRM method SetRebalanceFraction.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param f                Fraction from 0.0 to 1.0.
@@ -1963,7 +1963,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetRebalanceFraction = YAMLSetRebalanceFraction_F(id, f)
     END FUNCTION YAMLSetRebalanceFraction  
 !> Inserts data into the YAML document for the PhreeqcRM method SetRepresentativeVolume.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param rv              Vector of representative volumes, in liters. Default is 1.0 liter.
@@ -2018,7 +2018,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetRepresentativeVolume = YAMLSetRepresentativeVolume_F(id, rv(1), size(rv))
     END FUNCTION YAMLSetRepresentativeVolume
 !> Inserts data into the YAML document for the PhreeqcRM method SetSaturationUser.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param sat              Vector of saturations, unitless. Default 1.0. Size of vector is @a nxyz,
@@ -2066,7 +2066,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetSaturationUser = YAMLSetSaturationUser_F(id, sat(1), size(sat))
     END FUNCTION YAMLSetSaturationUser
 !> Inserts data into the YAML document for the PhreeqcRM method SetScreenOn.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param tf  @a True, enable screen messages; @a False, disable screen messages. Default is true.
@@ -2106,7 +2106,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetScreenOn = YAMLSetScreenOn_F(id, itf)
     END FUNCTION YAMLSetScreenOn  
 !> Inserts data into the YAML document for the PhreeqcRM method SetSelectedOutputOn.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param tf  @a True, enable selected output; @a False, disable selected output.
@@ -2151,7 +2151,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetSelectedOutputOn = YAMLSetSelectedOutputOn_F(id, itf)
     END FUNCTION YAMLSetSelectedOutputOn  
 !> Inserts data into the YAML document for the PhreeqcRM method SetSpeciesSaveOn.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param save_on          @a True indicates species concentrations are saved;
@@ -2198,7 +2198,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetSpeciesSaveOn = YAMLSetSpeciesSaveOn_F(id, itf)
     END FUNCTION YAMLSetSpeciesSaveOn 
 !> Inserts data into the YAML document for the PhreeqcRM method SetTemperature.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param tc                Vector of temperatures, in degrees C.
@@ -2242,7 +2242,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetTemperature = YAMLSetTemperature_F(id, tc(1), size(tc))
     END FUNCTION YAMLSetTemperature
 !> Inserts data into the YAML document for the PhreeqcRM method SetTime.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param time             Current simulation time, in seconds.
@@ -2276,7 +2276,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetTime = YAMLSetTime_F(id, time)
     END FUNCTION YAMLSetTime  
 !> Inserts data into the YAML document for the PhreeqcRM method SetTimeConversion.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param conv_factor      Factor to convert seconds to user time units.
@@ -2313,7 +2313,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetTimeConversion = YAMLSetTimeConversion_F(id, conv_factor)
     END FUNCTION YAMLSetTimeConversion 
 !> Inserts data into the YAML document for the PhreeqcRM method SetTimeStep.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param time_step        Time step, in seconds.
@@ -2350,7 +2350,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetTimeStep = YAMLSetTimeStep_F(id, time_step)
     END FUNCTION YAMLSetTimeStep  
 !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsExchange.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param option           Units option for exchangers: 0, 1, or 2.
@@ -2400,7 +2400,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetUnitsExchange = YAMLSetUnitsExchange_F(id, option)
     END FUNCTION YAMLSetUnitsExchange 
 !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsGasPhase.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param option           Units option for gas phases: 0, 1, or 2.
@@ -2451,7 +2451,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetUnitsGasPhase = YAMLSetUnitsGasPhase_F(id, option)
     END FUNCTION YAMLSetUnitsGasPhase 
 !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsKinetics.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param option           Units option for kinetic reactants: 0, 1, or 2.
@@ -2516,7 +2516,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetUnitsKinetics = YAMLSetUnitsKinetics_F(id, option)
     END FUNCTION YAMLSetUnitsKinetics
 !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsPPassemblage.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param option           Units option for equilibrium phases: 0, 1, or 2.
@@ -2566,7 +2566,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetUnitsPPassemblage = YAMLSetUnitsPPassemblage_F(id, option)
     END FUNCTION YAMLSetUnitsPPassemblage
 !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsSolution.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param option           Units option for solutions: 1, 2, or 3, default is 1, mg/L.
@@ -2636,7 +2636,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetUnitsSolution = YAMLSetUnitsSolution_F(id, option)
     END FUNCTION YAMLSetUnitsSolution
 !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsSSassemblage.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param option        Units option for solid solutions: 0, 1, or 2.
@@ -2686,7 +2686,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetUnitsSSassemblage = YAMLSetUnitsSSassemblage_F(id, option)
     END FUNCTION YAMLSetUnitsSSassemblage
 !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsSurface.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param option        Units option for surfaces: 0, 1, or 2.
@@ -2736,7 +2736,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSetUnitsSurface = YAMLSetUnitsSurface_F(id, option)
     END FUNCTION YAMLSetUnitsSurface
 !> Inserts data into the YAML document for the PhreeqcRM method SpeciesConcentrations2Module.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param species_conc     Vector of aqueous species concentrations. Dimension of the 
@@ -2790,7 +2790,7 @@ MODULE YAMLPhreeqcRM
 	YAMLSpeciesConcentrations2Module = YAMLSpeciesConcentrations2Module_F(id, species_conc(1,1), dim)
     END FUNCTION YAMLSpeciesConcentrations2Module   
 !> Inserts data into the YAML document for the PhreeqcRM method StateSave.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param n      Integer identifying the state that is saved.
@@ -2834,7 +2834,7 @@ MODULE YAMLPhreeqcRM
 	YAMLStateSave = YAMLStateSave_F(id, n)
     END FUNCTION YAMLStateSave
 !> Inserts data into the YAML document for the PhreeqcRM method StateApply.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param n     Integer identifying the state that is to be applied.
@@ -2878,7 +2878,7 @@ MODULE YAMLPhreeqcRM
 	YAMLStateApply = YAMLStateApply_F(id, n)
     END FUNCTION YAMLStateApply
 !> Inserts data into the YAML document for the PhreeqcRM method StateDelete.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param n     Integer identifying the state that is to be deleted.
@@ -2928,7 +2928,7 @@ MODULE YAMLPhreeqcRM
 !> @htmlonly
 !> <CODE>
 !> <PRE>
-!> status = YAMLThreadCount(id, 0)
+!> status = YAMLThreadCount(0)
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -2950,7 +2950,7 @@ MODULE YAMLPhreeqcRM
     END FUNCTION YAMLThreadCount
     
 !> Inserts data into the YAML document for the PhreeqcRM method UseSolutionDensityVolume.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param tf          @a True indicates that the solution density and volume as
@@ -3007,7 +3007,7 @@ MODULE YAMLPhreeqcRM
 	YAMLUseSolutionDensityVolume = YAMLUseSolutionDensityVolume_F(id, itf)
     END FUNCTION YAMLUseSolutionDensityVolume 
 !> Inserts data into the YAML document for the PhreeqcRM method WarningMessage.
-!> When the YAML document is written to file it can be processed by the method InitializeYAML to
+!> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
 !> initialize a PhreeqcRM instance.
 !> @param id     The instance id returned from @ref CreateYAMLPhreeqcRM.
 !> @param str          String to be printed.
