@@ -101,6 +101,12 @@
         module procedure bmif_get_value_ptr_integer
     END INTERFACE bmif_get_value_ptr
     
+    public bmi
+    type :: bmi
+        integer :: bmiphreeqcrm_id = -1
+    contains
+        procedure :: bmif_initialize => bmif_initialize, bmif_initialize_nxyz, bmif_initialize_default ! procedure declaration
+    end type         
     CONTAINS
 #ifndef USE_MPI
     ! ====================================================
@@ -305,13 +311,38 @@
     CHARACTER(KIND=C_CHAR), INTENT(in) :: config_file(*)
     END FUNCTION RMF_BMI_Initialize
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    !class(bmi), intent(inout) :: id
+    class(bmi), intent(in) :: id
     CHARACTER(len=*), INTENT(in) :: config_file
-    bmif_initialize = success(RMF_BMI_Initialize(id, trim(config_file)//C_NULL_CHAR))
+    bmif_initialize = success(RMF_BMI_Initialize(id%bmiphreeqcrm_id, trim(config_file)//C_NULL_CHAR))
     return
     END FUNCTION bmif_initialize
 #endif
 
+    INTEGER FUNCTION bmif_initialize_nxyz(id, nxyz, nthreads)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    class(bmi), intent(inout) :: id
+    INTEGER, intent(in) :: nxyz, nthreads
+    if (id%bmiphreeqcrm_id .lt. 0) then
+        id%bmiphreeqcrm_id = bmif_create(nxyz, nthreads)
+    endif
+    bmif_initialize_nxyz = id%bmiphreeqcrm_id
+    return
+    END FUNCTION bmif_initialize_nxyz
+    
+    INTEGER FUNCTION bmif_initialize_default(id)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    class(bmi), intent(inout) :: id
+    if (id%bmiphreeqcrm_id .lt. 0) then
+        id%bmiphreeqcrm_id = bmif_create_default()
+    endif
+    bmif_initialize_default = id%bmiphreeqcrm_id
+    return
+    END FUNCTION bmif_initialize_default    
+    
+    
     !> @a bmif_update runs a reaction step for all of the cells in the reaction module.
     !> Same as @ref RM_RunCells.
     !> @param id   The instance @a id returned from @ref bmif_create.
@@ -359,7 +390,7 @@
     INTEGER(KIND=C_INT), INTENT(in) :: id
     END FUNCTION RMF_BMI_Update
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     bmif_update = success(RMF_BMI_Update(id))
     return
     END FUNCTION bmif_update
@@ -398,7 +429,7 @@
     real(kind=C_DOUBLE), INTENT(in) :: time
     END FUNCTION RMF_BMI_UpdateUntil
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     real(kind=8), INTENT(in) :: end_time
     bmif_update_until = success(RMF_BMI_UpdateUntil(id, end_time))
     return
@@ -430,7 +461,7 @@
     INTEGER(KIND=C_INT), INTENT(in) :: id
     END FUNCTION RMF_BMI_Destroy
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     INTEGER :: status
 #ifdef USE_MPI
     !status = RM_MpiWorkerBreak(id)
@@ -461,7 +492,7 @@
     INTEGER FUNCTION bmif_get_component_name(id, component_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(inout) :: component_name
     component_name = "BMI_PhreeqcRM"
     bmif_get_component_name = BMI_SUCCESS
@@ -503,7 +534,7 @@
     INTEGER(KIND=C_INT), INTENT(in) :: id
     END FUNCTION RMF_BMI_GetInputItemCount
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     INTEGER, INTENT(inout) :: count
     INTEGER :: status
     count = RMF_BMI_GetInputItemCount(id)
@@ -544,7 +575,7 @@
     INTEGER(KIND=C_INT), INTENT(in) :: id
     END FUNCTION RMF_BMI_GetOutputItemCount
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     INTEGER, INTENT(inout) :: count
     INTEGER :: status
     count = RMF_BMI_GetOutputItemCount(id)
@@ -587,7 +618,7 @@
         INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_BMI_GetPointableItemCount
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     INTEGER, INTENT(inout) :: count
     INTEGER :: status
     count = RMF_BMI_GetPointableItemCount(id)
@@ -642,7 +673,7 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetNamesSize
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: var_names
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
@@ -704,7 +735,7 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetNamesSize
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: var_names
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
@@ -765,7 +796,7 @@
     INTEGER(KIND=C_INT), INTENT(inout) :: dest
     END FUNCTION RMF_BMI_GetNamesSize
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: var_names
     character(100) :: vartype
     integer :: nbytes, status, dim, itemsize
@@ -796,7 +827,7 @@
     integer FUNCTION bmif_get_var_grid(id, var, grid)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     INTEGER, INTENT(out) :: grid
     grid = 1
@@ -858,7 +889,7 @@
     CHARACTER(KIND=C_CHAR), INTENT(inout) :: vtype(*)
     END FUNCTION RMF_BMI_GetVarType
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=*), INTENT(inout) :: vtype
     bmif_get_var_type = success(RMF_BMI_GetVarType(id, trim(var)//C_NULL_CHAR, vtype, len(vtype)))
@@ -919,7 +950,7 @@
     CHARACTER(KIND=C_CHAR), INTENT(inout) :: units(*)
     END FUNCTION RMF_BMI_GetVarUnits
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=*), INTENT(inout) :: units
     bmif_get_var_units = success(RMF_BMI_GetVarUnits(id, trim(var)//C_NULL_CHAR, units, len(units)))
@@ -979,7 +1010,7 @@
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
     END FUNCTION RMF_BMI_GetVarItemsize
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     INTEGER, INTENT(out) :: itemsize
     itemsize = RMF_BMI_GetVarItemsize(id, trim(var)//C_NULL_CHAR)
@@ -1038,7 +1069,7 @@
     CHARACTER(KIND=C_CHAR), INTENT(in) :: var(*)
     END FUNCTION RMF_BMI_GetVarNbytes
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     INTEGER, INTENT(out) :: nbytes
     nbytes  = RMF_BMI_GetVarNbytes(id, trim(var)//C_NULL_CHAR)
@@ -1082,7 +1113,7 @@
     INTEGER(KIND=C_INT), INTENT(in) :: id
     END FUNCTION RMF_BMI_GetCurrentTime
     END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     real(kind=8), intent(inout) :: time
     time = RMF_BMI_GetCurrentTime(id)
     bmif_get_current_time = BMI_SUCCESS
@@ -1096,7 +1127,7 @@
     INTEGER FUNCTION bmif_get_start_time(id, start_time)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     real(kind=8), INTENT(inout) :: start_time
     bmif_get_start_time = bmif_get_current_time(id, start_time)
     END FUNCTION bmif_get_start_time
@@ -1135,7 +1166,7 @@
         INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_BMI_GetEndTime
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     real(kind=8), intent(inout) :: end_time
     end_time = RMF_BMI_GetEndTime(id)
     bmif_get_end_time = BMI_SUCCESS
@@ -1179,7 +1210,7 @@
         CHARACTER(KIND=C_CHAR), INTENT(inout) :: time_units(*)
         END FUNCTION RMF_BMI_GetTimeUnits
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(inout) :: time_units
     bmif_get_time_units = success(RMF_BMI_GetTimeUnits(id, time_units, len(time_units)))
     return
@@ -1220,7 +1251,7 @@
         INTEGER(KIND=C_INT), INTENT(in) :: id
         END FUNCTION RMF_BMI_GetTimeStep
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     real(kind=8), intent(inout) :: time_step
     time_step = RMF_BMI_GetTimeStep(id)
     bmif_get_time_step = BMI_SUCCESS
@@ -1302,7 +1333,7 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL, INTENT(inout) :: dest
     character(100) :: vartype
@@ -1332,7 +1363,7 @@
         CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=*), INTENT(inout) :: dest
     character(BMI_MAX_TYPE_NAME) :: vartype
@@ -1370,7 +1401,7 @@
         CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=:), allocatable, INTENT(inout) :: dest
     character(BMI_MAX_TYPE_NAME) :: vartype
@@ -1403,7 +1434,7 @@
         CHARACTER(KIND=C_CHAR), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: dest
     character(100) :: vartype
@@ -1447,7 +1478,7 @@
         REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT(inout) :: dest
     character(100) :: vartype
@@ -1478,7 +1509,7 @@
         REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), allocatable, dimension(:), INTENT(inout) :: dest
     character(100) :: vartype
@@ -1519,7 +1550,7 @@
         REAL(KIND=C_DOUBLE), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), allocatable, INTENT(inout) :: dest(:,:)
     character(100) :: vartype
@@ -1572,7 +1603,7 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT(inout) :: dest
     character(100) :: vartype
@@ -1603,7 +1634,7 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, allocatable, INTENT(inout) :: dest(:)
     character(100) :: vartype
@@ -1644,7 +1675,7 @@
         INTEGER(KIND=C_INT), INTENT(inout) :: dest
         END FUNCTION RMF_BMI_GetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, allocatable, INTENT(inout) :: dest(:,:)
     character(100) :: vartype
@@ -1703,7 +1734,7 @@
         type (c_ptr), INTENT(inout) :: src
         END FUNCTION RMF_BMI_GetValuePtr
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=c_double), pointer, INTENT(inout) :: ptr
     type (c_ptr) :: src
@@ -1728,7 +1759,7 @@
         type (c_ptr), INTENT(inout) :: src
         END FUNCTION RMF_BMI_GetValuePtr
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=c_double), pointer, INTENT(inout) :: ptr(:)
     type (c_ptr) :: src
@@ -1756,7 +1787,7 @@
         type (c_ptr), INTENT(inout) :: src
         END FUNCTION RMF_BMI_GetValuePtr
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, pointer, INTENT(inout) :: ptr
     type (c_ptr) :: src
@@ -1781,7 +1812,7 @@
         type (c_ptr), INTENT(inout) :: src
         END FUNCTION RMF_BMI_GetValuePtr
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     logical(kind=1), pointer, INTENT(inout) :: ptr
     type (c_ptr) :: src
@@ -1852,7 +1883,7 @@
         INTEGER(KIND=C_INT), INTENT(in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     LOGICAL, INTENT(in) :: src
     character(100) :: vartype
@@ -1881,7 +1912,7 @@
         CHARACTER(KIND=C_CHAR), INTENT(in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     CHARACTER(len=*), INTENT(in) :: src
     character(100) :: vartype
@@ -1908,7 +1939,7 @@
         INTEGER(KIND=C_INT), INTENT(in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT( in) :: src
     integer :: src_copy
@@ -1938,7 +1969,7 @@
         INTEGER(KIND=C_INT), INTENT( in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT( in) :: src(:)
     character(100) :: vartype
@@ -1971,7 +2002,7 @@
         INTEGER(KIND=C_INT), INTENT(in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    integer, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     integer, INTENT( in) :: src(:,:)
     character(100) :: vartype
@@ -2004,7 +2035,7 @@
         REAL(KIND=C_DOUBLE), INTENT( in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT( in) :: src
     character(100) :: vartype
@@ -2031,7 +2062,7 @@
         REAL(KIND=C_DOUBLE), INTENT( in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT( in) :: src(:)
     character(100) :: vartype
@@ -2064,7 +2095,7 @@
         REAL(KIND=C_DOUBLE), INTENT( in) :: src
         END FUNCTION RMF_BMI_SetValue
         END INTERFACE
-    integer, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=8), INTENT( in) :: src(:,:)
     character(100) :: vartype
@@ -2109,7 +2140,7 @@
     INTEGER FUNCTION bmif_grid_rank(id, grid, rank)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTEGER, INTENT(in) :: id, grid
+    class(bmi), intent(inout) :: id, grid
     INTEGER, INTENT(inout) :: rank
     if (grid .eq. 0) then
         rank = 1
@@ -2141,7 +2172,7 @@
     INTEGER FUNCTION bmif_grid_size(id, grid, ngrid)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTEGER, INTENT(in) :: id, grid
+    class(bmi), intent(inout) :: id, grid
     INTEGER, INTENT(inout) :: ngrid
     if (grid .eq. 0) then
         bmif_grid_size = success(bmif_get_value(id, "GridCellCount", ngrid))
@@ -2173,7 +2204,7 @@
     INTEGER FUNCTION bmif_grid_type(id, grid, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTEGER, INTENT(in) :: id, grid
+    class(bmi), intent(inout) :: id, grid
     CHARACTER(len=*), INTENT(inout) :: str
     if (grid .eq. 1) then
         str = "points"
@@ -2251,7 +2282,7 @@
         CHARACTER(KIND=C_CHAR), INTENT(in) :: src
         END FUNCTION RMF_BMI_AddOutputVars
         END INTERFACE
-    INTEGER, INTENT(in) :: id
+    class(bmi), intent(inout) :: id
     CHARACTER(len=*), INTENT(in) :: option
     CHARACTER(len=*), INTENT(in) :: def
     bmif_add_output_vars = RMF_BMI_AddOutputVars(id, trim(option)//C_NULL_CHAR, trim(def)//C_NULL_CHAR)

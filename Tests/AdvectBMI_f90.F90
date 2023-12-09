@@ -71,6 +71,7 @@
 	real(kind=8), pointer :: Porosity_ptr(:)
 	real(kind=8), pointer :: Pressure_ptr(:)
 	real(kind=8), pointer :: Temperature_ptr(:)
+    type(bmi) :: bmif
 #ifdef FORTRAN_2003
     character(LEN=:), allocatable                 :: errstr
 #else
@@ -102,8 +103,11 @@
     ! OpenMP
     nxyz = GetGridCellCountYAML(yaml_file)
     nthreads = 3
-    id = BMIF_Create(nxyz, nthreads)
+    
+    !id = BMIF_Create(nxyz, nthreads)
 #endif
+    status = bmif%bmif_initialize(yaml_file)
+#ifdef SKIP
     ! Open files
     status = bmif_initialize(id, yaml_file)
 	status = bmif_get_value_ptr(id, "ComponentCount", ComponentCount_ptr)
@@ -304,7 +308,7 @@
     deallocate(density)
     deallocate(temperature)
     deallocate(pressure)
-    
+#endif    
     return
     end subroutine AdvectBMI_f90
 
