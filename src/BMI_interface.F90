@@ -105,14 +105,50 @@
     type :: bmi
         INTEGER :: bmiphreeqcrm_id = -1
     contains
-        procedure :: bmif_initialize_yaml, bmif_initialize_nxyz, bmif_initialize_default 
-        generic :: bmif_initialize => bmif_initialize_yaml, bmif_initialize_nxyz, bmif_initialize_default ! procedure declaration
-
+        procedure :: bmif_get_id
+        procedure :: bmif_add_output_vars
+        procedure :: bmif_finalize
+        procedure :: bmif_get_component_name
+        procedure :: bmif_get_current_time
+        procedure :: bmif_get_end_time
+        procedure :: bmif_get_input_item_count
+        procedure :: bmif_get_input_var_names
+        procedure :: bmif_get_output_item_count
+        procedure :: bmif_get_output_var_names
+        procedure :: bmif_get_pointable_item_count
+        procedure :: bmif_get_pointable_var_names
+        procedure :: bmif_grid_rank
+        procedure :: bmif_grid_size
+        procedure :: bmif_grid_type
+        procedure :: bmif_get_start_time
+        procedure :: bmif_get_time_step
+        procedure :: bmif_get_time_units
+        procedure :: bmif_get_value_logical, bmif_get_value_char, bmif_get_value_char1, &
+            bmif_get_value_double, bmif_get_value_double1, bmif_get_value_double2, bmif_get_value_float, &! not implemented
+            bmif_get_value_int, bmif_get_value_int1, bmif_get_value_int2
+        generic :: bmif_get_value => bmif_get_value_logical, bmif_get_value_char, bmif_get_value_char1, &
+            bmif_get_value_double, bmif_get_value_double1, bmif_get_value_double2, bmif_get_value_float, &
+            bmif_get_value_int, bmif_get_value_int1, bmif_get_value_int2
         procedure :: bmif_get_value_ptr_logical, bmif_get_value_ptr_integer, &
              bmif_get_value_ptr_double, bmif_get_value_ptr_double1, bmif_get_value_ptr_float
         generic :: bmif_get_value_ptr => bmif_get_value_ptr_logical, bmif_get_value_ptr_integer, &
              bmif_get_value_ptr_double, bmif_get_value_ptr_double1, bmif_get_value_ptr_float
-    
+        procedure :: bmif_get_var_itemsize
+        procedure :: bmif_get_var_nbytes
+        procedure :: bmif_get_var_type
+        procedure :: bmif_get_var_units
+        procedure :: bmif_initialize_yaml, bmif_initialize_nxyz, bmif_initialize_default 
+        generic :: bmif_initialize => bmif_initialize_yaml, bmif_initialize_nxyz, bmif_initialize_default ! procedure declaration
+
+        procedure :: bmif_set_value_b, bmif_set_value_c, bmif_set_value_double, bmif_set_value_double1, &
+            bmif_set_value_double2, bmif_set_value_float, &! not implemented
+            bmif_set_value_int, bmif_set_value_int1, bmif_set_value_int2
+        generic :: bmif_set_value => bmif_set_value_b, bmif_set_value_c, bmif_set_value_double, bmif_set_value_double1, &
+            bmif_set_value_double2, bmif_set_value_float, &! not implemented
+            bmif_set_value_int, bmif_set_value_int1, bmif_set_value_int2
+        
+        procedure :: bmif_update
+        procedure :: bmif_update_until
     
     end type         
     CONTAINS
@@ -139,6 +175,15 @@
     bmif_create_default = RM_BMI_Create_default()
     return
     END FUNCTION bmif_create_default 
+    
+    
+    INTEGER FUNCTION bmif_get_id(id)
+    
+    class(bmi), intent(inout) :: id
+    bmif_get_id = id%bmiphreeqcrm_id
+    return 
+    
+    END FUNCTION bmif_get_id 
 #endif    
     !> @a bmif_create creates a reaction module. If the code is compiled with
     !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.

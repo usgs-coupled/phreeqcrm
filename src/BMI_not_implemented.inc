@@ -73,7 +73,7 @@
     INTEGER FUNCTION bmif_set_value_float(id, var, src)
     USE ISO_C_BINDING
     IMPLICIT NONE
-    INTEGER, INTENT(in) :: id
+    class(bmi), INTENT(in) :: id
     CHARACTER(len=*), INTENT(in) :: var
     real(kind=4), INTENT(inout) :: src
     bmif_set_value_float = BMI_FAILURE

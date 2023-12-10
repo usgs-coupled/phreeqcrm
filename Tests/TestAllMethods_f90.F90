@@ -33,6 +33,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
   logical(kind=1), pointer     :: b_ptr
   logical                      :: l
   integer                      :: itemsize, nbytes, dim
+  type(bmi) :: bmif, bmif1
   ! --------------------------------------------------------------------------
   ! Create PhreeqcRM
   ! --------------------------------------------------------------------------
@@ -43,15 +44,16 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
     if (status .ne. MPI_SUCCESS) then
         stop "Failed to get mpi_myself"
     endif  
-    id = bmif_create(nxyz, MPI_COMM_WORLD)
+    id = bmif%bmif_create(nxyz, MPI_COMM_WORLD)
     if (mpi_myself > 0) then
         status = RM_MpiWorker(id)
-        status = bmif_finalize(id)
+        status = bmif%bmif_finalize(id)
         return
     endif
 #else
     ! OpenMP
-    id = bmif_create()
+    !id = bmif%bmif_create()
+	id = bmif%bmif_initialize()
 #endif
     ! Write YAML file
     yid = CreateYAMLPhreeqcRM()
@@ -62,14 +64,14 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = YAMLClear(yid)
     status = DestroyYAMLPhreeqcRM(yid)  
   
-	write(*,*) "bmif_create"
+	write(*,*) "bmif%bmif_create"
 	!-------
-	status = bmif_initialize(id, yaml_filename)
+	status = bmif%bmif_initialize(yaml_filename)
 	status = RM_InitializeYAML(id, yaml_filename)
-	write(*,*) "bmif_initialize"
+	write(*,*) "bmif%bmif_initialize"
 	!-------
 	nxyz = RM_GetGridCellCount(id)
-	status = bmif_get_value(id, "GridCellCount", nxyz)
+	status = bmif%bmif_get_value("GridCellCount", nxyz)
 	write(*,*) "GetGridCellCount"
 	!-------
 	n = RM_GetThreadCount(id)
@@ -102,7 +104,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = RM_SetDumpFileName(id, "TestAllMethods_py.dump")
 	write(*,*) "SetDumpFileName "
 	!-------
-	status = bmif_set_value(id, "FilePrefix", "TestAllMethods_py")
+	status = bmif%bmif_set_value("FilePrefix", "TestAllMethods_py")
 	status = RM_SetFilePrefix(id, "TestAllMethods_py")
 	write(*,*) "SetFilePrefix "
 	!-------
@@ -122,7 +124,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	write(*,*) "SetScreenOn "
 	!-------
 	status = RM_SetSelectedOutputOn(id, 1)
-	status = bmif_set_value(id, "SelectedOutputOn", .true.)
+	status = bmif%bmif_set_value("SelectedOutputOn", .true.)
 	write(*,*) "SetSelectedOutputOn "
 	!-------
 	status = RM_SetUnitsExchange(id, 1)
@@ -174,19 +176,19 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = RM_RunFile(id, 1, 1, 1, "all_reactants.pqi")
 	write(*,*) "RunFile "
 	!-------
-	status = bmif_add_output_vars(id, "AddOutputVars", "True")
-	status = bmif_add_output_vars(id, "SolutionProperties", "True")
-	status = bmif_add_output_vars(id, "SolutionTotalMolalities", "True")
-	status = bmif_add_output_vars(id, "ExchangeMolalities", "True")
-	status = bmif_add_output_vars(id, "SurfaceMolalities", "True")
-	status = bmif_add_output_vars(id, "EquilibriumPhases", "True")
-	status = bmif_add_output_vars(id, "Gases", "True")
-	status = bmif_add_output_vars(id, "KineticReactants","True")
-	status = bmif_add_output_vars(id, "SolidSolutions", "True")
-	status = bmif_add_output_vars(id, "CalculateValues", "True")
-	status = bmif_add_output_vars(id, "SolutionActivities", "H+ Ca+2 Na+")
-	status = bmif_add_output_vars(id, "SolutionMolalities", "OH- Cl-")
-	status = bmif_add_output_vars(id, "SaturationIndices", "Calcite Dolomite")
+	status = bmif%bmif_add_output_vars("AddOutputVars", "True")
+	status = bmif%bmif_add_output_vars("SolutionProperties", "True")
+	status = bmif%bmif_add_output_vars("SolutionTotalMolalities", "True")
+	status = bmif%bmif_add_output_vars("ExchangeMolalities", "True")
+	status = bmif%bmif_add_output_vars("SurfaceMolalities", "True")
+	status = bmif%bmif_add_output_vars("EquilibriumPhases", "True")
+	status = bmif%bmif_add_output_vars("Gases", "True")
+	status = bmif%bmif_add_output_vars("KineticReactants","True")
+	status = bmif%bmif_add_output_vars("SolidSolutions", "True")
+	status = bmif%bmif_add_output_vars("CalculateValues", "True")
+	status = bmif%bmif_add_output_vars("SolutionActivities", "H+ Ca+2 Na+")
+	status = bmif%bmif_add_output_vars("SolutionMolalities", "OH- Cl-")
+	status = bmif%bmif_add_output_vars("SaturationIndices", "Calcite Dolomite")
 	write(*,*) "AddOutputVars "
 	!-------
 	ncomps = RM_FindComponents(id)
@@ -201,11 +203,11 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	write(*,*) "GetChemistryCellCount "
 	!-------
 	ncomps = RM_GetComponentCount(id)
-	status = bmif_get_value(id, "ComponentCount", ncomps)
-	status = bmif_get_value_ptr(id, "ComponentCount", i_ptr)
+	status = bmif%bmif_get_value("ComponentCount", ncomps)
+	status = bmif%bmif_get_value_ptr("ComponentCount", i_ptr)
 	write(*,*) "GetComponentCount)" 
 	!-------
-	status = bmif_get_value(id, "Components", StringVector)
+	status = bmif%bmif_get_value("Components", StringVector)
 	status = RM_GetComponents(id, StringVector)
 	write(*,*) "GetComponents)" 
 	! Species info
@@ -252,9 +254,9 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	ngas = RM_GetGasComponentsCount(id)
 	write(*,*) "GetGasComponentsCount "
 	!-------
-	status = bmif_get_value(id, "Gfw", DoubleVector)
+	status = bmif%bmif_get_value("Gfw", DoubleVector)
 	status = RM_GetGfw(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "Gfw", d_ptr)
+	status = bmif%bmif_get_value_ptr("Gfw", d_ptr)
 	write(*,*) "GetGfw "
 	!-------
 	n = RM_GetKineticReactionsCount(id)
@@ -383,42 +385,42 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	! Get/Set methods for time steping
 	!
 	d = RM_GetTime(id)
-	status = bmif_get_value(id, "Time", d)
-	status = bmif_get_current_time(id, d)
-	status = bmif_get_start_time(id, d)
-	status = bmif_get_value_ptr(id, "Time", d_ptr)
+	status = bmif%bmif_get_value("Time", d)
+	status = bmif%bmif_get_current_time(d)
+	status = bmif%bmif_get_start_time(d)
+	status = bmif%bmif_get_value_ptr("Time", d_ptr)
 	write(*,*) "GetTime "
 	!-------
 	status = RM_SetTime(id, 0.0d0)
-	status = bmif_set_value(id, "Time", 0.0d0)
+	status = bmif%bmif_set_value("Time", 0.0d0)
 	write(*,*) "SetTime "
 	!-------
 	d = RM_GetTimeStep(id)
-	status = bmif_get_value(id, "TimeStep", d)
-	status = bmif_get_value_ptr(id, "TimeStep", d_ptr)
+	status = bmif%bmif_get_value("TimeStep", d)
+	status = bmif%bmif_get_value_ptr("TimeStep", d_ptr)
 	write(*,*) "GetTimeStep "
 	!-------
 	status = RM_SetTimeStep(id, 0.0d0)
-	status = bmif_set_value(id, "TimeStep", 0.0d0)
+	status = bmif%bmif_set_value("TimeStep", 0.0d0)
 	write(*,*) "SetTimeStep "
 	!-------
-	status = bmif_get_value(id, "Concentrations", DoubleVector)
+	status = bmif%bmif_get_value("Concentrations", DoubleVector)
     allocate(DoubleVector2(nxyz, ncomps))
 	status = RM_GetConcentrations(id, DoubleVector2)
-	status = bmif_get_value_ptr(id, "Concentrations", d_ptr)
+	status = bmif%bmif_get_value_ptr("Concentrations", d_ptr)
 	write(*,*) "GetConcentrations "
 	!-------
 	status =RM_SetConcentrations(id, DoubleVector2)
-	status = bmif_set_value(id, "Concentrations", DoubleVector)
+	status = bmif%bmif_set_value("Concentrations", DoubleVector)
 	write(*,*) "SetConcentrations "
 	!-------
-	status = bmif_get_value(id, "DensityCalculated", DoubleVector)
+	status = bmif%bmif_get_value("DensityCalculated", DoubleVector)
 	status = RM_GetDensityCalculated(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "DensityCalculated", d_ptr)
+	status = bmif%bmif_get_value_ptr("DensityCalculated", d_ptr)
 	write(*,*) "GetDensityCalculated "
 	!-------
 	status = RM_SetDensityUser(id, DoubleVector)
-	status = bmif_set_value(id, "DensityUser", DoubleVector)
+	status = bmif%bmif_set_value("DensityUser", DoubleVector)
 	write(*,*) "SetDensityUser "
 	!-------
     deallocate(DoubleVector2)
@@ -459,36 +461,36 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
     write(*,*) "GetIthSpeciesConcentration "
     write(*,*) "SetIthSpeciesConcentration "
 	!-------
-	status = bmif_get_value(id, "Porosity", DoubleVector)
+	status = bmif%bmif_get_value("Porosity", DoubleVector)
 	status = RM_GetPorosity(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "Porosity", d_ptr)
+	status = bmif%bmif_get_value_ptr("Porosity", d_ptr)
 	write(*,*) "GetPorosity "
 	!-------
-	status = bmif_set_value(id, "Porosity", DoubleVector)
+	status = bmif%bmif_set_value("Porosity", DoubleVector)
 	status = RM_SetPorosity(id, DoubleVector)
 	write(*,*) "SetPorosity "
 	!-------
-	status = bmif_get_value(id, "Pressure", DoubleVector)
+	status = bmif%bmif_get_value("Pressure", DoubleVector)
 	status = RM_GetPressure(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "Pressure", d_ptr)
+	status = bmif%bmif_get_value_ptr("Pressure", d_ptr)
 	write(*,*) "GetPressure "
 	!-------
-	status = bmif_set_value(id, "Pressure", DoubleVector)
+	status = bmif%bmif_set_value("Pressure", DoubleVector)
 	status = RM_SetPressure(id, DoubleVector)
 	write(*,*) "SetPressure "
 	!-------
-	status = bmif_get_value(id, "SaturationCalculated", DoubleVector)
+	status = bmif%bmif_get_value("SaturationCalculated", DoubleVector)
 	status = RM_GetSaturationCalculated(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "SaturationCalculated", d_ptr)
+	status = bmif%bmif_get_value_ptr("SaturationCalculated", d_ptr)
 	write(*,*) "GetSaturationCalculated "
 	!-------
 	status = RM_SetSaturationUser(id, DoubleVector)
-	status = bmif_set_value(id, "SaturationUser", DoubleVector)
+	status = bmif%bmif_set_value("SaturationUser", DoubleVector)
 	write(*,*) "SetSaturationUser "
 	!-------
-	status = bmif_get_value(id, "SolutionVolume", DoubleVector)
+	status = bmif%bmif_get_value("SolutionVolume", DoubleVector)
 	status = RM_GetSolutionVolume(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "SolutionVolume", d_ptr)
+	status = bmif%bmif_get_value_ptr("SolutionVolume", d_ptr)
 	write(*,*) "GetSolutionVolume "
 	!-------
     deallocate(DoubleVector2)
@@ -505,45 +507,45 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = RM_GetSpeciesLog10Molalities(id, DoubleVector2)
 	write(*,*) "GetSpeciesLog10Molalities "
 	!-------
-	status = bmif_get_value(id, "Temperature", DoubleVector)
+	status = bmif%bmif_get_value("Temperature", DoubleVector)
 	status = RM_GetTemperature(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "Temperature", d_ptr)
+	status = bmif%bmif_get_value_ptr("Temperature", d_ptr)
 	write(*,*) "GetTemperature "
 	!-------
 	status = RM_SetTemperature(id, DoubleVector)
-	status = bmif_set_value(id, "Temperature", DoubleVector)
+	status = bmif%bmif_set_value("Temperature", DoubleVector)
 	write(*,*) "SetTemperature "
 	!-------
-	status = bmif_get_value(id, "Viscosity", DoubleVector)
+	status = bmif%bmif_get_value("Viscosity", DoubleVector)
 	status = RM_GetViscosity(id, DoubleVector)
-	status = bmif_get_value_ptr(id, "Viscosity", d_ptr)	
+	status = bmif%bmif_get_value_ptr("Viscosity", d_ptr)	
 	write(*,*) "GetViscosity "
 	!
 	! Take a time step
 	!
-	status = bmif_update(id)
+	status = bmif%bmif_update()
 	write(*,*) "Update"
 	!-------
 	status =RM_RunCells(id)
 	write(*,*) "RunCells"
 	!-------
-	status = bmif_update_until(id, 86400.0d0)
+	status = bmif%bmif_update_until(86400.0d0)
 	write(*,*) "UpdateUntil"
 	!
 	! Selected output
 	!
 	status = RM_SetNthSelectedOutput(id, 1)
-	status = bmif_set_value(id, "NthSelectedOutput", 1)
+	status = bmif%bmif_set_value("NthSelectedOutput", 1)
 	write(*,*) "SetNthSelectedOutput "
 	!-------
 	n_user = RM_GetCurrentSelectedOutputUserNumber(id)
-	status = bmif_get_value(id, "CurrentSelectedOutputUserNumber", n_user)
+	status = bmif%bmif_get_value("CurrentSelectedOutputUserNumber", n_user)
 	write(*,*) "GetCurrentSelectedOutputUserNumber "
 	!-------
 	n = RM_GetNthSelectedOutputUserNumber(id, 1)
 	write(*,*) "GetNthSelectedOutputUserNumber "
 	!-------
-	status = bmif_get_value(id, "SelectedOutput", DoubleVector)
+	status = bmif%bmif_get_value("SelectedOutput", DoubleVector)
     if(allocated(DoubleVector2)) deallocate(DoubleVector2)
     n = RM_GetSelectedOutputColumnCount(id)
     allocate(DoubleVector2(nxyz, n))
@@ -551,24 +553,24 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	write(*,*) "GetSelectedOutput "
 	!-------
 	n = RM_GetSelectedOutputColumnCount(id)
-	status = bmif_get_value(id, "SelectedOutputColumnCount", n)
+	status = bmif%bmif_get_value("SelectedOutputColumnCount", n)
 	write(*,*) "GetSelectedOutputColumnCount "
 	!-------
 	n = RM_GetSelectedOutputCount(id)
-	status = bmif_get_value(id, "SelectedOutputCount", n)
+	status = bmif%bmif_get_value("SelectedOutputCount", n)
 	write(*,*) "GetSelectedOutputCount "
 	!-------
-	status = bmif_get_value(id, "SelectedOutputHeadings", StringVector)
+	status = bmif%bmif_get_value("SelectedOutputHeadings", StringVector)
 	status = RM_GetSelectedOutputHeadings(id, StringVector)
 	write(*,*) "GetSelectedOutputHeadings "
 	!-------
 	!b = RM_GetSelectedOutputOn(id)
-	status = bmif_get_value(id, "SelectedOutputOn", l)
-	status = bmif_get_value_ptr(id, "SelectedOutputOn", b_ptr)	
+	status = bmif%bmif_get_value("SelectedOutputOn", l)
+	status = bmif%bmif_get_value_ptr("SelectedOutputOn", b_ptr)	
 	write(*,*) "GetSelectedOutputOn "
 	!-------
 	n = RM_GetSelectedOutputRowCount(id)
-	status = bmif_get_value(id, "SelectedOutputRowCount", n)
+	status = bmif%bmif_get_value("SelectedOutputRowCount", n)
 	write(*,*) "GetSelectedOutputRowCount "
 	!-------
 	status = RM_SetCurrentSelectedOutputUserNumber(id, 333)
@@ -589,11 +591,11 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!write(*,*) "GetErrorHandlerMode "
 	!-------
 	status = RM_GetErrorString(id, AllocString)
-	status = bmif_get_value(id, "ErrorString", AllocString)
+	status = bmif%bmif_get_value("ErrorString", AllocString)
 	write(*,*) "GetErrorString "
 	!-------
 	status = RM_GetFilePrefix(id, AllocString)
-	status = bmif_get_value(id, "FilePrefix", AllocString)
+	status = bmif%bmif_get_value("FilePrefix", AllocString)
 	write(*,*) "GetFilePrefix "
 	!-------
 	!status = RM_GetForwardMapping()  ! not implemented
@@ -662,9 +664,10 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	! Utilities
 	!
 #ifndef USE_MPI    
-	id1 = bmif_create(10, 1)  ! make another bmiphreeqcrm
+	!id1 = bmif%bmif_create(10, 1)  ! make another bmiphreeqcrm
+	id1 = bmif1%bmif_initialize(10, 1)
 	status = RM_CloseFiles(id1) 
-	status = bmif_finalize(id1)   ! destroy the new bmiphreeqcrm
+	status = bmif1%bmif_finalize()   ! destroy the new bmiphreeqcrm
 	write(*,*) "CloseFiles "
 #endif    
 	!-------
@@ -717,111 +720,111 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!
 	! BMI Methods
 	!
-	status = bmif_get_component_name(id, string)
-	write(*,*) "bmif_get_component_name "
+	status = bmif%bmif_get_component_name(string)
+	write(*,*) "bmif%bmif_get_component_name "
 	!-------
-	status = bmif_get_current_time(id, d)
-	write(*,*) "bmif_get_current_time "
+	status = bmif%bmif_get_current_time(d)
+	write(*,*) "bmif%bmif_get_current_time "
 	!-------
-	status = bmif_get_end_time(id, d)
-	write(*,*) "bmif_get_end_time "
+	status = bmif%bmif_get_end_time(d)
+	write(*,*) "bmif%bmif_get_end_time "
 	!-------
-	status = bmif_grid_rank(id, 0, n)
-	write(*,*) "bmif_grid_rank "
+	status = bmif%bmif_grid_rank(0, n)
+	write(*,*) "bmif%bmif_grid_rank "
 	!-------
-	status = bmif_grid_size(id, 0, n)
-	write(*,*) "bmif_grid_size "
+	status = bmif%bmif_grid_size(0, n)
+	write(*,*) "bmif%bmif_grid_size "
 	!-------
-	status = bmif_grid_type(id, 0, string)
-	write(*,*) "bmif_grid_type "
+	status = bmif%bmif_grid_type(0, string)
+	write(*,*) "bmif%bmif_grid_type "
 	!-------
-	status = bmif_get_input_item_count(id, n)
-	write(*,*) "bmif_get_input_item_count "
+	status = bmif%bmif_get_input_item_count(n)
+	write(*,*) "bmif%bmif_get_input_item_count "
 	!-------
-	status = bmif_get_input_var_names(id, StringVector)
-	write(*,*) "bmif_get_input_var_names "
+	status = bmif%bmif_get_input_var_names(StringVector)
+	write(*,*) "bmif%bmif_get_input_var_names "
 	!-------
-	status = bmif_get_output_item_count(id, n)
-	write(*,*) "bmif_get_output_item_count "
+	status = bmif%bmif_get_output_item_count(n)
+	write(*,*) "bmif%bmif_get_output_item_count "
 	!-------
-	status = bmif_get_output_var_names(id, StringVector)
-	write(*,*) "bmif_get_output_var_names "
+	status = bmif%bmif_get_output_var_names(StringVector)
+	write(*,*) "bmif%bmif_get_output_var_names "
 	!-------
-	status = bmif_get_pointable_item_count(id, n)
-	write(*,*) "bmif_get_pointable_item_count "
+	status = bmif%bmif_get_pointable_item_count(n)
+	write(*,*) "bmif%bmif_get_pointable_item_count "
 	!-------
-	status = bmif_get_pointable_var_names(id, StringVector)
-	write(*,*) "bmif_get_pointable_var_names "
+	status = bmif%bmif_get_pointable_var_names(StringVector)
+	write(*,*) "bmif%bmif_get_pointable_var_names "
 	!-------
-	status = bmif_get_time_step(id, d)
-	write(*,*) "bmif_get_time_step "
+	status = bmif%bmif_get_time_step(d)
+	write(*,*) "bmif%bmif_get_time_step "
 	!-------
-	status = bmif_get_time_units(id, string)
-	write(*,*) "bmif_get_time_units "
+	status = bmif%bmif_get_time_units(string)
+	write(*,*) "bmif%bmif_get_time_units "
 	!-------
-	status = bmif_get_value(id, "solution_saturation_index_Calcite", DoubleVector)
-	write(*,*) "bmif_get_value "
+	status = bmif%bmif_get_value("solution_saturation_index_Calcite", DoubleVector)
+	write(*,*) "bmif%bmif_get_value "
 	!-------
-	status = bmif_get_var_itemsize(id, "solution_saturation_index_Calcite", n)
-	write(*,*) "bmif_get_var_itemsize "
+	status = bmif%bmif_get_var_itemsize("solution_saturation_index_Calcite", n)
+	write(*,*) "bmif%bmif_get_var_itemsize "
 	!-------
-	status = bmif_get_var_nbytes(id, "solution_saturation_index_Calcite", n)
-	write(*,*) "bmif_get_var_nbytes "
+	status = bmif%bmif_get_var_nbytes("solution_saturation_index_Calcite", n)
+	write(*,*) "bmif%bmif_get_var_nbytes "
 	!-------
-	status = bmif_get_var_type(id, "solution_saturation_index_Calcite", string)
-	write(*,*) "bmif_get_var_type "
+	status = bmif%bmif_get_var_type("solution_saturation_index_Calcite", string)
+	write(*,*) "bmif%bmif_get_var_type "
 	!-------
-	status = bmif_get_var_units(id, "solution_saturation_index_Calcite", string)
-	write(*,*) "bmif_get_var_units "
-	!status = bmif_initialize(YAML_filename)
+	status = bmif%bmif_get_var_units("solution_saturation_index_Calcite", string)
+	write(*,*) "bmif%bmif_get_var_units "
+	!status = bmif%bmif_initialize(YAML_filename)
 	! See above
-	status = bmif_set_value(id, "Time", 1.0d0) 
-	write(*,*) "bmif_set_value"
+	status = bmif%bmif_set_value("Time", 1.0d0) 
+	write(*,*) "bmif%bmif_set_value"
 	!-------
-	status = bmif_update(id) 
-	write(*,*) "bmif_update"
+	status = bmif%bmif_update() 
+	write(*,*) "bmif%bmif_update"
 	!-------
-	status = bmif_update_until(id, 864000.0d0) 
-	write(*,*) "bmif_update_until"
+	status = bmif%bmif_update_until(864000.0d0) 
+	write(*,*) "bmif%bmif_update_until"
 	!-------
     
 	write(*,*) "AddOutputVars"
-	status = bmif_get_output_var_names(id, Names)
+	status = bmif%bmif_get_output_var_names(Names)
 	do i = 1, size(StringVector)
-		status = bmif_get_var_itemsize(id, Names(i), itemsize)
-		status = bmif_get_var_nbytes(id, Names(i), nbytes)
-		status = bmif_get_var_type(id, Names(i), string)
+		status = bmif%bmif_get_var_itemsize(Names(i), itemsize)
+		status = bmif%bmif_get_var_nbytes(Names(i), nbytes)
+		status = bmif%bmif_get_var_type(Names(i), string)
 		if (itemsize .eq. 0) itemsize=1
 		if (nbytes .eq. 0) nbytes=1
 		dim = nbytes / itemsize
-		status = bmif_get_var_type(id, Names(i), vtype)
+		status = bmif%bmif_get_var_type(Names(i), vtype)
 		if (vtype .eq. "real(kind=8)") then
 			if (dim .eq. 1) then
-				status = bmif_get_value(id, Names(i), d)
+				status = bmif%bmif_get_value(Names(i), d)
                 write(*,*) "     ", Names(i), "  ", d
 			else
-				status = bmif_get_value(id, Names(i), DoubleVector)
+				status = bmif%bmif_get_value(Names(i), DoubleVector)
                 write(*,*) "     ", Names(i), "  ", DoubleVector(1)
 			endif
 		else if (vtype .eq. "integer") then
 			if (dim .eq. 1) then
-				status = bmif_get_value(id, Names(i), j)
+				status = bmif%bmif_get_value(Names(i), j)
                 write(*,*) "     ", Names(i), "  ", j
 			else
-				status = bmif_get_value(id, Names(i), IntVector)
+				status = bmif%bmif_get_value(Names(i), IntVector)
                 write(*,*) "     ", Names(i), "  ", IntVector(1)
 			endif
 		else if (vtype .eq. "logical") then
 			if (dim == 1) then
-				status = bmif_get_value(id, Names(i), l)
+				status = bmif%bmif_get_value(Names(i), l)
                 write(*,*) "     ", Names(i), "  ", l
 			endif
 		else if (vtype(1:9) .eq. "character") then
 			if (dim == 1) then
-				status = bmif_get_value(id, Names(i), string)
+				status = bmif%bmif_get_value(Names(i), string)
                 write(*,*) "     ", Names(i), "  ", trim(string)
 			else
-				status = bmif_get_value(id, Names(i), StringVector)
+				status = bmif%bmif_get_value(Names(i), StringVector)
                 write(*,*) "     ", Names(i), "  ", trim(StringVector(1))
 			endif
 		endif
@@ -830,8 +833,8 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 #ifdef USE_MPI
 	status = RM_MpiWorkerBreak(id)
 #endif    
-	status = bmif_finalize(id)    ! void method
-	write(*,*) "bmif_finalize "
+	status = bmif%bmif_finalize()    ! void method
+	write(*,*) "bmif%bmif_finalize "
 
 	!Should be private: status =RM_ReturnHandler()
 	!TODO status =RM_MpiAbort()
