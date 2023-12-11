@@ -107,6 +107,7 @@
     !id = BMIF_Create(nxyz, nthreads)
 #endif
     id = bmif%bmif_initialize(yaml_file)
+    
     ! Open files
 	status = bmif%bmif_get_value_ptr("ComponentCount", ComponentCount_ptr)
 	status = bmif%bmif_get_value_ptr("GridCellCount", GridCellCount_ptr)

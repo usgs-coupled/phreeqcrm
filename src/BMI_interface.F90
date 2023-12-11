@@ -364,9 +364,18 @@
     CHARACTER(KIND=C_CHAR), INTENT(in) :: config_file(*)
     END FUNCTION RMF_BMI_Initialize
     END INTERFACE
-    class(bmi), intent(in) :: id
-    CHARACTER(len=*), INTENT(in) :: config_file
-    bmif_initialize_yaml = success(RMF_BMI_Initialize(id%bmiphreeqcrm_id, trim(config_file)//C_NULL_CHAR))
+    class(bmi), intent(inout) :: id
+    integer :: return_value
+    CHARACTER(len=*), INTENT(in) :: config_file    
+    if (id%bmiphreeqcrm_id .lt. 0) then
+        id%bmiphreeqcrm_id = bmif_create()
+    endif
+    return_value = success(RMF_BMI_Initialize(id%bmiphreeqcrm_id, trim(config_file)//C_NULL_CHAR))
+    if(return_value .ne. BMI_SUCCESS) then
+        bmif_initialize_yaml = -1
+    else
+        bmif_initialize_yaml = id%bmiphreeqcrm_id
+    endif
     return
     END FUNCTION bmif_initialize_yaml
 #endif

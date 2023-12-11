@@ -23,10 +23,10 @@
         SUBROUTINE register_basic_callback_fortran()
             implicit none
         END SUBROUTINE register_basic_callback_fortran
-        subroutine BMI_testing(id)
-            implicit none
-            integer, intent(in) :: id
-        end subroutine BMI_testing
+        !subroutine BMI_testing(self)
+        !    implicit none
+        !    class(bmi), intent(inout) :: self
+        !end subroutine BMI_testing
     end interface
     ! Based on PHREEQC Example 11
     real(kind=8), pointer :: d1_ptr(:)
@@ -140,6 +140,7 @@
 #endif
     ! Initialize with YAML file
     status = bmif%bmif_initialize(yaml_file)
+    id = bmif%bmif_get_id()
     status = bmif%bmif_get_value("GridCellCount", nxyz)
     status = bmif%bmif_get_value("ComponentCount", ncomps)
     ! OutputVarNames
@@ -213,7 +214,7 @@
     bc2 = -1          ! no bc2 solution for mixing
     bc_f1 = 1.0       ! mixing fraction for bc1
     status = RM_InitialPhreeqc2Concentrations(id, bc_conc, nbound, bc1, bc2, bc_f1)
-    call compare_ptrs
+    call compare_ptrs(bmif)
     ! --------------------------------------------------------------------------
     ! Transient loop
     ! --------------------------------------------------------------------------
@@ -263,10 +264,10 @@
         status = RM_StateSave(id, 1)
         status = RM_StateApply(id, 1)
         status = RM_StateDelete(id, 1)
-        call compare_ptrs
+        call compare_ptrs(bmif)
         ! Run chemistry
         status = bmif%bmif_update()
-        call compare_ptrs
+        call compare_ptrs(bmif)
         ! Get new data calculated by PhreeqcRM for transport
         status = bmif%bmif_get_value("Concentrations", c)
         status = bmif%bmif_get_value("DensityCalculated", density)
@@ -333,7 +334,7 @@
             enddo
         endif
     enddo 
-    call BMI_testing(id)
+    call BMI_testing(bmif)
     ! Clean up
 #ifdef USE_MPI    
     status = RM_MpiWorkerBreak(id)
@@ -686,7 +687,7 @@ USE, intrinsic :: ISO_C_BINDING
     dim = nbytes / itemsize
     allocate(rm_volume(dim))
     status = bmif%bmif_get_value("SolutionVolume", volume)
-	status = RM_GetSolutionVolume(id, volume);
+	status = RM_GetSolutionVolume(id, rm_volume);
     do i = 1, nxyz
         if (volume(i) .ne. rm_volume(i)) then
             status = assert(.false.)
@@ -776,7 +777,7 @@ write(*,*) "Assert failed"
 call exit(-1)
 end function assert
 
-subroutine compare_ptrs
+subroutine compare_ptrs(bmif)
 USE, intrinsic :: ISO_C_BINDING
 USE BMIPhreeqcRM
 USE IPhreeqc
@@ -811,8 +812,9 @@ implicit none
         SolutionVolume, Porosity, Pressure, Temperature, concentrations
     real(kind=8) :: time, timestep
     logical :: selectedoutputon, test_logical
-    type(bmi) :: bmif
+    type(bmi), intent(inout) :: bmif
     ! ComponentCount
+    id = bmif%bmif_get_id()
     status = bmif%bmif_get_value("ComponentCount", componentcount)
     status = assert(ncomps .eq. componentcount)
     componentcount = RM_GetComponentCount(id)
