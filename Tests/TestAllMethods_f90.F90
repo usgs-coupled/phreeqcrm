@@ -31,6 +31,9 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
   real(kind=8), pointer        :: d_ptr
   integer, pointer             :: i_ptr
   logical(kind=1), pointer     :: b_ptr
+  real(kind=4), pointer        :: float_ptr
+  real(kind=4)                 :: float
+  real(kind=4), allocatable    :: FloatVector(:)
   logical                      :: l
   integer                      :: itemsize, nbytes, dim
   type(bmi) :: bmif, bmif1
@@ -828,8 +831,32 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
                 write(*,*) "     ", Names(i), "  ", trim(StringVector(1))
 			endif
 		endif
-	enddo    
- 
+    enddo    
+    
+    ! Not implemented
+	status = bmif%bmif_get_var_location(string, string)
+	status = bmif%bmif_get_value_float(string, float)
+	status = bmif%bmif_get_value_ptr_float(string, float_ptr)
+	status = bmif%bmif_get_value_at_indices_double(string, DoubleVector, IntVector)
+	status = bmif%bmif_get_value_at_indices_float(string, FloatVector, IntVector)
+	status = bmif%bmif_get_value_at_indices_int(string, IntVector, IntVector)
+	status = bmif%bmif_set_value_at_indices_double(string, DoubleVector, IntVector)
+	status = bmif%bmif_set_value_at_indices_float(string, FloatVector, IntVector)
+	status = bmif%bmif_set_value_at_indices_int(string, IntVector, IntVector)
+	status = bmif%bmif_set_value_float(string, float)
+	status = bmif%bmif_get_grid_shape(n, IntVector)
+	status = bmif%bmif_get_grid_spacing(n, DoubleVector)
+	status = bmif%bmif_get_grid_origin(n, DoubleVector)
+	status = bmif%bmif_get_grid_x(n, DoubleVector)
+	status = bmif%bmif_get_grid_y(n, DoubleVector)
+	status = bmif%bmif_get_grid_z(n, DoubleVector)
+	status = bmif%bmif_get_grid_node_count(n, n)
+	status = bmif%bmif_get_grid_edge_count(n, n)
+	status = bmif%bmif_get_grid_face_count(n, n)
+	status = bmif%bmif_get_grid_edge_nodes(n, IntVector)
+	status = bmif%bmif_get_grid_face_edges(n, IntVector)
+	status = bmif%bmif_get_grid_face_nodes(n, IntVector)
+	status = bmif%bmif_get_grid_nodes_per_face(n, IntVector)
 #ifdef USE_MPI
 	status = RM_MpiWorkerBreak(id)
 #endif    

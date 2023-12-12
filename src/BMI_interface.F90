@@ -45,64 +45,10 @@
     END INTERFACE bmif_create
 #endif
 
-    !> @a bmif_get_value retrieves model variables. 
-    !>
-    !> Only variables in the list
-    !> provided by @ref bmif_get_output_var_names can be retrieved. 
-    INTERFACE bmif_get_value
-        module procedure bmif_get_value_logical
-        module procedure bmif_get_value_char
-        module procedure bmif_get_value_char1
-        module procedure bmif_get_value_double
-        module procedure bmif_get_value_double1
-        module procedure bmif_get_value_double2
-        module procedure bmif_get_value_float ! not implemented
-        module procedure bmif_get_value_int
-        module procedure bmif_get_value_int1
-        module procedure bmif_get_value_int2
-    END INTERFACE bmif_get_value
-    !> @a get_value_at_indices is not implemented. 
-    !INTERFACE get_value_at_indices
-    ! module procedure get_value_at_indices_double ! not implemented
-    ! module procedure get_value_at_indices_float  ! not implemented
-    ! module procedure get_value_at_indices_int    ! not implemented
-    ! END INTERFACE get_value_at_indices
-    !> @a bmif_set_value sets model variables. 
-    !>
-    !> Only variables in the list
-    !> provided by @ref bmif_get_input_var_names can be set. 
-   INTERFACE bmif_set_value
-        module procedure bmif_set_value_b
-        module procedure bmif_set_value_c
-        module procedure bmif_set_value_double
-        module procedure bmif_set_value_double1
-        module procedure bmif_set_value_double2
-        module procedure bmif_set_value_float ! not implemented
-        module procedure bmif_set_value_int
-        module procedure bmif_set_value_int1
-        module procedure bmif_set_value_int2
-    END INTERFACE bmif_set_value
-    
-    !> @a set_value_at_indices is not implemented. 
-    INTERFACE set_value_at_indices
-        module procedure set_value_at_indices_double ! not implemented
-        module procedure set_value_at_indices_float  ! not implemented
-        module procedure set_value_at_indices_int    ! not implemented
-    END INTERFACE set_value_at_indices
-    !> @a bmif_get_value_ptr retrieves pointers to model variables. 
-    !>
-    !> Only variables in the list
-    !> provided by @ref bmif_get_pointable_var_names can be pointed to. 
-    !INTERFACE bmif_get_value_ptr
-    !    module procedure bmif_get_value_ptr_logical
-    !    module procedure bmif_get_value_ptr_double
-    !    module procedure bmif_get_value_ptr_double1
-    !    module procedure bmif_get_value_ptr_float ! not implemented
-    !    module procedure bmif_get_value_ptr_integer
-    !END INTERFACE bmif_get_value_ptr
-    
     public bmi
-    type :: bmi
+!!!!!!!!!!
+    type :: bmi 
+!!!!!!!!!!
         INTEGER :: bmiphreeqcrm_id = -1
     contains
         procedure :: bmif_get_id
@@ -123,6 +69,10 @@
         procedure :: bmif_get_start_time
         procedure :: bmif_get_time_step
         procedure :: bmif_get_time_units
+        procedure :: bmif_get_value_at_indices_double, &
+            bmif_get_value_at_indices_float, bmif_get_value_at_indices_int
+        generic :: bmif_get_value_at_indicies => bmif_get_value_at_indices_double, &
+            bmif_get_value_at_indices_float, bmif_get_value_at_indices_int
         procedure :: bmif_get_value_logical, bmif_get_value_char, bmif_get_value_char1, &
             bmif_get_value_double, bmif_get_value_double1, bmif_get_value_double2, bmif_get_value_float, &! not implemented
             bmif_get_value_int, bmif_get_value_int1, bmif_get_value_int2
@@ -133,6 +83,13 @@
              bmif_get_value_ptr_double, bmif_get_value_ptr_double1, bmif_get_value_ptr_float
         generic :: bmif_get_value_ptr => bmif_get_value_ptr_logical, bmif_get_value_ptr_integer, &
              bmif_get_value_ptr_double, bmif_get_value_ptr_double1, bmif_get_value_ptr_float
+        procedure :: bmif_get_var_location
+        
+        procedure :: bmif_set_value_at_indices_double, bmif_set_value_at_indices_float, &
+            bmif_set_value_at_indices_int
+        generic :: bmif_set_value_at_indices => bmif_set_value_at_indices_double, &
+            bmif_set_value_at_indices_float, bmif_set_value_at_indices_int
+              
         procedure :: bmif_get_var_itemsize
         procedure :: bmif_get_var_nbytes
         procedure :: bmif_get_var_type
@@ -149,6 +106,19 @@
         
         procedure :: bmif_update
         procedure :: bmif_update_until
+        procedure :: bmif_get_grid_shape
+        procedure :: bmif_get_grid_spacing
+        procedure :: bmif_get_grid_origin
+        procedure :: bmif_get_grid_x
+        procedure :: bmif_get_grid_y
+        procedure :: bmif_get_grid_z
+        procedure :: bmif_get_grid_node_count
+        procedure :: bmif_get_grid_edge_count
+        procedure :: bmif_get_grid_face_count
+        procedure :: bmif_get_grid_edge_nodes
+        procedure :: bmif_get_grid_face_edges
+        procedure :: bmif_get_grid_face_nodes
+        procedure :: bmif_get_grid_nodes_per_face
     
     end type         
     CONTAINS
@@ -175,16 +145,7 @@
     bmif_create_default = RM_BMI_Create_default()
     return
     END FUNCTION bmif_create_default 
-    
-    
-    INTEGER FUNCTION bmif_get_id(id)
-    
-    class(bmi), intent(inout) :: id
-    bmif_get_id = id%bmiphreeqcrm_id
-    return 
-    
-    END FUNCTION bmif_get_id 
-#endif    
+#endif     
     !> @a bmif_create creates a reaction module. If the code is compiled with
     !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
     !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
@@ -228,7 +189,7 @@
     INTEGER, INTENT(in) :: nthreads
     bmif_create = RM_BMI_Create(nxyz, nthreads)
     return
-    END FUNCTION bmif_create    
+    END FUNCTION bmif_create   
 
     !> @a bmif_initialize uses a YAML file to initialize an instance of BMIPhreeqcRM. Same as
     !> @ref RM_InitializeYAML.
@@ -351,6 +312,8 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
+
+#if !defined(USE_MPI)    
 #ifdef USE_YAML
     INTEGER FUNCTION bmif_initialize_yaml(id, config_file)
     USE ISO_C_BINDING
@@ -391,7 +354,7 @@
     bmif_initialize_nxyz = id%bmiphreeqcrm_id
     return
     END FUNCTION bmif_initialize_nxyz
-    
+
     INTEGER FUNCTION bmif_initialize_default(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -401,8 +364,27 @@
     endif
     bmif_initialize_default = id%bmiphreeqcrm_id
     return
-    END FUNCTION bmif_initialize_default    
+    END FUNCTION bmif_initialize_default   
+#endif    
+#if defined(USE_MPI)    
+    INTEGER FUNCTION bmif_initialize_mpi(id, nxyz, nthreads)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    class(bmi), intent(inout) :: id
+    INTEGER, intent(in) :: nxyz, nthreads
+    if (id%bmiphreeqcrm_id .lt. 0) then
+        id%bmiphreeqcrm_id = bmif_create(nxyz, nthreads)
+    endif
+    bmif_initialize_nxyz = id%bmiphreeqcrm_id
+    return
+    END FUNCTION bmif_initialize_nxyz
+#endif
     
+    INTEGER FUNCTION bmif_get_id(id)
+    class(bmi), intent(inout) :: id
+    bmif_get_id = id%bmiphreeqcrm_id
+    return 
+    END FUNCTION bmif_get_id    
     
     !> @a bmif_update runs a reaction step for all of the cells in the reaction module.
     !> Same as @ref RM_RunCells.
@@ -2238,7 +2220,7 @@
     integer, intent(in) :: grid
     INTEGER, INTENT(inout) :: ngrid
     if (grid .eq. 0) then
-        bmif_grid_size = success(bmif_get_value(id, "GridCellCount", ngrid))
+        bmif_grid_size = success(id%bmif_get_value("GridCellCount", ngrid))
     else
         ngrid = 0
         bmif_grid_size = BMI_FAILURE
