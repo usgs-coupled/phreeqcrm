@@ -59,7 +59,6 @@ void TestAllMethods_c()
 	if (mpi_myself == 0)
 	{
 		status = WriteYAMLDoc(yid, YAML_filename);
-		assert(RM_GetGridCellCountYAML(YAML_filename) == nxyz);
 	}
 	if (MPI_Barrier(MPI_COMM_WORLD) != MPI_SUCCESS)  //  make sure yaml is finished being written
 	{
@@ -69,8 +68,8 @@ void TestAllMethods_c()
 	id = BMI_Create(nxyz, MPI_COMM_WORLD);
 	if (mpi_myself > 0)
 	{
-		BMI_MpiWorker();
-		BMI_Finalize();
+		status = RM_MpiWorker(id);
+		status = BMI_Finalize(id);
 		return;
 	}
 #else

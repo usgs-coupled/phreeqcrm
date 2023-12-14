@@ -131,12 +131,12 @@
     id = bmif%bmif_create(nxyz, MPI_COMM_WORLD)
     if (mpi_myself > 0) then
         status = RM_MpiWorker(id)
-        status = bmif%bmif_finalize(id)
+        status = bmif%bmif_finalize()
         return
     endif
 #else
     ! OpenMP
-    !id = bmif%bmif_create()
+    id = bmif%bmif_create_default()
 #endif
     ! Initialize with YAML file
     status = bmif%bmif_initialize(yaml_file)
@@ -398,6 +398,7 @@
     end function bmi_worker_tasks_f
 
     integer function bmi_do_something()
+    USE BMIPhreeqcRM
     implicit none
     INCLUDE 'mpif.h'
     integer status

@@ -93,10 +93,10 @@
         nxyz = GetGridCellCountYAML(yaml_file)
     endif
     CALL MPI_Bcast(nxyz, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, status)
-    id = bmif_create(nxyz, MPI_COMM_WORLD)
+    id = bmif%bmif_create(nxyz, MPI_COMM_WORLD)
     if (mpi_myself > 0) then
         status = RM_MpiWorker(id)
-        status = bmif_finalize(id)
+        status = bmif%bmif_finalize()
         return
     endif
 #else
@@ -104,9 +104,9 @@
     nxyz = GetGridCellCountYAML(yaml_file)
     nthreads = 3
     
-    !id = BMIF_Create(nxyz, nthreads)
+    id =bmif%bmif_create(nxyz, nthreads)
 #endif
-    id = bmif%bmif_initialize(yaml_file)
+    status = bmif%bmif_initialize(yaml_file)
     
     ! Open files
 	status = bmif%bmif_get_value_ptr("ComponentCount", ComponentCount_ptr)

@@ -50,13 +50,12 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
     id = bmif%bmif_create(nxyz, MPI_COMM_WORLD)
     if (mpi_myself > 0) then
         status = RM_MpiWorker(id)
-        status = bmif%bmif_finalize(id)
+        status = bmif%bmif_finalize()
         return
     endif
 #else
     ! OpenMP
-    !id = bmif%bmif_create()
-	id = bmif%bmif_initialize()
+    id = bmif%bmif_create_default()
 #endif
     ! Write YAML file
     yid = CreateYAMLPhreeqcRM()
@@ -668,7 +667,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	!
 #ifndef USE_MPI    
 	!id1 = bmif%bmif_create(10, 1)  ! make another bmiphreeqcrm
-	id1 = bmif1%bmif_initialize(10, 1)
+	id1 = bmif1%bmif_create(10,1)
 	status = RM_CloseFiles(id1) 
 	status = bmif1%bmif_finalize()   ! destroy the new bmiphreeqcrm
 	write(*,*) "CloseFiles "

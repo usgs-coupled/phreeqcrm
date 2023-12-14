@@ -10,7 +10,7 @@
     !> @n For Windows, 
     !> include the files BMI_interface.F90 and RM_interface.F90 in your project.
     !> @n For Linux, configure, compile, and install the PhreeqcRM library and module file.
-    !> You will need installed include directory (-I) added to the project) to 
+    !> You will need installed include directory (-I) added to the project to 
     !> reference the module file.
     !> You will need to link to the library to produce the executable for your code.
     !>
@@ -38,12 +38,12 @@
     !> constructor requires the number of cells in the user model
     !> as the first argument, and the number of threads as the
     !> second argument.  
-#ifndef USE_MPI
-    INTERFACE bmif_create
-		module procedure bmif_create_default 
-		module procedure bmif_create  
-    END INTERFACE bmif_create
-#endif
+
+  !  INTERFACE bmif_create
+		!module procedure bmif_create_default 
+		!module procedure bmif_create  
+  !  END INTERFACE bmif_create
+
 
     public bmi
 !!!!!!!!!!
@@ -51,6 +51,8 @@
 !!!!!!!!!!
         INTEGER :: bmiphreeqcrm_id = -1
     contains
+		procedure :: bmif_create_default 
+		procedure :: bmif_create  
         procedure :: bmif_get_id
         procedure :: bmif_add_output_vars
         procedure :: bmif_finalize
@@ -94,8 +96,8 @@
         procedure :: bmif_get_var_nbytes
         procedure :: bmif_get_var_type
         procedure :: bmif_get_var_units
-        procedure :: bmif_initialize_yaml, bmif_initialize_nxyz, bmif_initialize_default 
-        generic :: bmif_initialize => bmif_initialize_yaml, bmif_initialize_nxyz, bmif_initialize_default ! procedure declaration
+        procedure :: bmif_initialize
+        !generic :: bmif_initialize => bmif_initialize, bmif_initialize_default ! procedure declaration
 
         procedure :: bmif_set_value_b, bmif_set_value_c, bmif_set_value_double, bmif_set_value_double1, &
             bmif_set_value_double2, bmif_set_value_float, &! not implemented
@@ -122,7 +124,7 @@
     
     end type         
     CONTAINS
-#ifndef USE_MPI
+
     ! ====================================================
     ! Initialize, run, finalize (IRF) 
     ! ====================================================
@@ -131,8 +133,9 @@
     !> used if the instance is to be initialized with a YAML file.
     !> The YAML file must provide the number of cells in the user's 
     !> model through the YAMLSetGridCellCount method, and, optionally,
-    !> the number of threads with YAMLThreadCount. 
-    INTEGER FUNCTION bmif_create_default()
+    !> the number of threads with YAMLThreadCount. The default
+    !> method cannot be used with MPI.
+    INTEGER FUNCTION bmif_create_default(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -142,10 +145,16 @@
     IMPLICIT NONE
     END FUNCTION RM_BMI_Create_default
     END INTERFACE
-    bmif_create_default = RM_BMI_Create_default()
+    class(bmi), intent(inout) :: id
+#if defined(USE_MPI)
+    bmif_create_default = -1
+    STOP "ERROR: You must use bmif_create(nxyz, COMM) when using MPI."
+#endif
+    bmif_create_default = RM_BMI_Create_default() 
+    id%bmiphreeqcrm_id = bmif_create_default
     return
     END FUNCTION bmif_create_default 
-#endif     
+    
     !> @a bmif_create creates a reaction module. If the code is compiled with
     !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
     !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
@@ -173,7 +182,7 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and workers.
-    INTEGER FUNCTION bmif_create(nxyz, nthreads)
+    INTEGER FUNCTION bmif_create(id, nxyz, nthreads)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -185,9 +194,11 @@
     INTEGER(KIND=C_INT), INTENT(in) :: nthreads
     END FUNCTION RM_BMI_Create
     END INTERFACE
+    class(bmi), intent(inout) :: id
     INTEGER, INTENT(in) :: nxyz
     INTEGER, INTENT(in) :: nthreads
     bmif_create = RM_BMI_Create(nxyz, nthreads)
+    id%bmiphreeqcrm_id = bmif_create
     return
     END FUNCTION bmif_create   
 
@@ -313,9 +324,8 @@
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-#if !defined(USE_MPI)    
 #ifdef USE_YAML
-    INTEGER FUNCTION bmif_initialize_yaml(id, config_file)
+    INTEGER FUNCTION bmif_initialize(id, config_file)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -329,56 +339,23 @@
     END INTERFACE
     class(bmi), intent(inout) :: id
     integer :: return_value
-    CHARACTER(len=*), INTENT(in) :: config_file    
+    CHARACTER(len=*), INTENT(in) :: config_file   
     if (id%bmiphreeqcrm_id .lt. 0) then
-        id%bmiphreeqcrm_id = bmif_create()
+        STOP "ERROR: You must create the bmif instance before you call bmif_initialize."
     endif
-    return_value = success(RMF_BMI_Initialize(id%bmiphreeqcrm_id, trim(config_file)//C_NULL_CHAR))
-    if(return_value .ne. BMI_SUCCESS) then
-        bmif_initialize_yaml = -1
-    else
-        bmif_initialize_yaml = id%bmiphreeqcrm_id
+#if defined(USE_MPI)
+    if (RM_GetMpiMyself(id%bmiphreeqcrm_id) .gt. 0) then
+        STOP "bmif_initialize with YAML can only be called by root MPI process."
     endif
-    return
-    END FUNCTION bmif_initialize_yaml
-#endif
-
-    INTEGER FUNCTION bmif_initialize_nxyz(id, nxyz, nthreads)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    class(bmi), intent(inout) :: id
-    INTEGER, intent(in) :: nxyz, nthreads
-    if (id%bmiphreeqcrm_id .lt. 0) then
-        id%bmiphreeqcrm_id = bmif_create(nxyz, nthreads)
-    endif
-    bmif_initialize_nxyz = id%bmiphreeqcrm_id
-    return
-    END FUNCTION bmif_initialize_nxyz
-
-    INTEGER FUNCTION bmif_initialize_default(id)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    class(bmi), intent(inout) :: id
-    if (id%bmiphreeqcrm_id .lt. 0) then
-        id%bmiphreeqcrm_id = bmif_create_default()
-    endif
-    bmif_initialize_default = id%bmiphreeqcrm_id
-    return
-    END FUNCTION bmif_initialize_default   
 #endif    
-#if defined(USE_MPI)    
-    INTEGER FUNCTION bmif_initialize_mpi(id, nxyz, nthreads)
-    USE ISO_C_BINDING
-    IMPLICIT NONE
-    class(bmi), intent(inout) :: id
-    INTEGER, intent(in) :: nxyz, nthreads
-    if (id%bmiphreeqcrm_id .lt. 0) then
-        id%bmiphreeqcrm_id = bmif_create(nxyz, nthreads)
-    endif
-    bmif_initialize_nxyz = id%bmiphreeqcrm_id
+!    if (id%bmiphreeqcrm_id .lt. 0) then
+!        id%bmiphreeqcrm_id = bmif_create()
+!    endif
+    bmif_initialize = success(RMF_BMI_Initialize(id%bmiphreeqcrm_id, trim(config_file)//C_NULL_CHAR))
     return
-    END FUNCTION bmif_initialize_nxyz
+    END FUNCTION bmif_initialize
 #endif
+ 
     
     INTEGER FUNCTION bmif_get_id(id)
     class(bmi), intent(inout) :: id

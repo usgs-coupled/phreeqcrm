@@ -50,13 +50,13 @@ rmpadfstring(char* dest, const char* src, int len)
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
 int
-BMI_Create(int* nxyz, int* nthreads)
+BMI_Create(int nxyz, int nthreads)
 /* ---------------------------------------------------------------------- */
 {
 	//
 	// Creates reaction module, called by root and MPI workers
 	//
-	int id = BMIPhreeqcRM::CreateBMIModule(*nxyz, MPI_Comm_f2c(*nthreads));
+	int id = BMIPhreeqcRM::CreateBMIModule(nxyz, MPI_Comm_f2c(nthreads));
 	// Returns ith output variable name
 	if (id >= 0)
 	{

@@ -38,16 +38,6 @@ RM_BMI_Create(int* nxyz, int* nthreads)
 #else
 /* ---------------------------------------------------------------------- */
 int
-RM_BMI_Create_default()
-/* ---------------------------------------------------------------------- */
-{
-	//
-	// Creates reaction module, called by root and MPI workers
-	//
-	return BMIPhreeqcRM::CreateBMIModule();
-}
-/* ---------------------------------------------------------------------- */
-int
 RM_BMI_Create(int* nxyz, int* nthreads)
 /* ---------------------------------------------------------------------- */
 {
@@ -57,6 +47,16 @@ RM_BMI_Create(int* nxyz, int* nthreads)
 	return BMIPhreeqcRM::CreateBMIModule(*nxyz, *nthreads);
 }
 #endif
+/* ---------------------------------------------------------------------- */
+int
+RM_BMI_Create_default()
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	return BMIPhreeqcRM::CreateBMIModule();
+}
 /* ---------------------------------------------------------------------- */
 int
 RMF_BMI_Destroy(int* id)
