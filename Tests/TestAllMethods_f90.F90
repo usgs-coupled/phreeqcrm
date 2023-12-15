@@ -37,6 +37,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
   logical                      :: l
   integer                      :: itemsize, nbytes, dim
   type(bmi) :: bmif, bmif1
+  type(YAML_PhreeqcRM) :: yrm
   ! --------------------------------------------------------------------------
   ! Create PhreeqcRM
   ! --------------------------------------------------------------------------
@@ -58,13 +59,13 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
     id = bmif%bmif_create_default()
 #endif
     ! Write YAML file
-    yid = CreateYAMLPhreeqcRM()
-    status = YAMLSetGridCellCount(yid, nxyz)
-    status = YAMLThreadCount(yid, 3)
+    yid = yrm%CreateYAMLPhreeqcRM()
+    status = yrm%YAMLSetGridCellCount(nxyz)
+    status = yrm%YAMLThreadCount(3)
 	yaml_filename = "TestAllMethods_f90.yaml"
-	status = WriteYAMLDoc(yid, yaml_filename)
-	status = YAMLClear(yid)
-    status = DestroyYAMLPhreeqcRM(yid)  
+	status = yrm%WriteYAMLDoc(yaml_filename)
+	status = yrm%YAMLClear()
+    status = yrm%DestroyYAMLPhreeqcRM()  
   
 	write(*,*) "bmif%bmif_create"
 	!-------
