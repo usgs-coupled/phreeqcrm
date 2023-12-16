@@ -140,28 +140,28 @@
 	procedure :: FindComponents
 	procedure :: GetBackwardMapping
 	procedure :: GetChemistryCellCount
-	procedure :: GetComponents
-	procedure :: GetComponentCount
-	procedure :: GetConcentrations
-	procedure :: GetCurrentSelectedOutputUserNumber
-	procedure :: GetDensityCalculated
-	procedure :: GetDensity
+	procedure :: GetComponents                      ! bmif_get_var
+	procedure :: GetComponentCount                  ! bmif_get_var
+	procedure :: GetConcentrations                  ! bmif_get_var
+	procedure :: GetCurrentSelectedOutputUserNumber ! bmif_get_var
+	procedure :: GetDensityCalculated               ! bmif_get_var
+	procedure :: GetDensity                         ! bmif_get_var
 	procedure :: GetEndCell
 	procedure :: GetEquilibriumPhasesCount
 	procedure :: GetEquilibriumPhasesNames
-	procedure :: GetErrorString
+	procedure :: GetErrorString                     ! bmif_get_var
 	procedure :: GetExchangeNames
 	procedure :: GetExchangeSpeciesCount
 	procedure :: GetExchangeSpeciesNames
-	procedure :: GetFilePrefix
+	procedure :: GetFilePrefix                      ! bmif_get_var
 	procedure :: GetGasComponentsCount
 	procedure :: GetGasComponentsNames
 	procedure :: GetGasCompMoles
 	procedure :: GetGasCompPressures
 	procedure :: GetGasCompPhi
 	procedure :: GetGasPhaseVolume
-	procedure :: GetGfw
-	procedure :: GetGridCellCount
+	procedure :: GetGfw                             ! bmif_get_var
+	procedure :: GetGridCellCount                   ! bmif_get_var
 	procedure :: GetIPhreeqcId
 	procedure :: GetIthConcentration
 	procedure :: GetIthSpeciesConcentration
@@ -170,21 +170,22 @@
 	procedure :: GetMpiMyself
 	procedure :: GetMpiTasks
 	procedure :: GetNthSelectedOutputUserNumber
-	procedure :: GetPorosity
-	procedure :: GetPressure
+	procedure :: GetPorosity                        ! bmif_get_var
+	procedure :: GetPressure                        ! bmif_get_var
 	procedure :: GetSaturationCalculated
 	procedure :: GetSaturation
-	procedure :: GetSelectedOutput
-	procedure :: GetSelectedOutputColumnCount
-	procedure :: GetSelectedOutputCount
-	procedure :: GetSelectedOutputHeadings
-	procedure :: GetSelectedOutputRowCount
+	procedure :: GetSelectedOutput                  ! bmif_get_var
+	procedure :: GetSelectedOutputColumnCount       ! bmif_get_var
+	procedure :: GetSelectedOutputCount             ! bmif_get_var
+	procedure :: GetSelectedOutputHeadings          ! bmif_get_var
+    
+	procedure :: GetSelectedOutputRowCount          ! bmif_get_var
 	procedure :: GetSICount
 	procedure :: GetSINames
 	procedure :: GetSolidSolutionComponentsCount
 	procedure :: GetSolidSolutionComponentsNames
 	procedure :: GetSolidSolutionNames
-	procedure :: GetSolutionVolume
+	procedure :: GetSolutionVolume                  ! bmif_get_var
 	procedure :: GetSpeciesConcentrations
 	procedure :: GetSpeciesCount
 	procedure :: GetSpeciesD25
@@ -198,12 +199,12 @@
 	procedure :: GetSurfaceSpeciesCount
 	procedure :: GetSurfaceSpeciesNames
 	procedure :: GetSurfaceTypes
-	procedure :: GetTemperature
+	procedure :: GetTemperature                     ! bmif_get_var
 	procedure :: GetThreadCount
-	procedure :: GetTime
+	procedure :: GetTime                            ! bmif_get_var
 	procedure :: GetTimeConversion
-	procedure :: GetTimeStep
-	procedure :: GetViscosity
+	procedure :: GetTimeStep                        ! bmif_get_var
+	procedure :: GetViscosity                       ! bmif_get_var
 	procedure :: InitializeYAML
 	procedure :: InitialPhreeqc2Concentrations
 	procedure :: InitialPhreeqc2Module
@@ -227,37 +228,37 @@
 	procedure :: RunString
 	procedure :: ScreenMessage
 	procedure :: SetComponentH2O
-	procedure :: SetConcentrations
+	procedure :: SetConcentrations                  ! bmif_set_var
 	procedure :: SetCurrentSelectedOutputUserNumber
-	procedure :: SetDensityUser
-	procedure :: SetDensity
+	procedure :: SetDensityUser                     ! bmif_set_var
+	procedure :: SetDensity                         ! bmif_set_var
 	procedure :: SetDumpFileName
 	procedure :: SetErrorHandlerMode
 	procedure :: SetErrorOn
-	procedure :: SetFilePrefix
+	procedure :: SetFilePrefix                      ! bmif_set_var
 	procedure :: SetGasCompMoles
 	procedure :: SetGasPhaseVolume
 	procedure :: SetIthConcentration
 	procedure :: SetIthSpeciesConcentration
 	procedure :: SetMpiWorkerCallback
-	procedure :: SetNthSelectedOutput
+	procedure :: SetNthSelectedOutput               ! bmif_set_var
 	procedure :: SetPartitionUZSolids
-	procedure :: SetPorosity
-	procedure :: SetPressure
+	procedure :: SetPorosity                        ! bmif_set_var
+	procedure :: SetPressure                        ! bmif_set_var
 	procedure :: SetPrintChemistryMask
 	procedure :: SetPrintChemistryOn
 	procedure :: SetRebalanceByCell
 	procedure :: SetRebalanceFraction
 	procedure :: SetRepresentativeVolume
-	procedure :: SetSaturationUser
-	procedure :: SetSaturation
+	procedure :: SetSaturationUser                  ! bmif_set_var
+	procedure :: SetSaturation                      ! bmif_set_var
 	procedure :: SetScreenOn
-	procedure :: SetSelectedOutputOn
+	procedure :: SetSelectedOutputOn                ! bmif_set_var
 	procedure :: SetSpeciesSaveOn
-	procedure :: SetTemperature
-	procedure :: SetTime
+	procedure :: SetTemperature                     ! bmif_set_var
+	procedure :: SetTime                            ! bmif_set_var
 	procedure :: SetTimeConversion
-	procedure :: SetTimeStep
+	procedure :: SetTimeStep                        ! bmif_set_var
 	procedure :: SetUnitsExchange
 	procedure :: SetUnitsGasPhase
 	procedure :: SetUnitsKinetics
