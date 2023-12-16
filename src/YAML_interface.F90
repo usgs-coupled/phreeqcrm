@@ -96,7 +96,7 @@
     contains
     !> Creates a YAMLPhreeqcRM instance with a YAML document that is ready to
     !> for writing data for initiation of a PhreeqcRM instance.
-    
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @see
     !> @ref DestroyYAMLPhreeqcRM.
     !> @par Fortran Example:
@@ -109,7 +109,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION CreateYAMLPhreeqcRM(id)
+    INTEGER FUNCTION CreateYAMLPhreeqcRM(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -119,12 +119,12 @@
     IMPLICIT NONE
     END FUNCTION CreateYAMLPhreeqcRM_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
-    id%YAML_id  = CreateYAMLPhreeqcRM_F()
-    CreateYAMLPhreeqcRM = id%YAML_id
+    class(YAML_PhreeqcRM), intent(inout) :: self
+    self%YAML_id  = CreateYAMLPhreeqcRM_F()
+    CreateYAMLPhreeqcRM = self%YAML_id
     END FUNCTION CreateYAMLPhreeqcRM
     !> Deletes the YAMLPhreeqcRM instance and all data.
-    
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @see
     !> @ref YAMLClear.
@@ -139,7 +139,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION DestroyYAMLPhreeqcRM(id)
+    INTEGER FUNCTION DestroyYAMLPhreeqcRM(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -150,11 +150,11 @@
     integer(kind=C_INT), intent(in) :: id
     END FUNCTION DestroyYAMLPhreeqcRM_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
-    DestroyYAMLPhreeqcRM = DestroyYAMLPhreeqcRM_F(id%YAML_id)
+    class(YAML_PhreeqcRM), intent(inout) :: self
+    DestroyYAMLPhreeqcRM = DestroyYAMLPhreeqcRM_F(self%YAML_id)
     END FUNCTION DestroyYAMLPhreeqcRM
     !> Writes YAML document to file.
-    
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param file_name     Name of file to write YAML document.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @see
@@ -170,7 +170,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION WriteYAMLDoc(id, file_name)
+    INTEGER FUNCTION WriteYAMLDoc(self, file_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -182,13 +182,13 @@
     character(KIND=C_CHAR), intent(in) :: file_name(*)
     END FUNCTION WriteYAMLDoc_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     character(len=*), intent(in) :: file_name
-    WriteYAMLDoc = WriteYAMLDoc_F(id%YAML_id, trim(file_name)//C_NULL_CHAR)
+    WriteYAMLDoc = WriteYAMLDoc_F(self%YAML_id, trim(file_name)//C_NULL_CHAR)
     END FUNCTION WriteYAMLDoc
 
     !> Clears all definitions from the YAML document.
-    
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @see
     !> @ref DestroyYAMLPhreeqcRM.
@@ -203,7 +203,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLClear(id)
+    INTEGER FUNCTION YAMLClear(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -214,8 +214,8 @@
     integer(kind=C_INT), intent(in) :: id
     END FUNCTION YAMLClear_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
-    YAMLClear = YAMLClear_F(id%YAML_id)
+    class(YAML_PhreeqcRM), intent(inout) :: self
+    YAMLClear = YAMLClear_F(self%YAML_id)
     END FUNCTION YAMLClear
     !> Inserts data into the YAML document to select sets of output variables.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
@@ -225,6 +225,7 @@
     !> USER_PUNCH 333 data blocks that make the variables accessible. Variables will
     !> only be accessible if the system includes the given reactant; for example, no
     !> gas variables will be created if there are no GAS_PHASEs in the model.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param option    A string value, among those listed below, that selects sets of variables
     !> that can be retieved by the bmif_get_value method.
     !> @param def A string value that can be "false", "true", or a list of items to be included as
@@ -270,7 +271,7 @@
     !> aqueous species; list includes only the specified aqueous species. Default False.
     !> @n SaturationIndices: False excludes all saturation indices; True includes all
     !> saturation indices; list includes only the specified saturation indices. Default False.
-    INTEGER FUNCTION YAMLAddOutputVars(id, option, def)
+    INTEGER FUNCTION YAMLAddOutputVars(self, option, def)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -283,18 +284,18 @@
     CHARACTER(KIND=C_CHAR), INTENT(in) :: src
     END FUNCTION YAMLAddOutputVars_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     CHARACTER(len=*), INTENT(in) :: option
     CHARACTER(len=*), INTENT(in) :: def
     character(100) :: vartype
     integer :: bytes, nbytes, status, dim
-    YAMLAddOutputVars = YAMLAddOutputVars_F(id%YAML_id, trim(option)//C_NULL_CHAR, trim(def)//C_NULL_CHAR)
+    YAMLAddOutputVars = YAMLAddOutputVars_F(self%YAML_id, trim(option)//C_NULL_CHAR, trim(def)//C_NULL_CHAR)
     return
     END FUNCTION YAMLAddOutputVars
     !> Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
-    
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
     !> CloseFiles closes the output and log files.
@@ -306,7 +307,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLCloseFiles(id)
+    INTEGER FUNCTION YAMLCloseFiles(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -317,13 +318,13 @@
     integer(kind=C_INT), intent(in) :: id
     END FUNCTION YAMLCloseFiles_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
-    YAMLCloseFiles = YAMLCloseFiles_F(id%YAML_id)
+    class(YAML_PhreeqcRM), intent(inout) :: self
+    YAMLCloseFiles = YAMLCloseFiles_F(self%YAML_id)
     END FUNCTION YAMLCloseFiles
     !> Inserts data into the YAML document for the PhreeqcRM method CreateMapping.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
-    
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param grid2chem     Integer array of mapping from user's model grid to cells
     !> for which chemistry will be run.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -356,7 +357,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLCreateMapping(id, grid2chem)
+    INTEGER FUNCTION YAMLCreateMapping(self, grid2chem)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -369,14 +370,14 @@
     integer(kind=C_INT), intent(in) :: l
     END FUNCTION YAMLCreateMapping_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, allocatable, dimension(:), intent(in) :: grid2chem
-    YAMLCreateMapping = YAMLCreateMapping_F(id%YAML_id, grid2chem(1), size(grid2chem))
+    YAMLCreateMapping = YAMLCreateMapping_F(self%YAML_id, grid2chem(1), size(grid2chem))
     END FUNCTION YAMLCreateMapping
     !> Inserts data into the YAML document for the PhreeqcRM method DumpModule.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
-    
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param dump_on          Signal for writing the dump file, true or false.
     !> @param append           Signal to append to the contents of the dump file, true or false.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -396,7 +397,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLDumpModule(id, dump_on, append)
+    INTEGER FUNCTION YAMLDumpModule(self, dump_on, append)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -408,18 +409,19 @@
     integer(kind=C_INT), intent(in) :: idump_on, iappend
     END FUNCTION YAMLDumpModule_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical, intent(in) :: dump_on, append
     integer :: idump_on, iappend
     idump_on = 0
     iappend = 0
     if (dump_on) idump_on = 1
     if (append) iappend = 1
-    YAMLDumpModule = YAMLDumpModule_F(id%YAML_id, idump_on, iappend)
+    YAMLDumpModule = YAMLDumpModule_F(self%YAML_id, idump_on, iappend)
     END FUNCTION YAMLDumpModule
     !> Inserts data into the YAML document for the PhreeqcRM method FindComponents.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @retval      Zero indicates success, negative indicates failure.
     !> @par
     !> FindComponents accumulates a list of elements. Elements are those that have been
@@ -460,7 +462,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLFindComponents(id)
+    INTEGER FUNCTION YAMLFindComponents(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -471,13 +473,14 @@
     integer(kind=C_INT), intent(in) :: id
     END FUNCTION YAMLFindComponents_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
-    YAMLFindComponents = YAMLFindComponents_F(id%YAML_id)
+    class(YAML_PhreeqcRM), intent(inout) :: self
+    YAMLFindComponents = YAMLFindComponents_F(self%YAML_id)
     END FUNCTION YAMLFindComponents
 
     !> Inserts data into the YAML document for the PhreeqcRM method InitialSolutions2Module.
     !> When the YAML document is written to file it can be processed by the method
     !> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param solutions   Vector of SOLUTION index numbers that is dimensioned @a nxyz,
     !> where @a nxyz is the number of grid cells in the user's model.
     !> @retval            Zero indicates success, negative indicates failure.
@@ -486,7 +489,7 @@
     !> instance to the reaction-module workers.
     !> @a solutions is a vector of SOLUTION index numbers that refer to
     !> definitions in the InitialPhreeqc instance.
-    INTEGER FUNCTION YAMLInitialSolutions2Module(id, solutions)
+    INTEGER FUNCTION YAMLInitialSolutions2Module(self, solutions)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -498,16 +501,17 @@
     integer(kind=C_INT), intent(in) :: solutions(*)
     END FUNCTION YAMLInitialSolutions2Module_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, allocatable, dimension(:), intent(in) :: solutions
     integer :: dim
     dim = size(solutions)
-    YAMLInitialSolutions2Module = YAMLInitialSolutions2Module_F(id%YAML_id, solutions, dim)
+    YAMLInitialSolutions2Module = YAMLInitialSolutions2Module_F(self%YAML_id, solutions, dim)
     END FUNCTION YAMLInitialSolutions2Module
 
     !> Inserts data into the YAML document for the PhreeqcRM method InitialEquilibriumPhases2Module.
     !> When the YAML document is written to file it can be processed by the method
     !> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param equilibrium_phases   Vector of EQUILIBRIUM_PHASES index numbers that is dimensioned @a nxyz,
     !> where @a nxyz is the number of grid cells in the user's model.
     !> @retval                     Zero indicates success, negative indicates failure.
@@ -516,7 +520,7 @@
     !> instance to the reaction-module workers.
     !> @a equilibrium_phases is a vector of EQUILIBRIUM_PHASES index numbers that refer to
     !> definitions in the InitialPhreeqc instance.
-    INTEGER FUNCTION YAMLInitialEquilibriumPhases2Module(id, equilibrium_phases)
+    INTEGER FUNCTION YAMLInitialEquilibriumPhases2Module(self, equilibrium_phases)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -528,16 +532,17 @@
     integer(kind=C_INT), intent(in) :: equilibrium_phases(*)
     END FUNCTION YAMLInitialEquilibriumPhases2Module_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, allocatable, dimension(:), intent(in) :: equilibrium_phases
     integer :: dim
     dim = size(equilibrium_phases)
-    YAMLInitialEquilibriumPhases2Module = YAMLInitialEquilibriumPhases2Module_F(id%YAML_id, equilibrium_phases, dim)
+    YAMLInitialEquilibriumPhases2Module = YAMLInitialEquilibriumPhases2Module_F(self%YAML_id, equilibrium_phases, dim)
     END FUNCTION YAMLInitialEquilibriumPhases2Module
 
     !> Inserts data into the YAML document for the PhreeqcRM method InitialExchanges2Module.
     !> When the YAML document is written to file it can be processed by the method
     !> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param exchanges            Vector of EXCHANGE index numbers that is dimensioned @a nxyz,
     !> where @a nxyz is the number of grid cells in the user's model.
     !> @retval                     Zero indicates success, negative indicates failure.
@@ -546,7 +551,7 @@
     !> instance to the reaction-module workers.
     !> @a exchanges is a vector of EXCHANGE index numbers that refer to
     !> definitions in the InitialPhreeqc instance.
-    INTEGER FUNCTION YAMLInitialExchanges2Module(id, exchanges)
+    INTEGER FUNCTION YAMLInitialExchanges2Module(self, exchanges)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -558,16 +563,17 @@
     integer(kind=C_INT), intent(in) :: exchanges(*)
     END FUNCTION YAMLInitialExchanges2Module_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, allocatable, dimension(:), intent(in) :: exchanges
     integer :: dim
     dim = size(exchanges)
-    YAMLInitialExchanges2Module = YAMLInitialExchanges2Module_F(id%YAML_id, exchanges, dim)
+    YAMLInitialExchanges2Module = YAMLInitialExchanges2Module_F(self%YAML_id, exchanges, dim)
     END FUNCTION YAMLInitialExchanges2Module
 
     !> Inserts data into the YAML document for the PhreeqcRM method InitialSurfaces2Module.
     !> When the YAML document is written to file it can be processed by the method
     !> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param surfaces            Vector of SURFACE index numbers that is dimensioned @a nxyz,
     !> where @a nxyz is the number of grid cells in the user's model.
     !> @retval                     Zero indicates success, negative indicates failure.
@@ -576,7 +582,7 @@
     !> instance to the reaction-module workers.
     !> @a surfaces is a vector of SURFACE index numbers that refer to
     !> definitions in the InitialPhreeqc instance.
-    INTEGER FUNCTION YAMLInitialSurfaces2Module(id, surfaces)
+    INTEGER FUNCTION YAMLInitialSurfaces2Module(self, surfaces)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -588,16 +594,17 @@
     integer(kind=C_INT), intent(in) :: surfaces(*)
     END FUNCTION YAMLInitialSurfaces2Module_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, allocatable, dimension(:), intent(in) :: surfaces
     integer :: dim
     dim = size(surfaces)
-    YAMLInitialSurfaces2Module = YAMLInitialSurfaces2Module_F(id%YAML_id, surfaces, dim)
+    YAMLInitialSurfaces2Module = YAMLInitialSurfaces2Module_F(self%YAML_id, surfaces, dim)
     END FUNCTION YAMLInitialSurfaces2Module
 
     !> Inserts data into the YAML document for the PhreeqcRM method InitialGasPhases2Module.
     !> When the YAML document is written to file it can be processed by the method
     !> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param gas_phases          Vector of GAS_PHASE index numbers that is dimensioned @a nxyz,
     !> where @a nxyz is the number of grid cells in the user's model.
     !> @retval                    Zero indicates success, negative indicates failure.
@@ -606,7 +613,7 @@
     !> instance to the reaction-module workers.
     !> @a gas_phases is a vector of GAS_PHASE index numbers that refer to
     !> definitions in the InitialPhreeqc instance.
-    INTEGER FUNCTION YAMLInitialGasPhases2Module(id, gas_phases)
+    INTEGER FUNCTION YAMLInitialGasPhases2Module(self, gas_phases)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -618,16 +625,17 @@
     integer(kind=C_INT), intent(in) :: gas_phases(*)
     END FUNCTION YAMLInitialGasPhases2Module_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, allocatable, dimension(:), intent(in) :: gas_phases
     integer :: dim
     dim = size(gas_phases)
-    YAMLInitialGasPhases2Module = YAMLInitialGasPhases2Module_F(id%YAML_id, gas_phases, dim)
+    YAMLInitialGasPhases2Module = YAMLInitialGasPhases2Module_F(self%YAML_id, gas_phases, dim)
     END FUNCTION YAMLInitialGasPhases2Module
 
     !> Inserts data into the YAML document for the PhreeqcRM method InitialSolidSolutions2Module.
     !> When the YAML document is written to file it can be processed by the method
     !> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param solid_solutions     Vector of SOLID_SOLUTIONS index numbers that is dimensioned @a nxyz,
     !> where @a nxyz is the number of grid cells in the user's model.
     !> @retval                    Zero indicates success, negative indicates failure.
@@ -636,7 +644,7 @@
     !> instance to the reaction-module workers.
     !> @a solid_solutions is a vector of SOLID_SOLUTIONS index numbers that refer to
     !> definitions in the InitialPhreeqc instance.
-    INTEGER FUNCTION YAMLInitialSolidSolutions2Module(id, solid_solutions)
+    INTEGER FUNCTION YAMLInitialSolidSolutions2Module(self, solid_solutions)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -648,16 +656,17 @@
     integer(kind=C_INT), intent(in) :: solid_solutions(*)
     END FUNCTION YAMLInitialSolidSolutions2Module_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, allocatable, dimension(:), intent(in) :: solid_solutions
     integer :: dim
     dim = size(solid_solutions)
-    YAMLInitialSolidSolutions2Module = YAMLInitialSolidSolutions2Module_F(id%YAML_id, solid_solutions, dim)
+    YAMLInitialSolidSolutions2Module = YAMLInitialSolidSolutions2Module_F(self%YAML_id, solid_solutions, dim)
     END FUNCTION YAMLInitialSolidSolutions2Module
 
     !> Inserts data into the YAML document for the PhreeqcRM method InitialKinetics2Module.
     !> When the YAML document is written to file it can be processed by the method
     !> bmif_initialize or RM_InitializeYAML to initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param kinetics            Vector of KINETICS index numbers that is dimensioned @a nxyz,
     !> where @a nxyz is the number of grid cells in the user's model.
     !> @retval                    Zero indicates success, negative indicates failure.
@@ -666,7 +675,7 @@
     !> instance to the reaction-module workers.
     !> @a kinetics is a vector of KINETICS index numbers that refer to
     !> definitions in the InitialPhreeqc instance.
-    INTEGER FUNCTION YAMLInitialKinetics2Module(id, kinetics)
+    INTEGER FUNCTION YAMLInitialKinetics2Module(self, kinetics)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -679,16 +688,17 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLInitialKinetics2Module_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer :: dim
     integer, allocatable, dimension(:), intent(in) :: kinetics
     dim = size(kinetics)
-    YAMLInitialKinetics2Module = YAMLInitialKinetics2Module_F(id%YAML_id, kinetics, dim)
+    YAMLInitialKinetics2Module = YAMLInitialKinetics2Module_F(self%YAML_id, kinetics, dim)
     END FUNCTION YAMLInitialKinetics2Module
 
     !> Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param ic1  Vector of solution and reactant index numbers that refer to
     !> definitions in the InitialPhreeqc instance.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -729,7 +739,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLInitialPhreeqc2Module(id, ic1)
+    INTEGER FUNCTION YAMLInitialPhreeqc2Module(self, ic1)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -742,15 +752,16 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLInitialPhreeqc2Module_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, allocatable, dimension(:,:), intent(in) :: ic1
     integer :: l
     l = size(ic1,1)*size(ic1,2)
-    YAMLInitialPhreeqc2Module = YAMLInitialPhreeqc2Module_F(id%YAML_id, ic1(1,1), l)
+    YAMLInitialPhreeqc2Module = YAMLInitialPhreeqc2Module_F(self%YAML_id, ic1(1,1), l)
     END FUNCTION YAMLInitialPhreeqc2Module
     !> Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param ic1    Vector of solution and reactant index numbers that refer to
     !> definitions in the InitialPhreeqc instance.
     !> Size is 7 times @a nxyz, where @a nxyz is the number of grid cells in the user's model.
@@ -815,7 +826,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLInitialPhreeqc2Module_mix(id, ic1, ic2, f1)
+    INTEGER FUNCTION YAMLInitialPhreeqc2Module_mix(self, ic1, ic2, f1)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -830,7 +841,7 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLInitialPhreeqc2Module_mix_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, allocatable, dimension(:,:), intent(in) :: ic1
     integer, allocatable, dimension(:,:), intent(in) :: ic2
     real(kind=8), allocatable, dimension(:,:), intent(in) :: f1
@@ -841,11 +852,12 @@
     if ((l1 .ne. l2) .or. (l1 .ne. l3)) then
         stop "Dimension error in YAMLInitialPhreeqc2Module"
     endif
-    YAMLInitialPhreeqc2Module_mix = YAMLInitialPhreeqc2Module_mix_F(id%YAML_id, ic1(1,1), ic2(1,1), f1(1,1), l1)
+    YAMLInitialPhreeqc2Module_mix = YAMLInitialPhreeqc2Module_mix_F(self%YAML_id, ic1(1,1), ic2(1,1), f1(1,1), l1)
     END FUNCTION YAMLInitialPhreeqc2Module_mix
     !> Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqcCell2Module.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param n                  Number that refers to a solution or MIX and associated
     !> reactants in the InitialPhreeqc instance.
     !> @param cell_numbers       A vector of grid-cell numbers (user's grid-cell numbering system) that
@@ -875,7 +887,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLInitialPhreeqcCell2Module(id, n, cell_numbers)
+    INTEGER FUNCTION YAMLInitialPhreeqcCell2Module(self, n, cell_numbers)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -889,16 +901,17 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLInitialPhreeqcCell2Module_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: n
     integer, allocatable, dimension(:), intent(in) :: cell_numbers
     integer :: l
     l = size(cell_numbers)
-    YAMLInitialPhreeqcCell2Module = YAMLInitialPhreeqcCell2Module_F(id%YAML_id, n, cell_numbers(1), l)
+    YAMLInitialPhreeqcCell2Module = YAMLInitialPhreeqcCell2Module_F(self%YAML_id, n, cell_numbers(1), l)
     END FUNCTION YAMLInitialPhreeqcCell2Module
     !> Inserts data into the YAML document for the PhreeqcRM method LoadDatabase.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param file_name         String containing the database name.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -913,7 +926,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLLoadDatabase(id, file_name)
+    INTEGER FUNCTION YAMLLoadDatabase(self, file_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -925,13 +938,14 @@
     character(KIND=C_CHAR), intent(in) :: file_name(*)
     END FUNCTION YAMLLoadDatabase_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     character(len=*), intent(in) :: file_name
-    YAMLLoadDatabase = YAMLLoadDatabase_F(id%YAML_id, trim(file_name)//C_NULL_CHAR)
+    YAMLLoadDatabase = YAMLLoadDatabase_F(self%YAML_id, trim(file_name)//C_NULL_CHAR)
     END FUNCTION YAMLLoadDatabase
     !> Inserts data into the YAML document for the PhreeqcRM method LogMessage.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param str              String to be printed.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -945,7 +959,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLLogMessage(id, str)
+    INTEGER FUNCTION YAMLLogMessage(self, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -957,13 +971,14 @@
     character(KIND=C_CHAR), intent(in) :: str(*)
     END FUNCTION YAMLLogMessage_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     character(len=*), intent(in) :: str
-    YAMLLogMessage = YAMLLogMessage_F(id%YAML_id, trim(str)//C_NULL_CHAR)
+    YAMLLogMessage = YAMLLogMessage_F(self%YAML_id, trim(str)//C_NULL_CHAR)
     END FUNCTION YAMLLogMessage
     !> Inserts data into the YAML document for the PhreeqcRM method OpenFiles.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
     !> OpenFiles opens the output and log files. Files are named prefix.chem.txt and prefix.log.txt
@@ -979,7 +994,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLOpenFiles(id)
+    INTEGER FUNCTION YAMLOpenFiles(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -990,12 +1005,13 @@
     integer(kind=C_INT), intent(in) :: id
     END FUNCTION YAMLOpenFiles_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
-    YAMLOpenFiles = YAMLOpenFiles_F(id%YAML_id)
+    class(YAML_PhreeqcRM), intent(inout) :: self
+    YAMLOpenFiles = YAMLOpenFiles_F(self%YAML_id)
     END FUNCTION YAMLOpenFiles
     !> Inserts data into the YAML document for the PhreeqcRM method OutputMessage.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param str              String to be printed.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1009,7 +1025,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLOutputMessage(id, str)
+    INTEGER FUNCTION YAMLOutputMessage(self, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1021,13 +1037,14 @@
     character(KIND=C_CHAR), intent(in) :: str(*)
     END FUNCTION YAMLOutputMessage_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     character(len=*), intent(in) :: str
-    YAMLOutputMessage = YAMLOutputMessage_F(id%YAML_id, trim(str)//C_NULL_CHAR)
+    YAMLOutputMessage = YAMLOutputMessage_F(self%YAML_id, trim(str)//C_NULL_CHAR)
     END FUNCTION YAMLOutputMessage
     !> Inserts data into the YAML document for the PhreeqcRM method RunCells.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
     !> RunCells runs reactions for all cells in the reaction module.
@@ -1050,7 +1067,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLRunCells(id)
+    INTEGER FUNCTION YAMLRunCells(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1061,12 +1078,13 @@
     integer(kind=C_INT), intent(in) :: id
     END FUNCTION YAMLRunCells_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
-    YAMLRunCells = YAMLRunCells_F(id%YAML_id)
+    class(YAML_PhreeqcRM), intent(inout) :: self
+    YAMLRunCells = YAMLRunCells_F(self%YAML_id)
     END FUNCTION YAMLRunCells
     !> Inserts data into the YAML document for the PhreeqcRM method RunFile.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param workers          @a True, the workers will run the file; @a False, the workers will not run the file.
     !> @param initial_phreeqc  @a True, the InitialPhreeqc instance will run the file; @a False, the InitialPhreeqc will not run the file.
     !> @param utility          @a True, the Utility instance will run the file; @a False, the Utility instance will not run the file.
@@ -1088,7 +1106,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLRunFile(id, workers, initial_phreeqc, utility, file_name)
+    INTEGER FUNCTION YAMLRunFile(self, workers, initial_phreeqc, utility, file_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1101,7 +1119,7 @@
     character(KIND=C_CHAR), intent(in) :: file_name(*)
     END FUNCTION YAMLRunFile_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical, intent(in) :: workers, initial_phreeqc, utility
     integer :: iworkers, iinitial_phreeqc, iutility
     character(len=*), intent(in) :: file_name
@@ -1112,11 +1130,12 @@
     if (initial_phreeqc) iinitial_phreeqc = 1
     if (utility) iutility = 1
 
-    YAMLRunFile = YAMLRunFile_F(id%YAML_id, iworkers, iinitial_phreeqc, iutility, trim(file_name)//C_NULL_CHAR)
+    YAMLRunFile = YAMLRunFile_F(self%YAML_id, iworkers, iinitial_phreeqc, iutility, trim(file_name)//C_NULL_CHAR)
     END FUNCTION YAMLRunFile
     !> Inserts data into the YAML document for the PhreeqcRM method RunString.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param workers          @a True, the workers will run the string; @a False, the workers will not run the string.
     !> @param initial_phreeqc  @a True, the InitialPhreeqc instance will run the string; @a False, the InitialPhreeqc will not run the string.
     !> @param utility          @a True, the Utility instance will run the string; @a False, the Utility instance will not run the string.
@@ -1140,7 +1159,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLRunString(id, workers, initial_phreeqc, utility, input_string)
+    INTEGER FUNCTION YAMLRunString(self, workers, initial_phreeqc, utility, input_string)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1153,7 +1172,7 @@
     character(KIND=C_CHAR), intent(in) :: input_string(*)
     END FUNCTION YAMLRunString_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical, intent(in) :: workers, initial_phreeqc, utility
     integer :: iworkers, iinitial_phreeqc, iutility
     character(len=*), intent(in) :: input_string
@@ -1163,11 +1182,12 @@
     if (workers) iworkers = 1
     if (initial_phreeqc) iinitial_phreeqc = 1
     if (utility) iutility = 1
-    YAMLRunString = YAMLRunString_F(id%YAML_id, iworkers, iinitial_phreeqc, iutility, trim(input_string)//C_NULL_CHAR)
+    YAMLRunString = YAMLRunString_F(self%YAML_id, iworkers, iinitial_phreeqc, iutility, trim(input_string)//C_NULL_CHAR)
     END FUNCTION YAMLRunString
     !> Inserts data into the YAML document for the PhreeqcRM method ScreenMessage.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param str              String to be printed.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1182,7 +1202,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLScreenMessage(id, str)
+    INTEGER FUNCTION YAMLScreenMessage(self, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1194,13 +1214,14 @@
     character(KIND=C_CHAR), intent(in) :: str(*)
     END FUNCTION YAMLScreenMessage_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     character(len=*), intent(in) :: str
-    YAMLScreenMessage = YAMLScreenMessage_F(id%YAML_id, trim(str)//C_NULL_CHAR)
+    YAMLScreenMessage = YAMLScreenMessage_F(self%YAML_id, trim(str)//C_NULL_CHAR)
     END FUNCTION YAMLScreenMessage
     !> Inserts data into the YAML document for the PhreeqcRM method SetComponentH2O.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param tf               @a True (default), excess H, excess O, and water are included in the component list;
     !> @a False, total H and O are included in the component list.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -1224,7 +1245,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetComponentH2O(id, tf)
+    INTEGER FUNCTION YAMLSetComponentH2O(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1236,16 +1257,17 @@
     integer(kind=C_INT), intent(in) :: itf
     END FUNCTION YAMLSetComponentH2O_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical, intent(in) :: tf
     integer             :: itf
     itf = 0
     if (tf) itf = 1
-    YAMLSetComponentH2O = YAMLSetComponentH2O_F(id%YAML_id, itf)
+    YAMLSetComponentH2O = YAMLSetComponentH2O_F(self%YAML_id, itf)
     END FUNCTION YAMLSetComponentH2O
     !> Inserts data into the YAML document for the PhreeqcRM method SetConcentrations.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param c               Vector of component concentrations. Size of vector is @a ncomps times @a nxyz,
     !> where @a ncomps is the number of components as determined
     !> by FindComponents or GetComponentCount and
@@ -1265,7 +1287,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetConcentrations(id, c)
+    INTEGER FUNCTION YAMLSetConcentrations(self, c)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1278,15 +1300,16 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLSetConcentrations_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), allocatable, dimension(:,:), intent(in) :: c
     integer :: dim
     dim = size(c,1)*size(c,2)
-    YAMLSetConcentrations = YAMLSetConcentrations_F(id%YAML_id, c(1,1), dim)
+    YAMLSetConcentrations = YAMLSetConcentrations_F(self%YAML_id, c(1,1), dim)
     END FUNCTION YAMLSetConcentrations
     !> Inserts data into the YAML document for the PhreeqcRM method SetCurrentSelectedOutputUserNumber.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param n_user           User number of the SELECTED_OUTPUT data block that is to be used.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1306,7 +1329,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetCurrentSelectedOutputUserNumber(id, n_user)
+    INTEGER FUNCTION YAMLSetCurrentSelectedOutputUserNumber(self, n_user)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1318,14 +1341,14 @@
     integer(kind=C_INT), intent(in) :: n
     END FUNCTION YAMLSetCurrentSelectedOutputUserNumber_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: n_user
-    YAMLSetCurrentSelectedOutputUserNumber = YAMLSetCurrentSelectedOutputUserNumber_F(id%YAML_id, n_user)
+    YAMLSetCurrentSelectedOutputUserNumber = YAMLSetCurrentSelectedOutputUserNumber_F(self%YAML_id, n_user)
     END FUNCTION YAMLSetCurrentSelectedOutputUserNumber
     !> Inserts data into the YAML document for the PhreeqcRM method SetDensityUser.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
-    !>
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param density          Vector of densities. Size of vector is @a nxyz, where @a nxyz is the number
     !> of grid cells in the user's model.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -1349,7 +1372,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetDensityUser(id, density)
+    INTEGER FUNCTION YAMLSetDensityUser(self, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1362,13 +1385,14 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLSetDensityUser_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), allocatable, dimension(:), intent(in) :: density
-    YAMLSetDensityUser = YAMLSetDensityUser_F(id%YAML_id, density(1), size(density))
+    YAMLSetDensityUser = YAMLSetDensityUser_F(self%YAML_id, density(1), size(density))
     END FUNCTION YAMLSetDensityUser
     !> Inserts data into the YAML document for the PhreeqcRM method SetDumpFileName.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param file_name        Name of dump file.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1386,7 +1410,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetDumpFileName(id, file_name)
+    INTEGER FUNCTION YAMLSetDumpFileName(self, file_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1398,13 +1422,14 @@
     character(KIND=C_CHAR), intent(in) :: file_name(*)
     END FUNCTION YAMLSetDumpFileName_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     character(len=*), intent(in) :: file_name
-    YAMLSetDumpFileName = YAMLSetDumpFileName_F(id%YAML_id, trim(file_name)//C_NULL_CHAR)
+    YAMLSetDumpFileName = YAMLSetDumpFileName_F(self%YAML_id, trim(file_name)//C_NULL_CHAR)
     END FUNCTION YAMLSetDumpFileName
     !> Inserts data into the YAML document for the PhreeqcRM method SetErrorHandlerMode.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
-    !> initialize a PhreeqcRM instance
+    !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param mode             Error handling mode: 0, 1, or 2.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1420,7 +1445,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetErrorHandlerMode(id, mode)
+    INTEGER FUNCTION YAMLSetErrorHandlerMode(self, mode)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1432,13 +1457,14 @@
     integer(kind=C_INT), intent(in) :: n
     END FUNCTION YAMLSetErrorHandlerMode_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: mode
-    YAMLSetErrorHandlerMode = YAMLSetErrorHandlerMode_F(id%YAML_id, mode)
+    YAMLSetErrorHandlerMode = YAMLSetErrorHandlerMode_F(self%YAML_id, mode)
     END FUNCTION YAMLSetErrorHandlerMode
     !> Inserts data into the YAML document for the PhreeqcRM method SetErrorOn.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param tf  @a True, enable error messages; @a False, disable error messages. Default is true.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1455,7 +1481,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetErrorOn(id, tf)
+    INTEGER FUNCTION YAMLSetErrorOn(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1467,16 +1493,17 @@
     integer(kind=C_INT), intent(in) :: itf
     END FUNCTION YAMLSetErrorOn_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical, intent(in) :: tf
     integer :: itf
     itf = 0
     if (tf) itf = 1
-    YAMLSetErrorOn = YAMLSetErrorOn_F(id%YAML_id, itf)
+    YAMLSetErrorOn = YAMLSetErrorOn_F(self%YAML_id, itf)
     END FUNCTION YAMLSetErrorOn
     !> Inserts data into the YAML document for the PhreeqcRM method SetFilePrefix.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param prefix           Prefix used when opening the output and log files.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1492,7 +1519,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetFilePrefix(id, prefix)
+    INTEGER FUNCTION YAMLSetFilePrefix(self, prefix)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1504,13 +1531,14 @@
     character(KIND=C_CHAR), intent(in) :: prefix(*)
     END FUNCTION YAMLSetFilePrefix_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     character(len=*), intent(in) :: prefix
-    YAMLSetFilePrefix = YAMLSetFilePrefix_F(id%YAML_id, trim(prefix)//C_NULL_CHAR)
+    YAMLSetFilePrefix = YAMLSetFilePrefix_F(self%YAML_id, trim(prefix)//C_NULL_CHAR)
     END FUNCTION YAMLSetFilePrefix
     !> Inserts data into the YAML document for the PhreeqcRM method SetGasCompMoles.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param  gas_moles               Vector of moles of gas components.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1536,7 +1564,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetGasCompMoles(id, gas_moles)
+    INTEGER FUNCTION YAMLSetGasCompMoles(self, gas_moles)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1549,15 +1577,16 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLSetGasCompMoles_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), allocatable, dimension(:,:), intent(in) :: gas_moles
     integer :: dim
     dim = size(gas_moles,1)*size(gas_moles,2)
-    YAMLSetGasCompMoles = YAMLSetGasCompMoles_F(id%YAML_id, gas_moles(1,1), dim)
+    YAMLSetGasCompMoles = YAMLSetGasCompMoles_F(self%YAML_id, gas_moles(1,1), dim)
     END FUNCTION YAMLSetGasCompMoles
     !> Inserts data into the YAML document for the PhreeqcRM method SetGasPhaseVolume.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param  gas_volume               Vector of volumes for each gas phase.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1586,7 +1615,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetGasPhaseVolume(id, gas_volume)
+    INTEGER FUNCTION YAMLSetGasPhaseVolume(self, gas_volume)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1599,15 +1628,16 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLSetGasPhaseVolume_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), allocatable, dimension(:), intent(in) :: gas_volume
-    YAMLSetGasPhaseVolume = YAMLSetGasPhaseVolume_F(id%YAML_id, gas_volume(1), size(gas_volume))
+    YAMLSetGasPhaseVolume = YAMLSetGasPhaseVolume_F(self%YAML_id, gas_volume(1), size(gas_volume))
     END FUNCTION YAMLSetGasPhaseVolume
     !> Inserts data into the YAML document to define the number of cells in the user's model.
     !> Once the YAML document is written, the number of model cells can be extracted
     !> with the method GetGridCellCountYAML. GetGridCellCountYAML is NOT a PhreeqcRM
     !> method; it is a global method and must be used BEFORE the PhreeqcRM instance
     !> is created. SetGridCellCount will be ignored once the PhreeqcRM instance exists.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param n           Number of cells for the PhreeqcRM instance. The number of cells
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure
     !> @par
@@ -1626,7 +1656,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetGridCellCount(id, n)
+    INTEGER FUNCTION YAMLSetGridCellCount(self, n)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1638,13 +1668,14 @@
     integer(kind=C_INT), intent(in) :: n
     END FUNCTION YAMLSetGridCellCount_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: n
-    YAMLSetGridCellCount = YAMLSetGridCellCount_F(id%YAML_id, n)
+    YAMLSetGridCellCount = YAMLSetGridCellCount_F(self%YAML_id, n)
     END FUNCTION YAMLSetGridCellCount
     !> Inserts data into the YAML document for the PhreeqcRM method SetNthSelectedOutput.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param n           Sequence number of the SELECTED_OUTPUT data block that is to be used.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1665,7 +1696,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetNthSelectedOutput(id, n)
+    INTEGER FUNCTION YAMLSetNthSelectedOutput(self, n)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1677,13 +1708,14 @@
     integer(kind=C_INT), intent(in) :: n
     END FUNCTION YAMLSetNthSelectedOutput_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: n
-    YAMLSetNthSelectedOutput = YAMLSetNthSelectedOutput_F(id%YAML_id, n)
+    YAMLSetNthSelectedOutput = YAMLSetNthSelectedOutput_F(self%YAML_id, n)
     END FUNCTION YAMLSetNthSelectedOutput
     !> Inserts data into the YAML document for the PhreeqcRM method SetPartitionUZSolids.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param tf       @a True, the fraction of solids and gases available for
     !> reaction is equal to the saturation;
     !> @a False (default), all solids and gases are reactive regardless of saturation.
@@ -1715,7 +1747,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetPartitionUZSolids(id, tf)
+    INTEGER FUNCTION YAMLSetPartitionUZSolids(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1727,16 +1759,17 @@
     integer(kind=C_INT), intent(in) :: itf
     END FUNCTION YAMLSetPartitionUZSolids_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical, intent(in) :: tf
     integer :: itf
     itf = 0
     if (tf) itf = 1
-    YAMLSetPartitionUZSolids = YAMLSetPartitionUZSolids_F(id%YAML_id, itf)
+    YAMLSetPartitionUZSolids = YAMLSetPartitionUZSolids_F(self%YAML_id, itf)
     END FUNCTION YAMLSetPartitionUZSolids
     !> Inserts data into the YAML document for the PhreeqcRM method SetPorosity.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param por              Vector of porosities, unitless. Default is 0.1.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1757,7 +1790,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetPorosity(id, por)
+    INTEGER FUNCTION YAMLSetPorosity(self, por)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1770,13 +1803,14 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLSetPorosity_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), allocatable, dimension(:), intent(in) :: por
-    YAMLSetPorosity = YAMLSetPorosity_F(id%YAML_id, por(1), size(por))
+    YAMLSetPorosity = YAMLSetPorosity_F(self%YAML_id, por(1), size(por))
     END FUNCTION YAMLSetPorosity
     !> Inserts data into the YAML document for the PhreeqcRM method SetPressure.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param p                Vector of pressures, in atm. Size of vector is @a nxyz,
     !> where @a nxyz is the number of grid cells in the user's model.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -1796,7 +1830,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetPressure(id, p)
+    INTEGER FUNCTION YAMLSetPressure(self, p)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1809,13 +1843,14 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLSetPressure_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), allocatable, dimension(:), intent(in) :: p
-    YAMLSetPressure = YAMLSetPressure_F(id%YAML_id, p(1), size(p))
+    YAMLSetPressure = YAMLSetPressure_F(self%YAML_id, p(1), size(p))
     END FUNCTION YAMLSetPressure
     !> Inserts data into the YAML document for the PhreeqcRM method SetPrintChemistryMask.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param mask        Vector of integers. Size of vector is @a nxyz, where @a nxyz is the number
     !> of grid cells in the user's model. A value of 0 will
     !> disable printing detailed output for the cell; a value of 1 will enable printing detailed output for a cell.
@@ -1839,7 +1874,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetPrintChemistryMask(id, mask)
+    INTEGER FUNCTION YAMLSetPrintChemistryMask(self, mask)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1852,13 +1887,14 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLSetPrintChemistryMask_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, allocatable, dimension(:), intent(in) :: mask
-    YAMLSetPrintChemistryMask = YAMLSetPrintChemistryMask_F(id%YAML_id, mask(1), size(mask))
+    YAMLSetPrintChemistryMask = YAMLSetPrintChemistryMask_F(self%YAML_id, mask(1), size(mask))
     END FUNCTION YAMLSetPrintChemistryMask
     !> Inserts data into the YAML document for the PhreeqcRM method SetPrintChemistryOn.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param workers          @a True, enable detailed printing in the worker instances;
     !> @a False, disable detailed printing in the worker instances.
     !> @param initial_phreeqc  @a True, enable detailed printing in the InitialPhreeqc instance;
@@ -1891,7 +1927,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetPrintChemistryOn(id, workers, initial_phreeqc, utility)
+    INTEGER FUNCTION YAMLSetPrintChemistryOn(self, workers, initial_phreeqc, utility)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1903,7 +1939,7 @@
     integer(kind=C_INT), intent(in) :: iworkers, iinitial_phreeqc, iutility
     END FUNCTION YAMLSetPrintChemistryOn_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical, intent(in) :: workers, initial_phreeqc, utility
     integer :: iworkers, iinitial_phreeqc, iutility
     iworkers = 0
@@ -1912,11 +1948,12 @@
     if (workers) iworkers = 1
     if (initial_phreeqc) iinitial_phreeqc = 1
     if (utility) iutility = 1
-    YAMLSetPrintChemistryOn = YAMLSetPrintChemistryOn_F(id%YAML_id, iworkers, iinitial_phreeqc, iutility)
+    YAMLSetPrintChemistryOn = YAMLSetPrintChemistryOn_F(self%YAML_id, iworkers, iinitial_phreeqc, iutility)
     END FUNCTION YAMLSetPrintChemistryOn
     !> Inserts data into the YAML document for the PhreeqcRM method SetRebalanceByCell.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param tf           @a True, indicates individual cell times are used in rebalancing (default);
     !> @a False, indicates average times are used in rebalancing.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -1939,7 +1976,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetRebalanceByCell(id, tf)
+    INTEGER FUNCTION YAMLSetRebalanceByCell(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1951,16 +1988,17 @@
     integer(kind=C_INT), intent(in) :: itf
     END FUNCTION YAMLSetRebalanceByCell_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical, intent(in) :: tf
     integer :: itf
     itf = 0
     if (tf) itf = 1
-    YAMLSetRebalanceByCell = YAMLSetRebalanceByCell_F(id%YAML_id, itf)
+    YAMLSetRebalanceByCell = YAMLSetRebalanceByCell_F(self%YAML_id, itf)
     END FUNCTION YAMLSetRebalanceByCell
     !> Inserts data into the YAML document for the PhreeqcRM method SetRebalanceFraction.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param f                Fraction from 0.0 to 1.0.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -1987,7 +2025,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetRebalanceFraction(id, f)
+    INTEGER FUNCTION YAMLSetRebalanceFraction(self, f)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -1999,13 +2037,14 @@
     real(kind=C_DOUBLE), intent(in) :: f
     END FUNCTION YAMLSetRebalanceFraction_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), intent(in) :: f
-    YAMLSetRebalanceFraction = YAMLSetRebalanceFraction_F(id%YAML_id, f)
+    YAMLSetRebalanceFraction = YAMLSetRebalanceFraction_F(self%YAML_id, f)
     END FUNCTION YAMLSetRebalanceFraction
     !> Inserts data into the YAML document for the PhreeqcRM method SetRepresentativeVolume.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param rv              Vector of representative volumes, in liters. Default is 1.0 liter.
     !> Size of array is @a nxyz, where @a nxyz is the number
     !> of grid cells in the user's model.
@@ -2040,7 +2079,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetRepresentativeVolume(id, rv)
+    INTEGER FUNCTION YAMLSetRepresentativeVolume(self, rv)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2053,13 +2092,14 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLSetRepresentativeVolume_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), allocatable, dimension(:), intent(in) :: rv
-    YAMLSetRepresentativeVolume = YAMLSetRepresentativeVolume_F(id%YAML_id, rv(1), size(rv))
+    YAMLSetRepresentativeVolume = YAMLSetRepresentativeVolume_F(self%YAML_id, rv(1), size(rv))
     END FUNCTION YAMLSetRepresentativeVolume
     !> Inserts data into the YAML document for the PhreeqcRM method SetSaturationUser.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param sat              Vector of saturations, unitless. Default 1.0. Size of vector is @a nxyz,
     !> where @a nxyz is the number of grid cells in the user's model.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -2087,7 +2127,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetSaturationUser(id, sat)
+    INTEGER FUNCTION YAMLSetSaturationUser(self, sat)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2100,13 +2140,14 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLSetSaturationUser_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), allocatable, dimension(:), intent(in) :: sat
-    YAMLSetSaturationUser = YAMLSetSaturationUser_F(id%YAML_id, sat(1), size(sat))
+    YAMLSetSaturationUser = YAMLSetSaturationUser_F(self%YAML_id, sat(1), size(sat))
     END FUNCTION YAMLSetSaturationUser
     !> Inserts data into the YAML document for the PhreeqcRM method SetScreenOn.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param tf  @a True, enable screen messages; @a False, disable screen messages. Default is true.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2124,7 +2165,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetScreenOn(id, tf)
+    INTEGER FUNCTION YAMLSetScreenOn(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2136,16 +2177,17 @@
     integer(kind=C_INT), intent(in) :: itf
     END FUNCTION YAMLSetScreenOn_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical, intent(in) :: tf
     integer :: itf
     itf = 0
     if (tf) itf = 1
-    YAMLSetScreenOn = YAMLSetScreenOn_F(id%YAML_id, itf)
+    YAMLSetScreenOn = YAMLSetScreenOn_F(self%YAML_id, itf)
     END FUNCTION YAMLSetScreenOn
     !> Inserts data into the YAML document for the PhreeqcRM method SetSelectedOutputOn.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param tf  @a True, enable selected output; @a False, disable selected output.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2168,7 +2210,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetSelectedOutputOn(id, tf)
+    INTEGER FUNCTION YAMLSetSelectedOutputOn(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2180,16 +2222,17 @@
     integer(kind=C_INT), intent(in) :: itf
     END FUNCTION YAMLSetSelectedOutputOn_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical, intent(in) :: tf
     integer :: itf
     itf = 0
     if (tf) itf = 1
-    YAMLSetSelectedOutputOn = YAMLSetSelectedOutputOn_F(id%YAML_id, itf)
+    YAMLSetSelectedOutputOn = YAMLSetSelectedOutputOn_F(self%YAML_id, itf)
     END FUNCTION YAMLSetSelectedOutputOn
     !> Inserts data into the YAML document for the PhreeqcRM method SetSpeciesSaveOn.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param save_on          @a True indicates species concentrations are saved;
     !> @a False indicates species concentrations are not saved.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
@@ -2214,7 +2257,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetSpeciesSaveOn(id, save_on)
+    INTEGER FUNCTION YAMLSetSpeciesSaveOn(self, save_on)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2226,16 +2269,17 @@
     integer(kind=C_INT), intent(in) :: save_on
     END FUNCTION YAMLSetSpeciesSaveOn_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical(kind=4), intent(in) :: save_on
     integer :: itf
     itf = 0
     if (save_on) itf = 1
-    YAMLSetSpeciesSaveOn = YAMLSetSpeciesSaveOn_F(id%YAML_id, itf)
+    YAMLSetSpeciesSaveOn = YAMLSetSpeciesSaveOn_F(self%YAML_id, itf)
     END FUNCTION YAMLSetSpeciesSaveOn
     !> Inserts data into the YAML document for the PhreeqcRM method SetTemperature.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param tc                Vector of temperatures, in degrees C.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2259,7 +2303,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetTemperature(id, tc)
+    INTEGER FUNCTION YAMLSetTemperature(self, tc)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2272,13 +2316,14 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLSetTemperature_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), allocatable, dimension(:), intent(in) :: tc
-    YAMLSetTemperature = YAMLSetTemperature_F(id%YAML_id, tc(1), size(tc))
+    YAMLSetTemperature = YAMLSetTemperature_F(self%YAML_id, tc(1), size(tc))
     END FUNCTION YAMLSetTemperature
     !> Inserts data into the YAML document for the PhreeqcRM method SetTime.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param time             Current simulation time, in seconds.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2293,7 +2338,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetTime(id, time)
+    INTEGER FUNCTION YAMLSetTime(self, time)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2305,13 +2350,14 @@
     real(kind=C_DOUBLE), intent(in) :: time
     END FUNCTION YAMLSetTime_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), intent(in) :: time
-    YAMLSetTime = YAMLSetTime_F(id%YAML_id, time)
+    YAMLSetTime = YAMLSetTime_F(self%YAML_id, time)
     END FUNCTION YAMLSetTime
     !> Inserts data into the YAML document for the PhreeqcRM method SetTimeConversion.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param conv_factor      Factor to convert seconds to user time units.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2329,7 +2375,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetTimeConversion(id, conv_factor)
+    INTEGER FUNCTION YAMLSetTimeConversion(self, conv_factor)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2341,13 +2387,14 @@
     real(kind=C_DOUBLE), intent(in) :: conv_factor
     END FUNCTION YAMLSetTimeConversion_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), intent(in) :: conv_factor
-    YAMLSetTimeConversion = YAMLSetTimeConversion_F(id%YAML_id, conv_factor)
+    YAMLSetTimeConversion = YAMLSetTimeConversion_F(self%YAML_id, conv_factor)
     END FUNCTION YAMLSetTimeConversion
     !> Inserts data into the YAML document for the PhreeqcRM method SetTimeStep.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param time_step        Time step, in seconds.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2365,7 +2412,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetTimeStep(id, time_step)
+    INTEGER FUNCTION YAMLSetTimeStep(self, time_step)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2377,13 +2424,14 @@
     real(kind=C_DOUBLE), intent(in) :: time_step
     END FUNCTION YAMLSetTimeStep_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), intent(in) :: time_step
-    YAMLSetTimeStep = YAMLSetTimeStep_F(id%YAML_id, time_step)
+    YAMLSetTimeStep = YAMLSetTimeStep_F(self%YAML_id, time_step)
     END FUNCTION YAMLSetTimeStep
     !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsExchange.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param option           Units option for exchangers: 0, 1, or 2.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2414,7 +2462,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetUnitsExchange(id, option)
+    INTEGER FUNCTION YAMLSetUnitsExchange(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2426,13 +2474,14 @@
     integer(kind=C_INT), intent(in) :: option
     END FUNCTION YAMLSetUnitsExchange_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: option
-    YAMLSetUnitsExchange = YAMLSetUnitsExchange_F(id%YAML_id, option)
+    YAMLSetUnitsExchange = YAMLSetUnitsExchange_F(self%YAML_id, option)
     END FUNCTION YAMLSetUnitsExchange
     !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsGasPhase.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param option           Units option for gas phases: 0, 1, or 2.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2464,7 +2513,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetUnitsGasPhase(id, option)
+    INTEGER FUNCTION YAMLSetUnitsGasPhase(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2476,13 +2525,14 @@
     integer(kind=C_INT), intent(in) :: option
     END FUNCTION YAMLSetUnitsGasPhase_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: option
-    YAMLSetUnitsGasPhase = YAMLSetUnitsGasPhase_F(id%YAML_id, option)
+    YAMLSetUnitsGasPhase = YAMLSetUnitsGasPhase_F(self%YAML_id, option)
     END FUNCTION YAMLSetUnitsGasPhase
     !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsKinetics.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param option           Units option for kinetic reactants: 0, 1, or 2.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2528,7 +2578,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetUnitsKinetics(id, option)
+    INTEGER FUNCTION YAMLSetUnitsKinetics(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2540,13 +2590,14 @@
     integer(kind=C_INT), intent(in) :: option
     END FUNCTION YAMLSetUnitsKinetics_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: option
-    YAMLSetUnitsKinetics = YAMLSetUnitsKinetics_F(id%YAML_id, option)
+    YAMLSetUnitsKinetics = YAMLSetUnitsKinetics_F(self%YAML_id, option)
     END FUNCTION YAMLSetUnitsKinetics
     !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsPPassemblage.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param option           Units option for equilibrium phases: 0, 1, or 2.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2577,7 +2628,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetUnitsPPassemblage(id, option)
+    INTEGER FUNCTION YAMLSetUnitsPPassemblage(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2589,13 +2640,14 @@
     integer(kind=C_INT), intent(in) :: option
     END FUNCTION YAMLSetUnitsPPassemblage_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: option
-    YAMLSetUnitsPPassemblage = YAMLSetUnitsPPassemblage_F(id%YAML_id, option)
+    YAMLSetUnitsPPassemblage = YAMLSetUnitsPPassemblage_F(self%YAML_id, option)
     END FUNCTION YAMLSetUnitsPPassemblage
     !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsSolution.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param option           Units option for solutions: 1, 2, or 3, default is 1, mg/L.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2646,7 +2698,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetUnitsSolution(id, option)
+    INTEGER FUNCTION YAMLSetUnitsSolution(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2658,14 +2710,14 @@
     integer(kind=C_INT), intent(in) :: option
     END FUNCTION YAMLSetUnitsSolution_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: option
-    YAMLSetUnitsSolution = YAMLSetUnitsSolution_F(id%YAML_id, option)
+    YAMLSetUnitsSolution = YAMLSetUnitsSolution_F(self%YAML_id, option)
     END FUNCTION YAMLSetUnitsSolution
     !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsSSassemblage.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
-    
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param option        Units option for solid solutions: 0, 1, or 2.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2696,7 +2748,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetUnitsSSassemblage(id, option)
+    INTEGER FUNCTION YAMLSetUnitsSSassemblage(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2708,14 +2760,14 @@
     integer(kind=C_INT), intent(in) :: option
     END FUNCTION YAMLSetUnitsSSassemblage_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: option
-    YAMLSetUnitsSSassemblage = YAMLSetUnitsSSassemblage_F(id%YAML_id, option)
+    YAMLSetUnitsSSassemblage = YAMLSetUnitsSSassemblage_F(self%YAML_id, option)
     END FUNCTION YAMLSetUnitsSSassemblage
     !> Inserts data into the YAML document for the PhreeqcRM method SetUnitsSurface.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
-    
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param option        Units option for surfaces: 0, 1, or 2.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2746,7 +2798,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSetUnitsSurface(id, option)
+    INTEGER FUNCTION YAMLSetUnitsSurface(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2758,13 +2810,14 @@
     integer(kind=C_INT), intent(in) :: option
     END FUNCTION YAMLSetUnitsSurface_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: option
-    YAMLSetUnitsSurface = YAMLSetUnitsSurface_F(id%YAML_id, option)
+    YAMLSetUnitsSurface = YAMLSetUnitsSurface_F(self%YAML_id, option)
     END FUNCTION YAMLSetUnitsSurface
     !> Inserts data into the YAML document for the PhreeqcRM method SpeciesConcentrations2Module.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param species_conc     Vector of aqueous species concentrations. Dimension of the
     !> array is @a nspecies times @a nxyz,
     !> where  @a nspecies is the number of aqueous species,
@@ -2796,7 +2849,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLSpeciesConcentrations2Module(id, species_conc)
+    INTEGER FUNCTION YAMLSpeciesConcentrations2Module(self, species_conc)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2809,15 +2862,16 @@
     integer(kind=C_INT), intent(in) :: dim
     END FUNCTION YAMLSpeciesConcentrations2Module_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     real(kind=8), allocatable, dimension(:,:), intent(in) :: species_conc
     integer :: dim
     dim = size(species_conc,1)*size(species_conc,2)
-    YAMLSpeciesConcentrations2Module = YAMLSpeciesConcentrations2Module_F(id%YAML_id, species_conc(1,1), dim)
+    YAMLSpeciesConcentrations2Module = YAMLSpeciesConcentrations2Module_F(self%YAML_id, species_conc(1,1), dim)
     END FUNCTION YAMLSpeciesConcentrations2Module
     !> Inserts data into the YAML document for the PhreeqcRM method StateSave.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param n      Integer identifying the state that is saved.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2842,7 +2896,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLStateSave(id, n)
+    INTEGER FUNCTION YAMLStateSave(self, n)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2854,13 +2908,14 @@
     integer(kind=C_INT), intent(in) :: n
     END FUNCTION YAMLStateSave_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: n
-    YAMLStateSave = YAMLStateSave_F(id%YAML_id, n)
+    YAMLStateSave = YAMLStateSave_F(self%YAML_id, n)
     END FUNCTION YAMLStateSave
     !> Inserts data into the YAML document for the PhreeqcRM method StateApply.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param n     Integer identifying the state that is to be applied.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2885,7 +2940,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLStateApply(id, n)
+    INTEGER FUNCTION YAMLStateApply(self, n)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2897,13 +2952,14 @@
     integer(kind=C_INT), intent(in) :: n
     END FUNCTION YAMLStateApply_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: n
-    YAMLStateApply = YAMLStateApply_F(id%YAML_id, n)
+    YAMLStateApply = YAMLStateApply_F(self%YAML_id, n)
     END FUNCTION YAMLStateApply
     !> Inserts data into the YAML document for the PhreeqcRM method StateDelete.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param n     Integer identifying the state that is to be deleted.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -2920,7 +2976,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLStateDelete(id, n)
+    INTEGER FUNCTION YAMLStateDelete(self, n)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2932,9 +2988,9 @@
     integer(kind=C_INT), intent(in) :: n
     END FUNCTION YAMLStateDelete_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: n
-    YAMLStateDelete = YAMLStateDelete_F(id%YAML_id, n)
+    YAMLStateDelete = YAMLStateDelete_F(self%YAML_id, n)
     END FUNCTION YAMLStateDelete
 
     !> Inserts data into the YAML document to define the number of threads to use
@@ -2942,6 +2998,7 @@
     !> Once the YAML document is written, the number threads to use can be extracted
     !> when bmif_initialize is called. The data for ThreadCount will be ignored
     !> if the PhreeqcRM instance has already been initialized.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param n           Number of threads to use for multiprocessing in PhreeqcRM instance.
     !> A value of zero will cause PhreeqcRM to use the number of logical processors available
     !> on the computer.
@@ -2954,7 +3011,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLThreadCount(id, n)
+    INTEGER FUNCTION YAMLThreadCount(self, n)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -2966,14 +3023,15 @@
     integer(kind=C_INT), intent(in) :: n
     END FUNCTION YAMLThreadCount_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     integer, intent(in) :: n
-    YAMLThreadCount = YAMLThreadCount_F(id%YAML_id, n)
+    YAMLThreadCount = YAMLThreadCount_F(self%YAML_id, n)
     END FUNCTION YAMLThreadCount
 
     !> Inserts data into the YAML document for the PhreeqcRM method UseSolutionDensityVolume.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param tf          @a True indicates that the solution density and volume as
     !> calculated by PHREEQC will be used to calculate concentrations.
     !> @a False indicates that the solution density set by SetDensityUser and the volume determined by the
@@ -3008,7 +3066,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLUseSolutionDensityVolume(id, tf)
+    INTEGER FUNCTION YAMLUseSolutionDensityVolume(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -3020,16 +3078,17 @@
     integer(kind=C_INT), intent(in) :: itf
     END FUNCTION YAMLUseSolutionDensityVolume_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     logical, intent(in) :: tf
     integer :: itf
     itf = 0
     if (tf) itf = 1
-    YAMLUseSolutionDensityVolume = YAMLUseSolutionDensityVolume_F(id%YAML_id, itf)
+    YAMLUseSolutionDensityVolume = YAMLUseSolutionDensityVolume_F(self%YAML_id, itf)
     END FUNCTION YAMLUseSolutionDensityVolume
     !> Inserts data into the YAML document for the PhreeqcRM method WarningMessage.
     !> When the YAML document is written to file it can be processed by the method bmif_initialize or RM_InitializeYAML to
     !> initialize a PhreeqcRM instance.
+    !> @param self Fortran-supplied YAML_PhreeqcRM instance.
     !> @param str          String to be printed.
     !> @retval IRM_RESULT   Zero indicates success, negative indicates failure.
     !> @par
@@ -3042,11 +3101,11 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = WarningMessage(id, "Need to check these definitions.")
+    !> status = yrm%WarningMessage("Need to check these definitions.")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    INTEGER FUNCTION YAMLWarningMessage(id, str)
+    INTEGER FUNCTION YAMLWarningMessage(self, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -3058,9 +3117,9 @@
     character(KIND=C_CHAR), intent(in) :: str(*)
     END FUNCTION YAMLWarningMessage_F
     END INTERFACE
-    class(YAML_PhreeqcRM), intent(inout) :: id
+    class(YAML_PhreeqcRM), intent(inout) :: self
     character(len=*), intent(in) :: str
-    YAMLWarningMessage = YAMLWarningMessage_F(id%YAML_id, trim(str)//C_NULL_CHAR)
+    YAMLWarningMessage = YAMLWarningMessage_F(self%YAML_id, trim(str)//C_NULL_CHAR)
     END FUNCTION YAMLWarningMessage
 
     END MODULE YAMLPhreeqcRM
