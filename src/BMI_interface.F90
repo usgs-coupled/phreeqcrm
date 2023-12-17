@@ -543,7 +543,7 @@
     !> status = brm%bmif_set_value("Pressure", pressure)           ! If pressure changes
     !> status = brm%bmif_set_value("Concentrations", c)            ! Transported concentrations
     !> status = brm%bmif_set_value("TimeStep", time_step)          ! Time step for kinetic reactions
-    !> status = brm%bmif_update(id)
+    !> status = brm%bmif_update()
     !> status = brm%bmif_get_value("Concentrations", c)            ! Concentrations after reaction
     !> status = brm%bmif_get_value("DensityCalculated", density)   ! Density after reaction
     !> status = brm%bmif_get_value("SolutionVolume", volume)       ! Solution volume after reaction
@@ -617,7 +617,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%bmif_finalize(id)
+    !> status = brm%bmif_finalize()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -637,7 +637,7 @@
     class(bmi), intent(in) :: id
     INTEGER :: status
 #ifdef USE_MPI
-    !status = brm%RM_MpiWorkerBreak(id)
+    !status = brm%RM_MpiWorkerBreak()
 #endif    
     bmif_finalize = success(RMF_BMI_Destroy(id%bmiphreeqcrm_id))
     return
@@ -2548,7 +2548,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%CloseFiles(id)
+    !> status = brm%CloseFiles()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -2705,7 +2705,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%Destroy(id)
+    !> status = brm%Destroy()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -2843,7 +2843,7 @@
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: components(:)
-    !> ncomps = brm%FindComponents(id)
+    !> ncomps = brm%FindComponents()
     !> status = brm%GetComponents(components)
     !> enddo
     !> </PRE>
@@ -2915,7 +2915,7 @@
     !> <CODE>
     !> <PRE>
     !> status = brm%CreateMapping(grid2chem)
-    !> nchem = brm%GetChemistryCellCount(id)
+    !> nchem = brm%GetChemistryCellCount()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -2971,7 +2971,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> ncomps1 = brm%GetComponentCount(id)
+    !> ncomps1 = brm%GetComponentCount()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -3021,7 +3021,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: c(:,:)
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%GetConcentrations(c)
     !> </PRE>
     !> </CODE>
@@ -3057,10 +3057,10 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> do isel = 1, brm%GetSelectedOutputCount(id)
+    !> do isel = 1, brm%GetSelectedOutputCount()
     !>   status = brm%SetNthSelectedOutput(isel)
-    !>   n_user = brm%GetCurrentSelectedOutputUserNumber(id)
-    !>   col = brm%GetSelectedOutputColumnCount(id)
+    !>   n_user = brm%GetCurrentSelectedOutputUserNumber()
+    !>   col = brm%GetSelectedOutputColumnCount()
     !>   allocate(selected_out(nxyz,col))
     !>   status = brm%GetSelectedOutput(selected_out)
     !>   ! Process results here
@@ -3095,7 +3095,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: density(:)
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%GetDensityCalculated(density)
     !> </PRE>
     !> </CODE>
@@ -3166,7 +3166,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
     !> status = brm%GetEquilibriumPhasesNames(names)
-    !> do i = 1, brm%GetEquilibriumPhasesCount(id)
+    !> do i = 1, brm%GetEquilibriumPhasesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3197,7 +3197,7 @@
     !> <CODE>
     !> <PRE>
     !> status = brm%GetEquilibriumPhasesNames(names)
-    !> do i = 1, brm%GetEquilibriumPhasesCount(id)
+    !> do i = 1, brm%GetEquilibriumPhasesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3246,7 +3246,7 @@
     !> if (status .lt. 0) then
     !>   status = brm%GetErrorString(errstr)
     !>   write(*,"(A)") errstr
-    !>   status = brm%Destroy(id)
+    !>   status = brm%Destroy()
     !>   stop
     !> endif 
     !> </PRE>
@@ -3279,7 +3279,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
     !> status = brm%GetExchangeSpeciesNames(names)
-    !> do i = 1, brm%GetExchangeSpeciesCount(id)
+    !> do i = 1, brm%GetExchangeSpeciesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3311,7 +3311,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names
     !> status = brm%GetExchangeSpeciesNames(names)
-    !> do i = 1, brm%GetExchangeSpeciesCount(id)
+    !> do i = 1, brm%GetExchangeSpeciesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3344,7 +3344,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names
     !> status = brm%GetExchangeSpeciesNames(names)
-    !> do i = 1, brm%GetExchangeSpeciesCount(id)
+    !> do i = 1, brm%GetExchangeSpeciesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3401,7 +3401,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
     !> status = brm%GetGasComponentsNames(names)
-    !> do i = 1, brm%GetGasComponentsCount(id)
+    !> do i = 1, brm%GetGasComponentsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3433,7 +3433,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
     !> status = brm%GetGasComponentsNames(names)
-    !> do i = 1, brm%GetGasComponentsCount(id)
+    !> do i = 1, brm%GetGasComponentsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3474,7 +3474,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: gas_moles(:,:)
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%GetGasCompMoles(gas_moles)
     !> </PRE>
     !> </CODE>
@@ -3512,7 +3512,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: gas_p(:,:)
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%GetGasCompPressures(gas_p)
     !> </PRE>
     !> </CODE>
@@ -3551,7 +3551,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: gas_phi(:,:)
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%GetGasCompPhi(gas_phi)
     !> </PRE>
     !> </CODE>
@@ -3588,7 +3588,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: gas_volume(:)
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%GetGasPhaseVolume(gas_volume)
     !> </PRE>
     !> </CODE>
@@ -3621,7 +3621,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: components(:)
     !> real(kind=8), allocatable   :: gfw(:)
-    !> ncomps = brm%FindComponents(id)
+    !> ncomps = brm%FindComponents()
     !> status = brm%GetGfw(gfw)
     !> status = brm%GetComponents(components)
     !> do i = 1, ncomps
@@ -3654,7 +3654,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> nxyz = brm%GetGridCellCount(id)
+    !> nxyz = brm%GetGridCellCount()
     !> write(string1, "(A,I)") "Number of grid cells in the user's model: ", nxyz
     !> status = brm%OutputMessage(trim(string1))
     !> </PRE>
@@ -3692,7 +3692,7 @@
     !> <CODE>
     !> <PRE>
     !> ! Utility pointer is worker number nthreads + 1
-    !> iphreeqc_id1 = brm%GetIPhreeqcId(brm%GetThreadCount(id) + 1)
+    !> iphreeqc_id1 = brm%GetIPhreeqcId(brm%GetThreadCount() + 1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -3724,7 +3724,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable, dimension(:) :: c
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%phreeqc_rm.GetIthConcentration(1, c)
     !> </PRE>
     !> </CODE>
@@ -3761,7 +3761,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable, dimension(:) :: c
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%GetIthSpeciesConcentration(1, c)
     !> </PRE>
     !> </CODE>
@@ -3793,7 +3793,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
     !> status = brm%GetKineticReactionsNames(names)
-    !> do i = 1, brm%GetKineticReactionsCount(id)
+    !> do i = 1, brm%GetKineticReactionsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3825,7 +3825,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
     !> status = brm%GetKineticReactionsNames(names)
-    !> do i = 1, brm%GetKineticReactionsCount(id)
+    !> do i = 1, brm%GetKineticReactionsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3858,7 +3858,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> write(string1, "(A,I)") "MPI task number: ", brm%GetMpiMyself(id)
+    !> write(string1, "(A,I)") "MPI task number: ", brm%GetMpiMyself()
     !> status = brm%OutputMessage(string1)
     !> </PRE>
     !> </CODE>
@@ -3891,7 +3891,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> mpi_tasks = brm%GetMpiTasks(id)
+    !> mpi_tasks = brm%GetMpiTasks()
     !> write(string1, "(A,I)") "Number of MPI processes: ", mpi_tasks
     !> status = brm%OutputMessage(string1)
     !> </PRE>
@@ -3932,12 +3932,12 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> do isel = 1, brm%GetSelectedOutputCount(id)
+    !> do isel = 1, brm%GetSelectedOutputCount()
     !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
     !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
     !>   write(*,*) "Selected output sequence number: ", isel)
     !>   write(*,*) "Selected output user number:     ", n_user)
-    !>   col = brm%GetSelectedOutputColumnCount(id)
+    !>   col = brm%GetSelectedOutputColumnCount()
     !>   allocate(selected_out(nxyz,col))
     !>   status = brm%GetSelectedOutput(selected_out)
     !>   ! Process results here
@@ -4041,7 +4041,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: sat_calc(:)
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%GetSaturationCalculated(sat_calc)
     !> </PRE>
     !> </CODE>
@@ -4089,16 +4089,16 @@
     !> <PRE>
     !> character(len=:), allocatable :: headings
     !> real(kind=8), allocatable :: selected_out
-    !> do isel = 1, brm%GetSelectedOutputCount(id)
+    !> do isel = 1, brm%GetSelectedOutputCount()
     !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
     !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
     !>   status = brm%GetSelectedOutput(selected_out)
     !>   status = brm%GetSelectedOutputHeadings(headings)
     !>   ! Print results
-    !>   do i = 1, brm%GetSelectedOutputRowCount(id)
+    !>   do i = 1, brm%GetSelectedOutputRowCount()
     !>     write(*,*) "Cell number ", i
     !>     write(*,*) "     Selected output: "
-    !>     do j = 1, brm%GetSelectedOutputColumnCount(id)
+    !>     do j = 1, brm%GetSelectedOutputColumnCount()
     !>       write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ", trim(headings(j)),": ", selected_out(i,j)
     !>     enddo
     !>   enddo
@@ -4137,7 +4137,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: selected_out(:,:)
-    !> do isel = 1, brm%GetSelectedOutputCount(id)
+    !> do isel = 1, brm%GetSelectedOutputCount()
     !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
     !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
     !>   status = brm%GetSelectedOutput(selected_out)
@@ -4176,7 +4176,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: selected_out(:,:)
-    !> do isel = 1, brm%GetSelectedOutputCount(id)
+    !> do isel = 1, brm%GetSelectedOutputCount()
     !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
     !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
     !>   status = brm%GetSelectedOutput(selected_out)
@@ -4217,7 +4217,7 @@
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable, :: headings(:)
-    !> do isel = 1, brm%GetSelectedOutputCount(id)
+    !> do isel = 1, brm%GetSelectedOutputCount()
     !>   status = brm%SetNthSelectedOutput(isel)
     !>   status = brm%GetSelectedOutputHeadings(headings)
     !> enddo
@@ -4257,16 +4257,16 @@
     !> <PRE>
     !> character(len=:), allocatable :: headings
     !> real(kind=8), allocatable :: selected_out
-    !> do isel = 1, brm%GetSelectedOutputCount(id)
+    !> do isel = 1, brm%GetSelectedOutputCount()
     !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
     !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
     !>   status = brm%GetSelectedOutput(selected_out)
     !>   status = brm%GetSelectedOutputHeadings(headings)
     !>   ! Print results
-    !>   do i = 1, brm%GetSelectedOutputRowCount(id)
+    !>   do i = 1, brm%GetSelectedOutputRowCount()
     !>     write(*,*) "Cell number ", i
     !>     write(*,*) "     Selected output: "
-    !>     do j = 1, brm%GetSelectedOutputColumnCount(id)
+    !>     do j = 1, brm%GetSelectedOutputColumnCount()
     !>       write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ", trim(headings(j)),": ", selected_out(i,j)
     !>     enddo
     !>   enddo
@@ -4301,7 +4301,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
     !> status = brm%GetSINames(names)
-    !> do i = 1, brm%GetSICount(id)
+    !> do i = 1, brm%GetSICount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -4335,7 +4335,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
     !> status = brm%GetSINames(names)
-    !> do i = 1, brm%GetSICount(id)
+    !> do i = 1, brm%GetSICount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -4367,7 +4367,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
     !> status = brm%GetSolidSolutionComponentsNames(names)
-    !> do i = 1, brm%GetSolidSolutionComponentsCount(id)
+    !> do i = 1, brm%GetSolidSolutionComponentsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -4399,7 +4399,7 @@
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
     !> status = brm%GetSolidSolutionComponentsNames(names)
-    !> do i = 1, brm%GetSolidSolutionComponentsCount(id)
+    !> do i = 1, brm%GetSolidSolutionComponentsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -4436,7 +4436,7 @@
     !> character(len=:), allocatable :: names(:), ss_names(:)
     !> status = brm%GetSolidSolutionComponentsNames(names)
     !> status = brm%GetSolidSolutionNames(names)
-    !> do i = 1, brm%GetSolidSolutionComponentsCount(id)
+    !> do i = 1, brm%GetSolidSolutionComponentsCount()
     !>   write(*,*) names(i), ss_names(i)
     !> enddo
     !> </PRE>
@@ -4471,7 +4471,7 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: volume(:)allocate(volume)
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%GetSolutionVolume(volume)
     !> </PRE>
     !> </CODE>
@@ -4519,8 +4519,8 @@
     !> <PRE>
     !> real(kind=8), allocatable :: species_c(:,:)
     !> status = brm%SetSpeciesSaveOn(1)
-    !> ncomps = brm%FindComponents(id)
-    !> status = brm%RunCells(id)
+    !> ncomps = brm%FindComponents()
+    !> status = brm%RunCells()
     !> status = brm%GetSpeciesConcentrations(species_c)
     !> </PRE>
     !> </CODE>
@@ -4559,8 +4559,8 @@
     !> <CODE>
     !> <PRE>
     !> status = brm%SetSpeciesSaveOn(1)
-    !> ncomps = FindComponents(id)
-    !> status = brm%GetSpeciesCount(id)
+    !> ncomps = FindComponents()
+    !> status = brm%GetSpeciesCount()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -4601,7 +4601,7 @@
     !> <PRE>
     !> real(kind=8), allocatable :: diffc(:)
     !> status = brm%SetSpeciesSaveOn(1)
-    !> ncomps = brm%FindComponents(id)
+    !> ncomps = brm%FindComponents()
     !> nspecies = brm%GetSpeciesD25(diffc)
     !> </PRE>
     !> </CODE>
@@ -4728,9 +4728,9 @@
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
     !> status = brm%SetSpeciesSaveOn(1)
-    !> ncomps = brm%FindComponents(id)
+    !> ncomps = brm%FindComponents()
     !> status = brm%GetSpeciesNames(names)
-    !> do i = 1, brm%GetSpeciesCount(id)
+    !> do i = 1, brm%GetSpeciesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -4771,7 +4771,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> save_on = brm%GetSpeciesSaveOn(id)
+    !> save_on = brm%GetSpeciesSaveOn()
     !> if (save_on .ne. 0) then
     !>   write(*,*) "Reaction module is saving species concentrations"
     !> else
@@ -4814,8 +4814,8 @@
     !> <PRE>
     !> real(kind=8), allocatable :: z(:)
     !> status = brm%SetSpeciesSaveOn(1)
-    !> ncomps = brm%FindComponents(id)
-    !> nspecies = brm%GetSpeciesCount(id)
+    !> ncomps = brm%FindComponents()
+    !> nspecies = brm%GetSpeciesCount()
     !> status = brm%GetSpeciesZ(z)
     !> </PRE>
     !> </CODE>
@@ -4882,7 +4882,7 @@
     !> status = brm%GetSurfaceSpeciesNames(surface_species_names)
     !> status = brm%GetSurfaceTypes(types)
     !> status = brm%GetSurfaceNames(surface_names)
-    !> do i = 1, brm%GetSurfaceSpeciesCount(id)
+    !> do i = 1, brm%GetSurfaceSpeciesCount()
     !>   write(*,*) surface_species_names(i), types(i), surface_names(i)
     !> enddo
     !> </PRE>
@@ -4917,7 +4917,7 @@
     !> status = brm%GetSurfaceSpeciesNames(surface_species_names)
     !> status = brm%GetSurfaceTypes(types)
     !> status = brm%GetSurfaceNames(surface_names)
-    !> do i = 1, brm%GetSurfaceSpeciesCount(id)
+    !> do i = 1, brm%GetSurfaceSpeciesCount()
     !>   write(*,*) surface_species_names(i), types(i), surface_names(i)
     !> enddo
     !> </PRE>
@@ -4955,7 +4955,7 @@
     !> status = brm%GetSurfaceSpeciesNames(surface_species_names)
     !> status = brm%GetSurfaceTypes(types)
     !> status = brm%GetSurfaceNames(surface_names)
-    !> do i = 1, brm%GetSurfaceSpeciesCount(id)
+    !> do i = 1, brm%GetSurfaceSpeciesCount()
     !>   write(*,*) surface_species_names(i), types(i), surface_names(i)
     !> enddo
     !> </PRE>
@@ -4991,7 +4991,7 @@
     !> status = brm%GetSurfaceSpeciesNames(surface_species_names)
     !> status = brm%GetSurfaceTypes(types)
     !> status = brm%GetSurfaceNames(surface_names)
-    !> do i = 1, brm%GetSurfaceSpeciesCount(id)
+    !> do i = 1, brm%GetSurfaceSpeciesCount()
     !>   write(*,*) surface_species_names(i), types(i), surface_names(i)
     !> enddo
     !> </PRE>
@@ -5053,7 +5053,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> write(string1, "(A,I)") "Number of threads: ", brm%GetThreadCount(id)
+    !> write(string1, "(A,I)") "Number of threads: ", brm%GetThreadCount()
     !> status = brm%OutputMessage(string1)
     !> </PRE>
     !> </CODE>
@@ -5083,7 +5083,7 @@
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
-    !>       GetTime(id) * GetTimeConversion(id), " days"
+    !>       brm%GetTime() * brm%GetTimeConversion(), " days"
     !> status = brm%LogMessage(string)
     !> </PRE>
     !> </CODE>
@@ -5116,7 +5116,7 @@
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
-    !>       GetTime(id) * GetTimeConversion(id), " days"
+    !>       brm%GetTime() * brm%GetTimeConversion(), " days"
     !> status = brm%LogMessage(string)
     !> </PRE>
     !> </CODE>
@@ -5148,7 +5148,7 @@
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "          Time step             ", &
-    !>       GetTimeStep(id) * GetTimeConversion(id), " days"
+    !>       brm%GetTimeStep() * brm%GetTimeConversion(), " days"
     !> status = brm%LogMessage(string)
     !> </PRE>
     !> </CODE>
@@ -5923,7 +5923,7 @@
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
-    !>       GetTime(id) * GetTimeConversion(id), " days"
+    !>       brm%GetTime() * brm%GetTimeConversion(), " days"
     !> status = brm%LogMessage(string)
     !> </PRE>
     !> </CODE>
@@ -5966,7 +5966,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%MpiWorker(id)
+    !> status = brm%MpiWorker()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -5995,7 +5995,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%MpiWorkerBreak(id)
+    !> status = brm%MpiWorkerBreak()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -6025,7 +6025,7 @@
     !> <CODE>
     !> <PRE>
     !> status = brm%SetFilePrefix("Advect_f90")
-    !> status = brm%OpenFiles(id)
+    !> status = brm%OpenFiles()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -6051,20 +6051,20 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> write(string1, "(A,I10)") "Number of threads:                                ", brm%GetThreadCount(id)
+    !> write(string1, "(A,I10)") "Number of threads:                                ", brm%GetThreadCount()
     !> status = brm%OutputMessage(string1)
-    !> write(string1, "(A,I10)") "Number of MPI processes:                          ", brm%GetMpiTasks(id)
+    !> write(string1, "(A,I10)") "Number of MPI processes:                          ", brm%GetMpiTasks()
     !> status = brm%OutputMessage(string1)
-    !> write(string1, "(A,I10)") "MPI task number:                                  ", brm%GetMpiMyself(id)
+    !> write(string1, "(A,I10)") "MPI task number:                                  ", brm%GetMpiMyself()
     !> status = brm%OutputMessage(string1)
     !> status = brm%GetFilePrefix(string)
     !> write(string1, "(A,A)") "File prefix:                                        ", string
     !> status = brm%OutputMessage(trim(string1))
-    !> write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", brm%GetGridCellCount(id)
+    !> write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", brm%GetGridCellCount()
     !> status = brm%OutputMessage(trim(string1))
-    !> write(string1, "(A,I10)") "Number of chemistry cells in the reaction module: ", brm%GetChemistryCellCount(id)
+    !> write(string1, "(A,I10)") "Number of chemistry cells in the reaction module: ", brm%GetChemistryCellCount()
     !> status = brm%OutputMessage(trim(string1))
-    !> write(string1, "(A,I10)") "Number of components for transport:               ", brm%GetComponentCount(id)
+    !> write(string1, "(A,I10)") "Number of components for transport:               ", brm%GetComponentCount()
     !> status = brm%OutputMessage(trim(string1))
     !> </PRE>
     !> </CODE>
@@ -6106,7 +6106,7 @@
     !> status = brm%SetPressure(pressure)           ! If pressure changes
     !> status = brm%SetConcentrations(c)            ! Transported concentrations
     !> status = brm%SetTimeStep(time_step)          ! Time step for kinetic reactions
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%GetConcentrations(c)            ! Concentrations after reaction
     !> status = brm%GetDensityCalculated(density)   ! Density after reaction
     !> status = brm%GetSolutionVolume(volume)       ! Solution volume after reaction
@@ -6212,7 +6212,7 @@
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning reaction calculation  ", &
-    !>       time * GetTimeConversion(id), " days"
+    !>       time * brm%GetTimeConversion(), " days"
     !> status = brm%ScreenMessage(string)
     !> </PRE>
     !> </CODE>
@@ -6296,7 +6296,7 @@
     !> status = brm%SetConcentrations(c)           ! Transported concentrations
     !> status = brm%SetTimeStep(time_step)         ! Time step for kinetic reactions
     !> status = brm%SetTime(time)                  ! Current time
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> status = brm%GetConcentrations(c)           ! Concentrations after reaction
     !> status = brm%GetDensityCalculated(density)  ! Density after reaction
     !> status = brm%GetSolutionVolume(volume)      ! Solution volume after reaction
@@ -6336,10 +6336,10 @@
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: selected_out(:,:)
-    !> do isel = 1, brm%GetSelectedOutputCount(id)
+    !> do isel = 1, brm%GetSelectedOutputCount()
     !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
     !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
-    !>   col = brm%GetSelectedOutputColumnCount(id)
+    !>   col = brm%GetSelectedOutputColumnCount()
     !>   status = brm%GetSelectedOutput(selected_out)
     !>   ! Process results here
     !> enddo
@@ -6493,7 +6493,7 @@
     !> <CODE>
     !> <PRE>
     !> status = brm%SetFilePrefix("Advect_f90")
-    !> status = brm%OpenFiles(id)
+    !> status = brm%OpenFiles()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -6528,11 +6528,11 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> ngas_comps = SetGasComponentsCount(id)
+    !> ngas_comps = brm%SetGasComponentsCount()
     !> allocate(gas_moles(nxyz, ngas_comps))
     !> ...
     !> status = brm%SetGasCompMoles(gas_moles)
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -6572,7 +6572,7 @@
     !> allocate(gas_volume(nxyz))
     !> ...
     !> status = brm%SetGasPhaseVolume(gas_volume)
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -6607,7 +6607,7 @@
     !> <PRE>
     !> status = brm%phreeqc_rm.SetIthConcentration(i, c) ! repeat for all components
     !> ...
-    !> status = brm%phreeqc_rm.RunCells(id)
+    !> status = brm%phreeqc_rm.RunCells()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -6646,7 +6646,7 @@
     !> <PRE>
     !> status = brm%SetIthSpeciesConcentration(i, c) ! repeat for all species
     !> ...
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -6706,7 +6706,7 @@
     !>
     !> Code executed by workers:
     !> status = brm%SetMpiWorkerCallback(worker_tasks_f)
-    !> status = brm%MpiWorker(id)
+    !> status = brm%MpiWorker()
     !>
     !> Code executed by root and workers:
     !> integer function do_something
@@ -6787,10 +6787,10 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> do isel = 1, brm%GetSelectedOutputCount(id)
+    !> do isel = 1, brm%GetSelectedOutputCount()
     !>   status = brm%SetNthSelectedOutput(isel)
-    !>   n_user = brm%GetCurrentSelectedOutputUserNumber(id)
-    !>   col = brm%GetSelectedOutputColumnCount(id)
+    !>   n_user = brm%GetCurrentSelectedOutputUserNumber()
+    !>   col = brm%GetSelectedOutputColumnCount()
     !>   allocate(selected_out(nxyz,col))
     !>   status = brm%GetSelectedOutput(selected_out)
     !>   ! Process results here
@@ -7230,7 +7230,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> save_on = SetSpeciesSaveOn(1)
+    !> save_on = brm%SetSpeciesSaveOn(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -7728,13 +7728,13 @@
     !> <CODE>
     !> <PRE>
     !> status = brm%SetSpeciesSaveOn(1)
-    !> ncomps = brm%FindComponents(id)
-    !> nspecies = brm%GetSpeciesCount(id)
-    !> nxyz = brm%GetGridCellCount(id)
+    !> ncomps = brm%FindComponents()
+    !> nspecies = brm%GetSpeciesCount()
+    !> nxyz = brm%GetGridCellCount()
     !> allocate(species_c(nxyz, nspecies))
     !> ...
     !> status = brm%SpeciesConcentrations2Module(species_c(1,1))
-    !> status = brm%RunCells(id)
+    !> status = brm%RunCells()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
