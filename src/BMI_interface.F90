@@ -2532,8 +2532,8 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: iresult
-    CHARACTER(len=*), INTENT(inout) :: err_str
+    INTEGER, INTENT(in) :: iresult
+    CHARACTER(len=*), INTENT(in) :: err_str
     Abort = RM_Abort(self%bmiphreeqcrm_id, iresult, err_str)
     RETURN
     END FUNCTION Abort
@@ -2608,9 +2608,9 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
-    real(kind=8), INTENT(inout), DIMENSION(:,:) :: c
-    INTEGER, INTENT(inout) :: n
-    real(kind=8), INTENT(inout), DIMENSION(:) :: tc, p_atm
+    real(kind=8), INTENT(in), DIMENSION(:,:) :: c
+    INTEGER, INTENT(in) :: n
+    real(kind=8), INTENT(in), DIMENSION(:) :: tc, p_atm
     Concentrations2Utility = RM_Concentrations2Utility(self%bmiphreeqcrm_id, c, n, tc, p_atm)
     return
     END FUNCTION Concentrations2Utility
@@ -2648,7 +2648,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout), DIMENSION(:) :: grid2chem
+    INTEGER, INTENT(in), DIMENSION(:) :: grid2chem
     CreateMapping = RM_CreateMapping(self%bmiphreeqcrm_id, grid2chem)
     return
     END FUNCTION CreateMapping
@@ -2691,7 +2691,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: e
+    INTEGER, INTENT(in) :: e
     DecodeError = RM_DecodeError(self%bmiphreeqcrm_id, e)
     return
     END FUNCTION DecodeError
@@ -2746,8 +2746,8 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: dump_on
-    INTEGER, INTENT(inout) :: append
+    INTEGER, INTENT(in) :: dump_on
+    INTEGER, INTENT(in) :: append
     DumpModule = RM_DumpModule(self%bmiphreeqcrm_id, dump_on, append)
     return
     END FUNCTION DumpModule
@@ -2777,7 +2777,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
-    CHARACTER(len=*), INTENT(inout) :: errstr
+    CHARACTER(len=*), INTENT(in) :: errstr
     ErrorMessage = RM_ErrorMessage(self%bmiphreeqcrm_id, errstr)
     return
     END FUNCTION ErrorMessage
@@ -2892,7 +2892,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout)    :: n
+    INTEGER, INTENT(in)    :: n
     INTEGER, INTENT(inout), allocatable :: list(:)
     GetBackwardMapping = RM_GetBackwardMapping(self%bmiphreeqcrm_id, n, list)
     return
@@ -3702,7 +3702,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: i
+    INTEGER, INTENT(in) :: i
     GetIPhreeqcId = RM_GetIPhreeqcId(self%bmiphreeqcrm_id, i)
     END FUNCTION GetIPhreeqcId
 
@@ -3735,7 +3735,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: i
+    INTEGER, INTENT(in) :: i
     real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: c
     GetIthConcentration = RM_GetIthConcentration(self%bmiphreeqcrm_id, i, c)
     return
@@ -3772,7 +3772,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: i
+    INTEGER, INTENT(in) :: i
     real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: c
     GetIthSpeciesConcentration = RM_GetIthSpeciesConcentration(self%bmiphreeqcrm_id, i, c)
     return
@@ -3952,7 +3952,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: n
+    INTEGER, INTENT(in) :: n
     GetNthSelectedOutputUserNumber = RM_GetNthSelectedOutputUserNumber(self%bmiphreeqcrm_id, n)
     END FUNCTION GetNthSelectedOutputUserNumber
 
@@ -5348,7 +5348,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    CHARACTER(len=*), INTENT(inout) :: yaml_name
+    CHARACTER(len=*), INTENT(in) :: yaml_name
     InitializeYAML = RM_InitializeYAML(self%bmiphreeqcrm_id, yaml_name)
     END FUNCTION InitializeYAML
 #endif
@@ -5402,10 +5402,10 @@
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(INOUT), DIMENSION(:,:), allocatable :: bc_conc
-    INTEGER, INTENT(inout) :: n_boundary
-    INTEGER, INTENT(inout), DIMENSION(:) :: bc1
-    INTEGER, INTENT(inout), DIMENSION(:) , OPTIONAL :: bc2
-    real(kind=8), INTENT(inout), DIMENSION(:) , OPTIONAL :: f1
+    INTEGER, INTENT(in) :: n_boundary
+    INTEGER, INTENT(in), DIMENSION(:) :: bc1
+    INTEGER, INTENT(in), DIMENSION(:) , OPTIONAL :: bc2
+    real(kind=8), INTENT(in), DIMENSION(:) , OPTIONAL :: f1
     InitialPhreeqc2Concentrations = RM_InitialPhreeqc2Concentrations(self%bmiphreeqcrm_id, bc_conc, n_boundary, bc1, bc2, f1)
     END FUNCTION InitialPhreeqc2Concentrations
 
@@ -5483,7 +5483,7 @@
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(inout), DIMENSION(:,:) :: ic1
-    INTEGER, INTENT(inout), DIMENSION(:,:), OPTIONAL :: ic2
+    INTEGER, INTENT(in), DIMENSION(:,:), OPTIONAL :: ic2
     real(kind=8), INTENT(inout), DIMENSION(:,:), OPTIONAL :: f1
     InitialPhreeqc2Module = RM_InitialPhreeqc2Module(self%bmiphreeqcrm_id, ic1, ic2, f1)
     END FUNCTION InitialPhreeqc2Module
@@ -5526,7 +5526,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout), DIMENSION(:) :: solutions
+    INTEGER, INTENT(in), DIMENSION(:) :: solutions
     InitialSolutions2Module = RM_InitialSolutions2Module(self%bmiphreeqcrm_id, solutions)
     END FUNCTION InitialSolutions2Module  
 
@@ -5568,7 +5568,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout), DIMENSION(:) :: equilibrium_phases
+    INTEGER, INTENT(in), DIMENSION(:) :: equilibrium_phases
     InitialEquilibriumPhases2Module = RM_InitialEquilibriumPhases2Module(self%bmiphreeqcrm_id, equilibrium_phases)
     END FUNCTION InitialEquilibriumPhases2Module
 
@@ -5610,7 +5610,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout), DIMENSION(:) :: exchanges
+    INTEGER, INTENT(in), DIMENSION(:) :: exchanges
     InitialExchanges2Module = RM_InitialExchanges2Module(self%bmiphreeqcrm_id, exchanges)
     END FUNCTION InitialExchanges2Module
 
@@ -5652,7 +5652,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout), DIMENSION(:) :: gas_phases
+    INTEGER, INTENT(in), DIMENSION(:) :: gas_phases
     InitialGasPhases2Module = RM_InitialGasPhases2Module(self%bmiphreeqcrm_id, gas_phases)
     END FUNCTION InitialGasPhases2Module
 
@@ -5694,7 +5694,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout), DIMENSION(:) :: solid_solutions
+    INTEGER, INTENT(in), DIMENSION(:) :: solid_solutions
     InitialSolidSolutions2Module = RM_InitialSolidSolutions2Module(self%bmiphreeqcrm_id, solid_solutions)
     END FUNCTION InitialSolidSolutions2Module
 
@@ -5736,7 +5736,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout), DIMENSION(:) :: surfaces
+    INTEGER, INTENT(in), DIMENSION(:) :: surfaces
     InitialSurfaces2Module = RM_InitialSurfaces2Module(self%bmiphreeqcrm_id, surfaces)
     END FUNCTION InitialSurfaces2Module
     
@@ -5778,7 +5778,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout), DIMENSION(:) :: kinetics
+    INTEGER, INTENT(in), DIMENSION(:) :: kinetics
     InitialKinetics2Module = RM_InitialKinetics2Module(self%bmiphreeqcrm_id, kinetics)
     END FUNCTION InitialKinetics2Module  
     
@@ -5832,10 +5832,10 @@
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:,:), intent(inout), allocatable :: bc_conc
-    INTEGER, INTENT(inout) :: n_boundary
-    INTEGER, INTENT(inout), DIMENSION(:) :: bc1
-    INTEGER, INTENT(inout), DIMENSION(:), OPTIONAL :: bc2
-    real(kind=8), INTENT(inout), DIMENSION(:), OPTIONAL :: f1
+    INTEGER, INTENT(in) :: n_boundary
+    INTEGER, INTENT(in), DIMENSION(:) :: bc1
+    INTEGER, INTENT(in), DIMENSION(:), OPTIONAL :: bc2
+    real(kind=8), INTENT(in), DIMENSION(:), OPTIONAL :: f1
     InitialPhreeqc2SpeciesConcentrations = &
         RM_InitialPhreeqc2SpeciesConcentrations(self%bmiphreeqcrm_id, bc_conc, n_boundary, bc1, bc2, f1)
     END FUNCTION InitialPhreeqc2SpeciesConcentrations
@@ -5876,9 +5876,9 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: n_user
-    INTEGER, INTENT(inout), DIMENSION(:) :: cell_numbers
-    INTEGER, INTENT(inout) :: n_cell
+    INTEGER, INTENT(in) :: n_user
+    INTEGER, INTENT(in), DIMENSION(:) :: cell_numbers
+    INTEGER, INTENT(in) :: n_cell
     InitialPhreeqcCell2Module = RM_InitialPhreeqcCell2Module(self%bmiphreeqcrm_id, n_user, cell_numbers, n_cell)
     END FUNCTION InitialPhreeqcCell2Module
 
@@ -5904,7 +5904,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    CHARACTER(len=*), INTENT(inout) :: db_name
+    CHARACTER(len=*), INTENT(in) :: db_name
     LoadDatabase = RM_LoadDatabase(self%bmiphreeqcrm_id, db_name)
     END FUNCTION LoadDatabase
 
@@ -5934,7 +5934,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    CHARACTER(len=*), INTENT(inout) :: str
+    CHARACTER(len=*), INTENT(in) :: str
     LogMessage = RM_LogMessage(self%bmiphreeqcrm_id, str)
     END FUNCTION LogMessage
 
@@ -6075,7 +6075,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    CHARACTER(len=*), INTENT(inout) :: str
+    CHARACTER(len=*), INTENT(in) :: str
     OutputMessage = RM_OutputMessage(self%bmiphreeqcrm_id, str)
     END FUNCTION OutputMessage
 
@@ -6154,8 +6154,8 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: workers, initial_phreeqc, utility
-    CHARACTER(len=*), INTENT(inout) :: chem_name
+    INTEGER, INTENT(in) :: workers, initial_phreeqc, utility
+    CHARACTER(len=*), INTENT(in) :: chem_name
     RunFile = RM_RunFile(self%bmiphreeqcrm_id, workers, initial_phreeqc, utility, chem_name)
     END FUNCTION RunFile
 
@@ -6193,8 +6193,8 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: initial_phreeqc, workers, utility
-    CHARACTER(len=*), INTENT(inout) :: input_string
+    INTEGER, INTENT(in) :: initial_phreeqc, workers, utility
+    CHARACTER(len=*), INTENT(in) :: input_string
     RunString = RM_RunString(self%bmiphreeqcrm_id, workers, initial_phreeqc, utility, input_string)
     END FUNCTION RunString
 
@@ -6223,7 +6223,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    CHARACTER(len=*), INTENT(inout) :: str
+    CHARACTER(len=*), INTENT(in) :: str
     ScreenMessage = RM_ScreenMessage(self%bmiphreeqcrm_id, str)
     END FUNCTION ScreenMessage
 
@@ -6257,7 +6257,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: tf
+    INTEGER, INTENT(in) :: tf
     SetComponentH2O = RM_SetComponentH2O(self%bmiphreeqcrm_id, tf)
     END FUNCTION SetComponentH2O
 
@@ -6309,7 +6309,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:,:), INTENT(inout) :: c
+    real(kind=8), DIMENSION(:,:), INTENT(in) :: c
     SetConcentrations = RM_SetConcentrations(self%bmiphreeqcrm_id, c)
     END FUNCTION SetConcentrations
 
@@ -6352,7 +6352,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: n_user
+    INTEGER, INTENT(in) :: n_user
     SetCurrentSelectedOutputUserNumber = RM_SetCurrentSelectedOutputUserNumber(self%bmiphreeqcrm_id, n_user)
     END FUNCTION SetCurrentSelectedOutputUserNumber
 
@@ -6387,7 +6387,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:), INTENT(inout) :: density
+    real(kind=8), DIMENSION(:), INTENT(in) :: density
     SetDensityUser = RM_SetDensityUser(self%bmiphreeqcrm_id, density)
     END FUNCTION SetDensityUser
     
@@ -6395,7 +6395,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:), INTENT(inout) :: density
+    real(kind=8), DIMENSION(:), INTENT(in) :: density
     SetDensity = RM_SetDensityUser(self%bmiphreeqcrm_id, density)
     END FUNCTION SetDensity
 
@@ -6422,7 +6422,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    CHARACTER(len=*), INTENT(inout) :: dump_name
+    CHARACTER(len=*), INTENT(in) :: dump_name
     SetDumpFileName = RM_SetDumpFileName(self%bmiphreeqcrm_id, dump_name)
     END FUNCTION SetDumpFileName
 
@@ -6448,7 +6448,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: mode
+    INTEGER, INTENT(in) :: mode
     SetErrorHandlerMode = RM_SetErrorHandlerMode(self%bmiphreeqcrm_id, mode)
     END FUNCTION SetErrorHandlerMode
 
@@ -6476,7 +6476,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: tf
+    INTEGER, INTENT(in) :: tf
     SetErrorOn = RM_SetErrorOn(self%bmiphreeqcrm_id, tf)
     END FUNCTION SetErrorOn
 
@@ -6503,7 +6503,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    CHARACTER(len=*), INTENT(inout) :: prefix
+    CHARACTER(len=*), INTENT(in) :: prefix
     SetFilePrefix = RM_SetFilePrefix(self%bmiphreeqcrm_id, prefix)
     END FUNCTION SetFilePrefix
 
@@ -6542,7 +6542,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:,:), INTENT(inout) :: gas_moles
+    real(kind=8), DIMENSION(:,:), INTENT(in) :: gas_moles
     SetGasCompMoles = RM_SetGasCompMoles(self%bmiphreeqcrm_id, gas_moles)
     END FUNCTION SetGasCompMoles
 
@@ -6582,7 +6582,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:), INTENT(inout) :: gas_volume
+    real(kind=8), DIMENSION(:), INTENT(in) :: gas_volume
     SetGasPhaseVolume = RM_SetGasPhaseVolume(self%bmiphreeqcrm_id, gas_volume)
     END FUNCTION SetGasPhaseVolume
 
@@ -6617,9 +6617,9 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: i
-    real(kind=8), INTENT(inout), DIMENSION(:) :: c
-    SetIthConcentration = RM_SetIthConcentration(self%bmiphreeqcrm_id, i - 1, c)
+    INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(in), DIMENSION(:) :: c
+    SetIthConcentration = RM_SetIthConcentration(self%bmiphreeqcrm_id, i, c)
     return
     END FUNCTION SetIthConcentration
 
@@ -6656,9 +6656,9 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: i
-    real(kind=8), INTENT(inout), DIMENSION(:) :: c
-    SetIthSpeciesConcentration = RM_SetIthSpeciesConcentration(self%bmiphreeqcrm_id, i - 1, c)
+    INTEGER, INTENT(in) :: i
+    real(kind=8), INTENT(in), DIMENSION(:) :: c
+    SetIthSpeciesConcentration = RM_SetIthSpeciesConcentration(self%bmiphreeqcrm_id, i, c)
     return
     END FUNCTION SetIthSpeciesConcentration
 
@@ -6805,8 +6805,8 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: n
-    SetNthSelectedOutput = RM_SetNthSelectedOutput(self%bmiphreeqcrm_id, n-1)
+    INTEGER, INTENT(in) :: n
+    SetNthSelectedOutput = RM_SetNthSelectedOutput(self%bmiphreeqcrm_id, n)
     END FUNCTION SetNthSelectedOutput
 
     !> Sets the property for partitioning solids between the saturated and 
@@ -6843,7 +6843,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout)  :: tf
+    INTEGER, INTENT(in)  :: tf
     SetPartitionUZSolids = RM_SetPartitionUZSolids(self%bmiphreeqcrm_id, tf)
     END FUNCTION SetPartitionUZSolids
 
@@ -6876,7 +6876,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:), INTENT(inout) :: por
+    real(kind=8), DIMENSION(:), INTENT(in) :: por
     SetPorosity = RM_SetPorosity(self%bmiphreeqcrm_id, por)
     END FUNCTION SetPorosity
 
@@ -6905,7 +6905,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:), INTENT(inout) :: p
+    real(kind=8), DIMENSION(:), INTENT(in) :: p
     SetPressure = RM_SetPressure(self%bmiphreeqcrm_id, p)
     END FUNCTION SetPressure
 
@@ -6939,7 +6939,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, DIMENSION(:), INTENT(inout) :: cell_mask
+    INTEGER, DIMENSION(:), INTENT(in) :: cell_mask
     SetPrintChemistryMask = RM_SetPrintChemistryMask(self%bmiphreeqcrm_id, cell_mask)
     END FUNCTION SetPrintChemistryMask
 
@@ -6979,7 +6979,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: workers, initial_phreeqc, utility
+    INTEGER, INTENT(in) :: workers, initial_phreeqc, utility
     SetPrintChemistryOn = RM_SetPrintChemistryOn(self%bmiphreeqcrm_id, workers, initial_phreeqc, utility)
     END FUNCTION SetPrintChemistryOn
 
@@ -7012,7 +7012,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout)  :: method
+    INTEGER, INTENT(in)  :: method
     SetRebalanceByCell = RM_SetRebalanceByCell(self%bmiphreeqcrm_id, method)
     END FUNCTION SetRebalanceByCell
 
@@ -7047,7 +7047,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), INTENT(inout)  :: f
+    real(kind=8), INTENT(in)  :: f
     SetRebalanceFraction = RM_SetRebalanceFraction(self%bmiphreeqcrm_id, f)
     END FUNCTION SetRebalanceFraction
 
@@ -7087,7 +7087,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:), INTENT(inout) :: rv
+    real(kind=8), DIMENSION(:), INTENT(in) :: rv
     SetRepresentativeVolume = RM_SetRepresentativeVolume(self%bmiphreeqcrm_id, rv)
     END FUNCTION SetRepresentativeVolume
 
@@ -7128,7 +7128,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:), INTENT(inout) :: sat
+    real(kind=8), DIMENSION(:), INTENT(in) :: sat
     SetSaturationUser = RM_SetSaturationUser(self%bmiphreeqcrm_id, sat)
     END FUNCTION SetSaturationUser
     
@@ -7136,7 +7136,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:), INTENT(inout) :: sat
+    real(kind=8), DIMENSION(:), INTENT(in) :: sat
     SetSaturation = RM_SetSaturationUser(self%bmiphreeqcrm_id, sat)
     END FUNCTION SetSaturation
 
@@ -7164,7 +7164,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: tf
+    INTEGER, INTENT(in) :: tf
     SetScreenOn = RM_SetScreenOn(self%bmiphreeqcrm_id, tf)
     END FUNCTION SetScreenOn
 
@@ -7200,7 +7200,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: tf
+    INTEGER, INTENT(in) :: tf
     SetSelectedOutputOn = RM_SetSelectedOutputOn(self%bmiphreeqcrm_id, tf)
     END FUNCTION SetSelectedOutputOn
 
@@ -7240,7 +7240,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: save_on
+    INTEGER, INTENT(in) :: save_on
     SetSpeciesSaveOn = RM_SetSpeciesSaveOn(self%bmiphreeqcrm_id, save_on)
     END FUNCTION SetSpeciesSaveOn
 
@@ -7272,7 +7272,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:), INTENT(inout) :: t
+    real(kind=8), DIMENSION(:), INTENT(in) :: t
     SetTemperature = RM_SetTemperature(self%bmiphreeqcrm_id, t)
     END FUNCTION SetTemperature
 
@@ -7297,7 +7297,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), INTENT(inout) :: time
+    real(kind=8), INTENT(in) :: time
     SetTime = RM_SetTime(self%bmiphreeqcrm_id, time)
     END FUNCTION SetTime
 
@@ -7322,7 +7322,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), INTENT(inout) :: conv_factor
+    real(kind=8), INTENT(in) :: conv_factor
     SetTimeConversion = RM_SetTimeConversion(self%bmiphreeqcrm_id, conv_factor)
     END FUNCTION SetTimeConversion
 
@@ -7348,7 +7348,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), INTENT(inout) :: time_step
+    real(kind=8), INTENT(in) :: time_step
     SetTimeStep = RM_SetTimeStep(self%bmiphreeqcrm_id, time_step)
     END FUNCTION SetTimeStep
 
@@ -7393,7 +7393,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: option
+    INTEGER, INTENT(in) :: option
     SetUnitsExchange = RM_SetUnitsExchange(self%bmiphreeqcrm_id, option)
     END FUNCTION SetUnitsExchange
 
@@ -7438,7 +7438,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: option
+    INTEGER, INTENT(in) :: option
     SetUnitsGasPhase = RM_SetUnitsGasPhase(self%bmiphreeqcrm_id, option)
     END FUNCTION SetUnitsGasPhase
 
@@ -7499,7 +7499,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: option
+    INTEGER, INTENT(in) :: option
     SetUnitsKinetics = RM_SetUnitsKinetics(self%bmiphreeqcrm_id, option)
     END FUNCTION SetUnitsKinetics
 
@@ -7545,7 +7545,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: option
+    INTEGER, INTENT(in) :: option
     SetUnitsPPassemblage = RM_SetUnitsPPassemblage(self%bmiphreeqcrm_id, option)
     END FUNCTION SetUnitsPPassemblage
 
@@ -7602,7 +7602,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: option
+    INTEGER, INTENT(in) :: option
     SetUnitsSolution = RM_SetUnitsSolution(self%bmiphreeqcrm_id, option)
     END FUNCTION SetUnitsSolution
 
@@ -7647,7 +7647,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: option
+    INTEGER, INTENT(in) :: option
     SetUnitsSSassemblage = RM_SetUnitsSSassemblage(self%bmiphreeqcrm_id, option)
     END FUNCTION SetUnitsSSassemblage
 
@@ -7692,7 +7692,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    integer, intent(inout) :: option
+    integer, intent(in) :: option
     SetUnitsSurface = RM_SetUnitsSurface(self%bmiphreeqcrm_id, option)
     END FUNCTION SetUnitsSurface
 
@@ -7744,7 +7744,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    real(kind=8), DIMENSION(:,:), INTENT(inout) :: species_conc
+    real(kind=8), DIMENSION(:,:), INTENT(in) :: species_conc
     SpeciesConcentrations2Module = RM_SpeciesConcentrations2Module(self%bmiphreeqcrm_id, species_conc)
     END FUNCTION SpeciesConcentrations2Module
 
@@ -7780,7 +7780,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: istate
+    INTEGER, INTENT(in) :: istate
     StateSave = RM_StateSave(self%bmiphreeqcrm_id, istate)
     END FUNCTION StateSave
 
@@ -7816,7 +7816,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: istate
+    INTEGER, INTENT(in) :: istate
     StateApply = RM_StateApply(self%bmiphreeqcrm_id, istate)
     END FUNCTION StateApply
 
@@ -7844,7 +7844,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: istate
+    INTEGER, INTENT(in) :: istate
     StateDelete = RM_StateDelete(self%bmiphreeqcrm_id, istate)
     END FUNCTION StateDelete
     !> Determines the volume and density to use when converting from the reaction-module concentrations
@@ -7890,7 +7890,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    INTEGER, INTENT(inout) :: tf
+    INTEGER, INTENT(in) :: tf
     UseSolutionDensityVolume = RM_UseSolutionDensityVolume(self%bmiphreeqcrm_id, tf)
     END FUNCTION UseSolutionDensityVolume
 
@@ -7918,7 +7918,7 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    CHARACTER(len=*), INTENT(inout) :: warn_str
+    CHARACTER(len=*), INTENT(in) :: warn_str
     WarningMessage = RM_WarningMessage(self%bmiphreeqcrm_id, warn_str)
     END FUNCTION WarningMessage
 

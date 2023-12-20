@@ -1,6 +1,7 @@
 //#define _CRTDBG_MAP_ALLOC
 //#include <stdlib.h>
 //#include <crtdbg.h>
+#include <omp.h>
 #if defined(USE_OPENMP) && defined(USE_MPI)
 #error "Cannot define both USE_OPENMP and USE_MPI at the same time."
 #endif
