@@ -2899,6 +2899,7 @@ PhreeqcRM::FindComponents(void)
 			species_z.clear();
 			s_num2rm_species_num.clear();
 			species_stoichiometry.clear();
+			species_d_25.clear();
 			for (int i = 0; i < (int)phast_iphreeqc_worker->PhreeqcPtr->s_x.size(); i++)
 			{
 				species_names.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
