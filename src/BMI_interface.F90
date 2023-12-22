@@ -132,7 +132,7 @@
 	procedure :: Abort
 	procedure :: CloseFiles
 	procedure :: Concentrations2Utility
-	procedure :: Createmapping
+	procedure :: CreateMapping
 	procedure :: DecodeError
 	procedure :: Destroy
 	procedure :: DumpModule
@@ -313,6 +313,7 @@
     !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
     !> module will use MPI and multiple processes. If neither preprocessor directive is used,
     !> the reaction module will be serial (unparallelized).
+    !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param nxyz                         The number of grid cells in the user's model.
     !> @param nthreads (or @a comm, MPI)   When using OPENMP, the argument (@a nthreads) 
     !> is the number of worker threads to be used.
@@ -401,7 +402,7 @@
     !> <CODE>
     !> <PRE>
     !> CloseFiles();
-    !> Createmapping(std::vector< int >& grid2chem);
+    !> CreateMapping(std::vector< int >& grid2chem);
     !> DumpModule();
     !> FindComponents();
     !> InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
@@ -2637,21 +2638,21 @@
     !>   grid2chem(i) = i - 1
     !>   grid2chem(i+nxyz/2) = i - 1
     !> enddo
-    !> status = brm%Createmapping(grid2chem)
+    !> status = brm%CreateMapping(grid2chem)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref MpiWorker.
 
-    INTEGER FUNCTION Createmapping(self, grid2chem)
+    INTEGER FUNCTION CreateMapping(self, grid2chem)
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
     INTEGER, INTENT(in), DIMENSION(:) :: grid2chem
-    Createmapping = RM_Createmapping(self%bmiphreeqcrm_id, grid2chem)
+    CreateMapping = RM_CreateMapping(self%bmiphreeqcrm_id, grid2chem)
     return
-    END FUNCTION Createmapping
+    END FUNCTION CreateMapping
 
     !> If @a e is negative, this method prints an error message corresponding to IRESULT @a e. 
     !> If @a e is non-negative, no action is taken.
@@ -2679,7 +2680,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%Createmapping(grid2chem)
+    !> status = brm%CreateMapping(grid2chem)
     !> if (status < 0) status = brm%DecodeError(status)
     !> </PRE>
     !> </CODE>
@@ -2862,7 +2863,7 @@
 
     !> Fills an array with the cell numbers in the user's numbering sytstem that map 
     !> to a cell in the PhreeqcRM numbering system. The mapping is defined by
-    !> @ref bmif_createmapping.
+    !> @ref CreateMapping.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param n             A cell number in the PhreeqcRM numbering system (0 <= n < 
     !> @ref GetChemistryCellCount).
@@ -2870,7 +2871,7 @@
     !> PhreeqcRM cell @a n.
     !> @retval              IRESULT error code (see @ref DecodeError).
     !> @see
-    !> @ref bmif_createmapping,
+    !> @ref CreateMapping,
     !> @ref GetChemistryCellCount,
     !> @ref GetGridCellCount.
     !> @par C Example:
@@ -2902,19 +2903,19 @@
 
     !> Returns the number of chemistry cells in the reaction module. The number of chemistry 
     !> cells is defined by the set of non-negative integers in the mapping from user grid 
-    !> cells (@ref bmif_createmapping). The number of chemistry cells is less than or equal to 
+    !> cells (@ref CreateMapping). The number of chemistry cells is less than or equal to 
     !> the number of cells in the user's model.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval              Number of chemistry cells, or IRESULT error code 
     !> (see @ref DecodeError).
     !> @see
-    !> @ref bmif_createmapping,
+    !> @ref CreateMapping,
     !> @ref GetGridCellCount.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%Createmapping(grid2chem)
+    !> status = brm%CreateMapping(grid2chem)
     !> nchem = brm%GetChemistryCellCount()
     !> </PRE>
     !> </CODE>
@@ -3648,7 +3649,7 @@
     !> (See @ref DecodeError).
     !> @see
     !> @ref bmif_create,
-    !> @ref bmif_createmapping,
+    !> @ref CreateMapping,
     !> @ref InitializeYAML.
     !> @par Fortran Example:
     !> @htmlonly
@@ -5270,7 +5271,7 @@
     !> <CODE>
     !> <PRE>
     !> CloseFiles(void);
-    !> Createmapping(std::vector< int >& grid2chem);
+    !> CreateMapping(std::vector< int >& grid2chem);
     !> DumpModule();
     !> FindComponents();
     !> InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);

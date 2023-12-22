@@ -51,6 +51,7 @@ public:
     /**
     Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM.
     Definition of the number of cells and threads (or MPI communicator) is deferred.
+    @retval A BMIPhreeqcRM instance.
     */
     BMIPhreeqcRM();
     /**
@@ -91,13 +92,13 @@ public:
     @htmlonly
     <CODE>
     <PRE>
-- key: LoadDatabase
-  database: phreeqc.dat
-- key: RunFile
-  workers: true
-  initial_phreeqc: true
-  utility: true
-  chemistry_name: advect.pqi
+        - key: LoadDatabase
+          database: phreeqc.dat
+        - key: RunFile
+          workers: true
+          initial_phreeqc: true
+          utility: true
+          chemistry_name: advect.pqi
     </PRE>
     </CODE>
     @endhtmlonly

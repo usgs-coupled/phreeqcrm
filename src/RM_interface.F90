@@ -61,7 +61,7 @@
     PRIVATE :: RM_GetSIName
     PRIVATE :: RM_GetSolidSolutionComponentsName
     PRIVATE :: RM_GetSolidSolutionName
-    PRIVATE :: RM_GetSpeciesName
+    !PRIVATE :: RM_GetSpeciesName
     PRIVATE :: RM_GetSurfaceName
     PRIVATE :: RM_GetSurfaceSpeciesName
     PRIVATE :: RM_GetSurfaceType

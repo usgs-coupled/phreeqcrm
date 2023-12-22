@@ -587,7 +587,7 @@ user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are ignore
 @see
 @ref RM_FindComponents,
 @ref RM_GetComponentCount,
-@ref RM_GetComponents,
+@ref RM_GetComponent,
 @ref RM_SetConcentrations.
 @par C Example:
 @htmlonly
