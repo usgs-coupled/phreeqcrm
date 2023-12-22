@@ -2700,7 +2700,7 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval IRESULT   0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref Create.
+    !> @ref bmif_create.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -2862,7 +2862,7 @@
 
     !> Fills an array with the cell numbers in the user's numbering sytstem that map 
     !> to a cell in the PhreeqcRM numbering system. The mapping is defined by
-    !> @ref Createmapping.
+    !> @ref bmif_createmapping.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param n             A cell number in the PhreeqcRM numbering system (0 <= n < 
     !> @ref GetChemistryCellCount).
@@ -2870,7 +2870,7 @@
     !> PhreeqcRM cell @a n.
     !> @retval              IRESULT error code (see @ref DecodeError).
     !> @see
-    !> @ref Createmapping,
+    !> @ref bmif_createmapping,
     !> @ref GetChemistryCellCount,
     !> @ref GetGridCellCount.
     !> @par C Example:
@@ -2902,13 +2902,13 @@
 
     !> Returns the number of chemistry cells in the reaction module. The number of chemistry 
     !> cells is defined by the set of non-negative integers in the mapping from user grid 
-    !> cells (@ref Createmapping). The number of chemistry cells is less than or equal to 
+    !> cells (@ref bmif_createmapping). The number of chemistry cells is less than or equal to 
     !> the number of cells in the user's model.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval              Number of chemistry cells, or IRESULT error code 
     !> (see @ref DecodeError).
     !> @see
-    !> @ref Createmapping,
+    !> @ref bmif_createmapping,
     !> @ref GetGridCellCount.
     !> @par Fortran Example:
     !> @htmlonly
@@ -3127,7 +3127,7 @@
     !> the number of threads (OpenMP) or the number of processes (MPI).
     !> @retval IRESULT  0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref Create,
+    !> @ref bmif_create,
     !> @ref GetMpiTasks,
     !> @ref GetStartCell,
     !> @ref GetThreadCount.
@@ -3647,8 +3647,8 @@
     !> @retval            Number of grid cells in the user's model, negative is failure 
     !> (See @ref DecodeError).
     !> @see
-    !> @ref Create,
-    !> @ref Createmapping,
+    !> @ref bmif_create,
+    !> @ref bmif_createmapping,
     !> @ref InitializeYAML.
     !> @par Fortran Example:
     !> @htmlonly
@@ -3684,7 +3684,7 @@
     !> @retval          IPhreeqc id for the @a ith IPhreeqc instance, negative is failure 
     !> (See @ref DecodeError).
     !> @see
-    !> @ref Create,
+    !> @ref bmif_create,
     !> @ref GetThreadCount.
     !> See IPhreeqc documentation for descriptions of IPhreeqc methods.
     !> @par Fortran Example:
@@ -3848,7 +3848,7 @@
     !> The number of tasks can be obtained with @ref GetMpiTasks. The number of
     !> tasks and computer hosts are determined at run time by the mpiexec command, and the
     !> number of reaction-module processes is defined by the communicator used in
-    !> constructing the reaction modules (@ref Create).
+    !> constructing the reaction modules (@ref bmif_create).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval                 The MPI task number for a process, negative is failure 
     !> (See @ref DecodeError).
@@ -3886,7 +3886,7 @@
     !> negative is failure (See @ref DecodeError).
     !> @see
     !> @ref GetMpiMyself,
-    !> @ref Create.
+    !> @ref bmif_create.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -4838,7 +4838,7 @@
     !> processes (MPI).
     !> @retval IRESULT 0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref Create,
+    !> @ref bmif_create,
     !> @ref GetEndCell,
     !> @ref GetMpiTasks,
     !> @ref GetThreadCount.
@@ -5043,7 +5043,7 @@
     !> Returns the number of threads, which is equal to the number of workers used 
     !> to run in parallel with OPENMP.
     !> For the OPENMP version, the number of threads is set implicitly or explicitly 
-    !> with @ref Create. For the MPI version, the number of threads is always one 
+    !> with @ref bmif_create. For the MPI version, the number of threads is always one 
     !> for each process.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval           Number of threads, negative is failure (See @ref DecodeError).
@@ -5889,7 +5889,7 @@
     !> @param db_name          String containing the database name.
     !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref Create.
+    !> @ref bmif_create.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>

@@ -513,14 +513,14 @@ argument list (@a c). The concentrations are those resulting from the last call
 to @ref RM_RunCells. Units of concentration for @a c are defined by @ref RM_SetUnitsSolution.
 @param id               The instance @a id returned from @ref RM_Create.
 @param i                Zero-based index for the component to retrieve. Indices refer
-to the order produced by @ref RM_GetComponents. The total number of components is given by
+to the order produced by @ref RM_GetComponent. The total number of components is given by
 @ref RM_GetComponentCount.
 @param c                Allocated array to receive the component concentrations.
 Dimension of the array must be at least @a nxyz, where @a nxyz is the number of
 user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to 1e30.
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see    @ref RM_FindComponents,
-@ref RM_GetComponents,
+@ref RM_GetComponent,
 @ref RM_GetComponentCount,
 @ref RM_GetConcentrations.
 @par C Example:
@@ -545,7 +545,7 @@ To retrieve species concentrations, @ref RM_SetSpeciesSaveOn must be set to 1.
 This method is for use with multicomponent diffusion calculations.
 @param id               The instance @a id returned from @ref RM_Create.
 @param i                Zero-based index for the species to retrieve. Indices refer
-to the order given by @ref RM_GetSpeciesNames. The total number of species is given
+to the order given by @ref RM_GetSpeciesName. The total number of species is given
 by @ref RM_GetSpeciesCount.
 @param c                Allocated array to receive the species concentrations.
 Dimension of the array must be at least @a nxyz, where @a nxyz is the number of
@@ -553,7 +553,7 @@ user grid cells (@ref RM_GetGridCellCount). Values for inactive cells are set to
 @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
 @see         @ref RM_FindComponents,
 @ref RM_GetSpeciesCount,
-@ref RM_GetSpeciesNames,
+@ref RM_GetSpeciesName,
 @ref RM_GetSpeciesConcentrations,
 @ref RM_SetSpeciesSaveOn.
 @par C Example:
@@ -578,7 +578,7 @@ It is required that  @a RM_SetIthConcentration be called for each component
 in the system before @ref RM_RunCells is called.
 @param id               The instance @a id returned from @ref RM_Create.
 @param i                Zero-based index for the component to transfer.
-Indices refer to the order produced by @ref RM_GetComponents. The total number
+Indices refer to the order produced by @ref RM_GetComponent. The total number
 of components is given by @ref RM_GetComponentCount.
 @param c                Array of concentrations to transfer to the reaction cells.
 Dimension of the vector is @a nxyz, where @a nxyz is the number of
@@ -613,7 +613,7 @@ system before @ref RM_RunCells is called. This method is for use with
 multicomponent diffusion calculations.
 @param id               The instance @a id returned from @ref RM_Create.
 @param i                Zero-based index for the species to transfer. Indices
-refer to the order produced by @ref RM_GetSpeciesNames. The total number of
+refer to the order produced by @ref RM_GetSpeciesName. The total number of
 species is given by @ref RM_GetSpeciesCount.
 @param c                Array of concentrations to transfer to the reaction cells.
 Dimension of the array is @a nxyz, where @a nxyz is the number of user grid
@@ -622,7 +622,7 @@ cells (@ref RM_GetGridCellCount). Values for inactive cells are ignored.
 @see
 @ref RM_FindComponents,
 @ref RM_GetSpeciesCount,
-@ref RM_GetSpeciesNames,
+@ref RM_GetSpeciesName,
 @ref RM_SpeciesConcentrations2Module,
 @ref RM_SetSpeciesSaveOn.
 @par C Example:
@@ -2794,7 +2794,7 @@ status = RM_InitialSolutions2Module(id, solutions);
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
 */
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolutions2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolutions2Module(int id, int* solutions);
 /**
 Transfer EQUILIBRIUM_PHASES definitions from the InitialPhreeqc instance to the
 reaction-module workers.
@@ -2831,7 +2831,7 @@ status = RM_InitialEquilibriumPhases2Module(id, equilibrium_phases);
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
 */
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialEquilibriumPhases2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialEquilibriumPhases2Module(int id, int* equilibrium_phases);
 /**
 Transfer EXCHANGE definitions from the InitialPhreeqc instance to the
 reaction-module workers.
@@ -2868,7 +2868,7 @@ status = RM_InitialExchanges2Module(id, exchanges);
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
 */
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialExchanges2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialExchanges2Module(int id, int* exchanges);
 /**
 Transfer SURFACE definitions from the InitialPhreeqc instance to the
 reaction-module workers.
@@ -2905,7 +2905,7 @@ status = RM_InitialSurfaces2Module(id, surfaces);
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
 */
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialSurfaces2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialSurfaces2Module(int id, int* surfaces);
 /**
 Transfer GAS_PHASE definitions from the InitialPhreeqc instance to the
 reaction-module workers.
@@ -2942,7 +2942,7 @@ status = RM_InitialGasPhases2Module(id, gas_phases);
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
 */
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialGasPhases2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialGasPhases2Module(int id, int* gas_phases);
 /**
 Transfer SOLID_SOLUTIONS definitions from the InitialPhreeqc instance to the
 reaction-module workers.
@@ -2979,7 +2979,7 @@ status = RM_InitialSolidSolutions2Module(id, solid_solutions);
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
 */
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolidSolutions2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialSolidSolutions2Module(int id, int* solid_solutions);
 /**
 Transfer KINETICS definitions from the InitialPhreeqc instance to the
 reaction-module workers.
@@ -3016,7 +3016,7 @@ status = RM_InitialKinetics2Module(id, kinetics);
 @par MPI:
 Called by root, workers must be in the loop of @ref RM_MpiWorker.
 */
-IRM_DLL_EXPORT  IRM_RESULT RM_InitialKinetics2Module(int id, int* in);
+IRM_DLL_EXPORT  IRM_RESULT RM_InitialKinetics2Module(int id, int* kinetics);
 /**
 Transfer solutions and reactants from the InitialPhreeqc instance to the reaction-module workers, possibly with mixing.
 In its simplest form, @a initial_conditions1 is used to select initial conditions, including solutions and reactants,
