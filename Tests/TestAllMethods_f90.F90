@@ -1030,11 +1030,7 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = brm%bmif_finalize()    ! void method
 	write(*,*) "brm%bmif_finalize "
 
-	!Should be private: status =RM_ReturnHandler()
-	!Should be private: status =brm%ReturnHandler()
 	!TODO status =RM_MpiAbort()
-	!TODO status =RM_MpiWorker()
-	!TODO status =RM_MpiWorkerBreak()
 	!TODO status =RM_SetMpiWorkerCallbackC()
 	!TODO status =RM_SetMpiWorkerCallbackCookie()
 	write(*,*) "Success."
