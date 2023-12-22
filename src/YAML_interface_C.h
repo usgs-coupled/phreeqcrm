@@ -1,3 +1,6 @@
+/*! @file YAML_interface_C.h
+	@brief C header file for YAMLPhreeqcRM.
+*/
 #ifdef USE_YAML
 #ifndef INC_YAML_interface_C_H
 #define INC_YAML_interface_C_H

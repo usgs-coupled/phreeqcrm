@@ -1,6 +1,6 @@
-///*! @file BMI_interface_C.h
-//	@brief C/Fortran Documentation
-//*/
+/*! @file BMI_interface_C.h
+	@brief C header file for BMIPhreeqcRM.
+*/
 #if !defined(BMI_INTERFACE_C_H_INCLUDED)
 #define BMI_INTERFACE_C_H_INCLUDED
 #include "IrmResult.h"

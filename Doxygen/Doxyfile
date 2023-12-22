@@ -951,13 +951,15 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ../src/BMIPhreeqcRM.h \
-                         ../src/BMI_interface.F90 \
                          ../src/PhreeqcRM.h \
-                         ../src/RM_interface_C.h \
-                         ../src/RM_interface.F90 \
-                         ../src/IrmResult.h \
                          ../src/YAMLPhreeqcRM.h \
-                         ../src/YAML_interface.F90
+                         ../src/BMI_interface.F90 \
+                         ../src/RM_interface.F90 \
+                         ../src/YAML_interface.F90 \
+                         ../src/BMI_interface_C.h \
+                         ../src/RM_interface_C.h \
+                         ../src/YAML_interface_C.h \
+                         ../src/IrmResult.h 
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
