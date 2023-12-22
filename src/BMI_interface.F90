@@ -356,7 +356,7 @@
     END FUNCTION bmif_create   
 
     !> @a bmif_initialize uses a YAML file to initialize an instance of BMIPhreeqcRM. Same as
-    !> @ref RM_initializeyaml.
+    !> @ref InitializeYAML.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param config_file   String containing the YAML file name.
     !> @retval              0 is success, 1 is failure.
@@ -475,7 +475,7 @@
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_mpiworker.
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
 
 #ifdef USE_YAML
     INTEGER FUNCTION bmif_initialize(self, config_file)
@@ -517,7 +517,7 @@
     END FUNCTION bmif_get_id    
     
     !> @a bmif_update runs a reaction step for all of the cells in the reaction module.
-    !> Same as @ref RM_runcells.
+    !> Same as @ref RunCells.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval     0 is success, 1 is failure.
     !> Tranport concentrations are transferred to the reaction cells
@@ -551,7 +551,7 @@
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_mpiworker.
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
     INTEGER FUNCTION bmif_update(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -588,7 +588,7 @@
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_mpiworker.    
+    !> Called by root, workers must be in the loop of @ref MpiWorker.    
 
     INTEGER FUNCTION bmif_update_until(self, end_time)
     USE ISO_C_BINDING
@@ -608,7 +608,7 @@
     return
     END FUNCTION bmif_update_until
 
-    !> @a bmif_finalize destroys a reaction module, same as @ref RM_destroy.
+    !> @a bmif_finalize destroys a reaction module, same as @ref Destroy.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval    0 is success, 1 is failure.
     !> @see
@@ -1253,7 +1253,7 @@
     ! Time information
     ! ====================================================
 
-    !> @a bmif_get_current_time returns the current simulation time, in seconds. (Same as @ref RM_gettime.)
+    !> @a bmif_get_current_time returns the current simulation time, in seconds. (Same as @ref GetTime.)
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param time    The current simulation time, in seconds.
     !> @retval        0 is success, 1 is failure.
@@ -1261,10 +1261,10 @@
     !> @ref bmif_get_end_time,
     !> @ref bmif_get_time_step,
     !> @ref bmif_set_value,
-    !> @ref RM_gettime,
-    !> @ref RM_gettimestep,
-    !> @ref RM_settime,
-    !> @ref RM_settimestep.
+    !> @ref GetTime,
+    !> @ref GetTimeStep,
+    !> @ref SetTime,
+    !> @ref SetTimeStep.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -1293,7 +1293,7 @@
     END FUNCTION bmif_get_current_time
 
     !> @a bmif_get_start_time returns the current simulation time, in seconds. 
-    !> (Same as @ref bmif_get_current_time and @ref RM_gettime.)
+    !> (Same as @ref bmif_get_current_time and @ref GetTime.)
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param start_time  The current simulation time, in seconds.
     !> @retval        0 is success, 1 is failure.
@@ -1314,10 +1314,10 @@
     !> @ref bmif_get_current_time,
     !> @ref bmif_get_time_step,
     !> @ref bmif_set_value,
-    !> @ref RM_gettime,
-    !> @ref RM_gettimestep,
-    !> @ref RM_settime,
-    !> @ref RM_settimestep.
+    !> @ref GetTime,
+    !> @ref GetTimeStep,
+    !> @ref SetTime,
+    !> @ref SetTimeStep.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -1355,10 +1355,10 @@
     !> @ref bmif_get_end_time,
     !> @ref bmif_get_time_step,
     !> @ref bmif_set_value,
-    !> @ref RM_gettime,
-    !> @ref RM_gettimestep,
-    !> @ref RM_settime,
-    !> @ref RM_settimestep,
+    !> @ref GetTime,
+    !> @ref GetTimeStep,
+    !> @ref SetTime,
+    !> @ref SetTimeStep,
     !> @ref bmif_set_value.
     !> @par Fortran example:
     !> @htmlonly
@@ -1391,7 +1391,7 @@
 
 
     !> @a bmif_get_time_step returns the current simulation time step,
-    !> in seconds. (Same as @ref RM_gettimestep.)
+    !> in seconds. (Same as @ref GetTimeStep.)
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param time_step     The current simulation time step, in seconds.
     !> @retval              0 is success, 1 is failure.
@@ -1399,10 +1399,10 @@
     !> @ref bmif_get_current_time,
     !> @ref bmif_get_end_time,
     !> @ref bmif_set_value,
-    !> @ref RM_gettime,
-    !> @ref RM_gettimestep,
-    !> @ref RM_settime,
-    !> @ref RM_settimestep.
+    !> @ref GetTime,
+    !> @ref GetTimeStep,
+    !> @ref SetTime,
+    !> @ref SetTimeStep.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -1489,7 +1489,7 @@
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_mpiworker.
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
 !Add NEW_VARIABLE to bmif_get_value Documentation
     
     !> \overload
@@ -1891,7 +1891,7 @@
     !> @n "TimeStep": real(kind=8);
     !> @n "Viscosity": real(kind=8) (:);
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_mpiworker.     
+    !> Called by root, workers must be in the loop of @ref MpiWorker.     
 !Add NEW_VARIABLE to bmif_get_value_ptr Documentation  
     !> \overload
     INTEGER FUNCTION bmif_get_value_ptr_double(self, var, ptr)
@@ -2041,7 +2041,7 @@
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref RM_mpiworker.
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
     !> \overload
     INTEGER FUNCTION bmif_set_value_b(self, var, src)
     USE ISO_C_BINDING
@@ -2329,7 +2329,7 @@
     !> at creation of the BMIPhreeqcRM instance. 
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param grid  Grid number, only grid 0 is considered.
-    !> @param ngrid Same value as @ref RM_getgridcellcount 
+    !> @param ngrid Same value as @ref GetGridCellCount 
     !> or @ref bmif_get_value "GridCellCount" is returned for grid 0; 
     !> 0 for all other values of @a grid.
     !> @retval       0 is success, 1 is failure.
