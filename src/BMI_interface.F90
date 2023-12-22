@@ -27,7 +27,7 @@
 
     integer, parameter :: BMI_FAILURE = 1
     integer, parameter :: BMI_SUCCESS = 0
-    !> @a bmif_create creates a BMIPhreeqcRM instance. 
+    !> @a bmif_create Creates a BMIPhreeqcRM instance. 
     !>
     !> Two constructors are available to create a BMIPhreeqcRM
     !> instance. The default method, with no arguments, can be
@@ -128,150 +128,150 @@
 #define EXTEND_BMIPHREEQCRM
 #ifdef EXTEND_BMIPHREEQCRM        
 
-	!procedure :: getgridcellcountyaml
-	procedure :: abort
-	procedure :: closefiles
-	procedure :: concentrations2utility
-	procedure :: createmapping
-	procedure :: decodeerror
-	procedure :: destroy
-	procedure :: dumpmodule
-	procedure :: errormessage
-	procedure :: findcomponents
-	procedure :: getbackwardmapping
-	procedure :: getchemistrycellcount
-	procedure :: getcomponents                      ! bmif_get_var
-	procedure :: getcomponentcount                  ! bmif_get_var
-	procedure :: getconcentrations                  ! bmif_get_var
-	procedure :: getcurrentselectedoutputusernumber ! bmif_get_var
-	procedure :: getdensitycalculated               ! bmif_get_var
+	!procedure :: GetGridCellCountYAML
+	procedure :: Abort
+	procedure :: CloseFiles
+	procedure :: Concentrations2Utility
+	procedure :: Createmapping
+	procedure :: DecodeError
+	procedure :: Destroy
+	procedure :: DumpModule
+	procedure :: ErrorMessage
+	procedure :: FindComponents
+	procedure :: GetBackwardMapping
+	procedure :: GetChemistryCellCount
+	procedure :: GetComponents                      ! bmif_get_var
+	procedure :: GetComponentCount                  ! bmif_get_var
+	procedure :: GetConcentrations                  ! bmif_get_var
+	procedure :: GetCurrentSelectedOutputUserNumber ! bmif_get_var
+	procedure :: GetDensityCalculated               ! bmif_get_var
 	procedure :: GetDensity                         ! bmif_get_var
-	procedure :: getendcell
-	procedure :: getequilibriumphasescount
-	procedure :: getequilibriumphasesnames
-	procedure :: geterrorstring                     ! bmif_get_var
-	procedure :: getexchangenames
-	procedure :: getexchangespeciescount
-	procedure :: getexchangespeciesnames
-	procedure :: getfileprefix                      ! bmif_get_var
-	procedure :: getgascomponentscount
-	procedure :: getgascomponentsnames
-	procedure :: getgascompmoles
-	procedure :: getgascomppressures
-	procedure :: getgascompphi
-	procedure :: getgasphasevolume
-	procedure :: getgfw                             ! bmif_get_var
-	procedure :: getgridcellcount                   ! bmif_get_var
-	procedure :: getiphreeqcid
-	procedure :: getithconcentration
-	procedure :: getithspeciesconcentration
-	procedure :: getkineticreactionscount
-	procedure :: getkineticreactionsnames
-	procedure :: getmpimyself
-	procedure :: getmpitasks
-	procedure :: getnthselectedoutputusernumber
-	procedure :: getporosity                        ! bmif_get_var
-	procedure :: getpressure                        ! bmif_get_var
-	procedure :: getsaturationcalculated
+	procedure :: GetEndCell
+	procedure :: GetEquilibriumPhasesCount
+	procedure :: GetEquilibriumPhasesNames
+	procedure :: GetErrorString                     ! bmif_get_var
+	procedure :: GetExchangeNames
+	procedure :: GetExchangeSpeciesCount
+	procedure :: GetExchangeSpeciesNames
+	procedure :: GetFilePrefix                      ! bmif_get_var
+	procedure :: GetGasComponentsCount
+	procedure :: GetGasComponentsNames
+	procedure :: GetGasCompMoles
+	procedure :: GetGasCompPressures
+	procedure :: GetGasCompPhi
+	procedure :: GetGasPhaseVolume
+	procedure :: GetGfw                             ! bmif_get_var
+	procedure :: GetGridCellCount                   ! bmif_get_var
+	procedure :: GetIPhreeqcId
+	procedure :: GetIthConcentration
+	procedure :: GetIthSpeciesConcentration
+	procedure :: GetKineticReactionsCount
+	procedure :: GetKineticReactionsNames
+	procedure :: GetMpiMyself
+	procedure :: GetMpiTasks
+	procedure :: GetNthSelectedOutputUserNumber
+	procedure :: GetPorosity                        ! bmif_get_var
+	procedure :: GetPressure                        ! bmif_get_var
+	procedure :: GetSaturationCalculated
 	procedure :: GetSaturation
-	procedure :: getselectedoutput                  ! bmif_get_var
-	procedure :: getselectedoutputcolumncount       ! bmif_get_var
-	procedure :: getselectedoutputcount             ! bmif_get_var
-	procedure :: getselectedoutputheadings          ! bmif_get_var
+	procedure :: GetSelectedOutput                  ! bmif_get_var
+	procedure :: GetSelectedOutputColumnCount       ! bmif_get_var
+	procedure :: GetSelectedOutputCount             ! bmif_get_var
+	procedure :: GetSelectedOutputHeadings          ! bmif_get_var
     
-	procedure :: getselectedoutputrowcount          ! bmif_get_var
-	procedure :: getsicount
-	procedure :: getsinames
-	procedure :: getsolidsolutioncomponentscount
-	procedure :: getsolidsolutioncomponentsnames
-	procedure :: getsolidsolutionnames
-	procedure :: getsolutionvolume                  ! bmif_get_var
-	procedure :: getspeciesconcentrations
-	procedure :: getspeciescount
-	procedure :: getspeciesd25
-	procedure :: getspecieslog10gammas
-	procedure :: getspecieslog10molalities
-	procedure :: getspeciesnames
-	procedure :: getspeciessaveon
-	procedure :: getspeciesz
-	procedure :: getstartcell
-	procedure :: getsurfacenames
-	procedure :: getsurfacespeciescount
-	procedure :: getsurfacespeciesnames
-	procedure :: getsurfacetypes
-	procedure :: gettemperature                     ! bmif_get_var
-	procedure :: getthreadcount
-	procedure :: gettime                            ! bmif_get_var
-	procedure :: gettimeconversion
-	procedure :: gettimestep                        ! bmif_get_var
-	procedure :: getviscosity                       ! bmif_get_var
-	procedure :: initializeyaml
-	procedure :: initialphreeqc2concentrations
-	procedure :: initialphreeqc2module
-	procedure :: initialsolutions2module
-	procedure :: initialequilibriumphases2module
-	procedure :: initialexchanges2module
-	procedure :: initialgasphases2module
-	procedure :: initialsolidsolutions2module
-	procedure :: initialsurfaces2module
-	procedure :: initialkinetics2module
-	procedure :: initialphreeqc2speciesconcentrations
-	procedure :: initialphreeqccell2module
-	procedure :: loaddatabase
-	procedure :: logmessage
-	procedure :: mpiworker
-	procedure :: mpiworkerbreak
-	procedure :: openfiles
-	procedure :: outputmessage
-	procedure :: runcells
-	procedure :: runfile
-	procedure :: runstring
-	procedure :: screenmessage
-	procedure :: setcomponenth2o
-	procedure :: setconcentrations                  ! bmif_set_var
-	procedure :: setcurrentselectedoutputusernumber
-	procedure :: setdensityuser                     ! bmif_set_var
+	procedure :: GetSelectedOutputRowCount          ! bmif_get_var
+	procedure :: GetSICount
+	procedure :: GetSINames
+	procedure :: GetSolidSolutionComponentsCount
+	procedure :: GetSolidSolutionComponentsNames
+	procedure :: GetSolidSolutionNames
+	procedure :: GetSolutionVolume                  ! bmif_get_var
+	procedure :: GetSpeciesConcentrations
+	procedure :: GetSpeciesCount
+	procedure :: GetSpeciesD25
+	procedure :: GetSpeciesLog10Gammas
+	procedure :: GetSpeciesLog10Molalities
+	procedure :: GetSpeciesNames
+	procedure :: GetSpeciesSaveOn
+	procedure :: GetSpeciesZ
+	procedure :: GetStartCell
+	procedure :: GetSurfaceNames
+	procedure :: GetSurfaceSpeciesCount
+	procedure :: GetSurfaceSpeciesNames
+	procedure :: GetSurfaceTypes
+	procedure :: GetTemperature                     ! bmif_get_var
+	procedure :: GetThreadCount
+	procedure :: GetTime                            ! bmif_get_var
+	procedure :: GetTimeconversion
+	procedure :: GetTimestep                        ! bmif_get_var
+	procedure :: GetViscosity                       ! bmif_get_var
+	procedure :: InitializeYAML
+	procedure :: InitialPhreeqc2Concentrations
+	procedure :: InitialPhreeqc2Module
+	procedure :: InitialSolutions2Module
+	procedure :: InitialEquilibriumPhases2Module
+	procedure :: InitialExchanges2Module
+	procedure :: InitialGasPhases2Module
+	procedure :: InitialSolidSolutions2Module
+	procedure :: InitialSurfaces2Module
+	procedure :: InitialKinetics2Module
+	procedure :: InitialPhreeqc2SpeciesConcentrations
+	procedure :: InitialPhreeqcCell2Module
+	procedure :: LoadDatabase
+	procedure :: LogMessage
+	procedure :: MpiWorker
+	procedure :: MpiWorkerBreak
+	procedure :: OpenFiles
+	procedure :: OutputMessage
+	procedure :: RunCells
+	procedure :: RunFile
+	procedure :: RunString
+	procedure :: ScreenMessage
+	procedure :: SetComponentH2O
+	procedure :: SetConcentrations                  ! bmif_set_var
+	procedure :: SetCurrentSelectedOutputUserNumber
+	procedure :: SetDensityUser                     ! bmif_set_var
 	procedure :: SetDensity                         ! bmif_set_var
-	procedure :: setdumpfilename
-	procedure :: seterrorhandlermode
-	procedure :: seterroron
-	procedure :: setfileprefix                      ! bmif_set_var
-	procedure :: setgascompmoles
-	procedure :: setgasphasevolume
-	procedure :: setithconcentration
-	procedure :: setithspeciesconcentration
-	procedure :: SetmpiworkerCallback
-	procedure :: setnthselectedoutput               ! bmif_set_var
-	procedure :: setpartitionuzsolids
-	procedure :: setporosity                        ! bmif_set_var
-	procedure :: setpressure                        ! bmif_set_var
-	procedure :: setprintchemistrymask
-	procedure :: setprintchemistryon
-	procedure :: setrebalancebycell
-	procedure :: setrebalancefraction
-	procedure :: setrepresentativevolume
-	procedure :: setsaturationuser                  ! bmif_set_var
+	procedure :: SetDumpFileName
+	procedure :: SetErrorHandlerMode
+	procedure :: SetErrorOn
+	procedure :: SetFilePrefix                      ! bmif_set_var
+	procedure :: SetGasCompMoles
+	procedure :: SetGasPhaseVolume
+	procedure :: SetIthConcentration
+	procedure :: SetIthSpeciesConcentration
+	procedure :: SetMpiWorkerCallback
+	procedure :: SetNthSelectedOutput               ! bmif_set_var
+	procedure :: SetPartitionUZSolids
+	procedure :: SetPorosity                        ! bmif_set_var
+	procedure :: SetPressure                        ! bmif_set_var
+	procedure :: SetPrintChemistryMask
+	procedure :: SetPrintChemistryOn
+	procedure :: SetRebalanceByCell
+	procedure :: SetRebalanceFraction
+	procedure :: SetRepresentativeVolume
+	procedure :: SetSaturationUser                  ! bmif_set_var
 	procedure :: SetSaturation                      ! bmif_set_var
-	procedure :: setscreenon
-	procedure :: setselectedoutputon                ! bmif_set_var
-	procedure :: setspeciessaveon
-	procedure :: settemperature                     ! bmif_set_var
-	procedure :: settime                            ! bmif_set_var
-	procedure :: settimeconversion
-	procedure :: settimestep                        ! bmif_set_var
-	procedure :: setunitsexchange
-	procedure :: setunitsgasphase
-	procedure :: setunitskinetics
-	procedure :: setunitsppassemblage
-	procedure :: setunitssolution
-	procedure :: setunitsssassemblage
-	procedure :: setunitssurface
-	procedure :: speciesconcentrations2module
-	procedure :: statesave
-	procedure :: stateapply
-	procedure :: statedelete
-	procedure :: usesolutiondensityvolume
-	procedure :: warningmessage
+	procedure :: SetScreenOn
+	procedure :: SetSelectedOutputOn                ! bmif_set_var
+	procedure :: SetSpeciesSaveOn
+	procedure :: SetTemperature                     ! bmif_set_var
+	procedure :: SetTime                            ! bmif_set_var
+	procedure :: SetTimeConversion
+	procedure :: SetTimeStep                        ! bmif_set_var
+	procedure :: SetUnitsExchange
+	procedure :: SetUnitsGasPhase
+	procedure :: SetUnitsKinetics
+	procedure :: SetUnitsPPassemblage
+	procedure :: SetUnitsSolution
+	procedure :: SetUnitsSSassemblage
+	procedure :: SetUnitsSurface
+	procedure :: SpeciesConcentrations2Module
+	procedure :: StateSave
+	procedure :: StateApply
+	procedure :: StateDelete
+	procedure :: UseSolutionDensityVolume
+	procedure :: WarningMessage
 #endif
 !End EXTEND_BMIPHREEQCRM
     
@@ -281,7 +281,7 @@
     ! ====================================================
     ! Initialize, run, finalize (IRF) 
     ! ====================================================
-    !> @a bmif_create creates a BMIPhreeqcRM instance. 
+    !> @a bmif_create Creates a BMIPhreeqcRM instance. 
     !> The default method, with no arguments, can be
     !> used if the instance is to be initialized with a YAML file.
     !> The YAML file must provide the number of cells in the user's 
@@ -292,23 +292,23 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RM_BMI_create_default() &
-        BIND(C, NAME='RM_BMI_create_default')
+    INTEGER(KIND=C_INT) FUNCTION RM_BMI_Create_default() &
+        BIND(C, NAME='RM_BMI_Create_default')
     USE ISO_C_BINDING
     IMPLICIT NONE
-    END FUNCTION RM_BMI_create_default
+    END FUNCTION RM_BMI_Create_default
     END INTERFACE
     class(bmi), intent(inout) :: self
 #if defined(USE_MPI)
     bmif_create_default = -1
     STOP "ERROR: You must use bmif_create(nxyz, COMM) when using MPI."
 #endif
-    bmif_create_default = RM_BMI_create_default() 
+    bmif_create_default = RM_BMI_Create_default() 
     self%bmiphreeqcrm_id = bmif_create_default
     return
     END FUNCTION bmif_create_default 
     
-    !> @a bmif_create creates a reaction module. If the code is compiled with
+    !> @a bmif_create Creates a reaction module. If the code is compiled with
     !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
     !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
     !> module will use MPI and multiple processes. If neither preprocessor directive is used,
@@ -339,18 +339,18 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RM_BMI_create(nxyz, nthreads) &
-        BIND(C, NAME='RM_BMI_create')
+    INTEGER(KIND=C_INT) FUNCTION RM_BMI_Create(nxyz, nthreads) &
+        BIND(C, NAME='RM_BMI_Create')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: nxyz
     INTEGER(KIND=C_INT), INTENT(in) :: nthreads
-    END FUNCTION RM_BMI_create
+    END FUNCTION RM_BMI_Create
     END INTERFACE
     class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: nxyz
     INTEGER, INTENT(in) :: nthreads
-    bmif_create = RM_BMI_create(nxyz, nthreads)
+    bmif_create = RM_BMI_Create(nxyz, nthreads)
     self%bmiphreeqcrm_id = bmif_create
     return
     END FUNCTION bmif_create   
@@ -370,9 +370,9 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !>  key: loaddatabase
+    !>  key: LoadDatabase
     !>   database: phreeqc.dat
-    !> - key: runfile
+    !> - key: RunFile
     !> workers: true
     !> initial_phreeqc: true
     !>   utility: true
@@ -400,67 +400,67 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> closefiles();
-    !> createmapping(std::vector< int >& grid2chem);
-    !> dumpmodule();
-    !> findcomponents();
-    !> initialequilibriumphases2module(std::vector< int > equilibrium_phases);
-    !> initialexchanges2module(std::vector< int > exchanges);
-    !> initialgasphases2module(std::vector< int > gas_phases);
+    !> CloseFiles();
+    !> Createmapping(std::vector< int >& grid2chem);
+    !> DumpModule();
+    !> FindComponents();
+    !> InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+    !> InitialExchanges2Module(std::vector< int > exchanges);
+    !> InitialGasPhases2Module(std::vector< int > gas_phases);
     !> InitialKineticss2Module(std::vector< int > kinetics);
-    !> initialsolidsolutions2module(std::vector< int > solid_solutions);
-    !> initialsolutions2module(std::vector< int > solutions);
-    !> initialsurfaces2module(std::vector< int > surfaces);
-    !> initialphreeqc2module(std::vector< int > initial_conditions1);
-    !> initialphreeqc2module(std::vector< int > initial_conditions1, 
+    !> InitialSolidSolutions2Module(std::vector< int > solid_solutions);
+    !> InitialSolutions2Module(std::vector< int > solutions);
+    !> InitialSurfaces2Module(std::vector< int > surfaces);
+    !> InitialPhreeqc2Module(std::vector< int > initial_conditions1);
+    !> InitialPhreeqc2Module(std::vector< int > initial_conditions1, 
     !> std::vector< int > initial_conditions2, std::vector< double > fraction1);
-    !> initialphreeqccell2module(int n, std::vector< int > cell_numbers);
-    !> loaddatabase(std::string database);
-    !> openfiles();
-    !> outputmessage(std::string str);
-    !> runcells();
-    !> runfile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
-    !> runstring(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
-    !> screenmessage(std::string str);
-    !> setcomponenth2o(bool tf);
-    !> setconcentrations(std::vector< double > c);
-    !> setcurrentselectedoutputusernumber(int n_user);
-    !> setdensityuser(std::vector< double > density);
-    !> setdumpfilename(std::string dump_name);
-    !> seterrorhandlermode(int mode);
-    !> seterroron(bool tf);
-    !> setfileprefix(std::string prefix);
-    !> setgascompmoles(std::vector< double > gas_moles);
-    !> setgasphasevolume(std::vector< double > gas_volume);
-    !> setpartitionuzsolids(bool tf);
-    !> setporosity(std::vector< double > por);
-    !> setpressure(std::vector< double > p);
-    !> setprintchemistrymask(std::vector< int > cell_mask);
-    !> setprintchemistryon(bool workers, bool initial_phreeqc, bool utility);
-    !> setrebalancebycell(bool tf);
-    !> setrebalancefraction(double f);
-    !> setrepresentativevolume(std::vector< double > rv);
-    !> setsaturationuser(std::vector< double > sat);
-    !> setscreenon(bool tf);
-    !> setselectedoutputon(bool tf);
-    !> setspeciessaveon(bool save_on);
-    !> settemperature(std::vector< double > t);
-    !> settime(double time);
-    !> settimeconversion(double conv_factor);
-    !> settimestep(double time_step);
-    !> setunitsexchange(int option);
-    !> setunitsgasphase(int option);
-    !> setunitskinetics(int option);
-    !> setunitsppassemblage(int option);
-    !> setunitssolution(int option);
-    !> setunitsssassemblage(int option);
-    !> setunitssurface(int option);
-    !> speciesconcentrations2module(std::vector< double > species_conc);
-    !> statesave(int istate);
-    !> stateapply(int istate);
-    !> statedelete(int istate);
-    !> usesolutiondensityvolume(bool tf);
-    !> warningmessage(std::string warnstr);
+    !> InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
+    !> LoadDatabase(std::string database);
+    !> OpenFiles();
+    !> OutputMessage(std::string str);
+    !> RunCells();
+    !> RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
+    !> RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
+    !> ScreenMessage(std::string str);
+    !> SetComponentH2O(bool tf);
+    !> SetConcentrations(std::vector< double > c);
+    !> SetCurrentSelectedOutputUserNumber(int n_user);
+    !> SetDensityUser(std::vector< double > density);
+    !> SetDumpFileName(std::string dump_name);
+    !> SetErrorHandlerMode(int mode);
+    !> SetErrorOn(bool tf);
+    !> SetFilePrefix(std::string prefix);
+    !> SetGasCompMoles(std::vector< double > gas_moles);
+    !> SetGasPhaseVolume(std::vector< double > gas_volume);
+    !> SetPartitionUZSolids(bool tf);
+    !> SetPorosity(std::vector< double > por);
+    !> SetPressure(std::vector< double > p);
+    !> SetPrintChemistryMask(std::vector< int > cell_mask);
+    !> SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
+    !> SetRebalanceByCell(bool tf);
+    !> SetRebalanceFraction(double f);
+    !> SetRepresentativeVolume(std::vector< double > rv);
+    !> SetSaturationUser(std::vector< double > sat);
+    !> SetScreenOn(bool tf);
+    !> SetSelectedOutputOn(bool tf);
+    !> SetSpeciesSaveOn(bool save_on);
+    !> SetTemperature(std::vector< double > t);
+    !> SetTime(double time);
+    !> SetTimeConversion(double conv_factor);
+    !> SetTimeStep(double time_step);
+    !> SetUnitsExchange(int option);
+    !> SetUnitsGasPhase(int option);
+    !> SetUnitsKinetics(int option);
+    !> SetUnitsPPassemblage(int option);
+    !> SetUnitsSolution(int option);
+    !> SetUnitsSSassemblage(int option);
+    !> SetUnitsSurface(int option);
+    !> SpeciesConcentrations2Module(std::vector< double > species_conc);
+    !> StateSave(int istate);
+    !> StateApply(int istate);
+    !> StateDelete(int istate);
+    !> UseSolutionDensityVolume(bool tf);
+    !> WarningMessage(std::string warnstr);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -494,10 +494,10 @@
     integer :: return_value
     CHARACTER(len=*), INTENT(in) :: config_file   
     if (self%bmiphreeqcrm_id .lt. 0) then
-        STOP "ERROR: You must create the bmif instance before you call bmif_initialize."
+        STOP "ERROR: You must Create the bmif instance before you call bmif_initialize."
     endif
 #if defined(USE_MPI)
-    if (RM_getmpimyself(self%bmiphreeqcrm_id) .gt. 0) then
+    if (RM_GetMpiMyself(self%bmiphreeqcrm_id) .gt. 0) then
         STOP "bmif_initialize with YAML can only be called by root MPI process."
     endif
 #endif    
@@ -608,7 +608,7 @@
     return
     END FUNCTION bmif_update_until
 
-    !> @a bmif_finalize destroys a reaction module, same as @ref Destroy.
+    !> @a bmif_finalize Destroys a reaction module, same as @ref Destroy.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval    0 is success, 1 is failure.
     !> @see
@@ -627,19 +627,19 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
-    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_destroy(id) &
-        BIND(C, NAME='RMF_BMI_destroy')
+    INTEGER(KIND=C_INT) FUNCTION RMF_BMI_Destroy(id) &
+        BIND(C, NAME='RMF_BMI_Destroy')
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTEGER(KIND=C_INT), INTENT(in) :: id
-    END FUNCTION RMF_BMI_destroy
+    END FUNCTION RMF_BMI_Destroy
     END INTERFACE
     class(bmi), intent(inout) :: self
     INTEGER :: status
 #ifdef USE_MPI
-    !status = brm%RM_mpiworkerbreak()
+    !status = brm%RM_MpiWorkerBreak()
 #endif    
-    bmif_finalize = success(RMF_BMI_destroy(self%bmiphreeqcrm_id))
+    bmif_finalize = success(RMF_BMI_Destroy(self%bmiphreeqcrm_id))
     return
     END FUNCTION bmif_finalize
     
@@ -1375,17 +1375,17 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
         INTERFACE
-        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_gettimeUnits(id, time_units, l) &
-            BIND(C, NAME='RMF_BMI_gettimeUnits')
+        INTEGER(KIND=C_INT) FUNCTION RMF_BMI_GetTimeUnits(id, time_units, l) &
+            BIND(C, NAME='RMF_BMI_GetTimeUnits')
         USE ISO_C_BINDING
         IMPLICIT NONE
         INTEGER(KIND=C_INT), INTENT(in) :: id, l
         CHARACTER(KIND=C_CHAR), INTENT(inout) :: time_units(*)
-        END FUNCTION RMF_BMI_gettimeUnits
+        END FUNCTION RMF_BMI_GetTimeUnits
         END INTERFACE
     class(bmi), intent(inout) :: self
     CHARACTER(len=*), INTENT(inout) :: time_units
-    bmif_get_time_units = success(RMF_BMI_gettimeUnits(self%bmiphreeqcrm_id, time_units, len(time_units)))
+    bmif_get_time_units = success(RMF_BMI_GetTimeUnits(self%bmiphreeqcrm_id, time_units, len(time_units)))
     return
     END FUNCTION bmif_get_time_units
 
@@ -1417,16 +1417,16 @@
     USE ISO_C_BINDING
     IMPLICIT NONE
         INTERFACE
-        REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_gettimestep(id) &
-            BIND(C, NAME='RMF_BMI_gettimestep')
+        REAL(KIND=C_DOUBLE) FUNCTION RMF_BMI_GetTimeStep(id) &
+            BIND(C, NAME='RMF_BMI_GetTimeStep')
         USE ISO_C_BINDING
         IMPLICIT NONE
         INTEGER(KIND=C_INT), INTENT(in) :: id
-        END FUNCTION RMF_BMI_gettimestep
+        END FUNCTION RMF_BMI_GetTimeStep
         END INTERFACE
     class(bmi), intent(inout) :: self
     real(kind=8), intent(inout) :: time_step
-    time_step = RMF_BMI_gettimestep(self%bmiphreeqcrm_id)
+    time_step = RMF_BMI_GetTimeStep(self%bmiphreeqcrm_id)
     bmif_get_time_step = BMI_SUCCESS
     END FUNCTION bmif_get_time_step
         
@@ -1553,7 +1553,7 @@
     if (len(dest) .gt. 0) then
         dest = temp
     else
-        status = RM_errormessage(self%bmiphreeqcrm_id, "Variable length is zero")   
+        status = RM_ErrorMessage(self%bmiphreeqcrm_id, "Variable length is zero")   
         status = -1
     endif
     bmif_get_value_char = success(status)
@@ -1739,11 +1739,11 @@
     varname = Lower(var)
     need_alloc = .true.
     if (varname .eq. "concentrations") then
-        dim1 = RM_getgridcellcount(self%bmiphreeqcrm_id)
-        dim2 = RM_getcomponentcount(self%bmiphreeqcrm_id)
+        dim1 = RM_GetGridCellCount(self%bmiphreeqcrm_id)
+        dim2 = RM_GetComponentCount(self%bmiphreeqcrm_id)
     else if (varname .eq. "selectedoutput") then
-        dim1 = RM_getselectedoutputrowcount(self%bmiphreeqcrm_id)
-        dim2 = RM_getselectedoutputcolumncount(self%bmiphreeqcrm_id)
+        dim1 = RM_GetSelectedOutputRowCount(self%bmiphreeqcrm_id)
+        dim2 = RM_GetSelectedOutputColumnCount(self%bmiphreeqcrm_id)
     else
         stop "Unknown 2d variable"
     endif
@@ -2394,10 +2394,10 @@
 !> @a bmif_add_output_vars allows selection of sets of variables that can be retieved
 !> by the @ref bmif_get_value method. Sets of variables can be included or excluded with
 !> multiple calls to this method. All calls must precede the final call to
-!> the PhreeqcRM method findcomponents. findcomponents generates SELECTED_OUTPUT 333 and
+!> the PhreeqcRM method FindComponents. FindComponents generates SELECTED_OUTPUT 333 and
 !> USER_PUNCH 333 data blocks that make the variables accessible. Variables will
 !> only be accessible if the system includes the given reactant; for example, no
-!> gas variables will be created if there are no GAS_PHASEs in the model. 
+!> gas variables will be Created if there are no GAS_PHASEs in the model. 
 !>
 !> @param self Fortran-supplied BMIPhreeqcRM instance.
 !> @param option A string value, among those listed below, that includes or
@@ -2500,11 +2500,11 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
 #ifdef EXTEND_BMIPHREEQCRM
    
-    !> abort the program.
+    !> Abort the program.
     !> @a iresult will be interpreted as an IRESULT value and decoded; 
-    !> @a err_str will be printed; and the reaction module will be destroyed.
-    !> If using MPI, an MPI_abort message will be sent before the reaction
-    !> module is destroyed. If the @a id is an invalid instance, abort will 
+    !> @a err_str will be printed; and the reaction module will be Destroyed.
+    !> If using MPI, an MPI_Abort message will be sent before the reaction
+    !> module is Destroyed. If the @a id is an invalid instance, Abort will 
     !> return a value ofIBADINSTANCE, otherwise the program will exit with a 
     !> return code of 4.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
@@ -2513,61 +2513,61 @@
     !> @retval IRESULT   Program will exit before returning unless @a id is an 
     !> invalid reaction module id.
     !> @see
-    !> @ref destroy,
-    !> @ref errormessage.
+    !> @ref Destroy,
+    !> @ref ErrorMessage.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> string = "SELECTED_OUTPUT 5; -pH;RUN_CELLS; -cells 1"
-    !> status = brm%runstring(string)
-    !> if (status .lt. 0) status = brm%abort(status, "runstring failed")
+    !> status = brm%RunString(string)
+    !> if (status .lt. 0) status = brm%Abort(status, "RunString failed")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root or workers.
 
-    INTEGER FUNCTION abort(self, iresult, err_str)
+    INTEGER FUNCTION Abort(self, iresult, err_str)
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: iresult
     CHARACTER(len=*), INTENT(in) :: err_str
-    abort = RM_abort(self%bmiphreeqcrm_id, iresult, err_str)
+    Abort = RM_Abort(self%bmiphreeqcrm_id, iresult, err_str)
     RETURN
-    END FUNCTION abort
+    END FUNCTION Abort
 
     !> Close the output and log files.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @retval IRESULT   0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT   0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref openfiles,
-    !> @ref setfileprefix.
+    !> @ref OpenFiles,
+    !> @ref SetFilePrefix.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%closefiles()
+    !> status = brm%CloseFiles()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called only by root.
 
-    INTEGER FUNCTION closefiles(self)
+    INTEGER FUNCTION CloseFiles(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
-    closefiles = RM_closefiles(self%bmiphreeqcrm_id)
+    CloseFiles = RM_CloseFiles(self%bmiphreeqcrm_id)
     RETURN
-    END FUNCTION closefiles
+    END FUNCTION CloseFiles
 
     !> @a N sets of component concentrations are converted to SOLUTIONs numbered 
     !> 1-@a n in the Utility IPhreeqc. The solutions can be reacted and manipulated 
-    !> with the methods of IPhreeqc. If solution concentration units (@ref setunitssolution) 
-    !> are per liter, one liter of solution is created in the Utility instance; if solution
-    !> concentration units are mass fraction, one kilogram of solution is created in the Utility 
+    !> with the methods of IPhreeqc. If solution concentration units (@ref SetUnitsSolution) 
+    !> are per liter, one liter of solution is Created in the Utility instance; if solution
+    !> concentration units are mass fraction, one kilogram of solution is Created in the Utility 
     !> instance. The motivation for this method is the mixing of solutions in wells, where 
     !> it may be necessary to calculate solution properties (pH for example)
     !> or react the mixture to form scale minerals. The code fragments below make a mixture of
@@ -2575,7 +2575,7 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param c             Array of concentrations to be made SOLUTIONs in Utility IPhreeqc, 
     !> array size is (@a n, @a ncomps) where @a ncomps is the number of components 
-    !> (@ref getcomponentcount).
+    !> (@ref GetComponentCount).
     !> @param n             The number of sets of concentrations.
     !> @param tc            Array of temperatures to apply to the SOLUTIONs, in degree C. 
     !> Array of size @a n.
@@ -2593,32 +2593,32 @@
     !> allocate(tc(1), p_atm(1))
     !> tc(1) = 15.0
     !> p_atm(1) = 3.0
-    !> iphreeqc_id = brm%concentrations2utility(c_well, 1, tc, p_atm)
+    !> iphreeqc_id = brm%Concentrations2Utility(c_well, 1, tc, p_atm)
     !> string = "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1"
-    !> status = brm%runstring(iphreeqc_id, string)
-    !> status = brm%setcurrentselectedoutputusernumber(iphreeqc_id, 5)
-    !> status = brm%getselectedoutputValue(iphreeqc_id, 1, 1, vtype, pH, svalue)
+    !> status = brm%RunString(iphreeqc_id, string)
+    !> status = brm%SetCurrentSelectedOutputUserNumber(iphreeqc_id, 5)
+    !> status = brm%GetSelectedOutputValue(iphreeqc_id, 1, 1, vtype, pH, svalue)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called only by root.
 
-    INTEGER FUNCTION concentrations2utility(self, c, n, tc, p_atm)
+    INTEGER FUNCTION Concentrations2Utility(self, c, n, tc, p_atm)
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
     real(kind=8), INTENT(in), DIMENSION(:,:) :: c
     INTEGER, INTENT(in) :: n
     real(kind=8), INTENT(in), DIMENSION(:) :: tc, p_atm
-    concentrations2utility = RM_concentrations2utility(self%bmiphreeqcrm_id, c, n, tc, p_atm)
+    Concentrations2Utility = RM_Concentrations2Utility(self%bmiphreeqcrm_id, c, n, tc, p_atm)
     return
-    END FUNCTION concentrations2utility
+    END FUNCTION Concentrations2Utility
 
     !> Provides a mapping from grid cells in the user's model to reaction cells in PhreeqcRM.
     !> The mapping is used to eliminate inactive cells and to use symmetry to decrease the 
     !> number of cells for which chemistry must be run. The array @a grid2chem of size 
-    !> @a nxyz (the number of grid cells, @ref getgridcellcount) must contain the set of 
+    !> @a nxyz (the number of grid cells, @ref GetGridCellCount) must contain the set of 
     !> all integers 0 <= @a i < @a count_chemistry, where @a count_chemistry is a number less 
     !> than or equal to @a nxyz. Inactive cells are assigned a negative integer.
     !> The mapping may be many-to-one to account for symmetry. Default is a one-to-one 
@@ -2626,7 +2626,7 @@
     !> of 0,1,2,3,...,@a nxyz-1).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param grid2chem        An array of integers: Nonnegative is a reaction cell number (0 based), negative is an inactive cell. Array of size @a nxyz (number of grid cells).
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -2637,27 +2637,27 @@
     !>   grid2chem(i) = i - 1
     !>   grid2chem(i+nxyz/2) = i - 1
     !> enddo
-    !> status = brm%createmapping(grid2chem)
+    !> status = brm%Createmapping(grid2chem)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
 
-    INTEGER FUNCTION createmapping(self, grid2chem)
+    INTEGER FUNCTION Createmapping(self, grid2chem)
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
     INTEGER, INTENT(in), DIMENSION(:) :: grid2chem
-    createmapping = RM_createmapping(self%bmiphreeqcrm_id, grid2chem)
+    Createmapping = RM_Createmapping(self%bmiphreeqcrm_id, grid2chem)
     return
-    END FUNCTION createmapping
+    END FUNCTION Createmapping
 
     !> If @a e is negative, this method prints an error message corresponding to IRESULT @a e. 
     !> If @a e is non-negative, no action is taken.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param e                    An IRESULT value returned by one of the reaction-module methods.
-    !> @retval IRESULT          0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT          0 is success, negative is failure (See @ref DecodeError).
     !> @par IRESULT definition:
     !> @htmlonly
     !> <CODE>
@@ -2679,205 +2679,205 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%createmapping(grid2chem)
-    !> if (status < 0) status = brm%decodeerror(status)
+    !> status = brm%Createmapping(grid2chem)
+    !> if (status < 0) status = brm%DecodeError(status)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Can be called by root and (or) workers.
 
-    INTEGER FUNCTION decodeerror(self, e)
+    INTEGER FUNCTION DecodeError(self, e)
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: e
-    decodeerror = RM_decodeerror(self%bmiphreeqcrm_id, e)
+    DecodeError = RM_DecodeError(self%bmiphreeqcrm_id, e)
     return
-    END FUNCTION decodeerror
+    END FUNCTION DecodeError
 
-    !> destroys a reaction module.
+    !> Destroys a reaction module.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @retval IRESULT   0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT   0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref create.
+    !> @ref Create.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%destroy()
+    !> status = brm%Destroy()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and workers.
 
-    INTEGER FUNCTION destroy(self)
+    INTEGER FUNCTION Destroy(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
-    destroy = RM_destroy(self%bmiphreeqcrm_id)
+    Destroy = RM_Destroy(self%bmiphreeqcrm_id)
     return
-    END FUNCTION destroy
+    END FUNCTION Destroy
 
     !> Writes the contents of all workers to file in _RAW formats, including SOLUTIONs and 
     !> all reactants.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param dump_on          Signal for writing the dump file: 1 true, 0 false.
     !> @param append           Signal to append to the contents of the dump file: 1 true, 0 false.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref setdumpfilename.
+    !> @ref SetDumpFileName.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>      
     !> dump_on = 1
     !> append = 0
-    !> status = brm%setdumpfilename("advection_f90.dmp")
-    !> status = brm%dumpmodule(dump_on, append)
+    !> status = brm%SetDumpFileName("advection_f90.dmp")
+    !> status = brm%DumpModule(dump_on, append)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root; workers must be in the loop of @ref mpiworker.
+    !> Called by root; workers must be in the loop of @ref MpiWorker.
 
-    INTEGER FUNCTION dumpmodule(self, dump_on, append)
+    INTEGER FUNCTION DumpModule(self, dump_on, append)
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: dump_on
     INTEGER, INTENT(in) :: append
-    dumpmodule = RM_dumpmodule(self%bmiphreeqcrm_id, dump_on, append)
+    DumpModule = RM_DumpModule(self%bmiphreeqcrm_id, dump_on, append)
     return
-    END FUNCTION dumpmodule
+    END FUNCTION DumpModule
 
     !> Send an error message to the screen, the output file, and the log file.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param errstr           String to be printed.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref logmessage,
-    !> @ref openfiles,
-    !> @ref outputmessage,
-    !> @ref screenmessage,
-    !> @ref warningmessage.
+    !> @ref LogMessage,
+    !> @ref OpenFiles,
+    !> @ref OutputMessage,
+    !> @ref ScreenMessage,
+    !> @ref WarningMessage.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%errormessage("Goodbye world")
+    !> status = brm%ErrorMessage("Goodbye world")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers; root writes to output and log files.
 
-    INTEGER FUNCTION errormessage(self, errstr)
+    INTEGER FUNCTION ErrorMessage(self, errstr)
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
     CHARACTER(len=*), INTENT(in) :: errstr
-    errormessage = RM_errormessage(self%bmiphreeqcrm_id, errstr)
+    ErrorMessage = RM_ErrorMessage(self%bmiphreeqcrm_id, errstr)
     return
-    END FUNCTION errormessage
+    END FUNCTION ErrorMessage
 
     !> Returns the number of items in the list of all elements in the InitialPhreeqc 
     !> instance. Elements are those that have been defined in a solution or any other 
     !> reactant (EQUILIBRIUM_PHASE, KINETICS, and others). The method can be called 
-    !> multiple times and the list that is created is cummulative. The list is the set 
+    !> multiple times and the list that is Created is cummulative. The list is the set 
     !> of components that needs to be transported. By default the list includes water, 
     !> excess H and excess O (the H and O not contained in water); alternatively, the 
-    !> list may be set to contain total H and total O (@ref setcomponenth2o),
+    !> list may be set to contain total H and total O (@ref SetComponentH2O),
     !> which requires transport results to be accurate to eight or nine significant digits.
     !> If multicomponent diffusion (MCD) is to be modeled, there is a capability to retrieve 
-    !> aqueous species concentrations (@ref getspeciesconcentrations) and to set new 
+    !> aqueous species concentrations (@ref GetSpeciesConcentrations) and to set new 
     !> solution concentrations after MCD by using individual species concentrations
-    !> (@ref speciesconcentrations2module). To use these methods the save-species 
-    !> property needs to be turned on (@ref setspeciessaveon). If the save-species 
-    !> property is on, findcomponents will generate a list of aqueous species 
-    !> (@ref getspeciescount, @ref getspeciesnames), their diffusion coefficients 
-    !> at 25 C (@ref getspeciesd25), their charge (@ref getspeciesz).
+    !> (@ref SpeciesConcentrations2Module). To use these methods the save-species 
+    !> property needs to be turned on (@ref SetSpeciesSaveOn). If the save-species 
+    !> property is on, FindComponents will generate a list of aqueous species 
+    !> (@ref GetSpeciesCount, @ref GetSpeciesNames), their diffusion coefficients 
+    !> at 25 C (@ref GetSpeciesD25), their charge (@ref GetSpeciesZ).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval              Number of components currently in the list, or IRESULT error 
-    !> code (see @ref decodeerror).
+    !> code (see @ref DecodeError).
     !> @see
-    !> @ref getcomponents,
-    !> @ref getspeciesconcentrations,
-    !> @ref getspeciescount,
-    !> @ref getspeciesd25,
-    !> @ref getspecieslog10gammas,
-    !> @ref getspecieslog10molalities,
-    !> @ref getspeciesnames,
-    !> @ref getspeciesz,
-    !> @ref setcomponenth2o.
-    !> @ref setspeciessaveon,
-    !> @ref speciesconcentrations2module.
-    !> @par The findcomponents method also generates lists of reactants--equilibrium phases,
+    !> @ref GetComponents,
+    !> @ref GetSpeciesConcentrations,
+    !> @ref GetSpeciesCount,
+    !> @ref GetSpeciesD25,
+    !> @ref GetSpeciesLog10Gammas,
+    !> @ref GetSpeciesLog10Molalities,
+    !> @ref GetSpeciesNames,
+    !> @ref GetSpeciesZ,
+    !> @ref SetComponentH2O.
+    !> @ref SetSpeciesSaveOn,
+    !> @ref SpeciesConcentrations2Module.
+    !> @par The FindComponents method also generates lists of reactants--equilibrium phases,
     !> exchangers, gas components, kinetic reactants, solid solution components, and surfaces.
     !> The lists are cumulative, including all reactants that were
-    !> defined in the initial phreeqc instance at any time findcomponents was called.
+    !> defined in the initial phreeqc instance at any time FindComponents was called.
     !> In addition, a list of phases is generated for which saturation indices may be calculated from the
     !> cumulative list of components.
     !> @see also
-    !> @ref getequilibriumphasesnames,
-    !> @ref getequilibriumphasescount,
-    !> @ref getexchangenames,
-    !> @ref getexchangespeciesnames,
-    !> @ref getexchangespeciescount,
-    !> @ref getgascomponentsnames,
-    !> @ref getgascomponentscount,
-    !> @ref getkineticreactionsnames,
-    !> @ref getkineticreactionscount,
-    !> @ref getsicount,
-    !> @ref getsinames,
-    !> @ref getsolidsolutioncomponentsnames,
-    !> @ref getsolidsolutioncomponentscount,
-    !> @ref getsolidsolutionnames,
-    !> @ref getsurfacenames,
-    !> @ref getsurfacespeciesnames,
-    !> @ref getsurfacespeciescount,
-    !> @ref getsurfacetypes.
+    !> @ref GetEquilibriumPhasesNames,
+    !> @ref GetEquilibriumPhasesCount,
+    !> @ref GetExchangeNames,
+    !> @ref GetExchangeSpeciesNames,
+    !> @ref GetExchangeSpeciesCount,
+    !> @ref GetGasComponentsNames,
+    !> @ref GetGasComponentsCount,
+    !> @ref GetKineticReactionsNames,
+    !> @ref GetKineticReactionsCount,
+    !> @ref GetSICount,
+    !> @ref GetSINames,
+    !> @ref GetSolidSolutionComponentsNames,
+    !> @ref GetSolidSolutionComponentsCount,
+    !> @ref GetSolidSolutionNames,
+    !> @ref GetSurfaceNames,
+    !> @ref GetSurfaceSpeciesNames,
+    !> @ref GetSurfaceSpeciesCount,
+    !> @ref GetSurfaceTypes.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: components(:)
-    !> ncomps = brm%findcomponents()
-    !> status = brm%getcomponents(components)
+    !> ncomps = brm%FindComponents()
+    !> status = brm%GetComponents(components)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
 
-    INTEGER FUNCTION findcomponents(self)
+    INTEGER FUNCTION FindComponents(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
     class(bmi), intent(inout) :: self
-    findcomponents = RM_findcomponents(self%bmiphreeqcrm_id)
+    FindComponents = RM_FindComponents(self%bmiphreeqcrm_id)
     return
-    END FUNCTION findcomponents
+    END FUNCTION FindComponents
 
     !> Fills an array with the cell numbers in the user's numbering sytstem that map 
     !> to a cell in the PhreeqcRM numbering system. The mapping is defined by
-    !> @ref createmapping.
+    !> @ref Createmapping.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param n             A cell number in the PhreeqcRM numbering system (0 <= n < 
-    !> @ref getchemistrycellcount).
+    !> @ref GetChemistryCellCount).
     !> @param list          Allocatable array to store the user cell numbers mapped to 
     !> PhreeqcRM cell @a n.
-    !> @retval              IRESULT error code (see @ref decodeerror).
+    !> @retval              IRESULT error code (see @ref DecodeError).
     !> @see
-    !> @ref createmapping,
-    !> @ref getchemistrycellcount,
-    !> @ref getgridcellcount.
+    !> @ref Createmapping,
+    !> @ref GetChemistryCellCount,
+    !> @ref GetGridCellCount.
     !> @par C Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> if (brm%getbackwardmapping(cell_number, list) .eq. 0) then
+    !> if (brm%GetBackwardMapping(cell_number, list) .eq. 0) then
     !>   if (fstr(1:l) .eq. "HYDRAULIC_K") then
     !>     my_basic_fortran_callback = K_ptr(list(1)+1)
     !>   endif
@@ -2888,181 +2888,181 @@
     !> @par MPI:
     !> Called by root and (or) workers.
 
-    INTEGER FUNCTION getbackwardmapping(self, n, list)
+    INTEGER FUNCTION GetBackwardMapping(self, n, list)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in)    :: n
     INTEGER, INTENT(inout), allocatable :: list(:)
-    getbackwardmapping = RM_getbackwardmapping(self%bmiphreeqcrm_id, n, list)
+    GetBackwardMapping = RM_GetBackwardMapping(self%bmiphreeqcrm_id, n, list)
     return
-    END FUNCTION getbackwardmapping
+    END FUNCTION GetBackwardMapping
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !> Returns the number of chemistry cells in the reaction module. The number of chemistry 
     !> cells is defined by the set of non-negative integers in the mapping from user grid 
-    !> cells (@ref createmapping). The number of chemistry cells is less than or equal to 
+    !> cells (@ref Createmapping). The number of chemistry cells is less than or equal to 
     !> the number of cells in the user's model.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval              Number of chemistry cells, or IRESULT error code 
-    !> (see @ref decodeerror).
+    !> (see @ref DecodeError).
     !> @see
-    !> @ref createmapping,
-    !> @ref getgridcellcount.
+    !> @ref Createmapping,
+    !> @ref GetGridCellCount.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%createmapping(grid2chem)
-    !> nchem = brm%getchemistrycellcount()
+    !> status = brm%Createmapping(grid2chem)
+    !> nchem = brm%GetChemistryCellCount()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
 
-    INTEGER FUNCTION getchemistrycellcount(self)
+    INTEGER FUNCTION GetChemistryCellCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getchemistrycellcount = RM_getchemistrycellcount(self%bmiphreeqcrm_id)
+    GetChemistryCellCount = RM_GetChemistryCellCount(self%bmiphreeqcrm_id)
     return
-    END FUNCTION getchemistrycellcount
+    END FUNCTION GetChemistryCellCount
 
     !> Returns a list of the names of the components identified by PhreeqcRM.
     !> The list contains all components (elements) found in solutions and reactants in the
-    !> InitialPhreeqc instance by call(s) to @ref findcomponents.
+    !> InitialPhreeqc instance by call(s) to @ref FindComponents.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param components       Allocatable, 1D character variable to receive the component names. 
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents.
+    !> @ref FindComponents.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: components(:)
-    !> status = brm%getcomponents(components)
+    !> status = brm%GetComponents(components)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
     
-    INTEGER FUNCTION getcomponents(self, components)
+    INTEGER FUNCTION GetComponents(self, components)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: components
-    getcomponents = RM_getcomponents(self%bmiphreeqcrm_id, components)
+    GetComponents = RM_GetComponents(self%bmiphreeqcrm_id, components)
     return 
-    END FUNCTION getcomponents
+    END FUNCTION GetComponents
 
     !> PRIVATE Returns the number of components in the reaction-module component list.
-    !> The component list is generated by calls to @ref findcomponents.
-    !> The return value from the last call to @ref findcomponents is equal to the return value from getcomponentcount.
+    !> The component list is generated by calls to @ref FindComponents.
+    !> The return value from the last call to @ref FindComponents is equal to the return value from GetComponentCount.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @retval                 The number of components in the reaction-module component list, negative is failure (See @ref decodeerror).
+    !> @retval                 The number of components in the reaction-module component list, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getcomponents.
+    !> @ref FindComponents,
+    !> @ref GetComponents.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> ncomps1 = brm%getcomponentcount()
+    !> ncomps1 = brm%GetComponentCount()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
 
-    INTEGER FUNCTION getcomponentcount(self)
+    INTEGER FUNCTION GetComponentCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getcomponentcount = RM_getcomponentcount(self%bmiphreeqcrm_id)
-    END FUNCTION getcomponentcount
+    GetComponentCount = RM_GetComponentCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetComponentCount
 
     !> Transfer solution concentrations from each reaction cell to the concentration array 
     !> given in the argument list (@a c). Units of concentration for @a c are defined by 
-    !> @ref setunitssolution. For concentration units of per liter, the solution volume 
+    !> @ref SetUnitsSolution. For concentration units of per liter, the solution volume 
     !> is used to calculate the concentrations for @a c. For mass fraction concentration units,
     !> the solution mass is used to calculate concentrations for @a c. Two options are 
     !> available for the volume and mass of solution that are used in converting to transport 
     !> concentrations: (1) the volume and mass of solution are calculated by PHREEQC, or
-    !> (2) the volume of solution is the product of saturation (@ref setsaturationuser),
-    !> porosity (@ref setporosity), and representative volume (@ref setrepresentativevolume), 
-    !> and the mass of solution is volume times density as defined by @ref setdensityuser.
-    !> @ref usesolutiondensityvolume determines which option is used. For option 1, the 
+    !> (2) the volume of solution is the product of saturation (@ref SetSaturationUser),
+    !> porosity (@ref SetPorosity), and representative volume (@ref SetRepresentativeVolume), 
+    !> and the mass of solution is volume times density as defined by @ref SetDensityUser.
+    !> @ref UseSolutionDensityVolume determines which option is used. For option 1, the 
     !> databases that have partial molar volume definitions needed to calculate 
     !> solution volume accurately are phreeqc.dat, Amm.dat, and pitzer.dat.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param c         Array to receive the concentrations. Dimension of the array will be  
     !> set to (@a nxyz, @a ncomps), where @a nxyz is the number of user grid cells and 
-    !> @a ncomps is the result of @ref findcomponents or @ref getcomponentcount.
+    !> @a ncomps is the result of @ref FindComponents or @ref GetComponentCount.
     !> Values for inactive cells are set to 1e30.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !>
     !> @see
-    !> @ref findcomponents,
-    !> @ref getcomponentcount,
-    !> @ref getdensitycalculated,
-    !> @ref getsaturationcalculated,
-    !> @ref setconcentrations,
-    !> @ref setdensityuser,
-    !> @ref setrepresentativevolume,
-    !> @ref setsaturationuser,
-    !> @ref setunitssolution,
-    !> @ref usesolutiondensityvolume.
+    !> @ref FindComponents,
+    !> @ref GetComponentCount,
+    !> @ref GetDensityCalculated,
+    !> @ref GetSaturationCalculated,
+    !> @ref SetConcentrations,
+    !> @ref SetDensityUser,
+    !> @ref SetRepresentativeVolume,
+    !> @ref SetSaturationUser,
+    !> @ref SetUnitsSolution,
+    !> @ref UseSolutionDensityVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: c(:,:)
-    !> status = brm%runcells()
-    !> status = brm%getconcentrations(c)
+    !> status = brm%RunCells()
+    !> status = brm%GetConcentrations(c)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
 
-    INTEGER FUNCTION getconcentrations(self, c)
+    INTEGER FUNCTION GetConcentrations(self, c)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(inout), allocatable :: c(:,:)
-    getconcentrations = RM_getconcentrations(self%bmiphreeqcrm_id, c)
+    GetConcentrations = RM_GetConcentrations(self%bmiphreeqcrm_id, c)
     return
-    END FUNCTION getconcentrations
+    END FUNCTION GetConcentrations
     
     !> Returns the user number of the current selected-output definition.
-    !> @ref setcurrentselectedoutputusernumber or @ref setnthselectedoutput 
+    !> @ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput 
     !> specifies which of the selected-output definitions is used.
     !> @retval          User number of the the current selected-output definition,
-    !> negative is failure (See @ref decodeerror).
+    !> negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getnthselectedoutputusernumber,
-    !> @ref getselectedoutput,
-    !> @ref getselectedoutputcolumncount,
-    !> @ref getselectedoutputcount,
-    !> @ref getselectedoutputheadings,
-    !> @ref getselectedoutputrowcount,
-    !> @ref setcurrentselectedoutputusernumber,
-    !> @ref setnthselectedoutput,
-    !> @ref setselectedoutputon.
+    !> @ref GetNthSelectedOutputUserNumber,
+    !> @ref GetSelectedOutput,
+    !> @ref GetSelectedOutputColumnCount,
+    !> @ref GetSelectedOutputCount,
+    !> @ref GetSelectedOutputHeadings,
+    !> @ref GetSelectedOutputRowCount,
+    !> @ref SetCurrentSelectedOutputUserNumber,
+    !> @ref SetNthSelectedOutput,
+    !> @ref SetSelectedOutputOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> do isel = 1, brm%getselectedoutputcount()
-    !>   status = brm%setnthselectedoutput(isel)
-    !>   n_user = brm%getcurrentselectedoutputusernumber()
-    !>   col = brm%getselectedoutputcolumncount()
+    !> do isel = 1, brm%GetSelectedOutputCount()
+    !>   status = brm%SetNthSelectedOutput(isel)
+    !>   n_user = brm%GetCurrentSelectedOutputUserNumber()
+    !>   col = brm%GetSelectedOutputColumnCount()
     !>   allocate(selected_out(nxyz,col))
-    !>   status = brm%getselectedoutput(selected_out)
+    !>   status = brm%GetSelectedOutput(selected_out)
     !>   ! Process results here
     !>   deallocate(selected_out)
     !> enddo
@@ -3071,52 +3071,52 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getcurrentselectedoutputusernumber(self)
+    INTEGER FUNCTION GetCurrentSelectedOutputUserNumber(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getcurrentselectedoutputusernumber = RM_getcurrentselectedoutputusernumber(self%bmiphreeqcrm_id)
-    END FUNCTION getcurrentselectedoutputusernumber
+    GetCurrentSelectedOutputUserNumber = RM_GetCurrentSelectedOutputUserNumber(self%bmiphreeqcrm_id)
+    END FUNCTION GetCurrentSelectedOutputUserNumber
 
     !> Transfer solution densities from the reaction cells to the array given in the 
     !> argument list (@a density). Densities are those calculated by the reaction module. 
-    !> This method always  returns the calculated densities; @ref setdensityuser does 
+    !> This method always  returns the calculated densities; @ref SetDensityUser does 
     !> not affect the result. Only the following databases distributed with PhreeqcRM 
     !> have molar volume information needed to accurately calculate density: phreeqc.dat, 
     !> Amm.dat, and pitzer.dat.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param density         Allocatable array to receive the densities. Dimension 
     !> of the array is set to @a nxyz, where @a nxyz is the number of user grid cells 
-    !> (@ref getgridcellcount). Values for inactive cells are set to 1e30.
-    !> @retval IRESULT     0 is success, negative is failure (See @ref decodeerror).
+    !> (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
+    !> @retval IRESULT     0 is success, negative is failure (See @ref DecodeError).
     !>
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: density(:)
-    !> status = brm%runcells()
-    !> status = brm%getdensitycalculated(density)
+    !> status = brm%RunCells()
+    !> status = brm%GetDensityCalculated(density)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getdensitycalculated(self, density)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetDensityCalculated(self, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(inout), dimension(:), allocatable  :: density
-    getdensitycalculated = RM_getdensitycalculated(self%bmiphreeqcrm_id, density)
+    GetDensityCalculated = RM_GetDensityCalculated(self%bmiphreeqcrm_id, density)
     return
-    END FUNCTION getdensitycalculated
+    END FUNCTION GetDensityCalculated
     
     INTEGER FUNCTION GetDensity(self, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(inout), dimension(:), allocatable  :: density
-    GetDensity = RM_getdensitycalculated(self%bmiphreeqcrm_id, density)
+    GetDensity = RM_GetDensityCalculated(self%bmiphreeqcrm_id, density)
     return
     END FUNCTION GetDensity
 
@@ -3125,48 +3125,48 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param ec           Array to receive the ending cell numbers. Dimension of the array is
     !> the number of threads (OpenMP) or the number of processes (MPI).
-    !> @retval IRESULT  0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT  0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref create,
-    !> @ref getmpitasks,
-    !> @ref getstartcell,
-    !> @ref getthreadcount.
+    !> @ref Create,
+    !> @ref GetMpiTasks,
+    !> @ref GetStartCell,
+    !> @ref GetThreadCount.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> integer, allocatable :: ec(:)
-    !> status = brm%getendcell(ec)
+    !> status = brm%GetEndCell(ec)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION getendcell(self, ec)
+    INTEGER FUNCTION GetEndCell(self, ec)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(inout), DIMENSION(:), allocatable :: ec
-    getendcell = RM_getendcell(self%bmiphreeqcrm_id, ec)
+    GetEndCell = RM_GetEndCell(self%bmiphreeqcrm_id, ec)
     RETURN
-    END FUNCTION getendcell
+    END FUNCTION GetEndCell
 
     !> Returns the number of equilibrium phases in the initial-phreeqc module.
-    !> @ref findcomponents must be called before @ref getequilibriumphasescount.
+    !> @ref FindComponents must be called before @ref GetEquilibriumPhasesCount.
     !> This method may be useful when generating selected output definitions related to
     !> equilibrium phases.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval            The number of equilibrium phases in the initial-phreeqc module.
     !> @see
-    !> @ref findcomponents,
-    !> @ref getequilibriumphasesnames.
+    !> @ref FindComponents,
+    !> @ref GetEquilibriumPhasesNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
-    !> status = brm%getequilibriumphasesnames(names)
-    !> do i = 1, brm%getequilibriumphasescount()
+    !> status = brm%GetEquilibriumPhasesNames(names)
+    !> do i = 1, brm%GetEquilibriumPhasesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3174,30 +3174,30 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getequilibriumphasescount(self)
+    INTEGER FUNCTION GetEquilibriumPhasesCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getequilibriumphasescount = RM_getequilibriumphasescount(self%bmiphreeqcrm_id)
-    END FUNCTION getequilibriumphasescount
+    GetEquilibriumPhasesCount = RM_GetEquilibriumPhasesCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetEquilibriumPhasesCount
 
     !> Retrieve a list of equilibrium phase names.
     !> The list includes all phases included in any EQUILIBRIUM_PHASES definitions in
-    !> the initial-phreeqc module. @ref findcomponents must be called before 
-    !> @ref getequilibriumphasesnames. This method may be useful when generating 
+    !> the initial-phreeqc module. @ref FindComponents must be called before 
+    !> @ref GetEquilibriumPhasesNames. This method may be useful when generating 
     !> selected output definitions related to equilibrium phases.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names            Array of equilibrium phase names.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getequilibriumphasescount.
+    !> @ref FindComponents,
+    !> @ref GetEquilibriumPhasesCount.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%getequilibriumphasesnames(names)
-    !> do i = 1, brm%getequilibriumphasescount()
+    !> status = brm%GetEquilibriumPhasesNames(names)
+    !> do i = 1, brm%GetEquilibriumPhasesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3205,81 +3205,81 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getequilibriumphasesnames(self, names)
+    INTEGER FUNCTION GetEquilibriumPhasesNames(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getequilibriumphasesnames = RM_getequilibriumphasesnames(self%bmiphreeqcrm_id, names)
+    GetEquilibriumPhasesNames = RM_GetEquilibriumPhasesNames(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getequilibriumphasesnames
+    END FUNCTION GetEquilibriumPhasesNames
 
 
-    ! INTEGER FUNCTION getequilibriumphasesname(self, num, name)
+    ! INTEGER FUNCTION GetEquilibriumPhasesName(self, num, name)
     ! USE ISO_C_BINDING
     ! IMPLICIT NONE
     ! INTERFACE
-    ! INTEGER(KIND=C_INT) FUNCTION RMF_getequilibriumphasesname(id, num, name, l) &
-    !     BIND(C, NAME='RMF_getequilibriumphasesname')
+    ! INTEGER(KIND=C_INT) FUNCTION RMF_GetEquilibriumPhasesName(id, num, name, l) &
+    !     BIND(C, NAME='RMF_GetEquilibriumPhasesName')
     ! USE ISO_C_BINDING
     ! IMPLICIT NONE
     ! INTEGER(KIND=C_INT), INTENT(inout) :: id, num, l
     ! CHARACTER(KIND=C_CHAR), INTENT(inout) :: name(*)
-    ! END FUNCTION RMF_getequilibriumphasesname
+    ! END FUNCTION RMF_GetEquilibriumPhasesName
     ! END INTERFACE
     ! INTEGER, INTENT(inout) :: id, num
     ! CHARACTER(len=*), INTENT(inout) :: name
-    ! getequilibriumphasesname = RMF_getequilibriumphasesname(id, num, name, len(name))
+    ! GetEquilibriumPhasesName = RMF_GetEquilibriumPhasesName(id, num, name, len(name))
     ! return
-    ! END FUNCTION getequilibriumphasesname
+    ! END FUNCTION GetEquilibriumPhasesName
 
     !> Returns a string containing error messages related to the last call to a PhreeqcRM 
     !> method to the character argument (@a errstr).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param errstr           The error string related to the last call to a PhreeqcRM method.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: errstr
     !> if (status .lt. 0) then
-    !>   status = brm%geterrorstring(errstr)
+    !>   status = brm%GetErrorString(errstr)
     !>   write(*,"(A)") errstr
-    !>   status = brm%destroy()
+    !>   status = brm%Destroy()
     !>   stop
     !> endif 
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION geterrorstring(self, errstr)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetErrorString(self, errstr)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, INTENT(inout) :: errstr
-    geterrorstring = RM_geterrorstring(self%bmiphreeqcrm_id, errstr)
-    END FUNCTION geterrorstring
+    GetErrorString = RM_GetErrorString(self%bmiphreeqcrm_id, errstr)
+    END FUNCTION GetErrorString
 
     !> Retrieves a list of exchange names.
-    !> @ref findcomponents must be called before @ref getexchangenames.
+    !> @ref FindComponents must be called before @ref GetExchangeNames.
     !> The exchange names array is the same length as the exchange species names array
     !> and provides the corresponding exchange site (for example, X corresponing to NaX).
     !> This method may be useful when generating selected output definitions related to exchangers.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names            Allocatable array of  exchange names.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getexchangespeciescount, @ref getexchangespeciesnames.
+    !> @ref FindComponents,
+    !> @ref GetExchangeSpeciesCount, @ref GetExchangeSpeciesNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
-    !> status = brm%getexchangespeciesnames(names)
-    !> do i = 1, brm%getexchangespeciescount()
+    !> status = brm%GetExchangeSpeciesNames(names)
+    !> do i = 1, brm%GetExchangeSpeciesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3287,31 +3287,31 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getexchangenames(self, names)
+    INTEGER FUNCTION GetExchangeNames(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getexchangenames = RM_getexchangenames(self%bmiphreeqcrm_id, names)
+    GetExchangeNames = RM_GetExchangeNames(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getexchangenames
+    END FUNCTION GetExchangeNames
 
     !> Returns the number of exchange species in the initial-phreeqc module.
-    !> @ref findcomponents must be called before @ref getexchangespeciescount.
+    !> @ref FindComponents must be called before @ref GetExchangeSpeciesCount.
     !> This method may be useful when generating selected output definitions related 
     !> to exchangers.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval            The number of exchange species found by call(s) to 
-    !> @ref findcomponents.
+    !> @ref FindComponents.
     !> @see
-    !> @ref findcomponents, @ref getexchangespeciesnames, @ref getexchangenames.
+    !> @ref FindComponents, @ref GetExchangeSpeciesNames, @ref GetExchangeNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names
-    !> status = brm%getexchangespeciesnames(names)
-    !> do i = 1, brm%getexchangespeciescount()
+    !> status = brm%GetExchangeSpeciesNames(names)
+    !> do i = 1, brm%GetExchangeSpeciesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3319,32 +3319,32 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getexchangespeciescount(self)
+    INTEGER FUNCTION GetExchangeSpeciesCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getexchangespeciescount = RM_getexchangespeciescount(self%bmiphreeqcrm_id)
-    END FUNCTION getexchangespeciescount
+    GetExchangeSpeciesCount = RM_GetExchangeSpeciesCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetExchangeSpeciesCount
 
     !> Retrieves a list of exchange species names.
     !> The list of exchange species (such as "NaX") is derived from the list of components
-    !> (@ref findcomponents) and the list of all exchange names (such as "X")
-    !> that are found by call(s) to @ref findcomponents. @ref findcomponents must 
-    !> be called before @ref getexchangespeciesnames. This method may be useful 
+    !> (@ref FindComponents) and the list of all exchange names (such as "X")
+    !> that are found by call(s) to @ref FindComponents. @ref FindComponents must 
+    !> be called before @ref GetExchangeSpeciesNames. This method may be useful 
     !> when generating selected output definitions related to exchangers.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names            Allocatable array of exchange species names.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getexchangespeciescount, @ref getexchangenames.
+    !> @ref FindComponents,
+    !> @ref GetExchangeSpeciesCount, @ref GetExchangeNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names
-    !> status = brm%getexchangespeciesnames(names)
-    !> do i = 1, brm%getexchangespeciescount()
+    !> status = brm%GetExchangeSpeciesNames(names)
+    !> do i = 1, brm%GetExchangeSpeciesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3352,56 +3352,56 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getexchangespeciesnames(self, names)
+    INTEGER FUNCTION GetExchangeSpeciesNames(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getexchangespeciesnames = RM_getexchangespeciesnames(self%bmiphreeqcrm_id, names)
+    GetExchangeSpeciesNames = RM_GetExchangeSpeciesNames(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getexchangespeciesnames
+    END FUNCTION GetExchangeSpeciesNames
 
     !> Returns the reaction-module file prefix to the character argument (@a prefix).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param prefix           Allocatable character string where the prefix is written.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref setfileprefix.
+    !> @ref SetFilePrefix.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: prefix
-    !> status = brm%getfileprefix(prefix)
+    !> status = brm%GetFilePrefix(prefix)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION getfileprefix(self, prefix)
+    INTEGER FUNCTION GetFilePrefix(self, prefix)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, INTENT(inout) :: prefix
-    getfileprefix = RM_getfileprefix(self%bmiphreeqcrm_id, prefix)
-    END FUNCTION getfileprefix
+    GetFilePrefix = RM_GetFilePrefix(self%bmiphreeqcrm_id, prefix)
+    END FUNCTION GetFilePrefix
 
-    !> Returns the number of gas phase components found by call(s) to @ref findcomponents.
-    !> @ref findcomponents must be called before @ref getgascomponentscount.
+    !> Returns the number of gas phase components found by call(s) to @ref FindComponents.
+    !> @ref FindComponents must be called before @ref GetGasComponentsCount.
     !> This method may be useful when generating selected output definitions related to
     !> gas phases.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval            The number of gas phase components in the initial-phreeqc module.
     !> @see
-    !> @ref findcomponents,
-    !> @ref getgascomponentsnames.
+    !> @ref FindComponents,
+    !> @ref GetGasComponentsNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
-    !> status = brm%getgascomponentsnames(names)
-    !> do i = 1, brm%getgascomponentscount()
+    !> status = brm%GetGasComponentsNames(names)
+    !> do i = 1, brm%GetGasComponentsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3409,31 +3409,31 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getgascomponentscount(self)
+    INTEGER FUNCTION GetGasComponentsCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getgascomponentscount = RM_getgascomponentscount(self%bmiphreeqcrm_id)
-    END FUNCTION getgascomponentscount
+    GetGasComponentsCount = RM_GetGasComponentsCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetGasComponentsCount
 
     !> Retrieves a list of the gas component names.
-    !> The list includes all gas components found by calls to @ref findcomponents.
-    !> @ref findcomponents must be called before @ref getgascomponentsnames.
+    !> The list includes all gas components found by calls to @ref FindComponents.
+    !> @ref FindComponents must be called before @ref GetGasComponentsNames.
     !> This method may be useful when generating selected output definitions related 
     !> to gas phases.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names            Allocatable array of gas component names.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getgascomponentscount.
+    !> @ref FindComponents,
+    !> @ref GetGasComponentsCount.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
-    !> status = brm%getgascomponentsnames(names)
-    !> do i = 1, brm%getgascomponentscount()
+    !> status = brm%GetGasComponentsNames(names)
+    !> do i = 1, brm%GetGasComponentsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3441,14 +3441,14 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getgascomponentsnames(self, names)
+    INTEGER FUNCTION GetGasComponentsNames(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getgascomponentsnames = RM_getgascomponentsnames(self%bmiphreeqcrm_id, names)
+    GetGasComponentsNames = RM_GetGasComponentsNames(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getgascomponentsnames
+    END FUNCTION GetGasComponentsNames
 
     !> Transfer moles of gas components from each reaction cell
     !> to the array given in the argument list (@a gas_moles).
@@ -3457,38 +3457,38 @@
     !> @param gas_moles        Allocatable array to receive the moles of gas components 
     !> for each cell. Dimension of the array is set to (@a nxyz, @a ngas_comps),
     !> where @a nxyz is the number of user grid cells and @a ngas_comps is the result
-    !> of @ref getgascomponentscount. If a gas component is not defined for a cell,
+    !> of @ref GetGasComponentsCount. If a gas component is not defined for a cell,
     !> the number of moles is set to -1. Values for inactive cells are set to 1e30.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !>
     !> @see
-    !> @ref findcomponents,
-    !> @ref getgascomponentscount,
-    !> @ref getgascomppressures,
-    !> @ref getgascompphi,
-    !> @ref getgasphasevolume,
-    !> @ref setgascompmoles,
-    !> @ref setgasphasevolume.
+    !> @ref FindComponents,
+    !> @ref GetGasComponentsCount,
+    !> @ref GetGasCompPressures,
+    !> @ref GetGasCompPhi,
+    !> @ref GetGasPhaseVolume,
+    !> @ref SetGasCompMoles,
+    !> @ref SetGasPhaseVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: gas_moles(:,:)
-    !> status = brm%runcells()
-    !> status = brm%getgascompmoles(gas_moles)
+    !> status = brm%RunCells()
+    !> status = brm%GetGasCompMoles(gas_moles)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getgascompmoles(self, gas_moles)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetGasCompMoles(self, gas_moles)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(inout), DIMENSION(:,:), allocatable, TARGET :: gas_moles    
-    getgascompmoles = RM_getgascompmoles(self%bmiphreeqcrm_id, gas_moles)
+    GetGasCompMoles = RM_GetGasCompMoles(self%bmiphreeqcrm_id, gas_moles)
     return
-    END FUNCTION getgascompmoles
+    END FUNCTION GetGasCompMoles
 
     !> Transfer pressures of gas components from each reaction cell
     !> to the array given in the argument list (@a gas_p).
@@ -3496,37 +3496,37 @@
     !> @param gas_p          Allocatable array to receive the moles of gas components for 
     !> each cell. Dimension of the array is set to (@a nxyz, @a ngas_comps),
     !> where @a nxyz is the number of user grid cells and @a ngas_comps is the result
-    !> of @ref getgascomponentscount. If a gas component is not defined for a cell,
+    !> of @ref GetGasComponentsCount. If a gas component is not defined for a cell,
     !> the pressure is set to -1. Values for inactive cells are set to 1e30.
-    !> @retval IRESULT     0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT     0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getgascomponentscount,
-    !> @ref getgascompmoles,
-    !> @ref getgascompphi,
-    !> @ref getgasphasevolume,
-    !> @ref setgascompmoles,
-    !> @ref setgasphasevolume.
+    !> @ref FindComponents,
+    !> @ref GetGasComponentsCount,
+    !> @ref GetGasCompMoles,
+    !> @ref GetGasCompPhi,
+    !> @ref GetGasPhaseVolume,
+    !> @ref SetGasCompMoles,
+    !> @ref SetGasPhaseVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: gas_p(:,:)
-    !> status = brm%runcells()
-    !> status = brm%getgascomppressures(gas_p)
+    !> status = brm%RunCells()
+    !> status = brm%GetGasCompPressures(gas_p)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getgascomppressures(self, gas_p)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetGasCompPressures(self, gas_p)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(inout), DIMENSION(:,:), allocatable, TARGET :: gas_p
-    getgascomppressures = RM_getgascomppressures(self%bmiphreeqcrm_id, gas_p )
+    GetGasCompPressures = RM_GetGasCompPressures(self%bmiphreeqcrm_id, gas_p )
     return
-    END FUNCTION getgascomppressures
+    END FUNCTION GetGasCompPressures
 
     !> Transfer fugacity coefficients (phi) of gas components from each reaction cell
     !> to the array given in the argument list (@a gas_phi). Fugacity of a gas component
@@ -3535,74 +3535,74 @@
     !> @param gas_phi        Allocatable array to receive the fugacity coefficients
     !> of gas components for each cell. Dimension of the array is set to (@a nxyz, @a ngas_comps),
     !> where @a nxyz is the number of user grid cells and @a ngas_comps is the result
-    !> of @ref getgascomponentscount. If a gas component is not defined for a cell,
+    !> of @ref GetGasComponentsCount. If a gas component is not defined for a cell,
     !> the fugacity coefficient is set to -1. Values for inactive cells are set to 1e30.
-    !> @retval IRESULT     0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT     0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getgascomponentscount,
-    !> @ref getgascompmoles,
-    !> @ref getgascomppressures,
-    !> @ref getgasphasevolume,
-    !> @ref setgascompmoles,
-    !> @ref setgasphasevolume.
+    !> @ref FindComponents,
+    !> @ref GetGasComponentsCount,
+    !> @ref GetGasCompMoles,
+    !> @ref GetGasCompPressures,
+    !> @ref GetGasPhaseVolume,
+    !> @ref SetGasCompMoles,
+    !> @ref SetGasPhaseVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: gas_phi(:,:)
-    !> status = brm%runcells()
-    !> status = brm%getgascompphi(gas_phi)
+    !> status = brm%RunCells()
+    !> status = brm%GetGasCompPhi(gas_phi)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getgascompphi(self, gas_phi)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetGasCompPhi(self, gas_phi)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(inout), DIMENSION(:,:), allocatable, TARGET :: gas_phi
-    getgascompphi = RM_getgascompphi(self%bmiphreeqcrm_id, gas_phi)
+    GetGasCompPhi = RM_GetGasCompPhi(self%bmiphreeqcrm_id, gas_phi)
     return
-    END FUNCTION getgascompphi
+    END FUNCTION GetGasCompPhi
 
     !> Transfer volume of gas from each reaction cell
     !> to the array given in the argument list (@a gas_volume).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param gas_volume       Array to receive the gas phase volumes.
     !> Dimension of the array is set to @a nxyz, where @a nxyz is the number of user 
-    !> grid cells (@ref getgridcellcount). If a gas phase is not defined for a cell, 
+    !> grid cells (@ref GetGridCellCount). If a gas phase is not defined for a cell, 
     !> the volume is set to -1. Values for inactive cells are set to 1e30.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getgascomponentscount,
-    !> @ref getgascompmoles,
-    !> @ref getgascompphi,
-    !> @ref getgascomppressures,
-    !> @ref setgascompmoles
-    !> @ref setgasphasevolume.
+    !> @ref FindComponents,
+    !> @ref GetGasComponentsCount,
+    !> @ref GetGasCompMoles,
+    !> @ref GetGasCompPhi,
+    !> @ref GetGasCompPressures,
+    !> @ref SetGasCompMoles
+    !> @ref SetGasPhaseVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: gas_volume(:)
-    !> status = brm%runcells()
-    !> status = brm%getgasphasevolume(gas_volume)
+    !> status = brm%RunCells()
+    !> status = brm%GetGasPhaseVolume(gas_volume)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getgasphasevolume(self, gas_volume)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetGasPhaseVolume(self, gas_volume)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(inout), DIMENSION(:), allocatable, TARGET :: gas_volume
-    getgasphasevolume = RM_getgasphasevolume(self%bmiphreeqcrm_id, gas_volume)
+    GetGasPhaseVolume = RM_GetGasPhaseVolume(self%bmiphreeqcrm_id, gas_volume)
     return
-    END FUNCTION getgasphasevolume
+    END FUNCTION GetGasPhaseVolume
 
     !> Returns the gram formula weights (g/mol) for the components in the reaction-module 
     !> component list.
@@ -3610,69 +3610,69 @@
     !> @param gfw              Array to receive the gram formula weights. Dimension of the 
     !> array is set to @a ncomps, where @a ncomps is the number of components in the 
     !> component list.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getcomponents,
-    !> @ref getcomponentcount.
+    !> @ref FindComponents,
+    !> @ref GetComponents,
+    !> @ref GetComponentCount.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: components(:)
     !> real(kind=8), allocatable   :: gfw(:)
-    !> ncomps = brm%findcomponents()
-    !> status = brm%getgfw(gfw)
-    !> status = brm%getcomponents(components)
+    !> ncomps = brm%FindComponents()
+    !> status = brm%GetGfw(gfw)
+    !> status = brm%GetComponents(components)
     !> do i = 1, ncomps
     !>   write(string,"(A10, F15.4)") components(i), gfw(i)
-    !>   status = brm%outputmessage(string)
+    !>   status = brm%OutputMessage(string)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getgfw(self, gfw)
+    INTEGER FUNCTION GetGfw(self, gfw)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:), INTENT(inout), allocatable  :: gfw
-    getgfw = RM_getgfw(self%bmiphreeqcrm_id, gfw)
-    END FUNCTION getgfw
+    GetGfw = RM_GetGfw(self%bmiphreeqcrm_id, gfw)
+    END FUNCTION GetGfw
 
     !> Returns the number of grid cells in the user's model, which is defined in 
     !> the creation or initialization of the PhreeqcRM instance.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval            Number of grid cells in the user's model, negative is failure 
-    !> (See @ref decodeerror).
+    !> (See @ref DecodeError).
     !> @see
-    !> @ref create,
-    !> @ref createmapping,
-    !> @ref initializeyaml.
+    !> @ref Create,
+    !> @ref Createmapping,
+    !> @ref InitializeYAML.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> nxyz = brm%getgridcellcount()
+    !> nxyz = brm%GetGridCellCount()
     !> write(string1, "(A,I)") "Number of grid cells in the user's model: ", nxyz
-    !> status = brm%outputmessage(trim(string1))
+    !> status = brm%OutputMessage(trim(string1))
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION getgridcellcount(self)
+    INTEGER FUNCTION GetGridCellCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getgridcellcount = RM_getgridcellcount(self%bmiphreeqcrm_id)
-    END FUNCTION getgridcellcount
+    GetGridCellCount = RM_GetGridCellCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetGridCellCount
 
     !> Returns an IPhreeqc id for the @a ith IPhreeqc instance in the reaction module.
     !> For the threaded version, there are @a nthreads + 2 IPhreeqc instances, where
-    !> @a nthreads is defined in the constructor (@ref create) or initialization.
-    !> The number of threads can be determined by @ref getthreadcount.
+    !> @a nthreads is defined in the constructor (@ref bmif_create) or initialization.
+    !> The number of threads can be determined by @ref GetThreadCount.
     !> The first @a nthreads (0 based) instances will be the workers, the
     !> next (@a nthreads) is the InitialPhreeqc instance, and the next (@a nthreads + 1) 
     !> is the Utility instance. Getting the IPhreeqc pointer for one of these instances 
@@ -3682,118 +3682,118 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param i         The number of the IPhreeqc instance to be retrieved (0 based).
     !> @retval          IPhreeqc id for the @a ith IPhreeqc instance, negative is failure 
-    !> (See @ref decodeerror).
+    !> (See @ref DecodeError).
     !> @see
-    !> @ref create,
-    !> @ref getthreadcount.
+    !> @ref Create,
+    !> @ref GetThreadCount.
     !> See IPhreeqc documentation for descriptions of IPhreeqc methods.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> ! Utility pointer is worker number nthreads + 1
-    !> iphreeqc_id1 = brm%getiphreeqcid(brm%getthreadcount() + 1)
+    !> iphreeqc_id1 = brm%GetIPhreeqcId(brm%GetThreadCount() + 1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION getiphreeqcid(self, i)
+    INTEGER FUNCTION GetIPhreeqcId(self, i)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: i
-    getiphreeqcid = RM_getiphreeqcid(self%bmiphreeqcrm_id, i)
-    END FUNCTION getiphreeqcid
+    GetIPhreeqcId = RM_GetIPhreeqcId(self%bmiphreeqcrm_id, i)
+    END FUNCTION GetIPhreeqcId
 
     !> Transfer the concentration from each cell for one component to the array given in the 
     !> argument list (@a c). The concentrations are those resulting from the last call
-    !> to @ref runcells. Units of concentration for @a c are defined by @ref setunitssolution.
+    !> to @ref RunCells. Units of concentration for @a c are defined by @ref SetUnitsSolution.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param i                One-based index for the component to retrieve. Indices refer
-    !> to the order produced by @ref getcomponents. The total number of components is given by
-    !> @ref getcomponentcount.
+    !> to the order produced by @ref GetComponents. The total number of components is given by
+    !> @ref GetComponentCount.
     !> @param c                Allocatable array to receive the component concentrations.
     !> Dimension of the array is set to @a nxyz, where @a nxyz is the number of 
-    !> user grid cells (@ref getgridcellcount). Values for inactive cells are set to 1e30.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
-    !> @see    @ref findcomponents, @ref getcomponents, @ref getcomponentcount, 
-    !> @ref getconcentrations.
+    !> user grid cells (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
+    !> @see    @ref FindComponents, @ref GetComponents, @ref GetComponentCount, 
+    !> @ref GetConcentrations.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable, dimension(:) :: c
-    !> status = brm%runcells()
-    !> status = brm%phreeqc_rm.getithconcentration(1, c)
+    !> status = brm%RunCells()
+    !> status = brm%phreeqc_rm.GetIthConcentration(1, c)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getithconcentration(self, i, c)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetIthConcentration(self, i, c)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: i
     real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: c
-    getithconcentration = RM_getithconcentration(self%bmiphreeqcrm_id, i, c)
+    GetIthConcentration = RM_GetIthConcentration(self%bmiphreeqcrm_id, i, c)
     return
-    END FUNCTION getithconcentration
+    END FUNCTION GetIthConcentration
 
     !> Transfer the concentrations for one species from each cell to the array given in the
     !> argument list (@a c). The concentrations are those resulting from the last call
-    !> to @ref runcells. Units of concentration for @a c are mol/L.
-    !> To retrieve species concentrations, @ref setspeciessaveon must be set to @a true.
+    !> to @ref RunCells. Units of concentration for @a c are mol/L.
+    !> To retrieve species concentrations, @ref SetSpeciesSaveOn must be set to @a true.
     !> This method is for use with multicomponent diffusion calculations.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param i                One-based index for the species to retrieve. Indices refer
-    !> to the order given by @ref getspeciesnames. The total number of species is given
-    !> by @ref getspeciescount.
+    !> to the order given by @ref GetSpeciesNames. The total number of species is given
+    !> by @ref GetSpeciesCount.
     !> @param c                Allocatable array to receive the species concentrations.
     !> Dimension of the array is set to @a nxyz, where @a nxyz is the number of
-    !> user grid cells (@ref getgridcellcount). Values for inactive cells are set to 1e30.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
-    !> @see         @ref findcomponents, @ref getspeciescount, @ref getspeciesnames,
-    !> @ref getspeciesconcentrations, @ref setspeciessaveon.
+    !> user grid cells (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
+    !> @see         @ref FindComponents, @ref GetSpeciesCount, @ref GetSpeciesNames,
+    !> @ref GetSpeciesConcentrations, @ref SetSpeciesSaveOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable, dimension(:) :: c
-    !> status = brm%runcells()
-    !> status = brm%getithspeciesconcentration(1, c)
+    !> status = brm%RunCells()
+    !> status = brm%GetIthSpeciesConcentration(1, c)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getithspeciesconcentration(self, i, c)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetIthSpeciesConcentration(self, i, c)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: i
     real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: c
-    getithspeciesconcentration = RM_getithspeciesconcentration(self%bmiphreeqcrm_id, i, c)
+    GetIthSpeciesConcentration = RM_GetIthSpeciesConcentration(self%bmiphreeqcrm_id, i, c)
     return
-    END FUNCTION getithspeciesconcentration
+    END FUNCTION GetIthSpeciesConcentration
 
-    !> Returns the number of kinetic reactions found by call(s) to @ref findcomponents.
-    !> @ref findcomponents must be called before @ref getkineticreactionscount.
+    !> Returns the number of kinetic reactions found by call(s) to @ref FindComponents.
+    !> @ref FindComponents must be called before @ref GetKineticReactionsCount.
     !> This method may be useful when generating selected output definitions related to
     !> kinetic reactions.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval            The number of kinetic reactions in the initial-phreeqc module.
     !> @see
-    !> @ref findcomponents,
-    !> @ref getkineticreactionsnames.
+    !> @ref FindComponents,
+    !> @ref GetKineticReactionsNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
-    !> status = brm%getkineticreactionsnames(names)
-    !> do i = 1, brm%getkineticreactionscount()
+    !> status = brm%GetKineticReactionsNames(names)
+    !> do i = 1, brm%GetKineticReactionsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3801,31 +3801,31 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getkineticreactionscount(self)
+    INTEGER FUNCTION GetKineticReactionsCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getkineticreactionscount = RM_getkineticreactionscount(self%bmiphreeqcrm_id)
-    END FUNCTION getkineticreactionscount
+    GetKineticReactionsCount = RM_GetKineticReactionsCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetKineticReactionsCount
 
     !> Retrieves a list of kinetic reaction names.
-    !> The list includes all kinetic reactions found by call(s) to @ref findcomponents.
-    !> @ref findcomponents must be called before @ref getkineticreactionsnames.
+    !> The list includes all kinetic reactions found by call(s) to @ref FindComponents.
+    !> @ref FindComponents must be called before @ref GetKineticReactionsNames.
     !> This method may be useful when generating selected output definitions related to 
     !> kinetic reactions.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names            Allocatable array for kinetic reaction names
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getkineticreactionscount.
+    !> @ref FindComponents,
+    !> @ref GetKineticReactionsCount.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
-    !> status = brm%getkineticreactionsnames(names)
-    !> do i = 1, brm%getkineticreactionscount()
+    !> status = brm%GetKineticReactionsNames(names)
+    !> do i = 1, brm%GetKineticReactionsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -3833,113 +3833,113 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getkineticreactionsnames(self, names)
+    INTEGER FUNCTION GetKineticReactionsNames(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getkineticreactionsnames = RM_getkineticreactionsnames(self%bmiphreeqcrm_id, names)
+    GetKineticReactionsNames = RM_GetKineticReactionsNames(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getkineticreactionsnames
+    END FUNCTION GetKineticReactionsNames
 
     !> Returns the MPI task number. For the OPENMP version, the task number is always
-    !> zero and the result of @ref getmpitasks is one. For the MPI version,
+    !> zero and the result of @ref GetMpiTasks is one. For the MPI version,
     !> the root task number is zero, and all workers have a task number greater than zero.
-    !> The number of tasks can be obtained with @ref getmpitasks. The number of
+    !> The number of tasks can be obtained with @ref GetMpiTasks. The number of
     !> tasks and computer hosts are determined at run time by the mpiexec command, and the
     !> number of reaction-module processes is defined by the communicator used in
-    !> constructing the reaction modules (@ref create).
+    !> constructing the reaction modules (@ref Create).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval                 The MPI task number for a process, negative is failure 
-    !> (See @ref decodeerror).
+    !> (See @ref DecodeError).
     !> @see
-    !> @ref getmpitasks.
+    !> @ref GetMpiTasks.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> write(string1, "(A,I)") "MPI task number: ", brm%getmpimyself()
-    !> status = brm%outputmessage(string1)
+    !> write(string1, "(A,I)") "MPI task number: ", brm%GetMpiMyself()
+    !> status = brm%OutputMessage(string1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
 
-    INTEGER FUNCTION getmpimyself(self)
+    INTEGER FUNCTION GetMpiMyself(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getmpimyself = RM_getmpimyself(self%bmiphreeqcrm_id)
-    END FUNCTION getmpimyself
+    GetMpiMyself = RM_GetMpiMyself(self%bmiphreeqcrm_id)
+    END FUNCTION GetMpiMyself
 
     !> Returns the number of MPI processes (tasks) assigned to the reaction module.
     !> For the OPENMP version, the number of tasks is always
-    !> one (although there may be multiple threads, @ref getthreadcount),
-    !> and the task number returned by @ref getmpimyself is zero. For the MPI version, 
+    !> one (although there may be multiple threads, @ref GetThreadCount),
+    !> and the task number returned by @ref GetMpiMyself is zero. For the MPI version, 
     !> the number of tasks and computer hosts are determined at run time by the mpiexec 
     !> command. An MPI communicator is used in constructing reaction modules for MPI. 
     !> The communicator may define a subset of the total number of MPI processes. 
     !> The root task number is zero, and all workers have a task number greater than zero.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval                 The number of MPI  processes assigned to the reaction module,
-    !> negative is failure (See @ref decodeerror).
+    !> negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getmpimyself,
-    !> @ref create.
+    !> @ref GetMpiMyself,
+    !> @ref Create.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> mpi_tasks = brm%getmpitasks()
+    !> mpi_tasks = brm%GetMpiTasks()
     !> write(string1, "(A,I)") "Number of MPI processes: ", mpi_tasks
-    !> status = brm%outputmessage(string1)
+    !> status = brm%OutputMessage(string1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION getmpitasks(self)
+    INTEGER FUNCTION GetMpiTasks(self)
     USE ISO_C_BINDING
 	class(bmi), intent(inout) :: self
-    getmpitasks = RM_getmpitasks(self%bmiphreeqcrm_id)
-    END FUNCTION getmpitasks
+    GetMpiTasks = RM_GetMpiTasks(self%bmiphreeqcrm_id)
+    END FUNCTION GetMpiTasks
 
     !> Returns the user number for the @a nth selected-output definition.
     !> Definitions are sorted by user number. Phreeqc allows multiple selected-output
     !> definitions, each of which is assigned a nonnegative integer identifier by the
-    !> user. The number of definitions can be obtained by @ref getselectedoutputcount.
-    !> To cycle through all of the definitions, getnthselectedoutputusernumber
+    !> user. The number of definitions can be obtained by @ref GetSelectedOutputCount.
+    !> To cycle through all of the definitions, GetNthSelectedOutputUserNumber
     !> can be used to identify the user number for each selected-output definition
-    !> in sequence. @ref setcurrentselectedoutputusernumber is then used to select
+    !> in sequence. @ref SetCurrentSelectedOutputUserNumber is then used to select
     !> that user number for selected-output processing.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param n                The sequence number of the selected-output definition for 
     !> which the user number will be returned. Fortran, 1 based.
     !> @retval                 The user number of the @a nth selected-output definition, 
-    !> negative is failure (See @ref decodeerror).
+    !> negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getcurrentselectedoutputusernumber,
-    !> @ref getselectedoutput,
-    !> @ref getselectedoutputcolumncount,
-    !> @ref getselectedoutputcount,
-    !> @ref getselectedoutputheadings,
-    !> @ref getselectedoutputrowcount,
-    !> @ref setcurrentselectedoutputusernumber,
-    !> @ref setnthselectedoutput,
-    !> @ref setselectedoutputon.
+    !> @ref GetCurrentSelectedOutputUserNumber,
+    !> @ref GetSelectedOutput,
+    !> @ref GetSelectedOutputColumnCount,
+    !> @ref GetSelectedOutputCount,
+    !> @ref GetSelectedOutputHeadings,
+    !> @ref GetSelectedOutputRowCount,
+    !> @ref SetCurrentSelectedOutputUserNumber,
+    !> @ref SetNthSelectedOutput,
+    !> @ref SetSelectedOutputOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> do isel = 1, brm%getselectedoutputcount()
-    !>   n_user = brm%getnthselectedoutputusernumber(isel)
-    !>   status = brm%setcurrentselectedoutputusernumber(n_user)
+    !> do isel = 1, brm%GetSelectedOutputCount()
+    !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
+    !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
     !>   write(*,*) "Selected output sequence number: ", isel)
     !>   write(*,*) "Selected output user number:     ", n_user)
-    !>   col = brm%getselectedoutputcolumncount()
+    !>   col = brm%GetSelectedOutputColumnCount()
     !>   allocate(selected_out(nxyz,col))
-    !>   status = brm%getselectedoutput(selected_out)
+    !>   status = brm%GetSelectedOutput(selected_out)
     !>   ! Process results here
     !>   deallocate(selected_out)
     !> enddo
@@ -3948,157 +3948,157 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getnthselectedoutputusernumber(self, n)
+    INTEGER FUNCTION GetNthSelectedOutputUserNumber(self, n)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: n
-    getnthselectedoutputusernumber = RM_getnthselectedoutputusernumber(self%bmiphreeqcrm_id, n)
-    END FUNCTION getnthselectedoutputusernumber
+    GetNthSelectedOutputUserNumber = RM_GetNthSelectedOutputUserNumber(self%bmiphreeqcrm_id, n)
+    END FUNCTION GetNthSelectedOutputUserNumber
 
     !> Transfer current porosities to the array given in the argument list (@a porosity).
     !> Porosity is not changed by PhreeqcRM; the values are either the default values
-    !> or the values set by the last call to @ref setporosity.
+    !> or the values set by the last call to @ref SetPorosity.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param porosity           Array to receive the porosities. Dimension of the array 
     !> is set to @a nxyz, where @a nxyz is the number of user grid cells  
-    !> (@ref getgridcellcount). Values for inactive cells are set to 1e30.
-    !> @retval IRESULT          0 is success, negative is failure (See @ref decodeerror).
+    !> (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
+    !> @retval IRESULT          0 is success, negative is failure (See @ref DecodeError).
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: porosity(:)
-    !> status = brm%getporosity(porosity)
+    !> status = brm%GetPorosity(porosity)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getporosity(self, porosity)
+    INTEGER FUNCTION GetPorosity(self, porosity)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(inout), dimension(:), allocatable :: porosity
-    getporosity = RM_getporosity(self%bmiphreeqcrm_id, porosity)
+    GetPorosity = RM_GetPorosity(self%bmiphreeqcrm_id, porosity)
     return
-    END FUNCTION getporosity
+    END FUNCTION GetPorosity
 
     !> Transfer current pressures to the array given in the argument list (@a pressure).
     !> Pressure is not usually calculated by PhreeqcRM; the values are either the default values
-    !> or the values set by the last call to @ref setpressure. Pressures can be calculated
+    !> or the values set by the last call to @ref SetPressure. Pressures can be calculated
     !> by PhreeqcRM if a fixed-volume GAS_PHASE is used.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param pressure        Array to receive the porosities. Dimension of the array is set 
-    !> to @a nxyz, where @a nxyz is the number of user grid cells (@ref getgridcellcount). 
+    !> to @a nxyz, where @a nxyz is the number of user grid cells (@ref GetGridCellCount). 
     !> Values for inactive cells are set to 1e30.
-    !> @retval IRESULT          0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT          0 is success, negative is failure (See @ref DecodeError).
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: pressure(:)
-    !> status = brm%getpressure(pressure)
+    !> status = brm%GetPressure(pressure)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getpressure(self, pressure)
+    INTEGER FUNCTION GetPressure(self, pressure)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(inout), dimension(:), allocatable :: pressure
-    getpressure = RM_getpressure(self%bmiphreeqcrm_id, pressure)
+    GetPressure = RM_GetPressure(self%bmiphreeqcrm_id, pressure)
     return
-    END FUNCTION getpressure
+    END FUNCTION GetPressure
 
     !> Returns an array of saturations (@a sat_calc) as calculated by the reaction module.
     !> Reactions will change the volume of solution in a cell. This method always returns 
-    !> solution_volume/(rv * porosity); the method  @ref setsaturationuser has no effect 
+    !> solution_volume/(rv * porosity); the method  @ref SetSaturationUser has no effect 
     !> on the values returned. The transport code must decide whether to ignore or account 
     !> for this change in solution volume due to reactions. Following reactions, the cell 
-    !> saturation is calculated as solution volume (@ref getsolutionvolume) divided by 
-    !> the product of representative volume (@ref setrepresentativevolume) and the porosity 
-    !> (@ref setporosity). The cell saturation returned by @a getsaturationcalculated 
+    !> saturation is calculated as solution volume (@ref GetSolutionVolume) divided by 
+    !> the product of representative volume (@ref SetRepresentativeVolume) and the porosity 
+    !> (@ref SetPorosity). The cell saturation returned by @a GetSaturationCalculated 
     !> may be less than or greater than the saturation set by the transport code 
-    !> (@ref setsaturationuser), and may be greater than or less than 1.0, even in 
+    !> (@ref SetSaturationUser), and may be greater than or less than 1.0, even in 
     !> fully saturated simulations. Only the following databases distributed with PhreeqcRM
     !> have molar volume information needed to accurately calculate solution volume and 
     !> saturation: phreeqc.dat, Amm.dat, and pitzer.dat.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param sat_calc      Array to receive the saturations. Dimension of the array is set to 
-    !> @a nxyz, where @a nxyz is the number of user grid cells (@ref getgridcellcount).
+    !> @a nxyz, where @a nxyz is the number of user grid cells (@ref GetGridCellCount).
     !> Values for inactive cells are set to 1e30.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getsolutionvolume,
-    !> @ref setporosity,
-    !> @ref setrepresentativevolume,
-    !> @ref setsaturationuser.
+    !> @ref GetSolutionVolume,
+    !> @ref SetPorosity,
+    !> @ref SetRepresentativeVolume,
+    !> @ref SetSaturationUser.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: sat_calc(:)
-    !> status = brm%runcells()
-    !> status = brm%getsaturationcalculated(sat_calc)
+    !> status = brm%RunCells()
+    !> status = brm%GetSaturationCalculated(sat_calc)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getsaturationcalculated(self, sat_calc)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetSaturationCalculated(self, sat_calc)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: sat_calc
-    getsaturationcalculated = RM_getsaturationcalculated(self%bmiphreeqcrm_id, sat_calc)
-    END FUNCTION getsaturationcalculated
+    GetSaturationCalculated = RM_GetSaturationCalculated(self%bmiphreeqcrm_id, sat_calc)
+    END FUNCTION GetSaturationCalculated
     
     INTEGER FUNCTION GetSaturation(self, sat_calc)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: sat_calc
-    GetSaturation = RM_getsaturationcalculated(self%bmiphreeqcrm_id, sat_calc)
+    GetSaturation = RM_GetSaturationCalculated(self%bmiphreeqcrm_id, sat_calc)
     END FUNCTION GetSaturation
 
     !> Populates an array with values from the current selected-output definition. 
-    !> @ref setcurrentselectedoutputusernumber or @ref setnthselectedoutput determines 
+    !> @ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput determines 
     !> which of the selected-output definitions is used to populate the array.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param so           An array to contain the selected-output values. Size of the array 
     !> is set to (@a nxyz, @a col), where @a nxyz is the number of grid cells in the user's 
-    !> model (@ref getgridcellcount), and @a col is the number of columns in the 
-    !> selected-output definition (@ref getselectedoutputcolumncount).
-    !> @retval IRESULT  0 is success, negative is failure (See @ref decodeerror).
+    !> model (@ref GetGridCellCount), and @a col is the number of columns in the 
+    !> selected-output definition (@ref GetSelectedOutputColumnCount).
+    !> @retval IRESULT  0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getcurrentselectedoutputusernumber,
-    !> @ref getnthselectedoutputusernumber,
-    !> @ref getselectedoutputcolumncount,
-    !> @ref getselectedoutputcount,
-    !> @ref getselectedoutputheadings,
-    !> @ref getselectedoutputrowcount,
-    !> @ref setcurrentselectedoutputusernumber,
-    !> @ref setnthselectedoutput,
-    !> @ref setselectedoutputon.
+    !> @ref GetCurrentSelectedOutputUserNumber,
+    !> @ref GetNthSelectedOutputUserNumber,
+    !> @ref GetSelectedOutputColumnCount,
+    !> @ref GetSelectedOutputCount,
+    !> @ref GetSelectedOutputHeadings,
+    !> @ref GetSelectedOutputRowCount,
+    !> @ref SetCurrentSelectedOutputUserNumber,
+    !> @ref SetNthSelectedOutput,
+    !> @ref SetSelectedOutputOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: headings
     !> real(kind=8), allocatable :: selected_out
-    !> do isel = 1, brm%getselectedoutputcount()
-    !>   n_user = brm%getnthselectedoutputusernumber(isel)
-    !>   status = brm%setcurrentselectedoutputusernumber(n_user)
-    !>   status = brm%getselectedoutput(selected_out)
-    !>   status = brm%getselectedoutputheadings(headings)
+    !> do isel = 1, brm%GetSelectedOutputCount()
+    !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
+    !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
+    !>   status = brm%GetSelectedOutput(selected_out)
+    !>   status = brm%GetSelectedOutputHeadings(headings)
     !>   ! Print results
-    !>   do i = 1, brm%getselectedoutputrowcount()
+    !>   do i = 1, brm%GetSelectedOutputRowCount()
     !>     write(*,*) "Cell number ", i
     !>     write(*,*) "     Selected output: "
-    !>     do j = 1, brm%getselectedoutputcolumncount()
+    !>     do j = 1, brm%GetSelectedOutputColumnCount()
     !>       write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ", trim(headings(j)),": ", selected_out(i,j)
     !>     enddo
     !>   enddo
@@ -4107,40 +4107,40 @@
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getselectedoutput(self, so)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetSelectedOutput(self, so)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:,:), INTENT(inout), allocatable :: so
-    getselectedoutput = RM_getselectedoutput(self%bmiphreeqcrm_id, so)
-    END FUNCTION getselectedoutput
+    GetSelectedOutput = RM_GetSelectedOutput(self%bmiphreeqcrm_id, so)
+    END FUNCTION GetSelectedOutput
 
     !> Returns the number of columns in the current selected-output definition. 
-    !> @ref setcurrentselectedoutputusernumber or @ref setnthselectedoutput
+    !> @ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput
     !> determines which of the selected-output definitions is used.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval                 Number of columns in the current selected-output 
-    !> definition, negative is failure (See @ref decodeerror).
+    !> definition, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getcurrentselectedoutputusernumber,
-    !> @ref getnthselectedoutputusernumber,
-    !> @ref getselectedoutput,
-    !> @ref getselectedoutputcount,
-    !> @ref getselectedoutputheadings,
-    !> @ref getselectedoutputrowcount,
-    !> @ref setcurrentselectedoutputusernumber,
-    !> @ref setnthselectedoutput,
-    !> @ref setselectedoutputon.
+    !> @ref GetCurrentSelectedOutputUserNumber,
+    !> @ref GetNthSelectedOutputUserNumber,
+    !> @ref GetSelectedOutput,
+    !> @ref GetSelectedOutputCount,
+    !> @ref GetSelectedOutputHeadings,
+    !> @ref GetSelectedOutputRowCount,
+    !> @ref SetCurrentSelectedOutputUserNumber,
+    !> @ref SetNthSelectedOutput,
+    !> @ref SetSelectedOutputOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: selected_out(:,:)
-    !> do isel = 1, brm%getselectedoutputcount()
-    !>   n_user = brm%getnthselectedoutputusernumber(isel)
-    !>   status = brm%setcurrentselectedoutputusernumber(n_user)
-    !>   status = brm%getselectedoutput(selected_out)
+    !> do isel = 1, brm%GetSelectedOutputCount()
+    !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
+    !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
+    !>   status = brm%GetSelectedOutput(selected_out)
     !>   ! Process results here
     !> enddo
     !> </PRE>
@@ -4148,38 +4148,38 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getselectedoutputcolumncount(self)
+    INTEGER FUNCTION GetSelectedOutputColumnCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getselectedoutputcolumncount = RM_getselectedoutputcolumncount(self%bmiphreeqcrm_id)
-    END FUNCTION getselectedoutputcolumncount
+    GetSelectedOutputColumnCount = RM_GetSelectedOutputColumnCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetSelectedOutputColumnCount
 
     !> Returns the number of selected-output definitions. 
-    !> @ref setcurrentselectedoutputusernumber or @ref setnthselectedoutput
+    !> @ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput
     !> determines which of the selected-output definitions is used.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval                 Number of selected-output definitions, negative is failure 
-    !> (See @ref decodeerror).
+    !> (See @ref DecodeError).
     !> @see
-    !> @ref getcurrentselectedoutputusernumber,
-    !> @ref getnthselectedoutputusernumber,
-    !> @ref getselectedoutput,
-    !> @ref getselectedoutputcolumncount,
-    !> @ref getselectedoutputheadings,
-    !> @ref getselectedoutputrowcount,
-    !> @ref setcurrentselectedoutputusernumber,
-    !> @ref setnthselectedoutput,
-    !> @ref setselectedoutputon.
+    !> @ref GetCurrentSelectedOutputUserNumber,
+    !> @ref GetNthSelectedOutputUserNumber,
+    !> @ref GetSelectedOutput,
+    !> @ref GetSelectedOutputColumnCount,
+    !> @ref GetSelectedOutputHeadings,
+    !> @ref GetSelectedOutputRowCount,
+    !> @ref SetCurrentSelectedOutputUserNumber,
+    !> @ref SetNthSelectedOutput,
+    !> @ref SetSelectedOutputOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: selected_out(:,:)
-    !> do isel = 1, brm%getselectedoutputcount()
-    !>   n_user = brm%getnthselectedoutputusernumber(isel)
-    !>   status = brm%setcurrentselectedoutputusernumber(n_user)
-    !>   status = brm%getselectedoutput(selected_out)
+    !> do isel = 1, brm%GetSelectedOutputCount()
+    !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
+    !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
+    !>   status = brm%GetSelectedOutput(selected_out)
     !>   ! Process results here
     !> enddo
     !> </PRE>
@@ -4187,86 +4187,86 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getselectedoutputcount(self)
+    INTEGER FUNCTION GetSelectedOutputCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getselectedoutputcount = RM_getselectedoutputcount(self%bmiphreeqcrm_id)
-    END FUNCTION getselectedoutputcount
+    GetSelectedOutputCount = RM_GetSelectedOutputCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetSelectedOutputCount
 
    
     !> Returns the selected-output headings for the current selected-output file.
-    !> @ref setcurrentselectedoutputusernumber or @ref setnthselectedoutput
+    !> @ref SetCurrentSelectedOutputUserNumber or @ref SetNthSelectedOutput
     !> determines which of the selected-output definitions is used.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param headings         Allocatable, 1D character variable.
     !> to receive the headings. Character length and dimension will be allocated as needed.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getcurrentselectedoutputusernumber,
-    !> @ref getnthselectedoutputusernumber,
-    !> @ref getselectedoutput,
-    !> @ref getselectedoutputcolumncount,
-    !> @ref getselectedoutputcount,
-    !> @ref getselectedoutputrowcount,
-    !> @ref setcurrentselectedoutputusernumber,
-    !> @ref setnthselectedoutput,
-    !> @ref setselectedoutputon.
+    !> @ref GetCurrentSelectedOutputUserNumber,
+    !> @ref GetNthSelectedOutputUserNumber,
+    !> @ref GetSelectedOutput,
+    !> @ref GetSelectedOutputColumnCount,
+    !> @ref GetSelectedOutputCount,
+    !> @ref GetSelectedOutputRowCount,
+    !> @ref SetCurrentSelectedOutputUserNumber,
+    !> @ref SetNthSelectedOutput,
+    !> @ref SetSelectedOutputOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable, :: headings(:)
-    !> do isel = 1, brm%getselectedoutputcount()
-    !>   status = brm%setnthselectedoutput(isel)
-    !>   status = brm%getselectedoutputheadings(headings)
+    !> do isel = 1, brm%GetSelectedOutputCount()
+    !>   status = brm%SetNthSelectedOutput(isel)
+    !>   status = brm%GetSelectedOutputHeadings(headings)
     !> enddo
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getselectedoutputheadings(self, headings)
+    INTEGER FUNCTION GetSelectedOutputHeadings(self, headings)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: headings
-    getselectedoutputheadings = RM_getselectedoutputheadings(self%bmiphreeqcrm_id, headings)
+    GetSelectedOutputHeadings = RM_GetSelectedOutputHeadings(self%bmiphreeqcrm_id, headings)
     return
-    END FUNCTION getselectedoutputheadings
+    END FUNCTION GetSelectedOutputHeadings
 
     !> Returns the number of rows in the current selected-output definition. However, the method
     !> is included only for convenience; the number of rows is always equal to the number of
-    !> grid cells in the user's model, and is equal to @ref getgridcellcount.
+    !> grid cells in the user's model, and is equal to @ref GetGridCellCount.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval                 Number of rows in the current selected-output definition, 
-    !> negative is failure (See @ref decodeerror).
+    !> negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getcurrentselectedoutputusernumber,
-    !> @ref getnthselectedoutputusernumber,
-    !> @ref getselectedoutput,
-    !> @ref getselectedoutputcolumncount,
-    !> @ref getselectedoutputcount,
-    !> @ref getselectedoutputheadings,
-    !> @ref setcurrentselectedoutputusernumber,
-    !> @ref setnthselectedoutput,
-    !> @ref setselectedoutputon.
+    !> @ref GetCurrentSelectedOutputUserNumber,
+    !> @ref GetNthSelectedOutputUserNumber,
+    !> @ref GetSelectedOutput,
+    !> @ref GetSelectedOutputColumnCount,
+    !> @ref GetSelectedOutputCount,
+    !> @ref GetSelectedOutputHeadings,
+    !> @ref SetCurrentSelectedOutputUserNumber,
+    !> @ref SetNthSelectedOutput,
+    !> @ref SetSelectedOutputOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: headings
     !> real(kind=8), allocatable :: selected_out
-    !> do isel = 1, brm%getselectedoutputcount()
-    !>   n_user = brm%getnthselectedoutputusernumber(isel)
-    !>   status = brm%setcurrentselectedoutputusernumber(n_user)
-    !>   status = brm%getselectedoutput(selected_out)
-    !>   status = brm%getselectedoutputheadings(headings)
+    !> do isel = 1, brm%GetSelectedOutputCount()
+    !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
+    !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
+    !>   status = brm%GetSelectedOutput(selected_out)
+    !>   status = brm%GetSelectedOutputHeadings(headings)
     !>   ! Print results
-    !>   do i = 1, brm%getselectedoutputrowcount()
+    !>   do i = 1, brm%GetSelectedOutputRowCount()
     !>     write(*,*) "Cell number ", i
     !>     write(*,*) "     Selected output: "
-    !>     do j = 1, brm%getselectedoutputcolumncount()
+    !>     do j = 1, brm%GetSelectedOutputColumnCount()
     !>       write(*,'(10x,i2,A2,A10,A2,f10.4)') j, " ", trim(headings(j)),": ", selected_out(i,j)
     !>     enddo
     !>   enddo
@@ -4277,31 +4277,31 @@
     !> @par MPI:
     !> Called by root.
 
-    INTEGER FUNCTION getselectedoutputrowcount(self)
+    INTEGER FUNCTION GetSelectedOutputRowCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getselectedoutputrowcount = RM_getselectedoutputrowcount(self%bmiphreeqcrm_id)
-    END FUNCTION getselectedoutputrowcount
+    GetSelectedOutputRowCount = RM_GetSelectedOutputRowCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetSelectedOutputRowCount
 
-    !> Returns the number of phases in the found by @ref findcomponents for 
+    !> Returns the number of phases in the found by @ref FindComponents for 
     !> which saturation indices can be calculated.
-    !> @ref findcomponents must be called before @ref getsicount.
+    !> @ref FindComponents must be called before @ref GetSICount.
     !> This method may be useful when generating selected output definitions related to
     !> saturation indices.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval              The number of phases in the initial-phreeqc module for which 
     !> saturation indices can be calculated.
     !> @see
-    !> @ref findcomponents,
-    !> @ref getsinames.
+    !> @ref FindComponents,
+    !> @ref GetSINames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
-    !> status = brm%getsinames(names)
-    !> do i = 1, brm%getsicount()
+    !> status = brm%GetSINames(names)
+    !> do i = 1, brm%GetSICount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -4309,33 +4309,33 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getsicount(self)
+    INTEGER FUNCTION GetSICount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getsicount = RM_getsicount(self%bmiphreeqcrm_id)
-    END FUNCTION getsicount
+    GetSICount = RM_GetSICount(self%bmiphreeqcrm_id)
+    END FUNCTION GetSICount
 
     !> Retrieves a list of all phases for which saturation indices can be calculated.
     !> The list includes all phases that contain only elements included in the components in
     !> the initial-phreeqc module. The list assumes that all components are present to be 
     !> able to calculate the entire list of SIs; it may be that one or more components are 
-    !> missing in any specific cell. @ref findcomponents must be called before 
-    !> @ref getsinames. This method may be useful when generating selected output 
+    !> missing in any specific cell. @ref FindComponents must be called before 
+    !> @ref GetSINames. This method may be useful when generating selected output 
     !> definitions related to saturation indices.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names            Allocatable array for saturation-index-phase names.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getsicount.
+    !> @ref FindComponents,
+    !> @ref GetSICount.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
-    !> status = brm%getsinames(names)
-    !> do i = 1, brm%getsicount()
+    !> status = brm%GetSINames(names)
+    !> do i = 1, brm%GetSICount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -4343,31 +4343,31 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getsinames(self, names)
+    INTEGER FUNCTION GetSINames(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getsinames = RM_getsinames(self%bmiphreeqcrm_id, names)
+    GetSINames = RM_GetSINames(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getsinames
+    END FUNCTION GetSINames
 
     !> Returns the number of solid solution components in the initial-phreeqc module.
-    !> @ref findcomponents must be called before @ref getsolidsolutioncomponentscount.
+    !> @ref FindComponents must be called before @ref GetSolidSolutionComponentsCount.
     !> This method may be useful when generating selected output definitions related to 
     !> solid solutions.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval         The number of solid solution components in the initial-phreeqc module.
     !> @see
-    !> @ref findcomponents, @ref getsolidsolutioncomponentsnames,
-    !> @ref getsolidsolutionnames.
+    !> @ref FindComponents, @ref GetSolidSolutionComponentsNames,
+    !> @ref GetSolidSolutionNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
-    !> status = brm%getsolidsolutioncomponentsnames(names)
-    !> do i = 1, brm%getsolidsolutioncomponentscount()
+    !> status = brm%GetSolidSolutionComponentsNames(names)
+    !> do i = 1, brm%GetSolidSolutionComponentsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -4375,31 +4375,31 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getsolidsolutioncomponentscount(self)
+    INTEGER FUNCTION GetSolidSolutionComponentsCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getsolidsolutioncomponentscount = RM_getsolidsolutioncomponentscount(self%bmiphreeqcrm_id)
-    END FUNCTION getsolidsolutioncomponentscount
+    GetSolidSolutionComponentsCount = RM_GetSolidSolutionComponentsCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetSolidSolutionComponentsCount
 
     !> Retrieves a list of the solid solution component names.
     !> The list includes all solid solution components found by call(s) to 
-    !> @ref findcomponents. @ref findcomponents must be called before 
-    !> @ref getsolidsolutioncomponentsnames. This method may be useful when 
+    !> @ref FindComponents. @ref FindComponents must be called before 
+    !> @ref GetSolidSolutionComponentsNames. This method may be useful when 
     !> generating selected output definitions related to solid solutions.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names       Allocatable array for the solid solution compnent names
-    !> @retval IRESULT 0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT 0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents, @ref getsolidsolutioncomponentscount, 
-    !> @ref getsolidsolutionnames.
+    !> @ref FindComponents, @ref GetSolidSolutionComponentsCount, 
+    !> @ref GetSolidSolutionNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
-    !> status = brm%getsolidsolutioncomponentsnames(names)
-    !> do i = 1, brm%getsolidsolutioncomponentscount()
+    !> status = brm%GetSolidSolutionComponentsNames(names)
+    !> do i = 1, brm%GetSolidSolutionComponentsCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -4407,36 +4407,36 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getsolidsolutioncomponentsnames(self, names)
+    INTEGER FUNCTION GetSolidSolutionComponentsNames(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getsolidsolutioncomponentsnames = RM_getsolidsolutioncomponentsnames(self%bmiphreeqcrm_id, names)
+    GetSolidSolutionComponentsNames = RM_GetSolidSolutionComponentsNames(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getsolidsolutioncomponentsnames
+    END FUNCTION GetSolidSolutionComponentsNames
 
     !> Retrieves a list of solid solution names.
-    !> The list includes solid solution names found by call(s) to @ref findcomponents.
+    !> The list includes solid solution names found by call(s) to @ref FindComponents.
     !> The solid solution names array is the same length as the solid solution components 
     !> array and provides the corresponding name of solid solution containing the component.
-    !> @ref findcomponents must be called before @ref getsolidsolutionnames.
+    !> @ref FindComponents must be called before @ref GetSolidSolutionNames.
     !> This method may be useful when generating selected output definitions related to 
     !> solid solutions.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names            Allocatable array for the solid solution names.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents, @ref getsolidsolutioncomponentscount, 
-    !> @ref getsolidsolutioncomponentsnames.
+    !> @ref FindComponents, @ref GetSolidSolutionComponentsCount, 
+    !> @ref GetSolidSolutionComponentsNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:), ss_names(:)
-    !> status = brm%getsolidsolutioncomponentsnames(names)
-    !> status = brm%getsolidsolutionnames(names)
-    !> do i = 1, brm%getsolidsolutioncomponentscount()
+    !> status = brm%GetSolidSolutionComponentsNames(names)
+    !> status = brm%GetSolidSolutionNames(names)
+    !> do i = 1, brm%GetSolidSolutionComponentsCount()
     !>   write(*,*) names(i), ss_names(i)
     !> enddo
     !> </PRE>
@@ -4444,14 +4444,14 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getsolidsolutionnames(self, names)
+    INTEGER FUNCTION GetSolidSolutionNames(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getsolidsolutionnames = RM_getsolidsolutionnames(self%bmiphreeqcrm_id, names)
+    GetSolidSolutionNames = RM_GetSolidSolutionNames(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getsolidsolutionnames
+    END FUNCTION GetSolidSolutionNames
 
 
     !> Transfer solution volumes from the reaction cells to the array given in the 
@@ -4463,34 +4463,34 @@
     !> @param vol            Allocatable array to receive the solution volumes. 
     !> Dimension of the array is set to (@a nxyz), where @a nxyz is the number of user 
     !> grid cells. Values for inactive cells are set to 1e30.
-    !> @retval IRESULT    0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT    0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getsaturationcalculated.
+    !> @ref GetSaturationCalculated.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: volume(:)allocate(volume)
-    !> status = brm%runcells()
-    !> status = brm%getsolutionvolume(volume)
+    !> status = brm%RunCells()
+    !> status = brm%GetSolutionVolume(volume)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getsolutionvolume(self, vol)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetSolutionVolume(self, vol)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), intent(inout), DIMENSION(:), allocatable :: vol
-    getsolutionvolume = RM_getsolutionvolume(self%bmiphreeqcrm_id, vol)
-    END FUNCTION getsolutionvolume
+    GetSolutionVolume = RM_GetSolutionVolume(self%bmiphreeqcrm_id, vol)
+    END FUNCTION GetSolutionVolume
 
     !> Transfer concentrations of aqueous species for each cell to the argument 
     !> (@a species_conc).
     !> This method is intended for use with multicomponent-diffusion transport 
-    !> calculations, and @ref setspeciessaveon must be set to @a true.
-    !> The list of aqueous species is determined by call(s) to  @ref findcomponents 
+    !> calculations, and @ref SetSpeciesSaveOn must be set to @a true.
+    !> The list of aqueous species is determined by call(s) to  @ref FindComponents 
     !> and includes all aqueous species that can be made from the set of components.
     !> Solution volumes used to calculate mol/L are calculated by the reaction module.
     !> Only the following databases distributed with PhreeqcRM have molar volume information
@@ -4498,239 +4498,239 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param species_conc     Allocatable array to receive the aqueous species 
     ! concentrations. Dimension of the array is set to (@a nxyz, @a nspecies),
-    !> where @a nxyz is the number of user grid cells (@ref getgridcellcount),
-    !> and @a nspecies is the number of aqueous species (@ref getspeciescount).
+    !> where @a nxyz is the number of user grid cells (@ref GetGridCellCount),
+    !> and @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
     !> Concentrations are moles per liter. Values for inactive cells are set to 1e30.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getspeciescount,
-    !> @ref getspeciesd25,
-    !> @ref getspecieslog10gammas,
-    !> @ref getspecieslog10molalities,
-    !> @ref getspeciesnames,
-    !> @ref getspeciessaveon,
-    !> @ref getspeciesz,
-    !> @ref setspeciessaveon,
-    !> @ref speciesconcentrations2module.
+    !> @ref FindComponents,
+    !> @ref GetSpeciesCount,
+    !> @ref GetSpeciesD25,
+    !> @ref GetSpeciesLog10Gammas,
+    !> @ref GetSpeciesLog10Molalities,
+    !> @ref GetSpeciesNames,
+    !> @ref GetSpeciesSaveOn,
+    !> @ref GetSpeciesZ,
+    !> @ref SetSpeciesSaveOn,
+    !> @ref SpeciesConcentrations2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: species_c(:,:)
-    !> status = brm%setspeciessaveon(1)
-    !> ncomps = brm%findcomponents()
-    !> status = brm%runcells()
-    !> status = brm%getspeciesconcentrations(species_c)
+    !> status = brm%SetSpeciesSaveOn(1)
+    !> ncomps = brm%FindComponents()
+    !> status = brm%RunCells()
+    !> status = brm%GetSpeciesConcentrations(species_c)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getspeciesconcentrations(self, species_conc)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetSpeciesConcentrations(self, species_conc)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), intent(inout), DIMENSION(:,:), allocatable :: species_conc
-    getspeciesconcentrations = RM_getspeciesconcentrations(self%bmiphreeqcrm_id, species_conc)
-    END FUNCTION getspeciesconcentrations
+    GetSpeciesConcentrations = RM_GetSpeciesConcentrations(self%bmiphreeqcrm_id, species_conc)
+    END FUNCTION GetSpeciesConcentrations
 
     !> Returns the number of aqueous species  in the reaction module.
     !> This method is intended for use with multicomponent-diffusion transport 
-    !> calculations, and @ref setspeciessaveon must be set to @a true.
-    !> The list of aqueous species is determined by @ref findcomponents and 
+    !> calculations, and @ref SetSpeciesSaveOn must be set to @a true.
+    !> The list of aqueous species is determined by @ref FindComponents and 
     !> includes all aqueous species that can be made from the set of components.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval IRESULT      The number of aqueous species, negative is failure 
-    !> (See @ref decodeerror).
+    !> (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getspeciesconcentrations,
-    !> @ref getspeciesd25,
-    !> @ref getspecieslog10gammas,
-    !> @ref getspecieslog10molalities,
-    !> @ref getspeciesnames,
-    !> @ref getspeciessaveon,
-    !> @ref getspeciesz,
-    !> @ref setspeciessaveon,
-    !> @ref speciesconcentrations2module.
+    !> @ref FindComponents,
+    !> @ref GetSpeciesConcentrations,
+    !> @ref GetSpeciesD25,
+    !> @ref GetSpeciesLog10Gammas,
+    !> @ref GetSpeciesLog10Molalities,
+    !> @ref GetSpeciesNames,
+    !> @ref GetSpeciesSaveOn,
+    !> @ref GetSpeciesZ,
+    !> @ref SetSpeciesSaveOn,
+    !> @ref SpeciesConcentrations2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setspeciessaveon(1)
-    !> ncomps = findcomponents()
-    !> status = brm%getspeciescount()
+    !> status = brm%SetSpeciesSaveOn(1)
+    !> ncomps = FindComponents()
+    !> status = brm%GetSpeciesCount()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION getspeciescount(self)
+    INTEGER FUNCTION GetSpeciesCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getspeciescount = RM_getspeciescount(self%bmiphreeqcrm_id)
-    END FUNCTION getspeciescount
+    GetSpeciesCount = RM_GetSpeciesCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetSpeciesCount
 
     !> Transfers diffusion coefficients at 25C to the array argument (@a diffc).
     !> This method is intended for use with multicomponent-diffusion transport 
-    !> calculations, and @ref setspeciessaveon must be set to @a true.
+    !> calculations, and @ref SetSpeciesSaveOn must be set to @a true.
     !> Diffusion coefficients are defined in SOLUTION_SPECIES data blocks, normally 
     !> in the database file. Databases distributed with the reaction module that have 
     !> diffusion coefficients defined are phreeqc.dat, Amm.dat, and pitzer.dat.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param diffc          Allocatable array to receive the diffusion coefficients 
     !> at 25 C, m^2/s. Dimension of the array is set to  @a nspecies, where @a nspecies 
-    !> is the number of aqueous species (@ref getspeciescount).
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> is the number of aqueous species (@ref GetSpeciesCount).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getspeciesconcentrations,
-    !> @ref getspeciescount,
-    !> @ref getspecieslog10gammas,
-    !> @ref getspecieslog10molalities,
-    !> @ref getspeciesnames,
-    !> @ref getspeciessaveon,
-    !> @ref getspeciesz,
-    !> @ref setspeciessaveon,
-    !> @ref speciesconcentrations2module.
+    !> @ref FindComponents,
+    !> @ref GetSpeciesConcentrations,
+    !> @ref GetSpeciesCount,
+    !> @ref GetSpeciesLog10Gammas,
+    !> @ref GetSpeciesLog10Molalities,
+    !> @ref GetSpeciesNames,
+    !> @ref GetSpeciesSaveOn,
+    !> @ref GetSpeciesZ,
+    !> @ref SetSpeciesSaveOn,
+    !> @ref SpeciesConcentrations2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: diffc(:)
-    !> status = brm%setspeciessaveon(1)
-    !> ncomps = brm%findcomponents()
-    !> nspecies = brm%getspeciesd25(diffc)
+    !> status = brm%SetSpeciesSaveOn(1)
+    !> ncomps = brm%FindComponents()
+    !> nspecies = brm%GetSpeciesD25(diffc)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION getspeciesd25(self, diffc)
+    INTEGER FUNCTION GetSpeciesD25(self, diffc)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), intent(inout), DIMENSION(:), allocatable :: diffc
-    getspeciesd25 = RM_getspeciesd25(self%bmiphreeqcrm_id, diffc)
-    END FUNCTION getspeciesd25
+    GetSpeciesD25 = RM_GetSpeciesD25(self%bmiphreeqcrm_id, diffc)
+    END FUNCTION GetSpeciesD25
 
     !> Transfer log10 aqueous-species activity coefficients to the array argument 
     !> (@a species_log10gammas)
     !> This method is intended for use with multicomponent-diffusion transport 
-    !> calculations, and @ref setspeciessaveon must be set to @a true.
+    !> calculations, and @ref SetSpeciesSaveOn must be set to @a true.
     !> The list of aqueous species is determined by call(s) to  
-    !> @ref findcomponents and includes all aqueous species that can be made 
+    !> @ref FindComponents and includes all aqueous species that can be made 
     !> from the set of components.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param species_log10gammas  Allocatable array to receive the log10 aqueous 
     !> species activity coefficients. Dimension of the array is (@a nxyz, @a nspecies),
-    !> where @a nxyz is the number of user grid cells (@ref getgridcellcount),
-    !> and @a nspecies is the number of aqueous species (@ref getspeciescount).
+    !> where @a nxyz is the number of user grid cells (@ref GetGridCellCount),
+    !> and @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
     !> Values for inactive cells are set to 1e30.
     !> @retval IRESULT     0 is success, negative is failure 
-    !> (See @ref decodeerror).
+    !> (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getspeciesconcentrations,
-    !> @ref getspeciescount,
-    !> @ref getspeciesd25,
-    !> @ref getspecieslog10molalities,
-    !> @ref getspeciesnames,
-    !> @ref getspeciessaveon,
-    !> @ref getspeciesz,
-    !> @ref setspeciessaveon,
-    !> @ref speciesconcentrations2module.
+    !> @ref FindComponents,
+    !> @ref GetSpeciesConcentrations,
+    !> @ref GetSpeciesCount,
+    !> @ref GetSpeciesD25,
+    !> @ref GetSpeciesLog10Molalities,
+    !> @ref GetSpeciesNames,
+    !> @ref GetSpeciesSaveOn,
+    !> @ref GetSpeciesZ,
+    !> @ref SetSpeciesSaveOn,
+    !> @ref SpeciesConcentrations2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: species_log10gammas(:)
-    !> status = brm%getspecieslog10gammas(species_log10gammas)
+    !> status = brm%GetSpeciesLog10Gammas(species_log10gammas)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getspecieslog10gammas(self, species_log10gammas)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetSpeciesLog10Gammas(self, species_log10gammas)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), intent(inout), DIMENSION(:,:), allocatable :: species_log10gammas
-    getspecieslog10gammas = RM_getspecieslog10gammas(self%bmiphreeqcrm_id, species_log10gammas)
-    END FUNCTION getspecieslog10gammas
+    GetSpeciesLog10Gammas = RM_GetSpeciesLog10Gammas(self%bmiphreeqcrm_id, species_log10gammas)
+    END FUNCTION GetSpeciesLog10Gammas
 
     !> Transfer log10 aqueous-species molalities to the array argument 
     !> (@a species_log10molalities)
-    !> To use this method @ref setspeciessaveon must be set to @a true.
-    !> The list of aqueous species is determined by @ref findcomponents 
+    !> To use this method @ref SetSpeciesSaveOn must be set to @a true.
+    !> The list of aqueous species is determined by @ref FindComponents 
     !> and includes all aqueous species that can be made from the set of components.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param species_log10molalities  Array to receive the aqueous species log10 
     !> molalities. Dimension of the array is set to (@a nxyz, @a nspecies),
-    !> where @a nxyz is the number of user grid cells (@ref getgridcellcount),
-    !> and @a nspecies is the number of aqueous species (@ref getspeciescount).
+    !> where @a nxyz is the number of user grid cells (@ref GetGridCellCount),
+    !> and @a nspecies is the number of aqueous species (@ref GetSpeciesCount).
     !> Values for inactive cells are set to 1e30.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getspeciesconcentrations,
-    !> @ref getspeciescount,
-    !> @ref getspeciesd25,
-    !> @ref getspecieslog10gammas,
-    !> @ref getspeciesnames,
-    !> @ref getspeciessaveon,
-    !> @ref getspeciesz,
-    !> @ref setspeciessaveon,
-    !> @ref speciesconcentrations2module.
+    !> @ref FindComponents,
+    !> @ref GetSpeciesConcentrations,
+    !> @ref GetSpeciesCount,
+    !> @ref GetSpeciesD25,
+    !> @ref GetSpeciesLog10Gammas,
+    !> @ref GetSpeciesNames,
+    !> @ref GetSpeciesSaveOn,
+    !> @ref GetSpeciesZ,
+    !> @ref SetSpeciesSaveOn,
+    !> @ref SpeciesConcentrations2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: species_log10gammas(:)
-    !> status = brm%getspecieslog10molalities(species_log10gammas)
+    !> status = brm%GetSpeciesLog10Molalities(species_log10gammas)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION getspecieslog10molalities(self, species_log10molalities)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetSpeciesLog10Molalities(self, species_log10molalities)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), intent(inout), DIMENSION(:,:), allocatable :: species_log10molalities
-    getspecieslog10molalities = RM_getspecieslog10molalities(self%bmiphreeqcrm_id, species_log10molalities)
-    END FUNCTION getspecieslog10molalities
+    GetSpeciesLog10Molalities = RM_GetSpeciesLog10Molalities(self%bmiphreeqcrm_id, species_log10molalities)
+    END FUNCTION GetSpeciesLog10Molalities
 
     !> Provides a list of aqueous species names to the argument (@a names).
     !> This method is intended for use with multicomponent-diffusion transport calculations,
-    !> and @ref setspeciessaveon must be set to @a true. The list of aqueous
-    !> species is determined by @ref findcomponents and includes all
+    !> and @ref SetSpeciesSaveOn must be set to @a true. The list of aqueous
+    !> species is determined by @ref FindComponents and includes all
     !> aqueous species that can be made from the set of components.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names            Allocatable character array to receive the species names.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getspeciesconcentrations,
-    !> @ref getspeciescount,
-    !> @ref getspeciesd25,
-    !> @ref getspecieslog10gammas,
-    !> @ref getspecieslog10molalities,
-    !> @ref getspeciessaveon,
-    !> @ref getspeciesz,
-    !> @ref setspeciessaveon,
-    !> @ref speciesconcentrations2module.
+    !> @ref FindComponents,
+    !> @ref GetSpeciesConcentrations,
+    !> @ref GetSpeciesCount,
+    !> @ref GetSpeciesD25,
+    !> @ref GetSpeciesLog10Gammas,
+    !> @ref GetSpeciesLog10Molalities,
+    !> @ref GetSpeciesSaveOn,
+    !> @ref GetSpeciesZ,
+    !> @ref SetSpeciesSaveOn,
+    !> @ref SpeciesConcentrations2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: names(:)
-    !> status = brm%setspeciessaveon(1)
-    !> ncomps = brm%findcomponents()
-    !> status = brm%getspeciesnames(names)
-    !> do i = 1, brm%getspeciescount()
+    !> status = brm%SetSpeciesSaveOn(1)
+    !> ncomps = brm%FindComponents()
+    !> status = brm%GetSpeciesNames(names)
+    !> do i = 1, brm%GetSpeciesCount()
     !>   write(*,*) names(i)
     !> enddo
     !> </PRE>
@@ -4738,40 +4738,40 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION getspeciesnames(self, names)
+    INTEGER FUNCTION GetSpeciesNames(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getspeciesnames = RM_getspeciesnames(self%bmiphreeqcrm_id, names)
+    GetSpeciesNames = RM_GetSpeciesNames(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getspeciesnames    
+    END FUNCTION GetSpeciesNames    
 
 
     !> Returns the value of the species-save property.
     !> By default, concentrations of aqueous species are not saved. Setting the species-
     !> save property to true allows aqueous species concentrations to be retrieved
-    !> with @ref getspeciesconcentrations, and solution compositions to be set with
-    !> @ref speciesconcentrations2module.
+    !> with @ref GetSpeciesConcentrations, and solution compositions to be set with
+    !> @ref SpeciesConcentrations2Module.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval IRESULT      0, species are not saved; 1, species are saved; negative is 
-    !> failure (See @ref decodeerror).
+    !> failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getspeciesconcentrations,
-    !> @ref getspeciescount,
-    !> @ref getspeciesd25,
-    !> @ref getspecieslog10gammas,
-    !> @ref getspecieslog10molalities,
-    !> @ref getspeciesnames,
-    !> @ref getspeciesz,
-    !> @ref setspeciessaveon,
-    !> @ref speciesconcentrations2module. 
+    !> @ref FindComponents,
+    !> @ref GetSpeciesConcentrations,
+    !> @ref GetSpeciesCount,
+    !> @ref GetSpeciesD25,
+    !> @ref GetSpeciesLog10Gammas,
+    !> @ref GetSpeciesLog10Molalities,
+    !> @ref GetSpeciesNames,
+    !> @ref GetSpeciesZ,
+    !> @ref SetSpeciesSaveOn,
+    !> @ref SpeciesConcentrations2Module. 
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> save_on = brm%getspeciessaveon()
+    !> save_on = brm%GetSpeciesSaveOn()
     !> if (save_on .ne. 0) then
     !>   write(*,*) "Reaction module is saving species concentrations"
     !> else
@@ -4782,53 +4782,53 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION getspeciessaveon(self)
+    INTEGER FUNCTION GetSpeciesSaveOn(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getspeciessaveon = RM_getspeciessaveon(self%bmiphreeqcrm_id)
-    END FUNCTION getspeciessaveon
+    GetSpeciesSaveOn = RM_GetSpeciesSaveOn(self%bmiphreeqcrm_id)
+    END FUNCTION GetSpeciesSaveOn
 
     !> Transfers the charge of each aqueous species to the array argument (@a  z).
     !> This method is intended for use with multicomponent-diffusion transport 
-    !> calculations, and @ref setspeciessaveon must be set to @a true.
+    !> calculations, and @ref SetSpeciesSaveOn must be set to @a true.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param z                Allocatable array that receives the charge for each 
     !> aqueous species. Dimension of the array is @a nspecies, where @a nspecies is is 
-    !> the number of aqueous species (@ref getspeciescount).
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> the number of aqueous species (@ref GetSpeciesCount).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getspeciesconcentrations,
-    !> @ref getspeciescount,
-    !> @ref getspeciesd25,
-    !> @ref getspecieslog10gammas,
-    !> @ref getspecieslog10molalities,
-    !> @ref getspeciesnames,
-    !> @ref getspeciessaveon,
-    !> @ref setspeciessaveon,
-    !> @ref speciesconcentrations2module.
+    !> @ref FindComponents,
+    !> @ref GetSpeciesConcentrations,
+    !> @ref GetSpeciesCount,
+    !> @ref GetSpeciesD25,
+    !> @ref GetSpeciesLog10Gammas,
+    !> @ref GetSpeciesLog10Molalities,
+    !> @ref GetSpeciesNames,
+    !> @ref GetSpeciesSaveOn,
+    !> @ref SetSpeciesSaveOn,
+    !> @ref SpeciesConcentrations2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: z(:)
-    !> status = brm%setspeciessaveon(1)
-    !> ncomps = brm%findcomponents()
-    !> nspecies = brm%getspeciescount()
-    !> status = brm%getspeciesz(z)
+    !> status = brm%SetSpeciesSaveOn(1)
+    !> ncomps = brm%FindComponents()
+    !> nspecies = brm%GetSpeciesCount()
+    !> status = brm%GetSpeciesZ(z)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION getspeciesz(self, z)
+    INTEGER FUNCTION GetSpeciesZ(self, z)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), intent(inout), DIMENSION(:), allocatable :: z
-    getspeciesz = RM_getspeciesz(self%bmiphreeqcrm_id, z)
-    END FUNCTION getspeciesz
+    GetSpeciesZ = RM_GetSpeciesZ(self%bmiphreeqcrm_id, z)
+    END FUNCTION GetSpeciesZ
 
     !> Returns an array with the starting cell numbers from the range of cell numbers 
     !> assigned to each worker.
@@ -4836,53 +4836,53 @@
     !> @param sc          Allocatable array to receive the starting cell numbers. 
     !> Dimension of the array is the number of threads (OpenMP) or the number of 
     !> processes (MPI).
-    !> @retval IRESULT 0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT 0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref create,
-    !> @ref getendcell,
-    !> @ref getmpitasks,
-    !> @ref getthreadcount.
+    !> @ref Create,
+    !> @ref GetEndCell,
+    !> @ref GetMpiTasks,
+    !> @ref GetThreadCount.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> integer, allocatable :: sc(:)
-    !> status = brm%getstartcell(sc)
+    !> status = brm%GetStartCell(sc)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION getstartcell(self, sc)
+    INTEGER FUNCTION GetStartCell(self, sc)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, intent(inout), DIMENSION(:), allocatable :: sc
-    getstartcell = RM_getstartcell(self%bmiphreeqcrm_id, sc)
+    GetStartCell = RM_GetStartCell(self%bmiphreeqcrm_id, sc)
     RETURN
-    END FUNCTION getstartcell
+    END FUNCTION GetStartCell
 
     !> Retrieves the surface names (such as "Hfo") that corresponds with
     !> the surface species names.
     !> The lists of surface species names and surface names are the same length.
-    !> @ref findcomponents must be called before @ref getsurfacenames.
+    !> @ref FindComponents must be called before @ref GetSurfaceNames.
     !> This method may be useful when generating selected output definitions related 
     !> to surfaces.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names            Allocatable array for the surface names.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getsurfacespeciescount, @ref getsurfacespeciesnames, @ref getsurfacetypes.
+    !> @ref FindComponents,
+    !> @ref GetSurfaceSpeciesCount, @ref GetSurfaceSpeciesNames, @ref GetSurfaceTypes.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: surface_species_names(:), types(:), surface_names(:)
-    !> status = brm%getsurfacespeciesnames(surface_species_names)
-    !> status = brm%getsurfacetypes(types)
-    !> status = brm%getsurfacenames(surface_names)
-    !> do i = 1, brm%getsurfacespeciescount()
+    !> status = brm%GetSurfaceSpeciesNames(surface_species_names)
+    !> status = brm%GetSurfaceTypes(types)
+    !> status = brm%GetSurfaceNames(surface_names)
+    !> do i = 1, brm%GetSurfaceSpeciesCount()
     !>   write(*,*) surface_species_names(i), types(i), surface_names(i)
     !> enddo
     !> </PRE>
@@ -4890,34 +4890,34 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getsurfacenames(self, names)
+    INTEGER FUNCTION GetSurfaceNames(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getsurfacenames = RM_getsurfacenames(self%bmiphreeqcrm_id, names)
+    GetSurfaceNames = RM_GetSurfaceNames(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getsurfacenames
+    END FUNCTION GetSurfaceNames
 
     !> Returns the number of surface species (such as "Hfo_wOH") found by call(s) to 
-    !> @ref findcomponents.
-    !> @ref findcomponents must be called before @ref getsurfacespeciescount.
+    !> @ref FindComponents.
+    !> @ref FindComponents must be called before @ref GetSurfaceSpeciesCount.
     !> This method may be useful when generating selected output definitions related 
     !> to surfaces.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval            The number of surface species in the reaction module.
     !> @see
-    !> @ref findcomponents,
-    !> @ref getsurfacespeciesnames, @ref getsurfacetypes, @ref getsurfacenames.
+    !> @ref FindComponents,
+    !> @ref GetSurfaceSpeciesNames, @ref GetSurfaceTypes, @ref GetSurfaceNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: surface_species_names(:), types(:), surface_names(:)
-    !> status = brm%getsurfacespeciesnames(surface_species_names)
-    !> status = brm%getsurfacetypes(types)
-    !> status = brm%getsurfacenames(surface_names)
-    !> do i = 1, brm%getsurfacespeciescount()
+    !> status = brm%GetSurfaceSpeciesNames(surface_species_names)
+    !> status = brm%GetSurfaceTypes(types)
+    !> status = brm%GetSurfaceNames(surface_names)
+    !> do i = 1, brm%GetSurfaceSpeciesCount()
     !>   write(*,*) surface_species_names(i), types(i), surface_names(i)
     !> enddo
     !> </PRE>
@@ -4925,37 +4925,37 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getsurfacespeciescount(self)
+    INTEGER FUNCTION GetSurfaceSpeciesCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getsurfacespeciescount = RM_getsurfacespeciescount(self%bmiphreeqcrm_id)
-    END FUNCTION getsurfacespeciescount
+    GetSurfaceSpeciesCount = RM_GetSurfaceSpeciesCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetSurfaceSpeciesCount
 
     !> Retrieves a list of surface species names.
     !> The list of surface species (for example, "Hfo_wOH") is derived from 
-    !> the list of components (@ref findcomponents) and the list of all surface 
-    !> types (such as "Hfo_w") that are found by call(s) to @ref findcomponents.
-    !> @ref findcomponents must be called before @ref getsurfacespeciesnames.
+    !> the list of components (@ref FindComponents) and the list of all surface 
+    !> types (such as "Hfo_w") that are found by call(s) to @ref FindComponents.
+    !> @ref FindComponents must be called before @ref GetSurfaceSpeciesNames.
     !> This method may be useful when generating selected output definitions related 
     !> to surfaces.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names            Allocatable array to receive the surface species names. 
     !> Dimension of the array is set to @a nspecies, where @a nspecies is returned by
-    !> @ref getspeciescount.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @ref GetSpeciesCount.
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getsurfacespeciescount, @ref getsurfacetypes, @ref getsurfacenames.
+    !> @ref FindComponents,
+    !> @ref GetSurfaceSpeciesCount, @ref GetSurfaceTypes, @ref GetSurfaceNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: surface_species_names(:), types(:), surface_names(:)
-    !> status = brm%getsurfacespeciesnames(surface_species_names)
-    !> status = brm%getsurfacetypes(types)
-    !> status = brm%getsurfacenames(surface_names)
-    !> do i = 1, brm%getsurfacespeciescount()
+    !> status = brm%GetSurfaceSpeciesNames(surface_species_names)
+    !> status = brm%GetSurfaceTypes(types)
+    !> status = brm%GetSurfaceNames(surface_names)
+    !> do i = 1, brm%GetSurfaceSpeciesCount()
     !>   write(*,*) surface_species_names(i), types(i), surface_names(i)
     !> enddo
     !> </PRE>
@@ -4963,35 +4963,35 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getsurfacespeciesnames(self, names)
+    INTEGER FUNCTION GetSurfaceSpeciesNames(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getsurfacespeciesnames = RM_getsurfacespeciesnames(self%bmiphreeqcrm_id, names)
+    GetSurfaceSpeciesNames = RM_GetSurfaceSpeciesNames(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getsurfacespeciesnames
+    END FUNCTION GetSurfaceSpeciesNames
 
     !> Retrieves the surface site types (such as "Hfo_w") that correspond with
     !> the surface species names.
     !> The lists of surface species names and surface species types are the same length.
-    !> @ref findcomponents must be called before @ref getsurfacetypes.
+    !> @ref FindComponents must be called before @ref GetSurfaceTypes.
     !> This method may be useful when generating selected output definitions related to surfaces.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param names            Allocatable array to receive surface types.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getsurfacespeciescount, @ref getsurfacespeciesnames, @ref getsurfacenames.
+    !> @ref FindComponents,
+    !> @ref GetSurfaceSpeciesCount, @ref GetSurfaceSpeciesNames, @ref GetSurfaceNames.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> character(len=:), allocatable :: surface_species_names(:), types(:), surface_names(:)
-    !> status = brm%getsurfacespeciesnames(surface_species_names)
-    !> status = brm%getsurfacetypes(types)
-    !> status = brm%getsurfacenames(surface_names)
-    !> do i = 1, brm%getsurfacespeciescount()
+    !> status = brm%GetSurfaceSpeciesNames(surface_species_names)
+    !> status = brm%GetSurfaceTypes(types)
+    !> status = brm%GetSurfaceNames(surface_names)
+    !> do i = 1, brm%GetSurfaceSpeciesCount()
     !>   write(*,*) surface_species_names(i), types(i), surface_names(i)
     !> enddo
     !> </PRE>
@@ -4999,168 +4999,168 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getsurfacetypes(self, names)
+    INTEGER FUNCTION GetSurfaceTypes(self, names)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=:), allocatable, dimension(:), INTENT(inout) :: names
-    getsurfacetypes = RM_getsurfacetypes(self%bmiphreeqcrm_id, names)
+    GetSurfaceTypes = RM_GetSurfaceTypes(self%bmiphreeqcrm_id, names)
     return 
-    END FUNCTION getsurfacetypes
+    END FUNCTION GetSurfaceTypes
 
     !> Returns an array of temperatures (@a temperature) from the reaction module.
     !> Reactions do not change the temperature, so the temperatures are either the
     !> temperatures at initialization, or the values set with the last call to
-    !> @ref settemperature.
+    !> @ref SetTemperature.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param temperature      Allocatable array to receive the temperatures.
     !> Dimension of the array is set to @a nxyz, where @a nxyz is the number of 
-    !> user grid cells (@ref getgridcellcount). Values for inactive cells are 
+    !> user grid cells (@ref GetGridCellCount). Values for inactive cells are 
     !> set to 1e30.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref settemperature.
+    !> @ref SetTemperature.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: temperature(:)
-    !> status = brm%gettemperature(temperature)
+    !> status = brm%GetTemperature(temperature)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION gettemperature(self, temperature)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION GetTemperature(self, temperature)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), intent(inout), dimension(:), allocatable :: temperature
-    gettemperature = RM_gettemperature(self%bmiphreeqcrm_id, temperature)
+    GetTemperature = RM_GetTemperature(self%bmiphreeqcrm_id, temperature)
     return
-    END FUNCTION gettemperature
+    END FUNCTION GetTemperature
 
     !> Returns the number of threads, which is equal to the number of workers used 
     !> to run in parallel with OPENMP.
     !> For the OPENMP version, the number of threads is set implicitly or explicitly 
-    !> with @ref create. For the MPI version, the number of threads is always one 
+    !> with @ref Create. For the MPI version, the number of threads is always one 
     !> for each process.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @retval           Number of threads, negative is failure (See @ref decodeerror).
+    !> @retval           Number of threads, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getmpitasks.
+    !> @ref GetMpiTasks.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> write(string1, "(A,I)") "Number of threads: ", brm%getthreadcount()
-    !> status = brm%outputmessage(string1)
+    !> write(string1, "(A,I)") "Number of threads: ", brm%GetThreadCount()
+    !> status = brm%OutputMessage(string1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers; result is always 1.
-    INTEGER FUNCTION getthreadcount(self)
+    INTEGER FUNCTION GetThreadCount(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    getthreadcount = RM_getthreadcount(self%bmiphreeqcrm_id)
-    END FUNCTION getthreadcount
+    GetThreadCount = RM_GetThreadCount(self%bmiphreeqcrm_id)
+    END FUNCTION GetThreadCount
 
     !> Returns the current simulation time in seconds. The reaction module does not 
     !> change the time value, so the returned value is equal to the default (0.0) or 
-    !> the last time set by @ref settime.
+    !> the last time set by @ref SetTime.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval            The current simulation time in seconds.
     !> @see
-    !> @ref gettimeconversion,
-    !> @ref gettimestep,
-    !> @ref settime,
-    !> @ref settimeconversion,
-    !> @ref settimestep.
+    !> @ref GetTimeconversion,
+    !> @ref GetTimestep,
+    !> @ref SetTime,
+    !> @ref SetTimeConversion,
+    !> @ref SetTimeStep.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
-    !>       brm%gettime() * brm%gettimeconversion(), " days"
-    !> status = brm%logmessage(string)
+    !>       brm%GetTime() * brm%GetTimeconversion(), " days"
+    !> status = brm%LogMessage(string)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    real(kind=8) FUNCTION gettime(self)
+    real(kind=8) FUNCTION GetTime(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    gettime = RM_gettime(self%bmiphreeqcrm_id)
-    END FUNCTION gettime
+    GetTime = RM_GetTime(self%bmiphreeqcrm_id)
+    END FUNCTION GetTime
 
     !> Returns a multiplier to convert time from seconds to another unit, as 
     !> specified by the user. The reaction module uses seconds as the time unit. 
-    !> The user can set a conversion factor (@ref settimeconversion) and retrieve 
-    !> it with gettimeconversion. The reaction module only uses the conversion 
+    !> The user can set a conversion factor (@ref SetTimeConversion) and retrieve 
+    !> it with GetTimeconversion. The reaction module only uses the conversion 
     !> factor when printing the long version of cell chemistry 
-    !> (@ref setprintchemistryon), which is rare. Default conversion factor is 1.0.
+    !> (@ref SetPrintChemistryOn), which is rare. Default conversion factor is 1.0.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval                 Multiplier to convert seconds to another time unit.
     !> @see
-    !> @ref gettime,
-    !> @ref gettimestep,
-    !> @ref settime,
-    !> @ref settimeconversion,
-    !> @ref settimestep.
+    !> @ref GetTime,
+    !> @ref GetTimestep,
+    !> @ref SetTime,
+    !> @ref SetTimeConversion,
+    !> @ref SetTimeStep.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
-    !>       brm%gettime() * brm%gettimeconversion(), " days"
-    !> status = brm%logmessage(string)
+    !>       brm%GetTime() * brm%GetTimeconversion(), " days"
+    !> status = brm%LogMessage(string)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    real(kind=8) FUNCTION gettimeconversion(self)
+    real(kind=8) FUNCTION GetTimeconversion(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    gettimeconversion = RM_gettimeconversion(self%bmiphreeqcrm_id)
-    END FUNCTION gettimeconversion
+    GetTimeconversion = RM_GetTimeconversion(self%bmiphreeqcrm_id)
+    END FUNCTION GetTimeconversion
 
     !> Returns the current simulation time step in seconds.
     !> This is the time over which kinetic reactions are integrated in a 
-    !> call to @ref runcells. The reaction module does not change the time 
+    !> call to @ref RunCells. The reaction module does not change the time 
     !> step value, so the returned value is equal to the default (0.0) or the 
-    !> last time step set by @ref settimestep.
+    !> last time step set by @ref SetTimeStep.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval            The current simulation time step in seconds.
     !> @see
-    !> @ref gettime,
-    !> @ref gettimeconversion,
-    !> @ref settime,
-    !> @ref settimeconversion,
-    !> @ref settimestep.
+    !> @ref GetTime,
+    !> @ref GetTimeconversion,
+    !> @ref SetTime,
+    !> @ref SetTimeConversion,
+    !> @ref SetTimeStep.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "          Time step             ", &
-    !>       brm%gettimestep() * brm%gettimeconversion(), " days"
-    !> status = brm%logmessage(string)
+    !>       brm%GetTimestep() * brm%GetTimeconversion(), " days"
+    !> status = brm%LogMessage(string)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    real(kind=8) FUNCTION gettimestep(self)
+    real(kind=8) FUNCTION GetTimestep(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    gettimestep = RM_gettimestep(self%bmiphreeqcrm_id)
-    END FUNCTION gettimestep
+    GetTimestep = RM_GetTimestep(self%bmiphreeqcrm_id)
+    END FUNCTION GetTimestep
 
     ! INTEGER FUNCTION GetVarItemsize(self, var)
     ! USE ISO_C_BINDING
@@ -5202,33 +5202,33 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param viscosity            Allocatable array to receive the viscosities. Dimension of 
     !> the array is @a nxyz, where @a nxyz is the number of user grid cells 
-    !> (@ref getgridcellcount). Values for inactive cells are set to 1e30.
-    !> @retval IRESULT          0 is success, negative is failure (See @ref decodeerror).
+    !> (@ref GetGridCellCount). Values for inactive cells are set to 1e30.
+    !> @retval IRESULT          0 is success, negative is failure (See @ref DecodeError).
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: viscosity(:)
-    !> status = brm%getviscosity(viscosity)
+    !> status = brm%GetViscosity(viscosity)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION getviscosity(self, viscosity)
+    INTEGER FUNCTION GetViscosity(self, viscosity)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), intent(inout), dimension(:), allocatable :: viscosity
-    getviscosity = RM_getviscosity(self%bmiphreeqcrm_id, viscosity)
+    GetViscosity = RM_GetViscosity(self%bmiphreeqcrm_id, viscosity)
     return
-    END FUNCTION getviscosity
+    END FUNCTION GetViscosity
 
 #ifdef USE_YAML
     !> A YAML file can be used to initialize an instance of PhreeqcRM.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param yaml_name         String containing the YAML file name.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @par
     !> The file contains a YAML map of PhreeqcRM methods
     !> and the arguments corresponding to the methods.
@@ -5239,8 +5239,8 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> loaddatabase: phreeqc.dat
-    !> runfile:
+    !> LoadDatabase: phreeqc.dat
+    !> RunFile:
     !> workers: true
     !> initial_phreeqc: true
     !> utility: true
@@ -5249,7 +5249,7 @@
     !> </CODE>
     !> @endhtmlonly
     !> @par
-    !> @ref initializeyaml will read the YAML file and execute the specified methods with
+    !> @ref InitializeYAML will read the YAML file and execute the specified methods with
     !> the specified arguments. Using YAML
     !> terminology, the argument(s) for a method may be a scalar, a sequence, or a map,
     !> depending if the argument is
@@ -5269,66 +5269,66 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> closefiles(void);
-    !> createmapping(std::vector< int >& grid2chem);
-    !> dumpmodule();
-    !> findcomponents();
-    !> initialequilibriumphases2module(std::vector< int > equilibrium_phases);
-    !> initialexchanges2module(std::vector< int > exchanges);
-    !> initialgasphases2module(std::vector< int > gas_phases);
+    !> CloseFiles(void);
+    !> Createmapping(std::vector< int >& grid2chem);
+    !> DumpModule();
+    !> FindComponents();
+    !> InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+    !> InitialExchanges2Module(std::vector< int > exchanges);
+    !> InitialGasPhases2Module(std::vector< int > gas_phases);
     !> InitialKineticss2Module(std::vector< int > kinetics);
-    !> initialsolidsolutions2module(std::vector< int > solid_solutions);
-    !> initialsolutions2module(std::vector< int > solutions);
-    !> initialsurfaces2module(std::vector< int > surfaces);
-    !> initialphreeqc2module(std::vector< int > initial_conditions1);
-    !> initialphreeqc2module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
-    !> initialphreeqccell2module(int n, std::vector< int > cell_numbers);
-    !> loaddatabase(std::string database);
-    !> openfiles(void);
-    !> outputmessage(std::string str);
-    !> runcells(void);
-    !> runfile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
-    !> runstring(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
-    !> screenmessage(std::string str);
-    !> setcomponenth2o(bool tf);
-    !> setconcentrations(std::vector< double > c);
-    !> setcurrentselectedoutputusernumber(int n_user);
-    !> setdensityuser(std::vector< double > density);
-    !> setdumpfilename(std::string dump_name);
-    !> seterrorhandlermode(int mode);
-    !> seterroron(bool tf);
-    !> setfileprefix(std::string prefix);
-    !> setgascompmoles(std::vector< double > gas_moles);
-    !> setgasphasevolume(std::vector< double > gas_volume);
-    !> setpartitionuzsolids(bool tf);
-    !> setporosity(std::vector< double > por);
-    !> setpressure(std::vector< double > p);
-    !> setprintchemistrymask(std::vector< int > cell_mask);
-    !> setprintchemistryon(bool workers, bool initial_phreeqc, bool utility);
-    !> setrebalancebycell(bool tf);
-    !> setrebalancefraction(double f);
-    !> setrepresentativevolume(std::vector< double > rv);
-    !> setsaturationuser(std::vector< double > sat);
-    !> setscreenon(bool tf);
-    !> setselectedoutputon(bool tf);
-    !> setspeciessaveon(bool save_on);
-    !> settemperature(std::vector< double > t);
-    !> settime(double time);
-    !> settimeconversion(double conv_factor);
-    !> settimestep(double time_step);
-    !> setunitsexchange(int option);
-    !> setunitsgasphase(int option);
-    !> setunitskinetics(int option);
-    !> setunitsppassemblage(int option);
-    !> setunitssolution(int option);
-    !> setunitsssassemblage(int option);
-    !> setunitssurface(int option);
-    !> speciesconcentrations2module(std::vector< double > species_conc);
-    !> statesave(int istate);
-    !> stateapply(int istate);
-    !> statedelete(int istate);
-    !> usesolutiondensityvolume(bool tf);
-    !> warningmessage(std::string warnstr);
+    !> InitialSolidSolutions2Module(std::vector< int > solid_solutions);
+    !> InitialSolutions2Module(std::vector< int > solutions);
+    !> InitialSurfaces2Module(std::vector< int > surfaces);
+    !> InitialPhreeqc2Module(std::vector< int > initial_conditions1);
+    !> InitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
+    !> InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
+    !> LoadDatabase(std::string database);
+    !> OpenFiles(void);
+    !> OutputMessage(std::string str);
+    !> RunCells(void);
+    !> RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
+    !> RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
+    !> ScreenMessage(std::string str);
+    !> SetComponentH2O(bool tf);
+    !> SetConcentrations(std::vector< double > c);
+    !> SetCurrentSelectedOutputUserNumber(int n_user);
+    !> SetDensityUser(std::vector< double > density);
+    !> SetDumpFileName(std::string dump_name);
+    !> SetErrorHandlerMode(int mode);
+    !> SetErrorOn(bool tf);
+    !> SetFilePrefix(std::string prefix);
+    !> SetGasCompMoles(std::vector< double > gas_moles);
+    !> SetGasPhaseVolume(std::vector< double > gas_volume);
+    !> SetPartitionUZSolids(bool tf);
+    !> SetPorosity(std::vector< double > por);
+    !> SetPressure(std::vector< double > p);
+    !> SetPrintChemistryMask(std::vector< int > cell_mask);
+    !> SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
+    !> SetRebalanceByCell(bool tf);
+    !> SetRebalanceFraction(double f);
+    !> SetRepresentativeVolume(std::vector< double > rv);
+    !> SetSaturationUser(std::vector< double > sat);
+    !> SetScreenOn(bool tf);
+    !> SetSelectedOutputOn(bool tf);
+    !> SetSpeciesSaveOn(bool save_on);
+    !> SetTemperature(std::vector< double > t);
+    !> SetTime(double time);
+    !> SetTimeConversion(double conv_factor);
+    !> SetTimeStep(double time_step);
+    !> SetUnitsExchange(int option);
+    !> SetUnitsGasPhase(int option);
+    !> SetUnitsKinetics(int option);
+    !> SetUnitsPPassemblage(int option);
+    !> SetUnitsSolution(int option);
+    !> SetUnitsSSassemblage(int option);
+    !> SetUnitsSurface(int option);
+    !> SpeciesConcentrations2Module(std::vector< double > species_conc);
+    !> StateSave(int istate);
+    !> StateApply(int istate);
+    !> StateDelete(int istate);
+    !> UseSolutionDensityVolume(bool tf);
+    !> WarningMessage(std::string warnstr);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -5337,20 +5337,20 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !>    id = create(nxyz, MPI_COMM_WORLD)
-    !>    status = brm%initializeyaml("myfile.yaml")
+    !>    id = Create(nxyz, MPI_COMM_WORLD)
+    !>    status = brm%InitializeYAML("myfile.yaml")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION initializeyaml(self, yaml_name)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION InitializeYAML(self, yaml_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=*), INTENT(in) :: yaml_name
-    initializeyaml = RM_initializeyaml(self%bmiphreeqcrm_id, yaml_name)
-    END FUNCTION initializeyaml
+    InitializeYAML = RM_InitializeYAML(self%bmiphreeqcrm_id, yaml_name)
+    END FUNCTION InitializeYAML
 #endif
 
     !> Fills an array (@a bc_conc) with concentrations from solutions in the 
@@ -5366,8 +5366,8 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param bc_conc       Allocatable array of concentrations extracted from the 
     !> InitialPhreeqc instance. The dimension of @a bc_conc is set to (@a n_boundary, @a ncomp),
-    !> where @a ncomp is the number of components returned from @ref findcomponents 
-    !> or @ref getcomponentcount.
+    !> where @a ncomp is the number of components returned from @ref FindComponents 
+    !> or @ref GetComponentCount.
     !> @param n_boundary    The number of boundary condition solutions that need to be filled.
     !> @param bc1           Array of solution index numbers that refer to solutions in the 
     !> InitialPhreeqc instance. Size is @a n_boundary.
@@ -5375,10 +5375,10 @@
     !> and are defined to mix with @a bc1.
     !> Size is @a n_boundary. This argument and @a f1 are optional.
     !> @param f1            Array with fraction of @a bc1 that mixes with (1-@a f1) of @a bc2.
-    !> @retval IRESULT   0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT   0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getcomponentcount.
+    !> @ref FindComponents,
+    !> @ref GetComponentCount.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -5391,13 +5391,13 @@
     !> bc1 = 0           ! solution 0 from InitialPhreeqc instance
     !> bc2 = -1          ! no bc2 solution for mixing
     !> f1 = 1.0          ! mixing fraction for bc1
-    !> status = brm%initialphreeqc2concentrations(bc_conc, nbound, bc1, bc2, f1)
+    !> status = brm%InitialPhreeqc2Concentrations(bc_conc, nbound, bc1, bc2, f1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION initialphreeqc2concentrations(self, bc_conc, n_boundary, bc1, bc2, f1)
+    INTEGER FUNCTION InitialPhreeqc2Concentrations(self, bc_conc, n_boundary, bc1, bc2, f1)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
@@ -5406,20 +5406,20 @@
     INTEGER, INTENT(in), DIMENSION(:) :: bc1
     INTEGER, INTENT(in), DIMENSION(:) , OPTIONAL :: bc2
     real(kind=8), INTENT(in), DIMENSION(:) , OPTIONAL :: f1
-    initialphreeqc2concentrations = RM_initialphreeqc2concentrations(self%bmiphreeqcrm_id, bc_conc, n_boundary, bc1, bc2, f1)
-    END FUNCTION initialphreeqc2concentrations
+    InitialPhreeqc2Concentrations = RM_InitialPhreeqc2Concentrations(self%bmiphreeqcrm_id, bc_conc, n_boundary, bc1, bc2, f1)
+    END FUNCTION InitialPhreeqc2Concentrations
 
     !> Transfer solutions and reactants from the InitialPhreeqc instance to the 
     !> reaction-module workers, possibly with mixing. In its simplest form, @a ic1 is 
     !> used to select initial conditions, including solutions and reactants,
     !> for each cell of the model, without mixing. @a ic1 is dimensioned (@a nxyz, 7), 
     !> where @a nxyz is the number of grid cells in the user's model
-    !> (@ref getgridcellcount). The dimension of 7 refers to solutions and reactants 
+    !> (@ref GetGridCellCount). The dimension of 7 refers to solutions and reactants 
     !> in the following order: (1) SOLUTIONS, (2) EQUILIBRIUM_PHASES, (3) EXCHANGE, 
     !> (4) SURFACE, (5) GAS_PHASE, (6) SOLID_SOLUTIONS, and (7) KINETICS. In Fortran, 
     !> ic1(100, 4) = 2, indicates that cell 99 (0 based) contains the SURFACE definition 
     !> with user number 2 that has been defined in the InitialPhreeqc instance (either 
-    !> by @ref runfile or @ref runstring).
+    !> by @ref RunFile or @ref RunString).
     !> @n@n
     !> It is also possible to mix solutions and reactants to obtain the initial conditions 
     !> for cells. For mixing, @a ic2 contains numbers for a second entity that mixes with 
@@ -5443,16 +5443,16 @@
     !> @param f1           Fraction of ic1 that mixes with (1-@a f1) of ic2.
     !> Size is (nxyz,7). The order of definitions is given above.
     !> Optional in Fortran; omitting results in no mixing.
-    !> @retval IRESULT          0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT          0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref initialsolutions2module,
-    !> @ref initialequilibriumphases2module,
-    !> @ref initialexchanges2module,
-    !> @ref initialgasphases2module,
-    !> @ref initialkinetics2module,
-    !> @ref initialsolidsolutions2module,
-    !> @ref initialsurfaces2module,
-    !> @ref initialphreeqccell2module.
+    !> @ref InitialSolutions2Module,
+    !> @ref InitialEquilibriumPhases2Module,
+    !> @ref InitialExchanges2Module,
+    !> @ref InitialGasPhases2Module,
+    !> @ref InitialKinetics2Module,
+    !> @ref InitialSolidSolutions2Module,
+    !> @ref InitialSurfaces2Module,
+    !> @ref InitialPhreeqcCell2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -5470,322 +5470,322 @@
     !>   ic1(i,6) = -1      ! Solid solutions none
     !>   ic1(i,7) = -1      ! Kinetics none
     !> enddo
-    !> status = brm%initialphreeqc2module(ic1, ic2, f1)1))
+    !> status = brm%InitialPhreeqc2Module(ic1, ic2, f1)1))
     !> ! No mixing is defined, so the following is equivalent
-    !> status = brm%initialphreeqc2module(ic1)
+    !> status = brm%InitialPhreeqc2Module(ic1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION initialphreeqc2module(self, ic1, ic2, f1)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION InitialPhreeqc2Module(self, ic1, ic2, f1)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(inout), DIMENSION(:,:) :: ic1
     INTEGER, INTENT(in), DIMENSION(:,:), OPTIONAL :: ic2
     real(kind=8), INTENT(inout), DIMENSION(:,:), OPTIONAL :: f1
-    initialphreeqc2module = RM_initialphreeqc2module(self%bmiphreeqcrm_id, ic1, ic2, f1)
-    END FUNCTION initialphreeqc2module
+    InitialPhreeqc2Module = RM_InitialPhreeqc2Module(self%bmiphreeqcrm_id, ic1, ic2, f1)
+    END FUNCTION InitialPhreeqc2Module
 
     !> Transfer SOLUTION definitions from the InitialPhreeqc instance to the reaction-
     !> module workers. 
     !> @a solutions is used to select SOLUTION definitions for each 
     !> cell of the model. @a solutions is dimensioned @a nxyz, where @a nxyz is the 
-    !> number of grid cells in the  user's model (@ref getgridcellcount).
+    !> number of grid cells in the  user's model (@ref GetGridCellCount).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param solutions    Array of SOLUTION index numbers that refer to
     !> definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values 
     !> are ignored, resulting in no transfer of a SOLUTION definition for that cell.
     !> (Note that all cells must have a SOLUTION definition, which could be defined 
-    !> by other calls to @a initialsolutions2module, @ref initialphreeqc2module, 
-    !> or @ref initialphreeqccell2module.)
-    !> @retval IRESULT  0 is success, negative is failure (See @ref decodeerror).
+    !> by other calls to @a InitialSolutions2Module, @ref InitialPhreeqc2Module, 
+    !> or @ref InitialPhreeqcCell2Module.)
+    !> @retval IRESULT  0 is success, negative is failure (See @ref DecodeError).
     !> @see     
-    !> @ref initialequilibriumphases2module,
-    !> @ref initialexchanges2module,
-    !> @ref initialgasphases2module,
-    !> @ref initialkinetics2module,
-    !> @ref initialsolidsolutions2module,
-    !> @ref initialsurfaces2module,
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module.
+    !> @ref InitialEquilibriumPhases2Module,
+    !> @ref InitialExchanges2Module,
+    !> @ref InitialGasPhases2Module,
+    !> @ref InitialKinetics2Module,
+    !> @ref InitialSolidSolutions2Module,
+    !> @ref InitialSurfaces2Module,
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> dimension(solutions(nxyz))
     !> solutions = 1
-    !> status = brm%initialsolutions2module(solutions);
+    !> status = brm%InitialSolutions2Module(solutions);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION initialsolutions2module(self, solutions)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION InitialSolutions2Module(self, solutions)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in), DIMENSION(:) :: solutions
-    initialsolutions2module = RM_initialsolutions2module(self%bmiphreeqcrm_id, solutions)
-    END FUNCTION initialsolutions2module  
+    InitialSolutions2Module = RM_InitialSolutions2Module(self%bmiphreeqcrm_id, solutions)
+    END FUNCTION InitialSolutions2Module  
 
     !> Transfer EQUILIBRIUM_PHASES definitions from the InitialPhreeqc instance to the 
     !> reaction-module workers.
     !> @a equilibrium_phases is used to select EQUILIBRIUM_PHASES definitions for each 
     !> cell of the model. @a equilibrium_phases is dimensioned @a nxyz, where @a nxyz is 
-    !> the number of grid cells in the  user's model (@ref getgridcellcount).
+    !> the number of grid cells in the  user's model (@ref GetGridCellCount).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param equilibrium_phases Array of EQUILIBRIUM_PHASES index numbers that refer to
     !> definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values are 
     !> ignored, resulting in no transfer of an EQUILIBRIUM_PHASES definition for that cell.
     !> (Note that an EQUILIBRIUM_PHASES definition for a cell could be defined by other 
-    !> calls to @a initialequilibriumphases2module, @ref initialphreeqc2module, or 
-    !> @ref initialphreeqccell2module.)
-    !> @retval IRESULT    0 is success, negative is failure (See @ref decodeerror).
+    !> calls to @a InitialEquilibriumPhases2Module, @ref InitialPhreeqc2Module, or 
+    !> @ref InitialPhreeqcCell2Module.)
+    !> @retval IRESULT    0 is success, negative is failure (See @ref DecodeError).
     !> @see 
-    !> @ref initialsolutions2module,
-    !> @ref initialexchanges2module,
-    !> @ref initialgasphases2module,
-    !> @ref initialkinetics2module,
-    !> @ref initialsolidsolutions2module,
-    !> @ref initialsurfaces2module,
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module.
+    !> @ref InitialSolutions2Module,
+    !> @ref InitialExchanges2Module,
+    !> @ref InitialGasPhases2Module,
+    !> @ref InitialKinetics2Module,
+    !> @ref InitialSolidSolutions2Module,
+    !> @ref InitialSurfaces2Module,
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> dimension(equilibrium_phases(nxyz))
     !> equilibrium_phases = 1
-    !> status = brm%initialequilibriumphases2module(equilibrium_phases);
+    !> status = brm%InitialEquilibriumPhases2Module(equilibrium_phases);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION initialequilibriumphases2module(self, equilibrium_phases)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION InitialEquilibriumPhases2Module(self, equilibrium_phases)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in), DIMENSION(:) :: equilibrium_phases
-    initialequilibriumphases2module = RM_initialequilibriumphases2module(self%bmiphreeqcrm_id, equilibrium_phases)
-    END FUNCTION initialequilibriumphases2module
+    InitialEquilibriumPhases2Module = RM_InitialEquilibriumPhases2Module(self%bmiphreeqcrm_id, equilibrium_phases)
+    END FUNCTION InitialEquilibriumPhases2Module
 
     !> Transfer EXCHANGE definitions from the InitialPhreeqc instance to the 
     !> reaction-module workers.
     !> @a exchanges is used to select EXCHANGE definitions for each cell of the model.
     !> @a exchanges is dimensioned @a nxyz, where @a nxyz is the number of grid cells 
-    !> in the user's model (@ref getgridcellcount).
+    !> in the user's model (@ref GetGridCellCount).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param exchanges    Vector of EXCHANGE index numbers that refer to
     !> definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values 
     !> are ignored, resulting in no transfer of an EXCHANGE definition for that cell.
     !> (Note that an EXCHANGE definition for a cell could be defined by other 
-    !> calls to @a initialexchanges2module, @ref initialphreeqc2module, or 
-    !> @ref initialphreeqccell2module.)
-    !> @retval IRESULT  0 is success, negative is failure (See @ref decodeerror).
+    !> calls to @a InitialExchanges2Module, @ref InitialPhreeqc2Module, or 
+    !> @ref InitialPhreeqcCell2Module.)
+    !> @retval IRESULT  0 is success, negative is failure (See @ref DecodeError).
     !> @see 
-    !> @ref initialsolutions2module,
-    !> @ref initialequilibriumphases2module,
-    !> @ref initialgasphases2module,
-    !> @ref initialkinetics2module,
-    !> @ref initialsolidsolutions2module,
-    !> @ref initialsurfaces2module,
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module.
+    !> @ref InitialSolutions2Module,
+    !> @ref InitialEquilibriumPhases2Module,
+    !> @ref InitialGasPhases2Module,
+    !> @ref InitialKinetics2Module,
+    !> @ref InitialSolidSolutions2Module,
+    !> @ref InitialSurfaces2Module,
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> dimension(exchanges(nxyz))
     !> exchanges = 1
-    !> status = brm%initialexchanges2module(exchanges);
+    !> status = brm%InitialExchanges2Module(exchanges);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION initialexchanges2module(self, exchanges)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION InitialExchanges2Module(self, exchanges)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in), DIMENSION(:) :: exchanges
-    initialexchanges2module = RM_initialexchanges2module(self%bmiphreeqcrm_id, exchanges)
-    END FUNCTION initialexchanges2module
+    InitialExchanges2Module = RM_InitialExchanges2Module(self%bmiphreeqcrm_id, exchanges)
+    END FUNCTION InitialExchanges2Module
 
     !> Transfer GAS_PHASE definitions from the InitialPhreeqc instance to the 
     !> reaction-module workers.
     !> @a gas_phases is used to select GAS_PHASE definitions for each cell of the model.
     !> @a gas_phases is dimensioned @a nxyz, where @a nxyz is the number of grid cells 
-    !> in the user's model (@ref getgridcellcount).
+    !> in the user's model (@ref GetGridCellCount).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param gas_phases   Vector of GAS_PHASE index numbers that refer to
     !> definitions in the InitialPhreeqc instance.Size is @a nxyz. Negative values are 
     !> ignored, resulting in no transfer of a GAS_PHASE definition for that cell.
     !> (Note that an GAS_PHASE definition for a cell could be defined by other 
-    !> calls to @a initialgasphases2module, @ref initialphreeqc2module, or 
-    !> @ref initialphreeqccell2module.)
-    !> @retval IRESULT  0 is success, negative is failure (See @ref decodeerror).
+    !> calls to @a InitialGasPhases2Module, @ref InitialPhreeqc2Module, or 
+    !> @ref InitialPhreeqcCell2Module.)
+    !> @retval IRESULT  0 is success, negative is failure (See @ref DecodeError).
     !> @see 
-    !> @ref initialsolutions2module,
-    !> @ref initialequilibriumphases2module,
-    !> @ref initialexchanges2module,
-    !> @ref initialkinetics2module,
-    !> @ref initialsolidsolutions2module,
-    !> @ref initialsurfaces2module,
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module.
+    !> @ref InitialSolutions2Module,
+    !> @ref InitialEquilibriumPhases2Module,
+    !> @ref InitialExchanges2Module,
+    !> @ref InitialKinetics2Module,
+    !> @ref InitialSolidSolutions2Module,
+    !> @ref InitialSurfaces2Module,
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> dimension(gas_phases(nxyz))
     !> gas_phases = 1
-    !> status = brm%initialgasphases2module(gas_phases);
+    !> status = brm%InitialGasPhases2Module(gas_phases);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION initialgasphases2module(self, gas_phases)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION InitialGasPhases2Module(self, gas_phases)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in), DIMENSION(:) :: gas_phases
-    initialgasphases2module = RM_initialgasphases2module(self%bmiphreeqcrm_id, gas_phases)
-    END FUNCTION initialgasphases2module
+    InitialGasPhases2Module = RM_InitialGasPhases2Module(self%bmiphreeqcrm_id, gas_phases)
+    END FUNCTION InitialGasPhases2Module
 
     !> Transfer SOLID_SOLUTIONS definitions from the InitialPhreeqc instance to the 
     !> reaction-module workers.
     !> @a solid_solutions is used to select SOLID_SOLUTIONS definitions for each cell 
     !> of the model. @a solid_solutions is dimensioned @a nxyz, where @a nxyz is the 
-    !> number of grid cells in the user's model (@ref getgridcellcount).
+    !> number of grid cells in the user's model (@ref GetGridCellCount).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param solid_solutions Array of SOLID_SOLUTIONS index numbers that refer to
     !> definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values 
     !> are ignored, resulting in no transfer of a SOLID_SOLUTIONS definition for that cell.
     !> (Note that an SOLID_SOLUTIONS definition for a cell could be defined by other 
-    !> calls to @a initialsolidsolutions2module, @ref initialphreeqc2module, or 
-    !> @ref initialphreeqccell2module.)
-    !> @retval IRESULT  0 is success, negative is failure (See @ref decodeerror).
+    !> calls to @a InitialSolidSolutions2Module, @ref InitialPhreeqc2Module, or 
+    !> @ref InitialPhreeqcCell2Module.)
+    !> @retval IRESULT  0 is success, negative is failure (See @ref DecodeError).
     !> @see  
-    !> @ref initialsolutions2module,
-    !> @ref initialequilibriumphases2module,
-    !> @ref initialexchanges2module,
-    !> @ref initialgasphases2module,
-    !> @ref initialkinetics2module,
-    !> @ref initialsurfaces2module,
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module.
+    !> @ref InitialSolutions2Module,
+    !> @ref InitialEquilibriumPhases2Module,
+    !> @ref InitialExchanges2Module,
+    !> @ref InitialGasPhases2Module,
+    !> @ref InitialKinetics2Module,
+    !> @ref InitialSurfaces2Module,
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> dimension(solid_solutions(nxyz))
     !> solid_solutions = 1
-    !> status = brm%initialsolidsolutions2module(solid_solutions);
+    !> status = brm%InitialSolidSolutions2Module(solid_solutions);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION initialsolidsolutions2module(self, solid_solutions)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION InitialSolidSolutions2Module(self, solid_solutions)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in), DIMENSION(:) :: solid_solutions
-    initialsolidsolutions2module = RM_initialsolidsolutions2module(self%bmiphreeqcrm_id, solid_solutions)
-    END FUNCTION initialsolidsolutions2module
+    InitialSolidSolutions2Module = RM_InitialSolidSolutions2Module(self%bmiphreeqcrm_id, solid_solutions)
+    END FUNCTION InitialSolidSolutions2Module
 
     !> Transfer SURFACE definitions from the InitialPhreeqc instance to the 
     !> reaction-module workers.
     !> @a surfaces is used to select SURFACE definitions for each cell of the model.
     !> @a surfaces is dimensioned @a nxyz, where @a nxyz is the number of grid cells 
-    !> in the user's model (@ref getgridcellcount).
+    !> in the user's model (@ref GetGridCellCount).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param surfaces    Array of SURFACE index numbers that refer to
     !> definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values 
     !> are ignored, resulting in no transfer of a SURFACE definition for that cell.
     !> (Note that an SURFACE definition for a cell could be defined by other 
-    !> calls to @a initialsurfaces2module, @ref initialphreeqc2module, or 
-    !> @ref initialphreeqccell2module.)
-    !> @retval IRESULT  0 is success, negative is failure (See @ref decodeerror).
+    !> calls to @a InitialSurfaces2Module, @ref InitialPhreeqc2Module, or 
+    !> @ref InitialPhreeqcCell2Module.)
+    !> @retval IRESULT  0 is success, negative is failure (See @ref DecodeError).
     !> @see 
-    !> @ref initialsolutions2module,
-    !> @ref initialequilibriumphases2module,
-    !> @ref initialexchanges2module,
-    !> @ref initialgasphases2module,
-    !> @ref initialkinetics2module,
-    !> @ref initialsolidsolutions2module,
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module.
+    !> @ref InitialSolutions2Module,
+    !> @ref InitialEquilibriumPhases2Module,
+    !> @ref InitialExchanges2Module,
+    !> @ref InitialGasPhases2Module,
+    !> @ref InitialKinetics2Module,
+    !> @ref InitialSolidSolutions2Module,
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> dimension(surfaces(nxyz))
     !> surfaces = 1
-    !> status = brm%initialsurfaces2module(surfaces);
+    !> status = brm%InitialSurfaces2Module(surfaces);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION initialsurfaces2module(self, surfaces)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION InitialSurfaces2Module(self, surfaces)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in), DIMENSION(:) :: surfaces
-    initialsurfaces2module = RM_initialsurfaces2module(self%bmiphreeqcrm_id, surfaces)
-    END FUNCTION initialsurfaces2module
+    InitialSurfaces2Module = RM_InitialSurfaces2Module(self%bmiphreeqcrm_id, surfaces)
+    END FUNCTION InitialSurfaces2Module
     
     !> Transfer KINETICS definitions from the InitialPhreeqc instance to the 
     !> reaction-module workers.
     !> @a kinetics is used to select KINETICS definitions for each cell of the model.
     !> @a kinetics is dimensioned @a nxyz, where @a nxyz is the number of grid cells in the 
-    !> user's model (@ref getgridcellcount).
+    !> user's model (@ref GetGridCellCount).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param kinetics    Array of KINETICS index numbers that refer to
     !> definitions in the InitialPhreeqc instance. Size is @a nxyz. Negative values are 
     !> ignored, resulting in no transfer of a KINETICS definition for that cell.
     !> (Note that an KINETICS definition for a cell could be defined by other 
-    !> calls to @a initialkinetics2module, @ref initialphreeqc2module, or 
-    !> @ref initialphreeqccell2module.)
-    !> @retval IRESULT  0 is success, negative is failure (See @ref decodeerror).
+    !> calls to @a InitialKinetics2Module, @ref InitialPhreeqc2Module, or 
+    !> @ref InitialPhreeqcCell2Module.)
+    !> @retval IRESULT  0 is success, negative is failure (See @ref DecodeError).
     !> @see 
-    !> @ref initialsolutions2module,
-    !> @ref initialequilibriumphases2module,
-    !> @ref initialexchanges2module,
-    !> @ref initialgasphases2module,
-    !> @ref initialsolidsolutions2module,
-    !> @ref initialsurfaces2module,
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module.
+    !> @ref InitialSolutions2Module,
+    !> @ref InitialEquilibriumPhases2Module,
+    !> @ref InitialExchanges2Module,
+    !> @ref InitialGasPhases2Module,
+    !> @ref InitialSolidSolutions2Module,
+    !> @ref InitialSurfaces2Module,
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> dimension(kinetics(nxyz))
     !> kinetics = 1
-    !> status = brm%initialkinetics2module(kinetics);
+    !> status = brm%InitialKinetics2Module(kinetics);
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION initialkinetics2module(self, kinetics)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION InitialKinetics2Module(self, kinetics)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in), DIMENSION(:) :: kinetics
-    initialkinetics2module = RM_initialkinetics2module(self%bmiphreeqcrm_id, kinetics)
-    END FUNCTION initialkinetics2module  
+    InitialKinetics2Module = RM_InitialKinetics2Module(self%bmiphreeqcrm_id, kinetics)
+    END FUNCTION InitialKinetics2Module  
     
     !> Fills an array (@a bc_conc) with aqueous species concentrations from solutions 
     !> in the InitialPhreeqc instance.
     !> This method is intended for use with multicomponent-diffusion transport calculations,
-    !> and @ref setspeciessaveon must be set to @a true.
+    !> and @ref SetSpeciesSaveOn must be set to @a true.
     !> The method is used to obtain aqueous species concentrations for boundary conditions. 
     !> If a negative value is used for a cell in @a bc1, then the highest numbered solution 
     !> in the InitialPhreeqc instance will be used for that cell. Concentrations may be a 
@@ -5797,7 +5797,7 @@
     !> @param bc_conc        Array of aqueous concentrations extracted from the 
     !> InitialPhreeqc instance.
     !> The dimension of @a species_c is set to (@a n_boundary, @a nspecies), where 
-    !> @a nspecies is the number of aqueous species returned from @ref getspeciescount.
+    !> @a nspecies is the number of aqueous species returned from @ref GetSpeciesCount.
     !> @param n_boundary     The number of boundary condition solutions that need to be filled.
     !> @param bc1            Array of solution index numbers that refer to solutions in 
     !> the InitialPhreeqc instance. Size is @a n_boundary.
@@ -5806,11 +5806,11 @@
     !> @a n_boundary. Optional in Fortran.
     !> @param f1             Fraction of @a bc1 that mixes with (1-@a f1) of @a bc2.
     !> Size is @a n_boundary. Optional in Fortran.
-    !> @retval IRESULT    0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT    0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getspeciescount,
-    !> @ref setspeciessaveon.
+    !> @ref FindComponents,
+    !> @ref GetSpeciesCount,
+    !> @ref SetSpeciesSaveOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -5821,13 +5821,13 @@
     !> bc1 = 0           ! solution 0 from InitialPhreeqc instance
     !> bc2 = -1          ! no bc2 solution for mixing
     !> f1 = 1.0          ! mixing fraction for bc1
-    !> status = brm%initialphreeqc2speciesconcentrations(bc_conc, nbound, bc1, bc2, f1)
+    !> status = brm%InitialPhreeqc2SpeciesConcentrations(bc_conc, nbound, bc1, bc2, f1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION initialphreeqc2speciesconcentrations(self, bc_conc, n_boundary, bc1, bc2, f1)
+    INTEGER FUNCTION InitialPhreeqc2SpeciesConcentrations(self, bc_conc, n_boundary, bc1, bc2, f1)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
@@ -5836,9 +5836,9 @@
     INTEGER, INTENT(in), DIMENSION(:) :: bc1
     INTEGER, INTENT(in), DIMENSION(:), OPTIONAL :: bc2
     real(kind=8), INTENT(in), DIMENSION(:), OPTIONAL :: f1
-    initialphreeqc2speciesconcentrations = &
-        RM_initialphreeqc2speciesconcentrations(self%bmiphreeqcrm_id, bc_conc, n_boundary, bc1, bc2, f1)
-    END FUNCTION initialphreeqc2speciesconcentrations
+    InitialPhreeqc2SpeciesConcentrations = &
+        RM_InitialPhreeqc2SpeciesConcentrations(self%bmiphreeqcrm_id, bc_conc, n_boundary, bc1, bc2, f1)
+    END FUNCTION InitialPhreeqc2SpeciesConcentrations
     !> A cell numbered @a n_user in the InitialPhreeqc instance is selected to populate 
     !> a series of cells.
     !> All reactants with the number @a n_user are transferred along with the solution.
@@ -5854,9 +5854,9 @@
     !> @param cell_numbers     A list of cell numbers in the user's grid-cell numbering 
     !> system that will be populated with cell @a n_user from the InitialPhreeqc instance.
     !> @param n_cell           The number of cell numbers in the @a cell_numbers list.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref initialphreeqc2module.
+    !> @ref InitialPhreeqc2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -5866,261 +5866,261 @@
     !> cell_numbers(2) = 19
     !> ! n will be the largest SOLUTION number in InitialPhreeqc instance
     !> ! copies solution and reactants to cells 18 and 19
-    !> status = brm%initialphreeqccell2module(-1, cell_numbers, 2)
+    !> status = brm%InitialPhreeqcCell2Module(-1, cell_numbers, 2)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION initialphreeqccell2module(self, n_user, cell_numbers, n_cell)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION InitialPhreeqcCell2Module(self, n_user, cell_numbers, n_cell)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: n_user
     INTEGER, INTENT(in), DIMENSION(:) :: cell_numbers
     INTEGER, INTENT(in) :: n_cell
-    initialphreeqccell2module = RM_initialphreeqccell2module(self%bmiphreeqcrm_id, n_user, cell_numbers, n_cell)
-    END FUNCTION initialphreeqccell2module
+    InitialPhreeqcCell2Module = RM_InitialPhreeqcCell2Module(self%bmiphreeqcrm_id, n_user, cell_numbers, n_cell)
+    END FUNCTION InitialPhreeqcCell2Module
 
     !> Load a database for all IPhreeqc instances--workers, InitialPhreeqc, and Utility. 
     !> All definitions of the reaction module are cleared (SOLUTION_SPECIES, PHASES, 
     !> SOLUTIONs, etc.), and the database is read.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param db_name          String containing the database name.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref create.
+    !> @ref Create.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%loaddatabase("phreeqc.dat")
+    !> status = brm%LoadDatabase("phreeqc.dat")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION loaddatabase(self, db_name)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION LoadDatabase(self, db_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=*), INTENT(in) :: db_name
-    loaddatabase = RM_loaddatabase(self%bmiphreeqcrm_id, db_name)
-    END FUNCTION loaddatabase
+    LoadDatabase = RM_LoadDatabase(self%bmiphreeqcrm_id, db_name)
+    END FUNCTION LoadDatabase
 
     !> Print a message to the log file.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param str              String to be printed.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref errormessage,
-    !> @ref openfiles,
-    !> @ref outputmessage,
-    !> @ref screenmessage,
-    !> @ref warningmessage.
+    !> @ref ErrorMessage,
+    !> @ref OpenFiles,
+    !> @ref OutputMessage,
+    !> @ref ScreenMessage,
+    !> @ref WarningMessage.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
-    !>       brm%gettime() * brm%gettimeconversion(), " days"
-    !> status = brm%logmessage(string)
+    !>       brm%GetTime() * brm%GetTimeconversion(), " days"
+    !> status = brm%LogMessage(string)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION logmessage(self, str)
+    INTEGER FUNCTION LogMessage(self, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=*), INTENT(in) :: str
-    logmessage = RM_logmessage(self%bmiphreeqcrm_id, str)
-    END FUNCTION logmessage
+    LogMessage = RM_LogMessage(self%bmiphreeqcrm_id, str)
+    END FUNCTION LogMessage
 
-    !> MPI only. Workers (processes with @ref getmpimyself > 0) must call 
-    !> mpiworker to be able to respond to messages from the root to accept data, 
-    !> perform calculations, and (or) return data. mpiworker contains a loop that 
+    !> MPI only. Workers (processes with @ref GetMpiMyself > 0) must call 
+    !> MpiWorker to be able to respond to messages from the root to accept data, 
+    !> perform calculations, and (or) return data. MpiWorker contains a loop that 
     !> reads a message from root, performs a task, and waits for another message from 
-    !> root. @ref setconcentrations, @ref runcells, and @ref getconcentrations
+    !> root. @ref SetConcentrations, @ref RunCells, and @ref GetConcentrations
     !> are examples of methods that send a message from root to get the workers to 
     !> perform a task. The workers will respond to all methods that are designated 
-    !> "workers must be in the loop of mpiworker" in the MPI section of the method 
+    !> "workers must be in the loop of MpiWorker" in the MPI section of the method 
     !> documentation. The workers will continue to respond to messages from root until 
-    !> root calls @ref mpiworkerbreak.
+    !> root calls @ref MpiWorkerBreak.
     !> @n@n
     !> (Advanced) The list of tasks that the workers perform can be extended by using 
-    !> @ref SetmpiworkerCallback. It is then possible to use the MPI processes to 
+    !> @ref SetMpiWorkerCallback. It is then possible to use the MPI processes to 
     !> perform other developer-defined tasks, such as transport calculations, without
-    !> exiting from the mpiworker loop. Alternatively, root calls @ref mpiworkerbreak 
-    !> to allow the workers to continue past a call to mpiworker. The workers perform 
-    !> developer-defined calculations, and then mpiworker is called again to respond to
+    !> exiting from the MpiWorker loop. Alternatively, root calls @ref MpiWorkerBreak 
+    !> to allow the workers to continue past a call to MpiWorker. The workers perform 
+    !> developer-defined calculations, and then MpiWorker is called again to respond to
     !> requests from root to perform reaction-module tasks.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror). 
-    !> mpiworker returns a value only when @ref mpiworkerbreak is called by root.
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError). 
+    !> MpiWorker returns a value only when @ref MpiWorkerBreak is called by root.
     !> @see
-    !> @ref mpiworkerbreak,
-    !> @ref SetmpiworkerCallback.
+    !> @ref MpiWorkerBreak,
+    !> @ref SetMpiWorkerCallback.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%mpiworker()
+    !> status = brm%MpiWorker()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by all workers.
-    INTEGER FUNCTION mpiworker(self)
+    INTEGER FUNCTION MpiWorker(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    mpiworker = RM_mpiworker(self%bmiphreeqcrm_id)
-    END FUNCTION mpiworker
+    MpiWorker = RM_MpiWorker(self%bmiphreeqcrm_id)
+    END FUNCTION MpiWorker
 
     !> MPI only. This method is called by root to force workers (processes with 
-    !>@ref getmpimyself > 0) to return from a call to @ref mpiworker.
-    !> @ref mpiworker contains a loop that reads a message from root, performs a
+    !>@ref GetMpiMyself > 0) to return from a call to @ref MpiWorker.
+    !> @ref MpiWorker contains a loop that reads a message from root, performs a
     !> task, and waits for another message from root. The workers respond to all 
-    !> methods that are designated "workers must be in the loop of mpiworker" in 
+    !> methods that are designated "workers must be in the loop of MpiWorker" in 
     !> the MPI section of the method documentation. The workers will continue to 
-    !> respond to messages from root until root calls mpiworkerbreak.
+    !> respond to messages from root until root calls MpiWorkerBreak.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref mpiworker,
-    !> @ref SetmpiworkerCallback.
+    !> @ref MpiWorker,
+    !> @ref SetMpiWorkerCallback.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%mpiworkerbreak()
+    !> status = brm%MpiWorkerBreak()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION mpiworkerbreak(self)
+    INTEGER FUNCTION MpiWorkerBreak(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    mpiworkerbreak = RM_mpiworkerbreak(self%bmiphreeqcrm_id)
-    END FUNCTION mpiworkerbreak
+    MpiWorkerBreak = RM_MpiWorkerBreak(self%bmiphreeqcrm_id)
+    END FUNCTION MpiWorkerBreak
 
     !> Opens the output and log files. Files are named prefix.chem.txt and prefix.log.txt
-    !> based on the prefix defined by @ref setfileprefix.
+    !> based on the prefix defined by @ref SetFilePrefix.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref closefiles,
-    !> @ref errormessage,
-    !> @ref getfileprefix,
-    !> @ref logmessage,
-    !> @ref outputmessage,
-    !> @ref setfileprefix,
-    !> @ref warningmessage.
+    !> @ref CloseFiles,
+    !> @ref ErrorMessage,
+    !> @ref GetFilePrefix,
+    !> @ref LogMessage,
+    !> @ref OutputMessage,
+    !> @ref SetFilePrefix,
+    !> @ref WarningMessage.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setfileprefix("Advect_f90")
-    !> status = brm%openfiles()
+    !> status = brm%SetFilePrefix("Advect_f90")
+    !> status = brm%OpenFiles()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION openfiles(self)
+    INTEGER FUNCTION OpenFiles(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    openfiles = RM_openfiles(self%bmiphreeqcrm_id)
-    END FUNCTION openfiles
+    OpenFiles = RM_OpenFiles(self%bmiphreeqcrm_id)
+    END FUNCTION OpenFiles
 
     !> Print a message to the output file.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param str              String to be printed.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref errormessage,
-    !> @ref logmessage,
-    !> @ref screenmessage,
-    !> @ref warningmessage.
+    !> @ref ErrorMessage,
+    !> @ref LogMessage,
+    !> @ref ScreenMessage,
+    !> @ref WarningMessage.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> write(string1, "(A,I10)") "Number of threads:                                ", brm%getthreadcount()
-    !> status = brm%outputmessage(string1)
-    !> write(string1, "(A,I10)") "Number of MPI processes:                          ", brm%getmpitasks()
-    !> status = brm%outputmessage(string1)
-    !> write(string1, "(A,I10)") "MPI task number:                                  ", brm%getmpimyself()
-    !> status = brm%outputmessage(string1)
-    !> status = brm%getfileprefix(string)
+    !> write(string1, "(A,I10)") "Number of threads:                                ", brm%GetThreadCount()
+    !> status = brm%OutputMessage(string1)
+    !> write(string1, "(A,I10)") "Number of MPI processes:                          ", brm%GetMpiTasks()
+    !> status = brm%OutputMessage(string1)
+    !> write(string1, "(A,I10)") "MPI task number:                                  ", brm%GetMpiMyself()
+    !> status = brm%OutputMessage(string1)
+    !> status = brm%GetFilePrefix(string)
     !> write(string1, "(A,A)") "File prefix:                                        ", string
-    !> status = brm%outputmessage(trim(string1))
-    !> write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", brm%getgridcellcount()
-    !> status = brm%outputmessage(trim(string1))
-    !> write(string1, "(A,I10)") "Number of chemistry cells in the reaction module: ", brm%getchemistrycellcount()
-    !> status = brm%outputmessage(trim(string1))
-    !> write(string1, "(A,I10)") "Number of components for transport:               ", brm%getcomponentcount()
-    !> status = brm%outputmessage(trim(string1))
+    !> status = brm%OutputMessage(trim(string1))
+    !> write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", brm%GetGridCellCount()
+    !> status = brm%OutputMessage(trim(string1))
+    !> write(string1, "(A,I10)") "Number of chemistry cells in the reaction module: ", brm%GetChemistryCellCount()
+    !> status = brm%OutputMessage(trim(string1))
+    !> write(string1, "(A,I10)") "Number of components for transport:               ", brm%GetComponentCount()
+    !> status = brm%OutputMessage(trim(string1))
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION outputmessage(self, str)
+    INTEGER FUNCTION OutputMessage(self, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=*), INTENT(in) :: str
-    outputmessage = RM_outputmessage(self%bmiphreeqcrm_id, str)
-    END FUNCTION outputmessage
+    OutputMessage = RM_OutputMessage(self%bmiphreeqcrm_id, str)
+    END FUNCTION OutputMessage
 
     !> Runs a reaction step for all of the cells in the reaction module.
     !> Normally, tranport concentrations are transferred to the reaction cells 
-    !> (@ref setconcentrations) before reaction calculations are run. The 
+    !> (@ref SetConcentrations) before reaction calculations are run. The 
     !> length of time over which kinetic reactions are integrated is set
-    !> by @ref settimestep. Other properties that may need to be updated 
-    !> as a result of the transport calculations include porosity (@ref setporosity), 
-    !> saturation (@ref setsaturationuser), temperature (@ref settemperature), 
-    !> and pressure (@ref setpressure).
+    !> by @ref SetTimeStep. Other properties that may need to be updated 
+    !> as a result of the transport calculations include porosity (@ref SetPorosity), 
+    !> saturation (@ref SetSaturationUser), temperature (@ref SetTemperature), 
+    !> and pressure (@ref SetPressure).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref setconcentrations,
-    !> @ref setporosity,
-    !> @ref setpressure,
-    !> @ref setsaturationuser,
-    !> @ref settemperature,
-    !> @ref settimestep.
+    !> @ref SetConcentrations,
+    !> @ref SetPorosity,
+    !> @ref SetPressure,
+    !> @ref SetSaturationUser,
+    !> @ref SetTemperature,
+    !> @ref SetTimeStep.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setporosity(por)                ! If pore volume changes
-    !> status = brm%setsaturationuser(sat)          ! If saturation changes
-    !> status = brm%settemperature(temperature)     ! If temperature changes
-    !> status = brm%setpressure(pressure)           ! If pressure changes
-    !> status = brm%setconcentrations(c)            ! Transported concentrations
-    !> status = brm%settimestep(time_step)          ! Time step for kinetic reactions
-    !> status = brm%runcells()
-    !> status = brm%getconcentrations(c)            ! Concentrations after reaction
-    !> status = brm%getdensitycalculated(density)   ! Density after reaction
-    !> status = brm%getsolutionvolume(volume)       ! Solution volume after reaction
+    !> status = brm%SetPorosity(por)                ! If pore volume changes
+    !> status = brm%SetSaturationUser(sat)          ! If saturation changes
+    !> status = brm%SetTemperature(temperature)     ! If temperature changes
+    !> status = brm%SetPressure(pressure)           ! If pressure changes
+    !> status = brm%SetConcentrations(c)            ! Transported concentrations
+    !> status = brm%SetTimeStep(time_step)          ! Time step for kinetic reactions
+    !> status = brm%RunCells()
+    !> status = brm%GetConcentrations(c)            ! Concentrations after reaction
+    !> status = brm%GetDensityCalculated(density)   ! Density after reaction
+    !> status = brm%GetSolutionVolume(volume)       ! Solution volume after reaction
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION runcells(self)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION RunCells(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    runcells = RM_runcells(self%bmiphreeqcrm_id)
-    END FUNCTION runcells
+    RunCells = RM_RunCells(self%bmiphreeqcrm_id)
+    END FUNCTION RunCells
 
     !> Run a PHREEQC input file. The first three arguments determine which 
     !> IPhreeqc instances will run the file--the workers, the InitialPhreeqc instance, 
@@ -6137,27 +6137,27 @@
     !> @param utility          1, the Utility instance will run the file; 0, the Utility 
     !> instance will not run the file.
     !> @param chem_name        Name of the file to run.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref runstring.
+    !> @ref RunString.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%runfile(1, 1, 1, "advect.pqi")
+    !> status = brm%RunFile(1, 1, 1, "advect.pqi")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION runfile(self, workers, initial_phreeqc, utility, chem_name)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION RunFile(self, workers, initial_phreeqc, utility, chem_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: workers, initial_phreeqc, utility
     CHARACTER(len=*), INTENT(in) :: chem_name
-    runfile = RM_runfile(self%bmiphreeqcrm_id, workers, initial_phreeqc, utility, chem_name)
-    END FUNCTION runfile
+    RunFile = RM_RunFile(self%bmiphreeqcrm_id, workers, initial_phreeqc, utility, chem_name)
+    END FUNCTION RunFile
 
     !> Run a PHREEQC input string. The first three arguments determine which
     !> IPhreeqc instances will run
@@ -6175,57 +6175,57 @@
     !> @param utility          1, the Utility instance will run the string; 0, the 
     !> Utility instance will not run the string.
     !> @param input_string     String containing PHREEQC input.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref runfile.
+    !> @ref RunFile.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> string = "DELETE; -all"
-    !> status = brm%runstring(1, 0, 1, string)  ! workers, initial_phreeqc, utility
+    !> status = brm%RunString(1, 0, 1, string)  ! workers, initial_phreeqc, utility
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION runstring(self, workers, initial_phreeqc, utility, input_string)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION RunString(self, workers, initial_phreeqc, utility, input_string)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: initial_phreeqc, workers, utility
     CHARACTER(len=*), INTENT(in) :: input_string
-    runstring = RM_runstring(self%bmiphreeqcrm_id, workers, initial_phreeqc, utility, input_string)
-    END FUNCTION runstring
+    RunString = RM_RunString(self%bmiphreeqcrm_id, workers, initial_phreeqc, utility, input_string)
+    END FUNCTION RunString
 
     !> Print message to the screen.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param str              String to be printed.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref errormessage,
-    !> @ref logmessage,
-    !> @ref outputmessage,
-    !> @ref warningmessage.
+    !> @ref ErrorMessage,
+    !> @ref LogMessage,
+    !> @ref OutputMessage,
+    !> @ref WarningMessage.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning reaction calculation  ", &
-    !>       time * brm%gettimeconversion(), " days"
-    !> status = brm%screenmessage(string)
+    !>       time * brm%GetTimeconversion(), " days"
+    !> status = brm%ScreenMessage(string)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION screenmessage(self, str)
+    INTEGER FUNCTION ScreenMessage(self, str)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=*), INTENT(in) :: str
-    screenmessage = RM_screenmessage(self%bmiphreeqcrm_id, str)
-    END FUNCTION screenmessage
+    ScreenMessage = RM_ScreenMessage(self%bmiphreeqcrm_id, str)
+    END FUNCTION ScreenMessage
 
     !> Select whether to include H2O in the component list.
     !> The concentrations of H and O must be known accurately (8 to 10 
@@ -6235,52 +6235,52 @@
     !> transport the excess H and O (the H and O not in water) and water.
     !> The default setting (@a true) is to include water, excess H, and excess O 
     !> as components. A setting of @a false will include total H and total O 
-    !> as components. @a setcomponenth2o must be called before 
-    !> @ref findcomponents.
+    !> as components. @a SetComponentH2O must be called before 
+    !> @ref FindComponents.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param tf               0, total H and O are included in the component list; 1, 
     !> excess H, excess O, and water are included in the component list.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents.
+    !> @ref FindComponents.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setcomponenth2o(0)
+    !> status = brm%SetComponentH2O(0)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setcomponenth2o(self, tf)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetComponentH2O(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: tf
-    setcomponenth2o = RM_setcomponenth2o(self%bmiphreeqcrm_id, tf)
-    END FUNCTION setcomponenth2o
+    SetComponentH2O = RM_SetComponentH2O(self%bmiphreeqcrm_id, tf)
+    END FUNCTION SetComponentH2O
 
     !> Use the array of concentrations (@a c) to set the moles of components in each 
     !> reaction cell.
-    !> The volume of water in a cell is the product of porosity (@ref setporosity), 
-    !> saturation (@ref setsaturationuser), and reference volume 
-    !> (@ref setrepresentativevolume). The moles of each component are determined 
+    !> The volume of water in a cell is the product of porosity (@ref SetPorosity), 
+    !> saturation (@ref SetSaturationUser), and reference volume 
+    !> (@ref SetRepresentativeVolume). The moles of each component are determined 
     !> by the volume of water and per liter concentrations. If concentration units 
-    !> (@ref setunitssolution) are mass fraction, the density (as specified by
-    !>  @ref setdensityuser) is used to convert from mass fraction to per mass per liter.
+    !> (@ref SetUnitsSolution) are mass fraction, the density (as specified by
+    !>  @ref SetDensityUser) is used to convert from mass fraction to per mass per liter.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param c                Array of component concentrations. Size of array is 
     !> (@a nxyz, @a ncomps), where @a nxyz is the number of grid cells in the user's 
-    !> model (@ref getgridcellcount), and @a ncomps is the number of components as 
-    !> determined by @ref findcomponents or @ref getcomponentcount.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> model (@ref GetGridCellCount), and @a ncomps is the number of components as 
+    !> determined by @ref FindComponents or @ref GetComponentCount.
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref setdensityuser,
-    !> @ref setporosity,
-    !> @ref setrepresentativevolume,
-    !> @ref setsaturationuser,
-    !> @ref setunitssolution.
+    !> @ref SetDensityUser,
+    !> @ref SetPorosity,
+    !> @ref SetRepresentativeVolume,
+    !> @ref SetSaturationUser,
+    !> @ref SetUnitsSolution.
     !>
     !> @par Fortran Example:
     !> @htmlonly
@@ -6289,29 +6289,29 @@
     !> allocate(c(nxyz, ncomps))
     !> ...
     !> call advect_f90(c, bc_conc, ncomps, nxyz)
-    !> status = brm%setporosity(por)               ! If porosity changes
-    !> status = brm%setsaturationuser(sat)         ! If saturation changes
-    !> status = brm%settemperature(temperature))   ! If temperature changes
-    !> status = brm%setpressure(pressure)          ! If pressure changes
-    !> status = brm%setconcentrations(c)           ! Transported concentrations
-    !> status = brm%settimestep(time_step)         ! Time step for kinetic reactions
-    !> status = brm%settime(time)                  ! Current time
-    !> status = brm%runcells()
-    !> status = brm%getconcentrations(c)           ! Concentrations after reaction
-    !> status = brm%getdensitycalculated(density)  ! Density after reaction
-    !> status = brm%getsolutionvolume(volume)      ! Solution volume after reaction
+    !> status = brm%SetPorosity(por)               ! If porosity changes
+    !> status = brm%SetSaturationUser(sat)         ! If saturation changes
+    !> status = brm%SetTemperature(temperature))   ! If temperature changes
+    !> status = brm%SetPressure(pressure)          ! If pressure changes
+    !> status = brm%SetConcentrations(c)           ! Transported concentrations
+    !> status = brm%SetTimeStep(time_step)         ! Time step for kinetic reactions
+    !> status = brm%SetTime(time)                  ! Current time
+    !> status = brm%RunCells()
+    !> status = brm%GetConcentrations(c)           ! Concentrations after reaction
+    !> status = brm%GetDensityCalculated(density)  ! Density after reaction
+    !> status = brm%GetSolutionVolume(volume)      ! Solution volume after reaction
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setconcentrations(self, c)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetConcentrations(self, c)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:,:), INTENT(in) :: c
-    setconcentrations = RM_setconcentrations(self%bmiphreeqcrm_id, c)
-    END FUNCTION setconcentrations
+    SetConcentrations = RM_SetConcentrations(self%bmiphreeqcrm_id, c)
+    END FUNCTION SetConcentrations
 
     !> Select the current selected output by user number. 
     !> The user may define  multiple SELECTED_OUTPUT data blocks for the workers. 
@@ -6320,27 +6320,27 @@
     !> for selected-output operations.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param n_user           User number of the SELECTED_OUTPUT data block that is to be used.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getcurrentselectedoutputusernumber,
-    !> @ref getnthselectedoutputusernumber,
-    !> @ref getselectedoutput,
-    !> @ref getselectedoutputcolumncount,
-    !> @ref getselectedoutputcount,
-    !> @ref getselectedoutputheadings,
-    !> @ref getselectedoutputrowcount,
-    !> @ref setnthselectedoutput,
-    !> @ref setselectedoutputon.
+    !> @ref GetCurrentSelectedOutputUserNumber,
+    !> @ref GetNthSelectedOutputUserNumber,
+    !> @ref GetSelectedOutput,
+    !> @ref GetSelectedOutputColumnCount,
+    !> @ref GetSelectedOutputCount,
+    !> @ref GetSelectedOutputHeadings,
+    !> @ref GetSelectedOutputRowCount,
+    !> @ref SetNthSelectedOutput,
+    !> @ref SetSelectedOutputOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> real(kind=8), allocatable :: selected_out(:,:)
-    !> do isel = 1, brm%getselectedoutputcount()
-    !>   n_user = brm%getnthselectedoutputusernumber(isel)
-    !>   status = brm%setcurrentselectedoutputusernumber(n_user)
-    !>   col = brm%getselectedoutputcolumncount()
-    !>   status = brm%getselectedoutput(selected_out)
+    !> do isel = 1, brm%GetSelectedOutputCount()
+    !>   n_user = brm%GetNthSelectedOutputUserNumber(isel)
+    !>   status = brm%SetCurrentSelectedOutputUserNumber(n_user)
+    !>   col = brm%GetSelectedOutputColumnCount()
+    !>   status = brm%GetSelectedOutput(selected_out)
     !>   ! Process results here
     !> enddo
     !> </PRE>
@@ -6348,83 +6348,83 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION setcurrentselectedoutputusernumber(self, n_user)
+    INTEGER FUNCTION SetCurrentSelectedOutputUserNumber(self, n_user)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: n_user
-    setcurrentselectedoutputusernumber = RM_setcurrentselectedoutputusernumber(self%bmiphreeqcrm_id, n_user)
-    END FUNCTION setcurrentselectedoutputusernumber
+    SetCurrentSelectedOutputUserNumber = RM_SetCurrentSelectedOutputUserNumber(self%bmiphreeqcrm_id, n_user)
+    END FUNCTION SetCurrentSelectedOutputUserNumber
 
     !> Set the density used for units conversion. 
     !> These density values are used when converting from transported mass fraction 
-    !> concentrations (@ref setunitssolution) to produce per liter concentrations 
-    !> during a call to @ref setconcentrations. They are also used when converting 
+    !> concentrations (@ref SetUnitsSolution) to produce per liter concentrations 
+    !> during a call to @ref SetConcentrations. They are also used when converting 
     !> from module concentrations to transport concentrations of mass fraction 
-    !> (@ref getconcentrations), if @ref usesolutiondensityvolume is set to @a false.
+    !> (@ref GetConcentrations), if @ref UseSolutionDensityVolume is set to @a false.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param density          Array of densities. Size of array is @a nxyz, where @a nxyz 
-    !> is the number of grid cells in the user's model (@ref getgridcellcount).
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> is the number of grid cells in the user's model (@ref GetGridCellCount).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getconcentrations,
-    !> @ref setconcentrations,
-    !> @ref setunitssolution,
-    !> @ref usesolutiondensityvolume.
+    !> @ref GetConcentrations,
+    !> @ref SetConcentrations,
+    !> @ref SetUnitsSolution,
+    !> @ref UseSolutionDensityVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> allocate(density(nxyz))
     !> density = 1.0
-    !> status = brm%setdensityuser(density)
+    !> status = brm%SetDensityUser(density)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setdensityuser(self, density)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetDensityUser(self, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:), INTENT(in) :: density
-    setdensityuser = RM_setdensityuser(self%bmiphreeqcrm_id, density)
-    END FUNCTION setdensityuser
+    SetDensityUser = RM_SetDensityUser(self%bmiphreeqcrm_id, density)
+    END FUNCTION SetDensityUser
     
     INTEGER FUNCTION SetDensity(self, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:), INTENT(in) :: density
-    SetDensity = RM_setdensityuser(self%bmiphreeqcrm_id, density)
+    SetDensity = RM_SetDensityUser(self%bmiphreeqcrm_id, density)
     END FUNCTION SetDensity
 
-    !> Set the name of the dump file. It is the name used by @ref dumpmodule.
+    !> Set the name of the dump file. It is the name used by @ref DumpModule.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param dump_name        Name of dump file.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref dumpmodule.
+    !> @ref DumpModule.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setdumpfilename("advection_f90.dmp")
+    !> status = brm%SetDumpFileName("advection_f90.dmp")
     !> dump_on = 1
     !> append = 0
-    !> status = brm%dumpmodule(dump_on, append)
+    !> status = brm%DumpModule(dump_on, append)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION setdumpfilename(self, dump_name)
+    INTEGER FUNCTION SetDumpFileName(self, dump_name)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=*), INTENT(in) :: dump_name
-    setdumpfilename = RM_setdumpfilename(self%bmiphreeqcrm_id, dump_name)
-    END FUNCTION setdumpfilename
+    SetDumpFileName = RM_SetDumpFileName(self%bmiphreeqcrm_id, dump_name)
+    END FUNCTION SetDumpFileName
 
     !> Set the action to be taken when the reaction module encounters an error.
     !> Options are 0, return to calling program with an error return code (default);
@@ -6432,98 +6432,98 @@
     !> the program will exit; or 2, attempt to exit gracefully.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param mode             Error handling mode: 0, 1, or 2.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> id = create(nxyz, nthreads)
-    !> status = brm%seterrorhandlermode(2)
+    !> id = Create(nxyz, nthreads)
+    !> status = brm%SetErrorHandlerMode(2)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION seterrorhandlermode(self, mode)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetErrorHandlerMode(self, mode)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: mode
-    seterrorhandlermode = RM_seterrorhandlermode(self%bmiphreeqcrm_id, mode)
-    END FUNCTION seterrorhandlermode
+    SetErrorHandlerMode = RM_SetErrorHandlerMode(self%bmiphreeqcrm_id, mode)
+    END FUNCTION SetErrorHandlerMode
 
     !> Set the property that controls whether error messages are generated and displayed.
     !> Messages include PHREEQC "ERROR" messages, and any messages written with 
-    !> @ref errormessage.
+    !> @ref ErrorMessage.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param tf           @a 1, enable error messages; @a 0, disable error messages. 
     !> Default is 1.
-    !> @retval IRESULT  0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT  0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref errormessage,
-    !> @ref screenmessage.
+    !> @ref ErrorMessage,
+    !> @ref ScreenMessage.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%seterroron(1)
+    !> status = brm%SetErrorOn(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION seterroron(self, tf)
+    INTEGER FUNCTION SetErrorOn(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: tf
-    seterroron = RM_seterroron(self%bmiphreeqcrm_id, tf)
-    END FUNCTION seterroron
+    SetErrorOn = RM_SetErrorOn(self%bmiphreeqcrm_id, tf)
+    END FUNCTION SetErrorOn
 
     !> Set the prefix for the output (prefix.chem.txt) and log (prefix.log.txt) files.
-    !> These files are opened by @ref openfiles.
+    !> These files are opened by @ref OpenFiles.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param prefix           Prefix used when opening the output and log files.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref openfiles,
-    !> @ref closefiles.
+    !> @ref OpenFiles,
+    !> @ref CloseFiles.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setfileprefix("Advect_f90")
-    !> status = brm%openfiles()
+    !> status = brm%SetFilePrefix("Advect_f90")
+    !> status = brm%OpenFiles()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION setfileprefix(self, prefix)
+    INTEGER FUNCTION SetFilePrefix(self, prefix)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=*), INTENT(in) :: prefix
-    setfileprefix = RM_setfileprefix(self%bmiphreeqcrm_id, prefix)
-    END FUNCTION setfileprefix
+    SetFilePrefix = RM_SetFilePrefix(self%bmiphreeqcrm_id, prefix)
+    END FUNCTION SetFilePrefix
 
     !> Use the array of concentrations (@a gas_moles) to set the moles of
     !> gas components in each reaction cell.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param gas_moles        Array of moles of gas components. Dimensions 
     !> of the array are (nxyz, ngas_comps), where ngas_comps is the result of 
-    !> @ref getgascomponentscount, and @a nxyz is the number of user grid cells 
-    !> (@ref getgridcellcount). If the number of moles is set to a negative number, 
+    !> @ref GetGasComponentsCount, and @a nxyz is the number of user grid cells 
+    !> (@ref GetGridCellCount). If the number of moles is set to a negative number, 
     !> the gas component will not be defined for the GAS_PHASE of the reaction cell.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getgascomponentscount,
-    !> @ref getgascompmoles,
-    !> @ref getgascomppressures,
-    !> @ref getgascompphi,
-    !> @ref getgasphasevolume,
-    !> @ref setgasphasevolume.
+    !> @ref FindComponents,
+    !> @ref GetGasComponentsCount,
+    !> @ref GetGasCompMoles,
+    !> @ref GetGasCompPressures,
+    !> @ref GetGasCompPhi,
+    !> @ref GetGasPhaseVolume,
+    !> @ref SetGasPhaseVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -6531,20 +6531,20 @@
     !> ngas_comps = brm%SetGasComponentsCount()
     !> allocate(gas_moles(nxyz, ngas_comps))
     !> ...
-    !> status = brm%setgascompmoles(gas_moles)
-    !> status = brm%runcells()
+    !> status = brm%SetGasCompMoles(gas_moles)
+    !> status = brm%RunCells()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setgascompmoles(self, gas_moles)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetGasCompMoles(self, gas_moles)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:,:), INTENT(in) :: gas_moles
-    setgascompmoles = RM_setgascompmoles(self%bmiphreeqcrm_id, gas_moles)
-    END FUNCTION setgascompmoles
+    SetGasCompMoles = RM_SetGasCompMoles(self%bmiphreeqcrm_id, gas_moles)
+    END FUNCTION SetGasCompMoles
 
     !> Transfer volumes of gas phases from the array given in the argument list 
     !> (@a gas_volume) to each reaction cell.
@@ -6553,150 +6553,150 @@
     !> GAS_PHASE in a cell, the gas phase is forced to be a fixed-volume gas phase.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param gas_volume       Array of gas-phase volumes. Dimension of the array 
-    !> is (nxyz), where @a nxyz is the number of user grid cells (@ref getgridcellcount).
+    !> is (nxyz), where @a nxyz is the number of user grid cells (@ref GetGridCellCount).
     !> If an element of the array is set to a negative number, the gas component will
     !> not be defined for the GAS_PHASE of the reaction cell.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getgascomponentscount,
-    !> @ref getgascompmoles,
-    !> @ref getgascomppressures,
-    !> @ref getgascompphi,
-    !> @ref getgasphasevolume,
-    !> @ref setgascompmoles.
+    !> @ref FindComponents,
+    !> @ref GetGasComponentsCount,
+    !> @ref GetGasCompMoles,
+    !> @ref GetGasCompPressures,
+    !> @ref GetGasCompPhi,
+    !> @ref GetGasPhaseVolume,
+    !> @ref SetGasCompMoles.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> allocate(gas_volume(nxyz))
     !> ...
-    !> status = brm%setgasphasevolume(gas_volume)
-    !> status = brm%runcells()
+    !> status = brm%SetGasPhaseVolume(gas_volume)
+    !> status = brm%RunCells()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setgasphasevolume(self, gas_volume)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetGasPhaseVolume(self, gas_volume)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:), INTENT(in) :: gas_volume
-    setgasphasevolume = RM_setgasphasevolume(self%bmiphreeqcrm_id, gas_volume)
-    END FUNCTION setgasphasevolume
+    SetGasPhaseVolume = RM_SetGasPhaseVolume(self%bmiphreeqcrm_id, gas_volume)
+    END FUNCTION SetGasPhaseVolume
 
     !> Transfer the concentrations for one component given by the vector @a c 
     !> to each reaction cell. 
-    !> Units of concentration for @a c are defined by @ref setunitssolution. 
-    !> It is required that  @a setithconcentration be called for each component 
-    !> in the system before @ref runcells is called.
+    !> Units of concentration for @a c are defined by @ref SetUnitsSolution. 
+    !> It is required that  @a SetIthConcentration be called for each component 
+    !> in the system before @ref RunCells is called.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param i                One-based index for the component to transfer. 
-    !> Indices refer to the order produced by @ref getcomponents. The total number 
-    !> of components is given by @ref getcomponentcount.
+    !> Indices refer to the order produced by @ref GetComponents. The total number 
+    !> of components is given by @ref GetComponentCount.
     !> @param c                Array of concentrations to transfer to the reaction cells.
     !> Dimension of the vector is @a nxyz, where @a nxyz is the number of
-    !> user grid cells (@ref getgridcellcount). Values for inactive cells are ignored.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
-    !> @see                    @ref findcomponents, @ref getcomponentcount, 
-    !> @ref getcomponents, @ref setconcentrations.
+    !> user grid cells (@ref GetGridCellCount). Values for inactive cells are ignored.
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
+    !> @see                    @ref FindComponents, @ref GetComponentCount, 
+    !> @ref GetComponents, @ref SetConcentrations.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%phreeqc_rm.setithconcentration(i, c) ! repeat for all components
+    !> status = brm%phreeqc_rm.SetIthConcentration(i, c) ! repeat for all components
     !> ...
-    !> status = brm%phreeqc_rm.runcells()
+    !> status = brm%phreeqc_rm.RunCells()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setithconcentration(self, i, c)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetIthConcentration(self, i, c)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: i
     real(kind=8), INTENT(in), DIMENSION(:) :: c
-    setithconcentration = RM_setithconcentration(self%bmiphreeqcrm_id, i, c)
+    SetIthConcentration = RM_SetIthConcentration(self%bmiphreeqcrm_id, i, c)
     return
-    END FUNCTION setithconcentration
+    END FUNCTION SetIthConcentration
 
     !> Transfer the concentrations for one aqueous species given by the vector
     !> @a c to each reaction cell.
     !> Units of concentration for @a c are mol/L. To set species concentrations, 
-    !> @ref setspeciessaveon must be set to @a true. It is required that
-    !> @a setithspeciesconcentration be called for each aqueous species in the 
-    !> system before @ref runcells is called. This method is for use with 
+    !> @ref SetSpeciesSaveOn must be set to @a true. It is required that
+    !> @a SetIthSpeciesConcentration be called for each aqueous species in the 
+    !> system before @ref RunCells is called. This method is for use with 
     !> multicomponent diffusion calculations. 
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param i                One-based index for the species to transfer. Indices 
-    !> refer to the order produced by @ref getspeciesnames. The total number of 
-    !> species is given by @ref getspeciescount.
+    !> refer to the order produced by @ref GetSpeciesNames. The total number of 
+    !> species is given by @ref GetSpeciesCount.
     !> @param c                Array of concentrations to transfer to the reaction cells.
     !> Dimension of the array is @a nxyz, where @a nxyz is the number of user grid 
-    !> cells (@ref getgridcellcount). Values for inactive cells are ignored.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
-    !> @see                    @ref findcomponents, @ref getspeciescount, @ref getspeciesnames,
-    !> @ref speciesconcentrations2module, @ref setspeciessaveon.
+    !> cells (@ref GetGridCellCount). Values for inactive cells are ignored.
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
+    !> @see                    @ref FindComponents, @ref GetSpeciesCount, @ref GetSpeciesNames,
+    !> @ref SpeciesConcentrations2Module, @ref SetSpeciesSaveOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setithspeciesconcentration(i, c) ! repeat for all species
+    !> status = brm%SetIthSpeciesConcentration(i, c) ! repeat for all species
     !> ...
-    !> status = brm%runcells()
+    !> status = brm%RunCells()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setithspeciesconcentration(self, i, c)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetIthSpeciesConcentration(self, i, c)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: i
     real(kind=8), INTENT(in), DIMENSION(:) :: c
-    setithspeciesconcentration = RM_setithspeciesconcentration(self%bmiphreeqcrm_id, i, c)
+    SetIthSpeciesConcentration = RM_SetIthSpeciesConcentration(self%bmiphreeqcrm_id, i, c)
     return
-    END FUNCTION setithspeciesconcentration
+    END FUNCTION SetIthSpeciesConcentration
 
     !> MPI only. Defines a callback function that allows additional tasks to 
-    !> be done by the workers. The method @ref mpiworker contains a loop,
+    !> be done by the workers. The method @ref MpiWorker contains a loop,
     !> where the workers receive a message (an integer), run a function 
     !> corresponding to that integer, and then wait for another message.
-    !> SetmpiworkerCallback allows the developer to add another function
+    !> SetMpiWorkerCallback allows the developer to add another function
     !> that responds to additional integer messages by calling developer-defined 
-    !> functions corresponding to those integers. @ref mpiworker calls the 
+    !> functions corresponding to those integers. @ref MpiWorker calls the 
     !> callback function when the message number is not one of the PhreeqcRM 
     !> message numbers. Messages are unique integer numbers. PhreeqcRM uses integers 
     !> in a range beginning at 0. It is suggested that developers use message numbers 
     !> starting at 1000 or higher for their tasks. The callback function calls a 
     !> developer-defined function specified by the message number and then returns 
-    !> to @ref mpiworker to wait for another message.
+    !> to @ref MpiWorker to wait for another message.
     !> @n@n
     !> For Fortran, the functions that are called from the callback function
     !> can use USE statements to find the data necessary to perform the tasks, and
     !> the only argument to the callback function is an integer message argument.
-    !> @a SetmpiworkerCallback must be called by each worker before @ref mpiworker 
+    !> @a SetMpiWorkerCallback must be called by each worker before @ref MpiWorker 
     !> is called.
     !> @n@n
     !> The motivation for this method is to allow the workers to perform other
     !> tasks, for instance, parallel transport calculations, within the structure
-    !> of @ref mpiworker. The callback function can be used to allow the workers 
+    !> of @ref MpiWorker. The callback function can be used to allow the workers 
     !> to receive data, perform transport calculations, and (or) send results, without 
-    !> leaving the loop of @ref mpiworker. Alternatively, it is possible for the 
-    !> workers to return from @ref mpiworker by a call to @ref mpiworkerbreak 
+    !> leaving the loop of @ref MpiWorker. Alternatively, it is possible for the 
+    !> workers to return from @ref MpiWorker by a call to @ref MpiWorkerBreak 
     !> by root. The workers could then call subroutines to receive data, calculate 
     !> transport, and send data, and then resume processing PhreeqcRM messages from 
-    !> root with another call to @ref mpiworker.
+    !> root with another call to @ref MpiWorker.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param fcn              A function that returns an integer and has an integer argument.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref mpiworker,
-    !> @ref mpiworkerbreak.
+    !> @ref MpiWorker,
+    !> @ref MpiWorkerBreak.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -6705,8 +6705,8 @@
     !> status = do_something()
     !>
     !> Code executed by workers:
-    !> status = brm%SetmpiworkerCallback(worker_tasks_f)
-    !> status = brm%mpiworker()
+    !> status = brm%SetMpiWorkerCallback(worker_tasks_f)
+    !> status = brm%MpiWorker()
     !>
     !> Code executed by root and workers:
     !> integer function do_something
@@ -6730,7 +6730,7 @@
     !>   do_something = 0
     !> end function do_something
     !>
-    !> Code called by workers from method mpiworker:
+    !> Code called by workers from method MpiWorker:
     !> integer(kind=C_INT) function worker_tasks_f(method_number) BIND(C, NAME='worker_tasks_f')
     !>   USE ISO_C_BINDING
     !>   implicit none
@@ -6749,8 +6749,8 @@
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by workers, before call to @ref mpiworker.
-    INTEGER FUNCTION SetmpiworkerCallback(self, fcn)
+    !> Called by workers, before call to @ref MpiWorker.
+    INTEGER FUNCTION SetMpiWorkerCallback(self, fcn)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
@@ -6762,8 +6762,8 @@
     INTEGER(kind=c_int), INTENT(in) :: method_number
     END FUNCTION fcn
     END INTERFACE
-    SetmpiworkerCallback = RM_SetmpiworkerCallback(self%bmiphreeqcrm_id, fcn)
-    END FUNCTION SetmpiworkerCallback
+    SetMpiWorkerCallback = RM_SetMpiWorkerCallback(self%bmiphreeqcrm_id, fcn)
+    END FUNCTION SetMpiWorkerCallback
 
     !> Specify the current selected output by sequence number. The user may define 
     !> multiple SELECTED_OUTPUT data blocks for the workers. A user number is specified 
@@ -6772,27 +6772,27 @@
     !> that will be used for selected-output operations.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param n             Sequence number of the SELECTED_OUTPUT data block that is to be used.
-    !> @retval IRESULT   0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT   0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getcurrentselectedoutputusernumber,
-    !> @ref getnthselectedoutputusernumber,
-    !> @ref getselectedoutput,
-    !> @ref getselectedoutputcolumncount,
-    !> @ref getselectedoutputcount,
-    !> @ref getselectedoutputheadings,
-    !> @ref getselectedoutputrowcount,
-    !> @ref setcurrentselectedoutputusernumber,
-    !> @ref setselectedoutputon.
+    !> @ref GetCurrentSelectedOutputUserNumber,
+    !> @ref GetNthSelectedOutputUserNumber,
+    !> @ref GetSelectedOutput,
+    !> @ref GetSelectedOutputColumnCount,
+    !> @ref GetSelectedOutputCount,
+    !> @ref GetSelectedOutputHeadings,
+    !> @ref GetSelectedOutputRowCount,
+    !> @ref SetCurrentSelectedOutputUserNumber,
+    !> @ref SetSelectedOutputOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> do isel = 1, brm%getselectedoutputcount()
-    !>   status = brm%setnthselectedoutput(isel)
-    !>   n_user = brm%getcurrentselectedoutputusernumber()
-    !>   col = brm%getselectedoutputcolumncount()
+    !> do isel = 1, brm%GetSelectedOutputCount()
+    !>   status = brm%SetNthSelectedOutput(isel)
+    !>   n_user = brm%GetCurrentSelectedOutputUserNumber()
+    !>   col = brm%GetSelectedOutputColumnCount()
     !>   allocate(selected_out(nxyz,col))
-    !>   status = brm%getselectedoutput(selected_out)
+    !>   status = brm%GetSelectedOutput(selected_out)
     !>   ! Process results here
     !>   deallocate(selected_out)
     !> enddo
@@ -6801,13 +6801,13 @@
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION setnthselectedoutput(self, n)
+    INTEGER FUNCTION SetNthSelectedOutput(self, n)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: n
-    setnthselectedoutput = RM_setnthselectedoutput(self%bmiphreeqcrm_id, n)
-    END FUNCTION setnthselectedoutput
+    SetNthSelectedOutput = RM_SetNthSelectedOutput(self%bmiphreeqcrm_id, n)
+    END FUNCTION SetNthSelectedOutput
 
     !> Sets the property for partitioning solids between the saturated and 
     !> unsaturated parts of a partially saturated cell.
@@ -6816,7 +6816,7 @@
     !> saturations less than 1.0 are encountered. The partially saturated cells
     !> may have a small water-to-rock ratio that causes reactions to proceed 
     !> differently relative to fully saturated cells. By setting  
-    !> @a setpartitionuzsolids to true, the amounts of solids and gases are 
+    !> @a SetPartitionUZSolids to true, the amounts of solids and gases are 
     !> partioned according to the saturation. If a cell has a saturation of 0.5, then
     !> the water interacts with only half of the solids and gases; the other half 
     !> is unreactive until the water table rises. As the saturation in a cell varies,
@@ -6828,98 +6828,98 @@
     !> @param tf             @a True, the fraction of solids and gases available for
     !> reaction is equal to the saturation;
     !> @a False (default), all solids and gases are reactive regardless of saturation.
-    !> @retval IRESULT    0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT    0 is success, negative is failure (See @ref DecodeError).
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setpartitionuzsolids(0)
+    !> status = brm%SetPartitionUZSolids(0)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setpartitionuzsolids(self, tf)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetPartitionUZSolids(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in)  :: tf
-    setpartitionuzsolids = RM_setpartitionuzsolids(self%bmiphreeqcrm_id, tf)
-    END FUNCTION setpartitionuzsolids
+    SetPartitionUZSolids = RM_SetPartitionUZSolids(self%bmiphreeqcrm_id, tf)
+    END FUNCTION SetPartitionUZSolids
 
     !> Set the porosity for each reaction cell.
     !> The volume of water in a reaction cell is the product of the porosity, 
-    !> the saturation (@ref setsaturationuser), and the representative volume 
-    !> (@ref setrepresentativevolume).
+    !> the saturation (@ref SetSaturationUser), and the representative volume 
+    !> (@ref SetRepresentativeVolume).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param por              Array of porosities, unitless. Default is 0.1. Size 
     !> of array is @a nxyz, where @a nxyz is the number of grid cells in the user's 
-    !> model (@ref getgridcellcount).
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> model (@ref GetGridCellCount).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getsaturationcalculated,
-    !> @ref setrepresentativevolume,
-    !> @ref setsaturationuser.
+    !> @ref GetSaturationCalculated,
+    !> @ref SetRepresentativeVolume,
+    !> @ref SetSaturationUser.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> allocate(por(nxyz))
     !> por = 0.2
-    !> status = brm%setporosity(por)
+    !> status = brm%SetPorosity(por)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setporosity(self, por)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetPorosity(self, por)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:), INTENT(in) :: por
-    setporosity = RM_setporosity(self%bmiphreeqcrm_id, por)
-    END FUNCTION setporosity
+    SetPorosity = RM_SetPorosity(self%bmiphreeqcrm_id, por)
+    END FUNCTION SetPorosity
 
     !> Set the pressure for each reaction cell. 
     !> Pressure effects are considered explicitly only in three of the databases 
     !> distributed with PhreeqcRM: phreeqc.dat, Amm.dat, and pitzer.dat.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param p                Array of pressures, in atm. Size of array is @a nxyz, 
-    !> where @a nxyz is the number of grid cells in the user's model (@ref getgridcellcount).
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> where @a nxyz is the number of grid cells in the user's model (@ref GetGridCellCount).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref settemperature.
+    !> @ref SetTemperature.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> allocate(pressure(nxyz))
     !> pressure = 2.0
-    !> status = brm%setpressure(pressure)
+    !> status = brm%SetPressure(pressure)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setpressure(self, p)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetPressure(self, p)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:), INTENT(in) :: p
-    setpressure = RM_setpressure(self%bmiphreeqcrm_id, p)
-    END FUNCTION setpressure
+    SetPressure = RM_SetPressure(self%bmiphreeqcrm_id, p)
+    END FUNCTION SetPressure
 
     !> Enable or disable detailed output for each reaction cell.
     !> Printing for a cell will occur only when the printing is enabled with 
-    !> @ref setprintchemistryon and the @a cell_mask value is 1.
+    !> @ref SetPrintChemistryOn and the @a cell_mask value is 1.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param cell_mask        Array of integers. Size of array is @a nxyz, 
     !> where @a nxyz is the number of grid cells in the user's model 
-    !> (@ref getgridcellcount). A value of 0 will disable printing detailed 
+    !> (@ref GetGridCellCount). A value of 0 will disable printing detailed 
     !> output for the cell; a value of 1 will enable printing detailed output for a cell.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref setprintchemistryon.
+    !> @ref SetPrintChemistryOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -6929,29 +6929,29 @@
     !>   print_chemistry_mask(i) = 1
     !>   print_chemistry_mask(i+nxyz/2) = 0
     !> enddo
-    !> status = brm%setprintchemistrymask(print_chemistry_mask)
+    !> status = brm%SetPrintChemistryMask(print_chemistry_mask)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setprintchemistrymask(self, cell_mask)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetPrintChemistryMask(self, cell_mask)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, DIMENSION(:), INTENT(in) :: cell_mask
-    setprintchemistrymask = RM_setprintchemistrymask(self%bmiphreeqcrm_id, cell_mask)
-    END FUNCTION setprintchemistrymask
+    SetPrintChemistryMask = RM_SetPrintChemistryMask(self%bmiphreeqcrm_id, cell_mask)
+    END FUNCTION SetPrintChemistryMask
 
     !> Setting to enable or disable printing detailed output from reaction calculations 
-    !> to the output file for a set of cells defined by @ref setprintchemistrymask. 
+    !> to the output file for a set of cells defined by @ref SetPrintChemistryMask. 
     !> The detailed output prints all of the output typical of a PHREEQC reaction calculation, 
     !> which includes solution descriptions and the compositions of all other reactants. 
     !> The output can be several hundred lines per cell, which can lead to a very large 
-    !> output file (prefix.chem.txt, @ref openfiles). For the worker instances, the 
-    !> output can be limited to a set of cells (@ref setprintchemistrymask) and, in 
+    !> output file (prefix.chem.txt, @ref OpenFiles). For the worker instances, the 
+    !> output can be limited to a set of cells (@ref SetPrintChemistryMask) and, in 
     !> general, the amount of information printed can be limited by use of options in 
-    !> the PRINT data block of PHREEQC (applied by using @ref runfile or @ref runstring).
+    !> the PRINT data block of PHREEQC (applied by using @ref RunFile or @ref RunString).
     !> Printing the detailed output for the workers is generally used only for debugging, 
     !> and PhreeqcRM will run significantly faster when printing detailed output for the 
     !> workers is disabled.
@@ -6962,30 +6962,30 @@
     !> 1, enable detailed printing in the InitialPhreeqc instances.
     !> @param utility          0, disable detailed printing in the Utility instance; 
     !> 1, enable detailed printing in the Utility instance.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref setprintchemistrymask.
+    !> @ref SetPrintChemistryMask.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setprintchemistryon(0, 1, 0)  ! workers, initial_phreeqc, utility
+    !> status = brm%SetPrintChemistryOn(0, 1, 0)  ! workers, initial_phreeqc, utility
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setprintchemistryon(self, workers, initial_phreeqc, utility)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetPrintChemistryOn(self, workers, initial_phreeqc, utility)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: workers, initial_phreeqc, utility
-    setprintchemistryon = RM_setprintchemistryon(self%bmiphreeqcrm_id, workers, initial_phreeqc, utility)
-    END FUNCTION setprintchemistryon
+    SetPrintChemistryOn = RM_SetPrintChemistryOn(self%bmiphreeqcrm_id, workers, initial_phreeqc, utility)
+    END FUNCTION SetPrintChemistryOn
 
     !> Set the load-balancing algorithm.
     !> PhreeqcRM attempts to rebalance the load of each thread or process such that each
-    !> thread or process takes the same amount of time to run its part of a @ref runcells
+    !> thread or process takes the same amount of time to run its part of a @ref RunCells
     !> calculation. Two algorithms are available; one uses individual times for each cell and
     !> accounts for cells that were not run because
     !> saturation was zero (default), and
@@ -6995,33 +6995,33 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param method           0, indicates average times are used in rebalancing; 
     !> 1 indicates individual cell times are used in rebalancing (default).
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref setrebalancefraction.
+    !> @ref SetRebalanceFraction.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setrebalancebycell(1)
+    !> status = brm%SetRebalanceByCell(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setrebalancebycell(self, method)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetRebalanceByCell(self, method)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in)  :: method
-    setrebalancebycell = RM_setrebalancebycell(self%bmiphreeqcrm_id, method)
-    END FUNCTION setrebalancebycell
+    SetRebalanceByCell = RM_SetRebalanceByCell(self%bmiphreeqcrm_id, method)
+    END FUNCTION SetRebalanceByCell
 
     !> Sets the fraction of cells that are transferred among threads or processes 
     !> when rebalancing.
     !> PhreeqcRM attempts to rebalance the load of each thread or process such that 
     !> each thread or process takes the same amount of time to run its part of a 
-    !> @ref runcells calculation. The rebalancing transfers cell calculations among 
-    !> threads or processes to try to achieve an optimum balance. @a setrebalancefraction
+    !> @ref RunCells calculation. The rebalancing transfers cell calculations among 
+    !> threads or processes to try to achieve an optimum balance. @a SetRebalanceFraction
     !> adjusts the calculated optimum number of cell transfers by a fraction from 
     !> 0 to 1.0 to determine the actual number of cell transfers. A value of zero 
     !> eliminates load rebalancing. A value less than 1.0 is suggested to slow the approach 
@@ -7030,32 +7030,32 @@
     !> Default is 0.5.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param f                Fraction from 0.0 to 1.0.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref setrebalancebycell.
+    !> @ref SetRebalanceByCell.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setrebalancefraction(0.5d0)
+    !> status = brm%SetRebalanceFraction(0.5d0)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setrebalancefraction(self, f)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetRebalanceFraction(self, f)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(in)  :: f
-    setrebalancefraction = RM_setrebalancefraction(self%bmiphreeqcrm_id, f)
-    END FUNCTION setrebalancefraction
+    SetRebalanceFraction = RM_SetRebalanceFraction(self%bmiphreeqcrm_id, f)
+    END FUNCTION SetRebalanceFraction
 
     !> Set the representative volume of each reaction cell.
     !> By default the representative volume of each reaction cell is 1 liter. The volume 
     !> of water in a reaction cell is determined by the procuct of the representative 
-    !> volume, the porosity (@ref setporosity), and the saturation 
-    !> (@ref setsaturationuser). The numerical method of PHREEQC is more robust if 
+    !> volume, the porosity (@ref SetPorosity), and the saturation 
+    !> (@ref SetSaturationUser). The numerical method of PHREEQC is more robust if 
     !> the water volume for a reaction cell is within a couple orders of magnitude of 1.0.
     !> Small water volumes caused by small porosities and (or) small saturations (and (or) 
     !> small representative volumes) may cause non-convergence of the numerical method.
@@ -7065,11 +7065,11 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param rv               Vector of representative volumes, in liters. Default 
     !> is 1.0 liter. Size of array is @a nxyz, where @a nxyz is the number of grid cells 
-    !> in the user's model (@ref getgridcellcount).
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> in the user's model (@ref GetGridCellCount).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref setporosity,
-    !> @ref setsaturationuser.
+    !> @ref SetPorosity,
+    !> @ref SetSaturationUser.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -7077,291 +7077,291 @@
     !> real(kind=8), dimension(:), allocatable   :: rv
     !> allocate(rv(nxyz))
     !> rv = 1.0
-    !> status = brm%setrepresentativevolume(rv)
+    !> status = brm%SetRepresentativeVolume(rv)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setrepresentativevolume(self, rv)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetRepresentativeVolume(self, rv)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:), INTENT(in) :: rv
-    setrepresentativevolume = RM_setrepresentativevolume(self%bmiphreeqcrm_id, rv)
-    END FUNCTION setrepresentativevolume
+    SetRepresentativeVolume = RM_SetRepresentativeVolume(self%bmiphreeqcrm_id, rv)
+    END FUNCTION SetRepresentativeVolume
 
     !> Set the saturation of each reaction cell. Saturation is a fraction ranging from 0 to 1.
-    !> The volume of water in a cell is the product of porosity (@ref setporosity), 
-    !> saturation (@a setsaturationuser), and representative volume 
-    !> (@ref setrepresentativevolume). As a result of a reaction calculation,
+    !> The volume of water in a cell is the product of porosity (@ref SetPorosity), 
+    !> saturation (@a SetSaturationUser), and representative volume 
+    !> (@ref SetRepresentativeVolume). As a result of a reaction calculation,
     !> solution properties (density and volume) will change; the databases phreeqc.dat, 
     !> Amm.dat, and pitzer.dat have the molar volume data to calculate these changes.
-    !> The methods @ref getdensitycalculated, @ref getsolutionvolume, and 
-    !> @ref getsaturationcalculated can be used to account for these changes in the 
-    !> succeeding transport calculation. @a setrepresentativevolume should be called 
+    !> The methods @ref GetDensityCalculated, @ref GetSolutionVolume, and 
+    !> @ref GetSaturationCalculated can be used to account for these changes in the 
+    !> succeeding transport calculation. @a SetRepresentativeVolume should be called 
     !> before initial conditions are defined for the reaction cells.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param sat              Array of saturations, unitless. Size of array is @a nxyz, 
     !> where @a nxyz is the number of grid cells in the user's model 
-    !> (@ref getgridcellcount).
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> (@ref GetGridCellCount).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getdensitycalculated,
-    !> @ref getsaturationcalculated,
-    !> @ref getsolutionvolume,
-    !> @ref setporosity,
-    !> @ref setrepresentativevolume.
+    !> @ref GetDensityCalculated,
+    !> @ref GetSaturationCalculated,
+    !> @ref GetSolutionVolume,
+    !> @ref SetPorosity,
+    !> @ref SetRepresentativeVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> allocate(sat(nxyz))
     !> sat = 1.0
-    !> status = brm%setsaturationuser(sat)
+    !> status = brm%SetSaturationUser(sat)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setsaturationuser(self, sat)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetSaturationUser(self, sat)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:), INTENT(in) :: sat
-    setsaturationuser = RM_setsaturationuser(self%bmiphreeqcrm_id, sat)
-    END FUNCTION setsaturationuser
+    SetSaturationUser = RM_SetSaturationUser(self%bmiphreeqcrm_id, sat)
+    END FUNCTION SetSaturationUser
     
     INTEGER FUNCTION SetSaturation(self, sat)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:), INTENT(in) :: sat
-    SetSaturation = RM_setsaturationuser(self%bmiphreeqcrm_id, sat)
+    SetSaturation = RM_SetSaturationUser(self%bmiphreeqcrm_id, sat)
     END FUNCTION SetSaturation
 
     !> Set the property that controls whether messages are written to the screen.
-    !> Messages include information about rebalancing during @ref runcells, and
-    !> any messages written with @ref screenmessage.
+    !> Messages include information about rebalancing during @ref RunCells, and
+    !> any messages written with @ref ScreenMessage.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param tf            @a 1, enable screen messages; @a 0, disable screen messages. 
     !> Default is 1.
-    !> @retval IRESULT   0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT   0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref runcells,
-    !> @ref screenmessage.
+    !> @ref RunCells,
+    !> @ref ScreenMessage.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setscreenon(1)
+    !> status = brm%SetScreenOn(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root.
-    INTEGER FUNCTION setscreenon(self, tf)
+    INTEGER FUNCTION SetScreenOn(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: tf
-    setscreenon = RM_setscreenon(self%bmiphreeqcrm_id, tf)
-    END FUNCTION setscreenon
+    SetScreenOn = RM_SetScreenOn(self%bmiphreeqcrm_id, tf)
+    END FUNCTION SetScreenOn
 
     !> Setting determines whether selected-output results are available to be retrieved
-    !> with @ref getselectedoutput. @a 1 indicates that selected-output results
-    !> will be accumulated during @ref runcells and can be retrieved with
-    !> @ref getselectedoutput; @a 0 indicates that selected-output results will not
-    !> be accumulated during @ref runcells.
+    !> with @ref GetSelectedOutput. @a 1 indicates that selected-output results
+    !> will be accumulated during @ref RunCells and can be retrieved with
+    !> @ref GetSelectedOutput; @a 0 indicates that selected-output results will not
+    !> be accumulated during @ref RunCells.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param tf               0, disable selected output; 1, enable selected output.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref getcurrentselectedoutputusernumber,
-    !> @ref getnthselectedoutputusernumber,
-    !> @ref getselectedoutput,
-    !> @ref getselectedoutputcolumncount,
-    !> @ref getselectedoutputcount,
-    !> @ref getselectedoutputheadings,
-    !> @ref getselectedoutputrowcount,
-    !> @ref setcurrentselectedoutputusernumber,
-    !> @ref setnthselectedoutput.
+    !> @ref GetCurrentSelectedOutputUserNumber,
+    !> @ref GetNthSelectedOutputUserNumber,
+    !> @ref GetSelectedOutput,
+    !> @ref GetSelectedOutputColumnCount,
+    !> @ref GetSelectedOutputCount,
+    !> @ref GetSelectedOutputHeadings,
+    !> @ref GetSelectedOutputRowCount,
+    !> @ref SetCurrentSelectedOutputUserNumber,
+    !> @ref SetNthSelectedOutput.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setselectedoutputon(1)        ! enable selected output
+    !> status = brm%SetSelectedOutputOn(1)        ! enable selected output
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setselectedoutputon(self, tf)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetSelectedOutputOn(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: tf
-    setselectedoutputon = RM_setselectedoutputon(self%bmiphreeqcrm_id, tf)
-    END FUNCTION setselectedoutputon
+    SetSelectedOutputOn = RM_SetSelectedOutputOn(self%bmiphreeqcrm_id, tf)
+    END FUNCTION SetSelectedOutputOn
 
     !> Sets the value of the species-save property.
     !> This method enables use of PhreeqcRM with multicomponent-diffusion 
     !> transport calculations. By default, concentrations of aqueous species are 
     !> not saved. Setting the species-save property to 1 allows aqueous species 
-    !> concentrations to be retrieved with @ref getspeciesconcentrations, and 
-    !> solution compositions to be set with @ref speciesconcentrations2module.
-    !> setspeciessaveon must be called before calls to @ref findcomponents.
+    !> concentrations to be retrieved with @ref GetSpeciesConcentrations, and 
+    !> solution compositions to be set with @ref SpeciesConcentrations2Module.
+    !> SetSpeciesSaveOn must be called before calls to @ref FindComponents.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param save_on          0, indicates species concentrations are not saved; 
     !> 1, indicates species concentrations are saved.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getspeciesconcentrations,
-    !> @ref getspeciescount,
-    !> @ref getspeciesd25,
-    !> @ref getspecieslog10gammas,
-    !> @ref getspecieslog10molalities,
-    !> @ref getspeciesnames,
-    !> @ref getspeciessaveon,
-    !> @ref getspeciesz,
-    !> @ref speciesconcentrations2module.
+    !> @ref FindComponents,
+    !> @ref GetSpeciesConcentrations,
+    !> @ref GetSpeciesCount,
+    !> @ref GetSpeciesD25,
+    !> @ref GetSpeciesLog10Gammas,
+    !> @ref GetSpeciesLog10Molalities,
+    !> @ref GetSpeciesNames,
+    !> @ref GetSpeciesSaveOn,
+    !> @ref GetSpeciesZ,
+    !> @ref SpeciesConcentrations2Module.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> save_on = brm%setspeciessaveon(1)
+    !> save_on = brm%SetSpeciesSaveOn(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    INTEGER FUNCTION setspeciessaveon(self, save_on)
+    INTEGER FUNCTION SetSpeciesSaveOn(self, save_on)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: save_on
-    setspeciessaveon = RM_setspeciessaveon(self%bmiphreeqcrm_id, save_on)
-    END FUNCTION setspeciessaveon
+    SetSpeciesSaveOn = RM_SetSpeciesSaveOn(self%bmiphreeqcrm_id, save_on)
+    END FUNCTION SetSpeciesSaveOn
 
-    !> Set the temperature for each reaction cell. If @a settemperature is not called,
+    !> Set the temperature for each reaction cell. If @a SetTemperature is not called,
     !> worker solutions will have temperatures as defined by initial conditions
-    !> (@ref initialphreeqc2module and @ref initialphreeqccell2module).
+    !> (@ref InitialPhreeqc2Module and @ref InitialPhreeqcCell2Module).
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param t                Array of temperatures, in degrees C. Size of array is 
     !> @a nxyz, where @a nxyz is the number of grid cells in the user's model 
-    !> (@ref getgridcellcount).
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> (@ref GetGridCellCount).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module,
-    !> @ref setpressure.
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module,
+    !> @ref SetPressure.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
     !> allocate(temperature(nxyz))
     !> temperature = 20.0
-    !> status = brm%settemperature(temperature)
+    !> status = brm%SetTemperature(temperature)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION settemperature(self, t)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetTemperature(self, t)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:), INTENT(in) :: t
-    settemperature = RM_settemperature(self%bmiphreeqcrm_id, t)
-    END FUNCTION settemperature
+    SetTemperature = RM_SetTemperature(self%bmiphreeqcrm_id, t)
+    END FUNCTION SetTemperature
 
     !> Set current simulation time for the reaction module.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param time             Current simulation time, in seconds.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref settimeconversion,
-    !> @ref settimestep.
+    !> @ref SetTimeConversion,
+    !> @ref SetTimeStep.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%settime(time)
+    !> status = brm%SetTime(time)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION settime(self, time)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetTime(self, time)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(in) :: time
-    settime = RM_settime(self%bmiphreeqcrm_id, time)
-    END FUNCTION settime
+    SetTime = RM_SetTime(self%bmiphreeqcrm_id, time)
+    END FUNCTION SetTime
 
     !> Set a factor to convert to user time units. Factor times seconds produces user time units.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param conv_factor      Factor to convert seconds to user time units.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref settime,
-    !> @ref settimestep.
+    !> @ref SetTime,
+    !> @ref SetTimeStep.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%settimeconversion(dble(1.0 / 86400.0)) ! days
+    !> status = brm%SetTimeConversion(dble(1.0 / 86400.0)) ! days
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION settimeconversion(self, conv_factor)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetTimeConversion(self, conv_factor)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(in) :: conv_factor
-    settimeconversion = RM_settimeconversion(self%bmiphreeqcrm_id, conv_factor)
-    END FUNCTION settimeconversion
+    SetTimeConversion = RM_SetTimeConversion(self%bmiphreeqcrm_id, conv_factor)
+    END FUNCTION SetTimeConversion
 
     !> Set current time step for the reaction module. This is the length
     !> of time over which kinetic reactions are integrated.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param time_step        Current time step, in seconds.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref settime,
-    !> @ref settimeconversion.
+    !> @ref SetTime,
+    !> @ref SetTimeConversion.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%settimestep(time_step)
+    !> status = brm%SetTimeStep(time_step)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION settimestep(self, time_step)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetTimeStep(self, time_step)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), INTENT(in) :: time_step
-    settimestep = RM_settimestep(self%bmiphreeqcrm_id, time_step)
-    END FUNCTION settimestep
+    SetTimeStep = RM_SetTimeStep(self%bmiphreeqcrm_id, time_step)
+    END FUNCTION SetTimeStep
 
     !> Sets input units for exchangers.
     !> In PHREEQC input, exchangers are defined by moles of exchange sites (@a Mp).
-    !> @a setunitsexchange specifies how the number of moles of exchange sites in 
+    !> @a SetUnitsExchange specifies how the number of moles of exchange sites in 
     !> a reaction cell (@a Mc) is calculated from the input value (@a Mp).
     !>
     !> Options are
     !> 0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the 
-    !> representative volume (@ref setrepresentativevolume);
+    !> representative volume (@ref SetRepresentativeVolume);
     !> 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is 
-    !> porosity (@ref setporosity); or
+    !> porosity (@ref SetPorosity); or
     !> 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-P)*RV.
     !>
     !> If a single EXCHANGE definition is used for cells with different initial porosity,
@@ -7373,40 +7373,40 @@
     !>and inversely with porosity.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param option           Units option for exchangers: 0, 1, or 2.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module,
-    !> @ref setporosity,
-    !> @ref setrepresentativevolume.
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module,
+    !> @ref SetPorosity,
+    !> @ref SetRepresentativeVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setunitsexchange(1)
+    !> status = brm%SetUnitsExchange(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setunitsexchange(self, option)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetUnitsExchange(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: option
-    setunitsexchange = RM_setunitsexchange(self%bmiphreeqcrm_id, option)
-    END FUNCTION setunitsexchange
+    SetUnitsExchange = RM_SetUnitsExchange(self%bmiphreeqcrm_id, option)
+    END FUNCTION SetUnitsExchange
 
     !> Set input units for gas phases.
     !> In PHREEQC input, gas phases are defined by moles of component gases (@a Mp).
-    !> @a setunitsgasphase specifies how the number of moles of component gases in a 
+    !> @a SetUnitsGasPhase specifies how the number of moles of component gases in a 
     !> reaction cell (@a Mc) is calculated from the input value (@a Mp).
     !>
     !> Options are
     !> 0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the 
-    !> representative volume (@ref setrepresentativevolume);
+    !> representative volume (@ref SetRepresentativeVolume);
     !> 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is 
-    !> porosity (@ref setporosity); or
+    !> porosity (@ref SetPorosity); or
     !> 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
     !>
     !> If a single GAS_PHASE definition is used for cells with different initial porosity,
@@ -7418,40 +7418,40 @@
     !> volume and inversely with porosity.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param option           Units option for gas phases: 0, 1, or 2.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module,
-    !> @ref setporosity,
-    !> @ref setrepresentativevolume.
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module,
+    !> @ref SetPorosity,
+    !> @ref SetRepresentativeVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setunitsgasphase(1)
+    !> status = brm%SetUnitsGasPhase(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setunitsgasphase(self, option)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetUnitsGasPhase(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: option
-    setunitsgasphase = RM_setunitsgasphase(self%bmiphreeqcrm_id, option)
-    END FUNCTION setunitsgasphase
+    SetUnitsGasPhase = RM_SetUnitsGasPhase(self%bmiphreeqcrm_id, option)
+    END FUNCTION SetUnitsGasPhase
 
     !> Set input units for kinetic reactants.
     !> In PHREEQC input, kinetics are defined by moles of kinetic reactants (@a Mp).
-    !> @a setunitskinetics specifies how the number of moles of kinetic reactants in a 
+    !> @a SetUnitsKinetics specifies how the number of moles of kinetic reactants in a 
     !> reaction cell (@a Mc) is calculated from the input value (@a Mp).
     !>
     !> Options are
     !> 0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the 
-    !> representative volume (@ref setrepresentativevolume);
+    !> representative volume (@ref SetRepresentativeVolume);
     !> 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity 
-    !> (@ref setporosity); or
+    !> (@ref SetPorosity); or
     !> 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
     !>
     !> If a single KINETICS definition is used for cells with different initial porosity,
@@ -7463,8 +7463,8 @@
     !> rock volume and inversely with porosity.
     !>
     !> Note that the volume of water in a cell in the reaction module is equal to the product of
-    !> porosity (@ref setporosity), the saturation (@ref setsaturationuser), and 
-    !> representative volume (@ref setrepresentativevolume), which is usually less than 
+    !> porosity (@ref SetPorosity), the saturation (@ref SetSaturationUser), and 
+    !> representative volume (@ref SetRepresentativeVolume), which is usually less than 
     !> 1 liter. It is important to write the RATES definitions for homogeneous (aqueous) 
     !> kinetic reactions to account for the current volume of water, often by calculating 
     !> the rate of reaction per liter of water and multiplying by the volume
@@ -7478,41 +7478,41 @@
     !> reactant (Basic function M) in RATES to obtain the surface area.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param option           Units option for kinetic reactants: 0, 1, or 2.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module,
-    !> @ref setporosity,
-    !> @ref setrepresentativevolume,
-    !> @ref setsaturationuser.
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module,
+    !> @ref SetPorosity,
+    !> @ref SetRepresentativeVolume,
+    !> @ref SetSaturationUser.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setunitskinetics(1)
+    !> status = brm%SetUnitsKinetics(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setunitskinetics(self, option)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetUnitsKinetics(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: option
-    setunitskinetics = RM_setunitskinetics(self%bmiphreeqcrm_id, option)
-    END FUNCTION setunitskinetics
+    SetUnitsKinetics = RM_SetUnitsKinetics(self%bmiphreeqcrm_id, option)
+    END FUNCTION SetUnitsKinetics
 
     !> Set input units for pure phase assemblages (equilibrium phases).
     !> In PHREEQC input, equilibrium phases are defined by moles of each phase (@a Mp).
-    !> @a setunitsppassemblage specifies how the number of moles of phases in a 
+    !> @a SetUnitsPPassemblage specifies how the number of moles of phases in a 
     !> reaction cell (@a Mc) is calculated from the input value (@a Mp).
     !>
     !> Options are
     !> 0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the 
-    !> representative volume (@ref setrepresentativevolume);
+    !> representative volume (@ref SetRepresentativeVolume);
     !> 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is 
-    !> porosity (@ref setporosity); or
+    !> porosity (@ref SetPorosity); or
     !> 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
     !>
     !> If a single EQUILIBRIUM_PHASES definition is used for cells with different initial porosity,
@@ -7525,29 +7525,29 @@
     !>
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param option           Units option for equilibrium phases: 0, 1, or 2.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module,
-    !> @ref setporosity,
-    !> @ref setrepresentativevolume.
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module,
+    !> @ref SetPorosity,
+    !> @ref SetRepresentativeVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setunitsppassemblage(1)
+    !> status = brm%SetUnitsPPassemblage(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setunitsppassemblage(self, option)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetUnitsPPassemblage(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: option
-    setunitsppassemblage = RM_setunitsppassemblage(self%bmiphreeqcrm_id, option)
-    END FUNCTION setunitsppassemblage
+    SetUnitsPPassemblage = RM_SetUnitsPPassemblage(self%bmiphreeqcrm_id, option)
+    END FUNCTION SetUnitsPPassemblage
 
     !> Solution concentration units used by the transport model.
     !> Options are 1, mg/L; 2 mol/L; or 3, mass fraction, kg/kgs.
@@ -7557,12 +7557,12 @@
     !> To convert from mg/L to moles
     !> of element in the representative volume of a reaction cell, mg/L is converted 
     !> to mol/L and multiplied by the solution volume, which is the product of porosity 
-    !> (@ref setporosity), saturation (@ref setsaturationuser), and representative 
-    !> volume (@ref setrepresentativevolume). To convert from mol/L to moles
+    !> (@ref SetPorosity), saturation (@ref SetSaturationUser), and representative 
+    !> volume (@ref SetRepresentativeVolume). To convert from mol/L to moles
     !> of element in the representative volume of a reaction cell, mol/L is multiplied 
     !> by the solution volume. To convert from mass fraction to moles of element in the 
     !> representative volume of a reaction cell, kg/kgs is converted to mol/kgs, multiplied 
-    !> by density (@ref setdensityuser) and multiplied by the solution volume.
+    !> by density (@ref SetDensityUser) and multiplied by the solution volume.
     !> @n@n
     !> To convert from moles  of element in the representative volume of a reaction cell 
     !> to mg/L, the number of moles of an element is divided by the solution volume 
@@ -7575,56 +7575,56 @@
     !> Two options are available for the volume and mass of solution that are used in 
     !> converting to transport concentrations: (1) the volume and mass of solution are
     !> calculated by PHREEQC, or (2) the volume of solution is the product of porosity 
-    !> (@ref setporosity), saturation (@ref setsaturationuser), and representative 
-    !> volume (@ref setrepresentativevolume), and the mass of solution is volume times 
-    !> density as defined by @ref setdensityuser. Which option is used is determined 
-    !> by @ref usesolutiondensityvolume.
+    !> (@ref SetPorosity), saturation (@ref SetSaturationUser), and representative 
+    !> volume (@ref SetRepresentativeVolume), and the mass of solution is volume times 
+    !> density as defined by @ref SetDensityUser. Which option is used is determined 
+    !> by @ref UseSolutionDensityVolume.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param option           Units option for solutions: 1, 2, or 3, default is 1, mg/L.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref setdensityuser,
-    !> @ref setporosity,
-    !> @ref setrepresentativevolume,
-    !> @ref setsaturationuser,
-    !> @ref usesolutiondensityvolume.
+    !> @ref SetDensityUser,
+    !> @ref SetPorosity,
+    !> @ref SetRepresentativeVolume,
+    !> @ref SetSaturationUser,
+    !> @ref UseSolutionDensityVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setunitssolution(1)
+    !> status = brm%SetUnitsSolution(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setunitssolution(self, option)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetUnitsSolution(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: option
-    setunitssolution = RM_setunitssolution(self%bmiphreeqcrm_id, option)
-    END FUNCTION setunitssolution
+    SetUnitsSolution = RM_SetUnitsSolution(self%bmiphreeqcrm_id, option)
+    END FUNCTION SetUnitsSolution
 
     !> Set input units for solid-solution assemblages.
     !> In PHREEQC, solid solutions are defined by moles of each component (@a Mp).
-    !> @a setunitsssassemblage specifies how the number of moles of solid-solution 
+    !> @a SetUnitsSSassemblage specifies how the number of moles of solid-solution 
     !> components in a reaction cell (@a Mc) is calculated from the input value (@a Mp).
     !>
     !> Options are
     !> 0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the 
-    !> representative volume (@ref setrepresentativevolume);
+    !> representative volume (@ref SetRepresentativeVolume);
     !> 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is 
-    !> porosity (@ref setporosity); or
+    !> porosity (@ref SetPorosity); or
     !> 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param option           Units option for solid solutions: 0, 1, or 2.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module,
-    !> @ref setporosity,
-    !> @ref setrepresentativevolume.
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module,
+    !> @ref SetPorosity,
+    !> @ref SetRepresentativeVolume.
     !> If a single SOLID_SOLUTION definition is used for cells with different initial porosity,
     !> the three options scale quite differently.
     !> For option 0, the number of moles of a solid-solution component will be the same 
@@ -7637,30 +7637,30 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setunitsssassemblage(1)
+    !> status = brm%SetUnitsSSassemblage(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setunitsssassemblage(self, option)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetUnitsSSassemblage(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: option
-    setunitsssassemblage = RM_setunitsssassemblage(self%bmiphreeqcrm_id, option)
-    END FUNCTION setunitsssassemblage
+    SetUnitsSSassemblage = RM_SetUnitsSSassemblage(self%bmiphreeqcrm_id, option)
+    END FUNCTION SetUnitsSSassemblage
 
     !> Set input units for surfaces.
     !> In PHREEQC input, surfaces are defined by moles of surface sites (@a Mp).
-    !> @a setunitssurface specifies how the number of moles of surface sites in a 
+    !> @a SetUnitsSurface specifies how the number of moles of surface sites in a 
     !> reaction cell (@a Mc) is calculated from the input value (@a Mp).
     !>
     !> Options are
     !> 0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the 
-    !> representative volume (@ref setrepresentativevolume);
+    !> representative volume (@ref SetRepresentativeVolume);
     !> 1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is 
-    !> porosity (@ref setporosity); or
+    !> porosity (@ref SetPorosity); or
     !> 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
     !>
     !> If a single SURFACE definition is used for cells with different initial porosity,
@@ -7672,35 +7672,35 @@
     !> rock volume and inversely with porosity.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param option           Units option for surfaces: 0, 1, or 2.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref initialphreeqc2module,
-    !> @ref initialphreeqccell2module,
-    !> @ref setporosity,
-    !> @ref setrepresentativevolume.
+    !> @ref InitialPhreeqc2Module,
+    !> @ref InitialPhreeqcCell2Module,
+    !> @ref SetPorosity,
+    !> @ref SetRepresentativeVolume.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setunitssurface(1)
+    !> status = brm%SetUnitsSurface(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION setunitssurface(self, option)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SetUnitsSurface(self, option)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     integer, intent(in) :: option
-    setunitssurface = RM_setunitssurface(self%bmiphreeqcrm_id, option)
-    END FUNCTION setunitssurface
+    SetUnitsSurface = RM_SetUnitsSurface(self%bmiphreeqcrm_id, option)
+    END FUNCTION SetUnitsSurface
 
     !> Set solution concentrations in the reaction cells based on the array 
     !> of aqueous species concentrations (@a species_conc).
     !> This method is intended for use with multicomponent-diffusion transport 
-    !> calculations, and @ref setspeciessaveon must be set to @a true.
-    !> The list of aqueous species is determined by @ref findcomponents and 
+    !> calculations, and @ref SetSpeciesSaveOn must be set to @a true.
+    !> The list of aqueous species is determined by @ref FindComponents and 
     !> includes all aqueous species that can be made from the set of components.
     !> The method determines the total concentration of a component by summing 
     !> the molarities of the individual species times the stoichiometric
@@ -7709,82 +7709,82 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param species_conc     Array of aqueous species concentrations. Dimension of 
     !> the array is (@a nxyz, @a nspecies), where @a nxyz is the number of user grid 
-    !> cells (@ref getgridcellcount), and @a nspecies is the number of aqueous 
-    !> species (@ref getspeciescount). Concentrations are moles per liter.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> cells (@ref GetGridCellCount), and @a nspecies is the number of aqueous 
+    !> species (@ref GetSpeciesCount). Concentrations are moles per liter.
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref findcomponents,
-    !> @ref getspeciesconcentrations,
-    !> @ref getspeciescount,
-    !> @ref getspeciesd25,
-    !> @ref getspecieslog10gammas,
-    !> @ref getspecieslog10molalities,
-    !> @ref getspeciesnames,
-    !> @ref getspeciessaveon,
-    !> @ref getspeciesz,
-    !> @ref setspeciessaveon.
+    !> @ref FindComponents,
+    !> @ref GetSpeciesConcentrations,
+    !> @ref GetSpeciesCount,
+    !> @ref GetSpeciesD25,
+    !> @ref GetSpeciesLog10Gammas,
+    !> @ref GetSpeciesLog10Molalities,
+    !> @ref GetSpeciesNames,
+    !> @ref GetSpeciesSaveOn,
+    !> @ref GetSpeciesZ,
+    !> @ref SetSpeciesSaveOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%setspeciessaveon(1)
-    !> ncomps = brm%findcomponents()
-    !> nspecies = brm%getspeciescount()
-    !> nxyz = brm%getgridcellcount()
+    !> status = brm%SetSpeciesSaveOn(1)
+    !> ncomps = brm%FindComponents()
+    !> nspecies = brm%GetSpeciesCount()
+    !> nxyz = brm%GetGridCellCount()
     !> allocate(species_c(nxyz, nspecies))
     !> ...
-    !> status = brm%speciesconcentrations2module(species_c(1,1))
-    !> status = brm%runcells()
+    !> status = brm%SpeciesConcentrations2Module(species_c(1,1))
+    !> status = brm%RunCells()
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION speciesconcentrations2module(self, species_conc)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION SpeciesConcentrations2Module(self, species_conc)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     real(kind=8), DIMENSION(:,:), INTENT(in) :: species_conc
-    speciesconcentrations2module = RM_speciesconcentrations2module(self%bmiphreeqcrm_id, species_conc)
-    END FUNCTION speciesconcentrations2module
+    SpeciesConcentrations2Module = RM_SpeciesConcentrations2Module(self%bmiphreeqcrm_id, species_conc)
+    END FUNCTION SpeciesConcentrations2Module
 
     !> Save the state of the chemistry in all model cells, including SOLUTIONs,
     !> EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs.
     !> Although not generally used, MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs
     !> will be saved for each cell, if they have been defined in the worker IPhreeqc instances.
     !> The distribution of cells among the workers and the chemistry of fully or partially
-    !> unsaturated cells are also saved. The state is saved in memory; use @ref dumpmodule 
-    !> to save the state to file. PhreeqcRM can be reset to this state by using @ref stateapply.
+    !> unsaturated cells are also saved. The state is saved in memory; use @ref DumpModule 
+    !> to save the state to file. PhreeqcRM can be reset to this state by using @ref StateApply.
     !> A state is identified by an integer, and multiple states can be saved.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param istate        Integer identifying the state that is saved.
-    !> @retval IRESULT   0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT   0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref dumpmodule,
-    !> @ref stateapply, and
-    !> @ref statedelete.
+    !> @ref DumpModule,
+    !> @ref StateApply, and
+    !> @ref StateDelete.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%statesave(1)
+    !> status = brm%StateSave(1)
     !> ...
-    !> status = brm%stateapply(1)
-    !> status = brm%statedelete(1)
+    !> status = brm%StateApply(1)
+    !> status = brm%StateDelete(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION statesave(self, istate)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION StateSave(self, istate)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: istate
-    statesave = RM_statesave(self%bmiphreeqcrm_id, istate)
-    END FUNCTION statesave
+    StateSave = RM_StateSave(self%bmiphreeqcrm_id, istate)
+    END FUNCTION StateSave
 
-    !> Reset the state of the module to a state previously saved with @ref statesave.
+    !> Reset the state of the module to a state previously saved with @ref StateSave.
     !> The chemistry of all model cells are reset, including SOLUTIONs,
     !> EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs.
     !> MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs
@@ -7795,66 +7795,66 @@
     !> The state to be applied is identified by an integer.
     !> @param self Fortran-supplied BMIPhreeqcRM instance..
     !> @param istate       Integer identifying the state that is to be applied.
-    !> @retval IRESULT  0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT  0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref statesave and
-    !> @ref statedelete.
+    !> @ref StateSave and
+    !> @ref StateDelete.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%statesave(1)
+    !> status = brm%StateSave(1)
     !> ...
-    !> status = brm%stateapply(1)
-    !> status = brm%statedelete(1)
+    !> status = brm%StateApply(1)
+    !> status = brm%StateDelete(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION stateapply(self, istate)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION StateApply(self, istate)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: istate
-    stateapply = RM_stateapply(self%bmiphreeqcrm_id, istate)
-    END FUNCTION stateapply
+    StateApply = RM_StateApply(self%bmiphreeqcrm_id, istate)
+    END FUNCTION StateApply
 
-    !> Delete a state previously saved with @ref statesave.
+    !> Delete a state previously saved with @ref StateSave.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param istate      Integer identifying the state that is to be deleted.
-    !> @retval IRESULT 0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT 0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref statesave and
-    !> ref stateapply.
+    !> @ref StateSave and
+    !> ref StateApply.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%statesave(1)
+    !> status = brm%StateSave(1)
     !> ...
-    !> status = brm%stateapply(1)
-    !> status = brm%statedelete(1)
+    !> status = brm%StateApply(1)
+    !> status = brm%StateDelete(1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
-    INTEGER FUNCTION statedelete(self, istate)
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
+    INTEGER FUNCTION StateDelete(self, istate)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: istate
-    statedelete = RM_statedelete(self%bmiphreeqcrm_id, istate)
-    END FUNCTION statedelete
+    StateDelete = RM_StateDelete(self%bmiphreeqcrm_id, istate)
+    END FUNCTION StateDelete
     !> Determines the volume and density to use when converting from the reaction-module concentrations
-    !> to transport concentrations (@ref getconcentrations).
+    !> to transport concentrations (@ref GetConcentrations).
     !> Two options are available to convert concentration units:
     !> (1) the density and solution volume calculated by PHREEQC are used, or
-    !> (2) the specified density (@ref setdensityuser)
+    !> (2) the specified density (@ref SetDensityUser)
     !> and solution volume are defined by the product of
-    !> saturation (@ref setsaturationuser), porosity (@ref setporosity),
-    !> and representative volume (@ref setrepresentativevolume).
+    !> saturation (@ref SetSaturationUser), porosity (@ref SetPorosity),
+    !> and representative volume (@ref SetRepresentativeVolume).
     !> Transport models that consider density-dependent flow will probably use the
     !> PHREEQC-calculated density and solution volume (default),
     !> whereas transport models that assume constant-density flow will probably use
@@ -7865,62 +7865,62 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param tf               @a True indicates that the solution density and volume as
     !> calculated by PHREEQC will be used to calculate concentrations.
-    !> @a False indicates that the solution density set by @ref setdensityuser and 
-    !> the volume determined by the product of  @ref setsaturationuser, @ref setporosity, 
-    !> and @ref setrepresentativevolume, will be used to calculate concentrations retrieved 
-    !> by @ref getconcentrations.
+    !> @a False indicates that the solution density set by @ref SetDensityUser and 
+    !> the volume determined by the product of  @ref SetSaturationUser, @ref SetPorosity, 
+    !> and @ref SetRepresentativeVolume, will be used to calculate concentrations retrieved 
+    !> by @ref GetConcentrations.
     !> @see
-    !> @ref getconcentrations,
-    !> @ref setdensityuser,
-    !> @ref setporosity,
-    !> @ref setrepresentativevolume,
-    !> @ref setsaturationuser.
+    !> @ref GetConcentrations,
+    !> @ref SetDensityUser,
+    !> @ref SetPorosity,
+    !> @ref SetRepresentativeVolume,
+    !> @ref SetSaturationUser.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%usesolutiondensityvolume(0)
+    !> status = brm%UseSolutionDensityVolume(0)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
-    !> Called by root, workers must be in the loop of @ref mpiworker.
+    !> Called by root, workers must be in the loop of @ref MpiWorker.
 
-    INTEGER FUNCTION usesolutiondensityvolume(self, tf)
+    INTEGER FUNCTION UseSolutionDensityVolume(self, tf)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     INTEGER, INTENT(in) :: tf
-    usesolutiondensityvolume = RM_usesolutiondensityvolume(self%bmiphreeqcrm_id, tf)
-    END FUNCTION usesolutiondensityvolume
+    UseSolutionDensityVolume = RM_UseSolutionDensityVolume(self%bmiphreeqcrm_id, tf)
+    END FUNCTION UseSolutionDensityVolume
 
     !> Print a warning message to the screen and the log file.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param warn_str         String to be printed.
-    !> @retval IRESULT      0 is success, negative is failure (See @ref decodeerror).
+    !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
     !> @see
-    !> @ref errormessage,
-    !> @ref logmessage,
-    !> @ref openfiles,
-    !> @ref outputmessage,
-    !> @ref screenmessage.
+    !> @ref ErrorMessage,
+    !> @ref LogMessage,
+    !> @ref OpenFiles,
+    !> @ref OutputMessage,
+    !> @ref ScreenMessage.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = brm%warningmessage("Parameter is out of range, using default")
+    !> status = brm%WarningMessage("Parameter is out of range, using default")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers; only root writes to the log file.
-    INTEGER FUNCTION warningmessage(self, warn_str)
+    INTEGER FUNCTION WarningMessage(self, warn_str)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
     CHARACTER(len=*), INTENT(in) :: warn_str
-    warningmessage = RM_warningmessage(self%bmiphreeqcrm_id, warn_str)
-    END FUNCTION warningmessage
+    WarningMessage = RM_WarningMessage(self%bmiphreeqcrm_id, warn_str)
+    END FUNCTION WarningMessage
 
 #endif 
 !End EXTEND_BMIPHREEQCRM

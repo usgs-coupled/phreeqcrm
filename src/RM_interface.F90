@@ -1119,7 +1119,7 @@
     !> Retrieve a list of equilibrium phase names.
     !> The list includes all phases included in any EQUILIBRIUM_PHASES definitions in
     !> the initial-phreeqc module. @ref RM_FindComponents must be called before 
-    !> @ref RM_GetEquilibriumPhasesNames. This method may be useful when generating 
+    !> @a RM_GetEquilibriumPhasesNames. This method may be useful when generating 
     !> selected output definitions related to equilibrium phases.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param names            Array of equilibrium phase names.
@@ -1265,7 +1265,7 @@
     END FUNCTION RM_GetErrorStringLength
 
     !> Retrieves a list of exchange names.
-    !> @ref RM_FindComponents must be called before @ref RM_GetExchangeNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetExchangeNames.
     !> The exchange names array is the same length as the exchange species names array
     !> and provides the corresponding exchange site (for example, X corresponing to NaX).
     !> This method may be useful when generating selected output definitions related to exchangers.
@@ -1371,7 +1371,7 @@
     !> The list of exchange species (such as "NaX") is derived from the list of components
     !> (@ref RM_FindComponents) and the list of all exchange names (such as "X")
     !> that are found by call(s) to @ref RM_FindComponents. @ref RM_FindComponents must 
-    !> be called before @ref RM_GetExchangeSpeciesNames. This method may be useful 
+    !> be called before @a RM_GetExchangeSpeciesNames. This method may be useful 
     !> when generating selected output definitions related to exchangers.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param names            Allocatable array of exchange species names.
@@ -1515,7 +1515,7 @@
 
     !> Retrieves a list of the gas component names.
     !> The list includes all gas components found by calls to @ref RM_FindComponents.
-    !> @ref RM_FindComponents must be called before @ref RM_GetGasComponentsNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetGasComponentsNames.
     !> This method may be useful when generating selected output definitions related 
     !> to gas phases.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -2059,7 +2059,7 @@
 
     !> Retrieves a list of kinetic reaction names.
     !> The list includes all kinetic reactions found by call(s) to @ref RM_FindComponents.
-    !> @ref RM_FindComponents must be called before @ref RM_GetKineticReactionsNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetKineticReactionsNames.
     !> This method may be useful when generating selected output definitions related to 
     !> kinetic reactions.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -2771,7 +2771,7 @@
     !> the initial-phreeqc module. The list assumes that all components are present to be 
     !> able to calculate the entire list of SIs; it may be that one or more components are 
     !> missing in any specific cell. @ref RM_FindComponents must be called before 
-    !> @ref RM_GetSINames. This method may be useful when generating selected output 
+    !> @a RM_GetSINames. This method may be useful when generating selected output 
     !> definitions related to saturation indices.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param names            Allocatable array for saturation-index-phase names.
@@ -2875,7 +2875,7 @@
     !> Retrieves a list of the solid solution component names.
     !> The list includes all solid solution components found by call(s) to 
     !> @ref RM_FindComponents. @ref RM_FindComponents must be called before 
-    !> @ref RM_GetSolidSolutionComponentsNames. This method may be useful when 
+    !> @a RM_GetSolidSolutionComponentsNames. This method may be useful when 
     !> generating selected output definitions related to solid solutions.
     !> @param id          The instance @a id returned from @ref RM_Create.
     !> @param names       Allocatable array for the solid solution compnent names
@@ -2942,7 +2942,7 @@
     !> The list includes solid solution names found by call(s) to @ref RM_FindComponents.
     !> The solid solution names array is the same length as the solid solution components 
     !> array and provides the corresponding name of solid solution containing the component.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSolidSolutionNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetSolidSolutionNames.
     !> This method may be useful when generating selected output definitions related to 
     !> solid solutions.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -3545,7 +3545,7 @@
     !> Retrieves the surface names (such as "Hfo") that corresponds with
     !> the surface species names.
     !> The lists of surface species names and surface names are the same length.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetSurfaceNames.
     !> This method may be useful when generating selected output definitions related 
     !> to surfaces.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -3656,7 +3656,7 @@
     !> The list of surface species (for example, "Hfo_wOH") is derived from 
     !> the list of components (@ref RM_FindComponents) and the list of all surface 
     !> types (such as "Hfo_w") that are found by call(s) to @ref RM_FindComponents.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetSurfaceSpeciesNames.
     !> This method may be useful when generating selected output definitions related 
     !> to surfaces.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -3727,7 +3727,7 @@
     !> Retrieves the surface site types (such as "Hfo_w") that correspond with
     !> the surface species names.
     !> The lists of surface species names and surface species types are the same length.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceTypes.
+    !> @ref RM_FindComponents must be called before @a RM_GetSurfaceTypes.
     !> This method may be useful when generating selected output definitions related to surfaces.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param names            Allocatable array to receive surface types.
