@@ -171,8 +171,8 @@ extern "C" {
 	all saturation indices; list includes only the specified saturation
 	indices. Default False.
 	*/
-	IRM_DLL_EXPORT IRM_RESULT YAMLAddOutputVars(int id, char* option_in, char*
-		def_in);
+	IRM_DLL_EXPORT IRM_RESULT YAMLAddOutputVars(int id, char* option, char*
+		def);
 
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
@@ -651,7 +651,7 @@ extern "C" {
 	BMI_Initialize to initialize a PhreeqcRM instance.
 
 	@param id          The instance id returned from @ref CreateYAMLPhreeqcRM.
-	@param file_name   String containing the database name.
+	@param database   String containing the database name.
 	@retval IRM_RESULT Zero indicates success, negative indicates failure.
 
 	@par
@@ -1086,7 +1086,7 @@ extern "C" {
 	@endhtmlonly
 	*/
 	IRM_DLL_EXPORT IRM_RESULT YAMLSetDumpFileName(int id, const char*
-		dump_name);
+		file_name);
 
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method
@@ -1259,7 +1259,7 @@ extern "C" {
 	will be ignored once the PhreeqcRM instance exists.
 
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
-	@param n            Number of cells for the PhreeqcRM instance. The number
+	@param count        Number of cells for the PhreeqcRM instance. The number
 	of cells
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
 
@@ -1397,7 +1397,7 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param p            Vector of pressures, in atm. Size of vector is @a
 	nxyz, where @a nxyz is the number of grid cells in the user's model.
-	@param dim Dimension of the vector @p.
+	@param dim Dimension of the vector @a p.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
 
 	@par
@@ -1454,7 +1454,7 @@ extern "C" {
 	</CODE>
 	@endhtmlonly
 	*/
-	IRM_DLL_EXPORT IRM_RESULT YAMLSetPrintChemistryMask(int id, int* cell_mask,
+	IRM_DLL_EXPORT IRM_RESULT YAMLSetPrintChemistryMask(int id, int* mask,
 		int dim);
 
 	/**
@@ -1591,7 +1591,7 @@ extern "C" {
 	1.0 liter.
 	Size of array is @a nxyz, where @a nxyz is the number
 	of grid cells in the user's model.
-	@param dim          Dimension of the vector @rv.
+	@param dim          Dimension of the vector @a rv.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
 
 	@par
@@ -1805,7 +1805,7 @@ extern "C" {
 	</CODE>
 	@endhtmlonly
 	*/
-	IRM_DLL_EXPORT IRM_RESULT YAMLSetTemperature(int id, double* t, int dim);
+	IRM_DLL_EXPORT IRM_RESULT YAMLSetTemperature(int id, double* tc, int dim);
 
 	/**
 	Inserts data into the YAML document for the PhreeqcRM method SetTime. When
@@ -2329,7 +2329,7 @@ extern "C" {
 	instance.
 
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
-	@param n            Integer identifying the state that is saved.
+	@param istate       Integer identifying the state that is saved.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
 
 	@par
@@ -2367,7 +2367,7 @@ extern "C" {
 	instance.
 
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
-	@param n            Integer identifying the state that is to be applied.
+	@param istate       Integer identifying the state that is to be applied.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
 
 	@par
@@ -2403,7 +2403,7 @@ extern "C" {
 	instance.
 
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
-	@param n            Integer identifying the state that is to be deleted.
+	@param istate            Integer identifying the state that is to be deleted.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
 
 	@par
@@ -2432,7 +2432,7 @@ extern "C" {
 	initialized.
 
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
-	@param n            Number of threads to use for multiprocessing in
+	@param nthreads            Number of threads to use for multiprocessing in
 	PhreeqcRM instance. A value of zero will cause PhreeqcRM to use the number
 	of logical processors available on the computer.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
@@ -2526,7 +2526,7 @@ extern "C" {
 	</CODE>
 	@endhtmlonly
 	*/
-	IRM_DLL_EXPORT IRM_RESULT YAMLWarningMessage(int id, const char* warnstr);
+	IRM_DLL_EXPORT IRM_RESULT YAMLWarningMessage(int id, const char* str);
 
 #if defined(__cplusplus)
 }

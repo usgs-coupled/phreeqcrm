@@ -311,12 +311,14 @@ Called before PhreeqcRM is created.
  *
  *  @htmlonly
  *  <table>
- *   <tr><td class="indexkey"><a class="el" href="classPhreeqcRM.html">PhreeqRM.h</a> </td><td class="indexvalue">PhreeqcRM C++ Documentation</td></tr>
  *   <tr><td class="indexkey"><a class="el" href="classBMIPhreeqcRM.html">BMIPhreeqRM.h</a> </td><td class="indexvalue">BMIPhreeqcRM C++ Documentation</td></tr>
  *   <tr><td class="indexkey"><a class="el" href="classYAMLPhreeqcRM.html">YAMLPhreeqcRM.h</a></td><td class="indexvalue">YAML Helper C++ Documentation</td></tr>
- *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">PhreeqcRM Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="classPhreeqcRM.html">PhreeqRM.h</a> </td><td class="indexvalue">PhreeqcRM C++ Documentation</td></tr>
  *   <tr><td class="indexkey"><a class="el" href="BMI__interface_8F90.html">BMI_interface.F90</a></td><td class="indexvalue">BMIPhreeqcRM Fortran Documentation </td></tr>
  *   <tr><td class="indexkey"><a class="el" href="namespaceyaml__interface.html">YAML_interface.F90</a></td><td class="indexvalue">YAML Helper Fortran Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">PhreeqcRM Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="BMI__interface__C_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">BMIPhreeqcRM C Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="YAML__interface__C_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">YAML Helper  C Documentation </td></tr>
  *   <tr><td class="indexkey"><a class="el" href="RM__interface__C_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">PhreeqcRM C Documentation </td></tr>
  *   <tr><td class="indexkey"><a class="el" href="IrmResult_8h.html">IrmResult.h</a></td><td class="indexvalue">Return codes </td></tr>
  *  </table>
