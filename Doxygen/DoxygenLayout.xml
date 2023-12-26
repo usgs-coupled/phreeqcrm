@@ -3,12 +3,14 @@
   <!-- Navigation index tabs for HTML output -->
   <navindex>
     <tab type="mainpage" visible="yes" title="Home"/>
-    <tab type="user" url="classPhreeqcRM.html" title="PhreeqcRM C++ Documentation"/>
     <tab type="user" url="classBMIPhreeqcRM.html" title="BMIPhreeqcRM C++ Documentation"/>
     <tab type="user" url="classYAMLPhreeqcRM.html" title="YAML Helper C++ Documentation"/>
-    <tab type="user" url="namespacephreeqcrm.html" title="PhreeqcRM Fortran Documentation"/>
+    <tab type="user" url="classPhreeqcRM.html" title="PhreeqcRM C++ Documentation"/>
     <tab type="user" url="BMI__interface_8F90.html" title="BMIPhreeqcRM Fortran Documentation"/>
     <tab type="user" url="YAML__interface_8F90.html" title="YAML Helper Fortran Documentation"/>
+    <tab type="user" url="namespacephreeqcrm.html" title="PhreeqcRM Fortran Documentation"/>
+    <tab type="user" url="BMI__interface__C_8h.html" title="BMIPhreeqcRM C Documentation"/>
+    <tab type="user" url="YAML__interface__C_8h.html" title="YAML Helper C Documentation"/>
     <tab type="user" url="RM__interface__C_8h.html" title="PhreeqcRM C Documentation"/>
 
 
