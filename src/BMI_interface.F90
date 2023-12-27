@@ -6398,8 +6398,8 @@
     
     
     !> This deprecated function is included for backward compatibility. 
-    !> Use @ref SetSaturationUser. 
-    INTEGER FUNCTION SetDensityUser(self, density)
+    !> Use @ref SetDensityUser. 
+    INTEGER FUNCTION SetDensity(self, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
