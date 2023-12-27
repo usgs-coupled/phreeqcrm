@@ -361,13 +361,13 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param config_file   String containing the YAML file name.
     !> @retval              0 is success, 1 is failure.
-    !> @par
+    !> <p>
     !> The file contains a YAML map of PhreeqcRM methods
     !> and the arguments corresponding to the methods.
     !> Note that the PhreeqcRM methods do not have the "RM_" prefix
     !> and the id argument is not included.
     !> For example,
-    !> @par
+    !> </p>
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -381,7 +381,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    !> @par
+    !> <p>
     !> @ref bmif_initialize will read the YAML file and execute the specified methods with
     !> the specified arguments. Using YAML
     !> terminology, the argument(s) for a method may be a scalar, a sequence, or a map,
@@ -392,12 +392,14 @@
     !> The names of the map keys for map
     !> arguments are not used in parsing the YAML file; only the order of
     !> the arguments is important.
-    !> @par
+    !> </p>
+    !> <p>
     !> The following list gives the PhreeqcRM methods that can be specified in a YAML file
     !> and the arguments that are required. The arguments are described with C++ formats, which
     !> are sufficient to identify which arguments are YAML scalars (single bool/logical,
     !> int, double, string/character argument),
     !> sequences (single vector argument), or maps (multiple arguments).
+    !> </p>
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -2410,42 +2412,51 @@
 !> specifies a subset of items of the given type. 
 !>
 !> Values for the the parameter @a option:
-!> @n AddOutputVars: False excludes all variables; True causes the settings for each variable group
+!> @n@a AddOutputVars: False excludes all variables; True causes the settings for each variable group
 !> to determine the variables that will be defined. Default True;
-!> @n SolutionProperties: False excludes all solution property variables; True includes variables pH, pe,
+!> @n@a SolutionProperties: False excludes all solution property variables; True includes variables pH, pe,
 !> alkalinity, ionic strength, water mass, charge balance, percent error, and specific conductance.
 !> Default True.
-!> @n SolutionTotalMolalities: False excludes all total element and element redox state variables;
+!> @n@a SolutionTotalMolalities: False excludes all total element and element redox state variables;
 !> True includes all elements and element redox state variables for the system defined for the 
 !> calculation; list restricts variables to the specified elements and redox states.
 !> Default True.
-!> @n ExchangeMolalities: False excludes all variables related to exchange; True includes all 
+!> @n@a ExchangeMolalities: False excludes all variables related to exchange; True includes all 
 !> variables related to exchange; list includes variables for the specified exchange species.
 !> Default True.
-!> @n SurfaceMolalities: False excludes all variables related to surfaces; True includes all 
+!> @n@a SurfaceMolalities: False excludes all variables related to surfaces; True includes all 
 !> variables related to surfaces; list includes variables for the specified surface species.
 !> Default True.
-!> @n EquilibriumPhases: False excludes all variables related to equilibrium phases; True includes all 
+!> @n@a EquilibriumPhases: False excludes all variables related to equilibrium phases; True includes all 
 !> variables related to equilibrium phases; list includes variables for the specified
 !> equilibiurm phases. Default True.
-!> @n Gases: False excludes all variables related to gases; True includes all 
+!> @n@a Gases: False excludes all variables related to gases; True includes all 
 !> variables related to gases; list includes variables for the specified gas components. Default True.
-!> @n KineticReactants: False excludes all variables related to kinetic reactants; True includes all 
+!> @n@a KineticReactants: False excludes all variables related to kinetic reactants; True includes all 
 !> variables related to kinetic reactants; list includes variables for the specified kinetic 
 !> reactants. Default True.
-!> @n SolidSolutions: False excludes all variables related to solid solutions; True includes all 
+!> @n@a SolidSolutions: False excludes all variables related to solid solutions; True includes all 
 !> variables related to solid solutions; list includes variables for the specified solid solutions
 !> components. Default True.
-!> @n CalculateValues: False excludes all calculate values; True includes all 
+!> @n@a CalculateValues: False excludes all calculate values; True includes all 
 !> calculate values; list includes the specified calculate values. CALCLUATE_VALUES can be
 !> used to calculate geochemical quantities not available in the other sets of variables. 
 !> Default True.
-!> @n SolutionActivities: False excludes all aqueous species; True includes all 
+!> @n@a SolutionActivities: False excludes all aqueous species; True includes all 
 !> aqueous species; list includes only the specified aqueous species. Default False.
-!> @n SolutionMolalities: False excludes all aqueous species; True includes all 
+!> @n@a SolutionMolalities: False excludes all aqueous species; True includes all 
 !> aqueous species; list includes only the specified aqueous species. Default False.
-!> @n SaturationIndices: False excludes all saturation indices; True includes all 
+!> @n@a SaturationIndices: False excludes all saturation indices; True includes all 
 !> saturation indices; list includes only the specified saturation indices. Default False.
+!> @par Fortran Example:
+!> @htmlonly
+!> <CODE>
+!> <PRE>
+!> status = brm%bmif_add_output_vars("SolutionMolalities", "True")
+!> status = brm%bmif_add_output_vars("SaturationIndices", "Calcite Dolomite")
+!> </PRE>
+!> </CODE>
+!> @endhtmlonly
     INTEGER FUNCTION bmif_add_output_vars(self, option, def)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -2802,25 +2813,17 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval              Number of components currently in the list, or IRESULT error 
     !> code (see @ref DecodeError).
-    !> @see
-    !> @ref GetComponents,
-    !> @ref GetSpeciesConcentrations,
-    !> @ref GetSpeciesCount,
-    !> @ref GetSpeciesD25,
-    !> @ref GetSpeciesLog10Gammas,
-    !> @ref GetSpeciesLog10Molalities,
-    !> @ref GetSpeciesNames,
-    !> @ref GetSpeciesZ,
-    !> @ref SetComponentH2O.
-    !> @ref SetSpeciesSaveOn,
-    !> @ref SpeciesConcentrations2Module.
-    !> @par The FindComponents method also generates lists of reactants--equilibrium phases,
+    !> <p>
+    !> The @a FindComponents method also generates lists of reactants--equilibrium phases,
     !> exchangers, gas components, kinetic reactants, solid solution components, and surfaces.
     !> The lists are cumulative, including all reactants that were
     !> defined in the initial phreeqc instance at any time FindComponents was called.
     !> In addition, a list of phases is generated for which saturation indices may be calculated from the
     !> cumulative list of components.
-    !> @see also
+    !> </p>
+    !> @see 
+    !> @ref SetComponentH2O,
+    !> @ref GetComponents,
     !> @ref GetEquilibriumPhasesNames,
     !> @ref GetEquilibriumPhasesCount,
     !> @ref GetExchangeNames,
@@ -2835,10 +2838,18 @@
     !> @ref GetSolidSolutionComponentsNames,
     !> @ref GetSolidSolutionComponentsCount,
     !> @ref GetSolidSolutionNames,
+    !> @ref GetSpeciesConcentrations,
+    !> @ref GetSpeciesCount,
+    !> @ref GetSpeciesD25,
+    !> @ref GetSpeciesLog10Gammas,
+    !> @ref GetSpeciesLog10Molalities,
+    !> @ref GetSpeciesNames,
+    !> @ref GetSpeciesZ,
     !> @ref GetSurfaceNames,
     !> @ref GetSurfaceSpeciesNames,
     !> @ref GetSurfaceSpeciesCount,
-    !> @ref GetSurfaceTypes.
+    !> @ref GetSurfaceTypes,
+    !> @ref SetSpeciesSaveOn.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -5519,7 +5530,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(solutions(nxyz))
+    !> allocate(solutions(nxyz))
     !> solutions = 1
     !> status = brm%InitialSolutions2Module(solutions);
     !> </PRE>
@@ -5561,7 +5572,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(equilibrium_phases(nxyz))
+    !> allocate(equilibrium_phases(nxyz))
     !> equilibrium_phases = 1
     !> status = brm%InitialEquilibriumPhases2Module(equilibrium_phases);
     !> </PRE>
@@ -5603,7 +5614,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(exchanges(nxyz))
+    !> allocate(exchanges(nxyz))
     !> exchanges = 1
     !> status = brm%InitialExchanges2Module(exchanges);
     !> </PRE>
@@ -5645,7 +5656,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(gas_phases(nxyz))
+    !> allocate(gas_phases(nxyz))
     !> gas_phases = 1
     !> status = brm%InitialGasPhases2Module(gas_phases);
     !> </PRE>
@@ -5687,7 +5698,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(solid_solutions(nxyz))
+    !> allocate(solid_solutions(nxyz))
     !> solid_solutions = 1
     !> status = brm%InitialSolidSolutions2Module(solid_solutions);
     !> </PRE>
@@ -5729,7 +5740,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(surfaces(nxyz))
+    !> allocate(surfaces(nxyz))
     !> surfaces = 1
     !> status = brm%InitialSurfaces2Module(surfaces);
     !> </PRE>
@@ -5771,7 +5782,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(kinetics(nxyz))
+    !> allocate(kinetics(nxyz))
     !> kinetics = 1
     !> status = brm%InitialKinetics2Module(kinetics);
     !> </PRE>

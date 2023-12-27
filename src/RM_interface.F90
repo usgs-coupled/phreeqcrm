@@ -601,7 +601,7 @@
     !> defined in the initial phreeqc instance at any time RM_FindComponents was called.
     !> In addition, a list of phases is generated for which saturation indices may be calculated from the
     !> cumulative list of components.
-    !> @see also
+    !> @see 
     !> @ref RM_GetEquilibriumPhasesNames,
     !> @ref RM_GetEquilibriumPhasesCount,
     !> @ref RM_GetExchangeNames,
@@ -4465,7 +4465,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(solutions(nxyz))
+    !> allocate(solutions(nxyz))
     !> solutions = 1
     !> status = RM_InitialSolutions2Module(id, solutions);
     !> </PRE>
@@ -4516,7 +4516,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(equilibrium_phases(nxyz))
+    !> allocate(equilibrium_phases(nxyz))
     !> equilibrium_phases = 1
     !> status = RM_InitialEquilibriumPhases2Module(id, equilibrium_phases);
     !> </PRE>
@@ -4567,7 +4567,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(exchanges(nxyz))
+    !> allocate(exchanges(nxyz))
     !> exchanges = 1
     !> status = RM_InitialExchanges2Module(id, exchanges);
     !> </PRE>
@@ -4618,7 +4618,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(gas_phases(nxyz))
+    !> allocate(gas_phases(nxyz))
     !> gas_phases = 1
     !> status = RM_InitialGasPhases2Module(id, gas_phases);
     !> </PRE>
@@ -4669,7 +4669,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(solid_solutions(nxyz))
+    !> allocate(solid_solutions(nxyz))
     !> solid_solutions = 1
     !> status = RM_InitialSolidSolutions2Module(id, solid_solutions);
     !> </PRE>
@@ -4720,7 +4720,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(surfaces(nxyz))
+    !> allocate(surfaces(nxyz))
     !> surfaces = 1
     !> status = RM_InitialSurfaces2Module(id, surfaces);
     !> </PRE>
@@ -4771,7 +4771,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(kinetics(nxyz))
+    !> allocate(kinetics(nxyz))
     !> kinetics = 1
     !> status = RM_InitialKinetics2Module(id, kinetics);
     !> </PRE>

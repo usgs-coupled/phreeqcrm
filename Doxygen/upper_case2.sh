@@ -373,7 +373,6 @@ sed -i -e "s/abort/Abort/g" \
 -e "s/bmif_Create/bmif_create/" $f
 done
 
-sed -i 
 sed -i "s/yamlphreeqcrm/YAMLPhreeqcRM/g" $(egrep -l yamlphreeqcrm ./html/*)
 sed -i "s/bmiphreeqcrm/BMIPhreeqcRM/g" $(egrep -l bmiphreeqcrm ./html/*)
 sed -i "s/phreeqcrm/PhreeqcRM/g" $(egrep -l phreeqcrm ./html/*)

@@ -313,7 +313,7 @@ The lists are cumulative, including all reactants that were
 defined in the initial phreeqc instance at any time FindComponents was called.
 In addition, a list of phases is generated for which saturation indices may be calculated from the
 cumulative list of components.
-@see also
+@see 
 @ref RM_GetEquilibriumPhasesName,
 @ref RM_GetEquilibriumPhasesCount,
 @ref RM_GetExchangeName,
