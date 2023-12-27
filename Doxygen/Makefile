@@ -12,7 +12,7 @@ all:
 	cp ../src/YAML_interface.F90.save ../src/YAML_interface.F90
 	#./upper_case.sh
 	./upper_case2.sh
-	./upper_case2a.sh
+	#./upper_case2a.sh
 
 win:
 	lower_case.bat
