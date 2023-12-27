@@ -3112,6 +3112,8 @@
     return
     END FUNCTION GetDensityCalculated
     
+    !> This deprecated function is included for backward compatibility.
+    !> Use @ref GetDensityCalculated
     INTEGER FUNCTION GetDensity(self, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -4056,7 +4058,9 @@
     real(kind=8), INTENT(inout), DIMENSION(:), allocatable :: sat_calc
     GetSaturationCalculated = RM_GetSaturationCalculated(self%bmiphreeqcrm_id, sat_calc)
     END FUNCTION GetSaturationCalculated
-    
+        
+    !> This deprecated function is included for backward compatibility.
+    !> Use @ref GetSaturationCalculated.
     INTEGER FUNCTION GetSaturation(self, sat_calc)
     USE ISO_C_BINDING
     IMPLICIT NONE
@@ -6392,7 +6396,10 @@
     SetDensityUser = RM_SetDensityUser(self%bmiphreeqcrm_id, density)
     END FUNCTION SetDensityUser
     
-    INTEGER FUNCTION SetDensity(self, density)
+    
+    !> This deprecated function is included for backward compatibility. 
+    !> Use @ref SetSaturationUser. 
+    INTEGER FUNCTION SetDensityUser(self, density)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
@@ -7133,6 +7140,8 @@
     SetSaturationUser = RM_SetSaturationUser(self%bmiphreeqcrm_id, sat)
     END FUNCTION SetSaturationUser
     
+    !> This deprecated function is included for backward compatibility. 
+    !> Use @ref SetSaturationUser. 
     INTEGER FUNCTION SetSaturation(self, sat)
     USE ISO_C_BINDING
     IMPLICIT NONE

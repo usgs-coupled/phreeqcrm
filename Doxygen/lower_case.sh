@@ -226,7 +226,7 @@ sed -i -e "s/Abort/abort/g" \
 -e "s/CloseFiles/closefiles/g" \
 -e "s/Concentrations2Utility/concentrations2utility/g" \
 -e "s/CreateMapping/createmapping/g" \
--e "s/Create/create/g" \
+-e "s/Create /create /g" \
 -e "s/DecodeError/decodeerror/g" \
 -e "s/Destroy/destroy/g" \
 -e "s/DumpModule/dumpmodule/g" \
@@ -284,7 +284,6 @@ sed -i -e "s/Abort/abort/g" \
 -e "s/LoadDatabase/loaddatabase/g" \
 -e "s/LogMessage/logmessage/g" \
 -e "s/MpiWorkerBreak/mpiworkerbreak/g" \
--e "s/MpiWorker/mpiworker/g" \
 -e "s/OpenFiles/openfiles/g" \
 -e "s/OutputMessage/outputmessage/g" \
 -e "s/RunCells/runcells/g" \
@@ -303,6 +302,7 @@ sed -i -e "s/Abort/abort/g" \
 -e "s/SetGasCompMoles/setgascompmoles/g" \
 -e "s/SetGasPhaseVolume/setgasphasevolume/g" \
 -e "s/SetMpiWorkerCallback/setmpiworkercallback/g" \
+-e "s/MpiWorker/mpiworker/g" \
 -e "s/SetNthSelectedOutput/setnthselectedoutput/g" \
 -e "s/SetPartitionUZSolids/setpartitionuzsolids/g" \
 -e "s/SetPorosity/setporosity/g" \

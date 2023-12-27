@@ -113,41 +113,41 @@ public:
 	specifies a subset of items of the given type.
 
 	Values for the the parameter @a option :
-	@n AddOutputVars : False excludes all variables; True causes the settings for each variable group
+	 @n@n @a AddOutputVars: False excludes all variables; True causes the settings for each variable group
 	to determine the variables that will be defined.Default True;
-	@n SolutionProperties : False excludes all solution property variables; True includes variables pH, pe,
+	 @n@n @a SolutionProperties: False excludes all solution property variables; True includes variables pH, pe,
 	alkalinity, ionic strength, water mass, charge balance, percent error, and specific conductance.
 	Default True.
-	@n SolutionTotalMolalities : False excludes all total element and element redox state variables;
+	 @n@n @a SolutionTotalMolalities: False excludes all total element and element redox state variables;
 	True includes all elements and element redox state variables for the system defined for the
 	calculation; list restricts variables to the specified elements and redox states.
 	Default True.
-	@n ExchangeMolalities : False excludes all variables related to exchange; True includes all
+	 @n@n @a ExchangeMolalities: False excludes all variables related to exchange; True includes all
 	variables related to exchange; list includes variables for the specified exchange species.
 	Default True.
-	@n SurfaceMolalities : False excludes all variables related to surfaces; True includes all
+	 @n@n @a SurfaceMolalities: False excludes all variables related to surfaces; True includes all
 	variables related to surfaces; list includes variables for the specified surface species.
 	Default True.
-	@n EquilibriumPhases : False excludes all variables related to equilibrium phases; True includes all
+	 @n@n @a EquilibriumPhases: False excludes all variables related to equilibrium phases; True includes all
 	variables related to equilibrium phases; list includes variables for the specified
 	equilibiurm phases.Default True.
-	@n Gases : False excludes all variables related to gases; True includes all
+	 @n@n @a Gases: False excludes all variables related to gases; True includes all
 	variables related to gases; list includes variables for the specified gas components.Default True.
-	@n KineticReactants : False excludes all variables related to kinetic reactants; True includes all
+	 @n@n @a KineticReactants: False excludes all variables related to kinetic reactants; True includes all
 	variables related to kinetic reactants; list includes variables for the specified kinetic
 	reactants.Default True.
-	@n SolidSolutions : False excludes all variables related to solid solutions; True includes all
+	 @n@n @a SolidSolutions: False excludes all variables related to solid solutions; True includes all
 	variables related to solid solutions; list includes variables for the specified solid solutions
 	components.Default True.
-	@n CalculateValues : False excludes all calculate values; True includes all
+	 @n@n @a CalculateValues: False excludes all calculate values; True includes all
 	calculate values; list includes the specified calculate values.CALCLUATE_VALUES can be
 	used to calculate geochemical quantities not available in the other sets of variables.
 	Default True.
-	@n SolutionActivities : False excludes all aqueous species; True includes all
+	 @n@n @a SolutionActivities: False excludes all aqueous species; True includes all
 	aqueous species; list includes only the specified aqueous species.Default False.
-	@n SolutionMolalities : False excludes all aqueous species; True includes all
+	 @n@n @a SolutionMolalities: False excludes all aqueous species; True includes all
 	aqueous species; list includes only the specified aqueous species.Default False.
-	@n SaturationIndices : False excludes all saturation indices; True includes all
+	 @n@n @a SaturationIndices: False excludes all saturation indices; True includes all
 	saturation indices; list includes only the specified saturation indices. Default False.
 	@par C++ Example:
 	@htmlonly

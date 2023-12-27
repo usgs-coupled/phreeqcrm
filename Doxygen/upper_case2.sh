@@ -225,7 +225,7 @@ for f in ./html/BMI__interface_8F90.html ./html/BMI__interface_8F90.js \
 sed -i -e "s/abort/Abort/g" \
 -e "s/closefiles/CloseFiles/g" \
 -e "s/concentrations2utility/Concentrations2Utility/g" \
--e "s/create/Create/g" \
+-e "s/create /Create /g" \
 -e "s/createmapping/CreateMapping/g" \
 -e "s/decodeerror/DecodeError/g" \
 -e "s/destroy/Destroy/g" \
@@ -286,7 +286,6 @@ sed -i -e "s/abort/Abort/g" \
 -e "s/loaddatabase/LoadDatabase/g" \
 -e "s/logmessage/LogMessage/g" \
 -e "s/mpiworkerbreak/MpiWorkerBreak/g" \
--e "s/mpiworker/MpiWorker/g" \
 -e "s/openfiles/OpenFiles/g" \
 -e "s/outputmessage/OutputMessage/g" \
 -e "s/runcells/RunCells/g" \
@@ -303,6 +302,7 @@ sed -i -e "s/abort/Abort/g" \
 -e "s/seterroron/SetErrorOn/g" \
 -e "s/setfileprefix/SetFilePrefix/g" \
 -e "s/setmpiworkercallback/SetMpiWorkerCallback/g" \
+-e "s/mpiworker/MpiWorker/g" \
 -e "s/setnthselectedoutput/SetNthSelectedOutput/g" \
 -e "s/setpartitionuzsolids/SetPartitionUZSolids/g" \
 -e "s/setporosity/SetPorosity/g" \
@@ -369,9 +369,11 @@ sed -i -e "s/abort/Abort/g" \
 -e "s/initialsurfaces2module/InitialSurfaces2Module/g" \
 -e "s/initialgasphases2module/InitialGasPhases2Module/g" \
 -e "s/initialsolidsolutions2module/InitialSolidSolutions2Module/g" \
--e "s/initialkinetics2module/InitialKinetics2Module/g" $f
+-e "s/initialkinetics2module/InitialKinetics2Module/g" \
+-e "s/bmif_Create/bmif_create/" $f
 done
 
+sed -i 
 sed -i "s/yamlphreeqcrm/YAMLPhreeqcRM/g" $(egrep -l yamlphreeqcrm ./html/*)
 sed -i "s/bmiphreeqcrm/BMIPhreeqcRM/g" $(egrep -l bmiphreeqcrm ./html/*)
 sed -i "s/phreeqcrm/PhreeqcRM/g" $(egrep -l phreeqcrm ./html/*)
