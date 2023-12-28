@@ -110,18 +110,19 @@ extern "C" {
 	the given type for the current system; a list specifies a subset of items
 	of the given type.
 	@retval IRM_RESULT 	Zero indicates success, negative indicates failure.
-
+	<p>
 	Values for the the parameter @a option:
-
-	@n AddOutputVars: False excludes all variables; True causes the settings
+	</p>
+	<p>
+	@n@a AddOutputVars: False excludes all variables; True causes the settings
 	for each variable group to determine the variables that will be defined.
 	Default True;
 
-	@n SolutionProperties: False excludes all solution property variables;
+	@n@a SolutionProperties: False excludes all solution property variables;
 	True includes variables pH, pe, alkalinity, ionic strength, water mass,
 	charge balance, percent error, and specific conductance. Default True.
 
-	@n SolutionTotalMolalities: False excludes all total element and element
+	@n@a SolutionTotalMolalities: False excludes all total element and element
 	redox state variables;
 	True includes all elements and element redox state variables for the system
 	defined for the
@@ -129,47 +130,56 @@ extern "C" {
 	states.
 	Default True.
 
-	@n ExchangeMolalities: False excludes all variables related to exchange;
+	@n@a ExchangeMolalities: False excludes all variables related to exchange;
 	True includes all variables related to exchange; list includes variables
 	for the specified exchange species. Default True.
 
-	@n SurfaceMolalities: False excludes all variables related to surfaces;
+	@n@a SurfaceMolalities: False excludes all variables related to surfaces;
 	True includes all variables related to surfaces; list includes variables
 	for the specified surface species. Default True.
 
-	@n EquilibriumPhases: False excludes all variables related to equilibrium
+	@n@a EquilibriumPhases: False excludes all variables related to equilibrium
 	phases; True includes all variables related to equilibrium phases; list
 	includes variables for the specified equilibiurm phases. Default True.
 
-	@n Gases: False excludes all variables related to gases; True includes all
+	@n@a Gases: False excludes all variables related to gases; True includes all
 	variables related to gases; list includes variables for the specified gas
 	components. Default True.
 
-	@n KineticReactants: False excludes all variables related to kinetic
+	@n@a KineticReactants: False excludes all variables related to kinetic
 	reactants; True includes all variables related to kinetic reactants; list
 	includes variables for the specified kinetic reactants. Default True.
 
-	@n SolidSolutions: False excludes all variables related to solid
+	@n@a SolidSolutions: False excludes all variables related to solid
 	solutions; True includes all variables related to solid solutions; list
 	includes variables for the specified solid solutions components. Default
 	True.
 
-	@n CalculateValues: False excludes all calculate values; True includes all
+	@n@a CalculateValues: False excludes all calculate values; True includes all
 	calculate values; list includes the specified calculate values.
 	CALCLUATE_VALUES can be used to calculate geochemical quantities not
 	available in the other sets of variables. Default True.
 
-	@n SolutionActivities: False excludes all aqueous species; True includes
+	@n@a SolutionActivities: False excludes all aqueous species; True includes
 	all aqueous species; list includes only the specified aqueous species.
 	Default False.
 
-	@n SolutionMolalities: False excludes all aqueous species; True includes
+	@n@a SolutionMolalities: False excludes all aqueous species; True includes
 	all aqueous species; list includes only the specified aqueous species.
 	Default False.
 
-	@n SaturationIndices: False excludes all saturation indices; True includes
+	@n@a SaturationIndices: False excludes all saturation indices; True includes
 	all saturation indices; list includes only the specified saturation
 	indices. Default False.
+	@par C Example:
+	@htmlonly
+	<CODE>
+	<PRE>
+	status = YAMLAddOutputVars(id, "SolutionMolalities", "True");
+	status = YAMLAddOutputVars(id, "SaturationIndices", "Calcite Dolomite");
+	</PRE>
+	</CODE>
+	@endhtmlonly
 	*/
 	IRM_DLL_EXPORT IRM_RESULT YAMLAddOutputVars(int id, char* option, char*
 		def);
@@ -182,10 +192,9 @@ extern "C" {
 
 	@param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@retval IRM_RESULT   Zero indicates success, negative indicates failure.
-
-	@par
+	<p>
 	CloseFiles closes the output and log files.
-
+	</p>
 	@par C Example:
 	@htmlonly
 	<CODE>
@@ -208,9 +217,8 @@ extern "C" {
 	cells for which chemistry will be run.
 	@param dim     Dimension of the @a grid2chem vector.
 	@retval IRM_RESULT   Zero indicates success, negative indicates failure.
-
-	@par
-	CreateMapping provides a mapping from grid cells in the user's model to
+	<p>
+	@a CreateMapping provides a mapping from grid cells in the user's model to
 	reaction cells for which chemistry needs to be run. The mapping is used to
 	eliminate inactive cells and to use symmetry to decrease the number of
 	cells for which chemistry must be run. The array @a grid2chem of size @a
@@ -220,7 +228,7 @@ extern "C" {
 	mapping may be many-to-one to account for symmetry. Default is a
 	one-to-one mapping--all user grid cells are reaction cells (equivalent to
 	@a grid2chem values of 0,1,2,3,...,nxyz-1).
-
+	</p>
 	@par C Example:
 	@htmlonly
 	<CODE>
@@ -245,11 +253,11 @@ extern "C" {
 	@param append       Signal to append to the contents of the dump file,
 	1 or 0.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	DumpModule writes the contents of all workers to file in _RAW formats (see
+	<p>
+	@a DumpModule writes the contents of all workers to file in _RAW formats (see
 	appendix of PHREEQC version 3 manual), including SOLUTIONs and all
 	reactants.
+	</p>
 	@see
 	@ref YAMLSetDumpFileName.
 
@@ -273,9 +281,8 @@ extern "C" {
 
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	FindComponents accumulates a list of elements. Elements are those that
+	<p>
+	@a FindComponents accumulates a list of elements. Elements are those that
 	have been defined in a solution or any other reactant (EQUILIBRIUM_PHASE,
 	KINETICS, and others), including charge imbalance. This method can be
 	called multiple times and the list that is created is cummulative. The
@@ -291,21 +298,20 @@ extern "C" {
 	(@ref YAMLSetSpeciesSaveOn). If the save-species property is on,
 	FindComponents will generate a list of aqueous species, their diffusion
 	coefficients at 25 C, and their charge.
-
+	</p>
 	@see
 	@ref YAMLSetComponentH2O,
 	@ref YAMLSetSpeciesSaveOn,
 	@ref YAMLSpeciesConcentrations2Module.
-
-	@par
-	The FindComponents method also generates lists of reactants--equilibrium
+	<p>
+	The @a FindComponents method also generates lists of reactants--equilibrium
 	phases, exchangers, gas components, kinetic reactants, solid solution
 	components, and surfaces. The lists are cumulative, including all
 	reactants that were defined in the initial phreeqc instance at any time
-	FindComponents was called. In addition, a list of phases is generated for
+	@a FindComponents was called. In addition, a list of phases is generated for
 	which saturation indices may be calculated from the cumulative list of
 	components.
-
+	</p>
 	@par C Example:
 	@htmlonly
 	<CODE>
@@ -328,12 +334,12 @@ extern "C" {
 	@a nxyz, where @a nxyz is the number of grid cells in the user's model.
 	@param dim         Dimension of the @a solutions vector.
 	@retval IRM_RESULT Zero indicates success, negative indicates failure.
-
-	@par
-	InitialSolutions2Module transfers SOLUTION definitions from the
+	<p>
+	@a InitialSolutions2Module transfers SOLUTION definitions from the
 	InitialPhreeqc instance to the reaction-module workers. @a solutions is a
 	vector of SOLUTION index numbers that refer to definitions in the
 	InitialPhreeqc instance.
+	</p>
 	*/
 	IRM_DLL_EXPORT IRM_RESULT YAMLInitialSolutions2Module(int id, int*
 		solutions, int dim);
@@ -353,12 +359,12 @@ extern "C" {
 	@param dim                 Dimension of the @a equilibrium_phases vector.
 	@retval IRM_RESULT         Zero indicates success, negative indicates
 	failure.
-
-	@par
-	InitialEquilibriumPhases2Module transfers EQUILIBRIUM_PHASES definitions
+	<p>
+	@a InitialEquilibriumPhases2Module transfers EQUILIBRIUM_PHASES definitions
 	from the InitialPhreeqc instance to the reaction-module workers. @a
 	equilibrium_phases is a vector of EQUILIBRIUM_PHASES index numbers that
 	refer to definitions in the InitialPhreeqc instance.
+	</p>
 	*/
 	IRM_DLL_EXPORT IRM_RESULT YAMLInitialEquilibriumPhases2Module(int id, int*
 		equilibrium_phases, int dim);
@@ -376,12 +382,12 @@ extern "C" {
 	user's model.
 	@param dim            Dimension of the @a exchanges vector.
 	@retval IRM_RESULT    Zero indicates success, negative indicates failure.
-
-	@par
-	InitialExchanges2Module transfers EXCHANGE definitions from the
+	<p>
+	@a InitialExchanges2Module transfers EXCHANGE definitions from the
 	InitialPhreeqc instance to the reaction-module workers. @a exchanges is a
 	vector of EXCHANGE index numbers that refer to definitions in the
 	InitialPhreeqc instance.
+	</p>
 	*/
 	IRM_DLL_EXPORT IRM_RESULT YAMLInitialExchanges2Module(int id, int*
 		exchanges, int dim);
@@ -397,12 +403,12 @@ extern "C" {
 	nxyz, where @a nxyz is the number of grid cells in the user's model.
 	@param dim     Dimension of the @a surfaces vector.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	InitialSurfaces2Module transfers SURFACE definitions from the
+	<p>
+	@a InitialSurfaces2Module transfers SURFACE definitions from the
 	InitialPhreeqc instance to the reaction-module workers. @a surfaces is a
 	vector of SURFACE index numbers that refer to definitions in the
 	InitialPhreeqc instance.
+	</p>
 	*/
 	IRM_DLL_EXPORT IRM_RESULT YAMLInitialSurfaces2Module(int id, int* surfaces,
 		int dim);
@@ -418,12 +424,12 @@ extern "C" {
 	@a nxyz, where @a nxyz is the number of grid cells in the user's model.
 	@param dim          Dimension of the @a gas_phases vector.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	InitialGasPhases2Module transfers GAS_PHASE definitions from the
+	<p>
+	@a InitialGasPhases2Module transfers GAS_PHASE definitions from the
 	InitialPhreeqc instance to the reaction-module workers. @a gas_phases is a
 	vector of GAS_PHASE index numbers that refer to definitions in the
 	InitialPhreeqc instance.
+	</p>
 	*/
 	IRM_DLL_EXPORT IRM_RESULT YAMLInitialGasPhases2Module(int id, int*
 		gas_phases, int dim);
@@ -442,12 +448,12 @@ extern "C" {
 	user's model.
 	@param dim              Dimension of the @a solid_solutions vector.
 	@retval IRM_RESULT      Zero indicates success, negative indicates failure.
-
-	@par
-	InitialSolidSolutions2Module transfers SOLID_SOLUTIONS definitions from
+	<p>
+	@a InitialSolidSolutions2Module transfers SOLID_SOLUTIONS definitions from
 	the InitialPhreeqc instance to the reaction-module workers. @a
 	solid_solutions is a vector of SOLID_SOLUTIONS index numbers that refer to
 	definitions in the InitialPhreeqc instance.
+	</p>
 	*/
 	IRM_DLL_EXPORT IRM_RESULT YAMLInitialSolidSolutions2Module(int id, int*
 		solid_solutions, int dim);
@@ -462,11 +468,12 @@ extern "C" {
 	@a nxyz, where @a nxyz is the number of grid cells in the user's model.
 	@param dim          Dimension of the @a kinetics vector.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-	@par
-	InitialKinetics2Module transfers KINETICS definitions from the
+	<p>
+	@a InitialKinetics2Module transfers KINETICS definitions from the
 	InitialPhreeqc instance to the reaction-module workers. @a kinetics is a
 	vector of KINETICS index numbers that refer to definitions in the
 	InitialPhreeqc instance.
+	</p>
 	*/
 	IRM_DLL_EXPORT IRM_RESULT YAMLInitialKinetics2Module(int id, int* kinetics,
 		int dim);
@@ -482,9 +489,8 @@ extern "C" {
 	refer to definitions in the InitialPhreeqc instance.
 	@param dim         Dimension of the @a grid2chem vector.
 	@retval IRM_RESULT Zero indicates success, negative indicates failure.
-
-	@par
-	InitialPhreeqc2Module transfers solutions and reactants from the
+	<p>
+	@a InitialPhreeqc2Module transfers solutions and reactants from the
 	InitialPhreeqc instance to the reaction-module workers. @a ic1 is used to
 	select initial conditions, including solutions and reactants, for each
 	cell of the model, without mixing. @a ic1 is dimensioned 7 times @a nxyz,
@@ -497,7 +503,7 @@ extern "C" {
 	InitialPhreeqc instance. Size is 7 times @a nxyz. The order of definitions
 	is given above. Negative values are ignored, resulting in no definition of
 	that entity for that cell.
-
+	</p>
 	@see
 	@ref YAMLInitialPhreeqcCell2Module,
 	@ref YAMLInitialPhreeqc2Module_mix.
@@ -546,10 +552,9 @@ extern "C" {
 	@param f1           Fraction of @a ic1 that mixes with (1 - @a f1) of @a
 	ic2. Size is 7 times @a nxyz.
 	@param dim          Dimension of the vectors.
-	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	InitialPhreeqc2Module transfers solutions and reactants from the
+	@retval IRM_RESULT  Zero indicates success, negative indicates failure.<
+	<p>
+	@a InitialPhreeqc2Module transfers solutions and reactants from the
 	InitialPhreeqc instance to the reaction-module workers, possibly with
 	mixing. In its simplest form, @a  ic1 is used to select initial
 	conditions, including solutions and reactants, for each cell of the model,
@@ -559,8 +564,8 @@ extern "C" {
 	definition ic1[3*nxyz + 99] = 2, indicates that cell 99 (0 based) contains
 	the SURFACE definition (index 3) defined by SURFACE 2 in the
 	InitialPhreeqc instance (either by RunFile or RunString).
-
-	@n@n
+	</p>
+	<p>
 	It is also possible to mix solutions and reactants to obtain the initial
 	conditions for cells. For mixing, @a initials_conditions2 contains numbers
 	for a second entity that mixes with the entity defined in @a ic1. @a f1
@@ -570,7 +575,7 @@ extern "C" {
 	cell 99 (0 based) contains a mixture of 0.25 SURFACE 2 and 0.75 SURFACE 3,
 	where the surface compositions have been defined in the InitialPhreeqc
 	instance. If the user number in @a ic2 is negative, no mixing occurs.
-
+	</p>
 	@see
 	@ref YAMLInitialPhreeqcCell2Module,
 	@ref YAMLInitialPhreeqc2Module.
@@ -614,9 +619,8 @@ extern "C" {
 	@param cell_numbers A vector of grid-cell numbers.
 	@param dim          Dimension of the vector cell_numbers.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	InitialPhreeqcCell2Module uses a cell numbered @a n in the InitialPhreeqc
+	<p>
+	@a InitialPhreeqcCell2Module uses a cell numbered @a n in the InitialPhreeqc
 	instance to populate a series of transport cells. All reactants with the
 	number @a n are transferred along with the solution. If MIX @a n exists,
 	it is used for the definition of the solution. If @a n is negative, @a n
@@ -653,13 +657,12 @@ extern "C" {
 	@param id          The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param database   String containing the database name.
 	@retval IRM_RESULT Zero indicates success, negative indicates failure.
-
-	@par
-	LoadDatabase loads a database for all IPhreeqc instances--workers,
+	<p>
+	@a LoadDatabase loads a database for all IPhreeqc instances--workers,
 	InitialPhreeqc, and Utility. All definitions of the reaction module are
 	cleared (SOLUTION_SPECIES, PHASES, SOLUTIONs, etc.), and the database is
 	read.
-
+	</p>
 	@par C Example:
 	@htmlonly
 	<CODE>
@@ -680,10 +683,9 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param str          String to be printed.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	LogMessage prints a message to the log file.
-
+	<p>
+	@a LogMessage prints a message to the log file.
+	</p>
 	@see
 	@ref YAMLOutputMessage,
 	@ref YAMLScreenMessage,
@@ -708,11 +710,10 @@ extern "C" {
 
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	OpenFiles opens the output and log files. Files are named prefix.chem.txt
+	<p>
+	@a OpenFiles opens the output and log files. Files are named prefix.chem.txt
 	and prefix.log.txt based on the prefix defined by @ref YAMLSetFilePrefix.
-
+	</p>
 	@see
 	@ref YAMLSetFilePrefix,
 	@ref YAMLCloseFiles,
@@ -741,10 +742,9 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param str          String to be printed.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	OutputMessage prints a message to the output file.
-
+	<p>
+	@a OutputMessage prints a message to the output file.
+	</p>
 	@see
 	@ref YAMLLogMessage,
 	@ref YAMLScreenMessage,
@@ -769,16 +769,15 @@ extern "C" {
 
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	RunCells runs reactions for all cells in the reaction module. During
+	<p>
+	@a RunCells runs reactions for all cells in the reaction module. During
 	initialization, RunCells can be used to equilibrate each solution with all
 	reactants in a cell while using a time step of zero (@ref YAMLSetTimeStep)
 	to avoid kinetic reactions. Other properties that may need to be
 	initialized before RunCells is invoked include porosity (@ref
 	YAMLSetPorosity), saturation (@ref YAMLSetSaturationUser), temperature
 	(@ref YAMLSetTemperature), and pressure (@ref YAMLSetPressure).
-
+	</p>
 	@see
 	@ref YAMLSetPorosity,
 	@ref YAMLSetPressure,
@@ -813,9 +812,8 @@ extern "C" {
 	Utility instance will not run the file.
 	@param file_name        Name of the file to run.
 	@retval IRM_RESULT      Zero indicates success, negative indicates failure.
-
-	@par
-	RunFile runs a PHREEQC input file. The first three arguments determine
+	<p>
+	@a RunFile runs a PHREEQC input file. The first three arguments determine
 	which IPhreeqc instances will run the file--the workers, the
 	InitialPhreeqc instance, and (or) the Utility instance. Input files that
 	modify the thermodynamic database should be run by all three sets of
@@ -823,6 +821,7 @@ extern "C" {
 	the time-stepping loop need to be run by the workers. Files that contain
 	initial conditions or boundary conditions should be run by the
 	InitialPhreeqc instance.
+	</p>
 	@see
 	@ref YAMLRunString.
 
@@ -855,9 +854,8 @@ extern "C" {
 	the Utility instance will not run the string.
 	@param input_string     String containing PHREEQC input.
 	@retval IRM_RESULT      Zero indicates success, negative indicates failure.
-
-	@par
-	RunString runs a PHREEQC input string. The first three arguments determine
+	<p>
+	@a RunString runs a PHREEQC input string. The first three arguments determine
 	which IPhreeqc instances will run the string--the workers, the
 	InitialPhreeqc instance, and (or) the Utility instance. Input strings that
 	modify the thermodynamic database should be run by all three sets of
@@ -865,7 +863,7 @@ extern "C" {
 	during the time-stepping loop need to be run by the workers. Strings that
 	contain initial conditions or boundary conditions should be run by the
 	InitialPhreeqc instance.
-
+	</p>
 	@see
 	@ref YAMLRunFile.
 
@@ -891,9 +889,9 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param str          String to be printed.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	ScreenMessage prints a message to the screen.
+	<p>
+	@a ScreenMessage prints a message to the screen.
+	</p>
 	@see
 	@ref YAMLLogMessage,
 	@ref YAMLOutputMessage,
@@ -922,9 +920,8 @@ extern "C" {
 	included in the component list; 0, total H and O are included in the
 	component list.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetComponentH2O selects whether to include H2O in the component list. The
+	<p>
+	@a SetComponentH2O selects whether to include H2O in the component list. The
 	concentrations of H and O must be known accurately (8 to 10 significant
 	digits) for the numerical method of PHREEQC to produce accurate pH and pe
 	values. Because most of the H and O are in the water species, it may be
@@ -933,7 +930,7 @@ extern "C" {
 	include water, excess H, and excess O as components. A setting of 0 will
 	include total H and total O as components. YAMLSetComponentH2O must be
 	called before @ref YAMLFindComponents.
-
+	</p>
 	@see
 	@ref YAMLFindComponents.
 
@@ -961,13 +958,12 @@ extern "C" {
 	number of grid cells in the user's model.
 	@param dim          Dimension of the c vector.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
+	<p>
 	The only way to use this method is to have pre-calculated PHREEQC solution
 	concentrations, which is not common. Concentrations are normally
 	initialized with @ref YAMLInitialPhreeqc2Module or @ref
 	YAMLInitialPhreeqcCell2Module.
-
+	</p>
 	@see
 	@ref YAMLSetDensityUser,
 	@ref YAMLSetPorosity,
@@ -997,13 +993,13 @@ extern "C" {
 	@param n_user       User number of the SELECTED_OUTPUT data block that is
 	to be used.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-	@par
-	SetCurrentSelectedOutputUserNumber selects the current selected output by
+	<p>
+	@a SetCurrentSelectedOutputUserNumber selects the current selected output by
 	user number. The user may define multiple SELECTED_OUTPUT data blocks for
 	the workers. A user number is specified for each data block. The value of
 	the argument @a n_user selects which of the SELECTED_OUTPUT definitions
 	will be used for selected-output operations.
-
+	</p>
 	@see
 	@ref YAMLSetNthSelectedOutput,
 	@ref YAMLSetSelectedOutputOn.
@@ -1032,15 +1028,14 @@ extern "C" {
 	of grid cells in the user's model.
 	@param dim          Dimension of the @a density vector.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetDensityUser sets the density for each reaction cell. These density
+	<p>
+	@a SetDensityUser sets the density for each reaction cell. These density
 	values are used when converting from transported mass-fraction
 	concentrations (@ref YAMLSetUnitsSolution) to produce per liter
 	concentrations during a call to SetConcentrations. They are also used when
 	converting from reaction-cell concentrations to transport concentrations,
 	if UseSolutionDensityVolume is set to 0 (false).
-
+	</p>
 	@see
 	@ref YAMLSetUnitsSolution,
 	@ref YAMLUseSolutionDensityVolume.
@@ -1068,11 +1063,10 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param file_name    Name of dump file.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetDumpFileName	sets the name of the dump file. It is the name used by
+	<p>
+	@a SetDumpFileName	sets the name of the dump file. It is the name used by
 	the method DumpModule.
-
+	</p>
 	@see
 	@ref YAMLDumpModule.
 
@@ -1097,14 +1091,13 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param mode         Error handling mode: 0, 1, or 2.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetErrorHandlerMode sets the action to be taken when the reaction module
+	<p>
+	@a SetErrorHandlerMode sets the action to be taken when the reaction module
 	encounters an error. Options are 0, return to calling program with an
 	error return code (default); 1, throw an exception, in C++, the exception
 	can be caught, for C and Fortran, the program will exit; or 2, attempt to
 	exit gracefully.
-
+	</p>
 	@par C Example:
 	@htmlonly
 	<CODE>
@@ -1126,12 +1119,11 @@ extern "C" {
 	@param tf           1, enable error messages; 0, disable error messages.
 	Default is 1.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetErrorOn sets the property that controls whether error messages are
+	<p>
+	@a SetErrorOn sets the property that controls whether error messages are
 	generated and displayed. Messages include PHREEQC "ERROR" messages, and
 	any messages written with the method ErrorMessage.
-
+	</p>
 	@see
 	@ref YAMLLogMessage,
 	@ref YAMLOutputMessage,
@@ -1157,10 +1149,10 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param prefix       Prefix used when opening the output and log files.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetFilePrefix sets the prefix for the output (prefix.chem.txt) and log
+	<p>
+	@a SetFilePrefix sets the prefix for the output (prefix.chem.txt) and log
 	(prefix.log.txt) files. These files are opened by the method OpenFiles.
+	</p>
 	@see
 	@ref YAMLOpenFiles,
 	@ref YAMLCloseFiles.
@@ -1187,15 +1179,14 @@ extern "C" {
 	@param  gas_moles   Vector of moles of gas components.
 	@param dim          Dimension of vector @a gas_moles.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetGasCompMoles transfers moles of gas components from the vector given
+	<p>
+	@a SetGasCompMoles transfers moles of gas components from the vector given
 	in the argument list (@a gas_moles) to each reaction cell. Dimension of
 	the vector must be @a ngas_comps times @a nxyz, where, @a ngas_comps is
 	the result of GetGasComponentsCount, and @a nxyz is the number of user
 	grid cells. If the number of moles is set to a negative number, the gas
 	component will not be defined for the GAS_PHASE of the reaction cell.
-
+	</p>
 	@see
 	@ref YAMLFindComponents,
 	@ref YAMLSetGasPhaseVolume.
@@ -1222,9 +1213,8 @@ extern "C" {
 	@param  gas_volume   Vector of volumes for each gas phase.
 	@param dim           Dimension of the vector @a gas_volume.
 	@retval IRM_RESULT   Zero indicates success, negative indicates failure.
-
-	@par
-	SetGasPhaseVolume transfers volumes of gas phases from the vector given
+	<p>
+	@a SetGasPhaseVolume transfers volumes of gas phases from the vector given
 	in the argument list (@a gas_volume) to each reaction cell. The gas-phase
 	volume affects the gas-component pressures calculated for fixed-volume
 	gas phases. If a gas-phase volume is defined with this methood for a
@@ -1232,7 +1222,7 @@ extern "C" {
 	phase. Dimension of the vector is @a nxyz, where @a nxyz is the number of
 	user grid cells. If the volume is set to a negative number for a cell,
 	the gas-phase volume for that cell is not changed.
-
+	</p>
 	@see
 	@ref YAMLFindComponents,
 	@ref YAMLSetGasCompMoles.
@@ -1262,14 +1252,13 @@ extern "C" {
 	@param count        Number of cells for the PhreeqcRM instance. The number
 	of cells
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	YAMLSetGridCellCount can be used in the creation of the PhreeqcRM
+	<p>
+	@a YAMLSetGridCellCount can be used in the creation of the PhreeqcRM
 	instance. The PhreeqcRM constructor takes two arguments.
 	GetGridCellCountYAML provides the value for the first argument. If the
 	YAML file does not contain the node "SetGridCellCount:",
 	GetGridCellCountYAML will return zero.
-
+	</p>
 	@par C Example:
 	@htmlonly
 	<CODE>
@@ -1291,15 +1280,14 @@ extern "C" {
 	@param n            Sequence number of the SELECTED_OUTPUT data block
 	that is to be used (zero-based).
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetNthSelectedOutput specifies the current selected output by sequence
+	<p>
+	@a SetNthSelectedOutput specifies the current selected output by sequence
 	number (one-based). The user may define multiple SELECTED_OUTPUT data
 	blocks for the workers. A user number is specified for each data block,
 	and the blocks are stored in user-number order. The value of the argument
 	@a n selects the sequence number of the SELECTED_OUTPUT definition that
 	will be used for selected-output operations.
-
+	</p>
 	@see
 	@ref YAMLSetCurrentSelectedOutputUserNumber,
 	@ref YAMLSetSelectedOutputOn.
@@ -1326,9 +1314,8 @@ extern "C" {
 	reaction is equal to the saturation; 0 (default), all solids and gases
 	are reactive regardless of saturation.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetPartitionUZSolids sets the property for partitioning solids between
+	<p>
+	@a SetPartitionUZSolids sets the property for partitioning solids between
 	the saturated and unsaturated parts of a partially saturated cell. The
 	option is intended to be used by saturated-only flow codes that allow a
 	variable water table. The value has meaning only when saturations less
@@ -1343,7 +1330,7 @@ extern "C" {
 	(unreactive) reservoirs of the cell. Unsaturated-zone flow and transport
 	codes will probably use the default (false), which assumes all gases and
 	solids are reactive regardless of saturation.
-
+	</p>
 	@par C Example:
 	@htmlonly
 	<CODE>
@@ -1365,12 +1352,13 @@ extern "C" {
 	@param por          Vector of porosities, unitless. Default is 0.1.
 	@param dim          Dimension of the vector @ por.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-	@par
-	SetPorosity sets the porosity for each reaction cell. The volume of water
+	<p>
+	@a SetPorosity sets the porosity for each reaction cell. The volume of water
 	in a reaction cell is the product of porosity, saturation
 	(SetSaturationUser), and representative volume (SetRepresentativeVolume).
 	Size of vector is @a nxyz, where @a nxyz is the number of grid cells in
 	the user's model.
+	</p>
 	@see
 	@ref YAMLSetRepresentativeVolume,
 	@ref YAMLSetSaturationUser.
@@ -1399,12 +1387,11 @@ extern "C" {
 	nxyz, where @a nxyz is the number of grid cells in the user's model.
 	@param dim Dimension of the vector @a p.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetPressure sets the pressure for each reaction cell. Pressure effects
+	<p>
+	@a SetPressure sets the pressure for each reaction cell. Pressure effects
 	are considered only in three of the databases distributed with PhreeqcRM:
 	phreeqc.dat, Amm.dat, and pitzer.dat.
-
+	</p>
 	@see
 	@ref YAMLSetTemperature.
 
@@ -1434,12 +1421,11 @@ extern "C" {
 	enable printing detailed output for a cell.
 	@param dim          Dimension of the vector @ mask.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetPrintChemistryMask enables or disables detailed output for each
+	<p>
+	@a SetPrintChemistryMask enables or disables detailed output for each
 	reaction cell. Printing for a reaction cell will occur only when the
 	printing is enabled with SetPrintChemistryOn and the @a mask value is 1.
-
+	</p>
 	@see
 	@ref YAMLSetPrintChemistryOn.
 
@@ -1472,9 +1458,8 @@ extern "C" {
 	@param utility          1, enable detailed printing in the Utility
 	instance; 0, disable detailed printing in the Utility instance.
 	@retval IRM_RESULT      Zero indicates success, negative indicates failure.
-
-	@par
-	SetPrintChemistryOn sets the property that enables or disables printing
+	<p>
+	@a SetPrintChemistryOn sets the property that enables or disables printing
 	detailed output from reaction calculations to the output file for a set
 	of cells defined by SetPrintChemistryMask. The detailed output prints all
 	of the output typical of a PHREEQC reaction calculation, which includes
@@ -1488,7 +1473,7 @@ extern "C" {
 	output for the workers is generally used only for debugging, and
 	PhreeqcRM will run significantly faster when printing detailed output for
 	the workers is disabled.
-
+	</p>
 	@see
 	@ref YAMLOpenFiles,
 	@ref YAMLRunFile,
@@ -1517,9 +1502,8 @@ extern "C" {
 	@param tf          1, indicates individual cell times are used in
 	rebalancing (default); 0, indicates average times are used in rebalancing.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetRebalanceByCell sets the load-balancing algorithm. PhreeqcRM attempts
+	<p>
+	@a SetRebalanceByCell sets the load-balancing algorithm. PhreeqcRM attempts
 	to rebalance the load of each thread or process such that each thread or
 	process takes the same amount of time to run its part of a RunCells
 	calculation. Two algorithms are available; one uses individual times for
@@ -1527,7 +1511,7 @@ extern "C" {
 	zero (default), and the other assigns an average time to all cells. The
 	methods are similar, but limited testing indicates the default method
 	performs better.
-
+	</p>
 	@see
 	@ref YAMLSetRebalanceFraction.
 
@@ -1551,9 +1535,8 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param f            Fraction from 0.0 to 1.0.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetRebalanceFraction sets the fraction of cells that are transferred
+	<p>
+	@a SetRebalanceFraction sets the fraction of cells that are transferred
 	among threads or processes when rebalancing. PhreeqcRM attempts to
 	rebalance the load of each thread or process such that each thread or
 	process takes the same amount of time to run its part of a RunCells
@@ -1565,7 +1548,7 @@ extern "C" {
 	to slow the approach to the optimum cell distribution and avoid possible
 	oscillations when too many cells are transferred at one iteration,
 	requiring reverse transfers at the next iteration. Default is 0.5.
-
+	</p>
 	@see
 	@ref YAMLSetRebalanceByCell.
 
@@ -1593,9 +1576,8 @@ extern "C" {
 	of grid cells in the user's model.
 	@param dim          Dimension of the vector @a rv.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetRepresentativeVolume sets the representative volume of each reaction
+	<p>
+	@a SetRepresentativeVolume sets the representative volume of each reaction
 	cell. By default the representative volume of each reaction cell is 1
 	liter. The volume of water in a reaction cell is determined by the
 	product of the representative volume, the porosity (SetPorosity), and the
@@ -1610,7 +1592,7 @@ extern "C" {
 	defined as moles per representative volume. @a SetRepresentativeVolume
 	should be called before initial conditions are defined for the reaction
 	cells.
-
+	</p>
 	@see
 	@ref YAMLSetPorosity,
 	@ref YAMLSetSaturationUser.
@@ -1641,9 +1623,8 @@ extern "C" {
 	user's model.
 	@param dim          Dimension of the @ sat vector.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetSaturationUser sets the saturation of each reaction cell. Saturation
+	<p>
+	@a SetSaturationUser sets the saturation of each reaction cell. Saturation
 	is a fraction ranging from 0 to 1. The volume of water in a cell is the
 	product of porosity (SetPorosity), saturation (SetSaturationUser), and
 	representative volume (SetRepresentativeVolume). As a result of a
@@ -1652,7 +1633,7 @@ extern "C" {
 	volume data to calculate these changes. The methods GetDensityCalculated,
 	GetSolutionVolume, and GetSaturationCalculated can be used to account for
 	these changes in the succeeding transport calculation.
-
+	</p>
 	@see
 	@ref YAMLSetPorosity,
 	@ref YAMLSetRepresentativeVolume.
@@ -1681,13 +1662,12 @@ extern "C" {
 	@param tf          1, enable screen messages; 0, disable screen messages.
 	Default is true.
 	@retval IRM_RESULT Zero indicates success, negative indicates failure.
-
-	@par
-	SetScreenOn
+	<p>
+	@a SetScreenOn
 	sets the property that controls whether messages are written to the
 	screen. Messages include information about rebalancing during RunCells,
 	and any messages written with ScreenMessage.
-
+	</p>
 	@see
 	@ref YAMLRunCells,
 	@ref YAMLScreenMessage.
@@ -1712,14 +1692,14 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param tf           1, enable selected output; 0, disable selected output.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-	@par
-	SetSelectedOutputOn sets the property that controls whether
+	<p>
+	@a SetSelectedOutputOn sets the property that controls whether
 	selected-output results are available to be retrieved with
 	GetSelectedOutput. 1 indicates that selected-output results will be
 	accumulated during RunCells and can be retrieved with GetSelectedOutput;
 	0 indicates that selected-output results will not be accumulated during
 	RunCells.
-
+	</p>
 	@see
 	@ref YAMLSetCurrentSelectedOutputUserNumber,
 	@ref YAMLSetNthSelectedOutput,
@@ -1746,16 +1726,15 @@ extern "C" {
 	@param save_on      1 indicates species concentrations are saved; 0
 	indicates species concentrations are not saved.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetSpeciesSaveOn sets the value of the species-save property. This method
+	<p>
+	@a SetSpeciesSaveOn sets the value of the species-save property. This method
 	enables or disables use of PhreeqcRM with multicomponent-diffusion
 	transport calculations. By default, concentrations of aqueous species are
 	not saved. Setting the species-save property to @a true allows aqueous
 	species concentrations to be retrieved with GetSpeciesConcentrations, and
 	solution compositions to be set with SpeciesConcentrations2Module.
 	SetSpeciesSaveOn must be called before calls to FindComponents.
-
+	</p>
 	@see
 	@ref YAMLFindComponents,
 	@ref YAMLSpeciesConcentrations2Module.
@@ -1781,14 +1760,13 @@ extern "C" {
 	@param tc           Vector of temperatures, in degrees C.
 	@param dim          Dimension of vector @a tc.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetTemperature sets the temperature for each reaction cell. If
-	SetTemperature is not called, worker solutions will have temperatures as
+	<p>
+	@a SetTemperature sets the temperature for each reaction cell. If
+	@a SetTemperature is not called, worker solutions will have temperatures as
 	defined by initial conditions (InitialPhreeqc2Module and
 	InitialPhreeqcCell2Module). Size of vector is @a nxyz, where @a nxyz is
 	the number of grid cells in the user's model.
-
+	</p>
 	@see
 	@ref YAMLInitialPhreeqc2Module,
 	@ref YAMLInitialPhreeqcCell2Module,
@@ -1816,10 +1794,9 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param time         Current simulation time, in seconds.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetTime sets current simulation time for the reaction module.
-
+	<p>
+	@a SetTime sets current simulation time for the reaction module.
+	</p>
 	@see
 	@ref YAMLSetTimeStep,
 	@ref YAMLSetTimeConversion.
@@ -1844,12 +1821,11 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param conv_factor  Factor to convert seconds to user time units.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	YAMLSetTimeConversion sets a factor to convert from seconds to user time
+	<p>
+	@a SetTimeConversion sets a factor to convert from seconds to user time
 	units. Factor times seconds produces user time units that is used in some
 	PhreeqcRM printing.
-
+	</p>
 	@see
 	@ref YAMLSetTime,
 	@ref YAMLSetTimeStep.
@@ -1875,11 +1851,10 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param time_step    Time step, in seconds.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetTimeStep sets current time step for the reaction module. This is the
+	<p>
+	@a SetTimeStep sets current time step for the reaction module. This is the
 	length of time over which kinetic reactions are integrated.
-
+	</p>
 	@see
 	@ref YAMLSetTime,
 	@ref YAMLSetTimeConversion.
@@ -1905,21 +1880,20 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param option       Units option for exchangers: 0, 1, or 2.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetUnitsExchange sets input units for exchangers. In PHREEQC input,
+	<p>
+	@a SetUnitsExchange sets input units for exchangers. In PHREEQC input,
 	exchangers are defined by moles of exchange sites (@a Mp).
 	SetUnitsExchange specifies how the number of moles of exchange sites in a
 	reaction cell (@a Mc) is calculated from the input value (@a Mp).
-
-	@par
+	</p>
+	<p>
 	Options are 0, @a Mp is mol/L of RV (default), @a Mc = @a Mp*RV, where RV
 	is the representative volume (SetRepresentativeVolume); 1, @a Mp is mol/L
 	of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity
 	(SetPorosity); or 2, @a Mp is mol/L of rock in the RV,  @a Mc = @a
 	Mp*(1-P)*RV.
-
-	@par
+	</p>
+	<p>
 	If a single EXCHANGE definition is used for cells with different initial
 	porosity, the three options scale quite differently. For option 0, the
 	number of moles of exchangers will be the same regardless of porosity. For
@@ -1927,7 +1901,7 @@ extern "C" {
 	porosity and inversely with rock volume. For option 2, the number of moles
 	of exchangers will vary directly with rock volume and inversely with
 	porosity.
-
+	</p>
 	@see
 	@ref YAMLInitialPhreeqc2Module,
 	@ref YAMLInitialPhreeqcCell2Module,
@@ -1954,24 +1928,23 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param option       Units option for gas phases: 0, 1, or 2.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetUnitsGasPhase
+	<p>
+	@a SetUnitsGasPhase
 	sets input units for gas phases.
 	In PHREEQC input, gas phases are defined by moles of component gases (@a
 	Mp).
 	@a SetUnitsGasPhase specifies how the number of moles of component gases in
 	a reaction cell (@a Mc)
 	is calculated from the input value (@a Mp).
-
-	@par
+	</p>
+	<p>
 	Options are 0, @a Mp is mol/L of RV (default), @a Mc = @a Mp*RV, where RV
 	is the representative volume (SetRepresentativeVolume); 1, @a Mp is mol/L
 	of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity
 	(SetPorosity); or 2, @a Mp is mol/L of rock in the RV, @a Mc = @a Mp*(1-@a
 	P)*RV.
-
-	@par
+	</p>
+	<p>
 	If a single GAS_PHASE definition is used for cells with different initial
 	porosity, the three options scale quite differently. For option 0, the
 	number of moles of a gas component will be the same regardless of porosity.
@@ -1979,7 +1952,7 @@ extern "C" {
 	with porosity and inversely with rock volume. For option 2, the number of
 	moles of a gas component will vary directly with rock volume and inversely
 	with porosity.
-
+	</p>
 	@see
 	@ref YAMLInitialPhreeqc2Module,
 	@ref YAMLInitialPhreeqcCell2Module,
@@ -2006,25 +1979,24 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param option       Units option for kinetic reactants: 0, 1, or 2.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetUnitsKinetics
+	<p>
+	@a SetUnitsKinetics
 	sets input units for kinetic reactants.
-
-	@par
+	</p>
+	<p>
 	In PHREEQC input, kinetics are defined by moles of kinetic reactants (@a
 	Mp). @a SetUnitsKinetics specifies how the number of moles of kinetic
 	reactants in a reaction cell (@a Mc) is calculated from the input value (@a
 	Mp).
-
-	@par
+	</p>
+	<p>
 	Options are 0, @a Mp is mol/L of RV (default), @a Mc = @a Mp*RV, where RV
 	is the representative volume (SetRepresentativeVolume); 1, @a Mp is mol/L
 	of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity
 	(SetPorosity); or 2, @a Mp is mol/L of rock in the RV, @a Mc = @a Mp*(1-@a
 	P)*RV.
-
-	@par
+	</p>
+	<p>
 	If a single KINETICS definition is used for cells with different initial
 	porosity, the three options scale quite differently. For option 0, the
 	number of moles of kinetic reactants will be the same regardless of
@@ -2032,8 +2004,8 @@ extern "C" {
 	vary directly with porosity and inversely with rock volume. For option 2,
 	the number of moles of kinetic reactants will vary directly with rock
 	volume and inversely with porosity.
-
-	@par
+	</p>
+	<p>
 	Note that the volume of water in a cell in the reaction module is equal to
 	the product of porosity (SetPorosity), the saturation (SetSaturationUser),
 	and representative volume (SetRepresentativeVolume), which is usually less
@@ -2041,15 +2013,15 @@ extern "C" {
 	homogeneous (aqueous) kinetic reactions to account for the current volume
 	of water, often by calculating the rate of reaction per liter of water and
 	multiplying by the volume of water (Basic function SOLN_VOL).
-
-	@par
+	</p>
+	<p>
 	Rates that depend on surface area of solids, are not dependent on the
 	volume of water. However, it is important to get the correct surface area
 	for the kinetic reaction. To scale the surface area with the number of
 	moles, the specific area (m^2 per mole of reactant) can be defined as a
 	parameter (KINETICS; -parm), which is multiplied by the number of moles of
 	reactant (Basic function M) in RATES to obtain the surface area.
-
+	</p>
 	@see
 	@ref YAMLInitialPhreeqc2Module,
 	@ref YAMLInitialPhreeqcCell2Module,
@@ -2077,22 +2049,21 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param option       Units option for equilibrium phases: 0, 1, or 2.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetUnitsPPassemblage sets input units for pure phase assemblages
+	<p>
+	@a SetUnitsPPassemblage sets input units for pure phase assemblages
 	(equilibrium phases). In PHREEQC input, equilibrium phases are defined by
 	moles of each phase (@a Mp). @a SetUnitsPPassemblage specifies how the
 	number of moles of phases in a reaction cell (@a Mc) is calculated from the
 	input value (@a Mp).
-
-	@par
+	</p>
+	<p>
 	Options are 0, @a Mp is mol/L of RV (default), @a Mc = @a Mp*RV, where RV
 	is the representative volume (SetRepresentativeVolume); 1, @a Mp is mol/L
 	of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity
 	(SetPorosity); or 2, @a Mp is mol/L of rock in the RV, @a Mc = @a
 	Mp*(1-P)*RV.
-
-	@par
+	</p>
+	<p>
 	If a single EQUILIBRIUM_PHASES definition is used for cells with different
 	initial porosity, the three options scale quite differently. For option 0,
 	the number of moles of a mineral will be the same regardless of porosity.
@@ -2100,7 +2071,7 @@ extern "C" {
 	porosity and inversely with rock volume. For option 2, the number of moles
 	of a mineral will vary directly with rock volume and inversely with
 	porosity.
-
+	</p>
 	@see
 	@ref YAMLInitialPhreeqc2Module,
 	@ref YAMLInitialPhreeqcCell2Module,
@@ -2128,13 +2099,12 @@ extern "C" {
 	@param option       Units option for solutions: 1, 2, or 3, default is 1,
 	mg/L.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	SetUnitsSolution sets solution concentration units used by the transport
+	<p>
+	@a SetUnitsSolution sets solution concentration units used by the transport
 	model. Options are 1, mg/L; 2 mol/L; or 3, mass fraction, kg/kgs. PHREEQC
 	defines solutions by the number of moles of each element in the solution.
-
-	@par
+	</p>
+	<p>
 	To convert from mg/L to moles of element in the representative volume of a
 	reaction cell, mg/L is converted to mol/L and multiplied by the solution
 	volume, which is the product of porosity (SetPorosity), saturation
@@ -2144,8 +2114,8 @@ extern "C" {
 	mass fraction to moles of element in the representative volume of a
 	reaction cell, kg/kgs is converted to mol/kgs, multiplied by density
 	(SetDensityUser) and multiplied by the solution volume.
-
-	@par
+	</p>
+	<p>
 	To convert from moles of element in the representative volume of a reaction
 	cell to mg/L, the number of moles of an element is divided by the solution
 	volume resulting in mol/L, and then converted to mg/L. To convert from
@@ -2160,7 +2130,7 @@ extern "C" {
 	volume (SetRepresentativeVolume), and the mass of solution is volume times
 	density as defined by SetDensityUser. Which option is used is determined by
 	UseSolutionDensityVolume.
-
+	</p>
 	@see
 	@ref YAMLSetDensityUser,
 	@ref YAMLSetPorosity,
@@ -2188,22 +2158,21 @@ extern "C" {
 	@param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param option        Units option for solid solutions: 0, 1, or 2.
 	@retval IRM_RESULT   Zero indicates success, negative indicates failure.
-
-	@par
-	SetUnitsSSassemblage sets input units for solid-solution assemblages. In
+	<p>
+	@a SetUnitsSSassemblage sets input units for solid-solution assemblages. In
 	PHREEQC, solid solutions are defined by moles of each component (@a Mp). @a
 	SetUnitsSSassemblage specifies how the number of moles of solid-solution
 	components in a reaction cell (@a Mc) is calculated from the input value
 	(@a Mp).
-
-	@par
+	</p>
+	<p>
 	Options are 0, @a Mp is mol/L of RV (default), @a Mc = @a Mp*RV, where RV
 	is the representative volume (SetRepresentativeVolume); 1, @a Mp is mol/L
 	of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity
 	(SetPorosity); or 2, @a Mp is mol/L of rock in the RV, @a Mc = @a Mp*(1-@
 	P)*RV.
-
-	@par
+	</p>
+	<p>
 	If a single SOLID_SOLUTION definition is used for cells with different
 	initial porosity, the three options scale quite differently. For option 0,
 	the number of moles of a solid-solution component will be the same
@@ -2211,7 +2180,7 @@ extern "C" {
 	solid-solution component will be vary directly with porosity and inversely
 	with rock volume. For option 2, the number of moles of a solid-solution
 	component will vary directly with rock volume and inversely with porosity.
-
+	</p>
 	@see
 	@ref YAMLInitialPhreeqc2Module,
 	@ref YAMLInitialPhreeqcCell2Module,
@@ -2238,21 +2207,20 @@ extern "C" {
 	@param id            The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param option        Units option for surfaces: 0, 1, or 2.
 	@retval IRM_RESULT   Zero indicates success, negative indicates failure.
-
-	@par
-	SetUnitsSurface sets input units for surfaces. In PHREEQC input, surfaces
+	<p>
+	@a SetUnitsSurface sets input units for surfaces. In PHREEQC input, surfaces
 	are defined by moles of surface sites (@a Mp). @a SetUnitsSurface specifies
 	how the number of moles of surface sites in a reaction cell (@a Mc) is
 	calculated from the input value (@a Mp).
-
-	@par
+	</p>
+	<p>
 	Options are 0, @a Mp is mol/L of RV (default), @a Mc = @a Mp*RV, where RV
 	is the representative volume (SetRepresentativeVolume); 1, @a Mp is mol/L
 	of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity
 	(SetPorosity); or 2, @a Mp is mol/L of rock in the RV, @a Mc = @a Mp*(1-@a
 	P)*RV.
-
-	@par
+	</p>
+	<p>
 	If a single SURFACE definition is used for cells with different initial
 	porosity, the three options scale quite differently. For option 0, the
 	number of moles of surface sites will be the same regardless of porosity.
@@ -2260,7 +2228,7 @@ extern "C" {
 	with porosity and inversely with rock volume. For option 2, the number of
 	moles of surface sites will vary directly with rock volume and inversely
 	with porosity.
-
+	</p>
 	@see
 	@ref YAMLInitialPhreeqc2Module,
 	@ref YAMLInitialPhreeqcCell2Module,
@@ -2291,9 +2259,8 @@ extern "C" {
 	Concentrations are moles per liter.
 	@param dim           Dimension of vector @a species_conc.
 	@retval IRM_RESULT   Zero indicates success, negative indicates failure.
-
-	@par
-	SpeciesConcentrations2Module sets solution concentrations in the reaction
+	<p>
+	@a SpeciesConcentrations2Module sets solution concentrations in the reaction
 	cells based on the vector of aqueous species concentrations (@a
 	species_conc). This method is intended for use with
 	multicomponent-diffusion transport calculations, and SetSpeciesSaveOn must
@@ -2305,7 +2272,7 @@ extern "C" {
 	compositions in the reaction cells are updated with these component
 	concentrations. Usually, accurate concentrations will not be known to use
 	YAMLSpeciesConcentrations2Module during initialization.
-
+	</p>
 	@see
 	@ref YAMLFindComponents,
 	@ref YAMLSetSpeciesSaveOn.
@@ -2331,9 +2298,8 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param istate       Integer identifying the state that is saved.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	StateSave saves the state of the chemistry in all model cells, including
+	<p>
+	@a StateSave saves the state of the chemistry in all model cells, including
 	SOLUTIONs, EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS,
 	SOLID_SOLUTIONs, and SURFACEs. Although not generally used, MIXes,
 	REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs will be saved for
@@ -2343,7 +2309,7 @@ extern "C" {
 	use DumpModule to save the state to file. PhreeqcRM can be reset to this
 	state by using StateApply. A state is identified by an integer, and
 	multiple states can be saved.
-
+	</p>
 	@see
 	@ref YAMLDumpModule,
 	@ref YAMLStateApply, and
@@ -2369,9 +2335,8 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param istate       Integer identifying the state that is to be applied.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	StateApply resets the state of the module to a state previously saved with
+	<p>
+	@a StateApply resets the state of the module to a state previously saved with
 	StateSave. The chemistry of all model cells are reset, including SOLUTIONs,
 	EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and
 	SURFACEs. MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs
@@ -2380,7 +2345,7 @@ extern "C" {
 	the workers and the chemistry of fully or partially unsaturated cells are
 	also reset to the saved state. The state to be applied is identified by an
 	integer.
-
+	</p>
 	@see
 	@ref YAMLStateSave and
 	@ref YAMLStateDelete.
@@ -2405,10 +2370,9 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param istate            Integer identifying the state that is to be deleted.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	StateDelete deletes a state previously saved with StateSave.
-
+	<p>
+	@a StateDelete deletes a state previously saved with StateSave.
+	</p>
 	@see
 	@ref YAMLStateSave and
 	@ref YAMLStateApply.
@@ -2462,9 +2426,8 @@ extern "C" {
 	SetRepresentativeVolume, will be used to calculate concentrations retrieved
 	by GetConcentrations.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	UseSolutionDensityVolume determines the volume and density to use when
+	<p>
+	@a UseSolutionDensityVolume determines the volume and density to use when
 	converting from the reaction-cell concentrations to transport
 	concentrations (GetConcentrations). Two options are available to convert
 	concentration units: (1) the density and solution volume calculated by
@@ -2479,7 +2442,7 @@ extern "C" {
 	information needed to accurately calculate density and solution volume:
 	phreeqc.dat, Amm.dat, and pitzer.dat. Density is only used when converting
 	to or from transport units of mass fraction.
-
+	</p>
 	@see
 	@ref YAMLSetDensityUser,
 	@ref YAMLSetPorosity,
@@ -2506,11 +2469,10 @@ extern "C" {
 	@param id           The instance id returned from @ref CreateYAMLPhreeqcRM.
 	@param str          String to be printed.
 	@retval IRM_RESULT  Zero indicates success, negative indicates failure.
-
-	@par
-	WarningMessage
+	<p>
+	@a WarningMessage
 	prints a warning message to the screen and the log file.
-
+	</p>
 	@see
 	@ref YAMLOpenFiles,
 	@ref YAMLLogMessage,
