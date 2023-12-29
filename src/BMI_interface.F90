@@ -997,7 +997,7 @@
     !> and all spatial characterists are assigned by the user's
     !> model.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @param var   Varaiable name. (Return value is the same regardless of @a name.)
+    !> @param var   Varaiable name. (Return value is the same regardless of @a var.)
     !> @param grid  1 (points). BMIPhreeqcRM cells derive meaning from the user's model. 
     !> @retval      0 is success, 1 is failure.
     integer FUNCTION bmif_get_var_grid(self, var, grid)
@@ -1307,6 +1307,20 @@
     real(kind=8), INTENT(inout) :: start_time
     bmif_get_start_time = bmif_get_current_time(self, start_time)
     END FUNCTION bmif_get_start_time
+    
+    !> @a bmif_get_time returns the current simulation time, in seconds. 
+    !> (Same as @ref bmif_get_current_time and @ref GetTime.)
+    !> @param self Fortran-supplied BMIPhreeqcRM instance.
+    !> @param start_time  The current simulation time, in seconds.
+    !> @retval        0 is success, 1 is failure.
+    INTEGER FUNCTION bmif_get_time(self, start_time)
+    USE ISO_C_BINDING
+    IMPLICIT NONE
+    class(bmi), intent(inout) :: self
+    real(kind=8), INTENT(inout) :: start_time
+    bmif_get_time = bmif_get_current_time(self, start_time)
+    END FUNCTION bmif_get_time
+    
 
     !> @a bmif_get_end_time returns @ref bmif_get_current_time plus
     !> @ref bmif_get_time_step, in seconds.
@@ -1455,8 +1469,6 @@
     !> @n "FilePrefix", @a dest: character;
     !> @n "Gfw", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "GridCellCount", @a dest: integer;
-    !> @n "InputVarNames", @a dest: character(len=:), allocatable, dimension(:);
-    !> @n "OutputVarNames", @a dest: character(len=:), allocatable, dimension(:);
     !> @n "Porosity", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "Pressure", @a dest: real(kind=8), allocatable, dimension(:);
     !> @n "SaturationCalculated", @a dest: real(kind=8), allocatable, dimension(:);

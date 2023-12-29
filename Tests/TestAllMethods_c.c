@@ -235,8 +235,8 @@ void TestAllMethods_c()
 		status = RM_GetComponent(id, i, string, MAX_LENGTH);
 		fprintf(stderr, "     %s\n", string);
 	}
-	//??????  BMI_GetValue("Components", str_vector);    //?????
-	fprintf(stderr, "GetComponent %d\n", status);
+	//BMI_GetValue("Components", str_vector);    // Not implemented
+	//fprintf(stderr, "GetComponent %d\n", status);
 	// Species info
 	n = RM_GetSpeciesCount(id);
 	fprintf(stderr, "GetSpeciesCount %d\n", n);
