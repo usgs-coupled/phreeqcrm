@@ -11,7 +11,7 @@ extern "C" {
 #endif	
 	/**
     @a BMI_AddOutputVars allows selection of sets of variables that can be retieved
-    by the @ref BMI_GetValue method. Sets of variables can be included or excluded with
+    by the @a BMI_GetValue methods. Sets of variables can be included or excluded with
     multiple calls to this method. All calls must precede the final call to
     the PhreeqcRM method FindComponents. FindComponents generates SELECTED_OUTPUT 333 and
     USER_PUNCH 333 data blocks that make the variables accessible. Variables will
@@ -19,7 +19,7 @@ extern "C" {
     gas variables will be Created if there are no GAS_PHASEs in the model.
     @param id Id number returned by @ref BMI_Create.
     @param option A string value, among those listed below, that includes or
-    excludes variables from @ref BMI_GetOutputVarName, @ref BMI_GetValue,
+    excludes variables from @ref BMI_GetOutputVarName, @a BMI_GetValue methods,
     and other BMI methods.
     @param def A string value that can be "false", "true", or a list of items to be included as
     accessible variables. A value of "false", excludes all variables of the given type; a
@@ -151,7 +151,6 @@ extern "C" {
     @see
     @ref BMI_GetEndTime,
     @ref BMI_GetTimeStep,
-    @ref BMI_SetValue,
     @ref BMI_GetTime.
     @par C example:
     @htmlonly
@@ -172,8 +171,7 @@ extern "C" {
     @retval          The end of the time step, in seconds.
     @see
     @ref BMI_GetCurrentTime,
-    @ref BMI_GetTimeStep,
-    @ref BMI_SetValue.
+    @ref BMI_GetTimeStep.
     @par C example:
     @htmlonly
     <CODE>
@@ -212,7 +210,7 @@ extern "C" {
     at creation of the BMIPhreeqcRM instance.
     @param id Id number returned by @ref BMI_Create.
     @param grid  Grid number, only grid 0 is considered.
-    @retval    Number of cells. Same value as @ref BMI_GetValue "GridCellCount" 
+    @retval    Number of cells. Same value as @ref BMI_GetValueInt(id, "GridCellCount")
     is returned for grid 0;
     0 for all other values of @a grid.
     @par C example:
@@ -252,16 +250,15 @@ extern "C" {
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetGridType(int id, int grid, char* str, int l);
     /**
     @a BMI_GetInputItemCount returns count of variables that
-    can be set with @ref BMI_SetValue.
+    can be set with @a BMI_SetValue methods.
     @param id Id number returned by @ref BMI_Create.
-    @retval   Number of input variables that can be set with @ref BMI_SetValue.
+    @retval   Number of input variables that can be set with @a BMI_SetValue methods.
     @see
     @ref BMI_GetInputVarName,
     @ref BMI_GetVarItemsize,
     @ref BMI_GetVarNbytes,
     @ref BMI_GetVarType,
-    @ref BMI_GetVarUnits,
-    @ref BMI_SetValue.
+    @ref BMI_GetVarUnits.
     @par C example:
     @htmlonly
     <CODE>
@@ -277,7 +274,7 @@ extern "C" {
 	//IRM_DLL_EXPORT int        BMI_GetInputVarNamesSize(int id);
     /**
     @a BMI_GetInputVarName returns the ith variable name that can be set
-    with @ref BMI_SetValue.
+    with @a BMI_SetValue methods.
     @param id Id number returned by @ref BMI_Create.
     @param i 0-based index of variable name to retrieve.
     @param name   Retrieved variable name.
@@ -285,7 +282,6 @@ extern "C" {
     @retval            0 is success, 1 is failure; negative indicates buffer is too small.
     @see
     @ref BMI_GetInputItemCount,
-    @ref BMI_SetValue,
     @ref BMI_GetVarItemsize,
     @ref BMI_GetVarNbytes,
     @ref BMI_GetVarType,
@@ -307,12 +303,11 @@ extern "C" {
 	//IRM_DLL_EXPORT int        BMI_GetNamesSize(int id, const char* type, int* dest);
     /**
     @a BMI_GetOutputItemCount returns count of output variables that can be
-    retrieved with @ref BMI_GetValue.
+    retrieved with @a BMI_GetValue methods.
     @param id Id number returned by @ref BMI_Create.
-    @retval   Number of output variables that can be retrieved with @ref BMI_GetValue.
+    @retval   Number of output variables that can be retrieved with @a BMI_GetValue methods.
     @see
     @ref BMI_GetOutputVarName,
-    @ref BMI_GetValue,
     @ref BMI_GetVarItemsize,
     @ref BMI_GetVarNbytes,
     @ref BMI_GetVarType,
@@ -332,7 +327,7 @@ extern "C" {
 	//IRM_DLL_EXPORT int        BMI_GetOutputVarNamesSize(int id);
     /**
     @a BMI_GetOutputVarName returns ith variable name for which a pointer can be
-    retrieved with @ref BMI_GetValue.
+    retrieved with @a BMI_GetValue methods.
     @param id Id number returned by @ref BMI_Create.
     @param i 0-based index of variable name to retrieve.
     @param name    Retrieved variable name.
@@ -340,7 +335,6 @@ extern "C" {
     @retval            0 is success, 1 is failure; negative indicates buffer is too small.
     @see
     @ref BMI_GetOutputItemCount,
-    @ref BMI_GetValue,
     @ref BMI_GetVarItemsize,
     @ref BMI_GetVarNbytes,
     @ref BMI_GetVarType,
@@ -432,8 +426,7 @@ extern "C" {
     @retval              The current simulation time step, in seconds.
     @see
     @ref BMI_GetCurrentTime,
-    @ref BMI_GetEndTime,
-    @ref BMI_SetValue.
+    @ref BMI_GetEndTime.
     @par C example:
     @htmlonly
     <CODE>
@@ -456,9 +449,7 @@ extern "C" {
     @see
     @ref BMI_GetCurrentTime,
     @ref BMI_GetEndTime,
-    @ref BMI_GetTimeStep,
-    @ref BMI_GetValue,
-    @ref BMI_SetValue.
+    @ref BMI_GetTimeStep.
     @par C example:
     @htmlonly
     <CODE>
@@ -474,7 +465,7 @@ extern "C" {
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetTimeUnits(int id, char* units, int l);
 	// GetValue
     /**
-    @a BMI_GetValue retrieves model variables. Only variables in the list
+    @a BMI_GetValueInt retrieves int model variables. Only variables in the list
     provided by @ref BMI_GetOutputVarName can be retrieved.
     @param id Id number returned by @ref BMI_Create.
     @param var    Name of the variable to retrieve.
@@ -484,23 +475,54 @@ extern "C" {
     Variable names for the second argument (@a var).
     </p>
     @n "ComponentCount"
-    @n "Components"
-    @n "Concentrations"
     @n "CurrentSelectedOutputUserNumber"
-    @n "DensityCalculated"
-    @n "ErrorString"
-    @n "FilePrefix"
-    @n "Gfw"
     @n "GridCellCount"
+    @n "SelectedOutputColumnCount"
+    @n "SelectedOutputCount"
+    @n "SelectedOutputOn"
+    @n "SelectedOutputRowCount".
+    @see
+    @ref BMI_GetOutputVarName,
+    @ref BMI_GetOutputItemCount,
+    @ref BMI_GetVarItemsize,
+    @ref BMI_GetVarNbytes,
+    @ref BMI_GetVarType,
+    @ref BMI_GetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = BMI_GetValueInt(id, "ComponentCount", &count);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueInt(int id, char* var, int* dest);
+    /**
+    @a BMI_GetValueDouble retrieves model variables. Only variables in the list
+    provided by @ref BMI_GetOutputVarName can be retrieved. 
+    @param id Id number returned by @ref BMI_Create.
+    @param var    Name of the variable to retrieve.
+    @param dest   Variable in which to place results.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variables in addition to the ones listed below may be retrieved by this method,
+    depending on variables selected by @ref BMI_AddOutputVars. All variables added
+    by @ref BMI_AddOutputVars will be double arrays of size equal to the number of 
+    model cells [@ref BMI_GetValueInt(id, "GridCellCount")].
+    </p>
+    <p>
+    Variable names for the second argument (@a var).
+    </p>
+    @n "Concentrations"
+    @n "DensityCalculated"
+    @n "Gfw"
     @n "Porosity"
     @n "Pressure"
     @n "SaturationCalculated"
     @n "SelectedOutput"
-    @n "SelectedOutputColumnCount"
-    @n "SelectedOutputCount"
-    @n "SelectedOutputHeadings"
-    @n "SelectedOutputOn"
-    @n "SelectedOutputRowCount"
     @n "SolutionVolume"
     @n "Temperature"
     @n "Time"
@@ -512,22 +534,62 @@ extern "C" {
     @ref BMI_GetVarItemsize,
     @ref BMI_GetVarNbytes,
     @ref BMI_GetVarType,
-    @ref BMI_GetVarUnits,
-    @ref BMI_SetValue.
+    @ref BMI_GetVarUnits.
     @par C example:
     @htmlonly
     <CODE>
     <PRE>
     density = (double *)malloc(nxyz*sizeof(double));
-    status = BMI_GetValue(id, "DensityCalculated", density);
+    status = BMI_GetValueDouble(id, "DensityCalculated", density);
     </PRE>
     </CODE>
     @endhtmlonly
     @par MPI:
-    Called by root, workers must be in the loop of @a MpiWorker.
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
     */
-	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueInt(int id, char* var, int* dest);
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueDouble(int id, char* var, double* dest);
+    /**
+    @a BMI_GetValueChar retrieves char model variables. Only variables in the list
+    provided by @ref BMI_GetOutputVarName can be retrieved.
+    @param id Id number returned by @ref BMI_Create.
+    @param var    Name of the variable to retrieve.
+    @param dest   Variable in which to place results.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Retrieved strings are not null terminated. ErrorString and FilePrefix return single strings.
+    Components and SelectedOutputHeadings retrieve a string that is a concatenated list of
+    components or selected-output headings.
+    The length of each item in a list is given by @ref BMI_GetVarItemSize. The string must be
+    processed to extract each component or heading and append the null termination.
+    Alternatively, the components can
+    be retrieved one at a time with @a RM_GetComponent or @a RM_GetSelectedOutputHeading.
+    </p>
+    <p>
+    Variable names for the second argument (@a var).
+    </p>
+    @n "Components"
+    @n "ErrorString"
+    @n "FilePrefix"
+    @n "SelectedOutputHeadings".
+    @see
+    @ref BMI_GetOutputVarName,
+    @ref BMI_GetOutputItemCount,
+    @ref BMI_GetVarItemsize,
+    @ref BMI_GetVarNbytes,
+    @ref BMI_GetVarType,
+    @ref BMI_GetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    char string[256];
+    status = BMI_GetValueChar(id, "FilePrefix", string);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetValueChar(int id, char* var, char* dest, int l);
 	// GetValuePtr
 	//IRM_DLL_EXPORT IRM_RESULT BMI_GetValuePtrInt(int id, char* var, int** dest);
@@ -558,7 +620,7 @@ extern "C" {
     @n "TimeStep"
     @n "Viscosity"
     @par MPI:
-    Called by root, workers must be in the loop of @a MpiWorker.
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
     */
 	IRM_DLL_EXPORT void* BMI_GetValuePtr(int id, char* var);
     /**
@@ -575,7 +637,7 @@ extern "C" {
     /**
     @a BMI_GetVarItemsize retrieves the size, in bytes, of a
     variable that can be set with
-    @ref BMI_SetValue, retrieved with @ref BMI_GetValue, or pointed to with
+    @a BMI_SetValue methods, retrieved with @a BMI_GetValue methods, or pointed to with
     @ref BMI_GetValuePtr.
     Sizes may be the size of an integer, double,
     or a character length for string variables.
@@ -589,12 +651,10 @@ extern "C" {
     @ref BMI_GetOutputItemCount,
     @ref BMI_GetPointableVarName,
     @ref BMI_GetPointableItemCount,
-    @ref BMI_GetValue,
     @ref BMI_GetValuePtr,
     @ref BMI_GetVarNbytes,
     @ref BMI_GetVarType,
-    @ref BMI_GetVarUnits,
-    @ref BMI_SetValue.
+    @ref BMI_GetVarUnits.
     @par C example:
     @htmlonly
     <CODE>
@@ -613,7 +673,7 @@ extern "C" {
     /**
     @a BMI_GetVarNbytes retrieves the total number of bytes needed for a
     variable that can be set with
-    @ref BMI_SetValue, retrieved with @ref BMI_GetValue, or pointed to with
+    @a BMI_SetValue methods, retrieved with @a BMI_GetValue methods, or pointed to with
     @ref BMI_GetValuePtr.
     @param id Id number returned by @ref BMI_Create.
     @param name     Name of the variable to retrieve the number of bytes needed to
@@ -626,12 +686,10 @@ extern "C" {
     @ref BMI_GetOutputItemCount,
     @ref BMI_GetPointableVarName,
     @ref BMI_GetPointableItemCount,
-    @ref BMI_GetValue,
     @ref BMI_GetValuePtr,
     @ref BMI_GetVarItemsize,
     @ref BMI_GetVarType,
-    @ref BMI_GetVarUnits,
-    @ref BMI_SetValue.
+    @ref BMI_GetVarUnits.
     @par C example:
     @htmlonly
     <CODE>
@@ -649,7 +707,7 @@ extern "C" {
 	IRM_DLL_EXPORT int        BMI_GetVarNbytes(int id, char* name);
     /**
     @a BMI_GetVarType retrieves the type of a variable that can be set with
-    @ref BMI_SetValue, retrieved with @ref BMI_GetValue, or pointed to with
+    @a BMI_SetValue methods, retrieved with @a BMI_GetValue methods, or pointed to with
     @ref BMI_GetValuePtr.
     Types are "char", "double", or "int",
     or an array of these types.
@@ -665,12 +723,10 @@ extern "C" {
     @ref BMI_GetOutputItemCount,
     @ref BMI_GetPointableVarName,
     @ref BMI_GetPointableItemCount,
-    @ref BMI_GetValue,
     @ref BMI_GetValuePtr,
     @ref BMI_GetVarItemsize,
     @ref BMI_GetVarNbytes,
-    @ref BMI_GetVarUnits,
-    @ref BMI_SetValue.
+    @ref BMI_GetVarUnits.
     @par C example:
     @htmlonly
     <CODE>
@@ -689,7 +745,7 @@ extern "C" {
 	IRM_DLL_EXPORT IRM_RESULT BMI_GetVarType(int id, char* name, char* vtype, int l);
     /**
     @a BMI_GetVarType retrieves the units of a variable that can be set with
-    @ref BMI_SetValue, retrieved with @ref BMI_GetValue, or pointed to with
+    @a BMI_SetValue methods, retrieved with @a BMI_GetValue methods, or pointed to with
     @ref BMI_GetValuePtr.
     @param id Id number returned by @ref BMI_Create.
     @param name   Name of the variable to retrieve the type.
@@ -703,12 +759,10 @@ extern "C" {
     @ref BMI_GetOutputItemCount,
     @ref BMI_GetPointableVarName,
     @ref BMI_GetPointableItemCount,
-    @ref BMI_GetValue,
     @ref BMI_GetValuePtr,
     @ref BMI_GetVarItemsize,
     @ref BMI_GetVarNbytes,
-    @ref BMI_GetVarType,
-    @ref BMI_SetValue.
+    @ref BMI_GetVarType.
     @par C example:
     @htmlonly
     <CODE>
@@ -844,15 +898,147 @@ extern "C" {
     </CODE>
     @endhtmlonly
     @par MPI:
-    Called by root, workers must be in the loop of @a MpiWorker.
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
     */
 	IRM_DLL_EXPORT IRM_RESULT BMI_Initialize(int id, char* config_file);
-	// SetValue
+    //
+	// SetValue methods
+    //
     /**
-    @a BMI_SetValue sets model variables. Only variables in the list
+    @a BMI_SetValueChar sets model character variables. Only variables in the list
     provided by @ref BMI_GetInputVarName can be set.
     @param id Id number returned by @ref BMI_Create.
     @param name    Name of variable to set.
+    @param src    Data to use to set the variable.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variable names for the second argument (@a var):
+    </p>
+    @n "FilePrefix"
+    @see
+    @ref BMI_GetInputVarName,
+    @ref BMI_GetInputItemCount,
+    @ref BMI_GetVarItemsize,
+    @ref BMI_GetVarNbytes,
+    @ref BMI_GetVarType,
+    @ref BMI_GetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = BMI_SetValueChar(id, "FilePrefix", "my_prefix");
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueChar(int id, char* name, const char* src);
+    /**
+    @a BMI_SetValueDouble sets model double variables. Only variables in the list
+    provided by @ref BMI_GetInputVarName can be set.
+    @param id Id number returned by @ref BMI_Create.
+    @param name    Name of variable to set.
+    @param src    Data to use to set the variable.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variable names for the second argument (@a var):
+    </p>
+    @n "Time"
+    @n "TimeStep".
+    @see
+    @ref BMI_GetInputVarName,
+    @ref BMI_GetInputItemCount,
+    @ref BMI_GetVarItemsize,
+    @ref BMI_GetVarNbytes,
+    @ref BMI_GetVarType,
+    @ref BMI_GetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = BMI_SetValueDouble(id, "TimeStep", 86400.0);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueDouble(int id, char* name, double src);
+    /**
+    @a BMI_SetValueDoubleArray sets model double array variables. Only variables in the list
+    provided by @ref BMI_GetInputVarName can be set.
+    @param id Id number returned by @ref BMI_Create.
+    @param name   Name of variable to set.
+    @param src    Data to use to set the variable.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variable names for the second argument (@a var):
+    </p>
+    @n "Concentrations"
+    @n "DensityUser"
+    @n "Porosity"
+    @n "Pressure"
+    @n "SaturationUser"
+    @n "Temperature".
+    @see
+    @ref BMI_GetInputVarName,
+    @ref BMI_GetInputItemCount,
+    @ref BMI_GetVarItemsize,
+    @ref BMI_GetVarNbytes,
+    @ref BMI_GetVarType,
+    @ref BMI_GetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    tc = (double *)malloc(nxyz*sizeof(double));
+    for(i=0; i < nxyz; i++) tc[i] = 28.0e0;
+    status = BMI_SetValueDoubleArray(id, "Temperature", tc);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueDoubleArray(int id, char* name, double* src);
+    /**
+    @a BMI_SetValueInt sets model int variables. Only variables in the list
+    provided by @ref BMI_GetInputVarName can be set.
+    @param id Id number returned by @ref BMI_Create.
+    @param name   Name of variable to set.
+    @param src    Data to use to set the variable.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variable names for the second argument (@a var):
+    </p>
+    @n "NthSelectedOutput"
+    @n "SelectedOutputOn".
+    @see
+    @ref BMI_GetInputVarName,
+    @ref BMI_GetInputItemCount,
+    @ref BMI_GetVarItemsize,
+    @ref BMI_GetVarNbytes,
+    @ref BMI_GetVarType,
+    @ref BMI_GetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = BMI_SetValueInt(id, "SelectedOutputOn", 1);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueInt(int id, char* name, int src);
+#ifdef SKIP
+    /**
+    @a BMI_SetValueIntArray sets model int array variables. Only variables in the list
+    provided by @ref BMI_GetInputVarName can be set.
+    @param id Id number returned by @ref BMI_Create.
+    @param name   Name of variable to set.
     @param src    Data to use to set the variable.
     @retval       0 is success, 1 is failure.
     <p>
@@ -871,8 +1057,7 @@ extern "C" {
     @n "TimeStep".
     @see
     @ref BMI_GetInputVarName,
-    @ref BMI_GetInputItemCount,,
-    @ref BMI_GetValue,
+    @ref BMI_GetInputItemCount,
     @ref BMI_GetVarItemsize,
     @ref BMI_GetVarNbytes,
     @ref BMI_GetVarType,
@@ -888,23 +1073,20 @@ extern "C" {
     </CODE>
     @endhtmlonly
     @par MPI:
-    Called by root, workers must be in the loop of @a MpiWorker.
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
     */
-	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueChar(int id, char* name, const char* src);
-	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueDouble(int id, char* name, double src);
-	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueDoubleArray(int id, char* name, double* src);
-	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueInt(int id, char* name, int src);
 	IRM_DLL_EXPORT IRM_RESULT BMI_SetValueIntArray(int id, char* name, int* src);
+#endif
     /**
     @a BMI_Update runs a reaction step for all of the cells in the reaction module.
     @param id Id number returned by @ref BMI_Create.
     @retval     0 is success, 1 is failure.
     <p>
     Tranported concentrations are transferred to the reaction cells
-    (@ref BMI_SetValue "Concentrations") before
+    (@ref BMI_SetValueDoubleArray "Concentrations") before
     reaction calculations are run. The length of time over which kinetic
     reactions are integrated is set
-    by @ref BMI_SetValue "TimeStep". Other properties that may need to be updated
+    by @ref BMI_SetValueDouble "TimeStep". Other properties that may need to be updated
     as a result of the transport
     calculations include 
     porosity,
@@ -912,9 +1094,6 @@ extern "C" {
     saturation,
     temperature.
     </p>
-    @see
-    @ref BMI_GetValue,
-    @ref BMI_SetValue.
     @par C example:
     @htmlonly
     <CODE>
@@ -933,7 +1112,7 @@ extern "C" {
     </CODE>
     @endhtmlonly
     @par MPI:
-    Called by root, workers must be in the loop of @a MpiWorker.
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
     */
 	IRM_DLL_EXPORT IRM_RESULT BMI_Update(int id);
     /**
@@ -957,7 +1136,7 @@ extern "C" {
     </CODE>
     @endhtmlonly
     @par MPI:
-    Called by root, workers must be in the loop of @a MpiWorker.
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
     */
 	IRM_DLL_EXPORT IRM_RESULT BMI_UpdateUntil(int id, double end_time);
 

@@ -186,7 +186,7 @@ void TestAllMethods_c()
 
 	//-------Chemistry cells may be fewer than GridCellCount
 	vi = (int*)malloc(nxyz * sizeof(int));
-	for (int i = 0; i < nxyz; i++) v_nxyz[i] = 1;
+	for (int i = 0; i < nxyz; i++) vi[i] = 1;
 	status = RM_SetPrintChemistryMask(id, vi);
 	fprintf(stderr, "SetPrintChemistryMask %d\n", status);
 	//-------
@@ -235,8 +235,20 @@ void TestAllMethods_c()
 		status = RM_GetComponent(id, i, string, MAX_LENGTH);
 		fprintf(stderr, "     %s\n", string);
 	}
-	//BMI_GetValue("Components", str_vector);    // Not implemented
-	//fprintf(stderr, "GetComponent %d\n", status);
+	// BMI version of GetComponents
+	int itemsize = BMI_GetVarItemsize(id, "Components");
+	int nbytes = BMI_GetVarNbytes(id, "Components");
+	char* buffer = (char*)malloc(((size_t)nbytes + 1) * sizeof(char));
+	buffer[nbytes] = '\0';
+	status = BMI_GetValueChar(id, "Components", buffer, nbytes + 1);
+	char** comp_list = (char**)malloc(ncomps * sizeof(char*));
+	for (i = 0; i < ncomps; i++)
+	{
+		comp_list[i] = (char*)malloc(((size_t)itemsize + 1) * sizeof(char));
+		memcpy(comp_list[i], &buffer[i * itemsize], (size_t)itemsize);
+		comp_list[i][itemsize] = '\0';
+	}
+	fprintf(stderr, "BMI_GetValue(Components) %d\n", status);
 	// Species info
 	n = RM_GetSpeciesCount(id);
 	fprintf(stderr, "GetSpeciesCount %d\n", n);
@@ -596,6 +608,23 @@ void TestAllMethods_c()
 	}
 	fprintf(stderr, "GetSelectedOutputHeading %d \n", status);
 	//-------
+	// BMI version of GetHeadings
+	itemsize = BMI_GetVarItemsize(id, "SelectedOutputHeadings");
+	nbytes = BMI_GetVarNbytes(id, "SelectedOutputHeadings");
+	int ncol = 0;
+	status = BMI_GetValueInt(id, "SelectedOutputColumnCount", &ncol);
+	char* so_buffer = (char*)malloc(((size_t)nbytes + 1) * sizeof(char));
+	so_buffer[nbytes] = '\0';
+	status = BMI_GetValueChar(id, "SelectedOutputHeadings", so_buffer, nbytes + 1);
+	char** heading_list = (char**)malloc(ncol * itemsize* sizeof(char*));
+	for (i = 0; i < ncol; i++)
+	{
+		heading_list[i] = (char*)malloc(((size_t)itemsize + 1) * sizeof(char));
+		memcpy(heading_list[i], &so_buffer[i * itemsize], (size_t)itemsize);
+		heading_list[i][itemsize] = '\0';
+	}
+	fprintf(stderr, "BMI_GetValueChar(SelectedOutputHeadings %d \n", status);
+	//-------
 	//i = RM_GetSelectedOutputOn(id);
 	status = BMI_GetValueInt(id, "SelectedOutputOn", &i);
 	i_ptr = (int*)BMI_GetValuePtr(id, "SelectedOutputOn");
@@ -865,6 +894,33 @@ void TestAllMethods_c()
 	//TODO status = BMI_MpiAbort();
 	//TODO status = BMI_SetMpiWorkerCallbackC();
 	//TODO status = BMI_SetMpiWorkerCallbackCookie();
+	free(grid2chem);
+	free(v_nxyz);
+	free(vi);
+	free(v_spec);
+	free(ic1);
+	free(ic2);
+	free(f1);
+	free(bc1);
+	free(bc2);
+	free(bc);
+	free(bc_spec);
+	free(c);
+	free(v_gas);
+	free(v_spec_nxyz);
+	free(so);
+	for (i = 0; i < ncomps; i++)
+	{
+		free(comp_list[i]);
+	}
+	free(comp_list);
+	free(buffer);
+	for (i = 0; i < ncol; i++)
+	{
+		free(heading_list[i]); 
+	}
+	free(heading_list);
+	free(so_buffer);
 	fprintf(stderr, "Success.\n");
 	return;
 }

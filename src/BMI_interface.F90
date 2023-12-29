@@ -29,7 +29,7 @@
     integer, parameter :: BMI_SUCCESS = 0
     !> @a bmif_create Creates a BMIPhreeqcRM instance. 
     !>
-    !> Two constructors are available to create a BMIPhreeqcRM
+    !> Two constructors are available to Create a BMIPhreeqcRM
     !> instance. The default method, with no arguments, can be
     !> used if the instance is to be initialized with a YAML file.
     !> The YAML file must provide the number of cells in the user's 
@@ -203,7 +203,7 @@
 	procedure :: GetThreadCount
 	procedure :: GetTime                            ! bmif_get_var
 	procedure :: GetTimeconversion
-	procedure :: GetTimestep                        ! bmif_get_var
+	procedure :: GetTimeStep                        ! bmif_get_var
 	procedure :: GetViscosity                       ! bmif_get_var
 	procedure :: InitializeYAML
 	procedure :: InitialPhreeqc2Concentrations
@@ -5102,7 +5102,7 @@
     !> @retval            The current simulation time in seconds.
     !> @see
     !> @ref GetTimeconversion,
-    !> @ref GetTimestep,
+    !> @ref GetTimeStep,
     !> @ref SetTime,
     !> @ref SetTimeConversion,
     !> @ref SetTimeStep.
@@ -5135,7 +5135,7 @@
     !> @retval                 Multiplier to convert seconds to another time unit.
     !> @see
     !> @ref GetTime,
-    !> @ref GetTimestep,
+    !> @ref GetTimeStep,
     !> @ref SetTime,
     !> @ref SetTimeConversion,
     !> @ref SetTimeStep.
@@ -5176,19 +5176,19 @@
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "          Time step             ", &
-    !>       brm%GetTimestep() * brm%GetTimeconversion(), " days"
+    !>       brm%GetTimeStep() * brm%GetTimeconversion(), " days"
     !> status = brm%LogMessage(string)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    real(kind=8) FUNCTION GetTimestep(self)
+    real(kind=8) FUNCTION GetTimeStep(self)
     USE ISO_C_BINDING
     IMPLICIT NONE
 	class(bmi), intent(inout) :: self
-    GetTimestep = RM_GetTimestep(self%bmiphreeqcrm_id)
-    END FUNCTION GetTimestep
+    GetTimeStep = RM_GetTimeStep(self%bmiphreeqcrm_id)
+    END FUNCTION GetTimeStep
 
     ! INTEGER FUNCTION GetVarItemsize(self, var)
     ! USE ISO_C_BINDING
