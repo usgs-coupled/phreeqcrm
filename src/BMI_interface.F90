@@ -1889,8 +1889,10 @@
     !> @param var    Name of the variable to retrieve.
     !> @param ptr    Pointer to the variable's data.
     !> @retval       0 is success, 1 is failure.
+    !> <p>
     !> The following list gives the name in the second argument (@a var) and the
     !> data type the pointer (@a ptr):
+    !> </p>
     !> @n "ComponentCount": integer;
     !> @n "Concentrations": real(kind=8) (:);
     !> @n "DensityCalculated": real(kind=8) (:);
@@ -5257,13 +5259,13 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param yaml_name         String containing the YAML file name.
     !> @retval IRESULT      0 is success, negative is failure (See @ref DecodeError).
-    !> @par
+    !> <p>
     !> The file contains a YAML map of PhreeqcRM methods
     !> and the arguments corresponding to the methods.
     !> Note that the PhreeqcRM methods do not have the "" prefix
     !> and the id argument is not included.
     !> For example,
-    !> @par
+    !> </p>
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -5276,7 +5278,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    !> @par
+    !> <p>
     !> @ref InitializeYAML will read the YAML file and execute the specified methods with
     !> the specified arguments. Using YAML
     !> terminology, the argument(s) for a method may be a scalar, a sequence, or a map,
@@ -5287,13 +5289,14 @@
     !> The names of the map keys for map
     !> arguments are not used in parsing the YAML file; only the order of
     !> the arguments is important.
-    !> @par
+    !> </p>
+    !> <p>
     !> The following list gives the PhreeqcRM methods that can be specified in a YAML file
     !> and the arguments that are required. The arguments are described with C++ formats, which
     !> are sufficient to identify which arguments are YAML scalars (single bool/logical,
     !> int, double, string/character argument),
     !> sequences (single vector argument), or maps (multiple arguments).
-    !> @par
+    !> </p>
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -5365,8 +5368,8 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !>    id = Create(nxyz, MPI_COMM_WORLD)
-    !>    status = brm%InitializeYAML("myfile.yaml")
+    !> id = Create(nxyz, MPI_COMM_WORLD)
+    !> status = brm%InitializeYAML("myfile.yaml")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly

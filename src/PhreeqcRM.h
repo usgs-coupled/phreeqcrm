@@ -600,12 +600,14 @@ and their charge (@ref GetSpeciesZ).
 @ref SetComponentH2O,
 @ref SetSpeciesSaveOn,
 @ref SpeciesConcentrations2Module. 
-@par The FindComponents method also generates lists of reactants--equilibrium phases,
+<p>
+The FindComponents method also generates lists of reactants--equilibrium phases,
 exchangers, gas components, kinetic reactants, solid solution components, and surfaces. 
 The lists are cumulative, including all reactants that were
 defined in the initial phreeqc instance at any time FindComponents was called.
 In addition, a list of phases is generated for which saturation indices may be calculated from the
 cumulative list of components.
+</p>
 @see 
 @ref GetEquilibriumPhases,
 @ref GetEquilibriumPhasesCount,
@@ -2601,10 +2603,8 @@ with @ref GetSpeciesConcentrations, and solution compositions to be set with
 
 @retval True indicates solution species concentrations are saved and can be used for multicomponent-diffusion calculations;
 @a False indicates that solution species concentrations are not saved.
-@see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesCount,
-@ref GetSpeciesD25, @ref GetSpeciesSaveOn, @ref GetSpeciesZ,
-@ref GetSpeciesNames, @ref SpeciesConcentrations2Module.
-@see                    @ref FindComponents, 
+@see                    
+@ref FindComponents, 
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
@@ -3379,11 +3379,11 @@ WarningMessage(std::string warnstr);
 @htmlonly
 <CODE>
 <PRE>
-		int nthreads = 0;
-		std::string yaml_file = "myfile.yaml";
-		int nxyz = GetGridCellCountYAML(yaml_file);
-		PhreeqcRM phreeqc_rm(nxyz, nthreads);
-		phreeqc_rm.InitializeYAML(yaml_file);
+int nthreads = 0;
+std::string yaml_file = "myfile.yaml";
+int nxyz = GetGridCellCountYAML(yaml_file);
+PhreeqcRM phreeqc_rm(nxyz, nthreads);
+phreeqc_rm.InitializeYAML(yaml_file);
 </PRE>
 </CODE>
 @endhtmlonly

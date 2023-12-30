@@ -4067,13 +4067,13 @@
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param yaml_name         String containing the YAML file name.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @par
+    !> <p>
     !> The file contains a YAML map of PhreeqcRM methods
     !> and the arguments corresponding to the methods.
     !> Note that the PhreeqcRM methods do not have the "RM_" prefix
     !> and the id argument is not included.
     !> For example,
-    !> @par
+    !> </p>
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -4086,7 +4086,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    !> @par
+    !> <p>
     !> @ref RM_InitializeYAML will read the YAML file and execute the specified methods with
     !> the specified arguments. Using YAML
     !> terminology, the argument(s) for a method may be a scalar, a sequence, or a map,
@@ -4097,13 +4097,14 @@
     !> The names of the map keys for map
     !> arguments are not used in parsing the YAML file; only the order of
     !> the arguments is important.
-    !> @par
+    !> </p>
+    !> <p>
     !> The following list gives the PhreeqcRM methods that can be specified in a YAML file
     !> and the arguments that are required. The arguments are described with C++ formats, which
     !> are sufficient to identify which arguments are YAML scalars (single bool/logical,
     !> int, double, string/character argument),
     !> sequences (single vector argument), or maps (multiple arguments).
-    !> @par
+    !> </p>
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -4175,8 +4176,8 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !>    id = RM_Create(nxyz, MPI_COMM_WORLD)
-    !>    status = RM_InitializeYAML(id, "myfile.yaml")
+    !> id = RM_Create(nxyz, MPI_COMM_WORLD)
+    !> status = RM_InitializeYAML(id, "myfile.yaml")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly

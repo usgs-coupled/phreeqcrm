@@ -76,6 +76,7 @@ sed -i -e "s/rm_abort/RM_Abort/g" \
 -e "s/rm_setconcentrations/RM_SetConcentrations/g" \
 -e "s/rm_setcurrentselectedoutputusernumber/RM_SetCurrentSelectedOutputUserNumber/g" \
 -e "s/rm_setdensityuser/RM_SetDensityUser/g" \
+-e "s/rm_setdensity/RM_SetDensity/g" \
 -e "s/rm_setdumpfilename/RM_SetDumpFileName/g" \
 -e "s/rm_seterrorhandlermode/RM_SetErrorHandlerMode/g" \
 -e "s/rm_seterroron/RM_SetErrorOn/g" \
