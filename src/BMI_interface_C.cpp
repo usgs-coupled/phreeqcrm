@@ -353,8 +353,17 @@ BMI_GetValueChar(int id, char* var, char* dest, int l)
 	//	//bmirm_ptr->GetValue(name, dest);
 	//	return return_value;
 	//}
-
-	return RMF_BMI_GetValue(&id, var, dest);
+	int nbytes = RMF_BMI_GetVarNbytes(&id, var);
+	if (nbytes + 1 > l)
+	{
+		return IRM_INVALIDARG;
+	}
+	IRM_RESULT status = RMF_BMI_GetValue(&id, var, dest);
+	if (status >= 0)
+	{
+		dest[nbytes] = '\0';
+	}
+	return status;
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT

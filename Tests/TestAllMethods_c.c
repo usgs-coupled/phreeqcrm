@@ -239,7 +239,6 @@ void TestAllMethods_c()
 	int itemsize = BMI_GetVarItemsize(id, "Components");
 	int nbytes = BMI_GetVarNbytes(id, "Components");
 	char* buffer = (char*)malloc(((size_t)nbytes + 1) * sizeof(char));
-	buffer[nbytes] = '\0';
 	status = BMI_GetValueChar(id, "Components", buffer, nbytes + 1);
 	char** comp_list = (char**)malloc(ncomps * sizeof(char*));
 	for (i = 0; i < ncomps; i++)
@@ -614,7 +613,6 @@ void TestAllMethods_c()
 	int ncol = 0;
 	status = BMI_GetValueInt(id, "SelectedOutputColumnCount", &ncol);
 	char* so_buffer = (char*)malloc(((size_t)nbytes + 1) * sizeof(char));
-	so_buffer[nbytes] = '\0';
 	status = BMI_GetValueChar(id, "SelectedOutputHeadings", so_buffer, nbytes + 1);
 	char** heading_list = (char**)malloc(ncol * itemsize* sizeof(char*));
 	for (i = 0; i < ncol; i++)

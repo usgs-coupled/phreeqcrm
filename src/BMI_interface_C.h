@@ -554,15 +554,18 @@ extern "C" {
     @param id Id number returned by @ref BMI_Create.
     @param var    Name of the variable to retrieve.
     @param dest   Variable in which to place results.
-    @retval       0 is success, 1 is failure.
+    @retval       0 is success, 1 is failure; negative indicates buffer is too small.
     <p>
-    Retrieved strings are not null terminated. ErrorString and FilePrefix return single strings.
-    Components and SelectedOutputHeadings retrieve a string that is a concatenated list of
-    components or selected-output headings.
-    The length of each item in a list is given by @ref BMI_GetVarItemSize. The string must be
-    processed to extract each component or heading and append the null termination.
-    Alternatively, the components can
-    be retrieved one at a time with @a RM_GetComponent or @a RM_GetSelectedOutputHeading.
+    The buffer length must be at least one character greater than the value 
+    returned by @ref BMI_GetVarNbytes to allow for null termination. 
+    "ErrorString" and "FilePrefix" return single strings.
+    "Components" and "SelectedOutputHeadings" retrieve a string that is a 
+    concatenated list of components or selected-output headings.
+    The length of each item in a list is given by @ref BMI_GetVarItemSize. 
+    The concatenated list must be processed to extract each component or heading 
+    and a null termination must be appended.
+    Alternatively, the components can be retrieved one at a time with 
+    @a RM_GetComponent or @a RM_GetSelectedOutputHeading.
     </p>
     <p>
     Variable names for the second argument (@a var).
@@ -1139,6 +1142,111 @@ extern "C" {
     Called by root, workers must be in the loop of @a RM_MpiWorker.
     */
 	IRM_DLL_EXPORT IRM_RESULT BMI_UpdateUntil(int id, double end_time);
+    /**
+    @a BMI_GetValueAtIndices is not implemented
+    */
+    void BMI_GetValueAtIndices(int id, char* name, void* dest, int* inds, int count)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    };
+    /**
+    @a BMI_SetValueAtIndices is not implemented.
+    */
+    void BMI_SetValueAtIndices(int id, char* name, int* inds, int count, void* src)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    };
+    /**
+    @a BMI_GetGridShape is not implemented.
+    */
+    void BMI_GetGridShape(int id, const int grid, int* shape)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridSpacing is not implemented.
+    */
+    void BMI_GetGridSpacing(int id, const int grid, double* spacing)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridOrigin is not implemented.
+    */
+    void BMI_GetGridOrigin(int id, const int grid, double* origin)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridX is not implemented.
+    */
+    void BMI_GetGridX(int id, const int grid, double* x)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridY is not implemented.
+    */
+    void BMI_GetGridY(int id, const int grid, double* y)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridZ is not implemented.
+    */
+    void BMI_GetGridZ(int id, const int grid, double* z)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridNodeCount is not implemented.
+    */
+    int GetGridNodeCount(int id, const int grid)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridEdgeCount is not implemented.
+    */
+    int GetGridEdgeCount(int id, const int grid)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridFaceCount is not implemented.
+    */
+    int GetGridFaceCount(int id, const int grid)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridEdgeNodes is not implemented.
+    */
+    void BMI_GetGridEdgeNodes(int id, const int grid, int* edge_nodes)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridFaceEdges is not implemented.
+    */
+    void BMI_GetGridFaceEdges(int id, const int grid, int* face_edges)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridFaceNodes is not implemented.
+    */
+    void BMI_GetGridFaceNodes(int id, const int grid, int* face_nodes)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
+    /**
+    @a BMI_GetGridNodesPerFace is not implemented.
+    */
+    void BMI_GetGridNodesPerFace(int id, const int grid, int* nodes_per_face)
+    {
+        fprintf(stderr, "Not implemented\n"); exit(4);
+    }
 
 #if defined(__cplusplus)
 }
