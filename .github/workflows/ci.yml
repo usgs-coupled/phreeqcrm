@@ -4,16 +4,18 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths-ignore:
-      - 'CMakePresets.json'
-      - 'build-all-presets.sh'
       - '.github/workflows/wheels.yml'
+      - '.gitignore'
+      - 'build-all-presets.sh'
+      - 'CMakePresets.json'
   push:
     # branches:
     #   - master
     paths-ignore:
-      - 'CMakePresets.json'
-      - 'build-all-presets.sh'
       - '.github/workflows/wheels.yml'
+      - '.gitignore'
+      - 'build-all-presets.sh'
+      - 'CMakePresets.json'
   workflow_dispatch:
 
 env:
@@ -200,7 +202,7 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
-    name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }}
+    name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }} type=${{ matrix.BUILD_TYPE }}
     needs: [init, distcheck]
     strategy:
       fail-fast: false
