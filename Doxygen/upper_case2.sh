@@ -1,6 +1,6 @@
 #!/bin/sh
 sed -i "s/getgridcellcountyaml/GetGridCellCountYAML/g" $(egrep -l getgridcellcountyaml ./html/*)
-sed -i "s/setgridcellcountyaml/SetGridCellCountYAML/g" $(egrep -l setgridcellcountyaml ./html/*)
+#sed -i "s/setgridcellcountyaml/SetGridCellCountYAML/g" $(egrep -l setgridcellcountyaml ./html/*)
 #sed -i "s/rm_/RM_/g" $(egrep -l rm_ ./html/*)
 sed -i -e "s/rm_abort/RM_Abort/g" \
 -e "s/rm_closefiles/RM_CloseFiles/g" \
@@ -222,7 +222,7 @@ for f in ./html/BMI__interface_8F90.html ./html/BMI__interface_8F90.js \
 ./html/functions_func_g.html ./html/functions_g.html ./html/namespacebmiphreeqcrm.html \
 ./html/namespacebmiphreeqcrm.js ./html/namespacemembers_func_g.html \
 ./html/namespacemembers_g.html ./html/structbmiphreeqcrm_1_1bmi-members.html \
-./html/structbmiphreeqcrm_1_1bmi.html ./html/structbmiphreeqcrm_1_1bmi.js; do 
+./html/structbmiphreeqcrm_1_1bmi.html ./html/structbmiphreeqcrm_1_1bmi.js; do
 sed -i -e "s/abort/Abort/g" \
 -e "s/closefiles/CloseFiles/g" \
 -e "s/concentrations2utility/Concentrations2Utility/g" \
@@ -374,10 +374,10 @@ sed -i -e "s/abort/Abort/g" \
 -e "s/bmif_Create/bmif_create/" $f
 done
 
-sed -i "s/yamlphreeqcrm/YAMLPhreeqcRM/g" $(egrep -l yamlphreeqcrm ./html/*)
-sed -i "s/bmiphreeqcrm/BMIPhreeqcRM/g" $(egrep -l bmiphreeqcrm ./html/*)
-sed -i "s/phreeqcrm/PhreeqcRM/g" $(egrep -l phreeqcrm ./html/*)
-sed -i "s/yaml_interface/YAML_interface/g" $(egrep -l yaml_interface ./html/*)
+sed -i "s/\byamlphreeqcrm\b/YAMLPhreeqcRM/g" $(egrep -l yamlphreeqcrm ./html/*)
+sed -i "s/\bbmiphreeqcrm\b/BMIPhreeqcRM/g" $(egrep -l bmiphreeqcrm ./html/*)
+sed -i "s/\bphreeqcrm\b/PhreeqcRM/g" $(egrep -l phreeqcrm ./html/*)
+#sed -i "s/\byaml_interface\b/YAML_interface/g" $(egrep -l yaml_interface ./html/*)
 # Change Titles
 sed -i "s/RM_interface_C.h File Reference/PhreeqcRM C Reference/g" html/RM__interface__C_8h.html
 sed -i "s/PhreeqcRM Class Reference/PhreeqcRM C++ Class Reference/g" html/classPhreeqcRM.html
