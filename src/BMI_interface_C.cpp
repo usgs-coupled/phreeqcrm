@@ -592,3 +592,108 @@ BMI_UpdateUntil(int id, double time)
 {
 	return RMF_BMI_UpdateUntil(&id, &time);
 }
+/* ---------------------------------------------------------------------- */
+void 
+BMI_GetValueAtIndices(int id, char* name, void* dest, int* inds, int count)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void 
+BMI_SetValueAtIndices(int id, char* name, int* inds, int count, void* src)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void 
+BMI_GetGridShape(int id, const int grid, int* shape)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void 
+BMI_GetGridSpacing(int id, const int grid, double* spacing)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void 
+BMI_GetGridOrigin(int id, const int grid, double* origin)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void 
+BMI_GetGridX(int id, const int grid, double* x)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void 
+BMI_GetGridY(int id, const int grid, double* y)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void 
+BMI_GetGridZ(int id, const int grid, double* z)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+int 
+GetGridNodeCount(int id, const int grid)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+int 
+GetGridEdgeCount(int id, const int grid)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+int 
+GetGridFaceCount(int id, const int grid)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void 
+BMI_GetGridEdgeNodes(int id, const int grid, int* edge_nodes)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void 
+BMI_GetGridFaceEdges(int id, const int grid, int* face_edges)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void 
+BMI_GetGridFaceNodes(int id, const int grid, int* face_nodes)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void 
+BMI_GetGridNodesPerFace(int id, const int grid, int* nodes_per_face)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
