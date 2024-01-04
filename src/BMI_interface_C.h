@@ -107,6 +107,23 @@ extern "C" {
 	*/
 	IRM_DLL_EXPORT int        BMI_Create(int nxyz, int nthreads);
 	//IRM_DLL_EXPORT int        BMI_Create_default();
+    /**
+    @a BMI_Destroy Destroys a reaction module; same as @ref BMI_Finalize.
+    @param id Id number returned by @ref BMI_Create.
+    @retval    0 is success, 0 is failure.
+    @see
+    @ref BMI_Create.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = BMI_Destroy(id);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root and workers.
+    */
 	IRM_DLL_EXPORT IRM_RESULT BMI_Destroy(int id);
     /**
     @a BMI_Finalize Destroys a reaction module.
