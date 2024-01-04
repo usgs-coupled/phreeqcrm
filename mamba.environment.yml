@@ -1,0 +1,12 @@
+name: bld-phreeqcrm
+channels:
+- conda-forge
+dependencies:
+- numpy
+- pkgconfig
+- pytest
+- python
+- pyyaml
+- swig
+- yaml-cpp
+

@@ -1,5 +1,10 @@
 USE_YAML = true
-DOXYGEN ?= "C:/Program Files/doxygen/bin/doxygen.exe"
+
+ifeq ($(OS),Windows_NT)
+	DOXYGEN ?= "C:/Program Files/doxygen/bin/doxygen.exe"
+else
+	DOXYGEN ?= doxygen
+endif
 
 all:
 	cp ../src/BMI_interface.F90 ../src/BMI_interface.F90.save

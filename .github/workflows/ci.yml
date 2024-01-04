@@ -4,16 +4,18 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths-ignore:
-      - 'CMakePresets.json'
-      - 'build-all-presets.sh'
       - '.github/workflows/wheels.yml'
+      - '.gitignore'
+      - 'build-all-presets.sh'
+      - 'CMakePresets.json'
   push:
     # branches:
     #   - master
     paths-ignore:
-      - 'CMakePresets.json'
-      - 'build-all-presets.sh'
       - '.github/workflows/wheels.yml'
+      - '.gitignore'
+      - 'build-all-presets.sh'
+      - 'CMakePresets.json'
   workflow_dispatch:
 
 env:
@@ -200,8 +202,7 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
-    if: ${{ false }}
-    name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }}
+    name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }} type=${{ matrix.BUILD_TYPE }}
     needs: [init, distcheck]
     strategy:
       fail-fast: false
@@ -209,7 +210,7 @@ jobs:
         os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
         build_shared_libs: [OFF, ON]
         phreeqcrm_with_yaml_cpp: [OFF, ON]
-        # BUILD_TYPE: [Debug, Release]
+        BUILD_TYPE: [Debug, Release]
 
     runs-on: ${{ matrix.os }}
 
@@ -384,11 +385,11 @@ jobs:
           - os: ubuntu-22.04
             mpi: 'msmpi'
           - os: windows-2019
-            mpi: 'mpich'            
+            mpi: 'mpich'
           - os: windows-2019
             mpi: 'ompi'
           - os: windows-2022
-            mpi: 'mpich'            
+            mpi: 'mpich'
           - os: windows-2022
             mpi: 'ompi'
     timeout-minutes: 20

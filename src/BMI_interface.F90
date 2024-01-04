@@ -96,7 +96,9 @@
         procedure :: bmif_get_var_nbytes
         procedure :: bmif_get_var_type
         procedure :: bmif_get_var_units
+#ifdef USE_YAML
         procedure :: bmif_initialize
+#endif
         !generic :: bmif_initialize => bmif_initialize, bmif_initialize_default ! procedure declaration
 
         procedure :: bmif_set_value_b, bmif_set_value_c, bmif_set_value_double, bmif_set_value_double1, &
@@ -205,7 +207,9 @@
 	procedure :: GetTimeconversion
 	procedure :: GetTimeStep                        ! bmif_get_var
 	procedure :: GetViscosity                       ! bmif_get_var
+#ifdef USE_YAML
 	procedure :: InitializeYAML
+#endif
 	procedure :: InitialPhreeqc2Concentrations
 	procedure :: InitialPhreeqc2Module
 	procedure :: InitialSolutions2Module
