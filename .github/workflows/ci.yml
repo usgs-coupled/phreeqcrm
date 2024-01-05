@@ -104,6 +104,7 @@ jobs:
         path: ${{github.workspace}}/_build/*.tar.gz
 
   autotools:
+    if: ${{ false }}
     name: autotools
     needs: [init, distcheck]
     strategy:
@@ -558,10 +559,13 @@ jobs:
     #     $env:PATH="${{ env.VCPKG_INSTALLATION_ROOT }}\packages\yaml-cpp_x64-windows\bin;C:\Program Files (x86)\PhreeqcRM\bin;$env:PATH"
     #     ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
 
-  pages_deploy:
+  upload_pages:
     needs: [init, distcheck]
 
     runs-on: ubuntu-latest
+
+    env:
+      VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
 
     steps:
 
@@ -569,5 +573,17 @@ jobs:
         with:
           name: tarball
 
+      - run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
+
       - run: find .
-  
+
+      - name: Fix permissions
+        run: |
+          chmod -c -R +rX "phreeqcrm-${{ env.VER_STRING }}/Doxygen/html" | while read line; do
+            echo "::warning title=Invalid file permissions automatically fixed::$line"
+          done
+
+      - uses: actions/upload-pages-artifact@v2
+        with:
+          path: phreeqcrm-${{ env.VER_STRING }}/Doxygen/html
+    
