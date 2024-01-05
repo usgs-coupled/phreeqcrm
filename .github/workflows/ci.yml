@@ -592,7 +592,7 @@ jobs:
     # todo update conditionals for [valgrind, autotools, cmake]
     # todo update github.ref below
     # todo add cmake need
-    if: github.ref == 'module-publish-doxygen' && github.event_name == 'push'
+    # if: github.ref == 'module-publish-doxygen' && github.event_name == 'push'
     
     needs: [upload_pages]
 
@@ -610,6 +610,11 @@ jobs:
 
     # Specify runner + deployment step
     steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
