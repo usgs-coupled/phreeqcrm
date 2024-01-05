@@ -561,48 +561,20 @@ jobs:
     #     $env:PATH="${{ env.VCPKG_INSTALLATION_ROOT }}\packages\yaml-cpp_x64-windows\bin;C:\Program Files (x86)\PhreeqcRM\bin;$env:PATH"
     #     ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
 
-  upload_pages:
-    needs: [init, distcheck]
-
-    runs-on: ubuntu-latest
-
-    env:
-      VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
-
-    steps:
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: tarball
-
-      - run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
-
-      - run: find "phreeqcrm-${{ env.VER_STRING }}/Doxygen/html"
-
-      - name: Fix permissions
-        run: |
-          chmod -c -R +rX "phreeqcrm-${{ env.VER_STRING }}/Doxygen/html" | while read line; do
-            echo "::warning title=Invalid file permissions automatically fixed::$line"
-          done
-
-      - uses: actions/upload-pages-artifact@v2
-        with:
-          path: phreeqcrm-${{ env.VER_STRING }}/Doxygen/html
-
   deploy_pages:
     # todo update conditionals for [valgrind, autotools, cmake]
     # todo update github.ref below
     # todo add cmake need
     # todo update make step of distcheck
-    # todo
     if: github.ref == 'refs/heads/module-publish-doxygen' && github.event_name == 'push'
-    
-    needs: [upload_pages]
+
+    needs: [init, distcheck]
 
     runs-on: ubuntu-latest
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
+      actions: read     # req'd by actions/deploy-pages@v4
       pages: write      # to deploy to Pages
       id-token: write   # to verify the deployment originates from an appropriate source
 
@@ -611,8 +583,27 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
-    # Specify runner + deployment step
+    env:
+      VER_STRING: ${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}
+
     steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: tarball
+
+      - run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz
+
+      - name: Fix permissions
+        run: |
+          chmod -c -R +rX "phreeqcrm-${{ env.VER_STRING }}/Doxygen/html" | while read line; do
+            echo "::warning title=Invalid file permissions automatically fixed::$line"
+          done
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: phreeqcrm-${{ env.VER_STRING }}/Doxygen/html
+
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3
+        uses: actions/deploy-pages@v4
