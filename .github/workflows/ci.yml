@@ -43,7 +43,6 @@ jobs:
           echo DATE_RFC_3339=$(date --rfc-3339=date)                                                                >> $GITHUB_OUTPUT
 
   valgrind:
-    if: ${{ false }}
     name: valgrind
     runs-on: ubuntu-latest
     steps:
@@ -97,8 +96,7 @@ jobs:
     - name: make
       shell: bash
       working-directory: ${{github.workspace}}/_build
-      #run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test --with-yaml-cpp" make -j2 distcheck
-      run: make dist
+      run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test --with-yaml-cpp" make -j2 distcheck
 
     - uses: actions/upload-artifact@v3
       with:
@@ -106,7 +104,6 @@ jobs:
         path: ${{github.workspace}}/_build/*.tar.gz
 
   autotools:
-    if: ${{ false }}
     name: autotools
     needs: [init, distcheck]
     strategy:
@@ -205,7 +202,6 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
-    if: ${{ false }}
     name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }} type=${{ matrix.BUILD_TYPE }}
     needs: [init, distcheck]
     strategy:
@@ -562,11 +558,8 @@ jobs:
     #     ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
 
   deploy_pages:
-    # todo update conditionals for [valgrind, autotools, cmake]
     # todo update github.ref below
-    # todo add cmake need
-    # todo update make step of distcheck
-    if: github.ref == 'refs/heads/module-publish-doxygen' && github.event_name == 'push'
+    # if: github.ref == 'refs/heads/master' && github.event_name == 'push'
 
     needs: [init, distcheck]
 
