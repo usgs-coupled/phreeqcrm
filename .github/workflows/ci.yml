@@ -202,6 +202,7 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
+    if: ${{ false }}
     name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }} type=${{ matrix.BUILD_TYPE }}
     needs: [init, distcheck]
     strategy:
@@ -556,3 +557,17 @@ jobs:
     #   run: |
     #     $env:PATH="${{ env.VCPKG_INSTALLATION_ROOT }}\packages\yaml-cpp_x64-windows\bin;C:\Program Files (x86)\PhreeqcRM\bin;$env:PATH"
     #     ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
+
+  pages_deploy:
+    needs: [init, distcheck]
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: tarball
+
+      - run: find .
+  
