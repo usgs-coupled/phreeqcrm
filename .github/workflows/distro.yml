@@ -5,10 +5,10 @@ on: [push]
 env:
   NAME: PhreeqcRM
   VER: 3.7.3
-  DATE: 10/22/2023
-  REL: 15968-hotfix-2
+  DATE: 01/04/2024
+  REL: 15968-hotfix-3
   BUILD_TYPE: Release
-  VER_STRING: 3.7.3-15968-hotfix-2
+  VER_STRING: 3.7.3-15968-hotfix-3
 
 jobs:
 

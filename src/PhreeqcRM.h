@@ -114,7 +114,7 @@ enum {
  *  <table>
  *   <tr><td class="indexkey"><a class="el" href="class_phreeqc_r_m.html">PhreeqRM.h</a> </td><td class="indexvalue">C++ Documentation</td></tr>
  *   <tr><td class="indexkey"><a class="el" href="_r_m__interface___c_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">C Documentation </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="classphreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">Fortran Documentation </td></tr>
  *   <tr><td class="indexkey"><a class="el" href="_irm_result_8h.html">IrmResult.h</a></td><td class="indexvalue">Return codes </td></tr>
  *  </table>
  *  @endhtmlonly
