@@ -40,6 +40,7 @@ sed -i -e "s/rm_abort/RM_Abort/g" \
 -e "s/rm_getporosity/RM_GetPorosity/g" \
 -e "s/rm_getpressure/RM_GetPressure/g" \
 -e "s/rm_getsaturationcalculated/RM_GetSaturationCalculated/g" \
+-e "s/rm_getsaturation/RM_GetSaturation/g" \
 -e "s/rm_getselectedoutputcolumncount/RM_GetSelectedOutputColumnCount/g" \
 -e "s/rm_getselectedoutputcount/RM_GetSelectedOutputCount/g" \
 -e "s/rm_getselectedoutputheading/RM_GetSelectedOutputHeading/g" \
