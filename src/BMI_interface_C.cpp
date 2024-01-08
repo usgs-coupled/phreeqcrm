@@ -24,6 +24,7 @@
 //	while (sofar++ < len)
 //		*dest++ = ' ';
 //}
+#ifdef SKIP
 static IRM_RESULT
 rmpadfstring(char* dest, const char* src, int len)
 {
@@ -697,3 +698,4 @@ BMI_GetGridNodesPerFace(int id, const int grid, int* nodes_per_face)
 {
 	fprintf(stderr, "Not implemented\n"); exit(4);
 }
+#endif

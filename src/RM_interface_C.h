@@ -1,5 +1,7 @@
 /*! @file RM_interface_C.h
-	@brief C header file module PhreeqcRM.
+	@brief C header file for module BMIPhreeqcRM. RM_BmiCreate creates a module with 
+    access to all BMI methods. For backward compatibility, the deprecated method RM_Create
+    creates an old-style PhreeqcRM instance, which does not have access to BMI methods.
 */
 #ifdef USE_MPI
 #include "mpi.h"
@@ -13,6 +15,1222 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
+    /**
+    @a RM_BmiCreate Creates a BMI reaction module, which allows use of all of
+    the RM_Bmi methods. 
+    If the code is compiled with
+    the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
+    If the code is compiled with the preprocessor directive USE_MPI, the reaction
+    module will use MPI and multiple processes. If neither preprocessor directive is used,
+    the reaction module will be serial (unparallelized).
+    @param nxyz                         The number of grid cells in the user's model.
+    @param nthreads (or @a comm, MPI)   When using OPENMP, the argument (@a nthreads)
+    is the number of worker threads to be used.
+    If @a nthreads <= 0, the number of threads is set equal to the number of
+    processors of the computer.
+    When using MPI, the argument (@a comm) is the MPI communicator to use within
+    the reaction module.
+    @retval Id of the BMIPhreeqcRM instance, negative is failure.
+    @see
+    @ref RM_BmiFinalize.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    nxyz = 40;
+    nthreads = 3;
+    id = RM_BmiCreate(nxyz, nthreads);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root and workers.
+    */
+    IRM_DLL_EXPORT int        RM_BmiCreate(int nxyz, int nthreads);
+    /**
+    @a RM_BmiDestroy Destroys a BMI reaction module; same as @ref RM_BmiFinalize.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @retval    0 is success, 0 is failure.
+    @see
+    @ref RM_BmiCreate.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiDestroy(id);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root and workers.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiDestroy(int id);
+    /**
+    @a RM_BmiAddOutputVars allows selection of sets of variables that can be retieved
+    by the @a RM_BmiGetValue methods. Sets of variables can be included or excluded with
+    multiple calls to this method. All calls must precede the final call to
+    the PhreeqcRM method FindComponents. FindComponents generates SELECTED_OUTPUT 333 and
+    USER_PUNCH 333 data blocks that make the variables accessible. Variables will
+    only be accessible if the system includes the given reactant; for example, no
+    gas variables will be Created if there are no GAS_PHASEs in the model.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param option A string value, among those listed below, that includes or
+    excludes variables from @ref RM_BmiGetOutputVarName, @a RM_BmiGetValue methods,
+    and other BMI methods.
+    @param def A string value that can be "false", "true", or a list of items to be included as
+    accessible variables. A value of "false", excludes all variables of the given type; a
+    value of "true" includes all variables of the given type for the current system; a list
+    specifies a subset of items of the given type.
+    @retval    0 is success, 0 is failure.
+    <p>
+    Values for the the parameter @a option:
+    </p>
+    @n@a AddOutputVars: False excludes all variables; True causes the settings for each variable group
+    to determine the variables that will be defined. Default True;
+    @n@a SolutionProperties: False excludes all solution property variables; True includes variables pH, pe,
+    alkalinity, ionic strength, water mass, charge balance, percent error, and specific conductance.
+    Default True.
+    @n@a SolutionTotalMolalities: False excludes all total element and element redox state variables;
+    True includes all elements and element redox state variables for the system defined for the
+    calculation; list restricts variables to the specified elements and redox states.
+    Default True.
+    @n@a ExchangeMolalities: False excludes all variables related to exchange; True includes all
+    variables related to exchange; list includes variables for the specified exchange species.
+    Default True.
+    @n@a SurfaceMolalities: False excludes all variables related to surfaces; True includes all
+    variables related to surfaces; list includes variables for the specified surface species.
+    Default True.
+    @n@a EquilibriumPhases: False excludes all variables related to equilibrium phases; True includes all
+    variables related to equilibrium phases; list includes variables for the specified
+    equilibiurm phases. Default True.
+    @n@a Gases: False excludes all variables related to gases; True includes all
+    variables related to gases; list includes variables for the specified gas components. Default True.
+    @n@a KineticReactants: False excludes all variables related to kinetic reactants; True includes all
+    variables related to kinetic reactants; list includes variables for the specified kinetic
+    reactants. Default True.
+    @n@a SolidSolutions: False excludes all variables related to solid solutions; True includes all
+    variables related to solid solutions; list includes variables for the specified solid solutions
+    components. Default True.
+    @n@a CalculateValues: False excludes all calculate values; True includes all
+    calculate values; list includes the specified calculate values. CALCLUATE_VALUES can be
+    used to calculate geochemical quantities not available in the other sets of variables.
+    Default True.
+    @n@a SolutionActivities: False excludes all aqueous species; True includes all
+    aqueous species; list includes only the specified aqueous species. Default False.
+    @n@a SolutionMolalities: False excludes all aqueous species; True includes all
+    aqueous species; list includes only the specified aqueous species. Default False.
+    @n@a SaturationIndices: False excludes all saturation indices; True includes all
+    saturation indices; list includes only the specified saturation indices. Default False.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiAddOutputVars(id, "SolutionMolalities", "True");
+    status = RM_BmiAddOutputVars(id, "SaturationIndices", "Calcite Dolomite");
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiAddOutputVars(int id, char* option, char* def);
+    /**
+    @a RM_BmiFinalize Destroys a reaction module.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @retval    0 is success, 0 is failure.
+    @see
+    @ref RM_BmiCreate.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiFinalize(id);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root and workers.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiFinalize(int id);
+    /**
+    @a RM_BmiGetComponentName returns the component name--"BMIPhreeqcRM".
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param component_name Returns "BMIPhreeqcRM", the name of the component.
+    @param l Length of string buffer @a component_name.
+    @retval               0 is success, 1 is failure; negative indicates buffer is too small.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiGetComponentName(id, component_name);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiGetComponentName(int id, char* component_name, int l);
+    /**
+    @a RM_BmiGetCurrentTime returns the current simulation time, in seconds.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @retval        The current simulation time, in seconds.
+    @see
+    @ref RM_BmiGetEndTime,
+    @ref RM_BmiGetTimeStep,
+    @ref RM_BmiGetTime.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    now = RM_BmiGetCurrentTime(id);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT double     RM_BmiGetCurrentTime(int id);
+    /**
+    @a RM_BmiGetEndTime returns @ref RM_BmiGetCurrentTime plus
+    @ref RM_BmiGetTimeStep, in seconds.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @retval          The end of the time step, in seconds.
+    @see
+    @ref RM_BmiGetCurrentTime,
+    @ref RM_BmiGetTimeStep.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiGetEndTime(id);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT double     RM_BmiGetEndTime(int id);
+    /**
+    @a RM_BmiGetGridRank returns a rank of 1 for grid 0.
+    BMIPhreeqcRM has a 1D series of
+    cells; any grid or spatial information must
+    be found in the user's model.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param grid   Grid number, only grid 0 is considered.
+    @retval       Rank of 1 is returned for grid 0; 0 for
+    all other values of @a grid.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    rank = RM_BmiGetGridRank(id, grid)
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT int        RM_BmiGetGridRank(int id, int grid);
+    /**
+    @ref RM_BmiGetGridSize returns the number of cells specified
+    at creation of the BMIPhreeqcRM instance.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param grid  Grid number, only grid 0 is considered.
+    @retval    Number of cells. Same value as @ref RM_BmiGetValueInt(id, "GridCellCount")
+    is returned for grid 0;
+    0 for all other values of @a grid.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    nxyz = RM_BmiGetGridSize(id, grid);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT int        RM_BmiGetGridSize(int id, int grid);
+    /**
+    @a RM_BmiGetGridType defines the grid to be points. No grid
+    information is available in BMIPhreeqcRM; all grid
+    information must be found in the user's model.
+    @param id    Id number returned by @ref RM_BmiCreate.
+    @param grid  Grid number, only grid 0 is considered.
+    @param str   "Points" is returned for grid 0;
+    "Undefined grid identifier" is returned for all other
+    values of @a grid.
+    @param l Length of string buffer @a str.
+    @retval      0 is success, 1 is failure, negative indicates the buffer is too small.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiGetGridType(id, grid, str, l)
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiGetGridType(int id, int grid, char* str, int l);
+    /**
+    @a RM_BmiGetInputItemCount returns count of variables that
+    can be set with @a RM_BmiSetValue methods.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @retval   Number of input variables that can be set with @a RM_BmiSetValue methods.
+    @see
+    @ref RM_BmiGetInputVarName,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    count = RM_BmiGetInputItemCount(id);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT int        RM_BmiGetInputItemCount(int id);
+    //IRM_DLL_EXPORT int        RM_BmiGetInputVarNamesSize(int id);
+    /**
+    @a RM_BmiGetInputVarName returns the ith variable name that can be set
+    with @a RM_BmiSetValue methods.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param i 0-based index of variable name to retrieve.
+    @param name   Retrieved variable name.
+    @param l Length of buffer for @a name.
+    @retval            0 is success, 1 is failure; negative indicates buffer is too small.
+    @see
+    @ref RM_BmiGetInputItemCount,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    char name[256];
+    status = RM_BmiGetInputVarName(id, 0, name, 256);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiGetInputVarName(int id, int i, char* name, int l);
+    //IRM_DLL_EXPORT int        RM_BmiGetNames(int id, const char* type, char* dest);
+    //IRM_DLL_EXPORT int        RM_BmiGetNamesSize(int id, const char* type, int* dest);
+    /**
+    @a RM_BmiGetOutputItemCount returns count of output variables that can be
+    retrieved with @a RM_BmiGetValue methods.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @retval   Number of output variables that can be retrieved with @a RM_BmiGetValue methods.
+    @see
+    @ref RM_BmiGetOutputVarName,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    count = RM_BmiGetOutputItemCount(id);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT int        RM_BmiGetOutputItemCount(int id);
+    //IRM_DLL_EXPORT int        RM_BmiGetOutputVarNamesSize(int id);
+    /**
+    @a RM_BmiGetOutputVarName returns ith variable name for which a pointer can be
+    retrieved with @a RM_BmiGetValue methods.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param i 0-based index of variable name to retrieve.
+    @param name    Retrieved variable name.
+    @param l Length of buffer for @a name.
+    @retval            0 is success, 1 is failure; negative indicates buffer is too small.
+    @see
+    @ref RM_BmiGetOutputItemCount,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    char name[256]
+    status = RM_BmiGetOutputVarName(id, 0, name, 256);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiGetOutputVarName(int id, int i, char* name, int l);
+    /**
+    @a RM_BmiGetPointableItemCount returns count of pointable variables that can be
+    retrieved with @ref RM_BmiGetValuePtr.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @retval   Number of output variables that can be retrieved with @ref RM_BmiGetValuePtr.
+    @see
+    @ref RM_BmiGetPointableVarName,
+    @ref RM_BmiGetValuePtr,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    count = RM_BmiGetPointableItemCount(id);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT int		  RM_BmiGetPointableItemCount(int id);
+    //IRM_DLL_EXPORT int        RM_BmiGetPointableVarNamesSize(int id);
+    /**
+    @a RM_BmiGetPointableVarName returns ith variable name for which a pointer can be
+    retrieved with @ref RM_BmiGetValuePtr.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param i 0-based index of variable name to retrieve.
+    @param name    Retrieved variable name.
+    @param l Length of buffer for @a name.
+    @retval            0 is success, 1 is failure; negative indicates buffer is too small.
+    @see
+    @ref RM_BmiGetPointableItemCount,
+    @ref RM_BmiGetValuePtr,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    char name[256];
+    status = RM_BmiGetPointableVarName(id, 0, name, 256);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiGetPointableVarName(int id, int i, char* name, int l);
+    /**
+    @a RM_BmiGetStartTime returns the current simulation time, in seconds.
+    (Same as @ref RM_BmiGetCurrentTime.)
+    @param id Id number returned by @ref RM_BmiCreate.
+    @retval       The current simulation time, in seconds.
+    */
+    IRM_DLL_EXPORT double     RM_BmiGetStartTime(int id);
+    /**
+    @a RM_BmiGetTime returns the current simulation time, in seconds.
+    (Same as @ref RM_BmiGetCurrentTime.)
+    @param id Id number returned by @ref RM_BmiCreate.
+    @retval       The current simulation time, in seconds.
+    */
+    IRM_DLL_EXPORT double     RM_BmiGetTime(int id);
+    /**
+    @a RM_BmiGetTimeStep returns the current simulation time step,
+    in seconds.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @retval              The current simulation time step, in seconds.
+    @see
+    @ref RM_BmiGetCurrentTime,
+    @ref RM_BmiGetEndTime.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    time_step = RM_BmiGetTimeStep(id)
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT double     RM_BmiGetTimeStep(int id);
+    /**
+    @a RM_BmiGetTimeUnits returns the time units of PhreeqcRM.
+    All time units are seconds for PhreeqcRM.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param units    Returns the string "seconds".
+    @param l    Length of the string buffer @a units.
+    @retval              0 is success, 1 failure; negative indicates buffer is too small.
+    @see
+    @ref RM_BmiGetCurrentTime,
+    @ref RM_BmiGetEndTime,
+    @ref RM_BmiGetTimeStep.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    char time_units[256]
+    status = RM_BmiGetTimeUnits(id, time_units, 256)
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiGetTimeUnits(int id, char* units, int l);
+    // GetValue
+    /**
+    @a RM_BmiGetValueInt retrieves int model variables. Only variables in the list
+    provided by @ref RM_BmiGetOutputVarName can be retrieved.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param var    Name of the variable to retrieve.
+    @param dest   Variable in which to place results.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variable names for the second argument (@a var).
+    </p>
+    @n "ComponentCount"
+    @n "CurrentSelectedOutputUserNumber"
+    @n "GridCellCount"
+    @n "SelectedOutputColumnCount"
+    @n "SelectedOutputCount"
+    @n "SelectedOutputOn"
+    @n "SelectedOutputRowCount".
+    @see
+    @ref RM_BmiGetOutputVarName,
+    @ref RM_BmiGetOutputItemCount,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiGetValueInt(id, "ComponentCount", &count);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiGetValueInt(int id, char* var, int* dest);
+    /**
+    @a RM_BmiGetValueDouble retrieves model variables. Only variables in the list
+    provided by @ref RM_BmiGetOutputVarName can be retrieved.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param var    Name of the variable to retrieve.
+    @param dest   Variable in which to place results.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variables in addition to the ones listed below may be retrieved by this method,
+    depending on variables selected by @ref RM_BmiAddOutputVars. All variables added
+    by @ref RM_BmiAddOutputVars will be double arrays of size equal to the number of
+    model cells [@ref RM_BmiGetValueInt(id, "GridCellCount")].
+    </p>
+    <p>
+    Variable names for the second argument (@a var).
+    </p>
+    @n "Concentrations"
+    @n "DensityCalculated"
+    @n "Gfw"
+    @n "Porosity"
+    @n "Pressure"
+    @n "SaturationCalculated"
+    @n "SelectedOutput"
+    @n "SolutionVolume"
+    @n "Temperature"
+    @n "Time"
+    @n "TimeStep"
+    @n "Viscosity".
+    @see
+    @ref RM_BmiGetOutputVarName,
+    @ref RM_BmiGetOutputItemCount,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    density = (double *)malloc(nxyz*sizeof(double));
+    status = RM_BmiGetValueDouble(id, "DensityCalculated", density);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiGetValueDouble(int id, char* var, double* dest);
+    /**
+    @a RM_BmiGetValueChar retrieves char model variables. Only variables in the list
+    provided by @ref RM_BmiGetOutputVarName can be retrieved.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param var    Name of the variable to retrieve.
+    @param dest   Variable in which to place results.
+    @param l      Length of the string buffer @a dest.
+    @retval       0 is success, 1 is failure; negative indicates buffer is too small.
+    <p>
+    The buffer length must be at least one character greater than the value
+    returned by @ref RM_BmiGetVarNbytes to allow for null termination.
+    "ErrorString" and "FilePrefix" return single strings.
+    "Components" and "SelectedOutputHeadings" retrieve a string that is a
+    concatenated list of components or selected-output headings.
+    The length of each item in a list is given by @ref RM_BmiGetVarItemsize.
+    The concatenated list must be processed to extract each component or heading
+    and a null termination must be appended.
+    Alternatively, the components can be retrieved one at a time with
+    @a RM_GetComponent or @a RM_GetSelectedOutputHeading.
+    </p>
+    <p>
+    Variable names for the second argument (@a var).
+    </p>
+    @n "Components"
+    @n "ErrorString"
+    @n "FilePrefix"
+    @n "SelectedOutputHeadings".
+    @see
+    @ref RM_BmiGetOutputVarName,
+    @ref RM_BmiGetOutputItemCount,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    char string[256];
+    status = RM_BmiGetValueChar(id, "FilePrefix", string);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiGetValueChar(int id, char* var, char* dest, int l);
+    // GetValuePtr
+    //IRM_DLL_EXPORT IRM_RESULT RM_BmiGetValuePtrInt(int id, char* var, int** dest);
+    //IRM_DLL_EXPORT IRM_RESULT RM_BmiGetValuePtrDouble(int id, char* var, double** dest);
+    //IRM_DLL_EXPORT IRM_RESULT RM_BmiGetValuePtrChar(int id, char* var, char** dest);
+    /**
+    @a RM_BmiGetValuePtr retrieves pointers to model variables. Only variables in the list
+    provided by @ref RM_BmiGetPointableVarName can be pointed to.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param var    Name of the variable to retrieve.
+    @retval       Pointer to an up-to-date copy of the variable's data.
+    <p>
+    The following list gives the name in the second argument (@a var) and the
+    data type the pointer:
+    </p>
+    @n "ComponentCount"
+    @n "Concentrations"
+    @n "DensityCalculated"
+    @n "Gfw"
+    @n "GridCellCount"
+    @n "Porosity"
+    @n "Pressure"
+    @n "SaturationCalculated"
+    @n "SelectedOutputOn"
+    @n "SolutionVolume"
+    @n "Temperature"
+    @n "Time"
+    @n "TimeStep"
+    @n "Viscosity"
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT void* RM_BmiGetValuePtr(int id, char* var);
+    /**
+    @a RM_BmiGetVarGrid returns a value of 1, indicating points.
+    BMIPhreeqcRM does not have a grid of its own. The cells
+    of BMIPhreeqcRM are associated with the user's model grid,
+    and all spatial characterists are assigned by the user's
+    model.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param var   Varaiable name. (Return value is the same regardless of value of @ var.)
+    @retval      1 (points). BMIPhreeqcRM cells derive meaning from the user's model.
+    */
+    IRM_DLL_EXPORT int        RM_BmiGetVarGrid(int id, char* var);
+    /**
+    @a RM_BmiGetVarItemsize retrieves the size, in bytes, of a
+    variable that can be set with
+    @a RM_BmiSetValue methods, retrieved with @a RM_BmiGetValue methods, or pointed to with
+    @ref RM_BmiGetValuePtr.
+    Sizes may be the size of an integer, double,
+    or a character length for string variables.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param name        Name of the variable to retrieve the item size.
+    @retval           Size, in bytes, of one element of the variable.
+    @see
+    @ref RM_BmiGetInputVarName,
+    @ref RM_BmiGetInputItemCount,
+    @ref RM_BmiGetOutputVarName,
+    @ref RM_BmiGetOutputItemCount,
+    @ref RM_BmiGetPointableVarName,
+    @ref RM_BmiGetPointableItemCount,
+    @ref RM_BmiGetValuePtr,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    for(i = 0; i < GetInputVarCount(id); i++)
+    {
+        itemsize = GetVarItemsize(id, name);
+    }
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT int        RM_BmiGetVarItemsize(int id, char* name);
+    /**
+    @a RM_BmiGetVarNbytes retrieves the total number of bytes needed for a
+    variable that can be set with
+    @a RM_BmiSetValue methods, retrieved with @a RM_BmiGetValue methods, or pointed to with
+    @ref RM_BmiGetValuePtr.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param name     Name of the variable to retrieve the number of bytes needed to
+    retrieve or store the variable.
+    @retval        Total number of bytes needed for the variable.
+    @see
+    @ref RM_BmiGetInputVarName,
+    @ref RM_BmiGetInputItemCount,
+    @ref RM_BmiGetOutputVarName,
+    @ref RM_BmiGetOutputItemCount,
+    @ref RM_BmiGetPointableVarName,
+    @ref RM_BmiGetPointableItemCount,
+    @ref RM_BmiGetValuePtr,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    for(i = 0; i < GetInputVarCount(id); i++)
+    {
+        nbytes = GetVarNbytes(id, name);
+    }
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT int        RM_BmiGetVarNbytes(int id, char* name);
+    /**
+    @a RM_BmiGetVarType retrieves the type of a variable that can be set with
+    @a RM_BmiSetValue methods, retrieved with @a RM_BmiGetValue methods, or pointed to with
+    @ref RM_BmiGetValuePtr.
+    Types are "char", "double", or "int",
+    or an array of these types.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param name   Name of the variable to retrieve the type.
+    @param vtype Type of the variable.
+    @param l Length of string buffer @a vtype.
+    @retval      0 is success, 1 is failure; negative indicates buffer is too small.
+    @see
+    @ref RM_BmiGetInputVarName,
+    @ref RM_BmiGetInputItemCount,
+    @ref RM_BmiGetOutputVarName,
+    @ref RM_BmiGetOutputItemCount,
+    @ref RM_BmiGetPointableVarName,
+    @ref RM_BmiGetPointableItemCount,
+    @ref RM_BmiGetValuePtr,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    char string[256];
+    for(i = 0; i < GetInputVarCount(id); i++)
+    {
+        status = GetVarType(id, i, string, 256);
+    }
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiGetVarType(int id, char* name, char* vtype, int l);
+    /**
+    @a RM_BmiGetVarType retrieves the units of a variable that can be set with
+    @a RM_BmiSetValue methods, retrieved with @a RM_BmiGetValue methods, or pointed to with
+    @ref RM_BmiGetValuePtr.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param name   Name of the variable to retrieve the type.
+    @param units Units of the variable.
+    @param l Length of string buffer @a units.
+    @retval      0 is success, 1 is failure; negative indicates buffer is too small.
+    @see
+    @ref RM_BmiGetInputVarName,
+    @ref RM_BmiGetInputItemCount,
+    @ref RM_BmiGetOutputVarName,
+    @ref RM_BmiGetOutputItemCount,
+    @ref RM_BmiGetPointableVarName,
+    @ref RM_BmiGetPointableItemCount,
+    @ref RM_BmiGetValuePtr,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    char string[256];
+    for(i = 0; i < GetInputVarCount(id); i++)
+    {
+        status = GetVarUnits(id, i, string, 256);
+    }
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiGetVarUnits(int id, char* name, char* units, int l);
+    /**
+    @a RM_BmiInitialize uses a YAML file to initialize an instance of BMIPhreeqcRM.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param config_file   String containing the YAML file name.
+    @retval              0 is success, 1 is failure.
+    <p>
+    The file contains a YAML map of PhreeqcRM methods
+    and the arguments corresponding to the methods.
+    For example,
+    </p>
+    @htmlonly
+    <CODE>
+    <PRE>
+    - key: LoadDatabase
+      database: phreeqc.dat
+    - key: RunFile
+      workers: true
+      initial_phreeqc: true
+      utility: true
+      chemistry_name: advect.pqi
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    <p>
+    @a RM_BmiInitialize will read the YAML file and execute the specified methods with
+    the specified arguments. Using YAML
+    terminology, the argument(s) for a method may be a scalar, a sequence, or a map,
+    depending if the argument is
+    a single item, a single vector, or there are multiple arguments.
+    In the case of a map, the name associated
+    with each argument (for example "chemistry_name" above) is arbitrary.
+    The names of the map keys for map
+    arguments are not used in parsing the YAML file; only the order of
+    the arguments is important.
+    </p>
+    <p>
+    The following list gives the PhreeqcRM methods that can be specified in a YAML file
+    and the arguments that are required. The arguments are described with C++ formats, which
+    are sufficient to identify which arguments are YAML scalars (single bool/logical,
+    int, double, string/character argument),
+    sequences (single vector argument), or maps (multiple arguments).
+    </p>
+    @htmlonly
+    <CODE>
+    <PRE>
+    CloseFiles();
+    CreateMapping(std::vector< int >& grid2chem);
+    DumpModule();
+    FindComponents();
+    InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+    InitialExchanges2Module(std::vector< int > exchanges);
+    InitialGasPhases2Module(std::vector< int > gas_phases);
+    InitialKineticss2Module(std::vector< int > kinetics);
+    InitialSolidSolutions2Module(std::vector< int > solid_solutions);
+    InitialSolutions2Module(std::vector< int > solutions);
+    InitialSurfaces2Module(std::vector< int > surfaces);
+    InitialPhreeqc2Module(std::vector< int > initial_conditions1);
+    InitialPhreeqc2Module(std::vector< int > initial_conditions1,
+    std::vector< int > initial_conditions2, std::vector< double > fraction1);
+    InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
+    LoadDatabase(std::string database);
+    OpenFiles();
+    OutputMessage(std::string str);
+    RunCells();
+    RunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
+    RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
+    ScreenMessage(std::string str);
+    SetComponentH2O(bool tf);
+    SetConcentrations(std::vector< double > c);
+    SetCurrentSelectedOutputUserNumber(int n_user);
+    SetDensityUser(std::vector< double > density);
+    SetDumpFileName(std::string dump_name);
+    SetErrorHandlerMode(int mode);
+    SetErrorOn(bool tf);
+    SetFilePrefix(std::string prefix);
+    SetGasCompMoles(std::vector< double > gas_moles);
+    SetGasPhaseVolume(std::vector< double > gas_volume);
+    SetPartitionUZSolids(bool tf);
+    SetPorosity(std::vector< double > por);
+    SetPressure(std::vector< double > p);
+    SetPrintChemistryMask(std::vector< int > cell_mask);
+    SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
+    SetRebalanceByCell(bool tf);
+    SetRebalanceFraction(double f);
+    SetRepresentativeVolume(std::vector< double > rv);
+    SetSaturationUser(std::vector< double > sat);
+    SetScreenOn(bool tf);
+    SetSelectedOutputOn(bool tf);
+    SetSpeciesSaveOn(bool save_on);
+    SetTemperature(std::vector< double > t);
+    SetTime(double time);
+    SetTimeConversion(double conv_factor);
+    SetTimeStep(double time_step);
+    SetUnitsExchange(int option);
+    SetUnitsGasPhase(int option);
+    SetUnitsKinetics(int option);
+    SetUnitsPPassemblage(int option);
+    SetUnitsSolution(int option);
+    SetUnitsSSassemblage(int option);
+    SetUnitsSurface(int option);
+    SpeciesConcentrations2Module(std::vector< double > species_conc);
+    StateSave(int istate);
+    StateApply(int istate);
+    StateDelete(int istate);
+    UseSolutionDensityVolume(bool tf);
+    WarningMessage(std::string warnstr);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    id = RM_BmiCreate(nxyz, nthreads);
+    status = RM_BmiInitializeYAML(id, "myfile.yaml");
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiInitialize(int id, char* config_file);
+    //
+    // SetValue methods
+    //
+    /**
+    @a RM_BmiSetValueChar sets model character variables. Only variables in the list
+    provided by @ref RM_BmiGetInputVarName can be set.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param name    Name of variable to set.
+    @param src    Data to use to set the variable.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variable names for the second argument (@a var):
+    </p>
+    @n "FilePrefix"
+    @see
+    @ref RM_BmiGetInputVarName,
+    @ref RM_BmiGetInputItemCount,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiSetValueChar(id, "FilePrefix", "my_prefix");
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiSetValueChar(int id, char* name, const char* src);
+    /**
+    @a RM_BmiSetValueDouble sets model double variables. Only variables in the list
+    provided by @ref RM_BmiGetInputVarName can be set.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param name    Name of variable to set.
+    @param src    Data to use to set the variable.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variable names for the second argument (@a var):
+    </p>
+    @n "Time"
+    @n "TimeStep".
+    @see
+    @ref RM_BmiGetInputVarName,
+    @ref RM_BmiGetInputItemCount,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiSetValueDouble(id, "TimeStep", 86400.0);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiSetValueDouble(int id, char* name, double src);
+    /**
+    @a RM_BmiSetValueDoubleArray sets model double array variables. Only variables in the list
+    provided by @ref RM_BmiGetInputVarName can be set.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param name   Name of variable to set.
+    @param src    Data to use to set the variable.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variable names for the second argument (@a var):
+    </p>
+    @n "Concentrations"
+    @n "DensityUser"
+    @n "Porosity"
+    @n "Pressure"
+    @n "SaturationUser"
+    @n "Temperature".
+    @see
+    @ref RM_BmiGetInputVarName,
+    @ref RM_BmiGetInputItemCount,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    tc = (double *)malloc(nxyz*sizeof(double));
+    for(i=0; i < nxyz; i++) tc[i] = 28.0e0;
+    status = RM_BmiSetValueDoubleArray(id, "Temperature", tc);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiSetValueDoubleArray(int id, char* name, double* src);
+    /**
+    @a RM_BmiSetValueInt sets model int variables. Only variables in the list
+    provided by @ref RM_BmiGetInputVarName can be set.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param name   Name of variable to set.
+    @param src    Data to use to set the variable.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variable names for the second argument (@a var):
+    </p>
+    @n "NthSelectedOutput"
+    @n "SelectedOutputOn".
+    @see
+    @ref RM_BmiGetInputVarName,
+    @ref RM_BmiGetInputItemCount,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiSetValueInt(id, "SelectedOutputOn", 1);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiSetValueInt(int id, char* name, int src);
+#ifdef SKIP
+    /**
+    @a RM_BmiSetValueIntArray sets model int array variables. Only variables in the list
+    provided by @ref RM_BmiGetInputVarName can be set.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @param name   Name of variable to set.
+    @param src    Data to use to set the variable.
+    @retval       0 is success, 1 is failure.
+    <p>
+    Variable names for the second argument (@a var):
+    </p>
+    @n "Concentrations"
+    @n "DensityUser"
+    @n "FilePrefix"
+    @n "NthSelectedOutput"
+    @n "Porosity"
+    @n "Pressure"
+    @n "SaturationUser"
+    @n "SelectedOutputOn"
+    @n "Temperature"
+    @n "Time"
+    @n "TimeStep".
+    @see
+    @ref RM_BmiGetInputVarName,
+    @ref RM_BmiGetInputItemCount,
+    @ref RM_BmiGetVarItemsize,
+    @ref RM_BmiGetVarNbytes,
+    @ref RM_BmiGetVarType,
+    @ref RM_BmiGetVarUnits.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    tc = (double *)malloc(nxyz*sizeof(double));
+    for(i=0; i < nxyz; i++) tc[i] = 28.0e0;
+    status = RM_BmiSetValue(id, "Temperature", tc);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiSetValueIntArray(int id, char* name, int* src);
+#endif
+    /**
+    @a RM_BmiUpdate runs a reaction step for all of the cells in the reaction module.
+    @param id Id number returned by @ref RM_BmiCreate.
+    @retval     0 is success, 1 is failure.
+    <p>
+    Tranported concentrations are transferred to the reaction cells
+    (@ref RM_BmiSetValueDoubleArray "Concentrations") before
+    reaction calculations are run. The length of time over which kinetic
+    reactions are integrated is set
+    by @ref RM_BmiSetValueDouble "TimeStep". Other properties that may need to be updated
+    as a result of the transport
+    calculations include
+    porosity,
+    pressure,
+    saturation,
+    temperature.
+    </p>
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiSetValue(id, "Porosity", por);                ! If pore volume changes
+    status = RM_BmiSetValue(id, "SaturationUser", sat);          ! If saturation changes
+    status = RM_BmiSetValue(id, "Temperature", temperature);     ! If temperature changes
+    status = RM_BmiSetValue(id, "Pressure", pressure);           ! If pressure changes
+    status = RM_BmiSetValue(id, "Concentrations", c);            ! Transported concentrations
+    status = RM_BmiSetValue(id, "TimeStep", time_step);          ! Time step for kinetic reactions
+    status = RM_BmiUpdate(id);
+    status = RM_BmiGetValue(id, "Concentrations", c);            ! Concentrations after reaction
+    status = RM_BmiGetValue(id, "DensityCalculated", density);   ! Density after reaction
+    status = RM_BmiGetValue(id, "SolutionVolume", volume);       ! Solution volume after reaction
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiUpdate(int id);
+    /**
+    @a RM_BmiUpdateUntil is the same as @ref RM_BmiUpdate, except the time step is calculated
+    from the argument @a end_time. The time step is calculated to be @a end_time minus
+    the current time (@ref RM_BmiGetCurrentTime).
+    @param id Id number returned by @ref RM_BmiCreate..
+    @param end_time Time at the end of the time step.
+    @see
+    @ref RM_BmiInitialize,
+    @ref RM_BmiUpdate.
+    @par C example:
+    @htmlonly
+    <CODE>
+    <PRE>
+    status = RM_BmiSetValue(id, "Time", time);
+    status = RM_BmiSetValue(id, "Concentrations", c);
+    status = RM_BmiUpdateUntil(id, time + 86400.0);
+    status = RM_BmiGetValue(id, "Concentrations", c);
+    </PRE>
+    </CODE>
+    @endhtmlonly
+    @par MPI:
+    Called by root, workers must be in the loop of @a RM_MpiWorker.
+    */
+    IRM_DLL_EXPORT IRM_RESULT RM_BmiUpdateUntil(int id, double end_time);
+    /**
+    @a RM_BmiGetValueAtIndices is not implemented
+    */
+    IRM_DLL_EXPORT void RM_BmiGetValueAtIndices(int id, char* name, void* dest, int* inds, int count);
+    /**
+    @a RM_BmiSetValueAtIndices is not implemented.
+    */
+    IRM_DLL_EXPORT void RM_BmiSetValueAtIndices(int id, char* name, int* inds, int count, void* src);
+    /**
+    @a RM_BmiGetGridShape is not implemented.
+    */
+    IRM_DLL_EXPORT void RM_BmiGetGridShape(int id, const int grid, int* shape);
+    /**
+    @a RM_BmiGetGridSpacing is not implemented.
+    */
+    IRM_DLL_EXPORT void RM_BmiGetGridSpacing(int id, const int grid, double* spacing);
+    /**
+    @a RM_BmiGetGridOrigin is not implemented.
+    */
+    IRM_DLL_EXPORT void RM_BmiGetGridOrigin(int id, const int grid, double* origin);
+    /**
+    @a RM_BmiGetGridX is not implemented.
+    */
+    IRM_DLL_EXPORT void RM_BmiGetGridX(int id, const int grid, double* x);
+    /**
+    @a RM_BmiGetGridY is not implemented.
+    */
+    IRM_DLL_EXPORT void RM_BmiGetGridY(int id, const int grid, double* y);
+    /**
+    @a RM_BmiGetGridZ is not implemented.
+    */
+    IRM_DLL_EXPORT void RM_BmiGetGridZ(int id, const int grid, double* z);
+    /**
+    @a RM_BmiGetGridNodeCount is not implemented.
+    */
+    IRM_DLL_EXPORT int GetGridNodeCount(int id, const int grid);
+    /**
+    @a RM_BmiGetGridEdgeCount is not implemented.
+    */
+    IRM_DLL_EXPORT int GetGridEdgeCount(int id, const int grid);
+    /**
+    @a RM_BmiGetGridFaceCount is not implemented.
+    */
+    IRM_DLL_EXPORT int GetGridFaceCount(int id, const int grid);
+    /**
+    @a RM_BmiGetGridEdgeNodes is not implemented.
+    */
+    IRM_DLL_EXPORT void RM_BmiGetGridEdgeNodes(int id, const int grid, int* edge_nodes);
+    /**
+    @a RM_BmiGetGridFaceEdges is not implemented.
+    */
+    IRM_DLL_EXPORT void RM_BmiGetGridFaceEdges(int id, const int grid, int* face_edges);
+    /**
+    @a RM_BmiGetGridFaceNodes is not implemented.
+    */
+    IRM_DLL_EXPORT void RM_BmiGetGridFaceNodes(int id, const int grid, int* face_nodes);
+    /**
+    @a RM_BmiGetGridNodesPerFace is not implemented.
+    */
+    IRM_DLL_EXPORT void RM_BmiGetGridNodesPerFace(int id, const int grid, int* nodes_per_face);
+
+
+
+
 /**
 Abort the program. @a Result will be interpreted as
 an IRM_RESULT value and decoded; @a err_str will be printed; and the reaction module
@@ -102,11 +1320,16 @@ Called only by root.
  */
 IRM_DLL_EXPORT int        RM_Concentrations2Utility(int id, double *c, int n, double *tc, double *p_atm);
 /**
-Creates a reaction module. If the code is compiled with
+Creates a reaction module without BMI methods. This method is <b>deprecated</b> and included only for
+backward compatibility. Use RM_BmiCreate to create a reaction module with access to all
+RM_Bmi methods.
+<p>
+If the code is compiled with
 the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
 If the code is compiled with the preprocessor directive USE_MPI, the reaction
 module will use MPI and multiple processes. If neither preprocessor directive is used,
 the reaction module will be serial (unparallelized).
+</p>
 @param nxyz                   The number of grid cells in the user's model.
 @param nthreads (or @a comm, MPI)       When using OPENMP, the argument (@a nthreads) is the number of worker threads to be used.
 If @a nthreads <= 0, the number of threads is set equal to the number of processors of the computer.

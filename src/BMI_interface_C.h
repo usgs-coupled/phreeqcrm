@@ -9,6 +9,7 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif	
+#ifdef SKIP
 	/**
     @a BMI_AddOutputVars allows selection of sets of variables that can be retieved
     by the @a BMI_GetValue methods. Sets of variables can be included or excluded with
@@ -1220,7 +1221,7 @@ extern "C" {
     @a BMI_GetGridNodesPerFace is not implemented.
     */
     IRM_DLL_EXPORT void BMI_GetGridNodesPerFace(int id, const int grid, int* nodes_per_face);
-
+#endif #SKIP
 #if defined(__cplusplus)
 }
 #endif
