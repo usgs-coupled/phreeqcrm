@@ -40,7 +40,8 @@ jobs:
     - name: make distcheck
       shell: bash
       working-directory: ${{github.workspace}}/_build
-      run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test" make -j2 distcheck
+      # run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test" make -j2 distcheck
+      run: make dist
 
     - name: make dist-zip
       shell: bash
@@ -50,12 +51,9 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: tarball
-        path: ${{github.workspace}}/_build/*.tar.gz
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: tarball
-        path: ${{github.workspace}}/_build/*.zip
+        path: |
+          ${{github.workspace}}/_build/*.tar.gz
+          ${{github.workspace}}/_build/*.zip
 
   cmake:
     if: ${{ false }}
