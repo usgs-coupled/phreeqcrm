@@ -1,3 +1,4 @@
+#ifdef SKIP
 /*! @file BMI_interface_C.h
 	@brief C header file for BMIPhreeqcRM.
 */
@@ -9,7 +10,6 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif	
-#ifdef SKIP
 	/**
     @a BMI_AddOutputVars allows selection of sets of variables that can be retieved
     by the @a BMI_GetValue methods. Sets of variables can be included or excluded with
@@ -1224,6 +1224,7 @@ extern "C" {
 #endif #SKIP
 #if defined(__cplusplus)
 }
-#endif
 
 #endif // BMI_INTERFACE_C_H_INCLUDED
+
+#endif #SKIP

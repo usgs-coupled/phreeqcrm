@@ -1275,10 +1275,12 @@ protected:
 private:
     //friend class RM_interface;
     VarManager* var_man;
+    bool constructed = false;
 
     void ClearBMISelectedOutput() override;
     void GenerateAutoOutputVars() override;
     void UpdateBMI(RMVARS v_enum) override;
     void UpdateVariables();
+    RMVARS BMIPhreeqcRM::GetEnum(const std::string name);
 };
 #endif //BMIPHREEQCRM_H_INCLUDED

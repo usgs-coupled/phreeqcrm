@@ -79,8 +79,9 @@ void TestAllMethods_c()
 #endif
 
 	// Use YAML file to initialize
-	RM_BmiInitialize(id, YAML_filename);   // void function
-	RM_InitializeYAML(id, YAML_filename);
+	//RM_BmiInitialize(id, "");            // Initializes with no file
+	RM_BmiInitialize(id, YAML_filename);   // Initializes with file
+	RM_InitializeYAML(id, YAML_filename);  // Does not initialize BMI
 	fprintf(stderr, "Initialize\n");
 
 	//
