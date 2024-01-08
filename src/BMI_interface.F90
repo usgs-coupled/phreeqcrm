@@ -528,18 +528,18 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @retval     0 is success, 1 is failure.
     !> Tranport concentrations are transferred to the reaction cells
-    !> (@ref bmif_set_value "Concentrations" before
+    !> (@ref bmi::bmif_set_value "Concentrations" before
     !> reaction calculations are run. The length of time over which kinetic
     !> reactions are integrated is set
-    !> by @ref bmif_set_value "TimeStep". Other properties that may need to be updated
+    !> by @ref bmi::bmif_set_value "TimeStep". Other properties that may need to be updated
     !> as a result of the transport
-    !> calculations include porosity (@ref bmif_set_value "Porosity"),
-    !> pressure (@ref bmif_set_value "Pressure"),
-    !> saturation (@ref bmif_set_value "SaturationUser"),
-    !> temperature (@ref bmif_set_value "Temperature").
+    !> calculations include porosity (@ref bmi::bmif_set_value "Porosity"),
+    !> pressure (@ref bmi::bmif_set_value "Pressure"),
+    !> saturation (@ref bmi::bmif_set_value "SaturationUser"),
+    !> temperature (@ref bmi::bmif_set_value "Temperature").
     !> @see
-    !> @ref bmif_get_value,
-    !> @ref bmif_set_value.
+    !> @ref bmi::bmif_get_value,
+    !> @ref bmi::bmif_set_value.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -680,9 +680,9 @@
     END FUNCTION bmif_get_component_name
 
     !> @a bmif_get_input_item_count returns count of variables that
-    !> can be set with @ref bmif_set_value.
+    !> can be set with @ref bmi::bmif_set_value.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @param count  Number of input variables that can be set with @ref bmif_set_value.
+    !> @param count  Number of input variables that can be set with @ref bmi::bmif_set_value.
     !> @retval       0 is success, 1 is failure.
     !> 
     !> @see
@@ -691,7 +691,7 @@
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units,
-    !> @ref bmif_set_value.
+    !> @ref bmi::bmif_set_value.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -722,14 +722,14 @@
     END FUNCTION bmif_get_input_item_count
 
     !> @a bmif_get_output_item_count returns count of output variables that can be
-    !> retrieved with @ref bmif_get_value.
+    !> retrieved with @ref bmi::bmif_get_value.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @param count  Number of output variables that can be retrieved with @ref bmif_get_value.
+    !> @param count  Number of output variables that can be retrieved with @ref bmi::bmif_get_value.
     !> @retval       0 is success, 1 is failure.
     !>
     !> @see
     !> @ref bmif_get_output_var_names,
-    !> @ref bmif_get_value,
+    !> @ref bmi::bmif_get_value,
     !> @ref bmif_get_var_itemsize,
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
@@ -763,10 +763,10 @@
     END FUNCTION bmif_get_output_item_count
     
     !> @a bmif_get_pointable_item_count returns count of variables for which
-    !> pointers can be retrieved with @ref bmif_get_value_ptr.
+    !> pointers can be retrieved with @ref bmi::bmif_get_value_ptr.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param count  Number of variables for which pointers can be retrieved with 
-    !> @ref bmif_get_value_ptr.
+    !> @ref bmi::bmif_get_value_ptr.
     !> @retval       0 is success, 1 is failure.
     !>
     !> @see
@@ -775,7 +775,7 @@
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units,
-    !> @ref bmif_set_value.
+    !> @ref bmi::bmif_set_value.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -806,19 +806,19 @@
     END FUNCTION bmif_get_pointable_item_count
 
     !> Basic Model Interface method that returns a list of the variable names that can be set
-    !> with @ref bmif_set_value.
+    !> with @ref bmi::bmif_set_value.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param var_names   Character array of variable names.
     !> @retval            0 is success, 1 is failure.
     !>
     !> @see
     !> @ref bmif_get_input_item_count,
-    !> @ref bmif_get_value,
+    !> @ref bmi::bmif_get_value,
     !> @ref bmif_get_var_itemsize,
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units,
-    !> @ref bmif_set_value.
+    !> @ref bmi::bmif_set_value.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -869,14 +869,14 @@
     END FUNCTION bmif_get_input_var_names
 
     !> @a bmif_get_output_var_names returns a list of the variable names that can be
-    !> retrieved with @ref bmif_get_value.
+    !> retrieved with @ref bmi::bmif_get_value.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param var_names   Character array of variable names.
     !> @retval            0 is success, 1 is failure.
     !>
     !> @see
     !> @ref bmif_get_output_item_count,
-    !> @ref bmif_get_value,
+    !> @ref bmi::bmif_get_value,
     !> @ref bmif_get_var_itemsize,
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
@@ -930,14 +930,14 @@
     END FUNCTION bmif_get_output_var_names
 
     !> @a bmif_get_pointable_var_names returns a list of the variable names for which a pointer can be
-    !> retrieved with @ref bmif_get_value_ptr.
+    !> retrieved with @ref bmi::bmif_get_value_ptr.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param var_names   Character array of variable names.
     !> @retval            0 is success, 1 is failure.
     !>
     !> @see
     !> @ref bmif_get_pointable_item_count,
-    !> @ref bmif_get_value,
+    !> @ref bmi::bmif_get_value,
     !> @ref bmif_get_var_itemsize,
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
@@ -1015,8 +1015,8 @@
     END FUNCTION bmif_get_var_grid
 
     !> @a bmif_get_var_type retrieves the type of a variable that can be set with
-    !> @ref bmif_set_value, retrieved with @ref bmif_get_value, or pointed to with
-    !> @ref bmif_get_value_ptr.
+    !> @ref bmi::bmif_set_value, retrieved with @ref bmi::bmif_get_value, or pointed to with
+    !> @ref bmi::bmif_get_value_ptr.
     !> Types are "character", "real(kind=8)", "integer", or "logical",
     !> or an allocatable array of these types.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
@@ -1030,12 +1030,12 @@
     !> @ref bmif_get_output_item_count,
     !> @ref bmif_get_pointable_var_names,
     !> @ref bmif_get_pointable_item_count,
-    !> @ref bmif_get_value,
-    !> @ref bmif_get_value_ptr,
+    !> @ref bmi::bmif_get_value,
+    !> @ref bmi::bmif_get_value_ptr,
     !> @ref bmif_get_var_itemsize,
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_units,
-    !> @ref bmif_set_value.
+    !> @ref bmi::bmif_set_value.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -1078,8 +1078,8 @@
     
     !> @a bmif_get_var_units retrieves the units of a
     !> variable that can be set with
-    !> @ref bmif_set_value, retrieved with @ref bmif_get_value, or pointed to with
-    !> @ref bmif_get_value_ptr.
+    !> @ref bmi::bmif_set_value, retrieved with @ref bmi::bmif_get_value, or pointed to with
+    !> @ref bmi::bmif_get_value_ptr.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param var     Name of the variable to retrieve units.
     !> @param units   Units of the variable.
@@ -1091,12 +1091,12 @@
     !> @ref bmif_get_output_item_count,
     !> @ref bmif_get_pointable_var_names,
     !> @ref bmif_get_pointable_item_count,
-    !> @ref bmif_get_value,
-    !> @ref bmif_get_value_ptr,
+    !> @ref bmi::bmif_get_value,
+    !> @ref bmi::bmif_get_value_ptr,
     !> @ref bmif_get_var_itemsize,
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
-    !> @ref bmif_set_value.
+    !> @ref bmi::bmif_set_value.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -1139,8 +1139,8 @@
 
     !> @a bmif_get_var_itemsize retrieves the size, in bytes, of a
     !> variable that can be set with
-    !> @ref bmif_set_value, retrieved with @ref bmif_get_value, or pointed to with
-    !> @ref bmif_get_value_ptr.
+    !> @ref bmi::bmif_set_value, retrieved with @ref bmi::bmif_get_value, or pointed to with
+    !> @ref bmi::bmif_get_value_ptr.
     !> Sizes may be the size of an integer, real(kind=8), 
     !> or a character length for string variables.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
@@ -1155,12 +1155,12 @@
     !> @ref bmif_get_output_item_count,
     !> @ref bmif_get_pointable_var_names,
     !> @ref bmif_get_pointable_item_count,
-    !> @ref bmif_get_value,
-    !> @ref bmif_get_value_ptr,
+    !> @ref bmi::bmif_get_value,
+    !> @ref bmi::bmif_get_value_ptr,
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units,
-    !> @ref bmif_set_value.
+    !> @ref bmi::bmif_set_value.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -1199,8 +1199,8 @@
 
     !> @a bmif_get_var_nbytes retrieves the total number of bytes needed for a 
     !> variable that can be set with
-    !> @ref bmif_set_value, retrieved with @ref bmif_get_value, or pointed to with
-    !> @ref bmif_get_value_ptr.
+    !> @ref bmi::bmif_set_value, retrieved with @ref bmi::bmif_get_value, or pointed to with
+    !> @ref bmi::bmif_get_value_ptr.
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param var     Name of the variable to retrieve the number of bytes needed to
     !> retrieve or store the variable.
@@ -1214,12 +1214,12 @@
     !> @ref bmif_get_output_item_count,
     !> @ref bmif_get_pointable_var_names,
     !> @ref bmif_get_pointable_item_count,
-    !> @ref bmif_get_value,
-    !> @ref bmif_get_value_ptr,
+    !> @ref bmi::bmif_get_value,
+    !> @ref bmi::bmif_get_value_ptr,
     !> @ref bmif_get_var_itemsize,
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units,
-    !> @ref bmif_set_value.
+    !> @ref bmi::bmif_set_value.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -1267,7 +1267,7 @@
     !> @see
     !> @ref bmif_get_end_time,
     !> @ref bmif_get_time_step,
-    !> @ref bmif_set_value,
+    !> @ref bmi::bmif_set_value,
     !> @ref GetTime,
     !> @ref GetTimeStep,
     !> @ref SetTime,
@@ -1334,7 +1334,7 @@
     !> @see
     !> @ref bmif_get_current_time,
     !> @ref bmif_get_time_step,
-    !> @ref bmif_set_value,
+    !> @ref bmi::bmif_set_value,
     !> @ref GetTime,
     !> @ref GetTimeStep,
     !> @ref SetTime,
@@ -1375,12 +1375,12 @@
     !> @ref bmif_get_current_time,
     !> @ref bmif_get_end_time,
     !> @ref bmif_get_time_step,
-    !> @ref bmif_set_value,
+    !> @ref bmi::bmif_set_value,
     !> @ref GetTime,
     !> @ref GetTimeStep,
     !> @ref SetTime,
     !> @ref SetTimeStep,
-    !> @ref bmif_set_value.
+    !> @ref bmi::bmif_set_value.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -1419,7 +1419,7 @@
     !> @see
     !> @ref bmif_get_current_time,
     !> @ref bmif_get_end_time,
-    !> @ref bmif_set_value,
+    !> @ref bmi::bmif_set_value,
     !> @ref GetTime,
     !> @ref GetTimeStep,
     !> @ref SetTime,
@@ -1495,7 +1495,7 @@
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
     !> @ref bmif_get_var_units,
-    !> @ref bmif_set_value.
+    !> @ref bmi::bmif_set_value.
     !> @par Fortran example:
     !> @htmlonly
     !> <CODE>
@@ -2045,7 +2045,7 @@
     !> @see
     !> @ref bmif_get_input_var_names,
     !> @ref bmif_get_input_item_count,,
-    !> @ref bmif_get_value,
+    !> @ref bmi::bmif_get_value,
     !> @ref bmif_get_var_itemsize,
     !> @ref bmif_get_var_nbytes,
     !> @ref bmif_get_var_type,
@@ -2351,7 +2351,7 @@
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param grid  Grid number, only grid 0 is considered.
     !> @param ngrid Same value as @ref GetGridCellCount 
-    !> or @ref bmif_get_value "GridCellCount" is returned for grid 0; 
+    !> or @ref bmi::bmif_get_value "GridCellCount" is returned for grid 0;
     !> 0 for all other values of @a grid.
     !> @retval       0 is success, 1 is failure.
     !> @par Fortran example:
@@ -2413,7 +2413,7 @@
     END FUNCTION bmif_grid_type
 
 !> @a bmif_add_output_vars allows selection of sets of variables that can be retieved
-!> by the @ref bmif_get_value method. Sets of variables can be included or excluded with
+!> by the @ref bmi::bmif_get_value method. Sets of variables can be included or excluded with
 !> multiple calls to this method. All calls must precede the final call to
 !> the PhreeqcRM method FindComponents. FindComponents generates SELECTED_OUTPUT 333 and
 !> USER_PUNCH 333 data blocks that make the variables accessible. Variables will
@@ -2422,7 +2422,7 @@
 !>
 !> @param self Fortran-supplied BMIPhreeqcRM instance.
 !> @param option A string value, among those listed below, that includes or
-!> excludes variables from @ref bmif_get_output_var_names, @ref bmif_get_value,
+!> excludes variables from @ref bmif_get_output_var_names, @ref bmi::bmif_get_value,
 !> and other BMI methods.
 !> @param def A string value that can be "false", "true", or a list of items to be included as
 !> accessible variables. A value of "false", excludes all variables of the given type; a 

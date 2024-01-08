@@ -461,7 +461,7 @@ extern "C" {
     All time units are seconds for PhreeqcRM.
     @param id Id number returned by @ref BMI_Create.
     @param units    Returns the string "seconds".
-    @param l    Length of the string buffer @a time_units.
+    @param l    Length of the string buffer @a units.
     @retval              0 is success, 1 failure; negative indicates buffer is too small.
     @see
     @ref BMI_GetCurrentTime,
@@ -571,6 +571,7 @@ extern "C" {
     @param id Id number returned by @ref BMI_Create.
     @param var    Name of the variable to retrieve.
     @param dest   Variable in which to place results.
+    @param l      Length of the string buffer @a dest.
     @retval       0 is success, 1 is failure; negative indicates buffer is too small.
     <p>
     The buffer length must be at least one character greater than the value 
@@ -578,7 +579,7 @@ extern "C" {
     "ErrorString" and "FilePrefix" return single strings.
     "Components" and "SelectedOutputHeadings" retrieve a string that is a 
     concatenated list of components or selected-output headings.
-    The length of each item in a list is given by @ref BMI_GetVarItemSize. 
+    The length of each item in a list is given by @ref BMI_GetVarItemsize. 
     The concatenated list must be processed to extract each component or heading 
     and a null termination must be appended.
     Alternatively, the components can be retrieved one at a time with 

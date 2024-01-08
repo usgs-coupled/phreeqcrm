@@ -51,7 +51,6 @@ public:
     /**
     Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM.
     Definition of the number of cells and threads (or MPI communicator) is deferred.
-    @retval A BMIPhreeqcRM instance.
     */
     BMIPhreeqcRM();
     /**
@@ -65,7 +64,6 @@ public:
     an MPI communicator if PhreeqcRM is compiled with MPI. With OpenMP,
     a value of zero causes the program to set nthreads to the number 
     of logical processors of the computer.
-    @retval A BMIPhreeqcRM instance.
     @par C++ Example:
     @htmlonly
     <CODE>

@@ -370,3 +370,7 @@ sed -i -e "s/Abort/abort/g" \
 -e "s/InitialGasPhases2Module/initialgasphases2module/g" \
 -e "s/InitialSolidSolutions2Module/initialsolidsolutions2module/g" \
 -e "s/InitialKinetics2Module/initialkinetics2module/g" $BMI_INTERFACE_F90
+
+# remove USE_YAML guard
+sed -i -e "/^#if defined(USE_YAML) $/d" \
+-e "/^#endif$/d" $YAML_INTERFACE_F90

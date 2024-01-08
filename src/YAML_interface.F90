@@ -2288,8 +2288,8 @@
     !> By default, concentrations of aqueous species are not saved.
     !> Setting the species-save property to @a true allows
     !> aqueous species concentrations to be retrieved
-    !> with @ref GetSpeciesConcentrations, and solution compositions to be set with
-    !> @ref SpeciesConcentrations2Module.
+    !> with @ref PhreeqcRM::GetSpeciesConcentrations, and solution compositions to be set with
+    !> @ref PhreeqcRM::SpeciesConcentrations2Module.
     !> @a SetSpeciesSaveOn must be called before calls to FindComponents.
     !> </p>
     !> @see                    @ref YAMLFindComponents,
