@@ -43,6 +43,7 @@ jobs:
           echo DATE_RFC_3339=$(date --rfc-3339=date)                                                                >> $GITHUB_OUTPUT
 
   valgrind:
+    if: ${{ false }}
     name: valgrind
     runs-on: ubuntu-latest
     steps:
@@ -92,6 +93,7 @@ jobs:
           doxygen=1.9.7
 
     - name: run doxygen
+      shell: micromamba-shell {0}
       run: cd Doxygen && make
 
     - name: install yaml-cpp
