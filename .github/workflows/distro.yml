@@ -48,7 +48,7 @@ jobs:
       working-directory: ${{github.workspace}}/_build
       run: make dist-zip
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v3
       with:
         name: tarball
         path: |
