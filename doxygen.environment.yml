@@ -1,0 +1,6 @@
+name: doxygen-1.9.7
+channels:
+- conda-forge
+dependencies:
+- doxygen=1.9.7
+

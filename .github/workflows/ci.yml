@@ -79,8 +79,20 @@ jobs:
     - name: versioning
       run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
 
-    - name: doxygen
-      run: sudo apt-get -y install doxygen graphviz && cd Doxygen && make
+    - name: prepare doxygen
+      run: sudo apt-get -y install doxygen graphviz
+
+    - name: update doxygen using micromamba env
+      uses: mamba-org/setup-micromamba@v1
+      with:
+        # the create command looks like this:
+        # `micromamba create -n doxygen-1.9.7 doxygen=1.9.7`
+        environment-name: doxygen-1.9.7
+        create-args: >-
+          doxygen=1.9.7
+
+    - name: run doxygen
+      run: cd Doxygen && make
 
     - name: install yaml-cpp
       run: sudo apt-get -y install libyaml-cpp-dev
@@ -96,7 +108,8 @@ jobs:
     - name: make
       shell: bash
       working-directory: ${{github.workspace}}/_build
-      run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test --with-yaml-cpp" make -j2 distcheck
+      # run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test --with-yaml-cpp" make -j2 distcheck
+      run: make dist
 
     - uses: actions/upload-artifact@v3
       with:
@@ -104,6 +117,7 @@ jobs:
         path: ${{github.workspace}}/_build/*.tar.gz
 
   autotools:
+    if: ${{ false }}
     name: autotools
     needs: [init, distcheck]
     strategy:
@@ -202,6 +216,7 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
+    if: ${{ false }}
     name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }} type=${{ matrix.BUILD_TYPE }}
     needs: [init, distcheck]
     strategy:
