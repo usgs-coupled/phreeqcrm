@@ -86,11 +86,7 @@ jobs:
     - name: update doxygen using micromamba env
       uses: mamba-org/setup-micromamba@v1
       with:
-        # the create command looks like this:
-        # `micromamba create -n doxygen-1.9.7 doxygen=1.9.7`
-        environment-name: doxygen-1.9.7
-        create-args: >-
-          doxygen=1.9.7
+        environment-file: Doxygen/doxygen.environment.yml
 
     - name: run doxygen
       shell: micromamba-shell {0}
