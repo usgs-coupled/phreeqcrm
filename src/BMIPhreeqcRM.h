@@ -1281,6 +1281,6 @@ private:
     void GenerateAutoOutputVars() override;
     void UpdateBMI(RMVARS v_enum) override;
     void UpdateVariables();
-    RMVARS BMIPhreeqcRM::GetEnum(const std::string name);
+    RMVARS GetEnum(const std::string name);
 };
 #endif //BMIPHREEQCRM_H_INCLUDED
