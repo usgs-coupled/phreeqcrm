@@ -568,7 +568,7 @@ jobs:
 
   deploy_pages:
     # todo update github.ref below
-    # if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    if: github.repository == 'usgs-coupled/phreeqcrm' && github.ref == 'refs/heads/master' && github.event_name == 'push'
 
     needs: [init, distcheck]
 
