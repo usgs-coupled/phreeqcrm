@@ -51,6 +51,7 @@ public:
     /**
     Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM.
     Definition of the number of cells and threads (or MPI communicator) is deferred.
+    @ref Initialize must be called to initialize the BMIPhreeqcRM instance.
     */
     BMIPhreeqcRM();
     /**
@@ -83,10 +84,14 @@ public:
 
     // Model control functions.
     /**
-    @a Initialize is used to initialize a PhreeqcRM instance. This method is equivalent to
-    @ref InitializeYAML. A YAML file used for initialization contains a
-    YAML map of PhreeqcRM
-    methods and the arguments corresponding to each method. For example,
+    @a Initialize must be called to initialize a BMIPhreeqcRM instance. 
+    A YAML file is normally used for initialization; however, an empty string can be used for the 
+    file name when initializing without use of a YAML file.
+    <p>
+    The YAML file contains a YAML map of PhreeqcRM
+    methods and data corresponding to each PhreeqcRM method. 
+    For example,
+    </p>
     @htmlonly
     <CODE>
     <PRE>

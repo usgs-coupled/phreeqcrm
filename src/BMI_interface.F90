@@ -312,11 +312,12 @@
     return
     END FUNCTION bmif_create_default 
     
-    !> @a bmif_create Creates a reaction module. If the code is compiled with
+    !> @a bmif_create Creates a reaction module. The reaction module must be 
+    !> initialized with a call to @ref bmif_initialize. If the code is compiled with
     !> the preprocessor directive USE_OPENMP, the reaction module is multithreaded.
     !> If the code is compiled with the preprocessor directive USE_MPI, the reaction
     !> module will use MPI and multiple processes. If neither preprocessor directive is used,
-    !> the reaction module will be serial (unparallelized).
+    !> the reaction module will be serial (unparallelized). 
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
     !> @param nxyz                         The number of grid cells in the user's model.
     !> @param nthreads (or @a comm, MPI)   When using OPENMP, the argument (@a nthreads) 
@@ -360,10 +361,12 @@
     return
     END FUNCTION bmif_create   
 
-    !> @a bmif_initialize uses a YAML file to initialize an instance of BMIPhreeqcRM. Same as
-    !> @ref InitializeYAML.
+    !> @a bmif_initialize must be called to initialize a BMIPhreeqcRM instance. 
+    !> A YAML file is normally used for initialization; however, an empty string can 
+    !> be used for the file name when initializing without use of a YAML file.    
     !> @param self Fortran-supplied BMIPhreeqcRM instance.
-    !> @param config_file   String containing the YAML file name.
+    !> @param config_file   String containing the YAML file name; use an empty string
+    !> for initialization without using a YAML file.
     !> @retval              0 is success, 1 is failure.
     !> <p>
     !> The file contains a YAML map of PhreeqcRM methods

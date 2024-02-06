@@ -1,6 +1,7 @@
     !> @file RM_interface.F90
-    !> @brief PhreeqcRM module definition 
-    !>
+    !> @brief PhreeqcRM module definition. PhreeqcRM is deprecated and
+    !> included for backward compatibility. Use BMIPhreeqcRM instead;
+    !> all PhreeqcRM methods are included in the BMIPhreeqcRM module.
     !
     !*MODULE PhreeqcRM PHREEQC Reaction Module for Transport Codes
     !> @brief Fortran Documentation for the geochemical reaction module PhreeqcRM.

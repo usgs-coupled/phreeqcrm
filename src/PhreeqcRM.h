@@ -1,5 +1,7 @@
 /*! @file PhreeqcRM.h
-*	@brief C++ header file for PhreeqcRM
+*	@brief C++ header file for PhreeqcRM. PhreeqcRM is deprecated and
+*   included for backward compatibility. Use BMIPhreeqcRM instead;
+*   all PhreeqcRM methods are included in the BMIPhreeqcRM class.
 *
 *   PhreeqcRM is a reaction module for use with multicomponent-transport models.
 *   A reaction cell can be defined for each cell in the user's model that
