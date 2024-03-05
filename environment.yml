@@ -1,0 +1,12 @@
+name: phreeqcrm_dev
+channels:
+  - defaults
+dependencies:
+  - python
+  - cmake
+  - git
+  - yaml-cpp
+  - swig
+  - numpy
+  - pyyaml
+  - pytest

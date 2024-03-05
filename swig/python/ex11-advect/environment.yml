@@ -1,0 +1,9 @@
+name: phreeqcrm
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - matplotlib
+  - phreeqcrm
+  - notebook

@@ -1,10 +1,11 @@
 name: setup-fortran
 
 on:
-  push:
-    branches:
-      - master
-      - setup-fortran
+  # push:
+  #   branches:
+  #     - master
+  #     - setup-fortran
+  workflow_dispatch:
 
 env:
   NAME: PhreeqcRM

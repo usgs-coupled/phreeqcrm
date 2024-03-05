@@ -1,5 +1,5 @@
 # CMAKE_MSVC_RUNTIME_LIBRARY requires 3.15
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.20...3.26)
 
 project(
   PhreeqcRM
@@ -11,6 +11,7 @@ project(
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set(STANDALONE_BUILD 1)
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+  add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 else()
   set(STANDALONE_BUILD 0)
 endif()
@@ -338,14 +339,13 @@ endif()
 #   target_link_libraries(PhreeqcRM ${MPI_CXX_LIBRARIES})
 # endif()
 
-if(MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
-  target_link_libraries(PhreeqcRM ${ZLIB_LIBRARIES})
-endif()
+# if(MSVC AND BUILD_SHARED_LIBS AND PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
+#   target_link_libraries(PhreeqcRM ${ZLIB_LIBRARIES})
+# endif()
 
 set(PhreeqcRM_Headers
   ${PhreeqcRM_BINARY_DIR}/irm_dll_export.h
   ${PROJECT_SOURCE_DIR}/src/BMI_interface_F.h
-  ${PROJECT_SOURCE_DIR}/src/BMIVariant.h
   ${PROJECT_SOURCE_DIR}/src/BMIVariant.h
   ${PROJECT_SOURCE_DIR}/src/bmi.hxx
   ${PROJECT_SOURCE_DIR}/src/BMIPhreeqcRM.h
