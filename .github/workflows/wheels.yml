@@ -104,7 +104,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: wheels-${{ matrix.os }}-python-${{ matrix.python-version }}
           path: phreeqcrm-source/dist/*.whl
 
       - uses: actions/upload-artifact@v4
