@@ -46,7 +46,7 @@ jobs:
     name: valgrind
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: update apt-get
       run: sudo apt-get -y update
@@ -71,7 +71,7 @@ jobs:
     needs: init
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: autoreconf
       run: autoreconf -fvi
@@ -107,7 +107,7 @@ jobs:
       working-directory: ${{github.workspace}}/_build
       run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test --with-yaml-cpp" make -j2 distcheck
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: tarball
         path: ${{github.workspace}}/_build/*.tar.gz
@@ -127,7 +127,7 @@ jobs:
 
     steps:
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: tarball
 
@@ -196,7 +196,7 @@ jobs:
     - name: Cleanup
       run: rm -rf *
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Test autotools install
       working-directory: ${{ github.workspace }}/Tests
@@ -235,7 +235,7 @@ jobs:
       shell: bash
       run: echo "VCPKG_INSTALLATION_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: tarball
 
@@ -279,7 +279,7 @@ jobs:
 
     # - name: Set up Python ${{ matrix.python-version }}
     - name: Set up Python 3.8
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         # python-version: ${{ matrix.python-version }}
         python-version: 3.8
@@ -340,7 +340,7 @@ jobs:
       if: runner.os == 'Windows'
       run: Remove-Item -Recurse -Force *
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Test install (configure) (Non-Windows)
       if: ${{ matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
@@ -417,7 +417,7 @@ jobs:
       shell: bash
       run: echo "VCPKG_INSTALLATION_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: tarball
 
@@ -461,7 +461,7 @@ jobs:
 
     # # - name: Set up Python ${{ matrix.python-version }}
     # - name: Set up Python 3.8
-    #   uses: actions/setup-python@v4
+    #   uses: actions/setup-python@v5
     #   with:
     #     # python-version: ${{ matrix.python-version }}
     #     python-version: 3.8
@@ -538,7 +538,7 @@ jobs:
     #   if: runner.os == 'Windows'
     #   run: Remove-Item -Recurse -Force *
 
-    # - uses: actions/checkout@v3
+    # - uses: actions/checkout@v4
 
     # - name: Test install (configure) (Non-Windows)
     #   if: runner.os != 'Windows'

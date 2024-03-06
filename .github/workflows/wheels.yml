@@ -30,11 +30,11 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: phreeqcrm-source
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
             repository: jbeder/yaml-cpp
             ref: ${{ env.YAML_CPP_REF }}
@@ -56,7 +56,7 @@ jobs:
 
       - name: Cache yaml-cpp
         id: cache-yaml-cpp
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/yaml-cpp-install
           key: ${{ matrix.os }}-yaml-cpp-${{ env.YAML_CPP_REF }}
@@ -78,7 +78,7 @@ jobs:
         run: cmake --install yaml-cpp-build
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -102,12 +102,12 @@ jobs:
         working-directory: phreeqcrm-source
         run: pipx run build
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: wheels-${{ matrix.os }}-python-${{ matrix.python-version }}
           path: phreeqcrm-source/dist/*.whl
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ matrix.python-version == '3.10' && matrix.os == 'ubuntu-22.04' }}
         with:
           name: source
