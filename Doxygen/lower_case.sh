@@ -1,237 +1,376 @@
 #!/bin/sh
 export RM_INTERFACE_F90=../src/RM_interface.F90
 export YAML_INTERFACE_F90=../src/YAML_interface.F90
+export BMI_INTERFACE_F90=../src/BMI_interface.F90
 # sed -i -e "s/PhreeqcRM/phreeqcrm/g" $RM_INTERFACE_F90
-sed -i -e "s/GetGridCellCountYAML/getgridcellcountyaml/g" $RM_INTERFACE_F90
-sed -i -e "s/SetGridCellCountYAML/setgridcellcountyaml/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_Abort/rm_abort/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_CloseFiles/rm_closefiles/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_Concentrations2Utility/rm_concentrations2utility/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_CreateMapping/rm_createmapping/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_Create/rm_create/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_DecodeError/rm_decodeerror/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_Destroy/rm_destroy/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_DumpModule/rm_dumpmodule/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_ErrorMessage/rm_errormessage/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_FindComponents/rm_findcomponents/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetBackwardMapping/rm_getbackwardmapping/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetChemistryCellCount/rm_getchemistrycellcount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetComponentCount/rm_getcomponentcount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetComponent/rm_getcomponent/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetConcentrations/rm_getconcentrations/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetCurrentSelectedOutputUserNumber/rm_getcurrentselectedoutputusernumber/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetDensityCalculated/rm_getdensitycalculated/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetEndCell/rm_getendcell/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetErrorString/rm_geterrorstring/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetErrorStringLength/rm_geterrorstringlength/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetFilePrefix/rm_getfileprefix/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetGasCompMoles/rm_getgascompmoles/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetGasCompPhi/rm_getgascompphi/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetGasCompPressures/rm_getgascomppressures/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetGasPhaseVolume/rm_getgasphasevolume/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetGfw/rm_getgfw/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetGridCellCount/rm_getgridcellcount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetIPhreeqcId/rm_getiphreeqcid/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetMpiMyself/rm_getmpimyself/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetMpiTasks/rm_getmpitasks/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetNthSelectedOutputUserNumber/rm_getnthselectedoutputusernumber/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetPorosity/rm_getporosity/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetPressure/rm_getpressure/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSaturationCalculated/rm_getsaturationcalculated/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSelectedOutputColumnCount/rm_getselectedoutputcolumncount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSelectedOutputCount/rm_getselectedoutputcount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSelectedOutputHeading/rm_getselectedoutputheading/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSelectedOutputRowCount/rm_getselectedoutputrowcount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSelectedOutput/rm_getselectedoutput/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSolutionVolume/rm_getsolutionvolume/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSpeciesConcentrations/rm_getspeciesconcentrations/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSpeciesCount/rm_getspeciescount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSpeciesD25/rm_getspeciesd25/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSpeciesLog10Molalities/rm_getspecieslog10molalities/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSpeciesName/rm_getspeciesname/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSpeciesSaveOn/rm_getspeciessaveon/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSpeciesZ/rm_getspeciesz/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetStartCell/rm_getstartcell/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetThreadCount/rm_getthreadcount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetTimeConversion/rm_gettimeconversion/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetTimeStep/rm_gettimestep/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetTime/rm_gettime/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitializeYAML/rm_initializeyaml/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitialPhreeqc2Concentrations/rm_initialphreeqc2concentrations/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitialPhreeqc2Module/rm_initialphreeqc2module/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitialPhreeqcCell2Module/rm_initialphreeqccell2module/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitialPhreeqc2SpeciesConcentrations/rm_initialphreeqc2speciesconcentrations/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_LoadDatabase/rm_loaddatabase/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_LogMessage/rm_logmessage/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_MpiWorkerBreak/rm_mpiworkerbreak/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_MpiWorker/rm_mpiworker/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_OpenFiles/rm_openfiles/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_OutputMessage/rm_outputmessage/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_RunCells/rm_runcells/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_RunFile/rm_runfile/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_RunString/rm_runstring/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_ScreenMessage/rm_screenmessage/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetComponentH2O/rm_setcomponenth2o/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetConcentrations/rm_setconcentrations/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetCurrentSelectedOutputUserNumber/rm_setcurrentselectedoutputusernumber/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetDensityUser/rm_setdensityuser/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetDumpFileName/rm_setdumpfilename/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetErrorHandlerMode/rm_seterrorhandlermode/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetErrorOn/rm_seterroron/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetFilePrefix/rm_setfileprefix/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetGasCompMoles/rm_setgascompmoles/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetGasPhaseVolume/rm_setgasphasevolume/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetMpiWorkerCallback/rm_setmpiworkercallback/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetNthSelectedOutput/rm_setnthselectedoutput/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetPartitionUZSolids/rm_setpartitionuzsolids/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetPorosity/rm_setporosity/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetPrintChemistryMask/rm_setprintchemistrymask/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetPrintChemistryOn/rm_setprintchemistryon/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetPressure/rm_setpressure/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetRebalanceFraction/rm_setrebalancefraction/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetRebalanceByCell/rm_setrebalancebycell/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetRepresentativeVolume/rm_setrepresentativevolume/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetSaturationUser/rm_setsaturationuser/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetScreenOn/rm_setscreenon/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetSelectedOutputOn/rm_setselectedoutputon/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetSpeciesSaveOn/rm_setspeciessaveon/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetTemperature/rm_settemperature/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetTimeConversion/rm_settimeconversion/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetTimeStep/rm_settimestep/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetTime/rm_settime/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetUnitsExchange/rm_setunitsexchange/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetUnitsGasPhase/rm_setunitsgasphase/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetUnitsKinetics/rm_setunitskinetics/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetUnitsPPassemblage/rm_setunitsppassemblage/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetUnitsSolution/rm_setunitssolution/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetUnitsSSassemblage/rm_setunitsssassemblage/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetUnitsSSassemblage/rm_setunitsssassemblage/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetUnitsSurface/rm_setunitssurface/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SpeciesConcentrations2Module/rm_speciesconcentrations2module/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_UseSolutionDensityVolume/rm_usesolutiondensityvolume/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_WarningMessage/rm_warningmessage/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSpeciesLog10Gammas/rm_getspecieslog10gammas/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetExchangeSpeciesCount/rm_getexchangespeciescount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetExchangeSpeciesName/rm_getexchangespeciesname/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetExchangeName/rm_getexchangename/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSurfaceSpeciesCount/rm_getsurfacespeciescount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSurfaceSpeciesName/rm_getsurfacespeciesname/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSurfaceType/rm_getsurfacetype/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSurfaceName/rm_getsurfacename/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetEquilibriumPhasesCount/rm_getequilibriumphasescount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetEquilibriumPhasesName/rm_getequilibriumphasesname/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetGasComponentsCount/rm_getgascomponentscount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetGasComponentsName/rm_getgascomponentsname/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetKineticReactionsCount/rm_getkineticreactionscount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetKineticReactionsName/rm_getkineticreactionsname/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSolidSolutionComponentsCount/rm_getsolidsolutioncomponentscount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSolidSolutionComponentsName/rm_getsolidsolutioncomponentsname/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSolidSolutionName/rm_getsolidsolutionname/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSICount/rm_getsicount/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSIName/rm_getsiname/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_StateSave/rm_statesave/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_StateApply/rm_stateapply/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_StateDelete/rm_statedelete/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_Finalize/rm_bmi_finalize/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetComponentName/rm_bmi_getcomponentname/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetCurrentTime/rm_bmi_getcurrenttime/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetEndTime/rm_bmi_getendtime/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetInputItemCount/rm_bmi_getinputitemcount/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetInputVarNames/rm_bmi_getinputvarnames/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetOutputItemCount/rm_bmi_getoutputitemcount/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetOutputVarNames/rm_bmi_getoutputvarnames/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetTimeStep/rm_bmi_gettimestep/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetTimeUnits/rm_bmi_gettimeunits/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetValue/rm_bmi_getvalue/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetVarItemsize/rm_bmi_getvaritemsize/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetVarNbytes/rm_bmi_getvarnbytes/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetVarType/rm_bmi_getvartype/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_GetVarUnits/rm_bmi_getvarunits/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_Initialize/rm_bmi_initialize/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_SetValue/rm_bmi_setvalue/g" $RM_INTERFACE_F90
-#sed -i -e "s/RM_BMI_Update/rm_bmi_update/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetComponents/rm_getcomponents/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetGridCellCountYAML/rm_getgridcellcountyaml/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetSelectedOutputHeadings/rm_getselectedoutputheadings/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetTemperature/rm_gettemperature/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetViscosity/rm_getviscosity/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetIthConcentration/rm_getithconcentration/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_GetIthSpeciesConcentration/rm_getithspeciesconcentration/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetIthConcentration/rm_setithconcentration/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_SetIthSpeciesConcentration/rm_setithspeciesconcentration/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitialSolutions2Module/rm_initialsolutions2module/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitialEquilibriumPhases2Module/rm_initialequilibriumphases2module/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitialExchanges2Module/rm_initialexchanges2module/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitialSurfaces2Module/rm_initialsurfaces2module/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitialGasPhases2Module/rm_initialgasphases2module/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitialSolidSolutions2Module/rm_initialsolidsolutions2module/g" $RM_INTERFACE_F90
-sed -i -e "s/RM_InitialKinetics2Module/rm_initialkinetics2module/g" $RM_INTERFACE_F90
-sed -i -e "s/DestroyYAMLPhreeqcRM/destroyyamlphreeqcrm/g" $YAML_INTERFACE_F90
-sed -i -e "s/CreateYAMLPhreeqcRM/createyamlphreeqcrm/g" $YAML_INTERFACE_F90
-sed -i -e "s/WriteYAMLDoc/writeyamldoc/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLAddOutputVars/yamladdoutputvars/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLClear/yamlclear/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLCloseFiles/yamlclosefiles/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLCreateMapping/yamlcreatemapping/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLDumpModule/yamldumpmodule/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLFindComponents/yamlfindcomponents/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLInitialSolutions2Module/yamlinitialsolutions2module/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLInitialEquilibriumPhases2Module/yamlinitialequilibriumphases2module/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLInitialExchanges2Module/yamlinitialexchanges2module/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLInitialSurfaces2Module/yamlinitialsurfaces2module/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLInitialGasPhases2Module/yamlinitialgasphases2module/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLInitialSolidSolutions2Module/yamlinitialsolidsolutions2module/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLInitialKinetics2Module/yamlinitialkinetics2module/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLInitialPhreeqc2Module/yamlinitialphreeqc2module/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLInitialPhreeqc2Module_mix/yamlinitialphreeqc2module_mix/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLInitialPhreeqcCell2Module/yamlinitialphreeqccell2module/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLLoadDatabase/yamlloaddatabase/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLLogMessage/yamllogmessage/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLOpenFiles/yamlopenfiles/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLOutputMessage/yamloutputmessage/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLRunCells/yamlruncells/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLRunFile/yamlrunfile/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLRunString/yamlrunstring/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLScreenMessage/yamlscreenmessage/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetComponentH2O/yamlsetcomponenth2o/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetConcentrations/yamlsetconcentrations/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetCurrentSelectedOutputUserNumber/yamlsetcurrentselectedoutputusernumber/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetDensityUser/yamlsetdensityuser/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetDumpFileName/yamlsetdumpfilename/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetErrorHandlerMode/yamlseterrorhandlermode/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetErrorOn/yamlseterroron/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetFilePrefix/yamlsetfileprefix/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetGasCompMoles/yamlsetgascompmoles/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetGasPhaseVolume/yamlsetgasphasevolume/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetGridCellCount/yamlsetgridcellcount/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetNthSelectedOutput/yamlsetnthselectedoutput/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetPartitionUZSolids/yamlsetpartitionuzsolids/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetPorosity/yamlsetporosity/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetPressure/yamlsetpressure/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetPrintChemistryMask/yamlsetprintchemistrymask/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetPrintChemistryOn/yamlsetprintchemistryon/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetRebalanceByCell/yamlsetrebalancebycell/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetRebalanceFraction/yamlsetrebalancefraction/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetRepresentativeVolume/yamlsetrepresentativevolume/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetSaturationUser/yamlsetsaturationuser/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetScreenOn/yamlsetscreenon/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetSelectedOutputOn/yamlsetselectedoutputon/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetSpeciesSaveOn/yamlsetspeciessaveon/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetTemperature/yamlsettemperature/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetTimeConversion/yamlsettimeconversion/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetTimeStep/yamlsettimestep/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetTime/yamlsettime/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetUnitsExchange/yamlsetunitsexchange/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetUnitsGasPhase/yamlsetunitsgasphase/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetUnitsKinetics/yamlsetunitskinetics/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetUnitsPPassemblage/yamlsetunitsppassemblage/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetUnitsSolution/yamlsetunitssolution/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetUnitsSSassemblage/yamlsetunitsssassemblage/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSetUnitsSurface/yamlsetunitssurface/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLSpeciesConcentrations2Module/yamlspeciesconcentrations2module/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLStateSave/yamlstatesave/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLStateApply/yamlstateapply/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLStateDelete/yamlstatedelete/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLThreadCount/yamlthreadcount/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLUseSolutionDensityVolume/yamlusesolutiondensityvolume/g" $YAML_INTERFACE_F90
-sed -i -e "s/YAMLWarningMessage/yamlwarningmessage/g" $YAML_INTERFACE_F90
+sed -i -e "s/GetGridCellCountYAML/getgridcellcountyaml/g"  \
+-e "s/SetGridCellCountYAML/setgridcellcountyaml/g"  \
+-e "s/RM_Abort/rm_abort/g"  \
+-e "s/RM_CloseFiles/rm_closefiles/g"  \
+-e "s/RM_Concentrations2Utility/rm_concentrations2utility/g"  \
+-e "s/RM_CreateMapping/rm_createmapping/g"  \
+-e "s/RM_Create/rm_create/g"  \
+-e "s/RM_DecodeError/rm_decodeerror/g"  \
+-e "s/RM_Destroy/rm_destroy/g"  \
+-e "s/RM_DumpModule/rm_dumpmodule/g"  \
+-e "s/RM_ErrorMessage/rm_errormessage/g"  \
+-e "s/RM_FindComponents/rm_findcomponents/g"  \
+-e "s/RM_GetBackwardMapping/rm_getbackwardmapping/g"  \
+-e "s/RM_GetChemistryCellCount/rm_getchemistrycellcount/g"  \
+-e "s/RM_GetComponentCount/rm_getcomponentcount/g"  \
+-e "s/RM_GetComponent/rm_getcomponent/g"  \
+-e "s/RM_GetConcentrations/rm_getconcentrations/g"  \
+-e "s/RM_GetCurrentSelectedOutputUserNumber/rm_getcurrentselectedoutputusernumber/g"  \
+-e "s/RM_GetDensityCalculated/rm_getdensitycalculated/g"  \
+-e "s/RM_GetDensity/rm_getdensity/g"  \
+-e "s/RM_GetEndCell/rm_getendcell/g"  \
+-e "s/RM_GetErrorString/rm_geterrorstring/g"  \
+-e "s/RM_GetErrorStringLength/rm_geterrorstringlength/g"  \
+-e "s/RM_GetFilePrefix/rm_getfileprefix/g"  \
+-e "s/RM_GetGasCompMoles/rm_getgascompmoles/g"  \
+-e "s/RM_GetGasCompPhi/rm_getgascompphi/g"  \
+-e "s/RM_GetGasCompPressures/rm_getgascomppressures/g"  \
+-e "s/RM_GetGasPhaseVolume/rm_getgasphasevolume/g"  \
+-e "s/RM_GetGfw/rm_getgfw/g"  \
+-e "s/RM_GetGridCellCount/rm_getgridcellcount/g"  \
+-e "s/RM_GetIPhreeqcId/rm_getiphreeqcid/g"  \
+-e "s/RM_GetMpiMyself/rm_getmpimyself/g"  \
+-e "s/RM_GetMpiTasks/rm_getmpitasks/g"  \
+-e "s/RM_GetNthSelectedOutputUserNumber/rm_getnthselectedoutputusernumber/g"  \
+-e "s/RM_GetPorosity/rm_getporosity/g"  \
+-e "s/RM_GetPressure/rm_getpressure/g"  \
+-e "s/RM_GetSaturationCalculated/rm_getsaturationcalculated/g"  \
+-e "s/RM_GetSaturation/rm_getsaturation/g"  \
+-e "s/RM_GetSelectedOutputColumnCount/rm_getselectedoutputcolumncount/g"  \
+-e "s/RM_GetSelectedOutputCount/rm_getselectedoutputcount/g"  \
+-e "s/RM_GetSelectedOutputHeading/rm_getselectedoutputheading/g"  \
+-e "s/RM_GetSelectedOutputRowCount/rm_getselectedoutputrowcount/g"  \
+-e "s/RM_GetSelectedOutput/rm_getselectedoutput/g"  \
+-e "s/RM_GetSolutionVolume/rm_getsolutionvolume/g"  \
+-e "s/RM_GetSpeciesConcentrations/rm_getspeciesconcentrations/g"  \
+-e "s/RM_GetSpeciesCount/rm_getspeciescount/g"  \
+-e "s/RM_GetSpeciesD25/rm_getspeciesd25/g"  \
+-e "s/RM_GetSpeciesLog10Molalities/rm_getspecieslog10molalities/g"  \
+-e "s/RM_GetSpeciesName/rm_getspeciesname/g"  \
+-e "s/RM_GetSpeciesSaveOn/rm_getspeciessaveon/g"  \
+-e "s/RM_GetSpeciesZ/rm_getspeciesz/g"  \
+-e "s/RM_GetStartCell/rm_getstartcell/g"  \
+-e "s/RM_GetThreadCount/rm_getthreadcount/g"  \
+-e "s/RM_GetTimeConversion/rm_gettimeconversion/g"  \
+-e "s/RM_GetTimeStep/rm_gettimestep/g"  \
+-e "s/RM_GetTime/rm_gettime/g"  \
+-e "s/RM_InitializeYAML/rm_initializeyaml/g"  \
+-e "s/RM_InitialPhreeqc2Concentrations/rm_initialphreeqc2concentrations/g"  \
+-e "s/RM_InitialPhreeqc2Module/rm_initialphreeqc2module/g"  \
+-e "s/RM_InitialPhreeqcCell2Module/rm_initialphreeqccell2module/g"  \
+-e "s/RM_InitialPhreeqc2SpeciesConcentrations/rm_initialphreeqc2speciesconcentrations/g"  \
+-e "s/RM_LoadDatabase/rm_loaddatabase/g"  \
+-e "s/RM_LogMessage/rm_logmessage/g"  \
+-e "s/RM_MpiWorkerBreak/rm_mpiworkerbreak/g"  \
+-e "s/RM_MpiWorker/rm_mpiworker/g"  \
+-e "s/RM_OpenFiles/rm_openfiles/g"  \
+-e "s/RM_OutputMessage/rm_outputmessage/g"  \
+-e "s/RM_RunCells/rm_runcells/g"  \
+-e "s/RM_RunFile/rm_runfile/g"  \
+-e "s/RM_RunString/rm_runstring/g"  \
+-e "s/RM_ScreenMessage/rm_screenmessage/g"  \
+-e "s/RM_SetComponentH2O/rm_setcomponenth2o/g"  \
+-e "s/RM_SetConcentrations/rm_setconcentrations/g"  \
+-e "s/RM_SetCurrentSelectedOutputUserNumber/rm_setcurrentselectedoutputusernumber/g"  \
+-e "s/RM_SetDensityUser/rm_setdensityuser/g"  \
+-e "s/RM_SetDensity/rm_setdensity/g"  \
+-e "s/RM_SetDumpFileName/rm_setdumpfilename/g"  \
+-e "s/RM_SetErrorHandlerMode/rm_seterrorhandlermode/g"  \
+-e "s/RM_SetErrorOn/rm_seterroron/g"  \
+-e "s/RM_SetFilePrefix/rm_setfileprefix/g"  \
+-e "s/RM_SetGasCompMoles/rm_setgascompmoles/g"  \
+-e "s/RM_SetGasPhaseVolume/rm_setgasphasevolume/g"  \
+-e "s/RM_SetMpiWorkerCallback/rm_setmpiworkercallback/g"  \
+-e "s/RM_SetNthSelectedOutput/rm_setnthselectedoutput/g"  \
+-e "s/RM_SetPartitionUZSolids/rm_setpartitionuzsolids/g"  \
+-e "s/RM_SetPorosity/rm_setporosity/g"  \
+-e "s/RM_SetPrintChemistryMask/rm_setprintchemistrymask/g"  \
+-e "s/RM_SetPrintChemistryOn/rm_setprintchemistryon/g"  \
+-e "s/RM_SetPressure/rm_setpressure/g"  \
+-e "s/RM_SetRebalanceFraction/rm_setrebalancefraction/g"  \
+-e "s/RM_SetRebalanceByCell/rm_setrebalancebycell/g"  \
+-e "s/RM_SetRepresentativeVolume/rm_setrepresentativevolume/g"  \
+-e "s/RM_SetSaturationUser/rm_setsaturationuser/g"  \
+-e "s/RM_SetSaturation/rm_setsaturation/g"  \
+-e "s/RM_SetScreenOn/rm_setscreenon/g"  \
+-e "s/RM_SetSelectedOutputOn/rm_setselectedoutputon/g"  \
+-e "s/RM_SetSpeciesSaveOn/rm_setspeciessaveon/g"  \
+-e "s/RM_SetTemperature/rm_settemperature/g"  \
+-e "s/RM_SetTimeConversion/rm_settimeconversion/g"  \
+-e "s/RM_SetTimeStep/rm_settimestep/g"  \
+-e "s/RM_SetTime/rm_settime/g"  \
+-e "s/RM_SetUnitsExchange/rm_setunitsexchange/g"  \
+-e "s/RM_SetUnitsGasPhase/rm_setunitsgasphase/g"  \
+-e "s/RM_SetUnitsKinetics/rm_setunitskinetics/g"  \
+-e "s/RM_SetUnitsPPassemblage/rm_setunitsppassemblage/g"  \
+-e "s/RM_SetUnitsSolution/rm_setunitssolution/g"  \
+-e "s/RM_SetUnitsSSassemblage/rm_setunitsssassemblage/g"  \
+-e "s/RM_SetUnitsSSassemblage/rm_setunitsssassemblage/g"  \
+-e "s/RM_SetUnitsSurface/rm_setunitssurface/g"  \
+-e "s/RM_SpeciesConcentrations2Module/rm_speciesconcentrations2module/g"  \
+-e "s/RM_UseSolutionDensityVolume/rm_usesolutiondensityvolume/g"  \
+-e "s/RM_WarningMessage/rm_warningmessage/g"  \
+-e "s/RM_GetSpeciesLog10Gammas/rm_getspecieslog10gammas/g"  \
+-e "s/RM_GetExchangeSpeciesCount/rm_getexchangespeciescount/g"  \
+-e "s/RM_GetExchangeSpeciesName/rm_getexchangespeciesname/g"  \
+-e "s/RM_GetExchangeName/rm_getexchangename/g"  \
+-e "s/RM_GetSurfaceSpeciesCount/rm_getsurfacespeciescount/g"  \
+-e "s/RM_GetSurfaceSpeciesName/rm_getsurfacespeciesname/g"  \
+-e "s/RM_GetSurfaceType/rm_getsurfacetype/g"  \
+-e "s/RM_GetSurfaceName/rm_getsurfacename/g"  \
+-e "s/RM_GetEquilibriumPhasesCount/rm_getequilibriumphasescount/g"  \
+-e "s/RM_GetEquilibriumPhasesName/rm_getequilibriumphasesname/g"  \
+-e "s/RM_GetGasComponentsCount/rm_getgascomponentscount/g"  \
+-e "s/RM_GetGasComponentsName/rm_getgascomponentsname/g"  \
+-e "s/RM_GetKineticReactionsCount/rm_getkineticreactionscount/g"  \
+-e "s/RM_GetKineticReactionsName/rm_getkineticreactionsname/g"  \
+-e "s/RM_GetSolidSolutionComponentsCount/rm_getsolidsolutioncomponentscount/g"  \
+-e "s/RM_GetSolidSolutionComponentsName/rm_getsolidsolutioncomponentsname/g"  \
+-e "s/RM_GetSolidSolutionName/rm_getsolidsolutionname/g"  \
+-e "s/RM_GetSICount/rm_getsicount/g"  \
+-e "s/RM_GetSIName/rm_getsiname/g"  \
+-e "s/RM_StateSave/rm_statesave/g"  \
+-e "s/RM_StateApply/rm_stateapply/g"  \
+-e "s/RM_StateDelete/rm_statedelete/g"  \
+-e "s/RM_GetComponents/rm_getcomponents/g"  \
+-e "s/RM_GetGridCellCountYAML/rm_getgridcellcountyaml/g"  \
+-e "s/RM_GetSelectedOutputHeadings/rm_getselectedoutputheadings/g"  \
+-e "s/RM_GetTemperature/rm_gettemperature/g"  \
+-e "s/RM_GetViscosity/rm_getviscosity/g"  \
+-e "s/RM_GetIthConcentration/rm_getithconcentration/g"  \
+-e "s/RM_GetIthSpeciesConcentration/rm_getithspeciesconcentration/g"  \
+-e "s/RM_SetIthConcentration/rm_setithconcentration/g"  \
+-e "s/RM_SetIthSpeciesConcentration/rm_setithspeciesconcentration/g"  \
+-e "s/RM_InitialSolutions2Module/rm_initialsolutions2module/g"  \
+-e "s/RM_InitialEquilibriumPhases2Module/rm_initialequilibriumphases2module/g"  \
+-e "s/RM_InitialExchanges2Module/rm_initialexchanges2module/g"  \
+-e "s/RM_InitialSurfaces2Module/rm_initialsurfaces2module/g"  \
+-e "s/RM_InitialGasPhases2Module/rm_initialgasphases2module/g"  \
+-e "s/RM_InitialSolidSolutions2Module/rm_initialsolidsolutions2module/g"  \
+-e "s/RM_InitialKinetics2Module/rm_initialkinetics2module/g" $RM_INTERFACE_F90 
+sed -i -e "s/DestroyYAMLPhreeqcRM/destroyyamlphreeqcrm/g" \
+-e "s/CreateYAMLPhreeqcRM/createyamlphreeqcrm/g" \
+-e "s/WriteYAMLDoc/writeyamldoc/g" \
+-e "s/YAMLAddOutputVars/yamladdoutputvars/g" \
+-e "s/YAMLClear/yamlclear/g" \
+-e "s/YAMLCloseFiles/yamlclosefiles/g" \
+-e "s/YAMLCreateMapping/yamlcreatemapping/g" \
+-e "s/YAMLDumpModule/yamldumpmodule/g" \
+-e "s/YAMLFindComponents/yamlfindcomponents/g" \
+-e "s/YAMLInitialSolutions2Module/yamlinitialsolutions2module/g" \
+-e "s/YAMLInitialEquilibriumPhases2Module/yamlinitialequilibriumphases2module/g" \
+-e "s/YAMLInitialExchanges2Module/yamlinitialexchanges2module/g" \
+-e "s/YAMLInitialSurfaces2Module/yamlinitialsurfaces2module/g" \
+-e "s/YAMLInitialGasPhases2Module/yamlinitialgasphases2module/g" \
+-e "s/YAMLInitialSolidSolutions2Module/yamlinitialsolidsolutions2module/g" \
+-e "s/YAMLInitialKinetics2Module/yamlinitialkinetics2module/g" \
+-e "s/YAMLInitialPhreeqc2Module/yamlinitialphreeqc2module/g" \
+-e "s/YAMLInitialPhreeqc2Module_mix/yamlinitialphreeqc2module_mix/g" \
+-e "s/YAMLInitialPhreeqcCell2Module/yamlinitialphreeqccell2module/g" \
+-e "s/YAMLLoadDatabase/yamlloaddatabase/g" \
+-e "s/YAMLLogMessage/yamllogmessage/g" \
+-e "s/YAMLOpenFiles/yamlopenfiles/g" \
+-e "s/YAMLOutputMessage/yamloutputmessage/g" \
+-e "s/YAMLRunCells/yamlruncells/g" \
+-e "s/YAMLRunFile/yamlrunfile/g" \
+-e "s/YAMLRunString/yamlrunstring/g" \
+-e "s/YAMLScreenMessage/yamlscreenmessage/g" \
+-e "s/YAMLSetComponentH2O/yamlsetcomponenth2o/g" \
+-e "s/YAMLSetConcentrations/yamlsetconcentrations/g" \
+-e "s/YAMLSetCurrentSelectedOutputUserNumber/yamlsetcurrentselectedoutputusernumber/g" \
+-e "s/YAMLSetDensityUser/yamlsetdensityuser/g" \
+-e "s/YAMLSetDumpFileName/yamlsetdumpfilename/g" \
+-e "s/YAMLSetErrorHandlerMode/yamlseterrorhandlermode/g" \
+-e "s/YAMLSetErrorOn/yamlseterroron/g" \
+-e "s/YAMLSetFilePrefix/yamlsetfileprefix/g" \
+-e "s/YAMLSetGasCompMoles/yamlsetgascompmoles/g" \
+-e "s/YAMLSetGasPhaseVolume/yamlsetgasphasevolume/g" \
+-e "s/YAMLSetGridCellCount/yamlsetgridcellcount/g" \
+-e "s/YAMLSetNthSelectedOutput/yamlsetnthselectedoutput/g" \
+-e "s/YAMLSetPartitionUZSolids/yamlsetpartitionuzsolids/g" \
+-e "s/YAMLSetPorosity/yamlsetporosity/g" \
+-e "s/YAMLSetPressure/yamlsetpressure/g" \
+-e "s/YAMLSetPrintChemistryMask/yamlsetprintchemistrymask/g" \
+-e "s/YAMLSetPrintChemistryOn/yamlsetprintchemistryon/g" \
+-e "s/YAMLSetRebalanceByCell/yamlsetrebalancebycell/g" \
+-e "s/YAMLSetRebalanceFraction/yamlsetrebalancefraction/g" \
+-e "s/YAMLSetRepresentativeVolume/yamlsetrepresentativevolume/g" \
+-e "s/YAMLSetSaturationUser/yamlsetsaturationuser/g" \
+-e "s/YAMLSetScreenOn/yamlsetscreenon/g" \
+-e "s/YAMLSetSelectedOutputOn/yamlsetselectedoutputon/g" \
+-e "s/YAMLSetSpeciesSaveOn/yamlsetspeciessaveon/g" \
+-e "s/YAMLSetTemperature/yamlsettemperature/g" \
+-e "s/YAMLSetTimeConversion/yamlsettimeconversion/g" \
+-e "s/YAMLSetTimeStep/yamlsettimestep/g" \
+-e "s/YAMLSetTime/yamlsettime/g" \
+-e "s/YAMLSetUnitsExchange/yamlsetunitsexchange/g" \
+-e "s/YAMLSetUnitsGasPhase/yamlsetunitsgasphase/g" \
+-e "s/YAMLSetUnitsKinetics/yamlsetunitskinetics/g" \
+-e "s/YAMLSetUnitsPPassemblage/yamlsetunitsppassemblage/g" \
+-e "s/YAMLSetUnitsSolution/yamlsetunitssolution/g" \
+-e "s/YAMLSetUnitsSSassemblage/yamlsetunitsssassemblage/g" \
+-e "s/YAMLSetUnitsSurface/yamlsetunitssurface/g" \
+-e "s/YAMLSpeciesConcentrations2Module/yamlspeciesconcentrations2module/g" \
+-e "s/YAMLStateSave/yamlstatesave/g" \
+-e "s/YAMLStateApply/yamlstateapply/g" \
+-e "s/YAMLStateDelete/yamlstatedelete/g" \
+-e "s/YAMLThreadCount/yamlthreadcount/g" \
+-e "s/YAMLUseSolutionDensityVolume/yamlusesolutiondensityvolume/g" \
+-e "s/YAMLWarningMessage/yamlwarningmessage/g" $YAML_INTERFACE_F90
+sed -i -e "s/Abort/abort/g" \
+-e "s/CloseFiles/closefiles/g" \
+-e "s/Concentrations2Utility/concentrations2utility/g" \
+-e "s/CreateMapping/createmapping/g" \
+-e "s/Create /create /g" \
+-e "s/DecodeError/decodeerror/g" \
+-e "s/Destroy/destroy/g" \
+-e "s/DumpModule/dumpmodule/g" \
+-e "s/ErrorMessage/errormessage/g" \
+-e "s/FindComponents/findcomponents/g" \
+-e "s/GetBackwardMapping/getbackwardmapping/g" \
+-e "s/GetChemistryCellCount/getchemistrycellcount/g" \
+-e "s/GetComponentCount/getcomponentcount/g" \
+-e "s/GetComponent/getcomponent/g" \
+-e "s/GetConcentrations/getconcentrations/g" \
+-e "s/GetCurrentSelectedOutputUserNumber/getcurrentselectedoutputusernumber/g" \
+-e "s/GetDensityCalculated/getdensitycalculated/g" \
+-e "s/GetDensity/getdensity/g" \
+-e "s/GetEndCell/getendcell/g" \
+-e "s/GetErrorString/geterrorstring/g" \
+-e "s/GetErrorStringLength/geterrorstringlength/g" \
+-e "s/GetFilePrefix/getfileprefix/g" \
+-e "s/GetGasCompMoles/getgascompmoles/g" \
+-e "s/GetGasCompPhi/getgascompphi/g" \
+-e "s/GetGasCompPressures/getgascomppressures/g" \
+-e "s/GetGasPhaseVolume/getgasphasevolume/g" \
+-e "s/GetGfw/getgfw/g" \
+-e "s/GetGridCellCount/getgridcellcount/g" \
+-e "s/GetIPhreeqcId/getiphreeqcid/g" \
+-e "s/GetMpiMyself/getmpimyself/g" \
+-e "s/GetMpiTasks/getmpitasks/g" \
+-e "s/GetNthSelectedOutputUserNumber/getnthselectedoutputusernumber/g" \
+-e "s/GetPorosity/getporosity/g" \
+-e "s/GetPressure/getpressure/g" \
+-e "s/GetSaturationCalculated/getsaturationcalculated/g" \
+-e "s/GetSaturation/getsaturation/g" \
+-e "s/GetSelectedOutputColumnCount/getselectedoutputcolumncount/g" \
+-e "s/GetSelectedOutputCount/getselectedoutputcount/g" \
+-e "s/GetSelectedOutputHeading/getselectedoutputheading/g" \
+-e "s/GetSelectedOutputRowCount/getselectedoutputrowcount/g" \
+-e "s/GetSelectedOutput/getselectedoutput/g" \
+-e "s/GetSolutionVolume/getsolutionvolume/g" \
+-e "s/GetSpeciesConcentrations/getspeciesconcentrations/g" \
+-e "s/GetSpeciesCount/getspeciescount/g" \
+-e "s/GetSpeciesD25/getspeciesd25/g" \
+-e "s/GetSpeciesLog10Molalities/getspecieslog10molalities/g" \
+-e "s/GetSpeciesName/getspeciesname/g" \
+-e "s/GetSpeciesSaveOn/getspeciessaveon/g" \
+-e "s/GetSpeciesZ/getspeciesz/g" \
+-e "s/GetStartCell/getstartcell/g" \
+-e "s/GetThreadCount/getthreadcount/g" \
+-e "s/GetTimeConversion/gettimeconversion/g" \
+-e "s/GetTimeStep/gettimestep/g" \
+-e "s/GetTime/gettime/g" \
+-e "s/InitializeYAML/initializeyaml/g" \
+-e "s/InitialPhreeqc2Concentrations/initialphreeqc2concentrations/g" \
+-e "s/InitialPhreeqc2Module/initialphreeqc2module/g" \
+-e "s/InitialPhreeqcCell2Module/initialphreeqccell2module/g" \
+-e "s/InitialPhreeqc2SpeciesConcentrations/initialphreeqc2speciesconcentrations/g" \
+-e "s/LoadDatabase/loaddatabase/g" \
+-e "s/LogMessage/logmessage/g" \
+-e "s/MpiWorkerBreak/mpiworkerbreak/g" \
+-e "s/OpenFiles/openfiles/g" \
+-e "s/OutputMessage/outputmessage/g" \
+-e "s/RunCells/runcells/g" \
+-e "s/RunFile/runfile/g" \
+-e "s/RunString/runstring/g" \
+-e "s/ScreenMessage/screenmessage/g" \
+-e "s/SetComponentH2O/setcomponenth2o/g" \
+-e "s/SetConcentrations/setconcentrations/g" \
+-e "s/SetCurrentSelectedOutputUserNumber/setcurrentselectedoutputusernumber/g" \
+-e "s/SetDensityUser/setdensityuser/g" \
+-e "s/SetDensity/setdensity/g" \
+-e "s/SetDumpFileName/setdumpfilename/g" \
+-e "s/SetErrorHandlerMode/seterrorhandlermode/g" \
+-e "s/SetErrorOn/seterroron/g" \
+-e "s/SetFilePrefix/setfileprefix/g" \
+-e "s/SetGasCompMoles/setgascompmoles/g" \
+-e "s/SetGasPhaseVolume/setgasphasevolume/g" \
+-e "s/SetMpiWorkerCallback/setmpiworkercallback/g" \
+-e "s/MpiWorker/mpiworker/g" \
+-e "s/SetNthSelectedOutput/setnthselectedoutput/g" \
+-e "s/SetPartitionUZSolids/setpartitionuzsolids/g" \
+-e "s/SetPorosity/setporosity/g" \
+-e "s/SetPrintChemistryMask/setprintchemistrymask/g" \
+-e "s/SetPrintChemistryOn/setprintchemistryon/g" \
+-e "s/SetPressure/setpressure/g" \
+-e "s/SetRebalanceFraction/setrebalancefraction/g" \
+-e "s/SetRebalanceByCell/setrebalancebycell/g" \
+-e "s/SetRepresentativeVolume/setrepresentativevolume/g" \
+-e "s/SetSaturationUser/setsaturationuser/g" \
+-e "s/SetSaturation/setsaturation/g" \
+-e "s/SetScreenOn/setscreenon/g" \
+-e "s/SetSelectedOutputOn/setselectedoutputon/g" \
+-e "s/SetSpeciesSaveOn/setspeciessaveon/g" \
+-e "s/SetTemperature/settemperature/g" \
+-e "s/SetTimeConversion/settimeconversion/g" \
+-e "s/SetTimeStep/settimestep/g" \
+-e "s/SetTime/settime/g" \
+-e "s/SetUnitsExchange/setunitsexchange/g" \
+-e "s/SetUnitsGasPhase/setunitsgasphase/g" \
+-e "s/SetUnitsKinetics/setunitskinetics/g" \
+-e "s/SetUnitsPPassemblage/setunitsppassemblage/g" \
+-e "s/SetUnitsSolution/setunitssolution/g" \
+-e "s/SetUnitsSSassemblage/setunitsssassemblage/g" \
+-e "s/SetUnitsSSassemblage/setunitsssassemblage/g" \
+-e "s/SetUnitsSurface/setunitssurface/g" \
+-e "s/SpeciesConcentrations2Module/speciesconcentrations2module/g" \
+-e "s/UseSolutionDensityVolume/usesolutiondensityvolume/g" \
+-e "s/WarningMessage/warningmessage/g" \
+-e "s/GetSpeciesLog10Gammas/getspecieslog10gammas/g" \
+-e "s/GetExchangeSpeciesCount/getexchangespeciescount/g" \
+-e "s/GetExchangeSpeciesName/getexchangespeciesname/g" \
+-e "s/GetExchangeName/getexchangename/g" \
+-e "s/GetSurfaceSpeciesCount/getsurfacespeciescount/g" \
+-e "s/GetSurfaceSpeciesName/getsurfacespeciesname/g" \
+-e "s/GetSurfaceType/getsurfacetype/g" \
+-e "s/GetSurfaceName/getsurfacename/g" \
+-e "s/GetEquilibriumPhasesCount/getequilibriumphasescount/g" \
+-e "s/GetEquilibriumPhasesName/getequilibriumphasesname/g" \
+-e "s/GetGasComponentsCount/getgascomponentscount/g" \
+-e "s/GetGasComponentsName/getgascomponentsname/g" \
+-e "s/GetKineticReactionsCount/getkineticreactionscount/g" \
+-e "s/GetKineticReactionsName/getkineticreactionsname/g" \
+-e "s/GetSolidSolutionComponentsCount/getsolidsolutioncomponentscount/g" \
+-e "s/GetSolidSolutionComponentsName/getsolidsolutioncomponentsname/g" \
+-e "s/GetSolidSolutionName/getsolidsolutionname/g" \
+-e "s/GetSICount/getsicount/g" \
+-e "s/GetSIName/getsiname/g" \
+-e "s/StateSave/statesave/g" \
+-e "s/StateApply/stateapply/g" \
+-e "s/StateDelete/statedelete/g" \
+-e "s/GetComponents/getcomponents/g" \
+-e "s/GetGridCellCountYAML/getgridcellcountyaml/g" \
+-e "s/GetSelectedOutputHeadings/getselectedoutputheadings/g" \
+-e "s/GetTemperature/gettemperature/g" \
+-e "s/GetViscosity/getviscosity/g" \
+-e "s/GetIthConcentration/getithconcentration/g" \
+-e "s/GetIthSpeciesConcentration/getithspeciesconcentration/g" \
+-e "s/SetIthConcentration/setithconcentration/g" \
+-e "s/SetIthSpeciesConcentration/setithspeciesconcentration/g" \
+-e "s/InitialSolutions2Module/initialsolutions2module/g" \
+-e "s/InitialEquilibriumPhases2Module/initialequilibriumphases2module/g" \
+-e "s/InitialExchanges2Module/initialexchanges2module/g" \
+-e "s/InitialSurfaces2Module/initialsurfaces2module/g" \
+-e "s/InitialGasPhases2Module/initialgasphases2module/g" \
+-e "s/InitialSolidSolutions2Module/initialsolidsolutions2module/g" \
+-e "s/InitialKinetics2Module/initialkinetics2module/g" $BMI_INTERFACE_F90
+
+# remove USE_YAML guard
+sed -i -e "/^#if defined(USE_YAML) $/d" \
+-e "/^#endif$/d" $YAML_INTERFACE_F90

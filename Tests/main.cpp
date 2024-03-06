@@ -19,6 +19,7 @@ extern void SimpleAdvect_c(void);
 extern void SimpleAdvect_f90(void);
 extern void Species_c(void);
 extern void Species_f90(void);
+extern void TestAllMethods_c(void);
 extern void TestAllMethods_f90(void);
 extern void WriteYAMLFile_f90(void);
 extern void WriteYAMLFile_f90_test(void);
@@ -83,6 +84,8 @@ int main(int argc, char* argv[])
 	if (root) std::cerr << "Done AdvectBMI_cpp_test.=============================" << std::endl;
 	TestAllMethods_cpp();
 	if (root) std::cerr << "Done TestAllMethods_cpp.=============================" << std::endl;
+	TestAllMethods_c();
+	if (root) std::cerr << "Done TestAllMethods_c.=============================" << std::endl;
 #endif
 	SimpleAdvect_c();
 	if (root) std::cerr << "Done SimpleAdvect_c.=================================" << std::endl;

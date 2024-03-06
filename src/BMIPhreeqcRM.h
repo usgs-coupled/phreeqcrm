@@ -51,6 +51,7 @@ public:
     /**
     Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM.
     Definition of the number of cells and threads (or MPI communicator) is deferred.
+    @ref Initialize must be called to initialize the BMIPhreeqcRM instance.
     */
     BMIPhreeqcRM();
     /**
@@ -64,7 +65,6 @@ public:
     an MPI communicator if PhreeqcRM is compiled with MPI. With OpenMP,
     a value of zero causes the program to set nthreads to the number 
     of logical processors of the computer.
-    @retval A BMIPhreeqcRM instance.
     @par C++ Example:
     @htmlonly
     <CODE>
@@ -84,20 +84,24 @@ public:
 
     // Model control functions.
     /**
-    @a Initialize is used to initialize a PhreeqcRM instance. This method is equivalent to
-    @ref InitializeYAML. A YAML file used for initialization contains a
-    YAML map of PhreeqcRM
-    methods and the arguments corresponding to each method. For example,
+    @a Initialize must be called to initialize a BMIPhreeqcRM instance. 
+    A YAML file is normally used for initialization; however, an empty string can be used for the 
+    file name when initializing without use of a YAML file.
+    <p>
+    The YAML file contains a YAML map of PhreeqcRM
+    methods and data corresponding to each PhreeqcRM method. 
+    For example,
+    </p>
     @htmlonly
     <CODE>
     <PRE>
-- key: LoadDatabase
-  database: phreeqc.dat
-- key: RunFile
-  workers: true
-  initial_phreeqc: true
-  utility: true
-  chemistry_name: advect.pqi
+        - key: LoadDatabase
+          database: phreeqc.dat
+        - key: RunFile
+          workers: true
+          initial_phreeqc: true
+          utility: true
+          chemistry_name: advect.pqi
     </PRE>
     </CODE>
     @endhtmlonly
@@ -114,68 +118,68 @@ public:
     @htmlonly
     <CODE>
     <PRE>
-    @n CloseFiles();
-    @n CreateMapping(std::vector< int >& grid2chem);
-    @n DumpModule();
-    @n FindComponents();
-    @n InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
-    @n InitialExchanges2Module(std::vector< int > exchanges);
-    @n InitialGasPhases2Module(std::vector< int > gas_phases);
-    @n InitialKineticss2Module(std::vector< int > kinetics);
-    @n InitialSolidSolutions2Module(std::vector< int > solid_solutions);
-    @n InitialSolutions2Module(std::vector< int > solutions);
-    @n InitialSurfaces2Module(std::vector< int > surfaces);
-    @n InitialPhreeqc2Module(std::vector< int > initial_conditions1);
-    @n InitialPhreeqc2Module(std::vector< int > initial_conditions1,
-    @n     std::vector< int > initial_conditions2, std::vector< double > fraction1);
-    @n InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
-    @n LoadDatabase(std::string database);
-    @n OpenFiles();
-    @n OutputMessage(std::string str);
-    @n RunCells();
-    @n RunFile(bool workers, bool initial_phreeqc,
-    @n      bool utility, std::string chemistry_name);
-    @n RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
-    @n ScreenMessage(std::string str);
-    @n SetComponentH2O(bool tf);
-    @n SetConcentrations(std::vector< double > c);
-    @n SetCurrentSelectedOutputUserNumber(int n_user);
-    @n SetDensityUser(std::vector< double > density);
-    @n SetDumpFileName(std::string dump_name);
-    @n SetErrorHandlerMode(int mode);
-    @n SetErrorOn(bool tf);
-    @n SetFilePrefix(std::string prefix);
-    @n SetGasCompMoles(std::vector< double > gas_moles);
-    @n SetGasPhaseVolume(std::vector< double > gas_volume);
-    @n SetPartitionUZSolids(bool tf);
-    @n SetPorosity(std::vector< double > por);
-    @n SetPressure(std::vector< double > p);
-    @n SetPrintChemistryMask(std::vector< int > cell_mask);
-    @n SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
-    @n SetRebalanceByCell(bool tf);
-    @n SetRebalanceFraction(double f);
-    @n SetRepresentativeVolume(std::vector< double > rv);
-    @n SetSaturationUser(std::vector< double > sat);
-    @n SetScreenOn(bool tf);
-    @n SetSelectedOutputOn(bool tf);
-    @n SetSpeciesSaveOn(bool save_on);
-    @n SetTemperature(std::vector< double > t);
-    @n SetTime(double time);
-    @n SetTimeConversion(double conv_factor);
-    @n SetTimeStep(double time_step);
-    @n SetUnitsExchange(int option);
-    @n SetUnitsGasPhase(int option);
-    @n SetUnitsKinetics(int option);
-    @n SetUnitsPPassemblage(int option);
-    @n SetUnitsSolution(int option);
-    @n SetUnitsSSassemblage(int option);
-    @n SetUnitsSurface(int option);
-    @n SpeciesConcentrations2Module(std::vector< double > species_conc);
-    @n StateSave(int istate);
-    @n StateApply(int istate);
-    @n StateDelete(int istate);
-    @n UseSolutionDensityVolume(bool tf);
-    @n WarningMessage(std::string warnstr);
+    CloseFiles();
+    CreateMapping(std::vector< int >& grid2chem);
+    DumpModule();
+    FindComponents();
+    InitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
+    InitialExchanges2Module(std::vector< int > exchanges);
+    InitialGasPhases2Module(std::vector< int > gas_phases);
+    InitialKineticss2Module(std::vector< int > kinetics);
+    InitialSolidSolutions2Module(std::vector< int > solid_solutions);
+    InitialSolutions2Module(std::vector< int > solutions);
+    InitialSurfaces2Module(std::vector< int > surfaces);
+    InitialPhreeqc2Module(std::vector< int > initial_conditions1);
+    InitialPhreeqc2Module(std::vector< int > initial_conditions1,
+        std::vector< int > initial_conditions2, std::vector< double > fraction1);
+    InitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
+    LoadDatabase(std::string database);
+    OpenFiles();
+    OutputMessage(std::string str);
+    RunCells();
+    RunFile(bool workers, bool initial_phreeqc,
+         bool utility, std::string chemistry_name);
+    RunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
+    ScreenMessage(std::string str);
+    SetComponentH2O(bool tf);
+    SetConcentrations(std::vector< double > c);
+    SetCurrentSelectedOutputUserNumber(int n_user);
+    SetDensityUser(std::vector< double > density);
+    SetDumpFileName(std::string dump_name);
+    SetErrorHandlerMode(int mode);
+    SetErrorOn(bool tf);
+    SetFilePrefix(std::string prefix);
+    SetGasCompMoles(std::vector< double > gas_moles);
+    SetGasPhaseVolume(std::vector< double > gas_volume);
+    SetPartitionUZSolids(bool tf);
+    SetPorosity(std::vector< double > por);
+    SetPressure(std::vector< double > p);
+    SetPrintChemistryMask(std::vector< int > cell_mask);
+    SetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
+    SetRebalanceByCell(bool tf);
+    SetRebalanceFraction(double f);
+    SetRepresentativeVolume(std::vector< double > rv);
+    SetSaturationUser(std::vector< double > sat);
+    SetScreenOn(bool tf);
+    SetSelectedOutputOn(bool tf);
+    SetSpeciesSaveOn(bool save_on);
+    SetTemperature(std::vector< double > t);
+    SetTime(double time);
+    SetTimeConversion(double conv_factor);
+    SetTimeStep(double time_step);
+    SetUnitsExchange(int option);
+    SetUnitsGasPhase(int option);
+    SetUnitsKinetics(int option);
+    SetUnitsPPassemblage(int option);
+    SetUnitsSolution(int option);
+    SetUnitsSSassemblage(int option);
+    SetUnitsSurface(int option);
+    SpeciesConcentrations2Module(std::vector< double > species_conc);
+    StateSave(int istate);
+    StateApply(int istate);
+    StateDelete(int istate);
+    UseSolutionDensityVolume(bool tf);
+    WarningMessage(std::string warnstr);
     </PRE>
     </CODE>
     @endhtmlonly
@@ -213,8 +217,8 @@ public:
      */
     void Initialize(std::string config_file = "") override;
     /**
-    @a Update runs PhreeqcRM for one time step. This method is equivalent to
-    @ref RunCells. PhreeqcRM will equilibrate the solutions with all equilibrium
+    @a Update runs PhreeqcRM for one time step. PhreeqcRM will equilibrate 
+    the solutions with all equilibrium
     reactants (EQUILIBRIUM_PHASES, EXCHANGE, GAS_PHASE, SOLID_SOLUTIONS, and SURFACE)
     and integrate KINETICS reactions for the specified time step
     (@ref SetValue "TimeStep" or @ref SetTimeStep).
@@ -691,7 +695,7 @@ public:
     @htmlonly
         <CODE>
         <PRE>
-        std::vector< std::string > OutputVarNames = brm.GetOutputVarNames();
+    std::vector< std::string > OutputVarNames = brm.GetOutputVarNames();
     int count = brm.GetOutputItemCount();
     oss << "GetValue variables:\n";
     for (size_t i = 0; i < count; i++)
@@ -815,7 +819,9 @@ public:
 
     @param name Name of the variable to retrieve.
     @param dest Variable in which to place results. The @a dest variable
-    can be of different types depending on the variable retrieved. The
+    can be of different types depending on the variable retrieved. 
+    @n@n
+    The
     following list gives the name in the first argument and the
     corresponding data type of the @a dest argument:
 
@@ -948,10 +954,14 @@ public:
     provided by @ref GetInputVarNames can be set. 
     @param name Name of the variable to retrieve.
     @param src Data used to set the variable. The @a src data type
-    can vary depending on the variable retrieved. The
-    following list gives the name in the first argument and the 
+    can vary depending on the variable retrieved. 
+    @n@n
+    The following list gives the name in the first argument and the 
     corresponding data type and size of the @a src argument:
 
+    @htmlonly
+    <CODE>
+    <PRE>
     "Concentrations", std::vector<double>, [GridCellCount*ComponentCount];
     "DensityUser", std::vector<double>, [GridCellCount];
     "FilePrefix", std::string;
@@ -963,9 +973,12 @@ public:
     "Temperature", std::vector<double>, [GridCellCount];
     "Time", double;
     "TimeStep", double;
+    </PRE>
+    </CODE>
+    @endhtmlonly
     @see
     @ref GetInputVarNames,
-    @ref GetInputItemCount,,
+    @ref GetInputItemCount,
     @ref GetValue,
     @ref GetVarItemsize,
     @ref GetVarNbytes,
@@ -1161,44 +1174,72 @@ public:
     specifies a subset of items of the given type.
 
     Values for the the parameter @a option:
-    @n AddOutputVars: False excludes all variables; True causes the settings for each variable group
+    @n@n
+	@a AddOutputVars: 
+    False excludes all variables; True causes the settings for each variable group
     to determine the variables that will be defined. Default True;
-    @n SolutionProperties: False excludes all solution property variables; True includes variables pH, pe,
+    @n@n
+	@a SolutionProperties: 
+    False excludes all solution property variables; True includes variables pH, pe,
     alkalinity, ionic strength, water mass, charge balance, percent error, and specific conductance.
     Default True.
-    @n SolutionTotalMolalities: False excludes all total element and element redox state variables;
+    @n@n
+	@a SolutionTotalMolalities: 
+    False excludes all total element and element redox state variables;
     True includes all elements and element redox state variables for the system defined for the
     calculation; list restricts variables to the specified elements and redox states.
     Default True.
-    @n ExchangeMolalities: False excludes all variables related to exchange; True includes all
+    @n@n
+	@a ExchangeMolalities: 
+    False excludes all variables related to exchange; True includes all
     variables related to exchange; list includes variables for the specified exchange species.
     Default True.
-    @n SurfaceMolalities: False excludes all variables related to surfaces; True includes all
+    @n@n
+	@a SurfaceMolalities: 
+    False excludes all variables related to surfaces; True includes all
     variables related to surfaces; list includes variables for the specified surface species.
     Default True.
-    @n EquilibriumPhases: False excludes all variables related to equilibrium phases; True includes all
+    @n@n
+	@a EquilibriumPhases: 
+    False excludes all variables related to equilibrium phases; True includes all
     variables related to equilibrium phases; list includes variables for the specified
     equilibiurm phases. Default True.
-    @n Gases: False excludes all variables related to gases; True includes all
+    @n@n
+	@a Gases: 
+    False excludes all variables related to gases; True includes all
     variables related to gases; list includes variables for the specified gas components. Default True.
-    @n KineticReactants: False excludes all variables related to kinetic reactants; True includes all
+    @n@n
+	@a KineticReactants: 
+    False excludes all variables related to kinetic reactants; True includes all
     variables related to kinetic reactants; list includes variables for the specified kinetic
     reactants. Default True.
-    @n SolidSolutions: False excludes all variables related to solid solutions; True includes all
+    @n@n
+	@a SolidSolutions: 
+    False excludes all variables related to solid solutions; True includes all
     variables related to solid solutions; list includes variables for the specified solid solutions
     components. Default True.
-    @n CalculateValues: False excludes all calculate values; True includes all
+    @n@n
+	@a CalculateValues: 
+    False excludes all calculate values; True includes all
     calculate values; list includes the specified calculate values. CALCLUATE_VALUES can be
     used to calculate geochemical quantities not available in the other sets of variables.
     Default True.
-    @n SolutionActivities: False excludes all aqueous species; True includes all
+    @n@n
+	@a SolutionActivities: 
+    False excludes all aqueous species; True includes all
     aqueous species; list includes only the specified aqueous species. Default False.
-    @n SolutionMolalities: False excludes all aqueous species; True includes all
+    @n@n
+	@a SolutionMolalities: 
+    False excludes all aqueous species; True includes all
     aqueous species; list includes only the specified aqueous species. Default False.
-    @n SaturationIndices: False excludes all saturation indices; True includes all
+    @n@n
+	@a SaturationIndices: 
+    False excludes all saturation indices; True includes all
     saturation indices; list includes only the specified saturation indices. Default False.
     */
     void AddOutputVars(std::string option, std::string def) override;
+
+    IRM_RESULT SetLanguage(const char* string) { this->language = string; return IRM_OK; };
     // data
     std::string language;
     // typedef void (*VarFunction)(BMIPhreeqcRM* brm_ptr); // function pointer type
@@ -1239,10 +1280,12 @@ protected:
 private:
     //friend class RM_interface;
     VarManager* var_man;
+    bool constructed = false;
 
     void ClearBMISelectedOutput() override;
     void GenerateAutoOutputVars() override;
     void UpdateBMI(RMVARS v_enum) override;
     void UpdateVariables();
+    RMVARS GetEnum(const std::string name);
 };
 #endif //BMIPHREEQCRM_H_INCLUDED

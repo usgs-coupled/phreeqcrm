@@ -1,228 +1,384 @@
 #!/bin/sh
 sed -i "s/getgridcellcountyaml/GetGridCellCountYAML/g" $(egrep -l getgridcellcountyaml ./html/*)
-sed -i "s/setgridcellcountyaml/SetGridCellCountYAML/g" $(egrep -l setgridcellcountyaml ./html/*)
-sed -i "s/rm_abort/RM_Abort/g" $(egrep -l rm_abort ./html/*)
-sed -i "s/rm_closefiles/RM_CloseFiles/g" $(egrep -l rm_closefiles ./html/*)
-sed -i "s/rm_concentrations2utility/RM_Concentrations2Utility/g" $(egrep -l rm_concentrations2utility ./html/*)
-sed -i "s/rm_create/RM_Create/g" $(egrep -l rm_create ./html/*)
-sed -i "s/rm_createmapping/RM_CreateMapping/g" $(egrep -l rm_createmapping ./html/*)
-sed -i "s/rm_decodeerror/RM_DecodeError/g" $(egrep -l rm_decodeerror ./html/*)
-sed -i "s/rm_destroy/RM_Destroy/g" $(egrep -l rm_destroy ./html/*)
-sed -i "s/rm_dumpmodule/RM_DumpModule/g" $(egrep -l rm_dumpmodule ./html/*)
-sed -i "s/rm_errormessage/RM_ErrorMessage/g" $(egrep -l rm_errormessage ./html/*)
-sed -i "s/rm_findcomponents/RM_FindComponents/g" $(egrep -l rm_findcomponents ./html/*)
-sed -i "s/rm_getbackwardmapping/RM_GetBackwardMapping/g" $(egrep -l rm_getbackwardmapping ./html/*)
-sed -i "s/rm_getchemistrycellcount/RM_GetChemistryCellCount/g" $(egrep -l rm_getchemistrycellcount ./html/*)
-sed -i "s/rm_getcomponentcount/RM_GetComponentCount/g" $(egrep -l rm_getcomponentcount ./html/*)
-sed -i "s/rm_getcomponent/RM_GetComponent/g" $(egrep -l rm_getcomponent ./html/*)
-sed -i "s/rm_getconcentrations/RM_GetConcentrations/g" $(egrep -l rm_getconcentrations ./html/*)
-sed -i "s/rm_getcurrentselectedoutputusernumber/RM_GetCurrentSelectedOutputUserNumber/g" $(egrep -l rm_getcurrentselectedoutputusernumber ./html/*)
-sed -i "s/rm_getdensitycalculated/RM_GetDensityCalculated/g" $(egrep -l rm_getdensitycalculated ./html/*)
-sed -i "s/rm_getendcell/RM_GetEndCell/g" $(egrep -l rm_getendcell ./html/*)
-sed -i "s/rm_geterrorstringlength/RM_GetErrorStringLength/g" $(egrep -l rm_geterrorstringlength ./html/*)
-sed -i "s/rm_geterrorstring/RM_GetErrorString/g" $(egrep -l rm_geterrorstring ./html/*)
-sed -i "s/rm_getfileprefix/RM_GetFilePrefix/g" $(egrep -l rm_getfileprefix ./html/*)
-sed -i "s/rm_getgascompmoles/RM_GetGasCompMoles/g" $(egrep -l rm_getgascompmoles ./html/*)
-sed -i "s/rm_getgascomppressures/RM_GetGasCompPressures/g" $(egrep -l rm_getgascomppressures ./html/*)
-sed -i "s/rm_getgascompphi/RM_GetGasCompPhi/g" $(egrep -l rm_getgascompphi ./html/*)
-sed -i "s/rm_getgasphasevolume/RM_GetGasPhaseVolume/g" $(egrep -l rm_getgasphasevolume ./html/*)
-sed -i "s/rm_setgascompmoles/RM_SetGasCompMoles/g" $(egrep -l rm_setgascompmoles ./html/*)
-sed -i "s/rm_setgasphasevolume/RM_SetGasPhaseVolume/g" $(egrep -l rm_setgasphasevolume ./html/*)
-sed -i "s/rm_getspecieslog10molalities/RM_GetSpeciesLog10Molalities/g" $(egrep -l rm_getspecieslog10molalities ./html/*)
-sed -i "s/rm_getgfw/RM_GetGfw/g" $(egrep -l rm_getgfw ./html/*)
-sed -i "s/rm_getgridcellcount/RM_GetGridCellCount/g" $(egrep -l rm_getgridcellcount ./html/*)
-sed -i "s/rm_getiphreeqcid/RM_GetIPhreeqcId/g" $(egrep -l rm_getiphreeqcid ./html/*)
-sed -i "s/rm_getmpimyself/RM_GetMpiMyself/g" $(egrep -l rm_getmpimyself ./html/*)
-sed -i "s/rm_getmpitasks/RM_GetMpiTasks/g" $(egrep -l rm_getmpitasks ./html/*)
-sed -i "s/rm_getnthselectedoutputusernumber/RM_GetNthSelectedOutputUserNumber/g" $(egrep -l rm_getnthselectedoutputusernumber ./html/*)
-sed -i "s/rm_getporosity/RM_GetPorosity/g" $(egrep -l rm_getporosity ./html/*)
-sed -i "s/rm_getpressure/RM_GetPressure/g" $(egrep -l rm_getpressure ./html/*)
-sed -i "s/rm_getsaturationcalculated/RM_GetSaturationCalculated/g" $(egrep -l rm_getsaturationcalculated ./html/*)
-sed -i "s/rm_getselectedoutputcolumncount/RM_GetSelectedOutputColumnCount/g" $(egrep -l rm_getselectedoutputcolumncount ./html/*)
-sed -i "s/rm_getselectedoutputcount/RM_GetSelectedOutputCount/g" $(egrep -l rm_getselectedoutputcount ./html/*)
-sed -i "s/rm_getselectedoutputheading/RM_GetSelectedOutputHeading/g" $(egrep -l rm_getselectedoutputheading ./html/*)
-sed -i "s/rm_getselectedoutputrowcount/RM_GetSelectedOutputRowCount/g" $(egrep -l rm_getselectedoutputrowcount ./html/*)
-sed -i "s/rm_getselectedoutput/RM_GetSelectedOutput/g" $(egrep -l rm_getselectedoutput ./html/*)
-sed -i "s/rm_getsolutionvolume/RM_GetSolutionVolume/g" $(egrep -l rm_getsolutionvolume ./html/*)
-sed -i "s/rm_getspeciesconcentrations/RM_GetSpeciesConcentrations/g" $(egrep -l rm_getspeciesconcentrations ./html/*)
-sed -i "s/rm_getspeciescount/RM_GetSpeciesCount/g" $(egrep -l rm_getspeciescount ./html/*)
-sed -i "s/rm_getspeciesd25/RM_GetSpeciesD25/g" $(egrep -l rm_getspeciesd25 ./html/*)
-sed -i "s/rm_getspeciesname/RM_GetSpeciesName/g" $(egrep -l rm_getspeciesname ./html/*)
-sed -i "s/rm_getspeciessaveon/RM_GetSpeciesSaveOn/g" $(egrep -l rm_getspeciessaveon ./html/*)
-sed -i "s/rm_getspeciesz/RM_GetSpeciesZ/g" $(egrep -l rm_getspeciesz ./html/*)
-sed -i "s/rm_getstartcell/RM_GetStartCell/g" $(egrep -l rm_getstartcell ./html/*)
-sed -i "s/rm_getthreadcount/RM_GetThreadCount/g" $(egrep -l rm_getthreadcount ./html/*)
-sed -i "s/rm_gettime/RM_GetTime/g" $(egrep -l rm_gettime ./html/*)
-sed -i "s/rm_gettimeconversion/RM_GetTimeConversion/g" $(egrep -l rm_gettimeconversion ./html/*)
-sed -i "s/rm_gettimestep/RM_GetTimeStep/g" $(egrep -l rm_gettimestep ./html/*)
-sed -i "s/rm_initializeyaml/RM_InitializeYAML/g" $(egrep -l rm_initializeyaml ./html/*)
-sed -i "s/rm_initialphreeqc2concentrations/RM_InitialPhreeqc2Concentrations/g" $(egrep -l rm_initialphreeqc2concentrations ./html/*)
-sed -i "s/rm_initialphreeqc2module/RM_InitialPhreeqc2Module/g" $(egrep -l rm_initialphreeqc2module ./html/*)
-sed -i "s/rm_initialphreeqccell2module/RM_InitialPhreeqcCell2Module/g" $(egrep -l rm_initialphreeqccell2module ./html/*)
-sed -i "s/rm_initialphreeqc2speciesconcentrations/RM_InitialPhreeqc2SpeciesConcentrations/g" $(egrep -l rm_initialphreeqc2speciesconcentrations ./html/*)
-sed -i "s/rm_loaddatabase/RM_LoadDatabase/g" $(egrep -l rm_loaddatabase ./html/*)
-sed -i "s/rm_logmessage/RM_LogMessage/g" $(egrep -l rm_logmessage ./html/*)
-sed -i "s/rm_mpiworkerbreak/RM_MpiWorkerBreak/g" $(egrep -l rm_mpiworkerbreak ./html/*)
-sed -i "s/rm_mpiworker/RM_MpiWorker/g" $(egrep -l rm_mpiworker ./html/*)
-sed -i "s/rm_openfiles/RM_OpenFiles/g" $(egrep -l rm_openfiles ./html/*)
-sed -i "s/rm_outputmessage/RM_OutputMessage/g" $(egrep -l rm_outputmessage ./html/*)
-sed -i "s/rm_runcells/RM_RunCells/g" $(egrep -l rm_runcells ./html/*)
-sed -i "s/rm_runfile/RM_RunFile/g" $(egrep -l rm_runfile ./html/*)
-sed -i "s/rm_runstring/RM_RunString/g" $(egrep -l rm_runstring ./html/*)
-sed -i "s/rm_screenmessage/RM_ScreenMessage/g" $(egrep -l rm_screenmessage ./html/*)
-sed -i "s/rm_setcomponenth2o/RM_SetComponentH2O/g" $(egrep -l rm_setcomponenth2o ./html/*)
-sed -i "s/rm_setconcentrations/RM_SetConcentrations/g" $(egrep -l rm_setconcentrations ./html/*)
-sed -i "s/rm_setcurrentselectedoutputusernumber/RM_SetCurrentSelectedOutputUserNumber/g" $(egrep -l rm_setcurrentselectedoutputusernumber ./html/*)
-sed -i "s/rm_setdensityuser/RM_SetDensityUser/g" $(egrep -l rm_setdensityuser ./html/*)
-sed -i "s/rm_setdumpfilename/RM_SetDumpFileName/g" $(egrep -l rm_setdumpfilename ./html/*)
-sed -i "s/rm_seterrorhandlermode/RM_SetErrorHandlerMode/g" $(egrep -l rm_seterrorhandlermode ./html/*)
-sed -i "s/rm_seterroron/RM_SetErrorOn/g" $(egrep -l rm_seterroron ./html/*)
-sed -i "s/rm_setfileprefix/RM_SetFilePrefix/g" $(egrep -l rm_setfileprefix ./html/*)
-sed -i "s/rm_setmpiworkercallback/RM_SetMpiWorkerCallback/g" $(egrep -l rm_setmpiworkercallback ./html/*)
-sed -i "s/rm_setnthselectedoutput/RM_SetNthSelectedOutput/g" $(egrep -l rm_setnthselectedoutput ./html/*)
-sed -i "s/rm_setpartitionuzsolids/RM_SetPartitionUZSolids/g" $(egrep -l rm_setpartitionuzsolids ./html/*)
-sed -i "s/rm_setporosity/RM_SetPorosity/g" $(egrep -l rm_setporosity ./html/*)
-sed -i "s/rm_setprintchemistrymask/RM_SetPrintChemistryMask/g" $(egrep -l rm_setprintchemistrymask ./html/*)
-sed -i "s/rm_setprintchemistryon/RM_SetPrintChemistryOn/g" $(egrep -l rm_setprintchemistryon ./html/*)
-sed -i "s/rm_setpressure/RM_SetPressure/g" $(egrep -l rm_setpressure ./html/*)
-sed -i "s/rm_setrebalancefraction/RM_SetRebalanceFraction/g" $(egrep -l rm_setrebalancefraction ./html/*)
-sed -i "s/rm_setrebalancebycell/RM_SetRebalanceByCell/g" $(egrep -l rm_setrebalancebycell ./html/*)
-sed -i "s/rm_setrepresentativevolume/RM_SetRepresentativeVolume/g" $(egrep -l rm_setrepresentativevolume ./html/*)
-sed -i "s/rm_setsaturationuser/RM_SetSaturationUser/g" $(egrep -l rm_setsaturationuser ./html/*)
-sed -i "s/rm_setscreenon/RM_SetScreenOn/g" $(egrep -l rm_setscreenon ./html/*)
-sed -i "s/rm_setselectedoutputon/RM_SetSelectedOutputOn/g" $(egrep -l rm_setselectedoutputon ./html/*)
-sed -i "s/rm_setspeciessaveon/RM_SetSpeciesSaveOn/g" $(egrep -l rm_setspeciessaveon ./html/*)
-sed -i "s/rm_settemperature/RM_SetTemperature/g" $(egrep -l rm_settemperature ./html/*)
-sed -i "s/rm_settimeconversion/RM_SetTimeConversion/g" $(egrep -l rm_settimeconversion ./html/*)
-sed -i "s/rm_settimestep/RM_SetTimeStep/g" $(egrep -l rm_settimestep ./html/*)
-sed -i "s/rm_settime/RM_SetTime/g" $(egrep -l rm_settime ./html/*)
-sed -i "s/rm_setunitsexchange/RM_SetUnitsExchange/g" $(egrep -l rm_setunitsexchange ./html/*)
-sed -i "s/rm_setunitsgasphase/RM_SetUnitsGasPhase/g" $(egrep -l rm_setunitsgasphase ./html/*)
-sed -i "s/rm_setunitskinetics/RM_SetUnitsKinetics/g" $(egrep -l rm_setunitskinetics ./html/*)
-sed -i "s/rm_setunitsppassemblage/RM_SetUnitsPPassemblage/g" $(egrep -l rm_setunitsppassemblage ./html/*)
-sed -i "s/rm_setunitssolution/RM_SetUnitsSolution/g" $(egrep -l rm_setunitssolution ./html/*)
-sed -i "s/rm_setunitsssassemblage/RM_SetUnitsSSassemblage/g" $(egrep -l rm_setunitsssassemblage ./html/*)
-sed -i "s/rm_setunitsssassemblage/RM_SetUnitsSSassemblage/g" $(egrep -l rm_setunitsssassemblage ./html/*)
-sed -i "s/rm_setunitssurface/RM_SetUnitsSurface/g" $(egrep -l rm_setunitssurface ./html/*)
-sed -i "s/rm_speciesconcentrations2module/RM_SpeciesConcentrations2Module/g" $(egrep -l rm_speciesconcentrations2module ./html/*)
-sed -i "s/rm_usesolutiondensityvolume/RM_UseSolutionDensityVolume/g" $(egrep -l rm_usesolutiondensityvolume ./html/*)
-sed -i "s/rm_warningmessage/RM_WarningMessage/g" $(egrep -l rm_warningmessage ./html/*)
-sed -i "s/rm_getspecieslog10gammas/RM_GetSpeciesLog10Gammas/g"  $(egrep -l rm_getspecieslog10gammas ./html/*)
-sed -i "s/rm_getexchangespeciescount/RM_GetExchangeSpeciesCount/g"  $(egrep -l rm_getexchangespeciescount ./html/*)
-sed -i "s/rm_getexchangespeciesname/RM_GetExchangeSpeciesName/g"  $(egrep -l rm_getexchangespeciesname ./html/*)
-sed -i "s/rm_getexchangename/RM_GetExchangeName/g"  $(egrep -l rm_getexchangename ./html/*)
-sed -i "s/rm_getsurfacespeciescount/RM_GetSurfaceSpeciesCount/g"  $(egrep -l rm_getsurfacespeciescount ./html/*)
-sed -i "s/rm_getsurfacespeciesname/RM_GetSurfaceSpeciesName/g"  $(egrep -l rm_getsurfacespeciesname ./html/*)
-sed -i "s/rm_getsurfacetype/RM_GetSurfaceType/g"  $(egrep -l rm_getsurfacetype ./html/*)
-sed -i "s/rm_getsurfacename/RM_GetSurfaceName/g"  $(egrep -l rm_getsurfacename ./html/*)
-sed -i "s/rm_getequilibriumphasescount/RM_GetEquilibriumPhasesCount/g"  $(egrep -l rm_getequilibriumphasescount ./html/*)
-sed -i "s/rm_getequilibriumphasesname/RM_GetEquilibriumPhasesName/g"  $(egrep -l rm_getequilibriumphasesname ./html/*)
-sed -i "s/rm_getgascomponentscount/RM_GetGasComponentsCount/g"  $(egrep -l rm_getgascomponentscount ./html/*)
-sed -i "s/rm_getgascomponentsname/RM_GetGasComponentsName/g"  $(egrep -l rm_getgascomponentsname ./html/*)
-sed -i "s/rm_getkineticreactionscount/RM_GetKineticReactionsCount/g"  $(egrep -l rm_getkineticreactionscount ./html/*)
-sed -i "s/rm_getkineticreactionsname/RM_GetKineticReactionsName/g"  $(egrep -l rm_getkineticreactionsname ./html/*)
-sed -i "s/rm_getsolidsolutioncomponentscount/RM_GetSolidSolutionComponentsCount/g"  $(egrep -l rm_getsolidsolutioncomponentscount ./html/*)
-sed -i "s/rm_getsolidsolutioncomponentsname/RM_GetSolidSolutionComponentsName/g"  $(egrep -l rm_getsolidsolutioncomponentsname ./html/*)
-sed -i "s/rm_getsolidsolutionname/RM_GetSolidSolutionName/g"  $(egrep -l rm_getsolidsolutionname ./html/*)
-sed -i "s/rm_getsicount/RM_GetSICount/g"  $(egrep -l rm_getsicount ./html/*)
-sed -i "s/rm_getsiname/RM_GetSIName/g"  $(egrep -l rm_getsiname ./html/*)
-sed -i "s/rm_statesave/RM_StateSave/g"  $(egrep -l rm_statesave ./html/*)
-sed -i "s/rm_stateapply/RM_StateApply/g"  $(egrep -l rm_stateapply ./html/*)
-sed -i "s/rm_statedelete/RM_StateDelete/g"  $(egrep -l rm_statedelete ./html/*)
-sed -i "s/rm_getcomponents/RM_GetComponents/g" $(egrep -l rm_getcomponents ./html/*)
-sed -i "s/rm_getgridcellcountyaml/RM_GetGridCellCountYAML/g" $(egrep -l rm_getgridcellcountyaml ./html/*)
-sed -i "s/rm_getselectedoutputheadings/RM_GetSelectedOutputHeadings/g" $(egrep -l rm_getselectedoutputheadings ./html/*)
-sed -i "s/rm_gettemperature/RM_GetTemperature/g" $(egrep -l rm_gettemperature ./html/*)
-sed -i "s/rm_getviscosity/RM_GetViscosity/g" $(egrep -l rm_getviscosity ./html/*)
-sed -i "s/rm_getithconcentration/RM_GetIthConcentration/g" $(egrep -l rm_getithconcentration ./html/*)
-sed -i "s/rm_getithspeciesconcentration/RM_GetIthSpeciesConcentration/g" $(egrep -l rm_getithspeciesconcentration ./html/*)
-sed -i "s/rm_setithconcentration/RM_SetIthConcentration/g" $(egrep -l rm_setithconcentration ./html/*)
-sed -i "s/rm_setithspeciesconcentration/RM_SetIthSpeciesConcentration/g" $(egrep -l rm_setithspeciesconcentration ./html/*)
-sed -i "s/rm_initialsolutions2module/RM_InitialSolutions2Module/g" $(egrep -l rm_initialsolutions2module ./html/*)
-sed -i "s/rm_initialequilibriumphases2module/RM_InitialEquilibriumPhases2Module/g" $(egrep -l rm_initialequilibriumphases2module ./html/*)
-sed -i "s/rm_initialexchanges2module/RM_InitialExchanges2Module/g" $(egrep -l rm_initialexchanges2module ./html/*)
-sed -i "s/rm_initialsurfaces2module/RM_InitialSurfaces2Module/g" $(egrep -l rm_initialsurfaces2module ./html/*)
-sed -i "s/rm_initialgasphases2module/RM_InitialGasPhases2Module/g" $(egrep -l rm_initialgasphases2module ./html/*)
-sed -i "s/rm_initialsolidsolutions2module/RM_InitialSolidSolutions2Module/g" $(egrep -l rm_initialsolidsolutions2module ./html/*)
-sed -i "s/rm_initialkinetics2module/RM_InitialKinetics2Module/g" $(egrep -l rm_initialkinetics2module ./html/*)
-sed -i "s/destroyyamlphreeqcrm/DestroyYAMLPhreeqcRM/g"  $(egrep -l destroyyamlphreeqcrm ./html/*)
-sed -i "s/createyamlphreeqcrm/CreateYAMLPhreeqcRM/g"  $(egrep -l createyamlphreeqcrm ./html/*)
-sed -i "s/writeyamldoc/WriteYAMLDoc/g"  $(egrep -l writeyamldoc ./html/*)
-sed -i "s/yamladdoutputvars/YAMLAddOutputVars/g" $(egrep -l yamlclear ./html/*)
-sed -i "s/yamlclear/YAMLClear/g" $(egrep -l yamlclear ./html/*)
-sed -i "s/yamlclosefiles/YAMLCloseFiles/g" $(egrep -l yamlclosefiles ./html/*)
-sed -i "s/yamlcreatemapping/YAMLCreateMapping/g" $(egrep -l yamlcreatemapping ./html/*)
-sed -i "s/yamldumpmodule/YAMLDumpModule/g" $(egrep -l yamldumpmodule ./html/*)
-sed -i "s/yamlfindcomponents/YAMLFindComponents/g" $(egrep -l yamlfindcomponents ./html/*)
-sed -i "s/yamlinitialsolutions2module/YAMLInitialSolutions2Module/g" $(egrep -l yamlinitialsolutions2module ./html/*)
-sed -i "s/yamlinitialequilibriumphases2module/YAMLInitialEquilibriumPhases2Module/g" $(egrep -l yamlinitialequilibriumphases2module ./html/*)
-sed -i "s/yamlinitialexchanges2module/YAMLInitialExchanges2Module/g" $(egrep -l yamlinitialexchanges2module ./html/*)
-sed -i "s/yamlinitialsurfaces2module/YAMLInitialSurfaces2Module/g" $(egrep -l yamlinitialsurfaces2module ./html/*)
-sed -i "s/yamlinitialgasphases2module/YAMLInitialGasPhases2Module/g" $(egrep -l yamlinitialgasphases2module ./html/*)
-sed -i "s/yamlinitialsolidsolutions2module/YAMLInitialSolidSolutions2Module/g" $(egrep -l yamlinitialsolidsolutions2module ./html/*)
-sed -i "s/yamlinitialkinetics2module/YAMLInitialKinetics2Module/g" $(egrep -l yamlinitialkinetics2module ./html/*)
-sed -i "s/yamlinitialphreeqc2module/YAMLInitialPhreeqc2Module/g" $(egrep -l yamlinitialphreeqc2module ./html/*)
-sed -i "s/yamlinitialphreeqc2module_mix/YAMLInitialPhreeqc2Module_mix/g" $(egrep -l yamlinitialphreeqc2module_mix ./html/*)
-sed -i "s/yamlinitialphreeqccell2module/YAMLInitialPhreeqcCell2Module/g" $(egrep -l yamlinitialphreeqccell2module ./html/*)
-sed -i "s/yamlloaddatabase/YAMLLoadDatabase/g" $(egrep -l yamlloaddatabase ./html/*)
-sed -i "s/yamllogmessage/YAMLLogMessage/g" $(egrep -l yamllogmessage ./html/*)
-sed -i "s/yamlopenfiles/YAMLOpenFiles/g" $(egrep -l yamlopenfiles ./html/*)
-sed -i "s/yamloutputmessage/YAMLOutputMessage/g" $(egrep -l yamloutputmessage ./html/*)
-sed -i "s/yamlruncells/YAMLRunCells/g" $(egrep -l yamlruncells ./html/*)
-sed -i "s/yamlrunfile/YAMLRunFile/g" $(egrep -l yamlrunfile ./html/*)
-sed -i "s/yamlrunstring/YAMLRunString/g" $(egrep -l yamlrunstring ./html/*)
-sed -i "s/yamlscreenmessage/YAMLScreenMessage/g" $(egrep -l yamlscreenmessage ./html/*)
-sed -i "s/yamlsetcomponenth2o/YAMLSetComponentH2O/g" $(egrep -l yamlsetcomponenth2o ./html/*)
-sed -i "s/yamlsetconcentrations/YAMLSetConcentrations/g" $(egrep -l yamlsetconcentrations ./html/*)
-sed -i "s/yamlsetcurrentselectedoutputusernumber/YAMLSetCurrentSelectedOutputUserNumber/g" $(egrep -l yamlsetcurrentselectedoutputusernumber ./html/*)
-sed -i "s/yamlsetdensityuser/YAMLSetDensityUser/g" $(egrep -l yamlsetdensityuser ./html/*)
-sed -i "s/yamlsetdumpfilename/YAMLSetDumpFileName/g" $(egrep -l yamlsetdumpfilename ./html/*)
-sed -i "s/yamlseterrorhandlermode/YAMLSetErrorHandlerMode/g" $(egrep -l yamlseterrorhandlermode ./html/*)
-sed -i "s/yamlseterroron/YAMLSetErrorOn/g" $(egrep -l yamlseterroron ./html/*)
-sed -i "s/yamlsetfileprefix/YAMLSetFilePrefix/g" $(egrep -l yamlsetfileprefix ./html/*)
-sed -i "s/yamlsetgascompmoles/YAMLSetGasCompMoles/g" $(egrep -l yamlsetgascompmoles ./html/*)
-sed -i "s/yamlsetgasphasevolume/YAMLSetGasPhaseVolume/g" $(egrep -l yamlsetgasphasevolume ./html/*)
-sed -i "s/yamlsetgridcellcount/YAMLSetGridCellCount/g" $(egrep -l yamlsetgridcellcount ./html/*)
-sed -i "s/yamlsetnthselectedoutput/YAMLSetNthSelectedOutput/g" $(egrep -l yamlsetnthselectedoutput ./html/*)
-sed -i "s/yamlsetpartitionuzsolids/YAMLSetPartitionUZSolids/g" $(egrep -l yamlsetpartitionuzsolids ./html/*)
-sed -i "s/yamlsetporosity/YAMLSetPorosity/g" $(egrep -l yamlsetporosity ./html/*)
-sed -i "s/yamlsetpressure/YAMLSetPressure/g" $(egrep -l yamlsetpressure ./html/*)
-sed -i "s/yamlsetprintchemistrymask/YAMLSetPrintChemistryMask/g" $(egrep -l yamlsetprintchemistrymask ./html/*)
-sed -i "s/yamlsetprintchemistryon/YAMLSetPrintChemistryOn/g" $(egrep -l yamlsetprintchemistryon ./html/*)
-sed -i "s/yamlsetrebalancebycell/YAMLSetRebalanceByCell/g" $(egrep -l yamlsetrebalancebycell ./html/*)
-sed -i "s/yamlsetrebalancefraction/YAMLSetRebalanceFraction/g" $(egrep -l yamlsetrebalancefraction ./html/*)
-sed -i "s/yamlsetrepresentativevolume/YAMLSetRepresentativeVolume/g" $(egrep -l yamlsetrepresentativevolume ./html/*)
-sed -i "s/yamlsetsaturationuser/YAMLSetSaturationUser/g" $(egrep -l yamlsetsaturationuser ./html/*)
-sed -i "s/yamlsetscreenon/YAMLSetScreenOn/g" $(egrep -l yamlsetscreenon ./html/*)
-sed -i "s/yamlsetselectedoutputon/YAMLSetSelectedOutputOn/g" $(egrep -l yamlsetselectedoutputon ./html/*)
-sed -i "s/yamlsetspeciessaveon/YAMLSetSpeciesSaveOn/g" $(egrep -l yamlsetspeciessaveon ./html/*)
-sed -i "s/yamlsettemperature/YAMLSetTemperature/g" $(egrep -l yamlsettemperature ./html/*)
-sed -i "s/yamlsettimeconversion/YAMLSetTimeConversion/g" $(egrep -l yamlsettimeconversion ./html/*)
-sed -i "s/yamlsettimestep/YAMLSetTimeStep/g" $(egrep -l yamlsettimestep ./html/*)
-sed -i "s/yamlsettime/YAMLSetTime/g" $(egrep -l yamlsettime ./html/*)
-sed -i "s/yamlsetunitsexchange/YAMLSetUnitsExchange/g" $(egrep -l yamlsetunitsexchange ./html/*)
-sed -i "s/yamlsetunitsgasphase/YAMLSetUnitsGasPhase/g" $(egrep -l yamlsetunitsgasphase ./html/*)
-sed -i "s/yamlsetunitskinetics/YAMLSetUnitsKinetics/g" $(egrep -l yamlsetunitskinetics ./html/*)
-sed -i "s/yamlsetunitsppassemblage/YAMLSetUnitsPPassemblage/g" $(egrep -l yamlsetunitsppassemblage ./html/*)
-sed -i "s/yamlsetunitssolution/YAMLSetUnitsSolution/g" $(egrep -l yamlsetunitssolution ./html/*)
-sed -i "s/yamlsetunitsssassemblage/YAMLSetUnitsSSassemblage/g" $(egrep -l yamlsetunitsssassemblage ./html/*)
-sed -i "s/yamlsetunitssurface/YAMLSetUnitsSurface/g" $(egrep -l yamlsetunitssurface ./html/*)
-sed -i "s/yamlspeciesconcentrations2module/YAMLSpeciesConcentrations2Module/g" $(egrep -l yamlspeciesconcentrations2module ./html/*)
-sed -i "s/yamlstatesave/YAMLStateSave/g" $(egrep -l yamlstatesave ./html/*)
-sed -i "s/yamlstateapply/YAMLStateApply/g" $(egrep -l yamlstateapply ./html/*)
-sed -i "s/yamlstatedelete/YAMLStateDelete/g" $(egrep -l yamlstatedelete ./html/*)
-sed -i "s/yamlthreadcount/YAMLThreadCount/g" $(egrep -l yamlthreadcount ./html/*)
-sed -i "s/yamlusesolutiondensityvolume/YAMLUseSolutionDensityVolume/g" $(egrep -l yamlusesolutiondensityvolume ./html/*)
-sed -i "s/yamlwarningmessage/YAMLWarningMessage/g" $(egrep -l yamlwarningmessage ./html/*)
-# Rename PhreeqcRM to mixed case 
-#for f in html/*.html; do
-#  sed -i "s/\bphreeqcrm\b/PhreeqcRM/g" $f
-#done
+#sed -i "s/setgridcellcountyaml/SetGridCellCountYAML/g" $(egrep -l setgridcellcountyaml ./html/*)
+#sed -i "s/rm_/RM_/g" $(egrep -l rm_ ./html/*)
+sed -i -e "s/rm_abort/RM_Abort/g" \
+-e "s/rm_closefiles/RM_CloseFiles/g" \
+-e "s/rm_concentrations2utility/RM_Concentrations2Utility/g" \
+-e "s/rm_create/RM_Create/g" \
+-e "s/rm_createmapping/RM_CreateMapping/g" \
+-e "s/rm_decodeerror/RM_DecodeError/g" \
+-e "s/rm_destroy/RM_Destroy/g" \
+-e "s/rm_dumpmodule/RM_DumpModule/g" \
+-e "s/rm_errormessage/RM_ErrorMessage/g" \
+-e "s/rm_findcomponents/RM_FindComponents/g" \
+-e "s/rm_getbackwardmapping/RM_GetBackwardMapping/g" \
+-e "s/rm_getchemistrycellcount/RM_GetChemistryCellCount/g" \
+-e "s/rm_getcomponentcount/RM_GetComponentCount/g" \
+-e "s/rm_getcomponent/RM_GetComponent/g" \
+-e "s/rm_getconcentrations/RM_GetConcentrations/g" \
+-e "s/rm_getcurrentselectedoutputusernumber/RM_GetCurrentSelectedOutputUserNumber/g" \
+-e "s/rm_getdensitycalculated/RM_GetDensityCalculated/g" \
+-e "s/rm_getdensity/RM_GetDensity/g" \
+-e "s/rm_getendcell/RM_GetEndCell/g" \
+-e "s/rm_geterrorstringlength/RM_GetErrorStringLength/g" \
+-e "s/rm_geterrorstring/RM_GetErrorString/g" \
+-e "s/rm_getfileprefix/RM_GetFilePrefix/g" \
+-e "s/rm_getgascompmoles/RM_GetGasCompMoles/g" \
+-e "s/rm_getgascomppressures/RM_GetGasCompPressures/g" \
+-e "s/rm_getgascompphi/RM_GetGasCompPhi/g" \
+-e "s/rm_getgasphasevolume/RM_GetGasPhaseVolume/g" \
+-e "s/rm_setgascompmoles/RM_SetGasCompMoles/g" \
+-e "s/rm_setgasphasevolume/RM_SetGasPhaseVolume/g" \
+-e "s/rm_getspecieslog10molalities/RM_GetSpeciesLog10Molalities/g" \
+-e "s/rm_getgfw/RM_GetGfw/g" \
+-e "s/rm_getgridcellcount/RM_GetGridCellCount/g" \
+-e "s/rm_getiphreeqcid/RM_GetIPhreeqcId/g" \
+-e "s/rm_getmpimyself/RM_GetMpiMyself/g" \
+-e "s/rm_getmpitasks/RM_GetMpiTasks/g" \
+-e "s/rm_getnthselectedoutputusernumber/RM_GetNthSelectedOutputUserNumber/g" \
+-e "s/rm_getporosity/RM_GetPorosity/g" \
+-e "s/rm_getpressure/RM_GetPressure/g" \
+-e "s/rm_getsaturationcalculated/RM_GetSaturationCalculated/g" \
+-e "s/rm_getsaturation/RM_GetSaturation/g" \
+-e "s/rm_getselectedoutputcolumncount/RM_GetSelectedOutputColumnCount/g" \
+-e "s/rm_getselectedoutputcount/RM_GetSelectedOutputCount/g" \
+-e "s/rm_getselectedoutputheading/RM_GetSelectedOutputHeading/g" \
+-e "s/rm_getselectedoutputrowcount/RM_GetSelectedOutputRowCount/g" \
+-e "s/rm_getselectedoutput/RM_GetSelectedOutput/g" \
+-e "s/rm_getsolutionvolume/RM_GetSolutionVolume/g" \
+-e "s/rm_getspeciesconcentrations/RM_GetSpeciesConcentrations/g" \
+-e "s/rm_getspeciescount/RM_GetSpeciesCount/g" \
+-e "s/rm_getspeciesd25/RM_GetSpeciesD25/g" \
+-e "s/rm_getspeciesname/RM_GetSpeciesName/g" \
+-e "s/rm_getspeciessaveon/RM_GetSpeciesSaveOn/g" \
+-e "s/rm_getspeciesz/RM_GetSpeciesZ/g" \
+-e "s/rm_getstartcell/RM_GetStartCell/g" \
+-e "s/rm_getthreadcount/RM_GetThreadCount/g" \
+-e "s/rm_gettime/RM_GetTime/g" \
+-e "s/rm_gettimeconversion/RM_GetTimeConversion/g" \
+-e "s/rm_gettimestep/RM_GetTimeStep/g" \
+-e "s/rm_initializeyaml/RM_InitializeYAML/g" \
+-e "s/rm_initialphreeqc2concentrations/RM_InitialPhreeqc2Concentrations/g" \
+-e "s/rm_initialphreeqc2module/RM_InitialPhreeqc2Module/g" \
+-e "s/rm_initialphreeqccell2module/RM_InitialPhreeqcCell2Module/g" \
+-e "s/rm_initialphreeqc2speciesconcentrations/RM_InitialPhreeqc2SpeciesConcentrations/g" \
+-e "s/rm_loaddatabase/RM_LoadDatabase/g" \
+-e "s/rm_logmessage/RM_LogMessage/g" \
+-e "s/rm_mpiworkerbreak/RM_MpiWorkerBreak/g" \
+-e "s/rm_mpiworker/RM_MpiWorker/g" \
+-e "s/rm_openfiles/RM_OpenFiles/g" \
+-e "s/rm_outputmessage/RM_OutputMessage/g" \
+-e "s/rm_runcells/RM_RunCells/g" \
+-e "s/rm_runfile/RM_RunFile/g" \
+-e "s/rm_runstring/RM_RunString/g" \
+-e "s/rm_screenmessage/RM_ScreenMessage/g" \
+-e "s/rm_setcomponenth2o/RM_SetComponentH2O/g" \
+-e "s/rm_setconcentrations/RM_SetConcentrations/g" \
+-e "s/rm_setcurrentselectedoutputusernumber/RM_SetCurrentSelectedOutputUserNumber/g" \
+-e "s/rm_setdensityuser/RM_SetDensityUser/g" \
+-e "s/rm_setdensity/RM_SetDensity/g" \
+-e "s/rm_setdumpfilename/RM_SetDumpFileName/g" \
+-e "s/rm_seterrorhandlermode/RM_SetErrorHandlerMode/g" \
+-e "s/rm_seterroron/RM_SetErrorOn/g" \
+-e "s/rm_setfileprefix/RM_SetFilePrefix/g" \
+-e "s/rm_setmpiworkercallback/RM_SetMpiWorkerCallback/g" \
+-e "s/rm_setnthselectedoutput/RM_SetNthSelectedOutput/g" \
+-e "s/rm_setpartitionuzsolids/RM_SetPartitionUZSolids/g" \
+-e "s/rm_setporosity/RM_SetPorosity/g" \
+-e "s/rm_setprintchemistrymask/RM_SetPrintChemistryMask/g" \
+-e "s/rm_setprintchemistryon/RM_SetPrintChemistryOn/g" \
+-e "s/rm_setpressure/RM_SetPressure/g" \
+-e "s/rm_setrebalancefraction/RM_SetRebalanceFraction/g" \
+-e "s/rm_setrebalancebycell/RM_SetRebalanceByCell/g" \
+-e "s/rm_setrepresentativevolume/RM_SetRepresentativeVolume/g" \
+-e "s/rm_setsaturationuser/RM_SetSaturationUser/g" \
+-e "s/rm_setsaturation/RM_SetSaturation/g" \
+-e "s/rm_setscreenon/RM_SetScreenOn/g" \
+-e "s/rm_setselectedoutputon/RM_SetSelectedOutputOn/g" \
+-e "s/rm_setspeciessaveon/RM_SetSpeciesSaveOn/g" \
+-e "s/rm_settemperature/RM_SetTemperature/g" \
+-e "s/rm_settimeconversion/RM_SetTimeConversion/g" \
+-e "s/rm_settimestep/RM_SetTimeStep/g" \
+-e "s/rm_settime/RM_SetTime/g" \
+-e "s/rm_setunitsexchange/RM_SetUnitsExchange/g" \
+-e "s/rm_setunitsgasphase/RM_SetUnitsGasPhase/g" \
+-e "s/rm_setunitskinetics/RM_SetUnitsKinetics/g" \
+-e "s/rm_setunitsppassemblage/RM_SetUnitsPPassemblage/g" \
+-e "s/rm_setunitssolution/RM_SetUnitsSolution/g" \
+-e "s/rm_setunitsssassemblage/RM_SetUnitsSSassemblage/g" \
+-e "s/rm_setunitsssassemblage/RM_SetUnitsSSassemblage/g" \
+-e "s/rm_setunitssurface/RM_SetUnitsSurface/g" \
+-e "s/rm_speciesconcentrations2module/RM_SpeciesConcentrations2Module/g" \
+-e "s/rm_usesolutiondensityvolume/RM_UseSolutionDensityVolume/g" \
+-e "s/rm_warningmessage/RM_WarningMessage/g" \
+-e "s/rm_getspecieslog10gammas/RM_GetSpeciesLog10Gammas/g"  \
+-e "s/rm_getexchangespeciescount/RM_GetExchangeSpeciesCount/g"  \
+-e "s/rm_getexchangespeciesname/RM_GetExchangeSpeciesName/g"  \
+-e "s/rm_getexchangename/RM_GetExchangeName/g"  \
+-e "s/rm_getsurfacespeciescount/RM_GetSurfaceSpeciesCount/g"  \
+-e "s/rm_getsurfacespeciesname/RM_GetSurfaceSpeciesName/g"  \
+-e "s/rm_getsurfacetype/RM_GetSurfaceType/g"  \
+-e "s/rm_getsurfacename/RM_GetSurfaceName/g"  \
+-e "s/rm_getequilibriumphasescount/RM_GetEquilibriumPhasesCount/g"  \
+-e "s/rm_getequilibriumphasesname/RM_GetEquilibriumPhasesName/g"  \
+-e "s/rm_getgascomponentscount/RM_GetGasComponentsCount/g"  \
+-e "s/rm_getgascomponentsname/RM_GetGasComponentsName/g"  \
+-e "s/rm_getkineticreactionscount/RM_GetKineticReactionsCount/g"  \
+-e "s/rm_getkineticreactionsname/RM_GetKineticReactionsName/g"  \
+-e "s/rm_getsolidsolutioncomponentscount/RM_GetSolidSolutionComponentsCount/g"  \
+-e "s/rm_getsolidsolutioncomponentsname/RM_GetSolidSolutionComponentsName/g"  \
+-e "s/rm_getsolidsolutionname/RM_GetSolidSolutionName/g"  \
+-e "s/rm_getsicount/RM_GetSICount/g"  \
+-e "s/rm_getsiname/RM_GetSIName/g"  \
+-e "s/rm_statesave/RM_StateSave/g"  \
+-e "s/rm_stateapply/RM_StateApply/g"  \
+-e "s/rm_statedelete/RM_StateDelete/g"  \
+-e "s/rm_getcomponents/RM_GetComponents/g" \
+-e "s/rm_getgridcellcountyaml/RM_GetGridCellCountYAML/g" \
+-e "s/rm_getselectedoutputheadings/RM_GetSelectedOutputHeadings/g" \
+-e "s/rm_gettemperature/RM_GetTemperature/g" \
+-e "s/rm_getviscosity/RM_GetViscosity/g" \
+-e "s/rm_getithconcentration/RM_GetIthConcentration/g" \
+-e "s/rm_getithspeciesconcentration/RM_GetIthSpeciesConcentration/g" \
+-e "s/rm_setithconcentration/RM_SetIthConcentration/g" \
+-e "s/rm_setithspeciesconcentration/RM_SetIthSpeciesConcentration/g" \
+-e "s/rm_initialsolutions2module/RM_InitialSolutions2Module/g" \
+-e "s/rm_initialequilibriumphases2module/RM_InitialEquilibriumPhases2Module/g" \
+-e "s/rm_initialexchanges2module/RM_InitialExchanges2Module/g" \
+-e "s/rm_initialsurfaces2module/RM_InitialSurfaces2Module/g" \
+-e "s/rm_initialgasphases2module/RM_InitialGasPhases2Module/g" \
+-e "s/rm_initialsolidsolutions2module/RM_InitialSolidSolutions2Module/g" \
+-e "s/rm_initialkinetics2module/RM_InitialKinetics2Module/g" \
+-e "s/destroyyamlphreeqcrm/DestroyYAMLPhreeqcRM/g"  \
+-e "s/createyamlphreeqcrm/CreateYAMLPhreeqcRM/g"  \
+-e "s/writeyamldoc/WriteYAMLDoc/g"  \
+-e "s/yamladdoutputvars/YAMLAddOutputVars/g" \
+-e "s/yamlclear/YAMLClear/g" \
+-e "s/yamlclosefiles/YAMLCloseFiles/g" \
+-e "s/yamlcreatemapping/YAMLCreateMapping/g" \
+-e "s/yamldumpmodule/YAMLDumpModule/g" \
+-e "s/yamlfindcomponents/YAMLFindComponents/g" \
+-e "s/yamlinitialsolutions2module/YAMLInitialSolutions2Module/g" \
+-e "s/yamlinitialequilibriumphases2module/YAMLInitialEquilibriumPhases2Module/g" \
+-e "s/yamlinitialexchanges2module/YAMLInitialExchanges2Module/g" \
+-e "s/yamlinitialsurfaces2module/YAMLInitialSurfaces2Module/g" \
+-e "s/yamlinitialgasphases2module/YAMLInitialGasPhases2Module/g" \
+-e "s/yamlinitialsolidsolutions2module/YAMLInitialSolidSolutions2Module/g" \
+-e "s/yamlinitialkinetics2module/YAMLInitialKinetics2Module/g" \
+-e "s/yamlinitialphreeqc2module/YAMLInitialPhreeqc2Module/g" \
+-e "s/yamlinitialphreeqc2module_mix/YAMLInitialPhreeqc2Module_mix/g" \
+-e "s/yamlinitialphreeqccell2module/YAMLInitialPhreeqcCell2Module/g" \
+-e "s/yamlloaddatabase/YAMLLoadDatabase/g" \
+-e "s/yamllogmessage/YAMLLogMessage/g" \
+-e "s/yamlopenfiles/YAMLOpenFiles/g" \
+-e "s/yamloutputmessage/YAMLOutputMessage/g" \
+-e "s/yamlruncells/YAMLRunCells/g" \
+-e "s/yamlrunfile/YAMLRunFile/g" \
+-e "s/yamlrunstring/YAMLRunString/g" \
+-e "s/yamlscreenmessage/YAMLScreenMessage/g" \
+-e "s/yamlsetcomponenth2o/YAMLSetComponentH2O/g" \
+-e "s/yamlsetconcentrations/YAMLSetConcentrations/g" \
+-e "s/yamlsetcurrentselectedoutputusernumber/YAMLSetCurrentSelectedOutputUserNumber/g" \
+-e "s/yamlsetdensityuser/YAMLSetDensityUser/g" \
+-e "s/yamlsetdumpfilename/YAMLSetDumpFileName/g" \
+-e "s/yamlseterrorhandlermode/YAMLSetErrorHandlerMode/g" \
+-e "s/yamlseterroron/YAMLSetErrorOn/g" \
+-e "s/yamlsetfileprefix/YAMLSetFilePrefix/g" \
+-e "s/yamlsetgascompmoles/YAMLSetGasCompMoles/g" \
+-e "s/yamlsetgasphasevolume/YAMLSetGasPhaseVolume/g" \
+-e "s/yamlsetgridcellcount/YAMLSetGridCellCount/g" \
+-e "s/yamlsetnthselectedoutput/YAMLSetNthSelectedOutput/g" \
+-e "s/yamlsetpartitionuzsolids/YAMLSetPartitionUZSolids/g" \
+-e "s/yamlsetporosity/YAMLSetPorosity/g" \
+-e "s/yamlsetpressure/YAMLSetPressure/g" \
+-e "s/yamlsetprintchemistrymask/YAMLSetPrintChemistryMask/g" \
+-e "s/yamlsetprintchemistryon/YAMLSetPrintChemistryOn/g" \
+-e "s/yamlsetrebalancebycell/YAMLSetRebalanceByCell/g" \
+-e "s/yamlsetrebalancefraction/YAMLSetRebalanceFraction/g" \
+-e "s/yamlsetrepresentativevolume/YAMLSetRepresentativeVolume/g" \
+-e "s/yamlsetsaturationuser/YAMLSetSaturationUser/g" \
+-e "s/yamlsetscreenon/YAMLSetScreenOn/g" \
+-e "s/yamlsetselectedoutputon/YAMLSetSelectedOutputOn/g" \
+-e "s/yamlsetspeciessaveon/YAMLSetSpeciesSaveOn/g" \
+-e "s/yamlsettemperature/YAMLSetTemperature/g" \
+-e "s/yamlsettimeconversion/YAMLSetTimeConversion/g" \
+-e "s/yamlsettimestep/YAMLSetTimeStep/g" \
+-e "s/yamlsettime/YAMLSetTime/g" \
+-e "s/yamlsetunitsexchange/YAMLSetUnitsExchange/g" \
+-e "s/yamlsetunitsgasphase/YAMLSetUnitsGasPhase/g" \
+-e "s/yamlsetunitskinetics/YAMLSetUnitsKinetics/g" \
+-e "s/yamlsetunitsppassemblage/YAMLSetUnitsPPassemblage/g" \
+-e "s/yamlsetunitssolution/YAMLSetUnitsSolution/g" \
+-e "s/yamlsetunitsssassemblage/YAMLSetUnitsSSassemblage/g" \
+-e "s/yamlsetunitssurface/YAMLSetUnitsSurface/g" \
+-e "s/yamlspeciesconcentrations2module/YAMLSpeciesConcentrations2Module/g" \
+-e "s/yamlstatesave/YAMLStateSave/g" \
+-e "s/yamlstateapply/YAMLStateApply/g" \
+-e "s/yamlstatedelete/YAMLStateDelete/g" \
+-e "s/yamlthreadcount/YAMLThreadCount/g" \
+-e "s/yamlusesolutiondensityvolume/YAMLUseSolutionDensityVolume/g" \
+-e "s/yamlwarningmessage/YAMLWarningMessage/g" ./html/*
+for f in ./html/BMI__interface_8F90.html ./html/BMI__interface_8F90.js \
+./html/functions_func_g.html ./html/functions_g.html ./html/namespacebmiphreeqcrm.html \
+./html/namespacebmiphreeqcrm.js ./html/namespacemembers_func_g.html \
+./html/namespacemembers_g.html ./html/structbmiphreeqcrm_1_1bmi-members.html \
+./html/structbmiphreeqcrm_1_1bmi.html ./html/structbmiphreeqcrm_1_1bmi.js; do
+sed -i -e "s/abort/Abort/g" \
+-e "s/closefiles/CloseFiles/g" \
+-e "s/concentrations2utility/Concentrations2Utility/g" \
+-e "s/create /Create /g" \
+-e "s/createmapping/CreateMapping/g" \
+-e "s/decodeerror/DecodeError/g" \
+-e "s/destroy/Destroy/g" \
+-e "s/dumpmodule/DumpModule/g" \
+-e "s/errormessage/ErrorMessage/g" \
+-e "s/findcomponents/FindComponents/g" \
+-e "s/getbackwardmapping/GetBackwardMapping/g" \
+-e "s/getchemistrycellcount/GetChemistryCellCount/g" \
+-e "s/getcomponentcount/GetComponentCount/g" \
+-e "s/getcomponent/GetComponent/g" \
+-e "s/getconcentrations/GetConcentrations/g" \
+-e "s/getcurrentselectedoutputusernumber/GetCurrentSelectedOutputUserNumber/g" \
+-e "s/getdensitycalculated/GetDensityCalculated/g" \
+-e "s/getdensity/GetDensity/g" \
+-e "s/getendcell/GetEndCell/g" \
+-e "s/geterrorstringlength/GetErrorStringLength/g" \
+-e "s/geterrorstring/GetErrorString/g" \
+-e "s/getfileprefix/GetFilePrefix/g" \
+-e "s/getgascompmoles/GetGasCompMoles/g" \
+-e "s/getgascomppressures/GetGasCompPressures/g" \
+-e "s/getgascompphi/GetGasCompPhi/g" \
+-e "s/getgasphasevolume/GetGasPhaseVolume/g" \
+-e "s/setgascompmoles/SetGasCompMoles/g" \
+-e "s/setgasphasevolume/SetGasPhaseVolume/g" \
+-e "s/getspecieslog10molalities/GetSpeciesLog10Molalities/g" \
+-e "s/getgfw/GetGfw/g" \
+-e "s/getgridcellcount/GetGridCellCount/g" \
+-e "s/getiphreeqcid/GetIPhreeqcId/g" \
+-e "s/getmpimyself/GetMpiMyself/g" \
+-e "s/getmpitasks/GetMpiTasks/g" \
+-e "s/getnthselectedoutputusernumber/GetNthSelectedOutputUserNumber/g" \
+-e "s/getporosity/GetPorosity/g" \
+-e "s/getpressure/GetPressure/g" \
+-e "s/getsaturationcalculated/GetSaturationCalculated/g" \
+-e "s/getsaturation/GetSaturation/g" \
+-e "s/getselectedoutputcolumncount/GetSelectedOutputColumnCount/g" \
+-e "s/getselectedoutputcount/GetSelectedOutputCount/g" \
+-e "s/getselectedoutputheading/GetSelectedOutputHeading/g" \
+-e "s/getselectedoutputrowcount/GetSelectedOutputRowCount/g" \
+-e "s/getselectedoutput/GetSelectedOutput/g" \
+-e "s/getsolutionvolume/GetSolutionVolume/g" \
+-e "s/getspeciesconcentrations/GetSpeciesConcentrations/g" \
+-e "s/getspeciescount/GetSpeciesCount/g" \
+-e "s/getspeciesd25/GetSpeciesD25/g" \
+-e "s/getspeciesname/GetSpeciesName/g" \
+-e "s/getspeciessaveon/GetSpeciesSaveOn/g" \
+-e "s/getspeciesz/GetSpeciesZ/g" \
+-e "s/getstartcell/GetStartCell/g" \
+-e "s/getthreadcount/GetThreadCount/g" \
+-e "s/gettime/GetTime/g" \
+-e "s/gettimeconversion/GetTimeConversion/g" \
+-e "s/gettimestep/GetTimeStep/g" \
+-e "s/initializeyaml/InitializeYAML/g" \
+-e "s/initialphreeqc2concentrations/InitialPhreeqc2Concentrations/g" \
+-e "s/initialphreeqc2module/InitialPhreeqc2Module/g" \
+-e "s/initialphreeqccell2module/InitialPhreeqcCell2Module/g" \
+-e "s/initialphreeqc2speciesconcentrations/InitialPhreeqc2SpeciesConcentrations/g" \
+-e "s/loaddatabase/LoadDatabase/g" \
+-e "s/logmessage/LogMessage/g" \
+-e "s/mpiworkerbreak/MpiWorkerBreak/g" \
+-e "s/openfiles/OpenFiles/g" \
+-e "s/outputmessage/OutputMessage/g" \
+-e "s/runcells/RunCells/g" \
+-e "s/runfile/RunFile/g" \
+-e "s/runstring/RunString/g" \
+-e "s/screenmessage/ScreenMessage/g" \
+-e "s/setcomponenth2o/SetComponentH2O/g" \
+-e "s/setconcentrations/SetConcentrations/g" \
+-e "s/setcurrentselectedoutputusernumber/SetCurrentSelectedOutputUserNumber/g" \
+-e "s/setdensityuser/SetDensityUser/g" \
+-e "s/setdensity/SetDensity/g" \
+-e "s/setdumpfilename/SetDumpFileName/g" \
+-e "s/seterrorhandlermode/SetErrorHandlerMode/g" \
+-e "s/seterroron/SetErrorOn/g" \
+-e "s/setfileprefix/SetFilePrefix/g" \
+-e "s/setmpiworkercallback/SetMpiWorkerCallback/g" \
+-e "s/mpiworker/MpiWorker/g" \
+-e "s/setnthselectedoutput/SetNthSelectedOutput/g" \
+-e "s/setpartitionuzsolids/SetPartitionUZSolids/g" \
+-e "s/setporosity/SetPorosity/g" \
+-e "s/setprintchemistrymask/SetPrintChemistryMask/g" \
+-e "s/setprintchemistryon/SetPrintChemistryOn/g" \
+-e "s/setpressure/SetPressure/g" \
+-e "s/setrebalancefraction/SetRebalanceFraction/g" \
+-e "s/setrebalancebycell/SetRebalanceByCell/g" \
+-e "s/setrepresentativevolume/SetRepresentativeVolume/g" \
+-e "s/setsaturationuser/SetSaturationUser/g" \
+-e "s/setsaturation/SetSaturation/g" \
+-e "s/setscreenon/SetScreenOn/g" \
+-e "s/setselectedoutputon/SetSelectedOutputOn/g" \
+-e "s/setspeciessaveon/SetSpeciesSaveOn/g" \
+-e "s/settemperature/SetTemperature/g" \
+-e "s/settimeconversion/SetTimeConversion/g" \
+-e "s/settimestep/SetTimeStep/g" \
+-e "s/settime/SetTime/g" \
+-e "s/setunitsexchange/SetUnitsExchange/g" \
+-e "s/setunitsgasphase/SetUnitsGasPhase/g" \
+-e "s/setunitskinetics/SetUnitsKinetics/g" \
+-e "s/setunitsppassemblage/SetUnitsPPassemblage/g" \
+-e "s/setunitssolution/SetUnitsSolution/g" \
+-e "s/setunitsssassemblage/SetUnitsSSassemblage/g" \
+-e "s/setunitsssassemblage/SetUnitsSSassemblage/g" \
+-e "s/setunitssurface/SetUnitsSurface/g" \
+-e "s/speciesconcentrations2module/SpeciesConcentrations2Module/g" \
+-e "s/usesolutiondensityvolume/UseSolutionDensityVolume/g" \
+-e "s/warningmessage/WarningMessage/g" \
+-e "s/getspecieslog10gammas/GetSpeciesLog10Gammas/g"  \
+-e "s/getexchangespeciescount/GetExchangeSpeciesCount/g"  \
+-e "s/getexchangespeciesname/GetExchangeSpeciesName/g"  \
+-e "s/getexchangename/GetExchangeName/g"  \
+-e "s/getsurfacespeciescount/GetSurfaceSpeciesCount/g"  \
+-e "s/getsurfacespeciesname/GetSurfaceSpeciesName/g"  \
+-e "s/getsurfacetype/GetSurfaceType/g"  \
+-e "s/getsurfacename/GetSurfaceName/g"  \
+-e "s/getequilibriumphasescount/GetEquilibriumPhasesCount/g"  \
+-e "s/getequilibriumphasesname/GetEquilibriumPhasesName/g"  \
+-e "s/getgascomponentscount/GetGasComponentsCount/g"  \
+-e "s/getgascomponentsname/GetGasComponentsName/g"  \
+-e "s/getkineticreactionscount/GetKineticReactionsCount/g"  \
+-e "s/getkineticreactionsname/GetKineticReactionsName/g"  \
+-e "s/getsolidsolutioncomponentscount/GetSolidSolutionComponentsCount/g"  \
+-e "s/getsolidsolutioncomponentsname/GetSolidSolutionComponentsName/g"  \
+-e "s/getsolidsolutionname/GetSolidSolutionName/g"  \
+-e "s/getsicount/GetSICount/g"  \
+-e "s/getsiname/GetSIName/g"  \
+-e "s/statesave/StateSave/g"  \
+-e "s/stateapply/StateApply/g"  \
+-e "s/statedelete/StateDelete/g"  \
+-e "s/getcomponents/GetComponents/g" \
+-e "s/getgridcellcountyaml/GetGridCellCountYAML/g" \
+-e "s/getselectedoutputheadings/GetSelectedOutputHeadings/g" \
+-e "s/gettemperature/GetTemperature/g" \
+-e "s/getviscosity/GetViscosity/g" \
+-e "s/getithconcentration/GetIthConcentration/g" \
+-e "s/getithspeciesconcentration/GetIthSpeciesConcentration/g" \
+-e "s/setithconcentration/SetIthConcentration/g" \
+-e "s/setithspeciesconcentration/SetIthSpeciesConcentration/g" \
+-e "s/initialsolutions2module/InitialSolutions2Module/g" \
+-e "s/initialequilibriumphases2module/InitialEquilibriumPhases2Module/g" \
+-e "s/initialexchanges2module/InitialExchanges2Module/g" \
+-e "s/initialsurfaces2module/InitialSurfaces2Module/g" \
+-e "s/initialgasphases2module/InitialGasPhases2Module/g" \
+-e "s/initialsolidsolutions2module/InitialSolidSolutions2Module/g" \
+-e "s/initialkinetics2module/InitialKinetics2Module/g" \
+-e "s/bmif_Create/bmif_create/" $f
+done
 
-sed -i "s/yamlphreeqcrm/YAMLPhreeqcRM/g" $(egrep -l yamlphreeqcrm ./html/*)
-sed -i "s/bmiphreeqcrm/BMIPhreeqcRM/g" $(egrep -l bmiphreeqcrm ./html/*)
-sed -i "s/phreeqcrm/PhreeqcRM/g" $(egrep -l phreeqcrm ./html/*)
-sed -i "s/yaml_interface/YAML_interface/g" $(egrep -l yaml_interface ./html/*)
+sed -i "s/\byamlphreeqcrm\b/YAMLPhreeqcRM/g" $(egrep -l yamlphreeqcrm ./html/*)
+sed -i "s/\bbmiphreeqcrm\b/BMIPhreeqcRM/g" $(egrep -l bmiphreeqcrm ./html/*)
+sed -i "s/\bphreeqcrm\b/PhreeqcRM/g" $(egrep -l phreeqcrm ./html/*)
+#sed -i "s/\byaml_interface\b/YAML_interface/g" $(egrep -l yaml_interface ./html/*)
 # Change Titles
 sed -i "s/RM_interface_C.h File Reference/PhreeqcRM C Reference/g" html/RM__interface__C_8h.html
 sed -i "s/PhreeqcRM Class Reference/PhreeqcRM C++ Class Reference/g" html/classPhreeqcRM.html

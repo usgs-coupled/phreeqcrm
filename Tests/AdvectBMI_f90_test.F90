@@ -23,10 +23,10 @@
         SUBROUTINE register_basic_callback_fortran()
             implicit none
         END SUBROUTINE register_basic_callback_fortran
-        subroutine BMI_testing(id)
-            implicit none
-            integer, intent(in) :: id
-        end subroutine BMI_testing
+        !subroutine BMI_testing(self)
+        !    implicit none
+        !    class(bmi), intent(inout) :: self
+        !end subroutine BMI_testing
     end interface
     ! Based on PHREEQC Example 11
     real(kind=8), pointer :: d1_ptr(:)
@@ -94,6 +94,7 @@
 	real(kind=8), pointer :: Porosity_ptr(:)
 	real(kind=8), pointer :: Pressure_ptr(:)
 	real(kind=8), pointer :: Temperature_ptr(:)
+    type(bmi) :: bmif
 #ifdef FORTRAN_2003
     character(LEN=:), allocatable                 :: errstr
 #else
@@ -127,44 +128,45 @@
         nxyz = GetGridCellCountYAML(yaml_file)
     endif
     CALL MPI_Bcast(nxyz, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, status)
-    id = bmif_create(nxyz, MPI_COMM_WORLD)
+    id = bmif%bmif_create(nxyz, MPI_COMM_WORLD)
     if (mpi_myself > 0) then
         status = RM_MpiWorker(id)
-        status = bmif_finalize(id)
+        status = bmif%bmif_finalize()
         return
     endif
 #else
     ! OpenMP
-    id = bmif_create()
+    id = bmif%bmif_create_default()
 #endif
     ! Initialize with YAML file
-    status = bmif_initialize(id, yaml_file)
-    status = bmif_get_value(id, "GridCellCount", nxyz)
-    status = bmif_get_value(id, "ComponentCount", ncomps)
+    status = bmif%bmif_initialize(yaml_file)
+    id = bmif%bmif_get_id()
+    status = bmif%bmif_get_value("GridCellCount", nxyz)
+    status = bmif%bmif_get_value("ComponentCount", ncomps)
     ! OutputVarNames
-    status = bmif_get_output_var_names(id, outputvars)
+    status = bmif%bmif_get_output_var_names(outputvars)
     write(*,*) "Output variables (getters)"
     do i = 1, size(outputvars)
-        status = bmif_get_var_units(id, outputvars(i), string)
+        status = bmif%bmif_get_var_units(outputvars(i), string)
         write(*,"(1x, I4, A60, 2x, A15)") i, trim(outputvars(i)), string
     enddo
 
-	status = bmif_get_value_ptr(id, "ComponentCount", ComponentCount_ptr)
-	status = bmif_get_value_ptr(id, "GridCellCount", GridCellCount_ptr)
-	status = bmif_get_value_ptr(id, "SelectedOutputOn", SelectedOutputOn_ptr)
-	status = bmif_get_value_ptr(id, "Concentrations", Concentrations_ptr)
-	status = bmif_get_value_ptr(id, "DensityCalculated", Density_calculated_ptr)
-	status = bmif_get_value_ptr(id, "Gfw", Gfw_ptr)
-	status = bmif_get_value_ptr(id, "SaturationCalculated", Saturation_ptr)
-	status = bmif_get_value_ptr(id, "SolutionVolume", SolutionVolume_ptr)
-	status = bmif_get_value_ptr(id, "Time", Time_ptr)
-	status = bmif_get_value_ptr(id, "TimeStep", TimeStep_ptr)
-	status = bmif_get_value_ptr(id, "Porosity", Porosity_ptr)
-	status = bmif_get_value_ptr(id, "Pressure", Pressure_ptr)
-	status = bmif_get_value_ptr(id, "Temperature", Temperature_ptr)
-	status = bmif_get_var_nbytes(id, "FilePrefix", n)
+	status = bmif%bmif_get_value_ptr("ComponentCount", ComponentCount_ptr)
+	status = bmif%bmif_get_value_ptr("GridCellCount", GridCellCount_ptr)
+	status = bmif%bmif_get_value_ptr("SelectedOutputOn", SelectedOutputOn_ptr)
+	status = bmif%bmif_get_value_ptr("Concentrations", Concentrations_ptr)
+	status = bmif%bmif_get_value_ptr("DensityCalculated", Density_calculated_ptr)
+	status = bmif%bmif_get_value_ptr("Gfw", Gfw_ptr)
+	status = bmif%bmif_get_value_ptr("SaturationCalculated", Saturation_ptr)
+	status = bmif%bmif_get_value_ptr("SolutionVolume", SolutionVolume_ptr)
+	status = bmif%bmif_get_value_ptr("Time", Time_ptr)
+	status = bmif%bmif_get_value_ptr("TimeStep", TimeStep_ptr)
+	status = bmif%bmif_get_value_ptr("Porosity", Porosity_ptr)
+	status = bmif%bmif_get_value_ptr("Pressure", Pressure_ptr)
+	status = bmif%bmif_get_value_ptr("Temperature", Temperature_ptr)
+	status = bmif%bmif_get_var_nbytes("FilePrefix", n)
     allocate(character(len=n) :: prefix)
-    status = bmif_get_value(id, "FilePrefix", prefix)
+    status = bmif%bmif_get_value("FilePrefix", prefix)
     write(string1, "(A,A)") "File prefix:                                        ", prefix
     status = RM_OutputMessage(id, trim(string1))
     write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", GridCellCount_ptr
@@ -172,36 +174,36 @@
     write(string1, "(A,I10)") "Number of components for transport:               ", ComponentCount_ptr
     status = RM_OutputMessage(id, trim(string1))
     ! Get component information
-    status = bmif_get_value(id, "Components", components)
-    status = bmif_get_value(id, "Gfw", gfw)
+    status = bmif%bmif_get_value("Components", components)
+    status = bmif%bmif_get_value("Gfw", gfw)
     do i = 1, ncomps
         write(string,"(A10, F15.4)") trim(components(i)), gfw(i)
         status = RM_OutputMessage(id, string)
     enddo
     status = RM_OutputMessage(id, " ")	
     ! Get initial temperatures
-    status = bmif_get_value(id, "Temperature", temperature)
+    status = bmif%bmif_get_value("Temperature", temperature)
     ! Get initial temperature
-    status = bmif_get_value(id, "SaturationCalculated", sat)
+    status = bmif%bmif_get_value("SaturationCalculated", sat)
     ! Get initial porosity
-    status = bmif_get_value(id, "Porosity", por)
+    status = bmif%bmif_get_value("Porosity", por)
     ! Get initial temperature
-    status = bmif_get_value(id, "SolutionVolume", volume)
+    status = bmif%bmif_get_value("SolutionVolume", volume)
     ! Get initial concentrations
     ! flattened version
-    status = bmif_get_value(id, "Concentrations", c1)
+    status = bmif%bmif_get_value("Concentrations", c1)
     c = reshape(c1, (/nxyz, ncomps/))
     ! non-flattened version
-    status = bmif_get_value(id, "Concentrations", c)
+    status = bmif%bmif_get_value("Concentrations", c)
     ! Set density, pressure, and temperature (previously allocated)
     allocate(density(nxyz))
     density = 1.0
-    status = bmif_set_value(id, "DensityUser", density)
+    status = bmif%bmif_set_value("DensityUser", density)
     allocate(pressure(nxyz))
     pressure = 2.0
-    status = bmif_set_value(id, "Pressure", pressure)  
+    status = bmif%bmif_set_value("Pressure", pressure)  
     temperature = 20.0
-    status = bmif_set_value(id, "Temperature", temperature)  
+    status = bmif%bmif_set_value("Temperature", temperature)  
     ! --------------------------------------------------------------------------
     ! Set boundary condition
     ! --------------------------------------------------------------------------
@@ -212,15 +214,15 @@
     bc2 = -1          ! no bc2 solution for mixing
     bc_f1 = 1.0       ! mixing fraction for bc1
     status = RM_InitialPhreeqc2Concentrations(id, bc_conc, nbound, bc1, bc2, bc_f1)
-    call compare_ptrs
+    call compare_ptrs(bmif)
     ! --------------------------------------------------------------------------
     ! Transient loop
     ! --------------------------------------------------------------------------
     nsteps = 10
     time = 0.0
-    status = bmif_set_value(id, "Time", time)
+    status = bmif%bmif_set_value("Time", time)
     time_step = 86400.0
-    status = bmif_set_value(id, "TimeStep", time_step)   
+    status = bmif%bmif_set_value("TimeStep", time_step)   
     do isteps = 1, nsteps
         write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
             time/86400., " days"
@@ -236,23 +238,23 @@
     
         ! print at last time step
         if (isteps == nsteps) then     
-            status = bmif_set_value(id, "SelectedOutputOn", .true.)    ! enable selected output
+            status = bmif%bmif_set_value("SelectedOutputOn", .true.)    ! enable selected output
             status = RM_SetPrintChemistryOn(id, 1, 0, 0)                ! workers, initial_phreeqc, utility
         else        
-            status = bmif_set_value(id, "SelectedOutputOn", .false.)   ! disable selected output
+            status = bmif%bmif_set_value("SelectedOutputOn", .false.)   ! disable selected output
             status = RM_SetPrintChemistryOn(id, 0, 0, 0)                ! workers, initial_phreeqc, utility
         endif
         ! Transfer data to PhreeqcRM after transport      
-        status = bmif_set_value(id, "Concentrations", c)  ! Transported concentrations
+        status = bmif%bmif_set_value("Concentrations", c)  ! Transported concentrations
         ! Optionally, if values changed during transport
-        status = bmif_set_value(id, "Porosity", por)              
-        status = bmif_set_value(id, "SaturationUser", sat)            
-        status = bmif_set_value(id, "Temperature", temperature) 
-        status = bmif_set_value(id, "Pressure", pressure)          
-        status = bmif_set_value(id, "TimeStep", time_step) 
+        status = bmif%bmif_set_value("Porosity", por)              
+        status = bmif%bmif_set_value("SaturationUser", sat)            
+        status = bmif%bmif_set_value("Temperature", temperature) 
+        status = bmif%bmif_set_value("Pressure", pressure)          
+        status = bmif%bmif_set_value("TimeStep", time_step) 
         ! Set new time
         time = time + time_step              
-        status = bmif_set_value(id, "Time", time)  ! Current time
+        status = bmif%bmif_set_value("Time", time)  ! Current time
         ! Run cells with transported conditions
         write(string, "(A32,F15.1,A)") "Beginning reaction calculation  ", &
             time / 86400., " days"
@@ -262,14 +264,14 @@
         status = RM_StateSave(id, 1)
         status = RM_StateApply(id, 1)
         status = RM_StateDelete(id, 1)
-        call compare_ptrs
+        call compare_ptrs(bmif)
         ! Run chemistry
-        status = bmif_update(id)
-        call compare_ptrs
+        status = bmif%bmif_update()
+        call compare_ptrs(bmif)
         ! Get new data calculated by PhreeqcRM for transport
-        status = bmif_get_value(id, "Concentrations", c)
-        status = bmif_get_value(id, "DensityCalculated", density)
-        status = bmif_get_value(id, "SolutionVolume", volume)   
+        status = bmif%bmif_get_value("Concentrations", c)
+        status = bmif%bmif_get_value("DensityCalculated", density)
+        status = bmif%bmif_get_value("SolutionVolume", volume)   
        ! Print results at last time step
         if (isteps == nsteps) then
             write(*,*) "Current distribution of cells for workers"
@@ -282,24 +284,24 @@
                 write(*,*) i,"           ", sc(i),"                 ",ec(i)
             enddo
             ! Loop through possible multiple selected output definitions
-            status = bmif_get_value(id, "SelectedOutputCount", n)
+            status = bmif%bmif_get_value("SelectedOutputCount", n)
             do isel = 1, n  ! one based
                 i = isel
-                status = bmif_set_value(id, "NthSelectedOutput", i)
-                status = bmif_get_value(id, "CurrentSelectedOutputUserNumber", n_user)
+                status = bmif%bmif_set_value("NthSelectedOutput", i)
+                status = bmif%bmif_get_value("CurrentSelectedOutputUserNumber", n_user)
                 write(*,*) "Selected output sequence number: ", isel
                 write(*,*) "Selected output user number:     ", n_user
                 ! Get 2D array of selected output values
-                status = bmif_get_value(id, "SelectedOutputColumnCount", col)
-                status = bmif_get_value(id, "SelectedOutputRowCount", rows)
+                status = bmif%bmif_get_value("SelectedOutputColumnCount", col)
+                status = bmif%bmif_get_value("SelectedOutputRowCount", rows)
                 allocate(selected_out(rows,col))
                 ! Get headings
-                status = bmif_get_var_itemsize(id, "SelectedOutputHeadings", bytes)
+                status = bmif%bmif_get_var_itemsize("SelectedOutputHeadings", bytes)
                 if (allocated(headings)) deallocate(headings)
                 allocate(character(len=bytes) :: headings(col))    
-                status = bmif_get_value(id, "SelectedOutputHeadings", headings)
+                status = bmif%bmif_get_value("SelectedOutputHeadings", headings)
                 ! Get selected output
-                status = bmif_get_value(id, "SelectedOutput", selected_out)
+                status = bmif%bmif_get_value("SelectedOutput", selected_out)
                 ! Print results
                 do i = rows/2, rows/2
                     write(*,*) "Cell number ", i
@@ -319,11 +321,11 @@
             ! Use GetValue to extract exchange composition and pH
 			! YAMLAddOutputVars was called in YAML
 			! to select additional OutputVarNames variables
-			status = bmif_get_value(id, "solution_ph", pH_vector)
-			status = bmif_get_value(id, "exchange_X_species_log_molality_CaX2", CaX2)
-			status = bmif_get_value(id, "exchange_X_species_log_molality_KX", KX)
-			status = bmif_get_value(id, "exchange_X_species_log_molality_NaX", NaX)
-			status = bmif_get_value(id, "calculate_value_sar", SAR)
+			status = bmif%bmif_get_value("solution_ph", pH_vector)
+			status = bmif%bmif_get_value("exchange_X_species_log_molality_CaX2", CaX2)
+			status = bmif%bmif_get_value("exchange_X_species_log_molality_KX", KX)
+			status = bmif%bmif_get_value("exchange_X_species_log_molality_NaX", NaX)
+			status = bmif%bmif_get_value("calculate_value_sar", SAR)
             write(string1, "(A)") "      pH      CaX2     KX       NaX       SAR"
             status = RM_OutputMessage(id, string1)
 			do i = 1, nxyz
@@ -332,12 +334,12 @@
             enddo
         endif
     enddo 
-    call BMI_testing(id)
+    call BMI_testing(bmif)
     ! Clean up
 #ifdef USE_MPI    
     status = RM_MpiWorkerBreak(id)
 #endif    
-    status = bmif_finalize(id)
+    status = bmif%bmif_finalize()
     ! Deallocate
     deallocate(por)
     deallocate(sat)
@@ -396,10 +398,12 @@
     end function bmi_worker_tasks_f
 
     integer function bmi_do_something()
+    USE BMIPhreeqcRM
     implicit none
     INCLUDE 'mpif.h'
     integer status
     integer i, method_number, mpi_myself, mpi_task, mpi_tasks, worker_number
+    type(bmi) :: bmif
     method_number = 1000
     call MPI_Comm_size(MPI_COMM_WORLD, mpi_tasks, status)
     call MPI_Comm_rank(MPI_COMM_WORLD, mpi_myself, status)
@@ -417,7 +421,7 @@
     end function bmi_do_something
 #endif
 
-subroutine BMI_testing(id)
+subroutine BMI_testing(bmif)
 USE, intrinsic :: ISO_C_BINDING
     USE BMIPhreeqcRM
     USE IPhreeqc
@@ -427,7 +431,7 @@ USE, intrinsic :: ISO_C_BINDING
         logical, intent(in) :: tf
         end function assert
     end interface
-    integer, intent(in) :: id
+    !integer, intent(in) :: id
     character(100) :: string
     integer :: status, dim, isel
     integer :: i, j, n, bytes, nbytes
@@ -463,84 +467,87 @@ USE, intrinsic :: ISO_C_BINDING
     real(kind=c_double), pointer :: real_dim_ptr(:)
     integer, pointer :: integer_ptr
     logical, pointer :: logical_ptr
-
-    status = bmif_get_component_name(id, string)
+    type(bmi), intent(inout) :: bmif
+    integer :: id
+    
+    id = bmif%bmif_get_id()
+    status = bmif%bmif_get_component_name(string)
     write(*,*) trim(string)
-    time = bmif_get_current_time(id, time)
+    time = bmif%bmif_get_current_time(time)
     write(*,*) time
-    time = bmif_get_end_time(id, time)
+    time = bmif%bmif_get_end_time(time)
     write(*,*) time
-    status = bmif_get_time_units(id, string)
+    status = bmif%bmif_get_time_units(string)
     write(*,*) string
-    time = bmif_get_time_step(id, time)
+    time = bmif%bmif_get_time_step(time)
     write(*,*) time
     ! Time
     rm_time = 3600
-    status = bmif_set_value(id, "Time", rm_time)
-    status = bmif_get_value(id, "Time", time)
+    status = bmif%bmif_set_value("Time", rm_time)
+    status = bmif%bmif_get_value("Time", time)
     status = assert(rm_time .eq. time)
     rm_time = RM_GetTime(id)
-    status = bmif_get_value_ptr(id, "Time", real_ptr)
+    status = bmif%bmif_get_value_ptr("Time", real_ptr)
     status = assert(time .eq. rm_time)
-    status = bmif_get_current_time(id, time)
+    status = bmif%bmif_get_current_time(time)
     status = assert(time .eq. rm_time)
     ! TimeStep
     rm_time_step = 60
-    status = bmif_set_value(id, "TimeStep", rm_time_step)
-    status = bmif_get_value(id, "TimeStep", time_step)
+    status = bmif%bmif_set_value("TimeStep", rm_time_step)
+    status = bmif%bmif_get_value("TimeStep", time_step)
     status = assert(time_step .eq. rm_time_step)
     rm_time_step = RM_GetTimeStep(id)
     status = assert(time_step .eq. rm_time_step)
-    status = bmif_get_time_step(id, time_step)
+    status = bmif%bmif_get_time_step(time_step)
     status = assert(time_step .eq. rm_time_step)
     ! InputVarNames
-    status = bmif_get_input_var_names(id, inputvars)
+    status = bmif%bmif_get_input_var_names(inputvars)
     write(*,*) "Input variables (setters)"
     do i = 1, size(inputvars)
         write(*,"(1x, I4, A60)") i, trim(inputvars(i))
-        !status = bmif_get_var_units(id, inputvars(i), string)
+        !status = bmif%bmif_get_var_units(inputvars(i), string)
         !write(*,"(5x, A60)") trim(string)
-        !status = bmif_get_var_type(id, inputvars(i), string)
+        !status = bmif%bmif_get_var_type(inputvars(i), string)
         !write(*,"(5x, A60)") trim(string)
-        !status = bmif_get_var_itemsize(id, inputvars(i), itemsize)
+        !status = bmif%bmif_get_var_itemsize(inputvars(i), itemsize)
         !write(*, "(5x, I60)") itemsize
-        !status = bmif_get_var_nbytes(id, inputvars(i), nbytes)
+        !status = bmif%bmif_get_var_nbytes(inputvars(i), nbytes)
         !write(*, "(5x, I60)") nbytes
     enddo
     ! OutputVarNames
-    status = bmif_get_output_var_names(id, outputvars)
+    status = bmif%bmif_get_output_var_names(outputvars)
     write(*,*) "Output variables (getters)"
     do i = 1, size(outputvars)
         write(*,"(1x, I4, A60)") i, trim(outputvars(i))
-        !status = bmif_get_var_units(id, outputvars(i), string)
+        !status = bmif%bmif_get_var_units(outputvars(i), string)
         !write(*,"(5x, A60)") trim(string)
-        !status = bmif_get_var_type(id, outputvars(i), string)
+        !status = bmif%bmif_get_var_type(outputvars(i), string)
         !write(*,"(5x, A60)") trim(string)
-        !status = bmif_get_var_itemsize(id, outputvars(i), itemsize)
+        !status = bmif%bmif_get_var_itemsize(outputvars(i), itemsize)
         !write(*, "(5x, I60)") itemsize
-        !status = bmif_get_var_nbytes(id, outputvars(i), nbytes)
+        !status = bmif%bmif_get_var_nbytes(outputvars(i), nbytes)
         !write(*, "(5x, I60)") nbytes
     enddo
     ! PointableVarNames
-    status = bmif_get_pointable_var_names(id, pointablevars)
+    status = bmif%bmif_get_pointable_var_names(pointablevars)
     write(*,*) "Pointable variables (GetValuePtr)"
     do i = 1, size(pointablevars)
         write(*,"(1x, I4, A60)") i, trim(pointablevars(i))
     enddo
     ! ComponentCount
-    status = bmif_get_value(id, "ComponentCount", ncomps)
+    status = bmif%bmif_get_value("ComponentCount", ncomps)
     rm_ncomps = RM_GetComponentCount(id)
     status = assert(ncomps .eq. rm_ncomps)
     ! Components
-    status = bmif_get_value(id, "Components", components)
-    status = bmif_get_var_itemsize(id, "Components", itemsize)
-    status = bmif_get_var_nbytes(id, "Components", nbytes)
+    status = bmif%bmif_get_value("Components", components)
+    status = bmif%bmif_get_var_itemsize("Components", itemsize)
+    status = bmif%bmif_get_var_nbytes("Components", nbytes)
     dim = nbytes / itemsize
     status = assert(dim .eq. size(components))
     !allocate(character(len=itemsize) :: component)
     !do i = 1, dim
     !    j = i
-    !    status = RM_GetComponent(id, j, component)
+    !    status = RM_GetComponent(j, component)
     !    status = assert(component .eq. components(i))
     !enddo
     status = RM_GetComponents(id, rm_components)
@@ -548,16 +555,16 @@ USE, intrinsic :: ISO_C_BINDING
         status = assert(components(i) .eq. rm_components(i))
     enddo
 
-    status = bmif_get_value(id, "Gfw", gfw)
+    status = bmif%bmif_get_value("Gfw", gfw)
     do i = 1, size(components)
         write(*,"(A10, F15.4)") trim(components(i)), gfw(i)
     enddo
     write(*,*)	   
     
     ! Concentrations
-    status = bmif_get_value(id, "GridCellCount", nxyz)
+    status = bmif%bmif_get_value("GridCellCount", nxyz)
     status = assert(nxyz .eq. RM_GetGridCellCount(id))
-    status = bmif_get_value(id, "Concentrations", c)
+    status = bmif%bmif_get_value("Concentrations", c)
     allocate(c_rm(nxyz, ncomps))
     status = RM_GetConcentrations(id, c_rm)
     do j = 1, ncomps
@@ -570,14 +577,14 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
    
 	! GetValue("DensityCalculated")
-    ! RM_GetDensityCalculated and bmif_get_value("DensityCalculated) always return 
+    ! RM_GetDensityCalculated and bmif%bmif_get_value("DensityCalculated) always return 
     ! the calculated solution density
-    status = bmif_get_var_itemsize(id, "DensityCalculated", itemsize)
-    status = bmif_get_var_nbytes(id, "DensityCalculated", nbytes)
+    status = bmif%bmif_get_var_itemsize("DensityCalculated", itemsize)
+    status = bmif%bmif_get_var_nbytes("DensityCalculated", nbytes)
     dim = nbytes / itemsize
     allocate(rm_density_calculated(dim))
     status = RM_GetDensityCalculated(id, rm_density_calculated)
-    status = bmif_get_value(id, "DensityCalculated", density_calculated)
+    status = bmif%bmif_get_value("DensityCalculated", density_calculated)
     do i = 1, nxyz
         if (density_calculated(i) .ne. rm_density_calculated(i)) then
             status = assert(.false.)
@@ -587,21 +594,21 @@ USE, intrinsic :: ISO_C_BINDING
     
     ! FilePrefix
     string = "NewPrefix"
-    status = bmif_set_value(id, "FilePrefix", string)
-    status = bmif_get_var_itemsize(id, "FilePrefix", itemsize)
-    status = bmif_get_var_nbytes(id, "FilePrefix", nbytes)
+    status = bmif%bmif_set_value("FilePrefix", string)
+    status = bmif%bmif_get_var_itemsize("FilePrefix", itemsize)
+    status = bmif%bmif_get_var_nbytes("FilePrefix", nbytes)
     allocate(character(len=itemsize) :: rm_prefix)
     status = assert(itemsize .eq. nbytes)
     status = RM_GetFilePrefix(id, rm_prefix)
     status = assert(string .eq. rm_prefix)
     allocate(character(len=itemsize) :: prefix)
-    status = bmif_get_value(id, "FilePrefix", prefix)
+    status = bmif%bmif_get_value("FilePrefix", prefix)
     status = assert(prefix .eq. rm_prefix)
          
 	! GetValue("Gfw")
-    status = bmif_get_value(id, "Gfw", gfw)
-    status = bmif_get_var_itemsize(id, "Gfw", itemsize)
-    status = bmif_get_var_nbytes(id, "Gfw", nbytes)
+    status = bmif%bmif_get_value("Gfw", gfw)
+    status = bmif%bmif_get_var_itemsize("Gfw", itemsize)
+    status = bmif%bmif_get_var_nbytes("Gfw", nbytes)
     dim = nbytes / itemsize
     allocate(rm_gfw(dim))
 	status = RM_GetGfw(id, rm_gfw);
@@ -613,19 +620,19 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
     
     ! GridCellCount
-    status = bmif_get_value(id, "GridCellCount", nxyz)
+    status = bmif%bmif_get_value("GridCellCount", nxyz)
     rm_nxyz = RM_GetGridCellCount(id)
     status = assert(nxyz .eq. rm_nxyz)
     
 	! GetValue("Porosity")
-    status = bmif_get_value_ptr(id, "Porosity", real_dim_ptr)
-    status = bmif_get_var_itemsize(id, "Porosity", itemsize)
-    status = bmif_get_var_nbytes(id, "Porosity", nbytes)
+    status = bmif%bmif_get_value_ptr("Porosity", real_dim_ptr)
+    status = bmif%bmif_get_var_itemsize("Porosity", itemsize)
+    status = bmif%bmif_get_var_nbytes("Porosity", nbytes)
     dim = nbytes / itemsize
     allocate(rm_porosity(dim))
     rm_porosity = 0.25
-    status = bmif_set_value(id, "Porosity", rm_porosity)
-    status = bmif_get_value(id, "Porosity", porosity)
+    status = bmif%bmif_set_value("Porosity", rm_porosity)
+    status = bmif%bmif_get_value("Porosity", porosity)
     do i = 1, nxyz
         status = assert(porosity(i) .eq. rm_porosity(i)) 
         status = assert(porosity(i) .eq. real_dim_ptr(i)) 
@@ -639,13 +646,13 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
 
 	! GetValue("Pressure")
-    status = bmif_get_var_itemsize(id, "Pressure", itemsize)
-    status = bmif_get_var_nbytes(id, "Pressure", nbytes)
+    status = bmif%bmif_get_var_itemsize("Pressure", itemsize)
+    status = bmif%bmif_get_var_nbytes("Pressure", nbytes)
     dim = nbytes / itemsize
     allocate(rm_pressure(dim))
     rm_pressure = 10.
-    status = bmif_set_value(id, "Pressure", rm_pressure)
-    status = bmif_get_value(id, "Pressure", pressure)
+    status = bmif%bmif_set_value("Pressure", rm_pressure)
+    status = bmif%bmif_get_value("Pressure", pressure)
     do i = 1, nxyz
         if (pressure(i) .ne. rm_pressure(i)) then
             status = assert(.false.)
@@ -662,11 +669,11 @@ USE, intrinsic :: ISO_C_BINDING
 
 	! GetValue("SaturationCalculated")
     ! Always returns solution_volume/(rv * porosity) for each cell
-    status = bmif_get_var_itemsize(id, "SaturationCalculated", itemsize)
-    status = bmif_get_var_nbytes(id, "SaturationCalculated", nbytes)
+    status = bmif%bmif_get_var_itemsize("SaturationCalculated", itemsize)
+    status = bmif%bmif_get_var_nbytes("SaturationCalculated", nbytes)
     dim = nbytes / itemsize
     allocate(rm_saturation(dim))
-    status = bmif_get_value(id, "SaturationCalculated", saturation)
+    status = bmif%bmif_get_value("SaturationCalculated", saturation)
 	status = RM_GetSaturationCalculated(id, rm_saturation);
     do i = 1, nxyz
         if (saturation(i) .ne. rm_saturation(i)) then
@@ -676,11 +683,11 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
     
     ! GetValue("SolutionVolume")
-    status = bmif_get_var_itemsize(id, "SolutionVolume", itemsize)
-    status = bmif_get_var_nbytes(id, "SolutionVolume", nbytes)
+    status = bmif%bmif_get_var_itemsize("SolutionVolume", itemsize)
+    status = bmif%bmif_get_var_nbytes("SolutionVolume", nbytes)
     dim = nbytes / itemsize
     allocate(rm_volume(dim))
-    status = bmif_get_value(id, "SolutionVolume", volume)
+    status = bmif%bmif_get_value("SolutionVolume", volume)
 	status = RM_GetSolutionVolume(id, rm_volume);
     do i = 1, nxyz
         if (volume(i) .ne. rm_volume(i)) then
@@ -690,13 +697,13 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
     
 	! GetValue("Temperature")
-    status = bmif_get_var_itemsize(id, "Temperature", itemsize)
-    status = bmif_get_var_nbytes(id, "Temperature", nbytes)
+    status = bmif%bmif_get_var_itemsize("Temperature", itemsize)
+    status = bmif%bmif_get_var_nbytes("Temperature", nbytes)
     dim = nbytes / itemsize
     allocate(rm_temperature(dim))
     rm_temperature = 11.
-    status = bmif_set_value(id, "Temperature", rm_temperature)
-    status = bmif_get_value(id, "Temperature", temperature)
+    status = bmif%bmif_set_value("Temperature", rm_temperature)
+    status = bmif%bmif_get_value("Temperature", temperature)
     do i = 1, nxyz
         if (temperature(i) .ne. rm_temperature(i)) then
             status = assert(.false.)
@@ -712,33 +719,33 @@ USE, intrinsic :: ISO_C_BINDING
     enddo
 
 	! GetValue("SelectedOutput")
-    status = bmif_get_value(id, "SelectedOutputCount", so_count);
+    status = bmif%bmif_get_value("SelectedOutputCount", so_count);
 	rm_so_count = RM_GetSelectedOutputCount(id);
     status = assert(so_count .eq. rm_so_count)
  
     do isel = 1, so_count ! one based
         i = isel
-		status = bmif_set_value(id, "NthSelectedOutput", i)
-        status = bmif_get_value(id, "CurrentSelectedOutputUserNumber", nuser)
+		status = bmif%bmif_set_value("NthSelectedOutput", i)
+        status = bmif%bmif_get_value("CurrentSelectedOutputUserNumber", nuser)
         rm_nuser = RM_GetCurrentSelectedOutputUserNumber(id)
         status = assert(nuser .eq. rm_nuser)
         i = isel        
 		rm_nuser = RM_GetNthSelectedOutputUserNumber(id, i)
         status = assert(nuser .eq. rm_nuser)
 
-        status = bmif_get_value(id, "SelectedOutputColumnCount", col_count)
+        status = bmif%bmif_get_value("SelectedOutputColumnCount", col_count)
         rm_col_count =RM_GetSelectedOutputColumnCount(id)
         status = assert(col_count .eq. rm_col_count)
 
-        status = bmif_get_value(id, "SelectedOutputRowCount", row_count)
+        status = bmif%bmif_get_value("SelectedOutputRowCount", row_count)
         rm_row_count = RM_GetSelectedOutputRowCount(id)
         status = assert(row_count .eq. rm_row_count)
 
-        status = bmif_get_var_nbytes(id, "SelectedOutput", nbytes);
-        status = bmif_get_var_itemsize(id, "SelectedOutput", itemsize);
+        status = bmif%bmif_get_var_nbytes("SelectedOutput", nbytes);
+        status = bmif%bmif_get_var_itemsize("SelectedOutput", itemsize);
         dim = nbytes / itemsize;
         status = assert(dim .eq. rm_row_count*rm_col_count)
-        status = bmif_get_value(id, "SelectedOutput", so)
+        status = bmif%bmif_get_value("SelectedOutput", so)
         if (allocated(rm_so)) deallocate(rm_so)
         allocate(rm_so(rm_row_count, rm_col_count))
         status = RM_GetSelectedOutput(id, rm_so);
@@ -751,7 +758,7 @@ USE, intrinsic :: ISO_C_BINDING
             enddo
         enddo
         ! check headings
-        status = bmif_get_value(id, "SelectedOutputHeadings", headings)
+        status = bmif%bmif_get_value("SelectedOutputHeadings", headings)
         status = RM_GetSelectedOutputHeadings(id, rm_headings)
         do j = 1, col_count
             if (headings(j) .ne. rm_headings(j)) then
@@ -771,7 +778,7 @@ write(*,*) "Assert failed"
 call exit(-1)
 end function assert
 
-subroutine compare_ptrs
+subroutine compare_ptrs(bmif)
 USE, intrinsic :: ISO_C_BINDING
 USE BMIPhreeqcRM
 USE IPhreeqc
@@ -806,13 +813,15 @@ implicit none
         SolutionVolume, Porosity, Pressure, Temperature, concentrations
     real(kind=8) :: time, timestep
     logical :: selectedoutputon, test_logical
+    type(bmi), intent(inout) :: bmif
     ! ComponentCount
-    status = bmif_get_value(id, "ComponentCount", componentcount)
+    id = bmif%bmif_get_id()
+    status = bmif%bmif_get_value("ComponentCount", componentcount)
     status = assert(ncomps .eq. componentcount)
     componentcount = RM_GetComponentCount(id)
     status = assert(ncomps .eq. componentcount)
     ! Gfw
-    status = bmif_get_value(id, "Gfw", gfw)
+    status = bmif%bmif_get_value("Gfw", gfw)
 	do i = 1, ncomps
 		status = assert(Gfw_ptr(i) .eq. gfw(i))
     enddo
@@ -821,15 +830,15 @@ implicit none
 		status = assert(Gfw_ptr(i) .eq. gfw(i))
     enddo
     ! GridCellCount
-    status = bmif_get_value(id, "GridCellCount", gridcellcount)
+    status = bmif%bmif_get_value("GridCellCount", gridcellcount)
 	status = assert(nxyz .eq. gridcellcount)
     ! Density, Saturation, SolutionVolume, Porosity, Pressure, Temperature
-	status = bmif_get_value(id, "DensityCalculated", density_calculated)
-	status = bmif_get_value(id, "SaturationCalculated", saturation)
-	status = bmif_get_value(id, "solutionvolume", solutionvolume)
-	status = bmif_get_value(id, "Porosity", Porosity)
-	status = bmif_get_value(id, "Pressure", Pressure)
-	status = bmif_get_value(id, "Temperature", Temperature)
+	status = bmif%bmif_get_value("DensityCalculated", density_calculated)
+	status = bmif%bmif_get_value("SaturationCalculated", saturation)
+	status = bmif%bmif_get_value("solutionvolume", solutionvolume)
+	status = bmif%bmif_get_value("Porosity", Porosity)
+	status = bmif%bmif_get_value("Pressure", Pressure)
+	status = bmif%bmif_get_value("Temperature", Temperature)
 
 	do i = 1, nxyz
 		status = assert(Density_calculated_ptr(i) .eq. density_calculated(i))
@@ -854,18 +863,18 @@ implicit none
 		status = assert(Temperature_ptr(i) .eq. Temperature(i))
     enddo   
     ! Concentrations
-	status = bmif_get_value(id, "Concentrations", Concentrations)
+	status = bmif%bmif_get_value("Concentrations", Concentrations)
 	dim = ncomps * nxyz
 	do i = 1, dim
 		status = assert(Concentrations_ptr(i) .eq. Concentrations(i))
     enddo
     ! Time
-    status = bmif_get_value(id, "Time", time)
+    status = bmif%bmif_get_value("Time", time)
 	status = assert(Time_ptr .eq. time)
-    status = bmif_get_value(id, "TimeStep", timestep)
+    status = bmif%bmif_get_value("TimeStep", timestep)
 	status = assert(TimeStep_ptr .eq. timestep)
     ! SelectedOutputOn
-    status = bmif_get_value(id, "SelectedOutputOn", selectedoutputon)
+    status = bmif%bmif_get_value("SelectedOutputOn", selectedoutputon)
     test_logical = SelectedOutputOn_ptr
 	status = assert(test_logical .eqv. selectedoutputon)
     end subroutine compare_ptrs  

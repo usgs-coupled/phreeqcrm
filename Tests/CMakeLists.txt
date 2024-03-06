@@ -129,6 +129,7 @@ target_sources(TestRM PRIVATE
   SimpleAdvect_cpp.cpp
   Species_c.c
   Species_cpp.cpp
+  TestAllMethods_c.c
   TestAllMethods_cpp.cpp
 )
 
@@ -257,9 +258,20 @@ set_property(TARGET TestRM APPEND
     Species_f90.chem.txt
     Species_f90.dmp
     Species_f90.log.txt
+    TestAllMethods_c.chem.txt
+    TestAllMethods_c.log.txt
+    TestAllMethods_c.yaml
+    TestAllMethods_cpp.chem.txt
+    TestAllMethods_cpp.dump
+    TestAllMethods_cpp.log.txt
+    TestAllMethods_cpp.yaml
     TestAllMethods_f90.chem.txt
     TestAllMethods_f90.dmp
     TestAllMethods_f90.log.txt
+    TestAllMethods_f90.yaml
+    TestAllMethods_py.chem.txt
+    TestAllMethods_py.dump
+    TestAllMethods_py.log.txt
 )
 
 if(MSVC AND BUILD_SHARED_LIBS)

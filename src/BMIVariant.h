@@ -34,6 +34,7 @@ private:
 	int dim;
 	int column;
 	std::string ctype;
+	std::string clangtype;
 	std::string ftype;
 	std::string ptype;
 	bool							b_var;
@@ -102,9 +103,9 @@ public:
 		this->Itemsize = itemsize;
 		if (itemsize != 0) dim = nbytes / itemsize;
 	}
-	void SetTypes(std::string c, std::string f, std::string p)
+	void SetTypes(std::string c, std::string f, std::string p, std::string clang)
 	{
-		this->ctype = c; this->ftype = f; this->ptype = p;
+		this->ctype = c; this->ftype = f; this->ptype = p; this->clangtype = clang;
 	}
 	void SetItemsize(int v) { this->Itemsize = v; }
 	void SetInitialized(bool v) { Initialized = v; }
@@ -121,6 +122,7 @@ public:
 		memcpy(DoubleVector.data(), v.data(), v.size() * sizeof(int));
 	}
 	void SetCType(std::string v) { this->ctype = v; }
+	void SetClangType(std::string v) { this->clangtype = v; }
 	void SetFType(std::string v) { this->ftype = v; }
 	void SetPType(std::string v) { this->ptype = v; }
 	void SetName(std::string s) { this->name = s; }
@@ -145,7 +147,8 @@ public:
 	std::string GetStringVar() { return this->string_var; }
 	int GetNbytes(void) { return this->Nbytes; }
 	int GetItemsize(void) { return this->Itemsize; }
-	std::string& GetCType() { return this->ctype; };;
+	std::string& GetCType() { return this->ctype; }
+	std::string& GetClangType() { return this->clangtype; }
 	std::string& GetFType() { return this->ftype; };
 	std::string& GetPType() { return this->ptype; };
 	double* GetDoubleVectorPtr() { return this->DoubleVector.data(); }

@@ -124,6 +124,12 @@ int
 PhreeqcRM::GetGridCellCountYAML(const char* YAML_file)
 /* ---------------------------------------------------------------------- */
 {
+	std::ifstream file(YAML_file);
+	if (!file.is_open()) {
+		std::cerr << "YAML file not found: " << YAML_file << std::endl;
+		return -1;
+	}
+	file.close();
 	YAML::Node yaml = YAML::LoadFile(YAML_file);
 	for (auto it = yaml.begin(); it != yaml.end(); it++)
 	{
@@ -2892,6 +2898,7 @@ PhreeqcRM::FindComponents(void)
 			species_z.clear();
 			s_num2rm_species_num.clear();
 			species_stoichiometry.clear();
+			species_d_25.clear();
 			for (int i = 0; i < (int)phast_iphreeqc_worker->PhreeqcPtr->s_x.size(); i++)
 			{
 				species_names.push_back(phast_iphreeqc_worker->PhreeqcPtr->s_x[i]->name);
@@ -5454,431 +5461,434 @@ PhreeqcRM::HandleErrorsInternal(std::vector< int > &rtn)
 #ifdef USE_YAML
 IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 {
-	YAML::Node yaml = YAML::LoadFile(config);
-	//std::string keyword;
-	//YAML::Node node;
-	for (YAML::Node::const_iterator it = yaml.begin();it != yaml.end();++it)
+	if (config.size() > 0)
 	{
-		YAML::Node node = *it;
-		auto it1 = node.begin();
-		assert(node.IsMap());
-		std::string keyword = it1++->second.as<std::string>();
-		if (keyword == "AddOutputVars")
+		YAML::Node yaml = YAML::LoadFile(config);
+		//std::string keyword;
+		//YAML::Node node;
+		for (YAML::Node::const_iterator it = yaml.begin();it != yaml.end();++it)
 		{
-			assert(node.size() == 3);
-			std::string option = it1++->second.as<std::string>();
-			std::string def = it1++->second.as<std::string>();
-			this->AddOutputVars(option, def);
-			continue;
-		}
-		if (keyword == "CloseFiles")
-		{
-			this->CloseFiles();
-			continue;
-		}
-		if (keyword == "CreateMapping")
-		{
-			std::vector<int> grid2chem = it1++->second.as<std::vector<int>>();
-			this->CreateMapping(grid2chem);
-			continue;
-		}
-		if (keyword == "DumpModule")
-		{
-			assert(node.size() == 3);
-			bool dump_on = it1++->second.as<bool>();
-			bool append = it1++->second.as<bool>();
-			this->DumpModule(dump_on, append);
-			continue;
-		}
-		if (keyword == "FindComponents")
-		{
-			this->FindComponents();
-			continue;
-		}
+			YAML::Node node = *it;
+			auto it1 = node.begin();
+			assert(node.IsMap());
+			std::string keyword = it1++->second.as<std::string>();
+			if (keyword == "AddOutputVars")
+			{
+				assert(node.size() == 3);
+				std::string option = it1++->second.as<std::string>();
+				std::string def = it1++->second.as<std::string>();
+				this->AddOutputVars(option, def);
+				continue;
+			}
+			if (keyword == "CloseFiles")
+			{
+				this->CloseFiles();
+				continue;
+			}
+			if (keyword == "CreateMapping")
+			{
+				std::vector<int> grid2chem = it1++->second.as<std::vector<int>>();
+				this->CreateMapping(grid2chem);
+				continue;
+			}
+			if (keyword == "DumpModule")
+			{
+				assert(node.size() == 3);
+				bool dump_on = it1++->second.as<bool>();
+				bool append = it1++->second.as<bool>();
+				this->DumpModule(dump_on, append);
+				continue;
+			}
+			if (keyword == "FindComponents")
+			{
+				this->FindComponents();
+				continue;
+			}
 
-		if (keyword == "InitialSolutions2Module")
-		{
-			std::vector< int > ic = it1++->second.as< std::vector< int > >();
-			this->InitialSolutions2Module(ic);
-			continue;
-		}
-		if (keyword == "InitialEquilibriumPhases2Module")
-		{
-			std::vector< int > ic = it1++->second.as< std::vector< int > >();
-			this->InitialEquilibriumPhases2Module(ic);
-			continue;
-		}
-		if (keyword == "InitialExchanges2Module")
-		{
-			std::vector< int > ic = it1++->second.as< std::vector< int > >();
-			this->InitialExchanges2Module(ic);
-			continue;
-		}
-		if (keyword == "InitialSurfaces2Module")
-		{
-			std::vector< int > ic = it1++->second.as< std::vector< int > >();
-			this->InitialSurfaces2Module(ic);
-			continue;
-		}
-		if (keyword == "InitialGasPhases2Module")
-		{
-			std::vector< int > ic = it1++->second.as< std::vector< int > >();
-			this->InitialGasPhases2Module(ic);
-			continue;
-		}
-		if (keyword == "InitialSolidSolutions2Module")
-		{
-			std::vector< int > ic = it1++->second.as< std::vector< int > >();
-			this->InitialSolidSolutions2Module(ic);
-			continue;
-		}
-		if (keyword == "InitialKinetics2Module")
-		{
-			std::vector< int > ic = it1++->second.as< std::vector< int > >();
-			this->InitialKinetics2Module(ic);
-			continue;
-		}
-
-		if (keyword == "InitialPhreeqc2Module")
-		{
-			if (node.size() == 2)
+			if (keyword == "InitialSolutions2Module")
 			{
 				std::vector< int > ic = it1++->second.as< std::vector< int > >();
-				this->InitialPhreeqc2Module(ic);
+				this->InitialSolutions2Module(ic);
 				continue;
 			}
-			else if (node.size() == 4)
+			if (keyword == "InitialEquilibriumPhases2Module")
 			{
-				std::vector < int > ic1 = it1++->second.as< std::vector < int > >();
-				std::vector < int > ic2 = it1++->second.as< std::vector < int > >();
-				std::vector < double > f1 = it1->second.as< std::vector < double > >();
-				this->InitialPhreeqc2Module(ic1, ic2, f1);
+				std::vector< int > ic = it1++->second.as< std::vector< int > >();
+				this->InitialEquilibriumPhases2Module(ic);
 				continue;
 			}
-			//throw LetItThrow("YAML argument mismatch InitialPhreeqc2Module");
-			ErrorMessage("YAML argument mismatch InitialPhreeqc2Module");
+			if (keyword == "InitialExchanges2Module")
+			{
+				std::vector< int > ic = it1++->second.as< std::vector< int > >();
+				this->InitialExchanges2Module(ic);
+				continue;
+			}
+			if (keyword == "InitialSurfaces2Module")
+			{
+				std::vector< int > ic = it1++->second.as< std::vector< int > >();
+				this->InitialSurfaces2Module(ic);
+				continue;
+			}
+			if (keyword == "InitialGasPhases2Module")
+			{
+				std::vector< int > ic = it1++->second.as< std::vector< int > >();
+				this->InitialGasPhases2Module(ic);
+				continue;
+			}
+			if (keyword == "InitialSolidSolutions2Module")
+			{
+				std::vector< int > ic = it1++->second.as< std::vector< int > >();
+				this->InitialSolidSolutions2Module(ic);
+				continue;
+			}
+			if (keyword == "InitialKinetics2Module")
+			{
+				std::vector< int > ic = it1++->second.as< std::vector< int > >();
+				this->InitialKinetics2Module(ic);
+				continue;
+			}
+
+			if (keyword == "InitialPhreeqc2Module")
+			{
+				if (node.size() == 2)
+				{
+					std::vector< int > ic = it1++->second.as< std::vector< int > >();
+					this->InitialPhreeqc2Module(ic);
+					continue;
+				}
+				else if (node.size() == 4)
+				{
+					std::vector < int > ic1 = it1++->second.as< std::vector < int > >();
+					std::vector < int > ic2 = it1++->second.as< std::vector < int > >();
+					std::vector < double > f1 = it1->second.as< std::vector < double > >();
+					this->InitialPhreeqc2Module(ic1, ic2, f1);
+					continue;
+				}
+				//throw LetItThrow("YAML argument mismatch InitialPhreeqc2Module");
+				ErrorMessage("YAML argument mismatch InitialPhreeqc2Module");
+				throw PhreeqcRMStop();
+			}
+			if (keyword == "InitialPhreeqc2Module_mix")
+			{
+				if (node.size() == 4)
+				{
+					std::vector < int > ic1 = it1++->second.as< std::vector < int > >();
+					std::vector < int > ic2 = it1++->second.as< std::vector < int > >();
+					std::vector < double > f1 = it1->second.as< std::vector < double > >();
+					this->InitialPhreeqc2Module(ic1, ic2, f1);
+					continue;
+				}
+				//throw LetItThrow("YAML argument mismatch InitialPhreeqc2Module");
+				ErrorMessage("YAML argument mismatch InitialPhreeqc2Module_mix");
+				throw PhreeqcRMStop();
+			}
+			if (keyword == "InitialPhreeqcCell2Module")
+			{
+				assert(node.size() == 3);
+				int n = it1++->second.as<int>();
+				std::vector< int > cell_numbers = it1++->second.as< std::vector<int > >();
+				this->InitialPhreeqcCell2Module(n, cell_numbers);
+				continue;
+			}
+			if (keyword == "LoadDatabase")
+			{
+				std::string file = it1++->second.as< std::string >();
+				this->LoadDatabase(file);
+				continue;
+			}
+			if (keyword == "OpenFiles")
+			{
+				this->OpenFiles();
+				continue;
+			}
+			if (keyword == "OutputMessage")
+			{
+				std::string str = it1++->second.as< std::string >();
+				this->OutputMessage(str);
+				continue;
+			}
+			if (keyword == "RunCells")
+			{
+				this->RunCells();
+				continue;
+			}
+			if (keyword == "RunFile")
+			{
+				assert(node.size() == 5);
+				bool workers = it1++->second.as<bool>();
+				bool initial = it1++->second.as<bool>();
+				bool utility = it1++->second.as<bool>();
+				std::string  file = it1++->second.as< std::string >();
+				this->RunFile(workers, initial, utility, file);
+				continue;
+			}
+			if (keyword == "RunString")
+			{
+				assert(node.size() == 5);
+				bool workers = it1++->second.as<bool>();
+				bool initial = it1++->second.as<bool>();
+				bool utility = it1++->second.as<bool>();
+				std::string  string = it1++->second.as<std::string>();
+				this->RunString(workers, initial, utility, string);
+				continue;
+			}
+			if (keyword == "ScreenMessage")
+			{
+				std::string str = it1++->second.as< std::string >();
+				this->ScreenMessage(str);
+				continue;
+			}
+			if (keyword == "SetComponentH2O")
+			{
+				bool tf = it1++->second.as< bool >();
+				this->SetComponentH2O(tf);
+				continue;
+			}
+			if (keyword == "SetConcentrations")
+			{
+				std::vector< double > c = it1++->second.as< std::vector< double > >();
+				this->SetConcentrations(c);
+				continue;
+			}
+			if (keyword == "SetCurrentSelectedOutputUserNumber")
+			{
+				int n = it1++->second.as< int >();
+				this->SetCurrentSelectedOutputUserNumber(n);
+				continue;
+			}
+			if (keyword == "SetDensityUser")
+			{
+				std::vector< double > den = it1++->second.as< std::vector< double > >();
+				this->SetDensityUser(den);
+				continue;
+			}
+			if (keyword == "SetDumpFileName")
+			{
+				std::string str = it1++->second.as< std::string >();
+				this->SetDumpFileName(str);
+				continue;
+			}
+			if (keyword == "SetErrorHandlerMode")
+			{
+				int mode = it1++->second.as< int >();
+				this->SetErrorHandlerMode(mode);
+				continue;
+			}
+			if (keyword == "SetErrorOn")
+			{
+				bool tf = it1++->second.as< bool >();
+				this->SetErrorOn(tf);
+				continue;
+			}
+			if (keyword == "SetFilePrefix")
+			{
+				std::string prefix = it1++->second.as< std::string >();
+				this->SetFilePrefix(prefix);
+				continue;
+			}
+			if (keyword == "SetGasCompMoles")
+			{
+				std::vector<double> mol = it1++->second.as< std::vector < double > >();
+				this->SetGasCompMoles(mol);
+				continue;
+			}
+			if (keyword == "SetGasPhaseVolume")
+			{
+				std::vector<double> vol = it1++->second.as< std::vector < double > >();
+				this->SetGasPhaseVolume(vol);
+				continue;
+			}
+			if (keyword == "SetGridCellCount")
+			{
+				//this->WarningMessage("SetGridCellCount has no effect after the PhreeqcRM instance is created.");
+				continue;
+			}
+			if (keyword == "SetPartitionUZSolids")
+			{
+				bool tf = it1++->second.as< bool >();
+				this->SetPartitionUZSolids(tf);
+				continue;
+			}
+			if (keyword == "SetPorosity")
+			{
+				std::vector<double> por = it1++->second.as< std::vector< double > >();
+				this->SetPorosity(por);
+				continue;
+			}
+			if (keyword == "SetPressure")
+			{
+				std::vector<double> pressure = it1++->second.as< std::vector< double > >();
+				this->SetPressure(pressure);
+				continue;
+			}
+			if (keyword == "SetPrintChemistryMask")
+			{
+				std::vector<int> mask = it1++->second.as< std::vector< int > >();
+				this->SetPrintChemistryMask(mask);
+				continue;
+			}
+			if (keyword == "SetPrintChemistryOn")
+			{
+				assert(node.size() == 4);
+				bool workers = it1++->second.as< bool >();
+				bool initial = it1++->second.as< bool >();
+				bool utility = it1++->second.as< bool >();
+				this->SetPrintChemistryOn(workers, initial, utility);
+				continue;
+			}
+			if (keyword == "SetRebalanceByCell")
+			{
+				bool tf = it1++->second.as< bool >();
+				this->SetRebalanceByCell(tf);
+				continue;
+			}
+			if (keyword == "SetRebalanceFraction")
+			{
+				double f = it1++->second.as<double>();
+				this->SetRebalanceFraction(f);
+				continue;
+			}
+			if (keyword == "SetRepresentativeVolume")
+			{
+				std::vector<double> rv = it1++->second.as< std::vector<double > >();
+				this->SetRepresentativeVolume(rv);
+				continue;
+			}
+			if (keyword == "SetSaturationUser")
+			{
+				std::vector< double > sat = it1++->second.as< std::vector< double> >();
+				this->SetSaturationUser(sat);
+				continue;
+			}
+			if (keyword == "SetScreenOn")
+			{
+				bool tf = it1++->second.as< bool >();
+				this->SetScreenOn(tf);
+				continue;
+			}
+			if (keyword == "SetSelectedOutputOn")
+			{
+				bool tf = it1++->second.as< bool >();
+				this->SetSelectedOutputOn(tf);
+				continue;
+			}
+			if (keyword == "SetSpeciesSaveOn")
+			{
+				bool tf = it1++->second.as< bool >();
+				this->SetSpeciesSaveOn(tf);
+				continue;
+			}
+			if (keyword == "SetTemperature")
+			{
+				std::vector<double> temp = it1++->second.as<std::vector<double>>();
+				this->SetTemperature(temp);
+				continue;
+			}
+			if (keyword == "SetTime")
+			{
+				double time = it1++->second.as<double>();
+				this->SetTime(time);
+				continue;
+			}
+			if (keyword == "SetTimeConversion")
+			{
+				double time_conv = it1++->second.as<double>();
+				this->SetTimeConversion(time_conv);
+				continue;
+			}
+			if (keyword == "SetTimeStep")
+			{
+				double time_step = it1++->second.as<double>();
+				this->SetTimeStep(time_step);
+				continue;
+			}
+			if (keyword == "SetUnitsExchange")
+			{
+				int units = it1++->second.as<int>();
+				this->SetUnitsExchange(units);
+				continue;
+			}
+			if (keyword == "SetUnitsGasPhase")
+			{
+				int units = it1++->second.as< int >();
+				this->SetUnitsGasPhase(units);
+				continue;
+			}
+			if (keyword == "SetUnitsKinetics")
+			{
+				int units = it1++->second.as< int >();
+				this->SetUnitsKinetics(units);
+				continue;
+			}
+			if (keyword == "SetUnitsPPassemblage")
+			{
+				int units = it1++->second.as< int >();
+				this->SetUnitsPPassemblage(units);
+				continue;
+			}
+			if (keyword == "SetUnitsSolution")
+			{
+				int units = it1++->second.as< int >();
+				this->SetUnitsSolution(units);
+				continue;
+			}
+			if (keyword == "SetUnitsSSassemblage")
+			{
+				int units = it1++->second.as< int >();
+				this->SetUnitsSSassemblage(units);
+				continue;
+			}
+			if (keyword == "SetUnitsSurface")
+			{
+				int units = it1++->second.as< int >();
+				this->SetUnitsSurface(units);
+				continue;
+			}
+			if (keyword == "SpeciesConcentrations2Module")
+			{
+				std::vector < double > scond = it1++->second.as< std::vector < double > >();
+				this->SpeciesConcentrations2Module(scond);
+				continue;
+			}
+			if (keyword == "StateSave")
+			{
+				int n = it1++->second.as< int >();
+				this->StateSave(n);
+				continue;
+			}
+			if (keyword == "StateApply")
+			{
+				int n = it1++->second.as< int >();
+				this->StateApply(n);
+				continue;
+			}
+			if (keyword == "StateDelete")
+			{
+				int n = it1++->second.as< int >();
+				this->StateDelete(n);
+				continue;
+			}
+			if (keyword == "ThreadCount") {
+				continue;
+			}
+			if (keyword == "UseSolutionDensityVolume")
+			{
+				bool tf = it1++->second.as< bool >();
+				this->UseSolutionDensityVolume(tf);
+				continue;
+			}
+			if (keyword == "WarningMessage")
+			{
+				std::string str = it1++->second.as< std::string >();
+				this->WarningMessage(str);
+				continue;
+			}
+			//throw LetItThrow("YAML keyword not found");
+			std::ostringstream oss;
+			oss << "YAML keyword not found: " << keyword << std::endl;
+			ErrorMessage(oss.str());
 			throw PhreeqcRMStop();
 		}
-		if (keyword == "InitialPhreeqc2Module_mix")
-		{
-			if (node.size() == 4)
-			{
-				std::vector < int > ic1 = it1++->second.as< std::vector < int > >();
-				std::vector < int > ic2 = it1++->second.as< std::vector < int > >();
-				std::vector < double > f1 = it1->second.as< std::vector < double > >();
-				this->InitialPhreeqc2Module(ic1, ic2, f1);
-				continue;
-			}
-			//throw LetItThrow("YAML argument mismatch InitialPhreeqc2Module");
-			ErrorMessage("YAML argument mismatch InitialPhreeqc2Module_mix");
-			throw PhreeqcRMStop();
-		}
-		if (keyword == "InitialPhreeqcCell2Module")
-		{
-			assert(node.size() == 3);
-			int n = it1++->second.as<int>();
-			std::vector< int > cell_numbers = it1++->second.as< std::vector<int > >();
-			this->InitialPhreeqcCell2Module(n, cell_numbers);
-			continue;
-		}
-		if (keyword == "LoadDatabase")
-		{
-			std::string file = it1++->second.as< std::string >();
-			this->LoadDatabase(file);
-			continue;
-		}
-		if (keyword == "OpenFiles")
-		{
-			this->OpenFiles();
-			continue;
-		}
-		if (keyword == "OutputMessage")
-		{
-			std::string str = it1++->second.as< std::string >();
-			this->OutputMessage(str);
-			continue;
-		}
-		if (keyword == "RunCells")
-		{
-			this->RunCells();
-			continue;
-		}
-		if (keyword == "RunFile")
-		{
-			assert(node.size() == 5);
-			bool workers = it1++->second.as<bool>();
-			bool initial = it1++->second.as<bool>();
-			bool utility = it1++->second.as<bool>();
-			std::string  file = it1++->second.as< std::string >();
-			this->RunFile(workers, initial, utility, file);
-			continue;
-		}
-		if (keyword == "RunString")
-		{
-			assert(node.size() == 5);
-			bool workers = it1++->second.as<bool>();
-			bool initial = it1++->second.as<bool>();
-			bool utility = it1++->second.as<bool>();
-			std::string  string = it1++->second.as<std::string>();
-			this->RunString(workers, initial, utility, string);
-			continue;
-		}
-		if (keyword == "ScreenMessage")
-		{
-			std::string str = it1++->second.as< std::string >();
-			this->ScreenMessage(str);
-			continue;
-		}
-		if (keyword == "SetComponentH2O")
-		{
-			bool tf = it1++->second.as< bool >();
-			this->SetComponentH2O(tf);
-			continue;
-		}
-		if (keyword == "SetConcentrations") 
-		{
-			std::vector< double > c = it1++->second.as< std::vector< double > >();
-			this->SetConcentrations(c);
-			continue;
-		}
-		if (keyword == "SetCurrentSelectedOutputUserNumber")
-		{
-			int n = it1++->second.as< int >();
-			this->SetCurrentSelectedOutputUserNumber(n);
-			continue;
-		}
-		if (keyword == "SetDensityUser")
-		{
-			std::vector< double > den = it1++->second.as< std::vector< double > >();
-			this->SetDensityUser(den);
-			continue;
-		}
-		if (keyword == "SetDumpFileName")
-		{
-			std::string str = it1++->second.as< std::string >();
-			this->SetDumpFileName(str);
-			continue;
-		}
-		if (keyword == "SetErrorHandlerMode")
-		{
-			int mode = it1++->second.as< int >();
-			this->SetErrorHandlerMode(mode);
-			continue;
-		}
-		if (keyword == "SetErrorOn") 
-		{
-			bool tf = it1++->second.as< bool >();
-			this->SetErrorOn(tf);
-			continue;
-		}
-		if (keyword == "SetFilePrefix")
-		{
-			std::string prefix = it1++->second.as< std::string >();
-			this->SetFilePrefix(prefix);
-			continue;
-		}
-		if (keyword == "SetGasCompMoles") 
-		{
-			std::vector<double> mol = it1++->second.as< std::vector < double > >();
-			this->SetGasCompMoles(mol);
-			continue;
-		}
-		if (keyword == "SetGasPhaseVolume") 
-		{
-			std::vector<double> vol = it1++->second.as< std::vector < double > >();
-			this->SetGasPhaseVolume(vol);
-			continue;
-		}
-		if (keyword == "SetGridCellCount") 
-		{
-			//this->WarningMessage("SetGridCellCount has no effect after the PhreeqcRM instance is created.");
-			continue;
-		}
-		if (keyword == "SetPartitionUZSolids")
-		{
-			bool tf = it1++->second.as< bool >();
-			this->SetPartitionUZSolids(tf);
-			continue;
-		}
-		if (keyword == "SetPorosity")
-		{
-			std::vector<double> por = it1++->second.as< std::vector< double > >();
-			this->SetPorosity(por);
-			continue;
-		}
-		if (keyword == "SetPressure")
-		{
-			std::vector<double> pressure = it1++->second.as< std::vector< double > >();
-			this->SetPressure(pressure);
-			continue;
-		}
-		if (keyword == "SetPrintChemistryMask")
-		{
-			std::vector<int> mask = it1++->second.as< std::vector< int > >();
-			this->SetPrintChemistryMask(mask);
-			continue;
-		}
-		if (keyword == "SetPrintChemistryOn")
-		{
-			assert(node.size() == 4);
-			bool workers = it1++->second.as< bool >();
-			bool initial = it1++->second.as< bool >();
-			bool utility = it1++->second.as< bool >();
-			this->SetPrintChemistryOn(workers, initial, utility);
-			continue;
-		}
-		if (keyword == "SetRebalanceByCell")
-		{
-			bool tf = it1++->second.as< bool >();
-			this->SetRebalanceByCell(tf);
-			continue;
-		}
-		if (keyword == "SetRebalanceFraction")
-		{
-			double f = it1++->second.as<double>();
-			this->SetRebalanceFraction(f);
-			continue;
-		}
-		if (keyword == "SetRepresentativeVolume")
-		{
-			std::vector<double> rv = it1++->second.as< std::vector<double > >();
-			this->SetRepresentativeVolume(rv);
-			continue;
-		}
-		if (keyword == "SetSaturationUser")
-		{
-			std::vector< double > sat = it1++->second.as< std::vector< double> >();
-			this->SetSaturationUser(sat);
-			continue;
-		}
-		if (keyword == "SetScreenOn") 
-		{
-			bool tf = it1++->second.as< bool >();
-			this->SetScreenOn(tf);
-			continue;
-		}
-		if (keyword == "SetSelectedOutputOn")
-		{
-			bool tf = it1++->second.as< bool >();
-			this->SetSelectedOutputOn(tf);
-			continue;
-		}
-		if (keyword == "SetSpeciesSaveOn")
-		{
-			bool tf = it1++->second.as< bool >();
-			this->SetSpeciesSaveOn(tf);
-			continue;
-		}
-		if (keyword == "SetTemperature")
-		{
-			std::vector<double> temp = it1++->second.as<std::vector<double>>();
-			this->SetTemperature(temp);
-			continue;
-		}
-		if (keyword == "SetTime")
-		{
-			double time = it1++->second.as<double>();
-			this->SetTime(time);
-			continue;
-		}
-		if (keyword == "SetTimeConversion")
-		{
-			double time_conv = it1++->second.as<double>();
-			this->SetTimeConversion(time_conv);
-			continue;
-		}
-		if (keyword == "SetTimeStep")
-		{
-			double time_step = it1++->second.as<double>();
-			this->SetTimeStep(time_step);
-			continue;
-		}
-		if (keyword == "SetUnitsExchange")
-		{
-			int units = it1++->second.as<int>();
-			this->SetUnitsExchange(units);
-			continue;
-		}
-		if (keyword == "SetUnitsGasPhase")
-		{
-			int units = it1++->second.as< int >();
-			this->SetUnitsGasPhase(units);
-			continue;
-		}
-		if (keyword == "SetUnitsKinetics")
-		{
-			int units = it1++->second.as< int >();
-			this->SetUnitsKinetics(units);
-			continue;
-		}
-		if (keyword == "SetUnitsPPassemblage")
-		{
-			int units = it1++->second.as< int >();
-			this->SetUnitsPPassemblage(units);
-			continue;
-		}
-		if (keyword == "SetUnitsSolution")
-		{
-			int units = it1++->second.as< int >();
-			this->SetUnitsSolution(units);
-			continue;
-		}
-		if (keyword == "SetUnitsSSassemblage")
-		{
-			int units = it1++->second.as< int >();
-			this->SetUnitsSSassemblage(units);
-			continue;
-		}
-		if (keyword == "SetUnitsSurface")
-		{
-			int units = it1++->second.as< int >();
-			this->SetUnitsSurface(units);
-			continue;
-		}
-		if (keyword == "SpeciesConcentrations2Module")
-		{
-			std::vector < double > scond = it1++->second.as< std::vector < double > >();
-			this->SpeciesConcentrations2Module(scond);
-			continue;
-		}
-		if (keyword == "StateSave")
-		{
-			int n = it1++->second.as< int >();
-			this->StateSave(n);
-			continue;
-		}
-		if (keyword == "StateApply")
-		{
-			int n = it1++->second.as< int >();
-			this->StateApply(n);
-			continue;
-		}
-		if (keyword == "StateDelete")
-		{
-			int n = it1++->second.as< int >();
-			this->StateDelete(n);
-			continue;
-		}
-		if (keyword == "ThreadCount") {
-			continue;
-		}
-		if (keyword == "UseSolutionDensityVolume")
-		{
-			bool tf = it1++->second.as< bool >();
-			this->UseSolutionDensityVolume(tf);
-			continue;
-		}
-		if (keyword == "WarningMessage")
-		{
-			std::string str = it1++->second.as< std::string >();
-			this->WarningMessage(str);
-			continue;
-		}
-		//throw LetItThrow("YAML keyword not found");
-		std::ostringstream oss;
-		oss << "YAML keyword not found: " << keyword << std::endl;
-		ErrorMessage(oss.str());
-		throw PhreeqcRMStop();
 	}
 	return IRM_RESULT::IRM_OK;
 }

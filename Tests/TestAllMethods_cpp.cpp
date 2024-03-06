@@ -713,6 +713,12 @@ void TestAllMethods_cpp()
 	str_vector = bmi.GetOutputVarNames();
 	std::cerr << "GetOutputVarNames \n";
 	//-------
+	n = bmi.GetPointableItemCount();
+	std::cerr << "GetPointableItemCount \n";
+	//-------
+	str_vector = bmi.GetPointableVarNames();
+	std::cerr << "GetPointableVarNames \n";
+	//-------
 	d = bmi.GetTimeStep();
 	std::cerr << "GetTimeStep \n";
 	//-------

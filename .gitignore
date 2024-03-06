@@ -57,6 +57,7 @@ src/IPhreeqcPhast/IPhreeqc/phreeqcpp/print.utf-8.cpp
 src/IPhreeqcPhast/IPhreeqc/phreeqcpp/print.windows-1252.cpp
 
 # Doxygen/make
+src/BMI_interface.F90.save
 src/RM_interface.F90.save
 src/YAML_interface.F90.save
 

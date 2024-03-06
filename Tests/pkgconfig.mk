@@ -14,6 +14,7 @@ objects =\
 	SimpleAdvect_cpp.o\
 	Species_c.o\
 	Species_cpp.o\
+	TestAllMethods_c.o\
 	TestAllMethods_cpp.o\
 	WriteYAMLFile_cpp.o\
 	WriteYAMLFile_cpp_test.o

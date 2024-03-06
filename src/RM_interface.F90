@@ -1,6 +1,7 @@
     !> @file RM_interface.F90
-    !> @brief PhreeqcRM module definition 
-    !>
+    !> @brief PhreeqcRM module definition. PhreeqcRM is deprecated and
+    !> included for backward compatibility. Use BMIPhreeqcRM instead;
+    !> all PhreeqcRM methods are included in the BMIPhreeqcRM module.
     !
     !*MODULE PhreeqcRM PHREEQC Reaction Module for Transport Codes
     !> @brief Fortran Documentation for the geochemical reaction module PhreeqcRM.
@@ -86,9 +87,9 @@
 !> <PRE>
 !> integer nthreads = 0
 !> integer nxyz
-!> nxyz = GetGridCellCountYAML("myfile.yaml");
-!> status = RM_Create(nxyz, nthreads);
-!> status = RM_InitializeYAML("myfile.yaml");
+!> nxyz = GetGridCellCountYAML("myfile.yaml")
+!> status = RM_Create(nxyz, nthreads)
+!> status = RM_InitializeYAML("myfile.yaml")
 !> </PRE>
 !> </CODE>
 !> @endhtmlonly
@@ -112,9 +113,9 @@
 #endif    
     !> Abort the program.
     !> @a irm_result will be interpreted as an IRM_RESULT value and decoded; 
-    !> @a err_str will be printed; and the reaction module will be destroyed.
+    !> @a err_str will be printed; and the reaction module will be Destroyed.
     !> If using MPI, an MPI_Abort message will be sent before the reaction
-    !> module is destroyed. If the @a id is an invalid instance, RM_Abort will 
+    !> module is Destroyed. If the @a id is an invalid instance, RM_Abort will 
     !> return a value ofIRM_BADINSTANCE, otherwise the program will exit with a 
     !> return code of 4.
     !> @param id            The instance id returned from @ref RM_Create.
@@ -209,7 +210,7 @@
     !> Array of size @a n.
     !> @param p_atm         Array of pressures to apply to the SOLUTIONs, in atm. 
     !> Array of size n.
-    !> @retval IRM_RESULT   0 is success, negative is failure (See @ref RM_DecodeError).
+    !> @retval   id number of the utility IPhreeqc instance. 
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
@@ -361,14 +362,14 @@
     !>   grid2chem(i) = i - 1
     !>   grid2chem(i+nxyz/2) = i - 1
     !> enddo
-    !> status = RM_CreateMapping(id, grid2chem)
+    !> status = RM_Createmapping(id, grid2chem)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root, workers must be in the loop of @ref RM_MpiWorker.
 
-    INTEGER FUNCTION RM_CreateMapping(id, grid2chem)
+    INTEGER FUNCTION RM_Createmapping(id, grid2chem)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -383,9 +384,9 @@
     INTEGER, INTENT(in) :: id
     INTEGER, INTENT(in), DIMENSION(:) :: grid2chem
     if (rmf_debug) call Chk_CreateMapping(id, grid2chem)
-    RM_CreateMapping = RMF_CreateMapping(id, grid2chem)
+    RM_Createmapping = RMF_CreateMapping(id, grid2chem)
     return
-    END FUNCTION RM_CreateMapping
+    END FUNCTION RM_Createmapping
 
     SUBROUTINE Chk_CreateMapping(id, grid2chem)
     IMPLICIT NONE
@@ -393,9 +394,9 @@
     INTEGER, INTENT(in), DIMENSION(:) :: grid2chem
     INTEGER :: errors
     errors = 0
-    errors = errors + Chk_Integer1D(id, grid2chem, rmf_nxyz, "Grid2chem mapping", "RM_CreateMapping")
+    errors = errors + Chk_Integer1D(id, grid2chem, rmf_nxyz, "Grid2chem mapping", "RM_Createmapping")
     if (errors .gt. 0) then
-        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_CreateMapping")
+        errors = RM_Abort(id, -3, "Invalid argument(s) in RM_Createmapping")
     endif
     END SUBROUTINE Chk_CreateMapping
 
@@ -425,7 +426,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = RM_CreateMapping(id, grid2chem)
+    !> status = RM_Createmapping(id, grid2chem)
     !> if (status < 0) status = RM_DecodeError(id, status)
     !> </PRE>
     !> </CODE>
@@ -601,7 +602,7 @@
     !> defined in the initial phreeqc instance at any time RM_FindComponents was called.
     !> In addition, a list of phases is generated for which saturation indices may be calculated from the
     !> cumulative list of components.
-    !> @see also
+    !> @see 
     !> @ref RM_GetEquilibriumPhasesNames,
     !> @ref RM_GetEquilibriumPhasesCount,
     !> @ref RM_GetExchangeNames,
@@ -657,7 +658,7 @@
 
     !> Fills an array with the cell numbers in the user's numbering sytstem that map 
     !> to a cell in the PhreeqcRM numbering system. The mapping is defined by
-    !> @ref RM_CreateMapping.
+    !> @ref RM_Createmapping.
     !> @param id            The instance @a id returned from @ref RM_Create.
     !> @param n             A cell number in the PhreeqcRM numbering system (0 <= n < 
     !> @ref RM_GetChemistryCellCount).
@@ -665,14 +666,14 @@
     !> PhreeqcRM cell @a n.
     !> @retval              IRM_RESULT error code (see @ref RM_DecodeError).
     !> @see
-    !> @ref RM_CreateMapping,
+    !> @ref RM_Createmapping,
     !> @ref RM_GetChemistryCellCount,
     !> @ref RM_GetGridCellCount.
     !> @par C Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> if (RM_GetBackwardMapping(rm_id, rm_cell_number, list) .eq. 0) then
+    !> if (RM_GetBackwardMapping(id, rm_cell_number, list) .eq. 0) then
     !>   if (fstr(1:l) .eq. "HYDRAULIC_K") then
     !>     my_basic_fortran_callback = K_ptr(list(1)+1)
     !>   endif
@@ -712,19 +713,19 @@
 
     !> Returns the number of chemistry cells in the reaction module. The number of chemistry 
     !> cells is defined by the set of non-negative integers in the mapping from user grid 
-    !> cells (@ref RM_CreateMapping). The number of chemistry cells is less than or equal to 
+    !> cells (@ref RM_Createmapping). The number of chemistry cells is less than or equal to 
     !> the number of cells in the user's model.
     !> @param id            The instance @a id returned from @ref RM_Create.
     !> @retval              Number of chemistry cells, or IRM_RESULT error code 
     !> (see @ref RM_DecodeError).
     !> @see
-    !> @ref RM_CreateMapping,
+    !> @ref RM_Createmapping,
     !> @ref RM_GetGridCellCount.
     !> @par Fortran Example:
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = RM_CreateMapping(id, grid2chem)
+    !> status = RM_Createmapping(id, grid2chem)
     !> nchem = RM_GetChemistryCellCount(id)
     !> </PRE>
     !> </CODE>
@@ -1119,7 +1120,7 @@
     !> Retrieve a list of equilibrium phase names.
     !> The list includes all phases included in any EQUILIBRIUM_PHASES definitions in
     !> the initial-phreeqc module. @ref RM_FindComponents must be called before 
-    !> @ref RM_GetEquilibriumPhasesNames. This method may be useful when generating 
+    !> @a RM_GetEquilibriumPhasesNames. This method may be useful when generating 
     !> selected output definitions related to equilibrium phases.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param names            Array of equilibrium phase names.
@@ -1265,7 +1266,7 @@
     END FUNCTION RM_GetErrorStringLength
 
     !> Retrieves a list of exchange names.
-    !> @ref RM_FindComponents must be called before @ref RM_GetExchangeNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetExchangeNames.
     !> The exchange names array is the same length as the exchange species names array
     !> and provides the corresponding exchange site (for example, X corresponing to NaX).
     !> This method may be useful when generating selected output definitions related to exchangers.
@@ -1371,7 +1372,7 @@
     !> The list of exchange species (such as "NaX") is derived from the list of components
     !> (@ref RM_FindComponents) and the list of all exchange names (such as "X")
     !> that are found by call(s) to @ref RM_FindComponents. @ref RM_FindComponents must 
-    !> be called before @ref RM_GetExchangeSpeciesNames. This method may be useful 
+    !> be called before @a RM_GetExchangeSpeciesNames. This method may be useful 
     !> when generating selected output definitions related to exchangers.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param names            Allocatable array of exchange species names.
@@ -1515,7 +1516,7 @@
 
     !> Retrieves a list of the gas component names.
     !> The list includes all gas components found by calls to @ref RM_FindComponents.
-    !> @ref RM_FindComponents must be called before @ref RM_GetGasComponentsNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetGasComponentsNames.
     !> This method may be useful when generating selected output definitions related 
     !> to gas phases.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -1848,7 +1849,7 @@
     !> (See @ref RM_DecodeError).
     !> @see
     !> @ref RM_Create,
-    !> @ref RM_CreateMapping,
+    !> @ref RM_Createmapping,
     !> @ref RM_InitializeYAML.
     !> @par Fortran Example:
     !> @htmlonly
@@ -2059,7 +2060,7 @@
 
     !> Retrieves a list of kinetic reaction names.
     !> The list includes all kinetic reactions found by call(s) to @ref RM_FindComponents.
-    !> @ref RM_FindComponents must be called before @ref RM_GetKineticReactionsNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetKineticReactionsNames.
     !> This method may be useful when generating selected output definitions related to 
     !> kinetic reactions.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -2771,7 +2772,7 @@
     !> the initial-phreeqc module. The list assumes that all components are present to be 
     !> able to calculate the entire list of SIs; it may be that one or more components are 
     !> missing in any specific cell. @ref RM_FindComponents must be called before 
-    !> @ref RM_GetSINames. This method may be useful when generating selected output 
+    !> @a RM_GetSINames. This method may be useful when generating selected output 
     !> definitions related to saturation indices.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param names            Allocatable array for saturation-index-phase names.
@@ -2875,7 +2876,7 @@
     !> Retrieves a list of the solid solution component names.
     !> The list includes all solid solution components found by call(s) to 
     !> @ref RM_FindComponents. @ref RM_FindComponents must be called before 
-    !> @ref RM_GetSolidSolutionComponentsNames. This method may be useful when 
+    !> @a RM_GetSolidSolutionComponentsNames. This method may be useful when 
     !> generating selected output definitions related to solid solutions.
     !> @param id          The instance @a id returned from @ref RM_Create.
     !> @param names       Allocatable array for the solid solution compnent names
@@ -2942,7 +2943,7 @@
     !> The list includes solid solution names found by call(s) to @ref RM_FindComponents.
     !> The solid solution names array is the same length as the solid solution components 
     !> array and provides the corresponding name of solid solution containing the component.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSolidSolutionNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetSolidSolutionNames.
     !> This method may be useful when generating selected output definitions related to 
     !> solid solutions.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -3545,7 +3546,7 @@
     !> Retrieves the surface names (such as "Hfo") that corresponds with
     !> the surface species names.
     !> The lists of surface species names and surface names are the same length.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetSurfaceNames.
     !> This method may be useful when generating selected output definitions related 
     !> to surfaces.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -3656,7 +3657,7 @@
     !> The list of surface species (for example, "Hfo_wOH") is derived from 
     !> the list of components (@ref RM_FindComponents) and the list of all surface 
     !> types (such as "Hfo_w") that are found by call(s) to @ref RM_FindComponents.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceSpeciesNames.
+    !> @ref RM_FindComponents must be called before @a RM_GetSurfaceSpeciesNames.
     !> This method may be useful when generating selected output definitions related 
     !> to surfaces.
     !> @param id               The instance @a id returned from @ref RM_Create.
@@ -3727,7 +3728,7 @@
     !> Retrieves the surface site types (such as "Hfo_w") that correspond with
     !> the surface species names.
     !> The lists of surface species names and surface species types are the same length.
-    !> @ref RM_FindComponents must be called before @ref RM_GetSurfaceTypes.
+    !> @ref RM_FindComponents must be called before @a RM_GetSurfaceTypes.
     !> This method may be useful when generating selected output definitions related to surfaces.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param names            Allocatable array to receive surface types.
@@ -3876,8 +3877,8 @@
     !> @param id          The instance @a id returned from @ref RM_Create.
     !> @retval            The current simulation time in seconds.
     !> @see
-    !> @ref RM_GetTimeConversion,
-    !> @ref RM_GetTimeStep,
+    !> @ref RM_GetTimeconversion,
+    !> @ref RM_GetTimestep,
     !> @ref RM_SetTime,
     !> @ref RM_SetTimeConversion,
     !> @ref RM_SetTimeStep.
@@ -3886,7 +3887,7 @@
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
-    !>       RM_GetTime(id) * RM_GetTimeConversion(id), " days"
+    !>       RM_GetTime(id) * RM_GetTimeconversion(id), " days"
     !> status = RM_LogMessage(id, string)
     !> </PRE>
     !> </CODE>
@@ -3911,14 +3912,14 @@
     !> Returns a multiplier to convert time from seconds to another unit, as 
     !> specified by the user. The reaction module uses seconds as the time unit. 
     !> The user can set a conversion factor (@ref RM_SetTimeConversion) and retrieve 
-    !> it with RM_GetTimeConversion. The reaction module only uses the conversion 
+    !> it with RM_GetTimeconversion. The reaction module only uses the conversion 
     !> factor when printing the long version of cell chemistry 
     !> (@ref RM_SetPrintChemistryOn), which is rare. Default conversion factor is 1.0.
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @retval                 Multiplier to convert seconds to another time unit.
     !> @see
     !> @ref RM_GetTime,
-    !> @ref RM_GetTimeStep,
+    !> @ref RM_GetTimestep,
     !> @ref RM_SetTime,
     !> @ref RM_SetTimeConversion,
     !> @ref RM_SetTimeStep.
@@ -3927,14 +3928,14 @@
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
-    !>       RM_GetTime(id) * RM_GetTimeConversion(id), " days"
+    !>       RM_GetTime(id) * RM_GetTimeconversion(id), " days"
     !> status = RM_LogMessage(id, string)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    real(kind=8) FUNCTION RM_GetTimeConversion(id)
+    real(kind=8) FUNCTION RM_GetTimeconversion(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -3946,8 +3947,8 @@
     END FUNCTION RMF_GetTimeConversion
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    RM_GetTimeConversion = RMF_GetTimeConversion(id)
-    END FUNCTION RM_GetTimeConversion
+    RM_GetTimeconversion = RMF_GetTimeConversion(id)
+    END FUNCTION RM_GetTimeconversion
 
     !> Returns the current simulation time step in seconds.
     !> This is the time over which kinetic reactions are integrated in a 
@@ -3958,7 +3959,7 @@
     !> @retval            The current simulation time step in seconds.
     !> @see
     !> @ref RM_GetTime,
-    !> @ref RM_GetTimeConversion,
+    !> @ref RM_GetTimeconversion,
     !> @ref RM_SetTime,
     !> @ref RM_SetTimeConversion,
     !> @ref RM_SetTimeStep.
@@ -3967,14 +3968,14 @@
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "          Time step             ", &
-    !>       RM_GetTimeStep(id) * RM_GetTimeConversion(id), " days"
+    !>       RM_GetTimestep(id) * RM_GetTimeconversion(id), " days"
     !> status = RM_LogMessage(id, string)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
     !> @par MPI:
     !> Called by root and (or) workers.
-    real(kind=8) FUNCTION RM_GetTimeStep(id)
+    real(kind=8) FUNCTION RM_GetTimestep(id)
     USE ISO_C_BINDING
     IMPLICIT NONE
     INTERFACE
@@ -3986,8 +3987,8 @@
     END FUNCTION RMF_GetTimeStep
     END INTERFACE
     INTEGER, INTENT(in) :: id
-    RM_GetTimeStep = RMF_GetTimeStep(id)
-    END FUNCTION RM_GetTimeStep
+    RM_GetTimestep = RMF_GetTimeStep(id)
+    END FUNCTION RM_GetTimestep
 
     ! INTEGER FUNCTION RM_GetVarItemsize(id, var)
     ! USE ISO_C_BINDING
@@ -4067,13 +4068,13 @@
     !> @param id               The instance @a id returned from @ref RM_Create.
     !> @param yaml_name         String containing the YAML file name.
     !> @retval IRM_RESULT      0 is success, negative is failure (See @ref RM_DecodeError).
-    !> @par
+    !> <p>
     !> The file contains a YAML map of PhreeqcRM methods
     !> and the arguments corresponding to the methods.
     !> Note that the PhreeqcRM methods do not have the "RM_" prefix
     !> and the id argument is not included.
     !> For example,
-    !> @par
+    !> </p>
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -4086,7 +4087,7 @@
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
-    !> @par
+    !> <p>
     !> @ref RM_InitializeYAML will read the YAML file and execute the specified methods with
     !> the specified arguments. Using YAML
     !> terminology, the argument(s) for a method may be a scalar, a sequence, or a map,
@@ -4097,13 +4098,14 @@
     !> The names of the map keys for map
     !> arguments are not used in parsing the YAML file; only the order of
     !> the arguments is important.
-    !> @par
+    !> </p>
+    !> <p>
     !> The following list gives the PhreeqcRM methods that can be specified in a YAML file
     !> and the arguments that are required. The arguments are described with C++ formats, which
     !> are sufficient to identify which arguments are YAML scalars (single bool/logical,
     !> int, double, string/character argument),
     !> sequences (single vector argument), or maps (multiple arguments).
-    !> @par
+    !> </p>
     !> @htmlonly
     !> <CODE>
     !> <PRE>
@@ -4175,8 +4177,8 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !>    id = RM_Create(nxyz, MPI_COMM_WORLD)
-    !>    status = RM_InitializeYAML(id, "myfile.yaml")
+    !> id = RM_Create(nxyz, MPI_COMM_WORLD)
+    !> status = RM_InitializeYAML(id, "myfile.yaml")
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -4465,7 +4467,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(solutions(nxyz))
+    !> allocate(solutions(nxyz))
     !> solutions = 1
     !> status = RM_InitialSolutions2Module(id, solutions);
     !> </PRE>
@@ -4516,7 +4518,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(equilibrium_phases(nxyz))
+    !> allocate(equilibrium_phases(nxyz))
     !> equilibrium_phases = 1
     !> status = RM_InitialEquilibriumPhases2Module(id, equilibrium_phases);
     !> </PRE>
@@ -4567,7 +4569,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(exchanges(nxyz))
+    !> allocate(exchanges(nxyz))
     !> exchanges = 1
     !> status = RM_InitialExchanges2Module(id, exchanges);
     !> </PRE>
@@ -4618,7 +4620,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(gas_phases(nxyz))
+    !> allocate(gas_phases(nxyz))
     !> gas_phases = 1
     !> status = RM_InitialGasPhases2Module(id, gas_phases);
     !> </PRE>
@@ -4669,7 +4671,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(solid_solutions(nxyz))
+    !> allocate(solid_solutions(nxyz))
     !> solid_solutions = 1
     !> status = RM_InitialSolidSolutions2Module(id, solid_solutions);
     !> </PRE>
@@ -4720,7 +4722,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(surfaces(nxyz))
+    !> allocate(surfaces(nxyz))
     !> surfaces = 1
     !> status = RM_InitialSurfaces2Module(id, surfaces);
     !> </PRE>
@@ -4771,7 +4773,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> dimension(kinetics(nxyz))
+    !> allocate(kinetics(nxyz))
     !> kinetics = 1
     !> status = RM_InitialKinetics2Module(id, kinetics);
     !> </PRE>
@@ -5023,7 +5025,7 @@
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
-    !>       RM_GetTime(id) * RM_GetTimeConversion(id), " days"
+    !>       RM_GetTime(id) * RM_GetTimeconversion(id), " days"
     !> status = RM_LogMessage(id, string)
     !> </PRE>
     !> </CODE>
@@ -5382,7 +5384,7 @@
     !> <CODE>
     !> <PRE>
     !> write(string, "(A32,F15.1,A)") "Beginning reaction calculation  ", &
-    !>       time * RM_GetTimeConversion(id), " days"
+    !>       time * RM_GetTimeconversion(id), " days"
     !> status = RM_ScreenMessage(id, string)
     !> </PRE>
     !> </CODE>
@@ -5753,7 +5755,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = RM_SetErrorOn(rm_id, 1)
+    !> status = RM_SetErrorOn(id, 1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly
@@ -6683,7 +6685,7 @@
     !> @htmlonly
     !> <CODE>
     !> <PRE>
-    !> status = RM_SetScreenOn(rm_id, 1)
+    !> status = RM_SetScreenOn(id, 1)
     !> </PRE>
     !> </CODE>
     !> @endhtmlonly

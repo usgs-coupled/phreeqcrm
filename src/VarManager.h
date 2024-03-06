@@ -45,7 +45,9 @@ public:
 	VAR_TASKS task;
 	std::map<RMVARS, BMIVariant> VariantMap;
 	bool NeedInitialRun;
+	std::string language;
 	// Methods
+	void SetLanguage(std::string l) { this->language = l; }
 	RMVARS GetEnum(std::string name);
 	void RM2BMIUpdate(RMVARS v_enum);
 

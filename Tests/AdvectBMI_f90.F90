@@ -71,6 +71,7 @@
 	real(kind=8), pointer :: Porosity_ptr(:)
 	real(kind=8), pointer :: Pressure_ptr(:)
 	real(kind=8), pointer :: Temperature_ptr(:)
+    type(bmi) :: bmif
 #ifdef FORTRAN_2003
     character(LEN=:), allocatable                 :: errstr
 #else
@@ -92,38 +93,40 @@
         nxyz = GetGridCellCountYAML(yaml_file)
     endif
     CALL MPI_Bcast(nxyz, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, status)
-    id = bmif_create(nxyz, MPI_COMM_WORLD)
+    id = bmif%bmif_create(nxyz, MPI_COMM_WORLD)
     if (mpi_myself > 0) then
         status = RM_MpiWorker(id)
-        status = bmif_finalize(id)
+        status = bmif%bmif_finalize()
         return
     endif
 #else
     ! OpenMP
     nxyz = GetGridCellCountYAML(yaml_file)
     nthreads = 3
-    id = BMIF_Create(nxyz, nthreads)
+    
+    id =bmif%bmif_create(nxyz, nthreads)
 #endif
+    status = bmif%bmif_initialize(yaml_file)
+    
     ! Open files
-    status = bmif_initialize(id, yaml_file)
-	status = bmif_get_value_ptr(id, "ComponentCount", ComponentCount_ptr)
-	status = bmif_get_value_ptr(id, "GridCellCount", GridCellCount_ptr)
-	status = bmif_get_value_ptr(id, "SelectedOutputOn", SelectedOutputOn_ptr)
-	status = bmif_get_value_ptr(id, "Concentrations", Concentrations_ptr)
-	status = bmif_get_value_ptr(id, "DensityCalculated", Density_calculated_ptr)
-	status = bmif_get_value_ptr(id, "Gfw", Gfw_ptr)
-	status = bmif_get_value_ptr(id, "SaturationCalculated", Saturation_ptr)
-	status = bmif_get_value_ptr(id, "SolutionVolume", SolutionVolume_ptr)
-	status = bmif_get_value_ptr(id, "Time", Time_ptr)
-	status = bmif_get_value_ptr(id, "TimeStep", TimeStep_ptr)
-	status = bmif_get_value_ptr(id, "Porosity", Porosity_ptr)
-	status = bmif_get_value_ptr(id, "Pressure", Pressure_ptr)
-	status = bmif_get_value_ptr(id, "Temperature", Temperature_ptr)
-    status = bmif_get_value(id, "ComponentCount", ncomps)
+	status = bmif%bmif_get_value_ptr("ComponentCount", ComponentCount_ptr)
+	status = bmif%bmif_get_value_ptr("GridCellCount", GridCellCount_ptr)
+	status = bmif%bmif_get_value_ptr("SelectedOutputOn", SelectedOutputOn_ptr)
+	status = bmif%bmif_get_value_ptr("Concentrations", Concentrations_ptr)
+	status = bmif%bmif_get_value_ptr("DensityCalculated", Density_calculated_ptr)
+	status = bmif%bmif_get_value_ptr("Gfw", Gfw_ptr)
+	status = bmif%bmif_get_value_ptr("SaturationCalculated", Saturation_ptr)
+	status = bmif%bmif_get_value_ptr("SolutionVolume", SolutionVolume_ptr)
+	status = bmif%bmif_get_value_ptr("Time", Time_ptr)
+	status = bmif%bmif_get_value_ptr("TimeStep", TimeStep_ptr)
+	status = bmif%bmif_get_value_ptr("Porosity", Porosity_ptr)
+	status = bmif%bmif_get_value_ptr("Pressure", Pressure_ptr)
+	status = bmif%bmif_get_value_ptr("Temperature", Temperature_ptr)
+    status = bmif%bmif_get_value("ComponentCount", ncomps)
     ! Print some of the reaction module information
-    status = bmif_get_var_nbytes(id, "FilePrefix", n)
+    status = bmif%bmif_get_var_nbytes("FilePrefix", n)
     allocate(character(len=n) :: prefix)
-    status = bmif_get_value(id, "FilePrefix", prefix)
+    status = bmif%bmif_get_value("FilePrefix", prefix)
     write(string1, "(A,A)") "File prefix:                                        ", prefix
     status = RM_OutputMessage(id, trim(string1))
     write(string1, "(A,I10)") "Number of grid cells in the user's model:         ", GridCellCount_ptr
@@ -131,36 +134,36 @@
     write(string1, "(A,I10)") "Number of components for transport:               ", ComponentCount_ptr
     status = RM_OutputMessage(id, trim(string1))
     ! Get component information
-    status = bmif_get_value(id, "Components", components)
-    status = bmif_get_value(id, "Gfw", gfw)
+    status = bmif%bmif_get_value("Components", components)
+    status = bmif%bmif_get_value("Gfw", gfw)
     do i = 1, ComponentCount_ptr
         write(string,"(A10, F15.4)") trim(components(i)), gfw(i)
         status = RM_OutputMessage(id, string)
     enddo
     status = RM_OutputMessage(id, " ")	
     ! Get initial temperatures
-    status = bmif_get_value(id, "Temperature", temperature)
+    status = bmif%bmif_get_value("Temperature", temperature)
     ! Get initial temperature
-    status = bmif_get_value(id, "SaturationCalculated", sat)
+    status = bmif%bmif_get_value("SaturationCalculated", sat)
     ! Get initial porosity
-    status = bmif_get_value(id, "Porosity", por)
+    status = bmif%bmif_get_value("Porosity", por)
     ! Get initial temperature
-    status = bmif_get_value(id, "SolutionVolume", volume)
+    status = bmif%bmif_get_value("SolutionVolume", volume)
     ! Get initial concentrations
     ! flattened version
-    status = bmif_get_value(id, "Concentrations", c1)
+    status = bmif%bmif_get_value("Concentrations", c1)
     c = reshape(c1, (/nxyz, ncomps/))
     ! non-flattened version
-    status = bmif_get_value(id, "Concentrations", c)
+    status = bmif%bmif_get_value("Concentrations", c)
     ! Set density, pressure, and temperature (previously allocated)
     allocate(density(nxyz))
     density = 1.0
-    status = bmif_set_value(id, "DensityUser", density)
+    status = bmif%bmif_set_value("DensityUser", density)
     allocate(pressure(nxyz))
     pressure = 2.0
-    status = bmif_set_value(id, "Pressure", pressure)  
+    status = bmif%bmif_set_value("Pressure", pressure)  
     temperature = 20.0
-    status = bmif_set_value(id, "Temperature", temperature)  
+    status = bmif%bmif_set_value("Temperature", temperature)  
     ! --------------------------------------------------------------------------
     ! Set boundary condition
     ! --------------------------------------------------------------------------
@@ -176,9 +179,9 @@
     ! --------------------------------------------------------------------------
     nsteps = 10
     time = 0.0
-    status = bmif_set_value(id, "Time", time)
+    status = bmif%bmif_set_value("Time", time)
     time_step = 86400.0
-    status = bmif_set_value(id, "TimeStep", time_step)   
+    status = bmif%bmif_set_value("TimeStep", time_step)   
     do isteps = 1, nsteps
         write(string, "(A32,F15.1,A)") "Beginning transport calculation ", &
             time/86400., " days"
@@ -194,23 +197,23 @@
     
         ! print at last time step
         if (isteps == nsteps) then     
-            status = bmif_set_value(id, "SelectedOutputOn", .true.)    ! enable selected output
+            status = bmif%bmif_set_value("SelectedOutputOn", .true.)    ! enable selected output
             status = RM_SetPrintChemistryOn(id, 1, 0, 0)                ! workers, initial_phreeqc, utility
         else        
-            status = bmif_set_value(id, "SelectedOutputOn", .false.)   ! disable selected output
+            status = bmif%bmif_set_value("SelectedOutputOn", .false.)   ! disable selected output
             status = RM_SetPrintChemistryOn(id, 0, 0, 0)                ! workers, initial_phreeqc, utility
         endif
         ! Transfer data to PhreeqcRM after transport      
-        status = bmif_set_value(id, "Concentrations", c)  ! Transported concentrations
+        status = bmif%bmif_set_value("Concentrations", c)  ! Transported concentrations
         ! Optionally, if values changed during transport
-        status = bmif_set_value(id, "Porosity", por)              
-        status = bmif_set_value(id, "SaturationUser", sat)            
-        status = bmif_set_value(id, "Temperature", temperature) 
-        status = bmif_set_value(id, "Pressure", pressure)          
-        status = bmif_set_value(id, "TimeStep", time_step) 
+        status = bmif%bmif_set_value("Porosity", por)              
+        status = bmif%bmif_set_value("SaturationUser", sat)            
+        status = bmif%bmif_set_value("Temperature", temperature) 
+        status = bmif%bmif_set_value("Pressure", pressure)          
+        status = bmif%bmif_set_value("TimeStep", time_step) 
         ! Set new time
         time = time + time_step              
-        status = bmif_set_value(id, "Time", time)  ! Current time
+        status = bmif%bmif_set_value("Time", time)  ! Current time
         ! Run cells with transported conditions
         write(string, "(A32,F15.1,A)") "Beginning reaction calculation  ", &
             time / 86400., " days"
@@ -221,11 +224,11 @@
         status = RM_StateApply(id, 1)
         status = RM_StateDelete(id, 1)
         ! Run chemistry
-        status = bmif_update(id)
+        status = bmif%bmif_update()
         ! Get new data calculated by PhreeqcRM for transport
-        status = bmif_get_value(id, "Concentrations", c)
-        status = bmif_get_value(id, "DensityCalculated", density)
-        status = bmif_get_value(id, "SolutionVolume", volume)   
+        status = bmif%bmif_get_value("Concentrations", c)
+        status = bmif%bmif_get_value("DensityCalculated", density)
+        status = bmif%bmif_get_value("SolutionVolume", volume)   
        ! Print results at last time step
         if (isteps == nsteps) then
             write(*,*) "Current distribution of cells for workers"
@@ -238,24 +241,24 @@
                 write(*,*) i,"           ", sc(i),"                 ",ec(i)
             enddo
             ! Loop through possible multiple selected output definitions
-            status = bmif_get_value(id, "SelectedOutputCount", n)
+            status = bmif%bmif_get_value("SelectedOutputCount", n)
             do isel = 1, n  ! one based
                 i = isel
-                status = bmif_set_value(id, "NthSelectedOutput", i)
-                status = bmif_get_value(id, "CurrentSelectedOutputUserNumber", n_user)
+                status = bmif%bmif_set_value("NthSelectedOutput", i)
+                status = bmif%bmif_get_value("CurrentSelectedOutputUserNumber", n_user)
                 write(*,*) "Selected output sequence number: ", isel
                 write(*,*) "Selected output user number:     ", n_user
                 ! Get 2D array of selected output values
-                status = bmif_get_value(id, "SelectedOutputColumnCount", col)
-                status = bmif_get_value(id, "SelectedOutputRowCount", rows)
+                status = bmif%bmif_get_value("SelectedOutputColumnCount", col)
+                status = bmif%bmif_get_value("SelectedOutputRowCount", rows)
                 allocate(selected_out(rows,col))
                 ! Get headings
-                status = bmif_get_var_itemsize(id, "SelectedOutputHeadings", bytes)
+                status = bmif%bmif_get_var_itemsize("SelectedOutputHeadings", bytes)
                 if (allocated(headings)) deallocate(headings)
                 allocate(character(len=bytes) :: headings(col))    
-                status = bmif_get_value(id, "SelectedOutputHeadings", headings)
+                status = bmif%bmif_get_value("SelectedOutputHeadings", headings)
                 ! Get selected output
-                status = bmif_get_value(id, "SelectedOutput", selected_out)
+                status = bmif%bmif_get_value("SelectedOutput", selected_out)
                 ! Print results
                 do i = rows/2, rows/2
                     write(*,*) "Cell number ", i
@@ -275,10 +278,10 @@
 			! Use GetValue to extract exchange composition and pH
 			! YAMLAddOutputVars was called in YAML
 			! to select additional OutputVarNames variables
-			status = bmif_get_value(id, "solution_ph", pH_vector)
-			status = bmif_get_value(id, "exchange_X_species_log_molality_CaX2", CaX2)
-			status = bmif_get_value(id, "exchange_X_species_log_molality_KX", KX)
-			status = bmif_get_value(id, "exchange_X_species_log_molality_NaX", NaX)
+			status = bmif%bmif_get_value("solution_ph", pH_vector)
+			status = bmif%bmif_get_value("exchange_X_species_log_molality_CaX2", CaX2)
+			status = bmif%bmif_get_value("exchange_X_species_log_molality_KX", KX)
+			status = bmif%bmif_get_value("exchange_X_species_log_molality_NaX", NaX)
             write(string1, "(A)") "      pH      CaX2     KX       NaX"
             status = RM_OutputMessage(id, string1)
 			do i = 1, nxyz
@@ -290,7 +293,7 @@
     ! Clean up
     !status = RM_CloseFiles(id)
     status = RM_MpiWorkerBreak(id)
-    status = bmif_finalize(id)
+    status = bmif%bmif_finalize()
     ! Deallocate
     deallocate(por)
     deallocate(sat)
@@ -303,8 +306,7 @@
     deallocate(c)
     deallocate(density)
     deallocate(temperature)
-    deallocate(pressure)
-    
+    deallocate(pressure)  
     return
     end subroutine AdvectBMI_f90
 
