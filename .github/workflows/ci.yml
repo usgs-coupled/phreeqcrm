@@ -241,16 +241,17 @@ jobs:
 
     - name: Install GNU Fortran (macOS)
       if: ${{ runner.os == 'macOS' }}
-      uses: awvwgk/setup-fortran@main
+      uses: fortran-lang/setup-fortran@v1
       with:
         compiler: gcc
         version: 12
-
+  
     - name: Install oneAPI Fortran (Windows)
       if: ${{ runner.os == 'Windows' }}
-      uses: i-RIC/install-intelfortran-action@v1
+      uses: fortran-lang/setup-fortran@v1
       with:
-        cache: true
+        compiler: intel-classic
+        version: '2021.10'  
 
     - name: Install ninja valgrind (Linux)
       if: ${{ runner.os == 'Linux' }}
