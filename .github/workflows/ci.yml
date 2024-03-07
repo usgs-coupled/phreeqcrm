@@ -255,6 +255,7 @@ jobs:
 
     - name: Unset CC/CXX (Windows)
       if: runner.os == 'Windows'
+      shell: bash
       run: 
         echo "CC=" >> $GITHUB_ENV
         echo "CXX=" >> $GITHUB_ENV   
