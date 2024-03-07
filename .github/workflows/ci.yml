@@ -504,6 +504,12 @@ jobs:
       if: ${{ matrix.phreeqcrm_with_yaml_cpp != 'ON' }}
       run: cmake -G Ninja -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_MPI:BOOL=ON
 
+    - name: Unset CC/CXX (Windows)
+      if: runner.os == 'Windows'
+      run: 
+        echo "CC=" >> $GITHUB_ENV
+        echo "CXX=" >> $GITHUB_ENV      
+
     - name: Configure with CMake (using vcpkg toolchain)
       if: ${{ matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
       run: cmake -G Ninja --toolchain ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake -B build -S phreeqcrm-${{ env.VER_STRING }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.build_shared_libs }} -DPHREEQCRM_WITH_YAML_CPP=${{ matrix.phreeqcrm_with_yaml_cpp }} -DPHREEQCRM_BUILD_MPI:BOOL=ON
