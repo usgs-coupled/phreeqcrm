@@ -1,5 +1,7 @@
 /*! @file PhreeqcRM.h
-*	@brief C++ header file for PhreeqcRM
+*	@brief C++ header file for PhreeqcRM. PhreeqcRM is deprecated and
+*   included for backward compatibility. Use BMIPhreeqcRM instead;
+*   all PhreeqcRM methods are included in the BMIPhreeqcRM class.
 *
 *   PhreeqcRM is a reaction module for use with multicomponent-transport models.
 *   A reaction cell can be defined for each cell in the user's model that
@@ -311,12 +313,14 @@ Called before PhreeqcRM is created.
  *
  *  @htmlonly
  *  <table>
- *   <tr><td class="indexkey"><a class="el" href="classPhreeqcRM.html">PhreeqRM.h</a> </td><td class="indexvalue">PhreeqcRM C++ Documentation</td></tr>
  *   <tr><td class="indexkey"><a class="el" href="classBMIPhreeqcRM.html">BMIPhreeqRM.h</a> </td><td class="indexvalue">BMIPhreeqcRM C++ Documentation</td></tr>
  *   <tr><td class="indexkey"><a class="el" href="classYAMLPhreeqcRM.html">YAMLPhreeqcRM.h</a></td><td class="indexvalue">YAML Helper C++ Documentation</td></tr>
- *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">PhreeqcRM Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="classPhreeqcRM.html">PhreeqRM.h</a> </td><td class="indexvalue">PhreeqcRM C++ Documentation</td></tr>
  *   <tr><td class="indexkey"><a class="el" href="BMI__interface_8F90.html">BMI_interface.F90</a></td><td class="indexvalue">BMIPhreeqcRM Fortran Documentation </td></tr>
- *   <tr><td class="indexkey"><a class="el" href="namespaceyaml__interface.html">YAML_interface.F90</a></td><td class="indexvalue">YAML Helper Fortran Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="YAML__interface_8F90.html">YAML_interface.F90</a></td><td class="indexvalue">YAML Helper Fortran Documentation</td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="namespacephreeqcrm.html">RM_interface.F90</a></td><td class="indexvalue">PhreeqcRM Fortran Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="BMI__interface__C_8h.html">BMI_interface_C.h</a> </td><td class="indexvalue">BMIPhreeqcRM C Documentation </td></tr>
+ *   <tr><td class="indexkey"><a class="el" href="YAML__interface__C_8h.html">YAML_interface_C.h</a> </td><td class="indexvalue">YAML Helper  C Documentation </td></tr>
  *   <tr><td class="indexkey"><a class="el" href="RM__interface__C_8h.html">RM_interface_C.h</a> </td><td class="indexvalue">PhreeqcRM C Documentation </td></tr>
  *   <tr><td class="indexkey"><a class="el" href="IrmResult_8h.html">IrmResult.h</a></td><td class="indexvalue">Return codes </td></tr>
  *  </table>
@@ -598,13 +602,15 @@ and their charge (@ref GetSpeciesZ).
 @ref SetComponentH2O,
 @ref SetSpeciesSaveOn,
 @ref SpeciesConcentrations2Module. 
-@par The FindComponents method also generates lists of reactants--equilibrium phases,
+<p>
+The FindComponents method also generates lists of reactants--equilibrium phases,
 exchangers, gas components, kinetic reactants, solid solution components, and surfaces. 
 The lists are cumulative, including all reactants that were
 defined in the initial phreeqc instance at any time FindComponents was called.
 In addition, a list of phases is generated for which saturation indices may be calculated from the
 cumulative list of components.
-@see also
+</p>
+@see 
 @ref GetEquilibriumPhases,
 @ref GetEquilibriumPhasesCount,
 @ref GetExchangeNames,
@@ -2599,10 +2605,8 @@ with @ref GetSpeciesConcentrations, and solution compositions to be set with
 
 @retval True indicates solution species concentrations are saved and can be used for multicomponent-diffusion calculations;
 @a False indicates that solution species concentrations are not saved.
-@see                    @ref FindComponents, @ref GetSpeciesConcentrations, @ref GetSpeciesCount,
-@ref GetSpeciesD25, @ref GetSpeciesSaveOn, @ref GetSpeciesZ,
-@ref GetSpeciesNames, @ref SpeciesConcentrations2Module.
-@see                    @ref FindComponents, 
+@see                    
+@ref FindComponents, 
 @ref GetSpeciesConcentrations, 
 @ref GetSpeciesCount,
 @ref GetSpeciesD25,
@@ -3377,11 +3381,11 @@ WarningMessage(std::string warnstr);
 @htmlonly
 <CODE>
 <PRE>
-		int nthreads = 0;
-		std::string yaml_file = "myfile.yaml";
-		int nxyz = GetGridCellCountYAML(yaml_file);
-		PhreeqcRM phreeqc_rm(nxyz, nthreads);
-		phreeqc_rm.InitializeYAML(yaml_file);
+int nthreads = 0;
+std::string yaml_file = "myfile.yaml";
+int nxyz = GetGridCellCountYAML(yaml_file);
+PhreeqcRM phreeqc_rm(nxyz, nthreads);
+phreeqc_rm.InitializeYAML(yaml_file);
 </PRE>
 </CODE>
 @endhtmlonly

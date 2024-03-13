@@ -51,15 +51,16 @@ public:
 	@htmlonly
 	<CODE>
 	<PRE>
-			std::ofstream ofs = std::ofstream(YAML_filename.c_str(), std::ofstream::out);
-			ofs << yrm.GetYAMLDoc();
-			ofs.close();
-			yrm.clear();
+	std::ofstream ofs = std::ofstream(YAML_filename.c_str(), std::ofstream::out);
+	ofs << yrm.GetYAMLDoc();
+	ofs.close();
+	yrm.clear();
 	</PRE>
 	</CODE>
 	@endhtmlonly
 	 */
-	void Clear();	/**
+	void Clear();	
+	/**
 	 *  Retrieves the id of this object.  Each instance receives an id which is incremented for each instance
 	 *  starting with the value zero.
 	 *  @return                 The id.
@@ -71,10 +72,10 @@ public:
 	@htmlonly
 	<CODE>
 	<PRE>
-			std::ofstream ofs = std::ofstream(YAML_filename.c_str(), std::ofstream::out);
-			ofs << yrm.GetYAMLDoc();
-			ofs.close();
-			yrm.clear();
+	std::ofstream ofs = std::ofstream(YAML_filename.c_str(), std::ofstream::out);
+	ofs << yrm.GetYAMLDoc();
+	ofs.close();
+	yrm.clear();
 	</PRE>
 	</CODE>
 	@endhtmlonly
@@ -96,6 +97,10 @@ public:
 	void WriteYAMLDoc(std::string file_name);
 	// methods
 	/**
+	@a YAMLAddOutputVars inserts data into the YAML document for the PhreeqcRM method @a CloseFiles.
+	When the YAML document is written to file it can be processed by the method InitializeYAML to
+	initialize a PhreeqcRM instance. 
+	<p>
 	@a AddOutputVars allows selection of sets of variables that can be retieved
 	by the GetValue method.Sets of variables can be included or excluded with
 	multiple calls to this method. All calls must precede the final call to
@@ -103,7 +108,7 @@ public:
 	USER_PUNCH 333 data blocks that make the variables accessible. Variables will
 	only be accessible if the system includes the given reactant; for example, no
 	gas variables will be created if there are no GAS_PHASEs in the model.
-
+	</p>
 	@param option A string value, among those listed below, that includes or
 	excludes variables from GetOutputVarNames, GetValue, and other
 	BMI methods.
@@ -111,43 +116,44 @@ public:
 	accessible variables.A value of "false", excludes all variables of the given type; a
 	value of "true" includes all variables of the given type for the current system; a list
 	specifies a subset of items of the given type.
-
-	Values for the the parameter @a option :
-	@n AddOutputVars : False excludes all variables; True causes the settings for each variable group
+	<p>
+	Values for the the parameter @a option:
+	</p>
+	@n@n @a AddOutputVars: False excludes all variables; True causes the settings for each variable group
 	to determine the variables that will be defined.Default True;
-	@n SolutionProperties : False excludes all solution property variables; True includes variables pH, pe,
+	@n@n @a SolutionProperties: False excludes all solution property variables; True includes variables pH, pe,
 	alkalinity, ionic strength, water mass, charge balance, percent error, and specific conductance.
 	Default True.
-	@n SolutionTotalMolalities : False excludes all total element and element redox state variables;
+	@n@n @a SolutionTotalMolalities: False excludes all total element and element redox state variables;
 	True includes all elements and element redox state variables for the system defined for the
 	calculation; list restricts variables to the specified elements and redox states.
 	Default True.
-	@n ExchangeMolalities : False excludes all variables related to exchange; True includes all
+	@n@n @a ExchangeMolalities: False excludes all variables related to exchange; True includes all
 	variables related to exchange; list includes variables for the specified exchange species.
 	Default True.
-	@n SurfaceMolalities : False excludes all variables related to surfaces; True includes all
+	@n@n @a SurfaceMolalities: False excludes all variables related to surfaces; True includes all
 	variables related to surfaces; list includes variables for the specified surface species.
 	Default True.
-	@n EquilibriumPhases : False excludes all variables related to equilibrium phases; True includes all
+	@n@n @a EquilibriumPhases: False excludes all variables related to equilibrium phases; True includes all
 	variables related to equilibrium phases; list includes variables for the specified
 	equilibiurm phases.Default True.
-	@n Gases : False excludes all variables related to gases; True includes all
+	@n@n @a Gases: False excludes all variables related to gases; True includes all
 	variables related to gases; list includes variables for the specified gas components.Default True.
-	@n KineticReactants : False excludes all variables related to kinetic reactants; True includes all
+	@n@n @a KineticReactants: False excludes all variables related to kinetic reactants; True includes all
 	variables related to kinetic reactants; list includes variables for the specified kinetic
 	reactants.Default True.
-	@n SolidSolutions : False excludes all variables related to solid solutions; True includes all
+	@n@n @a SolidSolutions: False excludes all variables related to solid solutions; True includes all
 	variables related to solid solutions; list includes variables for the specified solid solutions
 	components.Default True.
-	@n CalculateValues : False excludes all calculate values; True includes all
+	@n@n @a CalculateValues: False excludes all calculate values; True includes all
 	calculate values; list includes the specified calculate values.CALCLUATE_VALUES can be
 	used to calculate geochemical quantities not available in the other sets of variables.
 	Default True.
-	@n SolutionActivities : False excludes all aqueous species; True includes all
+	@n@n @a SolutionActivities: False excludes all aqueous species; True includes all
 	aqueous species; list includes only the specified aqueous species.Default False.
-	@n SolutionMolalities : False excludes all aqueous species; True includes all
+	@n@n @a SolutionMolalities: False excludes all aqueous species; True includes all
 	aqueous species; list includes only the specified aqueous species.Default False.
-	@n SaturationIndices : False excludes all saturation indices; True includes all
+	@n@n @a SaturationIndices: False excludes all saturation indices; True includes all
 	saturation indices; list includes only the specified saturation indices. Default False.
 	@par C++ Example:
 	@htmlonly
@@ -161,11 +167,12 @@ public:
 	*/
 	void YAMLAddOutputVars(std::string option, std::string def);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method CloseFiles.
+	@a YAMLCloseFiles inserts data into the YAML document for the PhreeqcRM method @a CloseFiles.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
-	initialize a PhreeqcRM instance.
-	@par
-	CloseFiles closes the output and log files.
+	initialize a PhreeqcRM instance. 
+	<p>
+	@a CloseFiles closes the output and log files.
+	</p>
 	@par C++ Example:
 	@htmlonly
 	<CODE>
@@ -178,11 +185,11 @@ public:
 	 */
 	void YAMLCloseFiles(void);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method CreateMapping.
+	@a YAMLCreateMapping inserts data into the YAML document for the PhreeqcRM method @a CreateMapping.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	CreateMapping
+	<p>
+	@a CreateMapping
 	provides a mapping from grid cells in the user's model to reaction cells for which chemistry needs to be run.
 	The mapping is used to eliminate inactive cells and to use symmetry to decrease the number of cells
 	for which chemistry must be run.
@@ -193,6 +200,7 @@ public:
 	The mapping may be many-to-one to account for symmetry.
 	Default is a one-to-one mapping--all user grid cells are reaction cells
 	(equivalent to @a grid2chem values of 0,1,2,3,...,nxyz-1).
+	</p>
 	@param grid2chem        A vector of integers: Nonnegative is a reaction-cell number (0 based),
 	negative is an inactive cell. Vector is of size @a nxyz (number of grid cells).
 	@par C++ Example:
@@ -214,12 +222,13 @@ public:
 	 */
 	void YAMLCreateMapping(std::vector< int >& grid2chem);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method DumpModule.
+	@a YAMLDumpModule inserts data into the YAML document for the PhreeqcRM method @a DumpModule.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	DumpModule writes the contents of all workers to file in _RAW formats (see appendix of PHREEQC version 3 manual),
+	<p>
+	@a DumpModule writes the contents of all workers to file in _RAW formats (see appendix of PHREEQC version 3 manual),
 	including SOLUTIONs and all reactants.
+	</p>
 	@param dump_on          Signal for writing the dump file, true or false.
 	@param append           Signal to append to the contents of the dump file, true or false.
 	@see                    @ref YAMLSetDumpFileName.
@@ -237,24 +246,24 @@ public:
 	 */
 	void YAMLDumpModule(bool dump_on, bool append);
 	/**
-	Inserts data into the YAML document for the method ThreadCount.
+	@a YAMLThreadCount inserts data into the YAML document for the PhreeqcRM method @a ThreadCount.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-
-	ThreadCount provides the number of threads to use in OpenMP multiprocessing when used
+	<p>
+	@a ThreadCount provides the number of threads to use in OpenMP multiprocessing when used
 	to initialize a BMIPhreeqcRM instance, provided the BMIPhreeqcRM instance was created
 	with the default constructor--the constructor with no arguments.
-	
+	</p>
 	@param nthreads Number of threads to use in
 	parallelnprocessing with OpenMP.
 	*/
 	void YAMLThreadCount(int nthreads);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method FindComponents.
+	@a YAMLFindComponents inserts data into the YAML document for the PhreeqcRM method @a FindComponents.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	FindComponents accumulates a list of elements. Elements are those that have been
+	<p>
+	@a FindComponents accumulates a list of elements. Elements are those that have been
 	defined in a solution or any other reactant
 	(EQUILIBRIUM_PHASE, KINETICS, and others), including charge imbalance.
 	This method can be called multiple times and the list that is created is cummulative.
@@ -272,17 +281,19 @@ public:
 	a list of aqueous species,
 	their diffusion coefficients at 25 C,
 	and their charge.
+	</p>
 	@see
 	@ref YAMLSetComponentH2O,
 	@ref YAMLSetSpeciesSaveOn,
 	@ref YAMLSpeciesConcentrations2Module.
-	@par 
-	The FindComponents method also generates lists of reactants--equilibrium phases,
+	<p>
+	The @a FindComponents method also generates lists of reactants--equilibrium phases,
 	exchangers, gas components, kinetic reactants, solid solution components, and surfaces.
 	The lists are cumulative, including all reactants that were
 	defined in the initial phreeqc instance at any time FindComponents was called.
 	In addition, a list of phases is generated for which saturation indices may be calculated from the
 	cumulative list of components.
+	</p>
 	@par C++ Example:
 	@htmlonly
 	<CODE>
@@ -294,102 +305,117 @@ public:
 	 */
 	void YAMLFindComponents();
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method InitialSolutions2Module.
+	@a YAMLInitialSolutions2Module inserts data into the YAML document for the PhreeqcRM method 
+	@a InitialSolutions2Module.
 	When the YAML document is written to file it can be processed by the method 
 	InitializeYAML to initialize a PhreeqcRM instance.
-	@par
-	InitialSolutions2Module transfers SOLUTION definitions from the InitialPhreeqc 
+	<p>
+	@a InitialSolutions2Module transfers SOLUTION definitions from the InitialPhreeqc 
 	instance to the reaction-module workers.
 	@a solutions is a vector of SOLUTION index numbers that refer to
 	definitions in the InitialPhreeqc instance.
+	</p>
 	@param solutions Vector of index numbers that is dimensioned @a nxyz, 
 	where @a nxyz is the number of grid cells in the user's model. 
 	 */
 	void YAMLInitialSolutions2Module(std::vector< int > solutions);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method InitialEquilibriumPhases2Module.
+	@a YAMLInitialEquilibriumPhases2Module inserts data into the YAML document 
+	for the PhreeqcRM method @a InitialEquilibriumPhases2Module.
 	When the YAML document is written to file it can be processed by the method
 	InitializeYAML to initialize a PhreeqcRM instance.
-	@par
-	InitialEquilibriumPhases2Module transfers EQUILIBRIUM_PHASES definitions from the 
+	<p>
+	@a InitialEquilibriumPhases2Module transfers EQUILIBRIUM_PHASES definitions from the 
 	InitialPhreeqc instance to the reaction-module workers.
 	@a equilibrium_phases is a vector of EQUILIBRIUM_PHASES index numbers that refer to
 	definitions in the InitialPhreeqc instance.
+	</p>
 	@param equilibrium_phases Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
 	void YAMLInitialEquilibriumPhases2Module(std::vector< int > equilibrium_phases);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method InitialExchanges2Module.
+	@a YAMLInitialExchanges2Module inserts data into the YAML document for the 
+	PhreeqcRM method @a InitialExchanges2Module.
 	When the YAML document is written to file it can be processed by the method
 	InitializeYAML to initialize a PhreeqcRM instance.
-	@par
-	InitialExchanges2Module transfers EXCHANGE definitions from the
+	<p>
+	@a InitialExchanges2Module transfers EXCHANGE definitions from the
 	InitialPhreeqc instance to the reaction-module workers.
 	@a exchanges is a vector of EXCHANGE index numbers that refer to
 	definitions in the InitialPhreeqc instance.
+	</p>
 	@param exchanges Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
 	void YAMLInitialExchanges2Module(std::vector< int > exchanges);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method InitialSurfaces2Module.
+	@a YAMLInitialSurfaces2Module inserts data into the YAML document for 
+	the PhreeqcRM method @a InitialSurfaces2Module.
 	When the YAML document is written to file it can be processed by the method
 	InitializeYAML to initialize a PhreeqcRM instance.
-	@par
-	InitialSurfaces2Module transfers SURFACE definitions from the
+	<p>
+	@a InitialSurfaces2Module transfers SURFACE definitions from the
 	InitialPhreeqc instance to the reaction-module workers.
 	@a surfaces is a vector of SURFACE index numbers that refer to
 	definitions in the InitialPhreeqc instance.
+	</p>
 	@param surfaces Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
 	void YAMLInitialSurfaces2Module(std::vector< int > surfaces);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method InitialGasPhases2Module.
+	@a YAMLInitialGasPhases2Module inserts data into the YAML document for 
+	the PhreeqcRM method @a InitialGasPhases2Module.
 	When the YAML document is written to file it can be processed by the method
 	InitializeYAML to initialize a PhreeqcRM instance.
-	@par
-	InitialGasPhases2Module transfers GAS_PHASE definitions from the
+	<p>
+	@a InitialGasPhases2Module transfers GAS_PHASE definitions from the
 	InitialPhreeqc instance to the reaction-module workers.
 	@a gas_phases is a vector of GAS_PHASE index numbers that refer to
 	definitions in the InitialPhreeqc instance.
+	</p>
 	@param gas_phases Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
 	void YAMLInitialGasPhases2Module(std::vector< int > gas_phases);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method InitialSolidSolutions2Module.
+	@a YAMLInitialSolidSolutions2Module inserts data into the YAML document for 
+	the PhreeqcRM method @a InitialSolidSolutions2Module.
 	When the YAML document is written to file it can be processed by the method
 	InitializeYAML to initialize a PhreeqcRM instance.
-	@par
-	InitialSolidSolutions2Module transfers SOLID_SOLUTIONS definitions from the
+	<p>
+	@a InitialSolidSolutions2Module transfers SOLID_SOLUTIONS definitions from the
 	InitialPhreeqc instance to the reaction-module workers.
 	@a solid_solutions is a vector of SOLID_SOLUTIONS index numbers that refer to
 	definitions in the InitialPhreeqc instance.
+	</p>
 	@param solid_solutions Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
 	void YAMLInitialSolidSolutions2Module(std::vector< int > solid_solutions);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method InitialKinetics2Module.
+	@a YAMLInitialKinetics2Module inserts data into the YAML document for the 
+	PhreeqcRM method @a InitialKinetics2Module.
 	When the YAML document is written to file it can be processed by the method
 	InitializeYAML to initialize a PhreeqcRM instance.
-	@par
-	InitialKinetics2Module transfers KINETICS definitions from the
+	<p>
+	@a InitialKinetics2Module transfers KINETICS definitions from the
 	InitialPhreeqc instance to the reaction-module workers.
 	@a kinetics is a vector of KINETICS index numbers that refer to
 	definitions in the InitialPhreeqc instance.
+	</p>
 	@param kinetics Vector of index numbers that is dimensioned @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	 */
 	void YAMLInitialKinetics2Module(std::vector< int > kinetics);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
+	@a YAMLInitialPhreeqc2Module inserts data into the YAML document 
+	for the PhreeqcRM method @a InitialPhreeqc2Module.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	InitialPhreeqc2Module transfers solutions and reactants from the InitialPhreeqc instance to the reaction-module workers.
+	<p>
+	@a InitialPhreeqc2Module transfers solutions and reactants from the InitialPhreeqc instance to the reaction-module workers.
 	@a Initial_conditions1 is used to select initial conditions, including solutions and reactants,
 	for each cell of the model, without mixing.
 	@a Initial_conditions1 is dimensioned 7 times @a nxyz, where @a nxyz is the number of grid cells in the user's model. 
@@ -398,6 +424,7 @@ public:
 	(5) SOLID_SOLUTIONS, and (6) KINETICS.
 	The definition initial_solution1[3*nxyz + 99] = 2, indicates that
 	cell 99 (0 based) contains the SURFACE definition (index 3) defined by SURFACE 2 in the InitialPhreeqc instance.
+	</p>
 	@param initial_conditions1 Vector of solution and reactant index numbers that refer to
 	definitions in the InitialPhreeqc instance.
 	Size is 7 times @a nxyz. The order of definitions is given above.
@@ -426,11 +453,12 @@ public:
 	 */
 	void YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqc2Module.
+	@a YAMLInitialPhreeqc2Module inserts data into the YAML document 
+	for the PhreeqcRM method @a InitialPhreeqc2Module.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	InitialPhreeqc2Module transfers solutions and reactants from the InitialPhreeqc instance to
+	<p>
+	@a InitialPhreeqc2Module transfers solutions and reactants from the InitialPhreeqc instance to
 	the reaction-module workers, possibly with mixing.
 	In its simplest form, @a  initial_conditions1 is used to select initial conditions, including solutions and reactants,
 	for each cell of the model, without mixing.
@@ -441,7 +469,8 @@ public:
 	The definition initial_solution1[3*nxyz + 99] = 2, indicates that
 	cell 99 (0 based) contains the SURFACE definition (index 3) defined by SURFACE 2 in the InitialPhreeqc instance
 	(either by RunFile or RunString).
-	@n@n
+	</p>
+	<p>
 	It is also possible to mix solutions and reactants to obtain the initial conditions for cells. For mixing,
 	@a initials_conditions2 contains numbers for a second entity that mixes with the entity defined in @a initial_conditions1.
 	@a Fraction1 contains the mixing fraction for @a initial_conditions1,
@@ -456,6 +485,7 @@ public:
 	Size is 7 times @a nxyz, where @a nxyz is the number of grid cells in the user's model.
 	The order of definitions is given above.
 	Negative values are ignored, resulting in no definition of that entity for that cell.
+	</p>
 	@param initial_conditions2  Vector of solution and reactant index numbers that refer to
 	definitions in the InitialPhreeqc instance.
 	Nonnegative values of @a initial_conditions2 result in mixing with the entities defined in @a initial_conditions1.
@@ -491,16 +521,19 @@ public:
 	 */
 	void YAMLInitialPhreeqc2Module(std::vector< int > initial_conditions1, std::vector< int > initial_conditions2, std::vector< double > fraction1);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqcCell2Module.
+	@a YAMLInitialPhreeqcCell2Module inserts data into the YAML document for the 
+	PhreeqcRM method @a InitialPhreeqcCell2Module.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	InitialPhreeqcCell2Module uses a cell numbered @a n in the InitialPhreeqc instance to populate a series of transport cells.
+	<p>
+	@a InitialPhreeqcCell2Module uses a cell numbered @a n in the InitialPhreeqc instance to 
+	populate a series of transport cells.
 	All reactants with the number @a n are transferred along with the solution.
 	If MIX @a n exists, it is used for the definition of the solution.
 	If @a n is negative, @a n is redefined to be the largest solution or MIX number in the InitialPhreeqc instance.
 	All reactants for each cell in the list @a cell_numbers are removed before the cell
 	definition is copied from the InitialPhreeqc instance to the workers.
+	</p>
 	@param n                  Number that refers to a solution or MIX and associated reactants in the InitialPhreeqc instance.
 	@param cell_numbers       A vector of grid-cell numbers (user's grid-cell numbering system) that
 	will be populated with cell @a n from the InitialPhreeqc instance.
@@ -519,12 +552,15 @@ public:
 	 */
 	void YAMLInitialPhreeqcCell2Module(int n, std::vector< int > cell_numbers);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method LoadDatabase.
+	@a YAMLLoadDatabase inserts data into the YAML document 
+	for the PhreeqcRM method @a LoadDatabase.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	LoadDatabase loads a database for all IPhreeqc instances--workers, InitialPhreeqc, and Utility. All definitions
+	<p>
+	@a LoadDatabase loads a database for all IPhreeqc instances--workers, InitialPhreeqc, and Utility. 
+	All definitions
 	of the reaction module are cleared (SOLUTION_SPECIES, PHASES, SOLUTIONs, etc.), and the database is read.
+	</p>
 	@param database         String containing the database name.
 	@par C++ Example:
 	@htmlonly
@@ -537,11 +573,13 @@ public:
 	 */
 	void YAMLLoadDatabase(std::string database);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method LogMessage.
+	@a YAMLLogMessage inserts data into the YAML document for 
+	the PhreeqcRM method @a LogMessage.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	LogMessage prints a message to the log file.
+	<p>
+	@a LogMessage prints a message to the log file.
+	</p>
 	@param str              String to be printed.
 	@see                    @ref YAMLOutputMessage, @ref YAMLScreenMessage, @ref YAMLWarningMessage.
 	@par C++ Example:
@@ -555,12 +593,14 @@ public:
 	 */
 	void YAMLLogMessage(std::string str);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method OpenFiles.
+	@a YAMLOpenFiles inserts data into the YAML document for the 
+	PhreeqcRM method @a OpenFiles.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	OpenFiles opens the output and log files. Files are named prefix.chem.txt and prefix.log.txt
+	<p>
+	@a OpenFiles opens the output and log files. Files are named prefix.chem.txt and prefix.log.txt
 	based on the prefix defined by @ref YAMLSetFilePrefix.
+	</p>
 	@see                    @ref YAMLSetFilePrefix, @ref YAMLCloseFiles,
 	@ref YAMLLogMessage, @ref YAMLOutputMessage, and @ref YAMLWarningMessage.
 	@par C++ Example:
@@ -575,11 +615,13 @@ public:
 	 */
 	void YAMLOpenFiles(void);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method OutputMessage.
+	@a YAMLOutputMessage inserts data into the YAML document for the 
+	PhreeqcRM method @a OutputMessage.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	OutputMessage prints a message to the output file.
+	<p>
+	@a OutputMessage prints a message to the output file.
+	</p>
 	@param str              String to be printed.
 	@see                    @ref YAMLLogMessage, @ref YAMLScreenMessage, @ref YAMLWarningMessage.
 	@par C++ Example:
@@ -593,11 +635,12 @@ public:
 	 */
 	void YAMLOutputMessage(std::string str);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method RunCells.
+	@a YAMLRunCells inserts data into the YAML document for the 
+	PhreeqcRM method @a RunCells.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	RunCells runs reactions for all cells in the reaction module.
+	<p>
+	@a RunCells runs reactions for all cells in the reaction module.
 	During initialization, RunCells can be used to equilibrate 
 	each solution with all reactants in a cell while
 	using a time step of zero (@ref YAMLSetTimeStep) to avoid kinetic reactions.
@@ -605,6 +648,7 @@ public:
 	include porosity (@ref YAMLSetPorosity),
 	saturation (@ref YAMLSetSaturationUser),
 	temperature (@ref YAMLSetTemperature), and pressure (@ref YAMLSetPressure).
+	</p>
 
 	@see                    @ref YAMLSetPorosity,
 	@ref YAMLSetPressure, @ref YAMLSetSaturationUser, @ref YAMLSetTemperature, @ref YAMLSetTimeStep.
@@ -620,16 +664,18 @@ public:
 	 */
 	void YAMLRunCells(void);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method RunFile.
+	@a YAMLRunFile inserts data into the YAML document for the 
+	PhreeqcRM method @a RunFile.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	RunFile runs a PHREEQC input file. The first three arguments determine which IPhreeqc instances will run
+	<p>
+	@a RunFile runs a PHREEQC input file. The first three arguments determine which IPhreeqc instances will run
 	the file--the workers, the InitialPhreeqc instance, and (or) the Utility instance. Input
 	files that modify the thermodynamic database should be run by all three sets of instances.
 	Files with SELECTED_OUTPUT definitions that will be used during the time-stepping loop need to
 	be run by the workers. Files that contain initial conditions or boundary conditions should
 	be run by the InitialPhreeqc instance.
+	</p>
 	@param workers          @a True, the workers will run the file; @a False, the workers will not run the file.
 	@param initial_phreeqc  @a True, the InitialPhreeqc instance will run the file; @a False, the InitialPhreeqc will not run the file.
 	@param utility          @a True, the Utility instance will run the file; @a False, the Utility instance will not run the file.
@@ -646,17 +692,19 @@ public:
 	 */
 	void YAMLRunFile(bool workers, bool initial_phreeqc, bool utility, std::string chemistry_name);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method RunString.
+	YAMLRunString inserts data into the YAML document for the 
+	PhreeqcRM method @a RunString.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	RunString runs a PHREEQC input string. The first three arguments determine which
+	<p>
+	@a RunString runs a PHREEQC input string. The first three arguments determine which
 	IPhreeqc instances will run
 	the string--the workers, the InitialPhreeqc instance, and (or) the Utility instance. Input
 	strings that modify the thermodynamic database should be run by all three sets of instances.
 	Strings with SELECTED_OUTPUT definitions that will be used during the time-stepping loop need to
 	be run by the workers. Strings that contain initial conditions or boundary conditions should
 	be run by the InitialPhreeqc instance.
+	</p>
 	@param workers          @a True, the workers will run the string; @a False, the workers will not run the string.
 	@param initial_phreeqc  @a True, the InitialPhreeqc instance will run the string; @a False, the InitialPhreeqc will not run the string.
 	@param utility          @a True, the Utility instance will run the string; @a False, the Utility instance will not run the string.
@@ -674,11 +722,13 @@ public:
 	 */
 	void YAMLRunString(bool workers, bool initial_phreeqc, bool utility, std::string input_string);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method ScreenMessage.
+	@a YAMLScreenMessage inserts data into the YAML document for the 
+	PhreeqcRM method @a ScreenMessage.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	ScreenMessage prints a message to the screen.
+	<p>
+	@a ScreenMessage prints a message to the screen.
+	</p>
 	@param str              String to be printed.
 	@see                    @ref YAMLLogMessage, @ref YAMLOutputMessage, @ref YAMLWarningMessage.
 	@par C++ Example:
@@ -694,11 +744,12 @@ public:
 	 */
 	void YAMLScreenMessage(std::string str);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetComponentH2O.
+	@a YAMLSetComponentH2O inserts data into the YAML document for the 
+	PhreeqcRM method @a SetComponentH2O.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetComponentH2O selects whether to include H2O in the component list.
+	<p>
+	@a SetComponentH2O selects whether to include H2O in the component list.
 	The concentrations of H and O must be known
 	accurately (8 to 10 significant digits) for the numerical method of
 	PHREEQC to produce accurate pH and pe values.
@@ -708,11 +759,10 @@ public:
 	The default setting (@a true) is to include water, excess H, and excess O as components.
 	A setting of @a false will include total H and total O as components.
 	YAMLSetComponentH2O must be called before @ref YAMLFindComponents.
-
+	</p>
 	@param tf               @a True (default), excess H, excess O, and water are included in the component list;
 	@a False, total H and O are included in the component list.
 	@see                    @ref YAMLFindComponents.
-
 	@par C++ Example:
 	@htmlonly
 	<CODE>
@@ -724,13 +774,15 @@ public:
 	 */
 	void YAMLSetComponentH2O(bool tf);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetConcentrations.
+	@a YAMLSetConcentrations inserts data into the YAML document for the 
+	PhreeqcRM method @a SetConcentrations.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
+	<p>
 	The only way to use this method is to have pre-calculated PHREEQC solution concentrations,
 	which is not common. Concentrations are normally initialized
 	with @ref YAMLInitialPhreeqc2Module or @ref YAMLInitialPhreeqcCell2Module.
+	</p>
 	@param c               Vector of component concentrations. Size of vector is @a ncomps times @a nxyz,
 	where @a ncomps is the number of components as determined
 	by FindComponents or GetComponentCount and
@@ -748,15 +800,17 @@ public:
 	 */
 	void YAMLSetConcentrations(std::vector< double >& c);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetCurrentSelectedOutputUserNumber.
+	@a YAMLSetCurrentSelectedOutputUserNumber inserts data into the YAML document for the 
+	PhreeqcRM method @a SetCurrentSelectedOutputUserNumber.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetCurrentSelectedOutputUserNumber selects the current selected output by user number.
+	<p>
+	@a SetCurrentSelectedOutputUserNumber selects the current selected output by user number.
 	The user may define multiple SELECTED_OUTPUT
 	data blocks for the workers. A user number is specified for each data block. The value of
 	the argument @a n_user selects which of the SELECTED_OUTPUT definitions will be used
 	for selected-output operations.
+	</p>
 	@param n_user           User number of the SELECTED_OUTPUT data block that is to be used.
 	@see
 	@ref YAMLSetNthSelectedOutput,
@@ -772,15 +826,17 @@ public:
 	 */
 	void YAMLSetCurrentSelectedOutputUserNumber(int n_user);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetDensityUser.
+	@a YAMLSetDensityUser inserts data into the YAML document for the 
+	PhreeqcRM method @a SetDensityUser.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetDensityUser sets the density for each reaction cell. These density values are used
+	<p>
+	@a SetDensityUser sets the density for each reaction cell. These density values are used
 	when converting from transported mass-fraction concentrations (@ref YAMLSetUnitsSolution) to
 	produce per liter concentrations during a call to SetConcentrations and when converting from 
 	reaction-cell concentrations to transport concentrations, if UseSolutionDensityVolume is set to 
 	@a false.
+	</p>
 	@param density          Vector of densities. Size of vector is @a nxyz, where @a nxyz is the number
 	of grid cells in the user's model.
 	@see
@@ -798,11 +854,13 @@ public:
 	 */
 	void YAMLSetDensityUser(std::vector< double > density);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetDumpFileName.
+	@a YAMLSetDumpFileName inserts data into the YAML document for the 
+	PhreeqcRM method @a SetDumpFileName.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetDumpFileName	sets the name of the dump file. It is the name used by the method DumpModule.
+	<p>
+	@a SetDumpFileName	sets the name of the dump file. It is the name used by the method DumpModule.
+	</p>
 	@param dump_name        Name of dump file.
 	@see                    @ref YAMLDumpModule.
 	@par C++ Example:
@@ -819,14 +877,16 @@ public:
 	 */
 	void YAMLSetDumpFileName(std::string dump_name);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetErrorHandlerMode.
+	@a YAMLSetErrorHandlerMode inserts data into the YAML document for the 
+	PhreeqcRM method @a SetErrorHandlerMode.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetErrorHandlerMode sets the action to be taken when the reaction module encounters an error.
+	<p>
+	@a SetErrorHandlerMode sets the action to be taken when the reaction module encounters an error.
 	Options are 0, return to calling program with an error return code (default);
 	1, throw an exception, in C++, the exception can be caught, for C and Fortran, the program will exit; or
 	2, attempt to exit gracefully.
+	</p>
 	@param mode             Error handling mode: 0, 1, or 2.
 	@par C++ Example:
 	@htmlonly
@@ -839,14 +899,15 @@ public:
 	 */
 	void YAMLSetErrorHandlerMode(int mode);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetErrorOn.
+	@a YAMLSetErrorOn inserts data into the YAML document for the 
+	PhreeqcRM method @a SetErrorOn.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetErrorOn sets the property that controls whether error messages are generated and displayed.
+	<p>
+	@a SetErrorOn sets the property that controls whether error messages are generated and displayed.
 	Messages include PHREEQC "ERROR" messages, and
 	any messages written with the method ErrorMessage.
-
+	</p>
 	@param tf  @a True, enable error messages; @a False, disable error messages. Default is true.
 	@see                  @ref YAMLLogMessage, @ref YAMLOutputMessage, @ref YAMLScreenMessage.
 	@par C++ Example:
@@ -860,12 +921,14 @@ public:
 	 */
 	void YAMLSetErrorOn(bool tf);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetFilePrefix.
+	@a YAMLSetFilePrefix inserts data into the YAML document for the 
+	PhreeqcRM method @a SetFilePrefix.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetFilePrefix sets the prefix for the output (prefix.chem.txt) and log (prefix.log.txt) files.
+	<p>
+	@a SetFilePrefix sets the prefix for the output (prefix.chem.txt) and log (prefix.log.txt) files.
 	These files are opened by the method OpenFiles.
+	</p>
 	@param prefix           Prefix used when opening the output and log files.
 	@see                    @ref YAMLOpenFiles, @ref YAMLCloseFiles.
 	@par C++ Example:
@@ -880,13 +943,14 @@ public:
 	 */
 	void YAMLSetFilePrefix(std::string prefix);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetGasCompMoles.
+	@a YAMLSetGasCompMoles inserts data into the YAML document for the 
+	PhreeqcRM method @a SetGasCompMoles.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetGasCompMoles transfers moles of gas components from
+	<p>
+	@a SetGasCompMoles transfers moles of gas components from
 	the vector given in the argument list (@a gas_moles) to each reaction cell.
-
+	</p>
 	@param  gas_moles               Vector of moles of gas components.
 	Dimension of the vector is set to @a ngas_comps times @a nxyz,
 	where, @a ngas_comps is the result of GetGasComponentsCount,
@@ -910,17 +974,18 @@ public:
 		*/
 	void YAMLSetGasCompMoles(std::vector< double > gas_moles);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetGasPhaseVolume.
+	@a YAMLSetGasPhaseVolume inserts data into the YAML document for the 
+	PhreeqcRM method @a SetGasPhaseVolume.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetGasPhaseVolume transfers volumes of gas phases from
+	<p>
+	@a SetGasPhaseVolume transfers volumes of gas phases from
 	the vector given in the argument list (@a gas_volume) to each reaction cell.
 	The gas-phase volume affects the gas-component pressures calculated for fixed-volume
 	gas phases. If a gas-phase volume is defined with this methood
 	for a GAS_PHASE in a cell,
 	the gas phase is forced to be a fixed-volume gas phase.
-
+	</p>
 	@param  gas_volume               Vector of volumes for each gas phase.
 	Dimension of the vector is @a nxyz,
 	where @a nxyz is the number of user grid cells.
@@ -940,10 +1005,10 @@ public:
 	</PRE>
 	</CODE>
 	@endhtmlonly
-		*/
+	*/
 	void YAMLSetGasPhaseVolume(std::vector< double > gas_volume);
 	/**
-	Inserts data into the YAML document to define the number of cells in the 
+	@a YAMLSetGridCellCount Inserts data into the YAML document to define the number of cells in the 
 	user's model.
 	Once the YAML document is written, the number of model cells can be extracted
 	with the method GetGridCellCountYAML. GetGridCellCountYAML is NOT a PhreeqcRM 
@@ -966,15 +1031,18 @@ public:
 	*/
 	void YAMLSetGridCellCount(int n);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetNthSelectedOutput.
+	@a YAMLSetNthSelectedOutput inserts data into the YAML document for the 
+	PhreeqcRM method @a SetNthSelectedOutput.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetNthSelectedOutput specifies the current selected output by sequence number. The user may define multiple SELECTED_OUTPUT
+	<p>
+	@a SetNthSelectedOutput specifies the current selected output by sequence number. 
+	The user may define multiple SELECTED_OUTPUT
 	data blocks for the workers. A user number is specified for each data block, and the blocks are
 	stored in user-number order. The value of
 	the argument @a n selects the sequence number of the SELECTED_OUTPUT definition that will be used
 	for selected-output operations.
+	</p>
 	@param n           Sequence number of the SELECTED_OUTPUT data block that is to be used.
 	@see
 	@ref YAMLSetCurrentSelectedOutputUserNumber,
@@ -990,13 +1058,14 @@ public:
 	*/
 	void YAMLSetNthSelectedOutput(int n);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetPartitionUZSolids.
+	@a YAMLSetPartitionUZSolids inserts data into the YAML document for the 
+	PhreeqcRM method @a SetPartitionUZSolids.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetPartitionUZSolids sets the property for partitioning solids between the saturated and unsaturated
-	parts of a partially saturated cell.
-	@par
+	<p>
+	@a SetPartitionUZSolids sets the property for partitioning solids between 
+	the saturated and unsaturated
+	parts of a partially saturated cell. 
 	The option is intended to be used by saturated-only
 	flow codes that allow a variable water table.
 	The value has meaning only when saturations
@@ -1012,6 +1081,7 @@ public:
 	saturated and unsaturated (unreactive) reservoirs of the cell.
 	Unsaturated-zone flow and transport codes will probably use the default (false),
 	which assumes all gases and solids are reactive regardless of saturation.
+	</p>
 	@param tf       @a True, the fraction of solids and gases available for
 	reaction is equal to the saturation;
 	@a False (default), all solids and gases are reactive regardless of saturation.
@@ -1026,11 +1096,12 @@ public:
 	 */
 	void YAMLSetPartitionUZSolids(bool tf);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetPorosity.
+	@a YAMLSetPorosity inserts data into the YAML document for the 
+	PhreeqcRM method @a SetPorosity.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetPorosity sets the porosity for each reaction cell.
+	<p>
+	@a SetPorosity sets the porosity for each reaction cell.
 	The volume of water in a reaction cell is the product of porosity, saturation
 	(SetSaturationUser), and representative volume (SetRepresentativeVolume).
 	@param por              Vector of porosities, unitless. Default is 0.1.
@@ -1049,12 +1120,15 @@ public:
 	 */
 	void YAMLSetPorosity(std::vector< double > por);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetPressure.
+	@a YAMLSetPressure inserts data into the YAML document for the 
+	PhreeqcRM method @a SetPressure.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetPressure sets the pressure for each reaction cell. Pressure effects are considered only in three of the
+	<p>
+	@a SetPressure sets the pressure for each reaction cell. Pressure effects are 
+	considered only in three of the
 	databases distributed with PhreeqcRM: phreeqc.dat, Amm.dat, and pitzer.dat.
+	</p>
 	@param p                Vector of pressures, in atm. Size of vector is @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	@see                    @ref YAMLSetTemperature.
@@ -1070,13 +1144,15 @@ public:
 	 */
 	void YAMLSetPressure(std::vector< double > p);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetPrintChemistryMask.
+	@a YAMLSetPrintChemistryMask inserts data into the YAML document for the 
+	PhreeqcRM method @a SetPrintChemistryMask.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetPrintChemistryMask enables or disables detailed output for each reaction cell.
+	<p>
+	@a SetPrintChemistryMask enables or disables detailed output for each reaction cell.
 	Printing for a reaction cell will occur only when the
 	printing is enabled with SetPrintChemistryOn and the @a cell_mask value is 1.
+	</p>
 	@param cell_mask        Vector of integers. Size of vector is @a nxyz, where @a nxyz is the number
 	of grid cells in the user's model. A value of 0 will
 	disable printing detailed output for the cell; a value of 1 will enable printing detailed output for a cell.
@@ -1098,11 +1174,12 @@ public:
 	 */
 	void YAMLSetPrintChemistryMask(std::vector< int > cell_mask);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetPrintChemistryOn.
+	@a YAMLSetPrintChemistryOn inserts data into the YAML document for the 
+	PhreeqcRM method @a SetPrintChemistryOn.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetPrintChemistryOn
+	<p>
+	@a SetPrintChemistryOn
 	sets the property that enables or disables printing detailed output from reaction calculations
 	to the output file for a set of cells defined by SetPrintChemistryMask.
 	The detailed output prints all of the output typical of a PHREEQC reaction calculation,
@@ -1116,7 +1193,7 @@ public:
 	Printing the detailed output for the workers is generally used only for debugging,
 	and PhreeqcRM will run significantly faster
 	when printing detailed output for the workers is disabled.
-
+	</p>
 	@param workers          @a True, enable detailed printing in the worker instances;
 	@a False, disable detailed printing in the worker instances.
 	@param initial_phreeqc  @a True, enable detailed printing in the InitialPhreeqc instance;
@@ -1135,11 +1212,12 @@ public:
 	 */
 	void YAMLSetPrintChemistryOn(bool workers, bool initial_phreeqc, bool utility);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetRebalanceByCell.
+	@p YAMLSetRebalanceByCell inserts data into the YAML document for the 
+	PhreeqcRM method @a SetRebalanceByCell.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetRebalanceByCell
+	<p>
+	@a SetRebalanceByCell
 	sets the load-balancing algorithm.
 	PhreeqcRM attempts to rebalance the load of each thread or process such that each
 	thread or process takes the same amount of time to run its part of a RunCells
@@ -1148,6 +1226,7 @@ public:
 	saturation was zero (default), and
 	the other assigns an average time to all cells.
 	The methods are similar, but limited testing indicates the default method performs better.
+	</p>
 	@param tf           @a True, indicates individual cell times are used in rebalancing (default);
 	@a False, indicates average times are used in rebalancing.
 	@see                    @ref YAMLSetRebalanceFraction.
@@ -1162,11 +1241,12 @@ public:
 	 */
 	void YAMLSetRebalanceByCell(bool tf);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetRebalanceFraction.
+	@a YAMLSetRebalanceFraction inserts data into the YAML document for the 
+	PhreeqcRM method @a SetRebalanceFraction.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetRebalanceFraction sets the fraction of cells that are transferred among threads or processes when rebalancing.
+	<p>
+	@a SetRebalanceFraction sets the fraction of cells that are transferred among threads or processes when rebalancing.
 	PhreeqcRM attempts to rebalance the load of each thread or process such that each
 	thread or process takes the same amount of time to run its part of a RunCells
 	calculation. The rebalancing transfers cell calculations among threads or processes to
@@ -1177,7 +1257,7 @@ public:
 	distribution and avoid possible oscillations
 	when too many cells are transferred at one iteration, requiring reverse transfers at the next iteration.
 	Default is 0.5.
-
+	</p>
 	@param f                Fraction from 0.0 to 1.0.
 	@see                    @ref YAMLSetRebalanceByCell.
 
@@ -1192,11 +1272,12 @@ public:
 	 */
 	void YAMLSetRebalanceFraction(double f);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetRepresentativeVolume.
+	@a YAMLSetRepresentativeVolume inserts data into the YAML document for the 
+	PhreeqcRM method @a SetRepresentativeVolume.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetRepresentativeVolume
+	<p>
+	@a SetRepresentativeVolume
 	sets the representative volume of each reaction cell.
 	By default the representative volume of each reaction cell is 1 liter.
 	The volume of water in a reaction cell is determined by the product of the representative volume,
@@ -1209,7 +1290,9 @@ public:
 	that increasing the representative volume also increases
 	the number of moles of the reactants in the reaction cell (minerals, surfaces, exchangers,
 	and others), which are defined as moles per representative volume.
-	@a SetRepresentativeVolume should be called before initial conditions are defined for the reaction cells.
+	@a SetRepresentativeVolume should be called before initial conditions 
+	are defined for the reaction cells.
+	</p>
 	@param rv              Vector of representative volumes, in liters. Default is 1.0 liter.
 	Size of array is @a nxyz, where @a nxyz is the number
 	of grid cells in the user's model.
@@ -1226,11 +1309,12 @@ public:
 	 */
 	void YAMLSetRepresentativeVolume(std::vector< double > rv);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetSaturationUser.
+	@a YAMLSetSaturationUser inserts data into the YAML document for the 
+	PhreeqcRM method @a SetSaturationUser.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetSaturationUser
+	<p>
+	@a SetSaturationUser
 	sets the saturation of each reaction cell. Saturation is a fraction ranging from 0 to 1.
 	The volume of water in a cell is the product of porosity (SetPorosity), saturation 
 	(SetSaturationUser), and representative volume (SetRepresentativeVolume). As a result of 
@@ -1239,7 +1323,7 @@ public:
 	calculate these changes. 	The methods GetDensityCalculated,
 	GetSolutionVolume, and GetSaturationCalculated can be used to account
 	for these changes in the succeeding transport calculation.
-
+	</p>
 	@param sat              Vector of saturations, unitless. Default 1.0. Size of vector is @a nxyz,
 	where @a nxyz is the number of grid cells in the user's model.
 	@see
@@ -1256,15 +1340,16 @@ public:
 	 */
 	void YAMLSetSaturationUser(std::vector< double > sat);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetScreenOn.
+	@a YAMLSetScreenOn inserts data into the YAML document for the 
+	PhreeqcRM method @a SetScreenOn.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetScreenOn
+	<p>
+	@a SetScreenOn
 	sets the property that controls whether messages are written to the screen.
 	Messages include information about rebalancing during RunCells, and
 	any messages written with ScreenMessage.
-
+	</p>
 	@param tf  @a True, enable screen messages; @a False, disable screen messages. Default is true.
 	@see                    @ref YAMLRunCells, @ref YAMLScreenMessage.
 	@par C++ Example:
@@ -1278,17 +1363,18 @@ public:
 	 */
 	void YAMLSetScreenOn(bool tf);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetSelectedOutputOn.
+	@a YAMLSetSelectedOutputOn inserts data into the YAML document for the 
+	PhreeqcRM method @a SetSelectedOutputOn.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetSelectedOutputOn
+	<p>
+	@a SetSelectedOutputOn
 	sets the property that controls whether selected-output results are available to be retrieved
 	with GetSelectedOutput. @a True indicates that selected-output results
 	will be accumulated during RunCells and can be retrieved with GetSelectedOutput;
 	@a False indicates that selected-output results will not
 	be accumulated during RunCells.
-
+	</p>
 	@param tf  @a True, enable selected output; @a False, disable selected output.
 	@see
 	@ref YAMLSetCurrentSelectedOutputUserNumber,
@@ -1305,11 +1391,12 @@ public:
 	 */
 	void YAMLSetSelectedOutputOn(bool tf);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetSpeciesSaveOn.
+	@a Inserts data into the YAML document for the 
+	PhreeqcRM method @a SetSpeciesSaveOn.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetSpeciesSaveOn
+	<p>
+	@a SetSpeciesSaveOn
 	sets the value of the species-save property.
 	This method enables or disables use of PhreeqcRM with multicomponent-diffusion transport calculations.
 	By default, concentrations of aqueous species are not saved.
@@ -1318,7 +1405,7 @@ public:
 	with GetSpeciesConcentrations, and solution compositions to be set with
 	SpeciesConcentrations2Module.
 	SetSpeciesSaveOn must be called before calls to FindComponents.
-
+	</p>
 	@param save_on          @a True indicates species concentrations are saved;
 	@a False indicates species concentrations are not saved.
 	@see                    @ref YAMLFindComponents,
@@ -1334,15 +1421,16 @@ public:
 	 */
 	void YAMLSetSpeciesSaveOn(bool save_on);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetTemperature.
+	@a YAMLSetTemperature inserts data into the YAML document for the 
+	PhreeqcRM method @a SetTemperature.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetTemperature
+	<p>
+	@a SetTemperature
 	sets the temperature for each reaction cell. If SetTemperature is not called,
 	worker solutions will have temperatures as defined by initial conditions
 	(InitialPhreeqc2Module and InitialPhreeqcCell2Module).
-
+	</p>
 	@param t                Vector of temperatures, in degrees C.
 	Size of vector is @a nxyz, where @a nxyz is the number
 	of grid cells in the user's model.
@@ -1361,12 +1449,14 @@ public:
 	 */
 	void YAMLSetTemperature(std::vector< double > t);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetTime.
+	@a YAMLSetTime inserts data into the YAML document for the 
+	PhreeqcRM method @a SetTime.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetTime
+	<p>
+	@a SetTime
 	sets current simulation time for the reaction module.
+	</p>
 	@param time             Current simulation time, in seconds.
 	@see                    @ref YAMLSetTimeStep, @ref YAMLSetTimeConversion.
 	@par C++ Example:
@@ -1380,13 +1470,15 @@ public:
 	 */
 	void YAMLSetTime(double time);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetTimeConversion.
+	@a YAMLSetTimeConversion inserts data into the YAML document for the 
+	PhreeqcRM method @a SetTimeConversion.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetTimeConversion sets a factor to convert from seconds to user time units. Factor times seconds 
+	<p>
+	@a SetTimeConversion sets a factor to convert from seconds to user time units. 
+	Factor times seconds 
 	produces user time units, which are used in some PhreeqcRM printing.
-
+	</p>
 	@param conv_factor      Factor to convert seconds to user time units.
 	@see                    @ref YAMLSetTime, @ref YAMLSetTimeStep.
 	@par C++ Example:
@@ -1401,14 +1493,15 @@ public:
 	 */
 	void YAMLSetTimeConversion(double conv_factor);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetTimeStep.
+	@a YAMLSetTimeStep inserts data into the YAML document for the 
+	PhreeqcRM method @a SetTimeStep.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetTimeStep
+	<p>
+	@a SetTimeStep
 	sets current time step for the reaction module. This is the length
 	of time over which kinetic reactions are integrated.
-
+	</p>
 	@param time_step        Time step, in seconds.
 	@see                    @ref YAMLSetTime, @ref YAMLSetTimeConversion.
 	@par C++ Example:
@@ -1423,27 +1516,30 @@ public:
 	 */
 	void YAMLSetTimeStep(double time_step);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetUnitsExchange.
+	@a YAMLSetUnitsExchange inserts data into the YAML document for the 
+	PhreeqcRM method @a SetUnitsExchange.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetUnitsExchange
+	<p>
+	@a SetUnitsExchange
 	sets input units for exchangers.
 	In PHREEQC input, exchangers are defined by moles of exchange sites (@a Mp).
 	SetUnitsExchange specifies how the number of moles of exchange sites in a reaction cell (@a Mc)
 	is calculated from the input value (@a Mp).
-	@par
+	</p>
+	<p>
 	Options are
 	0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (SetRepresentativeVolume);
 	1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (SetPorosity); or
 	2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-P)*RV.
-	@par
+	</p>
+	<p>
 	If a single EXCHANGE definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of exchangers will be the same regardless of porosity.
 	For option 1, the number of moles of exchangers will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of exchangers will vary directly with rock volume and inversely with porosity.
-
+	</p>
 	@param option           Units option for exchangers: 0, 1, or 2.
 	@see                    @ref YAMLInitialPhreeqc2Module, @ref YAMLInitialPhreeqcCell2Module,
 	@ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume.
@@ -1458,27 +1554,30 @@ public:
 	 */
 	void YAMLSetUnitsExchange(int option);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetUnitsGasPhase.
+	@a YAMLSetUnitsGasPhase inserts data into the YAML document for the 
+	PhreeqcRM method @a SetUnitsGasPhase.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetUnitsGasPhase
+	<p>
+	@a SetUnitsGasPhase
 	sets input units for gas phases.
 	In PHREEQC input, gas phases are defined by moles of component gases (@a Mp).
 	@a SetUnitsGasPhase specifies how the number of moles of component gases in a reaction cell (@a Mc)
 	is calculated from the input value (@a Mp).
-	@par
+	</p>
+	<p>
 	Options are
 	0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (SetRepresentativeVolume);
 	1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (SetPorosity); or
 	2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
-	@par
+	</p>
+	<p>
 	If a single GAS_PHASE definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of a gas component will be the same regardless of porosity.
 	For option 1, the number of moles of a gas component will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of a gas component will vary directly with rock volume and inversely with porosity.
-
+	</p>
 	@param option           Units option for gas phases: 0, 1, or 2.
 	@see                    @ref YAMLInitialPhreeqc2Module, @ref YAMLInitialPhreeqcCell2Module,
 	@ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume.
@@ -1494,41 +1593,47 @@ public:
 	 */
 	void YAMLSetUnitsGasPhase(int option);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetUnitsKinetics.
+	@a YAMLSetUnitsKinetics inserts data into the YAML document for the 
+	PhreeqcRM method @a SetUnitsKinetics.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetUnitsKinetics
+	<p>
+	@a SetUnitsKinetics
 	sets input units for kinetic reactants.
-	@par
+	</p>
+	<p>
 	In PHREEQC input, kinetics are defined by moles of kinetic reactants (@a Mp).
 	@a SetUnitsKinetics specifies how the number of moles of kinetic reactants in a reaction cell (@a Mc)
 	is calculated from the input value (@a Mp).
-	@par
+	</p>
+	<p>
 	Options are
 	0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (SetRepresentativeVolume);
 	1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (SetPorosity); or
 	2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
-	@par
+	</p>
+	<p>
 	If a single KINETICS definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of kinetic reactants will be the same regardless of porosity.
 	For option 1, the number of moles of kinetic reactants will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of kinetic reactants will vary directly with rock volume and inversely with porosity.
-	@par
+	</p>
+	<p>
 	Note that the volume of water in a cell in the reaction module is equal to the product of
 	porosity (SetPorosity), the saturation (SetSaturationUser), and representative volume 
 	(SetRepresentativeVolume), which is usually less than 1 liter. It is important to write the 
 	RATES 	definitions for homogeneous (aqueous) kinetic reactions to account for the current 
 	volume of water, often by calculating the rate of reaction per liter of water and multiplying 
 	by the volume of water (Basic function SOLN_VOL).
-	@par
+	</p>
+	<p>
 	Rates that depend on surface area of solids, are not dependent
 	on the volume of water. However, it is important to get the correct surface area for the kinetic
 	reaction. To scale the surface area with the number of moles, the specific area (m^2 per mole of reactant)
 	can be defined as a parameter (KINETICS; -parm), which is multiplied by the number of moles of
 	reactant (Basic function M) in RATES to obtain the surface area.
-
+	</p>
 	@param option           Units option for kinetic reactants: 0, 1, or 2.
 	@see                    @ref YAMLInitialPhreeqc2Module, @ref YAMLInitialPhreeqcCell2Module,
 	@ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturationUser.
@@ -1544,27 +1649,30 @@ public:
 	 */
 	void YAMLSetUnitsKinetics(int option);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetUnitsPPassemblage.
+	@a YAMLSetUnitsPPassemblage inserts data into the YAML document for the 
+	PhreeqcRM method @a SetUnitsPPassemblage.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetUnitsPPassemblage
+	<p>
+	@a SetUnitsPPassemblage
 	sets input units for pure phase assemblages (equilibrium phases).
 	In PHREEQC input, equilibrium phases are defined by moles of each phase (@a Mp).
 	@a SetUnitsPPassemblage specifies how the number of moles of phases in a reaction cell (@a Mc)
 	is calculated from the input value (@a Mp).
-	@par
+	</p>
+	<p>
 	Options are
 	0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (SetRepresentativeVolume);
 	1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (SetPorosity); or
 	2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-P)*RV.
-	@par
+	</p>
+	<p>
 	If a single EQUILIBRIUM_PHASES definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of a mineral will be the same regardless of porosity.
 	For option 1, the number of moles of a mineral will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of a mineral will vary directly with rock volume and inversely with porosity.
-
+	</p>
 	@param option           Units option for equilibrium phases: 0, 1, or 2.
 	@see                    @ref YAMLInitialPhreeqc2Module, @ref YAMLInitialPhreeqcCell2Module,
 	@ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume.
@@ -1579,16 +1687,18 @@ public:
 	 */
 	void YAMLSetUnitsPPassemblage(int option);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetUnitsSolution.
+	@a YAMLSetUnitsSolution inserts data into the YAML document for the 
+	PhreeqcRM method @a SetUnitsSolution.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetUnitsSolution
+	<p>
+	@a SetUnitsSolution
 	sets solution concentration units used by the transport model.
 	Options are 1, mg/L; 2 mol/L; or 3, mass fraction, kg/kgs.
 	PHREEQC defines solutions by the number of moles of each
 	element in the solution.
-	@par
+	</p>
+	<p>
 	To convert from mg/L to moles
 	of element in the representative volume of a reaction cell, mg/L is converted to mol/L and
 	multiplied by the solution volume,
@@ -1601,7 +1711,8 @@ public:
 	of element in the representative volume of a reaction cell, kg/kgs is converted to mol/kgs, multiplied by density
 	(SetDensityUser) and
 	multiplied by the solution volume.
-	@par
+	</p>
+	<p>
 	To convert from moles
 	of element in the representative volume of a reaction cell to mg/L, the number of moles of an element is divided by the
 	solution volume resulting in mol/L, and then converted to mg/L.
@@ -1617,7 +1728,7 @@ public:
 	saturation (SetSaturationUser), and representative volume (SetRepresentativeVolume),
 	and the mass of solution is volume times density as defined by SetDensityUser.
 	Which option is used is determined by UseSolutionDensityVolume.
-
+	</p>
 	@param option           Units option for solutions: 1, 2, or 3, default is 1, mg/L.
 	@see                    @ref YAMLSetDensityUser, @ref YAMLSetPorosity, 
 	@ref YAMLSetRepresentativeVolume, @ref YAMLSetSaturationUser,
@@ -1634,27 +1745,30 @@ public:
 	 */
 	void YAMLSetUnitsSolution(int option);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetUnitsSSassemblage.
+	@a YAMLSetUnitsSSassemblage inserts data into the YAML document for the 
+	PhreeqcRM method @a SetUnitsSSassemblage.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetUnitsSSassemblage
+	<p>
+	@a SetUnitsSSassemblage
 	sets input units for solid-solution assemblages.
 	In PHREEQC, solid solutions are defined by moles of each component (@a Mp).
 	@a SetUnitsSSassemblage specifies how the number of moles of solid-solution components in a reaction cell (@a Mc)
 	is calculated from the input value (@a Mp).
-	@par
+	</p>
+	<p>
 	Options are
 	0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (SetRepresentativeVolume);
 	1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (SetPorosity); or
 	2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
-	@par
+	</p>
+	<p>
 	If a single SOLID_SOLUTION definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of a solid-solution component will be the same regardless of porosity.
 	For option 1, the number of moles of a solid-solution component will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of a solid-solution component will vary directly with rock volume and inversely with porosity.
-
+	</p>
 	@param option           Units option for solid solutions: 0, 1, or 2.
 	@see                    @ref YAMLInitialPhreeqc2Module, @ref YAMLInitialPhreeqcCell2Module,
 	@ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume.
@@ -1669,27 +1783,30 @@ public:
 	 */
 	void YAMLSetUnitsSSassemblage(int option);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SetUnitsSurface.
+	@a YAMLSetUnitsSurface inserts data into the YAML document for the 
+	PhreeqcRM method @a SetUnitsSurface.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SetUnitsSurface
+	<p>
+	@a SetUnitsSurface
 	sets input units for surfaces.
 	In PHREEQC input, surfaces are defined by moles of surface sites (@a Mp).
 	@a SetUnitsSurface specifies how the number of moles of surface sites in a reaction cell (@a Mc)
 	is calculated from the input value (@a Mp).
-	@par
+	</p>
+	<p>
 	Options are
 	0, @a Mp is mol/L of RV (default),    @a Mc = @a Mp*RV, where RV is the representative volume (SetRepresentativeVolume);
 	1, @a Mp is mol/L of water in the RV, @a Mc = @a Mp*P*RV, where @a P is porosity (SetPorosity); or
 	2, @a Mp is mol/L of rock in the RV,  @a Mc = @a Mp*(1-@a P)*RV.
-	@par
+	</p>
+	<p>
 	If a single SURFACE definition is used for cells with different initial porosity,
 	   the three options scale quite differently.
 	For option 0, the number of moles of surface sites will be the same regardless of porosity.
 	For option 1, the number of moles of surface sites will vary directly with porosity and inversely with rock volume.
 	For option 2, the number of moles of surface sites will vary directly with rock volume and inversely with porosity.
-	@par
+	</p>
 	@param option           Units option for surfaces: 0, 1, or 2.
 	@see                    @ref YAMLInitialPhreeqc2Module, @ref YAMLInitialPhreeqcCell2Module,
 	@ref YAMLSetPorosity, @ref YAMLSetRepresentativeVolume.
@@ -1704,11 +1821,12 @@ public:
 	 */
 	void YAMLSetUnitsSurface(int option);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method SpeciesConcentrations2Module.
+	@a YAMLSpeciesConcentrations2Module inserts data into the YAML document for the 
+	PhreeqcRM method @a SpeciesConcentrations2Module.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	SpeciesConcentrations2Module
+	<p>
+	@a SpeciesConcentrations2Module
 	sets solution concentrations in the reaction cells
 	based on the vector of aqueous species concentrations (@a species_conc).
 	This method is intended for use with multicomponent-diffusion transport calculations,
@@ -1721,7 +1839,7 @@ public:
 	Solution compositions in the reaction cells are updated with these component concentrations.
 	Usually, accurate concentrations will not be known to use YAMLSpeciesConcentrations2Module during
 	initialization.
-
+	</p>
 	@param species_conc     Vector of aqueous species concentrations. Dimension of the array is @a nspecies times @a nxyz,
 	where  @a nspecies is the number of aqueous species,
 	and @a nxyz is the number of user grid cells.
@@ -1739,11 +1857,12 @@ public:
 	 */
 	void YAMLSpeciesConcentrations2Module(std::vector< double > species_conc);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method StateSave.
+	@a YAMLStateSave inserts data into the YAML document for the 
+	PhreeqcRM method @a StateSave.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	StateSave
+	<p>
+	@a StateSave
 	saves the state of the chemistry in all model cells, including SOLUTIONs,
 	EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs.
 	Although not generally used, MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs
@@ -1752,7 +1871,7 @@ public:
 	unsaturated cells are also saved. The state is saved in memory; use DumpModule to save the state
 	to file. PhreeqcRM can be reset to this state by using StateApply.
 	A state is identified by an integer, and multiple states can be saved.
-
+	</p>
 	@param istate     Integer identifying the state that is saved.
 	@see                    @ref YAMLDumpModule,
 	@ref YAMLStateApply, and
@@ -1768,11 +1887,12 @@ public:
 	*/
 	void YAMLStateSave(int istate);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method StateApply.
+	@a YAMLStateApply inserts data into the YAML document for the 
+	PhreeqcRM method @a StateApply.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	StateApply
+	<p>
+	@a StateApply
 	resets the state of the module to a state previously saved with StateSave.
 	The chemistry of all model cells are reset, including SOLUTIONs,
 	EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs.
@@ -1782,7 +1902,7 @@ public:
 	The distribution of cells among the workers and the chemistry of fully or partially
 	unsaturated cells are also reset to the saved state.
 	The state to be applied is identified by an integer.
-
+	</p>
 	@param istate     Integer identifying the state that is to be applied.
 	@see                    @ref YAMLStateSave and
 	@ref YAMLStateDelete.
@@ -1797,13 +1917,14 @@ public:
 	*/
 	void YAMLStateApply(int istate);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method StateDelete.
+	@a YAMLStateDelete inserts data into the YAML document for the 
+	PhreeqcRM method @a StateDelete.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	StateDelete
+	<p>
+	@a StateDelete
 	deletes a state previously saved with StateSave.
-
+	</p>
 	@param istate     Integer identifying the state that is to be deleted.
 	@see                    @ref YAMLStateSave and
 	@ref YAMLStateApply.
@@ -1818,11 +1939,12 @@ public:
 	*/
 	void YAMLStateDelete(int istate);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method UseSolutionDensityVolume.
+	@a YAMLUseSolutionDensityVolume inserts data into the YAML document for the 
+	PhreeqcRM method @a UseSolutionDensityVolume.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	UseSolutionDensityVolume
+	<p>
+	@a UseSolutionDensityVolume
 	determines the volume and density to use when converting from the reaction-cell concentrations
 	to transport concentrations (GetConcentrations).
 	Two options are available to convert concentration units:
@@ -1838,7 +1960,7 @@ public:
 	Only the following databases distributed with PhreeqcRM have molar-volume information
 	needed to accurately calculate density and solution volume: phreeqc.dat, Amm.dat, and pitzer.dat.
 	Density is only used when converting to or from transport units of mass fraction.
-
+	</p>
 	@param tf          @a True indicates that the solution density and volume as
 	calculated by PHREEQC will be used to calculate concentrations.
 	@a False indicates that the solution density set by SetDensityUser and the volume determined by the
@@ -1857,13 +1979,14 @@ public:
 	 */
 	void YAMLUseSolutionDensityVolume(bool tf);
 	/**
-	Inserts data into the YAML document for the PhreeqcRM method WarningMessage.
+	@a YAMLWarningMessage inserts data into the YAML document for the 
+	PhreeqcRM method @a WarningMessage.
 	When the YAML document is written to file it can be processed by the method InitializeYAML to
 	initialize a PhreeqcRM instance.
-	@par
-	WarningMessage
+	<p>
+	@a WarningMessage
 	prints a warning message to the screen and the log file.
-
+	</p>
 	@param warnstr          String to be printed.
 	@see                    @ref YAMLOpenFiles, @ref YAMLLogMessage,
 	@ref YAMLOutputMessage, @ref YAMLScreenMessage.

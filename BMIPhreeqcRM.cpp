@@ -149,6 +149,7 @@ void BMIPhreeqcRM::ClearBMISelectedOutput(void)
 }
 void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
 {
+	if (constructed) return;
 	this->PhreeqcRM::Construct(i);
 	this->var_man = new VarManager((PhreeqcRM*)this);
 #if defined(WITH_PYBIND11)
@@ -193,7 +194,7 @@ void BMIPhreeqcRM::Initialize(std::string config_file)
 #endif
 
 	this->Construct(this->initializer);
-
+	constructed = true;
 #ifdef USE_YAML
 	if (config_file.size() != 0)
 	{
@@ -458,7 +459,7 @@ std::vector<std::string> BMIPhreeqcRM::GetReadOnlyVarNames()
 
 std::string BMIPhreeqcRM::GetVarType(const std::string name)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -480,6 +481,10 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 		{
 			return bv.GetPType();
 		}
+		else if (this->language == "C")
+		{
+			return bv.GetClangType();
+		}
 	}
 	{
 		std::string name_lc = name;
@@ -500,6 +505,10 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 			{
 				return it->second.GetPType();
 			}
+			else if (this->language == "C")
+			{
+				return it->second.GetClangType();
+			}
 		}
 	}
 	throw std::runtime_error("Failed in GetVarType.");
@@ -507,7 +516,7 @@ std::string BMIPhreeqcRM::GetVarType(const std::string name)
 }
 std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -535,7 +544,7 @@ std::string BMIPhreeqcRM::GetVarUnits(const std::string name)
 
 int BMIPhreeqcRM::GetVarItemsize(const std::string name)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -563,7 +572,7 @@ int BMIPhreeqcRM::GetVarItemsize(const std::string name)
 
 int BMIPhreeqcRM::GetVarNbytes(const std::string name)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -606,7 +615,7 @@ double BMIPhreeqcRM::GetEndTime()
 //}
 void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -701,7 +710,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, void* dest)
 }
 void BMIPhreeqcRM::GetValue(const std::string name, bool& dest)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -722,7 +731,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, bool& dest)
 }
 void BMIPhreeqcRM::GetValue(const std::string name, bool* dest)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -751,7 +760,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, bool* dest)
 }
 void BMIPhreeqcRM::GetValue(const std::string name, double& dest)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -772,7 +781,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, double& dest)
 }
 void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -828,7 +837,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, double* dest)
 }
 void BMIPhreeqcRM::GetValue(const std::string name, int& dest)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -848,7 +857,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, int& dest)
 }
 void BMIPhreeqcRM::GetValue(const std::string name, int* dest)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -860,7 +869,14 @@ void BMIPhreeqcRM::GetValue(const std::string name, int* dest)
 		}
 		this->var_man->task = VarManager::VAR_TASKS::GetVar;
 		((*this->var_man).*bv.GetFn())();
-		assert(this->var_man->VarExchange.GetCType() == "int");
+		if (this->language == "C")
+		{
+			assert(this->var_man->VarExchange.GetClangType() == "int");
+		}
+		else
+		{
+			assert(this->var_man->VarExchange.GetCType() == "int");
+		}
 		int dim = this->var_man->VarExchange.GetDim();
 		int nbytes = this->var_man->VarExchange.GetNbytes();
 		if (dim == 1)
@@ -883,7 +899,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, int* dest)
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::string& dest)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -904,7 +920,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::string& dest)
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -947,7 +963,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<double>& dest)
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::vector<int>& dest)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -967,7 +983,7 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<int>& dest)
 }
 void BMIPhreeqcRM::GetValue(const std::string name, std::vector<std::string>& dest)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -987,9 +1003,10 @@ void BMIPhreeqcRM::GetValue(const std::string name, std::vector<std::string>& de
 }
 void* BMIPhreeqcRM::GetValuePtr(const std::string name)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
+		this->var_man->SetLanguage(this->language);
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
 		//VarManager::VarFunction fn = this->var_man->GetFn(v_enum);
 		if (bv.GetVoidPtr() == NULL)
@@ -1004,7 +1021,7 @@ void* BMIPhreeqcRM::GetValuePtr(const std::string name)
 }
 void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -1076,7 +1093,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, void* src)
 }
 void BMIPhreeqcRM::SetValue(const std::string name, bool src)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -1099,7 +1116,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, bool src)
 }
 void BMIPhreeqcRM::SetValue(const std::string name, const char* src)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -1121,7 +1138,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, const char* src)
 }
 void BMIPhreeqcRM::SetValue(const std::string name, double src)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -1143,7 +1160,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, double src)
 }
 void BMIPhreeqcRM::SetValue(const std::string name, int src)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -1165,7 +1182,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, int src)
 }
 void BMIPhreeqcRM::SetValue(const std::string name, const std::string src)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -1187,7 +1204,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, const std::string src)
 }
 void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -1219,7 +1236,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<double> src)
 }
 void BMIPhreeqcRM::SetValue(const std::string name, std::vector<int> src)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -1244,7 +1261,7 @@ void BMIPhreeqcRM::SetValue(const std::string name, std::vector<int> src)
 }
 void BMIPhreeqcRM::SetValue(const std::string name, std::vector<std::string> src)
 {
-	RMVARS v_enum = this->var_man->GetEnum(name);
+	RMVARS v_enum = this->GetEnum(name);
 	if (v_enum != RMVARS::NotFound)
 	{
 		BMIVariant& bv = this->var_man->VariantMap[v_enum];
@@ -1292,6 +1309,15 @@ std::string BMIPhreeqcRM::GetGridType(const int grid)
 	return "Undefined grid identifier";
 };
 
+RMVARS BMIPhreeqcRM::GetEnum(const std::string name)
+{
+	if (this->var_man != nullptr)
+	{
+		return this->var_man->GetEnum(name);
+	}
+	std::cerr << "BMIPhreeqcRM has not been initialized." << std::endl;
+	return RMVARS::NotFound;
+};
 
 //////////////////
 

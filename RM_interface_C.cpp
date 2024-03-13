@@ -1,14 +1,700 @@
 #ifdef USE_MPI
 #include "mpi.h"
 #endif
+#include "BMIPhreeqcRM.h"
+#include "BMI_interface_F.h"
 #include "BMIVariant.h"
 #include "PhreeqcRM.h"
 #include "RM_interface_C.h"
+#include "RM_interface_F.h"
 #include "IPhreeqcPhastLib.h"
 #include "Phreeqc.h"
 #include "PHRQ_io.h"
 #include <string>
 #include <map>
+static IRM_RESULT
+rmpadfstring(char* dest, const char* src, int len)
+{
+	size_t sofar;
+	std::string str = src;
+	if (len == 0)
+	{
+		return IRM_INVALIDARG;
+	}
+	size_t l = (size_t)len - 1;
+	if (str.size() < l)
+	{
+		memcpy(dest, (void*)str.c_str(), str.size());
+		dest[str.size()] = '\0';
+		return IRM_OK;
+	}
+	else
+	{
+		memcpy(dest, (void*)str.c_str(), l);
+		dest[l] = '\0';
+		return IRM_INVALIDARG;
+	}
+}
+#ifdef USE_MPI
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiCreate(int nxyz, int nthreads)
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	int id = BMIPhreeqcRM::CreateBMIModule(nxyz, MPI_Comm_f2c(nthreads));
+	// Returns ith output variable name
+	if (id >= 0)
+	{
+		BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+		if (bmirm_ptr)
+		{
+			IRM_RESULT status = bmirm_ptr->SetLanguage("C");
+		}
+	}
+	return id;
+}
+#else
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiCreate_default()
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	int id = BMIPhreeqcRM::CreateBMIModule();
+	if (id >= 0)
+	{
+		BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+		if (bmirm_ptr)
+		{
+			IRM_RESULT status = bmirm_ptr->SetLanguage("C");
+		}
+	}
+	return id;
+}
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiCreate(int nxyz, int nthreads)
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	int id = BMIPhreeqcRM::CreateBMIModule(nxyz, nthreads);
+	if (id >= 0)
+	{
+		BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+		if (bmirm_ptr)
+		{
+			IRM_RESULT status = bmirm_ptr->SetLanguage("C");
+		}
+	}
+	return id;
+}
+#endif
+IRM_RESULT
+RM_BmiDestroy(int id)
+/* ---------------------------------------------------------------------- */
+{
+	//
+	// Creates reaction module, called by root and MPI workers
+	//
+	return BMIPhreeqcRM::DestroyBMIModule(id);
+}
+
+IRM_RESULT
+RM_BmiFinalize(int id)
+/* ---------------------------------------------------------------------- */
+{
+	return RM_Destroy(id);
+}
+IRM_RESULT
+RM_BmiAddOutputVars(int id, char* option_in, char* def_in)
+{
+	return RMF_BMI_AddOutputVars(&id, option_in, def_in);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiGetComponentName(int id, char* chem_name, int l1)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns ith output variable name
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string str = bmirm_ptr->GetComponentName();
+		return rmpadfstring(chem_name, str.c_str(), l1);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+double
+RM_BmiGetCurrentTime(int id)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_BMI_GetCurrentTime(&id);
+}
+/* ---------------------------------------------------------------------- */
+double
+RM_BmiGetEndTime(int id)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_BMI_GetCurrentTime(&id);
+}
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiGetGridRank(int id, int n)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns ith output variable name
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		return bmirm_ptr->GetGridRank(n);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiGetGridSize(int id, int n)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns ith output variable name
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		return bmirm_ptr->GetGridSize(n);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiGetGridType(int id, int n, char* string, int l)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns ith output variable name
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string str = bmirm_ptr->GetGridType(n);
+		return rmpadfstring(string, str.c_str(), l);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiGetInputItemCount(int id)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_BMI_GetInputItemCount(&id);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiGetInputVarName(int id, int i, char* name, int l)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns ith output variable name
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::vector<std::string> names = bmirm_ptr->GetInputVarNames();
+		return  rmpadfstring(name, names[i].c_str(), l);
+	}
+	return IRM_BADINSTANCE;
+}
+#ifdef SKIP
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiGetInputVarNamesSize(int id)
+/* ---------------------------------------------------------------------- */
+{
+	IRM_RESULT status;
+	int l;
+	status = (IRM_RESULT)RMF_BMI_GetNamesSize(&id, "inputvarnames", &l);
+	l = l + 1;
+	if (status != IRM_OK) l = -1;
+	return l;
+}
+#endif
+
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiGetOutputItemCount(int id)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_BMI_GetOutputItemCount(&id);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiGetOutputVarName(int id, int i, char* name, int l)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns ith output variable name
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::vector<std::string> names = bmirm_ptr->GetOutputVarNames();
+		return  rmpadfstring(name, names[i].c_str(), l);
+	}
+	return IRM_BADINSTANCE;
+}
+#ifdef SKIP
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiGetOutputVarNamesSize(int id)
+/* ---------------------------------------------------------------------- */
+{
+	IRM_RESULT status;
+	int l;
+	status = (IRM_RESULT)RMF_BMI_GetNamesSize(&id, "outputvarnames", &l);
+	l = l + 1;
+	if (status != IRM_OK) l = -1;
+	return l;
+}
+#endif
+
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiGetPointableItemCount(int id)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_BMI_GetPointableItemCount(&id);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiGetPointableVarName(int id, int i, char* name, int l)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns ith output variable name
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::vector<std::string> names = bmirm_ptr->GetPointableVarNames();
+		return  rmpadfstring(name, names[i].c_str(), l);
+	}
+	return IRM_BADINSTANCE;
+}
+#ifdef SKIP
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiGetPointableVarNamesSize(int id)
+/* ---------------------------------------------------------------------- */
+{
+	IRM_RESULT status;
+	int l;
+	status = (IRM_RESULT)RMF_BMI_GetNamesSize(&id, "pointablevarnames", &l);
+	l = l + 1;
+	if (status != IRM_OK) l = -1;
+	return l;
+}
+#endif
+/* ---------------------------------------------------------------------- */
+double
+RM_BmiGetStartTime(int id)
+/* ---------------------------------------------------------------------- */
+{
+	return RM_BmiGetCurrentTime(id);
+}
+/* ---------------------------------------------------------------------- */
+double
+RM_BmiGetTime(int id)
+/* ---------------------------------------------------------------------- */
+{
+	return RM_BmiGetCurrentTime(id);
+}
+/* ---------------------------------------------------------------------- */
+double
+RM_BmiGetTimeStep(int id)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_BMI_GetTimeStep(&id);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiGetTimeUnits(int id, char* units, int l1)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = bmirm_ptr->GetTimeUnits();
+		return	rmpadfstring(units, name.c_str(), l1);
+	}
+	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiGetValueChar(int id, char* var, char* dest, int l)
+/* ---------------------------------------------------------------------- */
+{
+	//BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	//if (bmirm_ptr)
+	//{
+	//	std::string name = var;
+	//	std::string value;
+	//	bmirm_ptr->GetValue(name, value);
+	//	IRM_RESULT return_value = rmpadfstring(dest, value.c_str(), l);
+	//	//bmirm_ptr->GetValue(name, dest);
+	//	return return_value;
+	//}
+	int nbytes = RMF_BMI_GetVarNbytes(&id, var);
+	if (nbytes + 1 > l)
+	{
+		return IRM_INVALIDARG;
+	}
+	IRM_RESULT status = RMF_BMI_GetValue(&id, var, dest);
+	if (status >= 0)
+	{
+		dest[nbytes] = '\0';
+	}
+	return status;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiGetValueDouble(int id, char* var, double* dest)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = var;
+		bmirm_ptr->GetValue(name, dest);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiGetValueInt(int id, char* var, int* dest)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = var;
+		bmirm_ptr->GetValue(name, dest);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+void*
+RM_BmiGetValuePtr(int id, char* var)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = var;
+		return bmirm_ptr->GetValuePtr(name);
+	}
+	return NULL;
+}
+
+///* ---------------------------------------------------------------------- */
+//IRM_RESULT
+//BMI_GetValuePtrChar(int id, char* var, char** dest)
+///* ---------------------------------------------------------------------- */
+//{
+//	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+//	if (bmirm_ptr)
+//	{
+//		std::string name = var;
+//		*dest = (char*)bmirm_ptr->GetValuePtr(name);
+//		return IRM_OK;
+//	}
+//	return IRM_BADINSTANCE;
+//}
+///* ---------------------------------------------------------------------- */
+//double*
+//BMI_GetValuePtrDouble(int id, char* var)
+///* ---------------------------------------------------------------------- */
+//{
+//	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+//	if (bmirm_ptr)
+//	{
+//		std::string name = var;
+//		return (double*)bmirm_ptr->GetValuePtr(name);
+//	}
+//	return NULL;
+//}
+///* ---------------------------------------------------------------------- */
+//int*
+//BMI_GetValuePtrInt(int id, char* var)
+///* ---------------------------------------------------------------------- */
+//{
+//	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+//	if (bmirm_ptr)
+//	{
+//		std::string name = var;
+//		return (int*)bmirm_ptr->GetValuePtr(name);
+//	}
+//	return NULL;
+//}
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiGetVarGrid(int id, char* var)
+/* ---------------------------------------------------------------------- */
+{
+	int g;
+	return 1;
+}
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiGetVarItemsize(int id, char* var)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_BMI_GetVarItemsize(&id, var);
+}
+/* ---------------------------------------------------------------------- */
+int
+RM_BmiGetVarNbytes(int id, char* var)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_BMI_GetVarNbytes(&id, var);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiGetVarType(int id, char* var, char* vtype, int l1)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = bmirm_ptr->GetVarType(var);
+		return	rmpadfstring(vtype, name.c_str(), l1);
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiGetVarUnits(int id, char* var, char* units, int l1)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = bmirm_ptr->GetVarUnits(var);
+		return	rmpadfstring(units, name.c_str(), l1);
+	}
+	return IRM_BADINSTANCE;
+}
+#ifdef USE_YAML
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiInitialize(int id, char* config_file)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_BMI_Initialize(&id, config_file);
+}
+#endif
+
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiSetValueChar(int id, char* var, const char* src)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = var;
+		bmirm_ptr->SetValue(name, src);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiSetValueDouble(int id, char* var, double src)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = var;
+		bmirm_ptr->SetValue(name, src);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiSetValueDoubleArray(int id, char* var, double* src)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = var;
+		bmirm_ptr->SetValue(name, src);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiSetValueInt(int id, char* var, int src)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = var;
+		bmirm_ptr->SetValue(name, src);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+#ifdef SKIP
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiSetValueIntArray(int id, char* var, int* src)
+/* ---------------------------------------------------------------------- */
+{
+	BMIPhreeqcRM* bmirm_ptr = BMIPhreeqcRM::GetInstance(id);
+	if (bmirm_ptr)
+	{
+		std::string name = var;
+		bmirm_ptr->SetValue(name, src);
+		return IRM_OK;
+	}
+	return IRM_BADINSTANCE;
+}
+#endif
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiUpdate(int id)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_BMI_Update(&id);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_BmiUpdateUntil(int id, double time)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_BMI_UpdateUntil(&id, &time);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiGetValueAtIndices(int id, char* name, void* dest, int* inds, int count)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiSetValueAtIndices(int id, char* name, int* inds, int count, void* src)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiGetGridShape(int id, const int grid, int* shape)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiGetGridSpacing(int id, const int grid, double* spacing)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiGetGridOrigin(int id, const int grid, double* origin)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiGetGridX(int id, const int grid, double* x)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiGetGridY(int id, const int grid, double* y)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiGetGridZ(int id, const int grid, double* z)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+int
+GetGridNodeCount(int id, const int grid)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+int
+GetGridEdgeCount(int id, const int grid)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+int
+GetGridFaceCount(int id, const int grid)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiGetGridEdgeNodes(int id, const int grid, int* edge_nodes)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiGetGridFaceEdges(int id, const int grid, int* face_edges)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiGetGridFaceNodes(int id, const int grid, int* face_nodes)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+/* ---------------------------------------------------------------------- */
+void
+RM_BmiGetGridNodesPerFace(int id, const int grid, int* nodes_per_face)
+/* ---------------------------------------------------------------------- */
+{
+	fprintf(stderr, "Not implemented\n"); exit(4);
+}
+
+
+
+
+
+
+
+
+
 
 /* ---------------------------------------------------------------------- */
 IRM_RESULT RM_Abort(int id, int result, const char * str)
@@ -521,7 +1207,13 @@ RM_GetSolidSolutionComponentsCount(int  id)
 	}
 	return IRM_BADINSTANCE;
 }
-
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetTemperature(int id, double* temperature)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_GetTemperature(&id, temperature);
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RM_GetSolidSolutionComponentsName(int  id, int num, char *name, int  l1)
@@ -626,6 +1318,23 @@ RM_GetConcentrations(int id, double * c)
 	}
 	return IRM_BADINSTANCE;
 }
+
+IRM_RESULT RM_GetIthConcentration(int id, int i, double* c)
+{
+	return RMF_GetIthConcentration(&id, &i, c);
+}
+IRM_RESULT RM_GetIthSpeciesConcentration(int id, int i, double* c)
+{
+	return RMF_GetIthSpeciesConcentration(&id, &i, c);
+}
+IRM_RESULT RM_SetIthConcentration(int id, int i, double* c)
+{
+	return RMF_SetIthConcentration(&id, &i, c);
+}
+IRM_RESULT RM_SetIthSpeciesConcentration(int id, int i, double* c)
+{
+	return RMF_SetIthSpeciesConcentration(&id, &i, c);
+}
 /* ---------------------------------------------------------------------- */
 int RM_GetCurrentSelectedOutputUserNumber(int id)
 /* ---------------------------------------------------------------------- */
@@ -636,6 +1345,14 @@ int RM_GetCurrentSelectedOutputUserNumber(int id)
 		return Reaction_module_ptr->GetCurrentSelectedOutputUserNumber();
 	}
 	return IRM_BADINSTANCE;
+}
+
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetDensity(int id, double* d)
+/* ---------------------------------------------------------------------- */
+{
+	return RM_GetDensityCalculated(id, d);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -838,6 +1555,17 @@ RM_GetGfw(int id, double * gfw)
 	}
 	return IRM_BADINSTANCE;
 }
+#ifdef USE_YAML
+/* ---------------------------------------------------------------------- */
+int
+RM_GetGridCellCountYAML(const char* config_file)
+/* ---------------------------------------------------------------------- */
+{
+	// Returns the number of grid cells extracted from YAML file
+
+	return PhreeqcRM::GetGridCellCountYAML(config_file);
+}
+#endif
 /* ---------------------------------------------------------------------- */
 int RM_GetGridCellCount(int id)
 /* ---------------------------------------------------------------------- */
@@ -901,6 +1629,27 @@ RM_GetNthSelectedOutputUserNumber(int id, int i)
 		return Reaction_module_ptr->GetNthSelectedOutputUserNumber(i);
 	}
 	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetPorosity(int id, double* porosity)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_GetPorosity(&id, porosity);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetPressure(int id, double* pressure)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_GetPressure(&id, pressure);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetSaturation(int id, double* sat)
+/* ---------------------------------------------------------------------- */
+{
+	return RM_GetSaturationCalculated(id, sat);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -1211,6 +1960,13 @@ RM_GetStartCell(int id, int *sc)
 	return IRM_BADINSTANCE;
 }
 /* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_GetViscosity(int id, double* viscosity)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_GetViscosity(&id, viscosity);
+}
+/* ---------------------------------------------------------------------- */
 int 
 RM_GetThreadCount(int id)
 /* ---------------------------------------------------------------------- */
@@ -1269,7 +2025,7 @@ RM_InitializeYAML(int id, const char* yamlname)
 		if (yamlname != NULL)
 		{
 			std::string name = PhreeqcRM::Char2TrimString(yamlname);
-			return Reaction_module_ptr->LoadDatabase(name.c_str());
+			return Reaction_module_ptr->InitializeYAML(name.c_str());
 		}
 		return IRM_INVALIDARG;
 	}
@@ -1333,6 +2089,48 @@ RM_InitialPhreeqc2Concentrations(
 		return IRM_INVALIDARG;
 	}
 	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT RM_InitialSolutions2Module(int id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_InitialSolutions2Module(&id, in);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT RM_InitialEquilibriumPhases2Module(int id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_InitialEquilibriumPhases2Module(&id, in);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT RM_InitialExchanges2Module(int id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_InitialExchanges2Module(&id, in);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT RM_InitialSurfaces2Module(int id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_InitialSurfaces2Module(&id, in);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT RM_InitialGasPhases2Module(int id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_InitialGasPhases2Module(&id, in);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT RM_InitialSolidSolutions2Module(int id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_InitialSolidSolutions2Module(&id, in);
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT RM_InitialKinetics2Module(int id, int* in)
+/* ---------------------------------------------------------------------- */
+{
+	return RMF_InitialKinetics2Module(&id, in);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -1589,7 +2387,7 @@ RM_RunString(int id, int workers, int initial_phreeqc, int utility, const char *
 	if (Reaction_module_ptr)
 	{
 		std::string str = PhreeqcRM::Char2TrimString(input_string);
-		return Reaction_module_ptr->RunString((workers != 0), (initial_phreeqc != 0), (utility != 0), input_string);
+		return Reaction_module_ptr->RunString((workers != 0), (initial_phreeqc != 0), (utility != 0), str.c_str());
 	}
 	return IRM_BADINSTANCE;
 }
@@ -1655,6 +2453,13 @@ RM_SetCurrentSelectedOutputUserNumber(int id, int i)
 	return IRM_BADINSTANCE;
 }
 
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_SetDensity(int id, double* t)
+/* ---------------------------------------------------------------------- */
+{
+	return RM_SetDensityUser(id, t);
+}
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 RM_SetDensityUser(int id, double *t)
@@ -1932,6 +2737,13 @@ RM_SetRepresentativeVolume(int id, double *t)
 		return IRM_INVALIDARG;
 	}
 	return IRM_BADINSTANCE;
+}
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+RM_SetSaturation(int id, double* t)
+/* ---------------------------------------------------------------------- */
+{
+	return RM_SetSaturationUser(id, t);
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT 
