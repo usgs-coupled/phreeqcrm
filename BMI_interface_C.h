@@ -1221,10 +1221,10 @@ extern "C" {
     @a BMI_GetGridNodesPerFace is not implemented.
     */
     IRM_DLL_EXPORT void BMI_GetGridNodesPerFace(int id, const int grid, int* nodes_per_face);
-#endif #SKIP
+#endif // SKIP
 #if defined(__cplusplus)
 }
 
 #endif // BMI_INTERFACE_C_H_INCLUDED
 
-#endif #SKIP
+#endif // SKIP
