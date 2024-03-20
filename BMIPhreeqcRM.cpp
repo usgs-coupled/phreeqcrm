@@ -108,7 +108,8 @@ BMIPhreeqcRM::GetInstance(int id)
 // Constructor
 BMIPhreeqcRM::BMIPhreeqcRM()
 : PhreeqcRM(PhreeqcRM::default_nxyz, PhreeqcRM::default_data_for_parallel_processing, nullptr, true)
-, var_man{ nullptr }
+, var_man( nullptr )
+, constructed( false )
 {
 	this->language = "cpp";
 #if defined(WITH_PYBIND11)
@@ -121,7 +122,8 @@ BMIPhreeqcRM::BMIPhreeqcRM()
 }
 BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads)
 : PhreeqcRM(nxyz, nthreads, nullptr, true) 
-, var_man{ nullptr }
+, var_man( nullptr )
+, constructed( false )
 {
 	this->language = "cpp";
 #if defined(WITH_PYBIND11)

@@ -1280,7 +1280,7 @@ protected:
 private:
     //friend class RM_interface;
     VarManager* var_man;
-    bool constructed = false;
+	bool constructed;
 
     void ClearBMISelectedOutput() override;
     void GenerateAutoOutputVars() override;

@@ -155,21 +155,21 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 	//
 	// constructor
 	//
-: StaticIndexer{ this }
-, component_h2o{ true }
-, phreeqc_bin{ nullptr }
-, count_chemistry{ nxyz_arg }
-, worker_waiting{ false }
-, error_count{ 0 }
-, error_handler_mode{ 0 }
-, need_error_check{ true }
-, phreeqcrm_io{ io }
-, delete_phreeqcrm_io{ false }
-, mpi_worker_callback_fortran{ nullptr }
-, mpi_worker_callback_c{ nullptr }
-, mpi_worker_callback_cookie{ nullptr }
-, species_save_on{ false }
-, initializer{ nxyz_arg, data_for_parallel_processing, io }
+: StaticIndexer( this )
+, component_h2o( true )
+, phreeqc_bin( nullptr )
+, count_chemistry( nxyz_arg )
+, worker_waiting( false )
+, error_count( 0 )
+, error_handler_mode( 0 )
+, need_error_check( true )
+, phreeqcrm_io( io )
+, delete_phreeqcrm_io( false )
+, mpi_worker_callback_fortran( nullptr )
+, mpi_worker_callback_c( nullptr )
+, mpi_worker_callback_cookie( nullptr )
+, species_save_on( false )
+, initializer( nxyz_arg, data_for_parallel_processing, io )
 {
 #ifdef USE_MPI
 	phreeqcrm_comm = data_for_parallel_processing;
