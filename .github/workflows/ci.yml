@@ -114,7 +114,7 @@ jobs:
 
     - name: unix2dos
       shell: bash
-      run: git ls-files --eol | grep -v '^i/-text' | grep -v '^i/ ' | grep -v 'Makefile.am' | grep -v 'configure.ac' | awk '{print $4}' | xargs unix2dos
+      run: git ls-files --eol | grep -v '^i/-text' | grep -v '^i/ ' | awk -F $'\t' '{print $2}' | xargs unix2dos
 
     - name: make dist-zip
       shell: bash
