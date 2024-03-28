@@ -70,6 +70,7 @@ jobs:
       NAME: ${{ steps.vars.outputs.NAME }} 
       VER: ${{ steps.vars.outputs.VER }}
       REL: ${{ steps.vars.outputs.REL }}
+      FULL_DATE: ${{ steps.vars.outputs.FULL_DATE }}
       DATE: ${{ steps.vars.outputs.DATE }}
       DATE_RFC_3339: ${{ steps.vars.outputs.DATE_RFC_3339 }}
     steps:
@@ -95,11 +96,13 @@ jobs:
           fi
           
           if [ -z "${DATE}" ]; then
-            echo DATE="$(date '+%x')"                                                                                   >> "${GITHUB_OUTPUT}"
-            echo DATE_RFC_3339="$(date --rfc-3339=date)"                                                                >> "${GITHUB_OUTPUT}"
+            echo DATE="$(TZ='America/Denver' date '+%x')"                                                               >> "${GITHUB_OUTPUT}"
+            echo DATE_RFC_3339="$(TZ='America/Denver' date --rfc-3339=date)"                                            >> "${GITHUB_OUTPUT}"
+            echo FULL_DATE="$(TZ='America/Denver' date)"                                                                >> "${GITHUB_OUTPUT}"
           else
             echo DATE="${DATE}"                                                                                         >> "${GITHUB_OUTPUT}"
-            echo DATE_RFC_3339="$(date --rfc-3339=date --date=${DATE})"                                                 >> "${GITHUB_OUTPUT}"
+            echo DATE_RFC_3339="$(TZ='America/Denver' date --rfc-3339=date --date=${DATE})"                             >> "${GITHUB_OUTPUT}"
+            echo FULL_DATE="$(TZ='America/Denver' date --date=${DATE})"                                                 >> "${GITHUB_OUTPUT}"
           fi
 
   results:
@@ -112,9 +115,10 @@ jobs:
           echo NAME="${{ needs.init.outputs.NAME }}"
           echo VER="${{ needs.init.outputs.VER }}"
           echo REL="${{ needs.init.outputs.REL }}"
+          echo DATE="${{ needs.init.outputs.DENVER_TIME }}"
           echo DATE="${{ needs.init.outputs.DATE }}"
           echo DATE_RFC_3339="${{ needs.init.outputs.DATE_RFC_3339 }}"
-        
+          echo FULL_DATE="${{ needs.init.outputs.FULL_DATE }}"
 
   valgrind:
     if: ${{ false }}
