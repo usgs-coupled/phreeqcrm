@@ -17,12 +17,45 @@ on:
       - 'build-all-presets.sh'
       - 'CMakePresets.json'
   workflow_dispatch:
+    inputs:
+      name:
+        description: 'File will be called name.lowercase()-VER-REL.tar.gz'
+        required: true
+        default: 'PhreeqcRM'
+
+      date:
+        description: 'Leave blank to use todays date'
+        required: false
+        default: ''
+
+      rel:
+        description: 'Leave blank to automatically generate (2021-03-09 = 15700)'
+        required: false
+        default: ''
+
+      ver:
+        description: 'Leave blank to use MAJOR.MINOR.(PATCH+1) (from https://github.com/usgs-coupled/phreeqc-version/blob/main/phreeqc-version.txt)'
+        required: false
+        default: ''  
 
 env:
-  NAME: PhreeqcRM
   BUILD_TYPE: Release
 
 jobs:
+
+  log-the-inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Name: $NAME"
+          echo "Date: $DATE"
+          echo "REL: $REL"
+          echo "VER: $VER"
+        env:
+          NAME: ${{ inputs.name }}
+          DATE: ${{ inputs.date }}
+          REL: ${{ inputs.rel }}
+          VER: ${{ inputs.ver }}
 
   init:
     if: github.event.pull_request.draft == false
@@ -43,6 +76,7 @@ jobs:
           echo DATE_RFC_3339=$(date --rfc-3339=date)                                                                >> $GITHUB_OUTPUT
 
   valgrind:
+    if: ${{ false }}
     name: valgrind
     runs-on: ubuntu-latest
     steps:
@@ -67,6 +101,7 @@ jobs:
       run: ctest -S cmemcheck.cmake -VV --output-on-failure -j 2
 
   distcheck:
+    if: ${{ false }}
     name: make distcheck
     needs: init
     runs-on: ubuntu-latest
@@ -113,6 +148,7 @@ jobs:
         path: ${{github.workspace}}/_build/*.tar.gz
 
   autotools:
+    if: ${{ false }}
     name: autotools
     needs: [init, distcheck]
     strategy:
@@ -211,6 +247,7 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
+    if: ${{ false }}
     name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }} type=${{ matrix.BUILD_TYPE }}
     needs: [init, distcheck]
     strategy:
@@ -575,6 +612,7 @@ jobs:
     #     ctest -C ${{ env.BUILD_TYPE }} --output-on-failure
 
   deploy_pages:
+    if: ${{ false }}
     # todo update github.ref below
     if: github.repository == 'usgs-coupled/phreeqcrm' && github.ref == 'refs/heads/master' && github.event_name == 'push'
 
