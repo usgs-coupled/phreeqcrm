@@ -102,6 +102,19 @@ jobs:
             echo DATE_RFC_3339="$(date --rfc-3339=date --date=${DATE})"                                                 >> "${GITHUB_OUTPUT}"
           fi
 
+  results:
+    name: display results
+    needs: init
+    runs-on: ubuntu-latest
+    steps:
+      - name: display
+        run: |
+          echo NAME="${{ needs.init.outputs.NAME }}"
+          echo VER="${{ needs.init.outputs.VER }}"
+          echo REL="${{ needs.init.outputs.REL }}"
+          echo DATE="${{ needs.init.outputs.DATE }}"
+          echo DATE_RFC_3339="${{ needs.init.outputs.DATE_RFC_3339 }}"
+        
 
   valgrind:
     if: ${{ false }}
