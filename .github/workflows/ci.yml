@@ -110,7 +110,7 @@ jobs:
     needs: init
     runs-on: ubuntu-latest
     steps:
-      - name: display
+      - name: results
         run: |
           echo NAME="${{ needs.init.outputs.NAME }}"
           echo VER="${{ needs.init.outputs.VER }}"
@@ -119,6 +119,7 @@ jobs:
           echo DATE="${{ needs.init.outputs.DATE }}"
           echo DATE_RFC_3339="${{ needs.init.outputs.DATE_RFC_3339 }}"
           echo FULL_DATE="${{ needs.init.outputs.FULL_DATE }}"
+          echo TARBALL=$(echo "${{ needs.init.outputs.NAME }}" | tr '[:upper:]' '[:lower:]')-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}.tar.gz
 
   valgrind:
     if: ${{ false }}
