@@ -19,22 +19,22 @@ on:
   workflow_dispatch:
     inputs:
       name:
-        description: 'File will be called name.lowercase()-VER-REL.tar.gz'
+        description: 'NAME: File will be called name.lowercase()-VER-REL.tar.gz'
         required: true
         default: 'PhreeqcRM'
 
       date:
-        description: 'Leave blank to use todays date'
+        description: 'DATE: Leave blank to use todays date'
         required: false
         default: ''
 
       rel:
-        description: 'Leave blank to automatically generate (2021-03-09 = 15700)'
+        description: 'REL: Leave blank to automatically generate (2021-03-09 = 15700)'
         required: false
         default: ''
 
       ver:
-        description: 'Leave blank to use MAJOR.MINOR.(PATCH+1) (from https://github.com/usgs-coupled/phreeqc-version/blob/main/phreeqc-version.txt)'
+        description: 'VER: Leave blank to use MAJOR.MINOR.(PATCH+1) (from https://github.com/usgs-coupled/phreeqc-version/blob/main/phreeqc-version.txt)'
         required: false
         default: ''  
 
@@ -60,8 +60,14 @@ jobs:
   init:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    env:
+      NAME: ${{ inputs.name }}
+      DATE: ${{ inputs.date }}
+      REL: ${{ inputs.rel }}
+      VER: ${{ inputs.ver }}
     # Map step outputs to job outputs
     outputs:
+      NAME: ${{ steps.vars.outputs.NAME }} 
       VER: ${{ steps.vars.outputs.VER }}
       REL: ${{ steps.vars.outputs.REL }}
       DATE: ${{ steps.vars.outputs.DATE }}
@@ -70,10 +76,32 @@ jobs:
       - name: Setup vars
         id: vars
         run: |
-          echo VER=$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/next_ver.sh | sh) >> $GITHUB_OUTPUT
-          echo REL=$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/rel.py | python3) >> $GITHUB_OUTPUT
-          echo DATE=$(date "+%x")                                                                                   >> $GITHUB_OUTPUT
-          echo DATE_RFC_3339=$(date --rfc-3339=date)                                                                >> $GITHUB_OUTPUT
+          if [ -z "${NAME}" ]; then
+            echo NAME="PhreeqcRM"                                                                                       >> "${GITHUB_OUTPUT}"
+          else
+            echo NAME="${NAME}"                                                                                         >> "${GITHUB_OUTPUT}"
+          fi
+          
+          if [ -z "${VER}" ]; then
+            echo VER="$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/next_ver.sh | sh)" >> "${GITHUB_OUTPUT}"
+          else
+            echo VER="${VER}"                                                                                           >> "${GITHUB_OUTPUT}"
+          fi
+          
+          if [ -z "${REL}" ]; then
+            echo REL="$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/rel.py | python3)" >> "${GITHUB_OUTPUT}"
+          else
+            echo REL="${REL}"                                                                                           >> "${GITHUB_OUTPUT}"
+          fi
+          
+          if [ -z "${DATE}" ]; then
+            echo DATE="$(date '+%x')"                                                                                   >> "${GITHUB_OUTPUT}"
+            echo DATE_RFC_3339="$(date --rfc-3339=date)"                                                                >> "${GITHUB_OUTPUT}"
+          else
+            echo DATE="${DATE}"                                                                                         >> "${GITHUB_OUTPUT}"
+            echo DATE_RFC_3339="$(date --rfc-3339=date --date=${DATE})"                                                 >> "${GITHUB_OUTPUT}"
+          fi
+
 
   valgrind:
     if: ${{ false }}
