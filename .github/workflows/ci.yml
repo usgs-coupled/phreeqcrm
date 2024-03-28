@@ -115,7 +115,6 @@ jobs:
           echo NAME="${{ needs.init.outputs.NAME }}"
           echo VER="${{ needs.init.outputs.VER }}"
           echo REL="${{ needs.init.outputs.REL }}"
-          echo DATE="${{ needs.init.outputs.DENVER_TIME }}"
           echo DATE="${{ needs.init.outputs.DATE }}"
           echo DATE_RFC_3339="${{ needs.init.outputs.DATE_RFC_3339 }}"
           echo FULL_DATE="${{ needs.init.outputs.FULL_DATE }}"
