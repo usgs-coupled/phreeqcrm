@@ -91,8 +91,8 @@ jobs:
       shell: micromamba-shell {0}
       run: cd Doxygen && make
 
-    - name: install yaml-cpp
-      run: sudo apt-get -y install libyaml-cpp-dev
+    - name: install yaml-cpp and dos2unix
+      run: sudo apt-get -y install libyaml-cpp-dev dos2unix
 
     - name: mkdir
       run: mkdir ${{github.workspace}}/_build
@@ -102,7 +102,7 @@ jobs:
       working-directory: ${{github.workspace}}/_build
       run: ../configure --prefix=$(pwd)/INSTALL
 
-    - name: make
+    - name: make distcheck
       shell: bash
       working-directory: ${{github.workspace}}/_build
       run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test --with-yaml-cpp" make -j2 distcheck
@@ -111,6 +111,20 @@ jobs:
       with:
         name: tarball
         path: ${{github.workspace}}/_build/*.tar.gz
+
+    - name: unix2dos
+      shell: bash
+      run: git ls-files --eol | grep -v '^i/-text' | grep -v '^i/ ' | grep -v 'Makefile.am' | grep -v 'configure.ac' | awk -F $'\t' '{print $2}' | xargs unix2dos
+
+    - name: make dist-zip
+      shell: bash
+      working-directory: ${{github.workspace}}/_build
+      run: make dist-zip
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: zip
+        path: ${{github.workspace}}/_build/*.zip
 
   autotools:
     name: autotools

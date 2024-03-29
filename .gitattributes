@@ -1,0 +1,15 @@
+# Set default behavior to automatically normalize line endings.
+*            text=auto
+
+# Make sure that these Windows files always have CRLF line endings at checkout
+*.bash       text eol=lf
+*.bat        text eol=crlf
+*.cmd        text eol=crlf
+*.ps1        text eol=crlf
+*.rc         text eol=crlf
+*.sh         text eol=lf
+*.sln        text eol=crlf
+*.vcproj     text eol=crlf
+*.vcxproj    text eol=crlf
+*.vfproj     text eol=crlf
+*.wixproj    text eol=crlf
