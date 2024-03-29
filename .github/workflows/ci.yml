@@ -18,10 +18,10 @@ on:
       - 'CMakePresets.json'
   workflow_dispatch:
     inputs:
-      name:
-        description: 'NAME: File will be called name.lowercase()-VER-REL.tar.gz'
-        required: true
-        default: 'PhreeqcRM'
+      # name:
+      #   description: 'NAME: File will be called name.lowercase()-VER-REL.tar.gz'
+      #   required: true
+      #   default: 'PhreeqcRM'
 
       date:
         description: 'DATE: Leave blank to use todays date'
@@ -39,6 +39,7 @@ on:
         default: ''  
 
 env:
+  # NAME: PhreeqcRM
   BUILD_TYPE: Release
 
 jobs:
@@ -47,12 +48,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "Name: $NAME"
+          # echo "Name: $NAME"
           echo "Date: $DATE"
           echo "REL: $REL"
           echo "VER: $VER"
         env:
-          NAME: ${{ inputs.name }}
+          # NAME: ${{ inputs.name }}
           DATE: ${{ inputs.date }}
           REL: ${{ inputs.rel }}
           VER: ${{ inputs.ver }}
@@ -61,14 +62,14 @@ jobs:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     env:
-      NAME: ${{ inputs.name }}
+      # NAME: ${{ inputs.name }}
       DATE: ${{ inputs.date }}
       REL: ${{ inputs.rel }}
       VER: ${{ inputs.ver }}
     # Map step outputs to job outputs
     outputs:
-      NAME: ${{ steps.vars.outputs.NAME }} 
-      NAME_LOWERCASE: ${{ steps.vars.outputs.NAME_LOWERCASE }} 
+      # NAME: ${{ steps.vars.outputs.NAME }} 
+      # NAME_LOWERCASE: ${{ steps.vars.outputs.NAME_LOWERCASE }} 
       VER: ${{ steps.vars.outputs.VER }}
       REL: ${{ steps.vars.outputs.REL }}
       DATE: ${{ steps.vars.outputs.DATE }}
@@ -78,13 +79,13 @@ jobs:
       - name: Setup vars
         id: vars
         run: |
-          if [ -z "${NAME}" ]; then
-            echo NAME="PhreeqcRM"                                                                                       >> "${GITHUB_OUTPUT}"
-            echo NAME_LOWERCASE=$(echo "PhreeqcRM" | tr '[:upper:]' '[:lower:]')                                        >> "${GITHUB_OUTPUT}"
-          else
-            echo NAME="${NAME}"                                                                                         >> "${GITHUB_OUTPUT}"
-            echo NAME_LOWERCASE=$(echo "${NAME}" | tr '[:upper:]' '[:lower:]')                                          >> "${GITHUB_OUTPUT}"
-          fi
+          # if [ -z "${NAME}" ]; then
+          #   echo NAME="PhreeqcRM"                                                                                       >> "${GITHUB_OUTPUT}"
+          #   echo NAME_LOWERCASE=$(echo "PhreeqcRM" | tr '[:upper:]' '[:lower:]')                                        >> "${GITHUB_OUTPUT}"
+          # else
+          #   echo NAME="${NAME}"                                                                                         >> "${GITHUB_OUTPUT}"
+          #   echo NAME_LOWERCASE=$(echo "${NAME}" | tr '[:upper:]' '[:lower:]')                                          >> "${GITHUB_OUTPUT}"
+          # fi
           
           if [ -z "${VER}" ]; then
             echo VER="$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/next_ver.sh | sh)" >> "${GITHUB_OUTPUT}"
@@ -115,16 +116,17 @@ jobs:
     steps:
       - name: results
         run: |
-          echo NAME="${{ needs.init.outputs.NAME }}"
+          # echo NAME="${{ needs.init.outputs.NAME }}"
           echo VER="${{ needs.init.outputs.VER }}"
           echo REL="${{ needs.init.outputs.REL }}"
           echo DATE="${{ needs.init.outputs.DATE }}"
           echo DATE_RFC_3339="${{ needs.init.outputs.DATE_RFC_3339 }}"
           echo DATE_FULL="${{ needs.init.outputs.DATE_FULL }}"
-          echo TARBALL="${{ needs.init.outputs.NAME_LOWERCASE }}-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}.tar.gz"
+          # echo TARBALL="${{ needs.init.outputs.NAME_LOWERCASE }}-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}.tar.gz"
+          echo TARBALL="phreeqcrm-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}.tar.gz"
 
   valgrind:
-    if: ${{ false }}
+    # if: ${{ false }}
     name: valgrind
     runs-on: ubuntu-latest
     steps:
@@ -149,12 +151,13 @@ jobs:
       run: ctest -S cmemcheck.cmake -VV --output-on-failure -j 2
 
   distcheck:
+    # if: ${{ false }}
     name: make distcheck
     needs: init
     runs-on: ubuntu-latest
-    env:
-      # NAME is consumed by jenkins-dist.sh
-      NAME: ${{ needs.init.outputs.NAME }}
+    # env:
+    #   # NAME is consumed by jenkins-dist.sh
+    #   NAME: ${{ needs.init.outputs.NAME }}
 
     steps:
     - uses: actions/checkout@v4
@@ -199,7 +202,7 @@ jobs:
         path: ${{github.workspace}}/_build/*.tar.gz
 
   autotools:
-    if: ${{ false }}
+    # if: ${{ false }}
     name: autotools
     needs: [init, distcheck]
     strategy:
@@ -298,7 +301,7 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
-    if: ${{ false }}
+    # if: ${{ false }}
     name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }} type=${{ matrix.BUILD_TYPE }}
     needs: [init, distcheck]
     strategy:
