@@ -71,8 +71,8 @@ jobs:
       NAME_LOWERCASE: ${{ steps.vars.outputs.NAME_LOWERCASE }} 
       VER: ${{ steps.vars.outputs.VER }}
       REL: ${{ steps.vars.outputs.REL }}
-      DATE_FULL: ${{ steps.vars.outputs.DATE_FULL }}
       DATE: ${{ steps.vars.outputs.DATE }}
+      DATE_FULL: ${{ steps.vars.outputs.DATE_FULL }}
       DATE_RFC_3339: ${{ steps.vars.outputs.DATE_RFC_3339 }}
     steps:
       - name: Setup vars
@@ -149,10 +149,13 @@ jobs:
       run: ctest -S cmemcheck.cmake -VV --output-on-failure -j 2
 
   distcheck:
-    if: ${{ false }}
     name: make distcheck
     needs: init
     runs-on: ubuntu-latest
+    env:
+      # NAME is consumed by jenkins-dist.sh
+      NAME: ${{ needs.init.outputs.NAME }}
+
     steps:
     - uses: actions/checkout@v4
 
