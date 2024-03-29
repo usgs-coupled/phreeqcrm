@@ -68,9 +68,10 @@ jobs:
     # Map step outputs to job outputs
     outputs:
       NAME: ${{ steps.vars.outputs.NAME }} 
+      NAME_LOWERCASE: ${{ steps.vars.outputs.NAME_LOWERCASE }} 
       VER: ${{ steps.vars.outputs.VER }}
       REL: ${{ steps.vars.outputs.REL }}
-      FULL_DATE: ${{ steps.vars.outputs.FULL_DATE }}
+      DATE_FULL: ${{ steps.vars.outputs.DATE_FULL }}
       DATE: ${{ steps.vars.outputs.DATE }}
       DATE_RFC_3339: ${{ steps.vars.outputs.DATE_RFC_3339 }}
     steps:
@@ -79,8 +80,10 @@ jobs:
         run: |
           if [ -z "${NAME}" ]; then
             echo NAME="PhreeqcRM"                                                                                       >> "${GITHUB_OUTPUT}"
+            echo NAME_LOWERCASE=$(echo "PhreeqcRM" | tr '[:upper:]' '[:lower:]')                                        >> "${GITHUB_OUTPUT}"
           else
             echo NAME="${NAME}"                                                                                         >> "${GITHUB_OUTPUT}"
+            echo NAME_LOWERCASE=$(echo "${NAME}" | tr '[:upper:]' '[:lower:]')                                          >> "${GITHUB_OUTPUT}"
           fi
           
           if [ -z "${VER}" ]; then
@@ -98,11 +101,11 @@ jobs:
           if [ -z "${DATE}" ]; then
             echo DATE="$(TZ='America/Denver' date '+%x')"                                                               >> "${GITHUB_OUTPUT}"
             echo DATE_RFC_3339="$(TZ='America/Denver' date --rfc-3339=date)"                                            >> "${GITHUB_OUTPUT}"
-            echo FULL_DATE="$(TZ='America/Denver' date)"                                                                >> "${GITHUB_OUTPUT}"
+            echo DATE_FULL="$(TZ='America/Denver' date)"                                                                >> "${GITHUB_OUTPUT}"
           else
             echo DATE="${DATE}"                                                                                         >> "${GITHUB_OUTPUT}"
             echo DATE_RFC_3339="$(TZ='America/Denver' date --rfc-3339=date --date=${DATE})"                             >> "${GITHUB_OUTPUT}"
-            echo FULL_DATE="$(TZ='America/Denver' date --date=${DATE})"                                                 >> "${GITHUB_OUTPUT}"
+            echo DATE_FULL="$(TZ='America/Denver' date --date=${DATE})"                                                 >> "${GITHUB_OUTPUT}"
           fi
 
   results:
@@ -117,8 +120,8 @@ jobs:
           echo REL="${{ needs.init.outputs.REL }}"
           echo DATE="${{ needs.init.outputs.DATE }}"
           echo DATE_RFC_3339="${{ needs.init.outputs.DATE_RFC_3339 }}"
-          echo FULL_DATE="${{ needs.init.outputs.FULL_DATE }}"
-          echo TARBALL=$(echo "${{ needs.init.outputs.NAME }}" | tr '[:upper:]' '[:lower:]')-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}.tar.gz
+          echo DATE_FULL="${{ needs.init.outputs.DATE_FULL }}"
+          echo TARBALL="${{ needs.init.outputs.NAME_LOWERCASE }}-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}.tar.gz"
 
   valgrind:
     if: ${{ false }}
