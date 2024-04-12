@@ -126,7 +126,7 @@ jobs:
           echo TARBALL="phreeqcrm-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}.tar.gz"
 
   valgrind:
-    # if: ${{ false }}
+    if: ${{ false }}
     name: valgrind
     runs-on: ubuntu-latest
     steps:
@@ -201,6 +201,15 @@ jobs:
         name: tarball
         path: ${{github.workspace}}/_build/*.tar.gz
 
+    - name: PhreeqcRM_ReadMe.txt
+      shell: bash
+      run: cp doc/README.TXT PhreeqcRM_ReadMe.txt
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: readme
+        path: ${{github.workspace}}/PhreeqcRM_ReadMe.txt
+
     - name: unix2dos
       shell: bash
       run: git ls-files --eol | grep -v '^i/-text' | grep -v '^i/ ' | grep -v 'Makefile.am' | grep -v 'configure.ac' | awk -F $'\t' '{print $2}' | xargs unix2dos
@@ -216,7 +225,7 @@ jobs:
         path: ${{github.workspace}}/_build/*.zip
 
   autotools:
-    # if: ${{ false }}
+    if: ${{ false }}
     name: autotools
     needs: [init, distcheck]
     strategy:
@@ -315,7 +324,7 @@ jobs:
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
   cmake:
-    # if: ${{ false }}
+    if: ${{ false }}
     name: ${{ matrix.os }} shared=${{ matrix.build_shared_libs }} yaml=${{ matrix.phreeqcrm_with_yaml_cpp }} type=${{ matrix.BUILD_TYPE }}
     needs: [init, distcheck]
     strategy:
