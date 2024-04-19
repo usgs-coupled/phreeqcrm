@@ -4,6 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths-ignore:
+      - '.github/workflows/dist.yml'
       - '.github/workflows/wheels.yml'
       - '.gitignore'
       - 'build-all-presets.sh'
@@ -12,6 +13,7 @@ on:
     # branches:
     #   - master
     paths-ignore:
+      - '.github/workflows/dist.yml'
       - '.github/workflows/wheels.yml'
       - '.gitignore'
       - 'build-all-presets.sh'

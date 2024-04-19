@@ -1,0 +1,181 @@
+name: dist
+
+on:
+on:
+  push:
+    branches: 
+      - master
+      - develop
+    paths-ignore:
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/wheels.yml'
+      - '.gitignore'
+      - 'build-all-presets.sh'
+      - 'CMakePresets.json'
+  pull_request:
+    branches: 
+      - master
+      - develop
+    paths-ignore:
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/wheels.yml'
+      - '.gitignore'
+      - 'build-all-presets.sh'
+      - 'CMakePresets.json'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'DATE: Leave blank to use todays date'
+        required: false
+        default: ''
+
+      rel:
+        description: 'REL: Leave blank to automatically generate (2021-03-09 = 15700)'
+        required: false
+        default: ''
+
+      ver:
+        description: 'VER: Leave blank to use MAJOR.MINOR.(PATCH+1) (from https://github.com/usgs-coupled/phreeqc-version/blob/main/phreeqc-version.txt)'
+        required: false
+        default: ''  
+
+env:
+  # NAME: PhreeqcRM
+  BUILD_TYPE: Release
+
+jobs:
+
+  log-the-inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Date: $DATE"
+          echo "REL: $REL"
+          echo "VER: $VER"
+        env:
+          DATE: ${{ inputs.date }}
+          REL: ${{ inputs.rel }}
+          VER: ${{ inputs.ver }}
+
+  init:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    env:
+      DATE: ${{ inputs.date }}
+      REL: ${{ inputs.rel }}
+      VER: ${{ inputs.ver }}
+    # Map step outputs to job outputs
+    outputs:
+      VER: ${{ steps.vars.outputs.VER }}
+      REL: ${{ steps.vars.outputs.REL }}
+      DATE: ${{ steps.vars.outputs.DATE }}
+      DATE_FULL: ${{ steps.vars.outputs.DATE_FULL }}
+      DATE_RFC_3339: ${{ steps.vars.outputs.DATE_RFC_3339 }}
+    steps:
+      - name: Setup vars
+        id: vars
+        run: |
+          if [ -z "${VER}" ]; then
+            echo VER="$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/next_ver.sh | sh)" >> "${GITHUB_OUTPUT}"
+          else
+            echo VER="${VER}"                                                                                           >> "${GITHUB_OUTPUT}"
+          fi
+          
+          if [ -z "${REL}" ]; then
+            echo REL="$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/rel.py | python3)" >> "${GITHUB_OUTPUT}"
+          else
+            echo REL="${REL}"                                                                                           >> "${GITHUB_OUTPUT}"
+          fi
+          
+          if [ -z "${DATE}" ]; then
+            echo DATE="$(TZ='America/Denver' date '+%x')"                                                               >> "${GITHUB_OUTPUT}"
+            echo DATE_RFC_3339="$(TZ='America/Denver' date --rfc-3339=date)"                                            >> "${GITHUB_OUTPUT}"
+            echo DATE_FULL="$(TZ='America/Denver' date)"                                                                >> "${GITHUB_OUTPUT}"
+          else
+            echo DATE="${DATE}"                                                                                         >> "${GITHUB_OUTPUT}"
+            echo DATE_RFC_3339="$(TZ='America/Denver' date --rfc-3339=date --date=${DATE})"                             >> "${GITHUB_OUTPUT}"
+            echo DATE_FULL="$(TZ='America/Denver' date --date=${DATE})"                                                 >> "${GITHUB_OUTPUT}"
+          fi
+
+  results:
+    name: display results
+    needs: init
+    runs-on: ubuntu-latest
+    steps:
+      - name: results
+        run: |
+          # echo NAME="${{ needs.init.outputs.NAME }}"
+          echo VER="${{ needs.init.outputs.VER }}"
+          echo REL="${{ needs.init.outputs.REL }}"
+          echo DATE="${{ needs.init.outputs.DATE }}"
+          echo DATE_RFC_3339="${{ needs.init.outputs.DATE_RFC_3339 }}"
+          echo DATE_FULL="${{ needs.init.outputs.DATE_FULL }}"
+          echo TARBALL="phreeqcrm-${{ needs.init.outputs.VER }}-${{ needs.init.outputs.REL }}.tar.gz"
+
+  distcheck:
+    # if: ${{ false }}
+    name: make distcheck
+    needs: init
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: autoreconf
+      run: autoreconf -fvi
+
+    - name: versioning
+      run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
+
+    - name: prepare doxygen
+      run: sudo apt-get -y install doxygen graphviz
+
+    - name: update doxygen using micromamba env
+      uses: mamba-org/setup-micromamba@v1
+      with:
+        environment-file: Doxygen/doxygen.environment.yml
+
+    - name: run doxygen
+      shell: micromamba-shell {0}
+      run: cd Doxygen && make
+
+    - name: install yaml-cpp and dos2unix
+      run: sudo apt-get -y install libyaml-cpp-dev dos2unix
+
+    - name: mkdir
+      run: mkdir ${{github.workspace}}/_build
+
+    - name: configure
+      shell: bash
+      working-directory: ${{github.workspace}}/_build
+      run: ../configure --prefix=$(pwd)/INSTALL
+
+    - name: make distcheck
+      shell: bash
+      working-directory: ${{github.workspace}}/_build
+      run: DISTCHECK_CONFIGURE_FLAGS="--enable-fortran-test --with-yaml-cpp" make -j2 distcheck
+
+    - name: PhreeqcRM_ReadMe.txt
+      shell: bash
+      run: cp doc/README.TXT PhreeqcRM_ReadMe.txt
+
+    - name: unix2dos
+      shell: bash
+      run: git ls-files --eol | grep -v '^i/-text' | grep -v '^i/ ' | grep -v 'Makefile.am' | grep -v 'configure.ac' | awk -F $'\t' '{print $2}' | xargs unix2dos
+
+    - name: make dist-zip
+      shell: bash
+      working-directory: ${{github.workspace}}/_build
+      run: make dist-zip
+
+    - name: mv files
+      working-directory: ${{github.workspace}}/_build
+      run: mv phreeqcrm-*.tar.gz phreeqcrm-*.zip ../.
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: phreeqcrm-artifacts
+        path: |
+          phreeqcrm-*.tar.gz
+          phreeqcrm-*.zip
+          PhreeqcRM_ReadMe.txt
