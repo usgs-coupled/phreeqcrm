@@ -1,7 +1,6 @@
 name: dist
 
 on:
-on:
   push:
     branches: 
       - master
