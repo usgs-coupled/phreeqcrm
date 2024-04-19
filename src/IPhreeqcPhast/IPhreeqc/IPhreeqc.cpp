@@ -1056,8 +1056,13 @@ int IPhreeqc::test_db(void)
 {
 	std::ostringstream oss;
 	int sn = this->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
-	oss << "SOLUTION " << sn <<"; DELETE; -solution " << sn;
-
+	//oss << "SOLUTION " << sn <<"; DELETE; -solution " << sn;
+	oss << "SOLUTION " << sn << ";";
+	if (this->PhreeqcPtr->llnl_temp.size() > 0)
+	{
+		oss << "-temp " << this->PhreeqcPtr->llnl_temp[0] << ";";
+	}
+	oss << "DELETE; -solution " << sn;
 	this->PhreeqcPtr->set_reading_database(TRUE);
 	int n = this->RunString(oss.str().c_str());
 	this->PhreeqcPtr->set_reading_database(FALSE);

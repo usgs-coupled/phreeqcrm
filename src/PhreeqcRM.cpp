@@ -2879,6 +2879,10 @@ PhreeqcRM::FindComponents(void)
 			{
 				std::ostringstream in;
 				in << "SOLUTION " << next << "\n";
+				if (phast_iphreeqc_worker->PhreeqcPtr->llnl_temp.size() > 0)
+				{
+					in << "-temp " << phast_iphreeqc_worker->PhreeqcPtr->llnl_temp[0] << ";";
+				}
 				for (i = 0; i < components.size(); i++)
 				{
 					if (components[i] == "H") continue;
@@ -2997,6 +3001,10 @@ PhreeqcRM::FindComponents(void)
 			{
 				std::ostringstream in;
 				in << "SOLUTION " << next << "\n";
+				if (phast_iphreeqc_worker->PhreeqcPtr->llnl_temp.size() > 0)
+				{
+					in << "-temp " << phast_iphreeqc_worker->PhreeqcPtr->llnl_temp[0] << ";";
+				}
 				for (i = 0; i < components.size(); i++)
 				{
 					if (components[i] == "H") continue;
@@ -9924,7 +9932,12 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 		std::ostringstream input;
 		input << "PRINT; -selected_output true\n";
 		int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
-		input << "SOLUTION " << next << "; DELETE; -solution " << next << "\n";
+		input << "SOLUTION " << next << ";";
+		if (phast_iphreeqc_worker->PhreeqcPtr->llnl_temp.size() > 0)
+		{
+			input << "-temp " << phast_iphreeqc_worker->PhreeqcPtr->llnl_temp[0] << ";";
+		}
+		input << "DELETE; -solution " << next << "\n";
 		if (phast_iphreeqc_worker->RunString(input.str().c_str()) < 0)
 		{
 			this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
@@ -10221,7 +10234,13 @@ PhreeqcRM::RunCellsThread(int n)
 				std::ostringstream input;
 				input << "PRINT; -selected_output true\n";
 				int next = phast_iphreeqc_worker->PhreeqcPtr->next_user_number(Keywords::KEY_SOLUTION);
-				input << "SOLUTION " << next << "; DELETE; -solution " << next << "\n";
+				//input << "SOLUTION " << next << "; DELETE; -solution " << next << "\n";
+				input << "SOLUTION " << next << ";";
+				if (phast_iphreeqc_worker->PhreeqcPtr->llnl_temp.size() > 0)
+				{
+					input << "-temp " << phast_iphreeqc_worker->PhreeqcPtr->llnl_temp[0] << ";";
+				}
+				input << "DELETE; -solution " << next << "\n";
 				if (phast_iphreeqc_worker->RunString(input.str().c_str()) < 0)
 				{
 					this->ErrorMessage(phast_iphreeqc_worker->GetErrorString());
