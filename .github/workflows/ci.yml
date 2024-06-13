@@ -269,7 +269,7 @@ jobs:
       run: |
         brew reinstall gcc
         brew install ninja yaml-cpp
-        ls -alR /usr/local/Cellar/
+        # ls -alR /usr/local/Cellar/
 
     - name: Verify gfortran
       run: |
