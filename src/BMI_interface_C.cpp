@@ -651,21 +651,21 @@ BMI_GetGridZ(int id, const int grid, double* z)
 }
 /* ---------------------------------------------------------------------- */
 int 
-GetGridNodeCount(int id, const int grid)
+BMI_GetGridNodeCount(int id, const int grid)
 /* ---------------------------------------------------------------------- */
 {
 	fprintf(stderr, "Not implemented\n"); exit(4);
 }
 /* ---------------------------------------------------------------------- */
 int 
-GetGridEdgeCount(int id, const int grid)
+BMI_GetGridEdgeCount(int id, const int grid)
 /* ---------------------------------------------------------------------- */
 {
 	fprintf(stderr, "Not implemented\n"); exit(4);
 }
 /* ---------------------------------------------------------------------- */
 int 
-GetGridFaceCount(int id, const int grid)
+BMI_GetGridFaceCount(int id, const int grid)
 /* ---------------------------------------------------------------------- */
 {
 	fprintf(stderr, "Not implemented\n"); exit(4);

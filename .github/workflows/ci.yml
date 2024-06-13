@@ -269,7 +269,7 @@ jobs:
       run: |
         brew reinstall gcc
         brew install ninja yaml-cpp
-        ls -alR /usr/local/Cellar/
+        # ls -alR /usr/local/Cellar/
 
     - name: Verify gfortran
       run: |
@@ -285,6 +285,10 @@ jobs:
     - name: Configure with autotools
       working-directory: ${{ github.workspace }}/build
       run: ../phreeqcrm-${{ env.VER_STRING }}/configure --enable-fortran-test --with-yaml-cpp
+
+    - name: Print phreeqcrm.pc
+      working-directory: ${{ github.workspace }}/build
+      run:  cat phreeqcrm.pc
 
     - name: Build with autotools
       working-directory: ${{ github.workspace }}/build
