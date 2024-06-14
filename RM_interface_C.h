@@ -1202,15 +1202,15 @@ extern "C" {
     /**
     @a RM_BmiGetGridNodeCount is not implemented.
     */
-    IRM_DLL_EXPORT int GetGridNodeCount(int id, const int grid);
+    IRM_DLL_EXPORT int RM_BmiGetGridNodeCount(int id, const int grid);
     /**
     @a RM_BmiGetGridEdgeCount is not implemented.
     */
-    IRM_DLL_EXPORT int GetGridEdgeCount(int id, const int grid);
+    IRM_DLL_EXPORT int RM_BmiGetGridEdgeCount(int id, const int grid);
     /**
     @a RM_BmiGetGridFaceCount is not implemented.
     */
-    IRM_DLL_EXPORT int GetGridFaceCount(int id, const int grid);
+    IRM_DLL_EXPORT int RM_BmiGetGridFaceCount(int id, const int grid);
     /**
     @a RM_BmiGetGridEdgeNodes is not implemented.
     */
