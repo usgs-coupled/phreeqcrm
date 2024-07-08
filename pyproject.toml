@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "phreeqcrm"
-version = "0.0.6"
+version = "0.0.7"
 description = "A reaction module for transport simulators based on the geochemical model PHREEQC."
 readme = "README.md"
 requires-python = ">=3.8"
