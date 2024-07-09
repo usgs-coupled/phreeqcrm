@@ -325,7 +325,7 @@ jobs:
       working-directory: ${{ github.workspace }}/Tests
       run: make -f autotools.mk clean
 
-    - name: Test CMake pkg-config
+    - name: Test autotools pkg-config
       working-directory: ${{ github.workspace }}/Tests
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
