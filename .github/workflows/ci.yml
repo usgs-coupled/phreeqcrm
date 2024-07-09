@@ -315,6 +315,18 @@ jobs:
     - name: Cleanup
       run: rm -rf *
 
+    - name: Check phreeqcrm.pc
+      run:  ls -al /usr/local/share/pkgconfig
+
+    - name: Man pkg-config
+      run:  man pkg-config
+
+    - name: Check phreeqcrm.pc cflags
+      run:  pkg-config --cflags phreeqcrm
+
+    - name: Check phreeqcrm.pc libs
+      run:  pkg-config --libs phreeqcrm
+
     - uses: actions/checkout@v4
 
     - name: Test autotools install
