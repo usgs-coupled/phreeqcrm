@@ -318,8 +318,9 @@ jobs:
     - name: Check phreeqcrm.pc
       run:  ls -al /usr/local/share/pkgconfig
 
-    - name: Man pkg-config
-      run:  man pkg-config
+    - name: Set PKG_CONFIG_PATH (macOS)
+      if: runner.os == 'macOS'
+      run: echo "PKG_CONFIG_PATH=/usr/local/share/pkgconfig" >> $GITHUB_ENV
 
     - name: Check phreeqcrm.pc cflags
       run:  pkg-config --cflags phreeqcrm
