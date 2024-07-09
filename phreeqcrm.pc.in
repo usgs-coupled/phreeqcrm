@@ -9,5 +9,5 @@ URL: https://github.com/usgs-coupled/phreeqcrm
 Version: @VERSION@
 Requires: @phreeqcrm_requires@
 Libs.private: @LIBS@
-Libs: -L${libdir} -lphreeqcrm @YAML_CPP_LIBS@
-Cflags: -I${includedir} @useyaml_define@ @usempi_define@ @YAML_CPP_CFLAGS@
+Libs: -L${libdir} -lphreeqcrm
+Cflags: -I${includedir} @useyaml_define@ @usempi_define@
