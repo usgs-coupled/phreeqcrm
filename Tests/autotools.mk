@@ -1,3 +1,4 @@
+PKGCONFIG =pkg-config
 LIBDIR =/usr/local/lib
 INCDIR =/usr/local/include
 OBJS =\
@@ -59,13 +60,16 @@ CLEANFILES =\
 	TestAllMethods_cpp.log.txt\
 	TestAllMethods_cpp.yaml
 
-# set cppflags
-CPPFLAGS := -DUSE_YAML -I$(INCDIR)
+# use pkg-config for yaml-cpp cflags
+CPPFLAGS := $(shell $(PKGCONFIG) --cflags yaml-cpp)
 
-# use pkg-config for yaml-cpp
-LDFLAGS := $(shell pkg-config --libs yaml-cpp)
+# add phreeqc cflags
+CPPFLAGS += -DUSE_YAML -I$(INCDIR)
 
-# add phreeqc
+# use pkg-config for yaml-cpp libs
+LDFLAGS := $(shell $(PKGCONFIG) --libs yaml-cpp)
+
+# add phreeqc libs
 LDFLAGS += -L$(LIBDIR) -lphreeqcrm
 
 # Executable
