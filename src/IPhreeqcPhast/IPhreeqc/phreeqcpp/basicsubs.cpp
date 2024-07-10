@@ -493,7 +493,7 @@ calc_SC(void)
 				if (av)
 					t1 *= pow(viscos_0 / viscos, av);
 				if (correct_Dw)
-					s_x[i]->dw_corr *= t1 / Dw;
+					s_x[i]->dw_corr *= t1 / Dw * pow(mass_water_aq_x / calc_solution_volume(), 2);
 
 				// fractional contribution in mu, and correct for charge imbalance
 				a2 = 2 / (eq_plus + eq_min);
@@ -592,6 +592,8 @@ calc_dens(void)
 	{
 		density_x = rho_0 * (1e3 + M_T / mass_water_aq_x) / (rho_0 * V_solutes / mass_water_aq_x + 1e3);
 	}
+	solution_mass_x = 1e-3*(M_T + s_h2o->moles * s_h2o->gfw);
+	solution_volume_x = solution_mass_x / density_x;
 	return density_x;
 	//M_T /= 1e3;
 	//solution_mass =  mass_water_aq_x + M_T;
@@ -604,7 +606,7 @@ calc_dens(void)
 }
 /* VP: Density End */
 /* DP: Function for interval halving */
-
+#ifdef NOT_USED
 LDBLE Phreeqc::
 f_rho(LDBLE rho_old, void* cookie)
 /* ---------------------------------------------------------------------- */
@@ -622,7 +624,8 @@ f_rho(LDBLE rho_old, void* cookie)
 	rho = rho + pThis->rho_0;
 	return (rho - rho_old);
 }
-
+#endif
+#ifdef original
 /* ---------------------------------------------------------------------- */
 LDBLE Phreeqc::
 calc_solution_volume(void)
@@ -653,7 +656,19 @@ calc_solution_volume(void)
 	LDBLE vol = 1e-3 * total_mass / rho;
 	return (vol);
 }
-
+#endif
+/* ---------------------------------------------------------------------- */
+LDBLE Phreeqc::
+calc_solution_volume(void)
+/* ---------------------------------------------------------------------- */
+{
+	/*
+	 *   Calculates solution volume based on sum of mass of element plus density
+	 */
+	LDBLE rho = calc_dens();
+	LDBLE vol = solution_volume_x;
+	return (vol);
+}
 /* ---------------------------------------------------------------------- */
 LDBLE Phreeqc::
 calc_logk_n(const char* name)
@@ -2992,6 +3007,109 @@ species_formula(std::string phase_name, cxxNameDouble& stoichiometry)
 		}
 	}
 	return (formula);
+}
+
+/* ---------------------------------------------------------------------- */
+std::string Phreeqc::
+phase_equation(std::string phase_name, std::vector<std::pair<std::string, double> >& stoichiometry)
+/* ---------------------------------------------------------------------- */
+{
+	/*
+	 *   Returns equation
+	 *   Also returns arrays of species and stoichiometry in stoichiometry
+	 */
+	stoichiometry.clear();
+	std::ostringstream eq, lhs, rhs;
+	int j = -1;
+	class phase* phase_ptr = phase_bsearch(phase_name.c_str(), &j, FALSE);
+	bool rhs_started = false;
+	bool lhs_started = false;
+	if (phase_ptr != NULL)
+	{
+		std::vector<rxn_token>::iterator it = phase_ptr->rxn.Get_tokens().begin();
+		for (; it->name != NULL; it++)
+		{
+			if (!lhs_started)
+			{
+				std::pair<std::string, double> item(phase_ptr->formula, it->coef);
+				stoichiometry.push_back(item);
+			}
+			else
+			{
+				std::pair<std::string, double> item(it->name, it->coef);
+				stoichiometry.push_back(item);
+			}
+			if (it->coef < 0.0)
+			{
+				if (lhs_started) lhs << "+ ";
+				if (it->coef != -1.0)
+				{
+					lhs << -it->coef;
+				}
+				lhs << it->name << " ";
+				lhs_started = true;
+			}
+			else if (it->coef > 0.0)
+			{
+				if (rhs_started) rhs << "+ ";
+				if (it->coef != 1.0)
+				{
+					rhs << it->coef;
+				}
+				rhs << it->name << " ";
+				rhs_started = true;
+			}
+		}
+	}
+	eq << lhs.str() << "= " << rhs.str();
+	return (eq.str());
+}
+
+/* ---------------------------------------------------------------------- */
+std::string Phreeqc::
+species_equation(std::string species_name, std::vector<std::pair<std::string, double> >& stoichiometry)
+/* ---------------------------------------------------------------------- */
+{
+	/*
+	 *   Returns equation
+	 *   Also returns arrays of species and stoichiometry in stoichiometry
+	 */
+	stoichiometry.clear();
+	std::ostringstream eq, lhs, rhs;;
+	class species* s_ptr = s_search(species_name.c_str());
+	bool rhs_started = false;
+	bool lhs_started = false;
+	if (s_ptr != NULL)
+	{
+		std::vector<rxn_token>::iterator it = s_ptr->rxn.Get_tokens().begin();
+		for ( ; it->name != NULL; it++)
+		{
+			std::pair<std::string, double> item(it->name, it->coef);
+			stoichiometry.push_back(item);
+			if (it->coef > 0.0)
+			{
+				if (lhs_started) lhs << "+ ";
+				if (it->coef != 1.0)
+				{
+					lhs << it->coef;
+				}
+				lhs << it->name << " ";
+				lhs_started = true;
+			}
+			else if (it->coef < 0.0)
+			{
+				if (rhs_started) rhs << "+ ";
+				if (it->coef != -1.0)
+				{
+					rhs << -it->coef;
+				}
+				rhs << it->name << " ";
+				rhs_started = true;
+			}
+		}
+	}
+	eq << lhs.str() << "= " << rhs.str();
+	return (eq.str());
 }
 
 /* ---------------------------------------------------------------------- */

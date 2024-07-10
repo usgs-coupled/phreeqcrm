@@ -269,7 +269,7 @@ jobs:
       run: |
         brew reinstall gcc
         brew install ninja yaml-cpp
-        ls -alR /usr/local/Cellar/
+        # ls -alR /usr/local/Cellar/
 
     - name: Verify gfortran
       run: |
@@ -285,6 +285,10 @@ jobs:
     - name: Configure with autotools
       working-directory: ${{ github.workspace }}/build
       run: ../phreeqcrm-${{ env.VER_STRING }}/configure --enable-fortran-test --with-yaml-cpp
+
+    - name: Print phreeqcrm.pc
+      working-directory: ${{ github.workspace }}/build
+      run:  cat phreeqcrm.pc
 
     - name: Build with autotools
       working-directory: ${{ github.workspace }}/build
@@ -311,6 +315,19 @@ jobs:
     - name: Cleanup
       run: rm -rf *
 
+    - name: Check phreeqcrm.pc
+      run:  ls -al /usr/local/share/pkgconfig
+
+    - name: Set PKG_CONFIG_PATH (macOS)
+      if: runner.os == 'macOS'
+      run: echo "PKG_CONFIG_PATH=/usr/local/share/pkgconfig" >> $GITHUB_ENV
+
+    - name: Check phreeqcrm.pc cflags
+      run:  pkg-config --cflags phreeqcrm
+
+    - name: Check phreeqcrm.pc libs
+      run:  pkg-config --libs phreeqcrm
+
     - uses: actions/checkout@v4
 
     - name: Test autotools install
@@ -321,7 +338,7 @@ jobs:
       working-directory: ${{ github.workspace }}/Tests
       run: make -f autotools.mk clean
 
-    - name: Test CMake pkg-config
+    - name: Test autotools pkg-config
       working-directory: ${{ github.workspace }}/Tests
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
@@ -332,7 +349,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        os: [macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
         build_shared_libs: [OFF, ON]
         phreeqcrm_with_yaml_cpp: [OFF, ON]
         BUILD_TYPE: [Debug, Release]
@@ -499,16 +516,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-11, macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        os: [macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
         build_shared_libs: [ON]
         phreeqcrm_with_yaml_cpp: [ON]
         mpi: ['mpich', 'ompi', 'impi', 'msmpi']  # see https://github.com/mpi4py/setup-mpi/blob/master/setup-mpi.sh
         # BUILD_TYPE: [Debug, Release]
         exclude:
-          - os: macos-11
-            mpi: 'impi'
-          - os: macos-11
-            mpi: 'msmpi'
           - os: macos-12
             mpi: 'impi'
           - os: macos-12

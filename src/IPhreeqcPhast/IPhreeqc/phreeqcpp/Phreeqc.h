@@ -167,6 +167,8 @@ public:
 	std::string kinetics_formula(std::string kinetics_name, cxxNameDouble& stoichiometry);
 	std::string phase_formula(std::string phase_name, cxxNameDouble& stoichiometry);
 	std::string species_formula(std::string phase_name, cxxNameDouble& stoichiometry);
+	std::string phase_equation(std::string phase_name, std::vector<std::pair<std::string, double> >& stoichiometry);
+	std::string species_equation(std::string species_name, std::vector<std::pair<std::string, double> >& stoichiometry);
 	LDBLE list_ss(std::string ss_name, cxxNameDouble& composition);
 	int system_total_elements(void);
 	int system_total_si(void);
@@ -1523,6 +1525,7 @@ protected:
 	int iterations;
 	int gamma_iterations;
 	size_t density_iterations;
+	LDBLE kgw_kgs;
 	int run_reactions_iterations;
 	int overall_iterations;
 
@@ -1629,6 +1632,8 @@ protected:
 	int print_viscosity;
 	LDBLE viscos, viscos_0, viscos_0_25; // viscosity of the solution, of pure water, of pure water at 25 C
 	LDBLE density_x;
+	LDBLE solution_volume_x;
+	LDBLE solution_mass_x;
 	LDBLE cell_pore_volume;
 	LDBLE cell_porosity;
 	LDBLE cell_volume;
