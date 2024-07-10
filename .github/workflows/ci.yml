@@ -315,6 +315,19 @@ jobs:
     - name: Cleanup
       run: rm -rf *
 
+    - name: Check phreeqcrm.pc
+      run:  ls -al /usr/local/share/pkgconfig
+
+    - name: Set PKG_CONFIG_PATH (macOS)
+      if: runner.os == 'macOS'
+      run: echo "PKG_CONFIG_PATH=/usr/local/share/pkgconfig" >> $GITHUB_ENV
+
+    - name: Check phreeqcrm.pc cflags
+      run:  pkg-config --cflags phreeqcrm
+
+    - name: Check phreeqcrm.pc libs
+      run:  pkg-config --libs phreeqcrm
+
     - uses: actions/checkout@v4
 
     - name: Test autotools install
@@ -325,7 +338,7 @@ jobs:
       working-directory: ${{ github.workspace }}/Tests
       run: make -f autotools.mk clean
 
-    - name: Test CMake pkg-config
+    - name: Test autotools pkg-config
       working-directory: ${{ github.workspace }}/Tests
       run: env CC='cc' CXX='c++ -std=c++11' make -f pkgconfig.mk pkgconfig_test && ./pkgconfig_test
 
