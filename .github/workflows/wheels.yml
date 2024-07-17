@@ -1,114 +1,31 @@
-name: wheels
+name: Build
 
-on:
-  pull_request:
-    branches:
-      - master
-  push:
-    branches:
-      - master
-  workflow_dispatch:
-  release:
-    types:
-      - published
-
-env:
-  FORCE_COLOR: 3
-  YAML_CPP_REF: b8882652fcbeba4c00dec019a39da91e702e474e
-  USE_LIB_CMAKE_YAML_CPP: ${{ true }}
+on: [push, pull_request]
 
 jobs:
-  build:
-    name: ${{ matrix.os }} (python ${{ matrix.python-version }})
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-12, macos-13, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          path: phreeqcrm-source
 
-      - uses: actions/checkout@v4
-        with:
-            repository: jbeder/yaml-cpp
-            ref: ${{ env.YAML_CPP_REF }}
-            path: yaml-cpp-source
+      # Used to host cibuildwheel
+      - uses: actions/setup-python@v5
 
-      - name: Install ninja (Linux)
-        if: ${{ runner.os == 'Linux' }}
-        run: sudo apt-get -y install ninja-build
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.19.2
 
-      - name: Install ninja (macOS)
-        if: ${{ runner.os == 'macOS' }}
-        run: brew install ninja
-
-      - name: Set up Visual Studio shell (Windows)
-        if: runner.os == 'Windows'
-        uses: egor-tensin/vs-shell@v2
-        with:
-          arch: x64
-
-      - name: Cache yaml-cpp
-        id: cache-yaml-cpp
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/yaml-cpp-install
-          key: ${{ matrix.os }}-yaml-cpp-${{ env.YAML_CPP_REF }}
-
-      - name: Configure yaml-cpp
-        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
-        run: cmake -G "Ninja Multi-Config" -B yaml-cpp-build -S yaml-cpp-source -DYAML_CPP_BUILD_TOOLS:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=$(pwd)/yaml-cpp-install -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-
-      - name: Build yaml-cpp
-        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
-        run: cmake --build yaml-cpp-build --config Release
-
-      - name: Test yaml-cpp
-        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
-        run: ctest --test-dir yaml-cpp-build
-
-      - name: Install yaml-cpp
-        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
-        run: cmake --install yaml-cpp-build
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Python ${{ matrix.python-version }} dependencies
-        run: |
-          python --version
-          python -m pip install --upgrade pip
-          pip install pipx
-
-      - name: Build package (using share/cmake/yaml-cpp)
-        if: ${{ !env.USE_LIB_CMAKE_YAML_CPP }}
-        env:
-          yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
-        working-directory: phreeqcrm-source
-        run: pipx run build
-
-      - name: Build package (using lib/cmake/yaml-cpp)
-        if: ${{ env.USE_LIB_CMAKE_YAML_CPP }}
-        env:
-          yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/lib/cmake/yaml-cpp
-        working-directory: phreeqcrm-source
-        run: pipx run build
+      - name: Build wheels
+        run: python -m cibuildwheel --output-dir wheelhouse
+        # to supply options, put them in 'env', like:
+        # env:
+        #   CIBW_SOME_OPTION: value
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}-python-${{ matrix.python-version }}
-          path: phreeqcrm-source/dist/*.whl
-
-      - uses: actions/upload-artifact@v4
-        if: ${{ matrix.python-version == '3.10' && matrix.os == 'ubuntu-22.04' }}
-        with:
-          name: source
-          path: phreeqcrm-source/dist/*.tar.gz
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
