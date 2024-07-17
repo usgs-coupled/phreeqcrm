@@ -68,7 +68,7 @@ if(PHREEQCRM_BUILD_PYTHON)
   # endif()
   find_package(SWIG REQUIRED)
   ###find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
-  find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
+  find_package(Python COMPONENTS Interpreter Development.Module NumPy REQUIRED)
   # Set Python_ROOT_DIR to specify which python to use
   # ie -DPython_ROOT_DIR=C:/Python38-x64
 endif()
