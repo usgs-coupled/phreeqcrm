@@ -1,4 +1,4 @@
-name: Build
+name: wheels
 
 on: [push, pull_request]
 
