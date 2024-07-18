@@ -23,6 +23,7 @@ jobs:
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BUILD: cp310-manylinux_x86_64
+          CIBW_BUILD_VERBOSITY: 2
         # to supply options, put them in 'env', like:
         # env:
         #   CIBW_SOME_OPTION: value
