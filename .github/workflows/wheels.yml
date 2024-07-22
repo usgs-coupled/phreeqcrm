@@ -31,9 +31,9 @@ jobs:
           CMAKE_GENERATOR_TOOLSET: ${{ matrix.python[1] }}
           CMAKE_GENERATOR_PLATFORM: ${{ matrix.buildplat[1] }}
         run: python -m cibuildwheel --output-dir wheelhouse
-        env:
-          CIBW_BUILD: cp310-manylinux_x86_64
-          CIBW_BUILD_VERBOSITY: 2
+        # env:
+        #   CIBW_BUILD: cp310-manylinux_x86_64
+        #   CIBW_BUILD_VERBOSITY: 2
         # to supply options, put them in 'env', like:
         # env:
         #   CIBW_SOME_OPTION: value
