@@ -19,8 +19,8 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "numpy",
-    "PyYAML"
+  "numpy<2",
+  "PyYAML"
 ]
 
 [tool.scikit-build]
