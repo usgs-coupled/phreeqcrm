@@ -4,13 +4,14 @@ on: [push, pull_request]
 
 jobs:
   build_wheels:
-    name: ${{ matrix.python[0] }} on ${{ matrix.buildplat[0] }}
+    name: ${{ matrix.python[0] }}(${{ matrix.buildplat[2] }}) on ${{ matrix.buildplat[0] }}
     runs-on: ${{ matrix.buildplat[0] }}
     strategy:
       matrix:
         buildplat:
-          - [windows-2019, win_amd64, x64]
-          - [windows-2019, win32, Win32]
+          - [ubuntu-20.04, manylinux_x86_64, x64]
+          # - [windows-2019, win_amd64, x64]
+          # - [windows-2019, win32, Win32]
         python:
           - [cp38, v141]
           - [cp39, v141]
@@ -27,6 +28,15 @@ jobs:
           python-version: "3.x"
 
       - name: Build wheels
+        if: ${{ runner.os != 'Windows' }}
+        uses: pypa/cibuildwheel@7e5a838a63ac8128d71ab2dfd99e4634dd1bca09  # v2.19.2
+        env:
+          # CIBW_PRERELEASE_PYTHONS: True
+          CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
+          # CIBW_BUILD_VERBOSITY: 1
+
+      - name: Build wheels (Windows)
+        if: ${{ runner.os == 'Windows' }}
         uses: pypa/cibuildwheel@7e5a838a63ac8128d71ab2dfd99e4634dd1bca09  # v2.19.2
         env:
           # CIBW_PRERELEASE_PYTHONS: True
