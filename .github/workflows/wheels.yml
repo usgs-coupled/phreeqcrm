@@ -13,14 +13,15 @@ jobs:
           - [macos-14, macosx_arm64, arm64]
           - [ubuntu-20.04, manylinux_x86_64, x86_64]
           - [ubuntu-20.04, manylinux_i686, i686]
-          # - [windows-2019, win_amd64, x64]
-          # - [windows-2019, win32, Win32]
+          - [windows-2019, win_amd64, x64]
+          - [windows-2019, win32, Win32]
         python:
           - [cp38, v141]
           - [cp39, v141]
           - [cp310, v141]
           - [cp311, v141]
           - [cp312, v142]
+          - [cp313, v142]
 
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +43,7 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         uses: pypa/cibuildwheel@7e5a838a63ac8128d71ab2dfd99e4634dd1bca09  # v2.19.2
         env:
-          # CIBW_PRERELEASE_PYTHONS: True
+          CIBW_PRERELEASE_PYTHONS: True
           CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
           # CIBW_BUILD_VERBOSITY: 1
           # CMAKE_GENERATOR: Visual Studio 16 2019
