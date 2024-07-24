@@ -33,16 +33,34 @@ if(PHREEQCRM_FORTRAN_TESTING)
   enable_language(Fortran)
 endif()
 
-# option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
-# if(DEFINED SKBUILD)
-#   set(PHREEQCRM_WITH_YAML_CPP ON)
-# endif()
-# if(PHREEQCRM_WITH_YAML_CPP)
-#   find_package(yaml-cpp REQUIRED)
-#   if(yaml-cpp_FOUND)
-#     message(STATUS "Found yaml-cpp: TRUE (found version \"${yaml-cpp_VERSION}\")")
-#   endif()
-# endif()
+if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
+
+  # Include FetchContent module
+  include(FetchContent)
+
+  # Fetch yaml-cpp
+  FetchContent_Declare(
+    yaml-cpp
+    GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+    GIT_TAG yaml-cpp-0.7.0
+  )
+
+  # Make yaml-cpp available
+  FetchContent_MakeAvailable(yaml-cpp)
+endif()
+
+option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
+if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
+  set(PHREEQCRM_WITH_YAML_CPP ON)
+endif()
+if(PHREEQCRM_WITH_YAML_CPP AND NOT DEFINED SKBUILD)
+  find_package(yaml-cpp REQUIRED)
+  if(yaml-cpp_FOUND)
+    message(STATUS "Found yaml-cpp: TRUE (found version \"${yaml-cpp_VERSION}\")")
+  endif()
+endif()
 
 option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" OFF)
 if(NOT PHREEQCRM_DISABLE_OPENMP)
@@ -60,12 +78,13 @@ endif()
 
 option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" OFF)
 if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
   set(PHREEQCRM_BUILD_PYTHON ON)
 endif()
 if(PHREEQCRM_BUILD_PYTHON)
-  # if(NOT PHREEQCRM_WITH_YAML_CPP)
-  #   message(FATAL_ERROR "Building python wrapper requires PHREEQCRM_WITH_YAML_CPP.")
-  # endif()
+  if(NOT PHREEQCRM_WITH_YAML_CPP)
+    message(FATAL_ERROR "Building python wrapper requires PHREEQCRM_WITH_YAML_CPP.")
+  endif()
   find_package(SWIG REQUIRED)
   ###find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
   find_package(Python COMPONENTS Interpreter Development.Module NumPy REQUIRED)
@@ -307,18 +326,23 @@ endif()
 # init exportPackageDependencies
 set(exportPackageDependencies "")
 
-# # yaml-cpp
-# if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
-#   target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
-#   if(TARGET yaml-cpp::yaml-cpp)
-#     target_link_libraries(PhreeqcRM PUBLIC yaml-cpp::yaml-cpp)
-#   else()
-#     target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
-#   endif()
-#   string(APPEND exportPackageDependencies "find_dependency(yaml-cpp)\n")
-#   # set(phreeqcrm_requires "yaml-cpp")
-#   set(useyaml_define "-DUSE_YAML")
-# endif()
+# yaml-cpp
+if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
+  target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
+  if(TARGET yaml-cpp::yaml-cpp)
+    target_link_libraries(PhreeqcRM PUBLIC yaml-cpp::yaml-cpp)
+  else()
+    target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+  endif()
+  string(APPEND exportPackageDependencies "find_dependency(yaml-cpp)\n")
+  # set(phreeqcrm_requires "yaml-cpp")
+  set(useyaml_define "-DUSE_YAML")
+endif()
+if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
+  target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
+  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+endif()
 
 # check for zlib
 if(NOT ZLIB_ROOT)
@@ -456,6 +480,7 @@ configure_file(phreeqcrm.cmake.in phreeqcrm.pc @ONLY)
 
 # install
 if(STANDALONE_BUILD EQUAL 1 AND NOT DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
 
   include(CMakePackageConfigHelpers)
 
@@ -547,6 +572,7 @@ if(STANDALONE_BUILD EQUAL 1)
 
   # subdirs
   if(NOT DEFINED SKBUILD)
+    # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
     add_subdirectory(database)
     add_subdirectory(doc)
     add_subdirectory(Doxygen)
@@ -564,6 +590,7 @@ if(MSVC)
 endif()
 
 if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
   message(STATUS "SKBUILD IS defined")
   #set_target_properties(PhreeqcRM TestRM TestBMIdtor TestRMdtor PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
   set_target_properties(PhreeqcRM PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
