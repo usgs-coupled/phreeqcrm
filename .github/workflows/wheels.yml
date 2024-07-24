@@ -4,7 +4,6 @@ on: [push, pull_request]
 
 jobs:
   build_wheels:
-    if: ${{ false }}
     name: ${{ matrix.python[0] }}(${{ matrix.buildplat[2] }}) on ${{ matrix.buildplat[0] }}
     runs-on: ${{ matrix.buildplat[0] }}
     strategy:
