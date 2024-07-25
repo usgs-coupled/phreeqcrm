@@ -17,7 +17,7 @@ jobs:
           - [windows-2019, win_amd64, x64]
           # - [windows-2019, win32, Win32]
         python:
-          # - [cp38, v141]
+          - [cp38, v141]
           # - [cp39, v141]
           # - [cp310, v141]
           # - [cp311, v141]
