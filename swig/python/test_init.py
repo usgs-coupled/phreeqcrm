@@ -3,7 +3,7 @@ import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_array_less
 import pytest
 
-from phreeqcrm import BMIPhreeqcRM, IRM_OK, State
+from phreeqcrm import BMIPhreeqcRM, IRM_OK, INITIALIZED, UNINITIALIZED
 
 ERROR_MUST_INITIALIZE             = "must call initialize first"
 ERROR_NOT_IMPLEMENTED             = "Not Implemented"
@@ -11,21 +11,21 @@ ERROR_NOT_IMPLEMENTED             = "Not Implemented"
 ###############################################################################
 def test_initialized():
     model = BMIPhreeqcRM()
-    assert model._state == State.UNINITIALIZED
+    assert model._state == UNINITIALIZED
 
 def test_finalize_not_initialized():
     model = BMIPhreeqcRM()
 
-    assert model._state == State.UNINITIALIZED
+    assert model._state == UNINITIALIZED
     model.finalize()
-    assert model._state == State.UNINITIALIZED
+    assert model._state == UNINITIALIZED
 
 def test_initialize_AdvectBMI():
     model = BMIPhreeqcRM()
 
-    assert model._state == State.UNINITIALIZED
+    assert model._state == UNINITIALIZED
     model.initialize("AdvectBMI_py.yaml")
-    assert model._state == State.INITIALIZED
+    assert model._state == INITIALIZED
 ###############################################################################
 
 #    def finalize(self) -> None:

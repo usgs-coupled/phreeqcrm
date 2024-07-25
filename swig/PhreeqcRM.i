@@ -22,12 +22,6 @@
 %{ 
 import numpy as np
 import phreeqcrm
-from enum import Enum, unique
-
-@unique
-class State(Enum):
-    UNINITIALIZED = 1
-    INITIALIZED = 2
 %}
 %include "typemaps.i"
 %include <std_vector.i>
@@ -628,7 +622,7 @@ def GetDoubleVector(self, v):
 // %numpy_typemaps(int,    NPY_INT32  , int)
 
 %feature("pythonprepend") BMIPhreeqcRM::BMIPhreeqcRM() %{
-    self._state = State.UNINITIALIZED
+    self._state = phreeqcrm.UNINITIALIZED
     self._values = {}
     self._pointables = {}
     self._readonlys = {}
@@ -637,11 +631,11 @@ def GetDoubleVector(self, v):
 %feature("pythonappend") BMIPhreeqcRM::Initialize(std::string config_file="") %{
     self._pointables = {var.lower() for var in self.get_pointable_var_names()}
     self._readonlys = {var.lower() for var in self.get_readonly_var_names()}
-    self._state = State.INITIALIZED
+    self._state = phreeqcrm.INITIALIZED
 %}
 
 %feature("pythonappend") BMIPhreeqcRM::Finalize() %{
-    self._state = State.UNINITIALIZED
+    self._state = phreeqcrm.UNINITIALIZED
     self._values = {}
     self._pointables = {}
     self._readonlys = {}
@@ -650,57 +644,57 @@ def GetDoubleVector(self, v):
 // initialize checks
 
 %feature("pythonprepend") BMIPhreeqcRM::GetGridSize(const int grid) %{
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}
 
 %feature("pythonprepend") BMIPhreeqcRM::GetInputItemCount() %{
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}
 
 %feature("pythonprepend") BMIPhreeqcRM::GetInputVarNames() %{
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}
 
 %feature("pythonprepend") BMIPhreeqcRM::GetOutputItemCount() %{
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}
 
 %feature("pythonprepend") BMIPhreeqcRM::GetOutputVarNames() %{
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}
 
 %feature("pythonprepend") BMIPhreeqcRM::GetVarItemsize(const std::string name) %{
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}
 
 %feature("pythonprepend") BMIPhreeqcRM::GetVarNbytes(const std::string name) %{
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}
 
 %feature("pythonprepend") BMIPhreeqcRM::GetVarType(const std::string name) %{
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}
 
 %feature("pythonprepend") BMIPhreeqcRM::GetVarUnits(const std::string name) %{
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}
 
 %feature("pythonprepend") BMIPhreeqcRM::Update() %{
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}
 
 %feature("pythonprepend") BMIPhreeqcRM::UpdateUntil(double end_time) %{
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}
 
@@ -765,7 +759,7 @@ std::vector<std::string>& BMIPhreeqcRM::get_value_ptr_vector_strings(std::string
 %{ 
 def get_value_ptr(self, var_name):
 
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
       raise RuntimeError("must call initialize first")
 
     var_name_lower = var_name.lower()
@@ -803,7 +797,7 @@ def get_value_ptr(self, var_name):
 
 def get_value(self, var_name, dest):
 
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
       raise RuntimeError("must call initialize first")
 
     var_name_lower = var_name.lower()
@@ -854,7 +848,7 @@ def get_value_at_indices(self, var_name, dest, indices):
     array_like
         Values at indices.
     """
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 
     dest[:] = self.get_value_ptr(var_name).take(indices)
@@ -872,7 +866,7 @@ def set_value_at_indices(self, var_name, inds, src):
     indices : array_like
         Array of indices.
     """
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
         raise RuntimeError("must call initialize first")
 
     val = self.get_value_ptr(var_name)
@@ -881,7 +875,7 @@ def set_value_at_indices(self, var_name, inds, src):
 def set_value(self, var_name, value):
     '''@todo
     '''
-    if self._state != State.INITIALIZED:
+    if self._state != phreeqcrm.INITIALIZED:
       raise RuntimeError("must call initialize first")
 
     Nbytes = self.get_var_nbytes(var_name)

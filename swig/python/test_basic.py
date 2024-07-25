@@ -3,7 +3,7 @@ import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_array_less
 import pytest
 
-from phreeqcrm import BMIPhreeqcRM, IRM_OK, State
+from phreeqcrm import BMIPhreeqcRM, IRM_OK, UNINITIALIZED
 
 ERROR_GET_VALUE_PTR_NOT_SUPPORTED = "get_value_ptr not supported for this variable."
 ERROR_SET_VALUE_NOT_SUPPORTED     = "set_value not supported for this variable."
@@ -18,14 +18,14 @@ def test_dtor():
 
 def test_initialized():
     model = BMIPhreeqcRM()
-    assert model._state == State.UNINITIALIZED
+    assert model._state == UNINITIALIZED
 
 def test_finalize_not_initialized():
     model = BMIPhreeqcRM()
 
-    assert model._state == State.UNINITIALIZED
+    assert model._state == UNINITIALIZED
     model.finalize()
-    assert model._state == State.UNINITIALIZED
+    assert model._state == UNINITIALIZED
 
 def test_get_components_is_tuple():
     model = BMIPhreeqcRM()

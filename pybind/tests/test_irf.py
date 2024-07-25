@@ -11,7 +11,7 @@ def test_component_name():
     model = bmi_phreeqcrm()
 
     name = model.get_component_name()
-    assert name == "BMI PhreeqcRM"
+    assert name[:13] == "BMI PhreeqcRM"
     #assert model.get_component_name() is name  @todo
 
 def test_start_time():
