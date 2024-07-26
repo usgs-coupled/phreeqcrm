@@ -24,8 +24,8 @@ jobs:
           - [cp312, v142]
           - [cp313, v142]
         exclude:
-          - buildplat: [windows-2019, win_amd64, x64]
-            python: [cp313, v142]
+          # - buildplat: [windows-2019, win_amd64, x64]
+          #   python: [cp313, v142]
           - buildplat: [windows-2019, win32, Win32]
             python: [cp313, v142]
 
