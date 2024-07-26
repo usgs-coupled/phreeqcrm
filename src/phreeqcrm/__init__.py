@@ -13,5 +13,7 @@ from .phreeqcrm import (
     BoolVector,
     DoubleVector,
     IntVector,
-    StringVector
+    StringVector,
+    INITIALIZED,
+    UNINITIALIZED
 )
