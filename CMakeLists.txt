@@ -14,6 +14,7 @@ project(
 if(DEFINED SKBUILD)
   include(CheckPIESupported)
   check_pie_supported()
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
 # check if this is the root project
