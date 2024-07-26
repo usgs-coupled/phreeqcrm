@@ -17,7 +17,7 @@
 #define MP_TYPE int
 #endif
 
-#if defined(SWIGPYTHON)
+#if defined(swig_python_EXPORTS)
 enum STATE {
     UNINITIALIZED = 1,
     INITIALIZED = 2
