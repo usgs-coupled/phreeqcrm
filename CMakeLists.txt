@@ -11,6 +11,11 @@ project(
   LANGUAGES CXX C
 )
 
+if(DEFINED SKBUILD)
+  include(CheckPIESupported)
+  check_pie_supported()
+endif()
+
 # check if this is the root project
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set(STANDALONE_BUILD 1)
