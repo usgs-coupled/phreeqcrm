@@ -10,10 +10,16 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../pyfragments.swg.in pyfragments.swg
 
 # copy database to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../database/phreeqc.dat phreeqc.dat COPYONLY)
+if(DEFINED SKBUILD)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../database/phreeqc.dat ${CMAKE_CURRENT_SOURCE_DIR}/phreeqc.dat COPYONLY)
+endif()
 
 # copy advect.pqi to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/advect.pqi advect.pqi COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/all_reactants.pqi all_reactants.pqi COPYONLY)
+if(DEFINED SKBUILD)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/advect.pqi ${CMAKE_CURRENT_SOURCE_DIR}/advect.pqi COPYONLY)
+endif()
 
 # copy SimpleAdvect.py to build directory for testing
 configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
