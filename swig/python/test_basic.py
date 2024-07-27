@@ -18,6 +18,10 @@ def test_prereqs():
     yaml = "AdvectBMI_py.yaml"
 
     # Check if file exists
+    cwd = os.getcwd()
+    assert os.path.exists(yaml), f"{cwd}"
+
+    # Check if file exists
     assert os.path.exists(yaml), f"{yaml} does not exist"
     
     # Check if file size is greater than 0 bytes
