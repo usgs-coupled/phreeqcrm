@@ -12,6 +12,33 @@ def test_main():
     # for debugging
     print(f"PYTHONPATH={os.getenv('PYTHONPATH')}")
 
+def test_prereqs():
+    # for debugging
+
+    yaml = "AdvectBMI_py.yaml"
+
+    # Check if file exists
+    assert os.path.exists(yaml), f"{yaml} does not exist"
+    
+    # Check if file size is greater than 0 bytes
+    assert os.path.getsize(yaml) > 0, f"{yaml} is empty"
+
+    database = "phreeqc.dat"
+
+    # Check if file exists
+    assert os.path.exists(database), f"{database} does not exist"
+    
+    # Check if file size is greater than 0 bytes
+    assert os.path.getsize(database) > 0, f"{database} is empty"
+
+    pqi = "advect.pqi"
+
+    # Check if file exists
+    assert os.path.exists(pqi), f"{pqi} does not exist"
+    
+    # Check if file size is greater than 0 bytes
+    assert os.path.getsize(pqi) > 0, f"{pqi} is empty"
+
 def test_dtor():
     model = BMIPhreeqcRM()
     del model
