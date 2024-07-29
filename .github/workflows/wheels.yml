@@ -62,6 +62,13 @@ jobs:
           CMAKE_GENERATOR_TOOLSET: ${{ matrix.python[1] }}
           CMAKE_GENERATOR_PLATFORM: ${{ matrix.buildplat[2] }}
 
+      - name: Output directory
+        if: ${{ failure() }}
+        shell: bash
+        run: |
+          pwd
+          ls -Ral  
+
       - name: Output log
         if: ${{ failure() }}
         run: cat swig/python/AdvectBMI_py.log.txt
