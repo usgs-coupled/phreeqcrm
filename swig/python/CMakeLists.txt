@@ -33,6 +33,7 @@ configure_file(WriteYAMLFile_py.py WriteYAMLFile_py.py COPYONLY)
 configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
 
 # copy pytest files to build directory for testing
+configure_file(constants.py constants.py COPYONLY)
 configure_file(test_basic.py test_basic.py COPYONLY)
 configure_file(test_get_value.py test_get_value.py COPYONLY)
 configure_file(test_init.py test_init.py COPYONLY)

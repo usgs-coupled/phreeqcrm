@@ -7,7 +7,7 @@ from numpy.testing import assert_almost_equal, assert_array_equal, assert_array_
 
 from phreeqcrm import BMIPhreeqcRM
 
-from constants import Constants
+from constants import FilePaths
 
 def test_component_name():
     model = BMIPhreeqcRM()
@@ -75,7 +75,7 @@ def test_initialize_from_file():
 def test_update():
     model = BMIPhreeqcRM()
     ## model.initialize() #  @todo
-    model.initialize(Constants.yaml)
+    model.initialize(FilePaths.YAML)
 
     for inc in range(10):
         model.update()

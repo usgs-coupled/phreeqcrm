@@ -7,7 +7,7 @@ from six.moves import range
 
 from phreeqcrm import bmi_phreeqcrm
 
-from constants import Constants
+from constants import FilePaths
 
 def test_component_name():
     model = bmi_phreeqcrm()
@@ -75,7 +75,7 @@ def test_initialize_from_file():
 def test_update():
     model = bmi_phreeqcrm()
     ## model.initialize() #  @todo
-    model.initialize(Constants.yaml)
+    model.initialize(FilePaths.YAML)
 
     for inc in range(10):
         model.update()
