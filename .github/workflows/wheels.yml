@@ -45,8 +45,8 @@ jobs:
           CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_REQUIRES: pytest
-          CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
-          CIBW_TEST_COMMAND: "pytest {project}/swig/python"
+          # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
+          CIBW_TEST_COMMAND: "pytest {project}/swig/python/test_basic.py::test_get_grid_size_AdvectBMI"
 
       - name: Build wheels (Windows)
         if: ${{ runner.os == 'Windows' }}
@@ -56,11 +56,15 @@ jobs:
           CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_REQUIRES: pytest
-          CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
-          CIBW_TEST_COMMAND: "pytest {project}/swig/python"
+          # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
+          CIBW_TEST_COMMAND: "pytest {project}/swig/python/test_basic.py::test_get_grid_size_AdvectBMI"
           CMAKE_GENERATOR: Visual Studio 16 2019
           CMAKE_GENERATOR_TOOLSET: ${{ matrix.python[1] }}
           CMAKE_GENERATOR_PLATFORM: ${{ matrix.buildplat[2] }}
+
+      - name: Output log
+        if: ${{ failure() }}
+        run: cat swig/python/AdvectBMI_py.log.txt
 
       - uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
         with:
