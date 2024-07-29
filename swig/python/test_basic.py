@@ -16,36 +16,41 @@ def test_main():
 
 def test_prereqs():
     # for debugging
-
-    current_directory = os.getcwd()
-    print(f"Current working directory: {current_directory}")
+    cwd = os.getcwd()
+    print(f"Current working directory: {cwd}")
 
     yaml = FilePaths.YAML
-    print(f"yaml: {yaml}")
 
-    # Check if file exists
+    # Check if src file exists
     assert os.path.exists(yaml), f"{yaml} does not exist"
-    
-    # Check if file size is greater than 0 bytes
+
+    # Check if src file size is greater than 0 bytes
     assert os.path.getsize(yaml) > 0, f"{yaml} is empty"
 
     database = FilePaths.DATABASE
-    print(f"database: {yaml}")
 
-    # Check if file exists
+    # Check if src file exists
     assert os.path.exists(database), f"{database} does not exist"
     
-    # Check if file size is greater than 0 bytes
+    # Check if src file size is greater than 0 bytes
     assert os.path.getsize(database) > 0, f"{database} is empty"
+
+    # database must be in current working directory
+    database_dest = os.path.join(cwd, os.path.basename(database))
+    assert os.path.exists(database_dest), f"{database_dest} does not exist"
 
     pqi = FilePaths.PQI
     print(f"pqi: {pqi}")
 
-    # Check if file exists
+    # Check if src file exists
     assert os.path.exists(pqi), f"{pqi} does not exist"
     
     # Check if file size is greater than 0 bytes
     assert os.path.getsize(pqi) > 0, f"{pqi} is empty"
+
+    # pqi must be in current working directory
+    pqi_dest = os.path.join(cwd, os.path.basename(pqi))
+    assert os.path.exists(pqi_dest), f"{pqi_dest} does not exist"
 
 def test_dtor():
     model = BMIPhreeqcRM()
