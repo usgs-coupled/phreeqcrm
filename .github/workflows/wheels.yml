@@ -45,7 +45,7 @@ jobs:
           CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_REQUIRES: pytest
-          CIBW_BEFORE_TEST: pwd && ls -al && ls -al {project}
+          CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
           CIBW_TEST_COMMAND: "pytest {project}/swig/python"
 
       - name: Build wheels (Windows)
@@ -56,7 +56,7 @@ jobs:
           CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_REQUIRES: pytest
-          CIBW_BEFORE_TEST: pwd && ls -al && ls -al {project}
+          CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
           CIBW_TEST_COMMAND: "pytest {project}/swig/python"
           CMAKE_GENERATOR: Visual Studio 16 2019
           CMAKE_GENERATOR_TOOLSET: ${{ matrix.python[1] }}
