@@ -3,7 +3,7 @@ import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_array_less
 import pytest
 
-from phreeqcrm import BMIPhreeqcRM, IRM_OK, UNINITIALIZED
+from phreeqcrm import BMIPhreeqcRM, IRM_OK, State
 
 from constants import FilePaths
 
@@ -31,7 +31,7 @@ def test_prereqs():
 
     # Check if src file exists
     assert os.path.exists(database), f"{database} does not exist"
-    
+
     # Check if src file size is greater than 0 bytes
     assert os.path.getsize(database) > 0, f"{database} is empty"
 
@@ -44,7 +44,7 @@ def test_prereqs():
 
     # Check if src file exists
     assert os.path.exists(pqi), f"{pqi} does not exist"
-    
+
     # Check if file size is greater than 0 bytes
     assert os.path.getsize(pqi) > 0, f"{pqi} is empty"
 
@@ -58,14 +58,14 @@ def test_dtor():
 
 def test_initialized():
     model = BMIPhreeqcRM()
-    assert model._state == UNINITIALIZED
+    assert model._state == State.UNINITIALIZED
 
 def test_finalize_not_initialized():
     model = BMIPhreeqcRM()
 
-    assert model._state == UNINITIALIZED
+    assert model._state == State.UNINITIALIZED
     model.finalize()
-    assert model._state == UNINITIALIZED
+    assert model._state == State.UNINITIALIZED
 
 def test_get_components_is_tuple():
     model = BMIPhreeqcRM()
@@ -76,10 +76,8 @@ def test_get_components_is_tuple():
     assert(len(components) == 0)
 
 def test_get_grid_size_AdvectBMI():
-    yaml = FilePaths.YAML
-
     model = BMIPhreeqcRM()
-    model.initialize(yaml)
+    model.initialize(FilePaths.YAML)
 
     nxyz = model.get_grid_size(0)
     assert(nxyz == 40)

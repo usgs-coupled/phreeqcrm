@@ -14,6 +14,5 @@ from .phreeqcrm import (
     DoubleVector,
     IntVector,
     StringVector,
-    INITIALIZED,
-    UNINITIALIZED
+    State
 )

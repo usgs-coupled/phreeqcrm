@@ -16,14 +16,6 @@
 #else
 #define MP_TYPE int
 #endif
-
-//#if defined(swig_python_EXPORTS) || defined(SWIGPYTHON)
-enum STATE {
-    UNINITIALIZED = 1,
-    INITIALIZED = 2
-};
-//#endif
-
 class IPhreeqcPhast;
 
 class cxxStorageBin;
