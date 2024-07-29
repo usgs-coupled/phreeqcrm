@@ -5,6 +5,8 @@ import pytest
 
 from phreeqcrm import BMIPhreeqcRM, IRM_OK, INITIALIZED, UNINITIALIZED
 
+from constants import Constants
+
 ERROR_MUST_INITIALIZE             = "must call initialize first"
 ERROR_NOT_IMPLEMENTED             = "Not Implemented"
 
@@ -24,7 +26,7 @@ def test_initialize_AdvectBMI():
     model = BMIPhreeqcRM()
 
     assert model._state == UNINITIALIZED
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(Constants.yaml)
     assert model._state == INITIALIZED
 ###############################################################################
 

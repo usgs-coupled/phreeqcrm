@@ -1,6 +1,8 @@
 import phreeqcrm
 import numpy as np
 
+from constants import Constants
+
 	#module mydata
 	#  double precision, dimension(:), pointer :: K_ptr
 	#  integer                                 :: rm_id
@@ -95,7 +97,7 @@ def AdvectBMI_py():
 	# --------------------------------------------------------------------------
 	# Create PhreeqcRM
 	# --------------------------------------------------------------------------
-	yaml_file = "AdvectBMI_py.yaml"
+	yaml_file = Constants.yaml
 	
 	# phreeqc_rm.GetGridCellCountYAML must be called BEFORE
 	# the PhreeqcRM instance is created. The

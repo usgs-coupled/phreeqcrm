@@ -7,6 +7,8 @@ from six.moves import range
 
 from phreeqcrm import bmi_phreeqcrm
 
+from constants import Constants
+
 def test_component_name():
     model = bmi_phreeqcrm()
 
@@ -73,7 +75,7 @@ def test_initialize_from_file():
 def test_update():
     model = bmi_phreeqcrm()
     ## model.initialize() #  @todo
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(Constants.yaml)
 
     for inc in range(10):
         model.update()
