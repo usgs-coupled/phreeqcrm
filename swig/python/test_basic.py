@@ -17,7 +17,11 @@ def test_main():
 def test_prereqs():
     # for debugging
 
+    current_directory = os.getcwd()
+    print(f"Current working directory: {current_directory}")
+
     yaml = FilePaths.YAML
+    print(f"yaml: {yaml}")
 
     # Check if file exists
     assert os.path.exists(yaml), f"{yaml} does not exist"
@@ -26,6 +30,7 @@ def test_prereqs():
     assert os.path.getsize(yaml) > 0, f"{yaml} is empty"
 
     database = FilePaths.DATABASE
+    print(f"database: {yaml}")
 
     # Check if file exists
     assert os.path.exists(database), f"{database} does not exist"
@@ -34,6 +39,7 @@ def test_prereqs():
     assert os.path.getsize(database) > 0, f"{database} is empty"
 
     pqi = FilePaths.PQI
+    print(f"pqi: {pqi}")
 
     # Check if file exists
     assert os.path.exists(pqi), f"{pqi} does not exist"

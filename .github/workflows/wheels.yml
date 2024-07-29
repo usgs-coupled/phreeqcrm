@@ -46,7 +46,7 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_REQUIRES: pytest
           # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
-          CIBW_TEST_COMMAND: "pytest {project}/swig/python/test_basic.py::test_prereqs"
+          CIBW_TEST_COMMAND: "pytest -s {project}/swig/python/test_basic.py::test_prereqs"
 
       - name: Build wheels (Windows)
         if: ${{ runner.os == 'Windows' }}
@@ -57,7 +57,7 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_REQUIRES: pytest
           # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
-          CIBW_TEST_COMMAND: "pytest {project}/swig/python/test_basic.py::test_prereqs"
+          CIBW_TEST_COMMAND: "pytest -s {project}/swig/python/test_basic.py::test_prereqs"
           CMAKE_GENERATOR: Visual Studio 16 2019
           CMAKE_GENERATOR_TOOLSET: ${{ matrix.python[1] }}
           CMAKE_GENERATOR_PLATFORM: ${{ matrix.buildplat[2] }}
