@@ -11,6 +11,8 @@ PHREEQCRM_EXTRA_DIST=\
 	swig/python/AdvectBMI_py.py\
 	swig/python/BMIPhreeqcRM_docstrings.swg\
 	swig/python/CMakeLists.txt\
+	swig/python/conftest.py\
+	swig/python/constants.py\
 	swig/python/PhreeqcRM_docstrings.swg\
 	swig/python/SimpleAdvect.py\
 	swig/python/test_basic.py\
