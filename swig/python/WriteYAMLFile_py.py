@@ -1,5 +1,7 @@
 import numpy as np
-import yamlphreeqcrm 
+import yamlphreeqcrm
+
+from constants import FilePaths
 
 def WriteYAMLFile_py():
 	# Create YAMLPhreeqcRM document
@@ -103,7 +105,7 @@ def WriteYAMLFile_py():
 	time_step = 86400.0
 	yrm.YAMLSetTimeStep(time_step)    
 	# Write YAML file	
-	yrm.WriteYAMLDoc("AdvectBMI_py.yaml")
+	yrm.WriteYAMLDoc(FilePaths.YAML)
 	print("Done.")
 
 if __name__ == '__main__':

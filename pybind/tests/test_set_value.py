@@ -3,9 +3,11 @@ from numpy.testing import assert_array_almost_equal
 
 from phreeqcrm import bmi_phreeqcrm
 
+from constants import FilePaths
+
 def test_set_value():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     z0 = model.get_value_ptr("Temperature")
     z1 = np.zeros_like(z0) - 1
@@ -21,7 +23,7 @@ def test_set_value():
 
 def test_set_value_at_indices():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     # model.set_value_at_indices("Temperature", np.array([0, 2, 4]), np.array([-1, -1, -1]))
     model.set_value_at_indices("Temperature", np.array([0, 2, 4]), np.array([-1.0, -1.0, -1.0]))
@@ -32,7 +34,7 @@ def test_set_value_at_indices():
 
 # def test_sequence():
 #     model = bmi_phreeqcrm()
-#     model.initialize("AdvectBMI_py.yaml")
+#     model.initialize(FilePaths.YAML)
 
 #     # Create a list
 #     my_list = [1, 2, 3]

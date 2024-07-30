@@ -325,7 +325,29 @@ public:
     @par MPI:
     Called by root.
     */
+#if defined(_MSC_VER)
+#if defined(_WIN64)
+    std::string GetComponentName() override {
+        char buffer[400];
+        sprintf(buffer, "BMI PhreeqcRM [MSC v.%d 64 bit (AMD64)]", _MSC_VER);
+        return buffer;
+    };
+#elif defined(_WIN32)
+    std::string GetComponentName() override {
+        char buffer[400];
+        sprintf(buffer, "BMI PhreeqcRM [MSC v.%d 32 bit (Intel)]", _MSC_VER);
+        return buffer;
+    };
+#else
+    std::string GetComponentName() override {
+        char buffer[400];
+        sprintf(buffer, "BMI PhreeqcRM [MSC v.%d Unknown]", _MSC_VER);
+        return buffer;
+    };
+#endif
+#else
     std::string GetComponentName() override { return "BMI PhreeqcRM"; };
+#endif
 
     /**
     @a GetInputVarNames returns the count of input variables that can

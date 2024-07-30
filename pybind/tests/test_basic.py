@@ -6,6 +6,8 @@ import pytest
 
 from phreeqcrm import bmi_phreeqcrm, IRM_RESULT
 
+from constants import FilePaths
+
 def test_main():
     # for debugging
     print(f"PYTHONPATH={os.getenv('PYTHONPATH')}")
@@ -66,19 +68,19 @@ def test_initialize_AdvectBMI():
     model = bmi_phreeqcrm()
 
     assert(not model._initialized)
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
     assert(model._initialized)
 
 def test_get_grid_size_AdvectBMI():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     nxyz = model.get_grid_size(0)
     assert(nxyz == 40)
 
 def test_get_value_ptr_is_ndarray():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
     nxyz = model.get_grid_size(0)
 
     temperature = model.get_value_ptr("Temperature")
@@ -91,7 +93,7 @@ def test_get_value_ptr_is_ndarray():
 
 def test_get_temperature_ptr_is_writeable():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
     nxyz = model.get_grid_size(0)
 
     # test WRITEABLE
@@ -111,7 +113,7 @@ def test_get_temperature_ptr_is_writeable():
 
 def test_get_ComponentCount_ptr_is_readonly():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     # make sure get_value_ptr can be called before get_input_var_names
     component_count = model.get_value_ptr("ComponentCount")
@@ -128,7 +130,7 @@ def test_get_ComponentCount_ptr_is_readonly():
 
 def test_get_input_var_names_is_tuple():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     input_vars = model.get_input_var_names()
     assert(isinstance(input_vars, tuple))
@@ -136,7 +138,7 @@ def test_get_input_var_names_is_tuple():
 
 def test_get_output_var_names_is_tuple():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     output_vars = model.get_output_var_names()
     assert(isinstance(output_vars, tuple))
@@ -144,7 +146,7 @@ def test_get_output_var_names_is_tuple():
 
 def test_get_components_is_tuple():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     components = model.get_components()
     assert(isinstance(components, tuple))
@@ -152,7 +154,7 @@ def test_get_components_is_tuple():
 
 def test_get_Components_ptr_is_ndarray():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     components = model.get_value_ptr("Components")
     assert(isinstance(components, np.ndarray))
@@ -165,7 +167,7 @@ def test_get_Components_ptr_is_ndarray():
 
 def test_get_Components_ptr_is_readonly():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     components = model.get_value_ptr("Components")
 
@@ -177,7 +179,7 @@ def test_get_Components_ptr_is_readonly():
 
 def test_get_Porosity_ptr():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
     nxyz = model.get_grid_size(0)
 
     porosity = model.get_value_ptr("Porosity")
@@ -188,7 +190,7 @@ def test_get_Porosity_ptr():
 
 def test_get_SolutionVolume_ptr():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
     nxyz = model.get_grid_size(0)
 
     solution_volume = model.get_value_ptr("SolutionVolume")
@@ -201,7 +203,7 @@ def test_get_SolutionVolume_ptr():
 
 def test_get_Concentrations_ptr():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
     nxyz = model.get_grid_size(0)
 
     components = model.get_value_ptr("Components")
@@ -289,7 +291,7 @@ def test_get_Concentrations_ptr():
 
 def test_get_value_ndarray_str():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     components = model.get_value_ptr("Components")
     comps = np.empty_like(components)
@@ -306,14 +308,14 @@ def test_get_value_ndarray_str():
 
 def test_SetComponentH2O():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     status = model.SetComponentH2O(True)
     assert(status == IRM_RESULT.IRM_OK)
 
 def test_get_value_FilePrefix():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     # FilePrefix doesn't support get_value_ptr
     expected = "AdvectBMI_py"
@@ -326,7 +328,7 @@ def test_get_value_FilePrefix():
 
 def test_get_value_FilePrefix_fail():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     # FilePrefix doesn't support get_value_ptr
     spaces = " " * 4
@@ -337,7 +339,7 @@ def test_get_value_FilePrefix_fail():
 
 def test_get_value_FilePrefix_big_buffer():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     # FilePrefix doesn't support get_value_ptr
     expected = "AdvectBMI_py"
@@ -351,7 +353,7 @@ def test_get_value_FilePrefix_big_buffer():
 
 def test_get_value_ComponentCount():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     # ComponentCount supports get_value_ptr @todo
     ##component_count = np.full((1,), 0)
@@ -362,7 +364,7 @@ def test_get_value_ComponentCount():
 
 def test_get_value_ptr_ComponentCount():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     # ComponentCount supports get_value_ptr @todo
     ##component_count = np.full((1,), 0)
@@ -373,7 +375,7 @@ def test_get_value_ptr_ComponentCount():
 
 def test_get_value_ptr_failure():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     # "Components" is currently excluded
     should_raise = ("CurrentSelectedOutputUserNumber", "DensityUser", "ErrorString", "FilePrefix", "NthSelectedOutput", "SaturationUser", "SelectedOutput", "SelectedOutputColumnCount", "SelectedOutputCount", "SelectedOutputHeadings", "SelectedOutputRowCount")
@@ -385,7 +387,7 @@ def test_get_value_ptr_failure():
 
 def test_get_value_Time():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     # Time supports get_value_ptr @todo
     time = np.empty((1,), dtype=float)

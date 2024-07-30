@@ -10,10 +10,16 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../pyfragments.swg.in pyfragments.swg
 
 # copy database to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../database/phreeqc.dat phreeqc.dat COPYONLY)
+if(DEFINED SKBUILD)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../database/phreeqc.dat ${CMAKE_CURRENT_SOURCE_DIR}/phreeqc.dat COPYONLY)
+endif()
 
 # copy advect.pqi to build directory for testing
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/advect.pqi advect.pqi COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/all_reactants.pqi all_reactants.pqi COPYONLY)
+if(DEFINED SKBUILD)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/advect.pqi ${CMAKE_CURRENT_SOURCE_DIR}/advect.pqi COPYONLY)
+endif()
 
 # copy SimpleAdvect.py to build directory for testing
 configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
@@ -27,6 +33,8 @@ configure_file(WriteYAMLFile_py.py WriteYAMLFile_py.py COPYONLY)
 configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
 
 # copy pytest files to build directory for testing
+configure_file(conftest.py conftest.py COPYONLY)
+configure_file(constants.py constants.py COPYONLY)
 configure_file(test_basic.py test_basic.py COPYONLY)
 configure_file(test_get_value.py test_get_value.py COPYONLY)
 configure_file(test_init.py test_init.py COPYONLY)
@@ -54,7 +62,7 @@ if(NOT PHREEQCRM_DISABLE_OPENMP)
   endif()
 endif()
 
-if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
+if((PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND) OR (DEFINED SKBUILD))
   set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_YAML)
   set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/YAMLPhreeqcRM.swg
@@ -117,6 +125,17 @@ if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
     #   windows      vcpkg   0.7.0#1
     #   ubuntu-20.04 apt-get 0.6
     #   ubuntu-22.04 apt-get 0.7
+    target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp)
+  endif()
+endif()
+
+if(DEFINED SKBUILD)
+  target_compile_definitions(${PYTHON_TARGET_NAME} PUBLIC USE_YAML)
+  if(TARGET yaml-cpp::yaml-cpp)
+    message(STATUS "SKBUILD found yaml-cpp::yaml-cpp")
+    target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp::yaml-cpp)
+  else()
+    message(STATUS "SKBUILD didn't find yaml-cpp::yaml-cpp")
     target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC yaml-cpp)
   endif()
 endif()
