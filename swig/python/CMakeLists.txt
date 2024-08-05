@@ -142,12 +142,7 @@ endif()
 
 if(DEFINED SKBUILD)
   target_compile_definitions(${PYTHON_TARGET_NAME} PUBLIC USE_GZ)
-  if(TARGET zlibstatic)
-    message(STATUS "SKBUILD found zlibstatic")
-    target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC zlibstatic)
-  else()
-    message(STATUS "SKBUILD didn't find zlibstatic")
-  endif()
+  target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC zlibstatic)
 endif()
 
 if(PHREEQCRM_NO_UTF8_ENCODING)

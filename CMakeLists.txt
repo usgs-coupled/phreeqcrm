@@ -46,30 +46,24 @@ if(DEFINED SKBUILD)
   include(FetchContent)
 
   # Fetch yaml-cpp
-  # FetchContent_Declare(
-  #   yaml-cpp
-  #   GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-  #   GIT_TAG yaml-cpp-0.7.0
-  # )
-
   FetchContent_Declare(
     yaml-cpp
     URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/yaml-cpp-0.7.0.tar.gz
   )
 
-
   # Make yaml-cpp available
   FetchContent_MakeAvailable(yaml-cpp)
 
 
+  # Fetch zlib
   FetchContent_Declare(
     zlib
     URL https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz
   )
 
-
-  # Make zlib available
+  # Don't install zlib in wheel
   set(SKIP_INSTALL_ALL ON)
+  # Make zlib available
   FetchContent_MakeAvailable(zlib)
 endif()
 
@@ -390,6 +384,7 @@ endif()
 if(DEFINED SKBUILD)
   # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
   target_compile_definitions(PhreeqcRM PRIVATE USE_GZ)
+  # for the wheel link to static zlib
   target_link_libraries(PhreeqcRM PRIVATE zlibstatic)
 endif()
 
