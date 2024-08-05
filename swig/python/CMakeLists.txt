@@ -140,6 +140,11 @@ if(DEFINED SKBUILD)
   endif()
 endif()
 
+if(DEFINED SKBUILD)
+  target_compile_definitions(${PYTHON_TARGET_NAME} PUBLIC USE_GZ)
+  target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC zlibstatic)
+endif()
+
 if(PHREEQCRM_NO_UTF8_ENCODING)
   target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE NO_UTF8_ENCODING)
 endif()
