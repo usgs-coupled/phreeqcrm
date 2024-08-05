@@ -46,14 +46,31 @@ if(DEFINED SKBUILD)
   include(FetchContent)
 
   # Fetch yaml-cpp
+  # FetchContent_Declare(
+  #   yaml-cpp
+  #   GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+  #   GIT_TAG yaml-cpp-0.7.0
+  # )
+
   FetchContent_Declare(
     yaml-cpp
-    GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-    GIT_TAG yaml-cpp-0.7.0
+    URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/yaml-cpp-0.7.0.tar.gz
   )
+
 
   # Make yaml-cpp available
   FetchContent_MakeAvailable(yaml-cpp)
+
+
+  FetchContent_Declare(
+    zlib
+    URL https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz
+  )
+
+
+  # Make zlib available
+  set(SKIP_INSTALL_ALL ON)
+  FetchContent_MakeAvailable(zlib)
 endif()
 
 option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
@@ -361,7 +378,7 @@ if(DEFINED SKBUILD)
   # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
   set(PHREEQCRM_USE_ZLIB ON)
 endif()
-if(PHREEQCRM_USE_ZLIB)
+if(PHREEQCRM_USE_ZLIB AND NOT DEFINED SKBUILD)
   find_package(ZLIB REQUIRED)
 endif()
 
@@ -369,6 +386,11 @@ if(PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
   target_compile_definitions(PhreeqcRM PRIVATE USE_GZ)
   target_link_libraries(PhreeqcRM PRIVATE ZLIB::ZLIB)
   string(APPEND exportPackageDependencies "find_dependency(ZLIB)\n")
+endif()
+if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
+  target_compile_definitions(PhreeqcRM PRIVATE USE_GZ)
+  target_link_libraries(PhreeqcRM PRIVATE zlibstatic)
 endif()
 
 # Allow user to override POSTFIX properties (but mandate them so that
@@ -604,6 +626,12 @@ if(DEFINED SKBUILD)
   message(STATUS "SKBUILD IS defined")
   #set_target_properties(PhreeqcRM TestRM TestBMIdtor TestRMdtor PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
   set_target_properties(PhreeqcRM PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+  message(STATUS "SKIP_INSTALL_ALL=${SKIP_INSTALL_ALL}")
+  if (SKIP_INSTALL_ALL)
+    message(STATUS "SKIP_INSTALL_ALL TRUE")
+  else()
+    message(STATUS "SKIP_INSTALL_ALL TRUE")
+  endif()
 else()
   message(STATUS "SKBUILD is NOT defined")
 endif()
