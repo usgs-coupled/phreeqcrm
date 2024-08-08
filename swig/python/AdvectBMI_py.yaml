@@ -160,7 +160,7 @@
   - 0.2
   - 0.2
 - key: SetSaturationUser
-  sat: !!python/tuple
+  sat:
   - 1.0
   - 1.0
   - 1.0
@@ -1151,7 +1151,7 @@
   - 1.0
 - key: InitialPhreeqcCell2Module
   n: -1
-  cell_numbers: !!python/tuple
+  cell_numbers:
   - 18
   - 19
 - key: SetTimeStep

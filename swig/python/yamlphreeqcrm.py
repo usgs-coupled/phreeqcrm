@@ -1316,8 +1316,7 @@ class YAMLPhreeqcRM(object):
         self.yaml_doc.append(node)
     def GetList(self, v):
         if isinstance(v, np.ndarray) and (isinstance(v[0].item(), int) or isinstance(v[0], float)):
-            l = []
-            for i in range(len(v)):
-                l.append(v[i].item())
-            return l
+            return v.tolist()
+        elif isinstance(v, tuple):
+            return list(v)
         return v
