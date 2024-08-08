@@ -10,10 +10,9 @@ import sys
     file to set properties and initial conditions in
     the PhreeqcRM instance.
 
-    Functions that accept a constant vector reference
-    (const std::vector<double>&) should be callable
-    with any of the three Python data types, namely
-    np.ndarray, list, and tuple.
+    Functions that accept an array should be callable
+    with any of three Python data types, 
+    np.ndarray, list, or tuple.
 
     For example, the porosity can be initialized:
 
@@ -30,18 +29,11 @@ import sys
     porosity = tuple(0.2 for i in range(nxyz))
 
     # And used:
-    nxyz = 20
-    nthreads = 3
-    phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, nthreads)
-    status = phreeqc_rm.SetPorosity(porosity)
+    yrm = yamlphreeqcrm.YAMLPhreeqcRM()
+    yrm.YAMLSetPorosity(por)
 
-    # likewise for integers (const std::vector<int>&)
+    # likewise for integer arrays
 
-    Currently functions that take non-const vectors (ie OUT or INOUT)
-    must use the SWIG wrapped vector class like this:
-
-    c_dbl_vect = phreeqcrm.DoubleVector(nxyz * len(components))
-    status = phreeqc_rm.GetConcentrations(c_dbl_vect)
 """
 
 class YAMLPhreeqcRM(object):
@@ -148,12 +140,13 @@ class YAMLPhreeqcRM(object):
         one-to-one mapping--all user grid cells are reaction cells 	(equivalent 
         to @a grid2chem values of 0,1,2,3,...,nxyz-1).
 	
-        @param grid2chem A vector of integers: Nonnegative is a reaction-cell number (0 based),
-        negative is an inactive cell. Vector is of size @a nxyz (number of grid cells).
+        @param grid2chem A list, tuple, or numpy array of integers: 
+        Nonnegative is a reaction-cell number (0 based), negative is an inactive 
+        cell. A list, tuple, or numpy array is of size @a nxyz (number of grid cells).
         """
         node = dict()
         node["key"] = "CreateMapping"
-        node["grid2chem"] = grid2chem
+        node["grid2chem"] = self.GetList(grid2chem)
         self.yaml_doc.append(node)
     def YAMLDumpModule(self, dump_on, append):
         """
@@ -210,12 +203,12 @@ class YAMLPhreeqcRM(object):
         InitializeYAML to initialize a PhreeqcRM instance. InitialSolutions2Module 
         transfers SOLUTION definitions from the InitialPhreeqc instance to the reaction-module 
         workers.
-        @param solutions Vector of index numbers that is dimensioned nxyz, 
-        where nxyz is the number of grid cells in the user's model. 
+        @param solutions A list, tuple, or numpy array of index numbers that is 
+        dimensioned nxyz, where nxyz is the number of grid cells in the user's model. 
         """
         node = dict()
         node["key"] = "InitialSolutions2Module"
-        node["solutions"] = solutions
+        node["solutions"] = self.GetList(solutions)
         self.yaml_doc.append(node)
     def YAMLInitialEquilibriumPhases2Module(self, equilibrium_phases):
         """
@@ -225,12 +218,12 @@ class YAMLPhreeqcRM(object):
         InitializeYAML to initialize a PhreeqcRM instance. InitialEquilibriumPhases2Module 
         transfers EQUILIBRIUM_PHASES definitions from the InitialPhreeqc instance to the 
         reaction-module workers.
-        @param equilibrium_phases Vector of index numbers that is dimensioned nxyz,
+        @param equilibrium_phases A list, tuple, or numpy array of index numbers that is dimensioned nxyz,
         where nxyz is the number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "InitialEquilibriumPhases2Module"
-        node["equilibrium_phases"] = equilibrium_phases
+        node["equilibrium_phases"] = self.GetList(equilibrium_phases)
         self.yaml_doc.append(node)
     def YAMLInitialExchanges2Module(self, exchanges):
         """
@@ -240,12 +233,12 @@ class YAMLPhreeqcRM(object):
         InitializeYAML to initialize a PhreeqcRM instance. InitialExchanges2Module 
         transfers EXCHANGE definitions from the InitialPhreeqc instance to the reaction-module 
         workers. 
-        @param exchanges Vector of index numbers that is dimensioned nxyz,
+        @param exchanges A list, tuple, or numpy array of index numbers that is dimensioned nxyz,
         where nxyz is the number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "InitialExchanges2Module"
-        node["exchanges"] = exchanges
+        node["exchanges"] = self.GetList(exchanges)
         self.yaml_doc.append(node)
     def YAMLInitialSurfaces2Module(self, surfaces):
         """
@@ -254,12 +247,12 @@ class YAMLPhreeqcRM(object):
         When the YAML document is written to file it can be processed by the method
         InitializeYAML to initialize a PhreeqcRM instance. InitialSurfaces2Module transfers 
         SURFACE definitions from the InitialPhreeqc instance to the reaction-module workers.
-        @param surfaces Vector of index numbers that is dimensioned nxyz,
+        @param surfaces A list, tuple, or numpy array of index numbers that is dimensioned nxyz,
         where nxyz is the number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "InitialSurfaces2Module"
-        node["surfaces"] = surfaces
+        node["surfaces"] = self.GetList(surfaces)
         self.yaml_doc.append(node)
     def YAMLInitialGasPhases2Module(self, gas_phases):
         """
@@ -269,12 +262,12 @@ class YAMLPhreeqcRM(object):
         InitializeYAML to initialize a PhreeqcRM instance. InitialGasPhases2Module 
         transfers GAS_PHASE definitions from the InitialPhreeqc instance to the 
         reaction-module workers.
-        @param gas_phases Vector of index numbers that is dimensioned nxyz,
+        @param gas_phases A list, tuple, or numpy array of index numbers that is dimensioned nxyz,
         where nxyz is the number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "InitialGasPhases2Module"
-        node["gas_phases"] = gas_phases
+        node["gas_phases"] = self.GetList(gas_phases)
         self.yaml_doc.append(node)
     def YAMLInitialSolidSolutions2Module(self, solid_solutions):
         """
@@ -284,12 +277,12 @@ class YAMLPhreeqcRM(object):
         InitializeYAML to initialize a PhreeqcRM instance. InitialSolidSolutions2Module 
         transfers SOLID_SOLUTIONS definitions from the InitialPhreeqc instance to the 
         reaction-module workers.
-        @param solid_solutions Vector of index numbers that is dimensioned nxyz,
+        @param solid_solutions A list, tuple, or numpy array of index numbers that is dimensioned nxyz,
         where nxyz is the number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "InitialSolidSolutions2Module"
-        node["solid_solutions"] = solid_solutions
+        node["solid_solutions"] = self.GetList(solid_solutions)
         self.yaml_doc.append(node)
     def YAMLInitialKinetics2Module(self, kinetics):
         """
@@ -299,12 +292,12 @@ class YAMLPhreeqcRM(object):
         InitializeYAML to initialize a PhreeqcRM instance. InitialKinetics2Module 
         transfers KINETICS definitions from the InitialPhreeqc instance to the 
         reaction-module workers.
-        @param kinetics Vector of index numbers that is dimensioned nxyz,
+        @param kinetics A list, tuple, or numpy array of index numbers that is dimensioned nxyz,
         where nxyz is the number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "InitialKinetics2Module"
-        node["kinetics"] = kinetics
+        node["kinetics"] = self.GetList(kinetics)
         self.yaml_doc.append(node)
     def YAMLInitialPhreeqc2Module(self, initial_conditions1):
         """
@@ -320,13 +313,13 @@ class YAMLPhreeqcRM(object):
         (2) EXCHANGE, (3) SURFACE, (4) GAS_PHASE, (5) SOLID_SOLUTIONS, and (6) KINETICS.
         The definition initial_solution1[3*nxyz + 99] = 2, indicates that cell 99 (0 based) contains 
         the SURFACE definition (index 3) defined by SURFACE 2 in the InitialPhreeqc instance.
-        @param initial_conditions1 Vector of solution and reactant index numbers that refer to
+        @param initial_conditions1 A list, tuple, or numpy array of solution and reactant index numbers that refer to
         definitions in the InitialPhreeqc instance. Negative values are ignored, resulting in no 
         definition of that entity for that cell.
         """
         node = dict()
         node["key"] = "InitialPhreeqc2Module"
-        node["ic"] = initial_conditions1
+        node["ic"] = self.GetList(initial_conditions1)
         self.yaml_doc.append(node)
     def YAMLInitialPhreeqc2Module_mix(self, ic1,  ic2,  f1):
         """
@@ -352,22 +345,22 @@ class YAMLPhreeqcRM(object):
         fraction1[3*nxyz + 99] = 0.25 indicates that cell 99 (0 based) contains a mixture of 
         0.25 SURFACE 2 and 0.75 SURFACE 3, where the surface compositions have been defined in the 
         InitialPhreeqc instance. If the user number in initial_conditions2 is negative, no mixing occurs.
-        @param initial_conditions1 Vector of solution and reactant index numbers that refer to
+        @param initial_conditions1 A list, tuple, or numpy array of solution and reactant index numbers that refer to
         definitions in the InitialPhreeqc instance.
-        @param initial_conditions2  Vector of solution and reactant index numbers that refer to
+        @param initial_conditions2  A list, tuple, or numpy array of solution and reactant index numbers that refer to
         definitions in the InitialPhreeqc instance. Nonnegative values of @a initial_conditions2 
         result in mixing with the entities defined in @a initial_conditions1. Negative values result 
         in no mixing.
-        @param fraction1 Fraction of initial_conditions1 that mixes with (1 - fraction1)
+        @param fraction1 A list, tuple, or numpy array of fraction of initial_conditions1 that mixes with (1 - fraction1)
         of initial_conditions2.
         """
         node = dict()
         node["key"] = "InitialPhreeqc2Module_mix"
-        node["ic1"] = ic1
-        node["ic2"] = ic2
-        node["f1"] = f1
+        node["ic1"] = self.GetList(ic1)
+        node["ic2"] = self.GetList(ic2)
+        node["f1"] = self.GetList(f1)
         self.yaml_doc.append(node)
-    def YAMLInitialPhreeqcCell2Module(self, n,  cell_numbers):
+    def YAMLInitialPhreeqcCell2Module(self, n, cell_numbers):
         """
         Inserts data into the YAML document for the PhreeqcRM method InitialPhreeqcCell2Module.
 
@@ -381,13 +374,13 @@ class YAMLPhreeqcRM(object):
         instance to the workers.
         @param n Number that refers to a solution or MIX and associated reactants in the InitialPhreeqc 
         instance.
-        @param cell_numbers A vector of grid-cell numbers (user's grid-cell numbering system) that
+        @param cell_numbers A list, tuple, or numpy array of grid-cell numbers (user's grid-cell numbering system) that
         will be populated with cell n from the InitialPhreeqc instance.
         """
         node = dict()
         node["key"] = "InitialPhreeqcCell2Module"
         node["n"] = n
-        node["cell_numbers"] = cell_numbers
+        node["cell_numbers"] = self.GetList(cell_numbers)
         self.yaml_doc.append(node)
     def YAMLLoadDatabase(self, database):
         """
@@ -547,13 +540,13 @@ class YAMLPhreeqcRM(object):
         with YAMLInitialPhreeqc2Module, YAMLInitialPhreeqcCell2Module, or the methods 
         YAMLInitialSolutions2Module, YAMLInitialEquilibriumPhases2Module, and other similar methods
         for other reactants.
-        @param c Vector of component concentrations. Size of vector is ncomps times nxyz,
+        @param c A list, tuple, or numpy array of component concentrations. Size of vector is ncomps times nxyz,
         where ncomps is the number of components as determined by FindComponents or GetComponentCount and
         nxyz is the number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "SetConcentrations"
-        node["c"] = c
+        node["c"] = self.GetList(c)
         self.yaml_doc.append(node)
     def YAMLSetCurrentSelectedOutputUserNumber(self, n_user):
         """
@@ -580,12 +573,12 @@ class YAMLPhreeqcRM(object):
         (YAMLSetUnitsSolution) to produce per liter concentrations during a call to SetConcentrations
         when converting from reaction-cell concentrations to transport concentrations,
         if UseSolutionDensityVolume is set to false.
-        @param density Vector of densities. Size of vector is nxyz, where nxyz is the number
+        @param density A list, tuple, or numpy array of densities. Size of vector is nxyz, where nxyz is the number
         of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "SetDensityUser"
-        node["density"] = density
+        node["density"] = self.GetList(density)
         self.yaml_doc.append(node)
     def YAMLSetDumpFileName(self, dump_name):
         """
@@ -649,14 +642,14 @@ class YAMLPhreeqcRM(object):
         When the YAML document is written to file it can be processed by the method InitializeYAML to
         initialize a PhreeqcRM instance. SetGasCompMoles transfers moles of gas components from
         the vector given in the argument list (gas_moles) to each reaction cell.
-        @param  gas_moles Vector of moles of gas components. Dimension of the vector is  
+        @param  gas_moles A list, tuple, or numpy array of moles of gas components. Dimension of the vector is  
         ngas_comps times nxyz, where, ngas_comps is the result of GetGasComponentsCount,
         and nxyz is the number of user grid cells. If the number of moles is set to a negative number, 
         the gas component will not be defined for the GAS_PHASE of the reaction cell.
         """
         node = dict()
         node["key"] = "SetGasCompMoles"
-        node["gas_moles"] = gas_moles
+        node["gas_moles"] = self.GetList(gas_moles)
         self.yaml_doc.append(node)
     def YAMLSetGasPhaseVolume(self,  gas_volume):
         """
@@ -668,13 +661,13 @@ class YAMLPhreeqcRM(object):
         affects the gas-component pressures calculated for fixed-volume gas phases. If a gas-phase volume 
         is defined with this methood for a GAS_PHASE in a cell, the gas phase is forced to be a 
         fixed-volume gas phase.
-        @param  gas_volume Vector of volumes for each gas phase. Dimension of the vector is nxyz, where 
+        @param  gas_volume A list, tuple, or numpy array of volumes for each gas phase. Dimension of the vector is nxyz, where 
         nxyz is the number of user grid cells. If the volume is set to a negative number for a cell, 
         the gas-phase volume for that cell is not changed.
         """
         node = dict()
         node["key"] = "SetGasPhaseVolume"
-        node["gas_volume"] = gas_volume
+        node["gas_volume"] = self.GetList(gas_volume)
         self.yaml_doc.append(node)
     def YAMLSetGridCellCount(self, count):
         """
@@ -739,12 +732,12 @@ class YAMLPhreeqcRM(object):
         initialize a PhreeqcRM instance. SetPorosity sets the porosity for each reaction cell.
         The volume of water in a reaction cell is the product of porosity, saturation
         (SetSaturationUser), and representative volume (SetRepresentativeVolume).
-        @param por Vector of porosities, unitless. Default is 0.1. Size of vector is nxyz, where 
+        @param por A list, tuple, or numpy array of porosities, unitless. Size of vector is nxyz, where 
         nxyz is the number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "SetPorosity"
-        node["por"] = por
+        node["por"] = self.GetList(por)
         self.yaml_doc.append(node)
     def YAMLSetPressure(self,  p):
         """
@@ -754,12 +747,12 @@ class YAMLPhreeqcRM(object):
         initialize a PhreeqcRM instance. SetPressure sets the pressure for each reaction cell. 
         Pressure effects are considered only in three of the databases distributed with PhreeqcRM: 
         phreeqc.dat, Amm.dat, and pitzer.dat.
-        @param p Vector of pressures, in atm. Size of vector is nxyz, where nxyz is the 
+        @param p A list, tuple, or numpy array of pressures, in atm. Size of vector is nxyz, where nxyz is the 
         number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "SetPressure"
-        node["p"] = p
+        node["p"] = self.GetList(p)
         self.yaml_doc.append(node)
     def YAMLSetPrintChemistryMask(self, cell_mask):
         """
@@ -769,13 +762,13 @@ class YAMLPhreeqcRM(object):
         initialize a PhreeqcRM instance. SetPrintChemistryMask enables or disables detailed output 
         for each reaction cell. Printing for a reaction cell will occur only when the
         printing is enabled with SetPrintChemistryOn and the cell_mask value is 1.
-        @param cell_mask Vector of integers. Size of vector is nxyz, where nxyz is the number
+        @param cell_mask A list, tuple, or numpy array of integers. Size of vector is nxyz, where nxyz is the number
         of grid cells in the user's model. A value of 0 will disable printing detailed output for 
         the cell; a value of 1 will enable printing detailed output for a cell.
         """
         node = dict()
         node["key"] = "SetPrintChemistryMask"
-        node["cell_mask"] = cell_mask
+        node["cell_mask"] = self.GetList(cell_mask)
         self.yaml_doc.append(node)
     def YAMLSetPrintChemistryOn(self, workers, initial_phreeqc, utility):
         """
@@ -864,12 +857,12 @@ class YAMLPhreeqcRM(object):
         surfaces, exchangers, and others), which are defined as moles per representative volume.
         SetRepresentativeVolume should be called before initial conditions are defined for the 
         reaction cells.
-        @param rv Vector of representative volumes, in liters. Default is 1.0 liter.
+        @param rv A list, tuple, or numpy array of representative volumes, in liters. 
         Size of array is nxyz, where nxyz is the number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "SetRepresentativeVolume"
-        node["rv"] = rv
+        node["rv"] = self.GetList(rv)
         self.yaml_doc.append(node)
     def YAMLSetSaturationUser(self,  sat):
         """
@@ -883,12 +876,12 @@ class YAMLPhreeqcRM(object):
         and volume) will change; the databases phreeqc.dat, Amm.dat, and pitzer.dat have the molar 
         volume data to calculate these changes. The methods GetDensity, GetSolutionVolume, and 
         GetSaturation can be used to account for these changes in the succeeding transport calculation.
-        @param sat Vector of saturations, unitless. Default 1.0. Size of vector is nxyz,
+        @param sat A list, tuple, or numpy array of saturations, unitless. Size of vector is nxyz,
         where nxyz is the number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "SetSaturationUser"
-        node["sat"] = sat
+        node["sat"] = self.GetList(sat)
         self.yaml_doc.append(node)
     def YAMLSetScreenOn(self, tf):
         """
@@ -945,12 +938,12 @@ class YAMLPhreeqcRM(object):
         initialize a PhreeqcRM instance. SetTemperature sets the temperature for each reaction cell. 
         If SetTemperature is not called, worker solutions will have temperatures as defined by initial 
         conditions (InitialPhreeqc2Module and InitialPhreeqcCell2Module).
-        @param t Vector of temperatures, in degrees C. Size of vector is @a nxyz, where @a nxyz is 
+        @param t A list, tuple, or numpy array of temperatures, in degrees C. Size of vector is @a nxyz, where @a nxyz is 
         the number of grid cells in the user's model.
         """
         node = dict()
         node["key"] = "SetTemperature"
-        node["t"] = t
+        node["t"] = self.GetList(t)
         self.yaml_doc.append(node)
     def YAMLSetTime(self, time):
         """
@@ -1206,13 +1199,13 @@ class YAMLPhreeqcRM(object):
         Usually, accurate concentrations will not be known to use YAMLSpeciesConcentrations2Module during
         initialization.
 
-        @param species_conc Vector of aqueous species concentrations. Dimension of the array is nspecies 
+        @param species_conc A list, tuple, or numpy array of aqueous species concentrations. Dimension of the array is nspecies 
         times nxyz, where  nspecies is the number of aqueous species, and nxyz is the number of user 
         grid cells. Concentrations are moles per liter.
         """
         node = dict()
         node["key"] = "SpeciesConcentrations2Module"
-        node["species_conc"] = species_conc
+        node["species_conc"] = self.GetList(species_conc)
         self.yaml_doc.append(node)
     def YAMLStateSave(self, istate):
         """
@@ -1321,3 +1314,9 @@ class YAMLPhreeqcRM(object):
         node["key"] = "WarningMessage"
         node["str"] = str
         self.yaml_doc.append(node)
+    def GetList(self, v):
+        if isinstance(v, np.ndarray) and (isinstance(v[0].item(), int) or isinstance(v[0], float)):
+            return v.tolist()
+        elif isinstance(v, tuple):
+            return list(v)
+        return v
