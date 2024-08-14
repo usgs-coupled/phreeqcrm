@@ -6,6 +6,10 @@
 
 #include "Var.h"
 
+#ifdef IPHREEQC_NO_FORTRAN_MODULE
+#include <stddef.h>
+#endif
+
 /**
  * @mainpage IPhreeqc Library Documentation (@PHREEQC_VER@-@REVISION_SVN@)
  *
