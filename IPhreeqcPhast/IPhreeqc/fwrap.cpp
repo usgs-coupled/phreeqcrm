@@ -482,7 +482,7 @@ RunStringF(int *id, char* input, size_t input_length)
 }
 
 IPQ_RESULT
-SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *str, size_t l))
+SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, const char *str, size_t l))
 {
 	return ::SetBasicFortranCallback(*id, fcn);
 }
