@@ -208,7 +208,7 @@ IPQ_DLL_EXPORT int  IPQ_DECL IPQ_CASE_UND(runstring, RUNSTRING, runstring_, RUNS
 {
 	return RunStringF(id, input, len);
 }
-IPQ_DLL_EXPORT int  IPQ_DECL IPQ_CASE_UND(setbasicfortrancallback, SETBASICFORTRANCALLBACK, setbasicfortrancallback_, SETBASICFORTRANCALLBACK_)(int *id, double (*fcn)(double *x1, double *x2, char *str, size_t l))
+IPQ_DLL_EXPORT int  IPQ_DECL IPQ_CASE_UND(setbasicfortrancallback, SETBASICFORTRANCALLBACK, setbasicfortrancallback_, SETBASICFORTRANCALLBACK_)(int *id, double (*fcn)(double *x1, double *x2, const char *str, size_t l))
 {
 	return SetBasicFortranCallbackF(id, fcn);
 }

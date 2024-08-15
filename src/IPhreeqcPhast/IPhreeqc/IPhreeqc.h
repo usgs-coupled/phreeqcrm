@@ -1711,7 +1711,7 @@ Headings
  *  @include ic
  */
 #ifdef IPHREEQC_NO_FORTRAN_MODULE
-	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str, size_t l));
+	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, const char *str, size_t l));
 #else
 	IPQ_DLL_EXPORT IPQ_RESULT  SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, const char *str, int l));
 #endif
