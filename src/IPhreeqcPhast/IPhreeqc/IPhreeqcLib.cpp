@@ -802,7 +802,7 @@ SetBasicCallback(int id, double (*fcn)(double x1, double x2, const char *str, vo
 #if !defined(R_SO)
 #ifdef IPHREEQC_NO_FORTRAN_MODULE
 IPQ_RESULT
-SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, char *str, size_t l))
+SetBasicFortranCallback(int id, double (*fcn)(double *x1, double *x2, const char *str, size_t l))
 {
 	IPhreeqc* IPhreeqcPtr = IPhreeqcLib::GetInstance(id);
 	if (IPhreeqcPtr)

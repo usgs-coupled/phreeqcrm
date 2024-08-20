@@ -9,4 +9,4 @@ dependencies:
 - pyyaml
 - swig
 - yaml-cpp
-
+- cmake

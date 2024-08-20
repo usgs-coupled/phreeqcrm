@@ -1,114 +1,101 @@
 name: wheels
 
-on:
-  pull_request:
-    branches:
-      - master
-  push:
-    branches:
-      - master
-  workflow_dispatch:
-  release:
-    types:
-      - published
-
-env:
-  FORCE_COLOR: 3
-  YAML_CPP_REF: b8882652fcbeba4c00dec019a39da91e702e474e
-  USE_LIB_CMAKE_YAML_CPP: ${{ true }}
+on: [push, pull_request]
 
 jobs:
-  build:
-    name: ${{ matrix.os }} (python ${{ matrix.python-version }})
-
+  build_wheels:
+    name: ${{ matrix.python[0] }}(${{ matrix.buildplat[2] }}) on ${{ matrix.buildplat[0] }}
+    runs-on: ${{ matrix.buildplat[0] }}
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12, macos-13, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-
-    runs-on: ${{ matrix.os }}
+        buildplat:
+          - [macos-13, macosx_x86_64, x86_64]
+          - [macos-14, macosx_arm64, arm64]
+          - [ubuntu-20.04, manylinux_x86_64, x86_64]
+          - [ubuntu-20.04, manylinux_i686, i686]
+          - [windows-2019, win_amd64, x64]
+          - [windows-2019, win32, Win32]
+        python:
+          - [cp38, v141]
+          - [cp39, v141]
+          - [cp310, v141]
+          - [cp311, v141]
+          - [cp312, v142]
+          - [cp313, v142]
+        exclude:
+          - buildplat: [windows-2019, win_amd64, x64]
+            python: [cp313, v142]
+          - buildplat: [windows-2019, win32, Win32]
+            python: [cp313, v142]
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          path: phreeqcrm-source
 
+      # Used to host cibuildwheel
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Build wheels
+        if: ${{ runner.os != 'Windows' }}
+        uses: pypa/cibuildwheel@7e5a838a63ac8128d71ab2dfd99e4634dd1bca09  # v2.19.2
+        env:
+          CIBW_PRERELEASE_PYTHONS: True
+          CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_TEST_REQUIRES: pytest
+          # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
+          CIBW_TEST_COMMAND: "pytest {project}/swig/python"
+
+      - name: Build wheels (Windows)
+        if: ${{ runner.os == 'Windows' }}
+        uses: pypa/cibuildwheel@7e5a838a63ac8128d71ab2dfd99e4634dd1bca09  # v2.19.2
+        env:
+          CIBW_PRERELEASE_PYTHONS: True
+          CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_TEST_REQUIRES: pytest
+          # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
+          CIBW_TEST_COMMAND: "pytest {project}/swig/python"
+          CMAKE_GENERATOR: Visual Studio 16 2019
+          CMAKE_GENERATOR_TOOLSET: ${{ matrix.python[1] }}
+          CMAKE_GENERATOR_PLATFORM: ${{ matrix.buildplat[2] }}
+
+      - uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        with:
+          name: dist-${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
+          path: ./wheelhouse/*.whl
+
+
+  build_sdist:
+    name: Build sdist
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5.1.1
         with:
-            repository: jbeder/yaml-cpp
-            ref: ${{ env.YAML_CPP_REF }}
-            path: yaml-cpp-source
-
-      - name: Install ninja (Linux)
-        if: ${{ runner.os == 'Linux' }}
-        run: sudo apt-get -y install ninja-build
-
-      - name: Install ninja (macOS)
-        if: ${{ runner.os == 'macOS' }}
-        run: brew install ninja
-
-      - name: Set up Visual Studio shell (Windows)
-        if: runner.os == 'Windows'
-        uses: egor-tensin/vs-shell@v2
-        with:
-          arch: x64
-
-      - name: Cache yaml-cpp
-        id: cache-yaml-cpp
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/yaml-cpp-install
-          key: ${{ matrix.os }}-yaml-cpp-${{ env.YAML_CPP_REF }}
-
-      - name: Configure yaml-cpp
-        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
-        run: cmake -G "Ninja Multi-Config" -B yaml-cpp-build -S yaml-cpp-source -DYAML_CPP_BUILD_TOOLS:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=$(pwd)/yaml-cpp-install -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-
-      - name: Build yaml-cpp
-        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
-        run: cmake --build yaml-cpp-build --config Release
-
-      - name: Test yaml-cpp
-        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
-        run: ctest --test-dir yaml-cpp-build
-
-      - name: Install yaml-cpp
-        if: steps.cache-yaml-cpp.outputs.cache-hit != 'true'
-        run: cmake --install yaml-cpp-build
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Python ${{ matrix.python-version }} dependencies
+          # Build sdist on lowest supported Python
+          python-version: "3.8"
+      - name: Build sdist
         run: |
-          python --version
-          python -m pip install --upgrade pip
-          pip install pipx
+          python -m pip install -U pip build
+          python -m build --sdist
 
-      - name: Build package (using share/cmake/yaml-cpp)
-        if: ${{ !env.USE_LIB_CMAKE_YAML_CPP }}
-        env:
-          yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/share/cmake/yaml-cpp
-        working-directory: phreeqcrm-source
-        run: pipx run build
-
-      - name: Build package (using lib/cmake/yaml-cpp)
-        if: ${{ env.USE_LIB_CMAKE_YAML_CPP }}
-        env:
-          yaml-cpp_DIR: ${{ github.workspace }}/yaml-cpp-install/lib/cmake/yaml-cpp
-        working-directory: phreeqcrm-source
-        run: pipx run build
-
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
         with:
-          name: wheels-${{ matrix.os }}-python-${{ matrix.python-version }}
-          path: phreeqcrm-source/dist/*.whl
+          name: dist-sdist
+          path: ./dist/*
 
-      - uses: actions/upload-artifact@v4
-        if: ${{ matrix.python-version == '3.10' && matrix.os == 'ubuntu-22.04' }}
+
+  merge_wheels:
+    name: Merge wheels into a combined artifact
+    runs-on: ubuntu-latest
+    needs: [build_wheels, build_sdist]
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
         with:
-          name: source
-          path: phreeqcrm-source/dist/*.tar.gz
+          name: dist
+          pattern: dist-*

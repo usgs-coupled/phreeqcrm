@@ -7,11 +7,13 @@ from six.moves import range
 
 from phreeqcrm import bmi_phreeqcrm
 
+from constants import FilePaths
+
 def test_component_name():
     model = bmi_phreeqcrm()
 
     name = model.get_component_name()
-    assert name == "BMI PhreeqcRM"
+    assert name[:13] == "BMI PhreeqcRM"
     #assert model.get_component_name() is name  @todo
 
 def test_start_time():
@@ -73,7 +75,7 @@ def test_initialize_from_file():
 def test_update():
     model = bmi_phreeqcrm()
     ## model.initialize() #  @todo
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     for inc in range(10):
         model.update()

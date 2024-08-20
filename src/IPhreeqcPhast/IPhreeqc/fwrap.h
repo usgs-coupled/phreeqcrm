@@ -135,7 +135,7 @@ extern "C" {
   int        RunAccumulatedF(int *id);
   int        RunFileF(int *id, char* filename, size_t filename_length);
   int        RunStringF(int *id, char* input, size_t input_length);
-  IPQ_RESULT SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, char *str, size_t l));
+  IPQ_RESULT SetBasicFortranCallbackF(int *id, double (*fcn)(double *x1, double *x2, const char *str, size_t l));
   IPQ_RESULT SetCurrentSelectedOutputUserNumberF(int *id, int *n);
   IPQ_RESULT SetDumpFileNameF(int *id, char* fname, size_t fname_length);
   IPQ_RESULT SetDumpFileOnF(int *id, int* dump_on);

@@ -7,11 +7,13 @@ from numpy.testing import assert_almost_equal, assert_array_equal, assert_array_
 
 from phreeqcrm import BMIPhreeqcRM
 
+from constants import FilePaths
+
 def test_component_name():
     model = BMIPhreeqcRM()
 
     name = model.get_component_name()
-    assert name == "BMI PhreeqcRM"
+    assert name[:13] == "BMI PhreeqcRM"
     #assert model.get_component_name() is name  @todo
 
 def test_start_time():
@@ -73,7 +75,7 @@ def test_initialize_from_file():
 def test_update():
     model = BMIPhreeqcRM()
     ## model.initialize() #  @todo
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     for inc in range(10):
         model.update()

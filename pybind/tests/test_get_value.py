@@ -3,6 +3,8 @@ from numpy.testing import assert_array_almost_equal, assert_array_less, assert_a
 
 from phreeqcrm import bmi_phreeqcrm
 
+from constants import FilePaths
+
 def test_get_initial_value():
     model = bmi_phreeqcrm()
     model.initialize()
@@ -24,7 +26,7 @@ def test_get_value_copy():
 
 def test_get_value_copy_int_scalar():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     dest0 = np.empty((1,), dtype=int)
     dest1 = np.empty((1,), dtype=int)
@@ -39,7 +41,7 @@ def test_get_value_copy_int_scalar():
 
 def test_get_value_copy_float_scalar():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     dest0 = np.empty((1,), dtype=float)
     dest1 = np.empty((1,), dtype=float)
@@ -54,7 +56,7 @@ def test_get_value_copy_float_scalar():
 
 def test_get_value_copy_str():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     components = model.get_value_ptr("Components")
     dest0 = np.empty_like(components)
@@ -68,7 +70,7 @@ def test_get_value_copy_str():
 
 def test_get_value_pointer():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     dest1 = np.empty(model.get_grid_size(0), dtype=float)
 
@@ -86,7 +88,7 @@ def test_get_value_pointer():
 
 def test_get_value_at_indices():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     temps = np.linspace(18.0, 30.0, model.get_grid_size(0))
     model.set_value("Temperature", temps)
@@ -101,7 +103,7 @@ def test_get_value_at_indices():
 
 def test_value_size():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     z = model.get_value_ptr("Temperature")
     assert model.get_grid_size(0) == z.size
@@ -109,7 +111,7 @@ def test_value_size():
 
 def test_value_nbytes():
     model = bmi_phreeqcrm()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     z = model.get_value_ptr("Temperature")
     assert model.get_var_nbytes("Temperature") == z.nbytes

@@ -1,5 +1,7 @@
 import numpy as np
-import yamlphreeqcrm 
+import yamlphreeqcrm
+
+from constants import FilePaths
 
 def WriteYAMLFile_py():
 	# Create YAMLPhreeqcRM document
@@ -35,13 +37,14 @@ def WriteYAMLFile_py():
 	rv = [1] * nxyz
 	yrm.YAMLSetRepresentativeVolume(rv)
 	# Set initial density
-	density = [1.0] * nxyz
+	density = [1.0] * nxyz                 # a float list
 	yrm.YAMLSetDensityUser(density)
     # Set initial porosity
-	por = [0.2] * nxyz
+	por = [0.2] * nxyz                     # an integer list
 	yrm.YAMLSetPorosity(por)
 	# Set initial saturation
-	sat = [1] * nxyz
+	#sat = [1] * nxyz
+	sat = tuple(1.0 for i in range(nxyz))   # a float tuple
 	yrm.YAMLSetSaturationUser(sat)   
 	# Set cells to print chemistry when print chemistry is turned on
 	print_chemistry_mask = [0] * nxyz
@@ -72,9 +75,11 @@ def WriteYAMLFile_py():
 	# Determine number of components to transport
 	yrm.YAMLFindComponents()
 	# set array of initial conditions
-	ic1 = [-1]*(nxyz*7)
-	ic2 = [-1]*(nxyz*7)
-	f1 = [1]*(nxyz*7)
+	ic1 = [-1]*(nxyz*7)            # an integer list
+	#ic2 = [-1]*(nxyz*7)
+	ic2 = np.full((nxyz*7,), -1)   # a numpy integer array
+	#f1 = [1]*(nxyz*7)
+	f1 = np.full((nxyz*7,), 1.0)   # a numpy double array
 	for i in range(nxyz): 
 		ic1[i] = 1;                # Solution 1
 		ic1[nxyz + i] = -1;        # Equilibrium phases none
@@ -92,7 +97,7 @@ def WriteYAMLFile_py():
 	# in advect.pqi and any reactants with the same number--
 	# Equilibrium phases, exchange, surface, gas phase, solid solution, and (or) kinetics--
 	# will be written to cells 18 and 19 (0 based)
-	module_cells = [18, 19]
+	module_cells = (18, 19)    # an integer tuple
 	yrm.YAMLInitialPhreeqcCell2Module(-1, module_cells)
 	# Initial equilibration of cells
 	time_step = 0.0    # no kinetics
@@ -103,7 +108,7 @@ def WriteYAMLFile_py():
 	time_step = 86400.0
 	yrm.YAMLSetTimeStep(time_step)    
 	# Write YAML file	
-	yrm.WriteYAMLDoc("AdvectBMI_py.yaml")
+	yrm.WriteYAMLDoc(FilePaths.YAML)
 	print("Done.")
 
 if __name__ == '__main__':

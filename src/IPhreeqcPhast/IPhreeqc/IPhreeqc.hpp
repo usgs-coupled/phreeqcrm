@@ -718,7 +718,7 @@ public:
 	 *  @see                    SetBasicCallback
 	 */
 #ifdef IPHREEQC_NO_FORTRAN_MODULE
-	void                     SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, char *str, size_t l));
+	void                     SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, const char *str, size_t l));
 #else
 	void                     SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, const char *str, int l));
 #endif

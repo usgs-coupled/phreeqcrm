@@ -3,9 +3,11 @@ from numpy.testing import assert_array_almost_equal
 
 from phreeqcrm import BMIPhreeqcRM
 
+from constants import FilePaths
+
 def test_set_value():
     model = BMIPhreeqcRM()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     z0 = model.get_value_ptr("Temperature")
     z1 = np.zeros_like(z0) - 1
@@ -20,7 +22,7 @@ def test_set_value():
 
 def test_set_value_at_indices():
     model = BMIPhreeqcRM()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     model.set_value_at_indices("Temperature", np.array([0, 2, 4]), np.array([-1.0, -1.0, -1.0]))
 
@@ -29,7 +31,7 @@ def test_set_value_at_indices():
 
 def test_set_value_SelectedOutputOn():
     model = BMIPhreeqcRM()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     z0 = model.get_value_ptr("SelectedOutputOn")
     assert str(z0.dtype) == "int32"
@@ -50,7 +52,7 @@ def test_numpy_integers_compatibility():
     # not being integrated into PhreeqcRM.i
 
     model = BMIPhreeqcRM()
-    model.initialize("AdvectBMI_py.yaml")
+    model.initialize(FilePaths.YAML)
 
     z1 = np.full(1, 0, dtype=int)
     n = model.GetNthSelectedOutputUserNumber(z1[0])

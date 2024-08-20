@@ -1806,7 +1806,7 @@ Returns:
 "A YAML file can be used to initialize an instance of PhreeqcRM. 
 
 Args:
-	str: String containing the YAML file name.
+	YAML_file: String containing the YAML file name.
 
 Returns:
 	IRM_RESULT: 0 is success, negative is failure (See

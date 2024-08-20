@@ -11,6 +11,12 @@ project(
   LANGUAGES CXX C
 )
 
+if(DEFINED SKBUILD)
+  include(CheckPIESupported)
+  check_pie_supported()
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
 # check if this is the root project
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set(STANDALONE_BUILD 1)
@@ -33,11 +39,40 @@ if(PHREEQCRM_FORTRAN_TESTING)
   enable_language(Fortran)
 endif()
 
+if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
+
+  # Include FetchContent module
+  include(FetchContent)
+
+  # Fetch yaml-cpp
+  FetchContent_Declare(
+    yaml-cpp
+    URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/yaml-cpp-0.7.0.tar.gz
+  )
+
+  # Make yaml-cpp available
+  FetchContent_MakeAvailable(yaml-cpp)
+
+
+  # Fetch zlib
+  FetchContent_Declare(
+    zlib
+    URL https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz
+  )
+
+  # Don't install zlib in wheel
+  set(SKIP_INSTALL_ALL ON)
+  # Make zlib available
+  FetchContent_MakeAvailable(zlib)
+endif()
+
 option(PHREEQCRM_WITH_YAML_CPP "Build with yaml-cpp support" OFF)
 if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
   set(PHREEQCRM_WITH_YAML_CPP ON)
 endif()
-if(PHREEQCRM_WITH_YAML_CPP)
+if(PHREEQCRM_WITH_YAML_CPP AND NOT DEFINED SKBUILD)
   find_package(yaml-cpp REQUIRED)
   if(yaml-cpp_FOUND)
     message(STATUS "Found yaml-cpp: TRUE (found version \"${yaml-cpp_VERSION}\")")
@@ -60,6 +95,7 @@ endif()
 
 option(PHREEQCRM_BUILD_PYTHON "Build python wrapper using SWIG" OFF)
 if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
   set(PHREEQCRM_BUILD_PYTHON ON)
 endif()
 if(PHREEQCRM_BUILD_PYTHON)
@@ -67,7 +103,8 @@ if(PHREEQCRM_BUILD_PYTHON)
     message(FATAL_ERROR "Building python wrapper requires PHREEQCRM_WITH_YAML_CPP.")
   endif()
   find_package(SWIG REQUIRED)
-  find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
+  ###find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development Development.Module NumPy)
+  find_package(Python COMPONENTS Interpreter Development.Module NumPy REQUIRED)
   # Set Python_ROOT_DIR to specify which python to use
   # ie -DPython_ROOT_DIR=C:/Python38-x64
 endif()
@@ -318,6 +355,11 @@ if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
   # set(phreeqcrm_requires "yaml-cpp")
   set(useyaml_define "-DUSE_YAML")
 endif()
+if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
+  target_compile_definitions(PhreeqcRM PUBLIC USE_YAML)
+  target_link_libraries(PhreeqcRM PUBLIC yaml-cpp)
+endif()
 
 # check for zlib
 if(NOT ZLIB_ROOT)
@@ -326,7 +368,11 @@ if(NOT ZLIB_ROOT)
   endif()
 endif()
 option(PHREEQCRM_USE_ZLIB "Use zlib compression for dump files" OFF)
-if(PHREEQCRM_USE_ZLIB)
+if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
+  set(PHREEQCRM_USE_ZLIB ON)
+endif()
+if(PHREEQCRM_USE_ZLIB AND NOT DEFINED SKBUILD)
   find_package(ZLIB REQUIRED)
 endif()
 
@@ -334,6 +380,12 @@ if(PHREEQCRM_USE_ZLIB AND ZLIB_FOUND)
   target_compile_definitions(PhreeqcRM PRIVATE USE_GZ)
   target_link_libraries(PhreeqcRM PRIVATE ZLIB::ZLIB)
   string(APPEND exportPackageDependencies "find_dependency(ZLIB)\n")
+endif()
+if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
+  target_compile_definitions(PhreeqcRM PRIVATE USE_GZ)
+  # for the wheel link to static zlib
+  target_link_libraries(PhreeqcRM PRIVATE zlibstatic)
 endif()
 
 # Allow user to override POSTFIX properties (but mandate them so that
@@ -455,6 +507,7 @@ configure_file(phreeqcrm.cmake.in phreeqcrm.pc @ONLY)
 
 # install
 if(STANDALONE_BUILD EQUAL 1 AND NOT DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
 
   include(CMakePackageConfigHelpers)
 
@@ -546,6 +599,7 @@ if(STANDALONE_BUILD EQUAL 1)
 
   # subdirs
   if(NOT DEFINED SKBUILD)
+    # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
     add_subdirectory(database)
     add_subdirectory(doc)
     add_subdirectory(Doxygen)
@@ -563,9 +617,16 @@ if(MSVC)
 endif()
 
 if(DEFINED SKBUILD)
+  # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
   message(STATUS "SKBUILD IS defined")
   #set_target_properties(PhreeqcRM TestRM TestBMIdtor TestRMdtor PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
   set_target_properties(PhreeqcRM PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+  message(STATUS "SKIP_INSTALL_ALL=${SKIP_INSTALL_ALL}")
+  if (SKIP_INSTALL_ALL)
+    message(STATUS "SKIP_INSTALL_ALL TRUE")
+  else()
+    message(STATUS "SKIP_INSTALL_ALL TRUE")
+  endif()
 else()
   message(STATUS "SKBUILD is NOT defined")
 endif()
