@@ -1090,7 +1090,12 @@ PhreeqcRM::Concentrations2SolutionsH2O(int n, std::vector<double> &c)
 	int start = this->start_cell[n];
 	int end = this->end_cell[n];
 #endif
-
+	if (gfw.size() == 0)
+	{
+		this->ErrorMessage("FindComponents must be called before this point, stopping.", true);
+		std::cerr << "ERROR: FindComponents must be called before this point, stopping." << std::endl;
+		throw PhreeqcRMStop();
+	}
 	for (j = start; j <= end; j++)
 	{
 		std::vector<double> d;  // scratch space to convert from mass fraction to moles
@@ -1192,7 +1197,12 @@ PhreeqcRM::Concentrations2SolutionsNoH2O(int n, std::vector<double> &c)
 	int start = this->start_cell[n];
 	int end = this->end_cell[n];
 #endif
-
+	if (gfw.size() == 0)
+	{
+		this->ErrorMessage("FindComponents must be called before this point, stopping.", true);
+		std::cerr << "ERROR: FindComponents must be called before this point, stopping." << std::endl;
+		throw PhreeqcRMStop();
+	}
 	for (j = start; j <= end; j++)
 	{
 		std::vector<double> d;  // scratch space to convert from mass fraction to moles
@@ -1292,7 +1302,12 @@ PhreeqcRM::Concentrations2UtilityH2O(const std::vector<double> &c_in,
 	size_t ncomps = this->components.size();
 	size_t nsolns = c.size() / ncomps;
 	size_t nutil= this->nthreads + 1;
-
+	if (gfw.size() == 0)
+	{
+		this->ErrorMessage("FindComponents must be called before this point, stopping.", true);
+		std::cerr << "ERROR: FindComponents must be called before this point, stopping." << std::endl;
+		throw PhreeqcRMStop();
+	}
 	for (size_t i = 0; i < nsolns; i++)
 	{
 		std::vector<double> d;  // scratch space to convert from mass fraction to moles
@@ -1368,7 +1383,12 @@ PhreeqcRM::Concentrations2UtilityNoH2O(const std::vector<double> &c_in,
 	size_t ncomps = this->components.size();
 	size_t nsolns = c.size() / ncomps;
 	size_t nutil= this->nthreads + 1;
-
+	if (gfw.size() == 0)
+	{
+		this->ErrorMessage("FindComponents must be called before this point, stopping.", true);
+		std::cerr << "ERROR: FindComponents must be called before this point, stopping." << std::endl;
+		throw PhreeqcRMStop();
+	}
 	for (size_t i = 0; i < nsolns; i++)
 	{
 		std::vector<double> d;  // scratch space to convert from mass fraction to moles
@@ -1796,7 +1816,12 @@ PhreeqcRM::cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector<d
 /* ---------------------------------------------------------------------- */
 {
 	d.clear();
-
+	if (gfw.size() == 0)
+	{
+		this->ErrorMessage("FindComponents must be called before this point, stopping.", true);
+		std::cerr << "ERROR: FindComponents must be called before this point, stopping." << std::endl;
+		throw PhreeqcRMStop();
+	}
 	// Simplify totals
 	{
 	  cxxNameDouble nd = cxxsoln_ptr->Get_totals().Simplify_redox();
@@ -1867,7 +1892,12 @@ PhreeqcRM::cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector
 	  cxxNameDouble nd = cxxsoln_ptr->Get_totals().Simplify_redox();
 	  cxxsoln_ptr->Set_totals(nd);
 	}
-
+	if (gfw.size() == 0)
+	{
+		this->ErrorMessage("FindComponents must be called before this point, stopping.", true);
+		std::cerr << "ERROR: FindComponents must be called before this point, stopping." << std::endl;
+		throw PhreeqcRMStop();
+	}
 	// convert units
 	switch (this->units_Solution)
 	{
