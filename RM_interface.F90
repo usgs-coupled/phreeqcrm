@@ -394,6 +394,7 @@
     INTEGER, INTENT(in), DIMENSION(:) :: grid2chem
     INTEGER :: errors
     errors = 0
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Integer1D(id, grid2chem, rmf_nxyz, "Grid2chem mapping", "RM_Createmapping")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument(s) in RM_Createmapping")
@@ -1639,6 +1640,7 @@
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Double2D(id, gas_moles, rmf_nxyz, rmf_ngas_comps, "gas_moles", "RM_GetGasCompMoles")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument(s) in RM_GetGasCompMoles")
@@ -4429,6 +4431,7 @@
     real(kind=8), INTENT(IN), DIMENSION(:,:) , OPTIONAL :: f1
     INTEGER :: errors
     errors = 0
+    rmf_nxyz = RM_GetGridCellCount(id)  
     errors = errors + Chk_Integer2D(id, ic1, rmf_nxyz, 7, "ic1", "RM_InitialPhreeqc2Module")
     if (present(ic2)) then
         errors = errors + Chk_Integer2D(id, ic2, rmf_nxyz, 7, "ic2", "RM_InitialPhreeqc2Module")
@@ -5528,6 +5531,7 @@
     INTEGER :: errors
     errors = 0
     rmf_ncomps = RMF_GetComponentCount(id)
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Double2D(id, c, rmf_nxyz, rmf_ncomps, "concentration", "RM_SetConcentrations")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetConcentrations")
@@ -5664,6 +5668,7 @@
     real(kind=8), INTENT(in), DIMENSION(:) :: density
     INTEGER :: errors
     errors = 0
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Double1D(id, density, rmf_nxyz, "density", "RM_SetDensityUser")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetDensityUser")
@@ -5870,6 +5875,7 @@
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Double2D(id, gas_moles, rmf_nxyz, rmf_ngas_comps, "gas moles", "RM_SetGasCompMoles")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetGasCompMoles")
@@ -5933,6 +5939,7 @@
     INTEGER :: errors, rmf_ngas_comps
     errors = 0
     rmf_ngas_comps = RM_GetGasComponentsCount(id)
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Double1D(id, gas_volume, rmf_nxyz, "gas volume", "RM_SetGasPhaseVolume")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetGasPhaseVolume")
@@ -6303,6 +6310,7 @@
     real(kind=8), INTENT(in), DIMENSION(:) :: por
     INTEGER :: errors
     errors = 0
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Double1D(id, por, rmf_nxyz, "porosity", "RM_SetPorosity")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetPorosity")
@@ -6354,6 +6362,7 @@
     real(kind=8), INTENT(in), DIMENSION(:) :: p
     INTEGER :: errors
     errors = 0
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Double1D(id, p, rmf_nxyz, "pressure", "RM_SetPressure")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetPressure")
@@ -6410,6 +6419,7 @@
     INTEGER, INTENT(in), DIMENSION(:) :: cell_mask
     INTEGER :: errors
     errors = 0
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Integer1D(id, cell_mask, rmf_nxyz, "cell_mask", "RM_SetPrintChemistryMask")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetPrintChemistryMask")
@@ -6665,6 +6675,7 @@
     real(kind=8), INTENT(in), DIMENSION(:) :: sat
     INTEGER :: errors
     errors = 0
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Double1D(id, sat, rmf_nxyz, "sataturation", "RM_SetSaturationUser")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetSaturationUser")
@@ -6850,6 +6861,7 @@
     real(kind=8), INTENT(in), DIMENSION(:) :: t
     INTEGER :: errors
     errors = 0
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Double1D(id, t, rmf_nxyz, "temperature", "RM_SetTemperature")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SetTemperature")
@@ -7435,6 +7447,7 @@
     INTEGER :: errors, nspecies
     nspecies = RM_GetSpeciesCount(id)
     errors = 0
+    rmf_nxyz = RM_GetGridCellCount(id)
     errors = errors + Chk_Double2D(id, species_conc, rmf_nxyz, nspecies, "species_conc", "RM_SpeciesConcentrations2Module")
     if (errors .gt. 0) then
         errors = RM_Abort(id, -3, "Invalid argument in RM_SpeciesConcentrations2Module")
