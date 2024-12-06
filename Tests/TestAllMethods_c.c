@@ -78,6 +78,9 @@ void TestAllMethods_c()
 	id = RM_BmiCreate(nxyz, nthreads);
 #endif
 
+	// delete YAMLPhreeqcRM by id
+	DestroyYAMLPhreeqcRM(yid);
+
 	// Use YAML file to initialize
 	//RM_BmiInitialize(id, "");            // Initializes with no file
 	RM_BmiInitialize(id, YAML_filename);   // Initializes with file
