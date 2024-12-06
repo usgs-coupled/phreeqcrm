@@ -73,7 +73,7 @@ extern "C" {
  *  Internally used to create an error condition.
  *  @param id            The instance id returned from @ref CreateIPhreeqc.
  *  @param error_msg     The error message to display.
- *  @return              The current error count if successful; otherwise a negative value indicates an error occured (see @ref IPQ_RESULT).
+ *  @return              The current error count if successful; otherwise a negative value indicates an error occurred (see @ref IPQ_RESULT).
  *  @see                 GetErrorString, GetErrorStringLine, GetErrorStringLineCount, OutputErrorString
  *  @par Fortran90 Interface:
  *  @htmlonly
@@ -96,7 +96,7 @@ extern "C" {
  *  Internally used to create a warning condition.
  *  @param id            The instance id returned from @ref CreateIPhreeqc.
  *  @param warn_msg      The warning message to display.
- *  @return              The current warning count if successful; otherwise a negative value indicates an error occured (see @ref IPQ_RESULT).
+ *  @return              The current warning count if successful; otherwise a negative value indicates an error occurred (see @ref IPQ_RESULT).
  *  @see                 GetWarningString, GetWarningStringLine, GetWarningStringLineCount, OutputWarningString
  *  @par Fortran90 Interface:
  *  @htmlonly
@@ -137,7 +137,7 @@ extern "C" {
 
 /**
  *  Create a new IPhreeqc instance.
- *  @return      A non-negative value if successful; otherwise a negative value indicates an error occured (see @ref IPQ_RESULT).
+ *  @return      A non-negative value if successful; otherwise a negative value indicates an error occurred (see @ref IPQ_RESULT).
  *  @see         DestroyIPhreeqc
  *  @par Fortran90 Interface:
  *  @htmlonly
@@ -224,7 +224,7 @@ extern "C" {
  *  Retrieves the number of components in the current component list.
  *  @param id            The instance id returned from @ref CreateIPhreeqc.
  *  @return              The current count of components.
- *                       A negative value indicates an error occured (see @ref IPQ_RESULT).
+ *                       A negative value indicates an error occurred (see @ref IPQ_RESULT).
  *  @see                 GetComponent
  *  @par Fortran90 Interface:
  *  @htmlonly
@@ -671,7 +671,7 @@ extern "C" {
  *  Retrieves the nth user number of the currently defined <B>SELECTED_OUTPUT</B> keyword blocks.
  *  @param id            The instance id returned from @ref CreateIPhreeqc.
  *  @param n             The zero-based index of the <B>SELECTED_OUTPUT</B> user number to retrieve.
- *  @return              The nth defined user number; a negative value indicates an error occured.
+ *  @return              The nth defined user number; a negative value indicates an error occurred.
  *  @see                 GetCurrentSelectedOutputUserNumber, GetSelectedOutputCount, SetCurrentSelectedOutputUserNumber
  *  @pre @ref RunAccumulated, @ref RunFile, @ref RunString must have been called and returned 0 (zero) errors.
  *  @par Fortran90 Interface:

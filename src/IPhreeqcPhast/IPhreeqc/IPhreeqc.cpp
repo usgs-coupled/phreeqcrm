@@ -110,7 +110,7 @@ VRESULT IPhreeqc::AccumulateLine(const char *line)
 	}
 	catch (...)
 	{
-		this->AddError("AccumulateLine: An unhandled exception occured.\n");
+		this->AddError("AccumulateLine: An unhandled exception occurred.\n");
 		throw;
 	}
 	return VR_OUTOFMEMORY;
@@ -607,7 +607,7 @@ int IPhreeqc::load_db(const char* filename)
 	}
 	catch (...)
 	{
-		const char *errmsg = "LoadDatabase: An unhandled exception occured.\n";
+		const char *errmsg = "LoadDatabase: An unhandled exception occurred.\n";
 		try
 		{
 			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws IPhreeqcStop
@@ -670,7 +670,7 @@ int IPhreeqc::load_db_str(const char* input)
 	}
 	catch(...)
 	{
-		const char *errmsg = "LoadDatabaseString: An unhandled exception occured.\n";
+		const char *errmsg = "LoadDatabaseString: An unhandled exception occurred.\n";
 		try
 		{
 			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
@@ -773,7 +773,7 @@ int IPhreeqc::RunAccumulated(void)
 	}
 	catch(...)
 	{
-		const char *errmsg = "RunAccumulated: An unhandled exception occured.\n";
+		const char *errmsg = "RunAccumulated: An unhandled exception occurred.\n";
 		try
 		{
 			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
@@ -844,7 +844,7 @@ int IPhreeqc::RunFile(const char* filename)
 	}
 	catch(...)
 	{
-		const char *errmsg = "RunFile: An unhandled exception occured.\n";
+		const char *errmsg = "RunFile: An unhandled exception occurred.\n";
 		try
 		{
 			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
@@ -907,7 +907,7 @@ int IPhreeqc::RunString(const char* input)
 	}
 	catch(...)
 	{
-		const char *errmsg = "RunString: An unhandled exception occured.\n";
+		const char *errmsg = "RunString: An unhandled exception occurred.\n";
 		try
 		{
 			this->PhreeqcPtr->error_msg(errmsg, STOP); // throws PhreeqcStop
@@ -1285,7 +1285,7 @@ void IPhreeqc::do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALL
 			// (punch.in == TRUE) when any "RUN" has contained
 			// a SELECTED_OUTPUT block since the last LoadDatabase call.
 			//
-			// Since LoadDatabase inititializes punch.in to FALSE
+			// Since LoadDatabase initializes punch.in to FALSE
 			// (via UnLoadDatabase...do_initialize)
 			// and punch.in is set to TRUE in read_selected_output
 			//

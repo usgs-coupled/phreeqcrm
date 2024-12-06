@@ -25,7 +25,7 @@ class SelectedOutput;
  * @class IPhreeqcStop
  *
  * @brief This class is derived from std::exception and is thrown
- * when an unrecoverable error has occured.
+ * when an unrecoverable error has occurred.
  */
 class IPQ_DLL_EXPORT IPhreeqcStop : public std::exception 
 {
@@ -289,7 +289,7 @@ public:
 	/**
 	 *  Retrieves the nth user number of the currently defined <B>SELECTED_OUTPUT</B> blocks.
 	 *  @param n                The zero-based index of the <B>SELECTED_OUTPUT</B> user number to retrieve.
-	 *  @return                 The nth defined user number; a negative value indicates an error occured.
+	 *  @return                 The nth defined user number; a negative value indicates an error occurred.
 	 *  @see                    GetCurrentSelectedOutputUserNumber, GetSelectedOutputCount, SetCurrentSelectedOutputUserNumber
 	 */
 	int                      GetNthSelectedOutputUserNumber(int n)const;

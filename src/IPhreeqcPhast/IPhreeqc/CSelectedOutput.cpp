@@ -247,8 +247,8 @@ std::ostream& operator<< (std::ostream &os, const CSelectedOutput &a)
 void CSelectedOutput::Serialize(
 	int row_number,
 	std::vector<int> &types,        // each column for each row types, including headings
-	std::vector<long> &longs,       // in order by occurance
-	std::vector<double> &doubles,   // in order by occurance
+	std::vector<long> &longs,       // in order by occurrence
+	std::vector<double> &doubles,   // in order by occurrence
 	std::string &strings)
 {
 	types.clear();
@@ -300,8 +300,8 @@ void CSelectedOutput::Serialize(
 }
 void CSelectedOutput::DeSerialize(
 	std::vector<int> &types,        // each column for each row types, including headings
-	std::vector<long> &longs,       // in order by occurance
-	std::vector<double> &doubles,   // in order by occurance
+	std::vector<long> &longs,       // in order by occurrence
+	std::vector<double> &doubles,   // in order by occurrence
 	std::string &strings)
 {
 	size_t i_types = 0, i_longs = 0, i_doubles = 0;
