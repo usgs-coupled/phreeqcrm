@@ -36,6 +36,12 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Setup QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
       - name: Build wheels
         if: ${{ runner.os != 'Windows' }}
         uses: pypa/cibuildwheel@v2.22.0
@@ -97,5 +103,5 @@ jobs:
       - name: Merge Artifacts
         uses: actions/upload-artifact/merge@v4
         with:
-          name: dist-${{ strategy.job-index }}
+          name: dist-${{ github.run_number }}
           pattern: dist-*
