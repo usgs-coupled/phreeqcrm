@@ -38,7 +38,7 @@ jobs:
 
       - name: Build wheels
         if: ${{ runner.os != 'Windows' }}
-        uses: pypa/cibuildwheel@7e5a838a63ac8128d71ab2dfd99e4634dd1bca09  # v2.19.2
+        uses: pypa/cibuildwheel@v2.22.0
         env:
           CIBW_PRERELEASE_PYTHONS: True
           CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
@@ -46,10 +46,11 @@ jobs:
           CIBW_TEST_REQUIRES: pytest
           # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
           CIBW_TEST_COMMAND: "pytest {project}/swig/python"
+          CIBW_ARCHS_LINUX: auto aarch64 ppc64le s390x
 
       - name: Build wheels (Windows)
         if: ${{ runner.os == 'Windows' }}
-        uses: pypa/cibuildwheel@7e5a838a63ac8128d71ab2dfd99e4634dd1bca09  # v2.19.2
+        uses: pypa/cibuildwheel@v2.22.0
         env:
           CIBW_PRERELEASE_PYTHONS: True
           CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
@@ -96,5 +97,5 @@ jobs:
       - name: Merge Artifacts
         uses: actions/upload-artifact/merge@v4
         with:
-          name: dist
+          name: dist-${{ strategy.job-index }}
           pattern: dist-*
