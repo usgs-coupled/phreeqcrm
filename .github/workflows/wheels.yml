@@ -23,8 +23,8 @@ jobs:
           # - [cp39, v141]
           # - [cp310, v141]
           # - [cp311, v141]
-          - [cp312, v142, 3.12.x]
-          - [pp312, v142, 3.12.x]
+          - [cp310, v141]
+          - [pp310, v141]
           # - [cp313, v142]
           # - [cp313t, v142]
         exclude:
@@ -35,10 +35,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # # Used to host cibuildwheel
-      # - uses: actions/setup-python@v5
-      #   with:
-      #     python-version: ${{ matrix.python[2] }}
+      # Used to host cibuildwheel
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
 
       - name: Check python version
         run: |
