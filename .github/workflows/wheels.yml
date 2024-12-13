@@ -71,7 +71,7 @@ jobs:
           CIBW_TEST_REQUIRES: pytest
           # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
           CIBW_TEST_COMMAND: "pytest {project}/swig/python"
-          CIBW_ARCHS_LINUX: matrix.buildplat[3]
+          CIBW_ARCHS_LINUX: ${{ matrix.buildplat[3] }}
 
       - name: Build wheels (macOS)
         if: ${{ runner.os == 'macOS' }}
@@ -84,7 +84,7 @@ jobs:
           CIBW_TEST_REQUIRES: pytest
           # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
           CIBW_TEST_COMMAND: "pytest {project}/swig/python"
-          CIBW_ARCHS_MACOS: matrix.buildplat[3]
+          CIBW_ARCHS_MACOS: ${{ matrix.buildplat[3] }}
 
       - name: Build wheels (Windows)
         if: ${{ runner.os == 'Windows' }}
