@@ -23,8 +23,8 @@ jobs:
           - [cp38, v141]
           - [cp39, v141]
           - [cp310, v141]
-          - [cp311, v141]
           - [pp310, v141]
+          - [cp311, v141]
           - [cp313, v142]
           - [cp313t, v142]
         exclude:
@@ -46,6 +46,18 @@ jobs:
           # pp310(ARM64) on windows-2019
           - buildplat: [windows-2019, win_arm64, ARM64, ARM64]
             python: [pp310, v141]
+          # cp313t(ppc64le) on ubuntu-20.04
+          - buildplat: [ubuntu-20.04, manylinux_ppc64le, ppc64le, ppc64le]
+            python: [cp313t, v142]
+          # cp313t(i686) on ubuntu-20.04
+          - buildplat: [ubuntu-20.04, manylinux_i686, i686]
+            python: [cp313t, v142]
+          # cp38(ARM64) on windows-2019
+          - buildplat: [windows-2019, win_arm64, ARM64, ARM64]
+            python: [cp38, v141]
+          # cp313t(ARM64) on windows-2019
+          - buildplat: [windows-2019, win_arm64, ARM64, ARM64]
+            python: [cp313t, v142]
 
     steps:
       - uses: actions/checkout@v4
@@ -69,7 +81,7 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         uses: pypa/cibuildwheel@v2.22.0
         env:
-          CIBW_ENABLE: cpython-prerelease cpython-freethreading
+          CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
           # CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
           CIBW_BUILD: ${{ matrix.python[0] }}-*
           CIBW_BUILD_VERBOSITY: 1
@@ -82,7 +94,7 @@ jobs:
         if: ${{ runner.os == 'macOS' }}
         uses: pypa/cibuildwheel@v2.22.0
         env:
-          CIBW_ENABLE: cpython-prerelease cpython-freethreading
+          CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
           # CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
           CIBW_BUILD: ${{ matrix.python[0] }}-*
           CIBW_BUILD_VERBOSITY: 1
@@ -95,7 +107,7 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         uses: pypa/cibuildwheel@v2.22.0
         env:
-          CIBW_ENABLE: cpython-prerelease cpython-freethreading
+          CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
           # CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
           CIBW_BUILD: ${{ matrix.python[0] }}-*
           CIBW_BUILD_VERBOSITY: 1
