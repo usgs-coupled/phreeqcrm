@@ -26,7 +26,7 @@ jobs:
           - [pp310, v141]
           - [cp311, v141]
           - [cp313, v142]
-          - [cp313t, v142]
+          # - [cp313t, v142]
         exclude:
           # cp313(i686) on ubuntu-20.04
           - buildplat: [ubuntu-20.04, manylinux_i686, i686]
@@ -82,7 +82,6 @@ jobs:
         uses: pypa/cibuildwheel@v2.22.0
         env:
           CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
-          # CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
           CIBW_BUILD: ${{ matrix.python[0] }}-*
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_REQUIRES: pytest
@@ -95,7 +94,6 @@ jobs:
         uses: pypa/cibuildwheel@v2.22.0
         env:
           CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
-          # CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
           CIBW_BUILD: ${{ matrix.python[0] }}-*
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_REQUIRES: pytest
@@ -108,7 +106,6 @@ jobs:
         uses: pypa/cibuildwheel@v2.22.0
         env:
           CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
-          # CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
           CIBW_BUILD: ${{ matrix.python[0] }}-*
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_REQUIRES: pytest
