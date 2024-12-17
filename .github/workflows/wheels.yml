@@ -10,19 +10,54 @@ jobs:
       fail-fast: false
       matrix:
         buildplat:
-          - [macos-13, macosx_x86_64, x86_64]
-          - [macos-14, macosx_arm64, arm64]
-          - [ubuntu-20.04, manylinux_x86_64, x86_64]
-          - [ubuntu-20.04, manylinux_i686, i686]
-          - [windows-2019, win_amd64, x64]
-          - [windows-2019, win32, Win32]
+          - [macos-13, macosx_x86_64, x86_64, x86_64]
+          - [macos-14, macosx_arm64, arm64, arm64]
+          - [ubuntu-20.04, manylinux_aarch64, aarch64, aarch64]
+          - [ubuntu-20.04, manylinux_ppc64le, ppc64le, ppc64le]
+          - [ubuntu-20.04, manylinux_x86_64, x86_64, x86_64]
+          - [ubuntu-20.04, manylinux_i686, i686, i686]
+          - [windows-2019, win_amd64, x64, AMD64]
+          - [windows-2019, win32, Win32, x86]
+          - [windows-2019, win_arm64, ARM64, ARM64]
         python:
           - [cp38, v141]
           - [cp39, v141]
           - [cp310, v141]
+          - [pp310, v141]
           - [cp311, v141]
-          - [cp312, v142]
           - [cp313, v142]
+          # - [cp313t, v142]
+        exclude:
+          # cp313(i686) on ubuntu-20.04
+          - buildplat: [ubuntu-20.04, manylinux_i686, i686]
+            python: [cp313, v142]
+          # pp310(ppc64le) on ubuntu-20.04
+          - buildplat: [ubuntu-20.04, manylinux_ppc64le, ppc64le, ppc64le]
+            python: [pp310, v141]
+          # pp310(i686) on ubuntu-20.04
+          - buildplat: [ubuntu-20.04, manylinux_i686, i686, i686]
+            python: [pp310, v141]
+          # pp310(Win32) on windows-2019
+          - buildplat: [windows-2019, win32, Win32, x86]
+            python: [pp310, v141]
+          # pp310(Win32) on windows-2019
+          - buildplat: [windows-2019, win32, Win32, x86]
+            python: [pp310, v141]
+          # pp310(ARM64) on windows-2019
+          - buildplat: [windows-2019, win_arm64, ARM64, ARM64]
+            python: [pp310, v141]
+          # cp313t(ppc64le) on ubuntu-20.04
+          - buildplat: [ubuntu-20.04, manylinux_ppc64le, ppc64le, ppc64le]
+            python: [cp313t, v142]
+          # cp313t(i686) on ubuntu-20.04
+          - buildplat: [ubuntu-20.04, manylinux_i686, i686]
+            python: [cp313t, v142]
+          # cp38(ARM64) on windows-2019
+          - buildplat: [windows-2019, win_arm64, ARM64, ARM64]
+            python: [cp38, v141]
+          # cp313t(ARM64) on windows-2019
+          - buildplat: [windows-2019, win_arm64, ARM64, ARM64]
+            python: [cp313t, v142]
 
     steps:
       - uses: actions/checkout@v4
@@ -32,34 +67,58 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Build wheels
-        if: ${{ runner.os != 'Windows' }}
-        uses: pypa/cibuildwheel@7e5a838a63ac8128d71ab2dfd99e4634dd1bca09  # v2.19.2
+      - name: Check python version
+        run: |
+          python --version
+
+      - name: Setup QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
+      - name: Build wheels (Linux)
+        if: ${{ runner.os == 'Linux' }}
+        uses: pypa/cibuildwheel@v2.22.0
         env:
-          CIBW_PRERELEASE_PYTHONS: True
-          CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
+          CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
+          CIBW_BUILD: ${{ matrix.python[0] }}-*
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_REQUIRES: pytest
           # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
           CIBW_TEST_COMMAND: "pytest {project}/swig/python"
+          CIBW_ARCHS_LINUX: ${{ matrix.buildplat[3] }}
+
+      - name: Build wheels (macOS)
+        if: ${{ runner.os == 'macOS' }}
+        uses: pypa/cibuildwheel@v2.22.0
+        env:
+          CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
+          CIBW_BUILD: ${{ matrix.python[0] }}-*
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_TEST_REQUIRES: pytest
+          # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
+          CIBW_TEST_COMMAND: "pytest {project}/swig/python"
+          CIBW_ARCHS_MACOS: ${{ matrix.buildplat[3] }}
 
       - name: Build wheels (Windows)
         if: ${{ runner.os == 'Windows' }}
-        uses: pypa/cibuildwheel@7e5a838a63ac8128d71ab2dfd99e4634dd1bca09  # v2.19.2
+        uses: pypa/cibuildwheel@v2.22.0
         env:
-          CIBW_PRERELEASE_PYTHONS: True
-          CIBW_BUILD: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
+          CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
+          CIBW_BUILD: ${{ matrix.python[0] }}-*
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_REQUIRES: pytest
           # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
           CIBW_TEST_COMMAND: "pytest {project}/swig/python"
+          CIBW_ARCHS_WINDOWS: ${{ matrix.buildplat[3] }}
           CMAKE_GENERATOR: Visual Studio 16 2019
           CMAKE_GENERATOR_TOOLSET: ${{ matrix.python[1] }}
           CMAKE_GENERATOR_PLATFORM: ${{ matrix.buildplat[2] }}
 
       - uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
         with:
-          name: dist-${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
+          name: dist-${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}-${{ github.run_number }}
           path: ./wheelhouse/*.whl
 
 
@@ -92,5 +151,5 @@ jobs:
       - name: Merge Artifacts
         uses: actions/upload-artifact/merge@v4
         with:
-          name: dist
+          name: dist-${{ github.run_number }}
           pattern: dist-*
