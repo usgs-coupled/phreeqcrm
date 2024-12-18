@@ -400,10 +400,10 @@ jobs:
         sudo apt-get -y update
         sudo apt-get install -y ninja-build valgrind
 
-    - name: Install ninja (macOS)
+    - name: Install ninja swig (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja
+        brew install ninja swig
         ls -alR /usr/local/Cellar/
 
     - name: Install yaml-cpp (Linux)
