@@ -349,7 +349,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        os: [macos-13, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
         build_shared_libs: [OFF, ON]
         phreeqcrm_with_yaml_cpp: [OFF, ON]
         BUILD_TYPE: [Debug, Release]
@@ -400,10 +400,10 @@ jobs:
         sudo apt-get -y update
         sudo apt-get install -y ninja-build valgrind
 
-    - name: Install ninja (macOS)
+    - name: Install ninja swig (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja
+        brew install ninja swig
         ls -alR /usr/local/Cellar/
 
     - name: Install yaml-cpp (Linux)
@@ -516,15 +516,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        os: [macos-13, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
         build_shared_libs: [ON]
         phreeqcrm_with_yaml_cpp: [ON]
         mpi: ['mpich', 'ompi', 'impi', 'msmpi']  # see https://github.com/mpi4py/setup-mpi/blob/master/setup-mpi.sh
         # BUILD_TYPE: [Debug, Release]
         exclude:
-          - os: macos-12
+          - os: macos-13
             mpi: 'impi'
-          - os: macos-12
+          - os: macos-13
             mpi: 'msmpi'
           - os: ubuntu-20.04
             mpi: 'msmpi'

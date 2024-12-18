@@ -1,6 +1,23 @@
 name: wheels
 
-on: [push, pull_request]
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/dist.yml'
+      - '.gitignore'
+      - 'build-all-presets.sh'
+      - 'CMakePresets.json'
+  push:
+    # branches:
+    #   - master
+    paths-ignore:
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/dist.yml'
+      - '.gitignore'
+      - 'build-all-presets.sh'
+      - 'CMakePresets.json'
 
 jobs:
   build_wheels:
