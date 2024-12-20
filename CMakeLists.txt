@@ -105,6 +105,11 @@ if(PHREEQCRM_BUILD_PYTHON)
   # ie -DPython_ROOT_DIR=C:/Python38-x64
 endif()
 
+if(DEFINED SKBUILD)
+  # see https://scikit-build-core.readthedocs.io/en/latest/cmakelists.html
+  set(Python_SOABI ${SKBUILD_SOABI})
+endif()
+
 option(PHREEQCRM_NO_UTF8_ENCODING "Build without utf-8 encoding" OFF)
 
 set(PhreeqcRM_SOURCES
