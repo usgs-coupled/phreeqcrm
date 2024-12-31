@@ -44,7 +44,7 @@ if(DEFINED SKBUILD)
   # Fetch yaml-cpp
   FetchContent_Declare(
     yaml-cpp
-    URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/yaml-cpp-0.7.0.tar.gz
+    URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.tar.gz
   )
 
   # Make yaml-cpp available
