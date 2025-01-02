@@ -130,7 +130,11 @@ jobs:
   valgrind:
     # if: ${{ false }}
     name: valgrind
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
 
@@ -349,7 +353,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        os: [macos-13, ubuntu-20.04, ubuntu-22.04, ubuntu-24.04, windows-2019, windows-2022]
         build_shared_libs: [OFF, ON]
         phreeqcrm_with_yaml_cpp: [OFF, ON]
         BUILD_TYPE: [Debug, Release]

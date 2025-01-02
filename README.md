@@ -1,5 +1,10 @@
 # PhreeqcRM: A reaction module for transport simulators based on the geochemical model PHREEQC
 
+![PyPI - Version](https://img.shields.io/pypi/v/phreeqcrm)
+![Conda Version](https://img.shields.io/conda/v/conda-forge/phreeqcrm)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/phreeqcrm)
+
+
 Reaction module for reactive-transport simulators. Based on IPhreeqc, allows access to all PHREEQC reaction capabilities. Contains methods for initial and boundary conditions, running reactions on all model cells, transfer of data to and from the module, and parallelization by MPI or OpenMP.
 
 This is the development repository for PhreeqcRM. The official USGS distribution is available at [USGS Release Page](https://www.usgs.gov/software/phreeqc-version-3).
