@@ -16,19 +16,24 @@
 #else
 #define MP_TYPE int
 #endif
-class IPhreeqcPhast;
 
-class cxxStorageBin;
-//class cxxNameDouble;
-#include "NameDouble.h"
+// forward declarations
+class cxxNameDouble;
 class cxxSolution;
+class cxxStorageBin;
+class IPhreeqc;
+class IPhreeqcPhast;
 class PHRQ_io;
+
+#include "NameDouble.h"
 #include <vector>
 #include <list>
 #include <set>
 #include <map>
 #include <mutex>
 #include <string>
+#include <memory>
+
 #include "RMVARS.h"
 
 #include "irm_dll_export.h"
@@ -37,8 +42,6 @@ class PHRQ_io;
 #define IRM_DLL_EXPORT
 #endif
 
-class PHRQ_io;
-class IPhreeqc;
 //class BMI_Var;
 /**
  * @class PhreeqcRMStop
@@ -3899,7 +3902,8 @@ status = phreeqc_rm.LoadDatabase("phreeqc.dat");
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	IRM_RESULT                                LoadDatabase(const std::string &database);
+	//IRM_RESULT                                LoadDatabase(const std::string& database);
+	virtual IRM_RESULT                          LoadDatabase(const std::string &database);
 /**
 Print a message to the log file.
 @param str              String to be printed.
@@ -5804,26 +5808,23 @@ protected:
 protected:
 	static const int default_nxyz = 10;
 	static const MP_TYPE default_data_for_parallel_processing;
-	struct Initializer {
-		int nxyz_arg;
-		MP_TYPE data_for_parallel_processing;
-		PHRQ_io *io;
 
-		Initializer()
-		: nxyz_arg(default_nxyz) , data_for_parallel_processing(default_data_for_parallel_processing), io(NULL) {}
+	class Initializer;  // Forward declaration
+	std::unique_ptr<Initializer> initializer;
 
-		Initializer(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io *io)
-		: nxyz_arg(nxyz_arg) , data_for_parallel_processing(data_for_parallel_processing), io(io) {}
+	virtual void Construct();
 
-	} initializer;
+	void set_data_for_parallel_processing(int value);
+	void set_io(PHRQ_io* value);
+	void set_nxyz(int value);
 
-	virtual void Construct(Initializer initializer);
 
 /** @endcond */
 private:
 	//friend class RM_interface;
 	friend class BMIPhreeqcRM;
 	friend class VarManager;
+	friend class SwigDirector_BMIPhreeqcRM;
 
 #if defined(_MSC_VER)
 /* reset warning C4251 */

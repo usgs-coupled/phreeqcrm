@@ -240,6 +240,12 @@ def test_initialize_no_throw():
     model = BMIPhreeqcRM()
     model.initialize()
 
+#    def LoadDatabase(self, database: str)
+def test_LoadDatabase_raises_uninitialized():
+    model = BMIPhreeqcRM()
+    with pytest.raises(RuntimeError, match=ERROR_MUST_INITIALIZE):
+        model.LoadDatabase(FilePaths.DATABASE)
+
 #    def set_value(self, name: str, src: np.ndarray) -> None:
 def test_set_value_raises_uninitialized():
     model = BMIPhreeqcRM()

@@ -8,5 +8,4 @@ dependencies:
 - python
 - pyyaml
 - swig
-- yaml-cpp
 - cmake

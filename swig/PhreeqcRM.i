@@ -1,4 +1,4 @@
-// %module(directors="1") phreeqcrm
+%module(directors="1") phreeqcrm
 %module phreeqcrm
 
 %begin %{
@@ -17,6 +17,9 @@
 #include <numpy/arrayobject.h>
 #endif
 %}
+
+%feature("director") PhreeqcRM;  // Enable directors for PhreeqcRM
+%feature("director") BMIPhreeqcRM;  // Enable directors for BMIPhreeqcRM
 
 %pythoncode 
 %{ 
@@ -648,6 +651,13 @@ def GetDoubleVector(self, v):
 %}
 
 // initialize checks
+
+//{{
+%feature("pythonprepend") BMIPhreeqcRM::LoadDatabase(const std::string& name) %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+//}}
 
 %feature("pythonprepend") BMIPhreeqcRM::GetGridSize(const int grid) %{
     if self._state != State.INITIALIZED:
