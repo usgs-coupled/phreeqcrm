@@ -131,7 +131,7 @@ jobs:
           # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
           CIBW_TEST_COMMAND: "pytest {project}/swig/python"
           CIBW_ARCHS_WINDOWS: ${{ matrix.buildplat[3] }}
-          CMAKE_GENERATOR: Visual Studio 16 2019
+          CMAKE_GENERATOR: Visual Studio 17 2022
           CMAKE_GENERATOR_TOOLSET: ${{ matrix.python[1] }}
           CMAKE_GENERATOR_PLATFORM: ${{ matrix.buildplat[2] }}
 
