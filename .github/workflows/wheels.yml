@@ -40,14 +40,16 @@ jobs:
           - [cp38, v141]
           - [cp39, v141]
           - [cp310, v141]
-          - [pp310, v141]
-          - [cp311, v141]
-          - [cp313, v142]
-          # - [cp313t, v142]
+          - [cp311, v143]
+          - [cp312, v143]
+          - [cp313, v143]
+          # - [cp313t, v143]
+          - [pp310, v142]
+
         exclude:
           # cp313(i686) on ubuntu-20.04
           - buildplat: [ubuntu-20.04, manylinux_i686, i686]
-            python: [cp313, v142]
+            python: [cp313, v143]
           # pp310(ppc64le) on ubuntu-20.04
           - buildplat: [ubuntu-20.04, manylinux_ppc64le, ppc64le, ppc64le]
             python: [pp310, v141]
