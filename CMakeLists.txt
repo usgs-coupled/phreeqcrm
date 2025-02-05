@@ -41,19 +41,6 @@ include(FetchContent)
 if(DEFINED SKBUILD)
   # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
 
-  # # Include FetchContent module
-  # include(FetchContent)
-
-  # # Fetch yaml-cpp
-  # FetchContent_Declare(
-  #   yaml-cpp
-  #   URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.tar.gz
-  # )
-
-  # # Make yaml-cpp available
-  # FetchContent_MakeAvailable(yaml-cpp)
-
-
   # Fetch zlib
   FetchContent_Declare(
     zlib
@@ -71,7 +58,6 @@ if(DEFINED SKBUILD)
   # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
   set(PHREEQCRM_WITH_YAML_CPP ON)
 endif()
-# if(PHREEQCRM_WITH_YAML_CPP AND NOT DEFINED SKBUILD)
 if(PHREEQCRM_WITH_YAML_CPP)
   # Initialize a static build for yaml-cpp
   # w/o the FORCE option the user can override using -DYAML_BUILD_SHARED_LIBS=ON
@@ -85,9 +71,6 @@ if(PHREEQCRM_WITH_YAML_CPP)
     URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.tar.gz
     OVERRIDE_FIND_PACKAGE
   )
-
-  # # Make yaml-cpp available
-  # FetchContent_MakeAvailable(yaml-cpp)
 
   # The following will automatically forward through to FetchContent_MakeAvailable()
   find_package(yaml-cpp REQUIRED)

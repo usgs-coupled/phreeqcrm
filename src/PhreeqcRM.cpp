@@ -218,7 +218,7 @@ void PhreeqcRM::Construct()
 {
 	int nxyz_arg                         = this->initializer->nxyz_arg;
 	MP_TYPE data_for_parallel_processing = this->initializer->data_for_parallel_processing;
-	PHRQ_io* io                          = this->initializer->io;
+	//PHRQ_io* io                          = this->initializer->io;
 #ifdef USE_MPI
 	if (mpi_myself == 0)
 	{

@@ -33,7 +33,6 @@ class PHRQ_io;
 #include <mutex>
 #include <string>
 #include <memory>
-
 #include "RMVARS.h"
 
 #include "irm_dll_export.h"
@@ -3902,7 +3901,6 @@ status = phreeqc_rm.LoadDatabase("phreeqc.dat");
 @par MPI:
 Called by root, workers must be in the loop of @ref MpiWorker.
  */
-	//IRM_RESULT                                LoadDatabase(const std::string& database);
 	virtual IRM_RESULT                          LoadDatabase(const std::string &database);
 /**
 Print a message to the log file.
@@ -5818,13 +5816,11 @@ protected:
 	void set_io(PHRQ_io* value);
 	void set_nxyz(int value);
 
-
 /** @endcond */
 private:
 	//friend class RM_interface;
 	friend class BMIPhreeqcRM;
 	friend class VarManager;
-	friend class SwigDirector_BMIPhreeqcRM;
 
 #if defined(_MSC_VER)
 /* reset warning C4251 */

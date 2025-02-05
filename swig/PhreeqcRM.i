@@ -652,13 +652,6 @@ def GetDoubleVector(self, v):
 
 // initialize checks
 
-//{{
-%feature("pythonprepend") BMIPhreeqcRM::LoadDatabase(const std::string& name) %{
-    if self._state != State.INITIALIZED:
-        raise RuntimeError("must call initialize first")
-%}
-//}}
-
 %feature("pythonprepend") BMIPhreeqcRM::GetGridSize(const int grid) %{
     if self._state != State.INITIALIZED:
         raise RuntimeError("must call initialize first")
@@ -700,6 +693,11 @@ def GetDoubleVector(self, v):
 %}
 
 %feature("pythonprepend") BMIPhreeqcRM::GetVarUnits(const std::string name) %{
+    if self._state != State.INITIALIZED:
+        raise RuntimeError("must call initialize first")
+%}
+
+%feature("pythonprepend") BMIPhreeqcRM::LoadDatabase(const std::string& name) %{
     if self._state != State.INITIALIZED:
         raise RuntimeError("must call initialize first")
 %}

@@ -69,7 +69,7 @@ AC_PROG_AWK
 AC_PROG_CPP
 AC_PROG_LN_S
 
-# c++11 is required
+# c++14 is required
 AX_CXX_COMPILE_STDCXX(14, [ext], [mandatory])
 
 # Check if the fortran test should be included

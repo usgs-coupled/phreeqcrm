@@ -1321,12 +1321,14 @@ RMVARS BMIPhreeqcRM::GetEnum(const std::string name)
 	return RMVARS::NotFound;
 };
 
-//////////////////
-
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
 BMIPhreeqcRM::LoadDatabase(const std::string& database)
 /* ---------------------------------------------------------------------- */
 {
+	// reqd for swig-python
 	return this->PhreeqcRM::LoadDatabase(database);
 }
+
+//////////////////
+
