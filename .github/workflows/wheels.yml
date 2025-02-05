@@ -90,11 +90,19 @@ jobs:
         run: |
           python --version
 
+      # free some space to prevent reaching GHA disk space limits
+      - name: Clean docker images
+        if: runner.os == 'Linux'
+        run: |
+          docker system prune -a -f
+          df -h
+
       - name: Setup QEMU
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v3
         with:
-          platforms: all
+          image: tonistiigi/binfmt:qemu-v8.1.5
+          #platforms: all
 
       - name: Build wheels (Linux)
         if: ${{ runner.os == 'Linux' }}
