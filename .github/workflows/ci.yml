@@ -390,16 +390,15 @@ jobs:
         compiler: intel-classic
         version: '2021.10'
 
-    - name: Unset CC/CXX (Windows)
+    - name: Set CC/CXX (Windows)
       if: runner.os == 'Windows'
       shell: bash
       run: |
-        echo "CC=" >> $GITHUB_ENV
-        echo "CXX=" >> $GITHUB_ENV   
+        echo "CC=cl" >> $GITHUB_ENV
+        echo "CXX=cl" >> $GITHUB_ENV   
 
     - name: Install ninja valgrind (Linux)
       if: ${{ runner.os == 'Linux' }}
-      #run: sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev python3-numpy
       run: |
         sudo apt-get -y update
         sudo apt-get install -y ninja-build valgrind
@@ -436,12 +435,6 @@ jobs:
         python -m pip install PyYAML
         python -m pip install pytest
         # @todo if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-    - name: Set up Visual Studio shell (Windows)
-      if: runner.os == 'Windows'
-      uses: egor-tensin/vs-shell@v2
-      with:
-        arch: x64
 
     - name: Extract tarball
       run: tar xvzf phreeqcrm-${{ env.VER_STRING }}.tar.gz

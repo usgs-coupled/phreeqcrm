@@ -35,21 +35,11 @@ if(PHREEQCRM_FORTRAN_TESTING)
   enable_language(Fortran)
 endif()
 
+# Include FetchContent module
+include(FetchContent)
+
 if(DEFINED SKBUILD)
   # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
-
-  # Include FetchContent module
-  include(FetchContent)
-
-  # Fetch yaml-cpp
-  FetchContent_Declare(
-    yaml-cpp
-    URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.tar.gz
-  )
-
-  # Make yaml-cpp available
-  FetchContent_MakeAvailable(yaml-cpp)
-
 
   # Fetch zlib
   FetchContent_Declare(
@@ -68,10 +58,28 @@ if(DEFINED SKBUILD)
   # SKBUILD is defined when scikit-build-core is used to build python wheels (see pyproject.toml)
   set(PHREEQCRM_WITH_YAML_CPP ON)
 endif()
-if(PHREEQCRM_WITH_YAML_CPP AND NOT DEFINED SKBUILD)
+if(PHREEQCRM_WITH_YAML_CPP)
+  # Initialize a static build for yaml-cpp
+  # w/o the FORCE option the user can override using -DYAML_BUILD_SHARED_LIBS=ON
+  set(YAML_BUILD_SHARED_LIBS OFF CACHE STRING "")
+  # w/o the FORCE option the user can override using -DYAML_CPP_INSTALL=OFF
+  set(YAML_CPP_INSTALL ON CACHE STRING "")
+
+  # Fetch yaml-cpp
+  FetchContent_Declare(
+    yaml-cpp
+    URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.tar.gz
+    OVERRIDE_FIND_PACKAGE
+  )
+
+  # The following will automatically forward through to FetchContent_MakeAvailable()
   find_package(yaml-cpp REQUIRED)
   if(yaml-cpp_FOUND)
-    message(STATUS "Found yaml-cpp: TRUE (found version \"${yaml-cpp_VERSION}\")")
+    if(DEFINED yaml-cpp_VERSION)
+      message(STATUS "Found yaml-cpp: TRUE (found version \"${yaml-cpp_VERSION}\")")
+    else()
+      message(STATUS "Found yaml-cpp: TRUE")
+    endif()
   endif()
 endif()
 
@@ -314,8 +322,8 @@ target_include_directories(PhreeqcRM
 include(GenerateExportHeader)
 generate_export_header(PhreeqcRM BASE_NAME IRM_DLL)
 
-# c++11
-target_compile_features(PhreeqcRM PUBLIC cxx_std_11)
+# c++14
+target_compile_features(PhreeqcRM PUBLIC cxx_std_14)
 
 # iphreeqc defs
 target_compile_definitions(PhreeqcRM PRIVATE SWIG_SHARED_OBJ)
@@ -526,13 +534,23 @@ if(STANDALONE_BUILD EQUAL 1 AND NOT DEFINED SKBUILD)
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PhreeqcRM
   )
 
-  install(TARGETS PhreeqcRM
-    EXPORT   PhreeqcRMTargets
-    LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  )
+  if(PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND)
+    install(TARGETS PhreeqcRM yaml-cpp
+      EXPORT   PhreeqcRMTargets
+      LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
+      INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+  else()
+    install(TARGETS PhreeqcRM
+      EXPORT   PhreeqcRMTargets
+      LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
+      INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+  endif()
 
   install(EXPORT PhreeqcRMTargets
     FILE PhreeqcRMTargets.cmake

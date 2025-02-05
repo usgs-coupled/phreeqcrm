@@ -69,6 +69,19 @@
 	const MP_TYPE PhreeqcRM::default_data_for_parallel_processing = -1;
 #endif
 
+// Pimpl for initialization
+class PhreeqcRM::Initializer
+{
+
+public:
+	Initializer() : nxyz_arg(default_nxyz), data_for_parallel_processing(default_data_for_parallel_processing), io(nullptr) {}
+	Initializer(int nxyz, MP_TYPE data, PHRQ_io *pio) : nxyz_arg(nxyz), data_for_parallel_processing(data), io(pio) {}
+
+public:
+	int nxyz_arg;
+	MP_TYPE data_for_parallel_processing;
+	PHRQ_io *io;
+};
 
 //// static PhreeqcRM methods
 /* ---------------------------------------------------------------------- */
@@ -169,7 +182,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 , mpi_worker_callback_c( nullptr )
 , mpi_worker_callback_cookie( nullptr )
 , species_save_on( false )
-, initializer( nxyz_arg, data_for_parallel_processing, io )
+, initializer(std::make_unique<PhreeqcRM::Initializer>(nxyz_arg, data_for_parallel_processing, io))
 {
 #ifdef USE_MPI
 	phreeqcrm_comm = data_for_parallel_processing;
@@ -188,7 +201,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 #ifdef USE_MPI
 		if (mpi_myself == 0)
 		{
-			this->Construct(this->initializer);
+			this->Construct();
 			MpiWorkerBreak();
 		}
 		else
@@ -196,16 +209,16 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 			MpiWorker();
 		}
 #else
-		this->Construct(this->initializer);
+		this->Construct();
 #endif
 	}
 }
 
-void PhreeqcRM::Construct(PhreeqcRM::Initializer i)
+void PhreeqcRM::Construct()
 {
-	int nxyz_arg = i.nxyz_arg;
-	MP_TYPE data_for_parallel_processing = i.data_for_parallel_processing;
-	//PHRQ_io *io = i.io;
+	int nxyz_arg                         = this->initializer->nxyz_arg;
+	MP_TYPE data_for_parallel_processing = this->initializer->data_for_parallel_processing;
+	//PHRQ_io* io                          = this->initializer->io;
 #ifdef USE_MPI
 	if (mpi_myself == 0)
 	{
@@ -5631,7 +5644,8 @@ IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
 			if (keyword == "LoadDatabase")
 			{
 				std::string file = it1++->second.as< std::string >();
-				this->LoadDatabase(file);
+				// no need to check for initialization just call base class
+				this->PhreeqcRM::LoadDatabase(file);
 				continue;
 			}
 			if (keyword == "OpenFiles")
@@ -7035,7 +7049,7 @@ PhreeqcRM::MpiWorker()
 			case METHOD_CONSTRUCT:
 				if (debug_worker) std::cerr << "METHOD_CONSTRUCT" << std::endl;
 				{
-					this->Construct(this->initializer);
+					this->Construct();
 				}
 				break;
 			case METHOD_CREATEMAPPING:
@@ -13027,6 +13041,27 @@ PhreeqcRM::WarningMessage(const std::string &str)
 	{
 		this->phreeqcrm_io->warning_msg(str.c_str());
 	}
+}
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::set_data_for_parallel_processing(int value)
+/* ---------------------------------------------------------------------- */
+{
+	this->initializer->data_for_parallel_processing = value;
+}
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::set_nxyz(int value)
+/* ---------------------------------------------------------------------- */
+{
+	this->initializer->nxyz_arg = value;
+}
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::set_io(PHRQ_io *value)
+/* ---------------------------------------------------------------------- */
+{
+	this->initializer->io = value;
 }
 
 

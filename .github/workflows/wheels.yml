@@ -40,10 +40,12 @@ jobs:
           - [cp38, v141]
           - [cp39, v141]
           - [cp310, v141]
-          - [pp310, v141]
           - [cp311, v141]
+          - [cp312, v142]
           - [cp313, v142]
           # - [cp313t, v142]
+          - [pp310, v141]
+
         exclude:
           # cp313(i686) on ubuntu-20.04
           - buildplat: [ubuntu-20.04, manylinux_i686, i686]
@@ -88,11 +90,19 @@ jobs:
         run: |
           python --version
 
+      # free some space to prevent reaching GHA disk space limits
+      - name: Clean docker images
+        if: runner.os == 'Linux'
+        run: |
+          docker system prune -a -f
+          df -h
+
       - name: Setup QEMU
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v3
         with:
-          platforms: all
+          image: tonistiigi/binfmt:qemu-v8.1.5
+          #platforms: all
 
       - name: Build wheels (Linux)
         if: ${{ runner.os == 'Linux' }}

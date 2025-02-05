@@ -149,10 +149,10 @@ void BMIPhreeqcRM::ClearBMISelectedOutput(void)
 	assert(this->var_man);
 	this->var_man->BMISelectedOutput.clear();
 }
-void BMIPhreeqcRM::Construct(PhreeqcRM::Initializer i)
+void BMIPhreeqcRM::Construct()
 {
 	if (constructed) return;
-	this->PhreeqcRM::Construct(i);
+	this->PhreeqcRM::Construct();
 	this->var_man = new VarManager((PhreeqcRM*)this);
 #if defined(WITH_PYBIND11)
 	this->_initialized = true;
@@ -180,13 +180,13 @@ void BMIPhreeqcRM::Initialize(std::string config_file)
 			std::string keyword = it1++->second.as<std::string>();
 			if (keyword == "SetGridCellCount")
 			{
-				this->initializer.nxyz_arg = it1++->second.as<int>();
+				set_nxyz(it1++->second.as<int>());
 				found_nxyz = true;
 			}
 			if (keyword == "ThreadCount")
 			{
 #if !defined(USE_MPI)
-				this->initializer.data_for_parallel_processing = it1++->second.as<int>();
+				set_data_for_parallel_processing(it1++->second.as<int>());
 #endif
 				found_threads = true;
 			}
@@ -195,7 +195,7 @@ void BMIPhreeqcRM::Initialize(std::string config_file)
 	}
 #endif
 
-	this->Construct(this->initializer);
+	this->Construct();
 	constructed = true;
 #ifdef USE_YAML
 	if (config_file.size() != 0)
@@ -1321,6 +1321,14 @@ RMVARS BMIPhreeqcRM::GetEnum(const std::string name)
 	return RMVARS::NotFound;
 };
 
-//////////////////
+/* ---------------------------------------------------------------------- */
+IRM_RESULT
+BMIPhreeqcRM::LoadDatabase(const std::string& database)
+/* ---------------------------------------------------------------------- */
+{
+	// reqd for swig-python
+	return this->PhreeqcRM::LoadDatabase(database);
+}
 
+//////////////////
 

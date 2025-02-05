@@ -87,7 +87,7 @@ endif()
 
 set_property(TARGET ${PYTHON_TARGET_NAME} PROPERTY OUTPUT_NAME "phreeqcrm")
 
-target_compile_features(${PYTHON_TARGET_NAME} PUBLIC cxx_std_11)
+target_compile_features(${PYTHON_TARGET_NAME} PUBLIC cxx_std_14)
 
 target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE IRM_DLL_STATIC_DEFINE)
 
