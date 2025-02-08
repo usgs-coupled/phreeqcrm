@@ -1271,6 +1271,8 @@ public:
     //  std::set<std::string> UpdateMap;
     // std::set<std::string>& GetUpdateMap() { return UpdateMap; }
 
+    IRM_RESULT                          LoadDatabase(const std::string& database) override;
+
 #if defined(WITH_PYBIND11)
 
     py::array BMIPhreeqcRM::get_value(std::string name, py::array arr);
@@ -1297,7 +1299,7 @@ public:
 #endif
 
 protected:
-    void Construct(Initializer initializer) override;
+    void Construct(void) override;
 
 private:
     //friend class RM_interface;
