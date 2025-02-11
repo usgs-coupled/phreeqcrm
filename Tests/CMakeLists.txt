@@ -62,6 +62,10 @@ if(PHREEQCRM_FORTRAN_TESTING)
     source_group("Source Files" FILES "../src/BMI_not_implemented.inc")
     source_group("Source Files" FILES "../src/IPhreeqcPhast/IPhreeqc/IPhreeqc_interface.F90")
     source_group("Source Files" FILES "../src/RM_interface.F90")
+
+    if(PHREEQCRM_STATIC_RUNTIME)
+      set_property(TARGET FortranAdvect PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif()  
   endif()
 
 
@@ -163,6 +167,10 @@ if(PHREEQCRM_FORTRAN_TESTING)
   target_link_libraries(TestRM FortranAdvect)
 endif()
 
+if(PHREEQCRM_STATIC_RUNTIME)
+  set_property(TARGET TestRM PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 #-----------------------------------------------------------------------------#
 
 # test PhreeqcRM dtor
@@ -180,6 +188,10 @@ endif()
 target_link_libraries(TestRMdtor PhreeqcRM::PhreeqcRM)
 
 add_test(TestRMdtor TestRMdtor)
+
+if(PHREEQCRM_STATIC_RUNTIME)
+  set_property(TARGET TestRMdtor PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 
 #-----------------------------------------------------------------------------#
 
@@ -200,6 +212,10 @@ endif()
 target_link_libraries(TestBMIdtor PhreeqcRM::PhreeqcRM)
 
 add_test(TestBMIdtor TestBMIdtor)
+
+if(PHREEQCRM_STATIC_RUNTIME)
+  set_property(TARGET TestBMIdtor PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 
 #-----------------------------------------------------------------------------#
 
@@ -273,6 +289,16 @@ set_property(TARGET TestRM APPEND
     TestAllMethods_py.dump
     TestAllMethods_py.log.txt
 )
+
+if(WIN32 AND PHREEQCRM_FORTRAN_TESTING)
+  # this attempts to find the location of libiomp5md.dll to add it to the path
+  # this should work for the most recent versions of oneAPI (ifort and ifx)
+  get_filename_component(FORTRAN_COMPILER_DIR ${CMAKE_Fortran_COMPILER} DIRECTORY)
+  file(TO_NATIVE_PATH "${FORTRAN_COMPILER_DIR}" FORTRAN_COMPILER_DIR_NATIVE)
+  set_tests_properties(TestRM PROPERTIES
+    ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${FORTRAN_COMPILER_DIR_NATIVE}"
+  )
+endif()
 
 if(MSVC AND BUILD_SHARED_LIBS)
   # copy PhreeqcRM dll
