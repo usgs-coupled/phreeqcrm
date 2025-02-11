@@ -577,41 +577,16 @@ else()
   endif()
 endif()
 
-if(STANDALONE_BUILD EQUAL 1 AND MSVC)
+if(WIN32)
   # PHREEQCRM_STATIC_RUNTIME (VCOMP???.dll) cannot be made static
-  option(PHREEQCRM_STATIC_RUNTIME "Build with a static runtime (excluding VCOMP???.DLL)" OFF)
+  option(PHREEQCRM_STATIC_RUNTIME "Build with a static runtime (excluding OpenMP dlls)" OFF)
   if(PHREEQCRM_STATIC_RUNTIME)
     # compile with static runtime
-
-    set(CompilerFlags
-      CMAKE_CXX_FLAGS
-      CMAKE_CXX_FLAGS_DEBUG
-      CMAKE_CXX_FLAGS_RELEASE
-      CMAKE_CXX_FLAGS_MINSIZEREL
-      CMAKE_CXX_FLAGS_RELWITHDEBINFO
-      CMAKE_C_FLAGS
-      CMAKE_C_FLAGS_DEBUG
-      CMAKE_C_FLAGS_RELEASE
-      CMAKE_C_FLAGS_MINSIZEREL
-      CMAKE_C_FLAGS_RELWITHDEBINFO
-    )
-
-    foreach(CompilerFlag ${CompilerFlags})
-      if(${CompilerFlag} MATCHES "/MD")
-        string(REGEX REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-      endif()
-    endforeach()
-
-    set(FortranCompilerFlags CMAKE_Fortran_FLAGS)
-
-    foreach(FortranCompilerFlags ${FortranCompilerFlags})
-      if(${FortranCompilerFlags} MATCHES "/libs:dll")
-        string(REGEX REPLACE "/libs:dll" "/libs:static" ${FortranCompilerFlags} "${${FortranCompilerFlags}}")
-      endif()
-    endforeach()
+    set_property(TARGET PhreeqcRM PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   endif()
 endif()
 
+# TODO PHREEQCRM_ENABLE_TESTING
 if(STANDALONE_BUILD EQUAL 1)
   # tests
   enable_testing()
