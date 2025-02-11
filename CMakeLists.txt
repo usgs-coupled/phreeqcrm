@@ -1,5 +1,4 @@
-# CMAKE_MSVC_RUNTIME_LIBRARY requires 3.15
-cmake_minimum_required(VERSION 3.20...3.26)
+cmake_minimum_required(VERSION 3.22...3.26)
 
 project(
   PhreeqcRM
