@@ -237,6 +237,7 @@ D. Linux compiling, testing, and installing the PhreeqcRM library
 			phreeqc.dat
 			pitzer.dat
 			sit.dat
+			stimela.dat
 			Tipping_Hurley.dat
 			wateq4f.dat
 			
@@ -379,6 +380,7 @@ E. Windows compiling, testing, and installing the PhreeqcRM library
 			phreeqc.dat
 			pitzer.dat
 			sit.dat
+			stimela.dat
 			wateq4f.dat
 
 		Documentation files:
