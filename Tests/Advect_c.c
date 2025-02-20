@@ -7,6 +7,11 @@
 #include <stdlib.h>
 #include "RM_interface_C.h"
 #include "IPhreeqc.h"
+
+#if defined(_MSC_VER) && _MSC_VER < 1900  // Before Visual Studio 2015
+#define snprintf _snprintf
+#endif
+
 int worker_tasks_c(int* task_number, void* cookie);
 int do_something(void* cookie);
 
@@ -612,12 +617,14 @@ double my_basic_callback(double x1, double x2, const char* str, void* cookie)
 }
 int example_selected_output(int id)
 {
-	int nlines, i, status;
-	char* input;
+	int nlines = 50;
 	size_t MAX_LINE = 400;
-	char line[400], line1[100], line2[100], line3[100];
-	nlines = 50;
 	size_t MAX_BUFFER = nlines * 40;
+
+	int i, status;
+	char* input;
+	char line[400], line1[100], line2[100], line3[100];
+
 	nlines = nlines + RM_GetComponentCount(id);
 	nlines = nlines + RM_GetSpeciesCount(id);
 	nlines = nlines + RM_GetExchangeSpeciesCount(id);

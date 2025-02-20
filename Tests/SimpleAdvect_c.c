@@ -8,6 +8,10 @@
 #include "RM_interface_C.h"
 #include "IPhreeqc.h"
 
+#if defined(_MSC_VER) && _MSC_VER < 1900  // Before Visual Studio 2015
+#define snprintf _snprintf
+#endif
+
 void simpleadvection_c(double* c, double* bc_conc, int ncomps, int nxyz, int dim);
 
 size_t strcat_safe(char* dest, size_t max, const char* src);

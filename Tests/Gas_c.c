@@ -212,14 +212,14 @@ void PrintCells(char** gcomps, double* gas_moles,
 	const char* str)
 	/* ---------------------------------------------------------------------- */
 {
+	int j;
 	fprintf(stderr, "\n%s\n", str);
 	// print cells 0,1,2
-	int j;
 	for (j = 0; j < 3; j++) // cell
 	{
+		int i;
 		fprintf(stderr, "Cell: %i\n", j);
 		fprintf(stderr, "               Moles         P         Phi\n");
-		int i;
 		for (i = 0; i < 3; i++) // component
 		{
 			int k = i * nxyz + j;

@@ -10,6 +10,9 @@
 #include "IPhreeqc.hpp"
 #include "IPhreeqcPhast.h"
 
+#if defined(_MSC_VER) && _MSC_VER < 1900  // Before Visual Studio 2015
+#define snprintf _snprintf
+#endif
 
 
 void speciesadvection_cpp(std::vector<double>& c, std::vector<double> bc_conc, int ncomps, int nxyz, int dim);

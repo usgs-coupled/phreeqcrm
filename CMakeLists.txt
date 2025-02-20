@@ -321,8 +321,8 @@ target_include_directories(PhreeqcRM
 include(GenerateExportHeader)
 generate_export_header(PhreeqcRM BASE_NAME IRM_DLL)
 
-# c++14
-target_compile_features(PhreeqcRM PUBLIC cxx_std_14)
+# c++11
+target_compile_features(PhreeqcRM PUBLIC cxx_std_11)
 
 # iphreeqc defs
 target_compile_definitions(PhreeqcRM PRIVATE SWIG_SHARED_OBJ)

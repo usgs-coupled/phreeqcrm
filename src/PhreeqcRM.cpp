@@ -182,7 +182,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 , mpi_worker_callback_c( nullptr )
 , mpi_worker_callback_cookie( nullptr )
 , species_save_on( false )
-, initializer(std::make_unique<PhreeqcRM::Initializer>(nxyz_arg, data_for_parallel_processing, io))
+, initializer(std::unique_ptr<PhreeqcRM::Initializer>(new PhreeqcRM::Initializer(nxyz_arg, data_for_parallel_processing, io)))
 {
 #ifdef USE_MPI
 	phreeqcrm_comm = data_for_parallel_processing;
