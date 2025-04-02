@@ -413,17 +413,17 @@ jobs:
         brew install ninja swig
         ls -alR /usr/local/Cellar/
 
-    # - name: Install yaml-cpp (Linux)
-    #   if: ${{ runner.os == 'Linux' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-    #   run: vcpkg install yaml-cpp:x64-linux
+    - name: Install yaml-cpp (Linux)
+      if: ${{ runner.os == 'Linux' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: vcpkg install yaml-cpp:x64-linux
 
-    # - name: Install yaml-cpp (macOS)
-    #   if: ${{ runner.os == 'macOS' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-    #   run: vcpkg install yaml-cpp:x64-osx
+    - name: Install yaml-cpp (macOS)
+      if: ${{ runner.os == 'macOS' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: vcpkg install yaml-cpp:x64-osx
 
-    # - name: Install yaml-cpp (Windows)
-    #   if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-    #   run: vcpkg install yaml-cpp:x64-windows
+    - name: Install yaml-cpp (Windows)
+      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
+      run: vcpkg install yaml-cpp:x64-windows
 
     # - name: Set up Python ${{ matrix.python-version }}
     - name: Set up Python 3.8
