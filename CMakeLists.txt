@@ -71,6 +71,9 @@ if(PHREEQCRM_WITH_YAML_CPP)
     set(YAML_CPP_INSTALL ON CACHE STRING "")
   endif()
 
+  # Fix for CMake 4.0 until yaml-cpp gets updated
+  set(CMAKE_POLICY_VERSION_MINIMUM "3.5" CACHE STRING "" FORCE)
+
   # Fetch yaml-cpp
   FetchContent_Declare(
     yaml-cpp
@@ -87,6 +90,9 @@ if(PHREEQCRM_WITH_YAML_CPP)
       message(STATUS "Found yaml-cpp: TRUE")
     endif()
   endif()
+
+  # Fix for CMake 4.0 until yaml-cpp gets updated
+  unset(CMAKE_POLICY_VERSION_MINIMUM CACHE)
 endif()
 
 option(PHREEQCRM_DISABLE_OPENMP "Disable openmp" OFF)
