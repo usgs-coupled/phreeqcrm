@@ -179,7 +179,9 @@ def AdvectBMI_py():
 	# Get initial volume
 	volume = bmi.get_value_ptr("SolutionVolume")
 	# Get initial concentrations
-	c = bmi.get_value_ptr("Concentrations")
+	#c = bmi.get_value_ptr("Concentrations")
+	dest = np.empty(nxyz*ncomps, dtype=float)
+	c = bmi.get_value("Concentrations", dest)
 
 	# print("volume")
 	# print(volume)
@@ -239,7 +241,9 @@ def AdvectBMI_py():
 		
 		# Run cells with transported conditions
 		print(f"Beginning reaction calculation  {time*bmi.GetTimeConversion()} days")
+		bmi.set_value("Concentrations", c)
 		bmi.update()
+		bmi.get_value("Concentrations", c)
 
 		# Print results at last time step
 		if (step == (nsteps - 1)):
