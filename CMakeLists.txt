@@ -59,10 +59,17 @@ if(DEFINED SKBUILD)
 endif()
 if(PHREEQCRM_WITH_YAML_CPP)
   # Initialize a static build for yaml-cpp
-  # w/o the FORCE option the user can override using -DYAML_BUILD_SHARED_LIBS=ON
-  set(YAML_BUILD_SHARED_LIBS OFF CACHE STRING "")
-  # w/o the FORCE option the user can override using -DYAML_CPP_INSTALL=OFF
-  set(YAML_CPP_INSTALL ON CACHE STRING "")
+  if(DEFINED SKBUILD)
+    # Use force for wheel builds
+    set(YAML_BUILD_SHARED_LIBS OFF CACHE STRING "" FORCE)
+    set(YAML_CPP_INSTALL OFF CACHE STRING "" FORCE)
+  else()
+    # w/o the FORCE option the user can override using -DYAML_BUILD_SHARED_LIBS=ON
+    set(YAML_BUILD_SHARED_LIBS OFF CACHE STRING "")
+
+    # w/o the FORCE option the user can override using -DYAML_CPP_INSTALL=OFF
+    set(YAML_CPP_INSTALL ON CACHE STRING "")
+  endif()
 
   # Fetch yaml-cpp
   FetchContent_Declare(
