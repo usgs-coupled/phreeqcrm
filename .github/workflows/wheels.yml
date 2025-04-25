@@ -29,10 +29,10 @@ jobs:
         buildplat:
           - [macos-13, macosx_x86_64, x86_64, x86_64]
           - [macos-14, macosx_arm64, arm64, arm64]
-          - [ubuntu-20.04, manylinux_aarch64, aarch64, aarch64]
-          - [ubuntu-20.04, manylinux_ppc64le, ppc64le, ppc64le]
-          - [ubuntu-20.04, manylinux_x86_64, x86_64, x86_64]
-          - [ubuntu-20.04, manylinux_i686, i686, i686]
+          - [ubuntu-22.04, manylinux_aarch64, aarch64, aarch64]
+          - [ubuntu-22.04, manylinux_ppc64le, ppc64le, ppc64le]
+          - [ubuntu-22.04, manylinux_x86_64, x86_64, x86_64]
+          - [ubuntu-22.04, manylinux_i686, i686, i686]
           - [windows-2019, win_amd64, x64, AMD64]
           - [windows-2019, win32, Win32, x86]
           - [windows-2019, win_arm64, ARM64, ARM64]
@@ -47,14 +47,14 @@ jobs:
           - [pp310, v141]
 
         exclude:
-          # cp313(i686) on ubuntu-20.04
-          - buildplat: [ubuntu-20.04, manylinux_i686, i686]
+          # cp313(i686) on ubuntu-22.04
+          - buildplat: [ubuntu-22.04, manylinux_i686, i686]
             python: [cp313, v142]
-          # pp310(ppc64le) on ubuntu-20.04
-          - buildplat: [ubuntu-20.04, manylinux_ppc64le, ppc64le, ppc64le]
+          # pp310(ppc64le) on ubuntu-22.04
+          - buildplat: [ubuntu-22.04, manylinux_ppc64le, ppc64le, ppc64le]
             python: [pp310, v141]
-          # pp310(i686) on ubuntu-20.04
-          - buildplat: [ubuntu-20.04, manylinux_i686, i686, i686]
+          # pp310(i686) on ubuntu-22.04
+          - buildplat: [ubuntu-22.04, manylinux_i686, i686, i686]
             python: [pp310, v141]
           # pp310(Win32) on windows-2019
           - buildplat: [windows-2019, win32, Win32, x86]
@@ -65,11 +65,11 @@ jobs:
           # pp310(ARM64) on windows-2019
           - buildplat: [windows-2019, win_arm64, ARM64, ARM64]
             python: [pp310, v141]
-          # cp313t(ppc64le) on ubuntu-20.04
-          - buildplat: [ubuntu-20.04, manylinux_ppc64le, ppc64le, ppc64le]
+          # cp313t(ppc64le) on ubuntu-22.04
+          - buildplat: [ubuntu-22.04, manylinux_ppc64le, ppc64le, ppc64le]
             python: [cp313t, v142]
-          # cp313t(i686) on ubuntu-20.04
-          - buildplat: [ubuntu-20.04, manylinux_i686, i686]
+          # cp313t(i686) on ubuntu-22.04
+          - buildplat: [ubuntu-22.04, manylinux_i686, i686]
             python: [cp313t, v142]
           # cp38(ARM64) on windows-2019
           - buildplat: [windows-2019, win_arm64, ARM64, ARM64]
