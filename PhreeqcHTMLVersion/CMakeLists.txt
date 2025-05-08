@@ -1,1 +1,0 @@
-install (FILES phreeqc3.chm DESTINATION ${CMAKE_INSTALL_DOCDIR})
