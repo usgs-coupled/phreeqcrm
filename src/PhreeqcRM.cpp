@@ -2934,6 +2934,8 @@ PhreeqcRM::FindComponents(void)
 					if (components[i] == "Charge") continue;
 					in << components[i] << " 1e-6\n";
 				}
+				// Added line for isotopes
+				in << "END; MIX; " << next << " 1.0; END\n";   /////////////////
 				int status = phast_iphreeqc_worker->RunString(in.str().c_str());
 				if (status != 0)
 				{
