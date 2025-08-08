@@ -1,0 +1,12 @@
+[
+ {
+    "prefix": "database",
+    "url": "git@${CI_SERVER_HOST}:${GROUP}-subtrees/phreeqc3-database.git",
+    "repo": "usgs-coupled-subtrees/phreeqc3-database"
+  },
+ {
+    "prefix": "src",
+    "url": "git@${CI_SERVER_HOST}:${GROUP}-subtrees/phreeqcrm-src.git",
+    "repo": "usgs-coupled-subtrees/phreeqcrm-src"
+  }
+]
