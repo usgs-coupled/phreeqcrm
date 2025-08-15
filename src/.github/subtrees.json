@@ -1,7 +1,6 @@
 [
- {
+  {
     "prefix": "IPhreeqcPhast/IPhreeqc",
-    "url": "git@${CI_SERVER_HOST}:${GROUP}-subtrees/IPhreeqc-src.git",
     "repo": "usgs-coupled-subtrees/IPhreeqc-src"
   }
 ]
