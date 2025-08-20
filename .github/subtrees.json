@@ -1,0 +1,10 @@
+[
+  {
+    "prefix": "database",
+    "repo": "usgs-coupled-subtrees/phreeqc3-database"
+  },
+  {
+    "prefix": "src",
+    "repo": "usgs-coupled-subtrees/phreeqcrm-src"
+  }
+]
