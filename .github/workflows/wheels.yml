@@ -38,16 +38,16 @@ jobs:
           # # - [windows-2022, win_arm64, ARM64, ARM64]
           # - [windows-11-arm, win_arm64, ARM64, ARM64]
         python:
-          # - [cp38, v141]  # 3.8.20 -> 1929 VS2019 Update 11
-          # - [cp39, v141]  # 3.9.23 -> 1929 VS2019 Update 11
-          # - [cp310, v143] # 3.10.18 -> 1944 VS2022 Update 14?
-          - [cp311, v143] # 3.11.13 -> 1944 VS2022 Update 14?
-          - [cp312, v143]
-          - [cp313, v143]
-          # - [cp313t, v143]
-          - [cp314, v143]
-          # - [pp310, v141]
-          - [pp310, v143]
+          # # - [cp38, v141]  # 3.8.20 -> 1929 VS2019 Update 11
+          # # - [cp39, v141]  # 3.9.23 -> 1929 VS2019 Update 11
+          # # - [cp310, v143] # 3.10.18 -> 1944 VS2022 Update 14?
+          # - [cp311, v143] # 3.11.13 -> 1944 VS2022 Update 14?
+          # - [cp312, v143]
+          # - [cp313, v143]
+          # # - [cp313t, v143]
+          # - [cp314, v143]
+          # # - [pp310, v141]
+          - [pp311, v143]
 
         exclude:
           # cp313(i686) on ubuntu-22.04
@@ -80,6 +80,9 @@ jobs:
           # cp313t(ARM64) on windows-2022
           - buildplat: [windows-2022, win_arm64, ARM64, ARM64]
             python: [cp313t, v142]
+          # pp311(ARM64) on windows-2022
+          - buildplat: [windows-11-arm, win_arm64, ARM64, ARM64]
+            python: [pp311, v143]
 
     steps:
       - uses: actions/checkout@v4
