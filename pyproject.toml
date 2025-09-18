@@ -1,5 +1,6 @@
 [build-system]
 requires = [
+  "cmake>=3.22.0",
   "scikit-build-core",
   "swig",
   "numpy"
@@ -8,7 +9,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "phreeqcrm"
-version = "0.0.16"
+version = "0.0.17"
 description = "A reaction module for transport simulators based on the geochemical model PHREEQC."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -22,10 +23,11 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
   "numpy",
-  "PyYAML"
+  "PyYAML",
 ]
 
 [tool.scikit-build]
