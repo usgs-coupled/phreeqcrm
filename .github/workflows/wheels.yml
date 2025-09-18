@@ -107,6 +107,12 @@ jobs:
           image: tonistiigi/binfmt:qemu-v8.1.5
           #platforms: all
 
+      #{{
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==3.1.4
+      #}}
+
+
       # - name: Build wheels (Linux)
       #   if: ${{ runner.os == 'Linux' }}
       #   uses: pypa/cibuildwheel@v2.22.0
@@ -147,8 +153,18 @@ jobs:
       #     CMAKE_GENERATOR_PLATFORM: ${{ matrix.buildplat[2] }}
 
       #{{
-      - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==3.1.4
+      - name: Build wheels (macOS)
+        if: ${{ runner.os == 'macOS' }}
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
+          CIBW_BUILD: ${{ matrix.python[0] }}-*
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_TEST_REQUIRES: pytest
+          # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
+          CIBW_TEST_COMMAND: "pytest {project}/swig/python"
+          CIBW_ARCHS_MACOS: ${{ matrix.buildplat[3] }}
+
 
       - name: Build wheels (Windows)
         if: ${{ runner.os == 'Windows' }}
@@ -181,7 +197,7 @@ jobs:
       - uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5.1.1
         with:
           # Build sdist on lowest supported Python
-          python-version: "3.8"
+          python-version: "3.11"
       - name: Build sdist
         run: |
           python -m pip install -U pip build
