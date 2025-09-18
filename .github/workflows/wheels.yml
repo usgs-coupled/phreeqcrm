@@ -37,16 +37,15 @@ jobs:
           - [windows-2022, win32, Win32, x86]
           # - [windows-2022, win_arm64, ARM64, ARM64]
         python:
-          - [cp38, v141]
-          - [cp39, v141]
-          - [cp310, v141]
-          - [cp311, v141]
-          - [cp312, v142]
-          - [cp313, v142]
-          # - [cp313t, v142]
-          # this needs to be verified (v142=VS2019, v143=VS2022)
-          # - [cp314, v142]
-          - [pp310, v141]
+          # - [cp38, v141]  # 3.8.20 -> 1929 VS2019 Update 11
+          # - [cp39, v141]  # 3.9.23 -> 1929 VS2019 Update 11
+          - [cp310, v143] # 3.10.18 -> 1944 VS2022 Update 14?
+          - [cp311, v143] # 3.11.13 -> 1944 VS2022 Update 14?
+          - [cp312, v143]
+          - [cp313, v143]
+          # - [cp313t, v143]
+          - [cp314, v143]
+          # - [pp310, v141]
 
         exclude:
           # cp313(i686) on ubuntu-22.04
