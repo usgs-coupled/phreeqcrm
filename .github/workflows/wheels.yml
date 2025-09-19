@@ -27,27 +27,22 @@ jobs:
       fail-fast: false
       matrix:
         buildplat:
-          # - [macos-13, macosx_x86_64, x86_64, x86_64]
-          # - [macos-14, macosx_arm64, arm64, arm64]
-          # # - [ubuntu-22.04, manylinux_aarch64, aarch64, aarch64]
-          # # - [ubuntu-22.04, manylinux_ppc64le, ppc64le, ppc64le]
+          - [macos-13, macosx_x86_64, x86_64, x86_64]
+          - [macos-14, macosx_arm64, arm64, arm64]
           - [ubuntu-24.04-arm, manylinux_aarch64, aarch64, aarch64]
-          - [ubuntu-24.04-arm, manylinux_ppc64le, ppc64le, ppc64le]
+          # - [ubuntu-22.04, manylinux_ppc64le, ppc64le, ppc64le]   ~2 hours
           - [ubuntu-22.04, manylinux_x86_64, x86_64, x86_64]
           - [ubuntu-22.04, manylinux_i686, i686, i686]
-          # - [windows-2022, win_amd64, x64, AMD64]
-          # - [windows-2022, win32, Win32, x86]
-          # - [windows-11-arm, win_arm64, ARM64, ARM64]
+          - [windows-2022, win_amd64, x64, AMD64]
+          - [windows-2022, win32, Win32, x86]
+          - [windows-11-arm, win_arm64, ARM64, ARM64]
         python:
-          # # - [cp38, v141]  # 3.8.20 -> 1929 VS2019 Update 11
-          # # - [cp39, v141]  # 3.9.23 -> 1929 VS2019 Update 11
-          # # - [cp310, v143] # 3.10.18 -> 1944 VS2022 Update 14?
-          # - [cp311, v143] # 3.11.13 -> 1944 VS2022 Update 14?
+          - [cp311, v143]
           - [cp312, v143]
-          # - [cp313, v143]
-          # # - [cp313t, v143]
-          # - [cp314, v143]
-          # - [pp311, v143]
+          - [cp313, v143]
+          # - [cp313t, v143]
+          - [cp314, v143]
+          - [pp311, v143]
 
         exclude:
           # cp313(i686) on ubuntu-22.04
@@ -90,63 +85,9 @@ jobs:
         run: |
           python --version
 
-      # # free some space to prevent reaching GHA disk space limits
-      # - name: Clean docker images
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     docker system prune -a -f
-      #     df -h
-
-      # - name: Setup QEMU
-      #   if: runner.os == 'Linux'
-      #   uses: docker/setup-qemu-action@v3
-      #   with:
-      #     image: tonistiigi/binfmt:qemu-v8.1.5
-      #     #platforms: all
-
       - name: Install cibuildwheel
         run: python -m pip install cibuildwheel==3.1.4
 
-      # - name: Build wheels (Linux)
-      #   if: ${{ runner.os == 'Linux' }}
-      #   uses: pypa/cibuildwheel@v2.22.0
-      #   env:
-      #     CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
-      #     CIBW_BUILD: ${{ matrix.python[0] }}-*
-      #     CIBW_BUILD_VERBOSITY: 1
-      #     CIBW_TEST_REQUIRES: pytest
-      #     # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
-      #     CIBW_TEST_COMMAND: "pytest {project}/swig/python"
-      #     CIBW_ARCHS_LINUX: ${{ matrix.buildplat[3] }}
-
-      # - name: Build wheels (macOS)
-      #   if: ${{ runner.os == 'macOS' }}
-      #   uses: pypa/cibuildwheel@v2.22.0
-      #   env:
-      #     CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
-      #     CIBW_BUILD: ${{ matrix.python[0] }}-*
-      #     CIBW_BUILD_VERBOSITY: 1
-      #     CIBW_TEST_REQUIRES: pytest
-      #     # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
-      #     CIBW_TEST_COMMAND: "pytest {project}/swig/python"
-      #     CIBW_ARCHS_MACOS: ${{ matrix.buildplat[3] }}
-
-      # - name: Build wheels (Windows)
-      #   if: ${{ runner.os == 'Windows' }}
-      #   uses: pypa/cibuildwheel@v2.22.0
-      #   env:
-      #     CIBW_ENABLE: cpython-prerelease cpython-freethreading pypy
-      #     CIBW_BUILD: ${{ matrix.python[0] }}-*
-      #     CIBW_BUILD_VERBOSITY: 1
-      #     CIBW_TEST_REQUIRES: pytest
-      #     # CIBW_BEFORE_TEST: pwd && ls -Ral && ls -Ral {project}/swig/python
-      #     CIBW_TEST_COMMAND: "pytest {project}/swig/python"
-      #     CIBW_ARCHS_WINDOWS: ${{ matrix.buildplat[3] }}
-      #     CMAKE_GENERATOR: Visual Studio 17 2022
-      #     CMAKE_GENERATOR_TOOLSET: ${{ matrix.python[1] }}
-      #     CMAKE_GENERATOR_PLATFORM: ${{ matrix.buildplat[2] }}
-
-      #{{
       - name: Build wheels (Linux)
         if: ${{ runner.os == 'Linux' }}
         run: python -m cibuildwheel --output-dir wheelhouse
@@ -185,7 +126,6 @@ jobs:
           CMAKE_GENERATOR: Visual Studio 17 2022
           CMAKE_GENERATOR_TOOLSET: ${{ matrix.python[1] }}
           CMAKE_GENERATOR_PLATFORM: ${{ matrix.buildplat[2] }}      
-      #}}
 
       - uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
         with:
