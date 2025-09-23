@@ -27,22 +27,22 @@ jobs:
       fail-fast: false
       matrix:
         buildplat:
-          # - [macos-13, macosx_x86_64, x86_64, x86_64]
-          # - [macos-14, macosx_arm64, arm64, arm64]
-          # - [ubuntu-24.04-arm, manylinux_aarch64, aarch64, aarch64]
+          - [macos-13, macosx_x86_64, x86_64, x86_64]
+          - [macos-14, macosx_arm64, arm64, arm64]
+          - [ubuntu-24.04-arm, manylinux_aarch64, aarch64, aarch64]
           - [ubuntu-22.04, manylinux_ppc64le, ppc64le, ppc64le]
-          # - [ubuntu-22.04, manylinux_x86_64, x86_64, x86_64]
-          # - [ubuntu-22.04, manylinux_i686, i686, i686]
-          # - [windows-2022, win_amd64, x64, AMD64]
-          # - [windows-2022, win32, Win32, x86]
-          # - [windows-11-arm, win_arm64, ARM64, ARM64]
+          - [ubuntu-22.04, manylinux_x86_64, x86_64, x86_64]
+          - [ubuntu-22.04, manylinux_i686, i686, i686]
+          - [windows-2022, win_amd64, x64, AMD64]
+          - [windows-2022, win32, Win32, x86]
+          - [windows-11-arm, win_arm64, ARM64, ARM64]
         python:
-          # - [cp311, v143]
+          - [cp311, v143]
           - [cp312, v143]
-          # - [cp313, v143]
-          # # - [cp313t, v143]
-          # - [cp314, v143]
-          # - [pp311, v143]
+          - [cp313, v143]
+          # - [cp313t, v143]
+          - [cp314, v143]
+          - [pp311, v143]
 
         exclude:
           # cp313(i686) on ubuntu-22.04
