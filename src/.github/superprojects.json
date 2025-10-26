@@ -1,0 +1,7 @@
+{
+  "usgs-coupled-subtrees/PhreeqcRM-src": {
+    "superprojects": [
+      "usgs-coupled-subtrees/phreeqcrm"
+    ]
+  }
+}
