@@ -1,10 +1,21 @@
-cmake_minimum_required(VERSION 3.22...3.26)
+cmake_minimum_required(VERSION 3.22...4.1)
 
 project(
   PhreeqcRM
   VERSION 3.8.0
   LANGUAGES CXX C
 )
+
+# Adapted from pyzmq's CMake build logic to be compatible with yaml-cpp
+# https://github.com/zeromq/pyzmq/blob/9007d88dd316328fd3ddd11380f94914dbcf687c/CMakeLists.txt#L327-L337
+if ("${CMAKE_POLICY_VERSION_MINIMUM}" STREQUAL "")
+  if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.31")
+    set(CMAKE_POLICY_VERSION_MINIMUM "3.31")
+  else()
+    set(CMAKE_POLICY_VERSION_MINIMUM "${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}")
+  endif()
+  message(STATUS "Setting CMAKE_POLICY_VERSION_MINIMUM=${CMAKE_POLICY_VERSION_MINIMUM} for yaml-cpp")
+endif()
 
 if(DEFINED SKBUILD)
   include(CheckPIESupported)
