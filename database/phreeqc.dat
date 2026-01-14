@@ -159,9 +159,9 @@ PO4-3 = PO4-3
 	-dw 0.612e-9
 F- = F-
 	-gamma 3.5 0
-	-Vm 0.928 1.36 6.27 -2.84 1.84 0 0 -0.318 0 1
-	-viscosity 0 2.85e-2 1.35e-2 6.11e-2 4.38e-3 1.384 0.586
-	-dw 1.46e-9 -36 4.352
+	-Vm 2.235 -3.39 7.6 -2.5 1.71 15 -1 -39.3 5.68e-2 0.913 # Majer et al., 1997, JSC 26, 847, with NaF and KF.
+	-viscosity 0 -0.448 4.67e-2 0.46 4.03e-2 -0.057 -2
+	-dw 1.46e-9 -62 5 0.854 1.66
 Br- = Br-
 	-gamma 3 0.045
 	-Vm 6.72 2.85 4.21 -3.14 1.38 0 -9.56e-2 7.08 -1.56e-3 1
@@ -467,8 +467,18 @@ Na+ + HPO4-2 = NaHPO4-
 	-gamma 5.4 0
 	-Vm 5.2 8.1 13 -3 0.9 0 0 1.62e-2 1
 Na+ + F- = NaF
-	-log_k -0.24
-	-Vm 2.7483 -1.0708 6.1709 -2.7347 -.03 # supcrt
+	-gamma 0 0.2
+	-log_k -2.38; -delta_h 24.5
+	-analytic -5 1.159e-2 -250
+	-Vm -0.6 2.14 20 -2.40 -9.6e-2
+	-dw 8e-10
+K+ + F- = KF
+	-gamma 0 -6.3e-3
+	-log_k -0.82; -delta_h 14.5
+	-analytic -1.568 5.87e-3 -234.6
+	-Vm 1.94 -9.2 20 -2.4 2.6e-2
+	-viscosity 0.9 -0.769 -1e-3 2 6.76e-2 -0.889 -2
+	-dw 8e-10
 K+ + HCO3- = KHCO3
 	-log_k -0.35; -delta_h 12 kJ
 	-gamma 0 0.1
@@ -1049,9 +1059,8 @@ Hydroxyapatite
 	-Vm 128.9
 Fluorite
 	CaF2 = Ca+2 + 2 F-
-	-log_k -10.6
-	-delta_h 4.69 kcal
-	-analytic 66.348 0 -4298.2 -25.271
+	-log_k -10.61; -delta_h 10.6
+	-analytic 57.313 0 -3495 -22.714 # Strübel, 1965, NJbM,M 83-95; Henry, 2018, PhD, Colorado School of Mines.
 	-Vm 15.7
 SiO2(a)
 	SiO2 + 2 H2O = H4SiO4
@@ -1943,10 +1952,11 @@ END
 # For details, consult ref. 1 and subroutine calc_vm(tc, pa) in prep.cpp.
 # =============================================================================================
 # The viscosity is calculated with a (modified) Jones-Dole equation:
-#    viscos / viscos_0 = 1 + A * Sum(0.5 z_i m_i) + fan * Sum(B_i m_i + D_i m_i n_i)
+#    viscos / viscos_0 = 1 + A * Sum(0.5 z_i m_i)^0.5 + fan * Sum(B_i m_i + D_i m_i n_i)
 # Parameters are for calculating the B and D terms:
 #    -viscosity 9.35e-2 -8.31e-2 2.487e-2 4.49e-4 2.01e-2 1.570 0
 #    #	        b0      b1	    b2	   d1	  d2	d3  tan
+#    A = calculated according to Falkenhagen
 #    z_i is absolute charge number, m_i is molality of i
 #    B_i = b0 + b1 exp(-b2 * tc)
 #    fan = (2 - tan V_i / V_Cl-), corrects for the volume of anions and neutral species
