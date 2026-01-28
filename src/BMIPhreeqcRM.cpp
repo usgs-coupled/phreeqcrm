@@ -106,6 +106,7 @@ BMIPhreeqcRM::GetInstance(int id)
 	return dynamic_cast<BMIPhreeqcRM*>(PhreeqcRM::GetInstance(id));
 }
 // Constructor
+#if 0
 BMIPhreeqcRM::BMIPhreeqcRM()
 : PhreeqcRM(PhreeqcRM::default_nxyz, PhreeqcRM::default_data_for_parallel_processing, nullptr, true)
 , var_man( nullptr )
@@ -120,6 +121,7 @@ BMIPhreeqcRM::BMIPhreeqcRM()
 	this->language = "Py";
 #endif
 }
+#endif
 BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads)
 : PhreeqcRM(nxyz, nthreads, nullptr, true) 
 , var_man( nullptr )
