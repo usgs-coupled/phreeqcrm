@@ -629,6 +629,13 @@ def GetDoubleVector(self, v):
 
 // %numpy_typemaps(int,    NPY_INT32  , int)
 
+%feature("pythonprepend") BMIPhreeqcRM::BMIPhreeqcRM() %{
+    self._state = State.UNINITIALIZED
+    self._values = {}
+    self._pointables = {}
+    self._readonlys = {}
+%}
+
 %feature("pythonprepend") BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads) %{
     self._state = State.UNINITIALIZED
     self._values = {}
