@@ -18,8 +18,8 @@
 #endif
 %}
 
-%feature("director") PhreeqcRM;  // Enable directors for PhreeqcRM
-%feature("director") BMIPhreeqcRM;  // Enable directors for BMIPhreeqcRM
+// %feature("director") PhreeqcRM;  // Enable directors for PhreeqcRM
+// %feature("director") BMIPhreeqcRM;  // Enable directors for BMIPhreeqcRM
 
 %pythoncode 
 %{ 
@@ -108,30 +108,30 @@ import_array();
 // Rename method to avoid tuple
 
 %rename(InitialPhreeqc2ConcentrationsSWIG)          InitialPhreeqc2Concentrations(
-													std::vector < double > &destination_c, 
-													const std::vector < int > &boundary_solution1);
+                                                    std::vector < double > &destination_c, 
+                                                    const std::vector < int > &boundary_solution1);
 
 %rename(InitialPhreeqc2ConcentrationsSWIG_mix)      InitialPhreeqc2Concentrations(
-													std::vector < double > & destination_c,
-													const std::vector < int >    & boundary_solution1,
-													const std::vector < int >    & boundary_solution2,
-													const std::vector < double > & fraction1);
+                                                    std::vector < double > & destination_c,
+                                                    const std::vector < int >    & boundary_solution1,
+                                                    const std::vector < int >    & boundary_solution2,
+                                                    const std::vector < double > & fraction1);
 %rename(InitialPhreeqc2ModuleSWIG)                  InitialPhreeqc2Module(
-													const std::vector < int > & initial_conditions1);
+                                                    const std::vector < int > & initial_conditions1);
 %rename(InitialPhreeqc2ModuleSWIG_mix)              InitialPhreeqc2Module(
-													const std::vector < int > & initial_conditions1,
-													const std::vector < int > & initial_conditions2,	
-													const std::vector < double > & fraction1);
+                                                    const std::vector < int > & initial_conditions1,
+                                                    const std::vector < int > & initial_conditions2,	
+                                                    const std::vector < double > & fraction1);
 %rename(InitialPhreeqc2SpeciesConcentrationsSWIG)   InitialPhreeqc2SpeciesConcentrations(
-													std::vector < double > & destination_c,
-													const std::vector < int >    & boundary_solution1);
+                                                    std::vector < double > & destination_c,
+                                                    const std::vector < int >    & boundary_solution1);
 %rename(InitialPhreeqc2SpeciesConcentrationsSWIG_mix) InitialPhreeqc2SpeciesConcentrations(
-													std::vector < double > & destination_c,
-													const std::vector < int >    & boundary_solution1,
-													const std::vector < int >    & boundary_solution2,
-													const std::vector < double > & fraction1);
+                                                    std::vector < double > & destination_c,
+                                                    const std::vector < int >    & boundary_solution1,
+                                                    const std::vector < int >    & boundary_solution2,
+                                                    const std::vector < double > & fraction1);
 %rename(InitialPhreeqcCell2ModuleSWIG)              InitialPhreeqcCell2Module(int n, 
-		                                            const std::vector< int > &cell_numbers);
+                                                    const std::vector< int > &cell_numbers);
 %rename(CreateMappingSWIG)                          CreateMapping(const std::vector< int > &grid2chem);
 %rename(GetConcentrationsSWIG)                      GetConcentrations(std::vector< double > &c_output);
 %rename(GetDensityCalculatedSWIG)                   GetDensityCalculated(std::vector< double > & d_output);
@@ -173,7 +173,6 @@ import_array();
 %rename(SetIthSpeciesConcentrationSWIG)             SetIthSpeciesConcentration(int i, std::vector< double >& c);
 
 // Ignore methods
-%ignore BMIPhreeqcRM::BMIPhreeqcRM(int,int);  // @todo
 %ignore BMIPhreeqcRM::GetValue(std::string const,bool *);
 %ignore BMIPhreeqcRM::GetValue(std::string const,double *);
 %ignore BMIPhreeqcRM::GetValue(std::string const,int *);
@@ -188,193 +187,193 @@ import_array();
 %extend PhreeqcRM { %pythoncode 
 %{ 
 def GetSpeciesStoichiometry(self):
-	v = self.GetSpeciesStoichiometrySWIG()
-	species = v[0]
-	nelt_in_species = v[1]
-	elts = v[2]
-	coefs = v[3]
-	all_stoich = dict()
-	j_tot = 0
-	for i in range(len(species)):
-		n = nelt_in_species[i]
-		s_stoich = dict()
-		for j in range(n):
-			s_stoich[elts[j_tot]] = coefs[j_tot]
-			j_tot += 1
-		all_stoich[species[i]] = s_stoich
-	return all_stoich	
+    v = self.GetSpeciesStoichiometrySWIG()
+    species = v[0]
+    nelt_in_species = v[1]
+    elts = v[2]
+    coefs = v[3]
+    all_stoich = dict()
+    j_tot = 0
+    for i in range(len(species)):
+        n = nelt_in_species[i]
+        s_stoich = dict()
+        for j in range(n):
+            s_stoich[elts[j_tot]] = coefs[j_tot]
+            j_tot += 1
+        all_stoich[species[i]] = s_stoich
+    return all_stoich	
 def GetBackwardMapping(self):
-	v = self.GetBackwardMappingSWIG()
-	count = v[0]
-	allcells = v[1]
-	backward_mapping = dict()
-	j_tot = 0
-	for i in range(len(count)):
-		n = count[i]
-		back = []
-		for j in range(n):
-			back.append(allcells[j_tot]);
-			j_tot += 1
-		backward_mapping[i] = back
-	return backward_mapping	
+    v = self.GetBackwardMappingSWIG()
+    count = v[0]
+    allcells = v[1]
+    backward_mapping = dict()
+    j_tot = 0
+    for i in range(len(count)):
+        n = count[i]
+        back = []
+        for j in range(n):
+            back.append(allcells[j_tot]);
+            j_tot += 1
+        backward_mapping[i] = back
+    return backward_mapping	
 def InitialPhreeqc2Concentrations(self, bc1):
-	if not isinstance(bc1, phreeqcrm.IntVector):
-		bc1 = self.GetIntVector(bc1)
-	return np.array(self.InitialPhreeqc2ConcentrationsSWIG(bc1)[1])
+    if not isinstance(bc1, phreeqcrm.IntVector):
+        bc1 = self.GetIntVector(bc1)
+    return np.array(self.InitialPhreeqc2ConcentrationsSWIG(bc1)[1])
 def InitialPhreeqc2Module(self, ic1):
-	if not isinstance(ic1, phreeqcrm.IntVector):
-		ic1 = self.GetIntVector(ic1)
-	return self.InitialPhreeqc2ModuleSWIG(ic1)
+    if not isinstance(ic1, phreeqcrm.IntVector):
+        ic1 = self.GetIntVector(ic1)
+    return self.InitialPhreeqc2ModuleSWIG(ic1)
 def InitialPhreeqc2Module_mix(self, ic1, ic2, f1):
-	if not isinstance(ic1, phreeqcrm.IntVector):
-		ic1 = self.GetIntVector(ic1)
-	if not isinstance(ic2, phreeqcrm.IntVector):
-		ic2 = self.GetIntVector(ic2)
-	return self.InitialPhreeqc2ModuleSWIG_mix(ic1,ic2,f1)
+    if not isinstance(ic1, phreeqcrm.IntVector):
+        ic1 = self.GetIntVector(ic1)
+    if not isinstance(ic2, phreeqcrm.IntVector):
+        ic2 = self.GetIntVector(ic2)
+    return self.InitialPhreeqc2ModuleSWIG_mix(ic1,ic2,f1)
 def InitialPhreeqc2Concentrations_mix(self, bc1, bc2, f1):
-	if not isinstance(bc1, phreeqcrm.IntVector):
-		bc1 = self.GetIntVector(bc1)
-	if not isinstance(bc2, phreeqcrm.IntVector):
-		bc2 = self.GetIntVector(bc2)
-	return np.array(self.InitialPhreeqc2ConcentrationsSWIG_mix(bc1,bc2,f1)[1])
+    if not isinstance(bc1, phreeqcrm.IntVector):
+        bc1 = self.GetIntVector(bc1)
+    if not isinstance(bc2, phreeqcrm.IntVector):
+        bc2 = self.GetIntVector(bc2)
+    return np.array(self.InitialPhreeqc2ConcentrationsSWIG_mix(bc1,bc2,f1)[1])
 def InitialPhreeqc2SpeciesConcentrations(self, bc1):
-	if not isinstance(bc1, phreeqcrm.IntVector):
-		bc1 = self.GetIntVector(bc1)
-	return np.array(self.InitialPhreeqc2SpeciesConcentrationsSWIG(bc1)[1])
+    if not isinstance(bc1, phreeqcrm.IntVector):
+        bc1 = self.GetIntVector(bc1)
+    return np.array(self.InitialPhreeqc2SpeciesConcentrationsSWIG(bc1)[1])
 def InitialPhreeqc2SpeciesConcentrations_mix(self, bc1, bc2, f1):
-	if not isinstance(bc1, phreeqcrm.IntVector):
-		bc1 = self.GetIntVector(bc1)
-	if not isinstance(bc2, phreeqcrm.IntVector):
-		bc2 = self.GetIntVector(bc2)
-	return np.array(self.InitialPhreeqc2SpeciesConcentrationsSWIG_mix(bc1,bc2,f1)[1])
+    if not isinstance(bc1, phreeqcrm.IntVector):
+        bc1 = self.GetIntVector(bc1)
+    if not isinstance(bc2, phreeqcrm.IntVector):
+        bc2 = self.GetIntVector(bc2)
+    return np.array(self.InitialPhreeqc2SpeciesConcentrationsSWIG_mix(bc1,bc2,f1)[1])
 def InitialPhreeqcCell2Module(self, n, v):
-	if not isinstance(v, phreeqcrm.IntVector):
-		v = self.GetIntVector(v)
-	return self.InitialPhreeqcCell2ModuleSWIG(n, v)
+    if not isinstance(v, phreeqcrm.IntVector):
+        v = self.GetIntVector(v)
+    return self.InitialPhreeqcCell2ModuleSWIG(n, v)
 def CreateMapping(self, v):
-	if not isinstance(v, phreeqcrm.IntVector):
-		v = self.GetIntVector(v)
-	return self.CreateMappingSWIG(v)
+    if not isinstance(v, phreeqcrm.IntVector):
+        v = self.GetIntVector(v)
+    return self.CreateMappingSWIG(v)
 def GetConcentrations(self):
-	return np.array(self.GetConcentrationsSWIG()[1])
+    return np.array(self.GetConcentrationsSWIG()[1])
 def GetDensityCalculated(self): 
-	return np.array(self.GetDensityCalculatedSWIG()[1])     
+    return np.array(self.GetDensityCalculatedSWIG()[1])     
 def GetEndCell(self):
-	return np.array(self.GetEndCellSWIG())    
+    return np.array(self.GetEndCellSWIG())    
 def GetForwardMapping(self):
-	return np.array(self.GetForwardMappingSWIG())  
+    return np.array(self.GetForwardMappingSWIG())  
 def GetGasCompMoles(self):                 
-	return np.array(self.GetGasCompMolesSWIG()[1])             
+    return np.array(self.GetGasCompMolesSWIG()[1])             
 def GetGasCompPhi(self):                
-	return np.array(self.GetGasCompPhiSWIG()[1])  
+    return np.array(self.GetGasCompPhiSWIG()[1])  
 def GetGasCompPressures(self):      
-	return np.array(self.GetGasCompPressuresSWIG()[1])           
+    return np.array(self.GetGasCompPressuresSWIG()[1])           
 def GetGasPhaseVolume(self):           
-	return np.array(self.GetGasPhaseVolumeSWIG()[1])    
+    return np.array(self.GetGasPhaseVolumeSWIG()[1])    
 def GetGfw(self):
-	return np.array(self.GetGfwSWIG())  
+    return np.array(self.GetGfwSWIG())  
 def GetIthConcentration(self, n):
-	return np.array(self.GetIthConcentrationSWIG(n)[1])   
+    return np.array(self.GetIthConcentrationSWIG(n)[1])   
 def GetIthSpeciesConcentration(self, n):
-	return np.array(self.GetIthSpeciesConcentrationSWIG(n)[1])  
+    return np.array(self.GetIthSpeciesConcentrationSWIG(n)[1])  
 def GetPrintChemistryOn(self):
-	return np.array(self.GetPrintChemistryOn_bool_vector())  
+    return np.array(self.GetPrintChemistryOn_bool_vector())  
 def GetPorosity(self):
-	return np.array(self.GetPorositySWIG())
+    return np.array(self.GetPorositySWIG())
 def GetPressure(self):
-	return np.array(self.GetPressureSWIG())
+    return np.array(self.GetPressureSWIG())
 def GetPrintChemistryMask(self):
-	return np.array(self.GetPrintChemistryMaskSWIG())
+    return np.array(self.GetPrintChemistryMaskSWIG())
 def GetPrintChemistryOn(self):
-	return np.array(self.GetPrintChemistryOn_bool_vector())
+    return np.array(self.GetPrintChemistryOn_bool_vector())
 def GetSaturationCalculated(self):      
-	return np.array(self.GetSaturationCalculatedSWIG()[1])   
+    return np.array(self.GetSaturationCalculatedSWIG()[1])   
 def GetSelectedOutput(self):    
-	return np.array(self.GetSelectedOutputSWIG()[1])     
+    return np.array(self.GetSelectedOutputSWIG()[1])     
 def GetSelectedOutputHeadings(self):             
-	return np.array(self.GetSelectedOutputHeadingsSWIG()[1])  
+    return np.array(self.GetSelectedOutputHeadingsSWIG()[1])  
 def GetSpeciesConcentrations(self):
-	return np.array(self.GetSpeciesConcentrationsSWIG()[1])  
+    return np.array(self.GetSpeciesConcentrationsSWIG()[1])  
 def GetSpeciesD25(self):
-	return np.array(self.GetSpeciesD25SWIG())    
+    return np.array(self.GetSpeciesD25SWIG())    
 def GetSpeciesLog10Gammas(self):   
-	return np.array(self.GetSpeciesLog10GammasSWIG()[1])     
+    return np.array(self.GetSpeciesLog10GammasSWIG()[1])     
 def GetSpeciesLog10Molalities(self):        
-	return np.array(self.GetSpeciesLog10MolalitiesSWIG()[1]) 
+    return np.array(self.GetSpeciesLog10MolalitiesSWIG()[1]) 
 def GetSpeciesZ(self):
-	return np.array(self.GetSpeciesZSWIG())
+    return np.array(self.GetSpeciesZSWIG())
 def GetSolutionVolume(self):
-	return np.array(self.GetSolutionVolumeSWIG())
+    return np.array(self.GetSolutionVolumeSWIG())
 def GetStartCell(self):
-	return np.array(self.GetStartCellSWIG())
+    return np.array(self.GetStartCellSWIG())
 def GetTemperature(self):
-	return np.array(self.GetTemperatureSWIG())
+    return np.array(self.GetTemperatureSWIG())
 def GetViscosity(self):
-	return np.array(self.GetViscositySWIG())
+    return np.array(self.GetViscositySWIG())
 def InitialEquilibriumPhases2Module(self, v):
-	if not isinstance(v, phreeqcrm.IntVector):
-		v = self.GetIntVector(v)
-	return self.InitialEquilibriumPhases2ModuleSWIG(v)
+    if not isinstance(v, phreeqcrm.IntVector):
+        v = self.GetIntVector(v)
+    return self.InitialEquilibriumPhases2ModuleSWIG(v)
 def InitialExchanges2Module(self, v):
-	if not isinstance(v, phreeqcrm.IntVector):
-		v = self.GetIntVector(v)
-	return self.InitialExchanges2ModuleSWIG(v)
+    if not isinstance(v, phreeqcrm.IntVector):
+        v = self.GetIntVector(v)
+    return self.InitialExchanges2ModuleSWIG(v)
 def InitialGasPhases2Module(self, v):
-	if not isinstance(v, phreeqcrm.IntVector):
-		v = self.GetIntVector(v)
-	return self.InitialGasPhases2ModuleSWIG(v)
+    if not isinstance(v, phreeqcrm.IntVector):
+        v = self.GetIntVector(v)
+    return self.InitialGasPhases2ModuleSWIG(v)
 def InitialKinetics2Module(self, v):
-	if not isinstance(v, phreeqcrm.IntVector):
-		v = self.GetIntVector(v)
-	return self.InitialKinetics2ModuleSWIG(v)
+    if not isinstance(v, phreeqcrm.IntVector):
+        v = self.GetIntVector(v)
+    return self.InitialKinetics2ModuleSWIG(v)
 def InitialSolutions2Module(self, v):
-	if not isinstance(v, phreeqcrm.IntVector):
-		v = self.GetIntVector(v)
-	return self.InitialSolutions2ModuleSWIG(v)
+    if not isinstance(v, phreeqcrm.IntVector):
+        v = self.GetIntVector(v)
+    return self.InitialSolutions2ModuleSWIG(v)
 def InitialSolidSolutions2Module(self, v):
-	if not isinstance(v, phreeqcrm.IntVector):
-		v = self.GetIntVector(v)
-	return self.InitialSolidSolutions2ModuleSWIG(v)
+    if not isinstance(v, phreeqcrm.IntVector):
+        v = self.GetIntVector(v)
+    return self.InitialSolidSolutions2ModuleSWIG(v)
 def InitialSurfaces2Module(self, v):
-	if not isinstance(v, phreeqcrm.IntVector):
-		v = self.GetIntVector(v)
-	return self.InitialSurfaces2ModuleSWIG(v)
+    if not isinstance(v, phreeqcrm.IntVector):
+        v = self.GetIntVector(v)
+    return self.InitialSurfaces2ModuleSWIG(v)
 def SetIthConcentration(self, i, c):
-	if not isinstance(c, phreeqcrm.DoubleVector):
-		c = self.GetDoubleVector(c)
-	return self.SetIthConcentrationSWIG(i, c)
+    if not isinstance(c, phreeqcrm.DoubleVector):
+        c = self.GetDoubleVector(c)
+    return self.SetIthConcentrationSWIG(i, c)
 def SetIthSpeciesConcentration(self, i, c):
-	if not isinstance(c, phreeqcrm.DoubleVector):
-		c = self.GetDoubleVector(c)
-	return self.SetIthSpeciesConcentrationSWIG(i, c)
+    if not isinstance(c, phreeqcrm.DoubleVector):
+        c = self.GetDoubleVector(c)
+    return self.SetIthSpeciesConcentrationSWIG(i, c)
 def SetPrintChemistryMask(self, cell_mask):
-	if not isinstance(cell_mask, phreeqcrm.IntVector):
-		cell_mask = self.GetIntVector(cell_mask)
-	return self.SetPrintChemistryMaskSWIG(cell_mask)
+    if not isinstance(cell_mask, phreeqcrm.IntVector):
+        cell_mask = self.GetIntVector(cell_mask)
+    return self.SetPrintChemistryMaskSWIG(cell_mask)
 def GetIntVector(self, v):
-	if isinstance(v, np.ndarray) and isinstance(v[0].item(), int):
-		vv = phreeqcrm.IntVector()
-		for i in range(len(v)):
-			vv.push_back(v[i].item())
-		return vv
-	if (isinstance(v, tuple) or isinstance(v, list)) and isinstance(v[0], int):
-		vv = phreeqcrm.IntVector()
-		for i in range(len(v)):
-			vv.push_back(v[i])
-		return vv
-	return v
+    if isinstance(v, np.ndarray) and isinstance(v[0].item(), int):
+        vv = phreeqcrm.IntVector()
+        for i in range(len(v)):
+            vv.push_back(v[i].item())
+        return vv
+    if (isinstance(v, tuple) or isinstance(v, list)) and isinstance(v[0], int):
+        vv = phreeqcrm.IntVector()
+        for i in range(len(v)):
+            vv.push_back(v[i])
+        return vv
+    return v
 def GetDoubleVector(self, v):
-	if isinstance(v, np.ndarray) and isinstance(v[0].item(), float):
-		vv = phreeqcrm.DoubleVector()
-		for i in range(len(v)):
-			vv.push_back(v[i].item())
-		return vv
-	if (isinstance(v, tuple) or isinstance(v, list)) and isinstance(v[0], float):
-		vv = phreeqcrm.DoubleVector()
-		for i in range(len(v)):
-			vv.push_back(v[i])
-		return vv
-	return v
+    if isinstance(v, np.ndarray) and isinstance(v[0].item(), float):
+        vv = phreeqcrm.DoubleVector()
+        for i in range(len(v)):
+            vv.push_back(v[i].item())
+        return vv
+    if (isinstance(v, tuple) or isinstance(v, list)) and isinstance(v[0], float):
+        vv = phreeqcrm.DoubleVector()
+        for i in range(len(v)):
+            vv.push_back(v[i])
+        return vv
+    return v
 
 %} 
 }
@@ -630,7 +629,7 @@ def GetDoubleVector(self, v):
 
 // %numpy_typemaps(int,    NPY_INT32  , int)
 
-%feature("pythonprepend") BMIPhreeqcRM::BMIPhreeqcRM() %{
+%feature("pythonprepend") BMIPhreeqcRM::BMIPhreeqcRM(int nxyz, MP_TYPE nthreads) %{
     self._state = State.UNINITIALIZED
     self._values = {}
     self._pointables = {}

@@ -42,11 +42,18 @@ configure_file(yamlphreeqcrm.py yamlphreeqcrm.py COPYONLY)
 configure_file(AdvectBMI_py.py AdvectBMI_py.py COPYONLY)
 configure_file(WriteYAMLFile_py.py WriteYAMLFile_py.py COPYONLY)
 configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
+configure_file(TestAllMethodsMPI.py TestAllMethodsMPI.py COPYONLY)
 
 # copy pytest files to build directory for testing
 configure_file(conftest.py conftest.py COPYONLY)
 configure_file(constants.py constants.py COPYONLY)
-configure_file(test_basic.py test_basic.py COPYONLY)
+if(PHREEQCRM_BUILD_MPI)
+  set(IMPORT_MPI4PY "import mpi4py.MPI as MPI")
+  configure_file(test_basic.py test_basic.py @ONLY)
+else()
+  set(IMPORT_MPI4PY "# MPI not enabled")
+  configure_file(test_basic.py test_basic.py @ONLY)
+endif()
 configure_file(test_get_value.py test_get_value.py COPYONLY)
 configure_file(test_init.py test_init.py COPYONLY)
 configure_file(test_irf.py test_irf.py COPYONLY)
@@ -71,7 +78,7 @@ set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY DEPENDS
 if(PHREEQCRM_BUILD_MPI)
   # HACK: define SWIG_USE_MPI instead of USE_MPI since it would set MP_TYPE to MPI_Comm in PhreeqcRM.h
   # which seems to work when compiling with MSMPI on Windows
-  ##set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_MPI)
+  ## set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_MPI)
   set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS SWIG_USE_MPI)
 else()
   if(NOT PHREEQCRM_DISABLE_OPENMP)
@@ -295,15 +302,29 @@ else()
   )
 endif()
 
-# TestAllMethods_py.py test
-add_test(NAME TestAllMethods_py.py
-  COMMAND ${Python_EXECUTABLE} TestAllMethods_py.py
-)
-set_tests_properties(TestAllMethods_py.py
-  PROPERTIES 
-    ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-    DISABLED "$<$<BOOL:${PHREEQCRM_BUILD_MPI}>:TRUE>"
-)
+# TestAllMethods_py.py/TestAllMethodsMPI.py test
+if(PHREEQCRM_BUILD_MPI)
+  add_test(NAME TestAllMethodsMPI.py
+          # COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
+          COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
+          ${MPIEXEC_PREFLAGS}
+          ${Python_EXECUTABLE} TestAllMethodsMPI.py
+          ${MPIEXEC_POSTFLAGS}
+          )
+  set_tests_properties(TestAllMethodsMPI.py
+    PROPERTIES
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+  )
+else()
+  add_test(NAME TestAllMethods_py.py
+    COMMAND ${Python_EXECUTABLE} TestAllMethods_py.py
+  )
+  set_tests_properties(TestAllMethods_py.py
+    PROPERTIES 
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+      DISABLED "$<$<BOOL:${PHREEQCRM_BUILD_MPI}>:TRUE>"
+  )
+endif()
 
 
 # Pytest
@@ -314,8 +335,7 @@ set_tests_properties(run_pytest
   PROPERTIES 
     ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
     # Some Pytest tests require PHREEQCRM_WITH_YAML_CPP=ON
-    # DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
-    DISABLED "$<$<BOOL:${PHREEQCRM_BUILD_MPI}>:TRUE>"
+    DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
 )
 
 

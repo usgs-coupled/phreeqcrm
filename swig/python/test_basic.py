@@ -4,6 +4,7 @@ from numpy.testing import assert_array_almost_equal, assert_array_less
 import pytest
 
 from phreeqcrm import BMIPhreeqcRM, IRM_OK, State
+@IMPORT_MPI4PY@
 
 from constants import FilePaths
 
