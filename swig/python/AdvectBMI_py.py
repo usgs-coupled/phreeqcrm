@@ -14,7 +14,7 @@ class AdvectBMI(phreeqcrm.BMIPhreeqcRM):
 		phreeqcrm.BMIPhreeqcRM.__init__(self)
 		self.initialize(yaml)
 
-	def display_results(self):
+	def display_all_selected_output(self):
 
 		nxyz = self.get_value_ptr("GridCellCount")[0]
 		components = self.get_value_ptr("Components")
@@ -54,6 +54,28 @@ class AdvectBMI(phreeqcrm.BMIPhreeqcRM):
 				for j in range(cols):
 					print(f"{j}, {headings[j]}, {selected_out[j * nxyz + i]}")
 
+	def display_results(self):
+		# Use GetValue to extract exchange composition and pH
+		# YAMLAddOutputVars can be used to select groups of
+		# variables that are available through GetValue
+		nxyz = self.get_scalar("GridCellCount")
+		pH = np.empty(nxyz, dtype=float)
+		x = self.get_value("solution_ph", pH)
+		Ca = np.empty(nxyz, dtype=float)
+		x = self.get_value("solution_total_molality_Ca", Ca)
+		K = np.empty(nxyz, dtype=float)
+		x = self.get_value("solution_total_molality_K", K)
+		Na = np.empty(nxyz, dtype=float)
+		x = self.get_value("solution_total_molality_Na", Na)
+		Cl = np.empty(nxyz, dtype=float)
+		x = self.get_value("solution_total_molality_Cl", Cl)
+		N = np.empty(nxyz, dtype=float)
+		x = self.get_value("solution_total_molality_N", N)
+		print("Cell         pH         Ca          K         Na         Cl        NO3")
+		for i in range(int(nxyz / 2)):
+			print(f"{i:4.0f}", f"{pH[i]:10.5f}", f"{Ca[i]:10.5f}", f"{K[i]:10.5f}", f"{Na[i]:10.5f}",f"{Cl[i]:10.5f}",f"{N[i]:10.5f}") 
+		return
+	
 	def get_scalar(self, var_name):
 		itemsize = self.get_var_itemsize(var_name)
 		nbytes = self.get_var_nbytes(var_name)
@@ -229,7 +251,7 @@ def AdvectBMI_py():
 		selected_output[0] = print_chemistry_on
 
 		bmi.SetPrintChemistryOn(print_chemistry_on==1, False, False)  # workers, initial_phreeqc, utility
-		time[0] += time_step
+		time += time_step
 		# bmi.set_value("Time", time)
 
 		# Optionally, if values changed during transport

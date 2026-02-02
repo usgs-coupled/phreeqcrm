@@ -2686,10 +2686,10 @@ Called by root and (or) workers.
 
 	const std::vector<cxxNameDouble> &        GetSpeciesStoichiometry(void) {return this->species_stoichiometry;}
 	/** @cond */
-#if !defined(SWIG_USE_MPI)
+//#if !defined(SWIG_USE_MPI)
 	void                                      GetSpeciesStoichiometrySWIG(std::vector<std::string>& species_output,
 		std::vector<int>& nelt_output, std::vector<std::string>& elts_output, std::vector<double>& coef_output);
-#endif
+//#endif
 	/** @endcond */
 	/**
 Returns a vector reference to the charge on each aqueous species.

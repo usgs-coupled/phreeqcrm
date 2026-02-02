@@ -13,47 +13,33 @@ import yamlphreeqcrm
 def testallmethods_py():
 
 	comm_handle = MPI.COMM_WORLD.py2f()
-	rank = MPI.COMM_WORLD.Get_rank()
-	string_rank = str(rank)
 
+	# Create BMIPhreeqcRM object, must use two-argument constructor
 	nxyz = 40
-	bmi = phreeqcrm.BMIPhreeqcRM(nxyz, comm_handle)
+	bmi = phreeqcrm.BMIPhreeqcRM(nxyz, comm_handle) 
 
-	yrm = yamlphreeqcrm.YAMLPhreeqcRM()
-	yrm.YAMLSetGridCellCount(40)
-	YAML_filename = "testallmethodsmpi" + string_rank + ".yaml"
-	print(YAML_filename)
-	yrm.WriteYAMLDoc(YAML_filename)
-
+	# Put workers in worker loop
 	mpi_myself = bmi.GetMpiMyself()
-	print("Process is awake: ", mpi_myself)
 	if (mpi_myself > 0):
-		print("Worker is awake: ", mpi_myself)
 		bmi.MpiWorker()
+		bmi.finalize()    
 		print("Worker success: ", mpi_myself)
-		exit()
-	
+		return
 	#
 	# Use all BMIPhreeqcRM methods roughly in order of use
-	#
-	# bmi=phreeqcrm.BMIPhreeqcRM()
-	# print(f"BMIPhreeqcRM {bmi}")
-	# #---------
-	bmi.initialize(YAML_filename)   # void function
-	bmi.InitializeYAML(YAML_filename)
+	# 
+	#---------
+	# Initialize root
+	bmi.initialize("")
 	print(f"Initialize")
 	#---------
 	nxyz = bmi.GetGridCellCount()
 	print(f"GetGridCellCount {type(nxyz)}, {nxyz}")
 	dest = np.empty((1,), dtype=int)
 	nxyz = bmi.get_value("GridCellCount", dest)
-	# print(f"get_value('GridCellCount') {type(nxyz)}, {nxyz}")
-	# dest_ptr = bmi.get_value_ptr("GridCellCount")
-	# print(f"get_value_ptr('GridCellCount') {type(dest_ptr)}, {dest_ptr}")
-
-	bmi.MpiWorkerBreak()
-	print("Success.")
-	exit()
+	print(f"get_value('GridCellCount') {type(nxyz)}, {nxyz}")
+	dest_ptr = bmi.get_value_ptr("GridCellCount")
+	print(f"get_value_ptr('GridCellCount') {type(dest_ptr)}, {dest_ptr}")
 	#---------
 	x=bmi.GetThreadCount()
 	print(f"GetThreadCount {type(x)}, {x}")
@@ -82,12 +68,12 @@ def testallmethods_py():
 	x=bmi.SetErrorHandlerMode(1)
 	print(f"SetErrorHandlerMode {type(x)}, {x}")
 	#---------
-	x=bmi.SetDumpFileName("TestAllMethods_py.dump")
+	x=bmi.SetDumpFileName("TestAllMethodsMPI.dump")
 	print(f"SetDumpFileName {type(x)}, {x}")
 	#---------
-	x=bmi.SetFilePrefix("TestAllMethods_py")
+	x=bmi.SetFilePrefix("TestAllMethodsMPI")
 	print(f"SetFilePrefix {type(x)}, {x}")
-	dest = np.full(1, "TestAllMethods_py")
+	dest = np.full(1, "TestAllMethodsMPI")
 	bmi.set_value("FilePrefix", dest)
 	print(f"set_value('FilePrefix')")
 	#---------
@@ -844,9 +830,11 @@ def testallmethods_py():
 	bmi.update_until(864000.0)
 	print(f"update_until")
 	#---------
+	bmi.MpiWorkerBreak()
+	print(f"MpiWorkerBreak")
+	#---------
 	bmi.finalize()    
 	print(f"finalize ")
-	#---------
 	print("Success.")
 	return
 
@@ -859,5 +847,4 @@ def testallmethods_py():
 
 if __name__ == '__main__':
 	testallmethods_py()
-
 #endif # USE_YAML

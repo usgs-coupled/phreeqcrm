@@ -43,6 +43,10 @@ def SimpleAdvect():
     comm_handle = MPI.COMM_WORLD.py2f()
 
     phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, comm_handle)
+    mpi_myself = phreeqc_rm.GetMpiMyself()
+    if (mpi_myself > 0):
+        phreeqc_rm.MpiWorker()
+        return
 
     # Set properties
     status = phreeqc_rm.SetComponentH2O(False)
@@ -185,6 +189,9 @@ def SimpleAdvect():
     # Clean up
     status = phreeqc_rm.CloseFiles()
     status = phreeqc_rm.MpiWorkerBreak()
+    print("Success.")
+    return
+
 def simpleadvection(c, bc_conc, ncomps, nxyz, dim):
     """
     TODO

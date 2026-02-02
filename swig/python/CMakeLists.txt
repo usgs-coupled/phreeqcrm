@@ -40,6 +40,7 @@ configure_file(yamlphreeqcrm.py yamlphreeqcrm.py COPYONLY)
 
 # copy AdvectBMI_py.py to build directory for testing
 configure_file(AdvectBMI_py.py AdvectBMI_py.py COPYONLY)
+configure_file(AdvectBmiMPI.py AdvectBmiMPI.py COPYONLY)
 configure_file(WriteYAMLFile_py.py WriteYAMLFile_py.py COPYONLY)
 configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
 configure_file(TestAllMethodsMPI.py TestAllMethodsMPI.py COPYONLY)
