@@ -5232,6 +5232,7 @@ PhreeqcRM::GetSpeciesLog10Molalities(std::vector<double>& species_log10molalitie
 	}
 	return IRM_OK;
 }
+#endif
 void 
 PhreeqcRM::GetSpeciesStoichiometrySWIG(std::vector<std::string>& species, std::vector<int>& nelt_in_species, \
 	std::vector<std::string>& elts, std::vector<double>& coef)
@@ -5250,7 +5251,6 @@ PhreeqcRM::GetSpeciesStoichiometrySWIG(std::vector<std::string>& species, std::v
 		}
 	}
 }
-#endif
 
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
