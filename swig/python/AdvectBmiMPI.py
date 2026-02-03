@@ -15,11 +15,8 @@ class AdvectBMI(phreeqcrm.BMIPhreeqcRM):
 
 	def __init__(self, nxyz):
 		
-		comm_handle = MPI.COMM_WORLD.py2f()
-
 		# Create BMIPhreeqcRM object, must use two-argument constructor
-		nxyz = 40
-		#bmi = phreeqcrm.BMIPhreeqcRM(nxyz, comm_handle) 
+		comm_handle = MPI.COMM_WORLD.py2f()
 		phreeqcrm.BMIPhreeqcRM.__init__(self, nxyz, comm_handle)
 
 	def display_all_selected_output(self):
@@ -260,7 +257,7 @@ def AdvectBmiMPI():
 		print(f"Beginning transport calculation {time*bmi.GetTimeConversion()} days")
 		print(f"          Time step             {time_step*bmi.GetTimeConversion()} days")
 
-		advectionbmi_py(c, bc_conc, ncomps, nxyz, nbound)
+		advectionbmi(c, bc_conc, ncomps, nxyz, nbound)
 
 		if (step == (nsteps - 1)):
 			print_chemistry_on = 1
@@ -294,7 +291,7 @@ def AdvectBmiMPI():
 	bmi.finalize()
 	print("Done.")
 	
-def advectionbmi_py(c: np.ndarray, bc_conc: np.ndarray, ncomps: int, nxyz: int, dim: int):
+def advectionbmi(c: np.ndarray, bc_conc: np.ndarray, ncomps: int, nxyz: int, dim: int):
 	# Advect
 	for i in range(nxyz - 1, 0, -1):
 		for j in range(ncomps):

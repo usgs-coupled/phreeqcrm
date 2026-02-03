@@ -325,12 +325,12 @@ def test_get_value_FilePrefix():
     model.initialize(FilePaths.YAML)
 
     # FilePrefix doesn't support get_value_ptr
-    expected = "AdvectBMI_py"
+    expected = "AdvectBmiOpenMP"
     spaces = " " * len(expected)
     fileprefix = np.array([spaces])
     fileprefix = model.get_value("FilePrefix", fileprefix)
 
-    assert(len(fileprefix[0]) == 12)
+    assert(len(fileprefix[0]) == 15)
     assert(fileprefix[0] == expected)
 
 def test_get_value_FilePrefix_fail():
@@ -339,7 +339,7 @@ def test_get_value_FilePrefix_fail():
 
     # FilePrefix doesn't support get_value_ptr
     sz = 4
-    expected = "AdvectBMI_py"
+    expected = "AdvectBmiOpenMP"
     spaces = " " * sz
     fileprefix = np.array([spaces])
 
@@ -359,7 +359,7 @@ def test_get_value_FilePrefix_big_buffer():
     model.initialize(FilePaths.YAML)
 
     # FilePrefix doesn't support get_value_ptr
-    expected = "AdvectBMI_py"
+    expected = "AdvectBmiOpenMP"
     spaces = " " * 80
     fileprefix = np.array([spaces])
     fileprefix = model.get_value("FilePrefix", fileprefix)
