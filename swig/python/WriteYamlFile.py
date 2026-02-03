@@ -3,11 +3,11 @@ import yamlphreeqcrm
 
 from constants import FilePaths
 
-def WriteYAMLFile_py():
+def WriteYamlFile():
 	# Create YAMLPhreeqcRM document
 	yrm = yamlphreeqcrm.YAMLPhreeqcRM()
 	# Number of cells
-	nxyz = 40;
+	nxyz = 40
 	# Set GridCellCount
 	yrm.YAMLSetGridCellCount(nxyz)
 	# Set ThreadCount
@@ -20,8 +20,8 @@ def WriteYAMLFile_py():
 	yrm.YAMLUseSolutionDensityVolume(False)
 	yrm.YAMLSetPartitionUZSolids(False)
 	# Open files
-	yrm.YAMLSetFilePrefix("AdvectBMI_py");
-	yrm.YAMLOpenFiles();
+	yrm.YAMLSetFilePrefix("AdvectBmiOpenMP")
+	yrm.YAMLOpenFiles()
     # Set concentration units
 	yrm.YAMLSetUnitsSolution(2)           # 1, mg/L; 2, mol/L; 3, kg/kgs
 	yrm.YAMLSetUnitsPPassemblage(1)       # 0, mol/L cell; 1, mol/L water; 2 mol/L rock
@@ -112,6 +112,6 @@ def WriteYAMLFile_py():
 	print("Done.")
 
 if __name__ == '__main__':
-    WriteYAMLFile_py()
+    WriteYamlFile()
             
 
