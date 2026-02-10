@@ -55,6 +55,7 @@ else()
   set(IMPORT_MPI4PY "# MPI not enabled")
   configure_file(test_basic.py test_basic.py @ONLY)
 endif()
+configure_file(test_callbacks.py test_callbacks.py COPYONLY)
 configure_file(test_get_value.py test_get_value.py COPYONLY)
 configure_file(test_init.py test_init.py COPYONLY)
 configure_file(test_irf.py test_irf.py COPYONLY)
@@ -97,6 +98,8 @@ if((PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND) OR (DEFINED SKBUILD))
 endif()
 
 # CMAKE_SWIG_FLAGS must be fully set before swig_add_library is called
+# Therefore all preprocessor definitions that should be passed to the swig-generated
+# wrapper must be set as source properties on the .i file before calling swig_add_library
 
 swig_add_library(
   ${PYTHON_TARGET_NAME}

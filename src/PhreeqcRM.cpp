@@ -63,6 +63,33 @@
 #include "Phreeqc.h"
 #include "IPhreeqcPhast.h"
 
+#if defined(swig_python_EXPORTS)
+/* When CMake creates the swig-python project it defines swig_python_EXPORTS.
+ * In that case, we want to include Python.h without the debug macros defined, 
+ * even if this is a debug build.  This allows the python wrapper to be built
+ * with either the debug or release version of Python.
+ * Snippet adapted from SWIG's Python generator.
+ * see SWIG_PYTHON_INTERPRETER_NO_DEBUG
+ */
+
+#if defined(_DEBUG)
+/* Use debug wrappers with the Python release dll */
+
+#if defined(_MSC_VER) && _MSC_VER >= 1929
+/* Workaround compilation errors when redefining _DEBUG in MSVC 2019 version 16.10 and later
+ * See https://github.com/swig/swig/issues/2090 */
+# include <corecrt.h>
+#endif
+
+# undef _DEBUG
+# include <Python.h>
+# define _DEBUG 1
+#else
+# include <Python.h>
+#endif
+
+#endif
+
 #if defined(USE_MPI)
 	const MP_TYPE PhreeqcRM::default_data_for_parallel_processing = MPI_COMM_WORLD;
 #else
@@ -183,6 +210,11 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 , mpi_worker_callback_cookie( nullptr )
 , species_save_on( false )
 , initializer(std::unique_ptr<PhreeqcRM::Initializer>(new PhreeqcRM::Initializer(nxyz_arg, data_for_parallel_processing, io)))
+#if defined(swig_python_EXPORTS)
+, py_callback(nullptr)
+, py_callback_cookie(nullptr)
+, basic_callback(nullptr)
+#endif
 {
 #ifdef USE_MPI
 	phreeqcrm_comm = data_for_parallel_processing;
@@ -410,6 +442,11 @@ PhreeqcRM::~PhreeqcRM(void)
 	{
 		delete this->phreeqcrm_io;
 	}
+
+#if defined(swig_python_EXPORTS)
+    Py_XDECREF(py_callback);
+    Py_XDECREF(py_callback_cookie);
+#endif
 }
 /* ---------------------------------------------------------------------- */
 void
@@ -13065,8 +13102,3 @@ PhreeqcRM::set_io(PHRQ_io *value)
 {
 	this->initializer->io = value;
 }
-
-
-
-
-
