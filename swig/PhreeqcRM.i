@@ -78,6 +78,12 @@ import_array();
 %include "../src/BMIVariant.h"
 %include "../src/IrmResult.h"
 
+// PhreeqcRM python prepends and appends
+%feature("pythonprepend") PhreeqcRM::set_basic_callback(PyObject* py_callable, PyObject* py_cookie = nullptr) %{
+    if not callable(py_callable):
+        raise TypeError("Expected callable")
+%}
+
 // Ignore methods
 %ignore PhreeqcRM::GetIPhreeqcPointer(int i);
 %ignore PhreeqcRM::GetSelectedOutputHeading(int icol, std::string &heading);
@@ -183,6 +189,67 @@ import_array();
 %ignore PhreeqcRM::Initializer;
 
 %include "../src/PhreeqcRM.h"
+
+%inline %{
+/* ---------------------------------------------------------------------- */
+static double 
+basic_callback_shim(double val1, double val2, const char* message, void* cookie)
+/* ---------------------------------------------------------------------- */
+{
+    double result_val = 0.0;
+    std::pair<PyObject*, PyObject*>* callback_pair = (std::pair< PyObject*, PyObject* > *)cookie;
+    PyObject* pyfunc = callback_pair->first;
+    if (!pyfunc || !PyCallable_Check(pyfunc)) return result_val;
+
+    PyGILState_STATE gil = PyGILState_Ensure();
+
+    PyObject* args = Py_BuildValue("(ddsO)", val1, val2, message, callback_pair->second);
+    if (args) {
+        PyObject* res = PyObject_CallObject(pyfunc, args);
+        Py_XDECREF(args);
+        if (res) {
+            if (PyFloat_Check(res)) {
+                result_val = PyFloat_AsDouble(res);
+            } else if (PyLong_Check(res)) {
+                result_val = (double)PyLong_AsLongLong(res);
+            }
+            Py_XDECREF(res);
+        }
+    }
+
+    PyGILState_Release(gil);
+    return result_val;
+}
+/* ---------------------------------------------------------------------- */
+double 
+PhreeqcRM::execute_callback(double val1, double val2, const char* message)
+/* ---------------------------------------------------------------------- */
+{
+    if (basic_callback) {
+        std::pair<PyObject*, PyObject*> callback_pair = std::make_pair(py_callback, py_callback_cookie);
+        return basic_callback(val1, val2, message, &callback_pair);
+    }
+    return 0.0;
+}
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::set_basic_callback(PyObject* py_callable, PyObject* py_cookie)
+/* ---------------------------------------------------------------------- */
+{
+    if (!py_callable || !PyCallable_Check(py_callable)) {
+        return;
+    }
+
+    Py_XDECREF(py_callback);
+    Py_INCREF(py_callback = py_callable);
+
+    Py_XDECREF(py_callback_cookie);
+    Py_INCREF(py_callback_cookie = py_cookie);
+
+    // Use the shim as the C callback
+    basic_callback = &basic_callback_shim;
+}
+%}
 
 %extend PhreeqcRM { %pythoncode 
 %{ 
@@ -628,6 +695,8 @@ def GetDoubleVector(self, v):
 #endif
 
 // %numpy_typemaps(int,    NPY_INT32  , int)
+
+// BMIPhreeqcRM python prepends and appends
 
 %feature("pythonprepend") BMIPhreeqcRM::BMIPhreeqcRM() %{
     self._state = State.UNINITIALIZED
