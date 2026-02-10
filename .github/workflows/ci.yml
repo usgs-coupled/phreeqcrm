@@ -407,7 +407,7 @@ jobs:
       if: ${{ runner.os == 'macOS' }}
       run: |
         brew install ninja swig
-        ls -alR /usr/local/Cellar/
+        # ls -alR /usr/local/Cellar/
 
     - name: Install yaml-cpp (Linux)
       if: ${{ runner.os == 'Linux' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
@@ -573,7 +573,7 @@ jobs:
       if: ${{ runner.os == 'macOS' }}
       run: |
         brew install ninja
-        ls -alR /usr/local/Cellar/
+        # ls -alR /usr/local/Cellar/
 
     - name: Install yaml-cpp (Linux)
       if: ${{ runner.os == 'Linux' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
