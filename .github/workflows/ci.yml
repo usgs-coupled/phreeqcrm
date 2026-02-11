@@ -353,9 +353,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, ubuntu-22.04, ubuntu-24.04, windows-2022]
+        # os: [macos-14, ubuntu-22.04, ubuntu-24.04, windows-2022]
+        os: [macos-14]
         build_shared_libs: [OFF, ON]
         phreeqcrm_with_yaml_cpp: [OFF, ON]
+        python-version: [3.9]
         BUILD_TYPE: [Debug, Release]
 
     runs-on: ${{ matrix.os }}
@@ -403,21 +405,19 @@ jobs:
         sudo apt-get -y update
         sudo apt-get install -y ninja-build valgrind
 
-    - name: Install ninja swig (macOS)
+    - name: Install swig (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja swig
+        brew install swig
         # ls -alR /usr/local/Cellar/
 
     - name: Install yaml-cpp
       run: vcpkg install yaml-cpp
 
-    # - name: Set up Python ${{ matrix.python-version }}
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v5
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v6
       with:
-        # python-version: ${{ matrix.python-version }}
-        python-version: 3.8
+        python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
       run: |
