@@ -268,11 +268,11 @@ jobs:
         sudo apt-get -y update
         sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
-    - name: Install gcc(gfortran) ninja yaml-cpp (macOS)
+    - name: Install gcc(gfortran) yaml-cpp (macOS)
       if: runner.os == 'macOS'
       run: |
         brew reinstall gcc
-        brew install ninja yaml-cpp
+        brew install yaml-cpp
         # ls -alR /usr/local/Cellar/
 
     - name: Verify gfortran
