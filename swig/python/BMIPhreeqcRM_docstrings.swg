@@ -602,3 +602,35 @@ Args:
 		period."
 %enddef
 %feature("docstring") BMIPhreeqcRM::UpdateUntil update_until_DOCSTRING
+
+
+%ignore basic_callback_shim;
+
+%define HAS_MPI_DOCSTRING
+"
+Determine whether phreeqcrm was compiled with MPI support.
+
+This function reports whether distributed-memory parallel
+execution via MPI is available in the current phreeqcrm build.
+
+Returns:
+	bool
+		True if MPI support is enabled, False otherwise.
+"
+%enddef
+%feature("docstring") has_mpi HAS_MPI_DOCSTRING
+
+
+%define HAS_OPENMP_DOCSTRING
+"
+Determine whether phreeqcrm was compiled with OpenMP support.
+
+This function reports whether parallel execution via OpenMP
+is available in the current phreeqcrm build.
+
+Returns:
+	bool
+		True if OpenMP support is enabled, False otherwise.
+"
+%enddef
+%feature("docstring") has_openmp HAS_OPENMP_DOCSTRING

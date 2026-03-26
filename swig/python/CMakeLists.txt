@@ -56,6 +56,7 @@ else()
   configure_file(test_basic.py test_basic.py @ONLY)
 endif()
 configure_file(test_callbacks.py test_callbacks.py COPYONLY)
+configure_file(test_functions.py test_functions.py COPYONLY)
 configure_file(test_get_value.py test_get_value.py COPYONLY)
 configure_file(test_init.py test_init.py COPYONLY)
 configure_file(test_irf.py test_irf.py COPYONLY)
@@ -78,10 +79,24 @@ set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY DEPENDS
 )
 
 if(PHREEQCRM_BUILD_MPI)
-  # HACK: define SWIG_USE_MPI instead of USE_MPI since it would set MP_TYPE to MPI_Comm in PhreeqcRM.h
-  # which seems to work when compiling with MSMPI on Windows
-  ## set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_MPI)
-  set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS SWIG_USE_MPI)
+  # Set preprocessor definition on the .i file so that it gets passed to SWIG
+  set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_MPI)
+
+  # Determine the include directory for mpi4py
+  execute_process(
+    COMMAND ${Python_EXECUTABLE} -c "import mpi4py; from mpi4py import MPI; print(mpi4py.get_include())"
+    RESULT_VARIABLE _mpi4py_include_result
+    OUTPUT_VARIABLE _mpi4py_include_output
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+  )
+  if(NOT ${_mpi4py_include_result} STREQUAL "0")
+    message(FATAL_ERROR "Python module \"mpi4py\" not found. Please install it in your Python environment.")
+  endif()
+
+  # Convert to cmake path list and set include directory for mpi4py
+  cmake_path(CONVERT ${_mpi4py_include_output} TO_CMAKE_PATH_LIST MPI4PY_INCLUDE_DIR)
+  set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY INCLUDE_DIRECTORIES ${MPI4PY_INCLUDE_DIR})
 else()
   if(NOT PHREEQCRM_DISABLE_OPENMP)
     if(OPENMP_FOUND)
@@ -137,6 +152,7 @@ endif()
 # MPI or OpenMP
 if(PHREEQCRM_BUILD_MPI)
   target_compile_definitions(${PYTHON_TARGET_NAME} PUBLIC USE_MPI)
+  target_include_directories(${PYTHON_TARGET_NAME} PRIVATE ${MPI4PY_INCLUDE_DIR}) 
   target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC MPI::MPI_CXX)
 else()
   if(NOT PHREEQCRM_DISABLE_OPENMP)
@@ -314,6 +330,49 @@ else()
       #DISABLED TRUE
   )
 endif()
+
+# AdvectBmi test
+configure_file(AdvectBmi.py AdvectBmi.py COPYONLY)
+if(PHREEQCRM_BUILD_MPI)
+  add_test(NAME "AdvectBmi(MPI).py"
+          # COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
+          COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
+          ${MPIEXEC_PREFLAGS}
+          ${Python_EXECUTABLE} AdvectBmi.py
+          ${MPIEXEC_POSTFLAGS}
+          )
+  set_tests_properties("AdvectBmi(MPI).py"
+    PROPERTIES
+      # Allow shared library to be found by test
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+      # Requires PHREEQCRM_WITH_YAML_CPP=ON
+      DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
+  )
+elseif(PHREEQCRM_DISABLE_OPENMP)
+  add_test(NAME "AdvectBmi(Serial).py"
+           COMMAND ${Python_EXECUTABLE} AdvectBmi.py
+          )
+  set_tests_properties("AdvectBmi(Serial).py"
+    PROPERTIES
+      # Allow shared library to be found by test
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+      # Requires PHREEQCRM_WITH_YAML_CPP=ON
+      DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
+  )
+else()
+  add_test(NAME "AdvectBmi(OpenMP).py"
+           COMMAND ${Python_EXECUTABLE} AdvectBmi.py
+          )
+  set_tests_properties("AdvectBmi(OpenMP).py"
+    PROPERTIES
+      # Allow shared library to be found by test
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+      # Requires PHREEQCRM_WITH_YAML_CPP=ON
+      DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
+  )
+endif()
+
+
 
 # TestAllMethodsOpenMP.py/TestAllMethodsMPI.py test
 if(PHREEQCRM_BUILD_MPI)

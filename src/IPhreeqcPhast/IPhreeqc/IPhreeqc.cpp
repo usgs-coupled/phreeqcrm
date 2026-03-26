@@ -12,6 +12,33 @@
 #include "SelectedOutput.h"             // SelectedOutput
 #include "dumper.h"                     // dumper
 
+#if defined(swig_python_EXPORTS)
+/* When CMake creates the swig-python project it defines swig_python_EXPORTS.
+ * In that case, we want to include Python.h without the debug macros defined,
+ * even if this is a debug build.  This allows the python wrapper to be built
+ * with either the debug or release version of Python.
+ * Snippet adapted from SWIG's Python generator.
+ * see SWIG_PYTHON_INTERPRETER_NO_DEBUG
+ */
+
+#if defined(_DEBUG)
+ /* Use debug wrappers with the Python release dll */
+
+#if defined(_MSC_VER) && _MSC_VER >= 1929
+/* Workaround compilation errors when redefining _DEBUG in MSVC 2019 version 16.10 and later
+ * See https://github.com/swig/swig/issues/2090 */
+# include <corecrt.h>
+#endif
+
+# undef _DEBUG
+# include <Python.h>
+# define _DEBUG 1
+#else
+# include <Python.h>
+#endif
+#endif /* swig_python_EXPORTS */
+
+
 // statics
 std::map<size_t, IPhreeqc*> IPhreeqc::Instances;
 size_t IPhreeqc::InstancesIndex = 0;
@@ -40,6 +67,12 @@ IPhreeqc::IPhreeqc(void)
 , PhreeqcPtr(0)
 , input_file(0)
 , database_file(0)
+#if defined(swig_python_EXPORTS)
+//, py_callback(nullptr)
+//, py_callback_cookie(nullptr)
+, py_callback_pair(nullptr, nullptr)
+, basic_callback(nullptr)
+#endif
 {
 	this->ErrorReporter   = new CErrorReporter<std::ostringstream>;
 	this->WarningReporter = new CErrorReporter<std::ostringstream>;
@@ -90,6 +123,13 @@ IPhreeqc::~IPhreeqc(void)
 		IPhreeqc::Instances.erase(it);
 	}
 	mutex_unlock(&map_lock);
+
+#if defined(swig_python_EXPORTS)
+	// Py_XDECREF(py_callback);
+	// Py_XDECREF(py_callback_cookie);
+	Py_XDECREF(py_callback_pair.first);
+	Py_XDECREF(py_callback_pair.second);
+#endif
 }
 
 VRESULT IPhreeqc::AccumulateLine(const char *line)
@@ -577,6 +617,7 @@ std::list< std::string > IPhreeqc::ListComponents(void)
 
 int IPhreeqc::load_db(const char* filename)
 {
+	std::cout << "IPhreeqc::load_db() IN this=" << this << std::endl;
 	try
 	{
 		// cleanup
@@ -620,6 +661,7 @@ int IPhreeqc::load_db(const char* filename)
 	}
 	this->PhreeqcPtr->phrq_io->clear_istream();
 	this->DatabaseLoaded = (this->PhreeqcPtr->get_input_errors() == 0);
+	std::cout << "IPhreeqc::load_db() OUT this=" << this << std::endl;
 	return this->PhreeqcPtr->get_input_errors();
 }
 
@@ -928,7 +970,16 @@ int IPhreeqc::RunString(const char* input)
 
 void IPhreeqc::SetBasicCallback(double (*fcn)(double x1, double x2, const char *str, void *cookie), void *cookie1)
 {
+#if defined(swig_python_EXPORTS)
+	PySys_WriteStdout("    IPhreeqc::SetBasicCallback in this=%p\n", this);
+	std::pair<PyObject*, PyObject*>* callback_pair = (std::pair< PyObject*, PyObject* > *)cookie1;
+	PyObject* py_callable = callback_pair->first;
+	PyObject* py_cookie = callback_pair->second;
+#endif
 	this->PhreeqcPtr->register_basic_callback(fcn, cookie1);
+#if defined(swig_python_EXPORTS)
+	PySys_WriteStdout("    IPhreeqc::SetBasicCallback out this=%p\n", this);
+#endif
 }
 #ifdef IPHREEQC_NO_FORTRAN_MODULE
 void IPhreeqc::SetBasicFortranCallback(double (*fcn)(double *x1, double *x2, const char *str, size_t l))
@@ -1071,6 +1122,7 @@ int IPhreeqc::test_db(void)
 
 void IPhreeqc::UnLoadDatabase(void)
 {
+	std::cout << "IPhreeqc::UnLoadDatabase() IN this=" << this << std::endl;
 	// init IPhreeqc
 	//
 	this->DatabaseLoaded   = false;
@@ -1124,6 +1176,7 @@ void IPhreeqc::UnLoadDatabase(void)
 	this->PhreeqcPtr->do_initialize();
 	this->PhreeqcPtr->input_error = 0;
 	this->io_error_count = 0;
+	std::cout << "IPhreeqc::UnLoadDatabase() OUT this=" << this << std::endl;
 }
 
 int IPhreeqc::EndRow(void)

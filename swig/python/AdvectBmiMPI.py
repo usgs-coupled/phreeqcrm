@@ -16,8 +16,8 @@ class AdvectBMI(phreeqcrm.BMIPhreeqcRM):
 	def __init__(self, nxyz):
 		
 		# Create BMIPhreeqcRM object, must use two-argument constructor
-		comm_handle = MPI.COMM_WORLD.py2f()
-		phreeqcrm.BMIPhreeqcRM.__init__(self, nxyz, comm_handle)
+		comm = MPI.COMM_WORLD
+		phreeqcrm.BMIPhreeqcRM.__init__(self, nxyz, comm)
 
 	def display_all_selected_output(self):
 
