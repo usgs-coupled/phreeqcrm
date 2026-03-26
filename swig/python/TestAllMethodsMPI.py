@@ -12,17 +12,15 @@ import yamlphreeqcrm
 
 def testallmethods_py():
 
-	comm_handle = MPI.COMM_WORLD.py2f()
-
 	# Create BMIPhreeqcRM object, must use two-argument constructor
 	nxyz = 40
-	bmi = phreeqcrm.BMIPhreeqcRM(nxyz, comm_handle) 
+	bmi = phreeqcrm.BMIPhreeqcRM(nxyz, MPI.COMM_WORLD) 
 
 	# Put workers in worker loop
 	mpi_myself = bmi.GetMpiMyself()
 	if (mpi_myself > 0):
 		bmi.MpiWorker()
-		bmi.finalize()    
+		bmi.finalize()
 		print("Worker success: ", mpi_myself)
 		return
 	#
@@ -593,7 +591,7 @@ def testallmethods_py():
 	# Getters
 	#
 	x=bmi.GetBackwardMapping()
-	print(f"GetBackwardMapping {type(x)}, {x[5]}")
+	print(f"GetBackwardMapping {type(x)}, {type(x[5])}, {x[5]}")
 	#---------
 	x=bmi.GetDatabaseFileName()
 	print(f"GetDatabaseFileName {type(x)}, {x}")

@@ -1,3 +1,7 @@
+#if defined(swig_python_EXPORTS) && defined(USE_MPI)
+#include <mpi.h>
+#endif
+
 #include "Phreeqc.h"
 #include "phqalloc.h"
 
@@ -11,6 +15,34 @@
 #include "cxxKinetics.h"
 #include "Solution.h"
 #include "Parser.h"
+
+
+#if defined(swig_python_EXPORTS)
+/* When CMake creates the swig-python project it defines swig_python_EXPORTS.
+ * In that case, we want to include Python.h without the debug macros defined,
+ * even if this is a debug build.  This allows the python wrapper to be built
+ * with either the debug or release version of Python.
+ * Snippet adapted from SWIG's Python generator.
+ * see SWIG_PYTHON_INTERPRETER_NO_DEBUG
+ */
+
+#if defined(_DEBUG)
+ /* Use debug wrappers with the Python release dll */
+
+#if defined(_MSC_VER) && _MSC_VER >= 1929
+/* Workaround compilation errors when redefining _DEBUG in MSVC 2019 version 16.10 and later
+ * See https://github.com/swig/swig/issues/2090 */
+# include <corecrt.h>
+#endif
+
+# undef _DEBUG
+# include <Python.h>
+# define _DEBUG 1
+#else
+# include <Python.h>
+#endif
+#endif /* swig_python_EXPORTS */
+
 
 #if defined(_MSC_VER) && (_MSC_VER <= 1400) // VS2005
 #  define nullptr NULL
@@ -4275,6 +4307,9 @@ basic_free(void)
 double Phreeqc::
 basic_callback(double x1, double x2, const char * str)
 {
+#if defined(swig_python_EXPORTS)
+	PySys_WriteStdout("    Phreeqc::basic_callback called\n");
+#endif
 	if (this->basicCallback)
 	{
 		return this->basicCallback->Callback(x1, x2, str);
@@ -4295,8 +4330,17 @@ basic_callback(double x1, double x2, const char * str)
 	double local_x1 = x1;
 	double local_x2 = x2;
 
+#if defined(swig_python_EXPORTS)
+	PySys_WriteStdout("      Phreeqc::basic_callback called with x1=%g, x2=%g, str=%s\n", x1, x2, str);
+	PySys_WriteStdout("          this=%p    basic_callback_ptr=%p\n", this, basic_callback_ptr);
+#endif
+
 	if (basic_callback_ptr != NULL)
 	{
+#if defined(swig_python_EXPORTS)
+		// PySys_WriteStdout("      Phreeqc::basic_callback basic_callback_ptr!=NULL\n");
+		//std::cout << "      Phreeqc::basic_callback basic_callback_ptr!=NULL\n";
+#endif
 		return (*basic_callback_ptr) (x1, x2, str, basic_callback_cookie);
 	}
 	if (basic_fortran_callback_ptr != NULL)
@@ -4307,14 +4351,39 @@ basic_callback(double x1, double x2, const char * str)
 		return (*basic_fortran_callback_ptr) (&local_x1, &local_x2, str, (int) strlen(str));
 #endif
 	}
+#if defined(swig_python_EXPORTS)
+	PySys_WriteStdout("      Phreeqc::basic_callback this=%p No callback registered\n", this);
+#if defined(USE_MPI)
+	int rank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	PySys_WriteStdout("        Phreeqc::basic_callback MPI rank %d\n", rank);
+#endif
+#endif
 	return 0;
 }
 
 void 
 Phreeqc::register_basic_callback(double (*fcn)(double x1, double x2, const char *str, void *cookie), void *cookie1)
 {
+#if defined(swig_python_EXPORTS)
+	//PySys_WriteStdout("      Phreeqc::register_basic_callback called\n");
+
+    std::pair<PyObject*, PyObject*>* callback_pair = (std::pair< PyObject*, PyObject* > *)cookie1;
+    PyObject* py_callable = callback_pair->first;
+	PyObject* py_cookie = callback_pair->second;
+
+	PySys_WriteStdout("      Phreeqc::register_basic_callback In this=%p cookie1=%p py_callable=%p py_cookie=%p\n", this, cookie1, py_callable, py_cookie);
+	PySys_WriteStdout("        Phreeqc::register_basic_callback fcn=%p cookie=%p\n", fcn, cookie1);
+
+	if (!py_callable || !PyCallable_Check(py_callable)) {
+        PySys_WriteStdout("      Phreeqc::register_basic_callback No valid Python callback found\n");
+    }
+#endif
 	this->basic_callback_ptr = fcn;
 	this->basic_callback_cookie = cookie1;
+#if defined(swig_python_EXPORTS)
+	PySys_WriteStdout("      Phreeqc::register_basic_callback Out  this=%p basic_callback_ptr=%p basic_callback_cookie=%p\n", this, this->basic_callback_ptr, this->basic_callback_cookie);
+#endif
 }
 #ifdef IPHREEQC_NO_FORTRAN_MODULE
 void 

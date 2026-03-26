@@ -26,8 +26,7 @@ def test_comm():
 
     # Create PhreeqcRM instance and test MPI functions
     nxyz = 20
-    comm_handle = MPI.COMM_WORLD.py2f()
-    phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, comm_handle)
+    phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, MPI.COMM_WORLD)
     tasks = phreeqc_rm.GetMpiTasks()
     mpi_myself = phreeqc_rm.GetMpiMyself()
     print(f"Hello, PhreeqcRM! I am process {mpi_myself} of {tasks}.", flush=True)   

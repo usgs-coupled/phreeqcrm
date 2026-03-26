@@ -3,8 +3,12 @@ import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_array_less
 import pytest
 
-from phreeqcrm import BMIPhreeqcRM, IRM_OK, State
-@IMPORT_MPI4PY@
+from phreeqcrm import BMIPhreeqcRM, IRM_OK, State, has_openmp, has_mpi
+
+if has_mpi():
+    from mpi4py import MPI
+
+###@IMPORT_MPI4PY@
 
 from constants import FilePaths
 

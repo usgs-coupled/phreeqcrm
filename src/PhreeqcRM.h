@@ -2697,10 +2697,8 @@ Called by root and (or) workers.
 
 	const std::vector<cxxNameDouble> &        GetSpeciesStoichiometry(void) {return this->species_stoichiometry;}
 	/** @cond */
-//#if !defined(SWIG_USE_MPI)
 	void                                      GetSpeciesStoichiometrySWIG(std::vector<std::string>& species_output,
 		std::vector<int>& nelt_output, std::vector<std::string>& elts_output, std::vector<double>& coef_output);
-//#endif
 	/** @endcond */
 	/**
 Returns a vector reference to the charge on each aqueous species.
@@ -5655,11 +5653,23 @@ public:
 /**
  TODO
  */
-    double                                    execute_callback(double val1, double val2, const char* message);
+    double                                    _execute_callback(double val1, double val2, const char* message);
 /**
  TODO
  */
     void                                      set_basic_callback(PyObject* py_callable, PyObject* py_cookie = nullptr);
+
+#if 0
+/**
+ TODO
+ */
+    PyObject*                                 check_openmp(void);
+
+/**
+ TODO
+ */
+    PyObject*                                 check_mpi(void);
+#endif
 #endif
 
 public:

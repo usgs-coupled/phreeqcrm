@@ -26,6 +26,7 @@
 import numpy as np
 import phreeqcrm
 from enum import Enum, unique
+import inspect 
 
 @unique
 class State(Enum):
@@ -37,6 +38,9 @@ class State(Enum):
 %{
 #define SWIG_FILE_WITH_INIT
 #include "BMIVariant.h"
+#include "Phreeqc.h"
+#include "IPhreeqc.hpp"
+#include "IPhreeqcPhast.h"
 #include "IrmResult.h"
 #include "PhreeqcRM.h"
 #include "bmi.hxx"
@@ -44,6 +48,10 @@ class State(Enum):
 #if defined(USE_YAML)
 #include "yaml-cpp/yaml.h"
 #endif
+#if defined(USE_MPI)
+#include <mpi.h>
+#endif
+// static PyObject* check_mpi(void);
 %}
 %ignore BMIVariant;
 %ignore bmi::Bmi;
@@ -54,6 +62,11 @@ class State(Enum):
 import_array();
 %}
 %fragment("NumPy_Fragments");
+#endif
+
+#if defined(SWIGPYTHON) && defined(USE_MPI)
+%include mpi4py/mpi4py.i
+%mpi4py_typemap(Comm, MPI_Comm);
 #endif
 
 %include "std_string.i"
@@ -81,7 +94,17 @@ import_array();
 // PhreeqcRM python prepends and appends
 %feature("pythonprepend") PhreeqcRM::set_basic_callback(PyObject* py_callable, PyObject* py_cookie = nullptr) %{
     if not callable(py_callable):
-        raise TypeError("Expected callable")
+        raise TypeError("Callback must be callable")
+
+    sig = inspect.signature(py_callable)
+    params = list(sig.parameters.values())
+
+    if len(params) != 4:
+        raise TypeError("Callback must accept exactly 4 parameters")
+
+    for p in params:
+        if p.kind not in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD):
+            raise TypeError("Callback parameters must be positional")
 %}
 
 // Ignore methods
@@ -177,6 +200,8 @@ import_array();
 %rename(SetPrintChemistryMaskSWIG)                  SetPrintChemistryMask(const std::vector<int> & cell_mask);
 %rename(SetIthConcentrationSWIG)                    SetIthConcentration(int i, std::vector< double >& c); 
 %rename(SetIthSpeciesConcentrationSWIG)             SetIthSpeciesConcentration(int i, std::vector< double >& c);
+// %rename(_execute_callback)                          execute_callback(double val1, double val2, const char* message);
+
 
 // Ignore methods
 %ignore BMIPhreeqcRM::GetValue(std::string const,bool *);
@@ -191,15 +216,28 @@ import_array();
 %include "../src/PhreeqcRM.h"
 
 %inline %{
+#ifdef USE_OPENMP
+#include <omp.h>
+#endif
 /* ---------------------------------------------------------------------- */
 static double 
 basic_callback_shim(double val1, double val2, const char* message, void* cookie)
 /* ---------------------------------------------------------------------- */
 {
+    PySys_WriteStdout("      basic_callback_shim In val1=%g val2=%g message=%s cookie=%p\n", val1, val2, message, cookie);
+
+#ifdef USE_OPENMP
+    int n = omp_get_thread_num();
+    PySys_WriteStdout("      basic_callback_shim OpenMP thread num: %d\n", n);
+#endif
+
     double result_val = 0.0;
     std::pair<PyObject*, PyObject*>* callback_pair = (std::pair< PyObject*, PyObject* > *)cookie;
     PyObject* pyfunc = callback_pair->first;
-    if (!pyfunc || !PyCallable_Check(pyfunc)) return result_val;
+    if (!pyfunc || !PyCallable_Check(pyfunc)) {
+        PySys_WriteStdout("      basic_callback_shim No valid Python callback found\n");
+        return result_val;
+    }
 
     PyGILState_STATE gil = PyGILState_Ensure();
 
@@ -217,37 +255,126 @@ basic_callback_shim(double val1, double val2, const char* message, void* cookie)
         }
     }
 
+    PySys_WriteStdout("      basic_callback_shim OUT val1=%g val2=%g message=%s cookie=%p\n", val1, val2, message, cookie);
     PyGILState_Release(gil);
     return result_val;
 }
 /* ---------------------------------------------------------------------- */
-double 
-PhreeqcRM::execute_callback(double val1, double val2, const char* message)
+void
+IPhreeqc::set_basic_callback(PyObject* py_callable, PyObject* py_cookie)
 /* ---------------------------------------------------------------------- */
 {
-    if (basic_callback) {
-        std::pair<PyObject*, PyObject*> callback_pair = std::make_pair(py_callback, py_callback_cookie);
-        return basic_callback(val1, val2, message, &callback_pair);
+    PySys_WriteStdout("  IPhreeqc::set_basic_callback In py_callable=%p py_cookie=%p\n", py_callable, py_cookie);
+
+    if (!py_callable || !PyCallable_Check(py_callable)) {
+        return;
     }
-    return 0.0;
+
+    Py_XDECREF(py_callback_pair.first);
+    Py_XDECREF(py_callback_pair.second);
+
+    Py_INCREF(py_callback_pair.first = py_callable);
+    Py_INCREF(py_callback_pair.second = py_cookie);
+
+    // Use the shim as the C callback
+    this->basic_callback = &basic_callback_shim;
+
+    this->SetBasicCallback(this->basic_callback, &py_callback_pair);
+
+    PySys_WriteStdout("  IPhreeqc::set_basic_callback Out\n");
+}
+/* ---------------------------------------------------------------------- */
+double 
+PhreeqcRM::_execute_callback(double val1, double val2, const char* message)
+/* ---------------------------------------------------------------------- */
+{
+    // if (basic_callback) {
+    //     std::pair<PyObject*, PyObject*> callback_pair = std::make_pair(py_callback, py_callback_cookie);
+    //     return basic_callback(val1, val2, message, &callback_pair);
+    // }
+    // return 0.0;
+    PySys_WriteStdout("PhreeqcRM::_execute_callback In\n");
+    // return basic_callback_shim(val1, val2, message, &std::pair<PyObject*, PyObject*>(py_callback, py_callback_cookie));
+    ////double result = basic_callback_shim(val1, val2, message, &std::pair<PyObject*, PyObject*>(py_callback, py_callback_cookie));
+
+    double result = 0.0;
+    for (const auto& worker : this->GetWorkers()) {
+        result = worker->PhreeqcPtr->basic_callback(val1, val2, message);
+        break;  // Assuming we only want to call the callback on the first worker for this test
+    }
+
+    PySys_WriteStdout("PhreeqcRM::_execute_callback Out\n");
+    return result;
 }
 /* ---------------------------------------------------------------------- */
 void
 PhreeqcRM::set_basic_callback(PyObject* py_callable, PyObject* py_cookie)
 /* ---------------------------------------------------------------------- */
+// {
+//     if (!py_callable || !PyCallable_Check(py_callable)) {
+//         return;
+//     }
+
+//     Py_XDECREF(py_callback);
+//     Py_INCREF(py_callback = py_callable);
+
+//     Py_XDECREF(py_callback_cookie);
+//     Py_INCREF(py_callback_cookie = py_cookie);
+
+//     // Use the shim as the C callback
+//     basic_callback = &basic_callback_shim;
+// }
 {
+    PySys_WriteStdout("PhreeqcRM::set_basic_callback In py_callable=%p py_cookie=%p\n", py_callable, py_cookie);
+#if defined(USE_MPI)
+    PySys_WriteStdout("    mpi_myself=%d\n", this->mpi_myself);
+#endif
+
     if (!py_callable || !PyCallable_Check(py_callable)) {
         return;
     }
 
-    Py_XDECREF(py_callback);
-    Py_INCREF(py_callback = py_callable);
+    Py_XDECREF(this->py_callback);
+    Py_INCREF(this->py_callback = py_callable);
 
-    Py_XDECREF(py_callback_cookie);
-    Py_INCREF(py_callback_cookie = py_cookie);
+    Py_XDECREF(this->py_callback_cookie);
+    Py_INCREF(this->py_callback_cookie = py_cookie);
 
-    // Use the shim as the C callback
-    basic_callback = &basic_callback_shim;
+    PySys_WriteStdout("    Number of workers: %d\n", (int) this->GetWorkers().size());
+
+    ///const std::vector<IPhreeqcPhast*> w = this->GetWorkers();
+    for (const auto& worker : this->GetWorkers()) {
+        PySys_WriteStdout("        worker: %p in\n", worker);
+        worker->set_basic_callback(py_callable, py_cookie);
+        PySys_WriteStdout("        worker: %p out\n", worker);
+        ////break;  // REMOVE THIS BREAK TO SET CALLBACK ON ALL WORKERS
+    }
+#if defined(USE_MPI)
+    PySys_WriteStdout("    mpi_myself=%d\n", this->mpi_myself);
+#endif
+    PySys_WriteStdout("PhreeqcRM::set_basic_callback Out\n");
+}
+/* ---------------------------------------------------------------------- */
+static PyObject*
+has_openmp(void)
+/* ---------------------------------------------------------------------- */
+{
+#ifdef USE_OPENMP
+    Py_RETURN_TRUE;
+#else
+    Py_RETURN_FALSE;
+#endif
+}
+/* ---------------------------------------------------------------------- */
+static PyObject*
+has_mpi(void)
+/* ---------------------------------------------------------------------- */
+{
+#ifdef USE_MPI
+    Py_RETURN_TRUE;
+#else
+    Py_RETURN_FALSE;
+#endif
 }
 %}
 

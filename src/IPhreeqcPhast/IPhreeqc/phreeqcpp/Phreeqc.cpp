@@ -461,6 +461,7 @@ Phreeqc::Phreeqc(PHRQ_io *io)
 }
 void Phreeqc::init(void)
 {
+	std::cout << "Phreeqc::init() IN this=" << this << std::endl;
 	same_model                      = FALSE;
 	current_tc                      = NAN;
 	current_pa                      = NAN;
@@ -1149,6 +1150,7 @@ void Phreeqc::init(void)
 		keycount[i] = 0;
 	}
 
+	std::cout << "Phreeqc::init() OUT this=" << this << std::endl;
 	return;
 }
 /*-----------------------------------------------------*/

@@ -88,7 +88,7 @@
 # include <Python.h>
 #endif
 
-#endif
+#endif /* swig_python_EXPORTS */
 
 #if defined(USE_MPI)
 	const MP_TYPE PhreeqcRM::default_data_for_parallel_processing = MPI_COMM_WORLD;
@@ -248,6 +248,11 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 
 void PhreeqcRM::Construct()
 {
+#if defined(swig_python_EXPORTS)
+	PySys_WriteStdout("PhreeqcRM::Construct() mpi_myself=%d IN\n", this->mpi_myself);
+#endif
+
+
 	int nxyz_arg                         = this->initializer->nxyz_arg;
 	MP_TYPE data_for_parallel_processing = this->initializer->data_for_parallel_processing;
 	//PHRQ_io* io                          = this->initializer->io;
@@ -333,7 +338,7 @@ void PhreeqcRM::Construct()
 		if (this->mpi_tasks > this->nxyz)
 		{
 			std::ostringstream err;
-			err << "Number of threads must be less than or equal to number of model cells, ";
+			err << "Number of processes must be less than or equal to number of model cells, ";
 			err << this->nxyz << "." << std::endl;
 			this->ErrorHandler(IRM_FAIL, err.str());
 		}
@@ -427,6 +432,16 @@ void PhreeqcRM::Construct()
 	ScatterNchem(rv_root, rv_worker);
 	ScatterNchem(saturation_root, saturation_worker);
 #endif
+
+#if defined(swig_python_EXPORTS)
+	// PySys_WriteStdout("PhreeqcRM::Construct() mpi_myself=%d START\n", this->mpi_myself);
+	// PySys_WriteStdout("    py_callback=%p py_callback_cookie: %p\n", this->py_callback, this->py_callback_cookie);
+	// this->set_basic_callback(this->py_callback, this->py_callback_cookie);
+	// PySys_WriteStdout("PhreeqcRM::Construct() mpi_myself=%d END\n", this->mpi_myself);
+
+	PySys_WriteStdout("PhreeqcRM::Construct() mpi_myself=%d OUT\n", this->mpi_myself);
+#endif
+
 }
 PhreeqcRM::~PhreeqcRM(void)
 {
@@ -5549,7 +5564,8 @@ PhreeqcRM::HandleErrorsInternal(std::vector< int > &rtn)
 }
 #endif
 #ifdef USE_YAML
-IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
+IRM_RESULT
+PhreeqcRM::InitializeYAML(std::string config)
 {
 	if (config.size() > 0)
 	{
@@ -6984,6 +7000,7 @@ IRM_RESULT
 PhreeqcRM::LoadDatabase(const std::string& database)
 /* ---------------------------------------------------------------------- */
 {
+	std::cout << "PhreeqcRM::LoadDatabase IN: " << database << std::endl;
 	this->phreeqcrm_error_string.clear();
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
@@ -7045,6 +7062,10 @@ PhreeqcRM::LoadDatabase(const std::string& database)
 	//	var_man->NeedInitialRun = false;
 	//	//this->RunString(false, true, false, "DELETE; -all");
 	//}
+#if defined(swig_python_EXPORTS)
+	this->set_basic_callback(this->py_callback, this->py_callback_cookie);
+#endif
+	std::cout << "PhreeqcRM::LoadDatabase OUT: " << database << std::endl;
 	return this->ReturnHandler(return_value, "PhreeqcRM::LoadDatabase");
 }
 /* ---------------------------------------------------------------------- */
@@ -9938,6 +9959,9 @@ PhreeqcRM::RunCells()
 		std::vector < int > r_vector;
 		r_vector.resize(this->nthreads);
 #ifdef USE_OPENMP
+#if defined(swig_python_EXPORTS)
+		Py_BEGIN_ALLOW_THREADS
+#endif
 		omp_set_num_threads(this->nthreads);
 #pragma omp parallel
 #pragma omp for
@@ -9946,6 +9970,11 @@ PhreeqcRM::RunCells()
 		{
 			r_vector[n] = RunCellsThread(n);
 		}
+#ifdef USE_OPENMP
+#if defined(swig_python_EXPORTS)
+		Py_END_ALLOW_THREADS
+#endif
+#endif
 		if (this->partition_uz_solids)
 		{
 			old_saturation_root = saturation_root;
@@ -10256,6 +10285,12 @@ PhreeqcRM::RunCellsThread(int n)
 
 	int i, j;
 	IPhreeqcPhast *phast_iphreeqc_worker = this->GetWorkers()[n];
+	IRM_RESULT return_value = IRM_OK;
+
+#if defined(USE_OPENMP) && defined(swig_python_EXPORTS)
+	PyGILState_STATE gstate = PyGILState_Ensure();
+#endif
+
 	try
 	{
 		// Partition solids, if necessary
@@ -10548,16 +10583,19 @@ PhreeqcRM::RunCellsThread(int n)
 	}
 	catch (PhreeqcRMStop)
 	{
-		return IRM_FAIL;
+		return_value = IRM_FAIL;
 	}
 	catch (...)
 	{
 		std::ostringstream e_stream;
 		e_stream << "Run cells failed in worker " << n << "from an unhandled exception.\n";
 		this->ErrorMessage(e_stream.str());
-		return IRM_FAIL;
+		return_value = IRM_FAIL;
 	}
-	return IRM_OK;
+#if defined(USE_OPENMP) && defined(swig_python_EXPORTS)
+	PyGILState_Release(gstate);
+#endif
+	return return_value;
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT

@@ -106,7 +106,7 @@ BMIPhreeqcRM::GetInstance(int id)
 	return dynamic_cast<BMIPhreeqcRM*>(PhreeqcRM::GetInstance(id));
 }
 // Constructor
-#if 0
+#if 0  // No longer needed. BMIPhreeqcRM constructor can be called with default arguments.
 BMIPhreeqcRM::BMIPhreeqcRM()
 : PhreeqcRM(PhreeqcRM::default_nxyz, PhreeqcRM::default_data_for_parallel_processing, nullptr, true)
 , var_man( nullptr )
@@ -1333,4 +1333,3 @@ BMIPhreeqcRM::LoadDatabase(const std::string& database)
 }
 
 //////////////////
-

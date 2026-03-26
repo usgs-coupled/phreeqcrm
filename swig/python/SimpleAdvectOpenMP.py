@@ -82,16 +82,21 @@ def SimpleAdvect():
 
     # Run file to define solutions and reactants for initial conditions, selected output
     status = phreeqc_rm.RunFile(True, True, True, "advect.pqi")
+    print("RunFile status: {}".format(status))
 
     # Clear contents of workers and utility
     input = "DELETE; -all"
     status = phreeqc_rm.RunString(True, False, True, input)
+    print("RunString status: {}".format(status))
 
     # Determine number of components to transport
     ncomps = phreeqc_rm.FindComponents()
+    print("FindComponents")
 
     # Get component information (as a tuple)
     components = phreeqc_rm.GetComponents()
+    print("GetComponents")
+    print("Components: {}".format(components))
 
     for comp in components:
         phreeqc_rm.OutputMessage(comp)
@@ -99,9 +104,11 @@ def SimpleAdvect():
 
     # Set array of initial conditions
     if 'numpy' in sys.modules:
+        print("Using numpy for initial conditions array")
         # this may require numpy to be linked in
         ic1 = np.full((nxyz * 7,), -1)
     else:
+        print("Using list for initial conditions array")
         ic1 = [-1] * nxyz * 7
     ic1 = [-1] * nxyz * 7     # Need to fix with numpy
     for i in range(nxyz):
@@ -113,6 +120,7 @@ def SimpleAdvect():
         ic1[5 * nxyz + i] = -1  # Solid solutions none
         ic1[6 * nxyz + i] = -1  # Kinetics none
     status = phreeqc_rm.InitialPhreeqc2Module(ic1)
+    
 
     # Initial equilibration of cells
     time = 0.0
@@ -120,6 +128,7 @@ def SimpleAdvect():
     status = phreeqc_rm.SetTime(time)
     status = phreeqc_rm.SetTimeStep(time_step)
     status = phreeqc_rm.RunCells()
+    return
 
     # for now use std::vector<double> wrapper for [inout] arrays
     #c_dbl_vect = phreeqcrm.DoubleVector(nxyz * len(components), 0.0)

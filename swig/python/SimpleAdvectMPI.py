@@ -40,9 +40,7 @@ from mpi4py import MPI
 
 def SimpleAdvect():
     nxyz = 20
-    comm_handle = MPI.COMM_WORLD.py2f()
-
-    phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, comm_handle)
+    phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, MPI.COMM_WORLD)
     mpi_myself = phreeqc_rm.GetMpiMyself()
     if (mpi_myself > 0):
         phreeqc_rm.MpiWorker()

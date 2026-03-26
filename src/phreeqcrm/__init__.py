@@ -14,5 +14,7 @@ from .phreeqcrm import (
     DoubleVector,
     IntVector,
     StringVector,
-    State
+    State,
+    has_openmp,
+    has_mpi,
 )
