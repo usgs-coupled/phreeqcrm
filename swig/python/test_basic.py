@@ -5,11 +5,6 @@ import pytest
 
 from phreeqcrm import BMIPhreeqcRM, IRM_OK, State, has_openmp, has_mpi
 
-if has_mpi():
-    from mpi4py import MPI
-
-###@IMPORT_MPI4PY@
-
 from constants import FilePaths
 
 ERROR_GET_VALUE_PTR_NOT_SUPPORTED = "get_value_ptr not supported for this variable."
