@@ -1,13 +1,11 @@
 import phreeqcrm
 import numpy as np
 import yamlphreeqcrm
-from mpi4py import MPI
 
-
-    #module mydata
-    #  double precision, dimension(:), pointer :: K_ptr
-    #  integer                                 :: rm_id
-    #end module mydata
+# Note: If phreeqcrm is built with MPI support, mpi4py must be available;
+# otherwise, the phreeqcrm module will fail to load.
+if phreeqcrm.has_mpi():
+    from mpi4py import MPI
 
 class AdvectBMI(phreeqcrm.BMIPhreeqcRM):
 
