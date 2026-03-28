@@ -143,37 +143,6 @@ def advect_bmi():
     # --------------------------------------------------------------------------
     # Create PhreeqcRM
     # --------------------------------------------------------------------------
-    
-    # # write yaml file for initialization
-    # nxyz = 40
-    # yaml_file = ""
-    # if phreeqcrm.has_mpi():
-    #     comm = MPI.COMM_WORLD
-    #     if comm.rank == 0:
-    #         file_prefix = "AdvectBmi"
-    #         yaml_file = WriteYAMLFile(file_prefix)
-    # else:
-    #     file_prefix = "AdvectBmi"
-    #     yaml_file = WriteYAMLFile(file_prefix)
-
-    # # Wait for root to write YAML file
-    # if phreeqcrm.has_mpi():
-    #     MPI.COMM_WORLD.Barrier()
-
-    # # create instance
-    # yaml_file = "AdvectBmi" + ".yaml"
-    # bmi = AdvectBMI(nxyz, yaml_file)
-
-    # if phreeqcrm.has_mpi():
-    #     # Put workers in worker loop
-    #     mpi_myself = bmi.GetMpiMyself()
-    #     if mpi_myself != 0:
-    #         bmi.MpiWorker()
-    #         bmi.finalize()
-    #         print("Worker success: ", mpi_myself)
-    #         return
-
-
     nxyz = 40
     bmi = AdvectBMI(nxyz)
     # Demonstrate add to Basic: Set a function for Basic CALLBACK
@@ -193,8 +162,6 @@ def advect_bmi():
     yaml_file = WriteYAMLFile(file_prefix, nxyz)
     status = bmi.initialize(yaml_file)
 
-    # Demonstrate add to Basic: Set a function for Basic CALLBACK after LoadDatabase
-    #TODO CALL register_basic_callback_fortran()
 #ifdef USE_MPI
     # Optional callback for MPI
     #TODO status = do_something()   # only root is calling do_something here

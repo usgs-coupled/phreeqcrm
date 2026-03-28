@@ -120,7 +120,7 @@ def AdvectBmiOpenMP():
 	# --------------------------------------------------------------------------
 	
 	# write yaml file for initialization
-	file_prefix = "AdvectBmiOpenMP"
+	file_prefix = "AdvectBmi"
 	yaml_file = WriteYAMLFile(file_prefix)
 
 	# create OpenMP BMIPhreeqcRM instance
