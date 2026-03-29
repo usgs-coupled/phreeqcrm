@@ -3,7 +3,6 @@ requires = [
   "scikit-build-core",
   "swig",
   "numpy",
-  "mpi4py",
 ]
 build-backend = "scikit_build_core.build"
 
@@ -25,7 +24,6 @@ classifiers = [
 dependencies = [
   "numpy",
   "PyYAML",
-  "mpi4py",
 ]
 
 [tool.scikit-build]
