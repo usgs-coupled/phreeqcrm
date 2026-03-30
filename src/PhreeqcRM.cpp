@@ -13121,7 +13121,7 @@ PhreeqcRM::WarningMessage(const std::string &str)
 }
 /* ---------------------------------------------------------------------- */
 void
-PhreeqcRM::set_data_for_parallel_processing(int value)
+PhreeqcRM::set_data_for_parallel_processing(MP_TYPE value)
 /* ---------------------------------------------------------------------- */
 {
 	this->initializer->data_for_parallel_processing = value;
