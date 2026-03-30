@@ -5854,7 +5854,7 @@ protected:
 
 	virtual void Construct();
 
-	void set_data_for_parallel_processing(int value);
+	void set_data_for_parallel_processing(MP_TYPE value);
 	void set_io(PHRQ_io* value);
 	void set_nxyz(int value);
 
