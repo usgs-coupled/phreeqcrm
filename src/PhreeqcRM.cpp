@@ -211,11 +211,7 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 , species_save_on( false )
 , initializer(std::unique_ptr<PhreeqcRM::Initializer>(new PhreeqcRM::Initializer(nxyz_arg, data_for_parallel_processing, io)))
 #if defined(swig_python_EXPORTS)
-, py_callback(nullptr)
-, py_callback_cookie(nullptr)
 , basic_callback(nullptr)
-// , python_mpi_worker_callback_data.py_callback(nullptr)
-// , python_mpi_worker_callback_data.py_callback_cookie(nullptr)
 #endif
 {
 #ifdef USE_MPI
@@ -462,11 +458,11 @@ PhreeqcRM::~PhreeqcRM(void)
 
 #if defined(swig_python_EXPORTS)
 	// basic callback data
-	Py_XDECREF(py_callback);
-	Py_XDECREF(py_callback_cookie);
+	Py_XDECREF(this->python_basic_callback_data.py_callable);
+	Py_XDECREF(this->python_basic_callback_data.py_callback_cookie);
 
 	// mpi worker callback data
-	Py_XDECREF(this->python_mpi_worker_callback_data.py_callback);
+	Py_XDECREF(this->python_mpi_worker_callback_data.py_callable);
 	Py_XDECREF(this->python_mpi_worker_callback_data.py_callback_cookie);
 #endif
 }
@@ -7070,8 +7066,7 @@ PhreeqcRM::LoadDatabase(const std::string& database)
 	//	//this->RunString(false, true, false, "DELETE; -all");
 	//}
 #if defined(swig_python_EXPORTS)
-	std::cout << "this->py_callback: " << this->py_callback << "this->py_callback_cookie: " << this->py_callback_cookie << std::endl;
-	this->set_basic_callback(this->py_callback, this->py_callback_cookie);
+	this->set_basic_callback(this->python_basic_callback_data.py_callable, this->python_basic_callback_data.py_callback_cookie);
 #endif
 	std::cout << "PhreeqcRM::LoadDatabase OUT: " << database << std::endl;
 	return this->ReturnHandler(return_value, "PhreeqcRM::LoadDatabase");

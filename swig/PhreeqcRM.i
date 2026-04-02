@@ -55,6 +55,7 @@ class State(Enum):
 %}
 %ignore BMIVariant;
 %ignore bmi::Bmi;
+%ignore PhreeqcRM::PythonBasicCallbackData;
 %ignore PhreeqcRM::PythonMpiWorkerCallbackData;
 
 #if defined(SWIGPYTHON)
@@ -343,7 +344,7 @@ mpi_worker_callback_shim(int *method, void* cookie)
     PhreeqcRM::PythonMpiWorkerCallbackData* callback_data = (PhreeqcRM::PythonMpiWorkerCallbackData*)cookie;
 
     int result_val = 0;
-    PyObject* pyfunc = callback_data->py_callback;
+    PyObject* pyfunc = callback_data->py_callable;
     if (!pyfunc || !PyCallable_Check(pyfunc)) {
         return result_val;
     }
@@ -378,10 +379,10 @@ PhreeqcRM::set_mpi_worker_callback(PyObject* py_callable, PyObject* py_cookie)
         return;
     }
 
-    Py_XDECREF(this->python_mpi_worker_callback_data.py_callback);
+    Py_XDECREF(this->python_mpi_worker_callback_data.py_callable);
     Py_XDECREF(this->python_mpi_worker_callback_data.py_callback_cookie);
 
-    Py_INCREF(this->python_mpi_worker_callback_data.py_callback = py_callable);
+    Py_INCREF(this->python_mpi_worker_callback_data.py_callable = py_callable);
     Py_INCREF(this->python_mpi_worker_callback_data.py_callback_cookie = py_cookie);
 
     // Use the shim as the C callback
@@ -414,14 +415,15 @@ basic_callback_shim(double val1, double val2, const char* message, void* cookie)
 {
     PySys_WriteStdout("      basic_callback_shim In val1=%g val2=%g message=%s cookie=%p\n", val1, val2, message, cookie);
 
+    PhreeqcRM::PythonBasicCallbackData* callback_data = (PhreeqcRM::PythonBasicCallbackData*)cookie;
+
 #ifdef USE_OPENMP
     int n = omp_get_thread_num();
     PySys_WriteStdout("      basic_callback_shim OpenMP thread num: %d\n", n);
 #endif
 
     double result_val = 0.0;
-    std::pair<PyObject*, PyObject*>* callback_pair = (std::pair< PyObject*, PyObject* > *)cookie;
-    PyObject* pyfunc = callback_pair->first;
+    PyObject* pyfunc = callback_data->py_callable;
     if (!pyfunc || !PyCallable_Check(pyfunc)) {
         PySys_WriteStdout("      basic_callback_shim No valid Python callback found\n");
         return result_val;
@@ -429,7 +431,7 @@ basic_callback_shim(double val1, double val2, const char* message, void* cookie)
 
     PyGILState_STATE gil = PyGILState_Ensure();
 
-    PyObject* args = Py_BuildValue("(ddsO)", val1, val2, message, callback_pair->second);
+    PyObject* args = Py_BuildValue("(ddsO)", val1, val2, message, callback_data->py_callback_cookie);
     if (args) {
         PyObject* res = PyObject_CallObject(pyfunc, args);
         Py_XDECREF(args);
@@ -498,20 +500,6 @@ PhreeqcRM::_execute_basic_callback(double val1, double val2, const char* message
 void
 PhreeqcRM::set_basic_callback(PyObject* py_callable, PyObject* py_cookie)
 /* ---------------------------------------------------------------------- */
-// {
-//     if (!py_callable || !PyCallable_Check(py_callable)) {
-//         return;
-//     }
-
-//     Py_XDECREF(py_callback);
-//     Py_INCREF(py_callback = py_callable);
-
-//     Py_XDECREF(py_callback_cookie);
-//     Py_INCREF(py_callback_cookie = py_cookie);
-
-//     // Use the shim as the C callback
-//     basic_callback = &basic_callback_shim;
-// }
 {
     PySys_WriteStdout("PhreeqcRM::set_basic_callback In py_callable=%p py_cookie=%p\n", py_callable, py_cookie);
 #if defined(USE_MPI)
@@ -522,20 +510,18 @@ PhreeqcRM::set_basic_callback(PyObject* py_callable, PyObject* py_cookie)
         return;
     }
 
-    Py_XDECREF(this->py_callback);
-    Py_INCREF(this->py_callback = py_callable);
+    Py_XDECREF(this->python_basic_callback_data.py_callable);
+    Py_INCREF(this->python_basic_callback_data.py_callable = py_callable);
 
-    Py_XDECREF(this->py_callback_cookie);
-    Py_INCREF(this->py_callback_cookie = py_cookie);
+    Py_XDECREF(this->python_basic_callback_data.py_callback_cookie);
+    Py_INCREF(this->python_basic_callback_data.py_callback_cookie = py_cookie);
 
     PySys_WriteStdout("    Number of workers: %d\n", (int) this->GetWorkers().size());
 
-    ///const std::vector<IPhreeqcPhast*> w = this->GetWorkers();
     for (const auto& worker : this->GetWorkers()) {
         PySys_WriteStdout("        worker: %p in\n", worker);
         worker->set_basic_callback(py_callable, py_cookie);
         PySys_WriteStdout("        worker: %p out\n", worker);
-        ////break;  // REMOVE THIS BREAK TO SET CALLBACK ON ALL WORKERS
     }
 #if defined(USE_MPI)
     PySys_WriteStdout("    mpi_myself=%d\n", this->mpi_myself);
