@@ -5647,27 +5647,42 @@ Called by root and (or) workers; only root writes to the log file.
 
 #if defined(SWIG) || defined(swig_python_EXPORTS)
 public:
-/**
- TODO
- */
-    double                                    _execute_basic_callback(double val1, double val2, const char* message);
-/**
- TODO
- */
+	// BasicCallback handling.
+	
+    /**
+     * Register Python callback for progress / cell-level information in run.
+     *
+     * This stores a Python callable + optional context (cookie) for `PhreeqcRM` to
+     * invoke in the per-cell callback path.  The stored callable is invoked from
+     * `basic_callback_shim` (in the SWIG inline code) as part of reaction calculations.
+     *
+     * @param py_callable Python callable(val1: float, val2: float, message: str, cookie: object) -> float/int
+     * @param py_cookie  user object passed back to py_callable
+     * @note caller must hold Python GIL if called from C++ threads.
+     */
     void                                      set_basic_callback(PyObject* py_callable, PyObject* py_cookie = nullptr);
+    /**
+     * (Internal) Execute the registered basic callback.
+     *
+     * Called by internal worker code when a callback was set. This function
+     * forwards values to `basic_callback_shim` and returns the value
+     * returned by the Python callback.
+     *
+     * @param val1  first numeric callback argument
+     * @param val2  second numeric callback argument
+     * @param message text message for callback
+     * @return callback return value, 0.0 default if none set or invalid callback
+     */
+    double                                    _execute_basic_callback(double val1, double val2, const char* message);
 
-    // struct PythonBasicCallbackData {
-    //     PyObject* py_callback = nullptr;
-    //     PyObject* py_callback_cookie = nullptr;
-    // };
+    struct PythonBasicCallbackData {
+        PyObject* py_callable = nullptr;
+        PyObject* py_callback_cookie = nullptr;
+    };
 
 private:
-    // BasicCallback handling.
     BasicCallback                             basic_callback;
-    PyObject*                                 py_callback;
-    PyObject*                                 py_callback_cookie;
-
-	// PythonBasicCallbackData python_basic_callback_data;
+	PythonBasicCallbackData python_basic_callback_data;
 #endif
 
 
@@ -5676,24 +5691,41 @@ private:
 public:
 	// MPI Callback handling.
 
-	/**
-	 TODO
-	*/
-    void                     set_mpi_worker_callback(PyObject* py_callable, PyObject* py_cookie = nullptr);
+    /**
+     * Register Python callback for MPI worker messages.
+     *
+     * In single-process (OPENMP) or MPI modes, the callback is invoked by
+     * PhreeqcRM worker code via a C shim (mpi_worker_callback_shim)
+     * when a non-PhreeqcRM message code is received.
+     *
+     * @param py_callable Python callable(obj) that accepts:
+     *        (method:int, cookie:any) -> int
+     *        return 0 on success, nonzero on error.
+     * @param py_cookie user-provided context passed into callback.
+     * @note Caller must hold GIL for Python objects.
+     */
+    void                                      set_mpi_worker_callback(PyObject* py_callable, PyObject* py_cookie = nullptr);
 
-	/**
-	 TODO
-	*/
-    int                      _execute_mpi_worker_callback(int val);
+    /**
+     * (Internal) Execute registered MPI worker callback.
+     *
+     * Called from C++ (or SWIG proxy) when MPI worker callback path
+     * is required.  If callback is set via set_mpi_worker_callback and
+     * `mpi_worker_callback_c` == shim, forwards `val` through shim and
+     * returns resulting integer.
+     *
+     * @param val message / method code.
+     * @return callback return value, or 0 if no callback registered.
+     */
+    int                                       _execute_mpi_worker_callback(int val);
 
     struct PythonMpiWorkerCallbackData {
-        PyObject* py_callback = nullptr;
+        PyObject* py_callable = nullptr;
         PyObject* py_callback_cookie = nullptr;
     };
 
 private:
 	PythonMpiWorkerCallbackData python_mpi_worker_callback_data;
-
 #endif
 
 public:
