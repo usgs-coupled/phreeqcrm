@@ -49,6 +49,8 @@ configure_file(TestAllMethodsMPI.py TestAllMethodsMPI.py COPYONLY)
 # copy pytest files to build directory for testing
 configure_file(conftest.py conftest.py COPYONLY)
 configure_file(constants.py constants.py COPYONLY)
+configure_file(minimum.yaml minimum.yaml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../database/minimum.dat minimum.dat COPYONLY)
 configure_file(test_basic.py test_basic.py COPYONLY)
 configure_file(test_callbacks.py test_callbacks.py COPYONLY)
 configure_file(test_functions.py test_functions.py COPYONLY)
