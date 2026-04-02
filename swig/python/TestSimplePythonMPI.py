@@ -2,6 +2,8 @@ import phreeqcrm
 import sys
 import numpy as np
 # installed msmpisetup.exe 10.1.3 (10.1.12498.52)
+# sudo apt install openmpi-bin openmpi-common libopenmpi-dev  # version 4.1.6-5ubuntu1
+
 from mpi4py import MPI
 import pytest
 
@@ -22,7 +24,6 @@ def test_comm():
     
     # Assert that ranks are unique and match [0, 1, 2]
     assert sorted(all_ranks) == [0, 1, 2]
-
 
     # Create PhreeqcRM instance and test MPI functions
     nxyz = 20
