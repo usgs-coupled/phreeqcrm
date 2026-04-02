@@ -55,6 +55,7 @@ class State(Enum):
 %}
 %ignore BMIVariant;
 %ignore bmi::Bmi;
+%ignore PhreeqcRM::PythonMpiWorkerCallbackData;
 
 #if defined(SWIGPYTHON)
 %include "numpy.i"
@@ -92,6 +93,51 @@ import_array();
 %include "../src/IrmResult.h"
 
 // PhreeqcRM python prepends and appends
+%feature("docstring") PhreeqcRM::set_basic_callback(PyObject* py_callable, PyObject* py_cookie = nullptr) %{
+Set a callback function to be invoked during reaction calculations.
+
+The callback is executed at each chemistry cell during the RunCells operation.
+It can be used to monitor or modify state variables during the simulation.
+
+Parameters
+----------
+py_callable : callable
+    A Python callable that accepts exactly 4 positional arguments:
+    - val1 (float): First value passed by the reaction module
+    - val2 (float): Second value passed by the reaction module
+    - message (str): Descriptive message from the reaction module
+    - cookie: User-defined context object (usually the py_cookie parameter)
+    
+    The callback should return a float value that may be used by 
+    the reaction module to adjust calculations.
+
+py_cookie : object, optional
+    User-defined context object passed back to the callback function.
+    Default is None.
+
+Returns
+-------
+None
+
+Raises
+------
+TypeError
+    If py_callable is not callable.
+TypeError
+    If py_callable does not accept exactly 4 parameters.
+TypeError
+    If any parameter of py_callable is not positional.
+
+Examples
+--------
+>>> def my_callback(val1, val2, message, cookie):
+...     print(f"Callback: {message}, val1={val1}, val2={val2}")
+...     return val1 + val2
+...
+>>> phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, nthreads)
+>>> phreeqc_rm.set_basic_callback(my_callback, {"context": "data"})
+%}
+
 %feature("pythonprepend") PhreeqcRM::set_basic_callback(PyObject* py_callable, PyObject* py_cookie = nullptr) %{
     if not callable(py_callable):
         raise TypeError("Callback must be callable")
@@ -106,6 +152,73 @@ import_array();
         if p.kind not in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD):
             raise TypeError("Callback parameters must be positional")
 %}
+
+%feature("docstring") PhreeqcRM::set_mpi_worker_callback(PyObject* py_callable, PyObject* py_cookie = nullptr) %{
+Set a callback function for MPI worker process communication.
+
+This method is only applicable when the PhreeqcRM instance is compiled
+with MPI support (USE_MPI). The callback is invoked to handle messages
+and coordination between MPI worker processes and the manager process.
+
+Parameters
+----------
+py_callable : callable
+    A Python callable that accepts exactly 2 positional arguments:
+    - method (int): Method identifier indicating the type of worker operation
+    - cookie: User-defined context object (usually the py_cookie parameter)
+    
+    The callback should return an integer status code:
+    - 0 for success
+    - Non-zero for error conditions
+
+py_cookie : object, optional
+    User-defined context object passed back to the callback function.
+    Default is None.
+
+Returns
+-------
+None
+
+Raises
+------
+TypeError
+    If py_callable is not callable.
+TypeError
+    If py_callable does not accept exactly 2 parameters.
+TypeError
+    If any parameter of py_callable is not positional.
+
+Notes
+-----
+This callback is called by MPI worker processes during distributed
+computation. It should be thread-safe if using OpenMP in addition to MPI.
+
+Examples
+--------
+>>> def mpi_worker_callback(method, cookie):
+...     if method == 0:
+...         print("Worker process initialized")
+...     return 0  # Success
+...
+>>> phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, mpi.COMM_WORLD)
+>>> phreeqc_rm.set_mpi_worker_callback(mpi_worker_callback)
+%}
+
+%feature("pythonprepend") PhreeqcRM::set_mpi_worker_callback(PyObject* py_callable, PyObject* py_cookie = nullptr) %{
+    if not callable(py_callable):
+        raise TypeError("Callback must be callable")
+
+    sig = inspect.signature(py_callable)
+    params = list(sig.parameters.values())
+
+    if len(params) != 2:
+        raise TypeError("Callback must accept exactly 2 parameters")
+
+    for p in params:
+        if p.kind not in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD):
+            raise TypeError("Callback parameters must be positional")
+%}
+
 
 // Ignore methods
 %ignore PhreeqcRM::GetIPhreeqcPointer(int i);
@@ -200,7 +313,7 @@ import_array();
 %rename(SetPrintChemistryMaskSWIG)                  SetPrintChemistryMask(const std::vector<int> & cell_mask);
 %rename(SetIthConcentrationSWIG)                    SetIthConcentration(int i, std::vector< double >& c); 
 %rename(SetIthSpeciesConcentrationSWIG)             SetIthSpeciesConcentration(int i, std::vector< double >& c);
-// %rename(_execute_callback)                          execute_callback(double val1, double val2, const char* message);
+// %rename(_execute_basic_callback)                          execute_callback(double val1, double val2, const char* message);
 
 
 // Ignore methods
@@ -219,6 +332,81 @@ import_array();
 #ifdef USE_OPENMP
 #include <omp.h>
 #endif
+
+/* ---------------------------------------------------------------------- */
+static int 
+mpi_worker_callback_shim(int *method, void* cookie)
+/* ---------------------------------------------------------------------- */
+{
+    PySys_WriteStdout("      mpi_worker_callback_shim In *method=%d cookie=%p\n", *method, cookie);
+
+    PhreeqcRM::PythonMpiWorkerCallbackData* callback_data = (PhreeqcRM::PythonMpiWorkerCallbackData*)cookie;
+
+    int result_val = 0;
+    PyObject* pyfunc = callback_data->py_callback;
+    if (!pyfunc || !PyCallable_Check(pyfunc)) {
+        return result_val;
+    }
+    
+    PyGILState_STATE gil = PyGILState_Ensure();
+
+    PyObject* args = Py_BuildValue("(iO)", *method, callback_data->py_callback_cookie);
+    if (args) {
+        PyObject* res = PyObject_CallObject(pyfunc, args);
+        Py_XDECREF(args);
+        if (res) {
+            if (PyLong_Check(res)) {
+                result_val = (int)PyLong_AsLong(res);
+            }
+            Py_XDECREF(res);
+        }
+    }
+
+    PySys_WriteStdout("      mpi_worker_callback_shim OUT result_val=%d\n", result_val);
+    PyGILState_Release(gil);
+    return result_val;
+}
+
+/* ---------------------------------------------------------------------- */
+void
+PhreeqcRM::set_mpi_worker_callback(PyObject* py_callable, PyObject* py_cookie)
+/* ---------------------------------------------------------------------- */
+{
+    PySys_WriteStdout("  PhreeqcRM::set_mpi_worker_callback In py_callable=%p py_cookie=%p\n", py_callable, py_cookie);
+
+    if (!py_callable || !PyCallable_Check(py_callable)) {
+        return;
+    }
+
+    Py_XDECREF(this->python_mpi_worker_callback_data.py_callback);
+    Py_XDECREF(this->python_mpi_worker_callback_data.py_callback_cookie);
+
+    Py_INCREF(this->python_mpi_worker_callback_data.py_callback = py_callable);
+    Py_INCREF(this->python_mpi_worker_callback_data.py_callback_cookie = py_cookie);
+
+    // Use the shim as the C callback
+    this->SetMpiWorkerCallbackC(&mpi_worker_callback_shim);
+    this->SetMpiWorkerCallbackCookie(&this->python_mpi_worker_callback_data);
+
+    PySys_WriteStdout("  PhreeqcRM::set_mpi_worker_callback Out\n");
+}
+
+/* ---------------------------------------------------------------------- */
+int
+PhreeqcRM::_execute_mpi_worker_callback(int val)
+/* ---------------------------------------------------------------------- */
+{
+    PySys_WriteStdout("PhreeqcRM::_execute_mpi_worker_callback In\n");
+
+    int result = 0;
+    if (this->mpi_worker_callback_c == &mpi_worker_callback_shim) {
+        result = mpi_worker_callback_shim(&val, &this->python_mpi_worker_callback_data);
+    }
+
+    PySys_WriteStdout("PhreeqcRM::_execute_mpi_worker_callback Out\n");
+    return result;
+}
+
 /* ---------------------------------------------------------------------- */
 static double 
 basic_callback_shim(double val1, double val2, const char* message, void* cookie)
@@ -285,7 +473,7 @@ IPhreeqc::set_basic_callback(PyObject* py_callable, PyObject* py_cookie)
 }
 /* ---------------------------------------------------------------------- */
 double 
-PhreeqcRM::_execute_callback(double val1, double val2, const char* message)
+PhreeqcRM::_execute_basic_callback(double val1, double val2, const char* message)
 /* ---------------------------------------------------------------------- */
 {
     // if (basic_callback) {
@@ -293,7 +481,7 @@ PhreeqcRM::_execute_callback(double val1, double val2, const char* message)
     //     return basic_callback(val1, val2, message, &callback_pair);
     // }
     // return 0.0;
-    PySys_WriteStdout("PhreeqcRM::_execute_callback In\n");
+    PySys_WriteStdout("PhreeqcRM::_execute_basic_callback In\n");
     // return basic_callback_shim(val1, val2, message, &std::pair<PyObject*, PyObject*>(py_callback, py_callback_cookie));
     ////double result = basic_callback_shim(val1, val2, message, &std::pair<PyObject*, PyObject*>(py_callback, py_callback_cookie));
 
@@ -303,7 +491,7 @@ PhreeqcRM::_execute_callback(double val1, double val2, const char* message)
         break;  // Assuming we only want to call the callback on the first worker for this test
     }
 
-    PySys_WriteStdout("PhreeqcRM::_execute_callback Out\n");
+    PySys_WriteStdout("PhreeqcRM::_execute_basic_callback Out\n");
     return result;
 }
 /* ---------------------------------------------------------------------- */

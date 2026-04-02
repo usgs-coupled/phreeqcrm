@@ -214,6 +214,8 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 , py_callback(nullptr)
 , py_callback_cookie(nullptr)
 , basic_callback(nullptr)
+// , python_mpi_worker_callback_data.py_callback(nullptr)
+// , python_mpi_worker_callback_data.py_callback_cookie(nullptr)
 #endif
 {
 #ifdef USE_MPI
@@ -459,8 +461,13 @@ PhreeqcRM::~PhreeqcRM(void)
 	}
 
 #if defined(swig_python_EXPORTS)
-    Py_XDECREF(py_callback);
-    Py_XDECREF(py_callback_cookie);
+	// basic callback data
+	Py_XDECREF(py_callback);
+	Py_XDECREF(py_callback_cookie);
+
+	// mpi worker callback data
+	Py_XDECREF(this->python_mpi_worker_callback_data.py_callback);
+	Py_XDECREF(this->python_mpi_worker_callback_data.py_callback_cookie);
 #endif
 }
 /* ---------------------------------------------------------------------- */
