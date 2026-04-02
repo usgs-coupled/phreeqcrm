@@ -605,6 +605,7 @@ Args:
 
 
 %ignore basic_callback_shim;
+%ignore mpi_worker_callback_shim;
 
 %define HAS_MPI_DOCSTRING
 "

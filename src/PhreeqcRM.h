@@ -34,6 +34,9 @@ typedef struct _object PyObject;
 
 // Basic
 typedef double (*BasicCallback)(double val1, double val2, const char* message, void* user_data);
+
+// MPI
+typedef int (*MpiWorkerCallback)(int *method, void* cookie);
 #endif
 
 #include "NameDouble.h"
@@ -5643,33 +5646,54 @@ Called by root and (or) workers; only root writes to the log file.
 	void                                      WarningMessage(const std::string &warnstr);
 
 #if defined(SWIG) || defined(swig_python_EXPORTS)
-private:
-    // BasicCallback handling.
-    BasicCallback                             basic_callback;
-    PyObject*                                 py_callback;
-    PyObject*                                 py_callback_cookie;
 public:
-
 /**
  TODO
  */
-    double                                    _execute_callback(double val1, double val2, const char* message);
+    double                                    _execute_basic_callback(double val1, double val2, const char* message);
 /**
  TODO
  */
     void                                      set_basic_callback(PyObject* py_callable, PyObject* py_cookie = nullptr);
 
-#if 0
-/**
- TODO
- */
-    PyObject*                                 check_openmp(void);
+    // struct PythonBasicCallbackData {
+    //     PyObject* py_callback = nullptr;
+    //     PyObject* py_callback_cookie = nullptr;
+    // };
 
-/**
- TODO
- */
-    PyObject*                                 check_mpi(void);
+private:
+    // BasicCallback handling.
+    BasicCallback                             basic_callback;
+    PyObject*                                 py_callback;
+    PyObject*                                 py_callback_cookie;
+
+	// PythonBasicCallbackData python_basic_callback_data;
 #endif
+
+
+// Python helpers
+#if defined(SWIG) || defined(swig_python_EXPORTS)
+public:
+	// MPI Callback handling.
+
+	/**
+	 TODO
+	*/
+    void                     set_mpi_worker_callback(PyObject* py_callable, PyObject* py_cookie = nullptr);
+
+	/**
+	 TODO
+	*/
+    int                      _execute_mpi_worker_callback(int val);
+
+    struct PythonMpiWorkerCallbackData {
+        PyObject* py_callback = nullptr;
+        PyObject* py_callback_cookie = nullptr;
+    };
+
+private:
+	PythonMpiWorkerCallbackData python_mpi_worker_callback_data;
+
 #endif
 
 public:

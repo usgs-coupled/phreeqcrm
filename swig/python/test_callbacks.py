@@ -46,12 +46,19 @@ class TestModuleImport:
         # Check PhreeqcRM class
         assert hasattr(phreeqcrm_module.PhreeqcRM, 'set_basic_callback')
         assert callable(phreeqcrm_module.PhreeqcRM.set_basic_callback)
+        # Check that PhreeqcRM has set_mpi_worker_callback method
+        assert hasattr(phreeqcrm_module.PhreeqcRM, 'set_mpi_worker_callback')
+        assert callable(phreeqcrm_module.PhreeqcRM.set_mpi_worker_callback)
+
         # Check BMIPhreeqcRM class
         assert hasattr(phreeqcrm_module.BMIPhreeqcRM, 'set_basic_callback')
         assert callable(phreeqcrm_module.BMIPhreeqcRM.set_basic_callback)
+        # Check that BMIPhreeqcRM has set_mpi_worker_callback method
+        assert hasattr(phreeqcrm_module.BMIPhreeqcRM, 'set_mpi_worker_callback')
+        assert callable(phreeqcrm_module.BMIPhreeqcRM.set_mpi_worker_callback)
 
 
-class TestCallbackRegistration:
+class TestBasicCallbackRegistration:
     """Tests for callback registration."""
 
     def test_set_callback_throws_before_initialize(self, phreeqcrm_module):
@@ -79,15 +86,34 @@ class TestCallbackRegistration:
         # Should not raise an exception
         model.set_basic_callback(dummy_callback)
 
+    def test_set_callback_with_valid_function_and_cookie(self, phreeqcrm_module):
+        """Test setting a callback with a valid function and cookie."""
+        def dummy_callback(val1, val2, message, cookie):
+            return 0.0
+        
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+
+        # Should not raise an exception
+        model.set_basic_callback(dummy_callback, model)  # Using the model instance as a cookie
+
     def test_set_callback_with_lambda(self, phreeqcrm_module):
         """Test setting a callback with a lambda function."""
 
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
 
-
         # Should not raise an exception
         model.set_basic_callback(lambda v1, v2, m, cookie: 0.0)
+
+    def test_set_callback_with_lambda_and_cookie(self, phreeqcrm_module):
+        """Test setting a callback with a lambda function and cookie."""
+
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+
+        # Should not raise an exception
+        model.set_basic_callback(lambda v1, v2, m, cookie: 0.0, model)
 
     def test_set_callback_with_non_callable_raises_error(self, phreeqcrm_module):
         """Test that setting a non-callable raises TypeError."""
@@ -110,7 +136,87 @@ class TestCallbackRegistration:
         with pytest.raises(TypeError, match="Callback must be callable"):
             model.set_basic_callback(42)
 
-class TestCallbackExecution:
+
+class TestMpiWorkerCallbackRegistration:
+    """Tests for callback registration."""
+
+    def test_set_callback_throws_before_initialize(self, phreeqcrm_module):
+        """Test setting a callback before initialization raises an error."""
+        def dummy_callback(val, cookie):
+            return 0
+        
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        # with pytest.raises(RuntimeError, match="must call initialize first"):
+        #     model.set_basic_callback(dummy_callback)
+
+        # Note: For compatibility with MPI (which can't call initialize for the
+        #  mpi workers), set_basic_callback can be called before initialize. 
+        #  The callback will be set on workers towards the end of Construct().
+        model.set_mpi_worker_callback(dummy_callback)
+
+    def test_set_mpi_worker_callback_with_valid_function(self, phreeqcrm_module):
+        """Test setting a callback with a valid function."""
+        def dummy_callback(val, cookie):
+            return 0
+        
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+
+        # Should not raise an exception
+        model.set_mpi_worker_callback(dummy_callback)
+
+    def test_set_callback_with_valid_function_and_cookie(self, phreeqcrm_module):
+        """Test setting a callback with a valid function and cookie."""
+        def dummy_callback(val, cookie):
+            return 0
+        
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+
+        # Should not raise an exception
+        model.set_mpi_worker_callback(dummy_callback, model)  # Using the model instance as a cookie
+
+    def test_set_callback_with_lambda(self, phreeqcrm_module):
+        """Test setting a callback with a lambda function."""
+
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+
+        # Should not raise an exception
+        model.set_mpi_worker_callback(lambda v, cookie: 0)
+
+    def test_set_callback_with_lambda_and_cookie(self, phreeqcrm_module):
+        """Test setting a callback with a lambda function and cookie."""
+
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+
+        # Should not raise an exception
+        model.set_mpi_worker_callback(lambda v, cookie: 0, model)  # Using the model instance as a cookie
+
+    def test_set_callback_with_non_callable_raises_error(self, phreeqcrm_module):
+        """Test that setting a non-callable raises TypeError."""
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+        with pytest.raises(TypeError, match="Callback must be callable"):
+            model.set_mpi_worker_callback("not a function")
+
+    def test_set_callback_with_none_raises_error(self, phreeqcrm_module):
+        """Test that setting None raises TypeError."""
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+        with pytest.raises(TypeError, match="Callback must be callable"):
+            model.set_mpi_worker_callback(None)
+
+    def test_set_callback_with_integer_raises_error(self, phreeqcrm_module):
+        """Test that setting an integer raises TypeError."""
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+        with pytest.raises(TypeError, match="Callback must be callable"):
+            model.set_mpi_worker_callback(42)
+
+
+class TestBasicCallbackExecution:
     """Tests for callback execution."""
 
     def test_execute_with_simple_return(self, phreeqcrm_module):
@@ -118,7 +224,7 @@ class TestCallbackExecution:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: 3.14)
-        result = model._execute_callback(1.5, 2.5, "test")
+        result = model._execute_basic_callback(1.5, 2.5, "test")
         assert result == pytest.approx(3.14)
 
     def test_execute_with_sum_of_arguments(self, phreeqcrm_module):
@@ -126,7 +232,7 @@ class TestCallbackExecution:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: v1 + v2)
-        result = model._execute_callback(10.0, 20.0, "sum")
+        result = model._execute_basic_callback(10.0, 20.0, "sum")
         assert result == pytest.approx(30.0)
     
     def test_execute_with_multiplication(self, phreeqcrm_module):
@@ -134,7 +240,7 @@ class TestCallbackExecution:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: v1 * v2)
-        result = model._execute_callback(5.0, 4.0, "multiply")
+        result = model._execute_basic_callback(5.0, 4.0, "multiply")
         assert result == pytest.approx(20.0)
 
     def test_execute_with_message_based_computation(self, phreeqcrm_module):
@@ -145,7 +251,7 @@ class TestCallbackExecution:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(callback)
-        result = model._execute_callback(1.0, 2.0, "hello")
+        result = model._execute_basic_callback(1.0, 2.0, "hello")
         # 1.0 + 2.0 + len("hello") = 1.0 + 2.0 + 5 = 8.0
         assert result == pytest.approx(8.0)
 
@@ -154,7 +260,7 @@ class TestCallbackExecution:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: v1 + v2)
-        result = model._execute_callback(0.0, 0.0, "zeros")
+        result = model._execute_basic_callback(0.0, 0.0, "zeros")
         assert result == pytest.approx(0.0)
 
     def test_execute_with_negative_values(self, phreeqcrm_module):
@@ -162,7 +268,7 @@ class TestCallbackExecution:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: v1 + v2)
-        result = model._execute_callback(-5.0, 3.0, "negative")
+        result = model._execute_basic_callback(-5.0, 3.0, "negative")
         assert result == pytest.approx(-2.0)
     
     def test_execute_with_large_values(self, phreeqcrm_module):
@@ -170,7 +276,7 @@ class TestCallbackExecution:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: v1 + v2)
-        result = model._execute_callback(1e10, 2e10, "large")
+        result = model._execute_basic_callback(1e10, 2e10, "large")
         assert result == pytest.approx(3e10)
     
     def test_execute_with_small_values(self, phreeqcrm_module):
@@ -178,7 +284,7 @@ class TestCallbackExecution:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: v1 + v2)
-        result = model._execute_callback(1e-10, 2e-10, "small")
+        result = model._execute_basic_callback(1e-10, 2e-10, "small")
         assert result == pytest.approx(3e-10, abs=1e-20)
 
     def test_execute_with_empty_message(self, phreeqcrm_module):
@@ -186,7 +292,7 @@ class TestCallbackExecution:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: v1 + v2)
-        result = model._execute_callback(5.0, 3.0, "")
+        result = model._execute_basic_callback(5.0, 3.0, "")
         assert result == pytest.approx(8.0)
     
     def test_execute_with_long_message(self, phreeqcrm_module):
@@ -195,7 +301,7 @@ class TestCallbackExecution:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: v1 + v2 + len(m))
-        result = model._execute_callback(1.0, 2.0, long_msg)
+        result = model._execute_basic_callback(1.0, 2.0, long_msg)
         assert result == pytest.approx(1003.0)
     
     def test_execute_with_special_characters_in_message(self, phreeqcrm_module):
@@ -204,10 +310,64 @@ class TestCallbackExecution:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: v1 + v2)
-        result = model._execute_callback(1.0, 2.0, special_msg)
+        result = model._execute_basic_callback(1.0, 2.0, special_msg)
         assert result == pytest.approx(3.0)
 
-class TestCallbackStateManagement:
+
+class TestMpiWorkerCallbackExecution:
+    """Tests for callback execution."""
+
+    def test_set_callback_with_dummy_callback(self, phreeqcrm_module):
+        """Test setting a callback before initialization raises an error."""
+        def dummy_callback(val, cookie):
+            return 0
+        
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.set_mpi_worker_callback(dummy_callback)
+        result = model._execute_mpi_worker_callback(301)
+        assert result == 0
+
+    def test_execute_with_simple_return(self, phreeqcrm_module):
+        """Test executing a callback that returns a simple int."""
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+        model.set_mpi_worker_callback(lambda v, cookie: 303)
+        result = model._execute_mpi_worker_callback(301)
+        assert result == 303
+
+    def test_execute_with_multiplication(self, phreeqcrm_module):
+        """Test executing a callback that multiplies arguments."""
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+        model.set_mpi_worker_callback(lambda v, cookie: 3 * v)
+        result = model._execute_mpi_worker_callback(101)
+        assert result == 303
+
+    def test_execute_with_zero_values(self, phreeqcrm_module):
+        """Test executing a callback with zero values."""
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+        model.set_mpi_worker_callback(lambda v, cookie: 555)
+        result = model._execute_mpi_worker_callback(0)
+        assert result == 555
+
+    def test_execute_with_negative_values(self, phreeqcrm_module):
+        """Test executing a callback with negative values."""
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+        model.set_mpi_worker_callback(lambda v, cookie: v)
+        result = model._execute_mpi_worker_callback(-5)
+        assert result == -5
+    
+    def test_execute_with_large_values(self, phreeqcrm_module):
+        """Test executing a callback with large integer value."""
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+        model.set_mpi_worker_callback(lambda v, cookie: v)
+        result = model._execute_mpi_worker_callback(2147483647)
+        assert result == 2147483647
+
+class TestBasicCallbackStateManagement:
     """Tests for managing callback state."""
     
     def test_multiple_set_basic_callback_calls(self, phreeqcrm_module):
@@ -215,11 +375,11 @@ class TestCallbackStateManagement:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: 1.0)
-        result1 = model._execute_callback(1.0, 1.0, "first")
+        result1 = model._execute_basic_callback(1.0, 1.0, "first")
         assert result1 == pytest.approx(1.0)
         
         model.set_basic_callback(lambda v1, v2, m, cookie: 2.0)
-        result2 = model._execute_callback(1.0, 1.0, "second")
+        result2 = model._execute_basic_callback(1.0, 1.0, "second")
         assert result2 == pytest.approx(2.0)
 
     def test_callback_with_state_via_closure(self, phreeqcrm_module):
@@ -234,11 +394,44 @@ class TestCallbackStateManagement:
         model.initialize()
         model.set_basic_callback(stateful_callback)
         
-        result1 = model._execute_callback(1.0, 2.0, "first")
+        result1 = model._execute_basic_callback(1.0, 2.0, "first")
         assert result1 == pytest.approx(4.0)  # 1 + 2 + 1
         
-        result2 = model._execute_callback(1.0, 2.0, "second")
+        result2 = model._execute_basic_callback(1.0, 2.0, "second")
         assert result2 == pytest.approx(5.0)  # 1 + 2 + 2
+
+class TestMpiWorkerCallbackStateManagement:
+    """Tests for managing callback state."""
+    
+    def test_multiple_set_basic_callback_calls(self, phreeqcrm_module):
+        """Test that multiple set_mpi_worker_callback calls override the previous callback."""
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+        model.set_mpi_worker_callback(lambda v, cookie: 1)
+        result1 = model._execute_mpi_worker_callback(1)
+        assert result1 == 1
+        
+        model.set_mpi_worker_callback(lambda v, cookie: 2)
+        result2 = model._execute_mpi_worker_callback(1)
+        assert result2 == 2
+
+    def test_callback_with_state_via_closure(self, phreeqcrm_module):
+        """Test that callbacks can maintain state via closures."""
+        call_count = [0]  # Use a list to allow modification in nested function
+
+        def stateful_callback(v, cookie):
+            call_count[0] += 1
+            return v + call_count[0]
+
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.initialize()
+        model.set_mpi_worker_callback(stateful_callback)
+
+        result1 = model._execute_mpi_worker_callback(1)
+        assert result1 == 2  # 1 + 1
+
+        result2 = model._execute_mpi_worker_callback(1)
+        assert result2 == 3  # 1 + 2
 
 class TestReturnTypes:
     """Tests for return type handling."""
@@ -248,7 +441,7 @@ class TestReturnTypes:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: 3.14159)
-        result = model._execute_callback(0.0, 0.0, "pi")
+        result = model._execute_basic_callback(0.0, 0.0, "pi")
         assert isinstance(result, float)
         assert result == pytest.approx(3.14159)
     
@@ -257,7 +450,7 @@ class TestReturnTypes:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: 42)
-        result = model._execute_callback(0.0, 0.0, "int")
+        result = model._execute_basic_callback(0.0, 0.0, "int")
         assert isinstance(result, (float, int))
         assert result == pytest.approx(42.0)
     
@@ -266,7 +459,7 @@ class TestReturnTypes:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: 0)
-        result = model._execute_callback(1.0, 2.0, "zero")
+        result = model._execute_basic_callback(1.0, 2.0, "zero")
         assert result == pytest.approx(0.0)
     
     def test_callback_returns_negative(self, phreeqcrm_module):
@@ -274,7 +467,7 @@ class TestReturnTypes:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: -99.99)
-        result = model._execute_callback(0.0, 0.0, "negative")
+        result = model._execute_basic_callback(0.0, 0.0, "negative")
         assert result == pytest.approx(-99.99)
 
 
@@ -293,10 +486,10 @@ class TestComplexCallbacks:
         model.initialize()
         model.set_basic_callback(conditional_callback)
         
-        result1 = model._execute_callback(10.0, 5.0, "greater")
+        result1 = model._execute_basic_callback(10.0, 5.0, "greater")
         assert result1 == pytest.approx(5.0)
         
-        result2 = model._execute_callback(3.0, 8.0, "less")
+        result2 = model._execute_basic_callback(3.0, 8.0, "less")
         assert result2 == pytest.approx(5.0)
     
     def test_callback_with_string_checking(self, phreeqcrm_module):
@@ -311,10 +504,10 @@ class TestComplexCallbacks:
         model.initialize()
         model.set_basic_callback(string_aware_callback)
 
-        result1 = model._execute_callback(5.0, 3.0, "double")
+        result1 = model._execute_basic_callback(5.0, 3.0, "double")
         assert result1 == pytest.approx(16.0)
 
-        result2 = model._execute_callback(5.0, 3.0, "normal")
+        result2 = model._execute_basic_callback(5.0, 3.0, "normal")
         assert result2 == pytest.approx(8.0)
 
     def test_callback_with_exception_handling(self, phreeqcrm_module):
@@ -332,10 +525,10 @@ class TestComplexCallbacks:
         model.initialize()
         model.set_basic_callback(safe_callback)
 
-        result1 = model._execute_callback(10.0, 5.0, "")
+        result1 = model._execute_basic_callback(10.0, 5.0, "")
         assert result1 == pytest.approx(15.0)
 
-        result2 = model._execute_callback(10.0, 5.0, "ab")
+        result2 = model._execute_basic_callback(10.0, 5.0, "ab")
         assert result2 == pytest.approx(7.5)
 
 class TestUnicodeHandling:
@@ -346,7 +539,7 @@ class TestUnicodeHandling:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: v1 + v2)
-        result = model._execute_callback(1.0, 2.0, "café")
+        result = model._execute_basic_callback(1.0, 2.0, "café")
         assert result == pytest.approx(3.0)
     
     def test_callback_with_emoji(self, phreeqcrm_module):
@@ -354,7 +547,7 @@ class TestUnicodeHandling:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: len(m))
-        result = model._execute_callback(0.0, 0.0, "😀🎉🚀")
+        result = model._execute_basic_callback(0.0, 0.0, "😀🎉🚀")
         assert result == pytest.approx(3.0)
     
     def test_callback_with_chinese_characters(self, phreeqcrm_module):
@@ -362,7 +555,7 @@ class TestUnicodeHandling:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: len(m))
-        result = model._execute_callback(0.0, 0.0, "你好世界")
+        result = model._execute_basic_callback(0.0, 0.0, "你好世界")
         assert result == pytest.approx(4.0)
     
     def test_callback_with_japanese_characters(self, phreeqcrm_module):
@@ -370,7 +563,7 @@ class TestUnicodeHandling:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: len(m))
-        result = model._execute_callback(0.0, 0.0, "こんにちは")
+        result = model._execute_basic_callback(0.0, 0.0, "こんにちは")
         assert result == pytest.approx(5.0)
     
     def test_callback_with_arabic_characters(self, phreeqcrm_module):
@@ -378,7 +571,7 @@ class TestUnicodeHandling:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: len(m))
-        result = model._execute_callback(0.0, 0.0, "مرحبا")
+        result = model._execute_basic_callback(0.0, 0.0, "مرحبا")
         assert result == pytest.approx(5.0)
     
     def test_callback_with_greek_characters(self, phreeqcrm_module):
@@ -386,7 +579,7 @@ class TestUnicodeHandling:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: len(m))
-        result = model._execute_callback(0.0, 0.0, "Ελληνικά")
+        result = model._execute_basic_callback(0.0, 0.0, "Ελληνικά")
         assert result == pytest.approx(8.0)
     
     def test_callback_with_cyrillic_characters(self, phreeqcrm_module):
@@ -394,7 +587,7 @@ class TestUnicodeHandling:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: len(m))
-        result = model._execute_callback(0.0, 0.0, "Привет")
+        result = model._execute_basic_callback(0.0, 0.0, "Привет")
         assert result == pytest.approx(6.0)
     
     def test_callback_with_mixed_unicode_and_ascii(self, phreeqcrm_module):
@@ -406,7 +599,7 @@ class TestUnicodeHandling:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(mixed_callback)
-        result = model._execute_callback(0.0, 0.0, "Hello世界!")
+        result = model._execute_basic_callback(0.0, 0.0, "Hello世界!")
         # "Hello!" = 6 ASCII characters
         assert result == pytest.approx(6.0)
     
@@ -415,7 +608,7 @@ class TestUnicodeHandling:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: len(m))
-        result = model._execute_callback(0.0, 0.0, "Français Español Português")
+        result = model._execute_basic_callback(0.0, 0.0, "Français Español Português")
         assert result == pytest.approx(26.0)
     
     def test_callback_with_combining_characters(self, phreeqcrm_module):
@@ -425,7 +618,7 @@ class TestUnicodeHandling:
         model.set_basic_callback(lambda v1, v2, m, cookie: len(m))
         # Using a combining character sequence
         combining_string = "é"  # e with combining acute accent
-        result = model._execute_callback(0.0, 0.0, combining_string)
+        result = model._execute_basic_callback(0.0, 0.0, combining_string)
         assert result >= 1.0  # Should have at least the base character
     
     def test_callback_with_zero_width_characters(self, phreeqcrm_module):
@@ -435,7 +628,7 @@ class TestUnicodeHandling:
         model.set_basic_callback(lambda v1, v2, m, cookie: len(m))
         # Zero-width space (U+200B)
         zero_width_string = "test\u200bstring"
-        result = model._execute_callback(0.0, 0.0, zero_width_string)
+        result = model._execute_basic_callback(0.0, 0.0, zero_width_string)
         assert result == pytest.approx(11.0)
     
     def test_callback_with_bidi_text(self, phreeqcrm_module):
@@ -444,7 +637,7 @@ class TestUnicodeHandling:
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: len(m))
         bidi_string = "Hello שלום"  # English and Hebrew
-        result = model._execute_callback(0.0, 0.0, bidi_string)
+        result = model._execute_basic_callback(0.0, 0.0, bidi_string)
         # "Hello " (6) + "שלום" (4) = 10 characters
         assert result == pytest.approx(10.0)
     
@@ -454,7 +647,7 @@ class TestUnicodeHandling:
         model.initialize()
         model.set_basic_callback(lambda v1, v2, m, cookie: len(m))
         math_string = "∑∫∂∇"
-        result = model._execute_callback(0.0, 0.0, math_string)
+        result = model._execute_basic_callback(0.0, 0.0, math_string)
         assert result == pytest.approx(4.0)
     
     def test_callback_with_unicode_in_conditional_logic(self, phreeqcrm_module):
@@ -471,10 +664,10 @@ class TestUnicodeHandling:
         model.initialize()
         model.set_basic_callback(unicode_aware_callback)
         
-        result1 = model._execute_callback(0.0, 0.0, "你好")
+        result1 = model._execute_basic_callback(0.0, 0.0, "你好")
         assert result1 == pytest.approx(100.0)
         
-        result2 = model._execute_callback(0.0, 0.0, "مرحبا")
+        result2 = model._execute_basic_callback(0.0, 0.0, "مرحبا")
         assert result2 == pytest.approx(200.0)
 
 
@@ -489,7 +682,7 @@ class TestIntegration:
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.initialize()
         model.set_basic_callback(workflow_callback)
-        result = model._execute_callback(3.0, 4.0, "test")
+        result = model._execute_basic_callback(3.0, 4.0, "test")
         # 3 * 4 + len("test") = 12 + 4 = 16
         assert result == pytest.approx(16.0)
     
@@ -500,9 +693,9 @@ class TestIntegration:
         model.set_basic_callback(lambda v1, v2, m, cookie: v1 + v2)
         
         results = [
-            model._execute_callback(1.0, 2.0, "a"),
-            model._execute_callback(2.0, 3.0, "b"),
-            model._execute_callback(3.0, 4.0, "c"),
+            model._execute_basic_callback(1.0, 2.0, "a"),
+            model._execute_basic_callback(2.0, 3.0, "b"),
+            model._execute_basic_callback(3.0, 4.0, "c"),
         ]
         
         expected = [3.0, 5.0, 7.0]
@@ -525,7 +718,7 @@ class TestCallbacks:
         model.set_basic_callback(pycb, None)
 
         # this will change later
-        value = model._execute_callback(3.0, 4.0, "test")
+        value = model._execute_basic_callback(3.0, 4.0, "test")
         assert value == pytest.approx(123.5)
         assert called == [(3.0, 4.0, "test", None)]
 
@@ -540,7 +733,7 @@ class TestCallbacks:
 
         model.initialize()
         model.set_basic_callback(pycb)
-        result = model._execute_callback(3.0, 4.0, "No cookie")
+        result = model._execute_basic_callback(3.0, 4.0, "No cookie")
         assert result == pytest.approx(7.0)
 
     def test_callback_with_cookie(self, phreeqcrm_module):
@@ -554,7 +747,7 @@ class TestCallbacks:
 
         model.initialize()
         model.set_basic_callback(pycb, "test_cookie")
-        result = model._execute_callback(3.0, 4.0, "With cookie")
+        result = model._execute_basic_callback(3.0, 4.0, "With cookie")
         assert result == pytest.approx(9.0)  # 3 + 4 + 2 (count of 't' in "test_cookie")
 
     def test_callback_with_model_cookie(self, phreeqcrm_module):
@@ -568,7 +761,7 @@ class TestCallbacks:
 
         model.initialize()
         model.set_basic_callback(pycb, model)  # Using the model instance as cookie
-        result = model._execute_callback(3.0, 4.0, "With model as cookie")
+        result = model._execute_basic_callback(3.0, 4.0, "With model as cookie")
         assert result == pytest.approx(0.0)
 
 
