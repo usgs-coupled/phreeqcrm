@@ -400,6 +400,35 @@ class TestBasicCallbackStateManagement:
         result2 = model._execute_basic_callback(1.0, 2.0, "second")
         assert result2 == pytest.approx(5.0)  # 1 + 2 + 2
 
+    def test_callback_still_gets_called_after_initialize(self, phreeqcrm_module):
+        """Test that callbacks set before initialization are still called."""
+
+        def basic_callback(v1, v2, m, cookie):
+            print("basic_callback called with v1:", v1, "v2:", v2, "m:", m, "cookie:", cookie)
+            return v1 + v2
+
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.set_basic_callback(basic_callback)  # Set before initialize
+        model.initialize("minimum.yaml")  # Initialize after setting callback
+
+        result1 = model._execute_basic_callback(1.0, 2.0, "first")
+        assert result1 == pytest.approx(3.0)  # 1 + 2
+
+    def test_callback_still_gets_called_after_initialize_alt(self, phreeqcrm_module):
+        """Test that callbacks set before initialization are still called."""
+
+        def basic_callback(v1, v2, m, cookie):
+            print("basic_callback called with v1:", v1, "v2:", v2, "m:", m, "cookie:", cookie)
+            return v1 + v2
+
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.set_basic_callback(basic_callback)  # Set before initialize
+        model.initialize()  # Initialize after setting callback
+        model.LoadDatabase("minimum.dat")
+
+        result1 = model._execute_basic_callback(1.0, 2.0, "first")
+        assert result1 == pytest.approx(3.0)  # 1 + 2
+
 class TestMpiWorkerCallbackStateManagement:
     """Tests for managing callback state."""
     
@@ -432,6 +461,53 @@ class TestMpiWorkerCallbackStateManagement:
 
         result2 = model._execute_mpi_worker_callback(1)
         assert result2 == 3  # 1 + 2
+
+    # def test_callback_still_gets_called_after_initialize(self, phreeqcrm_module):
+    #     """Test that callbacks set before initialization are still called."""
+    #     call_count = [0]
+
+    #     def stateful_callback(v, cookie):
+    #         call_count[0] += 1
+    #         return v + call_count[0]
+
+    #     model = phreeqcrm_module.BMIPhreeqcRM()
+    #     model.set_mpi_worker_callback(stateful_callback)  # Set before initialize
+    #     model.initialize()  # Initialize after setting callback
+
+    #     result1 = model._execute_mpi_worker_callback(1)
+    #     assert result1 == 2  # 1 + 1
+
+    #     result2 = model._execute_mpi_worker_callback(1)
+    #     assert result2 == 3  # 1 + 2
+
+    def test_callback_still_gets_called_after_initialize(self, phreeqcrm_module):
+        """Test that callbacks set before initialization are still called."""
+
+        def mpi_worker_callback(v, cookie):
+            print("basic_callback called with v:", v, "cookie:", cookie)
+            return v
+
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.set_mpi_worker_callback(mpi_worker_callback)  # Set before initialize
+        model.initialize("minimum.yaml")  # Initialize after setting callback
+
+        result1 = model._execute_mpi_worker_callback(301)
+        assert result1 == 301
+
+    def test_callback_still_gets_called_after_initialize_alt(self, phreeqcrm_module):
+        """Test that callbacks set before initialization are still called."""
+
+        def mpi_worker_callback(v, cookie):
+            print("basic_callback called with v:", v, "cookie:", cookie)
+            return v
+
+        model = phreeqcrm_module.BMIPhreeqcRM()
+        model.set_mpi_worker_callback(mpi_worker_callback)  # Set before initialize
+        model.initialize()  # Initialize after setting callback
+        model.LoadDatabase("minimum.dat")
+
+        result1 = model._execute_mpi_worker_callback(707)
+        assert result1 == 707
 
 class TestReturnTypes:
     """Tests for return type handling."""

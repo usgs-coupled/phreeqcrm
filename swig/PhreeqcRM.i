@@ -481,7 +481,7 @@ PhreeqcRM::_execute_basic_callback(double val1, double val2, const char* message
     //     return basic_callback(val1, val2, message, &callback_pair);
     // }
     // return 0.0;
-    PySys_WriteStdout("PhreeqcRM::_execute_basic_callback In\n");
+    PySys_WriteStdout("PhreeqcRM::_execute_basic_callback In worker count: %d\n", (int) this->GetWorkers().size());
     // return basic_callback_shim(val1, val2, message, &std::pair<PyObject*, PyObject*>(py_callback, py_callback_cookie));
     ////double result = basic_callback_shim(val1, val2, message, &std::pair<PyObject*, PyObject*>(py_callback, py_callback_cookie));
 

@@ -7070,6 +7070,7 @@ PhreeqcRM::LoadDatabase(const std::string& database)
 	//	//this->RunString(false, true, false, "DELETE; -all");
 	//}
 #if defined(swig_python_EXPORTS)
+	std::cout << "this->py_callback: " << this->py_callback << "this->py_callback_cookie: " << this->py_callback_cookie << std::endl;
 	this->set_basic_callback(this->py_callback, this->py_callback_cookie);
 #endif
 	std::cout << "PhreeqcRM::LoadDatabase OUT: " << database << std::endl;
