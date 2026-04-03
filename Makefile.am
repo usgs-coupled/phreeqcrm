@@ -20,6 +20,7 @@ PHREEQCRM_EXTRA_DIST=\
 	swig/python/SimpleAdvect.py\
 	swig/python/SimpleAdvectMPI.py\
 	swig/python/SimpleAdvectOpenMP.py\
+	swig/python/minimum.yaml\
 	swig/python/test_basic.py\
 	swig/python/test_callbacks.py\
 	swig/python/test_functions.py\
