@@ -16,6 +16,8 @@ import os
 import pytest
 import numpy as np
 
+from constants import FilePaths
+
 # Add the project directory to the path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -409,7 +411,7 @@ class TestBasicCallbackStateManagement:
 
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.set_basic_callback(basic_callback)  # Set before initialize
-        model.initialize(MINIMUM_YAML)  # Initialize after setting callback
+        model.initialize(FilePaths.MINIMUM_YAML)  # Initialize after setting callback
 
         result1 = model._execute_basic_callback(1.0, 2.0, "first")
         assert result1 == pytest.approx(3.0)  # 1 + 2
@@ -489,7 +491,7 @@ class TestMpiWorkerCallbackStateManagement:
 
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.set_mpi_worker_callback(mpi_worker_callback)  # Set before initialize
-        model.initialize(MINIMUM_YAML)  # Initialize after setting callback
+        model.initialize(FilePaths.MINIMUM_YAML)  # Initialize after setting callback
 
         result1 = model._execute_mpi_worker_callback(301)
         assert result1 == 301
