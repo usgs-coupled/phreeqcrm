@@ -5682,7 +5682,7 @@ public:
 
 private:
     BasicCallback                             basic_callback;
-	PythonBasicCallbackData python_basic_callback_data;
+	PythonBasicCallbackData                   python_basic_callback_data;
 #endif
 
 
@@ -5725,7 +5725,7 @@ public:
     };
 
 private:
-	PythonMpiWorkerCallbackData python_mpi_worker_callback_data;
+	PythonMpiWorkerCallbackData               python_mpi_worker_callback_data;
 #endif
 
 public:
