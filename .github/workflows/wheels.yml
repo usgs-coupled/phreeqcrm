@@ -37,12 +37,12 @@ jobs:
           # - [windows-2022, win32, Win32, x86]
           # - [windows-11-arm, win_arm64, ARM64, ARM64]
         python:
-          - [cp311, v143]
-          - [cp312, v143]
+          # - [cp311, v143]
+          # - [cp312, v143]
           - [cp313, v143]
-          # - [cp313t, v143]
-          - [cp314, v143]
-          - [pp311, v143]
+          # # - [cp313t, v143]
+          # - [cp314, v143]
+          # - [pp311, v143]
 
         exclude:
           # cp313(i686) on ubuntu-22.04

@@ -409,15 +409,7 @@ class TestBasicCallbackStateManagement:
 
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.set_basic_callback(basic_callback)  # Set before initialize
-
-        # debug {{
-        cwd = os.getcwd()
-        print("Current working directory:", cwd)
-        files_in_cwd = os.listdir(cwd)
-        print("Files in current working directory:", files_in_cwd)
-        # debug }}
-
-        model.initialize("minimum.yaml")  # Initialize after setting callback
+        model.initialize(MINIMUM_YAML)  # Initialize after setting callback
 
         result1 = model._execute_basic_callback(1.0, 2.0, "first")
         assert result1 == pytest.approx(3.0)  # 1 + 2
@@ -497,13 +489,7 @@ class TestMpiWorkerCallbackStateManagement:
 
         model = phreeqcrm_module.BMIPhreeqcRM()
         model.set_mpi_worker_callback(mpi_worker_callback)  # Set before initialize
-        # debug {{
-        cwd = os.getcwd()
-        print("Current working directory:", cwd)
-        files_in_cwd = os.listdir(cwd)
-        print("Files in current working directory:", files_in_cwd)
-        # debug }}
-        model.initialize("minimum.yaml")  # Initialize after setting callback
+        model.initialize(MINIMUM_YAML)  # Initialize after setting callback
 
         result1 = model._execute_mpi_worker_callback(301)
         assert result1 == 301
