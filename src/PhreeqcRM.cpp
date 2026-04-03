@@ -7066,6 +7066,7 @@ PhreeqcRM::LoadDatabase(const std::string& database)
 	//	//this->RunString(false, true, false, "DELETE; -all");
 	//}
 #if defined(swig_python_EXPORTS)
+	// This is needed to reset Phreeqc's callback (basic_callback_ptr) since UnLoadDatabase will reset it to nullptr by calling Phreeqc::init().
 	this->set_basic_callback(this->python_basic_callback_data.py_callable, this->python_basic_callback_data.py_callback_cookie);
 #endif
 	std::cout << "PhreeqcRM::LoadDatabase OUT: " << database << std::endl;

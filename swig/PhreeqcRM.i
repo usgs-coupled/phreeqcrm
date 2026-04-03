@@ -520,7 +520,11 @@ PhreeqcRM::set_basic_callback(PyObject* py_callable, PyObject* py_cookie)
 
     for (const auto& worker : this->GetWorkers()) {
         PySys_WriteStdout("        worker: %p in\n", worker);
-        worker->set_basic_callback(py_callable, py_cookie);
+        // 4/3/2026 3:08 PM    worker->set_basic_callback(py_callable, py_cookie);
+        // 4/3/2026 3:08 PM{{
+        // worker->PhreeqcPtr->SetBasicCallback(&basic_callback_shim, &this->python_basic_callback_data);
+        worker->SetBasicCallback(&basic_callback_shim, &this->python_basic_callback_data);
+        // 4/3/2026 3:08 PM}}
         PySys_WriteStdout("        worker: %p out\n", worker);
     }
 #if defined(USE_MPI)
