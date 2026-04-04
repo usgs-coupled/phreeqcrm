@@ -392,15 +392,30 @@ class TestBasicCallbackStateManagement:
             call_count[0] += 1
             return v1 + v2 + call_count[0]
         
-        model = phreeqcrm_module.BMIPhreeqcRM()
+        if phreeqcrm_module.has_mpi():
+            from mpi4py import MPI
+            model = phreeqcrm_module.BMIPhreeqcRM(10, MPI.COMM_WORLD)
+            model.initialize()
+            assert MPI.COMM_WORLD.Get_size() == 1
+        elif phreeqcrm_module.has_openmp():
+            model = phreeqcrm_module.BMIPhreeqcRM(10, 1)
+            model.initialize()
+            assert model.GetThreadCount() == 1
+        else:
+            # serial case - default to 1 thread
+            model = phreeqcrm_module.BMIPhreeqcRM(10, 1)
+            model.initialize()
+            assert model.GetThreadCount() == 1
+
+        assert model is not None
         model.initialize()
         model.set_basic_callback(stateful_callback)
         
         result1 = model._execute_basic_callback(1.0, 2.0, "first")
-        assert result1 == pytest.approx(4.0)  # 1 + 2 + 1
+        assert result1 == pytest.approx(6.0)  # 1 + 2 + threads+2
         
         result2 = model._execute_basic_callback(1.0, 2.0, "second")
-        assert result2 == pytest.approx(5.0)  # 1 + 2 + 2
+        assert result2 == pytest.approx(9.0)  # 1 + 2 + 2*(threads+2)
 
     def test_callback_still_gets_called_after_initialize(self, phreeqcrm_module):
         """Test that callbacks set before initialization are still called."""
@@ -789,16 +804,28 @@ class TestCallbacks:
             called.append((x, y, msg, cookie))
             return 123.5
         
-        model = phreeqcrm_module.BMIPhreeqcRM()
-        assert model is not None
+        if phreeqcrm_module.has_mpi():
+            from mpi4py import MPI
+            model = phreeqcrm_module.BMIPhreeqcRM(10, MPI.COMM_WORLD)
+            model.initialize()
+            assert MPI.COMM_WORLD.Get_size() == 1
+        elif phreeqcrm_module.has_openmp():
+            model = phreeqcrm_module.BMIPhreeqcRM(10, 1)
+            model.initialize()
+            assert model.GetThreadCount() == 1
+        else:
+            model = phreeqcrm_module.BMIPhreeqcRM(10, 1)
+            model.initialize()
+            assert model.GetThreadCount() == 1
 
+        assert model is not None
         model.initialize()
         model.set_basic_callback(pycb, None)
 
-        # this will change later
         value = model._execute_basic_callback(3.0, 4.0, "test")
         assert value == pytest.approx(123.5)
-        assert called == [(3.0, 4.0, "test", None)]
+        # nthreads + 2
+        assert called == [(3.0, 4.0, "test", None), (3.0, 4.0, "test", None), (3.0, 4.0, "test", None)]
 
     def test_default_cookie_is_none(self, phreeqcrm_module):
         """Test setting callback without cookie sets cookie to None."""

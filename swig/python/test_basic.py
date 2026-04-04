@@ -60,6 +60,19 @@ def test_prereqs(create_yaml_file):
     pqi_dest = os.path.join(cwd, os.path.basename(pqi))
     assert os.path.exists(pqi_dest), f"{pqi_dest} does not exist"
 
+def test_openmp_ctor():
+    if not has_openmp():
+        pytest.skip("OpenMP not available")
+
+    nxyz = 20
+    nthreads = 10
+    model = BMIPhreeqcRM(nxyz, nthreads)
+    model.initialize()
+
+    # these aren't valid unless the model is initialized
+    assert model.GetGridCellCount() == nxyz
+    assert model.GetThreadCount() == nthreads
+
 def test_dtor():
     model = BMIPhreeqcRM()
     del model

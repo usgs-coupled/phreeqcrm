@@ -117,22 +117,12 @@ class AdvectBMI(phreeqcrm.BMIPhreeqcRM):
         return self.GetSelectedOutput()
 
 def my_basic_callback(x1, x2, str, cookie):
-    print("In Python my_basic_callback")
-    print("x1: ", x1)
-    print("x2: ", x2)
-    print("str: ", str)
-    print("cookie: ", cookie)
-
     if str == "HYDRAULIC_K":
         phreeqcrm = cookie
         rm_cell_number = int(x1)
         if rm_cell_number >= 0 and rm_cell_number < phreeqcrm.GetChemistryCellCount():
             back = phreeqcrm.GetBackwardMapping() # dict of list
-            # return phreeqcrm.hydraulic_K[back[rm_cell_number][0]]
-            value = phreeqcrm.hydraulic_K[back[rm_cell_number][0]]
-            print(f"Returning hydraulic_K value of {value} for cell {rm_cell_number}")
-            return value
-    print(f"Returning hydraulic_K value of -999.9 for cell {rm_cell_number}")    
+            return phreeqcrm.hydraulic_K[back[rm_cell_number][0]]
     return -999.9
 
 

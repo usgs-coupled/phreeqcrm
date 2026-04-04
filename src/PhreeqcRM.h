@@ -31,12 +31,6 @@ class PHRQ_io;
 // nested class-scoped typedef) so it matches the interpreter's API and
 // SWIG-generated wrappers.
 typedef struct _object PyObject;
-
-// Basic
-typedef double (*BasicCallback)(double val1, double val2, const char* message, void* user_data);
-
-// MPI
-typedef int (*MpiWorkerCallback)(int *method, void* cookie);
 #endif
 
 #include "NameDouble.h"
@@ -5646,6 +5640,7 @@ Called by root and (or) workers; only root writes to the log file.
 	void                                      WarningMessage(const std::string &warnstr);
 
 #if defined(SWIG) || defined(swig_python_EXPORTS)
+// Python helpers
 public:
 	// BasicCallback handling.
 	
@@ -5661,6 +5656,7 @@ public:
      * @note caller must hold Python GIL if called from C++ threads.
      */
     void                                      set_basic_callback(PyObject* py_callable, PyObject* py_cookie = nullptr);
+
     /**
      * (Internal) Execute the registered basic callback.
      *
@@ -5676,18 +5672,16 @@ public:
     double                                    _execute_basic_callback(double val1, double val2, const char* message);
 
     struct PythonBasicCallbackData {
-        PyObject* py_callable = nullptr;
+        PyObject* py_callable        = nullptr;
         PyObject* py_callback_cookie = nullptr;
     };
 
 private:
-    BasicCallback                             basic_callback;
 	PythonBasicCallbackData                   python_basic_callback_data;
 #endif
 
-
-// Python helpers
 #if defined(SWIG) || defined(swig_python_EXPORTS)
+// Python helpers
 public:
 	// MPI Callback handling.
 
@@ -5720,7 +5714,7 @@ public:
     int                                       _execute_mpi_worker_callback(int val);
 
     struct PythonMpiWorkerCallbackData {
-        PyObject* py_callable = nullptr;
+        PyObject* py_callable        = nullptr;
         PyObject* py_callback_cookie = nullptr;
     };
 
