@@ -28,6 +28,7 @@ PHREEQCRM_EXTRA_DIST=\
 	swig/python/test_init.py\
 	swig/python/test_irf.py\
 	swig/python/test_set_value.py\
+	swig/python/TestAllMethods.py\
 	swig/python/TestAllMethodsMPI.py\
 	swig/python/TestAllMethodsOpenMP.py\
 	swig/python/WriteYamlFile.py\

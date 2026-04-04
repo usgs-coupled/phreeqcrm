@@ -43,6 +43,8 @@ configure_file(yamlphreeqcrm.py yamlphreeqcrm.py COPYONLY)
 configure_file(AdvectBmiOpenMP.py AdvectBmiOpenMP.py COPYONLY)
 configure_file(AdvectBmiMPI.py AdvectBmiMPI.py COPYONLY)
 configure_file(WriteYamlFile.py WriteYamlFile.py COPYONLY)
+
+configure_file(TestAllMethods.py TestAllMethods.py COPYONLY)
 configure_file(TestAllMethodsOpenMP.py TestAllMethodsOpenMP.py COPYONLY)
 configure_file(TestAllMethodsMPI.py TestAllMethodsMPI.py COPYONLY)
 
@@ -413,6 +415,27 @@ if(PHREEQCRM_BUILD_MPI)
     PROPERTIES
       ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
   )
+
+  add_test(NAME "TestAllMethods(MPI).py"
+          # COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
+          COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
+          ${MPIEXEC_PREFLAGS}
+          ${Python_EXECUTABLE} TestAllMethods.py
+          ${MPIEXEC_POSTFLAGS}
+          )
+  set_tests_properties("TestAllMethods(MPI).py"
+    PROPERTIES
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+  )
+
+elseif(PHREEQCRM_DISABLE_OPENMP OR NOT OPENMP_FOUND)
+  add_test(NAME "TestAllMethods(Serial).py"
+    COMMAND ${Python_EXECUTABLE} TestAllMethods.py
+  )
+  set_tests_properties("TestAllMethods(Serial).py"
+    PROPERTIES 
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+  )
 else()
   add_test(NAME TestAllMethodsOpenMP.py
     COMMAND ${Python_EXECUTABLE} TestAllMethodsOpenMP.py
@@ -420,7 +443,15 @@ else()
   set_tests_properties(TestAllMethodsOpenMP.py
     PROPERTIES 
       ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-      DISABLED "$<$<BOOL:${PHREEQCRM_BUILD_MPI}>:TRUE>"
+      # DISABLED "$<$<BOOL:${PHREEQCRM_BUILD_MPI}>:TRUE>"
+  )
+
+  add_test(NAME "TestAllMethods(OpenMP).py"
+    COMMAND ${Python_EXECUTABLE} TestAllMethods.py
+  )
+  set_tests_properties("TestAllMethods(OpenMP).py"
+    PROPERTIES 
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
   )
 endif()
 
@@ -453,7 +484,7 @@ if(MSVC)
   # set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND "${dir_name}/${base_name}$<$<CONFIG:Debug>:_d>${ext}")
   set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND ${Python_EXECUTABLE})
   set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
-  set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "SimpleAdvectOpenMP.py")
+  set_target_properties(${PYTHON_TARGET_NAME} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "SimpleAdvect.py")
 endif()
 
 if(DEFINED SKBUILD)
