@@ -21,17 +21,6 @@ class IErrorReporter;
 class CSelectedOutput;
 class SelectedOutput;
 
-#if defined(SWIG) || defined(swig_python_EXPORTS)
-// Forward-declare CPython's PyObject so headers can refer to it without
-// including Python.h here. This must be the global PyObject type (not a
-// nested class-scoped typedef) so it matches the interpreter's API and
-// SWIG-generated wrappers.
-typedef struct _object PyObject;
-
-// Basic
-typedef double (*BasicCallback)(double val1, double val2, const char* message, void* user_data);
-#endif
-
 /**
  * @class IPhreeqcStop
  *
@@ -881,18 +870,6 @@ public:
 	 *  @see                    GetSelectedOutputFileOn, GetSelectedOutputString, GetSelectedOutputStringOn, GetSelectedOutputStringLine, GetSelectedOutputStringLineCount, SetCurrentSelectedOutputUserNumber, SetSelectedOutputFileOn
 	 */
 	void                     SetSelectedOutputStringOn(bool bValue);
-
-// Python helpers
-#if defined(SWIG) || defined(swig_python_EXPORTS)
-	void                     set_basic_callback(PyObject* py_callable, PyObject* py_cookie = nullptr);
-private:
-	// BasicCallback handling.
-	BasicCallback                             basic_callback;
-	//PyObject* py_callback;
-	//PyObject* py_callback_cookie;
-	std::pair<PyObject*, PyObject*> py_callback_pair;
-#endif
-
 
 public:
 	// overrides

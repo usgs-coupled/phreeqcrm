@@ -210,9 +210,6 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 , mpi_worker_callback_cookie( nullptr )
 , species_save_on( false )
 , initializer(std::unique_ptr<PhreeqcRM::Initializer>(new PhreeqcRM::Initializer(nxyz_arg, data_for_parallel_processing, io)))
-#if defined(swig_python_EXPORTS)
-, basic_callback(nullptr)
-#endif
 {
 #ifdef USE_MPI
 	phreeqcrm_comm = data_for_parallel_processing;
@@ -246,11 +243,6 @@ PhreeqcRM::PhreeqcRM(int nxyz_arg, MP_TYPE data_for_parallel_processing, PHRQ_io
 
 void PhreeqcRM::Construct()
 {
-#if defined(swig_python_EXPORTS)
-	PySys_WriteStdout("PhreeqcRM::Construct() mpi_myself=%d IN\n", this->mpi_myself);
-#endif
-
-
 	int nxyz_arg                         = this->initializer->nxyz_arg;
 	MP_TYPE data_for_parallel_processing = this->initializer->data_for_parallel_processing;
 	//PHRQ_io* io                          = this->initializer->io;
@@ -430,16 +422,6 @@ void PhreeqcRM::Construct()
 	ScatterNchem(rv_root, rv_worker);
 	ScatterNchem(saturation_root, saturation_worker);
 #endif
-
-#if defined(swig_python_EXPORTS)
-	// PySys_WriteStdout("PhreeqcRM::Construct() mpi_myself=%d START\n", this->mpi_myself);
-	// PySys_WriteStdout("    py_callback=%p py_callback_cookie: %p\n", this->py_callback, this->py_callback_cookie);
-	// this->set_basic_callback(this->py_callback, this->py_callback_cookie);
-	// PySys_WriteStdout("PhreeqcRM::Construct() mpi_myself=%d END\n", this->mpi_myself);
-
-	PySys_WriteStdout("PhreeqcRM::Construct() mpi_myself=%d OUT\n", this->mpi_myself);
-#endif
-
 }
 PhreeqcRM::~PhreeqcRM(void)
 {
@@ -7003,7 +6985,6 @@ IRM_RESULT
 PhreeqcRM::LoadDatabase(const std::string& database)
 /* ---------------------------------------------------------------------- */
 {
-	std::cout << "PhreeqcRM::LoadDatabase IN: " << database << std::endl;
 	this->phreeqcrm_error_string.clear();
 #ifdef USE_MPI
 	if (this->mpi_myself == 0)
@@ -7069,7 +7050,6 @@ PhreeqcRM::LoadDatabase(const std::string& database)
 	// This is needed to reset Phreeqc's callback (basic_callback_ptr) since UnLoadDatabase will reset it to nullptr by calling Phreeqc::init().
 	this->set_basic_callback(this->python_basic_callback_data.py_callable, this->python_basic_callback_data.py_callback_cookie);
 #endif
-	std::cout << "PhreeqcRM::LoadDatabase OUT: " << database << std::endl;
 	return this->ReturnHandler(return_value, "PhreeqcRM::LoadDatabase");
 }
 /* ---------------------------------------------------------------------- */
