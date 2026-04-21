@@ -268,11 +268,11 @@ jobs:
         sudo apt-get -y update
         sudo apt-get install -y ninja-build valgrind libyaml-cpp-dev
 
-    - name: Install gcc(gfortran) ninja yaml-cpp (macOS)
+    - name: Install gcc(gfortran) yaml-cpp (macOS)
       if: runner.os == 'macOS'
       run: |
         brew reinstall gcc
-        brew install ninja yaml-cpp
+        brew install yaml-cpp
         # ls -alR /usr/local/Cellar/
 
     - name: Verify gfortran
@@ -353,9 +353,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13, ubuntu-22.04, ubuntu-24.04, windows-2022]
+        os: [macos-latest, ubuntu-latest, windows-latest]
         build_shared_libs: [OFF, ON]
         phreeqcrm_with_yaml_cpp: [OFF, ON]
+        python-version: [3.9]
         BUILD_TYPE: [Debug, Release]
 
     runs-on: ${{ matrix.os }}
@@ -403,30 +404,19 @@ jobs:
         sudo apt-get -y update
         sudo apt-get install -y ninja-build valgrind
 
-    - name: Install ninja swig (macOS)
+    - name: Install swig (macOS)
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja swig
-        ls -alR /usr/local/Cellar/
+        brew install swig
+        # ls -alR /usr/local/Cellar/
 
-    - name: Install yaml-cpp (Linux)
-      if: ${{ runner.os == 'Linux' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: vcpkg install yaml-cpp:x64-linux
+    - name: Install yaml-cpp
+      run: vcpkg install yaml-cpp
 
-    - name: Install yaml-cpp (macOS)
-      if: ${{ runner.os == 'macOS' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: vcpkg install yaml-cpp:x64-osx
-
-    - name: Install yaml-cpp (Windows)
-      if: ${{ runner.os == 'Windows' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
-      run: vcpkg install yaml-cpp:x64-windows
-
-    # - name: Set up Python ${{ matrix.python-version }}
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v5
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v6
       with:
-        # python-version: ${{ matrix.python-version }}
-        python-version: 3.8
+        python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
       run: |
@@ -513,15 +503,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13, ubuntu-22.04, windows-2022]
+        os: [macos-14, ubuntu-22.04, windows-2022]
         build_shared_libs: [ON]
         phreeqcrm_with_yaml_cpp: [ON]
         mpi: ['mpich', 'ompi', 'impi', 'msmpi']  # see https://github.com/mpi4py/setup-mpi/blob/master/setup-mpi.sh
         # BUILD_TYPE: [Debug, Release]
         exclude:
-          - os: macos-13
+          - os: macos-14
             mpi: 'impi'
-          - os: macos-13
+          - os: macos-14
             mpi: 'msmpi'
           - os: ubuntu-22.04
             mpi: 'msmpi'
@@ -573,7 +563,7 @@ jobs:
       if: ${{ runner.os == 'macOS' }}
       run: |
         brew install ninja
-        ls -alR /usr/local/Cellar/
+        # ls -alR /usr/local/Cellar/
 
     - name: Install yaml-cpp (Linux)
       if: ${{ runner.os == 'Linux' && matrix.phreeqcrm_with_yaml_cpp == 'ON' }}
