@@ -91,9 +91,16 @@ read(const char *line_in, cxxSolution *solution_ptr)
 		if (j == 0)
 		{
 			std::ostringstream errstr;
-			errstr << "Concentration data error for " << master_list << " in solution input.";
+			errstr << "Concentration data error for " << this->Get_description() << " in solution input.";
 			error_msg(errstr.str().c_str(),  PHRQ_io::OT_CONTINUE);
 			return (CParser::PARSER_ERROR);
+		}
+		if (j == EOF)
+		{
+			std::ostringstream oss;
+			oss << "WARNING: No value given for " << this->Get_description() << ". Line ignored.";
+			warning_msg(oss.str().c_str());
+			return (CParser::PARSER_IGNORE);
 		}
 		else
 		{

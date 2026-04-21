@@ -74,7 +74,8 @@ class CParser: public PHRQ_base
 	enum STATUS_TYPE
 	{
 		PARSER_ERROR = 0,
-		PARSER_OK = 1
+		PARSER_OK = 1,
+		PARSER_IGNORE = 2
 	};
 
 
