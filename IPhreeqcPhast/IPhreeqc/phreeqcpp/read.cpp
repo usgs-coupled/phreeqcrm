@@ -5333,20 +5333,33 @@ read_solution(void)
 			{
 				temp_solution.Set_tc(dummy);
 			}
+			else
+			{
+				std::ostringstream oss;
+				oss << "No value given for temperature. Line ignored.";
+				warning_msg(oss.str().c_str());
+			}
 			break;
 		case 2:				/* density */
 		case 3:
 			{
 				copy_token(token, &next_char);
-				if (sscanf(token.c_str(), SCANFORMAT, &dummy) != 1)
+				//if (sscanf(token.c_str(), SCANFORMAT, &dummy) != 1)
+				//{
+				//		error_msg("Expecting numeric value for density.", PHRQ_io::OT_CONTINUE);
+				//		error_msg(line_save, PHRQ_io::OT_CONTINUE);
+				//		input_error++;
+				//}
+				//else
+				if (sscanf(token.c_str(), SCANFORMAT, &dummy) == 1)
 				{
-						error_msg("Expecting numeric value for density.", PHRQ_io::OT_CONTINUE);
-						error_msg(line_save, PHRQ_io::OT_CONTINUE);
-						input_error++;
+					temp_solution.Set_density(dummy);
 				}
 				else
 				{
-					temp_solution.Set_density(dummy);
+					std::ostringstream oss;
+					oss << "No value given for density. Line ignored.";
+					warning_msg(oss.str().c_str());
 				}
 				int j = copy_token(token, &next_char);
 				if (j != EMPTY)
@@ -5375,7 +5388,9 @@ read_solution(void)
 				}
 				else
 				{
-					input_error++;
+					std::ostringstream oss;
+					oss << "No value given for units. Line ignored.";
+					warning_msg(oss.str().c_str());
 				}
 			}
 			break;
@@ -5392,18 +5407,24 @@ read_solution(void)
 			}
 			else
 			{
-				input_error++;
+				std::ostringstream oss;
+				oss << "No value given for redox. Line ignored.";
+				warning_msg(oss.str().c_str());
 			}
 			break;
 		case 6:				/* ph */
 			{
 				cxxISolutionComp temp_comp(this->phrq_io);
-				if (temp_comp.read(line, &temp_solution) == CParser::PARSER_ERROR)
+				CParser::STATUS_TYPE status = temp_comp.read(line, &temp_solution);
+				if (status == CParser::PARSER_ERROR)
 				{
 					input_error++;
 					break;
 				}
-				
+				else if(status == CParser::PARSER_IGNORE)
+				{
+					break;
+				}
 				temp_solution.Set_ph(temp_comp.Get_input_conc());
 				
 				if (temp_comp.Get_equation_name().size() == 0)
@@ -5418,9 +5439,14 @@ read_solution(void)
 		case 7:				/* pe */
 			{
 				cxxISolutionComp temp_comp(this->phrq_io);
-				if (temp_comp.read(line, &temp_solution) == CParser::PARSER_ERROR)
+				CParser::STATUS_TYPE status = temp_comp.read(line, &temp_solution);
+				if (status == CParser::PARSER_ERROR)
 				{
 					input_error++;
+					break;
+				}
+				else if (status == CParser::PARSER_IGNORE)
+				{
 					break;
 				}
 				temp_solution.Set_pe(temp_comp.Get_input_conc());
@@ -5504,7 +5530,9 @@ read_solution(void)
 				int j = copy_token(token, &next_char);
 				if (j == EMPTY)
 				{
-					temp_solution.Set_mass_water(1.0);
+					std::ostringstream oss;
+					oss << "No value given for water. Line ignored.";
+					warning_msg(oss.str().c_str());
 				}
 				else if (j != DIGIT)
 				{
@@ -5523,25 +5551,29 @@ read_solution(void)
 		case 11: /* pressure */
 		case 12:
 			{
-				if (sscanf(next_char, SCANFORMAT, &dummy) != 1)
+				if (sscanf(next_char, SCANFORMAT, &dummy) == 1)
 				{
-					temp_solution.Set_patm(1);
+					temp_solution.Set_patm(dummy);
 				}
 				else
 				{
-					temp_solution.Set_patm(dummy);
+					std::ostringstream oss;
+					oss << "No value given for pressure. Line ignored.";
+					warning_msg(oss.str().c_str());
 				}
 			}
 			break;
 		case 13: /* potential, Volt */
 			{
-				if (sscanf(next_char, SCANFORMAT, &dummy) != 1)
+				if (sscanf(next_char, SCANFORMAT, &dummy) == 1)
 				{
-					temp_solution.Set_potV(0);
+					temp_solution.Set_potV(dummy);
 				}
 				else
 				{
-					temp_solution.Set_potV(dummy);
+					std::ostringstream oss;
+					oss << "No value given for potential. Line ignored.";
+					warning_msg(oss.str().c_str());
 				}
 			}
 			break;
@@ -5551,9 +5583,14 @@ read_solution(void)
  */
 			{
 				cxxISolutionComp temp_comp(this->phrq_io);
-				if (temp_comp.read(line, &temp_solution) == CParser::PARSER_ERROR)
+				CParser::STATUS_TYPE status = temp_comp.read(line, &temp_solution);
+				if (status == CParser::PARSER_ERROR)
 				{
 					input_error++;
+					break;
+				}
+				else if (status == CParser::PARSER_IGNORE)
+				{
 					break;
 				}
 				isoln_ptr->Get_comps()[temp_comp.Get_description()] = temp_comp;

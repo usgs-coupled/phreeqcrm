@@ -1261,6 +1261,8 @@ xsolution_save(int n_user)
  *   Malloc space for solution data
  */
 	cxxSolution temp_solution;
+	// Also calculates density_x
+	temp_solution.Set_soln_vol(this->calc_solution_volume());
 	temp_solution.Set_n_user_both(n_user);
 	temp_solution.Set_new_def(false);
 	temp_solution.Set_description(description_x);
@@ -1281,7 +1283,6 @@ xsolution_save(int n_user)
 								/* does include surface charge after step */
 	temp_solution.Set_mass_water(mass_water_aq_x);
 	temp_solution.Set_total_alkalinity(total_alkalinity);
-	temp_solution.Set_soln_vol(this->calc_solution_volume());
 /*
  *   Copy pe data
  */
