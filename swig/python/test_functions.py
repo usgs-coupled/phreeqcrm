@@ -36,3 +36,10 @@ class TestModuleImport:
         assert callable(phreeqcrm_module.has_openmp)
         assert isinstance(phreeqcrm_module.has_openmp(), bool)  # Should return a boolean
         assert phreeqcrm_module.has_openmp.__doc__ is not None  # Should have a docstring
+
+    def test_shims_are_ignored(self, phreeqcrm_module):
+        """Test that shim functions are not present in the module."""
+        # Check basic_callback_shim
+        assert not hasattr(phreeqcrm_module, 'basic_callback_shim')
+        # Check mpi_worker_callback_shim
+        assert not hasattr(phreeqcrm_module, 'mpi_worker_callback_shim')

@@ -81,6 +81,7 @@ import_array();
 #if defined(SWIGPYTHON)
 %include "python/BMIPhreeqcRM_docstrings.swg"
 %include "python/PhreeqcRM_docstrings.swg"
+%include "python/functions_docstrings.swg"
 #if defined(USE_YAML)
 %include "python/YAMLPhreeqcRM.swg"
 #endif

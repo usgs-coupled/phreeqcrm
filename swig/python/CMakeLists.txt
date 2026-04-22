@@ -71,6 +71,7 @@ set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
   ${CMAKE_CURRENT_SOURCE_DIR}/BMIPhreeqcRM_docstrings.swg
   ${CMAKE_CURRENT_SOURCE_DIR}/PhreeqcRM_docstrings.swg
+  ${CMAKE_CURRENT_SOURCE_DIR}/functions_docstrings.swg
   ${PhreeqcRM_SOURCE_DIR}/src/BMIVariant.h
   ${PhreeqcRM_SOURCE_DIR}/src/IrmResult.h
   ${PhreeqcRM_SOURCE_DIR}/src/PhreeqcRM.h

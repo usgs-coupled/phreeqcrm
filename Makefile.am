@@ -16,6 +16,7 @@ PHREEQCRM_EXTRA_DIST=\
 	swig/python/CMakeLists.txt\
 	swig/python/conftest.py\
 	swig/python/constants.py\
+	swig/python/functions_docstrings.swg\
 	swig/python/PhreeqcRM_docstrings.swg\
 	swig/python/SimpleAdvect.py\
 	swig/python/SimpleAdvectMPI.py\
