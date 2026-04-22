@@ -48,16 +48,24 @@ class TestModuleImport:
         # Check PhreeqcRM class
         assert hasattr(phreeqcrm_module.PhreeqcRM, 'set_basic_callback')
         assert callable(phreeqcrm_module.PhreeqcRM.set_basic_callback)
-        # Check that PhreeqcRM has set_mpi_worker_callback method
-        assert hasattr(phreeqcrm_module.PhreeqcRM, 'set_mpi_worker_callback')
-        assert callable(phreeqcrm_module.PhreeqcRM.set_mpi_worker_callback)
+        assert phreeqcrm_module.PhreeqcRM.set_basic_callback.__doc__ is not None  # Should have a docstring
 
         # Check BMIPhreeqcRM class
         assert hasattr(phreeqcrm_module.BMIPhreeqcRM, 'set_basic_callback')
         assert callable(phreeqcrm_module.BMIPhreeqcRM.set_basic_callback)
-        # Check that BMIPhreeqcRM has set_mpi_worker_callback method
+        assert phreeqcrm_module.BMIPhreeqcRM.set_basic_callback.__doc__ is not None  # Should have a docstring
+
+    def test_classes_have_set_mpi_worker_callback(self, phreeqcrm_module):
+        """Test that the expected classes have set_mpi_worker_callback methods."""
+        # Check PhreeqcRM class
+        assert hasattr(phreeqcrm_module.PhreeqcRM, 'set_mpi_worker_callback')
+        assert callable(phreeqcrm_module.PhreeqcRM.set_mpi_worker_callback)
+        assert phreeqcrm_module.PhreeqcRM.set_mpi_worker_callback.__doc__ is not None  # Should have a docstring
+
+        # Check BMIPhreeqcRM class
         assert hasattr(phreeqcrm_module.BMIPhreeqcRM, 'set_mpi_worker_callback')
         assert callable(phreeqcrm_module.BMIPhreeqcRM.set_mpi_worker_callback)
+        assert phreeqcrm_module.BMIPhreeqcRM.set_mpi_worker_callback.__doc__ is not None  # Should have a docstring
 
 
 class TestBasicCallbackRegistration:
