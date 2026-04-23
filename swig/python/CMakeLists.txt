@@ -23,20 +23,11 @@ if(DEFINED SKBUILD)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/advect.pqi ${CMAKE_CURRENT_SOURCE_DIR}/advect.pqi COPYONLY)
 endif()
 
-# copy TestSimplePythonMPI.py to build directory for testing
-if(PHREEQCRM_BUILD_MPI)
-  configure_file(TestSimplePythonMPI.py TestSimplePythonMPI.py COPYONLY)
-endif()
-
-
 # copy yamlphreeqcrm.py to build directory for testing
 configure_file(yamlphreeqcrm.py yamlphreeqcrm.py COPYONLY)
 
-# copy AdvectBMI to build directory for testing
-configure_file(AdvectBmiOpenMP.py AdvectBmiOpenMP.py COPYONLY)
-configure_file(AdvectBmiMPI.py AdvectBmiMPI.py COPYONLY)
+# copy WriteYamlFile.py to build directory for testing
 configure_file(WriteYamlFile.py WriteYamlFile.py COPYONLY)
-
 
 # copy pytest files to build directory for testing
 configure_file(conftest.py conftest.py COPYONLY)
@@ -248,14 +239,17 @@ get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 #   endif()
 # endif()
 
+# TestSimplePythonMPI.py test
 if(PHREEQCRM_BUILD_MPI)
-  # TestSimplePythonMPI.py test
+  # copy TestSimplePythonMPI.py to build directory for testing
+  configure_file(TestSimplePythonMPI.py TestSimplePythonMPI.py COPYONLY)
+  
   add_test(NAME TestSimplePythonMPI.py
-           COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
-           ${MPIEXEC_PREFLAGS}
-           ${Python_EXECUTABLE} TestSimplePythonMPI.py
-           ${MPIEXEC_POSTFLAGS}
-           )
+    COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
+    ${MPIEXEC_PREFLAGS}
+    ${Python_EXECUTABLE} TestSimplePythonMPI.py
+    ${MPIEXEC_POSTFLAGS}
+  )
   set_tests_properties(TestSimplePythonMPI.py
     PROPERTIES
       ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
@@ -304,43 +298,16 @@ add_test(NAME WriteYamlFile.py
 )
 set_tests_properties(WriteYamlFile.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
 
-
-if(PHREEQCRM_BUILD_MPI)
-  add_test(NAME AdvectBmiMPI.py
-          # COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
-          COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
-          ${MPIEXEC_PREFLAGS}
-          ${Python_EXECUTABLE} AdvectBmiMPI.py
-          ${MPIEXEC_POSTFLAGS}
-          )
-  set_tests_properties(AdvectBmiMPI.py
-    PROPERTIES
-      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-  )
-else()
-  add_test(NAME AdvectBmiOpenMP.py
-    COMMAND ${Python_EXECUTABLE} AdvectBmiOpenMP.py
-  )
-  set_tests_properties(AdvectBmiOpenMP.py
-    PROPERTIES 
-      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-      #DEPENDS "WriteYAMLFile.py"
-      # AdvectBMIOpenMP.py requires PHREEQCRM_WITH_YAML_CPP=ON
-      DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
-      #DISABLED TRUE
-  )
-endif()
-
-# AdvectBmi test
+# copy AdvectBmi.py to build directory for testing
 configure_file(AdvectBmi.py AdvectBmi.py COPYONLY)
+
 if(PHREEQCRM_BUILD_MPI)
   add_test(NAME "AdvectBmi(MPI).py"
-          # COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
-          COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
-          ${MPIEXEC_PREFLAGS}
-          ${Python_EXECUTABLE} AdvectBmi.py
-          ${MPIEXEC_POSTFLAGS}
-          )
+    COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
+    ${MPIEXEC_PREFLAGS}
+    ${Python_EXECUTABLE} AdvectBmi.py
+    ${MPIEXEC_POSTFLAGS}
+  )
   set_tests_properties("AdvectBmi(MPI).py"
     PROPERTIES
       # Allow shared library to be found by test
@@ -350,8 +317,8 @@ if(PHREEQCRM_BUILD_MPI)
   )
 elseif(PHREEQCRM_DISABLE_OPENMP OR NOT OPENMP_FOUND)
   add_test(NAME "AdvectBmi(Serial).py"
-           COMMAND ${Python_EXECUTABLE} AdvectBmi.py
-          )
+    COMMAND ${Python_EXECUTABLE} AdvectBmi.py
+  )
   set_tests_properties("AdvectBmi(Serial).py"
     PROPERTIES
       # Allow shared library to be found by test
@@ -361,8 +328,8 @@ elseif(PHREEQCRM_DISABLE_OPENMP OR NOT OPENMP_FOUND)
   )
 else()
   add_test(NAME "AdvectBmi(OpenMP).py"
-           COMMAND ${Python_EXECUTABLE} AdvectBmi.py
-          )
+    COMMAND ${Python_EXECUTABLE} AdvectBmi.py
+  )
   set_tests_properties("AdvectBmi(OpenMP).py"
     PROPERTIES
       # Allow shared library to be found by test

@@ -10,8 +10,6 @@ PHREEQCRM_EXTRA_DIST=\
 	swig/PhreeqcRM.i\
 	swig/pyfragments.swg.in\
 	swig/python/AdvectBmi.py\
-	swig/python/AdvectBmiMPI.py\
-	swig/python/AdvectBmiOpenMP.py\
 	swig/python/BMIPhreeqcRM_docstrings.swg\
 	swig/python/CMakeLists.txt\
 	swig/python/conftest.py\

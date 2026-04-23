@@ -10,7 +10,7 @@ import yamlphreeqcrm
     #  integer                                 :: rm_id
     #end module mydata
 
-def testallmethods_py():
+def testallmethods():
 
     # Create BMIPhreeqcRM object, must use two-argument constructor
     if phreeqcrm.has_mpi():
@@ -34,7 +34,7 @@ def testallmethods_py():
         yrm = yamlphreeqcrm.YAMLPhreeqcRM()
         yrm.YAMLSetGridCellCount(40)
         yrm.YAMLThreadCount(3)
-        YAML_filename = "testallmethods_py.yaml"
+        YAML_filename = "testallmethods.yaml"
         yrm.WriteYAMLDoc(YAML_filename)
 
         bmi = phreeqcrm.BMIPhreeqcRM()
@@ -84,12 +84,12 @@ def testallmethods_py():
     x=bmi.SetErrorHandlerMode(1)
     print(f"SetErrorHandlerMode {type(x)}, {x}")
     #---------
-    x=bmi.SetDumpFileName("TestAllMethods_py.dump")
+    x=bmi.SetDumpFileName("TestAllMethods.dump")
     print(f"SetDumpFileName {type(x)}, {x}")
     #---------
-    x=bmi.SetFilePrefix("TestAllMethods_py")
+    x=bmi.SetFilePrefix("TestAllMethods")
     print(f"SetFilePrefix {type(x)}, {x}")
-    dest = np.full(1, "TestAllMethods_py")
+    dest = np.full(1, "TestAllMethods")
     bmi.set_value("FilePrefix", dest)
     print(f"set_value('FilePrefix')")
     #---------
@@ -863,4 +863,4 @@ def testallmethods_py():
     #TODO x=bmi.MpiWorkerBreak()
 
 if __name__ == '__main__':
-    testallmethods_py()
+    testallmethods()
