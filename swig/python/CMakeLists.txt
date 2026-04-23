@@ -28,13 +28,6 @@ if(PHREEQCRM_BUILD_MPI)
   configure_file(TestSimplePythonMPI.py TestSimplePythonMPI.py COPYONLY)
 endif()
 
-# copy SimpleAdvect to build directory for testing
-if(PHREEQCRM_BUILD_MPI)
-  configure_file(SimpleAdvectMPI.py SimpleAdvectMPI.py COPYONLY)
-else()
-  configure_file(SimpleAdvectOpenMP.py SimpleAdvectOpenMP.py COPYONLY)
-endif()
-configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
 
 # copy yamlphreeqcrm.py to build directory for testing
 configure_file(yamlphreeqcrm.py yamlphreeqcrm.py COPYONLY)
@@ -44,9 +37,6 @@ configure_file(AdvectBmiOpenMP.py AdvectBmiOpenMP.py COPYONLY)
 configure_file(AdvectBmiMPI.py AdvectBmiMPI.py COPYONLY)
 configure_file(WriteYamlFile.py WriteYamlFile.py COPYONLY)
 
-configure_file(TestAllMethods.py TestAllMethods.py COPYONLY)
-configure_file(TestAllMethodsOpenMP.py TestAllMethodsOpenMP.py COPYONLY)
-configure_file(TestAllMethodsMPI.py TestAllMethodsMPI.py COPYONLY)
 
 # copy pytest files to build directory for testing
 configure_file(conftest.py conftest.py COPYONLY)
@@ -272,33 +262,22 @@ if(PHREEQCRM_BUILD_MPI)
   )
 endif()
 
+# copy SimpleAdvect.py to build directory for testing
+configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
 
 if(PHREEQCRM_BUILD_MPI)
-  # SimpleAdvectMPI.py test
-  add_test(NAME SimpleAdvectMPI.py
-          # COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
-          COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
-          ${MPIEXEC_PREFLAGS}
-          ${Python_EXECUTABLE} SimpleAdvectMPI.py
-          ${MPIEXEC_POSTFLAGS}
-          )
-  set_tests_properties(SimpleAdvectMPI.py
-    PROPERTIES
-      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-  )
   # SimpleAdvect(MPI).py test
   add_test(NAME "SimpleAdvect(MPI).py"
-        # COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
-        COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
-        ${MPIEXEC_PREFLAGS}
-        ${Python_EXECUTABLE} SimpleAdvect.py
-        ${MPIEXEC_POSTFLAGS}
-        )
+    COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
+    ${MPIEXEC_PREFLAGS}
+    ${Python_EXECUTABLE} SimpleAdvect.py
+    ${MPIEXEC_POSTFLAGS}
+  )
   set_tests_properties("SimpleAdvect(MPI).py"
     PROPERTIES
       ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
   )
-elseif(PHREEQCRM_DISABLE_OPENMP)
+elseif(PHREEQCRM_DISABLE_OPENMP OR NOT OPENMP_FOUND)
   # SimpleAdvect(Serial).py test
   add_test(NAME "SimpleAdvect(Serial).py"
     COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
@@ -308,14 +287,6 @@ elseif(PHREEQCRM_DISABLE_OPENMP)
       ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
   )
 else()
-  # SimpleAdvectOpenMP.py test
-  add_test(NAME SimpleAdvectOpenMP.py
-    COMMAND ${Python_EXECUTABLE} SimpleAdvectOpenMP.py
-  )
-  set_tests_properties(SimpleAdvectOpenMP.py
-    PROPERTIES
-      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-  )
   # SimpleAdvect(OpenMP).py test
   add_test(NAME "SimpleAdvect(OpenMP).py"
     COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
@@ -377,7 +348,7 @@ if(PHREEQCRM_BUILD_MPI)
       # Requires PHREEQCRM_WITH_YAML_CPP=ON
       DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
   )
-elseif(PHREEQCRM_DISABLE_OPENMP)
+elseif(PHREEQCRM_DISABLE_OPENMP OR NOT OPENMP_FOUND)
   add_test(NAME "AdvectBmi(Serial).py"
            COMMAND ${Python_EXECUTABLE} AdvectBmi.py
           )
@@ -401,34 +372,20 @@ else()
   )
 endif()
 
+# copy TestAllMethods.py to build directory for testing
+configure_file(TestAllMethods.py TestAllMethods.py COPYONLY)
 
-
-# TestAllMethodsOpenMP.py/TestAllMethodsMPI.py test
 if(PHREEQCRM_BUILD_MPI)
-  add_test(NAME TestAllMethodsMPI.py
-          # COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
-          COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
-          ${MPIEXEC_PREFLAGS}
-          ${Python_EXECUTABLE} TestAllMethodsMPI.py
-          ${MPIEXEC_POSTFLAGS}
-          )
-  set_tests_properties(TestAllMethodsMPI.py
-    PROPERTIES
-      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-  )
-
   add_test(NAME "TestAllMethods(MPI).py"
-          # COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
-          COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
-          ${MPIEXEC_PREFLAGS}
-          ${Python_EXECUTABLE} TestAllMethods.py
-          ${MPIEXEC_POSTFLAGS}
-          )
+    COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
+    ${MPIEXEC_PREFLAGS}
+    ${Python_EXECUTABLE} TestAllMethods.py
+    ${MPIEXEC_POSTFLAGS}
+  )
   set_tests_properties("TestAllMethods(MPI).py"
     PROPERTIES
       ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
   )
-
 elseif(PHREEQCRM_DISABLE_OPENMP OR NOT OPENMP_FOUND)
   add_test(NAME "TestAllMethods(Serial).py"
     COMMAND ${Python_EXECUTABLE} TestAllMethods.py
@@ -438,15 +395,6 @@ elseif(PHREEQCRM_DISABLE_OPENMP OR NOT OPENMP_FOUND)
       ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
   )
 else()
-  add_test(NAME TestAllMethodsOpenMP.py
-    COMMAND ${Python_EXECUTABLE} TestAllMethodsOpenMP.py
-  )
-  set_tests_properties(TestAllMethodsOpenMP.py
-    PROPERTIES 
-      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-      # DISABLED "$<$<BOOL:${PHREEQCRM_BUILD_MPI}>:TRUE>"
-  )
-
   add_test(NAME "TestAllMethods(OpenMP).py"
     COMMAND ${Python_EXECUTABLE} TestAllMethods.py
   )

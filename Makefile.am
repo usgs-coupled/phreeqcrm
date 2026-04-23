@@ -19,8 +19,6 @@ PHREEQCRM_EXTRA_DIST=\
 	swig/python/functions_docstrings.swg\
 	swig/python/PhreeqcRM_docstrings.swg\
 	swig/python/SimpleAdvect.py\
-	swig/python/SimpleAdvectMPI.py\
-	swig/python/SimpleAdvectOpenMP.py\
 	swig/python/minimum.yaml\
 	swig/python/test_basic.py\
 	swig/python/test_callbacks.py\
@@ -30,8 +28,6 @@ PHREEQCRM_EXTRA_DIST=\
 	swig/python/test_irf.py\
 	swig/python/test_set_value.py\
 	swig/python/TestAllMethods.py\
-	swig/python/TestAllMethodsMPI.py\
-	swig/python/TestAllMethodsOpenMP.py\
 	swig/python/WriteYamlFile.py\
 	swig/python/yamlphreeqcrm.py\
 	swig/python/YAMLPhreeqcRM.swg
