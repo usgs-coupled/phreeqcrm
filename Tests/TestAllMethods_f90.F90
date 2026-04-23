@@ -112,13 +112,13 @@ subroutine TestAllMethods_f90()  BIND(C, NAME='TestAllMethods_f90')
 	status = brm%SetErrorHandlerMode(1)
 	write(*,*) "SetErrorHandlerMode "
 	!-------
-	status = RM_SetDumpFileName(id, "TestAllMethods_py.dump")     ! Deprecated
-	status = brm%SetDumpFileName("TestAllMethods_py.dump")
+	status = RM_SetDumpFileName(id, "TestAllMethods_f90.dump")     ! Deprecated
+	status = brm%SetDumpFileName("TestAllMethods_f90.dump")
 	write(*,*) "SetDumpFileName "
 	!-------
-	status = brm%bmif_set_value("FilePrefix", "TestAllMethods_py")
-	status = RM_SetFilePrefix(id, "TestAllMethods_py")     ! Deprecated
-	status = brm%SetFilePrefix("TestAllMethods_py")
+	status = brm%bmif_set_value("FilePrefix", "TestAllMethods_f90")
+	status = RM_SetFilePrefix(id, "TestAllMethods_f90")     ! Deprecated
+	status = brm%SetFilePrefix("TestAllMethods_f90")
 	write(*,*) "SetFilePrefix "
 	!-------
 	status =RM_OpenFiles(id)     ! Deprecated

@@ -256,7 +256,7 @@ def test_get_value_ptr_Concentrations(create_yaml_file):
 #     # phreeqc_rm.UseSolutionDensityVolume(False)
 
 #     # # Open files
-#     # status = phreeqc_rm.SetFilePrefix("SimpleAdvect_py")
+#     # status = phreeqc_rm.SetFilePrefix("SimpleAdvect")
 #     # phreeqc_rm.OpenFiles()
 
 #     # # Set concentration units
@@ -280,7 +280,7 @@ def test_get_value_ptr_Concentrations(create_yaml_file):
 #     # bmi.set_value("UseSolutionDensityVolume", False)        # YAML "UseSolutionDensityVolume"
 
 #     # # Open files
-#     # bmi.set_value("FilePrefix", "SimpleAdvect_py")          # YAML "SetFilePrefix"
+#     # bmi.set_value("FilePrefix", "SimpleAdvect")          # YAML "SetFilePrefix"
 #     # ????
 
 #     # # Set concentration units
