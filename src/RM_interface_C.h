@@ -5,7 +5,11 @@
 */
 #ifdef USE_MPI
 #include "mpi.h"
+#define MP_TYPE MPI_Comm
+#else
+#define MP_TYPE int
 #endif
+
 #include "IrmResult.h"
 #ifndef RM_INTERFACE_C_H
 #define RM_INTERFACE_C_H
@@ -46,7 +50,7 @@ extern "C" {
     @par MPI:
     Called by root and workers.
     */
-    IRM_DLL_EXPORT int        RM_BmiCreate(int nxyz, int nthreads);
+    IRM_DLL_EXPORT int        RM_BmiCreate(int nxyz, MP_TYPE nthreads);
     /**
     @a RM_BmiDestroy Destroys a BMI reaction module; same as @ref RM_BmiFinalize.
     @param id Id number returned by @ref RM_BmiCreate.

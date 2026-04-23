@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.22...4.1)
+
 set(PYTHON_TARGET_NAME swig-python)
 
 set(phreeqcrm_INTERFACE PhreeqcRM.i)
@@ -21,21 +23,20 @@ if(DEFINED SKBUILD)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../Tests/advect.pqi ${CMAKE_CURRENT_SOURCE_DIR}/advect.pqi COPYONLY)
 endif()
 
-# copy SimpleAdvect.py to build directory for testing
-configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
-
 # copy yamlphreeqcrm.py to build directory for testing
 configure_file(yamlphreeqcrm.py yamlphreeqcrm.py COPYONLY)
 
-# copy AdvectBMI_py.py to build directory for testing
-configure_file(AdvectBMI_py.py AdvectBMI_py.py COPYONLY)
-configure_file(WriteYAMLFile_py.py WriteYAMLFile_py.py COPYONLY)
-configure_file(TestAllMethods_py.py TestAllMethods_py.py COPYONLY)
+# copy WriteYamlFile.py to build directory for testing
+configure_file(WriteYamlFile.py WriteYamlFile.py COPYONLY)
 
 # copy pytest files to build directory for testing
 configure_file(conftest.py conftest.py COPYONLY)
 configure_file(constants.py constants.py COPYONLY)
+configure_file(minimum.yaml minimum.yaml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../../database/minimum.dat minimum.dat COPYONLY)
 configure_file(test_basic.py test_basic.py COPYONLY)
+configure_file(test_callbacks.py test_callbacks.py COPYONLY)
+configure_file(test_functions.py test_functions.py COPYONLY)
 configure_file(test_get_value.py test_get_value.py COPYONLY)
 configure_file(test_init.py test_init.py COPYONLY)
 configure_file(test_irf.py test_irf.py COPYONLY)
@@ -48,17 +49,40 @@ set_source_files_properties(${phreeqcrm_INTERFACE_FULLPATH} PROPERTIES CPLUSPLUS
 
 # if any of these files change force swig to be re-run
 set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
   ${CMAKE_CURRENT_SOURCE_DIR}/BMIPhreeqcRM_docstrings.swg
   ${CMAKE_CURRENT_SOURCE_DIR}/PhreeqcRM_docstrings.swg
+  ${CMAKE_CURRENT_SOURCE_DIR}/functions_docstrings.swg
   ${PhreeqcRM_SOURCE_DIR}/src/BMIVariant.h
   ${PhreeqcRM_SOURCE_DIR}/src/IrmResult.h
   ${PhreeqcRM_SOURCE_DIR}/src/PhreeqcRM.h
   ${PhreeqcRM_SOURCE_DIR}/src/BMIPhreeqcRM.h
 )
 
-if(NOT PHREEQCRM_DISABLE_OPENMP)
-  if(OPENMP_FOUND)
-    set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_OPENMP)
+if(PHREEQCRM_BUILD_MPI)
+  # Set preprocessor definition on the .i file so that it gets passed to SWIG
+  set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_MPI)
+
+  # Determine the include directory for mpi4py
+  execute_process(
+    COMMAND ${Python_EXECUTABLE} -c "import mpi4py; from mpi4py import MPI; print(mpi4py.get_include())"
+    RESULT_VARIABLE _mpi4py_include_result
+    OUTPUT_VARIABLE _mpi4py_include_output
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+  )
+  if(NOT ${_mpi4py_include_result} STREQUAL "0")
+    message(FATAL_ERROR "Python module \"mpi4py\" not found. Please install it in your Python environment.")
+  endif()
+
+  # Convert to cmake path list and set include directory for mpi4py
+  cmake_path(CONVERT ${_mpi4py_include_output} TO_CMAKE_PATH_LIST MPI4PY_INCLUDE_DIR)
+  set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY INCLUDE_DIRECTORIES ${MPI4PY_INCLUDE_DIR})
+else()
+  if(NOT PHREEQCRM_DISABLE_OPENMP)
+    if(OPENMP_FOUND)
+      set_property(SOURCE ${phreeqcrm_INTERFACE_FULLPATH} APPEND PROPERTY COMPILE_DEFINITIONS USE_OPENMP)
+    endif()
   endif()
 endif()
 
@@ -70,6 +94,8 @@ if((PHREEQCRM_WITH_YAML_CPP AND yaml-cpp_FOUND) OR (DEFINED SKBUILD))
 endif()
 
 # CMAKE_SWIG_FLAGS must be fully set before swig_add_library is called
+# Therefore all preprocessor definitions that should be passed to the swig-generated
+# wrapper must be set as source properties on the .i file before calling swig_add_library
 
 swig_add_library(
   ${PYTHON_TARGET_NAME}
@@ -104,10 +130,17 @@ if(MSVC)
   target_link_options(${PYTHON_TARGET_NAME} PRIVATE $<$<CONFIG:Debug,RelWithDebInfo>:/INCREMENTAL:NO>)
 endif()
 
-if(NOT PHREEQCRM_DISABLE_OPENMP)
-  if(OPENMP_FOUND)
-    target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE USE_OPENMP)
-    target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC OpenMP::OpenMP_CXX)
+# MPI or OpenMP
+if(PHREEQCRM_BUILD_MPI)
+  target_compile_definitions(${PYTHON_TARGET_NAME} PUBLIC USE_MPI)
+  target_include_directories(${PYTHON_TARGET_NAME} PRIVATE ${MPI4PY_INCLUDE_DIR}) 
+  target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC MPI::MPI_CXX)
+else()
+  if(NOT PHREEQCRM_DISABLE_OPENMP)
+    if(OPENMP_FOUND)
+      target_compile_definitions(${PYTHON_TARGET_NAME} PRIVATE USE_OPENMP)
+      target_link_libraries(${PYTHON_TARGET_NAME} PUBLIC OpenMP::OpenMP_CXX)
+    endif()
   endif()
 endif()
 
@@ -206,41 +239,137 @@ get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 #   endif()
 # endif()
 
-# SimpleAdvect.py test
-add_test(NAME SimpleAdvect.py
-  COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
-)
-set_tests_properties(SimpleAdvect.py
-  PROPERTIES
-    ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-)
+# TestSimplePythonMPI.py test
+if(PHREEQCRM_BUILD_MPI)
+  # copy TestSimplePythonMPI.py to build directory for testing
+  configure_file(TestSimplePythonMPI.py TestSimplePythonMPI.py COPYONLY)
+  
+  add_test(NAME TestSimplePythonMPI.py
+    COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 3
+    ${MPIEXEC_PREFLAGS}
+    ${Python_EXECUTABLE} TestSimplePythonMPI.py
+    ${MPIEXEC_POSTFLAGS}
+  )
+  set_tests_properties(TestSimplePythonMPI.py
+    PROPERTIES
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+  )
+endif()
 
-# WriteYAMLFile_py.py test
-add_test(NAME WriteYAMLFile_py.py
-  COMMAND ${Python_EXECUTABLE} WriteYAMLFile_py.py
-)
-set_tests_properties(WriteYAMLFile_py.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+# copy SimpleAdvect.py to build directory for testing
+configure_file(SimpleAdvect.py SimpleAdvect.py COPYONLY)
 
-# AdvectBMI_py.py test
-add_test(NAME AdvectBMI_py.py
-  COMMAND ${Python_EXECUTABLE} AdvectBMI_py.py
-)
-set_tests_properties(AdvectBMI_py.py
-  PROPERTIES 
-    ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-    DEPENDS "WriteYAMLFile_py.py"
-    # AdvectBMI_py.py requires PHREEQCRM_WITH_YAML_CPP=ON
-    # DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
-)
+if(PHREEQCRM_BUILD_MPI)
+  # SimpleAdvect(MPI).py test
+  add_test(NAME "SimpleAdvect(MPI).py"
+    COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
+    ${MPIEXEC_PREFLAGS}
+    ${Python_EXECUTABLE} SimpleAdvect.py
+    ${MPIEXEC_POSTFLAGS}
+  )
+  set_tests_properties("SimpleAdvect(MPI).py"
+    PROPERTIES
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+  )
+elseif(PHREEQCRM_DISABLE_OPENMP OR NOT OPENMP_FOUND)
+  # SimpleAdvect(Serial).py test
+  add_test(NAME "SimpleAdvect(Serial).py"
+    COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
+  )
+  set_tests_properties("SimpleAdvect(Serial).py"
+    PROPERTIES
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+  )
+else()
+  # SimpleAdvect(OpenMP).py test
+  add_test(NAME "SimpleAdvect(OpenMP).py"
+    COMMAND ${Python_EXECUTABLE} SimpleAdvect.py
+  )
+  set_tests_properties("SimpleAdvect(OpenMP).py"
+    PROPERTIES
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+  )
+endif()
 
-# TestAllMethods_py.py test
-add_test(NAME TestAllMethods_py.py
-  COMMAND ${Python_EXECUTABLE} TestAllMethods_py.py
+
+# WriteYAMLFile.py test
+add_test(NAME WriteYamlFile.py
+  COMMAND ${Python_EXECUTABLE} WriteYamlFile.py
 )
-set_tests_properties(TestAllMethods_py.py
-  PROPERTIES 
-    ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
-)
+set_tests_properties(WriteYamlFile.py PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>")
+
+# copy AdvectBmi.py to build directory for testing
+configure_file(AdvectBmi.py AdvectBmi.py COPYONLY)
+
+if(PHREEQCRM_BUILD_MPI)
+  add_test(NAME "AdvectBmi(MPI).py"
+    COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
+    ${MPIEXEC_PREFLAGS}
+    ${Python_EXECUTABLE} AdvectBmi.py
+    ${MPIEXEC_POSTFLAGS}
+  )
+  set_tests_properties("AdvectBmi(MPI).py"
+    PROPERTIES
+      # Allow shared library to be found by test
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+      # Requires PHREEQCRM_WITH_YAML_CPP=ON
+      DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
+  )
+elseif(PHREEQCRM_DISABLE_OPENMP OR NOT OPENMP_FOUND)
+  add_test(NAME "AdvectBmi(Serial).py"
+    COMMAND ${Python_EXECUTABLE} AdvectBmi.py
+  )
+  set_tests_properties("AdvectBmi(Serial).py"
+    PROPERTIES
+      # Allow shared library to be found by test
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+      # Requires PHREEQCRM_WITH_YAML_CPP=ON
+      DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
+  )
+else()
+  add_test(NAME "AdvectBmi(OpenMP).py"
+    COMMAND ${Python_EXECUTABLE} AdvectBmi.py
+  )
+  set_tests_properties("AdvectBmi(OpenMP).py"
+    PROPERTIES
+      # Allow shared library to be found by test
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+      # Requires PHREEQCRM_WITH_YAML_CPP=ON
+      DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
+  )
+endif()
+
+# copy TestAllMethods.py to build directory for testing
+configure_file(TestAllMethods.py TestAllMethods.py COPYONLY)
+
+if(PHREEQCRM_BUILD_MPI)
+  add_test(NAME "TestAllMethods(MPI).py"
+    COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
+    ${MPIEXEC_PREFLAGS}
+    ${Python_EXECUTABLE} TestAllMethods.py
+    ${MPIEXEC_POSTFLAGS}
+  )
+  set_tests_properties("TestAllMethods(MPI).py"
+    PROPERTIES
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+  )
+elseif(PHREEQCRM_DISABLE_OPENMP OR NOT OPENMP_FOUND)
+  add_test(NAME "TestAllMethods(Serial).py"
+    COMMAND ${Python_EXECUTABLE} TestAllMethods.py
+  )
+  set_tests_properties("TestAllMethods(Serial).py"
+    PROPERTIES 
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+  )
+else()
+  add_test(NAME "TestAllMethods(OpenMP).py"
+    COMMAND ${Python_EXECUTABLE} TestAllMethods.py
+  )
+  set_tests_properties("TestAllMethods(OpenMP).py"
+    PROPERTIES 
+      ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+  )
+endif()
 
 
 # Pytest
@@ -248,9 +377,10 @@ add_test(NAME run_pytest
   COMMAND ${Python_EXECUTABLE} -m pytest
 )
 set_tests_properties(run_pytest
-  PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
+  PROPERTIES 
+    ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${PYTHON_TARGET_NAME}>"
     # Some Pytest tests require PHREEQCRM_WITH_YAML_CPP=ON
-    # DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
+    DISABLED "$<$<NOT:$<BOOL:${PHREEQCRM_WITH_YAML_CPP}>>:TRUE>"
 )
 
 

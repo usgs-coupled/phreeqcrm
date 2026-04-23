@@ -63,6 +63,33 @@
 #include "Phreeqc.h"
 #include "IPhreeqcPhast.h"
 
+#if defined(swig_python_EXPORTS)
+/* When CMake creates the swig-python project it defines swig_python_EXPORTS.
+ * In that case, we want to include Python.h without the debug macros defined, 
+ * even if this is a debug build.  This allows the python wrapper to be built
+ * with either the debug or release version of Python.
+ * Snippet adapted from SWIG's Python generator.
+ * see SWIG_PYTHON_INTERPRETER_NO_DEBUG
+ */
+
+#if defined(_DEBUG)
+/* Use debug wrappers with the Python release dll */
+
+#if defined(_MSC_VER) && _MSC_VER >= 1929
+/* Workaround compilation errors when redefining _DEBUG in MSVC 2019 version 16.10 and later
+ * See https://github.com/swig/swig/issues/2090 */
+# include <corecrt.h>
+#endif
+
+# undef _DEBUG
+# include <Python.h>
+# define _DEBUG 1
+#else
+# include <Python.h>
+#endif
+
+#endif /* swig_python_EXPORTS */
+
 #if defined(USE_MPI)
 	const MP_TYPE PhreeqcRM::default_data_for_parallel_processing = MPI_COMM_WORLD;
 #else
@@ -301,7 +328,7 @@ void PhreeqcRM::Construct()
 		if (this->mpi_tasks > this->nxyz)
 		{
 			std::ostringstream err;
-			err << "Number of threads must be less than or equal to number of model cells, ";
+			err << "Number of processes must be less than or equal to number of model cells, ";
 			err << this->nxyz << "." << std::endl;
 			this->ErrorHandler(IRM_FAIL, err.str());
 		}
@@ -410,6 +437,16 @@ PhreeqcRM::~PhreeqcRM(void)
 	{
 		delete this->phreeqcrm_io;
 	}
+
+#if defined(swig_python_EXPORTS)
+	// basic callback data
+	Py_XDECREF(this->python_basic_callback_data.py_callable);
+	Py_XDECREF(this->python_basic_callback_data.py_callback_cookie);
+
+	// mpi worker callback data
+	Py_XDECREF(this->python_mpi_worker_callback_data.py_callable);
+	Py_XDECREF(this->python_mpi_worker_callback_data.py_callback_cookie);
+#endif
 }
 /* ---------------------------------------------------------------------- */
 void
@@ -5232,6 +5269,7 @@ PhreeqcRM::GetSpeciesLog10Molalities(std::vector<double>& species_log10molalitie
 	}
 	return IRM_OK;
 }
+#endif
 void 
 PhreeqcRM::GetSpeciesStoichiometrySWIG(std::vector<std::string>& species, std::vector<int>& nelt_in_species, \
 	std::vector<std::string>& elts, std::vector<double>& coef)
@@ -5250,7 +5288,6 @@ PhreeqcRM::GetSpeciesStoichiometrySWIG(std::vector<std::string>& species, std::v
 		}
 	}
 }
-#endif
 
 #ifdef USE_MPI
 /* ---------------------------------------------------------------------- */
@@ -5512,7 +5549,8 @@ PhreeqcRM::HandleErrorsInternal(std::vector< int > &rtn)
 }
 #endif
 #ifdef USE_YAML
-IRM_RESULT		PhreeqcRM::InitializeYAML(std::string config)
+IRM_RESULT
+PhreeqcRM::InitializeYAML(std::string config)
 {
 	if (config.size() > 0)
 	{
@@ -7008,6 +7046,10 @@ PhreeqcRM::LoadDatabase(const std::string& database)
 	//	var_man->NeedInitialRun = false;
 	//	//this->RunString(false, true, false, "DELETE; -all");
 	//}
+#if defined(swig_python_EXPORTS)
+	// This is needed to reset Phreeqc's callback (basic_callback_ptr) since UnLoadDatabase will reset it to nullptr by calling Phreeqc::init().
+	this->set_basic_callback(this->python_basic_callback_data.py_callable, this->python_basic_callback_data.py_callback_cookie);
+#endif
 	return this->ReturnHandler(return_value, "PhreeqcRM::LoadDatabase");
 }
 /* ---------------------------------------------------------------------- */
@@ -9901,6 +9943,9 @@ PhreeqcRM::RunCells()
 		std::vector < int > r_vector;
 		r_vector.resize(this->nthreads);
 #ifdef USE_OPENMP
+#if defined(swig_python_EXPORTS)
+		Py_BEGIN_ALLOW_THREADS
+#endif
 		omp_set_num_threads(this->nthreads);
 #pragma omp parallel
 #pragma omp for
@@ -9909,6 +9954,11 @@ PhreeqcRM::RunCells()
 		{
 			r_vector[n] = RunCellsThread(n);
 		}
+#ifdef USE_OPENMP
+#if defined(swig_python_EXPORTS)
+		Py_END_ALLOW_THREADS
+#endif
+#endif
 		if (this->partition_uz_solids)
 		{
 			old_saturation_root = saturation_root;
@@ -10219,6 +10269,12 @@ PhreeqcRM::RunCellsThread(int n)
 
 	int i, j;
 	IPhreeqcPhast *phast_iphreeqc_worker = this->GetWorkers()[n];
+	IRM_RESULT return_value = IRM_OK;
+
+#if defined(USE_OPENMP) && defined(swig_python_EXPORTS)
+	PyGILState_STATE gstate = PyGILState_Ensure();
+#endif
+
 	try
 	{
 		// Partition solids, if necessary
@@ -10511,16 +10567,19 @@ PhreeqcRM::RunCellsThread(int n)
 	}
 	catch (PhreeqcRMStop)
 	{
-		return IRM_FAIL;
+		return_value = IRM_FAIL;
 	}
 	catch (...)
 	{
 		std::ostringstream e_stream;
 		e_stream << "Run cells failed in worker " << n << "from an unhandled exception.\n";
 		this->ErrorMessage(e_stream.str());
-		return IRM_FAIL;
+		return_value = IRM_FAIL;
 	}
-	return IRM_OK;
+#if defined(USE_OPENMP) && defined(swig_python_EXPORTS)
+	PyGILState_Release(gstate);
+#endif
+	return return_value;
 }
 /* ---------------------------------------------------------------------- */
 IRM_RESULT
@@ -13046,7 +13105,7 @@ PhreeqcRM::WarningMessage(const std::string &str)
 }
 /* ---------------------------------------------------------------------- */
 void
-PhreeqcRM::set_data_for_parallel_processing(int value)
+PhreeqcRM::set_data_for_parallel_processing(MP_TYPE value)
 /* ---------------------------------------------------------------------- */
 {
 	this->initializer->data_for_parallel_processing = value;
@@ -13065,8 +13124,3 @@ PhreeqcRM::set_io(PHRQ_io *value)
 {
 	this->initializer->io = value;
 }
-
-
-
-
-

@@ -327,7 +327,8 @@ second argument (dest).
 'Components', dest : tuple (str);
 'Concentrations', dest : DoubleVector;
 'CurrentSelectedOutputUserNumber', dest : int;
-'Density', dest : DoubleVector;
+'DensityCalculated', dest : DoubleVector;
+'DensityUser', dest : DoubleVector;
 'ErrorString', dest : std::string;
 'FilePrefix', dest : std::string;
 'Gfw', dest : std::vector<double>;
@@ -336,7 +337,8 @@ second argument (dest).
 'OutputVarNames', dest : tuple (str);
 'Porosity', dest : DoubleVector;
 'Pressure', dest : DoubleVector;
-'Saturation', dest : DoubleVector;
+'SaturationCalculated', dest : DoubleVector;
+'SaturationUser', dest : DoubleVector;
 'SelectedOutput', dest : DoubleVector;
 'SelectedOutputColumnCount', dest : int;
 'SelectedOutputCount', dest : int;

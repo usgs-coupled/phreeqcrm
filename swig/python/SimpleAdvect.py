@@ -1,6 +1,8 @@
 import phreeqcrm
 import sys
 import numpy as np
+if phreeqcrm.has_mpi():
+    from mpi4py import MPI
 
 """
     Functions that accept a constant vector reference
@@ -39,16 +41,22 @@ import numpy as np
 
 def SimpleAdvect():
     nxyz = 20
-    nthreads = 3
-
-    phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, nthreads)
+    if phreeqcrm.has_mpi():
+        phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, MPI.COMM_WORLD)
+        mpi_myself = phreeqc_rm.GetMpiMyself()
+        if (mpi_myself > 0):
+            phreeqc_rm.MpiWorker()
+            return
+    else:
+        nthreads = 3
+        phreeqc_rm = phreeqcrm.PhreeqcRM(nxyz, nthreads)
 
     # Set properties
     status = phreeqc_rm.SetComponentH2O(False)
     phreeqc_rm.UseSolutionDensityVolume(False)
 
     # Open files
-    status = phreeqc_rm.SetFilePrefix("SimpleAdvect_py")
+    status = phreeqc_rm.SetFilePrefix("SimpleAdvect")
     phreeqc_rm.OpenFiles()
 
     # Set concentration units
@@ -82,16 +90,21 @@ def SimpleAdvect():
 
     # Run file to define solutions and reactants for initial conditions, selected output
     status = phreeqc_rm.RunFile(True, True, True, "advect.pqi")
+    print("RunFile status: {}".format(status))
 
     # Clear contents of workers and utility
     input = "DELETE; -all"
     status = phreeqc_rm.RunString(True, False, True, input)
+    print("RunString status: {}".format(status))
 
     # Determine number of components to transport
     ncomps = phreeqc_rm.FindComponents()
+    print("FindComponents")
 
     # Get component information (as a tuple)
     components = phreeqc_rm.GetComponents()
+    print("GetComponents")
+    print("Components: {}".format(components))
 
     for comp in components:
         phreeqc_rm.OutputMessage(comp)
@@ -99,9 +112,11 @@ def SimpleAdvect():
 
     # Set array of initial conditions
     if 'numpy' in sys.modules:
+        print("Using numpy for initial conditions array")
         # this may require numpy to be linked in
         ic1 = np.full((nxyz * 7,), -1)
     else:
+        print("Using list for initial conditions array")
         ic1 = [-1] * nxyz * 7
     ic1 = [-1] * nxyz * 7     # Need to fix with numpy
     for i in range(nxyz):
@@ -184,6 +199,9 @@ def SimpleAdvect():
     # Clean up
     status = phreeqc_rm.CloseFiles()
     status = phreeqc_rm.MpiWorkerBreak()
+    print("Success.")
+    return
+
 def simpleadvection(c, bc_conc, ncomps, nxyz, dim):
     """
     TODO

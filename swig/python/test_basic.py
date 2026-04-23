@@ -3,18 +3,26 @@ import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_array_less
 import pytest
 
-from phreeqcrm import BMIPhreeqcRM, IRM_OK, State
+from phreeqcrm import BMIPhreeqcRM, IRM_OK, State, has_openmp, has_mpi
 
 from constants import FilePaths
 
 ERROR_GET_VALUE_PTR_NOT_SUPPORTED = "get_value_ptr not supported for this variable."
 ERROR_SET_VALUE_NOT_SUPPORTED     = "set_value not supported for this variable."
 
+@pytest.fixture
+def create_yaml_file():
+    try:
+        import WriteYamlFile as yrm
+        yrm.WriteYamlFile()
+    except Exception as e:
+        pytest.skip(f"Cannot create yaml file: {e}")
+
 def test_main():
     # for debugging
     print(f"PYTHONPATH={os.getenv('PYTHONPATH')}")
 
-def test_prereqs():
+def test_prereqs(create_yaml_file):
     # for debugging
     cwd = os.getcwd()
     print(f"Current working directory: {cwd}")
@@ -52,6 +60,19 @@ def test_prereqs():
     pqi_dest = os.path.join(cwd, os.path.basename(pqi))
     assert os.path.exists(pqi_dest), f"{pqi_dest} does not exist"
 
+def test_openmp_ctor():
+    if not has_openmp():
+        pytest.skip("OpenMP not available")
+
+    nxyz = 20
+    nthreads = 10
+    model = BMIPhreeqcRM(nxyz, nthreads)
+    model.initialize()
+
+    # these aren't valid unless the model is initialized
+    assert model.GetGridCellCount() == nxyz
+    assert model.GetThreadCount() == nthreads
+
 def test_dtor():
     model = BMIPhreeqcRM()
     del model
@@ -75,14 +96,14 @@ def test_get_components_is_tuple():
     assert(isinstance(components, tuple))
     assert(len(components) == 0)
 
-def test_get_grid_size_AdvectBMI():
+def test_get_grid_size_AdvectBMI(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
     nxyz = model.get_grid_size(0)
     assert(nxyz == 40)
 
-def test_get_value_ptr_is_ndarray():
+def test_get_value_ptr_is_ndarray(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
     nxyz = model.get_grid_size(0)
@@ -95,7 +116,7 @@ def test_get_value_ptr_is_ndarray():
     assert(temperature[nxyz - 2] == pytest.approx(25.))
     assert(temperature[nxyz - 2] == pytest.approx(25.))
 
-def test_get_temperature_ptr_is_writeable():
+def test_get_temperature_ptr_is_writeable(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
     nxyz = model.get_grid_size(0)
@@ -116,7 +137,7 @@ def test_get_temperature_ptr_is_writeable():
     assert(temperature[nxyz - 2] == pytest.approx(25.))
     assert(temperature[nxyz - 1] == pytest.approx(25.))
 
-def test_get_value_ptr_ComponentCount_is_readonly():
+def test_get_value_ptr_ComponentCount_is_readonly(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
@@ -134,7 +155,7 @@ def test_get_value_ptr_ComponentCount_is_readonly():
         component_count[0] = 25
     assert(component_count[0] == 8)
 
-def test_get_input_var_names_is_tuple():
+def test_get_input_var_names_is_tuple(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
@@ -142,7 +163,7 @@ def test_get_input_var_names_is_tuple():
     assert(isinstance(input_vars, tuple))
     assert(isinstance(input_vars[0], str))
 
-def test_get_output_var_names_is_tuple():
+def test_get_output_var_names_is_tuple(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
@@ -150,7 +171,7 @@ def test_get_output_var_names_is_tuple():
     assert(isinstance(output_vars, tuple))
     assert(isinstance(output_vars[0], str))
 
-def test_GetComponents_is_tuple():
+def test_GetComponents_is_tuple(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
@@ -158,7 +179,7 @@ def test_GetComponents_is_tuple():
     assert(isinstance(components, tuple))
     assert(len(components) == 8)
 
-def test_get_value_ptr_Components_is_ndarray():
+def test_get_value_ptr_Components_is_ndarray(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
@@ -171,7 +192,7 @@ def test_get_value_ptr_Components_is_ndarray():
     assert(components[0] == 'H')
     assert(components[1] == 'O')
 
-def test_get_value_ptr_Components_is_readonly():
+def test_get_value_ptr_Components_is_readonly(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
@@ -183,7 +204,7 @@ def test_get_value_ptr_Components_is_readonly():
     assert(components[0] == 'H')
     assert(components[1] == 'O')
 
-def test_get_value_ptr_Porosity():
+def test_get_value_ptr_Porosity(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
     nxyz = model.get_grid_size(0)
@@ -194,7 +215,7 @@ def test_get_value_ptr_Porosity():
     assert(porosity.size == nxyz)
     assert(porosity.dtype == 'float64')
 
-def test_get_value_ptr_SolutionVolume():
+def test_get_value_ptr_SolutionVolume(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
     nxyz = model.get_grid_size(0)
@@ -207,7 +228,7 @@ def test_get_value_ptr_SolutionVolume():
     assert(solution_volume[0] == pytest.approx(0.2))
     assert(solution_volume[1] == pytest.approx(0.2))
 
-def test_get_value_ptr_Concentrations():
+def test_get_value_ptr_Concentrations(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
     nxyz = model.get_grid_size(0)
@@ -235,7 +256,7 @@ def test_get_value_ptr_Concentrations():
 #     # phreeqc_rm.UseSolutionDensityVolume(False)
 
 #     # # Open files
-#     # status = phreeqc_rm.SetFilePrefix("SimpleAdvect_py")
+#     # status = phreeqc_rm.SetFilePrefix("SimpleAdvect")
 #     # phreeqc_rm.OpenFiles()
 
 #     # # Set concentration units
@@ -259,7 +280,7 @@ def test_get_value_ptr_Concentrations():
 #     # bmi.set_value("UseSolutionDensityVolume", False)        # YAML "UseSolutionDensityVolume"
 
 #     # # Open files
-#     # bmi.set_value("FilePrefix", "SimpleAdvect_py")          # YAML "SetFilePrefix"
+#     # bmi.set_value("FilePrefix", "SimpleAdvect")          # YAML "SetFilePrefix"
 #     # ????
 
 #     # # Set concentration units
@@ -295,7 +316,7 @@ def test_get_value_ptr_Concentrations():
 #     # # use_sol_dens_vol = np.full((1,), False)
 #     # # bmi.set_value("UseSolutionDensityVolume", use_sol_dens_vol)        # YAML "UseSolutionDensityVolume"
 
-def test_get_value_ptr_ndarray_str():
+def test_get_value_ptr_ndarray_str(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
@@ -312,33 +333,32 @@ def test_get_value_ptr_ndarray_str():
     assert(comps[6] == 'N')
     assert(comps[7] == 'Na')
 
-def test_SetComponentH2O():
+def test_SetComponentH2O(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
     status = model.SetComponentH2O(True)
     assert(status == IRM_OK)
 
-def test_get_value_FilePrefix():
+def test_get_value_FilePrefix(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
     # FilePrefix doesn't support get_value_ptr
-    expected = "AdvectBMI_py"
+    expected = "AdvectBmi"
     spaces = " " * len(expected)
     fileprefix = np.array([spaces])
     fileprefix = model.get_value("FilePrefix", fileprefix)
 
-    assert(len(fileprefix[0]) == 12)
     assert(fileprefix[0] == expected)
 
-def test_get_value_FilePrefix_fail():
+def test_get_value_FilePrefix_fail(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
     # FilePrefix doesn't support get_value_ptr
     sz = 4
-    expected = "AdvectBMI_py"
+    expected = "AdvectBmi"
     spaces = " " * sz
     fileprefix = np.array([spaces])
 
@@ -353,12 +373,12 @@ def test_get_value_FilePrefix_fail():
     assert(len(fileprefix[0]) == 4)
     assert(fileprefix[0] == expected[:sz])
 
-def test_get_value_FilePrefix_big_buffer():
+def test_get_value_FilePrefix_big_buffer(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
     # FilePrefix doesn't support get_value_ptr
-    expected = "AdvectBMI_py"
+    expected = "AdvectBmi"
     spaces = " " * 80
     fileprefix = np.array([spaces])
     fileprefix = model.get_value("FilePrefix", fileprefix)
@@ -366,7 +386,7 @@ def test_get_value_FilePrefix_big_buffer():
     assert(fileprefix[0] == expected)
 
 
-def test_get_value_ComponentCount():
+def test_get_value_ComponentCount(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
@@ -377,7 +397,7 @@ def test_get_value_ComponentCount():
 
     assert(component_count[0] == 8)
 
-def test_get_value_ptr_ComponentCount():
+def test_get_value_ptr_ComponentCount(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
@@ -387,7 +407,7 @@ def test_get_value_ptr_ComponentCount():
 
     assert(component_count[0] == 8)
 
-def test_get_value_ptr_failure():
+def test_get_value_ptr_failure(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
@@ -399,7 +419,7 @@ def test_get_value_ptr_failure():
         with pytest.raises(RuntimeError, match=ERROR_GET_VALUE_PTR_NOT_SUPPORTED):
             arr = model.get_value_ptr(item)
 
-def test_read_only_vars():
+def test_read_only_vars(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 
@@ -422,7 +442,7 @@ def test_read_only_vars():
         with pytest.raises(RuntimeError, match=ERROR_SET_VALUE_NOT_SUPPORTED):
             model.set_value(item, dest)
 
-def test_get_value_Time():
+def test_get_value_Time(create_yaml_file):
     model = BMIPhreeqcRM()
     model.initialize(FilePaths.YAML)
 

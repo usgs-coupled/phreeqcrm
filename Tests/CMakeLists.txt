@@ -285,9 +285,6 @@ set_property(TARGET TestRM APPEND
     TestAllMethods_f90.dmp
     TestAllMethods_f90.log.txt
     TestAllMethods_f90.yaml
-    TestAllMethods_py.chem.txt
-    TestAllMethods_py.dump
-    TestAllMethods_py.log.txt
 )
 
 if(WIN32 AND PHREEQCRM_FORTRAN_TESTING)

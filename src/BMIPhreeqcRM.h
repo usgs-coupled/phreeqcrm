@@ -49,12 +49,6 @@ public:
     static IRM_RESULT       DestroyBMIModule(int n);
     static BMIPhreeqcRM*    GetInstance(int n);
     /**
-    Default constructor for the BMIPhreeqcRM subclass of PhreeqcRM.
-    Definition of the number of cells and threads (or MPI communicator) is deferred.
-    @ref Initialize must be called to initialize the BMIPhreeqcRM instance.
-    */
-    BMIPhreeqcRM();
-    /**
     Constructor for the BMIPhreeqcRM subclass of PhreeqcRM. A BMIPhreeqcRM
     instance has the BMI methods plus all of the PhreeqcRM methods. The
     constructor requires two arguments: the number of cells in the user's
@@ -78,7 +72,7 @@ public:
     </CODE>
     @endhtmlonly
     */
-    BMIPhreeqcRM(int ngrid, MP_TYPE nthreads);
+    BMIPhreeqcRM(int ngrid = PhreeqcRM::default_nxyz, MP_TYPE nthreads = PhreeqcRM::default_data_for_parallel_processing);
 
     ~BMIPhreeqcRM() override;
 

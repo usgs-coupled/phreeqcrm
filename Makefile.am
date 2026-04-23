@@ -4,24 +4,29 @@ PHREEQCRM_EXTRA_DIST=\
 	CMakeLists.txt\
 	phreeqcrm.cmake.in\
 	PhreeqcRMConfig.cmake.in\
+	pyproject.toml\
 	swig/CMakeLists.txt\
 	swig/numpy.i\
 	swig/PhreeqcRM.i\
 	swig/pyfragments.swg.in\
-	swig/python/AdvectBMI_py.py\
+	swig/python/AdvectBmi.py\
 	swig/python/BMIPhreeqcRM_docstrings.swg\
 	swig/python/CMakeLists.txt\
 	swig/python/conftest.py\
 	swig/python/constants.py\
+	swig/python/functions_docstrings.swg\
 	swig/python/PhreeqcRM_docstrings.swg\
 	swig/python/SimpleAdvect.py\
+	swig/python/minimum.yaml\
 	swig/python/test_basic.py\
+	swig/python/test_callbacks.py\
+	swig/python/test_functions.py\
 	swig/python/test_get_value.py\
 	swig/python/test_init.py\
 	swig/python/test_irf.py\
 	swig/python/test_set_value.py\
-	swig/python/TestAllMethods_py.py\
-	swig/python/WriteYAMLFile_py.py\
+	swig/python/TestAllMethods.py\
+	swig/python/WriteYamlFile.py\
 	swig/python/yamlphreeqcrm.py\
 	swig/python/YAMLPhreeqcRM.swg
 
