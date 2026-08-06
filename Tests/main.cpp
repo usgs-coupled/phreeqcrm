@@ -29,6 +29,7 @@ extern void WriteYAMLFile_f90_test(void);
 #endif
 
 // C++ function
+extern int TestEquiv_cpp();
 extern int SimpleAdvect_cpp();
 extern int Advect_cpp();
 extern int AdvectBMI_cpp();
@@ -65,6 +66,8 @@ int main(int argc, char* argv[])
 	mpi_myself = 0;
 #endif
 	bool root = (mpi_myself == 0);
+	TestEquiv_cpp();
+	if (root) std::cerr << "Done TestEquiv_cpp.==================================" << std::endl;
 	units_tester();
 	if (root) std::cerr << "Done units_tester.===================================" << std::endl;
 	SimpleAdvect_cpp();
