@@ -1861,6 +1861,51 @@ PhreeqcRM::cxxSolution2concentration(cxxSolution * cxxsoln_ptr, std::vector<doub
 	return cxxSolution2concentrationNoH2O(cxxsoln_ptr, d, v, dens);
 }
 /* ---------------------------------------------------------------------- */
+static void
+ElementalTotals(const cxxNameDouble& totals, const std::vector<std::string>& components,
+	size_t first_comp, std::vector<double>& elemental)
+/* ---------------------------------------------------------------------- */
+{
+	// One-pass Simplify_redox()+Get_total() replacement: both sides are sorted and redox states fold in totals-map order,
+	// so element sums are bit-identical.
+	elemental.assign(components.size(), 0.0);
+	size_t ci = first_comp;
+	cxxNameDouble::const_iterator it = totals.begin();
+	for (; it != totals.end() && ci < components.size(); ++it)
+	{
+		// element name = key, or key truncated at '(' when size() >= 4
+		const std::string& key = it->first;
+		size_t elen = key.size();
+		if (elen >= 4)
+		{
+			std::basic_string<char>::size_type indexCh = key.find("(");
+			if (indexCh != std::string::npos)
+			{
+				elen = indexCh;
+			}
+		}
+		// H, O, and Charge are handled by the fixed slots
+		if ((elen == 1 && (key[0] == 'H' || key[0] == 'O')) ||
+			(elen == 6 && key.compare(0, 6, "Charge") == 0))
+		{
+			continue;
+		}
+		// advance the component cursor to the element; components without
+		// a totals entry keep 0.0, matching Get_total's missing-key return
+		while (ci < components.size() &&
+			components[ci].compare(0, components[ci].size(), key, 0, elen) < 0)
+		{
+			ci++;
+		}
+		if (ci < components.size() &&
+			components[ci].compare(0, components[ci].size(), key, 0, elen) == 0)
+		{
+			elemental[ci] += it->second;
+		}
+		// element not in components: entry is dropped, as before
+	}
+}
+/* ---------------------------------------------------------------------- */
 void
 PhreeqcRM::cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector<double> & d, double v, double dens)
 /* ---------------------------------------------------------------------- */
@@ -1872,11 +1917,9 @@ PhreeqcRM::cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector<d
 		std::cerr << "ERROR: FindComponents must be called before this point, stopping." << std::endl;
 		throw PhreeqcRMStop();
 	}
-	// Simplify totals
-	{
-	  cxxNameDouble nd = cxxsoln_ptr->Get_totals().Simplify_redox();
-	  cxxsoln_ptr->Set_totals(nd);
-	}
+	// element sums per component (Simplify_redox semantics, single pass)
+	std::vector<double> elemental;
+	ElementalTotals(cxxsoln_ptr->Get_totals(), this->components, 4, elemental);
 
 	// convert units
 	switch (this->units_Solution)
@@ -1892,7 +1935,7 @@ PhreeqcRM::cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector<d
 			d.push_back(cxxsoln_ptr->Get_cb() * this->gfw[3] * 1000. / v);
 			for (size_t i = 4; i < this->components.size(); i++)
 			{
-				d.push_back(cxxsoln_ptr->Get_total(components[i].c_str()) * this->gfw[i] * 1000. / v);
+				d.push_back(elemental[i] * this->gfw[i] * 1000. / v);
 			}
 		}
 		break;
@@ -1907,7 +1950,7 @@ PhreeqcRM::cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector<d
 			d.push_back(cxxsoln_ptr->Get_cb()  / v);
 			for (size_t i = 4; i < this->components.size(); i++)
 			{
-				d.push_back(cxxsoln_ptr->Get_total(components[i].c_str())  / v);
+				d.push_back(elemental[i]  / v);
 			}
 		}
 		break;
@@ -1923,7 +1966,7 @@ PhreeqcRM::cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector<d
 			d.push_back(cxxsoln_ptr->Get_cb() * this->gfw[3] / 1000. / kgs);
 			for (size_t i = 4; i < this->components.size(); i++)
 			{
-				d.push_back(cxxsoln_ptr->Get_total(components[i].c_str()) * this->gfw[i] / 1000. / kgs);
+				d.push_back(elemental[i] * this->gfw[i] / 1000. / kgs);
 			}
 		}
 		break;
@@ -1937,17 +1980,16 @@ PhreeqcRM::cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector
 {
 	d.clear();
 
-	// Simplify totals
-	{
-	  cxxNameDouble nd = cxxsoln_ptr->Get_totals().Simplify_redox();
-	  cxxsoln_ptr->Set_totals(nd);
-	}
 	if (gfw.size() == 0)
 	{
 		this->ErrorMessage("FindComponents must be called before this point, stopping.", true);
 		std::cerr << "ERROR: FindComponents must be called before this point, stopping." << std::endl;
 		throw PhreeqcRMStop();
 	}
+	// element sums per component (Simplify_redox semantics, single pass)
+	std::vector<double> elemental;
+	ElementalTotals(cxxsoln_ptr->Get_totals(), this->components, 3, elemental);
+
 	// convert units
 	switch (this->units_Solution)
 	{
@@ -1958,7 +2000,7 @@ PhreeqcRM::cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector
 			d.push_back(cxxsoln_ptr->Get_cb() * this->gfw[2] * 1000. / v);
 			for (size_t i = 3; i < this->components.size(); i++)
 			{
-				d.push_back(cxxsoln_ptr->Get_total(components[i].c_str()) * this->gfw[i] * 1000. / v);
+				d.push_back(elemental[i] * this->gfw[i] * 1000. / v);
 			}
 		}
 		break;
@@ -1969,7 +2011,7 @@ PhreeqcRM::cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector
 			d.push_back(cxxsoln_ptr->Get_cb()  / v);
 			for (size_t i = 3; i < this->components.size(); i++)
 			{
-				d.push_back(cxxsoln_ptr->Get_total(components[i].c_str())  / v);
+				d.push_back(elemental[i]  / v);
 			}
 		}
 		break;
@@ -1981,7 +2023,7 @@ PhreeqcRM::cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector
 			d.push_back(cxxsoln_ptr->Get_cb() * this->gfw[2] / 1000. / kgs);
 			for (size_t i = 3; i < this->components.size(); i++)
 			{
-				d.push_back(cxxsoln_ptr->Get_total(components[i].c_str()) * this->gfw[i] / 1000. / kgs);
+				d.push_back(elemental[i] * this->gfw[i] / 1000. / kgs);
 			}
 		}
 		break;
