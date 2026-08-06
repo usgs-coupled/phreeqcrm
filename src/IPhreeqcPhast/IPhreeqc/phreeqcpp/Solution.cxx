@@ -8,6 +8,7 @@
 #include <set>
 #include <cassert>				// assert
 #include <algorithm>			// std::sort
+#include <utility>				// std::move
 #include "Utils.h"				// define first
 #include "Phreeqc.h"
 #include "Solution.h"
@@ -101,6 +102,51 @@ cxxSolution::operator =(const cxxSolution &rhs)
 			this->initial_data           = new cxxISolution(*rhs.initial_data);
 		else
 			this->initial_data           = NULL;
+	}
+	return *this;
+}
+cxxSolution::cxxSolution(cxxSolution &&old_sol) noexcept
+:	initial_data(NULL)
+{
+	*this = std::move(old_sol);
+}
+const cxxSolution &
+cxxSolution::operator =(cxxSolution &&rhs) noexcept
+{
+	if (this != &rhs)
+	{
+		this->io                         = rhs.io;
+		this->n_user                     = rhs.n_user;
+		this->n_user_end                 = rhs.n_user_end;
+		this->description                = std::move(rhs.description);
+		this->new_def                    = rhs.new_def;
+		this->patm                       = rhs.patm;
+		this->potV                       = rhs.potV;
+		this->tc                         = rhs.tc;
+		this->ph                         = rhs.ph;
+		this->pe                         = rhs.pe;
+		this->mu                         = rhs.mu;
+		this->ah2o                       = rhs.ah2o;
+		this->total_h                    = rhs.total_h;
+		this->total_o                    = rhs.total_o;
+		this->density                    = rhs.density;
+		this->viscosity                  = rhs.viscosity;
+		this->viscos_0                   = rhs.viscos_0;
+		this->cb                         = rhs.cb;
+		this->mass_water                 = rhs.mass_water;
+		this->soln_vol                   = rhs.soln_vol;
+		this->total_alkalinity           = rhs.total_alkalinity;
+		this->totals		             = std::move(rhs.totals);
+		this->master_activity            = std::move(rhs.master_activity);
+		this->species_gamma              = std::move(rhs.species_gamma);
+		this->isotopes                   = std::move(rhs.isotopes);
+		this->species_map                = std::move(rhs.species_map);
+		this->log_gamma_map              = std::move(rhs.log_gamma_map);
+		this->log_molalities_map         = std::move(rhs.log_molalities_map);
+		if (this->initial_data)
+			delete initial_data;
+		this->initial_data               = rhs.initial_data;
+		rhs.initial_data                 = NULL;
 	}
 	return *this;
 }

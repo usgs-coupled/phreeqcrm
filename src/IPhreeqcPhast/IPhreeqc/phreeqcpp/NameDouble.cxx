@@ -405,17 +405,14 @@ cxxNameDouble::add(const char *token, LDBLE total)
 // add to total for a specified element
 //
 {
-	char key[MAX_LENGTH];
-	Utilities::strcpy_safe(key, MAX_LENGTH, token);
-
-	cxxNameDouble::iterator current = (*this).find(key);
-	if (current != (*this).end())
+	cxxNameDouble::iterator current = this->lower_bound(token);
+	if (current != this->end() && current->first == token)
 	{
-		(*this)[key] = current->second + total;
+		current->second = current->second + total;
 	}
 	else
 	{
-		(*this)[key] = total;
+		this->emplace_hint(current, token, total);
 	}
 }
 void

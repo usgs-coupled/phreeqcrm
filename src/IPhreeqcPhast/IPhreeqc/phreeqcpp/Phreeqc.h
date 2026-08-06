@@ -26,6 +26,8 @@ typedef unsigned char boolean;
 #include <fstream>
 #include <sstream>
 #include <map>
+#include <memory>
+#include <unordered_map>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -1738,6 +1740,26 @@ protected:
 	std::vector<double> m_temp, m_original, rk_moles, x0_moles;
 	int set_and_run_attempt;
 
+	/* step.cpp -------------------------------- */
+	// memoized name -> master lookups for add_solution; NULL results are
+	// never stored (the miss path has error side effects that must repeat);
+	// cleared whenever the master vector changes
+	std::unordered_map<std::string, class master*> master_primary_memo;
+	std::unordered_map<std::string, class master*> master_exact_memo;
+	void invalidate_master_memos(void)
+	{
+		master_primary_memo.clear();
+		master_exact_memo.clear();
+	}
+	// spare save-objects reused across calls: stolen on entry (an empty
+	// spare under reentrancy falls back to heap allocation) and returned
+	// on exit; step() nests inside set_and_run_wrapper, so each has its own
+	std::unique_ptr<cxxPPassemblage> wrapper_pp_spare;
+	std::unique_ptr<cxxSSassemblage> wrapper_ss_spare;
+	std::unique_ptr<cxxKinetics> wrapper_kin_spare;
+	std::unique_ptr<cxxPPassemblage> step_pp_spare;
+	std::unique_ptr<cxxSSassemblage> step_ss_spare;
+
 	/* model.cpp ------------------------------- */
 	int gas_in;
 	LDBLE min_value;
@@ -1957,11 +1979,11 @@ namespace Utilities
 		it = b.find(i);
 		if (it != b.end())
 		{
-			b[j] = it->second;
-			it = b.find(j);
-			it->second.Set_n_user(j);
-			it->second.Set_n_user_end(j);
-			return &(it->second);
+			T& t = b[j];
+			t = it->second;
+			t.Set_n_user(j);
+			t.Set_n_user_end(j);
+			return &t;
 		}
 		else
 		{

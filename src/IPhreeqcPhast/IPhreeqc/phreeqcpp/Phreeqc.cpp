@@ -1470,6 +1470,7 @@ Phreeqc::InternalCopy(const Phreeqc* pSrc)
 		phase_ptr->rxn_x = CReaction_internal_copy(pSrc->phases[i]->rxn_x);
 	}
 	// Master species
+	invalidate_master_memos();
 	for (size_t i = 0; i < pSrc->master.size(); i++)
 	{
 		master.resize(i + 1);

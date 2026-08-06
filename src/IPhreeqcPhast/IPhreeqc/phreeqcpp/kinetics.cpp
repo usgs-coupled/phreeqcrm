@@ -1179,16 +1179,46 @@ set_and_run_wrapper(int i, int use_mix, int use_kinetics, int nsaver,
 	if (use.Get_pp_assemblage_ptr() != NULL)
 	{
 		cxxPPassemblage * pp_assemblage_ptr = use.Get_pp_assemblage_ptr();
-		pp_assemblage_save.reset(new cxxPPassemblage(*pp_assemblage_ptr));
+#if (__GNUC__ && (__cplusplus >= 201103L)) || (_MSC_VER >= 1600)
+		if (wrapper_pp_spare)
+		{
+			*wrapper_pp_spare = *pp_assemblage_ptr;
+			pp_assemblage_save = std::move(wrapper_pp_spare);
+		}
+		else
+#endif
+		{
+			pp_assemblage_save.reset(new cxxPPassemblage(*pp_assemblage_ptr));
+		}
 	}
 	if (use.Get_ss_assemblage_ptr() != NULL)
 	{
 		cxxSSassemblage * ss_assemblage_ptr = use.Get_ss_assemblage_ptr();
-		ss_assemblage_save.reset(new cxxSSassemblage(*ss_assemblage_ptr));
+#if (__GNUC__ && (__cplusplus >= 201103L)) || (_MSC_VER >= 1600)
+		if (wrapper_ss_spare)
+		{
+			*wrapper_ss_spare = *ss_assemblage_ptr;
+			ss_assemblage_save = std::move(wrapper_ss_spare);
+		}
+		else
+#endif
+		{
+			ss_assemblage_save.reset(new cxxSSassemblage(*ss_assemblage_ptr));
+		}
 	}
 	if (use.Get_kinetics_ptr() != NULL)
 	{
-		kinetics_save.reset(new cxxKinetics(*use.Get_kinetics_ptr()));
+#if (__GNUC__ && (__cplusplus >= 201103L)) || (_MSC_VER >= 1600)
+		if (wrapper_kin_spare)
+		{
+			*wrapper_kin_spare = *use.Get_kinetics_ptr();
+			kinetics_save = std::move(wrapper_kin_spare);
+		}
+		else
+#endif
+		{
+			kinetics_save.reset(new cxxKinetics(*use.Get_kinetics_ptr()));
+		}
 	}
 
 	if (pitzer_model == TRUE || sit_model == TRUE)
@@ -1483,6 +1513,15 @@ restart:
 				"Numerical method failed on all combinations of convergence parameters, cell/soln/mix %d", this->solution_number());
 		error_msg(error_string, STOP);
 	}
+#if (__GNUC__ && (__cplusplus >= 201103L)) || (_MSC_VER >= 1600)
+	// return the save objects to the spare pool for reuse by the next call
+	if (pp_assemblage_save)
+		wrapper_pp_spare = std::move(pp_assemblage_save);
+	if (ss_assemblage_save)
+		wrapper_ss_spare = std::move(ss_assemblage_save);
+	if (kinetics_save)
+		wrapper_kin_spare = std::move(kinetics_save);
+#endif
 	numerical_fixed_volume = false;
 	if (converge == MASS_BALANCE)
 	{

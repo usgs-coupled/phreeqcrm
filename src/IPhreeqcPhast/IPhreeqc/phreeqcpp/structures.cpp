@@ -72,6 +72,7 @@ clean_up(void)
 		master_free(master[j]);
 	}
 	master.clear();
+	invalidate_master_memos();
 
 	/* elements */
 
@@ -845,6 +846,7 @@ master_delete(const char* cptr)
 		return (FALSE);
 	master_free(master[n]);
 	master.erase(master.begin() + n);
+	invalidate_master_memos();
 	return (TRUE);
 }
 
@@ -885,13 +887,6 @@ master_bsearch(const char* cptr)
 					   (char *) &master[0],
 					   master.size(),
 					   sizeof(class master *), master_compare_string);
-	if (void_ptr == NULL)
-	{
-		void_ptr = bsearch(cptr,
-			(char*)&master[0],
-			master.size(),
-			sizeof(class master*), master_compare_string);
-	}
 	if (void_ptr == NULL)
 	{
 		return (NULL);
