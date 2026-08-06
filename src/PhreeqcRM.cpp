@@ -10362,11 +10362,16 @@ PhreeqcRM::RunCellsThread(int n)
 		phast_iphreeqc_worker->SetOutputFileOn(false);
 		phast_iphreeqc_worker->SetOutputStringOn(pr_chemistry_on);
 		phast_iphreeqc_worker->SetSelectedOutputFileOn(false);
-		//if (!pr_chemistry_on)
-		//{
-		//	RunCellsThreadNoPrint(n);
-		//}
-		//else
+		// batched fast path: one RUN_CELLS parse per thread instead of one
+		// per cell; requires no chemistry printout, throwing error handling
+		// (a batch cannot forgive individual cells like error_handler_mode
+		// >= 3 does), and no UZ partitioning (the batch path partitions
+		// active cells only)
+		if (!pr_chemistry_on && this->error_handler_mode < 3 && !this->partition_uz_solids)
+		{
+			RunCellsThreadNoPrint(n);
+		}
+		else
 		{
 			phast_iphreeqc_worker->Get_cell_clock_times().clear();
 
