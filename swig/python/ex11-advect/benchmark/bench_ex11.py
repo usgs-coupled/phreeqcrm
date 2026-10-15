@@ -1,12 +1,18 @@
-"""Time the ex11-advect transport loop on two PhreeqcRM builds and check they agree.
+r"""Time the ex11-advect transport loop on two PhreeqcRM builds and check they agree.
 
 Each build is selected by putting its swig/python directory on PYTHONPATH, so any
 two build trees (or installed packages) can be compared. Runs alternate in
 A B B A order to spread thermal and background noise evenly over both builds.
 
-Usage:
-    python bench_ex11.py --base <master build>/swig/python \
-                         --branch <branch build>/swig/python \
+Usage, building both sides from source (works on Windows, macOS and Linux):
+    python bench_ex11.py --build-against origin/master
+
+    This builds the git ref given (here origin/master) and the current working tree with
+    pip, then compares them. It needs git, a C++ compiler and internet access.
+
+Usage, with two builds you already have (replace the example paths with your own):
+    python bench_ex11.py --base ../phreeqcrm-master/build/swig/python \
+                         --branch build/swig/python \
                          --cells 1000 10000 --rounds 2
 """
 import argparse
@@ -102,6 +108,30 @@ def spawn(pythonpath, workdir, nxyz, nsteps, tag):
     return json.loads(out.stdout.strip().splitlines()[-1])
 
 
+def pip_build(src, dest):
+    """Build the phreeqcrm wheel from src into dest and return the folder to put on PYTHONPATH."""
+    print(f"# building {src}", flush=True)
+    # OpenMP off so both builds run on one thread, whatever the compiler supports
+    subprocess.run([sys.executable, "-m", "pip", "install", "--no-deps", "--target", dest,
+                    "--config-settings=cmake.define.PHREEQCRM_DISABLE_OPENMP=ON", src],
+                   check=True)
+    # the wheel installs phreeqcrm.py, _phreeqcrm and yamlphreeqcrm.py into this folder
+    return os.path.join(dest, "phreeqcrm")
+
+
+def build_both(ref, tmp):
+    repo = subprocess.run(["git", "-C", HERE, "rev-parse", "--show-toplevel"],
+                          check=True, capture_output=True, text=True).stdout.strip()
+    src = os.path.join(tmp, "src-base")
+    subprocess.run(["git", "-C", repo, "worktree", "add", "--detach", src, ref], check=True)
+    try:
+        base = pip_build(src, os.path.join(tmp, "base"))
+    finally:
+        subprocess.run(["git", "-C", repo, "worktree", "remove", "--force", src], check=True)
+    branch = pip_build(repo, os.path.join(tmp, "branch"))
+    return base, branch
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "--child":
         workdir, nxyz, nsteps, tag = sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), sys.argv[5]
@@ -109,14 +139,29 @@ def main():
         return
 
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--base", required=True, help="swig/python dir of the reference build")
-    ap.add_argument("--branch", required=True, help="swig/python dir of the build under test")
+    ap.add_argument("--build-against", metavar="REF",
+                    help="build this git ref and the current working tree, then compare them")
+    ap.add_argument("--base", help="swig/python dir of the reference build")
+    ap.add_argument("--branch", help="swig/python dir of the build under test")
     ap.add_argument("--cells", type=int, nargs="+", default=[1000, 10000])
     ap.add_argument("--steps", type=int, default=100)
     ap.add_argument("--rounds", type=int, default=2, help="A B B A rounds per grid size")
     ap.add_argument("--json", help="also write all timings to this file")
     a = ap.parse_args()
+    if not a.build_against and not (a.base and a.branch):
+        ap.error("give --build-against REF, or both --base and --branch")
 
+    if not a.build_against:
+        return compare(a)
+    builddir = tempfile.mkdtemp(prefix="ex11-build-")
+    try:
+        a.base, a.branch = build_both(a.build_against, builddir)
+        compare(a)
+    finally:
+        shutil.rmtree(builddir, ignore_errors=True)
+
+
+def compare(a):
     workdir = tempfile.mkdtemp(prefix="ex11-bench-")
     for f in ("phreeqc.dat", "advect.pqi"):
         shutil.copy(os.path.join(EX11, f), workdir)
@@ -136,10 +181,15 @@ def main():
                for t in ("base", "branch")}
         rows.append((n, med["base"], med["branch"], same))
 
-    print("\n| Cells | Base (s) | Branch (s) | Speedup | Time saved | Outputs identical |")
-    print("|---:|---:|---:|---:|---:|:---:|")
-    for n, b, p, same in rows:
-        print(f"| {n:,} | {b:.2f} | {p:.2f} | {b / p:.2f}x | {(1 - p / b) * 100:.0f}% | {'yes' if same else 'NO'} |")
+    head = ["Cells", "Base (s)", "Branch (s)", "Speedup", "Time saved", "Outputs identical"]
+    body = [[f"{n:,}", f"{b:.2f}", f"{p:.2f}", f"{b / p:.2f}x", f"{(1 - p / b) * 100:.0f}%",
+             "yes" if same else "NO"] for n, b, p, same in rows]
+    # padded so it lines up in a terminal and still pastes as a markdown table
+    w = [max(len(r[i]) for r in [head] + body) for i in range(len(head))]
+    print("\n| " + " | ".join(h.ljust(w[i]) for i, h in enumerate(head)) + " |")
+    print("|" + "|".join("-" * (w[i] + 1) + ":" for i in range(5)) + "|:" + "-" * w[5] + ":|")
+    for r in body:
+        print("| " + " | ".join(c.rjust(w[i]) if i < 5 else c.center(w[i]) for i, c in enumerate(r)) + " |")
     if a.json:
         with open(a.json, "w") as fh:
             json.dump(records, fh, indent=1)
