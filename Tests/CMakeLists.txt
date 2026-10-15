@@ -135,7 +135,6 @@ target_sources(TestRM PRIVATE
   Species_cpp.cpp
   TestAllMethods_c.c
   TestAllMethods_cpp.cpp
-  TestEquiv_cpp.cpp
 )
 
 if(PHREEQCRM_WITH_YAML_CPP)
