@@ -1920,6 +1920,8 @@ PhreeqcRM::cxxSolution2concentrationH2O(cxxSolution * cxxsoln_ptr, std::vector<d
 	// element sums per component (Simplify_redox semantics, single pass)
 	std::vector<double> elemental;
 	ElementalTotals(cxxsoln_ptr->Get_totals(), this->components, 4, elemental);
+	// store simplified totals in the solution; DumpModule and restarts rely on them
+	cxxsoln_ptr->Get_totals() = cxxsoln_ptr->Get_totals().Simplify_redox();
 
 	// convert units
 	switch (this->units_Solution)
@@ -1989,6 +1991,8 @@ PhreeqcRM::cxxSolution2concentrationNoH2O(cxxSolution * cxxsoln_ptr, std::vector
 	// element sums per component (Simplify_redox semantics, single pass)
 	std::vector<double> elemental;
 	ElementalTotals(cxxsoln_ptr->Get_totals(), this->components, 3, elemental);
+	// store simplified totals in the solution; DumpModule and restarts rely on them
+	cxxsoln_ptr->Get_totals() = cxxsoln_ptr->Get_totals().Simplify_redox();
 
 	// convert units
 	switch (this->units_Solution)
@@ -10291,6 +10295,20 @@ PhreeqcRM::RunCellsThreadNoPrint(int n)
 				phast_iphreeqc_worker->Get_cell_clock_times()[i - start] += t_elapsed / (double) count_active;
 			}
 		}
+	}
+
+	// Copy selected output back to worker for users of GetIPhreeqcPtr
+	std::map< int, CSelectedOutput* >::iterator sit = phast_iphreeqc_worker->SelectedOutputMap.begin();
+	for (; sit != phast_iphreeqc_worker->SelectedOutputMap.end(); ++sit)
+	{
+		delete (*sit).second;
+	}
+	phast_iphreeqc_worker->SelectedOutputMap.clear();
+
+	std::map< int, CSelectedOutput >::iterator cso_it = phast_iphreeqc_worker->CSelectedOutputMap.begin();
+	for (; cso_it != phast_iphreeqc_worker->CSelectedOutputMap.end(); cso_it++)
+	{
+		phast_iphreeqc_worker->SelectedOutputMap[cso_it->first] = new CSelectedOutput(cso_it->second);
 	}
 
 	return IRM_OK;
