@@ -1,5 +1,6 @@
 #include <time.h>
 #include <assert.h>
+#include <utility>
 #include "Utils.h"
 #include "Phreeqc.h"
 #include "phqalloc.h"
@@ -1099,7 +1100,7 @@ xexchange_save(int n_user)
 /*
  *   Finish up
  */
-	Rxn_exchange_map[n_user] = temp_exchange;
+	Rxn_exchange_map[n_user] = std::move(temp_exchange);
 
 	use.Set_exchange_ptr(NULL);
 	return (OK);
@@ -1241,7 +1242,7 @@ xpp_assemblage_save(int n_user)
  *   Finish up
  */
 
-	Rxn_pp_assemblage_map[n_user] = temp_pp_assemblage;
+	Rxn_pp_assemblage_map[n_user] = std::move(temp_pp_assemblage);
 	use.Set_pp_assemblage_ptr(NULL);
 	return (OK);
 }
@@ -1332,6 +1333,10 @@ xsolution_save(int n_user)
 /*
  *   Copy totals data
  */
+	// master[] is sorted, so hinted inserts append in order; a stale hint
+	// only costs the usual O(log n) descent
+	cxxNameDouble &temp_activity = temp_solution.Get_master_activity();
+	cxxNameDouble &temp_totals = temp_solution.Get_totals();
 	for (int i = 0; i < (int)master.size(); i++)
 	{
 		if (master[i]->s->type == EX ||
@@ -1346,7 +1351,7 @@ xsolution_save(int n_user)
  */
 		if (master[i]->in != FALSE)
 		{
-			temp_solution.Get_master_activity()[master[i]->elt->name] = master[i]->s->la;
+			temp_activity.emplace_hint(temp_activity.end(), master[i]->elt->name, master[i]->s->la);
 		}
 		if (master[i]->total <= MIN_TOTAL)
 		{
@@ -1357,7 +1362,7 @@ xsolution_save(int n_user)
 /*
  *   Save list of concentrations
  */
-		temp_solution.Get_totals()[master[i]->elt->name] = master[i]->total;
+		temp_totals.emplace_hint(temp_totals.end(), master[i]->elt->name, master[i]->total);
 	}
 	if (pitzer_model == TRUE || sit_model == TRUE)
 	{
@@ -1429,7 +1434,7 @@ xsolution_save(int n_user)
 /*
  *   Save solution
  */
-	Rxn_solution_map[n_user] = temp_solution;
+	Rxn_solution_map[n_user] = std::move(temp_solution);
 	return (OK);
 }
 /* ---------------------------------------------------------------------- */
@@ -1793,7 +1798,7 @@ step_save_exch(int n_user)
 		}
 	}
 
-	Rxn_exchange_map[n_user] = temp_exchange;
+	Rxn_exchange_map[n_user] = std::move(temp_exchange);
 	return (OK);
 }
 /* ---------------------------------------------------------------------- */

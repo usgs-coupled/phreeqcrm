@@ -147,7 +147,15 @@ step(LDBLE step_fraction)
 	if (use.Get_pp_assemblage_ptr() != NULL)
 	{
 		cxxPPassemblage * pp_assemblage_ptr = use.Get_pp_assemblage_ptr();
-		pp_assemblage_save = new cxxPPassemblage(*pp_assemblage_ptr);
+		if (step_pp_spare)
+		{
+			*step_pp_spare = *pp_assemblage_ptr;
+			pp_assemblage_save = step_pp_spare.release();
+		}
+		else
+		{
+			pp_assemblage_save = new cxxPPassemblage(*pp_assemblage_ptr);
+		}
 		add_pp_assemblage(pp_assemblage_ptr);
 	}
 /*
@@ -155,7 +163,15 @@ step(LDBLE step_fraction)
  */
 	if (use.Get_ss_assemblage_ptr() != NULL)
 	{
-		ss_assemblage_save = new cxxSSassemblage(*use.Get_ss_assemblage_ptr());
+		if (step_ss_spare)
+		{
+			*step_ss_spare = *use.Get_ss_assemblage_ptr();
+			ss_assemblage_save = step_ss_spare.release();
+		}
+		else
+		{
+			ss_assemblage_save = new cxxSSassemblage(*use.Get_ss_assemblage_ptr());
+		}
 		add_ss_assemblage(use.Get_ss_assemblage_ptr());
 	}
 /*
@@ -194,12 +210,12 @@ step(LDBLE step_fraction)
 		}
 		if (pp_assemblage_save != NULL)
 		{
-			delete pp_assemblage_save;
+			step_pp_spare.reset(pp_assemblage_save);
 			pp_assemblage_save = NULL;
 		}
 		if (ss_assemblage_save != NULL)
 		{
-			delete ss_assemblage_save;
+			step_ss_spare.reset(ss_assemblage_save);
 			ss_assemblage_save = NULL;
 		}
 		return (MASS_BALANCE);
@@ -215,12 +231,12 @@ step(LDBLE step_fraction)
  */
 	if (pp_assemblage_save != NULL)
 	{
-		delete pp_assemblage_save;
+		step_pp_spare.reset(pp_assemblage_save);
 		pp_assemblage_save = NULL;
 	}
 	if (ss_assemblage_save != NULL)
 	{
-		delete ss_assemblage_save;
+		step_ss_spare.reset(ss_assemblage_save);
 		ss_assemblage_save = NULL;
 	}
 	//
@@ -232,8 +248,7 @@ step(LDBLE step_fraction)
 	{
 		cxxStorageBin sys_bin(phrq_io);
 		cxxSolution *sol = Utilities::Rxn_find(Rxn_solution_map, -1);
-		cxxSolution soln(*sol);
-		sys_bin.Set_Solution(-1, soln);
+		sys_bin.Set_Solution(-1, *sol);
 		if (use.Get_pp_assemblage_in())
 		{
 			sys_bin.Set_PPassemblage(-1, use.Get_pp_assemblage_ptr());
@@ -244,7 +259,7 @@ step(LDBLE step_fraction)
 		}
 		sys_bin.Set_System(-1);
 		sys_bin.Get_System().totalize(this);
-		cxxNameDouble sys_tots = sys_bin.Get_System().Get_Totals();
+		cxxNameDouble &sys_tots = sys_bin.Get_System().Get_Totals();
 		if (use.Get_pp_assemblage_in())
 		{
 			cxxPPassemblage *pp_assemblage_ptr = sys_bin.Get_PPassemblage(-1);
@@ -395,7 +410,21 @@ add_solution(cxxSolution *solution_ptr, LDBLE extensive, LDBLE intensive)
 	cxxNameDouble::iterator jit = solution_ptr->Get_totals().begin();
 	for ( ; jit != solution_ptr->Get_totals().end(); jit++)
 	{
-		master_ptr = master_bsearch_primary(jit->first.c_str());
+		std::unordered_map<std::string, class master*>::iterator mit =
+			master_primary_memo.find(jit->first);
+		if (mit != master_primary_memo.end())
+		{
+			master_ptr = mit->second;
+			assert(master_ptr == master_bsearch_primary(jit->first.c_str()));
+		}
+		else
+		{
+			master_ptr = master_bsearch_primary(jit->first.c_str());
+			if (master_ptr != NULL)
+			{
+				master_primary_memo[jit->first] = master_ptr;
+			}
+		}
 		if (master_ptr != NULL)
 		{
 			master_ptr->total += jit->second * extensive;
@@ -413,7 +442,21 @@ add_solution(cxxSolution *solution_ptr, LDBLE extensive, LDBLE intensive)
 	for ( ; jit != solution_ptr->Get_master_activity().end(); jit++)
 	{
 		{
-			master_ptr = master_bsearch(jit->first.c_str());
+			std::unordered_map<std::string, class master*>::iterator mit =
+				master_exact_memo.find(jit->first);
+			if (mit != master_exact_memo.end())
+			{
+				master_ptr = mit->second;
+				assert(master_ptr == master_bsearch(jit->first.c_str()));
+			}
+			else
+			{
+				master_ptr = master_bsearch(jit->first.c_str());
+				if (master_ptr != NULL)
+				{
+					master_exact_memo[jit->first] = master_ptr;
+				}
+			}
 			if (master_ptr != NULL)
 			{
 				master_ptr->s->la += jit->second * intensive;
@@ -454,9 +497,9 @@ add_exchange(cxxExchange *exchange_ptr)
  */
 	for (size_t i = 0; i < exchange_ptr->Get_exchange_comps().size(); i++)
 	{
-		cxxExchComp comp_ref = exchange_ptr->Get_exchange_comps()[i];
-		cxxNameDouble nd(comp_ref.Get_totals());
-		cxxNameDouble::iterator it = nd.begin();
+		const cxxExchComp &comp_ref = exchange_ptr->Get_exchange_comps()[i];
+		const cxxNameDouble &nd = comp_ref.Get_totals();
+		cxxNameDouble::const_iterator it = nd.begin();
 		for ( ; it != nd.end(); it++)
 		{
 			class element *elt_ptr = element_store(it->first.c_str());
@@ -491,9 +534,9 @@ add_exchange(cxxExchange *exchange_ptr)
 	{
 		for (size_t i = 0; i < exchange_ptr->Get_exchange_comps().size(); i++)
 		{
-			cxxExchComp &comp_ref = exchange_ptr->Get_exchange_comps()[i];
-			cxxNameDouble nd(comp_ref.Get_totals());
-			cxxNameDouble::iterator it = nd.begin();
+			const cxxExchComp &comp_ref = exchange_ptr->Get_exchange_comps()[i];
+			const cxxNameDouble &nd = comp_ref.Get_totals();
+			cxxNameDouble::const_iterator it = nd.begin();
 			for ( ; it != nd.end(); it++)
 			{	
 				class element *elt_ptr = element_store(it->first.c_str());
@@ -869,8 +912,8 @@ check_pp_assemblage(cxxPPassemblage *pp_assemblage_ptr)
  */
 	class master *master_ptr;
 
-	cxxNameDouble nd = pp_assemblage_ptr->Get_eltList();
-	cxxNameDouble::iterator it;
+	const cxxNameDouble &nd = pp_assemblage_ptr->Get_eltList();
+	cxxNameDouble::const_iterator it;
 	for (it = nd.begin(); it != nd.end(); it++)
 	{
 		class element *elt_ptr = element_store(it->first.c_str());

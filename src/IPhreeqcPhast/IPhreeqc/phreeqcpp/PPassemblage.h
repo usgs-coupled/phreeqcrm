@@ -19,6 +19,11 @@ class cxxPPassemblage:public cxxNumKeyword
 	cxxPPassemblage(const std::map < int, cxxPPassemblage > &entity_map,
 					  cxxMix & mx, int n_user, PHRQ_io * io=NULL);
 	~cxxPPassemblage();
+	// the user-declared destructor suppresses implicit moves; restore all four
+	cxxPPassemblage(const cxxPPassemblage &) = default;
+	cxxPPassemblage & operator=(const cxxPPassemblage &) = default;
+	cxxPPassemblage(cxxPPassemblage &&) = default;
+	cxxPPassemblage & operator=(cxxPPassemblage &&) = default;
 
 	void dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out=NULL) const;
 

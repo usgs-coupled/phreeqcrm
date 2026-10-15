@@ -34,6 +34,11 @@ class IPQ_DLL_EXPORT cxxNameDouble:public
 	cxxNameDouble(class name_coef *nc, int count);
 	cxxNameDouble(const cxxNameDouble & old, LDBLE factor);
 	 ~cxxNameDouble();
+	// the user-declared destructor suppresses implicit moves; restore all four
+	cxxNameDouble(const cxxNameDouble &) = default;
+	cxxNameDouble & operator=(const cxxNameDouble &) = default;
+	cxxNameDouble(cxxNameDouble &&) = default;
+	cxxNameDouble & operator=(cxxNameDouble &&) = default;
 
 	LDBLE Get_total_element(const char *string) const;
 	cxxNameDouble Simplify_redox(void) const;

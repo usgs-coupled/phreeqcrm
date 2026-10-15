@@ -19,6 +19,11 @@ public:
 	cxxExchange(const std::map < int, cxxExchange > &exchange_map,
 		cxxMix & mx, int n_user, PHRQ_io *io=NULL);
 	~cxxExchange();
+	// the user-declared destructor suppresses implicit moves; restore all four
+	cxxExchange(const cxxExchange &) = default;
+	cxxExchange & operator=(const cxxExchange &) = default;
+	cxxExchange(cxxExchange &&) = default;
+	cxxExchange & operator=(cxxExchange &&) = default;
 
 	void dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out=NULL) const;
 

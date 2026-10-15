@@ -21,6 +21,8 @@ class cxxSolution:public cxxNumKeyword
 	cxxSolution(PHRQ_io *io=NULL);
 	cxxSolution(const cxxSolution &old_sol);
 	const cxxSolution & operator = (const cxxSolution &rhs);
+	cxxSolution(cxxSolution &&old_sol) noexcept;
+	const cxxSolution & operator = (cxxSolution &&rhs) noexcept;
 	cxxSolution(std::map < int, cxxSolution > &solution_map,
 				  cxxMix & mx, int n_user, PHRQ_io *io=NULL);
 	virtual ~cxxSolution();

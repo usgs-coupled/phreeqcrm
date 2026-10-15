@@ -1126,6 +1126,7 @@ read_exchange_master_species(void)
 		size_t count_master = master.size();
 		master.resize(count_master + 1);
 		master[count_master] = master_alloc();
+		invalidate_master_memos();
 /*
  *   Set type to EX
  */
@@ -3541,6 +3542,7 @@ read_master_species(void)
 		size_t count_master = master.size();
 		master.resize(count_master + 1);
 		master[count_master] = master_alloc();
+		invalidate_master_memos();
 /*
  *   Set type to AQ
  */
@@ -7463,6 +7465,7 @@ read_surface_master_species(void)
 			size_t count_master = master.size();
 			master.resize(count_master + 1);
 			master[count_master] = master_alloc();
+			invalidate_master_memos();
 			master[count_master]->type = SURF;
 			master[count_master]->elt = element_store(token);
 			if (copy_token(token, &cptr, &l) != UPPER && token[0] != '[')
